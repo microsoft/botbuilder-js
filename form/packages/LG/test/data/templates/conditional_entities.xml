@@ -1,0 +1,17 @@
+<Agent xmlns:Agent="http://schemas.microsoft.com/ConversationalAgent/1.0">
+  <AgentDefinition lang="en-us">
+    <ConditionalResponseTemplate name="Conditional" onRun="func">
+      <SwitchCase>
+        <Case value="small">
+          <Feedback>{a} is a small string</Feedback>
+        </Case>
+        <Case value="medium">
+          <Feedback>{a} is a medium sized string</Feedback>
+        </Case>
+        <Case value="large">
+          <Feedback>{a} is a large string</Feedback>
+        </Case>
+      </SwitchCase>
+    </ConditionalResponseTemplate>
+  </AgentDefinition>
+</Agent>

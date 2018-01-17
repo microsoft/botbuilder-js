@@ -1,0 +1,48 @@
+[
+  {
+    "text": "create a timer"
+  },
+  {
+    "text": "Please specify duration",
+    "speak": "Please specify duration",
+    "inputHint": "expectingInput"
+  },
+  {
+    "sticky": "Set Timer",
+    "flow": {
+      "stack": [
+        {
+          "type": "PromptFrame",
+          "dialogFlowName": "SetTimerRootFlow",
+          "stateName": "Ask For duration",
+          "turn": 0
+        }
+      ]
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  },
+  {
+    "text": "30 seconds"
+  },
+  {
+    "text": "The first entity was 30 seconds",
+    "speak": "The first entity was 30 seconds",
+    "inputHint": "ignoringInput"
+  },
+  {
+    "text": "30 seconds",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  }
+]

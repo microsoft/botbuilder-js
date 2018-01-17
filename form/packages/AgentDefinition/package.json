@@ -1,0 +1,16 @@
+{
+  "name": "bot-framework-agentdefinition",
+  "version": "1.0.10",
+  "description": "Bot Framework Agent Definitions",
+  "main": "agentdefinition.js",
+  "scripts": {
+    "test": "echo 'refer to end 2 end tests for coverage'"
+  },
+  "keywords": [
+    "bot",
+    "agent",
+    "definition"
+  ],
+  "author": "Microsoft",
+  "license": "ISC"
+}

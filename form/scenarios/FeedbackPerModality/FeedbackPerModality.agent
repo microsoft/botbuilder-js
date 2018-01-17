@@ -1,0 +1,39 @@
+<Agent xmlns="http://schemas.microsoft.com/ConversationalAgent/1.0">
+  <AgentDefinition lang="en-us">
+    <About>
+      <CodeBehindClass></CodeBehindClass>
+      <CodeBehindNamespace></CodeBehindNamespace>
+    </About>
+    <Task name="task1">
+      <CodeRecognizer onRun="hi"></CodeRecognizer>
+      <DialogFlow name="Dialog Flow" isRootFlow="true">
+        <Transitions initialState="Feedback">
+          <Transition to="Feedback" from="Start"></Transition>
+          <Transition to="Return" from="Feedback"></Transition>
+        </Transitions>
+        <Initial name="Start"></Initial>
+        <Respond name="Feedback">
+          <FeedbackPerModality>
+            <Display>Hello</Display>
+            <Speak>Hi There</Speak>
+          </FeedbackPerModality>
+          </Respond>
+        <Return name="Return" outcome="Success"></Return>
+      </DialogFlow>
+    </Task>
+    <PhraseTopic name="a" scenario="Dictation"></PhraseTopic>
+    <ConditionalResponseTemplate name="Conditional1" onRun="func">
+      <SwitchCase>
+        <Case value="l">
+          <Feedback>large {a}</Feedback>
+        </Case>
+        <Case value="s">
+          <Feedback>small</Feedback>
+        </Case>
+      </SwitchCase>
+    </ConditionalResponseTemplate>
+    <SimpleResponseTemplate name="SimpleResponse2">
+      <Feedback>c</Feedback>
+    </SimpleResponseTemplate>
+  </AgentDefinition>
+</Agent>

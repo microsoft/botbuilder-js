@@ -1,0 +1,31 @@
+<Agent xmlns="http://schemas.microsoft.com/ConversationalAgent/1.0">
+  <AgentDefinition lang="en-us">
+    <About>
+      <CodeBehindClass>Conversation3AppLogic</CodeBehindClass>
+      <CodeBehindNamespace>AgentConsole</CodeBehindNamespace>
+    </About>
+    <Task name="task1">
+      <CodeRecognizer onRun="hi"></CodeRecognizer>
+      <DialogFlow name="Dialog Flow" isRootFlow="true">
+        <Transitions initialState="Feedback">
+          <Transition to="Feedback" from="Start"></Transition>
+          <Transition to="Return" from="Feedback"></Transition>
+        </Transitions>
+        <Initial name="Start"></Initial>
+        <Respond name="Feedback">
+          <Feedback>[SimpleResponse0]</Feedback>
+        </Respond>
+        <Return name="Return" outcome="Success"></Return>
+      </DialogFlow>
+    </Task>
+    <SimpleResponseTemplate name="SimpleResponse2">
+      <Feedback>c</Feedback>
+    </SimpleResponseTemplate>
+    <SimpleResponseTemplate name="SimpleResponse1">
+      <Feedback>b [SimpleResponse2]</Feedback>
+    </SimpleResponseTemplate>
+    <SimpleResponseTemplate name="SimpleResponse0">
+      <Feedback>a [SimpleResponse1]</Feedback>
+    </SimpleResponseTemplate>
+  </AgentDefinition>
+</Agent>

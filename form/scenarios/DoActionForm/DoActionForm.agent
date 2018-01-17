@@ -1,0 +1,71 @@
+<Agent xmlns:Agent="http://schemas.microsoft.com/ConversationalAgent/1.0">
+  <AgentDefinition lang="en-us">
+
+    <Task name="task1" doAction="Form" thenAction="">
+      <CodeRecognizer onRun="recognizeFunc"></CodeRecognizer>
+      <FormRef name="SandwichOrder" refTo="SandwichOrder" />
+    </Task>
+
+    <Form name="SandwichOrder">
+
+        <!-- Fields -->
+
+        <Field entity="breadType" displayName="type of bread" required="true" preserveInGlobal="true"></Field>
+        <Field entity="proteinOption" displayName="protein" required="true"></Field>
+        <Field entity="sandwichSize" displayName="size" required="true"></Field>
+        <Field entity="mustard" displayName="mustard"></Field>
+        <Field entity="sandwichToppings" displayName="toppings" acceptsMultipleValues="true"></Field>
+
+        <!-- Prompts -->
+
+        <PromptForInput when="builtin.anyRequiredMissing">
+            <Feedback>Please provide values for [builtin.requiredFieldsMissing]</Feedback>
+        </PromptForInput>
+
+        <PromptForInput when="builtin.anyRequiredOptionalMissing">
+            <Feedback>Please provide values for [builtin.requiredFieldsMissing] you may also provide values for [builtin.optionalFieldsMissing]</Feedback>
+        </PromptForInput>
+
+        <PromptForInput when="breadType">
+            <Feedback>[TodayWeOfferTheseBreads]. Please choose a bread type.</Feedback>
+        </PromptForInput>
+
+        <PromptForInput when="builtin.allRequiredFilled">
+            <Feedback>Here's what I have: [builtin.filledFields]. Do you want to order this?</Feedback>
+        </PromptForInput>
+
+        <!-- Actions -->
+
+        <FormAction type="AddOrUpdate">
+            <CodeRecognizer onRun="addOrUpdateRecognizer" />
+        </FormAction>
+        
+        <FormAction type="Confirm">
+            <CodeRecognizer onRun="builtin.confirm" />
+            <Feedback>OK</Feedback>
+        </FormAction>
+        
+        <FormAction type="Cancel">
+            <CodeRecognizer onRun="builtin.cancel"></CodeRecognizer>
+            <Feedback>Order canceled - come back soon!</Feedback>
+        </FormAction>
+
+        <FormAction type="Help">
+            <CodeRecognizer onRun="builtin.help"></CodeRecognizer>
+            <Feedback>So far you have: [builtin.filledFields]. The following missing are required [builtin.requiredFieldsMissing] and the following are further options: [builtin.optionalFieldsMissing].</Feedback>
+        </FormAction>
+
+    </Form>
+
+    <!-- Templates -->
+
+    <SimpleResponseTemplate name="TodayWeOfferTheseBreads">
+      <Feedback>Today we offer [BreadTypes]</Feedback>
+    </SimpleResponseTemplate>
+
+    <SimpleResponseTemplate name="BreadTypes">
+      <Feedback>white-bread, wheat-bread or sourdough-bread</Feedback>
+    </SimpleResponseTemplate>
+
+  </AgentDefinition>
+</Agent>

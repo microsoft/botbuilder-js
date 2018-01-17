@@ -1,0 +1,10 @@
+<Agent xmlns="http://schemas.microsoft.com/ConversationalAgent/1.0">
+  <AgentDefinition lang="en-us">
+    <Task name="task1" doAction="Respond">
+      <CodeRecognizer onRun="recognize1"></CodeRecognizer>
+      <Respond name="respond1">
+        <Feedback>hello. x is {x}</Feedback>
+      </Respond>
+    </Task>
+  </AgentDefinition>
+</Agent>

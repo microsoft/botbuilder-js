@@ -1,0 +1,30 @@
+<Agent xmlns="http://schemas.microsoft.com/ConversationalAgent/1.1">
+  <AgentDefinition lang="en-us">
+    <About>
+      <CodeBehindClass>AppLogic</CodeBehindClass>
+      <CodeBehindNamespace>MyConversation</CodeBehindNamespace>
+    </About>
+    <Task name="Set Timer" triggerType="LUISRecognizer" doAction="DialogFlow">
+      <LUISRecognizer intentName="setTimerTrigger" appID="029873e5-46f2-4296-a41a-882f05c6dd49" key="505f1baeacc44affbc07e2cbbe399774"></LUISRecognizer>
+      <DialogFlowRef refTo="SetTimerRootFlow"></DialogFlowRef>
+    </Task>
+    <DialogFlow name="SetTimerRootFlow">
+      <Transitions initialState="Start">
+        <Transition to="Ask For duration" from="Start"></Transition>
+        <Transition to="Feedback" from="Ask For duration"></Transition>
+        <Transition to="Process" from="Feedback"></Transition>
+      </Transitions>
+      <Initial name="Start"></Initial>
+      <Return name="Return" outcome="Success"></Return>
+      <Prompt name="Ask For duration" triggerType="LUISRecognizer">
+        <Feedback>Please specify duration</Feedback>
+        <LUISRecognizer intentName="AskForDuration" appID="029873e5-46f2-4296-a41a-882f05c6dd49" key="505f1baeacc44affbc07e2cbbe399774"></LUISRecognizer>
+        <EntityRef name="builtin.datetimeV2.duration" promptIfMissing="true"></EntityRef>
+      </Prompt>
+      <Respond name="Feedback">
+        <Feedback>The first entity was {builtin.datetimeV2.duration}</Feedback>
+      </Respond>
+      <Process name="Process" onRun="func"></Process>
+    </DialogFlow>
+  </AgentDefinition>
+</Agent>

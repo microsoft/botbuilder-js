@@ -1,0 +1,72 @@
+<Agent xmlns="http://schemas.microsoft.com/ConversationalAgent/1.0">
+  <AgentDefinition lang="en-us">
+    <About>
+      <CodeBehindClass></CodeBehindClass>
+      <CodeBehindNamespace></CodeBehindNamespace>
+    </About>
+    <Task name="task1">
+      <CodeRecognizer onRun="hi"></CodeRecognizer>
+      <DialogFlow name="Dialog Flow" isRootFlow="true">
+        <Transitions initialState="Start">
+          <Transition to="Process" from="Start"></Transition>
+          <Transition to="Feedback" from="Process"></Transition>
+          <Transition to="Return" from="Feedback"></Transition>
+        </Transitions>
+        <Initial name="Start"></Initial>
+        <Process name="Process" onRun="func"></Process>
+        <Respond name="Feedback">
+          <Feedback>Hello 1({Missing}) 2([SimpleResponse_Missing]) 3([SimpleResponse]) 4([ConditionalNoCode]) 5([ConditionalNoEntity]) 6([ConditionalNoMatch]) 7([ConditionalNoCases])</Feedback>
+        </Respond>
+        <Return name="Return" outcome="Success"></Return>
+      </DialogFlow>
+    </Task>
+    <PhraseTopic name="a" scenario="Dictation"></PhraseTopic>
+    <SimpleResponseTemplate name="SimpleResponse">
+      <!-- no feedback -->
+    </SimpleResponseTemplate>
+    <ConditionalResponseTemplate name="ConditionalNoCode" onRun="">
+      <SwitchCase>
+        <Case value="small">
+          <Feedback>{x} is a small string</Feedback>
+        </Case>
+        <Case value="medium">
+          <Feedback>{x} is a medium sized string</Feedback>
+        </Case>
+        <Case value="large">
+          <Feedback>{x} is a large string</Feedback>
+        </Case>
+      </SwitchCase>
+    </ConditionalResponseTemplate>
+    <ConditionalResponseTemplate name="ConditionalNoEntity" onRun="conditional_func">
+      <SwitchCase>
+        <Case value="small">
+          <Feedback>{a} is a small string</Feedback>
+        </Case>
+        <Case value="medium">
+          <Feedback>{a} is a medium sized string</Feedback>
+        </Case>
+        <Case value="large">
+          <Feedback>{a} is a large string</Feedback>
+        </Case>
+      </SwitchCase>
+    </ConditionalResponseTemplate>
+    <ConditionalResponseTemplate name="ConditionalNoMatch" onRun="conditional_func_no_match">
+      <SwitchCase>
+        <Case value="small">
+          <Feedback>{a} is a small string</Feedback>
+        </Case>
+        <Case value="medium">
+          <Feedback>{a} is a medium sized string</Feedback>
+        </Case>
+        <Case value="large">
+          <Feedback>{a} is a large string</Feedback>
+        </Case>
+      </SwitchCase>
+    </ConditionalResponseTemplate>
+    <ConditionalResponseTemplate name="ConditionalNoCases" onRun="conditional_func">
+      <SwitchCase>
+        <!-- no cases -->
+      </SwitchCase>
+    </ConditionalResponseTemplate>
+  </AgentDefinition>
+</Agent>

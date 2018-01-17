@@ -1,0 +1,19 @@
+[
+  {
+    "text": "hi"
+  },
+  {
+    "text": "Matched all href of function resources",
+    "speak": "Matched all href of function resources",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  }
+]

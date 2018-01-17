@@ -1,0 +1,22 @@
+<Agent xmlns="http://schemas.microsoft.com/ConversationalAgent/1.0">
+  <AgentDefinition lang="en-us">
+    <About>
+      <CodeBehindClass>SingleFeedbackWithCodeAppLogic</CodeBehindClass>
+      <CodeBehindNamespace>AgentConsole.Agent</CodeBehindNamespace>
+    </About>
+    <Task name="task1">
+      <CodeRecognizer onRun="hi"></CodeRecognizer>
+      <DialogFlow name="Dialog Flow" isRootFlow="true">
+        <Transitions initialState="Feedback">
+          <Transition to="Feedback" from="Start"></Transition>
+          <Transition to="Return" from="Feedback"></Transition>
+        </Transitions>
+        <Initial name="Start"></Initial>
+        <Respond name="Feedback" beforeResponse="func">
+          <Feedback>Hello</Feedback>
+        </Respond>
+        <Return name="Return" outcome="Success"></Return>
+      </DialogFlow>
+    </Task>
+  </AgentDefinition>
+</Agent>

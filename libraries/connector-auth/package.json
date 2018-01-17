@@ -1,0 +1,37 @@
+{
+  "name": "botframework-connector-auth",
+  "author": "Microsoft Corp.",
+  "description": "Authentication package for Microsoft Bot Connector",
+  "version": "4.0.0-h4.1",
+  "license": "MIT",
+  "keywords": [
+    "botbuilder",
+    "botframework",
+    "bots",
+    "chatbots"
+  ],
+  "bugs": {
+    "url": "https://github.com/Microsoft/BotBuilder/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Microsoft/BotBuilder.git"
+  },
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "dependencies": {
+    "@types/jsonwebtoken": "^7.2.2",
+    "@types/node": "^8.0.11",
+    "base64url": "^2.0.0",
+    "jsonwebtoken": "^7.1.8",
+    "ms-rest": "^2.2.0",
+    "rsa-pem-from-mod-exp": "^0.8.4"
+  },
+  "devDependencies": {
+    "mocha": "^4.0.1",
+    "typescript": "2.2.1"
+  },
+  "scripts": {
+    "test": "mocha tests/*.js"
+  }
+}

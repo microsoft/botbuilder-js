@@ -1,0 +1,37 @@
+[
+  {
+    "type": "message",
+    "id": "1",
+    "serviceUrl": "InvalidServiceUrl",
+    "channelId": "Test",
+    "from": {
+      "id": "testUser"
+    },
+    "conversation": {
+      "id": "1"
+    },
+    "recipient": {
+      "id": "testBot"
+    },
+    "membersAdded": [],
+    "membersRemoved": [],
+    "text": "hi",
+    "attachments": [],
+    "entities": []
+  },
+  {
+    "description": "user thrown error",
+    "message": "user thrown error",
+    "stack": "Error: user thrown error\n   at Anonymous function (Unknown script code:1810:17)\n   at Generator.prototype.throw (native code)\n   at rejected (Unknown script code:1002:42)",
+    "flow": {
+      "task": "task1",
+      "stack": [
+        {
+          "type": "DialogFlow",
+          "dialogFlowName": "Dialog Flow",
+          "stateName": "Process 1"
+        }
+      ]
+    }
+  }
+]

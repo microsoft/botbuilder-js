@@ -1,0 +1,22 @@
+﻿<Agent xmlns="http://schemas.microsoft.com/ConversationalAgent/1.0">
+  <AgentDefinition lang="en-us">
+    <Task name="Greeting" doAction="Respond">
+      <CodeRecognizer onRun="hi"></CodeRecognizer>
+      <Respond name="GreetingSimpleResponse">
+        <Feedback>hello back</Feedback>
+      </Respond>
+      <!-- not used because of doAction, but the UI uses the Agent file as storage -->
+      <DialogFlow name="Greeting dialog" isRootFlow="true">
+        <Transitions initialState="Start">
+          <Transition to="Feedback" from="Start"></Transition>
+          <Transition to="Return" from="Feedback"></Transition>
+        </Transitions>
+        <Initial name="Start"></Initial>
+        <Respond name="Feedback">
+          <Feedback>wrong hello</Feedback>
+        </Respond>
+        <Return name="Return" outcome="Success"></Return>
+      </DialogFlow>
+    </Task>
+  </AgentDefinition>
+</Agent>

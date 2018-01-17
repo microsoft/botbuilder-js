@@ -1,0 +1,96 @@
+[
+  {
+    "text": "hi"
+  },
+  {
+    "text": "Please provide values for \" entity=\"odd\"\" and \" entity=\"even\"\"",
+    "speak": "Please provide values for \" entity=\"odd\"\" and \" entity=\"even\"\"",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [],
+      "form": {
+        "local": {}
+      }
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  },
+  {
+    "text": "number 2"
+  },
+  {
+    "text": "Please provide values for \" entity=\"odd\"\"",
+    "speak": "Please provide values for \" entity=\"odd\"\"",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [],
+      "form": {
+        "local": {
+          "even": "2"
+        }
+      }
+    },
+    "data": {
+      "taskEntities": {
+        "even": "2"
+      },
+      "global": {}
+    }
+  },
+  {
+    "text": "number 3"
+  },
+  {
+    "text": "Here's what I have: \" entity=\"even\" = 2\" and \" entity=\"odd\" = 3\". Is this OK?",
+    "speak": "Here's what I have: \" entity=\"even\" = 2\" and \" entity=\"odd\" = 3\". Is this OK?",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [],
+      "form": {
+        "local": {
+          "even": "2",
+          "odd": "3"
+        }
+      }
+    },
+    "data": {
+      "taskEntities": {
+        "even": "2",
+        "odd": "3"
+      },
+      "global": {}
+    }
+  },
+  {
+    "text": "yes"
+  },
+  {
+    "text": "OK",
+    "speak": "OK",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {
+        "odd": "3",
+        "even": "2",
+        "sum": "5"
+      }
+    }
+  }
+]

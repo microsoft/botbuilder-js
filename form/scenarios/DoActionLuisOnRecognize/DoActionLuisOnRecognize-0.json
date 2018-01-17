@@ -1,0 +1,21 @@
+[
+  {
+    "text": "book a table this weekend for 4"
+  },
+  {
+    "text": "you asked for a table for 4",
+    "speak": "you asked for a table for 4",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {
+        "match": true
+      }
+    }
+  }
+]

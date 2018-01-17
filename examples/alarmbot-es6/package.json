@@ -1,0 +1,20 @@
+{
+    "name": "alarmbot",
+    "version": "1.0.0",
+    "description": "Example alarm bot",
+    "main": "app.js",
+    "scripts": {
+      "start": "node app.js"
+    },
+    "author": "Microsoft",
+    "license": "MIT",
+    "dependencies": {
+      "@types/node": "^8.0.28",
+      "@types/restify": "^5.0.3",
+      "botbuilder": "file:../../libraries/core",
+      "botbuilder-prompts": "file:../../libraries/prompts",
+      "botbuilder-services": "file:../../libraries/services",
+      "restify": "^6.0.0"
+    }
+  }
+  

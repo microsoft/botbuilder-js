@@ -1,0 +1,79 @@
+[
+  {
+    "text": "hi"
+  },
+  {
+    "text": "This is a prompt for entity1",
+    "speak": "This is a prompt for entity1",
+    "inputHint": "expectingInput"
+  },
+  {
+    "sticky": "MultipleProcessMultiplePromptsSingleFeedbackNoCode",
+    "flow": {
+      "stack": [
+        {
+          "type": "PromptFrame",
+          "dialogFlowName": "Dialog Flow",
+          "stateName": "Prompt 1",
+          "turn": 0
+        }
+      ]
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {
+        "process1": "PROCESS-ENTITY-1"
+      }
+    }
+  },
+  {
+    "text": "PROMPT-ENTITY-1"
+  },
+  {
+    "text": "This is a prompt for entity2",
+    "speak": "This is a prompt for entity2",
+    "inputHint": "expectingInput"
+  },
+  {
+    "sticky": "MultipleProcessMultiplePromptsSingleFeedbackNoCode",
+    "flow": {
+      "stack": [
+        {
+          "type": "PromptFrame",
+          "dialogFlowName": "Dialog Flow",
+          "stateName": "Prompt 2",
+          "turn": 0
+        }
+      ]
+    },
+    "data": {
+      "taskEntities": {
+        "entity1": "PROMPT-ENTITY-1"
+      },
+      "global": {
+        "process1": "PROCESS-ENTITY-1",
+        "process2": "PROCESS-ENTITY-2"
+      }
+    }
+  },
+  {
+    "text": "PROMPT-ENTITY-2"
+  },
+  {
+    "text": "This is the response with no code behind. Entities captured are entity1 = PROMPT-ENTITY-1 and entity2 = PROMPT-ENTITY-2",
+    "speak": "This is the response with no code behind. Entities captured are entity1 = PROMPT-ENTITY-1 and entity2 = PROMPT-ENTITY-2",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {
+        "process1": "PROCESS-ENTITY-1",
+        "process2": "PROCESS-ENTITY-2"
+      }
+    }
+  }
+]

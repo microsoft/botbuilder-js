@@ -1,0 +1,101 @@
+[
+  {
+    "text": "hi"
+  },
+  {
+    "text": "Please provide values for \"To\" and \"Message\"",
+    "speak": "Please provide values for \"To\" and \"Message\"",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [],
+      "form": {
+        "local": {}
+      }
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  },
+  {
+    "text": "message: hello"
+  },
+  {
+    "text": "Who is the text for?",
+    "speak": "Who is the text for?",
+    "inputHint": "expectingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [
+        {
+          "type": "SingleEntityPrompt",
+          "entityName": "to"
+        }
+      ],
+      "form": {
+        "local": {
+          "message": "hello"
+        }
+      }
+    },
+    "data": {
+      "taskEntities": {
+        "message": "hello"
+      },
+      "global": {}
+    }
+  },
+  {
+    "text": "to: Buckethead"
+  },
+  {
+    "text": "Should I send a text to buckethead saying hello?",
+    "speak": "Should I send a text to buckethead saying hello?",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [],
+      "form": {
+        "local": {
+          "message": "hello",
+          "to": "buckethead"
+        }
+      }
+    },
+    "data": {
+      "taskEntities": {
+        "message": "hello",
+        "to": "buckethead"
+      },
+      "global": {}
+    }
+  },
+  {
+    "text": "yes"
+  },
+  {
+    "text": "Okay, I have sent your text",
+    "speak": "Okay, I have sent your text",
+    "inputHint": "ignoringInput"
+  },
+  {
+    "text": "to: buckethead message: hello",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  }
+]

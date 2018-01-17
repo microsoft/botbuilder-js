@@ -1,0 +1,23 @@
+{
+    "name": "examples-adaptive-cards",
+    "version": "1.0.0",
+    "description": "Example bot using Adaptive Cards",
+    "repository": {
+      "git": "https://github.com/microsoft/botbuilder-dev"
+    },
+    "main": "app.js",
+    "scripts": {
+      "start": "node app.js"
+    },
+    "author": "Microsoft",
+    "license": "MIT",
+    "dependencies": {
+      "@types/node": "^8.0.28",
+      "@types/restify": "^5.0.3",
+      "botbuilder-core": "file:../../core",
+      "botbuilder-prompts": "file:../../prompts",
+      "botbuilder-services": "file:../../services",
+      "restify": "^6.0.0"
+    }
+  }
+  

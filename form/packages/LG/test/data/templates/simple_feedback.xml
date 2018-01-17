@@ -1,0 +1,36 @@
+<Agent xmlns:Agent="http://schemas.microsoft.com/ConversationalAgent/1.0">
+  <AgentDefinition lang="en-us">
+    <SimpleResponseTemplate name="SimpleResponse-Feedback">
+      <Feedback>here is some feedback</Feedback>
+    </SimpleResponseTemplate>
+    <SimpleResponseTemplate name="SimpleResponse-Empty-Feedback">
+      <Feedback></Feedback>
+    </SimpleResponseTemplate>
+    <SimpleResponseTemplate name="SimpleResponse-Characters-Feedback">
+      <Feedback>abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789`"',.;:/?~!@#$%^&*()-+_+\|</Feedback>
+    </SimpleResponseTemplate>
+    <SimpleResponseTemplate name="SimpleResponse-FeedbackOneOf">
+      <FeedbackOneOf>
+        <Feedback>feedback 1</Feedback>
+        <Feedback>feedback 2</Feedback>
+        <Feedback>feedback 3</Feedback>
+        <Feedback>feedback 4</Feedback>
+      </FeedbackOneOf>
+    </SimpleResponseTemplate>
+    <SimpleResponseTemplate name="SimpleResponse-FeedbackModality">
+      <FeedbackPerModality>
+        <Display>type the letter "{letter}"</Display>
+        <Speak>please type the letter "{letter}"</Speak>
+      </FeedbackPerModality>
+    </SimpleResponseTemplate>
+    <SimpleResponseTemplate name="SimpleResponse-FeedbackOneOf-FeedbackModality">
+      <FeedbackOneOf>
+        <FeedbackPerModality>
+          <Display>type the letter "a"</Display>
+          <Speak>please type the letter "a"</Speak>
+        </FeedbackPerModality>
+        <Feedback>2 b or not 2 b</Feedback>
+      </FeedbackOneOf>
+    </SimpleResponseTemplate>
+  </AgentDefinition>
+</Agent>

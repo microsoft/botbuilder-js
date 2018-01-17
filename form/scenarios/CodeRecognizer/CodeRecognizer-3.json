@@ -1,0 +1,14 @@
+[
+  {
+    "text": "NOT-A-GREETING"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  }
+]

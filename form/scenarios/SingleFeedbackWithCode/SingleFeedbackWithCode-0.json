@@ -1,0 +1,21 @@
+[
+  {
+    "text": "hi"
+  },
+  {
+    "text": "((((Hello))))",
+    "speak": "Hello",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {
+        "utterance": "Hello"
+      }
+    }
+  }
+]

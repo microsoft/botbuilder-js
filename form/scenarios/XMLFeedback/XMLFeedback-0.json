@@ -1,0 +1,19 @@
+[
+  {
+    "text": "hi"
+  },
+  {
+    "text": "you should listen",
+    "speak": "<speak version=\"1.0\" xmlns=\"http://www.w3.org/2001/10/synthesis\" xmlns:mstts=\"http://www.w3.org/2001/mstts\" xmlns:emo=\"http://www.w3.org/2009/10/emotionml\" xml:lang=\"en-us\"><emo:emotion><emo:category name=\"Neutral\" value=\"1.0\"/> </emo:emotion>Alright, last one.<audio src=\"http://hello\"/>Survey says?</speak>",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  }
+]

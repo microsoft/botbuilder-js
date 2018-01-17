@@ -1,0 +1,16 @@
+<Agent xmlns="http://schemas.microsoft.com/ConversationalAgent/1.0">
+  <AgentDefinition lang="en-us">
+    <Task name="task1" doAction="Respond">
+      <CodeRecognizer onRun="recognize1"></CodeRecognizer>
+      <Respond name="respond1">
+        <Feedback>hello 1</Feedback>
+      </Respond>
+    </Task>
+    <Task name="task2" doAction="Respond">
+      <CodeRecognizer onRun="recognize2"></CodeRecognizer>
+      <Respond name="respond2" beforeResponse="funcBeforeResponse">
+        <Feedback>hello 2</Feedback>
+      </Respond>
+    </Task>
+  </AgentDefinition>
+</Agent>

@@ -1,0 +1,38 @@
+{
+    "type": "RootDialogFlow",
+    "nonRootDialogFlows": {},
+    "rootDialogFlow": {
+        "type": "DialogFlow",
+        "name": "Dialog Flow",
+        "stateTransitionTable": {
+            "initialState": "Process 1",
+            "table": [
+                {
+                    "to": "Process 1",
+                    "from": "Start"
+                },
+                {
+                    "to": "Return",
+                    "from": "Process 1"
+                }
+            ]
+        },
+        "transitions": {
+            "Process 1": {
+                "type": "Process",
+                "onRun": "func",
+                "name": "Process 1"
+            },
+            "Start": {
+                "type": "Initial",
+                "name": "Start"
+            },
+            "Return": {
+                "type": "Return",
+                "name": "Return",
+                "outcome": "Success"
+            }
+        },
+        "isRootFlow": true
+    }
+}

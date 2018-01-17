@@ -1,0 +1,19 @@
+[
+  {
+    "text": "2"
+  },
+  {
+    "text": "hello from task 2",
+    "speak": "hello from task 2",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  }
+]

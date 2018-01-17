@@ -1,0 +1,87 @@
+﻿<Agent xmlns="http://schemas.microsoft.com/ConversationalAgent/1.0">
+  <AgentDefinition lang="en-us">
+    <About>
+      <CodeBehindClass>AppLogic</CodeBehindClass>
+      <CodeBehindNamespace>MyConversation</CodeBehindNamespace>
+    </About>
+    <Task name="Greeting">
+      <CodeRecognizer onRun="hi"></CodeRecognizer>
+      <Entity name="a" src="PhraseTopic"></Entity>
+      <Entity name="b" src="PhraseTopic"></Entity>
+      <Entity name="c" src="PhraseTopic"></Entity>
+      <DialogFlow name="Flow 1" isRootFlow="true">
+        <Transitions initialState="Start">
+          <Transition to="Feedback" from="Start"></Transition>
+          <Transition to="Module 1" from="Feedback"></Transition>
+          <Transition to="Prompt" from="Module 1"></Transition>
+          <Transition to="Return" from="Prompt"></Transition>
+        </Transitions>
+        <Initial name="Start"></Initial>
+        <Respond name="Feedback">
+          <Feedback>In root dialog flow</Feedback>
+        </Respond>
+        <Prompt name="Prompt">
+          <FeedbackOneOf forTurn="0">
+            <Feedback>root flow: type a value for a</Feedback>
+          </FeedbackOneOf>
+          <FeedbackOneOf forTurn="1">
+            <Feedback>root flow: reprompt: type a value for a</Feedback>
+          </FeedbackOneOf>
+          <CodeRecognizer onRun="entity_a"></CodeRecognizer>
+          <EntityRef name="a" promptIfMissing="true"></EntityRef>
+        </Prompt>
+        <Return name="Return" outcome="Success"></Return>
+        <DialogFlowRef name="Module 1" refTo="Flow 2"></DialogFlowRef>
+      </DialogFlow>
+      <DialogFlow name="Flow 2" isRootFlow="false">
+        <Transitions initialState="Start">
+          <Transition to="Feedback" from="Start"></Transition>
+          <Transition to="Module 2" from="Feedback"></Transition>
+          <Transition to="Prompt 2" from="Module 2"></Transition>
+          <Transition to="Return" from="Prompt 2"></Transition>
+        </Transitions>
+        <Initial name="Start"></Initial>
+        <Return name="Return" outcome="Success"></Return>
+        <Respond name="Feedback">
+          <Feedback>In dialog flow 1</Feedback>
+        </Respond>
+        <DialogFlowRef name="Module 2" refTo="Flow 3"></DialogFlowRef>
+        <Prompt name="Prompt 2">
+          <FeedbackOneOf forTurn="0">
+            <Feedback>flow 1: type a value for b</Feedback>
+          </FeedbackOneOf>
+          <FeedbackOneOf forTurn="1">
+            <Feedback>flow 1: reprompt: type a value for b</Feedback>
+          </FeedbackOneOf>
+          <CodeRecognizer onRun="entity_b"></CodeRecognizer>
+          <EntityRef name="b" promptIfMissing="true"></EntityRef>
+        </Prompt>
+      </DialogFlow>
+      <DialogFlow name="Flow 3" isRootFlow="false">
+        <Transitions initialState="Start">
+          <Transition to="Feedback" from="Start"></Transition>
+          <Transition to="Prompt 3" from="Feedback"></Transition>
+          <Transition to="Return" from="Prompt 3"></Transition>
+        </Transitions>
+        <Initial name="Start"></Initial>
+        <Return name="Return" outcome="Success"></Return>
+        <Respond name="Feedback">
+          <Feedback>In dialog flow 2</Feedback>
+        </Respond>
+        <Prompt name="Prompt 3">
+          <FeedbackOneOf forTurn="0">
+            <Feedback>flow 2: type a value for c</Feedback>
+          </FeedbackOneOf>
+          <FeedbackOneOf forTurn="1">
+            <Feedback>flow 2: reprompt: type a value for c</Feedback>
+          </FeedbackOneOf>
+          <CodeRecognizer onRun="entity_c"></CodeRecognizer>
+          <EntityRef name="c" promptIfMissing="true"></EntityRef>
+        </Prompt>
+      </DialogFlow>
+    </Task>
+    <PhraseTopic name="a" scenario="Dictation"></PhraseTopic>
+    <PhraseTopic name="b" scenario="Dictation"></PhraseTopic>
+    <PhraseTopic name="c" scenario="Dictation"></PhraseTopic>
+  </AgentDefinition>
+</Agent>

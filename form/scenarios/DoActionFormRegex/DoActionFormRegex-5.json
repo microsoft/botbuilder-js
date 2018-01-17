@@ -1,0 +1,107 @@
+[
+  {
+    "text": "order something"
+  },
+  {
+    "text": "Today we offer white-bread, wheat-bread or sourdough-bread. Please choose a bread type.",
+    "speak": "Today we offer white-bread, wheat-bread or sourdough-bread. Please choose a bread type.",
+    "inputHint": "expectingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [
+        {
+          "type": "SingleEntityPrompt",
+          "entityName": "breadType"
+        }
+      ],
+      "form": {
+        "local": {}
+      }
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  },
+  {
+    "text": "white-bread"
+  },
+  {
+    "text": "Please choose a protein option.",
+    "speak": "Please choose a protein option.",
+    "inputHint": "expectingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [
+        {
+          "type": "SingleEntityPrompt",
+          "entityName": "proteinOption"
+        }
+      ],
+      "form": {
+        "local": {
+          "breadType": "white-bread"
+        }
+      }
+    },
+    "data": {
+      "taskEntities": {
+        "breadType": "white-bread"
+      },
+      "global": {}
+    }
+  },
+  {
+    "text": "ham"
+  },
+  {
+    "text": "Please choose a size.",
+    "speak": "Please choose a size.",
+    "inputHint": "expectingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [
+        {
+          "type": "SingleEntityPrompt",
+          "entityName": "sandwichSize"
+        }
+      ],
+      "form": {
+        "local": {
+          "breadType": "white-bread",
+          "proteinOption": "ham"
+        }
+      }
+    },
+    "data": {
+      "taskEntities": {
+        "breadType": "white-bread",
+        "proteinOption": "ham"
+      },
+      "global": {}
+    }
+  },
+  {
+    "text": "cancel"
+  },
+  {
+    "text": "Order canceled - come back soon!",
+    "speak": "Order canceled - come back soon!",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  }
+]

@@ -1,0 +1,145 @@
+[
+  {
+    "text": "hi"
+  },
+  {
+    "text": "Where to?",
+    "speak": "Where to?",
+    "inputHint": "expectingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [
+        {
+          "type": "SingleEntityPrompt",
+          "entityName": "to"
+        }
+      ],
+      "form": {
+        "local": {}
+      }
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  },
+  {
+    "text": "London"
+  },
+  {
+    "text": "Where from?",
+    "speak": "Where from?",
+    "inputHint": "expectingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [
+        {
+          "type": "SingleEntityPrompt",
+          "entityName": "from"
+        }
+      ],
+      "form": {
+        "local": {
+          "to": "London"
+        }
+      }
+    },
+    "data": {
+      "taskEntities": {
+        "to": "London"
+      },
+      "global": {}
+    }
+  },
+  {
+    "text": "Seattle"
+  },
+  {
+    "text": "When would you like to leave?",
+    "speak": "When would you like to leave?",
+    "inputHint": "expectingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [
+        {
+          "type": "SingleEntityPrompt",
+          "entityName": "departure"
+        }
+      ],
+      "form": {
+        "local": {
+          "to": "London",
+          "from": "Seattle"
+        }
+      }
+    },
+    "data": {
+      "taskEntities": {
+        "to": "London",
+        "from": "Seattle"
+      },
+      "global": {}
+    }
+  },
+  {
+    "text": "2017-11-14"
+  },
+  {
+    "text": "OK I have you going to London, departing on 2017-11-14 from Seattle. Ready?",
+    "speak": "OK I have you going to London, departing on 2017-11-14 from Seattle. Ready?",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [],
+      "form": {
+        "local": {
+          "to": "London",
+          "from": "Seattle",
+          "departure": {
+            "type": "Timex",
+            "timex": "2017-11-14"
+          }
+        }
+      }
+    },
+    "data": {
+      "taskEntities": {
+        "to": "London",
+        "from": "Seattle",
+        "departure": {
+          "type": "Timex",
+          "timex": "2017-11-14"
+        }
+      },
+      "global": {}
+    }
+  },
+  {
+    "text": "yes"
+  },
+  {
+    "text": "Okay, booking your journey.",
+    "speak": "Okay, booking your journey.",
+    "inputHint": "ignoringInput"
+  },
+  {
+    "inputHint": "acceptingInput"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  }
+]

@@ -1,0 +1,30 @@
+<Agent xmlns="http://schemas.microsoft.com/ConversationalAgent/1.0">
+  <AgentDefinition lang="en-us">
+    <About>
+      <CodeBehindClass>XMLFeedback</CodeBehindClass>
+      <CodeBehindNamespace>AgentConsole</CodeBehindNamespace>
+    </About>
+    <Task name="task1">
+      <CodeRecognizer onRun="hi"></CodeRecognizer>
+      <DialogFlow name="Dialog Flow" isRootFlow="true">
+        <Transitions initialState="Process">
+          <Transition to="Process" from="Start"></Transition>
+          <Transition to="Feedback" from="Process"></Transition>
+          <Transition to="Return" from="Feedback"></Transition>
+        </Transitions>
+        <Initial name="Start"></Initial>
+        <Respond name="Feedback">
+          <Feedback>[SimpleResponse]</Feedback>
+        </Respond>
+        <Process name="Process" onRun="func"></Process>
+        <Return name="Return" outcome="Success"></Return>
+      </DialogFlow>
+    </Task>
+    <SimpleResponseTemplate name="SimpleResponse">
+      <FeedbackPerModality>
+        <Speak>&lt;speak version=&quot;1.0&quot; xmlns=&quot;http://www.w3.org/2001/10/synthesis&quot; xmlns:mstts=&quot;http://www.w3.org/2001/mstts&quot; xmlns:emo=&quot;http://www.w3.org/2009/10/emotionml&quot; xml:lang=&quot;en-us&quot;&gt;&lt;emo:emotion&gt;&lt;emo:category name=&quot;Neutral&quot; value=&quot;1.0&quot;/&gt; &lt;/emo:emotion&gt;Alright, last one.&lt;audio src=&quot;{url}&quot;/&gt;Survey says?&lt;/speak&gt;</Speak>
+        <Display>you should listen</Display>
+      </FeedbackPerModality>
+    </SimpleResponseTemplate>
+  </AgentDefinition>
+</Agent>

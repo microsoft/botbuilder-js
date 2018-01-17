@@ -1,0 +1,37 @@
+[
+  {
+    "type": "message",
+    "id": "1",
+    "serviceUrl": "InvalidServiceUrl",
+    "channelId": "Test",
+    "from": {
+      "id": "testUser"
+    },
+    "conversation": {
+      "id": "1"
+    },
+    "recipient": {
+      "id": "testBot"
+    },
+    "membersAdded": [],
+    "membersRemoved": [],
+    "text": "hi",
+    "attachments": [],
+    "entities": []
+  },
+  {
+    "description": "user thrown error",
+    "message": "user thrown error",
+    "stack": "Error: user thrown error\n   at func (:2:5)\n   at Anonymous function (Unknown script code:1466:13)\n   at Generator.prototype.next (native code)\n   at Anonymous function (Unknown script code:1004:9)\n   at Promise (native code)\n   at Anonymous function (Unknown script code:1000:5)\n   at ProcessEvents.prototype.InvokeRecognizer (Unknown script code:1465:9)\n   at Anonymous function (Unknown script code:1410:21)\n   at Generator.prototype.next (native code)\n   at Anonymous function (Unknown script code:1004:9)",
+    "flow": {
+      "task": "task1",
+      "stack": [
+        {
+          "type": "DialogFlow",
+          "dialogFlowName": "Dialog Flow",
+          "stateName": "Process 1"
+        }
+      ]
+    }
+  }
+]

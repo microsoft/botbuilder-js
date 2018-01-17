@@ -1,0 +1,21 @@
+{
+    "name": "example-recognizer-es6",
+    "version": "1.0.0",
+    "description": "Bot Framework Node.js SDK RegExpRecognizer example",
+    "main": "app.js",
+    "scripts": {
+      "start": "node app.js"
+    },
+    "dependencies": {
+      "botbuilder-core": "file:../../libraries/core",
+      "botbuilder-services": "file:../../libraries/services",
+      "restify": "^6.0.1"
+    },
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/microsoft/botbuilder.git"
+    },
+    "author": "Microsoft",
+    "license": "MIT"
+  }
+  

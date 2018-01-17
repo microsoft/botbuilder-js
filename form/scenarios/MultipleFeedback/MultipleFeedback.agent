@@ -1,0 +1,30 @@
+<Agent xmlns="http://schemas.microsoft.com/ConversationalAgent/1.0">
+  <AgentDefinition lang="en-us">
+    <About>
+      <CodeBehindClass>MultipleFeedbackAppLogic</CodeBehindClass>
+      <CodeBehindNamespace>AgentConsole.Agent</CodeBehindNamespace>
+    </About>
+    <Task name="task1">
+      <CodeRecognizer onRun="hi"></CodeRecognizer>
+      <DialogFlow name="Dialog Flow" isRootFlow="true">
+        <Transitions initialState="Feedback">
+          <Transition to="Feedback" from="Start"></Transition>
+          <Transition to="Feedback 2" from="Feedback"></Transition>
+          <Transition to="Feedback 3" from="Feedback 2"></Transition>
+          <Transition to="Return" from="Feedback 3"></Transition>
+        </Transitions>
+        <Initial name="Start"></Initial>
+        <Respond name="Feedback">
+          <Feedback>hello 1</Feedback>
+        </Respond>
+        <Return name="Return" outcome="Success"></Return>
+        <Respond name="Feedback 2">
+          <Feedback>hello 2</Feedback>
+        </Respond>
+        <Respond name="Feedback 3">
+          <Feedback>hello 3</Feedback>
+        </Respond>
+      </DialogFlow>
+    </Task>
+  </AgentDefinition>
+</Agent>

@@ -1,0 +1,92 @@
+[
+  {
+    "text": "hi"
+  },
+  {
+    "text": "Please provide values for \"type of bread\", \"protein\" and \"size\" you may also provide values for \"mustard\" and \"toppings\"",
+    "speak": "Please provide values for \"type of bread\", \"protein\" and \"size\" you may also provide values for \"mustard\" and \"toppings\"",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [],
+      "form": {
+        "local": {}
+      }
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  },
+  {
+    "text": "add white-bread"
+  },
+  {
+    "text": "Please provide values for \"protein\" and \"size\" you may also provide values for \"mustard\" and \"toppings\"",
+    "speak": "Please provide values for \"protein\" and \"size\" you may also provide values for \"mustard\" and \"toppings\"",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [],
+      "form": {
+        "local": {
+          "breadType": "white-bread"
+        }
+      }
+    },
+    "data": {
+      "taskEntities": {
+        "breadType": "white-bread"
+      },
+      "global": {}
+    }
+  },
+  {
+    "text": "add ham"
+  },
+  {
+    "text": "Please provide values for \"size\" you may also provide values for \"mustard\" and \"toppings\"",
+    "speak": "Please provide values for \"size\" you may also provide values for \"mustard\" and \"toppings\"",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [],
+      "form": {
+        "local": {
+          "breadType": "white-bread",
+          "proteinOption": "ham"
+        }
+      }
+    },
+    "data": {
+      "taskEntities": {
+        "breadType": "white-bread",
+        "proteinOption": "ham"
+      },
+      "global": {}
+    }
+  },
+  {
+    "text": "cancel"
+  },
+  {
+    "text": "Order canceled - come back soon!",
+    "speak": "Order canceled - come back soon!",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  }
+]

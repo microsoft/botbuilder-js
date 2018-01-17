@@ -1,0 +1,37 @@
+[
+  {
+    "type": "conversationUpdate",
+    "text": "TEST"
+  },
+  {
+    "text": "Welcome my son, welcome to the machine.",
+    "speak": "Welcome my son, welcome to the machine.",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  },
+  {
+    "text": "hi"
+  },
+  {
+    "text": "a b c",
+    "speak": "a b c",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  }
+]

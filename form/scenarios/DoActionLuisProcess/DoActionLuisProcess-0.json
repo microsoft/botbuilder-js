@@ -1,0 +1,108 @@
+[
+  {
+    "type": "message",
+    "id": "1",
+    "serviceUrl": "InvalidServiceUrl",
+    "channelId": "Test",
+    "from": {
+      "id": "testUser"
+    },
+    "conversation": {
+      "id": "1"
+    },
+    "recipient": {
+      "id": "testBot"
+    },
+    "membersAdded": [],
+    "membersRemoved": [],
+    "text": "help",
+    "attachments": [],
+    "entities": []
+  },
+  {
+    "type": "message",
+    "serviceUrl": "InvalidServiceUrl",
+    "channelId": "Test",
+    "from": {
+      "id": "testBot"
+    },
+    "conversation": {
+      "id": "1"
+    },
+    "recipient": {
+      "id": "testUser"
+    },
+    "membersAdded": [],
+    "membersRemoved": [],
+    "text": "you asked for help",
+    "speak": "you asked for help",
+    "inputHint": "acceptingInput",
+    "attachments": [],
+    "entities": [],
+    "replyToId": "1"
+  },
+  {
+    "flow": {
+      "task": null,
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "contextEntities": {},
+      "phraseListOverrides": {}
+    }
+  },
+  {
+    "type": "message",
+    "id": "2",
+    "serviceUrl": "InvalidServiceUrl",
+    "channelId": "Test",
+    "from": {
+      "id": "testUser"
+    },
+    "conversation": {
+      "id": "2"
+    },
+    "recipient": {
+      "id": "testBot"
+    },
+    "membersAdded": [],
+    "membersRemoved": [],
+    "text": "seattle",
+    "attachments": [],
+    "entities": []
+  },
+  {
+    "type": "message",
+    "serviceUrl": "InvalidServiceUrl",
+    "channelId": "Test",
+    "from": {
+      "id": "testBot"
+    },
+    "conversation": {
+      "id": "2"
+    },
+    "recipient": {
+      "id": "testUser"
+    },
+    "membersAdded": [],
+    "membersRemoved": [],
+    "text": "you asked for a location near you",
+    "speak": "you asked for a location near you",
+    "inputHint": "acceptingInput",
+    "attachments": [],
+    "entities": [],
+    "replyToId": "2"
+  },
+  {
+    "flow": {
+      "task": null,
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "contextEntities": {},
+      "phraseListOverrides": {}
+    }
+  }
+]

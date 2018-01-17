@@ -1,0 +1,19 @@
+[
+  {
+    "text": "bye"
+  },
+  {
+    "text": "Farewell my friend",
+    "speak": "Farewell my friend",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  }
+]

@@ -1,0 +1,79 @@
+[
+  {
+    "text": "15"
+  },
+  {
+    "text": "type a value for 'b'",
+    "speak": "type a value for 'b'",
+    "inputHint": "expectingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [
+        {
+          "type": "PromptFrame",
+          "dialogFlowName": "Dialog Flow",
+          "stateName": "Prompt B",
+          "turn": 0
+        }
+      ]
+    },
+    "data": {
+      "taskEntities": {
+        "x": "15"
+      },
+      "global": {}
+    }
+  },
+  {
+    "text": "15"
+  },
+  {
+    "text": "feedback2 x = '15', b = '15'",
+    "speak": "feedback2 x = '15', b = '15'",
+    "inputHint": "ignoringInput"
+  },
+  {
+    "text": "type a value for 'c'",
+    "speak": "type a value for 'c'",
+    "inputHint": "expectingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [
+        {
+          "type": "PromptFrame",
+          "dialogFlowName": "Dialog Flow",
+          "stateName": "Prompt C",
+          "turn": 0
+        }
+      ]
+    },
+    "data": {
+      "taskEntities": {
+        "x": "15",
+        "b": "15"
+      },
+      "global": {}
+    }
+  },
+  {
+    "text": "456"
+  },
+  {
+    "text": "feedback3",
+    "speak": "feedback3",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  }
+]

@@ -1,0 +1,44 @@
+[
+  {
+    "text": "hi"
+  },
+  {
+    "text": "type the letter \"a\"",
+    "speak": "please type the letter \"a\"",
+    "inputHint": "expectingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [
+        {
+          "type": "PromptFrame",
+          "dialogFlowName": "Dialog Flow",
+          "stateName": "Prompt",
+          "turn": 0
+        }
+      ]
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  },
+  {
+    "text": "hey"
+  },
+  {
+    "text": "Thank you",
+    "speak": "Cheers Mate",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  }
+]

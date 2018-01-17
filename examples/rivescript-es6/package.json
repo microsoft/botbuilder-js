@@ -1,0 +1,21 @@
+{
+    "name": "example-rivescript-es6",
+    "version": "1.0.1",
+    "description": "Example rivescript bot",
+    "main": "app.js",
+    "scripts": {
+       "start": "node app.js"
+    },
+    "author": "Microsoft",
+    "license": "MIT",
+    "dependencies": {
+      "@types/node": "^8.0.13",
+      "@types/restify": "^5.0.1",
+      "botbuilder": "file:../../core",
+      "botbuilder-node": "file:../../node",
+      "botbuilder-services": "file:../../services",
+      "botbuilder-rivescript": "file:../../rivescript",
+      "restify": "^5.0.1"
+    }
+  }
+  

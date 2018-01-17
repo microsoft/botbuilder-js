@@ -1,0 +1,69 @@
+[
+  {
+    "text": "hi"
+  },
+  {
+    "text": "How can I help you?",
+    "speak": "How can I help you?",
+    "inputHint": "expectingInput"
+  },
+  {
+    "sticky": "task",
+    "flow": {
+      "stack": [
+        {
+          "type": "PromptFrame",
+          "dialogFlowName": "Dialog Flow",
+          "stateName": "Prompt",
+          "turn": 0
+        }
+      ]
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  },
+  {
+    "text": "wrong wrong wrong"
+  },
+  {
+    "text": "How can I help you?",
+    "speak": "How can I help you?",
+    "inputHint": "expectingInput"
+  },
+  {
+    "sticky": "task",
+    "flow": {
+      "stack": [
+        {
+          "type": "PromptFrame",
+          "dialogFlowName": "Dialog Flow",
+          "stateName": "Prompt",
+          "turn": 1
+        }
+      ]
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  },
+  {
+    "text": "book a table tomorrow for 3"
+  },
+  {
+    "text": "Your party size is 3",
+    "speak": "Your party size is 3",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  }
+]

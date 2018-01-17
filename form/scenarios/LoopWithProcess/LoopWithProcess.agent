@@ -1,0 +1,27 @@
+﻿<Agent xmlns="http://schemas.microsoft.com/ConversationalAgent/1.0">
+  <AgentDefinition lang="en-us">
+    <About>
+      <CodeBehindClass>AppLogic</CodeBehindClass>
+      <CodeBehindNamespace>MyConversation</CodeBehindNamespace>
+    </About>
+    <Task name="Hello Task" doAction="DialogFlow">
+      <CodeRecognizer onRun="hi"></CodeRecognizer>
+      <DialogFlow name="Looper" isRootFlow="true">
+        <Transitions initialState="Start">
+          <Transition to="Feedback" from="Start"></Transition>
+          <Transition to="Feedback" from="Process"></Transition>
+          <Transition to="Return" from="Decision" whenValueIs="Yes"></Transition>
+          <Transition to="Process" from="Decision" whenValueIs="No"></Transition>
+          <Transition to="Decision" from="Feedback"></Transition>
+        </Transitions>
+        <Initial name="Start"></Initial>
+        <Return name="Return" outcome="Success"></Return>
+        <Process name="Process" onRun="proc"></Process>
+        <Process name="Decision" onRun="dec"></Process>
+        <Respond name="Feedback">
+          <Feedback>This is feedback</Feedback>
+        </Respond>
+      </DialogFlow>
+    </Task>
+  </AgentDefinition>
+</Agent>

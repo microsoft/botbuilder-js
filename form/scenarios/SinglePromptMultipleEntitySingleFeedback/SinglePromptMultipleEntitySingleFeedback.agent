@@ -1,0 +1,33 @@
+<Agent xmlns="http://schemas.microsoft.com/ConversationalAgent/1.0">
+  <AgentDefinition lang="en-us">
+    <About>
+      <CodeBehindClass>SinglePromptMultipleEntitySingleFeedbackAppLogic</CodeBehindClass>
+      <CodeBehindNamespace>AgentConsole.Agent</CodeBehindNamespace>
+    </About>
+    <Task name="task1">
+      <CodeRecognizer onRun="hi"></CodeRecognizer>
+      <Entity name="a" src="PhraseTopic"></Entity>
+      <Entity name="b" src="PhraseTopic"></Entity>
+      <DialogFlow name="Dialog Flow" isRootFlow="true">
+        <Transitions initialState="Prompt">
+          <Transition to="Prompt" from="Start"></Transition>
+          <Transition to="Feedback" from="Prompt"></Transition>
+          <Transition to="Return" from="Feedback"></Transition>
+        </Transitions>
+        <Initial name="Start"></Initial>
+        <Prompt name="Prompt">
+          <Feedback forTurn="0">type a value for a and b</Feedback>
+          <CodeRecognizer onRun="func"></CodeRecognizer>
+          <EntityRef name="a" promptIfMissing="true"></EntityRef>
+          <EntityRef name="b" promptIfMissing="true"></EntityRef>
+        </Prompt>
+        <Respond name="Feedback">
+          <Feedback>you said {a} and {b}</Feedback>
+        </Respond>
+        <Return name="Return" outcome="Success"></Return>
+      </DialogFlow>
+    </Task>
+    <PhraseTopic name="a" scenario="Dictation"></PhraseTopic>
+    <PhraseTopic name="b" scenario="Dictation"></PhraseTopic>
+  </AgentDefinition>
+</Agent>

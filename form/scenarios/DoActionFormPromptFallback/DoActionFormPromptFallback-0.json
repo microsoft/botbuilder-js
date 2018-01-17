@@ -1,0 +1,140 @@
+[
+  {
+    "text": "hi"
+  },
+  {
+    "text": "Enter a value for x.",
+    "speak": "Enter a value for x.",
+    "inputHint": "expectingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [
+        {
+          "type": "SingleEntityPrompt",
+          "entityName": "x"
+        }
+      ],
+      "form": {
+        "local": {}
+      }
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  },
+  {
+    "text": "x: 42"
+  },
+  {
+    "text": "Enter a value for y.",
+    "speak": "Enter a value for y.",
+    "inputHint": "expectingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [
+        {
+          "type": "SingleEntityPrompt",
+          "entityName": "y"
+        }
+      ],
+      "form": {
+        "local": {
+          "x": "42"
+        }
+      }
+    },
+    "data": {
+      "taskEntities": {
+        "x": "42"
+      },
+      "global": {}
+    }
+  },
+  {
+    "text": "y: 64"
+  },
+  {
+    "text": "Enter a value for z.",
+    "speak": "Enter a value for z.",
+    "inputHint": "expectingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [
+        {
+          "type": "SingleEntityPrompt",
+          "entityName": "z"
+        }
+      ],
+      "form": {
+        "local": {
+          "x": "42",
+          "y": "64"
+        }
+      }
+    },
+    "data": {
+      "taskEntities": {
+        "x": "42",
+        "y": "64"
+      },
+      "global": {}
+    }
+  },
+  {
+    "text": "z: 32"
+  },
+  {
+    "text": "OK I have 42, 64 and 32. Ready?",
+    "speak": "OK I have 42, 64 and 32. Ready?",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [],
+      "form": {
+        "local": {
+          "x": "42",
+          "y": "64",
+          "z": "32"
+        }
+      }
+    },
+    "data": {
+      "taskEntities": {
+        "x": "42",
+        "y": "64",
+        "z": "32"
+      },
+      "global": {}
+    }
+  },
+  {
+    "text": "yes"
+  },
+  {
+    "text": "Okay, running the Process now...",
+    "speak": "Okay, running the Process now...",
+    "inputHint": "ignoringInput"
+  },
+  {
+    "text": "x: 42 y: 64 z: 32",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  }
+]

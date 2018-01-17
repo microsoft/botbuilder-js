@@ -1,0 +1,47 @@
+<Agent xmlns:Agent="http://schemas.microsoft.com/ConversationalAgent/1.0">
+  <AgentDefinition lang="en-us">
+    <About>
+      <CodeBehindClass></CodeBehindClass>
+      <CodeBehindNamespace></CodeBehindNamespace>
+    </About>
+    <Task name="task1">
+      <CodeRecognizer onRun="recognize1"></CodeRecognizer>
+      <IntentTip utteranceID="1234">type "1" to enter task 1</IntentTip>
+      <DialogFlow name="Dialog Flow" isRootFlow="true">
+        <Transitions initialState="Feedback">
+          <Transition to="Feedback" from="Start"></Transition>
+          <Transition to="Return" from="Feedback"></Transition>
+        </Transitions>
+        <Initial name="Start"></Initial>
+        <Respond name="Feedback">
+          <Feedback>hello from task 1</Feedback>
+        </Respond>
+        <Return name="Return" outcome="Success"></Return>
+      </DialogFlow>
+    </Task>
+    <Task name="task 2">
+      <CodeRecognizer onRun="recognize2"></CodeRecognizer>
+      <IntentTip utteranceID="5678">type "2" to enter task 2</IntentTip>
+      <IntentTip utteranceID="5678">typing "2" will get you into task 2</IntentTip>
+      <IntentTip utteranceID="5678">for task 2 type "2"</IntentTip>
+      <DialogFlow name="Dialog Flow" isRootFlow="true">
+        <Transitions initialState="Feedback">
+          <Transition to="Feedback" from="Start"></Transition>
+          <Transition to="Return" from="Feedback"></Transition>
+        </Transitions>
+        <Initial name="Start"></Initial>
+        <Respond name="Feedback">
+          <Feedback>hello from task 2</Feedback>
+        </Respond>
+        <Return name="Return" outcome="Success"></Return>
+      </DialogFlow>
+    </Task>
+    <Task name="task help" doAction="Respond">
+      <CodeRecognizer onRun="recognizeHelp"></CodeRecognizer>
+      <Respond name="Feedback">
+        <Feedback>[builtin.tasktips]</Feedback>
+      </Respond>
+      <Return name="Return" outcome="Success"></Return>
+    </Task>
+  </AgentDefinition>
+</Agent>

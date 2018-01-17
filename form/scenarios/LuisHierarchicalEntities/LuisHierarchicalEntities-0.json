@@ -1,0 +1,19 @@
+[
+  {
+    "text": "i would like to fly from Seattle to London"
+  },
+  {
+    "text": "Please confirm your flight request is departing from seattle and arriving in london",
+    "speak": "Please confirm your flight request is departing from seattle and arriving in london",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  }
+]

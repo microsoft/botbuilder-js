@@ -1,0 +1,121 @@
+[
+  {
+    "text": "hi"
+  },
+  {
+    "text": "Please provide values for \" entity=\"odd\"\" and \" entity=\"even\"\"",
+    "speak": "Please provide values for \" entity=\"odd\"\" and \" entity=\"even\"\"",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [],
+      "form": {
+        "local": {}
+      }
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  },
+  {
+    "text": "number 42"
+  },
+  {
+    "text": "Please provide values for \" entity=\"odd\"\"",
+    "speak": "Please provide values for \" entity=\"odd\"\"",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [],
+      "form": {
+        "local": {
+          "even": "42"
+        }
+      }
+    },
+    "data": {
+      "taskEntities": {
+        "even": "42"
+      },
+      "global": {}
+    }
+  },
+  {
+    "text": "number 64"
+  },
+  {
+    "text": "Please provide values for \" entity=\"odd\"\"",
+    "speak": "Please provide values for \" entity=\"odd\"\"",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [],
+      "form": {
+        "local": {
+          "even": "64"
+        }
+      }
+    },
+    "data": {
+      "taskEntities": {
+        "even": "64"
+      },
+      "global": {}
+    }
+  },
+  {
+    "text": "number 27"
+  },
+  {
+    "text": "Here's what I have: \" entity=\"even\" = 64\" and \" entity=\"odd\" = 27\". Is this OK?",
+    "speak": "Here's what I have: \" entity=\"even\" = 64\" and \" entity=\"odd\" = 27\". Is this OK?",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [],
+      "form": {
+        "local": {
+          "even": "64",
+          "odd": "27"
+        }
+      }
+    },
+    "data": {
+      "taskEntities": {
+        "even": "64",
+        "odd": "27"
+      },
+      "global": {}
+    }
+  },
+  {
+    "text": "yes"
+  },
+  {
+    "text": "OK",
+    "speak": "OK",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {
+        "odd": "27",
+        "even": "64",
+        "sum": "91"
+      }
+    }
+  }
+]

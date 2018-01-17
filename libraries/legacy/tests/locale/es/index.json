@@ -1,0 +1,6 @@
+{
+    "id1": "index-es1",
+    "id2": "index-es2",
+    "id3": ["index-es3-a", "index-es3-b", "index-es3-c"],
+    "id5": "index-es5"
+}

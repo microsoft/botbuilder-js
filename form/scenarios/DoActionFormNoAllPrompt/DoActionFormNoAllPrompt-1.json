@@ -1,0 +1,50 @@
+[
+  {
+    "text": "hello to Buckethead"
+  },
+  {
+    "text": "Should I send a text to buckethead saying hello?",
+    "speak": "Should I send a text to buckethead saying hello?",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [],
+      "form": {
+        "local": {
+          "to": "buckethead",
+          "message": "hello"
+        }
+      }
+    },
+    "data": {
+      "taskEntities": {
+        "to": "buckethead",
+        "message": "hello"
+      },
+      "global": {}
+    }
+  },
+  {
+    "text": "yes"
+  },
+  {
+    "text": "Okay, I have sent your text",
+    "speak": "Okay, I have sent your text",
+    "inputHint": "ignoringInput"
+  },
+  {
+    "text": "to: buckethead message: hello",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  }
+]

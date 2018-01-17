@@ -1,0 +1,39 @@
+<Agent xmlns="http://schemas.microsoft.com/ConversationalAgent/1.0">
+  <AgentDefinition lang="en-us">
+    <About>
+      <CodeBehindClass>BranchingAppLogic</CodeBehindClass>
+      <CodeBehindNamespace>AgentConsole.Agent</CodeBehindNamespace>
+    </About>
+    <Task name="task1">
+      <CodeRecognizer onRun="hi"></CodeRecognizer>
+      <Entity name="a" src="PhraseTopic"></Entity>
+      <DialogFlow name="Dialog Flow" isRootFlow="true">
+        <Transitions initialState="Prompt">
+          <Transition to="Prompt" from="Start"></Transition>
+          <Transition to="Decision 1" from="Prompt"></Transition>
+          <Transition to="Return" from="Feedback 1"></Transition>
+          <Transition to="Feedback 1" from="Decision 1" whenValueIs="yes"></Transition>
+          <Transition to="Feedback 2" from="Decision 1" whenValueIs="no"></Transition>
+          <Transition to="Return" from="Feedback 2"></Transition>
+        </Transitions>
+        <Initial name="Start"></Initial>
+        <Prompt name="Prompt">
+          <FeedbackOneOf forTurn="0">
+            <Feedback>type 0 or 1</Feedback>
+          </FeedbackOneOf>
+          <CodeRecognizer onRun="entity_a"></CodeRecognizer>          
+          <EntityRef name="a" promptIfMissing="true"></EntityRef>
+        </Prompt>
+        <Respond name="Feedback 1">
+          <Feedback>Hello</Feedback>
+        </Respond>
+        <Return name="Return" outcome="Success"></Return>
+        <Process name="Decision 1" onRun="func"></Process>
+        <Respond name="Feedback 2">
+          <Feedback>Goodbye</Feedback>
+        </Respond>
+      </DialogFlow>
+    </Task>
+    <PhraseTopic name="a" scenario="Dictation"></PhraseTopic>
+  </AgentDefinition>
+</Agent>

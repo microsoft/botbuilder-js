@@ -1,0 +1,25 @@
+﻿{
+  "contentType": "application/vnd.microsoft.card.adaptive",
+  "content": {
+    "$schema": "https://microsoft.github.io/AdaptiveCards/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.0",
+    "body": [
+      {
+        "type": "Container",
+        "items": [
+          {
+            "type": "TextBlock",
+            "text": "Entity {x}",
+            "isSubtle": true
+          },
+          {
+            "type": "TextBlock",
+            "text": "This is Adaptive Card 3",
+            "isSubtle": true
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,20 @@
+[
+  {
+    "text": "1"
+  },
+  {
+    "text": "from code in process1",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {
+        "x1": 1
+      }
+    }
+  }
+]

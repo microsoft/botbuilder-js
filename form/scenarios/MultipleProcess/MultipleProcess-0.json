@@ -1,0 +1,31 @@
+[
+  {
+    "text": "hi"
+  },
+  {
+    "text": "process1",
+    "inputHint": "ignoringInput",
+    "type": "message"
+  },
+  {
+    "text": "process2",
+    "inputHint": "ignoringInput",
+    "type": "message"
+  },
+  {
+    "text": "process3",
+    "inputHint": "acceptingInput",
+    "type": "message"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {
+        "x": 3
+      }
+    }
+  }
+]

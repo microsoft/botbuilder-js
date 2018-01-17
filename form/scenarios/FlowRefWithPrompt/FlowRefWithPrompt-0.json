@@ -1,0 +1,219 @@
+[
+  {
+    "text": "hi"
+  },
+  {
+    "text": "In root dialog flow",
+    "speak": "In root dialog flow",
+    "inputHint": "ignoringInput"
+  },
+  {
+    "text": "In dialog flow 1",
+    "speak": "In dialog flow 1",
+    "inputHint": "ignoringInput"
+  },
+  {
+    "text": "In dialog flow 2",
+    "speak": "In dialog flow 2",
+    "inputHint": "ignoringInput"
+  },
+  {
+    "text": "flow 2: type a value for c",
+    "speak": "flow 2: type a value for c",
+    "inputHint": "expectingInput"
+  },
+  {
+    "sticky": "Greeting",
+    "flow": {
+      "stack": [
+        {
+          "type": "DialogFlow",
+          "dialogFlowName": "Flow 1",
+          "stateName": "Prompt"
+        },
+        {
+          "type": "DialogFlow",
+          "dialogFlowName": "Flow 2",
+          "stateName": "Prompt 2"
+        },
+        {
+          "type": "PromptFrame",
+          "dialogFlowName": "Flow 3",
+          "stateName": "Prompt 3",
+          "turn": 0
+        }
+      ]
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  },
+  {
+    "text": "24"
+  },
+  {
+    "text": "flow 2: reprompt: type a value for c",
+    "speak": "flow 2: reprompt: type a value for c",
+    "inputHint": "expectingInput"
+  },
+  {
+    "sticky": "Greeting",
+    "flow": {
+      "stack": [
+        {
+          "type": "DialogFlow",
+          "dialogFlowName": "Flow 1",
+          "stateName": "Prompt"
+        },
+        {
+          "type": "DialogFlow",
+          "dialogFlowName": "Flow 2",
+          "stateName": "Prompt 2"
+        },
+        {
+          "type": "PromptFrame",
+          "dialogFlowName": "Flow 3",
+          "stateName": "Prompt 3",
+          "turn": 1
+        }
+      ]
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  },
+  {
+    "text": "value 24"
+  },
+  {
+    "text": "flow 1: type a value for b",
+    "speak": "flow 1: type a value for b",
+    "inputHint": "expectingInput"
+  },
+  {
+    "sticky": "Greeting",
+    "flow": {
+      "stack": [
+        {
+          "type": "DialogFlow",
+          "dialogFlowName": "Flow 1",
+          "stateName": "Prompt"
+        },
+        {
+          "type": "PromptFrame",
+          "dialogFlowName": "Flow 2",
+          "stateName": "Prompt 2",
+          "turn": 0
+        }
+      ]
+    },
+    "data": {
+      "taskEntities": {
+        "c": "24"
+      },
+      "global": {}
+    }
+  },
+  {
+    "text": "42"
+  },
+  {
+    "text": "flow 1: reprompt: type a value for b",
+    "speak": "flow 1: reprompt: type a value for b",
+    "inputHint": "expectingInput"
+  },
+  {
+    "sticky": "Greeting",
+    "flow": {
+      "stack": [
+        {
+          "type": "DialogFlow",
+          "dialogFlowName": "Flow 1",
+          "stateName": "Prompt"
+        },
+        {
+          "type": "PromptFrame",
+          "dialogFlowName": "Flow 2",
+          "stateName": "Prompt 2",
+          "turn": 1
+        }
+      ]
+    },
+    "data": {
+      "taskEntities": {
+        "c": "24"
+      },
+      "global": {}
+    }
+  },
+  {
+    "text": "value 42"
+  },
+  {
+    "text": "root flow: type a value for a",
+    "speak": "root flow: type a value for a",
+    "inputHint": "expectingInput"
+  },
+  {
+    "sticky": "Greeting",
+    "flow": {
+      "stack": [
+        {
+          "type": "PromptFrame",
+          "dialogFlowName": "Flow 1",
+          "stateName": "Prompt",
+          "turn": 0
+        }
+      ]
+    },
+    "data": {
+      "taskEntities": {
+        "c": "24",
+        "b": "42"
+      },
+      "global": {}
+    }
+  },
+  {
+    "text": "48"
+  },
+  {
+    "text": "root flow: reprompt: type a value for a",
+    "speak": "root flow: reprompt: type a value for a",
+    "inputHint": "expectingInput"
+  },
+  {
+    "sticky": "Greeting",
+    "flow": {
+      "stack": [
+        {
+          "type": "PromptFrame",
+          "dialogFlowName": "Flow 1",
+          "stateName": "Prompt",
+          "turn": 1
+        }
+      ]
+    },
+    "data": {
+      "taskEntities": {
+        "c": "24",
+        "b": "42"
+      },
+      "global": {}
+    }
+  },
+  {
+    "text": "value 48"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  }
+]

@@ -1,0 +1,46 @@
+[
+  {
+    "text": "hi"
+  },
+  {
+    "text": "please type a value for a",
+    "speak": "please type a value for a",
+    "inputHint": "expectingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [
+        {
+          "type": "PromptFrame",
+          "dialogFlowName": "Dialog Flow",
+          "stateName": "Prompt",
+          "turn": 0
+        }
+      ]
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  },
+  {
+    "text": "TEST TEST TEST"
+  },
+  {
+    "text": "the value of a is TEST TEST TEST",
+    "speak": "the value of a is TEST TEST TEST",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {
+        "a": "TEST TEST TEST"
+      }
+    }
+  }
+]

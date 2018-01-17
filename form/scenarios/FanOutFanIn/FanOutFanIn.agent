@@ -1,0 +1,58 @@
+<Agent xmlns="http://schemas.microsoft.com/ConversationalAgent/1.0">
+  <AgentDefinition lang="en-us">
+    <About>
+      <CodeBehindClass>FanOutFanInAppLogic</CodeBehindClass>
+      <CodeBehindNamespace>AgentConsole.Agent</CodeBehindNamespace>
+    </About>
+    <Task name="task1">
+      <Entity name="a" src="Code"></Entity>
+      <Entity name="b" src="Code"></Entity>
+      <Entity name="c" src="Code"></Entity>
+      <Entity name="x" src="Code"></Entity>
+      <CodeRecognizer onRun="recognize_x"></CodeRecognizer>
+      <DialogFlow name="Dialog Flow" isRootFlow="true">
+        <Transitions initialState="Decision 1">
+          <Transition to="Decision 1" from="Start"></Transition>
+          <Transition to="Feedback 1" from="Prompt A"></Transition>
+          <Transition to="Feedback 3" from="Feedback 1"></Transition>
+          <Transition to="Feedback 2" from="Prompt B"></Transition>
+          <Transition to="Prompt A" from="Decision 1" whenValueIs="left"></Transition>
+          <Transition to="Prompt B" from="Decision 1" whenValueIs="right"></Transition>
+          <Transition to="Decision 2" from="Feedback 2"></Transition>
+          <Transition to="End 1" from="Feedback 3"></Transition>
+          <Transition to="Prompt C" from="Decision 2" whenValueIs="right"></Transition>
+          <Transition to="Feedback 3" from="Decision 2" whenValueIs="left"></Transition>
+          <Transition to="Feedback 3" from="Prompt C"></Transition>
+        </Transitions>
+        <Initial name="Start"></Initial>
+        <Prompt name="Prompt A">
+          <Feedback forTurn="0">type a value for &apos;a&apos;</Feedback>
+          <CodeRecognizer onRun="recognize_a"></CodeRecognizer>
+          <EntityRef name="a" promptIfMissing="true"></EntityRef>
+        </Prompt>
+        <Respond name="Feedback 1">
+          <Feedback>feedback1 x = &apos;{x}&apos;, a = &apos;{a}&apos;</Feedback>
+        </Respond>
+        <Prompt name="Prompt B">
+          <Feedback forTurn="0">type a value for &apos;b&apos;</Feedback>
+          <CodeRecognizer onRun="recognize_b"></CodeRecognizer>
+          <EntityRef name="b" promptIfMissing="true"></EntityRef>
+        </Prompt>
+        <Process name="Decision 1" onRun="decision1"></Process>
+        <Respond name="Feedback 2">
+          <Feedback>feedback2 x = &apos;{x}&apos;, b = &apos;{b}&apos;</Feedback>
+        </Respond>
+        <Respond name="Feedback 3">
+          <Feedback>feedback3</Feedback>
+        </Respond>
+        <End name="End 1" outcome="Success"></End>
+        <Process name="Decision 2" onRun="decision2"></Process>
+        <Prompt name="Prompt C">
+          <Feedback forTurn="0">type a value for &apos;c&apos;</Feedback>
+          <CodeRecognizer onRun="recognize_c"></CodeRecognizer>
+          <EntityRef name="c" promptIfMissing="true"></EntityRef>
+        </Prompt>
+      </DialogFlow>
+    </Task>
+  </AgentDefinition>
+</Agent>

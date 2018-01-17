@@ -1,0 +1,25 @@
+/**
+ * @module botbuilder-choices
+ */
+/** second comment block */
+export declare const channels: {
+    facebook: string;
+    skype: string;
+    msteams: string;
+    telegram: string;
+    kik: string;
+    email: string;
+    slack: string;
+    groupme: string;
+    sms: string;
+    emulator: string;
+    directline: string;
+    webchat: string;
+    console: string;
+    cortana: string;
+};
+export declare function supportsSuggestedActions(channelId: string, buttonCnt?: number): boolean;
+export declare function supportsCardActions(channelId: string, buttonCnt?: number): boolean;
+export declare function hasMessageFeed(channelId: string): boolean;
+export declare function maxActionTitleLength(channelId: string): number;
+export declare function getChannelId(context: BotContext): string;

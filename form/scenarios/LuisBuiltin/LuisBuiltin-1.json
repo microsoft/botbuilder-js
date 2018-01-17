@@ -1,0 +1,19 @@
+[
+  {
+    "text": "please finish by tomorrow 6PM"
+  },
+  {
+    "text": "The date was tomorrow and time 6 pm",
+    "speak": "The date was tomorrow and time 6 pm",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  }
+]

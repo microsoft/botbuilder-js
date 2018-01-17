@@ -1,0 +1,19 @@
+{
+  "name": "botbuilder-example-prompts",
+  "version": "1.0.1",
+  "description": "Bot Builder sample that shows usage of all the built in prompts.",
+  "main": "./lib/app.js",
+  "scripts": {
+    "start": "tsc; node lib/app.js"
+  },
+  "author": "Microsoft",
+  "license": "MIT",
+  "dependencies": {
+    "@types/node": "^8.0.13",
+    "@types/restify": "^5.0.1",
+    "botbuilder-core": "file:../../core",
+    "botbuilder-services": "file:../../services",
+    "recognizers-text-number": "^1.0.0-rc.28",
+    "restify": "^5.0.0"
+  }
+}
