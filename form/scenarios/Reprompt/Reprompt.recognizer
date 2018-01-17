@@ -1,0 +1,168 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<turns xmlns:rade="http://schemas.microsoft.com/recognizerRADE/1.0" xmlns:math="http://schemas.microsoft.com/recognizerMATH/1.0">
+  <math:maximum>
+    <!--Maximum-Dialog Flow(437)-->
+    <math:maximum>
+      <!--ListenFor.Value=hi(438)-->
+      <rade:listenFor pattern="hi">
+        <!--First-Prompt-start(441)-->
+        <math:first>
+          <!--First-Prompt-ListenForFork(443)-->
+          <math:first>
+            <!--ListenFor.Value=value {a}(445)-->
+            <rade:listenFor pattern="value {a}">
+              <!--First-Prompt-ListenForJoin(444)-->
+              <math:first>
+                <!--First-Prompt-PromptIfMissing(446)-->
+                <math:first>
+                  <!--RadeState: Dialog Flow:Prompt:0:PromptIfMissing:None-->
+                  <rade:promptIfMissing entities="a">
+                    <!--RadeState: Dialog Flow:Prompt:0:Feedback:Suspend-->
+                    <rade:feedback pattern="enter a value for a">
+                      <!--Effect-Dialog Flow:Prompt:1:ListenFor:Resume(455)-->
+                      <math:effect effectScore="1" effectValue="{&quot;task&quot;:&quot;task1&quot;,&quot;stack&quot;:[{&quot;type&quot;:&quot;PromptFrame&quot;,&quot;dialogFlowName&quot;:&quot;Dialog Flow&quot;,&quot;stateName&quot;:&quot;Prompt&quot;,&quot;turn&quot;:1}]}" />
+                    </rade:feedback>
+                  </rade:promptIfMissing>
+                  <!--First-Prompt-after(442)-->
+                  <math:first>
+                    <!--First-transitions-Prompt(439)-->
+                    <math:first>
+                      <!--RadeState: Dialog Flow:Feedback-->
+                      <rade:feedback pattern="you said {a}" />
+                    </math:first>
+                  </math:first>
+                </math:first>
+              </math:first>
+            </rade:listenFor>
+            <!--First-Prompt-ListenForJoin(444)-->
+            <math:first>
+              <!--First-Prompt-PromptIfMissing(446)-->
+              <math:first>
+                <!--RadeState: Dialog Flow:Prompt:0:PromptIfMissing:None-->
+                <rade:promptIfMissing entities="a">
+                  <!--RadeState: Dialog Flow:Prompt:0:Feedback:Suspend-->
+                  <rade:feedback pattern="enter a value for a">
+                    <!--Effect-Dialog Flow:Prompt:1:ListenFor:Resume(455)-->
+                    <math:effect effectScore="1" effectValue="{&quot;task&quot;:&quot;task1&quot;,&quot;stack&quot;:[{&quot;type&quot;:&quot;PromptFrame&quot;,&quot;dialogFlowName&quot;:&quot;Dialog Flow&quot;,&quot;stateName&quot;:&quot;Prompt&quot;,&quot;turn&quot;:1}]}" />
+                  </rade:feedback>
+                </rade:promptIfMissing>
+                <!--First-Prompt-after(442)-->
+                <math:first>
+                  <!--First-transitions-Prompt(439)-->
+                  <math:first>
+                    <!--RadeState: Dialog Flow:Feedback-->
+                    <rade:feedback pattern="you said {a}" />
+                  </math:first>
+                </math:first>
+              </math:first>
+            </math:first>
+          </math:first>
+        </math:first>
+      </rade:listenFor>
+    </math:maximum>
+  </math:maximum>
+  <math:first>
+    <!--First-Prompt-ListenForFork(447)-->
+    <math:first>
+      <!--ListenFor.Value=value {a}(449)-->
+      <rade:listenFor pattern="value {a}">
+        <!--First-Prompt-ListenForJoin(448)-->
+        <math:first>
+          <!--First-Prompt-PromptIfMissing(450)-->
+          <math:first>
+            <!--RadeState: Dialog Flow:Prompt:1:PromptIfMissing:None-->
+            <rade:promptIfMissing entities="a">
+              <!--RadeState: Dialog Flow:Prompt:1:Feedback:Suspend-->
+              <rade:feedback pattern="reprompt 1: say &quot;value&quot; before the value">
+                <!--Effect-Dialog Flow:Prompt:2:ListenFor:Resume(456)-->
+                <math:effect effectScore="1" effectValue="{&quot;task&quot;:&quot;task1&quot;,&quot;stack&quot;:[{&quot;type&quot;:&quot;PromptFrame&quot;,&quot;dialogFlowName&quot;:&quot;Dialog Flow&quot;,&quot;stateName&quot;:&quot;Prompt&quot;,&quot;turn&quot;:2}]}" />
+              </rade:feedback>
+            </rade:promptIfMissing>
+            <!--First-Prompt-after(442)-->
+            <math:first>
+              <!--First-transitions-Prompt(439)-->
+              <math:first>
+                <!--RadeState: Dialog Flow:Feedback-->
+                <rade:feedback pattern="you said {a}" />
+              </math:first>
+            </math:first>
+          </math:first>
+        </math:first>
+      </rade:listenFor>
+      <!--First-Prompt-ListenForJoin(448)-->
+      <math:first>
+        <!--First-Prompt-PromptIfMissing(450)-->
+        <math:first>
+          <!--RadeState: Dialog Flow:Prompt:1:PromptIfMissing:None-->
+          <rade:promptIfMissing entities="a">
+            <!--RadeState: Dialog Flow:Prompt:1:Feedback:Suspend-->
+            <rade:feedback pattern="reprompt 1: say &quot;value&quot; before the value">
+              <!--Effect-Dialog Flow:Prompt:2:ListenFor:Resume(456)-->
+              <math:effect effectScore="1" effectValue="{&quot;task&quot;:&quot;task1&quot;,&quot;stack&quot;:[{&quot;type&quot;:&quot;PromptFrame&quot;,&quot;dialogFlowName&quot;:&quot;Dialog Flow&quot;,&quot;stateName&quot;:&quot;Prompt&quot;,&quot;turn&quot;:2}]}" />
+            </rade:feedback>
+          </rade:promptIfMissing>
+          <!--First-Prompt-after(442)-->
+          <math:first>
+            <!--First-transitions-Prompt(439)-->
+            <math:first>
+              <!--RadeState: Dialog Flow:Feedback-->
+              <rade:feedback pattern="you said {a}" />
+            </math:first>
+          </math:first>
+        </math:first>
+      </math:first>
+    </math:first>
+  </math:first>
+  <math:first>
+    <!--First-Prompt-ListenForFork(451)-->
+    <math:first>
+      <!--ListenFor.Value=value {a}(453)-->
+      <rade:listenFor pattern="value {a}">
+        <!--First-Prompt-ListenForJoin(452)-->
+        <math:first>
+          <!--First-Prompt-PromptIfMissing(454)-->
+          <math:first>
+            <!--RadeState: Dialog Flow:Prompt:2:PromptIfMissing:None-->
+            <rade:promptIfMissing entities="a">
+              <!--RadeState: Dialog Flow:Prompt:2:Feedback:Suspend-->
+              <rade:feedback pattern="reprompt 2: say &quot;value&quot; before the value">
+                <!--Effect-Dialog Flow:Prompt:2:ListenFor:Resume(457)-->
+                <math:effect effectScore="1" effectValue="{&quot;task&quot;:&quot;task1&quot;,&quot;stack&quot;:[{&quot;type&quot;:&quot;PromptFrame&quot;,&quot;dialogFlowName&quot;:&quot;Dialog Flow&quot;,&quot;stateName&quot;:&quot;Prompt&quot;,&quot;turn&quot;:2}]}" />
+              </rade:feedback>
+            </rade:promptIfMissing>
+            <!--First-Prompt-after(442)-->
+            <math:first>
+              <!--First-transitions-Prompt(439)-->
+              <math:first>
+                <!--RadeState: Dialog Flow:Feedback-->
+                <rade:feedback pattern="you said {a}" />
+              </math:first>
+            </math:first>
+          </math:first>
+        </math:first>
+      </rade:listenFor>
+      <!--First-Prompt-ListenForJoin(452)-->
+      <math:first>
+        <!--First-Prompt-PromptIfMissing(454)-->
+        <math:first>
+          <!--RadeState: Dialog Flow:Prompt:2:PromptIfMissing:None-->
+          <rade:promptIfMissing entities="a">
+            <!--RadeState: Dialog Flow:Prompt:2:Feedback:Suspend-->
+            <rade:feedback pattern="reprompt 2: say &quot;value&quot; before the value">
+              <!--Effect-Dialog Flow:Prompt:2:ListenFor:Resume(457)-->
+              <math:effect effectScore="1" effectValue="{&quot;task&quot;:&quot;task1&quot;,&quot;stack&quot;:[{&quot;type&quot;:&quot;PromptFrame&quot;,&quot;dialogFlowName&quot;:&quot;Dialog Flow&quot;,&quot;stateName&quot;:&quot;Prompt&quot;,&quot;turn&quot;:2}]}" />
+            </rade:feedback>
+          </rade:promptIfMissing>
+          <!--First-Prompt-after(442)-->
+          <math:first>
+            <!--First-transitions-Prompt(439)-->
+            <math:first>
+              <!--RadeState: Dialog Flow:Feedback-->
+              <rade:feedback pattern="you said {a}" />
+            </math:first>
+          </math:first>
+        </math:first>
+      </math:first>
+    </math:first>
+  </math:first>
+</turns>

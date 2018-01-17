@@ -1,0 +1,22 @@
+{
+  "name": "examples-ai-luis",
+  "version": "1.0.0",
+  "description": "Example bot using LUIS",
+  "repository": {
+    "git": ""
+  },
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "author": "Microsoft",
+  "license": "MIT",
+  "dependencies": {
+    "@types/node": "^8.0.28",
+    "@types/restify": "^5.0.3",
+    "botbuilder-ai": "file:../../ai",
+    "botbuilder-core": "file:../../core",
+    "botbuilder-services": "file:../../services",
+    "restify": "^6.0.0"
+  }
+}

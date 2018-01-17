@@ -1,0 +1,29 @@
+[
+  {
+    "text": "hi"
+  },
+  {
+    "text": "",
+    "speak": "",
+    "inputHint": "ignoringInput"
+  },
+  {
+    "text": "",
+    "speak": "",
+    "inputHint": "ignoringInput"
+  },
+  {
+    "text": "",
+    "speak": "",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  }
+]

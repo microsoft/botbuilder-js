@@ -1,0 +1,17 @@
+{
+  "name": "botbuilder-example-echobot",
+  "version": "1.0.0",
+  "description": "Bot Builder example showing a simple bot that echos anything you say.",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app"
+  },
+  "author": "Microsoft",
+  "license": "MIT",
+  "dependencies": {
+    "@types/node": "^8.0.28",
+    "botbuilder-core": "file:../../core",
+    "botbuilder-services": "file:../../services",
+    "restify": "^6.0.0"
+  }
+}

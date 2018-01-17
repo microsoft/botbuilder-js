@@ -1,0 +1,18 @@
+[
+  {
+    "text": "please finish by tomorrow"
+  },
+  {
+    "text": "date resolution is present",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  }
+]

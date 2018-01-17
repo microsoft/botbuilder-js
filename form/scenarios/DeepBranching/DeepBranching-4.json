@@ -1,0 +1,99 @@
+[
+  {
+    "text": "hi"
+  },
+  {
+    "text": "enter value for entity1",
+    "speak": "enter value for entity1",
+    "inputHint": "expectingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [
+        {
+          "type": "PromptFrame",
+          "dialogFlowName": "Dialog Flow",
+          "stateName": "Prompt 1",
+          "turn": 0
+        }
+      ]
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  },
+  {
+    "text": "right"
+  },
+  {
+    "text": "enter a value for entity3",
+    "speak": "enter a value for entity3",
+    "inputHint": "expectingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [
+        {
+          "type": "PromptFrame",
+          "dialogFlowName": "Dialog Flow",
+          "stateName": "Prompt 3",
+          "turn": 0
+        }
+      ]
+    },
+    "data": {
+      "taskEntities": {
+        "entity1": "right"
+      },
+      "global": {}
+    }
+  },
+  {
+    "text": "left"
+  },
+  {
+    "text": "enter a value for entity6",
+    "speak": "enter a value for entity6",
+    "inputHint": "expectingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [
+        {
+          "type": "PromptFrame",
+          "dialogFlowName": "Dialog Flow",
+          "stateName": "Prompt 6",
+          "turn": 0
+        }
+      ]
+    },
+    "data": {
+      "taskEntities": {
+        "entity1": "right",
+        "entity3": "left"
+      },
+      "global": {}
+    }
+  },
+  {
+    "text": "left"
+  },
+  {
+    "text": "feedback5 right left left",
+    "speak": "feedback5",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  }
+]

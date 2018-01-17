@@ -1,0 +1,29 @@
+[
+  {
+    "text": "hi"
+  },
+  {
+    "text": "In root dialog flow",
+    "speak": "In root dialog flow",
+    "inputHint": "ignoringInput"
+  },
+  {
+    "text": "In dialog flow 1",
+    "speak": "In dialog flow 1",
+    "inputHint": "ignoringInput"
+  },
+  {
+    "text": "In dialog flow 2",
+    "speak": "In dialog flow 2",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  }
+]

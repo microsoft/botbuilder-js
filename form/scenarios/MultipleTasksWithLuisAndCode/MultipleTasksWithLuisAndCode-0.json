@@ -1,0 +1,19 @@
+[
+  {
+    "text": "g'day mate"
+  },
+  {
+    "text": "I'll slip an extra shrimp on the barbie for you.",
+    "speak": "I'll slip an extra shrimp on the barbie for you.",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  }
+]

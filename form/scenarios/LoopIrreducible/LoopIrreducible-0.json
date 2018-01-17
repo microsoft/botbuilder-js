@@ -1,0 +1,23 @@
+[
+  {
+    "text": "hi ABABAE"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {
+        "next": [
+          "A",
+          "B",
+          "A",
+          "B",
+          "A",
+          "E"
+        ]
+      }
+    }
+  }
+]

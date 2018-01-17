@@ -1,0 +1,16 @@
+[
+  {
+    "text": "book a table this weekend for 4 please"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {
+        "match": false
+      }
+    }
+  }
+]

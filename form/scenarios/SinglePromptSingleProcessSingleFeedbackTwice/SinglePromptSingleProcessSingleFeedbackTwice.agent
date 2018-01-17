@@ -1,0 +1,50 @@
+<Agent xmlns="http://schemas.microsoft.com/ConversationalAgent/1.0">
+  <AgentDefinition lang="en-us">
+    <About>
+      <CodeBehindClass>SinglePromptSingleProcessSingleFeedbackTwiceAppLogic</CodeBehindClass>
+      <CodeBehindNamespace>AgentConsole.Agent</CodeBehindNamespace>
+    </About>
+    <Task name="task1">
+      <CodeRecognizer onRun="hi"></CodeRecognizer>
+      <Entity name="a" src="PhraseTopic"></Entity>
+      <Entity name="b" src="PhraseTopic"></Entity>
+      <DialogFlow name="Dialog Flow" isRootFlow="true">
+        <Transitions initialState="Prompt">
+          <Transition to="Prompt" from="Start"></Transition>
+          <Transition to="Process 1" from="Prompt"></Transition>
+          <Transition to="Prompt 2" from="Feedback"></Transition>
+          <Transition to="Feedback" from="Process 1"></Transition>
+          <Transition to="Process 2" from="Prompt 2"></Transition>
+          <Transition to="Feedback 2" from="Process 2"></Transition>
+          <Transition to="Return" from="Feedback 2"></Transition>
+        </Transitions>
+        <Initial name="Start"></Initial>
+        <Prompt name="Prompt">
+          <FeedbackOneOf forTurn="0">
+            <Feedback>entry a value for a</Feedback>
+          </FeedbackOneOf>
+          <CodeRecognizer onRun="entity_a"></CodeRecognizer>
+          <EntityRef name="a" promptIfMissing="true"></EntityRef>
+        </Prompt>
+        <Respond name="Feedback">
+          <Feedback>a equals {a}</Feedback>
+        </Respond>
+        <Return name="Return" outcome="Success"></Return>
+        <Process name="Process 1" onRun="func1"></Process>
+        <Prompt name="Prompt 2">
+          <FeedbackOneOf forTurn="0">
+            <Feedback>enter a value for b</Feedback>
+          </FeedbackOneOf>
+          <CodeRecognizer onRun="entity_b"></CodeRecognizer>
+          <EntityRef name="b" promptIfMissing="true"></EntityRef>
+        </Prompt>
+        <Process name="Process 2" onRun="func2"></Process>
+        <Respond name="Feedback 2">
+          <Feedback>a equals {a} and b equals {b}</Feedback>
+        </Respond>
+      </DialogFlow>
+    </Task>
+    <PhraseTopic name="a" scenario="Dictation"></PhraseTopic>
+    <PhraseTopic name="b" scenario="Dictation"></PhraseTopic>
+  </AgentDefinition>
+</Agent>

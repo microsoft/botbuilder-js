@@ -1,0 +1,134 @@
+[
+  {
+    "text": "3"
+  },
+  {
+    "text": "feedback from task3",
+    "speak": "feedback from task3",
+    "inputHint": "acceptingInput",
+    "attachments": [
+      {
+        "contentType": "application/vnd.microsoft.card.adaptive",
+        "content": {
+          "$schema": "https://microsoft.github.io/AdaptiveCards/schemas/adaptive-card.json",
+          "type": "AdaptiveCard",
+          "version": "1.0",
+          "body": [
+            {
+              "type": "Container",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "text": "Entity 3",
+                  "isSubtle": true
+                },
+                {
+                  "type": "TextBlock",
+                  "text": "This is Adaptive Card 3",
+                  "isSubtle": true
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  },
+  {
+    "text": "1"
+  },
+  {
+    "text": "feedback from task1",
+    "speak": "feedback from task1",
+    "inputHint": "acceptingInput",
+    "attachments": [
+      {
+        "contentType": "application/vnd.microsoft.card.adaptive",
+        "content": {
+          "$schema": "https://microsoft.github.io/AdaptiveCards/schemas/adaptive-card.json",
+          "type": "AdaptiveCard",
+          "version": "1.0",
+          "body": [
+            {
+              "type": "Container",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "text": "Entity 1",
+                  "isSubtle": true
+                },
+                {
+                  "type": "TextBlock",
+                  "text": "This is Adaptive Card 1",
+                  "isSubtle": true
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  },
+  {
+    "text": "2"
+  },
+  {
+    "text": "feedback from task2",
+    "speak": "feedback from task2",
+    "inputHint": "acceptingInput",
+    "attachments": [
+      {
+        "contentType": "application/vnd.microsoft.card.adaptive",
+        "content": {
+          "$schema": "https://microsoft.github.io/AdaptiveCards/schemas/adaptive-card.json",
+          "type": "AdaptiveCard",
+          "version": "1.0",
+          "body": [
+            {
+              "type": "Container",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "text": "Entity 2",
+                  "isSubtle": true
+                },
+                {
+                  "type": "TextBlock",
+                  "text": "This is Adaptive Card 2",
+                  "isSubtle": true
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  }
+]

@@ -1,0 +1,22 @@
+<Agent xmlns="http://schemas.microsoft.com/ConversationalAgent/1.0">
+  <AgentDefinition lang="en-us">
+    <Task name="task1" doAction="Respond">
+      <CodeRecognizer onRun="recognize1"></CodeRecognizer>
+      <Respond name="respond1">
+        <Feedback adaptiveCardSrc="card1.json">feedback from task1</Feedback>
+      </Respond>
+    </Task>
+    <Task name="task2" doAction="Respond">
+      <CodeRecognizer onRun="recognize2"></CodeRecognizer>
+      <Respond name="respond2">
+        <Feedback adaptiveCardSrc="card2.json">feedback from task2</Feedback>
+      </Respond>
+    </Task>
+    <Task name="task3" doAction="Respond">
+      <CodeRecognizer onRun="recognize3"></CodeRecognizer>
+      <Respond name="respond3">
+        <Feedback adaptiveCardSrc="card3.json">feedback from task3</Feedback>
+      </Respond>
+    </Task>
+  </AgentDefinition>
+</Agent>

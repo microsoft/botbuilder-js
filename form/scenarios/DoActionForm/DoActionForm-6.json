@@ -1,0 +1,128 @@
+[
+  {
+    "text": "hi"
+  },
+  {
+    "text": "Please provide values for \"type of bread\", \"protein\" and \"size\" you may also provide values for \"mustard\" and \"toppings\"",
+    "speak": "Please provide values for \"type of bread\", \"protein\" and \"size\" you may also provide values for \"mustard\" and \"toppings\"",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [],
+      "form": {
+        "local": {}
+      }
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  },
+  {
+    "text": "add large"
+  },
+  {
+    "text": "Please provide values for \"type of bread\" and \"protein\" you may also provide values for \"mustard\" and \"toppings\"",
+    "speak": "Please provide values for \"type of bread\" and \"protein\" you may also provide values for \"mustard\" and \"toppings\"",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [],
+      "form": {
+        "local": {
+          "sandwichSize": "large"
+        }
+      }
+    },
+    "data": {
+      "taskEntities": {
+        "sandwichSize": "large"
+      },
+      "global": {}
+    }
+  },
+  {
+    "text": "add ham"
+  },
+  {
+    "text": "Today we offer white-bread, wheat-bread or sourdough-bread. Please choose a bread type.",
+    "speak": "Today we offer white-bread, wheat-bread or sourdough-bread. Please choose a bread type.",
+    "inputHint": "expectingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [
+        {
+          "type": "SingleEntityPrompt",
+          "entityName": "breadType"
+        }
+      ],
+      "form": {
+        "local": {
+          "sandwichSize": "large",
+          "proteinOption": "ham"
+        }
+      }
+    },
+    "data": {
+      "taskEntities": {
+        "sandwichSize": "large",
+        "proteinOption": "ham"
+      },
+      "global": {}
+    }
+  },
+  {
+    "text": "add white-bread"
+  },
+  {
+    "text": "Here's what I have: \"size = large\", \"protein = ham\" and \"type of bread = white-bread\". Do you want to order this?",
+    "speak": "Here's what I have: \"size = large\", \"protein = ham\" and \"type of bread = white-bread\". Do you want to order this?",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [],
+      "form": {
+        "local": {
+          "sandwichSize": "large",
+          "proteinOption": "ham",
+          "breadType": "white-bread"
+        }
+      }
+    },
+    "data": {
+      "taskEntities": {
+        "sandwichSize": "large",
+        "proteinOption": "ham",
+        "breadType": "white-bread"
+      },
+      "global": {}
+    }
+  },
+  {
+    "text": "yes"
+  },
+  {
+    "text": "OK",
+    "speak": "OK",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {
+        "breadType": "white-bread"
+      }
+    }
+  }
+]

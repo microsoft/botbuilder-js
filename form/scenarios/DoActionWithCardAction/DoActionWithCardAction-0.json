@@ -1,0 +1,40 @@
+[
+  {
+    "text": "hi"
+  },
+  {
+    "text": "This is task1.",
+    "speak": "This is task1.",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  },
+  {
+    "type": "message",
+    "text": null,
+    "value": {
+      "@task": "task2"
+    }
+  },
+  {
+    "text": "This is task2.",
+    "speak": "This is task2.",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  }
+]

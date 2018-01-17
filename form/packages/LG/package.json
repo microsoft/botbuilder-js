@@ -1,0 +1,22 @@
+{
+  "name": "bot-framework-lg",
+  "version": "1.0.12",
+  "description": "Language Generation Template Mechanisms",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "keywords": [
+    "bot",
+    "agent",
+    "langauge",
+    "generation"
+  ],
+  "author": "Microsoft",
+  "license": "ISC",
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "chai-as-promised": "^7.1.1",
+    "xmldom": "^0.1.27"
+  }
+}

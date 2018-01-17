@@ -1,0 +1,40 @@
+<Agent xmlns="http://schemas.microsoft.com/ConversationalAgent/1.0">
+  <AgentDefinition lang="en-us">
+    <About>
+      <CodeBehindClass>AppLogic</CodeBehindClass>
+      <CodeBehindNamespace>MyConversation</CodeBehindNamespace>
+    </About>
+    <Task name="Hello Task">
+      <Entity name="a" src="PhraseList"></Entity>
+      <CodeRecognizer onRun="hi"></CodeRecognizer>
+      <DialogFlow name="Looper" isRootFlow="true">
+        <Transitions initialState="Feedback">
+          <Transition to="Feedback" from="Start"></Transition>
+          <Transition to="Prompt 1" from="Process"></Transition>
+          <Transition to="Return" from="Decision" whenValueIs="Yes"></Transition>
+          <Transition to="Process" from="Decision" whenValueIs="No"></Transition>
+          <Transition to="Decision" from="Feedback"></Transition>
+          <Transition to="Feedback" from="Prompt 1"></Transition>
+        </Transitions>
+        <Initial name="Start"></Initial>
+        <Return name="Return" outcome="Success"></Return>
+        <Process name="Process" onRun="proc"></Process>
+        <Process name="Decision" onRun="dec"></Process>
+        <Respond name="Feedback">
+          <Feedback>This is feedback</Feedback>
+        </Respond>
+        <Prompt name="Prompt 1">
+          <FeedbackOneOf forTurn="0">
+            <Feedback>Enter value of a</Feedback>
+          </FeedbackOneOf>
+          <FeedbackOneOf forTurn="1">
+            <Feedback>Reprompt for a</Feedback>
+          </FeedbackOneOf>
+          <CodeRecognizer onRun="entity_a"></CodeRecognizer>
+          <EntityRef name="a" promptIfMissing="true"></EntityRef>
+        </Prompt>
+      </DialogFlow>
+    </Task>
+    <PhraseTopic name="a" scenario="Dictation"></PhraseTopic>
+  </AgentDefinition>
+</Agent>

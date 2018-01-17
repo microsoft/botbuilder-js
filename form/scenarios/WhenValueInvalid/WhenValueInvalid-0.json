@@ -1,0 +1,8 @@
+[
+  {
+    "text": "hi"
+  },
+  {
+    "error": "operation: \"action\", task: \"task1\", reason: \"Error: Invalid decision state: invalid\""
+  }
+]

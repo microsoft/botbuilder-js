@@ -1,0 +1,11 @@
+<Agent xmlns:Agent="http://schemas.microsoft.com/ConversationalAgent/1.0">
+  <AgentDefinition lang="en-us">
+    <Task name="task1" doAction="Respond">
+      <LUISRecognizer intentID="1234-5678" intentName="bookTable" appID="fabef6b3-3a7f-42c0-a421-b047e2466460" key="8bf384673e2e4ae5b514d95a9370bd07"></LUISRecognizer>
+      <Entity> name="partySize" src="LUIS" entityType="simple" appID="0009c6c3-c6b0-4e4d-b87e-4c082314afe9"></Entity>
+      <Respond name="respond1">
+        <Feedback>you asked for a table for {partySize}</Feedback>
+      </Respond>
+    </Task>
+  </AgentDefinition>
+</Agent>

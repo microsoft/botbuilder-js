@@ -1,0 +1,41 @@
+<Agent xmlns:Agent="http://schemas.microsoft.com/ConversationalAgent/1.0">
+  <AgentDefinition lang="en-us">
+    
+    <SimpleResponseTemplate name="Start">
+      <FeedbackPerModality>
+        <Display>Display.[Display.1]</Display>
+        <Speak>Speak.[Speak.1]</Speak>
+      </FeedbackPerModality>
+    </SimpleResponseTemplate>
+    
+    <SimpleResponseTemplate name="Display.1">
+      <FeedbackOneOf>
+        <Feedback>1</Feedback>
+        <Feedback>2</Feedback>
+        <Feedback>3</Feedback>
+      </FeedbackOneOf>
+    </SimpleResponseTemplate>
+
+    <SimpleResponseTemplate name="Speak.1">
+      <FeedbackOneOf>
+        <Feedback>1.[Speak.2]</Feedback>
+        <Feedback>2.[Speak.2]</Feedback>
+      </FeedbackOneOf>
+    </SimpleResponseTemplate>
+
+    <SimpleResponseTemplate name="Speak.2">
+      <FeedbackOneOf>
+        <Feedback>1.[Speak.3]</Feedback>
+        <Feedback>2.[Speak.3]</Feedback>
+      </FeedbackOneOf>
+    </SimpleResponseTemplate>
+
+    <SimpleResponseTemplate name="Speak.3">
+      <FeedbackOneOf>
+        <Feedback>1</Feedback>
+        <Feedback>2</Feedback>
+      </FeedbackOneOf>
+    </SimpleResponseTemplate>
+
+  </AgentDefinition>
+</Agent>

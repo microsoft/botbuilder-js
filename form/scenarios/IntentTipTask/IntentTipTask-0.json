@@ -1,0 +1,19 @@
+[
+  {
+    "text": "help"
+  },
+  {
+    "text": "\"type \"1\" to enter task 1\", \"type \"2\" to enter task 2\"",
+    "speak": "\"type \"1\" to enter task 1\", \"type \"2\" to enter task 2\"",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  }
+]

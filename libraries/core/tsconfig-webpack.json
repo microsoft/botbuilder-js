@@ -1,0 +1,12 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "module": "es5",
+        "outDir": "./lib-es5/",
+        "sourceMap" : false,
+        "noImpliciAny" :  false
+    }, 
+    "exclude" : [
+        "./node_modules"
+    ]
+}

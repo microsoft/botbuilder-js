@@ -1,0 +1,42 @@
+<Agent xmlns="http://schemas.microsoft.com/ConversationalAgent/1.0">
+  <AgentDefinition lang="en-us">
+    <About>
+      <CodeBehindClass>LoopingAppLogic</CodeBehindClass>
+      <CodeBehindNamespace>AgentConsole.Agent</CodeBehindNamespace>
+    </About>
+    <Task name="task1">
+      <CodeRecognizer onRun="hi"></CodeRecognizer>
+      <Entity name="entity" src="PhraseTopic"></Entity>
+      <DialogFlow name="Dialog Flow" isRootFlow="true">
+        <Transitions initialState="Prompt">
+          <Transition to="Prompt" from="Start"></Transition>
+          <Transition to="Feedback 1" from="Prompt"></Transition>
+          <Transition to="Decision 1" from="Feedback 1"></Transition>
+          <Transition to="Prompt" from="Decision 1" whenValueIs="continue"></Transition>
+          <Transition to="Feedback 2" from="Decision 1" whenValueIs="break"></Transition>
+          <Transition to="Return" from="Feedback 2"></Transition>
+        </Transitions>
+        <Initial name="Start"></Initial>
+        <Prompt name="Prompt">
+          <FeedbackOneOf forTurn="0">
+            <Feedback>type in a value</Feedback>
+          </FeedbackOneOf>
+          <CodeRecognizer onRun="entity"></CodeRecognizer>
+          <EntityRef name="entity" promptIfMissing="true"></EntityRef>
+        </Prompt>
+        <Respond name="Feedback 1">
+          <Feedback>you said {entity}</Feedback>
+        </Respond>
+        <Return name="Return" outcome="Success"></Return>
+        <Process name="Decision 1" onRun="decision"></Process>
+        <Respond name="Feedback 2">
+          <FeedbackPerModality>
+            <Speak>value was greater than 10 so quitting</Speak>
+            <Display>value was greater than 10 so quiting</Display>
+          </FeedbackPerModality>
+        </Respond>
+      </DialogFlow>
+    </Task>
+    <PhraseTopic name="entity" scenario="Dictation"></PhraseTopic>
+  </AgentDefinition>
+</Agent>

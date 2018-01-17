@@ -1,0 +1,18 @@
+{
+  "name": "botbuilder-example-sproactive",
+  "version": "1.0.0",
+  "description": "Bot Builder example that shows how to send a proactive message.",
+  "main": "./lib/app.js",
+  "scripts": {
+    "start": "tsc; node ./lib/app.js"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@types/node": "^8.0.28",
+    "@types/restify": "^5.0.3",
+    "botbuilder-core": "file:../../core",
+    "botbuilder-services": "file:../../services",
+    "restify": "^6.0.0"
+  }
+}

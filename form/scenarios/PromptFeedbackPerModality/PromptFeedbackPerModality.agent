@@ -1,0 +1,36 @@
+<Agent xmlns="http://schemas.microsoft.com/ConversationalAgent/1.0">
+  <AgentDefinition lang="en-us">
+    <About>
+      <CodeBehindClass></CodeBehindClass>
+      <CodeBehindNamespace></CodeBehindNamespace>
+    </About>
+    <Task name="task1">
+      <CodeRecognizer onRun="hi"></CodeRecognizer>
+      <Entity name="a" src="PhraseTopic"></Entity>
+      <DialogFlow name="Dialog Flow" isRootFlow="true">
+        <Transitions initialState="Prompt">
+          <Transition to="Prompt" from="Start"></Transition>
+          <Transition to="Feedback" from="Prompt"></Transition>
+          <Transition to="Return" from="Feedback"></Transition>
+        </Transitions>
+        <Initial name="Start"></Initial>
+        <Prompt name="Prompt">
+          <FeedbackPerModality forTurn="0">
+            <Display>type the letter "a"</Display>
+            <Speak>please type the letter "a"</Speak>
+          </FeedbackPerModality>
+          <CodeRecognizer onRun="entity_a"></CodeRecognizer>
+          <EntityRef name="a" promptIfMissing="true"></EntityRef>
+        </Prompt>
+        <Respond name="Feedback">
+          <FeedbackPerModality>
+            <Display>Thank you</Display>
+            <Speak>Cheers Mate</Speak>
+          </FeedbackPerModality>
+        </Respond>
+        <Return name="Return" outcome="Success"></Return>
+      </DialogFlow>
+    </Task>
+    <PhraseTopic name="a" scenario="Dictation"></PhraseTopic>
+  </AgentDefinition>
+</Agent>

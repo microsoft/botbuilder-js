@@ -1,0 +1,89 @@
+[
+  {
+    "text": "add"
+  },
+  {
+    "text": "in func code recognizer",
+    "inputHint": "ignoringInput",
+    "type": "message"
+  },
+  {
+    "text": "match",
+    "speak": "match",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {
+        "a": true
+      }
+    }
+  },
+  {
+    "text": "get"
+  },
+  {
+    "text": "in func code recognizer",
+    "inputHint": "ignoringInput",
+    "type": "message"
+  },
+  {
+    "text": "match",
+    "speak": "match",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {
+        "a": true
+      }
+    }
+  },
+  {
+    "text": "remove"
+  },
+  {
+    "text": "in func code recognizer",
+    "inputHint": "ignoringInput",
+    "type": "message"
+  },
+  {
+    "text": "match",
+    "speak": "match",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  },
+  {
+    "text": "get"
+  },
+  {
+    "text": "in func code recognizer",
+    "inputHint": "acceptingInput",
+    "type": "message"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  }
+]

@@ -1,0 +1,42 @@
+{
+    "type": "RootDialogFlow",
+    "nonRootDialogFlows": {},
+    "rootDialogFlow": {
+        "type": "DialogFlow",
+        "name": "Dialog Flow",
+        "stateTransitionTable": {
+            "initialState": "Feedback",
+            "table": [
+                {
+                    "to": "Feedback",
+                    "from": "Start"
+                },
+                {
+                    "to": "Return",
+                    "from": "Feedback"
+                }
+            ]
+        },
+        "transitions": {
+            "Feedback": {
+                "type": "Respond",
+                "name": "Feedback",
+                "beforeResponse": "beforeResponseFunc",
+                "feedback": {
+                    "type": "Feedback",
+                    "value": "hello"
+                }
+            },
+            "Start": {
+                "type": "Initial",
+                "name": "Start"
+            },
+            "Return": {
+                "type": "Return",
+                "name": "Return",
+                "outcome": "Success"
+            }
+        },
+        "isRootFlow": true
+    }
+}

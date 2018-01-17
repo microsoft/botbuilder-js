@@ -1,0 +1,38 @@
+<Agent xmlns:Agent="http://schemas.microsoft.com/ConversationalAgent/1.0">
+  <AgentDefinition lang="en-us">
+    <About>
+      <CodeBehindClass>MultipleTasksAppLogic</CodeBehindClass>
+      <CodeBehindNamespace>AgentConsole.Agent</CodeBehindNamespace>
+    </About>
+    <Task name="task1" doAction="DialogFlow">
+      <CodeRecognizer onRun="recognize_1"></CodeRecognizer>
+      <DialogFlowRef name="module1" refTo="dialogFlow1"></DialogFlowRef>
+    </Task>
+    <Task name="task 2" doAction="DialogFlow">
+      <CodeRecognizer onRun="recognize_2"></CodeRecognizer>
+      <DialogFlowRef name="module2" refTo="dialogFlow2"></DialogFlowRef>
+    </Task>
+    <DialogFlow name="dialogFlow1">
+      <Transitions initialState="Feedback">
+        <Transition to="Feedback" from="Start"></Transition>
+        <Transition to="Return" from="Feedback"></Transition>
+      </Transitions>
+      <Initial name="Start"></Initial>
+      <Respond name="Feedback">
+        <Feedback>hello from task 1</Feedback>
+      </Respond>
+      <Return name="Return" outcome="Success"></Return>
+    </DialogFlow>
+    <DialogFlow name="dialogFlow2">
+      <Transitions initialState="Feedback">
+        <Transition to="Feedback" from="Start"></Transition>
+        <Transition to="Return" from="Feedback"></Transition>
+      </Transitions>
+      <Initial name="Start"></Initial>
+      <Respond name="Feedback">
+        <Feedback>hello from task 2</Feedback>
+      </Respond>
+      <Return name="Return" outcome="Success"></Return>
+    </DialogFlow>
+  </AgentDefinition>
+</Agent>

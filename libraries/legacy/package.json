@@ -1,0 +1,38 @@
+{
+  "name": "botbuilder-legacy",
+  "author": "Microsoft Corp.",
+  "description": "Bot Builder V3 adapter for BotBuilder runtime",
+  "version": "4.0.0-h4.1",
+  "license": "MIT",
+  "keywords": [
+    "botbuilder",
+    "botframework",
+    "bots",
+    "chatbots"
+  ],
+  "bugs": {
+    "url": "https://github.com/Microsoft/BotBuilder/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Microsoft/BotBuilder.git"
+  },
+  "main": "./lib/botbuilder.js",
+  "typings": "./lib/botbuilder.d.ts",
+  "dependencies": {
+    "async": "^1.5.2",
+    "botbuilder-core": "^4.0.0-h4.1",
+    "chrono-node": "^1.1.3",
+    "promise": "^7.1.1",
+    "request": "^2.69.0",
+    "sprintf-js": "^1.0.3"    
+  },
+  "devDependencies": {
+    "@types/async": "^2.0.43",
+    "@types/node": "^8.0.11",
+    "mocha": "^4.0.1"
+  },
+  "scripts": {
+    "test": "mocha tests/*.js"
+  }
+}

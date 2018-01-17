@@ -1,0 +1,140 @@
+[
+  {
+    "text": "hi"
+  },
+  {
+    "text": "How would you like your eggs?",
+    "speak": "How would you like your eggs?",
+    "inputHint": "expectingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [
+        {
+          "type": "SingleEntityPrompt",
+          "entityName": "eggs"
+        }
+      ],
+      "form": {
+        "local": {}
+      }
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  },
+  {
+    "text": "sunny side up"
+  },
+  {
+    "text": "What side would you like?",
+    "speak": "What side would you like?",
+    "inputHint": "expectingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [
+        {
+          "type": "SingleEntityPrompt",
+          "entityName": "side"
+        }
+      ],
+      "form": {
+        "local": {
+          "eggs": "sunny side up"
+        }
+      }
+    },
+    "data": {
+      "taskEntities": {
+        "eggs": "sunny side up"
+      },
+      "global": {}
+    }
+  },
+  {
+    "text": "bacon"
+  },
+  {
+    "text": "And what bread for your toast?",
+    "speak": "And what bread for your toast?",
+    "inputHint": "expectingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [
+        {
+          "type": "SingleEntityPrompt",
+          "entityName": "bread"
+        }
+      ],
+      "form": {
+        "local": {
+          "eggs": "sunny side up",
+          "side": "bacon"
+        }
+      }
+    },
+    "data": {
+      "taskEntities": {
+        "eggs": "sunny side up",
+        "side": "bacon"
+      },
+      "global": {}
+    }
+  },
+  {
+    "text": "whole wheat"
+  },
+  {
+    "text": "OK I have sunny side up eggs, a side of bacon and whole wheat toast. Ready?",
+    "speak": "OK I have sunny side up eggs, a side of bacon and whole wheat toast. Ready?",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [],
+      "form": {
+        "local": {
+          "eggs": "sunny side up",
+          "side": "bacon",
+          "bread": "whole wheat"
+        }
+      }
+    },
+    "data": {
+      "taskEntities": {
+        "eggs": "sunny side up",
+        "side": "bacon",
+        "bread": "whole wheat"
+      },
+      "global": {}
+    }
+  },
+  {
+    "text": "yes"
+  },
+  {
+    "text": "Okay, preparing your breakfast now...",
+    "speak": "Okay, preparing your breakfast now...",
+    "inputHint": "ignoringInput"
+  },
+  {
+    "text": "plate of sunny side up eggs with a side of bacon and whole wheat toast coming right up.",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  }
+]

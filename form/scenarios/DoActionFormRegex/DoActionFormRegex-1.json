@@ -1,0 +1,71 @@
+[
+  {
+    "text": "ORDER SANDWICH"
+  },
+  {
+    "text": "Today we offer white-bread, wheat-bread or sourdough-bread. Please choose a bread type.",
+    "speak": "Today we offer white-bread, wheat-bread or sourdough-bread. Please choose a bread type.",
+    "inputHint": "expectingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [
+        {
+          "type": "SingleEntityPrompt",
+          "entityName": "breadType"
+        }
+      ],
+      "form": {
+        "local": {}
+      }
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  },
+  {
+    "text": "help"
+  },
+  {
+    "text": "So far you have: . The following missing are required \"type of bread\", \"protein\" and \"size\" and the following are further options: \"mustard\" and \"toppings\".",
+    "speak": "So far you have: . The following missing are required \"type of bread\", \"protein\" and \"size\" and the following are further options: \"mustard\" and \"toppings\".",
+    "inputHint": "expectingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [
+        {
+          "type": "SingleEntityPrompt",
+          "entityName": "breadType"
+        }
+      ],
+      "form": {
+        "local": {}
+      }
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  },
+  {
+    "text": "cancel"
+  },
+  {
+    "text": "Order canceled - come back soon!",
+    "speak": "Order canceled - come back soon!",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  }
+]

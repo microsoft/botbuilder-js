@@ -1,0 +1,38 @@
+<Agent xmlns="http://schemas.microsoft.com/ConversationalAgent/1.0">
+  <AgentDefinition lang="en-us">
+    <About>
+      <CodeBehindClass>LuisIntentFeedbackAppLogic</CodeBehindClass>
+      <CodeBehindNamespace>AgentConsole.Agent</CodeBehindNamespace>
+    </About>
+    <Task name="task1">
+      <LUISRecognizer intentID="1234-5678" intentName="testing" appID="6fd770af-3e2d-40a9-9320-69f2f5c82cfb" key="8bf384673e2e4ae5b514d95a9370bd07"></LUISRecognizer>
+      <Entity name="datetime" src="LUIS" entityType="builtin" appID="6fd770af-3e2d-40a9-9320-69f2f5c82cfb"></Entity>
+      <DialogFlow name="Dialog Flow" isRootFlow="true">
+        <Transitions initialState="Feedback">
+          <Transition to="Feedback" from="Start"></Transition>
+          <Transition to="Return" from="Feedback"></Transition>
+        </Transitions>
+        <Initial name="Start"></Initial>
+        <Respond name="Feedback">
+          <Feedback>The date was {builtin.datetime.date} and time {builtin.datetime.time}</Feedback>
+        </Respond>
+        <Return name="Return" outcome="Success"></Return>
+      </DialogFlow>
+    </Task>
+    <Task name="task2">
+      <LUISRecognizer intentID="1234-5678" intentName="ageTest" appID="6fd770af-3e2d-40a9-9320-69f2f5c82cfb" key="8bf384673e2e4ae5b514d95a9370bd07"></LUISRecognizer>
+      <Entity name="datetime" src="LUIS" entityType="builtin" appID="6fd770af-3e2d-40a9-9320-69f2f5c82cfb"></Entity>
+      <DialogFlow name="Dialog Flow" isRootFlow="true">
+        <Transitions initialState="Feedback">
+          <Transition to="Feedback" from="Start"></Transition>
+          <Transition to="Return" from="Feedback"></Transition>
+        </Transitions>
+        <Initial name="Start"></Initial>
+        <Respond name="Feedback">
+          <Feedback>The age was {builtin.age}</Feedback>
+        </Respond>
+        <Return name="Return" outcome="Success"></Return>
+      </DialogFlow>
+    </Task>
+  </AgentDefinition>
+</Agent>

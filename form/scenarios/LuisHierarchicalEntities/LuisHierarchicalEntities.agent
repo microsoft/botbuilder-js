@@ -1,0 +1,24 @@
+<Agent xmlns="http://schemas.microsoft.com/ConversationalAgent/1.0">
+  <AgentDefinition lang="en-us">
+    <About>
+      <CodeBehindClass></CodeBehindClass>
+      <CodeBehindNamespace></CodeBehindNamespace>
+    </About>
+    <Task name="task1">
+      <LUISRecognizer intentID="1234-5678" intentName="book flight" appID="22241906-5547-4721-8c25-b0366eec28de" key="8bf384673e2e4ae5b514d95a9370bd07"></LUISRecognizer>
+      <Entity name="city::fromCity" src="LUIS" entityType="hierarchical" appID="22241906-5547-4721-8c25-b0366eec28de"></Entity>
+      <Entity name="city::toCity" src="LUIS" entityType="hierarchical" appID="22241906-5547-4721-8c25-b0366eec28de"></Entity>
+      <DialogFlow name="Dialog Flow" isRootFlow="true">
+        <Transitions initialState="Feedback">
+          <Transition to="Feedback" from="Start"></Transition>
+          <Transition to="Return" from="Feedback"></Transition>
+        </Transitions>
+        <Initial name="Start"></Initial>
+        <Respond name="Feedback">
+          <Feedback>Please confirm your flight request is departing from {city::fromCity} and arriving in {city::toCity}</Feedback>
+        </Respond>
+        <Return name="Return" outcome="Success"></Return>
+      </DialogFlow>
+    </Task>
+  </AgentDefinition>
+</Agent>

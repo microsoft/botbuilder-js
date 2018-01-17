@@ -1,0 +1,13 @@
+<Agent xmlns:Agent="http://schemas.microsoft.com/ConversationalAgent/1.0">
+  <AgentDefinition lang="en-us">
+    <SimpleResponseTemplate name="SimpleResponseRGB">
+      <Feedback>"r": "{r}", "g": "{g}", "b": "{b}"</Feedback>
+    </SimpleResponseTemplate>
+    <SimpleResponseTemplate name="SimpleResponseRB">
+      <Feedback>"r": "{r}", [SimpleResponseG], "b": "{b}"</Feedback>
+    </SimpleResponseTemplate>
+    <SimpleResponseTemplate name="SimpleResponseG">
+      <Feedback>"g": "{g}"</Feedback>
+    </SimpleResponseTemplate>
+  </AgentDefinition>
+</Agent>

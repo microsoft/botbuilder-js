@@ -1,0 +1,61 @@
+[
+  {
+    "text": "hi"
+  },
+  {
+    "text": "Please provide values for \"type of bread\", \"protein\" and \"size\" you may also provide values for \"mustard\" and \"toppings\"",
+    "speak": "Please provide values for \"type of bread\", \"protein\" and \"size\" you may also provide values for \"mustard\" and \"toppings\"",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [],
+      "form": {
+        "local": {}
+      }
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  },
+  {
+    "text": "help"
+  },
+  {
+    "text": "So far you have: . The following missing are required \"type of bread\", \"protein\" and \"size\" and the following are further options: \"mustard\" and \"toppings\".",
+    "speak": "So far you have: . The following missing are required \"type of bread\", \"protein\" and \"size\" and the following are further options: \"mustard\" and \"toppings\".",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [],
+      "form": {
+        "local": {}
+      }
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  },
+  {
+    "text": "cancel"
+  },
+  {
+    "text": "Order canceled - come back soon!",
+    "speak": "Order canceled - come back soon!",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  }
+]

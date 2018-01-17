@@ -1,0 +1,22 @@
+<Agent xmlns="http://schemas.microsoft.com/ConversationalAgent/1.0">
+  <AgentDefinition lang="en-us">
+    <Task name="IrreducibleTask">
+      <CodeRecognizer onRun="hi"></CodeRecognizer>
+      <DialogFlow name="IrreducibleFlow" isRootFlow="true">
+        <Transitions initialState="S">
+          <Transition to="A" from="S" whenValueIs="A"></Transition>
+          <Transition to="B" from="S" whenValueIs="B"></Transition>
+          <Transition to="B" from="A" whenValueIs="B"></Transition>
+          <Transition to="A" from="B" whenValueIs="A"></Transition>
+          <Transition to="E" from="A" whenValueIs="E"></Transition>
+          <Transition to="E" from="B" whenValueIs="E"></Transition>
+        </Transitions>
+        <Process name="S" onRun="decision"></Process>
+        <Process name="A" onRun="decision"></Process>
+        <Process name="B" onRun="decision"></Process>
+        <Return name="E"></Return>
+      </DialogFlow>
+    </Task>
+    <PhraseTopic name="path" scenario="Dictation"></PhraseTopic>
+  </AgentDefinition>
+</Agent>

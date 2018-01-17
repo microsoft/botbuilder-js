@@ -1,0 +1,39 @@
+{
+  "name": "botbuilder-ai",
+  "author": "Microsoft Corp.",
+  "description": "Cognitive services extensions for Microsoft BotBuilder.",
+  "version": "4.0.0-h4.1",
+  "license": "MIT",
+  "keywords": [
+    "botbuilder",
+    "botframework",
+    "bots",
+    "chatbots"
+  ],
+  "bugs": {
+    "url": "https://github.com/Microsoft/BotBuilder/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Microsoft/BotBuilder.git"
+  },
+  "main": "./lib/index.js",
+  "typings": "./lib/index.d.ts",
+  "dependencies": {
+    "botbuilder-core": "^4.0.0-h4.1",
+    "botframework-luis": "^4.0.0-h4.1",
+    "html-entities": "^1.2.1",
+    "mstranslator": "^3.0.0",
+    "request": "^2.81.0",
+    "request-promise-native": "^1.0.4"
+  },
+  "devDependencies": {
+    "@types/html-entities": "^1.2.16",
+    "@types/node": "^8.0.11",
+    "@types/request-promise-native": "^1.0.6",
+    "mocha": "^2.5.3"
+  },
+  "scripts": {
+    "test": "mocha tests/*.js"
+  }
+}

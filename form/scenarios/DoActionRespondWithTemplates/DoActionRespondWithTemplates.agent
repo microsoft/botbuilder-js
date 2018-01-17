@@ -1,0 +1,37 @@
+<Agent xmlns="http://schemas.microsoft.com/ConversationalAgent/1.0">
+  <AgentDefinition lang="en-us">
+    <Task name="task1" doAction="Respond">
+      <IntentTip utteranceID="1234">type "1" to enter task 1</IntentTip>
+      <CodeRecognizer onRun="recognize1"></CodeRecognizer>
+      <Respond name="respond1">
+        <Feedback>[SimpleResponse1] [builtin.tasktips]</Feedback>
+      </Respond>
+    </Task>
+    <Task name="task2" doAction="Respond">
+      <IntentTip utteranceID="1234">type "2" to enter task 2</IntentTip>
+      <CodeRecognizer onRun="recognize2"></CodeRecognizer>
+      <Respond name="respond2">
+        <Feedback>[SimpleResponse2]</Feedback>
+      </Respond>
+    </Task>
+    <Task name="task3" doAction="Respond">
+      <IntentTip utteranceID="1234">type "3" to enter task 3</IntentTip>
+      <CodeRecognizer onRun="recognize3"></CodeRecognizer>
+      <Respond name="respond3">
+        <Feedback>[SimpleResponse3] [builtin.tasktips]</Feedback>
+      </Respond>
+    </Task>
+    <SimpleResponseTemplate name="SimpleResponse1">
+      <Feedback>hello 1</Feedback>
+    </SimpleResponseTemplate>
+    <SimpleResponseTemplate name="SimpleResponse2">
+      <Feedback>[SimpleResponse2.1]</Feedback>
+    </SimpleResponseTemplate>
+    <SimpleResponseTemplate name="SimpleResponse2.1">
+      <Feedback>hello 2 [builtin.tasktips]</Feedback>
+    </SimpleResponseTemplate>
+    <SimpleResponseTemplate name="SimpleResponse3">
+      <Feedback>hello 3</Feedback>
+    </SimpleResponseTemplate>
+  </AgentDefinition>
+</Agent>

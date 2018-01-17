@@ -1,0 +1,44 @@
+[
+  {
+    "text": "hi"
+  },
+  {
+    "text": "type 0 or 1",
+    "speak": "type 0 or 1",
+    "inputHint": "expectingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [
+        {
+          "type": "PromptFrame",
+          "dialogFlowName": "Dialog Flow",
+          "stateName": "Prompt",
+          "turn": 0
+        }
+      ]
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  },
+  {
+    "text": "1"
+  },
+  {
+    "text": "Goodbye",
+    "speak": "Goodbye",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  }
+]

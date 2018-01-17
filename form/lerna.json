@@ -1,0 +1,14 @@
+{
+  "lerna": "2.4.0",
+  "packages": [
+    "packages/Datatypes",
+    "packages/AgentDefinition",
+    "packages/DoAction",
+    "packages/DesignerRuntime",
+    "packages/LG",
+    "packages/DialogFlow",
+    "packages/Core",
+    "packages/Form"
+  ],
+  "version": "independent"
+}

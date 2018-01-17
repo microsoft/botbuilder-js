@@ -1,0 +1,19 @@
+[
+  {
+    "text": "g'day mate"
+  },
+  {
+    "text": "Hello",
+    "speak": "Hello",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  }
+]

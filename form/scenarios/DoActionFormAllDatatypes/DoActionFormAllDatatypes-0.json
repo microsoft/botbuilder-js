@@ -1,0 +1,677 @@
+[
+  {
+    "text": "hi"
+  },
+  {
+    "text": "Enter a datetime.",
+    "speak": "Enter a datetime.",
+    "inputHint": "expectingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [
+        {
+          "type": "SingleEntityPrompt",
+          "entityName": "entityDateTime"
+        }
+      ],
+      "form": {
+        "local": {}
+      }
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  },
+  {
+    "text": "2018-05-29"
+  },
+  {
+    "text": "Enter a number.",
+    "speak": "Enter a number.",
+    "inputHint": "expectingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [
+        {
+          "type": "SingleEntityPrompt",
+          "entityName": "entityNumber"
+        }
+      ],
+      "form": {
+        "local": {
+          "entityDateTime": {
+            "type": "Timex",
+            "timex": "2018-05-29"
+          }
+        }
+      }
+    },
+    "data": {
+      "taskEntities": {
+        "entityDateTime": {
+          "type": "Timex",
+          "timex": "2018-05-29"
+        }
+      },
+      "global": {}
+    }
+  },
+  {
+    "text": "one million"
+  },
+  {
+    "text": "Enter a percentage.",
+    "speak": "Enter a percentage.",
+    "inputHint": "expectingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [
+        {
+          "type": "SingleEntityPrompt",
+          "entityName": "entityPercentage"
+        }
+      ],
+      "form": {
+        "local": {
+          "entityDateTime": {
+            "type": "Timex",
+            "timex": "2018-05-29"
+          },
+          "entityNumber": {
+            "type": "Number",
+            "value": 1000000
+          }
+        }
+      }
+    },
+    "data": {
+      "taskEntities": {
+        "entityDateTime": {
+          "type": "Timex",
+          "timex": "2018-05-29"
+        },
+        "entityNumber": {
+          "type": "Number",
+          "value": 1000000
+        }
+      },
+      "global": {}
+    }
+  },
+  {
+    "text": "fifty percent"
+  },
+  {
+    "text": "Enter an ordinal.",
+    "speak": "Enter an ordinal.",
+    "inputHint": "expectingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [
+        {
+          "type": "SingleEntityPrompt",
+          "entityName": "entityOrdinal"
+        }
+      ],
+      "form": {
+        "local": {
+          "entityDateTime": {
+            "type": "Timex",
+            "timex": "2018-05-29"
+          },
+          "entityNumber": {
+            "type": "Number",
+            "value": 1000000
+          },
+          "entityPercentage": {
+            "type": "Percentage",
+            "value": 0.5
+          }
+        }
+      }
+    },
+    "data": {
+      "taskEntities": {
+        "entityDateTime": {
+          "type": "Timex",
+          "timex": "2018-05-29"
+        },
+        "entityNumber": {
+          "type": "Number",
+          "value": 1000000
+        },
+        "entityPercentage": {
+          "type": "Percentage",
+          "value": 0.5
+        }
+      },
+      "global": {}
+    }
+  },
+  {
+    "text": "second"
+  },
+  {
+    "text": "Enter a temperature.",
+    "speak": "Enter a temperature.",
+    "inputHint": "expectingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [
+        {
+          "type": "SingleEntityPrompt",
+          "entityName": "entityTemperature"
+        }
+      ],
+      "form": {
+        "local": {
+          "entityDateTime": {
+            "type": "Timex",
+            "timex": "2018-05-29"
+          },
+          "entityNumber": {
+            "type": "Number",
+            "value": 1000000
+          },
+          "entityPercentage": {
+            "type": "Percentage",
+            "value": 0.5
+          },
+          "entityOrdinal": {
+            "type": "Ordinal",
+            "value": 2
+          }
+        }
+      }
+    },
+    "data": {
+      "taskEntities": {
+        "entityDateTime": {
+          "type": "Timex",
+          "timex": "2018-05-29"
+        },
+        "entityNumber": {
+          "type": "Number",
+          "value": 1000000
+        },
+        "entityPercentage": {
+          "type": "Percentage",
+          "value": 0.5
+        },
+        "entityOrdinal": {
+          "type": "Ordinal",
+          "value": 2
+        }
+      },
+      "global": {}
+    }
+  },
+  {
+    "text": "75 degrees"
+  },
+  {
+    "text": "Enter an age.",
+    "speak": "Enter an age.",
+    "inputHint": "expectingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [
+        {
+          "type": "SingleEntityPrompt",
+          "entityName": "entityAge"
+        }
+      ],
+      "form": {
+        "local": {
+          "entityDateTime": {
+            "type": "Timex",
+            "timex": "2018-05-29"
+          },
+          "entityNumber": {
+            "type": "Number",
+            "value": 1000000
+          },
+          "entityPercentage": {
+            "type": "Percentage",
+            "value": 0.5
+          },
+          "entityOrdinal": {
+            "type": "Ordinal",
+            "value": 2
+          },
+          "entityTemperature": {
+            "type": "Temperature",
+            "value": 75,
+            "unit": "Degree"
+          }
+        }
+      }
+    },
+    "data": {
+      "taskEntities": {
+        "entityDateTime": {
+          "type": "Timex",
+          "timex": "2018-05-29"
+        },
+        "entityNumber": {
+          "type": "Number",
+          "value": 1000000
+        },
+        "entityPercentage": {
+          "type": "Percentage",
+          "value": 0.5
+        },
+        "entityOrdinal": {
+          "type": "Ordinal",
+          "value": 2
+        },
+        "entityTemperature": {
+          "type": "Temperature",
+          "value": 75,
+          "unit": "Degree"
+        }
+      },
+      "global": {}
+    }
+  },
+  {
+    "text": "50 years old"
+  },
+  {
+    "text": "Enter a dimension.",
+    "speak": "Enter a dimension.",
+    "inputHint": "expectingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [
+        {
+          "type": "SingleEntityPrompt",
+          "entityName": "entityDimension"
+        }
+      ],
+      "form": {
+        "local": {
+          "entityDateTime": {
+            "type": "Timex",
+            "timex": "2018-05-29"
+          },
+          "entityNumber": {
+            "type": "Number",
+            "value": 1000000
+          },
+          "entityPercentage": {
+            "type": "Percentage",
+            "value": 0.5
+          },
+          "entityOrdinal": {
+            "type": "Ordinal",
+            "value": 2
+          },
+          "entityTemperature": {
+            "type": "Temperature",
+            "value": 75,
+            "unit": "Degree"
+          },
+          "entityAge": {
+            "type": "Age",
+            "value": 50,
+            "unit": "Year"
+          }
+        }
+      }
+    },
+    "data": {
+      "taskEntities": {
+        "entityDateTime": {
+          "type": "Timex",
+          "timex": "2018-05-29"
+        },
+        "entityNumber": {
+          "type": "Number",
+          "value": 1000000
+        },
+        "entityPercentage": {
+          "type": "Percentage",
+          "value": 0.5
+        },
+        "entityOrdinal": {
+          "type": "Ordinal",
+          "value": 2
+        },
+        "entityTemperature": {
+          "type": "Temperature",
+          "value": 75,
+          "unit": "Degree"
+        },
+        "entityAge": {
+          "type": "Age",
+          "value": 50,
+          "unit": "Year"
+        }
+      },
+      "global": {}
+    }
+  },
+  {
+    "text": "10 meters"
+  },
+  {
+    "text": "Enter a currency.",
+    "speak": "Enter a currency.",
+    "inputHint": "expectingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [
+        {
+          "type": "SingleEntityPrompt",
+          "entityName": "entityCurrency"
+        }
+      ],
+      "form": {
+        "local": {
+          "entityDateTime": {
+            "type": "Timex",
+            "timex": "2018-05-29"
+          },
+          "entityNumber": {
+            "type": "Number",
+            "value": 1000000
+          },
+          "entityPercentage": {
+            "type": "Percentage",
+            "value": 0.5
+          },
+          "entityOrdinal": {
+            "type": "Ordinal",
+            "value": 2
+          },
+          "entityTemperature": {
+            "type": "Temperature",
+            "value": 75,
+            "unit": "Degree"
+          },
+          "entityAge": {
+            "type": "Age",
+            "value": 50,
+            "unit": "Year"
+          },
+          "entityDimension": {
+            "type": "Dimension",
+            "value": 10,
+            "unit": "Meter"
+          }
+        }
+      }
+    },
+    "data": {
+      "taskEntities": {
+        "entityDateTime": {
+          "type": "Timex",
+          "timex": "2018-05-29"
+        },
+        "entityNumber": {
+          "type": "Number",
+          "value": 1000000
+        },
+        "entityPercentage": {
+          "type": "Percentage",
+          "value": 0.5
+        },
+        "entityOrdinal": {
+          "type": "Ordinal",
+          "value": 2
+        },
+        "entityTemperature": {
+          "type": "Temperature",
+          "value": 75,
+          "unit": "Degree"
+        },
+        "entityAge": {
+          "type": "Age",
+          "value": 50,
+          "unit": "Year"
+        },
+        "entityDimension": {
+          "type": "Dimension",
+          "value": 10,
+          "unit": "Meter"
+        }
+      },
+      "global": {}
+    }
+  },
+  {
+    "text": "two hundred and fifty pounds"
+  },
+  {
+    "text": "Enter a string.",
+    "speak": "Enter a string.",
+    "inputHint": "expectingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [
+        {
+          "type": "SingleEntityPrompt",
+          "entityName": "entityString"
+        }
+      ],
+      "form": {
+        "local": {
+          "entityDateTime": {
+            "type": "Timex",
+            "timex": "2018-05-29"
+          },
+          "entityNumber": {
+            "type": "Number",
+            "value": 1000000
+          },
+          "entityPercentage": {
+            "type": "Percentage",
+            "value": 0.5
+          },
+          "entityOrdinal": {
+            "type": "Ordinal",
+            "value": 2
+          },
+          "entityTemperature": {
+            "type": "Temperature",
+            "value": 75,
+            "unit": "Degree"
+          },
+          "entityAge": {
+            "type": "Age",
+            "value": 50,
+            "unit": "Year"
+          },
+          "entityDimension": {
+            "type": "Dimension",
+            "value": 10,
+            "unit": "Meter"
+          },
+          "entityCurrency": {
+            "type": "Currency",
+            "value": 250,
+            "currency": "GBP"
+          }
+        }
+      }
+    },
+    "data": {
+      "taskEntities": {
+        "entityDateTime": {
+          "type": "Timex",
+          "timex": "2018-05-29"
+        },
+        "entityNumber": {
+          "type": "Number",
+          "value": 1000000
+        },
+        "entityPercentage": {
+          "type": "Percentage",
+          "value": 0.5
+        },
+        "entityOrdinal": {
+          "type": "Ordinal",
+          "value": 2
+        },
+        "entityTemperature": {
+          "type": "Temperature",
+          "value": 75,
+          "unit": "Degree"
+        },
+        "entityAge": {
+          "type": "Age",
+          "value": 50,
+          "unit": "Year"
+        },
+        "entityDimension": {
+          "type": "Dimension",
+          "value": 10,
+          "unit": "Meter"
+        },
+        "entityCurrency": {
+          "type": "Currency",
+          "value": 250,
+          "currency": "GBP"
+        }
+      },
+      "global": {}
+    }
+  },
+  {
+    "text": "hello world"
+  },
+  {
+    "text": "OK I have 2018-05-29, 1,000,000, 50%, 2nd, 75 Degree, 50 Year, 10 Meter, £250.00 and hello world. Is this OK?",
+    "speak": "OK I have 2018-05-29, 1,000,000, 50%, 2nd, 75 Degree, 50 Year, 10 Meter, £250.00 and hello world. Is this OK?",
+    "inputHint": "acceptingInput"
+  },
+  {
+    "sticky": "task1",
+    "flow": {
+      "stack": [],
+      "form": {
+        "local": {
+          "entityDateTime": {
+            "type": "Timex",
+            "timex": "2018-05-29"
+          },
+          "entityNumber": {
+            "type": "Number",
+            "value": 1000000
+          },
+          "entityPercentage": {
+            "type": "Percentage",
+            "value": 0.5
+          },
+          "entityOrdinal": {
+            "type": "Ordinal",
+            "value": 2
+          },
+          "entityTemperature": {
+            "type": "Temperature",
+            "value": 75,
+            "unit": "Degree"
+          },
+          "entityAge": {
+            "type": "Age",
+            "value": 50,
+            "unit": "Year"
+          },
+          "entityDimension": {
+            "type": "Dimension",
+            "value": 10,
+            "unit": "Meter"
+          },
+          "entityCurrency": {
+            "type": "Currency",
+            "value": 250,
+            "currency": "GBP"
+          },
+          "entityString": "hello world"
+        }
+      }
+    },
+    "data": {
+      "taskEntities": {
+        "entityDateTime": {
+          "type": "Timex",
+          "timex": "2018-05-29"
+        },
+        "entityNumber": {
+          "type": "Number",
+          "value": 1000000
+        },
+        "entityPercentage": {
+          "type": "Percentage",
+          "value": 0.5
+        },
+        "entityOrdinal": {
+          "type": "Ordinal",
+          "value": 2
+        },
+        "entityTemperature": {
+          "type": "Temperature",
+          "value": 75,
+          "unit": "Degree"
+        },
+        "entityAge": {
+          "type": "Age",
+          "value": 50,
+          "unit": "Year"
+        },
+        "entityDimension": {
+          "type": "Dimension",
+          "value": 10,
+          "unit": "Meter"
+        },
+        "entityCurrency": {
+          "type": "Currency",
+          "value": 250,
+          "currency": "GBP"
+        },
+        "entityString": "hello world"
+      },
+      "global": {}
+    }
+  },
+  {
+    "text": "yes"
+  },
+  {
+    "text": "Okay, i have everything I need for right now.",
+    "speak": "Okay, i have everything I need for right now.",
+    "inputHint": "ignoringInput"
+  },
+  {
+    "inputHint": "acceptingInput"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  }
+]

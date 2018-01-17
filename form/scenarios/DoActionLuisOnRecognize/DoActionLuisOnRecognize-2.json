@@ -1,0 +1,14 @@
+[
+  {
+    "text": "hello"
+  },
+  {
+    "flow": {
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "global": {}
+    }
+  }
+]

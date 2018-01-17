@@ -1,0 +1,876 @@
+[
+  {
+    "type": "message",
+    "id": "1",
+    "serviceUrl": "InvalidServiceUrl",
+    "channelId": "Test",
+    "from": {
+      "id": "testUser"
+    },
+    "conversation": {
+      "id": "1"
+    },
+    "recipient": {
+      "id": "testBot"
+    },
+    "membersAdded": [],
+    "membersRemoved": [],
+    "text": "hi",
+    "attachments": [],
+    "entities": []
+  },
+  {
+    "type": "message",
+    "serviceUrl": "InvalidServiceUrl",
+    "channelId": "Test",
+    "from": {
+      "id": "testBot"
+    },
+    "conversation": {
+      "id": "1"
+    },
+    "recipient": {
+      "id": "testUser"
+    },
+    "membersAdded": [],
+    "membersRemoved": [],
+    "text": "Hello",
+    "speak": "Hello",
+    "inputHint": "acceptingInput",
+    "attachments": [
+      {
+        "contentType": "application/vnd.microsoft.card.adaptive",
+        "content": {
+          "$schema": "https://microsoft.github.io/AdaptiveCards/schemas/adaptive-card.json",
+          "type": "AdaptiveCard",
+          "version": "1.0",
+          "speak": "The Seattle Seahawks beat the Carolina Panthers 40-7",
+          "body": [
+            {
+              "type": "Container",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "text": "Seattle vs Panthers",
+                  "isSubtle": true
+                }
+              ]
+            },
+            {
+              "type": "Container",
+              "selectAction": {
+                "type": "Action.OpenUrl",
+                "url": "http://msn.com",
+                "title": "Container action"
+              },
+              "items": [
+                {
+                  "type": "ColumnSet",
+                  "columns": [
+                    {
+                      "type": "Column",
+                      "size": "auto",
+                      "items": [
+                        {
+                          "type": "Image",
+                          "url": "https://www.bing.com/th?id=AR_3934aff63dd6ff941034090a4b9d12e1&w=50&h=50&dpr=2&pid=AppEx",
+                          "size": "small",
+                          "horizontalAlignment": "center",
+                          "selectAction": {
+                            "type": "Action.OpenUrl",
+                            "url": "http://so.cl",
+                            "title": "Image action"
+                          }
+                        },
+                        {
+                          "type": "TextBlock",
+                          "text": "CAR",
+                          "horizontalAlignment": "center",
+                          "size": "normal",
+                          "weight": "bolder"
+                        }
+                      ],
+                      "selectAction": {
+                        "type": "Action.OpenUrl",
+                        "title": "Column action",
+                        "url": "http://msnbc.com"
+                      }
+                    },
+                    {
+                      "type": "Column",
+                      "size": "stretch",
+                      "items": [
+                        {
+                          "type": "TextBlock",
+                          "text": "Dec 4",
+                          "horizontalAlignment": "center"
+                        },
+                        {
+                          "type": "TextBlock",
+                          "text": "Final",
+                          "horizontalAlignment": "center"
+                        },
+                        {
+                          "type": "TextBlock",
+                          "text": "7 - 40",
+                          "size": "large",
+                          "horizontalAlignment": "center"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Column",
+                      "size": "auto",
+                      "items": [
+                        {
+                          "type": "Image",
+                          "url": "https://www.bing.com/th?id=AR_95e44d654968e8de2336993a1cf8a3cf&w=50&h=50&dpr=2&pid=AppEx",
+                          "size": "small",
+                          "horizontalAlignment": "center"
+                        },
+                        {
+                          "type": "TextBlock",
+                          "text": "SEA",
+                          "horizontalAlignment": "center",
+                          "size": "normal",
+                          "weight": "bolder"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "entities": [],
+    "replyToId": "1"
+  },
+  {
+    "flow": {
+      "task": null,
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "contextEntities": {},
+      "phraseListOverrides": {}
+    }
+  },
+  {
+    "type": "message",
+    "id": "2",
+    "serviceUrl": "InvalidServiceUrl",
+    "channelId": "Test",
+    "from": {
+      "id": "testUser"
+    },
+    "conversation": {
+      "id": "2"
+    },
+    "recipient": {
+      "id": "testBot"
+    },
+    "membersAdded": [],
+    "membersRemoved": [],
+    "text": "echo test",
+    "attachments": [],
+    "entities": []
+  },
+  {
+    "type": "message",
+    "serviceUrl": "InvalidServiceUrl",
+    "channelId": "Test",
+    "from": {
+      "id": "testBot"
+    },
+    "conversation": {
+      "id": "2"
+    },
+    "recipient": {
+      "id": "testUser"
+    },
+    "membersAdded": [],
+    "membersRemoved": [],
+    "text": "Echo back - test",
+    "speak": "Echo back - test",
+    "inputHint": "acceptingInput",
+    "attachments": [],
+    "entities": [],
+    "replyToId": "2"
+  },
+  {
+    "flow": {
+      "task": null,
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "contextEntities": {},
+      "phraseListOverrides": {}
+    }
+  },
+  {
+    "type": "message",
+    "id": "3",
+    "serviceUrl": "InvalidServiceUrl",
+    "channelId": "Test",
+    "from": {
+      "id": "testUser"
+    },
+    "conversation": {
+      "id": "3"
+    },
+    "recipient": {
+      "id": "testBot"
+    },
+    "membersAdded": [],
+    "membersRemoved": [],
+    "text": "Santa wants a blue ribbon",
+    "attachments": [],
+    "entities": []
+  },
+  {
+    "type": "message",
+    "serviceUrl": "InvalidServiceUrl",
+    "channelId": "Test",
+    "from": {
+      "id": "testBot"
+    },
+    "conversation": {
+      "id": "3"
+    },
+    "recipient": {
+      "id": "testUser"
+    },
+    "membersAdded": [],
+    "membersRemoved": [],
+    "text": "My bad. I do not understand that. Here are somethings you can try: ",
+    "speak": "My bad. I do not understand that. Here are somethings you can try: ",
+    "inputHint": "acceptingInput",
+    "attachments": [],
+    "entities": [],
+    "replyToId": "3"
+  },
+  {
+    "flow": {
+      "task": null,
+      "stack": []
+    },
+    "data": {
+      "taskEntities": {},
+      "contextEntities": {},
+      "phraseListOverrides": {}
+    }
+  },
+  {
+    "type": "message",
+    "id": "4",
+    "serviceUrl": "InvalidServiceUrl",
+    "channelId": "Test",
+    "from": {
+      "id": "testUser"
+    },
+    "conversation": {
+      "id": "4"
+    },
+    "recipient": {
+      "id": "testBot"
+    },
+    "membersAdded": [],
+    "membersRemoved": [],
+    "text": "play a game",
+    "attachments": [],
+    "entities": []
+  },
+  {
+    "type": "message",
+    "serviceUrl": "InvalidServiceUrl",
+    "channelId": "Test",
+    "from": {
+      "id": "testBot"
+    },
+    "conversation": {
+      "id": "4"
+    },
+    "recipient": {
+      "id": "testUser"
+    },
+    "membersAdded": [],
+    "membersRemoved": [],
+    "text": "Let's play Guess That Groove! I'll play three clips. Tell me the name of the song or artist for one point, or name both for three.  ",
+    "speak": "Let's play Guess That Groove! I'll play three clips. Tell me the name of the song or artist for one point, or name both for three.  ",
+    "inputHint": "ignoringInput",
+    "attachments": [],
+    "entities": [],
+    "replyToId": "4"
+  },
+  {
+    "type": "message",
+    "serviceUrl": "InvalidServiceUrl",
+    "channelId": "Test",
+    "from": {
+      "id": "testBot"
+    },
+    "conversation": {
+      "id": "4"
+    },
+    "recipient": {
+      "id": "testUser"
+    },
+    "membersAdded": [],
+    "membersRemoved": [],
+    "text": "What's your guess?",
+    "speak": "<speak version=\"1.0\" xmlns=\"http://www.w3.org/2001/10/synthesis\" xmlns:mstts=\"http://www.w3.org/2001/mstts\" xmlns:emo=\"http://www.w3.org/2009/10/emotionml\" xml:lang=\"en-us\"><emo:emotion><emo:category name=\"Neutral\" value=\"1.0\"/> </emo:emotion>OK, here's your first clip. <audio src=\"https://guessthegroovektq3j5.blob.core.windows.net/songs/0002.mp3\"/>Now, what's your guess?</speak>",
+    "inputHint": "expectingInput",
+    "attachments": [],
+    "entities": [],
+    "replyToId": "4"
+  },
+  {
+    "flow": {
+      "task": "Guess the groove",
+      "stack": [
+        {
+          "type": "PromptFrame",
+          "dialogFlowName": "root flow",
+          "stateName": "Turn prompt",
+          "turn": 0
+        }
+      ]
+    },
+    "data": {
+      "taskEntities": {
+        "startingSeed": [
+          {
+            "type": "startingSeed",
+            "value": "2"
+          }
+        ],
+        "turnIndex": [
+          {
+            "type": "turnIndex",
+            "value": "0"
+          }
+        ],
+        "score": [
+          {
+            "type": "score",
+            "value": "0"
+          }
+        ],
+        "url": [
+          {
+            "type": "url",
+            "value": "https://guessthegroovektq3j5.blob.core.windows.net/songs/0002.mp3"
+          }
+        ],
+        "ssml": [
+          {
+            "type": "ssml",
+            "value": "<speak version=\"1.0\" xmlns=\"http://www.w3.org/2001/10/synthesis\" xmlns:mstts=\"http://www.w3.org/2001/mstts\" xmlns:emo=\"http://www.w3.org/2009/10/emotionml\" xml:lang=\"en-us\"><emo:emotion><emo:category name=\"Neutral\" value=\"1.0\"/> </emo:emotion><audio src=\"https://guessthegroovektq3j5.blob.core.windows.net/songs/0002.mp3\"/></speak>"
+          }
+        ],
+        "qartist": [
+          {
+            "type": "qartist",
+            "value": "Franz Ferdinand"
+          }
+        ],
+        "title": [
+          {
+            "type": "title",
+            "value": "Take me out"
+          }
+        ],
+        "qhint": [
+          {
+            "type": "qhint",
+            "value": "A Scottish indie rock band who have put out four studio albums"
+          }
+        ],
+        "guessOutComeEffect": [
+          {
+            "type": "guessOutComeEffect",
+            "value": "https://guessthegroovektq3j5.blob.core.windows.net/effects/Wrong%20Buzzer%20-%20Sound%20Effect.mp3"
+          }
+        ],
+        "guessOutcome": [
+          {
+            "type": "guessOutcome",
+            "value": "0"
+          }
+        ],
+        "guessOutComeReadout": [
+          {
+            "type": "guessOutComeReadout",
+            "value": "[WrongAnswer] That was {title} by {qartist}."
+          }
+        ]
+      },
+      "contextEntities": {},
+      "phraseListOverrides": {}
+    }
+  },
+  {
+    "type": "message",
+    "id": "5",
+    "serviceUrl": "InvalidServiceUrl",
+    "channelId": "Test",
+    "from": {
+      "id": "testUser"
+    },
+    "conversation": {
+      "id": "5"
+    },
+    "recipient": {
+      "id": "testBot"
+    },
+    "membersAdded": [],
+    "membersRemoved": [],
+    "text": "give me a hint",
+    "attachments": [],
+    "entities": []
+  },
+  {
+    "type": "message",
+    "serviceUrl": "InvalidServiceUrl",
+    "channelId": "Test",
+    "from": {
+      "id": "testBot"
+    },
+    "conversation": {
+      "id": "5"
+    },
+    "recipient": {
+      "id": "testUser"
+    },
+    "membersAdded": [],
+    "membersRemoved": [],
+    "text": "OK, the artist is Franz Ferdinand. Now can you guess the title?",
+    "speak": "OK, the artist is Franz Ferdinand. Now can you guess the title?",
+    "inputHint": "expectingInput",
+    "attachments": [
+      {
+        "contentType": "application/vnd.microsoft.card.hero",
+        "content": {
+          "buttons": [
+            {
+              "type": "imBack",
+              "title": "Take me outbyFranz Ferdinand",
+              "value": "Take me outbyFranz Ferdinand"
+            },
+            {
+              "type": "imBack",
+              "title": "Take me out by Franz Ferdinand[*]",
+              "value": "Take me out by Franz Ferdinand"
+            },
+            {
+              "type": "imBack",
+              "title": "Air force onesbyNelly",
+              "value": "Air force onesbyNelly"
+            },
+            {
+              "type": "imBack",
+              "title": "If I ever feel betterbyPhoenix",
+              "value": "If I ever feel betterbyPhoenix"
+            }
+          ]
+        }
+      }
+    ],
+    "entities": [],
+    "replyToId": "5"
+  },
+  {
+    "flow": {
+      "task": "Guess the groove",
+      "stack": [
+        {
+          "type": "PromptFrame",
+          "dialogFlowName": "root flow",
+          "stateName": "Play hint",
+          "turn": 0
+        }
+      ]
+    },
+    "data": {
+      "taskEntities": {
+        "startingSeed": [
+          {
+            "type": "startingSeed",
+            "value": "2"
+          }
+        ],
+        "turnIndex": [
+          {
+            "type": "turnIndex",
+            "value": "0"
+          }
+        ],
+        "score": [
+          {
+            "type": "score",
+            "value": "0"
+          }
+        ],
+        "url": [
+          {
+            "type": "url",
+            "value": "https://guessthegroovektq3j5.blob.core.windows.net/songs/0002.mp3"
+          }
+        ],
+        "ssml": [
+          {
+            "type": "ssml",
+            "value": "<speak version=\"1.0\" xmlns=\"http://www.w3.org/2001/10/synthesis\" xmlns:mstts=\"http://www.w3.org/2001/mstts\" xmlns:emo=\"http://www.w3.org/2009/10/emotionml\" xml:lang=\"en-us\"><emo:emotion><emo:category name=\"Neutral\" value=\"1.0\"/> </emo:emotion><audio src=\"https://guessthegroovektq3j5.blob.core.windows.net/songs/0002.mp3\"/></speak>"
+          }
+        ],
+        "qartist": [
+          {
+            "type": "qartist",
+            "value": "Franz Ferdinand"
+          }
+        ],
+        "title": [
+          {
+            "type": "title",
+            "value": "Take me out"
+          }
+        ],
+        "qhint": [
+          {
+            "type": "qhint",
+            "value": "A Scottish indie rock band who have put out four studio albums"
+          }
+        ],
+        "guessOutComeEffect": [
+          {
+            "type": "guessOutComeEffect",
+            "value": "https://guessthegroovektq3j5.blob.core.windows.net/effects/Wrong%20Buzzer%20-%20Sound%20Effect.mp3"
+          }
+        ],
+        "guessOutcome": [
+          {
+            "type": "guessOutcome",
+            "value": "0"
+          }
+        ],
+        "guessOutComeReadout": [
+          {
+            "type": "guessOutComeReadout",
+            "value": "[WrongAnswer] That was {title} by {qartist}."
+          }
+        ]
+      },
+      "contextEntities": {},
+      "phraseListOverrides": {}
+    }
+  },
+  {
+    "type": "message",
+    "id": "6",
+    "serviceUrl": "InvalidServiceUrl",
+    "channelId": "Test",
+    "from": {
+      "id": "testUser"
+    },
+    "conversation": {
+      "id": "6"
+    },
+    "recipient": {
+      "id": "testBot"
+    },
+    "membersAdded": [],
+    "membersRemoved": [],
+    "text": "I don't know!",
+    "attachments": [],
+    "entities": []
+  },
+  {
+    "type": "message",
+    "serviceUrl": "InvalidServiceUrl",
+    "channelId": "Test",
+    "from": {
+      "id": "testBot"
+    },
+    "conversation": {
+      "id": "6"
+    },
+    "recipient": {
+      "id": "testUser"
+    },
+    "membersAdded": [],
+    "membersRemoved": [],
+    "text": "OK, the artist is Franz Ferdinand. Now can you guess the title?",
+    "speak": "OK, the artist is Franz Ferdinand. Now can you guess the title?",
+    "inputHint": "expectingInput",
+    "attachments": [
+      {
+        "contentType": "application/vnd.microsoft.card.hero",
+        "content": {
+          "buttons": [
+            {
+              "type": "imBack",
+              "title": "Take me outbyFranz Ferdinand",
+              "value": "Take me outbyFranz Ferdinand"
+            },
+            {
+              "type": "imBack",
+              "title": "Take me out by Franz Ferdinand[*]",
+              "value": "Take me out by Franz Ferdinand"
+            },
+            {
+              "type": "imBack",
+              "title": "Air force onesbyNelly",
+              "value": "Air force onesbyNelly"
+            },
+            {
+              "type": "imBack",
+              "title": "If I ever feel betterbyPhoenix",
+              "value": "If I ever feel betterbyPhoenix"
+            }
+          ]
+        }
+      }
+    ],
+    "entities": [],
+    "replyToId": "6"
+  },
+  {
+    "flow": {
+      "task": "Guess the groove",
+      "stack": [
+        {
+          "type": "PromptFrame",
+          "dialogFlowName": "root flow",
+          "stateName": "Play hint",
+          "turn": 0
+        }
+      ]
+    },
+    "data": {
+      "taskEntities": {
+        "startingSeed": [
+          {
+            "type": "startingSeed",
+            "value": "2"
+          }
+        ],
+        "turnIndex": [
+          {
+            "type": "turnIndex",
+            "value": "0"
+          }
+        ],
+        "score": [
+          {
+            "type": "score",
+            "value": "0"
+          }
+        ],
+        "url": [
+          {
+            "type": "url",
+            "value": "https://guessthegroovektq3j5.blob.core.windows.net/songs/0002.mp3"
+          }
+        ],
+        "ssml": [
+          {
+            "type": "ssml",
+            "value": "<speak version=\"1.0\" xmlns=\"http://www.w3.org/2001/10/synthesis\" xmlns:mstts=\"http://www.w3.org/2001/mstts\" xmlns:emo=\"http://www.w3.org/2009/10/emotionml\" xml:lang=\"en-us\"><emo:emotion><emo:category name=\"Neutral\" value=\"1.0\"/> </emo:emotion><audio src=\"https://guessthegroovektq3j5.blob.core.windows.net/songs/0002.mp3\"/></speak>"
+          }
+        ],
+        "qartist": [
+          {
+            "type": "qartist",
+            "value": "Franz Ferdinand"
+          }
+        ],
+        "title": [
+          {
+            "type": "title",
+            "value": "Take me out"
+          }
+        ],
+        "qhint": [
+          {
+            "type": "qhint",
+            "value": "A Scottish indie rock band who have put out four studio albums"
+          }
+        ],
+        "guessOutComeEffect": [
+          {
+            "type": "guessOutComeEffect",
+            "value": "https://guessthegroovektq3j5.blob.core.windows.net/effects/Wrong%20Buzzer%20-%20Sound%20Effect.mp3"
+          }
+        ],
+        "guessOutcome": [
+          {
+            "type": "guessOutcome",
+            "value": "0"
+          }
+        ],
+        "guessOutComeReadout": [
+          {
+            "type": "guessOutComeReadout",
+            "value": "[WrongAnswer] That was {title} by {qartist}."
+          }
+        ]
+      },
+      "contextEntities": {},
+      "phraseListOverrides": {}
+    }
+  },
+  {
+    "type": "message",
+    "id": "7",
+    "serviceUrl": "InvalidServiceUrl",
+    "channelId": "Test",
+    "from": {
+      "id": "testUser"
+    },
+    "conversation": {
+      "id": "7"
+    },
+    "recipient": {
+      "id": "testBot"
+    },
+    "membersAdded": [],
+    "membersRemoved": [],
+    "text": "Take me outbyFranz Ferdinand",
+    "attachments": [],
+    "entities": []
+  },
+  {
+    "type": "message",
+    "serviceUrl": "InvalidServiceUrl",
+    "channelId": "Test",
+    "from": {
+      "id": "testBot"
+    },
+    "conversation": {
+      "id": "7"
+    },
+    "recipient": {
+      "id": "testUser"
+    },
+    "membersAdded": [],
+    "membersRemoved": [],
+    "text": "One point!",
+    "speak": "<speak version=\"1.0\" xmlns=\"http://www.w3.org/2001/10/synthesis\" xmlns:mstts=\"http://www.w3.org/2001/mstts\" xmlns:emo=\"http://www.w3.org/2009/10/emotionml\" xml:lang=\"en-us\"><emo:emotion><emo:category name=\"Neutral\" value=\"1.0\"/> </emo:emotion><audio src=\"https://guessthegroovektq3j5.blob.core.windows.net/effects/Ding%20.mp3\"/>Two points!</speak> Yes, that was Franz Ferdinand singing Take me out.",
+    "inputHint": "ignoringInput",
+    "attachments": [],
+    "entities": [],
+    "replyToId": "7"
+  },
+  {
+    "type": "message",
+    "serviceUrl": "InvalidServiceUrl",
+    "channelId": "Test",
+    "from": {
+      "id": "testBot"
+    },
+    "conversation": {
+      "id": "7"
+    },
+    "recipient": {
+      "id": "testUser"
+    },
+    "membersAdded": [],
+    "membersRemoved": [],
+    "text": "What's your guess?",
+    "speak": "<speak version=\"1.0\" xmlns=\"http://www.w3.org/2001/10/synthesis\" xmlns:mstts=\"http://www.w3.org/2001/mstts\" xmlns:emo=\"http://www.w3.org/2009/10/emotionml\" xml:lang=\"en-us\"><emo:emotion><emo:category name=\"Neutral\" value=\"1.0\"/> </emo:emotion>OK, here's your first clip. <audio src=\"https://guessthegroovektq3j5.blob.core.windows.net/songs/0003.mp3\"/>Now, what's your guess?</speak>",
+    "inputHint": "expectingInput",
+    "attachments": [],
+    "entities": [],
+    "replyToId": "7"
+  },
+  {
+    "flow": {
+      "task": "Guess the groove",
+      "stack": [
+        {
+          "type": "PromptFrame",
+          "dialogFlowName": "root flow",
+          "stateName": "Turn prompt",
+          "turn": 0
+        }
+      ]
+    },
+    "data": {
+      "taskEntities": {
+        "startingSeed": [
+          {
+            "type": "startingSeed",
+            "value": "2"
+          }
+        ],
+        "turnIndex": [
+          {
+            "type": "turnIndex",
+            "value": "1"
+          }
+        ],
+        "score": [
+          {
+            "type": "score",
+            "value": "1"
+          }
+        ],
+        "url": [
+          {
+            "type": "url",
+            "value": "https://guessthegroovektq3j5.blob.core.windows.net/songs/0003.mp3"
+          }
+        ],
+        "ssml": [
+          {
+            "type": "ssml",
+            "value": "<speak version=\"1.0\" xmlns=\"http://www.w3.org/2001/10/synthesis\" xmlns:mstts=\"http://www.w3.org/2001/mstts\" xmlns:emo=\"http://www.w3.org/2009/10/emotionml\" xml:lang=\"en-us\"><emo:emotion><emo:category name=\"Neutral\" value=\"1.0\"/> </emo:emotion><audio src=\"https://guessthegroovektq3j5.blob.core.windows.net/songs/0003.mp3\"/></speak>"
+          }
+        ],
+        "qartist": [
+          {
+            "type": "qartist",
+            "value": "Jay Z featuring Beyonce"
+          }
+        ],
+        "title": [
+          {
+            "type": "title",
+            "value": "Bonnie and Clyde"
+          }
+        ],
+        "qhint": [
+          {
+            "type": "qhint",
+            "value": "An American rapper and businessman who has sold more than 100 million records"
+          }
+        ],
+        "guessOutComeEffect": [
+          {
+            "type": "guessOutComeEffect",
+            "value": "https://guessthegroovektq3j5.blob.core.windows.net/effects/Wrong%20Buzzer%20-%20Sound%20Effect.mp3"
+          }
+        ],
+        "guessOutcome": [
+          {
+            "type": "guessOutcome",
+            "value": "0"
+          }
+        ],
+        "guessOutComeReadout": [
+          {
+            "type": "guessOutComeReadout",
+            "value": "[WrongAnswer] That was {title} by {qartist}."
+          }
+        ]
+      },
+      "contextEntities": {},
+      "phraseListOverrides": {}
+    }
+  }
+]

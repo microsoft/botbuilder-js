@@ -1,0 +1,21 @@
+{
+  "name": "rivescript-example-ts",
+  "version": "1.0.1",
+  "description": "Example rivescript bot",
+  "main": "./lib/app.js",
+  "scripts": {
+     "start": "tsc; node ./lib/app.js"
+  },
+  "author": "Microsoft",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^8.0.13",
+    "@types/restify": "^5.0.1",
+    "botbuilder": "file:../../core",
+    "botbuilder-node": "file:../../node",
+    "botbuilder-services": "file:../../services",
+    "botbuilder-rivescript": "file:../../rivescript",
+    "botbuilder-ai": "file:../../ai",
+    "restify": "^5.0.1"
+  }
+}

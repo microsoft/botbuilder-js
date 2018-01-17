@@ -1,0 +1,13 @@
+<Agent xmlns:Agent="http://schemas.microsoft.com/ConversationalAgent/1.0">
+  <AgentDefinition lang="en-us">
+    <SimpleResponseTemplate name="x">
+      <Feedback>X([y])</Feedback>
+    </SimpleResponseTemplate>
+    <SimpleResponseTemplate name="y">
+      <Feedback>Y([z])</Feedback>
+    </SimpleResponseTemplate>
+    <SimpleResponseTemplate name="z">
+      <Feedback>Z([x])</Feedback>
+    </SimpleResponseTemplate>
+  </AgentDefinition>
+</Agent>
