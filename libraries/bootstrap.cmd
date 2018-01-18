@@ -32,3 +32,9 @@ call npm link botbuilder
 call npm install
 call npm link
 cd ..
+
+cd botbuilder-azure
+call npm link botbuilder
+call npm install
+call npm link
+cd ..

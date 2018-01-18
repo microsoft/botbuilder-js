@@ -2,7 +2,7 @@
  * @module botbuilder-azure-v4
  */
 /** second comment block */
-import { Storage, StorageSettings, StoreItems, StoreItem, StorageMiddleware } from 'botbuilder-core';
+import { Storage, StorageSettings, StoreItems, StoreItem, StorageMiddleware } from 'botbuilder';
 import * as azure from 'azure-storage';
 
 /** Additional settings for configuring an instance of [TableStorage](../classes/botbuilder_azure_v4.tablestorage.html). */
