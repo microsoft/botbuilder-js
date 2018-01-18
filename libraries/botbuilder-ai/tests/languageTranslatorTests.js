@@ -1,6 +1,6 @@
 const assert = require('assert');
 const ai = require('../');
-const builder = require('botbuilder-core');
+const builder = require('botbuilder');
 const process =require('process');
 const translatorKey = process.env.TRANSLATORKEY;
 const luisAppId = process.env.TRANSLATORLUISAPPID;

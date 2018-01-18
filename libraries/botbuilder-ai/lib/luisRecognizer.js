@@ -4,10 +4,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @module botbuilder-ai
  */
 /** second comment block */
-const botbuilder_core_1 = require("botbuilder-core");
+const botbuilder_1 = require("botbuilder");
 const LuisClient = require("botframework-luis");
-botbuilder_core_1.EntityTypes.luis = "Luis";
-class LuisRecognizer extends botbuilder_core_1.IntentRecognizer {
+botbuilder_1.EntityTypes.luis = "Luis";
+class LuisRecognizer extends botbuilder_1.IntentRecognizer {
     constructor(appId, subscriptionKey, baseUri) {
         super();
         this.appId = appId;

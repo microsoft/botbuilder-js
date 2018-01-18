@@ -2,7 +2,7 @@
  * @module botbuilder-ai
  */
 /** second comment block */
-import { Intent, IntentRecognizer } from 'botbuilder-core';
+import { Intent, IntentRecognizer } from 'botbuilder';
 import LuisClient = require('botframework-luis');
 export declare class LuisRecognizer extends IntentRecognizer {
     private appId;

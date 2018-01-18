@@ -2,7 +2,7 @@
  * @module botbuilder-ai
  */
 /** second comment block */
-import { Activity, Middleware, Promiseable, ConversationResourceResponse } from 'botbuilder-core';
+import { Activity, Middleware, Promiseable, ConversationResourceResponse } from 'botbuilder';
 import LuisClient = require('botframework-luis');
 import * as LanguageMap from './languageMap';
 let MsTranslator = require('mstranslator');

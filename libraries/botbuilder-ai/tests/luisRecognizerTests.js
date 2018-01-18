@@ -1,6 +1,6 @@
 const assert = require('assert');
 const ai = require('../');
-const builder = require('botbuilder-core');
+const builder = require('botbuilder');
 
 const luisAppId = process.env.LUISAPPID;
 const subscriptionKey = process.env.LUISAPPKEY;

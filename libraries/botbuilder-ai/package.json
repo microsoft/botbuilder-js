@@ -20,7 +20,7 @@
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "dependencies": {
-    "botbuilder-core": "^4.0.0-h4.1",
+    "botbuilder": "^4.0.0-h4.1",
     "botframework-luis": "^4.0.0-h4.1",
     "html-entities": "^1.2.1",
     "mstranslator": "^3.0.0",

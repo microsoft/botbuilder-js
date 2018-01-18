@@ -1,6 +1,6 @@
 const assert = require('assert');
 const ai = require('../');
-const builder = require('botbuilder-core');
+const builder = require('botbuilder');
 const node = require('botbuilder-node');
 const lunr = require('../../lunr');
 

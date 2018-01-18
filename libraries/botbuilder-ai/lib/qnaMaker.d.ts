@@ -2,7 +2,7 @@
  * @module botbuilder-ai
  */
 /** second comment block */
-import { SearchEngine } from 'botbuilder-core';
+import { SearchEngine } from 'botbuilder';
 export interface QnAMakerResult {
     answer: string;
     score: number;

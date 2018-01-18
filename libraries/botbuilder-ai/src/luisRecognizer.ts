@@ -2,7 +2,7 @@
  * @module botbuilder-ai
  */
 /** second comment block */
-import { Activity, Intent, IntentRecognizer, EntityObject, EntityTypes } from 'botbuilder-core';
+import { Activity, Intent, IntentRecognizer, EntityObject, EntityTypes } from 'botbuilder';
 import LuisClient = require('botframework-luis');
 
 EntityTypes.luis = "Luis";

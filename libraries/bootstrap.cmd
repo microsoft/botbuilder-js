@@ -27,3 +27,8 @@ call npm install
 call npm link
 cd ..
 
+cd botbuilder-ai
+call npm link botbuilder
+call npm install
+call npm link
+cd ..

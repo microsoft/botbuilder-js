@@ -2,7 +2,7 @@
  * @module botbuilder-ai
  */
 /** second comment block */
-import { Activity, SearchEngine, SearchCatalog, SearchHit } from 'botbuilder-core';
+import { Activity, SearchEngine, SearchCatalog, SearchHit } from 'botbuilder';
 import * as request from 'request-promise-native';
 import * as entities from 'html-entities';
 
