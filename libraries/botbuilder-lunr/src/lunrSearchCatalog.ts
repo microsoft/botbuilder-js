@@ -2,7 +2,7 @@ import {
     Activity, Middleware, BotService,
     Storage, StoreItems, StoreItem,
     SearchEngine, SearchCatalog, SearchHit
-} from 'botbuilder-core';
+} from 'botbuilder';
 var elasticLunr = require('elasticlunr');
 
 export class LunrSearchCatalog implements SearchCatalog {

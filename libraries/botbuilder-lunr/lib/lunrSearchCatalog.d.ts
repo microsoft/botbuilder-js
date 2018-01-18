@@ -1,4 +1,4 @@
-import { Storage, SearchCatalog, SearchHit } from 'botbuilder-core';
+import { Storage, SearchCatalog, SearchHit } from 'botbuilder';
 export declare class LunrSearchCatalog implements SearchCatalog {
     name: string;
     private index;

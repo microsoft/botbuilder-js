@@ -1,4 +1,4 @@
-import { Storage, SearchEngine, SearchCatalog } from 'botbuilder-core';
+import { Storage, SearchEngine, SearchCatalog } from 'botbuilder';
 export declare class LunrSearchEngine implements SearchEngine {
     private storage;
     private loadedCatalogs;

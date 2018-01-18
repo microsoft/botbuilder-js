@@ -1,6 +1,6 @@
 const assert = require('assert');
 const lunr = require('../');
-const builder = require('botbuilder-core');
+const builder = require('botbuilder');
 const builderNode = require('botbuilder-node');
 const azure = require("botbuilder-azure");
 const elasticLunr = require("elasticlunr");

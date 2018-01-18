@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const botbuilder_core_1 = require("botbuilder-core");
+const botbuilder_1 = require("botbuilder");
 const lunrSearchCatalog_1 = require("./lunrSearchCatalog");
 var elasticLunr = require('elasticlunr');
 class LunrSearchEngine {
@@ -18,7 +18,7 @@ class LunrSearchEngine {
         if (storage)
             this.storage = storage;
         else
-            this.storage = new botbuilder_core_1.MemoryStorage();
+            this.storage = new botbuilder_1.MemoryStorage();
     }
     /** List all catalogs */
     listCatalogs() {

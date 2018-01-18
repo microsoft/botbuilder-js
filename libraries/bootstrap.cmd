@@ -50,3 +50,9 @@ call npm link botbuilder
 call npm install
 call npm link
 cd ..
+
+cd botbuilder-lunr
+call npm link botbuilder
+call npm install
+call npm link
+cd ..

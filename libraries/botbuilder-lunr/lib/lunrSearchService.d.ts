@@ -1,4 +1,4 @@
-import { BotService, Storage, SearchEngine } from 'botbuilder-core';
+import { BotService, Storage, SearchEngine } from 'botbuilder';
 /**
  * The LunrSearcher implements search contract locally in javascript
  */
