@@ -3,10 +3,9 @@
  */
 /** second comment block */
 
-import { CardAction } from 'botbuilder-core';
+import { CardAction } from 'botbuilder';
 import { ModelResult } from './modelResult';
 import { findValues, FindValuesOptions, SortedValue } from './findValues';
-import { match } from 'minimatch';
 
 export interface Choice {
     /** Value to return when selected.  */

@@ -3,7 +3,7 @@
  */
 /** second comment block */
 
-import { Activity, MessageStyler, CardAction } from 'botbuilder-core';
+import { Activity, MessageStyler, CardAction } from 'botbuilder';
 import { Choice } from './findChoices';
 import * as channel from './channel';
 

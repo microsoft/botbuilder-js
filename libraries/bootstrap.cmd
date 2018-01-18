@@ -38,3 +38,9 @@ call npm link botbuilder
 call npm install
 call npm link
 cd ..
+
+cd botbuilder-choices
+call npm link botbuilder
+call npm install
+call npm link
+cd ..

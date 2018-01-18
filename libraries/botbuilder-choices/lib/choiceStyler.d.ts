@@ -2,7 +2,7 @@
  * @module botbuilder-choices
  */
 /** second comment block */
-import { Activity } from 'botbuilder-core';
+import { Activity } from 'botbuilder';
 import { Choice } from './findChoices';
 export interface ChoiceStylerOptions {
     /**

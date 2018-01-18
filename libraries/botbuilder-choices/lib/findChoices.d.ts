@@ -2,7 +2,7 @@
  * @module botbuilder-choices
  */
 /** second comment block */
-import { CardAction } from 'botbuilder-core';
+import { CardAction } from 'botbuilder';
 import { ModelResult } from './modelResult';
 import { FindValuesOptions } from './findValues';
 export interface Choice {

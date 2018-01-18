@@ -4,7 +4,7 @@
  */
 /** second comment block */
 Object.defineProperty(exports, "__esModule", { value: true });
-const botbuilder_core_1 = require("botbuilder-core");
+const botbuilder_1 = require("botbuilder");
 const channel = require("./channel");
 class ChoiceStyler {
     static forChannel(channelOrContext, choices, text, speak, options) {
@@ -62,7 +62,7 @@ class ChoiceStyler {
         });
         txt += '';
         // Return activity with choices as an inline list.
-        return botbuilder_core_1.MessageStyler.text(txt, speak);
+        return botbuilder_1.MessageStyler.text(txt, speak);
     }
     static list(choices, text, speak, options) {
         const opt = Object.assign({
@@ -77,7 +77,7 @@ class ChoiceStyler {
             connector = '\n   ';
         });
         // Return activity with choices as a numbered list.
-        return botbuilder_core_1.MessageStyler.text(txt, speak);
+        return botbuilder_1.MessageStyler.text(txt, speak);
     }
     static suggestedAction(choices, text, speak, options) {
         // Map choices to actions
@@ -90,7 +90,7 @@ class ChoiceStyler {
             }
         });
         // Return activity with choices as suggested actions
-        return botbuilder_core_1.MessageStyler.suggestedActions(actions, text, speak);
+        return botbuilder_1.MessageStyler.suggestedActions(actions, text, speak);
     }
     static toChoices(choices) {
         return (choices || []).map((choice) => typeof choice === 'string' ? { value: choice } : choice);
