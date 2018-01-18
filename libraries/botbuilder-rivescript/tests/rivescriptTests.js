@@ -1,6 +1,6 @@
 const assert = require('assert');
 const rs = require('../');
-const builder = require('botbuilder-core');
+const builder = require('botbuilder');
 const process = require('process');
 const path = require('path');
 

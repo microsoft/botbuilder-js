@@ -1,4 +1,4 @@
-import { Middleware } from 'botbuilder-core';
+import { Middleware } from 'botbuilder';
 import RiveScript = require('rivescript');
 export interface RiveScriptOptions {
     utf8?: boolean;
