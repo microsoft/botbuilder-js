@@ -2,7 +2,7 @@
  * @module botbuilder-node
  */
 /** second comment block */
-import { ActivityAdapter, Activity, ConversationResourceResponse } from 'botbuilder-core';
+import { ActivityAdapter, Activity, ConversationResourceResponse } from 'botbuilder';
 /**
  * Lets a user communicate with a bot from a console window.
  *

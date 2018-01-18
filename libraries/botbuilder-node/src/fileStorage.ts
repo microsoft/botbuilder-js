@@ -2,8 +2,7 @@
  * @module botbuilder-node
  */
 /** second comment block */
-import { StorageMiddleware } from 'botbuilder-core';
-import { Storage, StorageSettings, StoreItems, StoreItem } from 'botbuilder-core';
+import { Storage, StorageMiddleware, StorageSettings, StoreItems, StoreItem } from 'botbuilder';
 import * as path from 'path';
 import * as fs from 'async-file';
 import * as file from 'fs';

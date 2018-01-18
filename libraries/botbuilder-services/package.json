@@ -21,7 +21,7 @@
   "typings": "./lib/index.d.ts",
   "dependencies": {
     "@types/node": "^8.0.11",
-    "botbuilder-core": "^4.0.0-h4.1",
+    "botbuilder": "^4.0.0-h4.1",
     "botframework-connector": "^4.0.0-h4.1",
     "botframework-connector-auth": "^4.0.0-h4.1"
   },

@@ -4,7 +4,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @module botbuilder-node
  */
 /** second comment block */
-const botbuilder_core_1 = require("botbuilder-core");
+const botbuilder_1 = require("botbuilder");
 const readline = require("readline");
 /**
  * Lets a user communicate with a bot from a console window.
@@ -31,11 +31,11 @@ class ConsoleAdapter {
                 if (i < activities.length) {
                     responses.push({});
                     let a = activities[i];
-                    switch (a.type || botbuilder_core_1.ActivityTypes.message) {
+                    switch (a.type || botbuilder_1.ActivityTypes.message) {
                         case 'delay':
                             setTimeout(() => next(i + 1), a.value || 0);
                             break;
-                        case botbuilder_core_1.ActivityTypes.message:
+                        case botbuilder_1.ActivityTypes.message:
                             if (a.attachments && a.attachments.length > 0) {
                                 const append = a.attachments.length == 1 ? `(1 attachment)` : `(${a.attachments.length} attachments)`;
                                 console.log(`${a.text || ''} ${append}`);
@@ -84,7 +84,7 @@ class ConsoleAdapter {
     receive(text) {
         if (this.onReceive) {
             const activity = {
-                type: botbuilder_core_1.ActivityTypes.message,
+                type: botbuilder_1.ActivityTypes.message,
                 channelId: 'console',
                 from: { id: 'user', name: 'User1' },
                 recipient: { id: 'bot', name: 'Bot' },

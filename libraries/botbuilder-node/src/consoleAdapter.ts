@@ -2,7 +2,7 @@
  * @module botbuilder-node
  */
 /** second comment block */
-import { ActivityAdapter, Activity, ActivityTypes, ConversationResourceResponse } from 'botbuilder-core';
+import { ActivityAdapter, Activity, ActivityTypes, ConversationResourceResponse } from 'botbuilder';
 import * as readline from 'readline';
 
 /**

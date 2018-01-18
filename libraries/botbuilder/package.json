@@ -1,5 +1,5 @@
 {
-  "name": "botbuilder-core",
+  "name": "botbuilder",
   "author": "Microsoft Corp.",
   "description": "Bot Builder core library. Bot Builder is a toolkit for building rich bots on virtually any platform.",
   "version": "4.0.0-h4.2",
@@ -19,10 +19,11 @@
   },
   "main": "./lib/botbuilder.js",
   "typings": "./lib/botbuilder.d.ts",
-  "dependencies": {},
+  "dependencies": {
+    "@types/node": "^9.3.0"
+  },
   "devDependencies": {
-    "mocha": "^4.0.1",
-    "typedoc-plugin-markdown": "^1.0.11"
+    "mocha": "^4.0.1"
   },
   "scripts": {
     "test": "mocha tests/*.js",

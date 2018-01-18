@@ -2,7 +2,7 @@
 * @module botbuilder-services
 */
 /** second comment block */
-import { Activity, ActivityTypes, ActivityAdapter, ConversationReference, ConversationResourceResponse, ConversationParameters, ConversationAccount } from 'botbuilder-core';
+import { Activity, ActivityTypes, ActivityAdapter, ConversationReference, ConversationResourceResponse, ConversationParameters, ConversationAccount } from 'botbuilder';
 import { MicrosoftAppCredentials, BotAuthenticator, Headers, BotCredentials } from 'botframework-connector-auth';
 import ConnectorClient = require('botframework-connector');
 

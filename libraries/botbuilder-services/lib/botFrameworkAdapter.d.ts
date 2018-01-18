@@ -2,7 +2,7 @@
 * @module botbuilder-services
 */
 /** second comment block */
-import { Activity, ActivityAdapter, ConversationReference, ConversationResourceResponse, ConversationParameters } from 'botbuilder-core';
+import { Activity, ActivityAdapter, ConversationReference, ConversationResourceResponse, ConversationParameters } from 'botbuilder';
 import { Headers } from 'botframework-connector-auth';
 /** Express or Restify Request object. */
 export interface WebRequest {

@@ -4,7 +4,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @module botbuilder-node
  */
 /** second comment block */
-const botbuilder_core_1 = require("botbuilder-core");
+const botbuilder_1 = require("botbuilder");
 const path = require("path");
 const fs = require("async-file");
 const file = require("fs");
@@ -24,7 +24,7 @@ const filenamify = require("filenamify");
  * }));
  * ```
  */
-class FileStorage extends botbuilder_core_1.StorageMiddleware {
+class FileStorage extends botbuilder_1.StorageMiddleware {
     /**
      * Creates a new instance of the storage provider.
      *

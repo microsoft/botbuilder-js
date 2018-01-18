@@ -2,8 +2,7 @@
  * @module botbuilder-node
  */
 /** second comment block */
-import { StorageMiddleware } from 'botbuilder-core';
-import { Storage, StorageSettings, StoreItems } from 'botbuilder-core';
+import { Storage, StorageMiddleware, StorageSettings, StoreItems } from 'botbuilder';
 /** Additional settings for configuring an instance of [FileStorage](../classes/botbuilder_node.filestorage.html). */
 export interface FileStorageSettings extends StorageSettings {
     /**
