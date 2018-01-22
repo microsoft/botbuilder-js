@@ -7,7 +7,6 @@ echo starting storage emulator
 ) else (
   @echo You don't have Azure Storage Emulator installed
   @echo go to https://go.microsoft.com/fwlink/?LinkId=717179 to download and install 
-  @goto end
 )
 echo mocha tests for: botbuilder
 cd botbuilder
