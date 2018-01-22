@@ -1,13 +1,13 @@
 #!/bin/bash
 
 cwd=$(pwd);
-modules=("ai" "azure" "choices" "core" "lunr" "node" "prompts" "rivescript" "services");
+modules=("" "-node" "-services" "-ai" "-azure" "-choices" "-legacy" "-lunr" "-rivescript");
 
 for dir in ${modules[*]};
 do
-    path=$cwd"/libraries/"$dir;
+    path=$cwd"/libraries/botbuilder"$dir;
     cd $path;
-    echo "tsc compiling: $path";
+    echo "tsc compiling: botbuilder$path";
     tsc;
 done
 

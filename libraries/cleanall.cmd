@@ -1,18 +1,22 @@
-cd core
+@echo off
+echo cleaning lib directories
+cd botbuilder
 erase /q lib\*.*
-cd ..\node
+cd ..\botbuilder-node
 erase /q lib\*.*
-cd ..\services
+cd ..\botbuilder-services
 erase /q lib\*.*
-cd ..\ai 
-cd ..\azure 
+cd ..\botbuilder-ai 
 erase /q lib\*.*
-cd ..\choices
+cd ..\botbuilder-azure 
 erase /q lib\*.*
-cd ..\lunr
+cd ..\botbuilder-choices
 erase /q lib\*.*
-cd ..\prompts
+cd ..\botbuilder-legacy
 erase /q lib\*.*
-cd ..\rivescript
+cd ..\botbuilder-lunr
+erase /q lib\*.*
+cd ..\botbuilder-rivescript
 erase /q lib\*.*
 cd ..
+echo cleaning complete

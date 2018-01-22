@@ -1,3 +1,9 @@
+call npm install --global typescript
+call npm install --global mocha
+call npm install --global typedoc
+call npm install --global typedoc-plugin-external-module-name
+call npm install --global typedoc-plugin-markdown
+
 cd botframework-connector
 call npm link
 cd ..

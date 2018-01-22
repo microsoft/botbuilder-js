@@ -1,14 +1,13 @@
 const assert = require('assert');
 const ai = require('../');
 const builder = require('botbuilder');
-const node = require('botbuilder-node');
-const lunr = require('../../lunr');
-const elasticLunr = require('elasticlunr');
+//const lunr = require('../../lunr');
+//const elasticLunr = require('elasticlunr');
 
 // disable elasticlunr warnings
-elasticLunr.utils.warn = (function (global) {
-    return function (message) {    };
-  })(this);
+//elasticLunr.utils.warn = (function (global) {
+//    return function (message) {    };
+//  })(this);
 
 const knowlegeBaseId = process.env.QNAKNOWLEDGEBASEID;
 const subscriptionKey = process.env.QNASUBSCRIPTIONKEY;
@@ -45,7 +44,7 @@ describe('QnAMaker', function () {
             });
         ;
     });
-    
+/*
     it('local search should work', function () {
         let searchEngine = new lunr.LunrSearchEngine(new builder.MemoryStorage({path:'data'}));
 
@@ -69,6 +68,7 @@ describe('QnAMaker', function () {
                 assert(res[0].answer.startsWith("BaseCamp: You can use a damp rag to clean around the Power Pack"));
             });
     });
+*/
 
     it('routeToQnaMaker-service', function (done) {
         const adapter = new builder.TestAdapter();
