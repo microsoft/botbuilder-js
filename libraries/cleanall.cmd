@@ -12,7 +12,5 @@ cd ..\botbuilder-azure
 erase /q lib\*.*
 cd ..\botbuilder-choices
 erase /q lib\*.*
-cd ..\botbuilder-legacy
-erase /q lib\*.*
 cd ..
 echo cleaning complete

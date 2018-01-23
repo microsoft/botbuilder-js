@@ -50,9 +50,3 @@ call npm link botbuilder
 call npm install
 call npm link
 cd ..
-
-cd botbuilder-legacy
-call npm link botbuilder
-call npm install
-call npm link
-cd ..

@@ -29,11 +29,6 @@ echo tsc compiling: botbuilder-choices
 call tsc
 if errorlevel 1 goto err
 
-cd ..\botbuilder-legacy
-echo tsc compiling: botbuilder-legacy
-call tsc
-if errorlevel 1 goto err
-
 echo build complete
 goto end
 :err

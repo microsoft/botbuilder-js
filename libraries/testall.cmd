@@ -24,8 +24,6 @@ echo mocha tests for: botbuilder-choices
 cd ..\botbuilder-choices
 call npm run test
 echo mocha tests for: botbuilder-legacy
-cd ..\botbuilder-legacy
-call npm run test
 
 :end
 cd ..
