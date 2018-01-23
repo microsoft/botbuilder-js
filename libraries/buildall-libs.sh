@@ -1,7 +1,7 @@
 #!/bin/bash
 
 cwd=$(pwd);
-modules=("" "-node" "-services" "-ai" "-azure" "-choices" "-legacy" "-lunr" "-rivescript");
+modules=("" "-node" "-services" "-ai" "-azure" "-choices" "-legacy");
 
 for dir in ${modules[*]};
 do

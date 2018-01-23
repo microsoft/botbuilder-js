@@ -34,16 +34,6 @@ echo tsc compiling: botbuilder-legacy
 call tsc
 if errorlevel 1 goto err
 
-cd ..\botbuilder-lunr
-echo tsc compiling: botbuilder-lunr
-call tsc
-if errorlevel 1 goto err
-
-cd ..\botbuilder-rivescript
-echo tsc compiling: botbuilder-rivescript
-call tsc
-if errorlevel 1 goto err
-
 echo build complete
 goto end
 :err

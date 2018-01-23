@@ -2,11 +2,11 @@
 
 cwd=$(pwd);
 # packages containing docs 
-packages=("ai" "azure" "choices" "core" "node" "prompts" "services");
+packages=("" "ai" "node" "services" "ai" "azure" "choices" "legacy");
 
 for dir in ${packages[*]};
 do
-    path=$cwd"/libraries/"$dir"/docs/";
+    path=$cwd"/libraries/builder"$dir"/docs/";
     cd $path;
     echo "Compiling docs for package at: $path";
     bash build-docs.sh;

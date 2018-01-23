@@ -26,12 +26,6 @@ call npm run test
 echo mocha tests for: botbuilder-legacy
 cd ..\botbuilder-legacy
 call npm run test
-echo mocha tests for: botbuilder-lunr
-cd ..\botbuilder-lunr
-call npm run test
-echo mocha tests for: botbuilder-rivescript
-cd ..\botbuilder-rivescript
-call npm run test
 
 :end
 cd ..

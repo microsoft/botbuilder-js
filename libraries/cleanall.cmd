@@ -14,9 +14,5 @@ cd ..\botbuilder-choices
 erase /q lib\*.*
 cd ..\botbuilder-legacy
 erase /q lib\*.*
-cd ..\botbuilder-lunr
-erase /q lib\*.*
-cd ..\botbuilder-rivescript
-erase /q lib\*.*
 cd ..
 echo cleaning complete
