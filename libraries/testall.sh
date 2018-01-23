@@ -5,7 +5,7 @@ modules=("" "-node" "-services" "-ai" "-azure" "-choices");
 
 for dir in ${modules[*]};
 do
-    path=$cwd"/libraries/builder"$dir;
+    path=$cwd"/libraries/botbuilder"$dir;
     cd $path;
     echo "Running tests for module: $dir";
     npm run test;
