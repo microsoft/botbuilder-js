@@ -1,11 +1,11 @@
 #!/bin/bash
 
 cwd=$(pwd);
-modules=("core");
+modules=modules=("" "-node" "-services" "-ai" "-azure" "-choices");
 
 for dir in ${modules[*]};
 do
-    path=$cwd"/libraries/"$dir;
+    path=$cwd"/libraries/botbuilder"$dir;
     cd $path;
     echo "Running tests for module: $dir";
     npm run test;
