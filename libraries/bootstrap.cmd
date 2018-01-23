@@ -21,13 +21,25 @@ call npm install
 call npm link
 cd ..
 
-cd botbuilder-services
+cd botbuilder-middleware
+call npm link botbuilder
+call npm install
+call npm link
+cd ..
+
+cd botbuilder-stylers
 call npm link botbuilder
 call npm install
 call npm link
 cd ..
 
 cd botbuilder-node
+call npm link botbuilder
+call npm install
+call npm link
+cd ..
+
+cd botbuilder-services
 call npm link botbuilder
 call npm install
 call npm link
