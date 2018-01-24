@@ -12,4 +12,5 @@ __export(require("./bot"));
 __export(require("./botContext"));
 __export(require("./middleware"));
 __export(require("./middlewareSet"));
+__export(require("./testAdapter"));
 //# sourceMappingURL=index.js.map

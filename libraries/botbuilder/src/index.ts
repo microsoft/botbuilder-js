@@ -9,3 +9,4 @@ export * from './botContext';
 export * from './activityAdapter';
 export * from './middleware';
 export * from './middlewareSet';
+export * from './testAdapter';
