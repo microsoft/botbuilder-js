@@ -3,6 +3,7 @@
  */
 /** second comment block */
 import { Activity, ConversationResourceResponse } from './activity';
+import { BotContext } from './botContext';
 /**
  * Type signature for a return value that can (Optionally) return its value
  * asynchronously using a Promise.

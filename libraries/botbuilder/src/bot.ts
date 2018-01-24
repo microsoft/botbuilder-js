@@ -6,9 +6,7 @@ import { MiddlewareSet } from './middlewareSet';
 import { Activity, ConversationReference, ActivityTypes, ConversationResourceResponse, applyConversationReference } from './activity';
 import { ActivityAdapter } from './activityAdapter';
 import { Promiseable } from './middleware';
-import { createBotContext } from './botContext';
-import { TemplateManager, TemplateRenderer } from './templateManager';
-import { DictionaryRenderer, TemplateDictionary } from './botbuilder';
+import { BotContext } from './botContext';
 
 /**
  * Manages all communication between the bot and a user.
@@ -39,10 +37,6 @@ export class Bot extends MiddlewareSet {
 
         // Bind to adapter
         this.adapter = adapter;
-
-        // built in middleware
-        // QUESTION: Should we really have built-in middleware?
-        this.use(new TemplateManager());
     }
 
     /** Returns the current adapter. */
@@ -53,7 +47,7 @@ export class Bot extends MiddlewareSet {
     /** Changes the bots adapter. The previous adapter will first be disconnected from.  */
     public set adapter(adapter: ActivityAdapter) {
         if (!adapter) {
-            throw new Error(`Please provide a Connector`);
+            throw new Error(`Please provide an activity adapter`);
         }
 
         // Disconnect from existing adapter
@@ -89,9 +83,9 @@ export class Bot extends MiddlewareSet {
         // Initialize context object
         let context: BotContext;
         if ((activityOrReference as Activity).type) {
-            context = createBotContext(this, activityOrReference);
+            context = new BotContext(this, activityOrReference);
         } else {
-            context = createBotContext(this);
+            context = new BotContext(this);
             context.conversationReference = activityOrReference;
         }
 
@@ -101,7 +95,7 @@ export class Bot extends MiddlewareSet {
                 return Promise.resolve(onReady(context));
             }).then(() => {
                 // Next flush any queued up responses
-                return context.sendResponses();
+                return context.flushResponses();
             }).then(() => {
                 // Dispose of the context object
                 context.dispose();
@@ -136,28 +130,7 @@ export class Bot extends MiddlewareSet {
     }
 
     /**
-     * Register template renderer  as middleware
-     * @param templateRenderer templateRenderer
-     */
-    public useTemplateRenderer(templateRenderer: TemplateRenderer): Bot {
-        return this.use({
-            contextCreated: (ctx, next) => {
-                ctx.templateManager.register(templateRenderer);
-                return next();
-            }
-        });
-    }
-
-    /**
-     * Register TemplateDictionary as templates
-     * @param templates templateDictionary to register
-     */
-    public useTemplates(templates: TemplateDictionary): Bot {
-        return this.use(new DictionaryRenderer(templates));
-    }
-
-    /**
-     * INTERNAL sends an outgoing set of activities to the user. Calling `context.sendResponses()` achieves the same 
+     * INTERNAL sends an outgoing set of activities to the user. Calling `context.flushResponses()` achieves the same 
      * effect and is the preferred way of sending activities to the user.
      *
      * @param context Context for the current turn of the conversation.

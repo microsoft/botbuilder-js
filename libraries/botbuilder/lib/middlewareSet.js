@@ -10,19 +10,6 @@ class MiddlewareSet {
         this._middleware = [];
     }
     /**
-     * Removes all registered middleware from the set. This can be useful for unit testing.
-     */
-    removeAll() {
-        this._middleware = [];
-        return this;
-    }
-    /**
-     * Returns the underlying array of middleware.
-     */
-    get middleware() {
-        return this._middleware;
-    }
-    /**
      * Registers middleware plugin(s) with the bot or set.
      *
      * @param middleware One or more middleware plugin(s) to register.

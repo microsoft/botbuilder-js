@@ -17,8 +17,8 @@
     "type": "git",
     "url": "https://github.com/Microsoft/BotBuilder.git"
   },
-  "main": "./lib/botbuilder.js",
-  "typings": "./lib/botbuilder.d.ts",
+  "main": "./lib/index.js",
+  "typings": "./lib/index.d.ts",
   "dependencies": {
     "@types/node": "^9.3.0"
   },
@@ -26,7 +26,6 @@
     "mocha": "^4.0.1"
   },
   "scripts": {
-    "test": "mocha tests/*.js",
-    "webpack": "node ../../node_modules/webpack/bin/webpack"
+    "test": "mocha tests/*.js"
   }
 }

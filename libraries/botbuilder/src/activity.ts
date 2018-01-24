@@ -3,9 +3,9 @@
  */
 /** second comment block */
 
-export * from './index';
+export * from './schema';
 
-import { Activity, ConversationReference } from './index';
+import { Activity, ConversationReference } from './schema';
 
 /** List of activity types supported by the Bot Framework. */
 export const ActivityTypes = {

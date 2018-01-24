@@ -6,8 +6,7 @@ import { MiddlewareSet } from './middlewareSet';
 import { Activity, ConversationReference } from './activity';
 import { ActivityAdapter } from './activityAdapter';
 import { Promiseable } from './middleware';
-import { TemplateRenderer } from './templateManager';
-import { TemplateDictionary } from './botbuilder';
+import { BotContext } from './botContext';
 /**
  * Manages all communication between the bot and a user.
  *
@@ -73,17 +72,7 @@ export declare class Bot extends MiddlewareSet {
      */
     onReceive(...receivers: ((context: BotContext) => Promiseable<void>)[]): this;
     /**
-     * Register template renderer  as middleware
-     * @param templateRenderer templateRenderer
-     */
-    useTemplateRenderer(templateRenderer: TemplateRenderer): Bot;
-    /**
-     * Register TemplateDictionary as templates
-     * @param templates templateDictionary to register
-     */
-    useTemplates(templates: TemplateDictionary): Bot;
-    /**
-     * INTERNAL sends an outgoing set of activities to the user. Calling `context.sendResponses()` achieves the same
+     * INTERNAL sends an outgoing set of activities to the user. Calling `context.flushResponses()` achieves the same
      * effect and is the preferred way of sending activities to the user.
      *
      * @param context Context for the current turn of the conversation.

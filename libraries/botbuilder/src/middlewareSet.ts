@@ -4,6 +4,7 @@
 /** second comment block */
 import { Activity, ConversationResourceResponse } from './activity';
 import { Middleware } from './middleware';
+import { BotContext } from './botContext';
 
 /**
  * A set of `Middleware` plugins. The set itself is middleware so you can easily package up a set
@@ -12,21 +13,6 @@ import { Middleware } from './middleware';
  */
 export class MiddlewareSet implements Middleware {
     private _middleware: Middleware[] = [];
-
-    /**
-     * Removes all registered middleware from the set. This can be useful for unit testing.
-     */
-    public removeAll(): this {
-        this._middleware = [];
-        return this;
-    }
-
-    /**
-     * Returns the underlying array of middleware.
-     */
-    public get middleware(): Middleware[] {
-        return this._middleware;
-    }
     
     /**
      * Registers middleware plugin(s) with the bot or set.
