@@ -4,13 +4,13 @@ echo tsc compiling: botbuilder
 call tsc
 if errorlevel 1 goto err
 
-cd ..\botbuilder-middleware
-echo tsc compiling: botbuilder-middleware
+cd ..\botbuilder-stylers
+echo tsc compiling: botbuilder-stylers
 call tsc
 if errorlevel 1 goto err
 
-cd ..\botbuilder-stylers
-echo tsc compiling: botbuilder-stylers
+cd ..\botbuilder-storage
+echo tsc compiling: botbuilder-storage
 call tsc
 if errorlevel 1 goto err
 

@@ -11,11 +11,11 @@ echo starting storage emulator
 echo mocha tests for: botbuilder
 cd botbuilder
 call npm run test
-echo mocha tests for: botbuilder-middleware
-cd ..\botbuilder-middleware
-call npm run test
 echo mocha tests for: botbuilder-stylers
 cd ..\botbuilder-stylers
+call npm run test
+echo mocha tests for: botbuilder-storage
+cd ..\botbuilder-storage
 call npm run test
 echo mocha tests for: botbuilder-node
 cd ..\botbuilder-node

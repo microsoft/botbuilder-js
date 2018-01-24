@@ -2,9 +2,9 @@
 echo cleaning lib directories
 cd botbuilder
 erase /q lib\*.*
-cd ..\botbuilder-middleware
-erase /q lib\*.*
 cd ..\botbuilder-stylers
+erase /q lib\*.*
+cd ..\botbuilder-storage
 erase /q lib\*.*
 cd ..\botbuilder-node
 erase /q lib\*.*
