@@ -2,15 +2,15 @@
  * @module botbuilder-node
  */
 /** second comment block */
-import { Storage, StorageMiddleware, StorageSettings, StoreItems, StoreItem } from 'botbuilder';
+import { Storage, StoreItems, StoreItem } from 'botbuilder-storage';
 import * as path from 'path';
 import * as fs from 'async-file';
 import * as file from 'fs';
 import * as os from 'os';
 import * as filenamify from 'filenamify';
 
-/** Additional settings for configuring an instance of [FileStorage](../classes/botbuilder_node.filestorage.html). */
-export interface FileStorageSettings extends StorageSettings {
+/** Settings for configuring an instance of [FileStorage](../classes/botbuilder_node.filestorage.html). */
+export interface FileStorageSettings {
     /** 
      * (Optional) path to the backing folder. The default is to use a `storage` folder off
      * the systems temporary directory. 
@@ -19,20 +19,10 @@ export interface FileStorageSettings extends StorageSettings {
 }
 
 /**
- * Middleware that implements a file based storage provider for a bot.
- * 
- * __Extends BotContext:__
- * * context.storage - Storage provider for storing and retrieving objects.
- *
- * **Usage Example**
- *
- * ```js
- * bot.use(new FileStorage({
- *      path: path.join(__dirname, 'storage')
- * }));
- * ```
+ * File based storage provider for a bot.
  */
-export class FileStorage extends StorageMiddleware<FileStorageSettings> implements Storage {
+export class FileStorage implements Storage {
+    private settings: FileStorageSettings;
     private checked: boolean;
 
     /**
@@ -41,7 +31,7 @@ export class FileStorage extends StorageMiddleware<FileStorageSettings> implemen
      * @param settings (Optional) setting to configure the provider.
      */
     public constructor(settings?: FileStorageSettings) {
-        super(settings || {});
+        this.settings = Object.assign({}, settings);
         this.checked = false;
         if (!this.settings.path) {
             this.settings.path = path.join(os.tmpdir(), 'storage');
@@ -136,11 +126,6 @@ export class FileStorage extends StorageMiddleware<FileStorageSettings> implemen
                 }
                 Promise.all(tasks).then(() => { });
             });
-    }
-
-    /** INTERNAL method that returns the storage instance to be added to the context object. */
-    protected getStorage(context: BotContext): Storage {
-        return this;
     }
 
     private ensureFolder(): Promise<void> {

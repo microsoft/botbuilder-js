@@ -35,6 +35,7 @@ cd ..
 
 cd botbuilder-node
 call npm link botbuilder
+call npm link botbuilder-storage
 call npm install
 call npm link
 cd ..

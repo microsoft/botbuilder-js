@@ -1,37 +1,21 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @module botbuilder-node
- */
-/** second comment block */
-const botbuilder_1 = require("botbuilder");
 const path = require("path");
 const fs = require("async-file");
 const file = require("fs");
 const os = require("os");
 const filenamify = require("filenamify");
 /**
- * Middleware that implements a file based storage provider for a bot.
- *
- * __Extends BotContext:__
- * * context.storage - Storage provider for storing and retrieving objects.
- *
- * **Usage Example**
- *
- * ```js
- * bot.use(new FileStorage({
- *      path: path.join(__dirname, 'storage')
- * }));
- * ```
+ * File based storage provider for a bot.
  */
-class FileStorage extends botbuilder_1.StorageMiddleware {
+class FileStorage {
     /**
      * Creates a new instance of the storage provider.
      *
      * @param settings (Optional) setting to configure the provider.
      */
     constructor(settings) {
-        super(settings || {});
+        this.settings = Object.assign({}, settings);
         this.checked = false;
         if (!this.settings.path) {
             this.settings.path = path.join(os.tmpdir(), 'storage');
@@ -121,10 +105,6 @@ class FileStorage extends botbuilder_1.StorageMiddleware {
             }
             Promise.all(tasks).then(() => { });
         });
-    }
-    /** INTERNAL method that returns the storage instance to be added to the context object. */
-    getStorage(context) {
-        return this;
     }
     ensureFolder() {
         if (!this.checked) {

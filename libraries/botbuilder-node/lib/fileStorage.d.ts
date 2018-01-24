@@ -2,9 +2,9 @@
  * @module botbuilder-node
  */
 /** second comment block */
-import { Storage, StorageMiddleware, StorageSettings, StoreItems } from 'botbuilder';
-/** Additional settings for configuring an instance of [FileStorage](../classes/botbuilder_node.filestorage.html). */
-export interface FileStorageSettings extends StorageSettings {
+import { Storage, StoreItems } from 'botbuilder-storage';
+/** Settings for configuring an instance of [FileStorage](../classes/botbuilder_node.filestorage.html). */
+export interface FileStorageSettings {
     /**
      * (Optional) path to the backing folder. The default is to use a `storage` folder off
      * the systems temporary directory.
@@ -12,20 +12,10 @@ export interface FileStorageSettings extends StorageSettings {
     path?: string;
 }
 /**
- * Middleware that implements a file based storage provider for a bot.
- *
- * __Extends BotContext:__
- * * context.storage - Storage provider for storing and retrieving objects.
- *
- * **Usage Example**
- *
- * ```js
- * bot.use(new FileStorage({
- *      path: path.join(__dirname, 'storage')
- * }));
- * ```
+ * File based storage provider for a bot.
  */
-export declare class FileStorage extends StorageMiddleware<FileStorageSettings> implements Storage {
+export declare class FileStorage implements Storage {
+    private settings;
     private checked;
     /**
      * Creates a new instance of the storage provider.
@@ -51,8 +41,6 @@ export declare class FileStorage extends StorageMiddleware<FileStorageSettings> 
      * @param keys Array of item keys to remove from the store.
      **/
     delete(keys: string[]): Promise<void>;
-    /** INTERNAL method that returns the storage instance to be added to the context object. */
-    protected getStorage(context: BotContext): Storage;
     private ensureFolder();
     private getFileName(key);
     private getFilePath(key);
