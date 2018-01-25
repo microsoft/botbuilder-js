@@ -1,4 +1,5 @@
-/**/node_modules
-/**/.vscode
+tests
+.vscode
+swagger
 coverage
 .nyc_output
