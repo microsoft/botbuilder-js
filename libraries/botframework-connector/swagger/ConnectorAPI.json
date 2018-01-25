@@ -51,38 +51,13 @@
               "$ref": "#/definitions/AttachmentInfo"
             }
           },
-          "400": {
-            "description": "The request was malformed or otherwise incorrect. Inspect the message for a more detailed description.",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          },
-          "401": {
-            "description": "The bot is not authorized to make this request. Please check your Microsoft App ID and Microsoft App password. "
-          },
-          "403": {
-            "description": "The request was a valid request, but the server is refusing to respond to it. The user might be logged in but does not have the necessary permissions for the resource."
-          },
-          "404": {
-            "description": "The resource was not found.",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          },
-          "500": {
-            "description": "An internal server has occurred. Inspect the message for a more detailed description.",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          },
-          "503": {
-            "description": "The service you are trying to communciate with is unavailable.",
+          "default": {
+            "description": "The operation failed and the response is an error object describing the status code and failure.",
             "schema": {
               "$ref": "#/definitions/ErrorResponse"
             }
           }
-        },
-        "deprecated": false
+        }
       }
     },
     "/v3/attachments/{attachmentId}/views/{viewId}": {
@@ -118,10 +93,10 @@
         ],
         "responses": {
           "200": {
-            "description": "An array of bytes which represent the content.",
+            "description": "Attachment stream",
             "schema": {
               "format": "byte",
-              "type": "string"
+              "type": "file"
             }
           },
           "301": {
@@ -130,38 +105,13 @@
           "302": {
             "description": "The Location header describes where the content is now."
           },
-          "400": {
-            "description": "The request was malformed or otherwise incorrect. Inspect the message for a more detailed description.",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          },
-          "401": {
-            "description": "The bot is not authorized to make this request. Please check your Microsoft App ID and Microsoft App password. "
-          },
-          "403": {
-            "description": "The request was a valid request, but the server is refusing to respond to it. The user might be logged in but does not have the necessary permissions for the resource."
-          },
-          "404": {
-            "description": "The resource was not found.",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          },
-          "500": {
-            "description": "An internal server has occurred. Inspect the message for a more detailed description.",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          },
-          "503": {
-            "description": "The service you are trying to communciate with is unavailable.",
+          "default": {
+            "description": "The operation failed and the response is an error object describing the status code and failure.",
             "schema": {
               "$ref": "#/definitions/ErrorResponse"
             }
           }
-        },
-        "deprecated": false
+        }
       }
     },
     "/v3/conversations": {
@@ -215,44 +165,13 @@
               "$ref": "#/definitions/ConversationResourceResponse"
             }
           },
-          "400": {
-            "description": "The request was malformed or otherwise incorrect. Inspect the message for a more detailed description.",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          },
-          "401": {
-            "description": "The bot is not authorized to make this request. Please check your Microsoft App ID and Microsoft App password. "
-          },
-          "403": {
-            "description": "The request was a valid request, but the server is refusing to respond to it. The user might be logged in but does not have the necessary permissions for the resource."
-          },
-          "404": {
-            "description": "The resource was not found.",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          },
-          "405": {
-            "description": "The method and URI you are trying to use is not allowed on this service.  For example, not all services support the DELETE or PUT verbs on an activity URI.  ",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          },
-          "500": {
-            "description": "An internal server has occurred. Inspect the message for a more detailed description.",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          },
-          "503": {
-            "description": "The service you are trying to communciate with is unavailable.",
+          "default": {
+            "description": "The operation failed and the response is an error object describing the status code and failure.",
             "schema": {
               "$ref": "#/definitions/ErrorResponse"
             }
           }
-        },
-        "deprecated": false
+        }
       }
     },
     "/v3/conversations/{conversationId}/activities": {
@@ -276,6 +195,13 @@
         ],
         "parameters": [
           {
+            "name": "conversationId",
+            "in": "path",
+            "description": "Conversation ID",
+            "required": true,
+            "type": "string"
+          },
+          {
             "name": "activity",
             "in": "body",
             "description": "Activity to send",
@@ -283,13 +209,6 @@
             "schema": {
               "$ref": "#/definitions/Activity"
             }
-          },
-          {
-            "name": "conversationId",
-            "in": "path",
-            "description": "Conversation ID",
-            "required": true,
-            "type": "string"
           }
         ],
         "responses": {
@@ -311,38 +230,13 @@
               "$ref": "#/definitions/ResourceResponse"
             }
           },
-          "400": {
-            "description": "The request was malformed or otherwise incorrect. Inspect the message for a more detailed description.",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          },
-          "401": {
-            "description": "The bot is not authorized to make this request. Please check your Microsoft App ID and Microsoft App password. "
-          },
-          "403": {
-            "description": "The request was a valid request, but the server is refusing to respond to it. The user might be logged in but does not have the necessary permissions for the resource."
-          },
-          "404": {
-            "description": "The resource was not found.",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          },
-          "500": {
-            "description": "An internal server has occurred. Inspect the message for a more detailed description.",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          },
-          "503": {
-            "description": "The service you are trying to communciate with is unavailable.",
+          "default": {
+            "description": "The operation failed and the response is an error object describing the status code and failure.",
             "schema": {
               "$ref": "#/definitions/ErrorResponse"
             }
           }
-        },
-        "deprecated": false
+        }
       }
     },
     "/v3/conversations/{conversationId}/activities/{activityId}": {
@@ -408,44 +302,13 @@
               "$ref": "#/definitions/ResourceResponse"
             }
           },
-          "400": {
-            "description": "The request was malformed or otherwise incorrect. Inspect the message for a more detailed description.",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          },
-          "401": {
-            "description": "The bot is not authorized to make this request. Please check your Microsoft App ID and Microsoft App password. "
-          },
-          "403": {
-            "description": "The request was a valid request, but the server is refusing to respond to it. The user might be logged in but does not have the necessary permissions for the resource."
-          },
-          "404": {
-            "description": "The resource was not found.",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          },
-          "405": {
-            "description": "The method and URI you are trying to use is not allowed on this service.  For example, not all services support the DELETE or PUT verbs on an activity URI.  ",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          },
-          "500": {
-            "description": "An internal server has occurred. Inspect the message for a more detailed description.",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          },
-          "503": {
-            "description": "The service you are trying to communciate with is unavailable.",
+          "default": {
+            "description": "The operation failed and the response is an error object describing the status code and failure.",
             "schema": {
               "$ref": "#/definitions/ErrorResponse"
             }
           }
-        },
-        "deprecated": false
+        }
       },
       "post": {
         "tags": [
@@ -509,38 +372,13 @@
               "$ref": "#/definitions/ResourceResponse"
             }
           },
-          "400": {
-            "description": "The request was malformed or otherwise incorrect. Inspect the message for a more detailed description.",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          },
-          "401": {
-            "description": "The bot is not authorized to make this request. Please check your Microsoft App ID and Microsoft App password. "
-          },
-          "403": {
-            "description": "The request was a valid request, but the server is refusing to respond to it. The user might be logged in but does not have the necessary permissions for the resource."
-          },
-          "404": {
-            "description": "The resource was not found.",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          },
-          "500": {
-            "description": "An internal server has occurred. Inspect the message for a more detailed description.",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          },
-          "503": {
-            "description": "The service you are trying to communciate with is unavailable.",
+          "default": {
+            "description": "The operation failed and the response is an error object describing the status code and failure.",
             "schema": {
               "$ref": "#/definitions/ErrorResponse"
             }
           }
-        },
-        "deprecated": false
+        }
       },
       "delete": {
         "tags": [
@@ -579,44 +417,13 @@
           "202": {
             "description": "The request has been accepted for processing, but the processing has not been completed"
           },
-          "400": {
-            "description": "The request was malformed or otherwise incorrect. Inspect the message for a more detailed description.",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          },
-          "401": {
-            "description": "The bot is not authorized to make this request. Please check your Microsoft App ID and Microsoft App password. "
-          },
-          "403": {
-            "description": "The request was a valid request, but the server is refusing to respond to it. The user might be logged in but does not have the necessary permissions for the resource."
-          },
-          "404": {
-            "description": "The resource was not found.",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          },
-          "405": {
-            "description": "The method and URI you are trying to use is not allowed on this service.  For example, not all services support the DELETE or PUT verbs on an activity URI.  ",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          },
-          "500": {
-            "description": "An internal server has occurred. Inspect the message for a more detailed description.",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          },
-          "503": {
-            "description": "The service you are trying to communciate with is unavailable.",
+          "default": {
+            "description": "The operation failed and the response is an error object describing the status code and failure.",
             "schema": {
               "$ref": "#/definitions/ErrorResponse"
             }
           }
-        },
-        "deprecated": false
+        }
       }
     },
     "/v3/conversations/{conversationId}/members": {
@@ -653,44 +460,13 @@
               }
             }
           },
-          "400": {
-            "description": "The request was malformed or otherwise incorrect. Inspect the message for a more detailed description.",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          },
-          "401": {
-            "description": "The bot is not authorized to make this request. Please check your Microsoft App ID and Microsoft App password. "
-          },
-          "403": {
-            "description": "The request was a valid request, but the server is refusing to respond to it. The user might be logged in but does not have the necessary permissions for the resource."
-          },
-          "404": {
-            "description": "The resource was not found.",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          },
-          "405": {
-            "description": "The method and URI you are trying to use is not allowed on this service.  For example, not all services support the DELETE or PUT verbs on an activity URI.  ",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          },
-          "500": {
-            "description": "An internal server has occurred. Inspect the message for a more detailed description.",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          },
-          "503": {
-            "description": "The service you are trying to communciate with is unavailable.",
+          "default": {
+            "description": "The operation failed and the response is an error object describing the status code and failure.",
             "schema": {
               "$ref": "#/definitions/ErrorResponse"
             }
           }
-        },
-        "deprecated": false
+        }
       }
     },
     "/v3/conversations/{conversationId}/activities/{activityId}/members": {
@@ -734,44 +510,13 @@
               }
             }
           },
-          "400": {
-            "description": "The request was malformed or otherwise incorrect. Inspect the message for a more detailed description.",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          },
-          "401": {
-            "description": "The bot is not authorized to make this request. Please check your Microsoft App ID and Microsoft App password. "
-          },
-          "403": {
-            "description": "The request was a valid request, but the server is refusing to respond to it. The user might be logged in but does not have the necessary permissions for the resource."
-          },
-          "404": {
-            "description": "The resource was not found.",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          },
-          "405": {
-            "description": "The method and URI you are trying to use is not allowed on this service.  For example, not all services support the DELETE or PUT verbs on an activity URI.  ",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          },
-          "500": {
-            "description": "An internal server has occurred. Inspect the message for a more detailed description.",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          },
-          "503": {
-            "description": "The service you are trying to communciate with is unavailable.",
+          "default": {
+            "description": "The operation failed and the response is an error object describing the status code and failure.",
             "schema": {
               "$ref": "#/definitions/ErrorResponse"
             }
           }
-        },
-        "deprecated": false
+        }
       }
     },
     "/v3/conversations/{conversationId}/attachments": {
@@ -830,44 +575,13 @@
               "$ref": "#/definitions/ResourceResponse"
             }
           },
-          "400": {
-            "description": "The request was malformed or otherwise incorrect. Inspect the message for a more detailed description.",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          },
-          "401": {
-            "description": "The bot is not authorized to make this request. Please check your Microsoft App ID and Microsoft App password. "
-          },
-          "403": {
-            "description": "The request was a valid request, but the server is refusing to respond to it. The user might be logged in but does not have the necessary permissions for the resource."
-          },
-          "404": {
-            "description": "The resource was not found.",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          },
-          "405": {
-            "description": "The method and URI you are trying to use is not allowed on this service.  For example, not all services support the DELETE or PUT verbs on an activity URI.  ",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          },
-          "500": {
-            "description": "An internal server has occurred. Inspect the message for a more detailed description.",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          },
-          "503": {
-            "description": "The service you are trying to communciate with is unavailable.",
+          "default": {
+            "description": "The operation failed and the response is an error object describing the status code and failure.",
             "schema": {
               "$ref": "#/definitions/ErrorResponse"
             }
           }
-        },
-        "deprecated": false
+        }
       }
     }
   },
@@ -898,7 +612,7 @@
       "type": "object",
       "properties": {
         "viewId": {
-          "description": "content type of the attachmnet",
+          "description": "Content type of the attachment",
           "type": "string"
         },
         "size": {
@@ -960,8 +674,8 @@
           "description": "(Optional) When creating a new conversation, use this activity as the intial message to the conversation"
         },
         "channelData": {
-          "$ref": "#/definitions/Object",
-          "description": "Channel specific payload for creating the conversation"
+          "description": "Channel specific payload for creating the conversation",
+          "type": "object"
         }
       }
     },
@@ -1030,25 +744,39 @@
           "type": "string"
         },
         "membersAdded": {
-          "description": "Array of address added",
+          "description": "Members added to the conversation",
           "type": "array",
           "items": {
             "$ref": "#/definitions/ChannelAccount"
           }
         },
         "membersRemoved": {
-          "description": "Array of addresses removed",
+          "description": "Members removed from the conversation",
           "type": "array",
           "items": {
             "$ref": "#/definitions/ChannelAccount"
           }
         },
+        "reactionsAdded": {
+          "description": "Reactions added to the activity",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MessageReaction"
+          }
+        },
+        "reactionsRemoved": {
+          "description": "Reactions removed from the activity",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MessageReaction"
+          }
+        },
         "topicName": {
-          "description": "Conversations new topic name",
+          "description": "The conversation's updated topic name",
           "type": "string"
         },
         "historyDisclosed": {
-          "description": "True if the previous history of the channel is disclosed",
+          "description": "True if prior history of the channel is disclosed",
           "type": "boolean"
         },
         "locale": {
@@ -1090,8 +818,8 @@
           }
         },
         "channelData": {
-          "$ref": "#/definitions/Object",
-          "description": "Channel-specific payload"
+          "description": "Channel-specific payload",
+          "type": "object"
         },
         "action": {
           "description": "ContactAdded/Removed action",
@@ -1102,8 +830,8 @@
           "type": "string"
         },
         "value": {
-          "$ref": "#/definitions/Object",
-          "description": "Open-ended value"
+          "description": "Open-ended value",
+          "type": "object"
         },
         "name": {
           "description": "Name of the operation to invoke or the name of the event",
@@ -1116,12 +844,28 @@
         "code": {
           "description": "Code indicating why the conversation has ended",
           "type": "string"
+        },
+        "expiration": {
+          "format": "date-time",
+          "description": "DateTime to expire the activity as ISO 8601 encoded datetime",
+          "type": "string"
+        },
+        "importance": {
+          "description": "Importance of this activity \r\n {Low|Normal|High}, null value indicates Normal importance see ActivityImportance)",
+          "type": "string"
+        },
+        "deliveryMode": {
+          "description": "Hint to describe how this activity should be delivered.  \r\nCurrently: null or \"Default\" = default delivery\r\n\"Notification\" = notification semantics",
+          "type": "string"
+        },
+        "textHighlights": {
+          "description": "TextHighlight in the activity represented in the ReplyToId property",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TextHighlight"
+          }
         }
       }
-    },
-    "Object": {
-      "type": "object",
-      "properties": {}
     },
     "ConversationAccount": {
       "description": "Channel account information for a conversation",
@@ -1137,6 +881,16 @@
         },
         "name": {
           "description": "Display friendly name",
+          "type": "string"
+        }
+      }
+    },
+    "MessageReaction": {
+      "description": "Message reaction object",
+      "type": "object",
+      "properties": {
+        "type": {
+          "description": "Message reaction type",
           "type": "string"
         }
       }
@@ -1174,8 +928,8 @@
           "type": "string"
         },
         "content": {
-          "$ref": "#/definitions/Object",
-          "description": "Embedded content"
+          "description": "Embedded content",
+          "type": "object"
         },
         "name": {
           "description": "(OPTIONAL) The name of the attachment",
@@ -1227,25 +981,48 @@
         }
       }
     },
+    "TextHighlight": {
+      "description": "",
+      "type": "object",
+      "properties": {
+        "text": {
+          "description": "plain text fragment to highlight",
+          "type": "string"
+        },
+        "occurence": {
+          "format": "int32",
+          "description": "index of occurence of the Text (Starting at 1)",
+          "type": "integer"
+        }
+      }
+    },
     "CardAction": {
-      "description": "An action on a card",
+      "description": "A clickable action",
       "type": "object",
       "properties": {
         "type": {
-          "description": "Defines the type of action implemented by this button.",
+          "description": "The type of action implemented by this button",
           "type": "string"
         },
         "title": {
-          "description": "Text description which appear on the button.",
+          "description": "Text description which appears on the button",
           "type": "string"
         },
         "image": {
-          "description": "URL Picture which will appear on the button, next to text label.",
+          "description": "Image URL which will appear on the button, next to text label",
+          "type": "string"
+        },
+        "text": {
+          "description": "Text for this action",
+          "type": "string"
+        },
+        "displayText": {
+          "description": "(Optional) text to display in the chat feed if the button is clicked",
           "type": "string"
         },
         "value": {
-          "$ref": "#/definitions/Object",
-          "description": "Supplementary parameter for action. Content of this property depends on the ActionType"
+          "description": "Supplementary parameter for action. Content of this property depends on the ActionType",
+          "type": "object"
         }
       }
     },
@@ -1282,7 +1059,7 @@
       "type": "object",
       "properties": {
         "type": {
-          "description": "content type of the attachmnet",
+          "description": "Content-Type of the attachment",
           "type": "string"
         },
         "name": {
@@ -1291,12 +1068,12 @@
         },
         "originalBase64": {
           "format": "byte",
-          "description": "original content",
+          "description": "Attachment content",
           "type": "string"
         },
         "thumbnailBase64": {
           "format": "byte",
-          "description": "Thumbnail",
+          "description": "Attachment thumbnail",
           "type": "string"
         }
       }
@@ -1342,7 +1119,7 @@
       "type": "object",
       "properties": {
         "url": {
-          "description": "URL Thumbnail image for major content property.",
+          "description": "URL thumbnail image for major content property",
           "type": "string"
         },
         "alt": {
@@ -1351,12 +1128,158 @@
         },
         "tap": {
           "$ref": "#/definitions/CardAction",
-          "description": "Action assigned to specific Attachment.E.g.navigate to specific URL or play/open media content"
+          "description": "Action assigned to specific Attachment"
         }
       }
     },
-    "ThumbnailCard": {
-      "description": "A thumbnail card (card with a single, small thumbnail image)",
+    "AnimationCard": {
+      "description": "An animation card (Ex: gif or short video clip)",
+      "type": "object",
+      "properties": {
+        "title": {
+          "description": "Title of this card",
+          "type": "string"
+        },
+        "subtitle": {
+          "description": "Subtitle of this card",
+          "type": "string"
+        },
+        "text": {
+          "description": "Text of this card",
+          "type": "string"
+        },
+        "image": {
+          "$ref": "#/definitions/ThumbnailUrl",
+          "description": "Thumbnail placeholder"
+        },
+        "media": {
+          "description": "Media URLs for this card",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MediaUrl"
+          }
+        },
+        "buttons": {
+          "description": "Actions on this card",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CardAction"
+          }
+        },
+        "shareable": {
+          "description": "This content may be shared with others (default:true)",
+          "type": "boolean"
+        },
+        "autoloop": {
+          "description": "Should the client loop playback at end of content (default:true)",
+          "type": "boolean"
+        },
+        "autostart": {
+          "description": "Should the client automatically start playback of media in this card (default:true)",
+          "type": "boolean"
+        },
+        "aspect": {
+          "description": "Aspect ratio of thumbnail/media placeholder, allowed values are \"16:9\" and \"4:3\"",
+          "type": "string"
+        },
+        "value": {
+          "description": "Supplementary parameter for this card",
+          "type": "object"
+        }
+      }
+    },
+    "ThumbnailUrl": {
+      "description": "Thumbnail URL",
+      "required": [
+        "url"
+      ],
+      "type": "object",
+      "properties": {
+        "url": {
+          "description": "URL pointing to the thumbnail to use for media content",
+          "type": "string"
+        },
+        "alt": {
+          "description": "HTML alt text to include on this thumbnail image",
+          "type": "string"
+        }
+      }
+    },
+    "MediaUrl": {
+      "description": "Media URL",
+      "required": [
+        "url"
+      ],
+      "type": "object",
+      "properties": {
+        "url": {
+          "description": "Url for the media",
+          "type": "string"
+        },
+        "profile": {
+          "description": "Optional profile hint to the client to differentiate multiple MediaUrl objects from each other",
+          "type": "string"
+        }
+      }
+    },
+    "AudioCard": {
+      "description": "Audio card",
+      "type": "object",
+      "properties": {
+        "title": {
+          "description": "Title of this card",
+          "type": "string"
+        },
+        "subtitle": {
+          "description": "Subtitle of this card",
+          "type": "string"
+        },
+        "text": {
+          "description": "Text of this card",
+          "type": "string"
+        },
+        "image": {
+          "$ref": "#/definitions/ThumbnailUrl",
+          "description": "Thumbnail placeholder"
+        },
+        "media": {
+          "description": "Media URLs for this card",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MediaUrl"
+          }
+        },
+        "buttons": {
+          "description": "Actions on this card",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CardAction"
+          }
+        },
+        "shareable": {
+          "description": "This content may be shared with others (default:true)",
+          "type": "boolean"
+        },
+        "autoloop": {
+          "description": "Should the client loop playback at end of content (default:true)",
+          "type": "boolean"
+        },
+        "autostart": {
+          "description": "Should the client automatically start playback of media in this card (default:true)",
+          "type": "boolean"
+        },
+        "aspect": {
+          "description": "Aspect ratio of thumbnail/media placeholder, allowed values are \"16:9\" and \"4:3\"",
+          "type": "string"
+        },
+        "value": {
+          "description": "Supplementary parameter for this card",
+          "type": "object"
+        }
+      }
+    },
+    "BasicCard": {
+      "description": "A basic card",
       "type": "object",
       "properties": {
         "title": {
@@ -1388,6 +1311,62 @@
         "tap": {
           "$ref": "#/definitions/CardAction",
           "description": "This action will be activated when user taps on the card itself"
+        }
+      }
+    },
+    "MediaCard": {
+      "description": "Media card",
+      "type": "object",
+      "properties": {
+        "title": {
+          "description": "Title of this card",
+          "type": "string"
+        },
+        "subtitle": {
+          "description": "Subtitle of this card",
+          "type": "string"
+        },
+        "text": {
+          "description": "Text of this card",
+          "type": "string"
+        },
+        "image": {
+          "$ref": "#/definitions/ThumbnailUrl",
+          "description": "Thumbnail placeholder"
+        },
+        "media": {
+          "description": "Media URLs for this card",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MediaUrl"
+          }
+        },
+        "buttons": {
+          "description": "Actions on this card",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CardAction"
+          }
+        },
+        "shareable": {
+          "description": "This content may be shared with others (default:true)",
+          "type": "boolean"
+        },
+        "autoloop": {
+          "description": "Should the client loop playback at end of content (default:true)",
+          "type": "boolean"
+        },
+        "autostart": {
+          "description": "Should the client automatically start playback of media in this card (default:true)",
+          "type": "boolean"
+        },
+        "aspect": {
+          "description": "Aspect ratio of thumbnail/media placeholder, allowed values are \"16:9\" and \"4:3\"",
+          "type": "string"
+        },
+        "value": {
+          "description": "Supplementary parameter for this card",
+          "type": "object"
         }
       }
     },
@@ -1473,7 +1452,7 @@
       }
     },
     "Fact": {
-      "description": "Set of key-value pairs. Advantage of this section is that key and value properties will be \r\n            rendered with default style information with some delimiter between them. So there is no need for developer to specify style information.",
+      "description": "Set of key-value pairs. Advantage of this section is that key and value properties will be \r\nrendered with default style information with some delimiter between them. So there is no need for developer to specify style information.",
       "type": "object",
       "properties": {
         "key": {
@@ -1503,88 +1482,8 @@
         }
       }
     },
-    "AudioCard": {
-      "description": "A audio card",
-      "type": "object",
-      "properties": {
-        "aspect": {
-          "description": "Aspect ratio of thumbnail/media placeholder, allowed values are \"16x9\" and \"9x16\"",
-          "type": "string"
-        },
-        "title": {
-          "description": "Title of the card",
-          "type": "string"
-        },
-        "subtitle": {
-          "description": "Subtitle of the card",
-          "type": "string"
-        },
-        "text": {
-          "description": "Text of the card",
-          "type": "string"
-        },
-        "image": {
-          "$ref": "#/definitions/ThumbnailUrl",
-          "description": "Thumbnail placeholder"
-        },
-        "media": {
-          "description": "Array of media Url objects",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/MediaUrl"
-          }
-        },
-        "buttons": {
-          "description": "Set of actions applicable to the current card",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/CardAction"
-          }
-        },
-        "shareable": {
-          "description": "Is it OK for this content to be shareable with others (default:true)",
-          "type": "boolean"
-        },
-        "autoloop": {
-          "description": "Should the client loop playback at end of content (default:true)",
-          "type": "boolean"
-        },
-        "autostart": {
-          "description": "Should the client automatically start playback of video in this card (default:true)",
-          "type": "boolean"
-        }
-      }
-    },
-    "ThumbnailUrl": {
-      "description": "Object describing a media thumbnail",
-      "type": "object",
-      "properties": {
-        "url": {
-          "description": "url pointing to an thumbnail to use for media content",
-          "type": "string"
-        },
-        "alt": {
-          "description": "Alt text to display for screen readers on the thumbnail image",
-          "type": "string"
-        }
-      }
-    },
-    "MediaUrl": {
-      "description": "MediaUrl data",
-      "type": "object",
-      "properties": {
-        "url": {
-          "description": "Url for the media",
-          "type": "string"
-        },
-        "profile": {
-          "description": "Optional profile hint to the client to differentiate multiple MediaUrl objects from each other",
-          "type": "string"
-        }
-      }
-    },
-    "AnimationCard": {
-      "description": "An animation card (Ex: gif or short video clip)",
+    "ThumbnailCard": {
+      "description": "A thumbnail card (card with a single, small thumbnail image)",
       "type": "object",
       "properties": {
         "title": {
@@ -1596,18 +1495,14 @@
           "type": "string"
         },
         "text": {
-          "description": "Text of the card",
+          "description": "Text for the card",
           "type": "string"
         },
-        "image": {
-          "$ref": "#/definitions/ThumbnailUrl",
-          "description": "Thumbnail placeholder"
-        },
-        "media": {
-          "description": "Array of media Url objects",
+        "images": {
+          "description": "Array of images for the card",
           "type": "array",
           "items": {
-            "$ref": "#/definitions/MediaUrl"
+            "$ref": "#/definitions/CardImage"
           }
         },
         "buttons": {
@@ -1617,38 +1512,26 @@
             "$ref": "#/definitions/CardAction"
           }
         },
-        "shareable": {
-          "description": "Is it OK for this content to be shareable with others (default:true)",
-          "type": "boolean"
-        },
-        "autoloop": {
-          "description": "Should the client loop playback at end of content (default:true)",
-          "type": "boolean"
-        },
-        "autostart": {
-          "description": "Should the client automatically start playback of video in this card (default:true)",
-          "type": "boolean"
+        "tap": {
+          "$ref": "#/definitions/CardAction",
+          "description": "This action will be activated when user taps on the card itself"
         }
       }
     },
     "VideoCard": {
-      "description": "A video card",
+      "description": "Video card",
       "type": "object",
       "properties": {
-        "aspect": {
-          "description": "Aspect ratio (16:9)(4:3)",
-          "type": "string"
-        },
         "title": {
-          "description": "Title of the card",
+          "description": "Title of this card",
           "type": "string"
         },
         "subtitle": {
-          "description": "Subtitle of the card",
+          "description": "Subtitle of this card",
           "type": "string"
         },
         "text": {
-          "description": "Text of the card",
+          "description": "Text of this card",
           "type": "string"
         },
         "image": {
@@ -1656,21 +1539,21 @@
           "description": "Thumbnail placeholder"
         },
         "media": {
-          "description": "Array of media Url objects",
+          "description": "Media URLs for this card",
           "type": "array",
           "items": {
             "$ref": "#/definitions/MediaUrl"
           }
         },
         "buttons": {
-          "description": "Set of actions applicable to the current card",
+          "description": "Actions on this card",
           "type": "array",
           "items": {
             "$ref": "#/definitions/CardAction"
           }
         },
         "shareable": {
-          "description": "Is it OK for this content to be shareable with others (default:true)",
+          "description": "This content may be shared with others (default:true)",
           "type": "boolean"
         },
         "autoloop": {
@@ -1678,8 +1561,16 @@
           "type": "boolean"
         },
         "autostart": {
-          "description": "Should the client automatically start playback of video in this card (default:true)",
+          "description": "Should the client automatically start playback of media in this card (default:true)",
           "type": "boolean"
+        },
+        "aspect": {
+          "description": "Aspect ratio of thumbnail/media placeholder, allowed values are \"16:9\" and \"4:3\"",
+          "type": "string"
+        },
+        "value": {
+          "description": "Supplementary parameter for this card",
+          "type": "object"
         }
       }
     },
@@ -1712,21 +1603,39 @@
         }
       }
     },
+    "Mention": {
+      "description": "Mention information (entity type: \"mention\")",
+      "type": "object",
+      "properties": {
+        "mentioned": {
+          "$ref": "#/definitions/ChannelAccount",
+          "description": "The mentioned user"
+        },
+        "text": {
+          "description": "Sub Text which represents the mention (can be null or empty)",
+          "type": "string"
+        },
+        "type": {
+          "description": "Entity Type (typically from schema.org types)",
+          "type": "string"
+        }
+      }
+    },
     "Place": {
       "description": "Place (entity type: \"https://schema.org/Place\")",
       "type": "object",
       "properties": {
         "address": {
-          "$ref": "#/definitions/Object",
-          "description": "Address of the place (may be `string` or complex object of type `PostalAddress`)"
+          "description": "Address of the place (may be `string` or complex object of type `PostalAddress`)",
+          "type": "object"
         },
         "geo": {
-          "$ref": "#/definitions/Object",
-          "description": "Geo coordinates of the place (may be complex object of type `GeoCoordinates` or `GeoShape`)"
+          "description": "Geo coordinates of the place (may be complex object of type `GeoCoordinates` or `GeoShape`)",
+          "type": "object"
         },
         "hasMap": {
-          "$ref": "#/definitions/Object",
-          "description": "Map to the place (may be `string` (URL) or complex object of type `Map`)"
+          "description": "Map to the place (may be `string` (URL) or complex object of type `Map`)",
+          "type": "object"
         },
         "type": {
           "description": "The type of the thing",
@@ -1737,6 +1646,398 @@
           "type": "string"
         }
       }
+    },
+    "Thing": {
+      "description": "Thing (entity type: \"https://schema.org/Thing\")",
+      "type": "object",
+      "properties": {
+        "type": {
+          "description": "The type of the thing",
+          "type": "string"
+        },
+        "name": {
+          "description": "The name of the thing",
+          "type": "string"
+        }
+      }
+    },
+    "MediaEventValue": {
+      "description": "Supplementary parameter for media events",
+      "type": "object",
+      "properties": {
+        "cardValue": {
+          "description": "Callback parameter specified in the Value field of the MediaCard that originated this event",
+          "type": "object"
+        }
+      }
+    },
+    "MicrosoftPayMethodData": {
+      "description": "W3C Payment Method Data for Microsoft Pay",
+      "type": "object",
+      "properties": {
+        "mechantId": {
+          "description": "Microsoft Pay Merchant ID",
+          "type": "string"
+        },
+        "supportedNetworks": {
+          "description": "Supported payment networks (e.g., \"visa\" and \"mastercard\")",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "supportedTypes": {
+          "description": "Supported payment types (e.g., \"credit\")",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "PaymentAddress": {
+      "description": "Address within a Payment Request",
+      "type": "object",
+      "properties": {
+        "country": {
+          "description": "This is the CLDR (Common Locale Data Repository) region code. For example, US, GB, CN, or JP",
+          "type": "string"
+        },
+        "addressLine": {
+          "description": "This is the most specific part of the address. It can include, for example, a street name, a house number, apartment number, a rural delivery route, descriptive instructions, or a post office box number.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "region": {
+          "description": "This is the top level administrative subdivision of the country. For example, this can be a state, a province, an oblast, or a prefecture.",
+          "type": "string"
+        },
+        "city": {
+          "description": "This is the city/town portion of the address.",
+          "type": "string"
+        },
+        "dependentLocality": {
+          "description": "This is the dependent locality or sublocality within a city. For example, used for neighborhoods, boroughs, districts, or UK dependent localities.",
+          "type": "string"
+        },
+        "postalCode": {
+          "description": "This is the postal code or ZIP code, also known as PIN code in India.",
+          "type": "string"
+        },
+        "sortingCode": {
+          "description": "This is the sorting code as used in, for example, France.",
+          "type": "string"
+        },
+        "languageCode": {
+          "description": "This is the BCP-47 language code for the address. It's used to determine the field separators and the order of fields when formatting the address for display.",
+          "type": "string"
+        },
+        "organization": {
+          "description": "This is the organization, firm, company, or institution at this address.",
+          "type": "string"
+        },
+        "recipient": {
+          "description": "This is the name of the recipient or contact person.",
+          "type": "string"
+        },
+        "phone": {
+          "description": "This is the phone number of the recipient or contact person.",
+          "type": "string"
+        }
+      }
+    },
+    "PaymentCurrencyAmount": {
+      "description": "Supplies monetary amounts",
+      "type": "object",
+      "properties": {
+        "currency": {
+          "description": "A currency identifier",
+          "type": "string"
+        },
+        "value": {
+          "description": "Decimal monetary value",
+          "type": "string"
+        },
+        "currencySystem": {
+          "description": "Currency system",
+          "type": "string"
+        }
+      }
+    },
+    "PaymentDetails": {
+      "description": "Provides information about the requested transaction",
+      "type": "object",
+      "properties": {
+        "total": {
+          "$ref": "#/definitions/PaymentItem",
+          "description": "Contains the total amount of the payment request"
+        },
+        "displayItems": {
+          "description": "Contains line items for the payment request that the user agent may display",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PaymentItem"
+          }
+        },
+        "shippingOptions": {
+          "description": "A sequence containing the different shipping options for the user to choose from",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PaymentShippingOption"
+          }
+        },
+        "modifiers": {
+          "description": "Contains modifiers for particular payment method identifiers",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PaymentDetailsModifier"
+          }
+        },
+        "error": {
+          "description": "Error description",
+          "type": "string"
+        }
+      }
+    },
+    "PaymentItem": {
+      "description": "Indicates what the payment request is for and the value asked for",
+      "type": "object",
+      "properties": {
+        "label": {
+          "description": "Human-readable description of the item",
+          "type": "string"
+        },
+        "amount": {
+          "$ref": "#/definitions/PaymentCurrencyAmount",
+          "description": "Monetary amount for the item"
+        },
+        "pending": {
+          "description": "When set to true this flag means that the amount field is not final.",
+          "type": "boolean"
+        }
+      }
+    },
+    "PaymentShippingOption": {
+      "description": "Describes a shipping option",
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "String identifier used to reference this PaymentShippingOption",
+          "type": "string"
+        },
+        "label": {
+          "description": "Human-readable description of the item",
+          "type": "string"
+        },
+        "amount": {
+          "$ref": "#/definitions/PaymentCurrencyAmount",
+          "description": "Contains the monetary amount for the item"
+        },
+        "selected": {
+          "description": "Indicates whether this is the default selected PaymentShippingOption",
+          "type": "boolean"
+        }
+      }
+    },
+    "PaymentDetailsModifier": {
+      "description": "Provides details that modify the PaymentDetails based on payment method identifier",
+      "type": "object",
+      "properties": {
+        "supportedMethods": {
+          "description": "Contains a sequence of payment method identifiers",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "total": {
+          "$ref": "#/definitions/PaymentItem",
+          "description": "This value overrides the total field in the PaymentDetails dictionary for the payment method identifiers in the supportedMethods field"
+        },
+        "additionalDisplayItems": {
+          "description": "Provides additional display items that are appended to the displayItems field in the PaymentDetails dictionary for the payment method identifiers in the supportedMethods field",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PaymentItem"
+          }
+        },
+        "data": {
+          "description": "A JSON-serializable object that provides optional information that might be needed by the supported payment methods",
+          "type": "object"
+        }
+      }
+    },
+    "PaymentMethodData": {
+      "description": "Indicates a set of supported payment methods and any associated payment method specific data for those methods",
+      "type": "object",
+      "properties": {
+        "supportedMethods": {
+          "description": "Required sequence of strings containing payment method identifiers for payment methods that the merchant web site accepts",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "data": {
+          "description": "A JSON-serializable object that provides optional information that might be needed by the supported payment methods",
+          "type": "object"
+        }
+      }
+    },
+    "PaymentOptions": {
+      "description": "Provides information about the options desired for the payment request",
+      "type": "object",
+      "properties": {
+        "requestPayerName": {
+          "description": "Indicates whether the user agent should collect and return the payer's name as part of the payment request",
+          "type": "boolean"
+        },
+        "requestPayerEmail": {
+          "description": "Indicates whether the user agent should collect and return the payer's email address as part of the payment request",
+          "type": "boolean"
+        },
+        "requestPayerPhone": {
+          "description": "Indicates whether the user agent should collect and return the payer's phone number as part of the payment request",
+          "type": "boolean"
+        },
+        "requestShipping": {
+          "description": "Indicates whether the user agent should collect and return a shipping address as part of the payment request",
+          "type": "boolean"
+        },
+        "shippingType": {
+          "description": "If requestShipping is set to true, then the shippingType field may be used to influence the way the user agent presents the user interface for gathering the shipping address",
+          "type": "string"
+        }
+      }
+    },
+    "PaymentRequest": {
+      "description": "A request to make a payment",
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "ID of this payment request",
+          "type": "string"
+        },
+        "methodData": {
+          "description": "Allowed payment methods for this request",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PaymentMethodData"
+          }
+        },
+        "details": {
+          "$ref": "#/definitions/PaymentDetails",
+          "description": "Details for this request"
+        },
+        "options": {
+          "$ref": "#/definitions/PaymentOptions",
+          "description": "Provides information about the options desired for the payment request"
+        },
+        "expires": {
+          "description": "Expiration for this request, in ISO 8601 duration format (e.g., 'P1D')",
+          "type": "string"
+        }
+      }
+    },
+    "PaymentRequestComplete": {
+      "description": "Payload delivered when completing a payment request",
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Payment request ID",
+          "type": "string"
+        },
+        "paymentRequest": {
+          "$ref": "#/definitions/PaymentRequest",
+          "description": "Initial payment request"
+        },
+        "paymentResponse": {
+          "$ref": "#/definitions/PaymentResponse",
+          "description": "Corresponding payment response"
+        }
+      }
+    },
+    "PaymentResponse": {
+      "description": "A PaymentResponse is returned when a user has selected a payment method and approved a payment request",
+      "type": "object",
+      "properties": {
+        "methodName": {
+          "description": "The payment method identifier for the payment method that the user selected to fulfil the transaction",
+          "type": "string"
+        },
+        "details": {
+          "description": "A JSON-serializable object that provides a payment method specific message used by the merchant to process the transaction and determine successful fund transfer",
+          "type": "object"
+        },
+        "shippingAddress": {
+          "$ref": "#/definitions/PaymentAddress",
+          "description": "If the requestShipping flag was set to true in the PaymentOptions passed to the PaymentRequest constructor, then shippingAddress will be the full and final shipping address chosen by the user"
+        },
+        "shippingOption": {
+          "description": "If the requestShipping flag was set to true in the PaymentOptions passed to the PaymentRequest constructor, then shippingOption will be the id attribute of the selected shipping option",
+          "type": "string"
+        },
+        "payerEmail": {
+          "description": "If the requestPayerEmail flag was set to true in the PaymentOptions passed to the PaymentRequest constructor, then payerEmail will be the email address chosen by the user",
+          "type": "string"
+        },
+        "payerPhone": {
+          "description": "If the requestPayerPhone flag was set to true in the PaymentOptions passed to the PaymentRequest constructor, then payerPhone will be the phone number chosen by the user",
+          "type": "string"
+        }
+      }
+    },
+    "PaymentRequestCompleteResult": {
+      "description": "Result from a completed payment request",
+      "type": "object",
+      "properties": {
+        "result": {
+          "description": "Result of the payment request completion",
+          "type": "string"
+        }
+      }
+    },
+    "PaymentRequestUpdate": {
+      "description": "An update to a payment request",
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "ID for the payment request to update",
+          "type": "string"
+        },
+        "details": {
+          "$ref": "#/definitions/PaymentDetails",
+          "description": "Update payment details"
+        },
+        "shippingAddress": {
+          "$ref": "#/definitions/PaymentAddress",
+          "description": "Updated shipping address"
+        },
+        "shippingOption": {
+          "description": "Updated shipping options",
+          "type": "string"
+        }
+      }
+    },
+    "PaymentRequestUpdateResult": {
+      "description": "A result object from a Payment Request Update invoke operation",
+      "type": "object",
+      "properties": {
+        "details": {
+          "$ref": "#/definitions/PaymentDetails",
+          "description": "Update payment details"
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "bearer_auth": {
+      "type": "apiKey",
+      "description": "Access Token to authenticate calls to the Bot Connector Service.",
+      "name": "Authorization",
+      "in": "header"
     }
   }
 }

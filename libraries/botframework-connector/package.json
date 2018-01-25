@@ -9,17 +9,11 @@
     "bots",
     "chatbots"
   ],
-  "bugs": {
-    "url": "https://github.com/Microsoft/BotBuilder/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Microsoft/BotBuilder.git"
-  },
-  "main": "./lib/connectorClient.js",
-  "typings": "./lib/connectorClient.d.ts",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
   "dependencies": {
-    "ms-rest": "^2.2.0"
+    "ms-rest": "^2.2.2",
+    "ms-rest-azure": "^2.3.3"
   },
   "devDependencies": {
     "@types/mocha": "^2.2.47",
@@ -32,5 +26,13 @@
   },
   "scripts": {
     "test": "nyc mocha tests/"
+  },
+  "homepage": "http://github.com/Microsoft/BotBuilder-JS",
+  "bugs": {
+    "url": "http://github.com/Microsoft/BotBuilder-JS/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:Microsoft/BotBuilder-JS.git"
   }
 }
