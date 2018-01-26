@@ -1,4 +1,4 @@
-import { Bot, ConsoleLogger, MemoryStorage, BotStateManager, ConversationReference } from 'botbuilder-core';
+import { Bot, ConsoleLogger, MemoryStorage, BotStateManager, ConversationReference } from 'botbuilder';
 import { BotFrameworkAdapter } from 'botbuilder-services';
 import * as restify from "restify";
 
