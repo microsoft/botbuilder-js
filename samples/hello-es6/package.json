@@ -11,8 +11,8 @@
     "dependencies": {
       "@types/node": "^8.0.13",
       "@types/restify": "^5.0.1",
-      "botbuilder-core": "file:../../core",
-      "botbuilder-services": "file:../../services",
+      "botbuilder-core": "file:../../libraries/botbuilder",
+      "botbuilder-services": "file:../../libraries/botbuilder-services",
       "restify": "^5.0.0"
     }
   }

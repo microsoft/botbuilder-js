@@ -1,4 +1,4 @@
-import { Bot } from 'botbuilder-core';
+import { Bot } from 'botbuilder';
 import { BotFrameworkAdapter } from 'botbuilder-services';
 import * as restify from 'restify';
 
