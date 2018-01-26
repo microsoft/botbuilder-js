@@ -26,7 +26,7 @@ export const ActivityTypes = {
 
     /** A message sent from or to a user/group. */
     message: 'message',
-    
+
     /** A message activity within a conversation has had a message reaction added or removed. */
     messageReaction: 'messageReaction',
 

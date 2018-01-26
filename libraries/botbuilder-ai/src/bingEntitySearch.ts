@@ -2,14 +2,14 @@
  * @module botbuilder-ai
  */
 /** second comment block */
-import { Activity, SearchEngine, SearchCatalog, SearchHit } from 'botbuilder';
+import { SearchCatalog, SearchEngine, SearchHit } from 'botbuilder';
 import * as request from 'request-promise-native';
 
 let serviceEndpoint = 'https://api.cognitive.microsoft.com/bing/v7.0/entities';
 
 export interface BingEntitySearchOptions {
     subscriptionKey: string;
-    responseFilter?: string
+    responseFilter?: string;
 }
 
 export interface QueryOptions {

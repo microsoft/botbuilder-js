@@ -2,7 +2,7 @@
  * @module botbuilder-ai
  */
 /** second comment block */
-import { Activity, Intent, IntentRecognizer, EntityObject, EntityTypes } from 'botbuilder';
+import { EntityObject, EntityTypes, Intent, IntentRecognizer } from 'botbuilder';
 import LuisClient = require('botframework-luis');
 
 EntityTypes.luis = "Luis";
@@ -32,12 +32,12 @@ export class LuisRecognizer extends IntentRecognizer {
     protected static recognizeAndMap(client: LuisClient, utterance: string, appId: string, subscriptionKey: string): Promise<Intent> {
         return client.getIntentsAndEntitiesV2(appId, subscriptionKey, utterance)
             .then(result => {
-                var topScoringIntent = result.topScoringIntent || { intent: '', score: 0.0 };
+                var topScoringIntent = result.topScoringIntent || {intent: '', score: 0.0};
                 return {
                     name: topScoringIntent.intent,
                     score: topScoringIntent.score,
                     entities: result.entities.map(entity => {
-                        return { ...{ value: entity.entity }, ...entity  } as  EntityObject<string>;
+                        return {...{value: entity.entity}, ...entity} as  EntityObject<string>;
                     })
                 } as Intent
             });
