@@ -31,7 +31,7 @@ module.exports = {
     },
     initLuisRecognizer: function () {
         const luisAppId = process.env.LUIS_APP_ID;
-        const subscriptionKey = process.env.LUIS_APP_KEY;
+        const luisAppKey = process.env.LUIS_APP_KEY;
         return new ai.LuisRecognizer(luisAppId, luisAppKey);
     },
     handleConversationUpdateEvents: function (context) {
