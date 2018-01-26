@@ -1,5 +1,5 @@
-const builder = require('../../libraries/core');
-const services = require('../../libraries/services');
+const builder = require('botbuilder');
+const services = require('botbuilder-services');
 const restify = require('restify');
 const config = require('./bot/config');
 const router = require('./bot/router');
