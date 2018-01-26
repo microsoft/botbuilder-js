@@ -17,6 +17,9 @@ call npm run test
 echo mocha tests for: botbuilder-storage
 cd ..\botbuilder-storage
 call npm run test
+echo mocha tests for: botbuilder-recognizers
+cd ..\botbuilder-recognizers
+call npm run test
 echo mocha tests for: botbuilder-node
 cd ..\botbuilder-node
 call npm run test

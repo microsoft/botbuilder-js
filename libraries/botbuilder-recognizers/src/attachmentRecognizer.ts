@@ -1,10 +1,10 @@
 /**
- * @module botbuilder
+ * @module botbuilder-recognizers
  */
 /** second comment block */
-import { Intent, IntentRecognizer } from './intentRecognizer';
-import { EntityObject, EntityTypes } from './entityRecognizers';
-import { Attachment } from './index';
+import { BotContext, Attachment } from 'botbuilder';
+import { IntentRecognizer } from './intentRecognizer';
+import { Intent } from './intentSet';
 
 /** Optional settings for an `AttachmentRecognizer`. */
 export interface AttachmentRecognizerSettings {
@@ -35,7 +35,7 @@ export interface AttachmentRecognizerSettings {
  *      });
  * ```
  */
-export class AttachmentRecognizer extends IntentRecognizer {
+export class AttachmentRecognizer extends IntentRecognizer<Attachment[]> {
     private settings: AttachmentRecognizerSettings;
     private typeFilters: ContentTypeFilter[] = [];
 
@@ -51,25 +51,19 @@ export class AttachmentRecognizer extends IntentRecognizer {
         }, settings);
 
         this.onRecognize((context) => {
-            const intents: Intent[] = [];
-            if (context.request.attachments && context.request.attachments.length > 0) {
-                // Map attachments to entities
-                const entities: EntityObject<Attachment>[] = [];
-                context.request.attachments.forEach((a) => entities.push({ 
-                    type: a.contentType || EntityTypes.attachment, 
-                    score: 1.0, 
-                    value: a 
-                }));
-
+            const intents: Intent<Attachment[]>[] = [];
+            const attachments = context.request && context.request.attachments ? context.request.attachments : []; 
+            if (attachments.length > 0) {
                 // Filter by content type
                 if (this.typeFilters.length > 0) {
                     // Sort by content type
-                    const matches: { [type: string]: EntityObject<Attachment>[] } = {};
-                    entities.forEach((entity) => {
-                        if (matches.hasOwnProperty(entity.type)) {
-                            matches[entity.type].push(entity);
+                    const matches: { [type: string]: Attachment[] } = {};
+                    attachments.forEach((a) => {
+                        const type = a.contentType || '';
+                        if (matches.hasOwnProperty(type)) {
+                            matches[type].push(a);
                         } else {
-                            matches[entity.type] = [entity];
+                            matches[type] = [a];
                         }
                     });
 
@@ -97,7 +91,7 @@ export class AttachmentRecognizer extends IntentRecognizer {
                     intents.push({ 
                         score: 1.0, 
                         name: <string>this.settings.intentName,
-                        entities: entities
+                        entities: attachments
                     });
                 }
             }

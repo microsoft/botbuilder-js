@@ -14,6 +14,11 @@ echo tsc compiling: botbuilder-storage
 call tsc
 if errorlevel 1 goto err
 
+cd ..\botbuilder-recognizers
+echo tsc compiling: botbuilder-recognizers
+call tsc
+if errorlevel 1 goto err
+
 cd ..\botbuilder-node
 echo tsc compiling: botbuilder-node
 call tsc

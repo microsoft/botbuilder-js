@@ -33,6 +33,12 @@ call npm install
 call npm link
 cd ..
 
+cd botbuilder-recognizers
+call npm link botbuilder
+call npm install
+call npm link
+cd ..
+
 cd botbuilder-node
 call npm link botbuilder
 call npm link botbuilder-storage

@@ -5,10 +5,6 @@
 
 import { BotContext, Activity, ActivityTypes, EndOfConversationCodes } from 'botbuilder';
 
-export interface IMyService {
-
-} 
-
 declare global {
     export interface BotContextExtensions {
         /**
@@ -133,6 +129,3 @@ BotContext.prototype.showTyping = function showTyping() {
     this.responses.push({ type: ActivityTypes.typing });
     return this;
 };
-
-const context = new BotContext();
-const foo = context.get("myService")

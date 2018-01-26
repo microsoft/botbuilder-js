@@ -6,6 +6,8 @@ cd ..\botbuilder-stylers
 erase /q lib\*.*
 cd ..\botbuilder-storage
 erase /q lib\*.*
+cd ..\botbuilder-recognizers
+erase /q lib\*.*
 cd ..\botbuilder-node
 erase /q lib\*.*
 cd ..\botbuilder-services

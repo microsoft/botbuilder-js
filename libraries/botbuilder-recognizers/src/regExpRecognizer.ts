@@ -1,9 +1,10 @@
 /**
- * @module botbuilder
+ * @module botbuilder-recognizers
  */
 /** second comment block */
-import { Intent, IntentRecognizer } from './intentRecognizer';
-import { EntityObject, EntityTypes } from './entityRecognizers';
+import { BotContext } from 'botbuilder';
+import { IntentRecognizer } from './intentRecognizer';
+import { Intent } from './intentSet';
 
 export interface RegExpLocaleMap {
     [locale:string]: RegExp|RegExp[];
@@ -16,6 +17,17 @@ export interface RegExpRecognizerSettings {
      * expression. This defaults to a value of 0.0. 
      */
     minScore: number;
+}
+
+export interface RegExpEntities {
+    /** Raw output from RegExp.exec() call. */
+    '@instance': RegExpExecArray;
+
+    /** 
+     * Named capture groups. This is only populated when a list of group names is provided for 
+     * the matched expression. 
+     */
+    [group: string]: any; 
 }
 
 /**
@@ -57,7 +69,7 @@ export interface RegExpRecognizerSettings {
  * });
  * ```
  */
-export class RegExpRecognizer extends IntentRecognizer {
+export class RegExpRecognizer extends IntentRecognizer<RegExpEntities> {
     private settings: RegExpRecognizerSettings;
     private intents: { [name: string]: RegExpLocaleMap; } = {};
 
@@ -77,7 +89,7 @@ export class RegExpRecognizer extends IntentRecognizer {
         
         this.onRecognize((context) => { 
             const intents: Intent[] = [];
-            const utterance = (context.request.text || '').trim();
+            const utterance = (context.request && context.request.text ? context.request.text : '').trim();
             const minScore = this.settings.minScore;
             for (const name in this.intents) {
                 const map = this.intents[name];
@@ -154,7 +166,7 @@ export class RegExpRecognizer extends IntentRecognizer {
     }
 
     private getExpressions(context: BotContext, map: RegExpLocaleMap): RegExp[]|undefined {
-        const locale = context.request.locale || '*';
+        const locale = context.request && context.request.locale ? context.request.locale : '*';
         const entry = map.hasOwnProperty(locale) ? map[locale] : map['*'];
         return entry ? (Array.isArray(entry) ? entry : [entry]) : undefined;
     }
@@ -168,11 +180,10 @@ export class RegExpRecognizer extends IntentRecognizer {
      *
      * @param text The text string to match against.
      * @param expression The expression to match.
-     * @param entityTypes (Optional) array of types to assign to each entity returned for a numbered 
-     * capture group. As an example, for the expression `/flight from (.*) to (.*)/i` you could
-     * pass a value of `['fromCity', 'toCity']`. The entity returned for the first capture group will
-     * have a type of `fromCity` and the entity for the second capture group will have a type of 
-     * `toCity`. The default entity type returned when not specified is `string`.
+     * @param groupNames (Optional) array of property names to use for each group returned for a 
+     * numbered capture group. As an example, for the expression `/flight from (.*) to (.*)/i` 
+     * you could pass a value of `['fromCity', 'toCity']` and the entities returned will be an 
+     * Object containing 'fromCity' and 'toCity' members with the values filled in.S 
      * @param minScore (Optional) minimum score to return for the coverage score. The default value
      * is 0.0 but if provided, the calculated coverage score will be scaled to a value between the
      * minScore and 1.0. For example, a expression that matches 50% of the text will result in a
@@ -180,7 +191,7 @@ export class RegExpRecognizer extends IntentRecognizer {
      * scaled to be 0.75 or 50% between 0.5 and 1.0. As another example, providing a minScore of 1.0 
      * will always result in a match returning a score of 1.0.  
      */
-    static recognize(text: string, expression: RegExp, entityTypes: string[] = [], minScore = 0.0): Intent|undefined {
+    static recognize(text: string, expression: RegExp, groupNames: string[] = [], minScore = 0.0): Intent<RegExpEntities>|undefined {
         if (typeof minScore !== 'number' || minScore < 0 || minScore > 1.0) {
             throw new Error(`RegExpRecognizer: a minScore of '${minScore}' is out of range for expression '${expression.toString()}'.`);
         }
@@ -192,11 +203,14 @@ export class RegExpRecognizer extends IntentRecognizer {
             const score = minScore + ((1.0 - minScore) * coverage);
             
             // Populate entities
-            const entities: EntityObject<string>[] = [];
-            if (matched.length > 1) {
+            const entities: RegExpEntities = { '@instance': matched };
+            if (matched.length > 1 && groupNames.length > 0) {
                 for (let i = 1; i < matched.length; i++) {
-                    const type = (i - 1) < entityTypes.length ? entityTypes[i - 1] : EntityTypes.string;
-                    entities.push({ type: type, score: 1.0, value: matched[i] });
+                    const grpIndex = i - 1;
+                    if (grpIndex < groupNames.length) {
+                        const name = groupNames[grpIndex];
+                        entities[name] = matched[i];
+                    }
                 }
             }
 

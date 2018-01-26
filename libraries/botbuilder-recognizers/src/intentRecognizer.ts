@@ -1,25 +1,9 @@
 /**
- * @module botbuilder
+ * @module botbuilder-recognizers
  */
 /** second comment block */
-import { Middleware, Promiseable } from './middleware';
-import { EntityObject } from './entityRecognizers';
-
-/**
- * A named intent that represents an informed guess as to what the user is wanting to do based on 
- * their last utterance.  Intents have a [score](#score) which is the calculated confidence of this
- * guess. 
- */
-export interface Intent {
-    /** Name of the intent. */
-    name: string;
-
-    /** Calculated confidence score. */
-    score: number;
-
-    /** (Optional) entities that were recognized as being related to this intent. */
-    entities?: EntityObject<any>[];
-}
+import { BotContext, Middleware, Promiseable } from 'botbuilder';
+import { Intent } from './intentSet';
 
 /**
  * Middleware that's the base class for all intent recognizers.
@@ -27,18 +11,15 @@ export interface Intent {
  * __Extends BotContext:__
  * * context.topIntent - The top recognized `Intent` for the users utterance.
  */
-export class IntentRecognizer implements Middleware {
+export class IntentRecognizer<T = any> implements Middleware {
     private enabledChain: ((context: BotContext) => Promiseable<boolean>)[] = [];
-    private recognizeChain: ((context: BotContext) => Promiseable<Intent[]>)[] = [];
-    private filterChain: ((context: BotContext, intents: Intent[]) => Promise<Intent[]|void>|Intent[]|void)[] = [];
+    private recognizeChain: ((context: BotContext) => Promiseable<Intent<T>[]>)[] = [];
+    private filterChain: ((context: BotContext, intents: Intent<T>[]) => Promise<Intent<T>[]|void>|Intent<T>[]|void)[] = [];
 
     public receiveActivity(context: BotContext, next: () => Promise<void>): Promise<void> {
         return this.recognize(context)
-            .then((intents) => IntentRecognizer.findTopIntent(intents))
-            .then((intent) => {
-                if (intent && intent.score > 0.0) {
-                    context.topIntent = intent;
-                }
+            .then((intents) => {
+                intents.forEach((intent) => context.intents.all.push(intent));
                 return next();
             });
     }
@@ -48,8 +29,8 @@ export class IntentRecognizer implements Middleware {
      *
      * @param context Context for the current turn of the conversation.
      */
-    public recognize(context: BotContext): Promise<Intent[]> {
-        return new Promise<Intent[]>((resolve, reject) => {
+    public recognize(context: BotContext): Promise<Intent<T>[]> {
+        return new Promise<Intent<T>[]>((resolve, reject) => {
             this.runEnabled(context)
                 .then((enabled) => {
                     if (enabled) {
@@ -85,7 +66,7 @@ export class IntentRecognizer implements Middleware {
      *
      * @param handler Function that will be called to recognize a users intent.
      */
-    public onRecognize(handler: (context: BotContext) => Promiseable<Intent[]>): this {
+    public onRecognize(handler: (context: BotContext) => Promiseable<Intent<T>[]>): this {
         this.recognizeChain.unshift(handler);
         return this;
     }
@@ -101,7 +82,7 @@ export class IntentRecognizer implements Middleware {
      * that will become the new set of output intents passed on to the next filter. The final filter in
      * the chain will reduce the output set of intents to a single top scoring intent. 
      */
-    public onFilter(handler: (context: BotContext, intents: Intent[]) => Promiseable<Intent[]|void>): this {
+    public onFilter(handler: (context: BotContext, intents: Intent<T>[]) => Promiseable<Intent<T>[]|void>): this {
         this.filterChain.push(handler);
         return this;
     }
@@ -130,9 +111,9 @@ export class IntentRecognizer implements Middleware {
         });
     }
 
-    private runRecognize(context: BotContext): Promise<Intent[]> {
-        return new Promise<Intent[]>((resolve, reject) => {
-            let intents: Intent[] = [];
+    private runRecognize(context: BotContext): Promise<Intent<T>[]> {
+        return new Promise<Intent<T>[]>((resolve, reject) => {
+            let intents: Intent<T>[] = [];
             const chain = this.recognizeChain.slice();
             function next(i: number) {
                 if (i < chain.length) {
@@ -154,9 +135,9 @@ export class IntentRecognizer implements Middleware {
         });
     }
 
-    private runFilter(context: BotContext, intents: Intent[]): Promise<Intent[]> {
-        return new Promise<Intent[]>((resolve, reject) => {
-            let filtered: Intent[] = intents;
+    private runFilter(context: BotContext, intents: Intent<T>[]): Promise<Intent<T>[]> {
+        return new Promise<Intent<T>[]>((resolve, reject) => {
+            let filtered: Intent<T>[] = intents;
             const chain = this.filterChain.slice();
             function next(i: number) {
                 if (i < chain.length) {
@@ -175,23 +156,6 @@ export class IntentRecognizer implements Middleware {
                 }
             }
             next(0);
-        });
-    }
-
-    /** 
-     * Finds the top scoring intent given a set of intents.
-     *
-     * @param intents Array of intents to filter.  
-     */
-    static findTopIntent(intents: Intent[]): Promise<Intent|undefined> {
-        return new Promise<Intent|undefined>((resolve, reject) => {
-            let top: Intent|undefined = undefined;
-            (intents || []).forEach((intent) => {
-                if (!top || intent.score > top.score) {
-                    top = intent;
-                }
-            });
-            resolve(top);
         });
     }
 }

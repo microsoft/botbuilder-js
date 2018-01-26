@@ -2,7 +2,7 @@
 
 cwd=$(pwd);
 # packages containing docs 
-packages=("" "-stylers" "-storage" "-node" "-services" "-ai" "-azure" "-choices");
+packages=("" "-stylers" "-storage" "-recognizers" "-state" "-templates" "-node" "-services" "-ai" "-azure" "-choices");
 
 for dir in ${packages[*]};
 do

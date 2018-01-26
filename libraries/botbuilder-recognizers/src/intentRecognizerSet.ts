@@ -1,8 +1,10 @@
 /**
- * @module botbuilder
+ * @module botbuilder-recognizers
  */
 /** second comment block */
-import { Intent, IntentRecognizer } from './intentRecognizer';
+import { BotContext } from 'botbuilder';
+import { Intent } from './intentSet';
+import { IntentRecognizer } from './intentRecognizer';
 
 export enum RecognizeOrder { parallel, series }
 
