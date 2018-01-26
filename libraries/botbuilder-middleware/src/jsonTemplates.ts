@@ -37,9 +37,10 @@ export class JsonTemplates implements TemplateRenderer, Middleware {
     }
 
     renderTemplate(context: BotContext, language: string, templateId: string, data: any): Promise<Partial<Activity> | string | undefined> {
-        var result = this.render(`${language}-${templateId}`, data);
-        if (result)
+        const result = this.render(`${language}-${templateId}`, data);
+        if (result) {
             return Promise.resolve(JSON.parse(result));
+        }
         return Promise.resolve(undefined);
     }
 
@@ -73,8 +74,9 @@ export class JsonTemplates implements TemplateRenderer, Middleware {
      */
     public render(name: string, data: Object): string | undefined {
         let template = this.templates[name];
-        if (!template)
+        if (!template) {
             return undefined;
+        }
         return template(data);
     }
 
@@ -84,16 +86,17 @@ export class JsonTemplates implements TemplateRenderer, Middleware {
      *
      * @param name Name of the registered template to render.
      * @param data Data object to render template against.
-     * @param postProcess (Optional) if `true` the rendered output object will be scanned looking 
-     * for any processing directives, such as @prune. The default value is `true`.   
+     * @param postProcess (Optional) if `true` the rendered output object will be scanned looking
+     * for any processing directives, such as @prune. The default value is `true`.
      */
     public renderAsJSON(name: string, data: Object, postProcess?: boolean): any {
         var json = this.render(name, data);
-        if (!json)
+        if (!json) {
             return null;
+        }
         let obj = JSON.parse(json);
         if (postProcess || postProcess === undefined) {
-            obj = this.postProcess(obj)
+            obj = this.postProcess(obj);
         }
         return obj;
     }
@@ -101,7 +104,7 @@ export class JsonTemplates implements TemplateRenderer, Middleware {
     /**
      * Post processes a JSON object by walking the object and evaluating any processing directives
      * like @prune.
-     * @param object Object to post process. 
+     * @param object Object to post process.
      */
     public postProcess(object: any): any {
         if (!processNode(object, {})) {
@@ -116,7 +119,7 @@ export class JsonTemplates implements TemplateRenderer, Middleware {
      * a data object.
      *
      * @param json The JSON template to compile.
-     * @param templates (Optional) map of template functions (and other compiled templates) that 
+     * @param templates (Optional) map of template functions (and other compiled templates) that
      * can be called at render time.
      */
     static compile(json: string | any, templates?: TemplateFunctionMap): TemplateFunction {
@@ -133,7 +136,7 @@ export class JsonTemplates implements TemplateRenderer, Middleware {
         return (data: Object, path?: string) => {
             // Check for optional path.
             // - Templates can be executed as children of other templates so the path
-            //   specifies the property off the parent to execute the template for. 
+            //   specifies the property off the parent to execute the template for.
             let obj = '';
             if (path) {
                 const value = getValue(data, path);
@@ -154,7 +157,7 @@ export class JsonTemplates implements TemplateRenderer, Middleware {
                 parsed.forEach((fn) => obj += fn(data));
             }
             return obj;
-        }
+        };
     }
 }
 
@@ -172,9 +175,9 @@ function parse(json: string, templates?: TemplateFunctionMap): TemplateFunction[
         switch (state) {
             case ParseState.none:
             default:
-                if ((char == '\'' || char == '"') && i < (l - 1)) {
+                if ((char === '\'' || char === '"') && i < (l - 1)) {
                     // Check for literal
-                    if (json[i + 1] == '!') {
+                    if (json[i + 1] === '!') {
                         i++;    // <- skip next char
                         state = ParseState.path;
                         parsed.push(appendText(txt));
@@ -191,14 +194,14 @@ function parse(json: string, templates?: TemplateFunctionMap): TemplateFunction[
                 }
                 break;
             case ParseState.string:
-                if (char == '$' && i < (l - 1) && json[i + 1] == '{') {
+                if (char === '$' && i < (l - 1) && json[i + 1] === '{') {
                     i++;    // <- skip next char
                     state = ParseState.path;
                     parsed.push(appendText(txt));
                     endPath = '}';
                     nextState = ParseState.string;
                     txt = '';
-                } else if (char == endString && json[i - 1] !== '\\') {
+                } else if (char === endString && json[i - 1] !== '\\') {
                     state = ParseState.none;
                     txt += char;
                 } else {
@@ -206,10 +209,10 @@ function parse(json: string, templates?: TemplateFunctionMap): TemplateFunction[
                 }
                 break;
             case ParseState.path:
-                if (char == endPath) {
+                if (char === endPath) {
                     state = nextState;
                     const trimmed = txt.trim();
-                    if (trimmed && trimmed[trimmed.length - 1] == ')') {
+                    if (trimmed && trimmed[trimmed.length - 1] === ')') {
                         let open = txt.indexOf('(');
                         const close = txt.lastIndexOf(')');
                         if (open && close) {
@@ -217,10 +220,10 @@ function parse(json: string, templates?: TemplateFunctionMap): TemplateFunction[
                             const args = close > open ? txt.substr(open, close - open) : '';
                             parsed.push(appendFunction(name, args, templates));
                         } else {
-                            parsed.push(appendProperty(txt))
+                            parsed.push(appendProperty(txt));
                         }
                     } else {
-                        parsed.push(appendProperty(txt))
+                        parsed.push(appendProperty(txt));
                     }
                     txt = '';
                 } else {
@@ -229,7 +232,9 @@ function parse(json: string, templates?: TemplateFunctionMap): TemplateFunction[
                 break;
         }
     }
-    if (txt.length > 0) { parsed.push(appendText(txt)); }
+    if (txt.length > 0) {
+        parsed.push(appendText(txt));
+    }
     return parsed;
 }
 
@@ -284,7 +289,7 @@ function processNode(node: any, prune: PruneOptions): boolean {
         }
 
         // Prune out the array if it's now empty
-        if (prune.emptyArrays && node.length == 0) {
+        if (prune.emptyArrays && node.length === 0) {
             return false;
         }
     } else if (typeof node === 'object') {
@@ -305,9 +310,9 @@ function processNode(node: any, prune: PruneOptions): boolean {
                 // Prune members
                 if (prune.nullMembers && (value === undefined || value === null)) {
                     delete node[key];
-                } else if (prune.emptyStrings && typeof value === 'string' && value.trim().length == 0) {
+                } else if (prune.emptyStrings && typeof value === 'string' && value.trim().length === 0) {
                     delete node[key];
-                } else if (prune.emptyArrays && Array.isArray(value) && value.length == 0) {
+                } else if (prune.emptyArrays && Array.isArray(value) && value.length === 0) {
                     delete node[key];
                 } else if (!processNode(value, prune)) {
                     // @if condition failed so prune it.

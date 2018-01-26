@@ -6,7 +6,7 @@ import { Middleware } from './middleware';
 
 /**
  * Middleware for logging activity to the console.
- * 
+ *
  * __Extends BotContext:__
  * * context.logger - Logs activity and analytics within the bot.
  *
@@ -25,7 +25,7 @@ export class ConsoleLogger implements Middleware {
         // Wrap parent log() method
         const parentLog = context.logger.log;
         context.logger.log = (message, traceLevel, properties) => {
-            switch(traceLevel) {
+            switch (traceLevel) {
                 default:
                 case TraceLevel.log:
                     console.log(message);
@@ -51,7 +51,7 @@ export class ConsoleLogger implements Middleware {
         const parentLogException = context.logger.logException;
         context.logger.logException = (exception, message, properties, metrics) => {
             let msg = message && message.length > 0 ? message + '/n' : '';
-            console.error(msg + exception.stack); 
+            console.error(msg + exception.stack);
             parentLogException(exception, message, properties, metrics);
         };
         return next();

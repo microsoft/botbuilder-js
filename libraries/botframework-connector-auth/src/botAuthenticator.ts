@@ -2,7 +2,7 @@ import * as jwt from 'jsonwebtoken';
 import { OpenIdMetadata } from './openIdMetadata';
 import { AuthSettings, BotAuthenticatorSettings } from './settings';
 
-var logger = console;
+const logger = console;
 
 export interface Headers {
     [name: string]: string;
@@ -27,7 +27,7 @@ export class BotAuthenticator {
                 settingsOverride.emulatorAudience = this.settings.appId;
             }
 
-            this.settings.endpoint = { ...AuthSettings, ...settingsOverride };
+            this.settings.endpoint = {...AuthSettings, ...settingsOverride};
         }
 
         this.botConnectorOpenIdMetadata = new OpenIdMetadata(this.settings.endpoint.botConnectorOpenIdMetadata);
@@ -36,49 +36,50 @@ export class BotAuthenticator {
 
     public authenticate(headers: Headers, channelId?: string, serviceUrl?: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
-            var token: string;
-            var isEmulator = channelId === 'emulator';
-            var authHeaderValue = headers['authorization'] || headers['Authorization'] || null;
+            let token: string;
+            const isEmulator = channelId === 'emulator';
+            const authHeaderValue = headers['authorization'] || headers['Authorization'] || null;
             if (authHeaderValue) {
-                var auth = authHeaderValue.trim().split(' ');
-                if (auth.length == 2 && auth[0].toLowerCase() == 'bearer') {
+                const auth = authHeaderValue.trim().split(' ');
+                if (auth.length === 2 && auth[0].toLowerCase() === 'bearer') {
                     token = auth[1];
                 }
             }
 
             // Verify token
             if (token) {
-                let decoded: any = jwt.decode(token, { complete: true });
-                var verifyOptions: jwt.VerifyOptions;
-                var openIdMetadata: OpenIdMetadata;
+                let decoded: any = jwt.decode(token, {complete: true});
+                let verifyOptions: jwt.VerifyOptions;
+                let openIdMetadata: OpenIdMetadata;
+                let err: Error;
                 const algorithms: string[] = ['RS256', 'RS384', 'RS512'];
 
                 if (isEmulator) {
-                    
+
                     // validate the claims from the emulator
                     if ((decoded.payload.ver === '2.0' && decoded.payload.azp !== this.settings.appId) ||
                         (decoded.payload.ver !== '2.0' && decoded.payload.appid !== this.settings.appId)) {
-                        var err = new Error('ChatConnector: receive - invalid token. Requested by unexpected app ID.')
+                        err = new Error('ChatConnector: receive - invalid token. Requested by unexpected app ID.');
                         logger.error(err.message);
                         reject(this.addStatusToError(err, 403));
                     }
-    
+
                     // the token came from the emulator, so ensure the correct issuer is used
                     let issuer: string;
-                    if (decoded.payload.ver === '1.0' && decoded.payload.iss == this.settings.endpoint.emulatorAuthV31IssuerV1) {
+                    if (decoded.payload.ver === '1.0' && decoded.payload.iss === this.settings.endpoint.emulatorAuthV31IssuerV1) {
                         // This token came from the emulator as a v1 token using the Auth v3.1 issuer
                         issuer = this.settings.endpoint.emulatorAuthV31IssuerV1;
-                    } else if (decoded.payload.ver === '2.0' && decoded.payload.iss == this.settings.endpoint.emulatorAuthV31IssuerV2) {
+                    } else if (decoded.payload.ver === '2.0' && decoded.payload.iss === this.settings.endpoint.emulatorAuthV31IssuerV2) {
                         // This token came from the emulator as a v2 token using the Auth v3.1 issuer
                         issuer = this.settings.endpoint.emulatorAuthV31IssuerV2;
-                    } else if (decoded.payload.ver === '1.0' && decoded.payload.iss == this.settings.endpoint.emulatorAuthV32IssuerV1) {
+                    } else if (decoded.payload.ver === '1.0' && decoded.payload.iss === this.settings.endpoint.emulatorAuthV32IssuerV1) {
                         // This token came from the emulator as a v1 token using the Auth v3.2 issuer
                         issuer = this.settings.endpoint.emulatorAuthV32IssuerV1;
-                    } else if (decoded.payload.ver === '2.0' && decoded.payload.iss == this.settings.endpoint.emulatorAuthV32IssuerV2) {
+                    } else if (decoded.payload.ver === '2.0' && decoded.payload.iss === this.settings.endpoint.emulatorAuthV32IssuerV2) {
                         // This token came from the emulator as a v2 token using the Auth v3.2 issuer
                         issuer = this.settings.endpoint.emulatorAuthV32IssuerV2;
                     }
-    
+
                     if (issuer) {
                         openIdMetadata = this.emulatorOpenIdMetadata;
                         verifyOptions = {
@@ -89,7 +90,7 @@ export class BotAuthenticator {
                         };
                     }
                 }
-    
+
                 if (!verifyOptions) {
                     // This is a normal token, so use our Bot Connector verification
                     openIdMetadata = this.botConnectorOpenIdMetadata;
@@ -109,7 +110,7 @@ export class BotAuthenticator {
                             if (typeof channelId !== 'undefined' &&
                                 typeof key.endorsements !== 'undefined' &&
                                 key.endorsements.lastIndexOf(channelId) === -1) {
-                                const errorDescription: string = `channelId in req.body: ${channelId} didn't match the endorsements: ${key.endorsements.join(',')}.`;
+                                const errorDescription = `channelId in req.body: ${channelId} didn't match the endorsements: ${key.endorsements.join(',')}.`;
                                 logger.error(`BotAuthenticator: receive - endorsements validation failure. ${errorDescription}`);
                                 reject(this.addStatusToError(new Error(errorDescription), 403));
                             }
@@ -118,7 +119,7 @@ export class BotAuthenticator {
                             if (typeof decoded.payload.serviceurl !== 'undefined' &&
                                 typeof serviceUrl !== 'undefined' &&
                                 decoded.payload.serviceurl !== serviceUrl) {
-                                const errorDescription: string = `ServiceUrl in payload of token: ${decoded.payload.serviceurl} didn't match the request's serviceurl: ${serviceUrl}.`;
+                                const errorDescription = `ServiceUrl in payload of token: ${decoded.payload.serviceurl} didn't match the request's serviceurl: ${serviceUrl}.`;
                                 logger.error(`BotAuthenticator: receive - serviceurl mismatch. ${errorDescription}`);
                                 reject(this.addStatusToError(new Error(errorDescription), 403));
                             }
@@ -129,7 +130,7 @@ export class BotAuthenticator {
 
                         resolve();
                     } else {
-                        var err = new Error('BotAuthenticator: receive - invalid signing key or OpenId metadata document.');
+                        err = new Error('BotAuthenticator: receive - invalid signing key or OpenId metadata document.');
                         logger.error(err.message);
                         reject(this.addStatusToError(err, 500));
                     }
@@ -140,7 +141,7 @@ export class BotAuthenticator {
                 resolve();
             } else {
                 // Token not provided so
-                var err = new Error('BotAuthenticator: receive - no security token sent.');
+                const err = new Error('BotAuthenticator: receive - no security token sent.');
                 logger.error(err.message);
                 reject(this.addStatusToError(err, 401));
             }

@@ -4,20 +4,20 @@ import { AuthSettings, BotCredentials } from './settings';
 
 export class MicrosoftAppCredentials implements msrest.ServiceClientCredentials {
 
-    private accessToken: string = '';
-    private accessTokenExpires: number;
-    private appId: string = '';
-    private appPassword: string = '';
-
     private static refreshEndpoint: string = AuthSettings.refreshEndpoint;
     private static refreshScope: string = AuthSettings.refreshScope;
+
+    private accessToken = '';
+    private accessTokenExpires: number;
+    private appId = '';
+    private appPassword = '';
 
     public constructor(credentials: BotCredentials) {
         if (typeof credentials !== 'undefined') {
             if (typeof credentials.appId !== 'undefined') {
                 this.appId = credentials.appId;
             }
-            
+
             if (typeof credentials.appPassword !== 'undefined') {
                 this.appPassword = credentials.appPassword;
             }
@@ -28,12 +28,12 @@ export class MicrosoftAppCredentials implements msrest.ServiceClientCredentials 
         if (this.appId !== '' && this.appPassword !== '') {
             this.getAccessToken((err, token) => {
                 if (!err && token) {
-                    var tokenCredentials = new msrest.TokenCredentials(token);
+                    const tokenCredentials = new msrest.TokenCredentials(token);
                     tokenCredentials.signRequest(webResource, cb);
                 } else {
                     cb(err);
                 }
-            })
+            });
 
         } else {
             cb(null);
@@ -43,7 +43,7 @@ export class MicrosoftAppCredentials implements msrest.ServiceClientCredentials 
     private getAccessToken(cb: (err: Error, accessToken: string) => void): void {
         if (!this.accessToken || new Date().getTime() >= this.accessTokenExpires) {
             // Refresh access token
-            var opt: request.Options = {
+            const opt: request.Options = {
                 method: 'POST',
                 url: MicrosoftAppCredentials.refreshEndpoint,
                 form: {
@@ -58,7 +58,7 @@ export class MicrosoftAppCredentials implements msrest.ServiceClientCredentials 
                     if (body && response.statusCode < 300) {
                         // Subtract 5 minutes from expires_in so they'll we'll get a
                         // new token before it expires.
-                        var oauthResponse = JSON.parse(body);
+                        const oauthResponse = JSON.parse(body);
                         this.accessToken = oauthResponse.access_token;
                         this.accessTokenExpires = new Date().getTime() + ((oauthResponse.expires_in - 300) * 1000);
                         cb(null, this.accessToken);

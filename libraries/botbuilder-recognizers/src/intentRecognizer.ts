@@ -7,14 +7,14 @@ import { Intent } from './intentSet';
 
 /**
  * Middleware that's the base class for all intent recognizers.
- * 
+ *
  * __Extends BotContext:__
  * * context.topIntent - The top recognized `Intent` for the users utterance.
  */
 export class IntentRecognizer<T = any> implements Middleware {
     private enabledChain: ((context: BotContext) => Promiseable<boolean>)[] = [];
     private recognizeChain: ((context: BotContext) => Promiseable<Intent<T>[]>)[] = [];
-    private filterChain: ((context: BotContext, intents: Intent<T>[]) => Promise<Intent<T>[]|void>|Intent<T>[]|void)[] = [];
+    private filterChain: ((context: BotContext, intents: Intent<T>[]) => Promise<Intent<T>[] | void> | Intent<T>[] | void)[] = [];
 
     public receiveActivity(context: BotContext, next: () => Promise<void>): Promise<void> {
         return this.recognize(context)
@@ -52,7 +52,7 @@ export class IntentRecognizer<T = any> implements Middleware {
      * so the last handler added will be the first called.
      *
      * @param handler Function that will be called anytime the recognizer is run. If the handler
-     * returns true the recognizer will be run. Returning false disables the recognizer. 
+     * returns true the recognizer will be run. Returning false disables the recognizer.
      */
     public onEnabled(handler: (context: BotContext) => Promiseable<boolean>): this {
         this.enabledChain.unshift(handler);
@@ -73,16 +73,16 @@ export class IntentRecognizer<T = any> implements Middleware {
 
     /**
      * Adds a handler that will be called post recognition to filter the output of the recognizer.
-     * The filter receives all of the intents that were recognized and can return a subset, or 
+     * The filter receives all of the intents that were recognized and can return a subset, or
      * additional, or even all new intents as its response. This filtering adds a convenient second
      * layer of processing to intent recognition. Multiple handlers can be registered and they will
      * be called in the order they are added.
      *
-     * @param handler Function that will be called to filter the output intents. If an array is returned 
+     * @param handler Function that will be called to filter the output intents. If an array is returned
      * that will become the new set of output intents passed on to the next filter. The final filter in
-     * the chain will reduce the output set of intents to a single top scoring intent. 
+     * the chain will reduce the output set of intents to a single top scoring intent.
      */
-    public onFilter(handler: (context: BotContext, intents: Intent<T>[]) => Promiseable<Intent<T>[]|void>): this {
+    public onFilter(handler: (context: BotContext, intents: Intent<T>[]) => Promiseable<Intent<T>[] | void>): this {
         this.filterChain.push(handler);
         return this;
     }
@@ -90,6 +90,7 @@ export class IntentRecognizer<T = any> implements Middleware {
     private runEnabled(context: BotContext): Promise<boolean> {
         return new Promise<boolean>((resolve, reject) => {
             const chain = this.enabledChain.slice();
+
             function next(i: number) {
                 if (i < chain.length) {
                     try {
@@ -100,13 +101,14 @@ export class IntentRecognizer<T = any> implements Middleware {
                                 next(i + 1);
                             }
                         }).catch((err) => reject(err));
-                    } catch(err) {
+                    } catch (err) {
                         reject(err);
                     }
                 } else {
                     resolve(true);
                 }
             }
+
             next(0);
         });
     }
@@ -115,6 +117,7 @@ export class IntentRecognizer<T = any> implements Middleware {
         return new Promise<Intent<T>[]>((resolve, reject) => {
             let intents: Intent<T>[] = [];
             const chain = this.recognizeChain.slice();
+
             function next(i: number) {
                 if (i < chain.length) {
                     try {
@@ -124,13 +127,14 @@ export class IntentRecognizer<T = any> implements Middleware {
                             }
                             next(i + 1);
                         }).catch((err) => reject(err));
-                    } catch(err) {
+                    } catch (err) {
                         reject(err);
                     }
                 } else {
                     resolve(intents);
                 }
             }
+
             next(0);
         });
     }
@@ -139,6 +143,7 @@ export class IntentRecognizer<T = any> implements Middleware {
         return new Promise<Intent<T>[]>((resolve, reject) => {
             let filtered: Intent<T>[] = intents;
             const chain = this.filterChain.slice();
+
             function next(i: number) {
                 if (i < chain.length) {
                     try {
@@ -148,13 +153,14 @@ export class IntentRecognizer<T = any> implements Middleware {
                             }
                             next(i + 1);
                         }).catch((err) => reject(err));
-                    } catch(err) {
+                    } catch (err) {
                         reject(err);
                     }
                 } else {
                     resolve(filtered);
                 }
             }
+
             next(0);
         });
     }

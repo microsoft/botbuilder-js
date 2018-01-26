@@ -22,7 +22,8 @@
   "typings": "./lib/index.d.ts",
   "dependencies": {
     "azure-storage": "^2.3.0",
-    "botbuilder": "^4.0.0-h4.1"
+    "botbuilder": "^4.0.0-h4.1",
+    "botbuilder-middleware": "^4.0.0-h4.1"
   },
   "devDependencies": {
     "@types/node": "^9.3.0",

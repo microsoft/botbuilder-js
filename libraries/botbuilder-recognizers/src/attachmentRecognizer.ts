@@ -2,18 +2,18 @@
  * @module botbuilder-recognizers
  */
 /** second comment block */
-import { BotContext, Attachment } from 'botbuilder';
+import { Attachment } from 'botbuilder';
 import { IntentRecognizer } from './intentRecognizer';
 import { Intent } from './intentSet';
 
 /** Optional settings for an `AttachmentRecognizer`. */
 export interface AttachmentRecognizerSettings {
-    /** 
-     * Name of the intent to return when an attachment is detected. This defaults to 
+    /**
+     * Name of the intent to return when an attachment is detected. This defaults to
      * a value of "Intents.AttachmentReceived".
-     * 
+     *
      * Developers can also adjust the name of the intent returned by adding content filters to
-     * the recognizer. This setting will be ignored when content filters are active.  
+     * the recognizer. This setting will be ignored when content filters are active.
      */
     intentName: string;
 }
@@ -52,7 +52,7 @@ export class AttachmentRecognizer extends IntentRecognizer<Attachment[]> {
 
         this.onRecognize((context) => {
             const intents: Intent<Attachment[]>[] = [];
-            const attachments = context.request && context.request.attachments ? context.request.attachments : []; 
+            const attachments = context.request && context.request.attachments ? context.request.attachments : [];
             if (attachments.length > 0) {
                 // Filter by content type
                 if (this.typeFilters.length > 0) {
@@ -88,8 +88,8 @@ export class AttachmentRecognizer extends IntentRecognizer<Attachment[]> {
                     });
                 } else {
                     // Return a single intent for all attachments
-                    intents.push({ 
-                        score: 1.0, 
+                    intents.push({
+                        score: 1.0,
                         name: <string>this.settings.intentName,
                         entities: attachments
                     });
@@ -99,20 +99,20 @@ export class AttachmentRecognizer extends IntentRecognizer<Attachment[]> {
         });
     }
 
-    /** 
+    /**
      * Add a new content type filter to the recognizer. Adding one or more `contentType()` filters
      * will result in only attachments of the specified type(s) being recognized.
      *
      * @param contentType The `Attachment.contentType` to look for.
-     * @param intentName Name of the intent to return when the given type is matched. 
+     * @param intentName Name of the intent to return when the given type is matched.
      */
-    public contentType(contentType: string|RegExp, intentName: string): this {
-        this.typeFilters.push({ type: contentType, intentName: intentName });
+    public contentType(contentType: string | RegExp, intentName: string): this {
+        this.typeFilters.push({type: contentType, intentName: intentName});
         return this;
     }
 }
 
 interface ContentTypeFilter {
-    type: string|RegExp;
+    type: string | RegExp;
     intentName: string;
 }

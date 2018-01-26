@@ -3,7 +3,7 @@
  */
 /** second comment block */
 
-const breakingChars = " \n\r~`!@#$%^&*()-+={}|[]\\:\";'<>?,./";
+const breakingChars = ' \n\r~`!@#$%^&*()-+={}|[]\\:";\'<>?,./';
 
 export interface Token {
     start: number;
@@ -14,13 +14,14 @@ export interface Token {
 
 export type TokenizerFunction = (text: string, locale?: string) => Token[];
 
-/** 
+/**
  * Simple tokenizer that breaks on spaces and punctuation. The only normalization done is to lowercase
- *  
+ *
  */
 export function defaultTokenizer(text: string, locale?: string): Token[] {
     const tokens: Token[] = [];
-    let token: Token|undefined;
+    let token: Token | undefined;
+
     function appendToken(end: number) {
         if (token) {
             token.end = end;
@@ -52,10 +53,10 @@ export function defaultTokenizer(text: string, locale?: string): Token[] {
                 end: i + (chr.length - 1),
                 text: chr,
                 normalized: chr
-            }); 
+            });
         } else if (!token) {
             // Start a new token
-            token = { start: i, text: chr } as Token;
+            token = {start: i, text: chr} as Token;
         } else {
             // Add on to current token
             token.text += chr;
@@ -67,13 +68,13 @@ export function defaultTokenizer(text: string, locale?: string): Token[] {
 }
 
 function isBreakingChar(codePoint: number): boolean {
-    return (isBetween(codePoint, 0x0000, 0x002F) || 
-            isBetween(codePoint, 0x003A, 0x0040) ||
-            isBetween(codePoint, 0x005B, 0x0060) ||
-            isBetween(codePoint, 0x007B, 0x00BF) ||
-            isBetween(codePoint, 0x02B9, 0x036F) ||
-            isBetween(codePoint, 0x2000, 0x2BFF) ||
-            isBetween(codePoint, 0x2E00, 0x2E7F)); 
+    return (isBetween(codePoint, 0x0000, 0x002F) ||
+        isBetween(codePoint, 0x003A, 0x0040) ||
+        isBetween(codePoint, 0x005B, 0x0060) ||
+        isBetween(codePoint, 0x007B, 0x00BF) ||
+        isBetween(codePoint, 0x02B9, 0x036F) ||
+        isBetween(codePoint, 0x2000, 0x2BFF) ||
+        isBetween(codePoint, 0x2E00, 0x2E7F));
 }
 
 function isBetween(value: number, from: number, to: number): boolean {

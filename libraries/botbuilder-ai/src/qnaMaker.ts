@@ -2,15 +2,15 @@
  * @module botbuilder-ai
  */
 /** second comment block */
-import { SearchCatalog, SearchEngine, SearchHit } from 'botbuilder';
+import { SearchCatalog, SearchEngine, SearchHit } from 'botbuilder-middleware';
 import * as request from 'request-promise-native';
 import * as entities from 'html-entities';
 
-var htmlentities = new entities.AllHtmlEntities();
+const htmlentities = new entities.AllHtmlEntities();
 
 export interface QnAMakerResult {
-    answer: string,
-    score: number
+    answer: string;
+    score: number;
 }
 
 interface QnA {
@@ -18,7 +18,7 @@ interface QnA {
     source: string;
     answer: string;
     questions: string[];
-    metadata: any[]
+    metadata: any[];
 }
 
 interface QnAKnowledgeBase {
@@ -45,31 +45,55 @@ export class QnAMaker {
         this.kbUrl = `${qnaMakerServiceEndpoint}${options.knowledgeBaseId}`;
         this.answerUrl = `${qnaMakerServiceEndpoint}${options.knowledgeBaseId}/generateanswer`;
         this.kbTrainUrl = `${qnaMakerServiceEndpoint}${options.knowledgeBaseId}/train`;
-        if (!options.scoreThreshold || options.scoreThreshold == 0)
+        if (!options.scoreThreshold || +options.scoreThreshold === 0) {
             options.scoreThreshold = .3;
-        if (!options.top || options.top == 0)
+        }
+        if (!options.top || +options.top === 0) {
             options.top = 1;
+        }
     }
 
     public getAnswers(question: string): Promise<QnAMakerResult[]> {
         if (this.options.searchEngine) {
             return this.getSearchEngineAnswers(question);
-        }
-        else {
+        } else {
             return this.getServiceAnswers(question);
         }
     }
 
+    public routeTo(context: BotContext): Promise<boolean> {
+        if (context.request && context.request.text && context.request.text.length > 0) {
+            return this
+                .getAnswers(context.request.text)
+                .then((answers) => {
+                    if (answers.length > 0) {
+                        let answer = answers[0];
+                        // send reply as response
+                        context.reply(answer.answer);
+                        return true;
+                    }
+                    // no result found
+                    return false;
+                }).catch(error => {
+                    // failure
+                    return Promise.reject(error);
+                })
+        }
+        // no result
+        return Promise.resolve(false);
+    }
+
     private async getSearchEngineAnswers(question: string): Promise<QnAMakerResult[]> {
-        if (!this.options.searchEngine)
-            throw new Error("No searchEngine was provided");
+        if (!this.options.searchEngine) {
+            throw new Error('No searchEngine was provided');
+        }
 
         if (!this.catalog) {
             this.catalog = await this.options.searchEngine.getCatalog(this.options.knowledgeBaseId)
                 .catch(() => this.createCatalogForKnowledgeBase());
         }
         let searchHits = await this.catalog.search(question);
-        var answers: QnAMakerResult[] = [];
+        const answers: QnAMakerResult[] = [];
         if (searchHits && searchHits.length > 0) {
             for (let searchHit of searchHits) {
                 if (searchHit.score > this.options.scoreThreshold) {
@@ -78,11 +102,11 @@ export class QnAMaker {
                         score: searchHit.score,
                         answer: doc.answer
                     });
-                    if (answers.length >= this.options.top)
+                    if (answers.length >= this.options.top) {
                         break;
+                    }
                 }
             }
-            ;
         }
         return answers;
     }
@@ -101,7 +125,7 @@ export class QnAMaker {
             }
         })
             .then(result => {
-                var answers: QnAMakerResult[] = [];
+                const answers: QnAMakerResult[] = [];
                 if (result.answers && result.answers.length > 0) {
                     result.answers.forEach((ans: any) => {
                         ans.score /= 100;
@@ -121,7 +145,7 @@ export class QnAMaker {
     /** build catalog */
     private async createCatalogForKnowledgeBase(): Promise<SearchCatalog> {
         // create empty catalog
-        let catalog = await this.options.searchEngine.createCatalog(this.options.knowledgeBaseId, "qnaId", ["question", "answer"]);
+        let catalog = await this.options.searchEngine.createCatalog(this.options.knowledgeBaseId, 'qnaId', ['question', 'answer']);
 
         // get knowledge base
         let knowledgeBase = await request({
@@ -144,29 +168,4 @@ export class QnAMaker {
         await catalog.flush();
         return catalog;
     }
-
-    routeTo(context: BotContext): Promise<boolean> {
-        if (context.request && context.request.text && context.request.text.length > 0) {
-            return this
-                .getAnswers(context.request.text)
-                .then((answers) => {
-                    if (answers.length > 0) {
-                        let answer = answers[0];
-                        // send reply as response
-                        context.reply(answer.answer);
-                        return true;
-                    }
-                    // no result found
-                    return false;
-                }).catch(error => {
-                    // failure
-                    return Promise.reject(error);
-                })
-        }
-        // no result
-        return Promise.resolve(false);
-    }
 }
-
-
-

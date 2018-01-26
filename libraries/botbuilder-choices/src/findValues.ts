@@ -3,12 +3,12 @@
  */
 /** second comment block */
 
-import { Token, TokenizerFunction, defaultTokenizer } from './tokenizer';
+import { defaultTokenizer, Token, TokenizerFunction } from './tokenizer';
 import { ModelResult } from './modelResult';
 
 export interface FindValuesOptions {
-    /** 
-     * (Optional) if true, then only some of the tokens in a value need to exist to be considered 
+    /**
+     * (Optional) if true, then only some of the tokens in a value need to exist to be considered
      * a match. The default value is "false".
      */
     allowPartialMatches?: boolean;
@@ -18,23 +18,23 @@ export interface FindValuesOptions {
      */
     locale?: string;
 
-    /** 
+    /**
      * (Optional) maximum tokens allowed between two matched tokens in the utterance. So with
      * a max distance of 2 the value "second last" would match the utterance "second from the last"
-     * but it wouldn't match "Wait a second. That's not the last one is it?". 
-     * The default value is "2".  
+     * but it wouldn't match "Wait a second. That's not the last one is it?".
+     * The default value is "2".
      */
     maxTokenDistance?: number;
 
     /**
-     * (Optional) tokenizer to use when parsing the utterance and values being recognized.  
+     * (Optional) tokenizer to use when parsing the utterance and values being recognized.
      */
     tokenizer?: TokenizerFunction;
 }
 
 export interface FoundValue {
-    /** 
-     * The value that was matched. 
+    /**
+     * The value that was matched.
      */
     value: string;
 
@@ -42,8 +42,8 @@ export interface FoundValue {
      * The index of the value that was matched.
      */
     index: number;
-    
-    /** 
+
+    /**
      * The accuracy with which the value matched the specified portion of the utterance. A
      * value of 1.0 would indicate a perfect match.
      */
@@ -59,7 +59,7 @@ export interface SortedValue {
     index: number;
 }
 
-/** 
+/**
  * Looks for a set of values within an utterance.
  */
 export function findValues(utterance: string, values: SortedValue[], options?: FindValuesOptions): ModelResult<FoundValue>[] {
@@ -72,13 +72,13 @@ export function findValues(utterance: string, values: SortedValue[], options?: F
         return -1;
     }
 
-    function matchValue(index: number, value: string, vTokens: Token[], startPos: number): ModelResult<FoundValue>|undefined {
+    function matchValue(index: number, value: string, vTokens: Token[], startPos: number): ModelResult<FoundValue> | undefined {
         // Match value to utterance and calculate total deviation.
-        // - The tokens are matched in order so "second last" will match in 
+        // - The tokens are matched in order so "second last" will match in
         //   "the second from last one" but not in "the last from the second one".
-        // - The total deviation is a count of the number of tokens skipped in the 
+        // - The total deviation is a count of the number of tokens skipped in the
         //   match so for the example above the number of tokens matched would be
-        //   2 and the total deviation would be 1. 
+        //   2 and the total deviation would be 1.
         let matched = 0;
         let totalDeviation = 0;
         let start = -1;
@@ -97,7 +97,9 @@ export function findValues(utterance: string, values: SortedValue[], options?: F
                     startPos = pos + 1;
 
                     // Update start & end position that will track the span of the utterance that's matched.
-                    if (start < 0) { start = pos }
+                    if (start < 0) {
+                        start = pos;
+                    }
                     end = pos;
                 }
             }
@@ -105,9 +107,9 @@ export function findValues(utterance: string, values: SortedValue[], options?: F
 
         // Calculate score and format result
         // - The start & end positions and the results text field will be corrected by the caller.
-        let result: ModelResult<FoundValue>|undefined;
+        let result: ModelResult<FoundValue> | undefined;
         if (matched > 0 && (matched == vTokens.length || opt.allowPartialMatches)) {
-            // Percentage of tokens matched. If matching "second last" in 
+            // Percentage of tokens matched. If matching "second last" in
             // "the second from last one" the completeness would be 1.0 since
             // all tokens were found.
             const completeness = matched / vTokens.length;
@@ -115,8 +117,8 @@ export function findValues(utterance: string, values: SortedValue[], options?: F
             // Accuracy of the match. The accuracy is reduced by additional tokens
             // occurring in the value that weren't in the utterance. So an utterance
             // of "second last" matched against a value of "second from last" would
-            // result in an accuracy of 0.5. 
-            const accuracy = (matched / (matched + totalDeviation))
+            // result in an accuracy of 0.5.
+            const accuracy = (matched / (matched + totalDeviation));
 
             // The final score is simply the completeness multiplied by the accuracy.
             const score = completeness * accuracy;
@@ -130,7 +132,7 @@ export function findValues(utterance: string, values: SortedValue[], options?: F
                     value: value,
                     index: index,
                     score: score
-                } 
+                }
             } as ModelResult<FoundValue>;
         }
         return result;
@@ -138,7 +140,7 @@ export function findValues(utterance: string, values: SortedValue[], options?: F
 
     // Sort values in descending order by length so that the longest value is searched over first.
     const list = values.sort((a, b) => b.value.length - a.value.length);
-    
+
     // Search for each value within the utterance.
     let matches: ModelResult<FoundValue>[] = [];
     const opt = options || {};
@@ -147,7 +149,7 @@ export function findValues(utterance: string, values: SortedValue[], options?: F
     const maxDistance = opt.maxTokenDistance !== undefined ? opt.maxTokenDistance : 2;
     list.forEach((entry, index) => {
         // Find all matches for a value
-        // - To match "last one" in "the last time I chose the last one" we need 
+        // - To match "last one" in "the last time I chose the last one" we need
         //   to re-search the string starting from the end of the previous match.
         // - The start & end position returned for the match are token positions.
         let startPos = 0;
@@ -164,12 +166,12 @@ export function findValues(utterance: string, values: SortedValue[], options?: F
     });
 
     // Sort matches by score descending
-    matches = matches.sort((a,b) => b.resolution.score - a.resolution.score);
+    matches = matches.sort((a, b) => b.resolution.score - a.resolution.score);
 
     // Filter out duplicate matching indexes and overlapping characters.
-    // - The start & end positions are token positions and need to be translated to 
+    // - The start & end positions are token positions and need to be translated to
     //   character positions before returning. We also need to populate the "text"
-    //   field as well. 
+    //   field as well.
     const results: ModelResult<FoundValue>[] = [];
     const foundIndexes: { [index: number]: boolean } = {};
     const usedTokens: { [index: number]: boolean } = {};
@@ -187,7 +189,9 @@ export function findValues(utterance: string, values: SortedValue[], options?: F
         if (add) {
             // Update filter info
             foundIndexes[match.resolution.index] = true;
-            for (let i = match.start; i <= match.end; i++) { usedTokens[i] = true }
+            for (let i = match.start; i <= match.end; i++) {
+                usedTokens[i] = true;
+            }
 
             // Translate start & end and populate text field
             match.start = tokens[match.start].start;
@@ -198,5 +202,5 @@ export function findValues(utterance: string, values: SortedValue[], options?: F
     });
 
     // Return the results sorted by position in the utterance
-    return results.sort((a,b) => a.start - b.start);
+    return results.sort((a, b) => a.start - b.start);
 }

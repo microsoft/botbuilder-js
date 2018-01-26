@@ -22,16 +22,16 @@ export interface BotStateManagerSettings {
     lastWriterWins: boolean;
 }
 
-/** 
+/**
  * Middleware for tracking conversation and user state using the `context.storage` provider.
- * 
+ *
  * __Extends BotContext:__
  * * context.state.user - User persisted state
  * * context.state.conversation - Conversation persisted data
- * 
+ *
  * __Depends on:__
  * * context.storage - Storage provider for storing and retrieving objects
- * 
+ *
  * **Usage Example**
  *
  * ```js
@@ -49,10 +49,10 @@ export class BotStateManager implements Middleware {
     /**
      * Creates a new instance of the state manager.
      *
-     * @param settings (Optional) settings to adjust the behavior of the state manager. 
+     * @param settings (Optional) settings to adjust the behavior of the state manager.
      */
     public constructor(settings?: Partial<BotStateManagerSettings>) {
-        this.settings = Object.assign(<BotStateManagerSettings>{ 
+        this.settings = Object.assign(<BotStateManagerSettings>{
             persistUserState: true,
             persistConversationState: true,
             writeBeforePost: true,
@@ -67,7 +67,7 @@ export class BotStateManager implements Middleware {
 
     public postActivity(context: BotContext, activities: Partial<Activity>[], next: (newActivities?: Partial<Activity>[]) => Promise<ConversationResourceResponse[]>): Promise<ConversationResourceResponse[]> {
         if (this.settings.writeBeforePost) {
-            // save state 
+            // save state
             return this.write(context, {}).then(() => next());
         } else {
             return next();
@@ -75,13 +75,15 @@ export class BotStateManager implements Middleware {
     }
 
     public contextDone(context: BotContext, next: () => Promise<void>): Promise<void> {
-        // save state 
+        // save state
         return this.write(context, {}).then(() => next());
     }
 
     protected read(context: BotContext, keys: string[]): Promise<StoreItems> {
         // Ensure storage
-        if (!context.storage) { return Promise.reject(new Error(`BotStateManager: context.storage not found.`)); }
+        if (!context.storage) {
+            return Promise.reject(new Error(`BotStateManager: context.storage not found.`));
+        }
 
         // Calculate keys
         if (this.settings.persistUserState) {
@@ -110,7 +112,9 @@ export class BotStateManager implements Middleware {
 
     protected write(context: BotContext, changes: StoreItems): Promise<void> {
         // Ensure storage
-        if (!context.storage) { return Promise.reject(new Error(`BotStateManager: context.storage not found.`)); }
+        if (!context.storage) {
+            return Promise.reject(new Error(`BotStateManager: context.storage not found.`));
+        }
 
         // Append changes
         if (this.settings.persistUserState) {
@@ -121,7 +125,7 @@ export class BotStateManager implements Middleware {
         }
 
         // Update eTags
-        if (this.settings.lastWriterWins) { 
+        if (this.settings.lastWriterWins) {
             for (const key in changes) {
                 changes[key].eTag = '*';
             }

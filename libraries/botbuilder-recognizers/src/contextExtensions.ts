@@ -7,14 +7,16 @@ import { IntentSet } from './intentSet';
 
 declare global {
     export interface BotContextExtensions {
-        readonly intents: IntentSet; 
+        readonly intents: IntentSet;
     }
 }
 
 Object.defineProperty(BotContext.prototype, 'intents', {
     get: function getIntents() {
         const context: BotContext = this as any;
-        if (!context.has('intents')) { context.set('intents', new IntentSet()) }
+        if (!context.has('intents')) {
+            context.set('intents', new IntentSet());
+        }
         return context.get('intents');
     }
 });

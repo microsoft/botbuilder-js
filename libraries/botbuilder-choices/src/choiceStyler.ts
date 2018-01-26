@@ -3,39 +3,39 @@
  */
 /** second comment block */
 
-import { Activity, MessageStyler, CardAction } from 'botbuilder';
+import { Activity, CardAction, MessageStyler } from 'botbuilder';
 import { Choice } from './findChoices';
 import * as channel from './channel';
 
 export interface ChoiceStylerOptions {
-    /** 
-     * (Optional) character used to separate individual choices when there are more than 2 choices. 
-     * The default value is `", "`. 
+    /**
+     * (Optional) character used to separate individual choices when there are more than 2 choices.
+     * The default value is `", "`.
      */
     inlineSeparator?: string;
 
-    /** 
-     * (Optional) separator inserted between the choices when their are only 2 choices. The default 
+    /**
+     * (Optional) separator inserted between the choices when their are only 2 choices. The default
      * value is `" or "`.
      */
-    inlineOr?: string
+    inlineOr?: string;
 
-    /** 
-     * (Optional) separator inserted between the last 2 choices when their are more than 2 choices. 
+    /**
+     * (Optional) separator inserted between the last 2 choices when their are more than 2 choices.
      * The default value is `", or "`.
      */
     inlineOrMore?: string;
 
     /**
-     * (Optional) if `true`, inline and list style choices will be prefixed with the index of the 
-     * choice as in "1. choice". If `false`, the list style will use a bulleted list instead. The default value is `true`. 
+     * (Optional) if `true`, inline and list style choices will be prefixed with the index of the
+     * choice as in "1. choice". If `false`, the list style will use a bulleted list instead. The default value is `true`.
      */
     includeNumbers?: boolean;
 }
 
 export class ChoiceStyler {
 
-    static forChannel(channelOrContext: string|BotContext, choices: (string|Choice)[], text?: string, speak?: string, options?: ChoiceStylerOptions): Partial<Activity> {
+    static forChannel(channelOrContext: string | BotContext, choices: (string | Choice)[], text?: string, speak?: string, options?: ChoiceStylerOptions): Partial<Activity> {
         const channelId = typeof channelOrContext === 'string' ? channelOrContext : channel.getChannelId(channelOrContext);
 
         // Normalize choices
@@ -69,7 +69,7 @@ export class ChoiceStyler {
         }
     }
 
-    static inline(choices: (string|Choice)[], text?: string, speak?: string, options?: ChoiceStylerOptions): Partial<Activity> {
+    static inline(choices: (string | Choice)[], text?: string, speak?: string, options?: ChoiceStylerOptions): Partial<Activity> {
         const opt = Object.assign({
             inlineSeparator: ', ',
             inlineOr: ' or ',
@@ -84,8 +84,8 @@ export class ChoiceStyler {
         ChoiceStyler.toChoices(choices).forEach((choice: any, index: number) => {
             const title = choice.action && choice.action.title ? choice.action.title : choice.value;
             txt += `${connector}${opt.includeNumbers ? '(' + (index + 1).toString() + ') ' : ''}${title}`;
-            if (index == (choices.length - 2)) {
-                connector = (index == 0 ? opt.inlineOr : opt.inlineOrMore) || '';
+            if (index === (choices.length - 2)) {
+                connector = (index === 0 ? opt.inlineOr : opt.inlineOrMore) || '';
             } else {
                 connector = opt.inlineSeparator || '';
             }
@@ -96,7 +96,7 @@ export class ChoiceStyler {
         return MessageStyler.text(txt, speak);
     }
 
-    static list(choices: (string|Choice)[], text?: string, speak?: string, options?: ChoiceStylerOptions): Partial<Activity> {
+    static list(choices: (string | Choice)[], text?: string, speak?: string, options?: ChoiceStylerOptions): Partial<Activity> {
         const opt = Object.assign({
             includeNumbers: true
         } as ChoiceStylerOptions, options);
@@ -106,21 +106,21 @@ export class ChoiceStyler {
         let txt = (text || '');
         txt += '\n\n   ';
         ChoiceStyler.toChoices(choices).forEach((choice: any, index: number) => {
-            txt += `${connector}${opt.includeNumbers ? (index + 1).toString() + '. ': '- '}${choice.value}`;
-            connector =  '\n   ';
+            txt += `${connector}${opt.includeNumbers ? (index + 1).toString() + '. ' : '- '}${choice.value}`;
+            connector = '\n   ';
         });
 
         // Return activity with choices as a numbered list.
         return MessageStyler.text(txt, speak);
     }
-    
-    static suggestedAction(choices: (string|Choice)[], text?: string, speak?: string, options?: ChoiceStylerOptions): Partial<Activity> {
+
+    static suggestedAction(choices: (string | Choice)[], text?: string, speak?: string, options?: ChoiceStylerOptions): Partial<Activity> {
         // Map choices to actions
         const actions = ChoiceStyler.toChoices(choices).map<CardAction>((choice) => {
             if (choice.action) {
                 return choice.action;
             } else {
-                return { type: 'imBack', value: choice.value, title: choice.value }
+                return {type: 'imBack', value: choice.value, title: choice.value};
             }
         });
 
@@ -128,8 +128,8 @@ export class ChoiceStyler {
         return MessageStyler.suggestedActions(actions, text, speak);
     }
 
-    static toChoices(choices: (string|Choice)[]|undefined): Choice[] {
-        return (choices || []).map((choice) => typeof choice === 'string' ? { value: choice } : choice);
+    static toChoices(choices: (string | Choice)[] | undefined): Choice[] {
+        return (choices || []).map((choice) => typeof choice === 'string' ? {value: choice} : choice);
     }
-    
+
 }
