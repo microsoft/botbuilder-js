@@ -14,9 +14,9 @@
   "dependencies": {
     "@types/node": "^8.0.28",
     "@types/restify": "^5.0.3",
-    "botbuilder-ai": "file:../../ai",
-    "botbuilder-core": "file:../../core",
-    "botbuilder-services": "file:../../services",
+    "botbuilder-ai": "file:../../libraries/botbuilder-ai",
+    "botbuilder": "file:../../libraries/botbuilder",
+    "botbuilder-services": "file:../../libraries/botbuilder-services",
     "restify": "^6.0.0"
   }
 }

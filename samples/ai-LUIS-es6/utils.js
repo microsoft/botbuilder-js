@@ -1,6 +1,6 @@
 const ai = require('botbuilder-ai');
-var builder = require('../../libraries/core');
-var services = require('../../libraries/services');
+var builder = require('botbuilder');
+var services = require('botbuilder-services');
 var restify = require('restify');
 
 module.exports = {
