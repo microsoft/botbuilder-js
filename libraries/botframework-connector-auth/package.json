@@ -22,7 +22,7 @@
   "dependencies": {
     "base64url": "^2.0.0",
     "jsonwebtoken": "8.0.1",
-    "ms-rest": "^2.2.0",
+    "ms-rest": "^2.2.2",
     "rsa-pem-from-mod-exp": "^0.8.4"
   },
   "devDependencies": {
