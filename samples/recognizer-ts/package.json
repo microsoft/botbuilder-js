@@ -7,8 +7,8 @@
     "start": "tsc; node ./lib/app.js"
   },
   "dependencies": {
-    "botbuilder-core": "file:../../libraries/core",
-    "botbuilder-services": "file:../../libraries/services",
+    "botbuilder-core": "file:../../libraries/botbuilder",
+    "botbuilder-services": "file:../../libraries/botbuilder-services",
     "restify": "^6.0.1"
   },
   "repository": {

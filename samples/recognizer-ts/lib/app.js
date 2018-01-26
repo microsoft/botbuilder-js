@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const botbuilder_core_1 = require("botbuilder-core");
+const botbuilder_1 = require("botbuilder");
 const botbuilder_services_1 = require("botbuilder-services");
 const restify = require("restify");
 // Create server
@@ -12,14 +12,14 @@ server.listen(process.env.port || process.env.PORT || 3978, function () {
 const botFrameworkAdapter = new botbuilder_services_1.BotFrameworkAdapter({ appId: process.env.MICROSOFT_APP_ID, appPassword: process.env.MICROSOFT_APP_PASSWORD });
 server.post('/api/messages', botFrameworkAdapter.listen());
 // init recognizer
-let recognizer = new botbuilder_core_1.RegExpRecognizer();
+let recognizer = new botbuilder_1.RegExpRecognizer();
 // add intents to recognizer
 recognizer.addIntent('HelpIntent', /help/i);
 recognizer.addIntent('CancelIntent', /(quit|cancel)/i);
 // Initialize bot
-const bot = new botbuilder_core_1.Bot(botFrameworkAdapter);
+const bot = new botbuilder_1.Bot(botFrameworkAdapter);
 // bind middleware
-bot.use(new botbuilder_core_1.ConsoleLogger(), new botbuilder_core_1.MemoryStorage(), new botbuilder_core_1.BotStateManager());
+bot.use(new botbuilder_1.ConsoleLogger(), new botbuilder_1.MemoryStorage(), new botbuilder_1.BotStateManager());
 // register recognizer
 bot.use(recognizer);
 // handle messages
