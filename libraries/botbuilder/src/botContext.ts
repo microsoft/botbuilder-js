@@ -17,11 +17,11 @@ export interface BotContext extends BotContextExtensions {
 
 export class BotContext {
     private _bot: Bot;
-    private _request: Activity|undefined;
+    private _request: Activity | undefined;
     private _reference: ConversationReference;
     private _responses: Partial<Activity>[] = [];
     private _responded = false;
-    private _properties: { [key:string]: any; } = {};
+    private _properties: { [key: string]: any; } = {};
 
     /**
      * Creates a new bot context instance.
@@ -50,7 +50,7 @@ export class BotContext {
     /** Returns the conversation reference for the current turn. */
     get conversationReference(): ConversationReference {
         this.throwIfDisposed('conversationReference');
-        return this._reference
+        return this._reference;
     }
 
     /** Assigns the conversation reference for the current turn. */
@@ -58,12 +58,12 @@ export class BotContext {
         this.throwIfDisposed('conversationReference');
         this._reference = reference;
     }
-    
-    /** 
-     * The received activity. If the bot is performing "proactive" messaging, the request will be 
+
+    /**
+     * The received activity. If the bot is performing "proactive" messaging, the request will be
      * undefined.
      */
-    get request(): Activity|undefined {
+    get request(): Activity | undefined {
         this.throwIfDisposed('request');
         return this._request;
     }
@@ -81,14 +81,14 @@ export class BotContext {
     }
 
     /**
-     * INTERNAL disposes of the context object, making it unusable. Calling any properties or 
+     * INTERNAL disposes of the context object, making it unusable. Calling any properties or
      * methods off a disposed of context will result in an exception being thrown.
      */
     public dispose(): void {
         ['_bot', '_request', '_reference', '_responses', '_properties'].forEach((prop) => {
             (this as any)[prop] = undefined;
         });
-    };
+    }
 
     /**
      * Forces the delivery of any queued up responses to the user.
@@ -101,23 +101,25 @@ export class BotContext {
         args.unshift(this);
         return Bot.prototype.post.apply(this._bot, args)
             .then((results: ConversationReference[]) => {
-                if (cnt > 0) { 
+                if (cnt > 0) {
                     this._responses.splice(0, cnt);
-                    this._responded = true; 
+                    this._responded = true;
                 }
                 return results;
             });
     }
-    
+
     /**
      * Returns the value of a previously set property. An exception will be thrown if the property
-     * hasn't been set yet. 
+     * hasn't been set yet.
      * @param name Name of the property to return.
      */
     public get<T = any>(name: string): T {
         this.throwIfDisposed(`get("${name}")`);
 
-        if (!this._properties.hasOwnProperty(name)) { throw new Error(`BotContext.get("${name}"): property not found.`); }
+        if (!this._properties.hasOwnProperty(name)) {
+            throw new Error(`BotContext.get("${name}"): property not found.`);
+        }
         return this._properties[name];
     }
 
@@ -142,15 +144,15 @@ export class BotContext {
 
         this._properties[name] = value;
     }
-    
-    /** 
-     * Helper function used by context object extensions to ensure the context object hasn't 
+
+    /**
+     * Helper function used by context object extensions to ensure the context object hasn't
      * been disposed of prior to use.
      * @param member Name of the extension property or method being called.
      */
     public throwIfDisposed(member: string) {
-        if (this.disposed) {  
-            throw new Error(`BotContext.${member}: error calling property/method after context has been disposed.`); 
+        if (this.disposed) {
+            throw new Error(`BotContext.${member}: error calling property/method after context has been disposed.`);
         }
     }
 }
