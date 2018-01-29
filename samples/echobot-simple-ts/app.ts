@@ -65,16 +65,16 @@ export interface HttpHandler {
 }
 
 function createReply(activity: any, text: string, locale: string = null): Models.Activity {
-    let reply = new Models.Activity();
-    reply.type = "message";
-    reply.timestamp = new Date();
-    reply.from = { id: activity.recipient.id, name: activity.recipient.name };
-    reply.recipient = { id: activity.from.id, name: activity.from.name };
-    reply.replyToId = activity.id;
-    reply.serviceUrl = activity.serviceUrl;
-    reply.channelId = activity.channelId;
-    reply.conversation = { isGroup: activity.conversation.isGroup, id: activity.conversation.id, name: activity.conversation.name };
-    reply.text = text || '';
-    reply.locale = locale || activity.locale;
-    return reply;
+    return {
+        type: "message",
+        timestamp: new Date(),
+        from: { id: activity.recipient.id, name: activity.recipient.name },
+        recipient: { id: activity.from.id, name: activity.from.name },
+        replyToId: activity.id,
+        serviceUrl: activity.serviceUrl,
+        channelId: activity.channelId,
+        conversation: { isGroup: activity.conversation.isGroup, id: activity.conversation.id, name: activity.conversation.name },
+        text: text || '',
+        locale: locale || activity.locale
+    };
 }
