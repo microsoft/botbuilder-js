@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const botbuilder_core_1 = require("botbuilder-core");
+const botbuilder_1 = require("botbuilder");
 const botbuilder_services_1 = require("botbuilder-services");
 const restify = require("restify");
 // Create server
@@ -21,10 +21,10 @@ const numberPrompt = require("./topics/numberPrompt");
 const textPrompt = require("./topics/textPrompt");
 topicManager.addTopics(menu, attachmentPrompt, choicePrompt, confirmPrompt, numberPrompt, textPrompt);
 // Setup bot
-const bot = new botbuilder_core_1.Bot(botFrameworkAdapter)
-    .use(new botbuilder_core_1.ConsoleLogger())
-    .use(new botbuilder_core_1.MemoryStorage())
-    .use(new botbuilder_core_1.BotStateManager())
+const bot = new botbuilder_1.Bot(botFrameworkAdapter)
+    .use(new botbuilder_1.ConsoleLogger())
+    .use(new botbuilder_1.MemoryStorage())
+    .use(new botbuilder_1.BotStateManager())
     .onReceive((context) => {
     return topicManager.routeActivity(context).then((routed) => {
         if (!routed && context.request.type === 'message') {

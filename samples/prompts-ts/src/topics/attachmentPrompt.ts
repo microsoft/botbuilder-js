@@ -1,4 +1,4 @@
-import { MessageStyler } from 'botbuilder-core';
+import { MessageStyler } from 'botbuilder';
 import * as menu from './menu';
 
 export const topicName = 'attachmentPrompt';
