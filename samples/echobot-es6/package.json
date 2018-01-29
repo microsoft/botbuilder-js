@@ -10,7 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "@types/node": "^8.0.28",
-    "botbuilder-core": "file:../../libraries/botbuilder",
+    "botbuilder": "file:../../libraries/botbuilder",
     "botbuilder-services": "file:../../libraries/botbuilder-services",
     "restify": "^6.0.0"
   }
