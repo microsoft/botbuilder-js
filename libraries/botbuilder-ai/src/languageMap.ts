@@ -544,15 +544,15 @@ function GetCodeOrFallback(code: string): string {
     return "en";
 }
 
-    //     private TryCompound( firstVal: string,  secondVal:string, code :string) :boolean
-    // {
-    //     let  compound = $"{firstVal} {secondVal}";
-    //     if (namesToCodes.TryGetValue(compound, out code))
-    //         return true;
-    //     compound = $"{secondVal} {firstVal}";
-    //     if (namesToCodes.TryGetValue(compound, out code))
-    //         return true;
-    //     return false;
-    // }
+//     private TryCompound( firstVal: string,  secondVal:string, code :string) :boolean
+// {
+//     let  compound = $"{firstVal} {secondVal}";
+//     if (namesToCodes.TryGetValue(compound, out code))
+//         return true;
+//     compound = $"{secondVal} {firstVal}";
+//     if (namesToCodes.TryGetValue(compound, out code))
+//         return true;
+//     return false;
+// }
 
 

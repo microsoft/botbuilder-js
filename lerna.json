@@ -1,0 +1,12 @@
+{
+  "lerna": "2.8.0",
+  "packages": [
+    "libraries/*"
+  ],
+  "version": "independent",
+  "commands": {
+    "bootstrap": {
+      "hoist": true
+    }
+  }
+}

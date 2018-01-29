@@ -23,9 +23,10 @@
     "botbuilder": "^4.0.0-h4.1"
   },
   "devDependencies": {
-    "@types/node": "^8.0.11",
-    "recognizers-text-number": "^1.0.0-rc.28",
-    "mocha": "^4.0.1"
+    "@types/node": "^9.3.0",
+    "codelyzer": "^4.1.0",
+    "mocha": "^5.0.0",
+    "recognizers-text-number": "^1.0.0-rc.28"
   },
   "scripts": {
     "test": "mocha tests/*.js"

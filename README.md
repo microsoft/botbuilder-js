@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-
 # Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
@@ -13,7 +11,7 @@ provided by the bot. You will only need to do this once across all repos using o
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
 contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
-=======
+
 # Bot Builder SDK v4
 
 ## System Requirements
@@ -26,7 +24,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 ### macOS
 #### Install project dependencies
 - Navigate to the `js` directory in your terminal: `> cd ~/code/BotBuilder-Dev/js/`
-- Install `node_modules` at root of project: `> npm install`
+- Bootstrap lerna `> npm install -g lerna && lerna bootstrap --hoist`
    
 #### Run the examples
 - Run a bot example: `> cd examples/echobot; npm start`
@@ -42,4 +40,4 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 
 #### Dev - Reinstall local `node_modules` after building packages
 - Run: `> npm run update-modules`
->>>>>>> 4fb6f79f2320cdadf21a793bfa3b06cd65e596f9
+
