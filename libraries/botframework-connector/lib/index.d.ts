@@ -1,3 +1,5 @@
-export { default as ConnectorClient } from './generated/connectorClient';
+import ConnectorClient = require('./generated/connectorClient');
+import Models  = require('./generated/models');
+
+export { ConnectorClient, Models }
 export { MicrosoftAppCredentials } from './customs/microsoftAppCredentials';
-export { default as Models } from './generated/models';
