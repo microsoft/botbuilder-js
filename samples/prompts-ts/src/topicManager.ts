@@ -1,4 +1,4 @@
-import { Promiseable } from 'botbuilder-core';
+import { Promiseable } from 'botbuilder';
 
 /**
  * Interface that topic modules should implement.

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const botbuilder_core_1 = require("botbuilder-core");
+const botbuilder_1 = require("botbuilder");
 const menu = require("./menu");
 exports.topicName = 'attachmentPrompt';
 // Called by the menu
@@ -13,7 +13,7 @@ exports.startTopic = startTopic;
 function continueTopic(context) {
     const attachments = context.request.attachments || [];
     if (attachments.length > 0) {
-        const msg = botbuilder_core_1.MessageStyler.carousel(attachments, `You sent ${attachments.length} attachment(s).`);
+        const msg = botbuilder_1.MessageStyler.carousel(attachments, `You sent ${attachments.length} attachment(s).`);
         context.reply(msg);
         menu.showMenu(context);
     }
