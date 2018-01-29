@@ -54,8 +54,11 @@ const WebResource = msRest.WebResource;
  * @param {object} [parameters.activity] (Optional) When creating a new
  * conversation, use this activity as the intial message to the conversation
  *
- * @param {string} [parameters.activity.type] The type of the activity
- * [message|contactRelationUpdate|converationUpdate|typing|endOfConversation|event|invoke]
+ * @param {string} [parameters.activity.type] The type of the activity.
+ * Possible values include: 'message', 'contactRelationUpdate',
+ * 'conversationUpdate', 'typing', 'ping', 'endOfConversation', 'event',
+ * 'invoke', 'deleteUserData', 'messageUpdate', 'messageDelete',
+ * 'installationUpdate', 'messageReaction', 'suggestion'
  *
  * @param {string} [parameters.activity.id] ID of this activity
  *
@@ -79,10 +82,11 @@ const WebResource = msRest.WebResource;
  * address that received the message
  *
  * @param {string} [parameters.activity.textFormat] Format of text fields
- * [plain|markdown] Default:markdown
+ * Default:markdown. Possible values include: 'markdown', 'plain', 'xml'
  *
  * @param {string} [parameters.activity.attachmentLayout] Hint for how to deal
- * with multiple attachments: [list|carousel] Default:list
+ * with multiple attachments. Default:list. Possible values include: 'list',
+ * 'carousel'
  *
  * @param {array} [parameters.activity.membersAdded] Members added to the
  * conversation
@@ -110,8 +114,9 @@ const WebResource = msRest.WebResource;
  * @param {string} [parameters.activity.speak] SSML Speak for TTS audio
  * response
  *
- * @param {string} [parameters.activity.inputHint] Indicates whether the bot is
- * accepting, expecting, or ignoring input
+ * @param {string} [parameters.activity.inputHint] Input hint to the channel on
+ * what the bot is expecting. Possible values include: 'acceptingInput',
+ * 'ignoringInput', 'expectingInput'
  *
  * @param {string} [parameters.activity.summary] Text to display if the channel
  * cannot render cards
@@ -181,7 +186,9 @@ const WebResource = msRest.WebResource;
  * where operations concerning the referenced conversation may be performed
  *
  * @param {string} [parameters.activity.code] Code indicating why the
- * conversation has ended
+ * conversation has ended. Possible values include: 'unknown',
+ * 'completedSuccessfully', 'userCancelled', 'botTimedOut',
+ * 'botIssuedInvalidMessage', 'channelFailed'
  *
  * @param {date} [parameters.activity.expiration] DateTime to expire the
  * activity as ISO 8601 encoded datetime
@@ -384,8 +391,11 @@ function _createConversation(parameters, options, callback) {
  *
  * @param {object} activity Activity to send
  *
- * @param {string} [activity.type] The type of the activity
- * [message|contactRelationUpdate|converationUpdate|typing|endOfConversation|event|invoke]
+ * @param {string} [activity.type] The type of the activity. Possible values
+ * include: 'message', 'contactRelationUpdate', 'conversationUpdate', 'typing',
+ * 'ping', 'endOfConversation', 'event', 'invoke', 'deleteUserData',
+ * 'messageUpdate', 'messageDelete', 'installationUpdate', 'messageReaction',
+ * 'suggestion'
  *
  * @param {string} [activity.id] ID of this activity
  *
@@ -408,11 +418,12 @@ function _createConversation(parameters, options, callback) {
  * @param {object} [activity.recipient] (Outbound to bot only) Bot's address
  * that received the message
  *
- * @param {string} [activity.textFormat] Format of text fields [plain|markdown]
- * Default:markdown
+ * @param {string} [activity.textFormat] Format of text fields
+ * Default:markdown. Possible values include: 'markdown', 'plain', 'xml'
  *
  * @param {string} [activity.attachmentLayout] Hint for how to deal with
- * multiple attachments: [list|carousel] Default:list
+ * multiple attachments. Default:list. Possible values include: 'list',
+ * 'carousel'
  *
  * @param {array} [activity.membersAdded] Members added to the conversation
  *
@@ -435,8 +446,9 @@ function _createConversation(parameters, options, callback) {
  *
  * @param {string} [activity.speak] SSML Speak for TTS audio response
  *
- * @param {string} [activity.inputHint] Indicates whether the bot is accepting,
- * expecting, or ignoring input
+ * @param {string} [activity.inputHint] Input hint to the channel on what the
+ * bot is expecting. Possible values include: 'acceptingInput',
+ * 'ignoringInput', 'expectingInput'
  *
  * @param {string} [activity.summary] Text to display if the channel cannot
  * render cards
@@ -501,7 +513,8 @@ function _createConversation(parameters, options, callback) {
  * operations concerning the referenced conversation may be performed
  *
  * @param {string} [activity.code] Code indicating why the conversation has
- * ended
+ * ended. Possible values include: 'unknown', 'completedSuccessfully',
+ * 'userCancelled', 'botTimedOut', 'botIssuedInvalidMessage', 'channelFailed'
  *
  * @param {date} [activity.expiration] DateTime to expire the activity as ISO
  * 8601 encoded datetime
@@ -700,8 +713,11 @@ function _sendToConversation(conversationId, activity, options, callback) {
  *
  * @param {object} activity replacement Activity
  *
- * @param {string} [activity.type] The type of the activity
- * [message|contactRelationUpdate|converationUpdate|typing|endOfConversation|event|invoke]
+ * @param {string} [activity.type] The type of the activity. Possible values
+ * include: 'message', 'contactRelationUpdate', 'conversationUpdate', 'typing',
+ * 'ping', 'endOfConversation', 'event', 'invoke', 'deleteUserData',
+ * 'messageUpdate', 'messageDelete', 'installationUpdate', 'messageReaction',
+ * 'suggestion'
  *
  * @param {string} [activity.id] ID of this activity
  *
@@ -724,11 +740,12 @@ function _sendToConversation(conversationId, activity, options, callback) {
  * @param {object} [activity.recipient] (Outbound to bot only) Bot's address
  * that received the message
  *
- * @param {string} [activity.textFormat] Format of text fields [plain|markdown]
- * Default:markdown
+ * @param {string} [activity.textFormat] Format of text fields
+ * Default:markdown. Possible values include: 'markdown', 'plain', 'xml'
  *
  * @param {string} [activity.attachmentLayout] Hint for how to deal with
- * multiple attachments: [list|carousel] Default:list
+ * multiple attachments. Default:list. Possible values include: 'list',
+ * 'carousel'
  *
  * @param {array} [activity.membersAdded] Members added to the conversation
  *
@@ -751,8 +768,9 @@ function _sendToConversation(conversationId, activity, options, callback) {
  *
  * @param {string} [activity.speak] SSML Speak for TTS audio response
  *
- * @param {string} [activity.inputHint] Indicates whether the bot is accepting,
- * expecting, or ignoring input
+ * @param {string} [activity.inputHint] Input hint to the channel on what the
+ * bot is expecting. Possible values include: 'acceptingInput',
+ * 'ignoringInput', 'expectingInput'
  *
  * @param {string} [activity.summary] Text to display if the channel cannot
  * render cards
@@ -817,7 +835,8 @@ function _sendToConversation(conversationId, activity, options, callback) {
  * operations concerning the referenced conversation may be performed
  *
  * @param {string} [activity.code] Code indicating why the conversation has
- * ended
+ * ended. Possible values include: 'unknown', 'completedSuccessfully',
+ * 'userCancelled', 'botTimedOut', 'botIssuedInvalidMessage', 'channelFailed'
  *
  * @param {date} [activity.expiration] DateTime to expire the activity as ISO
  * 8601 encoded datetime
@@ -1026,8 +1045,11 @@ function _updateActivity(conversationId, activityId, activity, options, callback
  *
  * @param {object} activity Activity to send
  *
- * @param {string} [activity.type] The type of the activity
- * [message|contactRelationUpdate|converationUpdate|typing|endOfConversation|event|invoke]
+ * @param {string} [activity.type] The type of the activity. Possible values
+ * include: 'message', 'contactRelationUpdate', 'conversationUpdate', 'typing',
+ * 'ping', 'endOfConversation', 'event', 'invoke', 'deleteUserData',
+ * 'messageUpdate', 'messageDelete', 'installationUpdate', 'messageReaction',
+ * 'suggestion'
  *
  * @param {string} [activity.id] ID of this activity
  *
@@ -1050,11 +1072,12 @@ function _updateActivity(conversationId, activityId, activity, options, callback
  * @param {object} [activity.recipient] (Outbound to bot only) Bot's address
  * that received the message
  *
- * @param {string} [activity.textFormat] Format of text fields [plain|markdown]
- * Default:markdown
+ * @param {string} [activity.textFormat] Format of text fields
+ * Default:markdown. Possible values include: 'markdown', 'plain', 'xml'
  *
  * @param {string} [activity.attachmentLayout] Hint for how to deal with
- * multiple attachments: [list|carousel] Default:list
+ * multiple attachments. Default:list. Possible values include: 'list',
+ * 'carousel'
  *
  * @param {array} [activity.membersAdded] Members added to the conversation
  *
@@ -1077,8 +1100,9 @@ function _updateActivity(conversationId, activityId, activity, options, callback
  *
  * @param {string} [activity.speak] SSML Speak for TTS audio response
  *
- * @param {string} [activity.inputHint] Indicates whether the bot is accepting,
- * expecting, or ignoring input
+ * @param {string} [activity.inputHint] Input hint to the channel on what the
+ * bot is expecting. Possible values include: 'acceptingInput',
+ * 'ignoringInput', 'expectingInput'
  *
  * @param {string} [activity.summary] Text to display if the channel cannot
  * render cards
@@ -1143,7 +1167,8 @@ function _updateActivity(conversationId, activityId, activity, options, callback
  * operations concerning the referenced conversation may be performed
  *
  * @param {string} [activity.code] Code indicating why the conversation has
- * ended
+ * ended. Possible values include: 'unknown', 'completedSuccessfully',
+ * 'userCancelled', 'botTimedOut', 'botIssuedInvalidMessage', 'channelFailed'
  *
  * @param {date} [activity.expiration] DateTime to expire the activity as ISO
  * 8601 encoded datetime
@@ -1969,8 +1994,11 @@ class Conversations {
    * @param {object} [parameters.activity] (Optional) When creating a new
    * conversation, use this activity as the intial message to the conversation
    *
-   * @param {string} [parameters.activity.type] The type of the activity
-   * [message|contactRelationUpdate|converationUpdate|typing|endOfConversation|event|invoke]
+   * @param {string} [parameters.activity.type] The type of the activity.
+   * Possible values include: 'message', 'contactRelationUpdate',
+   * 'conversationUpdate', 'typing', 'ping', 'endOfConversation', 'event',
+   * 'invoke', 'deleteUserData', 'messageUpdate', 'messageDelete',
+   * 'installationUpdate', 'messageReaction', 'suggestion'
    *
    * @param {string} [parameters.activity.id] ID of this activity
    *
@@ -1994,10 +2022,11 @@ class Conversations {
    * address that received the message
    *
    * @param {string} [parameters.activity.textFormat] Format of text fields
-   * [plain|markdown] Default:markdown
+   * Default:markdown. Possible values include: 'markdown', 'plain', 'xml'
    *
    * @param {string} [parameters.activity.attachmentLayout] Hint for how to deal
-   * with multiple attachments: [list|carousel] Default:list
+   * with multiple attachments. Default:list. Possible values include: 'list',
+   * 'carousel'
    *
    * @param {array} [parameters.activity.membersAdded] Members added to the
    * conversation
@@ -2025,8 +2054,9 @@ class Conversations {
    * @param {string} [parameters.activity.speak] SSML Speak for TTS audio
    * response
    *
-   * @param {string} [parameters.activity.inputHint] Indicates whether the bot is
-   * accepting, expecting, or ignoring input
+   * @param {string} [parameters.activity.inputHint] Input hint to the channel on
+   * what the bot is expecting. Possible values include: 'acceptingInput',
+   * 'ignoringInput', 'expectingInput'
    *
    * @param {string} [parameters.activity.summary] Text to display if the channel
    * cannot render cards
@@ -2096,7 +2126,9 @@ class Conversations {
    * where operations concerning the referenced conversation may be performed
    *
    * @param {string} [parameters.activity.code] Code indicating why the
-   * conversation has ended
+   * conversation has ended. Possible values include: 'unknown',
+   * 'completedSuccessfully', 'userCancelled', 'botTimedOut',
+   * 'botIssuedInvalidMessage', 'channelFailed'
    *
    * @param {date} [parameters.activity.expiration] DateTime to expire the
    * activity as ISO 8601 encoded datetime
@@ -2182,8 +2214,11 @@ class Conversations {
    * @param {object} [parameters.activity] (Optional) When creating a new
    * conversation, use this activity as the intial message to the conversation
    *
-   * @param {string} [parameters.activity.type] The type of the activity
-   * [message|contactRelationUpdate|converationUpdate|typing|endOfConversation|event|invoke]
+   * @param {string} [parameters.activity.type] The type of the activity.
+   * Possible values include: 'message', 'contactRelationUpdate',
+   * 'conversationUpdate', 'typing', 'ping', 'endOfConversation', 'event',
+   * 'invoke', 'deleteUserData', 'messageUpdate', 'messageDelete',
+   * 'installationUpdate', 'messageReaction', 'suggestion'
    *
    * @param {string} [parameters.activity.id] ID of this activity
    *
@@ -2207,10 +2242,11 @@ class Conversations {
    * address that received the message
    *
    * @param {string} [parameters.activity.textFormat] Format of text fields
-   * [plain|markdown] Default:markdown
+   * Default:markdown. Possible values include: 'markdown', 'plain', 'xml'
    *
    * @param {string} [parameters.activity.attachmentLayout] Hint for how to deal
-   * with multiple attachments: [list|carousel] Default:list
+   * with multiple attachments. Default:list. Possible values include: 'list',
+   * 'carousel'
    *
    * @param {array} [parameters.activity.membersAdded] Members added to the
    * conversation
@@ -2238,8 +2274,9 @@ class Conversations {
    * @param {string} [parameters.activity.speak] SSML Speak for TTS audio
    * response
    *
-   * @param {string} [parameters.activity.inputHint] Indicates whether the bot is
-   * accepting, expecting, or ignoring input
+   * @param {string} [parameters.activity.inputHint] Input hint to the channel on
+   * what the bot is expecting. Possible values include: 'acceptingInput',
+   * 'ignoringInput', 'expectingInput'
    *
    * @param {string} [parameters.activity.summary] Text to display if the channel
    * cannot render cards
@@ -2309,7 +2346,9 @@ class Conversations {
    * where operations concerning the referenced conversation may be performed
    *
    * @param {string} [parameters.activity.code] Code indicating why the
-   * conversation has ended
+   * conversation has ended. Possible values include: 'unknown',
+   * 'completedSuccessfully', 'userCancelled', 'botTimedOut',
+   * 'botIssuedInvalidMessage', 'channelFailed'
    *
    * @param {date} [parameters.activity.expiration] DateTime to expire the
    * activity as ISO 8601 encoded datetime
@@ -2398,8 +2437,11 @@ class Conversations {
    *
    * @param {object} activity Activity to send
    *
-   * @param {string} [activity.type] The type of the activity
-   * [message|contactRelationUpdate|converationUpdate|typing|endOfConversation|event|invoke]
+   * @param {string} [activity.type] The type of the activity. Possible values
+   * include: 'message', 'contactRelationUpdate', 'conversationUpdate', 'typing',
+   * 'ping', 'endOfConversation', 'event', 'invoke', 'deleteUserData',
+   * 'messageUpdate', 'messageDelete', 'installationUpdate', 'messageReaction',
+   * 'suggestion'
    *
    * @param {string} [activity.id] ID of this activity
    *
@@ -2422,11 +2464,12 @@ class Conversations {
    * @param {object} [activity.recipient] (Outbound to bot only) Bot's address
    * that received the message
    *
-   * @param {string} [activity.textFormat] Format of text fields [plain|markdown]
-   * Default:markdown
+   * @param {string} [activity.textFormat] Format of text fields
+   * Default:markdown. Possible values include: 'markdown', 'plain', 'xml'
    *
    * @param {string} [activity.attachmentLayout] Hint for how to deal with
-   * multiple attachments: [list|carousel] Default:list
+   * multiple attachments. Default:list. Possible values include: 'list',
+   * 'carousel'
    *
    * @param {array} [activity.membersAdded] Members added to the conversation
    *
@@ -2449,8 +2492,9 @@ class Conversations {
    *
    * @param {string} [activity.speak] SSML Speak for TTS audio response
    *
-   * @param {string} [activity.inputHint] Indicates whether the bot is accepting,
-   * expecting, or ignoring input
+   * @param {string} [activity.inputHint] Input hint to the channel on what the
+   * bot is expecting. Possible values include: 'acceptingInput',
+   * 'ignoringInput', 'expectingInput'
    *
    * @param {string} [activity.summary] Text to display if the channel cannot
    * render cards
@@ -2515,7 +2559,8 @@ class Conversations {
    * operations concerning the referenced conversation may be performed
    *
    * @param {string} [activity.code] Code indicating why the conversation has
-   * ended
+   * ended. Possible values include: 'unknown', 'completedSuccessfully',
+   * 'userCancelled', 'botTimedOut', 'botIssuedInvalidMessage', 'channelFailed'
    *
    * @param {date} [activity.expiration] DateTime to expire the activity as ISO
    * 8601 encoded datetime
@@ -2578,8 +2623,11 @@ class Conversations {
    *
    * @param {object} activity Activity to send
    *
-   * @param {string} [activity.type] The type of the activity
-   * [message|contactRelationUpdate|converationUpdate|typing|endOfConversation|event|invoke]
+   * @param {string} [activity.type] The type of the activity. Possible values
+   * include: 'message', 'contactRelationUpdate', 'conversationUpdate', 'typing',
+   * 'ping', 'endOfConversation', 'event', 'invoke', 'deleteUserData',
+   * 'messageUpdate', 'messageDelete', 'installationUpdate', 'messageReaction',
+   * 'suggestion'
    *
    * @param {string} [activity.id] ID of this activity
    *
@@ -2602,11 +2650,12 @@ class Conversations {
    * @param {object} [activity.recipient] (Outbound to bot only) Bot's address
    * that received the message
    *
-   * @param {string} [activity.textFormat] Format of text fields [plain|markdown]
-   * Default:markdown
+   * @param {string} [activity.textFormat] Format of text fields
+   * Default:markdown. Possible values include: 'markdown', 'plain', 'xml'
    *
    * @param {string} [activity.attachmentLayout] Hint for how to deal with
-   * multiple attachments: [list|carousel] Default:list
+   * multiple attachments. Default:list. Possible values include: 'list',
+   * 'carousel'
    *
    * @param {array} [activity.membersAdded] Members added to the conversation
    *
@@ -2629,8 +2678,9 @@ class Conversations {
    *
    * @param {string} [activity.speak] SSML Speak for TTS audio response
    *
-   * @param {string} [activity.inputHint] Indicates whether the bot is accepting,
-   * expecting, or ignoring input
+   * @param {string} [activity.inputHint] Input hint to the channel on what the
+   * bot is expecting. Possible values include: 'acceptingInput',
+   * 'ignoringInput', 'expectingInput'
    *
    * @param {string} [activity.summary] Text to display if the channel cannot
    * render cards
@@ -2695,7 +2745,8 @@ class Conversations {
    * operations concerning the referenced conversation may be performed
    *
    * @param {string} [activity.code] Code indicating why the conversation has
-   * ended
+   * ended. Possible values include: 'unknown', 'completedSuccessfully',
+   * 'userCancelled', 'botTimedOut', 'botIssuedInvalidMessage', 'channelFailed'
    *
    * @param {date} [activity.expiration] DateTime to expire the activity as ISO
    * 8601 encoded datetime
@@ -2776,8 +2827,11 @@ class Conversations {
    *
    * @param {object} activity replacement Activity
    *
-   * @param {string} [activity.type] The type of the activity
-   * [message|contactRelationUpdate|converationUpdate|typing|endOfConversation|event|invoke]
+   * @param {string} [activity.type] The type of the activity. Possible values
+   * include: 'message', 'contactRelationUpdate', 'conversationUpdate', 'typing',
+   * 'ping', 'endOfConversation', 'event', 'invoke', 'deleteUserData',
+   * 'messageUpdate', 'messageDelete', 'installationUpdate', 'messageReaction',
+   * 'suggestion'
    *
    * @param {string} [activity.id] ID of this activity
    *
@@ -2800,11 +2854,12 @@ class Conversations {
    * @param {object} [activity.recipient] (Outbound to bot only) Bot's address
    * that received the message
    *
-   * @param {string} [activity.textFormat] Format of text fields [plain|markdown]
-   * Default:markdown
+   * @param {string} [activity.textFormat] Format of text fields
+   * Default:markdown. Possible values include: 'markdown', 'plain', 'xml'
    *
    * @param {string} [activity.attachmentLayout] Hint for how to deal with
-   * multiple attachments: [list|carousel] Default:list
+   * multiple attachments. Default:list. Possible values include: 'list',
+   * 'carousel'
    *
    * @param {array} [activity.membersAdded] Members added to the conversation
    *
@@ -2827,8 +2882,9 @@ class Conversations {
    *
    * @param {string} [activity.speak] SSML Speak for TTS audio response
    *
-   * @param {string} [activity.inputHint] Indicates whether the bot is accepting,
-   * expecting, or ignoring input
+   * @param {string} [activity.inputHint] Input hint to the channel on what the
+   * bot is expecting. Possible values include: 'acceptingInput',
+   * 'ignoringInput', 'expectingInput'
    *
    * @param {string} [activity.summary] Text to display if the channel cannot
    * render cards
@@ -2893,7 +2949,8 @@ class Conversations {
    * operations concerning the referenced conversation may be performed
    *
    * @param {string} [activity.code] Code indicating why the conversation has
-   * ended
+   * ended. Possible values include: 'unknown', 'completedSuccessfully',
+   * 'userCancelled', 'botTimedOut', 'botIssuedInvalidMessage', 'channelFailed'
    *
    * @param {date} [activity.expiration] DateTime to expire the activity as ISO
    * 8601 encoded datetime
@@ -2952,8 +3009,11 @@ class Conversations {
    *
    * @param {object} activity replacement Activity
    *
-   * @param {string} [activity.type] The type of the activity
-   * [message|contactRelationUpdate|converationUpdate|typing|endOfConversation|event|invoke]
+   * @param {string} [activity.type] The type of the activity. Possible values
+   * include: 'message', 'contactRelationUpdate', 'conversationUpdate', 'typing',
+   * 'ping', 'endOfConversation', 'event', 'invoke', 'deleteUserData',
+   * 'messageUpdate', 'messageDelete', 'installationUpdate', 'messageReaction',
+   * 'suggestion'
    *
    * @param {string} [activity.id] ID of this activity
    *
@@ -2976,11 +3036,12 @@ class Conversations {
    * @param {object} [activity.recipient] (Outbound to bot only) Bot's address
    * that received the message
    *
-   * @param {string} [activity.textFormat] Format of text fields [plain|markdown]
-   * Default:markdown
+   * @param {string} [activity.textFormat] Format of text fields
+   * Default:markdown. Possible values include: 'markdown', 'plain', 'xml'
    *
    * @param {string} [activity.attachmentLayout] Hint for how to deal with
-   * multiple attachments: [list|carousel] Default:list
+   * multiple attachments. Default:list. Possible values include: 'list',
+   * 'carousel'
    *
    * @param {array} [activity.membersAdded] Members added to the conversation
    *
@@ -3003,8 +3064,9 @@ class Conversations {
    *
    * @param {string} [activity.speak] SSML Speak for TTS audio response
    *
-   * @param {string} [activity.inputHint] Indicates whether the bot is accepting,
-   * expecting, or ignoring input
+   * @param {string} [activity.inputHint] Input hint to the channel on what the
+   * bot is expecting. Possible values include: 'acceptingInput',
+   * 'ignoringInput', 'expectingInput'
    *
    * @param {string} [activity.summary] Text to display if the channel cannot
    * render cards
@@ -3069,7 +3131,8 @@ class Conversations {
    * operations concerning the referenced conversation may be performed
    *
    * @param {string} [activity.code] Code indicating why the conversation has
-   * ended
+   * ended. Possible values include: 'unknown', 'completedSuccessfully',
+   * 'userCancelled', 'botTimedOut', 'botIssuedInvalidMessage', 'channelFailed'
    *
    * @param {date} [activity.expiration] DateTime to expire the activity as ISO
    * 8601 encoded datetime
@@ -3156,8 +3219,11 @@ class Conversations {
    *
    * @param {object} activity Activity to send
    *
-   * @param {string} [activity.type] The type of the activity
-   * [message|contactRelationUpdate|converationUpdate|typing|endOfConversation|event|invoke]
+   * @param {string} [activity.type] The type of the activity. Possible values
+   * include: 'message', 'contactRelationUpdate', 'conversationUpdate', 'typing',
+   * 'ping', 'endOfConversation', 'event', 'invoke', 'deleteUserData',
+   * 'messageUpdate', 'messageDelete', 'installationUpdate', 'messageReaction',
+   * 'suggestion'
    *
    * @param {string} [activity.id] ID of this activity
    *
@@ -3180,11 +3246,12 @@ class Conversations {
    * @param {object} [activity.recipient] (Outbound to bot only) Bot's address
    * that received the message
    *
-   * @param {string} [activity.textFormat] Format of text fields [plain|markdown]
-   * Default:markdown
+   * @param {string} [activity.textFormat] Format of text fields
+   * Default:markdown. Possible values include: 'markdown', 'plain', 'xml'
    *
    * @param {string} [activity.attachmentLayout] Hint for how to deal with
-   * multiple attachments: [list|carousel] Default:list
+   * multiple attachments. Default:list. Possible values include: 'list',
+   * 'carousel'
    *
    * @param {array} [activity.membersAdded] Members added to the conversation
    *
@@ -3207,8 +3274,9 @@ class Conversations {
    *
    * @param {string} [activity.speak] SSML Speak for TTS audio response
    *
-   * @param {string} [activity.inputHint] Indicates whether the bot is accepting,
-   * expecting, or ignoring input
+   * @param {string} [activity.inputHint] Input hint to the channel on what the
+   * bot is expecting. Possible values include: 'acceptingInput',
+   * 'ignoringInput', 'expectingInput'
    *
    * @param {string} [activity.summary] Text to display if the channel cannot
    * render cards
@@ -3273,7 +3341,8 @@ class Conversations {
    * operations concerning the referenced conversation may be performed
    *
    * @param {string} [activity.code] Code indicating why the conversation has
-   * ended
+   * ended. Possible values include: 'unknown', 'completedSuccessfully',
+   * 'userCancelled', 'botTimedOut', 'botIssuedInvalidMessage', 'channelFailed'
    *
    * @param {date} [activity.expiration] DateTime to expire the activity as ISO
    * 8601 encoded datetime
@@ -3338,8 +3407,11 @@ class Conversations {
    *
    * @param {object} activity Activity to send
    *
-   * @param {string} [activity.type] The type of the activity
-   * [message|contactRelationUpdate|converationUpdate|typing|endOfConversation|event|invoke]
+   * @param {string} [activity.type] The type of the activity. Possible values
+   * include: 'message', 'contactRelationUpdate', 'conversationUpdate', 'typing',
+   * 'ping', 'endOfConversation', 'event', 'invoke', 'deleteUserData',
+   * 'messageUpdate', 'messageDelete', 'installationUpdate', 'messageReaction',
+   * 'suggestion'
    *
    * @param {string} [activity.id] ID of this activity
    *
@@ -3362,11 +3434,12 @@ class Conversations {
    * @param {object} [activity.recipient] (Outbound to bot only) Bot's address
    * that received the message
    *
-   * @param {string} [activity.textFormat] Format of text fields [plain|markdown]
-   * Default:markdown
+   * @param {string} [activity.textFormat] Format of text fields
+   * Default:markdown. Possible values include: 'markdown', 'plain', 'xml'
    *
    * @param {string} [activity.attachmentLayout] Hint for how to deal with
-   * multiple attachments: [list|carousel] Default:list
+   * multiple attachments. Default:list. Possible values include: 'list',
+   * 'carousel'
    *
    * @param {array} [activity.membersAdded] Members added to the conversation
    *
@@ -3389,8 +3462,9 @@ class Conversations {
    *
    * @param {string} [activity.speak] SSML Speak for TTS audio response
    *
-   * @param {string} [activity.inputHint] Indicates whether the bot is accepting,
-   * expecting, or ignoring input
+   * @param {string} [activity.inputHint] Input hint to the channel on what the
+   * bot is expecting. Possible values include: 'acceptingInput',
+   * 'ignoringInput', 'expectingInput'
    *
    * @param {string} [activity.summary] Text to display if the channel cannot
    * render cards
@@ -3455,7 +3529,8 @@ class Conversations {
    * operations concerning the referenced conversation may be performed
    *
    * @param {string} [activity.code] Code indicating why the conversation has
-   * ended
+   * ended. Possible values include: 'unknown', 'completedSuccessfully',
+   * 'userCancelled', 'botTimedOut', 'botIssuedInvalidMessage', 'channelFailed'
    *
    * @param {date} [activity.expiration] DateTime to expire the activity as ISO
    * 8601 encoded datetime

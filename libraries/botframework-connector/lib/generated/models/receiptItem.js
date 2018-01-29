@@ -30,7 +30,9 @@ class ReceiptItem {
    * @member {string} [image.alt] Image description intended for screen readers
    * @member {object} [image.tap] Action assigned to specific Attachment
    * @member {string} [image.tap.type] The type of action implemented by this
-   * button
+   * button. Possible values include: 'openUrl', 'imBack', 'postBack',
+   * 'playAudio', 'playVideo', 'showImage', 'downloadFile', 'signin', 'call',
+   * 'payment', 'messageBack'
    * @member {string} [image.tap.title] Text description which appears on the
    * button
    * @member {string} [image.tap.image] Image URL which will appear on the
@@ -44,7 +46,10 @@ class ReceiptItem {
    * @member {string} [quantity] Number of items of given kind
    * @member {object} [tap] This action will be activated when user taps on the
    * Item bubble.
-   * @member {string} [tap.type] The type of action implemented by this button
+   * @member {string} [tap.type] The type of action implemented by this button.
+   * Possible values include: 'openUrl', 'imBack', 'postBack', 'playAudio',
+   * 'playVideo', 'showImage', 'downloadFile', 'signin', 'call', 'payment',
+   * 'messageBack'
    * @member {string} [tap.title] Text description which appears on the button
    * @member {string} [tap.image] Image URL which will appear on the button,
    * next to text label
