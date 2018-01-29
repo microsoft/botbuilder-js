@@ -36,6 +36,7 @@
   },
   "scripts": {
     "test": "mocha tests/*.js",
-    "build": "tsc"
+    "build": "tsc",
+    "clean": "erase /q lib\\*.*"
   }
 }
