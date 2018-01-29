@@ -2,7 +2,7 @@
  * @module botbuilder-ai
  */
 /** second comment block */
-import { Activity, SearchEngine, SearchCatalog, SearchHit } from 'botbuilder';
+import { SearchCatalog, SearchEngine, SearchHit } from 'botbuilder';
 import * as request from 'request-promise-native';
 import * as entities from 'html-entities';
 
@@ -81,7 +81,8 @@ export class QnAMaker {
                     if (answers.length >= this.options.top)
                         break;
                 }
-            };
+            }
+            ;
         }
         return answers;
     }
@@ -126,7 +127,7 @@ export class QnAMaker {
         let knowledgeBase = await request({
             url: this.kbUrl,
             method: 'GET',
-            headers: { 'Ocp-Apim-Subscription-Key': this.options.subscriptionKey }
+            headers: {'Ocp-Apim-Subscription-Key': this.options.subscriptionKey}
         }).then((result) => <QnAKnowledgeBase>JSON.parse(result));
 
         // proces each line

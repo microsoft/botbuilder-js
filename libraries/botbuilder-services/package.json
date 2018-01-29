@@ -20,13 +20,15 @@
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "dependencies": {
-    "@types/node": "^8.0.11",
+    "@types/node": "^9.3.0",
     "botbuilder": "^4.0.0-h4.1",
     "botframework-connector": "^4.0.0-h4.1",
     "botframework-connector-auth": "^4.0.0-h4.1"
   },
   "devDependencies": {
-    "mocha": "^4.0.1"
+    "@types/node": "^9.3.0",
+    "codelyzer": "^4.1.0",
+    "mocha": "^5.0.0"
   },
   "scripts": {
     "test": "mocha tests/*.js"

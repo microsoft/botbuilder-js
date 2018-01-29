@@ -2,9 +2,10 @@
  * @module botbuilder-ai
  */
 /** second comment block */
-import { Activity, Middleware, Promiseable, ConversationResourceResponse } from 'botbuilder';
-import LuisClient = require('botframework-luis');
+import { Activity, ConversationResourceResponse, Middleware } from 'botbuilder';
 import * as LanguageMap from './languageMap';
+import LuisClient = require('botframework-luis');
+
 let MsTranslator = require('mstranslator');
 
 export interface TranslationContext {
@@ -29,7 +30,7 @@ export class LanguageTranslator implements Middleware {
 
     public constructor(translatorKey: string, protected nativeLanguages: string[], protected luisAppId: string, protected luisAccessKey: string) {
         this.luisClient = new LuisClient();
-        this.translator = new MsTranslator({ api_key: translatorKey }, true);
+        this.translator = new MsTranslator({api_key: translatorKey}, true);
         this.translator.translateArrayAsync = denodeify(this.translator, this.translator.translateArray);
     }
 
@@ -65,7 +66,11 @@ export class LanguageTranslator implements Middleware {
                         let commandText = context.request.text;
                         // translate commandtext if not in en already (our model is in english)
                         if (sourceLanguage != 'en') {
-                            let translationResult = await this.translator.translateArrayAsync({ from: sourceLanguage, to: 'en', texts: [commandText] });
+                            let translationResult = await this.translator.translateArrayAsync({
+                                from: sourceLanguage,
+                                to: 'en',
+                                texts: [commandText]
+                            });
                             commandText = <string>translationResult[0].TranslatedText;
                         }
                         // look at intent of commandText
@@ -107,7 +112,7 @@ export class LanguageTranslator implements Middleware {
             }
         }
         return Promise.all(promises)
-               .then(result => next());
+            .then(result => next());
     }
 
     /// Translate .Text field of a message, regardless of direction
@@ -193,5 +198,6 @@ interface TranslationResult {
 
 interface Translator {
     translateArray(options: TranslateArrayOptions, callback: ErrorOrResult<TranslationResult[]>): void;
+
     translateArrayAsync(options: TranslateArrayOptions): Promise<TranslationResult[]>
 }
