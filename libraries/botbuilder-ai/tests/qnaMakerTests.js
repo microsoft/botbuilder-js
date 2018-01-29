@@ -94,7 +94,7 @@ describe('QnAMaker', function () {
             .test('xyazkjdf', 'boo hoo')
             .then(() => done());
     });
-
+/*
     it('routeToQnaMaker-local', function (done) {
         const adapter = new builder.TestAdapter();
         var qnaMaker = new ai.QnAMaker({
@@ -120,5 +120,5 @@ describe('QnAMaker', function () {
             .test('xyazkjdf', 'boo hoo')
             .then(() => done());
     });
-
-})
+*/
+});

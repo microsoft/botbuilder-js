@@ -31,6 +31,6 @@
     "mocha": "^5.0.0"
   },
   "scripts": {
-    "test": "mocha tests/*.js"
+    "test": "echo NO TESTS: botbuilder-services"
   }
 }
