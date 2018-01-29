@@ -17,7 +17,8 @@
 class MessageReaction {
   /**
    * Create a MessageReaction.
-   * @member {string} [type] Message reaction type
+   * @member {string} [type] Message reaction type. Possible values include:
+   * 'like', 'plusOne'
    */
   constructor() {
   }

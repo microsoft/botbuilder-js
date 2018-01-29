@@ -20,8 +20,11 @@ const models = require('./index');
 class Activity {
   /**
    * Create a Activity.
-   * @member {string} [type] The type of the activity
-   * [message|contactRelationUpdate|converationUpdate|typing|endOfConversation|event|invoke]
+   * @member {string} [type] The type of the activity. Possible values include:
+   * 'message', 'contactRelationUpdate', 'conversationUpdate', 'typing',
+   * 'ping', 'endOfConversation', 'event', 'invoke', 'deleteUserData',
+   * 'messageUpdate', 'messageDelete', 'installationUpdate', 'messageReaction',
+   * 'suggestion'
    * @member {string} [id] ID of this activity
    * @member {date} [timestamp] UTC Time when message was sent (set by service)
    * @member {date} [localTimestamp] Local time when message was sent (set by
@@ -43,10 +46,10 @@ class Activity {
    * @member {string} [recipient.id] Channel id for the user or bot on this
    * channel (Example: joe@smith.com, or @joesmith or 123456)
    * @member {string} [recipient.name] Display friendly name
-   * @member {string} [textFormat] Format of text fields [plain|markdown]
-   * Default:markdown
+   * @member {string} [textFormat] Format of text fields Default:markdown.
+   * Possible values include: 'markdown', 'plain', 'xml'
    * @member {string} [attachmentLayout] Hint for how to deal with multiple
-   * attachments: [list|carousel] Default:list
+   * attachments. Default:list. Possible values include: 'list', 'carousel'
    * @member {array} [membersAdded] Members added to the conversation
    * @member {array} [membersRemoved] Members removed from the conversation
    * @member {array} [reactionsAdded] Reactions added to the activity
@@ -57,8 +60,9 @@ class Activity {
    * @member {string} [locale] The language code of the Text field
    * @member {string} [text] Content for the message
    * @member {string} [speak] SSML Speak for TTS audio response
-   * @member {string} [inputHint] Indicates whether the bot is accepting,
-   * expecting, or ignoring input
+   * @member {string} [inputHint] Input hint to the channel on what the bot is
+   * expecting. Possible values include: 'acceptingInput', 'ignoringInput',
+   * 'expectingInput'
    * @member {string} [summary] Text to display if the channel cannot render
    * cards
    * @member {object} [suggestedActions] SuggestedActions are used to provide
@@ -98,7 +102,9 @@ class Activity {
    * @member {string} [relatesTo.channelId] Channel ID
    * @member {string} [relatesTo.serviceUrl] Service endpoint where operations
    * concerning the referenced conversation may be performed
-   * @member {string} [code] Code indicating why the conversation has ended
+   * @member {string} [code] Code indicating why the conversation has ended.
+   * Possible values include: 'unknown', 'completedSuccessfully',
+   * 'userCancelled', 'botTimedOut', 'botIssuedInvalidMessage', 'channelFailed'
    * @member {date} [expiration] DateTime to expire the activity as ISO 8601
    * encoded datetime
    * @member {string} [importance] Importance of this activity

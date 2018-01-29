@@ -107,7 +107,8 @@ export interface ConversationAccount {
  * @constructor
  * Message reaction object
  *
- * @member {string} [type] Message reaction type
+ * @member {string} [type] Message reaction type. Possible values include:
+ * 'like', 'plusOne'
  */
 export interface MessageReaction {
   type?: string;
@@ -119,7 +120,10 @@ export interface MessageReaction {
  * @constructor
  * A clickable action
  *
- * @member {string} [type] The type of action implemented by this button
+ * @member {string} [type] The type of action implemented by this button.
+ * Possible values include: 'openUrl', 'imBack', 'postBack', 'playAudio',
+ * 'playVideo', 'showImage', 'downloadFile', 'signin', 'call', 'payment',
+ * 'messageBack'
  * @member {string} [title] Text description which appears on the button
  * @member {string} [image] Image URL which will appear on the button, next to
  * text label
@@ -239,8 +243,10 @@ export interface TextHighlight {
  * An Activity is the basic communication type for the Bot Framework 3.0
  * protocol
  *
- * @member {string} [type] The type of the activity
- * [message|contactRelationUpdate|converationUpdate|typing|endOfConversation|event|invoke]
+ * @member {string} [type] The type of the activity. Possible values include:
+ * 'message', 'contactRelationUpdate', 'conversationUpdate', 'typing', 'ping',
+ * 'endOfConversation', 'event', 'invoke', 'deleteUserData', 'messageUpdate',
+ * 'messageDelete', 'installationUpdate', 'messageReaction', 'suggestion'
  * @member {string} [id] ID of this activity
  * @member {date} [timestamp] UTC Time when message was sent (set by service)
  * @member {date} [localTimestamp] Local time when message was sent (set by
@@ -262,10 +268,10 @@ export interface TextHighlight {
  * @member {string} [recipient.id] Channel id for the user or bot on this
  * channel (Example: joe@smith.com, or @joesmith or 123456)
  * @member {string} [recipient.name] Display friendly name
- * @member {string} [textFormat] Format of text fields [plain|markdown]
- * Default:markdown
+ * @member {string} [textFormat] Format of text fields Default:markdown.
+ * Possible values include: 'markdown', 'plain', 'xml'
  * @member {string} [attachmentLayout] Hint for how to deal with multiple
- * attachments: [list|carousel] Default:list
+ * attachments. Default:list. Possible values include: 'list', 'carousel'
  * @member {array} [membersAdded] Members added to the conversation
  * @member {array} [membersRemoved] Members removed from the conversation
  * @member {array} [reactionsAdded] Reactions added to the activity
@@ -276,8 +282,9 @@ export interface TextHighlight {
  * @member {string} [locale] The language code of the Text field
  * @member {string} [text] Content for the message
  * @member {string} [speak] SSML Speak for TTS audio response
- * @member {string} [inputHint] Indicates whether the bot is accepting,
- * expecting, or ignoring input
+ * @member {string} [inputHint] Input hint to the channel on what the bot is
+ * expecting. Possible values include: 'acceptingInput', 'ignoringInput',
+ * 'expectingInput'
  * @member {string} [summary] Text to display if the channel cannot render
  * cards
  * @member {object} [suggestedActions] SuggestedActions are used to provide
@@ -317,7 +324,9 @@ export interface TextHighlight {
  * @member {string} [relatesTo.channelId] Channel ID
  * @member {string} [relatesTo.serviceUrl] Service endpoint where operations
  * concerning the referenced conversation may be performed
- * @member {string} [code] Code indicating why the conversation has ended
+ * @member {string} [code] Code indicating why the conversation has ended.
+ * Possible values include: 'unknown', 'completedSuccessfully',
+ * 'userCancelled', 'botTimedOut', 'botIssuedInvalidMessage', 'channelFailed'
  * @member {date} [expiration] DateTime to expire the activity as ISO 8601
  * encoded datetime
  * @member {string} [importance] Importance of this activity
@@ -385,8 +394,11 @@ export interface Activity {
  * supported by the channel)
  * @member {object} [activity] (Optional) When creating a new conversation, use
  * this activity as the intial message to the conversation
- * @member {string} [activity.type] The type of the activity
- * [message|contactRelationUpdate|converationUpdate|typing|endOfConversation|event|invoke]
+ * @member {string} [activity.type] The type of the activity. Possible values
+ * include: 'message', 'contactRelationUpdate', 'conversationUpdate', 'typing',
+ * 'ping', 'endOfConversation', 'event', 'invoke', 'deleteUserData',
+ * 'messageUpdate', 'messageDelete', 'installationUpdate', 'messageReaction',
+ * 'suggestion'
  * @member {string} [activity.id] ID of this activity
  * @member {date} [activity.timestamp] UTC Time when message was sent (set by
  * service)
@@ -412,9 +424,10 @@ export interface Activity {
  * this channel (Example: joe@smith.com, or @joesmith or 123456)
  * @member {string} [activity.recipient.name] Display friendly name
  * @member {string} [activity.textFormat] Format of text fields
- * [plain|markdown] Default:markdown
+ * Default:markdown. Possible values include: 'markdown', 'plain', 'xml'
  * @member {string} [activity.attachmentLayout] Hint for how to deal with
- * multiple attachments: [list|carousel] Default:list
+ * multiple attachments. Default:list. Possible values include: 'list',
+ * 'carousel'
  * @member {array} [activity.membersAdded] Members added to the conversation
  * @member {array} [activity.membersRemoved] Members removed from the
  * conversation
@@ -427,8 +440,9 @@ export interface Activity {
  * @member {string} [activity.locale] The language code of the Text field
  * @member {string} [activity.text] Content for the message
  * @member {string} [activity.speak] SSML Speak for TTS audio response
- * @member {string} [activity.inputHint] Indicates whether the bot is
- * accepting, expecting, or ignoring input
+ * @member {string} [activity.inputHint] Input hint to the channel on what the
+ * bot is expecting. Possible values include: 'acceptingInput',
+ * 'ignoringInput', 'expectingInput'
  * @member {string} [activity.summary] Text to display if the channel cannot
  * render cards
  * @member {object} [activity.suggestedActions] SuggestedActions are used to
@@ -473,7 +487,8 @@ export interface Activity {
  * @member {string} [activity.relatesTo.serviceUrl] Service endpoint where
  * operations concerning the referenced conversation may be performed
  * @member {string} [activity.code] Code indicating why the conversation has
- * ended
+ * ended. Possible values include: 'unknown', 'completedSuccessfully',
+ * 'userCancelled', 'botTimedOut', 'botIssuedInvalidMessage', 'channelFailed'
  * @member {date} [activity.expiration] DateTime to expire the activity as ISO
  * 8601 encoded datetime
  * @member {string} [activity.importance] Importance of this activity
@@ -553,7 +568,10 @@ export interface AttachmentData {
  * @member {string} [url] URL thumbnail image for major content property
  * @member {string} [alt] Image description intended for screen readers
  * @member {object} [tap] Action assigned to specific Attachment
- * @member {string} [tap.type] The type of action implemented by this button
+ * @member {string} [tap.type] The type of action implemented by this button.
+ * Possible values include: 'openUrl', 'imBack', 'postBack', 'playAudio',
+ * 'playVideo', 'showImage', 'downloadFile', 'signin', 'call', 'payment',
+ * 'messageBack'
  * @member {string} [tap.title] Text description which appears on the button
  * @member {string} [tap.image] Image URL which will appear on the button, next
  * to text label
@@ -582,7 +600,10 @@ export interface CardImage {
  * @member {array} [buttons] Set of actions applicable to the current card
  * @member {object} [tap] This action will be activated when user taps on the
  * card itself
- * @member {string} [tap.type] The type of action implemented by this button
+ * @member {string} [tap.type] The type of action implemented by this button.
+ * Possible values include: 'openUrl', 'imBack', 'postBack', 'playAudio',
+ * 'playVideo', 'showImage', 'downloadFile', 'signin', 'call', 'payment',
+ * 'messageBack'
  * @member {string} [tap.title] Text description which appears on the button
  * @member {string} [tap.image] Image URL which will appear on the button, next
  * to text label
@@ -723,7 +744,10 @@ export interface AudioCard {
  * @member {array} [buttons] Set of actions applicable to the current card
  * @member {object} [tap] This action will be activated when user taps on the
  * card itself
- * @member {string} [tap.type] The type of action implemented by this button
+ * @member {string} [tap.type] The type of action implemented by this button.
+ * Possible values include: 'openUrl', 'imBack', 'postBack', 'playAudio',
+ * 'playVideo', 'showImage', 'downloadFile', 'signin', 'call', 'payment',
+ * 'messageBack'
  * @member {string} [tap.title] Text description which appears on the button
  * @member {string} [tap.image] Image URL which will appear on the button, next
  * to text label
@@ -798,7 +822,9 @@ export interface MediaCard {
  * @member {string} [image.alt] Image description intended for screen readers
  * @member {object} [image.tap] Action assigned to specific Attachment
  * @member {string} [image.tap.type] The type of action implemented by this
- * button
+ * button. Possible values include: 'openUrl', 'imBack', 'postBack',
+ * 'playAudio', 'playVideo', 'showImage', 'downloadFile', 'signin', 'call',
+ * 'payment', 'messageBack'
  * @member {string} [image.tap.title] Text description which appears on the
  * button
  * @member {string} [image.tap.image] Image URL which will appear on the
@@ -812,7 +838,10 @@ export interface MediaCard {
  * @member {string} [quantity] Number of items of given kind
  * @member {object} [tap] This action will be activated when user taps on the
  * Item bubble.
- * @member {string} [tap.type] The type of action implemented by this button
+ * @member {string} [tap.type] The type of action implemented by this button.
+ * Possible values include: 'openUrl', 'imBack', 'postBack', 'playAudio',
+ * 'playVideo', 'showImage', 'downloadFile', 'signin', 'call', 'payment',
+ * 'messageBack'
  * @member {string} [tap.title] Text description which appears on the button
  * @member {string} [tap.image] Image URL which will appear on the button, next
  * to text label
@@ -860,7 +889,10 @@ export interface Fact {
  * @member {array} [facts] Array of Fact Objects   Array of key-value pairs.
  * @member {object} [tap] This action will be activated when user taps on the
  * card
- * @member {string} [tap.type] The type of action implemented by this button
+ * @member {string} [tap.type] The type of action implemented by this button.
+ * Possible values include: 'openUrl', 'imBack', 'postBack', 'playAudio',
+ * 'playVideo', 'showImage', 'downloadFile', 'signin', 'call', 'payment',
+ * 'messageBack'
  * @member {string} [tap.title] Text description which appears on the button
  * @member {string} [tap.image] Image URL which will appear on the button, next
  * to text label
@@ -912,7 +944,10 @@ export interface SigninCard {
  * @member {array} [buttons] Set of actions applicable to the current card
  * @member {object} [tap] This action will be activated when user taps on the
  * card itself
- * @member {string} [tap.type] The type of action implemented by this button
+ * @member {string} [tap.type] The type of action implemented by this button.
+ * Possible values include: 'openUrl', 'imBack', 'postBack', 'playAudio',
+ * 'playVideo', 'showImage', 'downloadFile', 'signin', 'call', 'payment',
+ * 'messageBack'
  * @member {string} [tap.title] Text description which appears on the button
  * @member {string} [tap.image] Image URL which will appear on the button, next
  * to text label

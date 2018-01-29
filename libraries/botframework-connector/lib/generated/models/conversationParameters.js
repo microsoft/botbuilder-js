@@ -29,8 +29,11 @@ class ConversationParameters {
    * supported by the channel)
    * @member {object} [activity] (Optional) When creating a new conversation,
    * use this activity as the intial message to the conversation
-   * @member {string} [activity.type] The type of the activity
-   * [message|contactRelationUpdate|converationUpdate|typing|endOfConversation|event|invoke]
+   * @member {string} [activity.type] The type of the activity. Possible values
+   * include: 'message', 'contactRelationUpdate', 'conversationUpdate',
+   * 'typing', 'ping', 'endOfConversation', 'event', 'invoke',
+   * 'deleteUserData', 'messageUpdate', 'messageDelete', 'installationUpdate',
+   * 'messageReaction', 'suggestion'
    * @member {string} [activity.id] ID of this activity
    * @member {date} [activity.timestamp] UTC Time when message was sent (set by
    * service)
@@ -56,9 +59,10 @@ class ConversationParameters {
    * this channel (Example: joe@smith.com, or @joesmith or 123456)
    * @member {string} [activity.recipient.name] Display friendly name
    * @member {string} [activity.textFormat] Format of text fields
-   * [plain|markdown] Default:markdown
+   * Default:markdown. Possible values include: 'markdown', 'plain', 'xml'
    * @member {string} [activity.attachmentLayout] Hint for how to deal with
-   * multiple attachments: [list|carousel] Default:list
+   * multiple attachments. Default:list. Possible values include: 'list',
+   * 'carousel'
    * @member {array} [activity.membersAdded] Members added to the conversation
    * @member {array} [activity.membersRemoved] Members removed from the
    * conversation
@@ -72,8 +76,9 @@ class ConversationParameters {
    * @member {string} [activity.locale] The language code of the Text field
    * @member {string} [activity.text] Content for the message
    * @member {string} [activity.speak] SSML Speak for TTS audio response
-   * @member {string} [activity.inputHint] Indicates whether the bot is
-   * accepting, expecting, or ignoring input
+   * @member {string} [activity.inputHint] Input hint to the channel on what
+   * the bot is expecting. Possible values include: 'acceptingInput',
+   * 'ignoringInput', 'expectingInput'
    * @member {string} [activity.summary] Text to display if the channel cannot
    * render cards
    * @member {object} [activity.suggestedActions] SuggestedActions are used to
@@ -119,7 +124,8 @@ class ConversationParameters {
    * @member {string} [activity.relatesTo.serviceUrl] Service endpoint where
    * operations concerning the referenced conversation may be performed
    * @member {string} [activity.code] Code indicating why the conversation has
-   * ended
+   * ended. Possible values include: 'unknown', 'completedSuccessfully',
+   * 'userCancelled', 'botTimedOut', 'botIssuedInvalidMessage', 'channelFailed'
    * @member {date} [activity.expiration] DateTime to expire the activity as
    * ISO 8601 encoded datetime
    * @member {string} [activity.importance] Importance of this activity

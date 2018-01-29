@@ -22,7 +22,10 @@ class CardImage {
    * @member {string} [url] URL thumbnail image for major content property
    * @member {string} [alt] Image description intended for screen readers
    * @member {object} [tap] Action assigned to specific Attachment
-   * @member {string} [tap.type] The type of action implemented by this button
+   * @member {string} [tap.type] The type of action implemented by this button.
+   * Possible values include: 'openUrl', 'imBack', 'postBack', 'playAudio',
+   * 'playVideo', 'showImage', 'downloadFile', 'signin', 'call', 'payment',
+   * 'messageBack'
    * @member {string} [tap.title] Text description which appears on the button
    * @member {string} [tap.image] Image URL which will appear on the button,
    * next to text label

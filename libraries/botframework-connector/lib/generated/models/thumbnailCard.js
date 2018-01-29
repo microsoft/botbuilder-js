@@ -26,7 +26,10 @@ class ThumbnailCard {
    * @member {array} [buttons] Set of actions applicable to the current card
    * @member {object} [tap] This action will be activated when user taps on the
    * card itself
-   * @member {string} [tap.type] The type of action implemented by this button
+   * @member {string} [tap.type] The type of action implemented by this button.
+   * Possible values include: 'openUrl', 'imBack', 'postBack', 'playAudio',
+   * 'playVideo', 'showImage', 'downloadFile', 'signin', 'call', 'payment',
+   * 'messageBack'
    * @member {string} [tap.title] Text description which appears on the button
    * @member {string} [tap.image] Image URL which will appear on the button,
    * next to text label

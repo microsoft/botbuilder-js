@@ -17,7 +17,10 @@
 class CardAction {
   /**
    * Create a CardAction.
-   * @member {string} [type] The type of action implemented by this button
+   * @member {string} [type] The type of action implemented by this button.
+   * Possible values include: 'openUrl', 'imBack', 'postBack', 'playAudio',
+   * 'playVideo', 'showImage', 'downloadFile', 'signin', 'call', 'payment',
+   * 'messageBack'
    * @member {string} [title] Text description which appears on the button
    * @member {string} [image] Image URL which will appear on the button, next
    * to text label
