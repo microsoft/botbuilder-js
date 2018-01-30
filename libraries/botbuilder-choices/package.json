@@ -30,6 +30,8 @@
   },
   "scripts": {
     "test": "mocha tests/*.js",
-    "build-docs": "typedoc --theme markdown --entryPoint botbuilder-choices --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-choices .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Choices\" --readme none"
+    "build": "tsc",
+    "build-docs": "typedoc --theme markdown --entryPoint botbuilder-choices --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-choices .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Choices\" --readme none",
+    "clean": "erase /q lib\\*.*"
   }
 }

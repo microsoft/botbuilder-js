@@ -2,7 +2,7 @@
  * @module botbuilder-ai
  */
 /** second comment block */
-import { Activity, Middleware, ConversationResourceResponse } from 'botbuilder';
+import { Activity, ConversationResourceResponse, Middleware } from 'botbuilder';
 export interface TranslationContext {
     sourceText: string;
     sourceLanguage: string;

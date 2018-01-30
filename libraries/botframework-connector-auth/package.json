@@ -33,6 +33,6 @@
     "typescript": "^2.5.2"
   },
   "scripts": {
-    "test": "mocha tests/*.js"
+    "test": "echo NO TESTS: botframework-connector-auth"
   }
 }
