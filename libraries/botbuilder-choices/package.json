@@ -29,6 +29,8 @@
     "recognizers-text-number": "^1.0.0-rc.28"
   },
   "scripts": {
-    "test": "mocha tests/*.js"
+    "test": "mocha tests/*.js",
+    "build": "tsc",
+    "clean": "erase /q lib\\*.*"
   }
 }

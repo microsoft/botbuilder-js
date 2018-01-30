@@ -27,6 +27,7 @@
   },
   "scripts": {
     "test": "mocha tests/*.js",
-    "webpack": "node ../../node_modules/webpack/bin/webpack"
+    "build": "tsc",
+    "clean": "erase /q lib\\*.*"
   }
 }
