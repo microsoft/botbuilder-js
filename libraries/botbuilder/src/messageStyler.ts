@@ -6,8 +6,7 @@
  * Licensed under the MIT License.
  */
 import { CardStyler } from './cardStyler';
-import { Activity, CardAction, SuggestedActions, Attachment } from 'botframework-connector';
-import { ActivityTypes, AttachmentLayouts } from './activity';
+import { ActivityTypes, AttachmentLayouts, Activity, CardAction, SuggestedActions, Attachment } from 'botframework-connector';
 
 /**
  * A set of utility functions to assist with the formatting of the various message types a bot can

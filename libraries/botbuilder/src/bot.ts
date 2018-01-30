@@ -6,11 +6,10 @@
  * Licensed under the MIT License.
  */
 import { MiddlewareSet } from './middlewareSet';
-import { ActivityTypes, applyConversationReference } from './activity';
-import { Activity, ConversationReference, ConversationResourceResponse, } from 'botframework-connector';
+import { ActivityTypes, Activity, ConversationReference, ConversationResourceResponse, } from 'botframework-connector';
 import { ActivityAdapter } from './activityAdapter';
 import { Promiseable } from './middleware';
-import { createBotContext } from './botContext';
+import { createBotContext, applyConversationReference } from './botContext';
 import { TemplateManager, TemplateRenderer } from './templateManager';
 import { DictionaryRenderer, TemplateDictionary } from './botbuilder';
 

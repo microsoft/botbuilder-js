@@ -76,23 +76,3 @@ export const EndOfConversationCodes = {
     /** The conversation ended because the bot didn't recognize the users utterance. */
     unrecognized: 'unrecognized'
 }
-
-export function getConversationReference(activity: Partial<Activity>): ConversationReference {
-    return {
-        activityId: activity.id,
-        user: activity.from,
-        bot: activity.recipient,
-        conversation: activity.conversation,
-        channelId: activity.channelId,
-        serviceUrl: activity.serviceUrl
-    };
-}
-
-export function applyConversationReference(activity: Partial<Activity>, reference: ConversationReference): void {
-    activity.channelId = reference.channelId;
-    activity.serviceUrl = reference.serviceUrl;
-    activity.conversation = reference.conversation;
-    activity.from = reference.bot;
-    activity.recipient = reference.user;
-    activity.replyToId = reference.activityId;
-}

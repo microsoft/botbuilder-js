@@ -5,9 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.  
  * Licensed under the MIT License.
  */
-import { ActivityTypes, EndOfConversationCodes, getConversationReference } from './activity';
-import { Activity, ConversationReference } from 'botframework-connector';
-
+import { ActivityTypes, EndOfConversationCodes, Activity, ConversationReference } from 'botframework-connector';
 import { Bot } from './bot';
 import { Intent } from './intentRecognizer';
 import { EntityObject } from './entityObject';
@@ -212,4 +210,24 @@ export function createBotContext(bot: Bot, request?: Activity): BotContext {
     });
 
     return context;
+}
+
+export function getConversationReference(activity: Partial<Activity>): ConversationReference {
+    return {
+        activityId: activity.id,
+        user: activity.from,
+        bot: activity.recipient,
+        conversation: activity.conversation,
+        channelId: activity.channelId,
+        serviceUrl: activity.serviceUrl
+    };
+}
+
+export function applyConversationReference(activity: Partial<Activity>, reference: ConversationReference): void {
+    activity.channelId = reference.channelId;
+    activity.serviceUrl = reference.serviceUrl;
+    activity.conversation = reference.conversation;
+    activity.from = reference.bot;
+    activity.recipient = reference.user;
+    activity.replyToId = reference.activityId;
 }

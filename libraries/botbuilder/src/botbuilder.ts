@@ -6,7 +6,6 @@
  * Licensed under the MIT License.
  */
 
-export * from './activity';
 export * from './attachmentRecognizer';
 export * from './bot';
 export * from './botService';
@@ -31,7 +30,7 @@ export * from './storageMiddleware';
 export * from './templateManager';
 export * from './dictionaryRenderer';
 export * from './testAdapter';
-export { Activity, ConversationReference, ConversationResourceResponse } from 'botframework-connector';
+export * from 'botframework-connector';
 
 import { Bot } from './bot';
 import { Activity, ConversationReference, ConversationResourceResponse } from 'botframework-connector';
