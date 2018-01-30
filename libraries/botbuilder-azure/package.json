@@ -30,6 +30,7 @@
     "mocha": "^5.0.0"
   },
   "scripts": {
-    "test": "mocha tests/*.js"
+    "test": "mocha tests/*.js",
+    "build-docs": "typedoc --theme markdown --entryPoint botbuilder-azure --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-azure .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Azure\" --readme none"
   }
 }

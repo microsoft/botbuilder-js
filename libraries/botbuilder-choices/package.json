@@ -29,6 +29,7 @@
     "recognizers-text-number": "^1.0.0-rc.28"
   },
   "scripts": {
-    "test": "mocha tests/*.js"
+    "test": "mocha tests/*.js",
+    "build-docs": "typedoc --theme markdown --entryPoint botbuilder-choices --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-choices .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Choices\" --readme none"
   }
 }
