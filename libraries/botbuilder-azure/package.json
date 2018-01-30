@@ -2,7 +2,7 @@
   "name": "botbuilder-azure",
   "author": "Microsoft Corp.",
   "description": "Azure extensions for Microsoft BotBuilder.",
-  "version": "4.0.0-h4.1",
+  "version": "4.0.0-alpha2",
   "license": "MIT",
   "keywords": [
     "botbuilder",
@@ -22,7 +22,7 @@
   "typings": "./lib/index.d.ts",
   "dependencies": {
     "azure-storage": "^2.3.0",
-    "botbuilder": "^4.0.0-h4.1"
+    "botbuilder@preview": "^4.0.0-alpha2"
   },
   "devDependencies": {
     "@types/mocha": "^2.2.47",
