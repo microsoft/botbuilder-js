@@ -1,0 +1,1 @@
+call lerna run clean
