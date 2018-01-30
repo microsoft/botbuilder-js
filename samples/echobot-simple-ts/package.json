@@ -11,9 +11,9 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@types/node": "^8.0.28",
+    "@types/node": "^9.3.0",
     "@types/restify": "^5.0.3",
-    "botframework-connector": "file:../../libraries/botframework-connector",
-    "restify": "^6.0.0"
+    "botframework-connector": "4.0.0-h4.1",
+    "restify": "6.3.4"
   }
 }
