@@ -1,2 +1,5 @@
 /**/node_modules
 /**/.vscode
+#coverage
+coverage
+.nyc_output

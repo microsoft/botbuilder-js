@@ -50,4 +50,4 @@ export interface StoreItem {
 export interface StoreItems {
     [key: string]: StoreItem;
 }
-
+/* istanbul ignore file */

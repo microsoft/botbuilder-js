@@ -18,7 +18,6 @@
   "license": "MIT",
   "repository": "https://github.com/microsoft/botbuilder",
   "dependencies": {
-    "@types/request-promise-native": "^1.0.10",
     "async": "^2.6.0",
     "async-file": "^2.0.2",
     "azure-storage": "^2.3.0",
@@ -47,6 +46,7 @@
     "@types/html-entities": "^1.2.16",
     "@types/jsonwebtoken": "7.2.5",
     "@types/node": "^9.3.0",
+    "@types/request-promise-native": "^1.0.10",
     "@types/restify": "^5.0.1",
     "@types/sprintf-js": "^1.1.0",
     "awesome-typescript-loader": "^3.2.3",
