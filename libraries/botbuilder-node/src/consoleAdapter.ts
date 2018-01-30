@@ -5,7 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.  
  * Licensed under the MIT License.
  */
-import { ActivityAdapter, Activity, ActivityTypes, ConversationResourceResponse } from 'botbuilder';
+import { ActivityAdapter, ActivityTypes, } from 'botbuilder';
+import { Activity, ConversationResourceResponse } from 'botframework-connector';
 import * as readline from 'readline';
 
 /**
@@ -67,9 +68,9 @@ export class ConsoleAdapter implements ActivityAdapter {
         });
     }
 
-    /** 
-     * Begins listening to console input. The listener will call [receive()](#receive) after 
-     * parsing input from the user. 
+    /**
+     * Begins listening to console input. The listener will call [receive()](#receive) after
+     * parsing input from the user.
      */
     public listen(): this {
         this.rl = readline.createInterface({ input: process.stdin, output: process.stdout, terminal: false });
@@ -98,13 +99,13 @@ export class ConsoleAdapter implements ActivityAdapter {
                 from: { id: 'user', name: 'User1' },
                 recipient: { id: 'bot', name: 'Bot' },
                 conversation:  { id: 'Convo1' },
-                timestamp: new Date().toISOString(),
+                timestamp: new Date(),
                 text: text || '',
                 id: (this.nextId++).toString()
             };
             this.onReceive(activity);
         }
-        return this;        
+        return this;
     }
 
 }

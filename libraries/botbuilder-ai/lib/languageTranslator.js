@@ -132,7 +132,7 @@ class LanguageTranslator {
                         text += '\n';
                     text += translateResult[iData].TranslatedText;
                 }
-                // restore mentions 
+                // restore mentions
                 if (message.entities) {
                     let i = 0;
                     for (let iEntity in message.entities) {
