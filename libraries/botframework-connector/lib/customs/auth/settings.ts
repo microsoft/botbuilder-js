@@ -8,8 +8,8 @@ export interface BotCredentials {
 }
 
 export interface BotAuthenticatorSettings extends BotCredentials {
-    endpoint?: BotConnectorEndpoint;
-    openIdMetadata?: string;
+    endpoint: BotConnectorEndpoint;
+    openIdMetadata: string;
 }
 
 export interface BotConnectorEndpoint {

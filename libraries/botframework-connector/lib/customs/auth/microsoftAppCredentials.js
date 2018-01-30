@@ -1,7 +1,8 @@
-const msRest = require('ms-rest');
-const request = require('request');
-const settings = require('./settings');
-
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const msrest = require("ms-rest");
+const request = require("request");
+const settings_1 = require("./settings");
 class MicrosoftAppCredentials {
     constructor(credentials) {
         this.accessToken = '';
@@ -16,24 +17,25 @@ class MicrosoftAppCredentials {
             }
         }
     }
-
-    signRequest(webResource, callback) {
+    signRequest(webResource, cb) {
         if (this.appId !== '' && this.appPassword !== '') {
             this.getAccessToken((err, token) => {
                 if (!err && token) {
-                    var credentials = new msRest.TokenCredentials(token);
-                    credentials.signRequest(webResource, callback);
-                } else {
-                    callback(err);
+                    var tokenCredentials = new msrest.TokenCredentials(token);
+                    tokenCredentials.signRequest(webResource, cb);
+                }
+                else {
+                    cb(err);
                 }
             });
-        } else {
-            callback(null);
+        }
+        else {
+            cb(null);
         }
     }
-
-    getAccessToken(callback) {
+    getAccessToken(cb) {
         if (!this.accessToken || new Date().getTime() >= this.accessTokenExpires) {
+            // Refresh access token
             var opt = {
                 method: 'POST',
                 url: MicrosoftAppCredentials.refreshEndpoint,
@@ -46,25 +48,28 @@ class MicrosoftAppCredentials {
             };
             request(opt, (err, response, body) => {
                 if (!err) {
-                    if (body && response.statusCode < 300) {
+                    if (body && response.statusCode && response.statusCode < 300) {
+                        // Subtract 5 minutes from expires_in so they'll we'll get a
+                        // new token before it expires.
                         var oauthResponse = JSON.parse(body);
                         this.accessToken = oauthResponse.access_token;
                         this.accessTokenExpires = new Date().getTime() + ((oauthResponse.expires_in - 300) * 1000);
-                        callback(null, this.accessToken);
-                    } else {
-                        callback(new Error('Refresh access token failed with status code: ' + response.statusCode), null);
+                        cb(null, this.accessToken);
                     }
-                } else {
-                    callback(err, null);
+                    else {
+                        cb(new Error('Refresh access token failed with status code: ' + response.statusCode), null);
+                    }
+                }
+                else {
+                    cb(err, null);
                 }
             });
-        } else {
-            callback(null, this.accessToken);
+        }
+        else {
+            cb(null, this.accessToken);
         }
     }
 }
-
-MicrosoftAppCredentials.refreshEndpoint = settings.AuthSettings.refreshEndpoint;
-MicrosoftAppCredentials.refreshScope = settings.AuthSettings.refreshScope;
-
+MicrosoftAppCredentials.refreshEndpoint = settings_1.AuthSettings.refreshEndpoint;
+MicrosoftAppCredentials.refreshScope = settings_1.AuthSettings.refreshScope;
 exports.MicrosoftAppCredentials = MicrosoftAppCredentials;

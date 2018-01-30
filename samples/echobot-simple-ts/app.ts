@@ -1,5 +1,4 @@
-import { ConnectorClient, MicrosoftAppCredentials, Activity } from 'botframework-connector';
-import { BotAuthenticator } from 'botframework-connector-auth';
+import { ConnectorClient, MicrosoftAppCredentials, Activity, BotAuthenticator } from 'botframework-connector';
 import * as restify from "restify";
 
 const credentials = new MicrosoftAppCredentials({
