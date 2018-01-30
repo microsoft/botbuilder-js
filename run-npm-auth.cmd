@@ -1,1 +1,0 @@
-vsts-npm-auth -config .npmrc
