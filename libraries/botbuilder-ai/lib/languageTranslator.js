@@ -8,8 +8,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const LuisClient = require("botframework-luis");
 const LanguageMap = require("./languageMap");
+const LuisClient = require("botframework-luis");
 let MsTranslator = require('mstranslator');
 /**
  * The LanguageTranslator will use the Text Translator Cognitive service to translate text from a source language
@@ -54,7 +54,11 @@ class LanguageTranslator {
                             let commandText = context.request.text;
                             // translate commandtext if not in en already (our model is in english)
                             if (sourceLanguage != 'en') {
-                                let translationResult = yield this.translator.translateArrayAsync({ from: sourceLanguage, to: 'en', texts: [commandText] });
+                                let translationResult = yield this.translator.translateArrayAsync({
+                                    from: sourceLanguage,
+                                    to: 'en',
+                                    texts: [commandText]
+                                });
                                 commandText = translationResult[0].TranslatedText;
                             }
                             // look at intent of commandText
