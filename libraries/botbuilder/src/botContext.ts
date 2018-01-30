@@ -5,7 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.  
  * Licensed under the MIT License.
  */
-import { Activity, ActivityTypes, EndOfConversationCodes, ConversationReference, getConversationReference } from './activity';
+import { ActivityTypes, EndOfConversationCodes, getConversationReference } from './activity';
+import { Activity, ConversationReference } from 'botframework-connector';
+
 import { Bot } from './bot';
 import { Intent } from './intentRecognizer';
 import { EntityObject } from './entityObject';
@@ -189,9 +191,9 @@ export function createBotContext(bot: Bot, request?: Activity): BotContext {
         args.unshift(this);
         return Bot.prototype.post.apply(this.bot, args)
             .then((results: ConversationReference[]) => {
-                if (cnt > 0) { 
+                if (cnt > 0) {
                     this.responses.splice(0, cnt);
-                    responded = true; 
+                    responded = true;
                 }
                 return results;
             });
@@ -205,7 +207,7 @@ export function createBotContext(bot: Bot, request?: Activity): BotContext {
 
     Object.defineProperty(context, 'responded', {
         get: function () {
-            return (this as BotContext).responses.length > 0 || responded; 
+            return (this as BotContext).responses.length > 0 || responded;
         }
     });
 

@@ -103,7 +103,7 @@ class JsonTemplates {
         return (data, path) => {
             // Check for optional path.
             // - Templates can be executed as children of other templates so the path
-            //   specifies the property off the parent to execute the template for. 
+            //   specifies the property off the parent to execute the template for.
             let obj = '';
             if (path) {
                 const value = getValue(data, path);

@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { MiddlewareSet } from './middlewareSet';
-import { Activity, ConversationReference } from './activity';
+import { Activity, ConversationReference } from 'botframework-connector';
 import { ActivityAdapter } from './activityAdapter';
 import { Promiseable } from './middleware';
 import { TemplateRenderer } from './templateManager';

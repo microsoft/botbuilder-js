@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { ActivityAdapter } from './activityAdapter';
-import { Activity, ConversationReference } from './activity';
+import { Activity, ConversationReference } from 'botframework-connector';
 /**
  * Test adapter used for unit tests.
  * @example
