@@ -30,6 +30,7 @@ export * from './storageMiddleware';
 export * from './templateManager';
 export * from './dictionaryRenderer';
 export * from './testAdapter';
+export { Activity, ConversationReference, ConversationResourceResponse } from 'botframework-connector';
 import { Bot } from './bot';
 import { Activity, ConversationReference, ConversationResourceResponse } from 'botframework-connector';
 import { Intent } from './intentRecognizer';
