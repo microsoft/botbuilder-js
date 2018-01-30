@@ -1,5 +1,5 @@
 {
-  "name": "botbuilder-example-echobot",
+  "name": "botbuilder-example-echobot-ts",
   "version": "1.0.0",
   "description": "Bot Builder example showing a simple bot that echos anything you say.",
   "main": "./lib/app.js",
@@ -11,10 +11,10 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@types/node": "^8.0.28",
-    "@types/restify": "^5.0.3",
-    "botbuilder-core": "file:../../core",
-    "botbuilder-services":  "file:../../services",
-    "restify": "^6.0.0"
+    "@types/node": "^9.3.0",
+    "@types/restify": "^5.0.7",
+    "botbuilder-core": "4.0.0-h4.1",
+    "botbuilder-services": "4.0.0-h4.1",
+    "restify": "6.3.4"
   }
 }

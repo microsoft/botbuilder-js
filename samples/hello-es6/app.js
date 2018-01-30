@@ -1,4 +1,4 @@
-const Bot = require('botbuilder-core').Bot;
+const Bot = require('botbuilder').Bot;
 const BotFrameworkAdapter = require('botbuilder-services').BotFrameworkAdapter;
 const restify = require('restify');
 

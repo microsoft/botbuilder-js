@@ -1,6 +1,6 @@
-import { Bot, RegExpRecognizer, ConsoleLogger, MemoryStorage, BotStateManager } from 'botbuilder-core';
-const BotFrameworkAdapter = require('botbuilder-services').BotFrameworkAdapter;
-import * as restify from 'restify';
+const builder = require("botbuilder");
+const services = require('botbuilder-services');
+const restify = require("restify");
 
 // Create server
 let server = restify.createServer();
@@ -9,19 +9,19 @@ server.listen(process.env.port || process.env.PORT || 3978, function () {
 });
 
 // Create connector
-const botFrameworkAdapter = new BotFrameworkAdapter({ appId: process.env.MICROSOFT_APP_ID, appPassword: process.env.MICROSOFT_APP_PASSWORD });
+const botFrameworkAdapter = new services.BotFrameworkAdapter({ appId: process.env.MICROSOFT_APP_ID, appPassword: process.env.MICROSOFT_APP_PASSWORD });
 server.post('/api/messages', botFrameworkAdapter.listen());
 
 // init recognizer
-let recognizer = new RegExpRecognizer();
+let recognizer = new builder.RegExpRecognizer();
 // add intents to recognizer
 recognizer.addIntent('HelpIntent', /help/i);
 recognizer.addIntent('CancelIntent', /(quit|cancel)/i);
 
 // Initialize bot
-const bot = new Bot(botFrameworkAdapter);
+const bot = new builder.Bot(botFrameworkAdapter);
 // bind middleware
-bot.use(new ConsoleLogger(), new MemoryStorage(), new BotStateManager());
+bot.use(new builder.ConsoleLogger(), new builder.MemoryStorage(), new builder.BotStateManager());
 // register recognizer
 bot.use(recognizer);
 // handle messages

@@ -7,9 +7,9 @@
     "start": "tsc; node ./lib/app.js"
   },
   "dependencies": {
-    "botbuilder-core": "file:../../libraries/core",
-    "botbuilder-services": "file:../../libraries/services",
-    "restify": "^6.0.1"
+    "botbuilder-core": "4.0.0-h4.1",
+    "botbuilder-services": "4.0.0-h4.1",
+    "restify": "6.3.4"
   },
   "repository": {
     "type": "git",

@@ -1,4 +1,4 @@
-const builder = require('botbuilder-core');
+const builder = require('botbuilder');
 const services = require('botbuilder-services');
 const restify = require('restify');
 
