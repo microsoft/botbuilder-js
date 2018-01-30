@@ -1,20 +1,19 @@
 {
-    "name": "botbuilder-example-prompts",
-    "version": "1.0.1",
-    "description": "Bot Builder sample that shows usage of all the built in prompts.",
-    "main": "app.js",
-    "scripts": {
-      "start": "node app"
-    },
-    "author": "Microsoft",
-    "license": "MIT",
-    "dependencies": {
-      "@types/node": "^8.0.13",
-      "@types/restify": "^5.0.1",
-      "botbuilder-core": "file:../../core",
-      "botbuilder-services": "file:../../services",
-      "botbuilder-prompts": "file:../../prompts",
-      "restify": "^5.0.0"
-    }
+  "name": "botbuilder-example-prompts-es6",
+  "version": "1.0.1",
+  "description": "Bot Builder sample that shows usage of all the built in prompts.",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app"
+  },
+  "author": "Microsoft",
+  "license": "MIT",
+  "dependencies": {
+    "@types/node": "^9.3.0",
+    "@types/restify": "^5.0.7",
+    "botbuilder-core": "4.0.0-h4.1",
+    "botbuilder-prompts": "4.0.0-h4.1",
+    "botbuilder-services": "4.0.0-h4.1",
+    "restify": "6.3.4"
   }
-  
+}

@@ -9,13 +9,13 @@
   "author": "Microsoft",
   "license": "ISC",
   "dependencies": {
-    "@types/node": "^8.0.13",
-    "@types/restify": "^5.0.1",
-    "botbuilder": "file:../../core",
-    "botbuilder-node": "file:../../node",
-    "botbuilder-services": "file:../../services",
-    "botbuilder-rivescript": "file:../../rivescript",
-    "botbuilder-ai": "file:../../ai",
-    "restify": "^5.0.1"
+    "@types/node": "^9.3.0",
+    "@types/restify": "^5.0.7",
+    "botbuilder": "4.0.0-h4.2",
+    "botbuilder-node": "4.0.0-h4.1",
+    "botbuilder-services": "4.0.0-h4.1",
+    "botbuilder-rivescript": "4.0.0-h4.1",
+    "botbuilder-ai": "4.0.0-h4.1",
+    "restify": "6.3.4"
   }
 }
