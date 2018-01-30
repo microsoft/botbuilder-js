@@ -209,3 +209,4 @@ class BotFrameworkAdapter {
 }
 exports.BotFrameworkAdapter = BotFrameworkAdapter;
 // END OF LINE
+//# sourceMappingURL=botFrameworkAdapter.js.map
