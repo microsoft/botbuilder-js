@@ -1,4 +1,4 @@
-const botbuilder = require('botbuilder-core');
+const botbuilder = require('botbuilder');
 const prompts = require('botbuilder-prompts')
 const BotFrameworkAdapter = require('botbuilder-services').BotFrameworkAdapter;
 const restify = require('restify');
@@ -12,9 +12,9 @@ server.listen(process.env.port || process.env.PORT || 3978, function () {
 });
 
 // init connector
-const botFrameworkAdapter = new BotFrameworkAdapter({ 
-    appId: process.env.MICROSOFT_APP_ID, 
-    appPassword: process.env.MICROSOFT_APP_PASSWORD 
+const botFrameworkAdapter = new BotFrameworkAdapter({
+    appId: process.env.MICROSOFT_APP_ID,
+    appPassword: process.env.MICROSOFT_APP_PASSWORD
 });
 // bind connector to /api/messages route
 server.post('/api/messages', botFrameworkAdapter.listen());

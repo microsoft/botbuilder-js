@@ -14,8 +14,6 @@
       "botbuilder": "4.0.0-h4.2",
       "botbuilder-node": "4.0.0-h4.1",
       "botbuilder-services": "4.0.0-h4.1",
-      "botbuilder-rivescript": "4.0.0-h4.1",
       "restify": "6.3.4"
     }
   }
-  

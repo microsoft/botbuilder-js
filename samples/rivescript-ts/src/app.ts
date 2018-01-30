@@ -1,4 +1,4 @@
-import { Bot, BotStateManager } from 'botbuilder-core';
+import { Bot, BotStateManager } from 'botbuilder';
 import { FileStorage } from "botbuilder-node";
 import { BotFrameworkAdapter } from 'botbuilder-services';
 import { RiveScriptReceiver, routeToRiveScript } from 'botbuilder-rivescript';
@@ -22,4 +22,3 @@ const bot = new Bot(botFrameworkAdapter)
     .use(new RiveScriptReceiver(path.join(__dirname, "../rive/complex.rive")));
 
 // END OF LINE
-    
