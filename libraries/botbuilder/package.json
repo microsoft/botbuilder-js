@@ -28,6 +28,7 @@
   "scripts": {
     "test": "mocha tests/*.js",
     "build": "tsc",
+    "build-docs": "typedoc --theme markdown --entryPoint botbuilder --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder .\\lib\\botbuilder.d.ts --hideGenerator --name \"Bot Builder SDK - Core\" --readme none",
     "clean": "erase /q lib\\*.*"
   }
 }

@@ -32,6 +32,7 @@
   },
   "scripts": {
     "test": "echo NO TESTS: botbuilder-services",
-    "build": "tsc"
+    "build": "tsc",
+    "build-docs": "typedoc --theme markdown --entryPoint botbuilder-services --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-services .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Services\" --readme none"
   }
 }
