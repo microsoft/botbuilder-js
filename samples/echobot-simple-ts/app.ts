@@ -1,12 +1,12 @@
-import { ConnectorClient, MicrosoftAppCredentials, Activity, BotAuthenticator } from 'botframework-connector';
+import { ConnectorClient, BotCredentials, MicrosoftAppCredentials, Activity, BotAuthenticator } from 'botframework-connector';
 import * as restify from "restify";
 
-const credentials = new MicrosoftAppCredentials({
+const botCredentials: BotCredentials = {
     appId: '',
     appPassword: ''
-});
-
-const authenticator = new BotAuthenticator();
+};
+const credentials = new MicrosoftAppCredentials(botCredentials);
+const authenticator = new BotAuthenticator(botCredentials);
 
 const server = restify.createServer();
 server.listen(process.env.port || process.env.PORT || 3978, function () {
