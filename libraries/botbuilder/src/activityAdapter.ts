@@ -23,3 +23,4 @@ export interface ActivityAdapter {
      */
     post(activities: Partial<Activity>[]): Promise<ConversationResourceResponse[]|undefined>;
 }
+/* istanbul ignore file */

@@ -64,3 +64,4 @@ export interface SearchCatalog {
      */
     flush(): Promise<void>;
 }
+/* istanbul ignore file */

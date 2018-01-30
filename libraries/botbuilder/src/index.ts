@@ -625,3 +625,4 @@ export interface Place {
   /** The name of the thing. */
   name?: string;
 }
+/* istanbul ignore file */
