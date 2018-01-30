@@ -1,23 +1,9 @@
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exportTypes(require('./generated/models'));
-exportTypes(require('./customs/types'));
-
-exports.ConnectorClient = require('./generated/connectorClient');
-exports.MicrosoftAppCredentials = require('./customs/microsoftAppCredentials').MicrosoftAppCredentials;
-
-function exportTypes(module) {
-  Object.keys(module).forEach(function (key) {
-    if (key === "default" || key === "__esModule") return;
-    Object.defineProperty(exports, key, {
-      enumerable: true,
-      get: function get() {
-        return module[key];
-      }
-    });
-  })
+"use strict";
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
+Object.defineProperty(exports, "__esModule", { value: true });
+const ConnectorClient = require("./generated/connectorClient");
+exports.ConnectorClient = ConnectorClient;
+__export(require("./customs/types"));
+__export(require("./customs/auth"));

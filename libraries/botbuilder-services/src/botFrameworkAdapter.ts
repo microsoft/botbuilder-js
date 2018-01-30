@@ -7,7 +7,7 @@
  */
 import { ActivityAdapter } from 'botbuilder';
 import { ConnectorClient, ActivityTypes, Activity, ConversationReference, ConversationResourceResponse, ConversationParameters, ConversationAccount } from 'botframework-connector';
-import { MicrosoftAppCredentials, BotAuthenticator, Headers, BotCredentials } from 'botframework-connector-auth';
+import { MicrosoftAppCredentials, BotAuthenticator, Headers, BotCredentials } from 'botframework-connector';
 
 /** Express or Restify Request object. */
 export interface WebRequest {

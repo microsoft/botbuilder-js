@@ -21,7 +21,7 @@ export class MicrosoftAppCredentials implements msrest.ServiceClientCredentials 
             if (typeof credentials.appId !== 'undefined') {
                 this.appId = credentials.appId;
             }
-            
+
             if (typeof credentials.appPassword !== 'undefined') {
                 this.appPassword = credentials.appPassword;
             }
@@ -40,7 +40,7 @@ export class MicrosoftAppCredentials implements msrest.ServiceClientCredentials 
             })
 
         } else {
-            cb(null);
+            cb(null!);
         }
     }
 
@@ -59,22 +59,22 @@ export class MicrosoftAppCredentials implements msrest.ServiceClientCredentials 
             };
             request(opt, (err, response, body) => {
                 if (!err) {
-                    if (body && response.statusCode < 300) {
+                    if (body && response.statusCode && response.statusCode < 300) {
                         // Subtract 5 minutes from expires_in so they'll we'll get a
                         // new token before it expires.
                         var oauthResponse = JSON.parse(body);
                         this.accessToken = oauthResponse.access_token;
                         this.accessTokenExpires = new Date().getTime() + ((oauthResponse.expires_in - 300) * 1000);
-                        cb(null, this.accessToken);
+                        cb(null!, this.accessToken);
                     } else {
-                        cb(new Error('Refresh access token failed with status code: ' + response.statusCode), null);
+                        cb(new Error('Refresh access token failed with status code: ' + response.statusCode), null!);
                     }
                 } else {
-                    cb(err, null);
+                    cb(err, null!);
                 }
             });
         } else {
-            cb(null, this.accessToken);
+            cb(null!, this.accessToken);
         }
     }
 
