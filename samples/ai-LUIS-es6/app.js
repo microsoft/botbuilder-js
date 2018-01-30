@@ -29,7 +29,7 @@ bot.onReceive(
                 })
                 .catch((err) => {
                     context.reply('There was an error connecting to the LUIS API');
-                    context.reply(err);
+                    context.reply(err.toString());
                 });
         }
         else if (context.request.type === "conversationUpdate") utils.handleConversationUpdateEvents(context);
