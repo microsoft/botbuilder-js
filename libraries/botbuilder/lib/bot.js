@@ -8,7 +8,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Licensed under the MIT License.
  */
 const middlewareSet_1 = require("./middlewareSet");
-const activity_1 = require("./activity");
+const botframework_connector_1 = require("botframework-connector");
 const botContext_1 = require("./botContext");
 const templateManager_1 = require("./templateManager");
 const botbuilder_1 = require("./botbuilder");
@@ -145,9 +145,9 @@ class Bot extends middlewareSet_1.MiddlewareSet {
         for (let i = 0; i < activities.length; i++) {
             let activity = activities[i];
             if (!activity.type) {
-                activity.type = activity_1.ActivityTypes.message;
+                activity.type = botframework_connector_1.ActivityTypes.message;
             }
-            activity_1.applyConversationReference(activity, context.conversationReference);
+            botContext_1.applyConversationReference(activity, context.conversationReference);
         }
         // Run post activity pipeline
         const adapter = this.adapter;

@@ -5,8 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.  
  * Licensed under the MIT License.
  */
-import { ActivityAdapter, ActivityTypes, } from 'botbuilder';
-import { Activity, ConversationResourceResponse } from 'botframework-connector';
+import { ActivityAdapter } from 'botbuilder';
+import { ActivityTypes, Activity, ConversationResourceResponse } from 'botframework-connector';
 import * as readline from 'readline';
 
 /**

@@ -5,8 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.  
  * Licensed under the MIT License.
  */
-import { ActivityTypes, ActivityAdapter } from 'botbuilder';
-import { ConnectorClient, Activity, ConversationReference, ConversationResourceResponse, ConversationParameters, ConversationAccount } from 'botframework-connector';
+import { ActivityAdapter } from 'botbuilder';
+import { ConnectorClient, ActivityTypes, Activity, ConversationReference, ConversationResourceResponse, ConversationParameters, ConversationAccount } from 'botframework-connector';
+import { MicrosoftAppCredentials, BotAuthenticator, Headers, BotCredentials } from 'botframework-connector-auth';
 
 /** Express or Restify Request object. */
 export interface WebRequest {

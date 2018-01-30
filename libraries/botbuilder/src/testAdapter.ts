@@ -6,8 +6,7 @@
  * Licensed under the MIT License.
  */
 import { ActivityAdapter } from './activityAdapter';
-import { ActivityTypes } from './activity';
-import { Activity, ConversationReference } from 'botframework-connector';
+import { ActivityTypes, Activity, ConversationReference } from 'botframework-connector';
 import { Promiseable } from './middleware';
 import assert = require('assert');
 
