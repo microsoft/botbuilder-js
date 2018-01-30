@@ -6,7 +6,8 @@
  * Licensed under the MIT License.
  */
 import { MiddlewareSet } from './middlewareSet';
-import { Activity, ConversationReference, ActivityTypes, ConversationResourceResponse, applyConversationReference } from './activity';
+import { ActivityTypes, applyConversationReference } from './activity';
+import { Activity, ConversationReference, ConversationResourceResponse, } from 'botframework-connector';
 import { ActivityAdapter } from './activityAdapter';
 import { Promiseable } from './middleware';
 import { createBotContext } from './botContext';
@@ -55,8 +56,8 @@ export class Bot extends MiddlewareSet {
     }
 
     /**
-     * Creates a new context object given an activity or conversation reference. The context object 
-     * will be disposed of automatically once the callback completes or the promise it returns 
+     * Creates a new context object given an activity or conversation reference. The context object
+     * will be disposed of automatically once the callback completes or the promise it returns
      * completes.
      *
      * **Usage Example**
@@ -98,7 +99,7 @@ export class Bot extends MiddlewareSet {
 
     /**
      * Registers a new receiver with the bot. All incoming activities are routed to receivers in
-     * the order they're registered. The first receiver to return `{ handled: true }` prevents 
+     * the order they're registered. The first receiver to return `{ handled: true }` prevents
      * the receivers after it from being called.
      *
      * **Usage Example**
@@ -106,7 +107,7 @@ export class Bot extends MiddlewareSet {
      * ```js
      * const bot = new Bot(adapter)
      *      .onReceive((context) => {
-     *         context.reply(`Hello World`); 
+     *         context.reply(`Hello World`);
      *      });
      * ```
      *
@@ -145,7 +146,7 @@ export class Bot extends MiddlewareSet {
     }
 
     /**
-     * INTERNAL sends an outgoing set of activities to the user. Calling `context.sendResponses()` achieves the same 
+     * INTERNAL sends an outgoing set of activities to the user. Calling `context.sendResponses()` achieves the same
      * effect and is the preferred way of sending activities to the user.
      *
      * @param context Context for the current turn of the conversation.
@@ -186,8 +187,8 @@ export class Bot extends MiddlewareSet {
      */
     public receive(activity: Activity): Promise<void> {
         // Create context and run receive activity pipeline
-        return this.createContext(activity, 
-            (context) => this.receiveActivity(context, 
+        return this.createContext(activity,
+            (context) => this.receiveActivity(context,
                 () => Promise.resolve()));
     }
 }

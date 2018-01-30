@@ -6,9 +6,7 @@
  * Licensed under the MIT License.
  */
 
-export * from './index';
-
-import { Activity, ConversationReference } from './index';
+import { Activity, ConversationReference } from 'botframework-connector';
 
 /** List of activity types supported by the Bot Framework. */
 export const ActivityTypes = {
@@ -29,7 +27,7 @@ export const ActivityTypes = {
 
     /** A message sent from or to a user/group. */
     message: 'message',
-    
+
     /** A message activity within a conversation has had a message reaction added or removed. */
     messageReaction: 'messageReaction',
 

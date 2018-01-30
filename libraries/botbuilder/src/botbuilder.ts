@@ -33,7 +33,7 @@ export * from './dictionaryRenderer';
 export * from './testAdapter';
 
 import { Bot } from './bot';
-import { Activity, ConversationReference, ConversationResourceResponse } from './activity';
+import { Activity, ConversationReference, ConversationResourceResponse } from 'botframework-connector';
 import { Intent } from './intentRecognizer';
 import { EntityObject } from './entityObject';
 import { StoreItem, Storage } from './storage';
@@ -59,13 +59,13 @@ declare global {
         /** The calculated conversation reference for this request. */
         conversationReference: ConversationReference;
 
-        /** 
+        /**
          * Persisted state related to the request.
          */
         state: BotState;
 
         /**
-         *  Logger to trace messages and telemetry data. 
+         *  Logger to trace messages and telemetry data.
          */
         logger: BotLogger;
 
@@ -75,7 +75,7 @@ declare global {
         storage?: Storage;
 
         /**
-         * (Optional) a named "intent" object representing the current best understanding of what 
+         * (Optional) a named "intent" object representing the current best understanding of what
          * the user is attempting to do. This can be populated by either an `IntentRecognizer` or
          * a `Router` like `ifRegExp()`.
          */
@@ -84,7 +84,7 @@ declare global {
         /**
          * tempalmtemanager for registering template engines
          */
-        templateManager : TemplateManager; 
+        templateManager : TemplateManager;
 
         /**
          * Starts a prompt or other type of dialog.
@@ -100,19 +100,19 @@ declare global {
         begin(promptOrDialog: BeginDialog): Promise<any> | any;
 
         /**
-         * Returns a clone that's a shallow copy of the context object. 
+         * Returns a clone that's a shallow copy of the context object.
          */
         clone(): this;
 
         /**
          * Queues a new "delay" activity to the [responses](#responses) array. This will
          * cause a pause to occur before delivering additional queued responses to the user.
-         * 
+         *
          * If your bot send a message with images and then immediately sends a message without
-         * images, you run the risk of the client displaying your messages out of order. The 
+         * images, you run the risk of the client displaying your messages out of order. The
          * reason being that most clients want to copy the images you sent to a CDN for faster
          * rendering in the future.
-         * 
+         *
          * You can often avoid out of order messages by inserting a delay between the message
          * with images and the one without.
          *
@@ -135,7 +135,7 @@ declare global {
         dispose(): void;
 
         /**
-         * Queues a new "endOfConversation" activity that will be sent to the channel. This 
+         * Queues a new "endOfConversation" activity that will be sent to the channel. This
          * is often used by skill based channels to signal that the skill is finished.
          *
          * **Usage Example**
@@ -146,7 +146,7 @@ declare global {
          * ```
          *
          * @param duration Number of milliseconds to pause.
-         * @param code (Optional) code indicating the reason why the conversation is being ended. 
+         * @param code (Optional) code indicating the reason why the conversation is being ended.
          * The default value is `EndOfConversationCodes.completedSuccessfully`.
          */
         endOfConversation(code?: string): this;
@@ -168,7 +168,7 @@ declare global {
          * ```
          *
          * @param intent (Optional) intent that should be searched over. This will override the use
-         * of `topIntent`. 
+         * of `topIntent`.
          * @param type The type of entities to return. If this is a RegExp, then any type matching
          * the specified pattern will be returned.
          */
@@ -186,14 +186,14 @@ declare global {
          * if (helpIntent) {
          *      const topic = context.getEntity(helpIntent, 'topic');
          *      // ... return help for topic ...
-         * } 
+         * }
          * ```
          *
          * @param intent (Optional) intent that should be searched over. This will override the use
-         * of `topIntent`. 
+         * of `topIntent`.
          * @param type The type of entity to return. If this is a RegExp, then any type matching
          * the specified pattern will be returned.
-         * @param occurrence (Optional) a zero based index of the entity to return when there are 
+         * @param occurrence (Optional) a zero based index of the entity to return when there are
          * multiple occurrences of  same entity type. The default value is `0` meaning the first
          * occurrence will be returned.
          */
@@ -214,13 +214,13 @@ declare global {
 
         /**
          * Queues a new "message" or activity to the [responses](#responses) array.
-         * 
+         *
          * **Usage Example**
-         * 
+         *
          * ```js
          * context.reply(`Let's flip a coin. Would you like heads or tails?`, `heads or tails?`);
          * ```
-         * 
+         *
          * @param textOrActivity Text of a message or an activity object to send to the user.
          * @param speak (Optional) SSML that should be spoken to the user on channels that support speech.
          * @param additional (Optional) other activities fields, like attachments, that should be sent with the activity.
@@ -232,13 +232,13 @@ declare global {
 
         /**
          * Queues a new "message" or activity to the [responses](#responses) array using the specified template.
-         * 
+         *
          * **Usage Example**
-         * 
+         *
          * ```js
          * context.replyWith('greeting', { name:'joe'});
          * ```
-         * 
+         *
          * @param templateId id of template to bind to (using language of the current user)
          * @param data  data object to bind to
          */
@@ -266,10 +266,10 @@ declare global {
         sendResponses(): Promise<ConversationResourceResponse[]>;
 
         /**
-         * Queues a new "typing" activity to the [responses](#responses) array. On supported 
-         * channels this will display a typing indicator which can be used to convey to the 
-         * user that activity is occurring within the bot. This indicator is typically only 
-         * displayed to the user for 3 - 5 seconds so the bot should periodically send additional 
+         * Queues a new "typing" activity to the [responses](#responses) array. On supported
+         * channels this will display a typing indicator which can be used to convey to the
+         * user that activity is occurring within the bot. This indicator is typically only
+         * displayed to the user for 3 - 5 seconds so the bot should periodically send additional
          * "typing" activities for longer running operations.
          *
          * **Usage Example**

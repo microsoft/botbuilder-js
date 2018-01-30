@@ -41,7 +41,7 @@ class BotStateManager {
     }
     postActivity(context, activities, next) {
         if (this.settings.writeBeforePost) {
-            // save state 
+            // save state
             return this.write(context, {}).then(() => next());
         }
         else {
@@ -49,7 +49,7 @@ class BotStateManager {
         }
     }
     contextDone(context, next) {
-        // save state 
+        // save state
         return this.write(context, {}).then(() => next());
     }
     read(context, keys) {

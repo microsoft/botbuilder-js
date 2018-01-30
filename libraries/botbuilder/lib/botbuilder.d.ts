@@ -31,7 +31,7 @@ export * from './templateManager';
 export * from './dictionaryRenderer';
 export * from './testAdapter';
 import { Bot } from './bot';
-import { Activity, ConversationReference, ConversationResourceResponse } from './activity';
+import { Activity, ConversationReference, ConversationResourceResponse } from 'botframework-connector';
 import { Intent } from './intentRecognizer';
 import { EntityObject } from './entityObject';
 import { StoreItem, Storage } from './storage';

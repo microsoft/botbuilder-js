@@ -19,6 +19,9 @@
   },
   "main": "./lib/botbuilder.js",
   "typings": "./lib/botbuilder.d.ts",
+  "dependencies": {
+    "botframework-connector": "^4.0.0-h4.1"
+  },
   "devDependencies": {
     "@types/mocha": "^2.2.47",
     "@types/node": "^9.3.0",
