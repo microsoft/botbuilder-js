@@ -1,4 +1,4 @@
-import { ConnectorClient, MicrosoftAppCredentials, Models } from 'botframework-connector';
+import { ConnectorClient, MicrosoftAppCredentials, Activity } from 'botframework-connector';
 import { BotAuthenticator } from 'botframework-connector-auth';
 import * as restify from "restify";
 
@@ -64,7 +64,7 @@ export interface HttpHandler {
     (req, res, next?: Function): void;
 }
 
-function createReply(activity: any, text: string, locale: string = null): Models.Activity {
+function createReply(activity: any, text: string, locale: string = null): Activity {
     return {
         type: "message",
         timestamp: new Date(),
