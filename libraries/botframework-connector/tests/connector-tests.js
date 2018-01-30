@@ -4,12 +4,10 @@
 * license information.
 */
 
-var connectorDir = '../libraries/botframework-connector/'
-
 var path = require('path');
 var fs = require('fs');
 
-require('../.././../tools/node_modules/dotenv').config({ path: path.join(connectorDir, 'tests/.env') });
+require('../.././../tools/node_modules/dotenv').config({ path: 'tests/.env' });
 
 // function to encode file data to base64 encoded string
 function base64_encode(file) {
@@ -64,7 +62,7 @@ var createConversation = () => ({
 var createAttachment = () => ({
   name: 'bot-framework.png',
   type: 'image/png',
-  originalBase64: base64_encode(path.join(connectorDir, 'tests/bot-framework.png'))
+  originalBase64: base64_encode('tests/bot-framework.png')
 });
 
 var readStreamToBuffer = function(stream, callback) {
@@ -87,34 +85,34 @@ describe('Bot Framework Connector SDK', function() {
     });
     done();
   });
-  
+
   after(function (done) {
     suite.teardownSuite(done);
   });
-  
+
   beforeEach(function (done) {
     suite.setupTest(done);
   });
-  
+
   afterEach(function (done) {
     suite.baseTeardownTest(done);
   });
-  
+
   describe('Conversations', function() {
     describe('CreateConversation', function() {
       it('should return a valid conversation ID', function(done) {
         var params = createConversation()
         params.activity = createActivity();
-        
+
         client.conversations.createConversation(params)
         .then((result) => should.exist(result.id))
         .then(done, done);
       });
-      
+
       it('should fail with invalid bot', function(done) {
         var params = createConversation();
         params.bot = { id: 'invalid-id' };
-        
+
         client.conversations.createConversation(params).then((result) => {
           should.fail();
         }, (error) => {
@@ -122,11 +120,11 @@ describe('Bot Framework Connector SDK', function() {
           should.exist(error.message);
         }).then(done, done);
       });
-      
+
       it('should fail without members', function(done) {
         var params = createConversation();
         params.members = [];
-        
+
         client.conversations.createConversation(params).then((result) => {
           should.fail();
         }, (error) => {
@@ -134,11 +132,11 @@ describe('Bot Framework Connector SDK', function() {
           should.exist(error.message);
         }).then(done, done);
       });
-      
+
       it('should fail with bot member', function(done) {
         var params = createConversation();
         params.members = [ bot ];
-        
+
         client.conversations.createConversation(params).then((result) => {
           should.fail();
         }, (error) => {
@@ -147,11 +145,11 @@ describe('Bot Framework Connector SDK', function() {
         }).then(done, done);
       });
     });
-    
+
     describe('GetConversationMembers', function() {
       it('should have the userId', function(done) {
         var params = createConversation();
-        
+
         client.conversations.createConversation(params)
         .then((result) => client.conversations.getConversationMembers(result.id))
         .then((result) => {
@@ -159,10 +157,10 @@ describe('Bot Framework Connector SDK', function() {
         })
         .then(done, done);
       });
-      
+
       it('should fail with invalid conversationId', function(done) {
         var params = createConversation();
-        
+
         client.conversations.createConversation(params)
         .then((result) => client.conversations.getConversationMembers(result.id.concat('M')))
         .then((result) => {
@@ -174,11 +172,11 @@ describe('Bot Framework Connector SDK', function() {
         .then(done, done);
       });
     });
-    
+
     describe('SendToConversation', function() {
       it('should return a valid activityId', function(done) {
         var params = createConversation();
-        
+
         client.conversations.createConversation(params)
         .then((result) => client.conversations.sendToConversation(result.id, createActivity()))
         .then((result) => {
@@ -186,10 +184,10 @@ describe('Bot Framework Connector SDK', function() {
         })
         .then(done, done);
       });
-      
+
       it('should fail with invalid conversationId', function(done) {
         var params = createConversation();
-        
+
         client.conversations.createConversation(params)
         .then((result) => client.conversations.sendToConversation(result.id.concat('M'), createActivity()))
         .then((result) => {
@@ -200,7 +198,7 @@ describe('Bot Framework Connector SDK', function() {
         })
         .then(done, done);
       });
-      
+
       it('should send a Hero card', function(done) {
         var params = createConversation();
         var activity = createActivity();
@@ -216,7 +214,7 @@ describe('Bot Framework Connector SDK', function() {
             }
           }
         ];
-        
+
         client.conversations.createConversation(params)
         .then((result) => client.conversations.sendToConversation(result.id, activity))
         .then((result) => {
@@ -225,12 +223,12 @@ describe('Bot Framework Connector SDK', function() {
         .then(done, done);
       });
     });
-    
+
     describe('GetActivityMembers', function() {
       it('should have the userId', function(done) {
         var params = createConversation();
         params.activity = createActivity();
-        
+
         client.conversations.createConversation(params)
         .then((result) => client.conversations.getActivityMembers(result.id, result.activityId))
         .then((result) => {
@@ -238,11 +236,11 @@ describe('Bot Framework Connector SDK', function() {
         })
         .then(done, done);
       });
-      
+
       it('should fail with invalid conversatoinId', function(done) {
         var params = createConversation();
         params.activity = createActivity();
-        
+
         client.conversations.createConversation(params)
         .then((result) => client.conversations.getActivityMembers(result.id.concat('M'), result.activityId))
         .then((result) => {
@@ -254,15 +252,15 @@ describe('Bot Framework Connector SDK', function() {
         .then(done, done);
       });
     });
-    
+
     describe('ReplyToActivity', function() {
       it('should return a valid activityId', function(done) {
         var params = createConversation();
         var reply = createActivity();
         reply.text = 'reply';
-        
+
         var conversationId = '';
-        
+
         client.conversations.createConversation(params)
         .then((result) => {
           conversationId = result.id;
@@ -274,7 +272,7 @@ describe('Bot Framework Connector SDK', function() {
         })
         .then(done, done);
       });
-      
+
       it('should fail with invalid conversationId', function(done) {
         client.conversations.createConversation(createConversation())
         .then((result) => client.conversations.sendToConversation(result.id, createActivity()))
@@ -287,9 +285,9 @@ describe('Bot Framework Connector SDK', function() {
         })
         .then(done, done);
       });
-      
+
     });
-    
+
     describe('DeleteActivity', function() {
       it('should delete the activity', function(done) {
         var conversation = createConversation();
@@ -298,7 +296,7 @@ describe('Bot Framework Connector SDK', function() {
         .then((result) => client.conversations.deleteActivity(result.id, result.activityId))
         .then(done, done);
       });
-      
+
       it('should fail with invalid conversationId', function(done) {
         client.conversations.createConversation(createConversation())
         .then((result) => client.conversations.sendToConversation(result.id, createActivity()))
@@ -311,15 +309,15 @@ describe('Bot Framework Connector SDK', function() {
         })
         .then(done, done);
       });
-      
+
     });
-    
+
     describe('UpdateActivity', function() {
       it('should return a valid activityId', function(done) {
         var conversationId = '';
         var updatedActivity = createActivity();
         updatedActivity.text = 'updated activity';
-        
+
         client.conversations.createConversation(createConversation())
         .then((result) => {
           conversationId = result.id;
@@ -334,7 +332,7 @@ describe('Bot Framework Connector SDK', function() {
         })
         .then(done, done);
       });
-      
+
       it('should fail with invalid conversationId', function(done) {
         client.conversations.createConversation(createConversation())
         .then((result) => client.conversations.sendToConversation(result.id, createActivity()))
@@ -347,9 +345,9 @@ describe('Bot Framework Connector SDK', function() {
         })
         .then(done, done);
       });
-      
+
     });
-    
+
     describe('UploadAttachment', function() {
       it('should return a valid attachmentId', function(done) {
         client.conversations.createConversation(createConversation())
@@ -359,11 +357,11 @@ describe('Bot Framework Connector SDK', function() {
         })
         .then(done, done);
       });
-      
+
     });
-    
+
   });
-  
+
   describe('Attachments', function() {
     describe('GetAttachmentInfo', function() {
       it('should return a valid attachmentId', function(done) {
@@ -376,9 +374,9 @@ describe('Bot Framework Connector SDK', function() {
         })
         .then(done, done);
       });
-      
+
     });
-    
+
     describe('GetAttachment', function() {
       it('should return valid attachment', function(done) {
         var attachment = createAttachment();
