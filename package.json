@@ -36,7 +36,7 @@
     "recognizers-text-number": "^1.0.0-rc.28",
     "request": "2.83.0",
     "request-promise-native": "1.0.5",
-    "restify": "^6.0.0",
+    "restify": "6.3.4",
     "rivescript": "^1.17.2",
     "rsa-pem-from-mod-exp": "^0.8.4",
     "sprintf-js": "^1.1.1"
@@ -47,7 +47,7 @@
     "@types/html-entities": "^1.2.16",
     "@types/jsonwebtoken": "7.2.5",
     "@types/node": "^9.3.0",
-    "@types/restify": "^5.0.1",
+    "@types/restify": "^5.0.7",
     "@types/sprintf-js": "^1.1.0",
     "awesome-typescript-loader": "^3.2.3",
     "gulp": "^3.9.1",
