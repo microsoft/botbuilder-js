@@ -3,7 +3,7 @@
  */
 /** second comment block */
 import { MiddlewareSet } from './middlewareSet';
-import { Activity, ConversationReference, ActivityTypes, ConversationResourceResponse, applyConversationReference } from './activity';
+import { Activity, ActivityTypes, applyConversationReference, ConversationReference } from './activity';
 import { ActivityAdapter } from './activityAdapter';
 import { Promiseable } from './middleware';
 import { BotContext } from './botContext';
@@ -57,12 +57,13 @@ export class Bot extends MiddlewareSet {
 
         // Connect to new adapter
         this._adapter = adapter;
-        this._adapter.onReceive = (activity) => this.receive(activity).then(() => { });
+        this._adapter.onReceive = (activity) => this.receive(activity).then(() => {
+        });
     }
 
     /**
-     * Creates a new context object given an activity or conversation reference. The context object 
-     * will be disposed of automatically once the callback completes or the promise it returns 
+     * Creates a new context object given an activity or conversation reference. The context object
+     * will be disposed of automatically once the callback completes or the promise it returns
      * completes.
      *
      * **Usage Example**
@@ -91,20 +92,20 @@ export class Bot extends MiddlewareSet {
 
         // Run context created pipeline
         return this.contextCreated(context, function contextReady() {
-                // Run proactive or reactive logic
-                return Promise.resolve(onReady(context));
-            }).then(() => {
-                // Next flush any queued up responses
-                return context.flushResponses();
-            }).then(() => {
-                // Dispose of the context object
-                context.dispose();
-            });
+            // Run proactive or reactive logic
+            return Promise.resolve(onReady(context));
+        }).then(() => {
+            // Next flush any queued up responses
+            return context.flushResponses();
+        }).then(() => {
+            // Dispose of the context object
+            context.dispose();
+        });
     }
 
     /**
      * Registers a new receiver with the bot. All incoming activities are routed to receivers in
-     * the order they're registered. The first receiver to return `{ handled: true }` prevents 
+     * the order they're registered. The first receiver to return `{ handled: true }` prevents
      * the receivers after it from being called.
      *
      * **Usage Example**
@@ -112,7 +113,7 @@ export class Bot extends MiddlewareSet {
      * ```js
      * const bot = new Bot(adapter)
      *      .onReceive((context) => {
-     *         context.reply(`Hello World`); 
+     *         context.reply(`Hello World`);
      *      });
      * ```
      *
@@ -125,12 +126,12 @@ export class Bot extends MiddlewareSet {
                     return Promise.resolve(fn(context)).then(() => next());
                 }
             });
-        })
+        });
         return this;
     }
 
     /**
-     * INTERNAL sends an outgoing set of activities to the user. Calling `context.flushResponses()` achieves the same 
+     * INTERNAL sends an outgoing set of activities to the user. Calling `context.flushResponses()` achieves the same
      * effect and is the preferred way of sending activities to the user.
      *
      * @param context Context for the current turn of the conversation.
@@ -141,7 +142,7 @@ export class Bot extends MiddlewareSet {
         for (let i = 0; i < activities.length; i++) {
             let activity = activities[i];
             if (!activity.type) {
-                activity.type = ActivityTypes.message
+                activity.type = ActivityTypes.message;
             }
             applyConversationReference(activity, context.conversationReference);
         }
@@ -155,7 +156,9 @@ export class Bot extends MiddlewareSet {
                     // Ensure responses array populated
                     if (!Array.isArray(responses)) {
                         responses = [];
-                        for (let i = 0; i < activities.length; i++) { responses.push({}) }
+                        for (let i = 0; i < activities.length; i++) {
+                            responses.push({});
+                        }
                     }
                     return responses;
                 });
@@ -171,8 +174,8 @@ export class Bot extends MiddlewareSet {
      */
     public receive(activity: Activity): Promise<void> {
         // Create context and run receive activity pipeline
-        return this.createContext(activity, 
-            (context) => this.receiveActivity(context, 
+        return this.createContext(activity,
+            (context) => this.receiveActivity(context,
                 () => Promise.resolve()));
     }
 }

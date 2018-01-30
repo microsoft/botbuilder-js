@@ -2,16 +2,17 @@
  * @module botbuilder-ai
  */
 /** second comment block */
-import { Activity, Middleware, Promiseable, ConversationResourceResponse } from 'botbuilder';
-import LuisClient = require('botframework-luis');
+import { Activity, ConversationResourceResponse, Middleware } from 'botbuilder';
 import * as LanguageMap from './languageMap';
+import LuisClient = require('botframework-luis');
+
 let MsTranslator = require('mstranslator');
 
 export interface TranslationContext {
-    /// Original pre-translation text 
+    /// Original pre-translation text
     sourceText: string;
 
-    /// source language 
+    /// source language
     sourceLanguage: string;
 
     /// The targeted translation language
@@ -29,13 +30,13 @@ export class LanguageTranslator implements Middleware {
 
     public constructor(translatorKey: string, protected nativeLanguages: string[], protected luisAppId: string, protected luisAccessKey: string) {
         this.luisClient = new LuisClient();
-        this.translator = new MsTranslator({ api_key: translatorKey }, true);
+        this.translator = new MsTranslator({api_key: translatorKey}, true);
         this.translator.translateArrayAsync = denodeify(this.translator, this.translator.translateArray);
     }
 
     /// Incoming activity
     public async receiveActivity(context: BotContext, next: () => Promise<void>): Promise<void> {
-        if (context.request.type == "message" && context.request.text) {
+        if (context.request.type === 'message' && context.request.text) {
             // determine the language we are using for this conversation
             let sourceLanguage = this.nativeLanguages[0];
 
@@ -50,7 +51,7 @@ export class LanguageTranslator implements Middleware {
 
 
             // translate to bots language
-            if (translationContext.sourceLanguage != translationContext.targetLanguage) {
+            if (translationContext.sourceLanguage !== translationContext.targetLanguage) {
                 translationContext.sourceText = context.request.text;
                 await this.TranslateMessageAsync(context, context.request, translationContext.sourceLanguage, translationContext.targetLanguage);
             }
@@ -59,18 +60,22 @@ export class LanguageTranslator implements Middleware {
                 // look to see if this is a request to speak a different language
                 let lowertext = context.request.text.toLowerCase();
                 for (let iName in LanguageMap.Names) {
-                    let name = LanguageMap.Names[iName]
+                    let name = LanguageMap.Names[iName];
                     if (lowertext.indexOf(name) >= 0) {
                         // it has a language name in it, it may be a request to speak another language
                         let commandText = context.request.text;
                         // translate commandtext if not in en already (our model is in english)
-                        if (sourceLanguage != 'en') {
-                            let translationResult = await this.translator.translateArrayAsync({ from: sourceLanguage, to: 'en', texts: [commandText] });
+                        if (sourceLanguage !== 'en') {
+                            let translationResult = await this.translator.translateArrayAsync({
+                                from: sourceLanguage,
+                                to: 'en',
+                                texts: [commandText]
+                            });
                             commandText = <string>translationResult[0].TranslatedText;
                         }
                         // look at intent of commandText
-                        var intents = await this.luisClient.getIntentsAndEntitiesV2(this.luisAppId, this.luisAccessKey, commandText);
-                        if (intents.topScoringIntent && intents.topScoringIntent.intent == 'BotTranslator.ChangeLanguage' && intents.entities.length > 0) {
+                        const intents = await this.luisClient.getIntentsAndEntitiesV2(this.luisAppId, this.luisAccessKey, commandText);
+                        if (intents.topScoringIntent && intents.topScoringIntent.intent === 'BotTranslator.ChangeLanguage' && intents.entities.length > 0) {
                             let languageFragment: string = intents.entities[0].entity || '';
                             if (LanguageMap.namesToCode[languageFragment.toLowerCase()]) {
                                 // set new source language
@@ -101,19 +106,20 @@ export class LanguageTranslator implements Middleware {
                 if (message.text && message.text.length > 0) {
                     // use translationContext to reverse translate the response
                     let translationContext: TranslationContext = (<any>context).translation;
-                    if (translationContext.sourceLanguage != translationContext.targetLanguage)
+                    if (translationContext.sourceLanguage !== translationContext.targetLanguage) {
                         promises.push(this.TranslateMessageAsync(context, message, translationContext.targetLanguage, translationContext.sourceLanguage));
+                    }
                 }
             }
         }
         return Promise.all(promises)
-               .then(result => next());
+            .then(result => next());
     }
 
     /// Translate .Text field of a message, regardless of direction
     private TranslateMessageAsync(context: BotContext, message: Activity, sourceLanguage: string, targetLanguage: string): Promise<void> {
         // if we have text and a target language
-        if (message.text && message.text.length > 0 && targetLanguage != sourceLanguage) {
+        if (message.text && message.text.length > 0 && targetLanguage !== sourceLanguage) {
             // truncate big text
             let text = message.text.length <= 65536 ? message.text : message.text.substring(0, 65536);
 
@@ -122,9 +128,9 @@ export class LanguageTranslator implements Middleware {
                 let i = 0;
                 for (let iEntity in message.entities) {
                     let entity = message.entities[iEntity];
-                    if (entity.type == 'mention') {
+                    if (entity.type === 'mention') {
                         let mention: any = entity;
-                        let placeholder = "__" + i++ + "__";
+                        let placeholder = '__' + i++ + '__';
                         text = text.replace(mention.text, placeholder);
                     }
                 }
@@ -140,19 +146,20 @@ export class LanguageTranslator implements Middleware {
                 .then((translateResult) => {
                     text = '';
                     for (let iData in translateResult) {
-                        if (text.length > 0)
+                        if (text.length > 0) {
                             text += '\n';
+                        }
                         text += translateResult[iData].TranslatedText;
                     }
 
-                    // restore mentions 
+                    // restore mentions
                     if (message.entities) {
                         let i = 0;
                         for (let iEntity in message.entities) {
                             let entity = message.entities[iEntity];
-                            if (entity.type == 'mention') {
+                            if (entity.type === 'mention') {
                                 let mention: any = entity;
-                                let placeholder = "__" + i++ + "__";
+                                let placeholder = '__' + i++ + '__';
                                 text = text.replace(placeholder, mention.text);
                             }
                         }
@@ -184,7 +191,7 @@ declare interface TranslateArrayOptions {
 }
 
 interface ErrorOrResult<TResult> {
-    (error: Error, result: TResult): void
+    (error: Error, result: TResult): void;
 }
 
 interface TranslationResult {
@@ -193,5 +200,6 @@ interface TranslationResult {
 
 interface Translator {
     translateArray(options: TranslateArrayOptions, callback: ErrorOrResult<TranslationResult[]>): void;
-    translateArrayAsync(options: TranslateArrayOptions): Promise<TranslationResult[]>
+
+    translateArrayAsync(options: TranslateArrayOptions): Promise<TranslationResult[]>;
 }

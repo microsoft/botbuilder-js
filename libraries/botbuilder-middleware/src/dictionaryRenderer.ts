@@ -23,10 +23,10 @@ export declare type TemplateDictionary = {
  * This is a simple template renderer which has a resource map of template functions
  * let myTemplates  = {
  *      "en" : {
- *          "templateId": (context, data) => `your name  is ${data.name}`  
+ *          "templateId": (context, data) => `your name  is ${data.name}`
  *      }
  * }
- * 
+ *
  * To use, simply add to your pipeline
  * bot.use(new DictionaryRenderer(myTemplates))
  */
@@ -42,13 +42,13 @@ export class DictionaryRenderer implements TemplateRenderer, Middleware {
 
     renderTemplate(context: BotContext, language: string, templateId: string, data: any): Promise<Partial<Activity> | string | undefined> {
         if (!(language in this.templates)) {
-            //console.warn(`didn't find language ${language}`);
+            // console.warn(`didn't find language ${language}`);
             return Promise.resolve(undefined);
         }
         let languageResource = this.templates[language];
 
         if (!(templateId in languageResource)) {
-            //console.warn(`didn't find templateId ${templateId}`);
+            // console.warn(`didn't find templateId ${templateId}`);
             return Promise.resolve(undefined);
         }
         let template = languageResource[templateId];

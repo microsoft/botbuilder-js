@@ -13,7 +13,7 @@ import { BotContext } from './botContext';
  */
 export class MiddlewareSet implements Middleware {
     private _middleware: Middleware[] = [];
-    
+
     /**
      * Registers middleware plugin(s) with the bot or set.
      *
@@ -29,7 +29,7 @@ export class MiddlewareSet implements Middleware {
             if (i < set.length) {
                 const plugin = set[i];
                 if (plugin.contextCreated !== undefined) {
-                    return plugin.contextCreated(context, () => callMiddleware(set, i + 1))
+                    return plugin.contextCreated(context, () => callMiddleware(set, i + 1));
                 } else {
                     return callMiddleware(set, i + 1);
                 }
@@ -37,6 +37,7 @@ export class MiddlewareSet implements Middleware {
                 return next();
             }
         }
+
         return callMiddleware(this._middleware.slice(0), 0);
     }
 
@@ -45,7 +46,7 @@ export class MiddlewareSet implements Middleware {
             if (i < set.length) {
                 const plugin = set[i];
                 if (plugin.receiveActivity !== undefined) {
-                    return plugin.receiveActivity(context, () => callMiddleware(set, i + 1))
+                    return plugin.receiveActivity(context, () => callMiddleware(set, i + 1));
                 } else {
                     return callMiddleware(set, i + 1);
                 }
@@ -53,6 +54,7 @@ export class MiddlewareSet implements Middleware {
                 return next();
             }
         }
+
         return callMiddleware(this._middleware.slice(0), 0);
     }
 
@@ -61,7 +63,7 @@ export class MiddlewareSet implements Middleware {
             if (i < set.length) {
                 const plugin = set[i];
                 if (plugin.postActivity !== undefined) {
-                    return plugin.postActivity(context, activities, () => callMiddleware(set, i + 1))
+                    return plugin.postActivity(context, activities, () => callMiddleware(set, i + 1));
                 } else {
                     return callMiddleware(set, i + 1);
                 }
@@ -69,6 +71,7 @@ export class MiddlewareSet implements Middleware {
                 return next();
             }
         }
+
         return callMiddleware(this._middleware.slice(0), 0);
     }
 }

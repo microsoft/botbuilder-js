@@ -31,10 +31,11 @@ export class MemoryStorage implements Storage {
             });
             resolve(data);
         });
-    };
+    }
 
     public write(changes: StoreItems): Promise<void> {
         const that = this;
+
         function saveItem(key: string, item: StoreItem) {
             const clone = Object.assign({}, item);
             clone.eTag = (that.etag++).toString();

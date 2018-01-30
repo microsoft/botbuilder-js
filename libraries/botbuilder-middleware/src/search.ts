@@ -1,6 +1,7 @@
 /**
  * @module botbuilder
  */
+
 /** second comment block */
 
 /** Interface for a search engine that manages catalogs  **/

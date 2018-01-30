@@ -5,14 +5,14 @@
 
 
 export interface ModelResult<T extends Object = {}> {
-    
-    text: string
 
-    start: number
+    text: string;
 
-    end: number
+    start: number;
 
-    typeName: string
+    end: number;
 
-    resolution: T
+    typeName: string;
+
+    resolution: T;
 }

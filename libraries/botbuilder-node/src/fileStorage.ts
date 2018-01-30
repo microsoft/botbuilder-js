@@ -2,18 +2,18 @@
  * @module botbuilder-node
  */
 /** second comment block */
-import { Storage, StoreItems, StoreItem } from 'botbuilder-storage';
+import { Storage, StoreItem, StoreItems } from 'botbuilder-storage';
 import * as path from 'path';
-import * as fs from 'async-file';
+import * as fs from 'async-file';
 import * as file from 'fs';
-import * as os from 'os';
+import * as os from 'os';
 import * as filenamify from 'filenamify';
 
 /** Settings for configuring an instance of [FileStorage](../classes/botbuilder_node.filestorage.html). */
 export interface FileStorageSettings {
-    /** 
+    /**
      * (Optional) path to the backing folder. The default is to use a `storage` folder off
-     * the systems temporary directory. 
+     * the systems temporary directory.
      */
     path?: string;
 }
@@ -38,10 +38,10 @@ export class FileStorage implements Storage {
         }
     }
 
-    /** 
+    /**
      * Loads store items from storage
      *
-     * @param keys Array of item keys to read from the store. 
+     * @param keys Array of item keys to read from the store.
      **/
     public read(keys: string[]): Promise<StoreItems> {
         return this.ensureFolder()
@@ -56,10 +56,12 @@ export class FileStorage implements Storage {
                             .then((exists) => {
                                 if (exists) {
                                     return fs.readTextFile(filePath)
-                                        .catch(() => { })
+                                        .catch(() => {
+                                        })
                                         .then(json => {
-                                            if (json)
+                                            if (json) {
                                                 data[key] = JSON.parse(json);
+                                            }
                                         });
                                 }
                                 return;
@@ -69,12 +71,12 @@ export class FileStorage implements Storage {
 
                 return Promise.all(promises).then(() => data);
             });
-    };
+    }
 
-    /** 
+    /**
      * Saves store items to storage.
      *
-     * @param changes Map of items to write to storage.  
+     * @param changes Map of items to write to storage.
      **/
     public write(changes: StoreItems): Promise<void> {
         return this.ensureFolder()
@@ -85,16 +87,13 @@ export class FileStorage implements Storage {
                     promises.push(
                         fs.exists(filePath)
                             .then((exists) => {
-                                if (exists)
-                                    return fs.readTextFile(filePath);
-                                else
-                                    return Promise.resolve(undefined);
+                                return exists ? fs.readTextFile(filePath) : Promise.resolve(undefined);
                             })
                             .then((json) => {
                                 let old: StoreItem = (json) ? JSON.parse(json) : null;
-                                if (old == null || changes[key].eTag == '*' || old.eTag == changes[key].eTag) {
+                                if (old == null || changes[key].eTag === '*' || old.eTag === changes[key].eTag) {
                                     let newObj: StoreItem = Object.assign({}, changes[key]);
-                                    newObj.eTag = (parseInt(newObj.eTag || '0') + 1).toString();
+                                    newObj.eTag = (parseInt(newObj.eTag || '0', 10) + 1).toString();
                                     return fs.writeTextFile(filePath, JSON.stringify(newObj));
                                 } else {
                                     throw new Error('eTag conflict');
@@ -102,14 +101,15 @@ export class FileStorage implements Storage {
                             })
                     );
                 }
-                return Promise.all(promises).then(() => { });
+                return Promise.all(promises).then(() => {
+                });
             });
-    };
+    }
 
-    /** 
+    /**
      * Removes store items from storage
      *
-     * @param keys Array of item keys to remove from the store. 
+     * @param keys Array of item keys to remove from the store.
      **/
     public delete(keys: string[]): Promise<void> {
         return this.ensureFolder()
@@ -120,11 +120,13 @@ export class FileStorage implements Storage {
                     let filePath = this.getFilePath(key);
                     tasks.push(fs.exists(filePath)
                         .then((exists) => {
-                            if (exists)
+                            if (exists) {
                                 file.unlinkSync(filePath);
+                            }
                         }));
                 }
-                Promise.all(tasks).then(() => { });
+                Promise.all(tasks).then(() => {
+                });
             });
     }
 
@@ -134,7 +136,9 @@ export class FileStorage implements Storage {
                 .then((exists) => {
                     if (!exists) {
                         return fs.mkdirp(<string>this.settings.path)
-                            .then(() => { this.checked = true; });
+                            .then(() => {
+                                this.checked = true;
+                            });
                     }
                 });
         }
@@ -150,8 +154,10 @@ export class FileStorage implements Storage {
     }
 
     private hashCode(input: string): number {
-        var hash = 0;
-        if (input.length == 0) return hash;
+        let hash = 0x0;
+        if (input.length === 0) {
+            return hash;
+        }
         for (let i = 0; i < input.length; i++) {
             let char = input.charCodeAt(i);
             hash = ((hash << 5) - hash) + char;

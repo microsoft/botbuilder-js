@@ -2,14 +2,14 @@
  * @module botbuilder-ai
  */
 /** second comment block */
-import { Activity, SearchEngine, SearchCatalog, SearchHit } from 'botbuilder';
 import * as request from 'request-promise-native';
+import { BotContext } from 'botbuilder';
 
 let serviceEndpoint = 'https://api.cognitive.microsoft.com/bing/v7.0/entities';
 
 export interface BingEntitySearchOptions {
     subscriptionKey: string;
-    responseFilter?: string
+    responseFilter?: string;
 }
 
 export interface QueryOptions {
@@ -61,42 +61,49 @@ function defaultRenderSearchResponse(context: BotContext, matchResults: BingEnti
             // send reply as response
             for (let answer of searchResponse.entities.value) {
                 let text = '';
-                if (answer.name)
+                if (answer.name) {
                     text += `**${answer.name}**\n\n`;
-                if (answer.description)
+                }
+                if (answer.description) {
                     text += `${answer.description}\n\n`;
-                if (answer.url)
+                }
+                if (answer.url) {
                     text += `${answer.url}\n\n`;
-                if (answer.telephone)
+                }
+                if (answer.telephone) {
                     text += `${answer.telephone}\n\n`;
-                if (text.length > 0)
+                }
+                if (text.length > 0) {
                     context.reply(text.trim());
+                }
             }
-        }
-        else if (searchResponse.places && searchResponse.places.value.length > 0) {
+        } else if (searchResponse.places && searchResponse.places.value.length > 0) {
             // send reply as response
             for (let answer of searchResponse.places.value) {
                 let text = '';
-                if (answer.name)
+                if (answer.name) {
                     text += `**${answer.name}**\n\n`;
+                }
                 if (answer.address.addressLocality) {
-                    let neighborhood = ''
-                    if (answer.address.neighborhood.length > 0)
+                    let neighborhood = '';
+                    if (answer.address.neighborhood.length > 0) {
                         neighborhood = `(${answer.address.neighborhood})`;
+                    }
                     text += `${answer.address.addressLocality}${neighborhood}, ${answer.address.addressRegion} ${answer.address.postalCode}\n\n`;
                 }
-                if (answer.telephone)
+                if (answer.telephone) {
                     text += `${answer.telephone}\n\n`;
-                if (text.length > 0)
+                }
+                if (text.length > 0) {
                     context.reply(text.trim());
+                }
             }
         } else {
-            context.reply("I'm sorry, I didn't find any results.");
+            context.reply(`I'm sorry, I didn't find any results.`);
         }
 
-    }
-    else if (matchResults.searchError) {
-        context.reply("I'm sorry, I can't help you because I don't have internet connectivity at the moment.");
+    } else if (matchResults.searchError) {
+        context.reply(`I'm sorry, I can't help you because I don't have internet connectivity at the moment.`);
     }
 }
 

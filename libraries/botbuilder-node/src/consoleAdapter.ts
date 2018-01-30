@@ -2,7 +2,7 @@
  * @module botbuilder-node
  */
 /** second comment block */
-import { ActivityAdapter, Activity, ActivityTypes, ConversationResourceResponse } from 'botbuilder';
+import { Activity, ActivityAdapter, ActivityTypes, ConversationResourceResponse } from 'botbuilder';
 import * as readline from 'readline';
 
 /**
@@ -19,16 +19,17 @@ import * as readline from 'readline';
  * ```
  */
 export class ConsoleAdapter implements ActivityAdapter {
-    private nextId = 0;
-    private rl: readline.ReadLine;
-
     /** INTERNAL implementation of `Adapter.onReceive`. */
     public onReceive: (activity: Activity) => Promise<void>;
+
+    private nextId = 0;
+    private rl: readline.ReadLine;
 
     /** INTERNAL implementation of `Adapter.post()`. */
     public post(activities: Partial<Activity>[]): Promise<ConversationResourceResponse[]> {
         return new Promise((resolve, reject) => {
             const responses: ConversationResourceResponse[] = [];
+
             function next(i: number) {
                 if (i < activities.length) {
                     responses.push({});
@@ -55,19 +56,20 @@ export class ConsoleAdapter implements ActivityAdapter {
                     resolve(responses);
                 }
             }
+
             next(0);
         });
     }
 
-    /** 
-     * Begins listening to console input. The listener will call [receive()](#receive) after 
-     * parsing input from the user. 
+    /**
+     * Begins listening to console input. The listener will call [receive()](#receive) after
+     * parsing input from the user.
      */
     public listen(): this {
-        this.rl = readline.createInterface({ input: process.stdin, output: process.stdout, terminal: false });
+        this.rl = readline.createInterface({input: process.stdin, output: process.stdout, terminal: false});
         this.rl.on('line', (line: string) => {
             line = line || '';
-            if (line.toLowerCase() == 'quit') {
+            if (line.toLowerCase() === 'quit') {
                 this.rl.close();
                 process.exit();
             } else {
@@ -87,16 +89,16 @@ export class ConsoleAdapter implements ActivityAdapter {
             const activity = <Activity>{
                 type: ActivityTypes.message,
                 channelId: 'console',
-                from: { id: 'user', name: 'User1' },
-                recipient: { id: 'bot', name: 'Bot' },
-                conversation:  { id: 'Convo1' },
+                from: {id: 'user', name: 'User1'},
+                recipient: {id: 'bot', name: 'Bot'},
+                conversation: {id: 'Convo1'},
                 timestamp: new Date().toISOString(),
                 text: text || '',
                 id: (this.nextId++).toString()
             };
             this.onReceive(activity);
         }
-        return this;        
+        return this;
     }
 
 }

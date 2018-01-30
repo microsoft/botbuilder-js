@@ -1,23 +1,33 @@
 /**
-* @module botbuilder-services
-*/
+ * @module botbuilder-services
+ */
 /** second comment block */
-import { Activity, ActivityTypes, ActivityAdapter, ConversationReference, ConversationResourceResponse, ConversationParameters, ConversationAccount } from 'botbuilder';
-import { MicrosoftAppCredentials, BotAuthenticator, Headers, BotCredentials } from 'botframework-connector-auth';
+import {
+    Activity,
+    ActivityAdapter,
+    ConversationParameters,
+    ConversationReference,
+    ConversationResourceResponse
+} from 'botbuilder';
+import { BotAuthenticator, BotCredentials, Headers, MicrosoftAppCredentials } from 'botframework-connector-auth';
 import ConnectorClient = require('botframework-connector');
 
 /** Express or Restify Request object. */
 export interface WebRequest {
     body: any;
     headers: Headers;
+
     on(event: string, ...args: any[]): void;
 }
 
 /** Express or Restify Response object. */
 export interface WebResponse {
     end(): this;
+
     send(status: number, body?: any): this;
+
     send(body: any): this;
+
     status(code: number): this;
 }
 
@@ -28,38 +38,39 @@ export interface WebMiddleware {
 
 /** Bot Framework Adapter Settings */
 export interface BotAdapterSettings {
-    appId?: string,
-    appPassword?: string
+    appId?: string;
+    appPassword?: string;
 }
 
 /**
-* ActivityAdapter class needed to communicate with a Bot Framework channel or the Emulator.
-*
-* **Usage Example**
-*
-* ```js
-* import { Bot } from 'botbuilder-core';
-* import { BotFrameworkAdapter } from 'botbuilder-services';
-* import * as restify from 'restify';
-* 
+ * ActivityAdapter class needed to communicate with a Bot Framework channel or the Emulator.
+ *
+ * **Usage Example**
+ *
+ * ```js
+ * import { Bot } from 'botbuilder-core';
+ * import { BotFrameworkAdapter } from 'botbuilder-services';
+ * import * as restify from 'restify';
+ *
  * // Create server
-* let server = restify.createServer();
-* server.listen(process.env.port || process.env.PORT || 3978, function () {
+ * let server = restify.createServer();
+ * server.listen(process.env.port || process.env.PORT || 3978, function () {
 *     console.log('%s listening to %s', server.name, server.url);
 * });
-* 
+ *
  * // Create activity adapter and listen to our servers '/api/messages' route.
-* const activityAdapter = new BotFrameworkAdapter({ appId: process.env.MICROSOFT_APP_ID, appPassword: process.env.MICROSOFT_APP_PASSWORD});
-* server.post('/api/messages', activityAdapter.listen() as any);
-* 
+ * const activityAdapter = new BotFrameworkAdapter({ appId: process.env.MICROSOFT_APP_ID, appPassword: process.env.MICROSOFT_APP_PASSWORD});
+ * server.post('/api/messages', activityAdapter.listen() as any);
+ *
  * // Initialize bot by passing it a activity Adapter
-* const bot = new Bot(activityAdapter)
-*     .onReceive((context) => {
+ * const bot = new Bot(activityAdapter)
+ *     .onReceive((context) => {
 *         context.reply(`Hello World`);
 *     });
-* ```
-*/
+ * ```
+ */
 export class BotFrameworkAdapter implements ActivityAdapter {
+    public onReceive: (activity: Partial<Activity>) => Promise<void>;
     private nextId = 0;
     private credentials: MicrosoftAppCredentials;
     private authenticator: BotAuthenticator;
@@ -71,12 +82,10 @@ export class BotFrameworkAdapter implements ActivityAdapter {
      */
     public constructor(settings?: BotAdapterSettings) {
         settings = settings === undefined ? {appId: '', appPassword: ''} : settings;
-        const botCredentials: BotCredentials = { appId: settings.appId, appPassword: settings.appPassword };
+        const botCredentials: BotCredentials = {appId: settings.appId, appPassword: settings.appPassword};
         this.credentials = new MicrosoftAppCredentials(botCredentials);
         this.authenticator = new BotAuthenticator(botCredentials);
     }
-
-    public onReceive: (activity: Partial<Activity>) => Promise<void>;
 
     /**
      * Creates a new conversation
@@ -98,22 +107,20 @@ export class BotFrameworkAdapter implements ActivityAdapter {
                 let body = typeof response.body === 'string' ? response.body : JSON.parse(response.body);
                 conversationResourceResponse.id = body.id;
                 resolve(conversationResourceResponse);
-            }
-            catch (err) {
+            } catch (err) {
                 reject(err);
             }
         });
     }
 
-    
+
     public update(activity: Partial<Activity>): Promise<void> {
         return new Promise<void>(async (resolve, reject) => {
             try {
                 let client = new ConnectorClient(this.credentials);
                 await client.conversations.updateActivity((activity.conversation as any).id, activity.id as string, activity as any);
                 resolve();
-            }
-            catch (err) {
+            } catch (err) {
                 reject(err);
             }
         });
@@ -125,8 +132,7 @@ export class BotFrameworkAdapter implements ActivityAdapter {
                 let client = new ConnectorClient(this.credentials);
                 await client.conversations.deleteActivity((activity.conversation as any).id, activity.id as string);
                 resolve();
-            }
-            catch (err) {
+            } catch (err) {
                 reject(err);
             }
         });
@@ -135,17 +141,19 @@ export class BotFrameworkAdapter implements ActivityAdapter {
     public post(activities: Partial<Activity>[]): Promise<ConversationResourceResponse[]> {
         return new Promise(async (resolve, reject) => {
             const credentials = this.credentials;
-            const clientCache: { [url:string]: ConnectorClient; } = {};
-            function createClient(serviceUrl: string|undefined): ConnectorClient|undefined {
+            const clientCache: { [url: string]: ConnectorClient; } = {};
+
+            function createClient(serviceUrl: string | undefined): ConnectorClient | undefined {
                 if (serviceUrl) {
                     if (!clientCache.hasOwnProperty(serviceUrl)) {
-                        clientCache[serviceUrl] = new ConnectorClient(credentials, serviceUrl)
+                        clientCache[serviceUrl] = new ConnectorClient(credentials, serviceUrl);
                     }
                     return clientCache[serviceUrl];
                 }
             }
 
             const responses: ConversationResourceResponse[] = [];
+
             function next(i: number) {
                 if (i < activities.length) {
                     const activity = activities[i];
@@ -161,12 +169,12 @@ export class BotFrameworkAdapter implements ActivityAdapter {
                             if (client) {
                                 if (activity.conversation && activity.conversation.id) {
                                     client.conversations.sendToConversation(activity, activity.conversation.id)
-                                                        .then((result) => {
-                                                            responses.push(result || {});
-                                                            next(i + 1);
-                                                        }, (err) => {
-                                                            reject(err);
-                                                        });
+                                        .then((result) => {
+                                            responses.push(result || {});
+                                            next(i + 1);
+                                        }, (err) => {
+                                            reject(err);
+                                        });
                                 } else {
                                     reject(new Error(`BotFrameworkAdapter: activity missing 'conversation.id'.`));
                                 }
@@ -179,6 +187,7 @@ export class BotFrameworkAdapter implements ActivityAdapter {
                     resolve(responses);
                 }
             }
+
             next(0);
         });
     }
@@ -193,7 +202,7 @@ export class BotFrameworkAdapter implements ActivityAdapter {
             } else {
                 let requestData = '';
                 req.on('data', (chunk: string) => {
-                    requestData += chunk
+                    requestData += chunk;
                 });
                 req.on('end', async () => {
                     req.body = JSON.parse(requestData);
@@ -205,7 +214,7 @@ export class BotFrameworkAdapter implements ActivityAdapter {
 
     private async processRequest(req: WebRequest, res: WebResponse) {
         let activity: Activity = req.body;
-        
+
         try {
             // authenticate the incoming request
             await this.authenticator.authenticate(req.headers, activity.channelId, activity.serviceUrl);
@@ -213,7 +222,7 @@ export class BotFrameworkAdapter implements ActivityAdapter {
             await this.onReceive(activity);
 
             // TODO: Add logic to return 'invoke' response
-            res.send(202); 
+            res.send(202);
         } catch (err) {
             // TODO: Added logic to unpack error
             res.send(500, err.message);

@@ -10,6 +10,6 @@ export * from './bingEntitySearch';
 
 declare global {
     export interface EntityTypes {
-        luis: string
+        luis: string;
     }
 }

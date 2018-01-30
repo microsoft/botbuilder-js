@@ -22,16 +22,18 @@
   "dependencies": {
     "botbuilder": "^4.0.0-h4.1",
     "botframework-luis": "^4.0.0-h4.1",
+    "botbuilder-middleware": "^4.0.0-h4.1",
     "html-entities": "^1.2.1",
     "mstranslator": "^3.0.0",
-    "request": "^2.81.0",
-    "request-promise-native": "^1.0.4"
+    "request": "2.83.0",
+    "request-promise-native": "1.0.5"
   },
   "devDependencies": {
     "@types/html-entities": "^1.2.16",
-    "@types/node": "^8.0.11",
-    "@types/request-promise-native": "^1.0.6",
-    "mocha": "^2.5.3"
+    "@types/node": "^9.3.0",
+    "@types/request-promise-native": "^1.0.10",
+    "codelyzer": "^4.1.0",
+    "mocha": "^5.0.0"
   },
   "scripts": {
     "test": "mocha tests/*.js"
