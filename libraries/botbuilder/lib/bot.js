@@ -18,7 +18,7 @@ const botbuilder_1 = require("./botbuilder");
  * **Usage Example**
  *
  * ```js
- * import { Bot } from 'botbuilder-core'; // typescript
+ * import { Bot } from 'botbuilder'; // typescript
  *
  * const bot = new Bot(adapter); // init bot and bind to adapter
  *

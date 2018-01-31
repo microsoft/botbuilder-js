@@ -22,7 +22,7 @@ const entityObject_1 = require("./entityObject");
  * **Usage Example**
  *
  * ```js
- * import { RegExpRecognizer } from 'botbuilder-core';
+ * import { RegExpRecognizer } from 'botbuilder';
  *
  * // Define RegExp's for well known commands.
  * const recognizer = new RegExpRecognizer()
