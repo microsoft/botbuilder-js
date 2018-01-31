@@ -8,4 +8,4 @@ echo starting storage emulator
   @echo You don't have Azure Storage Emulator installed
   @echo go to https://go.microsoft.com/fwlink/?LinkId=717179 to download and install 
 )
-call lerna run test
+
