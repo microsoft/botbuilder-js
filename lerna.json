@@ -1,8 +1,7 @@
 {
   "lerna": "2.8.0",
   "packages": [
-    "libraries/*",
-    "samples/*"
+    "libraries/*"
   ],
   "version": "independent",
   "commands": {
