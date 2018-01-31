@@ -30,7 +30,8 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "tsc && nyc mocha tests/"
+    "test": "tsc && nyc mocha tests/",
+    "postinstall": "cd .. && cd .. && cd tools && npm install"
   },
   "homepage": "http://github.com/Microsoft/BotBuilder-JS",
   "bugs": {
