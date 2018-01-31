@@ -2,7 +2,7 @@
   "name": "botbuilder",
   "author": "Microsoft Corp.",
   "description": "Bot Builder core library. Bot Builder is a toolkit for building rich bots on virtually any platform.",
-  "version": "4.0.0-h4.2",
+  "version": "4.0.0-m1.0",
   "license": "MIT",
   "keywords": [
     "botbuilder",
@@ -32,5 +32,8 @@
     "build": "tsc",
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder .\\lib\\botbuilder.d.ts --hideGenerator --name \"Bot Builder SDK - Core\" --readme none",
     "clean": "erase /q lib\\*.*"
+  },
+  "dependencies": {
+    "assert": "^1.4.1"
   }
 }

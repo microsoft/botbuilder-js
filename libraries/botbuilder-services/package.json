@@ -2,7 +2,7 @@
   "name": "botbuilder-services",
   "author": "Microsoft Corp.",
   "description": "Services for Microsoft BotBuilder.",
-  "version": "4.0.0-h4.1",
+  "version": "4.0.0-m1.0",
   "license": "MIT",
   "keywords": [
     "botbuilder",
@@ -20,9 +20,9 @@
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "dependencies": {
-    "botbuilder": "^4.0.0-h4.1",
-    "botframework-connector": "^4.0.0-h4.1",
-    "botframework-connector-auth": "^4.0.0-h4.1"
+    "botbuilder": "^4.0.0-m1.0",
+    "botframework-connector": "^4.0.0-m1.0",
+    "botframework-connector-auth": "^4.0.0-m1.0"
   },
   "devDependencies": {
     "@types/mocha": "^2.2.47",
