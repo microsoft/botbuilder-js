@@ -35,6 +35,7 @@ class MicrosoftAppCredentials {
     }
     getAccessToken(cb) {
         if (!this.accessToken || new Date().getTime() >= this.accessTokenExpires) {
+            // Refresh access token
             var opt = {
                 method: 'POST',
                 url: MicrosoftAppCredentials.refreshEndpoint,
@@ -48,6 +49,8 @@ class MicrosoftAppCredentials {
             request(opt, (err, response, body) => {
                 if (!err) {
                     if (body && response.statusCode < 300) {
+                        // Subtract 5 minutes from expires_in so they'll we'll get a
+                        // new token before it expires.
                         var oauthResponse = JSON.parse(body);
                         this.accessToken = oauthResponse.access_token;
                         this.accessTokenExpires = new Date().getTime() + ((oauthResponse.expires_in - 300) * 1000);
@@ -70,3 +73,4 @@ class MicrosoftAppCredentials {
 MicrosoftAppCredentials.refreshEndpoint = settings_1.AuthSettings.refreshEndpoint;
 MicrosoftAppCredentials.refreshScope = settings_1.AuthSettings.refreshScope;
 exports.MicrosoftAppCredentials = MicrosoftAppCredentials;
+//# sourceMappingURL=microsoftAppCredentials.js.map
