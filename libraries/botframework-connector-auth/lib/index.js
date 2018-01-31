@@ -6,3 +6,4 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./microsoftAppCredentials"));
 __export(require("./botAuthenticator"));
 __export(require("./settings"));
+//# sourceMappingURL=index.js.map

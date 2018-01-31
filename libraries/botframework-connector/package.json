@@ -31,6 +31,6 @@
     "ts-node": "^4.1.0"
   },
   "scripts": {
-    "test": "tsc && nyc mocha tests/"
+    "test": "nyc mocha tests/"
   }
 }
