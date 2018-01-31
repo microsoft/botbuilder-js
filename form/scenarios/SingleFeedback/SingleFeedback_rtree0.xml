@@ -1,6 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<bml>
-  <recognize class="regex" pattern="hi" scope="">
-    <action class="template">Hello</action>
-  </recognize>
-</bml>
