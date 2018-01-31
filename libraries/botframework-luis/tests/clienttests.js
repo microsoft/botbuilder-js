@@ -16,6 +16,7 @@ describe('GetIntentAndEntities', function() {
         return;
     }
 
+    this.timeout(10000);
     it('should return intent and entities', function(done) {
         var client = new luisClient();
         client.getIntentsAndEntitiesV2(luisAppId, subscriptionKey, 'hello', { verbose : true })

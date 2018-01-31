@@ -32,29 +32,36 @@ class BotAuthenticator {
                     token = auth[1];
                 }
             }
+            // Verify token
             if (token) {
                 let decoded = jwt.decode(token, { complete: true });
                 var verifyOptions;
                 var openIdMetadata;
                 const algorithms = ['RS256', 'RS384', 'RS512'];
                 if (isEmulator) {
+                    // validate the claims from the emulator
                     if ((decoded.payload.ver === '2.0' && decoded.payload.azp !== this.settings.appId) ||
                         (decoded.payload.ver !== '2.0' && decoded.payload.appid !== this.settings.appId)) {
                         var err = new Error('ChatConnector: receive - invalid token. Requested by unexpected app ID.');
                         logger.error(err.message);
                         reject(this.addStatusToError(err, 403));
                     }
+                    // the token came from the emulator, so ensure the correct issuer is used
                     let issuer;
                     if (decoded.payload.ver === '1.0' && decoded.payload.iss == this.settings.endpoint.emulatorAuthV31IssuerV1) {
+                        // This token came from the emulator as a v1 token using the Auth v3.1 issuer
                         issuer = this.settings.endpoint.emulatorAuthV31IssuerV1;
                     }
                     else if (decoded.payload.ver === '2.0' && decoded.payload.iss == this.settings.endpoint.emulatorAuthV31IssuerV2) {
+                        // This token came from the emulator as a v2 token using the Auth v3.1 issuer
                         issuer = this.settings.endpoint.emulatorAuthV31IssuerV2;
                     }
                     else if (decoded.payload.ver === '1.0' && decoded.payload.iss == this.settings.endpoint.emulatorAuthV32IssuerV1) {
+                        // This token came from the emulator as a v1 token using the Auth v3.2 issuer
                         issuer = this.settings.endpoint.emulatorAuthV32IssuerV1;
                     }
                     else if (decoded.payload.ver === '2.0' && decoded.payload.iss == this.settings.endpoint.emulatorAuthV32IssuerV2) {
+                        // This token came from the emulator as a v2 token using the Auth v3.2 issuer
                         issuer = this.settings.endpoint.emulatorAuthV32IssuerV2;
                     }
                     if (issuer) {
@@ -68,6 +75,7 @@ class BotAuthenticator {
                     }
                 }
                 if (!verifyOptions) {
+                    // This is a normal token, so use our Bot Connector verification
                     openIdMetadata = this.botConnectorOpenIdMetadata;
                     verifyOptions = {
                         issuer: this.settings.endpoint.botConnectorIssuer,
@@ -79,6 +87,7 @@ class BotAuthenticator {
                     if (key) {
                         try {
                             jwt.verify(token, key.key, verifyOptions);
+                            // enforce endorsements in openIdMetadadata if there is any endorsements associated with the key
                             if (typeof channelId !== 'undefined' &&
                                 typeof key.endorsements !== 'undefined' &&
                                 key.endorsements.lastIndexOf(channelId) === -1) {
@@ -86,6 +95,7 @@ class BotAuthenticator {
                                 logger.error(`BotAuthenticator: receive - endorsements validation failure. ${errorDescription}`);
                                 reject(this.addStatusToError(new Error(errorDescription), 403));
                             }
+                            // validate service url using token's serviceurl payload
                             if (typeof decoded.payload.serviceurl !== 'undefined' &&
                                 typeof serviceUrl !== 'undefined' &&
                                 decoded.payload.serviceurl !== serviceUrl) {
@@ -108,10 +118,12 @@ class BotAuthenticator {
                 });
             }
             else if (isEmulator && !this.settings.appId && !this.settings.appPassword) {
+                // Emulator running without auth enabled
                 logger.warn('BotAuthenticator: receive - emulator running without security enabled.');
                 resolve();
             }
             else {
+                // Token not provided so
                 var err = new Error('BotAuthenticator: receive - no security token sent.');
                 logger.error(err.message);
                 reject(this.addStatusToError(err, 401));
@@ -125,3 +137,4 @@ class BotAuthenticator {
     }
 }
 exports.BotAuthenticator = BotAuthenticator;
+//# sourceMappingURL=botAuthenticator.js.map

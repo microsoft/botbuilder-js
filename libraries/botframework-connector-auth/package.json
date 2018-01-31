@@ -17,8 +17,8 @@
     "type": "git",
     "url": "https://github.com/Microsoft/BotBuilder.git"
   },
-  "main": "lib/index.js",
-  "typings": "lib/index.d.ts",
+  "main": "./lib/index.js",
+  "typings": "./lib/index.d.ts",
   "dependencies": {
     "base64url": "^2.0.0",
     "jsonwebtoken": "8.0.1",
@@ -37,6 +37,8 @@
     "typescript": "^2.5.2"
   },
   "scripts": {
-    "test": "tsc && nyc mocha tests/"
+    "test": "tsc && nyc mocha tests/",
+    "build": "tsc",
+    "clean": "erase /q lib\\*.*"
   }
 }
