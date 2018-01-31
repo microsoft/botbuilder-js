@@ -6,7 +6,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @module botbuilder-ai
  */
-/** second comment block */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 __export(require("./luisRecognizer"));
 __export(require("./languageTranslator"));
 __export(require("./languageMap"));

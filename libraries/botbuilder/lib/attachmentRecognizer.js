@@ -3,9 +3,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @module botbuilder
  */
-/** second comment block */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 const intentRecognizer_1 = require("./intentRecognizer");
-const entityRecognizers_1 = require("./entityRecognizers");
+const entityObject_1 = require("./entityObject");
 /**
  * An intent recognizer for detecting that the user has uploaded an attachment.
  *
@@ -41,7 +44,7 @@ class AttachmentRecognizer extends intentRecognizer_1.IntentRecognizer {
                 // Map attachments to entities
                 const entities = [];
                 context.request.attachments.forEach((a) => entities.push({
-                    type: a.contentType || entityRecognizers_1.EntityTypes.attachment,
+                    type: a.contentType || entityObject_1.EntityTypes.attachment,
                     score: 1.0,
                     value: a
                 }));

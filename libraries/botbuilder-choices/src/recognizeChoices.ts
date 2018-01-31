@@ -1,7 +1,10 @@
 /**
  * @module botbuilder-choices
  */
-/** second comment block */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Licensed under the MIT License.
+ */
 
 import { Choice, findChoices, FoundChoice, FindChoicesOptions } from './findChoices';
 import { ModelResult } from './modelResult';

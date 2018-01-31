@@ -1,7 +1,10 @@
 /**
  * @module botbuilder-ai
  */
-/** second comment block */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 import { Intent, IntentRecognizer } from 'botbuilder';
 import LuisClient = require('botframework-luis');
 export declare class LuisRecognizer extends IntentRecognizer {

@@ -1,3 +1,7 @@
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Licensed under the MIT License.
+ */
 import * as msrest from 'ms-rest';
 import * as request from 'request';
 import { AuthSettings, BotCredentials } from './settings';

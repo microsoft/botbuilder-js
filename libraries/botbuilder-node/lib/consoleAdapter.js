@@ -3,7 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @module botbuilder-node
  */
-/** second comment block */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 const botbuilder_1 = require("botbuilder");
 const readline = require("readline");
 /**

@@ -1,9 +1,12 @@
 /**
  * @module botbuilder
  */
-/** second comment block */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 import { Middleware, Promiseable } from './middleware';
-import { EntityObject } from './entityRecognizers';
+import { EntityObject } from './entityObject';
 /**
  * A named intent that represents an informed guess as to what the user is wanting to do based on
  * their last utterance.  Intents have a [score](#score) which is the calculated confidence of this

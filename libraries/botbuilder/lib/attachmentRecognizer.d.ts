@@ -1,7 +1,10 @@
 /**
  * @module botbuilder
  */
-/** second comment block */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 import { IntentRecognizer } from './intentRecognizer';
 /** Optional settings for an `AttachmentRecognizer`. */
 export interface AttachmentRecognizerSettings {

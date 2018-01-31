@@ -1,7 +1,10 @@
 /**
  * @module botbuilder-ai
  */
-/** second comment block */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Licensed under the MIT License.
+ */
 
 /** Names for languages in all languages */
 export const Names = [
