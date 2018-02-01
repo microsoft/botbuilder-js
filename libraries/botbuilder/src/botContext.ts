@@ -38,7 +38,6 @@ export class BotContext {
 
     /** The Bot object for this context. */
     get bot(): Bot {
-        this.throwIfDisposed('bot');
         return this._bot;
     }
 
@@ -49,13 +48,11 @@ export class BotContext {
 
     /** Returns the conversation reference for the current turn. */
     get conversationReference(): ConversationReference {
-        this.throwIfDisposed('conversationReference');
         return this._reference;
     }
 
     /** Assigns the conversation reference for the current turn. */
     set conversationReference(reference: ConversationReference) {
-        this.throwIfDisposed('conversationReference');
         this._reference = reference;
     }
 
@@ -64,38 +61,23 @@ export class BotContext {
      * undefined.
      */
     get request(): Activity | undefined {
-        this.throwIfDisposed('request');
         return this._request;
     }
 
     /** Queue of responses to send to the user. */
     get responses(): Partial<Activity>[] {
-        this.throwIfDisposed('responses');
         return this._responses;
     }
 
     /** If true at least one response has been sent for the current turn of conversation. */
     get responded(): boolean {
-        this.throwIfDisposed('responded');
         return this._responded;
-    }
-
-    /**
-     * INTERNAL disposes of the context object, making it unusable. Calling any properties or
-     * methods off a disposed of context will result in an exception being thrown.
-     */
-    public dispose(): void {
-        ['_bot', '_request', '_reference', '_responses', '_properties'].forEach((prop) => {
-            (this as any)[prop] = undefined;
-        });
     }
 
     /**
      * Forces the delivery of any queued up responses to the user.
      */
     public flushResponses<T>(): Promise<T> {
-        this.throwIfDisposed('flushResponses()');
-
         const args: any[] = this._responses.slice(0);
         const cnt = args.length;
         args.unshift(this);
@@ -115,8 +97,6 @@ export class BotContext {
      * @param name Name of the property to return.
      */
     public get<T = any>(name: string): T {
-        this.throwIfDisposed(`get("${name}")`);
-
         if (!this._properties.hasOwnProperty(name)) {
             throw new Error(`BotContext.get("${name}"): property not found.`);
         }
@@ -129,8 +109,6 @@ export class BotContext {
      * @param name Name of the property to look up.
      */
     public has(name: string): boolean {
-        this.throwIfDisposed(`has("${name}")`);
-
         return !this._properties.hasOwnProperty(name);
     }
 
@@ -140,19 +118,6 @@ export class BotContext {
      * @param value Value to store for the property.
      */
     public set(name: string, value: any): void {
-        this.throwIfDisposed(`set("${name}")`);
-
         this._properties[name] = value;
-    }
-
-    /**
-     * Helper function used by context object extensions to ensure the context object hasn't
-     * been disposed of prior to use.
-     * @param member Name of the extension property or method being called.
-     */
-    public throwIfDisposed(member: string) {
-        if (this.disposed) {
-            throw new Error(`BotContext.${member}: error calling property/method after context has been disposed.`);
-        }
     }
 }
