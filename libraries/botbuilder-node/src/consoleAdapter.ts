@@ -2,11 +2,11 @@
  * @module botbuilder-node
  */
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 import { ActivityAdapter } from 'botbuilder';
-import { ActivityTypes, Activity, ConversationResourceResponse } from 'botframework-connector';
+import { ActivityTypes, Activity, ConversationResourceResponse } from 'botbuilder';
 import * as readline from 'readline';
 
 /**

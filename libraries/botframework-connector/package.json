@@ -13,6 +13,7 @@
   "types": "./lib/index.d.ts",
   "dependencies": {
     "base64url": "^2.0.0",
+    "botbuilder-schema": "^4.0.0-m1.0",
     "jsonwebtoken": "8.0.1",
     "ms-rest": "^2.2.2",
     "ms-rest-azure": "^2.3.3",

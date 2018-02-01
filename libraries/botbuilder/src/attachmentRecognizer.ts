@@ -2,12 +2,12 @@
  * @module botbuilder
  */
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 import { Intent, IntentRecognizer } from './intentRecognizer';
 import { EntityObject, EntityTypes } from './entityObject';
-import { Attachment } from 'botframework-connector';
+import { Attachment } from 'botbuilder-schema';
 
 /** Optional settings for an `AttachmentRecognizer`. */
 export interface AttachmentRecognizerSettings {

@@ -2,11 +2,11 @@
  * @module botbuilder
  */
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 import { ActivityAdapter } from './activityAdapter';
-import { ActivityTypes, Activity, ConversationReference } from 'botframework-connector';
+import { ActivityTypes, Activity, ConversationReference } from 'botbuilder-schema';
 import { Promiseable } from './middleware';
 import assert = require('assert');
 

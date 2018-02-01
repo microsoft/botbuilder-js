@@ -1,11 +1,11 @@
 /**
  * @module botbuilder
  */
-/**   
- * Copyright (c) Microsoft Corporation. All rights reserved.  
- * Licensed under the MIT License.  
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
  */
-import { Activity, ConversationReference, ConversationResourceResponse } from 'botframework-connector';
+import { Activity, ConversationReference, ConversationResourceResponse } from 'botbuilder-schema';
 
 /**
  * Implemented by activity adapters

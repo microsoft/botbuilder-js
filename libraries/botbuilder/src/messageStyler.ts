@@ -2,11 +2,11 @@
  * @module botbuilder
  */
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 import { CardStyler } from './cardStyler';
-import { ActivityTypes, AttachmentLayouts, Activity, CardAction, SuggestedActions, Attachment } from 'botframework-connector';
+import { ActivityTypes, AttachmentLayouts, Activity, CardAction, SuggestedActions, Attachment } from 'botbuilder-schema';
 
 /**
  * A set of utility functions to assist with the formatting of the various message types a bot can

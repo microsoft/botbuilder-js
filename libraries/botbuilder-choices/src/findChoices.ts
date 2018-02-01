@@ -2,11 +2,11 @@
  * @module botbuilder-choices
  */
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 
-import { CardAction } from 'botframework-connector';
+import { CardAction } from 'botbuilder';
 import { ModelResult } from './modelResult';
 import { findValues, FindValuesOptions, SortedValue } from './findValues';
 
