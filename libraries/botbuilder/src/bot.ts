@@ -26,7 +26,7 @@ import { BotContext } from './botContext';
 export class Bot extends MiddlewareSet {
     private receivers: ((context: BotContext) => Promiseable<void>)[] = [];
     private _adapter: ActivityAdapter;
-    private pluginReflectMetadata = new Map<{ [property: string]: any, constructor?: Function }, { [propName: string]: PropertyDescriptor | undefined }>();
+    private pluginReflectMetadata = new Map<Partial<any>, { [propName: string]: PropertyDescriptor | undefined }>();
 
     /**
      * Creates a new instance of a bot
@@ -65,11 +65,11 @@ export class Bot extends MiddlewareSet {
     /**
      * Adds a plugin whose functions (including getters/setters) become available
      * on the context object passed to the middleware api. In order to resolve name
-     * collisions, calling a plugin function on the context returns an iterator
-     * containing the functions matched by name.
+     * collisions, if a naming collision should occur, calling a plugin function
+     * on the context returns an array containing the functions matched by name.
      *
      * ```js
-     * class MiddlewarePlugin extends BotContext {
+     * class MiddlewarePlugin implements BotContext {
      *   doStuff() {
      *     if (this.request.entities) {
      *       this.processEntities(this.request.entities);
@@ -87,11 +87,7 @@ export class Bot extends MiddlewareSet {
      *
      * class MyMiddleware {
      *   receiveActivity(context, next) {
-     *     // calls to "doStuff" returns an iterator since
-     *     // multiple plugins may contain same-named functions.
-     *     for (let doStuff in context.doStuff()) {
-     *         doStuff(); // doStuff() is bound to context's scope
-     *     }
+     *      context.doStuff()
      *   }
      * }
      * const bot = new Bot();
@@ -105,20 +101,22 @@ export class Bot extends MiddlewareSet {
      */
     public plugin(plugin: { [property: string]: any, constructor?: Function }): Bot {
         const {pluginReflectMetadata} = this;
-        const reflect = (prototype: { [property: string]: any, constructor?: Function }): { [key: string]: PropertyDescriptor | undefined } => {
+        const reflect = (target: { [property: string]: any, constructor?: Function }): { [key: string]: PropertyDescriptor | undefined } => {
             const meta = {} as { [key: string]: PropertyDescriptor | undefined };
             // Tail call avoidance
-            while (prototype && prototype !== Object.prototype && prototype !== BotContext.prototype) {
+            while (target && target !== Object.prototype && target !== BotContext.prototype) {
                 // Retain descriptors for use later
-                Reflect.ownKeys(prototype).forEach(key => {
-                    meta[key] = Reflect.getOwnPropertyDescriptor(prototype, key);
+                Reflect.ownKeys(target).filter(key => !/(constructor|__proto__)/.test(key as string)).forEach(key => {
+                    meta[key] = Reflect.getOwnPropertyDescriptor(target, key);
                 });
-                prototype = Reflect.getPrototypeOf(prototype);
+                target = Reflect.getPrototypeOf(target);
             }
             return meta;
         };
-        if (typeof plugin === 'object' && !('prototype' in plugin)) {
-            plugin = Reflect.getPrototypeOf(plugin);
+        // Check if this is an object literal, prototype or a class instance
+        const prototype = Reflect.getPrototypeOf(plugin);
+        if (prototype !== Object.prototype && 'constructor' in prototype && plugin.constructor === prototype.constructor) {
+            plugin = prototype;
         }
         pluginReflectMetadata.set(plugin, reflect(plugin));
         return this;
@@ -146,7 +144,7 @@ export class Bot extends MiddlewareSet {
     public createContext(activityOrReference: Activity | ConversationReference, onReady: (context: BotContext) => Promiseable<void>): Promise<void> {
         // Initialize context object
         const handler = new MiddlewareProxyHandler(this.pluginReflectMetadata);
-        let revocable: {proxy: BotContext, revoke: Function};
+        let revocable: { proxy: BotContext, revoke: Function };
         if ((activityOrReference as Activity).type) {
             revocable = Proxy.revocable(new BotContext(this, activityOrReference), handler);
         } else {
@@ -244,7 +242,7 @@ export class Bot extends MiddlewareSet {
 }
 
 class MiddlewareProxyHandler implements ProxyHandler<BotContext> {
-    constructor(private pluginReflectMetadata: Map<{ [property: string]: any, constructor?: Function }, { [propName: string]: PropertyDescriptor | undefined }>) {
+    constructor(private pluginReflectMetadata: Map<Partial<any>, { [propName: string]: PropertyDescriptor | undefined }>) {
 
     }
 
@@ -253,7 +251,7 @@ class MiddlewareProxyHandler implements ProxyHandler<BotContext> {
             return (target as any)[prop];
         }
         const matches = this.getDescriptorIteratorByName(prop, target);
-        return matches.length ? matches : matches[0];
+        return matches.length > 1 ? () => matches : matches[0];
     }
 
     private getDescriptorIteratorByName(propertyName: PropertyKey, target: BotContext): Function[] | Function | any {
