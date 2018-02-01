@@ -1,7 +1,10 @@
 /**
  * @module botbuilder
  */
-/** second comment block */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Licensed under the MIT License.
+ */
 
 export * from './activity';
 export * from './attachmentRecognizer';
@@ -12,7 +15,7 @@ export * from './browserStorage';
 export * from './cardStyler';
 export * from './activityAdapter';
 export * from './consoleLogger';
-export * from './entityRecognizers';
+export * from './entityObject';
 export * from './intentRecognizer';
 export * from './intentRecognizerSet';
 export * from './jsonTemplates';
@@ -32,7 +35,7 @@ export * from './testAdapter';
 import { Bot } from './bot';
 import { Activity, ConversationReference, ConversationResourceResponse } from './activity';
 import { Intent } from './intentRecognizer';
-import { EntityObject } from './entityRecognizers';
+import { EntityObject } from './entityObject';
 import { StoreItem, Storage } from './storage';
 import { TemplateRenderer, TemplateManager } from './templateManager';
 

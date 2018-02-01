@@ -1,7 +1,10 @@
 /**
  * @module botbuilder
  */
-/** second comment block */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Licensed under the MIT License.
+ */
 import { ActivityAdapter } from './activityAdapter';
 import { Activity, ActivityTypes, ConversationReference } from './activity';
 import { Promiseable } from './middleware';

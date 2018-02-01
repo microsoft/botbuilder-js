@@ -2,7 +2,10 @@
 /**
  * @module botbuilder
  */
-/** second comment block */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
@@ -15,7 +18,7 @@ __export(require("./botStateManager"));
 __export(require("./browserStorage"));
 __export(require("./cardStyler"));
 __export(require("./consoleLogger"));
-__export(require("./entityRecognizers"));
+__export(require("./entityObject"));
 __export(require("./intentRecognizer"));
 __export(require("./intentRecognizerSet"));
 __export(require("./jsonTemplates"));

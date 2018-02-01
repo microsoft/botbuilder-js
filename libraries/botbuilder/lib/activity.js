@@ -2,7 +2,10 @@
 /**
  * @module botbuilder
  */
-/** second comment block */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 /** List of activity types supported by the Bot Framework. */
 exports.ActivityTypes = {

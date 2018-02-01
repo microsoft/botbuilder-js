@@ -1,7 +1,10 @@
 /**
 * @module botbuilder-services
 */
-/** second comment block */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 import { Activity, ActivityAdapter, ConversationReference, ConversationResourceResponse, ConversationParameters } from 'botbuilder';
 import { Headers } from 'botframework-connector-auth';
 /** Express or Restify Request object. */

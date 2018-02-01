@@ -1,7 +1,10 @@
 /**
  * @module botbuilder-ai
  */
-/** second comment block */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Licensed under the MIT License.
+ */
 import { SearchCatalog, SearchEngine, SearchHit } from 'botbuilder';
 import * as request from 'request-promise-native';
 

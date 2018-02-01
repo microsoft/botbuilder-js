@@ -1,11 +1,14 @@
 /**
  * @module botbuilder
  */
-/** second comment block */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Licensed under the MIT License.
+ */
 import { Activity, ActivityTypes, EndOfConversationCodes, ConversationReference, getConversationReference } from './activity';
 import { Bot } from './bot';
 import { Intent } from './intentRecognizer';
-import { EntityObject } from './entityRecognizers';
+import { EntityObject } from './entityObject';
 import { RegExpRecognizer } from './regExpRecognizer';
 import { TemplateManager } from './templateManager';
 

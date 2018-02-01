@@ -3,9 +3,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @module botbuilder
  */
-/** second comment block */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 const intentRecognizer_1 = require("./intentRecognizer");
-const entityRecognizers_1 = require("./entityRecognizers");
+const entityObject_1 = require("./entityObject");
 /**
  * An intent recognizer for detecting the users intent using a series of regular expressions.
  *
@@ -176,7 +179,7 @@ class RegExpRecognizer extends intentRecognizer_1.IntentRecognizer {
             const entities = [];
             if (matched.length > 1) {
                 for (let i = 1; i < matched.length; i++) {
-                    const type = (i - 1) < entityTypes.length ? entityTypes[i - 1] : entityRecognizers_1.EntityTypes.string;
+                    const type = (i - 1) < entityTypes.length ? entityTypes[i - 1] : entityObject_1.EntityTypes.string;
                     entities.push({ type: type, score: 1.0, value: matched[i] });
                 }
             }

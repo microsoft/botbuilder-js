@@ -3,7 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @module botbuilder
  */
-/** second comment block */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 const botService_1 = require("./botService");
 /**
  * Abstract base class for all storage middleware.

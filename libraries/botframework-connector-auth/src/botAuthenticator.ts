@@ -1,3 +1,7 @@
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Licensed under the MIT License.
+ */
 import * as jwt from 'jsonwebtoken';
 import { OpenIdMetadata } from './openIdMetadata';
 import { AuthSettings, BotAuthenticatorSettings } from './settings';

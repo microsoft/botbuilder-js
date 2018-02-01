@@ -1,3 +1,7 @@
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Licensed under the MIT License.
+ */
 import * as request from 'request';
 var getPem = require('rsa-pem-from-mod-exp');
 var base64url = require('base64url');

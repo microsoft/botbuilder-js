@@ -1,7 +1,10 @@
 /**
  * @module botbuilder-node
  */
-/** second comment block */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Licensed under the MIT License.
+ */
 import { ActivityAdapter, Activity, ActivityTypes, ConversationResourceResponse } from 'botbuilder';
 import * as readline from 'readline';
 

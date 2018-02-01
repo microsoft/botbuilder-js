@@ -1,7 +1,10 @@
 /**
  * @module botbuilder-ai
  */
-/** second comment block */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 import { SearchEngine } from 'botbuilder';
 export interface QnAMakerResult {
     answer: string;
