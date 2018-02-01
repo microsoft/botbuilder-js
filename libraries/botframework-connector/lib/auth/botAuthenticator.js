@@ -9,8 +9,9 @@ const openIdMetadata_1 = require("./openIdMetadata");
 const settings_1 = require("./settings");
 var logger = console;
 class BotAuthenticator {
-    constructor(settings = {}) {
-        this.settings = settings;
+    constructor(credentials = {}) {
+        this.credentials = credentials;
+        this.settings = credentials;
         if (!this.settings.endpoint) {
             let settingsOverride = {};
             if (this.settings.openIdMetadata !== undefined) {
@@ -27,7 +28,7 @@ class BotAuthenticator {
     }
     authenticate(headers, channelId, serviceUrl) {
         return new Promise((resolve, reject) => {
-            var token;
+            var token = "";
             var isEmulator = channelId === 'emulator';
             var authHeaderValue = headers['authorization'] || headers['Authorization'] || null;
             if (authHeaderValue) {
@@ -37,10 +38,10 @@ class BotAuthenticator {
                 }
             }
             // Verify token
-            if (token) {
+            if (!!token) {
                 let decoded = jwt.decode(token, { complete: true });
-                var verifyOptions;
-                var openIdMetadata;
+                var verifyOptions = null;
+                var openIdMetadata = null;
                 const algorithms = ['RS256', 'RS384', 'RS512'];
                 if (isEmulator) {
                     // validate the claims from the emulator
@@ -51,7 +52,7 @@ class BotAuthenticator {
                         reject(this.addStatusToError(err, 403));
                     }
                     // the token came from the emulator, so ensure the correct issuer is used
-                    let issuer;
+                    let issuer = "";
                     if (decoded.payload.ver === '1.0' && decoded.payload.iss == this.settings.endpoint.emulatorAuthV31IssuerV1) {
                         // This token came from the emulator as a v1 token using the Auth v3.1 issuer
                         issuer = this.settings.endpoint.emulatorAuthV31IssuerV1;
@@ -68,7 +69,7 @@ class BotAuthenticator {
                         // This token came from the emulator as a v2 token using the Auth v3.2 issuer
                         issuer = this.settings.endpoint.emulatorAuthV32IssuerV2;
                     }
-                    if (issuer) {
+                    if (!!issuer) {
                         openIdMetadata = this.emulatorOpenIdMetadata;
                         verifyOptions = {
                             algorithms: algorithms,
@@ -87,39 +88,41 @@ class BotAuthenticator {
                         clockTolerance: 300
                     };
                 }
-                openIdMetadata.getKey(decoded.header.kid, key => {
-                    if (key) {
-                        try {
-                            jwt.verify(token, key.key, verifyOptions);
-                            // enforce endorsements in openIdMetadadata if there is any endorsements associated with the key
-                            if (typeof channelId !== 'undefined' &&
-                                typeof key.endorsements !== 'undefined' &&
-                                key.endorsements.lastIndexOf(channelId) === -1) {
-                                const errorDescription = `channelId in req.body: ${channelId} didn't match the endorsements: ${key.endorsements.join(',')}.`;
-                                logger.error(`BotAuthenticator: receive - endorsements validation failure. ${errorDescription}`);
-                                reject(this.addStatusToError(new Error(errorDescription), 403));
+                if (openIdMetadata) {
+                    openIdMetadata.getKey(decoded.header.kid, key => {
+                        if (key) {
+                            try {
+                                jwt.verify(token, key.key, verifyOptions);
+                                // enforce endorsements in openIdMetadadata if there is any endorsements associated with the key
+                                if (typeof channelId !== 'undefined' &&
+                                    typeof key.endorsements !== 'undefined' &&
+                                    key.endorsements.lastIndexOf(channelId) === -1) {
+                                    const errorDescription = `channelId in req.body: ${channelId} didn't match the endorsements: ${key.endorsements.join(',')}.`;
+                                    logger.error(`BotAuthenticator: receive - endorsements validation failure. ${errorDescription}`);
+                                    reject(this.addStatusToError(new Error(errorDescription), 403));
+                                }
+                                // validate service url using token's serviceurl payload
+                                if (typeof decoded.payload.serviceurl !== 'undefined' &&
+                                    typeof serviceUrl !== 'undefined' &&
+                                    decoded.payload.serviceurl !== serviceUrl) {
+                                    const errorDescription = `ServiceUrl in payload of token: ${decoded.payload.serviceurl} didn't match the request's serviceurl: ${serviceUrl}.`;
+                                    logger.error(`BotAuthenticator: receive - serviceurl mismatch. ${errorDescription}`);
+                                    reject(this.addStatusToError(new Error(errorDescription), 403));
+                                }
                             }
-                            // validate service url using token's serviceurl payload
-                            if (typeof decoded.payload.serviceurl !== 'undefined' &&
-                                typeof serviceUrl !== 'undefined' &&
-                                decoded.payload.serviceurl !== serviceUrl) {
-                                const errorDescription = `ServiceUrl in payload of token: ${decoded.payload.serviceurl} didn't match the request's serviceurl: ${serviceUrl}.`;
-                                logger.error(`BotAuthenticator: receive - serviceurl mismatch. ${errorDescription}`);
-                                reject(this.addStatusToError(new Error(errorDescription), 403));
+                            catch (err) {
+                                logger.error('BotAuthenticator: receive - invalid token. Check bot\'s app ID & Password.');
+                                reject(this.addStatusToError(err, 403));
                             }
+                            resolve();
                         }
-                        catch (err) {
-                            logger.error('BotAuthenticator: receive - invalid token. Check bot\'s app ID & Password.');
-                            reject(this.addStatusToError(err, 403));
+                        else {
+                            var err = new Error('BotAuthenticator: receive - invalid signing key or OpenId metadata document.');
+                            logger.error(err.message);
+                            reject(this.addStatusToError(err, 500));
                         }
-                        resolve();
-                    }
-                    else {
-                        var err = new Error('BotAuthenticator: receive - invalid signing key or OpenId metadata document.');
-                        logger.error(err.message);
-                        reject(this.addStatusToError(err, 500));
-                    }
-                });
+                    });
+                }
             }
             else if (isEmulator && !this.settings.appId && !this.settings.appPassword) {
                 // Emulator running without auth enabled
@@ -141,4 +144,3 @@ class BotAuthenticator {
     }
 }
 exports.BotAuthenticator = BotAuthenticator;
-//# sourceMappingURL=botAuthenticator.js.map

@@ -7,7 +7,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-const activity_1 = require("./activity");
+const botbuilder_schema_1 = require("botbuilder-schema");
 const bot_1 = require("./bot");
 /**
  * Creates a new BotContext instance.
@@ -25,7 +25,7 @@ function createBotContext(bot, request) {
     context.templateEngines = [];
     // Populate conversation reference
     if (request) {
-        context.conversationReference = activity_1.getConversationReference(request);
+        context.conversationReference = getConversationReference(request);
     }
     // Generate null logger
     context.logger = {};
@@ -70,8 +70,8 @@ function createBotContext(bot, request) {
     context.endOfConversation = function endOfConversation(code) {
         throwIfDisposed('endOfConversation');
         const activity = {
-            type: activity_1.ActivityTypes.endOfConversation,
-            code: code || activity_1.EndOfConversationCodes.completedSuccessfully
+            type: botbuilder_schema_1.ActivityTypes.endOfConversation,
+            code: code || botbuilder_schema_1.EndOfConversationCodes.completedSuccessfully
         };
         this.responses.push(activity);
         return this;
@@ -136,13 +136,13 @@ function createBotContext(bot, request) {
         }
         if (typeof textOrActivity === 'object') {
             if (!textOrActivity.type) {
-                textOrActivity.type = activity_1.ActivityTypes.message;
+                textOrActivity.type = botbuilder_schema_1.ActivityTypes.message;
             }
             this.responses.push(textOrActivity);
         }
         else {
             const activity = Object.assign({
-                type: activity_1.ActivityTypes.message,
+                type: botbuilder_schema_1.ActivityTypes.message,
                 text: textOrActivity || '',
             }, additional || {});
             if (typeof speak === 'string') {
@@ -180,7 +180,7 @@ function createBotContext(bot, request) {
     };
     context.showTyping = function showTyping() {
         throwIfDisposed('showTyping');
-        this.responses.push({ type: activity_1.ActivityTypes.typing });
+        this.responses.push({ type: botbuilder_schema_1.ActivityTypes.typing });
         return this;
     };
     Object.defineProperty(context, 'responded', {
@@ -191,4 +191,24 @@ function createBotContext(bot, request) {
     return context;
 }
 exports.createBotContext = createBotContext;
+function getConversationReference(activity) {
+    return {
+        activityId: activity.id,
+        user: activity.from,
+        bot: activity.recipient,
+        conversation: activity.conversation,
+        channelId: activity.channelId,
+        serviceUrl: activity.serviceUrl
+    };
+}
+exports.getConversationReference = getConversationReference;
+function applyConversationReference(activity, reference) {
+    activity.channelId = reference.channelId;
+    activity.serviceUrl = reference.serviceUrl;
+    activity.conversation = reference.conversation;
+    activity.from = reference.bot;
+    activity.recipient = reference.user;
+    activity.replyToId = reference.activityId;
+}
+exports.applyConversationReference = applyConversationReference;
 //# sourceMappingURL=botContext.js.map

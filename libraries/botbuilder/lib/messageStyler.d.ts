@@ -1,11 +1,4 @@
-/**
- * @module botbuilder
- */
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
-import * as activity from './activity';
+import { Activity, CardAction, Attachment } from 'botbuilder-schema';
 /**
  * A set of utility functions to assist with the formatting of the various message types a bot can
  * return.
@@ -41,7 +34,7 @@ export declare class MessageStyler {
      * @param text Text to include in the message.
      * @param speak (Optional) SSML to include in the message.
      */
-    static text(text: string, speak?: string): Partial<activity.Activity>;
+    static text(text: string, speak?: string): Partial<Activity>;
     /**
      * Returns a message that includes a set of suggested actions and optional text.
      *
@@ -49,7 +42,7 @@ export declare class MessageStyler {
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
      */
-    static suggestedActions(actions: (activity.CardAction | string)[], text?: string, speak?: string): Partial<activity.Activity>;
+    static suggestedActions(actions: (CardAction | string)[], text?: string, speak?: string): Partial<Activity>;
     /**
      * Returns a single message activity containing an attachment.
      *
@@ -57,7 +50,7 @@ export declare class MessageStyler {
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
      */
-    static attachment(attachment: activity.Attachment, text?: string, speak?: string): Partial<activity.Activity>;
+    static attachment(attachment: Attachment, text?: string, speak?: string): Partial<Activity>;
     /**
      * Returns a message that will display a set of attachments in list form.
      *
@@ -65,7 +58,7 @@ export declare class MessageStyler {
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
      */
-    static list(attachments: activity.Attachment[], text?: string, speak?: string): Partial<activity.Activity>;
+    static list(attachments: Attachment[], text?: string, speak?: string): Partial<Activity>;
     /**
      * Returns a message that will display a set of attachments using a carousel layout.
      *
@@ -86,7 +79,7 @@ export declare class MessageStyler {
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
      */
-    static carousel(attachments: activity.Attachment[], text?: string, speak?: string): Partial<activity.Activity>;
+    static carousel(attachments: Attachment[], text?: string, speak?: string): Partial<Activity>;
     /**
      * Returns a message that will display a single image or video to a user.
      *
@@ -105,5 +98,5 @@ export declare class MessageStyler {
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
      */
-    static contentUrl(url: string, contentType: string, name?: string, text?: string, speak?: string): Partial<activity.Activity>;
+    static contentUrl(url: string, contentType: string, name?: string, text?: string, speak?: string): Partial<Activity>;
 }

@@ -7,7 +7,7 @@
  */
 import { TemplateRenderer } from './templateManager';
 import { Middleware } from './middleware';
-import { Activity } from './activity';
+import { Activity } from 'botbuilder-schema';
 /**
  * A template function that can return a stringified value from a given data object.
  *

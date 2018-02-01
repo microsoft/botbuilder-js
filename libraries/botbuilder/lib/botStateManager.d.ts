@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Middleware } from './middleware';
-import { Activity, ConversationResourceResponse } from 'botframework-connector';
+import { Activity, ConversationResourceResponse } from 'botbuilder-schema';
 import { StoreItems } from './storage';
 /** Optional settings used to configure a BotStateManager instance. */
 export interface BotStateManagerSettings {

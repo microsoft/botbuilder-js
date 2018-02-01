@@ -5,7 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, ConversationResourceResponse, Middleware } from 'botbuilder';
+import { Middleware } from 'botbuilder';
+import { Activity, ConversationResourceResponse } from 'botbuilder';
 export interface TranslationContext {
     sourceText: string;
     sourceLanguage: string;

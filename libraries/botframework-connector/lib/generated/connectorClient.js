@@ -17,7 +17,7 @@
 const msRest = require('ms-rest');
 const ServiceClient = msRest.ServiceClient;
 
-const models = require('./models');
+const models = require('botbuilder-schema');
 const operations = require('./operations');
 
 

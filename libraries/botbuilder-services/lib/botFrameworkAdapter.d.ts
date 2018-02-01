@@ -5,8 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, ActivityAdapter, ConversationReference, ConversationResourceResponse, ConversationParameters } from 'botbuilder';
-import { Headers } from 'botframework-connector-auth';
+import { ActivityAdapter, Activity, ConversationReference, ConversationResourceResponse, ConversationParameters } from 'botbuilder';
+import { Headers } from 'botframework-connector';
 /** Express or Restify Request object. */
 export interface WebRequest {
     body: any;
@@ -35,7 +35,7 @@ export interface BotAdapterSettings {
 * **Usage Example**
 *
 * ```js
-* import { Bot } from 'botbuilder-core';
+* import { Bot } from 'botbuilder';
 * import { BotFrameworkAdapter } from 'botbuilder-services';
 * import * as restify from 'restify';
 *
