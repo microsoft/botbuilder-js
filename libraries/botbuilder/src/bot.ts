@@ -69,7 +69,7 @@ export class Bot extends MiddlewareSet {
      * on the context returns an array containing the functions matched by name.
      *
      * ```js
-     * class MiddlewarePlugin implements BotContext {
+     * class ContextPlugin implements BotContext {
      *   doStuff() {
      *     if (this.request.entities) {
      *       this.processEntities(this.request.entities);
@@ -77,11 +77,6 @@ export class Bot extends MiddlewareSet {
      *
      *   processEntities() {
      *     // Process entities
-     *   }
-     *
-     *   flushResponses() {
-     *      // Intercept flush responses then...
-     *      super.flushResponses(); // call super
      *   }
      * }
      *
@@ -91,7 +86,7 @@ export class Bot extends MiddlewareSet {
      *   }
      * }
      * const bot = new Bot();
-     * bot.plugin(new MiddlewarePlugin())
+     * bot.plugin(new ContextPlugin())
      *    .use(new MyMiddleware());
      *
      * ```
