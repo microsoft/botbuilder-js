@@ -19,6 +19,7 @@ import { ActivityAdapter, Activity, ConversationResourceResponse } from 'botbuil
 export declare class ConsoleAdapter implements ActivityAdapter {
     private nextId;
     private rl;
+    constructor();
     /** INTERNAL implementation of `Adapter.onReceive`. */
     onReceive: (activity: Activity) => Promise<void>;
     /** INTERNAL implementation of `Adapter.post()`. */

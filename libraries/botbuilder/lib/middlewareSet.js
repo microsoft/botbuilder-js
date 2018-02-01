@@ -10,13 +10,6 @@ class MiddlewareSet {
         this._middleware = [];
     }
     /**
-     * Removes all registered middleware from the set. This can be useful for unit testing.
-     */
-    removeAll() {
-        this._middleware = [];
-        return this;
-    }
-    /**
      * Returns the underlying array of middleware.
      */
     get middleware() {

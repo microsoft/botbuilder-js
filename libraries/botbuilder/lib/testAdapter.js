@@ -30,6 +30,7 @@ class TestAdapter {
     constructor(reference) {
         this.nextId = 0;
         this.botReplies = [];
+        this.onReceive = undefined;
         this.reference = Object.assign({}, reference, {
             channelId: 'test',
             serviceUrl: 'https://test.com',

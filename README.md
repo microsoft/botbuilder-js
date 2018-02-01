@@ -88,10 +88,9 @@ cd botbuilder-js
 Install [Lerna](https://lernajs.io/) and dev dependencies:
 
 ```bash
-npm install --global lerna
 npm install --global typescript
 npm install --global mocha
-npm install --global typedoc typedoc-plugin-external-module-name typedoc-plugin-markdown
+npm install
 ```
 
 Run lerna bootstrap:

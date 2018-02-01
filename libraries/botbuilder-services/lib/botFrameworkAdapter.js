@@ -49,6 +49,7 @@ class BotFrameworkAdapter {
         const botCredentials = { appId: settings.appId, appPassword: settings.appPassword };
         this.credentials = new botframework_connector_auth_1.MicrosoftAppCredentials(botCredentials);
         this.authenticator = new botframework_connector_auth_1.BotAuthenticator(botCredentials);
+        this.onReceive = undefined;
     }
     /**
      * Creates a new conversation
