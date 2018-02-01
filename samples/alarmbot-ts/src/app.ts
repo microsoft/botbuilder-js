@@ -2,7 +2,7 @@ import { Bot, MemoryStorage, BotStateManager } from 'botbuilder';
 import { BotFrameworkAdapter } from 'botbuilder-services';
 import * as restify from "restify";
 import * as addAlarm from './addAlarm';
-import * as deletelAlarm from './deleteAlarm';
+import * as deleteAlarm from './deleteAlarm';
 import * as showAlarms from './showAlarms';
 import * as cancel from './cancel';
 
@@ -30,7 +30,7 @@ const bot = new Bot(adapter)
             if (/add alarm/i.test(utterance)) {
                 return addAlarm.begin(context);
             } else if (/delete alarm/i.test(utterance)) {
-                return deletelAlarm.begin(context);
+                return deleteAlarm.begin(context);
             } else if (/show alarms/i.test(utterance)) {
                 return showAlarms.begin(context);
             } else if (/^cancel$/i.test(utterance)) {
@@ -41,7 +41,7 @@ const bot = new Bot(adapter)
                     case 'addAlarm':
                         return addAlarm.routeReply(context);
                     case 'deleteAlarm':
-                        return deletelAlarm.routeReply(context);
+                        return deleteAlarm.routeReply(context);
                     default:
                         context.reply(`Hi! I'm a simple alarm bot. Say "add alarm", "delete alarm", or "show alarms".`)
                         return Promise.resolve();
