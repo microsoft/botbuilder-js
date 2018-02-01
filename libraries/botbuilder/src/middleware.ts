@@ -2,10 +2,10 @@
  * @module botbuilder
  */
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, ConversationResourceResponse } from 'botframework-connector';
+import { Activity, ConversationResourceResponse } from 'botbuilder-schema';
 
 /**
  * Type signature for a return value that can (Optionally) return its value

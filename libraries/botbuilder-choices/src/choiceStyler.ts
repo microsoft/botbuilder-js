@@ -2,12 +2,12 @@
  * @module botbuilder-choices
  */
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 
 import { MessageStyler } from 'botbuilder';
-import { Activity, CardAction } from 'botframework-connector';
+import { Activity, CardAction } from 'botbuilder';
 import { Choice } from './findChoices';
 import * as channel from './channel';
 

@@ -2,7 +2,7 @@
  * @module botbuilder
  */
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 
@@ -30,10 +30,10 @@ export * from './storageMiddleware';
 export * from './templateManager';
 export * from './dictionaryRenderer';
 export * from './testAdapter';
-export * from 'botframework-connector';
+export * from 'botbuilder-schema';
 
 import { Bot } from './bot';
-import { Activity, ConversationReference, ConversationResourceResponse } from 'botframework-connector';
+import { Activity, ConversationReference, ConversationResourceResponse } from 'botbuilder-schema';
 import { Intent } from './intentRecognizer';
 import { EntityObject } from './entityObject';
 import { StoreItem, Storage } from './storage';

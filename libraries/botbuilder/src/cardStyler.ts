@@ -2,10 +2,10 @@
  * @module botbuilder
  */
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Attachment, MediaUrl, CardAction, AnimationCard, CardImage, HeroCard, ReceiptCard, SigninCard, ThumbnailCard, VideoCard } from "botframework-connector";
+import { Attachment, MediaUrl, CardAction, AnimationCard, CardImage, HeroCard, ReceiptCard, SigninCard, ThumbnailCard, VideoCard } from "botbuilder-schema";
 
 /**
  * A set of utility functions designed to assist with the formatting of the various card types a

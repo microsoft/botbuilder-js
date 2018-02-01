@@ -2,11 +2,11 @@
  * @module botbuilder
  */
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 import { Middleware } from './middleware';
-import { Activity, ConversationResourceResponse } from 'botframework-connector';
+import { Activity, ConversationResourceResponse } from 'botbuilder-schema';
 import { StoreItem, StoreItems } from './storage';
 
 

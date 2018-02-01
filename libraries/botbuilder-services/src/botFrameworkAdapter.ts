@@ -2,11 +2,11 @@
 * @module botbuilder-services
 */
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ActivityAdapter } from 'botbuilder';
-import { ConnectorClient, ActivityTypes, Activity, ConversationReference, ConversationResourceResponse, ConversationParameters, ConversationAccount } from 'botframework-connector';
+import { ActivityAdapter, ActivityTypes, Activity, ConversationReference, ConversationResourceResponse, ConversationParameters, ConversationAccount  } from 'botbuilder';
+import { ConnectorClient } from 'botframework-connector';
 import { MicrosoftAppCredentials, BotAuthenticator, Headers, BotCredentials } from 'botframework-connector';
 
 /** Express or Restify Request object. */

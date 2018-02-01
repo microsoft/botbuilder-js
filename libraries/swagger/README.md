@@ -28,5 +28,5 @@ nodejs:
   azure-arm: false
   use-internal-constructors: true
   clear-output-folder: true
-  output-folder: ../lib/generated
+  output-folder: ./generated
 ```

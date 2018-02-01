@@ -2,10 +2,10 @@
  * @module botbuilder
  */
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ActivityTypes, EndOfConversationCodes, Activity, ConversationReference } from 'botframework-connector';
+import { ActivityTypes, EndOfConversationCodes, Activity, ConversationReference } from 'botbuilder-schema';
 import { Bot } from './bot';
 import { Intent } from './intentRecognizer';
 import { EntityObject } from './entityObject';

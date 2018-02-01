@@ -6,6 +6,7 @@
 		"typedoc-plugin-markdown": "^1.0.12"
 	},
 	"dependencies": {
-		"@types/lodash": "^4.14.99"
+		"@types/lodash": "^4.14.99",
+		"replace": "^0.3.0"
 	}
 }
