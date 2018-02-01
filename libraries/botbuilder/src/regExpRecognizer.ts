@@ -1,9 +1,12 @@
 /**
  * @module botbuilder
  */
-/** second comment block */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Licensed under the MIT License.
+ */
 import { Intent, IntentRecognizer } from './intentRecognizer';
-import { EntityObject, EntityTypes } from './entityRecognizers';
+import { EntityObject, EntityTypes } from './entityObject';
 
 export interface RegExpLocaleMap {
     [locale:string]: RegExp|RegExp[];

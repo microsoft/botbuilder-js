@@ -1,5 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 const request = require("request");
 var getPem = require('rsa-pem-from-mod-exp');
 var base64url = require('base64url');

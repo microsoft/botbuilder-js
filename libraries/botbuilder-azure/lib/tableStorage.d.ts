@@ -1,7 +1,10 @@
 /**
- * @module botbuilder-azure-v4
+ * @module botbuilder-azure
  */
-/** second comment block */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 import { Storage, StorageSettings, StoreItems, StorageMiddleware } from 'botbuilder';
 import * as azure from 'azure-storage';
 /** Additional settings for configuring an instance of [TableStorage](../classes/botbuilder_azure_v4.tablestorage.html). */

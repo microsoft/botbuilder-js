@@ -1,7 +1,10 @@
 /**
  * @module botbuilder-choices
  */
-/** second comment block */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Licensed under the MIT License.
+ */
 
 import { Token, TokenizerFunction, defaultTokenizer } from './tokenizer';
 import { ModelResult } from './modelResult';

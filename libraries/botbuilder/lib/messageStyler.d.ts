@@ -1,7 +1,10 @@
 /**
  * @module botbuilder
  */
-/** second comment block */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 import * as activity from './activity';
 /**
  * A set of utility functions to assist with the formatting of the various message types a bot can

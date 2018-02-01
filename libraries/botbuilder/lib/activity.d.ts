@@ -1,7 +1,10 @@
 /**
  * @module botbuilder
  */
-/** second comment block */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 export * from './index';
 import { Activity, ConversationReference } from './index';
 /** List of activity types supported by the Bot Framework. */

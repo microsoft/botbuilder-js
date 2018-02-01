@@ -3,7 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @module botbuilder
  */
-/** second comment block */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 const middlewareSet_1 = require("./middlewareSet");
 const activity_1 = require("./activity");
 const botContext_1 = require("./botContext");

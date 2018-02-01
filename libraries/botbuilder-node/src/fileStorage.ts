@@ -1,7 +1,10 @@
 /**
  * @module botbuilder-node
  */
-/** second comment block */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Licensed under the MIT License.
+ */
 import { Storage, StorageMiddleware, StorageSettings, StoreItems, StoreItem } from 'botbuilder';
 import * as path from 'path';
 import * as fs from 'async-file';

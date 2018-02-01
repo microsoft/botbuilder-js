@@ -1,7 +1,10 @@
 /**
  * @module botbuilder-node
  */
-/** second comment block */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 import { Storage, StorageMiddleware, StorageSettings, StoreItems } from 'botbuilder';
 /** Additional settings for configuring an instance of [FileStorage](../classes/botbuilder_node.filestorage.html). */
 export interface FileStorageSettings extends StorageSettings {

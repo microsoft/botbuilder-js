@@ -1,7 +1,10 @@
 /**
  * @module botbuilder
  */
-/** second comment block */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Licensed under the MIT License.
+ */
 
 /** Interface for a search engine that manages catalogs  **/
 export interface SearchEngine {

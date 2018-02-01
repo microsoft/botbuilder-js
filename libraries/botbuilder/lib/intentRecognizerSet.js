@@ -3,7 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @module botbuilder
  */
-/** second comment block */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 const intentRecognizer_1 = require("./intentRecognizer");
 var RecognizeOrder;
 (function (RecognizeOrder) {

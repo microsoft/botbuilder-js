@@ -1,7 +1,10 @@
 /**
  * @module botbuilder
  */
-/** second comment block */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 import { Activity, ConversationResourceResponse } from './activity';
 /**
  * Type signature for a return value that can (Optionally) return its value
