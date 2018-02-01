@@ -1,20 +1,19 @@
 {
-  "name": "botbuilder-example-echobot-ts",
+  "name": "echobot-ts",
   "version": "1.0.0",
-  "description": "Bot Builder example showing a simple bot that echos anything you say.",
+  "description": "Bot Builder v4 example showing a simple bot that echos anything you say.",
   "main": "./lib/app.js",
   "scripts": {
-    "build": "tsc",
-    "debug": "tsc; node --inspect ./lib/app.js",
-    "start": "node ./lib/app.js"
+    "build-sample": "tsc",
+    "start": "tsc && node ./lib/app.js"
   },
   "author": "",
   "license": "MIT",
   "dependencies": {
     "@types/node": "^9.3.0",
     "@types/restify": "^5.0.7",
-    "botbuilder-core": "4.0.0-h4.1",
-    "botbuilder-services": "4.0.0-h4.1",
+    "botbuilder": "^4.0.0-m1.0",
+    "botbuilder-services": "^4.0.0-m1.0",
     "restify": "6.3.4"
   }
 }

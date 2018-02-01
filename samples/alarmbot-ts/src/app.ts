@@ -1,53 +1,69 @@
-'use strict';
-
-import { Bot, ConsoleLogger, MemoryStorage, BotStateManager } from 'botbuilder-core';
-import { Prompt } from 'botbuilder-prompts';
+import { Bot, MemoryStorage, BotStateManager } from 'botbuilder';
 import { BotFrameworkAdapter } from 'botbuilder-services';
-import * as restify from 'restify';
-import * as alarms from './alarms';
+import * as restify from "restify";
+import * as addAlarm from './addAlarm';
+import * as deletelAlarm from './deleteAlarm';
+import * as showAlarms from './showAlarms';
+import * as cancel from './cancel';
 
-// init restify server
+// Create server
 let server = restify.createServer();
-// bind listener to port and display start info
 server.listen(process.env.port || process.env.PORT || 3978, function () {
     console.log(`${server.name} listening to ${server.url}`);
 });
 
-// init connector
-const adapter = new BotFrameworkAdapter({ appId: process.env.MICROSOFT_APP_ID, appPassword: process.env.MICROSOFT_APP_PASSWORD });
-// bind connector to /api/messages route
+// Create adapter and listen to servers '/api/messages' route.
+const adapter = new BotFrameworkAdapter({ 
+    appId: process.env.MICROSOFT_APP_ID, 
+    appPassword: process.env.MICROSOFT_APP_PASSWORD 
+});
 server.post('/api/messages', <any>adapter.listen());
 
-// Configure bots routing table
-function routeActivity(context: BotContext) {
-    if (context.request.type === 'message') {
-        if (context.ifRegExp(/(list|show) alarms/i)) {
-            return alarms.sayAlarms(context);
-        } else if (context.ifRegExp(/(set|create|add|new) alarm/i)) {
-            Prompt.cancelActivePrompt(context);             // <-- cancel any active prompts
-            return alarms.addAlarm(context, {});
-        } else if (context.ifRegExp(/(delete|remove|cancel) alarm/i)) {
-            Prompt.cancelActivePrompt(context);             // <-- cancel any active prompts
-            return alarms.deleteAlarm(context);
-        } else if (context.ifRegExp(/help/i)) {
-            context.reply("Welcome to the Alarm Bot demo.");
-            context.reply("To set an alarm, type or say: 'set alarm', or 'new alarm'.\n\nTo cancel an alarm, type or say: 'cancel alarm', or 'delete alarm'.")
-        } else {
-            return Prompt.routeTo(context).then((handled) => {
-                if (!handled) {
-                    context.reply(`[Alarm Bot Example] To create a new alarm, type or say: "set alarm" or "new alarm". For more details, type or say 'help'`);
+// Initialize bot by passing it adapter and middleware
+const bot = new Bot(adapter)
+    .use(new MemoryStorage())
+    .use(new BotStateManager())
+    .onReceive((context) => {
+        if (context.request.type === 'message') {
+            // Check for the triggering of a new topic
+            const utterance = context.request.text;
+            if (/add alarm/i.test(utterance)) {
+                return addAlarm.begin(context);
+            } else if (/delete alarm/i.test(utterance)) {
+                return deletelAlarm.begin(context);
+            } else if (/show alarms/i.test(utterance)) {
+                return showAlarms.begin(context);
+            } else if (/^cancel$/i.test(utterance)) {
+                return cancel.begin(context);
+            } else {
+                // Continue the current topic
+                switch (context.state.conversation.topic) {
+                    case 'addAlarm':
+                        return addAlarm.routeReply(context);
+                    case 'deleteAlarm':
+                        return deletelAlarm.routeReply(context);
+                    default:
+                        context.reply(`Hi! I'm a simple alarm bot. Say "add alarm", "delete alarm", or "show alarms".`)
+                        return Promise.resolve();
                 }
-                return { handled: true };
-            });
+            }
         }
+    });
+
+
+declare global {
+    export interface ConversationState {
+        topic: string;
+        alarm: Alarm;
+        prompt: string;
+    }
+
+    export interface UserState {
+        alarms: Alarm[];
     }
 }
 
-// Initialize bot & bind to middleware
-const bot = new Bot(adapter)
-    .use(new ConsoleLogger())
-    .use(new MemoryStorage())
-    .use(new BotStateManager())
-    .onReceive(routeActivity);
-
-// END OF LINE
+interface Alarm {
+    title: string;
+    time: string;
+}
