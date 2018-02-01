@@ -25,6 +25,8 @@ const readline = require("readline");
 class ConsoleAdapter {
     constructor() {
         this.nextId = 0;
+        this.rl = undefined;
+        this.onReceive = undefined;
     }
     /** INTERNAL implementation of `Adapter.post()`. */
     post(activities) {

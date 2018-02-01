@@ -37,7 +37,8 @@ class Bot extends middlewareSet_1.MiddlewareSet {
         super();
         this.receivers = [];
         // Bind to adapter
-        this.adapter = adapter;
+        this._adapter = adapter;
+        this._adapter.onReceive = (activity) => this.receive(activity).then(() => { });
         // built in middleware
         // QUESTION: Should we really have built-in middleware?
         this.use(new templateManager_1.TemplateManager());
@@ -45,19 +46,6 @@ class Bot extends middlewareSet_1.MiddlewareSet {
     /** Returns the current adapter. */
     get adapter() {
         return this._adapter;
-    }
-    /** Changes the bots adapter. The previous adapter will first be disconnected from.  */
-    set adapter(adapter) {
-        if (!adapter) {
-            throw new Error(`Please provide a Connector`);
-        }
-        // Disconnect from existing adapter
-        if (this._adapter) {
-            this._adapter.onReceive = undefined;
-        }
-        // Connect to new adapter
-        this._adapter = adapter;
-        this._adapter.onReceive = (activity) => this.receive(activity).then(() => { });
     }
     /**
      * Creates a new context object given an activity or conversation reference. The context object

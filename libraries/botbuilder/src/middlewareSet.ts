@@ -17,14 +17,6 @@ export class MiddlewareSet implements Middleware {
     private _middleware: Middleware[] = [];
 
     /**
-     * Removes all registered middleware from the set. This can be useful for unit testing.
-     */
-    public removeAll(): this {
-        this._middleware = [];
-        return this;
-    }
-
-    /**
      * Returns the underlying array of middleware.
      */
     public get middleware(): Middleware[] {

@@ -25,6 +25,11 @@ export class ConsoleAdapter implements ActivityAdapter {
     private nextId = 0;
     private rl: readline.ReadLine;
 
+    constructor () {
+        this.rl = undefined as any;
+        this.onReceive = undefined as any;
+    }
+
     /** INTERNAL implementation of `Adapter.onReceive`. */
     public onReceive: (activity: Activity) => Promise<void>;
 

@@ -15,10 +15,6 @@ import { Middleware } from './middleware';
 export declare class MiddlewareSet implements Middleware {
     private _middleware;
     /**
-     * Removes all registered middleware from the set. This can be useful for unit testing.
-     */
-    removeAll(): this;
-    /**
      * Returns the underlying array of middleware.
      */
     readonly middleware: Middleware[];

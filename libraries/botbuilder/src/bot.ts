@@ -41,7 +41,8 @@ export class Bot extends MiddlewareSet {
         super();
 
         // Bind to adapter
-        this.adapter = adapter;
+        this._adapter = adapter;
+        this._adapter.onReceive = (activity) => this.receive(activity).then(() => { });
 
         // built in middleware
         // QUESTION: Should we really have built-in middleware?
@@ -51,22 +52,6 @@ export class Bot extends MiddlewareSet {
     /** Returns the current adapter. */
     public get adapter(): ActivityAdapter {
         return this._adapter;
-    }
-
-    /** Changes the bots adapter. The previous adapter will first be disconnected from.  */
-    public set adapter(adapter: ActivityAdapter) {
-        if (!adapter) {
-            throw new Error(`Please provide a Connector`);
-        }
-
-        // Disconnect from existing adapter
-        if (this._adapter) {
-            this._adapter.onReceive = <any>undefined;
-        }
-
-        // Connect to new adapter
-        this._adapter = adapter;
-        this._adapter.onReceive = (activity) => this.receive(activity).then(() => { });
     }
 
     /**

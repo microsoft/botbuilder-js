@@ -44,6 +44,7 @@ export class TestAdapter implements ActivityAdapter {
      * information for messages sent during a test.
      */
     constructor(reference?: ConversationReference) {
+        this.onReceive = undefined as any;
         this.reference = <ConversationReference>Object.assign({}, reference, {
             channelId: 'test',
             serviceUrl: 'https://test.com',

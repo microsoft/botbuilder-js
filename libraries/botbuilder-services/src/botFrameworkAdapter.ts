@@ -77,6 +77,7 @@ export class BotFrameworkAdapter implements ActivityAdapter {
         const botCredentials: BotCredentials = { appId: settings.appId, appPassword: settings.appPassword };
         this.credentials = new MicrosoftAppCredentials(botCredentials);
         this.authenticator = new BotAuthenticator(botCredentials);
+        this.onReceive = undefined as any;
     }
 
     public onReceive: (activity: Partial<Activity>) => Promise<void>;

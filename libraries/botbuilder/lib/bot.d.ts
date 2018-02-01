@@ -36,8 +36,7 @@ export declare class Bot extends MiddlewareSet {
      */
     constructor(adapter: ActivityAdapter);
     /** Returns the current adapter. */
-    /** Changes the bots adapter. The previous adapter will first be disconnected from.  */
-    adapter: ActivityAdapter;
+    readonly adapter: ActivityAdapter;
     /**
      * Creates a new context object given an activity or conversation reference. The context object
      * will be disposed of automatically once the callback completes or the promise it returns
