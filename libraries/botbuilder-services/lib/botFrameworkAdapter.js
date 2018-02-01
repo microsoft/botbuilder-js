@@ -9,14 +9,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const botframework_connector_1 = require("botframework-connector");
-const botframework_connector_auth_1 = require("botframework-connector-auth");
+const botframework_connector_2 = require("botframework-connector");
 /**
 * ActivityAdapter class needed to communicate with a Bot Framework channel or the Emulator.
 *
 * **Usage Example**
 *
 * ```js
-* import { Bot } from 'botbuilder-core';
+* import { Bot } from 'botbuilder';
 * import { BotFrameworkAdapter } from 'botbuilder-services';
 * import * as restify from 'restify';
 *
@@ -47,8 +47,8 @@ class BotFrameworkAdapter {
         this.nextId = 0;
         settings = settings === undefined ? { appId: '', appPassword: '' } : settings;
         const botCredentials = { appId: settings.appId, appPassword: settings.appPassword };
-        this.credentials = new botframework_connector_auth_1.MicrosoftAppCredentials(botCredentials);
-        this.authenticator = new botframework_connector_auth_1.BotAuthenticator(botCredentials);
+        this.credentials = new botframework_connector_2.MicrosoftAppCredentials(botCredentials);
+        this.authenticator = new botframework_connector_2.BotAuthenticator(botCredentials);
         this.onReceive = undefined;
     }
     /**

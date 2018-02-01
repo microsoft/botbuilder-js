@@ -10,7 +10,7 @@
 
 import { ServiceClientOptions, RequestOptions, ServiceCallback, HttpOperationResponse } from 'ms-rest';
 import * as stream from 'stream';
-import * as models from '../models';
+import * as models from 'botbuilder-schema';
 
 
 /**

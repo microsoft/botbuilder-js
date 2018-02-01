@@ -5,7 +5,6 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-export * from './activity';
 export * from './attachmentRecognizer';
 export * from './bot';
 export * from './botService';
@@ -30,9 +29,9 @@ export * from './storageMiddleware';
 export * from './templateManager';
 export * from './dictionaryRenderer';
 export * from './testAdapter';
-export { Activity, ConversationReference, ConversationResourceResponse } from 'botframework-connector';
+export * from 'botbuilder-schema';
 import { Bot } from './bot';
-import { Activity, ConversationReference, ConversationResourceResponse } from 'botframework-connector';
+import { Activity, ConversationReference, ConversationResourceResponse } from 'botbuilder-schema';
 import { Intent } from './intentRecognizer';
 import { EntityObject } from './entityObject';
 import { StoreItem, Storage } from './storage';
