@@ -1,6 +1,6 @@
 import { Bot, MemoryStorage, BotStateManager } from 'botbuilder';
 import { BotFrameworkAdapter } from 'botbuilder-services';
-import * as restify from "restify";
+import * as restify from 'restify';
 import * as addAlarm from './addAlarm';
 import * as deleteAlarm from './deleteAlarm';
 import * as showAlarms from './showAlarms';

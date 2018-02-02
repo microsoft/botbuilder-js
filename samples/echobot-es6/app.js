@@ -1,6 +1,6 @@
 const { Bot, MemoryStorage, BotStateManager } = require('botbuilder');
 const { BotFrameworkAdapter } = require('botbuilder-services');
-const restify = require("restify");
+const restify = require('restify');
 
 // Create server
 let server = restify.createServer();

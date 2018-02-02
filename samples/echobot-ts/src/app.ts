@@ -1,6 +1,6 @@
 import { Bot, MemoryStorage, BotStateManager } from 'botbuilder';
 import { BotFrameworkAdapter } from 'botbuilder-services';
-import * as restify from "restify";
+import * as restify from 'restify';
 
 // Create server
 let server = restify.createServer();
