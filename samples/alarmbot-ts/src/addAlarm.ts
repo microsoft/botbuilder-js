@@ -45,9 +45,9 @@ function nextField(context: BotContext): Promise<void> {
 
         // Notify user and cleanup topic state
         context.reply(`Your alarm named "${alarm.title}" is set for "${alarm.time}".`);
-        delete context.state.conversation.topic;
-        delete context.state.conversation.alarm;
-        delete context.state.conversation.prompt;
+        context.state.conversation.topic = undefined;
+        context.state.conversation.alarm = undefined;
+        context.state.conversation.prompt = undefined;
     }
     return Promise.resolve();
 }

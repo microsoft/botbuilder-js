@@ -2,9 +2,7 @@ import { renderAlarms } from './showAlarms';
 
 export function begin(context: BotContext): Promise<void> {
     // Delete any existing topic
-    if (context.state.conversation.topic) {
-        delete context.state.conversation.topic;
-    }
+    context.state.conversation.topic = undefined;
 
     // Render list of topics to user
     const count = renderAlarms(context);
@@ -32,7 +30,7 @@ export function routeReply(context: BotContext): Promise<void> {
     // Notify user of deletion or re-prompt
     if (deleted) {
         context.reply(`Deleted the "${title}" alarm.`);
-        delete context.state.conversation.topic;
+        context.state.conversation.topic = undefined;
     } else {
         context.reply(`An alarm named "${title}" doesn't exist. Which alarm would you like to delete? Say "cancel" to quit.`)
     }

@@ -26,14 +26,14 @@ const bot = new Bot(adapter)
     .onReceive((context) => {
         if (context.request.type === 'message') {
             // Check for the triggering of a new topic
-            const utterance = context.request.text;
-            if (/add alarm/i.test(utterance)) {
+            const utterance = (context.request.text || '').trim().toLowerCase();
+            if (utterance.includes('add alarm')) {
                 return addAlarm.begin(context);
-            } else if (/delete alarm/i.test(utterance)) {
+            } else if (utterance.includes('delete alarm')) {
                 return deleteAlarm.begin(context);
-            } else if (/show alarms/i.test(utterance)) {
+            } else if (utterance.includes('show alarms')) {
                 return showAlarms.begin(context);
-            } else if (/^cancel$/i.test(utterance)) {
+            } else if (utterance === 'cancel') {
                 return cancel.begin(context);
             } else {
                 // Continue the current topic
@@ -53,13 +53,13 @@ const bot = new Bot(adapter)
 
 declare global {
     export interface ConversationState {
-        topic: string;
-        alarm: Alarm;
-        prompt: string;
+        topic?: string;
+        alarm?: Alarm;
+        prompt?: string;
     }
 
     export interface UserState {
-        alarms: Alarm[];
+        alarms?: Alarm[];
     }
 }
 

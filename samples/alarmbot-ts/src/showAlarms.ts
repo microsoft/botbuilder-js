@@ -1,9 +1,7 @@
 
 export function begin(context: BotContext): Promise<void> {
     // Delete any existing topic
-    if (context.state.conversation.topic) {
-        delete context.state.conversation.topic;
-    }
+    context.state.conversation.topic = undefined;
 
     // Render alarms to user.
     // - No reply is expected so we don't set a new topic.
