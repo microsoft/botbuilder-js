@@ -8,6 +8,7 @@ In addition to the JavaScript SDK, Bot Builder supports creating bots in other p
 - The [Python Connector](https://github.com/Microsoft/botbuilder-python) provides basic connectivity to the Microsoft Bot Framework and lets developers build bots using Python. **v4 SDK coming soon**.
 - The [Java Connector](https://github.com/Microsoft/botbuilder-java) provides basic connectivity to the Microsoft Bot Framework and lets developers build bots using Java. **v4 SDK coming soon**.
 
+To see our [roadmap](FAQ.md#q-is-there-a-roadmap-for-this-sdk-when-will-this-be-generally-available) for the v4 SDK and other common questions, consult our [FAQ](FAQ.md).
 
 ## Getting Started
 
