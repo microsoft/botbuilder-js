@@ -19,7 +19,7 @@ function base64_encode(file) {
 
 const BotConnector = require('../lib');
 
-const Connector = BotConnector.ConnectorClient;
+const ConnectorClient = BotConnector.ConnectorClient;
 const Credentials = BotConnector.MicrosoftAppCredentials;
 
 var SuiteBase = require('../../../tools/framework/suite-base');
@@ -80,8 +80,7 @@ describe('Bot Framework Connector SDK', function() {
         appId: clientId,
         appPassword: clientSecret
       });
-      console.log(Connector);
-      client = new Connector(credentials, hostURL);
+      client = new ConnectorClient(credentials, hostURL);
     });
     done();
   });

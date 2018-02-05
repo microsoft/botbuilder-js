@@ -1,50 +1,57 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-const msrest = require("ms-rest-js");
-const request = require("request");
-const settings_1 = require("./settings");
-class MicrosoftAppCredentials {
-    constructor(credentials) {
-        this.accessToken = '';
-        this.appId = '';
-        this.appPassword = '';
+import * as msrest from 'ms-rest-js';
+import * as request from 'request';
+import { AuthSettings, BotCredentials } from './settings';
+
+export class MicrosoftAppCredentials implements msrest.ServiceClientCredentials {
+
+    private accessToken: string = '';
+    private accessTokenExpires: number;
+    private appId: string = '';
+    private appPassword: string = '';
+
+    private static refreshEndpoint: string = AuthSettings.refreshEndpoint;
+    private static refreshScope: string = AuthSettings.refreshScope;
+
+    public constructor(credentials: BotCredentials) {
         if (typeof credentials !== 'undefined') {
             if (typeof credentials.appId !== 'undefined') {
                 this.appId = credentials.appId;
             }
+
             if (typeof credentials.appPassword !== 'undefined') {
                 this.appPassword = credentials.appPassword;
             }
         }
     }
+
     // signRequest(webResource: WebResource): Promise<WebResource>;
     // public signRequest(webResource: msrest.WebResource, cb: { (err: Error): void }): void {
-    signRequest(webResource) {
+    public signRequest(webResource: msrest.WebResource): Promise<msrest.WebResource> {
         return new Promise((resolve, reject) => {
             if (this.appId !== '' && this.appPassword !== '') {
                 this.getAccessToken((err, token) => {
                     if (!err && token) {
                         var tokenCredentials = new msrest.TokenCredentials(token);
                         tokenCredentials.signRequest(webResource).then(resolve, reject);
-                    }
-                    else {
+                    } else {
                         reject(err);
                     }
                 });
-            }
-            else {
+
+            } else {
                 resolve(webResource);
             }
         });
     }
-    getAccessToken(cb) {
+
+    private getAccessToken(cb: (err: Error, accessToken: string) => void): void {
         if (!this.accessToken || new Date().getTime() >= this.accessTokenExpires) {
             // Refresh access token
-            var opt = {
+            var opt: request.Options = {
                 method: 'POST',
                 url: MicrosoftAppCredentials.refreshEndpoint,
                 form: {
@@ -54,7 +61,7 @@ class MicrosoftAppCredentials {
                     scope: MicrosoftAppCredentials.refreshScope
                 }
             };
-            request(opt, (err, response, body) => {
+            request(opt, (err: any, response :any, body: any) => {
                 if (!err) {
                     if (body && response.statusCode && response.statusCode < 300) {
                         // Subtract 5 minutes from expires_in so they'll we'll get a
@@ -62,23 +69,17 @@ class MicrosoftAppCredentials {
                         var oauthResponse = JSON.parse(body);
                         this.accessToken = oauthResponse.access_token;
                         this.accessTokenExpires = new Date().getTime() + ((oauthResponse.expires_in - 300) * 1000);
-                        cb(null, this.accessToken);
+                        cb(null!, this.accessToken);
+                    } else {
+                        cb(new Error('Refresh access token failed with status code: ' + response.statusCode), null!);
                     }
-                    else {
-                        cb(new Error('Refresh access token failed with status code: ' + response.statusCode), null);
-                    }
-                }
-                else {
-                    cb(err, null);
+                } else {
+                    cb(err, null!);
                 }
             });
-        }
-        else {
-            cb(null, this.accessToken);
+        } else {
+            cb(null!, this.accessToken);
         }
     }
+
 }
-MicrosoftAppCredentials.refreshEndpoint = settings_1.AuthSettings.refreshEndpoint;
-MicrosoftAppCredentials.refreshScope = settings_1.AuthSettings.refreshScope;
-exports.MicrosoftAppCredentials = MicrosoftAppCredentials;
-//# sourceMappingURL=microsoftAppCredentials.js.map

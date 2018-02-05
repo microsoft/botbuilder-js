@@ -11,3 +11,4 @@ exports.AuthSettings = {
     emulatorAuthV32IssuerV1: 'https://sts.windows.net/f8cdef31-a31e-4b4a-93e4-5f571e91255a/',
     emulatorAuthV32IssuerV2: 'https://login.microsoftonline.com/f8cdef31-a31e-4b4a-93e4-5f571e91255a/v2.0'
 };
+//# sourceMappingURL=settings.js.map
