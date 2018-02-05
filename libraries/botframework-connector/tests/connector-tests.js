@@ -293,7 +293,7 @@ describe('Bot Framework Connector SDK', function() {
         conversation.activity = createActivity();
         client.conversations.createConversation(conversation)
         .then((result) => client.conversations.deleteActivity(result.id, result.activityId))
-        .then(done, done);
+        .then(ok => done(), done);
       });
 
       it('should fail with invalid conversationId', function(done) {
@@ -389,7 +389,8 @@ describe('Bot Framework Connector SDK', function() {
         .then((result) => new Promise((resolve, reject) => {
           client.attachments.getAttachment(attachmentId, result.views[0].viewId, (err, result) => {
             if (err) reject(err);
-            readStreamToBuffer(result, (err, buffer) => {
+            // console.log(result);
+            readStreamToBuffer(result.body, (err, buffer) => {
               if (err) reject(err);
               resolve(buffer);
             });
