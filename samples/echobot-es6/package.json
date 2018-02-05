@@ -10,7 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "@types/node": "^9.3.0",
-    "botbuilder": "4.0.0-h4.2",
+    "botbuilder": "^4.0.0-m1.0",
     "botbuilder-services": "4.0.0-h4.1",
     "restify": "6.3.4"
   }

@@ -1,5 +1,5 @@
 const botbuilder = require('botbuilder-core');
-const prompts = require('botbuilder-prompts')
+const prompts = require('botbuilder-prompts');
 const BotFrameworkAdapter = require('botbuilder-services').BotFrameworkAdapter;
 const restify = require('restify');
 const alarms = require('./alarms');
