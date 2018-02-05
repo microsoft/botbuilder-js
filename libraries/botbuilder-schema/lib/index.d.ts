@@ -1,5 +1,12 @@
 /// <reference types="node" />
 /**
+ * @module botbuilder-schema
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+/**
  * @interface
  * An interface representing AttachmentView.
  * Attachment View name and size
