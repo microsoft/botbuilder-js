@@ -5,7 +5,7 @@ call autorest README.md --typescript
 
 call ..\..\node_modules\.bin\replace "as Models from \"./models" "as Models from \"botbuilder-schema" ./generated -r
 call ..\..\node_modules\.bin\replace "as Models from \"../models" "as Models from \"botbuilder-schema" ./generated -r
-
+call ..\..\node_modules\.bin\replace "\?: " ": " ./generated/models/index.ts
 
 del /q ..\botbuilder-schema\src\generated\*
 rd /s /q ..\botframework-connector\src\generated
