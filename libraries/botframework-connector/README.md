@@ -44,7 +44,7 @@ client.conversations.createConversation({
 }).then(result => {
     var conversationId = result.id;
     return client.conversations.sendToConversation(conversationId, {
-        type: ActivityTypes.Message,
+        type: "message",
         from: { id: botId },
         recipient: { id: recipientId },
         text: 'This a message from Bot Connector Client (NodeJS)'
