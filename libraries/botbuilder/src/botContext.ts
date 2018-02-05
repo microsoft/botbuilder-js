@@ -72,7 +72,7 @@ export function createBotContext(bot: Bot, request?: Activity): BotContext {
 
     context.delay = function delay(duration: number) {
         throwIfDisposed('delay');
-        this.responses.push({ type: 'delay', value: duration });
+        this.responses.push({ type: <ActivityTypes>'delay', value: duration });
         return this;
     };
 
@@ -80,11 +80,11 @@ export function createBotContext(bot: Bot, request?: Activity): BotContext {
         disposed = true;
     };
 
-    context.endOfConversation = function endOfConversation(code?: string) {
+    context.endOfConversation = function endOfConversation(code?: EndOfConversationCodes) {
         throwIfDisposed('endOfConversation');
         const activity: Partial<Activity> = {
-            type: ActivityTypes.endOfConversation,
-            code: code || EndOfConversationCodes.completedSuccessfully
+            type: ActivityTypes.EndOfConversation,
+            code: code || EndOfConversationCodes.CompletedSuccessfully
         };
         this.responses.push(activity);
         return this;
@@ -152,11 +152,11 @@ export function createBotContext(bot: Bot, request?: Activity): BotContext {
         }
 
         if (typeof textOrActivity === 'object') {
-            if (!(textOrActivity as Activity).type) { textOrActivity.type = ActivityTypes.message; }
+            if (!(textOrActivity as Activity).type) { textOrActivity.type = ActivityTypes.Message; }
             this.responses.push(textOrActivity);
         } else {
             const activity: Partial<Activity> = Object.assign(<Partial<Activity>>{
-                type: ActivityTypes.message,
+                type: ActivityTypes.Message,
                 text: textOrActivity || '',
             }, additional || {});
             if (typeof speak === 'string') {
@@ -172,7 +172,7 @@ export function createBotContext(bot: Bot, request?: Activity): BotContext {
 
         // push internal template record
         const activity: Partial<Activity> = <Partial<Activity>>{
-            type: "template",
+            type: <ActivityTypes>"template",
         };
         activity.text = templateId;
         activity.value = data;
@@ -199,7 +199,7 @@ export function createBotContext(bot: Bot, request?: Activity): BotContext {
 
     context.showTyping = function showTyping() {
         throwIfDisposed('showTyping');
-        this.responses.push({ type: ActivityTypes.typing });
+        this.responses.push({ type: ActivityTypes.Typing });
         return this;
     };
 

@@ -1,6 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
+ * @module botbuilder
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+const botbuilder_schema_1 = require("botbuilder-schema");
+/**
  * A set of utility functions designed to assist with the formatting of the various card types a
  * bot can return. All of these functions return an `Attachment` which can be added to an `Activity`
  * directly or passed as input to a `MessageStyler` function.
@@ -79,7 +87,7 @@ class CardStyler {
      * @param text (Optional) additional text to include on the card.
      */
     static signinCard(title, url, text) {
-        const card = { buttons: [{ type: 'signin', title: title, value: url }] };
+        const card = { buttons: [{ type: botbuilder_schema_1.ActionTypes.Signin, title: title, value: url }] };
         if (text) {
             card.text = text;
         }
@@ -131,7 +139,7 @@ class CardStyler {
                 list.push(a);
             }
             else {
-                list.push({ type: 'imBack', value: a.toString(), title: a.toString() });
+                list.push({ type: botbuilder_schema_1.ActionTypes.ImBack, value: a.toString(), title: a.toString() });
             }
         });
         return list;

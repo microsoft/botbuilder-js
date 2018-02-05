@@ -42,11 +42,11 @@ export class ConsoleAdapter implements ActivityAdapter {
                 if (i < activities.length) {
                     responses.push({});
                     let a = activities[i];
-                    switch (a.type || ActivityTypes.message) {
-                        case 'delay':
+                    switch (a.type || ActivityTypes.Message) {
+                        case <ActivityTypes>'delay':
                             setTimeout(() => next(i + 1), a.value || 0);
                             break;
-                        case ActivityTypes.message:
+                        case ActivityTypes.Message:
                             if (a.attachments && a.attachments.length > 0) {
                                 const append = a.attachments.length == 1 ? `(1 attachment)` : `(${a.attachments.length} attachments)`;
                                 console.log(`${a.text || ''} ${append}`);
@@ -94,7 +94,7 @@ export class ConsoleAdapter implements ActivityAdapter {
     public receive(text: string): this {
         if (this.onReceive) {
             const activity = <Activity>{
-                type: ActivityTypes.message,
+                type: ActivityTypes.Message,
                 channelId: 'console',
                 from: { id: 'user', name: 'User1' },
                 recipient: { id: 'bot', name: 'Bot' },

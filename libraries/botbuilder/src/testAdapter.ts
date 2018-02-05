@@ -63,7 +63,7 @@ export class TestAdapter implements ActivityAdapter {
     /* INTERNAL */
     public _sendActivityToBot(userSays: string | Partial<Activity>): Promise<void> {
         // ready for next reply
-        let activity = <Activity>(typeof userSays === 'string' ? { type:ActivityTypes.message, text: userSays } : userSays);
+        let activity = <Activity>(typeof userSays === 'string' ? { type:ActivityTypes.Message, text: userSays } : userSays);
         if (!activity.type)
             throw new Error("Missing activity.type");
         activity.channelId = this.reference.channelId;
@@ -174,7 +174,7 @@ export class TestFlow {
                 let myInterval = setInterval(() => {
                     let current = new Date().getTime();
                     if ((current - start) > <number>timeout) {
-                        let expectedActivity = <Activity>(typeof expected === 'string' ? { type: ActivityTypes.message, text: expected } : expected);
+                        let expectedActivity = <Activity>(typeof expected === 'string' ? { type: ActivityTypes.Message, text: expected } : expected);
                         throw new Error(`${timeout}ms Timed out waiting for:${description || expectedActivity.text}`);
                     }
 
@@ -186,7 +186,7 @@ export class TestFlow {
                         if (typeof expected === 'function') {
                             expected(botReply, description);
                         } else if (typeof expected === 'string') {
-                            assert.equal(botReply.type, ActivityTypes.message, (description || '') + ` type === '${botReply.type}'. `);
+                            assert.equal(botReply.type, ActivityTypes.Message, (description || '') + ` type === '${botReply.type}'. `);
                             assert.equal(botReply.text, expected, (description || '') + ` text === "${botReply.text}"`);
                         } else {
                             this.validateActivity(botReply, expected);

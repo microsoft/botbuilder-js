@@ -89,7 +89,7 @@ class ChoiceStyler {
                 return choice.action;
             }
             else {
-                return { type: 'imBack', value: choice.value, title: choice.value };
+                return { type: botbuilder_1.ActionTypes.ImBack, value: choice.value, title: choice.value };
             }
         });
         // Return activity with choices as suggested actions

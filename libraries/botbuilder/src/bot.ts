@@ -156,7 +156,7 @@ export class Bot extends MiddlewareSet {
         for (let i = 0; i < activities.length; i++) {
             let activity = activities[i];
             if (!activity.type) {
-                activity.type = ActivityTypes.message
+                activity.type = ActivityTypes.Message
             }
             applyConversationReference(activity, context.conversationReference);
         }

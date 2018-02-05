@@ -64,13 +64,13 @@ class TemplateManager {
                 if (templateOutput) {
                     if (typeof templateOutput === 'object') {
                         if (!templateOutput.type) {
-                            templateOutput.type = botbuilder_schema_1.ActivityTypes.message;
+                            templateOutput.type = botbuilder_schema_1.ActivityTypes.Message;
                         }
                         return templateOutput;
                     }
                     else {
                         const activity = {
-                            type: botbuilder_schema_1.ActivityTypes.message,
+                            type: botbuilder_schema_1.ActivityTypes.Message,
                             text: templateOutput || '',
                         };
                         return activity;

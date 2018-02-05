@@ -153,7 +153,7 @@ export class BotFrameworkAdapter implements ActivityAdapter {
                 if (i < activities.length) {
                     const activity = activities[i];
                     switch (activity.type) {
-                        case 'delay':
+                        case <ActivityTypes>'delay':
                             setTimeout(() => {
                                 responses.push({});
                                 next(i + 1);
