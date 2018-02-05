@@ -1,25 +1,26 @@
-const builder = require('botbuilder');
-const services = require('botbuilder-services');
+const { Bot, MemoryStorage, BotStateManager } = require('botbuilder');
+const { BotFrameworkAdapter } = require('botbuilder-services');
 const restify = require('restify');
 
 // Create server
 let server = restify.createServer();
 server.listen(process.env.port || process.env.PORT || 3978, function () {
-    console.log('%s listening to %s', server.name, server.url);
+    console.log(`${server.name} listening to ${server.url}`);
 });
 
-// Create adapter
-const botFrameworkAdapter = new services.BotFrameworkAdapter({ appId: process.env.MICROSOFT_APP_ID, appPassword: process.env.MICROSOFT_APP_PASSWORD });
-server.post('/api/messages', botFrameworkAdapter.listen());
+// Create adapter and listen to servers '/api/messages' route.
+const adapter = new BotFrameworkAdapter({ 
+    appId: process.env.MICROSOFT_APP_ID, 
+    appPassword: process.env.MICROSOFT_APP_PASSWORD 
+});
+server.post('/api/messages', adapter.listen());
 
-// Initialize bot by passing it adapter
-// - Add a logger to monitor bot.
+// Initialize bot by passing it adapter and middleware
 // - Add storage so that we can track conversation & user state.
 // - Add a receiver to process incoming activities.
-const bot = new builder.Bot(botFrameworkAdapter)
-    .use(new builder.ConsoleLogger())
-    .use(new builder.MemoryStorage())
-    .use(new builder.BotStateManager())
+const bot = new Bot(adapter)
+    .use(new MemoryStorage())
+    .use(new BotStateManager())
     .onReceive((context) => {
         if (context.request.type === 'message') {
             let count = context.state.conversation.count || 1;

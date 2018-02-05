@@ -1,58 +1,51 @@
-const botbuilder = require('botbuilder-core');
-const prompts = require('botbuilder-prompts')
-const BotFrameworkAdapter = require('botbuilder-services').BotFrameworkAdapter;
+const { Bot, MemoryStorage, BotStateManager } = require('botbuilder');
+const { BotFrameworkAdapter } = require('botbuilder-services');
 const restify = require('restify');
-const alarms = require('./alarms');
+const addAlarm = require('./addAlarm');
+const deleteAlarm = require('./deleteAlarm');
+const showAlarms = require('./showAlarms');
+const cancel = require('./cancel');
 
-// init restify server
+// Create server
 let server = restify.createServer();
-// bind listener to port and display start info
 server.listen(process.env.port || process.env.PORT || 3978, function () {
     console.log(`${server.name} listening to ${server.url}`);
 });
 
-// init connector
-const botFrameworkAdapter = new BotFrameworkAdapter({ 
+// Create adapter and listen to servers '/api/messages' route.
+const adapter = new BotFrameworkAdapter({ 
     appId: process.env.MICROSOFT_APP_ID, 
     appPassword: process.env.MICROSOFT_APP_PASSWORD 
 });
-// bind connector to /api/messages route
-server.post('/api/messages', botFrameworkAdapter.listen());
+server.post('/api/messages', adapter.listen());
 
-// init bot & bind to middleware
-const bot = new botbuilder.Bot(botFrameworkAdapter).use(
-    new botbuilder.ConsoleLogger(),
-    new botbuilder.MemoryStorage(),
-    new botbuilder.BotStateManager()
-);
-
-// configure bots routing table
-function routeActivity(context) {
-    if (context.request.type === botbuilder.ActivityTypes.message) {
-        if (context.ifRegExp(/(list|show) alarms/i)) {
-            return alarms.sayAlarms(context);
-        } else if (context.ifRegExp(/(set|create|add|new) alarm/i)) {
-            prompts.Prompt.cancelActivePrompt(context);             // <-- cancel any active prompts
-            return alarms.addAlarm(context, {});
-        } else if (context.ifRegExp(/(delete|remove|cancel) alarm/i)) {
-            prompts.Prompt.cancelActivePrompt(context);             // <-- cancel any active prompts
-            return alarms.deleteAlarm(context);
-        } else if (context.ifRegExp(/help/i)) {
-            context.reply("Welcome to the Alarm Bot demo.");
-            context.reply("To set an alarm, type or say: 'set alarm', or 'new alarm'.\n\nTo cancel an alarm, type or say: 'cancel alarm', or 'delete alarm'.")
-        } else {
-            return prompts.Prompt.routeTo(context).then((handled) => {
-                if (!handled) {
-                    context.reply(`[Alarm Bot Example] To create a new alarm, type or say: "set alarm" or "new alarm". For more details, type or say 'help'`);
+// Initialize bot by passing it adapter and middleware
+const bot = new Bot(adapter)
+    .use(new MemoryStorage())
+    .use(new BotStateManager())
+    .onReceive((context) => {
+        if (context.request.type === 'message') {
+            // Check for the triggering of a new topic
+            const utterance = (context.request.text || '').trim().toLowerCase();
+            if (utterance.includes('add alarm')) {
+                return addAlarm.begin(context);
+            } else if (utterance.includes('delete alarm')) {
+                return deleteAlarm.begin(context);
+            } else if (utterance.includes('show alarms')) {
+                return showAlarms.begin(context);
+            } else if (utterance === 'cancel') {
+                return cancel.begin(context);
+            } else {
+                // Continue the current topic
+                switch (context.state.conversation.topic) {
+                    case 'addAlarm':
+                        return addAlarm.routeReply(context);
+                    case 'deleteAlarm':
+                        return deleteAlarm.routeReply(context);
+                    default:
+                        context.reply(`Hi! I'm a simple alarm bot. Say "add alarm", "delete alarm", or "show alarms".`)
+                        return Promise.resolve();
                 }
-                return { handled: true };
-            });
+            }
         }
-    }
-}
-
-// handle activities
-bot.onReceive((context) => routeActivity(context));
-
-
-// END OF LINE
+    });
