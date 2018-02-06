@@ -16,11 +16,11 @@ export interface AttachmentView {
     /**
      * @member {string} [viewId] Content type of the attachment
      */
-    viewId: string;
+    viewId?: string;
     /**
      * @member {number} [size] Name of the attachment
      */
-    size: number;
+    size?: number;
 }
 /**
  * @interface
@@ -32,15 +32,15 @@ export interface AttachmentInfo {
     /**
      * @member {string} [name] Name of the attachment
      */
-    name: string;
+    name?: string;
     /**
      * @member {string} [type] ContentType of the attachment
      */
-    type: string;
+    type?: string;
     /**
      * @member {AttachmentView[]} [views] attachment views
      */
-    views: AttachmentView[];
+    views?: AttachmentView[];
 }
 /**
  * @interface
@@ -52,11 +52,11 @@ export interface ErrorModel {
     /**
      * @member {string} [code] Error code
      */
-    code: string;
+    code?: string;
     /**
      * @member {string} [message] Error message
      */
-    message: string;
+    message?: string;
 }
 /**
  * @interface
@@ -68,7 +68,7 @@ export interface ErrorResponse {
     /**
      * @member {ErrorModel} [error] Error message
      */
-    error: ErrorModel;
+    error?: ErrorModel;
 }
 /**
  * @interface
@@ -81,11 +81,11 @@ export interface ChannelAccount {
      * @member {string} [id] Channel id for the user or bot on this channel
      * (Example: joe@smith.com, or @joesmith or 123456)
      */
-    id: string;
+    id?: string;
     /**
      * @member {string} [name] Display friendly name
      */
-    name: string;
+    name?: string;
 }
 /**
  * @interface
@@ -97,16 +97,16 @@ export interface ConversationAccount {
     /**
      * @member {boolean} [isGroup] Is this a reference to a group
      */
-    isGroup: boolean;
+    isGroup?: boolean;
     /**
      * @member {string} [id] Channel id for the user or bot on this channel
      * (Example: joe@smith.com, or @joesmith or 123456)
      */
-    id: string;
+    id?: string;
     /**
      * @member {string} [name] Display friendly name
      */
-    name: string;
+    name?: string;
 }
 /**
  * @interface
@@ -119,7 +119,7 @@ export interface MessageReaction {
      * @member {MessageReactionTypes} [type] Message reaction type. Possible
      * values include: 'like', 'plusOne'
      */
-    type: MessageReactionTypes;
+    type?: MessageReactionTypes;
 }
 /**
  * @interface
@@ -134,30 +134,30 @@ export interface CardAction {
      * 'playAudio', 'playVideo', 'showImage', 'downloadFile', 'signin', 'call',
      * 'payment', 'messageBack'
      */
-    type: ActionTypes;
+    type?: ActionTypes;
     /**
      * @member {string} [title] Text description which appears on the button
      */
-    title: string;
+    title?: string;
     /**
      * @member {string} [image] Image URL which will appear on the button, next
      * to text label
      */
-    image: string;
+    image?: string;
     /**
      * @member {string} [text] Text for this action
      */
-    text: string;
+    text?: string;
     /**
      * @member {string} [displayText] (Optional) text to display in the chat feed
      * if the button is clicked
      */
-    displayText: string;
+    displayText?: string;
     /**
      * @member {any} [value] Supplementary parameter for action. Content of this
      * property depends on the ActionType
      */
-    value: any;
+    value?: any;
 }
 /**
  * @interface
@@ -171,11 +171,11 @@ export interface SuggestedActions {
      * shown to.  These Ids are relative to the channelId and a subset of all
      * recipients of the activity
      */
-    to: string[];
+    to?: string[];
     /**
      * @member {CardAction[]} [actions] Actions that can be shown to the user
      */
-    actions: CardAction[];
+    actions?: CardAction[];
 }
 /**
  * @interface
@@ -187,24 +187,24 @@ export interface Attachment {
     /**
      * @member {string} [contentType] mimetype/Contenttype for the file
      */
-    contentType: string;
+    contentType?: string;
     /**
      * @member {string} [contentUrl] Content Url
      */
-    contentUrl: string;
+    contentUrl?: string;
     /**
      * @member {any} [content] Embedded content
      */
-    content: any;
+    content?: any;
     /**
      * @member {string} [name] (OPTIONAL) The name of the attachment
      */
-    name: string;
+    name?: string;
     /**
      * @member {string} [thumbnailUrl] (OPTIONAL) Thumbnail associated with
      * attachment
      */
-    thumbnailUrl: string;
+    thumbnailUrl?: string;
 }
 /**
  * @interface
@@ -216,7 +216,7 @@ export interface Entity {
     /**
      * @member {string} [type] Entity Type (typically from schema.org types)
      */
-    type: string;
+    type?: string;
 }
 /**
  * @interface
@@ -228,29 +228,29 @@ export interface ConversationReference {
     /**
      * @member {string} [activityId] (Optional) ID of the activity to refer to
      */
-    activityId: string;
+    activityId?: string;
     /**
      * @member {ChannelAccount} [user] (Optional) User participating in this
      * conversation
      */
-    user: ChannelAccount;
+    user?: ChannelAccount;
     /**
      * @member {ChannelAccount} [bot] Bot participating in this conversation
      */
-    bot: ChannelAccount;
+    bot?: ChannelAccount;
     /**
      * @member {ConversationAccount} [conversation] Conversation reference
      */
-    conversation: ConversationAccount;
+    conversation?: ConversationAccount;
     /**
      * @member {string} [channelId] Channel ID
      */
-    channelId: string;
+    channelId?: string;
     /**
      * @member {string} [serviceUrl] Service endpoint where operations concerning
      * the referenced conversation may be performed
      */
-    serviceUrl: string;
+    serviceUrl?: string;
 }
 /**
  * @interface
@@ -260,12 +260,12 @@ export interface TextHighlight {
     /**
      * @member {string} [text] plain text fragment to highlight
      */
-    text: string;
+    text?: string;
     /**
      * @member {number} [occurence] index of occurence of the Text (Starting at
      * 1)
      */
-    occurence: number;
+    occurence?: number;
 }
 /**
  * @interface
@@ -282,175 +282,175 @@ export interface Activity {
      * 'deleteUserData', 'messageUpdate', 'messageDelete', 'installationUpdate',
      * 'messageReaction', 'suggestion'
      */
-    type: ActivityTypes;
+    type?: ActivityTypes;
     /**
      * @member {string} [id] ID of this activity
      */
-    id: string;
+    id?: string;
     /**
      * @member {Date} [timestamp] UTC Time when message was sent (set by service)
      */
-    timestamp: Date;
+    timestamp?: Date;
     /**
      * @member {Date} [localTimestamp] Local time when message was sent (set by
      * client, Ex: 2016-09-23T13:07:49.4714686-07:00)
      */
-    localTimestamp: Date;
+    localTimestamp?: Date;
     /**
      * @member {string} [serviceUrl] Service endpoint where operations concerning
      * the activity may be performed
      */
-    serviceUrl: string;
+    serviceUrl?: string;
     /**
      * @member {string} [channelId] ID of the channel where the activity was sent
      */
-    channelId: string;
+    channelId?: string;
     /**
      * @member {ChannelAccount} [from] Sender address
      */
-    from: ChannelAccount;
+    from?: ChannelAccount;
     /**
      * @member {ConversationAccount} [conversation] Conversation
      */
-    conversation: ConversationAccount;
+    conversation?: ConversationAccount;
     /**
      * @member {ChannelAccount} [recipient] (Outbound to bot only) Bot's address
      * that received the message
      */
-    recipient: ChannelAccount;
+    recipient?: ChannelAccount;
     /**
      * @member {TextFormatTypes} [textFormat] Format of text fields
      * Default:markdown. Possible values include: 'markdown', 'plain', 'xml'
      */
-    textFormat: TextFormatTypes;
+    textFormat?: TextFormatTypes;
     /**
      * @member {AttachmentLayoutTypes} [attachmentLayout] Hint for how to deal
      * with multiple attachments. Default:list. Possible values include: 'list',
      * 'carousel'
      */
-    attachmentLayout: AttachmentLayoutTypes;
+    attachmentLayout?: AttachmentLayoutTypes;
     /**
      * @member {ChannelAccount[]} [membersAdded] Members added to the
      * conversation
      */
-    membersAdded: ChannelAccount[];
+    membersAdded?: ChannelAccount[];
     /**
      * @member {ChannelAccount[]} [membersRemoved] Members removed from the
      * conversation
      */
-    membersRemoved: ChannelAccount[];
+    membersRemoved?: ChannelAccount[];
     /**
      * @member {MessageReaction[]} [reactionsAdded] Reactions added to the
      * activity
      */
-    reactionsAdded: MessageReaction[];
+    reactionsAdded?: MessageReaction[];
     /**
      * @member {MessageReaction[]} [reactionsRemoved] Reactions removed from the
      * activity
      */
-    reactionsRemoved: MessageReaction[];
+    reactionsRemoved?: MessageReaction[];
     /**
      * @member {string} [topicName] The conversation's updated topic name
      */
-    topicName: string;
+    topicName?: string;
     /**
      * @member {boolean} [historyDisclosed] True if prior history of the channel
      * is disclosed
      */
-    historyDisclosed: boolean;
+    historyDisclosed?: boolean;
     /**
      * @member {string} [locale] The language code of the Text field
      */
-    locale: string;
+    locale?: string;
     /**
      * @member {string} [text] Content for the message
      */
-    text: string;
+    text?: string;
     /**
      * @member {string} [speak] SSML Speak for TTS audio response
      */
-    speak: string;
+    speak?: string;
     /**
      * @member {InputHints} [inputHint] Input hint to the channel on what the bot
      * is expecting. Possible values include: 'acceptingInput', 'ignoringInput',
      * 'expectingInput'
      */
-    inputHint: InputHints;
+    inputHint?: InputHints;
     /**
      * @member {string} [summary] Text to display if the channel cannot render
      * cards
      */
-    summary: string;
+    summary?: string;
     /**
      * @member {SuggestedActions} [suggestedActions] SuggestedActions are used to
      * provide keyboard/quickreply like behavior in many clients
      */
-    suggestedActions: SuggestedActions;
+    suggestedActions?: SuggestedActions;
     /**
      * @member {Attachment[]} [attachments] Attachments
      */
-    attachments: Attachment[];
+    attachments?: Attachment[];
     /**
      * @member {Entity[]} [entities] Collection of Entity objects, each of which
      * contains metadata about this activity. Each Entity object is typed.
      */
-    entities: Entity[];
+    entities?: Entity[];
     /**
      * @member {any} [channelData] Channel-specific payload
      */
-    channelData: any;
+    channelData?: any;
     /**
      * @member {string} [action] ContactAdded/Removed action
      */
-    action: string;
+    action?: string;
     /**
      * @member {string} [replyToId] The original ID this message is a response to
      */
-    replyToId: string;
+    replyToId?: string;
     /**
      * @member {any} [value] Open-ended value
      */
-    value: any;
+    value?: any;
     /**
      * @member {string} [name] Name of the operation to invoke or the name of the
      * event
      */
-    name: string;
+    name?: string;
     /**
      * @member {ConversationReference} [relatesTo] Reference to another
      * conversation or activity
      */
-    relatesTo: ConversationReference;
+    relatesTo?: ConversationReference;
     /**
      * @member {EndOfConversationCodes} [code] Code indicating why the
      * conversation has ended. Possible values include: 'unknown',
      * 'completedSuccessfully', 'userCancelled', 'botTimedOut',
      * 'botIssuedInvalidMessage', 'channelFailed'
      */
-    code: EndOfConversationCodes;
+    code?: EndOfConversationCodes;
     /**
      * @member {Date} [expiration] DateTime to expire the activity as ISO 8601
      * encoded datetime
      */
-    expiration: Date;
+    expiration?: Date;
     /**
      * @member {string} [importance] Importance of this activity
      * {Low|Normal|High}, null value indicates Normal importance see
      * ActivityImportance)
      */
-    importance: string;
+    importance?: string;
     /**
      * @member {string} [deliveryMode] Hint to describe how this activity should
      * be delivered.
      * Currently: null or "Default" = default delivery
      * "Notification" = notification semantics
      */
-    deliveryMode: string;
+    deliveryMode?: string;
     /**
      * @member {TextHighlight[]} [textHighlights] TextHighlight in the activity
      * represented in the ReplyToId property
      */
-    textHighlights: TextHighlight[];
+    textHighlights?: TextHighlight[];
 }
 /**
  * @interface
@@ -462,30 +462,30 @@ export interface ConversationParameters {
     /**
      * @member {boolean} [isGroup] IsGroup
      */
-    isGroup: boolean;
+    isGroup?: boolean;
     /**
      * @member {ChannelAccount} [bot] The bot address for this conversation
      */
-    bot: ChannelAccount;
+    bot?: ChannelAccount;
     /**
      * @member {ChannelAccount[]} [members] Members to add to the conversation
      */
-    members: ChannelAccount[];
+    members?: ChannelAccount[];
     /**
      * @member {string} [topicName] (Optional) Topic of the conversation (if
      * supported by the channel)
      */
-    topicName: string;
+    topicName?: string;
     /**
      * @member {Activity} [activity] (Optional) When creating a new conversation,
      * use this activity as the intial message to the conversation
      */
-    activity: Activity;
+    activity?: Activity;
     /**
      * @member {any} [channelData] Channel specific payload for creating the
      * conversation
      */
-    channelData: any;
+    channelData?: any;
 }
 /**
  * @interface
@@ -497,16 +497,16 @@ export interface ConversationResourceResponse {
     /**
      * @member {string} [activityId] ID of the Activity (if sent)
      */
-    activityId: string;
+    activityId?: string;
     /**
      * @member {string} [serviceUrl] Service endpoint where operations concerning
      * the conversation may be performed
      */
-    serviceUrl: string;
+    serviceUrl?: string;
     /**
      * @member {string} [id] Id of the resource
      */
-    id: string;
+    id?: string;
 }
 /**
  * @interface
@@ -518,7 +518,7 @@ export interface ResourceResponse {
     /**
      * @member {string} [id] Id of the resource
      */
-    id: string;
+    id?: string;
 }
 /**
  * @interface
@@ -530,19 +530,19 @@ export interface AttachmentData {
     /**
      * @member {string} [type] Content-Type of the attachment
      */
-    type: string;
+    type?: string;
     /**
      * @member {string} [name] Name of the attachment
      */
-    name: string;
+    name?: string;
     /**
      * @member {Buffer} [originalBase64] Attachment content
      */
-    originalBase64: Buffer;
+    originalBase64?: Buffer;
     /**
      * @member {Buffer} [thumbnailBase64] Attachment thumbnail
      */
-    thumbnailBase64: Buffer;
+    thumbnailBase64?: Buffer;
 }
 /**
  * @interface
@@ -554,15 +554,15 @@ export interface CardImage {
     /**
      * @member {string} [url] URL thumbnail image for major content property
      */
-    url: string;
+    url?: string;
     /**
      * @member {string} [alt] Image description intended for screen readers
      */
-    alt: string;
+    alt?: string;
     /**
      * @member {CardAction} [tap] Action assigned to specific Attachment
      */
-    tap: CardAction;
+    tap?: CardAction;
 }
 /**
  * @interface
@@ -574,29 +574,29 @@ export interface HeroCard {
     /**
      * @member {string} [title] Title of the card
      */
-    title: string;
+    title?: string;
     /**
      * @member {string} [subtitle] Subtitle of the card
      */
-    subtitle: string;
+    subtitle?: string;
     /**
      * @member {string} [text] Text for the card
      */
-    text: string;
+    text?: string;
     /**
      * @member {CardImage[]} [images] Array of images for the card
      */
-    images: CardImage[];
+    images?: CardImage[];
     /**
      * @member {CardAction[]} [buttons] Set of actions applicable to the current
      * card
      */
-    buttons: CardAction[];
+    buttons?: CardAction[];
     /**
      * @member {CardAction} [tap] This action will be activated when user taps on
      * the card itself
      */
-    tap: CardAction;
+    tap?: CardAction;
 }
 /**
  * @interface
@@ -606,14 +606,14 @@ export interface HeroCard {
  */
 export interface ThumbnailUrl {
     /**
-     * @member {string} url URL pointing to the thumbnail to use for media
+     * @member {string} [url] URL pointing to the thumbnail to use for media
      * content
      */
-    url: string;
+    url?: string;
     /**
      * @member {string} [alt] HTML alt text to include on this thumbnail image
      */
-    alt: string;
+    alt?: string;
 }
 /**
  * @interface
@@ -623,14 +623,14 @@ export interface ThumbnailUrl {
  */
 export interface MediaUrl {
     /**
-     * @member {string} url Url for the media
+     * @member {string} [url] Url for the media
      */
-    url: string;
+    url?: string;
     /**
      * @member {string} [profile] Optional profile hint to the client to
      * differentiate multiple MediaUrl objects from each other
      */
-    profile: string;
+    profile?: string;
 }
 /**
  * @interface
@@ -642,51 +642,51 @@ export interface AnimationCard {
     /**
      * @member {string} [title] Title of this card
      */
-    title: string;
+    title?: string;
     /**
      * @member {string} [subtitle] Subtitle of this card
      */
-    subtitle: string;
+    subtitle?: string;
     /**
      * @member {string} [text] Text of this card
      */
-    text: string;
+    text?: string;
     /**
      * @member {ThumbnailUrl} [image] Thumbnail placeholder
      */
-    image: ThumbnailUrl;
+    image?: ThumbnailUrl;
     /**
      * @member {MediaUrl[]} [media] Media URLs for this card
      */
-    media: MediaUrl[];
+    media?: MediaUrl[];
     /**
      * @member {CardAction[]} [buttons] Actions on this card
      */
-    buttons: CardAction[];
+    buttons?: CardAction[];
     /**
      * @member {boolean} [shareable] This content may be shared with others
      * (default:true)
      */
-    shareable: boolean;
+    shareable?: boolean;
     /**
      * @member {boolean} [autoloop] Should the client loop playback at end of
      * content (default:true)
      */
-    autoloop: boolean;
+    autoloop?: boolean;
     /**
      * @member {boolean} [autostart] Should the client automatically start
      * playback of media in this card (default:true)
      */
-    autostart: boolean;
+    autostart?: boolean;
     /**
      * @member {string} [aspect] Aspect ratio of thumbnail/media placeholder,
      * allowed values are "16:9" and "4:3"
      */
-    aspect: string;
+    aspect?: string;
     /**
      * @member {any} [value] Supplementary parameter for this card
      */
-    value: any;
+    value?: any;
 }
 /**
  * @interface
@@ -698,51 +698,51 @@ export interface AudioCard {
     /**
      * @member {string} [title] Title of this card
      */
-    title: string;
+    title?: string;
     /**
      * @member {string} [subtitle] Subtitle of this card
      */
-    subtitle: string;
+    subtitle?: string;
     /**
      * @member {string} [text] Text of this card
      */
-    text: string;
+    text?: string;
     /**
      * @member {ThumbnailUrl} [image] Thumbnail placeholder
      */
-    image: ThumbnailUrl;
+    image?: ThumbnailUrl;
     /**
      * @member {MediaUrl[]} [media] Media URLs for this card
      */
-    media: MediaUrl[];
+    media?: MediaUrl[];
     /**
      * @member {CardAction[]} [buttons] Actions on this card
      */
-    buttons: CardAction[];
+    buttons?: CardAction[];
     /**
      * @member {boolean} [shareable] This content may be shared with others
      * (default:true)
      */
-    shareable: boolean;
+    shareable?: boolean;
     /**
      * @member {boolean} [autoloop] Should the client loop playback at end of
      * content (default:true)
      */
-    autoloop: boolean;
+    autoloop?: boolean;
     /**
      * @member {boolean} [autostart] Should the client automatically start
      * playback of media in this card (default:true)
      */
-    autostart: boolean;
+    autostart?: boolean;
     /**
      * @member {string} [aspect] Aspect ratio of thumbnail/media placeholder,
      * allowed values are "16:9" and "4:3"
      */
-    aspect: string;
+    aspect?: string;
     /**
      * @member {any} [value] Supplementary parameter for this card
      */
-    value: any;
+    value?: any;
 }
 /**
  * @interface
@@ -754,29 +754,29 @@ export interface BasicCard {
     /**
      * @member {string} [title] Title of the card
      */
-    title: string;
+    title?: string;
     /**
      * @member {string} [subtitle] Subtitle of the card
      */
-    subtitle: string;
+    subtitle?: string;
     /**
      * @member {string} [text] Text for the card
      */
-    text: string;
+    text?: string;
     /**
      * @member {CardImage[]} [images] Array of images for the card
      */
-    images: CardImage[];
+    images?: CardImage[];
     /**
      * @member {CardAction[]} [buttons] Set of actions applicable to the current
      * card
      */
-    buttons: CardAction[];
+    buttons?: CardAction[];
     /**
      * @member {CardAction} [tap] This action will be activated when user taps on
      * the card itself
      */
-    tap: CardAction;
+    tap?: CardAction;
 }
 /**
  * @interface
@@ -788,51 +788,51 @@ export interface MediaCard {
     /**
      * @member {string} [title] Title of this card
      */
-    title: string;
+    title?: string;
     /**
      * @member {string} [subtitle] Subtitle of this card
      */
-    subtitle: string;
+    subtitle?: string;
     /**
      * @member {string} [text] Text of this card
      */
-    text: string;
+    text?: string;
     /**
      * @member {ThumbnailUrl} [image] Thumbnail placeholder
      */
-    image: ThumbnailUrl;
+    image?: ThumbnailUrl;
     /**
      * @member {MediaUrl[]} [media] Media URLs for this card
      */
-    media: MediaUrl[];
+    media?: MediaUrl[];
     /**
      * @member {CardAction[]} [buttons] Actions on this card
      */
-    buttons: CardAction[];
+    buttons?: CardAction[];
     /**
      * @member {boolean} [shareable] This content may be shared with others
      * (default:true)
      */
-    shareable: boolean;
+    shareable?: boolean;
     /**
      * @member {boolean} [autoloop] Should the client loop playback at end of
      * content (default:true)
      */
-    autoloop: boolean;
+    autoloop?: boolean;
     /**
      * @member {boolean} [autostart] Should the client automatically start
      * playback of media in this card (default:true)
      */
-    autostart: boolean;
+    autostart?: boolean;
     /**
      * @member {string} [aspect] Aspect ratio of thumbnail/media placeholder,
      * allowed values are "16:9" and "4:3"
      */
-    aspect: string;
+    aspect?: string;
     /**
      * @member {any} [value] Supplementary parameter for this card
      */
-    value: any;
+    value?: any;
 }
 /**
  * @interface
@@ -844,34 +844,34 @@ export interface ReceiptItem {
     /**
      * @member {string} [title] Title of the Card
      */
-    title: string;
+    title?: string;
     /**
      * @member {string} [subtitle] Subtitle appears just below Title field,
      * differs from Title in font styling only
      */
-    subtitle: string;
+    subtitle?: string;
     /**
      * @member {string} [text] Text field appears just below subtitle, differs
      * from Subtitle in font styling only
      */
-    text: string;
+    text?: string;
     /**
      * @member {CardImage} [image] Image
      */
-    image: CardImage;
+    image?: CardImage;
     /**
      * @member {string} [price] Amount with currency
      */
-    price: string;
+    price?: string;
     /**
      * @member {string} [quantity] Number of items of given kind
      */
-    quantity: string;
+    quantity?: string;
     /**
      * @member {CardAction} [tap] This action will be activated when user taps on
      * the Item bubble.
      */
-    tap: CardAction;
+    tap?: CardAction;
 }
 /**
  * @interface
@@ -886,11 +886,11 @@ export interface Fact {
     /**
      * @member {string} [key] The key for this Fact
      */
-    key: string;
+    key?: string;
     /**
      * @member {string} [value] The value for this Fact
      */
-    value: string;
+    value?: string;
 }
 /**
  * @interface
@@ -902,37 +902,37 @@ export interface ReceiptCard {
     /**
      * @member {string} [title] Title of the card
      */
-    title: string;
+    title?: string;
     /**
      * @member {ReceiptItem[]} [items] Array of Receipt Items
      */
-    items: ReceiptItem[];
+    items?: ReceiptItem[];
     /**
      * @member {Fact[]} [facts] Array of Fact Objects   Array of key-value pairs.
      */
-    facts: Fact[];
+    facts?: Fact[];
     /**
      * @member {CardAction} [tap] This action will be activated when user taps on
      * the card
      */
-    tap: CardAction;
+    tap?: CardAction;
     /**
      * @member {string} [total] Total amount of money paid (or should be paid)
      */
-    total: string;
+    total?: string;
     /**
      * @member {string} [tax] Total amount of TAX paid(or should be paid)
      */
-    tax: string;
+    tax?: string;
     /**
      * @member {string} [vat] Total amount of VAT paid(or should be paid)
      */
-    vat: string;
+    vat?: string;
     /**
      * @member {CardAction[]} [buttons] Set of actions applicable to the current
      * card
      */
-    buttons: CardAction[];
+    buttons?: CardAction[];
 }
 /**
  * @interface
@@ -944,11 +944,11 @@ export interface SigninCard {
     /**
      * @member {string} [text] Text for signin request
      */
-    text: string;
+    text?: string;
     /**
      * @member {CardAction[]} [buttons] Action to use to perform signin
      */
-    buttons: CardAction[];
+    buttons?: CardAction[];
 }
 /**
  * @interface
@@ -960,29 +960,29 @@ export interface ThumbnailCard {
     /**
      * @member {string} [title] Title of the card
      */
-    title: string;
+    title?: string;
     /**
      * @member {string} [subtitle] Subtitle of the card
      */
-    subtitle: string;
+    subtitle?: string;
     /**
      * @member {string} [text] Text for the card
      */
-    text: string;
+    text?: string;
     /**
      * @member {CardImage[]} [images] Array of images for the card
      */
-    images: CardImage[];
+    images?: CardImage[];
     /**
      * @member {CardAction[]} [buttons] Set of actions applicable to the current
      * card
      */
-    buttons: CardAction[];
+    buttons?: CardAction[];
     /**
      * @member {CardAction} [tap] This action will be activated when user taps on
      * the card itself
      */
-    tap: CardAction;
+    tap?: CardAction;
 }
 /**
  * @interface
@@ -994,51 +994,51 @@ export interface VideoCard {
     /**
      * @member {string} [title] Title of this card
      */
-    title: string;
+    title?: string;
     /**
      * @member {string} [subtitle] Subtitle of this card
      */
-    subtitle: string;
+    subtitle?: string;
     /**
      * @member {string} [text] Text of this card
      */
-    text: string;
+    text?: string;
     /**
      * @member {ThumbnailUrl} [image] Thumbnail placeholder
      */
-    image: ThumbnailUrl;
+    image?: ThumbnailUrl;
     /**
      * @member {MediaUrl[]} [media] Media URLs for this card
      */
-    media: MediaUrl[];
+    media?: MediaUrl[];
     /**
      * @member {CardAction[]} [buttons] Actions on this card
      */
-    buttons: CardAction[];
+    buttons?: CardAction[];
     /**
      * @member {boolean} [shareable] This content may be shared with others
      * (default:true)
      */
-    shareable: boolean;
+    shareable?: boolean;
     /**
      * @member {boolean} [autoloop] Should the client loop playback at end of
      * content (default:true)
      */
-    autoloop: boolean;
+    autoloop?: boolean;
     /**
      * @member {boolean} [autostart] Should the client automatically start
      * playback of media in this card (default:true)
      */
-    autostart: boolean;
+    autostart?: boolean;
     /**
      * @member {string} [aspect] Aspect ratio of thumbnail/media placeholder,
      * allowed values are "16:9" and "4:3"
      */
-    aspect: string;
+    aspect?: string;
     /**
      * @member {any} [value] Supplementary parameter for this card
      */
-    value: any;
+    value?: any;
 }
 /**
  * @interface
@@ -1051,25 +1051,25 @@ export interface GeoCoordinates {
      * @member {number} [elevation] Elevation of the location [WGS
      * 84](https://en.wikipedia.org/wiki/World_Geodetic_System)
      */
-    elevation: number;
+    elevation?: number;
     /**
      * @member {number} [latitude] Latitude of the location [WGS
      * 84](https://en.wikipedia.org/wiki/World_Geodetic_System)
      */
-    latitude: number;
+    latitude?: number;
     /**
      * @member {number} [longitude] Longitude of the location [WGS
      * 84](https://en.wikipedia.org/wiki/World_Geodetic_System)
      */
-    longitude: number;
+    longitude?: number;
     /**
      * @member {string} [type] The type of the thing
      */
-    type: string;
+    type?: string;
     /**
      * @member {string} [name] The name of the thing
      */
-    name: string;
+    name?: string;
 }
 /**
  * @interface
@@ -1081,16 +1081,16 @@ export interface Mention {
     /**
      * @member {ChannelAccount} [mentioned] The mentioned user
      */
-    mentioned: ChannelAccount;
+    mentioned?: ChannelAccount;
     /**
      * @member {string} [text] Sub Text which represents the mention (can be null
      * or empty)
      */
-    text: string;
+    text?: string;
     /**
      * @member {string} [type] Entity Type (typically from schema.org types)
      */
-    type: string;
+    type?: string;
 }
 /**
  * @interface
@@ -1103,25 +1103,25 @@ export interface Place {
      * @member {any} [address] Address of the place (may be `string` or complex
      * object of type `PostalAddress`)
      */
-    address: any;
+    address?: any;
     /**
      * @member {any} [geo] Geo coordinates of the place (may be complex object of
      * type `GeoCoordinates` or `GeoShape`)
      */
-    geo: any;
+    geo?: any;
     /**
      * @member {any} [hasMap] Map to the place (may be `string` (URL) or complex
      * object of type `Map`)
      */
-    hasMap: any;
+    hasMap?: any;
     /**
      * @member {string} [type] The type of the thing
      */
-    type: string;
+    type?: string;
     /**
      * @member {string} [name] The name of the thing
      */
-    name: string;
+    name?: string;
 }
 /**
  * @interface
@@ -1133,11 +1133,11 @@ export interface Thing {
     /**
      * @member {string} [type] The type of the thing
      */
-    type: string;
+    type?: string;
     /**
      * @member {string} [name] The name of the thing
      */
-    name: string;
+    name?: string;
 }
 /**
  * @interface
@@ -1150,7 +1150,7 @@ export interface MediaEventValue {
      * @member {any} [cardValue] Callback parameter specified in the Value field
      * of the MediaCard that originated this event
      */
-    cardValue: any;
+    cardValue?: any;
 }
 /**
  * @interface
@@ -1162,17 +1162,17 @@ export interface MicrosoftPayMethodData {
     /**
      * @member {string} [mechantId] Microsoft Pay Merchant ID
      */
-    mechantId: string;
+    mechantId?: string;
     /**
      * @member {string[]} [supportedNetworks] Supported payment networks (e.g.,
      * "visa" and "mastercard")
      */
-    supportedNetworks: string[];
+    supportedNetworks?: string[];
     /**
      * @member {string[]} [supportedTypes] Supported payment types (e.g.,
      * "credit")
      */
-    supportedTypes: string[];
+    supportedTypes?: string[];
 }
 /**
  * @interface
@@ -1185,61 +1185,61 @@ export interface PaymentAddress {
      * @member {string} [country] This is the CLDR (Common Locale Data
      * Repository) region code. For example, US, GB, CN, or JP
      */
-    country: string;
+    country?: string;
     /**
      * @member {string[]} [addressLine] This is the most specific part of the
      * address. It can include, for example, a street name, a house number,
      * apartment number, a rural delivery route, descriptive instructions, or a
      * post office box number.
      */
-    addressLine: string[];
+    addressLine?: string[];
     /**
      * @member {string} [region] This is the top level administrative subdivision
      * of the country. For example, this can be a state, a province, an oblast,
      * or a prefecture.
      */
-    region: string;
+    region?: string;
     /**
      * @member {string} [city] This is the city/town portion of the address.
      */
-    city: string;
+    city?: string;
     /**
      * @member {string} [dependentLocality] This is the dependent locality or
      * sublocality within a city. For example, used for neighborhoods, boroughs,
      * districts, or UK dependent localities.
      */
-    dependentLocality: string;
+    dependentLocality?: string;
     /**
      * @member {string} [postalCode] This is the postal code or ZIP code, also
      * known as PIN code in India.
      */
-    postalCode: string;
+    postalCode?: string;
     /**
      * @member {string} [sortingCode] This is the sorting code as used in, for
      * example, France.
      */
-    sortingCode: string;
+    sortingCode?: string;
     /**
      * @member {string} [languageCode] This is the BCP-47 language code for the
      * address. It's used to determine the field separators and the order of
      * fields when formatting the address for display.
      */
-    languageCode: string;
+    languageCode?: string;
     /**
      * @member {string} [organization] This is the organization, firm, company,
      * or institution at this address.
      */
-    organization: string;
+    organization?: string;
     /**
      * @member {string} [recipient] This is the name of the recipient or contact
      * person.
      */
-    recipient: string;
+    recipient?: string;
     /**
      * @member {string} [phone] This is the phone number of the recipient or
      * contact person.
      */
-    phone: string;
+    phone?: string;
 }
 /**
  * @interface
@@ -1251,15 +1251,15 @@ export interface PaymentCurrencyAmount {
     /**
      * @member {string} [currency] A currency identifier
      */
-    currency: string;
+    currency?: string;
     /**
      * @member {string} [value] Decimal monetary value
      */
-    value: string;
+    value?: string;
     /**
      * @member {string} [currencySystem] Currency system
      */
-    currencySystem: string;
+    currencySystem?: string;
 }
 /**
  * @interface
@@ -1271,16 +1271,16 @@ export interface PaymentItem {
     /**
      * @member {string} [label] Human-readable description of the item
      */
-    label: string;
+    label?: string;
     /**
      * @member {PaymentCurrencyAmount} [amount] Monetary amount for the item
      */
-    amount: PaymentCurrencyAmount;
+    amount?: PaymentCurrencyAmount;
     /**
      * @member {boolean} [pending] When set to true this flag means that the
      * amount field is not final.
      */
-    pending: boolean;
+    pending?: boolean;
 }
 /**
  * @interface
@@ -1293,21 +1293,21 @@ export interface PaymentShippingOption {
      * @member {string} [id] String identifier used to reference this
      * PaymentShippingOption
      */
-    id: string;
+    id?: string;
     /**
      * @member {string} [label] Human-readable description of the item
      */
-    label: string;
+    label?: string;
     /**
      * @member {PaymentCurrencyAmount} [amount] Contains the monetary amount for
      * the item
      */
-    amount: PaymentCurrencyAmount;
+    amount?: PaymentCurrencyAmount;
     /**
      * @member {boolean} [selected] Indicates whether this is the default
      * selected PaymentShippingOption
      */
-    selected: boolean;
+    selected?: boolean;
 }
 /**
  * @interface
@@ -1321,25 +1321,25 @@ export interface PaymentDetailsModifier {
      * @member {string[]} [supportedMethods] Contains a sequence of payment
      * method identifiers
      */
-    supportedMethods: string[];
+    supportedMethods?: string[];
     /**
      * @member {PaymentItem} [total] This value overrides the total field in the
      * PaymentDetails dictionary for the payment method identifiers in the
      * supportedMethods field
      */
-    total: PaymentItem;
+    total?: PaymentItem;
     /**
      * @member {PaymentItem[]} [additionalDisplayItems] Provides additional
      * display items that are appended to the displayItems field in the
      * PaymentDetails dictionary for the payment method identifiers in the
      * supportedMethods field
      */
-    additionalDisplayItems: PaymentItem[];
+    additionalDisplayItems?: PaymentItem[];
     /**
      * @member {any} [data] A JSON-serializable object that provides optional
      * information that might be needed by the supported payment methods
      */
-    data: any;
+    data?: any;
 }
 /**
  * @interface
@@ -1352,26 +1352,26 @@ export interface PaymentDetails {
      * @member {PaymentItem} [total] Contains the total amount of the payment
      * request
      */
-    total: PaymentItem;
+    total?: PaymentItem;
     /**
      * @member {PaymentItem[]} [displayItems] Contains line items for the payment
      * request that the user agent may display
      */
-    displayItems: PaymentItem[];
+    displayItems?: PaymentItem[];
     /**
      * @member {PaymentShippingOption[]} [shippingOptions] A sequence containing
      * the different shipping options for the user to choose from
      */
-    shippingOptions: PaymentShippingOption[];
+    shippingOptions?: PaymentShippingOption[];
     /**
      * @member {PaymentDetailsModifier[]} [modifiers] Contains modifiers for
      * particular payment method identifiers
      */
-    modifiers: PaymentDetailsModifier[];
+    modifiers?: PaymentDetailsModifier[];
     /**
      * @member {string} [error] Error description
      */
-    error: string;
+    error?: string;
 }
 /**
  * @interface
@@ -1386,12 +1386,12 @@ export interface PaymentMethodData {
      * containing payment method identifiers for payment methods that the
      * merchant web site accepts
      */
-    supportedMethods: string[];
+    supportedMethods?: string[];
     /**
      * @member {any} [data] A JSON-serializable object that provides optional
      * information that might be needed by the supported payment methods
      */
-    data: any;
+    data?: any;
 }
 /**
  * @interface
@@ -1404,31 +1404,31 @@ export interface PaymentOptions {
      * @member {boolean} [requestPayerName] Indicates whether the user agent
      * should collect and return the payer's name as part of the payment request
      */
-    requestPayerName: boolean;
+    requestPayerName?: boolean;
     /**
      * @member {boolean} [requestPayerEmail] Indicates whether the user agent
      * should collect and return the payer's email address as part of the payment
      * request
      */
-    requestPayerEmail: boolean;
+    requestPayerEmail?: boolean;
     /**
      * @member {boolean} [requestPayerPhone] Indicates whether the user agent
      * should collect and return the payer's phone number as part of the payment
      * request
      */
-    requestPayerPhone: boolean;
+    requestPayerPhone?: boolean;
     /**
      * @member {boolean} [requestShipping] Indicates whether the user agent
      * should collect and return a shipping address as part of the payment
      * request
      */
-    requestShipping: boolean;
+    requestShipping?: boolean;
     /**
      * @member {string} [shippingType] If requestShipping is set to true, then
      * the shippingType field may be used to influence the way the user agent
      * presents the user interface for gathering the shipping address
      */
-    shippingType: string;
+    shippingType?: string;
 }
 /**
  * @interface
@@ -1440,26 +1440,26 @@ export interface PaymentRequest {
     /**
      * @member {string} [id] ID of this payment request
      */
-    id: string;
+    id?: string;
     /**
      * @member {PaymentMethodData[]} [methodData] Allowed payment methods for
      * this request
      */
-    methodData: PaymentMethodData[];
+    methodData?: PaymentMethodData[];
     /**
      * @member {PaymentDetails} [details] Details for this request
      */
-    details: PaymentDetails;
+    details?: PaymentDetails;
     /**
      * @member {PaymentOptions} [options] Provides information about the options
      * desired for the payment request
      */
-    options: PaymentOptions;
+    options?: PaymentOptions;
     /**
      * @member {string} [expires] Expiration for this request, in ISO 8601
      * duration format (e.g., 'P1D')
      */
-    expires: string;
+    expires?: string;
 }
 /**
  * @interface
@@ -1473,38 +1473,38 @@ export interface PaymentResponse {
      * @member {string} [methodName] The payment method identifier for the
      * payment method that the user selected to fulfil the transaction
      */
-    methodName: string;
+    methodName?: string;
     /**
      * @member {any} [details] A JSON-serializable object that provides a payment
      * method specific message used by the merchant to process the transaction
      * and determine successful fund transfer
      */
-    details: any;
+    details?: any;
     /**
      * @member {PaymentAddress} [shippingAddress] If the requestShipping flag was
      * set to true in the PaymentOptions passed to the PaymentRequest
      * constructor, then shippingAddress will be the full and final shipping
      * address chosen by the user
      */
-    shippingAddress: PaymentAddress;
+    shippingAddress?: PaymentAddress;
     /**
      * @member {string} [shippingOption] If the requestShipping flag was set to
      * true in the PaymentOptions passed to the PaymentRequest constructor, then
      * shippingOption will be the id attribute of the selected shipping option
      */
-    shippingOption: string;
+    shippingOption?: string;
     /**
      * @member {string} [payerEmail] If the requestPayerEmail flag was set to
      * true in the PaymentOptions passed to the PaymentRequest constructor, then
      * payerEmail will be the email address chosen by the user
      */
-    payerEmail: string;
+    payerEmail?: string;
     /**
      * @member {string} [payerPhone] If the requestPayerPhone flag was set to
      * true in the PaymentOptions passed to the PaymentRequest constructor, then
      * payerPhone will be the phone number chosen by the user
      */
-    payerPhone: string;
+    payerPhone?: string;
 }
 /**
  * @interface
@@ -1516,15 +1516,15 @@ export interface PaymentRequestComplete {
     /**
      * @member {string} [id] Payment request ID
      */
-    id: string;
+    id?: string;
     /**
      * @member {PaymentRequest} [paymentRequest] Initial payment request
      */
-    paymentRequest: PaymentRequest;
+    paymentRequest?: PaymentRequest;
     /**
      * @member {PaymentResponse} [paymentResponse] Corresponding payment response
      */
-    paymentResponse: PaymentResponse;
+    paymentResponse?: PaymentResponse;
 }
 /**
  * @interface
@@ -1536,7 +1536,7 @@ export interface PaymentRequestCompleteResult {
     /**
      * @member {string} [result] Result of the payment request completion
      */
-    result: string;
+    result?: string;
 }
 /**
  * @interface
@@ -1548,19 +1548,19 @@ export interface PaymentRequestUpdate {
     /**
      * @member {string} [id] ID for the payment request to update
      */
-    id: string;
+    id?: string;
     /**
      * @member {PaymentDetails} [details] Update payment details
      */
-    details: PaymentDetails;
+    details?: PaymentDetails;
     /**
      * @member {PaymentAddress} [shippingAddress] Updated shipping address
      */
-    shippingAddress: PaymentAddress;
+    shippingAddress?: PaymentAddress;
     /**
      * @member {string} [shippingOption] Updated shipping options
      */
-    shippingOption: string;
+    shippingOption?: string;
 }
 /**
  * @interface
@@ -1572,7 +1572,7 @@ export interface PaymentRequestUpdateResult {
     /**
      * @member {PaymentDetails} [details] Update payment details
      */
-    details: PaymentDetails;
+    details?: PaymentDetails;
 }
 /**
  * Defines values for ActivityTypes.
