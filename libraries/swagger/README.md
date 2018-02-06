@@ -18,15 +18,16 @@ The current release for the BotFramework Connector is v3.0.
 input-file: ConnectorAPI.json
 ```
 
-### Connector API 3.0 - NodeJS Settings
-These settings apply only when `--nodejs` is specified on the command line.
-``` yaml $(nodejs)
-nodejs:
+### Connector API 3.0 - TypeScript Settings
+These settings apply only when `--typescript` is specified on the command line.
+``` yaml $(typescript)
+
+typescript:
   override-client-name: ConnectorClient
-  package-name: connector
-  license-header: MICROSOFT_MIT_NO_VERSION
+  package-name: botframework-connector
+  package-version: 4.0.0
   azure-arm: false
-  use-internal-constructors: true
   clear-output-folder: true
   output-folder: ./generated
+  generate-metadata: false
 ```

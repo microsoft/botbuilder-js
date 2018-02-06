@@ -1,3 +1,2 @@
-import ConnectorClient = require('./generated/connectorClient');
-export { ConnectorClient };
+export { ConnectorClient } from './generated/connectorClient';
 export * from './auth';

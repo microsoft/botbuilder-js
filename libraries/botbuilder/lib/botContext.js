@@ -70,8 +70,8 @@ function createBotContext(bot, request) {
     context.endOfConversation = function endOfConversation(code) {
         throwIfDisposed('endOfConversation');
         const activity = {
-            type: botbuilder_schema_1.ActivityTypes.endOfConversation,
-            code: code || botbuilder_schema_1.EndOfConversationCodes.completedSuccessfully
+            type: botbuilder_schema_1.ActivityTypes.EndOfConversation,
+            code: code || botbuilder_schema_1.EndOfConversationCodes.CompletedSuccessfully
         };
         this.responses.push(activity);
         return this;
@@ -136,13 +136,13 @@ function createBotContext(bot, request) {
         }
         if (typeof textOrActivity === 'object') {
             if (!textOrActivity.type) {
-                textOrActivity.type = botbuilder_schema_1.ActivityTypes.message;
+                textOrActivity.type = botbuilder_schema_1.ActivityTypes.Message;
             }
             this.responses.push(textOrActivity);
         }
         else {
             const activity = Object.assign({
-                type: botbuilder_schema_1.ActivityTypes.message,
+                type: botbuilder_schema_1.ActivityTypes.Message,
                 text: textOrActivity || '',
             }, additional || {});
             if (typeof speak === 'string') {
@@ -180,7 +180,7 @@ function createBotContext(bot, request) {
     };
     context.showTyping = function showTyping() {
         throwIfDisposed('showTyping');
-        this.responses.push({ type: botbuilder_schema_1.ActivityTypes.typing });
+        this.responses.push({ type: botbuilder_schema_1.ActivityTypes.Typing });
         return this;
     };
     Object.defineProperty(context, 'responded', {

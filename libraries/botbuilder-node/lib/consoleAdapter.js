@@ -29,11 +29,11 @@ class ConsoleAdapter {
                 if (i < activities.length) {
                     responses.push({});
                     let a = activities[i];
-                    switch (a.type || botbuilder_1.ActivityTypes.message) {
+                    switch (a.type || botbuilder_1.ActivityTypes.Message) {
                         case 'delay':
                             setTimeout(() => next(i + 1), a.value || 0);
                             break;
-                        case botbuilder_1.ActivityTypes.message:
+                        case botbuilder_1.ActivityTypes.Message:
                             if (a.attachments && a.attachments.length > 0) {
                                 const append = a.attachments.length == 1 ? `(1 attachment)` : `(${a.attachments.length} attachments)`;
                                 console.log(`${a.text || ''} ${append}`);
@@ -82,7 +82,7 @@ class ConsoleAdapter {
     receive(text) {
         if (this.onReceive) {
             const activity = {
-                type: botbuilder_1.ActivityTypes.message,
+                type: botbuilder_1.ActivityTypes.Message,
                 channelId: 'console',
                 from: { id: 'user', name: 'User1' },
                 recipient: { id: 'bot', name: 'Bot' },

@@ -19,7 +19,7 @@ function base64_encode(file) {
 
 const BotConnector = require('../lib');
 
-const Connector = BotConnector.ConnectorClient;
+const ConnectorClient = BotConnector.ConnectorClient;
 const Credentials = BotConnector.MicrosoftAppCredentials;
 
 var SuiteBase = require('../../../tools/framework/suite-base');
@@ -80,8 +80,7 @@ describe('Bot Framework Connector SDK', function() {
         appId: clientId,
         appPassword: clientSecret
       });
-      console.log(Connector);
-      client = new Connector(credentials, hostURL);
+      client = new ConnectorClient(credentials, hostURL);
     });
     done();
   });
@@ -294,7 +293,7 @@ describe('Bot Framework Connector SDK', function() {
         conversation.activity = createActivity();
         client.conversations.createConversation(conversation)
         .then((result) => client.conversations.deleteActivity(result.id, result.activityId))
-        .then(done, done);
+        .then(ok => done(), done);
       });
 
       it('should fail with invalid conversationId', function(done) {
@@ -390,7 +389,8 @@ describe('Bot Framework Connector SDK', function() {
         .then((result) => new Promise((resolve, reject) => {
           client.attachments.getAttachment(attachmentId, result.views[0].viewId, (err, result) => {
             if (err) reject(err);
-            readStreamToBuffer(result, (err, buffer) => {
+            // console.log(result);
+            readStreamToBuffer(result.body, (err, buffer) => {
               if (err) reject(err);
               resolve(buffer);
             });

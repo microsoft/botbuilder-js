@@ -21,7 +21,7 @@
     "ts-node": "^4.1.0"
   },
   "scripts": {
-    "build": "tsc && cp -r src/generated ./lib/",
+    "build": "tsc",
     "clean": "erase /q lib\\*.*"
   },
   "homepage": "http://github.com/Microsoft/BotBuilder-JS",

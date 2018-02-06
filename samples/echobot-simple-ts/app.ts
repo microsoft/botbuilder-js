@@ -1,5 +1,5 @@
 import { ConnectorClient, BotCredentials, MicrosoftAppCredentials, BotAuthenticator } from 'botframework-connector';
-import { Activity } from 'botbuilder-schema';
+import { Activity, ActivityTypes } from 'botbuilder-schema';
 import * as restify from "restify";
 
 const botCredentials: BotCredentials = {
@@ -66,7 +66,7 @@ export interface HttpHandler {
 
 function createReply(activity: any, text: string, locale: string = null): Activity {
     return {
-        type: "message",
+        type: ActivityTypes.Message,
         timestamp: new Date(),
         from: { id: activity.recipient.id, name: activity.recipient.name },
         recipient: { id: activity.from.id, name: activity.from.name },

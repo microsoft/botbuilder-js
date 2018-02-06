@@ -145,7 +145,7 @@ class Bot extends middlewareSet_1.MiddlewareSet {
         for (let i = 0; i < activities.length; i++) {
             let activity = activities[i];
             if (!activity.type) {
-                activity.type = botbuilder_schema_1.ActivityTypes.message;
+                activity.type = botbuilder_schema_1.ActivityTypes.Message;
             }
             botContext_1.applyConversationReference(activity, context.conversationReference);
         }

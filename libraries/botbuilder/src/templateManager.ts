@@ -35,7 +35,7 @@ export class TemplateManager implements Middleware {
         // Ensure activities are well formed.
         for (let i = 0; i < activities.length; i++) {
             let activity = activities[i];
-            if (activity.type == "template") {
+            if (activity.type == <ActivityTypes>"template") {
                 await this.bindActivityTemplate(context, activity);
             }
         }
@@ -79,12 +79,12 @@ export class TemplateManager implements Middleware {
             if (templateOutput) {
                 if (typeof templateOutput === 'object') {
                     if (!(templateOutput as Activity).type) {
-                        templateOutput.type = ActivityTypes.message;
+                        templateOutput.type = ActivityTypes.Message;
                     }
                     return <Partial<Activity>>templateOutput;
                 } else {
                     const activity: Partial<Activity> = {
-                        type: ActivityTypes.message,
+                        type: ActivityTypes.Message,
                         text: templateOutput || '',
                     };
                     return activity;
@@ -103,7 +103,7 @@ export class TemplateManager implements Middleware {
 
         // Ensure activities are well formed.
         // bind any template activity
-        if (activity.type == "template") {
+        if (activity.type == <ActivityTypes>"template") {
             // try each locale until successful
             for (let locale of fallbackLocales) {
                 // apply template

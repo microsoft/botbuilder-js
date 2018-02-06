@@ -144,3 +144,4 @@ class BotAuthenticator {
     }
 }
 exports.BotAuthenticator = BotAuthenticator;
+//# sourceMappingURL=botAuthenticator.js.map

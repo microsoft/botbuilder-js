@@ -85,3 +85,4 @@ class OpenIdMetadata {
     }
 }
 exports.OpenIdMetadata = OpenIdMetadata;
+//# sourceMappingURL=openIdMetadata.js.map

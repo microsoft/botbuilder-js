@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { CardStyler } from './cardStyler';
-import { ActivityTypes, AttachmentLayouts, Activity, CardAction, SuggestedActions, Attachment } from 'botbuilder-schema';
+import { ActivityTypes, AttachmentLayoutTypes, Activity, CardAction, SuggestedActions, Attachment } from 'botbuilder-schema';
 
 /**
  * A set of utility functions to assist with the formatting of the various message types a bot can
@@ -45,7 +45,7 @@ export class MessageStyler {
      */
     static text(text: string, speak?: string): Partial<Activity> {
         const msg: Partial<Activity> = {
-            type: ActivityTypes.message,
+            type: ActivityTypes.Message,
             text: text || ''
         };
         if (speak) { msg.speak = speak; }
@@ -61,7 +61,7 @@ export class MessageStyler {
      */
     static suggestedActions(actions: (CardAction|string)[], text?: string, speak?: string): Partial<Activity> {
         const msg: Partial<Activity> = {
-            type: ActivityTypes.message,
+            type: ActivityTypes.Message,
             suggestedActions: <SuggestedActions>{
                 actions: CardStyler.actions(actions)
             }
@@ -79,7 +79,7 @@ export class MessageStyler {
      * @param speak (Optional) SSML to include with the message.
      */
     static attachment(attachment: Attachment, text?: string, speak?: string): Partial<Activity> {
-        return attachmentActivity(AttachmentLayouts.list, [attachment], text, speak);
+        return attachmentActivity(AttachmentLayoutTypes.List, [attachment], text, speak);
     }
 
     /**
@@ -90,7 +90,7 @@ export class MessageStyler {
      * @param speak (Optional) SSML to include with the message.
      */
     static list(attachments: Attachment[], text?: string, speak?: string): Partial<Activity> {
-        return attachmentActivity(AttachmentLayouts.list, attachments, text, speak);
+        return attachmentActivity(AttachmentLayoutTypes.List, attachments, text, speak);
     }
 
     /**
@@ -114,7 +114,7 @@ export class MessageStyler {
      * @param speak (Optional) SSML to include with the message.
      */
     static carousel(attachments: Attachment[], text?: string, speak?: string): Partial<Activity> {
-        return attachmentActivity(AttachmentLayouts.carousel, attachments, text, speak);
+        return attachmentActivity(AttachmentLayoutTypes.Carousel, attachments, text, speak);
     }
 
     /**
@@ -138,14 +138,14 @@ export class MessageStyler {
     static contentUrl(url: string, contentType: string, name?: string, text?: string, speak?: string): Partial<Activity> {
         const a: Attachment = { contentType: contentType, contentUrl: url };
         if (name) { a.name = name; }
-        return attachmentActivity(AttachmentLayouts.list, [a], text, speak);
+        return attachmentActivity(AttachmentLayoutTypes.List, [a], text, speak);
     }
 }
 
 
-function attachmentActivity(attachmentLayout: string, attachments: Attachment[], text?: string, speak?: string): Partial<Activity> {
+function attachmentActivity(attachmentLayout: AttachmentLayoutTypes, attachments: Attachment[], text?: string, speak?: string): Partial<Activity> {
     const msg: Partial<Activity> = {
-        type: ActivityTypes.message,
+        type: ActivityTypes.Message,
         attachmentLayout: attachmentLayout,
         attachments: attachments
     };

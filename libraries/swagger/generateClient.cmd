@@ -1,12 +1,16 @@
 @echo off
 
 rd /s /q generated
-call autorest README.md --nodejs
 
-call ..\..\node_modules\.bin\replace "'../models'" "'botbuilder-schema'" ./generated -r
-call ..\..\node_modules\.bin\replace "'./models'" "'botbuilder-schema'" ./generated -r
+call npm i replace-in-file
+call autorest README.md --typescript
 
-rd /s /q ..\botbuilder-schema\src\generated\models
-rd /s /q ..\botframework-connector\lib\generated
-move generated\models ..\botbuilder-schema\src\generated\models
-move generated ..\botframework-connector\lib\
+call node replace.js
+
+rem Move models to botbuilder-schema
+del /q ..\botbuilder-schema\src\index.ts
+move generated\models\index.ts ..\botbuilder-schema\src\index.ts
+
+rem Move client to botframework-connector
+rd /s /q ..\botframework-connector\src\generated
+move generated ..\botframework-connector\src\

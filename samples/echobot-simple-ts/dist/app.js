@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const botframework_connector_1 = require("botframework-connector");
+const botbuilder_schema_1 = require("botbuilder-schema");
 const restify = require("restify");
 const botCredentials = {
     appId: '',
@@ -54,7 +55,7 @@ function getListener() {
 }
 function createReply(activity, text, locale = null) {
     return {
-        type: "message",
+        type: botbuilder_schema_1.ActivityTypes.Message,
         timestamp: new Date(),
         from: { id: activity.recipient.id, name: activity.recipient.name },
         recipient: { id: activity.from.id, name: activity.from.name },

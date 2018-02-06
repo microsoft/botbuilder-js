@@ -4,7 +4,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-const msrest = require("ms-rest");
+const msrest = require("ms-rest-js");
 const request = require("request");
 const settings_1 = require("./settings");
 class MicrosoftAppCredentials {
@@ -21,21 +21,25 @@ class MicrosoftAppCredentials {
             }
         }
     }
-    signRequest(webResource, cb) {
-        if (this.appId !== '' && this.appPassword !== '') {
-            this.getAccessToken((err, token) => {
-                if (!err && token) {
-                    var tokenCredentials = new msrest.TokenCredentials(token);
-                    tokenCredentials.signRequest(webResource, cb);
-                }
-                else {
-                    cb(err);
-                }
-            });
-        }
-        else {
-            cb(null);
-        }
+    // signRequest(webResource: WebResource): Promise<WebResource>;
+    // public signRequest(webResource: msrest.WebResource, cb: { (err: Error): void }): void {
+    signRequest(webResource) {
+        return new Promise((resolve, reject) => {
+            if (this.appId !== '' && this.appPassword !== '') {
+                this.getAccessToken((err, token) => {
+                    if (!err && token) {
+                        var tokenCredentials = new msrest.TokenCredentials(token);
+                        tokenCredentials.signRequest(webResource).then(resolve, reject);
+                    }
+                    else {
+                        reject(err);
+                    }
+                });
+            }
+            else {
+                resolve(webResource);
+            }
+        });
     }
     getAccessToken(cb) {
         if (!this.accessToken || new Date().getTime() >= this.accessTokenExpires) {
@@ -77,3 +81,4 @@ class MicrosoftAppCredentials {
 MicrosoftAppCredentials.refreshEndpoint = settings_1.AuthSettings.refreshEndpoint;
 MicrosoftAppCredentials.refreshScope = settings_1.AuthSettings.refreshScope;
 exports.MicrosoftAppCredentials = MicrosoftAppCredentials;
+//# sourceMappingURL=microsoftAppCredentials.js.map

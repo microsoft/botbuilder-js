@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Attachment, MediaUrl, CardAction, AnimationCard, CardImage, HeroCard, ReceiptCard, SigninCard, ThumbnailCard, VideoCard } from "botbuilder-schema";
+import { Attachment, MediaUrl, CardAction, AnimationCard, CardImage, HeroCard, ReceiptCard, SigninCard, ThumbnailCard, VideoCard, ActionTypes } from "botbuilder-schema";
 
 /**
  * A set of utility functions designed to assist with the formatting of the various card types a
@@ -125,7 +125,7 @@ export class CardStyler {
      * @param text (Optional) additional text to include on the card.
      */
     static signinCard(title: string, url: string, text?: string): Attachment {
-        const card: SigninCard = { buttons: [{ type: 'signin', title: title, value: url }] };
+        const card: SigninCard = { buttons: [{ type: ActionTypes.Signin, title: title, value: url }] };
         if (text) { card.text = text; }
         return { contentType: CardStyler.contentTypes.signinCard, content: card };
     }
@@ -187,7 +187,7 @@ export class CardStyler {
             if (typeof a === 'object') {
                 list.push(a);
             } else {
-                list.push({ type: 'imBack', value: a.toString(), title: a.toString() });
+                list.push({ type: ActionTypes.ImBack, value: a.toString(), title: a.toString() });
             }
         });
         return list;

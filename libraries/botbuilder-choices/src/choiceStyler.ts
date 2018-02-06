@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { MessageStyler } from 'botbuilder';
+import { MessageStyler, ActionTypes } from 'botbuilder';
 import { Activity, CardAction } from 'botbuilder';
 import { Choice } from './findChoices';
 import * as channel from './channel';
@@ -124,7 +124,7 @@ export class ChoiceStyler {
             if (choice.action) {
                 return choice.action;
             } else {
-                return { type: 'imBack', value: choice.value, title: choice.value }
+                return { type: ActionTypes.ImBack, value: choice.value, title: choice.value }
             }
         });
 

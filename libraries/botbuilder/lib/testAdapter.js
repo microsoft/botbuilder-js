@@ -47,7 +47,7 @@ class TestAdapter {
     /* INTERNAL */
     _sendActivityToBot(userSays) {
         // ready for next reply
-        let activity = (typeof userSays === 'string' ? { type: botbuilder_schema_1.ActivityTypes.message, text: userSays } : userSays);
+        let activity = (typeof userSays === 'string' ? { type: botbuilder_schema_1.ActivityTypes.Message, text: userSays } : userSays);
         if (!activity.type)
             throw new Error("Missing activity.type");
         activity.channelId = this.reference.channelId;
@@ -149,7 +149,7 @@ class TestFlow {
                 let myInterval = setInterval(() => {
                     let current = new Date().getTime();
                     if ((current - start) > timeout) {
-                        let expectedActivity = (typeof expected === 'string' ? { type: botbuilder_schema_1.ActivityTypes.message, text: expected } : expected);
+                        let expectedActivity = (typeof expected === 'string' ? { type: botbuilder_schema_1.ActivityTypes.Message, text: expected } : expected);
                         throw new Error(`${timeout}ms Timed out waiting for:${description || expectedActivity.text}`);
                     }
                     // if we have replies
@@ -161,7 +161,7 @@ class TestFlow {
                             expected(botReply, description);
                         }
                         else if (typeof expected === 'string') {
-                            assert.equal(botReply.type, botbuilder_schema_1.ActivityTypes.message, (description || '') + ` type === '${botReply.type}'. `);
+                            assert.equal(botReply.type, botbuilder_schema_1.ActivityTypes.Message, (description || '') + ` type === '${botReply.type}'. `);
                             assert.equal(botReply.text, expected, (description || '') + ` text === "${botReply.text}"`);
                         }
                         else {

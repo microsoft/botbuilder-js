@@ -1,10 +1,14 @@
 rm -rf generated
-autorest README.md --nodejs
 
-../../node_modules/.bin/replace "'../models'" "'botbuilder-schema'" ./generated -r
-../../node_modules/.bin/replace "'./models'" "'botbuilder-schema'" ./generated -r
+npm i replace-in-file
+autorest README.md --typescript
 
-rm -rf ../botbuilder-schema/src/generated/*
-rm -rf ../botframework-connector/lib/generated/*
-mv generated/models ../botbuilder-schema/src/generated/models
-mv generated/* ../botframework-connector/lib/generated
+node replace.js
+
+#  Move models to botbuilder-schema
+rm ../botbuilder-schema/src/index.ts
+mv generated/models/index.ts ../botbuilder-schema/src/index.ts
+
+#  Move client to botframework-connector
+rm -rf ../botframework-connector/src/generated
+mv generated ../botframework-connector/src/
