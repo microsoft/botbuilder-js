@@ -28,8 +28,6 @@ export class MicrosoftAppCredentials implements msrest.ServiceClientCredentials 
         }
     }
 
-    // signRequest(webResource: WebResource): Promise<WebResource>;
-    // public signRequest(webResource: msrest.WebResource, cb: { (err: Error): void }): void {
     public signRequest(webResource: msrest.WebResource): Promise<msrest.WebResource> {
         return new Promise((resolve, reject) => {
             if (this.appId !== '' && this.appPassword !== '') {
