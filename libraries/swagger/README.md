@@ -29,4 +29,5 @@ typescript:
   azure-arm: false
   clear-output-folder: true
   output-folder: ./generated
+  generate-metadata: false
 ```
