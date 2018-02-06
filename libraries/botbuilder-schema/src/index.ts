@@ -628,7 +628,7 @@ export interface HeroCard {
  */
 export interface ThumbnailUrl {
   /**
-   * @member {string} url URL pointing to the thumbnail to use for media
+   * @member {string} [url] URL pointing to the thumbnail to use for media
    * content
    */
   url: string;
@@ -646,7 +646,7 @@ export interface ThumbnailUrl {
  */
 export interface MediaUrl {
   /**
-   * @member {string} url Url for the media
+   * @member {string} [url] Url for the media
    */
   url: string;
   /**

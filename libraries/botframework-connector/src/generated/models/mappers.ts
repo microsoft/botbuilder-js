@@ -1016,7 +1016,7 @@ export const ThumbnailUrl = {
     className: 'ThumbnailUrl',
     modelProperties: {
       url: {
-        required: true,
+        required: false,
         serializedName: 'url',
         type: {
           name: 'String'
@@ -1041,7 +1041,7 @@ export const MediaUrl = {
     className: 'MediaUrl',
     modelProperties: {
       url: {
-        required: true,
+        required: false,
         serializedName: 'url',
         type: {
           name: 'String'
