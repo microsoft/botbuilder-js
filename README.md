@@ -1,12 +1,12 @@
 # Bot Builder SDK v4
 This repository contains code for the JavaScript version of the [Microsoft Bot Builder SDK](https://github.com/Microsoft/BotBuilder). The 4.x version of the SDK is being actively developed and should therefore be used for **EXPERIMENTATION PURPOSES ONLY**. Production bots should continue to be developed using the [v3 SDK](https://github.com/Microsoft/BotBuilder/tree/master/Node). In addition to the JavaScript SDK, Bot Builder supports creating bots in other popular programming languages like [.Net SDK](https://github.com/Microsoft/botbuilder-dotnet), [Python](https://github.com/Microsoft/botbuilder-python), and [Java](https://github.com/Microsoft/botbuilder-java).
 
-- [Getting Started](wiki#getting-started)
-- [Building the SDK](wiki/Building-the-SDK)
-- [Documentation](wiki/Overview)
-- [Extension Directory](wiki/Extension-Directory)
-- [Roadmap](wiki/Roadmap)
-- [FAQ](wiki/FAQ)
+- [Getting Started](https://github.com/Microsoft/botbuilder-js/wiki#getting-started)
+- [Building the SDK](https://github.com/Microsoft/botbuilder-js/wiki/Building-the-SDK)
+- [Documentation](https://github.com/Microsoft/botbuilder-js/wiki/Overview)
+- [Extension Directory](https://github.com/Microsoft/botbuilder-js/wiki/Extension-Directory)
+- [Roadmap](https://github.com/Microsoft/botbuilder-js/wiki/Roadmap)
+- [FAQ](https://github.com/Microsoft/botbuilder-js/wiki/FAQ)
 
 ## Contributing
 
