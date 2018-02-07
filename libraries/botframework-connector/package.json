@@ -2,7 +2,7 @@
   "name": "botframework-connector",
   "author": "Microsoft Corp.",
   "description": "Bot Connector is autorest generated connector client.",
-  "version": "4.0.0-m1.0",
+  "version": "4.0.0-m1.2",
   "license": "MIT",
   "keywords": [
     "botconnector",
@@ -10,11 +10,11 @@
     "chatbots"
   ],
   "bugs": {
-    "url": "https://github.com/Microsoft/BotBuilder/issues"
+    "url": "https://github.com/Microsoft/botbuilder-js/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Microsoft/BotBuilder.git"
+    "url": "https://github.com/Microsoft/botbuilder-js.git"
   },
   "main": "./lib/connectorClient.js",
   "typings": "./lib/connectorClient.d.ts",

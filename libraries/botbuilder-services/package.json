@@ -11,18 +11,18 @@
     "chatbots"
   ],
   "bugs": {
-    "url": "https://github.com/Microsoft/BotBuilder/issues"
+    "url": "https://github.com/Microsoft/botbuilder-js/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Microsoft/BotBuilder.git"
+    "url": "https://github.com/Microsoft/botbuilder-js.git"
   },
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "dependencies": {
     "botbuilder": "^4.0.0-m1.2",
-    "botframework-connector": "^4.0.0-m1.0",
-    "botframework-connector-auth": "^4.0.0-m1.0"
+    "botframework-connector": "^4.0.0-m1.2",
+    "botframework-connector-auth": "^4.0.0-m1.2"
   },
   "devDependencies": {
     "@types/mocha": "^2.2.47",

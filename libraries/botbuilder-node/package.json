@@ -11,11 +11,11 @@
     "chatbots"
   ],
   "bugs": {
-    "url": "https://github.com/Microsoft/BotBuilder/issues"
+    "url": "https://github.com/Microsoft/botbuilder-js/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Microsoft/BotBuilder.git"
+    "url": "https://github.com/Microsoft/botbuilder-js.git"
   },
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
