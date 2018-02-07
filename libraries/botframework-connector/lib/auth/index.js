@@ -4,10 +4,15 @@ function __export(m) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
+ * @module botframework-connector
+ */
+/**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+__export(require("./credentialProvider"));
 __export(require("./microsoftAppCredentials"));
-__export(require("./botAuthenticator"));
-__export(require("./settings"));
+__export(require("./jwtTokenValidation"));
+__export(require("./channelValidation"));
+__export(require("./emulatorValidation"));
 //# sourceMappingURL=index.js.map

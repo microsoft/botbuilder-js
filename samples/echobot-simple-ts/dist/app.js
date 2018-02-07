@@ -3,12 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const botframework_connector_1 = require("botframework-connector");
 const botbuilder_schema_1 = require("botbuilder-schema");
 const restify = require("restify");
-const botCredentials = {
-    appId: '',
-    appPassword: ''
-};
-const credentials = new botframework_connector_1.MicrosoftAppCredentials(botCredentials);
-const authenticator = new botframework_connector_1.BotAuthenticator(botCredentials);
+const appId = process.env.MICROSOFT_APP_ID;
+const appPassword = process.env.MICROSOFT_APP_PASSWORD;
 const server = restify.createServer();
 server.listen(process.env.port || process.env.PORT || 3978, function () {
     console.log(`${server.name} listening to ${server.url}`);
@@ -18,13 +14,15 @@ function getListener() {
     // handle activity when request body is ready
     function processReq(req, res) {
         console.log('processReq:', req.body);
-        var activity = req.body;
+        let activity = req.body;
         // authenticate request
-        authenticator.authenticate(req.headers, activity.channelId, activity.serviceUrl).then(() => {
+        let authHeader = req.headers['authorization'] || req.headers['Authorization'] || null;
+        const credentials = new botframework_connector_1.SimpleCredentialProvider(appId, appPassword);
+        botframework_connector_1.JwtTokenValidation.assertValidActivity(activity, authHeader, credentials).then(() => {
             // On message activity, reply with the same text
             if (activity.type === 'message') {
-                var reply = createReply(activity, `You said: ${activity.text}`);
-                const client = new botframework_connector_1.ConnectorClient(credentials, activity.serviceUrl);
+                let reply = createReply(activity, `You said: ${activity.text}`);
+                const client = new botframework_connector_1.ConnectorClient(new botframework_connector_1.MicrosoftAppCredentials(credentials.appId, credentials.appPassword), activity.serviceUrl);
                 client.conversations.replyToActivity(activity.conversation.id, activity.id, reply)
                     .then((reply) => {
                     console.log('reply send with id: ' + reply.id);
