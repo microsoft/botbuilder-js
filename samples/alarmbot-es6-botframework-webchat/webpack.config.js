@@ -24,9 +24,6 @@ module.exports = {
         new webpack.HotModuleReplacementPlugin(),
         new CopyWebpackPlugin([
             {from: path.resolve(__dirname, 'index.html'), to: ''},
-            {from: path.resolve(__dirname, 'css/alarmBot.css'), to: 'css'},
-            {from: path.resolve(__dirname, '../../node_modules/skeleton-css/css/normalize.css'), to: 'css'},
-            {from: path.resolve(__dirname, '../../node_modules/skeleton-css/css/skeleton.css'), to: 'css'}
         ])
     ],
     output: {
