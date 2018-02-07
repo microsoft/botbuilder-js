@@ -1,16 +1,16 @@
-import {Prompt, TextPrompt, ConfirmPrompt} from 'botbuilder-prompts';
+import {ConfirmPrompt, Prompt, TextPrompt} from 'botbuilder-prompts';
 
 const getTitlePrompt = new Prompt('/alarms/getTitle', titleValidator, (context, promptState) => {
     promptState.with.title = promptState.value;
     alarms.addAlarm(context, promptState.with);
 });
 
-function titleValidator(context, options){
+function titleValidator(context, options) {
     let result = TextPrompt.validator(context, options);
     if (result.value) {
         if (result.value.length > 20) {
             context.reply("Your title must be less then 20 letters long");
-            return { reason: 'toolong' };
+            return {reason: 'toolong'};
         }
         else {
             return {
@@ -95,6 +95,7 @@ export const alarms = {
             // Append alarm
             alarms.push(alarm);
             context.reply(`Added alarm named "${alarm.title}" set for ${alarm.time}.`);
+            context.replyWith('newAlarm', alarm);
         }
     },
     deleteAlarm: function (context, titleOrIndex) {
@@ -105,12 +106,13 @@ export const alarms = {
             const index = typeof titleOrIndex === 'string' ? findAlarmIndex(alarms, titleOrIndex) : titleOrIndex;
             if (index >= 0) {
                 titleOrIndex = alarms[index].title;
-                alarms.splice(index, 1);
+                const deletedAlarm = alarms.splice(index, 1)[0];
                 context.reply(`Deleted alarmed named "${titleOrIndex}".`);
+                context.replyWith('deleteAlarm', deletedAlarm);
             } else {
                 context.reply(`I couldn't find the "${titleOrIndex}" alarm.`)
             }
-            return { handled: true };
+            return {handled: true};
         } else if (alarms.length > 1) {
             // Say list of alarms and prompt for choice.
             this.sayAlarms(context);

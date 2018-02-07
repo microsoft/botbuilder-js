@@ -4,7 +4,7 @@ const restify = require('restify');
 
 // Create server
 let server = restify.createServer();
-server.listen(process.env.port || process.env.PORT || 3978, function () {
+server.getMessagePipelineToBot(process.env.port || process.env.PORT || 3978, function () {
     console.log('%s listening to %s', server.name, server.url);
 });
 

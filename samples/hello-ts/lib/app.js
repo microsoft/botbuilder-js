@@ -5,7 +5,7 @@ const botbuilder_services_1 = require("botbuilder-services");
 const restify = require("restify");
 // Create server
 let server = restify.createServer();
-server.listen(process.env.port || process.env.PORT || 3978, function () {
+server.getMessagePipelineToBot(process.env.port || process.env.PORT || 3978, function () {
     console.log(`${server.name} listening to ${server.url}`);
 });
 // Create adapter and listen to our servers '/api/messages' route.

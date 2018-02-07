@@ -7,7 +7,7 @@ const alarms = require('./alarms');
 // init restify server
 let server = restify.createServer();
 // bind listener to port and display start info
-server.listen(process.env.port || process.env.PORT || 3978, function () {
+server.getMessagePipelineToBot(process.env.port || process.env.PORT || 3978, function () {
     console.log(`${server.name} listening to ${server.url}`);
 });
 

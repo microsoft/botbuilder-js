@@ -7,7 +7,7 @@ const path = require('path');
 
 // init server
 let server = restify.createServer();
-server.listen(process.env.port || process.env.PORT || 3978, function () {
+server.getMessagePipelineToBot(process.env.port || process.env.PORT || 3978, function () {
     console.log(`${server.name} listing to ${server.url}`);
 });
 
