@@ -12,7 +12,7 @@
 
 **●  index**:  *`number`* 
 
-*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:37](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-choices/lib/findValues.d.ts#L37)*
+*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:40](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-choices/lib/findValues.d.ts#L40)*
 
 
 
@@ -29,7 +29,7 @@ ___
 
 **●  score**:  *`number`* 
 
-*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:42](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-choices/lib/findValues.d.ts#L42)*
+*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:45](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-choices/lib/findValues.d.ts#L45)*
 
 
 
@@ -46,7 +46,7 @@ ___
 
 **●  value**:  *`string`* 
 
-*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:33](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-choices/lib/findValues.d.ts#L33)*
+*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:36](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-choices/lib/findValues.d.ts#L36)*
 
 
 

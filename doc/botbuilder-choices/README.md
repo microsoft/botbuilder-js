@@ -41,7 +41,7 @@
 
 
 
-*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:44](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-choices/lib/findChoices.d.ts#L44)*
+*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:47](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-choices/lib/findChoices.d.ts#L47)*
 
 
 
@@ -73,7 +73,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:54](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-choices/lib/findValues.d.ts#L54)*
+*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:57](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-choices/lib/findValues.d.ts#L57)*
 
 
 
@@ -108,7 +108,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-choices/lib/recognizeChoices.d.ts:7](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-choices/lib/recognizeChoices.d.ts#L7)*
+*Defined in [libraries/botbuilder-choices/lib/recognizeChoices.d.ts:10](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-choices/lib/recognizeChoices.d.ts#L10)*
 
 
 

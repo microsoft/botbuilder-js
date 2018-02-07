@@ -26,7 +26,7 @@
 
 
 
-*Defined in [libraries/botbuilder-choices/lib/choiceStyler.d.ts:30](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-choices/lib/choiceStyler.d.ts#L30)*
+*Defined in [libraries/botbuilder-choices/lib/choiceStyler.d.ts:33](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-choices/lib/choiceStyler.d.ts#L33)*
 
 
 
@@ -60,7 +60,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-choices/lib/choiceStyler.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-choices/lib/choiceStyler.d.ts#L31)*
+*Defined in [libraries/botbuilder-choices/lib/choiceStyler.d.ts:34](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-choices/lib/choiceStyler.d.ts#L34)*
 
 
 
@@ -93,7 +93,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-choices/lib/choiceStyler.d.ts:32](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-choices/lib/choiceStyler.d.ts#L32)*
+*Defined in [libraries/botbuilder-choices/lib/choiceStyler.d.ts:35](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-choices/lib/choiceStyler.d.ts#L35)*
 
 
 
@@ -126,7 +126,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-choices/lib/choiceStyler.d.ts:33](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-choices/lib/choiceStyler.d.ts#L33)*
+*Defined in [libraries/botbuilder-choices/lib/choiceStyler.d.ts:36](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-choices/lib/choiceStyler.d.ts#L36)*
 
 
 
@@ -159,7 +159,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-choices/lib/choiceStyler.d.ts:34](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-choices/lib/choiceStyler.d.ts#L34)*
+*Defined in [libraries/botbuilder-choices/lib/choiceStyler.d.ts:37](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-choices/lib/choiceStyler.d.ts#L37)*
 
 
 

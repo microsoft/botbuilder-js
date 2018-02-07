@@ -15,7 +15,7 @@ An Activity is the basic communication type for the Bot Framework 3.0 protocol.
 
 **●  action**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:181](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L181)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:185](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L185)*
 
 
 
@@ -32,7 +32,7 @@ ___
 
 **●  attachmentLayout**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:151](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L151)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:155](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L155)*
 
 
 
@@ -49,7 +49,7 @@ ___
 
 **●  attachments**:  *[Attachment](botbuilder.attachment.md)[]* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:173](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L173)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:177](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L177)*
 
 
 
@@ -66,7 +66,7 @@ ___
 
 **●  channelData**:  *`any`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:179](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L179)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:183](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L183)*
 
 
 
@@ -83,7 +83,7 @@ ___
 
 **●  channelId**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:141](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L141)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:145](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L145)*
 
 
 
@@ -100,7 +100,7 @@ ___
 
 **●  code**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:191](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L191)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:195](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L195)*
 
 
 
@@ -117,7 +117,7 @@ ___
 
 **●  conversation**:  *[ConversationAccount](botbuilder.conversationaccount.md)* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:145](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L145)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:149](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L149)*
 
 
 
@@ -134,7 +134,7 @@ ___
 
 **●  entities**:  *[Entity](botbuilder.entity.md)[]* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:177](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L177)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:181](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L181)*
 
 
 
@@ -151,7 +151,7 @@ ___
 
 **●  from**:  *[ChannelAccount](botbuilder.channelaccount.md)* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:143](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L143)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:147](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L147)*
 
 
 
@@ -168,7 +168,7 @@ ___
 
 **●  historyDisclosed**:  *`undefined`⎮`true`⎮`false`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:159](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L159)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:163](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L163)*
 
 
 
@@ -185,7 +185,7 @@ ___
 
 **●  id**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:133](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L133)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:137](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L137)*
 
 
 
@@ -202,7 +202,7 @@ ___
 
 **●  inputHint**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:167](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L167)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:171](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L171)*
 
 
 
@@ -219,7 +219,7 @@ ___
 
 **●  localTimestamp**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:137](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L137)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:141](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L141)*
 
 
 
@@ -236,7 +236,7 @@ ___
 
 **●  locale**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:161](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L161)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:165](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L165)*
 
 
 
@@ -253,7 +253,7 @@ ___
 
 **●  membersAdded**:  *[ChannelAccount](botbuilder.channelaccount.md)[]* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:153](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L153)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:157](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L157)*
 
 
 
@@ -270,7 +270,7 @@ ___
 
 **●  membersRemoved**:  *[ChannelAccount](botbuilder.channelaccount.md)[]* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:155](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L155)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:159](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L159)*
 
 
 
@@ -287,7 +287,7 @@ ___
 
 **●  name**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:187](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L187)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:191](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L191)*
 
 
 
@@ -304,7 +304,7 @@ ___
 
 **●  reactionsAdded**:  *[MessageReaction](botbuilder.messagereaction.md)[]* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:193](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L193)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:197](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L197)*
 
 
 
@@ -321,7 +321,7 @@ ___
 
 **●  reactionsRemoved**:  *[MessageReaction](botbuilder.messagereaction.md)[]* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:195](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L195)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:199](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L199)*
 
 
 
@@ -338,7 +338,7 @@ ___
 
 **●  recipient**:  *[ChannelAccount](botbuilder.channelaccount.md)* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:147](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L147)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:151](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L151)*
 
 
 
@@ -355,7 +355,7 @@ ___
 
 **●  relatesTo**:  *[ConversationReference](botbuilder.conversationreference.md)* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:189](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L189)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:193](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L193)*
 
 
 
@@ -372,7 +372,7 @@ ___
 
 **●  replyToId**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:183](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L183)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:187](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L187)*
 
 
 
@@ -389,7 +389,7 @@ ___
 
 **●  serviceUrl**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:139](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L139)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:143](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L143)*
 
 
 
@@ -406,7 +406,7 @@ ___
 
 **●  speak**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:165](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L165)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:169](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L169)*
 
 
 
@@ -423,7 +423,7 @@ ___
 
 **●  suggestedActions**:  *[SuggestedActions](botbuilder.suggestedactions.md)* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:171](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L171)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:175](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L175)*
 
 
 
@@ -440,7 +440,7 @@ ___
 
 **●  summary**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:169](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L169)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:173](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L173)*
 
 
 
@@ -457,7 +457,7 @@ ___
 
 **●  text**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:163](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L163)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:167](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L167)*
 
 
 
@@ -474,7 +474,7 @@ ___
 
 **●  textFormat**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:149](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L149)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:153](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L153)*
 
 
 
@@ -491,7 +491,7 @@ ___
 
 **●  timestamp**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:135](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L135)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:139](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L139)*
 
 
 
@@ -508,7 +508,7 @@ ___
 
 **●  topicName**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:157](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L157)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:161](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L161)*
 
 
 
@@ -525,7 +525,7 @@ ___
 
 **●  type**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:131](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L131)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:135](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L135)*
 
 
 
@@ -542,7 +542,7 @@ ___
 
 **●  value**:  *`any`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:185](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L185)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:189](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L189)*
 
 
 

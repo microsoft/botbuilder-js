@@ -61,7 +61,7 @@ Middleware that's the base class for all intent recognizers.
 
 
 
-*Defined in [libraries/botbuilder/lib/intentRecognizer.d.ts:45](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/intentRecognizer.d.ts#L45)*
+*Defined in [libraries/botbuilder/lib/intentRecognizer.d.ts:48](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/intentRecognizer.d.ts#L48)*
 
 
 
@@ -94,7 +94,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/intentRecognizer.d.ts:65](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/intentRecognizer.d.ts#L65)*
+*Defined in [libraries/botbuilder/lib/intentRecognizer.d.ts:68](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/intentRecognizer.d.ts#L68)*
 
 
 
@@ -127,7 +127,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/intentRecognizer.d.ts:53](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/intentRecognizer.d.ts#L53)*
+*Defined in [libraries/botbuilder/lib/intentRecognizer.d.ts:56](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/intentRecognizer.d.ts#L56)*
 
 
 
@@ -160,7 +160,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/intentRecognizer.d.ts:30](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/intentRecognizer.d.ts#L30)*
+*Defined in [libraries/botbuilder/lib/intentRecognizer.d.ts:33](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/intentRecognizer.d.ts#L33)*
 
 
 
@@ -191,7 +191,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/intentRecognizer.d.ts:36](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/intentRecognizer.d.ts#L36)*
+*Defined in [libraries/botbuilder/lib/intentRecognizer.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/intentRecognizer.d.ts#L39)*
 
 
 
@@ -224,7 +224,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/intentRecognizer.d.ts:74](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/intentRecognizer.d.ts#L74)*
+*Defined in [libraries/botbuilder/lib/intentRecognizer.d.ts:77](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/intentRecognizer.d.ts#L77)*
 
 
 

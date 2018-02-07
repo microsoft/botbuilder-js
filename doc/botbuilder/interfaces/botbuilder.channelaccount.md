@@ -28,7 +28,7 @@ Channel account information needed to route an activity.
 
 **●  id**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:30](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L30)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:34](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L34)*
 
 
 
@@ -45,7 +45,7 @@ ___
 
 **●  name**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:32](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L32)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:36](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L36)*
 
 
 

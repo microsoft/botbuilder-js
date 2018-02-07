@@ -15,7 +15,7 @@ An object relating to a particular point in a conversation.
 
 **●  activityId**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:113](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L113)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:117](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L117)*
 
 
 
@@ -32,7 +32,7 @@ ___
 
 **●  bot**:  *[ChannelAccount](botbuilder.channelaccount.md)* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:117](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L117)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:121](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L121)*
 
 
 
@@ -49,7 +49,7 @@ ___
 
 **●  channelId**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:121](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L121)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:125](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L125)*
 
 
 
@@ -66,7 +66,7 @@ ___
 
 **●  conversation**:  *[ConversationAccount](botbuilder.conversationaccount.md)* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:119](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L119)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:123](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L123)*
 
 
 
@@ -83,7 +83,7 @@ ___
 
 **●  serviceUrl**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:123](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L123)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:127](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L127)*
 
 
 
@@ -100,7 +100,7 @@ ___
 
 **●  user**:  *[ChannelAccount](botbuilder.channelaccount.md)* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:115](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L115)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:119](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L119)*
 
 
 

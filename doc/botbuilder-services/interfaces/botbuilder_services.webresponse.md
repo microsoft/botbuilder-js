@@ -17,7 +17,7 @@ Express or Restify Response object.
 
 
 
-*Defined in [libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts#L15)*
+*Defined in [libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts#L18)*
 
 
 
@@ -41,7 +41,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts:16](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts#L16)*
+*Defined in [libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts#L19)*
 
 
 
@@ -60,7 +60,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts#L17)*
+*Defined in [libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts:20](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts#L20)*
 
 
 
@@ -90,7 +90,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts#L18)*
+*Defined in [libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts#L21)*
 
 
 

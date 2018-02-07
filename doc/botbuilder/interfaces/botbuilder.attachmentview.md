@@ -15,7 +15,7 @@ Attachment View name and size
 
 **●  size**:  *`undefined`⎮`number`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:12](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L12)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:16](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L16)*
 
 
 
@@ -32,7 +32,7 @@ ___
 
 **●  viewId**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:10](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L10)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:14](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L14)*
 
 
 

@@ -12,7 +12,7 @@
 
 **●  sourceLanguage**:  *`string`* 
 
-*Defined in [libraries/botbuilder-ai/lib/languageTranslator.d.ts:8](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-ai/lib/languageTranslator.d.ts#L8)*
+*Defined in [libraries/botbuilder-ai/lib/languageTranslator.d.ts:11](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-ai/lib/languageTranslator.d.ts#L11)*
 
 
 
@@ -26,7 +26,7 @@ ___
 
 **●  sourceText**:  *`string`* 
 
-*Defined in [libraries/botbuilder-ai/lib/languageTranslator.d.ts:7](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-ai/lib/languageTranslator.d.ts#L7)*
+*Defined in [libraries/botbuilder-ai/lib/languageTranslator.d.ts:10](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-ai/lib/languageTranslator.d.ts#L10)*
 
 
 
@@ -40,7 +40,7 @@ ___
 
 **●  targetLanguage**:  *`string`* 
 
-*Defined in [libraries/botbuilder-ai/lib/languageTranslator.d.ts:9](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-ai/lib/languageTranslator.d.ts#L9)*
+*Defined in [libraries/botbuilder-ai/lib/languageTranslator.d.ts:12](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-ai/lib/languageTranslator.d.ts#L12)*
 
 
 

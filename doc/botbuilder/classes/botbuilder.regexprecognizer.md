@@ -83,7 +83,7 @@ The other advantage for non-LUIS bots is that it potentially lets your bot suppo
 ### ⊕ **new RegExpRecognizer**(settings?: *[Partial]()[RegExpRecognizerSettings](../interfaces/botbuilder.regexprecognizersettings.md)*): [RegExpRecognizer](botbuilder.regexprecognizer.md)
 
 
-*Defined in [libraries/botbuilder/lib/regExpRecognizer.d.ts:58](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/regExpRecognizer.d.ts#L58)*
+*Defined in [libraries/botbuilder/lib/regExpRecognizer.d.ts:61](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/regExpRecognizer.d.ts#L61)*
 
 
 
@@ -114,7 +114,7 @@ Creates a new instance of the recognizer.
 
 
 
-*Defined in [libraries/botbuilder/lib/regExpRecognizer.d.ts:104](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/regExpRecognizer.d.ts#L104)*
+*Defined in [libraries/botbuilder/lib/regExpRecognizer.d.ts:107](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/regExpRecognizer.d.ts#L107)*
 
 
 
@@ -180,7 +180,7 @@ ___
 
 *Inherited from [IntentRecognizer](botbuilder.intentrecognizer.md).[onEnabled](botbuilder.intentrecognizer.md#onenabled)*
 
-*Defined in [libraries/botbuilder/lib/intentRecognizer.d.ts:45](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/intentRecognizer.d.ts#L45)*
+*Defined in [libraries/botbuilder/lib/intentRecognizer.d.ts:48](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/intentRecognizer.d.ts#L48)*
 
 
 
@@ -215,7 +215,7 @@ ___
 
 *Inherited from [IntentRecognizer](botbuilder.intentrecognizer.md).[onFilter](botbuilder.intentrecognizer.md#onfilter)*
 
-*Defined in [libraries/botbuilder/lib/intentRecognizer.d.ts:65](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/intentRecognizer.d.ts#L65)*
+*Defined in [libraries/botbuilder/lib/intentRecognizer.d.ts:68](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/intentRecognizer.d.ts#L68)*
 
 
 
@@ -250,7 +250,7 @@ ___
 
 *Inherited from [IntentRecognizer](botbuilder.intentrecognizer.md).[onRecognize](botbuilder.intentrecognizer.md#onrecognize)*
 
-*Defined in [libraries/botbuilder/lib/intentRecognizer.d.ts:53](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/intentRecognizer.d.ts#L53)*
+*Defined in [libraries/botbuilder/lib/intentRecognizer.d.ts:56](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/intentRecognizer.d.ts#L56)*
 
 
 
@@ -285,7 +285,7 @@ ___
 
 *Inherited from [IntentRecognizer](botbuilder.intentrecognizer.md).[receiveActivity](botbuilder.intentrecognizer.md#receiveactivity)*
 
-*Defined in [libraries/botbuilder/lib/intentRecognizer.d.ts:30](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/intentRecognizer.d.ts#L30)*
+*Defined in [libraries/botbuilder/lib/intentRecognizer.d.ts:33](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/intentRecognizer.d.ts#L33)*
 
 
 
@@ -318,7 +318,7 @@ ___
 
 *Inherited from [IntentRecognizer](botbuilder.intentrecognizer.md).[recognize](botbuilder.intentrecognizer.md#recognize)*
 
-*Defined in [libraries/botbuilder/lib/intentRecognizer.d.ts:36](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/intentRecognizer.d.ts#L36)*
+*Defined in [libraries/botbuilder/lib/intentRecognizer.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/intentRecognizer.d.ts#L39)*
 
 
 
@@ -353,7 +353,7 @@ ___
 
 *Inherited from [IntentRecognizer](botbuilder.intentrecognizer.md).[findTopIntent](botbuilder.intentrecognizer.md#findtopintent)*
 
-*Defined in [libraries/botbuilder/lib/intentRecognizer.d.ts:74](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/intentRecognizer.d.ts#L74)*
+*Defined in [libraries/botbuilder/lib/intentRecognizer.d.ts:77](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/intentRecognizer.d.ts#L77)*
 
 
 
@@ -386,7 +386,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/regExpRecognizer.d.ts:127](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/regExpRecognizer.d.ts#L127)*
+*Defined in [libraries/botbuilder/lib/regExpRecognizer.d.ts:130](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/regExpRecognizer.d.ts#L130)*
 
 
 

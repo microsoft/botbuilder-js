@@ -89,7 +89,7 @@ export class Bot extends MiddlewareSet {
                 return Promise.resolve(onReady(context));
             }).then(() => {
                 // Next flush any queued up responses
-                return context.sendResponses();
+                return context.flushResponses();
             }).then(() => {
                 // Dispose of the context object
                 context.dispose();
@@ -145,7 +145,7 @@ export class Bot extends MiddlewareSet {
     }
 
     /**
-     * INTERNAL sends an outgoing set of activities to the user. Calling `context.sendResponses()` achieves the same 
+     * INTERNAL sends an outgoing set of activities to the user. Calling `context.flushResponses()` achieves the same 
      * effect and is the preferred way of sending activities to the user.
      *
      * @param context Context for the current turn of the conversation.

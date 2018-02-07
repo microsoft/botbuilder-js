@@ -17,16 +17,15 @@ Implemented by middleware plugins. Plugins have four separate methods they can i
 * [BotStateManager](../classes/botbuilder.botstatemanager.md)
 * [BrowserLocalStorage](../classes/botbuilder.browserlocalstorage.md)
 * [BrowserSessionStorage](../classes/botbuilder.browsersessionstorage.md)
-* [ConsoleLogger](../classes/botbuilder.consolelogger.md)
-* [DictionaryRenderer]()
+* [DictionaryRenderer](../classes/botbuilder.dictionaryrenderer.md)
 * [IntentRecognizer](../classes/botbuilder.intentrecognizer.md)
 * [IntentRecognizerSet](../classes/botbuilder.intentrecognizerset.md)
-* [JsonTemplates]()
+* [JsonTemplates](../classes/botbuilder.jsontemplates.md)
 * [MemoryStorage](../classes/botbuilder.memorystorage.md)
 * [MiddlewareSet](../classes/botbuilder.middlewareset.md)
 * [RegExpRecognizer](../classes/botbuilder.regexprecognizer.md)
 * [StorageMiddleware](../classes/botbuilder.storagemiddleware.md)
-* [TemplateManager]()
+* [TemplateManager](../classes/botbuilder.templatemanager.md)
 
 
 ## Methods
@@ -38,7 +37,7 @@ Implemented by middleware plugins. Plugins have four separate methods they can i
 
 
 
-*Defined in [libraries/botbuilder/lib/middleware.d.ts:36](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/middleware.d.ts#L36)*
+*Defined in [libraries/botbuilder/lib/middleware.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/middleware.d.ts#L39)*
 
 
 
@@ -72,7 +71,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/middleware.d.ts:54](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/middleware.d.ts#L54)*
+*Defined in [libraries/botbuilder/lib/middleware.d.ts:57](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/middleware.d.ts#L57)*
 
 
 
@@ -107,7 +106,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/middleware.d.ts:45](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/middleware.d.ts#L45)*
+*Defined in [libraries/botbuilder/lib/middleware.d.ts:48](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/middleware.d.ts#L48)*
 
 
 

@@ -27,17 +27,6 @@ function createBotContext(bot, request) {
     if (request) {
         context.conversationReference = activity_1.getConversationReference(request);
     }
-    // Generate null logger
-    context.logger = {};
-    context.logger.flush = () => {
-        return new Promise((resolve) => {
-            resolve();
-        });
-    };
-    ['logRequest', 'startRequest', 'logDependency', 'startDependency', 'logAvailability',
-        'logEvent', 'logException', 'logException', 'logMetric', 'log'].forEach((method) => {
-        context.logger[method] = () => { };
-    });
     // Add methods
     // !!!!!!! Be sure to use "this." when accessing members of the context object because
     // !!!!!!! you could be working with a clone.
@@ -47,18 +36,6 @@ function createBotContext(bot, request) {
         }
     }
     let disposed = false;
-    context.begin = function begin(dialog) {
-        throwIfDisposed('begin');
-        return dialog.begin(this);
-    };
-    context.clone = function clone() {
-        throwIfDisposed('clone');
-        const clone = Object.assign({}, this);
-        if (clone.state) {
-            clone.state = Object.assign({}, clone.state);
-        }
-        return clone;
-    };
     context.delay = function delay(duration) {
         throwIfDisposed('delay');
         this.responses.push({ type: 'delay', value: duration });
@@ -75,57 +52,6 @@ function createBotContext(bot, request) {
         };
         this.responses.push(activity);
         return this;
-    };
-    context.findEntities = function findEntities(intent, type) {
-        throwIfDisposed('findEntities');
-        if (!type && (typeof intent !== 'object' || !intent.hasOwnProperty('name'))) {
-            type = intent;
-            intent = undefined;
-        }
-        // Find entities to search over
-        let entities = this.request.entities || [];
-        const topIntent = intent || this.topIntent;
-        if (topIntent && topIntent.entities) {
-            entities = entities.concat(topIntent.entities);
-        }
-        // Search over entities
-        const matched = [];
-        if (type) {
-            entities.forEach((entity) => {
-                let matches = typeof type === 'string' ? (entity.type === type) : type.test(entity.type);
-                if (matches) {
-                    matched.push(entity);
-                }
-            });
-        }
-        return matched;
-    };
-    context.getEntity = function getEntity(intent, type, occurrence) {
-        throwIfDisposed('getEntity');
-        if (!occurrence && (typeof intent !== 'object' || !intent.hasOwnProperty('name'))) {
-            occurrence = type;
-            type = intent;
-            intent = undefined;
-        }
-        if (typeof occurrence !== 'number') {
-            occurrence = 0;
-        }
-        const entities = this.findEntities(intent, type);
-        if (occurrence < entities.length) {
-            const entity = entities[occurrence];
-            return entity.hasOwnProperty('value') ? entity.value : entity;
-        }
-        return undefined;
-    };
-    context.ifIntent = function ifIntent(filter) {
-        if (this.topIntent) {
-            return typeof filter === 'string' ? this.topIntent.name === filter : filter.test(this.topIntent.name);
-        }
-        return false;
-    };
-    context.ifRegExp = function ifRegExp(filter) {
-        const utterance = (this.request.text || '').trim();
-        return filter.test(utterance);
     };
     context.reply = function reply(textOrActivity, speak, additional) {
         throwIfDisposed('reply');
@@ -164,8 +90,8 @@ function createBotContext(bot, request) {
         return this;
     };
     let responded = false;
-    context.sendResponses = function sendResponses() {
-        throwIfDisposed('sendResponses');
+    context.flushResponses = function flushResponses() {
+        throwIfDisposed('flushResponses');
         const args = this.responses.slice(0);
         const cnt = args.length;
         args.unshift(this);

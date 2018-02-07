@@ -17,7 +17,6 @@ __export(require("./botService"));
 __export(require("./botStateManager"));
 __export(require("./browserStorage"));
 __export(require("./cardStyler"));
-__export(require("./consoleLogger"));
 __export(require("./entityObject"));
 __export(require("./intentRecognizer"));
 __export(require("./intentRecognizerSet"));

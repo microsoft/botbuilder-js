@@ -15,7 +15,7 @@ An image on a card
 
 **●  alt**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:260](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L260)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:264](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L264)*
 
 
 
@@ -32,7 +32,7 @@ ___
 
 **●  tap**:  *[CardAction](botbuilder.cardaction.md)* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:262](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L262)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:266](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L266)*
 
 
 
@@ -49,7 +49,7 @@ ___
 
 **●  url**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:258](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L258)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:262](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L262)*
 
 
 

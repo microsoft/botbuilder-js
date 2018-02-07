@@ -32,19 +32,6 @@ export function createBotContext(bot: Bot, request?: Activity): BotContext {
         context.conversationReference = getConversationReference(request);
     }
 
-    // Generate null logger
-    context.logger = <BotLogger>{};
-    context.logger.flush = () => {
-        return new Promise<void>((resolve) => {
-            resolve();
-        });
-    };
-
-    ['logRequest', 'startRequest', 'logDependency', 'startDependency', 'logAvailability',
-        'logEvent', 'logException', 'logException', 'logMetric', 'log'].forEach((method) => {
-            (<any>context.logger)[method] = () => { };
-        });
-
     // Add methods
     // !!!!!!! Be sure to use "this." when accessing members of the context object because
     // !!!!!!! you could be working with a clone.
@@ -54,21 +41,6 @@ export function createBotContext(bot: Bot, request?: Activity): BotContext {
         }
     }
     let disposed = false;
-
-
-    context.begin = function begin(dialog: BeginDialog) {
-        throwIfDisposed('begin');
-        return dialog.begin(this);
-    };
-
-    context.clone = function clone() {
-        throwIfDisposed('clone');
-        const clone = Object.assign({}, this);
-        if (clone.state) {
-            clone.state = Object.assign({}, clone.state);
-        }
-        return clone;
-    };
 
     context.delay = function delay(duration: number) {
         throwIfDisposed('delay');
@@ -89,59 +61,6 @@ export function createBotContext(bot: Bot, request?: Activity): BotContext {
         this.responses.push(activity);
         return this;
     };
-
-    context.findEntities = function findEntities<T>(intent: Intent | string | RegExp | undefined, type?: string | RegExp) {
-        throwIfDisposed('findEntities');
-        if (!type && (typeof intent !== 'object' || !intent.hasOwnProperty('name'))) {
-            type = <string | RegExp>intent;
-            intent = undefined;
-        }
-
-        // Find entities to search over
-        let entities: EntityObject<T>[] = this.request.entities as EntityObject<any>[] || [];
-        const topIntent = <Intent>intent || this.topIntent;
-        if (topIntent && topIntent.entities) { entities = entities.concat(topIntent.entities) }
-
-        // Search over entities
-        const matched: EntityObject<T>[] = [];
-        if (type) {
-            entities.forEach((entity) => {
-                let matches = typeof type === 'string' ? (entity.type === type) : (type as RegExp).test(entity.type);
-                if (matches) {
-                    matched.push(entity);
-                }
-            });
-        }
-        return matched;
-    };
-
-    context.getEntity = function getEntity(intent: Intent | string | RegExp | undefined, type?: string | RegExp | number, occurrence?: number) {
-        throwIfDisposed('getEntity');
-        if (!occurrence && (typeof intent !== 'object' || !intent.hasOwnProperty('name'))) {
-            occurrence = <number>type;
-            type = <string | RegExp>intent;
-            intent = undefined;
-        }
-        if (typeof occurrence !== 'number') { occurrence = 0 }
-        const entities = this.findEntities(<Intent>intent, <string | RegExp>type);
-        if (occurrence < entities.length) {
-            const entity = entities[occurrence];
-            return entity.hasOwnProperty('value') ? entity.value : entity
-        }
-        return undefined;
-    };
-
-    context.ifIntent = function ifIntent(filter: string | RegExp) {
-        if (this.topIntent) {
-            return typeof filter === 'string' ? this.topIntent.name === filter : filter.test(this.topIntent.name);
-        }
-        return false;
-    }
-
-    context.ifRegExp = function ifRegExp(filter: RegExp) {
-        const utterance = (this.request.text || '').trim();
-        return filter.test(utterance);
-    }
 
     context.reply = function reply(textOrActivity: string | Partial<Activity>, speak?: string | Partial<Activity>, additional?: Partial<Activity>) {
         throwIfDisposed('reply');
@@ -181,8 +100,8 @@ export function createBotContext(bot: Bot, request?: Activity): BotContext {
     }
 
     let responded = false;
-    context.sendResponses = function sendResponses() {
-        throwIfDisposed('sendResponses');
+    context.flushResponses = function flushResponses() {
+        throwIfDisposed('flushResponses');
 
         const args: any[] = this.responses.slice(0);
         const cnt = args.length;

@@ -15,7 +15,7 @@ Metadata for an attachment.
 
 **●  name**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L19)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:23](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L23)*
 
 
 
@@ -32,7 +32,7 @@ ___
 
 **●  type**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L21)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:25](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L25)*
 
 
 
@@ -49,7 +49,7 @@ ___
 
 **●  views**:  *[AttachmentView](botbuilder.attachmentview.md)[]* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:23](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L23)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L27)*
 
 
 

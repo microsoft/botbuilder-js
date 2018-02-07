@@ -255,121 +255,6 @@ describe('context', function () {
             .then(() => done());
     });
 
-    it('should findEntities() of a specific type', function (done) {
-        const code = builder.EndOfConversationCodes.botTimedOut;
-        const testAdapter = new builder.TestAdapter();
-        const bot = new builder.Bot(testAdapter)
-            .use({
-                receiveActivity: (ctx, next) => {
-                    ctx.topIntent = {
-                        name: 'BookFlight',
-                        score: 1.0,
-                        entities: [
-                            { type: 'fromCity', value: 'seattle' },
-                            { type: 'toCity', value: 'boston' },
-                            { type: 'date', value: '9/20/2017' }
-                        ]
-                    };
-                    return next();
-                }
-            })
-            .onReceive((context) => {
-                let msg = 'I found ';
-                let testAdapter = '';
-                context.findEntities('fromCity').forEach((entity) => {
-                    msg += testAdapter + entity.value;
-                    testAdapter = ' and ';
-                })
-                context.reply(msg);
-            });
-        testAdapter.send('book flight').assertReply('I found seattle')
-            .then(() => done());
-    });
-
-    it('should findEntities() using a pattern', function (done) {
-        const code = builder.EndOfConversationCodes.botTimedOut;
-        const testAdapter = new builder.TestAdapter();
-        const bot = new builder.Bot(testAdapter)
-            .use({
-                receiveActivity: (ctx, next) => {
-                    ctx.topIntent = {
-                        name: 'BookFlight',
-                        score: 1.0,
-                        entities: [
-                            { type: 'fromCity', value: 'seattle' },
-                            { type: 'toCity', value: 'boston' },
-                            { type: 'date', value: '9/20/2017' }
-                        ]
-                    };
-                    return next();
-                }
-            })
-            .onReceive((context) => {
-                let msg = 'I found ';
-                let testAdapter = '';
-                context.findEntities(/.*City/).forEach((entity) => {
-                    msg += testAdapter + entity.value;
-                    testAdapter = ' and ';
-                });
-                context.reply(msg);
-            });
-        testAdapter.send('book flight')
-            .assertReply('I found seattle and boston')
-            .then(() => done());
-    });
-
-    it('should return the value of the first match using getEntity()', function (done) {
-        const code = builder.EndOfConversationCodes.botTimedOut;
-        const testAdapter = new builder.TestAdapter();
-        const bot = new builder.Bot(testAdapter)
-            .use({
-                receiveActivity: (ctx, next) => {
-                    ctx.topIntent = {
-                        name: 'BookFlight',
-                        score: 1.0,
-                        entities: [
-                            { type: 'fromCity', value: 'seattle' },
-                            { type: 'toCity', value: 'boston' },
-                            { type: 'date', value: '9/20/2017' }
-                        ]
-                    };
-                    return next();
-                }
-            })
-            .onReceive((context) => {
-                const value = context.getEntity(/.*City/);
-                context.reply(`I found ${value}`);
-            });
-        testAdapter.send('book flight').assertReply('I found seattle')
-            .then(() => done());
-    });
-
-    it('should return the value of the second match using getEntity()', function (done) {
-        const code = builder.EndOfConversationCodes.botTimedOut;
-        const testAdapter = new builder.TestAdapter();
-        const bot = new builder.Bot(testAdapter)
-            .use({
-                receiveActivity: (ctx, next) => {
-                    ctx.topIntent = {
-                        name: 'BookFlight',
-                        score: 1.0,
-                        entities: [
-                            { type: 'fromCity', value: 'seattle' },
-                            { type: 'toCity', value: 'boston' },
-                            { type: 'date', value: '9/20/2017' }
-                        ]
-                    };
-                    return next();
-                }
-            })
-            .onReceive((context) => {
-                const value = context.getEntity(/.*City/, 1);
-                context.reply(`I found ${value}`);
-            });
-        testAdapter.send('book flight').assertReply('I found boston')
-            .then(() => done());
-    });
-
     it('should send a batch of activities', function (done) {
         const testAdapter = new builder.TestAdapter();
         const bot = new builder.Bot(testAdapter)
@@ -395,7 +280,7 @@ describe('context', function () {
         const testAdapter = new builder.TestAdapter();
         const bot = new builder.Bot(testAdapter)
             .onReceive((context) => {
-                return context.showTyping().delay(2000).reply('foo').sendResponses().then((r) => {
+                return context.showTyping().delay(2000).reply('foo').flushResponses().then((r) => {
                     assert(context.responses.length === 0, `Invalid responses length of ${context.responses.length}`);
                     batch = 1;
                     context.reply('bar');
@@ -424,7 +309,7 @@ describe('context', function () {
                 } 
             })
             .onReceive((context) => {
-                return context.sendResponses().then((r) => {
+                return context.flushResponses().then((r) => {
                     assert(batch === 1, `Changes not flushed.`);
                     batch = 2;
                     context.reply('bar');

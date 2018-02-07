@@ -21,7 +21,7 @@ Key/value pairs.
 
 **●  conversation**:  *[ConversationState](botbuilder.__global.conversationstate.md)* 
 
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:260](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/botbuilder.d.ts#L260)*
+*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:184](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botbuilder.d.ts#L184)*
 
 
 
@@ -38,7 +38,7 @@ ___
 
 **●  user**:  *[UserState](botbuilder.__global.userstate.md)* 
 
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:262](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/botbuilder.d.ts#L262)*
+*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:186](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botbuilder.d.ts#L186)*
 
 
 
@@ -55,7 +55,7 @@ ___
 
 **●  writeOptimizer**:  *`undefined`⎮`object`* 
 
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:264](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/botbuilder.d.ts#L264)*
+*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:188](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botbuilder.d.ts#L188)*
 
 
 
