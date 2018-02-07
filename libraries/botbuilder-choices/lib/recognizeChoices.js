@@ -8,7 +8,7 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 const findChoices_1 = require("./findChoices");
-const Recognizers = require("recognizers-text-number");
+const Recognizers = require("@microsoft/recognizers-text-number");
 const numberModel = Recognizers.NumberRecognizer.instance.getNumberModel("en-us");
 const ordinalModel = Recognizers.NumberRecognizer.instance.getOrdinalModel("en-us");
 function recognizeChoices(utterance, choices, options) {

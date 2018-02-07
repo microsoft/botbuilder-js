@@ -8,7 +8,8 @@
 
 import { Choice, findChoices, FoundChoice, FindChoicesOptions } from './findChoices';
 import { ModelResult } from './modelResult';
-import * as Recognizers from 'recognizers-text-number';
+import * as Recognizers from '@microsoft/recognizers-text-number';
+
 
 const numberModel = Recognizers.NumberRecognizer.instance.getNumberModel("en-us");
 const ordinalModel = Recognizers.NumberRecognizer.instance.getOrdinalModel("en-us");
