@@ -49,7 +49,7 @@ const adapter = new BotFrameworkAdapter({
 server.post('/api/messages', adapter.listen());
 
 // Initialize bot by passing it adapter
-const bot = new Bot(botFrameworkAdapter);
+const bot = new Bot(adapter);
 
 // Define the bots onReceive message handler
 bot.onReceive((context) => {
@@ -89,6 +89,7 @@ cd botbuilder-js
 Install [Lerna](https://lernajs.io/) and dev dependencies:
 
 ```bash
+npm install --global lerna
 npm install --global typescript
 npm install --global mocha
 npm install
