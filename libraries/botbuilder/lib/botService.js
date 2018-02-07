@@ -25,9 +25,6 @@ class BotService {
         this.instance = instance;
     }
     contextCreated(context, next) {
-        if (context.hasOwnProperty(this.name)) {
-            context.logger.log(`A service named '${this.name}' is already registered with the context object.`, TraceLevel.warning);
-        }
         context[this.name] = this.getService(context);
         return next();
     }

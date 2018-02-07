@@ -14,7 +14,6 @@ export * from './botStateManager';
 export * from './browserStorage';
 export * from './cardStyler';
 export * from './activityAdapter';
-export * from './consoleLogger';
 export * from './entityObject';
 export * from './intentRecognizer';
 export * from './intentRecognizerSet';
@@ -65,11 +64,6 @@ declare global {
         state: BotState;
 
         /**
-         *  Logger to trace messages and telemetry data. 
-         */
-        logger: BotLogger;
-
-        /**
          * (Optional) storage service for storing JSON based object.
          */
         storage?: Storage;
@@ -85,24 +79,6 @@ declare global {
          * tempalmtemanager for registering template engines
          */
         templateManager : TemplateManager; 
-
-        /**
-         * Starts a prompt or other type of dialog.
-         *
-         * **Usage Example**
-         *
-         * ```js
-         * context.prompt(namePrompt.reply(`Hi. What's your name?`));
-         * ```
-         *
-         * @param promptOrDialog An instance of a prompt or dialog to start.
-         */
-        begin(promptOrDialog: BeginDialog): Promise<any> | any;
-
-        /**
-         * Returns a clone that's a shallow copy of the context object. 
-         */
-        clone(): this;
 
         /**
          * Queues a new "delay" activity to the [responses](#responses) array. This will
@@ -152,67 +128,6 @@ declare global {
         endOfConversation(code?: string): this;
 
         /**
-         * Finds all entities of a given type on the [topIntent](#topintent).
-         *
-         * **Usage Example**
-         *
-         * ```js
-         * function sendMessage(context) {
-         *      const text = context.getEntity('text');
-         *      const recipients = context.findEntities('recipient') || [];
-         *      recipients.forEach((entity) => {
-         *          name = entity.value;
-         *          // ... send text to recipient ...
-         *      });
-         * }
-         * ```
-         *
-         * @param intent (Optional) intent that should be searched over. This will override the use
-         * of `topIntent`. 
-         * @param type The type of entities to return. If this is a RegExp, then any type matching
-         * the specified pattern will be returned.
-         */
-        findEntities<T = any>(intent: Intent, type: string | RegExp): EntityObject<T>[];
-        findEntities<T = any>(type: string | RegExp): EntityObject<T>[];
-
-        /**
-         * Returns the value of an individual entity of a specified type.
-         *
-         * **Usage Example**
-         *
-         * ```js
-         * const helpIntent = context.ifRegExp(/help .*with (.*)/i, ['topic']);
-         *
-         * if (helpIntent) {
-         *      const topic = context.getEntity(helpIntent, 'topic');
-         *      // ... return help for topic ...
-         * } 
-         * ```
-         *
-         * @param intent (Optional) intent that should be searched over. This will override the use
-         * of `topIntent`. 
-         * @param type The type of entity to return. If this is a RegExp, then any type matching
-         * the specified pattern will be returned.
-         * @param occurrence (Optional) a zero based index of the entity to return when there are 
-         * multiple occurrences of  same entity type. The default value is `0` meaning the first
-         * occurrence will be returned.
-         */
-        getEntity<T = any>(intent: Intent, type: string | RegExp, occurrence?: number): T | undefined;
-        getEntity<T = any>(type: string | RegExp, occurrence?: number): T | undefined;
-
-        /**
-         * Returns `true` if the context has a [topIntent](#topintent) that matches the specified filter.
-         * @param filter The name of the intent or a regular expression to match against the intent.
-         */
-        ifIntent(filter: string | RegExp): boolean;
-
-        /**
-         * Returns `true` in the specified expression matches the users utterance.
-         * @param filter The expression to match against the users utterance.
-         */
-        ifRegExp(filter: RegExp): boolean;
-
-        /**
          * Queues a new "message" or activity to the [responses](#responses) array.
          * 
          * **Usage Example**
@@ -253,7 +168,7 @@ declare global {
          *      const query = context.request.text;
          *      return context.reply(`Please wait while I find that...`)
          *                    .showTyping()
-         *                    .sendResponses()
+         *                    .flushResponses()
          *                    .then(() => runQuery(query))
          *                    .then((results) => resultsAsActivity(results))
          *                    .then((activity) => {
@@ -263,7 +178,7 @@ declare global {
          * }
          * ```
          */
-        sendResponses(): Promise<ConversationResourceResponse[]>;
+        flushResponses(): Promise<ConversationResourceResponse[]>;
 
         /**
          * Queues a new "typing" activity to the [responses](#responses) array. On supported 
@@ -305,60 +220,11 @@ declare global {
     export interface ConversationState extends StoreItem {
     }
 
-    /** Extensible logging interface. */
-    export interface BotLogger {
-        flush(): Promise<void>;
-        logRequest(name: string, startTime: Date, duration: number, responseCode: string, success: boolean): void;
-        startRequest(name: string, startTime?: Date): BotLoggerOperation;
-        logDependency(dependencyName: string, commandName: string, startTime: Date, duration: number, success: boolean, dependencyTypeName?: string, target?: string, data?: string, resultCode?: string): void;
-        startDependency(dependencyName: string, commandName: string, startTime: Date, dependencyTypeName?: string, target?: string, data?: string): BotLoggerOperation;
-        logAvailability(name: string, timeStamp: Date, duration: number, runLocation: string, success: boolean, message?: string, properties?: { [key: string]: string; }, metrics?: { [key: string]: number; }): void;
-        logEvent(eventName: string, properties?: { [key: string]: string; }, metrics?: { [key: string]: number; }): void;
-        logException(exception: Error, message?: string, properties?: { [key: string]: string; }, metrics?: { [key: string]: number; }): void;
-        logMetric(name: string, value: number, properties?: { [key: string]: string; }): void;
-        log(message: string, traceLevel?: TraceLevel, properties?: { [key: string]: string; }): void;
-    }
-
-    export interface BotLoggerOperation {
-        stop(resultCode: string, success: boolean): void;
-    }
-
-    /** Logging trace levels. */
-    export enum TraceLevel {
-        /** Debug only information. */
-        debug,
-
-        /** Generic log message. */
-        log,
-
-        /** More verbose than log. */
-        information,
-
-        /** A warning condition. */
-        warning,
-
-        /** An error occurred, but it is recoverable. */
-        error,
-
-        /** A critical, non-recoverable error. */
-        critical
-    }
-
     /** Well known entity types. */
     export interface EntityTypes {
         attachment: string;
         string: string;
         number: string;
         boolean: string;
-    }
-
-    /** Implemented by objects, like prompts, that can be started using `context.begin()`. */
-    export interface BeginDialog {
-        /**
-         * Function that will be called to start the object.
-         *
-         * @param context Context for the current turn of conversation.
-         */
-        begin(context: BotContext): Promise<any> | any;
     }
 }
