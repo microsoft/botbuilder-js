@@ -15,7 +15,7 @@ A response containing a resource ID.
 
 **●  id**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:238](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L238)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:242](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L242)*
 
 
 

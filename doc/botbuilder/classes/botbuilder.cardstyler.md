@@ -46,7 +46,7 @@ A set of utility functions designed to assist with the formatting of the various
 
 **●  contentTypes**:  *`object`* 
 
-*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:23](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/cardStyler.d.ts#L23)*
+*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:26](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/cardStyler.d.ts#L26)*
 
 
 
@@ -126,7 +126,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:124](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/cardStyler.d.ts#L124)*
+*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:127](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/cardStyler.d.ts#L127)*
 
 
 
@@ -159,7 +159,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:48](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/cardStyler.d.ts#L48)*
+*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:51](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/cardStyler.d.ts#L51)*
 
 
 
@@ -196,7 +196,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:57](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/cardStyler.d.ts#L57)*
+*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:60](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/cardStyler.d.ts#L60)*
 
 
 
@@ -232,7 +232,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:66](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/cardStyler.d.ts#L66)*
+*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:69](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/cardStyler.d.ts#L69)*
 
 
 
@@ -270,7 +270,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:77](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/cardStyler.d.ts#L77)*
+*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:80](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/cardStyler.d.ts#L80)*
 
 
 
@@ -294,7 +294,7 @@ Returns an attachment for a hero card. Hero cards tend to have one dominant full
 
 
 
-*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:78](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/cardStyler.d.ts#L78)*
+*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:81](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/cardStyler.d.ts#L81)*
 
 
 
@@ -328,7 +328,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:130](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/cardStyler.d.ts#L130)*
+*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:133](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/cardStyler.d.ts#L133)*
 
 
 
@@ -361,7 +361,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:136](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/cardStyler.d.ts#L136)*
+*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:139](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/cardStyler.d.ts#L139)*
 
 
 
@@ -394,7 +394,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:85](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/cardStyler.d.ts#L85)*
+*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:88](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/cardStyler.d.ts#L88)*
 
 
 
@@ -427,7 +427,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:94](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/cardStyler.d.ts#L94)*
+*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:97](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/cardStyler.d.ts#L97)*
 
 
 
@@ -464,7 +464,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:107](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/cardStyler.d.ts#L107)*
+*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:110](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/cardStyler.d.ts#L110)*
 
 
 
@@ -488,7 +488,7 @@ Returns an attachment for a thumbnail card. Thumbnail cards are similar to [hero
 
 
 
-*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:108](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/cardStyler.d.ts#L108)*
+*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:111](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/cardStyler.d.ts#L111)*
 
 
 
@@ -522,7 +522,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:117](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/cardStyler.d.ts#L117)*
+*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:120](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/cardStyler.d.ts#L120)*
 
 
 

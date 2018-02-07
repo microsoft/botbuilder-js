@@ -49,7 +49,7 @@
 ### ⊕ **new LuisRecognizer**(appId: *`string`*, subscriptionKey: *`string`*, baseUri?: *`undefined`⎮`string`*): [LuisRecognizer](botbuilder_ai.luisrecognizer.md)
 
 
-*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:10](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L10)*
+*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:13](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L13)*
 
 
 
@@ -81,7 +81,7 @@
 
 *Inherited from IntentRecognizer.onEnabled*
 
-*Defined in libraries/botbuilder-ai/node_modules/botbuilder/lib/intentRecognizer.d.ts:45*
+*Defined in libraries/botbuilder-ai/node_modules/botbuilder/lib/intentRecognizer.d.ts:48*
 
 
 
@@ -116,7 +116,7 @@ ___
 
 *Inherited from IntentRecognizer.onFilter*
 
-*Defined in libraries/botbuilder-ai/node_modules/botbuilder/lib/intentRecognizer.d.ts:65*
+*Defined in libraries/botbuilder-ai/node_modules/botbuilder/lib/intentRecognizer.d.ts:68*
 
 
 
@@ -151,7 +151,7 @@ ___
 
 *Inherited from IntentRecognizer.onRecognize*
 
-*Defined in libraries/botbuilder-ai/node_modules/botbuilder/lib/intentRecognizer.d.ts:53*
+*Defined in libraries/botbuilder-ai/node_modules/botbuilder/lib/intentRecognizer.d.ts:56*
 
 
 
@@ -186,7 +186,7 @@ ___
 
 *Inherited from IntentRecognizer.receiveActivity*
 
-*Defined in libraries/botbuilder-ai/node_modules/botbuilder/lib/intentRecognizer.d.ts:30*
+*Defined in libraries/botbuilder-ai/node_modules/botbuilder/lib/intentRecognizer.d.ts:33*
 
 
 
@@ -219,7 +219,7 @@ ___
 
 *Inherited from IntentRecognizer.recognize*
 
-*Defined in libraries/botbuilder-ai/node_modules/botbuilder/lib/intentRecognizer.d.ts:36*
+*Defined in libraries/botbuilder-ai/node_modules/botbuilder/lib/intentRecognizer.d.ts:39*
 
 
 
@@ -254,7 +254,7 @@ ___
 
 *Inherited from IntentRecognizer.findTopIntent*
 
-*Defined in libraries/botbuilder-ai/node_modules/botbuilder/lib/intentRecognizer.d.ts:74*
+*Defined in libraries/botbuilder-ai/node_modules/botbuilder/lib/intentRecognizer.d.ts:77*
 
 
 
@@ -287,7 +287,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:12](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L12)*
+*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L15)*
 
 
 
@@ -320,7 +320,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:13](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L13)*
+*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:16](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L16)*
 
 
 

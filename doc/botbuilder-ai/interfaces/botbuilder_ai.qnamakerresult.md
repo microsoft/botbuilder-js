@@ -12,7 +12,7 @@
 
 **●  answer**:  *`string`* 
 
-*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:7](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L7)*
+*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:10](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L10)*
 
 
 
@@ -26,7 +26,7 @@ ___
 
 **●  score**:  *`number`* 
 
-*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:8](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L8)*
+*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:11](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L11)*
 
 
 

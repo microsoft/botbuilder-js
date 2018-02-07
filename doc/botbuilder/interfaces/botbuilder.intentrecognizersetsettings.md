@@ -15,7 +15,7 @@ Optional settings for an `IntentRecognizerSet`.
 
 **●  recognizeOrder**:  *[RecognizeOrder](../enums/botbuilder.recognizeorder.md)* 
 
-*Defined in [libraries/botbuilder/lib/intentRecognizerSet.d.ts:16](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/intentRecognizerSet.d.ts#L16)*
+*Defined in [libraries/botbuilder/lib/intentRecognizerSet.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/intentRecognizerSet.d.ts#L19)*
 
 
 
@@ -32,7 +32,7 @@ ___
 
 **●  stopOnExactMatch**:  *`undefined`⎮`true`⎮`false`* 
 
-*Defined in [libraries/botbuilder/lib/intentRecognizerSet.d.ts:22](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/intentRecognizerSet.d.ts#L22)*
+*Defined in [libraries/botbuilder/lib/intentRecognizerSet.d.ts:25](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/intentRecognizerSet.d.ts#L25)*
 
 
 

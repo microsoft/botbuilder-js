@@ -43,7 +43,7 @@ A set of utility functions to assist with the formatting of the various message 
 
 
 
-*Defined in [libraries/botbuilder/lib/messageStyler.d.ts:57](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/messageStyler.d.ts#L57)*
+*Defined in [libraries/botbuilder/lib/messageStyler.d.ts:60](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/messageStyler.d.ts#L60)*
 
 
 
@@ -78,7 +78,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/messageStyler.d.ts:86](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/messageStyler.d.ts#L86)*
+*Defined in [libraries/botbuilder/lib/messageStyler.d.ts:89](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/messageStyler.d.ts#L89)*
 
 
 
@@ -124,7 +124,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/messageStyler.d.ts:105](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/messageStyler.d.ts#L105)*
+*Defined in [libraries/botbuilder/lib/messageStyler.d.ts:108](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/messageStyler.d.ts#L108)*
 
 
 
@@ -168,7 +168,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/messageStyler.d.ts:65](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/messageStyler.d.ts#L65)*
+*Defined in [libraries/botbuilder/lib/messageStyler.d.ts:68](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/messageStyler.d.ts#L68)*
 
 
 
@@ -203,7 +203,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/messageStyler.d.ts:49](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/messageStyler.d.ts#L49)*
+*Defined in [libraries/botbuilder/lib/messageStyler.d.ts:52](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/messageStyler.d.ts#L52)*
 
 
 
@@ -238,7 +238,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/messageStyler.d.ts:41](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/messageStyler.d.ts#L41)*
+*Defined in [libraries/botbuilder/lib/messageStyler.d.ts:44](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/messageStyler.d.ts#L44)*
 
 
 

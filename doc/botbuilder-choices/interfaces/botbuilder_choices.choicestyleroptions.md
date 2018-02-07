@@ -12,7 +12,7 @@
 
 **●  includeNumbers**:  *`undefined`⎮`true`⎮`false`* 
 
-*Defined in [libraries/botbuilder-choices/lib/choiceStyler.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-choices/lib/choiceStyler.d.ts#L27)*
+*Defined in [libraries/botbuilder-choices/lib/choiceStyler.d.ts:30](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-choices/lib/choiceStyler.d.ts#L30)*
 
 
 
@@ -29,7 +29,7 @@ ___
 
 **●  inlineOr**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder-choices/lib/choiceStyler.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-choices/lib/choiceStyler.d.ts#L17)*
+*Defined in [libraries/botbuilder-choices/lib/choiceStyler.d.ts:20](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-choices/lib/choiceStyler.d.ts#L20)*
 
 
 
@@ -46,7 +46,7 @@ ___
 
 **●  inlineOrMore**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder-choices/lib/choiceStyler.d.ts:22](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-choices/lib/choiceStyler.d.ts#L22)*
+*Defined in [libraries/botbuilder-choices/lib/choiceStyler.d.ts:25](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-choices/lib/choiceStyler.d.ts#L25)*
 
 
 
@@ -63,7 +63,7 @@ ___
 
 **●  inlineSeparator**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder-choices/lib/choiceStyler.d.ts:12](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-choices/lib/choiceStyler.d.ts#L12)*
+*Defined in [libraries/botbuilder-choices/lib/choiceStyler.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-choices/lib/choiceStyler.d.ts#L15)*
 
 
 

@@ -15,7 +15,7 @@ An item on a receipt card.
 
 **●  image**:  *[CardImage](botbuilder.cardimage.md)* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:309](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L309)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:313](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L313)*
 
 
 
@@ -32,7 +32,7 @@ ___
 
 **●  price**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:311](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L311)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:315](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L315)*
 
 
 
@@ -49,7 +49,7 @@ ___
 
 **●  quantity**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:313](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L313)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:317](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L317)*
 
 
 
@@ -66,7 +66,7 @@ ___
 
 **●  subtitle**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:305](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L305)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:309](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L309)*
 
 
 
@@ -83,7 +83,7 @@ ___
 
 **●  tap**:  *[CardAction](botbuilder.cardaction.md)* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:315](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L315)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:319](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L319)*
 
 
 
@@ -100,7 +100,7 @@ ___
 
 **●  text**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:307](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L307)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:311](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L311)*
 
 
 
@@ -117,7 +117,7 @@ ___
 
 **●  title**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:303](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L303)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:307](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L307)*
 
 
 

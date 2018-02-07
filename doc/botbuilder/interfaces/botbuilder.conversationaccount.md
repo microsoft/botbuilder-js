@@ -30,7 +30,7 @@ Channel account information for a conversation.
 
 *Inherited from [ChannelAccount](botbuilder.channelaccount.md).[id](botbuilder.channelaccount.md#id)*
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:30](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L30)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:34](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L34)*
 
 
 
@@ -47,7 +47,7 @@ ___
 
 **●  isGroup**:  *`undefined`⎮`true`⎮`false`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L39)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:43](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L43)*
 
 
 
@@ -66,7 +66,7 @@ ___
 
 *Inherited from [ChannelAccount](botbuilder.channelaccount.md).[name](botbuilder.channelaccount.md#name)*
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:32](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L32)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:36](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L36)*
 
 
 

@@ -15,7 +15,7 @@ MediaUrl data.
 
 **●  profile**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:374](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L374)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:378](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L378)*
 
 
 
@@ -32,7 +32,7 @@ ___
 
 **●  url**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:372](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L372)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:376](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L376)*
 
 
 

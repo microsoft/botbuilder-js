@@ -25,7 +25,7 @@ An attachment within an activity.
 
 **●  content**:  *`any`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:95](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L95)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:99](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L99)*
 
 
 
@@ -42,7 +42,7 @@ ___
 
 **●  contentType**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:91](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L91)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:95](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L95)*
 
 
 
@@ -59,7 +59,7 @@ ___
 
 **●  contentUrl**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:93](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L93)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:97](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L97)*
 
 
 
@@ -76,7 +76,7 @@ ___
 
 **●  name**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:97](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L97)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:101](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L101)*
 
 
 
@@ -93,7 +93,7 @@ ___
 
 **●  thumbnailUrl**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:99](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L99)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:103](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L103)*
 
 
 

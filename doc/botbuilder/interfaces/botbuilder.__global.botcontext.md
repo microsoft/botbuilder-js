@@ -15,7 +15,7 @@ Context object for the current turn of a conversation with a user.
 
 **●  bot**:  *[Bot](../classes/botbuilder.bot.md)* 
 
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:42](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/botbuilder.d.ts#L42)*
+*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:43](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botbuilder.d.ts#L43)*
 
 
 
@@ -32,28 +32,11 @@ ___
 
 **●  conversationReference**:  *[ConversationReference](botbuilder.conversationreference.md)* 
 
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:50](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/botbuilder.d.ts#L50)*
+*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:51](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botbuilder.d.ts#L51)*
 
 
 
 The calculated conversation reference for this request.
-
-
-
-
-___
-
-<a id="logger"></a>
-
-###  logger
-
-**●  logger**:  *[BotLogger](botbuilder.__global.botlogger.md)* 
-
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:58](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/botbuilder.d.ts#L58)*
-
-
-
-Logger to trace messages and telemetry data.
 
 
 
@@ -66,7 +49,7 @@ ___
 
 **●  request**:  *[Activity](botbuilder.activity.md)* 
 
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:44](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/botbuilder.d.ts#L44)*
+*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:45](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botbuilder.d.ts#L45)*
 
 
 
@@ -83,7 +66,7 @@ ___
 
 **●  responded**:  *`boolean`* 
 
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:48](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/botbuilder.d.ts#L48)*
+*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:49](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botbuilder.d.ts#L49)*
 
 
 
@@ -100,7 +83,7 @@ ___
 
 **●  responses**:  *[Partial]()[Activity](botbuilder.activity.md)[]* 
 
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:46](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/botbuilder.d.ts#L46)*
+*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:47](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botbuilder.d.ts#L47)*
 
 
 
@@ -117,7 +100,7 @@ ___
 
 **●  state**:  *[BotState](botbuilder.__global.botstate.md)* 
 
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:54](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/botbuilder.d.ts#L54)*
+*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:55](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botbuilder.d.ts#L55)*
 
 
 
@@ -134,7 +117,7 @@ ___
 
 **●  storage**:  *[Storage](botbuilder.storage.md)* 
 
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:62](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/botbuilder.d.ts#L62)*
+*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:59](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botbuilder.d.ts#L59)*
 
 
 
@@ -149,9 +132,9 @@ ___
 
 ###  templateManager
 
-**●  templateManager**:  *[TemplateManager]()* 
+**●  templateManager**:  *[TemplateManager](../classes/botbuilder.templatemanager.md)* 
 
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:72](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/botbuilder.d.ts#L72)*
+*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:69](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botbuilder.d.ts#L69)*
 
 
 
@@ -168,7 +151,7 @@ ___
 
 **●  topIntent**:  *[Intent](botbuilder.intent.md)* 
 
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:68](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/botbuilder.d.ts#L68)*
+*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:65](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botbuilder.d.ts#L65)*
 
 
 
@@ -181,68 +164,6 @@ ___
 
 
 ## Methods
-<a id="begin"></a>
-
-###  begin
-
-► **begin**(promptOrDialog: *[BeginDialog](botbuilder.__global.begindialog.md)*): `Promise`.<`any`>⎮`any`
-
-
-
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:84](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/botbuilder.d.ts#L84)*
-
-
-
-Starts a prompt or other type of dialog.
-
-**Usage Example**
-
-    context.prompt(namePrompt.reply(`Hi. What's your name?`));
-
-
-**Parameters:**
-
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| promptOrDialog | [BeginDialog](botbuilder.__global.begindialog.md)   |  An instance of a prompt or dialog to start. |
-
-
-
-
-
-**Returns:** `Promise`.<`any`>⎮`any`
-
-
-
-
-
-___
-
-<a id="clone"></a>
-
-###  clone
-
-► **clone**(): `this`
-
-
-
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:88](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/botbuilder.d.ts#L88)*
-
-
-
-Returns a clone that's a shallow copy of the context object.
-
-
-
-
-**Returns:** `this`
-
-
-
-
-
-___
-
 <a id="delay"></a>
 
 ###  delay
@@ -251,7 +172,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:111](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/botbuilder.d.ts#L111)*
+*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:92](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botbuilder.d.ts#L92)*
 
 
 
@@ -294,7 +215,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:116](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/botbuilder.d.ts#L116)*
+*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:97](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botbuilder.d.ts#L97)*
 
 
 
@@ -319,7 +240,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:132](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/botbuilder.d.ts#L132)*
+*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:113](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botbuilder.d.ts#L113)*
 
 
 
@@ -349,207 +270,37 @@ Queues a new "endOfConversation" activity that will be sent to the channel. This
 
 ___
 
-<a id="findentities"></a>
+<a id="flushresponses"></a>
 
-###  findEntities
+###  flushResponses
 
-► **findEntities**T(intent: *[Intent](botbuilder.intent.md)*, type: *`string`⎮`RegExp`*): [EntityObject](botbuilder.entityobject.md)`T`[]
-
-► **findEntities**T(type: *`string`⎮`RegExp`*): [EntityObject](botbuilder.entityobject.md)`T`[]
+► **flushResponses**(): `Promise`.<[ConversationResourceResponse](botbuilder.conversationresourceresponse.md)[]>
 
 
 
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:154](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/botbuilder.d.ts#L154)*
+*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:162](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botbuilder.d.ts#L162)*
 
 
 
-Finds all entities of a given type on the [topIntent](#topintent).
+Sends any queued up responses to the user. **Usage Example**
 
-**Usage Example**
-
-    function sendMessage(context) {
-         const text = context.getEntity('text');
-         const recipients = context.findEntities('recipient') || [];
-         recipients.forEach((entity) => {
-             name = entity.value;
-             // ... send text to recipient ...
-         });
+    function search(context) {
+         const query = context.request.text;
+         return context.reply(`Please wait while I find that...`)
+                       .showTyping()
+                       .flushResponses()
+                       .then(() => runQuery(query))
+                       .then((results) => resultsAsActivity(results))
+                       .then((activity) => {
+                           context.reply(`Here's what I found...`)
+                                  .reply(activity);
+                       });
     }
 
 
-**Type parameters:**
 
-#### T 
-**Parameters:**
 
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| intent | [Intent](botbuilder.intent.md)   |  (Optional) intent that should be searched over. This will override the useof `topIntent`. |
-| type | `string`⎮`RegExp`   |  The type of entities to return. If this is a RegExp, then any type matchingthe specified pattern will be returned. |
-
-
-
-
-
-**Returns:** [EntityObject](botbuilder.entityobject.md)`T`[]
-
-
-
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:155](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/botbuilder.d.ts#L155)*
-
-
-
-**Type parameters:**
-
-#### T 
-**Parameters:**
-
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| type | `string`⎮`RegExp`   |  - |
-
-
-
-
-
-**Returns:** [EntityObject](botbuilder.entityobject.md)`T`[]
-
-
-
-
-
-___
-
-<a id="getentity"></a>
-
-###  getEntity
-
-► **getEntity**T(intent: *[Intent](botbuilder.intent.md)*, type: *`string`⎮`RegExp`*, occurrence?: *`undefined`⎮`number`*): `T`⎮`undefined`
-
-► **getEntity**T(type: *`string`⎮`RegExp`*, occurrence?: *`undefined`⎮`number`*): `T`⎮`undefined`
-
-
-
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:178](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/botbuilder.d.ts#L178)*
-
-
-
-Returns the value of an individual entity of a specified type.
-
-**Usage Example**
-
-    const helpIntent = context.ifRegExp(/help .*with (.*)/i, ['topic']);
-
-    if (helpIntent) {
-         const topic = context.getEntity(helpIntent, 'topic');
-         // ... return help for topic ...
-    }
-
-
-**Type parameters:**
-
-#### T 
-**Parameters:**
-
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| intent | [Intent](botbuilder.intent.md)   |  (Optional) intent that should be searched over. This will override the useof `topIntent`. |
-| type | `string`⎮`RegExp`   |  The type of entity to return. If this is a RegExp, then any type matchingthe specified pattern will be returned. |
-| occurrence | `undefined`⎮`number`   |  (Optional) a zero based index of the entity to return when there aremultiple occurrences of same entity type. The default value is `0` meaning the firstoccurrence will be returned. |
-
-
-
-
-
-**Returns:** `T`⎮`undefined`
-
-
-
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:179](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/botbuilder.d.ts#L179)*
-
-
-
-**Type parameters:**
-
-#### T 
-**Parameters:**
-
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| type | `string`⎮`RegExp`   |  - |
-| occurrence | `undefined`⎮`number`   |  - |
-
-
-
-
-
-**Returns:** `T`⎮`undefined`
-
-
-
-
-
-___
-
-<a id="ifintent"></a>
-
-###  ifIntent
-
-► **ifIntent**(filter: *`string`⎮`RegExp`*): `boolean`
-
-
-
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:184](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/botbuilder.d.ts#L184)*
-
-
-
-Returns `true` if the context has a [topIntent](#topintent) that matches the specified filter.
-
-
-**Parameters:**
-
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| filter | `string`⎮`RegExp`   |  The name of the intent or a regular expression to match against the intent. |
-
-
-
-
-
-**Returns:** `boolean`
-
-
-
-
-
-___
-
-<a id="ifregexp"></a>
-
-###  ifRegExp
-
-► **ifRegExp**(filter: *`RegExp`*): `boolean`
-
-
-
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:189](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/botbuilder.d.ts#L189)*
-
-
-
-Returns `true` in the specified expression matches the users utterance.
-
-
-**Parameters:**
-
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| filter | `RegExp`   |  The expression to match against the users utterance. |
-
-
-
-
-
-**Returns:** `boolean`
+**Returns:** `Promise`.<[ConversationResourceResponse](botbuilder.conversationresourceresponse.md)[]>
 
 
 
@@ -569,7 +320,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:203](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/botbuilder.d.ts#L203)*
+*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:127](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botbuilder.d.ts#L127)*
 
 
 
@@ -596,7 +347,7 @@ Queues a new "message" or activity to the [responses](#responses) array.
 
 
 
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:204](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/botbuilder.d.ts#L204)*
+*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:128](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botbuilder.d.ts#L128)*
 
 
 
@@ -615,7 +366,7 @@ Queues a new "message" or activity to the [responses](#responses) array.
 
 
 
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:205](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/botbuilder.d.ts#L205)*
+*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:129](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botbuilder.d.ts#L129)*
 
 
 
@@ -645,7 +396,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:218](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/botbuilder.d.ts#L218)*
+*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:142](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botbuilder.d.ts#L142)*
 
 
 
@@ -675,44 +426,6 @@ Queues a new "message" or activity to the [responses](#responses) array using th
 
 ___
 
-<a id="sendresponses"></a>
-
-###  sendResponses
-
-► **sendResponses**(): `Promise`.<[ConversationResourceResponse](botbuilder.conversationresourceresponse.md)[]>
-
-
-
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:238](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/botbuilder.d.ts#L238)*
-
-
-
-Sends any queued up responses to the user. **Usage Example**
-
-    function search(context) {
-         const query = context.request.text;
-         return context.reply(`Please wait while I find that...`)
-                       .showTyping()
-                       .sendResponses()
-                       .then(() => runQuery(query))
-                       .then((results) => resultsAsActivity(results))
-                       .then((activity) => {
-                           context.reply(`Here's what I found...`)
-                                  .reply(activity);
-                       });
-    }
-
-
-
-
-**Returns:** `Promise`.<[ConversationResourceResponse](botbuilder.conversationresourceresponse.md)[]>
-
-
-
-
-
-___
-
 <a id="showtyping"></a>
 
 ###  showTyping
@@ -721,7 +434,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:253](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/botbuilder.d.ts#L253)*
+*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:177](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botbuilder.d.ts#L177)*
 
 
 

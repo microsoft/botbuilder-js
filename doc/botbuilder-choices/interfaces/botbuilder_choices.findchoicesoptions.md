@@ -27,7 +27,7 @@
 
 *Inherited from [FindValuesOptions](botbuilder_choices.findvaluesoptions.md).[allowPartialMatches](botbuilder_choices.findvaluesoptions.md#allowpartialmatches)*
 
-*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:12](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-choices/lib/findValues.d.ts#L12)*
+*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-choices/lib/findValues.d.ts#L15)*
 
 
 
@@ -44,7 +44,7 @@ ___
 
 **●  culture**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-choices/lib/findChoices.d.ts#L21)*
+*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:24](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-choices/lib/findChoices.d.ts#L24)*
 
 
 
@@ -63,7 +63,7 @@ ___
 
 *Inherited from [FindValuesOptions](botbuilder_choices.findvaluesoptions.md).[locale](botbuilder_choices.findvaluesoptions.md#locale)*
 
-*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:16](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-choices/lib/findValues.d.ts#L16)*
+*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-choices/lib/findValues.d.ts#L19)*
 
 
 
@@ -82,7 +82,7 @@ ___
 
 *Inherited from [FindValuesOptions](botbuilder_choices.findvaluesoptions.md).[maxTokenDistance](botbuilder_choices.findvaluesoptions.md#maxtokendistance)*
 
-*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:23](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-choices/lib/findValues.d.ts#L23)*
+*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:26](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-choices/lib/findValues.d.ts#L26)*
 
 
 
@@ -99,7 +99,7 @@ ___
 
 **●  noAction**:  *`undefined`⎮`true`⎮`false`* 
 
-*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:29](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-choices/lib/findChoices.d.ts#L29)*
+*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:32](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-choices/lib/findChoices.d.ts#L32)*
 
 
 
@@ -116,7 +116,7 @@ ___
 
 **●  noValue**:  *`undefined`⎮`true`⎮`false`* 
 
-*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:25](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-choices/lib/findChoices.d.ts#L25)*
+*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:28](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-choices/lib/findChoices.d.ts#L28)*
 
 
 
@@ -135,7 +135,7 @@ ___
 
 *Inherited from [FindValuesOptions](botbuilder_choices.findvaluesoptions.md).[tokenizer](botbuilder_choices.findvaluesoptions.md#tokenizer)*
 
-*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-choices/lib/findValues.d.ts#L27)*
+*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:30](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-choices/lib/findValues.d.ts#L30)*
 
 
 

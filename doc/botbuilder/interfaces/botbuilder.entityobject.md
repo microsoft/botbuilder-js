@@ -30,7 +30,7 @@ A strongly typed entity.
 
 **●  score**:  *`undefined`⎮`number`* 
 
-*Defined in [libraries/botbuilder/lib/entityRecognizers.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/entityRecognizers.d.ts#L15)*
+*Defined in [libraries/botbuilder/lib/entityObject.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/entityObject.d.ts#L15)*
 
 
 
@@ -49,7 +49,7 @@ ___
 
 *Overrides [Entity](botbuilder.entity.md).[type](botbuilder.entity.md#type)*
 
-*Defined in [libraries/botbuilder/lib/entityRecognizers.d.ts:11](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/entityRecognizers.d.ts#L11)*
+*Defined in [libraries/botbuilder/lib/entityObject.d.ts:11](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/entityObject.d.ts#L11)*
 
 
 
@@ -66,7 +66,7 @@ ___
 
 **●  value**:  *`T`* 
 
-*Defined in [libraries/botbuilder/lib/entityRecognizers.d.ts:13](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/entityRecognizers.d.ts#L13)*
+*Defined in [libraries/botbuilder/lib/entityObject.d.ts:13](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/entityObject.d.ts#L13)*
 
 
 

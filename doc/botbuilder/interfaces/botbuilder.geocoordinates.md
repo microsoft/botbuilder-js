@@ -15,7 +15,7 @@ GeoCoordinates (entity type: "[https://schema.org/GeoCoordinates](https://schema
 
 **●  elevation**:  *`undefined`⎮`number`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:454](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L454)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:458](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L458)*
 
 
 
@@ -32,7 +32,7 @@ ___
 
 **●  latitude**:  *`undefined`⎮`number`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:456](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L456)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:460](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L460)*
 
 
 
@@ -49,7 +49,7 @@ ___
 
 **●  longitude**:  *`undefined`⎮`number`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:458](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L458)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:462](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L462)*
 
 
 
@@ -66,7 +66,7 @@ ___
 
 **●  name**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:462](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L462)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:466](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L466)*
 
 
 
@@ -83,7 +83,7 @@ ___
 
 **●  type**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:460](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L460)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:464](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L464)*
 
 
 

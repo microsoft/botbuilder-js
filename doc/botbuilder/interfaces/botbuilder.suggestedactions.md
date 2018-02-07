@@ -15,7 +15,7 @@ SuggestedActions that can be performed.
 
 **●  actions**:  *[CardAction](botbuilder.cardaction.md)[]* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:73](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L73)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:77](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L77)*
 
 
 
@@ -32,7 +32,7 @@ ___
 
 **●  to**:  *`string`[]* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:71](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L71)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:75](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L75)*
 
 
 

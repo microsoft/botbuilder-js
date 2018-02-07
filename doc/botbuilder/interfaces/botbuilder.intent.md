@@ -15,7 +15,7 @@ A named intent that represents an informed guess as to what the user is wanting 
 
 **●  entities**:  *[EntityObject](botbuilder.entityobject.md)`any`[]* 
 
-*Defined in [libraries/botbuilder/lib/intentRecognizer.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/intentRecognizer.d.ts#L18)*
+*Defined in [libraries/botbuilder/lib/intentRecognizer.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/intentRecognizer.d.ts#L21)*
 
 
 
@@ -32,7 +32,7 @@ ___
 
 **●  name**:  *`string`* 
 
-*Defined in [libraries/botbuilder/lib/intentRecognizer.d.ts:14](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/intentRecognizer.d.ts#L14)*
+*Defined in [libraries/botbuilder/lib/intentRecognizer.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/intentRecognizer.d.ts#L17)*
 
 
 
@@ -49,7 +49,7 @@ ___
 
 **●  score**:  *`number`* 
 
-*Defined in [libraries/botbuilder/lib/intentRecognizer.d.ts:16](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/intentRecognizer.d.ts#L16)*
+*Defined in [libraries/botbuilder/lib/intentRecognizer.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/intentRecognizer.d.ts#L19)*
 
 
 
