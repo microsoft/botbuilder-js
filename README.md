@@ -7,7 +7,7 @@ This repository contains code for the JavaScript version of the [Microsoft Bot B
   - [Overview](https://github.com/Microsoft/botbuilder-js/wiki/Overview)
   - [Cards and Attachments](https://github.com/Microsoft/botbuilder-js/wiki/Sending-Cards-and-Attachments)
   - [Prompting Users](https://github.com/Microsoft/botbuilder-js/wiki/Prompting-Users)
-  - [LUIS-and-QnA-Maker](https://github.com/Microsoft/botbuilder-js/wiki/Using-LUIS-and-QnA-Maker)
+  - [LUIS and QnA Maker](https://github.com/Microsoft/botbuilder-js/wiki/Using-LUIS-and-QnA-Maker)
   - [Proactive Messaging](https://github.com/Microsoft/botbuilder-js/wiki/Proactive-Messaging)
   - [Creating Middleware](https://github.com/Microsoft/botbuilder-js/wiki/Creating-Middleware)
 - [Extension Directory](https://github.com/Microsoft/botbuilder-js/wiki/Extension-Directory)
