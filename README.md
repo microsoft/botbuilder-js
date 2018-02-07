@@ -3,7 +3,7 @@ This repository contains code for the JavaScript version of the [Microsoft Bot B
 
 - [Getting Started](https://github.com/Microsoft/botbuilder-js/wiki#getting-started)
 - [Building the SDK](https://github.com/Microsoft/botbuilder-js/wiki/Building-the-SDK)
-- [Documentation](https://github.com/Microsoft/botbuilder-js/wiki/Overview)
+- [Bot Building Basics](https://github.com/Microsoft/botbuilder-js/wiki/Overview)
 - [Extension Directory](https://github.com/Microsoft/botbuilder-js/wiki/Extension-Directory)
 - [Roadmap](https://github.com/Microsoft/botbuilder-js/wiki/Roadmap)
 - [FAQ](https://github.com/Microsoft/botbuilder-js/wiki/FAQ)
