@@ -1,15 +1,9 @@
 # Bot Builder SDK v4
-This repository contains code for the JavaScript version of the [Microsoft Bot Builder SDK](https://github.com/Microsoft/BotBuilder). The 4.x version of the SDK is being actively developed and should therefore be used for **EXPERIMENTATION PURPOSES ONLY**. Production bots should continue to be developed using the [v3 SDK](https://github.com/Microsoft/BotBuilder/tree/master/Node). In addition to the JavaScript SDK, Bot Builder supports creating bots in other popular programming languages like [.Net SDK](https://github.com/Microsoft/botbuilder-dotnet), [Python](https://github.com/Microsoft/botbuilder-python), and [Java](https://github.com/Microsoft/botbuilder-java).
+This repository contains code for the JavaScript version of the [Microsoft Bot Builder SDK](https://github.com/Microsoft/BotBuilder). The 4.x version of the SDK is being actively developed and should therefore be used for **EXPERIMENTATION PURPOSES ONLY**. Production bots should continue to be developed using the [v3 SDK](https://github.com/Microsoft/BotBuilder/tree/master/Node). In addition to the JavaScript SDK, Bot Builder supports creating bots in other popular programming languages like [.Net](https://github.com/Microsoft/botbuilder-dotnet), [Python](https://github.com/Microsoft/botbuilder-python), and [Java](https://github.com/Microsoft/botbuilder-java).
 
 - [Getting Started](https://github.com/Microsoft/botbuilder-js/wiki#getting-started)
 - [Building the SDK](https://github.com/Microsoft/botbuilder-js/wiki/Building-the-SDK)
-- Bot Building Basics
-  - [Overview](https://github.com/Microsoft/botbuilder-js/wiki/Overview)
-  - [Cards and Attachments](https://github.com/Microsoft/botbuilder-js/wiki/Sending-Cards-and-Attachments)
-  - [Prompting Users](https://github.com/Microsoft/botbuilder-js/wiki/Prompting-Users)
-  - [LUIS and QnA Maker](https://github.com/Microsoft/botbuilder-js/wiki/Using-LUIS-and-QnA-Maker)
-  - [Proactive Messaging](https://github.com/Microsoft/botbuilder-js/wiki/Proactive-Messaging)
-  - [Creating Middleware](https://github.com/Microsoft/botbuilder-js/wiki/Creating-Middleware)
+- [Bot Building Basics](https://github.com/Microsoft/botbuilder-js/wiki/Overview)
 - [Extension Directory](https://github.com/Microsoft/botbuilder-js/wiki/Extension-Directory)
 - [Roadmap](https://github.com/Microsoft/botbuilder-js/wiki/Roadmap)
 - [FAQ](https://github.com/Microsoft/botbuilder-js/wiki/FAQ)
