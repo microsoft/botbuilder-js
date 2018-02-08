@@ -4,6 +4,7 @@
   "description": "Example alarm bot for the browser",
   "main": "app.js",
   "scripts": {
+    "build": "webpack",
     "start": "webpack-dev-server"
   },
   "author": "Microsoft",

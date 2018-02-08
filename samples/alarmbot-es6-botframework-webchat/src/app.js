@@ -1,6 +1,6 @@
 import './css/app.css';
 
-import {Bot, BotStateManager, ConsoleLogger, MemoryStorage} from "botbuilder";
+import {Bot, BotStateManager, MemoryStorage} from "botbuilder";
 import 'botframework-webchat/botchat.css';
 import {App} from 'botframework-webchat/built/App';
 import {BotConnection} from './botConnection';
@@ -12,8 +12,7 @@ import {AlarmsListComponent} from "./alarmsListComponent";
 const webChatAdapter = new WebChatAdapter();
 
 const bot = new Bot(webChatAdapter)
-    .use(new ConsoleLogger(),
-        new MemoryStorage(),
+    .use(new MemoryStorage(),
         new BotStateManager(),
         new AlarmRenderer());
 const botConnection = new BotConnection(webChatAdapter.getMessagePipelineToBot());

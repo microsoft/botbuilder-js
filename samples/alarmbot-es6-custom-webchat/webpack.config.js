@@ -5,7 +5,6 @@ const webpack = require('webpack');
 
 module.exports = {
     entry: './src/app.js',
-    devtool: 'source-map',
     devServer: {
         contentBase: './dist',
         hot: true

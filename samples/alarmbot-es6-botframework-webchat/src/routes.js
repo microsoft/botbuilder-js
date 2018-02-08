@@ -1,24 +1,32 @@
 // configure bots routing table
-import {alarms} from "./alarms";
-import {Prompt} from 'botbuilder-prompts';
+import * as addAlarm from './alarms/addAlarm';
+import * as showAlarms from './alarms/showAlarms';
+import * as deleteAlarm from './alarms/deleteAlarm';
+import * as cancel from './alarms/cancel';
 
 export function routes(context) {
-    if (context.ifRegExp(/(list|show) alarms/i)) {
-        return alarms.sayAlarms(context);
-    } else if (context.ifRegExp(/(set|create|add|new) alarm/i)) {
-        Prompt.cancelActivePrompt(context);             // <-- cancel any active prompts
-        return alarms.addAlarm(context, {});
-    } else if (context.ifRegExp(/(delete|remove|cancel) alarm/i)) {
-        Prompt.cancelActivePrompt(context);             // <-- cancel any active prompts
-        return alarms.deleteAlarm(context);
-    } else if (context.ifRegExp(/help/i)) {
-        context.reply('Welcome to the Alarm Bot demo using the BotFramework WebChat! \nTo set an alarm, type or say: "set alarm", or "new alarm".\nTo cancel an alarm, type or say: "cancel alarm", or "delete alarm".');
-    } else {
-        return Prompt.routeTo(context).then((handled) => {
-            if (!handled) {
-                context.reply(`[Alarm Bot Example] To create a new alarm, type or say: 'set alarm' or 'new alarm'. For more details, type or say 'help'`);
+    if (context.request.type === 'message') {
+        // Check for the triggering of a new topic
+        const utterance = (context.request.text || '').trim().toLowerCase();
+        if (utterance.includes('add alarm')) {
+            return addAlarm.begin(context);
+        } else if (utterance.includes('delete alarm')) {
+            return deleteAlarm.begin(context);
+        } else if (utterance.includes('show alarms')) {
+            return showAlarms.begin(context);
+        } else if (utterance === 'cancel') {
+            return cancel.begin(context);
+        } else {
+            // Continue the current topic
+            switch (context.state.conversation.topic) {
+                case 'addAlarm':
+                    return addAlarm.routeReply(context);
+                case 'deleteAlarm':
+                    return deleteAlarm.routeReply(context);
+                default:
+                    context.reply(`Hi! I'm a simple alarm bot. Say "add alarm", "delete alarm", or "show alarms".`);
+                    return Promise.resolve();
             }
-            return {handled: true};
-        });
+        }
     }
 }
