@@ -36,7 +36,6 @@ A set of `Middleware` plugins. The set itself is middleware so you can easily pa
 * [contextCreated](botbuilder.middlewareset.md#contextcreated)
 * [postActivity](botbuilder.middlewareset.md#postactivity)
 * [receiveActivity](botbuilder.middlewareset.md#receiveactivity)
-* [removeAll](botbuilder.middlewareset.md#removeall)
 * [use](botbuilder.middlewareset.md#use)
 
 
@@ -49,7 +48,7 @@ A set of `Middleware` plugins. The set itself is middleware so you can easily pa
 
 **●  middleware**:  *[Middleware](../interfaces/botbuilder.middleware.md)[]* 
 
-*Defined in [libraries/botbuilder/lib/middlewareSet.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/middlewareSet.d.ts#L21)*
+*Defined in [libraries/botbuilder/lib/middlewareSet.d.ts:20](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/middlewareSet.d.ts#L20)*
 
 
 
@@ -70,7 +69,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/middlewareSet.d.ts:28](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/middlewareSet.d.ts#L28)*
+*Defined in [libraries/botbuilder/lib/middlewareSet.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/middlewareSet.d.ts#L27)*
 
 
 
@@ -101,7 +100,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/middlewareSet.d.ts:30](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/middlewareSet.d.ts#L30)*
+*Defined in [libraries/botbuilder/lib/middlewareSet.d.ts:29](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/middlewareSet.d.ts#L29)*
 
 
 
@@ -133,7 +132,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/middlewareSet.d.ts:29](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/middlewareSet.d.ts#L29)*
+*Defined in [libraries/botbuilder/lib/middlewareSet.d.ts:28](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/middlewareSet.d.ts#L28)*
 
 
 
@@ -156,31 +155,6 @@ ___
 
 ___
 
-<a id="removeall"></a>
-
-###  removeAll
-
-► **removeAll**(): `this`
-
-
-
-*Defined in [libraries/botbuilder/lib/middlewareSet.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/middlewareSet.d.ts#L17)*
-
-
-
-Removes all registered middleware from the set. This can be useful for unit testing.
-
-
-
-
-**Returns:** `this`
-
-
-
-
-
-___
-
 <a id="use"></a>
 
 ###  use
@@ -189,7 +163,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/middlewareSet.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/middlewareSet.d.ts#L27)*
+*Defined in [libraries/botbuilder/lib/middlewareSet.d.ts:26](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/middlewareSet.d.ts#L26)*
 
 
 

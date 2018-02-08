@@ -15,7 +15,7 @@ Set of key-value pairs. Advantage of this section is that key and value properti
 
 **●  key**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:324](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L324)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:328](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L328)*
 
 
 
@@ -32,7 +32,7 @@ ___
 
 **●  value**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:326](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L326)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:330](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L330)*
 
 
 

@@ -15,7 +15,7 @@ Attachment data.
 
 **●  name**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:247](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L247)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:251](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L251)*
 
 
 
@@ -32,7 +32,7 @@ ___
 
 **●  originalBase64**:  *[Buffer]()* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:249](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L249)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:253](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L253)*
 
 
 
@@ -49,7 +49,7 @@ ___
 
 **●  thumbnailBase64**:  *[Buffer]()* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:251](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L251)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:255](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L255)*
 
 
 
@@ -66,7 +66,7 @@ ___
 
 **●  type**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:245](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L245)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:249](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L249)*
 
 
 

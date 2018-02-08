@@ -21,6 +21,11 @@ Lets a user communicate with a bot from a console window.
 
 ## Index
 
+### Constructors
+
+* [constructor](botbuilder_node.consoleadapter.md#constructor)
+
+
 ### Properties
 
 * [onReceive](botbuilder_node.consoleadapter.md#onreceive)
@@ -35,6 +40,24 @@ Lets a user communicate with a bot from a console window.
 
 
 ---
+## Constructors
+<a id="constructor"></a>
+
+
+### ⊕ **new ConsoleAdapter**(): [ConsoleAdapter](botbuilder_node.consoleadapter.md)
+
+
+*Defined in [libraries/botbuilder-node/lib/consoleAdapter.d.ts:24](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-node/lib/consoleAdapter.d.ts#L24)*
+
+
+
+
+
+**Returns:** [ConsoleAdapter](botbuilder_node.consoleadapter.md)
+
+---
+
+
 ## Properties
 <a id="onreceive"></a>
 
@@ -44,7 +67,7 @@ Lets a user communicate with a bot from a console window.
 
 *Implementation of ActivityAdapter.onReceive*
 
-*Defined in [libraries/botbuilder-node/lib/consoleAdapter.d.ts:23](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-node/lib/consoleAdapter.d.ts#L23)*
+*Defined in [libraries/botbuilder-node/lib/consoleAdapter.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-node/lib/consoleAdapter.d.ts#L27)*
 
 
 
@@ -84,7 +107,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-node/lib/consoleAdapter.d.ts:30](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-node/lib/consoleAdapter.d.ts#L30)*
+*Defined in [libraries/botbuilder-node/lib/consoleAdapter.d.ts:34](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-node/lib/consoleAdapter.d.ts#L34)*
 
 
 
@@ -111,7 +134,7 @@ ___
 
 *Implementation of ActivityAdapter.post*
 
-*Defined in [libraries/botbuilder-node/lib/consoleAdapter.d.ts:25](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-node/lib/consoleAdapter.d.ts#L25)*
+*Defined in [libraries/botbuilder-node/lib/consoleAdapter.d.ts:29](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-node/lib/consoleAdapter.d.ts#L29)*
 
 
 
@@ -144,7 +167,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-node/lib/consoleAdapter.d.ts:36](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-node/lib/consoleAdapter.d.ts#L36)*
+*Defined in [libraries/botbuilder-node/lib/consoleAdapter.d.ts:40](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-node/lib/consoleAdapter.d.ts#L40)*
 
 
 

@@ -15,7 +15,7 @@ A thumbnail card (card with a single, small thumbnail image).
 
 **●  buttons**:  *[CardAction](botbuilder.cardaction.md)[]* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:294](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L294)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:298](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L298)*
 
 
 
@@ -32,7 +32,7 @@ ___
 
 **●  images**:  *[CardImage](botbuilder.cardimage.md)[]* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:292](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L292)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:296](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L296)*
 
 
 
@@ -49,7 +49,7 @@ ___
 
 **●  subtitle**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:288](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L288)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:292](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L292)*
 
 
 
@@ -66,7 +66,7 @@ ___
 
 **●  tap**:  *[CardAction](botbuilder.cardaction.md)* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:296](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L296)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:300](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L300)*
 
 
 
@@ -83,7 +83,7 @@ ___
 
 **●  text**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:290](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L290)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:294](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L294)*
 
 
 
@@ -100,7 +100,7 @@ ___
 
 **●  title**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:286](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L286)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:290](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L290)*
 
 
 

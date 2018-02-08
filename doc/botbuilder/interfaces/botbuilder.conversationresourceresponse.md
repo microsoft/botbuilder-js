@@ -15,7 +15,7 @@ A response containing a resource.
 
 **●  activityId**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:227](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L227)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:231](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L231)*
 
 
 
@@ -32,7 +32,7 @@ ___
 
 **●  id**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:231](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L231)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:235](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L235)*
 
 
 
@@ -49,7 +49,7 @@ ___
 
 **●  serviceUrl**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:229](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L229)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:233](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L233)*
 
 
 

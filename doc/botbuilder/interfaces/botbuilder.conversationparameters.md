@@ -15,7 +15,7 @@ Parameters for creating a new conversation.
 
 **●  activity**:  *[Activity](botbuilder.activity.md)* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:218](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L218)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:222](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L222)*
 
 
 
@@ -32,7 +32,7 @@ ___
 
 **●  bot**:  *[ChannelAccount](botbuilder.channelaccount.md)* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:209](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L209)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:213](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L213)*
 
 
 
@@ -49,7 +49,7 @@ ___
 
 **●  channelData**:  *`any`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:220](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L220)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:224](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L224)*
 
 
 
@@ -66,7 +66,7 @@ ___
 
 **●  isGroup**:  *`undefined`⎮`true`⎮`false`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:207](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L207)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:211](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L211)*
 
 
 
@@ -83,7 +83,7 @@ ___
 
 **●  members**:  *[ChannelAccount](botbuilder.channelaccount.md)[]* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:211](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L211)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:215](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L215)*
 
 
 
@@ -100,7 +100,7 @@ ___
 
 **●  topicName**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:213](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L213)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:217](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L217)*
 
 
 

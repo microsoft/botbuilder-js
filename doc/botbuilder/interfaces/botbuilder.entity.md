@@ -28,7 +28,7 @@ Object of schema.org types.
 
 **●  type**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:106](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L106)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:110](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L110)*
 
 
 

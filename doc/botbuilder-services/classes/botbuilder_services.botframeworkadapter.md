@@ -63,7 +63,7 @@ ActivityAdapter class needed to communicate with a Bot Framework channel or the 
 ### ⊕ **new BotFrameworkAdapter**(settings?: *[BotAdapterSettings](../interfaces/botbuilder_services.botadaptersettings.md)*): [BotFrameworkAdapter](botbuilder_services.botframeworkadapter.md)
 
 
-*Defined in [libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts:59](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts#L59)*
+*Defined in [libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts:62](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts#L62)*
 
 
 
@@ -92,7 +92,7 @@ Creates a new instance of the activity adapter.
 
 **●  onReceive**:  *`function`* 
 
-*Defined in [libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts:66](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts#L66)*
+*Defined in [libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts:69](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts#L69)*
 
 
 #### Type declaration
@@ -129,7 +129,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts:74](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts#L74)*
+*Defined in [libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts:77](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts#L77)*
 
 
 
@@ -165,7 +165,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts:76](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts#L76)*
+*Defined in [libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts:79](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts#L79)*
 
 
 
@@ -195,7 +195,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts:81](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts#L81)*
+*Defined in [libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts:84](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts#L84)*
 
 
 
@@ -220,7 +220,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts:77](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts#L77)*
+*Defined in [libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts:80](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts#L80)*
 
 
 
@@ -250,7 +250,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts:75](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts#L75)*
+*Defined in [libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts:78](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts#L78)*
 
 
 

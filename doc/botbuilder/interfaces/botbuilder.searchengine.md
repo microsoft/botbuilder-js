@@ -17,7 +17,7 @@ Interface for a search engine that manages catalogs
 
 
 
-*Defined in [libraries/botbuilder/lib/search.d.ts:8](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/search.d.ts#L8)*
+*Defined in [libraries/botbuilder/lib/search.d.ts:11](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/search.d.ts#L11)*
 
 
 
@@ -52,7 +52,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/search.d.ts:12](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/search.d.ts#L12)*
+*Defined in [libraries/botbuilder/lib/search.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/search.d.ts#L15)*
 
 
 
@@ -85,7 +85,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/search.d.ts:10](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/search.d.ts#L10)*
+*Defined in [libraries/botbuilder/lib/search.d.ts:13](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/search.d.ts#L13)*
 
 
 
@@ -118,7 +118,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/search.d.ts:14](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/search.d.ts#L14)*
+*Defined in [libraries/botbuilder/lib/search.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/search.d.ts#L17)*
 
 
 

@@ -12,7 +12,7 @@ Express or Restify Middleware Function.
 
 
 
-*Defined in [libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts#L21)*
+*Defined in [libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts:24](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts#L24)*
 
 
 

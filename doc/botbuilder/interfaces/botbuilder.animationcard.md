@@ -15,7 +15,7 @@ An animation card (Ex: gif or short video clip).
 
 **●  autoloop**:  *`undefined`⎮`true`⎮`false`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:420](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L420)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:424](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L424)*
 
 
 
@@ -32,7 +32,7 @@ ___
 
 **●  autostart**:  *`undefined`⎮`true`⎮`false`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:422](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L422)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:426](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L426)*
 
 
 
@@ -49,7 +49,7 @@ ___
 
 **●  buttons**:  *[CardAction](botbuilder.cardaction.md)[]* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:416](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L416)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:420](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L420)*
 
 
 
@@ -66,7 +66,7 @@ ___
 
 **●  image**:  *[ThumbnailUrl](botbuilder.thumbnailurl.md)* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:412](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L412)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:416](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L416)*
 
 
 
@@ -83,7 +83,7 @@ ___
 
 **●  media**:  *[MediaUrl](botbuilder.mediaurl.md)[]* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:414](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L414)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:418](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L418)*
 
 
 
@@ -100,7 +100,7 @@ ___
 
 **●  shareable**:  *`undefined`⎮`true`⎮`false`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:418](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L418)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:422](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L422)*
 
 
 
@@ -117,7 +117,7 @@ ___
 
 **●  subtitle**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:408](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L408)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:412](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L412)*
 
 
 
@@ -134,7 +134,7 @@ ___
 
 **●  text**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:410](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L410)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:414](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L414)*
 
 
 
@@ -151,7 +151,7 @@ ___
 
 **●  title**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:406](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L406)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:410](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L410)*
 
 
 

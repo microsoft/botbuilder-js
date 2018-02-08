@@ -12,7 +12,7 @@
 
 **●  knowledgeBaseId**:  *`string`* 
 
-*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:11](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L11)*
+*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:14](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L14)*
 
 
 
@@ -26,7 +26,7 @@ ___
 
 **●  scoreThreshold**:  *`number`* 
 
-*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:13](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L13)*
+*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:16](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L16)*
 
 
 
@@ -40,7 +40,7 @@ ___
 
 **●  searchEngine**:  *[SearchEngine]()* 
 
-*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:14](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L14)*
+*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L17)*
 
 
 
@@ -54,7 +54,7 @@ ___
 
 **●  subscriptionKey**:  *`string`* 
 
-*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:12](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L12)*
+*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L15)*
 
 
 
@@ -68,7 +68,7 @@ ___
 
 **●  top**:  *`number`* 
 
-*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L15)*
+*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L18)*
 
 
 

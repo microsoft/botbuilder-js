@@ -21,8 +21,6 @@ class MicrosoftAppCredentials {
             }
         }
     }
-    // signRequest(webResource: WebResource): Promise<WebResource>;
-    // public signRequest(webResource: msrest.WebResource, cb: { (err: Error): void }): void {
     signRequest(webResource) {
         return new Promise((resolve, reject) => {
             if (this.appId !== '' && this.appPassword !== '') {

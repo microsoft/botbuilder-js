@@ -15,7 +15,7 @@ Message reaction object.
 
 **●  type**:  *`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:200](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L200)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:204](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L204)*
 
 
 

@@ -54,7 +54,7 @@ Middleware for tracking conversation and user state using the `context.storage` 
 ### ⊕ **new BotStateManager**(settings?: *[Partial]()[BotStateManagerSettings](../interfaces/botbuilder.botstatemanagersettings.md)*): [BotStateManager](botbuilder.botstatemanager.md)
 
 
-*Defined in [libraries/botbuilder/lib/botStateManager.d.ts:41](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/botStateManager.d.ts#L41)*
+*Defined in [libraries/botbuilder/lib/botStateManager.d.ts:44](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botStateManager.d.ts#L44)*
 
 
 
@@ -85,7 +85,7 @@ Creates a new instance of the state manager.
 
 
 
-*Defined in [libraries/botbuilder/lib/botStateManager.d.ts:48](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/botStateManager.d.ts#L48)*
+*Defined in [libraries/botbuilder/lib/botStateManager.d.ts:51](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botStateManager.d.ts#L51)*
 
 
 
@@ -116,7 +116,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/botStateManager.d.ts:50](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/botStateManager.d.ts#L50)*
+*Defined in [libraries/botbuilder/lib/botStateManager.d.ts:53](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botStateManager.d.ts#L53)*
 
 
 
@@ -147,7 +147,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/botStateManager.d.ts:49](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/botStateManager.d.ts#L49)*
+*Defined in [libraries/botbuilder/lib/botStateManager.d.ts:52](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botStateManager.d.ts#L52)*
 
 
 
@@ -179,7 +179,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/botStateManager.d.ts:51](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/botStateManager.d.ts#L51)*
+*Defined in [libraries/botbuilder/lib/botStateManager.d.ts:54](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botStateManager.d.ts#L54)*
 
 
 
@@ -210,7 +210,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/botStateManager.d.ts:52](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/botStateManager.d.ts#L52)*
+*Defined in [libraries/botbuilder/lib/botStateManager.d.ts:55](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botStateManager.d.ts#L55)*
 
 
 

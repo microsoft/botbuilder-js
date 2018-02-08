@@ -25,15 +25,16 @@
 * [BrowserLocalStorage](classes/botbuilder.browserlocalstorage.md)
 * [BrowserSessionStorage](classes/botbuilder.browsersessionstorage.md)
 * [CardStyler](classes/botbuilder.cardstyler.md)
-* [ConsoleLogger](classes/botbuilder.consolelogger.md)
-* [EntityRecognizers](classes/botbuilder.entityrecognizers.md)
+* [DictionaryRenderer](classes/botbuilder.dictionaryrenderer.md)
 * [IntentRecognizer](classes/botbuilder.intentrecognizer.md)
 * [IntentRecognizerSet](classes/botbuilder.intentrecognizerset.md)
+* [JsonTemplates](classes/botbuilder.jsontemplates.md)
 * [MemoryStorage](classes/botbuilder.memorystorage.md)
 * [MessageStyler](classes/botbuilder.messagestyler.md)
 * [MiddlewareSet](classes/botbuilder.middlewareset.md)
 * [RegExpRecognizer](classes/botbuilder.regexprecognizer.md)
 * [StorageMiddleware](classes/botbuilder.storagemiddleware.md)
+* [TemplateManager](classes/botbuilder.templatemanager.md)
 * [TestAdapter](classes/botbuilder.testadapter.md)
 * [TestFlow](classes/botbuilder.testflow.md)
 
@@ -53,7 +54,6 @@
 * [CardAction](interfaces/botbuilder.cardaction.md)
 * [CardImage](interfaces/botbuilder.cardimage.md)
 * [ChannelAccount](interfaces/botbuilder.channelaccount.md)
-* [Choice](interfaces/botbuilder.choice.md)
 * [ConversationAccount](interfaces/botbuilder.conversationaccount.md)
 * [ConversationParameters](interfaces/botbuilder.conversationparameters.md)
 * [ConversationReference](interfaces/botbuilder.conversationreference.md)
@@ -71,9 +71,6 @@
 * [Place](interfaces/botbuilder.place.md)
 * [ReceiptCard](interfaces/botbuilder.receiptcard.md)
 * [ReceiptItem](interfaces/botbuilder.receiptitem.md)
-* [RecognizeChoicesOptions](interfaces/botbuilder.recognizechoicesoptions.md)
-* [RecognizeNumbersOptions](interfaces/botbuilder.recognizenumbersoptions.md)
-* [RecognizeValuesOptions](interfaces/botbuilder.recognizevaluesoptions.md)
 * [RegExpLocaleMap](interfaces/botbuilder.regexplocalemap.md)
 * [RegExpRecognizerSettings](interfaces/botbuilder.regexprecognizersettings.md)
 * [ResourceResponse](interfaces/botbuilder.resourceresponse.md)
@@ -86,6 +83,7 @@
 * [StoreItem](interfaces/botbuilder.storeitem.md)
 * [StoreItems](interfaces/botbuilder.storeitems.md)
 * [SuggestedActions](interfaces/botbuilder.suggestedactions.md)
+* [TemplateRenderer](interfaces/botbuilder.templaterenderer.md)
 * [ThumbnailCard](interfaces/botbuilder.thumbnailcard.md)
 * [ThumbnailUrl](interfaces/botbuilder.thumbnailurl.md)
 * [VideoCard](interfaces/botbuilder.videocard.md)
@@ -94,6 +92,11 @@
 ### Type aliases
 
 * [Promiseable](#promiseable)
+* [SimpleTemplateFunction](#simpletemplatefunction)
+* [TemplateDictionary](#templatedictionary)
+* [TemplateFunction](#templatefunction)
+* [TemplateFunctionMap](#templatefunctionmap)
+* [TemplateIdMap](#templateidmap)
 
 
 ### Variables
@@ -121,12 +124,159 @@
 
 **Τ Promiseable**:  *`Promise`.<`T`>⎮`T`* 
 
-*Defined in [libraries/botbuilder/lib/middleware.d.ts:11](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/middleware.d.ts#L11)*
+*Defined in [libraries/botbuilder/lib/middleware.d.ts:14](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/middleware.d.ts#L14)*
 
 
 
 Type signature for a return value that can (Optionally) return its value asynchronously using a Promise.
 *__param__*: (Optional) type of value being returned. This defaults to `void`.
+
+
+
+
+
+___
+
+<a id="simpletemplatefunction"></a>
+
+###  SimpleTemplateFunction
+
+**Τ SimpleTemplateFunction**:  *`function`* 
+
+*Defined in [libraries/botbuilder/lib/dictionaryRenderer.d.ts:11](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/dictionaryRenderer.d.ts#L11)*
+
+
+#### Type declaration
+►(context: *[BotContext](interfaces/botbuilder.__global.botcontext.md)*, data: *`Object`*): [Partial]()[Activity](interfaces/botbuilder.activity.md)⎮`string`⎮`undefined`
+
+
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| context | [BotContext](interfaces/botbuilder.__global.botcontext.md)   |  - |
+| data | `Object`   |  - |
+
+
+
+
+
+**Returns:** [Partial]()[Activity](interfaces/botbuilder.activity.md)⎮`string`⎮`undefined`
+
+
+
+
+
+
+___
+
+<a id="templatedictionary"></a>
+
+###  TemplateDictionary
+
+**Τ TemplateDictionary**:  *`object`* 
+
+*Defined in [libraries/botbuilder/lib/dictionaryRenderer.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/dictionaryRenderer.d.ts#L21)*
+
+
+
+Map of Language -> map of functions
+
+#### Type declaration
+
+
+[language: `string`]: [TemplateIdMap](#templateidmap)
+
+
+
+
+
+
+___
+
+<a id="templatefunction"></a>
+
+###  TemplateFunction
+
+**Τ TemplateFunction**:  *`function`* 
+
+*Defined in [libraries/botbuilder/lib/jsonTemplates.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/jsonTemplates.d.ts#L17)*
+
+
+
+A template function that can return a stringified value from a given data object.
+*__param__*: The data object to return a value from.
+
+*__param__*: (Optional) path to the value to return.
+
+
+#### Type declaration
+►(data: *`Object`*, path?: *`undefined`⎮`string`*): `string`
+
+
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| data | `Object`   |  - |
+| path | `undefined`⎮`string`   |  - |
+
+
+
+
+
+**Returns:** `string`
+
+
+
+
+
+
+___
+
+<a id="templatefunctionmap"></a>
+
+###  TemplateFunctionMap
+
+**Τ TemplateFunctionMap**:  *`object`* 
+
+*Defined in [libraries/botbuilder/lib/jsonTemplates.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/jsonTemplates.d.ts#L21)*
+
+
+
+A set of named template functions.
+
+#### Type declaration
+
+
+[name: `string`]: [TemplateFunction](#templatefunction)
+
+
+
+
+
+
+___
+
+<a id="templateidmap"></a>
+
+###  TemplateIdMap
+
+**Τ TemplateIdMap**:  *`object`* 
+
+*Defined in [libraries/botbuilder/lib/dictionaryRenderer.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/dictionaryRenderer.d.ts#L15)*
+
+
+
+Map of template Id -> Function
+
+#### Type declaration
+
+
+[id: `string`]: [SimpleTemplateFunction](#simpletemplatefunction)
+
 
 
 
@@ -142,7 +292,7 @@ ___
 
 **●  ActivityTypes**:  *`object`* 
 
-*Defined in [libraries/botbuilder/lib/activity.d.ts:8](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/activity.d.ts#L8)*
+*Defined in [libraries/botbuilder/lib/activity.d.ts:11](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/activity.d.ts#L11)*
 
 
 
@@ -218,7 +368,7 @@ ___
 
 **●  AttachmentLayouts**:  *`object`* 
 
-*Defined in [libraries/botbuilder/lib/activity.d.ts:24](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/activity.d.ts#L24)*
+*Defined in [libraries/botbuilder/lib/activity.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/activity.d.ts#L27)*
 
 
 
@@ -252,7 +402,7 @@ ___
 
 **●  EndOfConversationCodes**:  *`object`* 
 
-*Defined in [libraries/botbuilder/lib/activity.d.ts:29](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/activity.d.ts#L29)*
+*Defined in [libraries/botbuilder/lib/activity.d.ts:32](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/activity.d.ts#L32)*
 
 
 
@@ -321,7 +471,7 @@ ___
 
 **●  EntityTypes**:  *[EntityTypes](interfaces/botbuilder.__global.entitytypes.md)* 
 
-*Defined in [libraries/botbuilder/lib/entityRecognizers.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/entityRecognizers.d.ts#L18)*
+*Defined in [libraries/botbuilder/lib/entityObject.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/entityObject.d.ts#L18)*
 
 
 
@@ -338,7 +488,7 @@ ___
 
 **●  TextFormats**:  *`object`* 
 
-*Defined in [libraries/botbuilder/lib/activity.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/activity.d.ts#L19)*
+*Defined in [libraries/botbuilder/lib/activity.d.ts:22](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/activity.d.ts#L22)*
 
 
 
@@ -376,7 +526,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/activity.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/activity.d.ts#L39)*
+*Defined in [libraries/botbuilder/lib/activity.d.ts:42](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/activity.d.ts#L42)*
 
 
 
@@ -407,7 +557,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/activity.d.ts:38](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/activity.d.ts#L38)*
+*Defined in [libraries/botbuilder/lib/activity.d.ts:41](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/activity.d.ts#L41)*
 
 
 
@@ -437,7 +587,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/middleware.d.ts:16](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/middleware.d.ts#L16)*
+*Defined in [libraries/botbuilder/lib/middleware.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/middleware.d.ts#L19)*
 
 
 

@@ -15,7 +15,7 @@ Place (entity type: "[https://schema.org/Place](https://schema.org/Place)")
 
 **●  address**:  *`any`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:469](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L469)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:473](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L473)*
 
 
 
@@ -32,7 +32,7 @@ ___
 
 **●  geo**:  *`any`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:471](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L471)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:475](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L475)*
 
 
 
@@ -49,7 +49,7 @@ ___
 
 **●  hasMap**:  *`any`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:473](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L473)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:477](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L477)*
 
 
 
@@ -66,7 +66,7 @@ ___
 
 **●  name**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:477](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L477)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:481](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L481)*
 
 
 
@@ -83,7 +83,7 @@ ___
 
 **●  type**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:475](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L475)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:479](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L479)*
 
 
 

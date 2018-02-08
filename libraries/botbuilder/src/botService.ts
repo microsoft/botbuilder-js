@@ -30,9 +30,6 @@ export class BotService<T> implements Middleware {
     constructor(protected name: string, protected instance?: T) { }
 
     public contextCreated(context: BotContext, next: () => Promise<void>): Promise<void> {
-        if (context.hasOwnProperty(this.name)) {
-            context.logger.log(`A service named '${this.name}' is already registered with the context object.`, TraceLevel.warning);
-        }
         (<any>context)[this.name] = this.getService(context);
         return next();
     }

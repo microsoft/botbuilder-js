@@ -39,7 +39,7 @@ INTERNAL support class for `TestAdapter`.
 ### ⊕ **new TestFlow**(previous: *`Promise`.<`void`>*, adapter: *[TestAdapter](botbuilder.testadapter.md)*): [TestFlow](botbuilder.testflow.md)
 
 
-*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:77](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/testAdapter.d.ts#L77)*
+*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:80](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/testAdapter.d.ts#L80)*
 
 
 
@@ -66,7 +66,7 @@ INTERNAL support class for `TestAdapter`.
 
 **●  previous**:  *`Promise`.<`void`>* 
 
-*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:76](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/testAdapter.d.ts#L76)*
+*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:79](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/testAdapter.d.ts#L79)*
 
 
 
@@ -84,7 +84,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:98](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/testAdapter.d.ts#L98)*
+*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:101](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/testAdapter.d.ts#L101)*
 
 
 
@@ -119,7 +119,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:105](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/testAdapter.d.ts#L105)*
+*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:108](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/testAdapter.d.ts#L108)*
 
 
 
@@ -154,7 +154,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:113](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/testAdapter.d.ts#L113)*
+*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:116](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/testAdapter.d.ts#L116)*
 
 
 
@@ -184,7 +184,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:110](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/testAdapter.d.ts#L110)*
+*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:113](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/testAdapter.d.ts#L113)*
 
 
 
@@ -217,7 +217,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:91](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/testAdapter.d.ts#L91)*
+*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:94](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/testAdapter.d.ts#L94)*
 
 
 
@@ -250,7 +250,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:86](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/testAdapter.d.ts#L86)*
+*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:89](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/testAdapter.d.ts#L89)*
 
 
 
@@ -286,7 +286,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:112](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/testAdapter.d.ts#L112)*
+*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:115](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/testAdapter.d.ts#L115)*
 
 
 

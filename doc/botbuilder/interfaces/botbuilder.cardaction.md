@@ -23,7 +23,7 @@ An action on a card.
 
 **●  image**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:59](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L59)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:63](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L63)*
 
 
 
@@ -40,7 +40,7 @@ ___
 
 **●  title**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:57](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L57)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:61](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L61)*
 
 
 
@@ -57,7 +57,7 @@ ___
 
 **●  type**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:55](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L55)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:59](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L59)*
 
 
 
@@ -74,7 +74,7 @@ ___
 
 **●  value**:  *`any`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:61](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L61)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:65](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L65)*
 
 
 

@@ -15,7 +15,7 @@ A receipt card
 
 **●  buttons**:  *[CardAction](botbuilder.cardaction.md)[]* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:347](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L347)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:351](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L351)*
 
 
 
@@ -32,7 +32,7 @@ ___
 
 **●  facts**:  *[Fact](botbuilder.fact.md)[]* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:337](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L337)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:341](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L341)*
 
 
 
@@ -49,7 +49,7 @@ ___
 
 **●  items**:  *[ReceiptItem](botbuilder.receiptitem.md)[]* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:335](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L335)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:339](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L339)*
 
 
 
@@ -66,7 +66,7 @@ ___
 
 **●  tap**:  *[CardAction](botbuilder.cardaction.md)* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:339](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L339)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:343](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L343)*
 
 
 
@@ -83,7 +83,7 @@ ___
 
 **●  tax**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:343](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L343)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:347](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L347)*
 
 
 
@@ -100,7 +100,7 @@ ___
 
 **●  title**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:333](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L333)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:337](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L337)*
 
 
 
@@ -117,7 +117,7 @@ ___
 
 **●  total**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:341](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L341)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:345](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L345)*
 
 
 
@@ -134,7 +134,7 @@ ___
 
 **●  vat**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:345](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L345)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:349](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L349)*
 
 
 

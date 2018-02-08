@@ -2,17 +2,17 @@
   "name": "botframework-luis",
   "author": "Microsoft Corp.",
   "description": "Luis client package for Luis query API",
-  "version": "4.0.0-m1.0",
+  "version": "4.0.0-m1.2",
   "license": "MIT",
   "keywords": [
     "luis"
   ],
   "bugs": {
-    "url": "https://github.com/Microsoft/BotBuilder/issues"
+    "url": "https://github.com/Microsoft/botbuilder-js/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Microsoft/BotBuilder.git"
+    "url": "https://github.com/Microsoft/botbuilder-js.git"
   },
   "main": "./lib/luisClient.js",
   "typings": "./lib/luisClient.d.ts",

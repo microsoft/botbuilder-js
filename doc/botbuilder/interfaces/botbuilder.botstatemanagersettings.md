@@ -15,7 +15,7 @@ Optional settings used to configure a BotStateManager instance.
 
 **●  lastWriterWins**:  *`boolean`* 
 
-*Defined in [libraries/botbuilder/lib/botStateManager.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/botStateManager.d.ts#L17)*
+*Defined in [libraries/botbuilder/lib/botStateManager.d.ts:20](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botStateManager.d.ts#L20)*
 
 
 
@@ -32,7 +32,7 @@ ___
 
 **●  persistConversationState**:  *`boolean`* 
 
-*Defined in [libraries/botbuilder/lib/botStateManager.d.ts:13](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/botStateManager.d.ts#L13)*
+*Defined in [libraries/botbuilder/lib/botStateManager.d.ts:16](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botStateManager.d.ts#L16)*
 
 
 
@@ -49,7 +49,7 @@ ___
 
 **●  persistUserState**:  *`boolean`* 
 
-*Defined in [libraries/botbuilder/lib/botStateManager.d.ts:11](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/botStateManager.d.ts#L11)*
+*Defined in [libraries/botbuilder/lib/botStateManager.d.ts:14](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botStateManager.d.ts#L14)*
 
 
 
@@ -66,7 +66,7 @@ ___
 
 **●  writeBeforePost**:  *`boolean`* 
 
-*Defined in [libraries/botbuilder/lib/botStateManager.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/botStateManager.d.ts#L15)*
+*Defined in [libraries/botbuilder/lib/botStateManager.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botStateManager.d.ts#L18)*
 
 
 

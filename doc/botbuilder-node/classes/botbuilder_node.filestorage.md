@@ -70,7 +70,7 @@ Middleware that implements a file based storage provider for a bot.
 
 *Overrides StorageMiddleware.constructor*
 
-*Defined in [libraries/botbuilder-node/lib/fileStorage.d.ts:29](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-node/lib/fileStorage.d.ts#L29)*
+*Defined in [libraries/botbuilder-node/lib/fileStorage.d.ts:32](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-node/lib/fileStorage.d.ts#L32)*
 
 
 
@@ -101,7 +101,7 @@ Creates a new instance of the storage provider.
 
 *Inherited from BotService.instance*
 
-*Defined in libraries/botbuilder-node/node_modules/botbuilder/lib/botService.d.ts:19*
+*Defined in libraries/botbuilder-node/node_modules/botbuilder/lib/botService.d.ts:22*
 
 
 
@@ -117,7 +117,7 @@ ___
 
 *Inherited from BotService.name*
 
-*Defined in libraries/botbuilder-node/node_modules/botbuilder/lib/botService.d.ts:18*
+*Defined in libraries/botbuilder-node/node_modules/botbuilder/lib/botService.d.ts:21*
 
 
 
@@ -133,7 +133,7 @@ ___
 
 *Inherited from StorageMiddleware.settings*
 
-*Defined in libraries/botbuilder-node/node_modules/botbuilder/lib/storageMiddleware.d.ts:15*
+*Defined in libraries/botbuilder-node/node_modules/botbuilder/lib/storageMiddleware.d.ts:18*
 
 
 
@@ -156,7 +156,7 @@ ___
 
 *Inherited from BotService.contextCreated*
 
-*Defined in libraries/botbuilder-node/node_modules/botbuilder/lib/botService.d.ts:29*
+*Defined in libraries/botbuilder-node/node_modules/botbuilder/lib/botService.d.ts:32*
 
 
 
@@ -189,7 +189,7 @@ ___
 
 *Implementation of Storage.delete*
 
-*Defined in [libraries/botbuilder-node/lib/fileStorage.d.ts:53](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-node/lib/fileStorage.d.ts#L53)*
+*Defined in [libraries/botbuilder-node/lib/fileStorage.d.ts:56](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-node/lib/fileStorage.d.ts#L56)*
 
 
 
@@ -226,7 +226,7 @@ ___
 
 *Overrides BotService.getService*
 
-*Defined in libraries/botbuilder-node/node_modules/botbuilder/lib/storageMiddleware.d.ts:22*
+*Defined in libraries/botbuilder-node/node_modules/botbuilder/lib/storageMiddleware.d.ts:25*
 
 
 
@@ -258,7 +258,7 @@ ___
 
 *Overrides StorageMiddleware.getStorage*
 
-*Defined in [libraries/botbuilder-node/lib/fileStorage.d.ts:55](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-node/lib/fileStorage.d.ts#L55)*
+*Defined in [libraries/botbuilder-node/lib/fileStorage.d.ts:58](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-node/lib/fileStorage.d.ts#L58)*
 
 
 
@@ -293,7 +293,7 @@ ___
 
 *Implementation of Storage.read*
 
-*Defined in [libraries/botbuilder-node/lib/fileStorage.d.ts:41](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-node/lib/fileStorage.d.ts#L41)*
+*Defined in [libraries/botbuilder-node/lib/fileStorage.d.ts:44](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-node/lib/fileStorage.d.ts#L44)*
 
 
 
@@ -328,7 +328,7 @@ ___
 
 *Implementation of Storage.write*
 
-*Defined in [libraries/botbuilder-node/lib/fileStorage.d.ts:47](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-node/lib/fileStorage.d.ts#L47)*
+*Defined in [libraries/botbuilder-node/lib/fileStorage.d.ts:50](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-node/lib/fileStorage.d.ts#L50)*
 
 
 

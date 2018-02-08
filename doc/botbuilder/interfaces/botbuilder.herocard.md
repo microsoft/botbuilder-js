@@ -15,7 +15,7 @@ A Hero card (card with a single, large image).
 
 **●  buttons**:  *[CardAction](botbuilder.cardaction.md)[]* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:277](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L277)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:281](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L281)*
 
 
 
@@ -32,7 +32,7 @@ ___
 
 **●  images**:  *[CardImage](botbuilder.cardimage.md)[]* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:275](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L275)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:279](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L279)*
 
 
 
@@ -49,7 +49,7 @@ ___
 
 **●  subtitle**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:271](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L271)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:275](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L275)*
 
 
 
@@ -66,7 +66,7 @@ ___
 
 **●  tap**:  *[CardAction](botbuilder.cardaction.md)* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:279](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L279)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:283](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L283)*
 
 
 
@@ -83,7 +83,7 @@ ___
 
 **●  text**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:273](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L273)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:277](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L277)*
 
 
 
@@ -100,7 +100,7 @@ ___
 
 **●  title**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/index.d.ts:269](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder/lib/index.d.ts#L269)*
+*Defined in [libraries/botbuilder/lib/index.d.ts:273](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/index.d.ts#L273)*
 
 
 

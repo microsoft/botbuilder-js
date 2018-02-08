@@ -2,7 +2,7 @@
   "name": "botbuilder",
   "author": "Microsoft Corp.",
   "description": "Bot Builder core library. Bot Builder is a toolkit for building rich bots on virtually any platform.",
-  "version": "4.0.0-m1.0",
+  "version": "4.0.0-m1.2",
   "license": "MIT",
   "keywords": [
     "botbuilder",
@@ -11,11 +11,11 @@
     "chatbots"
   ],
   "bugs": {
-    "url": "https://github.com/Microsoft/BotBuilder/issues"
+    "url": "https://github.com/Microsoft/botbuilder-js/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Microsoft/BotBuilder.git"
+    "url": "https://github.com/Microsoft/botbuilder-js.git"
   },
   "main": "./lib/botbuilder.js",
   "typings": "./lib/botbuilder.d.ts",

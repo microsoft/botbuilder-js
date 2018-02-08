@@ -5,7 +5,7 @@
 # Interface: ModelResult
 
 
-second comment block
+Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT License.
 
 ## Type parameters
 #### T :  `Object`
@@ -17,7 +17,7 @@ second comment block
 
 **●  end**:  *`number`* 
 
-*Defined in [libraries/botbuilder-choices/lib/modelResult.d.ts:8](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-choices/lib/modelResult.d.ts#L8)*
+*Defined in [libraries/botbuilder-choices/lib/modelResult.d.ts:11](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-choices/lib/modelResult.d.ts#L11)*
 
 
 
@@ -31,7 +31,7 @@ ___
 
 **●  resolution**:  *`T`* 
 
-*Defined in [libraries/botbuilder-choices/lib/modelResult.d.ts:10](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-choices/lib/modelResult.d.ts#L10)*
+*Defined in [libraries/botbuilder-choices/lib/modelResult.d.ts:13](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-choices/lib/modelResult.d.ts#L13)*
 
 
 
@@ -45,7 +45,7 @@ ___
 
 **●  start**:  *`number`* 
 
-*Defined in [libraries/botbuilder-choices/lib/modelResult.d.ts:7](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-choices/lib/modelResult.d.ts#L7)*
+*Defined in [libraries/botbuilder-choices/lib/modelResult.d.ts:10](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-choices/lib/modelResult.d.ts#L10)*
 
 
 
@@ -59,7 +59,7 @@ ___
 
 **●  text**:  *`string`* 
 
-*Defined in [libraries/botbuilder-choices/lib/modelResult.d.ts:6](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-choices/lib/modelResult.d.ts#L6)*
+*Defined in [libraries/botbuilder-choices/lib/modelResult.d.ts:9](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-choices/lib/modelResult.d.ts#L9)*
 
 
 
@@ -73,7 +73,7 @@ ___
 
 **●  typeName**:  *`string`* 
 
-*Defined in [libraries/botbuilder-choices/lib/modelResult.d.ts:9](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-choices/lib/modelResult.d.ts#L9)*
+*Defined in [libraries/botbuilder-choices/lib/modelResult.d.ts:12](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-choices/lib/modelResult.d.ts#L12)*
 
 
 

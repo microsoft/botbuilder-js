@@ -30,7 +30,7 @@ Additional settings for configuring an instance of [FileStorage](../classes/botb
 
 *Inherited from StorageSettings.optimizeWrites*
 
-*Defined in libraries/botbuilder-node/node_modules/botbuilder/lib/storage.d.ts:33*
+*Defined in libraries/botbuilder-node/node_modules/botbuilder/lib/storage.d.ts:36*
 
 
 
@@ -47,7 +47,7 @@ ___
 
 **●  path**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder-node/lib/fileStorage.d.ts:12](https://github.com/Microsoft/botbuilder-js/blob/a28edbb/libraries/botbuilder-node/lib/fileStorage.d.ts#L12)*
+*Defined in [libraries/botbuilder-node/lib/fileStorage.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-node/lib/fileStorage.d.ts#L15)*
 
 
 
