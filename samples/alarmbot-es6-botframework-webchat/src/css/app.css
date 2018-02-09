@@ -1,0 +1,91 @@
+body {
+    font-family: "Segoe UI", sans-serif;
+    font-size: 15px;
+    box-sizing: content-box;
+}
+
+section {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: 10px;
+    padding: 10px;
+    border: 1px solid #d1d1d1;
+    display: flex;
+    overflow: hidden;
+}
+
+section > div:first-child {
+    width: 100%;
+}
+
+section > div:last-child {
+    min-width: 200px;
+}
+
+input[type="text"] {
+    height: 39px;
+    width: calc(100% - 105px);
+    margin: 0;
+}
+
+button.button-primary {
+    margin: 0;
+}
+
+.border-left {
+    border-left: 1px solid #D1D1D1;
+}
+
+.alarms-header {
+    margin: 0;
+    background-color: #0078d7;
+    box-shadow: 0 1px rgba(0, 0, 0, 0.2);
+    box-sizing: content-box;
+    color: #ffffff;
+    font-weight: 500;
+    height: 30px;
+    letter-spacing: 0.5px;
+    padding: 8px 8px 0 8px;
+    text-align: center;
+}
+
+#bot {
+    position: relative;
+}
+
+ul.alarms-list {
+    list-style: none;
+    margin: 0;
+    padding: 0 5px;
+    height: calc(100% - 30px);
+}
+
+ul.alarms-list li {
+    margin-top: 5px;
+    border-radius: 5px;
+    border: 1px solid #d5d5d7;
+    min-height: 120px;
+}
+
+ul.alarms-list li h5 {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    font-size: 12px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    background: #f7f7f9;
+    border-bottom: 1px solid #d5d5d7;
+    margin: 0;
+    padding: 10px;
+}
+
+ul.alarms-list li p {
+    margin: 5px 0 0 0;
+    font-size: 11px;
+    padding: 5px;
+}
