@@ -56,7 +56,6 @@ function getListener() {
 function createReply(activity, text, locale = null) {
     return {
         type: botbuilder_schema_1.ActivityTypes.Message,
-        timestamp: new Date(),
         from: { id: activity.recipient.id, name: activity.recipient.name },
         recipient: { id: activity.from.id, name: activity.from.name },
         replyToId: activity.id,

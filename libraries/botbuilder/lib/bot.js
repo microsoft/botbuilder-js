@@ -157,10 +157,11 @@ class Bot extends middlewareSet_1.MiddlewareSet {
                 .then((responses) => {
                 // Ensure responses array populated
                 if (!Array.isArray(responses)) {
-                    responses = [];
+                    let mockResponses = [];
                     for (let i = 0; i < activities.length; i++) {
-                        responses.push({});
+                        mockResponses.push({});
                     }
+                    return mockResponses;
                 }
                 return responses;
             });

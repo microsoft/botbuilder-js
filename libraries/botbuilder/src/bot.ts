@@ -77,10 +77,10 @@ export class Bot extends MiddlewareSet {
         // Initialize context object
         let context: BotContext;
         if ((activityOrReference as Activity).type) {
-            context = createBotContext(this, activityOrReference);
+            context = createBotContext(this, <Activity>activityOrReference);
         } else {
             context = createBotContext(this);
-            context.conversationReference = activityOrReference;
+            context.conversationReference = <ConversationReference>activityOrReference;
         }
 
         // Run context created pipeline
@@ -145,13 +145,13 @@ export class Bot extends MiddlewareSet {
     }
 
     /**
-     * INTERNAL sends an outgoing set of activities to the user. Calling `context.flushResponses()` achieves the same 
+     * INTERNAL sends an outgoing set of activities to the user. Calling `context.flushResponses()` achieves the same
      * effect and is the preferred way of sending activities to the user.
      *
      * @param context Context for the current turn of the conversation.
      * @param activities Set of activities to send.
      */
-    public post(context: BotContext, ...activities: Partial<Activity>[]): Promise<ConversationReference[]> {
+    public post(context: BotContext, ...activities: Partial<Activity>[]): Promise<Partial<ConversationResourceResponse>[]> {
         // Ensure activities are well formed.
         for (let i = 0; i < activities.length; i++) {
             let activity = activities[i];
@@ -169,8 +169,12 @@ export class Bot extends MiddlewareSet {
                 .then((responses) => {
                     // Ensure responses array populated
                     if (!Array.isArray(responses)) {
-                        responses = [];
-                        for (let i = 0; i < activities.length; i++) { responses.push({}) }
+                        let mockResponses: ConversationResourceResponse[] = [];
+                        for (let i = 0; i < activities.length; i++) {
+                            mockResponses.push(<ConversationResourceResponse>{})
+                        }
+
+                        return mockResponses;
                     }
                     return responses;
                 });

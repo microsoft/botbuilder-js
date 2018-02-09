@@ -40,7 +40,7 @@ export class ConsoleAdapter implements ActivityAdapter {
             const responses: ConversationResourceResponse[] = [];
             function next(i: number) {
                 if (i < activities.length) {
-                    responses.push({});
+                    responses.push(<ConversationResourceResponse>{});
                     let a = activities[i];
                     switch (a.type || ActivityTypes.Message) {
                         case <ActivityTypes>'delay':

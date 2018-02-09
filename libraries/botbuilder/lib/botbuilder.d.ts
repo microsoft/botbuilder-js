@@ -42,13 +42,13 @@ declare global  {
         /** The Bot object for this context. */
         bot: Bot;
         /** The received activity. */
-        request: Activity;
+        request: Partial<Activity>;
         /** Queue of responses to send to the user. */
         responses: Partial<Activity>[];
         /** If true at least one response has been sent for the current turn of conversation. */
         readonly responded: boolean;
         /** The calculated conversation reference for this request. */
-        conversationReference: ConversationReference;
+        conversationReference: Partial<ConversationReference>;
         /**
          * Persisted state related to the request.
          */
