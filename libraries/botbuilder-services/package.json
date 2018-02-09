@@ -21,7 +21,7 @@
   "typings": "./lib/index.d.ts",
   "dependencies": {
     "botbuilder": "^4.0.0-m1.2",
-    "botframework-connector": "^4.0.0-m1.0"
+    "botframework-connector": "^4.0.0-m1.2"
   },
   "devDependencies": {
     "@types/mocha": "^2.2.47",
