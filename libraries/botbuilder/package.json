@@ -2,7 +2,7 @@
   "name": "botbuilder",
   "author": "Microsoft Corp.",
   "description": "Bot Builder core library. Bot Builder is a toolkit for building rich bots on virtually any platform.",
-  "version": "4.0.0-m1.2",
+  "version": "4.0.0-m1.3",
   "license": "MIT",
   "keywords": [
     "botbuilder",
