@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.  
  * Licensed under the MIT License.
  */
-import { TemplateRenderer } from './TemplateManager';
+import { TemplateRenderer } from './templateManager';
 import { Middleware } from './middleware';
 import { BotService } from './botService';
 import { Activity } from './activity';
