@@ -1,0 +1,14 @@
+{
+  "name": "redux-bot-es6",
+  "version": "1.0.0",
+  "description": "An example of using just the Adapter layer directly with Redux",
+  "main": "app.js",
+  "author": "Microsoft",
+  "license": "MIT",
+  "dependencies": {
+    "botbuilder-services": "^4.0.0-m1.2",
+    "redux": "^3.7.2",
+    "redux-logger": "^3.0.6",
+    "restify": "^6.3.4"
+  }
+}
