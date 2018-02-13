@@ -28,30 +28,46 @@ interface QnAKnowledgeBase {
     qnaList: QnA[];
 }
 
-let qnaMakerServiceEndpoint = 'https://westus.api.cognitive.microsoft.com/qnamaker/v3.0/knowledgebases/';
+const v3path = '/qnamaker/v3.0/knowledgebases/';
 
 export interface QnAMakerOptions {
+    /** ID of your knowledge base. */
     knowledgeBaseId: string;
+
+    /** Your subscription keys. */
     subscriptionKey: string;
-    scoreThreshold: number;
-    searchEngine: SearchEngine;
-    top: number;
+
+    /** (Optional) minimum score accepted. Defaults to "0.3". */
+    scoreThreshold?: number;
+
+    /** (Optional) search engine */
+    searchEngine?: SearchEngine;
+
+    /** (Optional) service endpoint. Defaults to "https://westus.api.cognitive.microsoft.com" */
+    serviceEndpoint?: string;
+
+    /** (Optional) number of results to return. Defaults to "1". */
+    top?: number;
 }
 
 export class QnAMaker {
+    private readonly options: QnAMakerOptions; 
     private catalog?: SearchCatalog;
     private kbUrl: string;
     private answerUrl: string;
     private kbTrainUrl: string;
 
-    constructor(private options: QnAMakerOptions) {
-        this.kbUrl = `${qnaMakerServiceEndpoint}${options.knowledgeBaseId}`;
-        this.answerUrl = `${qnaMakerServiceEndpoint}${options.knowledgeBaseId}/generateanswer`;
-        this.kbTrainUrl = `${qnaMakerServiceEndpoint}${options.knowledgeBaseId}/train`;
-        if (!options.scoreThreshold || options.scoreThreshold == 0)
-            options.scoreThreshold = .3;
-        if (!options.top || options.top == 0)
-            options.top = 1;
+    constructor(options: QnAMakerOptions) {
+        this.options = Object.assign({
+            scoreThreshold: 0.3,
+            serviceEndpoint: 'https://westus.api.cognitive.microsoft.com',
+            top: 1
+        } as QnAMakerOptions, options);
+
+        const endpoint = this.options.serviceEndpoint as string;
+        this.kbUrl = `${endpoint + v3path + options.knowledgeBaseId}`;
+        this.answerUrl = `${this.kbUrl}/generateanswer`;
+        this.kbTrainUrl = `${this.kbUrl}/train`;
     }
 
     public getAnswers(question: string): Promise<QnAMakerResult[]> {
@@ -74,14 +90,16 @@ export class QnAMaker {
         let searchHits = await this.catalog.search(question);
         var answers: QnAMakerResult[] = [];
         if (searchHits && searchHits.length > 0) {
+            const scoreThreshold = this.options.scoreThreshold as number;
+            const top = this.options.top as number;
             for (let searchHit of searchHits) {
-                if (searchHit.score > this.options.scoreThreshold) {
+                if (searchHit.score >= scoreThreshold) {
                     let doc: any = await this.catalog.get(searchHit.docId);
                     answers.push({
                         score: searchHit.score,
                         answer: doc.answer
                     });
-                    if (answers.length >= this.options.top)
+                    if (answers.length >= top)
                         break;
                 }
             }
@@ -104,11 +122,12 @@ export class QnAMaker {
             }
         })
             .then(result => {
-                var answers: QnAMakerResult[] = [];
+                const answers: QnAMakerResult[] = [];
+                const scoreThreshold = this.options.scoreThreshold as number;
                 if (result.answers && result.answers.length > 0) {
                     result.answers.forEach((ans: any) => {
                         ans.score /= 100;
-                        if (ans.score > this.options.scoreThreshold) {
+                        if (ans.score >= scoreThreshold ) {
                             answers.push({
                                 score: ans.score,
                                 answer: htmlentities.decode(ans.answer)
@@ -124,7 +143,7 @@ export class QnAMaker {
     /** build catalog */
     private async createCatalogForKnowledgeBase(): Promise<SearchCatalog> {
         // create empty catalog
-        let catalog = await this.options.searchEngine.createCatalog(this.options.knowledgeBaseId, "qnaId", ["question", "answer"]);
+        let catalog = await (this.options.searchEngine as SearchEngine).createCatalog(this.options.knowledgeBaseId, "qnaId", ["question", "answer"]);
 
         // get knowledge base
         let knowledgeBase = await request({
