@@ -1,13 +1,9 @@
-import { ConnectorClient, BotCredentials, MicrosoftAppCredentials, BotAuthenticator } from 'botframework-connector';
+import { ConnectorClient, SimpleCredentialProvider, JwtTokenValidation, MicrosoftAppCredentials } from 'botframework-connector';
 import { Activity, ActivityTypes } from 'botbuilder-schema';
 import * as restify from "restify";
 
-const botCredentials: BotCredentials = {
-    appId: '',
-    appPassword: ''
-};
-const credentials = new MicrosoftAppCredentials(botCredentials);
-const authenticator = new BotAuthenticator(botCredentials);
+const appId = process.env.MICROSOFT_APP_ID;
+const appPassword = process.env.MICROSOFT_APP_PASSWORD;
 
 const server = restify.createServer();
 server.listen(process.env.port || process.env.PORT || 3978, function () {
@@ -21,15 +17,22 @@ function getListener(): HttpHandler {
     function processReq(req, res) {
         console.log('processReq:', req.body);
 
-        var activity = req.body;
+        let activity = req.body;
 
         // authenticate request
-        authenticator.authenticate(req.headers, activity.channelId, activity.serviceUrl).then(() => {
+        let authHeader = req.headers['authorization'] || req.headers['Authorization'] || null;
+
+        const credentials = new SimpleCredentialProvider(appId, appPassword);
+        JwtTokenValidation.assertValidActivity(activity, authHeader, credentials).then(() => {
 
             // On message activity, reply with the same text
             if (activity.type === 'message') {
-                var reply = createReply(activity, `You said: ${activity.text}`);
-                const client = new ConnectorClient(credentials, activity.serviceUrl);
+                let reply = createReply(activity, `You said: ${activity.text}`);
+
+                const client = new ConnectorClient(
+                    new MicrosoftAppCredentials(credentials.appId, credentials.appPassword),
+                    activity.serviceUrl);
+
                 client.conversations.replyToActivity(activity.conversation.id, activity.id, reply)
                     .then((reply) => {
                         console.log('reply send with id: ' + reply.id);
