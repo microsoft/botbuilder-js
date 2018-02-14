@@ -11,14 +11,21 @@ export interface QnAMakerResult {
     score: number;
 }
 export interface QnAMakerOptions {
+    /** ID of your knowledge base. */
     knowledgeBaseId: string;
+    /** Your subscription keys. */
     subscriptionKey: string;
-    scoreThreshold: number;
-    searchEngine: SearchEngine;
-    top: number;
+    /** (Optional) minimum score accepted. Defaults to "0.3". */
+    scoreThreshold?: number;
+    /** (Optional) search engine */
+    searchEngine?: SearchEngine;
+    /** (Optional) service endpoint. Defaults to "https://westus.api.cognitive.microsoft.com" */
+    serviceEndpoint?: string;
+    /** (Optional) number of results to return. Defaults to "1". */
+    top?: number;
 }
 export declare class QnAMaker {
-    private options;
+    private readonly options;
     private catalog?;
     private kbUrl;
     private answerUrl;

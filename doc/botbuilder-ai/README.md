@@ -20,6 +20,7 @@
 
 ### Interfaces
 
+* [LuisRecognizerOptions](interfaces/botbuilder_ai.luisrecognizeroptions.md)
 * [QnAMakerOptions](interfaces/botbuilder_ai.qnamakeroptions.md)
 * [QnAMakerResult](interfaces/botbuilder_ai.qnamakerresult.md)
 * [TranslationContext](interfaces/botbuilder_ai.translationcontext.md)
@@ -42,7 +43,7 @@
 
 **●  Names**:  *`string`[]* 
 
-*Defined in [libraries/botbuilder-ai/lib/languageMap.d.ts:9](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-ai/lib/languageMap.d.ts#L9)*
+*Defined in [libraries/botbuilder-ai/lib/languageMap.d.ts:9](https://github.com/Microsoft/botbuilder-js/blob/13506b4/libraries/botbuilder-ai/lib/languageMap.d.ts#L9)*
 
 
 
@@ -59,7 +60,7 @@ ___
 
 **●  codesToNames**:  *`object`* 
 
-*Defined in [libraries/botbuilder-ai/lib/languageMap.d.ts:10](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-ai/lib/languageMap.d.ts#L10)*
+*Defined in [libraries/botbuilder-ai/lib/languageMap.d.ts:10](https://github.com/Microsoft/botbuilder-js/blob/13506b4/libraries/botbuilder-ai/lib/languageMap.d.ts#L10)*
 
 
 #### Type declaration
@@ -80,7 +81,7 @@ ___
 
 **●  namesToCode**:  *`object`* 
 
-*Defined in [libraries/botbuilder-ai/lib/languageMap.d.ts:13](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-ai/lib/languageMap.d.ts#L13)*
+*Defined in [libraries/botbuilder-ai/lib/languageMap.d.ts:13](https://github.com/Microsoft/botbuilder-js/blob/13506b4/libraries/botbuilder-ai/lib/languageMap.d.ts#L13)*
 
 
 #### Type declaration
@@ -101,7 +102,7 @@ ___
 
 **●  namesToNames**:  *`object`* 
 
-*Defined in [libraries/botbuilder-ai/lib/languageMap.d.ts:16](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-ai/lib/languageMap.d.ts#L16)*
+*Defined in [libraries/botbuilder-ai/lib/languageMap.d.ts:16](https://github.com/Microsoft/botbuilder-js/blob/13506b4/libraries/botbuilder-ai/lib/languageMap.d.ts#L16)*
 
 
 #### Type declaration
