@@ -20,8 +20,7 @@ describe('LuisRecognizer', function () {
     }
 
     it('should return top intent and entities', function (done) {
-
-        var recognizer = new ai.LuisRecognizer(luisAppId, subscriptionKey);
+        var recognizer = new ai.LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey });
         var context = { request: { text: 'I want ham and cheese sandwich!' } };
         recognizer.recognize(context)
             .then(res => {
@@ -36,7 +35,7 @@ describe('LuisRecognizer', function () {
     });
 
     it('static recognize should return top intent', function (done) {
-        ai.LuisRecognizer.recognize("hello", luisAppId, subscriptionKey)
+        ai.LuisRecognizer.recognize("hello", { appId: luisAppId, subscriptionKey: subscriptionKey })
             .then(res => {
                 assert(res);
                 assert(res.name != '');
@@ -50,7 +49,7 @@ describe('LuisRecognizer', function () {
         const bot = new builder.Bot(testAdapter)
             .use(new builder.MemoryStorage())
             .use(new builder.BotStateManager())
-            .use(new ai.LuisRecognizer(luisAppId, subscriptionKey))
+            .use(new ai.LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey }))
             .onReceive((context) => {
                 context.reply(context.topIntent.name);
             });

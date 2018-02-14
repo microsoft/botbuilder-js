@@ -46,10 +46,29 @@
 <a id="constructor"></a>
 
 
-### ⊕ **new LuisRecognizer**(appId: *`string`*, subscriptionKey: *`string`*, baseUri?: *`undefined`⎮`string`*): [LuisRecognizer](botbuilder_ai.luisrecognizer.md)
+### ⊕ **new LuisRecognizer**(options: *[LuisRecognizerOptions](../interfaces/botbuilder_ai.luisrecognizeroptions.md)*): [LuisRecognizer](botbuilder_ai.luisrecognizer.md)
 
 
-*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:13](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L13)*
+### ⊕ **new LuisRecognizer**(appId: *`string`*, subscriptionKey: *`string`*): [LuisRecognizer](botbuilder_ai.luisrecognizer.md)
+
+
+*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/13506b4/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L31)*
+
+
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| options | [LuisRecognizerOptions](../interfaces/botbuilder_ai.luisrecognizeroptions.md)   |  - |
+
+
+
+
+
+**Returns:** [LuisRecognizer](botbuilder_ai.luisrecognizer.md)
+
+*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:32](https://github.com/Microsoft/botbuilder-js/blob/13506b4/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L32)*
 
 
 
@@ -59,7 +78,6 @@
 | ------ | ------ | ------ |
 | appId | `string`   |  - |
 | subscriptionKey | `string`   |  - |
-| baseUri | `undefined`⎮`string`   |  - |
 
 
 
@@ -283,11 +301,11 @@ ___
 
 ### «Static» recognize
 
-► **recognize**(utterance: *`string`*, appId: *`string`*, subscriptionKey: *`string`*, baseUri?: *`undefined`⎮`string`*): `Promise`.<[Intent]()>
+► **recognize**(utterance: *`string`*, options: *[LuisRecognizerOptions](../interfaces/botbuilder_ai.luisrecognizeroptions.md)*): `Promise`.<[Intent]()>
 
 
 
-*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L15)*
+*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:34](https://github.com/Microsoft/botbuilder-js/blob/13506b4/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L34)*
 
 
 
@@ -296,9 +314,7 @@ ___
 | Param | Type | Description |
 | ------ | ------ | ------ |
 | utterance | `string`   |  - |
-| appId | `string`   |  - |
-| subscriptionKey | `string`   |  - |
-| baseUri | `undefined`⎮`string`   |  - |
+| options | [LuisRecognizerOptions](../interfaces/botbuilder_ai.luisrecognizeroptions.md)   |  - |
 
 
 
@@ -316,11 +332,11 @@ ___
 
 ### «Static»«Protected» recognizeAndMap
 
-► **recognizeAndMap**(client: *[LuisClient]()*, utterance: *`string`*, appId: *`string`*, subscriptionKey: *`string`*): `Promise`.<[Intent]()>
+► **recognizeAndMap**(client: *[LuisClient]()*, utterance: *`string`*, options: *[LuisRecognizerOptions](../interfaces/botbuilder_ai.luisrecognizeroptions.md)*): `Promise`.<[Intent]()>
 
 
 
-*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:16](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L16)*
+*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:35](https://github.com/Microsoft/botbuilder-js/blob/13506b4/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L35)*
 
 
 
@@ -330,8 +346,7 @@ ___
 | ------ | ------ | ------ |
 | client | [LuisClient]()   |  - |
 | utterance | `string`   |  - |
-| appId | `string`   |  - |
-| subscriptionKey | `string`   |  - |
+| options | [LuisRecognizerOptions](../interfaces/botbuilder_ai.luisrecognizeroptions.md)   |  - |
 
 
 

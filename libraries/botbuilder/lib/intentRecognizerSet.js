@@ -120,12 +120,7 @@ class IntentRecognizerSet extends intentRecognizer_1.IntentRecognizer {
         });
     }
     hasExactMatch(intents) {
-        intents.forEach((intent) => {
-            if (intent.score >= 1.0) {
-                return true;
-            }
-        });
-        return false;
+        return intents.filter((intent) => intent.score >= 1.0).length > 0;
     }
 }
 exports.IntentRecognizerSet = IntentRecognizerSet;

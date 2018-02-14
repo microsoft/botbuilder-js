@@ -136,11 +136,6 @@ export class IntentRecognizerSet extends IntentRecognizer {
     }
 
     private hasExactMatch(intents: Intent[]): boolean {
-        intents.forEach((intent) => {
-            if (intent.score >= 1.0) {
-                return true;
-            }
-        });
-        return false;
+        return intents.filter((intent) => intent.score >= 1.0).length > 0;
     }
 }

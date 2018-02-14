@@ -33,11 +33,11 @@ export interface Storage {
 /** Additional settings for a storage provider. */
 export interface StorageSettings {
     /** 
-     * If true the storage provider will optimize the writing of objects such that any read object 
+     * (Optional) If true the storage provider will optimize the writing of objects such that any read object 
      * which hasn't changed won't be actually written. The default value for all storage providers 
      * is true. 
      */
-    optimizeWrites: boolean;
+    optimizeWrites?: boolean;
 }
 
 /** Object which is stored in Storage with an optional eTag */

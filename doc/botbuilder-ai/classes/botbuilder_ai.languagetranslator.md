@@ -40,7 +40,7 @@ The LanguageTranslator will use the Text Translator Cognitive service to transla
 ### ⊕ **new LanguageTranslator**(translatorKey: *`string`*, nativeLanguages: *`string`[]*, luisAppId: *`string`*, luisAccessKey: *`string`*): [LanguageTranslator](botbuilder_ai.languagetranslator.md)
 
 
-*Defined in [libraries/botbuilder-ai/lib/languageTranslator.d.ts:24](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-ai/lib/languageTranslator.d.ts#L24)*
+*Defined in [libraries/botbuilder-ai/lib/languageTranslator.d.ts:24](https://github.com/Microsoft/botbuilder-js/blob/13506b4/libraries/botbuilder-ai/lib/languageTranslator.d.ts#L24)*
 
 
 
@@ -69,7 +69,7 @@ The LanguageTranslator will use the Text Translator Cognitive service to transla
 
 **●  luisAccessKey**:  *`string`* 
 
-*Defined in [libraries/botbuilder-ai/lib/languageTranslator.d.ts:22](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-ai/lib/languageTranslator.d.ts#L22)*
+*Defined in [libraries/botbuilder-ai/lib/languageTranslator.d.ts:22](https://github.com/Microsoft/botbuilder-js/blob/13506b4/libraries/botbuilder-ai/lib/languageTranslator.d.ts#L22)*
 
 
 
@@ -83,7 +83,7 @@ ___
 
 **●  luisAppId**:  *`string`* 
 
-*Defined in [libraries/botbuilder-ai/lib/languageTranslator.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-ai/lib/languageTranslator.d.ts#L21)*
+*Defined in [libraries/botbuilder-ai/lib/languageTranslator.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/13506b4/libraries/botbuilder-ai/lib/languageTranslator.d.ts#L21)*
 
 
 
@@ -97,7 +97,7 @@ ___
 
 **●  nativeLanguages**:  *`string`[]* 
 
-*Defined in [libraries/botbuilder-ai/lib/languageTranslator.d.ts:20](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-ai/lib/languageTranslator.d.ts#L20)*
+*Defined in [libraries/botbuilder-ai/lib/languageTranslator.d.ts:20](https://github.com/Microsoft/botbuilder-js/blob/13506b4/libraries/botbuilder-ai/lib/languageTranslator.d.ts#L20)*
 
 
 
@@ -115,7 +115,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-ai/lib/languageTranslator.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-ai/lib/languageTranslator.d.ts#L27)*
+*Defined in [libraries/botbuilder-ai/lib/languageTranslator.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/13506b4/libraries/botbuilder-ai/lib/languageTranslator.d.ts#L27)*
 
 
 
@@ -147,7 +147,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-ai/lib/languageTranslator.d.ts:26](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-ai/lib/languageTranslator.d.ts#L26)*
+*Defined in [libraries/botbuilder-ai/lib/languageTranslator.d.ts:26](https://github.com/Microsoft/botbuilder-js/blob/13506b4/libraries/botbuilder-ai/lib/languageTranslator.d.ts#L26)*
 
 
 
