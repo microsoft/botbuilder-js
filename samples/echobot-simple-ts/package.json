@@ -15,6 +15,6 @@
     "@types/restify": "^5.0.7",
     "botframework-connector": "^4.0.0-m1.0",
     "botbuilder-schema": "^4.0.0-m1.0",
-    "restify": "6.3.4"
+    "restify": "^6.3.4"
   }
 }
