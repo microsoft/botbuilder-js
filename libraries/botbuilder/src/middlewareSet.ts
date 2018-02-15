@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, ConversationResourceResponse } from 'botbuilder-schema';
+import { Activity, ResourceResponse } from 'botbuilder-schema';
 import { Middleware } from './middleware';
 
 /**
@@ -73,8 +73,8 @@ export class MiddlewareSet implements Middleware {
         return callMiddleware(this._middleware.slice(0), 0);
     }
 
-    public postActivity(context: BotContext, activities: Partial<Activity>[], next: () => Promise<ConversationResourceResponse[]>): Promise<ConversationResourceResponse[]> {
-        function callMiddleware(set: Middleware[], i: number): Promise<ConversationResourceResponse[]> {
+    public postActivity(context: BotContext, activities: Partial<Activity>[], next: () => Promise<ResourceResponse[]>): Promise<ResourceResponse[]> {
+        function callMiddleware(set: Middleware[], i: number): Promise<ResourceResponse[]> {
             try {
                 if (i < set.length) {
                     const plugin = set[i];

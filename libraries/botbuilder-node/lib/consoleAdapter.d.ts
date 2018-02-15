@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { ActivityAdapter } from 'botbuilder';
-import { Activity, ConversationResourceResponse } from 'botbuilder';
+import { Activity, ResourceResponse } from 'botbuilder';
 /**
  * Lets a user communicate with a bot from a console window.
  *
@@ -27,7 +27,7 @@ export declare class ConsoleAdapter implements ActivityAdapter {
     /** INTERNAL implementation of `Adapter.onReceive`. */
     onReceive: (activity: Activity) => Promise<void>;
     /** INTERNAL implementation of `Adapter.post()`. */
-    post(activities: Partial<Activity>[]): Promise<ConversationResourceResponse[]>;
+    post(activities: Partial<Activity>[]): Promise<ResourceResponse[]>;
     /**
      * Begins listening to console input. The listener will call [receive()](#receive) after
      * parsing input from the user.

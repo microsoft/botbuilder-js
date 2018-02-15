@@ -39,7 +39,7 @@ INTERNAL support class for `TestAdapter`.
 ### ⊕ **new TestFlow**(previous: *`Promise`.<`void`>*, adapter: *[TestAdapter](botbuilder.testadapter.md)*): [TestFlow](botbuilder.testflow.md)
 
 
-*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:80](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/testAdapter.d.ts#L80)*
+*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:80](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/testAdapter.d.ts#L80)*
 
 
 
@@ -66,7 +66,7 @@ INTERNAL support class for `TestAdapter`.
 
 **●  previous**:  *`Promise`.<`void`>* 
 
-*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:79](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/testAdapter.d.ts#L79)*
+*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:79](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/testAdapter.d.ts#L79)*
 
 
 
@@ -80,11 +80,11 @@ ___
 
 ###  assertReply
 
-► **assertReply**(expected: *`string`⎮[Partial]()[Activity](../interfaces/botbuilder.activity.md)⎮`function`*, description?: *`undefined`⎮`string`*, timeout?: *`undefined`⎮`number`*): [TestFlow](botbuilder.testflow.md)
+► **assertReply**(expected: *`string`⎮[Partial]()[Activity]()⎮`function`*, description?: *`undefined`⎮`string`*, timeout?: *`undefined`⎮`number`*): [TestFlow](botbuilder.testflow.md)
 
 
 
-*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:101](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/testAdapter.d.ts#L101)*
+*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:101](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/testAdapter.d.ts#L101)*
 
 
 
@@ -95,7 +95,7 @@ Throws if the bot's response doesn't match the expected text/activity
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| expected | `string`⎮[Partial]()[Activity](../interfaces/botbuilder.activity.md)⎮`function`   |  expected text or activity from the bot, or callback to inspect object |
+| expected | `string`⎮[Partial]()[Activity]()⎮`function`   |  expected text or activity from the bot, or callback to inspect object |
 | description | `undefined`⎮`string`   |  description of test case |
 | timeout | `undefined`⎮`number`   |  (default 3000ms) time to wait for response from bot |
 
@@ -119,7 +119,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:108](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/testAdapter.d.ts#L108)*
+*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:108](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/testAdapter.d.ts#L108)*
 
 
 
@@ -154,7 +154,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:116](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/testAdapter.d.ts#L116)*
+*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:116](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/testAdapter.d.ts#L116)*
 
 
 
@@ -184,7 +184,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:113](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/testAdapter.d.ts#L113)*
+*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:113](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/testAdapter.d.ts#L113)*
 
 
 
@@ -213,11 +213,11 @@ ___
 
 ###  send
 
-► **send**(userSays: *`string`⎮[Partial]()[Activity](../interfaces/botbuilder.activity.md)*): [TestFlow](botbuilder.testflow.md)
+► **send**(userSays: *`string`⎮[Partial]()[Activity]()*): [TestFlow](botbuilder.testflow.md)
 
 
 
-*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:94](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/testAdapter.d.ts#L94)*
+*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:94](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/testAdapter.d.ts#L94)*
 
 
 
@@ -228,7 +228,7 @@ Send something to the bot
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| userSays | `string`⎮[Partial]()[Activity](../interfaces/botbuilder.activity.md)   |  text or activity simulating user input |
+| userSays | `string`⎮[Partial]()[Activity]()   |  text or activity simulating user input |
 
 
 
@@ -246,11 +246,11 @@ ___
 
 ###  test
 
-► **test**(userSays: *`string`⎮[Partial]()[Activity](../interfaces/botbuilder.activity.md)*, expected: *`string`⎮[Partial]()[Activity](../interfaces/botbuilder.activity.md)⎮`function`*, description?: *`undefined`⎮`string`*, timeout?: *`undefined`⎮`number`*): [TestFlow](botbuilder.testflow.md)
+► **test**(userSays: *`string`⎮[Partial]()[Activity]()*, expected: *`string`⎮[Partial]()[Activity]()⎮`function`*, description?: *`undefined`⎮`string`*, timeout?: *`undefined`⎮`number`*): [TestFlow](botbuilder.testflow.md)
 
 
 
-*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:89](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/testAdapter.d.ts#L89)*
+*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:89](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/testAdapter.d.ts#L89)*
 
 
 
@@ -261,8 +261,8 @@ Send something to the bot and expect the bot to reply
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| userSays | `string`⎮[Partial]()[Activity](../interfaces/botbuilder.activity.md)   |  text or activity simulating user input |
-| expected | `string`⎮[Partial]()[Activity](../interfaces/botbuilder.activity.md)⎮`function`   |  expected text or activity from the bot |
+| userSays | `string`⎮[Partial]()[Activity]()   |  text or activity simulating user input |
+| expected | `string`⎮[Partial]()[Activity]()⎮`function`   |  expected text or activity from the bot |
 | description | `undefined`⎮`string`   |  description of test case |
 | timeout | `undefined`⎮`number`   |  (default 3000ms) time to wait for response from bot |
 
@@ -286,7 +286,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:115](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/testAdapter.d.ts#L115)*
+*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:115](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/testAdapter.d.ts#L115)*
 
 
 

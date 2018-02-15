@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Middleware } from './middleware';
-import { Activity, ConversationResourceResponse } from 'botbuilder-schema';
+import { Activity, ResourceResponse } from 'botbuilder-schema';
 import { StoreItems } from './storage';
 /** Optional settings used to configure a BotStateManager instance. */
 export interface BotStateManagerSettings {
@@ -49,7 +49,7 @@ export declare class BotStateManager implements Middleware {
      */
     constructor(settings?: Partial<BotStateManagerSettings>);
     contextCreated(context: BotContext, next: () => Promise<void>): Promise<void>;
-    postActivity(context: BotContext, activities: Partial<Activity>[], next: (newActivities?: Partial<Activity>[]) => Promise<ConversationResourceResponse[]>): Promise<ConversationResourceResponse[]>;
+    postActivity(context: BotContext, activities: Partial<Activity>[], next: (newActivities?: Partial<Activity>[]) => Promise<ResourceResponse[]>): Promise<ResourceResponse[]>;
     contextDone(context: BotContext, next: () => Promise<void>): Promise<void>;
     protected read(context: BotContext, keys: string[]): Promise<StoreItems>;
     protected write(context: BotContext, changes: StoreItems): Promise<void>;

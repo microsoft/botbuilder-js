@@ -12,7 +12,7 @@
 
 **●  knowledgeBaseId**:  *`string`* 
 
-*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/13506b4/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L15)*
+*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L15)*
 
 
 
@@ -29,7 +29,7 @@ ___
 
 **●  scoreThreshold**:  *`undefined`⎮`number`* 
 
-*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/13506b4/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L19)*
+*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L19)*
 
 
 
@@ -46,7 +46,7 @@ ___
 
 **●  searchEngine**:  *[SearchEngine]()* 
 
-*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/13506b4/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L21)*
+*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L21)*
 
 
 
@@ -63,7 +63,7 @@ ___
 
 **●  serviceEndpoint**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:23](https://github.com/Microsoft/botbuilder-js/blob/13506b4/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L23)*
+*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:23](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L23)*
 
 
 
@@ -80,7 +80,7 @@ ___
 
 **●  subscriptionKey**:  *`string`* 
 
-*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/13506b4/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L17)*
+*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L17)*
 
 
 
@@ -97,7 +97,7 @@ ___
 
 **●  top**:  *`undefined`⎮`number`* 
 
-*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:25](https://github.com/Microsoft/botbuilder-js/blob/13506b4/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L25)*
+*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:25](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L25)*
 
 
 

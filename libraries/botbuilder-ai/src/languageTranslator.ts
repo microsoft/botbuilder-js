@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Middleware } from 'botbuilder';
-import { Activity, ConversationResourceResponse } from 'botbuilder';
+import { Activity, ResourceResponse } from 'botbuilder';
 import * as LanguageMap from './languageMap';
 import LuisClient = require('botframework-luis');
 
@@ -100,7 +100,7 @@ export class LanguageTranslator implements Middleware {
 
 
     /// outgoing activities
-    public postActivity(context: BotContext, activities: Activity[], next: () => Promise<ConversationResourceResponse[]>): Promise<ConversationResourceResponse[]> {
+    public postActivity(context: BotContext, activities: Activity[], next: () => Promise<ResourceResponse[]>): Promise<ResourceResponse[]> {
         let promises: Promise<void>[] = [];
 
         for (let iActivity in activities) {

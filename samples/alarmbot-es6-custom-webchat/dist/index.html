@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Example alarm bot for the browser</title>
+</head>
+<body style="visibility: hidden">
+<template id="alarm-template">
+    <li>
+        <h5 data-field></h5>
+        <p data-field></p>
+    </li>
+</template>
+<section>
+    <div>
+        <div class="col">
+            <h5>Chat</h5>
+            <div class="content-mask">
+                <div class="messages-container"></div>
+            </div>
+        </div>
+        <div class="border-left">
+            <h5>Alarms</h5>
+            <ul class="alarms-list"></ul>
+        </div>
+    </div>
+    <form>
+        <input type="text" autofocus>
+        <button class="button-primary">Send</button>
+    </form>
+</section>
+<script type="text/javascript" src="app.js"></script>
+</body>
+</html>

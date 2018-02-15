@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { MiddlewareSet } from './middlewareSet';
-import { Activity, ConversationReference, ConversationResourceResponse } from 'botbuilder-schema';
+import { Activity, ConversationReference, ResourceResponse } from 'botbuilder-schema';
 import { ActivityAdapter } from './activityAdapter';
 import { Promiseable } from './middleware';
 import { TemplateRenderer } from './templateManager';
@@ -91,7 +91,7 @@ export declare class Bot extends MiddlewareSet {
      * @param context Context for the current turn of the conversation.
      * @param activities Set of activities to send.
      */
-    post(context: BotContext, ...activities: Partial<Activity>[]): Promise<Partial<ConversationResourceResponse>[]>;
+    post(context: BotContext, ...activities: Partial<Activity>[]): Promise<ResourceResponse[]>;
     /**
      * Dispatches an incoming set of activities. This method can be used to dispatch an activity
      * to the bot as if a user had sent it which is sometimes useful.

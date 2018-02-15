@@ -37,7 +37,7 @@ Template source for rendering dynamic JSON objects. To use add to the pipeline b
 
 
 
-*Defined in [libraries/botbuilder/lib/jsonTemplates.d.ts:40](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/jsonTemplates.d.ts#L40)*
+*Defined in [libraries/botbuilder/lib/jsonTemplates.d.ts:40](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/jsonTemplates.d.ts#L40)*
 
 
 
@@ -71,7 +71,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/jsonTemplates.d.ts:47](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/jsonTemplates.d.ts#L47)*
+*Defined in [libraries/botbuilder/lib/jsonTemplates.d.ts:47](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/jsonTemplates.d.ts#L47)*
 
 
 
@@ -105,7 +105,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/jsonTemplates.d.ts:32](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/jsonTemplates.d.ts#L32)*
+*Defined in [libraries/botbuilder/lib/jsonTemplates.d.ts:32](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/jsonTemplates.d.ts#L32)*
 
 
 
@@ -136,7 +136,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/jsonTemplates.d.ts:70](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/jsonTemplates.d.ts#L70)*
+*Defined in [libraries/botbuilder/lib/jsonTemplates.d.ts:70](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/jsonTemplates.d.ts#L70)*
 
 
 
@@ -169,7 +169,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/jsonTemplates.d.ts:54](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/jsonTemplates.d.ts#L54)*
+*Defined in [libraries/botbuilder/lib/jsonTemplates.d.ts:54](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/jsonTemplates.d.ts#L54)*
 
 
 
@@ -203,7 +203,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/jsonTemplates.d.ts:64](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/jsonTemplates.d.ts#L64)*
+*Defined in [libraries/botbuilder/lib/jsonTemplates.d.ts:64](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/jsonTemplates.d.ts#L64)*
 
 
 
@@ -234,13 +234,13 @@ ___
 
 ###  renderTemplate
 
-► **renderTemplate**(context: *[BotContext](../interfaces/botbuilder.__global.botcontext.md)*, language: *`string`*, templateId: *`string`*, data: *`any`*): `Promise`.<[Partial]()[Activity](../interfaces/botbuilder.activity.md)⎮`string`⎮`undefined`>
+► **renderTemplate**(context: *[BotContext](../interfaces/botbuilder.__global.botcontext.md)*, language: *`string`*, templateId: *`string`*, data: *`any`*): `Promise`.<[Partial]()[Activity]()⎮`string`⎮`undefined`>
 
 
 
 *Implementation of [TemplateRenderer](../interfaces/botbuilder.templaterenderer.md).[renderTemplate](../interfaces/botbuilder.templaterenderer.md#rendertemplate)*
 
-*Defined in [libraries/botbuilder/lib/jsonTemplates.d.ts:33](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/jsonTemplates.d.ts#L33)*
+*Defined in [libraries/botbuilder/lib/jsonTemplates.d.ts:33](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/jsonTemplates.d.ts#L33)*
 
 
 
@@ -257,7 +257,7 @@ ___
 
 
 
-**Returns:** `Promise`.<[Partial]()[Activity](../interfaces/botbuilder.activity.md)⎮`string`⎮`undefined`>
+**Returns:** `Promise`.<[Partial]()[Activity]()⎮`string`⎮`undefined`>
 
 
 
@@ -273,7 +273,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/jsonTemplates.d.ts:79](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/jsonTemplates.d.ts#L79)*
+*Defined in [libraries/botbuilder/lib/jsonTemplates.d.ts:79](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/jsonTemplates.d.ts#L79)*
 
 
 

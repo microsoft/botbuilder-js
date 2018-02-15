@@ -30,7 +30,7 @@ export * from './dictionaryRenderer';
 export * from './testAdapter';
 export * from 'botbuilder-schema';
 import { Bot } from './bot';
-import { Activity, ConversationReference, ConversationResourceResponse } from 'botbuilder-schema';
+import { Activity, ConversationReference, ResourceResponse } from 'botbuilder-schema';
 import { Intent } from './intentRecognizer';
 import { StoreItem, Storage } from './storage';
 import { TemplateManager } from './templateManager';
@@ -159,7 +159,7 @@ declare global  {
          * }
          * ```
          */
-        flushResponses(): Promise<ConversationResourceResponse[]>;
+        flushResponses(): Promise<ResourceResponse[]>;
         /**
          * Queues a new "typing" activity to the [responses](#responses) array. On supported
          * channels this will display a typing indicator which can be used to convey to the

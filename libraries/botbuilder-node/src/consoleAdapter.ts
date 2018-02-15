@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { ActivityAdapter } from 'botbuilder';
-import { ActivityTypes, Activity, ConversationResourceResponse } from 'botbuilder';
+import { ActivityTypes, Activity, ResourceResponse } from 'botbuilder';
 import * as readline from 'readline';
 
 /**
@@ -35,12 +35,12 @@ export class ConsoleAdapter implements ActivityAdapter {
     public onReceive: (activity: Activity) => Promise<void>;
 
     /** INTERNAL implementation of `Adapter.post()`. */
-    public post(activities: Partial<Activity>[]): Promise<ConversationResourceResponse[]> {
+    public post(activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
         return new Promise((resolve, reject) => {
-            const responses: ConversationResourceResponse[] = [];
+            const responses: ResourceResponse[] = [];
             function next(i: number) {
                 if (i < activities.length) {
-                    responses.push(<ConversationResourceResponse>{});
+                    responses.push(<ResourceResponse>{});
                     let a = activities[i];
                     switch (a.type || ActivityTypes.Message) {
                         case <ActivityTypes>'delay':

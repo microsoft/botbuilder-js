@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Middleware, Promiseable } from './middleware';
-import { Activity, ConversationReference, ActivityTypes, ConversationResourceResponse } from 'botbuilder-schema';
+import { Activity, ConversationReference, ActivityTypes, ResourceResponse } from 'botbuilder-schema';
 
 /** Interface for a template renderer which provides the ability
  * to create a text reply or activity reply from the language, templateid and data object
@@ -31,7 +31,7 @@ export class TemplateManager implements Middleware {
         return next();
     }
 
-    public async postActivity(context: BotContext, activities: Partial<Activity>[], next: (newActivities?: Partial<Activity>[]) => Promise<ConversationResourceResponse[]>): Promise<ConversationResourceResponse[]> {
+    public async postActivity(context: BotContext, activities: Partial<Activity>[], next: (newActivities?: Partial<Activity>[]) => Promise<ResourceResponse[]>): Promise<ResourceResponse[]> {
         // Ensure activities are well formed.
         for (let i = 0; i < activities.length; i++) {
             let activity = activities[i];

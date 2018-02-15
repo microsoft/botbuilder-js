@@ -12,7 +12,7 @@ A strongly typed entity.
 ## Hierarchy
 
 
- [Entity](botbuilder.entity.md)
+ [Entity]()
 
 **↳ EntityObject**
 
@@ -30,7 +30,7 @@ A strongly typed entity.
 
 **●  score**:  *`undefined`⎮`number`* 
 
-*Defined in [libraries/botbuilder/lib/entityObject.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/entityObject.d.ts#L15)*
+*Defined in [libraries/botbuilder/lib/entityObject.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/entityObject.d.ts#L15)*
 
 
 
@@ -47,9 +47,9 @@ ___
 
 **●  type**:  *`string`* 
 
-*Overrides [Entity](botbuilder.entity.md).[type](botbuilder.entity.md#type)*
+*Overrides Entity.type*
 
-*Defined in [libraries/botbuilder/lib/entityObject.d.ts:11](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/entityObject.d.ts#L11)*
+*Defined in [libraries/botbuilder/lib/entityObject.d.ts:11](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/entityObject.d.ts#L11)*
 
 
 
@@ -66,7 +66,7 @@ ___
 
 **●  value**:  *`T`* 
 
-*Defined in [libraries/botbuilder/lib/entityObject.d.ts:13](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/entityObject.d.ts#L13)*
+*Defined in [libraries/botbuilder/lib/entityObject.d.ts:13](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/entityObject.d.ts#L13)*
 
 
 

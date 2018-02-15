@@ -66,7 +66,7 @@ Abstract base class for all storage middleware.
 
 *Overrides [BotService](botbuilder.botservice.md).[constructor](botbuilder.botservice.md#constructor)*
 
-*Defined in [libraries/botbuilder/lib/storageMiddleware.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/storageMiddleware.d.ts#L18)*
+*Defined in [libraries/botbuilder/lib/storageMiddleware.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/storageMiddleware.d.ts#L18)*
 
 
 
@@ -97,7 +97,7 @@ Creates a new instance of the storage provider.
 
 *Inherited from [BotService](botbuilder.botservice.md).[instance](botbuilder.botservice.md#instance)*
 
-*Defined in [libraries/botbuilder/lib/botService.d.ts:22](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botService.d.ts#L22)*
+*Defined in [libraries/botbuilder/lib/botService.d.ts:22](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/botService.d.ts#L22)*
 
 
 
@@ -113,7 +113,7 @@ ___
 
 *Inherited from [BotService](botbuilder.botservice.md).[name](botbuilder.botservice.md#name)*
 
-*Defined in [libraries/botbuilder/lib/botService.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botService.d.ts#L21)*
+*Defined in [libraries/botbuilder/lib/botService.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/botService.d.ts#L21)*
 
 
 
@@ -127,7 +127,7 @@ ___
 
 **●  settings**:  *`SETTINGS`* 
 
-*Defined in [libraries/botbuilder/lib/storageMiddleware.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/storageMiddleware.d.ts#L18)*
+*Defined in [libraries/botbuilder/lib/storageMiddleware.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/storageMiddleware.d.ts#L18)*
 
 
 
@@ -150,7 +150,7 @@ ___
 
 *Inherited from [BotService](botbuilder.botservice.md).[contextCreated](botbuilder.botservice.md#contextcreated)*
 
-*Defined in [libraries/botbuilder/lib/botService.d.ts:32](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botService.d.ts#L32)*
+*Defined in [libraries/botbuilder/lib/botService.d.ts:32](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/botService.d.ts#L32)*
 
 
 
@@ -183,7 +183,7 @@ ___
 
 *Overrides [BotService](botbuilder.botservice.md).[getService](botbuilder.botservice.md#getservice)*
 
-*Defined in [libraries/botbuilder/lib/storageMiddleware.d.ts:25](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/storageMiddleware.d.ts#L25)*
+*Defined in [libraries/botbuilder/lib/storageMiddleware.d.ts:25](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/storageMiddleware.d.ts#L25)*
 
 
 
@@ -213,7 +213,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/storageMiddleware.d.ts:32](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/storageMiddleware.d.ts#L32)*
+*Defined in [libraries/botbuilder/lib/storageMiddleware.d.ts:32](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/storageMiddleware.d.ts#L32)*
 
 
 
