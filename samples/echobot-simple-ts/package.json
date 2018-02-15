@@ -4,7 +4,7 @@
   "description": "Bot Builder example showing a simple bot that echos anything you say using the botframework-connector and restify.",
   "main": "./dist/app.js",
   "scripts": {
-    "build": "tsc",
+    "build-sample": "tsc",
     "debug": "tsc; node --inspect ./dist/app.js",
     "start": "node ./dist/app.js"
   },
