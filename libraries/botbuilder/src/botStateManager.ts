@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Middleware } from './middleware';
-import { Activity, ConversationResourceResponse } from 'botbuilder-schema';
+import { Activity, ResourceResponse } from 'botbuilder-schema';
 import { StoreItem, StoreItems } from './storage';
 
 
@@ -68,7 +68,7 @@ export class BotStateManager implements Middleware {
         return this.read(context, []).then(() => next());
     }
 
-    public postActivity(context: BotContext, activities: Partial<Activity>[], next: (newActivities?: Partial<Activity>[]) => Promise<ConversationResourceResponse[]>): Promise<ConversationResourceResponse[]> {
+    public postActivity(context: BotContext, activities: Partial<Activity>[], next: (newActivities?: Partial<Activity>[]) => Promise<ResourceResponse[]>): Promise<ResourceResponse[]> {
         if (this.settings.writeBeforePost) {
             // save state
             return this.write(context, {}).then(() => next());

@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, ConversationResourceResponse } from 'botbuilder-schema';
+import { Activity, ResourceResponse } from 'botbuilder-schema';
 
 /**
  * Type signature for a return value that can (Optionally) return its value
@@ -61,5 +61,5 @@ export interface Middleware {
      * @param context Context for the current turn of the conversation.
      * @param next Function you should call to continue execution of the middleware pipe.
      */
-    postActivity?(context: BotContext, activities: Partial<Activity>[], next: () => Promise<ConversationResourceResponse[]>): Promise<ConversationResourceResponse[]>;
+    postActivity?(context: BotContext, activities: Partial<Activity>[], next: () => Promise<ResourceResponse[]>): Promise<ResourceResponse[]>;
 }

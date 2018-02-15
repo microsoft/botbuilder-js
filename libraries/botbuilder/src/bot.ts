@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { MiddlewareSet } from './middlewareSet';
-import { ActivityTypes, Activity, ConversationReference, ConversationResourceResponse, } from 'botbuilder-schema';
+import { ActivityTypes, Activity, ConversationReference, ResourceResponse, } from 'botbuilder-schema';
 import { ActivityAdapter } from './activityAdapter';
 import { Promiseable } from './middleware';
 import { createBotContext, applyConversationReference } from './botContext';
@@ -151,7 +151,7 @@ export class Bot extends MiddlewareSet {
      * @param context Context for the current turn of the conversation.
      * @param activities Set of activities to send.
      */
-    public post(context: BotContext, ...activities: Partial<Activity>[]): Promise<Partial<ConversationResourceResponse>[]> {
+    public post(context: BotContext, ...activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
         // Ensure activities are well formed.
         for (let i = 0; i < activities.length; i++) {
             let activity = activities[i];
@@ -169,9 +169,9 @@ export class Bot extends MiddlewareSet {
                 .then((responses) => {
                     // Ensure responses array populated
                     if (!Array.isArray(responses)) {
-                        let mockResponses: ConversationResourceResponse[] = [];
+                        let mockResponses: ResourceResponse[] = [];
                         for (let i = 0; i < activities.length; i++) {
-                            mockResponses.push(<ConversationResourceResponse>{})
+                            mockResponses.push({} as ResourceResponse)
                         }
 
                         return mockResponses;
