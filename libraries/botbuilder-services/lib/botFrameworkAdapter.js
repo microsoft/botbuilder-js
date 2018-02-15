@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const botframework_connector_1 = require("botframework-connector");
+const botframework_connector_2 = require("botframework-connector");
 /**
 * ActivityAdapter class needed to communicate with a Bot Framework channel or the Emulator.
 *
@@ -45,8 +46,9 @@ class BotFrameworkAdapter {
     constructor(settings) {
         this.nextId = 0;
         settings = settings === undefined ? { appId: '', appPassword: '' } : settings;
-        this.credentials = new botframework_connector_1.MicrosoftAppCredentials(settings.appId || '', settings.appPassword || '');
-        this.credentialsProvider = new botframework_connector_1.SimpleCredentialProvider(this.credentials.appId, this.credentials.appPassword);
+        const botCredentials = { appId: settings.appId, appPassword: settings.appPassword };
+        this.credentials = new botframework_connector_2.MicrosoftAppCredentials(botCredentials);
+        this.authenticator = new botframework_connector_2.BotAuthenticator(botCredentials);
         this.onReceive = undefined;
     }
     /**
@@ -175,15 +177,7 @@ class BotFrameworkAdapter {
             let activity = req.body;
             try {
                 // authenticate the incoming request
-                var authHeader = req.headers["authorization"] || '';
-                yield botframework_connector_1.JwtTokenValidation.assertValidActivity(activity, authHeader, this.credentialsProvider);
-            }
-            catch (err) {
-                console.log(err);
-                res.send(401);
-                return;
-            }
-            try {
+                yield this.authenticator.authenticate(req.headers, activity.channelId, activity.serviceUrl);
                 // call onReceive delegate
                 yield this.onReceive(activity);
                 // TODO: Add logic to return 'invoke' response

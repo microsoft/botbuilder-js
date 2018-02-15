@@ -151,7 +151,7 @@ export class CardStyler {
             images = text;
             text = undefined;
         }
-        const card: ThumbnailCard = Object.assign({}, other);
+        const card: Partial<ThumbnailCard> = Object.assign({}, other);
         if (title) { card.title = title; }
         if (text) { card.text = text; }
         if (images) { card.images = CardStyler.images(images); }

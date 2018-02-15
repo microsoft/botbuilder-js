@@ -124,7 +124,7 @@ export class MicrosoftAppCredentials implements msrest.ServiceClientCredentials 
             if (uri.host) {
                 return MicrosoftAppCredentials.isTrustedUrl(uri.host);
             }
-        } catch {
+        } catch(e) {
         }
 
         return false;

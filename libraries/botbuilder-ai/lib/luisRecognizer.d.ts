@@ -7,11 +7,30 @@
  */
 import { Intent, IntentRecognizer } from 'botbuilder';
 import LuisClient = require('botframework-luis');
+export interface LuisRecognizerOptions {
+    /** Your models AppId */
+    appId: string;
+    /** Your subscription key. */
+    subscriptionKey: string;
+    /** (Optional) service endpoint to call. Defaults to "https://westus.api.cognitive.microsoft.com". */
+    serviceEndpoint?: string;
+    /** (Optional) request options passed to service call.  */
+    options?: {
+        timezoneOffset?: number;
+        contextId?: string;
+        verbose?: boolean;
+        forceSet?: string;
+        allowSampling?: string;
+        customHeaders?: {
+            [headerName: string]: string;
+        };
+    };
+}
 export declare class LuisRecognizer extends IntentRecognizer {
-    private appId;
-    private subscriptionKey;
+    private options;
     private luisClient;
-    constructor(appId: string, subscriptionKey: string, baseUri?: string);
-    static recognize(utterance: string, appId: string, subscriptionKey: string, baseUri?: string): Promise<Intent>;
-    protected static recognizeAndMap(client: LuisClient, utterance: string, appId: string, subscriptionKey: string): Promise<Intent>;
+    constructor(options: LuisRecognizerOptions);
+    constructor(appId: string, subscriptionKey: string);
+    static recognize(utterance: string, options: LuisRecognizerOptions): Promise<Intent>;
+    protected static recognizeAndMap(client: LuisClient, utterance: string, options: LuisRecognizerOptions): Promise<Intent>;
 }

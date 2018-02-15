@@ -11,17 +11,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const request = require("request-promise-native");
 const entities = require("html-entities");
 var htmlentities = new entities.AllHtmlEntities();
-let qnaMakerServiceEndpoint = 'https://westus.api.cognitive.microsoft.com/qnamaker/v3.0/knowledgebases/';
+const v3path = '/qnamaker/v3.0/knowledgebases/';
 class QnAMaker {
     constructor(options) {
-        this.options = options;
-        this.kbUrl = `${qnaMakerServiceEndpoint}${options.knowledgeBaseId}`;
-        this.answerUrl = `${qnaMakerServiceEndpoint}${options.knowledgeBaseId}/generateanswer`;
-        this.kbTrainUrl = `${qnaMakerServiceEndpoint}${options.knowledgeBaseId}/train`;
-        if (!options.scoreThreshold || options.scoreThreshold == 0)
-            options.scoreThreshold = .3;
-        if (!options.top || options.top == 0)
-            options.top = 1;
+        this.options = Object.assign({
+            scoreThreshold: 0.3,
+            serviceEndpoint: 'https://westus.api.cognitive.microsoft.com',
+            top: 1
+        }, options);
+        const endpoint = this.options.serviceEndpoint;
+        this.kbUrl = `${endpoint + v3path + options.knowledgeBaseId}`;
+        this.answerUrl = `${this.kbUrl}/generateanswer`;
+        this.kbTrainUrl = `${this.kbUrl}/train`;
     }
     getAnswers(question) {
         if (this.options.searchEngine) {
@@ -42,14 +43,16 @@ class QnAMaker {
             let searchHits = yield this.catalog.search(question);
             var answers = [];
             if (searchHits && searchHits.length > 0) {
+                const scoreThreshold = this.options.scoreThreshold;
+                const top = this.options.top;
                 for (let searchHit of searchHits) {
-                    if (searchHit.score > this.options.scoreThreshold) {
+                    if (searchHit.score >= scoreThreshold) {
                         let doc = yield this.catalog.get(searchHit.docId);
                         answers.push({
                             score: searchHit.score,
                             answer: doc.answer
                         });
-                        if (answers.length >= this.options.top)
+                        if (answers.length >= top)
                             break;
                     }
                 }
@@ -71,11 +74,12 @@ class QnAMaker {
             }
         })
             .then(result => {
-            var answers = [];
+            const answers = [];
+            const scoreThreshold = this.options.scoreThreshold;
             if (result.answers && result.answers.length > 0) {
                 result.answers.forEach((ans) => {
                     ans.score /= 100;
-                    if (ans.score > this.options.scoreThreshold) {
+                    if (ans.score >= scoreThreshold) {
                         answers.push({
                             score: ans.score,
                             answer: htmlentities.decode(ans.answer)

@@ -47,7 +47,7 @@ declare global {
         bot: Bot;
 
         /** The received activity. */
-        request: Activity;
+        request: Partial<Activity>;
 
         /** Queue of responses to send to the user. */
         responses: Partial<Activity>[];
@@ -56,7 +56,7 @@ declare global {
         readonly responded: boolean;
 
         /** The calculated conversation reference for this request. */
-        conversationReference: ConversationReference;
+        conversationReference: Partial<ConversationReference>;
 
         /** 
          * Persisted state related to the request.

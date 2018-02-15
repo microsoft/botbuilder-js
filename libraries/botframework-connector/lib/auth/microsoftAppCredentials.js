@@ -119,7 +119,7 @@ class MicrosoftAppCredentials {
                 return MicrosoftAppCredentials.isTrustedUrl(uri.host);
             }
         }
-        catch (_a) {
+        catch (e) {
         }
         return false;
     }

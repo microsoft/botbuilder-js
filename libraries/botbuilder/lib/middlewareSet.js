@@ -26,51 +26,66 @@ class MiddlewareSet {
     }
     contextCreated(context, next) {
         function callMiddleware(set, i) {
-            if (i < set.length) {
-                const plugin = set[i];
-                if (plugin.contextCreated !== undefined) {
-                    return plugin.contextCreated(context, () => callMiddleware(set, i + 1));
+            try {
+                if (i < set.length) {
+                    const plugin = set[i];
+                    if (plugin.contextCreated !== undefined) {
+                        return plugin.contextCreated(context, () => callMiddleware(set, i + 1));
+                    }
+                    else {
+                        return callMiddleware(set, i + 1);
+                    }
                 }
                 else {
-                    return callMiddleware(set, i + 1);
+                    return next();
                 }
             }
-            else {
-                return next();
+            catch (err) {
+                return Promise.reject(err);
             }
         }
         return callMiddleware(this._middleware.slice(0), 0);
     }
     receiveActivity(context, next) {
         function callMiddleware(set, i) {
-            if (i < set.length) {
-                const plugin = set[i];
-                if (plugin.receiveActivity !== undefined) {
-                    return plugin.receiveActivity(context, () => callMiddleware(set, i + 1));
+            try {
+                if (i < set.length) {
+                    const plugin = set[i];
+                    if (plugin.receiveActivity !== undefined) {
+                        return plugin.receiveActivity(context, () => callMiddleware(set, i + 1));
+                    }
+                    else {
+                        return callMiddleware(set, i + 1);
+                    }
                 }
                 else {
-                    return callMiddleware(set, i + 1);
+                    return next();
                 }
             }
-            else {
-                return next();
+            catch (err) {
+                return Promise.reject(err);
             }
         }
         return callMiddleware(this._middleware.slice(0), 0);
     }
     postActivity(context, activities, next) {
         function callMiddleware(set, i) {
-            if (i < set.length) {
-                const plugin = set[i];
-                if (plugin.postActivity !== undefined) {
-                    return plugin.postActivity(context, activities, () => callMiddleware(set, i + 1));
+            try {
+                if (i < set.length) {
+                    const plugin = set[i];
+                    if (plugin.postActivity !== undefined) {
+                        return plugin.postActivity(context, activities, () => callMiddleware(set, i + 1));
+                    }
+                    else {
+                        return callMiddleware(set, i + 1);
+                    }
                 }
                 else {
-                    return callMiddleware(set, i + 1);
+                    return next();
                 }
             }
-            else {
-                return next();
+            catch (err) {
+                return Promise.reject(err);
             }
         }
         return callMiddleware(this._middleware.slice(0), 0);

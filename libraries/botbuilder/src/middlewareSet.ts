@@ -35,15 +35,19 @@ export class MiddlewareSet implements Middleware {
 
     public contextCreated(context: BotContext, next: () => Promise<void>): Promise<void> {
         function callMiddleware(set: Middleware[], i: number): Promise<void> {
-            if (i < set.length) {
-                const plugin = set[i];
-                if (plugin.contextCreated !== undefined) {
-                    return plugin.contextCreated(context, () => callMiddleware(set, i + 1))
+            try {
+                if (i < set.length) {
+                    const plugin = set[i];
+                    if (plugin.contextCreated !== undefined) {
+                        return plugin.contextCreated(context, () => callMiddleware(set, i + 1))
+                    } else {
+                        return callMiddleware(set, i + 1);
+                    }
                 } else {
-                    return callMiddleware(set, i + 1);
+                    return next();
                 }
-            } else {
-                return next();
+            } catch(err) {
+                return Promise.reject(err);
             }
         }
         return callMiddleware(this._middleware.slice(0), 0);
@@ -51,15 +55,19 @@ export class MiddlewareSet implements Middleware {
 
     public receiveActivity(context: BotContext, next: () => Promise<void>): Promise<void> {
         function callMiddleware(set: Middleware[], i: number): Promise<void> {
-            if (i < set.length) {
-                const plugin = set[i];
-                if (plugin.receiveActivity !== undefined) {
-                    return plugin.receiveActivity(context, () => callMiddleware(set, i + 1))
+            try {
+                if (i < set.length) {
+                    const plugin = set[i];
+                    if (plugin.receiveActivity !== undefined) {
+                        return plugin.receiveActivity(context, () => callMiddleware(set, i + 1))
+                    } else {
+                        return callMiddleware(set, i + 1);
+                    }
                 } else {
-                    return callMiddleware(set, i + 1);
+                    return next();
                 }
-            } else {
-                return next();
+            } catch(err) {
+                return Promise.reject(err);
             }
         }
         return callMiddleware(this._middleware.slice(0), 0);
@@ -67,15 +75,19 @@ export class MiddlewareSet implements Middleware {
 
     public postActivity(context: BotContext, activities: Partial<Activity>[], next: () => Promise<ConversationResourceResponse[]>): Promise<ConversationResourceResponse[]> {
         function callMiddleware(set: Middleware[], i: number): Promise<ConversationResourceResponse[]> {
-            if (i < set.length) {
-                const plugin = set[i];
-                if (plugin.postActivity !== undefined) {
-                    return plugin.postActivity(context, activities, () => callMiddleware(set, i + 1))
+            try {
+                if (i < set.length) {
+                    const plugin = set[i];
+                    if (plugin.postActivity !== undefined) {
+                        return plugin.postActivity(context, activities, () => callMiddleware(set, i + 1))
+                    } else {
+                        return callMiddleware(set, i + 1);
+                    }
                 } else {
-                    return callMiddleware(set, i + 1);
+                    return next();
                 }
-            } else {
-                return next();
+            } catch (err) {
+                return Promise.reject(err);
             }
         }
         return callMiddleware(this._middleware.slice(0), 0);

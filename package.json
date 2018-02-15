@@ -1,12 +1,36 @@
 {
-	"devDependencies": {
-		"lerna": "^2.8.0",
-		"replace-in-file": "^3.1.1",
-		"typedoc": "^0.9.0",
-		"typedoc-plugin-external-module-name": "^1.0.10",
-		"typedoc-plugin-markdown": "^1.0.12"
-	},
-	"dependencies": {
-		"@types/lodash": "^4.14.99"
-	}
+  "devDependencies": {
+    "@babel/core": "^7.0.0-beta.39",
+    "@babel/polyfill": "^7.0.0-beta.39",
+    "@babel/preset-env": "^7.0.0-beta.39",
+    "babel-loader": "^8.0.0-beta.0",
+    "chai": "^4.1.2",
+    "chalk": "^2.3.0",
+    "klaw": "^2.1.1",
+    "lerna": "^2.8.0",
+    "mocha": "^5.0.0",
+    "mocha-chrome": "^1.0.3",
+    "replace-in-file": "^3.1.1",
+    "typedoc": "^0.9.0",
+    "typedoc-plugin-external-module-name": "^1.0.10",
+    "typedoc-plugin-markdown": "^1.0.12",
+    "webpack": "^3.10.0"
+  },
+  "scripts": {
+    "test": "node test-runner/test-builder.js",
+    "test:botbuilder": "node test-runner/test-builder.js",
+    "test:botbuilder-ai": "node test-runner/test-builder.js",
+    "test:botbuilder-azure": "node test-runner/test-builder.js",
+    "test:botbuilder-choices": "node test-runner/test-builder.js",
+    "test:botbuilder-middleware": "node test-runner/test-builder.js",
+    "test:botbuilder-recognizers": "node test-runner/test-builder.js",
+    "test:botbuilder-services": "node test-runner/test-builder.js",
+    "test:botbuilder-storage": "node test-runner/test-builder.js",
+    "test:botbuilder-connector": "node test-runner/test-builder.js",
+    "test:botbuilder-connector-auth": "node test-runner/test-builder.js",
+    "test:botbuilder-luis": "node test-runner/test-builder.js"
+  },
+  "dependencies": {
+    "@types/lodash": "^4.14.99"
+  }
 }
