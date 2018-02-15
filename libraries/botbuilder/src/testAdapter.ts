@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { ActivityAdapter } from './activityAdapter';
-import { ActivityTypes, Activity, ConversationReference } from 'botbuilder-schema';
+import { ActivityTypes, Activity, ConversationReference, ChannelAccount } from 'botbuilder-schema';
 import { Promiseable } from './middleware';
 import assert = require('assert');
 
@@ -33,7 +33,7 @@ export class TestAdapter implements ActivityAdapter {
     private nextId = 0;
 
     public reference: ConversationReference;
-    public botReplies: Activity[] = [];
+    public botReplies: Partial<Activity>[] = [];
 
     /** INTERNAL implementation of `Adapter.onReceive`. */
     public onReceive: (activity: Activity) => Promise<void>;
@@ -67,7 +67,7 @@ export class TestAdapter implements ActivityAdapter {
         if (!activity.type)
             throw new Error("Missing activity.type");
         activity.channelId = this.reference.channelId;
-        activity.from = this.reference.user;
+        activity.from = <ChannelAccount>this.reference.user;
         activity.recipient = this.reference.bot;
         activity.conversation = this.reference.conversation;
         activity.serviceUrl = this.reference.serviceUrl;
@@ -99,7 +99,7 @@ export class TestAdapter implements ActivityAdapter {
      * @param description description of test case
      * @param timeout (default 3000ms) time to wait for response from bot
      */
-    public test(userSays: string | Partial<Activity>, expected: string | Partial<Activity> | ((activity: Activity, description?: string) => void), description?: string, timeout?: number): TestFlow {
+    public test(userSays: string | Partial<Activity>, expected: string | Partial<Activity> | ((activity: Partial<Activity>, description?: string) => void), description?: string, timeout?: number): TestFlow {
         return this.send(userSays)
             .assertReply(expected, description);
     }
@@ -110,7 +110,7 @@ export class TestAdapter implements ActivityAdapter {
      * @param description description of test case
      * @param timeout (default 3000ms) time to wait for response from bot
      */
-    public assertReply(expected: string | Partial<Activity> | ((activity: Activity, description?: string) => void), description?: string, timeout?: number): TestFlow {
+    public assertReply(expected: string | Partial<Activity> | ((activity: Partial<Activity>, description?: string) => void), description?: string, timeout?: number): TestFlow {
         return new TestFlow(Promise.resolve(), this).assertReply(expected, description, timeout);
     }
 
@@ -140,7 +140,7 @@ export class TestFlow {
      * @param description description of test case
      * @param timeout (default 3000ms) time to wait for response from bot
      */
-    public test(userSays: string | Partial<Activity>, expected: string | Partial<Activity> | ((activity: Activity, description?: string) => void), description?: string, timeout?: number): TestFlow {
+    public test(userSays: string | Partial<Activity>, expected: string | Partial<Activity> | ((activity: Partial<Activity>, description?: string) => void), description?: string, timeout?: number): TestFlow {
         if (!expected)
             throw new Error(".test() Missing expected parameter");
         return this.send(userSays)
@@ -161,7 +161,7 @@ export class TestFlow {
      * @param description description of test case
      * @param timeout (default 3000ms) time to wait for response from bot
      */
-    public assertReply(expected: string | Partial<Activity> | ((activity: Activity, description?: string) => void), description?: string, timeout?: number): TestFlow {
+    public assertReply(expected: string | Partial<Activity> | ((activity: Partial<Activity>, description?: string) => void), description?: string, timeout?: number): TestFlow {
         if (!expected)
             throw new Error(".assertReply() Missing expected parameter");
 

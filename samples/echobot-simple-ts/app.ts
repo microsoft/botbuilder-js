@@ -67,7 +67,6 @@ export interface HttpHandler {
 function createReply(activity: any, text: string, locale: string = null): Activity {
     return {
         type: ActivityTypes.Message,
-        timestamp: new Date(),
         from: { id: activity.recipient.id, name: activity.recipient.name },
         recipient: { id: activity.from.id, name: activity.from.name },
         replyToId: activity.id,

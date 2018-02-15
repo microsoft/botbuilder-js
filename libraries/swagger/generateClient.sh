@@ -3,7 +3,7 @@ rm -rf generated
 npm i replace-in-file
 autorest README.md --typescript
 
-node replace.js
+node model_fixes.js
 
 #  Move models to botbuilder-schema
 rm ../botbuilder-schema/src/index.ts

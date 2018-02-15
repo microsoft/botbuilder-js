@@ -120,7 +120,7 @@ export class LanguageTranslator implements Middleware {
     }
 
     /// Translate .Text field of a message, regardless of direction
-    private TranslateMessageAsync(context: BotContext, message: Activity, sourceLanguage: string, targetLanguage: string): Promise<void> {
+    private TranslateMessageAsync(context: BotContext, message: Partial<Activity>, sourceLanguage: string, targetLanguage: string): Promise<void> {
         // if we have text and a target language
         if (message.text && message.text.length > 0 && targetLanguage != sourceLanguage) {
             // truncate big text

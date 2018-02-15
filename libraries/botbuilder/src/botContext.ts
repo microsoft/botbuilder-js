@@ -18,7 +18,7 @@ import { TemplateManager } from './templateManager';
  * @param bot Bot the context is for.
  * @param request (Optional) request to initialize the context with.
  */
-export function createBotContext(bot: Bot, request?: Activity): BotContext {
+export function createBotContext(bot: Bot, request?: Activity|ConversationReference): BotContext {
     const context = <BotContext>{};
     context.bot = bot;
     context.request = request || {};
@@ -131,7 +131,7 @@ export function createBotContext(bot: Bot, request?: Activity): BotContext {
     return context;
 }
 
-export function getConversationReference(activity: Partial<Activity>): ConversationReference {
+export function getConversationReference(activity: Partial<Activity>): Partial<ConversationReference> {
     return {
         activityId: activity.id,
         user: activity.from,
@@ -142,7 +142,7 @@ export function getConversationReference(activity: Partial<Activity>): Conversat
     };
 }
 
-export function applyConversationReference(activity: Partial<Activity>, reference: ConversationReference): void {
+export function applyConversationReference(activity: Partial<Activity>, reference: Partial<ConversationReference>): void {
     activity.channelId = reference.channelId;
     activity.serviceUrl = reference.serviceUrl;
     activity.conversation = reference.conversation;
