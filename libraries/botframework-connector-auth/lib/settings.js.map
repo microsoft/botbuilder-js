@@ -1,1 +1,0 @@
-{"version":3,"file":"settings.js","sourceRoot":"","sources":["../src/settings.ts"],"names":[],"mappings":";;AA4Ba,QAAA,YAAY,GAAG;IACxB,eAAe,EAAE,sEAAsE;IACvF,YAAY,EAAE,uCAAuC;IACrD,0BAA0B,EAAE,mEAAmE;IAC/F,kBAAkB,EAAE,8BAA8B;IAClD,sBAAsB,EAAE,0FAA0F;IAClH,uBAAuB,EAAE,+DAA+D;IACxF,uBAAuB,EAAE,6EAA6E;IACtG,uBAAuB,EAAE,+DAA+D;IACxF,uBAAuB,EAAE,6EAA6E;CACzG,CAAC"}

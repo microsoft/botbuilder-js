@@ -2,13 +2,13 @@
  * @module botbuilder
  */
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 import { TemplateRenderer } from './templateManager';
 import { Middleware } from './middleware';
 import { BotService } from './botService';
-import { Activity } from './activity';
+import { Activity } from 'botbuilder-schema';
 
 export declare type SimpleTemplateFunction = (context: BotContext, data: Object) => Partial<Activity> | string | undefined;
 
@@ -30,10 +30,10 @@ export declare type TemplateDictionary = {
  * This is a simple template renderer which has a resource map of template functions
  * let myTemplates  = {
  *      "en" : {
- *          "templateId": (context, data) => `your name  is ${data.name}`  
+ *          "templateId": (context, data) => `your name  is ${data.name}`
  *      }
  * }
- * 
+ *
  * To use, simply add to your pipeline
  * bot.use(new DictionaryRenderer(myTemplates))
  */

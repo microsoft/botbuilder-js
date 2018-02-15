@@ -2,36 +2,37 @@
  * @module botbuilder-choices
  */
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 
-import { Activity, MessageStyler, CardAction } from 'botbuilder';
+import { MessageStyler, ActionTypes } from 'botbuilder';
+import { Activity, CardAction } from 'botbuilder';
 import { Choice } from './findChoices';
 import * as channel from './channel';
 
 export interface ChoiceStylerOptions {
-    /** 
-     * (Optional) character used to separate individual choices when there are more than 2 choices. 
-     * The default value is `", "`. 
+    /**
+     * (Optional) character used to separate individual choices when there are more than 2 choices.
+     * The default value is `", "`.
      */
     inlineSeparator?: string;
 
-    /** 
-     * (Optional) separator inserted between the choices when their are only 2 choices. The default 
+    /**
+     * (Optional) separator inserted between the choices when their are only 2 choices. The default
      * value is `" or "`.
      */
     inlineOr?: string
 
-    /** 
-     * (Optional) separator inserted between the last 2 choices when their are more than 2 choices. 
+    /**
+     * (Optional) separator inserted between the last 2 choices when their are more than 2 choices.
      * The default value is `", or "`.
      */
     inlineOrMore?: string;
 
     /**
-     * (Optional) if `true`, inline and list style choices will be prefixed with the index of the 
-     * choice as in "1. choice". If `false`, the list style will use a bulleted list instead. The default value is `true`. 
+     * (Optional) if `true`, inline and list style choices will be prefixed with the index of the
+     * choice as in "1. choice". If `false`, the list style will use a bulleted list instead. The default value is `true`.
      */
     includeNumbers?: boolean;
 }
@@ -116,14 +117,14 @@ export class ChoiceStyler {
         // Return activity with choices as a numbered list.
         return MessageStyler.text(txt, speak);
     }
-    
+
     static suggestedAction(choices: (string|Choice)[], text?: string, speak?: string, options?: ChoiceStylerOptions): Partial<Activity> {
         // Map choices to actions
         const actions = ChoiceStyler.toChoices(choices).map<CardAction>((choice) => {
             if (choice.action) {
                 return choice.action;
             } else {
-                return { type: 'imBack', value: choice.value, title: choice.value }
+                return { type: ActionTypes.ImBack, value: choice.value, title: choice.value }
             }
         });
 
@@ -134,5 +135,5 @@ export class ChoiceStyler {
     static toChoices(choices: (string|Choice)[]|undefined): Choice[] {
         return (choices || []).map((choice) => typeof choice === 'string' ? { value: choice } : choice);
     }
-    
+
 }

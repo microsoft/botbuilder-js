@@ -8,7 +8,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Licensed under the MIT License.
  */
 const middlewareSet_1 = require("./middlewareSet");
-const activity_1 = require("./activity");
+const botbuilder_schema_1 = require("botbuilder-schema");
 const botContext_1 = require("./botContext");
 const templateManager_1 = require("./templateManager");
 const botbuilder_1 = require("./botbuilder");
@@ -18,7 +18,7 @@ const botbuilder_1 = require("./botbuilder");
  * **Usage Example**
  *
  * ```js
- * import { Bot } from 'botbuilder-core'; // typescript
+ * import { Bot } from 'botbuilder'; // typescript
  *
  * const bot = new Bot(adapter); // init bot and bind to adapter
  *
@@ -145,9 +145,9 @@ class Bot extends middlewareSet_1.MiddlewareSet {
         for (let i = 0; i < activities.length; i++) {
             let activity = activities[i];
             if (!activity.type) {
-                activity.type = activity_1.ActivityTypes.message;
+                activity.type = botbuilder_schema_1.ActivityTypes.Message;
             }
-            activity_1.applyConversationReference(activity, context.conversationReference);
+            botContext_1.applyConversationReference(activity, context.conversationReference);
         }
         // Run post activity pipeline
         const adapter = this.adapter;
@@ -157,10 +157,11 @@ class Bot extends middlewareSet_1.MiddlewareSet {
                 .then((responses) => {
                 // Ensure responses array populated
                 if (!Array.isArray(responses)) {
-                    responses = [];
+                    let mockResponses = [];
                     for (let i = 0; i < activities.length; i++) {
-                        responses.push({});
+                        mockResponses.push({});
                     }
+                    return mockResponses;
                 }
                 return responses;
             });

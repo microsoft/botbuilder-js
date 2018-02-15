@@ -2,12 +2,11 @@
  * @module botbuilder
  */
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-
-import * as activity from './activity';
 import { CardStyler } from './cardStyler';
+import { ActivityTypes, AttachmentLayoutTypes, Activity, CardAction, SuggestedActions, Attachment } from 'botbuilder-schema';
 
 /**
  * A set of utility functions to assist with the formatting of the various message types a bot can
@@ -44,9 +43,9 @@ export class MessageStyler {
      * @param text Text to include in the message.
      * @param speak (Optional) SSML to include in the message.
      */
-    static text(text: string, speak?: string): Partial<activity.Activity> {
-        const msg: Partial<activity.Activity> = {
-            type: activity.ActivityTypes.message,
+    static text(text: string, speak?: string): Partial<Activity> {
+        const msg: Partial<Activity> = {
+            type: ActivityTypes.Message,
             text: text || ''
         };
         if (speak) { msg.speak = speak; }
@@ -57,13 +56,13 @@ export class MessageStyler {
      * Returns a message that includes a set of suggested actions and optional text.
      *
      * @param actions Array of card actions or strings to include. Strings will be converted to `messageBack` actions.
-     * @param text (Optional) text of the message. 
+     * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
      */
-    static suggestedActions(actions: (activity.CardAction|string)[], text?: string, speak?: string): Partial<activity.Activity> {
-        const msg: Partial<activity.Activity> = {
-            type: activity.ActivityTypes.message,
-            suggestedActions: <activity.SuggestedActions>{
+    static suggestedActions(actions: (CardAction|string)[], text?: string, speak?: string): Partial<Activity> {
+        const msg: Partial<Activity> = {
+            type: ActivityTypes.Message,
+            suggestedActions: <SuggestedActions>{
                 actions: CardStyler.actions(actions)
             }
         };
@@ -76,22 +75,22 @@ export class MessageStyler {
      * Returns a single message activity containing an attachment.
      *
      * @param attachment Adaptive card to include in the message.
-     * @param text (Optional) text of the message. 
+     * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
      */
-    static attachment(attachment: activity.Attachment, text?: string, speak?: string): Partial<activity.Activity> {
-        return attachmentActivity(activity.AttachmentLayouts.list, [attachment], text, speak);
-    } 
+    static attachment(attachment: Attachment, text?: string, speak?: string): Partial<Activity> {
+        return attachmentActivity(AttachmentLayoutTypes.List, [attachment], text, speak);
+    }
 
     /**
      * Returns a message that will display a set of attachments in list form.
      *
      * @param attachments Array of attachments to include in the message.
-     * @param text (Optional) text of the message. 
+     * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
      */
-    static list(attachments: activity.Attachment[], text?: string, speak?: string): Partial<activity.Activity> {
-        return attachmentActivity(activity.AttachmentLayouts.list, attachments, text, speak);
+    static list(attachments: Attachment[], text?: string, speak?: string): Partial<Activity> {
+        return attachmentActivity(AttachmentLayoutTypes.List, attachments, text, speak);
     }
 
     /**
@@ -111,11 +110,11 @@ export class MessageStyler {
      * ```
      *
      * @param attachments Array of attachments to include in the message.
-     * @param text (Optional) text of the message. 
+     * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
      */
-    static carousel(attachments: activity.Attachment[], text?: string, speak?: string): Partial<activity.Activity> {
-        return attachmentActivity(activity.AttachmentLayouts.carousel, attachments, text, speak);
+    static carousel(attachments: Attachment[], text?: string, speak?: string): Partial<Activity> {
+        return attachmentActivity(AttachmentLayoutTypes.Carousel, attachments, text, speak);
     }
 
     /**
@@ -133,20 +132,20 @@ export class MessageStyler {
      * @param url Url of the image/video to send.
      * @param contentType The MIME type of the image/video.
      * @param name (Optional) Name of the image/video file.
-     * @param text (Optional) text of the message. 
+     * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
      */
-    static contentUrl(url: string, contentType: string, name?: string, text?: string, speak?: string): Partial<activity.Activity> {
-        const a: activity.Attachment = { contentType: contentType, contentUrl: url };
+    static contentUrl(url: string, contentType: string, name?: string, text?: string, speak?: string): Partial<Activity> {
+        const a: Attachment = { contentType: contentType, contentUrl: url };
         if (name) { a.name = name; }
-        return attachmentActivity(activity.AttachmentLayouts.list, [a], text, speak);
+        return attachmentActivity(AttachmentLayoutTypes.List, [a], text, speak);
     }
 }
 
 
-function attachmentActivity(attachmentLayout: string, attachments: activity.Attachment[], text?: string, speak?: string): Partial<activity.Activity> {
-    const msg: Partial<activity.Activity> = {
-        type: activity.ActivityTypes.message,
+function attachmentActivity(attachmentLayout: AttachmentLayoutTypes, attachments: Attachment[], text?: string, speak?: string): Partial<Activity> {
+    const msg: Partial<Activity> = {
+        type: ActivityTypes.Message,
         attachmentLayout: attachmentLayout,
         attachments: attachments
     };

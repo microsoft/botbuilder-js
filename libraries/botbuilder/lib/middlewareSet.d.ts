@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, ConversationResourceResponse } from './activity';
+import { Activity, ConversationResourceResponse } from 'botbuilder-schema';
 import { Middleware } from './middleware';
 /**
  * A set of `Middleware` plugins. The set itself is middleware so you can easily package up a set

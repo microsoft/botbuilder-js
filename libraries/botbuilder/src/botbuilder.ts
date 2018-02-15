@@ -6,7 +6,6 @@
  * Licensed under the MIT License.
  */
 
-export * from './activity';
 export * from './attachmentRecognizer';
 export * from './bot';
 export * from './botService';
@@ -30,9 +29,10 @@ export * from './storageMiddleware';
 export * from './templateManager';
 export * from './dictionaryRenderer';
 export * from './testAdapter';
+export * from 'botbuilder-schema';
 
 import { Bot } from './bot';
-import { Activity, ConversationReference, ConversationResourceResponse } from './activity';
+import { Activity, ConversationReference, ConversationResourceResponse } from 'botbuilder-schema';
 import { Intent } from './intentRecognizer';
 import { EntityObject } from './entityObject';
 import { StoreItem, Storage } from './storage';
@@ -47,7 +47,7 @@ declare global {
         bot: Bot;
 
         /** The received activity. */
-        request: Activity;
+        request: Partial<Activity>;
 
         /** Queue of responses to send to the user. */
         responses: Partial<Activity>[];
@@ -56,7 +56,7 @@ declare global {
         readonly responded: boolean;
 
         /** The calculated conversation reference for this request. */
-        conversationReference: ConversationReference;
+        conversationReference: Partial<ConversationReference>;
 
         /** 
          * Persisted state related to the request.

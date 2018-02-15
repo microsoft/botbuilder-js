@@ -5,7 +5,6 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-export * from './activity';
 export * from './attachmentRecognizer';
 export * from './bot';
 export * from './botService';
@@ -29,8 +28,9 @@ export * from './storageMiddleware';
 export * from './templateManager';
 export * from './dictionaryRenderer';
 export * from './testAdapter';
+export * from 'botbuilder-schema';
 import { Bot } from './bot';
-import { Activity, ConversationReference, ConversationResourceResponse } from './activity';
+import { Activity, ConversationReference, ConversationResourceResponse } from 'botbuilder-schema';
 import { Intent } from './intentRecognizer';
 import { StoreItem, Storage } from './storage';
 import { TemplateManager } from './templateManager';
@@ -42,13 +42,13 @@ declare global  {
         /** The Bot object for this context. */
         bot: Bot;
         /** The received activity. */
-        request: Activity;
+        request: Partial<Activity>;
         /** Queue of responses to send to the user. */
         responses: Partial<Activity>[];
         /** If true at least one response has been sent for the current turn of conversation. */
         readonly responded: boolean;
         /** The calculated conversation reference for this request. */
-        conversationReference: ConversationReference;
+        conversationReference: Partial<ConversationReference>;
         /**
          * Persisted state related to the request.
          */

@@ -236,13 +236,13 @@ describe('context', function () {
             });
         testAdapter.test('hi', (a) => {
             assert(a.type === 'endOfConversation');
-            assert(a.code === builder.EndOfConversationCodes.completedSuccessfully)
+            assert(a.code === builder.EndOfConversationCodes.CompletedSuccessfully)
         })
             .then(() => done());
     });
 
     it('should send endOfConversation() with a custom code', function (done) {
-        const code = builder.EndOfConversationCodes.botTimedOut;
+        const code = builder.EndOfConversationCodes.BotTimedOut;
         const testAdapter = new builder.TestAdapter();
         const bot = new builder.Bot(testAdapter)
             .onReceive((context) => {
@@ -306,7 +306,7 @@ describe('context', function () {
                 postActivity: (context, activities, next) => {
                     batch = 1;
                     return next();
-                } 
+                }
             })
             .onReceive((context) => {
                 return context.flushResponses().then((r) => {

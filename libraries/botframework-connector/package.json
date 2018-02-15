@@ -16,12 +16,19 @@
     "type": "git",
     "url": "https://github.com/Microsoft/botbuilder-js.git"
   },
-  "main": "./lib/connectorClient.js",
-  "typings": "./lib/connectorClient.d.ts",
+  "main": "./lib/index.js",
+  "typings": "./lib/index.d.ts",
   "dependencies": {
-    "ms-rest": "^2.2.0"
+    "@types/request": "^2.47.0",
+    "base64url": "^2.0.0",
+    "botbuilder-schema": "^4.0.0-m1.2",
+    "jsonwebtoken": "8.0.1",
+    "ms-rest-js": "^0.2.5",
+    "request": "2.83.0",
+    "rsa-pem-from-mod-exp": "^0.8.4"
   },
   "devDependencies": {
+    "@types/jsonwebtoken": "7.2.5",
     "@types/mocha": "^2.2.47",
     "@types/node": "^9.3.0",
     "codelyzer": "^4.1.0",
@@ -31,6 +38,8 @@
     "ts-node": "^4.1.0"
   },
   "scripts": {
-    "test": "nyc mocha tests/"
+    "build": "tsc",
+    "test": "tsc && nyc mocha tests/",
+    "postinstall": "cd .. && cd .. && cd tools && npm install"
   }
 }

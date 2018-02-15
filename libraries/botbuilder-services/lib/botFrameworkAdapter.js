@@ -8,15 +8,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const botframework_connector_auth_1 = require("botframework-connector-auth");
-const ConnectorClient = require("botframework-connector");
+const botframework_connector_1 = require("botframework-connector");
+const botframework_connector_2 = require("botframework-connector");
 /**
 * ActivityAdapter class needed to communicate with a Bot Framework channel or the Emulator.
 *
 * **Usage Example**
 *
 * ```js
-* import { Bot } from 'botbuilder-core';
+* import { Bot } from 'botbuilder';
 * import { BotFrameworkAdapter } from 'botbuilder-services';
 * import * as restify from 'restify';
 *
@@ -47,8 +47,8 @@ class BotFrameworkAdapter {
         this.nextId = 0;
         settings = settings === undefined ? { appId: '', appPassword: '' } : settings;
         const botCredentials = { appId: settings.appId, appPassword: settings.appPassword };
-        this.credentials = new botframework_connector_auth_1.MicrosoftAppCredentials(botCredentials);
-        this.authenticator = new botframework_connector_auth_1.BotAuthenticator(botCredentials);
+        this.credentials = new botframework_connector_2.MicrosoftAppCredentials(botCredentials);
+        this.authenticator = new botframework_connector_2.BotAuthenticator(botCredentials);
         this.onReceive = undefined;
     }
     /**
@@ -66,10 +66,9 @@ class BotFrameworkAdapter {
         };
         return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
             try {
-                let client = new ConnectorClient(this.credentials);
+                let client = new botframework_connector_1.ConnectorClient(this.credentials);
                 let response = yield client.conversations.createConversation(conversationParameters);
-                let body = typeof response.body === 'string' ? response.body : JSON.parse(response.body);
-                conversationResourceResponse.id = body.id;
+                conversationResourceResponse.id = response.id;
                 resolve(conversationResourceResponse);
             }
             catch (err) {
@@ -80,7 +79,7 @@ class BotFrameworkAdapter {
     update(activity) {
         return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
             try {
-                let client = new ConnectorClient(this.credentials);
+                let client = new botframework_connector_1.ConnectorClient(this.credentials);
                 yield client.conversations.updateActivity(activity.conversation.id, activity.id, activity);
                 resolve();
             }
@@ -92,7 +91,7 @@ class BotFrameworkAdapter {
     delete(activity) {
         return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
             try {
-                let client = new ConnectorClient(this.credentials);
+                let client = new botframework_connector_1.ConnectorClient(this.credentials);
                 yield client.conversations.deleteActivity(activity.conversation.id, activity.id);
                 resolve();
             }
@@ -108,7 +107,7 @@ class BotFrameworkAdapter {
             function createClient(serviceUrl) {
                 if (serviceUrl) {
                     if (!clientCache.hasOwnProperty(serviceUrl)) {
-                        clientCache[serviceUrl] = new ConnectorClient(credentials, serviceUrl);
+                        clientCache[serviceUrl] = new botframework_connector_1.ConnectorClient(credentials, serviceUrl);
                     }
                     return clientCache[serviceUrl];
                 }
@@ -128,7 +127,7 @@ class BotFrameworkAdapter {
                             const client = createClient(activity.serviceUrl);
                             if (client) {
                                 if (activity.conversation && activity.conversation.id) {
-                                    client.conversations.sendToConversation(activity, activity.conversation.id)
+                                    client.conversations.sendToConversation(activity.conversation.id, activity)
                                         .then((result) => {
                                         responses.push(result || {});
                                         next(i + 1);

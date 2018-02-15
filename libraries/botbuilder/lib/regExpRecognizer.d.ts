@@ -30,7 +30,7 @@ export interface RegExpRecognizerSettings {
  * **Usage Example**
  *
  * ```js
- * import { RegExpRecognizer } from 'botbuilder-core';
+ * import { RegExpRecognizer } from 'botbuilder';
  *
  * // Define RegExp's for well known commands.
  * const recognizer = new RegExpRecognizer()

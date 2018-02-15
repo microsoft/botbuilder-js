@@ -1,0 +1,20 @@
+{
+  "name": "botframework-example-echobot-simple",
+  "version": "1.0.0",
+  "description": "Bot Builder example showing a simple bot that echos anything you say using the botframework-connector and restify.",
+  "main": "./dist/app.js",
+  "scripts": {
+    "build": "tsc",
+    "debug": "tsc; node --inspect ./dist/app.js",
+    "start": "node ./dist/app.js"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@types/node": "^9.3.0",
+    "@types/restify": "^5.0.7",
+    "botframework-connector": "^4.0.0-m1.0",
+    "botbuilder-schema": "^4.0.0-m1.0",
+    "restify": "6.3.4"
+  }
+}

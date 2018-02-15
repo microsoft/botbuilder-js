@@ -2,7 +2,7 @@
  * @module botbuilder-choices
  */
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 
@@ -22,18 +22,18 @@ export interface Choice {
 }
 
 export interface FindChoicesOptions extends FindValuesOptions {
-    /** 
+    /**
      * (Optional) locale of the user preferred language. This is used when recognizing the
      * numerical or ordinal index of the choice. The default is assumed to be `en-US`.
      */
     culture?: string;
-    
-    /** 
-     * (Optional) If `true`, the choices value will NOT be search over. The default is `false`. 
+
+    /**
+     * (Optional) If `true`, the choices value will NOT be search over. The default is `false`.
      */
     noValue?: boolean;
 
-    /** 
+    /**
      * (Optional) If `true`, the title of the choices action will NOT be searched over. The default is `false`.
      */
     noAction?: boolean;
@@ -46,7 +46,7 @@ export interface FoundChoice {
     /** The choices index within the list of choices that was searched over. */
     index: number;
 
-    /** 
+    /**
      * The accuracy with which the synonym matched the specified portion of the utterance. A
      * value of 1.0 would indicate a perfect match.
      */

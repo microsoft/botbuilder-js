@@ -2,20 +2,19 @@
  * @module botbuilder
  */
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 import { Middleware, Promiseable } from './middleware';
-import { Activity, ConversationReference, ActivityTypes, ConversationResourceResponse, applyConversationReference } from './activity';
+import { Activity, ConversationReference, ActivityTypes, ConversationResourceResponse } from 'botbuilder-schema';
 
-
-/** Interface for a template renderer which provides the ability 
+/** Interface for a template renderer which provides the ability
  * to create a text reply or activity reply from the language, templateid and data object
  **/
 export interface TemplateRenderer {
-    /** 
-     * renders a template for the language/templateId 
-     * 
+    /**
+     * renders a template for the language/templateId
+     *
      * @param language id (such as 'en')
      * @param templateId id of the template to apply
      * @param data Data object to bind to
@@ -36,7 +35,7 @@ export class TemplateManager implements Middleware {
         // Ensure activities are well formed.
         for (let i = 0; i < activities.length; i++) {
             let activity = activities[i];
-            if (activity.type == "template") {
+            if (activity.type == <ActivityTypes>"template") {
                 await this.bindActivityTemplate(context, activity);
             }
         }
@@ -45,7 +44,7 @@ export class TemplateManager implements Middleware {
 
     /**
      * register template renderer
-     * @param renderer 
+     * @param renderer
      */
     public register(renderer: TemplateRenderer): TemplateManager {
         this.templateRenderers.push(renderer);
@@ -60,7 +59,7 @@ export class TemplateManager implements Middleware {
     }
 
     /**
-     * SetLanguagePolicy allows you to set the fallback strategy 
+     * SetLanguagePolicy allows you to set the fallback strategy
      * @param fallback array of languages to try when binding templates
      */
     public setLanguagePolicy(fallback:string[]) :void {
@@ -80,12 +79,12 @@ export class TemplateManager implements Middleware {
             if (templateOutput) {
                 if (typeof templateOutput === 'object') {
                     if (!(templateOutput as Activity).type) {
-                        templateOutput.type = ActivityTypes.message;
+                        templateOutput.type = ActivityTypes.Message;
                     }
                     return <Partial<Activity>>templateOutput;
                 } else {
                     const activity: Partial<Activity> = {
-                        type: ActivityTypes.message,
+                        type: ActivityTypes.Message,
                         text: templateOutput || '',
                     };
                     return activity;
@@ -101,10 +100,10 @@ export class TemplateManager implements Middleware {
         if (!!context.request.locale)
             fallbackLocales.push(context.request.locale);
         fallbackLocales.push('default');
-        
+
         // Ensure activities are well formed.
         // bind any template activity
-        if (activity.type == "template") {
+        if (activity.type == <ActivityTypes>"template") {
             // try each locale until successful
             for (let locale of fallbackLocales) {
                 // apply template

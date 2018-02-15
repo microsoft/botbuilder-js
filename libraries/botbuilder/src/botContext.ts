@@ -2,10 +2,10 @@
  * @module botbuilder
  */
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, ActivityTypes, EndOfConversationCodes, ConversationReference, getConversationReference } from './activity';
+import { ActivityTypes, EndOfConversationCodes, Activity, ConversationReference } from 'botbuilder-schema';
 import { Bot } from './bot';
 import { Intent } from './intentRecognizer';
 import { EntityObject } from './entityObject';
@@ -18,7 +18,7 @@ import { TemplateManager } from './templateManager';
  * @param bot Bot the context is for.
  * @param request (Optional) request to initialize the context with.
  */
-export function createBotContext(bot: Bot, request?: Activity): BotContext {
+export function createBotContext(bot: Bot, request?: Activity|ConversationReference): BotContext {
     const context = <BotContext>{};
     context.bot = bot;
     context.request = request || {};
@@ -44,7 +44,7 @@ export function createBotContext(bot: Bot, request?: Activity): BotContext {
 
     context.delay = function delay(duration: number) {
         throwIfDisposed('delay');
-        this.responses.push({ type: 'delay', value: duration });
+        this.responses.push({ type: <ActivityTypes>'delay', value: duration });
         return this;
     };
 
@@ -52,11 +52,11 @@ export function createBotContext(bot: Bot, request?: Activity): BotContext {
         disposed = true;
     };
 
-    context.endOfConversation = function endOfConversation(code?: string) {
+    context.endOfConversation = function endOfConversation(code?: EndOfConversationCodes) {
         throwIfDisposed('endOfConversation');
         const activity: Partial<Activity> = {
-            type: ActivityTypes.endOfConversation,
-            code: code || EndOfConversationCodes.completedSuccessfully
+            type: ActivityTypes.EndOfConversation,
+            code: code || EndOfConversationCodes.CompletedSuccessfully
         };
         this.responses.push(activity);
         return this;
@@ -71,11 +71,11 @@ export function createBotContext(bot: Bot, request?: Activity): BotContext {
         }
 
         if (typeof textOrActivity === 'object') {
-            if (!(textOrActivity as Activity).type) { textOrActivity.type = ActivityTypes.message; }
+            if (!(textOrActivity as Activity).type) { textOrActivity.type = ActivityTypes.Message; }
             this.responses.push(textOrActivity);
         } else {
             const activity: Partial<Activity> = Object.assign(<Partial<Activity>>{
-                type: ActivityTypes.message,
+                type: ActivityTypes.Message,
                 text: textOrActivity || '',
             }, additional || {});
             if (typeof speak === 'string') {
@@ -91,7 +91,7 @@ export function createBotContext(bot: Bot, request?: Activity): BotContext {
 
         // push internal template record
         const activity: Partial<Activity> = <Partial<Activity>>{
-            type: "template",
+            type: <ActivityTypes>"template",
         };
         activity.text = templateId;
         activity.value = data;
@@ -108,9 +108,9 @@ export function createBotContext(bot: Bot, request?: Activity): BotContext {
         args.unshift(this);
         return Bot.prototype.post.apply(this.bot, args)
             .then((results: ConversationReference[]) => {
-                if (cnt > 0) { 
+                if (cnt > 0) {
                     this.responses.splice(0, cnt);
-                    responded = true; 
+                    responded = true;
                 }
                 return results;
             });
@@ -118,15 +118,35 @@ export function createBotContext(bot: Bot, request?: Activity): BotContext {
 
     context.showTyping = function showTyping() {
         throwIfDisposed('showTyping');
-        this.responses.push({ type: ActivityTypes.typing });
+        this.responses.push({ type: ActivityTypes.Typing });
         return this;
     };
 
     Object.defineProperty(context, 'responded', {
         get: function () {
-            return (this as BotContext).responses.length > 0 || responded; 
+            return (this as BotContext).responses.length > 0 || responded;
         }
     });
 
     return context;
+}
+
+export function getConversationReference(activity: Partial<Activity>): Partial<ConversationReference> {
+    return {
+        activityId: activity.id,
+        user: activity.from,
+        bot: activity.recipient,
+        conversation: activity.conversation,
+        channelId: activity.channelId,
+        serviceUrl: activity.serviceUrl
+    };
+}
+
+export function applyConversationReference(activity: Partial<Activity>, reference: Partial<ConversationReference>): void {
+    activity.channelId = reference.channelId;
+    activity.serviceUrl = reference.serviceUrl;
+    activity.conversation = reference.conversation;
+    activity.from = reference.bot;
+    activity.recipient = reference.user;
+    activity.replyToId = reference.activityId;
 }

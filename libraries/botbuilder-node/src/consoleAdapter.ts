@@ -2,10 +2,11 @@
  * @module botbuilder-node
  */
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ActivityAdapter, Activity, ActivityTypes, ConversationResourceResponse } from 'botbuilder';
+import { ActivityAdapter } from 'botbuilder';
+import { ActivityTypes, Activity, ConversationResourceResponse } from 'botbuilder';
 import * as readline from 'readline';
 
 /**
@@ -39,13 +40,13 @@ export class ConsoleAdapter implements ActivityAdapter {
             const responses: ConversationResourceResponse[] = [];
             function next(i: number) {
                 if (i < activities.length) {
-                    responses.push({});
+                    responses.push(<ConversationResourceResponse>{});
                     let a = activities[i];
-                    switch (a.type || ActivityTypes.message) {
-                        case 'delay':
+                    switch (a.type || ActivityTypes.Message) {
+                        case <ActivityTypes>'delay':
                             setTimeout(() => next(i + 1), a.value || 0);
                             break;
-                        case ActivityTypes.message:
+                        case ActivityTypes.Message:
                             if (a.attachments && a.attachments.length > 0) {
                                 const append = a.attachments.length == 1 ? `(1 attachment)` : `(${a.attachments.length} attachments)`;
                                 console.log(`${a.text || ''} ${append}`);
@@ -67,9 +68,9 @@ export class ConsoleAdapter implements ActivityAdapter {
         });
     }
 
-    /** 
-     * Begins listening to console input. The listener will call [receive()](#receive) after 
-     * parsing input from the user. 
+    /**
+     * Begins listening to console input. The listener will call [receive()](#receive) after
+     * parsing input from the user.
      */
     public listen(): this {
         this.rl = readline.createInterface({ input: process.stdin, output: process.stdout, terminal: false });
@@ -93,18 +94,18 @@ export class ConsoleAdapter implements ActivityAdapter {
     public receive(text: string): this {
         if (this.onReceive) {
             const activity = <Activity>{
-                type: ActivityTypes.message,
+                type: ActivityTypes.Message,
                 channelId: 'console',
                 from: { id: 'user', name: 'User1' },
                 recipient: { id: 'bot', name: 'Bot' },
                 conversation:  { id: 'Convo1' },
-                timestamp: new Date().toISOString(),
+                timestamp: new Date(),
                 text: text || '',
                 id: (this.nextId++).toString()
             };
             this.onReceive(activity);
         }
-        return this;        
+        return this;
     }
 
 }

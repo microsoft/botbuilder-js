@@ -2,13 +2,13 @@
  * @module botbuilder
  */
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 import { TemplateRenderer } from './templateManager';
 import { Middleware } from './middleware';
 import { BotService } from './botService';
-import { Activity } from './activity';
+import { Activity } from 'botbuilder-schema';
 
 /**
  * A template function that can return a stringified value from a given data object.
@@ -86,8 +86,8 @@ export class JsonTemplates implements TemplateRenderer, Middleware {
      *
      * @param name Name of the registered template to render.
      * @param data Data object to render template against.
-     * @param postProcess (Optional) if `true` the rendered output object will be scanned looking 
-     * for any processing directives, such as @prune. The default value is `true`.   
+     * @param postProcess (Optional) if `true` the rendered output object will be scanned looking
+     * for any processing directives, such as @prune. The default value is `true`.
      */
     public renderAsJSON(name: string, data: Object, postProcess?: boolean): any {
         var json = this.render(name, data);
@@ -103,7 +103,7 @@ export class JsonTemplates implements TemplateRenderer, Middleware {
     /**
      * Post processes a JSON object by walking the object and evaluating any processing directives
      * like @prune.
-     * @param object Object to post process. 
+     * @param object Object to post process.
      */
     public postProcess(object: any): any {
         if (!processNode(object, {})) {
@@ -118,7 +118,7 @@ export class JsonTemplates implements TemplateRenderer, Middleware {
      * a data object.
      *
      * @param json The JSON template to compile.
-     * @param templates (Optional) map of template functions (and other compiled templates) that 
+     * @param templates (Optional) map of template functions (and other compiled templates) that
      * can be called at render time.
      */
     static compile(json: string | any, templates?: TemplateFunctionMap): TemplateFunction {
@@ -135,7 +135,7 @@ export class JsonTemplates implements TemplateRenderer, Middleware {
         return (data: Object, path?: string) => {
             // Check for optional path.
             // - Templates can be executed as children of other templates so the path
-            //   specifies the property off the parent to execute the template for. 
+            //   specifies the property off the parent to execute the template for.
             let obj = '';
             if (path) {
                 const value = getValue(data, path);

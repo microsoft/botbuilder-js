@@ -2,20 +2,21 @@
  * @module botbuilder-ai
  */
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, ConversationResourceResponse, Middleware } from 'botbuilder';
+import { Middleware } from 'botbuilder';
+import { Activity, ConversationResourceResponse } from 'botbuilder';
 import * as LanguageMap from './languageMap';
 import LuisClient = require('botframework-luis');
 
 let MsTranslator = require('mstranslator');
 
 export interface TranslationContext {
-    /// Original pre-translation text 
+    /// Original pre-translation text
     sourceText: string;
 
-    /// source language 
+    /// source language
     sourceLanguage: string;
 
     /// The targeted translation language
@@ -119,7 +120,7 @@ export class LanguageTranslator implements Middleware {
     }
 
     /// Translate .Text field of a message, regardless of direction
-    private TranslateMessageAsync(context: BotContext, message: Activity, sourceLanguage: string, targetLanguage: string): Promise<void> {
+    private TranslateMessageAsync(context: BotContext, message: Partial<Activity>, sourceLanguage: string, targetLanguage: string): Promise<void> {
         // if we have text and a target language
         if (message.text && message.text.length > 0 && targetLanguage != sourceLanguage) {
             // truncate big text
@@ -153,7 +154,7 @@ export class LanguageTranslator implements Middleware {
                         text += translateResult[iData].TranslatedText;
                     }
 
-                    // restore mentions 
+                    // restore mentions
                     if (message.entities) {
                         let i = 0;
                         for (let iEntity in message.entities) {

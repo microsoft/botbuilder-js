@@ -7,7 +7,7 @@
  */
 import { TemplateRenderer } from './templateManager';
 import { Middleware } from './middleware';
-import { Activity } from './activity';
+import { Activity } from 'botbuilder-schema';
 export declare type SimpleTemplateFunction = (context: BotContext, data: Object) => Partial<Activity> | string | undefined;
 /**
  * Map of template Id -> Function

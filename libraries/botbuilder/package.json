@@ -19,6 +19,10 @@
   },
   "main": "./lib/botbuilder.js",
   "typings": "./lib/botbuilder.d.ts",
+  "dependencies": {
+    "botbuilder-schema": "^4.0.0-m1.2",
+    "assert": "^1.4.1"
+  },
   "devDependencies": {
     "@types/mocha": "^2.2.47",
     "@types/node": "^9.3.0",
@@ -32,8 +36,5 @@
     "build": "tsc",
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder .\\lib\\botbuilder.d.ts --hideGenerator --name \"Bot Builder SDK - Core\" --readme none",
     "clean": "erase /q lib\\*.*"
-  },
-  "dependencies": {
-    "assert": "^1.4.1"
   }
 }

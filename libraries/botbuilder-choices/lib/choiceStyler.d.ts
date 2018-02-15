@@ -1,10 +1,3 @@
-/**
- * @module botbuilder-choices
- */
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
 import { Activity } from 'botbuilder';
 import { Choice } from './findChoices';
 export interface ChoiceStylerOptions {

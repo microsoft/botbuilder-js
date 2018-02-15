@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @module botbuilder
  */
@@ -6,9 +7,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-const activity = require("./activity");
 const cardStyler_1 = require("./cardStyler");
+const botbuilder_schema_1 = require("botbuilder-schema");
 /**
  * A set of utility functions to assist with the formatting of the various message types a bot can
  * return.
@@ -46,7 +46,7 @@ class MessageStyler {
      */
     static text(text, speak) {
         const msg = {
-            type: activity.ActivityTypes.message,
+            type: botbuilder_schema_1.ActivityTypes.Message,
             text: text || ''
         };
         if (speak) {
@@ -63,7 +63,7 @@ class MessageStyler {
      */
     static suggestedActions(actions, text, speak) {
         const msg = {
-            type: activity.ActivityTypes.message,
+            type: botbuilder_schema_1.ActivityTypes.Message,
             suggestedActions: {
                 actions: cardStyler_1.CardStyler.actions(actions)
             }
@@ -84,7 +84,7 @@ class MessageStyler {
      * @param speak (Optional) SSML to include with the message.
      */
     static attachment(attachment, text, speak) {
-        return attachmentActivity(activity.AttachmentLayouts.list, [attachment], text, speak);
+        return attachmentActivity(botbuilder_schema_1.AttachmentLayoutTypes.List, [attachment], text, speak);
     }
     /**
      * Returns a message that will display a set of attachments in list form.
@@ -94,7 +94,7 @@ class MessageStyler {
      * @param speak (Optional) SSML to include with the message.
      */
     static list(attachments, text, speak) {
-        return attachmentActivity(activity.AttachmentLayouts.list, attachments, text, speak);
+        return attachmentActivity(botbuilder_schema_1.AttachmentLayoutTypes.List, attachments, text, speak);
     }
     /**
      * Returns a message that will display a set of attachments using a carousel layout.
@@ -117,7 +117,7 @@ class MessageStyler {
      * @param speak (Optional) SSML to include with the message.
      */
     static carousel(attachments, text, speak) {
-        return attachmentActivity(activity.AttachmentLayouts.carousel, attachments, text, speak);
+        return attachmentActivity(botbuilder_schema_1.AttachmentLayoutTypes.Carousel, attachments, text, speak);
     }
     /**
      * Returns a message that will display a single image or video to a user.
@@ -142,13 +142,13 @@ class MessageStyler {
         if (name) {
             a.name = name;
         }
-        return attachmentActivity(activity.AttachmentLayouts.list, [a], text, speak);
+        return attachmentActivity(botbuilder_schema_1.AttachmentLayoutTypes.List, [a], text, speak);
     }
 }
 exports.MessageStyler = MessageStyler;
 function attachmentActivity(attachmentLayout, attachments, text, speak) {
     const msg = {
-        type: activity.ActivityTypes.message,
+        type: botbuilder_schema_1.ActivityTypes.Message,
         attachmentLayout: attachmentLayout,
         attachments: attachments
     };

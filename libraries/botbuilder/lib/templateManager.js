@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const activity_1 = require("./activity");
+const botbuilder_schema_1 = require("botbuilder-schema");
 class TemplateManager {
     constructor() {
         this.templateRenderers = [];
@@ -64,13 +64,13 @@ class TemplateManager {
                 if (templateOutput) {
                     if (typeof templateOutput === 'object') {
                         if (!templateOutput.type) {
-                            templateOutput.type = activity_1.ActivityTypes.message;
+                            templateOutput.type = botbuilder_schema_1.ActivityTypes.Message;
                         }
                         return templateOutput;
                     }
                     else {
                         const activity = {
-                            type: activity_1.ActivityTypes.message,
+                            type: botbuilder_schema_1.ActivityTypes.Message,
                             text: templateOutput || '',
                         };
                         return activity;

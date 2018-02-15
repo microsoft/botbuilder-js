@@ -2,11 +2,11 @@
  * @module botbuilder
  */
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 import { ActivityAdapter } from './activityAdapter';
-import { Activity, ActivityTypes, ConversationReference } from './activity';
+import { ActivityTypes, Activity, ConversationReference, ChannelAccount } from 'botbuilder-schema';
 import { Promiseable } from './middleware';
 import assert = require('assert');
 
@@ -33,14 +33,14 @@ export class TestAdapter implements ActivityAdapter {
     private nextId = 0;
 
     public reference: ConversationReference;
-    public botReplies: Activity[] = [];
+    public botReplies: Partial<Activity>[] = [];
 
     /** INTERNAL implementation of `Adapter.onReceive`. */
     public onReceive: (activity: Activity) => Promise<void>;
 
     /**
      * Creates a new instance of the test adapter.
-     * @param reference (Optional) conversation reference that lets you customize the address 
+     * @param reference (Optional) conversation reference that lets you customize the address
      * information for messages sent during a test.
      */
     constructor(reference?: ConversationReference) {
@@ -63,11 +63,11 @@ export class TestAdapter implements ActivityAdapter {
     /* INTERNAL */
     public _sendActivityToBot(userSays: string | Partial<Activity>): Promise<void> {
         // ready for next reply
-        let activity = <Activity>(typeof userSays === 'string' ? { type:ActivityTypes.message, text: userSays } : userSays);
-        if (!activity.type) 
+        let activity = <Activity>(typeof userSays === 'string' ? { type:ActivityTypes.Message, text: userSays } : userSays);
+        if (!activity.type)
             throw new Error("Missing activity.type");
         activity.channelId = this.reference.channelId;
-        activity.from = this.reference.user;
+        activity.from = <ChannelAccount>this.reference.user;
         activity.recipient = this.reference.bot;
         activity.conversation = this.reference.conversation;
         activity.serviceUrl = this.reference.serviceUrl;
@@ -99,7 +99,7 @@ export class TestAdapter implements ActivityAdapter {
      * @param description description of test case
      * @param timeout (default 3000ms) time to wait for response from bot
      */
-    public test(userSays: string | Partial<Activity>, expected: string | Partial<Activity> | ((activity: Activity, description?: string) => void), description?: string, timeout?: number): TestFlow {
+    public test(userSays: string | Partial<Activity>, expected: string | Partial<Activity> | ((activity: Partial<Activity>, description?: string) => void), description?: string, timeout?: number): TestFlow {
         return this.send(userSays)
             .assertReply(expected, description);
     }
@@ -110,7 +110,7 @@ export class TestAdapter implements ActivityAdapter {
      * @param description description of test case
      * @param timeout (default 3000ms) time to wait for response from bot
      */
-    public assertReply(expected: string | Partial<Activity> | ((activity: Activity, description?: string) => void), description?: string, timeout?: number): TestFlow {
+    public assertReply(expected: string | Partial<Activity> | ((activity: Partial<Activity>, description?: string) => void), description?: string, timeout?: number): TestFlow {
         return new TestFlow(Promise.resolve(), this).assertReply(expected, description, timeout);
     }
 
@@ -140,7 +140,7 @@ export class TestFlow {
      * @param description description of test case
      * @param timeout (default 3000ms) time to wait for response from bot
      */
-    public test(userSays: string | Partial<Activity>, expected: string | Partial<Activity> | ((activity: Activity, description?: string) => void), description?: string, timeout?: number): TestFlow {
+    public test(userSays: string | Partial<Activity>, expected: string | Partial<Activity> | ((activity: Partial<Activity>, description?: string) => void), description?: string, timeout?: number): TestFlow {
         if (!expected)
             throw new Error(".test() Missing expected parameter");
         return this.send(userSays)
@@ -157,11 +157,11 @@ export class TestFlow {
 
     /**
      * Throws if the bot's response doesn't match the expected text/activity
-     * @param expected expected text or activity from the bot, or callback to inspect object 
+     * @param expected expected text or activity from the bot, or callback to inspect object
      * @param description description of test case
      * @param timeout (default 3000ms) time to wait for response from bot
      */
-    public assertReply(expected: string | Partial<Activity> | ((activity: Activity, description?: string) => void), description?: string, timeout?: number): TestFlow {
+    public assertReply(expected: string | Partial<Activity> | ((activity: Partial<Activity>, description?: string) => void), description?: string, timeout?: number): TestFlow {
         if (!expected)
             throw new Error(".assertReply() Missing expected parameter");
 
@@ -174,7 +174,7 @@ export class TestFlow {
                 let myInterval = setInterval(() => {
                     let current = new Date().getTime();
                     if ((current - start) > <number>timeout) {
-                        let expectedActivity = <Activity>(typeof expected === 'string' ? { type: ActivityTypes.message, text: expected } : expected);
+                        let expectedActivity = <Activity>(typeof expected === 'string' ? { type: ActivityTypes.Message, text: expected } : expected);
                         throw new Error(`${timeout}ms Timed out waiting for:${description || expectedActivity.text}`);
                     }
 
@@ -186,7 +186,7 @@ export class TestFlow {
                         if (typeof expected === 'function') {
                             expected(botReply, description);
                         } else if (typeof expected === 'string') {
-                            assert.equal(botReply.type, ActivityTypes.message, (description || '') + ` type === '${botReply.type}'. `);
+                            assert.equal(botReply.type, ActivityTypes.Message, (description || '') + ` type === '${botReply.type}'. `);
                             assert.equal(botReply.text, expected, (description || '') + ` text === "${botReply.text}"`);
                         } else {
                             this.validateActivity(botReply, expected);

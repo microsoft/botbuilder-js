@@ -2,14 +2,14 @@
  * @module botbuilder
  */
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 import { MiddlewareSet } from './middlewareSet';
-import { Activity, ConversationReference, ActivityTypes, ConversationResourceResponse, applyConversationReference } from './activity';
+import { ActivityTypes, Activity, ConversationReference, ConversationResourceResponse, } from 'botbuilder-schema';
 import { ActivityAdapter } from './activityAdapter';
 import { Promiseable } from './middleware';
-import { createBotContext } from './botContext';
+import { createBotContext, applyConversationReference } from './botContext';
 import { TemplateManager, TemplateRenderer } from './templateManager';
 import { DictionaryRenderer, TemplateDictionary } from './botbuilder';
 
@@ -19,7 +19,7 @@ import { DictionaryRenderer, TemplateDictionary } from './botbuilder';
  * **Usage Example**
  *
  * ```js
- * import { Bot } from 'botbuilder-core'; // typescript
+ * import { Bot } from 'botbuilder'; // typescript
  *
  * const bot = new Bot(adapter); // init bot and bind to adapter
  *
@@ -55,8 +55,8 @@ export class Bot extends MiddlewareSet {
     }
 
     /**
-     * Creates a new context object given an activity or conversation reference. The context object 
-     * will be disposed of automatically once the callback completes or the promise it returns 
+     * Creates a new context object given an activity or conversation reference. The context object
+     * will be disposed of automatically once the callback completes or the promise it returns
      * completes.
      *
      * **Usage Example**
@@ -77,10 +77,10 @@ export class Bot extends MiddlewareSet {
         // Initialize context object
         let context: BotContext;
         if ((activityOrReference as Activity).type) {
-            context = createBotContext(this, activityOrReference);
+            context = createBotContext(this, <Activity>activityOrReference);
         } else {
             context = createBotContext(this);
-            context.conversationReference = activityOrReference;
+            context.conversationReference = <ConversationReference>activityOrReference;
         }
 
         // Run context created pipeline
@@ -98,7 +98,7 @@ export class Bot extends MiddlewareSet {
 
     /**
      * Registers a new receiver with the bot. All incoming activities are routed to receivers in
-     * the order they're registered. The first receiver to return `{ handled: true }` prevents 
+     * the order they're registered. The first receiver to return `{ handled: true }` prevents
      * the receivers after it from being called.
      *
      * **Usage Example**
@@ -106,7 +106,7 @@ export class Bot extends MiddlewareSet {
      * ```js
      * const bot = new Bot(adapter)
      *      .onReceive((context) => {
-     *         context.reply(`Hello World`); 
+     *         context.reply(`Hello World`);
      *      });
      * ```
      *
@@ -145,18 +145,18 @@ export class Bot extends MiddlewareSet {
     }
 
     /**
-     * INTERNAL sends an outgoing set of activities to the user. Calling `context.flushResponses()` achieves the same 
+     * INTERNAL sends an outgoing set of activities to the user. Calling `context.flushResponses()` achieves the same
      * effect and is the preferred way of sending activities to the user.
      *
      * @param context Context for the current turn of the conversation.
      * @param activities Set of activities to send.
      */
-    public post(context: BotContext, ...activities: Partial<Activity>[]): Promise<ConversationReference[]> {
+    public post(context: BotContext, ...activities: Partial<Activity>[]): Promise<Partial<ConversationResourceResponse>[]> {
         // Ensure activities are well formed.
         for (let i = 0; i < activities.length; i++) {
             let activity = activities[i];
             if (!activity.type) {
-                activity.type = ActivityTypes.message
+                activity.type = ActivityTypes.Message
             }
             applyConversationReference(activity, context.conversationReference);
         }
@@ -169,8 +169,12 @@ export class Bot extends MiddlewareSet {
                 .then((responses) => {
                     // Ensure responses array populated
                     if (!Array.isArray(responses)) {
-                        responses = [];
-                        for (let i = 0; i < activities.length; i++) { responses.push({}) }
+                        let mockResponses: ConversationResourceResponse[] = [];
+                        for (let i = 0; i < activities.length; i++) {
+                            mockResponses.push(<ConversationResourceResponse>{})
+                        }
+
+                        return mockResponses;
                     }
                     return responses;
                 });
@@ -186,8 +190,8 @@ export class Bot extends MiddlewareSet {
      */
     public receive(activity: Activity): Promise<void> {
         // Create context and run receive activity pipeline
-        return this.createContext(activity, 
-            (context) => this.receiveActivity(context, 
+        return this.createContext(activity,
+            (context) => this.receiveActivity(context,
                 () => Promise.resolve()));
     }
 }

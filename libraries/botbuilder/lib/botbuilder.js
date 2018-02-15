@@ -10,7 +10,6 @@ function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-__export(require("./activity"));
 __export(require("./attachmentRecognizer"));
 __export(require("./bot"));
 __export(require("./botService"));
@@ -31,4 +30,5 @@ __export(require("./storageMiddleware"));
 __export(require("./templateManager"));
 __export(require("./dictionaryRenderer"));
 __export(require("./testAdapter"));
+__export(require("botbuilder-schema"));
 //# sourceMappingURL=botbuilder.js.map

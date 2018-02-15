@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Middleware } from './middleware';
-import { Activity, ConversationResourceResponse } from './activity';
+import { Activity, ConversationResourceResponse } from 'botbuilder-schema';
 /** Interface for a template renderer which provides the ability
  * to create a text reply or activity reply from the language, templateid and data object
  **/
