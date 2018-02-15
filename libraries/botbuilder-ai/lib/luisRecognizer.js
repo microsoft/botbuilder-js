@@ -18,13 +18,6 @@ class LuisRecognizer extends botbuilder_1.Recognizer {
         else {
             this.options = Object.assign({}, appId);
         }
-        // We need to set verbose to true in order to get all intents
-        if (this.options.options) {
-            this.options.options.verbose = true;
-        }
-        else {
-            this.options.options = { verbose: true };
-        }
         // Create client and override callbacks
         let $this = this;
         const baseUri = (this.options.serviceEndpoint || 'https://westus.api.cognitive.microsoft.com');
@@ -48,7 +41,7 @@ class LuisRecognizer extends botbuilder_1.Recognizer {
             let entitiesAndMetadata = $this.getEntitiesAndMetadata(result.entities, result.compositeEntities, verbose);
             let recognizerResult = {
                 text: result.query,
-                intents: $this.getIntents(result.intents),
+                intents: $this.getIntents(result),
                 entities: entitiesAndMetadata.entities
             };
             if (verbose) {
@@ -59,13 +52,17 @@ class LuisRecognizer extends botbuilder_1.Recognizer {
             return recognizerResult;
         });
     }
-    getIntents(intents) {
-        if (intents) {
-            return intents.reduce((prev, curr) => {
+    getIntents(luisResult) {
+        let intents = {};
+        if (luisResult.intents) {
+            return luisResult.intents.reduce((prev, curr) => {
                 prev[curr.intent || ''] = curr.score;
                 return prev;
-            }, {});
+            }, intents);
         }
+        let topScoringIntent = luisResult.topScoringIntent || { intent: '', score: 0 };
+        intents[(topScoringIntent).intent || ''] = topScoringIntent.score;
+        return intents;
     }
     getEntitiesAndMetadata(entities, compositeEntities, verbose) {
         let $this = this;
@@ -85,9 +82,9 @@ class LuisRecognizer extends botbuilder_1.Recognizer {
             // we'll address composite entities separately
             if (compositeEntityTypes.indexOf(entity.type) > -1)
                 return;
-            this.addProperty(entitiesAndMetadata.entities, entity.type, $this.getEntityValue(entity));
+            this.addProperty(entitiesAndMetadata.entities, $this.getNormalizedEntityType(entity), $this.getEntityValue(entity));
             if (verbose) {
-                this.addProperty(entitiesAndMetadata.metadata, entity.type, $this.getEntityMetadata(entity));
+                this.addProperty(entitiesAndMetadata.metadata, $this.getNormalizedEntityType(entity), $this.getEntityMetadata(entity));
             }
         });
         return entitiesAndMetadata;
@@ -118,12 +115,12 @@ class LuisRecognizer extends botbuilder_1.Recognizer {
         return {
             $startIndex: entity.startIndex,
             $endIndex: entity.endIndex,
-            $entity: entity.entity,
-            $score: entity.score,
-            $resolution: entity.resolution ?
-                entity.resolution.value ? [entity.resolution.value] : entity.resolution.values :
-                undefined
+            $text: entity.entity,
+            $score: entity.score
         };
+    }
+    getNormalizedEntityType(entity) {
+        return entity.type.replace(/\./g, "_");
     }
     populateCompositeEntity(compositeEntity, entities, entitiesAndMetadata, verbose) {
         let childrenEntites = {};
@@ -153,9 +150,9 @@ class LuisRecognizer extends botbuilder_1.Recognizer {
                     entity.endIndex != undefined && compositeEntityMetadata.endIndex != undefined && entity.endIndex <= compositeEntityMetadata.endIndex) {
                     // Add to the set to ensure that we don't consider the same child entity more than once per composite
                     coveredSet.add(i);
-                    $this.addProperty(childrenEntites, entity.type, $this.getEntityValue(entity));
+                    $this.addProperty(childrenEntites, $this.getNormalizedEntityType(entity), $this.getEntityValue(entity));
                     if (verbose)
-                        $this.addProperty(childrenEntitiesMetadata, entity.type, $this.getEntityMetadata(entity));
+                        $this.addProperty(childrenEntitiesMetadata, $this.getNormalizedEntityType(entity), $this.getEntityMetadata(entity));
                 }
             }
             ;

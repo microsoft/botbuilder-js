@@ -16,7 +16,6 @@ export interface LuisRecognizerOptions {
     /** (Optional) request options passed to service call.  */
     options?: {
         timezoneOffset?: number;
-        contextId?: string;
         verbose?: boolean;
         forceSet?: string;
         allowSampling?: string;
@@ -32,10 +31,11 @@ export declare class LuisRecognizer extends Recognizer {
     constructor(appId: string, subscriptionKey: string);
     static recognize(utterance: string, options: LuisRecognizerOptions): Promise<RecognizerResult>;
     protected recognizeAndMap(utterance: string, verbose: boolean): Promise<RecognizerResult>;
-    private getIntents(intents);
+    private getIntents(luisResult);
     private getEntitiesAndMetadata(entities, compositeEntities, verbose);
     private getEntityValue(entity);
     private getEntityMetadata(entity);
+    private getNormalizedEntityType(entity);
     private populateCompositeEntity(compositeEntity, entities, entitiesAndMetadata, verbose);
     /**
      * If a property doesn't exist add it to a new array, otherwise append it to the existing array
