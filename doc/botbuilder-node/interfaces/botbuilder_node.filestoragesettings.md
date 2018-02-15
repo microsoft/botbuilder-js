@@ -24,9 +24,9 @@ Additional settings for configuring an instance of [FileStorage](../classes/botb
 ## Properties
 <a id="optimizewrites"></a>
 
-###  optimizeWrites
+### «Optional» optimizeWrites
 
-**●  optimizeWrites**:  *`boolean`* 
+**●  optimizeWrites**:  *`undefined`⎮`true`⎮`false`* 
 
 *Inherited from StorageSettings.optimizeWrites*
 
@@ -34,7 +34,7 @@ Additional settings for configuring an instance of [FileStorage](../classes/botb
 
 
 
-If true the storage provider will optimize the writing of objects such that any read object which hasn't changed won't be actually written. The default value for all storage providers is true.
+(Optional) If true the storage provider will optimize the writing of objects such that any read object which hasn't changed won't be actually written. The default value for all storage providers is true.
 
 
 
@@ -47,7 +47,7 @@ ___
 
 **●  path**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder-node/lib/fileStorage.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-node/lib/fileStorage.d.ts#L15)*
+*Defined in [libraries/botbuilder-node/lib/fileStorage.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-node/lib/fileStorage.d.ts#L15)*
 
 
 

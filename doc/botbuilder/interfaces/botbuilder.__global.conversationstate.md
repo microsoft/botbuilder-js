@@ -36,7 +36,7 @@ Key/value pairs.
 
 *Inherited from [StoreItem](botbuilder.storeitem.md).[eTag](botbuilder.storeitem.md#etag)*
 
-*Defined in [libraries/botbuilder/lib/storage.d.ts:43](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/storage.d.ts#L43)*
+*Defined in [libraries/botbuilder/lib/storage.d.ts:43](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/storage.d.ts#L43)*
 
 
 

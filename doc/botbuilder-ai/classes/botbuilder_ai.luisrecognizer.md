@@ -52,7 +52,7 @@
 ### ⊕ **new LuisRecognizer**(appId: *`string`*, subscriptionKey: *`string`*): [LuisRecognizer](botbuilder_ai.luisrecognizer.md)
 
 
-*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/13506b4/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L31)*
+*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L31)*
 
 
 
@@ -68,7 +68,7 @@
 
 **Returns:** [LuisRecognizer](botbuilder_ai.luisrecognizer.md)
 
-*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:32](https://github.com/Microsoft/botbuilder-js/blob/13506b4/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L32)*
+*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:32](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L32)*
 
 
 
@@ -305,7 +305,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:34](https://github.com/Microsoft/botbuilder-js/blob/13506b4/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L34)*
+*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:34](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L34)*
 
 
 
@@ -336,7 +336,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:35](https://github.com/Microsoft/botbuilder-js/blob/13506b4/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L35)*
+*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:35](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L35)*
 
 
 

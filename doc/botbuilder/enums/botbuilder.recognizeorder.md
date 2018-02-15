@@ -21,7 +21,7 @@
 
 ** parallel**:    = 0
 
-*Defined in [libraries/botbuilder/lib/intentRecognizerSet.d.ts:10](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/intentRecognizerSet.d.ts#L10)*
+*Defined in [libraries/botbuilder/lib/intentRecognizerSet.d.ts:10](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/intentRecognizerSet.d.ts#L10)*
 
 
 
@@ -35,7 +35,7 @@ ___
 
 ** series**:    = 1
 
-*Defined in [libraries/botbuilder/lib/intentRecognizerSet.d.ts:11](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/intentRecognizerSet.d.ts#L11)*
+*Defined in [libraries/botbuilder/lib/intentRecognizerSet.d.ts:11](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/intentRecognizerSet.d.ts#L11)*
 
 
 

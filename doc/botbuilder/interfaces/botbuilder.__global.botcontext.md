@@ -15,7 +15,7 @@ Context object for the current turn of a conversation with a user.
 
 **●  bot**:  *[Bot](../classes/botbuilder.bot.md)* 
 
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:43](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botbuilder.d.ts#L43)*
+*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:43](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/botbuilder.d.ts#L43)*
 
 
 
@@ -30,9 +30,9 @@ ___
 
 ###  conversationReference
 
-**●  conversationReference**:  *[ConversationReference](botbuilder.conversationreference.md)* 
+**●  conversationReference**:  *[Partial]()[ConversationReference]()* 
 
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:51](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botbuilder.d.ts#L51)*
+*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:51](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/botbuilder.d.ts#L51)*
 
 
 
@@ -47,9 +47,9 @@ ___
 
 ###  request
 
-**●  request**:  *[Activity](botbuilder.activity.md)* 
+**●  request**:  *[Partial]()[Activity]()* 
 
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:45](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botbuilder.d.ts#L45)*
+*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:45](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/botbuilder.d.ts#L45)*
 
 
 
@@ -66,7 +66,7 @@ ___
 
 **●  responded**:  *`boolean`* 
 
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:49](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botbuilder.d.ts#L49)*
+*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:49](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/botbuilder.d.ts#L49)*
 
 
 
@@ -81,9 +81,9 @@ ___
 
 ###  responses
 
-**●  responses**:  *[Partial]()[Activity](botbuilder.activity.md)[]* 
+**●  responses**:  *[Partial]()[Activity]()[]* 
 
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:47](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botbuilder.d.ts#L47)*
+*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:47](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/botbuilder.d.ts#L47)*
 
 
 
@@ -100,7 +100,7 @@ ___
 
 **●  state**:  *[BotState](botbuilder.__global.botstate.md)* 
 
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:55](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botbuilder.d.ts#L55)*
+*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:55](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/botbuilder.d.ts#L55)*
 
 
 
@@ -117,7 +117,7 @@ ___
 
 **●  storage**:  *[Storage](botbuilder.storage.md)* 
 
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:59](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botbuilder.d.ts#L59)*
+*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:59](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/botbuilder.d.ts#L59)*
 
 
 
@@ -134,7 +134,7 @@ ___
 
 **●  templateManager**:  *[TemplateManager](../classes/botbuilder.templatemanager.md)* 
 
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:69](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botbuilder.d.ts#L69)*
+*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:69](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/botbuilder.d.ts#L69)*
 
 
 
@@ -151,7 +151,7 @@ ___
 
 **●  topIntent**:  *[Intent](botbuilder.intent.md)* 
 
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:65](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botbuilder.d.ts#L65)*
+*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:65](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/botbuilder.d.ts#L65)*
 
 
 
@@ -172,7 +172,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:92](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botbuilder.d.ts#L92)*
+*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:92](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/botbuilder.d.ts#L92)*
 
 
 
@@ -215,7 +215,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:97](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botbuilder.d.ts#L97)*
+*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:97](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/botbuilder.d.ts#L97)*
 
 
 
@@ -240,7 +240,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:113](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botbuilder.d.ts#L113)*
+*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:113](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/botbuilder.d.ts#L113)*
 
 
 
@@ -274,11 +274,11 @@ ___
 
 ###  flushResponses
 
-► **flushResponses**(): `Promise`.<[ConversationResourceResponse](botbuilder.conversationresourceresponse.md)[]>
+► **flushResponses**(): `Promise`.<[ResourceResponse]()[]>
 
 
 
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:162](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botbuilder.d.ts#L162)*
+*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:162](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/botbuilder.d.ts#L162)*
 
 
 
@@ -300,7 +300,7 @@ Sends any queued up responses to the user. **Usage Example**
 
 
 
-**Returns:** `Promise`.<[ConversationResourceResponse](botbuilder.conversationresourceresponse.md)[]>
+**Returns:** `Promise`.<[ResourceResponse]()[]>
 
 
 
@@ -312,15 +312,15 @@ ___
 
 ###  reply
 
-► **reply**(textOrActivity: *`string`*, speak: *`string`*, additional?: *[Partial]()[Activity](botbuilder.activity.md)*): `this`
+► **reply**(textOrActivity: *`string`*, speak: *`string`*, additional?: *[Partial]()[Activity]()*): `this`
 
-► **reply**(textOrActivity: *`string`*, additional?: *[Partial]()[Activity](botbuilder.activity.md)*): `this`
+► **reply**(textOrActivity: *`string`*, additional?: *[Partial]()[Activity]()*): `this`
 
-► **reply**(textOrActivity: *[Partial]()[Activity](botbuilder.activity.md)*): `this`
+► **reply**(textOrActivity: *[Partial]()[Activity]()*): `this`
 
 
 
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:127](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botbuilder.d.ts#L127)*
+*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:127](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/botbuilder.d.ts#L127)*
 
 
 
@@ -337,7 +337,7 @@ Queues a new "message" or activity to the [responses](#responses) array.
 | ------ | ------ | ------ |
 | textOrActivity | `string`   |  Text of a message or an activity object to send to the user. |
 | speak | `string`   |  (Optional) SSML that should be spoken to the user on channels that support speech. |
-| additional | [Partial]()[Activity](botbuilder.activity.md)   |  (Optional) other activities fields, like attachments, that should be sent with the activity. |
+| additional | [Partial]()[Activity]()   |  (Optional) other activities fields, like attachments, that should be sent with the activity. |
 
 
 
@@ -347,7 +347,7 @@ Queues a new "message" or activity to the [responses](#responses) array.
 
 
 
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:128](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botbuilder.d.ts#L128)*
+*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:128](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/botbuilder.d.ts#L128)*
 
 
 
@@ -356,7 +356,7 @@ Queues a new "message" or activity to the [responses](#responses) array.
 | Param | Type | Description |
 | ------ | ------ | ------ |
 | textOrActivity | `string`   |  - |
-| additional | [Partial]()[Activity](botbuilder.activity.md)   |  - |
+| additional | [Partial]()[Activity]()   |  - |
 
 
 
@@ -366,7 +366,7 @@ Queues a new "message" or activity to the [responses](#responses) array.
 
 
 
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:129](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botbuilder.d.ts#L129)*
+*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:129](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/botbuilder.d.ts#L129)*
 
 
 
@@ -374,7 +374,7 @@ Queues a new "message" or activity to the [responses](#responses) array.
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| textOrActivity | [Partial]()[Activity](botbuilder.activity.md)   |  - |
+| textOrActivity | [Partial]()[Activity]()   |  - |
 
 
 
@@ -396,7 +396,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:142](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botbuilder.d.ts#L142)*
+*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:142](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/botbuilder.d.ts#L142)*
 
 
 
@@ -434,7 +434,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:177](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botbuilder.d.ts#L177)*
+*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:177](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/botbuilder.d.ts#L177)*
 
 
 

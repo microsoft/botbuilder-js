@@ -36,7 +36,7 @@ To use, simply add to your pipeline bot.use(new DictionaryRenderer(myTemplates))
 ### ⊕ **new DictionaryRenderer**(templates: *[TemplateDictionary](../#templatedictionary)*): [DictionaryRenderer](botbuilder.dictionaryrenderer.md)
 
 
-*Defined in [libraries/botbuilder/lib/dictionaryRenderer.d.ts:36](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/dictionaryRenderer.d.ts#L36)*
+*Defined in [libraries/botbuilder/lib/dictionaryRenderer.d.ts:36](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/dictionaryRenderer.d.ts#L36)*
 
 
 
@@ -64,7 +64,7 @@ To use, simply add to your pipeline bot.use(new DictionaryRenderer(myTemplates))
 
 
 
-*Defined in [libraries/botbuilder/lib/dictionaryRenderer.d.ts:38](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/dictionaryRenderer.d.ts#L38)*
+*Defined in [libraries/botbuilder/lib/dictionaryRenderer.d.ts:38](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/dictionaryRenderer.d.ts#L38)*
 
 
 
@@ -91,13 +91,13 @@ ___
 
 ###  renderTemplate
 
-► **renderTemplate**(context: *[BotContext](../interfaces/botbuilder.__global.botcontext.md)*, language: *`string`*, templateId: *`string`*, data: *`any`*): `Promise`.<[Partial]()[Activity](../interfaces/botbuilder.activity.md)⎮`string`⎮`undefined`>
+► **renderTemplate**(context: *[BotContext](../interfaces/botbuilder.__global.botcontext.md)*, language: *`string`*, templateId: *`string`*, data: *`any`*): `Promise`.<[Partial]()[Activity]()⎮`string`⎮`undefined`>
 
 
 
 *Implementation of [TemplateRenderer](../interfaces/botbuilder.templaterenderer.md).[renderTemplate](../interfaces/botbuilder.templaterenderer.md#rendertemplate)*
 
-*Defined in [libraries/botbuilder/lib/dictionaryRenderer.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/dictionaryRenderer.d.ts#L39)*
+*Defined in [libraries/botbuilder/lib/dictionaryRenderer.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/dictionaryRenderer.d.ts#L39)*
 
 
 
@@ -114,7 +114,7 @@ ___
 
 
 
-**Returns:** `Promise`.<[Partial]()[Activity](../interfaces/botbuilder.activity.md)⎮`string`⎮`undefined`>
+**Returns:** `Promise`.<[Partial]()[Activity]()⎮`string`⎮`undefined`>
 
 
 

@@ -15,7 +15,7 @@ Optional settings for an `AttachmentRecognizer`.
 
 **●  intentName**:  *`string`* 
 
-*Defined in [libraries/botbuilder/lib/attachmentRecognizer.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/attachmentRecognizer.d.ts#L18)*
+*Defined in [libraries/botbuilder/lib/attachmentRecognizer.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/attachmentRecognizer.d.ts#L18)*
 
 
 

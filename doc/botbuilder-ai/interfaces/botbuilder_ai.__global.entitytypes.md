@@ -12,7 +12,7 @@
 
 **●  luis**:  *`string`* 
 
-*Defined in [libraries/botbuilder-ai/lib/index.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/13506b4/libraries/botbuilder-ai/lib/index.d.ts#L15)*
+*Defined in [libraries/botbuilder-ai/lib/index.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-ai/lib/index.d.ts#L15)*
 
 
 

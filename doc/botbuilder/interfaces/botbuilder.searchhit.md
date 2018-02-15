@@ -15,7 +15,7 @@ result from performing a search
 
 **●  docId**:  *`string`* 
 
-*Defined in [libraries/botbuilder/lib/search.d.ts:24](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/search.d.ts#L24)*
+*Defined in [libraries/botbuilder/lib/search.d.ts:24](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/search.d.ts#L24)*
 
 
 
@@ -32,7 +32,7 @@ ___
 
 **●  score**:  *`number`* 
 
-*Defined in [libraries/botbuilder/lib/search.d.ts:22](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/search.d.ts#L22)*
+*Defined in [libraries/botbuilder/lib/search.d.ts:22](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/search.d.ts#L22)*
 
 
 

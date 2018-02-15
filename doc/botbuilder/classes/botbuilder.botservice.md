@@ -60,7 +60,7 @@ This class is typically derived from but can also be used like `bot.use(new BotS
 ### ⊕ **new BotService**(name: *`string`*, instance?: *`T`⎮`undefined`*): [BotService](botbuilder.botservice.md)
 
 
-*Defined in [libraries/botbuilder/lib/botService.d.ts:22](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botService.d.ts#L22)*
+*Defined in [libraries/botbuilder/lib/botService.d.ts:22](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/botService.d.ts#L22)*
 
 
 
@@ -90,7 +90,7 @@ Creates a new instance of a service definition.
 
 **●  instance**:  *`T`⎮`undefined`* 
 
-*Defined in [libraries/botbuilder/lib/botService.d.ts:22](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botService.d.ts#L22)*
+*Defined in [libraries/botbuilder/lib/botService.d.ts:22](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/botService.d.ts#L22)*
 
 
 
@@ -104,7 +104,7 @@ ___
 
 **●  name**:  *`string`* 
 
-*Defined in [libraries/botbuilder/lib/botService.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botService.d.ts#L21)*
+*Defined in [libraries/botbuilder/lib/botService.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/botService.d.ts#L21)*
 
 
 
@@ -122,7 +122,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/botService.d.ts:32](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botService.d.ts#L32)*
+*Defined in [libraries/botbuilder/lib/botService.d.ts:32](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/botService.d.ts#L32)*
 
 
 
@@ -153,7 +153,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/botService.d.ts:38](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/botService.d.ts#L38)*
+*Defined in [libraries/botbuilder/lib/botService.d.ts:38](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/botService.d.ts#L38)*
 
 
 

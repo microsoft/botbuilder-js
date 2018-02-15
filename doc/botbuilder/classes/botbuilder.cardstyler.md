@@ -46,7 +46,7 @@ A set of utility functions designed to assist with the formatting of the various
 
 **●  contentTypes**:  *`object`* 
 
-*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:26](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/cardStyler.d.ts#L26)*
+*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:26](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/cardStyler.d.ts#L26)*
 
 
 
@@ -122,11 +122,11 @@ ___
 
 ### «Static» actions
 
-► **actions**(actions: *(`string`⎮[CardAction](../interfaces/botbuilder.cardaction.md))[]⎮`undefined`*): [CardAction](../interfaces/botbuilder.cardaction.md)[]
+► **actions**(actions: *(`string`⎮[CardAction]())[]⎮`undefined`*): [CardAction]()[]
 
 
 
-*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:127](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/cardStyler.d.ts#L127)*
+*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:127](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/cardStyler.d.ts#L127)*
 
 
 
@@ -137,13 +137,13 @@ Returns a properly formatted array of actions. Supports converting strings to `m
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| actions | (`string`⎮[CardAction](../interfaces/botbuilder.cardaction.md))[]⎮`undefined`   |  Array of card actions or strings. Strings will be converted to `messageBack` actions. |
+| actions | (`string`⎮[CardAction]())[]⎮`undefined`   |  Array of card actions or strings. Strings will be converted to `messageBack` actions. |
 
 
 
 
 
-**Returns:** [CardAction](../interfaces/botbuilder.cardaction.md)[]
+**Returns:** [CardAction]()[]
 
 
 
@@ -155,11 +155,11 @@ ___
 
 ### «Static» adaptiveCard
 
-► **adaptiveCard**(card: *`any`*): [Attachment](../interfaces/botbuilder.attachment.md)
+► **adaptiveCard**(card: *`any`*): [Attachment]()
 
 
 
-*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:51](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/cardStyler.d.ts#L51)*
+*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:51](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/cardStyler.d.ts#L51)*
 
 
 
@@ -180,7 +180,7 @@ For more information about Adaptive Cards and to download the latest SDK, visit 
 
 
 
-**Returns:** [Attachment](../interfaces/botbuilder.attachment.md)
+**Returns:** [Attachment]()
 
 
 
@@ -192,11 +192,11 @@ ___
 
 ### «Static» animationCard
 
-► **animationCard**(title: *`string`*, media: *(`string`⎮[MediaUrl](../interfaces/botbuilder.mediaurl.md))[]*, buttons?: *(`string`⎮[CardAction](../interfaces/botbuilder.cardaction.md))[]*, other?: *[Partial]()[AnimationCard](../interfaces/botbuilder.animationcard.md)*): [Attachment](../interfaces/botbuilder.attachment.md)
+► **animationCard**(title: *`string`*, media: *(`string`⎮[MediaUrl]())[]*, buttons?: *(`string`⎮[CardAction]())[]*, other?: *[Partial]()[AnimationCard]()*): [Attachment]()
 
 
 
-*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:60](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/cardStyler.d.ts#L60)*
+*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:60](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/cardStyler.d.ts#L60)*
 
 
 
@@ -208,15 +208,15 @@ Returns an attachment for an animation card.
 | Param | Type | Description |
 | ------ | ------ | ------ |
 | title | `string`   |  The cards title. |
-| media | (`string`⎮[MediaUrl](../interfaces/botbuilder.mediaurl.md))[]   |  Media URL's for the card. |
-| buttons | (`string`⎮[CardAction](../interfaces/botbuilder.cardaction.md))[]   |  (Optional) set of buttons to include on the card. |
-| other | [Partial]()[AnimationCard](../interfaces/botbuilder.animationcard.md)   |  (Optional) additional properties to include on the card. |
+| media | (`string`⎮[MediaUrl]())[]   |  Media URL's for the card. |
+| buttons | (`string`⎮[CardAction]())[]   |  (Optional) set of buttons to include on the card. |
+| other | [Partial]()[AnimationCard]()   |  (Optional) additional properties to include on the card. |
 
 
 
 
 
-**Returns:** [Attachment](../interfaces/botbuilder.attachment.md)
+**Returns:** [Attachment]()
 
 
 
@@ -228,11 +228,11 @@ ___
 
 ### «Static» audioCard
 
-► **audioCard**(title: *`string`*, media: *(`string`⎮[MediaUrl](../interfaces/botbuilder.mediaurl.md))[]*, buttons?: *(`string`⎮[CardAction](../interfaces/botbuilder.cardaction.md))[]*, other?: *[Partial]()[AnimationCard](../interfaces/botbuilder.animationcard.md)*): [Attachment](../interfaces/botbuilder.attachment.md)
+► **audioCard**(title: *`string`*, media: *(`string`⎮[MediaUrl]())[]*, buttons?: *(`string`⎮[CardAction]())[]*, other?: *[Partial]()[AnimationCard]()*): [Attachment]()
 
 
 
-*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:69](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/cardStyler.d.ts#L69)*
+*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:69](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/cardStyler.d.ts#L69)*
 
 
 
@@ -244,15 +244,15 @@ Returns an attachment for an audio card.
 | Param | Type | Description |
 | ------ | ------ | ------ |
 | title | `string`   |  The cards title. |
-| media | (`string`⎮[MediaUrl](../interfaces/botbuilder.mediaurl.md))[]   |  Media URL's for the card. |
-| buttons | (`string`⎮[CardAction](../interfaces/botbuilder.cardaction.md))[]   |  (Optional) set of buttons to include on the card. |
-| other | [Partial]()[AnimationCard](../interfaces/botbuilder.animationcard.md)   |  (Optional) additional properties to include on the card. |
+| media | (`string`⎮[MediaUrl]())[]   |  Media URL's for the card. |
+| buttons | (`string`⎮[CardAction]())[]   |  (Optional) set of buttons to include on the card. |
+| other | [Partial]()[AnimationCard]()   |  (Optional) additional properties to include on the card. |
 
 
 
 
 
-**Returns:** [Attachment](../interfaces/botbuilder.attachment.md)
+**Returns:** [Attachment]()
 
 
 
@@ -264,13 +264,13 @@ ___
 
 ### «Static» heroCard
 
-► **heroCard**(title: *`string`*, images?: *(`string`⎮[CardImage](../interfaces/botbuilder.cardimage.md))[]*, buttons?: *(`string`⎮[CardAction](../interfaces/botbuilder.cardaction.md))[]*, other?: *[Partial]()[HeroCard](../interfaces/botbuilder.herocard.md)*): [Attachment](../interfaces/botbuilder.attachment.md)
+► **heroCard**(title: *`string`*, images?: *(`string`⎮[CardImage]())[]*, buttons?: *(`string`⎮[CardAction]())[]*, other?: *[Partial]()[HeroCard]()*): [Attachment]()
 
-► **heroCard**(title: *`string`*, text: *`string`*, images?: *(`string`⎮[CardImage](../interfaces/botbuilder.cardimage.md))[]*, buttons?: *(`string`⎮[CardAction](../interfaces/botbuilder.cardaction.md))[]*, other?: *[Partial]()[HeroCard](../interfaces/botbuilder.herocard.md)*): [Attachment](../interfaces/botbuilder.attachment.md)
+► **heroCard**(title: *`string`*, text: *`string`*, images?: *(`string`⎮[CardImage]())[]*, buttons?: *(`string`⎮[CardAction]())[]*, other?: *[Partial]()[HeroCard]()*): [Attachment]()
 
 
 
-*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:80](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/cardStyler.d.ts#L80)*
+*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:80](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/cardStyler.d.ts#L80)*
 
 
 
@@ -282,19 +282,19 @@ Returns an attachment for a hero card. Hero cards tend to have one dominant full
 | Param | Type | Description |
 | ------ | ------ | ------ |
 | title | `string`   |  The cards title. |
-| images | (`string`⎮[CardImage](../interfaces/botbuilder.cardimage.md))[]   |  (Optional) set of images to include on the card. |
-| buttons | (`string`⎮[CardAction](../interfaces/botbuilder.cardaction.md))[]   |  (Optional) set of buttons to include on the card. |
-| other | [Partial]()[HeroCard](../interfaces/botbuilder.herocard.md)   |  (Optional) additional properties to include on the card. |
+| images | (`string`⎮[CardImage]())[]   |  (Optional) set of images to include on the card. |
+| buttons | (`string`⎮[CardAction]())[]   |  (Optional) set of buttons to include on the card. |
+| other | [Partial]()[HeroCard]()   |  (Optional) additional properties to include on the card. |
 
 
 
 
 
-**Returns:** [Attachment](../interfaces/botbuilder.attachment.md)
+**Returns:** [Attachment]()
 
 
 
-*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:81](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/cardStyler.d.ts#L81)*
+*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:81](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/cardStyler.d.ts#L81)*
 
 
 
@@ -304,15 +304,15 @@ Returns an attachment for a hero card. Hero cards tend to have one dominant full
 | ------ | ------ | ------ |
 | title | `string`   |  - |
 | text | `string`   |  - |
-| images | (`string`⎮[CardImage](../interfaces/botbuilder.cardimage.md))[]   |  - |
-| buttons | (`string`⎮[CardAction](../interfaces/botbuilder.cardaction.md))[]   |  - |
-| other | [Partial]()[HeroCard](../interfaces/botbuilder.herocard.md)   |  - |
+| images | (`string`⎮[CardImage]())[]   |  - |
+| buttons | (`string`⎮[CardAction]())[]   |  - |
+| other | [Partial]()[HeroCard]()   |  - |
 
 
 
 
 
-**Returns:** [Attachment](../interfaces/botbuilder.attachment.md)
+**Returns:** [Attachment]()
 
 
 
@@ -324,11 +324,11 @@ ___
 
 ### «Static» images
 
-► **images**(images: *(`string`⎮[CardImage](../interfaces/botbuilder.cardimage.md))[]⎮`undefined`*): [CardImage](../interfaces/botbuilder.cardimage.md)[]
+► **images**(images: *(`string`⎮[CardImage]())[]⎮`undefined`*): [CardImage]()[]
 
 
 
-*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:133](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/cardStyler.d.ts#L133)*
+*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:133](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/cardStyler.d.ts#L133)*
 
 
 
@@ -339,13 +339,13 @@ Returns a properly formatted array of card images.
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| images | (`string`⎮[CardImage](../interfaces/botbuilder.cardimage.md))[]⎮`undefined`   |  Array of card images or strings. Strings will be converted to card images. |
+| images | (`string`⎮[CardImage]())[]⎮`undefined`   |  Array of card images or strings. Strings will be converted to card images. |
 
 
 
 
 
-**Returns:** [CardImage](../interfaces/botbuilder.cardimage.md)[]
+**Returns:** [CardImage]()[]
 
 
 
@@ -357,11 +357,11 @@ ___
 
 ### «Static» media
 
-► **media**(links: *(`string`⎮[MediaUrl](../interfaces/botbuilder.mediaurl.md))[]⎮`undefined`*): [MediaUrl](../interfaces/botbuilder.mediaurl.md)[]
+► **media**(links: *(`string`⎮[MediaUrl]())[]⎮`undefined`*): [MediaUrl]()[]
 
 
 
-*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:139](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/cardStyler.d.ts#L139)*
+*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:139](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/cardStyler.d.ts#L139)*
 
 
 
@@ -372,13 +372,13 @@ Returns a properly formatted array of media url objects.
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| links | (`string`⎮[MediaUrl](../interfaces/botbuilder.mediaurl.md))[]⎮`undefined`   |  Array of media url objects or strings. Strings will be converted to a media url object. |
+| links | (`string`⎮[MediaUrl]())[]⎮`undefined`   |  Array of media url objects or strings. Strings will be converted to a media url object. |
 
 
 
 
 
-**Returns:** [MediaUrl](../interfaces/botbuilder.mediaurl.md)[]
+**Returns:** [MediaUrl]()[]
 
 
 
@@ -390,11 +390,11 @@ ___
 
 ### «Static» receiptCard
 
-► **receiptCard**(card: *[ReceiptCard](../interfaces/botbuilder.receiptcard.md)*): [Attachment](../interfaces/botbuilder.attachment.md)
+► **receiptCard**(card: *[ReceiptCard]()*): [Attachment]()
 
 
 
-*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:88](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/cardStyler.d.ts#L88)*
+*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:88](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/cardStyler.d.ts#L88)*
 
 
 
@@ -405,13 +405,13 @@ Returns an attachment for a receipt card. The attachment will contain the card a
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| card | [ReceiptCard](../interfaces/botbuilder.receiptcard.md)   |  The adaptive card to return as an attachment. |
+| card | [ReceiptCard]()   |  The adaptive card to return as an attachment. |
 
 
 
 
 
-**Returns:** [Attachment](../interfaces/botbuilder.attachment.md)
+**Returns:** [Attachment]()
 
 
 
@@ -423,11 +423,11 @@ ___
 
 ### «Static» signinCard
 
-► **signinCard**(title: *`string`*, url: *`string`*, text?: *`undefined`⎮`string`*): [Attachment](../interfaces/botbuilder.attachment.md)
+► **signinCard**(title: *`string`*, url: *`string`*, text?: *`undefined`⎮`string`*): [Attachment]()
 
 
 
-*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:97](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/cardStyler.d.ts#L97)*
+*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:97](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/cardStyler.d.ts#L97)*
 
 
 
@@ -446,7 +446,7 @@ Returns an attachment for a signin card. For channels that don't natively suppor
 
 
 
-**Returns:** [Attachment](../interfaces/botbuilder.attachment.md)
+**Returns:** [Attachment]()
 
 
 
@@ -458,13 +458,13 @@ ___
 
 ### «Static» thumbnailCard
 
-► **thumbnailCard**(title: *`string`*, images?: *(`string`⎮[CardImage](../interfaces/botbuilder.cardimage.md))[]*, buttons?: *(`string`⎮[CardAction](../interfaces/botbuilder.cardaction.md))[]*, other?: *[Partial]()[ThumbnailCard](../interfaces/botbuilder.thumbnailcard.md)*): [Attachment](../interfaces/botbuilder.attachment.md)
+► **thumbnailCard**(title: *`string`*, images?: *(`string`⎮[CardImage]())[]*, buttons?: *(`string`⎮[CardAction]())[]*, other?: *[Partial]()[ThumbnailCard]()*): [Attachment]()
 
-► **thumbnailCard**(title: *`string`*, text: *`string`*, images?: *(`string`⎮[CardImage](../interfaces/botbuilder.cardimage.md))[]*, buttons?: *(`string`⎮[CardAction](../interfaces/botbuilder.cardaction.md))[]*, other?: *[Partial]()[ThumbnailCard](../interfaces/botbuilder.thumbnailcard.md)*): [Attachment](../interfaces/botbuilder.attachment.md)
+► **thumbnailCard**(title: *`string`*, text: *`string`*, images?: *(`string`⎮[CardImage]())[]*, buttons?: *(`string`⎮[CardAction]())[]*, other?: *[Partial]()[ThumbnailCard]()*): [Attachment]()
 
 
 
-*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:110](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/cardStyler.d.ts#L110)*
+*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:110](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/cardStyler.d.ts#L110)*
 
 
 
@@ -476,19 +476,19 @@ Returns an attachment for a thumbnail card. Thumbnail cards are similar to [hero
 | Param | Type | Description |
 | ------ | ------ | ------ |
 | title | `string`   |  The cards title. |
-| images | (`string`⎮[CardImage](../interfaces/botbuilder.cardimage.md))[]   |  (Optional) set of images to include on the card. |
-| buttons | (`string`⎮[CardAction](../interfaces/botbuilder.cardaction.md))[]   |  (Optional) set of buttons to include on the card. |
-| other | [Partial]()[ThumbnailCard](../interfaces/botbuilder.thumbnailcard.md)   |  (Optional) additional properties to include on the card. |
+| images | (`string`⎮[CardImage]())[]   |  (Optional) set of images to include on the card. |
+| buttons | (`string`⎮[CardAction]())[]   |  (Optional) set of buttons to include on the card. |
+| other | [Partial]()[ThumbnailCard]()   |  (Optional) additional properties to include on the card. |
 
 
 
 
 
-**Returns:** [Attachment](../interfaces/botbuilder.attachment.md)
+**Returns:** [Attachment]()
 
 
 
-*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:111](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/cardStyler.d.ts#L111)*
+*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:111](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/cardStyler.d.ts#L111)*
 
 
 
@@ -498,15 +498,15 @@ Returns an attachment for a thumbnail card. Thumbnail cards are similar to [hero
 | ------ | ------ | ------ |
 | title | `string`   |  - |
 | text | `string`   |  - |
-| images | (`string`⎮[CardImage](../interfaces/botbuilder.cardimage.md))[]   |  - |
-| buttons | (`string`⎮[CardAction](../interfaces/botbuilder.cardaction.md))[]   |  - |
-| other | [Partial]()[ThumbnailCard](../interfaces/botbuilder.thumbnailcard.md)   |  - |
+| images | (`string`⎮[CardImage]())[]   |  - |
+| buttons | (`string`⎮[CardAction]())[]   |  - |
+| other | [Partial]()[ThumbnailCard]()   |  - |
 
 
 
 
 
-**Returns:** [Attachment](../interfaces/botbuilder.attachment.md)
+**Returns:** [Attachment]()
 
 
 
@@ -518,11 +518,11 @@ ___
 
 ### «Static» videoCard
 
-► **videoCard**(title: *`string`*, media: *(`string`⎮[MediaUrl](../interfaces/botbuilder.mediaurl.md))[]*, buttons?: *(`string`⎮[CardAction](../interfaces/botbuilder.cardaction.md))[]*, other?: *[Partial]()[AnimationCard](../interfaces/botbuilder.animationcard.md)*): [Attachment](../interfaces/botbuilder.attachment.md)
+► **videoCard**(title: *`string`*, media: *(`string`⎮[MediaUrl]())[]*, buttons?: *(`string`⎮[CardAction]())[]*, other?: *[Partial]()[AnimationCard]()*): [Attachment]()
 
 
 
-*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:120](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/cardStyler.d.ts#L120)*
+*Defined in [libraries/botbuilder/lib/cardStyler.d.ts:120](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/cardStyler.d.ts#L120)*
 
 
 
@@ -534,15 +534,15 @@ Returns an attachment for a video card.
 | Param | Type | Description |
 | ------ | ------ | ------ |
 | title | `string`   |  The cards title. |
-| media | (`string`⎮[MediaUrl](../interfaces/botbuilder.mediaurl.md))[]   |  Media URL's for the card. |
-| buttons | (`string`⎮[CardAction](../interfaces/botbuilder.cardaction.md))[]   |  (Optional) set of buttons to include on the card. |
-| other | [Partial]()[AnimationCard](../interfaces/botbuilder.animationcard.md)   |  (Optional) additional properties to include on the card. |
+| media | (`string`⎮[MediaUrl]())[]   |  Media URL's for the card. |
+| buttons | (`string`⎮[CardAction]())[]   |  (Optional) set of buttons to include on the card. |
+| other | [Partial]()[AnimationCard]()   |  (Optional) additional properties to include on the card. |
 
 
 
 
 
-**Returns:** [Attachment](../interfaces/botbuilder.attachment.md)
+**Returns:** [Attachment]()
 
 
 
