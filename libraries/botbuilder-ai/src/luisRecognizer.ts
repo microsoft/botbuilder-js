@@ -23,7 +23,6 @@ export interface LuisRecognizerOptions {
     /** (Optional) request options passed to service call.  */
     options?: { 
         timezoneOffset? : number; 
-        contextId? : string; 
         verbose? : boolean; 
         forceSet? : string; 
         allowSampling?: string; 
@@ -44,14 +43,6 @@ export class LuisRecognizer extends Recognizer {
         } else {
             this.options = Object.assign({}, appId);
         }   
-
-        // We need to set verbose to true in order to get all intents
-        if(this.options.options) {
-            this.options.options.verbose = true;
-        }
-        else {
-            this.options.options = { verbose : true };
-        }
 
         // Create client and override callbacks
         let $this = this;
@@ -78,7 +69,7 @@ export class LuisRecognizer extends Recognizer {
                 let entitiesAndMetadata = $this.getEntitiesAndMetadata(result.entities, result.compositeEntities, verbose);
                 let recognizerResult  : RecognizerResult = {
                     text: result.query,
-                    intents: $this.getIntents(result.intents),
+                    intents: $this.getIntents(result),
                     entities: entitiesAndMetadata.entities
                 };
                 if(verbose) {
@@ -91,13 +82,17 @@ export class LuisRecognizer extends Recognizer {
             });
     }
 
-    private getIntents(intents: Intent[] | undefined) : object | undefined {
-        if(intents){
-            return intents.reduce((prev : any, curr : Intent) => {
+    private getIntents(luisResult: LuisResult) : object | undefined {
+        let intents : any = {};
+        if(luisResult.intents){
+            return luisResult.intents.reduce((prev : any, curr : Intent) => {
                 prev[curr.intent || ''] = curr.score;
                 return prev;
-            }, {});
+            }, intents);
         }
+        let topScoringIntent = luisResult.topScoringIntent || {intent: '', score: 0};
+        intents[(topScoringIntent).intent || ''] = topScoringIntent.score;
+        return intents;
     }
 
     private getEntitiesAndMetadata(entities: Entity[], compositeEntities : CompositeEntity[] | undefined, verbose: boolean) : any {
@@ -123,9 +118,9 @@ export class LuisRecognizer extends Recognizer {
             if(compositeEntityTypes.indexOf(entity.type) > -1)
                 return;
 
-            this.addProperty(entitiesAndMetadata.entities, entity.type, $this.getEntityValue(entity));
+            this.addProperty(entitiesAndMetadata.entities, $this.getNormalizedEntityType(entity), $this.getEntityValue(entity));
             if(verbose){
-                this.addProperty(entitiesAndMetadata.metadata, entity.type, $this.getEntityMetadata(entity));
+                this.addProperty(entitiesAndMetadata.metadata, $this.getNormalizedEntityType(entity), $this.getEntityMetadata(entity));
             }
         });
 
@@ -161,12 +156,13 @@ export class LuisRecognizer extends Recognizer {
         return {
             $startIndex: entity.startIndex,
             $endIndex: entity.endIndex,
-            $entity: entity.entity,
-            $score: entity.score,
-            $resolution: entity.resolution ? 
-                            entity.resolution.value ? [entity.resolution.value] : entity.resolution.values : 
-                            undefined
+            $text: entity.entity,
+            $score: entity.score
         };
+    }
+
+    private getNormalizedEntityType(entity: Entity) : string {
+        return entity.type.replace(/\./g, "_");
     }
 
     private populateCompositeEntity(compositeEntity: CompositeEntity, entities: Entity[], entitiesAndMetadata : any, verbose: boolean) : Entity[] {
@@ -202,10 +198,10 @@ export class LuisRecognizer extends Recognizer {
 
                     // Add to the set to ensure that we don't consider the same child entity more than once per composite
                     coveredSet.add(i);
-                    $this.addProperty(childrenEntites, entity.type, $this.getEntityValue(entity));
+                    $this.addProperty(childrenEntites, $this.getNormalizedEntityType(entity), $this.getEntityValue(entity));
 
                     if(verbose)
-                        $this.addProperty(childrenEntitiesMetadata, entity.type, $this.getEntityMetadata(entity));
+                        $this.addProperty(childrenEntitiesMetadata, $this.getNormalizedEntityType(entity), $this.getEntityMetadata(entity));
                 }
             };
         });
