@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ActivityAdapter, Activity, ConversationReference, ConversationResourceResponse, ConversationParameters } from 'botbuilder';
+import { ActivityAdapter, Activity, ConversationReference, ResourceResponse, ConversationResourceResponse, ConversationParameters } from 'botbuilder';
 /** Express or Restify Request object. */
 export interface WebRequest {
     body: any;
@@ -80,7 +80,7 @@ export declare class BotFrameworkAdapter implements ActivityAdapter {
     createConversation(conversationParameters: ConversationParameters, conversationReference: ConversationReference): Promise<ConversationResourceResponse>;
     update(activity: Partial<Activity>): Promise<void>;
     delete(activity: Partial<Activity>): Promise<void>;
-    post(activities: Partial<Activity>[]): Promise<ConversationResourceResponse[]>;
+    post(activities: Partial<Activity>[]): Promise<ResourceResponse[]>;
     /**
      * Listens for incoming activities off a Restify or Express.js POST route.
      */

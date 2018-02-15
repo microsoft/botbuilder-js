@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ActivityAdapter, ActivityTypes, Activity, ConversationReference, ConversationResourceResponse, ConversationParameters, ConversationAccount } from 'botbuilder';
+import { ActivityAdapter, ActivityTypes, Activity, ConversationReference, ResourceResponse, ConversationResourceResponse, ConversationParameters, ConversationAccount } from 'botbuilder';
 import { ConnectorClient, SimpleCredentialProvider, MicrosoftAppCredentials, JwtTokenValidation } from 'botframework-connector';
 
 /** Express or Restify Request object. */
@@ -93,11 +93,11 @@ export class BotFrameworkAdapter implements ActivityAdapter {
      * @returns {Promise<ConversationResourceResponse>}
      */
     public createConversation(conversationParameters: ConversationParameters, conversationReference: ConversationReference): Promise<ConversationResourceResponse> {
-        let conversationResourceResponse: ConversationResourceResponse = {
+        let conversationResourceResponse = {
             activityId: conversationReference.activityId,
             serviceUrl: conversationReference.serviceUrl,
             id: ''
-        };
+        } as ConversationResourceResponse;
         return new Promise<ConversationResourceResponse>(async (resolve, reject) => {
             try {
                 let client = new ConnectorClient(this.credentials);
@@ -138,7 +138,7 @@ export class BotFrameworkAdapter implements ActivityAdapter {
         });
     }
 
-    public post(activities: Partial<Activity>[]): Promise<ConversationResourceResponse[]> {
+    public post(activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
         return new Promise(async (resolve, reject) => {
             const credentials = this.credentials;
             const clientCache: { [url: string]: ConnectorClient; } = {};
@@ -151,14 +151,14 @@ export class BotFrameworkAdapter implements ActivityAdapter {
                 }
             }
 
-            const responses: ConversationResourceResponse[] = [];
+            const responses: ResourceResponse[] = [];
             function next(i: number) {
                 if (i < activities.length) {
                     const activity = activities[i];
                     switch (activity.type) {
                         case <ActivityTypes>'delay':
                             setTimeout(() => {
-                                responses.push({});
+                                responses.push({} as ResourceResponse);
                                 next(i + 1);
                             }, activity.value || 1);
                             break;
@@ -166,7 +166,7 @@ export class BotFrameworkAdapter implements ActivityAdapter {
                             const client = createClient(activity.serviceUrl);
                             if (client) {
                                 if (activity.conversation && activity.conversation.id) {
-                                    client.conversations.sendToConversation(activity.conversation.id, activity)
+                                    client.conversations.sendToConversation(activity.conversation.id, activity as Activity)
                                         .then((result) => {
                                             responses.push(result || {});
                                             next(i + 1);

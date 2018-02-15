@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, ConversationResourceResponse } from 'botbuilder-schema';
+import { Activity, ResourceResponse } from 'botbuilder-schema';
 import { Middleware } from './middleware';
 /**
  * A set of `Middleware` plugins. The set itself is middleware so you can easily package up a set
@@ -26,5 +26,5 @@ export declare class MiddlewareSet implements Middleware {
     use(...middleware: Middleware[]): this;
     contextCreated(context: BotContext, next: () => Promise<void>): Promise<void>;
     receiveActivity(context: BotContext, next: () => Promise<void>): Promise<void>;
-    postActivity(context: BotContext, activities: Partial<Activity>[], next: () => Promise<ConversationResourceResponse[]>): Promise<ConversationResourceResponse[]>;
+    postActivity(context: BotContext, activities: Partial<Activity>[], next: () => Promise<ResourceResponse[]>): Promise<ResourceResponse[]>;
 }

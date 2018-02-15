@@ -15,7 +15,7 @@ Bot Framework Adapter Settings
 
 **●  appId**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts:29](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts#L29)*
+*Defined in [libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts:29](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts#L29)*
 
 
 
@@ -29,7 +29,7 @@ ___
 
 **●  appPassword**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts:30](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts#L30)*
+*Defined in [libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts:30](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-services/lib/botFrameworkAdapter.d.ts#L30)*
 
 
 

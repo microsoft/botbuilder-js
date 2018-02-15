@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Middleware } from './middleware';
-import { Activity, ConversationResourceResponse } from 'botbuilder-schema';
+import { Activity, ResourceResponse } from 'botbuilder-schema';
 /** Interface for a template renderer which provides the ability
  * to create a text reply or activity reply from the language, templateid and data object
  **/
@@ -24,7 +24,7 @@ export declare class TemplateManager implements Middleware {
     private templateRenderers;
     private languageFallback;
     contextCreated(context: BotContext, next: () => Promise<void>): Promise<void>;
-    postActivity(context: BotContext, activities: Partial<Activity>[], next: (newActivities?: Partial<Activity>[]) => Promise<ConversationResourceResponse[]>): Promise<ConversationResourceResponse[]>;
+    postActivity(context: BotContext, activities: Partial<Activity>[], next: (newActivities?: Partial<Activity>[]) => Promise<ResourceResponse[]>): Promise<ResourceResponse[]>;
     /**
      * register template renderer
      * @param renderer

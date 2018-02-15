@@ -18,11 +18,11 @@ Interface for a template renderer which provides the ability to create a text re
 
 ###  renderTemplate
 
-► **renderTemplate**(context: *[BotContext](botbuilder.__global.botcontext.md)*, language: *`string`*, templateId: *`string`*, data: *`any`*): `Promise`.<[Partial]()[Activity](botbuilder.activity.md)⎮`string`⎮`undefined`>
+► **renderTemplate**(context: *[BotContext](botbuilder.__global.botcontext.md)*, language: *`string`*, templateId: *`string`*, data: *`any`*): `Promise`.<[Partial]()[Activity]()⎮`string`⎮`undefined`>
 
 
 
-*Defined in [libraries/botbuilder/lib/templateManager.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/templateManager.d.ts#L21)*
+*Defined in [libraries/botbuilder/lib/templateManager.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/templateManager.d.ts#L21)*
 
 
 
@@ -42,7 +42,7 @@ renders a template for the language/templateId
 
 
 
-**Returns:** `Promise`.<[Partial]()[Activity](botbuilder.activity.md)⎮`string`⎮`undefined`>
+**Returns:** `Promise`.<[Partial]()[Activity]()⎮`string`⎮`undefined`>
 
 
 

@@ -32,7 +32,7 @@ export * from './testAdapter';
 export * from 'botbuilder-schema';
 
 import { Bot } from './bot';
-import { Activity, ConversationReference, ConversationResourceResponse } from 'botbuilder-schema';
+import { Activity, ConversationReference, ResourceResponse } from 'botbuilder-schema';
 import { Intent } from './intentRecognizer';
 import { EntityObject } from './entityObject';
 import { StoreItem, Storage } from './storage';
@@ -178,7 +178,7 @@ declare global {
          * }
          * ```
          */
-        flushResponses(): Promise<ConversationResourceResponse[]>;
+        flushResponses(): Promise<ResourceResponse[]>;
 
         /**
          * Queues a new "typing" activity to the [responses](#responses) array. On supported 

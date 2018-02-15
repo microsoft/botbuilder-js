@@ -28,7 +28,7 @@ Additional settings for configuring an instance of [TableStorage](../classes/bot
 
 **●  host**:  *`azure.StorageHost`* 
 
-*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-azure/lib/tableStorage.d.ts#L19)*
+*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-azure/lib/tableStorage.d.ts#L19)*
 
 
 
@@ -41,9 +41,9 @@ ___
 
 <a id="optimizewrites"></a>
 
-###  optimizeWrites
+### «Optional» optimizeWrites
 
-**●  optimizeWrites**:  *`boolean`* 
+**●  optimizeWrites**:  *`undefined`⎮`true`⎮`false`* 
 
 *Inherited from StorageSettings.optimizeWrites*
 
@@ -51,7 +51,7 @@ ___
 
 
 
-If true the storage provider will optimize the writing of objects such that any read object which hasn't changed won't be actually written. The default value for all storage providers is true.
+(Optional) If true the storage provider will optimize the writing of objects such that any read object which hasn't changed won't be actually written. The default value for all storage providers is true.
 
 
 
@@ -64,7 +64,7 @@ ___
 
 **●  storageAccessKey**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-azure/lib/tableStorage.d.ts#L15)*
+*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-azure/lib/tableStorage.d.ts#L15)*
 
 
 
@@ -81,7 +81,7 @@ ___
 
 **●  storageAccountOrConnectionString**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-azure/lib/tableStorage.d.ts#L17)*
+*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-azure/lib/tableStorage.d.ts#L17)*
 
 
 
@@ -98,7 +98,7 @@ ___
 
 **●  tableName**:  *`string`* 
 
-*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:13](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-azure/lib/tableStorage.d.ts#L13)*
+*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:13](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-azure/lib/tableStorage.d.ts#L13)*
 
 
 

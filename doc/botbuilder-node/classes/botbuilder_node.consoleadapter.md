@@ -47,7 +47,7 @@ Lets a user communicate with a bot from a console window.
 ### ⊕ **new ConsoleAdapter**(): [ConsoleAdapter](botbuilder_node.consoleadapter.md)
 
 
-*Defined in [libraries/botbuilder-node/lib/consoleAdapter.d.ts:24](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-node/lib/consoleAdapter.d.ts#L24)*
+*Defined in [libraries/botbuilder-node/lib/consoleAdapter.d.ts:25](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-node/lib/consoleAdapter.d.ts#L25)*
 
 
 
@@ -67,7 +67,7 @@ Lets a user communicate with a bot from a console window.
 
 *Implementation of ActivityAdapter.onReceive*
 
-*Defined in [libraries/botbuilder-node/lib/consoleAdapter.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-node/lib/consoleAdapter.d.ts#L27)*
+*Defined in [libraries/botbuilder-node/lib/consoleAdapter.d.ts:28](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-node/lib/consoleAdapter.d.ts#L28)*
 
 
 
@@ -107,7 +107,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-node/lib/consoleAdapter.d.ts:34](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-node/lib/consoleAdapter.d.ts#L34)*
+*Defined in [libraries/botbuilder-node/lib/consoleAdapter.d.ts:35](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-node/lib/consoleAdapter.d.ts#L35)*
 
 
 
@@ -128,13 +128,13 @@ ___
 
 ###  post
 
-► **post**(activities: *[Partial]()[Activity]()[]*): `Promise`.<[ConversationResourceResponse]()[]>
+► **post**(activities: *[Partial]()[Activity]()[]*): `Promise`.<[ResourceResponse]()[]>
 
 
 
 *Implementation of ActivityAdapter.post*
 
-*Defined in [libraries/botbuilder-node/lib/consoleAdapter.d.ts:29](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-node/lib/consoleAdapter.d.ts#L29)*
+*Defined in [libraries/botbuilder-node/lib/consoleAdapter.d.ts:30](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-node/lib/consoleAdapter.d.ts#L30)*
 
 
 
@@ -151,7 +151,7 @@ INTERNAL implementation of `Adapter.post()`.
 
 
 
-**Returns:** `Promise`.<[ConversationResourceResponse]()[]>
+**Returns:** `Promise`.<[ResourceResponse]()[]>
 
 
 
@@ -167,7 +167,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-node/lib/consoleAdapter.d.ts:40](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-node/lib/consoleAdapter.d.ts#L40)*
+*Defined in [libraries/botbuilder-node/lib/consoleAdapter.d.ts:41](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-node/lib/consoleAdapter.d.ts#L41)*
 
 
 

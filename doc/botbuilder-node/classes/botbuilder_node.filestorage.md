@@ -70,7 +70,7 @@ Middleware that implements a file based storage provider for a bot.
 
 *Overrides StorageMiddleware.constructor*
 
-*Defined in [libraries/botbuilder-node/lib/fileStorage.d.ts:32](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-node/lib/fileStorage.d.ts#L32)*
+*Defined in [libraries/botbuilder-node/lib/fileStorage.d.ts:32](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-node/lib/fileStorage.d.ts#L32)*
 
 
 
@@ -189,7 +189,7 @@ ___
 
 *Implementation of Storage.delete*
 
-*Defined in [libraries/botbuilder-node/lib/fileStorage.d.ts:56](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-node/lib/fileStorage.d.ts#L56)*
+*Defined in [libraries/botbuilder-node/lib/fileStorage.d.ts:56](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-node/lib/fileStorage.d.ts#L56)*
 
 
 
@@ -258,7 +258,7 @@ ___
 
 *Overrides StorageMiddleware.getStorage*
 
-*Defined in [libraries/botbuilder-node/lib/fileStorage.d.ts:58](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-node/lib/fileStorage.d.ts#L58)*
+*Defined in [libraries/botbuilder-node/lib/fileStorage.d.ts:58](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-node/lib/fileStorage.d.ts#L58)*
 
 
 
@@ -293,7 +293,7 @@ ___
 
 *Implementation of Storage.read*
 
-*Defined in [libraries/botbuilder-node/lib/fileStorage.d.ts:44](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-node/lib/fileStorage.d.ts#L44)*
+*Defined in [libraries/botbuilder-node/lib/fileStorage.d.ts:44](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-node/lib/fileStorage.d.ts#L44)*
 
 
 
@@ -328,7 +328,7 @@ ___
 
 *Implementation of Storage.write*
 
-*Defined in [libraries/botbuilder-node/lib/fileStorage.d.ts:50](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-node/lib/fileStorage.d.ts#L50)*
+*Defined in [libraries/botbuilder-node/lib/fileStorage.d.ts:50](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-node/lib/fileStorage.d.ts#L50)*
 
 
 

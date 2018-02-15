@@ -48,7 +48,7 @@ A set of `Middleware` plugins. The set itself is middleware so you can easily pa
 
 **●  middleware**:  *[Middleware](../interfaces/botbuilder.middleware.md)[]* 
 
-*Defined in [libraries/botbuilder/lib/middlewareSet.d.ts:20](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/middlewareSet.d.ts#L20)*
+*Defined in [libraries/botbuilder/lib/middlewareSet.d.ts:20](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/middlewareSet.d.ts#L20)*
 
 
 
@@ -69,7 +69,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/middlewareSet.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/middlewareSet.d.ts#L27)*
+*Defined in [libraries/botbuilder/lib/middlewareSet.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/middlewareSet.d.ts#L27)*
 
 
 
@@ -96,11 +96,11 @@ ___
 
 ###  postActivity
 
-► **postActivity**(context: *[BotContext](../interfaces/botbuilder.__global.botcontext.md)*, activities: *[Partial]()[Activity](../interfaces/botbuilder.activity.md)[]*, next: *`function`*): `Promise`.<[ConversationResourceResponse](../interfaces/botbuilder.conversationresourceresponse.md)[]>
+► **postActivity**(context: *[BotContext](../interfaces/botbuilder.__global.botcontext.md)*, activities: *[Partial]()[Activity]()[]*, next: *`function`*): `Promise`.<[ResourceResponse]()[]>
 
 
 
-*Defined in [libraries/botbuilder/lib/middlewareSet.d.ts:29](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/middlewareSet.d.ts#L29)*
+*Defined in [libraries/botbuilder/lib/middlewareSet.d.ts:29](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/middlewareSet.d.ts#L29)*
 
 
 
@@ -109,14 +109,14 @@ ___
 | Param | Type | Description |
 | ------ | ------ | ------ |
 | context | [BotContext](../interfaces/botbuilder.__global.botcontext.md)   |  - |
-| activities | [Partial]()[Activity](../interfaces/botbuilder.activity.md)[]   |  - |
+| activities | [Partial]()[Activity]()[]   |  - |
 | next | `function`   |  - |
 
 
 
 
 
-**Returns:** `Promise`.<[ConversationResourceResponse](../interfaces/botbuilder.conversationresourceresponse.md)[]>
+**Returns:** `Promise`.<[ResourceResponse]()[]>
 
 
 
@@ -132,7 +132,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/middlewareSet.d.ts:28](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/middlewareSet.d.ts#L28)*
+*Defined in [libraries/botbuilder/lib/middlewareSet.d.ts:28](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/middlewareSet.d.ts#L28)*
 
 
 
@@ -163,7 +163,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/middlewareSet.d.ts:26](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder/lib/middlewareSet.d.ts#L26)*
+*Defined in [libraries/botbuilder/lib/middlewareSet.d.ts:26](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/middlewareSet.d.ts#L26)*
 
 
 

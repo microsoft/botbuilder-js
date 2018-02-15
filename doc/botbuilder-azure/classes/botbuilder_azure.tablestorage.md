@@ -73,7 +73,7 @@ Middleware that implements an Azure Table based storage provider for a bot.
 
 *Overrides StorageMiddleware.constructor*
 
-*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:37](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-azure/lib/tableStorage.d.ts#L37)*
+*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:37](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-azure/lib/tableStorage.d.ts#L37)*
 
 
 
@@ -192,7 +192,7 @@ ___
 
 *Implementation of Storage.delete*
 
-*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:66](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-azure/lib/tableStorage.d.ts#L66)*
+*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:66](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-azure/lib/tableStorage.d.ts#L66)*
 
 
 
@@ -225,7 +225,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:48](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-azure/lib/tableStorage.d.ts#L48)*
+*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:48](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-azure/lib/tableStorage.d.ts#L48)*
 
 
 
@@ -250,7 +250,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:46](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-azure/lib/tableStorage.d.ts#L46)*
+*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:46](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-azure/lib/tableStorage.d.ts#L46)*
 
 
 
@@ -311,7 +311,7 @@ ___
 
 *Overrides StorageMiddleware.getStorage*
 
-*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:68](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-azure/lib/tableStorage.d.ts#L68)*
+*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:68](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-azure/lib/tableStorage.d.ts#L68)*
 
 
 
@@ -346,7 +346,7 @@ ___
 
 *Implementation of Storage.read*
 
-*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:54](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-azure/lib/tableStorage.d.ts#L54)*
+*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:54](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-azure/lib/tableStorage.d.ts#L54)*
 
 
 
@@ -381,7 +381,7 @@ ___
 
 *Implementation of Storage.write*
 
-*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:60](https://github.com/Microsoft/botbuilder-js/blob/5422076/libraries/botbuilder-azure/lib/tableStorage.d.ts#L60)*
+*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:60](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-azure/lib/tableStorage.d.ts#L60)*
 
 
 

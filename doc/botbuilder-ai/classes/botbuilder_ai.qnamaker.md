@@ -26,7 +26,7 @@
 ### ⊕ **new QnAMaker**(options: *[QnAMakerOptions](../interfaces/botbuilder_ai.qnamakeroptions.md)*): [QnAMaker](botbuilder_ai.qnamaker.md)
 
 
-*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:32](https://github.com/Microsoft/botbuilder-js/blob/13506b4/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L32)*
+*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:32](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L32)*
 
 
 
@@ -54,7 +54,7 @@
 
 
 
-*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:34](https://github.com/Microsoft/botbuilder-js/blob/13506b4/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L34)*
+*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:34](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L34)*
 
 
 
@@ -84,7 +84,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/13506b4/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L39)*
+*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L39)*
 
 
 

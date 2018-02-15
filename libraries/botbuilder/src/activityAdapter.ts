@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, ConversationReference, ConversationResourceResponse } from 'botbuilder-schema';
+import { Activity, ConversationReference, ResourceResponse } from 'botbuilder-schema';
 
 /**
  * Implemented by activity adapters
@@ -24,6 +24,6 @@ export interface ActivityAdapter {
      *
      * @param activities The set of activities to send.
      */
-    post(activities: Partial<Activity>[]): Promise<ConversationResourceResponse[]|undefined>;
+    post(activities: Partial<Activity>[]): Promise<ResourceResponse[]|undefined>;
 }
 /* istanbul ignore file */
