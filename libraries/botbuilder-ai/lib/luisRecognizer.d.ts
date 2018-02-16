@@ -13,6 +13,8 @@ export interface LuisRecognizerOptions {
     subscriptionKey: string;
     /** (Optional) service endpoint to call. Defaults to "https://westus.api.cognitive.microsoft.com". */
     serviceEndpoint?: string;
+    /** (Optional) if set to true, we return the metadata of the returned intents/entities. Defaults to true */
+    verbose?: boolean;
     /** (Optional) request options passed to service call.  */
     options?: {
         timezoneOffset?: number;
@@ -31,7 +33,7 @@ export declare class LuisRecognizer extends Recognizer {
     constructor(appId: string, subscriptionKey: string);
     static recognize(utterance: string, options: LuisRecognizerOptions): Promise<RecognizerResult>;
     protected recognizeAndMap(utterance: string, verbose: boolean): Promise<RecognizerResult>;
-    private getIntents(luisResult);
+    private getIntentsAndMetadata(luisResult, verbose);
     private getEntitiesAndMetadata(entities, compositeEntities, verbose);
     private getEntityValue(entity);
     private getEntityMetadata(entity);

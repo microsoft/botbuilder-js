@@ -20,6 +20,9 @@ export interface LuisRecognizerOptions {
     /** (Optional) service endpoint to call. Defaults to "https://westus.api.cognitive.microsoft.com". */
     serviceEndpoint?: string;
 
+    /** (Optional) if set to true, we return the metadata of the returned intents/entities. Defaults to true */
+    verbose?: boolean;
+
     /** (Optional) request options passed to service call.  */
     options?: { 
         timezoneOffset? : number; 
@@ -50,7 +53,7 @@ export class LuisRecognizer extends Recognizer {
         this.luisClient = new LuisClient(baseUri + '/luis/');
         this.onRecognize((context) => {
             const utterance = (context.request.text || '').trim();
-            return $this.recognizeAndMap( utterance,true).then(res =>{
+            return $this.recognizeAndMap( utterance, $this.options.verbose || true).then(res =>{
                 let recognizerResults : RecognizerResult[]  = [res]
                 return recognizerResults;
             });
@@ -59,7 +62,7 @@ export class LuisRecognizer extends Recognizer {
 
     public static recognize(utterance: string, options: LuisRecognizerOptions): Promise<RecognizerResult> {
         let recognizer = new LuisRecognizer(options);
-        return recognizer.recognizeAndMap(utterance, true);
+        return recognizer.recognizeAndMap(utterance, options.verbose || true);
     }
 
     protected recognizeAndMap(utterance: string, verbose: boolean): Promise<RecognizerResult> {
@@ -67,13 +70,15 @@ export class LuisRecognizer extends Recognizer {
         return this.luisClient.getIntentsAndEntitiesV2($this.options.appId, this.options.subscriptionKey, utterance, $this.options.options)
             .then((result : LuisResult) => {
                 let entitiesAndMetadata = $this.getEntitiesAndMetadata(result.entities, result.compositeEntities, verbose);
+                let intentsAndMetadata = $this.getIntentsAndMetadata(result, verbose);
                 let recognizerResult  : RecognizerResult = {
                     text: result.query,
-                    intents: $this.getIntents(result),
+                    intents: intentsAndMetadata.intents,
                     entities: entitiesAndMetadata.entities
                 };
                 if(verbose) {
                     recognizerResult.$instance = {
+                        intents: intentsAndMetadata.metadata,
                         entities : entitiesAndMetadata.metadata
                     };
                 }
@@ -82,17 +87,28 @@ export class LuisRecognizer extends Recognizer {
             });
     }
 
-    private getIntents(luisResult: LuisResult) : object | undefined {
-        let intents : any = {};
+    private getIntentsAndMetadata(luisResult: LuisResult, verbose: boolean) : any {
+        let intentsAndMetadata = {
+            intents: {} as any,
+            metadata: {} as any
+        };
         if(luisResult.intents){
-            return luisResult.intents.reduce((prev : any, curr : Intent) => {
+            luisResult.intents.reduce((prev : any, curr : Intent) => {
                 prev[curr.intent || ''] = curr.score;
                 return prev;
-            }, intents);
+            }, intentsAndMetadata.intents);
         }
-        let topScoringIntent = luisResult.topScoringIntent || {intent: '', score: 0};
-        intents[(topScoringIntent).intent || ''] = topScoringIntent.score;
-        return intents;
+        else{
+            let topScoringIntent = luisResult.topScoringIntent || {intent: '', score: 0};
+            intentsAndMetadata.intents[(topScoringIntent).intent || ''] = topScoringIntent.score;
+        }
+        if(verbose){
+            Object.keys(intentsAndMetadata.intents).forEach(intent => {
+                // Add a placeholder metadata object for intents for consistency
+                intentsAndMetadata.metadata[intent] = {};
+            });
+        }
+        return intentsAndMetadata;
     }
 
     private getEntitiesAndMetadata(entities: Entity[], compositeEntities : CompositeEntity[] | undefined, verbose: boolean) : any {
