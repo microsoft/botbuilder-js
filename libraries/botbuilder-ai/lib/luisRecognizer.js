@@ -24,7 +24,7 @@ class LuisRecognizer extends botbuilder_1.Recognizer {
         this.luisClient = new LuisClient(baseUri + '/luis/');
         this.onRecognize((context) => {
             const utterance = (context.request.text || '').trim();
-            return $this.recognizeAndMap(utterance, true).then(res => {
+            return $this.recognizeAndMap(utterance, $this.options.verbose || true).then(res => {
                 let recognizerResults = [res];
                 return recognizerResults;
             });
@@ -32,37 +32,50 @@ class LuisRecognizer extends botbuilder_1.Recognizer {
     }
     static recognize(utterance, options) {
         let recognizer = new LuisRecognizer(options);
-        return recognizer.recognizeAndMap(utterance, true);
+        return recognizer.recognizeAndMap(utterance, options.verbose || true);
     }
     recognizeAndMap(utterance, verbose) {
         let $this = this;
         return this.luisClient.getIntentsAndEntitiesV2($this.options.appId, this.options.subscriptionKey, utterance, $this.options.options)
             .then((result) => {
             let entitiesAndMetadata = $this.getEntitiesAndMetadata(result.entities, result.compositeEntities, verbose);
+            let intentsAndMetadata = $this.getIntentsAndMetadata(result, verbose);
             let recognizerResult = {
                 text: result.query,
-                intents: $this.getIntents(result),
+                intents: intentsAndMetadata.intents,
                 entities: entitiesAndMetadata.entities
             };
             if (verbose) {
                 recognizerResult.$instance = {
+                    intents: intentsAndMetadata.metadata,
                     entities: entitiesAndMetadata.metadata
                 };
             }
             return recognizerResult;
         });
     }
-    getIntents(luisResult) {
-        let intents = {};
+    getIntentsAndMetadata(luisResult, verbose) {
+        let intentsAndMetadata = {
+            intents: {},
+            metadata: {}
+        };
         if (luisResult.intents) {
-            return luisResult.intents.reduce((prev, curr) => {
+            luisResult.intents.reduce((prev, curr) => {
                 prev[curr.intent || ''] = curr.score;
                 return prev;
-            }, intents);
+            }, intentsAndMetadata.intents);
         }
-        let topScoringIntent = luisResult.topScoringIntent || { intent: '', score: 0 };
-        intents[(topScoringIntent).intent || ''] = topScoringIntent.score;
-        return intents;
+        else {
+            let topScoringIntent = luisResult.topScoringIntent || { intent: '', score: 0 };
+            intentsAndMetadata.intents[(topScoringIntent).intent || ''] = topScoringIntent.score;
+        }
+        if (verbose) {
+            Object.keys(intentsAndMetadata.intents).forEach(intent => {
+                // Add a placeholder metadata object for intents for consistency
+                intentsAndMetadata.metadata[intent] = {};
+            });
+        }
+        return intentsAndMetadata;
     }
     getEntitiesAndMetadata(entities, compositeEntities, verbose) {
         let $this = this;

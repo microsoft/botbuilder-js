@@ -34,6 +34,8 @@ describe('LuisRecognizer', function () {
                 assert(res[0].entities.Name);
                 assert(res[0].entities.Name[0] === 'emad');
                 assert(res[0].$instance);
+                assert(res[0].$instance.intents);
+                assert(Object.keys(res[0].$instance.intents).length == 1);
                 assert(res[0].$instance.entities);
                 assert(res[0].$instance.entities.Name);
                 assert(res[0].$instance.entities.Name[0].$startIndex === 11);
