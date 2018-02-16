@@ -5,7 +5,7 @@ export class WebChatAdapter {
     constructor() {
         this.activity$ = new Subject();
         this.botConnection = {
-            connectionStatus$: new BehaviorSubject(ConnectionStatus.Uninitialized),
+            connectionStatus$: new BehaviorSubject(ConnectionStatus.Online),
             activity$: this.activity$.share(),
             end() {
                 debugger
