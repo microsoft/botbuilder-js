@@ -1,7 +1,7 @@
 {
-  "name": "botbuilder-choices",
+  "name": "botbuilder-dialogs",
   "author": "Microsoft Corp.",
-  "description": "Microsoft BotBuilder tools for working with choices.",
+  "description": "A dialog stack based conversation manager for Microsoft Bot Builder.",
   "version": "4.0.0-m1.2",
   "license": "MIT",
   "keywords": [
@@ -21,6 +21,7 @@
   "typings": "./lib/index.d.ts",
   "dependencies": {
     "botbuilder": "^4.0.0-m1.2",
+    "botbuilder-choices": "^4.0.0-m1.2",
     "@microsoft/recognizers-text-suite": "^1.0.0-rc.32.0"
   },
   "devDependencies": {
@@ -35,7 +36,7 @@
   "scripts": {
     "test": "tsc && nyc mocha tests/",
     "build": "tsc",
-    "build-docs": "typedoc --theme markdown --entryPoint botbuilder-choices --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-choices .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Choices\" --readme none",
+    "build-docs": "typedoc --theme markdown --entryPoint botbuilder-dialogs --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-dialogs .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Dialogs\" --readme none",
     "clean": "erase /q lib\\*.*"
   }
 }
