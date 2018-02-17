@@ -25,7 +25,7 @@ export class WebChatAdapter {
     }
 
     post(activities) {
-        let sentActivities = activities.map(activity => Object.assign({}, activity, {
+        const sentActivities = activities.map(activity => Object.assign({}, activity, {
             id: Date.now().toString(),
             channelId: 'WebChat',
             conversation: { id: 'bot' },
