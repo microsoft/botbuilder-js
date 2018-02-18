@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const botbuilder_1 = require("botbuilder");
-const botbuilder_services_1 = require("botbuilder-services");
 const botbuilder_dialogs_1 = require("botbuilder-dialogs");
+const botbuilder_services_1 = require("botbuilder-services");
 const restify = require("restify");
 // Create server
 let server = restify.createServer();
@@ -42,6 +42,7 @@ dialogs.add('confirmPrompt', new botbuilder_dialogs_1.ConfirmPrompt());
 dialogs.add('datetimePrompt', new botbuilder_dialogs_1.DatetimePrompt());
 dialogs.add('numberPrompt', new botbuilder_dialogs_1.NumberPrompt());
 dialogs.add('textPrompt', new botbuilder_dialogs_1.TextPrompt());
+dialogs.add('attachmentPrompt', new botbuilder_dialogs_1.AttachmentPrompt());
 const listStyle = { style: botbuilder_dialogs_1.ChoicePromptStyle.list };
 const noneStyle = { style: botbuilder_dialogs_1.ChoicePromptStyle.none };
 //-----------------------------------------------
@@ -61,6 +62,7 @@ dialogs.add('mainMenu', [
             choice('datetime', 'datetimeDemo'),
             choice('number', 'numberDemo'),
             choice('text', 'textDemo'),
+            choice('attachment', 'attachmentDemo'),
             choice('<all>', 'runAll')
         ], listStyle);
     },
@@ -90,6 +92,7 @@ dialogs.add('runAll', [
     (context) => dialogs.begin(context, 'datetimeDemo'),
     (context) => dialogs.begin(context, 'numberDemo'),
     (context) => dialogs.begin(context, 'textDemo'),
+    (context) => dialogs.begin(context, 'attachmentDemo'),
     (context) => dialogs.replace(context, 'mainMenu')
 ]);
 //-----------------------------------------------
@@ -149,6 +152,18 @@ dialogs.add('textDemo', [
     },
     function (context, value) {
         context.reply(`Recognized value: ${value}`);
+        return dialogs.end(context);
+    }
+]);
+//-----------------------------------------------
+// Attachment Demo
+//-----------------------------------------------
+dialogs.add('attachmentDemo', [
+    function (context) {
+        return dialogs.prompt(context, 'attachmentPrompt', `attachment: upload image(s)`);
+    },
+    function (context, values) {
+        context.reply(botbuilder_1.MessageStyler.carousel(values, `Uploaded ${values.length} Attachment(s)`));
         return dialogs.end(context);
     }
 ]);
