@@ -45,17 +45,17 @@ class DialogSet {
             return Promise.reject(err);
         }
     }
-    prompt(context, dialogId, prompt, choices, options) {
-        if (!Array.isArray(choices)) {
-            options = choices;
-            choices = undefined;
-        }
-        const args = Object.assign({}, options);
+    /**
+     * Helper function to simplify formatting the options for calling a prompt dialog.
+     * @param context Context object for the current turn of conversation with the user. This will get mapped into a `DialogContext` and passed to the dialog started.
+     * @param dialogId ID of the prompt to start.
+     * @param prompt Initial prompt to send the user.
+     * @param choicesOrOptions (Optional) array of choices to prompt the user for or additional prompt options.
+     */
+    prompt(context, dialogId, prompt, choicesOrOptions, options) {
+        const args = Object.assign({}, Array.isArray(choicesOrOptions) ? { choices: choicesOrOptions } : choicesOrOptions);
         if (prompt) {
             args.prompt = prompt;
-        }
-        if (choices) {
-            args.choices = choices;
         }
         return this.begin(context, dialogId, args);
     }

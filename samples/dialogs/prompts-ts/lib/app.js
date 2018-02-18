@@ -43,8 +43,6 @@ dialogs.add('datetimePrompt', new botbuilder_dialogs_1.DatetimePrompt());
 dialogs.add('numberPrompt', new botbuilder_dialogs_1.NumberPrompt());
 dialogs.add('textPrompt', new botbuilder_dialogs_1.TextPrompt());
 dialogs.add('attachmentPrompt', new botbuilder_dialogs_1.AttachmentPrompt());
-const listStyle = { style: botbuilder_dialogs_1.ChoicePromptStyle.list };
-const noneStyle = { style: botbuilder_dialogs_1.ChoicePromptStyle.none };
 //-----------------------------------------------
 // Main Menu
 //-----------------------------------------------
@@ -56,15 +54,19 @@ dialogs.add('mainMenu', [
                 action: { type: botbuilder_1.ActionTypes.ImBack, title: title, value: title }
             };
         }
-        return dialogs.prompt(context, 'choicePrompt', `Select a demo to run:`, [
-            choice('choice', 'choiceDemo'),
-            choice('confirm', 'confirmDemo'),
-            choice('datetime', 'datetimeDemo'),
-            choice('number', 'numberDemo'),
-            choice('text', 'textDemo'),
-            choice('attachment', 'attachmentDemo'),
-            choice('<all>', 'runAll')
-        ], listStyle);
+        const options = {
+            choices: [
+                choice('choice', 'choiceDemo'),
+                choice('confirm', 'confirmDemo'),
+                choice('datetime', 'datetimeDemo'),
+                choice('number', 'numberDemo'),
+                choice('text', 'textDemo'),
+                choice('attachment', 'attachmentDemo'),
+                choice('<all>', 'runAll')
+            ],
+            style: botbuilder_dialogs_1.ListStyle.list
+        };
+        return dialogs.prompt(context, 'choicePrompt', `Select a demo to run:`, options);
     },
     function (context, choice) {
         if (choice.value === 'runAll') {
@@ -100,7 +102,11 @@ dialogs.add('runAll', [
 //-----------------------------------------------
 dialogs.add('choiceDemo', [
     function (context) {
-        return dialogs.prompt(context, 'choicePrompt', `choice: select a color`, ['red', 'green', 'blue'], listStyle);
+        const options = {
+            choices: ['red', 'green', 'blue'],
+            style: botbuilder_dialogs_1.ListStyle.list
+        };
+        return dialogs.prompt(context, 'choicePrompt', `choice: select a color`, options);
     },
     function (context, choice) {
         context.reply(`Recognized choice: ${JSON.stringify(choice)}`);
@@ -112,7 +118,8 @@ dialogs.add('choiceDemo', [
 //-----------------------------------------------
 dialogs.add('confirmDemo', [
     function (context) {
-        return dialogs.prompt(context, 'confirmPrompt', `confirm: answer "yes" or "no"`, noneStyle);
+        const options = { style: botbuilder_dialogs_1.ListStyle.none };
+        return dialogs.prompt(context, 'confirmPrompt', `confirm: answer "yes" or "no"`, options);
     },
     function (context, value) {
         context.reply(`Recognized value: ${value}`);

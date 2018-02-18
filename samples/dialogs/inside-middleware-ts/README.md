@@ -1,0 +1,6 @@
+This sample demonstrates how to use dialogs in issolation within a middleware plugin. The sample contains a `GoodbyeMiddleware` class which can be added to any bot where it will listen for the user to say "goodbye". Upon being triggered it will analyze the bots conversation state to see if it thinks the bot is in an active conversation with the user. If it thinks it is it will use dialogs to first ask the user to verify they'd like to end what they're doing before resetting the bots conversation state.
+
+Even though the middleware is using `botbuilder-toybox-dialogs` there's no requirement that the rest of the bot be using the same dialog system. Here we're adding the GoodbyeMiddleware to a simple echo bot. The GoodbyeMiddleware is using it's own private dialog stack stored on the bots conversation state to avoid any potential collisions with the bots logic.
+
+## Running
+To run this sample folow the common instructions for running all of the samples found [here](../README.md#running).  This sample can be built using `npm run build-sample` and started using `npm run start`.

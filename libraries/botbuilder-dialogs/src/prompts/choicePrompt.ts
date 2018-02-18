@@ -11,7 +11,7 @@ import { DialogSet } from '../dialogSet';
 import { PromptOptions, PromptValidator } from './prompt';
 import { Choice, ChoiceStyler, ChoiceStylerOptions, recognizeChoices, FoundChoice } from 'botbuilder-choices';
 
-export enum ChoicePromptStyle {
+export enum ListStyle {
     /** Don't include any choices for prompt. */
     none,
 
@@ -33,7 +33,7 @@ export interface ChoicePromptOptions extends PromptOptions {
     choices?: (string|Choice)[];
 
     /** Preferred style of the choices sent to the user. The default value is `ChoicePromptStyle.auto`. */
-    style?: ChoicePromptStyle;
+    style?: ListStyle;
 
 }
 
@@ -106,18 +106,18 @@ export class ChoicePrompt implements Dialog {
     }
 }
 
-export function formatChoicePrompt(channelOrContext: string|BotContext, choices: (string|Choice)[], text?: string, speak?: string, options?: ChoiceStylerOptions, style?: ChoicePromptStyle): Partial<Activity> {
+export function formatChoicePrompt(channelOrContext: string|BotContext, choices: (string|Choice)[], text?: string, speak?: string, options?: ChoiceStylerOptions, style?: ListStyle): Partial<Activity> {
     switch (style) {
-        case ChoicePromptStyle.auto:
+        case ListStyle.auto:
         default:
             return ChoiceStyler.forChannel(channelOrContext, choices, text, speak, options);
-        case ChoicePromptStyle.inline:
+        case ListStyle.inline:
             return ChoiceStyler.inline(choices, text, speak, options);
-        case ChoicePromptStyle.list:
+        case ListStyle.list:
             return ChoiceStyler.list(choices, text, speak, options);
-        case ChoicePromptStyle.suggestedAction:
+        case ListStyle.suggestedAction:
             return ChoiceStyler.suggestedAction(choices, text, speak, options);
-        case ChoicePromptStyle.none:
+        case ListStyle.none:
             const p = { type: 'message', text: text || '' } as Partial<Activity>;
             if (speak) { p.speak = speak }
             if (!p.inputHint) { p.inputHint = InputHints.ExpectingInput }

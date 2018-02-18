@@ -8,7 +8,7 @@
 import { Activity } from 'botbuilder';
 import { Dialog, DialogInstance } from './dialog';
 import { Waterfall, WaterfallStep } from './waterfall';
-import { PromptOptions, ChoicePromptOptions } from './prompts/index';
+import { PromptOptions } from './prompts/index';
 import { Choice } from 'botbuilder-choices';
 /**
  * A related set of dialogs that can all call each other.
@@ -40,11 +40,9 @@ export declare class DialogSet {
      * @param context Context object for the current turn of conversation with the user. This will get mapped into a `DialogContext` and passed to the dialog started.
      * @param dialogId ID of the prompt to start.
      * @param prompt Initial prompt to send the user.
-     * @param choices Array of choices to prompt the user for.
-     * @param options (Optional) additional options to configure the prompt.
+     * @param choicesOrOptions (Optional) array of choices to prompt the user for or additional prompt options.
      */
-    prompt<O extends PromptOptions = PromptOptions>(context: BotContext, dialogId: string, prompt: string | Partial<Activity>, options?: O): Promise<void>;
-    prompt<O extends ChoicePromptOptions = ChoicePromptOptions>(context: BotContext, dialogId: string, prompt: string | Partial<Activity>, choices: (string | Choice)[], options?: O): Promise<void>;
+    prompt<O extends PromptOptions = PromptOptions>(context: BotContext, dialogId: string, prompt: string | Partial<Activity>, choicesOrOptions?: O | (string | Choice)[], options?: O): Promise<void>;
     /**
      * Continues execution of the active dialog, if there is one, by passing the
      * context object to its `Dialog.continue()` method.

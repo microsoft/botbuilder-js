@@ -2,8 +2,8 @@ import {
     Bot, MemoryStorage, BotStateManager, ActionTypes, CardAction, Attachment, MessageStyler
 } from 'botbuilder';
 import { 
-    DialogSet, TextPrompt, ConfirmPrompt, ChoicePrompt, ChoicePromptStyle, DatetimePrompt, 
-    NumberPrompt, AttachmentPrompt, FoundChoice, Choice, FoundDatetime 
+    DialogSet, TextPrompt, ConfirmPrompt, ConfirmPromptOptions, ChoicePrompt, ChoicePromptOptions, 
+    DatetimePrompt, NumberPrompt, AttachmentPrompt, FoundChoice, Choice, FoundDatetime, ListStyle 
 } from 'botbuilder-dialogs';
 import { BotFrameworkAdapter } from 'botbuilder-services';
 import * as restify from 'restify';
@@ -51,9 +51,6 @@ dialogs.add('numberPrompt', new NumberPrompt());
 dialogs.add('textPrompt', new TextPrompt());
 dialogs.add('attachmentPrompt', new AttachmentPrompt());
 
-const listStyle = { style: ChoicePromptStyle.list };
-const noneStyle = { style: ChoicePromptStyle.none };
-
     
 //-----------------------------------------------
 // Main Menu
@@ -67,15 +64,19 @@ dialogs.add('mainMenu', [
                 action: { type: ActionTypes.ImBack, title: title, value: title }
             };
         }
-        return dialogs.prompt(context, 'choicePrompt', `Select a demo to run:`, [
-            choice('choice', 'choiceDemo'),
-            choice('confirm', 'confirmDemo'),
-            choice('datetime', 'datetimeDemo'),
-            choice('number', 'numberDemo'),
-            choice('text', 'textDemo'),
-            choice('attachment', 'attachmentDemo'),
-            choice('<all>', 'runAll')
-        ], listStyle);
+        const options: ChoicePromptOptions = {
+            choices: [
+                choice('choice', 'choiceDemo'),
+                choice('confirm', 'confirmDemo'),
+                choice('datetime', 'datetimeDemo'),
+                choice('number', 'numberDemo'),
+                choice('text', 'textDemo'),
+                choice('attachment', 'attachmentDemo'),
+                choice('<all>', 'runAll')
+            ],
+            style: ListStyle.list
+        }
+        return dialogs.prompt(context, 'choicePrompt', `Select a demo to run:`, options);
     },
     function (context, choice: FoundChoice) {
         if (choice.value === 'runAll') {
@@ -115,7 +116,11 @@ dialogs.add('runAll', [
 
 dialogs.add('choiceDemo', [
     function (context) {
-        return dialogs.prompt(context, 'choicePrompt', `choice: select a color`, ['red', 'green', 'blue'], listStyle);
+        const options: ChoicePromptOptions = {
+            choices: ['red', 'green', 'blue'],
+            style: ListStyle.list
+        }
+        return dialogs.prompt(context, 'choicePrompt', `choice: select a color`, options);
     },
     function (context, choice: FoundChoice) {
         context.reply(`Recognized choice: ${JSON.stringify(choice)}`);
@@ -130,7 +135,8 @@ dialogs.add('choiceDemo', [
 
 dialogs.add('confirmDemo', [
     function (context) {
-        return dialogs.prompt(context, 'confirmPrompt', `confirm: answer "yes" or "no"`, noneStyle as any);
+        const options: ConfirmPromptOptions = { style: ListStyle.none }
+        return dialogs.prompt(context, 'confirmPrompt', `confirm: answer "yes" or "no"`, options);
     },
     function (context, value: boolean) {
         context.reply(`Recognized value: ${value}`);

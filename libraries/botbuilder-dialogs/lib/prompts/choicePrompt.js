@@ -9,19 +9,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const botbuilder_1 = require("botbuilder");
 const botbuilder_choices_1 = require("botbuilder-choices");
-var ChoicePromptStyle;
-(function (ChoicePromptStyle) {
+var ListStyle;
+(function (ListStyle) {
     /** Don't include any choices for prompt. */
-    ChoicePromptStyle[ChoicePromptStyle["none"] = 0] = "none";
+    ListStyle[ListStyle["none"] = 0] = "none";
     /** Automatically select the appropriate style for the current channel. */
-    ChoicePromptStyle[ChoicePromptStyle["auto"] = 1] = "auto";
+    ListStyle[ListStyle["auto"] = 1] = "auto";
     /** Add choices to prompt as an inline list. */
-    ChoicePromptStyle[ChoicePromptStyle["inline"] = 2] = "inline";
+    ListStyle[ListStyle["inline"] = 2] = "inline";
     /** Add choices to prompt as a numbered list. */
-    ChoicePromptStyle[ChoicePromptStyle["list"] = 3] = "list";
+    ListStyle[ListStyle["list"] = 3] = "list";
     /** Add choices to prompt as suggested actions. */
-    ChoicePromptStyle[ChoicePromptStyle["suggestedAction"] = 4] = "suggestedAction";
-})(ChoicePromptStyle = exports.ChoicePromptStyle || (exports.ChoicePromptStyle = {}));
+    ListStyle[ListStyle["suggestedAction"] = 4] = "suggestedAction";
+})(ListStyle = exports.ListStyle || (exports.ListStyle = {}));
 class ChoicePrompt {
     constructor(validator, choices) {
         this.validator = validator;
@@ -95,16 +95,16 @@ class ChoicePrompt {
 exports.ChoicePrompt = ChoicePrompt;
 function formatChoicePrompt(channelOrContext, choices, text, speak, options, style) {
     switch (style) {
-        case ChoicePromptStyle.auto:
+        case ListStyle.auto:
         default:
             return botbuilder_choices_1.ChoiceStyler.forChannel(channelOrContext, choices, text, speak, options);
-        case ChoicePromptStyle.inline:
+        case ListStyle.inline:
             return botbuilder_choices_1.ChoiceStyler.inline(choices, text, speak, options);
-        case ChoicePromptStyle.list:
+        case ListStyle.list:
             return botbuilder_choices_1.ChoiceStyler.list(choices, text, speak, options);
-        case ChoicePromptStyle.suggestedAction:
+        case ListStyle.suggestedAction:
             return botbuilder_choices_1.ChoiceStyler.suggestedAction(choices, text, speak, options);
-        case ChoicePromptStyle.none:
+        case ListStyle.none:
             const p = { type: 'message', text: text || '' };
             if (speak) {
                 p.speak = speak;

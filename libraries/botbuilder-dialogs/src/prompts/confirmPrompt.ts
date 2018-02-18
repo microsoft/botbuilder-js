@@ -8,8 +8,8 @@
 import { Activity } from 'botbuilder';
 import { Dialog } from '../dialog';
 import { DialogSet } from '../dialogSet';
-import { PromptValidator } from './prompt';
-import { ChoicePromptOptions, formatChoicePrompt } from './choicePrompt';
+import { PromptOptions, PromptValidator } from './prompt';
+import { ListStyle, formatChoicePrompt } from './choicePrompt';
 import { ChoiceStylerOptions, Choice } from 'botbuilder-choices';
 import * as Recognizers from '@microsoft/recognizers-text-options';
 
@@ -17,6 +17,12 @@ const booleanModel = Recognizers.OptionsRecognizer.instance.getBooleanModel('en-
 
 export interface ConfirmChoices {
     [locale:string]: (string|Choice)[];
+}
+
+
+export interface ConfirmPromptOptions extends PromptOptions {
+    /** Preferred style of the choices sent to the user. The default value is `ChoicePromptStyle.auto`. */
+    style?: ListStyle;
 }
 
 export class ConfirmPrompt implements Dialog {
@@ -28,9 +34,9 @@ export class ConfirmPrompt implements Dialog {
         this.choices = { '*': ['yes', 'no'] }; 
     }
 
-    public begin(context: BotContext, dialogs: DialogSet, options: ChoicePromptOptions): Promise<void> {
+    public begin(context: BotContext, dialogs: DialogSet, options: ConfirmPromptOptions): Promise<void> {
         // Persist options
-        const instance = dialogs.getInstance<ChoicePromptOptions>(context);
+        const instance = dialogs.getInstance<ConfirmPromptOptions>(context);
         instance.state = options || {};
 
         // Send initial prompt
@@ -43,7 +49,7 @@ export class ConfirmPrompt implements Dialog {
 
     public continue(context: BotContext, dialogs: DialogSet): Promise<void> {
         // Recognize value
-        const options = dialogs.getInstance<ChoicePromptOptions>(context).state;
+        const options = dialogs.getInstance<ConfirmPromptOptions>(context).state;
         const utterance = context.request && context.request.text ? context.request.text : '';
         const results = booleanModel.parse(utterance);
         const value = results.length > 0 && results[0].resolution ? results[0].resolution.value  : undefined;
@@ -72,7 +78,7 @@ export class ConfirmPrompt implements Dialog {
             const choices = this.choices[locale];
 
             // Reply with formatted prompt
-            const style = dialogs.getInstance<ChoicePromptOptions>(context).state.style; 
+            const style = dialogs.getInstance<ConfirmPromptOptions>(context).state.style; 
             context.reply(formatChoicePrompt(context, choices, prompt, speak, this.stylerOptions, style))
         } else { 
             context.reply(prompt);
