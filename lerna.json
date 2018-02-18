@@ -2,7 +2,8 @@
   "lerna": "2.8.0",
   "packages": [
     "libraries/*",
-    "samples/*"
+    "samples/*",
+    "samples/dialogs/*"
   ],
   "version": "independent",
   "commands": {
