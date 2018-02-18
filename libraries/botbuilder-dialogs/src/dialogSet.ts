@@ -8,8 +8,8 @@
 import { Activity } from 'botbuilder';
 import { Dialog, DialogInstance } from './dialog';
 import { Waterfall, WaterfallStep } from './waterfall';
-import { PromptOptions } from './prompts/index';
-import { Object } from 'core-js/library/web/timers';
+import { PromptOptions, ChoicePromptOptions } from './prompts/index';
+import { Choice } from 'botbuilder-choices';
 
 /**
  * A related set of dialogs that can all call each other.
@@ -70,11 +70,19 @@ export class DialogSet {
      * @param context Context object for the current turn of conversation with the user. This will get mapped into a `DialogContext` and passed to the dialog started.
      * @param dialogId ID of the prompt to start.
      * @param prompt Initial prompt to send the user.
+     * @param choices Array of choices to prompt the user for.
      * @param options (Optional) additional options to configure the prompt.
      */
-    public prompt<O extends PromptOptions = PromptOptions>(context: BotContext, dialogId: string, prompt: string|Partial<Activity>, options?: O): Promise<void> {
-        const args = Object.assign({}, options);
+    public prompt<O extends PromptOptions = PromptOptions>(context: BotContext, dialogId: string, prompt: string|Partial<Activity>, options?: O): Promise<void>;
+    public prompt<O extends ChoicePromptOptions = ChoicePromptOptions>(context: BotContext, dialogId: string, prompt: string|Partial<Activity>, choices: (string|Choice)[], options?: O): Promise<void>;
+    public prompt<O extends PromptOptions = PromptOptions>(context: BotContext, dialogId: string, prompt: string|Partial<Activity>, choices?: (string|Choice)[]|O, options?: O): Promise<void> {
+        if (!Array.isArray(choices)) {
+            options = choices;
+            choices = undefined;
+        }
+        const args = Object.assign({}, options) as ChoicePromptOptions;
         if (prompt) { args.prompt = prompt }
+        if (choices) { args.choices = choices }
         return this.begin(context, dialogId, args);
     }
 
