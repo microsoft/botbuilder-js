@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, Promiseable } from 'botbuilder';
+import { Activity, Promiseable, InputHints } from 'botbuilder';
 import { DialogSet } from '../dialogSet';
 
 export interface PromptOptions {
@@ -27,5 +27,6 @@ export type PromptValidator<T> = (context: BotContext, value: T, dialogs: Dialog
 export function formatPrompt(prompt: string|Partial<Activity>, speak?: string): Partial<Activity> {
     const p = typeof prompt === 'string' ? { type: 'message', text: prompt } as Partial<Activity> : prompt;
     if (speak) { p.speak = speak }
+    if (!p.inputHint) { p.inputHint = InputHints.ExpectingInput }
     return p;
 }

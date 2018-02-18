@@ -65,7 +65,7 @@ class ChoiceStyler {
         });
         txt += '';
         // Return activity with choices as an inline list.
-        return botbuilder_1.MessageStyler.text(txt, speak);
+        return botbuilder_1.MessageStyler.text(txt, speak, botbuilder_1.InputHints.ExpectingInput);
     }
     static list(choices, text, speak, options) {
         const opt = Object.assign({
@@ -81,7 +81,7 @@ class ChoiceStyler {
             connector = '\n   ';
         });
         // Return activity with choices as a numbered list.
-        return botbuilder_1.MessageStyler.text(txt, speak);
+        return botbuilder_1.MessageStyler.text(txt, speak, botbuilder_1.InputHints.ExpectingInput);
     }
     static suggestedAction(choices, text, speak, options) {
         // Map choices to actions
@@ -94,7 +94,7 @@ class ChoiceStyler {
             }
         });
         // Return activity with choices as suggested actions
-        return botbuilder_1.MessageStyler.suggestedActions(actions, text, speak);
+        return botbuilder_1.MessageStyler.suggestedActions(actions, text, speak, botbuilder_1.InputHints.ExpectingInput);
     }
     static toChoices(choices) {
         return (choices || []).map((choice) => typeof choice === 'string' ? { value: choice } : choice);

@@ -1,5 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @module botbuilder-dialogs
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+const botbuilder_1 = require("botbuilder");
 const botbuilder_choices_1 = require("botbuilder-choices");
 var ChoicePromptStyle;
 (function (ChoicePromptStyle) {
@@ -100,6 +108,9 @@ function formatChoicePrompt(channelOrContext, choices, text, speak, options, sty
             const p = { type: 'message', text: text || '' };
             if (speak) {
                 p.speak = speak;
+            }
+            if (!p.inputHint) {
+                p.inputHint = botbuilder_1.InputHints.ExpectingInput;
             }
             return p;
     }

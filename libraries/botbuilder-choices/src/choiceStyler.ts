@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { MessageStyler, ActionTypes } from 'botbuilder';
+import { MessageStyler, ActionTypes, InputHints } from 'botbuilder';
 import { Activity, CardAction } from 'botbuilder';
 import { Choice } from './findChoices';
 import * as channel from './channel';
@@ -97,7 +97,7 @@ export class ChoiceStyler {
         txt += '';
 
         // Return activity with choices as an inline list.
-        return MessageStyler.text(txt, speak);
+        return MessageStyler.text(txt, speak, InputHints.ExpectingInput);
     }
 
     static list(choices: (string|Choice)[], text?: string, speak?: string, options?: ChoiceStylerOptions): Partial<Activity> {
@@ -116,7 +116,7 @@ export class ChoiceStyler {
         });
 
         // Return activity with choices as a numbered list.
-        return MessageStyler.text(txt, speak);
+        return MessageStyler.text(txt, speak, InputHints.ExpectingInput);
     }
 
     static suggestedAction(choices: (string|Choice)[], text?: string, speak?: string, options?: ChoiceStylerOptions): Partial<Activity> {
@@ -130,7 +130,7 @@ export class ChoiceStyler {
         });
 
         // Return activity with choices as suggested actions
-        return MessageStyler.suggestedActions(actions, text, speak);
+        return MessageStyler.suggestedActions(actions, text, speak, InputHints.ExpectingInput);
     }
 
     static toChoices(choices: (string|Choice)[]|undefined): Choice[] {

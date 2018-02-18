@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Promiseable, Activity } from 'botbuilder';
+import { Promiseable, Activity, InputHints } from 'botbuilder';
 import { Dialog } from '../dialog';
 import { DialogSet } from '../dialogSet';
 import { PromptOptions, PromptValidator } from './prompt';
@@ -120,6 +120,7 @@ export function formatChoicePrompt(channelOrContext: string|BotContext, choices:
         case ChoicePromptStyle.none:
             const p = { type: 'message', text: text || '' } as Partial<Activity>;
             if (speak) { p.speak = speak }
+            if (!p.inputHint) { p.inputHint = InputHints.ExpectingInput }
             return p;
     }
 }
