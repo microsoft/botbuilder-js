@@ -46,7 +46,7 @@ export class ConfirmPrompt implements Dialog {
         const options = dialogs.getInstance<ChoicePromptOptions>(context).state;
         const utterance = context.request && context.request.text ? context.request.text : '';
         const results = booleanModel.parse(utterance);
-        const value = results.length > 0 && results[0].resolution ? results[0].resolution.value as boolean : undefined;
+        const value = results.length > 0 && results[0].resolution ? results[0].resolution.value  : undefined;
         if (this.validator) {
             // Call validator for further processing
             return Promise.resolve(this.validator(context, value, dialogs));

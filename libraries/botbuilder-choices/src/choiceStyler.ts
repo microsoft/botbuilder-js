@@ -110,7 +110,8 @@ export class ChoiceStyler {
         let txt = (text || '');
         txt += '\n\n   ';
         ChoiceStyler.toChoices(choices).forEach((choice: any, index: number) => {
-            txt += `${connector}${opt.includeNumbers ? (index + 1).toString() + '. ': '- '}${choice.value}`;
+            const title = choice.action && choice.action.title ? choice.action.title : choice.value;
+            txt += `${connector}${opt.includeNumbers ? (index + 1).toString() + '. ': '- '}${title}`;
             connector =  '\n   ';
         });
 

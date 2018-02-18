@@ -87,17 +87,6 @@ export class DialogSet {
     }
 
     /**
-     * Deletes any existing dialog stack, cancelling any dialogs on the stack.
-     * @param context Context object for the current turn of conversation with the user.
-     */
-    public endAll(context: BotContext): this {
-        // Cancel any current dialogs
-        const state = getConversationState(context);
-        state[this.stackName] = [];
-        return this;
-    }
-
-    /**
      * Continues execution of the active dialog, if there is one, by passing the
      * context object to its `Dialog.continue()` method. 
      * @param context Context object for the current turn of conversation with the user. This will get mapped into a `DialogContext` and passed to the dialog started.
@@ -155,6 +144,21 @@ export class DialogSet {
                 return Promise.resolve();
             }
         } catch(err) {
+            return Promise.reject(err);
+        }
+    }
+
+    /**
+     * Deletes any existing dialog stack, cancelling any dialogs on the stack.
+     * @param context Context object for the current turn of conversation with the user.
+     */
+    public endAll(context: BotContext): Promise<void> {
+        try {
+            // Cancel any current dialogs
+            const state = getConversationState(context);
+            state[this.stackName] = [];
+            return Promise.resolve();
+        } catch (err) {
             return Promise.reject(err);
         }
     }

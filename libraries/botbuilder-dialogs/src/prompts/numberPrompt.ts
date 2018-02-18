@@ -31,7 +31,7 @@ export class NumberPrompt implements Dialog {
         const options = dialogs.getInstance<PromptOptions>(context).state;
         const utterance = context.request && context.request.text ? context.request.text : '';
         const results = numberModel.parse(utterance);
-        const value = results.length > 0 && results[0].resolution ? results[0].resolution.value as number : undefined;
+        const value = results.length > 0 && results[0].resolution ? parseFloat(results[0].resolution.value) : undefined;
         if (this.validator) {
             // Call validator for further processing
             return Promise.resolve(this.validator(context, value, dialogs));

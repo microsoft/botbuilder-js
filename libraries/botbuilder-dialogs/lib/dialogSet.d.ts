@@ -46,17 +46,17 @@ export declare class DialogSet {
     prompt<O extends PromptOptions = PromptOptions>(context: BotContext, dialogId: string, prompt: string | Partial<Activity>, options?: O): Promise<void>;
     prompt<O extends ChoicePromptOptions = ChoicePromptOptions>(context: BotContext, dialogId: string, prompt: string | Partial<Activity>, choices: (string | Choice)[], options?: O): Promise<void>;
     /**
-     * Deletes any existing dialog stack, cancelling any dialogs on the stack.
-     * @param context Context object for the current turn of conversation with the user.
-     */
-    endAll(context: BotContext): this;
-    /**
      * Continues execution of the active dialog, if there is one, by passing the
      * context object to its `Dialog.continue()` method.
      * @param context Context object for the current turn of conversation with the user. This will get mapped into a `DialogContext` and passed to the dialog started.
      */
     continue(context: BotContext): Promise<void>;
     end(context: BotContext, result?: any): Promise<void>;
+    /**
+     * Deletes any existing dialog stack, cancelling any dialogs on the stack.
+     * @param context Context object for the current turn of conversation with the user.
+     */
+    endAll(context: BotContext): Promise<void>;
     /**
      * Looks up to see if a dialog with the given ID has been registered with the set. If not an
      * attempt will be made to look up the dialog as a prompt. If the dialog still can't be found,

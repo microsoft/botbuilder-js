@@ -40,12 +40,12 @@ const bot = new botbuilder_1.Bot(adapter)
         else if (utterance === 'cancel') {
             if (dialogs.getInstance(context)) {
                 context.reply(`Ok... Cancelled.`);
-                dialogs.endAll(context);
+                return dialogs.endAll(context);
             }
             else {
                 context.reply(`Nothing to cancel.`);
+                return Promise.resolve();
             }
-            return Promise.resolve();
             // Continue current dialog
         }
         else {
