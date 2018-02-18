@@ -50,7 +50,7 @@ export class MessageStyler {
             text: text || ''
         };
         if (speak) { msg.speak = speak }
-        if (inputHint) { msg.inputHint = inputHint as InputHints }
+        if (inputHint) { msg.inputHint = inputHint }
         return msg;
     }
 
@@ -71,7 +71,7 @@ export class MessageStyler {
         };
         if (text) { msg.text = text; }
         if (speak) { msg.speak = speak }
-        if (inputHint) { msg.inputHint = inputHint as InputHints }
+        if (inputHint) { msg.inputHint = inputHint }
         return msg;
     }
 
@@ -159,6 +159,6 @@ function attachmentActivity(attachmentLayout: AttachmentLayoutTypes, attachments
     };
     if (text) { msg.text = text }
     if (speak) { msg.speak = speak }
-    if (inputHint) { msg.inputHint = inputHint as InputHints }
+    if (inputHint) { msg.inputHint = inputHint }
     return msg;
 }
