@@ -127,7 +127,7 @@ export interface MessageReaction {
    * @member {MessageReactionTypes} [type] Message reaction type. Possible
    * values include: 'like', 'plusOne'
    */
-  type: MessageReactionTypes;
+  type: MessageReactionTypes | string;
 }
 
 /**
@@ -143,7 +143,7 @@ export interface CardAction {
    * 'playAudio', 'playVideo', 'showImage', 'downloadFile', 'signin', 'call',
    * 'payment', 'messageBack'
    */
-  type: ActionTypes;
+  type: ActionTypes | string;
   /**
    * @member {string} [title] Text description which appears on the button
    */
@@ -297,7 +297,7 @@ export interface Activity {
    * 'deleteUserData', 'messageUpdate', 'messageDelete', 'installationUpdate',
    * 'messageReaction', 'suggestion'
    */
-  type: ActivityTypes;
+  type: ActivityTypes | string;
   /**
    * @member {string} [id] ID of this activity
    */
@@ -337,13 +337,13 @@ export interface Activity {
    * @member {TextFormatTypes} [textFormat] Format of text fields
    * Default:markdown. Possible values include: 'markdown', 'plain', 'xml'
    */
-  textFormat?: TextFormatTypes;
+  textFormat?: TextFormatTypes | string;
   /**
    * @member {AttachmentLayoutTypes} [attachmentLayout] Hint for how to deal
    * with multiple attachments. Default:list. Possible values include: 'list',
    * 'carousel'
    */
-  attachmentLayout?: AttachmentLayoutTypes;
+  attachmentLayout?: AttachmentLayoutTypes | string;
   /**
    * @member {ChannelAccount[]} [membersAdded] Members added to the
    * conversation
@@ -390,7 +390,7 @@ export interface Activity {
    * is expecting. Possible values include: 'acceptingInput', 'ignoringInput',
    * 'expectingInput'
    */
-  inputHint?: InputHints;
+  inputHint?: InputHints | string;
   /**
    * @member {string} [summary] Text to display if the channel cannot render
    * cards
@@ -442,7 +442,7 @@ export interface Activity {
    * 'completedSuccessfully', 'userCancelled', 'botTimedOut',
    * 'botIssuedInvalidMessage', 'channelFailed'
    */
-  code?: EndOfConversationCodes;
+  code?: EndOfConversationCodes | string;
   /**
    * @member {Date} [expiration] DateTime to expire the activity as ISO 8601
    * encoded datetime
