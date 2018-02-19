@@ -24,7 +24,7 @@
 
 ** auto**:    = 1
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/9c47be0/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L17)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/59b50cb/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L17)*
 
 
 
@@ -41,7 +41,7 @@ ___
 
 ** inline**:    = 2
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/9c47be0/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L19)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/59b50cb/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L19)*
 
 
 
@@ -58,7 +58,7 @@ ___
 
 ** list**:    = 3
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/9c47be0/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L21)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/59b50cb/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L21)*
 
 
 
@@ -75,7 +75,7 @@ ___
 
 ** none**:    = 0
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/9c47be0/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L15)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/59b50cb/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L15)*
 
 
 
@@ -92,7 +92,7 @@ ___
 
 ** suggestedAction**:    = 4
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:23](https://github.com/Microsoft/botbuilder-js/blob/9c47be0/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L23)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:23](https://github.com/Microsoft/botbuilder-js/blob/59b50cb/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L23)*
 
 
 

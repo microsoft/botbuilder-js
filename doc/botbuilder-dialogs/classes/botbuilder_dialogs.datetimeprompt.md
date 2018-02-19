@@ -30,7 +30,7 @@
 ### ⊕ **new DatetimePrompt**(validator?: *[PromptValidator](../#promptvalidator)[FoundDatetime](../interfaces/botbuilder_dialogs.founddatetime.md)[]⎮`undefined`*): [DatetimePrompt](botbuilder_dialogs.datetimeprompt.md)
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/9c47be0/libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts#L17)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/59b50cb/libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts#L17)*
 
 
 
@@ -58,7 +58,7 @@
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/9c47be0/libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts#L19)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/59b50cb/libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts#L19)*
 
 
 
@@ -92,7 +92,7 @@ ___
 
 *Implementation of [Dialog](../interfaces/botbuilder_dialogs.dialog.md).[continue](../interfaces/botbuilder_dialogs.dialog.md#continue)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts:20](https://github.com/Microsoft/botbuilder-js/blob/9c47be0/libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts#L20)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts:20](https://github.com/Microsoft/botbuilder-js/blob/59b50cb/libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts#L20)*
 
 
 

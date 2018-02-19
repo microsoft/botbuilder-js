@@ -37,7 +37,7 @@ Similarly, calling a dialog/prompt from within the last step of the waterfall wi
 ### ⊕ **new Waterfall**(steps: *[WaterfallStep](../#waterfallstep)[]*): [Waterfall](botbuilder_dialogs.waterfall.md)
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:40](https://github.com/Microsoft/botbuilder-js/blob/9c47be0/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L40)*
+*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:40](https://github.com/Microsoft/botbuilder-js/blob/59b50cb/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L40)*
 
 
 
@@ -70,7 +70,7 @@ Creates a new waterfall dialog containing the given array of steps.
 
 *Implementation of [Dialog](../interfaces/botbuilder_dialogs.dialog.md).[begin](../interfaces/botbuilder_dialogs.dialog.md#begin)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:46](https://github.com/Microsoft/botbuilder-js/blob/9c47be0/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L46)*
+*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:46](https://github.com/Microsoft/botbuilder-js/blob/59b50cb/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L46)*
 
 
 
@@ -104,7 +104,7 @@ ___
 
 *Implementation of [Dialog](../interfaces/botbuilder_dialogs.dialog.md).[resume](../interfaces/botbuilder_dialogs.dialog.md#resume)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:47](https://github.com/Microsoft/botbuilder-js/blob/9c47be0/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L47)*
+*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:47](https://github.com/Microsoft/botbuilder-js/blob/59b50cb/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L47)*
 
 
 

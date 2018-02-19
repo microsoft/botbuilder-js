@@ -37,7 +37,7 @@
 ### ⊕ **new ConfirmPrompt**(validator?: *[PromptValidator](../#promptvalidator)`boolean`⎮`undefined`⎮`undefined`*): [ConfirmPrompt](botbuilder_dialogs.confirmprompt.md)
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:24](https://github.com/Microsoft/botbuilder-js/blob/9c47be0/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L24)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:24](https://github.com/Microsoft/botbuilder-js/blob/59b50cb/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L24)*
 
 
 
@@ -63,7 +63,7 @@
 
 **●  choices**:  *[ConfirmChoices](../interfaces/botbuilder_dialogs.confirmchoices.md)* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:24](https://github.com/Microsoft/botbuilder-js/blob/9c47be0/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L24)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:24](https://github.com/Microsoft/botbuilder-js/blob/59b50cb/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L24)*
 
 
 
@@ -77,7 +77,7 @@ ___
 
 **●  stylerOptions**:  *[ChoiceStylerOptions]()* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:23](https://github.com/Microsoft/botbuilder-js/blob/9c47be0/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L23)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:23](https://github.com/Microsoft/botbuilder-js/blob/59b50cb/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L23)*
 
 
 
@@ -95,7 +95,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:26](https://github.com/Microsoft/botbuilder-js/blob/9c47be0/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L26)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:26](https://github.com/Microsoft/botbuilder-js/blob/59b50cb/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L26)*
 
 
 
@@ -129,7 +129,7 @@ ___
 
 *Implementation of [Dialog](../interfaces/botbuilder_dialogs.dialog.md).[continue](../interfaces/botbuilder_dialogs.dialog.md#continue)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/9c47be0/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L27)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/59b50cb/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L27)*
 
 
 
@@ -160,7 +160,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:28](https://github.com/Microsoft/botbuilder-js/blob/9c47be0/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L28)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:28](https://github.com/Microsoft/botbuilder-js/blob/59b50cb/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L28)*
 
 
 

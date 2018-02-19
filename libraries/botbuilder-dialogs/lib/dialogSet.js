@@ -4,7 +4,8 @@ const waterfall_1 = require("./waterfall");
 /**
  * A related set of dialogs that can all call each other.
  *
- * @example
+ * *example usage*
+ *
  * ```JavaScript
  * const { Bot, MemoryStorage, BotStateManager } = require('botbuilder');
  * const { ConsoleAdapter } = require('botbuilder-node');
