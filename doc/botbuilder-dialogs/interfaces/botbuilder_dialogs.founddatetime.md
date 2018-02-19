@@ -12,7 +12,7 @@
 
 **●  timex**:  *`string`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts:12](https://github.com/Microsoft/botbuilder-js/blob/8226dcc/libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts#L12)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts:12](https://github.com/Microsoft/botbuilder-js/blob/9c47be0/libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts#L12)*
 
 
 
@@ -26,7 +26,7 @@ ___
 
 **●  type**:  *`string`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts:13](https://github.com/Microsoft/botbuilder-js/blob/8226dcc/libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts#L13)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts:13](https://github.com/Microsoft/botbuilder-js/blob/9c47be0/libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts#L13)*
 
 
 
@@ -40,7 +40,7 @@ ___
 
 **●  value**:  *`string`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts:14](https://github.com/Microsoft/botbuilder-js/blob/8226dcc/libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts#L14)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts:14](https://github.com/Microsoft/botbuilder-js/blob/9c47be0/libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts#L14)*
 
 
 

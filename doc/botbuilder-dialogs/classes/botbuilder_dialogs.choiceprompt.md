@@ -36,7 +36,7 @@
 ### ⊕ **new ChoicePrompt**(validator?: *[PromptValidator](../#promptvalidator)[FoundChoice]()⎮`undefined`⎮`undefined`*, choices?: *[DynamicChoicesProvider](../#dynamicchoicesprovider)⎮`undefined`*): [ChoicePrompt](botbuilder_dialogs.choiceprompt.md)
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:35](https://github.com/Microsoft/botbuilder-js/blob/8226dcc/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L35)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:35](https://github.com/Microsoft/botbuilder-js/blob/9c47be0/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L35)*
 
 
 
@@ -63,7 +63,7 @@
 
 **●  stylerOptions**:  *[ChoiceStylerOptions]()* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:35](https://github.com/Microsoft/botbuilder-js/blob/8226dcc/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L35)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:35](https://github.com/Microsoft/botbuilder-js/blob/9c47be0/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L35)*
 
 
 
@@ -81,7 +81,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:37](https://github.com/Microsoft/botbuilder-js/blob/8226dcc/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L37)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:37](https://github.com/Microsoft/botbuilder-js/blob/9c47be0/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L37)*
 
 
 
@@ -115,7 +115,7 @@ ___
 
 *Implementation of [Dialog](../interfaces/botbuilder_dialogs.dialog.md).[continue](../interfaces/botbuilder_dialogs.dialog.md#continue)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:38](https://github.com/Microsoft/botbuilder-js/blob/8226dcc/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L38)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:38](https://github.com/Microsoft/botbuilder-js/blob/9c47be0/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L38)*
 
 
 
@@ -146,7 +146,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/8226dcc/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L39)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/9c47be0/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L39)*
 
 
 

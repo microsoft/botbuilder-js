@@ -30,7 +30,7 @@
 ### ⊕ **new NumberPrompt**(validator?: *[PromptValidator](../#promptvalidator)`number`⎮`undefined`⎮`undefined`*): [NumberPrompt](botbuilder_dialogs.numberprompt.md)
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts:12](https://github.com/Microsoft/botbuilder-js/blob/8226dcc/libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts#L12)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts:12](https://github.com/Microsoft/botbuilder-js/blob/9c47be0/libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts#L12)*
 
 
 
@@ -58,7 +58,7 @@
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts:14](https://github.com/Microsoft/botbuilder-js/blob/8226dcc/libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts#L14)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts:14](https://github.com/Microsoft/botbuilder-js/blob/9c47be0/libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts#L14)*
 
 
 
@@ -92,7 +92,7 @@ ___
 
 *Implementation of [Dialog](../interfaces/botbuilder_dialogs.dialog.md).[continue](../interfaces/botbuilder_dialogs.dialog.md#continue)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/8226dcc/libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts#L15)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/9c47be0/libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts#L15)*
 
 
 

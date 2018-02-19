@@ -57,7 +57,7 @@
 
 **Τ DynamicChoicesProvider**:  *`function`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/8226dcc/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L31)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/9c47be0/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L31)*
 
 
 #### Type declaration
@@ -92,7 +92,7 @@ ___
 
 **Τ PromptValidator**:  *`function`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:20](https://github.com/Microsoft/botbuilder-js/blob/8226dcc/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L20)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:20](https://github.com/Microsoft/botbuilder-js/blob/9c47be0/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L20)*
 
 
 #### Type declaration
@@ -127,7 +127,7 @@ ___
 
 **Τ SkipStepFunction**:  *`function`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:22](https://github.com/Microsoft/botbuilder-js/blob/8226dcc/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L22)*
+*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:22](https://github.com/Microsoft/botbuilder-js/blob/9c47be0/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L22)*
 
 
 
@@ -163,7 +163,7 @@ ___
 
 **Τ WaterfallStep**:  *`function`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/8226dcc/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L17)*
+*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/9c47be0/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L17)*
 
 
 
@@ -205,7 +205,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:42](https://github.com/Microsoft/botbuilder-js/blob/8226dcc/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L42)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:42](https://github.com/Microsoft/botbuilder-js/blob/9c47be0/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L42)*
 
 
 
@@ -240,7 +240,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/8226dcc/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L21)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/9c47be0/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L21)*
 
 
 
