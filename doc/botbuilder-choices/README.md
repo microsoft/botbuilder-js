@@ -6,19 +6,32 @@
 
 ## Index
 
+### Classes
+
+* [ChoiceStyler](classes/botbuilder_choices.choicestyler.md)
+
+
 ### Interfaces
 
 * [Choice](interfaces/botbuilder_choices.choice.md)
+* [ChoiceStylerOptions](interfaces/botbuilder_choices.choicestyleroptions.md)
 * [FindChoicesOptions](interfaces/botbuilder_choices.findchoicesoptions.md)
 * [FindValuesOptions](interfaces/botbuilder_choices.findvaluesoptions.md)
 * [FoundChoice](interfaces/botbuilder_choices.foundchoice.md)
 * [FoundValue](interfaces/botbuilder_choices.foundvalue.md)
 * [ModelResult](interfaces/botbuilder_choices.modelresult.md)
 * [SortedValue](interfaces/botbuilder_choices.sortedvalue.md)
+* [Token](interfaces/botbuilder_choices.token.md)
+
+
+### Type aliases
+
+* [TokenizerFunction](#tokenizerfunction)
 
 
 ### Functions
 
+* [defaultTokenizer](#defaulttokenizer)
 * [findChoices](#findchoices)
 * [findValues](#findvalues)
 * [recognizeChoices](#recognizechoices)
@@ -26,7 +39,77 @@
 
 
 ---
+## Type aliases
+<a id="tokenizerfunction"></a>
+
+###  TokenizerFunction
+
+**Τ TokenizerFunction**:  *`function`* 
+
+*Defined in [libraries/botbuilder-choices/lib/tokenizer.d.ts:14](https://github.com/Microsoft/botbuilder-js/blob/f687311/libraries/botbuilder-choices/lib/tokenizer.d.ts#L14)*
+
+
+#### Type declaration
+►(text: *`string`*, locale?: *`undefined`⎮`string`*): [Token](interfaces/botbuilder_choices.token.md)[]
+
+
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| text | `string`   |  - |
+| locale | `undefined`⎮`string`   |  - |
+
+
+
+
+
+**Returns:** [Token](interfaces/botbuilder_choices.token.md)[]
+
+
+
+
+
+
+___
+
+
 ## Functions
+<a id="defaulttokenizer"></a>
+
+###  defaultTokenizer
+
+► **defaultTokenizer**(text: *`string`*, locale?: *`undefined`⎮`string`*): [Token](interfaces/botbuilder_choices.token.md)[]
+
+
+
+*Defined in [libraries/botbuilder-choices/lib/tokenizer.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/f687311/libraries/botbuilder-choices/lib/tokenizer.d.ts#L19)*
+
+
+
+Simple tokenizer that breaks on spaces and punctuation. The only normalization done is to lowercase
+
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| text | `string`   |  - |
+| locale | `undefined`⎮`string`   |  - |
+
+
+
+
+
+**Returns:** [Token](interfaces/botbuilder_choices.token.md)[]
+
+
+
+
+
+___
+
 <a id="findchoices"></a>
 
 ###  findChoices
@@ -35,7 +118,7 @@
 
 
 
-*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:47](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-choices/lib/findChoices.d.ts#L47)*
+*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:47](https://github.com/Microsoft/botbuilder-js/blob/f687311/libraries/botbuilder-choices/lib/findChoices.d.ts#L47)*
 
 
 
@@ -67,7 +150,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:57](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-choices/lib/findValues.d.ts#L57)*
+*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:57](https://github.com/Microsoft/botbuilder-js/blob/f687311/libraries/botbuilder-choices/lib/findValues.d.ts#L57)*
 
 
 
@@ -102,7 +185,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-choices/lib/recognizeChoices.d.ts:10](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-choices/lib/recognizeChoices.d.ts#L10)*
+*Defined in [libraries/botbuilder-choices/lib/recognizeChoices.d.ts:10](https://github.com/Microsoft/botbuilder-js/blob/f687311/libraries/botbuilder-choices/lib/recognizeChoices.d.ts#L10)*
 
 
 

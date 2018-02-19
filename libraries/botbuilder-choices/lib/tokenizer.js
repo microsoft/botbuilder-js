@@ -7,7 +7,6 @@
  * Licensed under the MIT License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-const breakingChars = " \n\r~`!@#$%^&*()-+={}|[]\\:\";'<>?,./";
 /**
  * Simple tokenizer that breaks on spaces and punctuation. The only normalization done is to lowercase
  *

@@ -6,8 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { MessageStyler, ActionTypes, InputHints } from 'botbuilder';
-import { Activity, CardAction } from 'botbuilder';
+import { MessageStyler, ActionTypes, InputHints, Activity, CardAction } from 'botbuilder';
 import { Choice } from './findChoices';
 import * as channel from './channel';
 
