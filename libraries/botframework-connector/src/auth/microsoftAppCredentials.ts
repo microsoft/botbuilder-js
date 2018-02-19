@@ -27,6 +27,7 @@ export class MicrosoftAppCredentials implements msrest.ServiceClientCredentials 
     readonly oAuthEndpoint: string = Constants.ToChannelFromBotLoginUrl;
     readonly oAuthScope: string = Constants.ToChannelFromBotOAuthScope;
     readonly tokenCacheKey: string;
+    private refreshingToken: Promise<OAuthResponse> | null = null;
 
     constructor(appId: string, appPassword: string) {
         this.appId = appId;
@@ -65,35 +66,39 @@ export class MicrosoftAppCredentials implements msrest.ServiceClientCredentials 
     }
 
     private refreshToken(): Promise<OAuthResponse> {
-        return new Promise<OAuthResponse>((resolve, reject) => {
-            // Refresh access token
-            var opt: request.Options = {
-                method: 'POST',
-                url: this.oAuthEndpoint,
-                form: {
-                    grant_type: 'client_credentials',
-                    client_id: this.appId,
-                    client_secret: this.appPassword,
-                    scope: this.oAuthScope
-                }
-            };
-
-            request(opt, (err: any, response: any, body: any) => {
-                if (!err) {
-                    if (body && response.statusCode && response.statusCode < 300) {
-                        // Subtract 5 minutes from expires_in so they'll we'll get a
-                        // new token before it expires.
-                        var oauthResponse = <OAuthResponse>JSON.parse(body);
-                        oauthResponse.expiration_time = new Date(Date.now() + (oauthResponse.expires_in * 1000) - 300000);
-                        resolve(oauthResponse);
-                    } else {
-                        reject(new Error('Refresh access token failed with status code: ' + response.statusCode));
+        if (!this.refreshingToken) {
+            this.refreshingToken = new Promise<OAuthResponse>((resolve, reject) => {
+                // Refresh access token
+                var opt: request.Options = {
+                    method: 'POST',
+                    url: this.oAuthEndpoint,
+                    form: {
+                        grant_type: 'client_credentials',
+                        client_id: this.appId,
+                        client_secret: this.appPassword,
+                        scope: this.oAuthScope
                     }
-                } else {
-                    reject(err);
-                }
+                };
+
+                request(opt, (err: any, response: any, body: any) => {
+                    if (!err) {
+                        if (body && response.statusCode && response.statusCode < 300) {
+                            // Subtract 5 minutes from expires_in so they'll we'll get a
+                            // new token before it expires.
+                            var oauthResponse = <OAuthResponse>JSON.parse(body);
+                            oauthResponse.expiration_time = new Date(Date.now() + (oauthResponse.expires_in * 1000) - 300000);
+                            resolve(oauthResponse);
+                        } else {
+                            reject(new Error('Refresh access token failed with status code: ' + response.statusCode));
+                        }
+                    } else {
+                        reject(err);
+                    }
+                });
             });
-        });
+        }
+
+        return this.refreshingToken;
     }
 
     /**

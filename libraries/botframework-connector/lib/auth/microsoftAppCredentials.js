@@ -26,6 +26,7 @@ class MicrosoftAppCredentials {
     constructor(appId, appPassword) {
         this.oAuthEndpoint = constants_1.Constants.ToChannelFromBotLoginUrl;
         this.oAuthScope = constants_1.Constants.ToChannelFromBotOAuthScope;
+        this.refreshingToken = null;
         this.appId = appId;
         this.appPassword = appPassword;
         this.tokenCacheKey = `${appId}-cache`;
@@ -61,36 +62,39 @@ class MicrosoftAppCredentials {
         });
     }
     refreshToken() {
-        return new Promise((resolve, reject) => {
-            // Refresh access token
-            var opt = {
-                method: 'POST',
-                url: this.oAuthEndpoint,
-                form: {
-                    grant_type: 'client_credentials',
-                    client_id: this.appId,
-                    client_secret: this.appPassword,
-                    scope: this.oAuthScope
-                }
-            };
-            request(opt, (err, response, body) => {
-                if (!err) {
-                    if (body && response.statusCode && response.statusCode < 300) {
-                        // Subtract 5 minutes from expires_in so they'll we'll get a
-                        // new token before it expires.
-                        var oauthResponse = JSON.parse(body);
-                        oauthResponse.expiration_time = new Date(Date.now() + (oauthResponse.expires_in * 1000) - 300000);
-                        resolve(oauthResponse);
+        if (!this.refreshingToken) {
+            this.refreshingToken = new Promise((resolve, reject) => {
+                // Refresh access token
+                var opt = {
+                    method: 'POST',
+                    url: this.oAuthEndpoint,
+                    form: {
+                        grant_type: 'client_credentials',
+                        client_id: this.appId,
+                        client_secret: this.appPassword,
+                        scope: this.oAuthScope
+                    }
+                };
+                request(opt, (err, response, body) => {
+                    if (!err) {
+                        if (body && response.statusCode && response.statusCode < 300) {
+                            // Subtract 5 minutes from expires_in so they'll we'll get a
+                            // new token before it expires.
+                            var oauthResponse = JSON.parse(body);
+                            oauthResponse.expiration_time = new Date(Date.now() + (oauthResponse.expires_in * 1000) - 300000);
+                            resolve(oauthResponse);
+                        }
+                        else {
+                            reject(new Error('Refresh access token failed with status code: ' + response.statusCode));
+                        }
                     }
                     else {
-                        reject(new Error('Refresh access token failed with status code: ' + response.statusCode));
+                        reject(err);
                     }
-                }
-                else {
-                    reject(err);
-                }
+                });
             });
-        });
+        }
+        return this.refreshingToken;
     }
     /**
      * Adds the host of service url to trusted hosts.

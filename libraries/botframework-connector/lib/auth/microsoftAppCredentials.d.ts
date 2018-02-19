@@ -10,6 +10,7 @@ export declare class MicrosoftAppCredentials implements msrest.ServiceClientCred
     readonly oAuthEndpoint: string;
     readonly oAuthScope: string;
     readonly tokenCacheKey: string;
+    private refreshingToken;
     constructor(appId: string, appPassword: string);
     signRequest(webResource: msrest.WebResource): Promise<msrest.WebResource>;
     getToken(forceRefresh?: boolean): Promise<string>;
