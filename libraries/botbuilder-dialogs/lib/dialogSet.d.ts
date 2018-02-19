@@ -47,7 +47,15 @@ export declare class DialogSet {
     private readonly stackName;
     private readonly dialogs;
     /**
-     * Creates an empty dialog set.
+     * Creates an empty dialog set. The ability to name the sets dialog stack means that multiple
+     * stacks can coexist within the same bot.  Middleware can use their own private set of
+     * dialogs without fear of colliding with the bots dialog stack.
+     *
+     * **Example usage:**
+     *
+     * ```JavaScript
+     * const dialogs = new DialogSet('myPrivateStack');
+     * ```
      * @param stackName (Optional) name of the field to store the dialog stack in off the bots conversation state object. This defaults to 'dialogStack'.
      */
     constructor(stackName?: string);
@@ -64,6 +72,7 @@ export declare class DialogSet {
      *      }
      * ]);
      * ```
+     * @param T Type of the dialog being set and returned.
      * @param dialogId Unique ID of the dialog within the set.
      * @param dialogOrSteps Either a new dialog or an array of waterfall steps to execute. If waterfall steps are passed in they will automatically be passed into an new instance of a `Waterfall` class.
      */
@@ -91,6 +100,7 @@ export declare class DialogSet {
      * ```JavaScript
      * return dialogs.prompt(context, 'confirmPrompt', `Are you sure you'd like to quit?`);
      * ```
+     * @param O (Optional) type of options expected by the prompt.
      * @param context Context object for the current turn of conversation with the user.
      * @param dialogId ID of the prompt to start.
      * @param prompt Initial prompt to send the user.
@@ -136,7 +146,7 @@ export declare class DialogSet {
      * ])
      * const started = new Date().getTime();
      * ```
-    * @param context Context object for the current turn of conversation with the user.
+     * @param context Context object for the current turn of conversation with the user.
      * @param result (Optional) result to pass to the parent dialogs `Dialog.resume()` method.
      */
     end(context: BotContext, result?: any): Promise<void>;
@@ -160,9 +170,10 @@ export declare class DialogSet {
      * ```JavaScript
      * const dialog = dialogs.find('greeting');
      * ```
+     * @param T (Optional) type of dialog returned.
      * @param dialogId ID of the dialog/prompt to lookup.
      */
-    find<T extends Dialog>(dialogId: string): T | undefined;
+    find<T extends Dialog = Dialog>(dialogId: string): T | undefined;
     /**
      * Returns the dialog stack persisted for a conversation.
      *
@@ -173,7 +184,7 @@ export declare class DialogSet {
      * ```
      * @param context Context object for the current turn of conversation with the user.
      */
-    getStack<T extends Object = {}>(context: BotContext): DialogInstance<T>[];
+    getStack(context: BotContext): DialogInstance<any>[];
     /**
      * Returns the active dialog instance on the top of the stack. Throws an error if the stack is
      * empty so use `dialogs.getStack(context).length > 0` to protect calls where the stack could
@@ -184,6 +195,7 @@ export declare class DialogSet {
      * ```JavaScript
      * const dialogState = dialogs.getInstance(context).state;
      * ```
+     * @param T (Optional) type of dialog state being persisted by the instance.
      * @param context Context object for the current turn of conversation with the user.
      */
     getInstance<T extends Object = {

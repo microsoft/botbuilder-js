@@ -36,7 +36,15 @@ const waterfall_1 = require("./waterfall");
  */
 class DialogSet {
     /**
-     * Creates an empty dialog set.
+     * Creates an empty dialog set. The ability to name the sets dialog stack means that multiple
+     * stacks can coexist within the same bot.  Middleware can use their own private set of
+     * dialogs without fear of colliding with the bots dialog stack.
+     *
+     * **Example usage:**
+     *
+     * ```JavaScript
+     * const dialogs = new DialogSet('myPrivateStack');
+     * ```
      * @param stackName (Optional) name of the field to store the dialog stack in off the bots conversation state object. This defaults to 'dialogStack'.
      */
     constructor(stackName) {
@@ -90,6 +98,7 @@ class DialogSet {
      * ```JavaScript
      * return dialogs.prompt(context, 'confirmPrompt', `Are you sure you'd like to quit?`);
      * ```
+     * @param O (Optional) type of options expected by the prompt.
      * @param context Context object for the current turn of conversation with the user.
      * @param dialogId ID of the prompt to start.
      * @param prompt Initial prompt to send the user.
@@ -168,7 +177,7 @@ class DialogSet {
      * ])
      * const started = new Date().getTime();
      * ```
-    * @param context Context object for the current turn of conversation with the user.
+     * @param context Context object for the current turn of conversation with the user.
      * @param result (Optional) result to pass to the parent dialogs `Dialog.resume()` method.
      */
     end(context, result) {
@@ -235,6 +244,7 @@ class DialogSet {
      * ```JavaScript
      * const dialog = dialogs.find('greeting');
      * ```
+     * @param T (Optional) type of dialog returned.
      * @param dialogId ID of the dialog/prompt to lookup.
      */
     find(dialogId) {
@@ -267,6 +277,7 @@ class DialogSet {
      * ```JavaScript
      * const dialogState = dialogs.getInstance(context).state;
      * ```
+     * @param T (Optional) type of dialog state being persisted by the instance.
      * @param context Context object for the current turn of conversation with the user.
      */
     getInstance(context) {

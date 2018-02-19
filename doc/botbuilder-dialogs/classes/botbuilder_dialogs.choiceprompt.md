@@ -56,7 +56,7 @@ Prompts a user to make a selection from a list of choices. By default the prompt
 ### ⊕ **new ChoicePrompt**(validator?: *[PromptValidator](../#promptvalidator)[FoundChoice]()⎮`undefined`⎮`undefined`*, choices?: *[DynamicChoicesProvider](../#dynamicchoicesprovider)⎮`undefined`*): [ChoicePrompt](botbuilder_dialogs.choiceprompt.md)
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:73](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L73)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:73](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L73)*
 
 
 
@@ -100,7 +100,7 @@ Creates a new instance of the prompt.
 
 **●  stylerOptions**:  *[ChoiceStylerOptions]()* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:73](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L73)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:73](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L73)*
 
 
 
@@ -121,7 +121,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:96](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L96)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:96](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L96)*
 
 
 
@@ -155,7 +155,7 @@ ___
 
 *Implementation of [Dialog](../interfaces/botbuilder_dialogs.dialog.md).[continue](../interfaces/botbuilder_dialogs.dialog.md#continue)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:97](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L97)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:97](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L97)*
 
 
 

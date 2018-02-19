@@ -10,6 +10,39 @@ import { Dialog } from './dialog';
 import { DialogSet } from './dialogSet';
 /**
  * Function signature of a waterfall step.
+ *
+ * **Example usage:**
+ *
+ * ```JavaScript
+ * dialogs.add('addAlarm', [
+ *      function (context, alarm, next) {
+ *          dialogs.getInstance(context).state = Object.assign({}, alarm);
+ *          if (!alarm.title) {
+ *              return dialogs.prompt(context, 'titlePrompt', `What would you like to call your alarm?`);
+ *          } else {
+ *              return next(alarm.title);
+ *          }
+ *      },
+ *      function (context, title, next) {
+ *          const alarm = dialogs.getInstance(context).state;
+ *          alarm.title = title;
+ *          if (!alarm.time) {
+ *              return dialogs.prompt(context, 'timePrompt', `What time would you like to set it for?`);
+ *          } else {
+ *              return next(alarm.time);
+ *          }
+ *      },
+ *      function (context, time) {
+ *          const alarm = dialogs.getInstance(context).state;
+ *          alarm.time = time;
+ *
+ *          // ... set alarm ...
+ *
+ *          context.reply(`Alarm set.`);
+ *          return dialogs.end(context);
+ *      }
+ * ]);
+ * ```
  * @param WaterfallStep.context The dialog context for the current turn of conversation.
  * @param WaterfallStep.args Argument(s) passed into the dialog for the first step and then the results from calling a prompt or other dialog for subsequent steps.
  * @param WaterfallStep.next Function passed into the step to let you manually skip to the next step in the waterfall.

@@ -57,7 +57,7 @@
 
 **Τ DynamicChoicesProvider**:  *`function`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:43](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L43)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:43](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L43)*
 
 
 
@@ -95,7 +95,7 @@ ___
 
 **Τ PromptValidator**:  *`function`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L31)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L31)*
 
 
 
@@ -135,7 +135,7 @@ ___
 
 **Τ SkipStepFunction**:  *`function`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:22](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L22)*
+*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:55](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L55)*
 
 
 
@@ -171,11 +171,42 @@ ___
 
 **Τ WaterfallStep**:  *`function`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L17)*
+*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:50](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L50)*
 
 
 
 Function signature of a waterfall step.
+
+**Example usage:**
+
+    dialogs.add('addAlarm', [
+         function (context, alarm, next) {
+             dialogs.getInstance(context).state = Object.assign({}, alarm);
+             if (!alarm.title) {
+                 return dialogs.prompt(context, 'titlePrompt', `What would you like to call your alarm?`);
+             } else {
+                 return next(alarm.title);
+             }
+         },
+         function (context, title, next) {
+             const alarm = dialogs.getInstance(context).state;
+             alarm.title = title;
+             if (!alarm.time) {
+                 return dialogs.prompt(context, 'timePrompt', `What time would you like to set it for?`);
+             } else {
+                 return next(alarm.time);
+             }
+         },
+         function (context, time) {
+             const alarm = dialogs.getInstance(context).state;
+             alarm.time = time;
+
+             // ... set alarm ...
+
+             context.reply(`Alarm set.`);
+             return dialogs.end(context);
+         }
+    ]);
 
 #### Type declaration
 ►(context: *`BotContext`*, args?: *`any`*, next?: *[SkipStepFunction](#skipstepfunction)*): [Promiseable]()`void`
@@ -213,7 +244,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:119](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L119)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:119](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L119)*
 
 
 
@@ -257,7 +288,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:45](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L45)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:45](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L45)*
 
 
 

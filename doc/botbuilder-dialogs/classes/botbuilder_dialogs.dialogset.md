@@ -65,11 +65,15 @@ A related set of dialogs that can all call each other.
 ### ⊕ **new DialogSet**(stackName?: *`undefined`⎮`string`*): [DialogSet](botbuilder_dialogs.dialogset.md)
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:48](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L48)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:48](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L48)*
 
 
 
-Creates an empty dialog set.
+Creates an empty dialog set. The ability to name the sets dialog stack means that multiple stacks can coexist within the same bot. Middleware can use their own private set of dialogs without fear of colliding with the bots dialog stack.
+
+**Example usage:**
+
+    const dialogs = new DialogSet('myPrivateStack');
 
 
 **Parameters:**
@@ -98,7 +102,7 @@ Creates an empty dialog set.
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:70](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L70)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:79](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L79)*
 
 
 
@@ -117,6 +121,9 @@ Adds a new dialog to the set and returns the added dialog.
 **Type parameters:**
 
 #### T :  [Dialog](../interfaces/botbuilder_dialogs.dialog.md)
+
+Type of the dialog being set and returned.
+
 **Parameters:**
 
 | Param | Type | Description |
@@ -132,7 +139,7 @@ Adds a new dialog to the set and returns the added dialog.
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:71](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L71)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:80](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L80)*
 
 
 
@@ -163,7 +170,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:84](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L84)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:93](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L93)*
 
 
 
@@ -202,7 +209,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:116](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L116)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:126](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L126)*
 
 
 
@@ -243,7 +250,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:142](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L142)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:152](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L152)*
 
 
 
@@ -290,7 +297,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:154](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L154)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:164](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L164)*
 
 
 
@@ -328,7 +335,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:165](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L165)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:176](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L176)*
 
 
 
@@ -342,6 +349,9 @@ Finds a dialog that was previously added to the set using [add()](#add).
 **Type parameters:**
 
 #### T :  [Dialog](../interfaces/botbuilder_dialogs.dialog.md)
+
+(Optional) type of dialog returned.
+
 **Parameters:**
 
 | Param | Type | Description |
@@ -368,7 +378,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:189](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L189)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:201](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L201)*
 
 
 
@@ -382,6 +392,9 @@ Returns the active dialog instance on the top of the stack. Throws an error if t
 **Type parameters:**
 
 #### T :  `Object`
+
+(Optional) type of dialog state being persisted by the instance.
+
 **Parameters:**
 
 | Param | Type | Description |
@@ -404,11 +417,11 @@ ___
 
 ###  getStack
 
-► **getStack**T(context: *`BotContext`*): [DialogInstance](../interfaces/botbuilder_dialogs.dialoginstance.md)`T`[]
+► **getStack**(context: *`BotContext`*): [DialogInstance](../interfaces/botbuilder_dialogs.dialoginstance.md)`any`[]
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:176](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L176)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:187](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L187)*
 
 
 
@@ -419,9 +432,6 @@ Returns the dialog stack persisted for a conversation.
     const hasActiveDialog = dialogs.getStack(context).length > 0;
 
 
-**Type parameters:**
-
-#### T :  `Object`
 **Parameters:**
 
 | Param | Type | Description |
@@ -432,7 +442,7 @@ Returns the dialog stack persisted for a conversation.
 
 
 
-**Returns:** [DialogInstance](../interfaces/botbuilder_dialogs.dialoginstance.md)`T`[]
+**Returns:** [DialogInstance](../interfaces/botbuilder_dialogs.dialoginstance.md)`any`[]
 
 
 
@@ -448,7 +458,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:99](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L99)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:109](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L109)*
 
 
 
@@ -462,6 +472,9 @@ Helper function to simplify formatting the options for calling a prompt dialog. 
 **Type parameters:**
 
 #### O :  [PromptOptions](../interfaces/botbuilder_dialogs.promptoptions.md)
+
+(Optional) type of options expected by the prompt.
+
 **Parameters:**
 
 | Param | Type | Description |
@@ -492,7 +505,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:214](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L214)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:226](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L226)*
 
 
 

@@ -51,7 +51,7 @@ Prompts a user to enter a number. By default the prompt will return to the calli
 ### ⊕ **new NumberPrompt**(validator?: *[PromptValidator](../#promptvalidator)`number`⎮`undefined`⎮`undefined`*): [NumberPrompt](botbuilder_dialogs.numberprompt.md)
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts:36](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts#L36)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts:36](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts#L36)*
 
 
 
@@ -93,7 +93,7 @@ Creates a new instance of the prompt.
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts:55](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts#L55)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts:55](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts#L55)*
 
 
 
@@ -127,7 +127,7 @@ ___
 
 *Implementation of [Dialog](../interfaces/botbuilder_dialogs.dialog.md).[continue](../interfaces/botbuilder_dialogs.dialog.md#continue)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts:56](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts#L56)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts:56](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts#L56)*
 
 
 
