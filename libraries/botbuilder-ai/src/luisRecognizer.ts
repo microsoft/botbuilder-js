@@ -46,7 +46,7 @@ export class LuisRecognizer extends IntentRecognizer {
         }
 
         // Create client and override callbacks
-        const baseUri = (this.options.serviceEndpoint || 'https://westus.api.cognitive.microsoft.com');
+        const baseUri = (this.options.serviceEndpoint || 'https://westus.api.cognitive.microsoft.com/luis');
         this.luisClient = new LuisClient(baseUri + '/luis/');
         this.onRecognize((context) => {
             const intents: Intent[] = [];
