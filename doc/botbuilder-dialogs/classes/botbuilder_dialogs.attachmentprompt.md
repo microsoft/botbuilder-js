@@ -30,7 +30,7 @@
 ### ⊕ **new AttachmentPrompt**(validator?: *[PromptValidator](../#promptvalidator)[Attachment]()[]⎮`undefined`*): [AttachmentPrompt](botbuilder_dialogs.attachmentprompt.md)
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts:16](https://github.com/Microsoft/botbuilder-js/blob/59b50cb/libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts#L16)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts:16](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts#L16)*
 
 
 
@@ -58,7 +58,7 @@
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/59b50cb/libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts#L18)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts#L18)*
 
 
 
@@ -92,7 +92,7 @@ ___
 
 *Implementation of [Dialog](../interfaces/botbuilder_dialogs.dialog.md).[continue](../interfaces/botbuilder_dialogs.dialog.md#continue)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/59b50cb/libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts#L19)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts#L19)*
 
 
 

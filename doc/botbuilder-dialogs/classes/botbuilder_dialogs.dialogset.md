@@ -7,7 +7,7 @@
 
 A related set of dialogs that can all call each other.
 
-_example usage_
+**example usage**
 
     const { Bot, MemoryStorage, BotStateManager } = require('botbuilder');
     const { ConsoleAdapter } = require('botbuilder-node');
@@ -65,7 +65,7 @@ _example usage_
 ### ⊕ **new DialogSet**(stackName?: *`undefined`⎮`string`*): [DialogSet](botbuilder_dialogs.dialogset.md)
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:48](https://github.com/Microsoft/botbuilder-js/blob/59b50cb/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L48)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:48](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L48)*
 
 
 
@@ -98,11 +98,20 @@ Creates an empty dialog set.
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:59](https://github.com/Microsoft/botbuilder-js/blob/59b50cb/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L59)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:70](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L70)*
 
 
 
 Adds a new dialog to the set and returns the added dialog.
+
+**example usage**
+
+    dialogs.add('greeting', [
+         function (context, user) {
+             context.reply(`Hello ${user.name}... I'm a bot :)`);
+             return dialogs.end(context);
+         }
+    ]);
 
 
 **Type parameters:**
@@ -123,7 +132,7 @@ Adds a new dialog to the set and returns the added dialog.
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:60](https://github.com/Microsoft/botbuilder-js/blob/59b50cb/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L60)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:71](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L71)*
 
 
 
@@ -154,11 +163,15 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:67](https://github.com/Microsoft/botbuilder-js/blob/59b50cb/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L67)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:84](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L84)*
 
 
 
 Pushes a new dialog onto the dialog stack.
+
+**example usage**
+
+    return dialogs.begin(context, 'greeting', user);
 
 
 **Parameters:**
@@ -189,11 +202,19 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:81](https://github.com/Microsoft/botbuilder-js/blob/59b50cb/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L81)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:116](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L116)*
 
 
 
-Continues execution of the active dialog, if there is one, by passing the context object to its `Dialog.continue()` method.
+Continues execution of the active dialog, if there is one, by passing the context object to its `Dialog.continue()` method. You can check `context.responded` after the call completes to determine if a dialog was run and a reply was sent to the user.
+
+**example usage**
+
+    return dialogs.continue(context).then(() => {
+         if (!dialog.responded) {
+             return dialogs.begin(context, 'fallback');
+         }
+    });
 
 
 **Parameters:**
@@ -222,13 +243,24 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:94](https://github.com/Microsoft/botbuilder-js/blob/59b50cb/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L94)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:142](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L142)*
 
 
 
 Ends a dialog by popping it off the stack and returns an optional result to the dialogs parent. The parent dialog is the dialog the started the on being ended via a call to either [begin()](#begin) or [prompt()](#prompt).
 
 The parent dialog will have its `Dialog.resume()` method invoked with any returned result. If the parent dialog hasn't implemented a `resume()` method then it will be automatically ended as well and the result passed to its parent. If there are no more parent dialogs on the stack then processing of the turn will end.
+
+**example usage**
+
+    dialogs.add('showUptime', [
+         function (context) {
+             const elapsed = new Date().getTime() - started;
+             context.reply(`I've been running for ${elapsed / 1000} seconds.`);
+             return dialogs.end(context, elapsed);
+         }
+    ])
+    const started = new Date().getTime();
 
 
 **Parameters:**
@@ -258,11 +290,16 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:99](https://github.com/Microsoft/botbuilder-js/blob/59b50cb/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L99)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:154](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L154)*
 
 
 
 Deletes any existing dialog stack thus cancelling all dialogs on the stack.
+
+**example usage**
+
+    return dialogs.endAll(context)
+         .then(() => dialogs.begin(context, 'addAlarm'));
 
 
 **Parameters:**
@@ -291,11 +328,15 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:104](https://github.com/Microsoft/botbuilder-js/blob/59b50cb/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L104)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:165](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L165)*
 
 
 
 Finds a dialog that was previously added to the set using [add()](#add).
+
+**example usage**
+
+    const dialog = dialogs.find('greeting');
 
 
 **Type parameters:**
@@ -327,11 +368,15 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:116](https://github.com/Microsoft/botbuilder-js/blob/59b50cb/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L116)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:189](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L189)*
 
 
 
 Returns the active dialog instance on the top of the stack. Throws an error if the stack is empty so use `dialogs.getStack(context).length > 0` to protect calls where the stack could be empty.
+
+**example usage**
+
+    const dialogState = dialogs.getInstance(context).state;
 
 
 **Type parameters:**
@@ -363,11 +408,15 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:109](https://github.com/Microsoft/botbuilder-js/blob/59b50cb/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L109)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:176](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L176)*
 
 
 
 Returns the dialog stack persisted for a conversation.
+
+**example usage**
+
+    const hasActiveDialog = dialogs.getStack(context).length > 0;
 
 
 **Type parameters:**
@@ -399,11 +448,15 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:75](https://github.com/Microsoft/botbuilder-js/blob/59b50cb/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L75)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:99](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L99)*
 
 
 
-Helper function to simplify formatting the options for calling a prompt dialog.
+Helper function to simplify formatting the options for calling a prompt dialog. This helper will construct a `PromptOptions` structure and then call [begin(context, dialogId, options)](#begin).
+
+**example usage**
+
+    return dialogs.prompt(context, 'confirmPrompt', `Are you sure you'd like to quit?`);
 
 
 **Type parameters:**
@@ -439,11 +492,24 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:125](https://github.com/Microsoft/botbuilder-js/blob/59b50cb/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L125)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:214](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L214)*
 
 
 
-Ends the current dialog and starts a new dialog in its place.
+Ends the current dialog and starts a new dialog in its place. This is particularly useful for creating loops or redirecting to another dialog.
+
+**example usage**
+
+    dialogs.add('loop', [
+         function (context, args) {
+             dialogs.getInstance(context).state = args;
+             return dialogs.begin(context, args.dialogId);
+         },
+         function (context) {
+             const args = dialogs.getInstance(context).state;
+             return dialogs.replace(context, 'loop', args);
+         }
+    ]);
 
 
 **Parameters:**

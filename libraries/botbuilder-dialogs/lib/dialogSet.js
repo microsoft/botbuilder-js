@@ -4,7 +4,7 @@ const waterfall_1 = require("./waterfall");
 /**
  * A related set of dialogs that can all call each other.
  *
- * *example usage*
+ * **example usage**
  *
  * ```JavaScript
  * const { Bot, MemoryStorage, BotStateManager } = require('botbuilder');
@@ -51,6 +51,12 @@ class DialogSet {
     }
     /**
      * Pushes a new dialog onto the dialog stack.
+     *
+     * **example usage**
+     *
+     * ```JavaScript
+     * return dialogs.begin(context, 'greeting', user);
+     * ```
      * @param context Context object for the current turn of conversation with the user.
      * @param dialogId ID of the dialog to start.
      * @param dialogArgs (Optional) additional argument(s) to pass to the dialog being started.
@@ -76,7 +82,14 @@ class DialogSet {
         }
     }
     /**
-     * Helper function to simplify formatting the options for calling a prompt dialog.
+     * Helper function to simplify formatting the options for calling a prompt dialog. This helper will
+     * construct a `PromptOptions` structure and then call [begin(context, dialogId, options)](#begin).
+     *
+     * **example usage**
+     *
+     * ```JavaScript
+     * return dialogs.prompt(context, 'confirmPrompt', `Are you sure you'd like to quit?`);
+     * ```
      * @param context Context object for the current turn of conversation with the user.
      * @param dialogId ID of the prompt to start.
      * @param prompt Initial prompt to send the user.
@@ -90,8 +103,19 @@ class DialogSet {
         return this.begin(context, dialogId, args);
     }
     /**
-     * Continues execution of the active dialog, if there is one, by passing the
-     * context object to its `Dialog.continue()` method.
+     * Continues execution of the active dialog, if there is one, by passing the context object to
+     * its `Dialog.continue()` method. You can check `context.responded` after the call completes
+     * to determine if a dialog was run and a reply was sent to the user.
+     *
+     * **example usage**
+     *
+     * ```JavaScript
+     * return dialogs.continue(context).then(() => {
+     *      if (!dialog.responded) {
+     *          return dialogs.begin(context, 'fallback');
+     *      }
+     * });
+     * ```
      * @param context Context object for the current turn of conversation with the user.
      */
     continue(context) {
@@ -131,7 +155,20 @@ class DialogSet {
      * result. If the parent dialog hasn't implemented a `resume()` method then it will be
      * automatically ended as well and the result passed to its parent. If there are no more
      * parent dialogs on the stack then processing of the turn will end.
-     * @param context Context object for the current turn of conversation with the user.
+      *
+     * **example usage**
+     *
+     * ```JavaScript
+     * dialogs.add('showUptime', [
+     *      function (context) {
+     *          const elapsed = new Date().getTime() - started;
+     *          context.reply(`I've been running for ${elapsed / 1000} seconds.`);
+     *          return dialogs.end(context, elapsed);
+     *      }
+     * ])
+     * const started = new Date().getTime();
+     * ```
+    * @param context Context object for the current turn of conversation with the user.
      * @param result (Optional) result to pass to the parent dialogs `Dialog.resume()` method.
      */
     end(context, result) {
@@ -170,6 +207,13 @@ class DialogSet {
     }
     /**
      * Deletes any existing dialog stack thus cancelling all dialogs on the stack.
+     *
+     * **example usage**
+     *
+     * ```JavaScript
+     * return dialogs.endAll(context)
+     *      .then(() => dialogs.begin(context, 'addAlarm'));
+     * ```
      * @param context Context object for the current turn of conversation with the user.
      */
     endAll(context) {
@@ -185,6 +229,12 @@ class DialogSet {
     }
     /**
      * Finds a dialog that was previously added to the set using [add()](#add).
+     *
+     * **example usage**
+     *
+     * ```JavaScript
+     * const dialog = dialogs.find('greeting');
+     * ```
      * @param dialogId ID of the dialog/prompt to lookup.
      */
     find(dialogId) {
@@ -192,6 +242,12 @@ class DialogSet {
     }
     /**
      * Returns the dialog stack persisted for a conversation.
+     *
+     * **example usage**
+     *
+     * ```JavaScript
+     * const hasActiveDialog = dialogs.getStack(context).length > 0;
+     * ```
      * @param context Context object for the current turn of conversation with the user.
      */
     getStack(context) {
@@ -205,6 +261,12 @@ class DialogSet {
      * Returns the active dialog instance on the top of the stack. Throws an error if the stack is
      * empty so use `dialogs.getStack(context).length > 0` to protect calls where the stack could
      * be empty.
+     *
+     * **example usage**
+     *
+     * ```JavaScript
+     * const dialogState = dialogs.getInstance(context).state;
+     * ```
      * @param context Context object for the current turn of conversation with the user.
      */
     getInstance(context) {
@@ -215,7 +277,23 @@ class DialogSet {
         return stack[stack.length - 1];
     }
     /**
-     * Ends the current dialog and starts a new dialog in its place.
+     * Ends the current dialog and starts a new dialog in its place. This is particularly useful
+     * for creating loops or redirecting to another dialog.
+     *
+     * **example usage**
+     *
+     * ```JavaScript
+     * dialogs.add('loop', [
+     *      function (context, args) {
+     *          dialogs.getInstance(context).state = args;
+     *          return dialogs.begin(context, args.dialogId);
+     *      },
+     *      function (context) {
+     *          const args = dialogs.getInstance(context).state;
+     *          return dialogs.replace(context, 'loop', args);
+     *      }
+     * ]);
+     * ```
      * @param context Context object for the current turn of conversation with the user.
      * @param dialogId ID of the new dialog to start.
      * @param dialogArgs (Optional) additional argument(s) to pass to the new dialog.

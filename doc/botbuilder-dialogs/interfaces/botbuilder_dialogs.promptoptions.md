@@ -30,7 +30,7 @@
 
 **●  prompt**:  *`string`⎮[Partial]()[Activity]()* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:12](https://github.com/Microsoft/botbuilder-js/blob/59b50cb/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L12)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:12](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L12)*
 
 
 
@@ -47,7 +47,7 @@ ___
 
 **●  retryPrompt**:  *`string`⎮[Partial]()[Activity]()* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:16](https://github.com/Microsoft/botbuilder-js/blob/59b50cb/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L16)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:16](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L16)*
 
 
 
@@ -64,7 +64,7 @@ ___
 
 **●  retrySpeak**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/59b50cb/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L18)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L18)*
 
 
 
@@ -81,7 +81,7 @@ ___
 
 **●  speak**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:14](https://github.com/Microsoft/botbuilder-js/blob/59b50cb/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L14)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:14](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L14)*
 
 
 
