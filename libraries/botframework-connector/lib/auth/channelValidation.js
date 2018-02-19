@@ -12,13 +12,11 @@ const constants_1 = require("./constants");
 const jwtTokenExtractor_1 = require("./jwtTokenExtractor");
 var ChannelValidation;
 (function (ChannelValidation) {
-    // This claim is ONLY used in the Channel Validation, and not in the emulator validation
-    const ServiceUrlClaim = 'serviceurl';
     /**
      * TO BOT FROM CHANNEL: Token validation parameters when connecting to a bot
      */
     ChannelValidation.ToBotFromChannelTokenValidationParameters = {
-        issuer: [constants_1.Constants.BotFrameworkTokenIssuer],
+        issuer: [constants_1.Constants.ToBotFromChannelTokenIssuer],
         audience: undefined,
         clockTolerance: 5 * 60,
         ignoreExpiration: false
@@ -34,7 +32,7 @@ var ChannelValidation;
     function authenticateChannelTokenWithServiceUrl(authHeader, credentials, serviceUrl) {
         return __awaiter(this, void 0, void 0, function* () {
             let identity = yield authenticateChannelToken(authHeader, credentials);
-            let serviceUrlClaim = identity.getClaimValue(ServiceUrlClaim);
+            let serviceUrlClaim = identity.getClaimValue(constants_1.Constants.ServiceUrlClaim);
             if (serviceUrlClaim !== serviceUrl) {
                 // Claim must match. Not Authorized.
                 throw new Error('Unauthorized. ServiceUrl claim do not match.');
@@ -67,12 +65,12 @@ var ChannelValidation;
             // comes from developer code that may be reaching out to a service, hence the
             // Async validation.
             // Look for the "aud" claim, but only if issued from the Bot Framework
-            if (identity.getClaimValue(constants_1.Constants.IssuerClaim) !== constants_1.Constants.BotFrameworkTokenIssuer) {
+            if (identity.getClaimValue(constants_1.Constants.IssuerClaim) !== constants_1.Constants.ToBotFromChannelTokenIssuer) {
                 // The relevant Audiance Claim MUST be present. Not Authorized.
                 throw new Error('Unauthorized. Audiance Claim MUST be present.');
             }
-            // The AppId from the claim in the token must match the AppId specified by the developer. Note that
-            // the Bot Framwork uses the Audiance claim ("aud") to pass the AppID.
+            // The AppId from the claim in the token must match the AppId specified by the developer. 
+            // In this case, the token is destined for the app, so we find the app ID in the audience claim.
             let audClaim = identity.getClaimValue(constants_1.Constants.AudienceClaim);
             if (!(yield credentials.isValidAppId(audClaim || ""))) {
                 // The AppId is not valid or not present. Not Authorized.

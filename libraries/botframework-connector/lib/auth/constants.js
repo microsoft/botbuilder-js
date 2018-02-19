@@ -9,7 +9,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 var Constants;
 (function (Constants) {
-    Constants.BotFrameworkTokenIssuer = "https://api.botframework.com";
     /**
      * TO CHANNEL FROM BOT: Login URL
      */
@@ -18,6 +17,10 @@ var Constants;
      * TO CHANNEL FROM BOT: OAuth scope to request
      */
     Constants.ToChannelFromBotOAuthScope = "https://api.botframework.com/.default";
+    /**
+     * TO BOT FROM CHANNEL: Token issuer
+     */
+    Constants.ToBotFromChannelTokenIssuer = "https://api.botframework.com";
     /**
      * TO BOT FROM CHANNEL: OpenID metadata document for tokens coming from MSA
      */
@@ -39,7 +42,7 @@ var Constants;
      */
     Constants.AuthorizedParty = "azp";
     /**
-     * Audiance Claim. From RFC 7519.
+     * Audience Claim. From RFC 7519.
      *     https://tools.ietf.org/html/rfc7519#section-4.1.3
      * The "aud" (audience) claim identifies the recipients that the JWT is
      * intended for.  Each principal intended to process the JWT MUST
@@ -64,7 +67,7 @@ var Constants;
      */
     Constants.IssuerClaim = "iss";
     /**
-     * From RFC 7517
+     * From RFC 7515
      *     https://tools.ietf.org/html/rfc7515#section-4.1.4
      * The "kid" (key ID) Header Parameter is a hint indicating which key
      * was used to secure the JWS. This parameter allows originators to
@@ -75,5 +78,17 @@ var Constants;
      * parameter value.
      */
     Constants.KeyIdHeader = "kid";
+    /**
+     * Token version claim name. As used in Microsoft AAD tokens.
+     */
+    Constants.VersionClaim = "ver";
+    /**
+     * App ID claim name. As used in Microsoft AAD 1.0 tokens.
+     */
+    Constants.AppIdClaim = "appid";
+    /**
+     * Service URL claim name. As used in Microsoft Bot Framework v3.1 auth.
+     */
+    Constants.ServiceUrlClaim = "serviceurl";
 })(Constants = exports.Constants || (exports.Constants = {}));
 //# sourceMappingURL=constants.js.map

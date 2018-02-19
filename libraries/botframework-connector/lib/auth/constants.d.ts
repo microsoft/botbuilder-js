@@ -6,7 +6,6 @@
  * Licensed under the MIT License.
  */
 export declare module Constants {
-    const BotFrameworkTokenIssuer: string;
     /**
      * TO CHANNEL FROM BOT: Login URL
      */
@@ -15,6 +14,10 @@ export declare module Constants {
      * TO CHANNEL FROM BOT: OAuth scope to request
      */
     const ToChannelFromBotOAuthScope: string;
+    /**
+     * TO BOT FROM CHANNEL: Token issuer
+     */
+    const ToBotFromChannelTokenIssuer: string;
     /**
      * TO BOT FROM CHANNEL: OpenID metadata document for tokens coming from MSA
      */
@@ -36,7 +39,7 @@ export declare module Constants {
      */
     const AuthorizedParty: string;
     /**
-     * Audiance Claim. From RFC 7519.
+     * Audience Claim. From RFC 7519.
      *     https://tools.ietf.org/html/rfc7519#section-4.1.3
      * The "aud" (audience) claim identifies the recipients that the JWT is
      * intended for.  Each principal intended to process the JWT MUST
@@ -61,7 +64,7 @@ export declare module Constants {
      */
     const IssuerClaim: string;
     /**
-     * From RFC 7517
+     * From RFC 7515
      *     https://tools.ietf.org/html/rfc7515#section-4.1.4
      * The "kid" (key ID) Header Parameter is a hint indicating which key
      * was used to secure the JWS. This parameter allows originators to
@@ -72,4 +75,16 @@ export declare module Constants {
      * parameter value.
      */
     const KeyIdHeader: string;
+    /**
+     * Token version claim name. As used in Microsoft AAD tokens.
+     */
+    const VersionClaim: string;
+    /**
+     * App ID claim name. As used in Microsoft AAD 1.0 tokens.
+     */
+    const AppIdClaim: string;
+    /**
+     * Service URL claim name. As used in Microsoft Bot Framework v3.1 auth.
+     */
+    const ServiceUrlClaim: string;
 }

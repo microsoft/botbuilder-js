@@ -23,9 +23,6 @@ const constants_1 = require("./constants");
  */
 var EmulatorValidation;
 (function (EmulatorValidation) {
-    // The AppId Claim is only used during emulator token validation.
-    const AppIdClaim = "appid";
-    const VersionClaim = "ver";
     /**
      * TO BOT FROM EMULATOR: Token validation parameters when connecting to a channel.
      */
@@ -110,7 +107,7 @@ var EmulatorValidation;
             // what we're looking for. Note that in a multi-tenant bot, this value
             // comes from developer code that may be reaching out to a service, hence the
             // Async validation.
-            let versionClaim = identity.getClaimValue(VersionClaim);
+            let versionClaim = identity.getClaimValue(constants_1.Constants.VersionClaim);
             if (versionClaim === null) {
                 throw new Error('Unauthorized. "ver" claim is required on Emulator Tokens.');
             }
@@ -120,7 +117,7 @@ var EmulatorValidation;
             if (!versionClaim || versionClaim === '1.0') {
                 // either no Version or a version of "1.0" means we should look for
                 // the claim in the "appid" claim.
-                let appIdClaim = identity.getClaimValue(AppIdClaim);
+                let appIdClaim = identity.getClaimValue(constants_1.Constants.AppIdClaim);
                 if (!appIdClaim) {
                     // No claim around AppID. Not Authorized.
                     throw new Error('Unauthorized. "appid" claim is required on Emulator Token version "1.0".');
@@ -135,19 +132,6 @@ var EmulatorValidation;
                     throw new Error('Unauthorized. "azp" claim is required on Emulator Token version "2.0".');
                 }
                 appId = appZClaim;
-            }
-            else if (versionClaim === '3.0') {
-                // The v3.0 Token types have been disallowed. Not Authorized.
-                throw new Error('Unauthorized. Emulator token version "3.0" is depricated.');
-            }
-            else if (versionClaim === '3.1' || versionClaim === '3.2') {
-                // The emulator for token versions "3.1" & "3.2" puts the AppId in the "Audiance" claim.
-                let audianceClaim = identity.getClaimValue(constants_1.Constants.AudienceClaim);
-                if (!audianceClaim) {
-                    // No claim around AppID. Not Authorized.
-                    throw new Error('Unauthorized. "aud" claim is required on Emulator Token version "3.x".');
-                }
-                appId = audianceClaim;
             }
             else {
                 // Unknown Version. Not Authorized.

@@ -13,14 +13,11 @@ import { JwtTokenExtractor } from './jwtTokenExtractor';
 
 export module ChannelValidation {
 
-    // This claim is ONLY used in the Channel Validation, and not in the emulator validation
-    const ServiceUrlClaim: string = 'serviceurl';
-
     /**
      * TO BOT FROM CHANNEL: Token validation parameters when connecting to a bot
      */
     export const ToBotFromChannelTokenValidationParameters: VerifyOptions = {
-        issuer: [Constants.BotFrameworkTokenIssuer],
+        issuer: [Constants.ToBotFromChannelTokenIssuer],
         audience: undefined,                                 // Audience validation takes place manually in code.
         clockTolerance: 5 * 60,
         ignoreExpiration: false
@@ -38,7 +35,7 @@ export module ChannelValidation {
 
         let identity = await authenticateChannelToken(authHeader, credentials);
 
-        let serviceUrlClaim = identity.getClaimValue(ServiceUrlClaim);
+        let serviceUrlClaim = identity.getClaimValue(Constants.ServiceUrlClaim);
         if (serviceUrlClaim !== serviceUrl) {
             // Claim must match. Not Authorized.
             throw new Error('Unauthorized. ServiceUrl claim do not match.');
@@ -78,13 +75,13 @@ export module ChannelValidation {
         // Async validation.
 
         // Look for the "aud" claim, but only if issued from the Bot Framework
-        if (identity.getClaimValue(Constants.IssuerClaim) !== Constants.BotFrameworkTokenIssuer) {
+        if (identity.getClaimValue(Constants.IssuerClaim) !== Constants.ToBotFromChannelTokenIssuer) {
             // The relevant Audiance Claim MUST be present. Not Authorized.
             throw new Error('Unauthorized. Audiance Claim MUST be present.');
         }
 
-        // The AppId from the claim in the token must match the AppId specified by the developer. Note that
-        // the Bot Framwork uses the Audiance claim ("aud") to pass the AppID.
+        // The AppId from the claim in the token must match the AppId specified by the developer. 
+        // In this case, the token is destined for the app, so we find the app ID in the audience claim.
         let audClaim = identity.getClaimValue(Constants.AudienceClaim);
         if (!(await credentials.isValidAppId(audClaim || ""))) {
             // The AppId is not valid or not present. Not Authorized.
