@@ -4,6 +4,27 @@
 
 # Class: NumberPrompt
 
+
+Prompts a user to enter a number. By default the prompt will return to the calling dialog a `number` representing the users input.
+
+**Example usage:**
+
+    const { DialogSet, NumberPrompt } = require('botbuilder-dialogs');
+
+    const dialogs = new DialogSet();
+
+    dialogs.add('numberPrompt', new NumberPrompt());
+
+    dialogs.add('numberDemo', [
+         function (context) {
+             return dialogs.prompt(context, 'numberPrompt', `number: enter a number`);
+         },
+         function (context, value) {
+             context.reply(`Recognized value: ${value}`);
+             return dialogs.end(context);
+         }
+    ]);
+
 ## Implements
 
 * [Dialog](../interfaces/botbuilder_dialogs.dialog.md)
@@ -30,15 +51,29 @@
 ### ⊕ **new NumberPrompt**(validator?: *[PromptValidator](../#promptvalidator)`number`⎮`undefined`⎮`undefined`*): [NumberPrompt](botbuilder_dialogs.numberprompt.md)
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts:12](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts#L12)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts:36](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts#L36)*
 
+
+
+Creates a new instance of the prompt.
+
+**Example usage:**
+
+    dialogs.add('agePrompt', new NumberPrompt((context, value) => {
+         if (value === undefined || value < 1 || value > 110) {
+             context.reply(`Please enter a valid age between 1 and 110.`);
+             return Promise.resolve();
+         } else {
+             return dialogs.end(context, value);
+         }
+    }));
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| validator | [PromptValidator](../#promptvalidator)`number`⎮`undefined`⎮`undefined`   |  - |
+| validator | [PromptValidator](../#promptvalidator)`number`⎮`undefined`⎮`undefined`   |  (Optional) validator that will be called each time the user responds to the prompt. |
 
 
 
@@ -58,7 +93,7 @@
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts:14](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts#L14)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts:55](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts#L55)*
 
 
 
@@ -92,7 +127,7 @@ ___
 
 *Implementation of [Dialog](../interfaces/botbuilder_dialogs.dialog.md).[continue](../interfaces/botbuilder_dialogs.dialog.md#continue)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts#L15)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts:56](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts#L56)*
 
 
 

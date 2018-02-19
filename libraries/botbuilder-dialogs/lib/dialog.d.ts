@@ -36,7 +36,7 @@ export interface Dialog {
      * dialog that was started by the current instance using `DialogSet.begin()`.
      *
      * If this method is NOT implemented then the dialog will be automatically ended with a call
-     * to `DialogSet.endDialogWithResult()`. Any result passed from teh called dialog will be passed
+     * to `DialogSet.endDialogWithResult()`. Any result passed from the called dialog will be passed
      * to the current dialogs parent.
      * @param context The dialog context for the current turn of conversation.
      * @param dialogs The dialogs parent set.

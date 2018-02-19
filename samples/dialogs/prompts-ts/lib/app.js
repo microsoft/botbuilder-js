@@ -127,7 +127,7 @@ dialogs.add('confirmDemo', [
     }
 ]);
 //-----------------------------------------------
-// Confirm Demo
+// Datetime Demo
 //-----------------------------------------------
 dialogs.add('datetimeDemo', [
     function (context) {

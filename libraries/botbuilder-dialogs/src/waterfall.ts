@@ -33,7 +33,7 @@ export type SkipStepFunction = (args?: any) => Promise<void>;
  * 
  * When a step is executed it should call either `context.begin()`, `context.end()`, 
  * `context.replace()`, `context.cancelDialog()`, or a prompt. Failing to do so will result
- * in teh dialog automatically ending the next time the user replies. 
+ * in the dialog automatically ending the next time the user replies. 
  * 
  * Similarly, calling a dialog/prompt from within the last step of the waterfall will result in
  * the waterfall automatically ending once the dialog/prompt completes. This is often desired 

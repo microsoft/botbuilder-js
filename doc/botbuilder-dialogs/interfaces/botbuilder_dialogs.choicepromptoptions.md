@@ -4,6 +4,9 @@
 
 # Interface: ChoicePromptOptions
 
+
+Additional options that can be used to configure a `ChoicePrompt`.
+
 ## Hierarchy
 
 
@@ -25,7 +28,7 @@
 
 **●  choices**:  *(`string`⎮[Choice]())[]* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L27)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:32](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L32)*
 
 
 
@@ -44,7 +47,7 @@ ___
 
 *Inherited from [PromptOptions](botbuilder_dialogs.promptoptions.md).[prompt](botbuilder_dialogs.promptoptions.md#prompt)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:12](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L12)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:13](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L13)*
 
 
 
@@ -63,7 +66,7 @@ ___
 
 *Inherited from [PromptOptions](botbuilder_dialogs.promptoptions.md).[retryPrompt](botbuilder_dialogs.promptoptions.md#retryprompt)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:16](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L16)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L17)*
 
 
 
@@ -82,7 +85,7 @@ ___
 
 *Inherited from [PromptOptions](botbuilder_dialogs.promptoptions.md).[retrySpeak](botbuilder_dialogs.promptoptions.md#retryspeak)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L18)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L19)*
 
 
 
@@ -101,7 +104,7 @@ ___
 
 *Inherited from [PromptOptions](botbuilder_dialogs.promptoptions.md).[speak](botbuilder_dialogs.promptoptions.md#speak)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:14](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L14)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L15)*
 
 
 
@@ -118,11 +121,11 @@ ___
 
 **●  style**:  *[ListStyle](../enums/botbuilder_dialogs.liststyle.md)* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:29](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L29)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:34](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L34)*
 
 
 
-Preferred style of the choices sent to the user. The default value is `ChoicePromptStyle.auto`.
+Preferred style of the choices sent to the user. The default value is `ListStyle.auto`.
 
 
 

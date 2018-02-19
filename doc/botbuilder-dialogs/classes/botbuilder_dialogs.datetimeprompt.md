@@ -4,6 +4,27 @@
 
 # Class: DatetimePrompt
 
+
+Prompts a user to enter a datetime expression. By default the prompt will return to the calling dialog a `FoundDatetime[]` but this can be overridden using a custom `PromptValidator`.
+
+**Example usage:**
+
+    const { DialogSet, DatetimePrompt } = require('botbuilder-dialogs');
+
+    const dialogs = new DialogSet();
+
+    dialogs.add('datetimePrompt', new DatetimePrompt());
+
+    dialogs.add('datetimeDemo', [
+         function (context) {
+             return dialogs.prompt(context, 'datetimePrompt', `datetime: enter a datetime`);
+         },
+         function (context, values) {
+             context.reply(`Recognized values: ${JSON.stringify(values)}`);
+             return dialogs.end(context);
+         }
+    ]);
+
 ## Implements
 
 * [Dialog](../interfaces/botbuilder_dialogs.dialog.md)
@@ -30,15 +51,33 @@
 ### ⊕ **new DatetimePrompt**(validator?: *[PromptValidator](../#promptvalidator)[FoundDatetime](../interfaces/botbuilder_dialogs.founddatetime.md)[]⎮`undefined`*): [DatetimePrompt](botbuilder_dialogs.datetimeprompt.md)
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts#L17)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts:56](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts#L56)*
 
+
+
+Creates a new instance of the prompt.
+
+**Example usage:**
+
+    dialogs.add('timePrompt', new DatetimePrompt((context, values) => {
+         try {
+             if (values.length < 0) { throw new Error('missing time') }
+             if (values[0].type !== 'datetime') { throw new Error('unsupported type') }
+             const value = new Date(values[0].value);
+             if (value.getTime() < new Date().getTime()) { throw new Error('in the past') }
+             return dialogs.end(context, value);
+         } catch (err) {
+             context.reply(`Please enter a valid time in the future like "tomorrow at 9am" or say "cancel".`);
+             return Promise.resolve();
+         }
+    }));
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| validator | [PromptValidator](../#promptvalidator)[FoundDatetime](../interfaces/botbuilder_dialogs.founddatetime.md)[]⎮`undefined`   |  - |
+| validator | [PromptValidator](../#promptvalidator)[FoundDatetime](../interfaces/botbuilder_dialogs.founddatetime.md)[]⎮`undefined`   |  (Optional) validator that will be called each time the user responds to the prompt. |
 
 
 
@@ -58,7 +97,7 @@
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts#L19)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts:79](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts#L79)*
 
 
 
@@ -92,7 +131,7 @@ ___
 
 *Implementation of [Dialog](../interfaces/botbuilder_dialogs.dialog.md).[continue](../interfaces/botbuilder_dialogs.dialog.md#continue)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts:20](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts#L20)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts:80](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts#L80)*
 
 
 

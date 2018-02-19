@@ -4,6 +4,27 @@
 
 # Class: AttachmentPrompt
 
+
+Prompts a user to upload attachments like images. By default the prompt will return to the calling dialog a `Attachment[]` but this can be overridden using a custom `PromptValidator`.
+
+**Example usage:**
+
+    const { DialogSet, AttachmentPrompt } = require('botbuilder-dialogs');
+
+    const dialogs = new DialogSet();
+
+    dialogs.add('attachmentPrompt', new AttachmentPrompt());
+
+    dialogs.add('uploadImage', [
+         function (context) {
+             return dialogs.prompt(context, 'attachmentPrompt', `Send me image(s)`);
+         },
+         function (context, attachments) {
+             context.reply(`Processing ${attachments.length} images.`);
+             return dialogs.end(context);
+         }
+    ]);
+
 ## Implements
 
 * [Dialog](../interfaces/botbuilder_dialogs.dialog.md)
@@ -30,15 +51,29 @@
 ### ⊕ **new AttachmentPrompt**(validator?: *[PromptValidator](../#promptvalidator)[Attachment]()[]⎮`undefined`*): [AttachmentPrompt](botbuilder_dialogs.attachmentprompt.md)
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts:16](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts#L16)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts:37](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts#L37)*
 
+
+
+Creates a new instance of the prompt.
+
+**Example usage:**
+
+    dialogs.add('imagePrompt', new AttachmentPrompt((context, values) => {
+         if (values.length < 1) {
+             context.reply(`Send me an image or say 'cancel'.`);
+             return Prompts.resolve();
+         } else {
+             return dialogs.end(context, values);
+         }
+    }));
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| validator | [PromptValidator](../#promptvalidator)[Attachment]()[]⎮`undefined`   |  - |
+| validator | [PromptValidator](../#promptvalidator)[Attachment]()[]⎮`undefined`   |  (Optional) validator that will be called each time the user responds to the prompt. |
 
 
 
@@ -58,7 +93,7 @@
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts#L18)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts:56](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts#L56)*
 
 
 
@@ -92,7 +127,7 @@ ___
 
 *Implementation of [Dialog](../interfaces/botbuilder_dialogs.dialog.md).[continue](../interfaces/botbuilder_dialogs.dialog.md#continue)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts#L19)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts:57](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts#L57)*
 
 
 

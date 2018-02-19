@@ -4,7 +4,7 @@ const waterfall_1 = require("./waterfall");
 /**
  * A related set of dialogs that can all call each other.
  *
- * **example usage**
+ * **Example usage:**
  *
  * ```JavaScript
  * const { Bot, MemoryStorage, BotStateManager } = require('botbuilder');
@@ -52,7 +52,7 @@ class DialogSet {
     /**
      * Pushes a new dialog onto the dialog stack.
      *
-     * **example usage**
+     * **Example usage:**
      *
      * ```JavaScript
      * return dialogs.begin(context, 'greeting', user);
@@ -85,7 +85,7 @@ class DialogSet {
      * Helper function to simplify formatting the options for calling a prompt dialog. This helper will
      * construct a `PromptOptions` structure and then call [begin(context, dialogId, options)](#begin).
      *
-     * **example usage**
+     * **Example usage:**
      *
      * ```JavaScript
      * return dialogs.prompt(context, 'confirmPrompt', `Are you sure you'd like to quit?`);
@@ -107,7 +107,7 @@ class DialogSet {
      * its `Dialog.continue()` method. You can check `context.responded` after the call completes
      * to determine if a dialog was run and a reply was sent to the user.
      *
-     * **example usage**
+     * **Example usage:**
      *
      * ```JavaScript
      * return dialogs.continue(context).then(() => {
@@ -156,7 +156,7 @@ class DialogSet {
      * automatically ended as well and the result passed to its parent. If there are no more
      * parent dialogs on the stack then processing of the turn will end.
       *
-     * **example usage**
+     * **Example usage:**
      *
      * ```JavaScript
      * dialogs.add('showUptime', [
@@ -208,7 +208,7 @@ class DialogSet {
     /**
      * Deletes any existing dialog stack thus cancelling all dialogs on the stack.
      *
-     * **example usage**
+     * **Example usage:**
      *
      * ```JavaScript
      * return dialogs.endAll(context)
@@ -230,7 +230,7 @@ class DialogSet {
     /**
      * Finds a dialog that was previously added to the set using [add()](#add).
      *
-     * **example usage**
+     * **Example usage:**
      *
      * ```JavaScript
      * const dialog = dialogs.find('greeting');
@@ -243,7 +243,7 @@ class DialogSet {
     /**
      * Returns the dialog stack persisted for a conversation.
      *
-     * **example usage**
+     * **Example usage:**
      *
      * ```JavaScript
      * const hasActiveDialog = dialogs.getStack(context).length > 0;
@@ -262,7 +262,7 @@ class DialogSet {
      * empty so use `dialogs.getStack(context).length > 0` to protect calls where the stack could
      * be empty.
      *
-     * **example usage**
+     * **Example usage:**
      *
      * ```JavaScript
      * const dialogState = dialogs.getInstance(context).state;
@@ -280,7 +280,7 @@ class DialogSet {
      * Ends the current dialog and starts a new dialog in its place. This is particularly useful
      * for creating loops or redirecting to another dialog.
      *
-     * **example usage**
+     * **Example usage:**
      *
      * ```JavaScript
      * dialogs.add('loop', [

@@ -27,7 +27,7 @@ Interface of Dialog objects that can be added to a `DialogSet`. The dialog shoul
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialog.d.ts:22](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/dialog.d.ts#L22)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialog.d.ts:22](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/dialog.d.ts#L22)*
 
 
 
@@ -62,7 +62,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialog.d.ts:33](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/dialog.d.ts#L33)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialog.d.ts:33](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/dialog.d.ts#L33)*
 
 
 
@@ -98,13 +98,13 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialog.d.ts:45](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/dialog.d.ts#L45)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialog.d.ts:45](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/dialog.d.ts#L45)*
 
 
 
 (Optional) method called when an instance of the dialog is being returned to from another dialog that was started by the current instance using `DialogSet.begin()`.
 
-If this method is NOT implemented then the dialog will be automatically ended with a call to `DialogSet.endDialogWithResult()`. Any result passed from teh called dialog will be passed to the current dialogs parent.
+If this method is NOT implemented then the dialog will be automatically ended with a call to `DialogSet.endDialogWithResult()`. Any result passed from the called dialog will be passed to the current dialogs parent.
 
 
 **Parameters:**

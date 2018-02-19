@@ -5,6 +5,9 @@
 # Interface: FoundDatetime
 
 
+Datetime result returned by `DatetimePrompt`. For more details see the LUIS docs for [builtin.datetimev2](https://docs.microsoft.com/en-us/azure/cognitive-services/luis/luis-reference-prebuilt-entities#builtindatetimev2).
+
+
 ## Properties
 <a id="timex"></a>
 
@@ -12,8 +15,11 @@
 
 **●  timex**:  *`string`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts:12](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts#L12)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts#L19)*
 
+
+
+TIMEX expression representing ambiguity of the recognized time.
 
 
 
@@ -26,8 +32,11 @@ ___
 
 **●  type**:  *`string`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts:13](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts#L13)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts:24](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts#L24)*
 
+
+
+Type of time recognized. Possible values are 'date', 'time', 'datetime', 'daterange', 'timerange', 'datetimerange', 'duration', or 'set'.
 
 
 
@@ -40,8 +49,11 @@ ___
 
 **●  value**:  *`string`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts:14](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts#L14)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts:29](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts#L29)*
 
+
+
+Value of the specified [type](#type) that's a reasonable approximation given the ambiguity of the [timex](#timex).
 
 
 

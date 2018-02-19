@@ -9,6 +9,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const botbuilder_1 = require("botbuilder");
 const botbuilder_choices_1 = require("botbuilder-choices");
+/**
+ * Controls the way that choices for a `ChoicePrompt` or yes/no options for a `ConfirmPrompt` are
+ * presented to a user.
+ */
 var ListStyle;
 (function (ListStyle) {
     /** Don't include any choices for prompt. */
@@ -22,10 +26,57 @@ var ListStyle;
     /** Add choices to prompt as suggested actions. */
     ListStyle[ListStyle["suggestedAction"] = 4] = "suggestedAction";
 })(ListStyle = exports.ListStyle || (exports.ListStyle = {}));
+/**
+ * Prompts a user to make a selection from a list of choices. By default the prompt will return to
+ * the calling dialog a `FoundChoice` for the choice the user selected. This can be overridden
+ * using a custom `PromptValidator`.
+ *
+ * **Example usage:**
+ *
+ * ```JavaScript
+ * const { DialogSet, ChoicePrompt } = require('botbuilder-dialogs');
+ *
+ * const dialogs = new DialogSet();
+ *
+ * dialogs.add('choicePrompt', new ChoicePrompt());
+ *
+ * dialogs.add('choiceDemo', [
+ *      function (context) {
+ *          return dialogs.prompt(context, 'choicePrompt', `choice: select a color`, ['red', 'green', 'blue']);
+ *      },
+ *      function (context, choice: FoundChoice) {
+ *          context.reply(`Recognized choice: ${JSON.stringify(choice)}`);
+ *          return dialogs.end(context);
+ *      }
+ * ]);
+ * ```
+ */
 class ChoicePrompt {
+    /**
+     * Creates a new instance of the prompt.
+     *
+     * **Example usage:**
+     *
+     * ```JavaScript
+     * const { ChoicePrompt, formatChoicePrompt } = require('botbuilder-dialogs');
+     *
+     * dialogs.add('choiceDemo', [
+     *      function (context) {
+     *          return dialogs.prompt(context, 'choicePrompt', `choice: select a color`, ['red', 'green', 'blue']);
+     *      },
+     *      function (context, choice) {
+     *          context.reply(`Recognized choice: ${JSON.stringify(choice)}`);
+     *          return dialogs.end(context);
+     *      }
+     * ]);
+     * ```
+     * @param validator (Optional) validator that will be called each time the user responds to the prompt.
+     * @param choices (Optional) handler to dynamically provide the list of choices for the prompt/
+     */
     constructor(validator, choices) {
         this.validator = validator;
         this.choices = choices;
+        /** Can be used to tweak the style of choice prompt rendered to the user. */
         this.stylerOptions = {};
     }
     begin(context, dialogs, options) {
@@ -93,6 +144,24 @@ class ChoicePrompt {
     }
 }
 exports.ChoicePrompt = ChoicePrompt;
+/**
+ * Helper function to format a choice prompt for a given `ListStyle`. An activity will be returned
+ * that can then be sent to the user.
+ *
+ * **Example usage:**
+ *
+ * ```JavaScript
+ * const { formatChoicePrompt } = require('botbuilder-dialogs');
+ *
+ * context.reply(formatChoicePrompt(context, ['red', 'green', 'blue'], `Select a color`));
+ * ```
+ * @param channelOrContext Context for the current turn of conversation with the user or the ID of a channel. This is used when `style == ListStyle.auto`.
+ * @param choices Array of choices being prompted for.
+ * @param text (Optional) prompt text to show the user along with the options.
+ * @param speak (Optional) SSML to speak to the user on channels like Cortana. The messages `inputHint` will be automatically set to `InputHints.expectingInput`.
+ * @param options (Optional) additional choice styler options used to customize the rendering of the prompts choice list.
+ * @param style (Optional) list style to use when rendering prompt. Defaults to `ListStyle.auto`.
+ */
 function formatChoicePrompt(channelOrContext, choices, text, speak, options, style) {
     switch (style) {
         case ListStyle.auto:

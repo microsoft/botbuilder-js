@@ -3,7 +3,48 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const prompt_1 = require("./prompt");
 const Recognizers = require("@microsoft/recognizers-text-number");
 const numberModel = Recognizers.NumberRecognizer.instance.getNumberModel('en-us');
+/**
+ * Prompts a user to enter a number. By default the prompt will return to the calling dialog
+ * a `number` representing the users input.
+ *
+ * **Example usage:**
+ *
+ * ```JavaScript
+ * const { DialogSet, NumberPrompt } = require('botbuilder-dialogs');
+ *
+ * const dialogs = new DialogSet();
+ *
+ * dialogs.add('numberPrompt', new NumberPrompt());
+ *
+ * dialogs.add('numberDemo', [
+ *      function (context) {
+ *          return dialogs.prompt(context, 'numberPrompt', `number: enter a number`);
+ *      },
+ *      function (context, value) {
+ *          context.reply(`Recognized value: ${value}`);
+ *          return dialogs.end(context);
+ *      }
+ * ]);
+ * ```
+ */
 class NumberPrompt {
+    /**
+     * Creates a new instance of the prompt.
+     *
+     * **Example usage:**
+     *
+     * ```JavaScript
+     * dialogs.add('agePrompt', new NumberPrompt((context, value) => {
+     *      if (value === undefined || value < 1 || value > 110) {
+     *          context.reply(`Please enter a valid age between 1 and 110.`);
+     *          return Promise.resolve();
+     *      } else {
+     *          return dialogs.end(context, value);
+     *      }
+     * }));
+     * ```
+     * @param validator (Optional) validator that will be called each time the user responds to the prompt.
+     */
     constructor(validator) {
         this.validator = validator;
     }

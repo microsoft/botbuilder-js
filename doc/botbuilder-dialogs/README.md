@@ -57,8 +57,11 @@
 
 **Τ DynamicChoicesProvider**:  *`function`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L31)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:43](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L43)*
 
+
+
+Signature for handler passed to a `ChoicePrompt` that will dynamically calculate the prompts choices.
 
 #### Type declaration
 ►(context: *`BotContext`*, recognizePhase: *`boolean`*, dialogs: *[DialogSet](classes/botbuilder_dialogs.dialogset.md)*): [Promiseable]()(`string`⎮[Choice]())[]
@@ -69,9 +72,9 @@
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | `BotContext`   |  - |
-| recognizePhase | `boolean`   |  - |
-| dialogs | [DialogSet](classes/botbuilder_dialogs.dialogset.md)   |  - |
+| context | `BotContext`   |  Context object for the current turn of conversation with the user. |
+| recognizePhase | `boolean`   |  If `true` the handler is being called to get a list of choices that will be recognized. If `false` then a prompt or retryPrompt is being rendered. |
+| dialogs | [DialogSet](classes/botbuilder_dialogs.dialogset.md)   |  The parent dialog set. |
 
 
 
@@ -92,7 +95,12 @@ ___
 
 **Τ PromptValidator**:  *`function`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:20](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L20)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L31)*
+
+
+
+Signature of a function that can be passed in to the constructor of all prompts. This function will be called every time the user replies to a prompt and can be used to add additional validation logic to a prompt or to customize the reply sent when the user send a reply that isn't recognized.
+*__param__*: Possible types for `value` arg.
 
 
 #### Type declaration
@@ -104,9 +112,9 @@ ___
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | `BotContext`   |  - |
-| value | `T`   |  - |
-| dialogs | [DialogSet](classes/botbuilder_dialogs.dialogset.md)   |  - |
+| context | `BotContext`   |  Context object for the current turn of conversation with the user. |
+| value | `T`   |  The value that was recognized or wasn't recognized. Depending on the prompt this can be either undefined or an empty array to indicate an unrecognized value. |
+| dialogs | [DialogSet](classes/botbuilder_dialogs.dialogset.md)   |  The parent dialog set. |
 
 
 
@@ -127,7 +135,7 @@ ___
 
 **Τ SkipStepFunction**:  *`function`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:22](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L22)*
+*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:22](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L22)*
 
 
 
@@ -163,7 +171,7 @@ ___
 
 **Τ WaterfallStep**:  *`function`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L17)*
+*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L17)*
 
 
 
@@ -205,20 +213,29 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:42](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L42)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:119](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L119)*
 
+
+
+Helper function to format a choice prompt for a given `ListStyle`. An activity will be returned that can then be sent to the user.
+
+**Example usage:**
+
+    const { formatChoicePrompt } = require('botbuilder-dialogs');
+
+    context.reply(formatChoicePrompt(context, ['red', 'green', 'blue'], `Select a color`));
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| channelOrContext | `string`⎮`BotContext`   |  - |
-| choices | (`string`⎮[Choice]())[]   |  - |
-| text | `undefined`⎮`string`   |  - |
-| speak | `undefined`⎮`string`   |  - |
-| options | [ChoiceStylerOptions]()   |  - |
-| style | [ListStyle](enums/botbuilder_dialogs.liststyle.md)   |  - |
+| channelOrContext | `string`⎮`BotContext`   |  Context for the current turn of conversation with the user or the ID of a channel. This is used when `style == ListStyle.auto`. |
+| choices | (`string`⎮[Choice]())[]   |  Array of choices being prompted for. |
+| text | `undefined`⎮`string`   |  (Optional) prompt text to show the user along with the options. |
+| speak | `undefined`⎮`string`   |  (Optional) SSML to speak to the user on channels like Cortana. The messages `inputHint` will be automatically set to `InputHints.expectingInput`. |
+| options | [ChoiceStylerOptions]()   |  (Optional) additional choice styler options used to customize the rendering of the prompts choice list. |
+| style | [ListStyle](enums/botbuilder_dialogs.liststyle.md)   |  (Optional) list style to use when rendering prompt. Defaults to `ListStyle.auto`. |
 
 
 
@@ -240,16 +257,25 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/dfb4aa4/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L21)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:45](https://github.com/Microsoft/botbuilder-js/blob/9f80f0a/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L45)*
 
+
+
+Helper function to properly format a prompt sent to a user.
+
+**Example usage:**
+
+    const { formatPrompt } = require('botbuilder-dialogs');
+
+    context.reply(formatPrompt(`Hi... What's your name?`, `What is your name?`));
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| prompt | `string`⎮[Partial]()[Activity]()   |  - |
-| speak | `undefined`⎮`string`   |  - |
+| prompt | `string`⎮[Partial]()[Activity]()   |  Activity or text to prompt the user with. If prompt is a `string` then an activity of type `message` will be created. |
+| speak | `undefined`⎮`string`   |  (Optional) SSML to speak to the user on channels like Cortana. The messages `inputHint` will be automatically set to `InputHints.expectingInput`. |
 
 
 
