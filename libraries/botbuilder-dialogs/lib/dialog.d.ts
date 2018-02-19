@@ -10,7 +10,7 @@ import { DialogSet } from './dialogSet';
 /**
  * Interface of Dialog objects that can be added to a `DialogSet`. The dialog should generally
  * be a singleton and added to a dialog set using `DialogSet.add()` at which point it will be
- * assigned a name.
+ * assigned a unique ID.
  */
 export interface Dialog {
     /**

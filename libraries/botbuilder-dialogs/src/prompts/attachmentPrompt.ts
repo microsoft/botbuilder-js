@@ -10,6 +10,9 @@ import { Dialog } from '../dialog';
 import { DialogSet } from '../dialogSet';
 import { PromptOptions, PromptValidator, formatPrompt } from './prompt';
 
+/**
+ * 
+ */
 export class AttachmentPrompt implements Dialog {
     constructor(private validator?: PromptValidator<Attachment[]>) {}
 

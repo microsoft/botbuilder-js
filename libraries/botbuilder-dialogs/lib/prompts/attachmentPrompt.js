@@ -1,6 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const prompt_1 = require("./prompt");
+/**
+ *
+ */
 class AttachmentPrompt {
     constructor(validator) {
         this.validator = validator;

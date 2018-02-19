@@ -9,6 +9,9 @@ import { Attachment } from 'botbuilder';
 import { Dialog } from '../dialog';
 import { DialogSet } from '../dialogSet';
 import { PromptOptions, PromptValidator } from './prompt';
+/**
+ *
+ */
 export declare class AttachmentPrompt implements Dialog {
     private validator;
     constructor(validator?: PromptValidator<Attachment[]> | undefined);
