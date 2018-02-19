@@ -84,7 +84,7 @@ export class MicrosoftAppCredentials implements msrest.ServiceClientCredentials 
                         // Subtract 5 minutes from expires_in so they'll we'll get a
                         // new token before it expires.
                         var oauthResponse = <OAuthResponse>JSON.parse(body);
-                        oauthResponse.expiration_time = new Date(Date.now() + (oauthResponse.expires_in * 1000) - 60000);
+                        oauthResponse.expiration_time = new Date(Date.now() + (oauthResponse.expires_in * 1000) - 300000);
                         resolve(oauthResponse);
                     } else {
                         reject(new Error('Refresh access token failed with status code: ' + response.statusCode));
