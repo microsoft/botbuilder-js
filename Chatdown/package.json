@@ -1,0 +1,29 @@
+{
+  "name": "chatdown",
+  "version": "0.0.1",
+  "description": "Tool for parsing chat files and outputting replayable activities",
+  "main": "lib/chatdown.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Microsoft/botbuilder-tools.git"
+  },
+  "author": "Microsoft",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Microsoft/botbuilder-tools/issues"
+  },
+  "homepage": "https://github.com/Microsoft/botbuilder-tools#readme",
+  "dependencies": {
+    "chalk": "^2.3.1",
+    "minimist": "^1.2.0"
+  },
+  "bin": {
+    "chatdown": "./bin/chatdown.js"
+  }
+}

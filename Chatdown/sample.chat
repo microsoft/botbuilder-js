@@ -1,0 +1,16 @@
+﻿[Message:LulaBot] Hi!
+
+[Message:Joe] yo!
+[Typing:LulaBot:3000]
+[Message:LulaBot] Greetings!
+What would you like to do?
+* update - You can update your account
+* List - You can list your data
+* help - you can get help
+
+[Message:Joe] I need help
+
+[Message:LulaBot]
+Here you go.
+
+[Attachments:LulaBot:content-type/json:{"imageUrl":"http://someimageurl"}]
