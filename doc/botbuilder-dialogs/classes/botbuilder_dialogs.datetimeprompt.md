@@ -51,7 +51,7 @@ Prompts a user to enter a datetime expression. By default the prompt will return
 ### ⊕ **new DatetimePrompt**(validator?: *[PromptValidator](../#promptvalidator)[FoundDatetime](../interfaces/botbuilder_dialogs.founddatetime.md)[]⎮`undefined`*): [DatetimePrompt](botbuilder_dialogs.datetimeprompt.md)
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts:56](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts#L56)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts:56](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts#L56)*
 
 
 
@@ -97,7 +97,7 @@ Creates a new instance of the prompt.
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts:79](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts#L79)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts:79](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts#L79)*
 
 
 
@@ -131,7 +131,7 @@ ___
 
 *Implementation of [Dialog](../interfaces/botbuilder_dialogs.dialog.md).[continue](../interfaces/botbuilder_dialogs.dialog.md#continue)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts:80](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts#L80)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts:80](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts#L80)*
 
 
 

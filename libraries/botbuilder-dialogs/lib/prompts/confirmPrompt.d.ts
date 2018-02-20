@@ -61,7 +61,7 @@ export declare class ConfirmPrompt implements Dialog {
      * ```
      */
     static choices: ConfirmChoices;
-    /** Can be used to tweak the style of choice prompt rendered to the user. */
+    /** Additional options passed to the `ChoiceStyler` and used to tweak the style of yes/no choices rendered to the user. */
     readonly stylerOptions: ChoiceStylerOptions;
     /**
      * Creates a new instance of the prompt.

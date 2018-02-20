@@ -58,26 +58,16 @@ class ChoicePrompt {
      * **Example usage:**
      *
      * ```JavaScript
-     * const { ChoicePrompt, formatChoicePrompt } = require('botbuilder-dialogs');
-     *
-     * dialogs.add('choiceDemo', [
-     *      function (context) {
-     *          return dialogs.prompt(context, 'choicePrompt', `choice: select a color`, ['red', 'green', 'blue']);
-     *      },
-     *      function (context, choice) {
-     *          context.reply(`Recognized choice: ${JSON.stringify(choice)}`);
-     *          return dialogs.end(context);
-     *      }
-     * ]);
+     * dialogs.add('choicePrompt', new ChoicePrompt());
      * ```
      * @param validator (Optional) validator that will be called each time the user responds to the prompt.
-     * @param choices (Optional) handler to dynamically provide the list of choices for the prompt/
      */
-    constructor(validator, choices) {
+    constructor(validator) {
         this.validator = validator;
-        this.choices = choices;
-        /** Can be used to tweak the style of choice prompt rendered to the user. */
+        /** Additional options passed to the `ChoiceStyler` and used to tweak the style of choices rendered to the user. */
         this.stylerOptions = {};
+        /** Additional options passed to the `recognizeChoices()` function. */
+        this.recognizerOptions = {};
     }
     begin(context, dialogs, options) {
         // Persist options
@@ -92,55 +82,40 @@ class ChoicePrompt {
         }
     }
     continue(context, dialogs) {
-        // Get choices to recognize against
-        return this.getChoices(context, true, dialogs)
-            .then((choices) => {
-            // Recognize value
-            const options = dialogs.getInstance(context).state;
-            const utterance = context.request && context.request.text ? context.request.text : '';
-            const results = botbuilder_choices_1.recognizeChoices(utterance, choices);
-            const value = results.length > 0 ? results[0].resolution : undefined;
-            if (this.validator) {
-                // Call validator for further processing
-                return Promise.resolve(this.validator(context, value, dialogs));
-            }
-            else if (value) {
-                // Return recognized choice
-                return dialogs.end(context, value);
-            }
-            else if (options.retryPrompt) {
-                // Send retry prompt to user
-                return this.sendChoicePrompt(context, dialogs, options.retryPrompt, options.retrySpeak);
-            }
-            else if (options.prompt) {
-                // Send original prompt to user
-                return this.sendChoicePrompt(context, dialogs, options.prompt, options.speak);
-            }
-            else {
-                return Promise.resolve();
-            }
-        });
-    }
-    sendChoicePrompt(context, dialogs, prompt, speak) {
-        if (typeof prompt === 'string') {
-            const style = dialogs.getInstance(context).state.style;
-            return this.getChoices(context, false, dialogs)
-                .then((choices) => formatChoicePrompt(context, choices, prompt, speak, this.stylerOptions, style))
-                .then((activity) => { context.reply(activity); });
+        // Recognize value
+        const options = dialogs.getInstance(context).state;
+        const utterance = context.request && context.request.text ? context.request.text : '';
+        const results = botbuilder_choices_1.recognizeChoices(utterance, options.choices || [], this.recognizerOptions);
+        const value = results.length > 0 ? results[0].resolution : undefined;
+        if (this.validator) {
+            // Call validator for further processing
+            return Promise.resolve(this.validator(context, value, dialogs));
+        }
+        else if (value) {
+            // Return recognized choice
+            return dialogs.end(context, value);
+        }
+        else if (options.retryPrompt) {
+            // Send retry prompt to user
+            return this.sendChoicePrompt(context, dialogs, options.retryPrompt, options.retrySpeak);
+        }
+        else if (options.prompt) {
+            // Send original prompt to user
+            return this.sendChoicePrompt(context, dialogs, options.prompt, options.speak);
         }
         else {
-            context.reply(prompt);
             return Promise.resolve();
         }
     }
-    getChoices(context, recognizePhase, dialogs) {
-        if (this.choices) {
-            return Promise.resolve(this.choices(context, recognizePhase, dialogs));
+    sendChoicePrompt(context, dialogs, prompt, speak) {
+        if (typeof prompt === 'string') {
+            const options = dialogs.getInstance(context).state;
+            context.reply(formatChoicePrompt(context, options.choices || [], prompt, speak, this.stylerOptions, options.style));
         }
         else {
-            const options = dialogs.getInstance(context).state;
-            return Promise.resolve(options.choices || []);
+            context.reply(prompt);
         }
+        return Promise.resolve();
     }
 }
 exports.ChoicePrompt = ChoicePrompt;

@@ -58,7 +58,7 @@ Prompts a user to confirm something with a yes/no response. By default the promp
 ### ⊕ **new ConfirmPrompt**(validator?: *[PromptValidator](../#promptvalidator)`boolean`⎮`undefined`⎮`undefined`*): [ConfirmPrompt](botbuilder_dialogs.confirmprompt.md)
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:65](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L65)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:65](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L65)*
 
 
 
@@ -98,11 +98,11 @@ Creates a new instance of the prompt.
 
 **●  stylerOptions**:  *[ChoiceStylerOptions]()* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:65](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L65)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:65](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L65)*
 
 
 
-Can be used to tweak the style of choice prompt rendered to the user.
+Additional options passed to the `ChoiceStyler` and used to tweak the style of yes/no choices rendered to the user.
 
 
 
@@ -115,7 +115,7 @@ ___
 
 **●  choices**:  *[ConfirmChoices](../interfaces/botbuilder_dialogs.confirmchoices.md)* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:63](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L63)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:63](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L63)*
 
 
 
@@ -143,7 +143,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:84](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L84)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:84](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L84)*
 
 
 
@@ -177,7 +177,7 @@ ___
 
 *Implementation of [Dialog](../interfaces/botbuilder_dialogs.dialog.md).[continue](../interfaces/botbuilder_dialogs.dialog.md#continue)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:85](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L85)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:85](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L85)*
 
 
 
@@ -208,7 +208,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:86](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L86)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:86](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L86)*
 
 
 

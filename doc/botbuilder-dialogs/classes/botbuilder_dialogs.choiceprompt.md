@@ -38,6 +38,7 @@ Prompts a user to make a selection from a list of choices. By default the prompt
 
 ### Properties
 
+* [recognizerOptions](botbuilder_dialogs.choiceprompt.md#recognizeroptions)
 * [stylerOptions](botbuilder_dialogs.choiceprompt.md#styleroptions)
 
 
@@ -53,10 +54,10 @@ Prompts a user to make a selection from a list of choices. By default the prompt
 <a id="constructor"></a>
 
 
-### ⊕ **new ChoicePrompt**(validator?: *[PromptValidator](../#promptvalidator)[FoundChoice]()⎮`undefined`⎮`undefined`*, choices?: *[DynamicChoicesProvider](../#dynamicchoicesprovider)⎮`undefined`*): [ChoicePrompt](botbuilder_dialogs.choiceprompt.md)
+### ⊕ **new ChoicePrompt**(validator?: *[PromptValidator](../#promptvalidator)[FoundChoice]()⎮`undefined`⎮`undefined`*): [ChoicePrompt](botbuilder_dialogs.choiceprompt.md)
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:73](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L73)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:66](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L66)*
 
 
 
@@ -64,17 +65,7 @@ Creates a new instance of the prompt.
 
 **Example usage:**
 
-    const { ChoicePrompt, formatChoicePrompt } = require('botbuilder-dialogs');
-
-    dialogs.add('choiceDemo', [
-         function (context) {
-             return dialogs.prompt(context, 'choicePrompt', `choice: select a color`, ['red', 'green', 'blue']);
-         },
-         function (context, choice) {
-             context.reply(`Recognized choice: ${JSON.stringify(choice)}`);
-             return dialogs.end(context);
-         }
-    ]);
+    dialogs.add('choicePrompt', new ChoicePrompt());
 
 
 **Parameters:**
@@ -82,7 +73,6 @@ Creates a new instance of the prompt.
 | Param | Type | Description |
 | ------ | ------ | ------ |
 | validator | [PromptValidator](../#promptvalidator)[FoundChoice]()⎮`undefined`⎮`undefined`   |  (Optional) validator that will be called each time the user responds to the prompt. |
-| choices | [DynamicChoicesProvider](../#dynamicchoicesprovider)⎮`undefined`   |  (Optional) handler to dynamically provide the list of choices for the prompt/ |
 
 
 
@@ -94,17 +84,34 @@ Creates a new instance of the prompt.
 
 
 ## Properties
+<a id="recognizeroptions"></a>
+
+###  recognizerOptions
+
+**●  recognizerOptions**:  *[FindChoicesOptions]()* 
+
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:66](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L66)*
+
+
+
+Additional options passed to the `recognizeChoices()` function.
+
+
+
+
+___
+
 <a id="styleroptions"></a>
 
 ###  stylerOptions
 
 **●  stylerOptions**:  *[ChoiceStylerOptions]()* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:73](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L73)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:64](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L64)*
 
 
 
-Can be used to tweak the style of choice prompt rendered to the user.
+Additional options passed to the `ChoiceStyler` and used to tweak the style of choices rendered to the user.
 
 
 
@@ -121,7 +128,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:96](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L96)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:78](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L78)*
 
 
 
@@ -155,7 +162,7 @@ ___
 
 *Implementation of [Dialog](../interfaces/botbuilder_dialogs.dialog.md).[continue](../interfaces/botbuilder_dialogs.dialog.md#continue)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:97](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L97)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:79](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L79)*
 
 
 

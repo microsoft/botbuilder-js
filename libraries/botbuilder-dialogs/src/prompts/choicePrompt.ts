@@ -9,7 +9,7 @@ import { Promiseable, Activity, InputHints } from 'botbuilder';
 import { Dialog } from '../dialog';
 import { DialogSet } from '../dialogSet';
 import { PromptOptions, PromptValidator } from './prompt';
-import { Choice, ChoiceStyler, ChoiceStylerOptions, recognizeChoices, FoundChoice } from 'botbuilder-choices';
+import { Choice, ChoiceStyler, ChoiceStylerOptions, recognizeChoices, FindChoicesOptions, FoundChoice } from 'botbuilder-choices';
 
 /**
  * Controls the way that choices for a `ChoicePrompt` or yes/no options for a `ConfirmPrompt` are
@@ -43,15 +43,6 @@ export interface ChoicePromptOptions extends PromptOptions {
 }
 
 /**
- * Signature for handler passed to a `ChoicePrompt` that will dynamically calculate the prompts 
- * choices.
- * @param DynamicChoicesProvider.context Context object for the current turn of conversation with the user.
- * @param DynamicChoicesProvider.recognizePhase If `true` the handler is being called to get a list of choices that will be recognized. If `false` then a prompt or retryPrompt is being rendered.
- * @param DynamicChoicesProvider.dialogs The parent dialog set.
- */
-export type DynamicChoicesProvider = (context: BotContext, recognizePhase: boolean, dialogs: DialogSet) => Promiseable<(string|Choice)[]>;
-
-/**
  * Prompts a user to make a selection from a list of choices. By default the prompt will return to 
  * the calling dialog a `FoundChoice` for the choice the user selected. This can be overridden 
  * using a custom `PromptValidator`.
@@ -77,8 +68,11 @@ export type DynamicChoicesProvider = (context: BotContext, recognizePhase: boole
  * ```
  */
 export class ChoicePrompt implements Dialog {
-    /** Can be used to tweak the style of choice prompt rendered to the user. */
+    /** Additional options passed to the `ChoiceStyler` and used to tweak the style of choices rendered to the user. */
     public readonly stylerOptions: ChoiceStylerOptions = {};
+
+    /** Additional options passed to the `recognizeChoices()` function. */
+    public readonly recognizerOptions: FindChoicesOptions = {};
 
     /**
      * Creates a new instance of the prompt.
@@ -86,22 +80,11 @@ export class ChoicePrompt implements Dialog {
      * **Example usage:**
      * 
      * ```JavaScript
-     * const { ChoicePrompt, formatChoicePrompt } = require('botbuilder-dialogs');
-     * 
-     * dialogs.add('choiceDemo', [
-     *      function (context) {
-     *          return dialogs.prompt(context, 'choicePrompt', `choice: select a color`, ['red', 'green', 'blue']);
-     *      },
-     *      function (context, choice) {
-     *          context.reply(`Recognized choice: ${JSON.stringify(choice)}`);
-     *          return dialogs.end(context);
-     *      }
-     * ]);
+     * dialogs.add('choicePrompt', new ChoicePrompt());
      * ```
      * @param validator (Optional) validator that will be called each time the user responds to the prompt.
-     * @param choices (Optional) handler to dynamically provide the list of choices for the prompt/
      */
-    constructor(private validator?: PromptValidator<FoundChoice|undefined>, private choices?: DynamicChoicesProvider) {}
+    constructor(private validator?: PromptValidator<FoundChoice|undefined>) {}
 
     public begin(context: BotContext, dialogs: DialogSet, options: ChoicePromptOptions): Promise<void> {
         // Persist options
@@ -117,51 +100,36 @@ export class ChoicePrompt implements Dialog {
     }
 
     public continue(context: BotContext, dialogs: DialogSet): Promise<void> {
-        // Get choices to recognize against
-        return this.getChoices(context, true, dialogs)
-            .then((choices) => {
-                // Recognize value
-                const options = dialogs.getInstance<ChoicePromptOptions>(context).state;
-                const utterance = context.request && context.request.text ? context.request.text : '';
-                const results = recognizeChoices(utterance, choices);
-                const value = results.length > 0 ? results[0].resolution : undefined;
-                if (this.validator) {
-                    // Call validator for further processing
-                    return Promise.resolve(this.validator(context, value, dialogs));
-                } else if (value) {
-                    // Return recognized choice
-                    return dialogs.end(context, value);
-                } else if (options.retryPrompt) {
-                    // Send retry prompt to user
-                    return this.sendChoicePrompt(context, dialogs, options.retryPrompt, options.retrySpeak);
-                } else if (options.prompt) {
-                    // Send original prompt to user
-                    return this.sendChoicePrompt(context, dialogs, options.prompt, options.speak);
-                } else {
-                    return Promise.resolve();
-                }
-            });
+        // Recognize value
+        const options = dialogs.getInstance<ChoicePromptOptions>(context).state;
+        const utterance = context.request && context.request.text ? context.request.text : '';
+        const results = recognizeChoices(utterance, options.choices || [], this.recognizerOptions);
+        const value = results.length > 0 ? results[0].resolution : undefined;
+        if (this.validator) {
+            // Call validator for further processing
+            return Promise.resolve(this.validator(context, value, dialogs));
+        } else if (value) {
+            // Return recognized choice
+            return dialogs.end(context, value);
+        } else if (options.retryPrompt) {
+            // Send retry prompt to user
+            return this.sendChoicePrompt(context, dialogs, options.retryPrompt, options.retrySpeak);
+        } else if (options.prompt) {
+            // Send original prompt to user
+            return this.sendChoicePrompt(context, dialogs, options.prompt, options.speak);
+        } else {
+            return Promise.resolve();
+        }
     }
 
     private sendChoicePrompt(context: BotContext, dialogs: DialogSet, prompt: string|Partial<Activity>, speak?: string): Promise<void> {
         if (typeof prompt === 'string') {
-            const style = dialogs.getInstance<ChoicePromptOptions>(context).state.style; 
-            return this.getChoices(context, false, dialogs)
-                .then((choices) => formatChoicePrompt(context, choices, prompt, speak, this.stylerOptions, style))
-                .then((activity) => { context.reply(activity) });
+            const options = dialogs.getInstance<ChoicePromptOptions>(context).state; 
+            context.reply(formatChoicePrompt(context, options.choices || [], prompt, speak, this.stylerOptions, options.style));
         } else { 
             context.reply(prompt);
-            return Promise.resolve(); 
         }
-    }
-
-    private getChoices(context: BotContext, recognizePhase: boolean, dialogs: DialogSet): Promise<(string|Choice)[]> {
-        if (this.choices) {
-            return Promise.resolve(this.choices(context, recognizePhase, dialogs));
-        } else {
-            const options = dialogs.getInstance<ChoicePromptOptions>(context).state;
-            return Promise.resolve(options.choices || []);
-        }
+        return Promise.resolve(); 
     }
 }
 

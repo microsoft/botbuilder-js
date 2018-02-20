@@ -68,7 +68,7 @@ export class ConfirmPrompt implements Dialog {
      */
     static choices: ConfirmChoices = { '*': ['yes', 'no'] };
 
-    /** Can be used to tweak the style of choice prompt rendered to the user. */
+    /** Additional options passed to the `ChoiceStyler` and used to tweak the style of yes/no choices rendered to the user. */
     public readonly stylerOptions: ChoiceStylerOptions;
 
     /**

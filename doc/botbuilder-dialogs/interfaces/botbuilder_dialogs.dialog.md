@@ -27,7 +27,7 @@ Interface of Dialog objects that can be added to a `DialogSet`. The dialog shoul
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialog.d.ts:22](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/dialog.d.ts#L22)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialog.d.ts:22](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/dialog.d.ts#L22)*
 
 
 
@@ -62,7 +62,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialog.d.ts:33](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/dialog.d.ts#L33)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialog.d.ts:33](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/dialog.d.ts#L33)*
 
 
 
@@ -98,7 +98,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialog.d.ts:45](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/dialog.d.ts#L45)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialog.d.ts:45](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/dialog.d.ts#L45)*
 
 
 

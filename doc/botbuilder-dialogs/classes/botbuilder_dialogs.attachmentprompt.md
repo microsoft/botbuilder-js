@@ -51,7 +51,7 @@ Prompts a user to upload attachments like images. By default the prompt will ret
 ### ⊕ **new AttachmentPrompt**(validator?: *[PromptValidator](../#promptvalidator)[Attachment]()[]⎮`undefined`*): [AttachmentPrompt](botbuilder_dialogs.attachmentprompt.md)
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts:37](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts#L37)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts:37](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts#L37)*
 
 
 
@@ -93,7 +93,7 @@ Creates a new instance of the prompt.
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts:56](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts#L56)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts:56](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts#L56)*
 
 
 
@@ -127,7 +127,7 @@ ___
 
 *Implementation of [Dialog](../interfaces/botbuilder_dialogs.dialog.md).[continue](../interfaces/botbuilder_dialogs.dialog.md#continue)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts:57](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts#L57)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts:57](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts#L57)*
 
 
 

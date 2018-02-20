@@ -36,7 +36,6 @@
 
 ### Type aliases
 
-* [DynamicChoicesProvider](#dynamicchoicesprovider)
 * [PromptValidator](#promptvalidator)
 * [SkipStepFunction](#skipstepfunction)
 * [WaterfallStep](#waterfallstep)
@@ -51,51 +50,13 @@
 
 ---
 ## Type aliases
-<a id="dynamicchoicesprovider"></a>
-
-###  DynamicChoicesProvider
-
-**Τ DynamicChoicesProvider**:  *`function`* 
-
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:43](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L43)*
-
-
-
-Signature for handler passed to a `ChoicePrompt` that will dynamically calculate the prompts choices.
-
-#### Type declaration
-►(context: *`BotContext`*, recognizePhase: *`boolean`*, dialogs: *[DialogSet](classes/botbuilder_dialogs.dialogset.md)*): [Promiseable]()(`string`⎮[Choice]())[]
-
-
-
-**Parameters:**
-
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| context | `BotContext`   |  Context object for the current turn of conversation with the user. |
-| recognizePhase | `boolean`   |  If `true` the handler is being called to get a list of choices that will be recognized. If `false` then a prompt or retryPrompt is being rendered. |
-| dialogs | [DialogSet](classes/botbuilder_dialogs.dialogset.md)   |  The parent dialog set. |
-
-
-
-
-
-**Returns:** [Promiseable]()(`string`⎮[Choice]())[]
-
-
-
-
-
-
-___
-
 <a id="promptvalidator"></a>
 
 ###  PromptValidator
 
 **Τ PromptValidator**:  *`function`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L31)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L31)*
 
 
 
@@ -135,7 +96,7 @@ ___
 
 **Τ SkipStepFunction**:  *`function`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:55](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L55)*
+*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:55](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L55)*
 
 
 
@@ -171,7 +132,7 @@ ___
 
 **Τ WaterfallStep**:  *`function`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:50](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L50)*
+*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:50](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L50)*
 
 
 
@@ -244,7 +205,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:119](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L119)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:100](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L100)*
 
 
 
@@ -288,7 +249,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:45](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L45)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:45](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L45)*
 
 
 

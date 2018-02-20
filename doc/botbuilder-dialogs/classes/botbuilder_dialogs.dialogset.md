@@ -65,7 +65,7 @@ A related set of dialogs that can all call each other.
 ### ⊕ **new DialogSet**(stackName?: *`undefined`⎮`string`*): [DialogSet](botbuilder_dialogs.dialogset.md)
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:48](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L48)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:48](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L48)*
 
 
 
@@ -102,7 +102,7 @@ Creates an empty dialog set. The ability to name the sets dialog stack means tha
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:79](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L79)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:79](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L79)*
 
 
 
@@ -139,7 +139,7 @@ Type of the dialog being set and returned.
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:80](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L80)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:80](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L80)*
 
 
 
@@ -170,7 +170,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:93](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L93)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:93](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L93)*
 
 
 
@@ -209,7 +209,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:126](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L126)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:126](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L126)*
 
 
 
@@ -250,7 +250,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:152](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L152)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:152](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L152)*
 
 
 
@@ -297,7 +297,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:164](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L164)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:164](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L164)*
 
 
 
@@ -335,7 +335,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:176](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L176)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:176](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L176)*
 
 
 
@@ -378,7 +378,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:201](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L201)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:201](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L201)*
 
 
 
@@ -421,7 +421,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:187](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L187)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:187](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L187)*
 
 
 
@@ -458,7 +458,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:109](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L109)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:109](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L109)*
 
 
 
@@ -505,7 +505,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:226](https://github.com/Microsoft/botbuilder-js/blob/4638a56/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L226)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:226](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L226)*
 
 
 
