@@ -1,6 +1,6 @@
 const chatdown = require('../lib/chatdown');
 
-const fs = require('fs');
+const fs = require('fs-extra');
 const path = require('path');
 const chalk = require('chalk');
 
@@ -32,22 +32,29 @@ function getInput(config) {
             stdin.on('error', error => reject(error))
         });
     }
-    return new Promise((resolve, reject) => {
-        fs.readFile(path.resolve(config.in), 'utf-8', (err, data) => {
-            err ? reject(err) : resolve(data);
-        });
-    });
+    return fs.readFile(path.resolve(config.in), 'utf-8');
+}
+
+async function writeOut(activities, config) {
+    const { out } = config;
+    if (!out) {
+        process.stdout.write(JSON.stringify(activities));
+        return true;
+    }
+    const fileToWrite = path.resolve(out);
+    await fs.ensureFile(fileToWrite);
+    await fs.writeJson(fileToWrite, activities, {spaces:2});
+    return fileToWrite;
 }
 
 async function runProgram() {
     const config = await resolveConfigs();
     const fileContents = await getInput(config);
-    const activities = await chatdown(fileContents);
-    const writeOutConfirmation = writeOut(activities, config);
-}
-
-async function writeOut(activities) {
-
+    const activities = await chatdown(fileContents, config);
+    const writeConfirmation = await writeOut(activities, config);
+    if (typeof writeConfirmation === 'string') {
+        process.stdout.write(chalk`{green Successfully wrote file:} {blue ${writeConfirmation}}`);
+    }
 }
 
 function exitWithError(error) {
@@ -56,4 +63,5 @@ function exitWithError(error) {
 }
 
 runProgram()
-    .then(writeOut).catch(exitWithError);
+    .then(() => process.exit(0))
+    .catch(exitWithError);

@@ -1,4 +1,6 @@
 {
+  "user": "Joe",
+  "bot": "LulaBot",
   "in": "sample.chat",
   "out": "sample.transcript"
 }

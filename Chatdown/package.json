@@ -21,6 +21,7 @@
   "homepage": "https://github.com/Microsoft/botbuilder-tools#readme",
   "dependencies": {
     "chalk": "^2.3.1",
+    "fs-extra": "^5.0.0",
     "minimist": "^1.2.0"
   },
   "bin": {

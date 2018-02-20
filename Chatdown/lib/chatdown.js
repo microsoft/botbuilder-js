@@ -3,7 +3,33 @@ const ActivityType = require('./activityType');
 const ActivityField = require('./activityField');
 const Attachment = require('./attachment');
 
-module.exports = async function readFileContents(fileContents) {
+async function readContents(fileContents, config) {
+    const activities = [];
+    const lines = fileLineIterator(fileContents);
+    const userToken = config.user.toLowerCase() + ':';
+    const botToken = config.bot.toLowerCase() + ':';
+    let aggregate = '';
+    let currentActivity;
+    for (let line of lines) {
+        if (line.startsWith(userToken) || line.startsWith(botToken)) {
+            if (currentActivity) {
+                currentActivity.message = aggregate.trim();
+                activities.push(currentActivity);
+                aggregate = '';
+            }
+            currentActivity = new Activity();
+            continue;
+        }
+
+        if (line.startsWith('[') && line.endsWith(']')) {
+            const activity = await readActivity(line);
+        }
+    }
+}
+
+module.exports = async function readFileContents(fileContents, config) {
+    fileContents = fileContents.replace('\r', '');
+    const { user, bot } = config;
     const activities = [];
     let currentActivity;
     let aggregate = '';
@@ -11,8 +37,11 @@ module.exports = async function readFileContents(fileContents) {
     let i = 0;
     for (; i < len; i++) {
         const char = fileContents.charAt(i);
-        if (char !== '[') {
-            aggregate += char;
+        aggregate += char;
+        if (aggregate.toLowerCase().endsWith(`\n${user}:`) || aggregate.toLowerCase().endsWith(`\n${bot}:`)) {
+            if (currentActivity) {
+                currentActivity.message = aggregate.trim();
+            }
             continue;
         }
         if (aggregate && currentActivity) {
@@ -58,4 +87,12 @@ async function readActivity(index, fileContents) {
     }
 
     return { index, activity };
+}
+
+function* fileLineIterator(fileContents) {
+    const reg = /(.+)*(?:\s)+/g; // take the whole line except the delimiter
+    let parts;
+    while (parts = reg.exec(fileContents)) {
+        yield parts[ 1 ];
+    }
 }
