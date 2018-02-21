@@ -29,6 +29,8 @@ export * from './templateManager';
 export * from './dictionaryRenderer';
 export * from './testAdapter';
 export * from 'botbuilder-schema';
+export * from './recognizerResult';
+export * from './recognizer';
 import { Bot } from './bot';
 import { Activity, ConversationReference, ResourceResponse } from 'botbuilder-schema';
 import { Intent } from './intentRecognizer';
