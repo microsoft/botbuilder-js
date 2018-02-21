@@ -1,0 +1,16 @@
+{
+  "name": "bot-handoff-es6",
+  "version": "1.0.0",
+  "description": "Bot Builder v4 example showing a simple implementation of bot to human handoff.",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "botbuilder": "^4.0.0-m1.0",
+    "botbuilder-services": "^4.0.0-m1.0",
+    "restify": "^6.3.4"
+  }
+}
