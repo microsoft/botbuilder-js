@@ -2,7 +2,7 @@
   "name": "botframework-connector",
   "author": "Microsoft Corp.",
   "description": "Bot Connector is autorest generated connector client.",
-  "version": "4.0.0-m1.5",
+  "version": "4.0.0-m1.6",
   "license": "MIT",
   "keywords": [
     "botconnector",
@@ -39,7 +39,6 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "tsc && nyc mocha tests/ --timeout 60000",
-    "postinstall": "cd .. && cd .. && cd tools && npm install"
+    "test": "tsc && nyc mocha tests/ --timeout 60000"
   }
 }
