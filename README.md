@@ -4,6 +4,7 @@ This repository contains code for the JavaScript version of the [Microsoft Bot B
 - [Getting Started](https://github.com/Microsoft/botbuilder-js/wiki#getting-started)
 - [Building the SDK](https://github.com/Microsoft/botbuilder-js/wiki/Building-the-SDK)
 - [Bot Building Basics](https://github.com/Microsoft/botbuilder-js/wiki/Overview)
+- [Contribution Guidlines](https://github.com/Microsoft/botbuilder-js/wiki/Contribution-Guidelines)
 - [Extension Directory](https://github.com/Microsoft/botbuilder-js/wiki/Extension-Directory)
 - [Roadmap](https://github.com/Microsoft/botbuilder-js/wiki/Roadmap)
 - [FAQ](https://github.com/Microsoft/botbuilder-js/wiki/FAQ)
@@ -21,6 +22,8 @@ provided by the bot. You will only need to do this once across all repos using o
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
 contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+
+See our [Contribution Guidelines](https://github.com/Microsoft/botbuilder-js/wiki/Contribution-Guidelines) for more details.
 
 ## Reporting Security Issues
 

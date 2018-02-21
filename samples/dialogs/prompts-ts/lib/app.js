@@ -54,19 +54,15 @@ dialogs.add('mainMenu', [
                 action: { type: botbuilder_1.ActionTypes.ImBack, title: title, value: title }
             };
         }
-        const options = {
-            choices: [
-                choice('choice', 'choiceDemo'),
-                choice('confirm', 'confirmDemo'),
-                choice('datetime', 'datetimeDemo'),
-                choice('number', 'numberDemo'),
-                choice('text', 'textDemo'),
-                choice('attachment', 'attachmentDemo'),
-                choice('<all>', 'runAll')
-            ],
-            style: botbuilder_dialogs_1.ListStyle.list
-        };
-        return dialogs.prompt(context, 'choicePrompt', `Select a demo to run:`, options);
+        return dialogs.prompt(context, 'choicePrompt', `Select a demo to run:`, [
+            choice('choice', 'choiceDemo'),
+            choice('confirm', 'confirmDemo'),
+            choice('datetime', 'datetimeDemo'),
+            choice('number', 'numberDemo'),
+            choice('text', 'textDemo'),
+            choice('attachment', 'attachmentDemo'),
+            choice('<all>', 'runAll')
+        ]);
     },
     function (context, choice) {
         if (choice.value === 'runAll') {
@@ -102,11 +98,7 @@ dialogs.add('runAll', [
 //-----------------------------------------------
 dialogs.add('choiceDemo', [
     function (context) {
-        const options = {
-            choices: ['red', 'green', 'blue'],
-            style: botbuilder_dialogs_1.ListStyle.list
-        };
-        return dialogs.prompt(context, 'choicePrompt', `choice: select a color`, options);
+        return dialogs.prompt(context, 'choicePrompt', `choice: select a color`, ['red', 'green', 'blue']);
     },
     function (context, choice) {
         context.reply(`Recognized choice: ${JSON.stringify(choice)}`);
@@ -118,8 +110,7 @@ dialogs.add('choiceDemo', [
 //-----------------------------------------------
 dialogs.add('confirmDemo', [
     function (context) {
-        const options = { style: botbuilder_dialogs_1.ListStyle.none };
-        return dialogs.prompt(context, 'confirmPrompt', `confirm: answer "yes" or "no"`, options);
+        return dialogs.prompt(context, 'confirmPrompt', `confirm: answer "yes" or "no"`);
     },
     function (context, value) {
         context.reply(`Recognized value: ${value}`);

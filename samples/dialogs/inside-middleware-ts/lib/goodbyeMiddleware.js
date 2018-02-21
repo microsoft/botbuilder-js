@@ -35,8 +35,7 @@ exports.GoodbyeMiddleware = GoodbyeMiddleware;
 const dialogs = new botbuilder_dialogs_1.DialogSet(GoodbyeStackName);
 dialogs.add('confirmGoodbye', [
     function (context) {
-        const options = { style: botbuilder_dialogs_1.ListStyle.none };
-        return dialogs.prompt(context, 'confirmPrompt', `This will end any active tasks. Are you sure?`, options);
+        return dialogs.prompt(context, 'confirmPrompt', `This will end any active tasks. Are you sure?`);
     },
     function (context, value) {
         if (value) {

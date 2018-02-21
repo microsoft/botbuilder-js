@@ -1,5 +1,5 @@
 import { Middleware, Activity } from 'botbuilder';
-import { DialogSet, ConfirmPrompt, ConfirmPromptOptions, ListStyle } from 'botbuilder-dialogs';
+import { DialogSet, ConfirmPrompt, ListStyle } from 'botbuilder-dialogs';
 
 const GoodbyeStackName = 'goodbyeStack';
 
@@ -36,8 +36,7 @@ const dialogs = new DialogSet(GoodbyeStackName);
 
 dialogs.add('confirmGoodbye', [
     function (context) {
-        const options: ConfirmPromptOptions = { style: ListStyle.none };
-        return dialogs.prompt(context, 'confirmPrompt', `This will end any active tasks. Are you sure?`, options);
+        return dialogs.prompt(context, 'confirmPrompt', `This will end any active tasks. Are you sure?`);
     },
     function (context, value) {
         if (value) {

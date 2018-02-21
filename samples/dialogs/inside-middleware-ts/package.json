@@ -12,9 +12,9 @@
   "dependencies": {
     "@types/node": "^9.3.0",
     "@types/restify": "^5.0.7",
-    "botbuilder": "^4.0.0-m1.4",
-    "botbuilder-services": "^4.0.0-m1.2",
-    "botbuilder-dialogs": "^4.0.0-m1.2",
+    "botbuilder": "^4.0.0-m1.5",
+    "botbuilder-services": "^4.0.0-m1.5",
+    "botbuilder-dialogs": "^4.0.0-m1.5",
     "restify": "^6.3.4"
   }
 }
