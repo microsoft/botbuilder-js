@@ -6,12 +6,15 @@
  * Licensed under the MIT License.
  */
 import { ActivityAdapter, Activity, ConversationReference, ResourceResponse, ConversationResourceResponse, ConversationParameters } from 'botbuilder';
-import { Headers } from 'botframework-connector';
 /** Express or Restify Request object. */
 export interface WebRequest {
     body: any;
     headers: Headers;
     on(event: string, ...args: any[]): void;
+}
+/** Express or Restify Response object. */
+export interface Headers {
+    [name: string]: string;
 }
 /** Express or Restify Response object. */
 export interface WebResponse {
@@ -59,7 +62,7 @@ export interface BotAdapterSettings {
 export declare class BotFrameworkAdapter implements ActivityAdapter {
     private nextId;
     private credentials;
-    private authenticator;
+    private credentialsProvider;
     /**
      * Creates a new instance of the activity adapter.
      *

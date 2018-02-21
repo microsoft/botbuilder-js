@@ -1,11 +1,13 @@
 /**
+ * @module botframework-connector
+ */
+/**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 import * as request from 'request';
 var getPem = require('rsa-pem-from-mod-exp');
 var base64url = require('base64url');
-
 
 export class OpenIdMetadata {
     private url: string;
@@ -16,25 +18,28 @@ export class OpenIdMetadata {
         this.url = url;
     }
 
-    public getKey(keyId: string, cb: (key: IOpenIdMetadataKey | null) => void): void {
-        // If keys are more than 5 days old, refresh them
-        var now = new Date().getTime();
-        if (this.lastUpdated < (now - 1000 * 60 * 60 * 24 * 5)) {
-            this.refreshCache((err) => {
-                if (err) {
-                    //logger.error('Error retrieving OpenId metadata at ' + this.url + ', error: ' + err.toString());
-                    // fall through and return cached key on error
-                }
+    public getKey(keyId: string): Promise<IOpenIdMetadataKey | null> {
+        return new Promise((resolve, reject) => {
+            // If keys are more than 5 days old, refresh them
+            var now = new Date().getTime();
+            if (this.lastUpdated < (now - 1000 * 60 * 60 * 24 * 5)) {
+                this.refreshCache((err) => {
+                    if (err) {
+                        //logger.error('Error retrieving OpenId metadata at ' + this.url + ', error: ' + err.toString());
+                        // fall through and return cached key on error
+                        reject(err);
+                    }
 
-                // Search the cache even if we failed to refresh
+                    // Search the cache even if we failed to refresh
+                    var key = this.findKey(keyId);
+                    resolve(key);
+                });
+            } else {
+                // Otherwise read from cache
                 var key = this.findKey(keyId);
-                cb(key);
-            });
-        } else {
-            // Otherwise read from cache
-            var key = this.findKey(keyId);
-            cb(key);
-        }
+                resolve(key);
+            }
+        });
     }
 
     private refreshCache(cb: (err: Error) => void): void {

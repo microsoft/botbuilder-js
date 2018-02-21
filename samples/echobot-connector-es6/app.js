@@ -7,7 +7,7 @@
 /// functionality into existing application code, where it can be useful to be 
 /// able to use aspects of the framework in isolation.
 
-const { ConnectorClient, BotCredentials, MicrosoftAppCredentials, BotAuthenticator } = require('botframework-connector');
+const { ConnectorClient, MicrosoftAppCredentials,  SimpleCredentialProvider, JwtTokenValidation } = require('botframework-connector');
 const { Activity, ActivityTypes } = require('botbuilder-schema');
 const restify = require('restify');
 
@@ -22,8 +22,8 @@ const botCredentials = {
     appId: '',
     appPassword: ''
 };
-const credentials = new MicrosoftAppCredentials(botCredentials);
-const authenticator = new BotAuthenticator(botCredentials);
+const authenticator = new SimpleCredentialProvider(botCredentials.appId, botCredentials.appPassword);
+const credentials = new MicrosoftAppCredentials(botCredentials.appId, botCredentials.appPassword);;
 
 server.post('/api/messages', (req, res, next) => {
     console.log('processReq:', req.body);
@@ -31,7 +31,7 @@ server.post('/api/messages', (req, res, next) => {
     let activity = req.body;
 
     // authenticate request
-    authenticator.authenticate(req.headers, activity.channelId, activity.serviceUrl).then(() => {
+    JwtTokenValidation.assertValidActivity(activity, req.headers.authorization, authenticator).then(() => {
 
         // On message activity, reply with the same text
         if (activity.type ===  ActivityTypes.Message) {
