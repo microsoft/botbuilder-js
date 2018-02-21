@@ -1,5 +1,5 @@
 {
-  "name": "botbuilder-schema",
+  "name": "botframework-schema",
   "version": "4.0.0-m1.5",
   "keywords": [
     "botconnector",
@@ -17,12 +17,12 @@
     "build": "tsc",
     "clean": "erase /q lib\\*.*"
   },
-  "homepage": "http://github.com/Microsoft/BotBuilder-JS",
+  "homepage": "http://github.com/Microsoft/botbuilder-js",
   "bugs": {
-    "url": "http://github.com/Microsoft/BotBuilder-JS/issues"
+    "url": "http://github.com/Microsoft/botbuilder-js/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:Microsoft/BotBuilder-JS.git"
+    "url": "git@github.com:Microsoft/botbuilder-js.git"
   }
 }

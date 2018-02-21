@@ -21,7 +21,7 @@
   "dependencies": {
     "@types/request": "^2.47.0",
     "base64url": "^2.0.0",
-    "botbuilder-schema": "^4.0.0-m1.5",
+    "botframework-schema": "^4.0.0-m1.5",
     "jsonwebtoken": "8.0.1",
     "ms-rest-js": "^0.2.5",
     "request": "2.83.0",
