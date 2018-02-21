@@ -3,7 +3,7 @@ export declare class OpenIdMetadata {
     private lastUpdated;
     private keys;
     constructor(url: string);
-    getKey(keyId: string, cb: (key: IOpenIdMetadataKey | null) => void): void;
+    getKey(keyId: string): Promise<IOpenIdMetadataKey | null>;
     private refreshCache(cb);
     private findKey(keyId);
 }

@@ -5,15 +5,19 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ActivityAdapter, ActivityTypes, Activity, ConversationReference, ResourceResponse, ConversationResourceResponse, ConversationParameters, ConversationAccount  } from 'botbuilder';
-import { ConnectorClient } from 'botframework-connector';
-import { MicrosoftAppCredentials, BotAuthenticator, Headers, BotCredentials } from 'botframework-connector';
+import { ActivityAdapter, ActivityTypes, Activity, ConversationReference, ResourceResponse, ConversationResourceResponse, ConversationParameters, ConversationAccount } from 'botbuilder';
+import { ConnectorClient, SimpleCredentialProvider, MicrosoftAppCredentials, JwtTokenValidation } from 'botframework-connector';
 
 /** Express or Restify Request object. */
 export interface WebRequest {
     body: any;
     headers: Headers;
     on(event: string, ...args: any[]): void;
+}
+
+/** Express or Restify Response object. */
+export interface Headers {
+    [name: string]: string;
 }
 
 /** Express or Restify Response object. */
@@ -65,7 +69,7 @@ export interface BotAdapterSettings {
 export class BotFrameworkAdapter implements ActivityAdapter {
     private nextId = 0;
     private credentials: MicrosoftAppCredentials;
-    private authenticator: BotAuthenticator;
+    private credentialsProvider: SimpleCredentialProvider;
 
     /**
      * Creates a new instance of the activity adapter.
@@ -73,10 +77,9 @@ export class BotFrameworkAdapter implements ActivityAdapter {
      * @param settings (optional) settings object
      */
     public constructor(settings?: BotAdapterSettings) {
-        settings = settings === undefined ? {appId: '', appPassword: ''} : settings;
-        const botCredentials: BotCredentials = { appId: settings.appId, appPassword: settings.appPassword };
-        this.credentials = new MicrosoftAppCredentials(botCredentials);
-        this.authenticator = new BotAuthenticator(botCredentials);
+        settings = settings === undefined ? { appId: '', appPassword: '' } : settings;
+        this.credentials = new MicrosoftAppCredentials(settings.appId || '', settings.appPassword || '');
+        this.credentialsProvider = new SimpleCredentialProvider(this.credentials.appId, this.credentials.appPassword);
         this.onReceive = undefined as any;
     }
 
@@ -138,8 +141,8 @@ export class BotFrameworkAdapter implements ActivityAdapter {
     public post(activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
         return new Promise(async (resolve, reject) => {
             const credentials = this.credentials;
-            const clientCache: { [url:string]: ConnectorClient; } = {};
-            function createClient(serviceUrl: string|undefined): ConnectorClient|undefined {
+            const clientCache: { [url: string]: ConnectorClient; } = {};
+            function createClient(serviceUrl: string | undefined): ConnectorClient | undefined {
                 if (serviceUrl) {
                     if (!clientCache.hasOwnProperty(serviceUrl)) {
                         clientCache[serviceUrl] = new ConnectorClient(credentials, serviceUrl)
@@ -164,12 +167,12 @@ export class BotFrameworkAdapter implements ActivityAdapter {
                             if (client) {
                                 if (activity.conversation && activity.conversation.id) {
                                     client.conversations.sendToConversation(activity.conversation.id, activity as Activity)
-                                                        .then((result) => {
-                                                            responses.push(result || {});
-                                                            next(i + 1);
-                                                        }, (err) => {
-                                                            reject(err);
-                                                        });
+                                        .then((result) => {
+                                            responses.push(result || {});
+                                            next(i + 1);
+                                        }, (err) => {
+                                            reject(err);
+                                        });
                                 } else {
                                     reject(new Error(`BotFrameworkAdapter: activity missing 'conversation.id'.`));
                                 }
@@ -211,7 +214,15 @@ export class BotFrameworkAdapter implements ActivityAdapter {
 
         try {
             // authenticate the incoming request
-            await this.authenticator.authenticate(req.headers, activity.channelId, activity.serviceUrl);
+            var authHeader = req.headers["authorization"] || '';
+            await JwtTokenValidation.assertValidActivity(activity, authHeader, this.credentialsProvider);
+        } catch (err) {
+            console.log(err);
+            res.send(401);
+            return;
+        }
+
+        try {
             // call onReceive delegate
             await this.onReceive(activity);
 

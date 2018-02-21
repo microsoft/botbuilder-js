@@ -98,10 +98,11 @@ export class ConsoleAdapter implements ActivityAdapter {
                 channelId: 'console',
                 from: { id: 'user', name: 'User1' },
                 recipient: { id: 'bot', name: 'Bot' },
-                conversation:  { id: 'Convo1' },
+                conversation:  { id: 'Convo1', name:'', isGroup: false },
                 timestamp: new Date(),
                 text: text || '',
-                id: (this.nextId++).toString()
+                id: (this.nextId++).toString(),
+                serviceUrl: ''
             };
             this.onReceive(activity);
         }

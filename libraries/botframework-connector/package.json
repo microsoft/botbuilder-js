@@ -39,7 +39,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "tsc && nyc mocha tests/",
+    "test": "tsc && nyc mocha tests/ --timeout 60000",
     "postinstall": "cd .. && cd .. && cd tools && npm install"
   }
 }
