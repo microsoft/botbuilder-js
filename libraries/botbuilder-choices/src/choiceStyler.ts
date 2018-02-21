@@ -6,8 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { MessageStyler, ActionTypes } from 'botbuilder';
-import { Activity, CardAction } from 'botbuilder';
+import { MessageStyler, ActionTypes, InputHints, Activity, CardAction } from 'botbuilder';
 import { Choice } from './findChoices';
 import * as channel from './channel';
 
@@ -97,7 +96,7 @@ export class ChoiceStyler {
         txt += '';
 
         // Return activity with choices as an inline list.
-        return MessageStyler.text(txt, speak);
+        return MessageStyler.text(txt, speak, InputHints.ExpectingInput);
     }
 
     static list(choices: (string|Choice)[], text?: string, speak?: string, options?: ChoiceStylerOptions): Partial<Activity> {
@@ -110,12 +109,13 @@ export class ChoiceStyler {
         let txt = (text || '');
         txt += '\n\n   ';
         ChoiceStyler.toChoices(choices).forEach((choice: any, index: number) => {
-            txt += `${connector}${opt.includeNumbers ? (index + 1).toString() + '. ': '- '}${choice.value}`;
+            const title = choice.action && choice.action.title ? choice.action.title : choice.value;
+            txt += `${connector}${opt.includeNumbers ? (index + 1).toString() + '. ': '- '}${title}`;
             connector =  '\n   ';
         });
 
         // Return activity with choices as a numbered list.
-        return MessageStyler.text(txt, speak);
+        return MessageStyler.text(txt, speak, InputHints.ExpectingInput);
     }
 
     static suggestedAction(choices: (string|Choice)[], text?: string, speak?: string, options?: ChoiceStylerOptions): Partial<Activity> {
@@ -129,7 +129,7 @@ export class ChoiceStyler {
         });
 
         // Return activity with choices as suggested actions
-        return MessageStyler.suggestedActions(actions, text, speak);
+        return MessageStyler.suggestedActions(actions, text, speak, InputHints.ExpectingInput);
     }
 
     static toChoices(choices: (string|Choice)[]|undefined): Choice[] {

@@ -12,7 +12,7 @@
 
 **●  action**:  *[CardAction]()* 
 
-*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-choices/lib/findChoices.d.ts#L15)*
+*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/f687311/libraries/botbuilder-choices/lib/findChoices.d.ts#L15)*
 
 
 
@@ -29,7 +29,7 @@ ___
 
 **●  synonyms**:  *`string`[]* 
 
-*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-choices/lib/findChoices.d.ts#L17)*
+*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/f687311/libraries/botbuilder-choices/lib/findChoices.d.ts#L17)*
 
 
 
@@ -46,7 +46,7 @@ ___
 
 **●  value**:  *`string`* 
 
-*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:13](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-choices/lib/findChoices.d.ts#L13)*
+*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:13](https://github.com/Microsoft/botbuilder-js/blob/f687311/libraries/botbuilder-choices/lib/findChoices.d.ts#L13)*
 
 
 

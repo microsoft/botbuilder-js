@@ -25,7 +25,7 @@
 
 **●  allowPartialMatches**:  *`undefined`⎮`true`⎮`false`* 
 
-*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-choices/lib/findValues.d.ts#L15)*
+*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/f687311/libraries/botbuilder-choices/lib/findValues.d.ts#L15)*
 
 
 
@@ -42,7 +42,7 @@ ___
 
 **●  locale**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-choices/lib/findValues.d.ts#L19)*
+*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/f687311/libraries/botbuilder-choices/lib/findValues.d.ts#L19)*
 
 
 
@@ -59,7 +59,7 @@ ___
 
 **●  maxTokenDistance**:  *`undefined`⎮`number`* 
 
-*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:26](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-choices/lib/findValues.d.ts#L26)*
+*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:26](https://github.com/Microsoft/botbuilder-js/blob/f687311/libraries/botbuilder-choices/lib/findValues.d.ts#L26)*
 
 
 
@@ -74,9 +74,9 @@ ___
 
 ### «Optional» tokenizer
 
-**●  tokenizer**:  *[TokenizerFunction]()* 
+**●  tokenizer**:  *[TokenizerFunction](../#tokenizerfunction)* 
 
-*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:30](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-choices/lib/findValues.d.ts#L30)*
+*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:30](https://github.com/Microsoft/botbuilder-js/blob/f687311/libraries/botbuilder-choices/lib/findValues.d.ts#L30)*
 
 
 

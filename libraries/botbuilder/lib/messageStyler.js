@@ -43,14 +43,18 @@ class MessageStyler {
      *
      * @param text Text to include in the message.
      * @param speak (Optional) SSML to include in the message.
+     * @param inputHint (Optional) input hint for the message.
      */
-    static text(text, speak) {
+    static text(text, speak, inputHint) {
         const msg = {
             type: botbuilder_schema_1.ActivityTypes.Message,
             text: text || ''
         };
         if (speak) {
             msg.speak = speak;
+        }
+        if (inputHint) {
+            msg.inputHint = inputHint;
         }
         return msg;
     }
@@ -60,8 +64,9 @@ class MessageStyler {
      * @param actions Array of card actions or strings to include. Strings will be converted to `messageBack` actions.
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
+     * @param inputHint (Optional) input hint for the message.
      */
-    static suggestedActions(actions, text, speak) {
+    static suggestedActions(actions, text, speak, inputHint) {
         const msg = {
             type: botbuilder_schema_1.ActivityTypes.Message,
             suggestedActions: {
@@ -74,6 +79,9 @@ class MessageStyler {
         if (speak) {
             msg.speak = speak;
         }
+        if (inputHint) {
+            msg.inputHint = inputHint;
+        }
         return msg;
     }
     /**
@@ -82,9 +90,10 @@ class MessageStyler {
      * @param attachment Adaptive card to include in the message.
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
+     * @param inputHint (Optional) input hint for the message.
      */
-    static attachment(attachment, text, speak) {
-        return attachmentActivity(botbuilder_schema_1.AttachmentLayoutTypes.List, [attachment], text, speak);
+    static attachment(attachment, text, speak, inputHint) {
+        return attachmentActivity(botbuilder_schema_1.AttachmentLayoutTypes.List, [attachment], text, speak, inputHint);
     }
     /**
      * Returns a message that will display a set of attachments in list form.
@@ -92,9 +101,10 @@ class MessageStyler {
      * @param attachments Array of attachments to include in the message.
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
+     * @param inputHint (Optional) input hint for the message.
      */
-    static list(attachments, text, speak) {
-        return attachmentActivity(botbuilder_schema_1.AttachmentLayoutTypes.List, attachments, text, speak);
+    static list(attachments, text, speak, inputHint) {
+        return attachmentActivity(botbuilder_schema_1.AttachmentLayoutTypes.List, attachments, text, speak, inputHint);
     }
     /**
      * Returns a message that will display a set of attachments using a carousel layout.
@@ -115,9 +125,10 @@ class MessageStyler {
      * @param attachments Array of attachments to include in the message.
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
+     * @param inputHint (Optional) input hint for the message.
      */
-    static carousel(attachments, text, speak) {
-        return attachmentActivity(botbuilder_schema_1.AttachmentLayoutTypes.Carousel, attachments, text, speak);
+    static carousel(attachments, text, speak, inputHint) {
+        return attachmentActivity(botbuilder_schema_1.AttachmentLayoutTypes.Carousel, attachments, text, speak, inputHint);
     }
     /**
      * Returns a message that will display a single image or video to a user.
@@ -136,17 +147,18 @@ class MessageStyler {
      * @param name (Optional) Name of the image/video file.
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
+     * @param inputHint (Optional) input hint for the message.
      */
-    static contentUrl(url, contentType, name, text, speak) {
+    static contentUrl(url, contentType, name, text, speak, inputHint) {
         const a = { contentType: contentType, contentUrl: url };
         if (name) {
             a.name = name;
         }
-        return attachmentActivity(botbuilder_schema_1.AttachmentLayoutTypes.List, [a], text, speak);
+        return attachmentActivity(botbuilder_schema_1.AttachmentLayoutTypes.List, [a], text, speak, inputHint);
     }
 }
 exports.MessageStyler = MessageStyler;
-function attachmentActivity(attachmentLayout, attachments, text, speak) {
+function attachmentActivity(attachmentLayout, attachments, text, speak, inputHint) {
     const msg = {
         type: botbuilder_schema_1.ActivityTypes.Message,
         attachmentLayout: attachmentLayout,
@@ -157,6 +169,9 @@ function attachmentActivity(attachmentLayout, attachments, text, speak) {
     }
     if (speak) {
         msg.speak = speak;
+    }
+    if (inputHint) {
+        msg.inputHint = inputHint;
     }
     return msg;
 }

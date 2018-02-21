@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { CardStyler } from './cardStyler';
-import { ActivityTypes, AttachmentLayoutTypes, Activity, CardAction, SuggestedActions, Attachment } from 'botbuilder-schema';
+import { ActivityTypes, AttachmentLayoutTypes, Activity, CardAction, SuggestedActions, Attachment, InputHints } from 'botbuilder-schema';
 
 /**
  * A set of utility functions to assist with the formatting of the various message types a bot can
@@ -42,13 +42,15 @@ export class MessageStyler {
      *
      * @param text Text to include in the message.
      * @param speak (Optional) SSML to include in the message.
+     * @param inputHint (Optional) input hint for the message.
      */
-    static text(text: string, speak?: string): Partial<Activity> {
+    static text(text: string, speak?: string, inputHint?: InputHints|string): Partial<Activity> {
         const msg: Partial<Activity> = {
             type: ActivityTypes.Message,
             text: text || ''
         };
-        if (speak) { msg.speak = speak; }
+        if (speak) { msg.speak = speak }
+        if (inputHint) { msg.inputHint = inputHint }
         return msg;
     }
 
@@ -58,8 +60,9 @@ export class MessageStyler {
      * @param actions Array of card actions or strings to include. Strings will be converted to `messageBack` actions.
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
+     * @param inputHint (Optional) input hint for the message.
      */
-    static suggestedActions(actions: (CardAction|string)[], text?: string, speak?: string): Partial<Activity> {
+    static suggestedActions(actions: (CardAction|string)[], text?: string, speak?: string, inputHint?: InputHints|string): Partial<Activity> {
         const msg: Partial<Activity> = {
             type: ActivityTypes.Message,
             suggestedActions: <SuggestedActions>{
@@ -67,7 +70,8 @@ export class MessageStyler {
             }
         };
         if (text) { msg.text = text; }
-        if (speak) { msg.speak = speak; }
+        if (speak) { msg.speak = speak }
+        if (inputHint) { msg.inputHint = inputHint }
         return msg;
     }
 
@@ -77,9 +81,10 @@ export class MessageStyler {
      * @param attachment Adaptive card to include in the message.
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
+     * @param inputHint (Optional) input hint for the message.
      */
-    static attachment(attachment: Attachment, text?: string, speak?: string): Partial<Activity> {
-        return attachmentActivity(AttachmentLayoutTypes.List, [attachment], text, speak);
+    static attachment(attachment: Attachment, text?: string, speak?: string, inputHint?: InputHints|string): Partial<Activity> {
+        return attachmentActivity(AttachmentLayoutTypes.List, [attachment], text, speak, inputHint);
     }
 
     /**
@@ -88,9 +93,10 @@ export class MessageStyler {
      * @param attachments Array of attachments to include in the message.
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
+     * @param inputHint (Optional) input hint for the message.
      */
-    static list(attachments: Attachment[], text?: string, speak?: string): Partial<Activity> {
-        return attachmentActivity(AttachmentLayoutTypes.List, attachments, text, speak);
+    static list(attachments: Attachment[], text?: string, speak?: string, inputHint?: InputHints|string): Partial<Activity> {
+        return attachmentActivity(AttachmentLayoutTypes.List, attachments, text, speak, inputHint);
     }
 
     /**
@@ -112,9 +118,10 @@ export class MessageStyler {
      * @param attachments Array of attachments to include in the message.
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
+     * @param inputHint (Optional) input hint for the message.
      */
-    static carousel(attachments: Attachment[], text?: string, speak?: string): Partial<Activity> {
-        return attachmentActivity(AttachmentLayoutTypes.Carousel, attachments, text, speak);
+    static carousel(attachments: Attachment[], text?: string, speak?: string, inputHint?: InputHints|string): Partial<Activity> {
+        return attachmentActivity(AttachmentLayoutTypes.Carousel, attachments, text, speak, inputHint);
     }
 
     /**
@@ -134,26 +141,24 @@ export class MessageStyler {
      * @param name (Optional) Name of the image/video file.
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
+     * @param inputHint (Optional) input hint for the message.
      */
-    static contentUrl(url: string, contentType: string, name?: string, text?: string, speak?: string): Partial<Activity> {
+    static contentUrl(url: string, contentType: string, name?: string, text?: string, speak?: string, inputHint?: InputHints|string): Partial<Activity> {
         const a: Attachment = { contentType: contentType, contentUrl: url };
         if (name) { a.name = name; }
-        return attachmentActivity(AttachmentLayoutTypes.List, [a], text, speak);
+        return attachmentActivity(AttachmentLayoutTypes.List, [a], text, speak, inputHint);
     }
 }
 
 
-function attachmentActivity(attachmentLayout: AttachmentLayoutTypes, attachments: Attachment[], text?: string, speak?: string): Partial<Activity> {
+function attachmentActivity(attachmentLayout: AttachmentLayoutTypes, attachments: Attachment[], text?: string, speak?: string, inputHint?: InputHints|string): Partial<Activity> {
     const msg: Partial<Activity> = {
         type: ActivityTypes.Message,
         attachmentLayout: attachmentLayout,
         attachments: attachments
     };
-    if (text) {
-        msg.text = text;
-    }
-    if (speak) {
-        msg.speak = speak;
-    }
+    if (text) { msg.text = text }
+    if (speak) { msg.speak = speak }
+    if (inputHint) { msg.inputHint = inputHint }
     return msg;
 }

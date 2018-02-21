@@ -6,8 +6,6 @@
  * Licensed under the MIT License.
  */
 
-const breakingChars = " \n\r~`!@#$%^&*()-+={}|[]\\:\";'<>?,./";
-
 export interface Token {
     start: number;
     end: number;

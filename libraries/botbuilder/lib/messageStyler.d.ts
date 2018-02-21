@@ -1,4 +1,4 @@
-import { Activity, CardAction, Attachment } from 'botbuilder-schema';
+import { Activity, CardAction, Attachment, InputHints } from 'botbuilder-schema';
 /**
  * A set of utility functions to assist with the formatting of the various message types a bot can
  * return.
@@ -33,32 +33,36 @@ export declare class MessageStyler {
      *
      * @param text Text to include in the message.
      * @param speak (Optional) SSML to include in the message.
+     * @param inputHint (Optional) input hint for the message.
      */
-    static text(text: string, speak?: string): Partial<Activity>;
+    static text(text: string, speak?: string, inputHint?: InputHints | string): Partial<Activity>;
     /**
      * Returns a message that includes a set of suggested actions and optional text.
      *
      * @param actions Array of card actions or strings to include. Strings will be converted to `messageBack` actions.
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
+     * @param inputHint (Optional) input hint for the message.
      */
-    static suggestedActions(actions: (CardAction | string)[], text?: string, speak?: string): Partial<Activity>;
+    static suggestedActions(actions: (CardAction | string)[], text?: string, speak?: string, inputHint?: InputHints | string): Partial<Activity>;
     /**
      * Returns a single message activity containing an attachment.
      *
      * @param attachment Adaptive card to include in the message.
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
+     * @param inputHint (Optional) input hint for the message.
      */
-    static attachment(attachment: Attachment, text?: string, speak?: string): Partial<Activity>;
+    static attachment(attachment: Attachment, text?: string, speak?: string, inputHint?: InputHints | string): Partial<Activity>;
     /**
      * Returns a message that will display a set of attachments in list form.
      *
      * @param attachments Array of attachments to include in the message.
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
+     * @param inputHint (Optional) input hint for the message.
      */
-    static list(attachments: Attachment[], text?: string, speak?: string): Partial<Activity>;
+    static list(attachments: Attachment[], text?: string, speak?: string, inputHint?: InputHints | string): Partial<Activity>;
     /**
      * Returns a message that will display a set of attachments using a carousel layout.
      *
@@ -78,8 +82,9 @@ export declare class MessageStyler {
      * @param attachments Array of attachments to include in the message.
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
+     * @param inputHint (Optional) input hint for the message.
      */
-    static carousel(attachments: Attachment[], text?: string, speak?: string): Partial<Activity>;
+    static carousel(attachments: Attachment[], text?: string, speak?: string, inputHint?: InputHints | string): Partial<Activity>;
     /**
      * Returns a message that will display a single image or video to a user.
      *
@@ -97,6 +102,7 @@ export declare class MessageStyler {
      * @param name (Optional) Name of the image/video file.
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
+     * @param inputHint (Optional) input hint for the message.
      */
-    static contentUrl(url: string, contentType: string, name?: string, text?: string, speak?: string): Partial<Activity>;
+    static contentUrl(url: string, contentType: string, name?: string, text?: string, speak?: string, inputHint?: InputHints | string): Partial<Activity>;
 }
