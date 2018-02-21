@@ -10,9 +10,7 @@
   "author": "Microsoft",
   "license": "MIT",
   "dependencies": {
-    "botbuilder": "^4.0.0-m1.0",
-    "botbuilder-prompts": "4.0.0-h4.1",
-    "botbuilder-services": "4.0.0-h4.1",
+    "botbuilder": "^4.0.0-m1.5",
     "skeleton-css": "^2.0.4"
   },
   "devDependencies": {

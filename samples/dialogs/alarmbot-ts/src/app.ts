@@ -1,8 +1,8 @@
 import { Bot, MemoryStorage, BotStateManager } from 'botbuilder';
 import { BotFrameworkAdapter } from 'botbuilder-services';
 import { 
-    DialogSet, TextPrompt, ChoicePrompt, ConfirmPrompt, DatetimePrompt, FoundChoice, 
-    FoundDatetime, ChoicePromptOptions, ConfirmPromptOptions, ListStyle 
+    DialogSet, TextPrompt, ChoicePrompt, ConfirmPrompt, DatetimePrompt, 
+    FoundChoice, FoundDatetime, ListStyle 
 } from 'botbuilder-dialogs';
 import * as restify from 'restify';
 import * as moment from 'moment';
@@ -142,8 +142,7 @@ dialogs.add('deleteAlarmMulti', [
 
         // Prompt user for choice (force use of "list" style)
         const prompt = `Which alarm would you like to delete? Say "cancel" to quit.`;
-        const options: ChoicePromptOptions = { choices: choices, style: ListStyle.list }; 
-        return dialogs.prompt(context, 'choicePrompt', prompt, options);
+        return dialogs.prompt(context, 'choicePrompt', prompt, choices);
     },
     function (context, choice: FoundChoice) {
         // Delete alarm by position
@@ -159,8 +158,7 @@ dialogs.add('deleteAlarmMulti', [
 dialogs.add('deleteAlarmSingle', [
     function (context) {
         const alarm = context.state.user.alarms[0];
-        const options: ConfirmPromptOptions = { style: ListStyle.none };
-        return dialogs.prompt(context, 'confirmPrompt', `Are you sure you want to delete the "${alarm.title}" alarm?`, options);
+        return dialogs.prompt(context, 'confirmPrompt', `Are you sure you want to delete the "${alarm.title}" alarm?`);
     },
     function (context, confirm: boolean) {
         if (confirm) {

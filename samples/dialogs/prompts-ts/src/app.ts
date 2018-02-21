@@ -2,8 +2,8 @@ import {
     Bot, MemoryStorage, BotStateManager, ActionTypes, CardAction, Attachment, MessageStyler
 } from 'botbuilder';
 import { 
-    DialogSet, TextPrompt, ConfirmPrompt, ConfirmPromptOptions, ChoicePrompt, ChoicePromptOptions, 
-    DatetimePrompt, NumberPrompt, AttachmentPrompt, FoundChoice, Choice, FoundDatetime, ListStyle 
+    DialogSet, TextPrompt, ConfirmPrompt, ChoicePrompt, DatetimePrompt, NumberPrompt, 
+    AttachmentPrompt, FoundChoice, Choice, FoundDatetime, ListStyle 
 } from 'botbuilder-dialogs';
 import { BotFrameworkAdapter } from 'botbuilder-services';
 import * as restify from 'restify';
@@ -64,19 +64,15 @@ dialogs.add('mainMenu', [
                 action: { type: ActionTypes.ImBack, title: title, value: title }
             };
         }
-        const options: ChoicePromptOptions = {
-            choices: [
-                choice('choice', 'choiceDemo'),
-                choice('confirm', 'confirmDemo'),
-                choice('datetime', 'datetimeDemo'),
-                choice('number', 'numberDemo'),
-                choice('text', 'textDemo'),
-                choice('attachment', 'attachmentDemo'),
-                choice('<all>', 'runAll')
-            ],
-            style: ListStyle.list
-        }
-        return dialogs.prompt(context, 'choicePrompt', `Select a demo to run:`, options);
+        return dialogs.prompt(context, 'choicePrompt', `Select a demo to run:`, [
+            choice('choice', 'choiceDemo'),
+            choice('confirm', 'confirmDemo'),
+            choice('datetime', 'datetimeDemo'),
+            choice('number', 'numberDemo'),
+            choice('text', 'textDemo'),
+            choice('attachment', 'attachmentDemo'),
+            choice('<all>', 'runAll')
+        ]);
     },
     function (context, choice: FoundChoice) {
         if (choice.value === 'runAll') {
@@ -116,11 +112,7 @@ dialogs.add('runAll', [
 
 dialogs.add('choiceDemo', [
     function (context) {
-        const options: ChoicePromptOptions = {
-            choices: ['red', 'green', 'blue'],
-            style: ListStyle.list
-        }
-        return dialogs.prompt(context, 'choicePrompt', `choice: select a color`, options);
+        return dialogs.prompt(context, 'choicePrompt', `choice: select a color`, ['red', 'green', 'blue']);
     },
     function (context, choice: FoundChoice) {
         context.reply(`Recognized choice: ${JSON.stringify(choice)}`);
@@ -135,8 +127,7 @@ dialogs.add('choiceDemo', [
 
 dialogs.add('confirmDemo', [
     function (context) {
-        const options: ConfirmPromptOptions = { style: ListStyle.none }
-        return dialogs.prompt(context, 'confirmPrompt', `confirm: answer "yes" or "no"`, options);
+        return dialogs.prompt(context, 'confirmPrompt', `confirm: answer "yes" or "no"`);
     },
     function (context, value: boolean) {
         context.reply(`Recognized value: ${value}`);

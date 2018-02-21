@@ -135,8 +135,7 @@ dialogs.add('deleteAlarmMulti', [
         const choices = context.state.user.alarms.map((value) => value.title);
         // Prompt user for choice (force use of "list" style)
         const prompt = `Which alarm would you like to delete? Say "cancel" to quit.`;
-        const options = { choices: choices, style: botbuilder_dialogs_1.ListStyle.list };
-        return dialogs.prompt(context, 'choicePrompt', prompt, options);
+        return dialogs.prompt(context, 'choicePrompt', prompt, choices);
     },
     function (context, choice) {
         // Delete alarm by position
@@ -152,8 +151,7 @@ dialogs.add('deleteAlarmMulti', [
 dialogs.add('deleteAlarmSingle', [
     function (context) {
         const alarm = context.state.user.alarms[0];
-        const options = { style: botbuilder_dialogs_1.ListStyle.none };
-        return dialogs.prompt(context, 'confirmPrompt', `Are you sure you want to delete the "${alarm.title}" alarm?`, options);
+        return dialogs.prompt(context, 'confirmPrompt', `Are you sure you want to delete the "${alarm.title}" alarm?`);
     },
     function (context, confirm) {
         if (confirm) {

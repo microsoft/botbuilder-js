@@ -237,7 +237,7 @@ export const CardAction = {
         required: false,
         serializedName: 'value',
         type: {
-          name: 'Object'
+          name: 'String'
         }
       }
     }
@@ -1156,7 +1156,7 @@ export const AnimationCard = {
         required: false,
         serializedName: 'value',
         type: {
-          name: 'Object'
+          name: 'String'
         }
       }
     }
@@ -1261,7 +1261,7 @@ export const AudioCard = {
         required: false,
         serializedName: 'value',
         type: {
-          name: 'Object'
+          name: 'String'
         }
       }
     }
@@ -1436,7 +1436,7 @@ export const MediaCard = {
         required: false,
         serializedName: 'value',
         type: {
-          name: 'Object'
+          name: 'String'
         }
       }
     }
@@ -1823,7 +1823,7 @@ export const VideoCard = {
         required: false,
         serializedName: 'value',
         type: {
-          name: 'Object'
+          name: 'String'
         }
       }
     }

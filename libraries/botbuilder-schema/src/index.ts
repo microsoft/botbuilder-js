@@ -163,10 +163,10 @@ export interface CardAction {
    */
   displayText?: string;
   /**
-   * @member {any} [value] Supplementary parameter for action. Content of this
-   * property depends on the ActionType
+   * @member {string} [value] Supplementary parameter for action. Content of
+   * this property depends on the ActionType
    */
-  value: any;
+  value: string;
 }
 
 /**
@@ -708,9 +708,9 @@ export interface AnimationCard {
    */
   aspect: string;
   /**
-   * @member {any} [value] Supplementary parameter for this card
+   * @member {string} [value] Supplementary parameter for this card
    */
-  value: any;
+  value: string;
 }
 
 /**
@@ -765,9 +765,9 @@ export interface AudioCard {
    */
   aspect: string;
   /**
-   * @member {any} [value] Supplementary parameter for this card
+   * @member {string} [value] Supplementary parameter for this card
    */
-  value: any;
+  value: string;
 }
 
 /**
@@ -857,9 +857,9 @@ export interface MediaCard {
    */
   aspect: string;
   /**
-   * @member {any} [value] Supplementary parameter for this card
+   * @member {string} [value] Supplementary parameter for this card
    */
-  value: any;
+  value: string;
 }
 
 /**
@@ -1069,9 +1069,9 @@ export interface VideoCard {
    */
   aspect: string;
   /**
-   * @member {any} [value] Supplementary parameter for this card
+   * @member {string} [value] Supplementary parameter for this card
    */
-  value: any;
+  value: string;
 }
 
 /**

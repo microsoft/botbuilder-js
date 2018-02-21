@@ -230,7 +230,7 @@ exports.CardAction = {
                 required: false,
                 serializedName: 'value',
                 type: {
-                    name: 'Object'
+                    name: 'String'
                 }
             }
         }
@@ -1134,7 +1134,7 @@ exports.AnimationCard = {
                 required: false,
                 serializedName: 'value',
                 type: {
-                    name: 'Object'
+                    name: 'String'
                 }
             }
         }
@@ -1238,7 +1238,7 @@ exports.AudioCard = {
                 required: false,
                 serializedName: 'value',
                 type: {
-                    name: 'Object'
+                    name: 'String'
                 }
             }
         }
@@ -1411,7 +1411,7 @@ exports.MediaCard = {
                 required: false,
                 serializedName: 'value',
                 type: {
-                    name: 'Object'
+                    name: 'String'
                 }
             }
         }
@@ -1792,7 +1792,7 @@ exports.VideoCard = {
                 required: false,
                 serializedName: 'value',
                 type: {
-                    name: 'Object'
+                    name: 'String'
                 }
             }
         }
