@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, ConversationReference, ResourceResponse } from 'botbuilder-schema';
+import { Activity, ConversationReference, ResourceResponse } from 'botframework-schema';
 
 /**
  * Implemented by activity adapters

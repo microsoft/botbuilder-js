@@ -15,7 +15,7 @@ Optional settings for a `RegExpRecognizer`.
 
 **●  minScore**:  *`number`* 
 
-*Defined in [libraries/botbuilder/lib/regExpRecognizer.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/regExpRecognizer.d.ts#L18)*
+*Defined in [libraries/botbuilder/lib/regExpRecognizer.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/regExpRecognizer.d.ts#L18)*
 
 
 

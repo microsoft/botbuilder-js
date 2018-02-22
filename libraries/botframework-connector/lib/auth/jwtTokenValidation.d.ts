@@ -1,11 +1,11 @@
 /**
- * @module botframework-connector
+ * @module botbuilder
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity } from 'botbuilder-schema';
+import { Activity } from 'botframework-schema';
 import { ICredentialProvider } from './credentialProvider';
 export declare module JwtTokenValidation {
     /**

@@ -30,5 +30,5 @@ __export(require("./storageMiddleware"));
 __export(require("./templateManager"));
 __export(require("./dictionaryRenderer"));
 __export(require("./testAdapter"));
-__export(require("botbuilder-schema"));
+__export(require("botframework-schema"));
 //# sourceMappingURL=botbuilder.js.map

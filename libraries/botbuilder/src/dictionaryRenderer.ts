@@ -8,7 +8,7 @@
 import { TemplateRenderer } from './templateManager';
 import { Middleware } from './middleware';
 import { BotService } from './botService';
-import { Activity } from 'botbuilder-schema';
+import { Activity } from 'botframework-schema';
 
 export declare type SimpleTemplateFunction = (context: BotContext, data: Object) => Partial<Activity> | string | undefined;
 

@@ -2,7 +2,7 @@
  * @module botbuilder
  */
 /** second comment block */
-import { Entity } from 'botbuilder-schema';
+import { Entity } from 'botframework-schema';
 /**
  * A strongly typed entity.
  */

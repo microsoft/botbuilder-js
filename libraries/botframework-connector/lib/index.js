@@ -4,7 +4,7 @@ function __export(m) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
- * @module botframework-connector
+ * @module botbuilder
  */
 var connectorClient_1 = require("./generated/connectorClient");
 exports.ConnectorClient = connectorClient_1.ConnectorClient;

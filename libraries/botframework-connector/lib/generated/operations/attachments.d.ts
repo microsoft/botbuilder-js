@@ -1,12 +1,12 @@
 /**
- * @module botframework-connector
+ * @module botbuilder
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 import * as msRest from "ms-rest-js";
-import * as Models from "botbuilder-schema";
+import * as Models from "botframework-schema";
 import { ConnectorClient } from "../connectorClient";
 /** Class representing a Attachments. */
 export declare class Attachments {

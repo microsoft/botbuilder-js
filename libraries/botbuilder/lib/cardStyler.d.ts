@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Attachment, MediaUrl, CardAction, AnimationCard, CardImage, HeroCard, ReceiptCard, ThumbnailCard } from "botbuilder-schema";
+import { Attachment, MediaUrl, CardAction, AnimationCard, CardImage, HeroCard, ReceiptCard, ThumbnailCard } from "botframework-schema";
 /**
  * A set of utility functions designed to assist with the formatting of the various card types a
  * bot can return. All of these functions return an `Attachment` which can be added to an `Activity`

@@ -37,7 +37,7 @@ Implemented by middleware plugins. Plugins have four separate methods they can i
 
 
 
-*Defined in [libraries/botbuilder/lib/middleware.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/middleware.d.ts#L39)*
+*Defined in [libraries/botbuilder/lib/middleware.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/middleware.d.ts#L39)*
 
 
 
@@ -67,11 +67,11 @@ ___
 
 ### «Optional» postActivity
 
-► **postActivity**(context: *[BotContext](botbuilder.__global.botcontext.md)*, activities: *[Partial]()[Activity]()[]*, next: *`function`*): `Promise`.<[ResourceResponse]()[]>
+► **postActivity**(context: *[BotContext](botbuilder.__global.botcontext.md)*, activities: *[Partial]()[Activity](botbuilder.activity.md)[]*, next: *`function`*): `Promise`.<[ResourceResponse](botbuilder.resourceresponse.md)[]>
 
 
 
-*Defined in [libraries/botbuilder/lib/middleware.d.ts:57](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/middleware.d.ts#L57)*
+*Defined in [libraries/botbuilder/lib/middleware.d.ts:57](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/middleware.d.ts#L57)*
 
 
 
@@ -83,14 +83,14 @@ ___
 | Param | Type | Description |
 | ------ | ------ | ------ |
 | context | [BotContext](botbuilder.__global.botcontext.md)   |  Context for the current turn of the conversation. |
-| activities | [Partial]()[Activity]()[]   |  - |
+| activities | [Partial]()[Activity](botbuilder.activity.md)[]   |  - |
 | next | `function`   |  Function you should call to continue execution of the middleware pipe. |
 
 
 
 
 
-**Returns:** `Promise`.<[ResourceResponse]()[]>
+**Returns:** `Promise`.<[ResourceResponse](botbuilder.resourceresponse.md)[]>
 
 
 
@@ -106,7 +106,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/middleware.d.ts:48](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/middleware.d.ts#L48)*
+*Defined in [libraries/botbuilder/lib/middleware.d.ts:48](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/middleware.d.ts#L48)*
 
 
 

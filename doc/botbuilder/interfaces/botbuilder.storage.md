@@ -23,7 +23,7 @@ Interface for a store provider that stores and retrieves objects
 
 
 
-*Defined in [libraries/botbuilder/lib/storage.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/storage.d.ts#L27)*
+*Defined in [libraries/botbuilder/lib/storage.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/storage.d.ts#L27)*
 
 
 
@@ -56,7 +56,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/storage.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/storage.d.ts#L15)*
+*Defined in [libraries/botbuilder/lib/storage.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/storage.d.ts#L15)*
 
 
 
@@ -89,7 +89,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/storage.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/storage.d.ts#L21)*
+*Defined in [libraries/botbuilder/lib/storage.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/storage.d.ts#L21)*
 
 
 

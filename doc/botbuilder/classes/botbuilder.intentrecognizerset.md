@@ -78,7 +78,7 @@ The intent recognizer set is itself an intent recognizer which means that it can
 ### ⊕ **new IntentRecognizerSet**(settings?: *[IntentRecognizerSetSettings](../interfaces/botbuilder.intentrecognizersetsettings.md)*): [IntentRecognizerSet](botbuilder.intentrecognizerset.md)
 
 
-*Defined in [libraries/botbuilder/lib/intentRecognizerSet.d.ts:66](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/intentRecognizerSet.d.ts#L66)*
+*Defined in [libraries/botbuilder/lib/intentRecognizerSet.d.ts:66](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/intentRecognizerSet.d.ts#L66)*
 
 
 
@@ -109,7 +109,7 @@ Creates a new instance of a recognizer set.
 
 
 
-*Defined in [libraries/botbuilder/lib/intentRecognizerSet.d.ts:79](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/intentRecognizerSet.d.ts#L79)*
+*Defined in [libraries/botbuilder/lib/intentRecognizerSet.d.ts:79](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/intentRecognizerSet.d.ts#L79)*
 
 
 
@@ -144,7 +144,7 @@ ___
 
 *Inherited from [IntentRecognizer](botbuilder.intentrecognizer.md).[onEnabled](botbuilder.intentrecognizer.md#onenabled)*
 
-*Defined in [libraries/botbuilder/lib/intentRecognizer.d.ts:48](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/intentRecognizer.d.ts#L48)*
+*Defined in [libraries/botbuilder/lib/intentRecognizer.d.ts:48](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/intentRecognizer.d.ts#L48)*
 
 
 
@@ -179,7 +179,7 @@ ___
 
 *Inherited from [IntentRecognizer](botbuilder.intentrecognizer.md).[onFilter](botbuilder.intentrecognizer.md#onfilter)*
 
-*Defined in [libraries/botbuilder/lib/intentRecognizer.d.ts:68](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/intentRecognizer.d.ts#L68)*
+*Defined in [libraries/botbuilder/lib/intentRecognizer.d.ts:68](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/intentRecognizer.d.ts#L68)*
 
 
 
@@ -214,7 +214,7 @@ ___
 
 *Inherited from [IntentRecognizer](botbuilder.intentrecognizer.md).[onRecognize](botbuilder.intentrecognizer.md#onrecognize)*
 
-*Defined in [libraries/botbuilder/lib/intentRecognizer.d.ts:56](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/intentRecognizer.d.ts#L56)*
+*Defined in [libraries/botbuilder/lib/intentRecognizer.d.ts:56](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/intentRecognizer.d.ts#L56)*
 
 
 
@@ -249,7 +249,7 @@ ___
 
 *Inherited from [IntentRecognizer](botbuilder.intentrecognizer.md).[receiveActivity](botbuilder.intentrecognizer.md#receiveactivity)*
 
-*Defined in [libraries/botbuilder/lib/intentRecognizer.d.ts:33](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/intentRecognizer.d.ts#L33)*
+*Defined in [libraries/botbuilder/lib/intentRecognizer.d.ts:33](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/intentRecognizer.d.ts#L33)*
 
 
 
@@ -282,7 +282,7 @@ ___
 
 *Inherited from [IntentRecognizer](botbuilder.intentrecognizer.md).[recognize](botbuilder.intentrecognizer.md#recognize)*
 
-*Defined in [libraries/botbuilder/lib/intentRecognizer.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/intentRecognizer.d.ts#L39)*
+*Defined in [libraries/botbuilder/lib/intentRecognizer.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/intentRecognizer.d.ts#L39)*
 
 
 
@@ -317,7 +317,7 @@ ___
 
 *Inherited from [IntentRecognizer](botbuilder.intentrecognizer.md).[findTopIntent](botbuilder.intentrecognizer.md#findtopintent)*
 
-*Defined in [libraries/botbuilder/lib/intentRecognizer.d.ts:77](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/intentRecognizer.d.ts#L77)*
+*Defined in [libraries/botbuilder/lib/intentRecognizer.d.ts:77](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/intentRecognizer.d.ts#L77)*
 
 
 

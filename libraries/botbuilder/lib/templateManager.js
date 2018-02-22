@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const botbuilder_schema_1 = require("botbuilder-schema");
+const botframework_schema_1 = require("botframework-schema");
 class TemplateManager {
     constructor() {
         this.templateRenderers = [];
@@ -64,13 +64,13 @@ class TemplateManager {
                 if (templateOutput) {
                     if (typeof templateOutput === 'object') {
                         if (!templateOutput.type) {
-                            templateOutput.type = botbuilder_schema_1.ActivityTypes.Message;
+                            templateOutput.type = botframework_schema_1.ActivityTypes.Message;
                         }
                         return templateOutput;
                     }
                     else {
                         const activity = {
-                            type: botbuilder_schema_1.ActivityTypes.Message,
+                            type: botframework_schema_1.ActivityTypes.Message,
                             text: templateOutput || '',
                         };
                         return activity;

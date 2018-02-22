@@ -13,7 +13,17 @@
 
 ### Enumerations
 
+* [ActionTypes](enums/botbuilder.actiontypes.md)
+* [ActivityImportance](enums/botbuilder.activityimportance.md)
+* [ActivityTypes](enums/botbuilder.activitytypes.md)
+* [AttachmentLayoutTypes](enums/botbuilder.attachmentlayouttypes.md)
+* [ContactRelationUpdateActionTypes](enums/botbuilder.contactrelationupdateactiontypes.md)
+* [EndOfConversationCodes](enums/botbuilder.endofconversationcodes.md)
+* [InputHints](enums/botbuilder.inputhints.md)
+* [InstallationUpdateActionTypes](enums/botbuilder.installationupdateactiontypes.md)
+* [MessageReactionTypes](enums/botbuilder.messagereactiontypes.md)
 * [RecognizeOrder](enums/botbuilder.recognizeorder.md)
+* [TextFormatTypes](enums/botbuilder.textformattypes.md)
 
 
 ### Classes
@@ -40,23 +50,75 @@
 
 ### Interfaces
 
+* [Activity](interfaces/botbuilder.activity.md)
 * [ActivityAdapter](interfaces/botbuilder.activityadapter.md)
+* [AnimationCard](interfaces/botbuilder.animationcard.md)
+* [Attachment](interfaces/botbuilder.attachment.md)
+* [AttachmentData](interfaces/botbuilder.attachmentdata.md)
+* [AttachmentInfo](interfaces/botbuilder.attachmentinfo.md)
 * [AttachmentRecognizerSettings](interfaces/botbuilder.attachmentrecognizersettings.md)
+* [AttachmentView](interfaces/botbuilder.attachmentview.md)
+* [AudioCard](interfaces/botbuilder.audiocard.md)
+* [BasicCard](interfaces/botbuilder.basiccard.md)
 * [BotStateManagerSettings](interfaces/botbuilder.botstatemanagersettings.md)
+* [CardAction](interfaces/botbuilder.cardaction.md)
+* [CardImage](interfaces/botbuilder.cardimage.md)
+* [ChannelAccount](interfaces/botbuilder.channelaccount.md)
+* [ConversationAccount](interfaces/botbuilder.conversationaccount.md)
+* [ConversationParameters](interfaces/botbuilder.conversationparameters.md)
+* [ConversationReference](interfaces/botbuilder.conversationreference.md)
+* [ConversationResourceResponse](interfaces/botbuilder.conversationresourceresponse.md)
+* [Entity](interfaces/botbuilder.entity.md)
 * [EntityObject](interfaces/botbuilder.entityobject.md)
+* [ErrorModel](interfaces/botbuilder.errormodel.md)
+* [ErrorResponse](interfaces/botbuilder.errorresponse.md)
+* [Fact](interfaces/botbuilder.fact.md)
+* [GeoCoordinates](interfaces/botbuilder.geocoordinates.md)
+* [HeroCard](interfaces/botbuilder.herocard.md)
 * [Intent](interfaces/botbuilder.intent.md)
 * [IntentRecognizerSetSettings](interfaces/botbuilder.intentrecognizersetsettings.md)
+* [MediaCard](interfaces/botbuilder.mediacard.md)
+* [MediaEventValue](interfaces/botbuilder.mediaeventvalue.md)
+* [MediaUrl](interfaces/botbuilder.mediaurl.md)
+* [Mention](interfaces/botbuilder.mention.md)
+* [MessageReaction](interfaces/botbuilder.messagereaction.md)
+* [MicrosoftPayMethodData](interfaces/botbuilder.microsoftpaymethoddata.md)
 * [Middleware](interfaces/botbuilder.middleware.md)
+* [PaymentAddress](interfaces/botbuilder.paymentaddress.md)
+* [PaymentCurrencyAmount](interfaces/botbuilder.paymentcurrencyamount.md)
+* [PaymentDetails](interfaces/botbuilder.paymentdetails.md)
+* [PaymentDetailsModifier](interfaces/botbuilder.paymentdetailsmodifier.md)
+* [PaymentItem](interfaces/botbuilder.paymentitem.md)
+* [PaymentMethodData](interfaces/botbuilder.paymentmethoddata.md)
+* [PaymentOptions](interfaces/botbuilder.paymentoptions.md)
+* [PaymentRequest](interfaces/botbuilder.paymentrequest.md)
+* [PaymentRequestComplete](interfaces/botbuilder.paymentrequestcomplete.md)
+* [PaymentRequestCompleteResult](interfaces/botbuilder.paymentrequestcompleteresult.md)
+* [PaymentRequestUpdate](interfaces/botbuilder.paymentrequestupdate.md)
+* [PaymentRequestUpdateResult](interfaces/botbuilder.paymentrequestupdateresult.md)
+* [PaymentResponse](interfaces/botbuilder.paymentresponse.md)
+* [PaymentShippingOption](interfaces/botbuilder.paymentshippingoption.md)
+* [Place](interfaces/botbuilder.place.md)
+* [ReceiptCard](interfaces/botbuilder.receiptcard.md)
+* [ReceiptItem](interfaces/botbuilder.receiptitem.md)
 * [RegExpLocaleMap](interfaces/botbuilder.regexplocalemap.md)
 * [RegExpRecognizerSettings](interfaces/botbuilder.regexprecognizersettings.md)
+* [ResourceResponse](interfaces/botbuilder.resourceresponse.md)
 * [SearchCatalog](interfaces/botbuilder.searchcatalog.md)
 * [SearchEngine](interfaces/botbuilder.searchengine.md)
 * [SearchHit](interfaces/botbuilder.searchhit.md)
+* [SigninCard](interfaces/botbuilder.signincard.md)
 * [Storage](interfaces/botbuilder.storage.md)
 * [StorageSettings](interfaces/botbuilder.storagesettings.md)
 * [StoreItem](interfaces/botbuilder.storeitem.md)
 * [StoreItems](interfaces/botbuilder.storeitems.md)
+* [SuggestedActions](interfaces/botbuilder.suggestedactions.md)
 * [TemplateRenderer](interfaces/botbuilder.templaterenderer.md)
+* [TextHighlight](interfaces/botbuilder.texthighlight.md)
+* [Thing](interfaces/botbuilder.thing.md)
+* [ThumbnailCard](interfaces/botbuilder.thumbnailcard.md)
+* [ThumbnailUrl](interfaces/botbuilder.thumbnailurl.md)
+* [VideoCard](interfaces/botbuilder.videocard.md)
 
 
 ### Type aliases
@@ -88,7 +150,7 @@
 
 **Τ Promiseable**:  *`Promise`.<`T`>⎮`T`* 
 
-*Defined in [libraries/botbuilder/lib/middleware.d.ts:14](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/middleware.d.ts#L14)*
+*Defined in [libraries/botbuilder/lib/middleware.d.ts:14](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/middleware.d.ts#L14)*
 
 
 
@@ -107,11 +169,11 @@ ___
 
 **Τ SimpleTemplateFunction**:  *`function`* 
 
-*Defined in [libraries/botbuilder/lib/dictionaryRenderer.d.ts:11](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/dictionaryRenderer.d.ts#L11)*
+*Defined in [libraries/botbuilder/lib/dictionaryRenderer.d.ts:11](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/dictionaryRenderer.d.ts#L11)*
 
 
 #### Type declaration
-►(context: *[BotContext](interfaces/botbuilder.__global.botcontext.md)*, data: *`Object`*): [Partial]()[Activity]()⎮`string`⎮`undefined`
+►(context: *[BotContext](interfaces/botbuilder.__global.botcontext.md)*, data: *`Object`*): [Partial]()[Activity](interfaces/botbuilder.activity.md)⎮`string`⎮`undefined`
 
 
 
@@ -126,7 +188,7 @@ ___
 
 
 
-**Returns:** [Partial]()[Activity]()⎮`string`⎮`undefined`
+**Returns:** [Partial]()[Activity](interfaces/botbuilder.activity.md)⎮`string`⎮`undefined`
 
 
 
@@ -141,7 +203,7 @@ ___
 
 **Τ TemplateDictionary**:  *`object`* 
 
-*Defined in [libraries/botbuilder/lib/dictionaryRenderer.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/dictionaryRenderer.d.ts#L21)*
+*Defined in [libraries/botbuilder/lib/dictionaryRenderer.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/dictionaryRenderer.d.ts#L21)*
 
 
 
@@ -165,7 +227,7 @@ ___
 
 **Τ TemplateFunction**:  *`function`* 
 
-*Defined in [libraries/botbuilder/lib/jsonTemplates.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/jsonTemplates.d.ts#L17)*
+*Defined in [libraries/botbuilder/lib/jsonTemplates.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/jsonTemplates.d.ts#L17)*
 
 
 
@@ -206,7 +268,7 @@ ___
 
 **Τ TemplateFunctionMap**:  *`object`* 
 
-*Defined in [libraries/botbuilder/lib/jsonTemplates.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/jsonTemplates.d.ts#L21)*
+*Defined in [libraries/botbuilder/lib/jsonTemplates.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/jsonTemplates.d.ts#L21)*
 
 
 
@@ -230,7 +292,7 @@ ___
 
 **Τ TemplateIdMap**:  *`object`* 
 
-*Defined in [libraries/botbuilder/lib/dictionaryRenderer.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/dictionaryRenderer.d.ts#L15)*
+*Defined in [libraries/botbuilder/lib/dictionaryRenderer.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/dictionaryRenderer.d.ts#L15)*
 
 
 
@@ -256,7 +318,7 @@ ___
 
 **●  EntityTypes**:  *[EntityTypes](interfaces/botbuilder.__global.entitytypes.md)* 
 
-*Defined in [libraries/botbuilder/lib/entityObject.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/entityObject.d.ts#L18)*
+*Defined in [libraries/botbuilder/lib/entityObject.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/entityObject.d.ts#L18)*
 
 
 
@@ -277,7 +339,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/middleware.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/middleware.d.ts#L19)*
+*Defined in [libraries/botbuilder/lib/middleware.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/middleware.d.ts#L19)*
 
 
 

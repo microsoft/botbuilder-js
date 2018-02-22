@@ -19,14 +19,14 @@ Implemented by activity adapters
 
 **●  onReceive**:  *`function`* 
 
-*Defined in [libraries/botbuilder/lib/activityAdapter.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/activityAdapter.d.ts#L19)*
+*Defined in [libraries/botbuilder/lib/activityAdapter.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/activityAdapter.d.ts#L19)*
 
 
 
 Handler that returns incoming activities to a single consumer. The `Bot` will set this when the adapter is passed to its constructor. Just keep in mind that should the bots adapter be replaced (like when running unit tests) this handler can end up being set back to undefined.
 
 #### Type declaration
-►(activity: *[Activity]()*): `Promise`.<`void`>
+►(activity: *[Activity](botbuilder.activity.md)*): `Promise`.<`void`>
 
 
 
@@ -34,7 +34,7 @@ Handler that returns incoming activities to a single consumer. The `Bot` will se
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| activity | [Activity]()   |  - |
+| activity | [Activity](botbuilder.activity.md)   |  - |
 
 
 
@@ -55,11 +55,11 @@ ___
 
 ###  post
 
-► **post**(activities: *[Partial]()[Activity]()[]*): `Promise`.<[ResourceResponse]()[]⎮`undefined`>
+► **post**(activities: *[Partial]()[Activity](botbuilder.activity.md)[]*): `Promise`.<[ResourceResponse](botbuilder.resourceresponse.md)[]⎮`undefined`>
 
 
 
-*Defined in [libraries/botbuilder/lib/activityAdapter.d.ts:25](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/activityAdapter.d.ts#L25)*
+*Defined in [libraries/botbuilder/lib/activityAdapter.d.ts:25](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/activityAdapter.d.ts#L25)*
 
 
 
@@ -70,13 +70,13 @@ Called by a consumer to send outgoing set of activities to a user.
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| activities | [Partial]()[Activity]()[]   |  The set of activities to send. |
+| activities | [Partial]()[Activity](botbuilder.activity.md)[]   |  The set of activities to send. |
 
 
 
 
 
-**Returns:** `Promise`.<[ResourceResponse]()[]⎮`undefined`>
+**Returns:** `Promise`.<[ResourceResponse](botbuilder.resourceresponse.md)[]⎮`undefined`>
 
 
 

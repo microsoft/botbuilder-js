@@ -8,7 +8,7 @@
 /// able to use aspects of the framework in isolation.
 
 const { ConnectorClient, MicrosoftAppCredentials,  SimpleCredentialProvider, JwtTokenValidation } = require('botframework-connector');
-const { Activity, ActivityTypes } = require('botbuilder-schema');
+const { Activity, ActivityTypes } = require('botframework-schema');
 const restify = require('restify');
 
 // Create server

@@ -54,7 +54,7 @@ Middleware for tracking conversation and user state using the `context.storage` 
 ### ⊕ **new BotStateManager**(settings?: *[Partial]()[BotStateManagerSettings](../interfaces/botbuilder.botstatemanagersettings.md)*): [BotStateManager](botbuilder.botstatemanager.md)
 
 
-*Defined in [libraries/botbuilder/lib/botStateManager.d.ts:44](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/botStateManager.d.ts#L44)*
+*Defined in [libraries/botbuilder/lib/botStateManager.d.ts:44](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/botStateManager.d.ts#L44)*
 
 
 
@@ -85,7 +85,7 @@ Creates a new instance of the state manager.
 
 
 
-*Defined in [libraries/botbuilder/lib/botStateManager.d.ts:51](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/botStateManager.d.ts#L51)*
+*Defined in [libraries/botbuilder/lib/botStateManager.d.ts:51](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/botStateManager.d.ts#L51)*
 
 
 
@@ -116,7 +116,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/botStateManager.d.ts:53](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/botStateManager.d.ts#L53)*
+*Defined in [libraries/botbuilder/lib/botStateManager.d.ts:53](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/botStateManager.d.ts#L53)*
 
 
 
@@ -143,11 +143,11 @@ ___
 
 ###  postActivity
 
-► **postActivity**(context: *[BotContext](../interfaces/botbuilder.__global.botcontext.md)*, activities: *[Partial]()[Activity]()[]*, next: *`function`*): `Promise`.<[ResourceResponse]()[]>
+► **postActivity**(context: *[BotContext](../interfaces/botbuilder.__global.botcontext.md)*, activities: *[Partial]()[Activity](../interfaces/botbuilder.activity.md)[]*, next: *`function`*): `Promise`.<[ResourceResponse](../interfaces/botbuilder.resourceresponse.md)[]>
 
 
 
-*Defined in [libraries/botbuilder/lib/botStateManager.d.ts:52](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/botStateManager.d.ts#L52)*
+*Defined in [libraries/botbuilder/lib/botStateManager.d.ts:52](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/botStateManager.d.ts#L52)*
 
 
 
@@ -156,14 +156,14 @@ ___
 | Param | Type | Description |
 | ------ | ------ | ------ |
 | context | [BotContext](../interfaces/botbuilder.__global.botcontext.md)   |  - |
-| activities | [Partial]()[Activity]()[]   |  - |
+| activities | [Partial]()[Activity](../interfaces/botbuilder.activity.md)[]   |  - |
 | next | `function`   |  - |
 
 
 
 
 
-**Returns:** `Promise`.<[ResourceResponse]()[]>
+**Returns:** `Promise`.<[ResourceResponse](../interfaces/botbuilder.resourceresponse.md)[]>
 
 
 
@@ -179,7 +179,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/botStateManager.d.ts:54](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/botStateManager.d.ts#L54)*
+*Defined in [libraries/botbuilder/lib/botStateManager.d.ts:54](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/botStateManager.d.ts#L54)*
 
 
 
@@ -210,7 +210,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/botStateManager.d.ts:55](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/botStateManager.d.ts#L55)*
+*Defined in [libraries/botbuilder/lib/botStateManager.d.ts:55](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/botStateManager.d.ts#L55)*
 
 
 

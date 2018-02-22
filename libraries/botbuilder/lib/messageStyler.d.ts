@@ -1,4 +1,4 @@
-import { Activity, CardAction, Attachment, InputHints } from 'botbuilder-schema';
+import { Activity, CardAction, Attachment, InputHints } from 'botframework-schema';
 /**
  * A set of utility functions to assist with the formatting of the various message types a bot can
  * return.

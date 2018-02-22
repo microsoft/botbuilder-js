@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, ResourceResponse } from 'botbuilder-schema';
+import { Activity, ResourceResponse } from 'botframework-schema';
 
 /**
  * Type signature for a return value that can (Optionally) return its value
