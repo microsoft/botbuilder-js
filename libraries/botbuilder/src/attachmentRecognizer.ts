@@ -7,7 +7,7 @@
  */
 import { Intent, IntentRecognizer } from './intentRecognizer';
 import { EntityObject, EntityTypes } from './entityObject';
-import { Attachment } from 'botbuilder-schema';
+import { Attachment } from 'botframework-schema';
 
 /** Optional settings for an `AttachmentRecognizer`. */
 export interface AttachmentRecognizerSettings {

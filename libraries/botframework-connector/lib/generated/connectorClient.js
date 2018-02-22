@@ -1,6 +1,6 @@
 "use strict";
 /**
- * @module botframework-connector
+ * @module botbuilder
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +8,7 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 const msRest = require("ms-rest-js");
-const Models = require("botbuilder-schema");
+const Models = require("botframework-schema");
 exports.ConnectorModels = Models;
 const Mappers = require("./models/mappers");
 exports.ConnectorMappers = Mappers;

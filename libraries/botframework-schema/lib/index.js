@@ -1,6 +1,6 @@
 "use strict";
 /**
- * @module botbuilder-schema
+ * @module botbuilder
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.

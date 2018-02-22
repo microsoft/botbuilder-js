@@ -39,7 +39,7 @@ Key/value pairs.
 
 **●  eTag**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/storage.d.ts:43](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/storage.d.ts#L43)*
+*Defined in [libraries/botbuilder/lib/storage.d.ts:43](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/storage.d.ts#L43)*
 
 
 

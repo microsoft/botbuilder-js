@@ -7,7 +7,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-const botbuilder_schema_1 = require("botbuilder-schema");
+const botframework_schema_1 = require("botframework-schema");
 const bot_1 = require("./bot");
 /**
  * Creates a new BotContext instance.
@@ -47,8 +47,8 @@ function createBotContext(bot, request) {
     context.endOfConversation = function endOfConversation(code) {
         throwIfDisposed('endOfConversation');
         const activity = {
-            type: botbuilder_schema_1.ActivityTypes.EndOfConversation,
-            code: code || botbuilder_schema_1.EndOfConversationCodes.CompletedSuccessfully
+            type: botframework_schema_1.ActivityTypes.EndOfConversation,
+            code: code || botframework_schema_1.EndOfConversationCodes.CompletedSuccessfully
         };
         this.responses.push(activity);
         return this;
@@ -62,13 +62,13 @@ function createBotContext(bot, request) {
         }
         if (typeof textOrActivity === 'object') {
             if (!textOrActivity.type) {
-                textOrActivity.type = botbuilder_schema_1.ActivityTypes.Message;
+                textOrActivity.type = botframework_schema_1.ActivityTypes.Message;
             }
             this.responses.push(textOrActivity);
         }
         else {
             const activity = Object.assign({
-                type: botbuilder_schema_1.ActivityTypes.Message,
+                type: botframework_schema_1.ActivityTypes.Message,
                 text: textOrActivity || '',
             }, additional || {});
             if (typeof speak === 'string') {
@@ -106,7 +106,7 @@ function createBotContext(bot, request) {
     };
     context.showTyping = function showTyping() {
         throwIfDisposed('showTyping');
-        this.responses.push({ type: botbuilder_schema_1.ActivityTypes.Typing });
+        this.responses.push({ type: botframework_schema_1.ActivityTypes.Typing });
         return this;
     };
     Object.defineProperty(context, 'responded', {

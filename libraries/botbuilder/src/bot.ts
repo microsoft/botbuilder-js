@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { MiddlewareSet } from './middlewareSet';
-import { ActivityTypes, Activity, ConversationReference, ResourceResponse, } from 'botbuilder-schema';
+import { ActivityTypes, Activity, ConversationReference, ResourceResponse, } from 'botframework-schema';
 import { ActivityAdapter } from './activityAdapter';
 import { Promiseable } from './middleware';
 import { createBotContext, applyConversationReference } from './botContext';

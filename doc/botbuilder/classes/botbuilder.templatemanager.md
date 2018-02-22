@@ -31,7 +31,7 @@
 
 
 
-*Defined in [libraries/botbuilder/lib/templateManager.d.ts:26](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/templateManager.d.ts#L26)*
+*Defined in [libraries/botbuilder/lib/templateManager.d.ts:26](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/templateManager.d.ts#L26)*
 
 
 
@@ -62,7 +62,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/templateManager.d.ts:45](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/templateManager.d.ts#L45)*
+*Defined in [libraries/botbuilder/lib/templateManager.d.ts:45](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/templateManager.d.ts#L45)*
 
 
 
@@ -87,7 +87,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/templateManager.d.ts:36](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/templateManager.d.ts#L36)*
+*Defined in [libraries/botbuilder/lib/templateManager.d.ts:36](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/templateManager.d.ts#L36)*
 
 
 
@@ -108,11 +108,11 @@ ___
 
 ###  postActivity
 
-► **postActivity**(context: *[BotContext](../interfaces/botbuilder.__global.botcontext.md)*, activities: *[Partial]()[Activity]()[]*, next: *`function`*): `Promise`.<[ResourceResponse]()[]>
+► **postActivity**(context: *[BotContext](../interfaces/botbuilder.__global.botcontext.md)*, activities: *[Partial]()[Activity](../interfaces/botbuilder.activity.md)[]*, next: *`function`*): `Promise`.<[ResourceResponse](../interfaces/botbuilder.resourceresponse.md)[]>
 
 
 
-*Defined in [libraries/botbuilder/lib/templateManager.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/templateManager.d.ts#L27)*
+*Defined in [libraries/botbuilder/lib/templateManager.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/templateManager.d.ts#L27)*
 
 
 
@@ -121,14 +121,14 @@ ___
 | Param | Type | Description |
 | ------ | ------ | ------ |
 | context | [BotContext](../interfaces/botbuilder.__global.botcontext.md)   |  - |
-| activities | [Partial]()[Activity]()[]   |  - |
+| activities | [Partial]()[Activity](../interfaces/botbuilder.activity.md)[]   |  - |
 | next | `function`   |  - |
 
 
 
 
 
-**Returns:** `Promise`.<[ResourceResponse]()[]>
+**Returns:** `Promise`.<[ResourceResponse](../interfaces/botbuilder.resourceresponse.md)[]>
 
 
 
@@ -144,7 +144,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/templateManager.d.ts:32](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/templateManager.d.ts#L32)*
+*Defined in [libraries/botbuilder/lib/templateManager.d.ts:32](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/templateManager.d.ts#L32)*
 
 
 
@@ -177,7 +177,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/templateManager.d.ts:41](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/templateManager.d.ts#L41)*
+*Defined in [libraries/botbuilder/lib/templateManager.d.ts:41](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/templateManager.d.ts#L41)*
 
 
 

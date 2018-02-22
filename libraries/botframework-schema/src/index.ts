@@ -1,5 +1,5 @@
 /**
- * @module botbuilder-schema
+ * @module botbuilder
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.  
@@ -555,13 +555,13 @@ export interface AttachmentData {
    */
   name: string;
   /**
-   * @member {Buffer} [originalBase64] Attachment content
+   * @member {any} [originalBase64] Attachment content
    */
-  originalBase64: Buffer;
+  originalBase64: any;
   /**
-   * @member {Buffer} [thumbnailBase64] Attachment thumbnail
+   * @member {any} [thumbnailBase64] Attachment thumbnail
    */
-  thumbnailBase64: Buffer;
+  thumbnailBase64: any;
 }
 
 /**

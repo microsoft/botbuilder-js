@@ -15,7 +15,7 @@ Additional settings for a storage provider.
 
 **●  optimizeWrites**:  *`undefined`⎮`true`⎮`false`* 
 
-*Defined in [libraries/botbuilder/lib/storage.d.ts:36](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/storage.d.ts#L36)*
+*Defined in [libraries/botbuilder/lib/storage.d.ts:36](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/storage.d.ts#L36)*
 
 
 

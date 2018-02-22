@@ -1,6 +1,6 @@
 {
   "name": "botframework-schema",
-  "version": "4.0.0-m1.5",
+  "version": "4.0.0-m1.7",
   "keywords": [
     "botconnector",
     "bots",
@@ -9,9 +9,9 @@
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "dependencies": {
-    "@types/node": "^9.3.0"
   },
   "devDependencies": {
+    "@types/node": "^9.3.0"
   },
   "scripts": {
     "build": "tsc",

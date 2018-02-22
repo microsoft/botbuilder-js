@@ -17,7 +17,7 @@ interface for search catalog
 
 
 
-*Defined in [libraries/botbuilder/lib/search.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/search.d.ts#L31)*
+*Defined in [libraries/botbuilder/lib/search.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/search.d.ts#L31)*
 
 
 
@@ -50,7 +50,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/search.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/search.d.ts#L39)*
+*Defined in [libraries/botbuilder/lib/search.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/search.d.ts#L39)*
 
 
 
@@ -83,7 +83,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/search.d.ts:55](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/search.d.ts#L55)*
+*Defined in [libraries/botbuilder/lib/search.d.ts:55](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/search.d.ts#L55)*
 
 
 
@@ -108,7 +108,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/search.d.ts:43](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/search.d.ts#L43)*
+*Defined in [libraries/botbuilder/lib/search.d.ts:43](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/search.d.ts#L43)*
 
 
 
@@ -141,7 +141,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/search.d.ts:47](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/search.d.ts#L47)*
+*Defined in [libraries/botbuilder/lib/search.d.ts:47](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/search.d.ts#L47)*
 
 
 
@@ -166,7 +166,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/search.d.ts:51](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/search.d.ts#L51)*
+*Defined in [libraries/botbuilder/lib/search.d.ts:51](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/search.d.ts#L51)*
 
 
 
@@ -199,7 +199,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/search.d.ts:35](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/search.d.ts#L35)*
+*Defined in [libraries/botbuilder/lib/search.d.ts:35](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/search.d.ts#L35)*
 
 
 

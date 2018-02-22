@@ -8,7 +8,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Licensed under the MIT License.
  */
 const cardStyler_1 = require("./cardStyler");
-const botbuilder_schema_1 = require("botbuilder-schema");
+const botframework_schema_1 = require("botframework-schema");
 /**
  * A set of utility functions to assist with the formatting of the various message types a bot can
  * return.
@@ -47,7 +47,7 @@ class MessageStyler {
      */
     static text(text, speak, inputHint) {
         const msg = {
-            type: botbuilder_schema_1.ActivityTypes.Message,
+            type: botframework_schema_1.ActivityTypes.Message,
             text: text || ''
         };
         if (speak) {
@@ -68,7 +68,7 @@ class MessageStyler {
      */
     static suggestedActions(actions, text, speak, inputHint) {
         const msg = {
-            type: botbuilder_schema_1.ActivityTypes.Message,
+            type: botframework_schema_1.ActivityTypes.Message,
             suggestedActions: {
                 actions: cardStyler_1.CardStyler.actions(actions)
             }
@@ -93,7 +93,7 @@ class MessageStyler {
      * @param inputHint (Optional) input hint for the message.
      */
     static attachment(attachment, text, speak, inputHint) {
-        return attachmentActivity(botbuilder_schema_1.AttachmentLayoutTypes.List, [attachment], text, speak, inputHint);
+        return attachmentActivity(botframework_schema_1.AttachmentLayoutTypes.List, [attachment], text, speak, inputHint);
     }
     /**
      * Returns a message that will display a set of attachments in list form.
@@ -104,7 +104,7 @@ class MessageStyler {
      * @param inputHint (Optional) input hint for the message.
      */
     static list(attachments, text, speak, inputHint) {
-        return attachmentActivity(botbuilder_schema_1.AttachmentLayoutTypes.List, attachments, text, speak, inputHint);
+        return attachmentActivity(botframework_schema_1.AttachmentLayoutTypes.List, attachments, text, speak, inputHint);
     }
     /**
      * Returns a message that will display a set of attachments using a carousel layout.
@@ -128,7 +128,7 @@ class MessageStyler {
      * @param inputHint (Optional) input hint for the message.
      */
     static carousel(attachments, text, speak, inputHint) {
-        return attachmentActivity(botbuilder_schema_1.AttachmentLayoutTypes.Carousel, attachments, text, speak, inputHint);
+        return attachmentActivity(botframework_schema_1.AttachmentLayoutTypes.Carousel, attachments, text, speak, inputHint);
     }
     /**
      * Returns a message that will display a single image or video to a user.
@@ -154,13 +154,13 @@ class MessageStyler {
         if (name) {
             a.name = name;
         }
-        return attachmentActivity(botbuilder_schema_1.AttachmentLayoutTypes.List, [a], text, speak, inputHint);
+        return attachmentActivity(botframework_schema_1.AttachmentLayoutTypes.List, [a], text, speak, inputHint);
     }
 }
 exports.MessageStyler = MessageStyler;
 function attachmentActivity(attachmentLayout, attachments, text, speak, inputHint) {
     const msg = {
-        type: botbuilder_schema_1.ActivityTypes.Message,
+        type: botframework_schema_1.ActivityTypes.Message,
         attachmentLayout: attachmentLayout,
         attachments: attachments
     };

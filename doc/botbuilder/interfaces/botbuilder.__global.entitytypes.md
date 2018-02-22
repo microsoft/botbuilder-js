@@ -15,7 +15,7 @@ Well known entity types.
 
 **●  attachment**:  *`string`* 
 
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:200](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/botbuilder.d.ts#L200)*
+*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:200](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/botbuilder.d.ts#L200)*
 
 
 
@@ -29,7 +29,7 @@ ___
 
 **●  boolean**:  *`string`* 
 
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:203](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/botbuilder.d.ts#L203)*
+*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:203](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/botbuilder.d.ts#L203)*
 
 
 
@@ -43,7 +43,7 @@ ___
 
 **●  number**:  *`string`* 
 
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:202](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/botbuilder.d.ts#L202)*
+*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:202](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/botbuilder.d.ts#L202)*
 
 
 
@@ -57,7 +57,7 @@ ___
 
 **●  string**:  *`string`* 
 
-*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:201](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/botbuilder.d.ts#L201)*
+*Defined in [libraries/botbuilder/lib/botbuilder.d.ts:201](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/botbuilder.d.ts#L201)*
 
 
 

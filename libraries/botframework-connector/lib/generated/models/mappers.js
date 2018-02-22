@@ -1,6 +1,6 @@
 "use strict";
 /**
- * @module botframework-connector
+ * @module botbuilder
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.

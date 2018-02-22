@@ -70,7 +70,7 @@ Manages all communication between the bot and a user.
 ### ⊕ **new Bot**(adapter: *[ActivityAdapter](../interfaces/botbuilder.activityadapter.md)*): [Bot](botbuilder.bot.md)
 
 
-*Defined in [libraries/botbuilder/lib/bot.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/bot.d.ts#L31)*
+*Defined in [libraries/botbuilder/lib/bot.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/bot.d.ts#L31)*
 
 
 
@@ -99,7 +99,7 @@ Creates a new instance of a bot
 
 **●  adapter**:  *[ActivityAdapter](../interfaces/botbuilder.activityadapter.md)* 
 
-*Defined in [libraries/botbuilder/lib/bot.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/bot.d.ts#L39)*
+*Defined in [libraries/botbuilder/lib/bot.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/bot.d.ts#L39)*
 
 
 
@@ -118,7 +118,7 @@ ___
 
 *Inherited from [MiddlewareSet](botbuilder.middlewareset.md).[middleware](botbuilder.middlewareset.md#middleware)*
 
-*Defined in [libraries/botbuilder/lib/middlewareSet.d.ts:20](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/middlewareSet.d.ts#L20)*
+*Defined in [libraries/botbuilder/lib/middlewareSet.d.ts:20](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/middlewareSet.d.ts#L20)*
 
 
 
@@ -141,7 +141,7 @@ ___
 
 *Inherited from [MiddlewareSet](botbuilder.middlewareset.md).[contextCreated](botbuilder.middlewareset.md#contextcreated)*
 
-*Defined in [libraries/botbuilder/lib/middlewareSet.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/middlewareSet.d.ts#L27)*
+*Defined in [libraries/botbuilder/lib/middlewareSet.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/middlewareSet.d.ts#L27)*
 
 
 
@@ -168,11 +168,11 @@ ___
 
 ###  createContext
 
-► **createContext**(activityOrReference: *[Activity]()⎮[ConversationReference]()*, onReady: *`function`*): `Promise`.<`void`>
+► **createContext**(activityOrReference: *[Activity](../interfaces/botbuilder.activity.md)⎮[ConversationReference](../interfaces/botbuilder.conversationreference.md)*, onReady: *`function`*): `Promise`.<`void`>
 
 
 
-*Defined in [libraries/botbuilder/lib/bot.d.ts:59](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/bot.d.ts#L59)*
+*Defined in [libraries/botbuilder/lib/bot.d.ts:59](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/bot.d.ts#L59)*
 
 
 
@@ -192,7 +192,7 @@ Creates a new context object given an activity or conversation reference. The co
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| activityOrReference | [Activity]()⎮[ConversationReference]()   |  Activity or ConversationReference to initialize the context object with. |
+| activityOrReference | [Activity](../interfaces/botbuilder.activity.md)⎮[ConversationReference](../interfaces/botbuilder.conversationreference.md)   |  Activity or ConversationReference to initialize the context object with. |
 | onReady | `function`   |  Function that will use the created context object. |
 
 
@@ -215,7 +215,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/bot.d.ts:76](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/bot.d.ts#L76)*
+*Defined in [libraries/botbuilder/lib/bot.d.ts:76](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/bot.d.ts#L76)*
 
 
 
@@ -251,11 +251,11 @@ ___
 
 ###  post
 
-► **post**(context: *[BotContext](../interfaces/botbuilder.__global.botcontext.md)*, ...activities: *[Partial]()[Activity]()[]*): `Promise`.<[ResourceResponse]()[]>
+► **post**(context: *[BotContext](../interfaces/botbuilder.__global.botcontext.md)*, ...activities: *[Partial]()[Activity](../interfaces/botbuilder.activity.md)[]*): `Promise`.<[ResourceResponse](../interfaces/botbuilder.resourceresponse.md)[]>
 
 
 
-*Defined in [libraries/botbuilder/lib/bot.d.ts:94](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/bot.d.ts#L94)*
+*Defined in [libraries/botbuilder/lib/bot.d.ts:94](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/bot.d.ts#L94)*
 
 
 
@@ -267,13 +267,13 @@ INTERNAL sends an outgoing set of activities to the user. Calling `context.flush
 | Param | Type | Description |
 | ------ | ------ | ------ |
 | context | [BotContext](../interfaces/botbuilder.__global.botcontext.md)   |  Context for the current turn of the conversation. |
-| activities | [Partial]()[Activity]()[]   |  Set of activities to send. |
+| activities | [Partial]()[Activity](../interfaces/botbuilder.activity.md)[]   |  Set of activities to send. |
 
 
 
 
 
-**Returns:** `Promise`.<[ResourceResponse]()[]>
+**Returns:** `Promise`.<[ResourceResponse](../interfaces/botbuilder.resourceresponse.md)[]>
 
 
 
@@ -285,13 +285,13 @@ ___
 
 ###  postActivity
 
-► **postActivity**(context: *[BotContext](../interfaces/botbuilder.__global.botcontext.md)*, activities: *[Partial]()[Activity]()[]*, next: *`function`*): `Promise`.<[ResourceResponse]()[]>
+► **postActivity**(context: *[BotContext](../interfaces/botbuilder.__global.botcontext.md)*, activities: *[Partial]()[Activity](../interfaces/botbuilder.activity.md)[]*, next: *`function`*): `Promise`.<[ResourceResponse](../interfaces/botbuilder.resourceresponse.md)[]>
 
 
 
 *Inherited from [MiddlewareSet](botbuilder.middlewareset.md).[postActivity](botbuilder.middlewareset.md#postactivity)*
 
-*Defined in [libraries/botbuilder/lib/middlewareSet.d.ts:29](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/middlewareSet.d.ts#L29)*
+*Defined in [libraries/botbuilder/lib/middlewareSet.d.ts:29](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/middlewareSet.d.ts#L29)*
 
 
 
@@ -300,14 +300,14 @@ ___
 | Param | Type | Description |
 | ------ | ------ | ------ |
 | context | [BotContext](../interfaces/botbuilder.__global.botcontext.md)   |  - |
-| activities | [Partial]()[Activity]()[]   |  - |
+| activities | [Partial]()[Activity](../interfaces/botbuilder.activity.md)[]   |  - |
 | next | `function`   |  - |
 
 
 
 
 
-**Returns:** `Promise`.<[ResourceResponse]()[]>
+**Returns:** `Promise`.<[ResourceResponse](../interfaces/botbuilder.resourceresponse.md)[]>
 
 
 
@@ -319,11 +319,11 @@ ___
 
 ###  receive
 
-► **receive**(activity: *[Activity]()*): `Promise`.<`void`>
+► **receive**(activity: *[Activity](../interfaces/botbuilder.activity.md)*): `Promise`.<`void`>
 
 
 
-*Defined in [libraries/botbuilder/lib/bot.d.ts:102](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/bot.d.ts#L102)*
+*Defined in [libraries/botbuilder/lib/bot.d.ts:102](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/bot.d.ts#L102)*
 
 
 
@@ -334,7 +334,7 @@ Dispatches an incoming set of activities. This method can be used to dispatch an
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| activity | [Activity]()   |  The activity that was received. |
+| activity | [Activity](../interfaces/botbuilder.activity.md)   |  The activity that was received. |
 
 
 
@@ -360,7 +360,7 @@ ___
 
 *Inherited from [MiddlewareSet](botbuilder.middlewareset.md).[receiveActivity](botbuilder.middlewareset.md#receiveactivity)*
 
-*Defined in [libraries/botbuilder/lib/middlewareSet.d.ts:28](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/middlewareSet.d.ts#L28)*
+*Defined in [libraries/botbuilder/lib/middlewareSet.d.ts:28](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/middlewareSet.d.ts#L28)*
 
 
 
@@ -393,7 +393,7 @@ ___
 
 *Inherited from [MiddlewareSet](botbuilder.middlewareset.md).[use](botbuilder.middlewareset.md#use)*
 
-*Defined in [libraries/botbuilder/lib/middlewareSet.d.ts:26](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/middlewareSet.d.ts#L26)*
+*Defined in [libraries/botbuilder/lib/middlewareSet.d.ts:26](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/middlewareSet.d.ts#L26)*
 
 
 
@@ -426,7 +426,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/bot.d.ts:81](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/bot.d.ts#L81)*
+*Defined in [libraries/botbuilder/lib/bot.d.ts:81](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/bot.d.ts#L81)*
 
 
 
@@ -459,7 +459,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/bot.d.ts:86](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder/lib/bot.d.ts#L86)*
+*Defined in [libraries/botbuilder/lib/bot.d.ts:86](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/bot.d.ts#L86)*
 
 
 

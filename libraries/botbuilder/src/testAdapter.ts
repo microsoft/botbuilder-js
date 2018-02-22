@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { ActivityAdapter } from './activityAdapter';
-import { ActivityTypes, Activity, ConversationReference, ChannelAccount } from 'botbuilder-schema';
+import { ActivityTypes, Activity, ConversationReference, ChannelAccount } from 'botframework-schema';
 import { Promiseable } from './middleware';
 import assert = require('assert');
 

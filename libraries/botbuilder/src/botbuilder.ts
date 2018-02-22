@@ -29,10 +29,10 @@ export * from './storageMiddleware';
 export * from './templateManager';
 export * from './dictionaryRenderer';
 export * from './testAdapter';
-export * from 'botbuilder-schema';
+export * from 'botframework-schema';
 
 import { Bot } from './bot';
-import { Activity, ConversationReference, ResourceResponse } from 'botbuilder-schema';
+import { Activity, ConversationReference, ResourceResponse } from 'botframework-schema';
 import { Intent } from './intentRecognizer';
 import { EntityObject } from './entityObject';
 import { StoreItem, Storage } from './storage';

@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, ConversationReference } from 'botbuilder-schema';
+import { Activity, ConversationReference } from 'botframework-schema';
 import { Bot } from './bot';
 /**
  * Creates a new BotContext instance.
