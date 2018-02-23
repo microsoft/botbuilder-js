@@ -5,7 +5,7 @@ const testMessage = { text: 'test', type: 'message' };
 
 class SimpleAdapter extends BotAdapter { }
 
-describe(`middlewareSet`, function () {
+describe(`MiddlewareSet`, function () {
     this.timeout(5000);
 
     let order = '';

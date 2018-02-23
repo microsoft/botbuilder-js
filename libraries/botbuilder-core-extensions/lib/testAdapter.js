@@ -16,21 +16,20 @@ class TestAdapter extends botbuilder_core_1.BotAdapter {
     /**
      * Creates a new instance of the test adapter.
      * @param botLogic The bots logic that's under test.
-     * @param reference (Optional) conversation reference that lets you customize the address
-     * information for messages sent during a test.
+     * @param template (Optional) activity containing default values to assign to all test messages received.
      */
-    constructor(botLogic, reference) {
+    constructor(botLogic, template) {
         super();
         this.botLogic = botLogic;
         this.nextId = 0;
         this.botReplies = [];
-        this.reference = Object.assign({
+        this.template = Object.assign({
             channelId: 'test',
             serviceUrl: 'https://test.com',
-            user: { id: 'user', name: 'User1' },
-            bot: { id: 'bot', name: 'Bot' },
+            from: { id: 'user', name: 'User1' },
+            recipient: { id: 'bot', name: 'Bot' },
             conversation: { id: 'Convo1' }
-        }, reference);
+        }, template);
     }
     sendActivities(activities) {
         const responses = activities.map((activity) => {
@@ -53,7 +52,7 @@ class TestAdapter extends botbuilder_core_1.BotAdapter {
      */
     receiveActivity(activity) {
         // Initialize request
-        const request = Object.assign({}, this.reference, typeof activity === 'string' ? { type: botbuilder_core_1.ActivityTypes.Message, text: activity } : activity);
+        const request = Object.assign({}, this.template, typeof activity === 'string' ? { type: botbuilder_core_1.ActivityTypes.Message, text: activity } : activity);
         if (!request.type) {
             request.type = botbuilder_core_1.ActivityTypes.Message;
         }

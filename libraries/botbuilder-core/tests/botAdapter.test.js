@@ -10,7 +10,7 @@ class SimpleAdapter extends BotAdapter {
     }
 }
 
-describe(`botAdapter`, function () {
+describe(`BotAdapter`, function () {
     this.timeout(5000);
 
     let calls = 0;

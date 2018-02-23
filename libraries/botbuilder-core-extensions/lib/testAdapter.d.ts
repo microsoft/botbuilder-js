@@ -12,15 +12,14 @@ import { BotAdapter, Activity, ConversationReference, Promiseable, TurnContext, 
 export declare class TestAdapter extends BotAdapter {
     private botLogic;
     private nextId;
-    readonly reference: ConversationReference;
+    readonly template: Partial<Activity>;
     readonly botReplies: Partial<Activity>[];
     /**
      * Creates a new instance of the test adapter.
      * @param botLogic The bots logic that's under test.
-     * @param reference (Optional) conversation reference that lets you customize the address
-     * information for messages sent during a test.
+     * @param template (Optional) activity containing default values to assign to all test messages received.
      */
-    constructor(botLogic: (context: TurnContext<TestAdapter>) => Promiseable<void>, reference?: ConversationReference);
+    constructor(botLogic: (context: TurnContext<TestAdapter>) => Promiseable<void>, template?: ConversationReference);
     sendActivities(activities: Partial<Activity>[]): Promise<ResourceResponse[]>;
     updateActivity(activity: Partial<Activity>): Promise<void>;
     deleteActivity(id: string): Promise<void>;

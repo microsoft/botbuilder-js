@@ -18,24 +18,23 @@ import assert = require('assert');
 export class TestAdapter extends BotAdapter {
     private nextId = 0;
 
-    public readonly reference: ConversationReference;
+    public readonly template: Partial<Activity>;
     public readonly botReplies: Partial<Activity>[] = [];
 
     /**
      * Creates a new instance of the test adapter.
      * @param botLogic The bots logic that's under test.
-     * @param reference (Optional) conversation reference that lets you customize the address
-     * information for messages sent during a test.
+     * @param template (Optional) activity containing default values to assign to all test messages received.
      */
-    constructor(private botLogic: (context: TurnContext<TestAdapter>) => Promiseable<void>, reference?: ConversationReference) {
+    constructor(private botLogic: (context: TurnContext<TestAdapter>) => Promiseable<void>, template?: ConversationReference) {
         super();
-        this.reference = Object.assign({
+        this.template = Object.assign({
             channelId: 'test',
             serviceUrl: 'https://test.com',
-            user: { id: 'user', name: 'User1' },
-            bot: { id: 'bot', name: 'Bot' },
+            from: { id: 'user', name: 'User1' },
+            recipient: { id: 'bot', name: 'Bot' },
             conversation: { id: 'Convo1' }
-        } as ConversationReference, reference);
+        } as Activity, template);
     }
 
     public sendActivities(activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
@@ -62,7 +61,7 @@ export class TestAdapter extends BotAdapter {
      */
     public receiveActivity(activity: string | Partial<Activity>): Promise<void> {
         // Initialize request
-        const request = Object.assign({}, this.reference, typeof activity === 'string' ? { type: ActivityTypes.Message, text: activity } : activity);
+        const request = Object.assign({}, this.template, typeof activity === 'string' ? { type: ActivityTypes.Message, text: activity } : activity);
         if (!request.type) { request.type = ActivityTypes.Message }
         if (!request.id) { request.id = (this.nextId++).toString() }
 

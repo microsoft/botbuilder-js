@@ -31,7 +31,7 @@ class SimpleAdapter extends BotAdapter {
     }
 }
 
-describe(`turnContext`, function () {
+describe(`TurnContext`, function () {
     this.timeout(5000);
 
     const context = new TurnContext(new SimpleAdapter(), testMessage);
