@@ -32,26 +32,26 @@ async function resolveConfigs() {
 }
 
 function getInput(config) {
-    if (!config.in) {
-        return new Promise((resolve, reject) => {
-            const {stdin} = process;
-            let timeout = setTimeout(reject, 1000);
-            let input = '';
-            stdin.setEncoding('utf8');
-            stdin.on('data', chunk => {
-                if (timeout) {
-                    clearTimeout(timeout);
-                    timeout = null;
-                }
-                input += chunk;
-            });
-            stdin.on('end', () => {
-                resolve(input)
-            });
-            stdin.on('error', error => reject(error));
-        });
+    if (config.in) {
+        return fs.readFile(path.resolve(config.in), 'utf-8');
     }
-    return fs.readFile(path.resolve(config.in), 'utf-8');
+    return new Promise((resolve, reject) => {
+        const {stdin} = process;
+        let timeout = setTimeout(reject, 1000);
+        let input = '';
+        stdin.setEncoding('utf8');
+        stdin.on('data', chunk => {
+            if (timeout) {
+                clearTimeout(timeout);
+                timeout = null;
+            }
+            input += chunk;
+        });
+        stdin.on('end', () => {
+            resolve(input)
+        });
+        stdin.on('error', error => reject(error));
+    });
 }
 
 async function writeOut(activities, config) {
