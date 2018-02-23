@@ -58,7 +58,7 @@ function conversationState(storage) {
             });
         }
         else {
-            return next();
+            return Promise.reject(new Error(`ConversationState: channelId and/or conversation missing from context.request.`));
         }
     };
 }
@@ -75,6 +75,16 @@ class ConvesationState {
         return context.get(CACHED_STATE);
     }
     /**
+     * Returns the storage key for the current conversation state.
+     * @param context Context for current turn of conversation with the user.
+     */
+    static key(context) {
+        if (!context.has(CACHED_STATE)) {
+            throw new Error(NOT_INSTALLED);
+        }
+        return context.get(CACHED_KEY);
+    }
+    /**
      * Clears the current conversation state for a turn.
      * @param context Context for current turn of conversation with the user.
      */
@@ -83,7 +93,6 @@ class ConvesationState {
             throw new Error(NOT_INSTALLED);
         }
         context.set(CACHED_STATE, {});
-        context.set(CACHED_HASH, '{}');
     }
     /**
      * Reloads the current conversation state for a turn.

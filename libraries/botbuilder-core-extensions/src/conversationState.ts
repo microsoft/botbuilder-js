@@ -59,7 +59,7 @@ export function conversationState(storage: Storage): MiddlewareHandler {
                     }
                 });
         } else {
-            return next();
+            return Promise.reject(new Error(`ConversationState: channelId and/or conversation missing from context.request.`));
         }
     }
 }
@@ -75,13 +75,21 @@ export class ConvesationState {
     }
 
     /**
+     * Returns the storage key for the current conversation state.
+     * @param context Context for current turn of conversation with the user.
+     */
+    static key(context: TurnContext): string {
+        if (!context.has(CACHED_STATE)) { throw new Error(NOT_INSTALLED) }
+        return context.get(CACHED_KEY);
+    }
+    
+    /**
      * Clears the current conversation state for a turn.
      * @param context Context for current turn of conversation with the user.
      */
     static clear(context: TurnContext) {
         if (!context.has(CACHED_STATE)) { throw new Error(NOT_INSTALLED) }
         context.set(CACHED_STATE, {});
-        context.set(CACHED_HASH, '{}');
     }
 
     /**

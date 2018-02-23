@@ -37,4 +37,29 @@ describe(`TestAdapter`, function () {
         .assertReply('received')
         .then(() => done());
     });
+
+    it(`should send and receive when test() is called.`, function (done) {
+        const adapter = new TestAdapter((context) => {
+            return context.sendActivities([receivedMessage]);
+        })
+        .test('test', 'received')
+        .then(() => done());
+    });
+
+    it(`should support multiple calls to test().`, function (done) {
+        let count = 0;
+        const adapter = new TestAdapter((context) => {
+            count++;
+            return context.sendActivities([receivedMessage]);
+        })
+        .test('test', 'received')
+        .test('test', 'received')
+        .test('test', 'received')
+        .test('test', 'received')
+        .test('test', 'received')
+        .then(() => {
+            assert(count == 5, `incorrect count of "${count}".`);
+            done();
+        });
+    });
 });

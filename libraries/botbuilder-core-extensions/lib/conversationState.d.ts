@@ -15,6 +15,11 @@ export declare class ConvesationState {
      */
     static get<T extends StoreItem>(context: TurnContext): T;
     /**
+     * Returns the storage key for the current conversation state.
+     * @param context Context for current turn of conversation with the user.
+     */
+    static key(context: TurnContext): string;
+    /**
      * Clears the current conversation state for a turn.
      * @param context Context for current turn of conversation with the user.
      */
