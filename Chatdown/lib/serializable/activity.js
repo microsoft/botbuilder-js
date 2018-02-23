@@ -36,14 +36,13 @@ module.exports = class Activity {
      *
      * @param attachments
      * @param conversation
-     * @param from
      * @param id
      * @param text
      * @param timestamp
      * @param type
      * @param recipient
      */
-    constructor({attachments, conversation, from, id, recipient, text, timestamp, type} = {}) {
-        Object.assign(this, {attachments, conversation, from, id, recipient, text, timestamp, type});
+    constructor({attachments, conversation, id, recipient, text, timestamp, type} = {}) {
+        Object.assign(this, {attachments, conversation, id, recipient, text, timestamp, type});
     }
 };

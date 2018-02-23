@@ -3,7 +3,7 @@ const path = require('path');
 const {exec} = require('child_process');
 const chatdown = path.resolve('../bin/chatdown.js');
 
-describe('The Chatdown tool', () => {
+describe('The Chatdown cli tool', () => {
     it('should throw if the a config path was provided but the config file was not found', done => {
         exec(`node ${chatdown} --config=notThere`, (error, stdout, stderr) => {
             assert(stdout === 'ReferenceError: notThere cannot be found');

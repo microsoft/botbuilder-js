@@ -2,6 +2,6 @@
   "channelId": 12345,
   "user": "Joe",
   "bot": "LulaBot",
-  "in": "sample.chat",
-  "out": "sample.transcript"
+  "in": "test/sample.chat",
+  "out": "test/sample.transcript"
 }

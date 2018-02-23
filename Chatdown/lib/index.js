@@ -13,10 +13,13 @@ const Attachment = require('./serializable/attachment');
 
 // Matches [someActivityOrInstruction:argument0:argument1:argumentn...]
 const activityRegExp = /(?:\[)([\w+:/.-]*)+(?:])/g;
+const messageTimeGap = 2000;
 let now = Date.now();
+now -= now % 1000; // nearest second
+
 module.exports = async function readContents(fileContents, config) {
     const activities = [];
-    const lines = fileLineIterator(fileContents);
+    const lines = fileLineIterator(fileContents.trim() + '\n');
     // Matches the user and bot from the arguments or from the merged config
     const {channelId, user, bot} = config;
     const newMessageRegEx = new RegExp(`(${user.toLowerCase()}|${bot.toLowerCase()}):`, 'i');
@@ -37,7 +40,7 @@ module.exports = async function readContents(fileContents, config) {
                 currentActivity.text = currentActivity.text ? currentActivity.text.trim() : null;
                 activities.push(currentActivity);
             }
-            currentActivity = createActivity({to, from, timestamp: new Date(now += 2000).toUTCString(), channelId});
+            currentActivity = createActivity({to, from, channelId});
             // Trim off the user or bot and continue since
             // this line may still have a message or other
             // activities to parse.
@@ -59,6 +62,7 @@ module.exports = async function readContents(fileContents, config) {
             }
         } else {
             currentActivity.text += (aggregate !== null ? aggregate : line).trim() + '\n';
+            currentActivity.timestamp = getIncrementedDate();
         }
     }
     // We've run out of lines but may still have
@@ -74,7 +78,7 @@ async function readActivitiesFromAggregate(aggregate, currentActivity, to, from,
     activityRegExp.lastIndex = 0;
     let result;
     while (result = activityRegExp.exec(aggregate)) {
-        // Type should always be listed first
+        // typeOrField should always be listed first
         const [typeOrField, ...rest] = result[1].split(':');
         const type = ActivityType[typeOrField];
         const field = ActivityField[typeOrField];
@@ -94,31 +98,30 @@ async function readActivitiesFromAggregate(aggregate, currentActivity, to, from,
             // to the message.
             const index = aggregate.indexOf(`[${result[1]}]`);
             (currentActivity.text || (currentActivity.text = '')).concat(`\n${aggregate.substr(0, index).trim()}`);
-            currentActivity = createActivity({
-                type,
-                to,
-                from,
-                channelId,
-                timestamp: new Date(now += 2000).toUTCString()
-            });
+            currentActivity = createActivity({type, to, from, channelId});
             newActivities.push(currentActivity);
         }
 
-        if (instruction === Instructions.Delay) {
-            currentActivity.timeStamp = new Date(now += rest[0]).toUTCString();
-        }
+        const delay = instruction === Instructions.Delay ? rest[0] : messageTimeGap;
+        currentActivity.timestamp = getIncrementedDate(delay);
         // As more activity fields are supported,
         // this should become a util or helper class.
         if (field === ActivityField.Attachments) {
-            await assembleAttachment(currentActivity, rest);
+            await addAttachment(currentActivity, rest);
         }
         // Trim off this activity or activity field and continue.
         aggregate = aggregate.replace(`[${result[1]}]`, '');
+        activityRegExp.lastIndex = 0;
+    }
+    // If we have text left on this line after extracting
+    // all instructions or activities, treat it like a message fragment.
+    if (aggregate) {
+        currentActivity.text += aggregate.trim();
     }
     return newActivities.length ? newActivities : null;
 }
 
-async function assembleAttachment(activity, attachmentInfo) {
+async function addAttachment(activity, attachmentInfo) {
     let [fileLocation, contentType] = attachmentInfo;
     if (!contentType) {
         contentType = mime.lookup(fileLocation) || cardContentTypes[path.extname(fileLocation)];
@@ -136,12 +139,16 @@ function readAttachmentFile(fileLocation, contentType) {
     return contentType.includes('json') ? fs.readJson(resolvedFileLocation) : fs.readFile(resolvedFileLocation);
 }
 
-function createActivity({type = ActivityType.Message, to, from, timestamp, channelId}) {
-    const activity = new Activity({type, text: '', timestamp});
-    activity.to = new ChannelAccount({id: channelId, name: to});
-    activity.recipient = new ChannelAccount({id: channelId, name: from});
+function createActivity({type = ActivityType.Message, to, from, channelId}) {
+    const activity = new Activity({type, text: ''});
+    activity.recipient = new ChannelAccount({id: channelId, name: to});
+    activity.from = new ChannelAccount({id: channelId, name: from});
     activity.conversation = new ConversationAccount();
     return activity;
+}
+
+function getIncrementedDate(byThisAmount = messageTimeGap) {
+    return new Date(now += +byThisAmount).toUTCString();
 }
 
 function* fileLineIterator(fileContents) {
