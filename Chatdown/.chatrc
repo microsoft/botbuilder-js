@@ -1,4 +1,5 @@
 {
+  "channelId": 12345,
   "user": "Joe",
   "bot": "LulaBot",
   "in": "sample.chat",

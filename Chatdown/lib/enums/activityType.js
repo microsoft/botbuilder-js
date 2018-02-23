@@ -12,5 +12,5 @@ module.exports = {
     MessageDelete: 'messageDelete',
     InstallationUpdate: 'installationUpdate',
     MessageReaction: 'messageReaction',
-    Suggestion: 'suggestion',
+    Suggestion: 'suggestion'
 };
