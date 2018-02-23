@@ -12,7 +12,7 @@ module.exports = class ChannelAccount {
      * @param id
      * @param name
      */
-    constructor({id='joe@smith.com', name}){
+    constructor({id = 'joe@smith.com', name} = {}) {
         Object.assign(this, {id, name});
     }
 };

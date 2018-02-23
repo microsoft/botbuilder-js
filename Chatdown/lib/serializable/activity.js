@@ -1,5 +1,3 @@
-const ActivityType = require('../enums/activityType');
-
 module.exports = class Activity {
     /**
      *
@@ -23,18 +21,29 @@ module.exports = class Activity {
      */
 
     /**
-     * @property relatesTo
+     * @property from
+     */
+
+    /**
+     * @property recipient
+     */
+
+    /**
+     * @property conversation
      */
 
     /**
      *
      * @param attachments
+     * @param conversation
+     * @param from
+     * @param id
      * @param text
      * @param timestamp
-     * @param id
      * @param type
+     * @param recipient
      */
-    constructor({attachments, text, timestamp, id, type = ActivityType.Message} = {}) {
-        Object.assign(this, {attachments, text, timestamp, id, type});
+    constructor({attachments, conversation, from, id, recipient, text, timestamp, type} = {}) {
+        Object.assign(this, {attachments, conversation, from, id, recipient, text, timestamp, type});
     }
 };

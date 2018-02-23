@@ -16,12 +16,19 @@ async function resolveConfigs() {
         config = JSON.parse(fs.readFileSync(path.resolve((chatdownArgs.config || '.chatrc'))));
     }
     catch (e) {
+        // We've been given a config location but its not there
         if (chatdownArgs.config !== undefined) {
             throw new ReferenceError(`${chatdownArgs.config} cannot be found`);
         }
         config = {};
     }
-    return Object.assign(config, chatdownArgs);
+    const mergedConfig = Object.assign(config, chatdownArgs);
+    if (!('bot' in mergedConfig) || !('user' in mergedConfig)) {
+        let message = !('bot' in mergedConfig) ? chalk`{red --bot is required to be passed in as an argument or as part of the config}\n` : '';
+        message += !('user' in mergedConfig) ? chalk`{red --user is required to be passed in as an argument or as part of the config}` : '';
+        throw new ReferenceError(message);
+    }
+    return mergedConfig;
 }
 
 function getInput(config) {
