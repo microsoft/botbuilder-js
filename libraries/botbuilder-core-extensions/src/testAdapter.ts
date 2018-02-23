@@ -5,74 +5,70 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ActivityAdapter } from './activityAdapter';
-import { ActivityTypes, Activity, ConversationReference, ChannelAccount } from 'botframework-schema';
-import { Promiseable } from './middleware';
+import { 
+    BotAdapter, ActivityTypes, Activity, ConversationReference, ChannelAccount,
+    Promiseable, TurnContext, ResourceResponse 
+} from 'botbuilder-core';
 import assert = require('assert');
+
 
 /**
  * Test adapter used for unit tests.
- * @example
- * <pre><code>
- * const adapter = new TestAdapater();
- * const bot = new Bot(adapter)
- *      .use(new MemoryStorage())
- *      .use(new BotStateManage())
- *      .onReceive((context) => {
- *          const cnt = context.state.conversation.next || 1;
- *          context.reply(`reply: ${cnt}`);
- *          context.state.conversation.next = cnt + 1;
- *      });
- * adapter.test('inc', 'reply: 1')
- *          .test('inc', 'reply: 2')
- *          .test('inc', 'reply: 3')
- *          .then(() => done());
- * </code></pre>
  */
-export class TestAdapter implements ActivityAdapter {
+export class TestAdapter extends BotAdapter {
     private nextId = 0;
 
-    public reference: ConversationReference;
-    public botReplies: Partial<Activity>[] = [];
-
-    /** INTERNAL implementation of `Adapter.onReceive`. */
-    public onReceive: (activity: Activity) => Promise<void>;
+    public readonly reference: ConversationReference;
+    public readonly botReplies: Partial<Activity>[] = [];
 
     /**
      * Creates a new instance of the test adapter.
+     * @param botLogic The bots logic that's under test.
      * @param reference (Optional) conversation reference that lets you customize the address
      * information for messages sent during a test.
      */
-    constructor(reference?: ConversationReference) {
-        this.onReceive = undefined as any;
-        this.reference = <ConversationReference>Object.assign({}, reference, {
+    constructor(private botLogic: (context: TurnContext<TestAdapter>) => Promiseable<void>, reference?: ConversationReference) {
+        super();
+        this.reference = Object.assign({
             channelId: 'test',
             serviceUrl: 'https://test.com',
             user: { id: 'user', name: 'User1' },
             bot: { id: 'bot', name: 'Bot' },
             conversation: { id: 'Convo1' }
+        } as ConversationReference, reference);
+    }
+
+    public sendActivities(activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
+        const responses = activities.map((activity) => {  
+            this.botReplies.push(activity);
+            return { id: (this.nextId++).toString() };
         });
+        return Promise.resolve(responses);
     }
 
-    /** INTERNAL implementation of `Adapter.post()`. */
-    public post(activities: Partial<Activity>[]): Promise<undefined> {
-        activities.forEach((activity) => this.botReplies.push(activity));
-        return Promise.resolve(undefined);
+    public updateActivity(activity: Partial<Activity>): Promise<void> {
+        // TODO: implement updateActivity() logic
+        return Promise.resolve();
     }
 
-    /* INTERNAL */
-    public _sendActivityToBot(userSays: string | Partial<Activity>): Promise<void> {
-        // ready for next reply
-        let activity = <Activity>(typeof userSays === 'string' ? { type:ActivityTypes.Message, text: userSays } : userSays);
-        if (!activity.type)
-            throw new Error("Missing activity.type");
-        activity.channelId = this.reference.channelId;
-        activity.from = <ChannelAccount>this.reference.user;
-        activity.recipient = this.reference.bot;
-        activity.conversation = this.reference.conversation;
-        activity.serviceUrl = this.reference.serviceUrl;
-        const id = activity.id = (this.nextId++).toString();
-        return this.onReceive(activity).then(result => { });
+    public deleteActivity(id: string): Promise<void> {
+        // TODO: implement deleteActivity() logic
+        return Promise.resolve();
+    }
+
+    /**
+     * Processes and activity received from the user.
+     * @param activity Text or activity from user.
+     */
+    public receiveActivity(activity: string | Partial<Activity>): Promise<void> {
+        // Initialize request
+        const request = Object.assign({}, this.reference, typeof activity === 'string' ? { type: ActivityTypes.Message, text: activity } : activity);
+        if (!request.type) { request.type = ActivityTypes.Message }
+        if (!request.id) { request.id = (this.nextId++).toString() }
+
+        // Create context object and run middleware
+        const context = new TurnContext<TestAdapter>(this, request);
+        return this.runMiddleware(context, this.botLogic);
     }
 
 
@@ -81,7 +77,7 @@ export class TestAdapter implements ActivityAdapter {
      * @param userSays text or activity simulating user input
      */
     public send(userSays: string | Partial<Activity>): TestFlow {
-        return new TestFlow(this._sendActivityToBot(userSays), this);
+        return new TestFlow(this.receiveActivity(userSays), this);
     }
 
     /**
@@ -152,7 +148,7 @@ export class TestFlow {
      * @param userSays text or activity simulating user input
      */
     public send(userSays: string | Partial<Activity>): TestFlow {
-        return new TestFlow(this.previous.then(() => this.adapter._sendActivityToBot(userSays)), this.adapter);
+        return new TestFlow(this.previous.then(() => this.adapter.receiveActivity(userSays)), this.adapter);
     }
 
     /**

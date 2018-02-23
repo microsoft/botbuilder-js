@@ -9,48 +9,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const memoryStorage_1 = require("./memoryStorage");
 /**
- * Storage middleware that uses browser local storage.
- *
- * __Extends BotContext:__
- * * context.storage - Storage provider for storing and retrieving objects.
- *
- * **Usage Example**
- *
- * ```js
- * const bot = new Bot(adapter)
- *      .use(new BrowserLocalStorage())
- *      .use(new BotStateManage())
- *      .onReceive((context) => {
- *          context.reply(`Hello World`);
- *      })
- * ```
+ * Storage provider that uses browser local storage.
  */
 class BrowserLocalStorage extends memoryStorage_1.MemoryStorage {
-    constructor(options) {
-        super(options, localStorage);
+    constructor() {
+        super(localStorage);
     }
 }
 exports.BrowserLocalStorage = BrowserLocalStorage;
 /**
- * Storage middleware that uses browser session storage.
- *
- * __Extends BotContext:__
- * * context.storage - Storage provider for storing and retrieving objects.
- *
- * **Usage Example**
- *
- * ```js
- * const bot = new Bot(adapter)
- *      .use(new BrowserSessionStorage())
- *      .use(new BotStateManage())
- *      .onReceive((context) => {
- *          context.reply(`Hello World`);
- *      })
- * ```
+ * Storage provider that uses browser session storage.
  */
 class BrowserSessionStorage extends memoryStorage_1.MemoryStorage {
-    constructor(options) {
-        super(options, sessionStorage);
+    constructor() {
+        super(sessionStorage);
     }
 }
 exports.BrowserSessionStorage = BrowserSessionStorage;

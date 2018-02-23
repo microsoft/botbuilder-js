@@ -16,7 +16,11 @@ export type UpdateActivityHandler = (activity: Partial<Activity>, next: () => Pr
 
 export type DeleteActivityHandler = (id: string, next: () => Promise<void>) => Promiseable<void>;
 
-export interface TurnContext<A extends BotAdapter> { }
+declare global {
+    export interface TurnContextExtensions { }
+}
+
+export interface TurnContext<A extends BotAdapter> extends TurnContextExtensions { }
 
 export class TurnContext<A extends BotAdapter = BotAdapter> {
     private _adapter: A;

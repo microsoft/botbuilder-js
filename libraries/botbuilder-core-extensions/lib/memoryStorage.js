@@ -1,32 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const storageMiddleware_1 = require("./storageMiddleware");
 /**
- * Middleware that implements an in memory based storage provider for a bot.
- *
- * __Extends BotContext:__
- * * context.storage - Storage provider for storing and retrieving objects.
- *
- * **Usage Example**
- *
- * ```js
- * const bot = new Bot(adapter)
- *      .use(new MemoryStorage())
- *      .use(new BotStateManage())
- *      .onReceive((context) => {
- *          context.reply(`Hello World`);
- *      })
- * ```
+ * Memory based storage provider for a bot.
  */
-class MemoryStorage extends storageMiddleware_1.StorageMiddleware {
+class MemoryStorage {
     /**
      * Creates a new instance of the storage provider.
-     *
-     * @param settings (Optional) setting to configure the provider.
      * @param memory (Optional) memory to use for storing items.
      */
-    constructor(settings, memory = {}) {
-        super(settings || {});
+    constructor(memory = {}) {
         this.memory = memory;
         this.etag = 1;
     }
@@ -76,9 +58,6 @@ class MemoryStorage extends storageMiddleware_1.StorageMiddleware {
             (keys || []).forEach((key) => this.memory[key] = undefined);
             resolve();
         });
-    }
-    getStorage(context) {
-        return this;
     }
 }
 exports.MemoryStorage = MemoryStorage;

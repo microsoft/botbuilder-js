@@ -1,69 +1,75 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const botframework_schema_1 = require("botframework-schema");
+/**
+ * @module botbuilder
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+const botbuilder_core_1 = require("botbuilder-core");
 const assert = require("assert");
 /**
  * Test adapter used for unit tests.
- * @example
- * <pre><code>
- * const adapter = new TestAdapater();
- * const bot = new Bot(adapter)
- *      .use(new MemoryStorage())
- *      .use(new BotStateManage())
- *      .onReceive((context) => {
- *          const cnt = context.state.conversation.next || 1;
- *          context.reply(`reply: ${cnt}`);
- *          context.state.conversation.next = cnt + 1;
- *      });
- * adapter.test('inc', 'reply: 1')
- *          .test('inc', 'reply: 2')
- *          .test('inc', 'reply: 3')
- *          .then(() => done());
- * </code></pre>
  */
-class TestAdapter {
+class TestAdapter extends botbuilder_core_1.BotAdapter {
     /**
      * Creates a new instance of the test adapter.
+     * @param botLogic The bots logic that's under test.
      * @param reference (Optional) conversation reference that lets you customize the address
      * information for messages sent during a test.
      */
-    constructor(reference) {
+    constructor(botLogic, reference) {
+        super();
+        this.botLogic = botLogic;
         this.nextId = 0;
         this.botReplies = [];
-        this.onReceive = undefined;
-        this.reference = Object.assign({}, reference, {
+        this.reference = Object.assign({
             channelId: 'test',
             serviceUrl: 'https://test.com',
             user: { id: 'user', name: 'User1' },
             bot: { id: 'bot', name: 'Bot' },
             conversation: { id: 'Convo1' }
+        }, reference);
+    }
+    sendActivities(activities) {
+        const responses = activities.map((activity) => {
+            this.botReplies.push(activity);
+            return { id: (this.nextId++).toString() };
         });
+        return Promise.resolve(responses);
     }
-    /** INTERNAL implementation of `Adapter.post()`. */
-    post(activities) {
-        activities.forEach((activity) => this.botReplies.push(activity));
-        return Promise.resolve(undefined);
+    updateActivity(activity) {
+        // TODO: implement updateActivity() logic
+        return Promise.resolve();
     }
-    /* INTERNAL */
-    _sendActivityToBot(userSays) {
-        // ready for next reply
-        let activity = (typeof userSays === 'string' ? { type: botframework_schema_1.ActivityTypes.Message, text: userSays } : userSays);
-        if (!activity.type)
-            throw new Error("Missing activity.type");
-        activity.channelId = this.reference.channelId;
-        activity.from = this.reference.user;
-        activity.recipient = this.reference.bot;
-        activity.conversation = this.reference.conversation;
-        activity.serviceUrl = this.reference.serviceUrl;
-        const id = activity.id = (this.nextId++).toString();
-        return this.onReceive(activity).then(result => { });
+    deleteActivity(id) {
+        // TODO: implement deleteActivity() logic
+        return Promise.resolve();
+    }
+    /**
+     * Processes and activity received from the user.
+     * @param activity Text or activity from user.
+     */
+    receiveActivity(activity) {
+        // Initialize request
+        const request = Object.assign({}, this.reference, typeof activity === 'string' ? { type: botbuilder_core_1.ActivityTypes.Message, text: activity } : activity);
+        if (!request.type) {
+            request.type = botbuilder_core_1.ActivityTypes.Message;
+        }
+        if (!request.id) {
+            request.id = (this.nextId++).toString();
+        }
+        // Create context object and run middleware
+        const context = new botbuilder_core_1.TurnContext(this, request);
+        return this.runMiddleware(context, this.botLogic);
     }
     /**
      * Send something to the bot
      * @param userSays text or activity simulating user input
      */
     send(userSays) {
-        return new TestFlow(this._sendActivityToBot(userSays), this);
+        return new TestFlow(this.receiveActivity(userSays), this);
     }
     /**
      * wait for time period to pass before continuing
@@ -129,7 +135,7 @@ class TestFlow {
      * @param userSays text or activity simulating user input
      */
     send(userSays) {
-        return new TestFlow(this.previous.then(() => this.adapter._sendActivityToBot(userSays)), this.adapter);
+        return new TestFlow(this.previous.then(() => this.adapter.receiveActivity(userSays)), this.adapter);
     }
     /**
      * Throws if the bot's response doesn't match the expected text/activity
@@ -149,7 +155,7 @@ class TestFlow {
                 let myInterval = setInterval(() => {
                     let current = new Date().getTime();
                     if ((current - start) > timeout) {
-                        let expectedActivity = (typeof expected === 'string' ? { type: botframework_schema_1.ActivityTypes.Message, text: expected } : expected);
+                        let expectedActivity = (typeof expected === 'string' ? { type: botbuilder_core_1.ActivityTypes.Message, text: expected } : expected);
                         throw new Error(`${timeout}ms Timed out waiting for:${description || expectedActivity.text}`);
                     }
                     // if we have replies
@@ -161,7 +167,7 @@ class TestFlow {
                             expected(botReply, description);
                         }
                         else if (typeof expected === 'string') {
-                            assert.equal(botReply.type, botframework_schema_1.ActivityTypes.Message, (description || '') + ` type === '${botReply.type}'. `);
+                            assert.equal(botReply.type, botbuilder_core_1.ActivityTypes.Message, (description || '') + ` type === '${botReply.type}'. `);
                             assert.equal(botReply.text, expected, (description || '') + ` text === "${botReply.text}"`);
                         }
                         else {

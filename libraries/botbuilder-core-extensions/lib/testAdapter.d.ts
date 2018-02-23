@@ -5,42 +5,30 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ActivityAdapter } from './activityAdapter';
-import { Activity, ConversationReference } from 'botframework-schema';
+import { BotAdapter, Activity, ConversationReference, Promiseable, TurnContext, ResourceResponse } from 'botbuilder-core';
 /**
  * Test adapter used for unit tests.
- * @example
- * <pre><code>
- * const adapter = new TestAdapater();
- * const bot = new Bot(adapter)
- *      .use(new MemoryStorage())
- *      .use(new BotStateManage())
- *      .onReceive((context) => {
- *          const cnt = context.state.conversation.next || 1;
- *          context.reply(`reply: ${cnt}`);
- *          context.state.conversation.next = cnt + 1;
- *      });
- * adapter.test('inc', 'reply: 1')
- *          .test('inc', 'reply: 2')
- *          .test('inc', 'reply: 3')
- *          .then(() => done());
- * </code></pre>
  */
-export declare class TestAdapter implements ActivityAdapter {
+export declare class TestAdapter extends BotAdapter {
+    private botLogic;
     private nextId;
-    reference: ConversationReference;
-    botReplies: Partial<Activity>[];
-    /** INTERNAL implementation of `Adapter.onReceive`. */
-    onReceive: (activity: Activity) => Promise<void>;
+    readonly reference: ConversationReference;
+    readonly botReplies: Partial<Activity>[];
     /**
      * Creates a new instance of the test adapter.
+     * @param botLogic The bots logic that's under test.
      * @param reference (Optional) conversation reference that lets you customize the address
      * information for messages sent during a test.
      */
-    constructor(reference?: ConversationReference);
-    /** INTERNAL implementation of `Adapter.post()`. */
-    post(activities: Partial<Activity>[]): Promise<undefined>;
-    _sendActivityToBot(userSays: string | Partial<Activity>): Promise<void>;
+    constructor(botLogic: (context: TurnContext<TestAdapter>) => Promiseable<void>, reference?: ConversationReference);
+    sendActivities(activities: Partial<Activity>[]): Promise<ResourceResponse[]>;
+    updateActivity(activity: Partial<Activity>): Promise<void>;
+    deleteActivity(id: string): Promise<void>;
+    /**
+     * Processes and activity received from the user.
+     * @param activity Text or activity from user.
+     */
+    receiveActivity(activity: string | Partial<Activity>): Promise<void>;
     /**
      * Send something to the bot
      * @param userSays text or activity simulating user input

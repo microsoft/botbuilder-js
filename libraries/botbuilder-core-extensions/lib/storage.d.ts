@@ -26,15 +26,6 @@ export interface Storage {
      **/
     delete(keys: string[]): Promise<void>;
 }
-/** Additional settings for a storage provider. */
-export interface StorageSettings {
-    /**
-     * (Optional) If true the storage provider will optimize the writing of objects such that any read object
-     * which hasn't changed won't be actually written. The default value for all storage providers
-     * is true.
-     */
-    optimizeWrites?: boolean;
-}
 /** Object which is stored in Storage with an optional eTag */
 export interface StoreItem {
     /** Key/value pairs. */
@@ -46,3 +37,4 @@ export interface StoreItem {
 export interface StoreItems {
     [key: string]: StoreItem;
 }
+export declare function calculateChangeHash(item: StoreItem): string;

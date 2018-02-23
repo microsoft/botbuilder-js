@@ -11,7 +11,11 @@ import { Promiseable } from './middlewareSet';
 export declare type SendActivitiesHandler = (activities: Partial<Activity>[], next: () => Promise<ResourceResponse[]>) => Promiseable<ResourceResponse[]>;
 export declare type UpdateActivityHandler = (activity: Partial<Activity>, next: () => Promise<void>) => Promiseable<void>;
 export declare type DeleteActivityHandler = (id: string, next: () => Promise<void>) => Promiseable<void>;
-export interface TurnContext<A extends BotAdapter> {
+declare global  {
+    interface TurnContextExtensions {
+    }
+}
+export interface TurnContext<A extends BotAdapter> extends TurnContextExtensions {
 }
 export declare class TurnContext<A extends BotAdapter = BotAdapter> {
     private _adapter;

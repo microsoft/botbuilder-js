@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  *
  * **Usage Example**
  *
- * ```js
+ * ```JavaScript
  * const bot = new Bot(adapter)
  *      .use(new MemoryStorage())
  *      .use(new BotStateManager())

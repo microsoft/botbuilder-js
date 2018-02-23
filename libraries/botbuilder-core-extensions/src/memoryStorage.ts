@@ -5,38 +5,20 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.  
  * Licensed under the MIT License.
  */
-import { Storage, StorageSettings, StoreItem, StoreItems } from './storage';
-import { StorageMiddleware } from './storageMiddleware';
+import { Storage, StoreItem, StoreItems } from './storage';
 
 /**
- * Middleware that implements an in memory based storage provider for a bot.
- * 
- * __Extends BotContext:__
- * * context.storage - Storage provider for storing and retrieving objects.
- *
- * **Usage Example**
- *
- * ```js
- * const bot = new Bot(adapter)
- *      .use(new MemoryStorage())
- *      .use(new BotStateManage())
- *      .onReceive((context) => {
- *          context.reply(`Hello World`);
- *      })
- * ```
+ * Memory based storage provider for a bot.
  */
-export class MemoryStorage extends StorageMiddleware<StorageSettings> implements Storage {
+export class MemoryStorage  implements Storage {
     protected etag: number;
 
 
     /**
      * Creates a new instance of the storage provider.
-     *
-     * @param settings (Optional) setting to configure the provider.
      * @param memory (Optional) memory to use for storing items.
      */
-    public constructor(settings?: Partial<StorageSettings>, protected memory: { [k: string]: string; } = {}) {
-        super(settings || {});
+    public constructor(protected memory: { [k: string]: string; } = {}) {
         this.etag = 1;
     }
 
@@ -85,9 +67,5 @@ export class MemoryStorage extends StorageMiddleware<StorageSettings> implements
             (keys || []).forEach((key) => this.memory[key] = <any>undefined);
             resolve();
         });
-    }
-
-    protected getStorage(context: BotContext): Storage {
-        return this;
     }
 }
