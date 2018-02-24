@@ -17,4 +17,5 @@ __export(require("./memoryStorage"));
 __export(require("./messageFactory"));
 __export(require("./storage"));
 __export(require("./testAdapter"));
+__export(require("./userState"));
 //# sourceMappingURL=index.js.map

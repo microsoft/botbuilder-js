@@ -13,3 +13,4 @@ export * from './memoryStorage';
 export * from './messageFactory';
 export * from './storage';
 export * from './testAdapter';
+export * from './userState';
