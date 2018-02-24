@@ -25,7 +25,7 @@ export class MemoryStorage  implements Storage {
     public read(keys: string[]): Promise<StoreItems> {
         return new Promise<StoreItems>((resolve, reject) => {
             const data: StoreItems = {};
-            (keys || []).forEach((key) => {
+            keys.forEach((key) => {
                 const item = this.memory[key];
                 if (item) {
                     data[key] = JSON.parse(item);
@@ -64,7 +64,7 @@ export class MemoryStorage  implements Storage {
 
     public delete(keys: string[]) {
         return new Promise<void>((resolve, reject) => {
-            (keys || []).forEach((key) => this.memory[key] = <any>undefined);
+            keys.forEach((key) => this.memory[key] = <any>undefined);
             resolve();
         });
     }

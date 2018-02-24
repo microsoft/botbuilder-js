@@ -15,7 +15,7 @@ class MemoryStorage {
     read(keys) {
         return new Promise((resolve, reject) => {
             const data = {};
-            (keys || []).forEach((key) => {
+            keys.forEach((key) => {
                 const item = this.memory[key];
                 if (item) {
                     data[key] = JSON.parse(item);
@@ -55,7 +55,7 @@ class MemoryStorage {
     ;
     delete(keys) {
         return new Promise((resolve, reject) => {
-            (keys || []).forEach((key) => this.memory[key] = undefined);
+            keys.forEach((key) => this.memory[key] = undefined);
             resolve();
         });
     }
