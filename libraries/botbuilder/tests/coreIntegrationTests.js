@@ -8,7 +8,7 @@ describe('Core integration tests', () => {
         
         beforeEach(() => adapter = new ConsoleAdapter().listen())
 
-        it.only('can pipe incoming messages to the bot and see outgoing responses', () => {
+        it('can pipe incoming messages to the bot and see outgoing responses', () => {
             const bot = new builder.Bot(adapter);
 
             const outgoingMessageSuccessProimse = new Promise((res, rej) => {
