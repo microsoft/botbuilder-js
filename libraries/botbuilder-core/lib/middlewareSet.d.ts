@@ -5,11 +5,6 @@ import { TurnContext } from './turnContext';
  * @param T (Optional) type of value being returned. This defaults to `void`.
  */
 export declare type Promiseable<T = void> = Promise<T> | T;
-/**
- * Returns true if a result that can (Optionally) be a Promise looks like a Promise.
- * @param result The result to test.
- */
-export declare function isPromised<T>(result: Promiseable<T>): result is Promise<T>;
 export interface Middleware {
     onProcessRequest(context: TurnContext, next: () => Promise<void>): Promiseable<void>;
 }

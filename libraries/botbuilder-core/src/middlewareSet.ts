@@ -15,14 +15,6 @@ import { TurnContext } from './turnContext';
  */
 export type Promiseable <T = void> = Promise<T>|T;
 
-/**
- * Returns true if a result that can (Optionally) be a Promise looks like a Promise.
- * @param result The result to test.
- */
-export function isPromised <T>(result: Promiseable<T>): result is Promise<T> {
-    return result && (result as Promise<T>).then !== undefined;
-}
-
 export interface Middleware {
     onProcessRequest(context: TurnContext, next: () => Promise<void>): Promiseable<void>;
 }
@@ -42,7 +34,7 @@ export class MiddlewareSet {
      * @param middleware One or more middleware handlers(s) to register.
      */
     public use(...middleware: (MiddlewareHandler|Middleware)[]): this {
-        (middleware || []).forEach((plugin) => {
+        middleware.forEach((plugin) => {
             if (typeof plugin === 'function') {
                 this.middleware.push(plugin);
             } else if (typeof plugin === 'object' && plugin.onProcessRequest) {
@@ -74,55 +66,4 @@ export class MiddlewareSet {
         }
         return runNext(0);
     }
-}
-
-// TODO: move out to toybox
-function parallel(...middleware: MiddlewareHandler[]): MiddlewareHandler {
-    return (context, next) => {
-        // Clone middleware list
-        const handlers = middleware.slice();
-
-        // Await consensus before calling next()
-        // - We need to wait for all plugins to call their inner next() before we call the 
-        //   outer next. To do that we count down the number of calls to next() and return
-        //   a promise (pNext) which will block them while we count.
-        // - We also need to listen for plugins that complete without calling next
-        let awaiting = handlers.length; 
-        let eNext: { resolve: () => Promiseable<void>; reject: (err: Error) => void };
-        const pNext = new Promise<void>((resolve, reject) =>{ 
-            eNext = { resolve: resolve, reject: reject }; 
-        });
-        function handlerNext() {
-            if (awaiting > 0 && --awaiting == 0) {
-                next().then(() => {
-                    eNext.resolve();
-                }, (err) => {
-                    eNext.reject(err);
-                });
-            }
-            return pNext;
-        }
-        function handlerCompleted() {
-            if (awaiting > 0) {
-                awaiting = 0;
-                eNext.resolve();
-            }
-        }
-        function handlerError(err: Error) {
-            handlerCompleted();
-            return err;
-        }
-
-        // Execute all handlers and get array or promises to wait on.
-        const promises = handlers.map((handler) => {
-            try {
-                return Promise.resolve(handler(context, handlerNext)).then(handlerCompleted, handlerError);
-            } catch(err) {
-                return Promise.reject(err);
-            }
-        });
-
-        // Wait for all promises to resolve before continuing
-        return Promise.all(promises).then(() => next());
-    };
 }

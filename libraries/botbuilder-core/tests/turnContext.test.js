@@ -145,4 +145,51 @@ describe(`TurnContext`, function () {
             done();
         });
     });
+
+    it(`should map an exception raised by a hook to a rejection.`, function (done) {
+        let called = false;
+        context.onDeleteActivity((id, next) => {
+            throw new Error('failed');
+        });
+        context.deleteActivity('1234')
+            .then((responses) => {
+                assert(false, `exception swallowed.`);        
+            })
+            .catch((err) => {
+                assert(err, `invalid exception returned.`);        
+                done();
+            });
+    });
+
+    it(`should round trip a conversation reference using getConversationReference() and applyConversationRefernce().`, function (done) {
+        // Convert to reference
+        const reference = TurnContext.getConversationReference(testMessage);
+        assert(reference.activityId, `reference missing activityId.`);
+        assert(reference.bot, `reference missing bot.`);
+        assert(reference.bot.id === testMessage.recipient.id, `reference bot.id doesn't match recipient.id.`);
+        assert(reference.channelId, `reference missing channelId.`);
+        assert(reference.conversation, `reference missing conversation.`);
+        assert(reference.serviceUrl, `reference missing serviceUrl.`);
+        assert(reference.user, `reference missing user.`);
+        assert(reference.user.id === testMessage.from.id, `reference user.id doesn't match from.id.`);
+        
+        // Round trip back to activity
+        const activity = TurnContext.applyConversationReference({ text: 'foo', type: 'message' }, reference);
+        assert(activity.text, `activity missing text`);
+        assert(activity.type, `activity missing type`);
+        assert(activity.replyToId, `activity missing replyToId`);
+        assert(activity.from, `activity missing from`);
+        assert(activity.from.id === reference.bot.id, `activity from.id doesn't match bot.id`);
+        assert(activity.channelId, `activity missing channelId`);
+        assert(activity.conversation, `activity missing conversation`);
+        assert(activity.serviceUrl, `activity missing serviceUrl`);
+        assert(activity.recipient, `activity missing recipient`);
+        assert(activity.recipient.id === reference.user.id, `activity recipient.id doesn't match user.id`);
+
+        // Round trip without a replyToId
+        delete reference.activityId;
+        const activity2 = TurnContext.applyConversationReference({ text: 'foo', type: 'message' }, reference);
+        assert(!activity2.hasOwnProperty('replyToId'), `activity2 has replyToId`);
+        done();
+    });
 });

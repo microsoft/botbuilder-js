@@ -95,7 +95,7 @@ export class TurnContext<A extends BotAdapter = BotAdapter> {
      */
     public sendActivities(activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
         const ref = TurnContext.getConversationReference(this._request);
-        const output = (activities || []).map((a) => TurnContext.applyConversationReference(a, ref))
+        const output = activities.map((a) => TurnContext.applyConversationReference(a, ref))
         return this.emit(this._onSendActivities, activities, () => {
             return this._adapter.sendActivities(activities)
                 .then((responses) => {
@@ -150,14 +150,13 @@ export class TurnContext<A extends BotAdapter = BotAdapter> {
     }
 
     private emit<T>(handlers: ((arg: T, next: () => Promise<any>) => Promiseable<any>)[], arg: T, next: () => Promise<any>): Promise<any> {
-        const list = (handlers || []).slice();
+        const list = handlers.slice();
         function emitNext(i: number): Promise<void> {
             try {
                 if (i < list.length) {
                     return Promise.resolve(list[i](arg, () => emitNext(i + 1)));
-                } else {
-                    return Promise.resolve(next());
                 }
+                return Promise.resolve(next());
             } catch (err) {
                 return Promise.reject(err);
             }

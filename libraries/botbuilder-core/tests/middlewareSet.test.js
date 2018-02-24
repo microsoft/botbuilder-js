@@ -93,4 +93,31 @@ describe(`MiddlewareSet`, function () {
                 done();
             });
     });
+
+    it(`should map an exception within middleware to a rejection.`, function (done) {
+        let called = false;
+        const context = new TurnContext(new SimpleAdapter(), testMessage);
+        new MiddlewareSet()
+            .use(() => {
+                throw new Error('failed');
+            })
+            .run(context, () => {
+                assert(false, `bot logic shouldn't run.`);
+            })
+            .then(() => {
+                assert(false, `exception swallowed.`);
+            })
+            .catch((err) => {
+                assert(err, `invalid exception object.`);
+                done();
+            });
+    });
+    
+    it(`should throw an error if an invalid plugin type is added.`, function (done) {
+        try {
+            new MiddlewareSet().use('bogus');
+        } catch (err) {
+            done();
+        }
+    });
 });

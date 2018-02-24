@@ -65,7 +65,7 @@ class TurnContext {
      */
     sendActivities(activities) {
         const ref = TurnContext.getConversationReference(this._request);
-        const output = (activities || []).map((a) => TurnContext.applyConversationReference(a, ref));
+        const output = activities.map((a) => TurnContext.applyConversationReference(a, ref));
         return this.emit(this._onSendActivities, activities, () => {
             return this._adapter.sendActivities(activities)
                 .then((responses) => {
@@ -114,15 +114,13 @@ class TurnContext {
         return this;
     }
     emit(handlers, arg, next) {
-        const list = (handlers || []).slice();
+        const list = handlers.slice();
         function emitNext(i) {
             try {
                 if (i < list.length) {
                     return Promise.resolve(list[i](arg, () => emitNext(i + 1)));
                 }
-                else {
-                    return Promise.resolve(next());
-                }
+                return Promise.resolve(next());
             }
             catch (err) {
                 return Promise.reject(err);
