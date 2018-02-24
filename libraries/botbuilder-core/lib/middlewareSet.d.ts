@@ -10,6 +10,9 @@ export declare type Promiseable<T = void> = Promise<T> | T;
  * @param result The result to test.
  */
 export declare function isPromised<T>(result: Promiseable<T>): result is Promise<T>;
+export interface Middleware {
+    onProcessRequest(context: TurnContext, next: () => Promise<void>): Promiseable<void>;
+}
 export declare type MiddlewareHandler = (context: TurnContext, next: () => Promise<void>) => Promiseable<void>;
 /**
  * A set of `Middleware` plugins. The set itself is middleware so you can easily package up a set
@@ -22,7 +25,7 @@ export declare class MiddlewareSet {
      * Registers middleware handlers(s) with the set.
      * @param middleware One or more middleware handlers(s) to register.
      */
-    use(...middleware: MiddlewareHandler[]): this;
+    use(...middleware: (MiddlewareHandler | Middleware)[]): this;
     /**
      * Executes a set of middleware in series.
      * @param context Context for the current turn of conversation with the user.

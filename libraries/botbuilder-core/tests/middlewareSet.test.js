@@ -57,4 +57,40 @@ describe(`MiddlewareSet`, function () {
                 done();
             });
     });
+
+    it(`should support middleware added as an object.`, function (done) {
+        let called = false;
+        const context = new TurnContext(new SimpleAdapter(), testMessage);
+        new MiddlewareSet()
+            .use({
+                onProcessRequest: (context, next) => {
+                    called = true;
+                    return next();
+                }
+            })
+            .run(context, () => {
+                assert(called, `onProcessRequest() not called.`);
+                done();
+            });
+    });
+
+    it(`not calling next() should intercept other middleware and bot logic.`, function (done) {
+        let called = false;
+        const context = new TurnContext(new SimpleAdapter(), testMessage);
+        new MiddlewareSet()
+            .use(() => {
+                return Promise.resolve();
+            })
+            .use((context, next) => {
+                called = true;
+                return next();
+            })
+            .run(context, () => {
+                assert(false, `bot logic not intercepted.`);
+            })
+            .then(() => {
+                assert(!called, `other middleware not intercepted.`);
+                done();
+            });
+    });
 });

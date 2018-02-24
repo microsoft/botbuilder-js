@@ -23,6 +23,10 @@ export function isPromised <T>(result: Promiseable<T>): result is Promise<T> {
     return result && (result as Promise<T>).then !== undefined;
 }
 
+export interface Middleware {
+    onProcessRequest(context: TurnContext, next: () => Promise<void>): Promiseable<void>;
+}
+
 export type MiddlewareHandler = (context: TurnContext, next: () => Promise<void>) => Promiseable<void>;
 
 /**
@@ -37,8 +41,16 @@ export class MiddlewareSet {
      * Registers middleware handlers(s) with the set.
      * @param middleware One or more middleware handlers(s) to register.
      */
-    public use(...middleware: MiddlewareHandler[]): this {
-        Array.prototype.push.apply(this.middleware, middleware);
+    public use(...middleware: (MiddlewareHandler|Middleware)[]): this {
+        (middleware || []).forEach((plugin) => {
+            if (typeof plugin === 'function') {
+                this.middleware.push(plugin);
+            } else if (typeof plugin === 'object' && plugin.onProcessRequest) {
+                this.middleware.push((context, next) => plugin.onProcessRequest(context, next));
+            } else {
+                throw new Error(`MiddlewareSet.use(): invalid plugin type being added.`);
+            }
+        });
         return this;
     }
 

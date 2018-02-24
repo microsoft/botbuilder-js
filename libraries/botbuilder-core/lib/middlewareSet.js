@@ -22,7 +22,17 @@ class MiddlewareSet {
      * @param middleware One or more middleware handlers(s) to register.
      */
     use(...middleware) {
-        Array.prototype.push.apply(this.middleware, middleware);
+        (middleware || []).forEach((plugin) => {
+            if (typeof plugin === 'function') {
+                this.middleware.push(plugin);
+            }
+            else if (typeof plugin === 'object' && plugin.onProcessRequest) {
+                this.middleware.push((context, next) => plugin.onProcessRequest(context, next));
+            }
+            else {
+                throw new Error(`MiddlewareSet.use(): invalid plugin type being added.`);
+            }
+        });
         return this;
     }
     /**
