@@ -23,7 +23,7 @@ class ConversationState {
         if (key !== undefined) {
             // Listen for outgoing endOfConversation activities
             context.onSendActivities((activities, next) => {
-                (activities || []).forEach((activity) => {
+                activities.forEach((activity) => {
                     if (botbuilder_core_1.ActivityTypes.EndOfConversation === activity.type) {
                         this.clear(context);
                     }
@@ -35,9 +35,7 @@ class ConversationState {
                 .then(() => next())
                 .then(() => this.write(context));
         }
-        else {
-            return Promise.reject(new Error(NO_KEY));
-        }
+        return Promise.reject(new Error(NO_KEY));
     }
     /**
      * Reads in and caches the current conversation state for a turn.
@@ -56,13 +54,9 @@ class ConversationState {
                     return state;
                 });
             }
-            else {
-                return Promise.reject(new Error(NO_KEY));
-            }
+            return Promise.reject(new Error(NO_KEY));
         }
-        else {
-            return Promise.resolve(context.get(CACHED_STATE) || {});
-        }
+        return Promise.resolve(context.get(CACHED_STATE) || {});
     }
     /**
      * Writes out the conversation state if it's been changed.
@@ -70,28 +64,26 @@ class ConversationState {
      * @param force (Optional) if `true` the state will always be written out regardless of its change state. Defaults to `false`.
      */
     write(context, force = false) {
-        const state = context.get(CACHED_STATE) || {};
-        const hash = context.get(CACHED_HASH) || '';
-        const newHash = storage_1.calculateChangeHash(state);
-        if (force || hash !== newHash) {
+        let state = context.get(CACHED_STATE);
+        const hash = context.get(CACHED_HASH);
+        if (force || (state && hash !== storage_1.calculateChangeHash(state))) {
             const key = ConversationState.key(context);
             if (key) {
+                if (!state) {
+                    state = {};
+                }
                 state.eTag = '*';
                 const changes = {};
                 changes[key] = state;
                 return this.storage.write(changes)
                     .then(() => {
                     // Update stored change hash
-                    context.set(CACHED_HASH, newHash);
+                    context.set(CACHED_HASH, storage_1.calculateChangeHash(state));
                 });
             }
-            else {
-                return Promise.reject(new Error(NO_KEY));
-            }
+            return Promise.reject(new Error(NO_KEY));
         }
-        else {
-            return Promise.resolve();
-        }
+        return Promise.resolve();
     }
     /**
      * Clears the current conversation state for a turn.
@@ -116,10 +108,10 @@ class ConversationState {
      * @param context Context for current turn of conversation with the user.
      */
     static key(context) {
-        const req = context.request || {};
-        const channelId = req.channelId || '';
-        const conversationId = req.conversation && req.conversation.id ? req.conversation.id : '';
-        return channelId.length > 0 && conversationId.length ? `convo/${channelId}/${conversationId}` : undefined;
+        const req = context.request;
+        const channelId = req.channelId;
+        const conversationId = req && req.conversation && req.conversation.id ? req.conversation.id : undefined;
+        return channelId && conversationId ? `convo/${channelId}/${conversationId}` : undefined;
     }
 }
 exports.ConversationState = ConversationState;

@@ -24,9 +24,8 @@ export class UserState<T extends StoreItem = StoreItem> implements Middleware {
             return this.read(context, true)
                 .then(() => next())
                 .then(() => this.write(context));
-        } else {
-            return Promise.reject(new Error(NO_KEY));
         }
+        return Promise.reject(new Error(NO_KEY));
     }
 
     /**
@@ -45,12 +44,10 @@ export class UserState<T extends StoreItem = StoreItem> implements Middleware {
                     context.set(CACHED_HASH, hash);
                     return state as T;
                 });
-            } else {
-                return Promise.reject(new Error(NO_KEY));
             }
-        } else {
-            return Promise.resolve(context.get(CACHED_STATE) || {});
+            return Promise.reject(new Error(NO_KEY));
         }
+        return Promise.resolve(context.get(CACHED_STATE) || {});
     }
 
     /**
@@ -59,26 +56,24 @@ export class UserState<T extends StoreItem = StoreItem> implements Middleware {
      * @param force (Optional) if `true` the state will always be written out regardless of its change state. Defaults to `false`. 
      */
     public write(context: TurnContext, force = false): Promise<void> {
-        const state = context.get(CACHED_STATE) || {};
-        const hash = context.get(CACHED_HASH) || '';
-        const newHash = calculateChangeHash(state);
-        if (force || hash !== newHash) {
+        let state = context.get(CACHED_STATE);
+        const hash = context.get(CACHED_HASH);
+        if (force || (state && hash !== calculateChangeHash(state))) {
             const key = UserState.key(context);
             if (key) {
+                if (!state) { state = {} }
                 state.eTag = '*';
                 const changes = {} as StoreItems;
                 changes[key] = state;
                 return this.storage.write(changes)
                     .then(() => {
                         // Update stored change hash
-                        context.set(CACHED_HASH, newHash);
+                        context.set(CACHED_HASH, calculateChangeHash(state));
                     });
-            } else {
-                return Promise.reject(new Error(NO_KEY));
             }
-        } else {
-            return Promise.resolve();
+            return Promise.reject(new Error(NO_KEY));
         }
+        return Promise.resolve();
     }
 
     /**
@@ -104,9 +99,9 @@ export class UserState<T extends StoreItem = StoreItem> implements Middleware {
      * @param context Context for current turn of conversation with the user.
      */
     static key(context: TurnContext): string|undefined {
-        const req = context.request || {};
-        const channelId = req.channelId || '';
-        const userId = req.from && req.from.id ? req.from.id : '';
-        return channelId.length > 0 && userId.length ? `user/${channelId}/${userId}` : undefined; 
+        const req = context.request;
+        const channelId = req.channelId;
+        const userId = req && req.from && req.from.id ? req.from.id : undefined;
+        return channelId && userId ? `user/${channelId}/${userId}` : undefined; 
     }
 }

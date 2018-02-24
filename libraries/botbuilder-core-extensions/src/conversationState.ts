@@ -22,7 +22,7 @@ export class ConversationState<T extends StoreItem = StoreItem> implements Middl
         if (key !== undefined) {
             // Listen for outgoing endOfConversation activities
             context.onSendActivities((activities, next) => {
-                (activities || []).forEach((activity) => {
+                activities.forEach((activity) => {
                     if (ActivityTypes.EndOfConversation === activity.type) {
                         this.clear(context);
                     }
@@ -34,9 +34,8 @@ export class ConversationState<T extends StoreItem = StoreItem> implements Middl
             return this.read(context, true)
                 .then(() => next())
                 .then(() => this.write(context));
-        } else {
-            return Promise.reject(new Error(NO_KEY));
         }
+        return Promise.reject(new Error(NO_KEY));
     }
 
     /**
@@ -55,12 +54,10 @@ export class ConversationState<T extends StoreItem = StoreItem> implements Middl
                     context.set(CACHED_HASH, hash);
                     return state as T;
                 });
-            } else {
-                return Promise.reject(new Error(NO_KEY));
             }
-        } else {
-            return Promise.resolve(context.get(CACHED_STATE) || {});
+            return Promise.reject(new Error(NO_KEY));
         }
+        return Promise.resolve(context.get(CACHED_STATE) || {});
     }
 
     /**
@@ -69,26 +66,24 @@ export class ConversationState<T extends StoreItem = StoreItem> implements Middl
      * @param force (Optional) if `true` the state will always be written out regardless of its change state. Defaults to `false`. 
      */
     public write(context: TurnContext, force = false): Promise<void> {
-        const state = context.get(CACHED_STATE) || {};
-        const hash = context.get(CACHED_HASH) || '';
-        const newHash = calculateChangeHash(state);
-        if (force || hash !== newHash) {
+        let state = context.get(CACHED_STATE);
+        const hash = context.get(CACHED_HASH);
+        if (force || (state && hash !== calculateChangeHash(state))) {
             const key = ConversationState.key(context);
             if (key) {
+                if (!state) { state = {} }
                 state.eTag = '*';
                 const changes = {} as StoreItems;
                 changes[key] = state;
                 return this.storage.write(changes)
                     .then(() => {
                         // Update stored change hash
-                        context.set(CACHED_HASH, newHash);
+                        context.set(CACHED_HASH, calculateChangeHash(state));
                     });
-            } else {
-                return Promise.reject(new Error(NO_KEY));
             }
-        } else {
-            return Promise.resolve();
+            return Promise.reject(new Error(NO_KEY));
         }
+        return Promise.resolve();
     }
 
     /**
@@ -114,9 +109,9 @@ export class ConversationState<T extends StoreItem = StoreItem> implements Middl
      * @param context Context for current turn of conversation with the user.
      */
     static key(context: TurnContext): string|undefined {
-        const req = context.request || {};
-        const channelId = req.channelId || '';
-        const conversationId = req.conversation && req.conversation.id ? req.conversation.id : '';
-        return channelId.length > 0 && conversationId.length ? `convo/${channelId}/${conversationId}` : undefined; 
+        const req = context.request;
+        const channelId = req.channelId;
+        const conversationId = req && req.conversation && req.conversation.id ? req.conversation.id : undefined;
+        return channelId && conversationId ? `convo/${channelId}/${conversationId}` : undefined; 
     }
 }

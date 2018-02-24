@@ -18,9 +18,7 @@ class UserState {
                 .then(() => next())
                 .then(() => this.write(context));
         }
-        else {
-            return Promise.reject(new Error(NO_KEY));
-        }
+        return Promise.reject(new Error(NO_KEY));
     }
     /**
      * Reads in and caches the current user state for a turn.
@@ -39,13 +37,9 @@ class UserState {
                     return state;
                 });
             }
-            else {
-                return Promise.reject(new Error(NO_KEY));
-            }
+            return Promise.reject(new Error(NO_KEY));
         }
-        else {
-            return Promise.resolve(context.get(CACHED_STATE) || {});
-        }
+        return Promise.resolve(context.get(CACHED_STATE) || {});
     }
     /**
      * Writes out the user state if it's been changed.
@@ -53,28 +47,26 @@ class UserState {
      * @param force (Optional) if `true` the state will always be written out regardless of its change state. Defaults to `false`.
      */
     write(context, force = false) {
-        const state = context.get(CACHED_STATE) || {};
-        const hash = context.get(CACHED_HASH) || '';
-        const newHash = storage_1.calculateChangeHash(state);
-        if (force || hash !== newHash) {
+        let state = context.get(CACHED_STATE);
+        const hash = context.get(CACHED_HASH);
+        if (force || (state && hash !== storage_1.calculateChangeHash(state))) {
             const key = UserState.key(context);
             if (key) {
+                if (!state) {
+                    state = {};
+                }
                 state.eTag = '*';
                 const changes = {};
                 changes[key] = state;
                 return this.storage.write(changes)
                     .then(() => {
                     // Update stored change hash
-                    context.set(CACHED_HASH, newHash);
+                    context.set(CACHED_HASH, storage_1.calculateChangeHash(state));
                 });
             }
-            else {
-                return Promise.reject(new Error(NO_KEY));
-            }
+            return Promise.reject(new Error(NO_KEY));
         }
-        else {
-            return Promise.resolve();
-        }
+        return Promise.resolve();
     }
     /**
      * Clears the current user state for a turn.
@@ -99,10 +91,10 @@ class UserState {
      * @param context Context for current turn of conversation with the user.
      */
     static key(context) {
-        const req = context.request || {};
-        const channelId = req.channelId || '';
-        const userId = req.from && req.from.id ? req.from.id : '';
-        return channelId.length > 0 && userId.length ? `user/${channelId}/${userId}` : undefined;
+        const req = context.request;
+        const channelId = req.channelId;
+        const userId = req && req.from && req.from.id ? req.from.id : undefined;
+        return channelId && userId ? `user/${channelId}/${userId}` : undefined;
     }
 }
 exports.UserState = UserState;
