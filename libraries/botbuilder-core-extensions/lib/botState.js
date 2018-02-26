@@ -25,7 +25,8 @@ class BotState {
      * @param force (Optional) If `true` the cache will be bypassed and the state will always be read in directly from storage. Defaults to `false`.
      */
     read(context, force = false) {
-        if (force || !context.has(this.cacheKey)) {
+        const cached = context.get(this.cacheKey);
+        if (force || !cached || !cached.state) {
             return Promise.resolve(this.storageKey(context)).then((key) => {
                 return this.storage.read([key]).then((items) => {
                     const state = items[key] || {};
@@ -35,7 +36,7 @@ class BotState {
                 });
             });
         }
-        return Promise.resolve(context.get(this.cacheKey) || {});
+        return Promise.resolve(cached.state);
     }
     /**
      * Writes out the state object if it's been changed.
@@ -47,7 +48,7 @@ class BotState {
         if (force || (cached && cached.hash !== storage_1.calculateChangeHash(cached.state))) {
             return Promise.resolve(this.storageKey(context)).then((key) => {
                 if (!cached) {
-                    cached = { state: {}, hash: undefined };
+                    cached = { state: {}, hash: '' };
                 }
                 cached.state.eTag = '*';
                 const changes = {};

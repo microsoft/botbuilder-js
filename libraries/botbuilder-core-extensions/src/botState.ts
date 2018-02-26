@@ -36,8 +36,8 @@ export class BotState<T extends StoreItem = StoreItem> implements Middleware {
      * @param force (Optional) If `true` the cache will be bypassed and the state will always be read in directly from storage. Defaults to `false`.  
      */
     public read(context: BotContext, force = false): Promise<T> {
-
-        if (force || !context.has(this.cacheKey)) {
+        const cached = context.get<CachedBotState<T>>(this.cacheKey);
+        if (force || !cached || !cached.state) {
             return Promise.resolve(this.storageKey(context)).then((key) => {
                     return this.storage.read([key]).then((items) => {
                         const state = items[key] || {};
@@ -47,7 +47,7 @@ export class BotState<T extends StoreItem = StoreItem> implements Middleware {
                     });
                 });
         }
-        return Promise.resolve(context.get(this.cacheKey) || {});
+        return Promise.resolve(cached.state);
     }
 
     /**
@@ -56,10 +56,10 @@ export class BotState<T extends StoreItem = StoreItem> implements Middleware {
      * @param force (Optional) if `true` the state will always be written out regardless of its change state. Defaults to `false`. 
      */
     public write(context: BotContext, force = false): Promise<void> {
-        let cached = context.get(this.cacheKey);
+        let cached = context.get<CachedBotState<T>>(this.cacheKey);
         if (force || (cached && cached.hash !== calculateChangeHash(cached.state))) {
             return Promise.resolve(this.storageKey(context)).then((key) => {
-                if (!cached) { cached = { state: {}, hash: undefined } }
+                if (!cached) { cached = { state: {} as T, hash: '' } }
                 cached.state.eTag = '*';
                 const changes = {} as StoreItems;
                 changes[key] = cached.state;
@@ -79,9 +79,9 @@ export class BotState<T extends StoreItem = StoreItem> implements Middleware {
      */
     public clear(context: BotContext): void {
         // We leave the change hash un-touched which will force the cleared state changes to get persisted.
-        const cached = context.get(this.cacheKey);
+        const cached = context.get<CachedBotState<T>>(this.cacheKey);
         if (cached) {
-            cached.state = {};
+            cached.state = {} as T;
             context.set(this.cacheKey, cached);
         }
     }

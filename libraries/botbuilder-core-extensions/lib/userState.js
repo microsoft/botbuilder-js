@@ -25,10 +25,11 @@ class UserState extends botState_1.BotState {
      * @param cacheKey (Optional) name of the cached entry on the context object. The default value is 'userState'.
      */
     static get(context, cacheKey) {
-        if (!context.has(cacheKey || DEFAULT_CHACHE_KEY)) {
+        const cached = context.get(cacheKey || DEFAULT_CHACHE_KEY);
+        if (!cached) {
             throw new Error(NOT_INSTALLED);
         }
-        return context.get(cacheKey || DEFAULT_CHACHE_KEY).state;
+        return cached.state;
     }
     /**
      * Returns the storage key for the current user state.

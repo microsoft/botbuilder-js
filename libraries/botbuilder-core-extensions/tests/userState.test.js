@@ -30,33 +30,6 @@ describe(`UserState`, function () {
         });
     });
 
-    it(`should force read() of state from storage.`, function (done) {
-        let key;
-        middleware.onProcessRequest(context, () => {
-            key = UserState.key(context);
-            assert(UserState.get(context).test === 'foo', `invalid initial state`);
-            delete UserState.get(context).test === 'foo';
-            return middleware.read(context, true).then(() => {
-                assert(UserState.get(context).test === 'foo', `state not reloaded`);
-            });
-        }).then(() => done());
-    });
-    
-    it(`should clear() state storage.`, function (done) {
-        let key;
-        middleware.onProcessRequest(context, () => {
-            key = UserState.key(context);
-            assert(UserState.get(context).test === 'foo', `invalid initial state`);
-            middleware.clear(context);
-            assert(!UserState.get(context).hasOwnProperty('test'), `state not cleared on context.`);
-        })
-        .then(() => storage.read([key]))
-        .then((items) => {
-            assert(!items[key].hasOwnProperty('test'), `state not cleared from storage.`);
-            done();
-        });
-    });
-
     it(`should reject with error if channelId missing.`, function (done) {
         const ctx = new BotContext(adapter, missingChannelId);
         middleware.onProcessRequest(ctx, () => {
@@ -83,5 +56,15 @@ describe(`UserState`, function () {
             assert(err, `error object missing.`);
             done();
         });
+    });
+
+    it(`should throw install exception if get() called without a cached entry.`, function (done) {
+        context.set('userState', undefined);
+        try {
+            UserState.get(context);
+            assert(false, `exception not thrown.`);
+        } catch (err) {
+            done();
+        }
     });
 });

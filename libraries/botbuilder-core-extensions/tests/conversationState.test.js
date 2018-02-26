@@ -30,45 +30,18 @@ describe(`ConversationState`, function () {
         });
     });
 
-    it(`should force read() of state from storage.`, function (done) {
+    it(`should ignore any activities that aren't "endOfConversation".`, function (done) {
         let key;
         middleware.onProcessRequest(context, () => {
             key = ConversationState.key(context);
             assert(ConversationState.get(context).test === 'foo', `invalid initial state`);
-            delete ConversationState.get(context).test === 'foo';
-            return middleware.read(context, true).then(() => {
-                assert(ConversationState.get(context).test === 'foo', `state not reloaded`);
-            });
-        }).then(() => done());
-    });
-    
-    it(`should clear() state storage.`, function (done) {
-        let key;
-        middleware.onProcessRequest(context, () => {
-            key = ConversationState.key(context);
-            assert(ConversationState.get(context).test === 'foo', `invalid initial state`);
-            middleware.clear(context);
-            assert(!ConversationState.get(context).hasOwnProperty('test'), `state not cleared on context.`);
+            return context.sendActivities([{ type: ActivityTypes.Message, text: 'foo' }]);
         })
         .then(() => storage.read([key]))
         .then((items) => {
-            assert(!items[key].hasOwnProperty('test'), `state not cleared from storage.`);
+            assert(items[key].hasOwnProperty('test'), `state cleared and shouldn't have been.`);
             done();
         });
-    });
-
-    it(`should force immediate write() of state to storage.`, function (done) {
-        let key;
-        middleware.onProcessRequest(context, () => {
-            key = ConversationState.key(context);
-            assert(!ConversationState.get(context).hasOwnProperty('foo'), `invalid initial state`);
-            ConversationState.get(context).test = 'foo';
-            return middleware.write(context, true)
-                .then(() => storage.read([key]))
-                .then((items) => {
-                    assert(items[key].test === 'foo', `state not immediately flushed.`);
-                });
-        }).then(() => done());
     });
     
     it(`should automatically clear() state storage when "endOfConversation" activity sent.`, function (done) {
@@ -84,6 +57,7 @@ describe(`ConversationState`, function () {
             done();
         });
     });
+
 
     it(`should reject with error if channelId missing.`, function (done) {
         const ctx = new BotContext(adapter, missingChannelId);
@@ -111,5 +85,15 @@ describe(`ConversationState`, function () {
             assert(err, `error object missing.`);
             done();
         });
+    });
+
+    it(`should throw install exception if get() called without a cached entry.`, function (done) {
+        context.set('conversationState', undefined);
+        try {
+            ConversationState.get(context);
+            assert(false, `exception not thrown.`);
+        } catch (err) {
+            done();
+        }
     });
 });

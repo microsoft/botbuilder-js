@@ -35,8 +35,9 @@ export class UserState<T extends StoreItem = StoreItem> extends BotState<T> {
      * @param cacheKey (Optional) name of the cached entry on the context object. The default value is 'userState'.
      */
     static get<T extends StoreItem>(context: BotContext, cacheKey?: string): T {
-        if (!context.has(cacheKey || DEFAULT_CHACHE_KEY)) { throw new Error(NOT_INSTALLED) }
-        return context.get<CachedBotState<T>>(cacheKey || DEFAULT_CHACHE_KEY).state;
+        const cached = context.get(cacheKey || DEFAULT_CHACHE_KEY);
+        if (!cached) { throw new Error(NOT_INSTALLED) }
+        return cached.state;
     }
 
     /**
