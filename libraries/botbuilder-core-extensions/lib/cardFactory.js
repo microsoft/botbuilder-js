@@ -196,9 +196,7 @@ function mediaCard(contentType, title, media, buttons, other) {
     if (title) {
         card.title = title;
     }
-    if (media) {
-        card.media = CardFactory.media(media);
-    }
+    card.media = CardFactory.media(media);
     if (buttons) {
         card.buttons = CardFactory.actions(buttons);
     }

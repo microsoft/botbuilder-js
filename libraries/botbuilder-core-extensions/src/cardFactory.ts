@@ -239,7 +239,7 @@ function mediaCard(contentType: string,
 {
     const card: VideoCard = Object.assign({}, other);
     if (title) { card.title = title; }
-    if (media) { card.media = CardFactory.media(media); }
+    card.media = CardFactory.media(media);
     if (buttons) { card.buttons = CardFactory.actions(buttons); }
     return { contentType: contentType, content: card };
 }
