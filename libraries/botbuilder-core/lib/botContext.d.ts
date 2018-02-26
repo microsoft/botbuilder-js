@@ -57,9 +57,9 @@ export declare class BotContext<A extends BotAdapter = BotAdapter> {
     /**
      * Sends a set of activities to the user. An array of responses form the server will be
      * returned.
-     * @param activities Set of activities being sent.
+     * @param activities One or more activities to send to the user.
      */
-    sendActivities(activities: Partial<Activity>[]): Promise<ResourceResponse[]>;
+    sendActivities(...activities: Partial<Activity>[]): Promise<ResourceResponse[]>;
     /**
      * Replaces an existing activity.
      * @param activity New replacement activity. The activity should already have it's ID information populated.

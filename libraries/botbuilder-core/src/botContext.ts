@@ -91,9 +91,9 @@ export class BotContext<A extends BotAdapter = BotAdapter> {
     /** 
      * Sends a set of activities to the user. An array of responses form the server will be 
      * returned.
-     * @param activities Set of activities being sent.
+     * @param activities One or more activities to send to the user.
      */
-    public sendActivities(activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
+    public sendActivities(...activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
         const ref = BotContext.getConversationReference(this._request);
         const output = activities.map((a) => BotContext.applyConversationReference(a, ref))
         return this.emit(this._onSendActivities, activities, () => {

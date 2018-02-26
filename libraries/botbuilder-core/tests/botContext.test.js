@@ -88,7 +88,7 @@ describe(`TurnContext`, function () {
 
     it(`should sendActivities() and set responded.`, function (done) {
         assert(context.responded === false, `invalid initial state for context.responded.`);        
-        context.sendActivities([testMessage]).then((responses) => {
+        context.sendActivities(testMessage).then((responses) => {
             assert(Array.isArray(responses), `responses isn't an array.`);
             assert(responses.length > 0, `empty responses array returned.`);
             assert(responses[0].id === '5678', `invalid response id of "${responses[0].id}" sent back.`);
@@ -104,7 +104,7 @@ describe(`TurnContext`, function () {
             count = activities.length;
             return next();
         });
-        context.sendActivities([testMessage]).then((responses) => {
+        context.sendActivities(testMessage).then((responses) => {
             assert(count === 1, `send hook not called.`);        
             done();
         });
@@ -114,7 +114,7 @@ describe(`TurnContext`, function () {
         context.onSendActivities((activities, next) => {
             return [];
         });
-        context.sendActivities([testMessage]).then((responses) => {
+        context.sendActivities(testMessage).then((responses) => {
             assert(responses.length === 0, `call not intercepted.`);        
             done();
         });

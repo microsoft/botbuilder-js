@@ -27,7 +27,7 @@ import {
  *      )
  * );
  *
- * context.sendActivities([message]); // send message
+ * context.sendActivities(message); // send message
  * ```
  */
 export class MessageFactory {

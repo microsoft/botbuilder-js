@@ -34,7 +34,7 @@ describe(`TestAdapter`, function () {
 
     it(`should return a message to assertReply().`, function (done) {
         const adapter = new TestAdapter((context) => {
-            return context.sendActivities([receivedMessage]);
+            return context.sendActivities(receivedMessage);
         });
         adapter.send('test')
         .assertReply('received')
@@ -43,7 +43,7 @@ describe(`TestAdapter`, function () {
 
     it(`should send and receive when test() is called.`, function (done) {
         const adapter = new TestAdapter((context) => {
-            return context.sendActivities([receivedMessage]);
+            return context.sendActivities(receivedMessage);
         });
         adapter.test('test', 'received')
         .then(() => done());
@@ -53,7 +53,7 @@ describe(`TestAdapter`, function () {
         let count = 0;
         const adapter = new TestAdapter((context) => {
             count++;
-            return context.sendActivities([receivedMessage]);
+            return context.sendActivities(receivedMessage);
         });
         adapter.test('test', 'received')
         .test('test', 'received')
@@ -69,7 +69,7 @@ describe(`TestAdapter`, function () {
     it(`should support context.updateActivity() calls.`, function (done) {
         const adapter = new TestAdapter((context) => {
             return context.updateActivity(updatedActivity)
-                .then(() => context.sendActivities([receivedMessage]));
+                .then(() => context.sendActivities(receivedMessage));
         });
         adapter.test('test', 'received')
         .then(() => {
@@ -82,7 +82,7 @@ describe(`TestAdapter`, function () {
     it(`should support context.deleteActivity() calls.`, function (done) {
         const adapter = new TestAdapter((context) => {
             return context.deleteActivity(deletedActivityId)
-                .then(() => context.sendActivities([receivedMessage]));
+                .then(() => context.sendActivities(receivedMessage));
         });
         adapter.test('test', 'received')
         .then(() => {

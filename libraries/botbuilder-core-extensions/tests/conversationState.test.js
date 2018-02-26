@@ -35,7 +35,7 @@ describe(`ConversationState`, function () {
         middleware.onProcessRequest(context, () => {
             key = ConversationState.key(context);
             assert(ConversationState.get(context).test === 'foo', `invalid initial state`);
-            return context.sendActivities([{ type: ActivityTypes.Message, text: 'foo' }]);
+            return context.sendActivities({ type: ActivityTypes.Message, text: 'foo' });
         })
         .then(() => storage.read([key]))
         .then((items) => {
@@ -49,7 +49,7 @@ describe(`ConversationState`, function () {
         middleware.onProcessRequest(context, () => {
             key = ConversationState.key(context);
             assert(ConversationState.get(context).test === 'foo', `invalid initial state`);
-            return context.sendActivities([{ type: ActivityTypes.EndOfConversation }]);
+            return context.sendActivities({ type: ActivityTypes.EndOfConversation });
         })
         .then(() => storage.read([key]))
         .then((items) => {
