@@ -95,7 +95,6 @@ describe(`MiddlewareSet`, function () {
     });
 
     it(`should map an exception within middleware to a rejection.`, function (done) {
-        let called = false;
         const context = new BotContext(new SimpleAdapter(), testMessage);
         new MiddlewareSet()
             .use(() => {
@@ -119,5 +118,19 @@ describe(`MiddlewareSet`, function () {
         } catch (err) {
             done();
         }
+    });
+
+    it(`should support passing middleware into the constructor of the set.`, function (done) {
+        let called = false;
+        const context = new BotContext(new SimpleAdapter(), testMessage);
+        new MiddlewareSet((context, next) => {
+            called = true;
+            return next();
+        })
+        .run(context, () => { })
+        .then(() => {
+            assert(called, `middleware not called.`);
+            done();
+        });
     });
 });
