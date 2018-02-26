@@ -18,8 +18,12 @@ import assert = require('assert');
 export class TestAdapter extends BotAdapter {
     private nextId = 0;
 
+    /** INTERNAL: used to drive the promise chain forward when running tests. */
+    public readonly activityBuffer: Partial<Activity>[] = [];
+   
     public readonly template: Partial<Activity>;
-    public readonly botReplies: Partial<Activity>[] = [];
+    public readonly updatedActivities: Partial<Activity>[] = [];
+    public readonly deletedActivities: string[] = [];
 
     /**
      * Creates a new instance of the test adapter.
@@ -39,19 +43,19 @@ export class TestAdapter extends BotAdapter {
 
     public sendActivities(activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
         const responses = activities.map((activity) => {  
-            this.botReplies.push(activity);
+            this.activityBuffer.push(activity);
             return { id: (this.nextId++).toString() };
         });
         return Promise.resolve(responses);
     }
 
     public updateActivity(activity: Partial<Activity>): Promise<void> {
-        // TODO: implement updateActivity() logic
+        this.updatedActivities.push(activity);
         return Promise.resolve();
     }
 
     public deleteActivity(id: string): Promise<void> {
-        // TODO: implement deleteActivity() logic
+        this.deletedActivities.push(id);
         return Promise.resolve();
     }
 
@@ -174,10 +178,10 @@ export class TestFlow {
                     }
 
                     // if we have replies
-                    if (this.adapter.botReplies.length > 0) {
+                    if (this.adapter.activityBuffer.length > 0) {
                         clearInterval(myInterval);
-                        let botReply = this.adapter.botReplies[0];
-                        this.adapter.botReplies.splice(0, 1);
+                        let botReply = this.adapter.activityBuffer[0];
+                        this.adapter.activityBuffer.splice(0, 1);
                         if (typeof expected === 'function') {
                             expected(botReply, description);
                         } else if (typeof expected === 'string') {

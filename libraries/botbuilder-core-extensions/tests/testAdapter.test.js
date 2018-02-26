@@ -3,6 +3,8 @@ const { ActivityTypes } = require('botbuilder-core');
 const { TestAdapter } = require('../');
 
 const receivedMessage = { text: 'received', type: 'message' };
+const updatedActivity = { text: 'update', type: 'message' };
+const deletedActivityId = '1234';
 
 describe(`TestAdapter`, function () {
     this.timeout(5000);
@@ -20,7 +22,8 @@ describe(`TestAdapter`, function () {
             assert(context.request.channelId, `missing channelId.`);
             assert(context.request.serviceUrl, `missing serviceUrl.`);
             done();
-        }).receiveActivity('test');
+        });
+        adapter.receiveActivity('test');
     });
 
     it(`should call bot logic when send() is called.`, function (done) {
@@ -32,8 +35,8 @@ describe(`TestAdapter`, function () {
     it(`should return a message to assertReply().`, function (done) {
         const adapter = new TestAdapter((context) => {
             return context.sendActivities([receivedMessage]);
-        })
-        .send('test')
+        });
+        adapter.send('test')
         .assertReply('received')
         .then(() => done());
     });
@@ -41,8 +44,8 @@ describe(`TestAdapter`, function () {
     it(`should send and receive when test() is called.`, function (done) {
         const adapter = new TestAdapter((context) => {
             return context.sendActivities([receivedMessage]);
-        })
-        .test('test', 'received')
+        });
+        adapter.test('test', 'received')
         .then(() => done());
     });
 
@@ -51,14 +54,40 @@ describe(`TestAdapter`, function () {
         const adapter = new TestAdapter((context) => {
             count++;
             return context.sendActivities([receivedMessage]);
-        })
-        .test('test', 'received')
+        });
+        adapter.test('test', 'received')
         .test('test', 'received')
         .test('test', 'received')
         .test('test', 'received')
         .test('test', 'received')
         .then(() => {
             assert(count == 5, `incorrect count of "${count}".`);
+            done();
+        });
+    });
+
+    it(`should support context.updateActivity() calls.`, function (done) {
+        const adapter = new TestAdapter((context) => {
+            return context.updateActivity(updatedActivity)
+                .then(() => context.sendActivities([receivedMessage]));
+        });
+        adapter.test('test', 'received')
+        .then(() => {
+            assert(adapter.updatedActivities.length === 1, `no activities updated.`);
+            assert(adapter.updatedActivities[0].text === updatedActivity.text, `invalid update activity.`);
+            done();
+        });
+    });
+
+    it(`should support context.deleteActivity() calls.`, function (done) {
+        const adapter = new TestAdapter((context) => {
+            return context.deleteActivity(deletedActivityId)
+                .then(() => context.sendActivities([receivedMessage]));
+        });
+        adapter.test('test', 'received')
+        .then(() => {
+            assert(adapter.deletedActivities.length === 1, `no activities deleted.`);
+            assert(adapter.deletedActivities[0] === deletedActivityId, `invalid deleted activity id.`);
             done();
         });
     });

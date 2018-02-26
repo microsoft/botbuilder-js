@@ -12,8 +12,11 @@ import { BotAdapter, Activity, ConversationReference, Promiseable, BotContext, R
 export declare class TestAdapter extends BotAdapter {
     private botLogic;
     private nextId;
+    /** INTERNAL: used to drive the promise chain forward when running tests. */
+    readonly activityBuffer: Partial<Activity>[];
     readonly template: Partial<Activity>;
-    readonly botReplies: Partial<Activity>[];
+    readonly updatedActivities: Partial<Activity>[];
+    readonly deletedActivities: string[];
     /**
      * Creates a new instance of the test adapter.
      * @param botLogic The bots logic that's under test.

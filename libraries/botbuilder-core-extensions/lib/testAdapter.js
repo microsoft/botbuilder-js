@@ -22,7 +22,10 @@ class TestAdapter extends botbuilder_core_1.BotAdapter {
         super();
         this.botLogic = botLogic;
         this.nextId = 0;
-        this.botReplies = [];
+        /** INTERNAL: used to drive the promise chain forward when running tests. */
+        this.activityBuffer = [];
+        this.updatedActivities = [];
+        this.deletedActivities = [];
         this.template = Object.assign({
             channelId: 'test',
             serviceUrl: 'https://test.com',
@@ -33,17 +36,17 @@ class TestAdapter extends botbuilder_core_1.BotAdapter {
     }
     sendActivities(activities) {
         const responses = activities.map((activity) => {
-            this.botReplies.push(activity);
+            this.activityBuffer.push(activity);
             return { id: (this.nextId++).toString() };
         });
         return Promise.resolve(responses);
     }
     updateActivity(activity) {
-        // TODO: implement updateActivity() logic
+        this.updatedActivities.push(activity);
         return Promise.resolve();
     }
     deleteActivity(id) {
-        // TODO: implement deleteActivity() logic
+        this.deletedActivities.push(id);
         return Promise.resolve();
     }
     /**
@@ -158,10 +161,10 @@ class TestFlow {
                         throw new Error(`${timeout}ms Timed out waiting for:${description || expectedActivity.text}`);
                     }
                     // if we have replies
-                    if (this.adapter.botReplies.length > 0) {
+                    if (this.adapter.activityBuffer.length > 0) {
                         clearInterval(myInterval);
-                        let botReply = this.adapter.botReplies[0];
-                        this.adapter.botReplies.splice(0, 1);
+                        let botReply = this.adapter.activityBuffer[0];
+                        this.adapter.activityBuffer.splice(0, 1);
                         if (typeof expected === 'function') {
                             expected(botReply, description);
                         }
