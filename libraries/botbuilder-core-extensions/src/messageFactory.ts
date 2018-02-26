@@ -50,7 +50,7 @@ export class MessageFactory {
     static text(text: string, speak?: string, inputHint?: InputHints|string): Partial<Activity> {
         const msg: Partial<Activity> = {
             type: ActivityTypes.Message,
-            text: text || ''
+            text: text
         };
         if (speak) { msg.speak = speak }
         if (inputHint) { msg.inputHint = inputHint }

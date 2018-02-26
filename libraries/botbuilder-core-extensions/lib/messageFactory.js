@@ -48,7 +48,7 @@ class MessageFactory {
     static text(text, speak, inputHint) {
         const msg = {
             type: botbuilder_core_1.ActivityTypes.Message,
-            text: text || ''
+            text: text
         };
         if (speak) {
             msg.speak = speak;
