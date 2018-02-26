@@ -74,13 +74,6 @@ class TestAdapter extends botbuilder_core_1.BotAdapter {
         return new TestFlow(this.receiveActivity(userSays), this);
     }
     /**
-     * wait for time period to pass before continuing
-     * @param ms ms to wait for
-     */
-    delay(ms) {
-        return new TestFlow(new Promise((resolve, reject) => { setTimeout(() => resolve(), ms); }), this);
-    }
-    /**
      * Send something to the bot and expect the bot to reply
      * @param userSays text or activity simulating user input
      * @param expected expected text or activity from the bot
@@ -91,24 +84,6 @@ class TestAdapter extends botbuilder_core_1.BotAdapter {
         return this.send(userSays)
             .assertReply(expected, description);
     }
-    /**
-     * Throws if the bot's response doesn't match the expected text/activity
-     * @param expected expected text or activity from the bot
-     * @param description description of test case
-     * @param timeout (default 3000ms) time to wait for response from bot
-     */
-    assertReply(expected, description, timeout) {
-        return new TestFlow(Promise.resolve(), this).assertReply(expected, description, timeout);
-    }
-    /**
-     * throws if the bot's response is not one of the candidate strings
-     * @param candidates candidate responses
-     * @param description description of test case
-     * @param timeout (default 3000ms) time to wait for response from bot
-     */
-    assertReplyOneOf(candidates, description, timeout) {
-        return new TestFlow(Promise.resolve(), this).assertReplyOneOf(candidates, description, timeout);
-    }
 }
 exports.TestAdapter = TestAdapter;
 /** INTERNAL support class for `TestAdapter`. */
@@ -116,8 +91,6 @@ class TestFlow {
     constructor(previous, adapter) {
         this.previous = previous;
         this.adapter = adapter;
-        if (!this.previous)
-            this.previous = Promise.resolve();
     }
     /**
      * Send something to the bot and expect the bot to reply
@@ -127,8 +100,6 @@ class TestFlow {
      * @param timeout (default 3000ms) time to wait for response from bot
      */
     test(userSays, expected, description, timeout) {
-        if (!expected)
-            throw new Error(".test() Missing expected parameter");
         return this.send(userSays)
             .assertReply(expected, description || `test("${userSays}", "${expected}")`, timeout);
     }
@@ -146,39 +117,56 @@ class TestFlow {
      * @param timeout (default 3000ms) time to wait for response from bot
      */
     assertReply(expected, description, timeout) {
-        if (!expected)
-            throw new Error(".assertReply() Missing expected parameter");
+        function defaultInspector(reply, description) {
+            if (typeof expected === 'object') {
+                validateActivity(reply, expected);
+            }
+            else {
+                assert.equal(reply.type, botbuilder_core_1.ActivityTypes.Message, description + ` type === '${reply.type}'. `);
+                assert.equal(reply.text, expected, description + ` text === "${reply.text}"`);
+            }
+        }
+        if (!description) {
+            description = '';
+        }
+        const inspector = typeof expected === 'function' ? expected : defaultInspector;
         return new TestFlow(this.previous.then(() => {
             return new Promise((resolve, reject) => {
-                if (!timeout)
+                if (!timeout) {
                     timeout = 3000;
-                let interval = 0;
+                }
                 let start = new Date().getTime();
-                let myInterval = setInterval(() => {
+                const adapter = this.adapter;
+                function waitForActivity() {
                     let current = new Date().getTime();
                     if ((current - start) > timeout) {
-                        let expectedActivity = (typeof expected === 'string' ? { type: botbuilder_core_1.ActivityTypes.Message, text: expected } : expected);
-                        throw new Error(`${timeout}ms Timed out waiting for:${description || expectedActivity.text}`);
+                        // Operation timed out
+                        let expecting;
+                        switch (typeof expected) {
+                            case 'string':
+                            default:
+                                expecting = `"${expected.toString()}"`;
+                                break;
+                            case 'object':
+                                expecting = `"${expected.text}`;
+                                break;
+                            case 'function':
+                                expecting = expected.toString();
+                                break;
+                        }
+                        reject(new Error(`TestAdapter.assertReply(${expecting}): ${description} Timed out after ${current - start}ms.`));
                     }
-                    // if we have replies
-                    if (this.adapter.activityBuffer.length > 0) {
-                        clearInterval(myInterval);
-                        let botReply = this.adapter.activityBuffer[0];
-                        this.adapter.activityBuffer.splice(0, 1);
-                        if (typeof expected === 'function') {
-                            expected(botReply, description);
-                        }
-                        else if (typeof expected === 'string') {
-                            assert.equal(botReply.type, botbuilder_core_1.ActivityTypes.Message, (description || '') + ` type === '${botReply.type}'. `);
-                            assert.equal(botReply.text, expected, (description || '') + ` text === "${botReply.text}"`);
-                        }
-                        else {
-                            this.validateActivity(botReply, expected);
-                        }
+                    else if (adapter.activityBuffer.length > 0) {
+                        // Activity received
+                        const reply = adapter.activityBuffer.shift();
+                        inspector(reply, description);
                         resolve();
-                        return;
                     }
-                }, interval);
+                    else {
+                        setTimeout(() => waitForActivity(), 5);
+                    }
+                }
+                waitForActivity();
             });
         }), this.adapter);
     }
@@ -189,14 +177,14 @@ class TestFlow {
      * @param timeout (default 3000ms) time to wait for response from bot
      */
     assertReplyOneOf(candidates, description, timeout) {
-        return this.assertReply((activity) => {
-            for (let candidate of candidates) {
+        return this.assertReply((activity, description) => {
+            for (const candidate of candidates) {
                 if (activity.text == candidate) {
                     return;
                 }
             }
-            assert.fail(`${description} FAILED, Expected one of :${JSON.stringify(candidates)}`);
-        });
+            assert.fail(`TestAdapter.assertReplyOneOf(): ${description || ''} FAILED, Expected one of :${JSON.stringify(candidates)}`);
+        }, description, timeout);
     }
     /**
      * Insert delay before continuing
@@ -207,11 +195,6 @@ class TestFlow {
             return new Promise((resolve, reject) => { setTimeout(() => resolve(), ms); });
         }), this.adapter);
     }
-    validateActivity(activity, expected) {
-        for (let prop in expected) {
-            assert.equal(activity[prop], expected[prop]);
-        }
-    }
     then(onFulfilled) {
         return new TestFlow(this.previous.then(onFulfilled), this.adapter);
     }
@@ -220,4 +203,9 @@ class TestFlow {
     }
 }
 exports.TestFlow = TestFlow;
+function validateActivity(activity, expected) {
+    for (const prop in expected) {
+        assert.equal(activity[prop], expected[prop]);
+    }
+}
 //# sourceMappingURL=testAdapter.js.map

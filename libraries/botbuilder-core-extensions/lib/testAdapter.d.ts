@@ -6,6 +6,7 @@
  * Licensed under the MIT License.
  */
 import { BotAdapter, Activity, ConversationReference, Promiseable, BotContext, ResourceResponse } from 'botbuilder-core';
+export declare type TestActivityInspector = (activity: Partial<Activity>, description: string) => void;
 /**
  * Test adapter used for unit tests.
  */
@@ -37,11 +38,6 @@ export declare class TestAdapter extends BotAdapter {
      */
     send(userSays: string | Partial<Activity>): TestFlow;
     /**
-     * wait for time period to pass before continuing
-     * @param ms ms to wait for
-     */
-    delay(ms: number): TestFlow;
-    /**
      * Send something to the bot and expect the bot to reply
      * @param userSays text or activity simulating user input
      * @param expected expected text or activity from the bot
@@ -49,20 +45,6 @@ export declare class TestAdapter extends BotAdapter {
      * @param timeout (default 3000ms) time to wait for response from bot
      */
     test(userSays: string | Partial<Activity>, expected: string | Partial<Activity> | ((activity: Partial<Activity>, description?: string) => void), description?: string, timeout?: number): TestFlow;
-    /**
-     * Throws if the bot's response doesn't match the expected text/activity
-     * @param expected expected text or activity from the bot
-     * @param description description of test case
-     * @param timeout (default 3000ms) time to wait for response from bot
-     */
-    assertReply(expected: string | Partial<Activity> | ((activity: Partial<Activity>, description?: string) => void), description?: string, timeout?: number): TestFlow;
-    /**
-     * throws if the bot's response is not one of the candidate strings
-     * @param candidates candidate responses
-     * @param description description of test case
-     * @param timeout (default 3000ms) time to wait for response from bot
-     */
-    assertReplyOneOf(candidates: string[], description?: string, timeout?: number): TestFlow;
 }
 /** INTERNAL support class for `TestAdapter`. */
 export declare class TestFlow {
@@ -88,7 +70,7 @@ export declare class TestFlow {
      * @param description description of test case
      * @param timeout (default 3000ms) time to wait for response from bot
      */
-    assertReply(expected: string | Partial<Activity> | ((activity: Partial<Activity>, description?: string) => void), description?: string, timeout?: number): TestFlow;
+    assertReply(expected: string | Partial<Activity> | TestActivityInspector, description?: string, timeout?: number): TestFlow;
     /**
      * throws if the bot's response is not one of the candidate strings
      * @param candidates candidate responses
@@ -101,7 +83,6 @@ export declare class TestFlow {
      * @param ms ms to wait
      */
     delay(ms: number): TestFlow;
-    private validateActivity(activity, expected);
     then(onFulfilled?: () => void): TestFlow;
     catch(onRejected?: (reason: any) => void): TestFlow;
 }

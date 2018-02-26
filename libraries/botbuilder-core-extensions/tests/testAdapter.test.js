@@ -26,6 +26,35 @@ describe(`TestAdapter`, function () {
         adapter.receiveActivity('test');
     });
 
+    it(`should support receiveActivity() called with an Activity.`, function (done) {
+        const adapter = new TestAdapter((context) => {
+            assert(context.request.type === ActivityTypes.Message, `wrong type.`);
+            assert(context.request.text === 'test', `wrong text.`);
+            done();
+        });
+        adapter.receiveActivity({ text: 'test', type: ActivityTypes.Message });
+    });
+
+    it(`should automatically set the type when receiveActivity() is called with an Activity.`, function (done) {
+        const adapter = new TestAdapter((context) => {
+            assert(context.request.type === ActivityTypes.Message, `wrong type.`);
+            assert(context.request.text === 'test', `wrong text.`);
+            done();
+        });
+        adapter.receiveActivity({ text: 'test' });
+    });
+
+    it(`should support passing your own Activity.Id to receiveActivity().`, function (done) {
+        const adapter = new TestAdapter((context) => {
+            assert(context.request.id === 'myId', `custom ID not passed through.`);
+            assert(context.request.type === ActivityTypes.Message, `wrong type.`);
+            assert(context.request.text === 'test', `wrong text.`);
+            done();
+        });
+        adapter.receiveActivity({ text: 'test', type: ActivityTypes.Message, id: 'myId' });
+    });
+
+    
     it(`should call bot logic when send() is called.`, function (done) {
         const adapter = new TestAdapter((context) => {
             done();
@@ -90,5 +119,115 @@ describe(`TestAdapter`, function () {
             assert(adapter.deletedActivities[0] === deletedActivityId, `invalid deleted activity id.`);
             done();
         });
+    });
+
+    it(`should delay() before running another test.`, function (done) {
+        const start = new Date().getTime();
+        const adapter = new TestAdapter((context) => {
+            return context.sendActivities(receivedMessage);
+        });
+        adapter
+            .test('test', 'received')
+            .delay(600)
+            .test('test', 'received')
+            .then(() => {
+                const end = new Date().getTime();
+                assert((end - start) >= 500, `didn't delay before moving on.`);
+                done();
+            });
+    });
+
+    it(`should support calling assertReply() with an expected Activity.`, function (done) {
+        const start = new Date().getTime();
+        const adapter = new TestAdapter((context) => {
+            return context.sendActivities(receivedMessage);
+        });
+        adapter
+            .send('test')
+            .assertReply({ text: 'received' })
+            .then(() => done());
+    });
+
+    it(`should support calling assertReply() with a custom inspector.`, function (done) {
+        let called = false;
+        const start = new Date().getTime();
+        const adapter = new TestAdapter((context) => {
+            return context.sendActivities(receivedMessage);
+        });
+        adapter
+            .send('test')
+            .assertReply((reply, description) => {
+                assert(reply, `reply not passed`);
+                called = true;
+            })
+            .then(() => {
+                assert(called, `inspector not called.`); 
+                done();
+            });
+    });
+    
+    it(`should timeout waiting for assertReply() when a string is expected.`, function (done) {
+        const start = new Date().getTime();
+        const adapter = new TestAdapter((context) => {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => resolve(), 600);
+            });
+        });
+        adapter
+            .send('test')
+            .assertReply('received', 'received failed', 500)
+            .catch((err) => done());
+    });
+
+    it(`should timeout waiting for assertReply() when an Activity is expected.`, function (done) {
+        const start = new Date().getTime();
+        const adapter = new TestAdapter((context) => {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => resolve(), 600);
+            });
+        });
+        adapter
+            .send('test')
+            .assertReply({ text: 'received' }, 'received failed', 500)
+            .catch((err) => done());
+    });
+
+    it(`should timeout waiting for assertReply() when a custom inspector is expected.`, function (done) {
+        const start = new Date().getTime();
+        const adapter = new TestAdapter((context) => {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => resolve(), 600);
+            });
+        });
+        adapter
+            .send('test')
+            .assertReply(() => assert(false, `inspector shouldn't be called.`), 'received failed', 500)
+            .catch((err) => done());
+    });
+
+    it(`should support calling assertReplyOneOf().`, function (done) {
+        const start = new Date().getTime();
+        const adapter = new TestAdapter((context) => {
+            return context.sendActivities(receivedMessage);
+        });
+        adapter
+            .send('test')
+            .assertReplyOneOf(['foo', 'bar', 'received'])
+            .then(() => done());
+    });
+
+
+    it(`should fail assertReplyOneOf() call for invalid response.`, function (done) {
+        const start = new Date().getTime();
+        const adapter = new TestAdapter((context) => {
+            return context.sendActivities(receivedMessage);
+        });
+        adapter
+            .send('test')
+            .assertReplyOneOf(['foo', 'bar'])
+            .then(() =>{
+                assert(false, `shouldn't pass tets.`);
+            })
+            .catch(() => done());
     });
 });
