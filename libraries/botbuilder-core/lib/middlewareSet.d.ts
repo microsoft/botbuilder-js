@@ -17,6 +17,11 @@ export declare type MiddlewareHandler = (context: BotContext, next: () => Promis
 export declare class MiddlewareSet {
     private middleware;
     /**
+     * Creates a new instance of a MiddlewareSet.
+     * @param middleware Zero or more middleware handlers(s) to register.
+     */
+    constructor(...middleware: (MiddlewareHandler | Middleware)[]);
+    /**
      * Registers middleware handlers(s) with the set.
      * @param middleware One or more middleware handlers(s) to register.
      */

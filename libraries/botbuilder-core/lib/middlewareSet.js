@@ -6,8 +6,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * another middleware set using `set.use(mySet)`.
  */
 class MiddlewareSet {
-    constructor() {
+    /**
+     * Creates a new instance of a MiddlewareSet.
+     * @param middleware Zero or more middleware handlers(s) to register.
+     */
+    constructor(...middleware) {
         this.middleware = [];
+        MiddlewareSet.prototype.use.apply(this, middleware);
     }
     /**
      * Registers middleware handlers(s) with the set.
