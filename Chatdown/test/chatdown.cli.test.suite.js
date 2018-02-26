@@ -19,21 +19,21 @@ describe('The Chatdown cli tool', () => {
     });
 
     it('should throw and output a message when --user is omitted', done => {
-        exec(`echo bot: hello! user:can I get some help? | node ${chatdown} --bot=bot`, (error, stdout, stderr) => {
+        exec(`echo bot: hello! user:can I get some help? | node ${chatdown} --bot bot`, (error, stdout, stderr) => {
             assert(stdout.trim() === 'ReferenceError: --user is required to be passed in as an argument or as part of the config');
             done();
         });
     });
 
     it('should throw and output a message when --bot is omitted', done => {
-        exec(`echo bot: hello! user:can I get some help? | node ${chatdown} --user=user`, (error, stdout, stderr) => {
+        exec(`(echo bot: hello! && echo user:can I get some help?) | node ${chatdown} --user user`, (error, stdout, stderr) => {
             assert(stdout.trim() === 'ReferenceError: --bot is required to be passed in as an argument or as part of the config');
             done();
         });
     });
 
     it('should accept data as a pipe and output the results', done => {
-        exec(`echo bot: hello! user:can I get some help? | node ${chatdown} --bot=bot --user=user`, (error, stdout, stderr) => {
+        exec(`(echo bot: hello! && echo user:can I get some help?) | node ${chatdown} --bot bot --user user`, (error, stdout, stderr) => {
             assert.doesNotThrow(() => JSON.parse(stdout));
             done();
         });

@@ -108,4 +108,40 @@ describe('The chatdown lib', () => {
             }
         });
     });
+
+    describe('should output the expected activities', () => {
+        let config = {
+            bot: 'bot',
+            user: 'user'
+        };
+
+        it('with the appropriate messages', async () => {
+            const conversation = [
+                'user: Hello!',
+                'bot: Hi there. How can I help you?',
+                'user: What time is is?',
+                'bot: It\'s go time!'
+            ];
+
+            const activities = await chatdown(conversation.join('\n'), config);
+            activities.forEach((activity, index) => {
+                assert(activity.text.trim() === conversation[index].replace('user: ', '').replace('bot: ', ''));
+            });
+        });
+
+        it('when a message contains newlines', async () => {
+            const conversation = `
+            user: Hello!
+            bot: Hi there. How can I help you?,
+            user: I need a sandwich!
+            bot: Great!. I have the following choices:
+            * Ham and Cheese
+            * Turkey bacon club
+            * Veggie on sourdough`;
+
+            const activities = await chatdown(conversation, config);
+            assert(activities.length === 4);
+            assert(activities[3].text.trim().split('\n').length === 4);
+        });
+    });
 });
