@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { TurnContext, ActivityTypes } = require('botbuilder-core');
+const { BotContext, ActivityTypes } = require('botbuilder-core');
 const { ConversationState, MemoryStorage, TestAdapter } = require('../');
 
 const receivedMessage = { text: 'received', type: 'message', channelId: 'test', conversation: { id: 'convo' } };
@@ -11,7 +11,7 @@ describe(`ConversationState`, function () {
 
     const storage = new MemoryStorage();
     const adapter = new TestAdapter();
-    const context = new TurnContext(adapter, receivedMessage);
+    const context = new BotContext(adapter, receivedMessage);
     const middleware = new ConversationState(storage);
     it(`should load and save state from storage.`, function (done) {
         let key;
@@ -86,7 +86,7 @@ describe(`ConversationState`, function () {
     });
 
     it(`should reject with error if channelId missing.`, function (done) {
-        const ctx = new TurnContext(adapter, missingChannelId);
+        const ctx = new BotContext(adapter, missingChannelId);
         middleware.onProcessRequest(ctx, () => {
             assert(false, `shouldn't have called next.`);
         })
@@ -100,7 +100,7 @@ describe(`ConversationState`, function () {
     });
 
     it(`should reject with error if conversation missing.`, function (done) {
-        const ctx = new TurnContext(adapter, missingConversation);
+        const ctx = new BotContext(adapter, missingConversation);
         middleware.onProcessRequest(ctx, () => {
             assert(false, `shouldn't have called next.`);
         })

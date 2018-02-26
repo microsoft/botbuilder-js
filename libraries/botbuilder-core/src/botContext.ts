@@ -17,12 +17,12 @@ export type UpdateActivityHandler = (activity: Partial<Activity>, next: () => Pr
 export type DeleteActivityHandler = (id: string, next: () => Promise<void>) => Promiseable<void>;
 
 declare global {
-    export interface TurnContextExtensions { }
+    export interface BotContextExtensions { }
 }
 
-export interface TurnContext<A extends BotAdapter> extends TurnContextExtensions { }
+export interface BotContext<A extends BotAdapter> extends BotContextExtensions { }
 
-export class TurnContext<A extends BotAdapter = BotAdapter> {
+export class BotContext<A extends BotAdapter = BotAdapter> {
     private _adapter: A;
     private _request: Activity;
     private _responded = false;
@@ -94,8 +94,8 @@ export class TurnContext<A extends BotAdapter = BotAdapter> {
      * @param activities Set of activities being sent.
      */
     public sendActivities(activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
-        const ref = TurnContext.getConversationReference(this._request);
-        const output = activities.map((a) => TurnContext.applyConversationReference(a, ref))
+        const ref = BotContext.getConversationReference(this._request);
+        const output = activities.map((a) => BotContext.applyConversationReference(a, ref))
         return this.emit(this._onSendActivities, activities, () => {
             return this._adapter.sendActivities(activities)
                 .then((responses) => {

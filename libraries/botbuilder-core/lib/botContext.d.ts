@@ -12,12 +12,12 @@ export declare type SendActivitiesHandler = (activities: Partial<Activity>[], ne
 export declare type UpdateActivityHandler = (activity: Partial<Activity>, next: () => Promise<void>) => Promiseable<void>;
 export declare type DeleteActivityHandler = (id: string, next: () => Promise<void>) => Promiseable<void>;
 declare global  {
-    interface TurnContextExtensions {
+    interface BotContextExtensions {
     }
 }
-export interface TurnContext<A extends BotAdapter> extends TurnContextExtensions {
+export interface BotContext<A extends BotAdapter> extends BotContextExtensions {
 }
-export declare class TurnContext<A extends BotAdapter = BotAdapter> {
+export declare class BotContext<A extends BotAdapter = BotAdapter> {
     private _adapter;
     private _request;
     private _responded;

@@ -1,4 +1,4 @@
-import { TurnContext } from './turnContext';
+import { BotContext } from './botContext';
 /**
  * Type signature for a return value that can (Optionally) return its value
  * asynchronously using a Promise.
@@ -6,9 +6,9 @@ import { TurnContext } from './turnContext';
  */
 export declare type Promiseable<T = void> = Promise<T> | T;
 export interface Middleware {
-    onProcessRequest(context: TurnContext, next: () => Promise<void>): Promiseable<void>;
+    onProcessRequest(context: BotContext, next: () => Promise<void>): Promiseable<void>;
 }
-export declare type MiddlewareHandler = (context: TurnContext, next: () => Promise<void>) => Promiseable<void>;
+export declare type MiddlewareHandler = (context: BotContext, next: () => Promise<void>) => Promiseable<void>;
 /**
  * A set of `Middleware` plugins. The set itself is middleware so you can easily package up a set
  * of middleware that can be composed into a bot with a single `bot.use(mySet)` call or even into
@@ -26,5 +26,5 @@ export declare class MiddlewareSet {
      * @param context Context for the current turn of conversation with the user.
      * @param next Function to invoke at the end of the middleware chain.
      */
-    run(context: TurnContext, next: () => Promiseable<void>): Promise<void>;
+    run(context: BotContext, next: () => Promiseable<void>): Promise<void>;
 }

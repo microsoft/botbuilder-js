@@ -60,7 +60,7 @@ class TestAdapter extends botbuilder_core_1.BotAdapter {
             request.id = (this.nextId++).toString();
         }
         // Create context object and run middleware
-        const context = new botbuilder_core_1.TurnContext(this, request);
+        const context = new botbuilder_core_1.BotContext(this, request);
         return this.runMiddleware(context, this.botLogic);
     }
     /**

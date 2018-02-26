@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Activity, ResourceResponse } from 'botframework-schema';
-import { TurnContext } from './turnContext';
+import { BotContext } from './botContext';
 
 /**
  * Type signature for a return value that can (Optionally) return its value
@@ -16,10 +16,10 @@ import { TurnContext } from './turnContext';
 export type Promiseable <T = void> = Promise<T>|T;
 
 export interface Middleware {
-    onProcessRequest(context: TurnContext, next: () => Promise<void>): Promiseable<void>;
+    onProcessRequest(context: BotContext, next: () => Promise<void>): Promiseable<void>;
 }
 
-export type MiddlewareHandler = (context: TurnContext, next: () => Promise<void>) => Promiseable<void>;
+export type MiddlewareHandler = (context: BotContext, next: () => Promise<void>) => Promiseable<void>;
 
 /**
  * A set of `Middleware` plugins. The set itself is middleware so you can easily package up a set
@@ -51,7 +51,7 @@ export class MiddlewareSet {
      * @param context Context for the current turn of conversation with the user.
      * @param next Function to invoke at the end of the middleware chain.
      */
-    public run(context: TurnContext, next: () => Promiseable<void>): Promise<void> {
+    public run(context: BotContext, next: () => Promiseable<void>): Promise<void> {
         const handlers = this.middleware.slice();
         function runNext(i: number): Promise<void> {
             try {

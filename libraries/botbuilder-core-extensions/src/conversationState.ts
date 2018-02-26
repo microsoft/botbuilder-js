@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext, Middleware, ActivityTypes } from 'botbuilder-core';
+import { BotContext, Middleware, ActivityTypes } from 'botbuilder-core';
 import { BotState, CachedBotState } from './botState';
 import { Storage, StoreItem } from './storage';
 
@@ -29,7 +29,7 @@ export class ConversationState<T extends StoreItem = StoreItem> extends BotState
         });
     }
     
-    public onProcessRequest(context: TurnContext, next: () => Promise<void>): Promise<void> {
+    public onProcessRequest(context: BotContext, next: () => Promise<void>): Promise<void> {
         // Listen for outgoing endOfConversation activities
         context.onSendActivities((activities, next) => {
             activities.forEach((activity) => {
@@ -47,7 +47,7 @@ export class ConversationState<T extends StoreItem = StoreItem> extends BotState
      * @param context Context for current turn of conversation with the user.
      * @param cacheKey (Optional) name of the cached entry on the context object. The default value is 'conversationState'.
      */
-    static get<T extends StoreItem>(context: TurnContext, cacheKey?: string): T {
+    static get<T extends StoreItem>(context: BotContext, cacheKey?: string): T {
         if (!context.has(cacheKey || DEFAULT_CHACHE_KEY)) { throw new Error(NOT_INSTALLED) }
         return context.get<CachedBotState<T>>(cacheKey || DEFAULT_CHACHE_KEY).state;
     }
@@ -56,7 +56,7 @@ export class ConversationState<T extends StoreItem = StoreItem> extends BotState
      * Returns the storage key for the current conversation state.
      * @param context Context for current turn of conversation with the user.
      */
-    static key(context: TurnContext): string|undefined {
+    static key(context: BotContext): string|undefined {
         const req = context.request;
         const channelId = req.channelId;
         const conversationId = req && req.conversation && req.conversation.id ? req.conversation.id : undefined;

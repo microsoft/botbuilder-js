@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { TurnContext } = require('botbuilder-core');
+const { BotContext } = require('botbuilder-core');
 const { CardFactory } = require('../');
 
 const receivedMessage = { text: 'received', type: 'message', channelId: 'test', conversation: { id: 'convo' } };

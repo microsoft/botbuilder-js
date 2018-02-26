@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { BotAdapter, MiddlewareSet, TurnContext } = require('../');
+const { BotAdapter, MiddlewareSet, BotContext } = require('../');
 
 const testMessage = { text: 'test', type: 'message' };
 
@@ -32,7 +32,7 @@ describe(`MiddlewareSet`, function () {
     });
 
     it(`should run all middleware in order.`, function (done) {
-        const context = new TurnContext(new SimpleAdapter(), testMessage);
+        const context = new BotContext(new SimpleAdapter(), testMessage);
         set.run(context, () => {
             assert(calls === 5, `only "${calls} of 5" middleware called.`);
             assert(order === 'abcde', `middleware executed out of order "${order}".`)
@@ -41,7 +41,7 @@ describe(`MiddlewareSet`, function () {
 
     it(`should run middleware with a leading and trailing edge.`, function (done) {
         let edge = '';
-        const context = new TurnContext(new SimpleAdapter(), testMessage);
+        const context = new BotContext(new SimpleAdapter(), testMessage);
         new MiddlewareSet()
             .use((context, next) => {
                 edge += 'a';
@@ -60,7 +60,7 @@ describe(`MiddlewareSet`, function () {
 
     it(`should support middleware added as an object.`, function (done) {
         let called = false;
-        const context = new TurnContext(new SimpleAdapter(), testMessage);
+        const context = new BotContext(new SimpleAdapter(), testMessage);
         new MiddlewareSet()
             .use({
                 onProcessRequest: (context, next) => {
@@ -76,7 +76,7 @@ describe(`MiddlewareSet`, function () {
 
     it(`not calling next() should intercept other middleware and bot logic.`, function (done) {
         let called = false;
-        const context = new TurnContext(new SimpleAdapter(), testMessage);
+        const context = new BotContext(new SimpleAdapter(), testMessage);
         new MiddlewareSet()
             .use(() => {
                 return Promise.resolve();
@@ -96,7 +96,7 @@ describe(`MiddlewareSet`, function () {
 
     it(`should map an exception within middleware to a rejection.`, function (done) {
         let called = false;
-        const context = new TurnContext(new SimpleAdapter(), testMessage);
+        const context = new BotContext(new SimpleAdapter(), testMessage);
         new MiddlewareSet()
             .use(() => {
                 throw new Error('failed');

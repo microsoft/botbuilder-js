@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext, Middleware } from 'botbuilder-core';
+import { BotContext, Middleware } from 'botbuilder-core';
 import { BotState, CachedBotState } from './botState';
 import { Storage, StoreItem } from './storage';
 
@@ -34,7 +34,7 @@ export class UserState<T extends StoreItem = StoreItem> extends BotState<T> {
      * @param context Context for current turn of conversation with the user.
      * @param cacheKey (Optional) name of the cached entry on the context object. The default value is 'userState'.
      */
-    static get<T extends StoreItem>(context: TurnContext, cacheKey?: string): T {
+    static get<T extends StoreItem>(context: BotContext, cacheKey?: string): T {
         if (!context.has(cacheKey || DEFAULT_CHACHE_KEY)) { throw new Error(NOT_INSTALLED) }
         return context.get<CachedBotState<T>>(cacheKey || DEFAULT_CHACHE_KEY).state;
     }
@@ -43,7 +43,7 @@ export class UserState<T extends StoreItem = StoreItem> extends BotState<T> {
      * Returns the storage key for the current user state.
      * @param context Context for current turn of conversation with the user.
      */
-    static key(context: TurnContext): string|undefined {
+    static key(context: BotContext): string|undefined {
         const req = context.request;
         const channelId = req.channelId;
         const userId = req && req.from && req.from.id ? req.from.id : undefined;

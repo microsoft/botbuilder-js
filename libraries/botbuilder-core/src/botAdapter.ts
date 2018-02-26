@@ -7,7 +7,7 @@
  */
 import { MiddlewareSet, MiddlewareHandler, Promiseable } from './middlewareSet';
 import { ActivityTypes, Activity, ResourceResponse, } from 'botframework-schema';
-import { TurnContext } from './turnContext';
+import { BotContext } from './botContext';
 import { makeRevocable } from './internal';
 
 /**
@@ -59,7 +59,7 @@ export abstract class BotAdapter {
      * @param next Function to call at the end of the middleware chain.
      * @param next.callback A revocable version of the context object.
      */
-    protected runMiddleware<T extends BotAdapter>(context: TurnContext<T>, next: (revocableContext: TurnContext<T>) => Promiseable<void>): Promise<void> {
+    protected runMiddleware<T extends BotAdapter>(context: BotContext<T>, next: (revocableContext: BotContext<T>) => Promiseable<void>): Promise<void> {
         // Wrap context with revocable proxy
         const pContext = makeRevocable(context);
         return this.middleware.run(pContext.proxy, () => {

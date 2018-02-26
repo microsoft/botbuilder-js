@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotAdapter, Activity, ConversationReference, Promiseable, TurnContext, ResourceResponse } from 'botbuilder-core';
+import { BotAdapter, Activity, ConversationReference, Promiseable, BotContext, ResourceResponse } from 'botbuilder-core';
 /**
  * Test adapter used for unit tests.
  */
@@ -19,7 +19,7 @@ export declare class TestAdapter extends BotAdapter {
      * @param botLogic The bots logic that's under test.
      * @param template (Optional) activity containing default values to assign to all test messages received.
      */
-    constructor(botLogic: (context: TurnContext<TestAdapter>) => Promiseable<void>, template?: ConversationReference);
+    constructor(botLogic: (context: BotContext<TestAdapter>) => Promiseable<void>, template?: ConversationReference);
     sendActivities(activities: Partial<Activity>[]): Promise<ResourceResponse[]>;
     updateActivity(activity: Partial<Activity>): Promise<void>;
     deleteActivity(id: string): Promise<void>;

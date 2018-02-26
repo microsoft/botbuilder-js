@@ -7,7 +7,7 @@
  */
 import { MiddlewareHandler, Promiseable } from './middlewareSet';
 import { Activity, ResourceResponse } from 'botframework-schema';
-import { TurnContext } from './turnContext';
+import { BotContext } from './botContext';
 /**
  * Manages all communication between the bot and a user.
  *
@@ -49,5 +49,5 @@ export declare abstract class BotAdapter {
      * @param next Function to call at the end of the middleware chain.
      * @param next.callback A revocable version of the context object.
      */
-    protected runMiddleware<T extends BotAdapter>(context: TurnContext<T>, next: (revocableContext: TurnContext<T>) => Promiseable<void>): Promise<void>;
+    protected runMiddleware<T extends BotAdapter>(context: BotContext<T>, next: (revocableContext: BotContext<T>) => Promiseable<void>): Promise<void>;
 }

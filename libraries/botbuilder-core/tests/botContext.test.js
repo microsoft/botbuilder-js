@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { BotAdapter, TurnContext } = require('../');
+const { BotAdapter, BotContext } = require('../');
 
 const testMessage = {
     type: 'message', 
@@ -34,7 +34,7 @@ class SimpleAdapter extends BotAdapter {
 describe(`TurnContext`, function () {
     this.timeout(5000);
 
-    const context = new TurnContext(new SimpleAdapter(), testMessage);
+    const context = new BotContext(new SimpleAdapter(), testMessage);
     it(`should have adapter.`, function (done) {
         assert(context.adapter, `missing property.`);
         assert(context.adapter.deleteActivity, `invalid property.`);
@@ -53,7 +53,7 @@ describe(`TurnContext`, function () {
     });
 
     it(`should set responded.`, function (done) {
-        const ctx = new TurnContext(new SimpleAdapter(), testMessage);
+        const ctx = new BotContext(new SimpleAdapter(), testMessage);
         ctx.responded = true;
         assert(ctx.responded === true, `responded not set.`);
         done();
@@ -61,7 +61,7 @@ describe(`TurnContext`, function () {
     
     it(`should throw if you set responded to false.`, function (done) {
         try {
-            const ctx = new TurnContext(new SimpleAdapter(), testMessage);
+            const ctx = new BotContext(new SimpleAdapter(), testMessage);
             ctx.responded = true;
             ctx.responded = false;
             assert(false, `responded didn't throw when set to false.`);
@@ -163,7 +163,7 @@ describe(`TurnContext`, function () {
 
     it(`should round trip a conversation reference using getConversationReference() and applyConversationRefernce().`, function (done) {
         // Convert to reference
-        const reference = TurnContext.getConversationReference(testMessage);
+        const reference = BotContext.getConversationReference(testMessage);
         assert(reference.activityId, `reference missing activityId.`);
         assert(reference.bot, `reference missing bot.`);
         assert(reference.bot.id === testMessage.recipient.id, `reference bot.id doesn't match recipient.id.`);
@@ -174,7 +174,7 @@ describe(`TurnContext`, function () {
         assert(reference.user.id === testMessage.from.id, `reference user.id doesn't match from.id.`);
         
         // Round trip back to activity
-        const activity = TurnContext.applyConversationReference({ text: 'foo', type: 'message' }, reference);
+        const activity = BotContext.applyConversationReference({ text: 'foo', type: 'message' }, reference);
         assert(activity.text, `activity missing text`);
         assert(activity.type, `activity missing type`);
         assert(activity.replyToId, `activity missing replyToId`);
@@ -188,7 +188,7 @@ describe(`TurnContext`, function () {
 
         // Round trip without a replyToId
         delete reference.activityId;
-        const activity2 = TurnContext.applyConversationReference({ text: 'foo', type: 'message' }, reference);
+        const activity2 = BotContext.applyConversationReference({ text: 'foo', type: 'message' }, reference);
         assert(!activity2.hasOwnProperty('replyToId'), `activity2 has replyToId`);
         done();
     });

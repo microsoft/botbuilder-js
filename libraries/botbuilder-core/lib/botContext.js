@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const internal_1 = require("./internal");
-class TurnContext {
+class BotContext {
     /**
      * Creates a new turn context instance.
      * @param adapter Adapter that constructed the context.
@@ -64,8 +64,8 @@ class TurnContext {
      * @param activities Set of activities being sent.
      */
     sendActivities(activities) {
-        const ref = TurnContext.getConversationReference(this._request);
-        const output = activities.map((a) => TurnContext.applyConversationReference(a, ref));
+        const ref = BotContext.getConversationReference(this._request);
+        const output = activities.map((a) => BotContext.applyConversationReference(a, ref));
         return this.emit(this._onSendActivities, activities, () => {
             return this._adapter.sendActivities(activities)
                 .then((responses) => {
@@ -177,5 +177,5 @@ class TurnContext {
         return activity;
     }
 }
-exports.TurnContext = TurnContext;
-//# sourceMappingURL=turnContext.js.map
+exports.BotContext = BotContext;
+//# sourceMappingURL=botContext.js.map

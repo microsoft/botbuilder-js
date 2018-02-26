@@ -1,11 +1,11 @@
 const assert = require('assert');
-const { BotAdapter, TurnContext } = require('../');
+const { BotAdapter, BotContext } = require('../');
 
 const testMessage = { text: 'test', type: 'message' };
 
 class SimpleAdapter extends BotAdapter {
     processRequest(activity, handler) {
-        const context = new TurnContext(this, activity);
+        const context = new BotContext(this, activity);
         return this.runMiddleware(context, handler);
     }
 }
