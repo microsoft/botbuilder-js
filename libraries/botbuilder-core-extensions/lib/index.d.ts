@@ -5,6 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+export * from './botState';
 export * from './browserStorage';
 export * from './cardFactory';
 export * from './conversationState';

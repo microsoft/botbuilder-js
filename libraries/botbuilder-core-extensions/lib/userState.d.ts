@@ -5,34 +5,22 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext, Middleware } from 'botbuilder-core';
+import { TurnContext } from 'botbuilder-core';
+import { BotState } from './botState';
 import { Storage, StoreItem } from './storage';
-export declare class UserState<T extends StoreItem = StoreItem> implements Middleware {
-    private storage;
-    constructor(storage: Storage);
-    onProcessRequest(context: TurnContext, next: () => Promise<void>): Promise<void>;
+export declare class UserState<T extends StoreItem = StoreItem> extends BotState<T> {
     /**
-     * Reads in and caches the current user state for a turn.
-     * @param context Context for current turn of conversation with the user.
-     * @param force (Optional) If `true` the cache will be bypassed and the state will always be read in directly from storage. Defaults to `false`.
+     * Creates a new UserState instance.
+     * @param storage Storage provider to persist user state to.
+     * @param cacheKey (Optional) name of the cached entry on the context object. The default value is 'userState'.
      */
-    read(context: TurnContext, force?: boolean): Promise<T>;
-    /**
-     * Writes out the user state if it's been changed.
-     * @param context Context for current turn of conversation with the user.
-     * @param force (Optional) if `true` the state will always be written out regardless of its change state. Defaults to `false`.
-     */
-    write(context: TurnContext, force?: boolean): Promise<void>;
-    /**
-     * Clears the current user state for a turn.
-     * @param context Context for current turn of conversation with the user.
-     */
-    clear(context: TurnContext): void;
+    constructor(storage: Storage, cacheKey?: string);
     /**
      * Returns the current user state for a turn.
      * @param context Context for current turn of conversation with the user.
+     * @param cacheKey (Optional) name of the cached entry on the context object. The default value is 'userState'.
      */
-    static get<T extends StoreItem>(context: TurnContext): T;
+    static get<T extends StoreItem>(context: TurnContext, cacheKey?: string): T;
     /**
      * Returns the storage key for the current user state.
      * @param context Context for current turn of conversation with the user.

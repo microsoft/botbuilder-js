@@ -6,102 +6,50 @@
  * Licensed under the MIT License.
  */
 import { TurnContext, Middleware, ActivityTypes } from 'botbuilder-core';
-import { Storage, StoreItem, StoreItems, calculateChangeHash } from './storage';
+import { BotState, CachedBotState } from './botState';
+import { Storage, StoreItem } from './storage';
 
-const CACHED_STATE = 'microsoft.botbuilder.conversationState';
-const CACHED_HASH = 'microsoft.botbuilder.conversationState.hash';
+const DEFAULT_CHACHE_KEY = 'conversationState';
 const NOT_INSTALLED = `ConversationState: state not found. Ensure ConversationState middleware is added to adapter.`;
 const NO_KEY = `ConversationState: channelId and/or conversation missing from context.request.`;
 
-export class ConversationState<T extends StoreItem = StoreItem> implements Middleware {
-    constructor(private storage: Storage) { }
+export class ConversationState<T extends StoreItem = StoreItem> extends BotState<T> {
+    /**
+     * Creates a new ConversationState instance. 
+     * @param storage Storage provider to persist conversation state to.
+     * @param cacheKey (Optional) name of the cached entry on the context object. The default value is 'conversationState'.
+     */
+    constructor(storage: Storage, cacheKey?: string) { 
+        super(storage, cacheKey || DEFAULT_CHACHE_KEY, (context) => {
+            const key = ConversationState.key(context);
+            if (key) {
+                return Promise.resolve(key);
+            }
+            return  Promise.reject(new Error(NO_KEY)); 
+        });
+    }
     
     public onProcessRequest(context: TurnContext, next: () => Promise<void>): Promise<void> {
-        // Ensure that we can calculate a key
-        const key = ConversationState.key(context);
-        if (key !== undefined) {
-            // Listen for outgoing endOfConversation activities
-            context.onSendActivities((activities, next) => {
-                activities.forEach((activity) => {
-                    if (ActivityTypes.EndOfConversation === activity.type) {
-                        this.clear(context);
-                    }
-                });
-                return next();
+        // Listen for outgoing endOfConversation activities
+        context.onSendActivities((activities, next) => {
+            activities.forEach((activity) => {
+                if (ActivityTypes.EndOfConversation === activity.type) {
+                    this.clear(context);
+                }
             });
-            
-            // Read in state, continue execution, and then flush changes on completion of turn.
-            return this.read(context, true)
-                .then(() => next())
-                .then(() => this.write(context));
-        }
-        return Promise.reject(new Error(NO_KEY));
-    }
-
-    /**
-     * Reads in and caches the current conversation state for a turn. 
-     * @param context Context for current turn of conversation with the user.
-     * @param force (Optional) If `true` the cache will be bypassed and the state will always be read in directly from storage. Defaults to `false`.  
-     */
-    public read(context: TurnContext, force = false): Promise<T> {
-        if (force || !context.has(CACHED_STATE)) {
-            const key = ConversationState.key(context);
-            if (key) {
-                return this.storage.read([key]).then((items) => {
-                    const state = items[key] || {};
-                    const hash = calculateChangeHash(state);
-                    context.set(CACHED_STATE, state);
-                    context.set(CACHED_HASH, hash);
-                    return state as T;
-                });
-            }
-            return Promise.reject(new Error(NO_KEY));
-        }
-        return Promise.resolve(context.get(CACHED_STATE) || {});
-    }
-
-    /**
-     * Writes out the conversation state if it's been changed.
-     * @param context Context for current turn of conversation with the user.
-     * @param force (Optional) if `true` the state will always be written out regardless of its change state. Defaults to `false`. 
-     */
-    public write(context: TurnContext, force = false): Promise<void> {
-        let state = context.get(CACHED_STATE);
-        const hash = context.get(CACHED_HASH);
-        if (force || (state && hash !== calculateChangeHash(state))) {
-            const key = ConversationState.key(context);
-            if (key) {
-                if (!state) { state = {} }
-                state.eTag = '*';
-                const changes = {} as StoreItems;
-                changes[key] = state;
-                return this.storage.write(changes)
-                    .then(() => {
-                        // Update stored change hash
-                        context.set(CACHED_HASH, calculateChangeHash(state));
-                    });
-            }
-            return Promise.reject(new Error(NO_KEY));
-        }
-        return Promise.resolve();
-    }
-
-    /**
-     * Clears the current conversation state for a turn.
-     * @param context Context for current turn of conversation with the user.
-     */
-    public clear(context: TurnContext): void {
-        // We leave the change hash un-touched which will force the cleared state changes to get persisted.  
-        context.set(CACHED_STATE, {});
+            return next();
+        });
+        return super.onProcessRequest(context, next);
     }
 
     /**
      * Returns the current conversation state for a turn.
      * @param context Context for current turn of conversation with the user.
+     * @param cacheKey (Optional) name of the cached entry on the context object. The default value is 'conversationState'.
      */
-    static get<T extends StoreItem>(context: TurnContext): T {
-        if (!context.has(CACHED_STATE)) { throw new Error(NOT_INSTALLED) }
-        return context.get(CACHED_STATE);
+    static get<T extends StoreItem>(context: TurnContext, cacheKey?: string): T {
+        if (!context.has(cacheKey || DEFAULT_CHACHE_KEY)) { throw new Error(NOT_INSTALLED) }
+        return context.get<CachedBotState<T>>(cacheKey || DEFAULT_CHACHE_KEY).state;
     }
 
     /**
@@ -112,6 +60,6 @@ export class ConversationState<T extends StoreItem = StoreItem> implements Middl
         const req = context.request;
         const channelId = req.channelId;
         const conversationId = req && req.conversation && req.conversation.id ? req.conversation.id : undefined;
-        return channelId && conversationId ? `convo/${channelId}/${conversationId}` : undefined; 
+        return channelId && conversationId ? `conversation/${channelId}/${conversationId}` : undefined;
     }
 }
