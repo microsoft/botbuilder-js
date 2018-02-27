@@ -6,5 +6,6 @@
  * Licensed under the MIT License.
  */
 export * from './botFrameworkAdapter';
+export * from './consoleAdapter';
 export * from 'botbuilder-core';
 export * from 'botbuilder-core-extensions';
