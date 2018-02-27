@@ -73,8 +73,9 @@ class LuisRecognizer extends botbuilder_1.Recognizer {
         }
         entities.forEach(entity => {
             // we'll address composite entities separately
-            if (compositeEntityTypes.indexOf(entity.type) > -1)
+            if (compositeEntityTypes.indexOf(entity.type) > -1) {
                 return;
+            }
             this.addProperty(entitiesAndMetadata, $this.getNormalizedEntityType(entity), $this.getEntityValue(entity));
             if (verbose) {
                 this.addProperty(entitiesAndMetadata.$instance, $this.getNormalizedEntityType(entity), $this.getEntityMetadata(entity));
