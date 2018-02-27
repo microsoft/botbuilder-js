@@ -204,15 +204,21 @@ describe(`TurnContext`, function () {
 
         // Round trip back to incoming activity
         const activity2 = BotContext.applyConversationReference({ text: 'foo', type: 'message' }, reference, true);
+        assert(activity2.id, `activity2 missing id`);
         assert(activity2.from, `activity2 missing from`);
         assert(activity2.from.id === reference.user.id, `activity2 from.id doesn't match user.id`);
         assert(activity2.recipient, `activity2 missing recipient`);
         assert(activity2.recipient.id === reference.bot.id, `activity2 recipient.id doesn't match bot.id`);
         
-        // Round trip without a replyToId
+        // Round trip outgoing activity without a replyToId
         delete reference.activityId;
         const activity3 = BotContext.applyConversationReference({ text: 'foo', type: 'message' }, reference);
         assert(!activity3.hasOwnProperty('replyToId'), `activity3 has replyToId`);
+
+        // Round trip incoming activity without an id
+        delete reference.activityId;
+        const activity4 = BotContext.applyConversationReference({ text: 'foo', type: 'message' }, reference, true);
+        assert(!activity4.hasOwnProperty('id'), `activity4 has id`);
         done();
     });
 });
