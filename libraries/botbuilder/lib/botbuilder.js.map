@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 {"version":3,"file":"botbuilder.js","sourceRoot":"","sources":["../src/botbuilder.ts"],"names":[],"mappings":";AAAA;;GAEG;AACH;;;GAGG;;;;;AAEH,4CAAuC;AACvC,2BAAsB;AACtB,kCAA6B;AAC7B,uCAAkC;AAClC,sCAAiC;AACjC,kCAA6B;AAE7B,oCAA+B;AAC/B,wCAAmC;AACnC,2CAAsC;AACtC,qCAAgC;AAChC,kCAA6B;AAC7B,qCAAgC;AAChC,qCAAgC;AAChC,kCAA6B;AAC7B,qCAAgC;AAChC,wCAAmC;AAGnC,yCAAoC;AACpC,uCAAkC;AAClC,0CAAqC;AACrC,mCAA8B;AAC9B,yCAAoC"}
+=======
+{"version":3,"file":"botbuilder.js","sourceRoot":"","sources":["../src/botbuilder.ts"],"names":[],"mappings":";AAAA;;GAEG;AACH;;;GAGG;;;;;AAEH,4CAAuC;AACvC,2BAAsB;AACtB,kCAA6B;AAC7B,uCAAkC;AAClC,sCAAiC;AACjC,kCAA6B;AAE7B,oCAA+B;AAC/B,wCAAmC;AACnC,2CAAsC;AACtC,qCAAgC;AAChC,kCAA6B;AAC7B,qCAAgC;AAChC,qCAAgC;AAChC,kCAA6B;AAC7B,qCAAgC;AAChC,wCAAmC;AAGnC,yCAAoC;AACpC,uCAAkC;AAClC,0CAAqC;AACrC,mCAA8B;AAC9B,uCAAkC;AAElC,kCAA6B"}
+>>>>>>> New Recognizer Result Schema + LUIS Recognizer imlpementation
