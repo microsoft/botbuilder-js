@@ -5,7 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Recognizer, RecognizerResult } from 'botbuilder';
+import { Intent, IntentRecognizer } from 'botbuilder';
+import LuisClient = require('botframework-luis');
 export interface LuisRecognizerOptions {
     /** Your models AppId */
     appId: string;
@@ -13,11 +14,10 @@ export interface LuisRecognizerOptions {
     subscriptionKey: string;
     /** (Optional) service endpoint to call. Defaults to "https://westus.api.cognitive.microsoft.com". */
     serviceEndpoint?: string;
-    /** (Optional) if set to true, we return the metadata of the returned intents/entities. Defaults to true */
-    verbose?: boolean;
     /** (Optional) request options passed to service call.  */
     options?: {
         timezoneOffset?: number;
+        contextId?: string;
         verbose?: boolean;
         forceSet?: string;
         allowSampling?: string;
@@ -26,24 +26,11 @@ export interface LuisRecognizerOptions {
         };
     };
 }
-export declare class LuisRecognizer extends Recognizer {
+export declare class LuisRecognizer extends IntentRecognizer {
     private options;
     private luisClient;
     constructor(options: LuisRecognizerOptions);
     constructor(appId: string, subscriptionKey: string);
-    static recognize(utterance: string, options: LuisRecognizerOptions): Promise<RecognizerResult>;
-    protected recognizeAndMap(utterance: string, verbose: boolean): Promise<RecognizerResult>;
-    private getIntents(luisResult);
-    private getEntitiesAndMetadata(entities, compositeEntities, verbose);
-    private getEntityValue(entity);
-    private getEntityMetadata(entity);
-    private getNormalizedEntityType(entity);
-    private populateCompositeEntity(compositeEntity, entities, entitiesAndMetadata, verbose);
-    /**
-     * If a property doesn't exist add it to a new array, otherwise append it to the existing array
-     * @param obj Object on which the property is to be set
-     * @param key Property Key
-     * @param value Property Value
-     */
-    private addProperty(obj, key, value);
+    static recognize(utterance: string, options: LuisRecognizerOptions): Promise<Intent>;
+    protected static recognizeAndMap(client: LuisClient, utterance: string, options: LuisRecognizerOptions): Promise<Intent>;
 }
