@@ -45,8 +45,8 @@ class TestAdapter extends botbuilder_core_1.BotAdapter {
         this.updatedActivities.push(activity);
         return Promise.resolve();
     }
-    deleteActivity(id) {
-        this.deletedActivities.push(id);
+    deleteActivity(reference) {
+        this.deletedActivities.push(reference);
         return Promise.resolve();
     }
     /**

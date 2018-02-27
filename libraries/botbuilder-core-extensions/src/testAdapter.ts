@@ -24,7 +24,7 @@ export class TestAdapter extends BotAdapter {
    
     public readonly template: Partial<Activity>;
     public readonly updatedActivities: Partial<Activity>[] = [];
-    public readonly deletedActivities: string[] = [];
+    public readonly deletedActivities: Partial<ConversationReference>[] = [];
 
     /**
      * Creates a new instance of the test adapter.
@@ -55,8 +55,8 @@ export class TestAdapter extends BotAdapter {
         return Promise.resolve();
     }
 
-    public deleteActivity(id: string): Promise<void> {
-        this.deletedActivities.push(id);
+    public deleteActivity(reference: Partial<ConversationReference>): Promise<void> {
+        this.deletedActivities.push(reference);
         return Promise.resolve();
     }
 

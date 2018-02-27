@@ -25,8 +25,9 @@ class SimpleAdapter extends BotAdapter {
         return Promise.resolve();
     }
 
-    deleteActivity(id) {
-        assert(id === '1234', `SimpleAdapter.deleteActivity: invalid id of "${id}".`);
+    deleteActivity(reference) {
+        assert(reference, `SimpleAdapter.deleteActivity: missing reference.`);
+        assert(reference.activityId === '1234', `SimpleAdapter.deleteActivity: invalid activityId of "${reference.activityId}".`);
         return Promise.resolve();
     }
 }
@@ -133,10 +134,11 @@ describe(`TurnContext`, function () {
         });
     });
 
-    it(`should call onDeleteActivity() hook before delete.`, function (done) {
+    it(`should call onDeleteActivity() hook before delete by "id".`, function (done) {
         let called = false;
-        context.onDeleteActivity((id, next) => {
-            assert(id === '1234', `invalid id passed to hook`);
+        context.onDeleteActivity((reference, next) => {
+            assert(reference, `missing reference`);
+            assert(reference.activityId === '1234', `invalid activityId passed to hook`);
             called = true;
             return next();
         });
@@ -146,9 +148,23 @@ describe(`TurnContext`, function () {
         });
     });
 
+    it(`should call onDeleteActivity() hook before delete by "reference".`, function (done) {
+        let called = false;
+        context.onDeleteActivity((reference, next) => {
+            assert(reference, `missing reference`);
+            assert(reference.activityId === '1234', `invalid activityId passed to hook`);
+            called = true;
+            return next();
+        });
+        context.deleteActivity({ activityId: '1234' }).then((responses) => {
+            assert(called, `delete hook not called.`);        
+            done();
+        });
+    });
+    
     it(`should map an exception raised by a hook to a rejection.`, function (done) {
         let called = false;
-        context.onDeleteActivity((id, next) => {
+        context.onDeleteActivity((reference, next) => {
             throw new Error('failed');
         });
         context.deleteActivity('1234')

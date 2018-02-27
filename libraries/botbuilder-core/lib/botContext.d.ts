@@ -10,7 +10,7 @@ import { BotAdapter } from './botAdapter';
 import { Promiseable } from './middlewareSet';
 export declare type SendActivitiesHandler = (activities: Partial<Activity>[], next: () => Promise<ResourceResponse[]>) => Promiseable<ResourceResponse[]>;
 export declare type UpdateActivityHandler = (activity: Partial<Activity>, next: () => Promise<void>) => Promiseable<void>;
-export declare type DeleteActivityHandler = (id: string, next: () => Promise<void>) => Promiseable<void>;
+export declare type DeleteActivityHandler = (reference: Partial<ConversationReference>, next: () => Promise<void>) => Promiseable<void>;
 declare global  {
     interface BotContextExtensions {
     }
@@ -67,9 +67,9 @@ export declare class BotContext<A extends BotAdapter = BotAdapter> {
     updateActivity(activity: Partial<Activity>): Promise<void>;
     /**
      * Deletes an existing activity.
-     * @param id of the activity to delete.
+     * @param idOrReference ID or conversation of the activity being deleted. If an ID is specified the conversation reference information from the current request will be used to delete the activity.
      */
-    deleteActivity(id: string): Promise<void>;
+    deleteActivity(idOrReference: string | Partial<ConversationReference>): Promise<void>;
     /**
      * Registers a handler to be notified of and potentially intercept the sending of activities.
      * @param handler A function that will be called anytime [sendActivities()](#sendactivities) is called. The handler should call `next()` to continue sending of the activities.

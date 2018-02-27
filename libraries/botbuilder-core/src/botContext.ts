@@ -14,7 +14,7 @@ export type SendActivitiesHandler = (activities: Partial<Activity>[], next: () =
 
 export type UpdateActivityHandler = (activity: Partial<Activity>, next: () => Promise<void>) => Promiseable<void>;
 
-export type DeleteActivityHandler = (id: string, next: () => Promise<void>) => Promiseable<void>;
+export type DeleteActivityHandler = (reference: Partial<ConversationReference>, next: () => Promise<void>) => Promiseable<void>;
 
 declare global {
     export interface BotContextExtensions { }
@@ -116,10 +116,17 @@ export class BotContext<A extends BotAdapter = BotAdapter> {
 
     /** 
      * Deletes an existing activity. 
-     * @param id of the activity to delete.
+     * @param idOrReference ID or conversation of the activity being deleted. If an ID is specified the conversation reference information from the current request will be used to delete the activity.
      */
-    public deleteActivity(id: string): Promise<void> {
-        return this.emit(this._onDeleteActivity, id, () => this._adapter.deleteActivity(id));
+    public deleteActivity(idOrReference: string|Partial<ConversationReference>): Promise<void> {
+        let reference: Partial<ConversationReference>;
+        if (typeof idOrReference === 'string') {
+            reference = BotContext.getConversationReference(this.request);
+            reference.activityId = idOrReference;
+        } else {
+            reference = idOrReference;
+        }
+        return this.emit(this._onDeleteActivity, reference, () => this._adapter.deleteActivity(reference));
     }
 
     /** 

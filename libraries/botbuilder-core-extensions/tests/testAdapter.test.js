@@ -110,13 +110,13 @@ describe(`TestAdapter`, function () {
 
     it(`should support context.deleteActivity() calls.`, function (done) {
         const adapter = new TestAdapter((context) => {
-            return context.deleteActivity(deletedActivityId)
+            return context.deleteActivity({ activityId: deletedActivityId })
                 .then(() => context.sendActivities(receivedMessage));
         });
         adapter.test('test', 'received')
         .then(() => {
             assert(adapter.deletedActivities.length === 1, `no activities deleted.`);
-            assert(adapter.deletedActivities[0] === deletedActivityId, `invalid deleted activity id.`);
+            assert(adapter.deletedActivities[0].activityId === deletedActivityId, `invalid deleted activity id.`);
             done();
         });
     });

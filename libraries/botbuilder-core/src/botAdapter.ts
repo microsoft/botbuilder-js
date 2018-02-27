@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { MiddlewareSet, MiddlewareHandler, Promiseable } from './middlewareSet';
-import { ActivityTypes, Activity, ResourceResponse, } from 'botframework-schema';
+import { ActivityTypes, Activity, ResourceResponse, ConversationReference } from 'botframework-schema';
 import { BotContext } from './botContext';
 import { makeRevocable } from './internal';
 
@@ -36,9 +36,9 @@ export abstract class BotAdapter {
 
     /** 
      * Deletes an existing activity. 
-     * @param id of the activity to delete.
+     * @param reference Conversation reference of the activity being deleted.  
      */
-    public abstract deleteActivity(id: string): Promise<void>;
+    public abstract deleteActivity(reference: Partial<ConversationReference>): Promise<void>;
 
     /**
      * Registers middleware handlers(s) with the adapter.
@@ -59,7 +59,7 @@ export abstract class BotAdapter {
      * @param next Function to call at the end of the middleware chain.
      * @param next.callback A revocable version of the context object.
      */
-    protected runMiddleware<T extends BotAdapter>(context: BotContext<T>, next: (revocableContext: BotContext<T>) => Promiseable<void>): Promise<void> {
+    protected runMiddleware<A extends BotAdapter>(context: BotContext<A>, next: (revocableContext: BotContext<A>) => Promiseable<void>): Promise<void> {
         // Wrap context with revocable proxy
         const pContext = makeRevocable(context);
         return this.middleware.run(pContext.proxy, () => {

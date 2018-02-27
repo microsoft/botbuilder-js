@@ -17,7 +17,7 @@ export declare class TestAdapter extends BotAdapter {
     readonly activityBuffer: Partial<Activity>[];
     readonly template: Partial<Activity>;
     readonly updatedActivities: Partial<Activity>[];
-    readonly deletedActivities: string[];
+    readonly deletedActivities: Partial<ConversationReference>[];
     /**
      * Creates a new instance of the test adapter.
      * @param botLogic The bots logic that's under test.
@@ -26,7 +26,7 @@ export declare class TestAdapter extends BotAdapter {
     constructor(botLogic: (context: BotContext<TestAdapter>) => Promiseable<void>, template?: ConversationReference);
     sendActivities(activities: Partial<Activity>[]): Promise<ResourceResponse[]>;
     updateActivity(activity: Partial<Activity>): Promise<void>;
-    deleteActivity(id: string): Promise<void>;
+    deleteActivity(reference: Partial<ConversationReference>): Promise<void>;
     /**
      * Processes and activity received from the user.
      * @param activity Text or activity from user.

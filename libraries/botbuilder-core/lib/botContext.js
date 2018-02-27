@@ -84,10 +84,18 @@ class BotContext {
     }
     /**
      * Deletes an existing activity.
-     * @param id of the activity to delete.
+     * @param idOrReference ID or conversation of the activity being deleted. If an ID is specified the conversation reference information from the current request will be used to delete the activity.
      */
-    deleteActivity(id) {
-        return this.emit(this._onDeleteActivity, id, () => this._adapter.deleteActivity(id));
+    deleteActivity(idOrReference) {
+        let reference;
+        if (typeof idOrReference === 'string') {
+            reference = BotContext.getConversationReference(this.request);
+            reference.activityId = idOrReference;
+        }
+        else {
+            reference = idOrReference;
+        }
+        return this.emit(this._onDeleteActivity, reference, () => this._adapter.deleteActivity(reference));
     }
     /**
      * Registers a handler to be notified of and potentially intercept the sending of activities.
