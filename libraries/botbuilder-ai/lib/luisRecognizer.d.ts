@@ -33,7 +33,7 @@ export declare class LuisRecognizer extends Recognizer {
     constructor(appId: string, subscriptionKey: string);
     static recognize(utterance: string, options: LuisRecognizerOptions): Promise<RecognizerResult>;
     protected recognizeAndMap(utterance: string, verbose: boolean): Promise<RecognizerResult>;
-    private getIntentsAndMetadata(luisResult, verbose);
+    private getIntents(luisResult);
     private getEntitiesAndMetadata(entities, compositeEntities, verbose);
     private getEntityValue(entity);
     private getEntityMetadata(entity);

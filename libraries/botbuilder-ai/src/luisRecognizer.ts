@@ -69,56 +69,34 @@ export class LuisRecognizer extends Recognizer {
         let $this = this;
         return this.luisClient.getIntentsAndEntitiesV2($this.options.appId, this.options.subscriptionKey, utterance, $this.options.options)
             .then((result : LuisResult) => {
-                let entitiesAndMetadata = $this.getEntitiesAndMetadata(result.entities, result.compositeEntities, verbose);
-                let intentsAndMetadata = $this.getIntentsAndMetadata(result, verbose);
                 let recognizerResult  : RecognizerResult = {
                     text: result.query,
-                    intents: intentsAndMetadata.intents,
-                    entities: entitiesAndMetadata.entities
-                };
-                if(verbose) {
-                    recognizerResult.$instance = {
-                        intents: intentsAndMetadata.metadata,
-                        entities : entitiesAndMetadata.metadata
-                    };
-                }
-                
+                    intents: $this.getIntents(result),
+                    entities: $this.getEntitiesAndMetadata(result.entities, result.compositeEntities, verbose)
+                };                
                 return recognizerResult;
             });
     }
 
-    private getIntentsAndMetadata(luisResult: LuisResult, verbose: boolean) : any {
-        let intentsAndMetadata = {
-            intents: {} as any,
-            metadata: {} as any
-        };
+    private getIntents(luisResult: LuisResult) : any {
+        let intents : any = {}
         if(luisResult.intents){
             luisResult.intents.reduce((prev : any, curr : Intent) => {
                 prev[curr.intent || ''] = curr.score;
                 return prev;
-            }, intentsAndMetadata.intents);
+            }, intents);
         }
         else{
             let topScoringIntent = luisResult.topScoringIntent || {intent: '', score: 0};
-            intentsAndMetadata.intents[(topScoringIntent).intent || ''] = topScoringIntent.score;
+            intents[(topScoringIntent).intent || ''] = topScoringIntent.score;
         }
-        if(verbose){
-            Object.keys(intentsAndMetadata.intents).forEach(intent => {
-                // Add a placeholder metadata object for intents for consistency
-                intentsAndMetadata.metadata[intent] = {};
-            });
-        }
-        return intentsAndMetadata;
+        return intents;
     }
 
     private getEntitiesAndMetadata(entities: Entity[], compositeEntities : CompositeEntity[] | undefined, verbose: boolean) : any {
         let $this = this;
 
-        let entitiesAndMetadata : any = {
-            entities : {},
-            metadata : {}
-        };
-
+        let entitiesAndMetadata : any = verbose ? {$instance: {} } : {};
         let compositeEntityTypes : string[] = [];
 
         // We start by populating composite entities so that entities covered by them are removed from the entities list
@@ -134,9 +112,9 @@ export class LuisRecognizer extends Recognizer {
             if(compositeEntityTypes.indexOf(entity.type) > -1)
                 return;
 
-            this.addProperty(entitiesAndMetadata.entities, $this.getNormalizedEntityType(entity), $this.getEntityValue(entity));
+            this.addProperty(entitiesAndMetadata, $this.getNormalizedEntityType(entity), $this.getEntityValue(entity));
             if(verbose){
-                this.addProperty(entitiesAndMetadata.metadata, $this.getNormalizedEntityType(entity), $this.getEntityMetadata(entity));
+                this.addProperty(entitiesAndMetadata.$instance, $this.getNormalizedEntityType(entity), $this.getEntityMetadata(entity));
             }
         });
 
@@ -170,10 +148,10 @@ export class LuisRecognizer extends Recognizer {
 
     private getEntityMetadata(entity: Entity) : any {
         return {
-            $startIndex: entity.startIndex,
-            $endIndex: entity.endIndex,
-            $text: entity.entity,
-            $score: entity.score
+            startIndex: entity.startIndex,
+            endIndex: entity.endIndex,
+            text: entity.entity,
+            score: entity.score
         };
     }
 
@@ -182,7 +160,7 @@ export class LuisRecognizer extends Recognizer {
     }
 
     private populateCompositeEntity(compositeEntity: CompositeEntity, entities: Entity[], entitiesAndMetadata : any, verbose: boolean) : Entity[] {
-        let childrenEntites : any = {};
+        let childrenEntites : any = verbose ? { $instance: {} } : {};
         let childrenEntitiesMetadata : any = {};
         let $this = this;
         
@@ -198,8 +176,10 @@ export class LuisRecognizer extends Recognizer {
             return entities;
 
         let filteredEntities : Entity[] = [];
-        if(verbose)
+        if(verbose){
             childrenEntitiesMetadata = $this.getEntityMetadata(compositeEntityMetadata);
+            childrenEntitiesMetadata.$instance = {};
+        }
 
         // This is now implemented as O(n*k) search and can be reduced to O(n + k) using a map as an optimization if n or k grow
         let coveredSet = new Set();
@@ -217,7 +197,7 @@ export class LuisRecognizer extends Recognizer {
                     $this.addProperty(childrenEntites, $this.getNormalizedEntityType(entity), $this.getEntityValue(entity));
 
                     if(verbose)
-                        $this.addProperty(childrenEntitiesMetadata, $this.getNormalizedEntityType(entity), $this.getEntityMetadata(entity));
+                        $this.addProperty(childrenEntites.$instance, $this.getNormalizedEntityType(entity), $this.getEntityMetadata(entity));
                 }
             };
         });
@@ -228,9 +208,9 @@ export class LuisRecognizer extends Recognizer {
                 filteredEntities.push(entities[i]);
         }
 
-        this.addProperty(entitiesAndMetadata.entities, compositeEntity.parentType, childrenEntites);
+        this.addProperty(entitiesAndMetadata, compositeEntity.parentType, childrenEntites);
         if(verbose){
-            $this.addProperty(entitiesAndMetadata.metadata, compositeEntity.parentType, childrenEntitiesMetadata);
+            $this.addProperty(entitiesAndMetadata.$instance, compositeEntity.parentType, childrenEntitiesMetadata);
         }
 
         return filteredEntities;        
