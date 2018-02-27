@@ -9,47 +9,68 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const botbuilder_1 = require("botbuilder");
 const LuisClient = require("botframework-luis");
-botbuilder_1.EntityTypes.luis = "Luis";
-class LuisRecognizer extends botbuilder_1.IntentRecognizer {
-    constructor(appId, subscriptionKey) {
-        super();
-        if (typeof appId === 'string') {
-            this.options = { appId: appId, subscriptionKey: subscriptionKey };
+class LuisRecognizer {
+    constructor(settings) {
+        this.settings = Object.assign({}, settings);
+        if (!this.settings.serviceEndpoint) {
+            this.settings.serviceEndpoint = 'https://westus.api.cognitive.microsoft.com/';
+        }
+        else if (!this.settings.serviceEndpoint.endsWith('/')) {
+            this.settings.serviceEndpoint += '/';
+        }
+        this.cacheKey = 'LuisRecognizer:' + (LuisRecognizer.nextInstance++).toString();
+    }
+    onProcessRequest(context, next) {
+        if (context.request.type === botbuilder_1.ActivityTypes.Message) {
+            // Recognize (and cache) then continue execution.
+            return this.recognize(context, true)
+                .then(() => next());
         }
         else {
-            this.options = Object.assign({}, appId);
+            return next();
         }
-        // Create client and override callbacks
-        const baseUri = (this.options.serviceEndpoint || 'https://westus.api.cognitive.microsoft.com');
-        this.luisClient = new LuisClient(baseUri + '/luis/');
-        this.onRecognize((context) => {
-            const intents = [];
-            const utterance = (context.request.text || '').trim();
-            return LuisRecognizer.recognizeAndMap(this.luisClient, utterance, this.options)
-                .then(res => {
-                intents.push(res);
-                return intents;
-            });
+    }
+    recognize(context, force = false) {
+        if (force || this.get(context) === undefined) {
+            if (context.request.text && context.request.text.length > 0) {
+                // Recognize utterance
+                return this.getIntentsAndEntities(context.request.text).then((result) => {
+                    // Cache result
+                    context.set(this.cacheKey, result);
+                    return result;
+                });
+            }
+            else {
+                // Cache empty result
+                context.set(this.cacheKey, { query: '', entities: [] });
+            }
+        }
+        return Promise.resolve(this.get(context));
+    }
+    get(context) {
+        return context.get(this.cacheKey);
+    }
+    getIntentsAndEntities(query) {
+        const { serviceEndpoint, appId, subscriptionKey, options } = this.settings;
+        const client = this.createLuisClient(serviceEndpoint);
+        return client.getIntentsAndEntitiesV2(appId, subscriptionKey, query, options).then((results) => {
+            if (!results.topScoringIntent && results.intents) {
+                // Find top scoring intent
+                let top = undefined;
+                results.intents.forEach((intent) => {
+                    if (!top || (intent.score && intent.score > top.score)) {
+                        top = intent;
+                    }
+                });
+                results.topScoringIntent = top;
+            }
+            return results;
         });
     }
-    static recognize(utterance, options) {
-        const baseUri = (options.serviceEndpoint || 'https://westus.api.cognitive.microsoft.com');
-        var client = new LuisClient(baseUri + '/luis/');
-        return LuisRecognizer.recognizeAndMap(client, utterance, options);
-    }
-    static recognizeAndMap(client, utterance, options) {
-        return client.getIntentsAndEntitiesV2(options.appId, options.subscriptionKey, utterance, options.options)
-            .then(result => {
-            var topScoringIntent = result.topScoringIntent || { intent: '', score: 0.0 };
-            return {
-                name: topScoringIntent.intent,
-                score: topScoringIntent.score,
-                entities: result.entities.map(entity => {
-                    return Object.assign({ value: entity.entity }, entity);
-                })
-            };
-        });
+    createLuisClient(serviceEndpoint) {
+        return new LuisClient(serviceEndpoint + 'luis/');
     }
 }
+LuisRecognizer.nextInstance = 0;
 exports.LuisRecognizer = LuisRecognizer;
 //# sourceMappingURL=luisRecognizer.js.map
