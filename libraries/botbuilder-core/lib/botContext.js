@@ -172,15 +172,25 @@ class BotContext {
      * ```
      * @param activity Activity to copy delivery information to.
      * @param reference Conversation reference containing delivery information.
+     * @param isIncoming (Optional) flag indicating whether the activity is an incoming or outgoing activity. Defaults to `false` indicating the activity is outgoing.
      */
-    static applyConversationReference(activity, reference) {
+    static applyConversationReference(activity, reference, isIncoming = false) {
         activity.channelId = reference.channelId;
         activity.serviceUrl = reference.serviceUrl;
         activity.conversation = reference.conversation;
-        activity.from = reference.bot;
-        activity.recipient = reference.user;
-        if (reference.activityId) {
-            activity.replyToId = reference.activityId;
+        if (isIncoming) {
+            activity.from = reference.user;
+            activity.recipient = reference.bot;
+            if (reference.activityId) {
+                activity.id = reference.activityId;
+            }
+        }
+        else {
+            activity.from = reference.bot;
+            activity.recipient = reference.user;
+            if (reference.activityId) {
+                activity.replyToId = reference.activityId;
+            }
         }
         return activity;
     }

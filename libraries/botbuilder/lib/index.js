@@ -1,6 +1,6 @@
 "use strict";
 /**
- * @module botbuilder-services
+ * @module botbuilder
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -11,4 +11,6 @@ function __export(m) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./botFrameworkAdapter"));
+__export(require("botbuilder-core"));
+__export(require("botbuilder-core-extensions"));
 //# sourceMappingURL=index.js.map

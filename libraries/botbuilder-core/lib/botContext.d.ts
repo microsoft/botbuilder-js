@@ -113,6 +113,7 @@ export declare class BotContext<A extends BotAdapter = BotAdapter> {
      * ```
      * @param activity Activity to copy delivery information to.
      * @param reference Conversation reference containing delivery information.
+     * @param isIncoming (Optional) flag indicating whether the activity is an incoming or outgoing activity. Defaults to `false` indicating the activity is outgoing.
      */
-    static applyConversationReference(activity: Partial<Activity>, reference: Partial<ConversationReference>): Partial<Activity>;
+    static applyConversationReference(activity: Partial<Activity>, reference: Partial<ConversationReference>, isIncoming?: boolean): Partial<Activity>;
 }

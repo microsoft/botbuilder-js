@@ -1,8 +1,8 @@
 {
-  "name": "botbuilder-services",
+  "name": "botbuilder",
   "author": "Microsoft Corp.",
   "description": "Services for Microsoft BotBuilder.",
-  "version": "4.0.0-m1.7",
+  "version": "4.0.0-m2.0",
   "license": "MIT",
   "keywords": [
     "botbuilder",
@@ -20,7 +20,8 @@
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "dependencies": {
-    "botbuilder": "^4.0.0-m1.7",
+    "botbuilder-core": "^4.0.0-m2.0",
+    "botbuilder-core-extensions": "^4.0.0-m2.0",
     "botframework-connector": "^4.0.0-m1.7"
   },
   "devDependencies": {
@@ -33,8 +34,9 @@
     "ts-node": "^4.1.0"
   },
   "scripts": {
+    "test": "tsc && nyc mocha tests/",
     "build": "tsc",
-    "build-docs": "typedoc --theme markdown --entryPoint botbuilder-services --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-services .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Services\" --readme none",
+    "build-docs": "typedoc --theme markdown --entryPoint botbuilder --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK\" --readme none",
     "clean": "erase /q lib\\*.*"
   }
 }
