@@ -35,7 +35,7 @@ export class ConsoleAdapter extends BotAdapter {
      * Begins listening to console input. 
      * @param logic Function which will be called each time a message is input by the user.
      */
-    public listen(logic: (context: BotContext<ConsoleAdapter>) => Promiseable<void>): Function {
+    public listen(logic: (context: BotContext) => Promiseable<void>): Function {
         const rl = this.createInterface({ input: process.stdin, output: process.stdout, terminal: false });
         rl.on('line', (line: string) => {
             // Initialize request
@@ -47,8 +47,8 @@ export class ConsoleAdapter extends BotAdapter {
             }, this.reference, true);
 
             // Create context and run middleware pipe
-            const context = new BotContext<ConsoleAdapter>(this, request);
-            this.runMiddleware<ConsoleAdapter>(context, logic)
+            const context = new BotContext(this, request);
+            this.runMiddleware(context, logic)
                 .catch((err) => { console.error(err.toString()) });
         });
         return function quit() {

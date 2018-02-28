@@ -61,7 +61,7 @@ export class BotFrameworkAdapter extends BotAdapter {
         this.credentialsProvider = new SimpleCredentialProvider(this.credentials.appId, this.credentials.appPassword);
     }
 
-    public processRequest<A extends BotFrameworkAdapter = BotFrameworkAdapter>(req: WebRequest, res: WebResponse, logic: (context: BotContext<A>) => Promiseable<void>): Promise<void> {
+    public processRequest(req: WebRequest, res: WebResponse, logic: (context: BotContext) => Promiseable<void>): Promise<void> {
         // Parse body of request
         let errorCode = 500;
         return parseRequest(req).then((request) => {
@@ -71,7 +71,7 @@ export class BotFrameworkAdapter extends BotAdapter {
             return this.authenticateRequest(request, authHeader).then(() => {
                 // Process received activity
                 errorCode = 500;
-                const context = this.createContext<A>(request);
+                const context = this.createContext(request);
                 return this.runMiddleware(context, logic as any)
                     .then(() => {
                         // TODO: Add logic to return 'invoke' response
@@ -88,13 +88,13 @@ export class BotFrameworkAdapter extends BotAdapter {
         });
     }
 
-    public continueConversation<A extends BotFrameworkAdapter = BotFrameworkAdapter>(reference: Partial<ConversationReference>, logic: (context: BotContext<A>) => Promiseable<void>): Promise<void> {
+    public continueConversation(reference: Partial<ConversationReference>, logic: (context: BotContext) => Promiseable<void>): Promise<void> {
         const request = BotContext.applyConversationReference({}, reference, true);
-        const context = this.createContext<A>(request);
+        const context = this.createContext(request);
         return this.runMiddleware(context, logic as any);
     }
 
-    public startConversation<A extends BotFrameworkAdapter = BotFrameworkAdapter>(reference: Partial<ConversationReference>, logic: (context: BotContext<A>) => Promiseable<void>): Promise<void> {
+    public startConversation(reference: Partial<ConversationReference>, logic: (context: BotContext) => Promiseable<void>): Promise<void> {
         try {
             if (!reference.serviceUrl) { throw new Error(`BotFrameworkAdapter.startConversation(): missing serviceUrl.`) }
             
@@ -107,7 +107,7 @@ export class BotFrameworkAdapter extends BotAdapter {
                 if (response.serviceUrl) { request.serviceUrl = response.serviceUrl }
 
                 // Create context and run middleware
-                const context = this.createContext<A>(request);
+                const context = this.createContext(request);
                 return this.runMiddleware(context, logic as any);
             });
         } catch (err) {
@@ -205,7 +205,7 @@ export class BotFrameworkAdapter extends BotAdapter {
         return new ConnectorClient(this.credentials, serviceUrl);
     }
 
-    protected createContext<A extends BotFrameworkAdapter = BotFrameworkAdapter>(request: Partial<Activity>): BotContext<A> {
+    protected createContext(request: Partial<Activity>): BotContext {
         return new BotContext(this as any, request);
     }
 }

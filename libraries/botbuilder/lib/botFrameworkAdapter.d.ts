@@ -48,14 +48,14 @@ export declare class BotFrameworkAdapter extends BotAdapter {
      * @param settings (optional) configuration settings for the adapter.
      */
     constructor(settings?: Partial<BotFrameworkAdapterSettings>);
-    processRequest<A extends BotFrameworkAdapter = BotFrameworkAdapter>(req: WebRequest, res: WebResponse, logic: (context: BotContext<A>) => Promiseable<void>): Promise<void>;
-    continueConversation<A extends BotFrameworkAdapter = BotFrameworkAdapter>(reference: Partial<ConversationReference>, logic: (context: BotContext<A>) => Promiseable<void>): Promise<void>;
-    startConversation<A extends BotFrameworkAdapter = BotFrameworkAdapter>(reference: Partial<ConversationReference>, logic: (context: BotContext<A>) => Promiseable<void>): Promise<void>;
+    processRequest(req: WebRequest, res: WebResponse, logic: (context: BotContext) => Promiseable<void>): Promise<void>;
+    continueConversation(reference: Partial<ConversationReference>, logic: (context: BotContext) => Promiseable<void>): Promise<void>;
+    startConversation(reference: Partial<ConversationReference>, logic: (context: BotContext) => Promiseable<void>): Promise<void>;
     sendActivities(activities: Partial<Activity>[]): Promise<ResourceResponse[]>;
     updateActivity(activity: Partial<Activity>): Promise<void>;
     deleteActivity(reference: Partial<ConversationReference>): Promise<void>;
     createConversation(serviceUrl: string, parameters: Partial<ConversationParameters>): Promise<ConversationResourceResponse>;
     protected authenticateRequest(request: Partial<Activity>, authHeader: string): Promise<void>;
     protected createConnectorClient(serviceUrl: string): ConnectorClient;
-    protected createContext<A extends BotFrameworkAdapter = BotFrameworkAdapter>(request: Partial<Activity>): BotContext<A>;
+    protected createContext(request: Partial<Activity>): BotContext;
 }
