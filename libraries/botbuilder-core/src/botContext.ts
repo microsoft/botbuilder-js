@@ -16,14 +16,10 @@ export type UpdateActivityHandler = (activity: Partial<Activity>, next: () => Pr
 
 export type DeleteActivityHandler = (reference: Partial<ConversationReference>, next: () => Promise<void>) => Promiseable<void>;
 
-declare global {
-    export interface BotContextExtensions { }
-}
+export interface BotContext { }
 
-export interface BotContext<A extends BotAdapter> extends BotContextExtensions { }
-
-export class BotContext<A extends BotAdapter = BotAdapter> {
-    private _adapter: A;
+export class BotContext {
+    private _adapter: BotAdapter;
     private _request: Activity;
     private _responded = false;
     private _cache = new Map<string, any>();
@@ -36,13 +32,13 @@ export class BotContext<A extends BotAdapter = BotAdapter> {
      * @param adapter Adapter that constructed the context.
      * @param request Request being processed.
      */
-    constructor(adapter: A, request: Partial<Activity>) {
+    constructor(adapter: BotAdapter, request: Partial<Activity>) {
         this._adapter = adapter;
         this._request = request as Activity;
     }
 
     /** The adapter for this context. */
-    public get adapter(): A {
+    public get adapter(): BotAdapter {
         return this._adapter;
     }
 

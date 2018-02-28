@@ -31,7 +31,7 @@ export class TestAdapter extends BotAdapter {
      * @param botLogic The bots logic that's under test.
      * @param template (Optional) activity containing default values to assign to all test messages received.
      */
-    constructor(private botLogic: (context: BotContext<TestAdapter>) => Promiseable<void>, template?: ConversationReference) {
+    constructor(private botLogic: (context: BotContext) => Promiseable<void>, template?: ConversationReference) {
         super();
         this.template = Object.assign({
             channelId: 'test',
@@ -71,7 +71,7 @@ export class TestAdapter extends BotAdapter {
         if (!request.id) { request.id = (this.nextId++).toString() }
 
         // Create context object and run middleware
-        const context = new BotContext<TestAdapter>(this, request);
+        const context = new BotContext(this, request);
         return this.runMiddleware(context, this.botLogic);
     }
 

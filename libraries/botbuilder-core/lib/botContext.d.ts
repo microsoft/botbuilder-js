@@ -11,13 +11,9 @@ import { Promiseable } from './middlewareSet';
 export declare type SendActivitiesHandler = (activities: Partial<Activity>[], next: () => Promise<ResourceResponse[]>) => Promiseable<ResourceResponse[]>;
 export declare type UpdateActivityHandler = (activity: Partial<Activity>, next: () => Promise<void>) => Promiseable<void>;
 export declare type DeleteActivityHandler = (reference: Partial<ConversationReference>, next: () => Promise<void>) => Promiseable<void>;
-declare global  {
-    interface BotContextExtensions {
-    }
+export interface BotContext {
 }
-export interface BotContext<A extends BotAdapter> extends BotContextExtensions {
-}
-export declare class BotContext<A extends BotAdapter = BotAdapter> {
+export declare class BotContext {
     private _adapter;
     private _request;
     private _responded;
@@ -30,9 +26,9 @@ export declare class BotContext<A extends BotAdapter = BotAdapter> {
      * @param adapter Adapter that constructed the context.
      * @param request Request being processed.
      */
-    constructor(adapter: A, request: Partial<Activity>);
+    constructor(adapter: BotAdapter, request: Partial<Activity>);
     /** The adapter for this context. */
-    readonly adapter: A;
+    readonly adapter: BotAdapter;
     /** The received activity. */
     readonly request: Activity;
     /** If `true` at least one response has been sent for the current turn of conversation. */

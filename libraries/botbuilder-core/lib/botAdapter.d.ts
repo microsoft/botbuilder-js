@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { MiddlewareHandler, Promiseable } from './middlewareSet';
+import { MiddlewareHandler, Middleware, Promiseable } from './middlewareSet';
 import { Activity, ResourceResponse, ConversationReference } from 'botframework-schema';
 import { BotContext } from './botContext';
 /**
@@ -38,7 +38,7 @@ export declare abstract class BotAdapter {
      * Registers middleware handlers(s) with the adapter.
      * @param middleware One or more middleware handlers(s) to register.
      */
-    use(...middleware: MiddlewareHandler[]): this;
+    use(...middleware: (MiddlewareHandler | Middleware)[]): this;
     /**
      * Called by the parent class to run the adapters middleware set and calls the passed in
      * `next()` handler at the end of the chain.  While the context object is passed in from the
@@ -49,5 +49,5 @@ export declare abstract class BotAdapter {
      * @param next Function to call at the end of the middleware chain.
      * @param next.callback A revocable version of the context object.
      */
-    protected runMiddleware<A extends BotAdapter>(context: BotContext<A>, next: (revocableContext: BotContext<A>) => Promiseable<void>): Promise<void>;
+    protected runMiddleware(context: BotContext, next: (revocableContext: BotContext) => Promiseable<void>): Promise<void>;
 }

@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { MiddlewareSet, MiddlewareHandler, Promiseable } from './middlewareSet';
+import { MiddlewareSet, MiddlewareHandler, Middleware, Promiseable } from './middlewareSet';
 import { ActivityTypes, Activity, ResourceResponse, ConversationReference } from 'botframework-schema';
 import { BotContext } from './botContext';
 import { makeRevocable } from './internal';
@@ -44,7 +44,7 @@ export abstract class BotAdapter {
      * Registers middleware handlers(s) with the adapter.
      * @param middleware One or more middleware handlers(s) to register.
      */
-    public use(...middleware: MiddlewareHandler[]): this {
+    public use(...middleware: (MiddlewareHandler|Middleware)[]): this {
         MiddlewareSet.prototype.use.apply(this.middleware, middleware);
         return this;
     }
@@ -59,7 +59,7 @@ export abstract class BotAdapter {
      * @param next Function to call at the end of the middleware chain.
      * @param next.callback A revocable version of the context object.
      */
-    protected runMiddleware<A extends BotAdapter>(context: BotContext<A>, next: (revocableContext: BotContext<A>) => Promiseable<void>): Promise<void> {
+    protected runMiddleware(context: BotContext, next: (revocableContext: BotContext) => Promiseable<void>): Promise<void> {
         // Wrap context with revocable proxy
         const pContext = makeRevocable(context);
         return this.middleware.run(pContext.proxy, () => {
