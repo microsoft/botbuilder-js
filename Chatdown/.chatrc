@@ -1,7 +1,0 @@
-{
-  "channelId": 12345,
-  "user": "Joe",
-  "bot": "LulaBot",
-  "in": "test/sample.chat",
-  "out": "test/sample.transcript"
-}

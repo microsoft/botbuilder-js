@@ -1,15 +1,18 @@
-﻿LulaBot: Hi!
-Joe: yo!
-LulaBot: [Typing][Delay:3000]
+﻿user=Joe
+bot=LulaBot
+
+bot: Hi!
+user: yo!
+bot: [Typing][Delay:3000]
 Greetings!
 What would you like to do?
 * update - You can update your account
 * List - You can list your data
 * help - you can get help
 
-Joe: I need help
+user: I need help
 
-LulaBot:
+bot:
 Here you go.
 
 [Attachments:bot-framework.png]

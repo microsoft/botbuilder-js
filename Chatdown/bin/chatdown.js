@@ -1,44 +1,30 @@
 const fs = require('fs-extra');
 const path = require('path');
 const chalk = require('chalk');
+const minimist = require('minimist');
 
 const help = require('../lib/help');
 const chatdown = require('../lib/index');
 
-async function resolveConfigs() {
-    const chatdownArgs = require('minimist')(process.argv.slice(2));
-    if ('help' in chatdownArgs) {
-        help();
-        process.exit(0);
-    }
-    let config;
-    try {
-        config = JSON.parse(fs.readFileSync(path.resolve((chatdownArgs.config || '.chatrc'))));
-    }
-    catch (e) {
-        // We've been given a config location but its not there
-        if (chatdownArgs.config !== undefined) {
-            throw new ReferenceError(`${chatdownArgs.config} cannot be found`);
-        }
-        config = {};
-    }
-    const mergedConfig = Object.assign(config, chatdownArgs);
-    if (!('bot' in mergedConfig) || !('user' in mergedConfig)) {
-        let message = !('bot' in mergedConfig) ? chalk`{red --bot is required to be passed in as an argument or as part of the config}\n` : '';
-        message += !('user' in mergedConfig) ? chalk`{red --user is required to be passed in as an argument or as part of the config}` : '';
-        throw new ReferenceError(message);
-    }
-    return mergedConfig;
-}
-
-function getInput(config) {
-    if (config.in) {
-        return fs.readFile(path.resolve(config.in), 'utf-8');
+/**
+ * Retrieves the content to be parsed from a file if
+ * the --in argument was specified or from the stdin
+ * stream otherwise. Currently, interactive mode is
+ * not supported and will timeout if no data is received
+ * from stdin within 1000ms.
+ *
+ * @param args An object containing the argument k/v pairs
+ * @returns {Promise} a Promise that resolves to the content to be parsed
+ */
+function getInput(args) {
+    if (args.in) {
+        return fs.readFile(path.resolve(args.in), 'utf-8');
     }
     return new Promise((resolve, reject) => {
         const {stdin} = process;
         let timeout = setTimeout(reject, 1000);
         let input = '';
+
         stdin.setEncoding('utf8');
         stdin.on('data', chunk => {
             if (timeout) {
@@ -47,35 +33,61 @@ function getInput(config) {
             }
             input += chunk;
         });
+
         stdin.on('end', () => {
-            resolve(input)
+            resolve(input);
         });
+
         stdin.on('error', error => reject(error));
     });
 }
 
-async function writeOut(activities, config) {
-    const {out} = config;
+/**
+ * Writes the output either to a file if --out is
+ * specified or to stdout otherwise.
+ *
+ * @param {Array<Activity>} activities The array of activities resulting from the dialog read
+ * @param args An object containing the argument k/v pairs
+ * @returns {Promise<string>|boolean} The path of the file to write or true if written to stdout
+ */
+async function writeOut(activities, args) {
+    const {out} = args;
     if (!out) {
-        process.stdout.write(JSON.stringify(activities));
+        process.stdout.write(JSON.stringify(activities, null, 2));
         return true;
     }
+
     const fileToWrite = path.resolve(out);
     await fs.ensureFile(fileToWrite);
     await fs.writeJson(fileToWrite, activities, {spaces: 2});
+
     return fileToWrite;
 }
 
+/**
+ * Runs the program
+ *
+ * @returns {Promise<void>}
+ */
 async function runProgram() {
-    const config = await resolveConfigs();
-    const fileContents = await getInput(config);
-    const activities = await chatdown(fileContents, config);
-    const writeConfirmation = await writeOut(activities, config);
+    const args = minimist(process.argv.slice(2));
+    const fileContents = await getInput(args);
+    const activities = await chatdown(fileContents, args);
+    const writeConfirmation = await writeOut(activities, args);
+
     if (typeof writeConfirmation === 'string') {
         process.stdout.write(chalk`{green Successfully wrote file:} {blue ${writeConfirmation}}\n`);
     }
 }
 
+/**
+ * Utility function that exist the process with an
+ * optional error. If an Error is received, the error
+ * message is written to stdout, otherwise, the help
+ * content are displayed.
+ *
+ * @param {*} error Either an instance of Error or null
+ */
 function exitWithError(error) {
     if (error instanceof Error) {
         process.stdout.write(chalk.red(error));
