@@ -12,19 +12,13 @@ export declare class ConversationState<T extends StoreItem = StoreItem> extends 
     /**
      * Creates a new ConversationState instance.
      * @param storage Storage provider to persist conversation state to.
-     * @param cacheKey (Optional) name of the cached entry on the context object. The default value is 'conversationState'.
+     * @param cacheKey (Optional) name of the cached entry on the context object. A property accessor with this name will also be added to the context object. The default value is 'conversationState'.
      */
     constructor(storage: Storage, cacheKey?: string);
-    onProcessRequest(context: BotContext, next: () => Promise<void>): Promise<void>;
-    /**
-     * Returns the current conversation state for a turn.
-     * @param context Context for current turn of conversation with the user.
-     * @param cacheKey (Optional) name of the cached entry on the context object. The default value is 'conversationState'.
-     */
-    static get<T extends StoreItem>(context: BotContext, cacheKey?: string): T;
     /**
      * Returns the storage key for the current conversation state.
      * @param context Context for current turn of conversation with the user.
      */
-    static key(context: BotContext): string | undefined;
+    getStorageKey(context: BotContext): string | undefined;
+    private extendContext(context);
 }
