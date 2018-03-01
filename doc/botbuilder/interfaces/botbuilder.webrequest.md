@@ -17,7 +17,7 @@ Express or Restify Request object.
 
 **●  body**:  *`any`* 
 
-*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:16](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L16)*
+*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:16](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L16)*
 
 
 
@@ -31,7 +31,7 @@ ___
 
 **●  headers**:  *[Headers](botbuilder.headers.md)* 
 
-*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L17)*
+*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L17)*
 
 
 
@@ -49,7 +49,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L18)*
+*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L18)*
 
 
 

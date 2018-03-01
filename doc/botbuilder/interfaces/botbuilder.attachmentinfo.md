@@ -15,7 +15,7 @@
 
 **●  name**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:34](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botframework-schema/lib/index.d.ts#L34)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:34](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L34)*
 
 
 *__member__*: {string} [name] Name of the attachment
@@ -32,7 +32,7 @@ ___
 
 **●  type**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:38](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botframework-schema/lib/index.d.ts#L38)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:38](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L38)*
 
 
 *__member__*: {string} [type] ContentType of the attachment
@@ -49,7 +49,7 @@ ___
 
 **●  views**:  *[AttachmentView](botbuilder.attachmentview.md)[]* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:42](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botframework-schema/lib/index.d.ts#L42)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:42](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L42)*
 
 
 *__member__*: {AttachmentView[]} [views] attachment views

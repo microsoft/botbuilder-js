@@ -15,7 +15,7 @@
 
 **●  id**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:520](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botframework-schema/lib/index.d.ts#L520)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:520](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L520)*
 
 
 *__member__*: {string} [id] Id of the resource

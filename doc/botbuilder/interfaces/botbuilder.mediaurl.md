@@ -15,7 +15,7 @@
 
 **●  profile**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:632](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botframework-schema/lib/index.d.ts#L632)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:632](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L632)*
 
 
 *__member__*: {string} [profile] Optional profile hint to the client to differentiate multiple MediaUrl objects from each other
@@ -32,7 +32,7 @@ ___
 
 **●  url**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:627](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botframework-schema/lib/index.d.ts#L627)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:627](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L627)*
 
 
 *__member__*: {string} [url] Url for the media

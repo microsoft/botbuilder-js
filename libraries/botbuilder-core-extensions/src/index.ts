@@ -6,6 +6,7 @@
  * Licensed under the MIT License.
  */
 
+export * from './batchOutput';
 export * from './botState';
 export * from './botStateSet';
 export * from './browserStorage';

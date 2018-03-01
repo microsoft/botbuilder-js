@@ -42,7 +42,7 @@ Defines values for ActivityTypes. Possible values include: 'message', 'contactRe
 
 ** ContactRelationUpdate**:    = "contactRelationUpdate"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1592](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botframework-schema/lib/index.d.ts#L1592)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1592](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L1592)*
 
 
 
@@ -56,7 +56,7 @@ ___
 
 ** ConversationUpdate**:    = "conversationUpdate"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1593](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botframework-schema/lib/index.d.ts#L1593)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1593](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L1593)*
 
 
 
@@ -70,7 +70,7 @@ ___
 
 ** DeleteUserData**:    = "deleteUserData"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1599](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botframework-schema/lib/index.d.ts#L1599)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1599](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L1599)*
 
 
 
@@ -84,7 +84,7 @@ ___
 
 ** EndOfConversation**:    = "endOfConversation"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1596](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botframework-schema/lib/index.d.ts#L1596)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1596](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L1596)*
 
 
 
@@ -98,7 +98,7 @@ ___
 
 ** Event**:    = "event"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1597](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botframework-schema/lib/index.d.ts#L1597)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1597](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L1597)*
 
 
 
@@ -112,7 +112,7 @@ ___
 
 ** InstallationUpdate**:    = "installationUpdate"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1602](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botframework-schema/lib/index.d.ts#L1602)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1602](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L1602)*
 
 
 
@@ -126,7 +126,7 @@ ___
 
 ** Invoke**:    = "invoke"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1598](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botframework-schema/lib/index.d.ts#L1598)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1598](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L1598)*
 
 
 
@@ -140,7 +140,7 @@ ___
 
 ** Message**:    = "message"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1591](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botframework-schema/lib/index.d.ts#L1591)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1591](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L1591)*
 
 
 
@@ -154,7 +154,7 @@ ___
 
 ** MessageDelete**:    = "messageDelete"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1601](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botframework-schema/lib/index.d.ts#L1601)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1601](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L1601)*
 
 
 
@@ -168,7 +168,7 @@ ___
 
 ** MessageReaction**:    = "messageReaction"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1603](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botframework-schema/lib/index.d.ts#L1603)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1603](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L1603)*
 
 
 
@@ -182,7 +182,7 @@ ___
 
 ** MessageUpdate**:    = "messageUpdate"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1600](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botframework-schema/lib/index.d.ts#L1600)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1600](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L1600)*
 
 
 
@@ -196,7 +196,7 @@ ___
 
 ** Ping**:    = "ping"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1595](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botframework-schema/lib/index.d.ts#L1595)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1595](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L1595)*
 
 
 
@@ -210,7 +210,7 @@ ___
 
 ** Suggestion**:    = "suggestion"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1604](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botframework-schema/lib/index.d.ts#L1604)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1604](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L1604)*
 
 
 
@@ -224,7 +224,7 @@ ___
 
 ** Typing**:    = "typing"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1594](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botframework-schema/lib/index.d.ts#L1594)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1594](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L1594)*
 
 
 

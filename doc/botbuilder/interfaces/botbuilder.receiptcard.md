@@ -15,7 +15,7 @@
 
 **●  buttons**:  *[CardAction](botbuilder.cardaction.md)[]* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:934](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botframework-schema/lib/index.d.ts#L934)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:934](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L934)*
 
 
 *__member__*: {CardAction[]} [buttons] Set of actions applicable to the current card
@@ -32,7 +32,7 @@ ___
 
 **●  facts**:  *[Fact](botbuilder.fact.md)[]* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:912](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botframework-schema/lib/index.d.ts#L912)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:912](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L912)*
 
 
 *__member__*: {Fact[]} [facts] Array of Fact Objects Array of key-value pairs.
@@ -49,7 +49,7 @@ ___
 
 **●  items**:  *[ReceiptItem](botbuilder.receiptitem.md)[]* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:908](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botframework-schema/lib/index.d.ts#L908)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:908](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L908)*
 
 
 *__member__*: {ReceiptItem[]} [items] Array of Receipt Items
@@ -66,7 +66,7 @@ ___
 
 **●  tap**:  *[CardAction](botbuilder.cardaction.md)* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:917](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botframework-schema/lib/index.d.ts#L917)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:917](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L917)*
 
 
 *__member__*: {CardAction} [tap] This action will be activated when user taps on the card
@@ -83,7 +83,7 @@ ___
 
 **●  tax**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:925](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botframework-schema/lib/index.d.ts#L925)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:925](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L925)*
 
 
 *__member__*: {string} [tax] Total amount of TAX paid(or should be paid)
@@ -100,7 +100,7 @@ ___
 
 **●  title**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:904](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botframework-schema/lib/index.d.ts#L904)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:904](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L904)*
 
 
 *__member__*: {string} [title] Title of the card
@@ -117,7 +117,7 @@ ___
 
 **●  total**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:921](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botframework-schema/lib/index.d.ts#L921)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:921](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L921)*
 
 
 *__member__*: {string} [total] Total amount of money paid (or should be paid)
@@ -134,7 +134,7 @@ ___
 
 **●  vat**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:929](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botframework-schema/lib/index.d.ts#L929)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:929](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L929)*
 
 
 *__member__*: {string} [vat] Total amount of VAT paid(or should be paid)

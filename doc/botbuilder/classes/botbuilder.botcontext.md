@@ -59,7 +59,7 @@ Context object containing information cached for a single turn of conversation w
 ### ⊕ **new BotContext**(adapter: *[BotAdapter](botbuilder.botadapter.md)*, request: *[Partial]()[Activity](../interfaces/botbuilder.activity.md)*): [BotContext](botbuilder.botcontext.md)
 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:61](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botbuilder-core/lib/botContext.d.ts#L61)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:61](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botbuilder-core/lib/botContext.d.ts#L61)*
 
 
 
@@ -89,7 +89,7 @@ Creates a new BotContext instance for a turn of conversation.
 
 **●  adapter**:  *[BotAdapter](botbuilder.botadapter.md)* 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:69](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botbuilder-core/lib/botContext.d.ts#L69)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:69](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botbuilder-core/lib/botContext.d.ts#L69)*
 
 
 
@@ -106,7 +106,7 @@ ___
 
 **●  request**:  *[Activity](../interfaces/botbuilder.activity.md)* 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:71](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botbuilder-core/lib/botContext.d.ts#L71)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:71](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botbuilder-core/lib/botContext.d.ts#L71)*
 
 
 
@@ -123,7 +123,7 @@ ___
 
 **●  responded**:  *`boolean`* 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:73](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botbuilder-core/lib/botContext.d.ts#L73)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:73](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botbuilder-core/lib/botContext.d.ts#L73)*
 
 
 
@@ -144,7 +144,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:106](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botbuilder-core/lib/botContext.d.ts#L106)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:106](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botbuilder-core/lib/botContext.d.ts#L106)*
 
 
 
@@ -177,7 +177,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:79](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botbuilder-core/lib/botContext.d.ts#L79)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:79](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botbuilder-core/lib/botContext.d.ts#L79)*
 
 
 
@@ -216,7 +216,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:84](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botbuilder-core/lib/botContext.d.ts#L84)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:84](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botbuilder-core/lib/botContext.d.ts#L84)*
 
 
 
@@ -249,7 +249,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:121](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botbuilder-core/lib/botContext.d.ts#L121)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:121](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botbuilder-core/lib/botContext.d.ts#L121)*
 
 
 
@@ -282,7 +282,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:111](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botbuilder-core/lib/botContext.d.ts#L111)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:111](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botbuilder-core/lib/botContext.d.ts#L111)*
 
 
 
@@ -315,7 +315,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:116](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botbuilder-core/lib/botContext.d.ts#L116)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:116](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botbuilder-core/lib/botContext.d.ts#L116)*
 
 
 
@@ -348,7 +348,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:96](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botbuilder-core/lib/botContext.d.ts#L96)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:96](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botbuilder-core/lib/botContext.d.ts#L96)*
 
 
 
@@ -381,7 +381,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:90](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botbuilder-core/lib/botContext.d.ts#L90)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:90](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botbuilder-core/lib/botContext.d.ts#L90)*
 
 
 
@@ -415,7 +415,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:101](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botbuilder-core/lib/botContext.d.ts#L101)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:101](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botbuilder-core/lib/botContext.d.ts#L101)*
 
 
 
@@ -448,7 +448,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:152](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botbuilder-core/lib/botContext.d.ts#L152)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:152](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botbuilder-core/lib/botContext.d.ts#L152)*
 
 
 
@@ -490,7 +490,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:134](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botbuilder-core/lib/botContext.d.ts#L134)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:134](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botbuilder-core/lib/botContext.d.ts#L134)*
 
 
 

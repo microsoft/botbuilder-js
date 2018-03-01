@@ -19,7 +19,7 @@ Express or Restify Response object.
 
 
 
-*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:34](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L34)*
+*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:34](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L34)*
 
 
 
@@ -41,7 +41,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:35](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L35)*
+*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:35](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L35)*
 
 
 

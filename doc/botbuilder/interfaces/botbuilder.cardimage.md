@@ -15,7 +15,7 @@
 
 **●  alt**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:560](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botframework-schema/lib/index.d.ts#L560)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:560](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L560)*
 
 
 *__member__*: {string} [alt] Image description intended for screen readers
@@ -32,7 +32,7 @@ ___
 
 **●  tap**:  *[CardAction](botbuilder.cardaction.md)* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:564](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botframework-schema/lib/index.d.ts#L564)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:564](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L564)*
 
 
 *__member__*: {CardAction} [tap] Action assigned to specific Attachment
@@ -49,7 +49,7 @@ ___
 
 **●  url**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:556](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botframework-schema/lib/index.d.ts#L556)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:556](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L556)*
 
 
 *__member__*: {string} [url] URL thumbnail image for major content property
