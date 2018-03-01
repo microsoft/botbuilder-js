@@ -17,13 +17,13 @@ import {
  *
  * **Usage Example**
  *
- * ```JavaScript
+ * \```JavaScript
  * const card = CardFactory.heroCard(
  *      'White T-Shirt',
  *      ['https://example.com/whiteShirt.jpg'],
  *      ['buy']
  * );
- * ```
+ * \```
  * 
  * | package | middleware |
  * | ------- | :--------: |

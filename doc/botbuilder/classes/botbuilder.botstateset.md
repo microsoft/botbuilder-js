@@ -63,7 +63,7 @@ Middleware that will call `read()` and `write()` in parallel on multiple `BotSta
 ### ⊕ **new BotStateSet**(...middleware: *[BotState](botbuilder.botstate.md)[]*): [BotStateSet](botbuilder.botstateset.md)
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botStateSet.d.ts:20](https://github.com/Microsoft/botbuilder-js/blob/0ef377c/libraries/botbuilder-core-extensions/lib/botStateSet.d.ts#L20)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botStateSet.d.ts:20](https://github.com/Microsoft/botbuilder-js/blob/d62f5bf/libraries/botbuilder-core-extensions/lib/botStateSet.d.ts#L20)*
 
 
 
@@ -94,7 +94,7 @@ Creates a new BotStateSet instance.
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botStateSet.d.ts:26](https://github.com/Microsoft/botbuilder-js/blob/0ef377c/libraries/botbuilder-core-extensions/lib/botStateSet.d.ts#L26)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botStateSet.d.ts:26](https://github.com/Microsoft/botbuilder-js/blob/d62f5bf/libraries/botbuilder-core-extensions/lib/botStateSet.d.ts#L26)*
 
 
 
@@ -125,7 +125,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botStateSet.d.ts:38](https://github.com/Microsoft/botbuilder-js/blob/0ef377c/libraries/botbuilder-core-extensions/lib/botStateSet.d.ts#L38)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botStateSet.d.ts:38](https://github.com/Microsoft/botbuilder-js/blob/d62f5bf/libraries/botbuilder-core-extensions/lib/botStateSet.d.ts#L38)*
 
 
 
@@ -159,7 +159,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botStateSet.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/0ef377c/libraries/botbuilder-core-extensions/lib/botStateSet.d.ts#L31)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botStateSet.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/d62f5bf/libraries/botbuilder-core-extensions/lib/botStateSet.d.ts#L31)*
 
 
 
@@ -192,7 +192,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botStateSet.d.ts:45](https://github.com/Microsoft/botbuilder-js/blob/0ef377c/libraries/botbuilder-core-extensions/lib/botStateSet.d.ts#L45)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botStateSet.d.ts:45](https://github.com/Microsoft/botbuilder-js/blob/d62f5bf/libraries/botbuilder-core-extensions/lib/botStateSet.d.ts#L45)*
 
 
 
