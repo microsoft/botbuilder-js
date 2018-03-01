@@ -9,11 +9,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const memoryStorage_1 = require("./memoryStorage");
 /**
- * Storage provider that uses browser local storage.
+ * :package: **botbuilder-core-extensions**
  *
- * | package | middleware |
- * | ------- | :--------: |
- * | botbuilder-core-extensions | no |
+ * Storage provider that uses browser local storage.
  */
 class BrowserLocalStorage extends memoryStorage_1.MemoryStorage {
     constructor() {
@@ -22,11 +20,9 @@ class BrowserLocalStorage extends memoryStorage_1.MemoryStorage {
 }
 exports.BrowserLocalStorage = BrowserLocalStorage;
 /**
- * Storage provider that uses browser session storage.
+ * :package: **botbuilder-core-extensions**
  *
- * | package | middleware |
- * | ------- | :--------: |
- * | botbuilder-core-extensions | no |
+ * Storage provider that uses browser session storage.
  */
 class BrowserSessionStorage extends memoryStorage_1.MemoryStorage {
     constructor() {

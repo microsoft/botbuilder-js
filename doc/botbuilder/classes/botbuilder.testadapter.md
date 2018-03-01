@@ -5,35 +5,9 @@
 # Class: TestAdapter
 
 
+:package: **botbuilder-core-extensions**
+
 Test adapter used for unit tests.
-
-<table>
-
-<thead>
-
-<tr>
-
-<th>package</th>
-
-<th style="text-align:center">middleware</th>
-
-</tr>
-
-</thead>
-
-<tbody>
-
-<tr>
-
-<td>botbuilder-core-extensions</td>
-
-<td style="text-align:center">yes</td>
-
-</tr>
-
-</tbody>
-
-</table>
 
 ## Hierarchy
 
@@ -87,7 +61,7 @@ Test adapter used for unit tests.
 ### ⊕ **new TestAdapter**(botLogic: *`function`*, template?: *`ConversationReference`*): [TestAdapter](botbuilder.testadapter.md)
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:24](https://github.com/Microsoft/botbuilder-js/blob/77747a0/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L24)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L27)*
 
 
 
@@ -117,7 +91,7 @@ Creates a new instance of the test adapter.
 
 **●  activityBuffer**:  *[Partial]()`Activity`[]* 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/77747a0/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L21)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:24](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L24)*
 
 
 
@@ -134,7 +108,7 @@ ___
 
 **●  deletedActivities**:  *[Partial]()`ConversationReference`[]* 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:24](https://github.com/Microsoft/botbuilder-js/blob/77747a0/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L24)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L27)*
 
 
 
@@ -148,7 +122,7 @@ ___
 
 **●  template**:  *[Partial]()`Activity`* 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:22](https://github.com/Microsoft/botbuilder-js/blob/77747a0/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L22)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:25](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L25)*
 
 
 
@@ -162,7 +136,7 @@ ___
 
 **●  updatedActivities**:  *[Partial]()`Activity`[]* 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:23](https://github.com/Microsoft/botbuilder-js/blob/77747a0/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L23)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:26](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L26)*
 
 
 
@@ -180,7 +154,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:33](https://github.com/Microsoft/botbuilder-js/blob/77747a0/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L33)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:36](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L36)*
 
 
 
@@ -210,7 +184,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:38](https://github.com/Microsoft/botbuilder-js/blob/77747a0/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L38)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:41](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L41)*
 
 
 
@@ -243,7 +217,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:43](https://github.com/Microsoft/botbuilder-js/blob/77747a0/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L43)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:46](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L46)*
 
 
 
@@ -276,7 +250,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/77747a0/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L31)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:34](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L34)*
 
 
 
@@ -306,7 +280,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:51](https://github.com/Microsoft/botbuilder-js/blob/77747a0/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L51)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:54](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L54)*
 
 
 
@@ -342,7 +316,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:32](https://github.com/Microsoft/botbuilder-js/blob/77747a0/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L32)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:35](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L35)*
 
 
 

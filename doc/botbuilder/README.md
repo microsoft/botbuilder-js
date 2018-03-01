@@ -60,7 +60,7 @@
 
 **Τ DeleteActivityHandler**:  *`function`* 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:34](https://github.com/Microsoft/botbuilder-js/blob/77747a0/libraries/botbuilder-core/lib/botContext.d.ts#L34)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:34](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder-core/lib/botContext.d.ts#L34)*
 
 
 
@@ -121,7 +121,7 @@ ___
 
 **Τ SendActivitiesHandler**:  *`function`* 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/77747a0/libraries/botbuilder-core/lib/botContext.d.ts#L18)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder-core/lib/botContext.d.ts#L18)*
 
 
 
@@ -182,9 +182,11 @@ ___
 
 **Τ StorageKeyFactory**:  *`function`* 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/storage.d.ts:13](https://github.com/Microsoft/botbuilder-js/blob/77747a0/libraries/botbuilder-core-extensions/lib/storage.d.ts#L13)*
+*Defined in [libraries/botbuilder-core-extensions/lib/storage.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder-core-extensions/lib/storage.d.ts#L15)*
 
 
+
+:package: **botbuilder-core-extensions**
 
 Callback to calculate a storage key.
 
@@ -218,8 +220,11 @@ ___
 
 **Τ TestActivityInspector**:  *`function`* 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:9](https://github.com/Microsoft/botbuilder-js/blob/77747a0/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L9)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:14](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L14)*
 
+
+
+:package: **botbuilder-core-extensions**
 
 #### Type declaration
 ►(activity: *[Partial]()`Activity`*, description: *`string`*): `void`
@@ -252,7 +257,7 @@ ___
 
 **Τ UpdateActivityHandler**:  *`function`* 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:26](https://github.com/Microsoft/botbuilder-js/blob/77747a0/libraries/botbuilder-core/lib/botContext.d.ts#L26)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:26](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder-core/lib/botContext.d.ts#L26)*
 
 
 
@@ -317,7 +322,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/storage.d.ts:73](https://github.com/Microsoft/botbuilder-js/blob/77747a0/libraries/botbuilder-core-extensions/lib/storage.d.ts#L73)*
+*Defined in [libraries/botbuilder-core-extensions/lib/storage.d.ts:73](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder-core-extensions/lib/storage.d.ts#L73)*
 
 
 

@@ -9,13 +9,11 @@ import { BotContext } from 'botbuilder-core';
 import { BotState } from './botState';
 import { Storage, StoreItem } from './storage';
 /**
+ * :package: **botbuilder-core-extensions**
+ *
  * Reads and writes user state for your bot to storage. When used as middleware the state
  * will automatically be read in before your bots logic runs and then written back out open
  * completion of your bots logic.
- *
- * | package | middleware |
- * | ------- | :--------: |
- * | botbuilder-core-extensions | yes |
  */
 export declare class UserState<T extends StoreItem = StoreItem> extends BotState<T> {
     /**

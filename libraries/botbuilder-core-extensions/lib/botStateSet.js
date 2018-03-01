@@ -1,12 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
+ * :package: **botbuilder-core-extensions**
+ *
  * Middleware that will call `read()` and `write()` in parallel on multiple `BotState`
  * instances.
- *
- * | package | middleware |
- * | ------- | :--------: |
- * | botbuilder-core-extensions | yes |
  */
 class BotStateSet {
     /**

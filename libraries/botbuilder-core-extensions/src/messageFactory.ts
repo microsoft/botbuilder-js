@@ -12,7 +12,9 @@ import {
 } from 'botbuilder-core';
 
 /**
- * A set of utility functions to assist with the formatting of the various message types a bot can
+  * :package: **botbuilder-core-extensions**
+ * 
+* A set of utility functions to assist with the formatting of the various message types a bot can
  * return.
  *
  * **Usage Example**
@@ -29,10 +31,6 @@ import {
  *
  * context.sendActivities(message); // send message
  * ```
- * 
- * | package | middleware |
- * | ------- | :--------: |
- * | botbuilder-core-extensions | no | 
  */
 export class MessageFactory {
     /**

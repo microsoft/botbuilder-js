@@ -11,14 +11,17 @@ import {
 } from 'botbuilder-core';
 import assert = require('assert');
 
+/** 
+ * :package: **botbuilder-core-extensions**
+ * 
+ * 
+ */
 export type TestActivityInspector = (activity: Partial<Activity>, description: string) => void;
 
 /**
- * Test adapter used for unit tests.
+ * :package: **botbuilder-core-extensions**
  * 
- * | package | middleware |
- * | ------- | :--------: |
- * | botbuilder-core-extensions | yes | 
+ * Test adapter used for unit tests.
  */
 export class TestAdapter extends BotAdapter {
     private nextId = 0;
@@ -101,7 +104,11 @@ export class TestAdapter extends BotAdapter {
     }
 }
 
-/** INTERNAL support class for `TestAdapter`. */
+/**
+ * :package: **botbuilder-core-extensions**
+ * 
+ *  INTERNAL support class for `TestAdapter`. 
+ */
 export class TestFlow {
 
     constructor(public previous: Promise<void>, private adapter: TestAdapter) { }

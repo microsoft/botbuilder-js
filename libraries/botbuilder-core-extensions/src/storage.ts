@@ -8,17 +8,17 @@
 import { BotContext, Promiseable } from 'botbuilder-core';
 
 /** 
+ * :package: **botbuilder-core-extensions**
+ * 
  * Callback to calculate a storage key.
  * @param StorageKeyFactory.context Context for the current turn of conversation with a user. 
  */
 export type StorageKeyFactory = (context: BotContext) => Promiseable<string>; 
 
 /** 
- * Interface for a store provider that stores and retrieves objects. 
+ * :package: **botbuilder-core-extensions**
  * 
- * | package |
- * | ------- |
- * | botbuilder-core-extensions | 
+ * Interface for a store provider that stores and retrieves objects. 
  */
 export interface Storage {
     /** 

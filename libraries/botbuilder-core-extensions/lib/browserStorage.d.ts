@@ -7,21 +7,17 @@
  */
 import { MemoryStorage } from './memoryStorage';
 /**
- * Storage provider that uses browser local storage.
+ * :package: **botbuilder-core-extensions**
  *
- * | package | middleware |
- * | ------- | :--------: |
- * | botbuilder-core-extensions | no |
+ * Storage provider that uses browser local storage.
  */
 export declare class BrowserLocalStorage extends MemoryStorage {
     constructor();
 }
 /**
- * Storage provider that uses browser session storage.
+ * :package: **botbuilder-core-extensions**
  *
- * | package | middleware |
- * | ------- | :--------: |
- * | botbuilder-core-extensions | no |
+ * Storage provider that uses browser session storage.
  */
 export declare class BrowserSessionStorage extends MemoryStorage {
     constructor();

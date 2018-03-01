@@ -9,12 +9,10 @@ import { BotContext, Middleware } from 'botbuilder-core';
 import { BotState } from './botState';
 import { StoreItem } from './storage';
 /**
+ * :package: **botbuilder-core-extensions**
+ *
  * Middleware that will call `read()` and `write()` in parallel on multiple `BotState`
  * instances.
- *
- * | package | middleware |
- * | ------- | :--------: |
- * | botbuilder-core-extensions | yes |
  */
 export declare class BotStateSet implements Middleware {
     private middleware;

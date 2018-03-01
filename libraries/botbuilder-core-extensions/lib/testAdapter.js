@@ -10,11 +10,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const botbuilder_core_1 = require("botbuilder-core");
 const assert = require("assert");
 /**
- * Test adapter used for unit tests.
+ * :package: **botbuilder-core-extensions**
  *
- * | package | middleware |
- * | ------- | :--------: |
- * | botbuilder-core-extensions | yes |
+ * Test adapter used for unit tests.
  */
 class TestAdapter extends botbuilder_core_1.BotAdapter {
     /**
@@ -90,7 +88,11 @@ class TestAdapter extends botbuilder_core_1.BotAdapter {
     }
 }
 exports.TestAdapter = TestAdapter;
-/** INTERNAL support class for `TestAdapter`. */
+/**
+ * :package: **botbuilder-core-extensions**
+ *
+ *  INTERNAL support class for `TestAdapter`.
+ */
 class TestFlow {
     constructor(previous, adapter) {
         this.previous = previous;

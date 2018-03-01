@@ -2,13 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const storage_1 = require("./storage");
 /**
+ * :package: **botbuilder-core-extensions**
+ *
  * Reads and writes state for your bot to storage. When used as middleware the state will
  * automatically be read in before your bots logic runs and then written back out open
  * completion of your bots logic.
- *
- * | package | middleware |
- * | ------- | :--------: |
- * | botbuilder-core-extensions | yes |
  */
 class BotState {
     /**

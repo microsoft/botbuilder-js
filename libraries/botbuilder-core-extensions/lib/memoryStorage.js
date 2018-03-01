@@ -1,11 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
- * Memory based storage provider for a bot.
+ * :package: **botbuilder-core-extensions**
  *
- * | package | middleware |
- * | ------- | :--------: |
- * | botbuilder-core-extensions | no |
+ * Memory based storage provider for a bot.
  */
 class MemoryStorage {
     /**

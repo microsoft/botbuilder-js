@@ -6,13 +6,16 @@
  * Licensed under the MIT License.
  */
 import { BotAdapter, Activity, ConversationReference, Promiseable, BotContext, ResourceResponse } from 'botbuilder-core';
+/**
+ * :package: **botbuilder-core-extensions**
+ *
+ *
+ */
 export declare type TestActivityInspector = (activity: Partial<Activity>, description: string) => void;
 /**
- * Test adapter used for unit tests.
+ * :package: **botbuilder-core-extensions**
  *
- * | package | middleware |
- * | ------- | :--------: |
- * | botbuilder-core-extensions | yes |
+ * Test adapter used for unit tests.
  */
 export declare class TestAdapter extends BotAdapter {
     private botLogic;
@@ -50,7 +53,11 @@ export declare class TestAdapter extends BotAdapter {
      */
     test(userSays: string | Partial<Activity>, expected: string | Partial<Activity> | ((activity: Partial<Activity>, description?: string) => void), description?: string, timeout?: number): TestFlow;
 }
-/** INTERNAL support class for `TestAdapter`. */
+/**
+ * :package: **botbuilder-core-extensions**
+ *
+ *  INTERNAL support class for `TestAdapter`.
+ */
 export declare class TestFlow {
     previous: Promise<void>;
     private adapter;

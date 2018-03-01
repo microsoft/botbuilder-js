@@ -8,11 +8,9 @@
 import { Storage, StoreItem, StoreItems } from './storage';
 
 /**
- * Memory based storage provider for a bot.
+ * :package: **botbuilder-core-extensions**
  * 
- * | package | middleware |
- * | ------- | :--------: |
- * | botbuilder-core-extensions | no | 
+ * Memory based storage provider for a bot.
  */
 export class MemoryStorage  implements Storage {
     protected etag: number;

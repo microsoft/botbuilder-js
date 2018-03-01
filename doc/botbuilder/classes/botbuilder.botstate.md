@@ -5,35 +5,9 @@
 # Class: BotState
 
 
+:package: **botbuilder-core-extensions**
+
 Reads and writes state for your bot to storage. When used as middleware the state will automatically be read in before your bots logic runs and then written back out open completion of your bots logic.
-
-<table>
-
-<thead>
-
-<tr>
-
-<th>package</th>
-
-<th style="text-align:center">middleware</th>
-
-</tr>
-
-</thead>
-
-<tbody>
-
-<tr>
-
-<td>botbuilder-core-extensions</td>
-
-<td style="text-align:center">yes</td>
-
-</tr>
-
-</tbody>
-
-</table>
 
 ## Type parameters
 #### T :  [StoreItem](../interfaces/botbuilder.storeitem.md)
@@ -90,7 +64,7 @@ Reads and writes state for your bot to storage. When used as middleware the stat
 ### ⊕ **new BotState**(storage: *[Storage](../interfaces/botbuilder.storage.md)*, cacheKey: *`string`*, storageKey: *[StorageKeyFactory](../#storagekeyfactory)*): [BotState](botbuilder.botstate.md)
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:33](https://github.com/Microsoft/botbuilder-js/blob/77747a0/libraries/botbuilder-core-extensions/lib/botState.d.ts#L33)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder-core-extensions/lib/botState.d.ts#L31)*
 
 
 
@@ -121,7 +95,7 @@ Creates a new BotState instance.
 
 **●  cacheKey**:  *`string`* 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:32](https://github.com/Microsoft/botbuilder-js/blob/77747a0/libraries/botbuilder-core-extensions/lib/botState.d.ts#L32)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:30](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder-core-extensions/lib/botState.d.ts#L30)*
 
 
 
@@ -135,7 +109,7 @@ ___
 
 **●  storage**:  *[Storage](../interfaces/botbuilder.storage.md)* 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/77747a0/libraries/botbuilder-core-extensions/lib/botState.d.ts#L31)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:29](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder-core-extensions/lib/botState.d.ts#L29)*
 
 
 
@@ -149,7 +123,7 @@ ___
 
 **●  storageKey**:  *[StorageKeyFactory](../#storagekeyfactory)* 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:33](https://github.com/Microsoft/botbuilder-js/blob/77747a0/libraries/botbuilder-core-extensions/lib/botState.d.ts#L33)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder-core-extensions/lib/botState.d.ts#L31)*
 
 
 
@@ -167,7 +141,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:58](https://github.com/Microsoft/botbuilder-js/blob/77747a0/libraries/botbuilder-core-extensions/lib/botState.d.ts#L58)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:56](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder-core-extensions/lib/botState.d.ts#L56)*
 
 
 
@@ -200,7 +174,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:41](https://github.com/Microsoft/botbuilder-js/blob/77747a0/libraries/botbuilder-core-extensions/lib/botState.d.ts#L41)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder-core-extensions/lib/botState.d.ts#L39)*
 
 
 
@@ -231,7 +205,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:47](https://github.com/Microsoft/botbuilder-js/blob/77747a0/libraries/botbuilder-core-extensions/lib/botState.d.ts#L47)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:45](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder-core-extensions/lib/botState.d.ts#L45)*
 
 
 
@@ -265,7 +239,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:53](https://github.com/Microsoft/botbuilder-js/blob/77747a0/libraries/botbuilder-core-extensions/lib/botState.d.ts#L53)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:51](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder-core-extensions/lib/botState.d.ts#L51)*
 
 
 
