@@ -18,11 +18,11 @@ import {
  * **Usage Example**
  *
  * \```JavaScript
- * const card = CardFactory.heroCard(
- *      'White T-Shirt',
- *      ['https://example.com/whiteShirt.jpg'],
- *      ['buy']
- * );
+ * \const card = CardFactory.heroCard(
+ * \     'White T-Shirt',
+ * \     ['https://example.com/whiteShirt.jpg'],
+ * \     ['buy']
+ * \);
  * \```
  * 
  * | package | middleware |

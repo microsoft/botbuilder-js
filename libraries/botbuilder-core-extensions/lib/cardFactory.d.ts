@@ -14,11 +14,11 @@ import { Attachment, MediaUrl, CardAction, AnimationCard, CardImage, HeroCard, R
  * **Usage Example**
  *
  * \```JavaScript
- * const card = CardFactory.heroCard(
- *      'White T-Shirt',
- *      ['https://example.com/whiteShirt.jpg'],
- *      ['buy']
- * );
+ * \const card = CardFactory.heroCard(
+ * \     'White T-Shirt',
+ * \     ['https://example.com/whiteShirt.jpg'],
+ * \     ['buy']
+ * \);
  * \```
  *
  * | package | middleware |
