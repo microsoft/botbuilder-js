@@ -5,6 +5,8 @@
 # Interface: WebMiddleware
 
 
+:package: **botbuilder-core**
+
 Express or Restify Middleware Function.
 
 ## Callable
@@ -12,9 +14,11 @@ Express or Restify Middleware Function.
 
 
 
-*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:26](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L26)*
+*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:42](https://github.com/Microsoft/botbuilder-js/blob/57c9ba8/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L42)*
 
 
+
+:package: **botbuilder-core**
 
 Express or Restify Middleware Function.
 

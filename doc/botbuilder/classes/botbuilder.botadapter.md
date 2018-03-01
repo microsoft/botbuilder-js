@@ -5,37 +5,11 @@
 # Class: BotAdapter
 
 
+:package: **botbuilder-core**
+
 Abstract base class for all adapter plugins. Adapters manage the communication between the bot and a user over a specific channel, or set of channels.
 
 **Usage Example**
-
-<table>
-
-<thead>
-
-<tr>
-
-<th>package</th>
-
-<th style="text-align:center">middleware</th>
-
-</tr>
-
-</thead>
-
-<tbody>
-
-<tr>
-
-<td>botbuilder-core</td>
-
-<td style="text-align:center">no</td>
-
-</tr>
-
-</tbody>
-
-</table>
 
 ## Index
 
@@ -55,11 +29,11 @@ Abstract base class for all adapter plugins. Adapters manage the communication b
 
 ###  deleteActivity
 
-► **deleteActivity**(reference: *[Partial]()`ConversationReference`*): `Promise`.<`void`>
+► **deleteActivity**(reference: *[Partial]()[ConversationReference](../interfaces/botbuilder.conversationreference.md)*): `Promise`.<`void`>
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:41](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder-core/lib/botAdapter.d.ts#L41)*
+*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/57c9ba8/libraries/botbuilder-core/lib/botAdapter.d.ts#L39)*
 
 
 
@@ -70,7 +44,7 @@ Deletes an existing activity.
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| reference | [Partial]()`ConversationReference`   |  Conversation reference of the activity being deleted. |
+| reference | [Partial]()[ConversationReference](../interfaces/botbuilder.conversationreference.md)   |  Conversation reference of the activity being deleted. |
 
 
 
@@ -92,7 +66,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:57](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder-core/lib/botAdapter.d.ts#L57)*
+*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:55](https://github.com/Microsoft/botbuilder-js/blob/57c9ba8/libraries/botbuilder-core/lib/botAdapter.d.ts#L55)*
 
 
 
@@ -122,11 +96,11 @@ ___
 
 ###  sendActivities
 
-► **sendActivities**(activities: *[Partial]()`Activity`[]*): `Promise`.<`ResourceResponse`[]>
+► **sendActivities**(activities: *[Partial]()[Activity](../interfaces/botbuilder.activity.md)[]*): `Promise`.<[ResourceResponse](../interfaces/botbuilder.resourceresponse.md)[]>
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder-core/lib/botAdapter.d.ts#L31)*
+*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:29](https://github.com/Microsoft/botbuilder-js/blob/57c9ba8/libraries/botbuilder-core/lib/botAdapter.d.ts#L29)*
 
 
 
@@ -137,13 +111,13 @@ Sends a set of activities to the user. An array of responses form the server wil
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| activities | [Partial]()`Activity`[]   |  Set of activities being sent. |
+| activities | [Partial]()[Activity](../interfaces/botbuilder.activity.md)[]   |  Set of activities being sent. |
 
 
 
 
 
-**Returns:** `Promise`.<`ResourceResponse`[]>
+**Returns:** `Promise`.<[ResourceResponse](../interfaces/botbuilder.resourceresponse.md)[]>
 
 
 
@@ -155,11 +129,11 @@ ___
 
 ###  updateActivity
 
-► **updateActivity**(activity: *[Partial]()`Activity`*): `Promise`.<`void`>
+► **updateActivity**(activity: *[Partial]()[Activity](../interfaces/botbuilder.activity.md)*): `Promise`.<`void`>
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:36](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder-core/lib/botAdapter.d.ts#L36)*
+*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:34](https://github.com/Microsoft/botbuilder-js/blob/57c9ba8/libraries/botbuilder-core/lib/botAdapter.d.ts#L34)*
 
 
 
@@ -170,7 +144,7 @@ Replaces an existing activity.
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| activity | [Partial]()`Activity`   |  New replacement activity. The activity should already have it's ID information populated. |
+| activity | [Partial]()[Activity](../interfaces/botbuilder.activity.md)   |  New replacement activity. The activity should already have it's ID information populated. |
 
 
 
@@ -192,7 +166,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:46](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder-core/lib/botAdapter.d.ts#L46)*
+*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:44](https://github.com/Microsoft/botbuilder-js/blob/57c9ba8/libraries/botbuilder-core/lib/botAdapter.d.ts#L44)*
 
 
 

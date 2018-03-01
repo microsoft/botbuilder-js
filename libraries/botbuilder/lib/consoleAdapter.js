@@ -10,16 +10,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const botbuilder_core_1 = require("botbuilder-core");
 const readline = require("readline");
 /**
+ * :package: **botbuilder-core**
+ *
  * Lets a user communicate with a bot from a console window.
  *
  * **Usage Example**
  *
  * ```JavaScript
  * ```
- *
- * | package | middleware |
- * | ------- | :--------: |
- * | botbuilder | no |
  */
 class ConsoleAdapter extends botbuilder_core_1.BotAdapter {
     constructor(reference) {

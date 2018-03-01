@@ -11,6 +11,8 @@ import { BotContext } from './botContext';
 import { makeRevocable } from './internal';
 
 /**
+ * :package: **botbuilder-core**
+ * 
  * Abstract base class for all adapter plugins. Adapters manage the communication between the bot 
  * and a user over a specific channel, or set of channels.
  *
@@ -18,10 +20,6 @@ import { makeRevocable } from './internal';
  *
  * ```JavaScript
  * ```
- * 
- * | package | middleware |
- * | ------- | :--------: |
- * | botbuilder-core | no | 
  */
 export abstract class BotAdapter {
     private middleware = new MiddlewareSet();

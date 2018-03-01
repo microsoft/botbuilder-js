@@ -2,11 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const internal_1 = require("./internal");
 /**
- * Context object containing information cached for a single turn of conversation with a user.
+ * :package: **botbuilder-core**
  *
- * | package | middleware |
- * | ------- | :--------: |
- * | botbuilder-core | no |
+ * Context object containing information cached for a single turn of conversation with a user.
  */
 class BotContext {
     /**

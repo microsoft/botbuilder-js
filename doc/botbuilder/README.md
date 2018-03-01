@@ -6,6 +6,20 @@
 
 ## Index
 
+### Enumerations
+
+* [ActionTypes](enums/botbuilder.actiontypes.md)
+* [ActivityImportance](enums/botbuilder.activityimportance.md)
+* [ActivityTypes](enums/botbuilder.activitytypes.md)
+* [AttachmentLayoutTypes](enums/botbuilder.attachmentlayouttypes.md)
+* [ContactRelationUpdateActionTypes](enums/botbuilder.contactrelationupdateactiontypes.md)
+* [EndOfConversationCodes](enums/botbuilder.endofconversationcodes.md)
+* [InputHints](enums/botbuilder.inputhints.md)
+* [InstallationUpdateActionTypes](enums/botbuilder.installationupdateactiontypes.md)
+* [MessageReactionTypes](enums/botbuilder.messagereactiontypes.md)
+* [TextFormatTypes](enums/botbuilder.textformattypes.md)
+
+
 ### Classes
 
 * [BotAdapter](classes/botbuilder.botadapter.md)
@@ -26,12 +40,64 @@
 
 ### Interfaces
 
+* [Activity](interfaces/botbuilder.activity.md)
+* [AnimationCard](interfaces/botbuilder.animationcard.md)
+* [Attachment](interfaces/botbuilder.attachment.md)
+* [AttachmentData](interfaces/botbuilder.attachmentdata.md)
+* [AttachmentInfo](interfaces/botbuilder.attachmentinfo.md)
+* [AttachmentView](interfaces/botbuilder.attachmentview.md)
+* [AudioCard](interfaces/botbuilder.audiocard.md)
+* [BasicCard](interfaces/botbuilder.basiccard.md)
 * [BotFrameworkAdapterSettings](interfaces/botbuilder.botframeworkadaptersettings.md)
 * [CachedBotState](interfaces/botbuilder.cachedbotstate.md)
+* [CardAction](interfaces/botbuilder.cardaction.md)
+* [CardImage](interfaces/botbuilder.cardimage.md)
+* [ChannelAccount](interfaces/botbuilder.channelaccount.md)
+* [ConversationAccount](interfaces/botbuilder.conversationaccount.md)
+* [ConversationParameters](interfaces/botbuilder.conversationparameters.md)
+* [ConversationReference](interfaces/botbuilder.conversationreference.md)
+* [ConversationResourceResponse](interfaces/botbuilder.conversationresourceresponse.md)
+* [Entity](interfaces/botbuilder.entity.md)
+* [ErrorModel](interfaces/botbuilder.errormodel.md)
+* [ErrorResponse](interfaces/botbuilder.errorresponse.md)
+* [Fact](interfaces/botbuilder.fact.md)
+* [GeoCoordinates](interfaces/botbuilder.geocoordinates.md)
 * [Headers](interfaces/botbuilder.headers.md)
+* [HeroCard](interfaces/botbuilder.herocard.md)
+* [MediaCard](interfaces/botbuilder.mediacard.md)
+* [MediaEventValue](interfaces/botbuilder.mediaeventvalue.md)
+* [MediaUrl](interfaces/botbuilder.mediaurl.md)
+* [Mention](interfaces/botbuilder.mention.md)
+* [MessageReaction](interfaces/botbuilder.messagereaction.md)
+* [MicrosoftPayMethodData](interfaces/botbuilder.microsoftpaymethoddata.md)
+* [PaymentAddress](interfaces/botbuilder.paymentaddress.md)
+* [PaymentCurrencyAmount](interfaces/botbuilder.paymentcurrencyamount.md)
+* [PaymentDetails](interfaces/botbuilder.paymentdetails.md)
+* [PaymentDetailsModifier](interfaces/botbuilder.paymentdetailsmodifier.md)
+* [PaymentItem](interfaces/botbuilder.paymentitem.md)
+* [PaymentMethodData](interfaces/botbuilder.paymentmethoddata.md)
+* [PaymentOptions](interfaces/botbuilder.paymentoptions.md)
+* [PaymentRequest](interfaces/botbuilder.paymentrequest.md)
+* [PaymentRequestComplete](interfaces/botbuilder.paymentrequestcomplete.md)
+* [PaymentRequestCompleteResult](interfaces/botbuilder.paymentrequestcompleteresult.md)
+* [PaymentRequestUpdate](interfaces/botbuilder.paymentrequestupdate.md)
+* [PaymentRequestUpdateResult](interfaces/botbuilder.paymentrequestupdateresult.md)
+* [PaymentResponse](interfaces/botbuilder.paymentresponse.md)
+* [PaymentShippingOption](interfaces/botbuilder.paymentshippingoption.md)
+* [Place](interfaces/botbuilder.place.md)
+* [ReceiptCard](interfaces/botbuilder.receiptcard.md)
+* [ReceiptItem](interfaces/botbuilder.receiptitem.md)
+* [ResourceResponse](interfaces/botbuilder.resourceresponse.md)
+* [SigninCard](interfaces/botbuilder.signincard.md)
 * [Storage](interfaces/botbuilder.storage.md)
 * [StoreItem](interfaces/botbuilder.storeitem.md)
 * [StoreItems](interfaces/botbuilder.storeitems.md)
+* [SuggestedActions](interfaces/botbuilder.suggestedactions.md)
+* [TextHighlight](interfaces/botbuilder.texthighlight.md)
+* [Thing](interfaces/botbuilder.thing.md)
+* [ThumbnailCard](interfaces/botbuilder.thumbnailcard.md)
+* [ThumbnailUrl](interfaces/botbuilder.thumbnailurl.md)
+* [VideoCard](interfaces/botbuilder.videocard.md)
 * [WebMiddleware](interfaces/botbuilder.webmiddleware.md)
 * [WebRequest](interfaces/botbuilder.webrequest.md)
 * [WebResponse](interfaces/botbuilder.webresponse.md)
@@ -60,38 +126,16 @@
 
 **Τ DeleteActivityHandler**:  *`function`* 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:34](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder-core/lib/botContext.d.ts#L34)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:28](https://github.com/Microsoft/botbuilder-js/blob/57c9ba8/libraries/botbuilder-core/lib/botContext.d.ts#L28)*
 
 
+
+:package: **botbuilder-core**
 
 Signature implemented by functions registered with `context.onDeleteActivity()`.
 
-<table>
-
-<thead>
-
-<tr>
-
-<th>package</th>
-
-</tr>
-
-</thead>
-
-<tbody>
-
-<tr>
-
-<td>botbuilder-core</td>
-
-</tr>
-
-</tbody>
-
-</table>
-
 #### Type declaration
-►(reference: *[Partial]()`ConversationReference`*, next: *`function`*): [Promiseable]()`void`
+►(reference: *[Partial]()[ConversationReference](interfaces/botbuilder.conversationreference.md)*, next: *`function`*): [Promiseable]()`void`
 
 
 
@@ -99,7 +143,7 @@ Signature implemented by functions registered with `context.onDeleteActivity()`.
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| reference | [Partial]()`ConversationReference`   |  - |
+| reference | [Partial]()[ConversationReference](interfaces/botbuilder.conversationreference.md)   |  - |
 | next | `function`   |  - |
 
 
@@ -121,38 +165,16 @@ ___
 
 **Τ SendActivitiesHandler**:  *`function`* 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder-core/lib/botContext.d.ts#L18)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:16](https://github.com/Microsoft/botbuilder-js/blob/57c9ba8/libraries/botbuilder-core/lib/botContext.d.ts#L16)*
 
 
+
+:package: **botbuilder-core**
 
 Signature implemented by functions registered with `context.onSendActivities()`.
 
-<table>
-
-<thead>
-
-<tr>
-
-<th>package</th>
-
-</tr>
-
-</thead>
-
-<tbody>
-
-<tr>
-
-<td>botbuilder-core</td>
-
-</tr>
-
-</tbody>
-
-</table>
-
 #### Type declaration
-►(activities: *[Partial]()`Activity`[]*, next: *`function`*): [Promiseable]()`ResourceResponse`[]
+►(activities: *[Partial]()[Activity](interfaces/botbuilder.activity.md)[]*, next: *`function`*): [Promiseable]()[ResourceResponse](interfaces/botbuilder.resourceresponse.md)[]
 
 
 
@@ -160,14 +182,14 @@ Signature implemented by functions registered with `context.onSendActivities()`.
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| activities | [Partial]()`Activity`[]   |  - |
+| activities | [Partial]()[Activity](interfaces/botbuilder.activity.md)[]   |  - |
 | next | `function`   |  - |
 
 
 
 
 
-**Returns:** [Promiseable]()`ResourceResponse`[]
+**Returns:** [Promiseable]()[ResourceResponse](interfaces/botbuilder.resourceresponse.md)[]
 
 
 
@@ -182,7 +204,7 @@ ___
 
 **Τ StorageKeyFactory**:  *`function`* 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/storage.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder-core-extensions/lib/storage.d.ts#L15)*
+*Defined in [libraries/botbuilder-core-extensions/lib/storage.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/57c9ba8/libraries/botbuilder-core-extensions/lib/storage.d.ts#L15)*
 
 
 
@@ -220,14 +242,14 @@ ___
 
 **Τ TestActivityInspector**:  *`function`* 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:14](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L14)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:14](https://github.com/Microsoft/botbuilder-js/blob/57c9ba8/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L14)*
 
 
 
 :package: **botbuilder-core-extensions**
 
 #### Type declaration
-►(activity: *[Partial]()`Activity`*, description: *`string`*): `void`
+►(activity: *[Partial]()[Activity](interfaces/botbuilder.activity.md)*, description: *`string`*): `void`
 
 
 
@@ -235,7 +257,7 @@ ___
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| activity | [Partial]()`Activity`   |  - |
+| activity | [Partial]()[Activity](interfaces/botbuilder.activity.md)   |  - |
 | description | `string`   |  - |
 
 
@@ -257,38 +279,16 @@ ___
 
 **Τ UpdateActivityHandler**:  *`function`* 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:26](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder-core/lib/botContext.d.ts#L26)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:22](https://github.com/Microsoft/botbuilder-js/blob/57c9ba8/libraries/botbuilder-core/lib/botContext.d.ts#L22)*
 
 
+
+:package: **botbuilder-core**
 
 Signature implemented by functions registered with `context.onUpdateActivity()`.
 
-<table>
-
-<thead>
-
-<tr>
-
-<th>package</th>
-
-</tr>
-
-</thead>
-
-<tbody>
-
-<tr>
-
-<td>botbuilder-core</td>
-
-</tr>
-
-</tbody>
-
-</table>
-
 #### Type declaration
-►(activity: *[Partial]()`Activity`*, next: *`function`*): [Promiseable]()`void`
+►(activity: *[Partial]()[Activity](interfaces/botbuilder.activity.md)*, next: *`function`*): [Promiseable]()`void`
 
 
 
@@ -296,7 +296,7 @@ Signature implemented by functions registered with `context.onUpdateActivity()`.
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| activity | [Partial]()`Activity`   |  - |
+| activity | [Partial]()[Activity](interfaces/botbuilder.activity.md)   |  - |
 | next | `function`   |  - |
 
 
@@ -322,7 +322,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/storage.d.ts:73](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder-core-extensions/lib/storage.d.ts#L73)*
+*Defined in [libraries/botbuilder-core-extensions/lib/storage.d.ts:73](https://github.com/Microsoft/botbuilder-js/blob/57c9ba8/libraries/botbuilder-core-extensions/lib/storage.d.ts#L73)*
 
 
 

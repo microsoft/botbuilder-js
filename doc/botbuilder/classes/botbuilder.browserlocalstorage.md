@@ -57,7 +57,7 @@ Storage provider that uses browser local storage.
 
 *Overrides [MemoryStorage](botbuilder.memorystorage.md).[constructor](botbuilder.memorystorage.md#constructor)*
 
-*Defined in [libraries/botbuilder-core-extensions/lib/browserStorage.d.ts:14](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder-core-extensions/lib/browserStorage.d.ts#L14)*
+*Defined in [libraries/botbuilder-core-extensions/lib/browserStorage.d.ts:14](https://github.com/Microsoft/botbuilder-js/blob/57c9ba8/libraries/botbuilder-core-extensions/lib/browserStorage.d.ts#L14)*
 
 
 
@@ -77,7 +77,7 @@ Storage provider that uses browser local storage.
 
 *Inherited from [MemoryStorage](botbuilder.memorystorage.md).[etag](botbuilder.memorystorage.md#etag)*
 
-*Defined in [libraries/botbuilder-core-extensions/lib/memoryStorage.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder-core-extensions/lib/memoryStorage.d.ts#L18)*
+*Defined in [libraries/botbuilder-core-extensions/lib/memoryStorage.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/57c9ba8/libraries/botbuilder-core-extensions/lib/memoryStorage.d.ts#L18)*
 
 
 
@@ -93,7 +93,7 @@ ___
 
 *Inherited from [MemoryStorage](botbuilder.memorystorage.md).[memory](botbuilder.memorystorage.md#memory)*
 
-*Defined in [libraries/botbuilder-core-extensions/lib/memoryStorage.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder-core-extensions/lib/memoryStorage.d.ts#L15)*
+*Defined in [libraries/botbuilder-core-extensions/lib/memoryStorage.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/57c9ba8/libraries/botbuilder-core-extensions/lib/memoryStorage.d.ts#L15)*
 
 
 #### Type declaration
@@ -122,7 +122,7 @@ ___
 
 *Inherited from [MemoryStorage](botbuilder.memorystorage.md).[delete](botbuilder.memorystorage.md#delete)*
 
-*Defined in [libraries/botbuilder-core-extensions/lib/memoryStorage.d.ts:28](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder-core-extensions/lib/memoryStorage.d.ts#L28)*
+*Defined in [libraries/botbuilder-core-extensions/lib/memoryStorage.d.ts:28](https://github.com/Microsoft/botbuilder-js/blob/57c9ba8/libraries/botbuilder-core-extensions/lib/memoryStorage.d.ts#L28)*
 
 
 
@@ -156,7 +156,7 @@ ___
 
 *Inherited from [MemoryStorage](botbuilder.memorystorage.md).[read](botbuilder.memorystorage.md#read)*
 
-*Defined in [libraries/botbuilder-core-extensions/lib/memoryStorage.d.ts:26](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder-core-extensions/lib/memoryStorage.d.ts#L26)*
+*Defined in [libraries/botbuilder-core-extensions/lib/memoryStorage.d.ts:26](https://github.com/Microsoft/botbuilder-js/blob/57c9ba8/libraries/botbuilder-core-extensions/lib/memoryStorage.d.ts#L26)*
 
 
 
@@ -190,7 +190,7 @@ ___
 
 *Inherited from [MemoryStorage](botbuilder.memorystorage.md).[write](botbuilder.memorystorage.md#write)*
 
-*Defined in [libraries/botbuilder-core-extensions/lib/memoryStorage.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder-core-extensions/lib/memoryStorage.d.ts#L27)*
+*Defined in [libraries/botbuilder-core-extensions/lib/memoryStorage.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/57c9ba8/libraries/botbuilder-core-extensions/lib/memoryStorage.d.ts#L27)*
 
 
 

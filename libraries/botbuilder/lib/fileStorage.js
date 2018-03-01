@@ -6,16 +6,14 @@ const file = require("fs");
 const os = require("os");
 const filenamify = require("filenamify");
 /**
+ * :package: **botbuilder-core**
+ *
  * A file based storage provider.
  *
  * **Usage Example**
  *
  * ```JavaScript
  * ```
- *
- * | package | middleware |
- * | ------- | :--------: |
- * | botbuilder | no |
  */
 class FileStorage {
     /**

@@ -11,33 +11,29 @@ import { shallowCopy } from './internal';
 import { Promiseable } from './middlewareSet';
 
 /** 
- * Signature implemented by functions registered with `context.onSendActivities()`. 
+ * :package: **botbuilder-core**
  * 
- * | package |
- * | ------- |
- * | botbuilder-core | 
+ * Signature implemented by functions registered with `context.onSendActivities()`. 
  */
 export type SendActivitiesHandler = (activities: Partial<Activity>[], next: () => Promise<ResourceResponse[]>) => Promiseable<ResourceResponse[]>;
 
 /** 
- * Signature implemented by functions registered with `context.onUpdateActivity()`. 
+ * :package: **botbuilder-core**
  * 
- * | package |
- * | ------- |
- * | botbuilder-core | 
+ * Signature implemented by functions registered with `context.onUpdateActivity()`. 
  */
 export type UpdateActivityHandler = (activity: Partial<Activity>, next: () => Promise<void>) => Promiseable<void>;
 
 /** 
- * Signature implemented by functions registered with `context.onDeleteActivity()`. 
+ * :package: **botbuilder-core**
  * 
- * | package |
- * | ------- |
- * | botbuilder-core | 
+ * Signature implemented by functions registered with `context.onDeleteActivity()`. 
  */
 export type DeleteActivityHandler = (reference: Partial<ConversationReference>, next: () => Promise<void>) => Promiseable<void>;
 
 /** 
+ * :package: **botbuilder-core**
+ * 
  * Interface definition for `BotContext` class. This is an aid for TypeScript developers to help
  * define the shape of the actual context object after middleware has added any extensions. 
  *
@@ -52,19 +48,13 @@ export type DeleteActivityHandler = (reference: Partial<ConversationReference>, 
  *      readonly conversationState: MyConversationState;
  * }
  * ```
- * 
- * | package |
- * | ------- |
- * | botbuilder-core | 
  */
 export interface BotContext { }
 
 /** 
- * Context object containing information cached for a single turn of conversation with a user.
+ * :package: **botbuilder-core**
  * 
- * | package | middleware |
- * | ------- | :--------: |
- * | botbuilder-core | no | 
+ * Context object containing information cached for a single turn of conversation with a user.
  */
 export class BotContext {
     private _adapter: BotAdapter;

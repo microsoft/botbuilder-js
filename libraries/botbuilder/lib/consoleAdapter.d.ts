@@ -9,16 +9,14 @@
 import { BotAdapter, BotContext, Activity, ResourceResponse, Promiseable, ConversationReference } from 'botbuilder-core';
 import * as readline from 'readline';
 /**
+ * :package: **botbuilder-core**
+ *
  * Lets a user communicate with a bot from a console window.
  *
  * **Usage Example**
  *
  * ```JavaScript
  * ```
- *
- * | package | middleware |
- * | ------- | :--------: |
- * | botbuilder | no |
  */
 export declare class ConsoleAdapter extends BotAdapter {
     private nextId;

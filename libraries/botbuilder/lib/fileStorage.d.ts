@@ -7,11 +7,9 @@
  */
 import { Storage, StoreItems } from 'botbuilder-core-extensions';
 /**
- * Additional settings for configuring an instance of `FileStorage`.
+ * :package: **botbuilder-core**
  *
- * | package |
- * | ------- |
- * | botbuilder |
+ * Additional settings for configuring an instance of `FileStorage`.
  */
 export interface FileStorageSettings {
     /**
@@ -21,16 +19,14 @@ export interface FileStorageSettings {
     path?: string;
 }
 /**
+ * :package: **botbuilder-core**
+ *
  * A file based storage provider.
  *
  * **Usage Example**
  *
  * ```JavaScript
  * ```
- *
- * | package | middleware |
- * | ------- | :--------: |
- * | botbuilder | no |
  */
 export declare class FileStorage implements Storage {
     private pEnsureFolder;

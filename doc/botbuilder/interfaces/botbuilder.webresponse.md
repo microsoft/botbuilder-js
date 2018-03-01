@@ -5,6 +5,8 @@
 # Interface: WebResponse
 
 
+:package: **botbuilder-core**
+
 Express or Restify Response object.
 
 
@@ -17,7 +19,7 @@ Express or Restify Response object.
 
 
 
-*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:22](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L22)*
+*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:34](https://github.com/Microsoft/botbuilder-js/blob/57c9ba8/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L34)*
 
 
 
@@ -39,7 +41,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:23](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L23)*
+*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:35](https://github.com/Microsoft/botbuilder-js/blob/57c9ba8/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L35)*
 
 
 

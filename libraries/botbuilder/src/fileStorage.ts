@@ -13,11 +13,9 @@ import * as os from 'os';
 import * as filenamify from 'filenamify';
 
 /** 
- * Additional settings for configuring an instance of `FileStorage`. 
+ * :package: **botbuilder-core**
  * 
- * | package |
- * | ------- |
- * | botbuilder | 
+ * Additional settings for configuring an instance of `FileStorage`. 
  */
 export interface FileStorageSettings {
     /** 
@@ -28,16 +26,14 @@ export interface FileStorageSettings {
 }
 
 /**
+ * :package: **botbuilder-core**
+ * 
  * A file based storage provider.
  *
  * **Usage Example**
  *
  * ```JavaScript
  * ```
- * 
- * | package | middleware |
- * | ------- | :--------: |
- * | botbuilder | no | 
  */
 export class FileStorage implements Storage {
     private pEnsureFolder: Promise<void>|undefined;

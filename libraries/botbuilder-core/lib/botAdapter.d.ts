@@ -9,6 +9,8 @@ import { MiddlewareHandler, Middleware, Promiseable } from './middlewareSet';
 import { Activity, ResourceResponse, ConversationReference } from 'botframework-schema';
 import { BotContext } from './botContext';
 /**
+ * :package: **botbuilder-core**
+ *
  * Abstract base class for all adapter plugins. Adapters manage the communication between the bot
  * and a user over a specific channel, or set of channels.
  *
@@ -16,10 +18,6 @@ import { BotContext } from './botContext';
  *
  * ```JavaScript
  * ```
- *
- * | package | middleware |
- * | ------- | :--------: |
- * | botbuilder-core | no |
  */
 export declare abstract class BotAdapter {
     private middleware;

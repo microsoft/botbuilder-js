@@ -8,35 +8,49 @@
 import { BotAdapter, BotContext, Promiseable, ActivityTypes, Activity, ConversationReference, ResourceResponse, ConversationResourceResponse, ConversationParameters, ConversationAccount } from 'botbuilder-core';
 import { ConnectorClient, SimpleCredentialProvider, MicrosoftAppCredentials, JwtTokenValidation } from 'botframework-connector';
 
-/** Express or Restify Request object. */
+/** 
+ * :package: **botbuilder-core**
+ * 
+ * Express or Restify Request object. 
+ */
 export interface WebRequest {
     body: any;
     headers: Headers;
     on(event: string, ...args: any[]): void;
 }
 
-/** Express or Restify Response object. */
+/** 
+ * :package: **botbuilder-core**
+ * 
+ * Express or Restify Response object. 
+ */
 export interface Headers {
     [name: string]: string;
 }
 
-/** Express or Restify Response object. */
+/** 
+ * :package: **botbuilder-core**
+ * 
+ * Express or Restify Response object. 
+ */
 export interface WebResponse {
     end(): this;
     send(status: number, body?: any): this;
 }
 
-/** Express or Restify Middleware Function. */
+/** 
+ * :package: **botbuilder-core**
+ * 
+ * Express or Restify Middleware Function. 
+ */
 export interface WebMiddleware {
     (req: WebRequest, res: WebResponse, next?: Function): void;
 }
 
 /** 
- * Bot Framework Adapter Settings. 
+ * :package: **botbuilder-core**
  * 
- * | package |
- * | ------- |
- * | botbuilder | 
+ * Bot Framework Adapter Settings. 
  */
 export interface BotFrameworkAdapterSettings {
     appId: string;
@@ -44,16 +58,14 @@ export interface BotFrameworkAdapterSettings {
 }
 
 /**
+ * :package: **botbuilder-core**
+ * 
  * ActivityAdapter class needed to communicate with a Bot Framework channel or the Emulator.
  *
  * **Usage Example**
  *
  * ```JavaScript
  * ```
- * 
- * | package | middleware |
- * | ------- | :--------: |
- * | botbuilder | no | 
  */
 export class BotFrameworkAdapter extends BotAdapter {
     protected readonly credentials: MicrosoftAppCredentials;

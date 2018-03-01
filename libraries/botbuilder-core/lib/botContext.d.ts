@@ -9,30 +9,26 @@ import { Activity, ResourceResponse, ConversationReference } from 'botframework-
 import { BotAdapter } from './botAdapter';
 import { Promiseable } from './middlewareSet';
 /**
- * Signature implemented by functions registered with `context.onSendActivities()`.
+ * :package: **botbuilder-core**
  *
- * | package |
- * | ------- |
- * | botbuilder-core |
+ * Signature implemented by functions registered with `context.onSendActivities()`.
  */
 export declare type SendActivitiesHandler = (activities: Partial<Activity>[], next: () => Promise<ResourceResponse[]>) => Promiseable<ResourceResponse[]>;
 /**
- * Signature implemented by functions registered with `context.onUpdateActivity()`.
+ * :package: **botbuilder-core**
  *
- * | package |
- * | ------- |
- * | botbuilder-core |
+ * Signature implemented by functions registered with `context.onUpdateActivity()`.
  */
 export declare type UpdateActivityHandler = (activity: Partial<Activity>, next: () => Promise<void>) => Promiseable<void>;
 /**
- * Signature implemented by functions registered with `context.onDeleteActivity()`.
+ * :package: **botbuilder-core**
  *
- * | package |
- * | ------- |
- * | botbuilder-core |
+ * Signature implemented by functions registered with `context.onDeleteActivity()`.
  */
 export declare type DeleteActivityHandler = (reference: Partial<ConversationReference>, next: () => Promise<void>) => Promiseable<void>;
 /**
+ * :package: **botbuilder-core**
+ *
  * Interface definition for `BotContext` class. This is an aid for TypeScript developers to help
  * define the shape of the actual context object after middleware has added any extensions.
  *
@@ -47,19 +43,13 @@ export declare type DeleteActivityHandler = (reference: Partial<ConversationRefe
  *      readonly conversationState: MyConversationState;
  * }
  * ```
- *
- * | package |
- * | ------- |
- * | botbuilder-core |
  */
 export interface BotContext {
 }
 /**
- * Context object containing information cached for a single turn of conversation with a user.
+ * :package: **botbuilder-core**
  *
- * | package | middleware |
- * | ------- | :--------: |
- * | botbuilder-core | no |
+ * Context object containing information cached for a single turn of conversation with a user.
  */
 export declare class BotContext {
     private _adapter;

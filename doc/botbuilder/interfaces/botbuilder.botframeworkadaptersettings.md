@@ -5,31 +5,9 @@
 # Interface: BotFrameworkAdapterSettings
 
 
+:package: **botbuilder-core**
+
 Bot Framework Adapter Settings.
-
-<table>
-
-<thead>
-
-<tr>
-
-<th>package</th>
-
-</tr>
-
-</thead>
-
-<tbody>
-
-<tr>
-
-<td>botbuilder</td>
-
-</tr>
-
-</tbody>
-
-</table>
 
 
 ## Properties
@@ -39,7 +17,7 @@ Bot Framework Adapter Settings.
 
 **●  appId**:  *`string`* 
 
-*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:37](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L37)*
+*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:51](https://github.com/Microsoft/botbuilder-js/blob/57c9ba8/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L51)*
 
 
 
@@ -53,7 +31,7 @@ ___
 
 **●  appPassword**:  *`string`* 
 
-*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:38](https://github.com/Microsoft/botbuilder-js/blob/2ba4064/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L38)*
+*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:52](https://github.com/Microsoft/botbuilder-js/blob/57c9ba8/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L52)*
 
 
 
