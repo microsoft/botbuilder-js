@@ -1,0 +1,1060 @@
+{
+  "patterns": {
+    "className": "Patterns",
+    "url": "/apps/{appId}/versions/{versionId}/patterns",
+    "operations": [
+      {
+        "description": "Gets all application version pattern features.",
+        "method": "get",
+        "name": "getVersionPatternFeatureList",
+        "entityName": "",
+        "entityType": "",
+        "queries": [
+          "'skip'",
+          "'take'"
+        ]
+      },
+      {
+        "description": "Creates a new pattern feature.",
+        "method": "post",
+        "name": "createPatternFeature",
+        "entityName": "patternCreateObject",
+        "entityType": "PatternCreateObject",
+        "queries": []
+      },
+      {
+        "description": "Deletes a pattern feature from an application version.",
+        "method": "delete",
+        "name": "deletePatternFeature",
+        "entityName": "",
+        "entityType": "",
+        "queries": []
+      },
+      {
+        "description": "Updates the pattern, the name and the state of the pattern feature.",
+        "method": "put",
+        "name": "updatePatternFeature",
+        "entityName": "patternUpdateObject",
+        "entityType": "PatternUpdateObject",
+        "queries": []
+      },
+      {
+        "description": "Gets pattern feature info.",
+        "method": "get",
+        "name": "getPatternFeatureInfo",
+        "entityName": "",
+        "entityType": "",
+        "queries": []
+      }
+    ]
+  },
+  "phraselists": {
+    "className": "Phraselists",
+    "url": "/apps/{appId}/versions/{versionId}/phraselists",
+    "operations": [
+      {
+        "description": "Gets all application phraselist features.",
+        "method": "get",
+        "name": "getVersionPhraselistFeaturesList",
+        "entityName": "",
+        "entityType": "",
+        "queries": [
+          "'skip'",
+          "'take'"
+        ]
+      },
+      {
+        "description": "Creates a new phraselist feature.",
+        "method": "post",
+        "name": "createPhraselistFeature",
+        "entityName": "phraselistCreateObject",
+        "entityType": "PhraselistCreateObject",
+        "queries": []
+      },
+      {
+        "description": "Deletes a phraselist feature from an application.",
+        "method": "delete",
+        "name": "deletePhraselistFeature",
+        "entityName": "",
+        "entityType": "",
+        "queries": []
+      },
+      {
+        "description": "Updates the phrases, the state and the name of the phraselist feature.",
+        "method": "put",
+        "name": "updatePhraselistFeature",
+        "entityName": "phraselistUpdateObject",
+        "entityType": "PhraselistUpdateObject",
+        "queries": []
+      },
+      {
+        "description": "Gets phraselist feature info.",
+        "method": "get",
+        "name": "getPhraselistFeatureInfo",
+        "entityName": "",
+        "entityType": "",
+        "queries": []
+      }
+    ]
+  },
+  "features": {
+    "className": "Features",
+    "url": "/apps/{appId}/versions/{versionId}/features",
+    "operations": [
+      {
+        "description": "Gets all application version features.",
+        "method": "get",
+        "name": "getVersionFeatures",
+        "entityName": "",
+        "entityType": "",
+        "queries": [
+          "'skip'",
+          "'take'"
+        ]
+      }
+    ]
+  },
+  "example": {
+    "className": "Example",
+    "url": "/apps/{appId}/versions/{versionId}/example",
+    "operations": [
+      {
+        "description": "Adds a labeled example to the application.",
+        "method": "post",
+        "name": "addLabel",
+        "entityName": "exampleLabelObject",
+        "entityType": "ExampleLabelObject",
+        "queries": []
+      }
+    ]
+  },
+  "examples": {
+    "className": "Examples",
+    "url": "/apps/{appId}/versions/{versionId}/examples",
+    "operations": [
+      {
+        "description": "Returns examples to be reviewed.",
+        "method": "get",
+        "name": "reviewLabeledExamples",
+        "entityName": "",
+        "entityType": "",
+        "queries": [
+          "'skip'",
+          "'take'"
+        ]
+      },
+      {
+        "description": "Adds a batch of labeled examples to the specified application. \r\n\r\nThe maximum batch size is 100 items. \r\n\r\nIf the item has the ExampleId and a value between 0 - 99, the returned result will also include the ExampleId. This is helpful if items have errors. \r\n\r\nSome items can pass while others fail. The returned result will indicate each item's status. \r\n",
+        "method": "post",
+        "name": "batchAddLabels",
+        "entityName": "exampleLabelObjectArray",
+        "entityType": "ExampleLabelObjectArray",
+        "queries": []
+      },
+      {
+        "description": "Deletes the label with the specified ID.",
+        "method": "delete",
+        "name": "deleteExampleLabels",
+        "entityName": "",
+        "entityType": "",
+        "queries": []
+      }
+    ]
+  },
+  "intents": {
+    "className": "Intents",
+    "url": "/apps/{appId}/versions/{versionId}/intents",
+    "operations": [
+      {
+        "description": "Gets information about the intent models.",
+        "method": "get",
+        "name": "getVersionIntentList",
+        "entityName": "",
+        "entityType": "",
+        "queries": [
+          "'skip'",
+          "'take'"
+        ]
+      },
+      {
+        "description": "Adds an intent classifier to the application.",
+        "method": "post",
+        "name": "createIntent",
+        "entityName": "modelCreateObject",
+        "entityType": "ModelCreateObject",
+        "queries": []
+      },
+      {
+        "description": "Deletes an intent classifier from the application.",
+        "method": "delete",
+        "name": "deleteIntent",
+        "entityName": "",
+        "entityType": "",
+        "queries": []
+      },
+      {
+        "description": "Updates the name of an intent classifier.",
+        "method": "put",
+        "name": "renameIntent",
+        "entityName": "modelUpdateObject",
+        "entityType": "ModelUpdateObject",
+        "queries": []
+      },
+      {
+        "description": "Gets information about the intent model.",
+        "method": "get",
+        "name": "getIntent",
+        "entityName": "",
+        "entityType": "",
+        "queries": []
+      },
+      {
+        "description": "Suggests examples that would improve the accuracy of the intent model.",
+        "method": "get",
+        "name": "suggestEndpointQueriesForIntents",
+        "entityName": "",
+        "entityType": "",
+        "queries": [
+          "'take'"
+        ]
+      }
+    ]
+  },
+  "entities": {
+    "className": "Entities",
+    "url": "/apps/{appId}/versions/{versionId}/entities",
+    "operations": [
+      {
+        "description": "Gets information about the entity models.",
+        "method": "get",
+        "name": "getVersionEntityList",
+        "entityName": "",
+        "entityType": "",
+        "queries": [
+          "'skip'",
+          "'take'"
+        ]
+      },
+      {
+        "description": "Adds an entity extractor to the application.",
+        "method": "post",
+        "name": "createEntity",
+        "entityName": "modelCreateObject",
+        "entityType": "ModelCreateObject",
+        "queries": []
+      },
+      {
+        "description": "Deletes an entity extractor from the application.",
+        "method": "delete",
+        "name": "deleteEntity",
+        "entityName": "",
+        "entityType": "",
+        "queries": []
+      },
+      {
+        "description": "Updates the name of an entity extractor.",
+        "method": "put",
+        "name": "renameEntity",
+        "entityName": "modelUpdateObject",
+        "entityType": "ModelUpdateObject",
+        "queries": []
+      },
+      {
+        "description": "Gets information about the entity model.",
+        "method": "get",
+        "name": "getEntity",
+        "entityName": "",
+        "entityType": "",
+        "queries": []
+      },
+      {
+        "description": "Suggests examples that would improve the accuracy of the entity model.",
+        "method": "get",
+        "name": "suggestEndpointQueriesForEntities",
+        "entityName": "",
+        "entityType": "",
+        "queries": [
+          "'take'"
+        ]
+      }
+    ]
+  },
+  "hierarchicalentities": {
+    "className": "Hierarchicalentities",
+    "url": "/apps/{appId}/versions/{versionId}/hierarchicalentities",
+    "operations": [
+      {
+        "description": "Gets information about the hierarchical entity models.",
+        "method": "get",
+        "name": "getVersionHierarchicalEntityList",
+        "entityName": "",
+        "entityType": "",
+        "queries": [
+          "'skip'",
+          "'take'"
+        ]
+      },
+      {
+        "description": "Adds a hierarchical entity extractor to the application version.",
+        "method": "post",
+        "name": "createHierarchicalEntity",
+        "entityName": "hierarchicalModelCreateObject",
+        "entityType": "HierarchicalModelCreateObject",
+        "queries": []
+      },
+      {
+        "description": "Deletes a hierarchical entity extractor from the application version.",
+        "method": "delete",
+        "name": "deleteHierarchicalEntity",
+        "entityName": "",
+        "entityType": "",
+        "queries": []
+      },
+      {
+        "description": "Updates the name and children of a hierarchical entity model.",
+        "method": "put",
+        "name": "updateHierarchicalEntity",
+        "entityName": "hierarchicalModelUpdateObject",
+        "entityType": "HierarchicalModelUpdateObject",
+        "queries": []
+      },
+      {
+        "description": "Gets information about the hierarchical entity model.",
+        "method": "get",
+        "name": "getHierarchicalEntity",
+        "entityName": "",
+        "entityType": "",
+        "queries": []
+      },
+      {
+        "description": "Deletes a hierarchical entity extractor child from the application.",
+        "method": "delete",
+        "name": "deleteHierarchicalChildEntity ",
+        "entityName": "",
+        "entityType": "",
+        "queries": []
+      },
+      {
+        "description": "Renames a single child in an existing hierarchical entity model.",
+        "method": "put",
+        "name": "updateHierarchicalChildEntity ",
+        "entityName": "body",
+        "entityType": "",
+        "queries": []
+      },
+      {
+        "description": "Gets information about the hierarchical entity child model.",
+        "method": "get",
+        "name": "getHierarchicalChildEntity",
+        "entityName": "",
+        "entityType": "",
+        "queries": []
+      },
+      {
+        "description": "Creates a single child in an existing hierarchical entity model.",
+        "method": "post",
+        "name": "createHierarchicalChildEntity ",
+        "entityName": "body",
+        "entityType": "",
+        "queries": []
+      }
+    ]
+  },
+  "compositeentities": {
+    "className": "Compositeentities",
+    "url": "/apps/{appId}/versions/{versionId}/compositeentities",
+    "operations": [
+      {
+        "description": "Gets information about the composite entity models.",
+        "method": "get",
+        "name": "getVersionCompositeEntityList",
+        "entityName": "",
+        "entityType": "",
+        "queries": [
+          "'skip'",
+          "'take'"
+        ]
+      },
+      {
+        "description": "Adds a composite entity extractor to the application.",
+        "method": "post",
+        "name": "createCompositeEntity",
+        "entityName": "hierarchicalModelCreateObject",
+        "entityType": "HierarchicalModelCreateObject",
+        "queries": []
+      },
+      {
+        "description": "Deletes a composite entity extractor from the application.",
+        "method": "delete",
+        "name": "deleteCompositeEntity",
+        "entityName": "",
+        "entityType": "",
+        "queries": []
+      },
+      {
+        "description": "Updates the composite entity extractor.",
+        "method": "put",
+        "name": "updateCompositeEntity",
+        "entityName": "hierarchicalModelUpdateObject",
+        "entityType": "HierarchicalModelUpdateObject",
+        "queries": []
+      },
+      {
+        "description": "Gets information about the composite entity model.",
+        "method": "get",
+        "name": "getCompositeEntity",
+        "entityName": "",
+        "entityType": "",
+        "queries": []
+      },
+      {
+        "description": "Creates a single child in an existing composite entity model.",
+        "method": "post",
+        "name": "createCompositeChildEntity",
+        "entityName": "body",
+        "entityType": "",
+        "queries": []
+      },
+      {
+        "description": "Deletes a composite entity extractor child from the application.",
+        "method": "delete",
+        "name": "deleteCompositeChildEntity ",
+        "entityName": "",
+        "entityType": "",
+        "queries": []
+      }
+    ]
+  },
+  "closedlists": {
+    "className": "Closedlists",
+    "url": "/apps/{appId}/versions/{versionId}/closedlists",
+    "operations": [
+      {
+        "description": "Gets information about the closedlist models.",
+        "method": "get",
+        "name": "getVersionClosedlistList",
+        "entityName": "",
+        "entityType": "",
+        "queries": [
+          "'skip'",
+          "'take'"
+        ]
+      },
+      {
+        "description": "Adds a list entity to the LUIS app.",
+        "method": "post",
+        "name": "createClosedListEntity",
+        "entityName": "closedListModelCreateObject",
+        "entityType": "ClosedListModelCreateObject",
+        "queries": []
+      },
+      {
+        "description": "Deletes a closed list model from the application.",
+        "method": "delete",
+        "name": "deleteClosedListEntity",
+        "entityName": "",
+        "entityType": "",
+        "queries": []
+      },
+      {
+        "description": "Adds a batch of sublists to an existing closedlist.",
+        "method": "patch",
+        "name": "patchClosedListEntity",
+        "entityName": "closedListModelPatchObject",
+        "entityType": "ClosedListModelPatchObject",
+        "queries": []
+      },
+      {
+        "description": "Updates the closed list model.",
+        "method": "put",
+        "name": "updateClosedListEntity",
+        "entityName": "closedListModelUpdateObject",
+        "entityType": "ClosedListModelUpdateObject",
+        "queries": []
+      },
+      {
+        "description": "Gets information of a closed list model.",
+        "method": "get",
+        "name": "getClosedListEntity",
+        "entityName": "",
+        "entityType": "",
+        "queries": []
+      },
+      {
+        "description": "Updates one of the closed list's sublists",
+        "method": "put",
+        "name": "updateClosedlistsSublist",
+        "entityName": "wordListBaseUpdateObject",
+        "entityType": "WordListBaseUpdateObject",
+        "queries": []
+      },
+      {
+        "description": "Deletes a sublist of a specified list entity.",
+        "method": "delete",
+        "name": "deleteSublistEntity",
+        "entityName": "",
+        "entityType": "",
+        "queries": []
+      },
+      {
+        "description": "Adds a list to an existing closed list",
+        "method": "post",
+        "name": "addClosedListsSublist",
+        "entityName": "wordListCreateObject",
+        "entityType": "WordListCreateObject",
+        "queries": []
+      }
+    ]
+  },
+  "prebuilts": {
+    "className": "Prebuilts",
+    "url": "/apps/{appId}/versions/{versionId}/prebuilts",
+    "operations": [
+      {
+        "description": "Gets information about the prebuilt entity models.",
+        "method": "get",
+        "name": "getVersionPrebuiltEntityList",
+        "entityName": "",
+        "entityType": "",
+        "queries": [
+          "'skip'",
+          "'take'"
+        ]
+      },
+      {
+        "description": "Adds a list of prebuilt entity extractors to the application.",
+        "method": "post",
+        "name": "addPrebuiltEntityList",
+        "entityName": "prebuiltExtractorNames",
+        "entityType": "PrebuiltExtractorNames",
+        "queries": []
+      },
+      {
+        "description": "Deletes a prebuilt entity extractor from the application.",
+        "method": "delete",
+        "name": "deletePrebuiltEntity",
+        "entityName": "",
+        "entityType": "",
+        "queries": []
+      },
+      {
+        "description": "Gets information about the prebuilt entity model.",
+        "method": "get",
+        "name": "getPrebuiltEntity",
+        "entityName": "",
+        "entityType": "",
+        "queries": []
+      }
+    ]
+  },
+  "listprebuilts": {
+    "className": "Listprebuilts",
+    "url": "/apps/{appId}/versions/{versionId}/listprebuilts",
+    "operations": [
+      {
+        "description": "Gets all the available prebuilt entities for the application based on the application's culture.",
+        "method": "get",
+        "name": "getAvailablePrebuiltEntityList",
+        "entityName": "",
+        "entityType": "",
+        "queries": []
+      }
+    ]
+  },
+  "models": {
+    "className": "Models",
+    "url": "/apps/{appId}/versions/{versionId}/models",
+    "operations": [
+      {
+        "description": "Gets information about the application version models.",
+        "method": "get",
+        "name": "getVersionModelList",
+        "entityName": "",
+        "entityType": "",
+        "queries": [
+          "'skip'",
+          "'take'"
+        ]
+      }
+    ]
+  },
+  "apps": {
+    "className": "Apps",
+    "url": "/apps/",
+    "operations": [
+      {
+        "description": "Lists all of the user applications.",
+        "method": "get",
+        "name": "getApplicationsList",
+        "entityName": "",
+        "entityType": "",
+        "queries": [
+          "'skip'",
+          "'take'"
+        ]
+      },
+      {
+        "description": "Creates a new LUIS app.",
+        "method": "post",
+        "name": "addApplication",
+        "entityName": "applicationCreateObject",
+        "entityType": "ApplicationCreateObject",
+        "queries": []
+      },
+      {
+        "description": "Deletes an application.",
+        "method": "delete",
+        "name": "deleteApplication",
+        "entityName": "",
+        "entityType": "",
+        "queries": []
+      },
+      {
+        "description": "Updates the name or description of the application.",
+        "method": "put",
+        "name": "renameApplication",
+        "entityName": "applicationUpdateObject",
+        "entityType": "ApplicationUpdateObject",
+        "queries": []
+      },
+      {
+        "description": "Gets the application info.",
+        "method": "get",
+        "name": "getApplicationInfo",
+        "entityName": "",
+        "entityType": "",
+        "queries": []
+      }
+    ]
+  },
+  "import": {
+    "className": "Import",
+    "url": "/apps/import",
+    "operations": [
+      {
+        "description": "Imports an application to LUIS, the application's JSON should be included in the request body. Returns new app ID.",
+        "method": "post",
+        "name": "importApplication",
+        "entityName": "jSONApp",
+        "entityType": "JSONApp",
+        "queries": [
+          "'appName'"
+        ]
+      }
+    ]
+  },
+  "assistants": {
+    "className": "Assistants",
+    "url": "/apps/assistants",
+    "operations": [
+      {
+        "description": "Gets the endpoint URLs for the prebuilt Cortana applications.",
+        "method": "get",
+        "name": "getPersonalAssistantApplications",
+        "entityName": "",
+        "entityType": "",
+        "queries": []
+      }
+    ]
+  },
+  "domains": {
+    "className": "Domains",
+    "url": "/apps/domains",
+    "operations": [
+      {
+        "description": "Gets the available application domains.",
+        "method": "get",
+        "name": "getLUISApplicationDomainsList",
+        "entityName": "",
+        "entityType": "",
+        "queries": []
+      }
+    ]
+  },
+  "usagescenarios": {
+    "className": "Usagescenarios",
+    "url": "/apps/usagescenarios",
+    "operations": [
+      {
+        "description": "Gets the application available usage scenarios.",
+        "method": "get",
+        "name": "getLUISApplicationUsageScenariosList",
+        "entityName": "",
+        "entityType": "",
+        "queries": []
+      }
+    ]
+  },
+  "cultures": {
+    "className": "Cultures",
+    "url": "/apps/cultures",
+    "operations": [
+      {
+        "description": "Gets the supported LUIS application cultures.",
+        "method": "get",
+        "name": "getLUISApplicationCulturesList",
+        "entityName": "",
+        "entityType": "",
+        "queries": []
+      }
+    ]
+  },
+  "querylogs": {
+    "className": "Querylogs",
+    "url": "/apps/{appId}/querylogs",
+    "operations": [
+      {
+        "description": "Gets the query logs of the past month for the application.",
+        "method": "get",
+        "name": "downloadApplicationQueryLogs",
+        "entityName": "",
+        "entityType": "",
+        "queries": []
+      }
+    ]
+  },
+  "clone": {
+    "className": "Clone",
+    "url": "/apps/{appId}/versions/{versionId}/clone",
+    "operations": [
+      {
+        "description": "Creates a new version equivalent to the current snapshot of the selected application version.",
+        "method": "post",
+        "name": "cloneVersion",
+        "entityName": "taskUpdateObject",
+        "entityType": "TaskUpdateObject",
+        "queries": []
+      }
+    ]
+  },
+  "publish": {
+    "className": "Publish",
+    "url": "/apps/{appId}/publish",
+    "operations": [
+      {
+        "description": "Publishes a specific version of the application.",
+        "method": "post",
+        "name": "publishApplication",
+        "entityName": "applicationPublishObject",
+        "entityType": "ApplicationPublishObject",
+        "queries": []
+      }
+    ]
+  },
+  "versions": {
+    "className": "Versions",
+    "url": "/apps/{appId}/versions",
+    "operations": [
+      {
+        "description": "Gets the application versions info.",
+        "method": "get",
+        "name": "getApplicationVersionList",
+        "entityName": "",
+        "entityType": "",
+        "queries": [
+          "'skip'",
+          "'take'"
+        ]
+      },
+      {
+        "description": "Deletes an application version.",
+        "method": "delete",
+        "name": "deleteApplicationVersion",
+        "entityName": "",
+        "entityType": "",
+        "queries": []
+      },
+      {
+        "description": "Updates the name or description of the application version.",
+        "method": "put",
+        "name": "renameApplicationVersion",
+        "entityName": "taskUpdateObject",
+        "entityType": "TaskUpdateObject",
+        "queries": []
+      },
+      {
+        "description": "Gets the task info.",
+        "method": "get",
+        "name": "getApplicationVersion",
+        "entityName": "",
+        "entityType": "",
+        "queries": []
+      },
+      {
+        "description": "Imports a new version into a LUIS application, the version's JSON should be included in in the request body.",
+        "method": "post",
+        "name": "importVersionToApplication",
+        "entityName": "jSONApp",
+        "entityType": "JSONApp",
+        "queries": [
+          "'versionId'"
+        ]
+      }
+    ]
+  },
+  "export": {
+    "className": "Export",
+    "url": "/apps/{appId}/versions/{versionId}/export",
+    "operations": [
+      {
+        "description": "Exports a LUIS application to JSON format.",
+        "method": "get",
+        "name": "exportApplicationVersion",
+        "entityName": "",
+        "entityType": "",
+        "queries": []
+      }
+    ]
+  },
+  "assignedkey": {
+    "className": "Assignedkey",
+    "url": "/apps/{appId}/versions/{versionId}/assignedkey",
+    "operations": []
+  },
+  "externalKeys": {
+    "className": "ExternalKeys",
+    "url": "/apps/{appId}/versions/{versionId}/externalKeys",
+    "operations": [
+      {
+        "description": "Gets the given application versions's external keys.",
+        "method": "get",
+        "name": "getApplicationVersionExternalApiKeys",
+        "entityName": "",
+        "entityType": "",
+        "queries": []
+      },
+      {
+        "description": "Assigns an external API key to the given application according to the specified key type.",
+        "method": "put",
+        "name": "updateApplicationVersionExternalKey",
+        "entityName": "externalKeyUpdateObject",
+        "entityType": "ExternalKeyUpdateObject",
+        "queries": []
+      }
+    ]
+  },
+  "train": {
+    "className": "Train",
+    "url": "/apps/{appId}/versions/{versionId}/train",
+    "operations": [
+      {
+        "description": "Gets the training status of all models (intents and entities) for the specified LUIS app. You must <a href=\"https://westus.dev.cognitive.microsoft.com/docs/services/5890b47c39e2bb17b84a55ff/operations/5890b47c39e2bb052c5b9c45\">call the train API</a> to train the LUIS app before you call this API to get training status.\r\n",
+        "method": "get",
+        "name": "getVersionTrainingStatus",
+        "entityName": "",
+        "entityType": "",
+        "queries": []
+      },
+      {
+        "description": "Sends a training request for a version of a specified LUIS app. \r\n\r\nThis POST request initiates a request asynchronously. To determine whether the training request is successful, submit a GET request to get training status.\r\n\r\n* **Note**: The application version is not fully trained unless all the models (intents and entities) are trained successfully or are up to date.\r\n\r\nTo verify training success, get the training status at least once after training is complete.",
+        "method": "post",
+        "name": "trainApplicationVersion",
+        "entityName": "",
+        "entityType": "",
+        "queries": []
+      }
+    ]
+  },
+  "subscriptions": {
+    "className": "Subscriptions",
+    "url": "/subscriptions",
+    "operations": []
+  },
+  "programmatickey": {
+    "className": "Programmatickey",
+    "url": "/programmatickey",
+    "operations": []
+  },
+  "settings": {
+    "className": "Settings",
+    "url": "/apps/{appId}/settings",
+    "operations": [
+      {
+        "description": "Updates the application settings",
+        "method": "put",
+        "name": "updateApplicationSettings",
+        "entityName": "applicationSettingUpdateObject",
+        "entityType": "ApplicationSettingUpdateObject",
+        "queries": []
+      },
+      {
+        "description": "Get the application settings",
+        "method": "get",
+        "name": "getApplicationSettings",
+        "entityName": "",
+        "entityType": "",
+        "queries": []
+      }
+    ]
+  },
+  "suggest": {
+    "className": "Suggest",
+    "url": "/apps/{appId}/versions/{versionId}/suggest",
+    "operations": [
+      {
+        "description": "Deleted an unlabelled utterance.",
+        "method": "delete",
+        "name": "deleteUnlabelledUtterance",
+        "entityName": "body",
+        "entityType": "",
+        "queries": []
+      }
+    ]
+  },
+  "permissions": {
+    "className": "Permissions",
+    "url": "/apps/{appId}/permissions",
+    "operations": [
+      {
+        "description": "Replaces the current users access list with the one sent in the body.\r\nIf an empty list is sent, all access to other users will be removed.\r\n",
+        "method": "put",
+        "name": "updateAccessList",
+        "entityName": "body",
+        "entityType": "",
+        "queries": []
+      },
+      {
+        "description": "Removed a user to the allowed list of users to access this LUIS application.\r\nUsers are removed using their email address.",
+        "method": "delete",
+        "name": "removeUserFromAccessList",
+        "entityName": "body",
+        "entityType": "",
+        "queries": []
+      },
+      {
+        "description": "Adds a user to the allowed list of users to access this LUIS application.\r\nUsers are added using their email address.",
+        "method": "post",
+        "name": "addEmailToAccessList",
+        "entityName": "body",
+        "entityType": "",
+        "queries": []
+      },
+      {
+        "description": "Gets the list of user emails that have permissions to access your application. ",
+        "method": "get",
+        "name": "getUserAccessList",
+        "entityName": "",
+        "entityType": "",
+        "queries": []
+      }
+    ]
+  },
+  "endpoints": {
+    "className": "Endpoints",
+    "url": "/apps/{appId}/endpoints",
+    "operations": [
+      {
+        "description": "Returns the available endpoint deployment regions and urls",
+        "method": "get",
+        "name": "getEndpoints",
+        "entityName": "",
+        "entityType": "",
+        "queries": []
+      }
+    ]
+  },
+  "customprebuiltdomains": {
+    "className": "Customprebuiltdomains",
+    "url": "/apps/{appId}/versions/{versionId}/customprebuiltdomains",
+    "operations": [
+      {
+        "description": "Adds a customizable prebuilt domain along with all of its models to this application.",
+        "method": "post",
+        "name": "addCustomPrebuiltDomain",
+        "entityName": "prebuiltDomainCreateBaseObject",
+        "entityType": "PrebuiltDomainCreateBaseObject",
+        "queries": []
+      },
+      {
+        "description": "Deletes a prebuilt domain's models from the application.",
+        "method": "delete",
+        "name": "deleteCustomPrebuiltDomain",
+        "entityName": "",
+        "entityType": "",
+        "queries": []
+      },
+      {
+        "description": "Adds a prebuilt domain along with its models as a new application. Returns new app ID. ",
+        "method": "post",
+        "name": "addPrebuiltApplication",
+        "entityName": "prebuiltDomainCreateObject",
+        "entityType": "PrebuiltDomainCreateObject",
+        "queries": []
+      },
+      {
+        "description": "Gets all the available custom prebuilt domains for all cultures",
+        "method": "get",
+        "name": "getLUISPrebuiltDomainsList",
+        "entityName": "",
+        "entityType": "",
+        "queries": []
+      },
+      {
+        "description": "Gets all the available custom prebuilt domains for a specific culture",
+        "method": "get",
+        "name": "getLUISPrebuiltDomainsForCultureList",
+        "entityName": "",
+        "entityType": "",
+        "queries": []
+      }
+    ]
+  },
+  "customprebuiltintents": {
+    "className": "Customprebuiltintents",
+    "url": "/apps/{appId}/versions/{versionId}/customprebuiltintents",
+    "operations": [
+      {
+        "description": "Gets custom prebuilt intents information of this application",
+        "method": "get",
+        "name": "getCustomPrebuiltDomainIntentsList",
+        "entityName": "",
+        "entityType": "",
+        "queries": []
+      },
+      {
+        "description": "Adds a custom prebuilt intent model to the application",
+        "method": "post",
+        "name": "addCustomPrebuiltIntent",
+        "entityName": "prebuiltDomainModelCreateObject",
+        "entityType": "PrebuiltDomainModelCreateObject",
+        "queries": []
+      }
+    ]
+  },
+  "customprebuiltentities": {
+    "className": "Customprebuiltentities",
+    "url": "/apps/{appId}/versions/{versionId}/customprebuiltentities",
+    "operations": [
+      {
+        "description": "Gets all custom prebuilt entities information of this application",
+        "method": "get",
+        "name": "getCustomPrebuiltDomainEntitiesList",
+        "entityName": "",
+        "entityType": "",
+        "queries": []
+      },
+      {
+        "description": "Adds a custom prebuilt entity model to the application",
+        "method": "post",
+        "name": "addCustomPrebuiltEntity",
+        "entityName": "prebuiltDomainModelCreateObject",
+        "entityType": "PrebuiltDomainModelCreateObject",
+        "queries": []
+      }
+    ]
+  },
+  "customprebuiltmodels": {
+    "className": "Customprebuiltmodels",
+    "url": "/apps/{appId}/versions/{versionId}/customprebuiltmodels",
+    "operations": [
+      {
+        "description": "Gets all custom prebuilt models information of this application",
+        "method": "get",
+        "name": "getCustomPrebuiltDomainModelsList",
+        "entityName": "",
+        "entityType": "",
+        "queries": []
+      }
+    ]
+  }
+}

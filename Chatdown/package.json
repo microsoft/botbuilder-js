@@ -22,7 +22,7 @@
   "dependencies": {
     "botbuilder-schema": "^4.0.0-m1.5",
     "chalk": "^2.3.1",
-    "cli-table": "^0.3.1",
+    "cli-table2": "^0.2.0",
     "fs-extra": "^5.0.0",
     "mime-types": "^2.1.18",
     "minimist": "^1.2.0",

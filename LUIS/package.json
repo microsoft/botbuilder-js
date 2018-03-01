@@ -1,0 +1,44 @@
+{
+  "name": "luis",
+  "version": "1.0.0",
+  "description": "Tooling for connectivity with LUIS APIs",
+  "main": "index.js",
+  "bin": {
+    "luis": "luis.js"
+  },
+  "directories": {
+    "doc": "docs",
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Microsoft/botbuilder-tools.git"
+  },
+  "author": "Microsoft",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Microsoft/botbuilder-tools/issues"
+  },
+  "homepage": "https://github.com/Microsoft/botbuilder-tools#readme",
+  "dependencies": {
+    "ajv": "^6.2.0",
+    "cli-table": "^0.3.1",
+    "minimist": "^1.2.0",
+    "node-fetch": "^2.0.0",
+    "prompt": "^1.0.0"
+  },
+  "devDependencies": {
+    "camelcase": "^4.1.0",
+    "eslint": "^4.18.1",
+    "eslint-config-standard": "^11.0.0",
+    "eslint-plugin-import": "^2.9.0",
+    "eslint-plugin-node": "^6.0.1",
+    "eslint-plugin-promise": "^3.6.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "fs-extra": "^5.0.0"
+  }
+}
