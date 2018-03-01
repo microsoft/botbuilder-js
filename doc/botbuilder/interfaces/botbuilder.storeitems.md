@@ -1,4 +1,4 @@
-[Bot Builder SDK - Core](../README.md) > [StoreItems](../interfaces/botbuilder.storeitems.md)
+[Bot Builder SDK](../README.md) > [StoreItems](../interfaces/botbuilder.storeitems.md)
 
 
 

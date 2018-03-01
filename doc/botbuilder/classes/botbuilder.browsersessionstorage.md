@@ -1,29 +1,16 @@
-[Bot Builder SDK - Core](../README.md) > [BrowserSessionStorage](../classes/botbuilder.browsersessionstorage.md)
+[Bot Builder SDK](../README.md) > [BrowserSessionStorage](../classes/botbuilder.browsersessionstorage.md)
 
 
 
 # Class: BrowserSessionStorage
 
 
-Storage middleware that uses browser session storage.
-
-**Extends BotContext:**
-
-*   context.storage - Storage provider for storing and retrieving objects.
-
-**Usage Example**
-
-    const bot = new Bot(adapter)
-         .use(new BrowserSessionStorage())
-         .use(new BotStateManage())
-         .onReceive((context) => {
-             context.reply(`Hello World`);
-         })
+Storage provider that uses browser session storage.
 
 ## Hierarchy
 
 
-↳  [MemoryStorage](botbuilder.memorystorage.md)
+ [MemoryStorage](botbuilder.memorystorage.md)
 
 **↳ BrowserSessionStorage**
 
@@ -35,7 +22,6 @@ Storage middleware that uses browser session storage.
 
 ## Implements
 
-* [Middleware](../interfaces/botbuilder.middleware.md)
 * [Storage](../interfaces/botbuilder.storage.md)
 
 ## Index
@@ -48,18 +34,12 @@ Storage middleware that uses browser session storage.
 ### Properties
 
 * [etag](botbuilder.browsersessionstorage.md#etag)
-* [instance](botbuilder.browsersessionstorage.md#instance)
 * [memory](botbuilder.browsersessionstorage.md#memory)
-* [name](botbuilder.browsersessionstorage.md#name)
-* [settings](botbuilder.browsersessionstorage.md#settings)
 
 
 ### Methods
 
-* [contextCreated](botbuilder.browsersessionstorage.md#contextcreated)
 * [delete](botbuilder.browsersessionstorage.md#delete)
-* [getService](botbuilder.browsersessionstorage.md#getservice)
-* [getStorage](botbuilder.browsersessionstorage.md#getstorage)
 * [read](botbuilder.browsersessionstorage.md#read)
 * [write](botbuilder.browsersessionstorage.md#write)
 
@@ -70,20 +50,12 @@ Storage middleware that uses browser session storage.
 <a id="constructor"></a>
 
 
-### ⊕ **new BrowserSessionStorage**(options?: *[StorageSettings](../interfaces/botbuilder.storagesettings.md)*): [BrowserSessionStorage](botbuilder.browsersessionstorage.md)
+### ⊕ **new BrowserSessionStorage**(): [BrowserSessionStorage](botbuilder.browsersessionstorage.md)
 
 
 *Overrides [MemoryStorage](botbuilder.memorystorage.md).[constructor](botbuilder.memorystorage.md#constructor)*
 
-*Defined in [libraries/botbuilder/lib/browserStorage.d.ts:47](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/browserStorage.d.ts#L47)*
-
-
-
-**Parameters:**
-
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| options | [StorageSettings](../interfaces/botbuilder.storagesettings.md)   |  - |
+*Defined in [libraries/botbuilder-core-extensions/lib/browserStorage.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/f986273/libraries/botbuilder-core-extensions/lib/browserStorage.d.ts#L18)*
 
 
 
@@ -103,23 +75,7 @@ Storage middleware that uses browser session storage.
 
 *Inherited from [MemoryStorage](botbuilder.memorystorage.md).[etag](botbuilder.memorystorage.md#etag)*
 
-*Defined in [libraries/botbuilder/lib/memoryStorage.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/memoryStorage.d.ts#L31)*
-
-
-
-
-
-___
-
-<a id="instance"></a>
-
-### «Protected» instance
-
-**●  instance**:  *[Storage](../interfaces/botbuilder.storage.md)⎮`undefined`* 
-
-*Inherited from [BotService](botbuilder.botservice.md).[instance](botbuilder.botservice.md#instance)*
-
-*Defined in [libraries/botbuilder/lib/botService.d.ts:22](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/botService.d.ts#L22)*
+*Defined in [libraries/botbuilder-core-extensions/lib/memoryStorage.d.ts:16](https://github.com/Microsoft/botbuilder-js/blob/f986273/libraries/botbuilder-core-extensions/lib/memoryStorage.d.ts#L16)*
 
 
 
@@ -135,7 +91,7 @@ ___
 
 *Inherited from [MemoryStorage](botbuilder.memorystorage.md).[memory](botbuilder.memorystorage.md#memory)*
 
-*Defined in [libraries/botbuilder/lib/memoryStorage.d.ts:28](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/memoryStorage.d.ts#L28)*
+*Defined in [libraries/botbuilder-core-extensions/lib/memoryStorage.d.ts:13](https://github.com/Microsoft/botbuilder-js/blob/f986273/libraries/botbuilder-core-extensions/lib/memoryStorage.d.ts#L13)*
 
 
 #### Type declaration
@@ -150,76 +106,8 @@ ___
 
 ___
 
-<a id="name"></a>
-
-### «Protected» name
-
-**●  name**:  *`string`* 
-
-*Inherited from [BotService](botbuilder.botservice.md).[name](botbuilder.botservice.md#name)*
-
-*Defined in [libraries/botbuilder/lib/botService.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/botService.d.ts#L21)*
-
-
-
-
-
-___
-
-<a id="settings"></a>
-
-###  settings
-
-**●  settings**:  *[StorageSettings](../interfaces/botbuilder.storagesettings.md)* 
-
-*Inherited from [StorageMiddleware](botbuilder.storagemiddleware.md).[settings](botbuilder.storagemiddleware.md#settings)*
-
-*Defined in [libraries/botbuilder/lib/storageMiddleware.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/storageMiddleware.d.ts#L18)*
-
-
-
-Settings that configure the various features of the storage provider.
-
-
-
-
-___
-
 
 ## Methods
-<a id="contextcreated"></a>
-
-###  contextCreated
-
-► **contextCreated**(context: *[BotContext](../interfaces/botbuilder.__global.botcontext.md)*, next: *`function`*): `Promise`.<`void`>
-
-
-
-*Inherited from [BotService](botbuilder.botservice.md).[contextCreated](botbuilder.botservice.md#contextcreated)*
-
-*Defined in [libraries/botbuilder/lib/botService.d.ts:32](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/botService.d.ts#L32)*
-
-
-
-**Parameters:**
-
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| context | [BotContext](../interfaces/botbuilder.__global.botcontext.md)   |  - |
-| next | `function`   |  - |
-
-
-
-
-
-**Returns:** `Promise`.<`void`>
-
-
-
-
-
-___
-
 <a id="delete"></a>
 
 ###  delete
@@ -232,7 +120,7 @@ ___
 
 *Inherited from [MemoryStorage](botbuilder.memorystorage.md).[delete](botbuilder.memorystorage.md#delete)*
 
-*Defined in [libraries/botbuilder/lib/memoryStorage.d.ts:43](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/memoryStorage.d.ts#L43)*
+*Defined in [libraries/botbuilder-core-extensions/lib/memoryStorage.d.ts:26](https://github.com/Microsoft/botbuilder-js/blob/f986273/libraries/botbuilder-core-extensions/lib/memoryStorage.d.ts#L26)*
 
 
 
@@ -254,74 +142,6 @@ ___
 
 ___
 
-<a id="getservice"></a>
-
-### «Protected» getService
-
-► **getService**(context: *[BotContext](../interfaces/botbuilder.__global.botcontext.md)*): [Storage](../interfaces/botbuilder.storage.md)
-
-
-
-*Inherited from [StorageMiddleware](botbuilder.storagemiddleware.md).[getService](botbuilder.storagemiddleware.md#getservice)*
-
-*Overrides [BotService](botbuilder.botservice.md).[getService](botbuilder.botservice.md#getservice)*
-
-*Defined in [libraries/botbuilder/lib/storageMiddleware.d.ts:25](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/storageMiddleware.d.ts#L25)*
-
-
-
-**Parameters:**
-
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| context | [BotContext](../interfaces/botbuilder.__global.botcontext.md)   |  - |
-
-
-
-
-
-**Returns:** [Storage](../interfaces/botbuilder.storage.md)
-
-
-
-
-
-___
-
-<a id="getstorage"></a>
-
-### «Protected» getStorage
-
-► **getStorage**(context: *[BotContext](../interfaces/botbuilder.__global.botcontext.md)*): [Storage](../interfaces/botbuilder.storage.md)
-
-
-
-*Inherited from [MemoryStorage](botbuilder.memorystorage.md).[getStorage](botbuilder.memorystorage.md#getstorage)*
-
-*Overrides [StorageMiddleware](botbuilder.storagemiddleware.md).[getStorage](botbuilder.storagemiddleware.md#getstorage)*
-
-*Defined in [libraries/botbuilder/lib/memoryStorage.d.ts:44](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/memoryStorage.d.ts#L44)*
-
-
-
-**Parameters:**
-
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| context | [BotContext](../interfaces/botbuilder.__global.botcontext.md)   |  - |
-
-
-
-
-
-**Returns:** [Storage](../interfaces/botbuilder.storage.md)
-
-
-
-
-
-___
-
 <a id="read"></a>
 
 ###  read
@@ -334,7 +154,7 @@ ___
 
 *Inherited from [MemoryStorage](botbuilder.memorystorage.md).[read](botbuilder.memorystorage.md#read)*
 
-*Defined in [libraries/botbuilder/lib/memoryStorage.d.ts:41](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/memoryStorage.d.ts#L41)*
+*Defined in [libraries/botbuilder-core-extensions/lib/memoryStorage.d.ts:24](https://github.com/Microsoft/botbuilder-js/blob/f986273/libraries/botbuilder-core-extensions/lib/memoryStorage.d.ts#L24)*
 
 
 
@@ -368,7 +188,7 @@ ___
 
 *Inherited from [MemoryStorage](botbuilder.memorystorage.md).[write](botbuilder.memorystorage.md#write)*
 
-*Defined in [libraries/botbuilder/lib/memoryStorage.d.ts:42](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/memoryStorage.d.ts#L42)*
+*Defined in [libraries/botbuilder-core-extensions/lib/memoryStorage.d.ts:25](https://github.com/Microsoft/botbuilder-js/blob/f986273/libraries/botbuilder-core-extensions/lib/memoryStorage.d.ts#L25)*
 
 
 

@@ -11,6 +11,16 @@ export interface CachedBotState<T extends StoreItem> {
     state: T;
     hash: string;
 }
+/**
+ * Reads and writes state for your bot to storage. When used as middleware the state will
+ * automatically be read in before your bots logic runs and then written back out open
+ * completion of your bots logic.
+ *
+ * | package | middleware |
+ * | ------- | :--------: |
+ * | botbuilder-core-extensions | yes |
+ *
+ */
 export declare class BotState<T extends StoreItem = StoreItem> implements Middleware {
     protected storage: Storage;
     protected cacheKey: string;
