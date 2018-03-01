@@ -15,7 +15,7 @@
 
 **●  mechantId**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1164](https://github.com/Microsoft/botbuilder-js/blob/57c9ba8/libraries/botframework-schema/lib/index.d.ts#L1164)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1164](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botframework-schema/lib/index.d.ts#L1164)*
 
 
 *__member__*: {string} [mechantId] Microsoft Pay Merchant ID
@@ -32,7 +32,7 @@ ___
 
 **●  supportedNetworks**:  *`string`[]* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1169](https://github.com/Microsoft/botbuilder-js/blob/57c9ba8/libraries/botframework-schema/lib/index.d.ts#L1169)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1169](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botframework-schema/lib/index.d.ts#L1169)*
 
 
 *__member__*: {string[]} [supportedNetworks] Supported payment networks (e.g., "visa" and "mastercard")
@@ -49,7 +49,7 @@ ___
 
 **●  supportedTypes**:  *`string`[]* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1174](https://github.com/Microsoft/botbuilder-js/blob/57c9ba8/libraries/botframework-schema/lib/index.d.ts#L1174)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1174](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botframework-schema/lib/index.d.ts#L1174)*
 
 
 *__member__*: {string[]} [supportedTypes] Supported payment types (e.g., "credit")

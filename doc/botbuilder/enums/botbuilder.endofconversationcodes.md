@@ -34,7 +34,7 @@ Defines values for EndOfConversationCodes. Possible values include: 'unknown', '
 
 ** BotIssuedInvalidMessage**:    = "botIssuedInvalidMessage"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1710](https://github.com/Microsoft/botbuilder-js/blob/57c9ba8/libraries/botframework-schema/lib/index.d.ts#L1710)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1710](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botframework-schema/lib/index.d.ts#L1710)*
 
 
 
@@ -48,7 +48,7 @@ ___
 
 ** BotTimedOut**:    = "botTimedOut"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1709](https://github.com/Microsoft/botbuilder-js/blob/57c9ba8/libraries/botframework-schema/lib/index.d.ts#L1709)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1709](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botframework-schema/lib/index.d.ts#L1709)*
 
 
 
@@ -62,7 +62,7 @@ ___
 
 ** ChannelFailed**:    = "channelFailed"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1711](https://github.com/Microsoft/botbuilder-js/blob/57c9ba8/libraries/botframework-schema/lib/index.d.ts#L1711)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1711](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botframework-schema/lib/index.d.ts#L1711)*
 
 
 
@@ -76,7 +76,7 @@ ___
 
 ** CompletedSuccessfully**:    = "completedSuccessfully"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1707](https://github.com/Microsoft/botbuilder-js/blob/57c9ba8/libraries/botframework-schema/lib/index.d.ts#L1707)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1707](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botframework-schema/lib/index.d.ts#L1707)*
 
 
 
@@ -90,7 +90,7 @@ ___
 
 ** Unknown**:    = "unknown"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1706](https://github.com/Microsoft/botbuilder-js/blob/57c9ba8/libraries/botframework-schema/lib/index.d.ts#L1706)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1706](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botframework-schema/lib/index.d.ts#L1706)*
 
 
 
@@ -104,7 +104,7 @@ ___
 
 ** UserCancelled**:    = "userCancelled"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1708](https://github.com/Microsoft/botbuilder-js/blob/57c9ba8/libraries/botframework-schema/lib/index.d.ts#L1708)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1708](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botframework-schema/lib/index.d.ts#L1708)*
 
 
 

@@ -30,7 +30,7 @@ Defines values for MessageReactionTypes. Possible values include: 'like', 'plusO
 
 ** Like**:    = "like"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1649](https://github.com/Microsoft/botbuilder-js/blob/57c9ba8/libraries/botframework-schema/lib/index.d.ts#L1649)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1649](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botframework-schema/lib/index.d.ts#L1649)*
 
 
 
@@ -44,7 +44,7 @@ ___
 
 ** PlusOne**:    = "plusOne"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1650](https://github.com/Microsoft/botbuilder-js/blob/57c9ba8/libraries/botframework-schema/lib/index.d.ts#L1650)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1650](https://github.com/Microsoft/botbuilder-js/blob/8495ddc/libraries/botframework-schema/lib/index.d.ts#L1650)*
 
 
 
