@@ -15,6 +15,10 @@ export type TestActivityInspector = (activity: Partial<Activity>, description: s
 
 /**
  * Test adapter used for unit tests.
+ * 
+ * | package | middleware |
+ * | ------- | :--------: |
+ * | botbuilder-core-extensions | yes | 
  */
 export class TestAdapter extends BotAdapter {
     private nextId = 0;

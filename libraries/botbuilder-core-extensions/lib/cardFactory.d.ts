@@ -20,6 +20,10 @@ import { Attachment, MediaUrl, CardAction, AnimationCard, CardImage, HeroCard, R
  *      ['buy']
  * );
  * ```
+ *
+ * | package | middleware |
+ * | ------- | :--------: |
+ * | botbuilder-core-extensions | no |
  */
 export declare class CardFactory {
     /** List of content types for each card style. */

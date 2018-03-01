@@ -7,6 +7,13 @@
  */
 import { BotContext, Middleware } from 'botbuilder-core';
 import { Storage, StoreItem, StorageKeyFactory } from './storage';
+/**
+ * State information cached off the context object by a `BotState` instance.
+ *
+ * | package |
+ * | ------- |
+ * | botbuilder-core-extensions |
+ */
 export interface CachedBotState<T extends StoreItem> {
     state: T;
     hash: string;
@@ -19,7 +26,6 @@ export interface CachedBotState<T extends StoreItem> {
  * | package | middleware |
  * | ------- | :--------: |
  * | botbuilder-core-extensions | yes |
- *
  */
 export declare class BotState<T extends StoreItem = StoreItem> implements Middleware {
     protected storage: Storage;

@@ -10,13 +10,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const botbuilder_core_1 = require("botbuilder-core");
 const botframework_connector_1 = require("botframework-connector");
 /**
-* ActivityAdapter class needed to communicate with a Bot Framework channel or the Emulator.
-*
-* **Usage Example**
-*
-* ```JavaScript
-* ```
-*/
+ * ActivityAdapter class needed to communicate with a Bot Framework channel or the Emulator.
+ *
+ * **Usage Example**
+ *
+ * ```JavaScript
+ * ```
+ *
+ * | package | middleware |
+ * | ------- | :--------: |
+ * | botbuilder | no |
+ */
 class BotFrameworkAdapter extends botbuilder_core_1.BotAdapter {
     /**
      * Creates a new BotFrameworkAdapter instance.

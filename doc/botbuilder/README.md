@@ -60,8 +60,35 @@
 
 **Τ DeleteActivityHandler**:  *`function`* 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:13](https://github.com/Microsoft/botbuilder-js/blob/f986273/libraries/botbuilder-core/lib/botContext.d.ts#L13)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:34](https://github.com/Microsoft/botbuilder-js/blob/b68a82a/libraries/botbuilder-core/lib/botContext.d.ts#L34)*
 
+
+
+Signature implemented by functions registered with `context.onDeleteActivity()`.
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>package</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>botbuilder-core</td>
+
+</tr>
+
+</tbody>
+
+</table>
 
 #### Type declaration
 ►(reference: *[Partial]()`ConversationReference`*, next: *`function`*): [Promiseable]()`void`
@@ -94,8 +121,35 @@ ___
 
 **Τ SendActivitiesHandler**:  *`function`* 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:11](https://github.com/Microsoft/botbuilder-js/blob/f986273/libraries/botbuilder-core/lib/botContext.d.ts#L11)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/b68a82a/libraries/botbuilder-core/lib/botContext.d.ts#L18)*
 
+
+
+Signature implemented by functions registered with `context.onSendActivities()`.
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>package</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>botbuilder-core</td>
+
+</tr>
+
+</tbody>
+
+</table>
 
 #### Type declaration
 ►(activities: *[Partial]()`Activity`[]*, next: *`function`*): [Promiseable]()`ResourceResponse`[]
@@ -128,7 +182,7 @@ ___
 
 **Τ StorageKeyFactory**:  *`function`* 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/storage.d.ts:13](https://github.com/Microsoft/botbuilder-js/blob/f986273/libraries/botbuilder-core-extensions/lib/storage.d.ts#L13)*
+*Defined in [libraries/botbuilder-core-extensions/lib/storage.d.ts:13](https://github.com/Microsoft/botbuilder-js/blob/b68a82a/libraries/botbuilder-core-extensions/lib/storage.d.ts#L13)*
 
 
 
@@ -164,7 +218,7 @@ ___
 
 **Τ TestActivityInspector**:  *`function`* 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:9](https://github.com/Microsoft/botbuilder-js/blob/f986273/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L9)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:9](https://github.com/Microsoft/botbuilder-js/blob/b68a82a/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L9)*
 
 
 #### Type declaration
@@ -198,8 +252,35 @@ ___
 
 **Τ UpdateActivityHandler**:  *`function`* 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:12](https://github.com/Microsoft/botbuilder-js/blob/f986273/libraries/botbuilder-core/lib/botContext.d.ts#L12)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:26](https://github.com/Microsoft/botbuilder-js/blob/b68a82a/libraries/botbuilder-core/lib/botContext.d.ts#L26)*
 
+
+
+Signature implemented by functions registered with `context.onUpdateActivity()`.
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>package</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>botbuilder-core</td>
+
+</tr>
+
+</tbody>
+
+</table>
 
 #### Type declaration
 ►(activity: *[Partial]()`Activity`*, next: *`function`*): [Promiseable]()`void`
@@ -236,15 +317,42 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/storage.d.ts:46](https://github.com/Microsoft/botbuilder-js/blob/f986273/libraries/botbuilder-core-extensions/lib/storage.d.ts#L46)*
+*Defined in [libraries/botbuilder-core-extensions/lib/storage.d.ts:73](https://github.com/Microsoft/botbuilder-js/blob/b68a82a/libraries/botbuilder-core-extensions/lib/storage.d.ts#L73)*
 
+
+
+Utility function to calculate a change hash for a `StoreItem`.
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>package</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>botbuilder-core-extensions</td>
+
+</tr>
+
+</tbody>
+
+</table>
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| item | [StoreItem](interfaces/botbuilder.storeitem.md)   |  - |
+| item | [StoreItem](interfaces/botbuilder.storeitem.md)   |  Item to calculate the change hash for. |
 
 
 

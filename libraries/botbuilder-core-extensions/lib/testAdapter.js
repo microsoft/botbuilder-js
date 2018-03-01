@@ -11,6 +11,10 @@ const botbuilder_core_1 = require("botbuilder-core");
 const assert = require("assert");
 /**
  * Test adapter used for unit tests.
+ *
+ * | package | middleware |
+ * | ------- | :--------: |
+ * | botbuilder-core-extensions | yes |
  */
 class TestAdapter extends botbuilder_core_1.BotAdapter {
     /**

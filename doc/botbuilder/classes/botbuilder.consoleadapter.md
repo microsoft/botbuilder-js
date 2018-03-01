@@ -9,6 +9,34 @@ Lets a user communicate with a bot from a console window.
 
 **Usage Example**
 
+<table>
+
+<thead>
+
+<tr>
+
+<th>package</th>
+
+<th style="text-align:center">middleware</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>botbuilder</td>
+
+<td style="text-align:center">no</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
 ## Hierarchy
 
 
@@ -52,7 +80,7 @@ Lets a user communicate with a bot from a console window.
 ### ⊕ **new ConsoleAdapter**(reference?: *`ConversationReference`*): [ConsoleAdapter](botbuilder.consoleadapter.md)
 
 
-*Defined in [libraries/botbuilder/lib/consoleAdapter.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/f986273/libraries/botbuilder/lib/consoleAdapter.d.ts#L21)*
+*Defined in [libraries/botbuilder/lib/consoleAdapter.d.ts:25](https://github.com/Microsoft/botbuilder-js/blob/b68a82a/libraries/botbuilder/lib/consoleAdapter.d.ts#L25)*
 
 
 
@@ -80,7 +108,7 @@ Lets a user communicate with a bot from a console window.
 
 
 
-*Defined in [libraries/botbuilder/lib/consoleAdapter.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/f986273/libraries/botbuilder/lib/consoleAdapter.d.ts#L31)*
+*Defined in [libraries/botbuilder/lib/consoleAdapter.d.ts:35](https://github.com/Microsoft/botbuilder-js/blob/b68a82a/libraries/botbuilder/lib/consoleAdapter.d.ts#L35)*
 
 
 
@@ -110,7 +138,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/consoleAdapter.d.ts:30](https://github.com/Microsoft/botbuilder-js/blob/f986273/libraries/botbuilder/lib/consoleAdapter.d.ts#L30)*
+*Defined in [libraries/botbuilder/lib/consoleAdapter.d.ts:34](https://github.com/Microsoft/botbuilder-js/blob/b68a82a/libraries/botbuilder/lib/consoleAdapter.d.ts#L34)*
 
 
 
@@ -140,7 +168,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/consoleAdapter.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/f986273/libraries/botbuilder/lib/consoleAdapter.d.ts#L27)*
+*Defined in [libraries/botbuilder/lib/consoleAdapter.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/b68a82a/libraries/botbuilder/lib/consoleAdapter.d.ts#L31)*
 
 
 
@@ -173,7 +201,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/consoleAdapter.d.ts:28](https://github.com/Microsoft/botbuilder-js/blob/f986273/libraries/botbuilder/lib/consoleAdapter.d.ts#L28)*
+*Defined in [libraries/botbuilder/lib/consoleAdapter.d.ts:32](https://github.com/Microsoft/botbuilder-js/blob/b68a82a/libraries/botbuilder/lib/consoleAdapter.d.ts#L32)*
 
 
 
@@ -203,7 +231,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/consoleAdapter.d.ts:29](https://github.com/Microsoft/botbuilder-js/blob/f986273/libraries/botbuilder/lib/consoleAdapter.d.ts#L29)*
+*Defined in [libraries/botbuilder/lib/consoleAdapter.d.ts:33](https://github.com/Microsoft/botbuilder-js/blob/b68a82a/libraries/botbuilder/lib/consoleAdapter.d.ts#L33)*
 
 
 

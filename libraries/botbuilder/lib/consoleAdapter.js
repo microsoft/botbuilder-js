@@ -16,6 +16,10 @@ const readline = require("readline");
  *
  * ```JavaScript
  * ```
+ *
+ * | package | middleware |
+ * | ------- | :--------: |
+ * | botbuilder | no |
  */
 class ConsoleAdapter extends botbuilder_core_1.BotAdapter {
     constructor(reference) {

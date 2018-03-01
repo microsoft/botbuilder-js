@@ -22,6 +22,10 @@ const botbuilder_core_1 = require("botbuilder-core");
  *      ['buy']
  * );
  * ```
+ *
+ * | package | middleware |
+ * | ------- | :--------: |
+ * | botbuilder-core-extensions | no |
  */
 class CardFactory {
     /**

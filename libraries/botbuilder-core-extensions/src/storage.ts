@@ -13,7 +13,13 @@ import { BotContext, Promiseable } from 'botbuilder-core';
  */
 export type StorageKeyFactory = (context: BotContext) => Promiseable<string>; 
 
-/** Interface for a store provider that stores and retrieves objects **/
+/** 
+ * Interface for a store provider that stores and retrieves objects. 
+ * 
+ * | package |
+ * | ------- |
+ * | botbuilder-core-extensions | 
+ */
 export interface Storage {
     /** 
      * Loads store items from storage
@@ -37,7 +43,13 @@ export interface Storage {
     delete(keys: string[]): Promise<void>;
 }
 
-/** Object which is stored in Storage with an optional eTag */
+/** 
+ * Object which is stored in Storage with an optional eTag.
+ * 
+ * | package |
+ * | ------- |
+ * | botbuilder-core-extensions | 
+ */
 export interface StoreItem {
     /** Key/value pairs. */
     [key: string]: any;
@@ -46,11 +58,26 @@ export interface StoreItem {
     eTag?: string;
 }
 
-/** Map of named `StoreItem` objects. */
+/** 
+ * Map of named `StoreItem` objects. 
+ * 
+ * | package |
+ * | ------- |
+ * | botbuilder-core-extensions | 
+ */
 export interface StoreItems {
     [key: string]: StoreItem;
 }
 
+/**
+ * Utility function to calculate a change hash for a `StoreItem`.
+ * 
+ * | package |
+ * | ------- |
+ * | botbuilder-core-extensions | 
+ * 
+ * @param item Item to calculate the change hash for.
+ */
 export function calculateChangeHash(item: StoreItem): string {
     const cpy = Object.assign({}, item);
     if (cpy.eTag) { delete cpy.eTag };

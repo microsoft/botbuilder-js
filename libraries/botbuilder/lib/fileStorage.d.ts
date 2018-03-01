@@ -6,7 +6,13 @@
  * Licensed under the MIT License.
  */
 import { Storage, StoreItems } from 'botbuilder-core-extensions';
-/** Additional settings for configuring an instance of `FileStorage`. */
+/**
+ * Additional settings for configuring an instance of `FileStorage`.
+ *
+ * | package |
+ * | ------- |
+ * | botbuilder |
+ */
 export interface FileStorageSettings {
     /**
      * (Optional) path to the backing folder. The default is to use a `storage` folder off
@@ -21,6 +27,10 @@ export interface FileStorageSettings {
  *
  * ```JavaScript
  * ```
+ *
+ * | package | middleware |
+ * | ------- | :--------: |
+ * | botbuilder | no |
  */
 export declare class FileStorage implements Storage {
     private pEnsureFolder;

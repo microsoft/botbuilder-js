@@ -4,6 +4,15 @@ const botState_1 = require("./botState");
 const DEFAULT_CHACHE_KEY = 'userState';
 const NOT_CACHED = `UserState: state not found. Ensure UserState middleware is added to adapter or that UserState.read() has been called.`;
 const NO_KEY = `UserState: channelId and/or conversation missing from context.request.`;
+/**
+ * Reads and writes user state for your bot to storage. When used as middleware the state
+ * will automatically be read in before your bots logic runs and then written back out open
+ * completion of your bots logic.
+ *
+ * | package | middleware |
+ * | ------- | :--------: |
+ * | botbuilder-core-extensions | yes |
+ */
 class UserState extends botState_1.BotState {
     /**
      * Creates a new UserState instance.

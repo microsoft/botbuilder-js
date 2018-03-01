@@ -29,6 +29,10 @@ import {
  *
  * context.sendActivities(message); // send message
  * ```
+ * 
+ * | package | middleware |
+ * | ------- | :--------: |
+ * | botbuilder-core-extensions | no | 
  */
 export class MessageFactory {
     /**

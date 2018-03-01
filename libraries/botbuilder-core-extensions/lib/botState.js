@@ -9,7 +9,6 @@ const storage_1 = require("./storage");
  * | package | middleware |
  * | ------- | :--------: |
  * | botbuilder-core-extensions | yes |
- *
  */
 class BotState {
     /**

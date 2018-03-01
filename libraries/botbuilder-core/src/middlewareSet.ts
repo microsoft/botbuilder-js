@@ -11,22 +11,44 @@ import { BotContext } from './botContext';
 /**
  * Type signature for a return value that can (Optionally) return its value
  * asynchronously using a Promise.
+ * 
+ * | package |
+ * | ------- |
+ * | botbuilder-core | 
  * @param T (Optional) type of value being returned. This defaults to `void`.
  */
 export type Promiseable <T = void> = Promise<T>|T;
 
+/** 
+ * Interface implemented by object based middleware. 
+ * 
+ * | package |
+ * | ------- |
+ * | botbuilder-core | 
+ */
 export interface Middleware {
     onProcessRequest(context: BotContext, next: () => Promise<void>): Promiseable<void>;
 }
 
+/** 
+ * Signature implemented by function based middleware. 
+ * 
+ * | package |
+ * | ------- |
+ * | botbuilder-core | 
+ */
 export type MiddlewareHandler = (context: BotContext, next: () => Promise<void>) => Promiseable<void>;
 
 /**
  * A set of `Middleware` plugins. The set itself is middleware so you can easily package up a set
  * of middleware that can be composed into a bot with a single `bot.use(mySet)` call or even into
  * another middleware set using `set.use(mySet)`.
+ * 
+ * | package | middleware |
+ * | ------- | :--------: |
+ * | botbuilder-core | no | 
  */
-export class MiddlewareSet {
+export class MiddlewareSet implements Middleware {
     private middleware: MiddlewareHandler[] = [];
 
     /**
@@ -35,6 +57,10 @@ export class MiddlewareSet {
      */
     constructor(...middleware: (MiddlewareHandler|Middleware)[]) {
         MiddlewareSet.prototype.use.apply(this, middleware);
+    }
+
+    public onProcessRequest(context: BotContext, next: () => Promise<void>): Promise<void> {
+        return this.run(context, next);
     }
 
     /**

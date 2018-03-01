@@ -17,6 +17,10 @@ import { Activity, CardAction, Attachment, InputHints } from 'botbuilder-core';
  *
  * context.sendActivities(message); // send message
  * ```
+ *
+ * | package | middleware |
+ * | ------- | :--------: |
+ * | botbuilder-core-extensions | no |
  */
 export declare class MessageFactory {
     /**

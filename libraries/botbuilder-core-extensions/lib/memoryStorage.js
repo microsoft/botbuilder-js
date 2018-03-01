@@ -2,6 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * Memory based storage provider for a bot.
+ *
+ * | package | middleware |
+ * | ------- | :--------: |
+ * | botbuilder-core-extensions | no |
  */
 class MemoryStorage {
     /**

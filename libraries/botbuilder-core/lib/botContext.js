@@ -1,9 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const internal_1 = require("./internal");
+/**
+ * Context object containing information cached for a single turn of conversation with a user.
+ *
+ * | package | middleware |
+ * | ------- | :--------: |
+ * | botbuilder-core | no |
+ */
 class BotContext {
     /**
-     * Creates a new turn context instance.
+     * Creates a new BotContext instance for a turn of conversation.
      * @param adapter Adapter that constructed the context.
      * @param request Request being processed.
      */

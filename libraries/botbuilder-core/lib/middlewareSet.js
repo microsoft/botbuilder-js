@@ -4,6 +4,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * A set of `Middleware` plugins. The set itself is middleware so you can easily package up a set
  * of middleware that can be composed into a bot with a single `bot.use(mySet)` call or even into
  * another middleware set using `set.use(mySet)`.
+ *
+ * | package | middleware |
+ * | ------- | :--------: |
+ * | botbuilder-core | no |
  */
 class MiddlewareSet {
     /**
@@ -13,6 +17,9 @@ class MiddlewareSet {
     constructor(...middleware) {
         this.middleware = [];
         MiddlewareSet.prototype.use.apply(this, middleware);
+    }
+    onProcessRequest(context, next) {
+        return this.run(context, next);
     }
     /**
      * Registers middleware handlers(s) with the set.

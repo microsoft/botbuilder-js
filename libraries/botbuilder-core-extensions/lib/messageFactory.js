@@ -27,6 +27,10 @@ const botbuilder_core_1 = require("botbuilder-core");
  *
  * context.sendActivities(message); // send message
  * ```
+ *
+ * | package | middleware |
+ * | ------- | :--------: |
+ * | botbuilder-core-extensions | no |
  */
 class MessageFactory {
     /**

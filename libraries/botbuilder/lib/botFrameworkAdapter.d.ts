@@ -26,19 +26,29 @@ export interface WebResponse {
 export interface WebMiddleware {
     (req: WebRequest, res: WebResponse, next?: Function): void;
 }
-/** Bot Framework Adapter Settings */
+/**
+ * Bot Framework Adapter Settings.
+ *
+ * | package |
+ * | ------- |
+ * | botbuilder |
+ */
 export interface BotFrameworkAdapterSettings {
     appId: string;
     appPassword: string;
 }
 /**
-* ActivityAdapter class needed to communicate with a Bot Framework channel or the Emulator.
-*
-* **Usage Example**
-*
-* ```JavaScript
-* ```
-*/
+ * ActivityAdapter class needed to communicate with a Bot Framework channel or the Emulator.
+ *
+ * **Usage Example**
+ *
+ * ```JavaScript
+ * ```
+ *
+ * | package | middleware |
+ * | ------- | :--------: |
+ * | botbuilder | no |
+ */
 export declare class BotFrameworkAdapter extends BotAdapter {
     protected readonly credentials: MicrosoftAppCredentials;
     protected readonly credentialsProvider: SimpleCredentialProvider;

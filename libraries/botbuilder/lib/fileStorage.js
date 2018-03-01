@@ -12,6 +12,10 @@ const filenamify = require("filenamify");
  *
  * ```JavaScript
  * ```
+ *
+ * | package | middleware |
+ * | ------- | :--------: |
+ * | botbuilder | no |
  */
 class FileStorage {
     /**

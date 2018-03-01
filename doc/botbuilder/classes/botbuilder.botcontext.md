@@ -4,6 +4,71 @@
 
 # Class: BotContext
 
+
+Interface definition for `BotContext` class. This is an aid for TypeScript developers to help define the shape of the actual context object after middleware has added any extensions. Context object containing information cached for a single turn of conversation with a user.
+
+**Usage Example**
+
+    interface MyContext extends BotContext {
+         // Added by UserState middleware.
+         readonly userState: MyUserState;
+
+         // Added by ConversationState middleware.
+         readonly conversationState: MyConversationState;
+    }
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>package</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>botbuilder-core</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>package</th>
+
+<th style="text-align:center">middleware</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>botbuilder-core</td>
+
+<td style="text-align:center">no</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
 ## Index
 
 ### Constructors
@@ -42,11 +107,11 @@
 ### ⊕ **new BotContext**(adapter: *[BotAdapter](botbuilder.botadapter.md)*, request: *[Partial]()`Activity`*): [BotContext](botbuilder.botcontext.md)
 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:23](https://github.com/Microsoft/botbuilder-js/blob/f986273/libraries/botbuilder-core/lib/botContext.d.ts#L23)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:71](https://github.com/Microsoft/botbuilder-js/blob/b68a82a/libraries/botbuilder-core/lib/botContext.d.ts#L71)*
 
 
 
-Creates a new turn context instance.
+Creates a new BotContext instance for a turn of conversation.
 
 
 **Parameters:**
@@ -72,7 +137,7 @@ Creates a new turn context instance.
 
 **●  adapter**:  *[BotAdapter](botbuilder.botadapter.md)* 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/f986273/libraries/botbuilder-core/lib/botContext.d.ts#L31)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:79](https://github.com/Microsoft/botbuilder-js/blob/b68a82a/libraries/botbuilder-core/lib/botContext.d.ts#L79)*
 
 
 
@@ -89,7 +154,7 @@ ___
 
 **●  request**:  *`Activity`* 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:33](https://github.com/Microsoft/botbuilder-js/blob/f986273/libraries/botbuilder-core/lib/botContext.d.ts#L33)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:81](https://github.com/Microsoft/botbuilder-js/blob/b68a82a/libraries/botbuilder-core/lib/botContext.d.ts#L81)*
 
 
 
@@ -106,7 +171,7 @@ ___
 
 **●  responded**:  *`boolean`* 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:35](https://github.com/Microsoft/botbuilder-js/blob/f986273/libraries/botbuilder-core/lib/botContext.d.ts#L35)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:83](https://github.com/Microsoft/botbuilder-js/blob/b68a82a/libraries/botbuilder-core/lib/botContext.d.ts#L83)*
 
 
 
@@ -127,7 +192,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:68](https://github.com/Microsoft/botbuilder-js/blob/f986273/libraries/botbuilder-core/lib/botContext.d.ts#L68)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:116](https://github.com/Microsoft/botbuilder-js/blob/b68a82a/libraries/botbuilder-core/lib/botContext.d.ts#L116)*
 
 
 
@@ -160,7 +225,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:41](https://github.com/Microsoft/botbuilder-js/blob/f986273/libraries/botbuilder-core/lib/botContext.d.ts#L41)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:89](https://github.com/Microsoft/botbuilder-js/blob/b68a82a/libraries/botbuilder-core/lib/botContext.d.ts#L89)*
 
 
 
@@ -199,7 +264,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:46](https://github.com/Microsoft/botbuilder-js/blob/f986273/libraries/botbuilder-core/lib/botContext.d.ts#L46)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:94](https://github.com/Microsoft/botbuilder-js/blob/b68a82a/libraries/botbuilder-core/lib/botContext.d.ts#L94)*
 
 
 
@@ -232,7 +297,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:83](https://github.com/Microsoft/botbuilder-js/blob/f986273/libraries/botbuilder-core/lib/botContext.d.ts#L83)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:131](https://github.com/Microsoft/botbuilder-js/blob/b68a82a/libraries/botbuilder-core/lib/botContext.d.ts#L131)*
 
 
 
@@ -265,7 +330,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:73](https://github.com/Microsoft/botbuilder-js/blob/f986273/libraries/botbuilder-core/lib/botContext.d.ts#L73)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:121](https://github.com/Microsoft/botbuilder-js/blob/b68a82a/libraries/botbuilder-core/lib/botContext.d.ts#L121)*
 
 
 
@@ -298,7 +363,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:78](https://github.com/Microsoft/botbuilder-js/blob/f986273/libraries/botbuilder-core/lib/botContext.d.ts#L78)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:126](https://github.com/Microsoft/botbuilder-js/blob/b68a82a/libraries/botbuilder-core/lib/botContext.d.ts#L126)*
 
 
 
@@ -331,7 +396,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:58](https://github.com/Microsoft/botbuilder-js/blob/f986273/libraries/botbuilder-core/lib/botContext.d.ts#L58)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:106](https://github.com/Microsoft/botbuilder-js/blob/b68a82a/libraries/botbuilder-core/lib/botContext.d.ts#L106)*
 
 
 
@@ -364,7 +429,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:52](https://github.com/Microsoft/botbuilder-js/blob/f986273/libraries/botbuilder-core/lib/botContext.d.ts#L52)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:100](https://github.com/Microsoft/botbuilder-js/blob/b68a82a/libraries/botbuilder-core/lib/botContext.d.ts#L100)*
 
 
 
@@ -398,7 +463,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:63](https://github.com/Microsoft/botbuilder-js/blob/f986273/libraries/botbuilder-core/lib/botContext.d.ts#L63)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:111](https://github.com/Microsoft/botbuilder-js/blob/b68a82a/libraries/botbuilder-core/lib/botContext.d.ts#L111)*
 
 
 
@@ -431,7 +496,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:114](https://github.com/Microsoft/botbuilder-js/blob/f986273/libraries/botbuilder-core/lib/botContext.d.ts#L114)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:162](https://github.com/Microsoft/botbuilder-js/blob/b68a82a/libraries/botbuilder-core/lib/botContext.d.ts#L162)*
 
 
 
@@ -473,7 +538,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:96](https://github.com/Microsoft/botbuilder-js/blob/f986273/libraries/botbuilder-core/lib/botContext.d.ts#L96)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:144](https://github.com/Microsoft/botbuilder-js/blob/b68a82a/libraries/botbuilder-core/lib/botContext.d.ts#L144)*
 
 
 

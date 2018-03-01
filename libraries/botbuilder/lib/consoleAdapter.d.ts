@@ -15,6 +15,10 @@ import * as readline from 'readline';
  *
  * ```JavaScript
  * ```
+ *
+ * | package | middleware |
+ * | ------- | :--------: |
+ * | botbuilder | no |
  */
 export declare class ConsoleAdapter extends BotAdapter {
     private nextId;

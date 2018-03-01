@@ -10,12 +10,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const middlewareSet_1 = require("./middlewareSet");
 const internal_1 = require("./internal");
 /**
- * Manages all communication between the bot and a user.
+ * Abstract base class for all adapter plugins. Adapters manage the communication between the bot
+ * and a user over a specific channel, or set of channels.
  *
  * **Usage Example**
  *
  * ```JavaScript
  * ```
+ *
+ * | package | middleware |
+ * | ------- | :--------: |
+ * | botbuilder-core | no |
  */
 class BotAdapter {
     constructor() {

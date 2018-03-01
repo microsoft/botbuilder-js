@@ -9,6 +9,10 @@ import { BotAdapter, Activity, ConversationReference, Promiseable, BotContext, R
 export declare type TestActivityInspector = (activity: Partial<Activity>, description: string) => void;
 /**
  * Test adapter used for unit tests.
+ *
+ * | package | middleware |
+ * | ------- | :--------: |
+ * | botbuilder-core-extensions | yes |
  */
 export declare class TestAdapter extends BotAdapter {
     private botLogic;

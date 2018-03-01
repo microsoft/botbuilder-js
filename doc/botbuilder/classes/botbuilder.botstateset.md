@@ -4,6 +4,37 @@
 
 # Class: BotStateSet
 
+
+Middleware that will call `read()` and `write()` in parallel on multiple `BotState` instances.
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>package</th>
+
+<th style="text-align:center">middleware</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>botbuilder-core-extensions</td>
+
+<td style="text-align:center">yes</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
 ## Implements
 
 * `any`
@@ -32,7 +63,7 @@
 ### ⊕ **new BotStateSet**(...middleware: *[BotState](botbuilder.botstate.md)[]*): [BotStateSet](botbuilder.botstateset.md)
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botStateSet.d.ts:12](https://github.com/Microsoft/botbuilder-js/blob/f986273/libraries/botbuilder-core-extensions/lib/botStateSet.d.ts#L12)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botStateSet.d.ts:20](https://github.com/Microsoft/botbuilder-js/blob/b68a82a/libraries/botbuilder-core-extensions/lib/botStateSet.d.ts#L20)*
 
 
 
@@ -63,7 +94,7 @@ Creates a new BotStateSet instance.
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botStateSet.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/f986273/libraries/botbuilder-core-extensions/lib/botStateSet.d.ts#L18)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botStateSet.d.ts:26](https://github.com/Microsoft/botbuilder-js/blob/b68a82a/libraries/botbuilder-core-extensions/lib/botStateSet.d.ts#L26)*
 
 
 
@@ -94,7 +125,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botStateSet.d.ts:30](https://github.com/Microsoft/botbuilder-js/blob/f986273/libraries/botbuilder-core-extensions/lib/botStateSet.d.ts#L30)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botStateSet.d.ts:38](https://github.com/Microsoft/botbuilder-js/blob/b68a82a/libraries/botbuilder-core-extensions/lib/botStateSet.d.ts#L38)*
 
 
 
@@ -128,7 +159,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botStateSet.d.ts:23](https://github.com/Microsoft/botbuilder-js/blob/f986273/libraries/botbuilder-core-extensions/lib/botStateSet.d.ts#L23)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botStateSet.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/b68a82a/libraries/botbuilder-core-extensions/lib/botStateSet.d.ts#L31)*
 
 
 
@@ -161,7 +192,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botStateSet.d.ts:37](https://github.com/Microsoft/botbuilder-js/blob/f986273/libraries/botbuilder-core-extensions/lib/botStateSet.d.ts#L37)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botStateSet.d.ts:45](https://github.com/Microsoft/botbuilder-js/blob/b68a82a/libraries/botbuilder-core-extensions/lib/botStateSet.d.ts#L45)*
 
 
 

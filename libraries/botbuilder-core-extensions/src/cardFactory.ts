@@ -24,6 +24,10 @@ import {
  *      ['buy']
  * );
  * ```
+ * 
+ * | package | middleware |
+ * | ------- | :--------: |
+ * | botbuilder-core-extensions | no | 
  */
 export class CardFactory {
     /** List of content types for each card style. */

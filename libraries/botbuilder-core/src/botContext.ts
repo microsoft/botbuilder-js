@@ -10,14 +10,62 @@ import { BotAdapter } from './botAdapter';
 import { shallowCopy } from './internal';
 import { Promiseable } from './middlewareSet';
 
+/** 
+ * Signature implemented by functions registered with `context.onSendActivities()`. 
+ * 
+ * | package |
+ * | ------- |
+ * | botbuilder-core | 
+ */
 export type SendActivitiesHandler = (activities: Partial<Activity>[], next: () => Promise<ResourceResponse[]>) => Promiseable<ResourceResponse[]>;
 
+/** 
+ * Signature implemented by functions registered with `context.onUpdateActivity()`. 
+ * 
+ * | package |
+ * | ------- |
+ * | botbuilder-core | 
+ */
 export type UpdateActivityHandler = (activity: Partial<Activity>, next: () => Promise<void>) => Promiseable<void>;
 
+/** 
+ * Signature implemented by functions registered with `context.onDeleteActivity()`. 
+ * 
+ * | package |
+ * | ------- |
+ * | botbuilder-core | 
+ */
 export type DeleteActivityHandler = (reference: Partial<ConversationReference>, next: () => Promise<void>) => Promiseable<void>;
 
+/** 
+ * Interface definition for `BotContext` class. This is an aid for TypeScript developers to help
+ * define the shape of the actual context object after middleware has added any extensions. 
+ *
+ * **Usage Example**
+ *
+ * ```JavaScript
+ * interface MyContext extends BotContext {
+ *      // Added by UserState middleware.
+ *      readonly userState: MyUserState;
+ * 
+ *      // Added by ConversationState middleware.
+ *      readonly conversationState: MyConversationState;
+ * }
+ * ```
+ * 
+ * | package |
+ * | ------- |
+ * | botbuilder-core | 
+ */
 export interface BotContext { }
 
+/** 
+ * Context object containing information cached for a single turn of conversation with a user.
+ * 
+ * | package | middleware |
+ * | ------- | :--------: |
+ * | botbuilder-core | no | 
+ */
 export class BotContext {
     private _adapter: BotAdapter;
     private _request: Activity;
@@ -28,7 +76,7 @@ export class BotContext {
     private _onDeleteActivity: DeleteActivityHandler[] = [];
 
     /**
-     * Creates a new turn context instance.
+     * Creates a new BotContext instance for a turn of conversation.
      * @param adapter Adapter that constructed the context.
      * @param request Request being processed.
      */

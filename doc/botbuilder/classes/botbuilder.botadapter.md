@@ -5,9 +5,37 @@
 # Class: BotAdapter
 
 
-Manages all communication between the bot and a user.
+Abstract base class for all adapter plugins. Adapters manage the communication between the bot and a user over a specific channel, or set of channels.
 
 **Usage Example**
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>package</th>
+
+<th style="text-align:center">middleware</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>botbuilder-core</td>
+
+<td style="text-align:center">no</td>
+
+</tr>
+
+</tbody>
+
+</table>
 
 ## Index
 
@@ -31,7 +59,7 @@ Manages all communication between the bot and a user.
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:36](https://github.com/Microsoft/botbuilder-js/blob/f986273/libraries/botbuilder-core/lib/botAdapter.d.ts#L36)*
+*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:41](https://github.com/Microsoft/botbuilder-js/blob/b68a82a/libraries/botbuilder-core/lib/botAdapter.d.ts#L41)*
 
 
 
@@ -64,7 +92,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:52](https://github.com/Microsoft/botbuilder-js/blob/f986273/libraries/botbuilder-core/lib/botAdapter.d.ts#L52)*
+*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:57](https://github.com/Microsoft/botbuilder-js/blob/b68a82a/libraries/botbuilder-core/lib/botAdapter.d.ts#L57)*
 
 
 
@@ -98,7 +126,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:26](https://github.com/Microsoft/botbuilder-js/blob/f986273/libraries/botbuilder-core/lib/botAdapter.d.ts#L26)*
+*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/b68a82a/libraries/botbuilder-core/lib/botAdapter.d.ts#L31)*
 
 
 
@@ -131,7 +159,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/f986273/libraries/botbuilder-core/lib/botAdapter.d.ts#L31)*
+*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:36](https://github.com/Microsoft/botbuilder-js/blob/b68a82a/libraries/botbuilder-core/lib/botAdapter.d.ts#L36)*
 
 
 
@@ -164,7 +192,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:41](https://github.com/Microsoft/botbuilder-js/blob/f986273/libraries/botbuilder-core/lib/botAdapter.d.ts#L41)*
+*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:46](https://github.com/Microsoft/botbuilder-js/blob/b68a82a/libraries/botbuilder-core/lib/botAdapter.d.ts#L46)*
 
 
 

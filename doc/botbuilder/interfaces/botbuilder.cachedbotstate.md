@@ -4,6 +4,33 @@
 
 # Interface: CachedBotState
 
+
+State information cached off the context object by a `BotState` instance.
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>package</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>botbuilder-core-extensions</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
 ## Type parameters
 #### T :  [StoreItem](botbuilder.storeitem.md)
 
@@ -14,7 +41,7 @@
 
 **●  hash**:  *`string`* 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:12](https://github.com/Microsoft/botbuilder-js/blob/f986273/libraries/botbuilder-core-extensions/lib/botState.d.ts#L12)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/b68a82a/libraries/botbuilder-core-extensions/lib/botState.d.ts#L19)*
 
 
 
@@ -28,7 +55,7 @@ ___
 
 **●  state**:  *`T`* 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:11](https://github.com/Microsoft/botbuilder-js/blob/f986273/libraries/botbuilder-core-extensions/lib/botState.d.ts#L11)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/b68a82a/libraries/botbuilder-core-extensions/lib/botState.d.ts#L18)*
 
 
 

@@ -8,6 +8,10 @@
 import { Storage, StoreItems } from './storage';
 /**
  * Memory based storage provider for a bot.
+ *
+ * | package | middleware |
+ * | ------- | :--------: |
+ * | botbuilder-core-extensions | no |
  */
 export declare class MemoryStorage implements Storage {
     protected memory: {

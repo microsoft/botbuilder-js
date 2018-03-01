@@ -12,7 +12,13 @@ import * as file from 'fs';
 import * as os from 'os';
 import * as filenamify from 'filenamify';
 
-/** Additional settings for configuring an instance of `FileStorage`. */
+/** 
+ * Additional settings for configuring an instance of `FileStorage`. 
+ * 
+ * | package |
+ * | ------- |
+ * | botbuilder | 
+ */
 export interface FileStorageSettings {
     /** 
      * (Optional) path to the backing folder. The default is to use a `storage` folder off
@@ -28,6 +34,10 @@ export interface FileStorageSettings {
  *
  * ```JavaScript
  * ```
+ * 
+ * | package | middleware |
+ * | ------- | :--------: |
+ * | botbuilder | no | 
  */
 export class FileStorage implements Storage {
     private pEnsureFolder: Promise<void>|undefined;
