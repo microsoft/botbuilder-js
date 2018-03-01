@@ -1,14 +1,6 @@
 "use strict";
 /**
  * @module botbuilder
- * @preferred
- *
- * ## Installation
- * You can install preview version of the v4 botbuilder SDK from NPM using the `@preview` tag:
- *
- * ```bash
- * npm install --save botbuilder@preview
- * ```
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
