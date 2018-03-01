@@ -14,13 +14,12 @@ const NOT_CACHED = `ConversationState: state not found. Ensure ConversationState
 const NO_KEY = `ConversationState: channelId and/or conversation missing from context.request.`;
 
 /** 
+ * :package: **botbuilder-core-extensions**
+ * :notebook: **use as middleware or in bot logic**
+ * 
  * Reads and writes conversation state for your bot to storage. When used as middleware the state 
  * will automatically be read in before your bots logic runs and then written back out open
  * completion of your bots logic.
- * 
- * | package | middleware |
- * | ------- | :--------: |
- * | botbuilder-core-extensions | yes | 
  */
 export class ConversationState<T extends StoreItem = StoreItem> extends BotState<T> {
     /**

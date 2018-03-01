@@ -7,6 +7,8 @@
  */
 import { Attachment, MediaUrl, CardAction, AnimationCard, CardImage, HeroCard, ReceiptCard, ThumbnailCard } from "botbuilder-core";
 /**
+ * :package: **botbuilder-core-extensions**
+ *
  * A set of utility functions designed to assist with the formatting of the various card types a
  * bot can return. All of these functions return an `Attachment` which can be added to an `Activity`
  * directly or passed as input to a `MessageStyler` function.
@@ -20,10 +22,6 @@ import { Attachment, MediaUrl, CardAction, AnimationCard, CardImage, HeroCard, R
  *      ['buy']
  * );
  * ```
- *
- * | package | middleware |
- * | ------- | :--------: |
- * | botbuilder-core-extensions | no |
  */
 export declare class CardFactory {
     /** List of content types for each card style. */
