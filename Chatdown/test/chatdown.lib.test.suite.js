@@ -116,6 +116,59 @@ describe('The chatdown lib', () => {
     });
 
     describe('should output the expected activities', () => {
+        it('with the same channelId in each conversation', async () => {
+            const conversation = [
+                'user=Joe',
+                'bot=LulaBot',
+                'user: Hello!',
+                'bot: Hi there. How can I help you?',
+                'user: What time is is?',
+                'bot: It\'s go time!'
+            ];
+
+            const activities = await chatdown(conversation.join('\n'), {});
+            const id = activities[0].conversation.id;
+            activities.forEach(activity => {
+                assert(activity.conversation.id === id);
+            });
+        });
+
+        it('with unique ids for each activity', async () => {
+            const conversation = [
+                'user=Joe',
+                'bot=LulaBot',
+                'user: Hello!',
+                'bot: Hi there. How can I help you?',
+                'user: What time is is?',
+                'bot: It\'s go time!'
+            ];
+
+            const activities = await chatdown(conversation.join('\n'), {});
+            let ids = {};
+            activities.forEach(activity => {
+                assert(ids[activity.id] === undefined);
+                ids[activity.id] = true;
+            });
+        });
+
+        it('With alternating from and recipient ids', async () => {
+            const conversation = [
+                'user=Joe',
+                'bot=LulaBot',
+                'user: Hello!',
+                'bot: Hi there. How can I help you?',
+                'user: What time is is?',
+                'bot: It\'s go time!'
+            ];
+
+            const activities = await chatdown(conversation.join('\n'), {});
+            let previousRecipientId;
+            activities.forEach(activity => {
+                const recipient = (activity.recipient || {});
+                assert(recipient.id === previousRecipientId);
+                previousRecipientId = activity.from.id;
+            });
+        });
 
         it('with the appropriate messages', async () => {
             const conversation = [
@@ -129,7 +182,7 @@ describe('The chatdown lib', () => {
 
             const activities = await chatdown(conversation.join('\n'), {});
             activities.forEach((activity, index) => {
-                assert(activity.text.trim() === conversation[index+2].replace('user: ', '').replace('bot: ', ''));
+                assert(activity.text.trim() === conversation[index + 2].replace('user: ', '').replace('bot: ', ''));
             });
         });
 

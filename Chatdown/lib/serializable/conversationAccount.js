@@ -1,4 +1,3 @@
-let _id = 0;
 module.exports = class ConversationAccount {
     /**
      * @property isGroup
@@ -17,7 +16,7 @@ module.exports = class ConversationAccount {
      * @param name
      * @param id
      */
-    constructor({isGroup, name, id = '' + (_id++)} = {}) {
+    constructor({isGroup, name, id} = {}) {
         Object.assign(this, {isGroup, name, id});
     }
 };

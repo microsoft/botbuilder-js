@@ -1,17 +1,34 @@
 [
   {
     "conversation": {
-      "id": "0"
+      "id": "1"
     },
+    "id": "c358c242-f50c-4fef-ada7-a5cc1509f906",
+    "recipient": null,
+    "text": "Hi!",
+    "timestamp": "2018-03-01T00:56:13.000Z",
+    "type": "message",
+    "channelId": "chatdown",
+    "from": {
+      "id": "e8d2b3ca-ae71-3a88-8bf7-b2ec3f2e5aa5",
+      "name": "LulaBot"
+    }
+  },
+  {
+    "conversation": {
+      "id": "1"
+    },
+    "id": "134c9466-5c0b-4782-b3be-2126a7f673af",
     "recipient": {
-      "id": 12345,
+      "id": "e8d2b3ca-ae71-3a88-8bf7-b2ec3f2e5aa5",
       "name": "LulaBot"
     },
-    "text": "Hi!",
-    "timestamp": "Fri, 23 Feb 2018 19:17:18 GMT",
+    "text": "yo!",
+    "timestamp": "2018-03-01T00:56:15.000Z",
     "type": "message",
-    "to": {
-      "id": 12345,
+    "channelId": "chatdown",
+    "from": {
+      "id": "055beb33-46b6-3658-a936-2ae827d804a4",
       "name": "Joe"
     }
   },
@@ -19,64 +36,54 @@
     "conversation": {
       "id": "1"
     },
+    "id": "2439d61e-2373-4d6b-b298-686cf1ed194f",
     "recipient": {
-      "id": 12345,
+      "id": "055beb33-46b6-3658-a936-2ae827d804a4",
       "name": "Joe"
-    },
-    "text": "yo!",
-    "timestamp": "Fri, 23 Feb 2018 19:17:20 GMT",
-    "type": "message",
-    "to": {
-      "id": 12345,
-      "name": "LulaBot"
-    }
-  },
-  {
-    "conversation": {
-      "id": "3"
-    },
-    "recipient": {
-      "id": 12345,
-      "name": "LulaBot"
     },
     "text": "",
-    "timestamp": "Fri, 23 Feb 2018 19:17:24 GMT",
+    "timestamp": "2018-03-01T00:56:20.000Z",
     "type": "typing",
-    "to": {
-      "id": 12345,
-      "name": "Joe"
+    "channelId": "chatdown",
+    "from": {
+      "id": "e8d2b3ca-ae71-3a88-8bf7-b2ec3f2e5aa5",
+      "name": "LulaBot"
     }
   },
   {
     "conversation": {
-      "id": "2"
+      "id": "1"
     },
+    "id": "cbe8760b-84a7-499f-b81f-7be5d1165452",
     "recipient": {
-      "id": 12345,
-      "name": "LulaBot"
+      "id": "055beb33-46b6-3658-a936-2ae827d804a4",
+      "name": "Joe"
     },
     "text": "Greetings!\nWhat would you like to do?\n* update - You can update your account\n* List - You can list your data\n* help - you can get help",
-    "timestamp": "Fri, 23 Feb 2018 19:17:22 GMT",
+    "timestamp": "2018-03-01T00:56:30.000Z",
     "type": "message",
-    "to": {
-      "id": 12345,
-      "name": "Joe"
+    "channelId": "chatdown",
+    "from": {
+      "id": "e8d2b3ca-ae71-3a88-8bf7-b2ec3f2e5aa5",
+      "name": "LulaBot"
     }
   },
   {
     "conversation": {
-      "id": "4"
+      "id": "1"
     },
+    "id": "9443ba48-7a61-49a2-ade9-1d3c34938d0d",
     "recipient": {
-      "id": 12345,
-      "name": "Joe"
+      "id": "e8d2b3ca-ae71-3a88-8bf7-b2ec3f2e5aa5",
+      "name": "LulaBot"
     },
     "text": "I need help",
-    "timestamp": "Fri, 23 Feb 2018 19:17:26 GMT",
+    "timestamp": "2018-03-01T00:56:32.000Z",
     "type": "message",
-    "to": {
-      "id": 12345,
-      "name": "LulaBot"
+    "channelId": "chatdown",
+    "from": {
+      "id": "055beb33-46b6-3658-a936-2ae827d804a4",
+      "name": "Joe"
     }
   },
   {
@@ -88,18 +95,20 @@
       }
     ],
     "conversation": {
-      "id": "5"
+      "id": "1"
     },
+    "id": "d951f929-a237-44a3-96fa-7c3159af2f97",
     "recipient": {
-      "id": 12345,
-      "name": "LulaBot"
+      "id": "055beb33-46b6-3658-a936-2ae827d804a4",
+      "name": "Joe"
     },
     "text": "\nHere you go.\n",
-    "timestamp": "Fri, 23 Feb 2018 19:17:28 GMT",
+    "timestamp": "2018-03-01T00:56:38.000Z",
     "type": "message",
-    "to": {
-      "id": 12345,
-      "name": "Joe"
+    "channelId": "chatdown",
+    "from": {
+      "id": "e8d2b3ca-ae71-3a88-8bf7-b2ec3f2e5aa5",
+      "name": "LulaBot"
     }
   }
 ]
