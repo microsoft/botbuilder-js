@@ -9,39 +9,13 @@ A set of utility functions designed to assist with the formatting of the various
 
 **Usage Example**
 
-```ts
+    const card = CardFactory.heroCard(
+         'White T-Shirt',
+         ['https://example.com/whiteShirt.jpg'],
+         ['buy']
+    );
 
-const card = CardFactory.heroCard( 'White T-Shirt', ['[https://example.com/whiteShirt.jpg](https://example.com/whiteShirt.jpg)'], ['buy'] );
-
-```
-
-<table>
-
-<thead>
-
-<tr>
-
-<th>package</th>
-
-<th style="text-align:center">middleware</th>
-
-</tr>
-
-</thead>
-
-<tbody>
-
-<tr>
-
-<td>botbuilder-core-extensions</td>
-
-<td style="text-align:center">no</td>
-
-</tr>
-
-</tbody>
-
-</table>
+| package | middleware | | ------- | :--------: | | botbuilder-core-extensions | no |
 
 ## Index
 
@@ -74,7 +48,7 @@ const card = CardFactory.heroCard( 'White T-Shirt', ['[https://example.com/white
 
 **●  contentTypes**:  *`object`* 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:32](https://github.com/Microsoft/botbuilder-js/blob/e68eff0/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L32)*
+*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:32](https://github.com/Microsoft/botbuilder-js/blob/c9501a0/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L32)*
 
 
 
@@ -154,7 +128,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:133](https://github.com/Microsoft/botbuilder-js/blob/e68eff0/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L133)*
+*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:133](https://github.com/Microsoft/botbuilder-js/blob/c9501a0/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L133)*
 
 
 
@@ -187,7 +161,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:57](https://github.com/Microsoft/botbuilder-js/blob/e68eff0/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L57)*
+*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:57](https://github.com/Microsoft/botbuilder-js/blob/c9501a0/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L57)*
 
 
 
@@ -224,7 +198,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:66](https://github.com/Microsoft/botbuilder-js/blob/e68eff0/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L66)*
+*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:66](https://github.com/Microsoft/botbuilder-js/blob/c9501a0/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L66)*
 
 
 
@@ -260,7 +234,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:75](https://github.com/Microsoft/botbuilder-js/blob/e68eff0/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L75)*
+*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:75](https://github.com/Microsoft/botbuilder-js/blob/c9501a0/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L75)*
 
 
 
@@ -298,7 +272,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:86](https://github.com/Microsoft/botbuilder-js/blob/e68eff0/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L86)*
+*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:86](https://github.com/Microsoft/botbuilder-js/blob/c9501a0/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L86)*
 
 
 
@@ -322,7 +296,7 @@ Returns an attachment for a hero card. Hero cards tend to have one dominant full
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:87](https://github.com/Microsoft/botbuilder-js/blob/e68eff0/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L87)*
+*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:87](https://github.com/Microsoft/botbuilder-js/blob/c9501a0/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L87)*
 
 
 
@@ -356,7 +330,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:139](https://github.com/Microsoft/botbuilder-js/blob/e68eff0/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L139)*
+*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:139](https://github.com/Microsoft/botbuilder-js/blob/c9501a0/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L139)*
 
 
 
@@ -389,7 +363,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:145](https://github.com/Microsoft/botbuilder-js/blob/e68eff0/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L145)*
+*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:145](https://github.com/Microsoft/botbuilder-js/blob/c9501a0/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L145)*
 
 
 
@@ -422,7 +396,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:94](https://github.com/Microsoft/botbuilder-js/blob/e68eff0/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L94)*
+*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:94](https://github.com/Microsoft/botbuilder-js/blob/c9501a0/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L94)*
 
 
 
@@ -455,7 +429,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:103](https://github.com/Microsoft/botbuilder-js/blob/e68eff0/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L103)*
+*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:103](https://github.com/Microsoft/botbuilder-js/blob/c9501a0/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L103)*
 
 
 
@@ -492,7 +466,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:116](https://github.com/Microsoft/botbuilder-js/blob/e68eff0/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L116)*
+*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:116](https://github.com/Microsoft/botbuilder-js/blob/c9501a0/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L116)*
 
 
 
@@ -516,7 +490,7 @@ Returns an attachment for a thumbnail card. Thumbnail cards are similar to [hero
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:117](https://github.com/Microsoft/botbuilder-js/blob/e68eff0/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L117)*
+*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:117](https://github.com/Microsoft/botbuilder-js/blob/c9501a0/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L117)*
 
 
 
@@ -550,7 +524,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:126](https://github.com/Microsoft/botbuilder-js/blob/e68eff0/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L126)*
+*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:126](https://github.com/Microsoft/botbuilder-js/blob/c9501a0/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L126)*
 
 
 

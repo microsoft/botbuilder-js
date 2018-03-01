@@ -13,7 +13,7 @@ import { Attachment, MediaUrl, CardAction, AnimationCard, CardImage, HeroCard, R
  *
  * **Usage Example**
  *
- * \```ts
+ * ```javascript
  *
  * const card = CardFactory.heroCard(
  *      'White T-Shirt',
@@ -21,11 +21,11 @@ import { Attachment, MediaUrl, CardAction, AnimationCard, CardImage, HeroCard, R
  *      ['buy']
  * );
  *
- * \```
+ * ```
  *
- * | package | middleware |
- * | ------- | :--------: |
- * | botbuilder-core-extensions | no |
+ * \| package | middleware |
+ * \| ------- | :--------: |
+ * \| botbuilder-core-extensions | no |
  */
 export declare class CardFactory {
     /** List of content types for each card style. */
