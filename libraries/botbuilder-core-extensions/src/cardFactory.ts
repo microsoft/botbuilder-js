@@ -17,7 +17,7 @@ import {
  *
  * **Usage Example**
  *
- * \```javascript
+ * \```ts
  * 
  * const card = CardFactory.heroCard(
  *      'White T-Shirt',

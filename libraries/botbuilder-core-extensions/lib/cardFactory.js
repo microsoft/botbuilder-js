@@ -15,7 +15,7 @@ const botbuilder_core_1 = require("botbuilder-core");
  *
  * **Usage Example**
  *
- * \```javascript
+ * \```ts
  *
  * const card = CardFactory.heroCard(
  *      'White T-Shirt',

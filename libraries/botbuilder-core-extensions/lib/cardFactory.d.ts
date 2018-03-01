@@ -13,7 +13,7 @@ import { Attachment, MediaUrl, CardAction, AnimationCard, CardImage, HeroCard, R
  *
  * **Usage Example**
  *
- * \```javascript
+ * \```ts
  *
  * const card = CardFactory.heroCard(
  *      'White T-Shirt',
