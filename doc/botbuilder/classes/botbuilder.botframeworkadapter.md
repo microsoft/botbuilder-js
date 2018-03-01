@@ -92,7 +92,7 @@ ActivityAdapter class needed to communicate with a Bot Framework channel or the 
 ### ⊕ **new BotFrameworkAdapter**(settings?: *[Partial]()[BotFrameworkAdapterSettings](../interfaces/botbuilder.botframeworkadaptersettings.md)*): [BotFrameworkAdapter](botbuilder.botframeworkadapter.md)
 
 
-*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:55](https://github.com/Microsoft/botbuilder-js/blob/c9501a0/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L55)*
+*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:55](https://github.com/Microsoft/botbuilder-js/blob/f8c834f/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L55)*
 
 
 
@@ -121,7 +121,7 @@ Creates a new BotFrameworkAdapter instance.
 
 **●  credentials**:  *`MicrosoftAppCredentials`* 
 
-*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:53](https://github.com/Microsoft/botbuilder-js/blob/c9501a0/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L53)*
+*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:53](https://github.com/Microsoft/botbuilder-js/blob/f8c834f/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L53)*
 
 
 
@@ -135,7 +135,7 @@ ___
 
 **●  credentialsProvider**:  *`SimpleCredentialProvider`* 
 
-*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:54](https://github.com/Microsoft/botbuilder-js/blob/c9501a0/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L54)*
+*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:54](https://github.com/Microsoft/botbuilder-js/blob/f8c834f/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L54)*
 
 
 
@@ -149,7 +149,7 @@ ___
 
 **●  settings**:  *[BotFrameworkAdapterSettings](../interfaces/botbuilder.botframeworkadaptersettings.md)* 
 
-*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:55](https://github.com/Microsoft/botbuilder-js/blob/c9501a0/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L55)*
+*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:55](https://github.com/Microsoft/botbuilder-js/blob/f8c834f/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L55)*
 
 
 
@@ -167,7 +167,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:68](https://github.com/Microsoft/botbuilder-js/blob/c9501a0/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L68)*
+*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:68](https://github.com/Microsoft/botbuilder-js/blob/f8c834f/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L68)*
 
 
 
@@ -198,7 +198,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:62](https://github.com/Microsoft/botbuilder-js/blob/c9501a0/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L62)*
+*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:62](https://github.com/Microsoft/botbuilder-js/blob/f8c834f/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L62)*
 
 
 
@@ -229,7 +229,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:69](https://github.com/Microsoft/botbuilder-js/blob/c9501a0/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L69)*
+*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:69](https://github.com/Microsoft/botbuilder-js/blob/f8c834f/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L69)*
 
 
 
@@ -259,7 +259,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:70](https://github.com/Microsoft/botbuilder-js/blob/c9501a0/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L70)*
+*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:70](https://github.com/Microsoft/botbuilder-js/blob/f8c834f/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L70)*
 
 
 
@@ -289,7 +289,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:67](https://github.com/Microsoft/botbuilder-js/blob/c9501a0/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L67)*
+*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:67](https://github.com/Microsoft/botbuilder-js/blob/f8c834f/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L67)*
 
 
 
@@ -320,7 +320,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:66](https://github.com/Microsoft/botbuilder-js/blob/c9501a0/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L66)*
+*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:66](https://github.com/Microsoft/botbuilder-js/blob/f8c834f/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L66)*
 
 
 
@@ -350,7 +350,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:61](https://github.com/Microsoft/botbuilder-js/blob/c9501a0/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L61)*
+*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:61](https://github.com/Microsoft/botbuilder-js/blob/f8c834f/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L61)*
 
 
 
@@ -382,7 +382,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:64](https://github.com/Microsoft/botbuilder-js/blob/c9501a0/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L64)*
+*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:64](https://github.com/Microsoft/botbuilder-js/blob/f8c834f/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L64)*
 
 
 
@@ -412,7 +412,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:63](https://github.com/Microsoft/botbuilder-js/blob/c9501a0/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L63)*
+*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:63](https://github.com/Microsoft/botbuilder-js/blob/f8c834f/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L63)*
 
 
 
@@ -443,7 +443,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:65](https://github.com/Microsoft/botbuilder-js/blob/c9501a0/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L65)*
+*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:65](https://github.com/Microsoft/botbuilder-js/blob/f8c834f/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L65)*
 
 
 

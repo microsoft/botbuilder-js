@@ -59,7 +59,7 @@ Abstract base class for all adapter plugins. Adapters manage the communication b
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:41](https://github.com/Microsoft/botbuilder-js/blob/c9501a0/libraries/botbuilder-core/lib/botAdapter.d.ts#L41)*
+*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:41](https://github.com/Microsoft/botbuilder-js/blob/f8c834f/libraries/botbuilder-core/lib/botAdapter.d.ts#L41)*
 
 
 
@@ -92,7 +92,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:57](https://github.com/Microsoft/botbuilder-js/blob/c9501a0/libraries/botbuilder-core/lib/botAdapter.d.ts#L57)*
+*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:57](https://github.com/Microsoft/botbuilder-js/blob/f8c834f/libraries/botbuilder-core/lib/botAdapter.d.ts#L57)*
 
 
 
@@ -126,7 +126,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/c9501a0/libraries/botbuilder-core/lib/botAdapter.d.ts#L31)*
+*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/f8c834f/libraries/botbuilder-core/lib/botAdapter.d.ts#L31)*
 
 
 
@@ -159,7 +159,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:36](https://github.com/Microsoft/botbuilder-js/blob/c9501a0/libraries/botbuilder-core/lib/botAdapter.d.ts#L36)*
+*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:36](https://github.com/Microsoft/botbuilder-js/blob/f8c834f/libraries/botbuilder-core/lib/botAdapter.d.ts#L36)*
 
 
 
@@ -192,7 +192,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:46](https://github.com/Microsoft/botbuilder-js/blob/c9501a0/libraries/botbuilder-core/lib/botAdapter.d.ts#L46)*
+*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:46](https://github.com/Microsoft/botbuilder-js/blob/f8c834f/libraries/botbuilder-core/lib/botAdapter.d.ts#L46)*
 
 
 

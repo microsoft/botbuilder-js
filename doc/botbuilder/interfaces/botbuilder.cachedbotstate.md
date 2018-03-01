@@ -41,7 +41,7 @@ State information cached off the context object by a `BotState` instance.
 
 **●  hash**:  *`string`* 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/c9501a0/libraries/botbuilder-core-extensions/lib/botState.d.ts#L19)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/f8c834f/libraries/botbuilder-core-extensions/lib/botState.d.ts#L19)*
 
 
 
@@ -55,7 +55,7 @@ ___
 
 **●  state**:  *`T`* 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/c9501a0/libraries/botbuilder-core-extensions/lib/botState.d.ts#L18)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/f8c834f/libraries/botbuilder-core-extensions/lib/botState.d.ts#L18)*
 
 
 

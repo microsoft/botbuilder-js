@@ -16,18 +16,16 @@ const botbuilder_core_1 = require("botbuilder-core");
  * **Usage Example**
  *
  * ```javascript
- *
  * const card = CardFactory.heroCard(
  *      'White T-Shirt',
  *      ['https://example.com/whiteShirt.jpg'],
  *      ['buy']
  * );
- *
  * ```
  *
- * \| package | middleware |
- * \| ------- | :--------: |
- * \| botbuilder-core-extensions | no |
+ * | package | middleware |
+ * | ------- | :--------: |
+ * | botbuilder-core-extensions | no |
  */
 class CardFactory {
     /**

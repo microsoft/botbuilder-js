@@ -39,7 +39,7 @@ INTERNAL support class for `TestAdapter`.
 ### ⊕ **new TestFlow**(previous: *`Promise`.<`void`>*, adapter: *[TestAdapter](botbuilder.testadapter.md)*): [TestFlow](botbuilder.testflow.md)
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:56](https://github.com/Microsoft/botbuilder-js/blob/c9501a0/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L56)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:56](https://github.com/Microsoft/botbuilder-js/blob/f8c834f/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L56)*
 
 
 
@@ -66,7 +66,7 @@ INTERNAL support class for `TestAdapter`.
 
 **●  previous**:  *`Promise`.<`void`>* 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:55](https://github.com/Microsoft/botbuilder-js/blob/c9501a0/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L55)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:55](https://github.com/Microsoft/botbuilder-js/blob/f8c834f/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L55)*
 
 
 
@@ -84,7 +84,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:77](https://github.com/Microsoft/botbuilder-js/blob/c9501a0/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L77)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:77](https://github.com/Microsoft/botbuilder-js/blob/f8c834f/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L77)*
 
 
 
@@ -119,7 +119,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:84](https://github.com/Microsoft/botbuilder-js/blob/c9501a0/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L84)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:84](https://github.com/Microsoft/botbuilder-js/blob/f8c834f/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L84)*
 
 
 
@@ -154,7 +154,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:91](https://github.com/Microsoft/botbuilder-js/blob/c9501a0/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L91)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:91](https://github.com/Microsoft/botbuilder-js/blob/f8c834f/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L91)*
 
 
 
@@ -184,7 +184,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:89](https://github.com/Microsoft/botbuilder-js/blob/c9501a0/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L89)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:89](https://github.com/Microsoft/botbuilder-js/blob/f8c834f/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L89)*
 
 
 
@@ -217,7 +217,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:70](https://github.com/Microsoft/botbuilder-js/blob/c9501a0/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L70)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:70](https://github.com/Microsoft/botbuilder-js/blob/f8c834f/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L70)*
 
 
 
@@ -250,7 +250,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:65](https://github.com/Microsoft/botbuilder-js/blob/c9501a0/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L65)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:65](https://github.com/Microsoft/botbuilder-js/blob/f8c834f/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L65)*
 
 
 
@@ -286,7 +286,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:90](https://github.com/Microsoft/botbuilder-js/blob/c9501a0/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L90)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:90](https://github.com/Microsoft/botbuilder-js/blob/f8c834f/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L90)*
 
 
 
