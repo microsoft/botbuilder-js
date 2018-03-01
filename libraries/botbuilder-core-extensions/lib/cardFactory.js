@@ -18,9 +18,13 @@ const botbuilder_core_1 = require("botbuilder-core");
  * \```JavaScript
  *
  * const card = CardFactory.heroCard(
+ *
  *      'White T-Shirt',
+ *
  *      ['https://example.com/whiteShirt.jpg'],
+ *
  *      ['buy']
+ *
  * );
  *
  * \```
