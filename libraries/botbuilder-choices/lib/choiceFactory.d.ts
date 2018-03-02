@@ -5,9 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity } from 'botbuilder';
+import { BotContext, Activity } from 'botbuilder';
 import { Choice } from './findChoices';
-export interface ChoiceStylerOptions {
+export interface ChoiceFactoryOptions {
     /**
      * (Optional) character used to separate individual choices when there are more than 2 choices.
      * The default value is `", "`.
@@ -29,10 +29,10 @@ export interface ChoiceStylerOptions {
      */
     includeNumbers?: boolean;
 }
-export declare class ChoiceStyler {
-    static forChannel(channelOrContext: string | BotContext, choices: (string | Choice)[], text?: string, speak?: string, options?: ChoiceStylerOptions): Partial<Activity>;
-    static inline(choices: (string | Choice)[], text?: string, speak?: string, options?: ChoiceStylerOptions): Partial<Activity>;
-    static list(choices: (string | Choice)[], text?: string, speak?: string, options?: ChoiceStylerOptions): Partial<Activity>;
-    static suggestedAction(choices: (string | Choice)[], text?: string, speak?: string, options?: ChoiceStylerOptions): Partial<Activity>;
+export declare class ChoiceFactory {
+    static forChannel(channelOrContext: string | BotContext, choices: (string | Choice)[], text?: string, speak?: string, options?: ChoiceFactoryOptions): Partial<Activity>;
+    static inline(choices: (string | Choice)[], text?: string, speak?: string, options?: ChoiceFactoryOptions): Partial<Activity>;
+    static list(choices: (string | Choice)[], text?: string, speak?: string, options?: ChoiceFactoryOptions): Partial<Activity>;
+    static suggestedAction(choices: (string | Choice)[], text?: string, speak?: string, options?: ChoiceFactoryOptions): Partial<Activity>;
     static toChoices(choices: (string | Choice)[] | undefined): Choice[];
 }

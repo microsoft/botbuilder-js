@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { ChoiceStyler } = require('../');
+const { ChoiceFactory } = require('../');
 
 function assertActivity(received, expected) {
     assert(received, `Activity not returned.`);
@@ -21,11 +21,11 @@ function assertActivity(received, expected) {
 
 const colorChoices = ['red', 'green', 'blue'];
 
-describe('ChoiceStyler', function() {
+describe('ChoiceFactory', function() {
     this.timeout(5000);
    
     it('should render choices inline.', function (done) {
-        const activity = ChoiceStyler.inline(colorChoices, 'select from:');
+        const activity = ChoiceFactory.inline(colorChoices, 'select from:');
         assertActivity(activity, {
             text: `select from: (1) red, (2) green, or (3) blue`
         });
@@ -33,7 +33,7 @@ describe('ChoiceStyler', function() {
     });
 
     it('should render choices as a list.', function (done) {
-        const activity = ChoiceStyler.list(colorChoices, 'select from:');
+        const activity = ChoiceFactory.list(colorChoices, 'select from:');
         assertActivity(activity, {
             text: `select from:\n\n   1. red\n   2. green\n   3. blue`
         });
@@ -41,7 +41,7 @@ describe('ChoiceStyler', function() {
     });
 
     it('should render choices as suggested actions.', function (done) {
-        const activity = ChoiceStyler.suggestedAction(colorChoices, 'select from:');
+        const activity = ChoiceFactory.suggestedAction(colorChoices, 'select from:');
         assertActivity(activity, {
             text: `select from:`,
             suggestedActions: {
@@ -56,7 +56,7 @@ describe('ChoiceStyler', function() {
     });
 
     it('should automatically choose render style based on channel type.', function (done) {
-        const activity = ChoiceStyler.forChannel('emulator', colorChoices, 'select from:');
+        const activity = ChoiceFactory.forChannel('emulator', colorChoices, 'select from:');
         assertActivity(activity, {
             text: `select from:`,
             suggestedActions: {

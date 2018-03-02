@@ -6,11 +6,11 @@
  * Licensed under the MIT License.
  */
 
-import { MessageStyler, ActionTypes, InputHints, Activity, CardAction } from 'botbuilder';
+import { MessageFactory, BotContext, ActionTypes, InputHints, Activity, CardAction } from 'botbuilder';
 import { Choice } from './findChoices';
 import * as channel from './channel';
 
-export interface ChoiceStylerOptions {
+export interface ChoiceFactoryOptions {
     /**
      * (Optional) character used to separate individual choices when there are more than 2 choices.
      * The default value is `", "`.
@@ -36,13 +36,13 @@ export interface ChoiceStylerOptions {
     includeNumbers?: boolean;
 }
 
-export class ChoiceStyler {
+export class ChoiceFactory {
 
-    static forChannel(channelOrContext: string|BotContext, choices: (string|Choice)[], text?: string, speak?: string, options?: ChoiceStylerOptions): Partial<Activity> {
+    static forChannel(channelOrContext: string|BotContext, choices: (string|Choice)[], text?: string, speak?: string, options?: ChoiceFactoryOptions): Partial<Activity> {
         const channelId = typeof channelOrContext === 'string' ? channelOrContext : channel.getChannelId(channelOrContext);
 
         // Normalize choices
-        const list = ChoiceStyler.toChoices(choices);
+        const list = ChoiceFactory.toChoices(choices);
 
         // Find maximum title length
         let maxTitleLength = 0;
@@ -62,29 +62,29 @@ export class ChoiceStyler {
         if (!longTitles && (supportsSuggestedActions || (!hasMessageFeed && supportsCardActions))) {
             // We always prefer showing choices using suggested actions. If the titles are too long, however,
             // we'll have to show them as a text list.
-            return ChoiceStyler.suggestedAction(list, text, speak, options);
+            return ChoiceFactory.suggestedAction(list, text, speak, options);
         } else if (!longTitles && choices.length <= 3) {
             // If the titles are short and there are 3 or less choices we'll use an inline list.
-            return ChoiceStyler.inline(list, text, speak, options);
+            return ChoiceFactory.inline(list, text, speak, options);
         } else {
             // Show a numbered list.
-            return ChoiceStyler.list(list, text, speak, options);
+            return ChoiceFactory.list(list, text, speak, options);
         }
     }
 
-    static inline(choices: (string|Choice)[], text?: string, speak?: string, options?: ChoiceStylerOptions): Partial<Activity> {
+    static inline(choices: (string|Choice)[], text?: string, speak?: string, options?: ChoiceFactoryOptions): Partial<Activity> {
         const opt = Object.assign({
             inlineSeparator: ', ',
             inlineOr: ' or ',
             inlineOrMore: ', or ',
             includeNumbers: true
-        } as ChoiceStylerOptions, options);
+        } as ChoiceFactoryOptions, options);
 
         // Format list of choices
         let connector = '';
         let txt = (text || '');
         txt += ' ';
-        ChoiceStyler.toChoices(choices).forEach((choice: any, index: number) => {
+        ChoiceFactory.toChoices(choices).forEach((choice: any, index: number) => {
             const title = choice.action && choice.action.title ? choice.action.title : choice.value;
             txt += `${connector}${opt.includeNumbers ? '(' + (index + 1).toString() + ') ' : ''}${title}`;
             if (index == (choices.length - 2)) {
@@ -96,31 +96,31 @@ export class ChoiceStyler {
         txt += '';
 
         // Return activity with choices as an inline list.
-        return MessageStyler.text(txt, speak, InputHints.ExpectingInput);
+        return MessageFactory.text(txt, speak, InputHints.ExpectingInput);
     }
 
-    static list(choices: (string|Choice)[], text?: string, speak?: string, options?: ChoiceStylerOptions): Partial<Activity> {
+    static list(choices: (string|Choice)[], text?: string, speak?: string, options?: ChoiceFactoryOptions): Partial<Activity> {
         const opt = Object.assign({
             includeNumbers: true
-        } as ChoiceStylerOptions, options);
+        } as ChoiceFactoryOptions, options);
 
         // Format list of choices
         let connector = '';
         let txt = (text || '');
         txt += '\n\n   ';
-        ChoiceStyler.toChoices(choices).forEach((choice: any, index: number) => {
+        ChoiceFactory.toChoices(choices).forEach((choice: any, index: number) => {
             const title = choice.action && choice.action.title ? choice.action.title : choice.value;
             txt += `${connector}${opt.includeNumbers ? (index + 1).toString() + '. ': '- '}${title}`;
             connector =  '\n   ';
         });
 
         // Return activity with choices as a numbered list.
-        return MessageStyler.text(txt, speak, InputHints.ExpectingInput);
+        return MessageFactory.text(txt, speak, InputHints.ExpectingInput);
     }
 
-    static suggestedAction(choices: (string|Choice)[], text?: string, speak?: string, options?: ChoiceStylerOptions): Partial<Activity> {
+    static suggestedAction(choices: (string|Choice)[], text?: string, speak?: string, options?: ChoiceFactoryOptions): Partial<Activity> {
         // Map choices to actions
-        const actions = ChoiceStyler.toChoices(choices).map<CardAction>((choice) => {
+        const actions = ChoiceFactory.toChoices(choices).map<CardAction>((choice) => {
             if (choice.action) {
                 return choice.action;
             } else {
@@ -129,7 +129,7 @@ export class ChoiceStyler {
         });
 
         // Return activity with choices as suggested actions
-        return MessageStyler.suggestedActions(actions, text, speak, InputHints.ExpectingInput);
+        return MessageFactory.suggestedActions(actions, text, speak, InputHints.ExpectingInput);
     }
 
     static toChoices(choices: (string|Choice)[]|undefined): Choice[] {
