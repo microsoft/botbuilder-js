@@ -15,7 +15,7 @@
 
 **●  size**:  *`number`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:22](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L22)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:22](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botframework-schema/lib/index.d.ts#L22)*
 
 
 *__member__*: {number} [size] Name of the attachment
@@ -32,7 +32,7 @@ ___
 
 **●  viewId**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L18)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botframework-schema/lib/index.d.ts#L18)*
 
 
 *__member__*: {string} [viewId] Content type of the attachment

@@ -58,10 +58,12 @@ const botbuilder_core_1 = require("botbuilder-core");
 class BatchOutput {
     /**
      * Creates a new BatchOutput instance.
+     * @param context (Optional) context for the current turn of conversation. This can be omitted when creating an instance of the class to use as middleware.
      */
     constructor(context) {
         this.context = context;
     }
+    /** INTERNAL called by the adapter when used as middleware. */
     onProcessRequest(context, next) {
         // Extend context with batch property
         const batch = new BatchOutput(context);
@@ -71,21 +73,57 @@ class BatchOutput {
         // Continue execution and flush upon completion
         return next().then(() => batch.flush()).then(() => { });
     }
+    /**
+     * Adds a delay to the batch. This can be used to pause after sending a typing indicator or
+     * after sending a card with image(s).
+     *
+     * Most chat clients download any images sent by the bot to a CDN which can delay the showing
+     * of the message to the user.  If a bot sends a message with only text immediately after
+     * sending a message with images, the messages could end up being shown to the user out of
+     * order. To help prevent this you can insert a delay of 2 seconds or so in between replies.
+     * @param ms Number of milliseconds to pause before delivering the next activity in the batch.
+     */
     delay(ms) {
-        this.batch().push({ type: 'delay', value: ms });
+        this.add({ type: 'delay', value: ms });
         return this;
     }
+    /**
+     * Adds an `endOfConversation` activity to the batch indicating that the bot has completed
+     * it's current task or skill.  For channels like Cortana this is used to tell Cortana that the
+     * skill has completed and the skills window should close.
+     *
+     * When used in conjunction with the `ConversationState` middleware, sending an `endOfConversation`
+     * activity will cause the bots conversation state to be automatically cleared. If you're
+     * building a Cortana skill this helps ensure that the next time your skill is invoked it
+     * will be in a clean state given that you won't always get a new conversation ID in between
+     * invocations.
+     *
+     * Even for non-Cortana bots it's a good practice to send an `endOfConversation` anytime you
+     * complete a task with the user as it will give your bot a chance to clear its conversation
+     * state and helps avoid your bot getting into a bad state for a conversation.
+     * @param code (Optional) code to indicate why the bot/skill is ending. Defaults to
+     * `EndOfConversationCodes.CompletedSuccessfully`.
+     */
     endOfConversation(code) {
         if (code === undefined) {
             code = botbuilder_core_1.EndOfConversationCodes.CompletedSuccessfully;
         }
-        this.batch().push({ type: botbuilder_core_1.ActivityTypes.EndOfConversation, code: code });
+        this.add({ type: botbuilder_core_1.ActivityTypes.EndOfConversation, code: code });
         return this;
     }
-    event(value) {
-        this.batch().push({ type: botbuilder_core_1.ActivityTypes.Event, value: value });
+    /**
+     * Adds an `event` activity to the batch. This is most useful for DirectLine and WebChat
+     * channels as a way for the bot to send a custom named event to the client.
+     * @param name Name of the event being sent.
+     * @param value (Optional) value to include with the event.
+     */
+    event(name, value) {
+        this.add({ type: botbuilder_core_1.ActivityTypes.Event, name: name, value: value });
         return this;
     }
+    /**
+     * Flushes the batch causing all activities in the batch to be immediately sent to the user.
+     */
     flush() {
         try {
             const responses = this.batch().slice();
@@ -113,12 +151,19 @@ class BatchOutput {
         if (inputHint) {
             activity.inputHint = inputHint;
         }
-        this.batch().push(activity);
+        this.add(activity);
         return this;
     }
+    /**
+     * Adds a `typing` activity to the batch.
+     */
     typing() {
-        this.batch().push({ type: botbuilder_core_1.ActivityTypes.Typing });
+        this.add({ type: botbuilder_core_1.ActivityTypes.Typing });
         return this;
+    }
+    add(activity) {
+        this.batch().push(activity);
+        this.context.responded = true;
     }
     batch() {
         if (!this.context) {

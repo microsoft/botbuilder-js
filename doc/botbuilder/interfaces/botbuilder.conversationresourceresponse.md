@@ -15,7 +15,7 @@
 
 **●  activityId**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:499](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L499)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:499](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botframework-schema/lib/index.d.ts#L499)*
 
 
 *__member__*: {string} [activityId] ID of the Activity (if sent)
@@ -32,7 +32,7 @@ ___
 
 **●  id**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:508](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L508)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:508](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botframework-schema/lib/index.d.ts#L508)*
 
 
 *__member__*: {string} [id] Id of the resource
@@ -49,7 +49,7 @@ ___
 
 **●  serviceUrl**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:504](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L504)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:504](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botframework-schema/lib/index.d.ts#L504)*
 
 
 *__member__*: {string} [serviceUrl] Service endpoint where operations concerning the conversation may be performed

@@ -31,13 +31,19 @@ export type UpdateActivityHandler = (activity: Partial<Activity>, next: () => Pr
  */
 export type DeleteActivityHandler = (reference: Partial<ConversationReference>, next: () => Promise<void>) => Promiseable<void>;
 
+export interface BotContext { }
+
 /** 
  * :package: **botbuilder-core**
  * 
- * Interface definition for `BotContext` class. This is an aid for TypeScript developers to help
- * define the shape of the actual context object after middleware has added any extensions. 
- *
- * **Usage Example**
+ * Context object containing information cached for a single turn of conversation with a user. This
+ * will typically be created by the adapter you're using and then passed to middleware and your 
+ * bots logic.
+ * 
+ * For TypeScript developers the `BotContext` is also exposed as an interface which you can derive
+ * from to better describe the actual shape of the context object being passed around.  Middleware
+ * can potentially extend the context object with additional members so in order to get intellisense 
+ * for those added members you'll need to define them on an interface that extends BotContext:
  *
  * ```JavaScript
  * interface MyContext extends BotContext {
@@ -47,14 +53,11 @@ export type DeleteActivityHandler = (reference: Partial<ConversationReference>, 
  *      // Added by ConversationState middleware.
  *      readonly conversationState: MyConversationState;
  * }
- * ```
- */
-export interface BotContext { }
-
-/** 
- * :package: **botbuilder-core**
  * 
- * Context object containing information cached for a single turn of conversation with a user.
+ * adapter.processRequest(req, res, (context: MyContext) => {
+ *      const state = context.conversationState;
+ * });
+ * ```
  */
 export class BotContext {
     private _adapter: BotAdapter;

@@ -15,7 +15,7 @@
 
 **●  error**:  *[ErrorModel](botbuilder.errormodel.md)* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:70](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L70)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:70](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botframework-schema/lib/index.d.ts#L70)*
 
 
 *__member__*: {ErrorModel} [error] Error message

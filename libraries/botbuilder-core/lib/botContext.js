@@ -4,7 +4,28 @@ const internal_1 = require("./internal");
 /**
  * :package: **botbuilder-core**
  *
- * Context object containing information cached for a single turn of conversation with a user.
+ * Context object containing information cached for a single turn of conversation with a user. This
+ * will typically be created by the adapter you're using and then passed to middleware and your
+ * bots logic.
+ *
+ * For TypeScript developers the `BotContext` is also exposed as an interface which you can derive
+ * from to better describe the actual shape of the context object being passed around.  Middleware
+ * can potentially extend the context object with additional members so in order to get intellisense
+ * for those added members you'll need to define them on an interface that extends BotContext:
+ *
+ * ```JavaScript
+ * interface MyContext extends BotContext {
+ *      // Added by UserState middleware.
+ *      readonly userState: MyUserState;
+ *
+ *      // Added by ConversationState middleware.
+ *      readonly conversationState: MyConversationState;
+ * }
+ *
+ * adapter.processRequest(req, res, (context: MyContext) => {
+ *      const state = context.conversationState;
+ * });
+ * ```
  */
 class BotContext {
     /**

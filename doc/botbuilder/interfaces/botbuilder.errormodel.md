@@ -15,7 +15,7 @@
 
 **●  code**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:54](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L54)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:54](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botframework-schema/lib/index.d.ts#L54)*
 
 
 *__member__*: {string} [code] Error code
@@ -32,7 +32,7 @@ ___
 
 **●  message**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:58](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L58)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:58](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botframework-schema/lib/index.d.ts#L58)*
 
 
 *__member__*: {string} [message] Error message

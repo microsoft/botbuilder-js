@@ -62,7 +62,7 @@ Reads and writes user state for your bot to storage. When used as middleware the
 
 *Overrides [BotState](botbuilder.botstate.md).[constructor](botbuilder.botstate.md#constructor)*
 
-*Defined in [libraries/botbuilder-core-extensions/lib/userState.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botbuilder-core-extensions/lib/userState.d.ts#L18)*
+*Defined in [libraries/botbuilder-core-extensions/lib/userState.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botbuilder-core-extensions/lib/userState.d.ts#L18)*
 
 
 
@@ -94,7 +94,7 @@ Creates a new UserState instance.
 
 *Inherited from [BotState](botbuilder.botstate.md).[cacheKey](botbuilder.botstate.md#cachekey)*
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:30](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botbuilder-core-extensions/lib/botState.d.ts#L30)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:30](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botbuilder-core-extensions/lib/botState.d.ts#L30)*
 
 
 
@@ -110,7 +110,7 @@ ___
 
 *Inherited from [BotState](botbuilder.botstate.md).[storage](botbuilder.botstate.md#storage)*
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:29](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botbuilder-core-extensions/lib/botState.d.ts#L29)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:29](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botbuilder-core-extensions/lib/botState.d.ts#L29)*
 
 
 
@@ -126,7 +126,7 @@ ___
 
 *Inherited from [BotState](botbuilder.botstate.md).[storageKey](botbuilder.botstate.md#storagekey)*
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botbuilder-core-extensions/lib/botState.d.ts#L31)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botbuilder-core-extensions/lib/botState.d.ts#L31)*
 
 
 
@@ -146,7 +146,7 @@ ___
 
 *Inherited from [BotState](botbuilder.botstate.md).[clear](botbuilder.botstate.md#clear)*
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:56](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botbuilder-core-extensions/lib/botState.d.ts#L56)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:56](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botbuilder-core-extensions/lib/botState.d.ts#L56)*
 
 
 
@@ -179,7 +179,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/userState.d.ts:29](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botbuilder-core-extensions/lib/userState.d.ts#L29)*
+*Defined in [libraries/botbuilder-core-extensions/lib/userState.d.ts:29](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botbuilder-core-extensions/lib/userState.d.ts#L29)*
 
 
 
@@ -214,7 +214,7 @@ ___
 
 *Inherited from [BotState](botbuilder.botstate.md).[onProcessRequest](botbuilder.botstate.md#onprocessrequest)*
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botbuilder-core-extensions/lib/botState.d.ts#L39)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botbuilder-core-extensions/lib/botState.d.ts#L39)*
 
 
 
@@ -247,7 +247,7 @@ ___
 
 *Inherited from [BotState](botbuilder.botstate.md).[read](botbuilder.botstate.md#read)*
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:45](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botbuilder-core-extensions/lib/botState.d.ts#L45)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:45](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botbuilder-core-extensions/lib/botState.d.ts#L45)*
 
 
 
@@ -283,7 +283,7 @@ ___
 
 *Inherited from [BotState](botbuilder.botstate.md).[write](botbuilder.botstate.md#write)*
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:51](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botbuilder-core-extensions/lib/botState.d.ts#L51)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:51](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botbuilder-core-extensions/lib/botState.d.ts#L51)*
 
 
 

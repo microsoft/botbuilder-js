@@ -15,7 +15,7 @@
 
 **●  image**:  *[CardImage](botbuilder.cardimage.md)* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:860](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L860)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:860](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botframework-schema/lib/index.d.ts#L860)*
 
 
 *__member__*: {CardImage} [image] Image
@@ -32,7 +32,7 @@ ___
 
 **●  price**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:864](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L864)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:864](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botframework-schema/lib/index.d.ts#L864)*
 
 
 *__member__*: {string} [price] Amount with currency
@@ -49,7 +49,7 @@ ___
 
 **●  quantity**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:868](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L868)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:868](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botframework-schema/lib/index.d.ts#L868)*
 
 
 *__member__*: {string} [quantity] Number of items of given kind
@@ -66,7 +66,7 @@ ___
 
 **●  subtitle**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:851](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L851)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:851](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botframework-schema/lib/index.d.ts#L851)*
 
 
 *__member__*: {string} [subtitle] Subtitle appears just below Title field, differs from Title in font styling only
@@ -83,7 +83,7 @@ ___
 
 **●  tap**:  *[CardAction](botbuilder.cardaction.md)* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:873](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L873)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:873](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botframework-schema/lib/index.d.ts#L873)*
 
 
 *__member__*: {CardAction} [tap] This action will be activated when user taps on the Item bubble.
@@ -100,7 +100,7 @@ ___
 
 **●  text**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:856](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L856)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:856](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botframework-schema/lib/index.d.ts#L856)*
 
 
 *__member__*: {string} [text] Text field appears just below subtitle, differs from Subtitle in font styling only
@@ -117,7 +117,7 @@ ___
 
 **●  title**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:846](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botframework-schema/lib/index.d.ts#L846)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:846](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botframework-schema/lib/index.d.ts#L846)*
 
 
 *__member__*: {string} [title] Title of the Card

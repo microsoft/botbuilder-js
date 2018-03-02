@@ -68,7 +68,7 @@ The class supports mixed modes of usage so it's fine to both use it as middlewar
 ### ⊕ **new BatchOutput**(context?: *[BotContext](botbuilder.botcontext.md)⎮`undefined`*): [BatchOutput](botbuilder.batchoutput.md)
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:57](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L57)*
+*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:57](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L57)*
 
 
 
@@ -79,7 +79,7 @@ Creates a new BatchOutput instance.
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | [BotContext](botbuilder.botcontext.md)⎮`undefined`   |  - |
+| context | [BotContext](botbuilder.botcontext.md)⎮`undefined`   |  (Optional) context for the current turn of conversation. This can be omitted when creating an instance of the class to use as middleware. |
 
 
 
@@ -99,15 +99,20 @@ Creates a new BatchOutput instance.
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:63](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L63)*
+*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:75](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L75)*
 
+
+
+Adds a delay to the batch. This can be used to pause after sending a typing indicator or after sending a card with image(s).
+
+Most chat clients download any images sent by the bot to a CDN which can delay the showing of the message to the user. If a bot sends a message with only text immediately after sending a message with images, the messages could end up being shown to the user out of order. To help prevent this you can insert a delay of 2 seconds or so in between replies.
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| ms | `number`   |  - |
+| ms | `number`   |  Number of milliseconds to pause before delivering the next activity in the batch. |
 
 
 
@@ -129,15 +134,22 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:64](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L64)*
+*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:93](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L93)*
 
+
+
+Adds an `endOfConversation` activity to the batch indicating that the bot has completed it's current task or skill. For channels like Cortana this is used to tell Cortana that the skill has completed and the skills window should close.
+
+When used in conjunction with the `ConversationState` middleware, sending an `endOfConversation` activity will cause the bots conversation state to be automatically cleared. If you're building a Cortana skill this helps ensure that the next time your skill is invoked it will be in a clean state given that you won't always get a new conversation ID in between invocations.
+
+Even for non-Cortana bots it's a good practice to send an `endOfConversation` anytime you complete a task with the user as it will give your bot a chance to clear its conversation state and helps avoid your bot getting into a bad state for a conversation.
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| code | [EndOfConversationCodes](../enums/botbuilder.endofconversationcodes.md)⎮`string`   |  - |
+| code | [EndOfConversationCodes](../enums/botbuilder.endofconversationcodes.md)⎮`string`   |  (Optional) code to indicate why the bot/skill is ending. Defaults to`EndOfConversationCodes.CompletedSuccessfully`. |
 
 
 
@@ -155,19 +167,23 @@ ___
 
 ###  event
 
-► **event**(value?: *`any`*): `this`
+► **event**(name: *`string`*, value?: *`any`*): `this`
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:65](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L65)*
+*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:100](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L100)*
 
+
+
+Adds an `event` activity to the batch. This is most useful for DirectLine and WebChat channels as a way for the bot to send a custom named event to the client.
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| value | `any`   |  - |
+| name | `string`   |  Name of the event being sent. |
+| value | `any`   |  (Optional) value to include with the event. |
 
 
 
@@ -189,8 +205,11 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:66](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L66)*
+*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:104](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L104)*
 
+
+
+Flushes the batch causing all activities in the batch to be immediately sent to the user.
 
 
 
@@ -211,8 +230,11 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:62](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L62)*
+*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:64](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L64)*
 
+
+
+INTERNAL called by the adapter when used as middleware.
 
 
 **Parameters:**
@@ -238,21 +260,26 @@ ___
 
 ###  reply
 
-► **reply**(textOrActivity: *[Partial]()[Activity](../interfaces/botbuilder.activity.md)*): `this`
-
 ► **reply**(textOrActivity: *`string`*, speak?: *`undefined`⎮`string`*, inputHint?: *`undefined`⎮`string`*): `this`
 
+► **reply**(textOrActivity: *[Partial]()[Activity](../interfaces/botbuilder.activity.md)*): `this`
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:67](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L67)*
 
+*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:111](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L111)*
+
+
+
+Adds a `message` activity to the batch.
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| textOrActivity | [Partial]()[Activity](../interfaces/botbuilder.activity.md)   |  - |
+| textOrActivity | `string`   |  Text or activity to add to the batch. If text a new `message` activity will be created. If an activity and missing a `type`, the type will be set to `message`. |
+| speak | `undefined`⎮`string`   |  (Optional) SSML to add to the activity. |
+| inputHint | `undefined`⎮`string`   |  (Optional) `inputHint` to assign to the activity. |
 
 
 
@@ -262,7 +289,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:68](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L68)*
+*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:112](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L112)*
 
 
 
@@ -270,9 +297,7 @@ ___
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| textOrActivity | `string`   |  - |
-| speak | `undefined`⎮`string`   |  - |
-| inputHint | `undefined`⎮`string`   |  - |
+| textOrActivity | [Partial]()[Activity](../interfaces/botbuilder.activity.md)   |  - |
 
 
 
@@ -294,8 +319,11 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:69](https://github.com/Microsoft/botbuilder-js/blob/99f6a4a/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L69)*
+*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:116](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L116)*
 
+
+
+Adds a `typing` activity to the batch.
 
 
 
