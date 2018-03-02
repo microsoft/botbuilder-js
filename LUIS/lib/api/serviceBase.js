@@ -18,7 +18,7 @@ class ServiceBase {
         this.endpoint = endpoint;
     }
 
-    getRequest(method, dataModel) {
+    createRequest(method, dataModel) {
         const {commonHeaders: headers, config, endpoint} = this;
         const {base, baseParams, operations} = config;
         if (!operations.includes(method)) {

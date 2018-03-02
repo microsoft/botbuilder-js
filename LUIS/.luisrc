@@ -1,7 +1,6 @@
 {
-  "base": "https://{location}/api.cognitive.microsoft.com/luis/api/v2.0/",
+  "base": "https://westus/api.cognitive.microsoft.com/luis/api/v2.0/",
   "subscriptionKey": "",
-  "location": "westus",
   "appId": "",
   "versionId": ""
 }

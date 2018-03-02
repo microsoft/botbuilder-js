@@ -2,13 +2,25 @@ global.fetch = require('node-fetch'); // Browser compatibility
 const fs = require('fs-extra');
 const path = require('path');
 const readline = require('readline');
-const luis = require('../lib');
 const minimist = require('minimist');
+const chalk = require('chalk');
+const help = require('../lib/help');
+const luis = require('../lib');
 
 async function runProgram() {
     const args = minimist(process.argv.slice(2));
     if (args.init) {
-        await initializeConfig();
+        return initializeConfig();
+    }
+    if (args.help) {
+        const helpContents = await help(args);
+        debugger
+    }
+    try {
+        const config = await fs.readJson(path.join(process.cwd(), '.luisrc'));
+        return luis(config);
+    } catch (e) {
+        throw new Error('.luisrc file not found. Run luis --init to create the configuration file.');
     }
 }
 
@@ -38,14 +50,14 @@ async function initializeConfig() {
     const [subscriptionKey, location, appId, versionId] = answers;
     const config = Object.assign({}, {
         subscriptionKey,
-        location,
         appId,
         versionId,
         endpointBase: `https://${location}/api.cognitive.microsoft.com/luis/api/v2.0/`,
     });
     try {
         await new Promise((resolve, reject) => {
-            prompt.question(`\n\nDoes this look ok?\n${JSON.stringify(config, null, 2)}\nYes/No: `, response => {
+            const confirmation = `\n\nDoes this look ok?\n${JSON.stringify(config, null, 2)}\nYes/No: `;
+            prompt.question(confirmation, response => {
                 (response || '').toLowerCase() === 'yes' ? resolve(response) : reject();
             });
         });
@@ -55,5 +67,12 @@ async function initializeConfig() {
 
     fs.writeJsonSync(path.join(process.cwd(), '.luisrc'), JSON.stringify(config, null, 2));
 }
-
-runProgram().then(() => process.exit(0));
+function exitWithError(error) {
+    if (error instanceof Error) {
+        process.stdout.write(chalk.red(error));
+    } else {
+        help();
+    }
+    process.exit(1);
+}
+runProgram().then(() => process.exit(0)).catch(exitWithError);
