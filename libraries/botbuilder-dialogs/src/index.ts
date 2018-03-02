@@ -9,4 +9,4 @@ export * from './waterfall';
 
 // Re-exporting choice related interfaces used just to avoid TS developers from needing to 
 // import interfaces from two libraries when working with dialogs.
-export { FoundChoice, Choice, ChoiceStylerOptions } from 'botbuilder-choices';
+export { FoundChoice, Choice, ChoiceFactoryOptions } from 'botbuilder-choices';

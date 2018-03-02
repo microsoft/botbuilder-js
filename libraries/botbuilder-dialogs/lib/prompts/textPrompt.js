@@ -52,7 +52,7 @@ class TextPrompt {
         instance.state = options || {};
         // Send initial prompt
         if (instance.state.prompt) {
-            context.reply(prompt_1.formatPrompt(instance.state.prompt, instance.state.speak));
+            return prompt_1.sendPrompt(context, instance.state.prompt, instance.state.speak);
         }
         return Promise.resolve();
     }

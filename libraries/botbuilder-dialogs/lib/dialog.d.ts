@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Promiseable } from 'botbuilder';
+import { BotContext, Promiseable } from 'botbuilder';
 import { DialogSet } from './dialogSet';
 /**
  * Interface of Dialog objects that can be added to a `DialogSet`. The dialog should generally

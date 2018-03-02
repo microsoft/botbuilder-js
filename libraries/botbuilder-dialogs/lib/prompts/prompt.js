@@ -32,4 +32,8 @@ function formatPrompt(prompt, speak) {
     return p;
 }
 exports.formatPrompt = formatPrompt;
+function sendPrompt(context, prompt, speak) {
+    return context.sendActivities(formatPrompt(prompt, speak)).then(() => { });
+}
+exports.sendPrompt = sendPrompt;
 //# sourceMappingURL=prompt.js.map

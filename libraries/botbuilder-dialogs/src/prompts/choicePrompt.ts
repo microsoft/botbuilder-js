@@ -5,11 +5,11 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Promiseable, Activity, InputHints } from 'botbuilder';
+import { BotContext, Promiseable, Activity, InputHints } from 'botbuilder';
 import { Dialog } from '../dialog';
 import { DialogSet } from '../dialogSet';
 import { PromptOptions, PromptValidator } from './prompt';
-import { Choice, ChoiceStyler, ChoiceStylerOptions, recognizeChoices, FindChoicesOptions, FoundChoice } from 'botbuilder-choices';
+import { Choice, ChoiceFactory, ChoiceFactoryOptions, recognizeChoices, FindChoicesOptions, FoundChoice } from 'botbuilder-choices';
 
 /**
  * Controls the way that choices for a `ChoicePrompt` or yes/no options for a `ConfirmPrompt` are
@@ -69,7 +69,7 @@ export interface ChoicePromptOptions extends PromptOptions {
  */
 export class ChoicePrompt implements Dialog {
     /** Additional options passed to the `ChoiceStyler` and used to tweak the style of choices rendered to the user. */
-    public readonly stylerOptions: ChoiceStylerOptions = {};
+    public readonly stylerOptions: ChoiceFactoryOptions = {};
 
     /** Additional options passed to the `recognizeChoices()` function. */
     public readonly recognizerOptions: FindChoicesOptions = {};
@@ -125,11 +125,9 @@ export class ChoicePrompt implements Dialog {
     private sendChoicePrompt(context: BotContext, dialogs: DialogSet, prompt: string|Partial<Activity>, speak?: string): Promise<void> {
         if (typeof prompt === 'string') {
             const options = dialogs.getInstance<ChoicePromptOptions>(context).state; 
-            context.reply(formatChoicePrompt(context, options.choices || [], prompt, speak, this.stylerOptions, options.style));
-        } else { 
-            context.reply(prompt);
-        }
-        return Promise.resolve(); 
+            return context.sendActivities(formatChoicePrompt(context, options.choices || [], prompt, speak, this.stylerOptions, options.style)).then(() => {});
+        } 
+        return context.sendActivities(prompt).then(() => {}); 
     }
 }
 
@@ -151,17 +149,17 @@ export class ChoicePrompt implements Dialog {
  * @param options (Optional) additional choice styler options used to customize the rendering of the prompts choice list.
  * @param style (Optional) list style to use when rendering prompt. Defaults to `ListStyle.auto`.
  */
-export function formatChoicePrompt(channelOrContext: string|BotContext, choices: (string|Choice)[], text?: string, speak?: string, options?: ChoiceStylerOptions, style?: ListStyle): Partial<Activity> {
+export function formatChoicePrompt(channelOrContext: string|BotContext, choices: (string|Choice)[], text?: string, speak?: string, options?: ChoiceFactoryOptions, style?: ListStyle): Partial<Activity> {
     switch (style) {
         case ListStyle.auto:
         default:
-            return ChoiceStyler.forChannel(channelOrContext, choices, text, speak, options);
+            return ChoiceFactory.forChannel(channelOrContext, choices, text, speak, options);
         case ListStyle.inline:
-            return ChoiceStyler.inline(choices, text, speak, options);
+            return ChoiceFactory.inline(choices, text, speak, options);
         case ListStyle.list:
-            return ChoiceStyler.list(choices, text, speak, options);
+            return ChoiceFactory.list(choices, text, speak, options);
         case ListStyle.suggestedAction:
-            return ChoiceStyler.suggestedAction(choices, text, speak, options);
+            return ChoiceFactory.suggestedAction(choices, text, speak, options);
         case ListStyle.none:
             const p = { type: 'message', text: text || '' } as Partial<Activity>;
             if (speak) { p.speak = speak }

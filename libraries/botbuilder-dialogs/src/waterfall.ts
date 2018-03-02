@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Promiseable, BotService } from 'botbuilder';
+import { Promiseable, BotContext } from 'botbuilder';
 import { Dialog, DialogInstance } from './dialog';
 import { DialogSet } from './dialogSet';
 import { Context } from 'vm';

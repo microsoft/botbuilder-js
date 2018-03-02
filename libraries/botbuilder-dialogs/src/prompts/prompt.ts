@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, Promiseable, InputHints } from 'botbuilder';
+import { BotContext, Activity, Promiseable, InputHints } from 'botbuilder';
 import { DialogSet } from '../dialogSet';
 
 /** Basic configuration options supported by all prompts. */
@@ -53,4 +53,8 @@ export function formatPrompt(prompt: string|Partial<Activity>, speak?: string): 
     if (speak) { p.speak = speak }
     if (!p.inputHint) { p.inputHint = InputHints.ExpectingInput }
     return p;
+}
+
+export function sendPrompt(context: BotContext, prompt: string|Partial<Activity>, speak?: string): Promise<void> {
+    return context.sendActivities(formatPrompt(prompt, speak)).then(() => {});
 }

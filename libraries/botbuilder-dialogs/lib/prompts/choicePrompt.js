@@ -110,12 +110,9 @@ class ChoicePrompt {
     sendChoicePrompt(context, dialogs, prompt, speak) {
         if (typeof prompt === 'string') {
             const options = dialogs.getInstance(context).state;
-            context.reply(formatChoicePrompt(context, options.choices || [], prompt, speak, this.stylerOptions, options.style));
+            return context.sendActivities(formatChoicePrompt(context, options.choices || [], prompt, speak, this.stylerOptions, options.style)).then(() => { });
         }
-        else {
-            context.reply(prompt);
-        }
-        return Promise.resolve();
+        return context.sendActivities(prompt).then(() => { });
     }
 }
 exports.ChoicePrompt = ChoicePrompt;
@@ -141,13 +138,13 @@ function formatChoicePrompt(channelOrContext, choices, text, speak, options, sty
     switch (style) {
         case ListStyle.auto:
         default:
-            return botbuilder_choices_1.ChoiceStyler.forChannel(channelOrContext, choices, text, speak, options);
+            return botbuilder_choices_1.ChoiceFactory.forChannel(channelOrContext, choices, text, speak, options);
         case ListStyle.inline:
-            return botbuilder_choices_1.ChoiceStyler.inline(choices, text, speak, options);
+            return botbuilder_choices_1.ChoiceFactory.inline(choices, text, speak, options);
         case ListStyle.list:
-            return botbuilder_choices_1.ChoiceStyler.list(choices, text, speak, options);
+            return botbuilder_choices_1.ChoiceFactory.list(choices, text, speak, options);
         case ListStyle.suggestedAction:
-            return botbuilder_choices_1.ChoiceStyler.suggestedAction(choices, text, speak, options);
+            return botbuilder_choices_1.ChoiceFactory.suggestedAction(choices, text, speak, options);
         case ListStyle.none:
             const p = { type: 'message', text: text || '' };
             if (speak) {

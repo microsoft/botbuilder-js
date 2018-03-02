@@ -5,10 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Attachment } from 'botbuilder';
+import { BotContext, Attachment } from 'botbuilder';
 import { Dialog } from '../dialog';
 import { DialogSet } from '../dialogSet';
-import { PromptOptions, PromptValidator, formatPrompt } from './prompt';
+import { PromptOptions, PromptValidator, sendPrompt } from './prompt';
 
 /**
  * Prompts a user to upload attachments like images. By default the prompt will return to the 
@@ -60,7 +60,9 @@ export class AttachmentPrompt implements Dialog {
         instance.state = options || {};
 
         // Send initial prompt
-        if (instance.state.prompt) { context.reply(formatPrompt(instance.state.prompt, instance.state.speak)) }
+        if (instance.state.prompt) { 
+            return sendPrompt(context, instance.state.prompt, instance.state.speak); 
+        }
         return Promise.resolve();
     }
 
@@ -77,10 +79,10 @@ export class AttachmentPrompt implements Dialog {
         } else {
             if (options.retryPrompt) {
                 // Send retry prompt to user
-                context.reply(formatPrompt(options.retryPrompt, options.retrySpeak));
+                return sendPrompt(context, options.retryPrompt, options.retrySpeak);
             } else if (options.prompt) {
                 // Send original prompt to user
-                context.reply(formatPrompt(options.prompt, options.speak));
+                return sendPrompt(context, options.prompt, options.speak);
             }
             return Promise.resolve();
         }

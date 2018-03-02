@@ -5,12 +5,12 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity } from 'botbuilder';
+import { BotContext, Activity } from 'botbuilder';
 import { Dialog } from '../dialog';
 import { DialogSet } from '../dialogSet';
 import { PromptOptions, PromptValidator } from './prompt';
 import { ListStyle } from './choicePrompt';
-import { ChoiceStylerOptions, Choice } from 'botbuilder-choices';
+import { ChoiceFactoryOptions, Choice } from 'botbuilder-choices';
 /** Map of `ConfirmPrompt` choices for each locale the bot supports. */
 export interface ConfirmChoices {
     [locale: string]: (string | Choice)[];
@@ -62,7 +62,7 @@ export declare class ConfirmPrompt implements Dialog {
      */
     static choices: ConfirmChoices;
     /** Additional options passed to the `ChoiceStyler` and used to tweak the style of yes/no choices rendered to the user. */
-    readonly stylerOptions: ChoiceStylerOptions;
+    readonly stylerOptions: ChoiceFactoryOptions;
     /**
      * Creates a new instance of the prompt.
      *

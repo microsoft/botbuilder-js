@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity } from 'botbuilder';
+import { BotContext, Activity } from 'botbuilder';
 import { Dialog, DialogInstance } from './dialog';
 import { Waterfall, WaterfallStep } from './waterfall';
 import { PromptOptions } from './prompts/index';
@@ -44,6 +44,7 @@ import { Choice } from 'botbuilder-choices';
  * ```
  */
 export declare class DialogSet {
+    private readonly stateName;
     private readonly stackName;
     private readonly dialogs;
     /**
@@ -56,9 +57,10 @@ export declare class DialogSet {
      * ```JavaScript
      * const dialogs = new DialogSet('myPrivateStack');
      * ```
-     * @param stackName (Optional) name of the field to store the dialog stack in off the bots conversation state object. This defaults to 'dialogStack'.
+     * @param stackName (Optional) name of the field to store the dialog stack in off the state bag. Defaults to 'dialogStack'.
+     * @param stateName (Optional) name of state bag on the context object that will be used to store the dialog stack. Defaults to `conversationState`.
      */
-    constructor(stackName?: string);
+    constructor(stackName?: string, stateName?: string);
     /**
      * Adds a new dialog to the set and returns the added dialog.
      *
@@ -224,4 +226,5 @@ export declare class DialogSet {
      * @param dialogArgs (Optional) additional argument(s) to pass to the new dialog.
      */
     replace(context: BotContext, dialogId: string, dialogArgs?: any): Promise<void>;
+    private getState(context);
 }

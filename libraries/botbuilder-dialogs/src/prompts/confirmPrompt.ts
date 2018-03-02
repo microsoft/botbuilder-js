@@ -5,12 +5,12 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity } from 'botbuilder';
+import { BotContext, Activity } from 'botbuilder';
 import { Dialog } from '../dialog';
 import { DialogSet } from '../dialogSet';
 import { PromptOptions, PromptValidator } from './prompt';
 import { ListStyle, formatChoicePrompt } from './choicePrompt';
-import { ChoiceStylerOptions, Choice } from 'botbuilder-choices';
+import { ChoiceFactoryOptions, Choice } from 'botbuilder-choices';
 import * as Recognizers from '@microsoft/recognizers-text-options';
 
 const booleanModel = Recognizers.OptionsRecognizer.instance.getBooleanModel('en-us');
@@ -69,7 +69,7 @@ export class ConfirmPrompt implements Dialog {
     static choices: ConfirmChoices = { '*': ['yes', 'no'] };
 
     /** Additional options passed to the `ChoiceStyler` and used to tweak the style of yes/no choices rendered to the user. */
-    public readonly stylerOptions: ChoiceStylerOptions;
+    public readonly stylerOptions: ChoiceFactoryOptions;
 
     /**
      * Creates a new instance of the prompt.
@@ -137,10 +137,8 @@ export class ConfirmPrompt implements Dialog {
 
             // Reply with formatted prompt
             const style = dialogs.getInstance<ConfirmPromptOptions>(context).state.style; 
-            context.reply(formatChoicePrompt(context, choices, prompt, speak, this.stylerOptions, style))
-        } else { 
-            context.reply(prompt);
+            return context.sendActivities(formatChoicePrompt(context, choices, prompt, speak, this.stylerOptions, style)).then(() => {});
         }
-        return Promise.resolve(); 
+        return context.sendActivities(prompt).then(() => {}); 
     }
 }

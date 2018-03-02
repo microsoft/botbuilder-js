@@ -19,9 +19,9 @@ export declare class ConversationState<T extends StoreItem = StoreItem> extends 
     /**
      * Creates a new ConversationState instance.
      * @param storage Storage provider to persist conversation state to.
-     * @param cacheKey (Optional) name of the cached entry on the context object. A property accessor with this name will also be added to the context object. The default value is 'conversationState'.
+     * @param stateName (Optional) name of the cached entry on the context object. A property accessor with this name will also be added to the context object. The default value is 'conversationState'.
      */
-    constructor(storage: Storage, cacheKey?: string);
+    constructor(storage: Storage, stateName?: string);
     /**
      * Returns the storage key for the current conversation state.
      * @param context Context for current turn of conversation with the user.

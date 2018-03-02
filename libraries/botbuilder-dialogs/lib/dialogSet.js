@@ -1,5 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @module botbuilder-dialogs
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+const botbuilder_1 = require("botbuilder");
 const waterfall_1 = require("./waterfall");
 /**
  * A related set of dialogs that can all call each other.
@@ -45,11 +53,13 @@ class DialogSet {
      * ```JavaScript
      * const dialogs = new DialogSet('myPrivateStack');
      * ```
-     * @param stackName (Optional) name of the field to store the dialog stack in off the bots conversation state object. This defaults to 'dialogStack'.
+     * @param stackName (Optional) name of the field to store the dialog stack in off the state bag. Defaults to 'dialogStack'.
+     * @param stateName (Optional) name of state bag on the context object that will be used to store the dialog stack. Defaults to `conversationState`.
      */
-    constructor(stackName) {
+    constructor(stackName, stateName) {
         this.dialogs = {};
         this.stackName = stackName || 'dialogStack';
+        this.stateName = stateName || 'conversationState';
     }
     add(dialogId, dialogOrSteps) {
         if (this.dialogs.hasOwnProperty(dialogId)) {
@@ -228,7 +238,7 @@ class DialogSet {
     endAll(context) {
         try {
             // Cancel any current dialogs
-            const state = getConversationState(context);
+            const state = this.getState(context);
             state[this.stackName] = [];
             return Promise.resolve();
         }
@@ -261,7 +271,7 @@ class DialogSet {
      * @param context Context object for the current turn of conversation with the user.
      */
     getStack(context) {
-        const state = getConversationState(context);
+        const state = this.getState(context);
         if (!Array.isArray(state[this.stackName])) {
             state[this.stackName] = [];
         }
@@ -323,12 +333,16 @@ class DialogSet {
             return Promise.reject(err);
         }
     }
+    getState(context) {
+        const state = context[this.stateName];
+        if (typeof state !== 'object') {
+            state === botbuilder_1.BotState.get(context, this.stateName);
+            if (typeof state !== 'object') {
+                throw new Error(`DialogSet: No state object named "${this.stackName}". Ensure that the name is correct or add the appropriate BotState class to your bots middleware stack.`);
+            }
+        }
+        return state;
+    }
 }
 exports.DialogSet = DialogSet;
-function getConversationState(context) {
-    if (!context.state.conversation) {
-        throw new Error(`DialogSet: No conversation state found. Please add a BotStateManager instance to your bots middleware stack.`);
-    }
-    return context.state.conversation;
-}
 //# sourceMappingURL=dialogSet.js.map

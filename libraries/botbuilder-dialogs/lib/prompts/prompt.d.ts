@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, Promiseable } from 'botbuilder';
+import { BotContext, Activity, Promiseable } from 'botbuilder';
 import { DialogSet } from '../dialogSet';
 /** Basic configuration options supported by all prompts. */
 export interface PromptOptions {
@@ -43,3 +43,4 @@ export declare type PromptValidator<T> = (context: BotContext, value: T, dialogs
  * @param speak (Optional) SSML to speak to the user on channels like Cortana. The messages `inputHint` will be automatically set to `InputHints.expectingInput`.
  */
 export declare function formatPrompt(prompt: string | Partial<Activity>, speak?: string): Partial<Activity>;
+export declare function sendPrompt(context: BotContext, prompt: string | Partial<Activity>, speak?: string): Promise<void>;

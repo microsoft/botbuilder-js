@@ -6,4 +6,4 @@ export * from './prompts/index';
 export * from './dialog';
 export * from './dialogSet';
 export * from './waterfall';
-export { FoundChoice, Choice, ChoiceStylerOptions } from 'botbuilder-choices';
+export { FoundChoice, Choice, ChoiceFactoryOptions } from 'botbuilder-choices';

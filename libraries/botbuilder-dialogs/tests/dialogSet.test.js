@@ -1,13 +1,14 @@
-const { Bot, BotStateManager, MemoryStorage, TestAdapter } = require('botbuilder');
+const { TestAdapter, MemoryStorage, ConversationState } = require('botbuilder');
 const { DialogSet } =  require('../');
 const assert = require('assert');
 
-function createBot(receiver) {
-    const adapter = new TestAdapter();
-    const bot = new Bot(adapter)
-        .use(new MemoryStorage())
-        .use(new BotStateManager())
-        .onReceive(receiver);
+const beginMessage = { text: `begin`, type: 'message' };
+const continueMessage = { text: `continue`, type: 'message' };
+
+function createBot(botLogic) {
+    const storage = new MemoryStorage();
+    const adapter = new TestAdapter(botLogic)
+        .use(new ConversationState(storage));
     return adapter;
 }
 
@@ -21,12 +22,12 @@ describe('DialogSet class', function() {
                 assert(ctx, 'Missing context in begin()');
                 assert(dlgs === dialogs, 'Dialogs not passed to begin()');
                 assert(args === 'z', 'Args not passed');
-                ctx.reply(`begin`);
+                return ctx.sendActivities(beginMessage);
             },
             continue: (ctx, dlgs) => {
                 assert(ctx, 'Missing context in continue()');
                 assert(dlgs === dialogs, 'Dialogs not passed to continue()');
-                ctx.reply(`continue`);
+                return ctx.sendActivities(continueMessage);
             }
         });
 

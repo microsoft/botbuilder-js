@@ -5,9 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { BotContext } from 'botbuilder';
 import { Dialog } from '../dialog';
 import { DialogSet } from '../dialogSet';
-import { PromptOptions, PromptValidator, formatPrompt } from './prompt';
+import { PromptOptions, PromptValidator, sendPrompt } from './prompt';
 
 /**
  * Prompts a user to enter some text. By default the prompt will return to the calling 
@@ -59,7 +60,9 @@ export class TextPrompt implements Dialog {
         instance.state = options || {};
 
         // Send initial prompt
-        if (instance.state.prompt) { context.reply(formatPrompt(instance.state.prompt, instance.state.speak)) }
+        if (instance.state.prompt) { 
+            return sendPrompt(context, instance.state.prompt, instance.state.speak); 
+        }
         return Promise.resolve();
     }
 

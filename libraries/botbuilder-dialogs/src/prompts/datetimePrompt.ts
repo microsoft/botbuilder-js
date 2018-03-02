@@ -5,9 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { BotContext } from 'botbuilder';
 import { Dialog } from '../dialog';
 import { DialogSet } from '../dialogSet';
-import { PromptOptions, PromptValidator, formatPrompt } from './prompt';
+import { PromptOptions, PromptValidator, sendPrompt } from './prompt';
 //import * as Recognizers from '@microsoft/recognizers-text-date-time';
 const Recognizers = require('@microsoft/recognizers-text-date-time');
 
@@ -90,7 +91,9 @@ export class DatetimePrompt implements Dialog {
         instance.state = options || {};
 
         // Send initial prompt
-        if (instance.state.prompt) { context.reply(formatPrompt(instance.state.prompt, instance.state.speak)) }
+        if (instance.state.prompt) { 
+            return sendPrompt(context, instance.state.prompt, instance.state.speak); 
+        }
         return Promise.resolve();
     }
 
@@ -109,10 +112,10 @@ export class DatetimePrompt implements Dialog {
         } else {
             if (options.retryPrompt) {
                 // Send retry prompt to user
-                context.reply(formatPrompt(options.retryPrompt, options.retrySpeak));
+                return sendPrompt(context, options.retryPrompt, options.retrySpeak);
             } else if (options.prompt) {
                 // Send original prompt to user
-                context.reply(formatPrompt(options.prompt, options.speak));
+                return sendPrompt(context, options.prompt, options.speak);
             }
             return Promise.resolve();
         }

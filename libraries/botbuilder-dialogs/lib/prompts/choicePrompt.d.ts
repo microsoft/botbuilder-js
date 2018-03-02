@@ -5,11 +5,11 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity } from 'botbuilder';
+import { BotContext, Activity } from 'botbuilder';
 import { Dialog } from '../dialog';
 import { DialogSet } from '../dialogSet';
 import { PromptOptions, PromptValidator } from './prompt';
-import { Choice, ChoiceStylerOptions, FindChoicesOptions, FoundChoice } from 'botbuilder-choices';
+import { Choice, ChoiceFactoryOptions, FindChoicesOptions, FoundChoice } from 'botbuilder-choices';
 /**
  * Controls the way that choices for a `ChoicePrompt` or yes/no options for a `ConfirmPrompt` are
  * presented to a user.
@@ -61,7 +61,7 @@ export interface ChoicePromptOptions extends PromptOptions {
 export declare class ChoicePrompt implements Dialog {
     private validator;
     /** Additional options passed to the `ChoiceStyler` and used to tweak the style of choices rendered to the user. */
-    readonly stylerOptions: ChoiceStylerOptions;
+    readonly stylerOptions: ChoiceFactoryOptions;
     /** Additional options passed to the `recognizeChoices()` function. */
     readonly recognizerOptions: FindChoicesOptions;
     /**
@@ -97,4 +97,4 @@ export declare class ChoicePrompt implements Dialog {
  * @param options (Optional) additional choice styler options used to customize the rendering of the prompts choice list.
  * @param style (Optional) list style to use when rendering prompt. Defaults to `ListStyle.auto`.
  */
-export declare function formatChoicePrompt(channelOrContext: string | BotContext, choices: (string | Choice)[], text?: string, speak?: string, options?: ChoiceStylerOptions, style?: ListStyle): Partial<Activity>;
+export declare function formatChoicePrompt(channelOrContext: string | BotContext, choices: (string | Choice)[], text?: string, speak?: string, options?: ChoiceFactoryOptions, style?: ListStyle): Partial<Activity>;

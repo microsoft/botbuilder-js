@@ -52,7 +52,7 @@ class AttachmentPrompt {
         instance.state = options || {};
         // Send initial prompt
         if (instance.state.prompt) {
-            context.reply(prompt_1.formatPrompt(instance.state.prompt, instance.state.speak));
+            return prompt_1.sendPrompt(context, instance.state.prompt, instance.state.speak);
         }
         return Promise.resolve();
     }
@@ -71,11 +71,11 @@ class AttachmentPrompt {
         else {
             if (options.retryPrompt) {
                 // Send retry prompt to user
-                context.reply(prompt_1.formatPrompt(options.retryPrompt, options.retrySpeak));
+                return prompt_1.sendPrompt(context, options.retryPrompt, options.retrySpeak);
             }
             else if (options.prompt) {
                 // Send original prompt to user
-                context.reply(prompt_1.formatPrompt(options.prompt, options.speak));
+                return prompt_1.sendPrompt(context, options.prompt, options.speak);
             }
             return Promise.resolve();
         }
