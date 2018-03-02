@@ -1,5 +1,5 @@
 {
-  "base": "https://westus/api.cognitive.microsoft.com/luis/api/v2.0/",
+  "endpointBasePath": "https://westus/api.cognitive.microsoft.com/luis/api/v2.0",
   "subscriptionKey": "",
   "appId": "",
   "versionId": ""

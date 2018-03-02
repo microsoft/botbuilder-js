@@ -8,10 +8,9 @@ class Publish extends ServiceBase {
     /**
      * Publishes a specific version of the application.
      */
-    async publishApplication(applicationPublishObject/* ApplicationPublishObject */) {
-        return this.createRequest('post', [], applicationPublishObject);
+    async publishApplication(params, applicationPublishObject/* ApplicationPublishObject */) {
+        return this.createRequest('', params, 'post', applicationPublishObject);
     }
-
 }
 
 module.exports = {Publish};

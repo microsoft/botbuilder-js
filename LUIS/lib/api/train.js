@@ -9,8 +9,8 @@ class Train extends ServiceBase {
      * Gets the training status of all models (intents and entities) for the specified LUIS app. You must <a href="https://westus.dev.cognitive.microsoft.com/docs/services/5890b47c39e2bb17b84a55ff/operations/5890b47c39e2bb052c5b9c45">call the train API</a> to train the LUIS app before you call this API to get training status.
 
      */
-    async getVersionTrainingStatus() {
-        return this.createRequest('get', []);
+    async getVersionTrainingStatus(params) {
+        return this.createRequest('', params, 'get');
     }
 
     /**
@@ -22,10 +22,9 @@ class Train extends ServiceBase {
 
      To verify training success, get the training status at least once after training is complete.
      */
-    async trainApplicationVersion() {
-        return this.createRequest('post', []);
+    async trainApplicationVersion(params) {
+        return this.createRequest('', params, 'post');
     }
-
 }
 
 module.exports = {Train};

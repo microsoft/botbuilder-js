@@ -8,10 +8,9 @@ class Customprebuiltmodels extends ServiceBase {
     /**
      * Gets all custom prebuilt models information of this application
      */
-    async getCustomPrebuiltDomainModelsList() {
-        return this.createRequest('get', []);
+    async getCustomPrebuiltDomainModelsList(params) {
+        return this.createRequest('', params, 'get');
     }
-
 }
 
 module.exports = {Customprebuiltmodels};

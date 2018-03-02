@@ -8,10 +8,9 @@ class Import extends ServiceBase {
     /**
      * Imports an application to LUIS, the application's JSON should be included in the request body. Returns new app ID.
      */
-    async importApplication(jSONApp/* JSONApp */) {
-        return this.createRequest('post', ['appName'], jSONApp);
+    async importApplication(params, jSONApp/* JSONApp */) {
+        return this.createRequest('', params, 'post', jSONApp);
     }
-
 }
 
 module.exports = {Import};

@@ -8,38 +8,37 @@ class Phraselists extends ServiceBase {
     /**
      * Gets all application phraselist features.
      */
-    async getVersionPhraselistFeaturesList() {
-        return this.createRequest('get', ['skip', 'take']);
+    async getVersionPhraselistFeaturesList(params) {
+        return this.createRequest('', params, 'get');
     }
 
     /**
      * Creates a new phraselist feature.
      */
-    async createPhraselistFeature(phraselistCreateObject/* PhraselistCreateObject */) {
-        return this.createRequest('post', [], phraselistCreateObject);
+    async createPhraselistFeature(params, phraselistCreateObject/* PhraselistCreateObject */) {
+        return this.createRequest('', params, 'post', phraselistCreateObject);
     }
 
     /**
      * Deletes a phraselist feature from an application.
      */
-    async deletePhraselistFeature() {
-        return this.createRequest('delete', []);
+    async deletePhraselistFeature(params) {
+        return this.createRequest('/{phraselistId}', params, 'delete');
     }
 
     /**
      * Updates the phrases, the state and the name of the phraselist feature.
      */
-    async updatePhraselistFeature(phraselistUpdateObject/* PhraselistUpdateObject */) {
-        return this.createRequest('put', [], phraselistUpdateObject);
+    async updatePhraselistFeature(params, phraselistUpdateObject/* PhraselistUpdateObject */) {
+        return this.createRequest('/{phraselistId}', params, 'put', phraselistUpdateObject);
     }
 
     /**
      * Gets phraselist feature info.
      */
-    async getPhraselistFeatureInfo() {
-        return this.createRequest('get', []);
+    async getPhraselistFeatureInfo(params) {
+        return this.createRequest('/{phraselistId}', params, 'get');
     }
-
 }
 
 module.exports = {Phraselists};

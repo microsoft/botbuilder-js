@@ -4,24 +4,32 @@ const path = require('path');
 const readline = require('readline');
 const minimist = require('minimist');
 const chalk = require('chalk');
+
 const help = require('../lib/help');
 const luis = require('../lib');
+const getServiceManifestFromArguments = require('../lib/utils/getServiceManifestFromArguments');
 
 async function runProgram() {
     const args = minimist(process.argv.slice(2));
+
     if (args.init) {
         return initializeConfig();
     }
     if (args.help) {
-        const helpContents = await help(args);
-        debugger
+        return help(args);
     }
+    let config;
     try {
-        const config = await fs.readJson(path.join(process.cwd(), '.luisrc'));
-        return luis(config);
+        config = await fs.readJson(path.join(process.cwd(), '.luisrc'));
     } catch (e) {
         throw new Error('.luisrc file not found. Run luis --init to create the configuration file.');
     }
+
+    const serviceManifest = getServiceManifestFromArguments(args);
+    validateArguments(args, serviceManifest);
+
+    const requestBody = await getFileInput();
+    return luis(config, serviceManifest, args, requestBody);
 }
 
 async function initializeConfig() {
@@ -37,6 +45,7 @@ async function initializeConfig() {
         input: process.stdin,
         output: process.stdout,
     });
+
     const answers = [];
     for (let question of questions) {
         const answer = await new Promise((resolve) => {
@@ -52,7 +61,7 @@ async function initializeConfig() {
         subscriptionKey,
         appId,
         versionId,
-        endpointBase: `https://${location}/api.cognitive.microsoft.com/luis/api/v2.0/`,
+        endpointBasePath: `https://${location}/api.cognitive.microsoft.com/luis/api/v2.0`,
     });
     try {
         await new Promise((resolve, reject) => {
@@ -65,14 +74,51 @@ async function initializeConfig() {
         return null;
     }
 
-    fs.writeJsonSync(path.join(process.cwd(), '.luisrc'), JSON.stringify(config, null, 2));
+    return fs.writeJson(path.join(process.cwd(), '.luisrc'), JSON.stringify(config, null, 2));
 }
-function exitWithError(error) {
-    if (error instanceof Error) {
-        process.stdout.write(chalk.red(error));
+
+async function getFileInput(args) {
+    if (typeof args.in !== 'string') {
+        return null;
+    }
+    // Let any errors fall through to the runProgram() promise
+    return await fs.readJson(path.resolve(args.in));
+}
+
+function validateArguments(args, serviceManifest) {
+    if (!serviceManifest) {
+        throw new ReferenceError('The service does not exist');
+    }
+
+    if (typeof serviceManifest.operationName === 'boolean') {
+        throw new Error('An operation must be specified');
+    }
+
+    const {operationDetail} = serviceManifest;
+    const entitySpecified = typeof args.in === 'string';
+    const entityRequired = !!operationDetail.entityName;
+
+    if (!entityRequired && entitySpecified) {
+        throw new Error(`The ${operationDetail.name} operation does not accept an input`);
+    }
+
+    if (entityRequired && !entitySpecified) {
+        throw new Error(`The ${operationDetail.name} requires an input of type: ${operationDetail.entityType}`);
+    }
+
+    // Note that the ServiceBase will validate params that may be required.
+}
+
+function exitWithError(args) {
+    if (args instanceof Error) {
+        process.stdout.write(chalk.red(args));
+        process.stdout.write(chalk.green('Type --help for a list of commands.'));
     } else {
-        help();
+        help(args);
     }
     process.exit(1);
 }
-runProgram().then(() => process.exit(0)).catch(exitWithError);
+
+runProgram()
+    .then(process.exit)
+    .catch(exitWithError);

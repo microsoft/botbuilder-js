@@ -8,10 +8,9 @@ class Suggest extends ServiceBase {
     /**
      * Deleted an unlabelled utterance.
      */
-    async deleteUnlabelledUtterance(body) {
-        return this.createRequest('delete', [], body);
+    async deleteUnlabelledUtterance(params, body) {
+        return this.createRequest('', params, 'delete', body);
     }
-
 }
 
 module.exports = {Suggest};

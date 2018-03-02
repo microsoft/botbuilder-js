@@ -8,38 +8,37 @@ class Apps extends ServiceBase {
     /**
      * Lists all of the user applications.
      */
-    async getApplicationsList() {
-        return this.createRequest('get', ['skip', 'take']);
+    async getApplicationsList(params) {
+        return this.createRequest('/', params, 'get');
     }
 
     /**
      * Creates a new LUIS app.
      */
-    async addApplication(applicationCreateObject/* ApplicationCreateObject */) {
-        return this.createRequest('post', [], applicationCreateObject);
+    async addApplication(params, applicationCreateObject/* ApplicationCreateObject */) {
+        return this.createRequest('/', params, 'post', applicationCreateObject);
     }
 
     /**
      * Deletes an application.
      */
-    async deleteApplication() {
-        return this.createRequest('delete', []);
+    async deleteApplication(params) {
+        return this.createRequest('/{appId}', params, 'delete');
     }
 
     /**
      * Updates the name or description of the application.
      */
-    async renameApplication(applicationUpdateObject/* ApplicationUpdateObject */) {
-        return this.createRequest('put', [], applicationUpdateObject);
+    async renameApplication(params, applicationUpdateObject/* ApplicationUpdateObject */) {
+        return this.createRequest('/{appId}', params, 'put', applicationUpdateObject);
     }
 
     /**
      * Gets the application info.
      */
-    async getApplicationInfo() {
-        return this.createRequest('get', []);
+    async getApplicationInfo(params) {
+        return this.createRequest('/{appId}', params, 'get');
     }
-
 }
 
 module.exports = {Apps};

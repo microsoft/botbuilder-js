@@ -8,66 +8,65 @@ class Closedlists extends ServiceBase {
     /**
      * Gets information about the closedlist models.
      */
-    async getVersionClosedlistList() {
-        return this.createRequest('get', ['skip', 'take']);
+    async getVersionClosedlistList(params) {
+        return this.createRequest('', params, 'get');
     }
 
     /**
      * Adds a list entity to the LUIS app.
      */
-    async createClosedListEntity(closedListModelCreateObject/* ClosedListModelCreateObject */) {
-        return this.createRequest('post', [], closedListModelCreateObject);
+    async createClosedListEntity(params, closedListModelCreateObject/* ClosedListModelCreateObject */) {
+        return this.createRequest('', params, 'post', closedListModelCreateObject);
     }
 
     /**
      * Deletes a closed list model from the application.
      */
-    async deleteClosedListEntity() {
-        return this.createRequest('delete', []);
+    async deleteClosedListEntity(params) {
+        return this.createRequest('/{clEntityId}', params, 'delete');
     }
 
     /**
      * Adds a batch of sublists to an existing closedlist.
      */
-    async patchClosedListEntity(closedListModelPatchObject/* ClosedListModelPatchObject */) {
-        return this.createRequest('patch', [], closedListModelPatchObject);
+    async patchClosedListEntity(params, closedListModelPatchObject/* ClosedListModelPatchObject */) {
+        return this.createRequest('/{clEntityId}', params, 'patch', closedListModelPatchObject);
     }
 
     /**
      * Updates the closed list model.
      */
-    async updateClosedListEntity(closedListModelUpdateObject/* ClosedListModelUpdateObject */) {
-        return this.createRequest('put', [], closedListModelUpdateObject);
+    async updateClosedListEntity(params, closedListModelUpdateObject/* ClosedListModelUpdateObject */) {
+        return this.createRequest('/{clEntityId}', params, 'put', closedListModelUpdateObject);
     }
 
     /**
      * Gets information of a closed list model.
      */
-    async getClosedListEntity() {
-        return this.createRequest('get', []);
+    async getClosedListEntity(params) {
+        return this.createRequest('/{clEntityId}', params, 'get');
     }
 
     /**
      * Updates one of the closed list's sublists
      */
-    async updateClosedlistsSublist(wordListBaseUpdateObject/* WordListBaseUpdateObject */) {
-        return this.createRequest('put', [], wordListBaseUpdateObject);
+    async updateClosedlistsSublist(params, wordListBaseUpdateObject/* WordListBaseUpdateObject */) {
+        return this.createRequest('/{clEntityId}/sublists/{subListId}', params, 'put', wordListBaseUpdateObject);
     }
 
     /**
      * Deletes a sublist of a specified list entity.
      */
-    async deleteSublistEntity() {
-        return this.createRequest('delete', []);
+    async deleteSublistEntity(params) {
+        return this.createRequest('/{clEntityId}/sublists/{subListId}', params, 'delete');
     }
 
     /**
      * Adds a list to an existing closed list
      */
-    async addClosedListsSublist(wordListCreateObject/* WordListCreateObject */) {
-        return this.createRequest('post', [], wordListCreateObject);
+    async addClosedListsSublist(params, wordListCreateObject/* WordListCreateObject */) {
+        return this.createRequest('/{clEntityId}/sublists', params, 'post', wordListCreateObject);
     }
-
 }
 
 module.exports = {Closedlists};

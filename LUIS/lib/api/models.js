@@ -8,10 +8,9 @@ class Models extends ServiceBase {
     /**
      * Gets information about the application version models.
      */
-    async getVersionModelList() {
-        return this.createRequest('get', ['skip', 'take']);
+    async getVersionModelList(params) {
+        return this.createRequest('', params, 'get');
     }
-
 }
 
 module.exports = {Models};

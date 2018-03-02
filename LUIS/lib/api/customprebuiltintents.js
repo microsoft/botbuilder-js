@@ -8,17 +8,16 @@ class Customprebuiltintents extends ServiceBase {
     /**
      * Gets custom prebuilt intents information of this application
      */
-    async getCustomPrebuiltDomainIntentsList() {
-        return this.createRequest('get', []);
+    async getCustomPrebuiltDomainIntentsList(params) {
+        return this.createRequest('', params, 'get');
     }
 
     /**
      * Adds a custom prebuilt intent model to the application
      */
-    async addCustomPrebuiltIntent(prebuiltDomainModelCreateObject/* PrebuiltDomainModelCreateObject */) {
-        return this.createRequest('post', [], prebuiltDomainModelCreateObject);
+    async addCustomPrebuiltIntent(params, prebuiltDomainModelCreateObject/* PrebuiltDomainModelCreateObject */) {
+        return this.createRequest('', params, 'post', prebuiltDomainModelCreateObject);
     }
-
 }
 
 module.exports = {Customprebuiltintents};

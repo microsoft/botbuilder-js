@@ -8,10 +8,9 @@ class Export extends ServiceBase {
     /**
      * Exports a LUIS application to JSON format.
      */
-    async exportApplicationVersion() {
-        return this.createRequest('get', []);
+    async exportApplicationVersion(params) {
+        return this.createRequest('', params, 'get');
     }
-
 }
 
 module.exports = {Export};

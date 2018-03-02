@@ -8,8 +8,8 @@ class Examples extends ServiceBase {
     /**
      * Returns examples to be reviewed.
      */
-    async reviewLabeledExamples() {
-        return this.createRequest('get', ['skip', 'take']);
+    async reviewLabeledExamples(params) {
+        return this.createRequest('', params, 'get');
     }
 
     /**
@@ -22,17 +22,16 @@ class Examples extends ServiceBase {
      Some items can pass while others fail. The returned result will indicate each item's status.
 
      */
-    async batchAddLabels(exampleLabelObjectArray/* ExampleLabelObjectArray */) {
-        return this.createRequest('post', [], exampleLabelObjectArray);
+    async batchAddLabels(params, exampleLabelObjectArray/* ExampleLabelObjectArray */) {
+        return this.createRequest('', params, 'post', exampleLabelObjectArray);
     }
 
     /**
      * Deletes the label with the specified ID.
      */
-    async deleteExampleLabels() {
-        return this.createRequest('delete', []);
+    async deleteExampleLabels(params) {
+        return this.createRequest('/{exampleId}', params, 'delete');
     }
-
 }
 
 module.exports = {Examples};

@@ -21,10 +21,9 @@ const operationTpl = (operations) => {
     /**
     * ${operation.description}
     */
-    async ${operation.name}(${operation.entityName}${(operation.entityType ? `/* ${operation.entityType} */` : '')}) {
-        return this.createRequest('${operation.method}', [${operation.queries}]${operation.entityName ? ', ' + operation.entityName : ''});
-    }
-       `;
+    async ${operation.name}(params${operation.entityName ? ` , ${operation.entityName}` : ''}${(operation.entityType ? `/* ${operation.entityType} */` : '')}) {
+        return this.createRequest('${operation.pathFragment}', params, '${operation.method}'${operation.entityName ? ', ' + operation.entityName : ''});
+    }`;
     });
     return tpl;
 };
@@ -85,10 +84,6 @@ function findFileNameFromPathName(pathName) {
     }
 }
 
-function findQueries(swaggerOperation) {
-    return (swaggerOperation.parameters || []).filter(operation => operation.in === 'query');
-}
-
 const modelTypesByName = {};
 Object.keys(swagger.definitions).forEach(key => {
     const def = swagger.definitions[key];
@@ -127,6 +122,7 @@ Object.keys(swagger.definitions).forEach(key => {
 const configsByFileName = {};
 Object.keys(swagger.paths).forEach(pathName => {
     const fileName = findFileNameFromPathName(pathName);
+    const pathFragment = pathName.substr(pathName.indexOf(fileName) + fileName.length);
     const {[pathName]: path} = swagger.paths;
     const className = fileName.replace(/[\w]/, match => match.toUpperCase());
     const cfg = configsByFileName[fileName] || {className, url: pathName, operations: []};
@@ -138,27 +134,44 @@ Object.keys(swagger.paths).forEach(pathName => {
         if (swaggerOperation.description.toLowerCase().includes('deprecated')) {
             continue;
         }
-        const operation = {description: swaggerOperation.description};
+        const operation = {
+            description: swaggerOperation.description,
+            pathFragment,
+            params: (swaggerOperation.parameters || []).filter(param => (!/(body|query)/.test(param.in) && !/(appId|versionId)/.test(param.name)))
+        };
         const entityToConsume = findEntity(swaggerOperation) || {name: '', schema: {$ref: ''}};
+        if (!entityToConsume.schema.$ref && entityToConsume.schema.example) {
+            const entity = JSON.parse(entityToConsume.schema.example);
+            console.log('no entity for: ', entity, pathName);
+        }
         operation.method = operationName;
-        operation.name = swaggerOperation.operationId.replace(/(')/g, '').split('-').pop().replace(/( \w)/g, (...args) => args[2] ? args[0].trim().toUpperCase() : args[0].trim().toLowerCase());
-        operation.entityName = (entityToConsume || {name: ''}).name;
-        operation.entityType = (entityToConsume.schema.$ref || '').split('/').pop();
+        operation.name = swaggerOperation.operationId
+            .replace(/(')/g, '')
+            .split('-')
+            .pop()
+            .replace(/( \w)/g, (...args) => args[2] ? args[0]
+                .trim()
+                .toUpperCase() : args[0]
+                .trim()
+                .toLowerCase());
+
+        if (entityToConsume.name) {
+            operation.entityName = entityToConsume.name;
+            operation.entityType = (entityToConsume.schema.$ref || '').split('/').pop();
+        }
         cfg.operations.push(operation);
-        const queries = findQueries(swaggerOperation);
-        operation.queries = queries.map(query => `'${query.name}'`);
     }
-    configsByFileName[fileName] = cfg;
+    if (cfg.operations.length) {
+        configsByFileName[fileName] = cfg;
+    }
 });
 
 let classNames = [];
 Object.keys(configsByFileName).forEach(key => {
     const cfg = configsByFileName[key];
-    if (cfg.operations.length) {
-        const clazz = classTpl(cfg);
-        fs.ensureDir('generated').then(() => fs.writeFileSync(`generated/${key}.js`, clazz));
-        classNames.push(cfg.className);
-    }
+    const clazz = classTpl(cfg);
+    fs.ensureDir('generated').then(() => fs.writeFileSync(`generated/${key}.js`, clazz));
+    classNames.push(cfg.className);
 });
 
 let modelNames = [];

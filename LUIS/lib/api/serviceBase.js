@@ -1,4 +1,5 @@
 const {insertParametersFromObject} = require('../utils/insertParametersFromObject');
+const {deriveParamsFromPath} = require('../utils/deriveParamsFromPath');
 
 class ServiceBase {
 
@@ -18,15 +19,17 @@ class ServiceBase {
         this.endpoint = endpoint;
     }
 
-    createRequest(method, dataModel) {
+    createRequest(pathFragment, params, method, dataModel) {
         const {commonHeaders: headers, config, endpoint} = this;
-        const {base, baseParams, operations} = config;
-        if (!operations.includes(method)) {
-            throw new Error(`${method} is not implemented for them ${endpoint} endpoint`);
-        }
-        const params = Object.assign({}, baseParams, dataModel);
-        const URL = insertParametersFromObject(base + endpoint, params);
+        const {endpointBasePath, appId, versionId} = config;
+        const tokenizedUrl = endpointBasePath + endpoint + pathFragment;
+
+        params = Object.assign((dataModel || {}), params, {appId, versionId});
+        ServiceBase.validateParams(tokenizedUrl, params);
+
+        const URL = insertParametersFromObject(tokenizedUrl, params);
         const body = dataModel ? JSON.stringify(dataModel) : undefined;
+
         return fetch(URL, {headers, method, body});
     }
 
@@ -38,4 +41,13 @@ class ServiceBase {
     }
 }
 
+ServiceBase.validateParams = function (tokenizedUrl, params) {
+    const paramsFromPath = deriveParamsFromPath(tokenizedUrl);
+
+    paramsFromPath.forEach(param => {
+        if (!(param in params)) {
+            throw new Error(`${param} is missing.`);
+        }
+    });
+};
 module.exports = {ServiceBase};

@@ -8,10 +8,9 @@ class Endpoints extends ServiceBase {
     /**
      * Returns the available endpoint deployment regions and urls
      */
-    async getEndpoints() {
-        return this.createRequest('get', []);
+    async getEndpoints(params) {
+        return this.createRequest('', params, 'get');
     }
-
 }
 
 module.exports = {Endpoints};

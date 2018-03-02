@@ -8,38 +8,37 @@ class Versions extends ServiceBase {
     /**
      * Gets the application versions info.
      */
-    async getApplicationVersionList() {
-        return this.createRequest('get', ['skip', 'take']);
+    async getApplicationVersionList(params) {
+        return this.createRequest('', params, 'get');
     }
 
     /**
      * Deletes an application version.
      */
-    async deleteApplicationVersion() {
-        return this.createRequest('delete', []);
+    async deleteApplicationVersion(params) {
+        return this.createRequest('/{versionId}/', params, 'delete');
     }
 
     /**
      * Updates the name or description of the application version.
      */
-    async renameApplicationVersion(taskUpdateObject/* TaskUpdateObject */) {
-        return this.createRequest('put', [], taskUpdateObject);
+    async renameApplicationVersion(params, taskUpdateObject/* TaskUpdateObject */) {
+        return this.createRequest('/{versionId}/', params, 'put', taskUpdateObject);
     }
 
     /**
      * Gets the task info.
      */
-    async getApplicationVersion() {
-        return this.createRequest('get', []);
+    async getApplicationVersion(params) {
+        return this.createRequest('/{versionId}/', params, 'get');
     }
 
     /**
      * Imports a new version into a LUIS application, the version's JSON should be included in in the request body.
      */
-    async importVersionToApplication(jSONApp/* JSONApp */) {
-        return this.createRequest('post', ['versionId'], jSONApp);
+    async importVersionToApplication(params, jSONApp/* JSONApp */) {
+        return this.createRequest('/import', params, 'post', jSONApp);
     }
-
 }
 
 module.exports = {Versions};

@@ -8,10 +8,9 @@ class Querylogs extends ServiceBase {
     /**
      * Gets the query logs of the past month for the application.
      */
-    async downloadApplicationQueryLogs() {
-        return this.createRequest('get', []);
+    async downloadApplicationQueryLogs(params) {
+        return this.createRequest('', params, 'get');
     }
-
 }
 
 module.exports = {Querylogs};

@@ -8,10 +8,9 @@ class Usagescenarios extends ServiceBase {
     /**
      * Gets the application available usage scenarios.
      */
-    async getLUISApplicationUsageScenariosList() {
-        return this.createRequest('get', []);
+    async getLUISApplicationUsageScenariosList(params) {
+        return this.createRequest('', params, 'get');
     }
-
 }
 
 module.exports = {Usagescenarios};

@@ -10,33 +10,32 @@ class Permissions extends ServiceBase {
      If an empty list is sent, all access to other users will be removed.
 
      */
-    async updateAccessList(body) {
-        return this.createRequest('put', [], body);
+    async updateAccessList(params, body) {
+        return this.createRequest('', params, 'put', body);
     }
 
     /**
      * Removed a user to the allowed list of users to access this LUIS application.
      Users are removed using their email address.
      */
-    async removeUserFromAccessList(body) {
-        return this.createRequest('delete', [], body);
+    async removeUserFromAccessList(params, body) {
+        return this.createRequest('', params, 'delete', body);
     }
 
     /**
      * Adds a user to the allowed list of users to access this LUIS application.
      Users are added using their email address.
      */
-    async addEmailToAccessList(body) {
-        return this.createRequest('post', [], body);
+    async addEmailToAccessList(params, body) {
+        return this.createRequest('', params, 'post', body);
     }
 
     /**
      * Gets the list of user emails that have permissions to access your application.
      */
-    async getUserAccessList() {
-        return this.createRequest('get', []);
+    async getUserAccessList(params) {
+        return this.createRequest('', params, 'get');
     }
-
 }
 
 module.exports = {Permissions};

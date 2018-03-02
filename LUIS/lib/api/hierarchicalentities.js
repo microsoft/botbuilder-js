@@ -8,66 +8,65 @@ class Hierarchicalentities extends ServiceBase {
     /**
      * Gets information about the hierarchical entity models.
      */
-    async getVersionHierarchicalEntityList() {
-        return this.createRequest('get', ['skip', 'take']);
+    async getVersionHierarchicalEntityList(params) {
+        return this.createRequest('', params, 'get');
     }
 
     /**
      * Adds a hierarchical entity extractor to the application version.
      */
-    async createHierarchicalEntity(hierarchicalModelCreateObject/* HierarchicalModelCreateObject */) {
-        return this.createRequest('post', [], hierarchicalModelCreateObject);
+    async createHierarchicalEntity(params, hierarchicalModelCreateObject/* HierarchicalModelCreateObject */) {
+        return this.createRequest('', params, 'post', hierarchicalModelCreateObject);
     }
 
     /**
      * Deletes a hierarchical entity extractor from the application version.
      */
-    async deleteHierarchicalEntity() {
-        return this.createRequest('delete', []);
+    async deleteHierarchicalEntity(params) {
+        return this.createRequest('/{hEntityId}', params, 'delete');
     }
 
     /**
      * Updates the name and children of a hierarchical entity model.
      */
-    async updateHierarchicalEntity(hierarchicalModelUpdateObject/* HierarchicalModelUpdateObject */) {
-        return this.createRequest('put', [], hierarchicalModelUpdateObject);
+    async updateHierarchicalEntity(params, hierarchicalModelUpdateObject/* HierarchicalModelUpdateObject */) {
+        return this.createRequest('/{hEntityId}', params, 'put', hierarchicalModelUpdateObject);
     }
 
     /**
      * Gets information about the hierarchical entity model.
      */
-    async getHierarchicalEntity() {
-        return this.createRequest('get', []);
+    async getHierarchicalEntity(params) {
+        return this.createRequest('/{hEntityId}', params, 'get');
     }
 
     /**
      * Deletes a hierarchical entity extractor child from the application.
      */
-    async deleteHierarchicalChildEntity() {
-        return this.createRequest('delete', []);
+    async deleteHierarchicalChildEntity(params) {
+        return this.createRequest('/{hEntityId}/children/{hChildId}', params, 'delete');
     }
 
     /**
      * Renames a single child in an existing hierarchical entity model.
      */
-    async updateHierarchicalChildEntity(body) {
-        return this.createRequest('put', [], body);
+    async updateHierarchicalChildEntity(params, body) {
+        return this.createRequest('/{hEntityId}/children/{hChildId}', params, 'put', body);
     }
 
     /**
      * Gets information about the hierarchical entity child model.
      */
-    async getHierarchicalChildEntity() {
-        return this.createRequest('get', []);
+    async getHierarchicalChildEntity(params) {
+        return this.createRequest('/{hEntityId}/children/{hChildId}', params, 'get');
     }
 
     /**
      * Creates a single child in an existing hierarchical entity model.
      */
-    async createHierarchicalChildEntity(body) {
-        return this.createRequest('post', [], body);
+    async createHierarchicalChildEntity(params, body) {
+        return this.createRequest('/{hEntityId}/children', params, 'post', body);
     }
-
 }
 
 module.exports = {Hierarchicalentities};

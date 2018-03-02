@@ -8,10 +8,9 @@ class Listprebuilts extends ServiceBase {
     /**
      * Gets all the available prebuilt entities for the application based on the application's culture.
      */
-    async getAvailablePrebuiltEntityList() {
-        return this.createRequest('get', []);
+    async getAvailablePrebuiltEntityList(params) {
+        return this.createRequest('', params, 'get');
     }
-
 }
 
 module.exports = {Listprebuilts};

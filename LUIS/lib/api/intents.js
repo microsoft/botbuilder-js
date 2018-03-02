@@ -8,45 +8,44 @@ class Intents extends ServiceBase {
     /**
      * Gets information about the intent models.
      */
-    async getVersionIntentList() {
-        return this.createRequest('get', ['skip', 'take']);
+    async getVersionIntentList(params) {
+        return this.createRequest('', params, 'get');
     }
 
     /**
      * Adds an intent classifier to the application.
      */
-    async createIntent(modelCreateObject/* ModelCreateObject */) {
-        return this.createRequest('post', [], modelCreateObject);
+    async createIntent(params, modelCreateObject/* ModelCreateObject */) {
+        return this.createRequest('', params, 'post', modelCreateObject);
     }
 
     /**
      * Deletes an intent classifier from the application.
      */
-    async deleteIntent() {
-        return this.createRequest('delete', []);
+    async deleteIntent(params) {
+        return this.createRequest('/{intentId}', params, 'delete');
     }
 
     /**
      * Updates the name of an intent classifier.
      */
-    async renameIntent(modelUpdateObject/* ModelUpdateObject */) {
-        return this.createRequest('put', [], modelUpdateObject);
+    async renameIntent(params, modelUpdateObject/* ModelUpdateObject */) {
+        return this.createRequest('/{intentId}', params, 'put', modelUpdateObject);
     }
 
     /**
      * Gets information about the intent model.
      */
-    async getIntent() {
-        return this.createRequest('get', []);
+    async getIntent(params) {
+        return this.createRequest('/{intentId}', params, 'get');
     }
 
     /**
      * Suggests examples that would improve the accuracy of the intent model.
      */
-    async suggestEndpointQueriesForIntents() {
-        return this.createRequest('get', ['take']);
+    async suggestEndpointQueriesForIntents(params) {
+        return this.createRequest('/{intentId}/suggest', params, 'get');
     }
-
 }
 
 module.exports = {Intents};
