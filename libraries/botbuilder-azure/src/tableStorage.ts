@@ -5,11 +5,11 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.  
  * Licensed under the MIT License.
  */
-import { Storage, StorageSettings, StoreItems, StoreItem, StorageMiddleware } from 'botbuilder';
+import { Storage, StoreItems, StoreItem } from 'botbuilder';
 import * as azure from 'azure-storage';
 
 /** Additional settings for configuring an instance of [TableStorage](../classes/botbuilder_azure_v4.tablestorage.html). */
-export interface TableStorageSettings extends StorageSettings {
+export interface TableStorageSettings {
     /** Name of the table to use for storage. */
     tableName: string;
 
@@ -27,20 +27,14 @@ let checkedTables: { [name: string]: Promise<azure.TableService.TableResult>; } 
 
 /**
  * Middleware that implements an Azure Table based storage provider for a bot.
- * 
- * __Extends BotContext:__
- * * context.storage - Storage provider for storing and retrieving objects.
  *
  * **Usage Example**
  *
- * ```js
- * bot.use(new TableStorage({
- *      tableName: 'storage',
- *      storageAccountOrConnectionString: 'UseDevelopmentStorage=true'
- * }));
+ * ```javascript
  * ```
 */
-export class TableStorage extends StorageMiddleware<TableStorageSettings> implements Storage {
+export class TableStorage implements Storage {
+    private settings: TableStorageSettings;
     private tableService: TableServiceAsync;
 
     /**
@@ -49,7 +43,7 @@ export class TableStorage extends StorageMiddleware<TableStorageSettings> implem
      * @param settings (Optional) setting to configure the provider.
      */
     public constructor(settings: TableStorageSettings) {
-        super(settings);
+        this.settings = Object.assign({}, settings);
 
         if (this.settings.storageAccountOrConnectionString)
             this.tableService = <TableServiceAsync>azure.createTableService(this.settings.storageAccountOrConnectionString as string, this.settings.storageAccessKey as string, this.settings.host);
@@ -211,11 +205,6 @@ export class TableStorage extends StorageMiddleware<TableStorageSettings> implem
                 return Promise.all(promises)
                     .then(result => { });
             });
-    }
-
-    /** INTERNAL method that returns the storage instance to be added to the context object. */
-    protected getStorage(context: BotContext): Storage {
-        return this;
     }
 }
 
