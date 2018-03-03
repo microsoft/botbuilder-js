@@ -68,7 +68,7 @@ The class supports mixed modes of usage so it's fine to both use it as middlewar
 ### ⊕ **new BatchOutput**(context?: *[BotContext](botbuilder.botcontext.md)⎮`undefined`*): [BatchOutput](botbuilder.batchoutput.md)
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:57](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L57)*
+*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:57](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L57)*
 
 
 
@@ -99,7 +99,7 @@ Creates a new BatchOutput instance.
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:75](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L75)*
+*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:75](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L75)*
 
 
 
@@ -134,7 +134,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:93](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L93)*
+*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:93](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L93)*
 
 
 
@@ -171,7 +171,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:100](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L100)*
+*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:100](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L100)*
 
 
 
@@ -205,7 +205,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:104](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L104)*
+*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:104](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L104)*
 
 
 
@@ -230,7 +230,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:64](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L64)*
+*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:64](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L64)*
 
 
 
@@ -266,7 +266,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:111](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L111)*
+*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:111](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L111)*
 
 
 
@@ -289,7 +289,7 @@ Adds a `message` activity to the batch.
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:112](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L112)*
+*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:112](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L112)*
 
 
 
@@ -319,7 +319,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:116](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L116)*
+*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:116](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L116)*
 
 
 

@@ -30,7 +30,7 @@ Additional options that can be used to configure a `ChoicePrompt`.
 
 *Inherited from [PromptOptions](botbuilder_dialogs.promptoptions.md).[prompt](botbuilder_dialogs.promptoptions.md#prompt)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:13](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L13)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:13](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L13)*
 
 
 
@@ -49,7 +49,7 @@ ___
 
 *Inherited from [PromptOptions](botbuilder_dialogs.promptoptions.md).[retryPrompt](botbuilder_dialogs.promptoptions.md#retryprompt)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L17)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L17)*
 
 
 
@@ -68,7 +68,7 @@ ___
 
 *Inherited from [PromptOptions](botbuilder_dialogs.promptoptions.md).[retrySpeak](botbuilder_dialogs.promptoptions.md#retryspeak)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L19)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L19)*
 
 
 
@@ -87,7 +87,7 @@ ___
 
 *Inherited from [PromptOptions](botbuilder_dialogs.promptoptions.md).[speak](botbuilder_dialogs.promptoptions.md#speak)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L15)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L15)*
 
 
 
@@ -104,7 +104,7 @@ ___
 
 **●  style**:  *[ListStyle](../enums/botbuilder_dialogs.liststyle.md)* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L21)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L21)*
 
 
 

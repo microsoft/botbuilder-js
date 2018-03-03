@@ -15,7 +15,7 @@
 
 **●  activity**:  *[Activity](botbuilder.activity.md)* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:482](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botframework-schema/lib/index.d.ts#L482)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:482](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L482)*
 
 
 *__member__*: {Activity} [activity] (Optional) When creating a new conversation, use this activity as the intial message to the conversation
@@ -32,7 +32,7 @@ ___
 
 **●  bot**:  *[ChannelAccount](botbuilder.channelaccount.md)* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:468](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botframework-schema/lib/index.d.ts#L468)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:468](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L468)*
 
 
 *__member__*: {ChannelAccount} [bot] The bot address for this conversation
@@ -49,7 +49,7 @@ ___
 
 **●  channelData**:  *`any`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:487](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botframework-schema/lib/index.d.ts#L487)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:487](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L487)*
 
 
 *__member__*: {any} [channelData] Channel specific payload for creating the conversation
@@ -66,7 +66,7 @@ ___
 
 **●  isGroup**:  *`boolean`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:464](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botframework-schema/lib/index.d.ts#L464)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:464](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L464)*
 
 
 *__member__*: {boolean} [isGroup] IsGroup
@@ -83,7 +83,7 @@ ___
 
 **●  members**:  *[ChannelAccount](botbuilder.channelaccount.md)[]* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:472](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botframework-schema/lib/index.d.ts#L472)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:472](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L472)*
 
 
 *__member__*: {ChannelAccount[]} [members] Members to add to the conversation
@@ -100,7 +100,7 @@ ___
 
 **●  topicName**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:477](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botframework-schema/lib/index.d.ts#L477)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:477](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L477)*
 
 
 *__member__*: {string} [topicName] (Optional) Topic of the conversation (if supported by the channel)

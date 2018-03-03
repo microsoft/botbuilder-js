@@ -31,7 +31,7 @@ Defines values for ActivityImportance. Possible values include: 'low', 'normal',
 
 ** High**:    = "high"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1757](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botframework-schema/lib/index.d.ts#L1757)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1757](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1757)*
 
 
 
@@ -45,7 +45,7 @@ ___
 
 ** Low**:    = "low"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1755](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botframework-schema/lib/index.d.ts#L1755)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1755](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1755)*
 
 
 
@@ -59,7 +59,7 @@ ___
 
 ** Normal**:    = "normal"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1756](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botframework-schema/lib/index.d.ts#L1756)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1756](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1756)*
 
 
 

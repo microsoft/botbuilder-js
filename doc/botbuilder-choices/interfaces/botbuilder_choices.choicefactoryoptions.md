@@ -1,8 +1,8 @@
-[Bot Builder SDK - Choices](../README.md) > [ChoiceStylerOptions](../interfaces/botbuilder_choices.choicestyleroptions.md)
+[Bot Builder SDK - Choices](../README.md) > [ChoiceFactoryOptions](../interfaces/botbuilder_choices.choicefactoryoptions.md)
 
 
 
-# Interface: ChoiceStylerOptions
+# Interface: ChoiceFactoryOptions
 
 
 ## Properties
@@ -12,7 +12,7 @@
 
 **●  includeNumbers**:  *`undefined`⎮`true`⎮`false`* 
 
-*Defined in [libraries/botbuilder-choices/lib/choiceStyler.d.ts:30](https://github.com/Microsoft/botbuilder-js/blob/f687311/libraries/botbuilder-choices/lib/choiceStyler.d.ts#L30)*
+*Defined in [libraries/botbuilder-choices/lib/choiceFactory.d.ts:30](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-choices/lib/choiceFactory.d.ts#L30)*
 
 
 
@@ -29,7 +29,7 @@ ___
 
 **●  inlineOr**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder-choices/lib/choiceStyler.d.ts:20](https://github.com/Microsoft/botbuilder-js/blob/f687311/libraries/botbuilder-choices/lib/choiceStyler.d.ts#L20)*
+*Defined in [libraries/botbuilder-choices/lib/choiceFactory.d.ts:20](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-choices/lib/choiceFactory.d.ts#L20)*
 
 
 
@@ -46,7 +46,7 @@ ___
 
 **●  inlineOrMore**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder-choices/lib/choiceStyler.d.ts:25](https://github.com/Microsoft/botbuilder-js/blob/f687311/libraries/botbuilder-choices/lib/choiceStyler.d.ts#L25)*
+*Defined in [libraries/botbuilder-choices/lib/choiceFactory.d.ts:25](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-choices/lib/choiceFactory.d.ts#L25)*
 
 
 
@@ -63,7 +63,7 @@ ___
 
 **●  inlineSeparator**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder-choices/lib/choiceStyler.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/f687311/libraries/botbuilder-choices/lib/choiceStyler.d.ts#L15)*
+*Defined in [libraries/botbuilder-choices/lib/choiceFactory.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-choices/lib/choiceFactory.d.ts#L15)*
 
 
 

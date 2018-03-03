@@ -37,7 +37,7 @@ Reads and writes user state for your bot to storage. When used as middleware the
 
 ### Properties
 
-* [cacheKey](botbuilder.userstate.md#cachekey)
+* [stateName](botbuilder.userstate.md#statename)
 * [storage](botbuilder.userstate.md#storage)
 * [storageKey](botbuilder.userstate.md#storagekey)
 
@@ -49,6 +49,7 @@ Reads and writes user state for your bot to storage. When used as middleware the
 * [onProcessRequest](botbuilder.userstate.md#onprocessrequest)
 * [read](botbuilder.userstate.md#read)
 * [write](botbuilder.userstate.md#write)
+* [get](botbuilder.userstate.md#get)
 
 
 
@@ -57,12 +58,12 @@ Reads and writes user state for your bot to storage. When used as middleware the
 <a id="constructor"></a>
 
 
-### ⊕ **new UserState**(storage: *[Storage](../interfaces/botbuilder.storage.md)*, cacheKey?: *`undefined`⎮`string`*): [UserState](botbuilder.userstate.md)
+### ⊕ **new UserState**(storage: *[Storage](../interfaces/botbuilder.storage.md)*, stateName?: *`undefined`⎮`string`*): [UserState](botbuilder.userstate.md)
 
 
 *Overrides [BotState](botbuilder.botstate.md).[constructor](botbuilder.botstate.md#constructor)*
 
-*Defined in [libraries/botbuilder-core-extensions/lib/userState.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botbuilder-core-extensions/lib/userState.d.ts#L18)*
+*Defined in [libraries/botbuilder-core-extensions/lib/userState.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/userState.d.ts#L18)*
 
 
 
@@ -74,7 +75,7 @@ Creates a new UserState instance.
 | Param | Type | Description |
 | ------ | ------ | ------ |
 | storage | [Storage](../interfaces/botbuilder.storage.md)   |  Storage provider to persist user state to. |
-| cacheKey | `undefined`⎮`string`   |  (Optional) name of the cached entry on the context object. A property accessor with this name will also be added to the context object. The default value is 'userState'. |
+| stateName | `undefined`⎮`string`   |  (Optional) name of the cached entry on the context object. A property accessor with this name will also be added to the context object. The default value is 'userState'. |
 
 
 
@@ -86,15 +87,15 @@ Creates a new UserState instance.
 
 
 ## Properties
-<a id="cachekey"></a>
+<a id="statename"></a>
 
-### «Protected» cacheKey
+### «Protected» stateName
 
-**●  cacheKey**:  *`string`* 
+**●  stateName**:  *`string`* 
 
-*Inherited from [BotState](botbuilder.botstate.md).[cacheKey](botbuilder.botstate.md#cachekey)*
+*Inherited from [BotState](botbuilder.botstate.md).[stateName](botbuilder.botstate.md#statename)*
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:30](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botbuilder-core-extensions/lib/botState.d.ts#L30)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:30](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/botState.d.ts#L30)*
 
 
 
@@ -110,7 +111,7 @@ ___
 
 *Inherited from [BotState](botbuilder.botstate.md).[storage](botbuilder.botstate.md#storage)*
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:29](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botbuilder-core-extensions/lib/botState.d.ts#L29)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:29](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/botState.d.ts#L29)*
 
 
 
@@ -126,7 +127,7 @@ ___
 
 *Inherited from [BotState](botbuilder.botstate.md).[storageKey](botbuilder.botstate.md#storagekey)*
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botbuilder-core-extensions/lib/botState.d.ts#L31)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/botState.d.ts#L31)*
 
 
 
@@ -146,7 +147,7 @@ ___
 
 *Inherited from [BotState](botbuilder.botstate.md).[clear](botbuilder.botstate.md#clear)*
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:56](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botbuilder-core-extensions/lib/botState.d.ts#L56)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:56](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/botState.d.ts#L56)*
 
 
 
@@ -179,7 +180,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/userState.d.ts:29](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botbuilder-core-extensions/lib/userState.d.ts#L29)*
+*Defined in [libraries/botbuilder-core-extensions/lib/userState.d.ts:29](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/userState.d.ts#L29)*
 
 
 
@@ -214,7 +215,7 @@ ___
 
 *Inherited from [BotState](botbuilder.botstate.md).[onProcessRequest](botbuilder.botstate.md#onprocessrequest)*
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botbuilder-core-extensions/lib/botState.d.ts#L39)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/botState.d.ts#L39)*
 
 
 
@@ -247,7 +248,7 @@ ___
 
 *Inherited from [BotState](botbuilder.botstate.md).[read](botbuilder.botstate.md#read)*
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:45](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botbuilder-core-extensions/lib/botState.d.ts#L45)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:45](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/botState.d.ts#L45)*
 
 
 
@@ -283,7 +284,7 @@ ___
 
 *Inherited from [BotState](botbuilder.botstate.md).[write](botbuilder.botstate.md#write)*
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:51](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botbuilder-core-extensions/lib/botState.d.ts#L51)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:51](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/botState.d.ts#L51)*
 
 
 
@@ -302,6 +303,45 @@ Writes out the state object if it's been changed.
 
 
 **Returns:** `Promise`.<`void`>
+
+
+
+
+
+___
+
+<a id="get"></a>
+
+### «Static» get
+
+► **get**T(context: *[BotContext](botbuilder.botcontext.md)*, stateName: *`string`*): `T`⎮`undefined`
+
+
+
+*Inherited from [BotState](botbuilder.botstate.md).[get](botbuilder.botstate.md#get)*
+
+*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:62](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/botState.d.ts#L62)*
+
+
+
+Returns a cached state object or undefined if not cached.
+
+
+**Type parameters:**
+
+#### T :  [StoreItem](../interfaces/botbuilder.storeitem.md)
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| context | [BotContext](botbuilder.botcontext.md)   |  Context for current turn of conversation with the user. |
+| stateName | `string`   |  Name of the cached state object to return. |
+
+
+
+
+
+**Returns:** `T`⎮`undefined`
 
 
 

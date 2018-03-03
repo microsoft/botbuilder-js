@@ -15,7 +15,7 @@
 
 **●  addressLine**:  *`string`[]* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1194](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botframework-schema/lib/index.d.ts#L1194)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1194](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1194)*
 
 
 *__member__*: {string[]} [addressLine] This is the most specific part of the address. It can include, for example, a street name, a house number, apartment number, a rural delivery route, descriptive instructions, or a post office box number.
@@ -32,7 +32,7 @@ ___
 
 **●  city**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1204](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botframework-schema/lib/index.d.ts#L1204)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1204](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1204)*
 
 
 *__member__*: {string} [city] This is the city/town portion of the address.
@@ -49,7 +49,7 @@ ___
 
 **●  country**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1187](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botframework-schema/lib/index.d.ts#L1187)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1187](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1187)*
 
 
 *__member__*: {string} [country] This is the CLDR (Common Locale Data Repository) region code. For example, US, GB, CN, or JP
@@ -66,7 +66,7 @@ ___
 
 **●  dependentLocality**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1210](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botframework-schema/lib/index.d.ts#L1210)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1210](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1210)*
 
 
 *__member__*: {string} [dependentLocality] This is the dependent locality or sublocality within a city. For example, used for neighborhoods, boroughs, districts, or UK dependent localities.
@@ -83,7 +83,7 @@ ___
 
 **●  languageCode**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1226](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botframework-schema/lib/index.d.ts#L1226)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1226](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1226)*
 
 
 *__member__*: {string} [languageCode] This is the BCP-47 language code for the address. It's used to determine the field separators and the order of fields when formatting the address for display.
@@ -100,7 +100,7 @@ ___
 
 **●  organization**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1231](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botframework-schema/lib/index.d.ts#L1231)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1231](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1231)*
 
 
 *__member__*: {string} [organization] This is the organization, firm, company, or institution at this address.
@@ -117,7 +117,7 @@ ___
 
 **●  phone**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1241](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botframework-schema/lib/index.d.ts#L1241)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1241](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1241)*
 
 
 *__member__*: {string} [phone] This is the phone number of the recipient or contact person.
@@ -134,7 +134,7 @@ ___
 
 **●  postalCode**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1215](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botframework-schema/lib/index.d.ts#L1215)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1215](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1215)*
 
 
 *__member__*: {string} [postalCode] This is the postal code or ZIP code, also known as PIN code in India.
@@ -151,7 +151,7 @@ ___
 
 **●  recipient**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1236](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botframework-schema/lib/index.d.ts#L1236)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1236](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1236)*
 
 
 *__member__*: {string} [recipient] This is the name of the recipient or contact person.
@@ -168,7 +168,7 @@ ___
 
 **●  region**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1200](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botframework-schema/lib/index.d.ts#L1200)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1200](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1200)*
 
 
 *__member__*: {string} [region] This is the top level administrative subdivision of the country. For example, this can be a state, a province, an oblast, or a prefecture.
@@ -185,7 +185,7 @@ ___
 
 **●  sortingCode**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1220](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botframework-schema/lib/index.d.ts#L1220)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1220](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1220)*
 
 
 *__member__*: {string} [sortingCode] This is the sorting code as used in, for example, France.

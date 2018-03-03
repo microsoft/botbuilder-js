@@ -15,7 +15,7 @@
 
 **●  details**:  *[PaymentDetails](botbuilder.paymentdetails.md)* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1574](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botframework-schema/lib/index.d.ts#L1574)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1574](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1574)*
 
 
 *__member__*: {PaymentDetails} [details] Update payment details

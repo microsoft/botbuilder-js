@@ -15,7 +15,7 @@ A value that can be sorted and still refer to its original position with a sourc
 
 **●  index**:  *`number`* 
 
-*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:52](https://github.com/Microsoft/botbuilder-js/blob/f687311/libraries/botbuilder-choices/lib/findValues.d.ts#L52)*
+*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:52](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-choices/lib/findValues.d.ts#L52)*
 
 
 
@@ -32,7 +32,7 @@ ___
 
 **●  value**:  *`string`* 
 
-*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:50](https://github.com/Microsoft/botbuilder-js/blob/f687311/libraries/botbuilder-choices/lib/findValues.d.ts#L50)*
+*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:50](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-choices/lib/findValues.d.ts#L50)*
 
 
 

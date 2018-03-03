@@ -15,7 +15,7 @@
 
 **●  details**:  *[PaymentDetails](botbuilder.paymentdetails.md)* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1554](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botframework-schema/lib/index.d.ts#L1554)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1554](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1554)*
 
 
 *__member__*: {PaymentDetails} [details] Update payment details
@@ -32,7 +32,7 @@ ___
 
 **●  id**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1550](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botframework-schema/lib/index.d.ts#L1550)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1550](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1550)*
 
 
 *__member__*: {string} [id] ID for the payment request to update
@@ -49,7 +49,7 @@ ___
 
 **●  shippingAddress**:  *[PaymentAddress](botbuilder.paymentaddress.md)* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1558](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botframework-schema/lib/index.d.ts#L1558)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1558](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1558)*
 
 
 *__member__*: {PaymentAddress} [shippingAddress] Updated shipping address
@@ -66,7 +66,7 @@ ___
 
 **●  shippingOption**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1562](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botframework-schema/lib/index.d.ts#L1562)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1562](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1562)*
 
 
 *__member__*: {string} [shippingOption] Updated shipping options

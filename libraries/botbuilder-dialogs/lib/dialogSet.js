@@ -130,7 +130,7 @@ class DialogSet {
      *
      * ```JavaScript
      * return dialogs.continue(context).then(() => {
-     *      if (!dialog.responded) {
+     *      if (!context.responded) {
      *          return dialogs.begin(context, 'fallback');
      *      }
      * });

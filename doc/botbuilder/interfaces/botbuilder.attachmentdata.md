@@ -15,7 +15,7 @@
 
 **●  name**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:536](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botframework-schema/lib/index.d.ts#L536)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:536](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L536)*
 
 
 *__member__*: {string} [name] Name of the attachment
@@ -32,7 +32,7 @@ ___
 
 **●  originalBase64**:  *`any`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:540](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botframework-schema/lib/index.d.ts#L540)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:540](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L540)*
 
 
 *__member__*: {any} [originalBase64] Attachment content
@@ -49,7 +49,7 @@ ___
 
 **●  thumbnailBase64**:  *`any`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:544](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botframework-schema/lib/index.d.ts#L544)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:544](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L544)*
 
 
 *__member__*: {any} [thumbnailBase64] Attachment thumbnail
@@ -66,7 +66,7 @@ ___
 
 **●  type**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:532](https://github.com/Microsoft/botbuilder-js/blob/ce808e0/libraries/botframework-schema/lib/index.d.ts#L532)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:532](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L532)*
 
 
 *__member__*: {string} [type] Content-Type of the attachment

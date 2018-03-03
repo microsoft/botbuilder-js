@@ -45,6 +45,7 @@
 
 * [formatChoicePrompt](#formatchoiceprompt)
 * [formatPrompt](#formatprompt)
+* [sendPrompt](#sendprompt)
 
 
 
@@ -56,7 +57,7 @@
 
 **Τ PromptValidator**:  *`function`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L31)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L31)*
 
 
 
@@ -65,7 +66,7 @@ Signature of a function that can be passed in to the constructor of all prompts.
 
 
 #### Type declaration
-►(context: *`BotContext`*, value: *`T`*, dialogs: *[DialogSet](classes/botbuilder_dialogs.dialogset.md)*): [Promiseable]()`void`
+►(context: *[BotContext]()*, value: *`T`*, dialogs: *[DialogSet](classes/botbuilder_dialogs.dialogset.md)*): [Promiseable]()`void`
 
 
 
@@ -73,7 +74,7 @@ Signature of a function that can be passed in to the constructor of all prompts.
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | `BotContext`   |  Context object for the current turn of conversation with the user. |
+| context | [BotContext]()   |  Context object for the current turn of conversation with the user. |
 | value | `T`   |  The value that was recognized or wasn't recognized. Depending on the prompt this can be either undefined or an empty array to indicate an unrecognized value. |
 | dialogs | [DialogSet](classes/botbuilder_dialogs.dialogset.md)   |  The parent dialog set. |
 
@@ -96,7 +97,7 @@ ___
 
 **Τ SkipStepFunction**:  *`function`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:55](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L55)*
+*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:55](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L55)*
 
 
 
@@ -132,7 +133,7 @@ ___
 
 **Τ WaterfallStep**:  *`function`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:50](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L50)*
+*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:50](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L50)*
 
 
 
@@ -170,7 +171,7 @@ Function signature of a waterfall step.
     ]);
 
 #### Type declaration
-►(context: *`BotContext`*, args?: *`any`*, next?: *[SkipStepFunction](#skipstepfunction)*): [Promiseable]()`void`
+►(context: *[BotContext]()*, args?: *`any`*, next?: *[SkipStepFunction](#skipstepfunction)*): [Promiseable]()`void`
 
 
 
@@ -178,7 +179,7 @@ Function signature of a waterfall step.
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | `BotContext`   |  The dialog context for the current turn of conversation. |
+| context | [BotContext]()   |  The dialog context for the current turn of conversation. |
 | args | `any`   |  Argument(s) passed into the dialog for the first step and then the results from calling a prompt or other dialog for subsequent steps. |
 | next | [SkipStepFunction](#skipstepfunction)   |  Function passed into the step to let you manually skip to the next step in the waterfall. |
 
@@ -201,11 +202,11 @@ ___
 
 ###  formatChoicePrompt
 
-► **formatChoicePrompt**(channelOrContext: *`string`⎮`BotContext`*, choices: *(`string`⎮[Choice]())[]*, text?: *`undefined`⎮`string`*, speak?: *`undefined`⎮`string`*, options?: *[ChoiceStylerOptions]()*, style?: *[ListStyle](enums/botbuilder_dialogs.liststyle.md)*): [Partial]()[Activity]()
+► **formatChoicePrompt**(channelOrContext: *`string`⎮[BotContext]()*, choices: *(`string`⎮[Choice]())[]*, text?: *`undefined`⎮`string`*, speak?: *`undefined`⎮`string`*, options?: *[ChoiceFactoryOptions]()*, style?: *[ListStyle](enums/botbuilder_dialogs.liststyle.md)*): [Partial]()[Activity]()
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:100](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L100)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:100](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L100)*
 
 
 
@@ -222,11 +223,11 @@ Helper function to format a choice prompt for a given `ListStyle`. An activity w
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| channelOrContext | `string`⎮`BotContext`   |  Context for the current turn of conversation with the user or the ID of a channel. This is used when `style == ListStyle.auto`. |
+| channelOrContext | `string`⎮[BotContext]()   |  Context for the current turn of conversation with the user or the ID of a channel. This is used when `style == ListStyle.auto`. |
 | choices | (`string`⎮[Choice]())[]   |  Array of choices being prompted for. |
 | text | `undefined`⎮`string`   |  (Optional) prompt text to show the user along with the options. |
 | speak | `undefined`⎮`string`   |  (Optional) SSML to speak to the user on channels like Cortana. The messages `inputHint` will be automatically set to `InputHints.expectingInput`. |
-| options | [ChoiceStylerOptions]()   |  (Optional) additional choice styler options used to customize the rendering of the prompts choice list. |
+| options | [ChoiceFactoryOptions]()   |  (Optional) additional choice styler options used to customize the rendering of the prompts choice list. |
 | style | [ListStyle](enums/botbuilder_dialogs.liststyle.md)   |  (Optional) list style to use when rendering prompt. Defaults to `ListStyle.auto`. |
 
 
@@ -249,7 +250,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:45](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L45)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:45](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L45)*
 
 
 
@@ -274,6 +275,38 @@ Helper function to properly format a prompt sent to a user.
 
 
 **Returns:** [Partial]()[Activity]()
+
+
+
+
+
+___
+
+<a id="sendprompt"></a>
+
+###  sendPrompt
+
+► **sendPrompt**(context: *[BotContext]()*, prompt: *`string`⎮[Partial]()[Activity]()*, speak?: *`undefined`⎮`string`*): `Promise`.<`void`>
+
+
+
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:46](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L46)*
+
+
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| context | [BotContext]()   |  - |
+| prompt | `string`⎮[Partial]()[Activity]()   |  - |
+| speak | `undefined`⎮`string`   |  - |
+
+
+
+
+
+**Returns:** `Promise`.<`void`>
 
 
 
