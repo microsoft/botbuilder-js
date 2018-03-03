@@ -1,5 +1,5 @@
 const {insertParametersFromObject} = require('../utils/insertParametersFromObject');
-const {deriveParamsFromPath} = require('../utils/deriveParamsFromPath');
+const deriveParamsFromPath = require('../utils/deriveParamsFromPath');
 
 class ServiceBase {
 

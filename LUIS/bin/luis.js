@@ -13,7 +13,9 @@ async function runProgram() {
     const args = minimist(process.argv.slice(2));
 
     if (args.init) {
-        return initializeConfig();
+        await initializeConfig();
+        process.stdout.write(`Successfully wrote ${process.cwd()}.luisrc`);
+        return;
     }
     if (args.help) {
         return help(args);
@@ -28,8 +30,9 @@ async function runProgram() {
     const serviceManifest = getServiceManifestFromArguments(args);
     validateArguments(args, serviceManifest);
 
-    const requestBody = await getFileInput();
-    return luis(config, serviceManifest, args, requestBody);
+    const requestBody = await getFileInput(args);
+    const result = await luis(config, serviceManifest, args, requestBody);
+    debugger;
 }
 
 async function initializeConfig() {
@@ -61,7 +64,7 @@ async function initializeConfig() {
         subscriptionKey,
         appId,
         versionId,
-        endpointBasePath: `https://${location}/api.cognitive.microsoft.com/luis/api/v2.0`,
+        endpointBasePath: `https://${location}.api.cognitive.microsoft.com/luis/api/v2.0`,
     });
     try {
         await new Promise((resolve, reject) => {
@@ -74,7 +77,7 @@ async function initializeConfig() {
         return null;
     }
 
-    return fs.writeJson(path.join(process.cwd(), '.luisrc'), JSON.stringify(config, null, 2));
+    return fs.writeJson(path.join(process.cwd(), '.luisrc'), config);
 }
 
 async function getFileInput(args) {

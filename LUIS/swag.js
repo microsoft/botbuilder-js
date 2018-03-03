@@ -182,8 +182,8 @@ Object.keys(modelTypesByName).forEach(key => {
     modelNames.push(modelCfg.className);
 });
 
-const modelIndexJS = modelNames.sort().map(clazz => `module.exports.${clazz} = require('./${cc(clazz)}');`).join('\n');
+const modelIndexJS = modelNames.sort().map(clazz => `module.exports.${clazz} = require('./${cc(clazz)}').${clazz};`).join('\n');
 fs.writeFileSync('generated/models/index.js', modelIndexJS);
-const serviceIndexJS = classNames.sort().map(clazz => `module.exports.${clazz} = require('./${cc(clazz)}');`).join('\n');
+const serviceIndexJS = classNames.sort().map(clazz => `module.exports.${clazz} = require('./${cc(clazz)}').${clazz};`).join('\n');
 fs.writeFileSync('generated/index.js', serviceIndexJS);
 fs.writeJsonSync('generated/manifest.json', configsByFileName);
