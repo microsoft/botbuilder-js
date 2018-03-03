@@ -9,7 +9,7 @@ module.exports = async function help(args) {
     let [x] = process.stdout.getWindowSize();
     const table = new Table({
         head: ['Argument', 'Description'],
-        colWidths: [null, x * .5],
+        colWidths: [null, Math.floor(x * .5)],
         style: {head: ['green'], 'padding-left': 1, 'padding-right': 1},
         wordWrap: true
     });

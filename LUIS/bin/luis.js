@@ -32,7 +32,7 @@ async function runProgram() {
 
     const requestBody = await getFileInput(args);
     const result = await luis(config, serviceManifest, args, requestBody);
-    debugger;
+    process.stdout(JSON.stringify(result, null, 2));
 }
 
 async function initializeConfig() {
