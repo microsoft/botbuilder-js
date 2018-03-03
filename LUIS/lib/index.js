@@ -12,5 +12,6 @@ module.exports = async function luis(config, serviceManifest, params, requestBod
         requestBodyDataModel = models[entityType].fromJSON(requestBody);
     }
     const service = new api[className]();
-    return service[operationDetail.name](params, (requestBodyDataModel || requestBody));
+    const response = await service[operationDetail.name](params, (requestBodyDataModel || requestBody));
+    return response.json();
 };
