@@ -58,7 +58,7 @@ export class ConsoleAdapter extends BotAdapter {
         }
     }
 
-    public sendActivities(activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
+    public sendActivity(activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
         return new Promise((resolve, reject) => {
             const responses: ResourceResponse[] = [];
             function next(i: number) {

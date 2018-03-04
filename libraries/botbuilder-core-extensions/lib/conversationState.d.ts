@@ -27,5 +27,5 @@ export declare class ConversationState<T extends StoreItem = StoreItem> extends 
      * @param context Context for current turn of conversation with the user.
      */
     getStorageKey(context: BotContext): string | undefined;
-    private extendContext(context);
+    private subscribe(context);
 }

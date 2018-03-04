@@ -303,9 +303,9 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should deliver a single activity using sendActivities().`, function (done) {
+    it(`should deliver a single activity using sendActivity().`, function (done) {
         const adapter = new AdapterUnderTest();
-        adapter.sendActivities([outgoingMessage]).then((responses) => {
+        adapter.sendActivity([outgoingMessage]).then((responses) => {
             assert(Array.isArray(responses), `array of responses not returned.`);
             assert(responses.length === 1, `invalid number of responses returned.`);
             assert(responses[0].id === '5678', `invalid response returned.`);
@@ -313,19 +313,19 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should deliver multiple activities using sendActivities().`, function (done) {
+    it(`should deliver multiple activities using sendActivity().`, function (done) {
         const adapter = new AdapterUnderTest();
-        adapter.sendActivities([outgoingMessage, outgoingMessage]).then((responses) => {
+        adapter.sendActivity([outgoingMessage, outgoingMessage]).then((responses) => {
             assert(Array.isArray(responses), `array of responses not returned.`);
             assert(responses.length === 2, `invalid number of responses returned.`);
             done();
         });
     });
 
-    it(`should wait for a 'delay' using sendActivities().`, function (done) {
+    it(`should wait for a 'delay' using sendActivity().`, function (done) {
         const start = new Date().getTime();
         const adapter = new AdapterUnderTest();
-        adapter.sendActivities([outgoingMessage, { type: 'delay', value: 600 }, outgoingMessage]).then((responses) => {
+        adapter.sendActivity([outgoingMessage, { type: 'delay', value: 600 }, outgoingMessage]).then((responses) => {
             const end = new Date().getTime();
             assert(Array.isArray(responses), `array of responses not returned.`);
             assert(responses.length === 3, `invalid number of responses returned.`);
@@ -334,10 +334,10 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should wait for a 'delay' withut a value using sendActivities().`, function (done) {
+    it(`should wait for a 'delay' withut a value using sendActivity().`, function (done) {
         const start = new Date().getTime();
         const adapter = new AdapterUnderTest();
-        adapter.sendActivities([outgoingMessage, { type: 'delay' }, outgoingMessage]).then((responses) => {
+        adapter.sendActivity([outgoingMessage, { type: 'delay' }, outgoingMessage]).then((responses) => {
             const end = new Date().getTime();
             assert(Array.isArray(responses), `array of responses not returned.`);
             assert(responses.length === 3, `invalid number of responses returned.`);
@@ -346,11 +346,11 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should fail to sendActivities().`, function (done) {
+    it(`should fail to sendActivity().`, function (done) {
         const adapter = new AdapterUnderTest();
         adapter.failOperation = true;
         const cpy = Object.assign({}, outgoingMessage);
-        adapter.sendActivities([cpy]).then((responses) => {
+        adapter.sendActivity([cpy]).then((responses) => {
             assert(false, `shouldn't succeed`);
         }, (err) => {
             assert(err, `error not returned.`);
@@ -358,10 +358,10 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should fail to sendActivities() without a serviceUrl.`, function (done) {
+    it(`should fail to sendActivity() without a serviceUrl.`, function (done) {
         const adapter = new AdapterUnderTest();
         const cpy = Object.assign({}, outgoingMessage, { serviceUrl: undefined });
-        adapter.sendActivities([cpy]).then((responses) => {
+        adapter.sendActivity([cpy]).then((responses) => {
             assert(false, `shouldn't succeed`);
         }, (err) => {
             assert(err, `error not returned.`);
@@ -369,10 +369,10 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should fail to sendActivities() without a conversation.id.`, function (done) {
+    it(`should fail to sendActivity() without a conversation.id.`, function (done) {
         const adapter = new AdapterUnderTest();
         const cpy = Object.assign({}, outgoingMessage, { conversation: undefined });
-        adapter.sendActivities([cpy]).then((responses) => {
+        adapter.sendActivity([cpy]).then((responses) => {
             assert(false, `shouldn't succeed`);
         }, (err) => {
             assert(err, `error not returned.`);
@@ -380,10 +380,10 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should post to a whole conversation using sendActivities() if replyToId missing.`, function (done) {
+    it(`should post to a whole conversation using sendActivity() if replyToId missing.`, function (done) {
         const adapter = new AdapterUnderTest();
         const cpy = Object.assign({}, outgoingMessage, { replyToId: undefined });
-        adapter.sendActivities([cpy]).then((responses) => {
+        adapter.sendActivity([cpy]).then((responses) => {
             assert(Array.isArray(responses), `array of responses not returned.`);
             assert(responses.length === 1, `invalid number of responses returned.`);
             assert(responses[0].id === '5678', `invalid response returned.`);

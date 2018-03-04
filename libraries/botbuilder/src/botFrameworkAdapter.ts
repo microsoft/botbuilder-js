@@ -14,18 +14,9 @@ import { ConnectorClient, SimpleCredentialProvider, MicrosoftAppCredentials, Jwt
  * Express or Restify Request object. 
  */
 export interface WebRequest {
-    body: any;
-    headers: Headers;
-    on(event: string, ...args: any[]): void;
-}
-
-/** 
- * :package: **botbuilder-core**
- * 
- * Express or Restify Response object. 
- */
-export interface Headers {
-    [name: string]: string;
+    body?: any;
+    headers: any;
+    on(event: string, ...args: any[]): any;
 }
 
 /** 
@@ -34,17 +25,8 @@ export interface Headers {
  * Express or Restify Response object. 
  */
 export interface WebResponse {
-    end(): this;
-    send(status: number, body?: any): this;
-}
-
-/** 
- * :package: **botbuilder-core**
- * 
- * Express or Restify Middleware Function. 
- */
-export interface WebMiddleware {
-    (req: WebRequest, res: WebResponse, next?: Function): void;
+    end(...args: any[]): any;
+    send(status: number, body?: any): any;
 }
 
 /** 
@@ -83,7 +65,7 @@ export class BotFrameworkAdapter extends BotAdapter {
         this.credentialsProvider = new SimpleCredentialProvider(this.credentials.appId, this.credentials.appPassword);
     }
 
-    public processRequest(req: WebRequest, res: WebResponse, logic: (context: BotContext) => Promiseable<void>): Promise<void> {
+    public processRequest(req: WebRequest, res: WebResponse, logic: (context: BotContext) => Promiseable<any>): Promise<void> {
         // Parse body of request
         let errorCode = 500;
         return parseRequest(req).then((request) => {
@@ -137,7 +119,7 @@ export class BotFrameworkAdapter extends BotAdapter {
         }
     }
 
-    public sendActivities(activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
+    public sendActivity(activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
         return new Promise((resolve, reject) => {
             const responses: ResourceResponse[] = [];
             const that = this;
@@ -153,8 +135,8 @@ export class BotFrameworkAdapter extends BotAdapter {
                                 }, typeof activity.value === 'number' ? activity.value : 1000);
                                 break;
                             default:
-                                if (!activity.serviceUrl) { throw new Error(`BotFrameworkAdapter.sendActivities(): missing serviceUrl.`) }
-                                if (!activity.conversation || !activity.conversation.id) { throw new Error(`BotFrameworkAdapter.sendActivities(): missing conversation id.`) }
+                                if (!activity.serviceUrl) { throw new Error(`BotFrameworkAdapter.sendActivity(): missing serviceUrl.`) }
+                                if (!activity.conversation || !activity.conversation.id) { throw new Error(`BotFrameworkAdapter.sendActivity(): missing conversation id.`) }
                                 let p: Promise<ResourceResponse>;
                                 const client = that.createConnectorClient(activity.serviceUrl);
                                 if (activity.replyToId) {

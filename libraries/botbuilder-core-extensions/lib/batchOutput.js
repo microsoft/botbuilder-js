@@ -129,7 +129,7 @@ class BatchOutput {
             const responses = this.batch().slice();
             const count = responses.length;
             if (count > 0) {
-                return botbuilder_core_1.BotContext.prototype.sendActivities.apply(this.context, responses).then((responses) => {
+                return botbuilder_core_1.BotContext.prototype.sendActivity.apply(this.context, responses).then((responses) => {
                     this.batch().splice(0, count);
                     return responses;
                 });

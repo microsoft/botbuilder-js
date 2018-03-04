@@ -49,7 +49,7 @@ export class TestAdapter extends BotAdapter {
         } as Activity, template);
     }
 
-    public sendActivities(activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
+    public sendActivity(activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
         const responses = activities.map((activity) => {  
             this.activityBuffer.push(activity);
             return { id: (this.nextId++).toString() };

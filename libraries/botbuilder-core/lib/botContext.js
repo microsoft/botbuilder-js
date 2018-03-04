@@ -36,7 +36,7 @@ class BotContext {
     constructor(adapter, request) {
         this._responded = false;
         this._cache = new Map();
-        this._onSendActivities = [];
+        this._onSendActivity = [];
         this._onUpdateActivity = [];
         this._onDeleteActivity = [];
         this._adapter = adapter;
@@ -87,13 +87,13 @@ class BotContext {
     /**
      * Sends a set of activities to the user. An array of responses form the server will be
      * returned.
-     * @param activities One or more activities to send to the user.
+     * @param activityOrText One or more activities or messages to send to the user. If a `string` is provided it will be sent to the user as a `message` activity.
      */
-    sendActivities(...activities) {
+    sendActivity(...activityOrText) {
         const ref = BotContext.getConversationReference(this._request);
-        const output = activities.map((a) => BotContext.applyConversationReference(a, ref));
-        return this.emit(this._onSendActivities, activities, () => {
-            return this._adapter.sendActivities(activities)
+        const output = activityOrText.map((a) => BotContext.applyConversationReference(typeof a === 'string' ? { text: a, type: 'message' } : a, ref));
+        return this.emit(this._onSendActivity, output, () => {
+            return this._adapter.sendActivity(output)
                 .then((responses) => {
                 // Set responded flag
                 this._responded = true;
@@ -125,10 +125,10 @@ class BotContext {
     }
     /**
      * Registers a handler to be notified of and potentially intercept the sending of activities.
-     * @param handler A function that will be called anytime [sendActivities()](#sendactivities) is called. The handler should call `next()` to continue sending of the activities.
+     * @param handler A function that will be called anytime [sendActivity()](#sendactivity) is called. The handler should call `next()` to continue sending of the activities.
      */
-    onSendActivities(handler) {
-        this._onSendActivities.push(handler);
+    onSendActivity(handler) {
+        this._onSendActivity.push(handler);
         return this;
     }
     /**
@@ -194,7 +194,7 @@ class BotContext {
      * // Send a typing indicator without calling any handlers
      * const reference = TurnContext.getConversationReference(context.request);
      * const activity = TurnContext.applyConversationReference({ type: 'typing' }, reference);
-     * return context.adapter.sendActivities([activity]);
+     * return context.adapter.sendActivity(activity);
      * ```
      * @param activity Activity to copy delivery information to.
      * @param reference Conversation reference containing delivery information.

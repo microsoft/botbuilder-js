@@ -36,7 +36,7 @@ class TestAdapter extends botbuilder_core_1.BotAdapter {
             conversation: { id: 'Convo1' }
         }, template);
     }
-    sendActivities(activities) {
+    sendActivity(activities) {
         const responses = activities.map((activity) => {
             this.activityBuffer.push(activity);
             return { id: (this.nextId++).toString() };

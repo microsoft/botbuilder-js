@@ -110,9 +110,9 @@ class ChoicePrompt {
     sendChoicePrompt(context, dialogs, prompt, speak) {
         if (typeof prompt === 'string') {
             const options = dialogs.getInstance(context).state;
-            return context.sendActivities(formatChoicePrompt(context, options.choices || [], prompt, speak, this.stylerOptions, options.style)).then(() => { });
+            return context.sendActivity(formatChoicePrompt(context, options.choices || [], prompt, speak, this.stylerOptions, options.style)).then(() => { });
         }
-        return context.sendActivities(prompt).then(() => { });
+        return context.sendActivity(prompt).then(() => { });
     }
 }
 exports.ChoicePrompt = ChoicePrompt;

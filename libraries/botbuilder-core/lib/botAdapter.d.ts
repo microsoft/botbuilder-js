@@ -26,7 +26,7 @@ export declare abstract class BotAdapter {
      * returned.
      * @param activities Set of activities being sent.
      */
-    abstract sendActivities(activities: Partial<Activity>[]): Promise<ResourceResponse[]>;
+    abstract sendActivity(activities: Partial<Activity>[]): Promise<ResourceResponse[]>;
     /**
      * Replaces an existing activity.
      * @param activity New replacement activity. The activity should already have it's ID information populated.

@@ -13,10 +13,10 @@ const testMessage = {
 };
 
 class SimpleAdapter extends BotAdapter {
-    sendActivities(activities) {
-        assert(activities, `SimpleAdapter.sendActivities: missing activities.`);
-        assert(Array.isArray(activities), `SimpleAdapter.sendActivities: activities not array.`);
-        assert(activities.length > 0, `SimpleAdapter.sendActivities: empty activities array.`);
+    sendActivity(activities) {
+        assert(activities, `SimpleAdapter.sendActivity: missing activities.`);
+        assert(Array.isArray(activities), `SimpleAdapter.sendActivity: activities not array.`);
+        assert(activities.length > 0, `SimpleAdapter.sendActivity: empty activities array.`);
         return Promise.resolve([{ id: '5678' }]);
     }
 
@@ -87,9 +87,9 @@ describe(`TurnContext`, function () {
         done();
     });
 
-    it(`should sendActivities() and set responded.`, function (done) {
+    it(`should sendActivity() and set responded.`, function (done) {
         assert(context.responded === false, `invalid initial state for context.responded.`);        
-        context.sendActivities(testMessage).then((responses) => {
+        context.sendActivity(testMessage).then((responses) => {
             assert(Array.isArray(responses), `responses isn't an array.`);
             assert(responses.length > 0, `empty responses array returned.`);
             assert(responses[0].id === '5678', `invalid response id of "${responses[0].id}" sent back.`);
@@ -98,24 +98,24 @@ describe(`TurnContext`, function () {
         });
     });
 
-    it(`should call onSendActivities() hook before delivery.`, function (done) {
+    it(`should call onSendActivity() hook before delivery.`, function (done) {
         let count = 0;
-        context.onSendActivities((activities, next) => {
+        context.onSendActivity((activities, next) => {
             assert(activities, `activity not passed to hook`);
             count = activities.length;
             return next();
         });
-        context.sendActivities(testMessage).then((responses) => {
+        context.sendActivity(testMessage).then((responses) => {
             assert(count === 1, `send hook not called.`);        
             done();
         });
     });
 
-    it(`should allow interception of delivery in onSendActivities() hook.`, function (done) {
-        context.onSendActivities((activities, next) => {
+    it(`should allow interception of delivery in onSendActivity() hook.`, function (done) {
+        context.onSendActivity((activities, next) => {
             return [];
         });
-        context.sendActivities(testMessage).then((responses) => {
+        context.sendActivity(testMessage).then((responses) => {
             assert(responses.length === 0, `call not intercepted.`);        
             done();
         });

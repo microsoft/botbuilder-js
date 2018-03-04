@@ -29,7 +29,7 @@ export abstract class BotAdapter {
      * returned.
      * @param activities Set of activities being sent.
      */
-    public abstract sendActivities(activities: Partial<Activity>[]): Promise<ResourceResponse[]>;
+    public abstract sendActivity(activities: Partial<Activity>[]): Promise<ResourceResponse[]>;
 
     /** 
      * Replaces an existing activity. 

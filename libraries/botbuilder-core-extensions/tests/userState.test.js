@@ -16,8 +16,8 @@ describe(`UserState`, function () {
     it(`should load and save state from storage.`, function (done) {
         let key;
         middleware.onProcessRequest(context, () => {
-            key = UserState.key(context);
-            const state = UserState.get(context);
+            key = middleware.getStorageKey(context);
+            const state = middleware.get(context);
             assert(state, `State not loaded`);
             assert(key, `Key not found`);
             state.test = 'foo';

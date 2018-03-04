@@ -27,7 +27,7 @@ export declare class ConsoleAdapter extends BotAdapter {
      * @param logic Function which will be called each time a message is input by the user.
      */
     listen(logic: (context: BotContext) => Promiseable<void>): Function;
-    sendActivities(activities: Partial<Activity>[]): Promise<ResourceResponse[]>;
+    sendActivity(activities: Partial<Activity>[]): Promise<ResourceResponse[]>;
     updateActivity(activity: Partial<Activity>): Promise<void>;
     deleteActivity(reference: Partial<ConversationReference>): Promise<void>;
     protected createInterface(options: readline.ReadLineOptions): readline.ReadLine;

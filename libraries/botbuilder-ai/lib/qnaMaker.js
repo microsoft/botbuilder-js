@@ -34,7 +34,7 @@ class QnAMaker {
         const { top, scoreThreshold } = this.settings;
         return this.generateAnswer(context.request.text, top, scoreThreshold).then((answers) => {
             if (answers.length > 0) {
-                return context.sendActivities({ text: answers[0].answer, type: 'message' }).then(() => true);
+                return context.sendActivity({ text: answers[0].answer, type: 'message' }).then(() => true);
             }
             else {
                 return Promise.resolve(false);

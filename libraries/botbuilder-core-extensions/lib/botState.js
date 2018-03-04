@@ -84,6 +84,13 @@ class BotState {
     /**
      * Returns a cached state object or undefined if not cached.
      * @param context Context for current turn of conversation with the user.
+     */
+    get(context) {
+        return BotState.get(context, this.stateName);
+    }
+    /**
+     * Returns a cached state object or undefined if not cached.
+     * @param context Context for current turn of conversation with the user.
      * @param stateName Name of the cached state object to return.
      */
     static get(context, stateName) {

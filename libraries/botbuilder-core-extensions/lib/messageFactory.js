@@ -27,7 +27,7 @@ const botbuilder_core_1 = require("botbuilder-core");
  *      )
  * );
  *
- * context.sendActivities(message); // send message
+ * context.sendActivity(message); // send message
  * ```
  */
 class MessageFactory {

@@ -22,12 +22,12 @@ describe('DialogSet class', function() {
                 assert(ctx, 'Missing context in begin()');
                 assert(dlgs === dialogs, 'Dialogs not passed to begin()');
                 assert(args === 'z', 'Args not passed');
-                return ctx.sendActivities(beginMessage);
+                return ctx.sendActivity(beginMessage);
             },
             continue: (ctx, dlgs) => {
                 assert(ctx, 'Missing context in continue()');
                 assert(dlgs === dialogs, 'Dialogs not passed to continue()');
-                return ctx.sendActivities(continueMessage);
+                return ctx.sendActivity(continueMessage);
             }
         });
 

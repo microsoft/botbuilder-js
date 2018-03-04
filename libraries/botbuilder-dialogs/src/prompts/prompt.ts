@@ -56,5 +56,5 @@ export function formatPrompt(prompt: string|Partial<Activity>, speak?: string): 
 }
 
 export function sendPrompt(context: BotContext, prompt: string|Partial<Activity>, speak?: string): Promise<void> {
-    return context.sendActivities(formatPrompt(prompt, speak)).then(() => {});
+    return context.sendActivity(formatPrompt(prompt, speak)).then(() => {});
 }

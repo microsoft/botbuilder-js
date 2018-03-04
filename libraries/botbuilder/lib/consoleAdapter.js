@@ -54,7 +54,7 @@ class ConsoleAdapter extends botbuilder_core_1.BotAdapter {
             rl.close();
         };
     }
-    sendActivities(activities) {
+    sendActivity(activities) {
         return new Promise((resolve, reject) => {
             const responses = [];
             function next(i) {

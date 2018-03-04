@@ -125,9 +125,9 @@ export class ChoicePrompt implements Dialog {
     private sendChoicePrompt(context: BotContext, dialogs: DialogSet, prompt: string|Partial<Activity>, speak?: string): Promise<void> {
         if (typeof prompt === 'string') {
             const options = dialogs.getInstance<ChoicePromptOptions>(context).state; 
-            return context.sendActivities(formatChoicePrompt(context, options.choices || [], prompt, speak, this.stylerOptions, options.style)).then(() => {});
+            return context.sendActivity(formatChoicePrompt(context, options.choices || [], prompt, speak, this.stylerOptions, options.style)).then(() => {});
         } 
-        return context.sendActivities(prompt).then(() => {}); 
+        return context.sendActivity(prompt).then(() => {}); 
     }
 }
 

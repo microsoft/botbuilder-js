@@ -11,9 +11,9 @@ import { Promiseable } from './middlewareSet';
 /**
  * :package: **botbuilder-core**
  *
- * Signature implemented by functions registered with `context.onSendActivities()`.
+ * Signature implemented by functions registered with `context.onSendActivity()`.
  */
-export declare type SendActivitiesHandler = (activities: Partial<Activity>[], next: () => Promise<ResourceResponse[]>) => Promiseable<ResourceResponse[]>;
+export declare type SendActivityHandler = (activities: Partial<Activity>[], next: () => Promise<ResourceResponse[]>) => Promiseable<ResourceResponse[]>;
 /**
  * :package: **botbuilder-core**
  *
@@ -59,7 +59,7 @@ export declare class BotContext {
     private _request;
     private _responded;
     private _cache;
-    private _onSendActivities;
+    private _onSendActivity;
     private _onUpdateActivity;
     private _onDeleteActivity;
     /**
@@ -94,9 +94,9 @@ export declare class BotContext {
     /**
      * Sends a set of activities to the user. An array of responses form the server will be
      * returned.
-     * @param activities One or more activities to send to the user.
+     * @param activityOrText One or more activities or messages to send to the user. If a `string` is provided it will be sent to the user as a `message` activity.
      */
-    sendActivities(...activities: Partial<Activity>[]): Promise<ResourceResponse[]>;
+    sendActivity(...activityOrText: (Partial<Activity> | string)[]): Promise<ResourceResponse[]>;
     /**
      * Replaces an existing activity.
      * @param activity New replacement activity. The activity should already have it's ID information populated.
@@ -109,9 +109,9 @@ export declare class BotContext {
     deleteActivity(idOrReference: string | Partial<ConversationReference>): Promise<void>;
     /**
      * Registers a handler to be notified of and potentially intercept the sending of activities.
-     * @param handler A function that will be called anytime [sendActivities()](#sendactivities) is called. The handler should call `next()` to continue sending of the activities.
+     * @param handler A function that will be called anytime [sendActivity()](#sendactivity) is called. The handler should call `next()` to continue sending of the activities.
      */
-    onSendActivities(handler: SendActivitiesHandler): this;
+    onSendActivity(handler: SendActivityHandler): this;
     /**
      * Registers a handler to be notified of and potentially intercept an activity being updated.
      * @param handler A function that will be called anytime [updateActivity()](#updateactivity) is called. The handler should call `next()` to continue sending of the replacement activity.
@@ -146,7 +146,7 @@ export declare class BotContext {
      * // Send a typing indicator without calling any handlers
      * const reference = TurnContext.getConversationReference(context.request);
      * const activity = TurnContext.applyConversationReference({ type: 'typing' }, reference);
-     * return context.adapter.sendActivities([activity]);
+     * return context.adapter.sendActivity(activity);
      * ```
      * @param activity Activity to copy delivery information to.
      * @param reference Conversation reference containing delivery information.

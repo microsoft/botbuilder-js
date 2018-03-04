@@ -84,7 +84,7 @@ class BotFrameworkAdapter extends botbuilder_core_1.BotAdapter {
             return Promise.reject(err);
         }
     }
-    sendActivities(activities) {
+    sendActivity(activities) {
         return new Promise((resolve, reject) => {
             const responses = [];
             const that = this;
@@ -101,10 +101,10 @@ class BotFrameworkAdapter extends botbuilder_core_1.BotAdapter {
                                 break;
                             default:
                                 if (!activity.serviceUrl) {
-                                    throw new Error(`BotFrameworkAdapter.sendActivities(): missing serviceUrl.`);
+                                    throw new Error(`BotFrameworkAdapter.sendActivity(): missing serviceUrl.`);
                                 }
                                 if (!activity.conversation || !activity.conversation.id) {
-                                    throw new Error(`BotFrameworkAdapter.sendActivities(): missing conversation id.`);
+                                    throw new Error(`BotFrameworkAdapter.sendActivity(): missing conversation id.`);
                                 }
                                 let p;
                                 const client = that.createConnectorClient(activity.serviceUrl);

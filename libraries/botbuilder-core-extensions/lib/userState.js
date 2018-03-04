@@ -22,8 +22,6 @@ class UserState extends botState_1.BotState {
             // Calculate storage key
             const key = this.getStorageKey(context);
             if (key) {
-                // Extend context object on first access and return key
-                this.extendContext(context);
                 return Promise.resolve(key);
             }
             return Promise.reject(new Error(NO_KEY));
@@ -38,24 +36,6 @@ class UserState extends botState_1.BotState {
         const channelId = req.channelId;
         const userId = req && req.from && req.from.id ? req.from.id : undefined;
         return channelId && userId ? `user/${channelId}/${userId}` : undefined;
-    }
-    extendContext(context) {
-        const extended = this.stateName + '.extended';
-        if (!context.get(extended)) {
-            context.set(extended, true);
-            // Add states property accessor
-            const descriptor = {};
-            descriptor[this.stateName] = {
-                get: () => {
-                    const cached = context.get(this.stateName);
-                    if (!cached) {
-                        throw new Error(NOT_CACHED);
-                    }
-                    return cached.state;
-                }
-            };
-            Object.defineProperties(context, descriptor);
-        }
     }
 }
 exports.UserState = UserState;

@@ -131,7 +131,7 @@ export class BatchOutput implements Middleware {
             const responses = this.batch().slice();
             const count = responses.length;
             if (count > 0) {
-                return BotContext.prototype.sendActivities.apply(this.context, responses).then((responses: ResourceResponse[]) => {
+                return BotContext.prototype.sendActivity.apply(this.context, responses).then((responses: ResourceResponse[]) => {
                         this.batch().splice(0, count);
                         return responses;
                     });

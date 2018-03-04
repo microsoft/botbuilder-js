@@ -103,6 +103,14 @@ export class BotState<T extends StoreItem = StoreItem> implements Middleware {
     /**
      * Returns a cached state object or undefined if not cached.
      * @param context Context for current turn of conversation with the user.
+     */
+    public get(context: BotContext): T|undefined {
+        return BotState.get(context, this.stateName);
+    }
+    
+    /**
+     * Returns a cached state object or undefined if not cached.
+     * @param context Context for current turn of conversation with the user.
      * @param stateName Name of the cached state object to return.
      */
     static get<T extends StoreItem = StoreItem>(context: BotContext, stateName: string): T|undefined {

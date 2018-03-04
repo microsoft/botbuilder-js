@@ -97,9 +97,9 @@ class ConfirmPrompt {
             const choices = ConfirmPrompt.choices[locale];
             // Reply with formatted prompt
             const style = dialogs.getInstance(context).state.style;
-            return context.sendActivities(choicePrompt_1.formatChoicePrompt(context, choices, prompt, speak, this.stylerOptions, style)).then(() => { });
+            return context.sendActivity(choicePrompt_1.formatChoicePrompt(context, choices, prompt, speak, this.stylerOptions, style)).then(() => { });
         }
-        return context.sendActivities(prompt).then(() => { });
+        return context.sendActivity(prompt).then(() => { });
     }
 }
 /**

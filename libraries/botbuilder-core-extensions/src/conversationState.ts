@@ -31,8 +31,8 @@ export class ConversationState<T extends StoreItem = StoreItem> extends BotState
             // Calculate storage key
             const key = this.getStorageKey(context);
             if (key) {
-                // Extend context object on first access and return key
-                this.extendContext(context);
+                // Subscribe context object hooks on first access and return key
+                this.subscribe(context);
                 return Promise.resolve(key);
             }
             return  Promise.reject(new Error(NO_KEY)); 
@@ -50,24 +50,18 @@ export class ConversationState<T extends StoreItem = StoreItem> extends BotState
         return channelId && conversationId ? `conversation/${channelId}/${conversationId}` : undefined;
     }
 
-    private extendContext(context: BotContext): void {
-        const extended = this.stateName + '.extended';
-        if (!context.get(extended)) {
-            context.set(extended, true);
+    private subscribe(context: BotContext): void {
+        const subscribed = this.stateName + '.subscribed';
+        if (!context.get(subscribed)) {
+            context.set(subscribed, true);
 
-            // Add states property accessor
-            const descriptor: PropertyDescriptorMap = {};
-            descriptor[this.stateName] = {
-                get: () => {
-                    const cached = context.get(this.stateName);
-                    if (!cached) { throw new Error(NOT_CACHED) }
-                    return cached.state;
-                }
-            };
-            Object.defineProperties(context, descriptor);
+            // Clear state for incoming endOfConversation activity
+            if (ActivityTypes.EndOfConversation === context.request.type) {
+                this.clear(context);    // <- re-enters subscribe()
+            }
 
-            // Listen for outgoing endOfConversation activities
-            context.onSendActivities((activities, next) => {
+            // Clear state if outgoing endOfConversation detected
+            context.onSendActivity((activities, next) => {
                 activities.forEach((activity) => {
                     if (ActivityTypes.EndOfConversation === activity.type) {
                         this.clear(context);

@@ -16,8 +16,8 @@ describe(`ConversationState`, function () {
     it(`should load and save state from storage.`, function (done) {
         let key;
         middleware.onProcessRequest(context, () => {
-            key = ConversationState.key(context);
-            const state = ConversationState.get(context);
+            key = middleware.getStorageKey(context);
+            const state = middleware.get(context);
             assert(state, `State not loaded`);
             assert(key, `Key not found`);
             state.test = 'foo';
@@ -33,9 +33,9 @@ describe(`ConversationState`, function () {
     it(`should ignore any activities that aren't "endOfConversation".`, function (done) {
         let key;
         middleware.onProcessRequest(context, () => {
-            key = ConversationState.key(context);
-            assert(ConversationState.get(context).test === 'foo', `invalid initial state`);
-            return context.sendActivities({ type: ActivityTypes.Message, text: 'foo' });
+            key = middleware.getStorageKey(context);
+            assert(middleware.get(context).test === 'foo', `invalid initial state`);
+            return context.sendActivity({ type: ActivityTypes.Message, text: 'foo' });
         })
         .then(() => storage.read([key]))
         .then((items) => {
@@ -47,9 +47,9 @@ describe(`ConversationState`, function () {
     it(`should automatically clear() state storage when "endOfConversation" activity sent.`, function (done) {
         let key;
         middleware.onProcessRequest(context, () => {
-            key = ConversationState.key(context);
-            assert(ConversationState.get(context).test === 'foo', `invalid initial state`);
-            return context.sendActivities({ type: ActivityTypes.EndOfConversation });
+            key = middleware.getStorageKey(context);
+            assert(middleware.get(context).test === 'foo', `invalid initial state`);
+            return context.sendActivity({ type: ActivityTypes.EndOfConversation });
         })
         .then(() => storage.read([key]))
         .then((items) => {
@@ -90,7 +90,7 @@ describe(`ConversationState`, function () {
     it(`should throw install exception if get() called without a cached entry.`, function (done) {
         context.set('conversationState', undefined);
         try {
-            ConversationState.get(context);
+            middleware.get(context);
             assert(false, `exception not thrown.`);
         } catch (err) {
             done();

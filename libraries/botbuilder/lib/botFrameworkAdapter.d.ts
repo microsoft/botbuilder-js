@@ -13,17 +13,9 @@ import { ConnectorClient, SimpleCredentialProvider, MicrosoftAppCredentials } fr
  * Express or Restify Request object.
  */
 export interface WebRequest {
-    body: any;
-    headers: Headers;
-    on(event: string, ...args: any[]): void;
-}
-/**
- * :package: **botbuilder-core**
- *
- * Express or Restify Response object.
- */
-export interface Headers {
-    [name: string]: string;
+    body?: any;
+    headers: any;
+    on(event: string, ...args: any[]): any;
 }
 /**
  * :package: **botbuilder-core**
@@ -31,16 +23,8 @@ export interface Headers {
  * Express or Restify Response object.
  */
 export interface WebResponse {
-    end(): this;
-    send(status: number, body?: any): this;
-}
-/**
- * :package: **botbuilder-core**
- *
- * Express or Restify Middleware Function.
- */
-export interface WebMiddleware {
-    (req: WebRequest, res: WebResponse, next?: Function): void;
+    end(...args: any[]): any;
+    send(status: number, body?: any): any;
 }
 /**
  * :package: **botbuilder-core**
@@ -70,10 +54,10 @@ export declare class BotFrameworkAdapter extends BotAdapter {
      * @param settings (optional) configuration settings for the adapter.
      */
     constructor(settings?: Partial<BotFrameworkAdapterSettings>);
-    processRequest(req: WebRequest, res: WebResponse, logic: (context: BotContext) => Promiseable<void>): Promise<void>;
+    processRequest(req: WebRequest, res: WebResponse, logic: (context: BotContext) => Promiseable<any>): Promise<void>;
     continueConversation(reference: Partial<ConversationReference>, logic: (context: BotContext) => Promiseable<void>): Promise<void>;
     startConversation(reference: Partial<ConversationReference>, logic: (context: BotContext) => Promiseable<void>): Promise<void>;
-    sendActivities(activities: Partial<Activity>[]): Promise<ResourceResponse[]>;
+    sendActivity(activities: Partial<Activity>[]): Promise<ResourceResponse[]>;
     updateActivity(activity: Partial<Activity>): Promise<void>;
     deleteActivity(reference: Partial<ConversationReference>): Promise<void>;
     createConversation(serviceUrl: string, parameters: Partial<ConversationParameters>): Promise<ConversationResourceResponse>;

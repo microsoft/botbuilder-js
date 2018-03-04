@@ -13,9 +13,9 @@ import { Promiseable } from './middlewareSet';
 /** 
  * :package: **botbuilder-core**
  * 
- * Signature implemented by functions registered with `context.onSendActivities()`. 
+ * Signature implemented by functions registered with `context.onSendActivity()`. 
  */
-export type SendActivitiesHandler = (activities: Partial<Activity>[], next: () => Promise<ResourceResponse[]>) => Promiseable<ResourceResponse[]>;
+export type SendActivityHandler = (activities: Partial<Activity>[], next: () => Promise<ResourceResponse[]>) => Promiseable<ResourceResponse[]>;
 
 /** 
  * :package: **botbuilder-core**
@@ -64,7 +64,7 @@ export class BotContext {
     private _request: Activity;
     private _responded = false;
     private _cache = new Map<string, any>();
-    private _onSendActivities: SendActivitiesHandler[] = [];
+    private _onSendActivity: SendActivityHandler[] = [];
     private _onUpdateActivity: UpdateActivityHandler[] = [];
     private _onDeleteActivity: DeleteActivityHandler[] = [];
 
@@ -128,13 +128,13 @@ export class BotContext {
     /** 
      * Sends a set of activities to the user. An array of responses form the server will be 
      * returned.
-     * @param activities One or more activities to send to the user.
+     * @param activityOrText One or more activities or messages to send to the user. If a `string` is provided it will be sent to the user as a `message` activity.
      */
-    public sendActivities(...activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
+    public sendActivity(...activityOrText: (Partial<Activity>|string)[]): Promise<ResourceResponse[]> {
         const ref = BotContext.getConversationReference(this._request);
-        const output = activities.map((a) => BotContext.applyConversationReference(a, ref))
-        return this.emit(this._onSendActivities, activities, () => {
-            return this._adapter.sendActivities(activities)
+        const output = activityOrText.map((a) => BotContext.applyConversationReference(typeof a === 'string' ? { text: a, type: 'message' } : a, ref));
+        return this.emit(this._onSendActivity, output, () => {
+            return this._adapter.sendActivity(output)
                 .then((responses) => {
                     // Set responded flag
                     this._responded = true;
@@ -168,10 +168,10 @@ export class BotContext {
 
     /** 
      * Registers a handler to be notified of and potentially intercept the sending of activities. 
-     * @param handler A function that will be called anytime [sendActivities()](#sendactivities) is called. The handler should call `next()` to continue sending of the activities. 
+     * @param handler A function that will be called anytime [sendActivity()](#sendactivity) is called. The handler should call `next()` to continue sending of the activities. 
      */
-    public onSendActivities(handler: SendActivitiesHandler): this {
-        this._onSendActivities.push(handler);
+    public onSendActivity(handler: SendActivityHandler): this {
+        this._onSendActivity.push(handler);
         return this;
     }
 
@@ -241,7 +241,7 @@ export class BotContext {
      * // Send a typing indicator without calling any handlers
      * const reference = TurnContext.getConversationReference(context.request);
      * const activity = TurnContext.applyConversationReference({ type: 'typing' }, reference);
-     * return context.adapter.sendActivities([activity]);
+     * return context.adapter.sendActivity(activity);
      * ```
      * @param activity Activity to copy delivery information to.
      * @param reference Conversation reference containing delivery information.

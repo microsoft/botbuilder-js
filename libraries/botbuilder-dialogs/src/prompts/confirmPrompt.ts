@@ -137,8 +137,8 @@ export class ConfirmPrompt implements Dialog {
 
             // Reply with formatted prompt
             const style = dialogs.getInstance<ConfirmPromptOptions>(context).state.style; 
-            return context.sendActivities(formatChoicePrompt(context, choices, prompt, speak, this.stylerOptions, style)).then(() => {});
+            return context.sendActivity(formatChoicePrompt(context, choices, prompt, speak, this.stylerOptions, style)).then(() => {});
         }
-        return context.sendActivities(prompt).then(() => {}); 
+        return context.sendActivity(prompt).then(() => {}); 
     }
 }

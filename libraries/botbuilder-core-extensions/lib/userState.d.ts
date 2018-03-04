@@ -27,5 +27,4 @@ export declare class UserState<T extends StoreItem = StoreItem> extends BotState
      * @param context Context for current turn of conversation with the user.
      */
     getStorageKey(context: BotContext): string | undefined;
-    private extendContext(context);
 }

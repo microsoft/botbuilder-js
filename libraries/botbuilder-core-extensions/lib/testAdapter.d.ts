@@ -31,7 +31,7 @@ export declare class TestAdapter extends BotAdapter {
      * @param template (Optional) activity containing default values to assign to all test messages received.
      */
     constructor(botLogic: (context: BotContext) => Promiseable<void>, template?: ConversationReference);
-    sendActivities(activities: Partial<Activity>[]): Promise<ResourceResponse[]>;
+    sendActivity(activities: Partial<Activity>[]): Promise<ResourceResponse[]>;
     updateActivity(activity: Partial<Activity>): Promise<void>;
     deleteActivity(reference: Partial<ConversationReference>): Promise<void>;
     /**

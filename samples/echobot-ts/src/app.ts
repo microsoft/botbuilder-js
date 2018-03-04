@@ -1,5 +1,4 @@
-import { Bot, MemoryStorage, BotStateManager } from 'botbuilder';
-import { BotFrameworkAdapter } from 'botbuilder-services';
+import { BotFrameworkAdapter, MemoryStorage, ConversationState, BotContext } from 'botbuilder';
 import * as restify from 'restify';
 
 // Create server
@@ -8,25 +7,31 @@ server.listen(process.env.port || process.env.PORT || 3978, function () {
     console.log(`${server.name} listening to ${server.url}`);
 });
 
-// Create adapter and listen to servers '/api/messages' route.
-const adapter = new BotFrameworkAdapter({ 
+// Create adapter
+const adapter = new BotFrameworkAdapter( { 
     appId: process.env.MICROSOFT_APP_ID, 
     appPassword: process.env.MICROSOFT_APP_PASSWORD 
 });
-server.post('/api/messages', <any>adapter.listen());
 
-// Initialize bot by passing it adapter and middleware
-// - Add storage so that we can track conversation & user state.
-// - Add a receiver to process incoming activities.
-const bot = new Bot(adapter)
-    .use(new MemoryStorage())
-    .use(new BotStateManager())
-    .onReceive((context) => {
+// Define conversation state shape
+interface EchoState {
+    count: number;
+}
+
+// Add conversation state middleware
+const conversationState = new ConversationState<EchoState>(new MemoryStorage());
+adapter.use(conversationState);
+
+// Listen for incoming requests 
+server.post('/api/messages', (req, res) => {
+    // Route received request to adapter for processing
+    adapter.processRequest(req, res, (context) => {
         if (context.request.type === 'message') {
-            let count = context.state.conversation.count || 1;
-            context.reply(`${count}: You said "${context.request.text}"`);
-            context.state.conversation.count = count + 1;
+            const state = conversationState.get(context);
+            const count = state.count === undefined ? state.count = 0 : ++state.count;
+            return context.sendActivity(`${count}: You said "${context.request.text}"`);
         } else {
-            context.reply(`[${context.request.type} event detected]`);
+            return context.sendActivity(`[${context.request.type} event detected]`);
         }
     });
+});

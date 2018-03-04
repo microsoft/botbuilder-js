@@ -17,7 +17,7 @@ import { Activity, CardAction, Attachment, InputHints } from 'botbuilder-core';
  *      )
  * );
  *
- * context.sendActivities(message); // send message
+ * context.sendActivity(message); // send message
  * ```
  */
 export declare class MessageFactory {

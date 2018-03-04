@@ -31,8 +31,6 @@ export class UserState<T extends StoreItem = StoreItem> extends BotState<T> {
             // Calculate storage key
             const key = this.getStorageKey(context);
             if (key) {
-                // Extend context object on first access and return key
-                this.extendContext(context);
                 return Promise.resolve(key);
             }
             return  Promise.reject(new Error(NO_KEY)); 
@@ -48,23 +46,5 @@ export class UserState<T extends StoreItem = StoreItem> extends BotState<T> {
         const channelId = req.channelId;
         const userId = req && req.from && req.from.id ? req.from.id : undefined;
         return channelId && userId ? `user/${channelId}/${userId}` : undefined;
-    }
-
-    private extendContext(context: BotContext): void {
-        const extended = this.stateName + '.extended';
-        if (!context.get(extended)) {
-            context.set(extended, true);
-
-            // Add states property accessor
-            const descriptor: PropertyDescriptorMap = {};
-            descriptor[this.stateName] = {
-                get: () => {
-                    const cached = context.get(this.stateName);
-                    if (!cached) { throw new Error(NOT_CACHED) }
-                    return cached.state;
-                }
-            };
-            Object.defineProperties(context, descriptor);
-        }
     }
 }

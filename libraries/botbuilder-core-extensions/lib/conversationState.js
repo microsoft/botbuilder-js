@@ -30,8 +30,8 @@ class ConversationState extends botState_1.BotState {
             // Calculate storage key
             const key = this.getStorageKey(context);
             if (key) {
-                // Extend context object on first access and return key
-                this.extendContext(context);
+                // Subscribe context object hooks on first access and return key
+                this.subscribe(context);
                 return Promise.resolve(key);
             }
             return Promise.reject(new Error(NO_KEY));
@@ -47,24 +47,16 @@ class ConversationState extends botState_1.BotState {
         const conversationId = req && req.conversation && req.conversation.id ? req.conversation.id : undefined;
         return channelId && conversationId ? `conversation/${channelId}/${conversationId}` : undefined;
     }
-    extendContext(context) {
-        const extended = this.stateName + '.extended';
-        if (!context.get(extended)) {
-            context.set(extended, true);
-            // Add states property accessor
-            const descriptor = {};
-            descriptor[this.stateName] = {
-                get: () => {
-                    const cached = context.get(this.stateName);
-                    if (!cached) {
-                        throw new Error(NOT_CACHED);
-                    }
-                    return cached.state;
-                }
-            };
-            Object.defineProperties(context, descriptor);
-            // Listen for outgoing endOfConversation activities
-            context.onSendActivities((activities, next) => {
+    subscribe(context) {
+        const subscribed = this.stateName + '.subscribed';
+        if (!context.get(subscribed)) {
+            context.set(subscribed, true);
+            // Clear state for incoming endOfConversation activity
+            if (botbuilder_core_1.ActivityTypes.EndOfConversation === context.request.type) {
+                this.clear(context); // <- re-enters subscribe()
+            }
+            // Clear state if outgoing endOfConversation detected
+            context.onSendActivity((activities, next) => {
                 activities.forEach((activity) => {
                     if (botbuilder_core_1.ActivityTypes.EndOfConversation === activity.type) {
                         this.clear(context);

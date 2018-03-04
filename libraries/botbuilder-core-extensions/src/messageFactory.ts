@@ -29,7 +29,7 @@ import {
  *      )
  * );
  *
- * context.sendActivities(message); // send message
+ * context.sendActivity(message); // send message
  * ```
  */
 export class MessageFactory {

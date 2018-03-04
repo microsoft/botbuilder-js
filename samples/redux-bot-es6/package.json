@@ -6,7 +6,7 @@
   "author": "Microsoft",
   "license": "MIT",
   "dependencies": {
-    "botbuilder-services": "^4.0.0-m1.7",
+    "botbuilder": "^4.0.0-m2.0",
     "redux": "^3.7.2",
     "redux-logger": "^3.0.6",
     "restify": "^6.3.4"
