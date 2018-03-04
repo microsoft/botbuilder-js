@@ -1,4 +1,4 @@
-import { BotFrameworkAdapter, MemoryStorage, ConversationState, BotContext } from 'botbuilder';
+import { BotFrameworkAdapter, MemoryStorage, ConversationState } from 'botbuilder';
 import * as restify from 'restify';
 
 // Create server
