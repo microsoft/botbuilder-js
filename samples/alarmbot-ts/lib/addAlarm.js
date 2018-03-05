@@ -1,17 +1,16 @@
-import { BotContext } from 'botbuilder';
-import { BotStateManager, Alarm } from './botStateManager';
-
-export function begin(context: BotContext, state: BotStateManager): Promise<any> {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+function begin(context, state) {
     // Set topic and initialize empty alarm
     const conversation = state.conversation.get(context);
     conversation.topic = 'addAlarm';
     conversation.alarm = {};
     return nextField(context, state);
 }
-
-export function routeReply(context: BotContext, state: BotStateManager): Promise<any> {
+exports.begin = begin;
+function routeReply(context, state) {
     // Handle users reply to prompt
-    let invalid: string = undefined;
+    let invalid = undefined;
     const conversation = state.conversation.get(context);
     const utterance = context.request.text.trim();
     switch (conversation.prompt) {
@@ -19,7 +18,8 @@ export function routeReply(context: BotContext, state: BotStateManager): Promise
             // Validate reply and save to alarm
             if (utterance.length > 2) {
                 conversation.alarm.title = utterance;
-            } else {
+            }
+            else {
                 invalid = `I'm sorry. Your alarm should have a title at least 3 characters long.`;
             }
             break;
@@ -28,35 +28,35 @@ export function routeReply(context: BotContext, state: BotStateManager): Promise
             conversation.alarm.time = utterance;
             break;
     }
-
     // Check for invalid prompt
     if (invalid) {
         return context.sendActivity(invalid)
             .then(() => nextField(context, state));
-    } else {
+    }
+    else {
         return nextField(context, state);
     }
 }
-
-function nextField(context: BotContext, state: BotStateManager): Promise<any> {
+exports.routeReply = routeReply;
+function nextField(context, state) {
     // Prompt user for next missing field
     const conversation = state.conversation.get(context);
     const alarm = conversation.alarm;
     if (alarm.title === undefined) {
         conversation.prompt = 'title';
         return context.sendActivity(`What would you like to call your alarm?`);
-    } else if (alarm.time === undefined) {
+    }
+    else if (alarm.time === undefined) {
         conversation.prompt = 'time';
         return context.sendActivity(`What time would you like to set the "${alarm.title}" alarm for?`);
-    } else {
+    }
+    else {
         // Alarm completed so set alarm.
         const user = state.user.get(context);
         const list = user.alarms || [];
-        list.push(alarm as Alarm);
+        list.push(alarm);
         user.alarms = list;
-
         // TODO: set alarm
-
         // Notify user and cleanup topic state
         conversation.topic = undefined;
         conversation.alarm = undefined;
@@ -64,3 +64,4 @@ function nextField(context: BotContext, state: BotStateManager): Promise<any> {
         return context.sendActivity(`Your alarm named "${alarm.title}" is set for "${alarm.time}".`);
     }
 }
+//# sourceMappingURL=addAlarm.js.map

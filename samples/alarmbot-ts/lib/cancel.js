@@ -1,7 +1,6 @@
-import { BotContext } from 'botbuilder';
-import { BotStateManager } from './botStateManager';
-
-export function begin(context: BotContext, state: BotStateManager): Promise<any> {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+function begin(context, state) {
     // Cancel the current topic
     const conversation = state.conversation.get(context);
     if (conversation.topic) {
@@ -10,3 +9,5 @@ export function begin(context: BotContext, state: BotStateManager): Promise<any>
     }
     return context.sendActivity(`Nothing to cancel.`);
 }
+exports.begin = begin;
+//# sourceMappingURL=cancel.js.map
