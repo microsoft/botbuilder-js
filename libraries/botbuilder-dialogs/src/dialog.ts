@@ -20,7 +20,7 @@ export interface Dialog {
      * @param dialogs The dialogs parent set.
      * @param args (Optional) arguments that were passed to the dialog during `begin()` call that started the instance.  
      */
-    begin(context: BotContext, dialogs: DialogSet, args?: any): Promiseable<void>;
+    begin(context: BotContext, dialogs: DialogSet, args?: any): Promiseable<any>;
 
     /**
      * (Optional) method called when an instance of the dialog is the "current" dialog and the 
@@ -32,7 +32,7 @@ export interface Dialog {
      * @param context The dialog context for the current turn of conversation.
      * @param dialogs The dialogs parent set.
      */
-    continue?(context: BotContext, dialogs: DialogSet): Promiseable<void>;
+    continue?(context: BotContext, dialogs: DialogSet): Promiseable<any>;
 
     /**
      * (Optional) method called when an instance of the dialog is being returned to from another
@@ -45,7 +45,7 @@ export interface Dialog {
      * @param dialogs The dialogs parent set.
      * @param result (Optional) value returned from the dialog that was called. The type of the value returned is dependant on the dialog that was called. 
      */
-    resume?(context: BotContext, dialogs: DialogSet, result?: any): Promiseable<void>;
+    resume?(context: BotContext, dialogs: DialogSet, result?: any): Promiseable<any>;
 }
 
 /** 

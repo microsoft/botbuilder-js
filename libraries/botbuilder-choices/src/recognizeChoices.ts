@@ -10,11 +10,6 @@ import { Choice, findChoices, FoundChoice, FindChoicesOptions } from './findChoi
 import { ModelResult } from './modelResult';
 import * as Recognizers from '@microsoft/recognizers-text-number';
 
-
-const numberModel = Recognizers.NumberRecognizer.instance.getNumberModel("en-us");
-const ordinalModel = Recognizers.NumberRecognizer.instance.getOrdinalModel("en-us");
-
-
 export function recognizeChoices(utterance: string, choices: (string|Choice)[], options?: FindChoicesOptions): ModelResult<FoundChoice>[] {
     function matchChoiceByIndex(match: ModelResult<any>) {
         try {
@@ -46,12 +41,12 @@ export function recognizeChoices(utterance: string, choices: (string|Choice)[], 
     let matched = findChoices(utterance, list, options);
     if (matched.length === 0) {
         // Next try finding by ordinal
-        const ordinals = ordinalModel.parse(utterance);
+        const ordinals = Recognizers.recognizeOrdinal(utterance, 'en-us');
         if (ordinals.length > 0) {
             ordinals.forEach(matchChoiceByIndex);
         } else {
             // Finally try by numerical index
-            numberModel.parse(utterance).forEach(matchChoiceByIndex);
+            Recognizers.recognizeNumber(utterance, 'en-us').forEach(matchChoiceByIndex);
         }
 
         // Sort any found matches by their position within the utterance.
