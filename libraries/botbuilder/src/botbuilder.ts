@@ -29,7 +29,7 @@ export * from './storageMiddleware';
 export * from './templateManager';
 export * from './dictionaryRenderer';
 export * from './testAdapter';
-export * from 'botbuilder-schema';
+export * from 'botframework-schema';
 export * from './recognizerResult';
 export * from './recognizer';
 

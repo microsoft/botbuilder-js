@@ -1,8 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const choicePrompt_1 = require("./choicePrompt");
-const Recognizers = require("@microsoft/recognizers-text-options");
-const booleanModel = Recognizers.OptionsRecognizer.instance.getBooleanModel('en-us');
+const Recognizers = require("@microsoft/recognizers-text-choice");
 /**
  * Prompts a user to confirm something with a yes/no response. By default the prompt will return
  * to the calling dialog a `boolean` representing the users selection.
@@ -65,7 +64,7 @@ class ConfirmPrompt {
         // Recognize value
         const options = dialogs.getInstance(context).state;
         const utterance = context.request && context.request.text ? context.request.text : '';
-        const results = booleanModel.parse(utterance);
+        const results = Recognizers.recognizeBoolean(utterance, 'en-us');
         const value = results.length > 0 && results[0].resolution ? results[0].resolution.value : undefined;
         if (this.validator) {
             // Call validator for further processing

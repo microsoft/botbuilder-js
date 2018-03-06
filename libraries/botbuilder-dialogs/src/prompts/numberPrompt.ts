@@ -10,8 +10,6 @@ import { DialogSet } from '../dialogSet';
 import { PromptOptions, PromptValidator, formatPrompt } from './prompt';
 import * as Recognizers from '@microsoft/recognizers-text-number';
 
-const numberModel = Recognizers.NumberRecognizer.instance.getNumberModel('en-us');
-
 /**
  * Prompts a user to enter a number. By default the prompt will return to the calling dialog 
  * a `number` representing the users input.
@@ -70,7 +68,7 @@ export class NumberPrompt implements Dialog {
         // Recognize value
         const options = dialogs.getInstance<PromptOptions>(context).state;
         const utterance = context.request && context.request.text ? context.request.text : '';
-        const results = numberModel.parse(utterance);
+        const results = Recognizers.recognizeNumber(utterance, 'en-us');
         const value = results.length > 0 && results[0].resolution ? parseFloat(results[0].resolution.value) : undefined;
         if (this.validator) {
             // Call validator for further processing
