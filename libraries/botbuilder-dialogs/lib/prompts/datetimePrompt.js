@@ -1,9 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const prompt_1 = require("./prompt");
-//import * as Recognizers from '@microsoft/recognizers-text-date-time';
-const Recognizers = require('@microsoft/recognizers-text-date-time');
-const dateTimeModel = Recognizers.DateTimeRecognizer.instance.getDateTimeModel('en-us');
+const Recognizers = require("@microsoft/recognizers-text-date-time");
 /**
  * Prompts a user to enter a datetime expression. By default the prompt will return to the
  * calling dialog a `FoundDatetime[]` but this can be overridden using a custom `PromptValidator`.
@@ -67,7 +65,7 @@ class DatetimePrompt {
         // Recognize value
         const options = dialogs.getInstance(context).state;
         const utterance = context.request && context.request.text ? context.request.text : '';
-        const results = dateTimeModel.parse(utterance);
+        const results = Recognizers.recognizeDateTime(utterance, 'en-us');
         const value = results.length > 0 && results[0].resolution ? (results[0].resolution.values || []) : [];
         if (this.validator) {
             // Call validator for further processing

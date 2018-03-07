@@ -2,7 +2,7 @@
   "name": "botbuilder-dialogs",
   "author": "Microsoft Corp.",
   "description": "A dialog stack based conversation manager for Microsoft Bot Builder.",
-  "version": "4.0.0-m1.10",
+  "version": "4.0.0-m1.11",
   "license": "MIT",
   "keywords": [
     "botbuilder",
