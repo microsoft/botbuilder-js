@@ -4,7 +4,7 @@ import { renderAlarms } from './showAlarms';
 
 export function begin(context: BotContext, state: BotStateManager): Promise<any> {
     // Delete any existing topic
-    const conversation = state.conversation.get(context);
+    const conversation = state.conversation(context);
     conversation.topic = undefined;
 
     // Render list of topics to user
@@ -21,10 +21,10 @@ export function routeReply(context: BotContext, state: BotStateManager): Promise
     // Validate users reply and delete alarm
     let deleted = false;
     const title = context.request.text.trim();
-    const list = state.user.get(context).alarms || [];
-    for (let i = 0; i < list.length; i++) {
-        if (list[i].title.toLowerCase() === title.toLowerCase()) {
-            list.splice(i, 1);
+    const user = state.user(context);
+    for (let i = 0; i < user.alarms.length; i++) {
+        if (user.alarms[i].title.toLowerCase() === title.toLowerCase()) {
+            user.alarms.splice(i, 1);
             deleted = true;
             break;
         }
@@ -32,7 +32,7 @@ export function routeReply(context: BotContext, state: BotStateManager): Promise
 
     // Notify user of deletion or re-prompt
     if (deleted) {
-        state.conversation.get(context).topic = undefined;
+        state.conversation(context).topic = undefined;
         return context.sendActivity(`Deleted the "${title}" alarm.`);
     }
     return context.sendActivity(`An alarm named "${title}" doesn't exist. Which alarm would you like to delete? Say "cancel" to quit.`)

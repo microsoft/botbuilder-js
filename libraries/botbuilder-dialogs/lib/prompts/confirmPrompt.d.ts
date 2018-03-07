@@ -44,7 +44,7 @@ export interface ConfirmPromptOptions extends PromptOptions {
  * ]);
  * ```
  */
-export declare class ConfirmPrompt implements Dialog {
+export declare class ConfirmPrompt<C extends BotContext> implements Dialog<C> {
     private validator;
     /**
      * Allows for the localization of the confirm prompts yes/no choices to other locales besides
@@ -80,8 +80,8 @@ export declare class ConfirmPrompt implements Dialog {
      * ```
      * @param validator (Optional) validator that will be called each time the user responds to the prompt.
      */
-    constructor(validator?: PromptValidator<boolean | undefined> | undefined);
-    begin(context: BotContext, dialogs: DialogSet, options: ConfirmPromptOptions): Promise<void>;
-    continue(context: BotContext, dialogs: DialogSet): Promise<void>;
-    protected sendChoicePrompt(context: BotContext, dialogs: DialogSet, prompt: string | Partial<Activity>, speak?: string): Promise<void>;
+    constructor(validator?: PromptValidator<C, boolean | undefined> | undefined);
+    begin(context: C, dialogs: DialogSet<C>, options: ConfirmPromptOptions): Promise<void>;
+    continue(context: C, dialogs: DialogSet<C>): Promise<void>;
+    protected sendChoicePrompt(context: C, dialogs: DialogSet<C>, prompt: string | Partial<Activity>, speak?: string): Promise<void>;
 }

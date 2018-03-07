@@ -58,7 +58,7 @@ export interface ChoicePromptOptions extends PromptOptions {
  * ]);
  * ```
  */
-export declare class ChoicePrompt implements Dialog {
+export declare class ChoicePrompt<C extends BotContext> implements Dialog<C> {
     private validator;
     /** Additional options passed to the `ChoiceStyler` and used to tweak the style of choices rendered to the user. */
     readonly stylerOptions: ChoiceFactoryOptions;
@@ -74,9 +74,9 @@ export declare class ChoicePrompt implements Dialog {
      * ```
      * @param validator (Optional) validator that will be called each time the user responds to the prompt.
      */
-    constructor(validator?: PromptValidator<FoundChoice | undefined> | undefined);
-    begin(context: BotContext, dialogs: DialogSet, options: ChoicePromptOptions): Promise<void>;
-    continue(context: BotContext, dialogs: DialogSet): Promise<void>;
+    constructor(validator?: PromptValidator<C, FoundChoice | undefined> | undefined);
+    begin(context: C, dialogs: DialogSet<C>, options: ChoicePromptOptions): Promise<void>;
+    continue(context: C, dialogs: DialogSet<C>): Promise<void>;
     private sendChoicePrompt(context, dialogs, prompt, speak?);
 }
 /**

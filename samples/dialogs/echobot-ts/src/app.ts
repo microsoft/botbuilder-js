@@ -1,4 +1,4 @@
-import { BotFrameworkAdapter, MemoryStorage, ConversationState } from 'botbuilder';
+import { BotFrameworkAdapter, MemoryStorage, ConversationState, BatchOutput, BotContext } from 'botbuilder';
 import { DialogSet } from 'botbuilder-dialogs';
 import * as restify from 'restify';
 
@@ -14,14 +14,18 @@ const adapter = new BotFrameworkAdapter( {
     appPassword: process.env.MICROSOFT_APP_PASSWORD 
 });
 
-// Define conversation state shape
+// Add conversation state middleware
 interface EchoState {
     count: number;
 }
-
-// Add conversation state middleware
 const conversationState = new ConversationState<EchoState>(new MemoryStorage());
 adapter.use(conversationState);
+
+// Add batch output middleware
+interface EchoContext extends BotContext {
+    batch: BatchOutput;
+}
+adapter.use(new BatchOutput());
 
 // Create empty dialog set
 const dialogs = new DialogSet();
@@ -46,10 +50,10 @@ server.post('/api/messages', (req, res) => {
 
 // Add dialogs
 dialogs.add('echo', [
-    function (context) {
+    function (context: EchoContext) {
         const state = conversationState.get(context);
         const count = state.count === undefined ? state.count = 0 : ++state.count;
-        return context.sendActivity(`${count}: You said "${context.request.text}"`)
-            .then(() => dialogs.end(context));
+        context.batch.reply(`${count}: You said "${context.request.text}"`);
+        return dialogs.end(context);
     }
-])
+]);

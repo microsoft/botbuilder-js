@@ -34,7 +34,7 @@ import { PromptOptions, PromptValidator, sendPrompt } from './prompt';
  * ]);
  * ```
  */
-export class AttachmentPrompt implements Dialog {
+export class AttachmentPrompt<C extends BotContext> implements Dialog<C> {
     /**
      * Creates a new instance of the prompt.
      * 
@@ -52,9 +52,9 @@ export class AttachmentPrompt implements Dialog {
      * ```
      * @param validator (Optional) validator that will be called each time the user responds to the prompt.
      */
-    constructor(private validator?: PromptValidator<Attachment[]>) {}
+    constructor(private validator?: PromptValidator<C, Attachment[]>) {}
 
-    public begin(context: BotContext, dialogs: DialogSet, options: PromptOptions): Promise<void> {
+    public begin(context: C, dialogs: DialogSet<C>, options: PromptOptions): Promise<void> {
         // Persist options
         const instance = dialogs.getInstance<PromptOptions>(context);
         instance.state = options || {};
@@ -66,7 +66,7 @@ export class AttachmentPrompt implements Dialog {
         return Promise.resolve();
     }
 
-    public continue(context: BotContext, dialogs: DialogSet): Promise<void> {
+    public continue(context: C, dialogs: DialogSet<C>): Promise<void> {
         // Recognize value
         const options = dialogs.getInstance<PromptOptions>(context).state;
         const values: Attachment[] = context.request && context.request.attachments ? context.request.attachments : [];

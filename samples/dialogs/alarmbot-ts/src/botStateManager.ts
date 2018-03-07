@@ -1,4 +1,4 @@
-import { ConversationState, UserState, BotStateSet, Storage, BotContext } from 'botbuilder';
+import { ConversationState, UserState, BotStateSet, BotContext, Storage } from 'botbuilder';
 
 export interface Alarm {
     title: string;
@@ -6,9 +6,7 @@ export interface Alarm {
 }
 
 export interface AlarmConversation {
-    topic?: string;
-    alarm?: Partial<Alarm>;
-    prompt?: string;
+    alarm: Alarm;
 }
 
 export interface AlarmUser {
@@ -21,18 +19,9 @@ export class BotStateManager extends BotStateSet {
 
     constructor(storage: Storage) {
         super();
-
-        // Create individual state storages
         this._conversation = new ConversationState(storage);
         this._user = new UserState(storage);
-
-        // Add them to base BotStateSet so that they read and write as a pair
         this.use(this._conversation, this._user);
-    }
-
-    public conversation(context: BotContext): AlarmConversation {
-        // Get cached conversation state
-        return this._conversation.get(context);
     }
 
     public user(context: BotContext): AlarmUser {
@@ -40,5 +29,10 @@ export class BotStateManager extends BotStateSet {
         const user = this._user.get(context);
         if (!user.alarms) { user.alarms = [] }
         return user;
+    }
+
+    public conversation(context: BotContext): AlarmConversation {
+        // Get cached conversation state
+        return this._conversation.get(context);
     }
 }

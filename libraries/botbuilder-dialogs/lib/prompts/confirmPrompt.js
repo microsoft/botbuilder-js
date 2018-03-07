@@ -1,5 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @module botbuilder-dialogs
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+const botbuilder_1 = require("botbuilder");
 const choicePrompt_1 = require("./choicePrompt");
 const Recognizers = require("@microsoft/recognizers-text-choice");
 /**
@@ -87,6 +95,7 @@ class ConfirmPrompt {
         }
     }
     sendChoicePrompt(context, dialogs, prompt, speak) {
+        let msg;
         if (typeof prompt === 'string') {
             // Get locale specific choices
             let locale = context.request && context.request.locale ? context.request.locale.toLowerCase() : '*';
@@ -96,9 +105,13 @@ class ConfirmPrompt {
             const choices = ConfirmPrompt.choices[locale];
             // Reply with formatted prompt
             const style = dialogs.getInstance(context).state.style;
-            return context.sendActivity(choicePrompt_1.formatChoicePrompt(context, choices, prompt, speak, this.stylerOptions, style)).then(() => { });
+            msg = choicePrompt_1.formatChoicePrompt(context, choices, prompt, speak, this.stylerOptions, style);
         }
-        return context.sendActivity(prompt).then(() => { });
+        else {
+            msg = prompt;
+        }
+        // This ensures that the prompt is appended to the current batch if the caller is using batching.
+        return new botbuilder_1.BatchOutput(context).reply(msg).flush().then(() => { });
     }
 }
 /**

@@ -12,14 +12,14 @@ import { DialogSet } from './dialogSet';
  * be a singleton and added to a dialog set using `DialogSet.add()` at which point it will be
  * assigned a unique ID.
  */
-export interface Dialog {
+export interface Dialog<C extends BotContext> {
     /**
      * Method called when a new dialog has been pushed onto the stack and is being activated.
      * @param context The dialog context for the current turn of conversation.
      * @param dialogs The dialogs parent set.
      * @param args (Optional) arguments that were passed to the dialog during `begin()` call that started the instance.
      */
-    begin(context: BotContext, dialogs: DialogSet, args?: any): Promiseable<any>;
+    begin(context: C, dialogs: DialogSet<C>, args?: any): Promiseable<any>;
     /**
      * (Optional) method called when an instance of the dialog is the "current" dialog and the
      * user replies with a new activity. The dialog will generally continue to receive the users
@@ -30,7 +30,7 @@ export interface Dialog {
      * @param context The dialog context for the current turn of conversation.
      * @param dialogs The dialogs parent set.
      */
-    continue?(context: BotContext, dialogs: DialogSet): Promiseable<any>;
+    continue?(context: C, dialogs: DialogSet<C>): Promiseable<any>;
     /**
      * (Optional) method called when an instance of the dialog is being returned to from another
      * dialog that was started by the current instance using `DialogSet.begin()`.
@@ -42,7 +42,7 @@ export interface Dialog {
      * @param dialogs The dialogs parent set.
      * @param result (Optional) value returned from the dialog that was called. The type of the value returned is dependant on the dialog that was called.
      */
-    resume?(context: BotContext, dialogs: DialogSet, result?: any): Promiseable<any>;
+    resume?(context: C, dialogs: DialogSet<C>, result?: any): Promiseable<any>;
 }
 /**
  * Tracking information for a dialog on the stack.

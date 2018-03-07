@@ -33,7 +33,8 @@ function formatPrompt(prompt, speak) {
 }
 exports.formatPrompt = formatPrompt;
 function sendPrompt(context, prompt, speak) {
-    return context.sendActivity(formatPrompt(prompt, speak)).then(() => { });
+    // This ensures that the prompt is appended to the current batch if the caller is using batching.
+    return new botbuilder_1.BatchOutput(context).reply(formatPrompt(prompt, speak)).flush().then(() => { });
 }
 exports.sendPrompt = sendPrompt;
 //# sourceMappingURL=prompt.js.map

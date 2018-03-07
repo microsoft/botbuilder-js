@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 function begin(context, state) {
     // Set topic and initialize empty alarm
-    const conversation = state.conversation.get(context);
+    const conversation = state.conversation(context);
     conversation.topic = 'addAlarm';
     conversation.alarm = {};
     return nextField(context, state);
@@ -11,7 +11,7 @@ exports.begin = begin;
 function routeReply(context, state) {
     // Handle users reply to prompt
     let invalid = undefined;
-    const conversation = state.conversation.get(context);
+    const conversation = state.conversation(context);
     const utterance = context.request.text.trim();
     switch (conversation.prompt) {
         case 'title':
@@ -40,7 +40,7 @@ function routeReply(context, state) {
 exports.routeReply = routeReply;
 function nextField(context, state) {
     // Prompt user for next missing field
-    const conversation = state.conversation.get(context);
+    const conversation = state.conversation(context);
     const alarm = conversation.alarm;
     if (alarm.title === undefined) {
         conversation.prompt = 'title';
@@ -52,10 +52,8 @@ function nextField(context, state) {
     }
     else {
         // Alarm completed so set alarm.
-        const user = state.user.get(context);
-        const list = user.alarms || [];
-        list.push(alarm);
-        user.alarms = list;
+        const user = state.user(context);
+        user.alarms.push(alarm);
         // TODO: set alarm
         // Notify user and cleanup topic state
         conversation.topic = undefined;

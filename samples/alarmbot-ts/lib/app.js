@@ -17,7 +17,7 @@ const adapter = new botbuilder_1.BotFrameworkAdapter({
     appId: process.env.MICROSOFT_APP_ID,
     appPassword: process.env.MICROSOFT_APP_PASSWORD
 });
-// Create state manager
+// Add state middleware
 const state = new botStateManager_1.BotStateManager(new botbuilder_1.MemoryStorage());
 adapter.use(state);
 // Listen for incoming requests 
@@ -41,7 +41,7 @@ server.post('/api/messages', (req, res) => {
             }
             else {
                 // Continue the current topic
-                switch (state.conversation.get(context).topic) {
+                switch (state.conversation(context).topic) {
                     case 'addAlarm':
                         return addAlarm.routeReply(context, state);
                     case 'deleteAlarm':

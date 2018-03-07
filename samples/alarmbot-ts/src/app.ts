@@ -18,7 +18,7 @@ const adapter = new BotFrameworkAdapter({
     appPassword: process.env.MICROSOFT_APP_PASSWORD 
 });
 
-// Create state manager
+// Add state middleware
 const state = new BotStateManager(new MemoryStorage());
 adapter.use(state);
 
@@ -39,7 +39,7 @@ server.post('/api/messages', (req, res) => {
                 return cancel.begin(context, state);
             } else {
                 // Continue the current topic
-                switch (state.conversation.get(context).topic) {
+                switch (state.conversation(context).topic) {
                     case 'addAlarm':
                         return addAlarm.routeReply(context, state);
                     case 'deleteAlarm':

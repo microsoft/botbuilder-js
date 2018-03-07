@@ -43,7 +43,7 @@ import { Choice } from 'botbuilder-choices';
  *      });
  * ```
  */
-export declare class DialogSet {
+export declare class DialogSet<C extends BotContext = BotContext> {
     private readonly stateName;
     private readonly stackName;
     private readonly dialogs;
@@ -78,8 +78,8 @@ export declare class DialogSet {
      * @param dialogId Unique ID of the dialog within the set.
      * @param dialogOrSteps Either a new dialog or an array of waterfall steps to execute. If waterfall steps are passed in they will automatically be passed into an new instance of a `Waterfall` class.
      */
-    add<T extends Dialog>(dialogId: string, dialogOrSteps: T): T;
-    add(dialogId: string, dialogOrSteps: WaterfallStep[]): Waterfall;
+    add(dialogId: string, dialogOrSteps: Dialog<C>): Dialog<C>;
+    add(dialogId: string, dialogOrSteps: WaterfallStep<C>[]): Waterfall<C>;
     /**
      * Pushes a new dialog onto the dialog stack.
      *
@@ -92,7 +92,7 @@ export declare class DialogSet {
      * @param dialogId ID of the dialog to start.
      * @param dialogArgs (Optional) additional argument(s) to pass to the dialog being started.
      */
-    begin(context: BotContext, dialogId: string, dialogArgs?: any): Promise<void>;
+    begin(context: C, dialogId: string, dialogArgs?: any): Promise<void>;
     /**
      * Helper function to simplify formatting the options for calling a prompt dialog. This helper will
      * construct a `PromptOptions` structure and then call [begin(context, dialogId, options)](#begin).
@@ -108,7 +108,7 @@ export declare class DialogSet {
      * @param prompt Initial prompt to send the user.
      * @param choicesOrOptions (Optional) array of choices to prompt the user for or additional prompt options.
      */
-    prompt<O extends PromptOptions = PromptOptions>(context: BotContext, dialogId: string, prompt: string | Partial<Activity>, choicesOrOptions?: O | (string | Choice)[], options?: O): Promise<void>;
+    prompt<O extends PromptOptions = PromptOptions>(context: C, dialogId: string, prompt: string | Partial<Activity>, choicesOrOptions?: O | (string | Choice)[], options?: O): Promise<void>;
     /**
      * Continues execution of the active dialog, if there is one, by passing the context object to
      * its `Dialog.continue()` method. You can check `context.responded` after the call completes
@@ -125,7 +125,7 @@ export declare class DialogSet {
      * ```
      * @param context Context object for the current turn of conversation with the user.
      */
-    continue(context: BotContext): Promise<void>;
+    continue(context: C): Promise<void>;
     /**
      * Ends a dialog by popping it off the stack and returns an optional result to the dialogs
      * parent. The parent dialog is the dialog the started the on being ended via a call to
@@ -151,7 +151,7 @@ export declare class DialogSet {
      * @param context Context object for the current turn of conversation with the user.
      * @param result (Optional) result to pass to the parent dialogs `Dialog.resume()` method.
      */
-    end(context: BotContext, result?: any): Promise<void>;
+    end(context: C, result?: any): Promise<void>;
     /**
      * Deletes any existing dialog stack thus cancelling all dialogs on the stack.
      *
@@ -163,7 +163,7 @@ export declare class DialogSet {
      * ```
      * @param context Context object for the current turn of conversation with the user.
      */
-    endAll(context: BotContext): Promise<void>;
+    endAll(context: C): Promise<void>;
     /**
      * Finds a dialog that was previously added to the set using [add()](#add).
      *
@@ -175,7 +175,7 @@ export declare class DialogSet {
      * @param T (Optional) type of dialog returned.
      * @param dialogId ID of the dialog/prompt to lookup.
      */
-    find<T extends Dialog = Dialog>(dialogId: string): T | undefined;
+    find<T extends Dialog<C> = Dialog<C>>(dialogId: string): T | undefined;
     /**
      * Returns the dialog stack persisted for a conversation.
      *
@@ -186,7 +186,7 @@ export declare class DialogSet {
      * ```
      * @param context Context object for the current turn of conversation with the user.
      */
-    getStack(context: BotContext): DialogInstance<any>[];
+    getStack(context: C): DialogInstance<any>[];
     /**
      * Returns the active dialog instance on the top of the stack. Throws an error if the stack is
      * empty so use `dialogs.getStack(context).length > 0` to protect calls where the stack could
@@ -202,7 +202,7 @@ export declare class DialogSet {
      */
     getInstance<T extends Object = {
         [key: string]: any;
-    }>(context: BotContext): DialogInstance<T>;
+    }>(context: C): DialogInstance<T>;
     /**
      * Ends the current dialog and starts a new dialog in its place. This is particularly useful
      * for creating loops or redirecting to another dialog.
@@ -225,6 +225,6 @@ export declare class DialogSet {
      * @param dialogId ID of the new dialog to start.
      * @param dialogArgs (Optional) additional argument(s) to pass to the new dialog.
      */
-    replace(context: BotContext, dialogId: string, dialogArgs?: any): Promise<void>;
+    replace(context: C, dialogId: string, dialogArgs?: any): Promise<void>;
     private getState(context);
 }

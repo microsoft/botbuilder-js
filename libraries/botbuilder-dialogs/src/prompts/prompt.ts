@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotContext, Activity, Promiseable, InputHints } from 'botbuilder';
+import { BotContext, Activity, Promiseable, InputHints, BatchOutput } from 'botbuilder';
 import { DialogSet } from '../dialogSet';
 
 /** Basic configuration options supported by all prompts. */
@@ -33,7 +33,7 @@ export interface PromptOptions {
  * @param PromptValidator.value The value that was recognized or wasn't recognized. Depending on the prompt this can be either undefined or an empty array to indicate an unrecognized value.
  * @param PromptValidator.dialogs The parent dialog set.
  */
-export type PromptValidator<T> = (context: BotContext, value: T, dialogs: DialogSet) => Promiseable<void>;
+export type PromptValidator<C extends BotContext, T> = (context: C, value: T, dialogs: DialogSet<C>) => Promiseable<void>;
 
 /**
  * Helper function to properly format a prompt sent to a user.
@@ -56,5 +56,6 @@ export function formatPrompt(prompt: string|Partial<Activity>, speak?: string): 
 }
 
 export function sendPrompt(context: BotContext, prompt: string|Partial<Activity>, speak?: string): Promise<void> {
-    return context.sendActivity(formatPrompt(prompt, speak)).then(() => {});
+    // This ensures that the prompt is appended to the current batch if the caller is using batching.
+    return new BatchOutput(context).reply(formatPrompt(prompt, speak)).flush().then(() => {});
 }

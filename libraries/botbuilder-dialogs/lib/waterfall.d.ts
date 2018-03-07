@@ -47,7 +47,7 @@ import { DialogSet } from './dialogSet';
  * @param WaterfallStep.args Argument(s) passed into the dialog for the first step and then the results from calling a prompt or other dialog for subsequent steps.
  * @param WaterfallStep.next Function passed into the step to let you manually skip to the next step in the waterfall.
  */
-export declare type WaterfallStep = (context: BotContext, args?: any, next?: SkipStepFunction) => Promiseable<any>;
+export declare type WaterfallStep<C extends BotContext> = (context: C, args?: any, next?: SkipStepFunction) => Promiseable<any>;
 /**
  * When called, control will skip to the next waterfall step.
  * @param SkipStepFunction.args (Optional) additional argument(s) to pass into the next step.
@@ -69,14 +69,14 @@ export declare type SkipStepFunction = (args?: any) => Promise<any>;
  * though as the result from tha called dialog/prompt will be passed to the waterfalls parent
  * dialog.
  */
-export declare class Waterfall implements Dialog {
+export declare class Waterfall<C extends BotContext> implements Dialog<C> {
     private readonly steps;
     /**
      * Creates a new waterfall dialog containing the given array of steps.
      * @param steps Array of waterfall steps.
      */
-    constructor(steps: WaterfallStep[]);
-    begin(context: BotContext, dialogs: DialogSet, args?: any): Promiseable<void>;
-    resume(context: BotContext, dialogs: DialogSet, result?: any): Promiseable<void>;
+    constructor(steps: WaterfallStep<C>[]);
+    begin(context: C, dialogs: DialogSet, args?: any): Promiseable<void>;
+    resume(context: C, dialogs: DialogSet, result?: any): Promiseable<void>;
     private runStep(context, dialogs, result?);
 }

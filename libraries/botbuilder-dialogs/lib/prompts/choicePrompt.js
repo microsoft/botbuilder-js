@@ -108,11 +108,16 @@ class ChoicePrompt {
         }
     }
     sendChoicePrompt(context, dialogs, prompt, speak) {
+        let msg;
         if (typeof prompt === 'string') {
             const options = dialogs.getInstance(context).state;
-            return context.sendActivity(formatChoicePrompt(context, options.choices || [], prompt, speak, this.stylerOptions, options.style)).then(() => { });
+            msg = formatChoicePrompt(context, options.choices || [], prompt, speak, this.stylerOptions, options.style);
         }
-        return context.sendActivity(prompt).then(() => { });
+        else {
+            msg = prompt;
+        }
+        // This ensures that the prompt is appended to the current batch if the caller is using batching.
+        return new botbuilder_1.BatchOutput(context).reply(msg).flush().then(() => { });
     }
 }
 exports.ChoicePrompt = ChoicePrompt;

@@ -28,7 +28,7 @@ export interface PromptOptions {
  * @param PromptValidator.value The value that was recognized or wasn't recognized. Depending on the prompt this can be either undefined or an empty array to indicate an unrecognized value.
  * @param PromptValidator.dialogs The parent dialog set.
  */
-export declare type PromptValidator<T> = (context: BotContext, value: T, dialogs: DialogSet) => Promiseable<void>;
+export declare type PromptValidator<C extends BotContext, T> = (context: C, value: T, dialogs: DialogSet<C>) => Promiseable<void>;
 /**
  * Helper function to properly format a prompt sent to a user.
  *

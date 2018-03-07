@@ -44,10 +44,10 @@ import { Choice } from 'botbuilder-choices';
  *      }); 
  * ```
  */
-export class DialogSet {
+export class DialogSet<C extends BotContext = BotContext> {
     private readonly stateName: string;
     private readonly stackName: string;
-    private readonly dialogs: { [id:string]: Dialog; } = {};
+    private readonly dialogs: { [id:string]: Dialog<C>; } = {};
 
     /**
      * Creates an empty dialog set. The ability to name the sets dialog stack means that multiple
@@ -85,9 +85,9 @@ export class DialogSet {
      * @param dialogId Unique ID of the dialog within the set.
      * @param dialogOrSteps Either a new dialog or an array of waterfall steps to execute. If waterfall steps are passed in they will automatically be passed into an new instance of a `Waterfall` class.
      */
-    public add<T extends Dialog>(dialogId: string, dialogOrSteps: T): T;
-    public add(dialogId: string, dialogOrSteps: WaterfallStep[]): Waterfall;
-    public add(dialogId: string, dialogOrSteps: Dialog|WaterfallStep[]): Dialog {
+    public add(dialogId: string, dialogOrSteps: Dialog<C>): Dialog<C>;
+    public add(dialogId: string, dialogOrSteps: WaterfallStep<C>[]): Waterfall<C>;
+    public add(dialogId: string, dialogOrSteps: Dialog<C>|WaterfallStep<C>[]): Dialog<C> {
         if (this.dialogs.hasOwnProperty(dialogId)) { throw new Error(`DialogSet.add(): A dialog with an id of '${dialogId}' already added.`) }
         return this.dialogs[dialogId] = Array.isArray(dialogOrSteps) ? new Waterfall(dialogOrSteps as any) : dialogOrSteps;
     }
@@ -104,7 +104,7 @@ export class DialogSet {
      * @param dialogId ID of the dialog to start.
      * @param dialogArgs (Optional) additional argument(s) to pass to the dialog being started.
      */
-    public begin(context: BotContext, dialogId: string, dialogArgs?: any): Promise<void> {
+    public begin(context: C, dialogId: string, dialogArgs?: any): Promise<void> {
         try {
             // Lookup dialog
             const dialog = this.find(dialogId);
@@ -139,7 +139,7 @@ export class DialogSet {
      * @param prompt Initial prompt to send the user.
      * @param choicesOrOptions (Optional) array of choices to prompt the user for or additional prompt options.
      */
-    public prompt<O extends PromptOptions = PromptOptions>(context: BotContext, dialogId: string, prompt: string|Partial<Activity>, choicesOrOptions?: O|(string|Choice)[], options?: O): Promise<void> {
+    public prompt<O extends PromptOptions = PromptOptions>(context: C, dialogId: string, prompt: string|Partial<Activity>, choicesOrOptions?: O|(string|Choice)[], options?: O): Promise<void> {
         const args = Object.assign({}, Array.isArray(choicesOrOptions) ? { choices: choicesOrOptions } : choicesOrOptions) as O;
         if (prompt) { args.prompt = prompt }
         return this.begin(context, dialogId, args);
@@ -161,7 +161,7 @@ export class DialogSet {
      * ```
      * @param context Context object for the current turn of conversation with the user.
      */
-    public continue(context: BotContext): Promise<void> {
+    public continue(context: C): Promise<void> {
         try {
             if (this.getStack(context).length > 0) {
                 // Get current dialog instance
@@ -212,7 +212,7 @@ export class DialogSet {
      * @param context Context object for the current turn of conversation with the user.
      * @param result (Optional) result to pass to the parent dialogs `Dialog.resume()` method.
      */
-    public end(context: BotContext, result?: any): Promise<void> {
+    public end(context: C, result?: any): Promise<void> {
         try {
             // Pop current dialog off the stack
             const stack = this.getStack(context);
@@ -254,7 +254,7 @@ export class DialogSet {
      * ```
      * @param context Context object for the current turn of conversation with the user.
      */
-    public endAll(context: BotContext): Promise<void> {
+    public endAll(context: C): Promise<void> {
         try {
             // Cancel any current dialogs
             const state = this.getState(context);
@@ -276,7 +276,7 @@ export class DialogSet {
      * @param T (Optional) type of dialog returned.
      * @param dialogId ID of the dialog/prompt to lookup.
      */
-    public find<T extends Dialog = Dialog>(dialogId: string): T|undefined {
+    public find<T extends Dialog<C> = Dialog<C>>(dialogId: string): T|undefined {
         return this.dialogs.hasOwnProperty(dialogId) ? this.dialogs[dialogId] as T : undefined;
     }
 
@@ -290,7 +290,7 @@ export class DialogSet {
      * ```
      * @param context Context object for the current turn of conversation with the user.
      */
-    public getStack(context: BotContext): DialogInstance<any>[] {
+    public getStack(context: C): DialogInstance<any>[] {
         const state = this.getState(context);
         if (!Array.isArray(state[this.stackName])) { state[this.stackName] = [] }
         return state[this.stackName];
@@ -309,7 +309,7 @@ export class DialogSet {
      * @param T (Optional) type of dialog state being persisted by the instance.
      * @param context Context object for the current turn of conversation with the user.
      */
-    public getInstance<T extends Object = { [key:string]: any; }>(context: BotContext): DialogInstance<T> {
+    public getInstance<T extends Object = { [key:string]: any; }>(context: C): DialogInstance<T> {
         const stack = this.getStack(context);
         if (stack.length < 1) { throw new Error(`DialogSet.getInstance(): No active dialog on the stack.`) }
         return stack[stack.length - 1];
@@ -337,7 +337,7 @@ export class DialogSet {
      * @param dialogId ID of the new dialog to start.
      * @param dialogArgs (Optional) additional argument(s) to pass to the new dialog.  
      */
-    public replace(context: BotContext, dialogId: string, dialogArgs?: any): Promise<void> {
+    public replace(context: C, dialogId: string, dialogArgs?: any): Promise<void> {
         try {
             // Pop stack
             const stack = this.getStack(context);
@@ -350,7 +350,7 @@ export class DialogSet {
         }
     }
 
-    private getState(context: BotContext): StoreItem {
+    private getState(context: C): StoreItem {
         let state = (context as any)[this.stateName];
         if (typeof state !== 'object') { 
             state = BotState.get(context, this.stateName); 

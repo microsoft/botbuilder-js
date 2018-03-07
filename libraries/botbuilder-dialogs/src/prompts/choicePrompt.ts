@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotContext, Promiseable, Activity, InputHints } from 'botbuilder';
+import { BotContext, Promiseable, Activity, InputHints, BatchOutput } from 'botbuilder';
 import { Dialog } from '../dialog';
 import { DialogSet } from '../dialogSet';
 import { PromptOptions, PromptValidator } from './prompt';
@@ -67,7 +67,7 @@ export interface ChoicePromptOptions extends PromptOptions {
  * ]);
  * ```
  */
-export class ChoicePrompt implements Dialog {
+export class ChoicePrompt<C extends BotContext> implements Dialog<C> {
     /** Additional options passed to the `ChoiceStyler` and used to tweak the style of choices rendered to the user. */
     public readonly stylerOptions: ChoiceFactoryOptions = {};
 
@@ -84,9 +84,9 @@ export class ChoicePrompt implements Dialog {
      * ```
      * @param validator (Optional) validator that will be called each time the user responds to the prompt.
      */
-    constructor(private validator?: PromptValidator<FoundChoice|undefined>) {}
+    constructor(private validator?: PromptValidator<C, FoundChoice|undefined>) {}
 
-    public begin(context: BotContext, dialogs: DialogSet, options: ChoicePromptOptions): Promise<void> {
+    public begin(context: C, dialogs: DialogSet<C>, options: ChoicePromptOptions): Promise<void> {
         // Persist options
         const instance = dialogs.getInstance<ChoicePromptOptions>(context);
         instance.state = options || {};
@@ -99,7 +99,7 @@ export class ChoicePrompt implements Dialog {
         }
     }
 
-    public continue(context: BotContext, dialogs: DialogSet): Promise<void> {
+    public continue(context: C, dialogs: DialogSet<C>): Promise<void> {
         // Recognize value
         const options = dialogs.getInstance<ChoicePromptOptions>(context).state;
         const utterance = context.request && context.request.text ? context.request.text : '';
@@ -122,12 +122,17 @@ export class ChoicePrompt implements Dialog {
         }
     }
 
-    private sendChoicePrompt(context: BotContext, dialogs: DialogSet, prompt: string|Partial<Activity>, speak?: string): Promise<void> {
+    private sendChoicePrompt(context: C, dialogs: DialogSet<C>, prompt: string|Partial<Activity>, speak?: string): Promise<void> {
+        let msg: Partial<Activity>;
         if (typeof prompt === 'string') {
             const options = dialogs.getInstance<ChoicePromptOptions>(context).state; 
-            return context.sendActivity(formatChoicePrompt(context, options.choices || [], prompt, speak, this.stylerOptions, options.style)).then(() => {});
-        } 
-        return context.sendActivity(prompt).then(() => {}); 
+            msg = formatChoicePrompt(context, options.choices || [], prompt, speak, this.stylerOptions, options.style);
+        } else {
+            msg = prompt;
+        }
+        
+        // This ensures that the prompt is appended to the current batch if the caller is using batching.
+        return new BatchOutput(context).reply(msg).flush().then(() => {});
     }
 }
 

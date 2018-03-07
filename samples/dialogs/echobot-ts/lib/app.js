@@ -13,9 +13,9 @@ const adapter = new botbuilder_1.BotFrameworkAdapter({
     appId: process.env.MICROSOFT_APP_ID,
     appPassword: process.env.MICROSOFT_APP_PASSWORD
 });
-// Add conversation state middleware
 const conversationState = new botbuilder_1.ConversationState(new botbuilder_1.MemoryStorage());
 adapter.use(conversationState);
+adapter.use(new botbuilder_1.BatchOutput());
 // Create empty dialog set
 const dialogs = new botbuilder_dialogs_1.DialogSet();
 // Listen for incoming requests 
@@ -41,7 +41,7 @@ dialogs.add('echo', [
     function (context) {
         const state = conversationState.get(context);
         const count = state.count === undefined ? state.count = 0 : ++state.count;
-        return context.sendActivity(`${count}: You said "${context.request.text}"`)
-            .then(() => dialogs.end(context));
+        context.batch.reply(`${count}: You said "${context.request.text}"`);
+        return dialogs.end(context);
     }
 ]);

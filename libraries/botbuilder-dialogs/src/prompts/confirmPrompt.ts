@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotContext, Activity } from 'botbuilder';
+import { BotContext, Activity, BatchOutput } from 'botbuilder';
 import { Dialog } from '../dialog';
 import { DialogSet } from '../dialogSet';
 import { PromptOptions, PromptValidator } from './prompt';
@@ -49,7 +49,7 @@ export interface ConfirmPromptOptions extends PromptOptions {
  * ]);
  * ```
  */
-export class ConfirmPrompt implements Dialog {
+export class ConfirmPrompt<C extends BotContext> implements Dialog<C> {
     /** 
      * Allows for the localization of the confirm prompts yes/no choices to other locales besides 
      * english. The key of each entry is the languages locale code and should be lower cased. A
@@ -86,11 +86,11 @@ export class ConfirmPrompt implements Dialog {
      * ```
      * @param validator (Optional) validator that will be called each time the user responds to the prompt.
      */
-    constructor(private validator?: PromptValidator<boolean|undefined>) {
+    constructor(private validator?: PromptValidator<C, boolean|undefined>) {
         this.stylerOptions = { includeNumbers: false };
     }
 
-    public begin(context: BotContext, dialogs: DialogSet, options: ConfirmPromptOptions): Promise<void> {
+    public begin(context: C, dialogs: DialogSet<C>, options: ConfirmPromptOptions): Promise<void> {
         // Persist options
         const instance = dialogs.getInstance<ConfirmPromptOptions>(context);
         instance.state = options || {};
@@ -103,7 +103,7 @@ export class ConfirmPrompt implements Dialog {
         }
     }
 
-    public continue(context: BotContext, dialogs: DialogSet): Promise<void> {
+    public continue(context: C, dialogs: DialogSet<C>): Promise<void> {
         // Recognize value
         const options = dialogs.getInstance<ConfirmPromptOptions>(context).state;
         const utterance = context.request && context.request.text ? context.request.text : '';
@@ -126,7 +126,8 @@ export class ConfirmPrompt implements Dialog {
         }
     }
 
-    protected sendChoicePrompt(context: BotContext, dialogs: DialogSet, prompt: string|Partial<Activity>, speak?: string): Promise<void> {
+    protected sendChoicePrompt(context: C, dialogs: DialogSet<C>, prompt: string|Partial<Activity>, speak?: string): Promise<void> {
+        let msg: Partial<Activity>;
         if (typeof prompt === 'string') {
             // Get locale specific choices
             let locale = context.request && context.request.locale ? context.request.locale.toLowerCase() : '*';
@@ -135,8 +136,12 @@ export class ConfirmPrompt implements Dialog {
 
             // Reply with formatted prompt
             const style = dialogs.getInstance<ConfirmPromptOptions>(context).state.style; 
-            return context.sendActivity(formatChoicePrompt(context, choices, prompt, speak, this.stylerOptions, style)).then(() => {});
+            msg =formatChoicePrompt(context, choices, prompt, speak, this.stylerOptions, style);
+        } else {
+            msg = prompt;
         }
-        return context.sendActivity(prompt).then(() => {}); 
+        
+        // This ensures that the prompt is appended to the current batch if the caller is using batching.
+        return new BatchOutput(context).reply(msg).flush().then(() => {});
     }
 }

@@ -3,7 +3,7 @@ import { BotStateManager, Alarm } from './botStateManager';
 
 export function begin(context: BotContext, state: BotStateManager): Promise<any> {
     // Set topic and initialize empty alarm
-    const conversation = state.conversation.get(context);
+    const conversation = state.conversation(context);
     conversation.topic = 'addAlarm';
     conversation.alarm = {};
     return nextField(context, state);
@@ -12,7 +12,7 @@ export function begin(context: BotContext, state: BotStateManager): Promise<any>
 export function routeReply(context: BotContext, state: BotStateManager): Promise<any> {
     // Handle users reply to prompt
     let invalid: string = undefined;
-    const conversation = state.conversation.get(context);
+    const conversation = state.conversation(context);
     const utterance = context.request.text.trim();
     switch (conversation.prompt) {
         case 'title':
@@ -40,7 +40,7 @@ export function routeReply(context: BotContext, state: BotStateManager): Promise
 
 function nextField(context: BotContext, state: BotStateManager): Promise<any> {
     // Prompt user for next missing field
-    const conversation = state.conversation.get(context);
+    const conversation = state.conversation(context);
     const alarm = conversation.alarm;
     if (alarm.title === undefined) {
         conversation.prompt = 'title';
@@ -50,10 +50,8 @@ function nextField(context: BotContext, state: BotStateManager): Promise<any> {
         return context.sendActivity(`What time would you like to set the "${alarm.title}" alarm for?`);
     } else {
         // Alarm completed so set alarm.
-        const user = state.user.get(context);
-        const list = user.alarms || [];
-        list.push(alarm as Alarm);
-        user.alarms = list;
+        const user = state.user(context);
+        user.alarms.push(alarm as Alarm);
 
         // TODO: set alarm
 

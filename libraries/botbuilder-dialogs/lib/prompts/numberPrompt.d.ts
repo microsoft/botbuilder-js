@@ -33,7 +33,7 @@ import { PromptOptions, PromptValidator } from './prompt';
  * ]);
  * ```
  */
-export declare class NumberPrompt implements Dialog {
+export declare class NumberPrompt<C extends BotContext> implements Dialog<C> {
     private validator;
     /**
      * Creates a new instance of the prompt.
@@ -52,7 +52,7 @@ export declare class NumberPrompt implements Dialog {
      * ```
      * @param validator (Optional) validator that will be called each time the user responds to the prompt.
      */
-    constructor(validator?: PromptValidator<number | undefined> | undefined);
-    begin(context: BotContext, dialogs: DialogSet, options: PromptOptions): Promise<void>;
-    continue(context: BotContext, dialogs: DialogSet): Promise<void>;
+    constructor(validator?: PromptValidator<C, number | undefined> | undefined);
+    begin(context: C, dialogs: DialogSet<C>, options: PromptOptions): Promise<void>;
+    continue(context: C, dialogs: DialogSet<C>): Promise<void>;
 }

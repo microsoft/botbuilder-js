@@ -35,7 +35,7 @@ import * as Recognizers from '@microsoft/recognizers-text-number';
  * ]);
  * ```
  */
-export class NumberPrompt implements Dialog {
+export class NumberPrompt<C extends BotContext> implements Dialog<C> {
     /**
      * Creates a new instance of the prompt.
      * 
@@ -53,9 +53,9 @@ export class NumberPrompt implements Dialog {
      * ```
      * @param validator (Optional) validator that will be called each time the user responds to the prompt.
      */
-    constructor(private validator?: PromptValidator<number|undefined>) {}
+    constructor(private validator?: PromptValidator<C, number|undefined>) {}
 
-    public begin(context: BotContext, dialogs: DialogSet, options: PromptOptions): Promise<void> {
+    public begin(context: C, dialogs: DialogSet<C>, options: PromptOptions): Promise<void> {
         // Persist options
         const instance = dialogs.getInstance<PromptOptions>(context);
         instance.state = options || {};
@@ -67,7 +67,7 @@ export class NumberPrompt implements Dialog {
         return Promise.resolve();
     }
 
-    public continue(context: BotContext, dialogs: DialogSet): Promise<void> {
+    public continue(context: C, dialogs: DialogSet<C>): Promise<void> {
         // Recognize value
         const options = dialogs.getInstance<PromptOptions>(context).state;
         const utterance = context.request && context.request.text ? context.request.text : '';
