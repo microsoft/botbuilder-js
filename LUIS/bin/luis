@@ -40,6 +40,9 @@ async function runProgram() {
 
     const requestBody = await getFileInput(args);
     const result = await luis(config, serviceManifest, args, requestBody);
+    if (result.error) {
+        throw new Error(result.error.message);
+    }
     process.stdout.write(JSON.stringify(result, null, 2));
 }
 
@@ -122,8 +125,8 @@ function validateArguments(args, serviceManifest) {
 
 function exitWithError(args) {
     if (args instanceof Error) {
-        process.stdout.write(chalk.red(args));
-        process.stdout.write(chalk.green(`Use ${chalk.cyan.bold('--help')} for a list of commands.`));
+        process.stdout.write(chalk.red.bold(args + '\n'));
+        process.stdout.write(chalk.green(`\nUse ${chalk.cyan.bold('luis --help')} for a list of commands.`));
     } else {
         help(args);
     }
