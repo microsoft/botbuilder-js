@@ -32,10 +32,10 @@ class ServiceBase {
             const {skip, take} = params;
             URL += '?';
             if (!isNaN(+skip)) {
-                URL += `skip=${+skip}`;
+                URL += `skip=${~~skip}`;
             }
             if (!isNaN(+take)) {
-                URL += !isNaN(+skip) ? `&take=${+take}` : `take=${+take}`;
+                URL += !isNaN(+skip) ? `&take=${~~take}` : `take=${~~take}`;
             }
         }
         const body = dataModel ? JSON.stringify(dataModel) : undefined;
