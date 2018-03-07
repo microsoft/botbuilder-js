@@ -27,7 +27,17 @@ class ServiceBase {
         params = Object.assign((dataModel || {}), params, {appId, versionId});
         ServiceBase.validateParams(tokenizedUrl, params);
 
-        const URL = insertParametersFromObject(tokenizedUrl, params);
+        let URL = insertParametersFromObject(tokenizedUrl, params);
+        if (method === 'get' && (params.skip || params.take)) {
+            const {skip, take} = params;
+            URL += '?';
+            if (skip) {
+                URL += `skip=${skip}`;
+            }
+            if (take) {
+                URL += skip ? `&take=${take}` : `?take=${take}`;
+            }
+        }
         const body = dataModel ? JSON.stringify(dataModel) : undefined;
 
         return fetch(URL, {headers, method, body});
@@ -46,7 +56,7 @@ ServiceBase.validateParams = function (tokenizedUrl, params) {
 
     paramsFromPath.forEach(param => {
         if (!(param in params)) {
-            throw new Error(`${param} is missing.`);
+            throw new Error(`The required param "${param}" is missing.`);
         }
     });
 };

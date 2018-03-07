@@ -11,7 +11,7 @@ const tokenRegExp = /({\w+})/g;
 function insertParametersFromObject(parameterizedString, sourceObj) {
     let result;
     let payload = parameterizedString;
-    while (result = tokenRegExp.exec(parameterizedString)) {
+    while ((result = tokenRegExp.exec(parameterizedString))) {
         const token = result[1];
         const propertyName = token.replace(/[{}]/g, '');
         if (!(propertyName in sourceObj)) {

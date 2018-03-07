@@ -1,1325 +1,1903 @@
 {
-  "patterns": {
-    "className": "Patterns",
-    "url": "/apps/{appId}/versions/{versionId}/patterns",
-    "operations": [
-      {
-        "description": "Gets all application version pattern features.",
-        "pathFragment": "",
-        "params": [],
-        "method": "get",
-        "name": "getVersionPatternFeatureList"
-      },
-      {
-        "description": "Creates a new pattern feature.",
-        "pathFragment": "",
-        "params": [],
-        "method": "post",
-        "name": "createPatternFeature",
-        "entityName": "patternCreateObject",
-        "entityType": "PatternCreateObject"
-      },
-      {
-        "description": "Deletes a pattern feature from an application version.",
-        "pathFragment": "/{patternId}",
-        "params": [
-          {
-            "name": "patternId",
-            "in": "path",
-            "description": "The ID of the pattern feature to be deleted.",
-            "required": true,
-            "type": "integer"
-          }
-        ],
-        "method": "delete",
-        "name": "deletePatternFeature"
-      },
-      {
-        "description": "Updates the pattern, the name and the state of the pattern feature.",
-        "pathFragment": "/{patternId}",
-        "params": [
-          {
-            "name": "patternId",
-            "in": "path",
-            "description": "The ID of the feature to be updated.",
-            "required": true,
-            "type": "integer"
-          }
-        ],
-        "method": "put",
-        "name": "updatePatternFeature",
-        "entityName": "patternUpdateObject",
-        "entityType": "PatternUpdateObject"
-      },
-      {
-        "description": "Gets pattern feature info.",
-        "pathFragment": "/{patternId}",
-        "params": [
-          {
-            "name": "patternId",
-            "in": "path",
-            "description": "The pattern feature ID.",
-            "required": true,
-            "type": "integer"
-          }
-        ],
-        "method": "get",
-        "name": "getPatternFeatureInfo"
-      }
-    ]
-  },
-  "phraselists": {
-    "className": "Phraselists",
-    "url": "/apps/{appId}/versions/{versionId}/phraselists",
-    "operations": [
-      {
-        "description": "Gets all application phraselist features.",
-        "pathFragment": "",
-        "params": [],
-        "method": "get",
-        "name": "getVersionPhraselistFeaturesList"
-      },
-      {
-        "description": "Creates a new phraselist feature.",
-        "pathFragment": "",
-        "params": [],
-        "method": "post",
-        "name": "createPhraselistFeature",
-        "entityName": "phraselistCreateObject",
-        "entityType": "PhraselistCreateObject"
-      },
-      {
-        "description": "Deletes a phraselist feature from an application.",
-        "pathFragment": "/{phraselistId}",
-        "params": [
-          {
-            "name": "phraselistId",
-            "in": "path",
-            "description": "The ID of the feature to be deleted.",
-            "required": true,
-            "type": "integer"
-          }
-        ],
-        "method": "delete",
-        "name": "deletePhraselistFeature"
-      },
-      {
-        "description": "Updates the phrases, the state and the name of the phraselist feature.",
-        "pathFragment": "/{phraselistId}",
-        "params": [
-          {
-            "name": "phraselistId",
-            "in": "path",
-            "description": "The ID of the feature to be updated.",
-            "required": true,
-            "type": "integer"
-          }
-        ],
-        "method": "put",
-        "name": "updatePhraselistFeature",
-        "entityName": "phraselistUpdateObject",
-        "entityType": "PhraselistUpdateObject"
-      },
-      {
-        "description": "Gets phraselist feature info.",
-        "pathFragment": "/{phraselistId}",
-        "params": [
-          {
-            "name": "phraselistId",
-            "in": "path",
-            "description": "The phraselist feature ID.",
-            "required": true,
-            "type": "integer"
-          }
-        ],
-        "method": "get",
-        "name": "getPhraselistFeatureInfo"
-      }
-    ]
-  },
-  "features": {
-    "className": "Features",
-    "url": "/apps/{appId}/versions/{versionId}/features",
-    "operations": [
-      {
-        "description": "Gets all application version features.",
-        "pathFragment": "",
-        "params": [],
-        "method": "get",
-        "name": "getVersionFeatures"
-      }
-    ]
-  },
-  "example": {
-    "className": "Example",
-    "url": "/apps/{appId}/versions/{versionId}/example",
-    "operations": [
-      {
-        "description": "Adds a labeled example to the application.",
-        "pathFragment": "",
-        "params": [],
-        "method": "post",
-        "name": "addLabel",
-        "entityName": "exampleLabelObject",
-        "entityType": "ExampleLabelObject"
-      }
-    ]
-  },
-  "examples": {
-    "className": "Examples",
-    "url": "/apps/{appId}/versions/{versionId}/examples",
-    "operations": [
-      {
-        "description": "Returns examples to be reviewed.",
-        "pathFragment": "",
-        "params": [],
-        "method": "get",
-        "name": "reviewLabeledExamples"
-      },
-      {
-        "description": "Adds a batch of labeled examples to the specified application. \r\n\r\nThe maximum batch size is 100 items. \r\n\r\nIf the item has the ExampleId and a value between 0 - 99, the returned result will also include the ExampleId. This is helpful if items have errors. \r\n\r\nSome items can pass while others fail. The returned result will indicate each item's status. \r\n",
-        "pathFragment": "",
-        "params": [],
-        "method": "post",
-        "name": "batchAddLabels",
-        "entityName": "exampleLabelObjectArray",
-        "entityType": "ExampleLabelObjectArray"
-      },
-      {
-        "description": "Deletes the label with the specified ID.",
-        "pathFragment": "/{exampleId}",
-        "params": [
-          {
-            "name": "exampleId",
-            "in": "path",
-            "description": "The example ID.",
-            "required": true,
-            "type": "integer"
-          }
-        ],
-        "method": "delete",
-        "name": "deleteExampleLabels"
-      }
-    ]
-  },
-  "intents": {
-    "className": "Intents",
-    "url": "/apps/{appId}/versions/{versionId}/intents",
-    "operations": [
-      {
-        "description": "Gets information about the intent models.",
-        "pathFragment": "",
-        "params": [],
-        "method": "get",
-        "name": "getVersionIntentList"
-      },
-      {
-        "description": "Adds an intent classifier to the application.",
-        "pathFragment": "",
-        "params": [],
-        "method": "post",
-        "name": "createIntent",
-        "entityName": "modelCreateObject",
-        "entityType": "ModelCreateObject"
-      },
-      {
-        "description": "Deletes an intent classifier from the application.",
-        "pathFragment": "/{intentId}",
-        "params": [
-          {
-            "name": "intentId",
-            "in": "path",
-            "description": "Format - guid. The intent classifier ID.",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "method": "delete",
-        "name": "deleteIntent"
-      },
-      {
-        "description": "Updates the name of an intent classifier.",
-        "pathFragment": "/{intentId}",
-        "params": [
-          {
-            "name": "intentId",
-            "in": "path",
-            "description": "Format - guid. The intent classifier ID.",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "method": "put",
-        "name": "renameIntent",
-        "entityName": "modelUpdateObject",
-        "entityType": "ModelUpdateObject"
-      },
-      {
-        "description": "Gets information about the intent model.",
-        "pathFragment": "/{intentId}",
-        "params": [
-          {
-            "name": "intentId",
-            "in": "path",
-            "description": "Format - guid. The intent classifier ID.",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "method": "get",
-        "name": "getIntent"
-      },
-      {
-        "description": "Suggests examples that would improve the accuracy of the intent model.",
-        "pathFragment": "/{intentId}/suggest",
-        "params": [
-          {
-            "name": "intentId",
-            "in": "path",
-            "description": "Format - guid. The target intent classifier model to enhance.",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "method": "get",
-        "name": "suggestEndpointQueriesForIntents"
-      }
-    ]
-  },
-  "entities": {
-    "className": "Entities",
-    "url": "/apps/{appId}/versions/{versionId}/entities",
-    "operations": [
-      {
-        "description": "Gets information about the entity models.",
-        "pathFragment": "",
-        "params": [],
-        "method": "get",
-        "name": "getVersionEntityList"
-      },
-      {
-        "description": "Adds an entity extractor to the application.",
-        "pathFragment": "",
-        "params": [],
-        "method": "post",
-        "name": "createEntity",
-        "entityName": "modelCreateObject",
-        "entityType": "ModelCreateObject"
-      },
-      {
-        "description": "Deletes an entity extractor from the application.",
-        "pathFragment": "/{entityId}",
-        "params": [
-          {
-            "name": "entityId",
-            "in": "path",
-            "description": "Format - guid. The entity extractor ID.",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "method": "delete",
-        "name": "deleteEntity"
-      },
-      {
-        "description": "Updates the name of an entity extractor.",
-        "pathFragment": "/{entityId}",
-        "params": [
-          {
-            "name": "entityId",
-            "in": "path",
-            "description": "Format - guid. The entity extractor ID.",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "method": "put",
-        "name": "renameEntity",
-        "entityName": "modelUpdateObject",
-        "entityType": "ModelUpdateObject"
-      },
-      {
-        "description": "Gets information about the entity model.",
-        "pathFragment": "/{entityId}",
-        "params": [
-          {
-            "name": "entityId",
-            "in": "path",
-            "description": "Format - guid. The entity extractor ID.",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "method": "get",
-        "name": "getEntity"
-      },
-      {
-        "description": "Suggests examples that would improve the accuracy of the entity model.",
-        "pathFragment": "/{entityId}/suggest",
-        "params": [
-          {
-            "name": "entityId",
-            "in": "path",
-            "description": "Format - guid. The target entity extractor model to enhance.",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "method": "get",
-        "name": "suggestEndpointQueriesForEntities"
-      }
-    ]
-  },
-  "hierarchicalentities": {
-    "className": "Hierarchicalentities",
-    "url": "/apps/{appId}/versions/{versionId}/hierarchicalentities",
-    "operations": [
-      {
-        "description": "Gets information about the hierarchical entity models.",
-        "pathFragment": "",
-        "params": [],
-        "method": "get",
-        "name": "getVersionHierarchicalEntityList"
-      },
-      {
-        "description": "Adds a hierarchical entity extractor to the application version.",
-        "pathFragment": "",
-        "params": [],
-        "method": "post",
-        "name": "createHierarchicalEntity",
-        "entityName": "hierarchicalModelCreateObject",
-        "entityType": "HierarchicalModelCreateObject"
-      },
-      {
-        "description": "Deletes a hierarchical entity extractor from the application version.",
-        "pathFragment": "/{hEntityId}",
-        "params": [
-          {
-            "name": "hEntityId",
-            "in": "path",
-            "description": "Format - guid. The hierarchical entity extractor ID.",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "method": "delete",
-        "name": "deleteHierarchicalEntity"
-      },
-      {
-        "description": "Updates the name and children of a hierarchical entity model.",
-        "pathFragment": "/{hEntityId}",
-        "params": [
-          {
-            "name": "hEntityId",
-            "in": "path",
-            "description": "Format - guid. The hierarchical entity extractor ID.",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "method": "put",
-        "name": "updateHierarchicalEntity",
-        "entityName": "hierarchicalModelUpdateObject",
-        "entityType": "HierarchicalModelUpdateObject"
-      },
-      {
-        "description": "Gets information about the hierarchical entity model.",
-        "pathFragment": "/{hEntityId}",
-        "params": [
-          {
-            "name": "hEntityId",
-            "in": "path",
-            "description": "Format - guid. The hierarchical entity extractor ID.",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "method": "get",
-        "name": "getHierarchicalEntity"
-      },
-      {
-        "description": "Deletes a hierarchical entity extractor child from the application.",
-        "pathFragment": "/{hEntityId}/children/{hChildId}",
-        "params": [
-          {
-            "name": "hEntityId",
-            "in": "path",
-            "description": "Format - guid. The hierarchical entity extractor ID.",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "hChildId",
-            "in": "path",
-            "description": "Format - guid. The hierarchical entity extractor child ID.",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "method": "delete",
-        "name": "deleteHierarchicalChildEntity "
-      },
-      {
-        "description": "Renames a single child in an existing hierarchical entity model.",
-        "pathFragment": "/{hEntityId}/children/{hChildId}",
-        "params": [
-          {
-            "name": "hEntityId",
-            "in": "path",
-            "description": "Format - guid. The hierarchical entity extractor ID.",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "hChildId",
-            "in": "path",
-            "description": "Format - guid. The hierarchical entity extractor child ID.",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "method": "put",
-        "name": "updateHierarchicalChildEntity ",
-        "entityName": "body",
-        "entityType": ""
-      },
-      {
-        "description": "Gets information about the hierarchical entity child model.",
-        "pathFragment": "/{hEntityId}/children/{hChildId}",
-        "params": [
-          {
-            "name": "hEntityId",
-            "in": "path",
-            "description": "Format - guid. The hierarchical entity extractor parent ID.",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "hChildId",
-            "in": "path",
-            "description": "Format - guid. The hierarchical entity extractor child ID.",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "method": "get",
-        "name": "getHierarchicalChildEntity"
-      },
-      {
-        "description": "Creates a single child in an existing hierarchical entity model.",
-        "pathFragment": "/{hEntityId}/children",
-        "params": [
-          {
-            "name": "hEntityId",
-            "in": "path",
-            "description": "Format - guid. The hierarchical entity extractor ID.",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "method": "post",
-        "name": "createHierarchicalChildEntity ",
-        "entityName": "body",
-        "entityType": ""
-      }
-    ]
-  },
-  "compositeentities": {
-    "className": "Compositeentities",
-    "url": "/apps/{appId}/versions/{versionId}/compositeentities",
-    "operations": [
-      {
-        "description": "Gets information about the composite entity models.",
-        "pathFragment": "",
-        "params": [],
-        "method": "get",
-        "name": "getVersionCompositeEntityList"
-      },
-      {
-        "description": "Adds a composite entity extractor to the application.",
-        "pathFragment": "",
-        "params": [],
-        "method": "post",
-        "name": "createCompositeEntity",
-        "entityName": "hierarchicalModelCreateObject",
-        "entityType": "HierarchicalModelCreateObject"
-      },
-      {
-        "description": "Deletes a composite entity extractor from the application.",
-        "pathFragment": "/{cEntityId}",
-        "params": [
-          {
-            "name": "cEntityId",
-            "in": "path",
-            "description": "Format - guid. The composite entity extractor ID.",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "method": "delete",
-        "name": "deleteCompositeEntity"
-      },
-      {
-        "description": "Updates the composite entity extractor.",
-        "pathFragment": "/{cEntityId}",
-        "params": [
-          {
-            "name": "cEntityId",
-            "in": "path",
-            "description": "Format - guid. The composite entity extractor ID.",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "method": "put",
-        "name": "updateCompositeEntity",
-        "entityName": "hierarchicalModelUpdateObject",
-        "entityType": "HierarchicalModelUpdateObject"
-      },
-      {
-        "description": "Gets information about the composite entity model.",
-        "pathFragment": "/{cEntityId}",
-        "params": [
-          {
-            "name": "cEntityId",
-            "in": "path",
-            "description": "Format - guid. The composite entity extractor ID.",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "method": "get",
-        "name": "getCompositeEntity"
-      },
-      {
-        "description": "Creates a single child in an existing composite entity model.",
-        "pathFragment": "/{cEntityId}/children",
-        "params": [
-          {
-            "name": "cEntityId",
-            "in": "path",
-            "description": "Format - guid. The composite entity extractor ID.",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "method": "post",
-        "name": "createCompositeChildEntity",
-        "entityName": "body",
-        "entityType": ""
-      },
-      {
-        "description": "Deletes a composite entity extractor child from the application.",
-        "pathFragment": "/{cEntityId}/children/{cChildId}",
-        "params": [
-          {
-            "name": "cEntityId",
-            "in": "path",
-            "description": "Format - guid. The hierarchical entity extractor ID.",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "cChildId",
-            "in": "path",
-            "description": "Format - guid. The hierarchical entity extractor child ID.",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "method": "delete",
-        "name": "deleteCompositeChildEntity "
-      }
-    ]
-  },
-  "closedlists": {
-    "className": "Closedlists",
-    "url": "/apps/{appId}/versions/{versionId}/closedlists",
-    "operations": [
-      {
-        "description": "Gets information about the closedlist models.",
-        "pathFragment": "",
-        "params": [],
-        "method": "get",
-        "name": "getVersionClosedlistList"
-      },
-      {
-        "description": "Adds a list entity to the LUIS app.",
-        "pathFragment": "",
-        "params": [],
-        "method": "post",
-        "name": "createClosedListEntity",
-        "entityName": "closedListModelCreateObject",
-        "entityType": "ClosedListModelCreateObject"
-      },
-      {
-        "description": "Deletes a closed list model from the application.",
-        "pathFragment": "/{clEntityId}",
-        "params": [
-          {
-            "name": "clEntityId",
-            "in": "path",
-            "description": "Format - guid. The closed list entity extractor ID.",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "method": "delete",
-        "name": "deleteClosedListEntity"
-      },
-      {
-        "description": "Adds a batch of sublists to an existing closedlist.",
-        "pathFragment": "/{clEntityId}",
-        "params": [
-          {
-            "name": "clEntityId",
-            "in": "path",
-            "description": "Format - guid. The closed list entity extractor ID.",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "method": "patch",
-        "name": "patchClosedListEntity",
-        "entityName": "closedListModelPatchObject",
-        "entityType": "ClosedListModelPatchObject"
-      },
-      {
-        "description": "Updates the closed list model.",
-        "pathFragment": "/{clEntityId}",
-        "params": [
-          {
-            "name": "clEntityId",
-            "in": "path",
-            "description": "Format - guid. The closed list entity extractor ID.",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "method": "put",
-        "name": "updateClosedListEntity",
-        "entityName": "closedListModelUpdateObject",
-        "entityType": "ClosedListModelUpdateObject"
-      },
-      {
-        "description": "Gets information of a closed list model.",
-        "pathFragment": "/{clEntityId}",
-        "params": [
-          {
-            "name": "clEntityId",
-            "in": "path",
-            "description": "Format - guid. The closed list model ID.",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "method": "get",
-        "name": "getClosedListEntity"
-      },
-      {
-        "description": "Updates one of the closed list's sublists",
-        "pathFragment": "/{clEntityId}/sublists/{subListId}",
-        "params": [
-          {
-            "name": "clEntityId",
-            "in": "path",
-            "description": "Format - guid. The closedlist ID.",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "subListId",
-            "in": "path",
-            "description": "Format - long. The sublist ID",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "method": "put",
-        "name": "updateClosedlistsSublist",
-        "entityName": "wordListBaseUpdateObject",
-        "entityType": "WordListBaseUpdateObject"
-      },
-      {
-        "description": "Deletes a sublist of a specified list entity.",
-        "pathFragment": "/{clEntityId}/sublists/{subListId}",
-        "params": [
-          {
-            "name": "clEntityId",
-            "in": "path",
-            "description": "Format - guid. The closed list entity extractor ID.",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "subListId",
-            "in": "path",
-            "description": "The sublist ID.",
-            "required": true,
-            "type": "integer"
-          }
-        ],
-        "method": "delete",
-        "name": "deleteSublistEntity"
-      },
-      {
-        "description": "Adds a list to an existing closed list",
-        "pathFragment": "/{clEntityId}/sublists",
-        "params": [
-          {
-            "name": "clEntityId",
-            "in": "path",
-            "description": "Format - guid. The closed list entity extractor ID.",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "method": "post",
-        "name": "addClosedListsSublist",
-        "entityName": "wordListCreateObject",
-        "entityType": "WordListCreateObject"
-      }
-    ]
-  },
-  "prebuilts": {
-    "className": "Prebuilts",
-    "url": "/apps/{appId}/versions/{versionId}/prebuilts",
-    "operations": [
-      {
-        "description": "Gets information about the prebuilt entity models.",
-        "pathFragment": "",
-        "params": [],
-        "method": "get",
-        "name": "getVersionPrebuiltEntityList"
-      },
-      {
-        "description": "Adds a list of prebuilt entity extractors to the application.",
-        "pathFragment": "",
-        "params": [],
-        "method": "post",
-        "name": "addPrebuiltEntityList",
-        "entityName": "prebuiltExtractorNames",
-        "entityType": "PrebuiltExtractorNames"
-      },
-      {
-        "description": "Deletes a prebuilt entity extractor from the application.",
-        "pathFragment": "/{prebuiltId}",
-        "params": [
-          {
-            "name": "prebuiltId",
-            "in": "path",
-            "description": "Format - guid. The prebuilt entity extractor ID.",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "method": "delete",
-        "name": "deletePrebuiltEntity"
-      },
-      {
-        "description": "Gets information about the prebuilt entity model.",
-        "pathFragment": "/{prebuiltId}",
-        "params": [
-          {
-            "name": "prebuiltId",
-            "in": "path",
-            "description": "Format - guid. The prebuilt entity extractor ID.",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "method": "get",
-        "name": "getPrebuiltEntity"
-      }
-    ]
-  },
-  "listprebuilts": {
-    "className": "Listprebuilts",
-    "url": "/apps/{appId}/versions/{versionId}/listprebuilts",
-    "operations": [
-      {
-        "description": "Gets all the available prebuilt entities for the application based on the application's culture.",
-        "pathFragment": "",
-        "params": [],
-        "method": "get",
-        "name": "getAvailablePrebuiltEntityList"
-      }
-    ]
-  },
-  "models": {
-    "className": "Models",
-    "url": "/apps/{appId}/versions/{versionId}/models",
-    "operations": [
-      {
-        "description": "Gets information about the application version models.",
-        "pathFragment": "",
-        "params": [],
-        "method": "get",
-        "name": "getVersionModelList"
-      }
-    ]
-  },
   "apps": {
-    "className": "Apps",
-    "url": "/apps/",
-    "operations": [
-      {
-        "description": "Lists all of the user applications.",
-        "pathFragment": "/",
-        "params": [],
-        "method": "get",
-        "name": "getApplicationsList"
-      },
-      {
-        "description": "Creates a new LUIS app.",
-        "pathFragment": "/",
-        "params": [],
-        "method": "post",
-        "name": "addApplication",
-        "entityName": "applicationCreateObject",
-        "entityType": "ApplicationCreateObject"
-      },
-      {
-        "description": "Deletes an application.",
-        "pathFragment": "/{appId}",
-        "params": [],
-        "method": "delete",
-        "name": "deleteApplication"
-      },
-      {
-        "description": "Updates the name or description of the application.",
-        "pathFragment": "/{appId}",
-        "params": [],
-        "method": "put",
-        "name": "renameApplication",
-        "entityName": "applicationUpdateObject",
-        "entityType": "ApplicationUpdateObject"
-      },
-      {
-        "description": "Gets the application info.",
-        "pathFragment": "/{appId}",
-        "params": [],
-        "method": "get",
-        "name": "getApplicationInfo"
+    "apps": {
+      "className": "Apps",
+      "category": "apps",
+      "url": "/apps/",
+      "operations": {
+        "list:getApplicationsList": {
+          "method": "get",
+          "methodAlias": "list",
+          "command": "apps list --skip <integer> --take <integer>",
+          "pathFragment": "/",
+          "params": [
+            {
+              "name": "skip",
+              "in": "query",
+              "description": "The number of entries to skip. Default value is 0.",
+              "type": "integer",
+              "default": "0",
+              "enum": [
+                "0"
+              ]
+            },
+            {
+              "name": "take",
+              "in": "query",
+              "description": "The number of entries to return. Maximum page size is 500. Default is 100.",
+              "type": "integer",
+              "default": "100",
+              "enum": [
+                "100"
+              ]
+            }
+          ],
+          "description": "Lists all of the user applications.",
+          "name": "getApplicationsList"
+        },
+        "post:addApplication": {
+          "method": "post",
+          "methodAlias": "post",
+          "command": "apps post --in applicationCreateObject.json ",
+          "pathFragment": "/",
+          "description": "Creates a new LUIS app.",
+          "name": "addApplication",
+          "entityName": "applicationCreateObject",
+          "entityType": "ApplicationCreateObject"
+        },
+        "delete:deleteApplication": {
+          "method": "delete",
+          "methodAlias": "delete",
+          "command": "apps delete --appId <string>",
+          "pathFragment": "/{appId}",
+          "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "description": "Deletes an application.",
+          "name": "deleteApplication"
+        },
+        "put:renameApplication": {
+          "method": "put",
+          "methodAlias": "put",
+          "command": "apps put --in applicationUpdateObject.json  --appId <string>",
+          "pathFragment": "/{appId}",
+          "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "description": "Updates the name or description of the application.",
+          "name": "renameApplication",
+          "entityName": "applicationUpdateObject",
+          "entityType": "ApplicationUpdateObject"
+        },
+        "get:getApplicationInfo": {
+          "method": "get",
+          "methodAlias": "get",
+          "command": "apps get --appId <string>",
+          "pathFragment": "/{appId}",
+          "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "description": "Gets the application info.",
+          "name": "getApplicationInfo"
+        }
       }
-    ]
-  },
-  "import": {
-    "className": "Import",
-    "url": "/apps/import",
-    "operations": [
-      {
-        "description": "Imports an application to LUIS, the application's JSON should be included in the request body. Returns new app ID.",
-        "pathFragment": "",
-        "params": [],
-        "method": "post",
-        "name": "importApplication",
-        "entityName": "jSONApp",
-        "entityType": "JSONApp"
+    },
+    "assistants": {
+      "className": "Assistants",
+      "category": "apps",
+      "url": "/apps/assistants",
+      "operations": {
+        "get:getPersonalAssistantApplications": {
+          "method": "get",
+          "methodAlias": "get",
+          "command": "apps get assistants",
+          "pathFragment": "",
+          "description": "Gets the endpoint URLs for the prebuilt Cortana applications.",
+          "name": "getPersonalAssistantApplications"
+        }
       }
-    ]
-  },
-  "assistants": {
-    "className": "Assistants",
-    "url": "/apps/assistants",
-    "operations": [
-      {
-        "description": "Gets the endpoint URLs for the prebuilt Cortana applications.",
-        "pathFragment": "",
-        "params": [],
-        "method": "get",
-        "name": "getPersonalAssistantApplications"
+    },
+    "cultures": {
+      "className": "Cultures",
+      "category": "apps",
+      "url": "/apps/cultures",
+      "operations": {
+        "get:getLUISApplicationCulturesList": {
+          "method": "get",
+          "methodAlias": "get",
+          "command": "apps get cultures",
+          "pathFragment": "",
+          "description": "Gets the supported LUIS application cultures.",
+          "name": "getLUISApplicationCulturesList"
+        }
       }
-    ]
-  },
-  "domains": {
-    "className": "Domains",
-    "url": "/apps/domains",
-    "operations": [
-      {
-        "description": "Gets the available application domains.",
-        "pathFragment": "",
-        "params": [],
-        "method": "get",
-        "name": "getLUISApplicationDomainsList"
+    },
+    "customprebuiltdomains": {
+      "className": "Customprebuiltdomains",
+      "category": "apps",
+      "url": "/apps/customprebuiltdomains",
+      "operations": {
+        "post:addPrebuiltApplication": {
+          "method": "post",
+          "methodAlias": "post",
+          "command": "apps post customprebuiltdomains --in prebuiltDomainCreateObject.json ",
+          "pathFragment": "",
+          "description": "Adds a prebuilt domain along with its models as a new application. Returns new app ID. ",
+          "name": "addPrebuiltApplication",
+          "entityName": "prebuiltDomainCreateObject",
+          "entityType": "PrebuiltDomainCreateObject"
+        },
+        "get:getLUISPrebuiltDomainsList": {
+          "method": "get",
+          "methodAlias": "get",
+          "command": "apps get customprebuiltdomains",
+          "pathFragment": "",
+          "description": "Gets all the available custom prebuilt domains for all cultures",
+          "name": "getLUISPrebuiltDomainsList"
+        },
+        "get:getLUISPrebuiltDomainsForCultureList": {
+          "method": "get",
+          "methodAlias": "get",
+          "command": "apps get customprebuiltdomains --culture <string>",
+          "pathFragment": "/{culture}",
+          "params": [
+            {
+              "name": "culture",
+              "in": "path",
+              "description": "Format - string. Culture",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "description": "Gets all the available custom prebuilt domains for a specific culture",
+          "name": "getLUISPrebuiltDomainsForCultureList"
+        }
       }
-    ]
-  },
-  "usagescenarios": {
-    "className": "Usagescenarios",
-    "url": "/apps/usagescenarios",
-    "operations": [
-      {
-        "description": "Gets the application available usage scenarios.",
-        "pathFragment": "",
-        "params": [],
-        "method": "get",
-        "name": "getLUISApplicationUsageScenariosList"
+    },
+    "domains": {
+      "className": "Domains",
+      "category": "apps",
+      "url": "/apps/domains",
+      "operations": {
+        "get:getLUISApplicationDomainsList": {
+          "method": "get",
+          "methodAlias": "get",
+          "command": "apps get domains",
+          "pathFragment": "",
+          "description": "Gets the available application domains.",
+          "name": "getLUISApplicationDomainsList"
+        }
       }
-    ]
-  },
-  "cultures": {
-    "className": "Cultures",
-    "url": "/apps/cultures",
-    "operations": [
-      {
-        "description": "Gets the supported LUIS application cultures.",
-        "pathFragment": "",
-        "params": [],
-        "method": "get",
-        "name": "getLUISApplicationCulturesList"
+    },
+    "import": {
+      "className": "Import",
+      "category": "apps",
+      "url": "/apps/import",
+      "operations": {
+        "post:importApplication": {
+          "method": "post",
+          "methodAlias": "post",
+          "command": "apps post import --in jSONApp.json  --appName <string>",
+          "pathFragment": "",
+          "params": [
+            {
+              "name": "appName",
+              "in": "query",
+              "description": "The imported application name.",
+              "type": "string"
+            }
+          ],
+          "description": "Imports an application to LUIS, the application's JSON should be included in the request body. Returns new app ID.",
+          "name": "importApplication",
+          "entityName": "jSONApp",
+          "entityType": "JSONApp"
+        }
       }
-    ]
-  },
-  "querylogs": {
-    "className": "Querylogs",
-    "url": "/apps/{appId}/querylogs",
-    "operations": [
-      {
-        "description": "Gets the query logs of the past month for the application.",
-        "pathFragment": "",
-        "params": [],
-        "method": "get",
-        "name": "downloadApplicationQueryLogs"
+    },
+    "usagescenarios": {
+      "className": "Usagescenarios",
+      "category": "apps",
+      "url": "/apps/usagescenarios",
+      "operations": {
+        "get:getLUISApplicationUsageScenariosList": {
+          "method": "get",
+          "methodAlias": "get",
+          "command": "apps get usagescenarios",
+          "pathFragment": "",
+          "description": "Gets the application available usage scenarios.",
+          "name": "getLUISApplicationUsageScenariosList"
+        }
       }
-    ]
-  },
-  "clone": {
-    "className": "Clone",
-    "url": "/apps/{appId}/versions/{versionId}/clone",
-    "operations": [
-      {
-        "description": "Creates a new version equivalent to the current snapshot of the selected application version.",
-        "pathFragment": "",
-        "params": [],
-        "method": "post",
-        "name": "cloneVersion",
-        "entityName": "taskUpdateObject",
-        "entityType": "TaskUpdateObject"
+    },
+    "endpoints": {
+      "className": "Endpoints",
+      "category": "apps",
+      "url": "/apps/{appId}/endpoints",
+      "operations": {
+        "get:getEndpoints": {
+          "method": "get",
+          "methodAlias": "get",
+          "command": "apps get endpoints --appId <string>",
+          "pathFragment": "",
+          "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "description": "Returns the available endpoint deployment regions and urls",
+          "name": "getEndpoints"
+        }
       }
-    ]
-  },
-  "publish": {
-    "className": "Publish",
-    "url": "/apps/{appId}/publish",
-    "operations": [
-      {
-        "description": "Publishes a specific version of the application.",
-        "pathFragment": "",
-        "params": [],
-        "method": "post",
-        "name": "publishApplication",
-        "entityName": "applicationPublishObject",
-        "entityType": "ApplicationPublishObject"
+    },
+    "publish": {
+      "className": "Publish",
+      "category": "apps",
+      "url": "/apps/{appId}/publish",
+      "operations": {
+        "post:publishApplication": {
+          "method": "post",
+          "methodAlias": "post",
+          "command": "apps post publish --in applicationPublishObject.json  --appId <string>",
+          "pathFragment": "",
+          "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application version ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "description": "Publishes a specific version of the application.",
+          "name": "publishApplication",
+          "entityName": "applicationPublishObject",
+          "entityType": "ApplicationPublishObject"
+        }
       }
-    ]
-  },
-  "versions": {
-    "className": "Versions",
-    "url": "/apps/{appId}/versions",
-    "operations": [
-      {
-        "description": "Gets the application versions info.",
-        "pathFragment": "",
-        "params": [],
-        "method": "get",
-        "name": "getApplicationVersionList"
-      },
-      {
-        "description": "Deletes an application version.",
-        "pathFragment": "/{versionId}/",
-        "params": [],
-        "method": "delete",
-        "name": "deleteApplicationVersion"
-      },
-      {
-        "description": "Updates the name or description of the application version.",
-        "pathFragment": "/{versionId}/",
-        "params": [],
-        "method": "put",
-        "name": "renameApplicationVersion",
-        "entityName": "taskUpdateObject",
-        "entityType": "TaskUpdateObject"
-      },
-      {
-        "description": "Gets the task info.",
-        "pathFragment": "/{versionId}/",
-        "params": [],
-        "method": "get",
-        "name": "getApplicationVersion"
-      },
-      {
-        "description": "Imports a new version into a LUIS application, the version's JSON should be included in in the request body.",
-        "pathFragment": "/import",
-        "params": [],
-        "method": "post",
-        "name": "importVersionToApplication",
-        "entityName": "jSONApp",
-        "entityType": "JSONApp"
+    },
+    "querylogs": {
+      "className": "Querylogs",
+      "category": "apps",
+      "url": "/apps/{appId}/querylogs",
+      "operations": {
+        "get:downloadApplicationQueryLogs": {
+          "method": "get",
+          "methodAlias": "get",
+          "command": "apps get querylogs --appId <string>",
+          "pathFragment": "",
+          "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "description": "Gets the query logs of the past month for the application.",
+          "name": "downloadApplicationQueryLogs"
+        }
       }
-    ]
-  },
-  "export": {
-    "className": "Export",
-    "url": "/apps/{appId}/versions/{versionId}/export",
-    "operations": [
-      {
-        "description": "Exports a LUIS application to JSON format.",
-        "pathFragment": "",
-        "params": [],
-        "method": "get",
-        "name": "exportApplicationVersion"
+    },
+    "settings": {
+      "className": "Settings",
+      "category": "apps",
+      "url": "/apps/{appId}/settings",
+      "operations": {
+        "put:updateApplicationSettings": {
+          "method": "put",
+          "methodAlias": "put",
+          "command": "apps put settings --in applicationSettingUpdateObject.json  --appId <string>",
+          "pathFragment": "",
+          "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "description": "Updates the application settings",
+          "name": "updateApplicationSettings",
+          "entityName": "applicationSettingUpdateObject",
+          "entityType": "ApplicationSettingUpdateObject"
+        },
+        "get:getApplicationSettings": {
+          "method": "get",
+          "methodAlias": "get",
+          "command": "apps get settings --appId <string>",
+          "pathFragment": "",
+          "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "description": "Get the application settings",
+          "name": "getApplicationSettings"
+        }
       }
-    ]
-  },
-  "externalKeys": {
-    "className": "ExternalKeys",
-    "url": "/apps/{appId}/versions/{versionId}/externalKeys",
-    "operations": [
-      {
-        "description": "Gets the given application versions's external keys.",
-        "pathFragment": "",
-        "params": [],
-        "method": "get",
-        "name": "getApplicationVersionExternalApiKeys"
-      },
-      {
-        "description": "Assigns an external API key to the given application according to the specified key type.",
-        "pathFragment": "",
-        "params": [],
-        "method": "put",
-        "name": "updateApplicationVersionExternalKey",
-        "entityName": "externalKeyUpdateObject",
-        "entityType": "ExternalKeyUpdateObject"
-      }
-    ]
-  },
-  "train": {
-    "className": "Train",
-    "url": "/apps/{appId}/versions/{versionId}/train",
-    "operations": [
-      {
-        "description": "Gets the training status of all models (intents and entities) for the specified LUIS app. You must <a href=\"https://westus.dev.cognitive.microsoft.com/docs/services/5890b47c39e2bb17b84a55ff/operations/5890b47c39e2bb052c5b9c45\">call the train API</a> to train the LUIS app before you call this API to get training status.\r\n",
-        "pathFragment": "",
-        "params": [],
-        "method": "get",
-        "name": "getVersionTrainingStatus"
-      },
-      {
-        "description": "Sends a training request for a version of a specified LUIS app. \r\n\r\nThis POST request initiates a request asynchronously. To determine whether the training request is successful, submit a GET request to get training status.\r\n\r\n* **Note**: The application version is not fully trained unless all the models (intents and entities) are trained successfully or are up to date.\r\n\r\nTo verify training success, get the training status at least once after training is complete.",
-        "pathFragment": "",
-        "params": [],
-        "method": "post",
-        "name": "trainApplicationVersion"
-      }
-    ]
-  },
-  "settings": {
-    "className": "Settings",
-    "url": "/apps/{appId}/settings",
-    "operations": [
-      {
-        "description": "Updates the application settings",
-        "pathFragment": "",
-        "params": [],
-        "method": "put",
-        "name": "updateApplicationSettings",
-        "entityName": "applicationSettingUpdateObject",
-        "entityType": "ApplicationSettingUpdateObject"
-      },
-      {
-        "description": "Get the application settings",
-        "pathFragment": "",
-        "params": [],
-        "method": "get",
-        "name": "getApplicationSettings"
-      }
-    ]
-  },
-  "suggest": {
-    "className": "Suggest",
-    "url": "/apps/{appId}/versions/{versionId}/suggest",
-    "operations": [
-      {
-        "description": "Deleted an unlabelled utterance.",
-        "pathFragment": "",
-        "params": [],
-        "method": "delete",
-        "name": "deleteUnlabelledUtterance",
-        "entityName": "body",
-        "entityType": ""
-      }
-    ]
+    }
   },
   "permissions": {
-    "className": "Permissions",
-    "url": "/apps/{appId}/permissions",
-    "operations": [
-      {
-        "description": "Replaces the current users access list with the one sent in the body.\r\nIf an empty list is sent, all access to other users will be removed.\r\n",
-        "pathFragment": "",
-        "params": [],
-        "method": "put",
-        "name": "updateAccessList",
-        "entityName": "body",
-        "entityType": ""
-      },
-      {
-        "description": "Removed a user to the allowed list of users to access this LUIS application.\r\nUsers are removed using their email address.",
-        "pathFragment": "",
-        "params": [],
-        "method": "delete",
-        "name": "removeUserFromAccessList",
-        "entityName": "body",
-        "entityType": ""
-      },
-      {
-        "description": "Adds a user to the allowed list of users to access this LUIS application.\r\nUsers are added using their email address.",
-        "pathFragment": "",
-        "params": [],
-        "method": "post",
-        "name": "addEmailToAccessList",
-        "entityName": "body",
-        "entityType": ""
-      },
-      {
-        "description": "Gets the list of user emails that have permissions to access your application. ",
-        "pathFragment": "",
-        "params": [],
-        "method": "get",
-        "name": "getUserAccessList"
+    "permissions": {
+      "className": "Permissions",
+      "category": "permissions",
+      "url": "/apps/{appId}/permissions",
+      "operations": {
+        "put:updateAccessList": {
+          "method": "put",
+          "methodAlias": "put",
+          "command": "permissions put --in body.json ",
+          "pathFragment": "",
+          "description": "Replaces the current users access list with the one sent in the body.\r\nIf an empty list is sent, all access to other users will be removed.\r\n",
+          "name": "updateAccessList",
+          "entityName": "body",
+          "entityType": ""
+        },
+        "delete:removeUserFromAccessList": {
+          "method": "delete",
+          "methodAlias": "delete",
+          "command": "permissions delete --in body.json ",
+          "pathFragment": "",
+          "description": "Removed a user to the allowed list of users to access this LUIS application.\r\nUsers are removed using their email address.",
+          "name": "removeUserFromAccessList",
+          "entityName": "body",
+          "entityType": ""
+        },
+        "post:addEmailToAccessList": {
+          "method": "post",
+          "methodAlias": "post",
+          "command": "permissions post --in body.json ",
+          "pathFragment": "",
+          "description": "Adds a user to the allowed list of users to access this LUIS application.\r\nUsers are added using their email address.",
+          "name": "addEmailToAccessList",
+          "entityName": "body",
+          "entityType": ""
+        },
+        "get:getUserAccessList": {
+          "method": "get",
+          "methodAlias": "get",
+          "command": "permissions get",
+          "pathFragment": "",
+          "description": "Gets the list of user emails that have permissions to access your application. ",
+          "name": "getUserAccessList"
+        }
       }
-    ]
+    }
   },
-  "endpoints": {
-    "className": "Endpoints",
-    "url": "/apps/{appId}/endpoints",
-    "operations": [
-      {
-        "description": "Returns the available endpoint deployment regions and urls",
-        "pathFragment": "",
-        "params": [],
-        "method": "get",
-        "name": "getEndpoints"
+  "versions": {
+    "versions": {
+      "className": "Versions",
+      "category": "versions",
+      "url": "/apps/{appId}/versions",
+      "operations": {
+        "list:getApplicationVersionList": {
+          "method": "get",
+          "methodAlias": "list",
+          "command": "versions list --skip <integer> --take <integer>",
+          "pathFragment": "",
+          "params": [
+            {
+              "name": "skip",
+              "in": "query",
+              "description": "The number of entries to skip. Default value is 0.",
+              "type": "integer",
+              "default": "0",
+              "enum": [
+                "0"
+              ]
+            },
+            {
+              "name": "take",
+              "in": "query",
+              "description": "The number of entries to return. Maximum page size is 500. Default is 100.",
+              "type": "integer",
+              "default": "100",
+              "enum": [
+                "100"
+              ]
+            }
+          ],
+          "description": "Gets the application versions info.",
+          "name": "getApplicationVersionList"
+        },
+        "post:import:importVersionToApplication": {
+          "method": "post",
+          "methodAlias": "post",
+          "command": "versions post import  --in jSONApp.json ",
+          "pathFragment": "/import",
+          "description": "Imports a new version into a LUIS application, the version's JSON should be included in in the request body.",
+          "name": "importVersionToApplication",
+          "entityName": "jSONApp",
+          "entityType": "JSONApp"
+        },
+        "delete:deleteApplicationVersion": {
+          "method": "delete",
+          "methodAlias": "delete",
+          "command": "versions delete",
+          "pathFragment": "/{versionId}/",
+          "description": "Deletes an application version.",
+          "name": "deleteApplicationVersion"
+        },
+        "put:renameApplicationVersion": {
+          "method": "put",
+          "methodAlias": "put",
+          "command": "versions put --in taskUpdateObject.json ",
+          "pathFragment": "/{versionId}/",
+          "description": "Updates the name or description of the application version.",
+          "name": "renameApplicationVersion",
+          "entityName": "taskUpdateObject",
+          "entityType": "TaskUpdateObject"
+        },
+        "get:getApplicationVersion": {
+          "method": "get",
+          "methodAlias": "get",
+          "command": "versions get",
+          "pathFragment": "/{versionId}/",
+          "description": "Gets the task info.",
+          "name": "getApplicationVersion"
+        }
       }
-    ]
+    },
+    "clone": {
+      "className": "Clone",
+      "category": "versions",
+      "url": "/apps/{appId}/versions/{versionId}/clone",
+      "operations": {
+        "post:cloneVersion": {
+          "method": "post",
+          "methodAlias": "post",
+          "command": "versions post clone --in taskUpdateObject.json ",
+          "pathFragment": "",
+          "description": "Creates a new version equivalent to the current snapshot of the selected application version.",
+          "name": "cloneVersion",
+          "entityName": "taskUpdateObject",
+          "entityType": "TaskUpdateObject"
+        }
+      }
+    },
+    "export": {
+      "className": "Export",
+      "category": "versions",
+      "url": "/apps/{appId}/versions/{versionId}/export",
+      "operations": {
+        "get:exportApplicationVersion": {
+          "method": "get",
+          "methodAlias": "get",
+          "command": "versions get export",
+          "pathFragment": "",
+          "description": "Exports a LUIS application to JSON format.",
+          "name": "exportApplicationVersion"
+        }
+      }
+    },
+    "externalKeys": {
+      "className": "ExternalKeys",
+      "category": "versions",
+      "url": "/apps/{appId}/versions/{versionId}/externalKeys",
+      "operations": {
+        "get:getApplicationVersionExternalApiKeys": {
+          "method": "get",
+          "methodAlias": "get",
+          "command": "versions get externalKeys",
+          "pathFragment": "",
+          "description": "Gets the given application versions's external keys.",
+          "name": "getApplicationVersionExternalApiKeys"
+        },
+        "put:updateApplicationVersionExternalKey": {
+          "method": "put",
+          "methodAlias": "put",
+          "command": "versions put externalKeys --in externalKeyUpdateObject.json ",
+          "pathFragment": "",
+          "description": "Assigns an external API key to the given application according to the specified key type.",
+          "name": "updateApplicationVersionExternalKey",
+          "entityName": "externalKeyUpdateObject",
+          "entityType": "ExternalKeyUpdateObject"
+        }
+      }
+    },
+    "suggest": {
+      "className": "Suggest",
+      "category": "versions",
+      "url": "/apps/{appId}/versions/{versionId}/suggest",
+      "operations": {
+        "delete:deleteUnlabelledUtterance": {
+          "method": "delete",
+          "methodAlias": "delete",
+          "command": "versions delete suggest --in body.json ",
+          "pathFragment": "",
+          "description": "Deleted an unlabelled utterance.",
+          "name": "deleteUnlabelledUtterance",
+          "entityName": "body",
+          "entityType": ""
+        }
+      }
+    }
   },
-  "customprebuiltdomains": {
-    "className": "Customprebuiltdomains",
-    "url": "/apps/{appId}/versions/{versionId}/customprebuiltdomains",
-    "operations": [
-      {
-        "description": "Adds a customizable prebuilt domain along with all of its models to this application.",
-        "pathFragment": "",
-        "params": [],
-        "method": "post",
-        "name": "addCustomPrebuiltDomain",
-        "entityName": "prebuiltDomainCreateBaseObject",
-        "entityType": "PrebuiltDomainCreateBaseObject"
-      },
-      {
-        "description": "Deletes a prebuilt domain's models from the application.",
-        "pathFragment": "/{domainName}",
-        "params": [
-          {
-            "name": "domainName",
-            "in": "path",
-            "description": "Domain name",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "method": "delete",
-        "name": "deleteCustomPrebuiltDomain"
-      },
-      {
-        "description": "Adds a prebuilt domain along with its models as a new application. Returns new app ID. ",
-        "pathFragment": "",
-        "params": [],
-        "method": "post",
-        "name": "addPrebuiltApplication",
-        "entityName": "prebuiltDomainCreateObject",
-        "entityType": "PrebuiltDomainCreateObject"
-      },
-      {
-        "description": "Gets all the available custom prebuilt domains for all cultures",
-        "pathFragment": "",
-        "params": [],
-        "method": "get",
-        "name": "getLUISPrebuiltDomainsList"
-      },
-      {
-        "description": "Gets all the available custom prebuilt domains for a specific culture",
-        "pathFragment": "/{culture}",
-        "params": [
-          {
-            "name": "culture",
-            "in": "path",
-            "description": "Format - string. Culture",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "method": "get",
-        "name": "getLUISPrebuiltDomainsForCultureList"
+  "models": {
+    "closedlists": {
+      "className": "Closedlists",
+      "category": "models",
+      "url": "/apps/{appId}/versions/{versionId}/closedlists",
+      "operations": {
+        "list:getVersionClosedlistList": {
+          "method": "get",
+          "methodAlias": "list",
+          "command": "models list closedlists --skip <integer> --take <integer>",
+          "pathFragment": "",
+          "params": [
+            {
+              "name": "skip",
+              "in": "query",
+              "description": "The number of entries to skip. Default value is 0.",
+              "type": "integer",
+              "default": "0",
+              "enum": [
+                "0"
+              ]
+            },
+            {
+              "name": "take",
+              "in": "query",
+              "description": "The number of entries to return. Maximum page size is 500. Default is 100.",
+              "type": "integer",
+              "default": "100",
+              "enum": [
+                "100"
+              ]
+            }
+          ],
+          "description": "Gets information about the closedlist models.",
+          "name": "getVersionClosedlistList"
+        },
+        "post:createClosedListEntity": {
+          "method": "post",
+          "methodAlias": "post",
+          "command": "models post closedlists --in closedListModelCreateObject.json ",
+          "pathFragment": "",
+          "description": "Adds a list entity to the LUIS app.",
+          "name": "createClosedListEntity",
+          "entityName": "closedListModelCreateObject",
+          "entityType": "ClosedListModelCreateObject"
+        },
+        "delete:deleteClosedListEntity": {
+          "method": "delete",
+          "methodAlias": "delete",
+          "command": "models delete closedlists --clEntityId <string>",
+          "pathFragment": "/{clEntityId}",
+          "params": [
+            {
+              "name": "clEntityId",
+              "in": "path",
+              "description": "Format - guid. The closed list entity extractor ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "description": "Deletes a closed list model from the application.",
+          "name": "deleteClosedListEntity"
+        },
+        "patch:patchClosedListEntity": {
+          "method": "patch",
+          "methodAlias": "patch",
+          "command": "models patch closedlists --in closedListModelPatchObject.json  --clEntityId <string>",
+          "pathFragment": "/{clEntityId}",
+          "params": [
+            {
+              "name": "clEntityId",
+              "in": "path",
+              "description": "Format - guid. The closed list entity extractor ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "description": "Adds a batch of sublists to an existing closedlist.",
+          "name": "patchClosedListEntity",
+          "entityName": "closedListModelPatchObject",
+          "entityType": "ClosedListModelPatchObject"
+        },
+        "put:updateClosedListEntity": {
+          "method": "put",
+          "methodAlias": "put",
+          "command": "models put closedlists --in closedListModelUpdateObject.json  --clEntityId <string>",
+          "pathFragment": "/{clEntityId}",
+          "params": [
+            {
+              "name": "clEntityId",
+              "in": "path",
+              "description": "Format - guid. The closed list entity extractor ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "description": "Updates the closed list model.",
+          "name": "updateClosedListEntity",
+          "entityName": "closedListModelUpdateObject",
+          "entityType": "ClosedListModelUpdateObject"
+        },
+        "get:getClosedListEntity": {
+          "method": "get",
+          "methodAlias": "get",
+          "command": "models get closedlists --clEntityId <string>",
+          "pathFragment": "/{clEntityId}",
+          "params": [
+            {
+              "name": "clEntityId",
+              "in": "path",
+              "description": "Format - guid. The closed list model ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "description": "Gets information of a closed list model.",
+          "name": "getClosedListEntity"
+        },
+        "post:sublists:addClosedListsSublist": {
+          "method": "post",
+          "methodAlias": "post",
+          "command": "models post closedlists sublists  --in wordListCreateObject.json  --clEntityId <string>",
+          "pathFragment": "/{clEntityId}/sublists",
+          "params": [
+            {
+              "name": "clEntityId",
+              "in": "path",
+              "description": "Format - guid. The closed list entity extractor ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "description": "Adds a list to an existing closed list",
+          "name": "addClosedListsSublist",
+          "entityName": "wordListCreateObject",
+          "entityType": "WordListCreateObject"
+        },
+        "put:sublists:updateClosedlistsSublist": {
+          "method": "put",
+          "methodAlias": "put",
+          "command": "models put closedlists sublists  --in wordListBaseUpdateObject.json  --clEntityId <string> --subListId <string>",
+          "pathFragment": "/{clEntityId}/sublists/{subListId}",
+          "params": [
+            {
+              "name": "clEntityId",
+              "in": "path",
+              "description": "Format - guid. The closedlist ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "subListId",
+              "in": "path",
+              "description": "Format - long. The sublist ID",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "description": "Updates one of the closed list's sublists",
+          "name": "updateClosedlistsSublist",
+          "entityName": "wordListBaseUpdateObject",
+          "entityType": "WordListBaseUpdateObject"
+        },
+        "delete:sublists:deleteSublistEntity": {
+          "method": "delete",
+          "methodAlias": "delete",
+          "command": "models delete closedlists sublists  --clEntityId <string> --subListId <integer>",
+          "pathFragment": "/{clEntityId}/sublists/{subListId}",
+          "params": [
+            {
+              "name": "clEntityId",
+              "in": "path",
+              "description": "Format - guid. The closed list entity extractor ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "subListId",
+              "in": "path",
+              "description": "The sublist ID.",
+              "required": true,
+              "type": "integer"
+            }
+          ],
+          "description": "Deletes a sublist of a specified list entity.",
+          "name": "deleteSublistEntity"
+        }
       }
-    ]
+    },
+    "compositeentities": {
+      "className": "Compositeentities",
+      "category": "models",
+      "url": "/apps/{appId}/versions/{versionId}/compositeentities",
+      "operations": {
+        "list:getVersionCompositeEntityList": {
+          "method": "get",
+          "methodAlias": "list",
+          "command": "models list compositeentities --skip <integer> --take <integer>",
+          "pathFragment": "",
+          "params": [
+            {
+              "name": "skip",
+              "in": "query",
+              "description": "The number of entries to skip. Default value is 0.",
+              "type": "integer",
+              "default": "0",
+              "enum": [
+                "0"
+              ]
+            },
+            {
+              "name": "take",
+              "in": "query",
+              "description": "The number of entries to return. Maximum page size is 500. Default is 100.",
+              "type": "integer",
+              "default": "100",
+              "enum": [
+                "100"
+              ]
+            }
+          ],
+          "description": "Gets information about the composite entity models.",
+          "name": "getVersionCompositeEntityList"
+        },
+        "post:createCompositeEntity": {
+          "method": "post",
+          "methodAlias": "post",
+          "command": "models post compositeentities --in hierarchicalModelCreateObject.json ",
+          "pathFragment": "",
+          "description": "Adds a composite entity extractor to the application.",
+          "name": "createCompositeEntity",
+          "entityName": "hierarchicalModelCreateObject",
+          "entityType": "HierarchicalModelCreateObject"
+        },
+        "delete:deleteCompositeEntity": {
+          "method": "delete",
+          "methodAlias": "delete",
+          "command": "models delete compositeentities --cEntityId <string>",
+          "pathFragment": "/{cEntityId}",
+          "params": [
+            {
+              "name": "cEntityId",
+              "in": "path",
+              "description": "Format - guid. The composite entity extractor ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "description": "Deletes a composite entity extractor from the application.",
+          "name": "deleteCompositeEntity"
+        },
+        "put:updateCompositeEntity": {
+          "method": "put",
+          "methodAlias": "put",
+          "command": "models put compositeentities --in hierarchicalModelUpdateObject.json  --cEntityId <string>",
+          "pathFragment": "/{cEntityId}",
+          "params": [
+            {
+              "name": "cEntityId",
+              "in": "path",
+              "description": "Format - guid. The composite entity extractor ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "description": "Updates the composite entity extractor.",
+          "name": "updateCompositeEntity",
+          "entityName": "hierarchicalModelUpdateObject",
+          "entityType": "HierarchicalModelUpdateObject"
+        },
+        "get:getCompositeEntity": {
+          "method": "get",
+          "methodAlias": "get",
+          "command": "models get compositeentities --cEntityId <string>",
+          "pathFragment": "/{cEntityId}",
+          "params": [
+            {
+              "name": "cEntityId",
+              "in": "path",
+              "description": "Format - guid. The composite entity extractor ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "description": "Gets information about the composite entity model.",
+          "name": "getCompositeEntity"
+        },
+        "post:children:createCompositeChildEntity": {
+          "method": "post",
+          "methodAlias": "post",
+          "command": "models post compositeentities children  --in body.json  --cEntityId <string>",
+          "pathFragment": "/{cEntityId}/children",
+          "params": [
+            {
+              "name": "cEntityId",
+              "in": "path",
+              "description": "Format - guid. The composite entity extractor ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "description": "Creates a single child in an existing composite entity model.",
+          "name": "createCompositeChildEntity",
+          "entityName": "body",
+          "entityType": ""
+        },
+        "delete:children:deleteCompositeChildEntity": {
+          "method": "delete",
+          "methodAlias": "delete",
+          "command": "models delete compositeentities children  --cEntityId <string> --cChildId <string>",
+          "pathFragment": "/{cEntityId}/children/{cChildId}",
+          "params": [
+            {
+              "name": "cEntityId",
+              "in": "path",
+              "description": "Format - guid. The hierarchical entity extractor ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "cChildId",
+              "in": "path",
+              "description": "Format - guid. The hierarchical entity extractor child ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "description": "Deletes a composite entity extractor child from the application.",
+          "name": "deleteCompositeChildEntity "
+        }
+      }
+    },
+    "customprebuiltdomains": {
+      "className": "Customprebuiltdomains",
+      "category": "models",
+      "url": "/apps/{appId}/versions/{versionId}/customprebuiltdomains",
+      "operations": {
+        "post:addCustomPrebuiltDomain": {
+          "method": "post",
+          "methodAlias": "post",
+          "command": "models post customprebuiltdomains --in prebuiltDomainCreateBaseObject.json ",
+          "pathFragment": "",
+          "description": "Adds a customizable prebuilt domain along with all of its models to this application.",
+          "name": "addCustomPrebuiltDomain",
+          "entityName": "prebuiltDomainCreateBaseObject",
+          "entityType": "PrebuiltDomainCreateBaseObject"
+        },
+        "delete:deleteCustomPrebuiltDomain": {
+          "method": "delete",
+          "methodAlias": "delete",
+          "command": "models delete customprebuiltdomains --domainName <string>",
+          "pathFragment": "/{domainName}",
+          "params": [
+            {
+              "name": "domainName",
+              "in": "path",
+              "description": "Domain name",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "description": "Deletes a prebuilt domain's models from the application.",
+          "name": "deleteCustomPrebuiltDomain"
+        }
+      }
+    },
+    "customprebuiltentities": {
+      "className": "Customprebuiltentities",
+      "category": "models",
+      "url": "/apps/{appId}/versions/{versionId}/customprebuiltentities",
+      "operations": {
+        "get:getCustomPrebuiltDomainEntitiesList": {
+          "method": "get",
+          "methodAlias": "get",
+          "command": "models get customprebuiltentities",
+          "pathFragment": "",
+          "description": "Gets all custom prebuilt entities information of this application",
+          "name": "getCustomPrebuiltDomainEntitiesList"
+        },
+        "post:addCustomPrebuiltEntity": {
+          "method": "post",
+          "methodAlias": "post",
+          "command": "models post customprebuiltentities --in prebuiltDomainModelCreateObject.json ",
+          "pathFragment": "",
+          "description": "Adds a custom prebuilt entity model to the application",
+          "name": "addCustomPrebuiltEntity",
+          "entityName": "prebuiltDomainModelCreateObject",
+          "entityType": "PrebuiltDomainModelCreateObject"
+        }
+      }
+    },
+    "customprebuiltintents": {
+      "className": "Customprebuiltintents",
+      "category": "models",
+      "url": "/apps/{appId}/versions/{versionId}/customprebuiltintents",
+      "operations": {
+        "get:getCustomPrebuiltDomainIntentsList": {
+          "method": "get",
+          "methodAlias": "get",
+          "command": "models get customprebuiltintents",
+          "pathFragment": "",
+          "description": "Gets custom prebuilt intents information of this application",
+          "name": "getCustomPrebuiltDomainIntentsList"
+        },
+        "post:addCustomPrebuiltIntent": {
+          "method": "post",
+          "methodAlias": "post",
+          "command": "models post customprebuiltintents --in prebuiltDomainModelCreateObject.json ",
+          "pathFragment": "",
+          "description": "Adds a custom prebuilt intent model to the application",
+          "name": "addCustomPrebuiltIntent",
+          "entityName": "prebuiltDomainModelCreateObject",
+          "entityType": "PrebuiltDomainModelCreateObject"
+        }
+      }
+    },
+    "customprebuiltmodels": {
+      "className": "Customprebuiltmodels",
+      "category": "models",
+      "url": "/apps/{appId}/versions/{versionId}/customprebuiltmodels",
+      "operations": {
+        "get:getCustomPrebuiltDomainModelsList": {
+          "method": "get",
+          "methodAlias": "get",
+          "command": "models get customprebuiltmodels",
+          "pathFragment": "",
+          "description": "Gets all custom prebuilt models information of this application",
+          "name": "getCustomPrebuiltDomainModelsList"
+        }
+      }
+    },
+    "entities": {
+      "className": "Entities",
+      "category": "models",
+      "url": "/apps/{appId}/versions/{versionId}/entities",
+      "operations": {
+        "list:getVersionEntityList": {
+          "method": "get",
+          "methodAlias": "list",
+          "command": "models list entities --skip <integer> --take <integer>",
+          "pathFragment": "",
+          "params": [
+            {
+              "name": "skip",
+              "in": "query",
+              "description": "The number of entries to skip. Default value is 0.",
+              "type": "integer",
+              "default": "0",
+              "enum": [
+                "0"
+              ]
+            },
+            {
+              "name": "take",
+              "in": "query",
+              "description": "The number of entries to return. Maximum page size is 500. Default is 100.",
+              "type": "integer",
+              "default": "100",
+              "enum": [
+                "100"
+              ]
+            }
+          ],
+          "description": "Gets information about the entity models.",
+          "name": "getVersionEntityList"
+        },
+        "post:createEntity": {
+          "method": "post",
+          "methodAlias": "post",
+          "command": "models post entities --in modelCreateObject.json ",
+          "pathFragment": "",
+          "description": "Adds an entity extractor to the application.",
+          "name": "createEntity",
+          "entityName": "modelCreateObject",
+          "entityType": "ModelCreateObject"
+        },
+        "delete:deleteEntity": {
+          "method": "delete",
+          "methodAlias": "delete",
+          "command": "models delete entities --entityId <string>",
+          "pathFragment": "/{entityId}",
+          "params": [
+            {
+              "name": "entityId",
+              "in": "path",
+              "description": "Format - guid. The entity extractor ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "description": "Deletes an entity extractor from the application.",
+          "name": "deleteEntity"
+        },
+        "put:renameEntity": {
+          "method": "put",
+          "methodAlias": "put",
+          "command": "models put entities --in modelUpdateObject.json  --entityId <string>",
+          "pathFragment": "/{entityId}",
+          "params": [
+            {
+              "name": "entityId",
+              "in": "path",
+              "description": "Format - guid. The entity extractor ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "description": "Updates the name of an entity extractor.",
+          "name": "renameEntity",
+          "entityName": "modelUpdateObject",
+          "entityType": "ModelUpdateObject"
+        },
+        "get:getEntity": {
+          "method": "get",
+          "methodAlias": "get",
+          "command": "models get entities --entityId <string>",
+          "pathFragment": "/{entityId}",
+          "params": [
+            {
+              "name": "entityId",
+              "in": "path",
+              "description": "Format - guid. The entity extractor ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "description": "Gets information about the entity model.",
+          "name": "getEntity"
+        },
+        "list:suggest:suggestEndpointQueriesForEntities": {
+          "method": "get",
+          "methodAlias": "list",
+          "command": "models list entities suggest  --entityId <string> --take <integer>",
+          "pathFragment": "/{entityId}/suggest",
+          "params": [
+            {
+              "name": "entityId",
+              "in": "path",
+              "description": "Format - guid. The target entity extractor model to enhance.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "take",
+              "in": "query",
+              "description": "Maximum number of queries to be returned. Default is set to 10. Maximum is 500.",
+              "type": "integer",
+              "default": "10",
+              "enum": [
+                "10"
+              ]
+            }
+          ],
+          "description": "Suggests examples that would improve the accuracy of the entity model.",
+          "name": "suggestEndpointQueriesForEntities"
+        }
+      }
+    },
+    "hierarchicalentities": {
+      "className": "Hierarchicalentities",
+      "category": "models",
+      "url": "/apps/{appId}/versions/{versionId}/hierarchicalentities",
+      "operations": {
+        "list:getVersionHierarchicalEntityList": {
+          "method": "get",
+          "methodAlias": "list",
+          "command": "models list hierarchicalentities --skip <integer> --take <integer>",
+          "pathFragment": "",
+          "params": [
+            {
+              "name": "skip",
+              "in": "query",
+              "description": "The number of entries to skip. Default value is 0.",
+              "type": "integer",
+              "default": "0",
+              "enum": [
+                "0"
+              ]
+            },
+            {
+              "name": "take",
+              "in": "query",
+              "description": "The number of entries to return. Maximum page size is 500. Default is 100.",
+              "type": "integer",
+              "default": "100",
+              "enum": [
+                "100"
+              ]
+            }
+          ],
+          "description": "Gets information about the hierarchical entity models.",
+          "name": "getVersionHierarchicalEntityList"
+        },
+        "post:createHierarchicalEntity": {
+          "method": "post",
+          "methodAlias": "post",
+          "command": "models post hierarchicalentities --in hierarchicalModelCreateObject.json ",
+          "pathFragment": "",
+          "description": "Adds a hierarchical entity extractor to the application version.",
+          "name": "createHierarchicalEntity",
+          "entityName": "hierarchicalModelCreateObject",
+          "entityType": "HierarchicalModelCreateObject"
+        },
+        "delete:deleteHierarchicalEntity": {
+          "method": "delete",
+          "methodAlias": "delete",
+          "command": "models delete hierarchicalentities --hEntityId <string>",
+          "pathFragment": "/{hEntityId}",
+          "params": [
+            {
+              "name": "hEntityId",
+              "in": "path",
+              "description": "Format - guid. The hierarchical entity extractor ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "description": "Deletes a hierarchical entity extractor from the application version.",
+          "name": "deleteHierarchicalEntity"
+        },
+        "put:updateHierarchicalEntity": {
+          "method": "put",
+          "methodAlias": "put",
+          "command": "models put hierarchicalentities --in hierarchicalModelUpdateObject.json  --hEntityId <string>",
+          "pathFragment": "/{hEntityId}",
+          "params": [
+            {
+              "name": "hEntityId",
+              "in": "path",
+              "description": "Format - guid. The hierarchical entity extractor ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "description": "Updates the name and children of a hierarchical entity model.",
+          "name": "updateHierarchicalEntity",
+          "entityName": "hierarchicalModelUpdateObject",
+          "entityType": "HierarchicalModelUpdateObject"
+        },
+        "get:getHierarchicalEntity": {
+          "method": "get",
+          "methodAlias": "get",
+          "command": "models get hierarchicalentities --hEntityId <string>",
+          "pathFragment": "/{hEntityId}",
+          "params": [
+            {
+              "name": "hEntityId",
+              "in": "path",
+              "description": "Format - guid. The hierarchical entity extractor ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "description": "Gets information about the hierarchical entity model.",
+          "name": "getHierarchicalEntity"
+        },
+        "post:children:createHierarchicalChildEntity": {
+          "method": "post",
+          "methodAlias": "post",
+          "command": "models post hierarchicalentities children  --in body.json  --hEntityId <string>",
+          "pathFragment": "/{hEntityId}/children",
+          "params": [
+            {
+              "name": "hEntityId",
+              "in": "path",
+              "description": "Format - guid. The hierarchical entity extractor ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "description": "Creates a single child in an existing hierarchical entity model.",
+          "name": "createHierarchicalChildEntity ",
+          "entityName": "body",
+          "entityType": ""
+        },
+        "delete:children:deleteHierarchicalChildEntity": {
+          "method": "delete",
+          "methodAlias": "delete",
+          "command": "models delete hierarchicalentities children  --hEntityId <string> --hChildId <string>",
+          "pathFragment": "/{hEntityId}/children/{hChildId}",
+          "params": [
+            {
+              "name": "hEntityId",
+              "in": "path",
+              "description": "Format - guid. The hierarchical entity extractor ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "hChildId",
+              "in": "path",
+              "description": "Format - guid. The hierarchical entity extractor child ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "description": "Deletes a hierarchical entity extractor child from the application.",
+          "name": "deleteHierarchicalChildEntity "
+        },
+        "put:children:updateHierarchicalChildEntity": {
+          "method": "put",
+          "methodAlias": "put",
+          "command": "models put hierarchicalentities children  --in body.json  --hEntityId <string> --hChildId <string>",
+          "pathFragment": "/{hEntityId}/children/{hChildId}",
+          "params": [
+            {
+              "name": "hEntityId",
+              "in": "path",
+              "description": "Format - guid. The hierarchical entity extractor ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "hChildId",
+              "in": "path",
+              "description": "Format - guid. The hierarchical entity extractor child ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "description": "Renames a single child in an existing hierarchical entity model.",
+          "name": "updateHierarchicalChildEntity ",
+          "entityName": "body",
+          "entityType": ""
+        },
+        "get:children:getHierarchicalChildEntity": {
+          "method": "get",
+          "methodAlias": "get",
+          "command": "models get hierarchicalentities children  --hEntityId <string> --hChildId <string>",
+          "pathFragment": "/{hEntityId}/children/{hChildId}",
+          "params": [
+            {
+              "name": "hEntityId",
+              "in": "path",
+              "description": "Format - guid. The hierarchical entity extractor parent ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "hChildId",
+              "in": "path",
+              "description": "Format - guid. The hierarchical entity extractor child ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "description": "Gets information about the hierarchical entity child model.",
+          "name": "getHierarchicalChildEntity"
+        }
+      }
+    },
+    "intents": {
+      "className": "Intents",
+      "category": "models",
+      "url": "/apps/{appId}/versions/{versionId}/intents",
+      "operations": {
+        "list:getVersionIntentList": {
+          "method": "get",
+          "methodAlias": "list",
+          "command": "models list intents --skip <integer> --take <integer>",
+          "pathFragment": "",
+          "params": [
+            {
+              "name": "skip",
+              "in": "query",
+              "description": "The number of entries to skip. Default value is 0.",
+              "type": "integer",
+              "default": "0",
+              "enum": [
+                "0"
+              ]
+            },
+            {
+              "name": "take",
+              "in": "query",
+              "description": "The number of entries to return. Maximum page size is 500. Default is 100.",
+              "type": "integer",
+              "default": "100",
+              "enum": [
+                "100"
+              ]
+            }
+          ],
+          "description": "Gets information about the intent models.",
+          "name": "getVersionIntentList"
+        },
+        "post:createIntent": {
+          "method": "post",
+          "methodAlias": "post",
+          "command": "models post intents --in modelCreateObject.json ",
+          "pathFragment": "",
+          "description": "Adds an intent classifier to the application.",
+          "name": "createIntent",
+          "entityName": "modelCreateObject",
+          "entityType": "ModelCreateObject"
+        },
+        "delete:deleteIntent": {
+          "method": "delete",
+          "methodAlias": "delete",
+          "command": "models delete intents --intentId <string>",
+          "pathFragment": "/{intentId}",
+          "params": [
+            {
+              "name": "intentId",
+              "in": "path",
+              "description": "Format - guid. The intent classifier ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "description": "Deletes an intent classifier from the application.",
+          "name": "deleteIntent"
+        },
+        "put:renameIntent": {
+          "method": "put",
+          "methodAlias": "put",
+          "command": "models put intents --in modelUpdateObject.json  --intentId <string>",
+          "pathFragment": "/{intentId}",
+          "params": [
+            {
+              "name": "intentId",
+              "in": "path",
+              "description": "Format - guid. The intent classifier ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "description": "Updates the name of an intent classifier.",
+          "name": "renameIntent",
+          "entityName": "modelUpdateObject",
+          "entityType": "ModelUpdateObject"
+        },
+        "get:getIntent": {
+          "method": "get",
+          "methodAlias": "get",
+          "command": "models get intents --intentId <string>",
+          "pathFragment": "/{intentId}",
+          "params": [
+            {
+              "name": "intentId",
+              "in": "path",
+              "description": "Format - guid. The intent classifier ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "description": "Gets information about the intent model.",
+          "name": "getIntent"
+        },
+        "list:suggest:suggestEndpointQueriesForIntents": {
+          "method": "get",
+          "methodAlias": "list",
+          "command": "models list intents suggest  --intentId <string> --take <integer>",
+          "pathFragment": "/{intentId}/suggest",
+          "params": [
+            {
+              "name": "intentId",
+              "in": "path",
+              "description": "Format - guid. The target intent classifier model to enhance.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "take",
+              "in": "query",
+              "description": "Maximum number of queries to be returned. Default is set to 10. Maximum is 500.",
+              "type": "integer",
+              "default": "10",
+              "enum": [
+                "10"
+              ]
+            }
+          ],
+          "description": "Suggests examples that would improve the accuracy of the intent model.",
+          "name": "suggestEndpointQueriesForIntents"
+        }
+      }
+    },
+    "listprebuilts": {
+      "className": "Listprebuilts",
+      "category": "models",
+      "url": "/apps/{appId}/versions/{versionId}/listprebuilts",
+      "operations": {
+        "get:getAvailablePrebuiltEntityList": {
+          "method": "get",
+          "methodAlias": "get",
+          "command": "models get listprebuilts",
+          "pathFragment": "",
+          "description": "Gets all the available prebuilt entities for the application based on the application's culture.",
+          "name": "getAvailablePrebuiltEntityList"
+        }
+      }
+    },
+    "models": {
+      "className": "Models",
+      "category": "models",
+      "url": "/apps/{appId}/versions/{versionId}/models",
+      "operations": {
+        "list:getVersionModelList": {
+          "method": "get",
+          "methodAlias": "list",
+          "command": "models list --skip <integer> --take <integer>",
+          "pathFragment": "",
+          "params": [
+            {
+              "name": "skip",
+              "in": "query",
+              "description": "The number of entries to skip. Default value is 0.",
+              "type": "integer",
+              "default": "0",
+              "enum": [
+                "0"
+              ]
+            },
+            {
+              "name": "take",
+              "in": "query",
+              "description": "The number of entries to return. Maximum page size is 500. Default is 100.",
+              "type": "integer",
+              "default": "100",
+              "enum": [
+                "100"
+              ]
+            }
+          ],
+          "description": "Gets information about the application version models.",
+          "name": "getVersionModelList"
+        }
+      }
+    },
+    "prebuilts": {
+      "className": "Prebuilts",
+      "category": "models",
+      "url": "/apps/{appId}/versions/{versionId}/prebuilts",
+      "operations": {
+        "list:getVersionPrebuiltEntityList": {
+          "method": "get",
+          "methodAlias": "list",
+          "command": "models list prebuilts --skip <integer> --take <integer>",
+          "pathFragment": "",
+          "params": [
+            {
+              "name": "skip",
+              "in": "query",
+              "description": "The number of entries to skip. Default value is 0.",
+              "type": "integer",
+              "default": "0",
+              "enum": [
+                "0"
+              ]
+            },
+            {
+              "name": "take",
+              "in": "query",
+              "description": "The number of entries to return. Maximum page size is 500. Default is 100.",
+              "type": "integer",
+              "default": "100",
+              "enum": [
+                "100"
+              ]
+            }
+          ],
+          "description": "Gets information about the prebuilt entity models.",
+          "name": "getVersionPrebuiltEntityList"
+        },
+        "post:addPrebuiltEntityList": {
+          "method": "post",
+          "methodAlias": "post",
+          "command": "models post prebuilts --in prebuiltExtractorNames.json ",
+          "pathFragment": "",
+          "description": "Adds a list of prebuilt entity extractors to the application.",
+          "name": "addPrebuiltEntityList",
+          "entityName": "prebuiltExtractorNames",
+          "entityType": "PrebuiltExtractorNames"
+        },
+        "delete:deletePrebuiltEntity": {
+          "method": "delete",
+          "methodAlias": "delete",
+          "command": "models delete prebuilts --prebuiltId <string>",
+          "pathFragment": "/{prebuiltId}",
+          "params": [
+            {
+              "name": "prebuiltId",
+              "in": "path",
+              "description": "Format - guid. The prebuilt entity extractor ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "description": "Deletes a prebuilt entity extractor from the application.",
+          "name": "deletePrebuiltEntity"
+        },
+        "get:getPrebuiltEntity": {
+          "method": "get",
+          "methodAlias": "get",
+          "command": "models get prebuilts --prebuiltId <string>",
+          "pathFragment": "/{prebuiltId}",
+          "params": [
+            {
+              "name": "prebuiltId",
+              "in": "path",
+              "description": "Format - guid. The prebuilt entity extractor ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "description": "Gets information about the prebuilt entity model.",
+          "name": "getPrebuiltEntity"
+        }
+      }
+    }
   },
-  "customprebuiltintents": {
-    "className": "Customprebuiltintents",
-    "url": "/apps/{appId}/versions/{versionId}/customprebuiltintents",
-    "operations": [
-      {
-        "description": "Gets custom prebuilt intents information of this application",
-        "pathFragment": "",
-        "params": [],
-        "method": "get",
-        "name": "getCustomPrebuiltDomainIntentsList"
-      },
-      {
-        "description": "Adds a custom prebuilt intent model to the application",
-        "pathFragment": "",
-        "params": [],
-        "method": "post",
-        "name": "addCustomPrebuiltIntent",
-        "entityName": "prebuiltDomainModelCreateObject",
-        "entityType": "PrebuiltDomainModelCreateObject"
+  "examples": {
+    "example": {
+      "className": "Example",
+      "category": "examples",
+      "url": "/apps/{appId}/versions/{versionId}/example",
+      "operations": {
+        "post:addLabel": {
+          "method": "post",
+          "methodAlias": "post",
+          "command": "examples post example --in exampleLabelObject.json ",
+          "pathFragment": "",
+          "description": "Adds a labeled example to the application.",
+          "name": "addLabel",
+          "entityName": "exampleLabelObject",
+          "entityType": "ExampleLabelObject"
+        }
       }
-    ]
+    },
+    "examples": {
+      "className": "Examples",
+      "category": "examples",
+      "url": "/apps/{appId}/versions/{versionId}/examples",
+      "operations": {
+        "list:reviewLabeledExamples": {
+          "method": "get",
+          "methodAlias": "list",
+          "command": "examples list --skip <integer> --take <integer>",
+          "pathFragment": "",
+          "params": [
+            {
+              "name": "skip",
+              "in": "query",
+              "description": "The number of entries to skip. Default value is 0.",
+              "type": "integer",
+              "default": "0",
+              "enum": [
+                "0"
+              ]
+            },
+            {
+              "name": "take",
+              "in": "query",
+              "description": "The number of entries to return. Maximum page size is 500. Default is 100.",
+              "type": "integer",
+              "default": "100",
+              "enum": [
+                "100"
+              ]
+            }
+          ],
+          "description": "Returns examples to be reviewed.",
+          "name": "reviewLabeledExamples"
+        },
+        "post:batchAddLabels": {
+          "method": "post",
+          "methodAlias": "post",
+          "command": "examples post --in exampleLabelObjectArray.json ",
+          "pathFragment": "",
+          "description": "Adds a batch of labeled examples to the specified application. \r\n\r\nThe maximum batch size is 100 items. \r\n\r\nIf the item has the ExampleId and a value between 0 - 99, the returned result will also include the ExampleId. This is helpful if items have errors. \r\n\r\nSome items can pass while others fail. The returned result will indicate each item's status. \r\n",
+          "name": "batchAddLabels",
+          "entityName": "exampleLabelObjectArray",
+          "entityType": "ExampleLabelObjectArray"
+        },
+        "delete:deleteExampleLabels": {
+          "method": "delete",
+          "methodAlias": "delete",
+          "command": "examples delete --exampleId <integer>",
+          "pathFragment": "/{exampleId}",
+          "params": [
+            {
+              "name": "exampleId",
+              "in": "path",
+              "description": "The example ID.",
+              "required": true,
+              "type": "integer"
+            }
+          ],
+          "description": "Deletes the label with the specified ID.",
+          "name": "deleteExampleLabels"
+        }
+      }
+    }
   },
-  "customprebuiltentities": {
-    "className": "Customprebuiltentities",
-    "url": "/apps/{appId}/versions/{versionId}/customprebuiltentities",
-    "operations": [
-      {
-        "description": "Gets all custom prebuilt entities information of this application",
-        "pathFragment": "",
-        "params": [],
-        "method": "get",
-        "name": "getCustomPrebuiltDomainEntitiesList"
-      },
-      {
-        "description": "Adds a custom prebuilt entity model to the application",
-        "pathFragment": "",
-        "params": [],
-        "method": "post",
-        "name": "addCustomPrebuiltEntity",
-        "entityName": "prebuiltDomainModelCreateObject",
-        "entityType": "PrebuiltDomainModelCreateObject"
+  "features": {
+    "features": {
+      "className": "Features",
+      "category": "features",
+      "url": "/apps/{appId}/versions/{versionId}/features",
+      "operations": {
+        "list:getVersionFeatures": {
+          "method": "get",
+          "methodAlias": "list",
+          "command": "features list --skip <integer> --take <integer>",
+          "pathFragment": "",
+          "params": [
+            {
+              "name": "skip",
+              "in": "query",
+              "description": "The number of entries to skip. Default value is 0.",
+              "type": "integer",
+              "default": "0",
+              "enum": [
+                "0"
+              ]
+            },
+            {
+              "name": "take",
+              "in": "query",
+              "description": "The number of entries to return. Maximum page size is 500. Default is 100.",
+              "type": "integer",
+              "default": "100",
+              "enum": [
+                "100"
+              ]
+            }
+          ],
+          "description": "Gets all application version features.",
+          "name": "getVersionFeatures"
+        }
       }
-    ]
+    },
+    "patterns": {
+      "className": "Patterns",
+      "category": "features",
+      "url": "/apps/{appId}/versions/{versionId}/patterns",
+      "operations": {
+        "list:getVersionPatternFeatureList": {
+          "method": "get",
+          "methodAlias": "list",
+          "command": "features list patterns --skip <integer> --take <integer>",
+          "pathFragment": "",
+          "params": [
+            {
+              "name": "skip",
+              "in": "query",
+              "description": "The number of entries to skip. Default value is 0.",
+              "type": "integer",
+              "default": "0",
+              "enum": [
+                "0"
+              ]
+            },
+            {
+              "name": "take",
+              "in": "query",
+              "description": "The number of entries to return. Maximum page size is 500. Default is 100.",
+              "type": "integer",
+              "default": "100",
+              "enum": [
+                "100"
+              ]
+            }
+          ],
+          "description": "Gets all application version pattern features.",
+          "name": "getVersionPatternFeatureList"
+        },
+        "post:createPatternFeature": {
+          "method": "post",
+          "methodAlias": "post",
+          "command": "features post patterns --in patternCreateObject.json ",
+          "pathFragment": "",
+          "description": "Creates a new pattern feature.",
+          "name": "createPatternFeature",
+          "entityName": "patternCreateObject",
+          "entityType": "PatternCreateObject"
+        },
+        "delete:deletePatternFeature": {
+          "method": "delete",
+          "methodAlias": "delete",
+          "command": "features delete patterns --patternId <integer>",
+          "pathFragment": "/{patternId}",
+          "params": [
+            {
+              "name": "patternId",
+              "in": "path",
+              "description": "The ID of the pattern feature to be deleted.",
+              "required": true,
+              "type": "integer"
+            }
+          ],
+          "description": "Deletes a pattern feature from an application version.",
+          "name": "deletePatternFeature"
+        },
+        "put:updatePatternFeature": {
+          "method": "put",
+          "methodAlias": "put",
+          "command": "features put patterns --in patternUpdateObject.json  --patternId <integer>",
+          "pathFragment": "/{patternId}",
+          "params": [
+            {
+              "name": "patternId",
+              "in": "path",
+              "description": "The ID of the feature to be updated.",
+              "required": true,
+              "type": "integer"
+            }
+          ],
+          "description": "Updates the pattern, the name and the state of the pattern feature.",
+          "name": "updatePatternFeature",
+          "entityName": "patternUpdateObject",
+          "entityType": "PatternUpdateObject"
+        },
+        "get:getPatternFeatureInfo": {
+          "method": "get",
+          "methodAlias": "get",
+          "command": "features get patterns --patternId <integer>",
+          "pathFragment": "/{patternId}",
+          "params": [
+            {
+              "name": "patternId",
+              "in": "path",
+              "description": "The pattern feature ID.",
+              "required": true,
+              "type": "integer"
+            }
+          ],
+          "description": "Gets pattern feature info.",
+          "name": "getPatternFeatureInfo"
+        }
+      }
+    },
+    "phraselists": {
+      "className": "Phraselists",
+      "category": "features",
+      "url": "/apps/{appId}/versions/{versionId}/phraselists",
+      "operations": {
+        "list:getVersionPhraselistFeaturesList": {
+          "method": "get",
+          "methodAlias": "list",
+          "command": "features list phraselists --skip <integer> --take <integer>",
+          "pathFragment": "",
+          "params": [
+            {
+              "name": "skip",
+              "in": "query",
+              "description": "The number of entries to skip. Default value is 0.",
+              "type": "integer",
+              "default": "0",
+              "enum": [
+                "0"
+              ]
+            },
+            {
+              "name": "take",
+              "in": "query",
+              "description": "The number of entries to return. Maximum page size is 500. Default is 100.",
+              "type": "integer",
+              "default": "100",
+              "enum": [
+                "100"
+              ]
+            }
+          ],
+          "description": "Gets all application phraselist features.",
+          "name": "getVersionPhraselistFeaturesList"
+        },
+        "post:createPhraselistFeature": {
+          "method": "post",
+          "methodAlias": "post",
+          "command": "features post phraselists --in phraselistCreateObject.json ",
+          "pathFragment": "",
+          "description": "Creates a new phraselist feature.",
+          "name": "createPhraselistFeature",
+          "entityName": "phraselistCreateObject",
+          "entityType": "PhraselistCreateObject"
+        },
+        "delete:deletePhraselistFeature": {
+          "method": "delete",
+          "methodAlias": "delete",
+          "command": "features delete phraselists --phraselistId <integer>",
+          "pathFragment": "/{phraselistId}",
+          "params": [
+            {
+              "name": "phraselistId",
+              "in": "path",
+              "description": "The ID of the feature to be deleted.",
+              "required": true,
+              "type": "integer"
+            }
+          ],
+          "description": "Deletes a phraselist feature from an application.",
+          "name": "deletePhraselistFeature"
+        },
+        "put:updatePhraselistFeature": {
+          "method": "put",
+          "methodAlias": "put",
+          "command": "features put phraselists --in phraselistUpdateObject.json  --phraselistId <integer>",
+          "pathFragment": "/{phraselistId}",
+          "params": [
+            {
+              "name": "phraselistId",
+              "in": "path",
+              "description": "The ID of the feature to be updated.",
+              "required": true,
+              "type": "integer"
+            }
+          ],
+          "description": "Updates the phrases, the state and the name of the phraselist feature.",
+          "name": "updatePhraselistFeature",
+          "entityName": "phraselistUpdateObject",
+          "entityType": "PhraselistUpdateObject"
+        },
+        "get:getPhraselistFeatureInfo": {
+          "method": "get",
+          "methodAlias": "get",
+          "command": "features get phraselists --phraselistId <integer>",
+          "pathFragment": "/{phraselistId}",
+          "params": [
+            {
+              "name": "phraselistId",
+              "in": "path",
+              "description": "The phraselist feature ID.",
+              "required": true,
+              "type": "integer"
+            }
+          ],
+          "description": "Gets phraselist feature info.",
+          "name": "getPhraselistFeatureInfo"
+        }
+      }
+    }
   },
-  "customprebuiltmodels": {
-    "className": "Customprebuiltmodels",
-    "url": "/apps/{appId}/versions/{versionId}/customprebuiltmodels",
-    "operations": [
-      {
-        "description": "Gets all custom prebuilt models information of this application",
-        "pathFragment": "",
-        "params": [],
-        "method": "get",
-        "name": "getCustomPrebuiltDomainModelsList"
+  "train": {
+    "train": {
+      "className": "Train",
+      "category": "train",
+      "url": "/apps/{appId}/versions/{versionId}/train",
+      "operations": {
+        "get:getVersionTrainingStatus": {
+          "method": "get",
+          "methodAlias": "get",
+          "command": "train get",
+          "pathFragment": "",
+          "description": "Gets the training status of all models (intents and entities) for the specified LUIS app. You must <a href=\"https://westus.dev.cognitive.microsoft.com/docs/services/5890b47c39e2bb17b84a55ff/operations/5890b47c39e2bb052c5b9c45\">call the train API</a> to train the LUIS app before you call this API to get training status.\r\n",
+          "name": "getVersionTrainingStatus"
+        },
+        "post:trainApplicationVersion": {
+          "method": "post",
+          "methodAlias": "post",
+          "command": "train post",
+          "pathFragment": "",
+          "description": "Sends a training request for a version of a specified LUIS app. \r\n\r\nThis POST request initiates a request asynchronously. To determine whether the training request is successful, submit a GET request to get training status.\r\n\r\n* **Note**: The application version is not fully trained unless all the models (intents and entities) are trained successfully or are up to date.\r\n\r\nTo verify training success, get the training status at least once after training is complete.",
+          "name": "trainApplicationVersion"
+        }
       }
-    ]
+    }
   }
 }

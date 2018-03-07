@@ -1,22 +1,22 @@
 const swagger = require('./swagger');
 const fs = require('fs-extra');
 const cc = require('camelcase');
-
 const classTpl = (cfg) => {
-    return `const {ServiceBase} = require('./serviceBase');
+    return `const {ServiceBase} = require('../serviceBase');
 class ${cfg.className} extends ServiceBase {
     constructor() {
         super('${cfg.url}');
     }
 ${operationTpl(cfg.operations)}
 }
-module.exports = {${cfg.className}};
+module.exports = ${cfg.className};
 `;
 };
 
 const operationTpl = (operations) => {
     let tpl = '';
-    operations.forEach(operation => {
+    Object.keys(operations).forEach(key => {
+        const operation = operations[key];
         tpl += `
     /**
     * ${operation.description}
@@ -49,7 +49,7 @@ ${modelCfg.className}.fromJSON = function(source) {
     return new ${modelCfg.className}({${modelCfg.props}});
 };
 
-module.exports = {${modelCfg.className}};
+module.exports = ${modelCfg.className};
 `;
 
 const propertyDocBlockTpl = (type, name) => `
@@ -66,22 +66,34 @@ function findEntity(swaggerOperation) {
     return (swaggerOperation.parameters || []).find(param => param.in === 'body');
 }
 
-function findFileNameFromPathName(pathName) {
+function getMethodAlias(swaggerOperation, method) {
+    const {parameters = []} = swaggerOperation;
+    if (method !== 'get') {
+        return method;
+    }
+    const hasSkipOrTake = !!parameters.find(param => /(skip|take)/.test(param.name));
+    return hasSkipOrTake ? 'list' : method;
+}
+
+function findRootAndNodeFromPathName(pathName) {
     const parts = pathName.split('/');
     let i = parts.length;
+    const info = {};
+
     while (i--) {
-        if (parts[i] && /({versionId}|{appId})/i.test(parts[i]) && parts[i + 1]) {
-            return parts[i + 1];
+        if (parts[i] && !/({[\w]+})/.test(parts[i])) {
+            info.node = parts[i];
+            break;
         }
     }
 
-    // Fallback - we're not likely to get to this point often.
-    i = parts.length;
     while (i--) {
-        if (parts[i] && !/({[\w]+})/.test(parts[i])) {
-            return parts[i];
+        if (parts[i] && /({versionId}|{appId})/i.test(parts[i]) && parts[i + 1]) {
+            info.root = parts[i + 1];
+            break;
         }
     }
+    return info;
 }
 
 const modelTypesByName = {};
@@ -119,32 +131,57 @@ Object.keys(swagger.definitions).forEach(key => {
         modelTypesByName[`#/definitions/${key}`] = model;
     }
 });
-const configsByFileName = {};
-Object.keys(swagger.paths).forEach(pathName => {
-    const fileName = findFileNameFromPathName(pathName);
+const configsMap = {};
+Object.keys(swagger.paths).sort().forEach(pathName => {
+    const {root, node} = findRootAndNodeFromPathName(pathName);
+    const fileName = root || node;
     const pathFragment = pathName.substr(pathName.indexOf(fileName) + fileName.length);
     const {[pathName]: path} = swagger.paths;
-    const className = fileName.replace(/[\w]/, match => match.toUpperCase());
-    const cfg = configsByFileName[fileName] || {className, url: pathName, operations: []};
     const keys = Object.keys(path);
     let i = keys.length;
     while (i--) {
-        const operationName = keys[i];
-        const {[operationName]: swaggerOperation} = path;
+        const method = keys[i];
+        const {[method]: swaggerOperation} = path;
+        // bail, we're deprecated.
         if (swaggerOperation.description.toLowerCase().includes('deprecated')) {
             continue;
         }
-        const operation = {
-            description: swaggerOperation.description,
-            pathFragment,
-            params: (swaggerOperation.parameters || []).filter(param => (!/(body|query)/.test(param.in) && !/(appId|versionId)/.test(param.name)))
-        };
+        // Get the category from the operationId. pull out "apps" from "apps - Get applications list"
+        const category = swaggerOperation.operationId.replace(/(')/g, '').split('-')[0].trim();
+        const className = fileName.replace(/[\w]/, match => match.toUpperCase());
+        const configKey = `${category}/${fileName}`;
+        if (!configsMap[category]) {
+            configsMap[category] = {};
+        }
+        const cfg = configsMap[category][fileName] || {className, category, url: pathName, operations: {}};
+        const methodAlias = getMethodAlias(swaggerOperation, method);
+        const params = (swaggerOperation.parameters || []).filter(param => (!/(body)/.test(param.in) && (category === 'apps' || !/(appId|versionId)/.test(param.name))));
         const entityToConsume = findEntity(swaggerOperation) || {name: '', schema: {$ref: ''}};
+        let command = `${category} ${methodAlias}`;
+        if (fileName !== category) {
+            command += ` ${fileName}`;
+        }
+        if (root && root !== node) {
+            command += ` ${node} `;
+        }
+        command += entityToConsume.name ? ` --in ${entityToConsume.name}.json ` : '';
+        command += params.reduce((agg, param) => (agg += ` --${param.name} <${param.type}>`), '');
+
+        const operation = {
+            method,
+            methodAlias,
+            command,
+            pathFragment,
+            params,
+            description: swaggerOperation.description,
+        };
+        if (!operation.params.length) {
+            delete operation.params;
+        }
         if (!entityToConsume.schema.$ref && entityToConsume.schema.example) {
             const entity = JSON.parse(entityToConsume.schema.example);
-            console.log('no entity for: ', entity, pathName);
+            // console.log('no entity for: ', entity, pathName);
         }
-        operation.method = operationName;
         operation.name = swaggerOperation.operationId
             .replace(/(')/g, '')
             .split('-')
@@ -159,31 +196,45 @@ Object.keys(swagger.paths).forEach(pathName => {
             operation.entityName = entityToConsume.name;
             operation.entityType = (entityToConsume.schema.$ref || '').split('/').pop();
         }
-        cfg.operations.push(operation);
-    }
-    if (cfg.operations.length) {
-        configsByFileName[fileName] = cfg;
+        let operationKey = operation.methodAlias;
+        if (root && root !== node) {
+            operationKey += `:${node}`;
+        }
+        operationKey += `:${operation.name.trim()}`;
+        cfg.operations[operationKey] = operation;
+        configsMap[category][fileName] = cfg;
     }
 });
 
-let classNames = [];
-Object.keys(configsByFileName).forEach(key => {
-    const cfg = configsByFileName[key];
-    const clazz = classTpl(cfg);
-    fs.ensureDir('generated').then(() => fs.writeFileSync(`generated/${key}.js`, clazz));
-    classNames.push(cfg.className);
+let classNames = {};
+Object.keys(configsMap).forEach(category => {
+    const cfg = configsMap[category];
+    Object.keys(cfg).forEach(fileName => {
+        const clazz = classTpl(cfg[fileName]);
+        const path = `${category}/${fileName}`;
+        fs.outputFileSync(`generated/${path}.js`, clazz);
+        (classNames[cfg.category] || (classNames[cfg.category] = [])).push({path, name: cfg[fileName].className});
+    });
 });
+
+let apiIndexJs = '';
+Object.keys(classNames).forEach(category => {
+    const names = classNames[category];
+    const serviceIndexJS = names.map(info => `module.exports.${info.name} = require('./${info.name.toLowerCase()}');`).join('\n');
+    apiIndexJs += `module.exports.${category} = require('./${category}');\n`;
+    fs.outputFileSync(`generated/${category}/index.js`, serviceIndexJS);
+});
+fs.outputFileSync('generated/index.js', apiIndexJs);
 
 let modelNames = [];
 Object.keys(modelTypesByName).forEach(key => {
     const modelCfg = modelTypesByName[key];
     const model = modelTpl(modelCfg);
-    fs.ensureDir('generated/models').then(() => fs.writeFileSync(`generated/models/${cc(modelCfg.className)}.js`, model));
+    fs.outputFileSync(`generated/dataModels/${cc(modelCfg.className)}.js`, model);
     modelNames.push(modelCfg.className);
 });
 
-const modelIndexJS = modelNames.sort().map(clazz => `module.exports.${clazz} = require('./${cc(clazz)}').${clazz};`).join('\n');
-fs.writeFileSync('generated/models/index.js', modelIndexJS);
-const serviceIndexJS = classNames.sort().map(clazz => `module.exports.${clazz} = require('./${cc(clazz)}').${clazz};`).join('\n');
-fs.writeFileSync('generated/index.js', serviceIndexJS);
-fs.writeJsonSync('generated/manifest.json', configsByFileName);
+const modelIndexJS = modelNames.sort().map(clazz => `module.exports.${clazz} = require('./${cc(clazz)}');`).join('\n');
+
+fs.outputFileSync('generated/dataModels/index.js', modelIndexJS);
+fs.writeJsonSync('generated/manifest.json', configsMap);

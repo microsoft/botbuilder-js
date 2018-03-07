@@ -1,1 +1,6 @@
-{"subscriptionKey":"bf40feb95dca4b7bb3308e6577740586","appId":"03261492-33d7-4d01-bc21-c21cb408b41f","versionId":"0.1","endpointBasePath":"https://westus.api.cognitive.microsoft.com/luis/api/v2.0"}
+{
+  "subscriptionKey": "bf40feb95dca4b7bb3308e6577740586",
+  "appId": "03261492-33d7-4d01-bc21-c21cb408b41f",
+  "versionId": "0.1",
+  "endpointBasePath": "https://westus.api.cognitive.microsoft.com/luis/api/v2.0"
+}

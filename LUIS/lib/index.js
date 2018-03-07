@@ -1,17 +1,22 @@
 const {ServiceBase} = require('./api/serviceBase');
 const api = require('./api');
-const models = require('./api/models');
+const dataModels = require('./api/dataModels');
 
-module.exports = async function luis(config, serviceManifest, params, requestBody) {
+module.exports = async function luis(config, serviceManifest, args, requestBody) {
     Object.defineProperty(ServiceBase.prototype, 'config', {
         value: config, writable: false, configurable: false
     });
-    const {entityType, className, operationDetail} = serviceManifest;
+    const {entityType, identifier, identifierPath, operation} = serviceManifest;
     let requestBodyDataModel;
     if (requestBody) {
-        requestBodyDataModel = models[entityType].fromJSON(requestBody);
+        requestBodyDataModel = dataModels[entityType].fromJSON(requestBody);
     }
-    const service = new api[className]();
-    const response = await service[operationDetail.name](params, (requestBodyDataModel || requestBody));
+    const service = new api[identifierPath][identifier]();
+    const mappedParams = Object.assign(mapParams(operation, args['--']), args);
+    const response = await service[operation.name](mappedParams, (requestBodyDataModel || requestBody));
     return response.json();
 };
+
+function mapParams(operation, params) {
+    return operation.params.reduce((map, param, index) => (map[param.name] = params[index], map), {});
+}

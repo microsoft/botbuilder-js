@@ -1,7 +1,7 @@
 const assert = require('assert');
 const path = require('path');
 const {exec} = require('child_process');
-const chatdown = path.resolve('../bin/chatdown.js');
+const chatdown = path.resolve('../bin/chatdown');
 
 describe('The Chatdown cli tool', () => {
 
