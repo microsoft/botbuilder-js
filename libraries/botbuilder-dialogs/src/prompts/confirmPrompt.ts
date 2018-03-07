@@ -11,9 +11,7 @@ import { DialogSet } from '../dialogSet';
 import { PromptOptions, PromptValidator } from './prompt';
 import { ListStyle, formatChoicePrompt } from './choicePrompt';
 import { ChoiceFactoryOptions, Choice } from 'botbuilder-choices';
-import * as Recognizers from '@microsoft/recognizers-text-options';
-
-const booleanModel = Recognizers.OptionsRecognizer.instance.getBooleanModel('en-us');
+import * as Recognizers from '@microsoft/recognizers-text-choice';
 
 /** Map of `ConfirmPrompt` choices for each locale the bot supports. */
 export interface ConfirmChoices {
@@ -109,7 +107,7 @@ export class ConfirmPrompt implements Dialog {
         // Recognize value
         const options = dialogs.getInstance<ConfirmPromptOptions>(context).state;
         const utterance = context.request && context.request.text ? context.request.text : '';
-        const results = booleanModel.parse(utterance);
+        const results = Recognizers.recognizeBoolean(utterance, 'en-us');
         const value = results.length > 0 && results[0].resolution ? results[0].resolution.value  : undefined;
         if (this.validator) {
             // Call validator for further processing

@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const prompt_1 = require("./prompt");
 const Recognizers = require("@microsoft/recognizers-text-number");
-const numberModel = Recognizers.NumberRecognizer.instance.getNumberModel('en-us');
 /**
  * Prompts a user to enter a number. By default the prompt will return to the calling dialog
  * a `number` representing the users input.
@@ -62,7 +61,7 @@ class NumberPrompt {
         // Recognize value
         const options = dialogs.getInstance(context).state;
         const utterance = context.request && context.request.text ? context.request.text : '';
-        const results = numberModel.parse(utterance);
+        const results = Recognizers.recognizeNumber(utterance, 'en-us');
         const value = results.length > 0 && results[0].resolution ? parseFloat(results[0].resolution.value) : undefined;
         if (this.validator) {
             // Call validator for further processing

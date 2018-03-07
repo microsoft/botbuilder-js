@@ -9,10 +9,7 @@ import { BotContext } from 'botbuilder';
 import { Dialog } from '../dialog';
 import { DialogSet } from '../dialogSet';
 import { PromptOptions, PromptValidator, sendPrompt } from './prompt';
-//import * as Recognizers from '@microsoft/recognizers-text-date-time';
-const Recognizers = require('@microsoft/recognizers-text-date-time');
-
-const dateTimeModel = Recognizers.DateTimeRecognizer.instance.getDateTimeModel('en-us');
+import * as Recognizers from '@microsoft/recognizers-text-date-time';
 
 /**
  * Datetime result returned by `DatetimePrompt`. For more details see the LUIS docs for
@@ -101,7 +98,7 @@ export class DatetimePrompt implements Dialog {
         // Recognize value
         const options = dialogs.getInstance<PromptOptions>(context).state;
         const utterance = context.request && context.request.text ? context.request.text : '';
-        const results = dateTimeModel.parse(utterance);
+        const results = Recognizers.recognizeDateTime(utterance, 'en-us');
         const value: FoundDatetime[] = results.length > 0 && results[0].resolution ? (results[0].resolution.values || []) : [];
         if (this.validator) {
             // Call validator for further processing

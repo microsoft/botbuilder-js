@@ -20,7 +20,7 @@
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "dependencies": {
-    "botframework-schema": "^4.0.0-m1.7",
+    "botframework-schema": "4.0.0-m2.0",
     "assert": "^1.4.1"
   },
   "devDependencies": {

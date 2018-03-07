@@ -21,10 +21,11 @@
   "typings": "./lib/index.d.ts",
   "dependencies": {
     "async-file": "^2.0.2",
-    "botbuilder-core": "^4.0.0-m2.0",
-    "botbuilder-core-extensions": "^4.0.0-m2.0",
-    "botframework-connector": "^4.0.0-m1.7",
-    "filenamify": "^2.0.0"
+    "botbuilder-core": "4.0.0-m2.0",
+    "botbuilder-core-extensions": "4.0.0-m2.0",
+    "botframework-connector": "4.0.0-m2.0",
+    "filenamify": "^2.0.0",
+    "readline": "^1.3.0"
   },
   "devDependencies": {
     "@types/filenamify": "^2.0.1",

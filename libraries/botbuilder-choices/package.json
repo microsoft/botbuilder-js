@@ -20,8 +20,8 @@
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "dependencies": {
-    "botbuilder": "^4.0.0-m2.0",
-    "@microsoft/recognizers-text-suite": "^1.0.0-rc.32.0"
+    "botbuilder": "4.0.0-m2.0",
+    "@microsoft/recognizers-text-suite": "^1.0.0"
   },
   "devDependencies": {
     "@types/mocha": "^2.2.47",

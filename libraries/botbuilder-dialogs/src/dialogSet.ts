@@ -351,10 +351,10 @@ export class DialogSet {
     }
 
     private getState(context: BotContext): StoreItem {
-        const state = (context as any)[this.stateName];
+        let state = (context as any)[this.stateName];
         if (typeof state !== 'object') { 
-            state === BotState.get(context, this.stateName); 
-            if (typeof state !== 'object') { throw new Error(`DialogSet: No state object named "${this.stackName}". Ensure that the name is correct or add the appropriate BotState class to your bots middleware stack.`) }
+            state = BotState.get(context, this.stateName); 
+            if (typeof state !== 'object') { throw new Error(`DialogSet: No state object named "${this.stateName}". Ensure that the name is correct or add the appropriate BotState class to your bots middleware stack.`) }
         }
         return state;
     }
