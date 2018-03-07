@@ -43,7 +43,7 @@ class Waterfall {
                 return Promise.resolve(this.steps[step](context, result, (r) => {
                     // Skip to next step
                     instance.step += 1;
-                    return this.runStep(context, r);
+                    return this.runStep(context, dialogs, r);
                 }));
             }
             else {

@@ -105,7 +105,7 @@ export class Waterfall implements Dialog {
                 return Promise.resolve(this.steps[step](context, result, (r?: any) => {
                     // Skip to next step
                     instance.step += 1;
-                    return this.runStep(context, r);
+                    return this.runStep(context, dialogs, r);
                 }));
             } else {
                 // End of waterfall so just return to parent
