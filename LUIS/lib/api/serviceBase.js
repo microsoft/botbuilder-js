@@ -31,11 +31,11 @@ class ServiceBase {
         if (method === 'get' && ('skip' in params || 'take' in params)) {
             const {skip, take} = params;
             URL += '?';
-            if (skip !== undefined) {
+            if (!isNaN(+skip)) {
                 URL += `skip=${+skip}`;
             }
-            if (take !== undefined) {
-                URL += skip !== undefined ? `&take=${+take}` : `take=${+take}`;
+            if (!isNaN(+take)) {
+                URL += !isNaN(+skip) ? `&take=${+take}` : `take=${+take}`;
             }
         }
         const body = dataModel ? JSON.stringify(dataModel) : undefined;
