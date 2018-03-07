@@ -14,7 +14,7 @@ const {getServiceManifest} = require('../lib/utils/argsUtil');
 async function runProgram() {
     const args = minimist(process.argv.slice(2), {'--': true});
 
-    if (args.init) {
+    if (args.init || args.i) {
         await initializeConfig();
         process.stdout.write(`Successfully wrote ${process.cwd()}.luisrc`);
         return;
@@ -24,6 +24,9 @@ async function runProgram() {
         args['!'] ||
         args._.includes('help')) {
         return help(args);
+    }
+    if (args.version || args.v) {
+        return process.stdout.write(require(path.join(__dirname, '../package.json')).version);
     }
     let config;
     try {
