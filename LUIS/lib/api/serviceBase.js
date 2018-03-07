@@ -28,14 +28,14 @@ class ServiceBase {
         ServiceBase.validateParams(tokenizedUrl, params);
 
         let URL = insertParametersFromObject(tokenizedUrl, params);
-        if (method === 'get' && (params.skip || params.take)) {
+        if (method === 'get' && ('skip' in params || 'take' in params)) {
             const {skip, take} = params;
             URL += '?';
-            if (skip) {
-                URL += `skip=${skip}`;
+            if (skip !== undefined) {
+                URL += `skip=${+skip}`;
             }
-            if (take) {
-                URL += skip ? `&take=${take}` : `?take=${take}`;
+            if (take !== undefined) {
+                URL += skip !== undefined ? `&take=${+take}` : `take=${+take}`;
             }
         }
         const body = dataModel ? JSON.stringify(dataModel) : undefined;
