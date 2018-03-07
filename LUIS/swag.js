@@ -15,8 +15,7 @@ module.exports = ${cfg.className};
 
 const operationTpl = (operations) => {
     let tpl = '';
-    Object.keys(operations).forEach(key => {
-        const operation = operations[key];
+    operations.forEach(operation => {
         tpl += `
     /**
     * ${operation.description}
@@ -153,11 +152,11 @@ Object.keys(swagger.paths).sort().forEach(pathName => {
         if (!configsMap[category]) {
             configsMap[category] = {};
         }
-        const cfg = configsMap[category][fileName] || {className, category, url: pathName, operations: {}};
+        const cfg = configsMap[category][fileName] || {className, category, url: pathName, operations: []};
         const methodAlias = getMethodAlias(swaggerOperation, method);
-        const params = (swaggerOperation.parameters || []).filter(param => (!/(body)/.test(param.in) && (category === 'apps' || !/(appId|versionId)/.test(param.name))));
+        const params = (swaggerOperation.parameters || []).filter(param => (!/(body)/.test(param.in) && (/(apps|versions)/.test(category) || !/(appId|versionId)/.test(param.name))));
         const entityToConsume = findEntity(swaggerOperation) || {name: '', schema: {$ref: ''}};
-        let command = `${category} ${methodAlias}`;
+        let command = `luis ${category} ${methodAlias}`;
         if (fileName !== category) {
             command += ` ${fileName}`;
         }
@@ -173,10 +172,13 @@ Object.keys(swagger.paths).sort().forEach(pathName => {
             command,
             pathFragment,
             params,
-            description: swaggerOperation.description,
+            description: swaggerOperation.description.replace(/[\r]/g, ''),
         };
         if (!operation.params.length) {
             delete operation.params;
+        }
+        if (root && root !== node) {
+            operation.subTarget = node;
         }
         if (!entityToConsume.schema.$ref && entityToConsume.schema.example) {
             const entity = JSON.parse(entityToConsume.schema.example);
@@ -196,12 +198,7 @@ Object.keys(swagger.paths).sort().forEach(pathName => {
             operation.entityName = entityToConsume.name;
             operation.entityType = (entityToConsume.schema.$ref || '').split('/').pop();
         }
-        let operationKey = operation.methodAlias;
-        if (root && root !== node) {
-            operationKey += `:${node}`;
-        }
-        operationKey += `:${operation.name.trim()}`;
-        cfg.operations[operationKey] = operation;
+        cfg.operations.push(operation);
         configsMap[category][fileName] = cfg;
     }
 });

@@ -4,11 +4,11 @@
       "className": "Apps",
       "category": "apps",
       "url": "/apps/",
-      "operations": {
-        "list:getApplicationsList": {
+      "operations": [
+        {
           "method": "get",
           "methodAlias": "list",
-          "command": "apps list --skip <integer> --take <integer>",
+          "command": "luis apps list --skip <integer> --take <integer>",
           "pathFragment": "/",
           "params": [
             {
@@ -35,20 +35,20 @@
           "description": "Lists all of the user applications.",
           "name": "getApplicationsList"
         },
-        "post:addApplication": {
+        {
           "method": "post",
           "methodAlias": "post",
-          "command": "apps post --in applicationCreateObject.json ",
+          "command": "luis apps post --in applicationCreateObject.json ",
           "pathFragment": "/",
           "description": "Creates a new LUIS app.",
           "name": "addApplication",
           "entityName": "applicationCreateObject",
           "entityType": "ApplicationCreateObject"
         },
-        "delete:deleteApplication": {
+        {
           "method": "delete",
           "methodAlias": "delete",
-          "command": "apps delete --appId <string>",
+          "command": "luis apps delete --appId <string>",
           "pathFragment": "/{appId}",
           "params": [
             {
@@ -62,10 +62,10 @@
           "description": "Deletes an application.",
           "name": "deleteApplication"
         },
-        "put:renameApplication": {
+        {
           "method": "put",
           "methodAlias": "put",
-          "command": "apps put --in applicationUpdateObject.json  --appId <string>",
+          "command": "luis apps put --in applicationUpdateObject.json  --appId <string>",
           "pathFragment": "/{appId}",
           "params": [
             {
@@ -81,10 +81,10 @@
           "entityName": "applicationUpdateObject",
           "entityType": "ApplicationUpdateObject"
         },
-        "get:getApplicationInfo": {
+        {
           "method": "get",
           "methodAlias": "get",
-          "command": "apps get --appId <string>",
+          "command": "luis apps get --appId <string>",
           "pathFragment": "/{appId}",
           "params": [
             {
@@ -98,65 +98,65 @@
           "description": "Gets the application info.",
           "name": "getApplicationInfo"
         }
-      }
+      ]
     },
     "assistants": {
       "className": "Assistants",
       "category": "apps",
       "url": "/apps/assistants",
-      "operations": {
-        "get:getPersonalAssistantApplications": {
+      "operations": [
+        {
           "method": "get",
           "methodAlias": "get",
-          "command": "apps get assistants",
+          "command": "luis apps get assistants",
           "pathFragment": "",
           "description": "Gets the endpoint URLs for the prebuilt Cortana applications.",
           "name": "getPersonalAssistantApplications"
         }
-      }
+      ]
     },
     "cultures": {
       "className": "Cultures",
       "category": "apps",
       "url": "/apps/cultures",
-      "operations": {
-        "get:getLUISApplicationCulturesList": {
+      "operations": [
+        {
           "method": "get",
           "methodAlias": "get",
-          "command": "apps get cultures",
+          "command": "luis apps get cultures",
           "pathFragment": "",
           "description": "Gets the supported LUIS application cultures.",
           "name": "getLUISApplicationCulturesList"
         }
-      }
+      ]
     },
     "customprebuiltdomains": {
       "className": "Customprebuiltdomains",
       "category": "apps",
       "url": "/apps/customprebuiltdomains",
-      "operations": {
-        "post:addPrebuiltApplication": {
+      "operations": [
+        {
           "method": "post",
           "methodAlias": "post",
-          "command": "apps post customprebuiltdomains --in prebuiltDomainCreateObject.json ",
+          "command": "luis apps post customprebuiltdomains --in prebuiltDomainCreateObject.json ",
           "pathFragment": "",
           "description": "Adds a prebuilt domain along with its models as a new application. Returns new app ID. ",
           "name": "addPrebuiltApplication",
           "entityName": "prebuiltDomainCreateObject",
           "entityType": "PrebuiltDomainCreateObject"
         },
-        "get:getLUISPrebuiltDomainsList": {
+        {
           "method": "get",
           "methodAlias": "get",
-          "command": "apps get customprebuiltdomains",
+          "command": "luis apps get customprebuiltdomains",
           "pathFragment": "",
           "description": "Gets all the available custom prebuilt domains for all cultures",
           "name": "getLUISPrebuiltDomainsList"
         },
-        "get:getLUISPrebuiltDomainsForCultureList": {
+        {
           "method": "get",
           "methodAlias": "get",
-          "command": "apps get customprebuiltdomains --culture <string>",
+          "command": "luis apps get customprebuiltdomains --culture <string>",
           "pathFragment": "/{culture}",
           "params": [
             {
@@ -170,32 +170,32 @@
           "description": "Gets all the available custom prebuilt domains for a specific culture",
           "name": "getLUISPrebuiltDomainsForCultureList"
         }
-      }
+      ]
     },
     "domains": {
       "className": "Domains",
       "category": "apps",
       "url": "/apps/domains",
-      "operations": {
-        "get:getLUISApplicationDomainsList": {
+      "operations": [
+        {
           "method": "get",
           "methodAlias": "get",
-          "command": "apps get domains",
+          "command": "luis apps get domains",
           "pathFragment": "",
           "description": "Gets the available application domains.",
           "name": "getLUISApplicationDomainsList"
         }
-      }
+      ]
     },
     "import": {
       "className": "Import",
       "category": "apps",
       "url": "/apps/import",
-      "operations": {
-        "post:importApplication": {
+      "operations": [
+        {
           "method": "post",
           "methodAlias": "post",
-          "command": "apps post import --in jSONApp.json  --appName <string>",
+          "command": "luis apps post import --in jSONApp.json  --appName <string>",
           "pathFragment": "",
           "params": [
             {
@@ -210,32 +210,32 @@
           "entityName": "jSONApp",
           "entityType": "JSONApp"
         }
-      }
+      ]
     },
     "usagescenarios": {
       "className": "Usagescenarios",
       "category": "apps",
       "url": "/apps/usagescenarios",
-      "operations": {
-        "get:getLUISApplicationUsageScenariosList": {
+      "operations": [
+        {
           "method": "get",
           "methodAlias": "get",
-          "command": "apps get usagescenarios",
+          "command": "luis apps get usagescenarios",
           "pathFragment": "",
           "description": "Gets the application available usage scenarios.",
           "name": "getLUISApplicationUsageScenariosList"
         }
-      }
+      ]
     },
     "endpoints": {
       "className": "Endpoints",
       "category": "apps",
       "url": "/apps/{appId}/endpoints",
-      "operations": {
-        "get:getEndpoints": {
+      "operations": [
+        {
           "method": "get",
           "methodAlias": "get",
-          "command": "apps get endpoints --appId <string>",
+          "command": "luis apps get endpoints --appId <string>",
           "pathFragment": "",
           "params": [
             {
@@ -249,17 +249,17 @@
           "description": "Returns the available endpoint deployment regions and urls",
           "name": "getEndpoints"
         }
-      }
+      ]
     },
     "publish": {
       "className": "Publish",
       "category": "apps",
       "url": "/apps/{appId}/publish",
-      "operations": {
-        "post:publishApplication": {
+      "operations": [
+        {
           "method": "post",
           "methodAlias": "post",
-          "command": "apps post publish --in applicationPublishObject.json  --appId <string>",
+          "command": "luis apps post publish --in applicationPublishObject.json  --appId <string>",
           "pathFragment": "",
           "params": [
             {
@@ -275,17 +275,17 @@
           "entityName": "applicationPublishObject",
           "entityType": "ApplicationPublishObject"
         }
-      }
+      ]
     },
     "querylogs": {
       "className": "Querylogs",
       "category": "apps",
       "url": "/apps/{appId}/querylogs",
-      "operations": {
-        "get:downloadApplicationQueryLogs": {
+      "operations": [
+        {
           "method": "get",
           "methodAlias": "get",
-          "command": "apps get querylogs --appId <string>",
+          "command": "luis apps get querylogs --appId <string>",
           "pathFragment": "",
           "params": [
             {
@@ -299,17 +299,17 @@
           "description": "Gets the query logs of the past month for the application.",
           "name": "downloadApplicationQueryLogs"
         }
-      }
+      ]
     },
     "settings": {
       "className": "Settings",
       "category": "apps",
       "url": "/apps/{appId}/settings",
-      "operations": {
-        "put:updateApplicationSettings": {
+      "operations": [
+        {
           "method": "put",
           "methodAlias": "put",
-          "command": "apps put settings --in applicationSettingUpdateObject.json  --appId <string>",
+          "command": "luis apps put settings --in applicationSettingUpdateObject.json  --appId <string>",
           "pathFragment": "",
           "params": [
             {
@@ -325,10 +325,10 @@
           "entityName": "applicationSettingUpdateObject",
           "entityType": "ApplicationSettingUpdateObject"
         },
-        "get:getApplicationSettings": {
+        {
           "method": "get",
           "methodAlias": "get",
-          "command": "apps get settings --appId <string>",
+          "command": "luis apps get settings --appId <string>",
           "pathFragment": "",
           "params": [
             {
@@ -342,7 +342,7 @@
           "description": "Get the application settings",
           "name": "getApplicationSettings"
         }
-      }
+      ]
     }
   },
   "permissions": {
@@ -350,46 +350,46 @@
       "className": "Permissions",
       "category": "permissions",
       "url": "/apps/{appId}/permissions",
-      "operations": {
-        "put:updateAccessList": {
+      "operations": [
+        {
           "method": "put",
           "methodAlias": "put",
-          "command": "permissions put --in body.json ",
+          "command": "luis permissions put --in body.json ",
           "pathFragment": "",
-          "description": "Replaces the current users access list with the one sent in the body.\r\nIf an empty list is sent, all access to other users will be removed.\r\n",
+          "description": "Replaces the current users access list with the one sent in the body.\nIf an empty list is sent, all access to other users will be removed.\n",
           "name": "updateAccessList",
           "entityName": "body",
           "entityType": ""
         },
-        "delete:removeUserFromAccessList": {
+        {
           "method": "delete",
           "methodAlias": "delete",
-          "command": "permissions delete --in body.json ",
+          "command": "luis permissions delete --in body.json ",
           "pathFragment": "",
-          "description": "Removed a user to the allowed list of users to access this LUIS application.\r\nUsers are removed using their email address.",
+          "description": "Removed a user to the allowed list of users to access this LUIS application.\nUsers are removed using their email address.",
           "name": "removeUserFromAccessList",
           "entityName": "body",
           "entityType": ""
         },
-        "post:addEmailToAccessList": {
+        {
           "method": "post",
           "methodAlias": "post",
-          "command": "permissions post --in body.json ",
+          "command": "luis permissions post --in body.json ",
           "pathFragment": "",
-          "description": "Adds a user to the allowed list of users to access this LUIS application.\r\nUsers are added using their email address.",
+          "description": "Adds a user to the allowed list of users to access this LUIS application.\nUsers are added using their email address.",
           "name": "addEmailToAccessList",
           "entityName": "body",
           "entityType": ""
         },
-        "get:getUserAccessList": {
+        {
           "method": "get",
           "methodAlias": "get",
-          "command": "permissions get",
+          "command": "luis permissions get",
           "pathFragment": "",
           "description": "Gets the list of user emails that have permissions to access your application. ",
           "name": "getUserAccessList"
         }
-      }
+      ]
     }
   },
   "versions": {
@@ -397,13 +397,20 @@
       "className": "Versions",
       "category": "versions",
       "url": "/apps/{appId}/versions",
-      "operations": {
-        "list:getApplicationVersionList": {
+      "operations": [
+        {
           "method": "get",
           "methodAlias": "list",
-          "command": "versions list --skip <integer> --take <integer>",
+          "command": "luis versions list --appId <string> --skip <integer> --take <integer>",
           "pathFragment": "",
           "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
             {
               "name": "skip",
               "in": "query",
@@ -428,117 +435,261 @@
           "description": "Gets the application versions info.",
           "name": "getApplicationVersionList"
         },
-        "post:import:importVersionToApplication": {
+        {
           "method": "post",
           "methodAlias": "post",
-          "command": "versions post import  --in jSONApp.json ",
+          "command": "luis versions post import  --in jSONApp.json  --appId <string> --versionId <string>",
           "pathFragment": "/import",
+          "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "query",
+              "description": "The imported versionId.",
+              "type": "string"
+            }
+          ],
           "description": "Imports a new version into a LUIS application, the version's JSON should be included in in the request body.",
+          "subTarget": "import",
           "name": "importVersionToApplication",
           "entityName": "jSONApp",
           "entityType": "JSONApp"
         },
-        "delete:deleteApplicationVersion": {
+        {
           "method": "delete",
           "methodAlias": "delete",
-          "command": "versions delete",
+          "command": "luis versions delete --appId <string> --versionId <string>",
           "pathFragment": "/{versionId}/",
+          "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application version ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The application ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
           "description": "Deletes an application version.",
           "name": "deleteApplicationVersion"
         },
-        "put:renameApplicationVersion": {
+        {
           "method": "put",
           "methodAlias": "put",
-          "command": "versions put --in taskUpdateObject.json ",
+          "command": "luis versions put --in taskUpdateObject.json  --appId <string> --versionId <string>",
           "pathFragment": "/{versionId}/",
+          "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application version ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The application ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
           "description": "Updates the name or description of the application version.",
           "name": "renameApplicationVersion",
           "entityName": "taskUpdateObject",
           "entityType": "TaskUpdateObject"
         },
-        "get:getApplicationVersion": {
+        {
           "method": "get",
           "methodAlias": "get",
-          "command": "versions get",
+          "command": "luis versions get --appId <string> --versionId <string>",
           "pathFragment": "/{versionId}/",
+          "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
           "description": "Gets the task info.",
           "name": "getApplicationVersion"
         }
-      }
+      ]
     },
     "clone": {
       "className": "Clone",
       "category": "versions",
       "url": "/apps/{appId}/versions/{versionId}/clone",
-      "operations": {
-        "post:cloneVersion": {
+      "operations": [
+        {
           "method": "post",
           "methodAlias": "post",
-          "command": "versions post clone --in taskUpdateObject.json ",
+          "command": "luis versions post clone --in taskUpdateObject.json  --appId <string> --versionId <string>",
           "pathFragment": "",
+          "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The application version ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
           "description": "Creates a new version equivalent to the current snapshot of the selected application version.",
           "name": "cloneVersion",
           "entityName": "taskUpdateObject",
           "entityType": "TaskUpdateObject"
         }
-      }
+      ]
     },
     "export": {
       "className": "Export",
       "category": "versions",
       "url": "/apps/{appId}/versions/{versionId}/export",
-      "operations": {
-        "get:exportApplicationVersion": {
+      "operations": [
+        {
           "method": "get",
           "methodAlias": "get",
-          "command": "versions get export",
+          "command": "luis versions get export --appId <string> --versionId <string>",
           "pathFragment": "",
+          "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application version ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The application ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
           "description": "Exports a LUIS application to JSON format.",
           "name": "exportApplicationVersion"
         }
-      }
+      ]
     },
     "externalKeys": {
       "className": "ExternalKeys",
       "category": "versions",
       "url": "/apps/{appId}/versions/{versionId}/externalKeys",
-      "operations": {
-        "get:getApplicationVersionExternalApiKeys": {
+      "operations": [
+        {
           "method": "get",
           "methodAlias": "get",
-          "command": "versions get externalKeys",
+          "command": "luis versions get externalKeys --appId <string> --versionId <string>",
           "pathFragment": "",
+          "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The application version ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
           "description": "Gets the given application versions's external keys.",
           "name": "getApplicationVersionExternalApiKeys"
         },
-        "put:updateApplicationVersionExternalKey": {
+        {
           "method": "put",
           "methodAlias": "put",
-          "command": "versions put externalKeys --in externalKeyUpdateObject.json ",
+          "command": "luis versions put externalKeys --in externalKeyUpdateObject.json  --appId <string> --versionId <string>",
           "pathFragment": "",
+          "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application version ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The application ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
           "description": "Assigns an external API key to the given application according to the specified key type.",
           "name": "updateApplicationVersionExternalKey",
           "entityName": "externalKeyUpdateObject",
           "entityType": "ExternalKeyUpdateObject"
         }
-      }
+      ]
     },
     "suggest": {
       "className": "Suggest",
       "category": "versions",
       "url": "/apps/{appId}/versions/{versionId}/suggest",
-      "operations": {
-        "delete:deleteUnlabelledUtterance": {
+      "operations": [
+        {
           "method": "delete",
           "methodAlias": "delete",
-          "command": "versions delete suggest --in body.json ",
+          "command": "luis versions delete suggest --in body.json  --appId <string> --versionId <string>",
           "pathFragment": "",
+          "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
           "description": "Deleted an unlabelled utterance.",
           "name": "deleteUnlabelledUtterance",
           "entityName": "body",
           "entityType": ""
         }
-      }
+      ]
     }
   },
   "models": {
@@ -546,11 +697,11 @@
       "className": "Closedlists",
       "category": "models",
       "url": "/apps/{appId}/versions/{versionId}/closedlists",
-      "operations": {
-        "list:getVersionClosedlistList": {
+      "operations": [
+        {
           "method": "get",
           "methodAlias": "list",
-          "command": "models list closedlists --skip <integer> --take <integer>",
+          "command": "luis models list closedlists --skip <integer> --take <integer>",
           "pathFragment": "",
           "params": [
             {
@@ -577,20 +728,20 @@
           "description": "Gets information about the closedlist models.",
           "name": "getVersionClosedlistList"
         },
-        "post:createClosedListEntity": {
+        {
           "method": "post",
           "methodAlias": "post",
-          "command": "models post closedlists --in closedListModelCreateObject.json ",
+          "command": "luis models post closedlists --in closedListModelCreateObject.json ",
           "pathFragment": "",
           "description": "Adds a list entity to the LUIS app.",
           "name": "createClosedListEntity",
           "entityName": "closedListModelCreateObject",
           "entityType": "ClosedListModelCreateObject"
         },
-        "delete:deleteClosedListEntity": {
+        {
           "method": "delete",
           "methodAlias": "delete",
-          "command": "models delete closedlists --clEntityId <string>",
+          "command": "luis models delete closedlists --clEntityId <string>",
           "pathFragment": "/{clEntityId}",
           "params": [
             {
@@ -604,10 +755,10 @@
           "description": "Deletes a closed list model from the application.",
           "name": "deleteClosedListEntity"
         },
-        "patch:patchClosedListEntity": {
+        {
           "method": "patch",
           "methodAlias": "patch",
-          "command": "models patch closedlists --in closedListModelPatchObject.json  --clEntityId <string>",
+          "command": "luis models patch closedlists --in closedListModelPatchObject.json  --clEntityId <string>",
           "pathFragment": "/{clEntityId}",
           "params": [
             {
@@ -623,10 +774,10 @@
           "entityName": "closedListModelPatchObject",
           "entityType": "ClosedListModelPatchObject"
         },
-        "put:updateClosedListEntity": {
+        {
           "method": "put",
           "methodAlias": "put",
-          "command": "models put closedlists --in closedListModelUpdateObject.json  --clEntityId <string>",
+          "command": "luis models put closedlists --in closedListModelUpdateObject.json  --clEntityId <string>",
           "pathFragment": "/{clEntityId}",
           "params": [
             {
@@ -642,10 +793,10 @@
           "entityName": "closedListModelUpdateObject",
           "entityType": "ClosedListModelUpdateObject"
         },
-        "get:getClosedListEntity": {
+        {
           "method": "get",
           "methodAlias": "get",
-          "command": "models get closedlists --clEntityId <string>",
+          "command": "luis models get closedlists --clEntityId <string>",
           "pathFragment": "/{clEntityId}",
           "params": [
             {
@@ -659,10 +810,10 @@
           "description": "Gets information of a closed list model.",
           "name": "getClosedListEntity"
         },
-        "post:sublists:addClosedListsSublist": {
+        {
           "method": "post",
           "methodAlias": "post",
-          "command": "models post closedlists sublists  --in wordListCreateObject.json  --clEntityId <string>",
+          "command": "luis models post closedlists sublists  --in wordListCreateObject.json  --clEntityId <string>",
           "pathFragment": "/{clEntityId}/sublists",
           "params": [
             {
@@ -674,14 +825,15 @@
             }
           ],
           "description": "Adds a list to an existing closed list",
+          "subTarget": "sublists",
           "name": "addClosedListsSublist",
           "entityName": "wordListCreateObject",
           "entityType": "WordListCreateObject"
         },
-        "put:sublists:updateClosedlistsSublist": {
+        {
           "method": "put",
           "methodAlias": "put",
-          "command": "models put closedlists sublists  --in wordListBaseUpdateObject.json  --clEntityId <string> --subListId <string>",
+          "command": "luis models put closedlists sublists  --in wordListBaseUpdateObject.json  --clEntityId <string> --subListId <string>",
           "pathFragment": "/{clEntityId}/sublists/{subListId}",
           "params": [
             {
@@ -700,14 +852,15 @@
             }
           ],
           "description": "Updates one of the closed list's sublists",
+          "subTarget": "sublists",
           "name": "updateClosedlistsSublist",
           "entityName": "wordListBaseUpdateObject",
           "entityType": "WordListBaseUpdateObject"
         },
-        "delete:sublists:deleteSublistEntity": {
+        {
           "method": "delete",
           "methodAlias": "delete",
-          "command": "models delete closedlists sublists  --clEntityId <string> --subListId <integer>",
+          "command": "luis models delete closedlists sublists  --clEntityId <string> --subListId <integer>",
           "pathFragment": "/{clEntityId}/sublists/{subListId}",
           "params": [
             {
@@ -726,19 +879,20 @@
             }
           ],
           "description": "Deletes a sublist of a specified list entity.",
+          "subTarget": "sublists",
           "name": "deleteSublistEntity"
         }
-      }
+      ]
     },
     "compositeentities": {
       "className": "Compositeentities",
       "category": "models",
       "url": "/apps/{appId}/versions/{versionId}/compositeentities",
-      "operations": {
-        "list:getVersionCompositeEntityList": {
+      "operations": [
+        {
           "method": "get",
           "methodAlias": "list",
-          "command": "models list compositeentities --skip <integer> --take <integer>",
+          "command": "luis models list compositeentities --skip <integer> --take <integer>",
           "pathFragment": "",
           "params": [
             {
@@ -765,20 +919,20 @@
           "description": "Gets information about the composite entity models.",
           "name": "getVersionCompositeEntityList"
         },
-        "post:createCompositeEntity": {
+        {
           "method": "post",
           "methodAlias": "post",
-          "command": "models post compositeentities --in hierarchicalModelCreateObject.json ",
+          "command": "luis models post compositeentities --in hierarchicalModelCreateObject.json ",
           "pathFragment": "",
           "description": "Adds a composite entity extractor to the application.",
           "name": "createCompositeEntity",
           "entityName": "hierarchicalModelCreateObject",
           "entityType": "HierarchicalModelCreateObject"
         },
-        "delete:deleteCompositeEntity": {
+        {
           "method": "delete",
           "methodAlias": "delete",
-          "command": "models delete compositeentities --cEntityId <string>",
+          "command": "luis models delete compositeentities --cEntityId <string>",
           "pathFragment": "/{cEntityId}",
           "params": [
             {
@@ -792,10 +946,10 @@
           "description": "Deletes a composite entity extractor from the application.",
           "name": "deleteCompositeEntity"
         },
-        "put:updateCompositeEntity": {
+        {
           "method": "put",
           "methodAlias": "put",
-          "command": "models put compositeentities --in hierarchicalModelUpdateObject.json  --cEntityId <string>",
+          "command": "luis models put compositeentities --in hierarchicalModelUpdateObject.json  --cEntityId <string>",
           "pathFragment": "/{cEntityId}",
           "params": [
             {
@@ -811,10 +965,10 @@
           "entityName": "hierarchicalModelUpdateObject",
           "entityType": "HierarchicalModelUpdateObject"
         },
-        "get:getCompositeEntity": {
+        {
           "method": "get",
           "methodAlias": "get",
-          "command": "models get compositeentities --cEntityId <string>",
+          "command": "luis models get compositeentities --cEntityId <string>",
           "pathFragment": "/{cEntityId}",
           "params": [
             {
@@ -828,10 +982,10 @@
           "description": "Gets information about the composite entity model.",
           "name": "getCompositeEntity"
         },
-        "post:children:createCompositeChildEntity": {
+        {
           "method": "post",
           "methodAlias": "post",
-          "command": "models post compositeentities children  --in body.json  --cEntityId <string>",
+          "command": "luis models post compositeentities children  --in body.json  --cEntityId <string>",
           "pathFragment": "/{cEntityId}/children",
           "params": [
             {
@@ -843,14 +997,15 @@
             }
           ],
           "description": "Creates a single child in an existing composite entity model.",
+          "subTarget": "children",
           "name": "createCompositeChildEntity",
           "entityName": "body",
           "entityType": ""
         },
-        "delete:children:deleteCompositeChildEntity": {
+        {
           "method": "delete",
           "methodAlias": "delete",
-          "command": "models delete compositeentities children  --cEntityId <string> --cChildId <string>",
+          "command": "luis models delete compositeentities children  --cEntityId <string> --cChildId <string>",
           "pathFragment": "/{cEntityId}/children/{cChildId}",
           "params": [
             {
@@ -869,29 +1024,30 @@
             }
           ],
           "description": "Deletes a composite entity extractor child from the application.",
+          "subTarget": "children",
           "name": "deleteCompositeChildEntity "
         }
-      }
+      ]
     },
     "customprebuiltdomains": {
       "className": "Customprebuiltdomains",
       "category": "models",
       "url": "/apps/{appId}/versions/{versionId}/customprebuiltdomains",
-      "operations": {
-        "post:addCustomPrebuiltDomain": {
+      "operations": [
+        {
           "method": "post",
           "methodAlias": "post",
-          "command": "models post customprebuiltdomains --in prebuiltDomainCreateBaseObject.json ",
+          "command": "luis models post customprebuiltdomains --in prebuiltDomainCreateBaseObject.json ",
           "pathFragment": "",
           "description": "Adds a customizable prebuilt domain along with all of its models to this application.",
           "name": "addCustomPrebuiltDomain",
           "entityName": "prebuiltDomainCreateBaseObject",
           "entityType": "PrebuiltDomainCreateBaseObject"
         },
-        "delete:deleteCustomPrebuiltDomain": {
+        {
           "method": "delete",
           "methodAlias": "delete",
-          "command": "models delete customprebuiltdomains --domainName <string>",
+          "command": "luis models delete customprebuiltdomains --domainName <string>",
           "pathFragment": "/{domainName}",
           "params": [
             {
@@ -905,82 +1061,82 @@
           "description": "Deletes a prebuilt domain's models from the application.",
           "name": "deleteCustomPrebuiltDomain"
         }
-      }
+      ]
     },
     "customprebuiltentities": {
       "className": "Customprebuiltentities",
       "category": "models",
       "url": "/apps/{appId}/versions/{versionId}/customprebuiltentities",
-      "operations": {
-        "get:getCustomPrebuiltDomainEntitiesList": {
+      "operations": [
+        {
           "method": "get",
           "methodAlias": "get",
-          "command": "models get customprebuiltentities",
+          "command": "luis models get customprebuiltentities",
           "pathFragment": "",
           "description": "Gets all custom prebuilt entities information of this application",
           "name": "getCustomPrebuiltDomainEntitiesList"
         },
-        "post:addCustomPrebuiltEntity": {
+        {
           "method": "post",
           "methodAlias": "post",
-          "command": "models post customprebuiltentities --in prebuiltDomainModelCreateObject.json ",
+          "command": "luis models post customprebuiltentities --in prebuiltDomainModelCreateObject.json ",
           "pathFragment": "",
           "description": "Adds a custom prebuilt entity model to the application",
           "name": "addCustomPrebuiltEntity",
           "entityName": "prebuiltDomainModelCreateObject",
           "entityType": "PrebuiltDomainModelCreateObject"
         }
-      }
+      ]
     },
     "customprebuiltintents": {
       "className": "Customprebuiltintents",
       "category": "models",
       "url": "/apps/{appId}/versions/{versionId}/customprebuiltintents",
-      "operations": {
-        "get:getCustomPrebuiltDomainIntentsList": {
+      "operations": [
+        {
           "method": "get",
           "methodAlias": "get",
-          "command": "models get customprebuiltintents",
+          "command": "luis models get customprebuiltintents",
           "pathFragment": "",
           "description": "Gets custom prebuilt intents information of this application",
           "name": "getCustomPrebuiltDomainIntentsList"
         },
-        "post:addCustomPrebuiltIntent": {
+        {
           "method": "post",
           "methodAlias": "post",
-          "command": "models post customprebuiltintents --in prebuiltDomainModelCreateObject.json ",
+          "command": "luis models post customprebuiltintents --in prebuiltDomainModelCreateObject.json ",
           "pathFragment": "",
           "description": "Adds a custom prebuilt intent model to the application",
           "name": "addCustomPrebuiltIntent",
           "entityName": "prebuiltDomainModelCreateObject",
           "entityType": "PrebuiltDomainModelCreateObject"
         }
-      }
+      ]
     },
     "customprebuiltmodels": {
       "className": "Customprebuiltmodels",
       "category": "models",
       "url": "/apps/{appId}/versions/{versionId}/customprebuiltmodels",
-      "operations": {
-        "get:getCustomPrebuiltDomainModelsList": {
+      "operations": [
+        {
           "method": "get",
           "methodAlias": "get",
-          "command": "models get customprebuiltmodels",
+          "command": "luis models get customprebuiltmodels",
           "pathFragment": "",
           "description": "Gets all custom prebuilt models information of this application",
           "name": "getCustomPrebuiltDomainModelsList"
         }
-      }
+      ]
     },
     "entities": {
       "className": "Entities",
       "category": "models",
       "url": "/apps/{appId}/versions/{versionId}/entities",
-      "operations": {
-        "list:getVersionEntityList": {
+      "operations": [
+        {
           "method": "get",
           "methodAlias": "list",
-          "command": "models list entities --skip <integer> --take <integer>",
+          "command": "luis models list entities --skip <integer> --take <integer>",
           "pathFragment": "",
           "params": [
             {
@@ -1007,20 +1163,20 @@
           "description": "Gets information about the entity models.",
           "name": "getVersionEntityList"
         },
-        "post:createEntity": {
+        {
           "method": "post",
           "methodAlias": "post",
-          "command": "models post entities --in modelCreateObject.json ",
+          "command": "luis models post entities --in modelCreateObject.json ",
           "pathFragment": "",
           "description": "Adds an entity extractor to the application.",
           "name": "createEntity",
           "entityName": "modelCreateObject",
           "entityType": "ModelCreateObject"
         },
-        "delete:deleteEntity": {
+        {
           "method": "delete",
           "methodAlias": "delete",
-          "command": "models delete entities --entityId <string>",
+          "command": "luis models delete entities --entityId <string>",
           "pathFragment": "/{entityId}",
           "params": [
             {
@@ -1034,10 +1190,10 @@
           "description": "Deletes an entity extractor from the application.",
           "name": "deleteEntity"
         },
-        "put:renameEntity": {
+        {
           "method": "put",
           "methodAlias": "put",
-          "command": "models put entities --in modelUpdateObject.json  --entityId <string>",
+          "command": "luis models put entities --in modelUpdateObject.json  --entityId <string>",
           "pathFragment": "/{entityId}",
           "params": [
             {
@@ -1053,10 +1209,10 @@
           "entityName": "modelUpdateObject",
           "entityType": "ModelUpdateObject"
         },
-        "get:getEntity": {
+        {
           "method": "get",
           "methodAlias": "get",
-          "command": "models get entities --entityId <string>",
+          "command": "luis models get entities --entityId <string>",
           "pathFragment": "/{entityId}",
           "params": [
             {
@@ -1070,10 +1226,10 @@
           "description": "Gets information about the entity model.",
           "name": "getEntity"
         },
-        "list:suggest:suggestEndpointQueriesForEntities": {
+        {
           "method": "get",
           "methodAlias": "list",
-          "command": "models list entities suggest  --entityId <string> --take <integer>",
+          "command": "luis models list entities suggest  --entityId <string> --take <integer>",
           "pathFragment": "/{entityId}/suggest",
           "params": [
             {
@@ -1095,19 +1251,20 @@
             }
           ],
           "description": "Suggests examples that would improve the accuracy of the entity model.",
+          "subTarget": "suggest",
           "name": "suggestEndpointQueriesForEntities"
         }
-      }
+      ]
     },
     "hierarchicalentities": {
       "className": "Hierarchicalentities",
       "category": "models",
       "url": "/apps/{appId}/versions/{versionId}/hierarchicalentities",
-      "operations": {
-        "list:getVersionHierarchicalEntityList": {
+      "operations": [
+        {
           "method": "get",
           "methodAlias": "list",
-          "command": "models list hierarchicalentities --skip <integer> --take <integer>",
+          "command": "luis models list hierarchicalentities --skip <integer> --take <integer>",
           "pathFragment": "",
           "params": [
             {
@@ -1134,20 +1291,20 @@
           "description": "Gets information about the hierarchical entity models.",
           "name": "getVersionHierarchicalEntityList"
         },
-        "post:createHierarchicalEntity": {
+        {
           "method": "post",
           "methodAlias": "post",
-          "command": "models post hierarchicalentities --in hierarchicalModelCreateObject.json ",
+          "command": "luis models post hierarchicalentities --in hierarchicalModelCreateObject.json ",
           "pathFragment": "",
           "description": "Adds a hierarchical entity extractor to the application version.",
           "name": "createHierarchicalEntity",
           "entityName": "hierarchicalModelCreateObject",
           "entityType": "HierarchicalModelCreateObject"
         },
-        "delete:deleteHierarchicalEntity": {
+        {
           "method": "delete",
           "methodAlias": "delete",
-          "command": "models delete hierarchicalentities --hEntityId <string>",
+          "command": "luis models delete hierarchicalentities --hEntityId <string>",
           "pathFragment": "/{hEntityId}",
           "params": [
             {
@@ -1161,10 +1318,10 @@
           "description": "Deletes a hierarchical entity extractor from the application version.",
           "name": "deleteHierarchicalEntity"
         },
-        "put:updateHierarchicalEntity": {
+        {
           "method": "put",
           "methodAlias": "put",
-          "command": "models put hierarchicalentities --in hierarchicalModelUpdateObject.json  --hEntityId <string>",
+          "command": "luis models put hierarchicalentities --in hierarchicalModelUpdateObject.json  --hEntityId <string>",
           "pathFragment": "/{hEntityId}",
           "params": [
             {
@@ -1180,10 +1337,10 @@
           "entityName": "hierarchicalModelUpdateObject",
           "entityType": "HierarchicalModelUpdateObject"
         },
-        "get:getHierarchicalEntity": {
+        {
           "method": "get",
           "methodAlias": "get",
-          "command": "models get hierarchicalentities --hEntityId <string>",
+          "command": "luis models get hierarchicalentities --hEntityId <string>",
           "pathFragment": "/{hEntityId}",
           "params": [
             {
@@ -1197,10 +1354,10 @@
           "description": "Gets information about the hierarchical entity model.",
           "name": "getHierarchicalEntity"
         },
-        "post:children:createHierarchicalChildEntity": {
+        {
           "method": "post",
           "methodAlias": "post",
-          "command": "models post hierarchicalentities children  --in body.json  --hEntityId <string>",
+          "command": "luis models post hierarchicalentities children  --in body.json  --hEntityId <string>",
           "pathFragment": "/{hEntityId}/children",
           "params": [
             {
@@ -1212,14 +1369,15 @@
             }
           ],
           "description": "Creates a single child in an existing hierarchical entity model.",
+          "subTarget": "children",
           "name": "createHierarchicalChildEntity ",
           "entityName": "body",
           "entityType": ""
         },
-        "delete:children:deleteHierarchicalChildEntity": {
+        {
           "method": "delete",
           "methodAlias": "delete",
-          "command": "models delete hierarchicalentities children  --hEntityId <string> --hChildId <string>",
+          "command": "luis models delete hierarchicalentities children  --hEntityId <string> --hChildId <string>",
           "pathFragment": "/{hEntityId}/children/{hChildId}",
           "params": [
             {
@@ -1238,12 +1396,13 @@
             }
           ],
           "description": "Deletes a hierarchical entity extractor child from the application.",
+          "subTarget": "children",
           "name": "deleteHierarchicalChildEntity "
         },
-        "put:children:updateHierarchicalChildEntity": {
+        {
           "method": "put",
           "methodAlias": "put",
-          "command": "models put hierarchicalentities children  --in body.json  --hEntityId <string> --hChildId <string>",
+          "command": "luis models put hierarchicalentities children  --in body.json  --hEntityId <string> --hChildId <string>",
           "pathFragment": "/{hEntityId}/children/{hChildId}",
           "params": [
             {
@@ -1262,14 +1421,15 @@
             }
           ],
           "description": "Renames a single child in an existing hierarchical entity model.",
+          "subTarget": "children",
           "name": "updateHierarchicalChildEntity ",
           "entityName": "body",
           "entityType": ""
         },
-        "get:children:getHierarchicalChildEntity": {
+        {
           "method": "get",
           "methodAlias": "get",
-          "command": "models get hierarchicalentities children  --hEntityId <string> --hChildId <string>",
+          "command": "luis models get hierarchicalentities children  --hEntityId <string> --hChildId <string>",
           "pathFragment": "/{hEntityId}/children/{hChildId}",
           "params": [
             {
@@ -1288,19 +1448,20 @@
             }
           ],
           "description": "Gets information about the hierarchical entity child model.",
+          "subTarget": "children",
           "name": "getHierarchicalChildEntity"
         }
-      }
+      ]
     },
     "intents": {
       "className": "Intents",
       "category": "models",
       "url": "/apps/{appId}/versions/{versionId}/intents",
-      "operations": {
-        "list:getVersionIntentList": {
+      "operations": [
+        {
           "method": "get",
           "methodAlias": "list",
-          "command": "models list intents --skip <integer> --take <integer>",
+          "command": "luis models list intents --skip <integer> --take <integer>",
           "pathFragment": "",
           "params": [
             {
@@ -1327,20 +1488,20 @@
           "description": "Gets information about the intent models.",
           "name": "getVersionIntentList"
         },
-        "post:createIntent": {
+        {
           "method": "post",
           "methodAlias": "post",
-          "command": "models post intents --in modelCreateObject.json ",
+          "command": "luis models post intents --in modelCreateObject.json ",
           "pathFragment": "",
           "description": "Adds an intent classifier to the application.",
           "name": "createIntent",
           "entityName": "modelCreateObject",
           "entityType": "ModelCreateObject"
         },
-        "delete:deleteIntent": {
+        {
           "method": "delete",
           "methodAlias": "delete",
-          "command": "models delete intents --intentId <string>",
+          "command": "luis models delete intents --intentId <string>",
           "pathFragment": "/{intentId}",
           "params": [
             {
@@ -1354,10 +1515,10 @@
           "description": "Deletes an intent classifier from the application.",
           "name": "deleteIntent"
         },
-        "put:renameIntent": {
+        {
           "method": "put",
           "methodAlias": "put",
-          "command": "models put intents --in modelUpdateObject.json  --intentId <string>",
+          "command": "luis models put intents --in modelUpdateObject.json  --intentId <string>",
           "pathFragment": "/{intentId}",
           "params": [
             {
@@ -1373,10 +1534,10 @@
           "entityName": "modelUpdateObject",
           "entityType": "ModelUpdateObject"
         },
-        "get:getIntent": {
+        {
           "method": "get",
           "methodAlias": "get",
-          "command": "models get intents --intentId <string>",
+          "command": "luis models get intents --intentId <string>",
           "pathFragment": "/{intentId}",
           "params": [
             {
@@ -1390,10 +1551,10 @@
           "description": "Gets information about the intent model.",
           "name": "getIntent"
         },
-        "list:suggest:suggestEndpointQueriesForIntents": {
+        {
           "method": "get",
           "methodAlias": "list",
-          "command": "models list intents suggest  --intentId <string> --take <integer>",
+          "command": "luis models list intents suggest  --intentId <string> --take <integer>",
           "pathFragment": "/{intentId}/suggest",
           "params": [
             {
@@ -1415,34 +1576,35 @@
             }
           ],
           "description": "Suggests examples that would improve the accuracy of the intent model.",
+          "subTarget": "suggest",
           "name": "suggestEndpointQueriesForIntents"
         }
-      }
+      ]
     },
     "listprebuilts": {
       "className": "Listprebuilts",
       "category": "models",
       "url": "/apps/{appId}/versions/{versionId}/listprebuilts",
-      "operations": {
-        "get:getAvailablePrebuiltEntityList": {
+      "operations": [
+        {
           "method": "get",
           "methodAlias": "get",
-          "command": "models get listprebuilts",
+          "command": "luis models get listprebuilts",
           "pathFragment": "",
           "description": "Gets all the available prebuilt entities for the application based on the application's culture.",
           "name": "getAvailablePrebuiltEntityList"
         }
-      }
+      ]
     },
     "models": {
       "className": "Models",
       "category": "models",
       "url": "/apps/{appId}/versions/{versionId}/models",
-      "operations": {
-        "list:getVersionModelList": {
+      "operations": [
+        {
           "method": "get",
           "methodAlias": "list",
-          "command": "models list --skip <integer> --take <integer>",
+          "command": "luis models list --skip <integer> --take <integer>",
           "pathFragment": "",
           "params": [
             {
@@ -1469,17 +1631,17 @@
           "description": "Gets information about the application version models.",
           "name": "getVersionModelList"
         }
-      }
+      ]
     },
     "prebuilts": {
       "className": "Prebuilts",
       "category": "models",
       "url": "/apps/{appId}/versions/{versionId}/prebuilts",
-      "operations": {
-        "list:getVersionPrebuiltEntityList": {
+      "operations": [
+        {
           "method": "get",
           "methodAlias": "list",
-          "command": "models list prebuilts --skip <integer> --take <integer>",
+          "command": "luis models list prebuilts --skip <integer> --take <integer>",
           "pathFragment": "",
           "params": [
             {
@@ -1506,20 +1668,20 @@
           "description": "Gets information about the prebuilt entity models.",
           "name": "getVersionPrebuiltEntityList"
         },
-        "post:addPrebuiltEntityList": {
+        {
           "method": "post",
           "methodAlias": "post",
-          "command": "models post prebuilts --in prebuiltExtractorNames.json ",
+          "command": "luis models post prebuilts --in prebuiltExtractorNames.json ",
           "pathFragment": "",
           "description": "Adds a list of prebuilt entity extractors to the application.",
           "name": "addPrebuiltEntityList",
           "entityName": "prebuiltExtractorNames",
           "entityType": "PrebuiltExtractorNames"
         },
-        "delete:deletePrebuiltEntity": {
+        {
           "method": "delete",
           "methodAlias": "delete",
-          "command": "models delete prebuilts --prebuiltId <string>",
+          "command": "luis models delete prebuilts --prebuiltId <string>",
           "pathFragment": "/{prebuiltId}",
           "params": [
             {
@@ -1533,10 +1695,10 @@
           "description": "Deletes a prebuilt entity extractor from the application.",
           "name": "deletePrebuiltEntity"
         },
-        "get:getPrebuiltEntity": {
+        {
           "method": "get",
           "methodAlias": "get",
-          "command": "models get prebuilts --prebuiltId <string>",
+          "command": "luis models get prebuilts --prebuiltId <string>",
           "pathFragment": "/{prebuiltId}",
           "params": [
             {
@@ -1550,7 +1712,7 @@
           "description": "Gets information about the prebuilt entity model.",
           "name": "getPrebuiltEntity"
         }
-      }
+      ]
     }
   },
   "examples": {
@@ -1558,28 +1720,28 @@
       "className": "Example",
       "category": "examples",
       "url": "/apps/{appId}/versions/{versionId}/example",
-      "operations": {
-        "post:addLabel": {
+      "operations": [
+        {
           "method": "post",
           "methodAlias": "post",
-          "command": "examples post example --in exampleLabelObject.json ",
+          "command": "luis examples post example --in exampleLabelObject.json ",
           "pathFragment": "",
           "description": "Adds a labeled example to the application.",
           "name": "addLabel",
           "entityName": "exampleLabelObject",
           "entityType": "ExampleLabelObject"
         }
-      }
+      ]
     },
     "examples": {
       "className": "Examples",
       "category": "examples",
       "url": "/apps/{appId}/versions/{versionId}/examples",
-      "operations": {
-        "list:reviewLabeledExamples": {
+      "operations": [
+        {
           "method": "get",
           "methodAlias": "list",
-          "command": "examples list --skip <integer> --take <integer>",
+          "command": "luis examples list --skip <integer> --take <integer>",
           "pathFragment": "",
           "params": [
             {
@@ -1606,20 +1768,20 @@
           "description": "Returns examples to be reviewed.",
           "name": "reviewLabeledExamples"
         },
-        "post:batchAddLabels": {
+        {
           "method": "post",
           "methodAlias": "post",
-          "command": "examples post --in exampleLabelObjectArray.json ",
+          "command": "luis examples post --in exampleLabelObjectArray.json ",
           "pathFragment": "",
-          "description": "Adds a batch of labeled examples to the specified application. \r\n\r\nThe maximum batch size is 100 items. \r\n\r\nIf the item has the ExampleId and a value between 0 - 99, the returned result will also include the ExampleId. This is helpful if items have errors. \r\n\r\nSome items can pass while others fail. The returned result will indicate each item's status. \r\n",
+          "description": "Adds a batch of labeled examples to the specified application. \n\nThe maximum batch size is 100 items. \n\nIf the item has the ExampleId and a value between 0 - 99, the returned result will also include the ExampleId. This is helpful if items have errors. \n\nSome items can pass while others fail. The returned result will indicate each item's status. \n",
           "name": "batchAddLabels",
           "entityName": "exampleLabelObjectArray",
           "entityType": "ExampleLabelObjectArray"
         },
-        "delete:deleteExampleLabels": {
+        {
           "method": "delete",
           "methodAlias": "delete",
-          "command": "examples delete --exampleId <integer>",
+          "command": "luis examples delete --exampleId <integer>",
           "pathFragment": "/{exampleId}",
           "params": [
             {
@@ -1633,7 +1795,7 @@
           "description": "Deletes the label with the specified ID.",
           "name": "deleteExampleLabels"
         }
-      }
+      ]
     }
   },
   "features": {
@@ -1641,11 +1803,11 @@
       "className": "Features",
       "category": "features",
       "url": "/apps/{appId}/versions/{versionId}/features",
-      "operations": {
-        "list:getVersionFeatures": {
+      "operations": [
+        {
           "method": "get",
           "methodAlias": "list",
-          "command": "features list --skip <integer> --take <integer>",
+          "command": "luis features list --skip <integer> --take <integer>",
           "pathFragment": "",
           "params": [
             {
@@ -1672,17 +1834,17 @@
           "description": "Gets all application version features.",
           "name": "getVersionFeatures"
         }
-      }
+      ]
     },
     "patterns": {
       "className": "Patterns",
       "category": "features",
       "url": "/apps/{appId}/versions/{versionId}/patterns",
-      "operations": {
-        "list:getVersionPatternFeatureList": {
+      "operations": [
+        {
           "method": "get",
           "methodAlias": "list",
-          "command": "features list patterns --skip <integer> --take <integer>",
+          "command": "luis features list patterns --skip <integer> --take <integer>",
           "pathFragment": "",
           "params": [
             {
@@ -1709,20 +1871,20 @@
           "description": "Gets all application version pattern features.",
           "name": "getVersionPatternFeatureList"
         },
-        "post:createPatternFeature": {
+        {
           "method": "post",
           "methodAlias": "post",
-          "command": "features post patterns --in patternCreateObject.json ",
+          "command": "luis features post patterns --in patternCreateObject.json ",
           "pathFragment": "",
           "description": "Creates a new pattern feature.",
           "name": "createPatternFeature",
           "entityName": "patternCreateObject",
           "entityType": "PatternCreateObject"
         },
-        "delete:deletePatternFeature": {
+        {
           "method": "delete",
           "methodAlias": "delete",
-          "command": "features delete patterns --patternId <integer>",
+          "command": "luis features delete patterns --patternId <integer>",
           "pathFragment": "/{patternId}",
           "params": [
             {
@@ -1736,10 +1898,10 @@
           "description": "Deletes a pattern feature from an application version.",
           "name": "deletePatternFeature"
         },
-        "put:updatePatternFeature": {
+        {
           "method": "put",
           "methodAlias": "put",
-          "command": "features put patterns --in patternUpdateObject.json  --patternId <integer>",
+          "command": "luis features put patterns --in patternUpdateObject.json  --patternId <integer>",
           "pathFragment": "/{patternId}",
           "params": [
             {
@@ -1755,10 +1917,10 @@
           "entityName": "patternUpdateObject",
           "entityType": "PatternUpdateObject"
         },
-        "get:getPatternFeatureInfo": {
+        {
           "method": "get",
           "methodAlias": "get",
-          "command": "features get patterns --patternId <integer>",
+          "command": "luis features get patterns --patternId <integer>",
           "pathFragment": "/{patternId}",
           "params": [
             {
@@ -1772,17 +1934,17 @@
           "description": "Gets pattern feature info.",
           "name": "getPatternFeatureInfo"
         }
-      }
+      ]
     },
     "phraselists": {
       "className": "Phraselists",
       "category": "features",
       "url": "/apps/{appId}/versions/{versionId}/phraselists",
-      "operations": {
-        "list:getVersionPhraselistFeaturesList": {
+      "operations": [
+        {
           "method": "get",
           "methodAlias": "list",
-          "command": "features list phraselists --skip <integer> --take <integer>",
+          "command": "luis features list phraselists --skip <integer> --take <integer>",
           "pathFragment": "",
           "params": [
             {
@@ -1809,20 +1971,20 @@
           "description": "Gets all application phraselist features.",
           "name": "getVersionPhraselistFeaturesList"
         },
-        "post:createPhraselistFeature": {
+        {
           "method": "post",
           "methodAlias": "post",
-          "command": "features post phraselists --in phraselistCreateObject.json ",
+          "command": "luis features post phraselists --in phraselistCreateObject.json ",
           "pathFragment": "",
           "description": "Creates a new phraselist feature.",
           "name": "createPhraselistFeature",
           "entityName": "phraselistCreateObject",
           "entityType": "PhraselistCreateObject"
         },
-        "delete:deletePhraselistFeature": {
+        {
           "method": "delete",
           "methodAlias": "delete",
-          "command": "features delete phraselists --phraselistId <integer>",
+          "command": "luis features delete phraselists --phraselistId <integer>",
           "pathFragment": "/{phraselistId}",
           "params": [
             {
@@ -1836,10 +1998,10 @@
           "description": "Deletes a phraselist feature from an application.",
           "name": "deletePhraselistFeature"
         },
-        "put:updatePhraselistFeature": {
+        {
           "method": "put",
           "methodAlias": "put",
-          "command": "features put phraselists --in phraselistUpdateObject.json  --phraselistId <integer>",
+          "command": "luis features put phraselists --in phraselistUpdateObject.json  --phraselistId <integer>",
           "pathFragment": "/{phraselistId}",
           "params": [
             {
@@ -1855,10 +2017,10 @@
           "entityName": "phraselistUpdateObject",
           "entityType": "PhraselistUpdateObject"
         },
-        "get:getPhraselistFeatureInfo": {
+        {
           "method": "get",
           "methodAlias": "get",
-          "command": "features get phraselists --phraselistId <integer>",
+          "command": "luis features get phraselists --phraselistId <integer>",
           "pathFragment": "/{phraselistId}",
           "params": [
             {
@@ -1872,7 +2034,7 @@
           "description": "Gets phraselist feature info.",
           "name": "getPhraselistFeatureInfo"
         }
-      }
+      ]
     }
   },
   "train": {
@@ -1880,24 +2042,24 @@
       "className": "Train",
       "category": "train",
       "url": "/apps/{appId}/versions/{versionId}/train",
-      "operations": {
-        "get:getVersionTrainingStatus": {
+      "operations": [
+        {
           "method": "get",
           "methodAlias": "get",
-          "command": "train get",
+          "command": "luis train get",
           "pathFragment": "",
-          "description": "Gets the training status of all models (intents and entities) for the specified LUIS app. You must <a href=\"https://westus.dev.cognitive.microsoft.com/docs/services/5890b47c39e2bb17b84a55ff/operations/5890b47c39e2bb052c5b9c45\">call the train API</a> to train the LUIS app before you call this API to get training status.\r\n",
+          "description": "Gets the training status of all models (intents and entities) for the specified LUIS app. You must <a href=\"https://westus.dev.cognitive.microsoft.com/docs/services/5890b47c39e2bb17b84a55ff/operations/5890b47c39e2bb052c5b9c45\">call the train API</a> to train the LUIS app before you call this API to get training status.\n",
           "name": "getVersionTrainingStatus"
         },
-        "post:trainApplicationVersion": {
+        {
           "method": "post",
           "methodAlias": "post",
-          "command": "train post",
+          "command": "luis train post",
           "pathFragment": "",
-          "description": "Sends a training request for a version of a specified LUIS app. \r\n\r\nThis POST request initiates a request asynchronously. To determine whether the training request is successful, submit a GET request to get training status.\r\n\r\n* **Note**: The application version is not fully trained unless all the models (intents and entities) are trained successfully or are up to date.\r\n\r\nTo verify training success, get the training status at least once after training is complete.",
+          "description": "Sends a training request for a version of a specified LUIS app. \n\nThis POST request initiates a request asynchronously. To determine whether the training request is successful, submit a GET request to get training status.\n\n* **Note**: The application version is not fully trained unless all the models (intents and entities) are trained successfully or are up to date.\n\nTo verify training success, get the training status at least once after training is complete.",
           "name": "trainApplicationVersion"
         }
-      }
+      ]
     }
   }
 }
