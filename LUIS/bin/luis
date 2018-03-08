@@ -11,6 +11,11 @@ const help = require('../lib/help');
 const luis = require('../lib');
 const {getServiceManifest} = require('../lib/utils/argsUtil');
 
+/**
+ * Entry for the app
+ *
+ * @returns {Promise<void>}
+ */
 async function runProgram() {
     const args = minimist(process.argv.slice(2), {'--': true});
 
@@ -46,6 +51,14 @@ async function runProgram() {
     process.stdout.write(JSON.stringify(result, null, 2));
 }
 
+/**
+ * Walks the user though the creation of the .luisrc
+ * file and writes it to disk. the App and Version IDs
+ * are optional but if omitted, --appId and --versionId
+ * flags may be required for some commands.
+ *
+ * @returns {Promise<*>}
+ */
 async function initializeConfig() {
     process.stdout.write(chalk.cyan.bold('\nThis util will walk you through creating a .luisrc file\n\nPress ^C at any time to quit.\n\n'));
     const questions = [
@@ -91,6 +104,13 @@ async function initializeConfig() {
     return fs.writeJson(path.join(process.cwd(), '.luisrc'), config);
 }
 
+/**
+ * Retrieves the input file to send as
+ * the body of the request.
+ *
+ * @param args
+ * @returns {Promise<*>}
+ */
 async function getFileInput(args) {
     if (typeof args.in !== 'string') {
         return null;
@@ -99,6 +119,12 @@ async function getFileInput(args) {
     return await fs.readJson(path.resolve(args.in));
 }
 
+/**
+ * Provides basic validation of the command arguments.
+ *
+ * @param args
+ * @param serviceManifest
+ */
 function validateArguments(args, serviceManifest) {
     if (!serviceManifest) {
         throw new ReferenceError('The service does not exist');
@@ -123,6 +149,12 @@ function validateArguments(args, serviceManifest) {
     // Note that the ServiceBase will validate params that may be required.
 }
 
+/**
+ * Exits with a non-zero status and prints
+ * the error if present or displays the help
+ *
+ * @param args
+ */
 function exitWithError(args) {
     if (args instanceof Error) {
         process.stdout.write(chalk.red.bold(args + '\n'));
