@@ -24,7 +24,7 @@ class ServiceBase {
         const {endpointBasePath, appId, versionId} = config;
         const tokenizedUrl = endpointBasePath + endpoint + pathFragment;
 
-        params = Object.assign((dataModel || {}), {appId, versionId}, params);
+        params = Object.assign({}, (dataModel || {}), {appId, versionId}, params);
         ServiceBase.validateParams(tokenizedUrl, params);
 
         let URL = insertParametersFromObject(tokenizedUrl, params);

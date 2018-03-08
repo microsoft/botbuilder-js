@@ -5,14 +5,14 @@ const OperationCommandMap = {
     l: 'list',
     list: 'list',
 
-    c: 'post',
-    create: 'post',
+    c: 'create',
+    create: 'create',
 
     p: 'patch',
     patch: 'patch',
 
-    u: 'put',
-    update: 'put',
+    u: 'update',
+    update: 'update',
 
     d: 'delete',
     'delete': 'delete'

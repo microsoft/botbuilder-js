@@ -6,10 +6,10 @@ module.exports = async function luis(config, serviceManifest, args, requestBody)
     Object.defineProperty(ServiceBase.prototype, 'config', {
         value: config, writable: false, configurable: false
     });
-    const {entityType, identifier, identifierPath, operation} = serviceManifest;
+    const {identifier, identifierPath, operation} = serviceManifest;
     let requestBodyDataModel;
     if (requestBody) {
-        requestBodyDataModel = dataModels[entityType].fromJSON(requestBody);
+        requestBodyDataModel = dataModels[operation.entityType].fromJSON(requestBody);
     }
     const service = new api[identifierPath][identifier]();
     const mappedParams = Object.assign(mapParams(operation, args['--']), args);

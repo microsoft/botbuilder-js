@@ -9,6 +9,7 @@ function getServiceManifest(args, includeAllOperations) {
         thisArgs.splice(1, 0, '');
     }
     let [apiGroup, methodAlias, target, subTarget] = thisArgs;
+    methodAlias = OperationCommandMap[methodAlias];
     const {'--': params} = args;
     const category = getCategoryManifest(args);
     const manifestEntry = (category || {})[(target || apiGroup)];

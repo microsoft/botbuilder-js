@@ -85,12 +85,12 @@ function getGeneralHelpContents() {
         {
             head: chalk.bold(` Where ${chalk.cyan('<action>')} is one of the following:`),
             table: [
-                ['get,    -g', 'Retrieves or reads the specified <target> or <subtarget> where applicable'],
-                ['create, -c', 'Creates a new resource at the <target> or <subtarget> where applicable'],
-                ['list,   -l', `Retrieves a list of <target> or <subtarget> ${chalk.cyan.bold('--skip')} and ${chalk.cyan.bold('--take')} pagination arguments are optional`],
-                ['update, -u', 'Updates an existing resource at <target> or <subtarget> where applicable'],
-                ['patch,  -p', 'Updates a partial resource at <target> or <subtarget> where applicable'],
-                ['delete, -d', 'Deletes a resource at <target> or <subtarget> where applicable']
+                ['get,    g', 'Retrieves or reads the specified <target> or <subtarget> where applicable'],
+                ['create, c', 'Creates a new resource at the <target> or <subtarget> where applicable'],
+                ['list,   l', `Retrieves a list of <target> or <subtarget> ${chalk.cyan.bold('--skip')} and ${chalk.cyan.bold('--take')} pagination arguments are optional`],
+                ['update, u', 'Updates an existing resource at <target> or <subtarget> where applicable'],
+                ['patch,  p', 'Updates a partial resource at <target> or <subtarget> where applicable'],
+                ['delete, d', 'Deletes a resource at <target> or <subtarget> where applicable']
             ]
         }
     ];

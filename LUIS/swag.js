@@ -1,6 +1,8 @@
 const swagger = require('./swagger');
 const fs = require('fs-extra');
 const cc = require('camelcase');
+const {OperationCommandMap} = require('./lib/enums/operationCommandMap');
+
 const classTpl = (cfg) => {
     return `const {ServiceBase} = require('../serviceBase');
 class ${cfg.className} extends ServiceBase {
@@ -68,7 +70,7 @@ function findEntity(swaggerOperation) {
 function getMethodAlias(swaggerOperation, method) {
     const {parameters = []} = swaggerOperation;
     if (method !== 'get') {
-        return method;
+        return OperationCommandMap[method];
     }
     const hasSkipOrTake = !!parameters.find(param => /(skip|take)/.test(param.name));
     return hasSkipOrTake ? 'list' : method;
