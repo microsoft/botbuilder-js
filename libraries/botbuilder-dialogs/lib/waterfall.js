@@ -24,31 +24,31 @@ class Waterfall {
     constructor(steps) {
         this.steps = (steps || []).slice(0);
     }
-    begin(context, dialogs, args) {
-        const instance = dialogs.getInstance(context);
+    begin(dc, args) {
+        const instance = dc.instance;
         instance.step = 0;
-        return this.runStep(context, dialogs, args);
+        return this.runStep(dc, args);
     }
-    resume(context, dialogs, result) {
-        const instance = dialogs.getInstance(context);
+    resume(dc, result) {
+        const instance = dc.instance;
         instance.step += 1;
-        return this.runStep(context, dialogs, result);
+        return this.runStep(dc, result);
     }
-    runStep(context, dialogs, result) {
+    runStep(dc, result) {
         try {
-            const instance = dialogs.getInstance(context);
+            const instance = dc.instance;
             const step = instance.step;
             if (step >= 0 && step < this.steps.length) {
                 // Execute step
-                return Promise.resolve(this.steps[step](context, result, (r) => {
+                return Promise.resolve(this.steps[step](dc, result, (r) => {
                     // Skip to next step
                     instance.step += 1;
-                    return this.runStep(context, dialogs, r);
+                    return this.runStep(dc, r);
                 }));
             }
             else {
                 // End of waterfall so just return to parent
-                return dialogs.end(context);
+                return dc.end();
             }
         }
         catch (err) {

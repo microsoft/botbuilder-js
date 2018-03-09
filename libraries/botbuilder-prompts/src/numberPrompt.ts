@@ -40,7 +40,7 @@ export function createNumberPrompt<O = number>(validator?: PromptValidator<numbe
         recognize: function recognize(context) {
             const request = context.request || {};
             const utterance = request.text || '';
-            const locale =  request.locale || defaultLocale || 'en-use';
+            const locale =  request.locale || defaultLocale || 'en-us';
             const results = Recognizers.recognizeNumber(utterance, locale);
             const value = results.length > 0 && results[0].resolution ? parseFloat(results[0].resolution.value) : undefined;
             return Promise.resolve(validator ? validator(context, value) : value as any);

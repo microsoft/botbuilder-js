@@ -5,38 +5,18 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotContext, Activity } from 'botbuilder';
-import { Dialog } from '../dialog';
-import { DialogSet } from '../dialogSet';
-import { PromptOptions, PromptValidator } from './prompt';
-import { Choice, ChoiceFactoryOptions, FindChoicesOptions, FoundChoice } from 'botbuilder-choices';
-/**
- * Controls the way that choices for a `ChoicePrompt` or yes/no options for a `ConfirmPrompt` are
- * presented to a user.
- */
-export declare enum ListStyle {
-    /** Don't include any choices for prompt. */
-    none = 0,
-    /** Automatically select the appropriate style for the current channel. */
-    auto = 1,
-    /** Add choices to prompt as an inline list. */
-    inline = 2,
-    /** Add choices to prompt as a numbered list. */
-    list = 3,
-    /** Add choices to prompt as suggested actions. */
-    suggestedAction = 4,
-}
+import { BotContext } from 'botbuilder';
+import { DialogContext } from '../dialogContext';
+import { Prompt, PromptOptions, PromptValidator } from './prompt';
+import * as prompts from 'botbuilder-prompts';
 /** Additional options that can be used to configure a `ChoicePrompt`. */
 export interface ChoicePromptOptions extends PromptOptions {
     /** List of choices to recognize. */
-    choices?: (string | Choice)[];
-    /** Preferred style of the choices sent to the user. The default value is `ListStyle.auto`. */
-    style?: ListStyle;
+    choices?: (string | prompts.Choice)[];
 }
 /**
- * Prompts a user to make a selection from a list of choices. By default the prompt will return to
- * the calling dialog a `FoundChoice` for the choice the user selected. This can be overridden
- * using a custom `PromptValidator`.
+ * Prompts a user to confirm something with a yes/no response. By default the prompt will return
+ * to the calling dialog a `boolean` representing the users selection.
  *
  * **Example usage:**
  *
@@ -48,22 +28,18 @@ export interface ChoicePromptOptions extends PromptOptions {
  * dialogs.add('choicePrompt', new ChoicePrompt());
  *
  * dialogs.add('choiceDemo', [
- *      function (context) {
- *          return dialogs.prompt(context, 'choicePrompt', `choice: select a color`, ['red', 'green', 'blue']);
+ *      function (dc) {
+ *          return dc.prompt('choicePrompt', `choice: select a color`, ['red', 'green', 'blue']);
  *      },
- *      function (context, choice: FoundChoice) {
- *          context.reply(`Recognized choice: ${JSON.stringify(choice)}`);
- *          return dialogs.end(context);
+ *      function (dc, choice) {
+ *          dc.batch.reply(`Recognized choice: ${JSON.stringify(choice)}`);
+ *          return dc.end();
  *      }
  * ]);
  * ```
  */
-export declare class ChoicePrompt<C extends BotContext> implements Dialog<C> {
-    private validator;
-    /** Additional options passed to the `ChoiceStyler` and used to tweak the style of choices rendered to the user. */
-    readonly stylerOptions: ChoiceFactoryOptions;
-    /** Additional options passed to the `recognizeChoices()` function. */
-    readonly recognizerOptions: FindChoicesOptions;
+export declare class ChoicePrompt<C extends BotContext> extends Prompt<C, prompts.FoundChoice> {
+    private prompt;
     /**
      * Creates a new instance of the prompt.
      *
@@ -72,29 +48,26 @@ export declare class ChoicePrompt<C extends BotContext> implements Dialog<C> {
      * ```JavaScript
      * dialogs.add('choicePrompt', new ChoicePrompt());
      * ```
-     * @param validator (Optional) validator that will be called each time the user responds to the prompt.
+     * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
+     * @param defaultLocale (Optional) locale to use if `dc.context.request.locale` not specified. Defaults to a value of `en-us`.
      */
-    constructor(validator?: PromptValidator<C, FoundChoice | undefined> | undefined);
-    begin(context: C, dialogs: DialogSet<C>, options: ChoicePromptOptions): Promise<void>;
-    continue(context: C, dialogs: DialogSet<C>): Promise<void>;
-    private sendChoicePrompt(context, dialogs, prompt, speak?);
+    constructor(validator?: PromptValidator<C, prompts.FoundChoice>, defaultLocale?: string);
+    /**
+     * Sets additional options passed to the `ChoiceFactory` and used to tweak the style of choices
+     * rendered to the user.
+     * @param options Additional options to set.
+     */
+    choiceOptions(options: prompts.ChoiceFactoryOptions): this;
+    /**
+     * Sets additional options passed to the `recognizeChoices()` function.
+     * @param options Additional options to set.
+     */
+    recognizerOptions(options: prompts.FindChoicesOptions): this;
+    /**
+     * Sets the style of the choice list rendered to the user when prompting.
+     * @param listStyle Type of list to render to to user. Defaults to `ListStyle.auto`.
+     */
+    style(listStyle: prompts.ListStyle): this;
+    protected onPrompt(dc: DialogContext<C>, options: ChoicePromptOptions, isRetry: boolean): Promise<void>;
+    protected onRecognize(dc: DialogContext<C>, options: ChoicePromptOptions): Promise<prompts.FoundChoice | undefined>;
 }
-/**
- * Helper function to format a choice prompt for a given `ListStyle`. An activity will be returned
- * that can then be sent to the user.
- *
- * **Example usage:**
- *
- * ```JavaScript
- * const { formatChoicePrompt } = require('botbuilder-dialogs');
- *
- * context.reply(formatChoicePrompt(context, ['red', 'green', 'blue'], `Select a color`));
- * ```
- * @param channelOrContext Context for the current turn of conversation with the user or the ID of a channel. This is used when `style == ListStyle.auto`.
- * @param choices Array of choices being prompted for.
- * @param text (Optional) prompt text to show the user along with the options.
- * @param speak (Optional) SSML to speak to the user on channels like Cortana. The messages `inputHint` will be automatically set to `InputHints.expectingInput`.
- * @param options (Optional) additional choice styler options used to customize the rendering of the prompts choice list.
- * @param style (Optional) list style to use when rendering prompt. Defaults to `ListStyle.auto`.
- */
-export declare function formatChoicePrompt(channelOrContext: string | BotContext, choices: (string | Choice)[], text?: string, speak?: string, options?: ChoiceFactoryOptions, style?: ListStyle): Partial<Activity>;

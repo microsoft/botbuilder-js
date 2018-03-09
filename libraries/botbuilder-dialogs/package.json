@@ -21,7 +21,7 @@
   "typings": "./lib/index.d.ts",
   "dependencies": {
     "botbuilder": "4.0.0-m2.0",
-    "botbuilder-choices": "4.0.0-m2.0",
+    "botbuilder-prompts": "4.0.0-m2.0",
     "@microsoft/recognizers-text-suite": "^1.0.0"
   },
   "devDependencies": {

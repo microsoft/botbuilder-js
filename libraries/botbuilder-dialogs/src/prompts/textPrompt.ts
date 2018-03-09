@@ -6,9 +6,9 @@
  * Licensed under the MIT License.
  */
 import { BotContext } from 'botbuilder';
-import { Dialog } from '../dialog';
-import { DialogSet } from '../dialogSet';
-import { PromptOptions, PromptValidator, sendPrompt } from './prompt';
+import { DialogContext } from '../dialogContext';
+import { Prompt, PromptOptions, PromptValidator } from './prompt';
+import * as prompts from 'botbuilder-prompts';
 
 /**
  * Prompts a user to enter some text. By default the prompt will return to the calling 
@@ -24,56 +24,51 @@ import { PromptOptions, PromptValidator, sendPrompt } from './prompt';
  * dialogs.add('textPrompt', new TextPrompt());
  * 
  * dialogs.add('textDemo', [
- *      function (context) {
- *          return dialogs.prompt(context, 'textPrompt', `text: enter some text`);
+ *      function (dc) {
+ *          return dc.prompt('textPrompt', `text: enter some text`);
  *      },
- *      function (context, value) {
- *          context.reply(`Recognized value: ${value}`);
- *          return dialogs.end(context);
+ *      function (dc, value) {
+ *          dc.batch.reply(`Recognized value: ${value}`);
+ *          return dc.end();
  *      }
  * ]);
  * ```
  */
-export class TextPrompt<C extends BotContext> implements Dialog<C> {
+export class TextPrompt<C extends BotContext> extends Prompt<C, string> {
+    private prompt: prompts.TextPrompt;
+
     /**
      * Creates a new instance of the prompt.
      * 
      * **Example usage:**
      * 
      * ```JavaScript
-     * dialogs.add('titlePrompt', new TextPrompt((context, value) => {
+     * dialogs.add('titlePrompt', new TextPrompt((dc, value) => {
      *      if (value.length < 3) {
-     *          context.reply(`Title should be at least 3 characters long.`);
-     *          return Promise.resolve();
+     *          dc.batch.reply(`Title should be at least 3 characters long.`);
+     *          return undefined;
      *      } else {
-     *          return dialogs.end(context, value.trim());
+     *          return value.trim();
      *      }
      * }));
      * ```
-     * @param validator (Optional) validator that will be called each time the user responds to the prompt.
+     * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.  
      */
-    constructor(private validator?: PromptValidator<C, string>) {}
+    constructor(validator?: PromptValidator<C, string>) {
+        super(validator);
+        this.prompt = prompts.createTextPrompt(); 
+    }
 
-    public begin(context: C, dialogs: DialogSet<C>, options: PromptOptions): Promise<void> {
-        // Persist options
-        const instance = dialogs.getInstance<PromptOptions>(context);
-        instance.state = options || {};
-
-        // Send initial prompt
-        if (instance.state.prompt) { 
-            return sendPrompt(context, instance.state.prompt, instance.state.speak); 
+    protected onPrompt(dc: DialogContext<C>, options: PromptOptions, isRetry: boolean): Promise<void> {
+        if (isRetry && options.retryPrompt) {
+            return this.prompt.prompt(dc.context, options.retryPrompt, options.retrySpeak);
+        } else if (options.prompt) {
+            return this.prompt.prompt(dc.context, options.prompt, options.speak);
         }
         return Promise.resolve();
     }
 
-    public continue(context: C, dialogs: DialogSet<C>): Promise<void> {
-        // Recognize value and call validator
-        const utterance = context.request && context.request.text ? context.request.text : '';
-        if (this.validator) {
-            return Promise.resolve(this.validator(context, utterance, dialogs));
-        } else {
-            // Default behavior is to just return recognized value
-            return dialogs.end(context, utterance);
-        }
+    protected onRecognize(dc: DialogContext<C>, options: PromptOptions): Promise<string|undefined> {
+        return this.prompt.recognize(dc.context);
     }
 }

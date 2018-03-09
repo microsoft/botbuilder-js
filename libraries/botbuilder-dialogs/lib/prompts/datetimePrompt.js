@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const prompt_1 = require("./prompt");
-const Recognizers = require("@microsoft/recognizers-text-date-time");
+const prompts = require("botbuilder-prompts");
 /**
  * Prompts a user to enter a datetime expression. By default the prompt will return to the
  * calling dialog a `FoundDatetime[]` but this can be overridden using a custom `PromptValidator`.
@@ -16,76 +16,54 @@ const Recognizers = require("@microsoft/recognizers-text-date-time");
  * dialogs.add('datetimePrompt', new DatetimePrompt());
  *
  * dialogs.add('datetimeDemo', [
- *      function (context) {
- *          return dialogs.prompt(context, 'datetimePrompt', `datetime: enter a datetime`);
+ *      function (dc) {
+ *          return dc.prompt('datetimePrompt', `datetime: enter a datetime`);
  *      },
- *      function (context, values) {
- *          context.reply(`Recognized values: ${JSON.stringify(values)}`);
- *          return dialogs.end(context);
+ *      function (dc, values) {
+ *          dc.batch.reply(`Recognized values: ${JSON.stringify(values)}`);
+ *          return dc.end();
  *      }
  * ]);
  * ```
  */
-class DatetimePrompt {
+class DatetimePrompt extends prompt_1.Prompt {
     /**
      * Creates a new instance of the prompt.
      *
      * **Example usage:**
      *
      * ```JavaScript
-     * dialogs.add('timePrompt', new DatetimePrompt((context, values) => {
+     * dialogs.add('timePrompt', new DatetimePrompt((dc, values) => {
      *      try {
      *          if (values.length < 0) { throw new Error('missing time') }
      *          if (values[0].type !== 'datetime') { throw new Error('unsupported type') }
      *          const value = new Date(values[0].value);
      *          if (value.getTime() < new Date().getTime()) { throw new Error('in the past') }
-     *          return dialogs.end(context, value);
+     *          return value;
      *      } catch (err) {
-     *          context.reply(`Please enter a valid time in the future like "tomorrow at 9am" or say "cancel".`);
-     *          return Promise.resolve();
+     *          dc.batch.reply(`Invalid time. Answer with a time in the future like "tomorrow at 9am" or say "cancel".`);
+     *          return undefined;
      *      }
      * }));
      * ```
-     * @param validator (Optional) validator that will be called each time the user responds to the prompt.
+     * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
+     * @param defaultLocale (Optional) locale to use if `dc.context.request.locale` not specified. Defaults to a value of `en-us`.
      */
-    constructor(validator) {
-        this.validator = validator;
+    constructor(validator, defaultLocale) {
+        super(validator);
+        this.prompt = prompts.createDatetimePrompt(undefined, defaultLocale);
     }
-    begin(context, dialogs, options) {
-        // Persist options
-        const instance = dialogs.getInstance(context);
-        instance.state = options || {};
-        // Send initial prompt
-        if (instance.state.prompt) {
-            return prompt_1.sendPrompt(context, instance.state.prompt, instance.state.speak);
+    onPrompt(dc, options, isRetry) {
+        if (isRetry && options.retryPrompt) {
+            return this.prompt.prompt(dc.context, options.retryPrompt, options.retrySpeak);
+        }
+        else if (options.prompt) {
+            return this.prompt.prompt(dc.context, options.prompt, options.speak);
         }
         return Promise.resolve();
     }
-    continue(context, dialogs) {
-        // Recognize value
-        const options = dialogs.getInstance(context).state;
-        const utterance = context.request && context.request.text ? context.request.text : '';
-        const results = Recognizers.recognizeDateTime(utterance, 'en-us');
-        const value = results.length > 0 && results[0].resolution ? (results[0].resolution.values || []) : [];
-        if (this.validator) {
-            // Call validator for further processing
-            return Promise.resolve(this.validator(context, value, dialogs));
-        }
-        else if (value.length > 0) {
-            // Return recognized value
-            return dialogs.end(context, value);
-        }
-        else {
-            if (options.retryPrompt) {
-                // Send retry prompt to user
-                return prompt_1.sendPrompt(context, options.retryPrompt, options.retrySpeak);
-            }
-            else if (options.prompt) {
-                // Send original prompt to user
-                return prompt_1.sendPrompt(context, options.prompt, options.speak);
-            }
-            return Promise.resolve();
-        }
+    onRecognize(dc, options) {
+        return this.prompt.recognize(dc.context);
     }
 }
 exports.DatetimePrompt = DatetimePrompt;

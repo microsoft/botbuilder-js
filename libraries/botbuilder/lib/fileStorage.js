@@ -59,7 +59,7 @@ class FileStorage {
                 const p = parseFile(filePath).then((old) => {
                     if (old === undefined || changes[key].eTag === '*' || old.eTag === changes[key].eTag) {
                         const newObj = Object.assign({}, changes[key]);
-                        newObj.eTag = (parseInt(newObj.eTag || '0') + 1).toString();
+                        newObj.eTag = (FileStorage.nextTag++).toString();
                         return fs.writeTextFile(filePath, JSON.stringify(newObj));
                     }
                     else {
@@ -124,6 +124,7 @@ class FileStorage {
         return hash;
     }
 }
+FileStorage.nextTag = 0;
 exports.FileStorage = FileStorage;
 function parseFile(filePath) {
     return fs.exists(filePath)

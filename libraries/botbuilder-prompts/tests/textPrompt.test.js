@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { Bot, TestAdapter } = require('botbuilder');
+const { TestAdapter } = require('botbuilder');
 const { FromPatch } = require('../lib');
 
 describe('TextPrompt', function() {

@@ -5,8 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.  
  * Licensed under the MIT License.
  */
-import { Promiseable, Activity, Attachment, BotContext, BatchOutput, ActivityTypes, InputHints } from 'botbuilder';
+import { Promiseable, Activity, Attachment, BotContext } from 'botbuilder';
 import { PromptValidator } from './textPrompt';
+import { sendPrompt } from './internal';
 
 /** Prompts the user to upload one or more attachments. */
 export interface AttachmentPrompt<O = Attachment[]> {
@@ -32,11 +33,7 @@ export interface AttachmentPrompt<O = Attachment[]> {
 export function createAttachmentPrompt<O = Attachment[]>(validator?: PromptValidator<Attachment[], O>): AttachmentPrompt<O> {
     return {
         prompt: function prompt(context, prompt, speak) {
-            const msg: Partial<Activity> = typeof prompt === 'string' ? { type: 'message', text: prompt } : Object.assign({}, prompt);
-            if (speak) { msg.speak = speak }
-            if (!msg.inputHint) { msg.inputHint = 'expectingInput' }
-            context.responses.push(msg);
-            return Promise.resolve(); 
+            return sendPrompt(context, prompt, speak);
         },
         recognize: function recognize(context) {
             const values = context.request ? context.request.attachments : undefined;

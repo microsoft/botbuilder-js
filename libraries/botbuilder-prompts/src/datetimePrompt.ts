@@ -63,7 +63,7 @@ export function createDatetimePrompt<O = FoundDatetime[]>(validator?: PromptVali
         recognize: function recognize(context) {
             const request = context.request || {};
             const utterance = request.text || '';
-            const locale =  request.locale || defaultLocale || 'en-use';
+            const locale =  request.locale || defaultLocale || 'en-us';
             const results = Recognizers.recognizeDateTime(utterance, locale);
             const values = results.length > 0 && results[0].resolution ? results[0].resolution.values : undefined;
             return Promise.resolve(validator ? validator(context, values) : values as any);

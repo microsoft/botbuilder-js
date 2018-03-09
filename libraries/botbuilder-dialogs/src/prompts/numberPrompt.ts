@@ -6,10 +6,9 @@
  * Licensed under the MIT License.
  */
 import { BotContext } from 'botbuilder';
-import { Dialog } from '../dialog';
-import { DialogSet } from '../dialogSet';
-import { PromptOptions, PromptValidator, sendPrompt } from './prompt';
-import * as Recognizers from '@microsoft/recognizers-text-number';
+import { DialogContext } from '../dialogContext';
+import { Prompt, PromptOptions, PromptValidator } from './prompt';
+import * as prompts from 'botbuilder-prompts';
 
 /**
  * Prompts a user to enter a number. By default the prompt will return to the calling dialog 
@@ -25,69 +24,54 @@ import * as Recognizers from '@microsoft/recognizers-text-number';
  * dialogs.add('numberPrompt', new NumberPrompt());
  * 
  * dialogs.add('numberDemo', [
- *      function (context) {
- *          return dialogs.prompt(context, 'numberPrompt', `number: enter a number`);
+ *      function (dc) {
+ *          return dc.prompt('numberPrompt', `number: enter a number`);
  *      },
- *      function (context, value) {
- *          context.reply(`Recognized value: ${value}`);
- *          return dialogs.end(context);
+ *      function (dc, value) {
+ *          dc.batch.reply(`Recognized value: ${value}`);
+ *          return dc.end();
  *      }
  * ]);
  * ```
  */
-export class NumberPrompt<C extends BotContext> implements Dialog<C> {
+export class NumberPrompt<C extends BotContext> extends Prompt<C, number> {
+    private prompt: prompts.NumberPrompt;
+
     /**
      * Creates a new instance of the prompt.
      * 
      * **Example usage:**
      * 
      * ```JavaScript
-     * dialogs.add('agePrompt', new NumberPrompt((context, value) => {
+     * dialogs.add('agePrompt', new NumberPrompt((dc, value) => {
      *      if (value === undefined || value < 1 || value > 110) {
-     *          context.reply(`Please enter a valid age between 1 and 110.`);
-     *          return Promise.resolve();
+     *          dc.batch.reply(`Invalid age. Only ages between 1 and 110 are allowed.`);
+     *          return undefined;
      *      } else {
-     *          return dialogs.end(context, value);
+     *          return value;
      *      }
      * }));
      * ```
-     * @param validator (Optional) validator that will be called each time the user responds to the prompt.
+     * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.  
+     * @param defaultLocale (Optional) locale to use if `dc.context.request.locale` not specified. Defaults to a value of `en-us`.
      */
-    constructor(private validator?: PromptValidator<C, number|undefined>) {}
+    constructor(validator?: PromptValidator<C, number>, defaultLocale?: string) {
+        super(validator);
+        this.prompt = prompts.createNumberPrompt(undefined, defaultLocale); 
+    }
 
-    public begin(context: C, dialogs: DialogSet<C>, options: PromptOptions): Promise<void> {
-        // Persist options
-        const instance = dialogs.getInstance<PromptOptions>(context);
-        instance.state = options || {};
-
-        // Send initial prompt
-        if (instance.state.prompt) { 
-            return sendPrompt(context, instance.state.prompt, instance.state.speak); 
+    protected onPrompt(dc: DialogContext<C>, options: PromptOptions, isRetry: boolean): Promise<void> {
+        if (isRetry && options.retryPrompt) {
+            return this.prompt.prompt(dc.context, options.retryPrompt, options.retrySpeak);
+        } else if (options.prompt) {
+            return this.prompt.prompt(dc.context, options.prompt, options.speak);
         }
         return Promise.resolve();
     }
 
-    public continue(context: C, dialogs: DialogSet<C>): Promise<void> {
-        // Recognize value
-        const options = dialogs.getInstance<PromptOptions>(context).state;
-        const utterance = context.request && context.request.text ? context.request.text : '';
-        const results = Recognizers.recognizeNumber(utterance, 'en-us');
-        const value = results.length > 0 && results[0].resolution ? parseFloat(results[0].resolution.value) : undefined;
-        if (this.validator) {
-            // Call validator for further processing
-            return Promise.resolve(this.validator(context, value, dialogs));
-        } else if (typeof value === 'number') {
-            // Return recognized value
-            return dialogs.end(context, value);
-        } else {
-            if (options.retryPrompt) {
-                // Send retry prompt to user
-                return sendPrompt(context, options.retryPrompt, options.retrySpeak);
-            } else if (options.prompt) {
-                // Send original prompt to user
-                return sendPrompt(context, options.prompt, options.speak);
-            }
-            return Promise.resolve();
-        }
+    protected onRecognize(dc: DialogContext<C>, options: PromptOptions): Promise<number|undefined> {
+        return this.prompt.recognize(dc.context);
     }
 }
+
+

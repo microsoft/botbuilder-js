@@ -6,9 +6,8 @@
  * Licensed under the MIT License.
  */
 import { BotContext, Attachment } from 'botbuilder';
-import { Dialog } from '../dialog';
-import { DialogSet } from '../dialogSet';
-import { PromptOptions, PromptValidator } from './prompt';
+import { DialogContext } from '../dialogContext';
+import { Prompt, PromptOptions, PromptValidator } from './prompt';
 /**
  * Prompts a user to upload attachments like images. By default the prompt will return to the
  * calling dialog a `Attachment[]` but this can be overridden using a custom `PromptValidator`.
@@ -23,36 +22,36 @@ import { PromptOptions, PromptValidator } from './prompt';
  * dialogs.add('attachmentPrompt', new AttachmentPrompt());
  *
  * dialogs.add('uploadImage', [
- *      function (context) {
- *          return dialogs.prompt(context, 'attachmentPrompt', `Send me image(s)`);
+ *      function (dc) {
+ *          return dc.prompt('attachmentPrompt', `Send me image(s)`);
  *      },
- *      function (context, attachments) {
- *          context.reply(`Processing ${attachments.length} images.`);
- *          return dialogs.end(context);
+ *      function (dc, attachments) {
+ *          dc.batch.reply(`Processing ${attachments.length} images.`);
+ *          return dc.end();
  *      }
  * ]);
  * ```
  */
-export declare class AttachmentPrompt<C extends BotContext> implements Dialog<C> {
-    private validator;
+export declare class AttachmentPrompt<C extends BotContext> extends Prompt<C, Attachment[]> {
+    private prompt;
     /**
      * Creates a new instance of the prompt.
      *
      * **Example usage:**
      *
      * ```JavaScript
-     * dialogs.add('imagePrompt', new AttachmentPrompt((context, values) => {
-     *      if (values.length < 1) {
-     *          context.reply(`Send me an image or say 'cancel'.`);
-     *          return Prompts.resolve();
+     * dialogs.add('imagePrompt', new AttachmentPrompt((dc, values) => {
+     *      if (!Array.isArray(values) || values.length < 1) {
+     *          dc.batch.reply(`Send me an image or say "cancel".`);
+     *          return undefined;
      *      } else {
-     *          return dialogs.end(context, values);
+     *          return values;
      *      }
      * }));
      * ```
-     * @param validator (Optional) validator that will be called each time the user responds to the prompt.
+     * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
      */
-    constructor(validator?: PromptValidator<C, Attachment[]> | undefined);
-    begin(context: C, dialogs: DialogSet<C>, options: PromptOptions): Promise<void>;
-    continue(context: C, dialogs: DialogSet<C>): Promise<void>;
+    constructor(validator?: PromptValidator<C, Attachment[]>);
+    protected onPrompt(dc: DialogContext<C>, options: PromptOptions, isRetry: boolean): Promise<void>;
+    protected onRecognize(dc: DialogContext<C>, options: PromptOptions): Promise<Attachment[] | undefined>;
 }

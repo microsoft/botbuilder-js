@@ -29,6 +29,7 @@ export interface FileStorageSettings {
  * ```
  */
 export declare class FileStorage implements Storage {
+    static nextTag: number;
     private pEnsureFolder;
     protected readonly path: string;
     /**

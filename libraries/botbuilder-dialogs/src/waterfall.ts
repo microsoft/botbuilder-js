@@ -7,8 +7,7 @@
  */
 import { Promiseable, BotContext } from 'botbuilder';
 import { Dialog, DialogInstance } from './dialog';
-import { DialogSet } from './dialogSet';
-import { Context } from 'vm';
+import { DialogContext } from './dialogContext';
 
 /**
  * Function signature of a waterfall step.
@@ -49,7 +48,7 @@ import { Context } from 'vm';
  * @param WaterfallStep.args Argument(s) passed into the dialog for the first step and then the results from calling a prompt or other dialog for subsequent steps.
  * @param WaterfallStep.next Function passed into the step to let you manually skip to the next step in the waterfall.  
  */
-export type WaterfallStep<C extends BotContext> = (context: C, args?: any, next?: SkipStepFunction) => Promiseable<any>;
+export type WaterfallStep<C extends BotContext> = (dc: DialogContext<C>, args?: any, next?: SkipStepFunction) => Promiseable<any>;
 
 /**
  * When called, control will skip to the next waterfall step.
@@ -84,32 +83,32 @@ export class Waterfall<C extends BotContext> implements Dialog<C> {
         this.steps = (steps || []).slice(0);
     }
 
-    public begin(context: C, dialogs: DialogSet, args?: any): Promiseable<void> {
-        const instance = dialogs.getInstance(context) as WaterfallInstance<any>;
+    public begin(dc: DialogContext<C>, args?: any): Promiseable<any> {
+        const instance = dc.instance as WaterfallInstance<any>;
         instance.step = 0;
-        return this.runStep(context, dialogs, args);
+        return this.runStep(dc, args);
     }
 
-    public resume(context: C, dialogs: DialogSet, result?: any): Promiseable<void> {
-        const instance = dialogs.getInstance(context) as WaterfallInstance<any>;
+    public resume(dc: DialogContext<C>, result?: any): Promiseable<any> {
+        const instance = dc.instance as WaterfallInstance<any>;
         instance.step += 1
-        return this.runStep(context, dialogs, result);
+        return this.runStep(dc, result);
     }
 
-    private runStep(context: C, dialogs: DialogSet, result?: any): Promise<void> {
+    private runStep(dc: DialogContext<C>, result?: any): Promise<any> {
         try {
-            const instance = dialogs.getInstance(context) as WaterfallInstance<any>;
+            const instance = dc.instance as WaterfallInstance<any>;
             const step = instance.step;
             if (step >= 0 && step < this.steps.length) {
                 // Execute step
-                return Promise.resolve(this.steps[step](context, result, (r?: any) => {
+                return Promise.resolve(this.steps[step](dc, result, (r?: any) => {
                     // Skip to next step
                     instance.step += 1;
-                    return this.runStep(context, dialogs, r);
+                    return this.runStep(dc, r);
                 }));
             } else {
                 // End of waterfall so just return to parent
-                return dialogs.end(context);
+                return dc.end();
             }
         } catch (err) {
             return Promise.reject(err);

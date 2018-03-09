@@ -36,6 +36,7 @@ export interface FileStorageSettings {
  * ```
  */
 export class FileStorage implements Storage {
+    static nextTag = 0;
     private pEnsureFolder: Promise<void>|undefined;
     protected readonly path: string;
 
@@ -85,7 +86,7 @@ export class FileStorage implements Storage {
                     const p = parseFile(filePath).then((old: StoreItem|undefined) => {
                             if (old === undefined || changes[key].eTag === '*' || old.eTag === changes[key].eTag) {
                                 const newObj = Object.assign({}, changes[key]);
-                                newObj.eTag = (parseInt(newObj.eTag || '0') + 1).toString();
+                                newObj.eTag = (FileStorage.nextTag++).toString();
                                 return fs.writeTextFile(filePath, JSON.stringify(newObj));
                             } else {
                                 throw new Error(`FileStorage: eTag conflict for "${filePath}"`);

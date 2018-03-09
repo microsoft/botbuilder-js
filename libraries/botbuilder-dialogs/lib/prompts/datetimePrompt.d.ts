@@ -6,29 +6,9 @@
  * Licensed under the MIT License.
  */
 import { BotContext } from 'botbuilder';
-import { Dialog } from '../dialog';
-import { DialogSet } from '../dialogSet';
-import { PromptOptions, PromptValidator } from './prompt';
-/**
- * Datetime result returned by `DatetimePrompt`. For more details see the LUIS docs for
- * [builtin.datetimev2](https://docs.microsoft.com/en-us/azure/cognitive-services/luis/luis-reference-prebuilt-entities#builtindatetimev2).
- */
-export interface FoundDatetime {
-    /**
-     * TIMEX expression representing ambiguity of the recognized time.
-     */
-    timex: string;
-    /**
-     * Type of time recognized. Possible values are 'date', 'time', 'datetime', 'daterange',
-     * 'timerange', 'datetimerange', 'duration', or 'set'.
-     */
-    type: string;
-    /**
-     * Value of the specified [type](#type) that's a reasonable approximation given the ambiguity
-     * of the [timex](#timex).
-     */
-    value: string;
-}
+import { DialogContext } from '../dialogContext';
+import { Prompt, PromptOptions, PromptValidator } from './prompt';
+import * as prompts from 'botbuilder-prompts';
 /**
  * Prompts a user to enter a datetime expression. By default the prompt will return to the
  * calling dialog a `FoundDatetime[]` but this can be overridden using a custom `PromptValidator`.
@@ -43,40 +23,41 @@ export interface FoundDatetime {
  * dialogs.add('datetimePrompt', new DatetimePrompt());
  *
  * dialogs.add('datetimeDemo', [
- *      function (context) {
- *          return dialogs.prompt(context, 'datetimePrompt', `datetime: enter a datetime`);
+ *      function (dc) {
+ *          return dc.prompt('datetimePrompt', `datetime: enter a datetime`);
  *      },
- *      function (context, values) {
- *          context.reply(`Recognized values: ${JSON.stringify(values)}`);
- *          return dialogs.end(context);
+ *      function (dc, values) {
+ *          dc.batch.reply(`Recognized values: ${JSON.stringify(values)}`);
+ *          return dc.end();
  *      }
  * ]);
  * ```
  */
-export declare class DatetimePrompt<C extends BotContext> implements Dialog<C> {
-    private validator;
+export declare class DatetimePrompt<C extends BotContext> extends Prompt<C, prompts.FoundDatetime[]> {
+    private prompt;
     /**
      * Creates a new instance of the prompt.
      *
      * **Example usage:**
      *
      * ```JavaScript
-     * dialogs.add('timePrompt', new DatetimePrompt((context, values) => {
+     * dialogs.add('timePrompt', new DatetimePrompt((dc, values) => {
      *      try {
      *          if (values.length < 0) { throw new Error('missing time') }
      *          if (values[0].type !== 'datetime') { throw new Error('unsupported type') }
      *          const value = new Date(values[0].value);
      *          if (value.getTime() < new Date().getTime()) { throw new Error('in the past') }
-     *          return dialogs.end(context, value);
+     *          return value;
      *      } catch (err) {
-     *          context.reply(`Please enter a valid time in the future like "tomorrow at 9am" or say "cancel".`);
-     *          return Promise.resolve();
+     *          dc.batch.reply(`Invalid time. Answer with a time in the future like "tomorrow at 9am" or say "cancel".`);
+     *          return undefined;
      *      }
      * }));
      * ```
-     * @param validator (Optional) validator that will be called each time the user responds to the prompt.
+     * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
+     * @param defaultLocale (Optional) locale to use if `dc.context.request.locale` not specified. Defaults to a value of `en-us`.
      */
-    constructor(validator?: PromptValidator<C, FoundDatetime[]> | undefined);
-    begin(context: C, dialogs: DialogSet<C>, options: PromptOptions): Promise<void>;
-    continue(context: C, dialogs: DialogSet<C>): Promise<void>;
+    constructor(validator?: PromptValidator<C, prompts.FoundDatetime[]>, defaultLocale?: string);
+    protected onPrompt(dc: DialogContext<C>, options: PromptOptions, isRetry: boolean): Promise<void>;
+    protected onRecognize(dc: DialogContext<C>, options: PromptOptions): Promise<prompts.FoundDatetime[] | undefined>;
 }
