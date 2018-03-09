@@ -11,13 +11,15 @@ const help = require('../lib/help');
 const luis = require('../lib');
 const {getServiceManifest} = require('../lib/utils/argsUtil');
 
+let args;
+
 /**
  * Entry for the app
  *
  * @returns {Promise<void>}
  */
 async function runProgram() {
-    const args = minimist(process.argv.slice(2), {'--': true});
+    args = minimist(process.argv.slice(2), {'--': true});
 
     if (args.init || args.i) {
         await initializeConfig();
@@ -41,7 +43,7 @@ async function runProgram() {
     }
 
     const serviceManifest = getServiceManifest(args);
-    validateArguments(args, serviceManifest);
+    validateArguments(serviceManifest);
 
     const requestBody = await getFileInput(args);
     const result = await luis(config, serviceManifest, args, requestBody);
@@ -125,25 +127,38 @@ async function getFileInput(args) {
  * @param args
  * @param serviceManifest
  */
-function validateArguments(args, serviceManifest) {
+function validateArguments(serviceManifest) {
+    let error;
     if (!serviceManifest) {
-        throw new ReferenceError('The service does not exist');
+        error = new Error('The service does not exist');
+        error.name = 'ServiceError';
+
+        throw error;
     }
 
     const {operation} = serviceManifest;
     if (!operation) {
-        throw new Error('The operation does not exist');
+        error = new Error('The operation does not exist');
+        error.name = 'OperationError';
+
+        throw error;
     }
 
     const entitySpecified = typeof args.in === 'string';
     const entityRequired = !!operation.entityName;
 
     if (!entityRequired && entitySpecified) {
-        throw new Error(`The ${operation.name} operation does not accept an input`);
+        error = new Error(`The ${operation.name} operation does not accept an input`);
+        error.name = 'InputError';
+
+        throw error;
     }
 
     if (entityRequired && !entitySpecified) {
-        throw new Error(`The ${operation.name} requires an input of type: ${operation.entityType}`);
+        error = new Error(`The ${operation.name} requires an input of type: ${operation.entityType}`);
+        error.name = 'InputError';
+
+        throw error;
     }
 
     // Note that the ServiceBase will validate params that may be required.
@@ -153,18 +168,15 @@ function validateArguments(args, serviceManifest) {
  * Exits with a non-zero status and prints
  * the error if present or displays the help
  *
- * @param args
+ * @param error
  */
-function exitWithError(args) {
-    if (args instanceof Error) {
-        process.stdout.write(chalk.red.bold(args + '\n'));
-        process.stdout.write(chalk.green(`\nUse ${chalk.cyan.bold('luis --help')} for a list of commands.`));
-    } else {
-        help(args);
-    }
-    process.exit(1);
+async function handleError(error) {
+    process.stdout.write('\n' + chalk.red.bold(error + '\n'));
+    await help(args);
+    return 1;
 }
 
 runProgram()
     .then(process.exit)
-    .catch(exitWithError);
+    .catch(handleError)
+    .then(process.exit);

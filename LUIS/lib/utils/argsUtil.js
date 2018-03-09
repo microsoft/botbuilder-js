@@ -50,10 +50,17 @@ function getServiceManifest(args, includeAllOperations) {
 
 function getNamedArgsMap(args) {
     const thisArgs = args._ || [];
-    // The method alias may be missing when
+    // The methodAlias can be anywhere since its an
+    // enum and easy to find. If we find it out of
+    // position, place it back into position 1
+    const methodAliasIndex = thisArgs.findIndex(arg => OperationCommandMap[arg]);
+    // also The method alias may be missing when
     // help is used on an api group or target
-    if (thisArgs[1] && !OperationCommandMap[thisArgs[1]]) {
+    if (methodAliasIndex === -1 && thisArgs[1] !== '') {
         thisArgs.splice(1, 0, '');
+    } else if (methodAliasIndex !== 1 && methodAliasIndex !== -1) {
+        const methodAlias = thisArgs.splice(methodAliasIndex, 1)[0];
+        thisArgs.splice(1, 0, methodAlias);
     }
     let [apiGroup, methodAlias, target, subTarget] = thisArgs;
     return {apiGroup, methodAlias, target, subTarget};

@@ -1,3 +1,10 @@
+/**
+ * Derives required parameters from the
+ * tokenized path
+ *
+ * @param {string} path The tokenized path
+ * @returns {string[]} An array of named params
+ */
 module.exports = function deriveParamsFromPath(path) {
     const params = [];
     const reg = /(?:{)([\w]+)(?:})/g;
