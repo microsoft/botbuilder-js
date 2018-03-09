@@ -23,7 +23,7 @@ class DialogContext {
     }
     /** Returns the cached instance of the active dialog on the top of the stack or `undefined` if the stack is empty. */
     get instance() {
-        return this.stack.length > 0 ? this.stack[this.stack.length - 1].state : undefined;
+        return this.stack.length > 0 ? this.stack[this.stack.length - 1] : undefined;
     }
     /**
      * Pushes a new dialog onto the dialog stack.

@@ -35,7 +35,7 @@ class DatetimePrompt extends prompt_1.Prompt {
      * ```JavaScript
      * dialogs.add('timePrompt', new DatetimePrompt((dc, values) => {
      *      try {
-     *          if (values.length < 0) { throw new Error('missing time') }
+     *          if (!Array.isArray(values) || values.length < 0) { throw new Error('missing time') }
      *          if (values[0].type !== 'datetime') { throw new Error('unsupported type') }
      *          const value = new Date(values[0].value);
      *          if (value.getTime() < new Date().getTime()) { throw new Error('in the past') }

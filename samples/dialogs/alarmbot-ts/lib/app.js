@@ -18,6 +18,7 @@ const adapter = new botbuilder_1.BotFrameworkAdapter({
 // Add state middleware
 const state = new botStateManager_1.BotStateManager(new botbuilder_1.MemoryStorage());
 adapter.use(state);
+// Add batch output middleware
 adapter.use(new botbuilder_1.BatchOutput());
 // Listen for incoming requests 
 server.post('/api/messages', (req, res) => {
@@ -25,35 +26,37 @@ server.post('/api/messages', (req, res) => {
     adapter.processRequest(req, res, (context) => {
         if (context.request.type === 'message') {
             const utterance = (context.request.text || '').trim().toLowerCase();
+            // Create dialog context
+            const stack = state.conversation(context).dialogStack;
+            const dc = dialogs.createContext(context, stack);
             // Start addAlarm dialog
             if (utterance.includes('add alarm')) {
-                return dialogs.begin(context, 'addAlarm');
+                return dc.begin('addAlarm');
                 // Start deleteAlarm dialog
             }
             else if (utterance.includes('delete alarm')) {
-                return dialogs.begin(context, 'deleteAlarm');
+                return dc.begin('deleteAlarm');
                 // Start showAlarms
             }
             else if (utterance.includes('show alarms')) {
-                return dialogs.begin(context, 'showAlarms');
+                return dc.begin('showAlarms');
                 // Check for cancel
             }
             else if (utterance === 'cancel') {
-                if (dialogs.getInstance(context)) {
-                    context.batch.reply(`Ok... Cancelled.`);
-                    return dialogs.endAll(context);
+                if (dc.instance) {
+                    dc.batch.reply(`Ok... Cancelled.`);
+                    return dc.endAll();
                 }
                 else {
-                    context.batch.reply(`Nothing to cancel.`);
-                    return Promise.resolve();
+                    dc.batch.reply(`Nothing to cancel.`);
                 }
                 // Continue current dialog
             }
             else {
-                return dialogs.continue(context).then(() => {
+                return dc.continue().then(() => {
                     // Return default message if nothing replied.
                     if (!context.responded) {
-                        context.batch.reply(`Hi! I'm a simple alarm bot. Say "add alarm", "delete alarm", or "show alarms".`);
+                        dc.batch.reply(`Hi! I'm a simple alarm bot. Say "add alarm", "delete alarm", or "show alarms".`);
                     }
                 });
             }
@@ -65,41 +68,41 @@ const dialogs = new botbuilder_dialogs_1.DialogSet();
 // Add Alarm
 //-----------------------------------------------
 dialogs.add('addAlarm', [
-    function (context) {
+    function (dc) {
         // Initialize temp alarm and prompt for title
-        state.conversation(context).alarm = {};
-        return dialogs.prompt(context, 'titlePrompt', `What would you like to call your alarm?`);
+        dc.instance.state = {};
+        return dc.prompt('titlePrompt', `What would you like to call your alarm?`);
     },
-    function (context, title) {
+    function (dc, title) {
         // Save alarm title and prompt for time
-        const alarm = state.conversation(context).alarm;
+        const alarm = dc.instance.state;
         alarm.title = title;
-        return dialogs.prompt(context, 'timePrompt', `What time would you like to set the "${alarm.title}" alarm for?`);
+        return dc.prompt('timePrompt', `What time would you like to set the "${alarm.title}" alarm for?`);
     },
-    function (context, time) {
+    function (dc, time) {
         // Save alarm time
-        const alarm = state.conversation(context).alarm;
+        const alarm = dc.instance.state;
         alarm.time = time.toISOString();
         // Alarm completed so set alarm.
-        const user = state.user(context);
+        const user = state.user(dc.context);
         user.alarms.push(alarm);
         // Confirm to user
-        context.batch.reply(`Your alarm named "${alarm.title}" is set for "${moment(alarm.time).format("ddd, MMM Do, h:mm a")}".`);
-        return dialogs.end(context);
+        dc.batch.reply(`Your alarm named "${alarm.title}" is set for "${moment(alarm.time).format("ddd, MMM Do, h:mm a")}".`);
+        return dc.end();
     }
 ]);
-dialogs.add('titlePrompt', new botbuilder_dialogs_1.TextPrompt((context, value) => {
-    if (value.length < 3) {
-        context.batch.reply(`Title should be at least 3 characters long.`);
-        return Promise.resolve();
+dialogs.add('titlePrompt', new botbuilder_dialogs_1.TextPrompt((dc, value) => {
+    if (!value || value.length < 3) {
+        dc.batch.reply(`Title should be at least 3 characters long.`);
+        return undefined;
     }
     else {
-        return dialogs.end(context, value.trim());
+        return value.trim();
     }
 }));
-dialogs.add('timePrompt', new botbuilder_dialogs_1.DatetimePrompt((context, values) => {
+dialogs.add('timePrompt', new botbuilder_dialogs_1.DatetimePrompt((dc, values) => {
     try {
-        if (values.length < 0) {
+        if (!Array.isArray(values) || values.length < 0) {
             throw new Error('missing time');
         }
         if (values[0].type !== 'datetime') {
@@ -109,66 +112,66 @@ dialogs.add('timePrompt', new botbuilder_dialogs_1.DatetimePrompt((context, valu
         if (value.getTime() < new Date().getTime()) {
             throw new Error('in the past');
         }
-        return dialogs.end(context, value);
+        return value;
     }
     catch (err) {
-        context.batch.reply(`Please enter a valid time in the future like "tomorrow at 9am" or say "cancel".`);
-        return Promise.resolve();
+        dc.batch.reply(`Please enter a valid time in the future like "tomorrow at 9am" or say "cancel".`);
+        return undefined;
     }
 }));
 //-----------------------------------------------
 // Delete Alarm
 //-----------------------------------------------
 dialogs.add('deleteAlarm', [
-    function (context) {
+    function (dc) {
         // Divert to appropriate dialog
-        const user = state.user(context);
+        const user = state.user(dc.context);
         if (user.alarms.length > 1) {
-            return dialogs.begin(context, 'deleteAlarmMulti');
+            return dc.begin('deleteAlarmMulti');
         }
         else if (user.alarms.length === 1) {
-            return dialogs.begin(context, 'deleteAlarmSingle');
+            return dc.begin('deleteAlarmSingle');
         }
         else {
-            context.batch.reply(`No alarms set to delete.`);
-            return dialogs.end(context);
+            dc.batch.reply(`No alarms set to delete.`);
+            return dc.end();
         }
     }
 ]);
 dialogs.add('deleteAlarmMulti', [
-    function (context) {
+    function (dc) {
         // Compute list of choices based on alarm titles
-        const user = state.user(context);
+        const user = state.user(dc.context);
         const choices = user.alarms.map((value) => value.title);
         // Prompt user for choice (force use of "list" style)
         const prompt = `Which alarm would you like to delete? Say "cancel" to quit.`;
-        return dialogs.prompt(context, 'choicePrompt', prompt, choices);
+        return dc.prompt('choicePrompt', prompt, choices);
     },
-    function (context, choice) {
+    function (dc, choice) {
         // Delete alarm by position
-        const user = state.user(context);
+        const user = state.user(dc.context);
         if (choice.index < user.alarms.length) {
             user.alarms.splice(choice.index, 1);
         }
         // Notify user of delete
-        context.batch.reply(`Deleted "${choice.value}" alarm.`);
-        return dialogs.end(context);
+        dc.batch.reply(`Deleted "${choice.value}" alarm.`);
+        return dc.end();
     }
 ]);
 dialogs.add('deleteAlarmSingle', [
-    function (context) {
-        const user = state.user(context);
+    function (dc) {
+        const user = state.user(dc.context);
         const alarm = user.alarms[0];
-        return dialogs.prompt(context, 'confirmPrompt', `Are you sure you want to delete the "${alarm.title}" alarm?`);
+        return dc.prompt('confirmPrompt', `Are you sure you want to delete the "${alarm.title}" alarm?`);
     },
-    function (context, confirm) {
+    function (dc, confirm) {
         if (confirm) {
-            const user = state.user(context);
+            const user = state.user(dc.context);
             user.alarms = [];
-            context.batch.reply(`alarm deleted...`);
+            dc.batch.reply(`alarm deleted...`);
         }
         else {
-            context.batch.reply(`ok...`);
+            dc.batch.reply(`ok...`);
         }
         return Promise.resolve();
     }
@@ -179,9 +182,9 @@ dialogs.add('confirmPrompt', new botbuilder_dialogs_1.ConfirmPrompt());
 // Show Alarms
 //-----------------------------------------------
 dialogs.add('showAlarms', [
-    function (context) {
+    function (dc) {
         let msg = `No alarms found.`;
-        const user = state.user(context);
+        const user = state.user(dc.context);
         if (user.alarms.length > 0) {
             msg = `**Current Alarms**\n\n`;
             let connector = '';
@@ -190,8 +193,8 @@ dialogs.add('showAlarms', [
                 connector = '\n';
             });
         }
-        context.batch.reply(msg);
-        return dialogs.end(context);
+        dc.batch.reply(msg);
+        return dc.end();
     }
 ]);
 //# sourceMappingURL=app.js.map

@@ -13,7 +13,8 @@ class Prompt {
     }
     continue(dc) {
         // Recognize value
-        return this.onRecognize(dc, dc.instance.state)
+        const instance = dc.instance;
+        return this.onRecognize(dc, instance.state)
             .then((recognized) => {
             if (this.validator) {
                 // Call validator
@@ -30,7 +31,7 @@ class Prompt {
             }
             else if (!dc.context.responded) {
                 // Send retry prompt
-                return this.onPrompt(dc, dc.instance.state, true);
+                return this.onPrompt(dc, instance.state, true);
             }
         });
     }

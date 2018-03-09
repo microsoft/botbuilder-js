@@ -30,10 +30,10 @@ export interface PromptOptions {
  * @param PromptValidator.context Dialog context for the current turn of conversation with the user.
  * @param PromptValidator.value The value that was recognized or wasn't recognized. Depending on the prompt this can be either undefined or an empty array to indicate an unrecognized value.
  */
-export declare type PromptValidator<C extends BotContext, R, O = R> = (dc: DialogContext<C>, value: R | undefined) => Promiseable<O | undefined>;
+export declare type PromptValidator<C extends BotContext, R> = (dc: DialogContext<C>, value: R | undefined) => Promiseable<any>;
 export declare abstract class Prompt<C extends BotContext, T> implements Dialog<C> {
     private validator;
-    constructor(validator?: PromptValidator<C, T, T> | undefined);
+    constructor(validator?: PromptValidator<C, T> | undefined);
     protected abstract onPrompt(dc: DialogContext<C>, options: PromptOptions, isRetry: boolean): Promise<void>;
     protected abstract onRecognize(dc: DialogContext<C>, options: PromptOptions): Promise<T | undefined>;
     begin(dc: DialogContext<C>, options: PromptOptions): Promise<void>;

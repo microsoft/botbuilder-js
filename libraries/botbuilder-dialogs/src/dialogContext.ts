@@ -31,8 +31,8 @@ export class DialogContext<C extends BotContext> {
     }
 
     /** Returns the cached instance of the active dialog on the top of the stack or `undefined` if the stack is empty. */
-    public get instance(): DialogInstance {
-        return this.stack.length > 0 ? this.stack[this.stack.length - 1].state : undefined
+    public get instance(): DialogInstance|undefined {
+        return this.stack.length > 0 ? this.stack[this.stack.length - 1] : undefined;
     }
 
     /**

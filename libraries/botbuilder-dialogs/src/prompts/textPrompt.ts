@@ -44,7 +44,7 @@ export class TextPrompt<C extends BotContext> extends Prompt<C, string> {
      * 
      * ```JavaScript
      * dialogs.add('titlePrompt', new TextPrompt((dc, value) => {
-     *      if (value.length < 3) {
+     *      if (!value || value.length < 3) {
      *          dc.batch.reply(`Title should be at least 3 characters long.`);
      *          return undefined;
      *      } else {

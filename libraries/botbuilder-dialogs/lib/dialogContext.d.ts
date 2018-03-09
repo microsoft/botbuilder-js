@@ -28,7 +28,7 @@ export declare class DialogContext<C extends BotContext> {
      */
     constructor(dialogs: DialogSet<C>, context: C, stack: DialogInstance[]);
     /** Returns the cached instance of the active dialog on the top of the stack or `undefined` if the stack is empty. */
-    readonly instance: DialogInstance;
+    readonly instance: DialogInstance | undefined;
     /**
      * Pushes a new dialog onto the dialog stack.
      *

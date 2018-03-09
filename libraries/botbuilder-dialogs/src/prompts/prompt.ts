@@ -7,7 +7,7 @@
  */
 import { BotContext, Activity, Promiseable } from 'botbuilder';
 import { DialogContext } from '../dialogContext';
-import { Dialog } from '../dialog';
+import { Dialog, DialogInstance } from '../dialog';
 
 /** Basic configuration options supported by all prompts. */
 export interface PromptOptions {
@@ -35,7 +35,7 @@ export interface PromptOptions {
  * @param PromptValidator.context Dialog context for the current turn of conversation with the user.
  * @param PromptValidator.value The value that was recognized or wasn't recognized. Depending on the prompt this can be either undefined or an empty array to indicate an unrecognized value.
  */
-export type PromptValidator<C extends BotContext, R, O = R> = (dc: DialogContext<C>, value: R|undefined) => Promiseable<O|undefined>;
+export type PromptValidator<C extends BotContext, R> = (dc: DialogContext<C>, value: R|undefined) => Promiseable<any>;
 
 export abstract class Prompt<C extends BotContext, T> implements Dialog<C> {
     constructor(private validator?: PromptValidator<C, T>) { }
@@ -46,7 +46,7 @@ export abstract class Prompt<C extends BotContext, T> implements Dialog<C> {
 
     public begin(dc: DialogContext<C>, options: PromptOptions): Promise<void> {
         // Persist options
-        const instance = dc.instance;
+        const instance = dc.instance as DialogInstance;
         instance.state = options || {};
 
         // Send initial prompt
@@ -55,7 +55,8 @@ export abstract class Prompt<C extends BotContext, T> implements Dialog<C> {
 
     public continue(dc: DialogContext<C>): Promise<void> {
         // Recognize value
-        return this.onRecognize(dc, dc.instance.state)
+        const instance = dc.instance as DialogInstance;
+        return this.onRecognize(dc, instance.state)
             .then((recognized) => {
                 if (this.validator) {
                     // Call validator
@@ -70,7 +71,7 @@ export abstract class Prompt<C extends BotContext, T> implements Dialog<C> {
                     return dc.end(output);
                 } else if (!dc.context.responded) {
                     // Send retry prompt
-                    return this.onPrompt(dc, dc.instance.state, true);
+                    return this.onPrompt(dc, instance.state, true);
                 }
             });
     }
