@@ -126,6 +126,10 @@ function getHelpContentsForTargetOrSubTarget(serviceManifest, categoryName, targ
     let targets = operations.slice().filter(operation => !subTargetName && !operation.subTarget);
     let subTargets = operations.slice().filter(operation => subTargetName ? operation.subTarget === subTargetName : !!operation.subTarget);
 
+    if (subTargetName) {
+        targets = subTargets;
+        subTargets = [];
+    }
     const payload = [];
     if (targets.length) {
         payload.push({
@@ -133,6 +137,7 @@ function getHelpContentsForTargetOrSubTarget(serviceManifest, categoryName, targ
             table: targets.map(getHelpForOperation)
         });
     }
+
     if (subTargets.length) {
         payload.push(getHelpForSubTargets(subTargets, categoryName, targetName));
     }
