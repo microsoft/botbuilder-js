@@ -2,13 +2,13 @@ const Table = require('cli-table2');
 const chalk = require('chalk');
 
 const manifest = require('./api/manifest');
-const {getServiceManifest, getCategoryManifest, getCategoryName} = require('./utils/argsUtil');
+const {getServiceManifest, getCategoryManifest, getNamedArgsMap} = require('./utils/argsUtil');
 
 module.exports = async function help(args) {
     const helpContents = await getHelpContents(args);
     let [x] = process.stdout.getWindowSize();
     process.stdout.write('\nLUIS cli for interacting with the LUIS api - © 2018 Microsoft Corporation\n\n');
-    process.stdout.write(chalk.bold(`usage: luis [--help] [--!] [--init] ${chalk.cyan('<api group> <action> [<target> [<subtarget>] [--<args> ...]]]')}\n\n`));
+    process.stdout.write(chalk.bold(`usage: luis ${chalk.cyan('<api group> <action> [<target> [<subtarget>] [--<args> --<globalArgs>]]]')}\n\n`));
     helpContents.forEach(helpContent => {
         const rows = helpContent.table[0].length;
         let i = rows - 1;
@@ -37,11 +37,12 @@ async function getHelpContents(args) {
     }
 
     const serviceManifest = getServiceManifest(args, true);
+    const {key: target} = serviceManifest;
     const category = getCategoryManifest(args);
-    const categoryName = getCategoryName(args);
+    const {apiGroup: categoryName, subTarget} = getNamedArgsMap(args);
 
     if (serviceManifest) {
-        const targetHelpContents = getHelpContentsForTarget(serviceManifest);
+        const targetHelpContents = getHelpContentsForTargetOrSubTarget(serviceManifest, categoryName, target, subTarget);
         return categoryName === serviceManifest.key ? targetHelpContents.concat(getHelpContentsForCategory(category, categoryName)) : targetHelpContents;
     }
 
@@ -54,21 +55,6 @@ async function getHelpContents(args) {
 
 function getGeneralHelpContents() {
     return [
-        {
-            head: 'Commands:',
-            table: [
-                ['--help, -h', `Prints this help file. Use ${chalk.cyan.bold('<api group> [<target>] -h')} to see specific details on an <api group>`],
-                ['--!', 'Dumps absolutely all documented commands to the console with descriptions'],
-                ['--appId', 'Specifies the application id. This can optionally be specified in the .luisrc'],
-                ['--versionId', 'Specifies the version id. This can optionally be specified in the .luisrc'],
-                ['--init', 'Initializes the .luisrc file with settings specific to your LUIS instance'],
-                ['--in <path>', 'Specifies the input file path. Applicable for create, update and patch actions'],
-                ['--skip <int>', 'Specifies the number of records to skip. Applicable for the list action only'],
-                ['--take <int>', 'Specifies the number of records to take. Applicable for the list action only'],
-                ['--version', 'Prints the version of this cli tool']
-            ]
-        },
-
         {
             head: chalk.bold(` Where ${chalk.cyan('<api group>')} is one of the following:`),
             table: [
@@ -92,7 +78,26 @@ function getGeneralHelpContents() {
                 ['patch,  p', 'Updates a partial resource at <target> or <subtarget> where applicable'],
                 ['delete, d', 'Deletes a resource at <target> or <subtarget> where applicable']
             ]
-        }
+        },
+        {
+            head: 'Arguments:',
+            table: [
+                ['--appId', 'Specifies the application id. This can optionally be specified in the .luisrc'],
+                ['--versionId', 'Specifies the version id. This can optionally be specified in the .luisrc'],
+                ['--in <path>', 'Specifies the input file path. Applicable for create, update and patch actions'],
+                ['--skip <int>', 'Specifies the number of records to skip. Applicable for the list action only'],
+                ['--take <int>', 'Specifies the number of records to take. Applicable for the list action only'],
+            ]
+        },
+        {
+            head: 'Global Arguments:',
+            table: [
+                ['--help,    -h', `Prints this help file. Use ${chalk.cyan.bold('<api group> [<target>] -h')} to see specific details on an <api group>`],
+                ['--!          ', 'Dumps absolutely all documented commands to the console with descriptions'],
+                ['--init,    -i', 'Initializes the .luisrc file with settings specific to your LUIS instance'],
+                ['--version, -v', 'Prints the version of this cli tool']
+            ]
+        },
     ];
 }
 
@@ -115,27 +120,46 @@ function getAllCommands() {
     ];
 }
 
-function getHelpContentsForTarget(serviceManifest) {
-    const table = [];
-    serviceManifest.operations.forEach(operation => {
-        const subTarget = operation.subTarget ? ` ${chalk.bold('**Note**')} the ${chalk.cyan.bold('<subtarget>')} of ${chalk.bold(operation.subTarget)} must be used.` : '';
-        table.push([operation.methodAlias, `${operation.description} ${subTarget} \nexample: ${chalk.cyan.bold(operation.command)}`]);
-    });
+function getHelpContentsForTargetOrSubTarget(serviceManifest, categoryName, targetName, subTargetName) {
+    const {operation} = serviceManifest;
+    const operations = serviceManifest.operation ? [operation] : serviceManifest.operations;
+    let targets = operations.slice().filter(operation => !subTargetName && !operation.subTarget);
+    let subTargets = operations.slice().filter(operation => subTargetName ? operation.subTarget === subTargetName : !!operation.subTarget);
 
-    return [
-        {
+    const payload = [];
+    if (targets.length) {
+        payload.push({
             head: chalk.bold(`Where ${chalk.cyan('<action>')} is one of the following`),
-            table: table
-        }
-    ];
+            table: targets.map(getHelpForOperation)
+        });
+    }
+    if (subTargets.length) {
+        payload.push(getHelpForSubTargets(subTargets, categoryName, targetName));
+    }
+    return payload;
 }
 
 function getHelpContentsForCategory(category, categoryName) {
     return [{
-        head: chalk.bold(`Where ${chalk.cyan('<target>')} is optionally one of the following:`),
+        head: chalk.bold(`Where ${chalk.cyan('<target>')} may be one of the following:`),
         table: [
             [chalk.cyan.bold(`luis ${categoryName} <action> <target>`), Object.keys(category).filter(key => key !== categoryName).join(', ')],
             ['', chalk.bold(`Use ${chalk.cyan(`luis ${categoryName} <target> --help`)} for details on a specific target`)]
         ]
     }];
+}
+
+function getHelpForSubTargets(operations, categoryName, targetName) {
+    return {
+        head: chalk.bold(`Where ${chalk.cyan('<subtarget>')} may be one of the following:`),
+        table: [
+            [chalk.cyan.bold(`luis ${categoryName} <action> ${targetName} <subtarget>`), operations.map(operation => operation.subTarget).join(', ')],
+            ['', chalk.bold(`Use ${chalk.cyan(`luis ${categoryName} <action> ${targetName} <subtarget> --help`)} for details on a specific subtarget`)]
+        ]
+    };
+}
+
+function getHelpForOperation(operation) {
+    const {methodAlias, command, description} = operation;
+    return [methodAlias, `${description} \nexample: ${chalk.cyan.bold(command)}`];
 }

@@ -2,13 +2,7 @@ const manifest = require('../api/manifest');
 const {OperationCommandMap} = require('../enums/operationCommandMap');
 
 function getServiceManifest(args, includeAllOperations) {
-    const thisArgs = args._ || [];
-    // The method alias will be missing when
-    // help is used on an api group or target
-    if (!OperationCommandMap[thisArgs[1]]) {
-        thisArgs.splice(1, 0, '');
-    }
-    let [apiGroup, methodAlias, target, subTarget] = thisArgs;
+    let {apiGroup, methodAlias, target, subTarget} = getNamedArgsMap(args);
     methodAlias = OperationCommandMap[methodAlias];
     const {'--': params} = args;
     const category = getCategoryManifest(args);
@@ -54,17 +48,24 @@ function getServiceManifest(args, includeAllOperations) {
     return payload;
 }
 
-function getCategoryName(args) {
-    return args._[0] || null;
+function getNamedArgsMap(args) {
+    const thisArgs = args._ || [];
+    // The method alias may be missing when
+    // help is used on an api group or target
+    if (thisArgs[1] && !OperationCommandMap[thisArgs[1]]) {
+        thisArgs.splice(1, 0, '');
+    }
+    let [apiGroup, methodAlias, target, subTarget] = thisArgs;
+    return {apiGroup, methodAlias, target, subTarget};
 }
 
 function getCategoryManifest(args) {
-    const category = getCategoryName(args);
-    return manifest[category];
+    const {apiGroup} = getNamedArgsMap(args);
+    return manifest[apiGroup];
 }
 
 module.exports = {
-    getCategoryName,
+    getNamedArgsMap,
     getServiceManifest,
     getCategoryManifest
 };

@@ -232,7 +232,7 @@ Object.keys(swagger.paths).sort().forEach(pathName => {
         // Params that are contained in the .luisrc are excluded
         // unless the category is "apps" pr "versions" since these
         // will require the user to specify --appId or --versionId respectively.
-        const params = (swaggerOperation.parameters || []).filter(param => (!/(body)/.test(param.in) && (/(apps|versions)/.test(category) || !/(appId|versionId)/.test(param.name))));
+        const params = (swaggerOperation.parameters || []).filter(param => (!/(body)/.test(param.in)));
         const entityToConsume = findEntity(swaggerOperation) || {name: '', schema: {$ref: ''}};
 
         // Build the command example for the help output: luis <api group> <action> <target> <subtarget> --<args>
