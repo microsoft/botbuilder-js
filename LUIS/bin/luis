@@ -103,7 +103,7 @@ async function initializeConfig() {
         return null;
     }
 
-    return fs.writeJson(path.join(process.cwd(), '.luisrc'), config);
+    return fs.writeJson(path.join(process.cwd(), '.luisrc'), config, {spaces: 2});
 }
 
 /**
