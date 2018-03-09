@@ -12,7 +12,7 @@ const {getServiceManifest, getCategoryManifest, getNamedArgsMap} = require('./ut
  */
 module.exports = async function help(args) {
     const helpContents = await getHelpContents(args);
-    let [x] = process.stdout.getWindowSize();
+    let x = 'getWindowSize' in process.stdout ? process.stdout.getWindowSize()[0] : 50;
     process.stdout.write('\nLUIS cli for interacting with the LUIS api - © 2018 Microsoft Corporation\n\n');
     process.stdout.write(chalk.bold(`usage: luis ${chalk.cyan('<api group> <action> [<target> [<subtarget>] [--<args> --<globalArgs>]]]')}\n\n`));
     helpContents.forEach(helpContent => {

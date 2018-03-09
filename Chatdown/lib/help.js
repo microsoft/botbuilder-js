@@ -1,9 +1,9 @@
 const Table = require('cli-table2');
 module.exports = function () {
-    process.stdout.write('\nChatdown cli tool used to parse chat dialogs into transcripts\n\n© 2018 Microsoft Corporation\n\nUsage:\n\n');
-    let [x] = process.stdout.getWindowSize() ;
+    process.stdout.write('\nChatdown cli tool used to parse chat dialogs into tran; scripts\n\n© 2018 Microsoft Corporation\n\nUsage:\n\n');
+    let x = 'getWindowSize' in process.stdout ? process.stdout.getWindowSize()[0] : 50;
     let left = 16;
-    let right = x-left-3; // 3 is for 3 vertical bar characters
+    let right = x - left - 3; // 3 is for 3 vertical bar characters
     const table = new Table({
         head: ['Argument', 'Description'],
         colWidths: [left, right],
