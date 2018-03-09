@@ -23,11 +23,16 @@ server.post('/api/messages', (req, res) => {
     // Route received request to adapter for processing
     adapter.processRequest(req, res, (context) => {
         if (context.request.type === 'message') {
-            // Continue executing the "current" dialog, if any.
-            return dialogs.continue(context).then(() => {
+            const state = conversationState.get(context);
+            if (!state.dialogStack) {
+                state.dialogStack = [];
+            }
+            // Create dialog context and continue executing the "current" dialog, if any.
+            const dc = dialogs.createContext(context, state.dialogStack);
+            return dc.continue().then(() => {
                 // Check to see if anyone replied. If not then start echo dialog
                 if (!context.responded) {
-                    return dialogs.begin(context, 'echo');
+                    return dc.begin('echo');
                 }
             });
         }
@@ -38,10 +43,10 @@ server.post('/api/messages', (req, res) => {
 });
 // Add dialogs
 dialogs.add('echo', [
-    function (context) {
-        const state = conversationState.get(context);
+    function (dc) {
+        const state = conversationState.get(dc.context);
         const count = state.count === undefined ? state.count = 0 : ++state.count;
-        context.batch.reply(`${count}: You said "${context.request.text}"`);
-        return dialogs.end(context);
+        dc.batch.reply(`${count}: You said "${dc.context.request.text}"`);
+        return dc.end();
     }
 ]);

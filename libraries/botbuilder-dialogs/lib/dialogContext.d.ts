@@ -65,15 +65,15 @@ export declare class DialogContext<C extends BotContext> {
      * **Example usage:**
      *
      * ```JavaScript
-     * return dialogs.continue(context).then(() => {
+     * const dc = dialogs.createContext(context, dialogStack);
+     * return dc.continue().then(() => {
      *      if (!context.responded) {
-     *          return dialogs.begin(context, 'fallback');
+     *          return dc.begin('fallback');
      *      }
      * });
      * ```
-     * @param context Context object for the current turn of conversation with the user.
      */
-    continue(context: C): Promise<void>;
+    continue(): Promise<void>;
     /**
      * Ends a dialog by popping it off the stack and returns an optional result to the dialogs
      * parent. The parent dialog is the dialog the started the on being ended via a call to

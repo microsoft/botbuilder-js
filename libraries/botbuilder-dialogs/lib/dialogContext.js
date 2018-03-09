@@ -86,15 +86,15 @@ class DialogContext {
      * **Example usage:**
      *
      * ```JavaScript
-     * return dialogs.continue(context).then(() => {
+     * const dc = dialogs.createContext(context, dialogStack);
+     * return dc.continue().then(() => {
      *      if (!context.responded) {
-     *          return dialogs.begin(context, 'fallback');
+     *          return dc.begin('fallback');
      *      }
      * });
      * ```
-     * @param context Context object for the current turn of conversation with the user.
      */
-    continue(context) {
+    continue() {
         try {
             // Check for a dialog on the stack
             const instance = this.instance;
