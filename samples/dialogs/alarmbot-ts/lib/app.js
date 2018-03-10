@@ -1,4 +1,12 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const botbuilder_1 = require("botbuilder");
 const botbuilder_dialogs_1 = require("botbuilder-dialogs");
@@ -23,7 +31,7 @@ adapter.use(new botbuilder_1.BatchOutput());
 // Listen for incoming requests 
 server.post('/api/messages', (req, res) => {
     // Route received request to adapter for processing
-    adapter.processRequest(req, res, (context) => {
+    adapter.processRequest(req, res, (context) => __awaiter(this, void 0, void 0, function* () {
         if (context.request.type === 'message') {
             const utterance = (context.request.text || '').trim().toLowerCase();
             // Create dialog context
@@ -31,37 +39,36 @@ server.post('/api/messages', (req, res) => {
             const dc = dialogs.createContext(context, stack);
             // Start addAlarm dialog
             if (utterance.includes('add alarm')) {
-                return dc.begin('addAlarm');
+                yield dc.begin('addAlarm');
                 // Start deleteAlarm dialog
             }
             else if (utterance.includes('delete alarm')) {
-                return dc.begin('deleteAlarm');
+                yield dc.begin('deleteAlarm');
                 // Start showAlarms
             }
             else if (utterance.includes('show alarms')) {
-                return dc.begin('showAlarms');
+                yield dc.begin('showAlarms');
                 // Check for cancel
             }
             else if (utterance === 'cancel') {
                 if (dc.instance) {
-                    dc.batch.reply(`Ok... Cancelled.`);
-                    return dc.endAll();
+                    yield dc.context.sendActivity(`Ok... Cancelled.`);
+                    yield dc.endAll();
                 }
                 else {
-                    dc.batch.reply(`Nothing to cancel.`);
+                    yield dc.context.sendActivity(`Nothing to cancel.`);
                 }
                 // Continue current dialog
             }
             else {
-                return dc.continue().then(() => {
-                    // Return default message if nothing replied.
-                    if (!context.responded) {
-                        dc.batch.reply(`Hi! I'm a simple alarm bot. Say "add alarm", "delete alarm", or "show alarms".`);
-                    }
-                });
+                yield dc.continue();
+                // Return default message if nothing replied.
+                if (!context.responded) {
+                    yield dc.context.sendActivity(`Hi! I'm a simple alarm bot. Say "add alarm", "delete alarm", or "show alarms".`);
+                }
             }
         }
-    });
+    }));
 });
 const dialogs = new botbuilder_dialogs_1.DialogSet();
 //-----------------------------------------------
@@ -69,38 +76,44 @@ const dialogs = new botbuilder_dialogs_1.DialogSet();
 //-----------------------------------------------
 dialogs.add('addAlarm', [
     function (dc) {
-        // Initialize temp alarm and prompt for title
-        dc.instance.state = {};
-        return dc.prompt('titlePrompt', `What would you like to call your alarm?`);
+        return __awaiter(this, void 0, void 0, function* () {
+            // Initialize temp alarm and prompt for title
+            dc.instance.state = {};
+            yield dc.prompt('titlePrompt', `What would you like to call your alarm?`);
+        });
     },
     function (dc, title) {
-        // Save alarm title and prompt for time
-        const alarm = dc.instance.state;
-        alarm.title = title;
-        return dc.prompt('timePrompt', `What time would you like to set the "${alarm.title}" alarm for?`);
+        return __awaiter(this, void 0, void 0, function* () {
+            // Save alarm title and prompt for time
+            const alarm = dc.instance.state;
+            alarm.title = title;
+            yield dc.prompt('timePrompt', `What time would you like to set the "${alarm.title}" alarm for?`);
+        });
     },
     function (dc, time) {
-        // Save alarm time
-        const alarm = dc.instance.state;
-        alarm.time = time.toISOString();
-        // Alarm completed so set alarm.
-        const user = state.user(dc.context);
-        user.alarms.push(alarm);
-        // Confirm to user
-        dc.batch.reply(`Your alarm named "${alarm.title}" is set for "${moment(alarm.time).format("ddd, MMM Do, h:mm a")}".`);
-        return dc.end();
+        return __awaiter(this, void 0, void 0, function* () {
+            // Save alarm time
+            const alarm = dc.instance.state;
+            alarm.time = time.toISOString();
+            // Alarm completed so set alarm.
+            const user = state.user(dc.context);
+            user.alarms.push(alarm);
+            // Confirm to user
+            yield dc.context.sendActivity(`Your alarm named "${alarm.title}" is set for "${moment(alarm.time).format("ddd, MMM Do, h:mm a")}".`);
+            yield dc.end();
+        });
     }
 ]);
-dialogs.add('titlePrompt', new botbuilder_dialogs_1.TextPrompt((dc, value) => {
+dialogs.add('titlePrompt', new botbuilder_dialogs_1.TextPrompt((dc, value) => __awaiter(this, void 0, void 0, function* () {
     if (!value || value.length < 3) {
-        dc.batch.reply(`Title should be at least 3 characters long.`);
+        yield dc.context.sendActivity(`Title should be at least 3 characters long.`);
         return undefined;
     }
     else {
         return value.trim();
     }
-}));
-dialogs.add('timePrompt', new botbuilder_dialogs_1.DatetimePrompt((dc, values) => {
+})));
+dialogs.add('timePrompt', new botbuilder_dialogs_1.DatetimePrompt((dc, values) => __awaiter(this, void 0, void 0, function* () {
     try {
         if (!Array.isArray(values) || values.length < 0) {
             throw new Error('missing time');
@@ -115,65 +128,74 @@ dialogs.add('timePrompt', new botbuilder_dialogs_1.DatetimePrompt((dc, values) =
         return value;
     }
     catch (err) {
-        dc.batch.reply(`Please enter a valid time in the future like "tomorrow at 9am" or say "cancel".`);
+        yield dc.context.sendActivity(`Please enter a valid time in the future like "tomorrow at 9am" or say "cancel".`);
         return undefined;
     }
-}));
+})));
 //-----------------------------------------------
 // Delete Alarm
 //-----------------------------------------------
 dialogs.add('deleteAlarm', [
     function (dc) {
-        // Divert to appropriate dialog
-        const user = state.user(dc.context);
-        if (user.alarms.length > 1) {
-            return dc.begin('deleteAlarmMulti');
-        }
-        else if (user.alarms.length === 1) {
-            return dc.begin('deleteAlarmSingle');
-        }
-        else {
-            dc.batch.reply(`No alarms set to delete.`);
-            return dc.end();
-        }
+        return __awaiter(this, void 0, void 0, function* () {
+            // Divert to appropriate dialog
+            const user = state.user(dc.context);
+            if (user.alarms.length > 1) {
+                yield dc.begin('deleteAlarmMulti');
+            }
+            else if (user.alarms.length === 1) {
+                yield dc.begin('deleteAlarmSingle');
+            }
+            else {
+                yield dc.context.sendActivity(`No alarms set to delete.`);
+                yield dc.end();
+            }
+        });
     }
 ]);
 dialogs.add('deleteAlarmMulti', [
     function (dc) {
-        // Compute list of choices based on alarm titles
-        const user = state.user(dc.context);
-        const choices = user.alarms.map((value) => value.title);
-        // Prompt user for choice (force use of "list" style)
-        const prompt = `Which alarm would you like to delete? Say "cancel" to quit.`;
-        return dc.prompt('choicePrompt', prompt, choices);
+        return __awaiter(this, void 0, void 0, function* () {
+            // Compute list of choices based on alarm titles
+            const user = state.user(dc.context);
+            const choices = user.alarms.map((value) => value.title);
+            // Prompt user for choice (force use of "list" style)
+            const prompt = `Which alarm would you like to delete? Say "cancel" to quit.`;
+            yield dc.prompt('choicePrompt', prompt, choices);
+        });
     },
     function (dc, choice) {
-        // Delete alarm by position
-        const user = state.user(dc.context);
-        if (choice.index < user.alarms.length) {
-            user.alarms.splice(choice.index, 1);
-        }
-        // Notify user of delete
-        dc.batch.reply(`Deleted "${choice.value}" alarm.`);
-        return dc.end();
+        return __awaiter(this, void 0, void 0, function* () {
+            // Delete alarm by position
+            const user = state.user(dc.context);
+            if (choice.index < user.alarms.length) {
+                user.alarms.splice(choice.index, 1);
+            }
+            // Notify user of delete
+            yield dc.context.sendActivity(`Deleted "${choice.value}" alarm.`);
+            yield dc.end();
+        });
     }
 ]);
 dialogs.add('deleteAlarmSingle', [
     function (dc) {
-        const user = state.user(dc.context);
-        const alarm = user.alarms[0];
-        return dc.prompt('confirmPrompt', `Are you sure you want to delete the "${alarm.title}" alarm?`);
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = state.user(dc.context);
+            const alarm = user.alarms[0];
+            yield dc.prompt('confirmPrompt', `Are you sure you want to delete the "${alarm.title}" alarm?`);
+        });
     },
     function (dc, confirm) {
-        if (confirm) {
-            const user = state.user(dc.context);
-            user.alarms = [];
-            dc.batch.reply(`alarm deleted...`);
-        }
-        else {
-            dc.batch.reply(`ok...`);
-        }
-        return Promise.resolve();
+        return __awaiter(this, void 0, void 0, function* () {
+            if (confirm) {
+                const user = state.user(dc.context);
+                user.alarms = [];
+                yield dc.context.sendActivity(`alarm deleted...`);
+            }
+            else {
+                yield dc.context.sendActivity(`ok...`);
+            }
+        });
     }
 ]);
 dialogs.add('choicePrompt', new botbuilder_dialogs_1.ChoicePrompt());
@@ -183,18 +205,20 @@ dialogs.add('confirmPrompt', new botbuilder_dialogs_1.ConfirmPrompt());
 //-----------------------------------------------
 dialogs.add('showAlarms', [
     function (dc) {
-        let msg = `No alarms found.`;
-        const user = state.user(dc.context);
-        if (user.alarms.length > 0) {
-            msg = `**Current Alarms**\n\n`;
-            let connector = '';
-            user.alarms.forEach((alarm) => {
-                msg += connector + `- ${alarm.title} (${moment(alarm.time).format("ddd, MMM Do, h:mm a")})`;
-                connector = '\n';
-            });
-        }
-        dc.batch.reply(msg);
-        return dc.end();
+        return __awaiter(this, void 0, void 0, function* () {
+            let msg = `No alarms found.`;
+            const user = state.user(dc.context);
+            if (user.alarms.length > 0) {
+                msg = `**Current Alarms**\n\n`;
+                let connector = '';
+                user.alarms.forEach((alarm) => {
+                    msg += connector + `- ${alarm.title} (${moment(alarm.time).format("ddd, MMM Do, h:mm a")})`;
+                    connector = '\n';
+                });
+            }
+            yield dc.context.sendActivity(msg);
+            yield dc.end();
+        });
     }
 ]);
 //# sourceMappingURL=app.js.map
