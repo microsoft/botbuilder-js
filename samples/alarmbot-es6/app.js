@@ -1,5 +1,5 @@
-const { Bot, MemoryStorage, BotStateManager } = require('botbuilder');
-const { BotFrameworkAdapter } = require('botbuilder-services');
+const { BotFrameworkAdapter, MemoryStorage } = require('botbuilder');
+const { BotStateManager } = require('./botStateManager');
 const restify = require('restify');
 const addAlarm = require('./addAlarm');
 const deleteAlarm = require('./deleteAlarm');
@@ -12,40 +12,42 @@ server.listen(process.env.port || process.env.PORT || 3978, function () {
     console.log(`${server.name} listening to ${server.url}`);
 });
 
-// Create adapter and listen to servers '/api/messages' route.
+// Create adapter
 const adapter = new BotFrameworkAdapter({ 
     appId: process.env.MICROSOFT_APP_ID, 
     appPassword: process.env.MICROSOFT_APP_PASSWORD 
 });
-server.post('/api/messages', adapter.listen());
 
-// Initialize bot by passing it adapter and middleware
-const bot = new Bot(adapter)
-    .use(new MemoryStorage())
-    .use(new BotStateManager())
-    .onReceive((context) => {
+// Add state middleware
+const state = new BotStateManager(new MemoryStorage());
+adapter.use(state);
+
+// Listen for incoming requests 
+server.post('/api/messages', (req, res) => {
+    // Route received request to adapter for processing
+    adapter.processRequest(req, res, (context) => {
         if (context.request.type === 'message') {
             // Check for the triggering of a new topic
             const utterance = (context.request.text || '').trim().toLowerCase();
             if (utterance.includes('add alarm')) {
-                return addAlarm.begin(context);
+                return addAlarm.begin(context, state);
             } else if (utterance.includes('delete alarm')) {
-                return deleteAlarm.begin(context);
+                return deleteAlarm.begin(context, state);
             } else if (utterance.includes('show alarms')) {
-                return showAlarms.begin(context);
+                return showAlarms.begin(context, state);
             } else if (utterance === 'cancel') {
-                return cancel.begin(context);
+                return cancel.begin(context, state);
             } else {
                 // Continue the current topic
-                switch (context.state.conversation.topic) {
+                switch (state.conversation(context).topic) {
                     case 'addAlarm':
-                        return addAlarm.routeReply(context);
+                        return addAlarm.routeReply(context, state);
                     case 'deleteAlarm':
-                        return deleteAlarm.routeReply(context);
+                        return deleteAlarm.routeReply(context, state);
                     default:
-                        context.reply(`Hi! I'm a simple alarm bot. Say "add alarm", "delete alarm", or "show alarms".`)
-                        return Promise.resolve();
+                        return context.sendActivity(`Hi! I'm a simple alarm bot. Say "add alarm", "delete alarm", or "show alarms".`)
                 }
             }
         }
     });
+});

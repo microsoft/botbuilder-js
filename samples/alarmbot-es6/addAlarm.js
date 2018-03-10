@@ -1,54 +1,63 @@
 
 module.exports = {
-    begin(context) {
+    begin(context, state) {
         // Set topic and initialize empty alarm
-        context.state.conversation.topic = 'addAlarm';
-        context.state.conversation.alarm = {};
-        return nextField(context);
+        const conversation = state.conversation(context);
+        conversation.topic = 'addAlarm';
+        conversation.alarm = {};
+        return nextField(context, state);
     },
-    routeReply(context) {
+    routeReply(context, state) {
         // Handle users reply to prompt
+        let invalid = undefined;
+        const conversation = state.conversation(context);
         const utterance = context.request.text.trim();
-        switch (context.state.conversation.prompt) {
+        switch (conversation.prompt) {
             case 'title':
                 // Validate reply and save to alarm
                 if (utterance.length > 2) {
-                    context.state.conversation.alarm.title = utterance;
+                    conversation.alarm.title = utterance;
                 } else {
-                    context.reply(`I'm sorry. Your alarm should have a title at least 3 characters long.`);
+                    invalid = `I'm sorry. Your alarm should have a title at least 3 characters long.`;
                 }
                 break;
             case 'time':
                 // TODO: validate time user replied with
-                context.state.conversation.alarm.time = utterance;
+                conversation.alarm.time = utterance;
                 break;
         }
-        return nextField(context);
+    
+        // Check for invalid prompt
+        if (invalid) {
+            return context.sendActivity(invalid)
+                .then(() => nextField(context, state));
+        } else {
+            return nextField(context, state);
+        }
     }
 };
 
-function nextField(context) {
+function nextField(context, state) {
     // Prompt user for next missing field
-    const alarm = context.state.conversation.alarm;
+    const conversation = state.conversation(context);
+    const alarm = conversation.alarm;
     if (alarm.title === undefined) {
-        context.reply(`What would you like to call your alarm?`);
-        context.state.conversation.prompt = 'title';
+        conversation.prompt = 'title';
+        return context.sendActivity(`What would you like to call your alarm?`);
     } else if (alarm.time === undefined) {
-        context.reply(`What time would you like to set the "${alarm.title}" alarm for?`);
-        context.state.conversation.prompt = 'time';
+        conversation.prompt = 'time';
+        return context.sendActivity(`What time would you like to set the "${alarm.title}" alarm for?`);
     } else {
         // Alarm completed so set alarm.
-        const list = context.state.user.alarms || [];
-        list.push(alarm);
-        context.state.user.alarms = list;
+        const user = state.user(context);
+        user.alarms.push(alarm);
 
         // TODO: set alarm
 
         // Notify user and cleanup topic state
-        context.reply(`Your alarm named "${alarm.title}" is set for "${alarm.time}".`);
-        context.state.conversation.topic = undefined;
-        context.state.conversation.alarm = undefined;
-        context.state.conversation.prompt = undefined;
+        conversation.topic = undefined;
+        conversation.alarm = undefined;
+        conversation.prompt = undefined;
+        return context.sendActivity(`Your alarm named "${alarm.title}" is set for "${alarm.time}".`);
     }
-    return Promise.resolve();
 }
