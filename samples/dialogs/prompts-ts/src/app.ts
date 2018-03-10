@@ -4,7 +4,7 @@ import {
 } from 'botbuilder';
 import { 
     DialogSet, TextPrompt, ConfirmPrompt, ChoicePrompt, DatetimePrompt, NumberPrompt, 
-    AttachmentPrompt, FoundChoice, Choice, FoundDatetime, ListStyle
+    AttachmentPrompt, FoundChoice, Choice, FoundDatetime
 } from 'botbuilder-dialogs';
 import * as restify from 'restify';
 
