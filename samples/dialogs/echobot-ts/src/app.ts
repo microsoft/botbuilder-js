@@ -1,5 +1,5 @@
 import { BotFrameworkAdapter, MemoryStorage, ConversationState, BatchOutput, BotContext } from 'botbuilder';
-import { DialogSet, DialogInstance } from 'botbuilder-dialogs';
+import { DialogSet } from 'botbuilder-dialogs';
 import * as restify from 'restify';
 
 // Create server
@@ -16,7 +16,7 @@ const adapter = new BotFrameworkAdapter( {
 
 // Add conversation state middleware
 interface EchoState {
-    dialogStack: DialogInstance[];
+    dialogStack: any[];
     count: number;
 }
 const conversationState = new ConversationState<EchoState>(new MemoryStorage());
