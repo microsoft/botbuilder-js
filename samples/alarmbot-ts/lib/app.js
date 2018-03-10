@@ -1,4 +1,12 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const botbuilder_1 = require("botbuilder");
 const botStateManager_1 = require("./botStateManager");
@@ -23,34 +31,37 @@ adapter.use(state);
 // Listen for incoming requests 
 server.post('/api/messages', (req, res) => {
     // Route received request to adapter for processing
-    adapter.processRequest(req, res, (context) => {
+    adapter.processRequest(req, res, (context) => __awaiter(this, void 0, void 0, function* () {
         if (context.request.type === 'message') {
             // Check for the triggering of a new topic
             const utterance = (context.request.text || '').trim().toLowerCase();
             if (utterance.includes('add alarm')) {
-                return addAlarm.begin(context, state);
+                yield addAlarm.begin(context, state);
             }
             else if (utterance.includes('delete alarm')) {
-                return deleteAlarm.begin(context, state);
+                yield deleteAlarm.begin(context, state);
             }
             else if (utterance.includes('show alarms')) {
-                return showAlarms.begin(context, state);
+                yield showAlarms.begin(context, state);
             }
             else if (utterance === 'cancel') {
-                return cancel.begin(context, state);
+                yield cancel.begin(context, state);
             }
             else {
                 // Continue the current topic
                 switch (state.conversation(context).topic) {
                     case 'addAlarm':
-                        return addAlarm.routeReply(context, state);
+                        yield addAlarm.routeReply(context, state);
+                        break;
                     case 'deleteAlarm':
-                        return deleteAlarm.routeReply(context, state);
+                        yield deleteAlarm.routeReply(context, state);
+                        break;
                     default:
-                        return context.sendActivity(`Hi! I'm a simple alarm bot. Say "add alarm", "delete alarm", or "show alarms".`);
+                        yield context.sendActivity(`Hi! I'm a simple alarm bot. Say "add alarm", "delete alarm", or "show alarms".`);
+                        break;
                 }
             }
         }
-    });
+    }));
 });
 //# sourceMappingURL=app.js.map
