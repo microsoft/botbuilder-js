@@ -7,7 +7,7 @@
  */
 import { Storage, StoreItems } from 'botbuilder-core-extensions';
 /**
- * :package: **botbuilder-core**
+ * :package: **botbuilder**
  *
  * Additional settings for configuring an instance of `FileStorage`.
  */
@@ -19,7 +19,7 @@ export interface FileStorageSettings {
     path?: string;
 }
 /**
- * :package: **botbuilder-core**
+ * :package: **botbuilder**
  *
  * A file based storage provider.
  *

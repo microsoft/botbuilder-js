@@ -6,7 +6,7 @@ const file = require("fs");
 const os = require("os");
 const filenamify = require("filenamify");
 /**
- * :package: **botbuilder-core**
+ * :package: **botbuilder**
  *
  * A file based storage provider.
  *

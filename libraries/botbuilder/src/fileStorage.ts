@@ -13,7 +13,7 @@ import * as os from 'os';
 import * as filenamify from 'filenamify';
 
 /** 
- * :package: **botbuilder-core**
+ * :package: **botbuilder**
  * 
  * Additional settings for configuring an instance of `FileStorage`. 
  */
@@ -26,7 +26,7 @@ export interface FileStorageSettings {
 }
 
 /**
- * :package: **botbuilder-core**
+ * :package: **botbuilder**
  * 
  * A file based storage provider.
  *
