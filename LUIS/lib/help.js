@@ -1,7 +1,7 @@
 const Table = require('cli-table2');
 const chalk = require('chalk');
 
-const manifest = require('./api/manifest');
+const manifest = require('./api/luis');
 const {getServiceManifest, getCategoryManifest, getNamedArgsMap} = require('./utils/argsUtil');
 
 /**
@@ -38,7 +38,7 @@ module.exports = async function help(args) {
 };
 
 /**
- * Retrieves help content vie the manifest.json from
+ * Retrieves help content vie the luis.json from
  * the arguments input by the user.
  *
  * @param args The arguments input by the user
@@ -108,8 +108,8 @@ function getGeneralHelpContents() {
                 ['--appId', 'Specifies the application id. This can optionally be specified in the .luisrc'],
                 ['--versionId', 'Specifies the version id. This can optionally be specified in the .luisrc'],
                 ['--in <path>', 'Specifies the input file path. Applicable for create, update and patch actions'],
-                ['--skip <int>', 'Specifies the number of records to skip. Applicable for the list action only'],
-                ['--take <int>', 'Specifies the number of records to take. Applicable for the list action only'],
+                ['--skip <integer>', 'Specifies the number of records to skip. Applicable for the list action only'],
+                ['--take <integer>', 'Specifies the number of records to take. Applicable for the list action only'],
             ]
         },
         {
@@ -125,7 +125,7 @@ function getGeneralHelpContents() {
 }
 
 /**
- * Walks the manifest.json and pulls out all
+ * Walks the luis.json and pulls out all
  * commands that are supported.
  *
  * @returns {*[]}
@@ -165,17 +165,20 @@ function getHelpContentsForTargetOrSubTarget(serviceManifest, categoryName, targ
 
     let targets = operations.slice().filter(operation => !subTargetName && !operation.subTarget);
     let subTargets = operations.slice().filter(operation => subTargetName ? operation.subTarget === subTargetName : !!operation.subTarget);
-
+    let message = `Where ${chalk.cyan('<action>')} is one of the following:`;
     // Display the subtargets like the targets
     // if we are specifying help for a subtarget.
-    if (subTargetName) {
+    if (subTargetName && subTargets.length) {
         targets = subTargets;
         subTargets = [];
+    } else if (!subTargets.length && !targets.length) {
+        targets = operations;
+        message = `${chalk.cyan.bold(subTargetName)} does not exist, did you mean one of these?`;
     }
     const payload = [];
     if (targets.length) {
         payload.push({
-            head: chalk.bold(`Where ${chalk.cyan('<action>')} is one of the following:`),
+            head: chalk.bold(message),
             table: targets.map(getHelpForOperation)
         });
     }
@@ -229,6 +232,16 @@ function getHelpContentsForCategory(category, categoryName) {
  * @returns {{head: *|string, table: *[]}}
  */
 function getHelpForSubTargets(operations, categoryName, targetName) {
+    // Since subtargets are derived from operations, there could be
+    // duplicates if a subtarget has more than one operation associated with it.
+    const operationNameMap = {};
+    operations = operations.filter(op => {
+        if (!operationNameMap[op.subTarget]){
+            operationNameMap[op.subTarget] = true;
+            return true;
+        }
+        return false;
+    });
     return {
         head: chalk.bold(`Where ${chalk.cyan('<subtarget>')} may be one of the following:`),
         table: [

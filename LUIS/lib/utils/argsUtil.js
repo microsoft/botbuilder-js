@@ -1,4 +1,4 @@
-const manifest = require('../api/manifest');
+const manifest = require('../api/luis');
 const {OperationCommandMap} = require('../enums/operationCommandMap');
 
 function getServiceManifest(args, includeAllOperations) {

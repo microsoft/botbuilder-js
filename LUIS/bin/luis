@@ -128,18 +128,16 @@ async function getFileInput(args) {
  * @param serviceManifest
  */
 function validateArguments(serviceManifest) {
-    let error;
+    let error = new Error();
+    error.name = 'ArgumentError';
     if (!serviceManifest) {
-        error = new Error('The service does not exist');
-        error.name = 'ServiceError';
-
+        error.message = 'The service does not exist';
         throw error;
     }
 
     const {operation} = serviceManifest;
     if (!operation) {
-        error = new Error('The operation does not exist');
-        error.name = 'OperationError';
+        error.message = 'The operation does not exist';
 
         throw error;
     }
@@ -148,15 +146,13 @@ function validateArguments(serviceManifest) {
     const entityRequired = !!operation.entityName;
 
     if (!entityRequired && entitySpecified) {
-        error = new Error(`The ${operation.name} operation does not accept an input`);
-        error.name = 'InputError';
+        error.message = `The ${operation.name} operation does not accept an input`;
 
         throw error;
     }
 
     if (entityRequired && !entitySpecified) {
-        error = new Error(`The ${operation.name} requires an input of type: ${operation.entityType}`);
-        error.name = 'InputError';
+        error.message = `The ${operation.name} requires an input of type: ${operation.entityType}`;
 
         throw error;
     }
@@ -172,7 +168,9 @@ function validateArguments(serviceManifest) {
  */
 async function handleError(error) {
     process.stdout.write('\n' + chalk.red.bold(error + '\n'));
-    await help(args);
+    if (error.name === 'ArgumentError') {
+        await help(args);
+    }
     return 1;
 }
 

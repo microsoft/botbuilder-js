@@ -7,9 +7,13 @@ const luis = path.resolve('../bin/luis');
 describe('The LUIS cli --init argument', () => {
     const rcPath = path.resolve('.luisrc');
     beforeEach(async () => {
-        const rc = await fs.stat(rcPath);
-        if (rc) {
-            await fs.unlink(path.resolve('.luisrc'));
+        try {
+            const rc = await fs.stat(rcPath);
+            if (rc) {
+                await fs.unlink(path.resolve('.luisrc'));
+            }
+        } catch (e) {
+            // do noting
         }
     });
 

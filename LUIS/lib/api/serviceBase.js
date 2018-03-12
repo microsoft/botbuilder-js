@@ -83,7 +83,7 @@ ServiceBase.validateParams = function (tokenizedUrl, params) {
     paramsFromPath.forEach(param => {
         if (!(param in params)) {
             const error = new Error(`The required param "${param}" is missing.`);
-            error.name = 'OperationError';
+            error.name = 'ArgumentError';
         }
     });
 };

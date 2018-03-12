@@ -201,7 +201,7 @@ Object.keys(swagger.definitions).forEach(key => {
     }
 });
 
-// Builds the Service classes and manifest.json
+// Builds the Service classes and luis.json
 const configsMap = {};
 Object.keys(swagger.paths).sort().forEach(pathName => {
     const {root, node} = findRootAndNodeFromPath(pathName);
@@ -283,7 +283,7 @@ Object.keys(swagger.paths).sort().forEach(pathName => {
                 .toLowerCase());
 
         // If a body is expected in the request, keep
-        // information about this in the manifest.json
+        // information about this in the luis.json
         if (entityToConsume.name) {
             operation.entityName = entityToConsume.name;
             operation.entityType = (entityToConsume.schema.$ref || '').split('/').pop();
@@ -330,5 +330,5 @@ Object.keys(modelTypesByName).forEach(key => {
 const modelIndexJS = modelNames.sort().map(clazz => `module.exports.${clazz} = require('./${cc(clazz)}');`).join('\n');
 
 fs.outputFileSync('generated/dataModels/index.js', modelIndexJS);
-// Write the manifest.json
-fs.writeJsonSync('generated/manifest.json', configsMap);
+// Write the luis.json
+fs.writeJsonSync('generated/luis.json', configsMap);
