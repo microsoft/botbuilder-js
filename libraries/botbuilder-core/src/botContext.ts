@@ -15,21 +15,21 @@ import { Promiseable } from './middlewareSet';
  * 
  * Signature implemented by functions registered with `context.onSendActivity()`. 
  */
-export type SendActivityHandler = (activities: Partial<Activity>[], next: () => Promise<ResourceResponse[]>) => Promiseable<ResourceResponse[]>;
+export type SendActivityHandler = (context: BotContext, activities: Partial<Activity>[], next: () => Promise<ResourceResponse[]>) => Promiseable<ResourceResponse[]>;
 
 /** 
  * :package: **botbuilder-core**
  * 
  * Signature implemented by functions registered with `context.onUpdateActivity()`. 
  */
-export type UpdateActivityHandler = (activity: Partial<Activity>, next: () => Promise<void>) => Promiseable<void>;
+export type UpdateActivityHandler = (context: BotContext, activity: Partial<Activity>, next: () => Promise<void>) => Promiseable<void>;
 
 /** 
  * :package: **botbuilder-core**
  * 
  * Signature implemented by functions registered with `context.onDeleteActivity()`. 
  */
-export type DeleteActivityHandler = (reference: Partial<ConversationReference>, next: () => Promise<void>) => Promiseable<void>;
+export type DeleteActivityHandler = (context: BotContext, reference: Partial<ConversationReference>, next: () => Promise<void>) => Promiseable<void>;
 
 export interface BotContext { }
 
@@ -193,12 +193,13 @@ export class BotContext {
         return this;
     }
 
-    private emit<T>(handlers: ((arg: T, next: () => Promise<any>) => Promiseable<any>)[], arg: T, next: () => Promise<any>): Promise<any> {
+    private emit<T>(handlers: ((context: BotContext, arg: T, next: () => Promise<any>) => Promiseable<any>)[], arg: T, next: () => Promise<any>): Promise<any> {
         const list = handlers.slice();
+        const context = this;
         function emitNext(i: number): Promise<void> {
             try {
                 if (i < list.length) {
-                    return Promise.resolve(list[i](arg, () => emitNext(i + 1)));
+                    return Promise.resolve(list[i](context, arg, () => emitNext(i + 1)));
                 }
                 return Promise.resolve(next());
             } catch (err) {

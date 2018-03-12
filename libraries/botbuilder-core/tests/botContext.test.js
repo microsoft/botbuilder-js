@@ -100,7 +100,8 @@ describe(`TurnContext`, function () {
 
     it(`should call onSendActivity() hook before delivery.`, function (done) {
         let count = 0;
-        context.onSendActivity((activities, next) => {
+        context.onSendActivity((ctx, activities, next) => {
+            assert(ctx, `context not passed to hook`);
             assert(activities, `activity not passed to hook`);
             count = activities.length;
             return next();
@@ -112,7 +113,7 @@ describe(`TurnContext`, function () {
     });
 
     it(`should allow interception of delivery in onSendActivity() hook.`, function (done) {
-        context.onSendActivity((activities, next) => {
+        context.onSendActivity((ctx, activities, next) => {
             return [];
         });
         context.sendActivity(testMessage).then((responses) => {
@@ -123,7 +124,8 @@ describe(`TurnContext`, function () {
     
     it(`should call onUpdateActivity() hook before update.`, function (done) {
         let called = false;
-        context.onUpdateActivity((activity, next) => {
+        context.onUpdateActivity((ctx, activity, next) => {
+            assert(ctx, `context not passed to hook`);
             assert(activity, `activity not passed to hook`);
             called = true;
             return next();
@@ -136,7 +138,8 @@ describe(`TurnContext`, function () {
 
     it(`should call onDeleteActivity() hook before delete by "id".`, function (done) {
         let called = false;
-        context.onDeleteActivity((reference, next) => {
+        context.onDeleteActivity((ctx, reference, next) => {
+            assert(ctx, `context not passed to hook`);
             assert(reference, `missing reference`);
             assert(reference.activityId === '1234', `invalid activityId passed to hook`);
             called = true;
@@ -150,7 +153,7 @@ describe(`TurnContext`, function () {
 
     it(`should call onDeleteActivity() hook before delete by "reference".`, function (done) {
         let called = false;
-        context.onDeleteActivity((reference, next) => {
+        context.onDeleteActivity((ctx, reference, next) => {
             assert(reference, `missing reference`);
             assert(reference.activityId === '1234', `invalid activityId passed to hook`);
             called = true;
@@ -164,7 +167,7 @@ describe(`TurnContext`, function () {
     
     it(`should map an exception raised by a hook to a rejection.`, function (done) {
         let called = false;
-        context.onDeleteActivity((reference, next) => {
+        context.onDeleteActivity((ctx, reference, next) => {
             throw new Error('failed');
         });
         context.deleteActivity('1234')

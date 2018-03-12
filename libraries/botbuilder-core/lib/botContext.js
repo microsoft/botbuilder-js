@@ -149,10 +149,11 @@ class BotContext {
     }
     emit(handlers, arg, next) {
         const list = handlers.slice();
+        const context = this;
         function emitNext(i) {
             try {
                 if (i < list.length) {
-                    return Promise.resolve(list[i](arg, () => emitNext(i + 1)));
+                    return Promise.resolve(list[i](context, arg, () => emitNext(i + 1)));
                 }
                 return Promise.resolve(next());
             }

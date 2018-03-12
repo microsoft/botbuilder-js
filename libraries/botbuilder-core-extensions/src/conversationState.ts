@@ -61,10 +61,10 @@ export class ConversationState<T extends StoreItem = StoreItem> extends BotState
             }
 
             // Clear state if outgoing endOfConversation detected
-            context.onSendActivity((activities, next) => {
+            context.onSendActivity((ctx, activities, next) => {
                 activities.forEach((activity) => {
                     if (ActivityTypes.EndOfConversation === activity.type) {
-                        this.clear(context);
+                        this.clear(ctx);
                     }
                 });
                 return next();

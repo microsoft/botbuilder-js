@@ -56,10 +56,10 @@ class ConversationState extends botState_1.BotState {
                 this.clear(context); // <- re-enters subscribe()
             }
             // Clear state if outgoing endOfConversation detected
-            context.onSendActivity((activities, next) => {
+            context.onSendActivity((ctx, activities, next) => {
                 activities.forEach((activity) => {
                     if (botbuilder_core_1.ActivityTypes.EndOfConversation === activity.type) {
-                        this.clear(context);
+                        this.clear(ctx);
                     }
                 });
                 return next();

@@ -13,19 +13,19 @@ import { Promiseable } from './middlewareSet';
  *
  * Signature implemented by functions registered with `context.onSendActivity()`.
  */
-export declare type SendActivityHandler = (activities: Partial<Activity>[], next: () => Promise<ResourceResponse[]>) => Promiseable<ResourceResponse[]>;
+export declare type SendActivityHandler = (context: BotContext, activities: Partial<Activity>[], next: () => Promise<ResourceResponse[]>) => Promiseable<ResourceResponse[]>;
 /**
  * :package: **botbuilder-core**
  *
  * Signature implemented by functions registered with `context.onUpdateActivity()`.
  */
-export declare type UpdateActivityHandler = (activity: Partial<Activity>, next: () => Promise<void>) => Promiseable<void>;
+export declare type UpdateActivityHandler = (context: BotContext, activity: Partial<Activity>, next: () => Promise<void>) => Promiseable<void>;
 /**
  * :package: **botbuilder-core**
  *
  * Signature implemented by functions registered with `context.onDeleteActivity()`.
  */
-export declare type DeleteActivityHandler = (reference: Partial<ConversationReference>, next: () => Promise<void>) => Promiseable<void>;
+export declare type DeleteActivityHandler = (context: BotContext, reference: Partial<ConversationReference>, next: () => Promise<void>) => Promiseable<void>;
 export interface BotContext {
 }
 /**
