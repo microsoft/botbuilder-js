@@ -12,6 +12,9 @@ interface EchoState {
 const conversationState = new ConversationState<EchoState>(new MemoryStorage());
 adapter.use(conversationState);
 
+// Greet user
+console.log(`Hi... I'm an echobot. Whatever you say I'll echo back.`);
+
 // Listen for incoming requests 
 adapter.listen(async (context) => {
     if (context.request.type === 'message') {

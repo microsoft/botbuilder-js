@@ -5,7 +5,7 @@
   "main": "./lib/app.js",
   "scripts": {
     "build-sample": "tsc",
-    "start": "tsc && node ./lib/app.js"
+    "start": "node ./lib/app.js"
   },
   "author": "",
   "license": "MIT",
