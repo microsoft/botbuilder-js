@@ -9,6 +9,14 @@ Make sure you have node >=8.5 and npm installed on your machine. then use:
 
 `npm install -g luis`
 
+## Getting Started
+After installation, the LUIS cli will need to be configured with the 
+subscription key, application Id version Id and region and saved in `.luisrc`. 
+This can be automated using `luis --init` which will walk you though the
+creation of the `.luisrc` and write it disc. After the `.luisrc` is written
+to disc, it can be edited manually or `luis --init` can be run again.
+
+
 ## Usage
 Basic usage: `luis <api group> <action> [<target> [<subtarget>] [--<args> --<globalArgs>]]]`
 
@@ -35,7 +43,9 @@ Where `<action>` is one of the following:
 | patch,  p                                 | Updates a partial resource at `<target>` or `<subtarget>` where applicable |
 | delete, d                                 | Deletes a resource at `<target>` or `<subtarget>` where applicable |
 
-| Arguments                                 |                                                                  |
+Arguments may be one or more of the following:
+
+|                                           |                                                                  |
 | :-----------------------------------------|------------------------------------------------------------------|
 | --appId                                   | Specifies the application id. This can optionally be specified in the .luisrc |
 | --versionId                               | Specifies the version id. This can optionally be specified in the .luisrc |
@@ -43,7 +53,9 @@ Where `<action>` is one of the following:
 | --skip <integer>                          | Specifies the number of records to skip. Applicable for the list action only |
 | --take <integer>                          | Specifies the number of records to take. Applicable for the list action only |
 
-| Global Arguments                          |                                                                  |
+Global Arguments:
+
+|                                           |                                                                  |
 | :-----------------------------------------|------------------------------------------------------------------|
 | -- help, -h                               | Prints this help file. Use `<api group> [<target>] -h` to see specific details on an `<api group>`
 | --!                                       | Dumps absolutely all documented commands to the console with descriptions |
