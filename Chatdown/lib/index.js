@@ -37,11 +37,10 @@ module.exports = async function readContents(fileContents, args) {
     // we reach a new activity.
     let aggregate = null;
     let currentActivity;
-    let recipientChannelAccount;
-    let from;
-    let channelAccountId;
     // Read each line, derive activities with messages, then
     // return them as the payload
+    let from;
+    let recipient;
     for (let line of lines) {
         // signature for a new message
         if (configurationRegExp.test(line)) {
@@ -52,10 +51,14 @@ module.exports = async function readContents(fileContents, args) {
             args[optionName.trim()] = value.trim();
 
             if (args.bot && args.user) {
+                const botId = uuidv3(args.bot, NS);
+                const userId = uuidv3(args.user, NS);
                 args[args.bot] = args.bot;
                 args[args.user] = args.user;
-                args.botId = uuidv3(args.bot, NS);
-                args.userId = uuidv3(args.user, NS);
+                args.botId = botId;
+                args.userId = userId;
+                args[botId] = new ChannelAccount({id: botId, name: args.bot});
+                args[userId] = new ChannelAccount({id: userId, name: args.user});
             }
             continue;
         }
@@ -64,7 +67,7 @@ module.exports = async function readContents(fileContents, args) {
         }
         // If we've gotten to this point, we've defined
         // user, bot and other config options
-        const {channelId = "1", user, bot} = args;
+        const {channelId = '1', user, bot} = args;
         const newMessageRegEx = new RegExp(`(${user}|${bot}|bot|user):`, 'i');
         if (newMessageRegEx.test(line)) {
             // Complete the previous activity
@@ -72,12 +75,15 @@ module.exports = async function readContents(fileContents, args) {
                 currentActivity.text = currentActivity.text ? currentActivity.text.trim() : null;
                 activities.push(currentActivity);
             }
-            from = args[newMessageRegEx.exec(line)[1]];
-            channelAccountId = from === args.bot ? args.botId : args.userId; // Assumes a single user in the conversation
-            recipientChannelAccount = currentActivity ? currentActivity.from : null;
+            const fromId = args[newMessageRegEx.exec(line)[1]];
+            const fromChannelAccountId = fromId === args.bot ? args.botId : args.userId;
+            const recipientChannelAccountId = fromId === args.bot ? args.userId : args.botId;
+
+            from = args[fromChannelAccountId];
+            recipient = args[recipientChannelAccountId];
 
             // Start the new activity
-            currentActivity = createActivity({recipientChannelAccount, from, channelId, channelAccountId});
+            currentActivity = createActivity({recipient, from, channelId});
             // Trim off the user or bot and continue since
             // this line may still have a message or other
             // activities to parse.
@@ -92,7 +98,7 @@ module.exports = async function readContents(fileContents, args) {
         // signature for an activity that contains a type other than
         // message with or without arguments. e.g. [delay:3000]
         if (activityRegExp.test(aggregate)) {
-            const newActivities = await readActivitiesFromAggregate(aggregate, currentActivity, recipientChannelAccount, from, channelId, channelAccountId);
+            const newActivities = await readActivitiesFromAggregate(aggregate, currentActivity, recipient, from, channelId);
             if (newActivities) {
                 activities.push(...newActivities);
                 aggregate = null;
@@ -117,14 +123,13 @@ module.exports = async function readContents(fileContents, args) {
  *
  * @param {string} aggregate The aggregate text to derive activities from.
  * @param {Activity} currentActivity The Activity currently in context
- * @param {string} recipientChannelAccount The recipient of the Activity
+ * @param {string} recipient The recipient of the Activity
  * @param {string} from The sender of the Activity
  * @param {string} channelId The id of the channel
- * @param {string} channelAccountId The id for the channelAccount producing this activity
  *
  * @returns {Promise<*>} Resolves to the number of new activities encountered or null if no new activities resulted
  */
-async function readActivitiesFromAggregate(aggregate, currentActivity, recipientChannelAccount, from, channelId, channelAccountId) {
+async function readActivitiesFromAggregate(aggregate, currentActivity, recipient, from, channelId) {
     const newActivities = [];
     activityRegExp.lastIndex = 0;
     let result;
@@ -149,7 +154,7 @@ async function readActivitiesFromAggregate(aggregate, currentActivity, recipient
             // to the message.
             const index = aggregate.indexOf(`[${result[1]}]`);
             (currentActivity.text || (currentActivity.text = '')).concat(`\n${aggregate.substr(0, index).trim()}`);
-            currentActivity = createActivity({type, recipientChannelAccount, from, channelId, channelAccountId});
+            currentActivity = createActivity({type, recipient, from, channelId});
             newActivities.push(currentActivity);
         }
 
@@ -219,17 +224,14 @@ async function readAttachmentFile(fileLocation, contentType) {
 /**
  * Utility for creating a new serializable Activity.
  *
- * @param {string} type The Activity type
+ * @param {ActivityTypes} type The Activity type
  * @param {string} to The recipient of the Activity
  * @param {string} from The sender of the Activity
  * @param {string} channelId The id of the channel
- * @param {string} channelAccountId The id for the channelAccount producing this activity
  * @returns {Activity} The newly created activity
  */
-function createActivity({type = ActivityTypes.Message, recipientChannelAccount, from, channelId, channelAccountId}) {
-    const activity = new Activity({type, text: '', id: uuid()});
-    activity.recipient = recipientChannelAccount;
-    activity.from = new ChannelAccount({id: channelAccountId, name: from});
+function createActivity({type = ActivityTypes.Message, recipient, from, channelId}) {
+    const activity = new Activity({from, recipient, type, text: '', id: uuid()});
     activity.conversation = new ConversationAccount({id: channelId});
     return activity;
 }

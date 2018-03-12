@@ -38,12 +38,13 @@ module.exports = class Activity {
      * @param conversation
      * @param id
      * @param recipient
+     * @param from
      * @param text
      * @param timestamp
      * @param type
      * @param channelId
      */
-    constructor({attachments, conversation, id, recipient, text, timestamp, type, channelId = 'chatdown'} = {}) {
-        Object.assign(this, {attachments, conversation, id, recipient, text, timestamp, type, channelId});
+    constructor({attachments, conversation, id, recipient, from, text, timestamp, type, channelId = 'chatdown'} = {}) {
+        Object.assign(this, {attachments, conversation, id, recipient, from, text, timestamp, type, channelId});
     }
 };

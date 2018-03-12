@@ -163,9 +163,11 @@ describe('The chatdown lib', () => {
 
             const activities = await chatdown(conversation.join('\n'), {});
             let previousRecipientId;
-            activities.forEach(activity => {
+            activities.forEach((activity, index) => {
                 const recipient = (activity.recipient || {});
-                assert(recipient.id === previousRecipientId);
+                if (index) {
+                    assert(recipient.id === previousRecipientId);
+                }
                 previousRecipientId = activity.from.id;
             });
         });
