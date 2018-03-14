@@ -13,7 +13,7 @@ Make sure you have node >=8.5 and npm installed on your machine. then use:
 ### As a library
 The LUIS apis can be installed and used as a library in any Node or UI JavaScript projects for the browser.
 
-`npm i -s`
+`npm i -s luis-apis`
 
 You can then import and use service classes specific to the endpoint and operation you wish to call.
 For example, to get the first 5 apps, do the following:
