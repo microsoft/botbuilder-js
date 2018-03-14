@@ -6,6 +6,7 @@ notifications:
 
 before_install:
   - npm install --global lerna
+  - cd tools/ && npm install
 
 install:
   - lerna bootstrap --hoist
