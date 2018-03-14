@@ -67,8 +67,7 @@ export class MicrosoftAppCredentials implements msrest.ServiceClientCredentials 
 
     private refreshToken(): Promise<OAuthResponse> {
         if (!this.refreshingToken) {
-            let exception: Error|undefined;
-            const p = new Promise<OAuthResponse>((resolve, reject) => {
+            this.refreshingToken = new Promise<OAuthResponse>((resolve, reject) => {
                 // Refresh access token
                 var opt: request.Options = {
                     method: 'POST',
@@ -99,15 +98,8 @@ export class MicrosoftAppCredentials implements msrest.ServiceClientCredentials 
                 });
             }).catch((err) => {
                 this.refreshingToken = null;
-                exception = err;
                 throw err;
             });
-            
-            if (!exception) {
-                this.refreshingToken = p;
-            } else {
-                return Promise.reject(exception);
-            }
         }
 
         return this.refreshingToken;

@@ -63,8 +63,7 @@ class MicrosoftAppCredentials {
     }
     refreshToken() {
         if (!this.refreshingToken) {
-            let exception;
-            const p = new Promise((resolve, reject) => {
+            this.refreshingToken = new Promise((resolve, reject) => {
                 // Refresh access token
                 var opt = {
                     method: 'POST',
@@ -96,15 +95,8 @@ class MicrosoftAppCredentials {
                 });
             }).catch((err) => {
                 this.refreshingToken = null;
-                exception = err;
                 throw err;
             });
-            if (!exception) {
-                this.refreshingToken = p;
-            }
-            else {
-                return Promise.reject(exception);
-            }
         }
         return this.refreshingToken;
     }
