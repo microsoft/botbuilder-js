@@ -8,7 +8,7 @@ before_install:
   - npm install --global lerna
 
 install:
-  - lerna boostrap --hoist
+  - lerna bootstrap --hoist
 
 script:
   - lerna run test
