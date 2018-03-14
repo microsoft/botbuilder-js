@@ -166,14 +166,15 @@ class Recognizer {
     static findTopIntent(recognizerResults) {
         return new Promise((resolve, reject) => {
             let top = undefined;
-            let intents = [].concat.apply([], recognizerResults.map(recognizerResult => recognizerResult.intents));
-            Object.keys(intents).forEach(intent => {
-                if (!top || recognizerResults[0].intents[intent] > top.score) {
-                    top = {
-                        name: intent,
-                        score: recognizerResults[0].intents[intent]
-                    };
-                }
+            recognizerResults.forEach(result => {
+                Object.keys(result.intents).forEach(intent => {
+                    if (!top || result.intents[intent] > top.score) {
+                        top = {
+                            name: intent,
+                            score: result.intents[intent]
+                        };
+                    }
+                });
             });
             resolve(top);
         });
