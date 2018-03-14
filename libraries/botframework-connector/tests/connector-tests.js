@@ -73,7 +73,7 @@ var readStreamToBuffer = function(stream, callback) {
   stream.on('error', (err) => callback(error, null));
 }
 
-describe('Bot Framework Connector SDK', function() {
+xdescribe('Bot Framework Connector SDK', function() {
   before(function (done) {
     suite = new SuiteBase(this, testPrefix, requiredEnvironment, libraryPath);
     suite.setupSuite(function () {
@@ -98,7 +98,7 @@ describe('Bot Framework Connector SDK', function() {
     suite.baseTeardownTest(done);
   });
 
-  describe('Conversations', function() {
+  xdescribe('Conversations', function() {
     describe('CreateConversation', function() {
       it('should return a valid conversation ID', function(done) {
         var params = createConversation()
