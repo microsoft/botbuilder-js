@@ -1,0 +1,18 @@
+language: node_js
+node_js:
+  - "lts"
+notifications:
+  email: false
+
+before_install:
+  - npm install --global lerna
+
+install:
+  - lerna boostrap --hoist
+
+script:
+  - lerna run test
+
+cache:
+  directories:
+    - "node_modules"
