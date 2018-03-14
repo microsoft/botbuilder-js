@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 global.fetch = require('node-fetch'); // Browser compatibility
+const assert = require('assert');
 const fs = require('fs-extra');
 const path = require('path');
 const readline = require('readline');
@@ -35,13 +36,7 @@ async function runProgram() {
     if (args.version || args.v) {
         return process.stdout.write(require(path.join(__dirname, '../package.json')).version);
     }
-    let config;
-    try {
-        config = await fs.readJson(path.join(process.cwd(), '.luisrc'));
-    } catch (e) {
-        throw new Error('.luisrc file not found. Run luis --init to create the configuration file.');
-    }
-
+    const config = await composeConfig();
     const serviceManifest = getServiceManifest(args);
     validateArguments(serviceManifest);
 
@@ -66,8 +61,8 @@ async function initializeConfig() {
     const questions = [
         'Subscription key: ',
         'Region: ',
-        'App ID (leave blank to use the --appId argument instead): ',
-        'Version ID (leave blank to use the --versionId argument instead): '
+        'App ID: ',
+        'Version ID: '
     ];
 
     const prompt = readline.createInterface({
@@ -122,9 +117,55 @@ async function getFileInput(args) {
 }
 
 /**
+ * Composes the config from the 3 sources that it may reside.
+ * Precedence is 1. Arguments, 2. luisrc and 3. env variables
+ *
+ * @returns {Promise<*>}
+ */
+async function composeConfig() {
+    const {LUIS_APP_ID, LUIS_SUBSCRIPTION_KEY, LUIS_VERSION_ID, LUIS_ENDPOINT_BASE_PATH} = process.env;
+
+    const {appId: args_appId,
+        subscriptionKey: args_subscriptionKey,
+        versionId: args_versionId,
+        endpointBasePath: args_endpointBasePath} = args;
+
+    let luisrcJson = {};
+    let config;
+    try {
+        await fs.access(path.join(process.cwd(), '.luisrc'), fs.R_OK);
+        luisrcJson = await fs.readJson(path.join(process.cwd(), '.luisrc'));
+    } catch (e) {
+        // Do nothing
+    } finally {
+        config = {
+            appId: (args_appId || luisrcJson.appId || LUIS_APP_ID),
+            subscriptionKey: (args_subscriptionKey || luisrcJson.subscriptionKey || LUIS_SUBSCRIPTION_KEY),
+            versionId: (args_versionId || luisrcJson.versionId || LUIS_VERSION_ID),
+            endpointBasePath: (args_endpointBasePath || luisrcJson.endpointBasePath || LUIS_ENDPOINT_BASE_PATH)
+        };
+        validateConfig(config);
+    }
+    return config;
+}
+
+/**
+ * Validates the config object to contain the
+ * fields necessary for endpoint calls.
+ *
+ * @param {*} config The config object to validate
+ */
+function validateConfig(config) {
+    const {versionId, appId, subscriptionKey, endpointBasePath} = config;
+    assert(typeof versionId === 'string');
+    assert(typeof appId === 'string');
+    assert(typeof subscriptionKey === 'string');
+    assert(typeof endpointBasePath === 'string');
+}
+
+/**
  * Provides basic validation of the command arguments.
  *
- * @param args
  * @param serviceManifest
  */
 function validateArguments(serviceManifest) {

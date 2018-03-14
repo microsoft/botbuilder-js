@@ -20,12 +20,8 @@ const dataModels = require('./api/dataModels');
  * @returns {Promise<*|Promise|{enumerable}|void|JSON|Promise<any>>}
  */
 module.exports = async function luis(config, serviceManifest, args, requestBody) {
-    // Provide the config in the prototype to prevent
-    // all ServiceBase subclasses from having to pass
-    // in in as an argument to the constructor.
-    Object.defineProperty(ServiceBase.prototype, 'config', {
-        value: config, writable: false, configurable: false
-    });
+    // Provide the config to the ServiceBase
+    ServiceBase.config = config;
     // If a request body is specified and a typed data model
     // is available, create it and pass the source in.
     // This guarantees the endpoint will get only the

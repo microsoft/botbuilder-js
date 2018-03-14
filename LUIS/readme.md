@@ -1,23 +1,76 @@
 # LUIS
 
-The Luis cli tool allows communication with the LUIS endpoints via command line. 
+The LUIS apis tool allows communication with the LUIS endpoints via command line, node or browser project. 
 Any endpoint listed in the [documentation for the LUIS Programmatic APIs v2.0](https://westus.dev.cognitive.microsoft.com/docs/services/5890b47c39e2bb17b84a55ff/operations/5890b47c39e2bb052c5b9c2f)
-is also available using this tool.
+is also available using the cli or the library (for node and browser projects). 
 
-## Installing
+## Installation
+### As a cli
 Make sure you have node >=8.5 and npm installed on your machine. then use:
 
-`npm install -g luis`
+`npm i -g luis-apis`
 
-## Getting Started
-After installation, the LUIS cli will need to be configured with the 
-subscription key, application Id version Id and region and saved in `.luisrc`. 
-This can be automated using `luis --init` which will walk you though the
-creation of the `.luisrc` and write it disc. After the `.luisrc` is written
-to disc, it can be edited manually or `luis --init` can be run again.
+### As a library
+The LUIS apis can be installed and used as a library in any Node or UI JavaScript projects for the browser.
 
+`npm i -s`
 
-## Usage
+You can then import and use service classes specific to the endpoint and operation you wish to call.
+For example, to get the first 5 apps, do the following:
+```js
+import {apps} from 'luis-apis';
+
+const appsService = new apps.Apps();
+appsService.getApplicationsList({take: 5}).then(apps => {
+    // handle apps
+})
+```
+
+## Configuration
+A configuration object is required to provide the endpoint base path, app ID, version ID and the 
+subscription key to each outbound call. There are 3 ways to provide this information to the cli
+1. As a `.luisrc` file in the cwd. 
+The json format for the `.luisrc` file is:
+```json
+{
+  "subscriptionKey": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  "appId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+  "versionId": "x.x.xx",
+  "endpointBasePath": "https://xxxxxx.api.cognitive.microsoft.com/luis/api/v2.0"
+}
+```
+The cli has a utility command that walks through the creation of this file:
+`luis --init`
+or it can be created manually.
+2. As arguments to the cli. `--subscriptionKey <string> --appId <string> --versionId <string> --endpointBasePath <string>`
+3. As environment variables. `LUIS_APP_ID, LUIS_SUBSCRIPTION_KEY, LUIS_VERSION_ID, LUIS_ENDPOINT_BASE_PATH`
+
+The cli will first look for these named configuration variables in the arguments list, then inside the `.luisrc` file, 
+then fallback to environment variables. 
+
+### Securing Your Key
+To better secure your subscription key, it's recommended to omit the key from the `.luisrc` 
+file and instead pass it in to the `--subscriptionKey` argument or store it as the `LUIS_SUBSCRIPTION_KEY` 
+environment variable. If security is not a concern for your particular case, all configuration items 
+can be stored in the `.luisrc` for convenience.
+
+### Overriding Configurations
+Since configuration items can be passed as arguments to the cli, using arguments to specify 
+the configuration will override the `.luisrc` and any environment variables that may have been specified.
+
+### Configuring the Library for Node and the Browser
+This configuration object is provided as a static property on the `ServicecBase` class for node and browser projects:
+```js
+import {ServiceBase} from 'luis/lib/serviceBase';
+ServiceBase.config = {
+  "subscriptionKey": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  "appId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+  "versionId": "x.x.xx",
+  "endpointBasePath": "https://xxxxxx.api.cognitive.microsoft.com/luis/api/v2.0"
+}
+```
+
+## Cli Usage
 Basic usage: `luis <api group> <action> [<target> [<subtarget>] [--<args> --<globalArgs>]]]`
 
 Where `<api group>` is one of the following:

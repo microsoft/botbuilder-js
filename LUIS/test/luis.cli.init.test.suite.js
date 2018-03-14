@@ -44,12 +44,12 @@ describe('The LUIS cli --init argument', () => {
                         break;
 
                     case 4:
-                        assert(message === 'App ID (leave blank to use the --appId argument instead): ');
+                        assert(message === 'App ID: ');
                         luisProcess.stdin.write(`${appId}\r`);
                         break;
 
                     case 5:
-                        assert(message === 'Version ID (leave blank to use the --versionId argument instead): ');
+                        assert(message === 'Version ID: ');
                         luisProcess.stdin.write(`${versionId}\r`);
                         break;
 

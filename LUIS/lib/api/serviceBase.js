@@ -11,10 +11,6 @@ class ServiceBase {
      */
 
     /**
-     * @property {object} config The configuration object for this app
-     */
-
-    /**
      *
      * @param {String} endpoint the endpoint for this service
      */
@@ -33,8 +29,8 @@ class ServiceBase {
      * @returns {Promise<Response>} The promise representing the request
      */
     createRequest(pathFragment, params, method, dataModel = null) {
-        const {commonHeaders: headers, config, endpoint} = this;
-        const {endpointBasePath, appId, versionId} = config;
+        const {commonHeaders: headers, endpoint} = this;
+        const {endpointBasePath, appId, versionId} = ServiceBase.config;
         const tokenizedUrl = endpointBasePath + endpoint + pathFragment;
         // Order is important since we want to allow the user to
         // override their config with the data in the params object.
@@ -65,7 +61,7 @@ class ServiceBase {
     get commonHeaders() {
         return {
             'Content-Type': 'application/json',
-            'Ocp-Apim-Subscription-Key': this.config.subscriptionKey
+            'Ocp-Apim-Subscription-Key': ServiceBase.config.subscriptionKey
         };
     }
 }
@@ -87,4 +83,10 @@ ServiceBase.validateParams = function (tokenizedUrl, params) {
         }
     });
 };
+/**
+ * @type {*} The configuration object containing
+ * the endpointBasePath, appId, versionId and subscriptionKey properties.
+ */
+ServiceBase.config = {endpointBasePath: '', appId: '', versionId: '', subscriptionKey: ''};
+
 module.exports = {ServiceBase};
