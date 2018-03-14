@@ -1,8 +1,12 @@
 {
-	"dependencies": {
-		"replace-in-file": "^3.1.1",
-		"typedoc": "^0.9.0",
-		"typedoc-plugin-external-module-name": "^1.0.10",
-		"typedoc-plugin-markdown": "^1.0.12"
-	}
+  "dependencies": {
+    "lerna": "^2.9.0",
+    "replace-in-file": "^3.1.1",
+    "typedoc": "^0.9.0",
+    "typedoc-plugin-external-module-name": "^1.0.10",
+    "typedoc-plugin-markdown": "^1.0.12"
+  },
+  "scripts": {
+    "test": "lerna run test"
+  }
 }
