@@ -32,6 +32,8 @@ describe(`MiddlewareSet`, function () {
     });
 
     it(`should run all middleware in order.`, function (done) {
+        calls = 0;
+        order = '';
         const context = new BotContext(new SimpleAdapter(), testMessage);
         set.run(context, () => {
             assert(calls === 5, `only "${calls} of 5" middleware called.`);
@@ -39,6 +41,17 @@ describe(`MiddlewareSet`, function () {
         }).then(() => done());
     });
 
+    it(`should run a middleware set added to another middleware set.`, function (done) {
+        calls = 0;
+        order = '';
+        const context = new BotContext(new SimpleAdapter(), testMessage);
+        const set2 = new MiddlewareSet(set);
+        set2.run(context, () => {
+            assert(calls === 5, `only "${calls} of 5" middleware called.`);
+            assert(order === 'abcde', `middleware executed out of order "${order}".`)
+        }).then(() => done());
+    });
+    
     it(`should run middleware with a leading and trailing edge.`, function (done) {
         let edge = '';
         const context = new BotContext(new SimpleAdapter(), testMessage);

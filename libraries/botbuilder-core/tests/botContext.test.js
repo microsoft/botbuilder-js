@@ -14,10 +14,16 @@ const testMessage = {
 
 class SimpleAdapter extends BotAdapter {
     sendActivity(activities) {
+        const responses = [];
         assert(activities, `SimpleAdapter.sendActivity: missing activities.`);
         assert(Array.isArray(activities), `SimpleAdapter.sendActivity: activities not array.`);
         assert(activities.length > 0, `SimpleAdapter.sendActivity: empty activities array.`);
-        return Promise.resolve([{ id: '5678' }]);
+        activities.forEach((a, i) => {
+            assert(typeof a === 'object', `SimpleAdapter.sendActivity: activity[${i}] not an object.`);
+            assert(typeof a.type === 'string', `SimpleAdapter.sendActivity: activity[${i}].type missing or invalid.`);
+            responses.push({ id: '5678' });
+        });
+        return Promise.resolve(responses);
     }
 
     updateActivity(activity) {
@@ -32,7 +38,7 @@ class SimpleAdapter extends BotAdapter {
     }
 }
 
-describe(`TurnContext`, function () {
+describe(`BotContext`, function () {
     this.timeout(5000);
 
     const context = new BotContext(new SimpleAdapter(), testMessage);
@@ -45,6 +51,18 @@ describe(`TurnContext`, function () {
     it(`should have request.`, function (done) {
         assert(context.request, `missing property.`);
         assert(context.request.type === 'message', `invalid property.`);
+        done();
+    });
+
+    it(`should clone a passed in context.`, function (done) {
+        const ctx = new BotContext(context);
+        assert(ctx._adapter === context._adapter, `_adapter not cloned.`);
+        assert(ctx._request === context._request, `_request not cloned.`);
+        assert(ctx._cache === context._cache, `_cache not cloned.`);
+        assert(ctx._onDeleteActivity === context._onDeleteActivity, `_onDeleteActivity not cloned.`);
+        assert(ctx._onSendActivity === context._onSendActivity, `_onSendActivity not cloned.`);
+        assert(ctx._onUpdateActivity === context._onUpdateActivity, `_onUpdateActivity not cloned.`);
+        assert(ctx._respondedRef === context._respondedRef, `_respondedRef not cloned.`);
         done();
     });
 
@@ -91,13 +109,32 @@ describe(`TurnContext`, function () {
         assert(context.responded === false, `invalid initial state for context.responded.`);        
         context.sendActivity(testMessage).then((responses) => {
             assert(Array.isArray(responses), `responses isn't an array.`);
-            assert(responses.length > 0, `empty responses array returned.`);
+            assert(responses.length === 1, `empty or invalid responses array returned.`);
             assert(responses[0].id === '5678', `invalid response id of "${responses[0].id}" sent back.`);
             assert(context.responded === true, `context.responded not set after send.`);        
             done();
         });
     });
 
+    it(`should send a text message via sendActivity().`, function (done) {
+        context.sendActivity('test').then((responses) => {
+            assert(Array.isArray(responses), `responses isn't an array.`);
+            assert(responses.length === 1, `empty or invalid responses array returned.`);
+            assert(responses[0].id === '5678', `invalid response id of "${responses[0].id}" sent back.`);
+            done();
+        });
+    });
+
+    it(`should send multiple activities via sendActivity().`, function (done) {
+        context.sendActivity('foo', testMessage, 'bar').then((responses) => {
+            assert(Array.isArray(responses), `responses isn't an array.`);
+            assert(responses.length > 0, `empty responses array returned.`);
+            assert(responses.length === 3, `invalid responses array length of "${responses.length}" returned.`);
+            assert(responses[0].id === '5678', `invalid response id of "${responses[0].id}" sent back.`);
+            done();
+        });
+    });
+    
     it(`should call onSendActivity() hook before delivery.`, function (done) {
         let count = 0;
         context.onSendActivity((ctx, activities, next) => {
