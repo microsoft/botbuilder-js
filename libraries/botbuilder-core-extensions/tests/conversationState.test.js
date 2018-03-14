@@ -5,6 +5,7 @@ const { ConversationState, MemoryStorage, TestAdapter } = require('../');
 const receivedMessage = { text: 'received', type: 'message', channelId: 'test', conversation: { id: 'convo' } };
 const missingChannelId = { text: 'received', type: 'message', conversation: { id: 'convo' } };
 const missingConversation = { text: 'received', type: 'message', channelId: 'test' };
+const endOfConversation = { type: 'endOfConversation', channelId: 'test', conversation: { id: 'convo' } };
 
 describe(`ConversationState`, function () {
     this.timeout(5000);
@@ -54,10 +55,13 @@ describe(`ConversationState`, function () {
         .then(() => storage.read([key]))
         .then((items) => {
             assert(!items[key].hasOwnProperty('test'), `state not cleared from storage.`);
-            done();
-        });
+            
+            // Setup next test
+            items[key].test = 'foo';
+            return storage.write(items);
+        })
+        .then(() => done());
     });
-
 
     it(`should reject with error if channelId missing.`, function (done) {
         const ctx = new BotContext(adapter, missingChannelId);

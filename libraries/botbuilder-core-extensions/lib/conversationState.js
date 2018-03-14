@@ -51,10 +51,6 @@ class ConversationState extends botState_1.BotState {
         const subscribed = this.stateName + '.subscribed';
         if (!context.get(subscribed)) {
             context.set(subscribed, true);
-            // Clear state for incoming endOfConversation activity
-            if (botbuilder_core_1.ActivityTypes.EndOfConversation === context.request.type) {
-                this.clear(context); // <- re-enters subscribe()
-            }
             // Clear state if outgoing endOfConversation detected
             context.onSendActivity((ctx, activities, next) => {
                 activities.forEach((activity) => {

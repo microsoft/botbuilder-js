@@ -55,11 +55,6 @@ export class ConversationState<T extends StoreItem = StoreItem> extends BotState
         if (!context.get(subscribed)) {
             context.set(subscribed, true);
 
-            // Clear state for incoming endOfConversation activity
-            if (ActivityTypes.EndOfConversation === context.request.type) {
-                this.clear(context);    // <- re-enters subscribe()
-            }
-
             // Clear state if outgoing endOfConversation detected
             context.onSendActivity((ctx, activities, next) => {
                 activities.forEach((activity) => {
