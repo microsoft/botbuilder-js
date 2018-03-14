@@ -63,7 +63,8 @@ class MicrosoftAppCredentials {
     }
     refreshToken() {
         if (!this.refreshingToken) {
-            this.refreshingToken = new Promise((resolve, reject) => {
+            let exception;
+            const p = new Promise((resolve, reject) => {
                 // Refresh access token
                 var opt = {
                     method: 'POST',
@@ -76,6 +77,7 @@ class MicrosoftAppCredentials {
                     }
                 };
                 request(opt, (err, response, body) => {
+                    this.refreshingToken = null;
                     if (!err) {
                         if (body && response.statusCode && response.statusCode < 300) {
                             // Subtract 5 minutes from expires_in so they'll we'll get a
@@ -92,7 +94,17 @@ class MicrosoftAppCredentials {
                         reject(err);
                     }
                 });
+            }).catch((err) => {
+                this.refreshingToken = null;
+                exception = err;
+                throw err;
             });
+            if (!exception) {
+                this.refreshingToken = p;
+            }
+            else {
+                return Promise.reject(exception);
+            }
         }
         return this.refreshingToken;
     }
