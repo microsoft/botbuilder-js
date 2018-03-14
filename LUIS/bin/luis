@@ -125,10 +125,12 @@ async function getFileInput(args) {
 async function composeConfig() {
     const {LUIS_APP_ID, LUIS_SUBSCRIPTION_KEY, LUIS_VERSION_ID, LUIS_ENDPOINT_BASE_PATH} = process.env;
 
-    const {appId: args_appId,
+    const {
+        appId: args_appId,
         subscriptionKey: args_subscriptionKey,
         versionId: args_versionId,
-        endpointBasePath: args_endpointBasePath} = args;
+        endpointBasePath: args_endpointBasePath
+    } = args;
 
     let luisrcJson = {};
     let config;
@@ -157,10 +159,12 @@ async function composeConfig() {
  */
 function validateConfig(config) {
     const {versionId, appId, subscriptionKey, endpointBasePath} = config;
-    assert(typeof versionId === 'string');
-    assert(typeof appId === 'string');
-    assert(typeof subscriptionKey === 'string');
-    assert(typeof endpointBasePath === 'string');
+    const messageTail = `is missing from the configuration.\n\nDid you run ${chalk.cyan.bold('luis --init')} yet?`;
+
+    assert(typeof versionId === 'string', `The versionId ${messageTail}`);
+    assert(typeof appId === 'string', `The appId ${messageTail}`);
+    assert(typeof subscriptionKey === 'string', `The subscriptionKey ${messageTail}`);
+    assert(typeof endpointBasePath === 'string', `The endpointBasePath ${messageTail}`);
 }
 
 /**
