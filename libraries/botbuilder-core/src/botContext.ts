@@ -60,9 +60,9 @@ export interface BotContext { }
  * ```
  */
 export class BotContext {
-    private _adapter: BotAdapter;
-    private _request: Activity;
-    private _responded = false;
+    private _adapter: BotAdapter|undefined =  undefined;
+    private _request: Activity| undefined = undefined;
+    private _respondedRef: { responded: boolean; } = { responded: false };
     private _cache = new Map<string, any>();
     private _onSendActivity: SendActivityHandler[] = [];
     private _onUpdateActivity: UpdateActivityHandler[] = [];
@@ -70,32 +70,49 @@ export class BotContext {
 
     /**
      * Creates a new BotContext instance for a turn of conversation.
-     * @param adapter Adapter that constructed the context.
+     * @param adapterOrContext Adapter that constructed the context or a context object to clone.
      * @param request Request being processed.
      */
-    constructor(adapter: BotAdapter, request: Partial<Activity>) {
-        this._adapter = adapter;
-        this._request = request as Activity;
+    constructor(adapterOrContext: BotAdapter, request: Partial<Activity>);
+    constructor(adapterOrContext: BotContext);
+    constructor(adapterOrContext: BotAdapter|BotContext, request?: Partial<Activity>) {
+        if (adapterOrContext instanceof BotContext) {
+            adapterOrContext.copyTo(this);
+        } else {
+            this._adapter = adapterOrContext;
+            this._request = request as Activity;
+        }
+    }
+
+    /**
+     * Called when this BotContext instance is passed into the constructor of a new BotContext 
+     * instance. 
+     * @param context The context object to copy private members to. Everything should be copied by reference. 
+     */
+    protected copyTo(context: BotContext): void {
+        // Copy private member to other instance.
+        ['_adapter', '_request', '_respondedRef', '_cache', 
+         '_onSendActivity', '_onUpdateActivity', '_onDeleteActivity'].forEach((prop) => (context as any)[prop] = (this as any)[prop]);        
     }
 
     /** The adapter for this context. */
     public get adapter(): BotAdapter {
-        return this._adapter;
+        return this._adapter as BotAdapter;
     }
 
     /** The received activity. */
     public get request(): Activity {
-        return this._request;
+        return this._request as Activity;
     }
 
     /** If `true` at least one response has been sent for the current turn of conversation. */
     public get responded(): boolean {
-        return this._responded;
+        return this._respondedRef.responded;
     }
 
     public set responded(value: boolean) {
         if (!value) { throw new Error(`TurnContext: cannot set 'responded' to a value of 'false'.`) }
-        this._responded = true;
+        this._respondedRef.responded = true;
     }
 
     /** 
@@ -131,13 +148,13 @@ export class BotContext {
      * @param activityOrText One or more activities or messages to send to the user. If a `string` is provided it will be sent to the user as a `message` activity.
      */
     public sendActivity(...activityOrText: (Partial<Activity>|string)[]): Promise<ResourceResponse[]> {
-        const ref = BotContext.getConversationReference(this._request);
+        const ref = BotContext.getConversationReference(this.request);
         const output = activityOrText.map((a) => BotContext.applyConversationReference(typeof a === 'string' ? { text: a, type: 'message' } : a, ref));
         return this.emit(this._onSendActivity, output, () => {
-            return this._adapter.sendActivity(output)
+            return this.adapter.sendActivity(output)
                 .then((responses) => {
                     // Set responded flag
-                    this._responded = true;
+                    this.responded = true;
                     return responses;
                 });
         });
@@ -148,7 +165,7 @@ export class BotContext {
      * @param activity New replacement activity. The activity should already have it's ID information populated. 
      */
     public updateActivity(activity: Partial<Activity>): Promise<void> {
-        return this.emit(this._onUpdateActivity, activity, () => this._adapter.updateActivity(activity));
+        return this.emit(this._onUpdateActivity, activity, () => this.adapter.updateActivity(activity));
     }
 
     /** 
@@ -163,7 +180,7 @@ export class BotContext {
         } else {
             reference = idOrReference;
         }
-        return this.emit(this._onDeleteActivity, reference, () => this._adapter.deleteActivity(reference));
+        return this.emit(this._onDeleteActivity, reference, () => this.adapter.deleteActivity(reference));
     }
 
     /** 

@@ -57,17 +57,24 @@ export interface BotContext {
 export declare class BotContext {
     private _adapter;
     private _request;
-    private _responded;
+    private _respondedRef;
     private _cache;
     private _onSendActivity;
     private _onUpdateActivity;
     private _onDeleteActivity;
     /**
      * Creates a new BotContext instance for a turn of conversation.
-     * @param adapter Adapter that constructed the context.
+     * @param adapterOrContext Adapter that constructed the context or a context object to clone.
      * @param request Request being processed.
      */
-    constructor(adapter: BotAdapter, request: Partial<Activity>);
+    constructor(adapterOrContext: BotAdapter, request: Partial<Activity>);
+    constructor(adapterOrContext: BotContext);
+    /**
+     * Called when this BotContext instance is passed into the constructor of a new BotContext
+     * instance.
+     * @param context The context object to copy private members to. Everything should be copied by reference.
+     */
+    protected copyTo(context: BotContext): void;
     /** The adapter for this context. */
     readonly adapter: BotAdapter;
     /** The received activity. */

@@ -28,19 +28,31 @@ const internal_1 = require("./internal");
  * ```
  */
 class BotContext {
-    /**
-     * Creates a new BotContext instance for a turn of conversation.
-     * @param adapter Adapter that constructed the context.
-     * @param request Request being processed.
-     */
-    constructor(adapter, request) {
-        this._responded = false;
+    constructor(adapterOrContext, request) {
+        this._adapter = undefined;
+        this._request = undefined;
+        this._respondedRef = { responded: false };
         this._cache = new Map();
         this._onSendActivity = [];
         this._onUpdateActivity = [];
         this._onDeleteActivity = [];
-        this._adapter = adapter;
-        this._request = request;
+        if (adapterOrContext instanceof BotContext) {
+            adapterOrContext.copyTo(this);
+        }
+        else {
+            this._adapter = adapterOrContext;
+            this._request = request;
+        }
+    }
+    /**
+     * Called when this BotContext instance is passed into the constructor of a new BotContext
+     * instance.
+     * @param context The context object to copy private members to. Everything should be copied by reference.
+     */
+    copyTo(context) {
+        // Copy private member to other instance.
+        ['_adapter', '_request', '_respondedRef', '_cache',
+            '_onSendActivity', '_onUpdateActivity', '_onDeleteActivity'].forEach((prop) => context[prop] = this[prop]);
     }
     /** The adapter for this context. */
     get adapter() {
@@ -52,13 +64,13 @@ class BotContext {
     }
     /** If `true` at least one response has been sent for the current turn of conversation. */
     get responded() {
-        return this._responded;
+        return this._respondedRef.responded;
     }
     set responded(value) {
         if (!value) {
             throw new Error(`TurnContext: cannot set 'responded' to a value of 'false'.`);
         }
-        this._responded = true;
+        this._respondedRef.responded = true;
     }
     /**
      * Gets a value previously cached on the context.
@@ -90,13 +102,13 @@ class BotContext {
      * @param activityOrText One or more activities or messages to send to the user. If a `string` is provided it will be sent to the user as a `message` activity.
      */
     sendActivity(...activityOrText) {
-        const ref = BotContext.getConversationReference(this._request);
+        const ref = BotContext.getConversationReference(this.request);
         const output = activityOrText.map((a) => BotContext.applyConversationReference(typeof a === 'string' ? { text: a, type: 'message' } : a, ref));
         return this.emit(this._onSendActivity, output, () => {
-            return this._adapter.sendActivity(output)
+            return this.adapter.sendActivity(output)
                 .then((responses) => {
                 // Set responded flag
-                this._responded = true;
+                this.responded = true;
                 return responses;
             });
         });
@@ -106,7 +118,7 @@ class BotContext {
      * @param activity New replacement activity. The activity should already have it's ID information populated.
      */
     updateActivity(activity) {
-        return this.emit(this._onUpdateActivity, activity, () => this._adapter.updateActivity(activity));
+        return this.emit(this._onUpdateActivity, activity, () => this.adapter.updateActivity(activity));
     }
     /**
      * Deletes an existing activity.
@@ -121,7 +133,7 @@ class BotContext {
         else {
             reference = idOrReference;
         }
-        return this.emit(this._onDeleteActivity, reference, () => this._adapter.deleteActivity(reference));
+        return this.emit(this._onDeleteActivity, reference, () => this.adapter.deleteActivity(reference));
     }
     /**
      * Registers a handler to be notified of and potentially intercept the sending of activities.
