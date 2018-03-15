@@ -7,7 +7,7 @@
     "typedoc-plugin-markdown": "^1.0.12"
   },
   "scripts": {
-    "test": "lerna run build && nyc mocha libraries/bot*/tests/**/*.js && nyc report --reporter=text-lcov | coveralls"
+    "test": "lerna run build && nyc mocha \"libraries/bot*/tests/**/*.js\" && nyc report --reporter=text-lcov | coveralls"
   },
   "devDependencies": {
     "coveralls": "^3.0.0",
