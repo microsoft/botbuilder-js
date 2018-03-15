@@ -105,11 +105,18 @@ function getGeneralHelpContents() {
         {
             head: 'Arguments:',
             table: [
-                ['--appId', 'Specifies the application id. This can optionally be specified in the .luisrc'],
-                ['--versionId', 'Specifies the version id. This can optionally be specified in the .luisrc'],
                 ['--in <path>', 'Specifies the input file path. Applicable for create, update and patch actions'],
                 ['--skip <integer>', 'Specifies the number of records to skip. Applicable for the list action only'],
                 ['--take <integer>', 'Specifies the number of records to take. Applicable for the list action only'],
+            ]
+        },
+        {
+            head: 'Configuration and Overrides:',
+            table: [
+                ['--appId', 'Specifies the application id. Overrides the .luisrc value and the LUIS_APP_ID environment variable.'],
+                ['--versionId', 'Specifies the version id. Overrides the .luisrc value and the LUIS_VERSION_ID environment variable.'],
+                ['--subscriptionKey', 'Specifies the subscription key. Overrides the .luisrc value and the LUIS_SUBSCRIPTION_LEY environment variable.'],
+                ['--endpointBasePath', 'Specifies the base URI for all requests. Overrides the .luisrc value and the LUIS_ENDPOINT_BASE_PATH environment variable.'],
             ]
         },
         {
@@ -236,7 +243,7 @@ function getHelpForSubTargets(operations, categoryName, targetName) {
     // duplicates if a subtarget has more than one operation associated with it.
     const operationNameMap = {};
     operations = operations.filter(op => {
-        if (!operationNameMap[op.subTarget]){
+        if (!operationNameMap[op.subTarget]) {
             operationNameMap[op.subTarget] = true;
             return true;
         }
