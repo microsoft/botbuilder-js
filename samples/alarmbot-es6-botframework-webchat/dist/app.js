@@ -1584,7 +1584,7 @@ __export(__webpack_require__("../../libraries/botbuilder/lib/cardStyler.js"));
 __export(__webpack_require__("../../libraries/botbuilder/lib/entityObject.js"));
 __export(__webpack_require__("../../libraries/botbuilder/lib/intentRecognizer.js"));
 __export(__webpack_require__("../../libraries/botbuilder/lib/intentRecognizerSet.js"));
-__export(__webpack_require__("../../libraries/botbuilder/lib/jsonTemplates.js"));
+__export(__webpack_require__("../../libraries/botbuilder/lib/jsonTemplates.test.suite.js"));
 __export(__webpack_require__("../../libraries/botbuilder/lib/middleware.js"));
 __export(__webpack_require__("../../libraries/botbuilder/lib/memoryStorage.js"));
 __export(__webpack_require__("../../libraries/botbuilder/lib/messageStyler.js"));
