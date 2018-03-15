@@ -12,7 +12,7 @@ install:
   - lerna bootstrap --hoist
 
 script:
-  - lerna run test
+  - npm run test
 
 cache:
   directories:
