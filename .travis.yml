@@ -6,7 +6,7 @@ notifications:
 
 before_install:
   - npm install --global lerna nyc mocha
-  - cd tools/ && npm install
+  - cd tools/ && npm install && cd ..
 
 install:
   - lerna bootstrap --hoist
