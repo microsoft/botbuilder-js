@@ -80,7 +80,7 @@ export declare class ConfirmPrompt implements Dialog {
      * ```
      * @param validator (Optional) validator that will be called each time the user responds to the prompt.
      */
-    constructor(validator?: PromptValidator<boolean | undefined> | undefined);
+    constructor(validator?: PromptValidator<boolean | undefined>);
     begin(context: BotContext, dialogs: DialogSet, options: ConfirmPromptOptions): Promise<void>;
     continue(context: BotContext, dialogs: DialogSet): Promise<void>;
     protected sendChoicePrompt(context: BotContext, dialogs: DialogSet, prompt: string | Partial<Activity>, speak?: string): Promise<void>;

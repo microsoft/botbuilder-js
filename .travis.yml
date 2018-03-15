@@ -17,3 +17,4 @@ script:
 cache:
   directories:
     - "node_modules"
+    - "tools/node_modules"
