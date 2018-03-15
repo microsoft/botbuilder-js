@@ -8,35 +8,35 @@ class Versions extends ServiceBase {
     /**
      * Gets the application versions info.
      */
-    async getApplicationVersionList(params) {
+    getApplicationVersionList(params) {
         return this.createRequest('', params, 'get');
     }
 
     /**
      * Imports a new version into a LUIS application, the version's JSON should be included in in the request body.
      */
-    async importVersionToApplication(params, jSONApp/* JSONApp */) {
+    importVersionToApplication(params, jSONApp/* JSONApp */) {
         return this.createRequest('/import', params, 'post', jSONApp);
     }
 
     /**
      * Deletes an application version.
      */
-    async deleteApplicationVersion(params) {
+    deleteApplicationVersion(params) {
         return this.createRequest('/{versionId}/', params, 'delete');
     }
 
     /**
      * Updates the name or description of the application version.
      */
-    async renameApplicationVersion(params, taskUpdateObject/* TaskUpdateObject */) {
+    renameApplicationVersion(params, taskUpdateObject/* TaskUpdateObject */) {
         return this.createRequest('/{versionId}/', params, 'put', taskUpdateObject);
     }
 
     /**
      * Gets the task info.
      */
-    async getApplicationVersion(params) {
+    getApplicationVersion(params) {
         return this.createRequest('/{versionId}/', params, 'get');
     }
 }

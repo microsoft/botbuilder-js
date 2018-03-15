@@ -5,8 +5,8 @@ class ApplicationSettingUpdateObject {
      */
 
 
-    constructor({p /* boolean */} = {}) {
-        Object.assign(this, {p /* boolean */});
+    constructor({value /* boolean */} = {}) {
+        Object.assign(this, {'public': value /* boolean */});
     }
 }
 
@@ -18,8 +18,8 @@ ApplicationSettingUpdateObject.fromJSON = function (source) {
         return source.map(ApplicationSettingUpdateObject.fromJSON);
     }
 
-    const {public /* boolean */} = source;
-    return new ApplicationSettingUpdateObject({public /* boolean */});
+    const {'public': value /* boolean */} = source;
+    return new ApplicationSettingUpdateObject({'public': value /* boolean */});
 };
 
 module.exports = ApplicationSettingUpdateObject;

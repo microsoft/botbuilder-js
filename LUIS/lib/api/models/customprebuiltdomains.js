@@ -8,14 +8,14 @@ class Customprebuiltdomains extends ServiceBase {
     /**
      * Adds a customizable prebuilt domain along with all of its models to this application.
      */
-    async addCustomPrebuiltDomain(params, prebuiltDomainCreateBaseObject/* PrebuiltDomainCreateBaseObject */) {
+    addCustomPrebuiltDomain(params, prebuiltDomainCreateBaseObject/* PrebuiltDomainCreateBaseObject */) {
         return this.createRequest('', params, 'post', prebuiltDomainCreateBaseObject);
     }
 
     /**
      * Deletes a prebuilt domain's models from the application.
      */
-    async deleteCustomPrebuiltDomain(params) {
+    deleteCustomPrebuiltDomain(params) {
         return this.createRequest('/{domainName}', params, 'delete');
     }
 }

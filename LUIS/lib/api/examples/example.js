@@ -8,7 +8,7 @@ class Example extends ServiceBase {
     /**
      * Adds a labeled example to the application.
      */
-    async addLabel(params, exampleLabelObject/* ExampleLabelObject */) {
+    addLabel(params, exampleLabelObject/* ExampleLabelObject */) {
         return this.createRequest('', params, 'post', exampleLabelObject);
     }
 }

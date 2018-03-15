@@ -38,7 +38,7 @@
         {
           "method": "post",
           "methodAlias": "create",
-          "command": "luis apps create --in applicationCreateObject.json ",
+          "command": "luis apps create --in applicationCreateObject.json",
           "pathFragment": "/",
           "description": "Creates a new LUIS app.",
           "name": "addApplication",
@@ -65,7 +65,7 @@
         {
           "method": "put",
           "methodAlias": "update",
-          "command": "luis apps update --in applicationUpdateObject.json  --appId <string>",
+          "command": "luis apps update --in applicationUpdateObject.json --appId <string>",
           "pathFragment": "/{appId}",
           "params": [
             {
@@ -138,7 +138,7 @@
         {
           "method": "post",
           "methodAlias": "create",
-          "command": "luis apps create customprebuiltdomains --in prebuiltDomainCreateObject.json ",
+          "command": "luis apps create customprebuiltdomains --in prebuiltDomainCreateObject.json",
           "pathFragment": "",
           "description": "Adds a prebuilt domain along with its models as a new application. Returns new app ID. ",
           "name": "addPrebuiltApplication",
@@ -195,7 +195,7 @@
         {
           "method": "post",
           "methodAlias": "create",
-          "command": "luis apps create import --in jSONApp.json  --appName <string>",
+          "command": "luis apps create import --in jSONApp.json --appName <string>",
           "pathFragment": "",
           "params": [
             {
@@ -259,7 +259,7 @@
         {
           "method": "post",
           "methodAlias": "create",
-          "command": "luis apps create publish --in applicationPublishObject.json  --appId <string>",
+          "command": "luis apps create publish --in applicationPublishObject.json --appId <string>",
           "pathFragment": "",
           "params": [
             {
@@ -309,7 +309,7 @@
         {
           "method": "put",
           "methodAlias": "update",
-          "command": "luis apps update settings --in applicationSettingUpdateObject.json  --appId <string>",
+          "command": "luis apps update settings --in applicationSettingUpdateObject.json --appId <string>",
           "pathFragment": "",
           "params": [
             {
@@ -354,8 +354,17 @@
         {
           "method": "put",
           "methodAlias": "update",
-          "command": "luis permissions update --in body.json ",
+          "command": "luis permissions update --in body.json",
           "pathFragment": "",
+          "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
           "description": "Replaces the current users access list with the one sent in the body.\nIf an empty list is sent, all access to other users will be removed.\n",
           "name": "updateAccessList",
           "entityName": "body",
@@ -364,8 +373,17 @@
         {
           "method": "delete",
           "methodAlias": "delete",
-          "command": "luis permissions delete --in body.json ",
+          "command": "luis permissions delete --in body.json",
           "pathFragment": "",
+          "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
           "description": "Removed a user to the allowed list of users to access this LUIS application.\nUsers are removed using their email address.",
           "name": "removeUserFromAccessList",
           "entityName": "body",
@@ -374,8 +392,17 @@
         {
           "method": "post",
           "methodAlias": "create",
-          "command": "luis permissions create --in body.json ",
+          "command": "luis permissions create --in body.json",
           "pathFragment": "",
+          "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
           "description": "Adds a user to the allowed list of users to access this LUIS application.\nUsers are added using their email address.",
           "name": "addEmailToAccessList",
           "entityName": "body",
@@ -386,6 +413,15 @@
           "methodAlias": "get",
           "command": "luis permissions get",
           "pathFragment": "",
+          "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
           "description": "Gets the list of user emails that have permissions to access your application. ",
           "name": "getUserAccessList"
         }
@@ -438,7 +474,7 @@
         {
           "method": "post",
           "methodAlias": "create",
-          "command": "luis versions create import  --in jSONApp.json  --appId <string> --versionId <string>",
+          "command": "luis versions create import  --in jSONApp.json --appId <string> --versionId <string>",
           "pathFragment": "/import",
           "params": [
             {
@@ -488,7 +524,7 @@
         {
           "method": "put",
           "methodAlias": "update",
-          "command": "luis versions update --in taskUpdateObject.json  --appId <string> --versionId <string>",
+          "command": "luis versions update --in taskUpdateObject.json --appId <string> --versionId <string>",
           "pathFragment": "/{versionId}/",
           "params": [
             {
@@ -545,7 +581,7 @@
         {
           "method": "post",
           "methodAlias": "create",
-          "command": "luis versions create clone --in taskUpdateObject.json  --appId <string> --versionId <string>",
+          "command": "luis versions create clone --in taskUpdateObject.json --appId <string> --versionId <string>",
           "pathFragment": "",
           "params": [
             {
@@ -633,7 +669,7 @@
         {
           "method": "put",
           "methodAlias": "update",
-          "command": "luis versions update externalKeys --in externalKeyUpdateObject.json  --appId <string> --versionId <string>",
+          "command": "luis versions update externalKeys --in externalKeyUpdateObject.json --appId <string> --versionId <string>",
           "pathFragment": "",
           "params": [
             {
@@ -666,7 +702,7 @@
         {
           "method": "delete",
           "methodAlias": "delete",
-          "command": "luis versions delete suggest --in body.json  --appId <string> --versionId <string>",
+          "command": "luis versions delete suggest --in body.json --appId <string> --versionId <string>",
           "pathFragment": "",
           "params": [
             {
@@ -705,6 +741,20 @@
           "pathFragment": "",
           "params": [
             {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
               "name": "skip",
               "in": "query",
               "description": "The number of entries to skip. Default value is 0.",
@@ -731,8 +781,24 @@
         {
           "method": "post",
           "methodAlias": "create",
-          "command": "luis models create closedlists --in closedListModelCreateObject.json ",
+          "command": "luis models create closedlists --in closedListModelCreateObject.json",
           "pathFragment": "",
+          "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
           "description": "Adds a list entity to the LUIS app.",
           "name": "createClosedListEntity",
           "entityName": "closedListModelCreateObject",
@@ -744,6 +810,20 @@
           "command": "luis models delete closedlists --clEntityId <string>",
           "pathFragment": "/{clEntityId}",
           "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            },
             {
               "name": "clEntityId",
               "in": "path",
@@ -758,9 +838,23 @@
         {
           "method": "patch",
           "methodAlias": "patch",
-          "command": "luis models patch closedlists --in closedListModelPatchObject.json  --clEntityId <string>",
+          "command": "luis models patch closedlists --in closedListModelPatchObject.json --clEntityId <string>",
           "pathFragment": "/{clEntityId}",
           "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            },
             {
               "name": "clEntityId",
               "in": "path",
@@ -777,9 +871,23 @@
         {
           "method": "put",
           "methodAlias": "update",
-          "command": "luis models update closedlists --in closedListModelUpdateObject.json  --clEntityId <string>",
+          "command": "luis models update closedlists --in closedListModelUpdateObject.json --clEntityId <string>",
           "pathFragment": "/{clEntityId}",
           "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            },
             {
               "name": "clEntityId",
               "in": "path",
@@ -800,6 +908,20 @@
           "pathFragment": "/{clEntityId}",
           "params": [
             {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
               "name": "clEntityId",
               "in": "path",
               "description": "Format - guid. The closed list model ID.",
@@ -813,9 +935,23 @@
         {
           "method": "post",
           "methodAlias": "create",
-          "command": "luis models create closedlists sublists  --in wordListCreateObject.json  --clEntityId <string>",
+          "command": "luis models create closedlists sublists  --in wordListCreateObject.json --clEntityId <string>",
           "pathFragment": "/{clEntityId}/sublists",
           "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            },
             {
               "name": "clEntityId",
               "in": "path",
@@ -833,9 +969,23 @@
         {
           "method": "put",
           "methodAlias": "update",
-          "command": "luis models update closedlists sublists  --in wordListBaseUpdateObject.json  --clEntityId <string> --subListId <string>",
+          "command": "luis models update closedlists sublists  --in wordListBaseUpdateObject.json --clEntityId <string> --subListId <string>",
           "pathFragment": "/{clEntityId}/sublists/{subListId}",
           "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            },
             {
               "name": "clEntityId",
               "in": "path",
@@ -863,6 +1013,20 @@
           "command": "luis models delete closedlists sublists  --clEntityId <string> --subListId <integer>",
           "pathFragment": "/{clEntityId}/sublists/{subListId}",
           "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            },
             {
               "name": "clEntityId",
               "in": "path",
@@ -896,6 +1060,20 @@
           "pathFragment": "",
           "params": [
             {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
               "name": "skip",
               "in": "query",
               "description": "The number of entries to skip. Default value is 0.",
@@ -922,8 +1100,24 @@
         {
           "method": "post",
           "methodAlias": "create",
-          "command": "luis models create compositeentities --in hierarchicalModelCreateObject.json ",
+          "command": "luis models create compositeentities --in hierarchicalModelCreateObject.json",
           "pathFragment": "",
+          "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
           "description": "Adds a composite entity extractor to the application.",
           "name": "createCompositeEntity",
           "entityName": "hierarchicalModelCreateObject",
@@ -935,6 +1129,20 @@
           "command": "luis models delete compositeentities --cEntityId <string>",
           "pathFragment": "/{cEntityId}",
           "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            },
             {
               "name": "cEntityId",
               "in": "path",
@@ -949,9 +1157,23 @@
         {
           "method": "put",
           "methodAlias": "update",
-          "command": "luis models update compositeentities --in hierarchicalModelUpdateObject.json  --cEntityId <string>",
+          "command": "luis models update compositeentities --in hierarchicalModelUpdateObject.json --cEntityId <string>",
           "pathFragment": "/{cEntityId}",
           "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            },
             {
               "name": "cEntityId",
               "in": "path",
@@ -972,6 +1194,20 @@
           "pathFragment": "/{cEntityId}",
           "params": [
             {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
               "name": "cEntityId",
               "in": "path",
               "description": "Format - guid. The composite entity extractor ID.",
@@ -985,9 +1221,23 @@
         {
           "method": "post",
           "methodAlias": "create",
-          "command": "luis models create compositeentities children  --in body.json  --cEntityId <string>",
+          "command": "luis models create compositeentities children  --in body.json --cEntityId <string>",
           "pathFragment": "/{cEntityId}/children",
           "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            },
             {
               "name": "cEntityId",
               "in": "path",
@@ -1008,6 +1258,20 @@
           "command": "luis models delete compositeentities children  --cEntityId <string> --cChildId <string>",
           "pathFragment": "/{cEntityId}/children/{cChildId}",
           "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            },
             {
               "name": "cEntityId",
               "in": "path",
@@ -1037,8 +1301,24 @@
         {
           "method": "post",
           "methodAlias": "create",
-          "command": "luis models create customprebuiltdomains --in prebuiltDomainCreateBaseObject.json ",
+          "command": "luis models create customprebuiltdomains --in prebuiltDomainCreateBaseObject.json",
           "pathFragment": "",
+          "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
           "description": "Adds a customizable prebuilt domain along with all of its models to this application.",
           "name": "addCustomPrebuiltDomain",
           "entityName": "prebuiltDomainCreateBaseObject",
@@ -1050,6 +1330,20 @@
           "command": "luis models delete customprebuiltdomains --domainName <string>",
           "pathFragment": "/{domainName}",
           "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            },
             {
               "name": "domainName",
               "in": "path",
@@ -1073,14 +1367,46 @@
           "methodAlias": "get",
           "command": "luis models get customprebuiltentities",
           "pathFragment": "",
+          "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
           "description": "Gets all custom prebuilt entities information of this application",
           "name": "getCustomPrebuiltDomainEntitiesList"
         },
         {
           "method": "post",
           "methodAlias": "create",
-          "command": "luis models create customprebuiltentities --in prebuiltDomainModelCreateObject.json ",
+          "command": "luis models create customprebuiltentities --in prebuiltDomainModelCreateObject.json",
           "pathFragment": "",
+          "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
           "description": "Adds a custom prebuilt entity model to the application",
           "name": "addCustomPrebuiltEntity",
           "entityName": "prebuiltDomainModelCreateObject",
@@ -1098,14 +1424,46 @@
           "methodAlias": "get",
           "command": "luis models get customprebuiltintents",
           "pathFragment": "",
+          "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
           "description": "Gets custom prebuilt intents information of this application",
           "name": "getCustomPrebuiltDomainIntentsList"
         },
         {
           "method": "post",
           "methodAlias": "create",
-          "command": "luis models create customprebuiltintents --in prebuiltDomainModelCreateObject.json ",
+          "command": "luis models create customprebuiltintents --in prebuiltDomainModelCreateObject.json",
           "pathFragment": "",
+          "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
           "description": "Adds a custom prebuilt intent model to the application",
           "name": "addCustomPrebuiltIntent",
           "entityName": "prebuiltDomainModelCreateObject",
@@ -1123,6 +1481,22 @@
           "methodAlias": "get",
           "command": "luis models get customprebuiltmodels",
           "pathFragment": "",
+          "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
           "description": "Gets all custom prebuilt models information of this application",
           "name": "getCustomPrebuiltDomainModelsList"
         }
@@ -1139,6 +1513,20 @@
           "command": "luis models list entities --skip <integer> --take <integer>",
           "pathFragment": "",
           "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            },
             {
               "name": "skip",
               "in": "query",
@@ -1166,8 +1554,24 @@
         {
           "method": "post",
           "methodAlias": "create",
-          "command": "luis models create entities --in modelCreateObject.json ",
+          "command": "luis models create entities --in modelCreateObject.json",
           "pathFragment": "",
+          "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
           "description": "Adds an entity extractor to the application.",
           "name": "createEntity",
           "entityName": "modelCreateObject",
@@ -1179,6 +1583,20 @@
           "command": "luis models delete entities --entityId <string>",
           "pathFragment": "/{entityId}",
           "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            },
             {
               "name": "entityId",
               "in": "path",
@@ -1193,9 +1611,23 @@
         {
           "method": "put",
           "methodAlias": "update",
-          "command": "luis models update entities --in modelUpdateObject.json  --entityId <string>",
+          "command": "luis models update entities --in modelUpdateObject.json --entityId <string>",
           "pathFragment": "/{entityId}",
           "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            },
             {
               "name": "entityId",
               "in": "path",
@@ -1216,6 +1648,20 @@
           "pathFragment": "/{entityId}",
           "params": [
             {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
               "name": "entityId",
               "in": "path",
               "description": "Format - guid. The entity extractor ID.",
@@ -1232,6 +1678,20 @@
           "command": "luis models list entities suggest  --entityId <string> --take <integer>",
           "pathFragment": "/{entityId}/suggest",
           "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            },
             {
               "name": "entityId",
               "in": "path",
@@ -1268,6 +1728,20 @@
           "pathFragment": "",
           "params": [
             {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
               "name": "skip",
               "in": "query",
               "description": "The number of entries to skip. Default value is 0.",
@@ -1294,8 +1768,24 @@
         {
           "method": "post",
           "methodAlias": "create",
-          "command": "luis models create hierarchicalentities --in hierarchicalModelCreateObject.json ",
+          "command": "luis models create hierarchicalentities --in hierarchicalModelCreateObject.json",
           "pathFragment": "",
+          "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
           "description": "Adds a hierarchical entity extractor to the application version.",
           "name": "createHierarchicalEntity",
           "entityName": "hierarchicalModelCreateObject",
@@ -1307,6 +1797,20 @@
           "command": "luis models delete hierarchicalentities --hEntityId <string>",
           "pathFragment": "/{hEntityId}",
           "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            },
             {
               "name": "hEntityId",
               "in": "path",
@@ -1321,9 +1825,23 @@
         {
           "method": "put",
           "methodAlias": "update",
-          "command": "luis models update hierarchicalentities --in hierarchicalModelUpdateObject.json  --hEntityId <string>",
+          "command": "luis models update hierarchicalentities --in hierarchicalModelUpdateObject.json --hEntityId <string>",
           "pathFragment": "/{hEntityId}",
           "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            },
             {
               "name": "hEntityId",
               "in": "path",
@@ -1344,6 +1862,20 @@
           "pathFragment": "/{hEntityId}",
           "params": [
             {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
               "name": "hEntityId",
               "in": "path",
               "description": "Format - guid. The hierarchical entity extractor ID.",
@@ -1357,9 +1889,23 @@
         {
           "method": "post",
           "methodAlias": "create",
-          "command": "luis models create hierarchicalentities children  --in body.json  --hEntityId <string>",
+          "command": "luis models create hierarchicalentities children  --in body.json --hEntityId <string>",
           "pathFragment": "/{hEntityId}/children",
           "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            },
             {
               "name": "hEntityId",
               "in": "path",
@@ -1380,6 +1926,20 @@
           "command": "luis models delete hierarchicalentities children  --hEntityId <string> --hChildId <string>",
           "pathFragment": "/{hEntityId}/children/{hChildId}",
           "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            },
             {
               "name": "hEntityId",
               "in": "path",
@@ -1402,9 +1962,23 @@
         {
           "method": "put",
           "methodAlias": "update",
-          "command": "luis models update hierarchicalentities children  --in body.json  --hEntityId <string> --hChildId <string>",
+          "command": "luis models update hierarchicalentities children  --in body.json --hEntityId <string> --hChildId <string>",
           "pathFragment": "/{hEntityId}/children/{hChildId}",
           "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            },
             {
               "name": "hEntityId",
               "in": "path",
@@ -1432,6 +2006,20 @@
           "command": "luis models get hierarchicalentities children  --hEntityId <string> --hChildId <string>",
           "pathFragment": "/{hEntityId}/children/{hChildId}",
           "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            },
             {
               "name": "hEntityId",
               "in": "path",
@@ -1465,6 +2053,20 @@
           "pathFragment": "",
           "params": [
             {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
               "name": "skip",
               "in": "query",
               "description": "The number of entries to skip. Default value is 0.",
@@ -1491,8 +2093,24 @@
         {
           "method": "post",
           "methodAlias": "create",
-          "command": "luis models create intents --in modelCreateObject.json ",
+          "command": "luis models create intents --in modelCreateObject.json",
           "pathFragment": "",
+          "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. ID of the application.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
           "description": "Adds an intent classifier to the application.",
           "name": "createIntent",
           "entityName": "modelCreateObject",
@@ -1504,6 +2122,20 @@
           "command": "luis models delete intents --intentId <string>",
           "pathFragment": "/{intentId}",
           "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            },
             {
               "name": "intentId",
               "in": "path",
@@ -1518,9 +2150,23 @@
         {
           "method": "put",
           "methodAlias": "update",
-          "command": "luis models update intents --in modelUpdateObject.json  --intentId <string>",
+          "command": "luis models update intents --in modelUpdateObject.json --intentId <string>",
           "pathFragment": "/{intentId}",
           "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            },
             {
               "name": "intentId",
               "in": "path",
@@ -1541,6 +2187,20 @@
           "pathFragment": "/{intentId}",
           "params": [
             {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
               "name": "intentId",
               "in": "path",
               "description": "Format - guid. The intent classifier ID.",
@@ -1557,6 +2217,20 @@
           "command": "luis models list intents suggest  --intentId <string> --take <integer>",
           "pathFragment": "/{intentId}/suggest",
           "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            },
             {
               "name": "intentId",
               "in": "path",
@@ -1591,6 +2265,22 @@
           "methodAlias": "get",
           "command": "luis models get listprebuilts",
           "pathFragment": "",
+          "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
           "description": "Gets all the available prebuilt entities for the application based on the application's culture.",
           "name": "getAvailablePrebuiltEntityList"
         }
@@ -1607,6 +2297,20 @@
           "command": "luis models list --skip <integer> --take <integer>",
           "pathFragment": "",
           "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            },
             {
               "name": "skip",
               "in": "query",
@@ -1645,6 +2349,20 @@
           "pathFragment": "",
           "params": [
             {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
               "name": "skip",
               "in": "query",
               "description": "The number of entries to skip. Default value is 0.",
@@ -1671,8 +2389,24 @@
         {
           "method": "post",
           "methodAlias": "create",
-          "command": "luis models create prebuilts --in prebuiltExtractorNames.json ",
+          "command": "luis models create prebuilts --in prebuiltExtractorNames.json",
           "pathFragment": "",
+          "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
           "description": "Adds a list of prebuilt entity extractors to the application.",
           "name": "addPrebuiltEntityList",
           "entityName": "prebuiltExtractorNames",
@@ -1684,6 +2418,20 @@
           "command": "luis models delete prebuilts --prebuiltId <string>",
           "pathFragment": "/{prebuiltId}",
           "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            },
             {
               "name": "prebuiltId",
               "in": "path",
@@ -1701,6 +2449,20 @@
           "command": "luis models get prebuilts --prebuiltId <string>",
           "pathFragment": "/{prebuiltId}",
           "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            },
             {
               "name": "prebuiltId",
               "in": "path",
@@ -1724,8 +2486,24 @@
         {
           "method": "post",
           "methodAlias": "create",
-          "command": "luis examples create example --in exampleLabelObject.json ",
+          "command": "luis examples create example --in exampleLabelObject.json",
           "pathFragment": "",
+          "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
           "description": "Adds a labeled example to the application.",
           "name": "addLabel",
           "entityName": "exampleLabelObject",
@@ -1744,6 +2522,20 @@
           "command": "luis examples list --skip <integer> --take <integer>",
           "pathFragment": "",
           "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            },
             {
               "name": "skip",
               "in": "query",
@@ -1771,8 +2563,24 @@
         {
           "method": "post",
           "methodAlias": "create",
-          "command": "luis examples create --in exampleLabelObjectArray.json ",
+          "command": "luis examples create --in exampleLabelObjectArray.json",
           "pathFragment": "",
+          "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
           "description": "Adds a batch of labeled examples to the specified application. \n\nThe maximum batch size is 100 items. \n\nIf the item has the ExampleId and a value between 0 - 99, the returned result will also include the ExampleId. This is helpful if items have errors. \n\nSome items can pass while others fail. The returned result will indicate each item's status. \n",
           "name": "batchAddLabels",
           "entityName": "exampleLabelObjectArray",
@@ -1784,6 +2592,20 @@
           "command": "luis examples delete --exampleId <integer>",
           "pathFragment": "/{exampleId}",
           "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            },
             {
               "name": "exampleId",
               "in": "path",
@@ -1810,6 +2632,20 @@
           "command": "luis features list --skip <integer> --take <integer>",
           "pathFragment": "",
           "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The version ID of the task.",
+              "required": true,
+              "type": "string"
+            },
             {
               "name": "skip",
               "in": "query",
@@ -1848,6 +2684,20 @@
           "pathFragment": "",
           "params": [
             {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The version ID of the task.",
+              "required": true,
+              "type": "string"
+            },
+            {
               "name": "skip",
               "in": "query",
               "description": "The number of entries to skip. Default value is 0.",
@@ -1874,8 +2724,24 @@
         {
           "method": "post",
           "methodAlias": "create",
-          "command": "luis features create patterns --in patternCreateObject.json ",
+          "command": "luis features create patterns --in patternCreateObject.json",
           "pathFragment": "",
+          "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The version ID of the task.",
+              "required": true,
+              "type": "string"
+            }
+          ],
           "description": "Creates a new pattern feature.",
           "name": "createPatternFeature",
           "entityName": "patternCreateObject",
@@ -1887,6 +2753,20 @@
           "command": "luis features delete patterns --patternId <integer>",
           "pathFragment": "/{patternId}",
           "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The version ID of the task.",
+              "required": true,
+              "type": "string"
+            },
             {
               "name": "patternId",
               "in": "path",
@@ -1901,9 +2781,23 @@
         {
           "method": "put",
           "methodAlias": "update",
-          "command": "luis features update patterns --in patternUpdateObject.json  --patternId <integer>",
+          "command": "luis features update patterns --in patternUpdateObject.json --patternId <integer>",
           "pathFragment": "/{patternId}",
           "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The version ID of the task.",
+              "required": true,
+              "type": "string"
+            },
             {
               "name": "patternId",
               "in": "path",
@@ -1923,6 +2817,20 @@
           "command": "luis features get patterns --patternId <integer>",
           "pathFragment": "/{patternId}",
           "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The version ID of the task.",
+              "required": true,
+              "type": "string"
+            },
             {
               "name": "patternId",
               "in": "path",
@@ -1947,6 +2855,20 @@
           "command": "luis features list phraselists --skip <integer> --take <integer>",
           "pathFragment": "",
           "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The version ID of the task.",
+              "required": true,
+              "type": "string"
+            },
             {
               "name": "skip",
               "in": "query",
@@ -1974,8 +2896,24 @@
         {
           "method": "post",
           "methodAlias": "create",
-          "command": "luis features create phraselists --in phraselistCreateObject.json ",
+          "command": "luis features create phraselists --in phraselistCreateObject.json",
           "pathFragment": "",
+          "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The version ID of the task.",
+              "required": true,
+              "type": "string"
+            }
+          ],
           "description": "Creates a new phraselist feature.",
           "name": "createPhraselistFeature",
           "entityName": "phraselistCreateObject",
@@ -1987,6 +2925,20 @@
           "command": "luis features delete phraselists --phraselistId <integer>",
           "pathFragment": "/{phraselistId}",
           "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The version ID of the task.",
+              "required": true,
+              "type": "string"
+            },
             {
               "name": "phraselistId",
               "in": "path",
@@ -2001,9 +2953,23 @@
         {
           "method": "put",
           "methodAlias": "update",
-          "command": "luis features update phraselists --in phraselistUpdateObject.json  --phraselistId <integer>",
+          "command": "luis features update phraselists --in phraselistUpdateObject.json --phraselistId <integer>",
           "pathFragment": "/{phraselistId}",
           "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The version ID of the task.",
+              "required": true,
+              "type": "string"
+            },
             {
               "name": "phraselistId",
               "in": "path",
@@ -2023,6 +2989,20 @@
           "command": "luis features get phraselists --phraselistId <integer>",
           "pathFragment": "/{phraselistId}",
           "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The version ID of the task.",
+              "required": true,
+              "type": "string"
+            },
             {
               "name": "phraselistId",
               "in": "path",
@@ -2048,6 +3028,22 @@
           "methodAlias": "get",
           "command": "luis train get",
           "pathFragment": "",
+          "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
           "description": "Gets the training status of all models (intents and entities) for the specified LUIS app. You must <a href=\"https://westus.dev.cognitive.microsoft.com/docs/services/5890b47c39e2bb17b84a55ff/operations/5890b47c39e2bb052c5b9c45\">call the train API</a> to train the LUIS app before you call this API to get training status.\n",
           "name": "getVersionTrainingStatus"
         },
@@ -2056,6 +3052,22 @@
           "methodAlias": "create",
           "command": "luis train create",
           "pathFragment": "",
+          "params": [
+            {
+              "name": "appId",
+              "in": "path",
+              "description": "Format - guid. The application ID.",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "versionId",
+              "in": "path",
+              "description": "The task version ID.",
+              "required": true,
+              "type": "string"
+            }
+          ],
           "description": "Sends a training request for a version of a specified LUIS app. \n\nThis POST request initiates a request asynchronously. To determine whether the training request is successful, submit a GET request to get training status.\n\n* **Note**: The application version is not fully trained unless all the models (intents and entities) are trained successfully or are up to date.\n\nTo verify training success, get the training status at least once after training is complete.",
           "name": "trainApplicationVersion"
         }

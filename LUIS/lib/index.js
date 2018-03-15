@@ -36,22 +36,7 @@ module.exports = async function luis(config, serviceManifest, args, requestBody)
     }
     // Create the target service and kick off the request.
     const service = new api[identifierPath][identifier]();
-    // Shorthand argument syntax mapping (not documented in help)
-    const mappedParams = Object.assign(mapParams(operation, args['--']), args);
-    const response = await service[operation.name](mappedParams, (requestBodyDataModel || requestBody));
+    const response = await service[operation.name](args, (requestBodyDataModel || requestBody));
 
     return response.json();
 };
-
-/**
- * Maps indexed parameters to named parameters when
- * the shorthand "--" switch is used in the command.
- * e.g. for the command: luis apps list -- 1 5
- * the "--" array will be [1, 5] which maps to {skip: 1, take: 5}
- *
- * @param operation The operation from the manifest that contains a named list of params
- * @param params An array of params supplied after the -- in the command.
- */
-function mapParams(operation, params) {
-    return operation.params.reduce((map, param, index) => (map[param.name] = params[index], map), {});
-}

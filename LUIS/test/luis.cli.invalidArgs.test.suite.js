@@ -24,9 +24,9 @@ describe('When the arguments are invalid, the LUIS cli', () => {
         });
 
         it('when the action is unknown', done =>{
-            exec(`node ${luis} models compositeentities post`, (error, stdout) => {
+            exec(`node ${luis} models compositeentities crreate`, (error, stdout) => {
                 assert(stdout.includes('ArgumentError: The operation does not exist'));
-                assert(stdout.includes('post does not exist, did you mean one of these?'));
+                assert(stdout.includes('crreate does not exist, did you mean one of these?'));
                 done();
             });
         });

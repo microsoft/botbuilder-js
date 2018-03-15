@@ -8,7 +8,7 @@ class Features extends ServiceBase {
     /**
      * Gets all application version features.
      */
-    async getVersionFeatures(params) {
+    getVersionFeatures(params) {
         return this.createRequest('', params, 'get');
     }
 }

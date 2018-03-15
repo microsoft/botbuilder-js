@@ -7,12 +7,14 @@ const OperationCommandMap = {
 
     c: 'create',
     create: 'create',
+    post: 'create',
 
     p: 'patch',
     patch: 'patch',
 
     u: 'update',
     update: 'update',
+    put: 'update',
 
     d: 'delete',
     'delete': 'delete'

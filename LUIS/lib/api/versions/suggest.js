@@ -8,7 +8,7 @@ class Suggest extends ServiceBase {
     /**
      * Deleted an unlabelled utterance.
      */
-    async deleteUnlabelledUtterance(params, body) {
+    deleteUnlabelledUtterance(params, body) {
         return this.createRequest('', params, 'delete', body);
     }
 }

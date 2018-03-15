@@ -8,7 +8,7 @@ class Examples extends ServiceBase {
     /**
      * Returns examples to be reviewed.
      */
-    async reviewLabeledExamples(params) {
+    reviewLabeledExamples(params) {
         return this.createRequest('', params, 'get');
     }
 
@@ -22,14 +22,14 @@ class Examples extends ServiceBase {
      Some items can pass while others fail. The returned result will indicate each item's status.
 
      */
-    async batchAddLabels(params, exampleLabelObjectArray/* ExampleLabelObjectArray */) {
+    batchAddLabels(params, exampleLabelObjectArray/* ExampleLabelObjectArray */) {
         return this.createRequest('', params, 'post', exampleLabelObjectArray);
     }
 
     /**
      * Deletes the label with the specified ID.
      */
-    async deleteExampleLabels(params) {
+    deleteExampleLabels(params) {
         return this.createRequest('/{exampleId}', params, 'delete');
     }
 }

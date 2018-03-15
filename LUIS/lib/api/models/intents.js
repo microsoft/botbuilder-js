@@ -8,42 +8,42 @@ class Intents extends ServiceBase {
     /**
      * Gets information about the intent models.
      */
-    async getVersionIntentList(params) {
+    getVersionIntentList(params) {
         return this.createRequest('', params, 'get');
     }
 
     /**
      * Adds an intent classifier to the application.
      */
-    async createIntent(params, modelCreateObject/* ModelCreateObject */) {
+    createIntent(params, modelCreateObject/* ModelCreateObject */) {
         return this.createRequest('', params, 'post', modelCreateObject);
     }
 
     /**
      * Deletes an intent classifier from the application.
      */
-    async deleteIntent(params) {
+    deleteIntent(params) {
         return this.createRequest('/{intentId}', params, 'delete');
     }
 
     /**
      * Updates the name of an intent classifier.
      */
-    async renameIntent(params, modelUpdateObject/* ModelUpdateObject */) {
+    renameIntent(params, modelUpdateObject/* ModelUpdateObject */) {
         return this.createRequest('/{intentId}', params, 'put', modelUpdateObject);
     }
 
     /**
      * Gets information about the intent model.
      */
-    async getIntent(params) {
+    getIntent(params) {
         return this.createRequest('/{intentId}', params, 'get');
     }
 
     /**
      * Suggests examples that would improve the accuracy of the intent model.
      */
-    async suggestEndpointQueriesForIntents(params) {
+    suggestEndpointQueriesForIntents(params) {
         return this.createRequest('/{intentId}/suggest', params, 'get');
     }
 }

@@ -8,7 +8,7 @@ class Cultures extends ServiceBase {
     /**
      * Gets the supported LUIS application cultures.
      */
-    async getLUISApplicationCulturesList(params) {
+    getLUISApplicationCulturesList(params) {
         return this.createRequest('', params, 'get');
     }
 }

@@ -8,7 +8,7 @@ class Models extends ServiceBase {
     /**
      * Gets information about the application version models.
      */
-    async getVersionModelList(params) {
+    getVersionModelList(params) {
         return this.createRequest('', params, 'get');
     }
 }

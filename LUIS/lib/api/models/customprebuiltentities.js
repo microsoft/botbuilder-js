@@ -8,14 +8,14 @@ class Customprebuiltentities extends ServiceBase {
     /**
      * Gets all custom prebuilt entities information of this application
      */
-    async getCustomPrebuiltDomainEntitiesList(params) {
+    getCustomPrebuiltDomainEntitiesList(params) {
         return this.createRequest('', params, 'get');
     }
 
     /**
      * Adds a custom prebuilt entity model to the application
      */
-    async addCustomPrebuiltEntity(params, prebuiltDomainModelCreateObject/* PrebuiltDomainModelCreateObject */) {
+    addCustomPrebuiltEntity(params, prebuiltDomainModelCreateObject/* PrebuiltDomainModelCreateObject */) {
         return this.createRequest('', params, 'post', prebuiltDomainModelCreateObject);
     }
 }

@@ -8,35 +8,35 @@ class Phraselists extends ServiceBase {
     /**
      * Gets all application phraselist features.
      */
-    async getVersionPhraselistFeaturesList(params) {
+    getVersionPhraselistFeaturesList(params) {
         return this.createRequest('', params, 'get');
     }
 
     /**
      * Creates a new phraselist feature.
      */
-    async createPhraselistFeature(params, phraselistCreateObject/* PhraselistCreateObject */) {
+    createPhraselistFeature(params, phraselistCreateObject/* PhraselistCreateObject */) {
         return this.createRequest('', params, 'post', phraselistCreateObject);
     }
 
     /**
      * Deletes a phraselist feature from an application.
      */
-    async deletePhraselistFeature(params) {
+    deletePhraselistFeature(params) {
         return this.createRequest('/{phraselistId}', params, 'delete');
     }
 
     /**
      * Updates the phrases, the state and the name of the phraselist feature.
      */
-    async updatePhraselistFeature(params, phraselistUpdateObject/* PhraselistUpdateObject */) {
+    updatePhraselistFeature(params, phraselistUpdateObject/* PhraselistUpdateObject */) {
         return this.createRequest('/{phraselistId}', params, 'put', phraselistUpdateObject);
     }
 
     /**
      * Gets phraselist feature info.
      */
-    async getPhraselistFeatureInfo(params) {
+    getPhraselistFeatureInfo(params) {
         return this.createRequest('/{phraselistId}', params, 'get');
     }
 }

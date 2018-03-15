@@ -20,7 +20,7 @@ let args;
  * @returns {Promise<void>}
  */
 async function runProgram() {
-    args = minimist(process.argv.slice(2), {'--': true});
+    args = minimist(process.argv.slice(2));
 
     if (args.init || args.i) {
         await initializeConfig();

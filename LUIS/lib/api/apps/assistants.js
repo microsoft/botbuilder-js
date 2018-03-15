@@ -8,7 +8,7 @@ class Assistants extends ServiceBase {
     /**
      * Gets the endpoint URLs for the prebuilt Cortana applications.
      */
-    async getPersonalAssistantApplications(params) {
+    getPersonalAssistantApplications(params) {
         return this.createRequest('', params, 'get');
     }
 }

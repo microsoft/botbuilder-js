@@ -8,7 +8,7 @@ class Domains extends ServiceBase {
     /**
      * Gets the available application domains.
      */
-    async getLUISApplicationDomainsList(params) {
+    getLUISApplicationDomainsList(params) {
         return this.createRequest('', params, 'get');
     }
 }

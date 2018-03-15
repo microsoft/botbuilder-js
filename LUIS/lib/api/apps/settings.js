@@ -8,14 +8,14 @@ class Settings extends ServiceBase {
     /**
      * Updates the application settings
      */
-    async updateApplicationSettings(params, applicationSettingUpdateObject/* ApplicationSettingUpdateObject */) {
+    updateApplicationSettings(params, applicationSettingUpdateObject/* ApplicationSettingUpdateObject */) {
         return this.createRequest('', params, 'put', applicationSettingUpdateObject);
     }
 
     /**
      * Get the application settings
      */
-    async getApplicationSettings(params) {
+    getApplicationSettings(params) {
         return this.createRequest('', params, 'get');
     }
 }

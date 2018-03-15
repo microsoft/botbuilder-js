@@ -1,6 +1,0 @@
-{
-  "subscriptionKey": "abc123",
-  "appId": "4682336",
-  "versionId": "111047",
-  "endpointBasePath": "https://5437966.api.cognitive.microsoft.com/luis/api/v2.0"
-}

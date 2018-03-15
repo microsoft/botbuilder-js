@@ -8,7 +8,7 @@ class Listprebuilts extends ServiceBase {
     /**
      * Gets all the available prebuilt entities for the application based on the application's culture.
      */
-    async getAvailablePrebuiltEntityList(params) {
+    getAvailablePrebuiltEntityList(params) {
         return this.createRequest('', params, 'get');
     }
 }

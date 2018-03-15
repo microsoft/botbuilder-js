@@ -8,14 +8,14 @@ class ExternalKeys extends ServiceBase {
     /**
      * Gets the given application versions's external keys.
      */
-    async getApplicationVersionExternalApiKeys(params) {
+    getApplicationVersionExternalApiKeys(params) {
         return this.createRequest('', params, 'get');
     }
 
     /**
      * Assigns an external API key to the given application according to the specified key type.
      */
-    async updateApplicationVersionExternalKey(params, externalKeyUpdateObject/* ExternalKeyUpdateObject */) {
+    updateApplicationVersionExternalKey(params, externalKeyUpdateObject/* ExternalKeyUpdateObject */) {
         return this.createRequest('', params, 'put', externalKeyUpdateObject);
     }
 }

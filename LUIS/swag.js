@@ -37,7 +37,7 @@ const operationTpl = (operations) => {
     /**
     * ${operation.description}
     */
-    async ${operation.name}(params${operation.entityName ? ` , ${operation.entityName}` : ''}${(operation.entityType ? `/* ${operation.entityType} */` : '')}) {
+    ${operation.name}(params${operation.entityName ? ` , ${operation.entityName}` : ''}${(operation.entityType ? `/* ${operation.entityType} */` : '')}) {
         return this.createRequest('${operation.pathFragment}', params, '${operation.method}'${operation.entityName ? ', ' + operation.entityName : ''});
     }`;
     });
@@ -236,21 +236,23 @@ Object.keys(swagger.paths).sort().forEach(pathName => {
         const entityToConsume = findEntity(swaggerOperation) || {name: '', schema: {$ref: ''}};
 
         // Build the command example for the help output: luis <api group> <action> <target> <subtarget> --<args>
-        let command = `luis ${category} ${methodAlias}`;
+        let command = `luis ${category}${(methodAlias ? ' ' + methodAlias : '')}`;
         if (fileName !== category) {
             command += ` ${fileName}`;
         }
         if (root && root !== node) {
             command += ` ${node} `;
         }
-        command += entityToConsume.name ? ` --in ${entityToConsume.name}.json ` : '';
-        command += params.reduce((agg, param) => (agg += ` --${param.name} <${param.type}>`), '');
-
+        command += entityToConsume.name ? ` --in ${entityToConsume.name}.json` : '';
+        command += params
+            .slice()
+            .filter(p => (/(apps|versions)/.test(category) || !/(appId|versionId)/.test(p.name)))
+            .reduce((agg, param) => (agg += ` --${param.name} <${param.type}>`), '');
         // Build the operation entry for the manifest
         const operation = {
             method,
             methodAlias,
-            command,
+            command: command.trim(),
             pathFragment,
             params,
             description: swaggerOperation.description.replace(/[\r]/g, ''),
@@ -302,7 +304,7 @@ Object.keys(configsMap).forEach(category => {
         const clazz = classTpl(cfg[fileName]);
         const path = `${category}/${fileName}`;
         fs.outputFileSync(`generated/${path}.js`, clazz);
-        (classNames[cfg.category] || (classNames[cfg.category] = [])).push({path, name: cfg[fileName].className});
+        (classNames[category] || (classNames[category] = [])).push({path, name: cfg[fileName].className});
     });
 });
 
