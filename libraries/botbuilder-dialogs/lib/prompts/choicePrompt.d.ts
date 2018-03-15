@@ -74,7 +74,7 @@ export declare class ChoicePrompt implements Dialog {
      * ```
      * @param validator (Optional) validator that will be called each time the user responds to the prompt.
      */
-    constructor(validator?: PromptValidator<FoundChoice | undefined> | undefined);
+    constructor(validator?: PromptValidator<FoundChoice | undefined>);
     begin(context: BotContext, dialogs: DialogSet, options: ChoicePromptOptions): Promise<void>;
     continue(context: BotContext, dialogs: DialogSet): Promise<void>;
     private sendChoicePrompt(context, dialogs, prompt, speak?);

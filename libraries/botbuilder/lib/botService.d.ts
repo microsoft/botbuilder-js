@@ -19,7 +19,7 @@ import { Middleware } from './middleware';
  */
 export declare class BotService<T> implements Middleware {
     protected name: string;
-    protected instance: T | undefined;
+    protected instance: T;
     /**
      * Creates a new instance of a service definition.
      *
@@ -28,7 +28,7 @@ export declare class BotService<T> implements Middleware {
      * @param instance (Optional) singleton instance of the service to add to the context object.
      * Dynamic instances can be added by implementing [getService()](#getservice).
      */
-    constructor(name: string, instance?: T | undefined);
+    constructor(name: string, instance?: T);
     contextCreated(context: BotContext, next: () => Promise<void>): Promise<void>;
     /**
      * Overrided by derived classes to register a dynamic instance of the service.

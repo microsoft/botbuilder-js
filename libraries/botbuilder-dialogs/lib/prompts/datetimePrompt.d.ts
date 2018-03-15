@@ -75,7 +75,7 @@ export declare class DatetimePrompt implements Dialog {
      * ```
      * @param validator (Optional) validator that will be called each time the user responds to the prompt.
      */
-    constructor(validator?: PromptValidator<FoundDatetime[]> | undefined);
+    constructor(validator?: PromptValidator<FoundDatetime[]>);
     begin(context: BotContext, dialogs: DialogSet, options: PromptOptions): Promise<void>;
     continue(context: BotContext, dialogs: DialogSet): Promise<void>;
 }
