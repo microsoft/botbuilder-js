@@ -5,7 +5,7 @@ notifications:
   email: false
 
 before_install:
-  - npm install --global lerna
+  - npm install --global lerna nyc mocha
   - cd tools/ && npm install
 
 install:
