@@ -24,7 +24,7 @@ async function runProgram() {
 
     if (args.init || args.i) {
         await initializeConfig();
-        process.stdout.write(`Successfully wrote ${process.cwd()}.luisrc`);
+        process.stdout.write(`Successfully wrote ${process.cwd()}/.luisrc`);
         return;
     }
     if (args.help ||
