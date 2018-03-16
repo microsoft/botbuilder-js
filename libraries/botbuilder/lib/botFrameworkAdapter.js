@@ -46,14 +46,21 @@ class BotFrameworkAdapter extends botbuilder_core_1.BotAdapter {
                     .then(() => {
                     if (request.type === botbuilder_core_1.ActivityTypes.Invoke) {
                         const key = request.channelId + '/' + request.id;
-                        const invokeResponse = this.invokeResponses[key];
-                        if (invokeResponse && invokeResponse.value) {
-                            const value = invokeResponse.value;
-                            res.send(value.status, value.body);
-                            res.end();
+                        try {
+                            const invokeResponse = this.invokeResponses[key];
+                            if (invokeResponse && invokeResponse.value) {
+                                const value = invokeResponse.value;
+                                res.send(value.status, value.body);
+                                res.end();
+                            }
+                            else {
+                                throw new Error(`Bot failed to return a valid 'invokeResponse' activity.`);
+                            }
                         }
-                        else {
-                            throw new Error(`Bot failed to return a valid 'invokeResponse' activity.`);
+                        finally {
+                            if (this.invokeResponses.hasOwnProperty(key)) {
+                                delete this.invokeResponses[key];
+                            }
                         }
                     }
                     else {
