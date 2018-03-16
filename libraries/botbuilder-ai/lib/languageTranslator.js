@@ -8,8 +8,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const LanguageMap = require("./languageMap");
-const LuisClient = require("botframework-luis");
+const request = require("request-promise-native");
+const xmldom_1 = require("xmldom");
 let MsTranslator = require('mstranslator');
 /**
  * The LanguageTranslator will use the Text Translator Cognitive service to translate text from a source language
@@ -17,20 +17,16 @@ let MsTranslator = require('mstranslator');
  * get a translated experience, and also a LUIS model allowing the user to ask to speak a language.
  */
 class LanguageTranslator {
-    constructor(translatorKey, nativeLanguages, luisAppId, luisAccessKey) {
+    constructor(translatorKey, nativeLanguages) {
         this.nativeLanguages = nativeLanguages;
-        this.luisAppId = luisAppId;
-        this.luisAccessKey = luisAccessKey;
-        this.luisClient = new LuisClient();
-        this.translator = new MsTranslator({ api_key: translatorKey }, true);
-        this.translator.translateArrayAsync = denodeify(this.translator, this.translator.translateArray);
+        this.translator = new MicrosoftTranslator(translatorKey);
     }
     /// Incoming activity
     receiveActivity(context, next) {
         return __awaiter(this, void 0, void 0, function* () {
             if (context.request.type == "message" && context.request.text) {
                 // determine the language we are using for this conversation
-                let sourceLanguage = this.nativeLanguages[0];
+                let sourceLanguage = yield this.translator.detect(context.request.text);
                 if (context.state && context.state.conversation && context.state.conversation.language) {
                     sourceLanguage = context.state.conversation.language;
                 }
@@ -44,62 +40,28 @@ class LanguageTranslator {
                     translationContext.sourceText = context.request.text;
                     yield this.TranslateMessageAsync(context, context.request, translationContext.sourceLanguage, translationContext.targetLanguage);
                 }
-                if (this.luisAppId && this.luisAccessKey) {
-                    // look to see if this is a request to speak a different language
-                    let lowertext = context.request.text.toLowerCase();
-                    for (let iName in LanguageMap.Names) {
-                        let name = LanguageMap.Names[iName];
-                        if (lowertext.indexOf(name) >= 0) {
-                            // it has a language name in it, it may be a request to speak another language
-                            let commandText = context.request.text;
-                            // translate commandtext if not in en already (our model is in english)
-                            if (sourceLanguage != 'en') {
-                                let translationResult = yield this.translator.translateArrayAsync({
-                                    from: sourceLanguage,
-                                    to: 'en',
-                                    texts: [commandText]
-                                });
-                                commandText = translationResult[0].TranslatedText;
-                            }
-                            // look at intent of commandText
-                            var intents = yield this.luisClient.getIntentsAndEntitiesV2(this.luisAppId, this.luisAccessKey, commandText);
-                            if (intents.topScoringIntent && intents.topScoringIntent.intent == 'BotTranslator.ChangeLanguage' && intents.entities.length > 0) {
-                                let languageFragment = intents.entities[0].entity || '';
-                                if (LanguageMap.namesToCode[languageFragment.toLowerCase()]) {
-                                    // set new source language
-                                    translationContext.sourceLanguage = LanguageMap.namesToCode[languageFragment];
-                                    // remember
-                                    if (context.state && context.state.conversation) {
-                                        context.state.conversation.language = LanguageMap.namesToCode[languageFragment];
-                                    }
-                                }
-                            }
-                            break;
-                        }
-                    }
-                }
             }
             return next();
         });
     }
-    /// outgoing activities
-    postActivity(context, activities, next) {
-        let promises = [];
-        for (let iActivity in activities) {
-            let activity = activities[iActivity];
-            if (activity.type === 'message') {
-                let message = activity;
-                if (message.text && message.text.length > 0) {
-                    // use translationContext to reverse translate the response
-                    let translationContext = context.translation;
-                    if (translationContext.sourceLanguage != translationContext.targetLanguage)
-                        promises.push(this.TranslateMessageAsync(context, message, translationContext.targetLanguage, translationContext.sourceLanguage));
-                }
-            }
-        }
-        return Promise.all(promises)
-            .then(result => next());
-    }
+    // /// outgoing activities
+    // public postActivity(context: BotContext, activities: Activity[], next: () => Promise<ResourceResponse[]>): Promise<ResourceResponse[]> {
+    //     let promises: Promise<void>[] = [];
+    //     for (let iActivity in activities) {
+    //         let activity = activities[iActivity];
+    //         if (activity.type === 'message') {
+    //             let message = activity;
+    //             if (message.text && message.text.length > 0) {
+    //                 // use translationContext to reverse translate the response
+    //                 let translationContext: TranslationContext = (<any>context).translation;
+    //                 if (translationContext.sourceLanguage != translationContext.targetLanguage)
+    //                     promises.push(this.TranslateMessageAsync(context, message, translationContext.targetLanguage, translationContext.sourceLanguage));
+    //             }
+    //         }
+    //     }
+    //     return Promise.all(promises)
+    //         .then(result => next());
+    // }
     /// Translate .Text field of a message, regardless of direction
     TranslateMessageAsync(context, message, sourceLanguage, targetLanguage) {
         // if we have text and a target language
@@ -160,4 +122,151 @@ function denodeify(thisArg, fn) {
         });
     };
 }
+class MicrosoftTranslator {
+    constructor(apiKey) {
+        this.entityMap = {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': '&quot;',
+            "'": '&#39;',
+            "/": '&#x2F;'
+        };
+        this.apiKey = apiKey;
+        this.postProcessor = new PostProcessTranslator();
+    }
+    getAccessToken() {
+        return request({
+            url: `https://api.cognitive.microsoft.com/sts/v1.0/issueToken?Subscription-Key=${this.apiKey}`,
+            method: 'POST'
+        })
+            .then(result => result);
+    }
+    escapeHtml(source) {
+        return String(source).replace(/[&<>"'\/]/g, s => this.entityMap[s]);
+    }
+    detect(text) {
+        let uri = "http://api.microsofttranslator.com/v2/Http.svc/Detect";
+        let query = `?text=${encodeURI(text)}`;
+        return new Promise((resolve, reject) => {
+            this.getAccessToken()
+                .then(accessToken => {
+                return request({
+                    url: uri + query,
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer ' + accessToken
+                    }
+                });
+            })
+                .then(lang => resolve(lang.replace(/<[^>]*>/g, '')))
+                .catch(error => reject(error));
+        });
+    }
+    translateArray(options, callback) {
+        return;
+    }
+    translateArrayAsync(options) {
+        let from = options.from;
+        let to = options.to;
+        let texts = options.texts;
+        texts.forEach((text, index, array) => {
+            texts[index] = this.escapeHtml(text);
+            texts[index] = `<string xmlns="http://schemas.microsoft.com/2003/10/Serialization/Arrays">${text}</string>`;
+        });
+        let uri = "https://api.microsofttranslator.com/v2/Http.svc/TranslateArray2";
+        let body = "<TranslateArrayRequest>" +
+            "<AppId />" +
+            `<From>${from}</From>` +
+            "<Options>" +
+            " <Category xmlns=\"http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2\" >generalnn</Category>" +
+            "<ContentType xmlns=\"http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2\">text/plain</ContentType>" +
+            "<ReservedFlags xmlns=\"http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2\" />" +
+            "<State xmlns=\"http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2\" />" +
+            "<Uri xmlns=\"http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2\" />" +
+            "<User xmlns=\"http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2\" />" +
+            "</Options>" +
+            "<Texts>" +
+            texts.join('') +
+            "</Texts>" +
+            `<To>${to}</To>` +
+            "</TranslateArrayRequest>";
+        return new Promise((resolve, reject) => {
+            this.getAccessToken()
+                .then(accessToken => {
+                return request({
+                    url: uri,
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + accessToken,
+                        'Content-Type': 'text/xml'
+                    },
+                    body: body,
+                });
+            })
+                .then(response => {
+                let results = [];
+                let parser = new xmldom_1.DOMParser();
+                let responseObj = parser.parseFromString(response);
+                let elements = responseObj.getElementsByTagName("TranslateArray2Response");
+                let index = 0;
+                Array.from(elements).forEach(element => {
+                    let translation = element.getElementsByTagName('TranslatedText')[0].textContent;
+                    let alignment = element.getElementsByTagName('Alignment')[0].textContent;
+                    translation = this.postProcessor.fixTranslation(texts[index], alignment, translation);
+                    let result = { TranslatedText: translation };
+                    results.push(result);
+                });
+                resolve(results);
+            })
+                .catch(error => {
+                console.log(error);
+            });
+        });
+    }
+}
+class PostProcessTranslator {
+    wordAlignmentParse(alignment, source, target) {
+        let alignMap = {};
+        if (alignment.trim() == "")
+            return alignMap;
+        let alignments = alignment.trim().split(' ');
+        alignments.forEach(alignData => {
+            let wordIndexes = alignData.split('-');
+            let trgstartIndex = parseInt(wordIndexes[1].split(':')[0]);
+            let trgLength = parseInt(wordIndexes[1].split(':')[1]) - trgstartIndex + 1;
+            alignMap[wordIndexes[0]] = trgstartIndex + ":" + trgLength;
+        });
+        return alignMap;
+    }
+    keepSrcWrdInTranslation(alignment, source, target, srcWrd) {
+        let processedTranslation = target;
+        let wrdStartIndex = source.indexOf(srcWrd);
+        let wrdEndIndex = wrdStartIndex + srcWrd.length - 1;
+        let wrdIndexesString = wrdStartIndex + ":" + wrdEndIndex;
+        if (wrdIndexesString in alignment) {
+            let trgWrdLocation = alignment[wrdIndexesString].split(':');
+            let targetWrd = target.substr(parseInt(trgWrdLocation[0]), parseInt(trgWrdLocation[1]));
+            if (targetWrd.trim().length == parseInt(trgWrdLocation[1]) && targetWrd != srcWrd)
+                processedTranslation = processedTranslation.replace(targetWrd, srcWrd);
+        }
+        return processedTranslation;
+    }
+    fixTranslation(sourceMessage, alignment, targetMessage) {
+        let processedTranslation = targetMessage;
+        let numericMatches = sourceMessage.match(new RegExp("\d+", "g"));
+        let containsNum = numericMatches != null;
+        if (!containsNum) {
+            return processedTranslation;
+        }
+        let alignMap = this.wordAlignmentParse(alignment, sourceMessage, targetMessage);
+        if (numericMatches != null) {
+            for (const numericMatch in numericMatches) {
+                processedTranslation = this.keepSrcWrdInTranslation(alignMap, sourceMessage, processedTranslation, numericMatch);
+            }
+        }
+        return processedTranslation;
+    }
+}
+exports.PostProcessTranslator = PostProcessTranslator;
 //# sourceMappingURL=languageTranslator.js.map

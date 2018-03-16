@@ -6,7 +6,6 @@
  * Licensed under the MIT License.
  */
 import { Middleware } from 'botbuilder';
-import { Activity, ResourceResponse } from 'botbuilder';
 export interface TranslationContext {
     sourceText: string;
     sourceLanguage: string;
@@ -19,12 +18,13 @@ export interface TranslationContext {
  */
 export declare class LanguageTranslator implements Middleware {
     protected nativeLanguages: string[];
-    protected luisAppId: string;
-    protected luisAccessKey: string;
-    private luisClient;
     private translator;
-    constructor(translatorKey: string, nativeLanguages: string[], luisAppId: string, luisAccessKey: string);
+    constructor(translatorKey: string, nativeLanguages: string[]);
     receiveActivity(context: BotContext, next: () => Promise<void>): Promise<void>;
-    postActivity(context: BotContext, activities: Activity[], next: () => Promise<ResourceResponse[]>): Promise<ResourceResponse[]>;
     private TranslateMessageAsync(context, message, sourceLanguage, targetLanguage);
+}
+export declare class PostProcessTranslator {
+    private wordAlignmentParse(alignment, source, target);
+    private keepSrcWrdInTranslation(alignment, source, target, srcWrd);
+    fixTranslation(sourceMessage: string, alignment: string, targetMessage: string): string;
 }
