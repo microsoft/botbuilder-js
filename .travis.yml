@@ -1,0 +1,20 @@
+language: node_js
+node_js:
+  - "lts/*"
+notifications:
+  email: false
+
+before_install:
+  - npm install --global lerna nyc mocha
+  - cd tools/ && npm install && cd ..
+
+install:
+  - lerna bootstrap --hoist
+
+script:
+  - npm run test
+
+cache:
+  directories:
+    - "node_modules"
+    - "tools/node_modules"

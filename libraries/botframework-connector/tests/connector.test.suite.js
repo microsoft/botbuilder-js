@@ -6,8 +6,9 @@
 
 var path = require('path');
 var fs = require('fs');
+var assert = require('assert');
 
-require('../.././../tools/node_modules/dotenv').config({ path: 'tests/.env' });
+require('dotenv').config({ path: 'tests/.env' });
 
 // function to encode file data to base64 encoded string
 function base64_encode(file) {
@@ -72,7 +73,7 @@ var readStreamToBuffer = function(stream, callback) {
   stream.on('error', (err) => callback(error, null));
 }
 
-describe('Bot Framework Connector SDK', function() {
+xdescribe('Bot Framework Connector SDK', function() {
   before(function (done) {
     suite = new SuiteBase(this, testPrefix, requiredEnvironment, libraryPath);
     suite.setupSuite(function () {
@@ -97,14 +98,14 @@ describe('Bot Framework Connector SDK', function() {
     suite.baseTeardownTest(done);
   });
 
-  describe('Conversations', function() {
+  xdescribe('Conversations', function() {
     describe('CreateConversation', function() {
       it('should return a valid conversation ID', function(done) {
         var params = createConversation()
         params.activity = createActivity();
 
         client.conversations.createConversation(params)
-        .then((result) => should.exist(result.id))
+        .then((result) => assert(!!result.id))
         .then(done, done);
       });
 
@@ -115,8 +116,8 @@ describe('Bot Framework Connector SDK', function() {
         client.conversations.createConversation(params).then((result) => {
           should.fail();
         }, (error) => {
-          should.exist(error.code);
-          should.exist(error.message);
+          assert(!!error.code);
+          assert(!!error.message);
         }).then(done, done);
       });
 
@@ -127,8 +128,8 @@ describe('Bot Framework Connector SDK', function() {
         client.conversations.createConversation(params).then((result) => {
           should.fail();
         }, (error) => {
-          should.exist(error.code);
-          should.exist(error.message);
+          assert(!!error.code);
+          assert(!!error.message);
         }).then(done, done);
       });
 
@@ -139,8 +140,8 @@ describe('Bot Framework Connector SDK', function() {
         client.conversations.createConversation(params).then((result) => {
           should.fail();
         }, (error) => {
-          should.exist(error.code);
-          should.exist(error.message);
+          assert(!!error.code);
+          assert(!!error.message);
         }).then(done, done);
       });
     });
@@ -165,8 +166,8 @@ describe('Bot Framework Connector SDK', function() {
         .then((result) => {
           should.fail();
         }, (error) => {
-          should.exist(error.code);
-          should.exist(error.message);
+          assert(!!error.code);
+          assert(!!error.message);
         })
         .then(done, done);
       });
@@ -179,7 +180,7 @@ describe('Bot Framework Connector SDK', function() {
         client.conversations.createConversation(params)
         .then((result) => client.conversations.sendToConversation(result.id, createActivity()))
         .then((result) => {
-          should.exist(result.id);
+          assert(!!result.id);
         })
         .then(done, done);
       });
@@ -192,8 +193,8 @@ describe('Bot Framework Connector SDK', function() {
         .then((result) => {
           should.fail();
         }, (error) => {
-          should.exist(error.code);
-          should.exist(error.message);
+          assert(!!error.code);
+          assert(!!error.message);
         })
         .then(done, done);
       });
@@ -217,7 +218,7 @@ describe('Bot Framework Connector SDK', function() {
         client.conversations.createConversation(params)
         .then((result) => client.conversations.sendToConversation(result.id, activity))
         .then((result) => {
-          should.exist(result.id);
+          assert(!!result.id);
         })
         .then(done, done);
       });
@@ -245,8 +246,8 @@ describe('Bot Framework Connector SDK', function() {
         .then((result) => {
           should.fail();
         }, (error) => {
-          should.exist(error.code);
-          should.exist(error.message);
+          assert(!!error.code);
+          assert(!!error.message);
         })
         .then(done, done);
       });
@@ -267,7 +268,7 @@ describe('Bot Framework Connector SDK', function() {
         })
         .then((result) => client.conversations.replyToActivity(conversationId, result.id, reply))
         .then((result) => {
-          should.exist(result.id);
+          assert(!!result.id);
         })
         .then(done, done);
       });
@@ -279,8 +280,8 @@ describe('Bot Framework Connector SDK', function() {
         .then((result) => {
           should.fail();
         }, (error) => {
-          should.exist(error.code);
-          should.exist(error.message);
+          assert(!!error.code);
+          assert(!!error.message);
         })
         .then(done, done);
       });
@@ -303,8 +304,8 @@ describe('Bot Framework Connector SDK', function() {
         .then((result) => {
           should.fail();
         }, (error) => {
-          should.exist(error.code);
-          should.exist(error.message);
+          assert(!!error.code);
+          assert(!!error.message);
         })
         .then(done, done);
       });
@@ -327,7 +328,7 @@ describe('Bot Framework Connector SDK', function() {
           return client.conversations.updateActivity(conversationId, result.id, updatedActivity)
         })
         .then((result) => {
-          should.exist(result.id);
+          assert(!!result.id);
         })
         .then(done, done);
       });
@@ -339,8 +340,8 @@ describe('Bot Framework Connector SDK', function() {
         .then((result) => {
           should.fail();
         }, (error) => {
-          should.exist(error.code);
-          should.exist(error.message);
+          assert(!!error.code);
+          assert(!!error.message);
         })
         .then(done, done);
       });
@@ -352,7 +353,7 @@ describe('Bot Framework Connector SDK', function() {
         client.conversations.createConversation(createConversation())
         .then((result) => client.conversations.uploadAttachment(result.id, createAttachment()))
         .then((result) => {
-          should.exist(result.id);
+          assert(!!result.id);
         })
         .then(done, done);
       });
