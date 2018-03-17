@@ -10,6 +10,24 @@ import { DialogInstance } from './dialog';
 import { DialogSet } from './dialogSet';
 import { PromptOptions } from './prompts/index';
 import { Choice } from 'botbuilder-prompts';
+/**
+ * Result returned to the caller of one of the various stack manipulation methods and used to
+ * return the result from a final call to `DialogContext.end()` to the bots logic.
+ */
+export interface DialogResult {
+    /** This will be `true` if there is still an active dialog on the stack. */
+    active: boolean;
+    /**
+     * Result returned by a dialog that was just ended.  This will only be populated in certain
+     * cases:
+     *
+     * - The bot calls `dc.begin()` to start a new dialog and the dialog ends immediately.
+     * - The bot calls `dc.continue()` and a dialog that was active ends.
+     *
+     * In all cases where it's populated, [active](#active) will be `false`.
+     */
+    result?: any;
+}
 export declare class DialogContext<C extends BotContext> {
     readonly dialogs: DialogSet<C>;
     readonly context: C;
@@ -41,7 +59,7 @@ export declare class DialogContext<C extends BotContext> {
      * @param dialogId ID of the dialog to start.
      * @param dialogArgs (Optional) additional argument(s) to pass to the dialog being started.
      */
-    begin(dialogId: string, dialogArgs?: any): Promise<void>;
+    begin(dialogId: string, dialogArgs?: any): Promise<DialogResult>;
     /**
      * Helper function to simplify formatting the options for calling a prompt dialog. This helper will
      * construct a `PromptOptions` structure and then call [begin(context, dialogId, options)](#begin).
@@ -56,7 +74,7 @@ export declare class DialogContext<C extends BotContext> {
      * @param prompt Initial prompt to send the user.
      * @param choicesOrOptions (Optional) array of choices to prompt the user for or additional prompt options.
      */
-    prompt<O extends PromptOptions = PromptOptions>(dialogId: string, prompt: string | Partial<Activity>, choicesOrOptions?: O | (string | Choice)[], options?: O): Promise<void>;
+    prompt<O extends PromptOptions = PromptOptions>(dialogId: string, prompt: string | Partial<Activity>, choicesOrOptions?: O | (string | Choice)[], options?: O): Promise<DialogResult>;
     /**
      * Continues execution of the active dialog, if there is one, by passing the context object to
      * its `Dialog.continue()` method. You can check `context.responded` after the call completes
@@ -73,7 +91,7 @@ export declare class DialogContext<C extends BotContext> {
      * });
      * ```
      */
-    continue(): Promise<void>;
+    continue(): Promise<DialogResult>;
     /**
      * Ends a dialog by popping it off the stack and returns an optional result to the dialogs
      * parent. The parent dialog is the dialog the started the on being ended via a call to
@@ -98,7 +116,7 @@ export declare class DialogContext<C extends BotContext> {
      * ```
      * @param result (Optional) result to pass to the parent dialogs `Dialog.resume()` method.
      */
-    end(result?: any): Promise<void>;
+    end(result?: any): Promise<DialogResult>;
     /**
      * Deletes any existing dialog stack thus cancelling all dialogs on the stack.
      *
@@ -108,7 +126,7 @@ export declare class DialogContext<C extends BotContext> {
      * return dc.endAll();
      * ```
      */
-    endAll(): Promise<void>;
+    endAll(): Promise<DialogResult>;
     /**
      * Ends the active dialog and starts a new dialog in its place. This is particularly useful
      * for creating loops or redirecting to another dialog.
@@ -130,5 +148,6 @@ export declare class DialogContext<C extends BotContext> {
      * @param dialogId ID of the new dialog to start.
      * @param dialogArgs (Optional) additional argument(s) to pass to the new dialog.
      */
-    replace(dialogId: string, dialogArgs?: any): Promise<void>;
+    replace(dialogId: string, dialogArgs?: any): Promise<DialogResult>;
+    private ensureDialogResult(result);
 }

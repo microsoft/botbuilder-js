@@ -40,11 +40,11 @@ export type PromptValidator<C extends BotContext, R> = (dc: DialogContext<C>, va
 export abstract class Prompt<C extends BotContext, T> implements Dialog<C> {
     constructor(private validator?: PromptValidator<C, T>) { }
 
-    protected abstract onPrompt(dc: DialogContext<C>, options: PromptOptions, isRetry: boolean): Promise<void>;
+    protected abstract onPrompt(dc: DialogContext<C>, options: PromptOptions, isRetry: boolean): Promise<any>;
 
     protected abstract onRecognize(dc: DialogContext<C>, options: PromptOptions): Promise<T|undefined>;
 
-    public begin(dc: DialogContext<C>, options: PromptOptions): Promise<void> {
+    public begin(dc: DialogContext<C>, options: PromptOptions): Promise<any> {
         // Persist options
         const instance = dc.instance as DialogInstance;
         instance.state = options || {};
@@ -53,7 +53,7 @@ export abstract class Prompt<C extends BotContext, T> implements Dialog<C> {
         return this.onPrompt(dc, instance.state, false);
     }
 
-    public continue(dc: DialogContext<C>): Promise<void> {
+    public continue(dc: DialogContext<C>): Promise<any> {
         // Recognize value
         const instance = dc.instance as DialogInstance;
         return this.onRecognize(dc, instance.state)

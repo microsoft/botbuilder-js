@@ -11,6 +11,26 @@ import { DialogSet } from './dialogSet';
 import { PromptOptions, ChoicePromptOptions } from './prompts/index';
 import { Choice } from 'botbuilder-prompts';
 
+/**
+ * Result returned to the caller of one of the various stack manipulation methods and used to 
+ * return the result from a final call to `DialogContext.end()` to the bots logic.
+ */
+export interface DialogResult {
+    /** This will be `true` if there is still an active dialog on the stack. */
+    active: boolean;
+
+    /** 
+     * Result returned by a dialog that was just ended.  This will only be populated in certain
+     * cases: 
+     * 
+     * - The bot calls `dc.begin()` to start a new dialog and the dialog ends immediately.
+     * - The bot calls `dc.continue()` and a dialog that was active ends.
+     * 
+     * In all cases where it's populated, [active](#active) will be `false`. 
+     */
+    result?: any;
+}
+
 export class DialogContext<C extends BotContext> {
 
      /** 
@@ -47,7 +67,7 @@ export class DialogContext<C extends BotContext> {
      * @param dialogId ID of the dialog to start.
      * @param dialogArgs (Optional) additional argument(s) to pass to the dialog being started.
      */
-    public begin(dialogId: string, dialogArgs?: any): Promise<void> {
+    public begin(dialogId: string, dialogArgs?: any): Promise<DialogResult> {
         try {
             // Lookup dialog
             const dialog = this.dialogs.find(dialogId);
@@ -61,7 +81,7 @@ export class DialogContext<C extends BotContext> {
             this.stack.push(instance);
             
             // Call dialogs begin() method.
-            return Promise.resolve(dialog.begin(this, dialogArgs));
+            return Promise.resolve(dialog.begin(this, dialogArgs)).then((r) => this.ensureDialogResult(r));
         } catch(err) {
             return Promise.reject(err);
         }
@@ -81,7 +101,7 @@ export class DialogContext<C extends BotContext> {
      * @param prompt Initial prompt to send the user.
      * @param choicesOrOptions (Optional) array of choices to prompt the user for or additional prompt options.
      */
-    public prompt<O extends PromptOptions = PromptOptions>(dialogId: string, prompt: string|Partial<Activity>, choicesOrOptions?: O|(string|Choice)[], options?: O): Promise<void> {
+    public prompt<O extends PromptOptions = PromptOptions>(dialogId: string, prompt: string|Partial<Activity>, choicesOrOptions?: O|(string|Choice)[], options?: O): Promise<DialogResult> {
         const args = Object.assign({}, Array.isArray(choicesOrOptions) ? { choices: choicesOrOptions } : choicesOrOptions) as O;
         if (prompt) { args.prompt = prompt }
         return this.begin(dialogId, args);
@@ -103,7 +123,7 @@ export class DialogContext<C extends BotContext> {
      * });
      * ```
      */
-    public continue(): Promise<void> {
+    public continue(): Promise<DialogResult> {
         try {
             // Check for a dialog on the stack
             const instance = this.instance;
@@ -116,13 +136,13 @@ export class DialogContext<C extends BotContext> {
                 // Check for existence of a continue() method
                 if (dialog.continue) {
                     // Continue execution of dialog
-                    return Promise.resolve(dialog.continue(this));
+                    return Promise.resolve(dialog.continue(this)).then((r) => this.ensureDialogResult(r));
                 } else {
                     // Just end the dialog
                     return this.end();
                 }
             } else {
-                return Promise.resolve();
+                return Promise.resolve({ active: false });
             }
         } catch(err) {
             return Promise.reject(err);
@@ -153,7 +173,7 @@ export class DialogContext<C extends BotContext> {
      * ```
      * @param result (Optional) result to pass to the parent dialogs `Dialog.resume()` method.
      */
-    public end(result?: any): Promise<void> {
+    public end(result?: any): Promise<DialogResult> {
         try {
             // Pop active dialog off the stack
             if (this.stack.length > 0) { this.stack.pop() }
@@ -169,13 +189,13 @@ export class DialogContext<C extends BotContext> {
                 // Check for existence of a resumeDialog() method
                 if (dialog.resume) {
                     // Return result to previous dialog
-                    return Promise.resolve(dialog.resume(this, result));
+                    return Promise.resolve(dialog.resume(this, result)).then((r) => this.ensureDialogResult(r));
                 } else {
-                    // Just end the dialog
-                    return this.end();
+                    // Just end the dialog and pass result to parent dialog
+                    return this.end(result);
                 }
             } else {
-                return Promise.resolve();
+                return Promise.resolve({ active: false, result: result });
             }
         } catch(err) {
             return Promise.reject(err);
@@ -191,13 +211,13 @@ export class DialogContext<C extends BotContext> {
      * return dc.endAll();
      * ```
      */
-    public endAll(): Promise<void> {
+    public endAll(): Promise<DialogResult> {
         try {
             // Cancel any active dialogs
             if (this.stack.length > 0) {
                 this.stack.splice(0, this.stack.length - 1);
             }
-            return Promise.resolve();
+            return Promise.resolve({ active: false });
         } catch (err) {
             return Promise.reject(err);
         }
@@ -224,7 +244,7 @@ export class DialogContext<C extends BotContext> {
      * @param dialogId ID of the new dialog to start.
      * @param dialogArgs (Optional) additional argument(s) to pass to the new dialog.  
      */
-    public replace(dialogId: string, dialogArgs?: any): Promise<void> {
+    public replace(dialogId: string, dialogArgs?: any): Promise<DialogResult> {
         try {
             // Pop stack
             if (this.stack.length > 0) { this.stack.pop() }
@@ -235,4 +255,9 @@ export class DialogContext<C extends BotContext> {
             return Promise.reject(err);
         }
     }
+
+    private ensureDialogResult(result: any): DialogResult {
+        return typeof result === 'object' && typeof (result as DialogResult).active === 'boolean' ? result : { active: this.stack.length > 0 };
+    }
 }
+

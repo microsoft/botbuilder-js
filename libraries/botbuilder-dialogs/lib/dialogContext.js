@@ -51,7 +51,7 @@ class DialogContext {
             };
             this.stack.push(instance);
             // Call dialogs begin() method.
-            return Promise.resolve(dialog.begin(this, dialogArgs));
+            return Promise.resolve(dialog.begin(this, dialogArgs)).then((r) => this.ensureDialogResult(r));
         }
         catch (err) {
             return Promise.reject(err);
@@ -107,7 +107,7 @@ class DialogContext {
                 // Check for existence of a continue() method
                 if (dialog.continue) {
                     // Continue execution of dialog
-                    return Promise.resolve(dialog.continue(this));
+                    return Promise.resolve(dialog.continue(this)).then((r) => this.ensureDialogResult(r));
                 }
                 else {
                     // Just end the dialog
@@ -115,7 +115,7 @@ class DialogContext {
                 }
             }
             else {
-                return Promise.resolve();
+                return Promise.resolve({ active: false });
             }
         }
         catch (err) {
@@ -163,15 +163,15 @@ class DialogContext {
                 // Check for existence of a resumeDialog() method
                 if (dialog.resume) {
                     // Return result to previous dialog
-                    return Promise.resolve(dialog.resume(this, result));
+                    return Promise.resolve(dialog.resume(this, result)).then((r) => this.ensureDialogResult(r));
                 }
                 else {
-                    // Just end the dialog
-                    return this.end();
+                    // Just end the dialog and pass result to parent dialog
+                    return this.end(result);
                 }
             }
             else {
-                return Promise.resolve();
+                return Promise.resolve({ active: false, result: result });
             }
         }
         catch (err) {
@@ -193,7 +193,7 @@ class DialogContext {
             if (this.stack.length > 0) {
                 this.stack.splice(0, this.stack.length - 1);
             }
-            return Promise.resolve();
+            return Promise.resolve({ active: false });
         }
         catch (err) {
             return Promise.reject(err);
@@ -232,6 +232,9 @@ class DialogContext {
         catch (err) {
             return Promise.reject(err);
         }
+    }
+    ensureDialogResult(result) {
+        return typeof result === 'object' && typeof result.active === 'boolean' ? result : { active: this.stack.length > 0 };
     }
 }
 exports.DialogContext = DialogContext;

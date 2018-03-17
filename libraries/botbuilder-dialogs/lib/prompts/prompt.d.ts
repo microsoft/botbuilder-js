@@ -33,9 +33,9 @@ export interface PromptOptions {
 export declare type PromptValidator<C extends BotContext, R> = (dc: DialogContext<C>, value: R | undefined) => Promiseable<any>;
 export declare abstract class Prompt<C extends BotContext, T> implements Dialog<C> {
     private validator;
-    constructor(validator?: PromptValidator<C, T> | undefined);
-    protected abstract onPrompt(dc: DialogContext<C>, options: PromptOptions, isRetry: boolean): Promise<void>;
+    constructor(validator?: PromptValidator<C, T>);
+    protected abstract onPrompt(dc: DialogContext<C>, options: PromptOptions, isRetry: boolean): Promise<any>;
     protected abstract onRecognize(dc: DialogContext<C>, options: PromptOptions): Promise<T | undefined>;
-    begin(dc: DialogContext<C>, options: PromptOptions): Promise<void>;
-    continue(dc: DialogContext<C>): Promise<void>;
+    begin(dc: DialogContext<C>, options: PromptOptions): Promise<any>;
+    continue(dc: DialogContext<C>): Promise<any>;
 }
