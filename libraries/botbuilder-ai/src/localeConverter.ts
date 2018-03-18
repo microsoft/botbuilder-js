@@ -16,19 +16,34 @@ import { Culture } from '@microsoft/recognizers-text-date-time';
  */
 export class LocaleConverterMiddleware implements Middleware {
     private localeConverter: ILocaleConverter;
-    private fromLocale: string;
+    private fromLocale: string | undefined;
     private toLocale: string;
+    private getUserLocale: ((context: BotContext) => string) | undefined;
+    private setUserLocale: ((context: BotContext) => Promise<boolean>) | undefined;
 
-    public constructor(fromLocale: string, toLocale: string) {
+    public constructor(toLocale: string, fromLocale: string);
+    public constructor(toLocale: string, getUserLocale: (context: BotContext) => string, setUserLocale: (context: BotContext) => Promise<boolean>);
+    public constructor(toLocale: string, fromLocale: string | ((context: BotContext) => string), setUserLocale?: (context: BotContext) => Promise<boolean>) {
         this.localeConverter = new LocaleConverter();
-        this.fromLocale = fromLocale;
         this.toLocale = toLocale;
+        if (fromLocale instanceof String) {
+            this.fromLocale = fromLocale as string;
+        } else {
+            this.getUserLocale = fromLocale as (context: BotContext) => string;
+            this.setUserLocale = setUserLocale;
+        }
     }
 
     /// Incoming activity
     public async receiveActivity(context: BotContext, next: () => Promise<void>): Promise<void> {
         if (context.request.type == "message" && context.request.text) {
             // determine the language we are using for this conversation
+            if (this.setUserLocale != undefined) {
+                let changedLocale = await this.setUserLocale(context);
+                if (changedLocale) {
+                    return next();
+                }
+            }
             await this.convertLocalesAsync(context, context.request);
         }
         return next();
@@ -37,7 +52,15 @@ export class LocaleConverterMiddleware implements Middleware {
     private convertLocalesAsync(context: BotContext, message: Partial<Activity>): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             if (message.text) {
-                this.localeConverter.convert(message.text, this.fromLocale, this.toLocale)
+                let fromLocale: string;
+                if (this.fromLocale != undefined) {
+                    fromLocale = this.fromLocale;
+                } else if (this.getUserLocale != undefined) {
+                    fromLocale = this.getUserLocale(context);
+                } else {
+                    fromLocale = 'en-us';
+                }
+                this.localeConverter.convert(message.text, fromLocale, this.toLocale)
                 .then(result => {
                     message.text = result;
                     resolve();

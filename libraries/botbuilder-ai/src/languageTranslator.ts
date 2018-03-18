@@ -32,16 +32,32 @@ export interface TranslationContext {
  */
 export class LanguageTranslator implements Middleware {
     private translator: Translator;
+    private getUserLanguage: ((context: BotContext) => string) | undefined;
+    private setUserLanguage: ((context: BotContext) => Promise<boolean>) | undefined;
 
-    public constructor(translatorKey: string, protected nativeLanguages: string[], noTranslatePatterns: Set<string>) {
+    public constructor(translatorKey: string, protected nativeLanguages: string[], noTranslatePatterns: Set<string>, getUserLanguage?: (c: BotContext) => string, setUserLanguage?: (context: BotContext) => Promise<boolean>) {
         this.translator = new MicrosoftTranslator(translatorKey, noTranslatePatterns);
+        this.getUserLanguage = getUserLanguage;
+        this.setUserLanguage = setUserLanguage;
     }
 
     /// Incoming activity
     public async receiveActivity(context: BotContext, next: () => Promise<void>): Promise<void> {
         if (context.request.type == "message" && context.request.text) {
+            
+            if (this.setUserLanguage != undefined) {
+                let changedLanguage = await this.setUserLanguage(context);
+                if (changedLanguage) {
+                    return next();
+                }
+            }
             // determine the language we are using for this conversation
-            let sourceLanguage = await this.translator.detect(context.request.text);
+            let sourceLanguage: string;
+            if (this.getUserLanguage != undefined) {
+                sourceLanguage = this.getUserLanguage(context);
+            } else {
+                sourceLanguage = await this.translator.detect(context.request.text);
+            }
 
             if (context.state && context.state.conversation && context.state.conversation.language) {
                 sourceLanguage = context.state.conversation.language;
