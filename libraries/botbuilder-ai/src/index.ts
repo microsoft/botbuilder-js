@@ -10,6 +10,7 @@ export * from './languageTranslator';
 export * from './languageMap';
 export * from './qnaMaker';
 export * from './bingEntitySearch';
+export * from './localeConverter';
 
 declare global {
     export interface EntityTypes {

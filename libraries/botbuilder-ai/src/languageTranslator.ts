@@ -33,8 +33,8 @@ export interface TranslationContext {
 export class LanguageTranslator implements Middleware {
     private translator: Translator;
 
-    public constructor(translatorKey: string, protected nativeLanguages: string[]) {
-        this.translator = new MicrosoftTranslator(translatorKey);
+    public constructor(translatorKey: string, protected nativeLanguages: string[], noTranslatePatterns: Set<string>) {
+        this.translator = new MicrosoftTranslator(translatorKey, noTranslatePatterns);
     }
 
     /// Incoming activity
@@ -176,10 +176,11 @@ class MicrosoftTranslator implements Translator {
     
     apiKey: string;
     postProcessor: PostProcessTranslator;
+    noTranslatePatterns: Set<string> = new Set<string>();
 
-    constructor(apiKey: string) {
+    constructor(apiKey: string, noTranslatePatterns: Set<string>) {
         this.apiKey = apiKey;
-        this.postProcessor = new PostProcessTranslator();
+        this.postProcessor = new PostProcessTranslator(noTranslatePatterns);
     }
 
     getAccessToken(): Promise<string> {
@@ -232,11 +233,13 @@ class MicrosoftTranslator implements Translator {
         let from: any = options.from;
         let to: any = options.to;
         let texts: string[] = options.texts;
+        let orgTexts: string[] = [];
         texts.forEach((text, index, array) => {
+            orgTexts.push(text);
             texts[index] = this.escapeHtml(text);
             texts[index] = `<string xmlns="http://schemas.microsoft.com/2003/10/Serialization/Arrays">${text}</string>`;
         });
-
+        
         let uri: any = "https://api.microsofttranslator.com/v2/Http.svc/TranslateArray2";
         let body: any = "<TranslateArrayRequest>" +
         "<AppId />" +
@@ -278,7 +281,7 @@ class MicrosoftTranslator implements Translator {
                 Array.from(elements).forEach(element => {
                     let translation = element.getElementsByTagName('TranslatedText')[0].textContent as string;
                     let alignment = element.getElementsByTagName('Alignment')[0].textContent as string;
-                    translation = this.postProcessor.fixTranslation(texts[index], alignment, translation);
+                    translation = this.postProcessor.fixTranslation(orgTexts[index], alignment, translation);
                     let result: TranslationResult = { TranslatedText: translation }
                     results.push(result)
                 });
@@ -292,6 +295,12 @@ class MicrosoftTranslator implements Translator {
 }
 
 export class PostProcessTranslator {
+    noTranslatePatterns: Set<string>;
+
+    constructor(noTranslatePatterns: Set<string>) {
+        this.noTranslatePatterns = noTranslatePatterns;
+    }
+
     private wordAlignmentParse(alignment: string, source: string, target: string): { [id: string] : string } {
         let alignMap: { [id: string] : string } = {};
         if (alignment.trim() == "")
@@ -324,11 +333,37 @@ export class PostProcessTranslator {
         let processedTranslation = targetMessage;
         let numericMatches = sourceMessage.match(new RegExp("\d+", "g"));
         let containsNum = numericMatches != null;
+        let noTranslatePatterns = Array.from(this.noTranslatePatterns);
 
-        if (!containsNum) {
+        if (!containsNum && noTranslatePatterns.length == 0) {
             return processedTranslation;
         }
+
+        let toBeReplaced: string[] = [];
+        noTranslatePatterns.forEach(pattern => {
+            let regExp = new RegExp(pattern, "i");
+            let matches = sourceMessage.match(regExp);
+            if (matches != null) {
+                toBeReplaced.push(pattern);
+            }
+        });
+        
         let alignMap = this.wordAlignmentParse(alignment, sourceMessage, targetMessage);
+
+        if (toBeReplaced.length > 0) {
+            toBeReplaced.forEach(pattern => {
+                let regExp = new RegExp(pattern, "i");
+                let match = regExp.exec(sourceMessage);
+                
+                if (match != null) {
+                    let wrdNoTranslate = match[1].split(' ');
+                    wrdNoTranslate.forEach(srcWrd => {
+                        processedTranslation = this.keepSrcWrdInTranslation(alignMap, sourceMessage, processedTranslation, srcWrd);
+                    });
+                }
+            });
+        }
+
         if (numericMatches != null) {
             for (const numericMatch in numericMatches) {
                 processedTranslation = this.keepSrcWrdInTranslation(alignMap, sourceMessage, processedTranslation, numericMatch);
