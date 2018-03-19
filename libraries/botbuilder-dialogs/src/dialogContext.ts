@@ -15,7 +15,7 @@ import { Choice } from 'botbuilder-prompts';
  * Result returned to the caller of one of the various stack manipulation methods and used to 
  * return the result from a final call to `DialogContext.end()` to the bots logic.
  */
-export interface DialogResult {
+export interface DialogResult<T = any> {
     /** This will be `true` if there is still an active dialog on the stack. */
     active: boolean;
 
@@ -28,7 +28,7 @@ export interface DialogResult {
      * 
      * In all cases where it's populated, [active](#active) will be `false`. 
      */
-    result?: any;
+    result?: T;
 }
 
 export class DialogContext<C extends BotContext> {

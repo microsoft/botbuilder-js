@@ -17,9 +17,9 @@ export interface Dialog<C extends BotContext> {
     /**
      * Method called when a new dialog has been pushed onto the stack and is being activated.
      * @param dc The dialog context for the current turn of conversation.
-     * @param args (Optional) arguments that were passed to the dialog during `begin()` call that started the instance.  
+     * @param dialogArgs (Optional) arguments that were passed to the dialog during `begin()` call that started the instance.  
      */
-    begin(dc: DialogContext<C>, args?: any): Promiseable<any>;
+    begin(dc: DialogContext<C>, dialogArgs?: any): Promiseable<any>;
 
     /**
      * (Optional) method called when an instance of the dialog is the "current" dialog and the 

@@ -32,7 +32,7 @@ export function recognizeChoices(utterance: string, choices: (string|Choice)[], 
     }
 
     // Normalize choices
-    const list: Choice[] = (choices || []).map((choice, index) => typeof choice === 'string' ? { value: choice } : choice);
+    const list: Choice[] = (choices || []).map((choice, index) => typeof choice === 'string' ? { value: choice } : choice).filter((choice) => choice);
     
     // Try finding choices by text search first
     // - We only want to use a single strategy for returning results to avoid issues where utterances 

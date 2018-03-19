@@ -31,7 +31,7 @@ function recognizeChoices(utterance, choices, options) {
         catch (e) { }
     }
     // Normalize choices
-    const list = (choices || []).map((choice, index) => typeof choice === 'string' ? { value: choice } : choice);
+    const list = (choices || []).map((choice, index) => typeof choice === 'string' ? { value: choice } : choice).filter((choice) => choice);
     // Try finding choices by text search first
     // - We only want to use a single strategy for returning results to avoid issues where utterances 
     //   like the "the third one" or "the red one" or "the first division book" would miss-recognize as 

@@ -133,7 +133,7 @@ export class ChoiceFactory {
     }
 
     static toChoices(choices: (string|Choice)[]|undefined): Choice[] {
-        return (choices || []).map((choice) => typeof choice === 'string' ? { value: choice } : choice);
+        return (choices || []).map((choice) => typeof choice === 'string' ? { value: choice } : choice).filter((choice) => choice);
     }
 
 }

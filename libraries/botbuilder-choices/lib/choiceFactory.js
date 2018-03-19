@@ -97,7 +97,7 @@ class ChoiceFactory {
         return botbuilder_1.MessageFactory.suggestedActions(actions, text, speak, botbuilder_1.InputHints.ExpectingInput);
     }
     static toChoices(choices) {
-        return (choices || []).map((choice) => typeof choice === 'string' ? { value: choice } : choice);
+        return (choices || []).map((choice) => typeof choice === 'string' ? { value: choice } : choice).filter((choice) => choice);
     }
 }
 exports.ChoiceFactory = ChoiceFactory;
