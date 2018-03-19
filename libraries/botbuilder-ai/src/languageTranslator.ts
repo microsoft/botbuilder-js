@@ -78,27 +78,6 @@ export class LanguageTranslator implements Middleware {
         return next();
     }
 
-
-    // /// outgoing activities
-    // public postActivity(context: BotContext, activities: Activity[], next: () => Promise<ResourceResponse[]>): Promise<ResourceResponse[]> {
-    //     let promises: Promise<void>[] = [];
-
-    //     for (let iActivity in activities) {
-    //         let activity = activities[iActivity];
-    //         if (activity.type === 'message') {
-    //             let message = activity;
-    //             if (message.text && message.text.length > 0) {
-    //                 // use translationContext to reverse translate the response
-    //                 let translationContext: TranslationContext = (<any>context).translation;
-    //                 if (translationContext.sourceLanguage != translationContext.targetLanguage)
-    //                     promises.push(this.TranslateMessageAsync(context, message, translationContext.targetLanguage, translationContext.sourceLanguage));
-    //             }
-    //         }
-    //     }
-    //     return Promise.all(promises)
-    //         .then(result => next());
-    // }
-
     /// Translate .Text field of a message, regardless of direction
     private TranslateMessageAsync(context: BotContext, message: Partial<Activity>, sourceLanguage: string, targetLanguage: string): Promise<void> {
         // if we have text and a target language
