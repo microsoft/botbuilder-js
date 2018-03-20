@@ -8,13 +8,12 @@
 import { Middleware } from 'botbuilder';
 import { Activity, ResourceResponse } from 'botbuilder';
 import * as LanguageMap from './languageMap';
-import * as DateTimeRecoginizers from '@microsoft/recognizers-text-date-time';
-import { Culture } from '@microsoft/recognizers-text-date-time';
+import * as DateTimeRecognizers from '@microsoft/recognizers-text-date-time';
 
 /**
  * The LocaleConverter converts all locales in a message to a given locale.
  */
-export class LocaleConverterMiddleware implements Middleware {
+export class LocaleConverter implements Middleware {
     private localeConverter: ILocaleConverter;
     private fromLocale: string | undefined;
     private toLocale: string;
@@ -24,7 +23,7 @@ export class LocaleConverterMiddleware implements Middleware {
     public constructor(toLocale: string, fromLocale: string);
     public constructor(toLocale: string, getUserLocale: (context: BotContext) => string, setUserLocale: (context: BotContext) => Promise<boolean>);
     public constructor(toLocale: string, fromLocale: string | ((context: BotContext) => string), setUserLocale?: (context: BotContext) => Promise<boolean>) {
-        this.localeConverter = new LocaleConverter();
+        this.localeConverter = new MicrosoftLocaleConverter();
         this.toLocale = toLocale;
         if (fromLocale instanceof String) {
             this.fromLocale = fromLocale as string;
@@ -79,7 +78,7 @@ interface ILocaleConverter {
     getAvailableLocales(): Promise<string[]>;
 }
 
-class LocaleConverter implements ILocaleConverter {
+class MicrosoftLocaleConverter implements ILocaleConverter {
 
     mapLocaleToFunction: { [id: string] : DateAndTimeLocaleFormat } = {};
 
@@ -111,20 +110,20 @@ class LocaleConverter implements ILocaleConverter {
 
     private extractDates(message: string, fromLocale:string): TextAndDateTime[] {
         let fndDates: string[];
-        let culture = Culture.English;
+        let culture = DateTimeRecognizers.Culture.English;
         if (fromLocale.startsWith("fr")) {
-            culture = Culture.French;
+            culture = DateTimeRecognizers.Culture.French;
         } else if (fromLocale.startsWith("pt"))  {
-            culture = Culture.Portuguese;
+            culture = DateTimeRecognizers.Culture.Portuguese;
         } else if (fromLocale.startsWith("zh"))  {
-            culture = Culture.Chinese;
+            culture = DateTimeRecognizers.Culture.Chinese;
         } else if (fromLocale.startsWith("es")) {
-            culture = Culture.Spanish;
+            culture = DateTimeRecognizers.Culture.Spanish;
         } else if(!fromLocale.startsWith("en")) {
             throw new Error("Unsupported from locale");
         }
 
-        let model = new DateTimeRecoginizers.DateTimeRecognizer(culture).getDateTimeModel();
+        let model = new DateTimeRecognizers.DateTimeRecognizer(culture).getDateTimeModel();
         let results = model.parse(message);
         let moment: Date;
         let foundDates: TextAndDateTime[] = [];
