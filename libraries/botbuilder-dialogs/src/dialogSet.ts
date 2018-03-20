@@ -44,28 +44,7 @@ import { DialogContext } from './dialogContext';
  * ```
  */
 export class DialogSet<C extends BotContext = BotContext> {
-    private readonly stateName: string;
-    private readonly stackName: string;
     private readonly dialogs: { [id:string]: Dialog<C>; } = {};
-
-    /**
-     * Creates an empty dialog set. The ability to name the sets dialog stack means that multiple
-     * stacks can coexist within the same bot.  Middleware can use their own private set of 
-     * dialogs without fear of colliding with the bots dialog stack.
-     *
-     * **Example usage:**
-     * 
-     * ```JavaScript
-     * const dialogs = new DialogSet('myPrivateStack');
-     * ```
-     * @param stackName (Optional) name of the field to store the dialog stack in off the state bag. Defaults to 'dialogStack'.
-     * @param stateName (Optional) name of state bag on the context object that will be used to store the dialog stack. Defaults to `conversationState`. 
-     */
-    constructor (stackName?: string, stateName?: string) {
-        this.stackName = stackName || 'dialogStack';
-        this.stateName = stateName || 'conversationState';
-    }
-
 
     /**
      * Adds a new dialog to the set and returns the added dialog.
@@ -91,8 +70,9 @@ export class DialogSet<C extends BotContext = BotContext> {
         return this.dialogs[dialogId] = Array.isArray(dialogOrSteps) ? new Waterfall(dialogOrSteps as any) : dialogOrSteps;
     }
 
-    public createContext(context: C, stack: DialogInstance[]): DialogContext<C> {
-        return new DialogContext(this, context, stack || []);
+    public createContext(context: C, state: object): DialogContext<C> {
+        if (!Array.isArray(state['dialogStack'])) { state['dialogStack'] = [] } 
+        return new DialogContext(this, context, state['dialogStack']);
     }
 
     /**

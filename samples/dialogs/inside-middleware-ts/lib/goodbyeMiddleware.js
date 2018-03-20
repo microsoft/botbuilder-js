@@ -10,9 +10,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const botbuilder_dialogs_1 = require("botbuilder-dialogs");
 class GoodbyeMiddleware {
-    constructor(conversationState, stackName = 'goodbyeStack') {
+    constructor(conversationState) {
         this.conversationState = conversationState;
-        this.stackName = stackName;
         this.dialogs = new botbuilder_dialogs_1.DialogSet();
         // Add private dialogs for confirming goodbye
         this.dialogs.add('confirmGoodbye', [
@@ -42,10 +41,10 @@ class GoodbyeMiddleware {
             if (context.request.type === 'message') {
                 // Create dialog context using our middlewares private dialog stack
                 const state = yield this.conversationState.read(context);
-                if (!Array.isArray(state[this.stackName])) {
-                    state[this.stackName] = [];
+                if (!state['goodbyeMiddlewareState']) {
+                    state['goodbyeMiddlewareState'] = {};
                 }
-                const dc = this.dialogs.createContext(context, state[this.stackName]);
+                const dc = this.dialogs.createContext(context, state['goodbyeMiddlewareState']);
                 // Intercept the message if we're prompting the user
                 yield dc.continue();
                 if (context.responded) {

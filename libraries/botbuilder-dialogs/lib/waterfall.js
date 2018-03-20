@@ -76,17 +76,17 @@ class Waterfall {
     constructor(steps) {
         this.steps = (steps || []).slice(0);
     }
-    begin(dc, args) {
+    dialogBegin(dc, args) {
         const instance = dc.instance;
         instance.step = 0;
         return this.runStep(dc, args);
     }
-    continue(dc) {
+    dialogContinue(dc) {
         const instance = dc.instance;
         instance.step += 1;
         return this.runStep(dc, dc.context.request.text || '');
     }
-    resume(dc, result) {
+    dialogResume(dc, result) {
         const instance = dc.instance;
         instance.step += 1;
         return this.runStep(dc, result);

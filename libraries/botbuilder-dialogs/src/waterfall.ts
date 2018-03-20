@@ -135,19 +135,19 @@ export class Waterfall<C extends BotContext> implements Dialog<C> {
         this.steps = (steps || []).slice(0);
     }
 
-    public begin(dc: DialogContext<C>, args?: any): Promiseable<any> {
+    public dialogBegin(dc: DialogContext<C>, args?: any): Promiseable<any> {
         const instance = dc.instance as WaterfallInstance<any>;
         instance.step = 0;
         return this.runStep(dc, args);
     }
 
-    public continue(dc: DialogContext<C>): Promise<any> {
+    public dialogContinue(dc: DialogContext<C>): Promise<any> {
         const instance = dc.instance as WaterfallInstance<any>;
         instance.step += 1
         return this.runStep(dc, dc.context.request.text || '');
     }
 
-    public resume(dc: DialogContext<C>, result?: any): Promiseable<any> {
+    public dialogResume(dc: DialogContext<C>, result?: any): Promiseable<any> {
         const instance = dc.instance as WaterfallInstance<any>;
         instance.step += 1
         return this.runStep(dc, result);

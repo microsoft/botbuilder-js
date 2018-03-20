@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { BotContext } from 'botbuilder';
-import { Dialog, DialogInstance } from './dialog';
+import { Dialog } from './dialog';
 import { Waterfall, WaterfallStep } from './waterfall';
 import { DialogContext } from './dialogContext';
 /**
@@ -43,23 +43,7 @@ import { DialogContext } from './dialogContext';
  * ```
  */
 export declare class DialogSet<C extends BotContext = BotContext> {
-    private readonly stateName;
-    private readonly stackName;
     private readonly dialogs;
-    /**
-     * Creates an empty dialog set. The ability to name the sets dialog stack means that multiple
-     * stacks can coexist within the same bot.  Middleware can use their own private set of
-     * dialogs without fear of colliding with the bots dialog stack.
-     *
-     * **Example usage:**
-     *
-     * ```JavaScript
-     * const dialogs = new DialogSet('myPrivateStack');
-     * ```
-     * @param stackName (Optional) name of the field to store the dialog stack in off the state bag. Defaults to 'dialogStack'.
-     * @param stateName (Optional) name of state bag on the context object that will be used to store the dialog stack. Defaults to `conversationState`.
-     */
-    constructor(stackName?: string, stateName?: string);
     /**
      * Adds a new dialog to the set and returns the added dialog.
      *
@@ -79,7 +63,7 @@ export declare class DialogSet<C extends BotContext = BotContext> {
      */
     add(dialogId: string, dialogOrSteps: Dialog<C>): Dialog<C>;
     add(dialogId: string, dialogOrSteps: WaterfallStep<C>[]): Waterfall<C>;
-    createContext(context: C, stack: DialogInstance[]): DialogContext<C>;
+    createContext(context: C, state: object): DialogContext<C>;
     /**
      * Finds a dialog that was previously added to the set using [add()](#add).
      *

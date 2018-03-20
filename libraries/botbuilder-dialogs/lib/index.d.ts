@@ -3,6 +3,7 @@
  */
 /** Licensed under the MIT License. */
 export * from './prompts/index';
+export * from './compositeControl';
 export * from './control';
 export * from './dialog';
 export * from './dialogContext';

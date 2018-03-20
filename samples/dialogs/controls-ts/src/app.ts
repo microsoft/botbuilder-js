@@ -18,8 +18,7 @@ const adapter = new BotFrameworkAdapter( {
 interface DemoState {
     currentLocale?: string;     // remembers the current locale between demos
     demo?: string;              // active demo (if any)
-    dialogStack?: any;          // persisted dialog stack when running 'dialog' based demo
-    controlState?: object;      // persisted control state when running 'topic' based demo
+    demoState?: object;      // persisted control/dialog state
 }
 const conversationState = new ConversationState<DemoState>(new MemoryStorage());
 adapter.use(conversationState);
@@ -64,16 +63,17 @@ import { LanguagePicker } from './language';
 
 async function beginDialogDemo(context: BotContext, state: DemoState) {
     state.demo = 'dialog';
-    state.dialogStack = [];
-    const dc = dialogs.createContext(context, state.dialogStack);
+    state.demoState = {};
+    const dc = dialogs.createContext(context, state.demoState);
     await dc.begin('demo');
 }
 
 async function continueDialogDemo(context: BotContext, state: DemoState) {
-    const dc = dialogs.createContext(context, state.dialogStack);
+    const dc = dialogs.createContext(context, state.demoState);
     const result = await dc.continue();
     if (!result.active) {
         state.demo = undefined;
+        state.demoState = undefined;
         state.currentLocale = result.result;
     }
 }
@@ -97,16 +97,19 @@ dialogs.add('localePicker', new LanguagePicker({ defaultLocale: 'en' }));
 // Topic Based Usage
 //---------------------------------------------------------
 
+const localePicker = new LanguagePicker({ defaultLocale: 'en' });
+
 async function beginTopicDemo(context: BotContext, state: DemoState) {
     state.demo = 'topic';
-    state.controlState = {};
-    await LanguagePicker.begin(context, state.controlState, { defaultLocale: 'en' });
+    state.demoState = {};
+    await localePicker.begin(context, state.demoState);
 }
 
 async function continueTopicDemo(context: BotContext, state: DemoState) {
-    const result = await LanguagePicker.continue(context, state.controlState);
+    const result = await localePicker.continue(context, state.demoState);
     if (!result.active) {
         state.demo = undefined;
+        state.demoState = undefined;
         state.currentLocale = result.result;
         await context.sendActivity(`Switching locale to "${state.currentLocale}".`);
     }

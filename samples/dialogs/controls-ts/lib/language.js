@@ -1,20 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const botbuilder_dialogs_1 = require("botbuilder-dialogs");
-class LanguagePicker extends botbuilder_dialogs_1.Control {
-    constructor(options) {
-        super(dialogs, 'chooseLanguage', options);
-    }
-    static async begin(context, state, options) {
-        // Initialize stack and start control
-        state['stack'] = [];
-        const dc = dialogs.createContext(context, state['stack']);
-        await dc.begin('chooseLanguage', options);
-    }
-    static async continue(context, state) {
-        // Continue control execution
-        const dc = dialogs.createContext(context, state['stack']);
-        return await dc.continue();
+class LanguagePicker extends botbuilder_dialogs_1.CompositeControl {
+    constructor(defaultOptions) {
+        super(dialogs, 'chooseLanguage', defaultOptions);
     }
 }
 exports.LanguagePicker = LanguagePicker;
@@ -54,7 +43,7 @@ const localeToPrompt = {
     'es': `Seleccione su idioma preferido.`,
     'fr': `Sélectionnez votre langue préférée.`,
     'it': `Selezionare la lingua desiderata.`,
-    'ja': `希望する言語を選択します。`
+    'ja': `言語を選択。`
 };
 const localeToChoice = {
     'en': 'English',

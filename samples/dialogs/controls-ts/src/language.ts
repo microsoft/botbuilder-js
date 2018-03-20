@@ -1,4 +1,4 @@
-import { DialogSet, Control, ChoicePrompt, DialogResult, FoundChoice } from 'botbuilder-dialogs';
+import { DialogSet, CompositeControl, ChoicePrompt, DialogResult, FoundChoice } from 'botbuilder-dialogs';
 import { BotContext } from 'botbuilder';
 
 export interface LanguagePickerOptions {
@@ -6,23 +6,10 @@ export interface LanguagePickerOptions {
     supportedLocales?: string[]; 
 }
 
-export class LanguagePicker extends Control {
-    constructor(options?: LanguagePickerOptions) {
-        super(dialogs, 'chooseLanguage', options)
+export class LanguagePicker extends CompositeControl<string, LanguagePickerOptions> {
+    constructor(defaultOptions?: LanguagePickerOptions) {
+        super(dialogs, 'chooseLanguage', defaultOptions)
     } 
-
-    static async begin(context: BotContext, state: object, options?: LanguagePickerOptions) {
-        // Initialize stack and start control
-        state['stack'] = [];
-        const dc = dialogs.createContext(context, state['stack']);
-        await dc.begin('chooseLanguage', options);
-    }
-
-    static async continue(context: BotContext, state: object) {
-        // Continue control execution
-        const dc = dialogs.createContext(context, state['stack']);
-        return await dc.continue() as DialogResult<string>;
-    }
 }
 
 //---------------------------------------------------------

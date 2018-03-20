@@ -28,11 +28,9 @@ adapter.use(conversationState);
 server.post('/api/messages', (req, res) => {
     adapter.processRequest(req, res, async (context) => {
         if (context.request.type === 'message') {
-            const state = conversationState.get(context);
-            if (!state.dialogStack) { state.dialogStack = [] }
-
             // Create dialog context.
-            const dc = dialogs.createContext(context, state.dialogStack);
+            const state = conversationState.get(context);
+            const dc = dialogs.createContext(context, state);
 
             // Check for list to show
             const utterance = (context.request.text || '').trim().toLowerCase();

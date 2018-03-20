@@ -7,7 +7,7 @@
  */
 import { BotContext, Activity, Promiseable } from 'botbuilder';
 import { DialogContext } from '../dialogContext';
-import { Dialog, DialogInstance } from '../dialog';
+import { Control } from '../control';
 
 /** Basic configuration options supported by all prompts. */
 export interface PromptOptions {
@@ -37,25 +37,27 @@ export interface PromptOptions {
  */
 export type PromptValidator<C extends BotContext, R> = (dc: DialogContext<C>, value: R|undefined) => Promiseable<any>;
 
-export abstract class Prompt<C extends BotContext, T> implements Dialog<C> {
-    constructor(private validator?: PromptValidator<C, T>) { }
+export abstract class Prompt<C extends BotContext, T> extends Control<C> {
+    constructor(private validator?: PromptValidator<C, T>) { 
+        super();
+    }
 
     protected abstract onPrompt(dc: DialogContext<C>, options: PromptOptions, isRetry: boolean): Promise<any>;
 
     protected abstract onRecognize(dc: DialogContext<C>, options: PromptOptions): Promise<T|undefined>;
 
-    public begin(dc: DialogContext<C>, options: PromptOptions): Promise<any> {
+    public dialogBegin(dc: DialogContext<C>, options: PromptOptions): Promise<any> {
         // Persist options
-        const instance = dc.instance as DialogInstance;
+        const instance = dc.instance;
         instance.state = options || {};
 
         // Send initial prompt
         return this.onPrompt(dc, instance.state, false);
     }
 
-    public continue(dc: DialogContext<C>): Promise<any> {
+    public dialogContinue(dc: DialogContext<C>): Promise<any> {
         // Recognize value
-        const instance = dc.instance as DialogInstance;
+        const instance = dc.instance;
         return this.onRecognize(dc, instance.state)
             .then((recognized) => {
                 if (this.validator) {

@@ -35,8 +35,7 @@ server.post('/api/messages', (req, res) => {
         if (context.request.type === 'message') {
             const utterance = (context.request.text || '').trim().toLowerCase();
             // Create dialog context
-            const stack = state.conversation(context).dialogStack;
-            const dc = dialogs.createContext(context, stack);
+            const dc = dialogs.createContext(context, state.conversation(context));
             // Start addAlarm dialog
             if (utterance.includes('add alarm')) {
                 yield dc.begin('addAlarm');

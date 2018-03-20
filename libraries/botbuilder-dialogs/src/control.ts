@@ -10,46 +10,36 @@ import { Dialog, DialogInstance } from './dialog';
 import { DialogContext, DialogResult } from './dialogContext';
 import { DialogSet } from './dialogSet';
 
-
 /**
  * 
  */
-export class Control<C extends BotContext = BotContext> implements Dialog<C> {
+export abstract class Control<R = any, O = {}, C extends BotContext = BotContext> implements Dialog<C> {
 
     /**
      * Creates a new Control instance.
-     * @param dialogs Controls dialog set.
-     * @param dialogId ID of the root dialog that should be started anytime the control is started.
-     * @param defaultDialogArgs (Optional) set of default args that should be passed to controls root dialog. These will be merged with arguments passed in by the caller.
+     * @param defaultOptions (Optional) set of default options that should be passed to controls root dialog. These will be merged with arguments passed in by the caller.
      */
-    constructor(protected dialogs: DialogSet, protected dialogId: string, protected defaultDialogArgs = {}) { }
+    constructor(protected defaultOptions?: O) { }
 
-    public begin(dc: DialogContext<C>, dialogArgs?: any): Promise<any> {
-        // Initialize an empty stack for the controls DialogSet.
-        const instance = dc.instance as ControlInstance;
-        instance.state = [];
+    public begin(context: C, state: object, options?: O): Promise<DialogResult<R>> {
+        // Create empty dialog set and ourselves to it
+        const dialogs = new DialogSet();
+        dialogs.add('control', this);
 
-        // Start the controls entry point dialog. 
-        const cdc = this.dialogs.createContext(dc.context, instance.state);
-        return cdc.begin(this.dialogId, Object.assign({}, this.defaultDialogArgs, dialogArgs)).then((result) => {
-            // End if the controls dialog ends.
-            if (!result.active) {
-                return dc.end(result.result);
-            }
-        });
+        // Start the control
+        const cdc = dialogs.createContext(context, state);
+        return cdc.begin('control', Object.assign({}, this.defaultOptions, options));
     }
 
-    public continue(dc: DialogContext<C>): Promise<any> {
-        // Continue controls dialog stack.
-        const instance = dc.instance as ControlInstance;
-        const cdc = this.dialogs.createContext(dc.context, instance.state);
-        return cdc.continue().then((result) => {
-            // End if the controls dialog ends.
-            if (!result.active) {
-                return dc.end(result.result);
-            }
-        });
+    public continue(context: C, state: object): Promise<DialogResult<R>> {
+        // Create empty dialog set and ourselves to it
+        const dialogs = new DialogSet();
+        dialogs.add('control', this);
+
+        // Continue the control
+        const cdc = dialogs.createContext(context, state);
+        return cdc.continue();         
     }
+
+    abstract dialogBegin(dc: DialogContext<C>, dialogArgs?: any): Promise<any>;
 }
-
-interface ControlInstance extends DialogInstance<DialogInstance[]> { }

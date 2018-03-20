@@ -4,7 +4,7 @@ import { DialogSet, ConfirmPrompt } from 'botbuilder-dialogs';
 export class GoodbyeMiddleware implements Middleware {
     private dialogs = new DialogSet();
 
-    constructor(private conversationState: ConversationState, private stackName = 'goodbyeStack') { 
+    constructor(private conversationState: ConversationState) { 
         // Add private dialogs for confirming goodbye
         this.dialogs.add('confirmGoodbye', [
             async function (dc) {
@@ -29,8 +29,8 @@ export class GoodbyeMiddleware implements Middleware {
         if (context.request.type === 'message') {
             // Create dialog context using our middlewares private dialog stack
             const state = await this.conversationState.read(context);
-            if (!Array.isArray(state[this.stackName])) { state[this.stackName] = [] }
-            const dc = this.dialogs.createContext(context, state[this.stackName]);
+            if (!state['goodbyeMiddlewareState']) { state['goodbyeMiddlewareState'] = {} }
+            const dc = this.dialogs.createContext(context, state['goodbyeMiddlewareState']);
 
             // Intercept the message if we're prompting the user
             await dc.continue();

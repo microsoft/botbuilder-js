@@ -19,12 +19,12 @@ describe('DialogSet class', function() {
         const stack = [];
         const dialogs = new DialogSet();
         dialogs.add('a', {
-            begin: (dc, args) => {
+            dialogBegin: (dc, args) => {
                 assert(dc, 'Missing dialog context in begin()');
                 assert(args === 'z', 'Args not passed');
                 return dc.context.sendActivity(beginMessage);
             },
-            continue: (dc) => {
+            dialogContinue: (dc) => {
                 assert(dc, 'Missing dialog context in continue()');
                 return dc.context.sendActivity(continueMessage);
             }

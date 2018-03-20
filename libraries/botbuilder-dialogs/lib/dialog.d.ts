@@ -18,7 +18,7 @@ export interface Dialog<C extends BotContext> {
      * @param dc The dialog context for the current turn of conversation.
      * @param dialogArgs (Optional) arguments that were passed to the dialog during `begin()` call that started the instance.
      */
-    begin(dc: DialogContext<C>, dialogArgs?: any): Promiseable<any>;
+    dialogBegin(dc: DialogContext<C>, dialogArgs?: any): Promiseable<any>;
     /**
      * (Optional) method called when an instance of the dialog is the "current" dialog and the
      * user replies with a new activity. The dialog will generally continue to receive the users
@@ -28,7 +28,7 @@ export interface Dialog<C extends BotContext> {
      * replies.
      * @param dc The dialog context for the current turn of conversation.
      */
-    continue?(dc: DialogContext<C>): Promiseable<any>;
+    dialogContinue?(dc: DialogContext<C>): Promiseable<any>;
     /**
      * (Optional) method called when an instance of the dialog is being returned to from another
      * dialog that was started by the current instance using `DialogSet.begin()`.
@@ -39,7 +39,7 @@ export interface Dialog<C extends BotContext> {
      * @param dc The dialog context for the current turn of conversation.
      * @param result (Optional) value returned from the dialog that was called. The type of the value returned is dependant on the dialog that was called.
      */
-    resume?(dc: DialogContext<C>, result?: any): Promiseable<any>;
+    dialogResume?(dc: DialogContext<C>, result?: any): Promiseable<any>;
 }
 /**
  * Tracking information for a dialog on the stack.

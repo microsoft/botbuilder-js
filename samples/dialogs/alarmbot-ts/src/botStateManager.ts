@@ -6,7 +6,6 @@ export interface Alarm {
 }
 
 export interface AlarmConversation {
-    dialogStack: any[];
 }
 
 export interface AlarmUser {
@@ -33,8 +32,6 @@ export class BotStateManager extends BotStateSet {
 
     public conversation(context: BotContext): AlarmConversation {
         // Get cached conversation state
-        const conversation = this._conversation.get(context);
-        if (!conversation.dialogStack) { conversation.dialogStack = [] }
-        return conversation;
+        return this._conversation.get(context);
     }
 }

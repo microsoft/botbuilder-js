@@ -1,4 +1,4 @@
-import { Dialog, DialogContext } from 'botbuilder-dialogs';
+import { Control, DialogContext } from 'botbuilder-dialogs';
 import { Choice, findChoices } from 'botbuilder-choices';
 import { BotContext, Promiseable, Activity, CardAction, MessageFactory } from 'botbuilder';
 
@@ -10,7 +10,7 @@ export interface ListPagerResult {
 }
 
 
-export interface ListControlArgs {
+export interface ListControlOptions {
     filter: any;
     continueToken: any;
 }
@@ -20,21 +20,20 @@ export interface ListControlResult {
     continueToken?: any;
 }
 
-export class ListControl<C extends BotContext> implements Dialog<C> {
-    private _actions: (string|CardAction)[] = [{ type: 'imBack', title: 'Show More', value: 'more' }];
+export class ListControl<C extends BotContext> extends Control<ListControlResult, ListControlOptions, C> {
+    private readonly actions: (string|CardAction)[];
 
-    constructor(protected pager: ListPager<C>) { }
-
-    public get actions(): (string|Choice)[] {
-        return this._actions;
+    constructor(protected pager: ListPager<C>, actions?: (string|CardAction)[]) { 
+        super();
+        this.actions = actions || [{ type: 'imBack', title: 'Show More', value: 'more' }];
     }
 
-    public begin(dc: DialogContext<C>, args?: ListControlArgs): Promise<any> {
+    public dialogBegin(dc: DialogContext<C>, args?: ListControlOptions): Promise<any> {
         dc.instance.state = Object.assign({}, args);
         return this.showMore(dc);
     }
 
-    public continue(dc: DialogContext<C>): Promise<any> {
+    public dialogContinue(dc: DialogContext<C>): Promise<any> {
         // Recognize selected action
         const utterance = (dc.context.request.text || '').trim();
         const choices = this.actions.map((a) => {
@@ -47,21 +46,21 @@ export class ListControl<C extends BotContext> implements Dialog<C> {
         if (action === 'more') {
             return this.showMore(dc);
         } else {
-            const state = dc.instance.state as ListControlArgs;
+            const state = dc.instance.state as ListControlOptions;
             return dc.end({ action: action, continueToken: state.continueToken });
         }
     }
 
     private showMore(dc: DialogContext<C>): Promise<any> {
         try {
-            const state = dc.instance.state as ListControlArgs;
+            const state = dc.instance.state as ListControlOptions;
             return Promise.resolve(this.pager(dc, state.filter, state.continueToken)).then((result) => {
                 if (result.continueToken) {
                     // Save continuation token
                     state.continueToken = result.continueToken;
 
                     // Add suggested actions to results
-                    const msg = Object.assign(MessageFactory.suggestedActions(this._actions), result.results);
+                    const msg = Object.assign(MessageFactory.suggestedActions(this.actions), result.results);
 
                     // Send user the results
                     return dc.context.sendActivity(msg) as Promise<any>;

@@ -21,10 +21,7 @@ const adapter = new BotFrameworkAdapter({
 });
 
 // Add conversation state middleware
-interface PromptsState {
-    dialogStack: any[];
-}
-const conversationState = new ConversationState<PromptsState>(new MemoryStorage());
+const conversationState = new ConversationState(new MemoryStorage());
 adapter.use(conversationState);
 
 // Listen for incoming requests 
@@ -34,8 +31,7 @@ server.post('/api/messages', (req, res) => {
         if (context.request.type === 'message') {
             // Create dialog context
             const state = conversationState.get(context);
-            if (!state.dialogStack) { state.dialogStack = [] }
-            const dc = dialogs.createContext(context, state.dialogStack);
+            const dc = dialogs.createContext(context, state);
 
             // Check for cancel
             const utterance = (context.request.text || '').trim().toLowerCase();

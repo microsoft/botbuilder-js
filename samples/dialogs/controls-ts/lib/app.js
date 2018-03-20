@@ -56,15 +56,16 @@ const language_1 = require("./language");
 //---------------------------------------------------------
 async function beginDialogDemo(context, state) {
     state.demo = 'dialog';
-    state.dialogStack = [];
-    const dc = dialogs.createContext(context, state.dialogStack);
+    state.demoState = {};
+    const dc = dialogs.createContext(context, state.demoState);
     await dc.begin('demo');
 }
 async function continueDialogDemo(context, state) {
-    const dc = dialogs.createContext(context, state.dialogStack);
+    const dc = dialogs.createContext(context, state.demoState);
     const result = await dc.continue();
     if (!result.active) {
         state.demo = undefined;
+        state.demoState = undefined;
         state.currentLocale = result.result;
     }
 }
@@ -82,15 +83,17 @@ dialogs.add('localePicker', new language_1.LanguagePicker({ defaultLocale: 'en' 
 //---------------------------------------------------------
 // Topic Based Usage
 //---------------------------------------------------------
+const localePicker = new language_1.LanguagePicker({ defaultLocale: 'en' });
 async function beginTopicDemo(context, state) {
     state.demo = 'topic';
-    state.controlState = {};
-    await language_1.LanguagePicker.begin(context, state.controlState, { defaultLocale: 'en' });
+    state.demoState = {};
+    await localePicker.begin(context, state.demoState);
 }
 async function continueTopicDemo(context, state) {
-    const result = await language_1.LanguagePicker.continue(context, state.controlState);
+    const result = await localePicker.continue(context, state.demoState);
     if (!result.active) {
         state.demo = undefined;
+        state.demoState = undefined;
         state.currentLocale = result.result;
         await context.sendActivity(`Switching locale to "${state.currentLocale}".`);
     }

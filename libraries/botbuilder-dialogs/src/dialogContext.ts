@@ -81,7 +81,7 @@ export class DialogContext<C extends BotContext> {
             this.stack.push(instance);
             
             // Call dialogs begin() method.
-            return Promise.resolve(dialog.begin(this, dialogArgs)).then((r) => this.ensureDialogResult(r));
+            return Promise.resolve(dialog.dialogBegin(this, dialogArgs)).then((r) => this.ensureDialogResult(r));
         } catch(err) {
             return Promise.reject(err);
         }
@@ -134,9 +134,9 @@ export class DialogContext<C extends BotContext> {
                 if (!dialog) { throw new Error(`DialogSet.continue(): Can't continue dialog. A dialog with an id of '${instance.id}' wasn't found.`) }
 
                 // Check for existence of a continue() method
-                if (dialog.continue) {
+                if (dialog.dialogContinue) {
                     // Continue execution of dialog
-                    return Promise.resolve(dialog.continue(this)).then((r) => this.ensureDialogResult(r));
+                    return Promise.resolve(dialog.dialogContinue(this)).then((r) => this.ensureDialogResult(r));
                 } else {
                     // Just end the dialog
                     return this.end();
@@ -187,9 +187,9 @@ export class DialogContext<C extends BotContext> {
                 if (!dialog) { throw new Error(`DialogContext.end(): Can't resume previous dialog. A dialog with an id of '${instance.id}' wasn't found.`) }
                 
                 // Check for existence of a resumeDialog() method
-                if (dialog.resume) {
+                if (dialog.dialogResume) {
                     // Return result to previous dialog
-                    return Promise.resolve(dialog.resume(this, result)).then((r) => this.ensureDialogResult(r));
+                    return Promise.resolve(dialog.dialogResume(this, result)).then((r) => this.ensureDialogResult(r));
                 } else {
                     // Just end the dialog and pass result to parent dialog
                     return this.end(result);

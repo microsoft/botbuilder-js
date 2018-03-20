@@ -30,12 +30,9 @@ server.post('/api/messages', (req, res) => {
     // Route received request to adapter for processing
     adapter.processRequest(req, res, (context) => __awaiter(this, void 0, void 0, function* () {
         if (context.request.type === 'message') {
-            const state = conversationState.get(context);
-            if (!state.dialogStack) {
-                state.dialogStack = [];
-            }
             // Create dialog context and continue executing the "current" dialog, if any.
-            const dc = dialogs.createContext(context, state.dialogStack);
+            const state = conversationState.get(context);
+            const dc = dialogs.createContext(context, state);
             yield dc.continue();
             // Check to see if anyone replied. If not then start echo dialog
             if (!context.responded) {

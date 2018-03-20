@@ -1,20 +1,19 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const botbuilder_dialogs_1 = require("botbuilder-dialogs");
 const botbuilder_choices_1 = require("botbuilder-choices");
 const botbuilder_1 = require("botbuilder");
-class ListControl {
-    constructor(pager) {
+class ListControl extends botbuilder_dialogs_1.Control {
+    constructor(pager, actions) {
+        super();
         this.pager = pager;
-        this._actions = [{ type: 'imBack', title: 'Show More', value: 'more' }];
+        this.actions = actions || [{ type: 'imBack', title: 'Show More', value: 'more' }];
     }
-    get actions() {
-        return this._actions;
-    }
-    begin(dc, args) {
+    dialogBegin(dc, args) {
         dc.instance.state = Object.assign({}, args);
         return this.showMore(dc);
     }
-    continue(dc) {
+    dialogContinue(dc) {
         // Recognize selected action
         const utterance = (dc.context.request.text || '').trim();
         const choices = this.actions.map((a) => {
@@ -39,7 +38,7 @@ class ListControl {
                     // Save continuation token
                     state.continueToken = result.continueToken;
                     // Add suggested actions to results
-                    const msg = Object.assign(botbuilder_1.MessageFactory.suggestedActions(this._actions), result.results);
+                    const msg = Object.assign(botbuilder_1.MessageFactory.suggestedActions(this.actions), result.results);
                     // Send user the results
                     return dc.context.sendActivity(msg);
                 }

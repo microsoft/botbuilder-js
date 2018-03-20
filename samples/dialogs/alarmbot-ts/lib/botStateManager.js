@@ -18,11 +18,7 @@ class BotStateManager extends botbuilder_1.BotStateSet {
     }
     conversation(context) {
         // Get cached conversation state
-        const conversation = this._conversation.get(context);
-        if (!conversation.dialogStack) {
-            conversation.dialogStack = [];
-        }
-        return conversation;
+        return this._conversation.get(context);
     }
 }
 exports.BotStateManager = BotStateManager;

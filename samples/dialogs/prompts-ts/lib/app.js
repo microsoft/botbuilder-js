@@ -21,6 +21,7 @@ const adapter = new botbuilder_1.BotFrameworkAdapter({
     appId: process.env.MICROSOFT_APP_ID,
     appPassword: process.env.MICROSOFT_APP_PASSWORD
 });
+// Add conversation state middleware
 const conversationState = new botbuilder_1.ConversationState(new botbuilder_1.MemoryStorage());
 adapter.use(conversationState);
 // Listen for incoming requests 
@@ -30,10 +31,7 @@ server.post('/api/messages', (req, res) => {
         if (context.request.type === 'message') {
             // Create dialog context
             const state = conversationState.get(context);
-            if (!state.dialogStack) {
-                state.dialogStack = [];
-            }
-            const dc = dialogs.createContext(context, state.dialogStack);
+            const dc = dialogs.createContext(context, state);
             // Check for cancel
             const utterance = (context.request.text || '').trim().toLowerCase();
             if (utterance === 'menu' || utterance === 'cancel') {

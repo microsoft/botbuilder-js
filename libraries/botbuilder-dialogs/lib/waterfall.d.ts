@@ -128,8 +128,8 @@ export declare class Waterfall<C extends BotContext> implements Dialog<C> {
      * @param steps Array of waterfall steps.
      */
     constructor(steps: WaterfallStep<C>[]);
-    begin(dc: DialogContext<C>, args?: any): Promiseable<any>;
-    continue(dc: DialogContext<C>): Promise<any>;
-    resume(dc: DialogContext<C>, result?: any): Promiseable<any>;
+    dialogBegin(dc: DialogContext<C>, args?: any): Promiseable<any>;
+    dialogContinue(dc: DialogContext<C>): Promise<any>;
+    dialogResume(dc: DialogContext<C>, result?: any): Promiseable<any>;
     private runStep(dc, result?);
 }

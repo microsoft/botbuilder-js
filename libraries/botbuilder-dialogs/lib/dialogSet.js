@@ -36,23 +36,8 @@ const dialogContext_1 = require("./dialogContext");
  * ```
  */
 class DialogSet {
-    /**
-     * Creates an empty dialog set. The ability to name the sets dialog stack means that multiple
-     * stacks can coexist within the same bot.  Middleware can use their own private set of
-     * dialogs without fear of colliding with the bots dialog stack.
-     *
-     * **Example usage:**
-     *
-     * ```JavaScript
-     * const dialogs = new DialogSet('myPrivateStack');
-     * ```
-     * @param stackName (Optional) name of the field to store the dialog stack in off the state bag. Defaults to 'dialogStack'.
-     * @param stateName (Optional) name of state bag on the context object that will be used to store the dialog stack. Defaults to `conversationState`.
-     */
-    constructor(stackName, stateName) {
+    constructor() {
         this.dialogs = {};
-        this.stackName = stackName || 'dialogStack';
-        this.stateName = stateName || 'conversationState';
     }
     add(dialogId, dialogOrSteps) {
         if (this.dialogs.hasOwnProperty(dialogId)) {
@@ -60,8 +45,11 @@ class DialogSet {
         }
         return this.dialogs[dialogId] = Array.isArray(dialogOrSteps) ? new waterfall_1.Waterfall(dialogOrSteps) : dialogOrSteps;
     }
-    createContext(context, stack) {
-        return new dialogContext_1.DialogContext(this, context, stack || []);
+    createContext(context, state) {
+        if (!Array.isArray(state['dialogStack'])) {
+            state['dialogStack'] = [];
+        }
+        return new dialogContext_1.DialogContext(this, context, state['dialogStack']);
     }
     /**
      * Finds a dialog that was previously added to the set using [add()](#add).

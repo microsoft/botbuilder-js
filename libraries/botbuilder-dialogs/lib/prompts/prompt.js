@@ -1,17 +1,19 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-class Prompt {
+const control_1 = require("../control");
+class Prompt extends control_1.Control {
     constructor(validator) {
+        super();
         this.validator = validator;
     }
-    begin(dc, options) {
+    dialogBegin(dc, options) {
         // Persist options
         const instance = dc.instance;
         instance.state = options || {};
         // Send initial prompt
         return this.onPrompt(dc, instance.state, false);
     }
-    continue(dc) {
+    dialogContinue(dc) {
         // Recognize value
         const instance = dc.instance;
         return this.onRecognize(dc, instance.state)
