@@ -25,6 +25,14 @@ export interface TranslationContext {
     targetLanguage: string;
 }
 
+export interface TranslatorSettings {
+    translatorKey: string,
+    nativeLanguages: string[],
+    noTranslatePatterns: Set<string>,
+    getUserLanguage: ((c: BotContext) => string) | undefined,
+    setUserLanguage: ((context: BotContext) => Promise<boolean>) | undefined
+}
+
 /**
  * The LanguageTranslator will use the Text Translator Cognitive service to translate text from a source language
  * to one of the native languages that the bot speaks.  By adding it to the middleware pipeline you will automatically
@@ -34,11 +42,13 @@ export class LanguageTranslator implements Middleware {
     private translator: Translator;
     private getUserLanguage: ((context: BotContext) => string) | undefined;
     private setUserLanguage: ((context: BotContext) => Promise<boolean>) | undefined;
+    private nativeLanguages: string[];
 
-    public constructor(translatorKey: string, protected nativeLanguages: string[], noTranslatePatterns: Set<string>, getUserLanguage?: (c: BotContext) => string, setUserLanguage?: (context: BotContext) => Promise<boolean>) {
-        this.translator = new MicrosoftTranslator(translatorKey, noTranslatePatterns);
-        this.getUserLanguage = getUserLanguage;
-        this.setUserLanguage = setUserLanguage;
+    public constructor(settings: TranslatorSettings) {
+        this.translator = new MicrosoftTranslator(settings.translatorKey, settings.noTranslatePatterns);
+        this.nativeLanguages = settings.nativeLanguages;
+        this.getUserLanguage = settings.getUserLanguage;
+        this.setUserLanguage = settings.setUserLanguage;
     }
 
     /// Incoming activity
@@ -55,13 +65,15 @@ export class LanguageTranslator implements Middleware {
             let sourceLanguage: string;
             if (this.getUserLanguage != undefined) {
                 sourceLanguage = this.getUserLanguage(context);
+            } else if (context.request.locale != undefined) {
+                sourceLanguage = context.request.locale;
+            } else if (context.state && context.state.conversation && context.state.conversation.language) {
+                sourceLanguage = context.state.conversation.language;
             } else {
                 sourceLanguage = await this.translator.detect(context.request.text);
             }
 
-            if (context.state && context.state.conversation && context.state.conversation.language) {
-                sourceLanguage = context.state.conversation.language;
-            }
+            
             // create translationcontext
             let translationContext = <TranslationContext>{};
             translationContext.sourceLanguage = sourceLanguage;
@@ -283,7 +295,7 @@ class MicrosoftTranslator implements Translator {
                 resolve(results);
             })
             .catch(error => {
-                console.log(error);
+                reject(error);
             })
         })
     }
