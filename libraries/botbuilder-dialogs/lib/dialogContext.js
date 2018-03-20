@@ -184,20 +184,15 @@ class DialogContext {
      * **Example usage:**
      *
      * ```JavaScript
-     * return dc.endAll();
+     * await dc.endAll().begin('bookFlightTask');
      * ```
      */
     endAll() {
-        try {
-            // Cancel any active dialogs
-            if (this.stack.length > 0) {
-                this.stack.splice(0, this.stack.length - 1);
-            }
-            return Promise.resolve({ active: false });
+        // Cancel any active dialogs
+        if (this.stack.length > 0) {
+            this.stack.splice(0, this.stack.length - 1);
         }
-        catch (err) {
-            return Promise.reject(err);
-        }
+        return this;
     }
     /**
      * Ends the active dialog and starts a new dialog in its place. This is particularly useful

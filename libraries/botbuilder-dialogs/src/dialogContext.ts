@@ -208,19 +208,15 @@ export class DialogContext<C extends BotContext> {
      * **Example usage:**
      * 
      * ```JavaScript
-     * return dc.endAll();
+     * await dc.endAll().begin('bookFlightTask');
      * ```
      */
-    public endAll(): Promise<DialogResult> {
-        try {
-            // Cancel any active dialogs
-            if (this.stack.length > 0) {
-                this.stack.splice(0, this.stack.length - 1);
-            }
-            return Promise.resolve({ active: false });
-        } catch (err) {
-            return Promise.reject(err);
+    public endAll(): this{
+        // Cancel any active dialogs
+        if (this.stack.length > 0) {
+            this.stack.splice(0, this.stack.length - 1);
         }
+        return this;
     }
 
     /**

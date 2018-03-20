@@ -123,10 +123,10 @@ export declare class DialogContext<C extends BotContext> {
      * **Example usage:**
      *
      * ```JavaScript
-     * return dc.endAll();
+     * await dc.endAll().begin('bookFlightTask');
      * ```
      */
-    endAll(): Promise<DialogResult>;
+    endAll(): this;
     /**
      * Ends the active dialog and starts a new dialog in its place. This is particularly useful
      * for creating loops or redirecting to another dialog.
