@@ -16,25 +16,25 @@ describe('DialogSet class', function() {
     this.timeout(5000);
 
     it('should call Dialog.begin() and Dialog.continue().', function (done) {
+        const stack = [];
         const dialogs = new DialogSet();
         dialogs.add('a', {
-            begin: (ctx, dlgs, args) => {
-                assert(ctx, 'Missing context in begin()');
-                assert(dlgs === dialogs, 'Dialogs not passed to begin()');
+            begin: (dc, args) => {
+                assert(dc, 'Missing dialog context in begin()');
                 assert(args === 'z', 'Args not passed');
-                return ctx.sendActivity(beginMessage);
+                return dc.context.sendActivity(beginMessage);
             },
-            continue: (ctx, dlgs) => {
-                assert(ctx, 'Missing context in continue()');
-                assert(dlgs === dialogs, 'Dialogs not passed to continue()');
-                return ctx.sendActivity(continueMessage);
+            continue: (dc) => {
+                assert(dc, 'Missing dialog context in continue()');
+                return dc.context.sendActivity(continueMessage);
             }
         });
 
-        createBot((ctx) => {
-            return dialogs.continue(ctx).then(() => {
-                if (!ctx.responded) {
-                    return dialogs.begin(ctx, 'a', 'z');
+        createBot((context) => {
+            const dc = dialogs.createContext(context, stack);
+            return dc.continue().then(() => {
+                if (!context.responded) {
+                    return dc.begin('a', 'z');
                 }
             })
         })
