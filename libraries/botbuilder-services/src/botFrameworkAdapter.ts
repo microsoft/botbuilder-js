@@ -168,7 +168,7 @@ export class BotFrameworkAdapter implements ActivityAdapter {
                                 if (activity.conversation && activity.conversation.id) {
                                     client.conversations.sendToConversation(activity.conversation.id, activity as Activity)
                                         .then((result) => {
-                                            responses.push(result || {});
+                                            responses.push(result || {} as ResourceResponse);
                                             next(i + 1);
                                         }, (err) => {
                                             reject(err);

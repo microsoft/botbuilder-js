@@ -1,4 +1,4 @@
-const should = require('../../../tools/node_modules/should');
+const assert = require('assert');
 const Connector = require('../lib');
 
 describe('Bot Framework Connector - Auth Tests', function () {
@@ -33,7 +33,7 @@ describe('Bot Framework Connector - Auth Tests', function () {
                     done(new Error('Expected validation to fail.'))
                 })
                 .catch((err) => {
-                    should.exist(err);
+                    assert(!!err);
                     done();
                 })
                 .catch(done);
@@ -48,7 +48,7 @@ describe('Bot Framework Connector - Auth Tests', function () {
                     done(new Error('Expected validation to fail.'))
                 })
                 .catch((err) => {
-                    should.exist(err);
+                    assert(!!err);
                     done();
                 })
                 .catch(done);
@@ -78,7 +78,7 @@ describe('Bot Framework Connector - Auth Tests', function () {
                     done(new Error('Expected validation to fail.'))
                 })
                 .catch((err) => {
-                    should.exist(err);
+                    assert(!!err);
                     done();
                 })
                 .catch(done);

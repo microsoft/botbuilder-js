@@ -176,14 +176,15 @@ export class Recognizer implements Middleware {
         return new Promise<Intent|undefined>((resolve, reject) => {
             let top: Intent|undefined = undefined;
 
-            let intents : any = [].concat.apply([],recognizerResults.map(recognizerResult => recognizerResult.intents));
-            Object.keys(intents).forEach(intent => {
-                if (!top || recognizerResults[0].intents[intent] > top.score) {
-                    top = {
-                            name: intent,
-                            score: recognizerResults[0].intents[intent]
-                    } as Intent;
-                }
+            recognizerResults.forEach(result =>{
+                Object.keys(result.intents).forEach(intent => {
+                    if (!top || result.intents[intent] > top.score) {
+                        top = {
+                                name: intent,
+                                score: result.intents[intent]
+                        } as Intent;
+                    }
+                });
             });
             resolve(top);
         });

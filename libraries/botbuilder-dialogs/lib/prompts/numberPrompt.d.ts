@@ -51,7 +51,7 @@ export declare class NumberPrompt implements Dialog {
      * ```
      * @param validator (Optional) validator that will be called each time the user responds to the prompt.
      */
-    constructor(validator?: PromptValidator<number | undefined> | undefined);
+    constructor(validator?: PromptValidator<number | undefined>);
     begin(context: BotContext, dialogs: DialogSet, options: PromptOptions): Promise<void>;
     continue(context: BotContext, dialogs: DialogSet): Promise<void>;
 }
