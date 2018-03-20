@@ -8,6 +8,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Licensed under the MIT License.
  */
 const botbuilder_core_1 = require("botbuilder-core");
+const cacheKey = Symbol('batch');
 /**
  * :package: **botbuilder-core-extensions**
  *
@@ -169,10 +170,10 @@ class BatchOutput {
         if (!this.context) {
             throw new Error(`BatchOutput: no context object. Pass in a context object to use BatchOutput directly, outside of middleware.`);
         }
-        if (!this.context.has('batch')) {
-            this.context.set('batch', []);
+        if (!this.context.has(cacheKey)) {
+            this.context.set(cacheKey, []);
         }
-        return this.context.get('batch');
+        return this.context.get(cacheKey);
     }
 }
 exports.BatchOutput = BatchOutput;

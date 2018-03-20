@@ -7,6 +7,8 @@
  */
 import { BotContext, Middleware, Activity, ActivityTypes, InputHints, EndOfConversationCodes, ResourceResponse } from 'botbuilder-core';
 
+const cacheKey = Symbol('batch');
+
 /** 
  * :package: **botbuilder-core-extensions**
  * 
@@ -174,9 +176,9 @@ export class BatchOutput implements Middleware {
 
     private batch(): Partial<Activity>[] {
         if (!this.context) { throw new Error(`BatchOutput: no context object. Pass in a context object to use BatchOutput directly, outside of middleware.`) }
-        if (!this.context.has('batch')) {
-            this.context.set('batch', []);
+        if (!this.context.has(cacheKey)) {
+            this.context.set(cacheKey, []);
         }
-        return this.context.get('batch');
+        return this.context.get(cacheKey);
     }
 }
