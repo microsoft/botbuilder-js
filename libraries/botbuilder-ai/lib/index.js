@@ -15,4 +15,5 @@ __export(require("./languageTranslator"));
 __export(require("./languageMap"));
 __export(require("./qnaMaker"));
 __export(require("./bingEntitySearch"));
+__export(require("./localeConverter"));
 //# sourceMappingURL=index.js.map
