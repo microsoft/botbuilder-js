@@ -27,15 +27,14 @@ export interface CachedBotState<T extends StoreItem> {
  */
 export declare class BotState<T extends StoreItem = StoreItem> implements Middleware {
     protected storage: Storage;
-    protected stateName: string;
     protected storageKey: StorageKeyFactory;
+    private stateKey;
     /**
      * Creates a new BotState instance.
      * @param storage Storage provider to persist the state object to.
-     * @param stateName Name of the cached entry on the context object. This will be passed to `context.set()` and `context.get()`.
      * @param storageKey Function called anytime the storage key for a given turn needs to be known.
      */
-    constructor(storage: Storage, stateName: string, storageKey: StorageKeyFactory);
+    constructor(storage: Storage, storageKey: StorageKeyFactory);
     onProcessRequest(context: BotContext, next: () => Promise<void>): Promise<void>;
     /**
      * Reads in and caches the current state object for a turn.
@@ -59,10 +58,4 @@ export declare class BotState<T extends StoreItem = StoreItem> implements Middle
      * @param context Context for current turn of conversation with the user.
      */
     get(context: BotContext): T | undefined;
-    /**
-     * Returns a cached state object or undefined if not cached.
-     * @param context Context for current turn of conversation with the user.
-     * @param stateName Name of the cached state object to return.
-     */
-    static get<T extends StoreItem = StoreItem>(context: BotContext, stateName: string): T | undefined;
 }

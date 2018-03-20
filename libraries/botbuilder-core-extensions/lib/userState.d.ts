@@ -19,9 +19,8 @@ export declare class UserState<T extends StoreItem = StoreItem> extends BotState
     /**
      * Creates a new UserState instance.
      * @param storage Storage provider to persist user state to.
-     * @param stateName (Optional) name of the cached entry on the context object. A property accessor with this name will also be added to the context object. The default value is 'userState'.
      */
-    constructor(storage: Storage, stateName?: string);
+    constructor(storage: Storage);
     /**
      * Returns the storage key for the current user state.
      * @param context Context for current turn of conversation with the user.

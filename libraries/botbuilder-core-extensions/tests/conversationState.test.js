@@ -44,24 +44,6 @@ describe(`ConversationState`, function () {
             done();
         });
     });
-    
-    it(`should automatically clear() state storage when "endOfConversation" activity sent.`, function (done) {
-        let key;
-        middleware.onProcessRequest(context, () => {
-            key = middleware.getStorageKey(context);
-            assert(middleware.get(context).test === 'foo', `invalid initial state`);
-            return context.sendActivity({ type: ActivityTypes.EndOfConversation });
-        })
-        .then(() => storage.read([key]))
-        .then((items) => {
-            assert(!items[key].hasOwnProperty('test'), `state not cleared from storage.`);
-            
-            // Setup next test
-            items[key].test = 'foo';
-            return storage.write(items);
-        })
-        .then(() => done());
-    });
 
     it(`should reject with error if channelId missing.`, function (done) {
         const ctx = new BotContext(adapter, missingChannelId);

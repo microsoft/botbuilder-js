@@ -59,7 +59,7 @@ export declare class BatchOutput implements Middleware {
      * Creates a new BatchOutput instance.
      * @param context (Optional) context for the current turn of conversation. This can be omitted when creating an instance of the class to use as middleware.
      */
-    constructor(context?: BotContext | undefined);
+    constructor(context?: BotContext);
     /** INTERNAL called by the adapter when used as middleware. */
     onProcessRequest(context: BotContext, next: () => Promise<void>): Promise<void>;
     /**

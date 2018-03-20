@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const botState_1 = require("./botState");
-const DEFAULT_CHACHE_KEY = 'userState';
 const NOT_CACHED = `UserState: state not found. Ensure UserState middleware is added to adapter or that UserState.read() has been called.`;
 const NO_KEY = `UserState: channelId and/or conversation missing from context.request.`;
 /**
@@ -15,16 +14,12 @@ class UserState extends botState_1.BotState {
     /**
      * Creates a new UserState instance.
      * @param storage Storage provider to persist user state to.
-     * @param stateName (Optional) name of the cached entry on the context object. A property accessor with this name will also be added to the context object. The default value is 'userState'.
      */
-    constructor(storage, stateName) {
-        super(storage, stateName || DEFAULT_CHACHE_KEY, (context) => {
+    constructor(storage) {
+        super(storage, (context) => {
             // Calculate storage key
             const key = this.getStorageKey(context);
-            if (key) {
-                return Promise.resolve(key);
-            }
-            return Promise.reject(new Error(NO_KEY));
+            return key ? Promise.resolve(key) : Promise.reject(new Error(NO_KEY));
         });
     }
     /**
