@@ -37,7 +37,8 @@ server.post('/api/messages', (req, res) => {
             // Check for list to show
             const utterance = (context.request.text || '').trim().toLowerCase();
             if (utterance.includes('images')) {
-                await dc.endAll().begin('imageList', { filter: { start: Math.floor(Math.random() * 100) }});
+                const startImage = Math.floor(Math.random() * 100);
+                await dc.endAll().begin('imageList', { filter: { start: startImage }});
             } else {
                 await dc.continue();
 
