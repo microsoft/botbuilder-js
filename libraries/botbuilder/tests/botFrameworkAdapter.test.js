@@ -12,6 +12,7 @@ const reference = {
 };
 const incomingMessage = BotContext.applyConversationReference({ text: 'test', type: 'message' }, reference, true);
 const outgoingMessage = BotContext.applyConversationReference({ text: 'test', type: 'message' }, reference);
+const incomingInvoke = BotContext.applyConversationReference({ type: 'invoke' }, reference, true);
 
 class AdapterUnderTest extends BotFrameworkAdapter {
     constructor(settings) {
@@ -342,6 +343,33 @@ describe(`BotFrameworkAdapter`, function () {
             assert(Array.isArray(responses), `array of responses not returned.`);
             assert(responses.length === 3, `invalid number of responses returned.`);
             assert((end - start) >= 500, `didn't pause for delay.`);
+            done();
+        });
+    });
+
+    it(`should return bots 'invokeResponse'.`, function (done) {
+        const req = new MockRequest(incomingInvoke);
+        const res = new MockResponse();
+        const adapter = new AdapterUnderTest();
+        adapter.processRequest(req, res, (context) => {
+            // don't return anything
+        }).then(() => {
+            assert(false, `shouldn't have passed.`);
+        }, (err) => {
+            assert(err, `error not returned.`);
+            assertResponse(res, 500, true);
+            done();
+        });
+    });
+
+    it(`should return 500 error if bot fails to return an 'invokeResponse'.`, function (done) {
+        const req = new MockRequest(incomingInvoke);
+        const res = new MockResponse();
+        const adapter = new AdapterUnderTest();
+        adapter.processRequest(req, res, (context) => {
+            return context.sendActivity({ type: 'invokeResponse', value: { status: 200, body: 'body' }})
+        }).then(() => {
+            assertResponse(res, 200, true);
             done();
         });
     });

@@ -26,6 +26,7 @@ class BotFrameworkAdapter extends botbuilder_core_1.BotAdapter {
      */
     constructor(settings) {
         super();
+        this.invokeResponses = {};
         this.settings = Object.assign({ appId: '', appPassword: '' }, settings);
         this.credentials = new botframework_connector_1.MicrosoftAppCredentials(this.settings.appId, this.settings.appPassword || '');
         this.credentialsProvider = new botframework_connector_1.SimpleCredentialProvider(this.credentials.appId, this.credentials.appPassword);
@@ -43,9 +44,29 @@ class BotFrameworkAdapter extends botbuilder_core_1.BotAdapter {
                 const context = this.createContext(request);
                 return this.runMiddleware(context, logic)
                     .then(() => {
-                    // TODO: Add logic to return 'invoke' response
-                    res.send(202);
-                    res.end();
+                    if (request.type === botbuilder_core_1.ActivityTypes.Invoke) {
+                        const key = request.channelId + '/' + request.id;
+                        try {
+                            const invokeResponse = this.invokeResponses[key];
+                            if (invokeResponse && invokeResponse.value) {
+                                const value = invokeResponse.value;
+                                res.send(value.status, value.body);
+                                res.end();
+                            }
+                            else {
+                                throw new Error(`Bot failed to return a valid 'invokeResponse' activity.`);
+                            }
+                        }
+                        finally {
+                            if (this.invokeResponses.hasOwnProperty(key)) {
+                                delete this.invokeResponses[key];
+                            }
+                        }
+                    }
+                    else {
+                        res.send(202);
+                        res.end();
+                    }
                 });
             });
         }).catch((err) => {
@@ -98,6 +119,11 @@ class BotFrameworkAdapter extends botbuilder_core_1.BotAdapter {
                                     responses.push({});
                                     next(i + 1);
                                 }, typeof activity.value === 'number' ? activity.value : 1000);
+                                break;
+                            case 'invokeResponse':
+                                const key = activity.channelId + '/' + activity.replyToId;
+                                that.invokeResponses[key] = activity;
+                                next(i + 1);
                                 break;
                             default:
                                 if (!activity.serviceUrl) {

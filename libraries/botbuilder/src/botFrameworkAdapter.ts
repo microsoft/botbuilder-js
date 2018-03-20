@@ -39,6 +39,11 @@ export interface BotFrameworkAdapterSettings {
     appPassword: string;
 }
 
+export interface InvokeResponse {
+    status: number;
+    body?: any;
+}
+
 /**
  * :package: **botbuilder-core**
  * 
@@ -50,6 +55,7 @@ export interface BotFrameworkAdapterSettings {
  * ```
  */
 export class BotFrameworkAdapter extends BotAdapter {
+    private readonly invokeResponses: { [key:string]: Partial<Activity>; } = {};
     protected readonly credentials: MicrosoftAppCredentials;
     protected readonly credentialsProvider: SimpleCredentialProvider;
     protected readonly settings: BotFrameworkAdapterSettings;
@@ -78,9 +84,24 @@ export class BotFrameworkAdapter extends BotAdapter {
                 const context = this.createContext(request);
                 return this.runMiddleware(context, logic as any)
                     .then(() => {
-                        // TODO: Add logic to return 'invoke' response
-                        res.send(202);
-                        res.end();
+                        if (request.type === ActivityTypes.Invoke) {
+                            const key = request.channelId + '/' + request.id;
+                            try {
+                                const invokeResponse = this.invokeResponses[key];
+                                if (invokeResponse && invokeResponse.value) {
+                                    const value = invokeResponse.value as InvokeResponse;
+                                    res.send(value.status, value.body);
+                                    res.end();
+                                } else {
+                                    throw new Error(`Bot failed to return a valid 'invokeResponse' activity.`);
+                                }
+                            } finally {
+                                if (this.invokeResponses.hasOwnProperty(key)) { delete this.invokeResponses[key] }
+                            }
+                        } else {
+                            res.send(202);
+                            res.end();
+                        }
                     });
             });
         }).catch((err) => {
@@ -133,6 +154,11 @@ export class BotFrameworkAdapter extends BotAdapter {
                                     responses.push({} as ResourceResponse);
                                     next(i + 1);
                                 }, typeof activity.value === 'number' ? activity.value : 1000);
+                                break;
+                            case 'invokeResponse':
+                                const key = activity.channelId + '/' + activity.replyToId;
+                                that.invokeResponses[key] = activity;
+                                next(i + 1);
                                 break;
                             default:
                                 if (!activity.serviceUrl) { throw new Error(`BotFrameworkAdapter.sendActivity(): missing serviceUrl.`) }

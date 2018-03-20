@@ -35,6 +35,10 @@ export interface BotFrameworkAdapterSettings {
     appId: string;
     appPassword: string;
 }
+export interface InvokeResponse {
+    status: number;
+    body?: any;
+}
 /**
  * :package: **botbuilder-core**
  *
@@ -46,6 +50,7 @@ export interface BotFrameworkAdapterSettings {
  * ```
  */
 export declare class BotFrameworkAdapter extends BotAdapter {
+    private readonly invokeResponses;
     protected readonly credentials: MicrosoftAppCredentials;
     protected readonly credentialsProvider: SimpleCredentialProvider;
     protected readonly settings: BotFrameworkAdapterSettings;
