@@ -6,11 +6,6 @@
 
 ## Index
 
-### Modules
-
-* [__global](modules/botbuilder.__global.md)
-
-
 ### Enumerations
 
 * [ActionTypes](enums/botbuilder.actiontypes.md)
@@ -22,45 +17,40 @@
 * [InputHints](enums/botbuilder.inputhints.md)
 * [InstallationUpdateActionTypes](enums/botbuilder.installationupdateactiontypes.md)
 * [MessageReactionTypes](enums/botbuilder.messagereactiontypes.md)
-* [RecognizeOrder](enums/botbuilder.recognizeorder.md)
 * [TextFormatTypes](enums/botbuilder.textformattypes.md)
 
 
 ### Classes
 
-* [AttachmentRecognizer](classes/botbuilder.attachmentrecognizer.md)
-* [Bot](classes/botbuilder.bot.md)
-* [BotService](classes/botbuilder.botservice.md)
-* [BotStateManager](classes/botbuilder.botstatemanager.md)
+* [BatchOutput](classes/botbuilder.batchoutput.md)
+* [BotAdapter](classes/botbuilder.botadapter.md)
+* [BotContext](classes/botbuilder.botcontext.md)
+* [BotFrameworkAdapter](classes/botbuilder.botframeworkadapter.md)
+* [BotState](classes/botbuilder.botstate.md)
+* [BotStateSet](classes/botbuilder.botstateset.md)
 * [BrowserLocalStorage](classes/botbuilder.browserlocalstorage.md)
 * [BrowserSessionStorage](classes/botbuilder.browsersessionstorage.md)
-* [CardStyler](classes/botbuilder.cardstyler.md)
-* [DictionaryRenderer](classes/botbuilder.dictionaryrenderer.md)
-* [IntentRecognizer](classes/botbuilder.intentrecognizer.md)
-* [IntentRecognizerSet](classes/botbuilder.intentrecognizerset.md)
-* [JsonTemplates](classes/botbuilder.jsontemplates.md)
+* [CardFactory](classes/botbuilder.cardfactory.md)
+* [ConsoleAdapter](classes/botbuilder.consoleadapter.md)
+* [ConversationState](classes/botbuilder.conversationstate.md)
 * [MemoryStorage](classes/botbuilder.memorystorage.md)
-* [MiddlewareSet](classes/botbuilder.middlewareset.md)
-* [RegExpRecognizer](classes/botbuilder.regexprecognizer.md)
-* [StorageMiddleware](classes/botbuilder.storagemiddleware.md)
-* [TemplateManager](classes/botbuilder.templatemanager.md)
 * [TestAdapter](classes/botbuilder.testadapter.md)
 * [TestFlow](classes/botbuilder.testflow.md)
+* [UserState](classes/botbuilder.userstate.md)
 
 
 ### Interfaces
 
 * [Activity](interfaces/botbuilder.activity.md)
-* [ActivityAdapter](interfaces/botbuilder.activityadapter.md)
 * [AnimationCard](interfaces/botbuilder.animationcard.md)
 * [Attachment](interfaces/botbuilder.attachment.md)
 * [AttachmentData](interfaces/botbuilder.attachmentdata.md)
 * [AttachmentInfo](interfaces/botbuilder.attachmentinfo.md)
-* [AttachmentRecognizerSettings](interfaces/botbuilder.attachmentrecognizersettings.md)
 * [AttachmentView](interfaces/botbuilder.attachmentview.md)
 * [AudioCard](interfaces/botbuilder.audiocard.md)
 * [BasicCard](interfaces/botbuilder.basiccard.md)
-* [BotStateManagerSettings](interfaces/botbuilder.botstatemanagersettings.md)
+* [BotFrameworkAdapterSettings](interfaces/botbuilder.botframeworkadaptersettings.md)
+* [CachedBotState](interfaces/botbuilder.cachedbotstate.md)
 * [CardAction](interfaces/botbuilder.cardaction.md)
 * [CardImage](interfaces/botbuilder.cardimage.md)
 * [ChannelAccount](interfaces/botbuilder.channelaccount.md)
@@ -69,21 +59,18 @@
 * [ConversationReference](interfaces/botbuilder.conversationreference.md)
 * [ConversationResourceResponse](interfaces/botbuilder.conversationresourceresponse.md)
 * [Entity](interfaces/botbuilder.entity.md)
-* [EntityObject](interfaces/botbuilder.entityobject.md)
 * [ErrorModel](interfaces/botbuilder.errormodel.md)
 * [ErrorResponse](interfaces/botbuilder.errorresponse.md)
 * [Fact](interfaces/botbuilder.fact.md)
 * [GeoCoordinates](interfaces/botbuilder.geocoordinates.md)
+* [Headers](interfaces/botbuilder.headers.md)
 * [HeroCard](interfaces/botbuilder.herocard.md)
-* [Intent](interfaces/botbuilder.intent.md)
-* [IntentRecognizerSetSettings](interfaces/botbuilder.intentrecognizersetsettings.md)
 * [MediaCard](interfaces/botbuilder.mediacard.md)
 * [MediaEventValue](interfaces/botbuilder.mediaeventvalue.md)
 * [MediaUrl](interfaces/botbuilder.mediaurl.md)
 * [Mention](interfaces/botbuilder.mention.md)
 * [MessageReaction](interfaces/botbuilder.messagereaction.md)
 * [MicrosoftPayMethodData](interfaces/botbuilder.microsoftpaymethoddata.md)
-* [Middleware](interfaces/botbuilder.middleware.md)
 * [PaymentAddress](interfaces/botbuilder.paymentaddress.md)
 * [PaymentCurrencyAmount](interfaces/botbuilder.paymentcurrencyamount.md)
 * [PaymentDetails](interfaces/botbuilder.paymentdetails.md)
@@ -101,79 +88,55 @@
 * [Place](interfaces/botbuilder.place.md)
 * [ReceiptCard](interfaces/botbuilder.receiptcard.md)
 * [ReceiptItem](interfaces/botbuilder.receiptitem.md)
-* [RegExpLocaleMap](interfaces/botbuilder.regexplocalemap.md)
-* [RegExpRecognizerSettings](interfaces/botbuilder.regexprecognizersettings.md)
 * [ResourceResponse](interfaces/botbuilder.resourceresponse.md)
-* [SearchCatalog](interfaces/botbuilder.searchcatalog.md)
-* [SearchEngine](interfaces/botbuilder.searchengine.md)
-* [SearchHit](interfaces/botbuilder.searchhit.md)
 * [SigninCard](interfaces/botbuilder.signincard.md)
 * [Storage](interfaces/botbuilder.storage.md)
-* [StorageSettings](interfaces/botbuilder.storagesettings.md)
 * [StoreItem](interfaces/botbuilder.storeitem.md)
 * [StoreItems](interfaces/botbuilder.storeitems.md)
 * [SuggestedActions](interfaces/botbuilder.suggestedactions.md)
-* [TemplateRenderer](interfaces/botbuilder.templaterenderer.md)
 * [TextHighlight](interfaces/botbuilder.texthighlight.md)
 * [Thing](interfaces/botbuilder.thing.md)
 * [ThumbnailCard](interfaces/botbuilder.thumbnailcard.md)
 * [ThumbnailUrl](interfaces/botbuilder.thumbnailurl.md)
 * [VideoCard](interfaces/botbuilder.videocard.md)
+* [WebMiddleware](interfaces/botbuilder.webmiddleware.md)
+* [WebRequest](interfaces/botbuilder.webrequest.md)
+* [WebResponse](interfaces/botbuilder.webresponse.md)
 
 
 ### Type aliases
 
-* [Promiseable](#promiseable)
-* [SimpleTemplateFunction](#simpletemplatefunction)
-* [TemplateDictionary](#templatedictionary)
-* [TemplateFunction](#templatefunction)
-* [TemplateFunctionMap](#templatefunctionmap)
-* [TemplateIdMap](#templateidmap)
-
-
-### Variables
-
-* [EntityTypes](#entitytypes)
+* [DeleteActivityHandler](#deleteactivityhandler)
+* [SendActivitiesHandler](#sendactivitieshandler)
+* [StorageKeyFactory](#storagekeyfactory)
+* [TestActivityInspector](#testactivityinspector)
+* [UpdateActivityHandler](#updateactivityhandler)
 
 
 ### Functions
 
-* [isPromised](#ispromised)
+* [calculateChangeHash](#calculatechangehash)
 
 
 
 ---
 ## Type aliases
-<a id="promiseable"></a>
+<a id="deleteactivityhandler"></a>
 
-###  Promiseable
+###  DeleteActivityHandler
 
-**Τ Promiseable**:  *`Promise`.<`T`>⎮`T`* 
+**Τ DeleteActivityHandler**:  *`function`* 
 
-*Defined in [libraries/botbuilder/lib/middleware.d.ts:14](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/middleware.d.ts#L14)*
-
-
-
-Type signature for a return value that can (Optionally) return its value asynchronously using a Promise.
-*__param__*: (Optional) type of value being returned. This defaults to `void`.
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:28](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core/lib/botContext.d.ts#L28)*
 
 
 
+:package: **botbuilder-core**
 
-
-___
-
-<a id="simpletemplatefunction"></a>
-
-###  SimpleTemplateFunction
-
-**Τ SimpleTemplateFunction**:  *`function`* 
-
-*Defined in [libraries/botbuilder/lib/dictionaryRenderer.d.ts:11](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/dictionaryRenderer.d.ts#L11)*
-
+Signature implemented by functions registered with `context.onDeleteActivity()`.
 
 #### Type declaration
-►(context: *[BotContext](interfaces/botbuilder.__global.botcontext.md)*, data: *`Object`*): [Partial]()[Activity](interfaces/botbuilder.activity.md)⎮`string`⎮`undefined`
+►(reference: *[Partial]()[ConversationReference](interfaces/botbuilder.conversationreference.md)*, next: *`function`*): [Promiseable]()`void`
 
 
 
@@ -181,38 +144,14 @@ ___
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | [BotContext](interfaces/botbuilder.__global.botcontext.md)   |  - |
-| data | `Object`   |  - |
+| reference | [Partial]()[ConversationReference](interfaces/botbuilder.conversationreference.md)   |  - |
+| next | `function`   |  - |
 
 
 
 
 
-**Returns:** [Partial]()[Activity](interfaces/botbuilder.activity.md)⎮`string`⎮`undefined`
-
-
-
-
-
-
-___
-
-<a id="templatedictionary"></a>
-
-###  TemplateDictionary
-
-**Τ TemplateDictionary**:  *`object`* 
-
-*Defined in [libraries/botbuilder/lib/dictionaryRenderer.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/dictionaryRenderer.d.ts#L21)*
-
-
-
-Map of Language -> map of functions
-
-#### Type declaration
-
-
-[language: `string`]: [TemplateIdMap](#templateidmap)
+**Returns:** [Promiseable]()`void`
 
 
 
@@ -221,24 +160,22 @@ Map of Language -> map of functions
 
 ___
 
-<a id="templatefunction"></a>
+<a id="sendactivitieshandler"></a>
 
-###  TemplateFunction
+###  SendActivitiesHandler
 
-**Τ TemplateFunction**:  *`function`* 
+**Τ SendActivitiesHandler**:  *`function`* 
 
-*Defined in [libraries/botbuilder/lib/jsonTemplates.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/jsonTemplates.d.ts#L17)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:16](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core/lib/botContext.d.ts#L16)*
 
 
 
-A template function that can return a stringified value from a given data object.
-*__param__*: The data object to return a value from.
+:package: **botbuilder-core**
 
-*__param__*: (Optional) path to the value to return.
-
+Signature implemented by functions registered with `context.onSendActivities()`.
 
 #### Type declaration
-►(data: *`Object`*, path?: *`undefined`⎮`string`*): `string`
+►(activities: *[Partial]()[Activity](interfaces/botbuilder.activity.md)[]*, next: *`function`*): [Promiseable]()[ResourceResponse](interfaces/botbuilder.resourceresponse.md)[]
 
 
 
@@ -246,14 +183,14 @@ A template function that can return a stringified value from a given data object
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| data | `Object`   |  - |
-| path | `undefined`⎮`string`   |  - |
+| activities | [Partial]()[Activity](interfaces/botbuilder.activity.md)[]   |  - |
+| next | `function`   |  - |
 
 
 
 
 
-**Returns:** `string`
+**Returns:** [Promiseable]()[ResourceResponse](interfaces/botbuilder.resourceresponse.md)[]
 
 
 
@@ -262,22 +199,36 @@ A template function that can return a stringified value from a given data object
 
 ___
 
-<a id="templatefunctionmap"></a>
+<a id="storagekeyfactory"></a>
 
-###  TemplateFunctionMap
+###  StorageKeyFactory
 
-**Τ TemplateFunctionMap**:  *`object`* 
+**Τ StorageKeyFactory**:  *`function`* 
 
-*Defined in [libraries/botbuilder/lib/jsonTemplates.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/jsonTemplates.d.ts#L21)*
+*Defined in [libraries/botbuilder-core-extensions/lib/storage.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/storage.d.ts#L15)*
 
 
 
-A set of named template functions.
+:package: **botbuilder-core-extensions**
+
+Callback to calculate a storage key.
 
 #### Type declaration
+►(context: *[BotContext](classes/botbuilder.botcontext.md)*): [Promiseable]()`string`
 
 
-[name: `string`]: [TemplateFunction](#templatefunction)
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| context | [BotContext](classes/botbuilder.botcontext.md)   |  Context for the current turn of conversation with a user. |
+
+
+
+
+
+**Returns:** [Promiseable]()`string`
 
 
 
@@ -286,22 +237,35 @@ A set of named template functions.
 
 ___
 
-<a id="templateidmap"></a>
+<a id="testactivityinspector"></a>
 
-###  TemplateIdMap
+###  TestActivityInspector
 
-**Τ TemplateIdMap**:  *`object`* 
+**Τ TestActivityInspector**:  *`function`* 
 
-*Defined in [libraries/botbuilder/lib/dictionaryRenderer.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/dictionaryRenderer.d.ts#L15)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:14](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L14)*
 
 
 
-Map of template Id -> Function
+:package: **botbuilder-core-extensions**
 
 #### Type declaration
+►(activity: *[Partial]()[Activity](interfaces/botbuilder.activity.md)*, description: *`string`*): `void`
 
 
-[id: `string`]: [SimpleTemplateFunction](#simpletemplatefunction)
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| activity | [Partial]()[Activity](interfaces/botbuilder.activity.md)   |  - |
+| description | `string`   |  - |
+
+
+
+
+
+**Returns:** `void`
 
 
 
@@ -310,19 +274,39 @@ Map of template Id -> Function
 
 ___
 
+<a id="updateactivityhandler"></a>
 
-## Variables
-<a id="entitytypes"></a>
+###  UpdateActivityHandler
 
-###  EntityTypes
+**Τ UpdateActivityHandler**:  *`function`* 
 
-**●  EntityTypes**:  *[EntityTypes](interfaces/botbuilder.__global.entitytypes.md)* 
-
-*Defined in [libraries/botbuilder/lib/entityObject.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/entityObject.d.ts#L18)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:22](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core/lib/botContext.d.ts#L22)*
 
 
 
-Well known entity types.
+:package: **botbuilder-core**
+
+Signature implemented by functions registered with `context.onUpdateActivity()`.
+
+#### Type declaration
+►(activity: *[Partial]()[Activity](interfaces/botbuilder.activity.md)*, next: *`function`*): [Promiseable]()`void`
+
+
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| activity | [Partial]()[Activity](interfaces/botbuilder.activity.md)   |  - |
+| next | `function`   |  - |
+
+
+
+
+
+**Returns:** [Promiseable]()`void`
+
+
 
 
 
@@ -331,35 +315,56 @@ ___
 
 
 ## Functions
-<a id="ispromised"></a>
+<a id="calculatechangehash"></a>
 
-###  isPromised
+###  calculateChangeHash
 
-► **isPromised**T(result: *[Promiseable](#promiseable)`T`*): `boolean`
-
-
-
-*Defined in [libraries/botbuilder/lib/middleware.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/middleware.d.ts#L19)*
+► **calculateChangeHash**(item: *[StoreItem](interfaces/botbuilder.storeitem.md)*): `string`
 
 
 
-Returns true if a result that can (Optionally) be a Promise looks like a Promise.
+*Defined in [libraries/botbuilder-core-extensions/lib/storage.d.ts:73](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/storage.d.ts#L73)*
 
 
-**Type parameters:**
 
-#### T 
+Utility function to calculate a change hash for a `StoreItem`.
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>package</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>botbuilder-core-extensions</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| result | [Promiseable](#promiseable)`T`   |  The result to test. |
+| item | [StoreItem](interfaces/botbuilder.storeitem.md)   |  Item to calculate the change hash for. |
 
 
 
 
 
-**Returns:** `boolean`
+**Returns:** `string`
 
 
 

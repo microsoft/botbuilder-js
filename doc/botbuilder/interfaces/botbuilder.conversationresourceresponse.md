@@ -1,4 +1,4 @@
-[Bot Builder SDK - Core](../README.md) > [ConversationResourceResponse](../interfaces/botbuilder.conversationresourceresponse.md)
+[Bot Builder SDK](../README.md) > [ConversationResourceResponse](../interfaces/botbuilder.conversationresourceresponse.md)
 
 
 
@@ -15,7 +15,7 @@
 
 **●  activityId**:  *`string`* 
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:499*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:499](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L499)*
 
 
 *__member__*: {string} [activityId] ID of the Activity (if sent)
@@ -32,7 +32,7 @@ ___
 
 **●  id**:  *`string`* 
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:508*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:508](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L508)*
 
 
 *__member__*: {string} [id] Id of the resource
@@ -49,7 +49,7 @@ ___
 
 **●  serviceUrl**:  *`string`* 
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:504*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:504](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L504)*
 
 
 *__member__*: {string} [serviceUrl] Service endpoint where operations concerning the conversation may be performed

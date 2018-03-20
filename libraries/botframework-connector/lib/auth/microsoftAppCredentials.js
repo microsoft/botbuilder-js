@@ -76,6 +76,7 @@ class MicrosoftAppCredentials {
                     }
                 };
                 request(opt, (err, response, body) => {
+                    this.refreshingToken = null;
                     if (!err) {
                         if (body && response.statusCode && response.statusCode < 300) {
                             // Subtract 5 minutes from expires_in so they'll we'll get a
@@ -92,6 +93,9 @@ class MicrosoftAppCredentials {
                         reject(err);
                     }
                 });
+            }).catch((err) => {
+                this.refreshingToken = null;
+                throw err;
             });
         }
         return this.refreshingToken;

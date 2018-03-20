@@ -1,4 +1,4 @@
-[Bot Builder SDK - Core](../README.md) > [ConversationAccount](../interfaces/botbuilder.conversationaccount.md)
+[Bot Builder SDK](../README.md) > [ConversationAccount](../interfaces/botbuilder.conversationaccount.md)
 
 
 
@@ -15,10 +15,10 @@
 
 **●  id**:  *`string`* 
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:104*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:104](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L104)*
 
 
-*__member__*: {string} [id] Channel id for the user or bot on this channel (Example: joe@smith.com, or @joesmith or 123456)
+*__member__*: {string} [id] Channel id for the user or bot on this channel (Example: [joe@smith.com](mailto:joe@smith.com), or @joesmith or 123456)
 
 
 
@@ -32,7 +32,7 @@ ___
 
 **●  isGroup**:  *`boolean`* 
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:99*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:99](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L99)*
 
 
 *__member__*: {boolean} [isGroup] Is this a reference to a group
@@ -49,7 +49,7 @@ ___
 
 **●  name**:  *`string`* 
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:108*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:108](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L108)*
 
 
 *__member__*: {string} [name] Display friendly name

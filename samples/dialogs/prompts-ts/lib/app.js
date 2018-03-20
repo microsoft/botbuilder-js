@@ -1,41 +1,52 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const botbuilder_1 = require("botbuilder");
 const botbuilder_dialogs_1 = require("botbuilder-dialogs");
-const botbuilder_services_1 = require("botbuilder-services");
 const restify = require("restify");
 // Create server
 let server = restify.createServer();
 server.listen(process.env.port || process.env.PORT || 3978, function () {
     console.log(`${server.name} listening to ${server.url}`);
 });
-// Create adapter and listen to servers '/api/messages' route.
-const adapter = new botbuilder_services_1.BotFrameworkAdapter({
+// Create adapter
+const adapter = new botbuilder_1.BotFrameworkAdapter({
     appId: process.env.MICROSOFT_APP_ID,
     appPassword: process.env.MICROSOFT_APP_PASSWORD
 });
-server.post('/api/messages', adapter.listen());
-const dialogs = new botbuilder_dialogs_1.DialogSet();
-// Initialize bot by passing it adapter and middleware
-const bot = new botbuilder_1.Bot(adapter)
-    .use(new botbuilder_1.MemoryStorage())
-    .use(new botbuilder_1.BotStateManager())
-    .onReceive((context) => {
-    if (context.request.type === 'message') {
-        // Check for cancel
-        const utterance = (context.request.text || '').trim().toLowerCase();
-        if (utterance === 'menu' || utterance === 'cancel') {
-            dialogs.endAll(context);
-        }
-        // Continue the current dialog
-        return dialogs.continue(context).then(() => {
-            // Show menu if no response queued.
-            if (!context.responded) {
-                return dialogs.begin(context, 'mainMenu');
+// Add conversation state middleware
+const conversationState = new botbuilder_1.ConversationState(new botbuilder_1.MemoryStorage());
+adapter.use(conversationState);
+// Listen for incoming requests 
+server.post('/api/messages', (req, res) => {
+    // Route received request to adapter for processing
+    adapter.processRequest(req, res, (context) => __awaiter(this, void 0, void 0, function* () {
+        if (context.request.type === 'message') {
+            // Create dialog context
+            const state = conversationState.get(context);
+            const dc = dialogs.createContext(context, state);
+            // Check for cancel
+            const utterance = (context.request.text || '').trim().toLowerCase();
+            if (utterance === 'menu' || utterance === 'cancel') {
+                yield dc.endAll();
             }
-        });
-    }
+            // Continue the current dialog
+            yield dc.continue();
+            // Show menu if no response sent
+            if (!context.responded) {
+                yield dc.begin('mainMenu');
+            }
+        }
+    }));
 });
+const dialogs = new botbuilder_dialogs_1.DialogSet();
 // Add prompts
 dialogs.add('choicePrompt', new botbuilder_dialogs_1.ChoicePrompt());
 dialogs.add('confirmPrompt', new botbuilder_dialogs_1.ConfirmPrompt());
@@ -47,122 +58,154 @@ dialogs.add('attachmentPrompt', new botbuilder_dialogs_1.AttachmentPrompt());
 // Main Menu
 //-----------------------------------------------
 dialogs.add('mainMenu', [
-    function (context) {
-        function choice(title, value) {
-            return {
-                value: value,
-                action: { type: botbuilder_1.ActionTypes.ImBack, title: title, value: title }
-            };
-        }
-        return dialogs.prompt(context, 'choicePrompt', `Select a demo to run:`, [
-            choice('choice', 'choiceDemo'),
-            choice('confirm', 'confirmDemo'),
-            choice('datetime', 'datetimeDemo'),
-            choice('number', 'numberDemo'),
-            choice('text', 'textDemo'),
-            choice('attachment', 'attachmentDemo'),
-            choice('<all>', 'runAll')
-        ]);
+    function (dc) {
+        return __awaiter(this, void 0, void 0, function* () {
+            function choice(title, value) {
+                return {
+                    value: value,
+                    action: { type: botbuilder_1.ActionTypes.ImBack, title: title, value: title }
+                };
+            }
+            yield dc.prompt('choicePrompt', `Select a demo to run:`, [
+                choice('choice', 'choiceDemo'),
+                choice('confirm', 'confirmDemo'),
+                choice('datetime', 'datetimeDemo'),
+                choice('number', 'numberDemo'),
+                choice('text', 'textDemo'),
+                choice('attachment', 'attachmentDemo'),
+                choice('<all>', 'runAll')
+            ]);
+        });
     },
-    function (context, choice) {
-        if (choice.value === 'runAll') {
-            return dialogs.replace(context, choice.value);
-        }
-        else {
-            context.reply(`The demo will loop so say "menu" or "cancel" to end.`);
-            return dialogs.replace(context, 'loop', { dialogId: choice.value });
-        }
+    function (dc, choice) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (choice.value === 'runAll') {
+                yield dc.replace(choice.value);
+            }
+            else {
+                yield dc.context.sendActivity(`The demo will loop so say "menu" or "cancel" to end.`);
+                yield dc.replace('loop', { dialogId: choice.value });
+            }
+        });
     }
 ]);
 dialogs.add('loop', [
-    function (context, args) {
-        dialogs.getInstance(context).state = args;
-        return dialogs.begin(context, args.dialogId);
+    function (dc, args) {
+        return __awaiter(this, void 0, void 0, function* () {
+            dc.instance.state = args;
+            yield dc.begin(args.dialogId);
+        });
     },
-    function (context) {
-        const args = dialogs.getInstance(context).state;
-        return dialogs.replace(context, 'loop', args);
+    function (dc) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const args = dc.instance.state;
+            yield dc.replace('loop', args);
+        });
     }
 ]);
 dialogs.add('runAll', [
-    (context) => dialogs.begin(context, 'choiceDemo'),
-    (context) => dialogs.begin(context, 'confirmDemo'),
-    (context) => dialogs.begin(context, 'datetimeDemo'),
-    (context) => dialogs.begin(context, 'numberDemo'),
-    (context) => dialogs.begin(context, 'textDemo'),
-    (context) => dialogs.begin(context, 'attachmentDemo'),
-    (context) => dialogs.replace(context, 'mainMenu')
+    (dc) => dc.begin('choiceDemo'),
+    (dc) => dc.begin('confirmDemo'),
+    (dc) => dc.begin('datetimeDemo'),
+    (dc) => dc.begin('numberDemo'),
+    (dc) => dc.begin('textDemo'),
+    (dc) => dc.begin('attachmentDemo'),
+    (dc) => dc.replace('mainMenu')
 ]);
 //-----------------------------------------------
 // Choice Demo
 //-----------------------------------------------
 dialogs.add('choiceDemo', [
-    function (context) {
-        return dialogs.prompt(context, 'choicePrompt', `choice: select a color`, ['red', 'green', 'blue']);
+    function (dc) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield dc.prompt('choicePrompt', `choice: select a color`, ['red', 'green', 'blue']);
+        });
     },
-    function (context, choice) {
-        context.reply(`Recognized choice: ${JSON.stringify(choice)}`);
-        return dialogs.end(context);
+    function (dc, choice) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield dc.context.sendActivity(`Recognized choice: ${JSON.stringify(choice)}`);
+            yield dc.end();
+        });
     }
 ]);
 //-----------------------------------------------
 // Confirm Demo
 //-----------------------------------------------
 dialogs.add('confirmDemo', [
-    function (context) {
-        return dialogs.prompt(context, 'confirmPrompt', `confirm: answer "yes" or "no"`);
+    function (dc) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield dc.prompt('confirmPrompt', `confirm: answer "yes" or "no"`);
+        });
     },
-    function (context, value) {
-        context.reply(`Recognized value: ${value}`);
-        return dialogs.end(context);
+    function (dc, value) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield dc.context.sendActivity(`Recognized value: ${value}`);
+            yield dc.end();
+        });
     }
 ]);
 //-----------------------------------------------
 // Datetime Demo
 //-----------------------------------------------
 dialogs.add('datetimeDemo', [
-    function (context) {
-        return dialogs.prompt(context, 'datetimePrompt', `datetime: enter a datetime`);
+    function (dc) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield dc.prompt('datetimePrompt', `datetime: enter a datetime`);
+        });
     },
-    function (context, values) {
-        context.reply(`Recognized values: ${JSON.stringify(values)}`);
-        return dialogs.end(context);
+    function (dc, values) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield dc.context.sendActivity(`Recognized values: ${JSON.stringify(values)}`);
+            yield dc.end();
+        });
     }
 ]);
 //-----------------------------------------------
 // Number Demo
 //-----------------------------------------------
 dialogs.add('numberDemo', [
-    function (context) {
-        return dialogs.prompt(context, 'numberPrompt', `number: enter a number`);
+    function (dc) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield dc.prompt('numberPrompt', `number: enter a number`);
+        });
     },
-    function (context, value) {
-        context.reply(`Recognized value: ${value}`);
-        return dialogs.end(context);
+    function (dc, value) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield dc.context.sendActivity(`Recognized value: ${value}`);
+            yield dc.end();
+        });
     }
 ]);
 //-----------------------------------------------
 // Text Demo
 //-----------------------------------------------
 dialogs.add('textDemo', [
-    function (context) {
-        return dialogs.prompt(context, 'textPrompt', `text: enter some text`);
+    function (dc) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield dc.prompt('textPrompt', `text: enter some text`);
+        });
     },
-    function (context, value) {
-        context.reply(`Recognized value: ${value}`);
-        return dialogs.end(context);
+    function (dc, value) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield dc.context.sendActivity(`Recognized value: ${value}`);
+            yield dc.end();
+        });
     }
 ]);
 //-----------------------------------------------
 // Attachment Demo
 //-----------------------------------------------
 dialogs.add('attachmentDemo', [
-    function (context) {
-        return dialogs.prompt(context, 'attachmentPrompt', `attachment: upload image(s)`);
+    function (dc) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield dc.prompt('attachmentPrompt', `attachment: upload image(s)`);
+        });
     },
-    function (context, values) {
-        context.reply(botbuilder_1.MessageStyler.carousel(values, `Uploaded ${values.length} Attachment(s)`));
-        return dialogs.end(context);
+    function (dc, values) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield dc.context.sendActivity(botbuilder_1.MessageFactory.carousel(values, `Uploaded ${values.length} Attachment(s)`));
+            yield dc.end();
+        });
     }
 ]);
 //# sourceMappingURL=app.js.map

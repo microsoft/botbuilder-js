@@ -1,13 +1,12 @@
 
 module.exports = {
-    begin(context) {
+    begin(context, state) {
         // Cancel the current topic
-        if (context.state.conversation.topic) {
-            context.state.conversation.topic = undefined;
-            context.reply(`Ok... Canceled.`);
-        } else {
-            context.reply(`Nothing to cancel.`);
+        const conversation = state.conversation(context);
+        if (conversation.topic) {
+            conversation.topic = undefined;
+            return context.sendActivity(`Ok... Canceled.`);
         }
-        return Promise.resolve();
+        return context.sendActivity(`Nothing to cancel.`);
     }
 };

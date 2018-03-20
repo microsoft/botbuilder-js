@@ -1,27 +1,29 @@
+import { BotContext } from 'botbuilder';
+import { BotStateManager } from './botStateManager';
 import { renderAlarms } from './showAlarms';
 
-export function begin(context: BotContext): Promise<void> {
+export async function begin(context: BotContext, state: BotStateManager): Promise<any> {
     // Delete any existing topic
-    context.state.conversation.topic = undefined;
+    const conversation = state.conversation(context);
+    conversation.topic = undefined;
 
     // Render list of topics to user
-    const count = renderAlarms(context);
+    const count = await renderAlarms(context, state);
     if (count > 0) {
         // Set topic and prompt user for alarm to delete.
-        context.state.conversation.topic = 'deleteAlarm';
-        context.reply(`Which alarm would you like to delete?`);
+        conversation.topic = 'deleteAlarm';
+        await context.sendActivity(`Which alarm would you like to delete?`);
     }
-    return Promise.resolve();
 }
 
-export function routeReply(context: BotContext): Promise<void> {
+export async function routeReply(context: BotContext, state: BotStateManager): Promise<any> {
     // Validate users reply and delete alarm
     let deleted = false;
     const title = context.request.text.trim();
-    const list = context.state.user.alarms || [];
-    for (let i = 0; i < list.length; i++) {
-        if (list[i].title.toLowerCase() === title.toLowerCase()) {
-            list.splice(i, 1);
+    const user = state.user(context);
+    for (let i = 0; i < user.alarms.length; i++) {
+        if (user.alarms[i].title.toLowerCase() === title.toLowerCase()) {
+            user.alarms.splice(i, 1);
             deleted = true;
             break;
         }
@@ -29,11 +31,9 @@ export function routeReply(context: BotContext): Promise<void> {
 
     // Notify user of deletion or re-prompt
     if (deleted) {
-        context.reply(`Deleted the "${title}" alarm.`);
-        context.state.conversation.topic = undefined;
+        state.conversation(context).topic = undefined;
+        await context.sendActivity(`Deleted the "${title}" alarm.`);
     } else {
-        context.reply(`An alarm named "${title}" doesn't exist. Which alarm would you like to delete? Say "cancel" to quit.`)
+        await context.sendActivity(`An alarm named "${title}" doesn't exist. Which alarm would you like to delete? Say "cancel" to quit.`)
     }
-
-    return Promise.resolve();
 }

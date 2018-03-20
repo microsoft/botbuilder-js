@@ -1,4 +1,4 @@
-[Bot Builder SDK - Core](../README.md) > [MessageReactionTypes](../enums/botbuilder.messagereactiontypes.md)
+[Bot Builder SDK](../README.md) > [MessageReactionTypes](../enums/botbuilder.messagereactiontypes.md)
 
 
 
@@ -30,7 +30,7 @@ Defines values for MessageReactionTypes. Possible values include: 'like', 'plusO
 
 ** Like**:    = "like"
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:1649*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1649](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1649)*
 
 
 
@@ -44,7 +44,7 @@ ___
 
 ** PlusOne**:    = "plusOne"
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:1650*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1650](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1650)*
 
 
 

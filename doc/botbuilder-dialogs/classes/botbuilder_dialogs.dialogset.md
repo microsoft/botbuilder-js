@@ -62,10 +62,10 @@ A related set of dialogs that can all call each other.
 <a id="constructor"></a>
 
 
-### ⊕ **new DialogSet**(stackName?: *`undefined`⎮`string`*): [DialogSet](botbuilder_dialogs.dialogset.md)
+### ⊕ **new DialogSet**(stackName?: *`undefined`⎮`string`*, stateName?: *`undefined`⎮`string`*): [DialogSet](botbuilder_dialogs.dialogset.md)
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:48](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L48)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:49](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L49)*
 
 
 
@@ -80,7 +80,8 @@ Creates an empty dialog set. The ability to name the sets dialog stack means tha
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| stackName | `undefined`⎮`string`   |  (Optional) name of the field to store the dialog stack in off the bots conversation state object. This defaults to 'dialogStack'. |
+| stackName | `undefined`⎮`string`   |  (Optional) name of the field to store the dialog stack in off the state bag. Defaults to 'dialogStack'. |
+| stateName | `undefined`⎮`string`   |  (Optional) name of state bag on the context object that will be used to store the dialog stack. Defaults to `conversationState`. |
 
 
 
@@ -102,7 +103,7 @@ Creates an empty dialog set. The ability to name the sets dialog stack means tha
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:79](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L79)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:81](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L81)*
 
 
 
@@ -139,7 +140,7 @@ Type of the dialog being set and returned.
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:80](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L80)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:82](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L82)*
 
 
 
@@ -166,11 +167,11 @@ ___
 
 ###  begin
 
-► **begin**(context: *`BotContext`*, dialogId: *`string`*, dialogArgs?: *`any`*): `Promise`.<`void`>
+► **begin**(context: *[BotContext]()*, dialogId: *`string`*, dialogArgs?: *`any`*): `Promise`.<`void`>
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:93](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L93)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:95](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L95)*
 
 
 
@@ -185,7 +186,7 @@ Pushes a new dialog onto the dialog stack.
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | `BotContext`   |  Context object for the current turn of conversation with the user. |
+| context | [BotContext]()   |  Context object for the current turn of conversation with the user. |
 | dialogId | `string`   |  ID of the dialog to start. |
 | dialogArgs | `any`   |  (Optional) additional argument(s) to pass to the dialog being started. |
 
@@ -205,11 +206,11 @@ ___
 
 ###  continue
 
-► **continue**(context: *`BotContext`*): `Promise`.<`void`>
+► **continue**(context: *[BotContext]()*): `Promise`.<`void`>
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:126](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L126)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:128](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L128)*
 
 
 
@@ -218,7 +219,7 @@ Continues execution of the active dialog, if there is one, by passing the contex
 **Example usage:**
 
     return dialogs.continue(context).then(() => {
-         if (!dialog.responded) {
+         if (!context.responded) {
              return dialogs.begin(context, 'fallback');
          }
     });
@@ -228,7 +229,7 @@ Continues execution of the active dialog, if there is one, by passing the contex
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | `BotContext`   |  Context object for the current turn of conversation with the user. |
+| context | [BotContext]()   |  Context object for the current turn of conversation with the user. |
 
 
 
@@ -246,11 +247,11 @@ ___
 
 ###  end
 
-► **end**(context: *`BotContext`*, result?: *`any`*): `Promise`.<`void`>
+► **end**(context: *[BotContext]()*, result?: *`any`*): `Promise`.<`void`>
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:152](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L152)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:154](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L154)*
 
 
 
@@ -274,7 +275,7 @@ The parent dialog will have its `Dialog.resume()` method invoked with any return
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | `BotContext`   |  Context object for the current turn of conversation with the user. |
+| context | [BotContext]()   |  Context object for the current turn of conversation with the user. |
 | result | `any`   |  (Optional) result to pass to the parent dialogs `Dialog.resume()` method. |
 
 
@@ -293,11 +294,11 @@ ___
 
 ###  endAll
 
-► **endAll**(context: *`BotContext`*): `Promise`.<`void`>
+► **endAll**(context: *[BotContext]()*): `Promise`.<`void`>
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:164](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L164)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:166](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L166)*
 
 
 
@@ -313,7 +314,7 @@ Deletes any existing dialog stack thus cancelling all dialogs on the stack.
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | `BotContext`   |  Context object for the current turn of conversation with the user. |
+| context | [BotContext]()   |  Context object for the current turn of conversation with the user. |
 
 
 
@@ -335,7 +336,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:176](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L176)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:178](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L178)*
 
 
 
@@ -374,11 +375,11 @@ ___
 
 ###  getInstance
 
-► **getInstance**T(context: *`BotContext`*): [DialogInstance](../interfaces/botbuilder_dialogs.dialoginstance.md)`T`
+► **getInstance**T(context: *[BotContext]()*): [DialogInstance](../interfaces/botbuilder_dialogs.dialoginstance.md)`T`
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:201](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L201)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:203](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L203)*
 
 
 
@@ -399,7 +400,7 @@ Returns the active dialog instance on the top of the stack. Throws an error if t
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | `BotContext`   |  Context object for the current turn of conversation with the user. |
+| context | [BotContext]()   |  Context object for the current turn of conversation with the user. |
 
 
 
@@ -417,11 +418,11 @@ ___
 
 ###  getStack
 
-► **getStack**(context: *`BotContext`*): [DialogInstance](../interfaces/botbuilder_dialogs.dialoginstance.md)`any`[]
+► **getStack**(context: *[BotContext]()*): [DialogInstance](../interfaces/botbuilder_dialogs.dialoginstance.md)`any`[]
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:187](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L187)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:189](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L189)*
 
 
 
@@ -436,7 +437,7 @@ Returns the dialog stack persisted for a conversation.
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | `BotContext`   |  Context object for the current turn of conversation with the user. |
+| context | [BotContext]()   |  Context object for the current turn of conversation with the user. |
 
 
 
@@ -454,11 +455,11 @@ ___
 
 ###  prompt
 
-► **prompt**O(context: *`BotContext`*, dialogId: *`string`*, prompt: *`string`⎮[Partial]()[Activity]()*, choicesOrOptions?: *`O`⎮(`string`⎮[Choice]())[]*, options?: *[O]()*): `Promise`.<`void`>
+► **prompt**O(context: *[BotContext]()*, dialogId: *`string`*, prompt: *`string`⎮[Partial]()[Activity]()*, choicesOrOptions?: *`O`⎮(`string`⎮[Choice]())[]*, options?: *[O]()*): `Promise`.<`void`>
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:109](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L109)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:111](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L111)*
 
 
 
@@ -479,7 +480,7 @@ Helper function to simplify formatting the options for calling a prompt dialog. 
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | `BotContext`   |  Context object for the current turn of conversation with the user. |
+| context | [BotContext]()   |  Context object for the current turn of conversation with the user. |
 | dialogId | `string`   |  ID of the prompt to start. |
 | prompt | `string`⎮[Partial]()[Activity]()   |  Initial prompt to send the user. |
 | choicesOrOptions | `O`⎮(`string`⎮[Choice]())[]   |  (Optional) array of choices to prompt the user for or additional prompt options. |
@@ -501,11 +502,11 @@ ___
 
 ###  replace
 
-► **replace**(context: *`BotContext`*, dialogId: *`string`*, dialogArgs?: *`any`*): `Promise`.<`void`>
+► **replace**(context: *[BotContext]()*, dialogId: *`string`*, dialogArgs?: *`any`*): `Promise`.<`void`>
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:226](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L226)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:228](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L228)*
 
 
 
@@ -529,7 +530,7 @@ Ends the current dialog and starts a new dialog in its place. This is particular
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | `BotContext`   |  Context object for the current turn of conversation with the user. |
+| context | [BotContext]()   |  Context object for the current turn of conversation with the user. |
 | dialogId | `string`   |  ID of the new dialog to start. |
 | dialogArgs | `any`   |  (Optional) additional argument(s) to pass to the new dialog. |
 

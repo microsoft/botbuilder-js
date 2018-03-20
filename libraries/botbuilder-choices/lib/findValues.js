@@ -94,7 +94,7 @@ function findValues(utterance, values, options) {
         //   to re-search the string starting from the end of the previous match.
         // - The start & end position returned for the match are token positions.
         let startPos = 0;
-        const vTokens = tokenizer(entry.value.trim());
+        const vTokens = tokenizer(entry.value.trim(), opt.locale);
         while (startPos < tokens.length) {
             const match = matchValue(entry.index, entry.value, vTokens, startPos);
             if (match) {

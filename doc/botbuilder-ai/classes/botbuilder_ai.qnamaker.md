@@ -4,6 +4,10 @@
 
 # Class: QnAMaker
 
+## Implements
+
+* [Middleware]()
+
 ## Index
 
 ### Constructors
@@ -13,8 +17,10 @@
 
 ### Methods
 
-* [getAnswers](botbuilder_ai.qnamaker.md#getanswers)
-* [routeTo](botbuilder_ai.qnamaker.md#routeto)
+* [answer](botbuilder_ai.qnamaker.md#answer)
+* [callService](botbuilder_ai.qnamaker.md#callservice)
+* [generateAnswer](botbuilder_ai.qnamaker.md#generateanswer)
+* [onProcessRequest](botbuilder_ai.qnamaker.md#onprocessrequest)
 
 
 
@@ -23,10 +29,10 @@
 <a id="constructor"></a>
 
 
-### ⊕ **new QnAMaker**(options: *[QnAMakerOptions](../interfaces/botbuilder_ai.qnamakeroptions.md)*): [QnAMaker](botbuilder_ai.qnamaker.md)
+### ⊕ **new QnAMaker**(settings: *[QnAMakerSettings](../interfaces/botbuilder_ai.qnamakersettings.md)*): [QnAMaker](botbuilder_ai.qnamaker.md)
 
 
-*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:32](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L32)*
+*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:40](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L40)*
 
 
 
@@ -34,7 +40,7 @@
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| options | [QnAMakerOptions](../interfaces/botbuilder_ai.qnamakeroptions.md)   |  - |
+| settings | [QnAMakerSettings](../interfaces/botbuilder_ai.qnamakersettings.md)   |  - |
 
 
 
@@ -46,45 +52,15 @@
 
 
 ## Methods
-<a id="getanswers"></a>
+<a id="answer"></a>
 
-###  getAnswers
+###  answer
 
-► **getAnswers**(question: *`string`*): `Promise`.<[QnAMakerResult](../interfaces/botbuilder_ai.qnamakerresult.md)[]>
-
-
-
-*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:34](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L34)*
+► **answer**(context: *[BotContext]()*): `Promise`.<`boolean`>
 
 
 
-**Parameters:**
-
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| question | `string`   |  - |
-
-
-
-
-
-**Returns:** `Promise`.<[QnAMakerResult](../interfaces/botbuilder_ai.qnamakerresult.md)[]>
-
-
-
-
-
-___
-
-<a id="routeto"></a>
-
-###  routeTo
-
-► **routeTo**(context: *[BotContext]()*): `Promise`.<`boolean`>
-
-
-
-*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L39)*
+*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:43](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L43)*
 
 
 
@@ -99,6 +75,101 @@ ___
 
 
 **Returns:** `Promise`.<`boolean`>
+
+
+
+
+
+___
+
+<a id="callservice"></a>
+
+### «Protected» callService
+
+► **callService**(serviceEndpoint: *`string`*, question: *`string`*, top: *`number`*): `Promise`.<[QnAMakerResult](../interfaces/botbuilder_ai.qnamakerresult.md)[]>
+
+
+
+*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:45](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L45)*
+
+
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| serviceEndpoint | `string`   |  - |
+| question | `string`   |  - |
+| top | `number`   |  - |
+
+
+
+
+
+**Returns:** `Promise`.<[QnAMakerResult](../interfaces/botbuilder_ai.qnamakerresult.md)[]>
+
+
+
+
+
+___
+
+<a id="generateanswer"></a>
+
+###  generateAnswer
+
+► **generateAnswer**(question: *`string`*, top?: *`undefined`⎮`number`*, scoreThreshold?: *`undefined`⎮`number`*): `Promise`.<[QnAMakerResult](../interfaces/botbuilder_ai.qnamakerresult.md)[]>
+
+
+
+*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:44](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L44)*
+
+
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| question | `string`   |  - |
+| top | `undefined`⎮`number`   |  - |
+| scoreThreshold | `undefined`⎮`number`   |  - |
+
+
+
+
+
+**Returns:** `Promise`.<[QnAMakerResult](../interfaces/botbuilder_ai.qnamakerresult.md)[]>
+
+
+
+
+
+___
+
+<a id="onprocessrequest"></a>
+
+###  onProcessRequest
+
+► **onProcessRequest**(context: *[BotContext]()*, next: *`function`*): `Promise`.<`void`>
+
+
+
+*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:42](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L42)*
+
+
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| context | [BotContext]()   |  - |
+| next | `function`   |  - |
+
+
+
+
+
+**Returns:** `Promise`.<`void`>
 
 
 

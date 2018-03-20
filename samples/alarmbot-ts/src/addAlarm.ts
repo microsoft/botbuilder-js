@@ -1,53 +1,60 @@
+import { BotContext } from 'botbuilder';
+import { BotStateManager, Alarm } from './botStateManager';
 
-export function begin(context: BotContext): Promise<void> {
+export async function begin(context: BotContext, state: BotStateManager): Promise<any> {
     // Set topic and initialize empty alarm
-    context.state.conversation.topic = 'addAlarm';
-    context.state.conversation.alarm = {} as any;
-    return nextField(context);
+    const conversation = state.conversation(context);
+    conversation.topic = 'addAlarm';
+    conversation.alarm = {};
+    
+    // Prompt for first field
+    await nextField(context, state);
 }
 
-export function routeReply(context: BotContext): Promise<void> {
+export async function routeReply(context: BotContext, state: BotStateManager): Promise<any> {
     // Handle users reply to prompt
+    const conversation = state.conversation(context);
     const utterance = context.request.text.trim();
-    switch (context.state.conversation.prompt) {
+    switch (conversation.prompt) {
         case 'title':
             // Validate reply and save to alarm
             if (utterance.length > 2) {
-                context.state.conversation.alarm.title = utterance;
+                conversation.alarm.title = utterance;
             } else {
-                context.reply(`I'm sorry. Your alarm should have a title at least 3 characters long.`);
+                await context.sendActivity(`I'm sorry. Your alarm should have a title at least 3 characters long.`);
             }
             break;
         case 'time':
             // TODO: validate time user replied with
-            context.state.conversation.alarm.time = utterance;
+            conversation.alarm.time = utterance;
             break;
     }
-    return nextField(context);
+
+    // Prompt for next field
+    await nextField(context, state);
 }
 
-function nextField(context: BotContext): Promise<void> {
+async function nextField(context: BotContext, state: BotStateManager): Promise<any> {
     // Prompt user for next missing field
-    const alarm = context.state.conversation.alarm;
+    const conversation = state.conversation(context);
+    const alarm = conversation.alarm;
     if (alarm.title === undefined) {
-        context.reply(`What would you like to call your alarm?`);
-        context.state.conversation.prompt = 'title';
+        conversation.prompt = 'title';
+        await context.sendActivity(`What would you like to call your alarm?`);
     } else if (alarm.time === undefined) {
-        context.reply(`What time would you like to set the "${alarm.title}" alarm for?`);
-        context.state.conversation.prompt = 'time';
+        conversation.prompt = 'time';
+        await context.sendActivity(`What time would you like to set the "${alarm.title}" alarm for?`);
     } else {
         // Alarm completed so set alarm.
-        const list = context.state.user.alarms || [];
-        list.push(alarm);
-        context.state.user.alarms = list;
+        const user = state.user(context);
+        user.alarms.push(alarm as Alarm);
 
         // TODO: set alarm
 
         // Notify user and cleanup topic state
-        context.reply(`Your alarm named "${alarm.title}" is set for "${alarm.time}".`);
-        context.state.conversation.topic = undefined;
-        context.state.conversation.alarm = undefined;
-        context.state.conversation.prompt = undefined;
+        conversation.topic = undefined;
+        conversation.alarm = undefined;
+        conversation.prompt = undefined;
+        await context.sendActivity(`Your alarm named "${alarm.title}" is set for "${alarm.time}".`);
     }
-    return Promise.resolve();
 }

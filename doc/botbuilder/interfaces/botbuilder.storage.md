@@ -1,11 +1,13 @@
-[Bot Builder SDK - Core](../README.md) > [Storage](../interfaces/botbuilder.storage.md)
+[Bot Builder SDK](../README.md) > [Storage](../interfaces/botbuilder.storage.md)
 
 
 
 # Interface: Storage
 
 
-Interface for a store provider that stores and retrieves objects
+:package: **botbuilder-core-extensions**
+
+Interface for a store provider that stores and retrieves objects.
 
 ## Implemented by
 
@@ -23,7 +25,7 @@ Interface for a store provider that stores and retrieves objects
 
 
 
-*Defined in [libraries/botbuilder/lib/storage.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/storage.d.ts#L27)*
+*Defined in [libraries/botbuilder-core-extensions/lib/storage.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/storage.d.ts#L39)*
 
 
 
@@ -56,7 +58,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/storage.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/storage.d.ts#L15)*
+*Defined in [libraries/botbuilder-core-extensions/lib/storage.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/storage.d.ts#L27)*
 
 
 
@@ -89,7 +91,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/storage.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/storage.d.ts#L21)*
+*Defined in [libraries/botbuilder-core-extensions/lib/storage.d.ts:33](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/storage.d.ts#L33)*
 
 
 

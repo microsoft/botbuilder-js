@@ -1,11 +1,4 @@
 "use strict";
-/**
- * @module botbuilder-choices
- */
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.channels = {
     facebook: 'facebook',
@@ -70,7 +63,7 @@ function maxActionTitleLength(channelId) {
 }
 exports.maxActionTitleLength = maxActionTitleLength;
 function getChannelId(context) {
-    return context.conversationReference.channelId || '';
+    return context.request.channelId || '';
 }
 exports.getChannelId = getChannelId;
 //# sourceMappingURL=channel.js.map

@@ -1,4 +1,4 @@
-[Bot Builder SDK - Core](../README.md) > [PaymentDetailsModifier](../interfaces/botbuilder.paymentdetailsmodifier.md)
+[Bot Builder SDK](../README.md) > [PaymentDetailsModifier](../interfaces/botbuilder.paymentdetailsmodifier.md)
 
 
 
@@ -15,7 +15,7 @@
 
 **●  additionalDisplayItems**:  *[PaymentItem](botbuilder.paymentitem.md)[]* 
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:1336*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1336](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1336)*
 
 
 *__member__*: {PaymentItem[]} [additionalDisplayItems] Provides additional display items that are appended to the displayItems field in the PaymentDetails dictionary for the payment method identifiers in the supportedMethods field
@@ -32,7 +32,7 @@ ___
 
 **●  data**:  *`any`* 
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:1341*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1341](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1341)*
 
 
 *__member__*: {any} [data] A JSON-serializable object that provides optional information that might be needed by the supported payment methods
@@ -49,7 +49,7 @@ ___
 
 **●  supportedMethods**:  *`string`[]* 
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:1323*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1323](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1323)*
 
 
 *__member__*: {string[]} [supportedMethods] Contains a sequence of payment method identifiers
@@ -66,7 +66,7 @@ ___
 
 **●  total**:  *[PaymentItem](botbuilder.paymentitem.md)* 
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:1329*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1329](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1329)*
 
 
 *__member__*: {PaymentItem} [total] This value overrides the total field in the PaymentDetails dictionary for the payment method identifiers in the supportedMethods field

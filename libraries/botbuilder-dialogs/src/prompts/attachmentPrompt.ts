@@ -5,10 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Attachment } from 'botbuilder';
-import { Dialog } from '../dialog';
-import { DialogSet } from '../dialogSet';
-import { PromptOptions, PromptValidator, formatPrompt } from './prompt';
+import { BotContext, Attachment } from 'botbuilder';
+import { DialogContext } from '../dialogContext';
+import { Prompt, PromptOptions, PromptValidator } from './prompt';
+import * as prompts from 'botbuilder-prompts';
 
 /**
  * Prompts a user to upload attachments like images. By default the prompt will return to the 
@@ -24,65 +24,51 @@ import { PromptOptions, PromptValidator, formatPrompt } from './prompt';
  * dialogs.add('attachmentPrompt', new AttachmentPrompt());
  * 
  * dialogs.add('uploadImage', [
- *      function (context) {
- *          return dialogs.prompt(context, 'attachmentPrompt', `Send me image(s)`);
+ *      function (dc) {
+ *          return dc.prompt('attachmentPrompt', `Send me image(s)`);
  *      },
- *      function (context, attachments) {
- *          context.reply(`Processing ${attachments.length} images.`);
- *          return dialogs.end(context);
+ *      function (dc, attachments) {
+ *          dc.batch.reply(`Processing ${attachments.length} images.`);
+ *          return dc.end();
  *      }
  * ]);
  * ```
  */
-export class AttachmentPrompt implements Dialog {
+export class AttachmentPrompt<C extends BotContext> extends Prompt<C, Attachment[]> {
+    private prompt: prompts.AttachmentPrompt;
+
     /**
      * Creates a new instance of the prompt.
      * 
      * **Example usage:**
      * 
      * ```JavaScript
-     * dialogs.add('imagePrompt', new AttachmentPrompt((context, values) => {
-     *      if (values.length < 1) {
-     *          context.reply(`Send me an image or say 'cancel'.`);
-     *          return Prompts.resolve();
+     * dialogs.add('imagePrompt', new AttachmentPrompt((dc, values) => {
+     *      if (!Array.isArray(values) || values.length < 1) {
+     *          dc.batch.reply(`Send me an image or say "cancel".`);
+     *          return undefined;
      *      } else {
-     *          return dialogs.end(context, values);
+     *          return values;
      *      }
      * }));
      * ```
-     * @param validator (Optional) validator that will be called each time the user responds to the prompt.
+     * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.  
      */
-    constructor(private validator?: PromptValidator<Attachment[]>) {}
+    constructor(validator?: PromptValidator<C, Attachment[]>) {
+        super(validator);
+        this.prompt = prompts.createAttachmentPrompt(); 
+    }
 
-    public begin(context: BotContext, dialogs: DialogSet, options: PromptOptions): Promise<void> {
-        // Persist options
-        const instance = dialogs.getInstance<PromptOptions>(context);
-        instance.state = options || {};
-
-        // Send initial prompt
-        if (instance.state.prompt) { context.reply(formatPrompt(instance.state.prompt, instance.state.speak)) }
+    protected onPrompt(dc: DialogContext<C>, options: PromptOptions, isRetry: boolean): Promise<void> {
+        if (isRetry && options.retryPrompt) {
+            return this.prompt.prompt(dc.context, options.retryPrompt, options.retrySpeak);
+        } else if (options.prompt) {
+            return this.prompt.prompt(dc.context, options.prompt, options.speak);
+        }
         return Promise.resolve();
     }
 
-    public continue(context: BotContext, dialogs: DialogSet): Promise<void> {
-        // Recognize value
-        const options = dialogs.getInstance<PromptOptions>(context).state;
-        const values: Attachment[] = context.request && context.request.attachments ? context.request.attachments : [];
-        if (this.validator) {
-            // Call validator for further processing
-            return Promise.resolve(this.validator(context, values, dialogs));
-        } else if (values.length > 0) {
-            // Return recognized values
-            return dialogs.end(context, values);
-        } else {
-            if (options.retryPrompt) {
-                // Send retry prompt to user
-                context.reply(formatPrompt(options.retryPrompt, options.retrySpeak));
-            } else if (options.prompt) {
-                // Send original prompt to user
-                context.reply(formatPrompt(options.prompt, options.speak));
-            }
-            return Promise.resolve();
-        }
+    protected onRecognize(dc: DialogContext<C>, options: PromptOptions): Promise<Attachment[]|undefined> {
+        return this.prompt.recognize(dc.context);
     }
 }

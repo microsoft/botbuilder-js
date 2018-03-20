@@ -1,4 +1,4 @@
-[Bot Builder SDK - Core](../README.md) > [MicrosoftPayMethodData](../interfaces/botbuilder.microsoftpaymethoddata.md)
+[Bot Builder SDK](../README.md) > [MicrosoftPayMethodData](../interfaces/botbuilder.microsoftpaymethoddata.md)
 
 
 
@@ -15,7 +15,7 @@
 
 **●  mechantId**:  *`string`* 
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:1164*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1164](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1164)*
 
 
 *__member__*: {string} [mechantId] Microsoft Pay Merchant ID
@@ -32,7 +32,7 @@ ___
 
 **●  supportedNetworks**:  *`string`[]* 
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:1169*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1169](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1169)*
 
 
 *__member__*: {string[]} [supportedNetworks] Supported payment networks (e.g., "visa" and "mastercard")
@@ -49,7 +49,7 @@ ___
 
 **●  supportedTypes**:  *`string`[]* 
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:1174*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1174](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1174)*
 
 
 *__member__*: {string[]} [supportedTypes] Supported payment types (e.g., "credit")

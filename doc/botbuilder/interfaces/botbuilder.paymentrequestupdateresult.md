@@ -1,4 +1,4 @@
-[Bot Builder SDK - Core](../README.md) > [PaymentRequestUpdateResult](../interfaces/botbuilder.paymentrequestupdateresult.md)
+[Bot Builder SDK](../README.md) > [PaymentRequestUpdateResult](../interfaces/botbuilder.paymentrequestupdateresult.md)
 
 
 
@@ -15,7 +15,7 @@
 
 **●  details**:  *[PaymentDetails](botbuilder.paymentdetails.md)* 
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:1574*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1574](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1574)*
 
 
 *__member__*: {PaymentDetails} [details] Update payment details

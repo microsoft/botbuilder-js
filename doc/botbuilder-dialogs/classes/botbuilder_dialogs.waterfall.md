@@ -37,7 +37,7 @@ Similarly, calling a dialog/prompt from within the last step of the waterfall wi
 ### ⊕ **new Waterfall**(steps: *[WaterfallStep](../#waterfallstep)[]*): [Waterfall](botbuilder_dialogs.waterfall.md)
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:73](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L73)*
+*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:73](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L73)*
 
 
 
@@ -64,13 +64,13 @@ Creates a new waterfall dialog containing the given array of steps.
 
 ###  begin
 
-► **begin**(context: *`BotContext`*, dialogs: *[DialogSet](botbuilder_dialogs.dialogset.md)*, args?: *`any`*): [Promiseable]()`void`
+► **begin**(context: *[BotContext]()*, dialogs: *[DialogSet](botbuilder_dialogs.dialogset.md)*, args?: *`any`*): [Promiseable]()`void`
 
 
 
 *Implementation of [Dialog](../interfaces/botbuilder_dialogs.dialog.md).[begin](../interfaces/botbuilder_dialogs.dialog.md#begin)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:79](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L79)*
+*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:79](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L79)*
 
 
 
@@ -78,7 +78,7 @@ Creates a new waterfall dialog containing the given array of steps.
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | `BotContext`   |  - |
+| context | [BotContext]()   |  - |
 | dialogs | [DialogSet](botbuilder_dialogs.dialogset.md)   |  - |
 | args | `any`   |  - |
 
@@ -98,13 +98,13 @@ ___
 
 ###  resume
 
-► **resume**(context: *`BotContext`*, dialogs: *[DialogSet](botbuilder_dialogs.dialogset.md)*, result?: *`any`*): [Promiseable]()`void`
+► **resume**(context: *[BotContext]()*, dialogs: *[DialogSet](botbuilder_dialogs.dialogset.md)*, result?: *`any`*): [Promiseable]()`void`
 
 
 
 *Implementation of [Dialog](../interfaces/botbuilder_dialogs.dialog.md).[resume](../interfaces/botbuilder_dialogs.dialog.md#resume)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:80](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L80)*
+*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:80](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L80)*
 
 
 
@@ -112,7 +112,7 @@ ___
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | `BotContext`   |  - |
+| context | [BotContext]()   |  - |
 | dialogs | [DialogSet](botbuilder_dialogs.dialogset.md)   |  - |
 | result | `any`   |  - |
 

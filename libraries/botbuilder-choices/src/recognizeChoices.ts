@@ -10,7 +10,6 @@ import { Choice, findChoices, FoundChoice, FindChoicesOptions } from './findChoi
 import { ModelResult } from './modelResult';
 import * as Recognizers from '@microsoft/recognizers-text-number';
 
-
 export function recognizeChoices(utterance: string, choices: (string|Choice)[], options?: FindChoicesOptions): ModelResult<FoundChoice>[] {
     function matchChoiceByIndex(match: ModelResult<any>) {
         try {
@@ -33,21 +32,22 @@ export function recognizeChoices(utterance: string, choices: (string|Choice)[], 
     }
 
     // Normalize choices
-    const list: Choice[] = (choices || []).map((choice, index) => typeof choice === 'string' ? { value: choice } : choice);
+    const list: Choice[] = (choices || []).map((choice, index) => typeof choice === 'string' ? { value: choice } : choice).filter((choice) => choice);
     
     // Try finding choices by text search first
     // - We only want to use a single strategy for returning results to avoid issues where utterances 
     //   like the "the third one" or "the red one" or "the first division book" would miss-recognize as 
     //   a numerical index or ordinal as well.
+    const locale = options && options.locale ? options.locale : 'en-us';
     let matched = findChoices(utterance, list, options);
     if (matched.length === 0) {
         // Next try finding by ordinal
-        const ordinals = Recognizers.recognizeOrdinal(utterance, 'en-us');
+        const ordinals = Recognizers.recognizeOrdinal(utterance, locale);
         if (ordinals.length > 0) {
             ordinals.forEach(matchChoiceByIndex);
         } else {
             // Finally try by numerical index
-            Recognizers.recognizeNumber(utterance, 'en-us').forEach(matchChoiceByIndex);
+            Recognizers.recognizeNumber(utterance, locale).forEach(matchChoiceByIndex);
         }
 
         // Sort any found matches by their position within the utterance.

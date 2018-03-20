@@ -1,38 +1,23 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @module botbuilder-azure
- */
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
-const botbuilder_1 = require("botbuilder");
 const azure = require("azure-storage");
 let checkedTables = {};
 /**
  * Middleware that implements an Azure Table based storage provider for a bot.
  *
- * __Extends BotContext:__
- * * context.storage - Storage provider for storing and retrieving objects.
- *
  * **Usage Example**
  *
- * ```js
- * bot.use(new TableStorage({
- *      tableName: 'storage',
- *      storageAccountOrConnectionString: 'UseDevelopmentStorage=true'
- * }));
+ * ```javascript
  * ```
 */
-class TableStorage extends botbuilder_1.StorageMiddleware {
+class TableStorage {
     /**
      * Creates a new instance of the storage provider.
      *
      * @param settings (Optional) setting to configure the provider.
      */
     constructor(settings) {
-        super(settings);
+        this.settings = Object.assign({}, settings);
         if (this.settings.storageAccountOrConnectionString)
             this.tableService = azure.createTableService(this.settings.storageAccountOrConnectionString, this.settings.storageAccessKey, this.settings.host);
         else
@@ -181,10 +166,6 @@ class TableStorage extends botbuilder_1.StorageMiddleware {
             return Promise.all(promises)
                 .then(result => { });
         });
-    }
-    /** INTERNAL method that returns the storage instance to be added to the context object. */
-    getStorage(context) {
-        return this;
     }
 }
 exports.TableStorage = TableStorage;

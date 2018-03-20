@@ -1,4 +1,4 @@
-[Bot Builder SDK - Core](../README.md) > [ContactRelationUpdateActionTypes](../enums/botbuilder.contactrelationupdateactiontypes.md)
+[Bot Builder SDK](../README.md) > [ContactRelationUpdateActionTypes](../enums/botbuilder.contactrelationupdateactiontypes.md)
 
 
 
@@ -30,7 +30,7 @@ Defines values for ContactRelationUpdateActionTypes. Possible values include: 'a
 
 ** Add**:    = "add"
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:1725*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1725](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1725)*
 
 
 
@@ -44,7 +44,7 @@ ___
 
 ** Remove**:    = "remove"
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:1726*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1726](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1726)*
 
 
 

@@ -23,11 +23,11 @@ Interface of Dialog objects that can be added to a `DialogSet`. The dialog shoul
 
 ###  begin
 
-► **begin**(context: *`BotContext`*, dialogs: *[DialogSet](../classes/botbuilder_dialogs.dialogset.md)*, args?: *`any`*): [Promiseable]()`void`
+► **begin**(context: *[BotContext]()*, dialogs: *[DialogSet](../classes/botbuilder_dialogs.dialogset.md)*, args?: *`any`*): [Promiseable]()`void`
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialog.d.ts:22](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/dialog.d.ts#L22)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialog.d.ts:22](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/dialog.d.ts#L22)*
 
 
 
@@ -38,7 +38,7 @@ Method called when a new dialog has been pushed onto the stack and is being acti
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | `BotContext`   |  The dialog context for the current turn of conversation. |
+| context | [BotContext]()   |  The dialog context for the current turn of conversation. |
 | dialogs | [DialogSet](../classes/botbuilder_dialogs.dialogset.md)   |  The dialogs parent set. |
 | args | `any`   |  (Optional) arguments that were passed to the dialog during `begin()` call that started the instance. |
 
@@ -58,11 +58,11 @@ ___
 
 ### «Optional» continue
 
-► **continue**(context: *`BotContext`*, dialogs: *[DialogSet](../classes/botbuilder_dialogs.dialogset.md)*): [Promiseable]()`void`
+► **continue**(context: *[BotContext]()*, dialogs: *[DialogSet](../classes/botbuilder_dialogs.dialogset.md)*): [Promiseable]()`void`
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialog.d.ts:33](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/dialog.d.ts#L33)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialog.d.ts:33](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/dialog.d.ts#L33)*
 
 
 
@@ -75,7 +75,7 @@ If this method is NOT implemented then the dialog will automatically be ended wh
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | `BotContext`   |  The dialog context for the current turn of conversation. |
+| context | [BotContext]()   |  The dialog context for the current turn of conversation. |
 | dialogs | [DialogSet](../classes/botbuilder_dialogs.dialogset.md)   |  The dialogs parent set. |
 
 
@@ -94,11 +94,11 @@ ___
 
 ### «Optional» resume
 
-► **resume**(context: *`BotContext`*, dialogs: *[DialogSet](../classes/botbuilder_dialogs.dialogset.md)*, result?: *`any`*): [Promiseable]()`void`
+► **resume**(context: *[BotContext]()*, dialogs: *[DialogSet](../classes/botbuilder_dialogs.dialogset.md)*, result?: *`any`*): [Promiseable]()`void`
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialog.d.ts:45](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/dialog.d.ts#L45)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialog.d.ts:45](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/dialog.d.ts#L45)*
 
 
 
@@ -111,7 +111,7 @@ If this method is NOT implemented then the dialog will be automatically ended wi
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | `BotContext`   |  The dialog context for the current turn of conversation. |
+| context | [BotContext]()   |  The dialog context for the current turn of conversation. |
 | dialogs | [DialogSet](../classes/botbuilder_dialogs.dialogset.md)   |  The dialogs parent set. |
 | result | `any`   |  (Optional) value returned from the dialog that was called. The type of the value returned is dependant on the dialog that was called. |
 

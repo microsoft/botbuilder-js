@@ -1,4 +1,4 @@
-[Bot Builder SDK - Core](../README.md) > [ResourceResponse](../interfaces/botbuilder.resourceresponse.md)
+[Bot Builder SDK](../README.md) > [ResourceResponse](../interfaces/botbuilder.resourceresponse.md)
 
 
 
@@ -15,7 +15,7 @@
 
 **●  id**:  *`string`* 
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:520*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:520](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L520)*
 
 
 *__member__*: {string} [id] Id of the resource
