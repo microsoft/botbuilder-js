@@ -66,7 +66,7 @@ const localeToPrompt = {
     'es': `Seleccione su idioma preferido.`,
     'fr': `Sélectionnez votre langue préférée.`,
     'it': `Selezionare la lingua desiderata.`,
-    'ja': `希望する言語を選択します。` 
+    'ja': `言語を選択。` 
 };
 
 const localeToChoice = {
