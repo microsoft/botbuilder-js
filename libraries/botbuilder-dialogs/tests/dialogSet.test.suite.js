@@ -1,13 +1,14 @@
-const { Bot, BotStateManager, MemoryStorage, TestAdapter } = require('botbuilder');
+const { TestAdapter, MemoryStorage, ConversationState } = require('botbuilder');
 const { DialogSet } =  require('../');
 const assert = require('assert');
 
-function createBot(receiver) {
-    const adapter = new TestAdapter();
-    const bot = new Bot(adapter)
-        .use(new MemoryStorage())
-        .use(new BotStateManager())
-        .onReceive(receiver);
+const beginMessage = { text: `begin`, type: 'message' };
+const continueMessage = { text: `continue`, type: 'message' };
+
+function createBot(botLogic) {
+    const storage = new MemoryStorage();
+    const adapter = new TestAdapter(botLogic)
+        .use(new ConversationState(storage));
     return adapter;
 }
 
@@ -15,25 +16,25 @@ describe('DialogSet class', function() {
     this.timeout(5000);
 
     it('should call Dialog.begin() and Dialog.continue().', function (done) {
+        const stack = [];
         const dialogs = new DialogSet();
         dialogs.add('a', {
-            begin: (ctx, dlgs, args) => {
-                assert(ctx, 'Missing context in begin()');
-                assert(dlgs === dialogs, 'Dialogs not passed to begin()');
+            dialogBegin: (dc, args) => {
+                assert(dc, 'Missing dialog context in begin()');
                 assert(args === 'z', 'Args not passed');
-                ctx.reply(`begin`);
+                return dc.context.sendActivity(beginMessage);
             },
-            continue: (ctx, dlgs) => {
-                assert(ctx, 'Missing context in continue()');
-                assert(dlgs === dialogs, 'Dialogs not passed to continue()');
-                ctx.reply(`continue`);
+            dialogContinue: (dc) => {
+                assert(dc, 'Missing dialog context in continue()');
+                return dc.context.sendActivity(continueMessage);
             }
         });
 
-        createBot((ctx) => {
-            return dialogs.continue(ctx).then(() => {
-                if (!ctx.responded) {
-                    return dialogs.begin(ctx, 'a', 'z');
+        createBot((context) => {
+            const dc = dialogs.createContext(context, stack);
+            return dc.continue().then(() => {
+                if (!context.responded) {
+                    return dc.begin('a', 'z');
                 }
             })
         })

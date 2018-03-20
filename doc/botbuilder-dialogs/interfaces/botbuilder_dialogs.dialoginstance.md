@@ -17,7 +17,7 @@ Tracking information for a dialog on the stack.
 
 **●  id**:  *`string`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialog.d.ts:52](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/dialog.d.ts#L52)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialog.d.ts:52](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/dialog.d.ts#L52)*
 
 
 
@@ -34,7 +34,7 @@ ___
 
 **●  state**:  *`T`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialog.d.ts:54](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/dialog.d.ts#L54)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialog.d.ts:54](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/dialog.d.ts#L54)*
 
 
 

@@ -4,19 +4,6 @@
 
 # Class: LuisRecognizer
 
-## Hierarchy
-
-
- [IntentRecognizer]()
-
-**↳ LuisRecognizer**
-
-
-
-
-
-
-
 ## Implements
 
 * [Middleware]()
@@ -28,16 +15,18 @@
 * [constructor](botbuilder_ai.luisrecognizer.md#constructor)
 
 
+### Properties
+
+* [nextInstance](botbuilder_ai.luisrecognizer.md#nextinstance)
+
+
 ### Methods
 
-* [onEnabled](botbuilder_ai.luisrecognizer.md#onenabled)
-* [onFilter](botbuilder_ai.luisrecognizer.md#onfilter)
-* [onRecognize](botbuilder_ai.luisrecognizer.md#onrecognize)
-* [receiveActivity](botbuilder_ai.luisrecognizer.md#receiveactivity)
+* [createLuisClient](botbuilder_ai.luisrecognizer.md#createluisclient)
+* [get](botbuilder_ai.luisrecognizer.md#get)
+* [getIntentsAndEntities](botbuilder_ai.luisrecognizer.md#getintentsandentities)
+* [onProcessRequest](botbuilder_ai.luisrecognizer.md#onprocessrequest)
 * [recognize](botbuilder_ai.luisrecognizer.md#recognize)
-* [findTopIntent](botbuilder_ai.luisrecognizer.md#findtopintent)
-* [recognize](botbuilder_ai.luisrecognizer.md#recognize-1)
-* [recognizeAndMap](botbuilder_ai.luisrecognizer.md#recognizeandmap)
 
 
 
@@ -46,13 +35,10 @@
 <a id="constructor"></a>
 
 
-### ⊕ **new LuisRecognizer**(options: *[LuisRecognizerOptions](../interfaces/botbuilder_ai.luisrecognizeroptions.md)*): [LuisRecognizer](botbuilder_ai.luisrecognizer.md)
+### ⊕ **new LuisRecognizer**(settings: *[LuisRecognizerSettings](../interfaces/botbuilder_ai.luisrecognizersettings.md)*): [LuisRecognizer](botbuilder_ai.luisrecognizer.md)
 
 
-### ⊕ **new LuisRecognizer**(appId: *`string`*, subscriptionKey: *`string`*): [LuisRecognizer](botbuilder_ai.luisrecognizer.md)
-
-
-*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L31)*
+*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:33](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L33)*
 
 
 
@@ -60,24 +46,7 @@
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| options | [LuisRecognizerOptions](../interfaces/botbuilder_ai.luisrecognizeroptions.md)   |  - |
-
-
-
-
-
-**Returns:** [LuisRecognizer](botbuilder_ai.luisrecognizer.md)
-
-*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:32](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L32)*
-
-
-
-**Parameters:**
-
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| appId | `string`   |  - |
-| subscriptionKey | `string`   |  - |
+| settings | [LuisRecognizerSettings](../interfaces/botbuilder_ai.luisrecognizersettings.md)   |  - |
 
 
 
@@ -88,35 +57,46 @@
 ---
 
 
+## Properties
+<a id="nextinstance"></a>
+
+### «Static» nextInstance
+
+**●  nextInstance**:  *`number`* 
+
+*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L31)*
+
+
+
+
+
+___
+
+
 ## Methods
-<a id="onenabled"></a>
+<a id="createluisclient"></a>
 
-###  onEnabled
+### «Protected» createLuisClient
 
-► **onEnabled**(handler: *`function`*): `this`
-
-
-
-*Inherited from IntentRecognizer.onEnabled*
-
-*Defined in libraries/botbuilder-ai/node_modules/botbuilder/lib/intentRecognizer.d.ts:48*
+► **createLuisClient**(serviceEndpoint: *`string`*): [LuisClient]()
 
 
 
-Adds a handler that lets you conditionally determine if a recognizer should run. Multiple handlers can be registered and they will be called in the reverse order they are added so the last handler added will be the first called.
+*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L39)*
+
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| handler | `function`   |  Function that will be called anytime the recognizer is run. If the handlerreturns true the recognizer will be run. Returning false disables the recognizer. |
+| serviceEndpoint | `string`   |  - |
 
 
 
 
 
-**Returns:** `this`
+**Returns:** [LuisClient]()
 
 
 
@@ -124,34 +104,29 @@ Adds a handler that lets you conditionally determine if a recognizer should run.
 
 ___
 
-<a id="onfilter"></a>
+<a id="get"></a>
 
-###  onFilter
+###  get
 
-► **onFilter**(handler: *`function`*): `this`
-
-
-
-*Inherited from IntentRecognizer.onFilter*
-
-*Defined in libraries/botbuilder-ai/node_modules/botbuilder/lib/intentRecognizer.d.ts:68*
+► **get**(context: *[BotContext]()*): [LuisResult]()⎮`undefined`
 
 
 
-Adds a handler that will be called post recognition to filter the output of the recognizer. The filter receives all of the intents that were recognized and can return a subset, or additional, or even all new intents as its response. This filtering adds a convenient second layer of processing to intent recognition. Multiple handlers can be registered and they will be called in the order they are added.
+*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:37](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L37)*
+
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| handler | `function`   |  Function that will be called to filter the output intents. If an array is returnedthat will become the new set of output intents passed on to the next filter. The final filter inthe chain will reduce the output set of intents to a single top scoring intent. |
+| context | [BotContext]()   |  - |
 
 
 
 
 
-**Returns:** `this`
+**Returns:** [LuisResult]()⎮`undefined`
 
 
 
@@ -159,34 +134,29 @@ Adds a handler that will be called post recognition to filter the output of the 
 
 ___
 
-<a id="onrecognize"></a>
+<a id="getintentsandentities"></a>
 
-###  onRecognize
+###  getIntentsAndEntities
 
-► **onRecognize**(handler: *`function`*): `this`
-
-
-
-*Inherited from IntentRecognizer.onRecognize*
-
-*Defined in libraries/botbuilder-ai/node_modules/botbuilder/lib/intentRecognizer.d.ts:56*
+► **getIntentsAndEntities**(query: *`string`*): `Promise`.<[LuisResult]()>
 
 
 
-Adds a handler that will be called to recognize the users intent. Multiple handlers can be registered and they will be called in the reverse order they are added so the last handler added will be the first called.
+*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:38](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L38)*
+
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| handler | `function`   |  Function that will be called to recognize a users intent. |
+| query | `string`   |  - |
 
 
 
 
 
-**Returns:** `this`
+**Returns:** `Promise`.<[LuisResult]()>
 
 
 
@@ -194,17 +164,15 @@ Adds a handler that will be called to recognize the users intent. Multiple handl
 
 ___
 
-<a id="receiveactivity"></a>
+<a id="onprocessrequest"></a>
 
-###  receiveActivity
+###  onProcessRequest
 
-► **receiveActivity**(context: *[BotContext]()*, next: *`function`*): `Promise`.<`void`>
+► **onProcessRequest**(context: *[BotContext]()*, next: *`function`*): `Promise`.<`void`>
 
 
 
-*Inherited from IntentRecognizer.receiveActivity*
-
-*Defined in libraries/botbuilder-ai/node_modules/botbuilder/lib/intentRecognizer.d.ts:33*
+*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:35](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L35)*
 
 
 
@@ -231,81 +199,11 @@ ___
 
 ###  recognize
 
-► **recognize**(context: *[BotContext]()*): `Promise`.<[Intent]()[]>
+► **recognize**(context: *[BotContext]()*, force?: *`undefined`⎮`true`⎮`false`*): `Promise`.<[LuisResult]()>
 
 
 
-*Inherited from IntentRecognizer.recognize*
-
-*Defined in libraries/botbuilder-ai/node_modules/botbuilder/lib/intentRecognizer.d.ts:39*
-
-
-
-Recognizes intents for the current context. The return value is 0 or more recognized intents.
-
-
-**Parameters:**
-
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| context | [BotContext]()   |  Context for the current turn of the conversation. |
-
-
-
-
-
-**Returns:** `Promise`.<[Intent]()[]>
-
-
-
-
-
-___
-
-<a id="findtopintent"></a>
-
-### «Static» findTopIntent
-
-► **findTopIntent**(intents: *[Intent]()[]*): `Promise`.<[Intent]()⎮`undefined`>
-
-
-
-*Inherited from IntentRecognizer.findTopIntent*
-
-*Defined in libraries/botbuilder-ai/node_modules/botbuilder/lib/intentRecognizer.d.ts:77*
-
-
-
-Finds the top scoring intent given a set of intents.
-
-
-**Parameters:**
-
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| intents | [Intent]()[]   |  Array of intents to filter. |
-
-
-
-
-
-**Returns:** `Promise`.<[Intent]()⎮`undefined`>
-
-
-
-
-
-___
-
-<a id="recognize-1"></a>
-
-### «Static» recognize
-
-► **recognize**(utterance: *`string`*, options: *[LuisRecognizerOptions](../interfaces/botbuilder_ai.luisrecognizeroptions.md)*): `Promise`.<[Intent]()>
-
-
-
-*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:34](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L34)*
+*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:36](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L36)*
 
 
 
@@ -313,46 +211,14 @@ ___
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| utterance | `string`   |  - |
-| options | [LuisRecognizerOptions](../interfaces/botbuilder_ai.luisrecognizeroptions.md)   |  - |
+| context | [BotContext]()   |  - |
+| force | `undefined`⎮`true`⎮`false`   |  - |
 
 
 
 
 
-**Returns:** `Promise`.<[Intent]()>
-
-
-
-
-
-___
-
-<a id="recognizeandmap"></a>
-
-### «Static»«Protected» recognizeAndMap
-
-► **recognizeAndMap**(client: *[LuisClient]()*, utterance: *`string`*, options: *[LuisRecognizerOptions](../interfaces/botbuilder_ai.luisrecognizeroptions.md)*): `Promise`.<[Intent]()>
-
-
-
-*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:35](https://github.com/Microsoft/botbuilder-js/blob/6102823/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L35)*
-
-
-
-**Parameters:**
-
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| client | [LuisClient]()   |  - |
-| utterance | `string`   |  - |
-| options | [LuisRecognizerOptions](../interfaces/botbuilder_ai.luisrecognizeroptions.md)   |  - |
-
-
-
-
-
-**Returns:** `Promise`.<[Intent]()>
+**Returns:** `Promise`.<[LuisResult]()>
 
 
 

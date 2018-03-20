@@ -1,8 +1,8 @@
 {
   "name": "botbuilder",
   "author": "Microsoft Corp.",
-  "description": "Bot Builder core library. Bot Builder is a toolkit for building rich bots on virtually any platform.",
-  "version": "4.0.0-m1.10",
+  "description": "Services for Microsoft BotBuilder.",
+  "version": "4.0.0-m2.0",
   "license": "MIT",
   "keywords": [
     "botbuilder",
@@ -17,15 +17,21 @@
     "type": "git",
     "url": "https://github.com/Microsoft/botbuilder-js.git"
   },
-  "main": "./lib/botbuilder.js",
-  "typings": "./lib/botbuilder.d.ts",
+  "main": "./lib/index.js",
+  "typings": "./lib/index.d.ts",
   "dependencies": {
-    "botframework-schema": "4.0.0-m1.10",
-    "assert": "^1.4.1"
+    "async-file": "^2.0.2",
+    "botbuilder-core": "4.0.0-m2.0",
+    "botbuilder-core-extensions": "4.0.0-m2.0",
+    "botframework-connector": "4.0.0-m2.0",
+    "filenamify": "^2.0.0",
+    "readline": "^1.3.0"
   },
   "devDependencies": {
+    "@types/filenamify": "^2.0.1",
     "@types/mocha": "^2.2.47",
     "@types/node": "^9.3.0",
+    "codelyzer": "^4.1.0",
     "mocha": "^5.0.0",
     "nyc": "^11.4.1",
     "source-map-support": "^0.5.3",
@@ -34,7 +40,7 @@
   "scripts": {
     "test": "tsc && nyc mocha tests/",
     "build": "tsc",
-    "build-docs": "typedoc --theme markdown --entryPoint botbuilder --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder .\\lib\\botbuilder.d.ts --hideGenerator --name \"Bot Builder SDK - Core\" --readme none",
+    "build-docs": "typedoc --theme markdown --entryPoint botbuilder --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder .\\lib\\index.d.ts ..\\botbuilder-core\\lib\\index.d.ts ..\\botbuilder-core-extensions\\lib\\index.d.ts ..\\botframework-schema\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK\" --readme none",
     "clean": "erase /q lib\\*.*"
   }
 }

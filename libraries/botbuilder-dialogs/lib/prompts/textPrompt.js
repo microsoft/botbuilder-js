@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const prompt_1 = require("./prompt");
+const prompts = require("botbuilder-prompts");
 /**
  * Prompts a user to enter some text. By default the prompt will return to the calling
  * dialog a `string` representing the users reply.
@@ -15,57 +16,49 @@ const prompt_1 = require("./prompt");
  * dialogs.add('textPrompt', new TextPrompt());
  *
  * dialogs.add('textDemo', [
- *      function (context) {
- *          return dialogs.prompt(context, 'textPrompt', `text: enter some text`);
+ *      function (dc) {
+ *          return dc.prompt('textPrompt', `text: enter some text`);
  *      },
- *      function (context, value) {
- *          context.reply(`Recognized value: ${value}`);
- *          return dialogs.end(context);
+ *      function (dc, value) {
+ *          dc.batch.reply(`Recognized value: ${value}`);
+ *          return dc.end();
  *      }
  * ]);
  * ```
  */
-class TextPrompt {
+class TextPrompt extends prompt_1.Prompt {
     /**
      * Creates a new instance of the prompt.
      *
      * **Example usage:**
      *
      * ```JavaScript
-     * dialogs.add('titlePrompt', new TextPrompt((context, value) => {
-     *      if (value.length < 3) {
-     *          context.reply(`Title should be at least 3 characters long.`);
-     *          return Promise.resolve();
+     * dialogs.add('titlePrompt', new TextPrompt((dc, value) => {
+     *      if (!value || value.length < 3) {
+     *          dc.batch.reply(`Title should be at least 3 characters long.`);
+     *          return undefined;
      *      } else {
-     *          return dialogs.end(context, value.trim());
+     *          return value.trim();
      *      }
      * }));
      * ```
-     * @param validator (Optional) validator that will be called each time the user responds to the prompt.
+     * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
      */
     constructor(validator) {
-        this.validator = validator;
+        super(validator);
+        this.prompt = prompts.createTextPrompt();
     }
-    begin(context, dialogs, options) {
-        // Persist options
-        const instance = dialogs.getInstance(context);
-        instance.state = options || {};
-        // Send initial prompt
-        if (instance.state.prompt) {
-            context.reply(prompt_1.formatPrompt(instance.state.prompt, instance.state.speak));
+    onPrompt(dc, options, isRetry) {
+        if (isRetry && options.retryPrompt) {
+            return this.prompt.prompt(dc.context, options.retryPrompt, options.retrySpeak);
+        }
+        else if (options.prompt) {
+            return this.prompt.prompt(dc.context, options.prompt, options.speak);
         }
         return Promise.resolve();
     }
-    continue(context, dialogs) {
-        // Recognize value and call validator
-        const utterance = context.request && context.request.text ? context.request.text : '';
-        if (this.validator) {
-            return Promise.resolve(this.validator(context, utterance, dialogs));
-        }
-        else {
-            // Default behavior is to just return recognized value
-            return dialogs.end(context, utterance);
-        }
+    onRecognize(dc, options) {
+        return this.prompt.recognize(dc.context);
     }
 }
 exports.TextPrompt = TextPrompt;

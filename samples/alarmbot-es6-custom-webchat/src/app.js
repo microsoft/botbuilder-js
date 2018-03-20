@@ -2,7 +2,7 @@ import 'skeleton-css/css/normalize.css';
 import 'skeleton-css/css/skeleton.css';
 import './css/alarmBot.css';
 
-import {Bot, BotStateManager, MemoryStorage} from 'botbuilder';
+import {Bot, ConversationState, MemoryStorage} from 'botbuilder-core';
 import {WebChatAdapter} from "./webChatAdapter";
 import {ChatComponent} from "./chatComponent";
 import {AlarmRenderer} from "./alarmRenderer";

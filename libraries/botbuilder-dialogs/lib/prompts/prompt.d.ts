@@ -5,8 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, Promiseable } from 'botbuilder';
-import { DialogSet } from '../dialogSet';
+import { BotContext, Activity, Promiseable } from 'botbuilder';
+import { DialogContext } from '../dialogContext';
+import { Control } from '../control';
 /** Basic configuration options supported by all prompts. */
 export interface PromptOptions {
     /** (Optional) Initial prompt to send the user. */
@@ -23,23 +24,18 @@ export interface PromptOptions {
  * will be called every time the user replies to a prompt and can be used to add additional
  * validation logic to a prompt or to customize the reply sent when the user send a reply that isn't
  * recognized.
- * @param T Possible types for `value` arg.
- * @param PromptValidator.context Context object for the current turn of conversation with the user.
+ * @param C Type of dialog context object passed to validator.
+ * @param R Type of value that will recognized and passed to the validator as input.
+ * @param O Type of output that will be returned by the validator. This can be changed from the input type by the validator.
+ * @param PromptValidator.context Dialog context for the current turn of conversation with the user.
  * @param PromptValidator.value The value that was recognized or wasn't recognized. Depending on the prompt this can be either undefined or an empty array to indicate an unrecognized value.
- * @param PromptValidator.dialogs The parent dialog set.
  */
-export declare type PromptValidator<T> = (context: BotContext, value: T, dialogs: DialogSet) => Promiseable<void>;
-/**
- * Helper function to properly format a prompt sent to a user.
- *
- * **Example usage:**
- *
- * ```JavaScript
- * const { formatPrompt } = require('botbuilder-dialogs');
- *
- * context.reply(formatPrompt(`Hi... What's your name?`, `What is your name?`));
- * ```
- * @param prompt Activity or text to prompt the user with.  If prompt is a `string` then an activity of type `message` will be created.
- * @param speak (Optional) SSML to speak to the user on channels like Cortana. The messages `inputHint` will be automatically set to `InputHints.expectingInput`.
- */
-export declare function formatPrompt(prompt: string | Partial<Activity>, speak?: string): Partial<Activity>;
+export declare type PromptValidator<C extends BotContext, R> = (dc: DialogContext<C>, value: R | undefined) => Promiseable<any>;
+export declare abstract class Prompt<C extends BotContext, T> extends Control<C> {
+    private validator;
+    constructor(validator?: PromptValidator<C, T>);
+    protected abstract onPrompt(dc: DialogContext<C>, options: PromptOptions, isRetry: boolean): Promise<any>;
+    protected abstract onRecognize(dc: DialogContext<C>, options: PromptOptions): Promise<T | undefined>;
+    dialogBegin(dc: DialogContext<C>, options: PromptOptions): Promise<any>;
+    dialogContinue(dc: DialogContext<C>): Promise<any>;
+}

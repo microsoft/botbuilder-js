@@ -1,4 +1,4 @@
-[Bot Builder SDK - Core](../README.md) > [AttachmentLayoutTypes](../enums/botbuilder.attachmentlayouttypes.md)
+[Bot Builder SDK](../README.md) > [AttachmentLayoutTypes](../enums/botbuilder.attachmentlayouttypes.md)
 
 
 
@@ -30,7 +30,7 @@ Defines values for AttachmentLayoutTypes. Possible values include: 'list', 'caro
 
 ** Carousel**:    = "carousel"
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:1635*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1635](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1635)*
 
 
 
@@ -44,7 +44,7 @@ ___
 
 ** List**:    = "list"
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:1634*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1634](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1634)*
 
 
 

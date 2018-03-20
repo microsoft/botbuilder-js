@@ -1,4 +1,4 @@
-[Bot Builder SDK - Core](../README.md) > [InputHints](../enums/botbuilder.inputhints.md)
+[Bot Builder SDK](../README.md) > [InputHints](../enums/botbuilder.inputhints.md)
 
 
 
@@ -29,7 +29,7 @@ Defines values for InputHints. Possible values include: 'acceptingInput', 'ignor
 
 ** AcceptingInput**:    = "acceptingInput"
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:1663*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1663](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1663)*
 
 
 
@@ -43,7 +43,7 @@ ___
 
 ** ExpectingInput**:    = "expectingInput"
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:1665*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1665](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1665)*
 
 
 
@@ -57,7 +57,7 @@ ___
 
 ** IgnoringInput**:    = "ignoringInput"
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:1664*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1664](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1664)*
 
 
 

@@ -57,7 +57,7 @@ Prompts a user to make a selection from a list of choices. By default the prompt
 ### ⊕ **new ChoicePrompt**(validator?: *[PromptValidator](../#promptvalidator)[FoundChoice]()⎮`undefined`⎮`undefined`*): [ChoicePrompt](botbuilder_dialogs.choiceprompt.md)
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:66](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L66)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:66](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L66)*
 
 
 
@@ -90,7 +90,7 @@ Creates a new instance of the prompt.
 
 **●  recognizerOptions**:  *[FindChoicesOptions]()* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:66](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L66)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:66](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L66)*
 
 
 
@@ -105,9 +105,9 @@ ___
 
 ###  stylerOptions
 
-**●  stylerOptions**:  *[ChoiceStylerOptions]()* 
+**●  stylerOptions**:  *[ChoiceFactoryOptions]()* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:64](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L64)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:64](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L64)*
 
 
 
@@ -124,11 +124,11 @@ ___
 
 ###  begin
 
-► **begin**(context: *`BotContext`*, dialogs: *[DialogSet](botbuilder_dialogs.dialogset.md)*, options: *[ChoicePromptOptions](../interfaces/botbuilder_dialogs.choicepromptoptions.md)*): `Promise`.<`void`>
+► **begin**(context: *[BotContext]()*, dialogs: *[DialogSet](botbuilder_dialogs.dialogset.md)*, options: *[ChoicePromptOptions](../interfaces/botbuilder_dialogs.choicepromptoptions.md)*): `Promise`.<`void`>
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:78](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L78)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:78](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L78)*
 
 
 
@@ -136,7 +136,7 @@ ___
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | `BotContext`   |  - |
+| context | [BotContext]()   |  - |
 | dialogs | [DialogSet](botbuilder_dialogs.dialogset.md)   |  - |
 | options | [ChoicePromptOptions](../interfaces/botbuilder_dialogs.choicepromptoptions.md)   |  - |
 
@@ -156,13 +156,13 @@ ___
 
 ###  continue
 
-► **continue**(context: *`BotContext`*, dialogs: *[DialogSet](botbuilder_dialogs.dialogset.md)*): `Promise`.<`void`>
+► **continue**(context: *[BotContext]()*, dialogs: *[DialogSet](botbuilder_dialogs.dialogset.md)*): `Promise`.<`void`>
 
 
 
 *Implementation of [Dialog](../interfaces/botbuilder_dialogs.dialog.md).[continue](../interfaces/botbuilder_dialogs.dialog.md#continue)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:79](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L79)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:79](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L79)*
 
 
 
@@ -170,7 +170,7 @@ ___
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | `BotContext`   |  - |
+| context | [BotContext]()   |  - |
 | dialogs | [DialogSet](botbuilder_dialogs.dialogset.md)   |  - |
 
 

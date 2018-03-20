@@ -1,4 +1,4 @@
-[Bot Builder SDK - Core](../README.md) > [SuggestedActions](../interfaces/botbuilder.suggestedactions.md)
+[Bot Builder SDK](../README.md) > [SuggestedActions](../interfaces/botbuilder.suggestedactions.md)
 
 
 
@@ -15,7 +15,7 @@
 
 **●  actions**:  *[CardAction](botbuilder.cardaction.md)[]* 
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:177*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:177](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L177)*
 
 
 *__member__*: {CardAction[]} [actions] Actions that can be shown to the user
@@ -32,7 +32,7 @@ ___
 
 **●  to**:  *`string`[]* 
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:173*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:173](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L173)*
 
 
 *__member__*: {string[]} [to] Ids of the recipients that the actions should be shown to. These Ids are relative to the channelId and a subset of all recipients of the activity

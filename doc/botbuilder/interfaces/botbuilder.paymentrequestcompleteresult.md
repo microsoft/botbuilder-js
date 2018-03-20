@@ -1,4 +1,4 @@
-[Bot Builder SDK - Core](../README.md) > [PaymentRequestCompleteResult](../interfaces/botbuilder.paymentrequestcompleteresult.md)
+[Bot Builder SDK](../README.md) > [PaymentRequestCompleteResult](../interfaces/botbuilder.paymentrequestcompleteresult.md)
 
 
 
@@ -15,7 +15,7 @@
 
 **●  result**:  *`string`* 
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:1538*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1538](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1538)*
 
 
 *__member__*: {string} [result] Result of the payment request completion

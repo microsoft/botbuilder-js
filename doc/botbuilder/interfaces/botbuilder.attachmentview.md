@@ -1,4 +1,4 @@
-[Bot Builder SDK - Core](../README.md) > [AttachmentView](../interfaces/botbuilder.attachmentview.md)
+[Bot Builder SDK](../README.md) > [AttachmentView](../interfaces/botbuilder.attachmentview.md)
 
 
 
@@ -15,7 +15,7 @@
 
 **●  size**:  *`number`* 
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:22*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:22](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L22)*
 
 
 *__member__*: {number} [size] Name of the attachment
@@ -32,7 +32,7 @@ ___
 
 **●  viewId**:  *`string`* 
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:18*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L18)*
 
 
 *__member__*: {string} [viewId] Content type of the attachment

@@ -1,30 +1,31 @@
-[Bot Builder SDK - Core](../README.md) > [TestAdapter](../classes/botbuilder.testadapter.md)
+[Bot Builder SDK](../README.md) > [TestAdapter](../classes/botbuilder.testadapter.md)
 
 
 
 # Class: TestAdapter
 
 
+:package: **botbuilder-core-extensions**
+
 Test adapter used for unit tests.
-*__example__*:     
-    const adapter = new TestAdapater();
-    const bot = new Bot(adapter)
-         .use(new MemoryStorage())
-         .use(new BotStateManage())
-         .onReceive((context) => {
-             const cnt = context.state.conversation.next || 1;
-             context.reply(`reply: ${cnt}`);
-             context.state.conversation.next = cnt + 1;
-         });
-    adapter.test('inc', 'reply: 1')
-             .test('inc', 'reply: 2')
-             .test('inc', 'reply: 3')
-             .then(() => done());
+
+## Hierarchy
 
 
-## Implements
+↳  [TestAdapter](botbuilder.testadapter.md)
 
-* [ActivityAdapter](../interfaces/botbuilder.activityadapter.md)
+**↳ TestAdapter**
+
+↳  [TestAdapter](botbuilder.testadapter.md)
+
+
+
+
+
+
+
+
+
 
 ## Index
 
@@ -35,20 +36,20 @@ Test adapter used for unit tests.
 
 ### Properties
 
-* [botReplies](botbuilder.testadapter.md#botreplies)
-* [onReceive](botbuilder.testadapter.md#onreceive)
-* [reference](botbuilder.testadapter.md#reference)
+* [activityBuffer](botbuilder.testadapter.md#activitybuffer)
+* [deletedActivities](botbuilder.testadapter.md#deletedactivities)
+* [template](botbuilder.testadapter.md#template)
+* [updatedActivities](botbuilder.testadapter.md#updatedactivities)
 
 
 ### Methods
 
-* [_sendActivityToBot](botbuilder.testadapter.md#_sendactivitytobot)
-* [assertReply](botbuilder.testadapter.md#assertreply)
-* [assertReplyOneOf](botbuilder.testadapter.md#assertreplyoneof)
-* [delay](botbuilder.testadapter.md#delay)
-* [post](botbuilder.testadapter.md#post)
+* [deleteActivity](botbuilder.testadapter.md#deleteactivity)
+* [receiveActivity](botbuilder.testadapter.md#receiveactivity)
 * [send](botbuilder.testadapter.md#send)
+* [sendActivities](botbuilder.testadapter.md#sendactivities)
 * [test](botbuilder.testadapter.md#test)
+* [updateActivity](botbuilder.testadapter.md#updateactivity)
 
 
 
@@ -57,10 +58,10 @@ Test adapter used for unit tests.
 <a id="constructor"></a>
 
 
-### ⊕ **new TestAdapter**(reference?: *[ConversationReference](../interfaces/botbuilder.conversationreference.md)*): [TestAdapter](botbuilder.testadapter.md)
+### ⊕ **new TestAdapter**(botLogic: *`function`*, template?: *[ConversationReference](../interfaces/botbuilder.conversationreference.md)*): [TestAdapter](botbuilder.testadapter.md)
 
 
-*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:34](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/testAdapter.d.ts#L34)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L27)*
 
 
 
@@ -71,7 +72,8 @@ Creates a new instance of the test adapter.
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| reference | [ConversationReference](../interfaces/botbuilder.conversationreference.md)   |  (Optional) conversation reference that lets you customize the addressinformation for messages sent during a test. |
+| botLogic | `function`   |  The bots logic that's under test. |
+| template | [ConversationReference](../interfaces/botbuilder.conversationreference.md)   |  (Optional) activity containing default values to assign to all test messages received. |
 
 
 
@@ -83,13 +85,30 @@ Creates a new instance of the test adapter.
 
 
 ## Properties
-<a id="botreplies"></a>
+<a id="activitybuffer"></a>
 
-###  botReplies
+###  activityBuffer
 
-**●  botReplies**:  *[Partial]()[Activity](../interfaces/botbuilder.activity.md)[]* 
+**●  activityBuffer**:  *[Partial]()[Activity](../interfaces/botbuilder.activity.md)[]* 
 
-*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:32](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/testAdapter.d.ts#L32)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:24](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L24)*
+
+
+
+INTERNAL: used to drive the promise chain forward when running tests.
+
+
+
+
+___
+
+<a id="deletedactivities"></a>
+
+###  deletedActivities
+
+**●  deletedActivities**:  *[Partial]()[ConversationReference](../interfaces/botbuilder.conversationreference.md)[]* 
+
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L27)*
 
 
 
@@ -97,37 +116,13 @@ Creates a new instance of the test adapter.
 
 ___
 
-<a id="onreceive"></a>
+<a id="template"></a>
 
-###  onReceive
+###  template
 
-**●  onReceive**:  *`function`* 
+**●  template**:  *[Partial]()[Activity](../interfaces/botbuilder.activity.md)* 
 
-*Implementation of [ActivityAdapter](../interfaces/botbuilder.activityadapter.md).[onReceive](../interfaces/botbuilder.activityadapter.md#onreceive)*
-
-*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:34](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/testAdapter.d.ts#L34)*
-
-
-
-INTERNAL implementation of `Adapter.onReceive`.
-
-#### Type declaration
-►(activity: *[Activity](../interfaces/botbuilder.activity.md)*): `Promise`.<`void`>
-
-
-
-**Parameters:**
-
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| activity | [Activity](../interfaces/botbuilder.activity.md)   |  - |
-
-
-
-
-
-**Returns:** `Promise`.<`void`>
-
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:25](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L25)*
 
 
 
@@ -135,13 +130,13 @@ INTERNAL implementation of `Adapter.onReceive`.
 
 ___
 
-<a id="reference"></a>
+<a id="updatedactivities"></a>
 
-###  reference
+###  updatedActivities
 
-**●  reference**:  *[ConversationReference](../interfaces/botbuilder.conversationreference.md)* 
+**●  updatedActivities**:  *[Partial]()[Activity](../interfaces/botbuilder.activity.md)[]* 
 
-*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/testAdapter.d.ts#L31)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:26](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L26)*
 
 
 
@@ -151,15 +146,15 @@ ___
 
 
 ## Methods
-<a id="_sendactivitytobot"></a>
+<a id="deleteactivity"></a>
 
-###  _sendActivityToBot
+###  deleteActivity
 
-► **_sendActivityToBot**(userSays: *`string`⎮[Partial]()[Activity](../interfaces/botbuilder.activity.md)*): `Promise`.<`void`>
+► **deleteActivity**(reference: *[Partial]()[ConversationReference](../interfaces/botbuilder.conversationreference.md)*): `Promise`.<`void`>
 
 
 
-*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:43](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/testAdapter.d.ts#L43)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:36](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L36)*
 
 
 
@@ -167,7 +162,7 @@ ___
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| userSays | `string`⎮[Partial]()[Activity](../interfaces/botbuilder.activity.md)   |  - |
+| reference | [Partial]()[ConversationReference](../interfaces/botbuilder.conversationreference.md)   |  - |
 
 
 
@@ -181,137 +176,32 @@ ___
 
 ___
 
-<a id="assertreply"></a>
+<a id="receiveactivity"></a>
 
-###  assertReply
+###  receiveActivity
 
-► **assertReply**(expected: *`string`⎮[Partial]()[Activity](../interfaces/botbuilder.activity.md)⎮`function`*, description?: *`undefined`⎮`string`*, timeout?: *`undefined`⎮`number`*): [TestFlow](botbuilder.testflow.md)
-
-
-
-*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:68](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/testAdapter.d.ts#L68)*
+► **receiveActivity**(activity: *`string`⎮[Partial]()[Activity](../interfaces/botbuilder.activity.md)*): `Promise`.<`void`>
 
 
 
-Throws if the bot's response doesn't match the expected text/activity
-
-
-**Parameters:**
-
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| expected | `string`⎮[Partial]()[Activity](../interfaces/botbuilder.activity.md)⎮`function`   |  expected text or activity from the bot |
-| description | `undefined`⎮`string`   |  description of test case |
-| timeout | `undefined`⎮`number`   |  (default 3000ms) time to wait for response from bot |
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:41](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L41)*
 
 
 
-
-
-**Returns:** [TestFlow](botbuilder.testflow.md)
-
-
-
-
-
-___
-
-<a id="assertreplyoneof"></a>
-
-###  assertReplyOneOf
-
-► **assertReplyOneOf**(candidates: *`string`[]*, description?: *`undefined`⎮`string`*, timeout?: *`undefined`⎮`number`*): [TestFlow](botbuilder.testflow.md)
-
-
-
-*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:75](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/testAdapter.d.ts#L75)*
-
-
-
-throws if the bot's response is not one of the candidate strings
+Processes and activity received from the user.
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| candidates | `string`[]   |  candidate responses |
-| description | `undefined`⎮`string`   |  description of test case |
-| timeout | `undefined`⎮`number`   |  (default 3000ms) time to wait for response from bot |
+| activity | `string`⎮[Partial]()[Activity](../interfaces/botbuilder.activity.md)   |  Text or activity from user. |
 
 
 
 
 
-**Returns:** [TestFlow](botbuilder.testflow.md)
-
-
-
-
-
-___
-
-<a id="delay"></a>
-
-###  delay
-
-► **delay**(ms: *`number`*): [TestFlow](botbuilder.testflow.md)
-
-
-
-*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:53](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/testAdapter.d.ts#L53)*
-
-
-
-wait for time period to pass before continuing
-
-
-**Parameters:**
-
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| ms | `number`   |  ms to wait for |
-
-
-
-
-
-**Returns:** [TestFlow](botbuilder.testflow.md)
-
-
-
-
-
-___
-
-<a id="post"></a>
-
-###  post
-
-► **post**(activities: *[Partial]()[Activity](../interfaces/botbuilder.activity.md)[]*): `Promise`.<`undefined`>
-
-
-
-*Implementation of [ActivityAdapter](../interfaces/botbuilder.activityadapter.md).[post](../interfaces/botbuilder.activityadapter.md#post)*
-
-*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:42](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/testAdapter.d.ts#L42)*
-
-
-
-INTERNAL implementation of `Adapter.post()`.
-
-
-**Parameters:**
-
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| activities | [Partial]()[Activity](../interfaces/botbuilder.activity.md)[]   |  - |
-
-
-
-
-
-**Returns:** `Promise`.<`undefined`>
+**Returns:** `Promise`.<`void`>
 
 
 
@@ -327,7 +217,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:48](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/testAdapter.d.ts#L48)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:46](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L46)*
 
 
 
@@ -352,6 +242,36 @@ Send something to the bot
 
 ___
 
+<a id="sendactivities"></a>
+
+###  sendActivities
+
+► **sendActivities**(activities: *[Partial]()[Activity](../interfaces/botbuilder.activity.md)[]*): `Promise`.<[ResourceResponse](../interfaces/botbuilder.resourceresponse.md)[]>
+
+
+
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:34](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L34)*
+
+
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| activities | [Partial]()[Activity](../interfaces/botbuilder.activity.md)[]   |  - |
+
+
+
+
+
+**Returns:** `Promise`.<[ResourceResponse](../interfaces/botbuilder.resourceresponse.md)[]>
+
+
+
+
+
+___
+
 <a id="test"></a>
 
 ###  test
@@ -360,7 +280,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:61](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/testAdapter.d.ts#L61)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:54](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L54)*
 
 
 
@@ -381,6 +301,36 @@ Send something to the bot and expect the bot to reply
 
 
 **Returns:** [TestFlow](botbuilder.testflow.md)
+
+
+
+
+
+___
+
+<a id="updateactivity"></a>
+
+###  updateActivity
+
+► **updateActivity**(activity: *[Partial]()[Activity](../interfaces/botbuilder.activity.md)*): `Promise`.<`void`>
+
+
+
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:35](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L35)*
+
+
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| activity | [Partial]()[Activity](../interfaces/botbuilder.activity.md)   |  - |
+
+
+
+
+
+**Returns:** `Promise`.<`void`>
 
 
 

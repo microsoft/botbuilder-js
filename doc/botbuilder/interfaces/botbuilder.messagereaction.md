@@ -1,4 +1,4 @@
-[Bot Builder SDK - Core](../README.md) > [MessageReaction](../interfaces/botbuilder.messagereaction.md)
+[Bot Builder SDK](../README.md) > [MessageReaction](../interfaces/botbuilder.messagereaction.md)
 
 
 
@@ -15,7 +15,7 @@
 
 **●  type**:  *[MessageReactionTypes](../enums/botbuilder.messagereactiontypes.md)⎮`string`* 
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:121*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:121](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L121)*
 
 
 *__member__*: {MessageReactionTypes} [type] Message reaction type. Possible values include: 'like', 'plusOne'

@@ -5,10 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Storage, StorageSettings, StoreItems, StorageMiddleware } from 'botbuilder';
+import { Storage, StoreItems } from 'botbuilder';
 import * as azure from 'azure-storage';
 /** Additional settings for configuring an instance of [TableStorage](../classes/botbuilder_azure_v4.tablestorage.html). */
-export interface TableStorageSettings extends StorageSettings {
+export interface TableStorageSettings {
     /** Name of the table to use for storage. */
     tableName: string;
     /** Storage access key. */
@@ -21,19 +21,13 @@ export interface TableStorageSettings extends StorageSettings {
 /**
  * Middleware that implements an Azure Table based storage provider for a bot.
  *
- * __Extends BotContext:__
- * * context.storage - Storage provider for storing and retrieving objects.
- *
  * **Usage Example**
  *
- * ```js
- * bot.use(new TableStorage({
- *      tableName: 'storage',
- *      storageAccountOrConnectionString: 'UseDevelopmentStorage=true'
- * }));
+ * ```javascript
  * ```
 */
-export declare class TableStorage extends StorageMiddleware<TableStorageSettings> implements Storage {
+export declare class TableStorage implements Storage {
+    private settings;
     private tableService;
     /**
      * Creates a new instance of the storage provider.
@@ -64,6 +58,4 @@ export declare class TableStorage extends StorageMiddleware<TableStorageSettings
      * @param keys Array of item keys to remove from the store.
      **/
     delete(keys: string[]): Promise<void>;
-    /** INTERNAL method that returns the storage instance to be added to the context object. */
-    protected getStorage(context: BotContext): Storage;
 }

@@ -10,7 +10,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-__export(require("./choiceStyler"));
+__export(require("./choiceFactory"));
 __export(require("./findChoices"));
 __export(require("./findValues"));
 __export(require("./recognizeChoices"));

@@ -1,34 +1,64 @@
-[Bot Builder SDK - Core](../README.md) > [StoreItem](../interfaces/botbuilder.storeitem.md)
+[Bot Builder SDK](../README.md) > [StoreItem](../interfaces/botbuilder.storeitem.md)
 
 
 
 # Interface: StoreItem
 
 
-Object which is stored in Storage with an optional eTag
+Object which is stored in Storage with an optional eTag.
 
-## Hierarchy
+<table>
 
-**StoreItem**
+<thead>
 
-↳  [UserState](botbuilder.__global.userstate.md)
+<tr>
 
+<th>package</th>
 
+</tr>
 
+</thead>
 
-↳  [ConversationState](botbuilder.__global.conversationstate.md)
+<tbody>
 
+<tr>
 
+<td>botbuilder-core-extensions</td>
 
+</tr>
 
+</tbody>
 
-
-
+</table>
 
 ## Indexable
 
 \[key: `string`\]:&nbsp;`any`
 Key/value pairs.
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>package</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>botbuilder-core-extensions</td>
+
+</tr>
+
+</tbody>
+
+</table>
 
 
 
@@ -39,7 +69,7 @@ Key/value pairs.
 
 **●  eTag**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder/lib/storage.d.ts:43](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/storage.d.ts#L43)*
+*Defined in [libraries/botbuilder-core-extensions/lib/storage.d.ts:52](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/storage.d.ts#L52)*
 
 
 

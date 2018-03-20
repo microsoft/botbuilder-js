@@ -51,7 +51,7 @@ Prompts a user to enter a number. By default the prompt will return to the calli
 ### ⊕ **new NumberPrompt**(validator?: *[PromptValidator](../#promptvalidator)`number`⎮`undefined`⎮`undefined`*): [NumberPrompt](botbuilder_dialogs.numberprompt.md)
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts:36](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts#L36)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts:37](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts#L37)*
 
 
 
@@ -89,11 +89,11 @@ Creates a new instance of the prompt.
 
 ###  begin
 
-► **begin**(context: *`BotContext`*, dialogs: *[DialogSet](botbuilder_dialogs.dialogset.md)*, options: *[PromptOptions](../interfaces/botbuilder_dialogs.promptoptions.md)*): `Promise`.<`void`>
+► **begin**(context: *[BotContext]()*, dialogs: *[DialogSet](botbuilder_dialogs.dialogset.md)*, options: *[PromptOptions](../interfaces/botbuilder_dialogs.promptoptions.md)*): `Promise`.<`void`>
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts:55](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts#L55)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts:56](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts#L56)*
 
 
 
@@ -101,7 +101,7 @@ Creates a new instance of the prompt.
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | `BotContext`   |  - |
+| context | [BotContext]()   |  - |
 | dialogs | [DialogSet](botbuilder_dialogs.dialogset.md)   |  - |
 | options | [PromptOptions](../interfaces/botbuilder_dialogs.promptoptions.md)   |  - |
 
@@ -121,13 +121,13 @@ ___
 
 ###  continue
 
-► **continue**(context: *`BotContext`*, dialogs: *[DialogSet](botbuilder_dialogs.dialogset.md)*): `Promise`.<`void`>
+► **continue**(context: *[BotContext]()*, dialogs: *[DialogSet](botbuilder_dialogs.dialogset.md)*): `Promise`.<`void`>
 
 
 
 *Implementation of [Dialog](../interfaces/botbuilder_dialogs.dialog.md).[continue](../interfaces/botbuilder_dialogs.dialog.md#continue)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts:56](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts#L56)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts:57](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/prompts/numberPrompt.d.ts#L57)*
 
 
 
@@ -135,7 +135,7 @@ ___
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | `BotContext`   |  - |
+| context | [BotContext]()   |  - |
 | dialogs | [DialogSet](botbuilder_dialogs.dialogset.md)   |  - |
 
 

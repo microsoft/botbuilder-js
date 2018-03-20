@@ -1,4 +1,4 @@
-[Bot Builder SDK - Core](../README.md) > [PaymentShippingOption](../interfaces/botbuilder.paymentshippingoption.md)
+[Bot Builder SDK](../README.md) > [PaymentShippingOption](../interfaces/botbuilder.paymentshippingoption.md)
 
 
 
@@ -15,7 +15,7 @@
 
 **●  amount**:  *[PaymentCurrencyAmount](botbuilder.paymentcurrencyamount.md)* 
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:1304*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1304](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1304)*
 
 
 *__member__*: {PaymentCurrencyAmount} [amount] Contains the monetary amount for the item
@@ -32,7 +32,7 @@ ___
 
 **●  id**:  *`string`* 
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:1295*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1295](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1295)*
 
 
 *__member__*: {string} [id] String identifier used to reference this PaymentShippingOption
@@ -49,7 +49,7 @@ ___
 
 **●  label**:  *`string`* 
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:1299*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1299](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1299)*
 
 
 *__member__*: {string} [label] Human-readable description of the item
@@ -66,7 +66,7 @@ ___
 
 **●  selected**:  *`boolean`* 
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:1309*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1309](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1309)*
 
 
 *__member__*: {boolean} [selected] Indicates whether this is the default selected PaymentShippingOption

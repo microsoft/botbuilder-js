@@ -1,4 +1,4 @@
-[Bot Builder SDK - Core](../README.md) > [PaymentCurrencyAmount](../interfaces/botbuilder.paymentcurrencyamount.md)
+[Bot Builder SDK](../README.md) > [PaymentCurrencyAmount](../interfaces/botbuilder.paymentcurrencyamount.md)
 
 
 
@@ -15,7 +15,7 @@
 
 **●  currency**:  *`string`* 
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:1253*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1253](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1253)*
 
 
 *__member__*: {string} [currency] A currency identifier
@@ -32,7 +32,7 @@ ___
 
 **●  currencySystem**:  *`string`* 
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:1261*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1261](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1261)*
 
 
 *__member__*: {string} [currencySystem] Currency system
@@ -49,7 +49,7 @@ ___
 
 **●  value**:  *`string`* 
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:1257*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1257](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1257)*
 
 
 *__member__*: {string} [value] Decimal monetary value

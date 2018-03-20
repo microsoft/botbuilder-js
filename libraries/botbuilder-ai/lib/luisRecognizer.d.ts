@@ -5,19 +5,20 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Recognizer, RecognizerResult } from 'botbuilder';
-export interface LuisRecognizerOptions {
+import { BotContext, Middleware } from 'botbuilder';
+import { LuisResult } from './luisSchema';
+import LuisClient = require('botframework-luis');
+export interface LuisRecognizerSettings {
     /** Your models AppId */
     appId: string;
     /** Your subscription key. */
     subscriptionKey: string;
-    /** (Optional) service endpoint to call. Defaults to "https://westus.api.cognitive.microsoft.com". */
+    /** (Optional) service endpoint to call. Defaults to "https://westus.api.cognitive.microsoft.com/". */
     serviceEndpoint?: string;
-    /** (Optional) if set to true, we return the metadata of the returned intents/entities. Defaults to true */
-    verbose?: boolean;
     /** (Optional) request options passed to service call.  */
     options?: {
         timezoneOffset?: number;
+        contextId?: string;
         verbose?: boolean;
         forceSet?: string;
         allowSampling?: string;
@@ -26,24 +27,14 @@ export interface LuisRecognizerOptions {
         };
     };
 }
-export declare class LuisRecognizer extends Recognizer {
-    private options;
-    private luisClient;
-    constructor(options: LuisRecognizerOptions);
-    constructor(appId: string, subscriptionKey: string);
-    static recognize(utterance: string, options: LuisRecognizerOptions): Promise<RecognizerResult>;
-    protected recognizeAndMap(utterance: string, verbose: boolean): Promise<RecognizerResult>;
-    private getIntents(luisResult);
-    private getEntitiesAndMetadata(entities, compositeEntities, verbose);
-    private getEntityValue(entity);
-    private getEntityMetadata(entity);
-    private getNormalizedEntityType(entity);
-    private populateCompositeEntity(compositeEntity, entities, entitiesAndMetadata, verbose);
-    /**
-     * If a property doesn't exist add it to a new array, otherwise append it to the existing array
-     * @param obj Object on which the property is to be set
-     * @param key Property Key
-     * @param value Property Value
-     */
-    private addProperty(obj, key, value);
+export declare class LuisRecognizer implements Middleware {
+    static nextInstance: number;
+    private settings;
+    private cacheKey;
+    constructor(settings: LuisRecognizerSettings);
+    onProcessRequest(context: BotContext, next: () => Promise<void>): Promise<void>;
+    recognize(context: BotContext, force?: boolean): Promise<LuisResult>;
+    get(context: BotContext): LuisResult | undefined;
+    getIntentsAndEntities(query: string): Promise<LuisResult>;
+    protected createLuisClient(serviceEndpoint: string): LuisClient;
 }

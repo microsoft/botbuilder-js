@@ -1,0 +1,1 @@
+{"version":3,"file":"browserStorage.js","sourceRoot":"","sources":["../src/browserStorage.ts"],"names":[],"mappings":";;AAAA;;GAEG;AACH;;;GAGG;AACH,mDAAgD;AAEhD;;;;GAIG;AACH,yBAAiC,SAAQ,6BAAa;IAClD;QACI,KAAK,CAAC,YAAY,CAAC,CAAC;IACxB,CAAC;CACJ;AAJD,kDAIC;AAED;;;;GAIG;AACH,2BAAmC,SAAQ,6BAAa;IACpD;QACI,KAAK,CAAC,cAAc,CAAC,CAAC;IAC1B,CAAC;CACJ;AAJD,sDAIC"}
