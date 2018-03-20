@@ -105,6 +105,16 @@ describe(`BotContext`, function () {
         done();
     });
 
+    it(`should be able to use a Symbol with set(), get(), and has().`, function (done) {
+        const key = Symbol('foo');
+        assert(!context.has(key), `invalid initial state for has().`);
+        context.set(key, 'bar');
+        assert(context.get(key) === 'bar', `invalid value of "${context.get(key)}" after set().`);
+        context.set(key, undefined);
+        assert(context.has(key), `invalid initial state for has() after set(undefined).`);
+        done();
+    });
+
     it(`should sendActivity() and set responded.`, function (done) {
         assert(context.responded === false, `invalid initial state for context.responded.`);        
         context.sendActivity(testMessage).then((responses) => {

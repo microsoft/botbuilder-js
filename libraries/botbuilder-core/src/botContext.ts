@@ -120,7 +120,7 @@ export class BotContext {
      * @param T (Optional) type of value being returned.
      * @param key The key to lookup in the cache. 
      */
-    public get<T = any>(key: string): T {
+    public get<T = any>(key: any): T {
         return this._cache.get(key) as T;
     }
 
@@ -128,7 +128,7 @@ export class BotContext {
      * Returns `true` if [set()](#set) has been called for a key. The cached value may be `undefined`. 
      * @param key The key to lookup in the cache. 
      */
-    public has(key: string): boolean {
+    public has(key: any): boolean {
         return this._cache.has(key);
     }
 
@@ -137,7 +137,7 @@ export class BotContext {
      * @param key The key of the value being cached. 
      * @param value The value to cache. 
      */
-    public set(key: string, value: any): this {
+    public set(key: any, value: any): this {
         this._cache.set(key, value);
         return this;
     }

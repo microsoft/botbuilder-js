@@ -86,18 +86,18 @@ export declare class BotContext {
      * @param T (Optional) type of value being returned.
      * @param key The key to lookup in the cache.
      */
-    get<T = any>(key: string): T;
+    get<T = any>(key: any): T;
     /**
      * Returns `true` if [set()](#set) has been called for a key. The cached value may be `undefined`.
      * @param key The key to lookup in the cache.
      */
-    has(key: string): boolean;
+    has(key: any): boolean;
     /**
      * Caches a value for the lifetime of the current turn.
      * @param key The key of the value being cached.
      * @param value The value to cache.
      */
-    set(key: string, value: any): this;
+    set(key: any, value: any): this;
     /**
      * Sends a set of activities to the user. An array of responses form the server will be
      * returned.
