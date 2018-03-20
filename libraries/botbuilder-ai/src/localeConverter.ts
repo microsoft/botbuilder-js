@@ -25,7 +25,7 @@ export class LocaleConverter implements Middleware {
     public constructor(toLocale: string, fromLocale: string | ((context: BotContext) => string), setUserLocale?: (context: BotContext) => Promise<boolean>) {
         this.localeConverter = new MicrosoftLocaleConverter();
         this.toLocale = toLocale;
-        if (fromLocale instanceof String) {
+        if (typeof(fromLocale) === 'string') {
             this.fromLocale = fromLocale as string;
         } else {
             this.getUserLocale = fromLocale as (context: BotContext) => string;
@@ -64,6 +64,7 @@ export class LocaleConverter implements Middleware {
                     message.text = result;
                     resolve();
                 })
+                .catch(error => reject(error));
             }
         });
     }

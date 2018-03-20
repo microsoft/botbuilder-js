@@ -67,18 +67,6 @@ class LanguageTranslator {
         if (message.text && message.text.length > 0 && targetLanguage != sourceLanguage) {
             // truncate big text
             let text = message.text.length <= 65536 ? message.text : message.text.substring(0, 65536);
-            // massage mentions so they don't get translated
-            if (message.entities) {
-                let i = 0;
-                for (let iEntity in message.entities) {
-                    let entity = message.entities[iEntity];
-                    if (entity.type == 'mention') {
-                        let mention = entity;
-                        let placeholder = "__" + i++ + "__";
-                        text = text.replace(mention.text, placeholder);
-                    }
-                }
-            }
             let lines = text.split('\n');
             return this.translator.translateArrayAsync({
                 from: sourceLanguage,
@@ -93,34 +81,14 @@ class LanguageTranslator {
                         text += '\n';
                     text += translateResult[iData].TranslatedText;
                 }
-                // restore mentions
-                if (message.entities) {
-                    let i = 0;
-                    for (let iEntity in message.entities) {
-                        let entity = message.entities[iEntity];
-                        if (entity.type == 'mention') {
-                            let mention = entity;
-                            let placeholder = "__" + i++ + "__";
-                            text = text.replace(placeholder, mention.text);
-                        }
-                    }
-                }
                 message.text = text;
-            });
+                return Promise.resolve();
+            })
+                .catch(error => Promise.reject(error));
         }
-        return Promise.resolve();
     }
 }
 exports.LanguageTranslator = LanguageTranslator;
-// turn a cb based azure method into a Promisified one
-function denodeify(thisArg, fn) {
-    return (...args) => {
-        return new Promise((resolve, reject) => {
-            args.push((error, result) => (error) ? reject(error) : resolve(result));
-            fn.apply(thisArg, args);
-        });
-    };
-}
 class MicrosoftTranslator {
     constructor(apiKey, noTranslatePatterns) {
         this.noTranslatePatterns = new Set();
@@ -140,7 +108,8 @@ class MicrosoftTranslator {
             url: `https://api.cognitive.microsoft.com/sts/v1.0/issueToken?Subscription-Key=${this.apiKey}`,
             method: 'POST'
         })
-            .then(result => result);
+            .then(result => result)
+            .catch(error => Promise.reject(error));
     }
     escapeHtml(source) {
         return String(source).replace(/[&<>"'\/]/g, s => this.entityMap[s]);
@@ -221,9 +190,7 @@ class MicrosoftTranslator {
                 });
                 resolve(results);
             })
-                .catch(error => {
-                reject(error);
-            });
+                .catch(error => Promise.reject(error));
         });
     }
 }
@@ -249,7 +216,7 @@ class PostProcessTranslator {
         let wrdStartIndex = source.indexOf(srcWrd);
         let wrdEndIndex = wrdStartIndex + srcWrd.length - 1;
         let wrdIndexesString = wrdStartIndex + ":" + wrdEndIndex;
-        if (wrdIndexesString in alignment) {
+        if (!(typeof alignment[wrdIndexesString] === "undefined")) {
             let trgWrdLocation = alignment[wrdIndexesString].split(':');
             let targetWrd = target.substr(parseInt(trgWrdLocation[0]), parseInt(trgWrdLocation[1]));
             if (targetWrd.trim().length == parseInt(trgWrdLocation[1]) && targetWrd != srcWrd)
@@ -278,7 +245,7 @@ class PostProcessTranslator {
             toBeReplaced.forEach(pattern => {
                 let regExp = new RegExp(pattern, "i");
                 let match = regExp.exec(sourceMessage);
-                if (match != null) {
+                if (match != null && match[1] != undefined) {
                     let wrdNoTranslate = match[1].split(' ');
                     wrdNoTranslate.forEach(srcWrd => {
                         processedTranslation = this.keepSrcWrdInTranslation(alignMap, sourceMessage, processedTranslation, srcWrd);

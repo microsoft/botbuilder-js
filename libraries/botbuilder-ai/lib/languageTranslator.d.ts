@@ -15,8 +15,8 @@ export interface TranslatorSettings {
     translatorKey: string;
     nativeLanguages: string[];
     noTranslatePatterns: Set<string>;
-    getUserLanguage: ((c: BotContext) => string) | undefined;
-    setUserLanguage: ((context: BotContext) => Promise<boolean>) | undefined;
+    getUserLanguage?: ((c: BotContext) => string) | undefined;
+    setUserLanguage?: ((context: BotContext) => Promise<boolean>) | undefined;
 }
 /**
  * The LanguageTranslator will use the Text Translator Cognitive service to translate text from a source language

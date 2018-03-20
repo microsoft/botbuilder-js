@@ -16,7 +16,7 @@ class LocaleConverter {
     constructor(toLocale, fromLocale, setUserLocale) {
         this.localeConverter = new MicrosoftLocaleConverter();
         this.toLocale = toLocale;
-        if (fromLocale instanceof String) {
+        if (typeof (fromLocale) === 'string') {
             this.fromLocale = fromLocale;
         }
         else {
@@ -57,7 +57,8 @@ class LocaleConverter {
                     .then(result => {
                     message.text = result;
                     resolve();
-                });
+                })
+                    .catch(error => reject(error));
             }
         });
     }
