@@ -2,7 +2,7 @@
   "name": "botbuilder",
   "author": "Microsoft Corp.",
   "description": "Services for Microsoft BotBuilder.",
-  "version": "4.0.0-m2.0",
+  "version": "4.0.0-m2.1",
   "license": "MIT",
   "keywords": [
     "botbuilder",
@@ -21,9 +21,9 @@
   "typings": "./lib/index.d.ts",
   "dependencies": {
     "async-file": "^2.0.2",
-    "botbuilder-core": "4.0.0-m2.0",
-    "botbuilder-core-extensions": "4.0.0-m2.0",
-    "botframework-connector": "4.0.0-m2.0",
+    "botbuilder-core": "4.0.0-m2.1",
+    "botbuilder-core-extensions": "4.0.0-m2.1",
+    "botframework-connector": "4.0.0-m2.1",
     "filenamify": "^2.0.0",
     "readline": "^1.3.0"
   },

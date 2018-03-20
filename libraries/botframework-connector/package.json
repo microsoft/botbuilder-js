@@ -2,7 +2,7 @@
   "name": "botframework-connector",
   "author": "Microsoft Corp.",
   "description": "Bot Connector is autorest generated connector client.",
-  "version": "4.0.0-m2.0",
+  "version": "4.0.0-m2.1",
   "license": "MIT",
   "keywords": [
     "botconnector",
@@ -21,7 +21,7 @@
   "dependencies": {
     "@types/request": "^2.47.0",
     "base64url": "^2.0.0",
-    "botframework-schema": "4.0.0-m2.0",
+    "botframework-schema": "4.0.0-m2.1",
     "jsonwebtoken": "8.0.1",
     "ms-rest-js": "^0.2.5",
     "request": "2.83.0",
