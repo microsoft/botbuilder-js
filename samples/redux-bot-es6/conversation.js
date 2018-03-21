@@ -30,7 +30,7 @@ const store = function (state = [], action) {
         // this state change came from the bot framework channel
         case 'message':
             state.push({ user: action.activity });
-            state.push({ bot: echo(action.activity) });
+            state.push({ bot: echo(action.activity), replyToId: action.activity.id });
             break;
         // this state change was generated interanlly in our bot logic
         case 'interval': {
@@ -38,7 +38,12 @@ const store = function (state = [], action) {
             // however, here we are just looking at the tail of our conversation log 
             const last = state[state.length - 1];
             if (last && last.bot) {
-                state.push({ bot: Object.assign({}, last.bot, { text: 'The time is: ' + action.now.toUTCString() }) });
+                state.push({ 
+                    bot: Object.assign({}, last.bot, { 
+                        text: 'The time is: ' + action.now.toUTCString(), 
+                        replyToId: undefined
+                    })
+                });
             }
         }
     }
