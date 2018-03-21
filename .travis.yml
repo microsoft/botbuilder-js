@@ -12,7 +12,7 @@ install:
   - lerna bootstrap --hoist
 
 script:
-  - npm run test
+  - npm run test:travis
 
 cache:
   directories:
