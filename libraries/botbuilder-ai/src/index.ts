@@ -6,14 +6,6 @@
  * Licensed under the MIT License.
  */
 export * from './luisRecognizer';
-export * from './languageTranslator';
-export * from './languageMap';
 export * from './qnaMaker';
-export * from './bingEntitySearch';
+export * from './languageTranslator';
 export * from './localeConverter';
-
-declare global {
-    export interface EntityTypes {
-        luis: string
-    }
-}

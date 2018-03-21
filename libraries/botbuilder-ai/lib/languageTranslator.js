@@ -23,7 +23,7 @@ class LanguageTranslator {
         this.setUserLanguage = settings.setUserLanguage;
     }
     /// Incoming activity
-    receiveActivity(context, next) {
+    onProcessRequest(context, next) {
         return __awaiter(this, void 0, void 0, function* () {
             if (context.request.type == "message" && context.request.text) {
                 if (this.setUserLanguage != undefined) {
@@ -36,9 +36,6 @@ class LanguageTranslator {
                 let sourceLanguage;
                 if (this.getUserLanguage != undefined) {
                     sourceLanguage = this.getUserLanguage(context);
-                }
-                else if (context.state && context.state.conversation && context.state.conversation.language) {
-                    sourceLanguage = context.state.conversation.language;
                 }
                 else if (context.request.locale != undefined) {
                     sourceLanguage = context.request.locale;

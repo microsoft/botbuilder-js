@@ -1,11 +1,11 @@
-import { 
-    Bot, MemoryStorage, BotStateManager, ActionTypes, CardAction, Attachment, MessageStyler
+import {
+    BotFrameworkAdapter, MemoryStorage, ConversationState, ActionTypes, Attachment,
+    MessageFactory
 } from 'botbuilder';
 import { 
     DialogSet, TextPrompt, ConfirmPrompt, ChoicePrompt, DatetimePrompt, NumberPrompt, 
-    AttachmentPrompt, FoundChoice, Choice, FoundDatetime, ListStyle 
+    AttachmentPrompt, FoundChoice, Choice, FoundDatetime
 } from 'botbuilder-dialogs';
-import { BotFrameworkAdapter } from 'botbuilder-services';
 import * as restify from 'restify';
 
 // Create server
@@ -14,35 +14,44 @@ server.listen(process.env.port || process.env.PORT || 3978, function () {
     console.log(`${server.name} listening to ${server.url}`);
 });
 
-// Create adapter and listen to servers '/api/messages' route.
+// Create adapter
 const adapter = new BotFrameworkAdapter({ 
     appId: process.env.MICROSOFT_APP_ID, 
     appPassword: process.env.MICROSOFT_APP_PASSWORD 
 });
-server.post('/api/messages', <any>adapter.listen());
 
-const dialogs = new DialogSet();
+// Add conversation state middleware
+const conversationState = new ConversationState(new MemoryStorage());
+adapter.use(conversationState);
 
-// Initialize bot by passing it adapter and middleware
-const bot = new Bot(adapter)
-    .use(new MemoryStorage())
-    .use(new BotStateManager())
-    .onReceive((context) => {
+// Listen for incoming requests 
+server.post('/api/messages', (req, res) => {
+    // Route received request to adapter for processing
+    adapter.processRequest(req, res, async (context) => {
         if (context.request.type === 'message') {
+            // Create dialog context
+            const state = conversationState.get(context);
+            const dc = dialogs.createContext(context, state);
+
             // Check for cancel
             const utterance = (context.request.text || '').trim().toLowerCase();
-            if (utterance === 'menu' || utterance === 'cancel') { dialogs.endAll(context) }
-
+            if (utterance === 'menu' || utterance === 'cancel') { 
+                await dc.endAll(); 
+            }
+            
             // Continue the current dialog
-            return dialogs.continue(context).then(() => {
-                // Show menu if no response queued.
-                if (!context.responded) {
-                    return dialogs.begin(context, 'mainMenu');
-                }
-            });
+            await dc.continue();
+
+            // Show menu if no response sent
+            if (!context.responded) {
+                await dc.begin('mainMenu');
+            }
         }
     });
+});
 
+const dialogs = new DialogSet();
+    
 // Add prompts
 dialogs.add('choicePrompt', new ChoicePrompt());
 dialogs.add('confirmPrompt', new ConfirmPrompt());
@@ -57,14 +66,14 @@ dialogs.add('attachmentPrompt', new AttachmentPrompt());
 //-----------------------------------------------
 
 dialogs.add('mainMenu', [
-    function (context) {
+    async function(dc) {
         function choice(title: string, value: string): Choice {
             return {
                 value: value,
                 action: { type: ActionTypes.ImBack, title: title, value: title }
             };
         }
-        return dialogs.prompt(context, 'choicePrompt', `Select a demo to run:`, [
+        await dc.prompt('choicePrompt', `Select a demo to run:`, [
             choice('choice', 'choiceDemo'),
             choice('confirm', 'confirmDemo'),
             choice('datetime', 'datetimeDemo'),
@@ -74,35 +83,35 @@ dialogs.add('mainMenu', [
             choice('<all>', 'runAll')
         ]);
     },
-    function (context, choice: FoundChoice) {
+    async function(dc, choice: FoundChoice) {
         if (choice.value === 'runAll') {
-            return dialogs.replace(context, choice.value);
+            await dc.replace(choice.value);
         } else {
-            context.reply(`The demo will loop so say "menu" or "cancel" to end.`);
-            return dialogs.replace(context, 'loop', { dialogId: choice.value });
+            await dc.context.sendActivity(`The demo will loop so say "menu" or "cancel" to end.`);
+            await dc.replace('loop', { dialogId: choice.value });
         }
     }
 ]);
 
 dialogs.add('loop', [
-    function (context, args: { dialogId: string; }) {
-        dialogs.getInstance(context).state = args;
-        return dialogs.begin(context, args.dialogId);
+    async function(dc, args: { dialogId: string; }) {
+        dc.instance.state = args;
+        await dc.begin(args.dialogId);
     },
-    function (context) {
-        const args = dialogs.getInstance(context).state;
-        return dialogs.replace(context, 'loop', args);
+    async function(dc) {
+        const args = dc.instance.state;
+        await dc.replace('loop', args);
     }
 ]);
 
 dialogs.add('runAll', [
-    (context) => dialogs.begin(context, 'choiceDemo'),
-    (context) => dialogs.begin(context, 'confirmDemo'),
-    (context) => dialogs.begin(context, 'datetimeDemo'),
-    (context) => dialogs.begin(context, 'numberDemo'),
-    (context) => dialogs.begin(context, 'textDemo'),
-    (context) => dialogs.begin(context, 'attachmentDemo'),
-    (context) => dialogs.replace(context, 'mainMenu')
+    (dc) => dc.begin('choiceDemo'),
+    (dc) => dc.begin('confirmDemo'),
+    (dc) => dc.begin('datetimeDemo'),
+    (dc) => dc.begin('numberDemo'),
+    (dc) => dc.begin('textDemo'),
+    (dc) => dc.begin('attachmentDemo'),
+    (dc) => dc.replace('mainMenu')
 ]);
 
 
@@ -111,12 +120,12 @@ dialogs.add('runAll', [
 //-----------------------------------------------
 
 dialogs.add('choiceDemo', [
-    function (context) {
-        return dialogs.prompt(context, 'choicePrompt', `choice: select a color`, ['red', 'green', 'blue']);
+    async function(dc) {
+        await dc.prompt('choicePrompt', `choice: select a color`, ['red', 'green', 'blue']);
     },
-    function (context, choice: FoundChoice) {
-        context.reply(`Recognized choice: ${JSON.stringify(choice)}`);
-        return dialogs.end(context);
+    async function(dc, choice: FoundChoice) {
+        await dc.context.sendActivity(`Recognized choice: ${JSON.stringify(choice)}`);
+        await dc.end();
     }
 ]);
 
@@ -126,12 +135,12 @@ dialogs.add('choiceDemo', [
 //-----------------------------------------------
 
 dialogs.add('confirmDemo', [
-    function (context) {
-        return dialogs.prompt(context, 'confirmPrompt', `confirm: answer "yes" or "no"`);
+    async function(dc) {
+        await dc.prompt('confirmPrompt', `confirm: answer "yes" or "no"`);
     },
-    function (context, value: boolean) {
-        context.reply(`Recognized value: ${value}`);
-        return dialogs.end(context);
+    async function(dc, value: boolean) {
+        await dc.context.sendActivity(`Recognized value: ${value}`);
+        await dc.end();
     }
 ]);
 
@@ -141,12 +150,12 @@ dialogs.add('confirmDemo', [
 //-----------------------------------------------
 
 dialogs.add('datetimeDemo', [
-    function (context) {
-        return dialogs.prompt(context, 'datetimePrompt', `datetime: enter a datetime`);
+    async function(dc) {
+        await dc.prompt('datetimePrompt', `datetime: enter a datetime`);
     },
-    function (context, values: FoundDatetime[]) {
-        context.reply(`Recognized values: ${JSON.stringify(values)}`);
-        return dialogs.end(context);
+    async function(dc, values: FoundDatetime[]) {
+        await dc.context.sendActivity(`Recognized values: ${JSON.stringify(values)}`);
+        await dc.end();
     }
 ]);
 
@@ -156,12 +165,12 @@ dialogs.add('datetimeDemo', [
 //-----------------------------------------------
 
 dialogs.add('numberDemo', [
-    function (context) {
-        return dialogs.prompt(context, 'numberPrompt', `number: enter a number`);
+    async function(dc) {
+        await dc.prompt('numberPrompt', `number: enter a number`);
     },
-    function (context, value: number) {
-        context.reply(`Recognized value: ${value}`);
-        return dialogs.end(context);
+    async function(dc, value: number) {
+        await dc.context.sendActivity(`Recognized value: ${value}`);
+        await dc.end();
     }
 ]);
 
@@ -171,12 +180,12 @@ dialogs.add('numberDemo', [
 //-----------------------------------------------
 
 dialogs.add('textDemo', [
-    function (context) {
-        return dialogs.prompt(context, 'textPrompt', `text: enter some text`);
+    async function(dc) {
+        await dc.prompt('textPrompt', `text: enter some text`);
     },
-    function (context, value: string) {
-        context.reply(`Recognized value: ${value}`);
-        return dialogs.end(context);
+    async function(dc, value: string) {
+        await dc.context.sendActivity(`Recognized value: ${value}`);
+        await dc.end();
     }
 ]);
 
@@ -186,11 +195,11 @@ dialogs.add('textDemo', [
 //-----------------------------------------------
 
 dialogs.add('attachmentDemo', [
-    function (context) {
-        return dialogs.prompt(context, 'attachmentPrompt', `attachment: upload image(s)`);
+    async function(dc) {
+        await dc.prompt('attachmentPrompt', `attachment: upload image(s)`);
     },
-    function (context, values: Attachment[]) {
-        context.reply(MessageStyler.carousel(values, `Uploaded ${values.length} Attachment(s)`));
-        return dialogs.end(context);
+    async function(dc, values: Attachment[]) {
+        await dc.context.sendActivity(MessageFactory.carousel(values, `Uploaded ${values.length} Attachment(s)`));
+        await dc.end();
     }
 ]);

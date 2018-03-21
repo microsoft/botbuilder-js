@@ -6,7 +6,7 @@
 // In our example, once a conversation has started and messages have been exchanged this bot will
 // start to proactively report the current time to the conversation - every 10 seconds!
 
-const services = require('botbuilder-services');
+const botbuilder = require('botbuilder');
 const restify = require('restify');
 const redux = require('redux');
 const createLogger = require('redux-logger').createLogger;
@@ -37,8 +37,9 @@ const store = redux.createStore(conversation.store,
 ));
 
 // Create adapter
-const adapter = new services.BotFrameworkAdapter(process.env.MICROSOFT_APP_ID, process.env.MICROSOFT_APP_PASSWORD);
-server.post('/api/messages', adapter.listen());
+const adapter = new botbuilder.BotFrameworkAdapter(process.env.MICROSOFT_APP_ID, process.env.MICROSOFT_APP_PASSWORD);
+server.post('/api/messages', (req, res) => {
+});
 
 // Redux provides a simple pub-sub model that we can use to help organize our application logic in a decoupled way
 

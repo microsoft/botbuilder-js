@@ -1,4 +1,4 @@
-[Bot Builder SDK - Core](../README.md) > [PaymentMethodData](../interfaces/botbuilder.paymentmethoddata.md)
+[Bot Builder SDK](../README.md) > [PaymentMethodData](../interfaces/botbuilder.paymentmethoddata.md)
 
 
 
@@ -15,7 +15,7 @@
 
 **●  data**:  *`any`* 
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:1393*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1393](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1393)*
 
 
 *__member__*: {any} [data] A JSON-serializable object that provides optional information that might be needed by the supported payment methods
@@ -32,7 +32,7 @@ ___
 
 **●  supportedMethods**:  *`string`[]* 
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:1388*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1388](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1388)*
 
 
 *__member__*: {string[]} [supportedMethods] Required sequence of strings containing payment method identifiers for payment methods that the merchant web site accepts

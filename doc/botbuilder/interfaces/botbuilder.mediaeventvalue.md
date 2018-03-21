@@ -1,4 +1,4 @@
-[Bot Builder SDK - Core](../README.md) > [MediaEventValue](../interfaces/botbuilder.mediaeventvalue.md)
+[Bot Builder SDK](../README.md) > [MediaEventValue](../interfaces/botbuilder.mediaeventvalue.md)
 
 
 
@@ -15,7 +15,7 @@
 
 **●  cardValue**:  *`any`* 
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:1152*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1152](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1152)*
 
 
 *__member__*: {any} [cardValue] Callback parameter specified in the Value field of the MediaCard that originated this event

@@ -1,4 +1,4 @@
-[Bot Builder SDK - Core](../README.md) > [ChannelAccount](../interfaces/botbuilder.channelaccount.md)
+[Bot Builder SDK](../README.md) > [ChannelAccount](../interfaces/botbuilder.channelaccount.md)
 
 
 
@@ -15,10 +15,10 @@
 
 **●  id**:  *`string`* 
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:83*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:83](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L83)*
 
 
-*__member__*: {string} [id] Channel id for the user or bot on this channel (Example: joe@smith.com, or @joesmith or 123456)
+*__member__*: {string} [id] Channel id for the user or bot on this channel (Example: [joe@smith.com](mailto:joe@smith.com), or @joesmith or 123456)
 
 
 
@@ -32,7 +32,7 @@ ___
 
 **●  name**:  *`string`* 
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:87*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:87](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L87)*
 
 
 *__member__*: {string} [name] Display friendly name

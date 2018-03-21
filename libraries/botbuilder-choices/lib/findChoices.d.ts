@@ -18,11 +18,6 @@ export interface Choice {
 }
 export interface FindChoicesOptions extends FindValuesOptions {
     /**
-     * (Optional) locale of the user preferred language. This is used when recognizing the
-     * numerical or ordinal index of the choice. The default is assumed to be `en-US`.
-     */
-    culture?: string;
-    /**
      * (Optional) If `true`, the choices value will NOT be search over. The default is `false`.
      */
     noValue?: boolean;

@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Middleware } from 'botbuilder';
+import { Middleware, BotContext } from 'botbuilder';
 /**
  * The LocaleConverter converts all locales in a message to a given locale.
  */
@@ -17,6 +17,6 @@ export declare class LocaleConverter implements Middleware {
     private setUserLocale;
     constructor(toLocale: string, fromLocale: string);
     constructor(toLocale: string, getUserLocale: (context: BotContext) => string, setUserLocale: (context: BotContext) => Promise<boolean>);
-    receiveActivity(context: BotContext, next: () => Promise<void>): Promise<void>;
+    onProcessRequest(context: BotContext, next: () => Promise<void>): Promise<void>;
     private convertLocalesAsync(context);
 }

@@ -8,13 +8,13 @@
 
 ### Classes
 
-* [ChoiceStyler](classes/botbuilder_choices.choicestyler.md)
+* [ChoiceFactory](classes/botbuilder_choices.choicefactory.md)
 
 
 ### Interfaces
 
 * [Choice](interfaces/botbuilder_choices.choice.md)
-* [ChoiceStylerOptions](interfaces/botbuilder_choices.choicestyleroptions.md)
+* [ChoiceFactoryOptions](interfaces/botbuilder_choices.choicefactoryoptions.md)
 * [FindChoicesOptions](interfaces/botbuilder_choices.findchoicesoptions.md)
 * [FindValuesOptions](interfaces/botbuilder_choices.findvaluesoptions.md)
 * [FoundChoice](interfaces/botbuilder_choices.foundchoice.md)
@@ -46,7 +46,7 @@
 
 **Τ TokenizerFunction**:  *`function`* 
 
-*Defined in [libraries/botbuilder-choices/lib/tokenizer.d.ts:14](https://github.com/Microsoft/botbuilder-js/blob/f687311/libraries/botbuilder-choices/lib/tokenizer.d.ts#L14)*
+*Defined in [libraries/botbuilder-choices/lib/tokenizer.d.ts:14](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-choices/lib/tokenizer.d.ts#L14)*
 
 
 #### Type declaration
@@ -84,7 +84,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-choices/lib/tokenizer.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/f687311/libraries/botbuilder-choices/lib/tokenizer.d.ts#L19)*
+*Defined in [libraries/botbuilder-choices/lib/tokenizer.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-choices/lib/tokenizer.d.ts#L19)*
 
 
 
@@ -118,7 +118,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:47](https://github.com/Microsoft/botbuilder-js/blob/f687311/libraries/botbuilder-choices/lib/findChoices.d.ts#L47)*
+*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:47](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-choices/lib/findChoices.d.ts#L47)*
 
 
 
@@ -150,7 +150,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:57](https://github.com/Microsoft/botbuilder-js/blob/f687311/libraries/botbuilder-choices/lib/findValues.d.ts#L57)*
+*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:57](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-choices/lib/findValues.d.ts#L57)*
 
 
 
@@ -185,7 +185,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-choices/lib/recognizeChoices.d.ts:10](https://github.com/Microsoft/botbuilder-js/blob/f687311/libraries/botbuilder-choices/lib/recognizeChoices.d.ts#L10)*
+*Defined in [libraries/botbuilder-choices/lib/recognizeChoices.d.ts:10](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-choices/lib/recognizeChoices.d.ts#L10)*
 
 
 

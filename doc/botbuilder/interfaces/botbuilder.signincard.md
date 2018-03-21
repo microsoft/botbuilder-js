@@ -1,4 +1,4 @@
-[Bot Builder SDK - Core](../README.md) > [SigninCard](../interfaces/botbuilder.signincard.md)
+[Bot Builder SDK](../README.md) > [SigninCard](../interfaces/botbuilder.signincard.md)
 
 
 
@@ -15,7 +15,7 @@
 
 **●  buttons**:  *[CardAction](botbuilder.cardaction.md)[]* 
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:950*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:950](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L950)*
 
 
 *__member__*: {CardAction[]} [buttons] Action to use to perform signin
@@ -32,7 +32,7 @@ ___
 
 **●  text**:  *`undefined`⎮`string`* 
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:946*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:946](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L946)*
 
 
 *__member__*: {string} [text] Text for signin request

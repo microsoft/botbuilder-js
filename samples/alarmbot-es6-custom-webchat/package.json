@@ -10,7 +10,8 @@
   "author": "Microsoft",
   "license": "MIT",
   "dependencies": {
-    "botbuilder": "4.0.0-m1.10",
+    "botbuilder-core": "^4.0.0-m2.1",
+    "botbuilder-core-extensions": "^4.0.0-m2.1",
     "skeleton-css": "^2.0.4"
   },
   "devDependencies": {

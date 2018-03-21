@@ -1,11 +1,13 @@
+import { BotContext } from 'botbuilder';
+import { BotStateManager } from './botStateManager';
 
-export function begin(context: BotContext): Promise<void> {
+export async function begin(context: BotContext, state: BotStateManager): Promise<any> {
     // Cancel the current topic
-    if (context.state.conversation.topic) {
-        context.state.conversation.topic = undefined;
-        context.reply(`Ok... Canceled.`);
+    const conversation = state.conversation(context);
+    if (conversation.topic) {
+        conversation.topic = undefined;
+        await context.sendActivity(`Ok... Canceled.`);
     } else {
-        context.reply(`Nothing to cancel.`);
+        await context.sendActivity(`Nothing to cancel.`);
     }
-    return Promise.resolve();
 }

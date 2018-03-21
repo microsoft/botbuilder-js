@@ -1,4 +1,4 @@
-[Bot Builder SDK - Core](../README.md) > [TextFormatTypes](../enums/botbuilder.textformattypes.md)
+[Bot Builder SDK](../README.md) > [TextFormatTypes](../enums/botbuilder.textformattypes.md)
 
 
 
@@ -31,7 +31,7 @@ Defines values for TextFormatTypes. Possible values include: 'markdown', 'plain'
 
 ** Markdown**:    = "markdown"
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:1618*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1618](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1618)*
 
 
 
@@ -45,7 +45,7 @@ ___
 
 ** Plain**:    = "plain"
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:1619*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1619](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1619)*
 
 
 
@@ -59,7 +59,7 @@ ___
 
 ** Xml**:    = "xml"
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:1620*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1620](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1620)*
 
 
 

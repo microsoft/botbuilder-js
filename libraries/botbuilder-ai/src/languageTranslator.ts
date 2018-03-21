@@ -5,11 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Middleware } from 'botbuilder';
-import { Activity, ResourceResponse } from 'botbuilder';
-import * as LanguageMap from './languageMap';
+import { Middleware, BotContext } from 'botbuilder';
 import * as request from 'request-promise-native';
-import LuisClient = require('botframework-luis');
 import { DOMParser } from "xmldom";
 
 export interface TranslatorSettings {
@@ -39,7 +36,7 @@ export class LanguageTranslator implements Middleware {
     }
 
     /// Incoming activity
-    public async receiveActivity(context: BotContext, next: () => Promise<void>): Promise<void> {
+    public async onProcessRequest(context: BotContext, next: () => Promise<void>): Promise<void> {
         if (context.request.type == "message" && context.request.text) {
             
             if (this.setUserLanguage != undefined) {
@@ -52,8 +49,6 @@ export class LanguageTranslator implements Middleware {
             let sourceLanguage: string;
             if (this.getUserLanguage != undefined) {
                 sourceLanguage = this.getUserLanguage(context);
-            } else if (context.state && context.state.conversation && context.state.conversation.language) {
-                sourceLanguage = context.state.conversation.language;
             } else if (context.request.locale != undefined) {
                 sourceLanguage = context.request.locale;
             } else {

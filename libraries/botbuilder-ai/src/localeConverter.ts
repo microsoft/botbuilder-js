@@ -5,9 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Middleware } from 'botbuilder';
-import { Activity, ResourceResponse } from 'botbuilder';
-import * as LanguageMap from './languageMap';
+import { Middleware, BotContext } from 'botbuilder';
 import * as DateTimeRecognizers from '@microsoft/recognizers-text-date-time';
 
 /**
@@ -34,7 +32,7 @@ export class LocaleConverter implements Middleware {
     }
 
     /// Incoming activity
-    public async receiveActivity(context: BotContext, next: () => Promise<void>): Promise<void> {
+    public async onProcessRequest(context: BotContext, next: () => Promise<void>): Promise<void> {
         if (context.request.type == "message" && context.request.text) {
             // determine the language we are using for this conversation
             if (this.setUserLocale != undefined) {

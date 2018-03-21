@@ -5,9 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog } from '../dialog';
-import { DialogSet } from '../dialogSet';
-import { PromptOptions, PromptValidator } from './prompt';
+import { BotContext } from 'botbuilder';
+import { DialogContext } from '../dialogContext';
+import { Prompt, PromptOptions, PromptValidator } from './prompt';
 /**
  * Prompts a user to enter some text. By default the prompt will return to the calling
  * dialog a `string` representing the users reply.
@@ -22,36 +22,36 @@ import { PromptOptions, PromptValidator } from './prompt';
  * dialogs.add('textPrompt', new TextPrompt());
  *
  * dialogs.add('textDemo', [
- *      function (context) {
- *          return dialogs.prompt(context, 'textPrompt', `text: enter some text`);
+ *      function (dc) {
+ *          return dc.prompt('textPrompt', `text: enter some text`);
  *      },
- *      function (context, value) {
- *          context.reply(`Recognized value: ${value}`);
- *          return dialogs.end(context);
+ *      function (dc, value) {
+ *          dc.batch.reply(`Recognized value: ${value}`);
+ *          return dc.end();
  *      }
  * ]);
  * ```
  */
-export declare class TextPrompt implements Dialog {
-    private validator;
+export declare class TextPrompt<C extends BotContext> extends Prompt<C, string> {
+    private prompt;
     /**
      * Creates a new instance of the prompt.
      *
      * **Example usage:**
      *
      * ```JavaScript
-     * dialogs.add('titlePrompt', new TextPrompt((context, value) => {
-     *      if (value.length < 3) {
-     *          context.reply(`Title should be at least 3 characters long.`);
-     *          return Promise.resolve();
+     * dialogs.add('titlePrompt', new TextPrompt((dc, value) => {
+     *      if (!value || value.length < 3) {
+     *          dc.batch.reply(`Title should be at least 3 characters long.`);
+     *          return undefined;
      *      } else {
-     *          return dialogs.end(context, value.trim());
+     *          return value.trim();
      *      }
      * }));
      * ```
-     * @param validator (Optional) validator that will be called each time the user responds to the prompt.
+     * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
      */
-    constructor(validator?: PromptValidator<string>);
-    begin(context: BotContext, dialogs: DialogSet, options: PromptOptions): Promise<void>;
-    continue(context: BotContext, dialogs: DialogSet): Promise<void>;
+    constructor(validator?: PromptValidator<C, string>);
+    protected onPrompt(dc: DialogContext<C>, options: PromptOptions, isRetry: boolean): Promise<void>;
+    protected onRecognize(dc: DialogContext<C>, options: PromptOptions): Promise<string | undefined>;
 }

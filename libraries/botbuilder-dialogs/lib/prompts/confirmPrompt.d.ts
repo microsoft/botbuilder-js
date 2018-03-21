@@ -5,21 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity } from 'botbuilder';
-import { Dialog } from '../dialog';
-import { DialogSet } from '../dialogSet';
-import { PromptOptions, PromptValidator } from './prompt';
-import { ListStyle } from './choicePrompt';
-import { ChoiceStylerOptions, Choice } from 'botbuilder-choices';
-/** Map of `ConfirmPrompt` choices for each locale the bot supports. */
-export interface ConfirmChoices {
-    [locale: string]: (string | Choice)[];
-}
-/** Additional options that can be used to configure a `ChoicePrompt`. */
-export interface ConfirmPromptOptions extends PromptOptions {
-    /** Preferred style of the yes/no choices sent to the user. The default value is `ListStyle.auto`. */
-    style?: ListStyle;
-}
+import { BotContext } from 'botbuilder';
+import { DialogContext } from '../dialogContext';
+import { Prompt, PromptOptions, PromptValidator } from './prompt';
+import * as prompts from 'botbuilder-prompts';
 /**
  * Prompts a user to confirm something with a yes/no response. By default the prompt will return
  * to the calling dialog a `boolean` representing the users selection.
@@ -34,18 +23,18 @@ export interface ConfirmPromptOptions extends PromptOptions {
  * dialogs.add('confirmPrompt', new ConfirmPrompt());
  *
  * dialogs.add('confirmDemo', [
- *      function (context) {
- *          return dialogs.prompt(context, 'confirmPrompt', `confirm: answer "yes" or "no"`);
+ *      function (dc) {
+ *          return dc.prompt('confirmPrompt', `confirm: answer "yes" or "no"`);
  *      },
- *      function (context, value) {
- *          context.reply(`Recognized value: ${value}`);
- *          return dialogs.end(context);
+ *      function (dc, value) {
+ *          dc.batch.reply(`Recognized value: ${value}`);
+ *          return dc.end();
  *      }
  * ]);
  * ```
  */
-export declare class ConfirmPrompt implements Dialog {
-    private validator;
+export declare class ConfirmPrompt<C extends BotContext> extends Prompt<C, boolean> {
+    private prompt;
     /**
      * Allows for the localization of the confirm prompts yes/no choices to other locales besides
      * english. The key of each entry is the languages locale code and should be lower cased. A
@@ -60,28 +49,37 @@ export declare class ConfirmPrompt implements Dialog {
      * ConfirmPrompt.choices['en-us'] = ['yes', 'no'];
      * ```
      */
-    static choices: ConfirmChoices;
-    /** Additional options passed to the `ChoiceStyler` and used to tweak the style of yes/no choices rendered to the user. */
-    readonly stylerOptions: ChoiceStylerOptions;
+    static choices: prompts.ConfirmChoices;
     /**
      * Creates a new instance of the prompt.
      *
      * **Example usage:**
      *
      * ```JavaScript
-     * dialogs.add('confirmPrompt', new ConfirmPrompt((context, value) => {
+     * dialogs.add('confirmPrompt', new ConfirmPrompt((dc, value) => {
      *      if (value === undefined) {
-     *          context.reply(`Please answer with "yes" or "no".`);
-     *          return Prompts.resolve();
+     *          dc.batch.reply(`Invalid answer. Answer with "yes" or "no".`);
+     *          return undefined;
      *      } else {
-     *          return dialogs.end(context, values);
+     *          return value;
      *      }
      * }));
      * ```
-     * @param validator (Optional) validator that will be called each time the user responds to the prompt.
+     * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
+     * @param defaultLocale (Optional) locale to use if `dc.context.request.locale` not specified. Defaults to a value of `en-us`.
      */
-    constructor(validator?: PromptValidator<boolean | undefined>);
-    begin(context: BotContext, dialogs: DialogSet, options: ConfirmPromptOptions): Promise<void>;
-    continue(context: BotContext, dialogs: DialogSet): Promise<void>;
-    protected sendChoicePrompt(context: BotContext, dialogs: DialogSet, prompt: string | Partial<Activity>, speak?: string): Promise<void>;
+    constructor(validator?: PromptValidator<C, boolean>, defaultLocale?: string);
+    /**
+     * Sets additional options passed to the `ChoiceFactory` and used to tweak the style of choices
+     * rendered to the user.
+     * @param options Additional options to set.
+     */
+    choiceOptions(options: prompts.ChoiceFactoryOptions): this;
+    /**
+     * Sets the style of the yes/no choices rendered to the user when prompting.
+     * @param listStyle Type of list to render to to user. Defaults to `ListStyle.auto`.
+     */
+    style(listStyle: prompts.ListStyle): this;
+    protected onPrompt(dc: DialogContext<C>, options: PromptOptions, isRetry: boolean): Promise<void>;
+    protected onRecognize(dc: DialogContext<C>, options: PromptOptions): Promise<boolean | undefined>;
 }

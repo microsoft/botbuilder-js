@@ -5,6 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { BotContext } from 'botbuilder';
 export declare const channels: {
     facebook: string;
     skype: string;

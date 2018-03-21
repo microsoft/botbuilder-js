@@ -58,7 +58,7 @@ Prompts a user to confirm something with a yes/no response. By default the promp
 ### ⊕ **new ConfirmPrompt**(validator?: *[PromptValidator](../#promptvalidator)`boolean`⎮`undefined`⎮`undefined`*): [ConfirmPrompt](botbuilder_dialogs.confirmprompt.md)
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:65](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L65)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:65](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L65)*
 
 
 
@@ -96,9 +96,9 @@ Creates a new instance of the prompt.
 
 ###  stylerOptions
 
-**●  stylerOptions**:  *[ChoiceStylerOptions]()* 
+**●  stylerOptions**:  *[ChoiceFactoryOptions]()* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:65](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L65)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:65](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L65)*
 
 
 
@@ -115,7 +115,7 @@ ___
 
 **●  choices**:  *[ConfirmChoices](../interfaces/botbuilder_dialogs.confirmchoices.md)* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:63](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L63)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:63](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L63)*
 
 
 
@@ -139,11 +139,11 @@ ___
 
 ###  begin
 
-► **begin**(context: *`BotContext`*, dialogs: *[DialogSet](botbuilder_dialogs.dialogset.md)*, options: *[ConfirmPromptOptions](../interfaces/botbuilder_dialogs.confirmpromptoptions.md)*): `Promise`.<`void`>
+► **begin**(context: *[BotContext]()*, dialogs: *[DialogSet](botbuilder_dialogs.dialogset.md)*, options: *[ConfirmPromptOptions](../interfaces/botbuilder_dialogs.confirmpromptoptions.md)*): `Promise`.<`void`>
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:84](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L84)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:84](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L84)*
 
 
 
@@ -151,7 +151,7 @@ ___
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | `BotContext`   |  - |
+| context | [BotContext]()   |  - |
 | dialogs | [DialogSet](botbuilder_dialogs.dialogset.md)   |  - |
 | options | [ConfirmPromptOptions](../interfaces/botbuilder_dialogs.confirmpromptoptions.md)   |  - |
 
@@ -171,13 +171,13 @@ ___
 
 ###  continue
 
-► **continue**(context: *`BotContext`*, dialogs: *[DialogSet](botbuilder_dialogs.dialogset.md)*): `Promise`.<`void`>
+► **continue**(context: *[BotContext]()*, dialogs: *[DialogSet](botbuilder_dialogs.dialogset.md)*): `Promise`.<`void`>
 
 
 
 *Implementation of [Dialog](../interfaces/botbuilder_dialogs.dialog.md).[continue](../interfaces/botbuilder_dialogs.dialog.md#continue)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:85](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L85)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:85](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L85)*
 
 
 
@@ -185,7 +185,7 @@ ___
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | `BotContext`   |  - |
+| context | [BotContext]()   |  - |
 | dialogs | [DialogSet](botbuilder_dialogs.dialogset.md)   |  - |
 
 
@@ -204,11 +204,11 @@ ___
 
 ### «Protected» sendChoicePrompt
 
-► **sendChoicePrompt**(context: *`BotContext`*, dialogs: *[DialogSet](botbuilder_dialogs.dialogset.md)*, prompt: *`string`⎮[Partial]()[Activity]()*, speak?: *`undefined`⎮`string`*): `Promise`.<`void`>
+► **sendChoicePrompt**(context: *[BotContext]()*, dialogs: *[DialogSet](botbuilder_dialogs.dialogset.md)*, prompt: *`string`⎮[Partial]()[Activity]()*, speak?: *`undefined`⎮`string`*): `Promise`.<`void`>
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:86](https://github.com/Microsoft/botbuilder-js/blob/071de25/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L86)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:86](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L86)*
 
 
 
@@ -216,7 +216,7 @@ ___
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | `BotContext`   |  - |
+| context | [BotContext]()   |  - |
 | dialogs | [DialogSet](botbuilder_dialogs.dialogset.md)   |  - |
 | prompt | `string`⎮[Partial]()[Activity]()   |  - |
 | speak | `undefined`⎮`string`   |  - |

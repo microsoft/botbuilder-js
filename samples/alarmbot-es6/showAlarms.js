@@ -1,27 +1,30 @@
 
 module.exports = {
-    begin(context) {
+    begin(context, state) {
         // Delete any existing topic
-        context.state.conversation.topic = undefined;
+        state.conversation(context).topic = undefined;
     
         // Render alarms to user.
         // - No reply is expected so we don't set a new topic.
-        this.renderAlarms(context);
-        return Promise.resolve();
+        return this.renderAlarms(context, state);
     },
-    renderAlarms(context) {
-        const list = context.state.user.alarms || [];
-        if (list.length > 0) {
-            let msg = `**Current Alarms**\n\n`;
+    renderAlarms(context, state) {
+        // Get user state w/alarm list
+        const user = state.user(context);
+    
+        // Build message
+        let msg = `No alarms found.`;
+        if (user.alarms.length > 0) {
+            msg = `**Current Alarms**\n\n`;
             let connector = '';
-            list.forEach((alarm) => {
+            user.alarms.forEach((alarm) => {
                 msg += connector + `- ${alarm.title} (${alarm.time})`;
                 connector = '\n';
             });
-            context.reply(msg);
-        } else {
-            context.reply(`No alarms found.`);
         }
-        return list.length;
+    
+        // Send message to user and return alarm count
+        return context.sendActivity(msg)
+                      .then(() => user.alarms.length);
     }
 };

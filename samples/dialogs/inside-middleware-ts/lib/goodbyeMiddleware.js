@@ -1,53 +1,72 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const botbuilder_dialogs_1 = require("botbuilder-dialogs");
-const GoodbyeStackName = 'goodbyeStack';
 class GoodbyeMiddleware {
-    receiveActivity(context, next) {
-        // Ensure we only respond to messages
-        if (context.request.type !== 'message') {
-            return next();
-        }
-        // Intercept the message if we're prompting the user.
-        return dialogs.continue(context).then(() => {
-            // Ensure the utterance handled by an active dialog
-            if (!context.responded) {
+    constructor(conversationState) {
+        this.conversationState = conversationState;
+        this.dialogs = new botbuilder_dialogs_1.DialogSet();
+        // Add private dialogs for confirming goodbye
+        this.dialogs.add('confirmGoodbye', [
+            function (dc) {
+                return __awaiter(this, void 0, void 0, function* () {
+                    yield dc.prompt('confirmPrompt', `This will end any active tasks. Are you sure?`);
+                });
+            },
+            function (dc, value) {
+                return __awaiter(this, void 0, void 0, function* () {
+                    if (value) {
+                        // Clear conversation state
+                        yield dc.context.sendActivity(`Ok... Goodbye`);
+                        conversationState.clear(dc.context);
+                    }
+                    else {
+                        yield dc.context.sendActivity(`Ok...`);
+                    }
+                    return dc.end();
+                });
+            }
+        ]);
+        this.dialogs.add('confirmPrompt', new botbuilder_dialogs_1.ConfirmPrompt());
+    }
+    onProcessRequest(context, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (context.request.type === 'message') {
+                // Create dialog context using our middlewares private dialog stack
+                const state = yield this.conversationState.read(context);
+                if (!state['goodbyeMiddlewareState']) {
+                    state['goodbyeMiddlewareState'] = {};
+                }
+                const dc = this.dialogs.createContext(context, state['goodbyeMiddlewareState']);
+                // Intercept the message if we're prompting the user
+                yield dc.continue();
+                if (context.responded) {
+                    return;
+                }
                 // Check for user to say "goodbye"
                 const utterance = (context.request.text || '').trim().toLowerCase();
                 if (utterance === 'goodbye') {
                     // Start confirmation dialog
-                    return dialogs.begin(context, 'confirmGoodbye');
+                    yield dc.begin('confirmGoodbye');
                 }
                 else {
-                    return next();
+                    // Let bot process request
+                    yield next();
                 }
             }
             else {
-                // Prevent further processing since we're in a dialog with the user.
-                return Promise.resolve();
+                // Let bot process request
+                yield next();
             }
         });
     }
 }
 exports.GoodbyeMiddleware = GoodbyeMiddleware;
-// Create dialogs for middleware. Uses its own namespace isolated stack to avoid collisions with 
-// the bot or other middleware.
-const dialogs = new botbuilder_dialogs_1.DialogSet(GoodbyeStackName);
-dialogs.add('confirmGoodbye', [
-    function (context) {
-        return dialogs.prompt(context, 'confirmPrompt', `This will end any active tasks. Are you sure?`);
-    },
-    function (context, value) {
-        if (value) {
-            // Reset conversation state
-            context.reply(`Ok... Goodbye`);
-            context.state.conversation = {};
-        }
-        else {
-            context.reply(`Ok...`);
-        }
-        return dialogs.end(context);
-    }
-]);
-dialogs.add('confirmPrompt', new botbuilder_dialogs_1.ConfirmPrompt());
 //# sourceMappingURL=goodbyeMiddleware.js.map

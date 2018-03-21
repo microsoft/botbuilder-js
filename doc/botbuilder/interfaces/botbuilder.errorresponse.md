@@ -1,4 +1,4 @@
-[Bot Builder SDK - Core](../README.md) > [ErrorResponse](../interfaces/botbuilder.errorresponse.md)
+[Bot Builder SDK](../README.md) > [ErrorResponse](../interfaces/botbuilder.errorresponse.md)
 
 
 
@@ -15,7 +15,7 @@
 
 **●  error**:  *[ErrorModel](botbuilder.errormodel.md)* 
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:70*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:70](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L70)*
 
 
 *__member__*: {ErrorModel} [error] Error message

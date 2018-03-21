@@ -11,9 +11,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Licensed under the MIT License.
  */
 __export(require("./luisRecognizer"));
-__export(require("./languageTranslator"));
-__export(require("./languageMap"));
 __export(require("./qnaMaker"));
-__export(require("./bingEntitySearch"));
+__export(require("./languageTranslator"));
 __export(require("./localeConverter"));
 //# sourceMappingURL=index.js.map

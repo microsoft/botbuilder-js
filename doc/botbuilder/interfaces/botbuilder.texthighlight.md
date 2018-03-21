@@ -1,4 +1,4 @@
-[Bot Builder SDK - Core](../README.md) > [TextHighlight](../interfaces/botbuilder.texthighlight.md)
+[Bot Builder SDK](../README.md) > [TextHighlight](../interfaces/botbuilder.texthighlight.md)
 
 
 
@@ -15,7 +15,7 @@
 
 **●  occurence**:  *`number`* 
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:267*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:267](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L267)*
 
 
 *__member__*: {number} [occurence] index of occurence of the Text (Starting at 1)
@@ -32,7 +32,7 @@ ___
 
 **●  text**:  *`string`* 
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:262*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:262](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L262)*
 
 
 *__member__*: {string} [text] plain text fragment to highlight

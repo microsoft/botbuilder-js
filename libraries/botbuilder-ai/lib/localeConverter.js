@@ -25,7 +25,7 @@ class LocaleConverter {
         }
     }
     /// Incoming activity
-    receiveActivity(context, next) {
+    onProcessRequest(context, next) {
         return __awaiter(this, void 0, void 0, function* () {
             if (context.request.type == "message" && context.request.text) {
                 // determine the language we are using for this conversation

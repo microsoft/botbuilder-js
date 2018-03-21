@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Middleware } from 'botbuilder';
+import { Middleware, BotContext } from 'botbuilder';
 export interface TranslatorSettings {
     translatorKey: string;
     nativeLanguages: string[];
@@ -24,7 +24,7 @@ export declare class LanguageTranslator implements Middleware {
     private setUserLanguage;
     private nativeLanguages;
     constructor(settings: TranslatorSettings);
-    receiveActivity(context: BotContext, next: () => Promise<void>): Promise<void>;
+    onProcessRequest(context: BotContext, next: () => Promise<void>): Promise<void>;
     private TranslateMessageAsync(context, sourceLanguage, targetLanguage);
 }
 export declare class PostProcessTranslator {

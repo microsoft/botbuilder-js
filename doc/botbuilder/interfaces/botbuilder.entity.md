@@ -1,23 +1,10 @@
-[Bot Builder SDK - Core](../README.md) > [Entity](../interfaces/botbuilder.entity.md)
+[Bot Builder SDK](../README.md) > [Entity](../interfaces/botbuilder.entity.md)
 
 
 
 # Interface: Entity
 
 *__interface__*: An interface representing Entity. Object of schema.org types
-
-
-## Hierarchy
-
-**Entity**
-
-↳  [EntityObject](botbuilder.entityobject.md)
-
-
-
-
-
-
 
 
 
@@ -28,7 +15,7 @@
 
 **●  type**:  *`string`* 
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:218*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:218](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L218)*
 
 
 *__member__*: {string} [type] Entity Type (typically from schema.org types)

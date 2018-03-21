@@ -1,9 +1,11 @@
-[Bot Builder SDK - Core](../README.md) > [TestFlow](../classes/botbuilder.testflow.md)
+[Bot Builder SDK](../README.md) > [TestFlow](../classes/botbuilder.testflow.md)
 
 
 
 # Class: TestFlow
 
+
+:package: **botbuilder-core-extensions**
 
 INTERNAL support class for `TestAdapter`.
 
@@ -39,7 +41,7 @@ INTERNAL support class for `TestAdapter`.
 ### ⊕ **new TestFlow**(previous: *`Promise`.<`void`>*, adapter: *[TestAdapter](botbuilder.testadapter.md)*): [TestFlow](botbuilder.testflow.md)
 
 
-*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:80](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/testAdapter.d.ts#L80)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:63](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L63)*
 
 
 
@@ -66,7 +68,7 @@ INTERNAL support class for `TestAdapter`.
 
 **●  previous**:  *`Promise`.<`void`>* 
 
-*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:79](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/testAdapter.d.ts#L79)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:62](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L62)*
 
 
 
@@ -80,11 +82,11 @@ ___
 
 ###  assertReply
 
-► **assertReply**(expected: *`string`⎮[Partial]()[Activity](../interfaces/botbuilder.activity.md)⎮`function`*, description?: *`undefined`⎮`string`*, timeout?: *`undefined`⎮`number`*): [TestFlow](botbuilder.testflow.md)
+► **assertReply**(expected: *`string`⎮[Partial]()[Activity](../interfaces/botbuilder.activity.md)⎮[TestActivityInspector](../#testactivityinspector)*, description?: *`undefined`⎮`string`*, timeout?: *`undefined`⎮`number`*): [TestFlow](botbuilder.testflow.md)
 
 
 
-*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:101](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/testAdapter.d.ts#L101)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:84](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L84)*
 
 
 
@@ -95,7 +97,7 @@ Throws if the bot's response doesn't match the expected text/activity
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| expected | `string`⎮[Partial]()[Activity](../interfaces/botbuilder.activity.md)⎮`function`   |  expected text or activity from the bot, or callback to inspect object |
+| expected | `string`⎮[Partial]()[Activity](../interfaces/botbuilder.activity.md)⎮[TestActivityInspector](../#testactivityinspector)   |  expected text or activity from the bot, or callback to inspect object |
 | description | `undefined`⎮`string`   |  description of test case |
 | timeout | `undefined`⎮`number`   |  (default 3000ms) time to wait for response from bot |
 
@@ -119,7 +121,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:108](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/testAdapter.d.ts#L108)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:91](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L91)*
 
 
 
@@ -154,7 +156,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:116](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/testAdapter.d.ts#L116)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:98](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L98)*
 
 
 
@@ -184,7 +186,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:113](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/testAdapter.d.ts#L113)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:96](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L96)*
 
 
 
@@ -217,7 +219,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:94](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/testAdapter.d.ts#L94)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:77](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L77)*
 
 
 
@@ -250,7 +252,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:89](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/testAdapter.d.ts#L89)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:72](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L72)*
 
 
 
@@ -286,7 +288,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/testAdapter.d.ts:115](https://github.com/Microsoft/botbuilder-js/blob/0b16877/libraries/botbuilder/lib/testAdapter.d.ts#L115)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:97](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L97)*
 
 
 

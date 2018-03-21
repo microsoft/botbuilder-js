@@ -1,4 +1,4 @@
-[Bot Builder SDK - Core](../README.md) > [Mention](../interfaces/botbuilder.mention.md)
+[Bot Builder SDK](../README.md) > [Mention](../interfaces/botbuilder.mention.md)
 
 
 
@@ -15,7 +15,7 @@
 
 **●  mentioned**:  *[ChannelAccount](botbuilder.channelaccount.md)* 
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:1083*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1083](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1083)*
 
 
 *__member__*: {ChannelAccount} [mentioned] The mentioned user
@@ -32,7 +32,7 @@ ___
 
 **●  text**:  *`string`* 
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:1088*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1088](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1088)*
 
 
 *__member__*: {string} [text] Sub Text which represents the mention (can be null or empty)
@@ -49,7 +49,7 @@ ___
 
 **●  type**:  *`string`* 
 
-*Defined in libraries/botbuilder/node_modules/botframework-schema/lib/index.d.ts:1092*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1092](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1092)*
 
 
 *__member__*: {string} [type] Entity Type (typically from schema.org types)
