@@ -3,8 +3,6 @@ const ai = require('../');
 const builder = require('botbuilder');
 const process =require('process');
 const translatorKey = process.env.TRANSLATORKEY;
-const luisAppId = process.env.TRANSLATORLUISAPPID;
-const luisAppKey = process.env.TRANSLATORLUISAPPKEY;
 
 let setTestCaseLanguage = function (language) {
     return {

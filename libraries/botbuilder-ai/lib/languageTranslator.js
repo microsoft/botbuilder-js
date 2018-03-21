@@ -10,7 +10,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const request = require("request-promise-native");
 const xmldom_1 = require("xmldom");
-let MsTranslator = require('mstranslator');
 /**
  * The LanguageTranslator will use the Text Translator Cognitive service to translate text from a source language
  * to one of the native languages that the bot speaks.  By adding it to the middleware pipeline you will automatically
@@ -38,32 +37,28 @@ class LanguageTranslator {
                 if (this.getUserLanguage != undefined) {
                     sourceLanguage = this.getUserLanguage(context);
                 }
-                else if (context.request.locale != undefined) {
-                    sourceLanguage = context.request.locale;
-                }
                 else if (context.state && context.state.conversation && context.state.conversation.language) {
                     sourceLanguage = context.state.conversation.language;
+                }
+                else if (context.request.locale != undefined) {
+                    sourceLanguage = context.request.locale;
                 }
                 else {
                     sourceLanguage = yield this.translator.detect(context.request.text);
                 }
-                // create translationcontext
-                let translationContext = {};
-                translationContext.sourceLanguage = sourceLanguage;
-                translationContext.targetLanguage = (this.nativeLanguages.indexOf(sourceLanguage) >= 0) ? sourceLanguage : this.nativeLanguages[0];
-                context.translation = translationContext;
+                let targetLanguage = (this.nativeLanguages.indexOf(sourceLanguage) >= 0) ? sourceLanguage : this.nativeLanguages[0];
                 // translate to bots language
-                if (translationContext.sourceLanguage != translationContext.targetLanguage) {
-                    translationContext.sourceText = context.request.text;
-                    yield this.TranslateMessageAsync(context, context.request, translationContext.sourceLanguage, translationContext.targetLanguage);
+                if (sourceLanguage != targetLanguage) {
+                    yield this.TranslateMessageAsync(context, sourceLanguage, targetLanguage);
                 }
             }
             return next();
         });
     }
     /// Translate .Text field of a message, regardless of direction
-    TranslateMessageAsync(context, message, sourceLanguage, targetLanguage) {
+    TranslateMessageAsync(context, sourceLanguage, targetLanguage) {
         // if we have text and a target language
+        let message = context.request;
         if (message.text && message.text.length > 0 && targetLanguage != sourceLanguage) {
             // truncate big text
             let text = message.text.length <= 65536 ? message.text : message.text.substring(0, 65536);

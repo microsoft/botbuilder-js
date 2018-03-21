@@ -43,13 +43,14 @@ export class LocaleConverter implements Middleware {
                     return next();
                 }
             }
-            await this.convertLocalesAsync(context, context.request);
+            await this.convertLocalesAsync(context);
         }
         return next();
     }
 
-    private convertLocalesAsync(context: BotContext, message: Partial<Activity>): Promise<void> {
+    private convertLocalesAsync(context: BotContext): Promise<void> {
         return new Promise<void>((resolve, reject) => {
+            let message = context.request;
             if (message.text) {
                 let fromLocale: string;
                 if (this.fromLocale != undefined) {

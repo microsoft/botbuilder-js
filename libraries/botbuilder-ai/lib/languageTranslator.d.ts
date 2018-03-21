@@ -6,11 +6,6 @@
  * Licensed under the MIT License.
  */
 import { Middleware } from 'botbuilder';
-export interface TranslationContext {
-    sourceText: string;
-    sourceLanguage: string;
-    targetLanguage: string;
-}
 export interface TranslatorSettings {
     translatorKey: string;
     nativeLanguages: string[];
@@ -30,7 +25,7 @@ export declare class LanguageTranslator implements Middleware {
     private nativeLanguages;
     constructor(settings: TranslatorSettings);
     receiveActivity(context: BotContext, next: () => Promise<void>): Promise<void>;
-    private TranslateMessageAsync(context, message, sourceLanguage, targetLanguage);
+    private TranslateMessageAsync(context, sourceLanguage, targetLanguage);
 }
 export declare class PostProcessTranslator {
     noTranslatePatterns: Set<string>;

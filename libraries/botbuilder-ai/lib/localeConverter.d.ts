@@ -18,5 +18,5 @@ export declare class LocaleConverter implements Middleware {
     constructor(toLocale: string, fromLocale: string);
     constructor(toLocale: string, getUserLocale: (context: BotContext) => string, setUserLocale: (context: BotContext) => Promise<boolean>);
     receiveActivity(context: BotContext, next: () => Promise<void>): Promise<void>;
-    private convertLocalesAsync(context, message);
+    private convertLocalesAsync(context);
 }

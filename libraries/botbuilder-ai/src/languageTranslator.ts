@@ -12,19 +12,6 @@ import * as request from 'request-promise-native';
 import LuisClient = require('botframework-luis');
 import { DOMParser } from "xmldom";
 
-let MsTranslator = require('mstranslator');
-
-export interface TranslationContext {
-    /// Original pre-translation text
-    sourceText: string;
-
-    /// source language
-    sourceLanguage: string;
-
-    /// The targeted translation language
-    targetLanguage: string;
-}
-
 export interface TranslatorSettings {
     translatorKey: string,
     nativeLanguages: string[],
@@ -65,34 +52,30 @@ export class LanguageTranslator implements Middleware {
             let sourceLanguage: string;
             if (this.getUserLanguage != undefined) {
                 sourceLanguage = this.getUserLanguage(context);
-            } else if (context.request.locale != undefined) {
-                sourceLanguage = context.request.locale;
             } else if (context.state && context.state.conversation && context.state.conversation.language) {
                 sourceLanguage = context.state.conversation.language;
+            } else if (context.request.locale != undefined) {
+                sourceLanguage = context.request.locale;
             } else {
                 sourceLanguage = await this.translator.detect(context.request.text);
             }
 
             
-            // create translationcontext
-            let translationContext = <TranslationContext>{};
-            translationContext.sourceLanguage = sourceLanguage;
-            translationContext.targetLanguage = (this.nativeLanguages.indexOf(sourceLanguage) >= 0) ? sourceLanguage : this.nativeLanguages[0];
-            (<any>context).translation = translationContext;
-
+            let targetLanguage = (this.nativeLanguages.indexOf(sourceLanguage) >= 0) ? sourceLanguage : this.nativeLanguages[0];
+            
 
             // translate to bots language
-            if (translationContext.sourceLanguage != translationContext.targetLanguage) {
-                translationContext.sourceText = context.request.text;
-                await this.TranslateMessageAsync(context, context.request, translationContext.sourceLanguage, translationContext.targetLanguage);
+            if (sourceLanguage != targetLanguage) {
+                await this.TranslateMessageAsync(context, sourceLanguage, targetLanguage);
             }
         }
         return next();
     }
 
     /// Translate .Text field of a message, regardless of direction
-    private TranslateMessageAsync(context: BotContext, message: Partial<Activity>, sourceLanguage: string, targetLanguage: string): Promise<void> {
+    private TranslateMessageAsync(context: BotContext, sourceLanguage: string, targetLanguage: string): Promise<void> {
         // if we have text and a target language
+        let message = context.request;
         if (message.text && message.text.length > 0 && targetLanguage != sourceLanguage) {
             // truncate big text
             let text = message.text.length <= 65536 ? message.text : message.text.substring(0, 65536);

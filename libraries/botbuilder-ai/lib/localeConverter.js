@@ -35,13 +35,14 @@ class LocaleConverter {
                         return next();
                     }
                 }
-                yield this.convertLocalesAsync(context, context.request);
+                yield this.convertLocalesAsync(context);
             }
             return next();
         });
     }
-    convertLocalesAsync(context, message) {
+    convertLocalesAsync(context) {
         return new Promise((resolve, reject) => {
+            let message = context.request;
             if (message.text) {
                 let fromLocale;
                 if (this.fromLocale != undefined) {
