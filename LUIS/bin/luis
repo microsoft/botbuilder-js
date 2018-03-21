@@ -20,8 +20,10 @@ let args;
  * @returns {Promise<void>}
  */
 async function runProgram() {
-    args = minimist(process.argv.slice(2));
-
+    var a = process.argv.slice(2);
+     if (!a || a.length == 0)
+        a = ['-h'];
+    args = minimist(a);
     if (args.init || args.i) {
         await initializeConfig();
         process.stdout.write(`Successfully wrote ${process.cwd()}/.luisrc`);

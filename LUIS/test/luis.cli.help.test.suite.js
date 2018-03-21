@@ -8,7 +8,6 @@ describe('The LUIS cli --help -h argument', () => {
     it('should print the help contents when --help is used', done => {
         exec(`node ${luis} --help`, (error, stdout) => {
             assert(stdout.includes('Where <api group> is one of the following:'));
-            assert(stdout.includes('Where <action> is one of the following:'));
             assert(stdout.includes('Arguments:'));
             assert(stdout.includes('Global Arguments:'));
             done();

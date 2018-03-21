@@ -8,7 +8,7 @@ const dataModels = require('./api/dataModels');
  * This function orchestrates the instantiation
  * of the service containing the operation to call.
  * If a body is specified, the typed data model is
- * crated and the source object containing the properties
+ * created and the source object containing the properties
  * is passed in. This is necessary to guarantee the
  * endpoint receives a clean data model.
  *
