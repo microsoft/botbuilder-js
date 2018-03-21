@@ -100,7 +100,7 @@ class MicrosoftTranslator {
             url: `https://api.cognitive.microsoft.com/sts/v1.0/issueToken?Subscription-Key=${this.apiKey}`,
             method: 'POST'
         })
-            .then(result => result)
+            .then(result => Promise.resolve(result))
             .catch(error => Promise.reject(error));
     }
     escapeHtml(source) {
@@ -109,20 +109,18 @@ class MicrosoftTranslator {
     detect(text) {
         let uri = "http://api.microsofttranslator.com/v2/Http.svc/Detect";
         let query = `?text=${encodeURI(text)}`;
-        return new Promise((resolve, reject) => {
-            this.getAccessToken()
-                .then(accessToken => {
-                return request({
-                    url: uri + query,
-                    method: 'GET',
-                    headers: {
-                        'Authorization': 'Bearer ' + accessToken
-                    }
-                });
-            })
-                .then(lang => resolve(lang.replace(/<[^>]*>/g, '')))
-                .catch(error => reject(error));
-        });
+        return this.getAccessToken()
+            .then(accessToken => {
+            return request({
+                url: uri + query,
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + accessToken
+                }
+            });
+        })
+            .then(lang => Promise.resolve(lang.replace(/<[^>]*>/g, '')))
+            .catch(error => Promise.reject(error));
     }
     translateArray(options, callback) {
         return;
@@ -154,36 +152,34 @@ class MicrosoftTranslator {
             "</Texts>" +
             `<To>${to}</To>` +
             "</TranslateArrayRequest>";
-        return new Promise((resolve, reject) => {
-            this.getAccessToken()
-                .then(accessToken => {
-                return request({
-                    url: uri,
-                    method: 'POST',
-                    headers: {
-                        'Authorization': 'Bearer ' + accessToken,
-                        'Content-Type': 'text/xml'
-                    },
-                    body: body,
-                });
-            })
-                .then(response => {
-                let results = [];
-                let parser = new xmldom_1.DOMParser();
-                let responseObj = parser.parseFromString(response);
-                let elements = responseObj.getElementsByTagName("TranslateArray2Response");
-                let index = 0;
-                Array.from(elements).forEach(element => {
-                    let translation = element.getElementsByTagName('TranslatedText')[0].textContent;
-                    let alignment = element.getElementsByTagName('Alignment')[0].textContent;
-                    translation = this.postProcessor.fixTranslation(orgTexts[index], alignment, translation);
-                    let result = { TranslatedText: translation };
-                    results.push(result);
-                });
-                resolve(results);
-            })
-                .catch(error => Promise.reject(error));
-        });
+        return this.getAccessToken()
+            .then(accessToken => {
+            return request({
+                url: uri,
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + accessToken,
+                    'Content-Type': 'text/xml'
+                },
+                body: body,
+            });
+        })
+            .then(response => {
+            let results = [];
+            let parser = new xmldom_1.DOMParser();
+            let responseObj = parser.parseFromString(response);
+            let elements = responseObj.getElementsByTagName("TranslateArray2Response");
+            let index = 0;
+            Array.from(elements).forEach(element => {
+                let translation = element.getElementsByTagName('TranslatedText')[0].textContent;
+                let alignment = element.getElementsByTagName('Alignment')[0].textContent;
+                translation = this.postProcessor.fixTranslation(orgTexts[index], alignment, translation);
+                let result = { TranslatedText: translation };
+                results.push(result);
+            });
+            return Promise.resolve(results);
+        })
+            .catch(error => Promise.reject(error));
     }
 }
 class PostProcessTranslator {

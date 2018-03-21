@@ -23,6 +23,11 @@ export class LocaleConverter implements Middleware {
     public constructor(toLocale: string, fromLocale: string | ((context: BotContext) => string), setUserLocale?: (context: BotContext) => Promise<boolean>) {
         this.localeConverter = new MicrosoftLocaleConverter();
         this.toLocale = toLocale;
+
+        if (!this.localeConverter.isLocaleAvailable(toLocale)) {
+            throw new Error("Unsupported locale");
+        }
+
         if (typeof(fromLocale) === 'string') {
             this.fromLocale = fromLocale as string;
         } else {
@@ -47,25 +52,25 @@ export class LocaleConverter implements Middleware {
     }
 
     private convertLocalesAsync(context: BotContext): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
-            let message = context.request;
-            if (message.text) {
-                let fromLocale: string;
-                if (this.fromLocale != undefined) {
-                    fromLocale = this.fromLocale;
-                } else if (this.getUserLocale != undefined) {
-                    fromLocale = this.getUserLocale(context);
-                } else {
-                    fromLocale = 'en-us';
-                }
-                this.localeConverter.convert(message.text, fromLocale, this.toLocale)
-                .then(result => {
-                    message.text = result;
-                    resolve();
-                })
-                .catch(error => reject(error));
+        let message = context.request;
+        if (message.text) {
+            let fromLocale: string;
+            if (this.fromLocale != undefined) {
+                fromLocale = this.fromLocale;
+            } else if (this.getUserLocale != undefined) {
+                fromLocale = this.getUserLocale(context);
+            } else {
+                fromLocale = 'en-us';
             }
-        });
+
+            this.localeConverter.convert(message.text, fromLocale, this.toLocale)
+            .then(result => {
+                message.text = result;
+                return Promise.resolve();
+            })
+            .catch(error => Promise.reject(error));
+        }
+        return Promise.resolve();
     }
 }
 
@@ -148,45 +153,41 @@ class MicrosoftLocaleConverter implements ILocaleConverter {
     }
 
     convert(message: string, fromLocale: string, toLocale: string): Promise<string> {
-        return new Promise<string>((resolve, reject) => {
-            if (message.trim().length == 0) {
-                reject('Empty message');
-            }
+        if (message.trim().length == 0) {
+            return Promise.reject('Empty message');
+        }
 
-            if (!this.isLocaleAvailable(toLocale)) {
-                reject('Unsupported locale ' + toLocale);
-            }
+        if (!this.isLocaleAvailable(toLocale)) {
+           return Promise.reject('Unsupported locale ' + toLocale);
+        }
 
-            let dates: TextAndDateTime[] = this.extractDates(message, fromLocale);
-            let processedMessage = message;
-            dates.forEach(date => {
-                if (date.dateTimeObj.toDateString() == (new Date()).toDateString()) {
-                    let convertedDate = this.mapLocaleToFunction[toLocale].timeFormat
-                        .replace('hh', (date.dateTimeObj.getHours()).toLocaleString(undefined, {minimumIntegerDigits: 2}))
-                        .replace('mm', (date.dateTimeObj.getMinutes()).toLocaleString(undefined, {minimumIntegerDigits: 2}));
+        let dates: TextAndDateTime[] = this.extractDates(message, fromLocale);
+        let processedMessage = message;
+        dates.forEach(date => {
+            if (date.dateTimeObj.toDateString() == (new Date()).toDateString()) {
+                let convertedDate = this.mapLocaleToFunction[toLocale].timeFormat
+                    .replace('hh', (date.dateTimeObj.getHours()).toLocaleString(undefined, {minimumIntegerDigits: 2}))
+                    .replace('mm', (date.dateTimeObj.getMinutes()).toLocaleString(undefined, {minimumIntegerDigits: 2}));
+                
+                processedMessage = processedMessage.replace(date.text, convertedDate)
+            } else {
+                let convertedDate = this.mapLocaleToFunction[toLocale].dateFormat
+                    .replace('yyyy', (date.dateTimeObj.getFullYear()).toLocaleString(undefined, {minimumIntegerDigits: 4}).replace(',', ''))
+                    .replace('MM', (date.dateTimeObj.getMonth() + 1).toLocaleString(undefined, {minimumIntegerDigits: 2}))
+                    .replace('dd', (date.dateTimeObj.getDate()).toLocaleString(undefined, {minimumIntegerDigits: 2}));
                     
-                    processedMessage = processedMessage.replace(date.text, convertedDate)
-                } else {
-                    let convertedDate = this.mapLocaleToFunction[toLocale].dateFormat
-                        .replace('yyyy', (date.dateTimeObj.getFullYear()).toLocaleString(undefined, {minimumIntegerDigits: 4}).replace(',', ''))
-                        .replace('MM', (date.dateTimeObj.getMonth() + 1).toLocaleString(undefined, {minimumIntegerDigits: 2}))
-                        .replace('dd', (date.dateTimeObj.getDate()).toLocaleString(undefined, {minimumIntegerDigits: 2}));
-                        
-                    processedMessage = processedMessage.replace(date.text, convertedDate);
-                }
-            });
-            resolve(processedMessage);
+                processedMessage = processedMessage.replace(date.text, convertedDate);
+            }
         });
+        return Promise.resolve(processedMessage);
     }
 
     getAvailableLocales(): Promise<string[]> {
-        return new Promise<string[]>((resolve, reject) => {
-            let locales: string[] = [];
-            Object.keys(this.mapLocaleToFunction).forEach(locale => {
-                locales.push(locale)
-            });
-            resolve(locales);
-        })
+        let locales: string[] = [];
+        Object.keys(this.mapLocaleToFunction).forEach(locale => {
+            locales.push(locale)
+        });
+        return Promise.resolve(locales);
     }
 }
 
