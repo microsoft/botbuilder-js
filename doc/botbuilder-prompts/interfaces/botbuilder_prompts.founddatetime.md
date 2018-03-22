@@ -1,4 +1,4 @@
-[Bot Builder SDK - Dialogs](../README.md) > [FoundDatetime](../interfaces/botbuilder_dialogs.founddatetime.md)
+[Bot Builder SDK - Prompts](../README.md) > [FoundDatetime](../interfaces/botbuilder_prompts.founddatetime.md)
 
 
 
@@ -15,7 +15,7 @@ Datetime result returned by `DatetimePrompt`. For more details see the LUIS docs
 
 **●  timex**:  *`string`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts:20](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts#L20)*
+*Defined in [libraries/botbuilder-prompts/lib/datetimePrompt.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-prompts/lib/datetimePrompt.d.ts#L18)*
 
 
 
@@ -32,7 +32,7 @@ ___
 
 **●  type**:  *`string`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts:25](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts#L25)*
+*Defined in [libraries/botbuilder-prompts/lib/datetimePrompt.d.ts:23](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-prompts/lib/datetimePrompt.d.ts#L23)*
 
 
 
@@ -49,7 +49,7 @@ ___
 
 **●  value**:  *`string`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts:30](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts#L30)*
+*Defined in [libraries/botbuilder-prompts/lib/datetimePrompt.d.ts:28](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-prompts/lib/datetimePrompt.d.ts#L28)*
 
 
 

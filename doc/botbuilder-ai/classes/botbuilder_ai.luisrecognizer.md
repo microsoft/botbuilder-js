@@ -6,7 +6,7 @@
 
 ## Implements
 
-* [Middleware]()
+* `any`
 
 ## Index
 
@@ -38,7 +38,7 @@
 ### ⊕ **new LuisRecognizer**(settings: *[LuisRecognizerSettings](../interfaces/botbuilder_ai.luisrecognizersettings.md)*): [LuisRecognizer](botbuilder_ai.luisrecognizer.md)
 
 
-*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:33](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L33)*
+*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:33](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L33)*
 
 
 
@@ -64,7 +64,7 @@
 
 **●  nextInstance**:  *`number`* 
 
-*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L31)*
+*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L31)*
 
 
 
@@ -78,11 +78,11 @@ ___
 
 ### «Protected» createLuisClient
 
-► **createLuisClient**(serviceEndpoint: *`string`*): [LuisClient]()
+► **createLuisClient**(serviceEndpoint: *`string`*): `LuisClient`
 
 
 
-*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L39)*
+*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L39)*
 
 
 
@@ -96,7 +96,7 @@ ___
 
 
 
-**Returns:** [LuisClient]()
+**Returns:** `LuisClient`
 
 
 
@@ -108,11 +108,11 @@ ___
 
 ###  get
 
-► **get**(context: *[BotContext]()*): [LuisResult]()⎮`undefined`
+► **get**(context: *`BotContext`*): [LuisResult]()⎮`undefined`
 
 
 
-*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:37](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L37)*
+*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:37](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L37)*
 
 
 
@@ -120,7 +120,7 @@ ___
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | [BotContext]()   |  - |
+| context | `BotContext`   |  - |
 
 
 
@@ -142,7 +142,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:38](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L38)*
+*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:38](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L38)*
 
 
 
@@ -168,11 +168,11 @@ ___
 
 ###  onProcessRequest
 
-► **onProcessRequest**(context: *[BotContext]()*, next: *`function`*): `Promise`.<`void`>
+► **onProcessRequest**(context: *`BotContext`*, next: *`function`*): `Promise`.<`void`>
 
 
 
-*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:35](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L35)*
+*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:35](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L35)*
 
 
 
@@ -180,7 +180,7 @@ ___
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | [BotContext]()   |  - |
+| context | `BotContext`   |  - |
 | next | `function`   |  - |
 
 
@@ -199,11 +199,11 @@ ___
 
 ###  recognize
 
-► **recognize**(context: *[BotContext]()*, force?: *`undefined`⎮`true`⎮`false`*): `Promise`.<[LuisResult]()>
+► **recognize**(context: *`BotContext`*, force?: *`boolean`*): `Promise`.<[LuisResult]()>
 
 
 
-*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:36](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L36)*
+*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:36](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L36)*
 
 
 
@@ -211,8 +211,8 @@ ___
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | [BotContext]()   |  - |
-| force | `undefined`⎮`true`⎮`false`   |  - |
+| context | `BotContext`   |  - |
+| force | `boolean`   |  - |
 
 
 

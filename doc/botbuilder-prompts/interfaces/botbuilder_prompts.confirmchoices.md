@@ -1,4 +1,4 @@
-[Bot Builder SDK - Dialogs](../README.md) > [ConfirmChoices](../interfaces/botbuilder_dialogs.confirmchoices.md)
+[Bot Builder SDK - Prompts](../README.md) > [ConfirmChoices](../interfaces/botbuilder_prompts.confirmchoices.md)
 
 
 

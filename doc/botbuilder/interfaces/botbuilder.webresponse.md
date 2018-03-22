@@ -15,17 +15,25 @@ Express or Restify Response object.
 
 ###  end
 
-► **end**(): `this`
+► **end**(...args: *`any`[]*): `any`
 
 
 
-*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:34](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L34)*
+*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:26](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L26)*
+
+
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| args | `any`[]   |  - |
 
 
 
 
 
-**Returns:** `this`
+**Returns:** `any`
 
 
 
@@ -37,11 +45,11 @@ ___
 
 ###  send
 
-► **send**(status: *`number`*, body?: *`any`*): `this`
+► **send**(status: *`number`*, body?: *`any`*): `any`
 
 
 
-*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:35](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L35)*
+*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L27)*
 
 
 
@@ -56,7 +64,7 @@ ___
 
 
 
-**Returns:** `this`
+**Returns:** `any`
 
 
 

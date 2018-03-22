@@ -63,8 +63,8 @@
 * [ErrorResponse](interfaces/botbuilder.errorresponse.md)
 * [Fact](interfaces/botbuilder.fact.md)
 * [GeoCoordinates](interfaces/botbuilder.geocoordinates.md)
-* [Headers](interfaces/botbuilder.headers.md)
 * [HeroCard](interfaces/botbuilder.herocard.md)
+* [InvokeResponse](interfaces/botbuilder.invokeresponse.md)
 * [MediaCard](interfaces/botbuilder.mediacard.md)
 * [MediaEventValue](interfaces/botbuilder.mediaeventvalue.md)
 * [MediaUrl](interfaces/botbuilder.mediaurl.md)
@@ -99,7 +99,6 @@
 * [ThumbnailCard](interfaces/botbuilder.thumbnailcard.md)
 * [ThumbnailUrl](interfaces/botbuilder.thumbnailurl.md)
 * [VideoCard](interfaces/botbuilder.videocard.md)
-* [WebMiddleware](interfaces/botbuilder.webmiddleware.md)
 * [WebRequest](interfaces/botbuilder.webrequest.md)
 * [WebResponse](interfaces/botbuilder.webresponse.md)
 
@@ -107,7 +106,7 @@
 ### Type aliases
 
 * [DeleteActivityHandler](#deleteactivityhandler)
-* [SendActivitiesHandler](#sendactivitieshandler)
+* [SendActivityHandler](#sendactivityhandler)
 * [StorageKeyFactory](#storagekeyfactory)
 * [TestActivityInspector](#testactivityinspector)
 * [UpdateActivityHandler](#updateactivityhandler)
@@ -127,7 +126,7 @@
 
 **Τ DeleteActivityHandler**:  *`function`* 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:28](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core/lib/botContext.d.ts#L28)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:28](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core/lib/botContext.d.ts#L28)*
 
 
 
@@ -136,7 +135,7 @@
 Signature implemented by functions registered with `context.onDeleteActivity()`.
 
 #### Type declaration
-►(reference: *[Partial]()[ConversationReference](interfaces/botbuilder.conversationreference.md)*, next: *`function`*): [Promiseable]()`void`
+►(context: *[BotContext](classes/botbuilder.botcontext.md)*, reference: *`Partial`.<[ConversationReference](interfaces/botbuilder.conversationreference.md)>*, next: *`function`*): [Promiseable]()`void`
 
 
 
@@ -144,7 +143,8 @@ Signature implemented by functions registered with `context.onDeleteActivity()`.
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| reference | [Partial]()[ConversationReference](interfaces/botbuilder.conversationreference.md)   |  - |
+| context | [BotContext](classes/botbuilder.botcontext.md)   |  - |
+| reference | `Partial`.<[ConversationReference](interfaces/botbuilder.conversationreference.md)>   |  - |
 | next | `function`   |  - |
 
 
@@ -160,22 +160,22 @@ Signature implemented by functions registered with `context.onDeleteActivity()`.
 
 ___
 
-<a id="sendactivitieshandler"></a>
+<a id="sendactivityhandler"></a>
 
-###  SendActivitiesHandler
+###  SendActivityHandler
 
-**Τ SendActivitiesHandler**:  *`function`* 
+**Τ SendActivityHandler**:  *`function`* 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:16](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core/lib/botContext.d.ts#L16)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:16](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core/lib/botContext.d.ts#L16)*
 
 
 
 :package: **botbuilder-core**
 
-Signature implemented by functions registered with `context.onSendActivities()`.
+Signature implemented by functions registered with `context.onSendActivity()`.
 
 #### Type declaration
-►(activities: *[Partial]()[Activity](interfaces/botbuilder.activity.md)[]*, next: *`function`*): [Promiseable]()[ResourceResponse](interfaces/botbuilder.resourceresponse.md)[]
+►(context: *[BotContext](classes/botbuilder.botcontext.md)*, activities: *`Partial`.<[Activity](interfaces/botbuilder.activity.md)>[]*, next: *`function`*): [Promiseable]()[ResourceResponse](interfaces/botbuilder.resourceresponse.md)[]
 
 
 
@@ -183,7 +183,8 @@ Signature implemented by functions registered with `context.onSendActivities()`.
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| activities | [Partial]()[Activity](interfaces/botbuilder.activity.md)[]   |  - |
+| context | [BotContext](classes/botbuilder.botcontext.md)   |  - |
+| activities | `Partial`.<[Activity](interfaces/botbuilder.activity.md)>[]   |  - |
 | next | `function`   |  - |
 
 
@@ -205,7 +206,7 @@ ___
 
 **Τ StorageKeyFactory**:  *`function`* 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/storage.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/storage.d.ts#L15)*
+*Defined in [libraries/botbuilder-core-extensions/lib/storage.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/storage.d.ts#L15)*
 
 
 
@@ -243,14 +244,14 @@ ___
 
 **Τ TestActivityInspector**:  *`function`* 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:14](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L14)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:14](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L14)*
 
 
 
 :package: **botbuilder-core-extensions**
 
 #### Type declaration
-►(activity: *[Partial]()[Activity](interfaces/botbuilder.activity.md)*, description: *`string`*): `void`
+►(activity: *`Partial`.<[Activity](interfaces/botbuilder.activity.md)>*, description: *`string`*): `void`
 
 
 
@@ -258,7 +259,7 @@ ___
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| activity | [Partial]()[Activity](interfaces/botbuilder.activity.md)   |  - |
+| activity | `Partial`.<[Activity](interfaces/botbuilder.activity.md)>   |  - |
 | description | `string`   |  - |
 
 
@@ -280,7 +281,7 @@ ___
 
 **Τ UpdateActivityHandler**:  *`function`* 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:22](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core/lib/botContext.d.ts#L22)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:22](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core/lib/botContext.d.ts#L22)*
 
 
 
@@ -289,7 +290,7 @@ ___
 Signature implemented by functions registered with `context.onUpdateActivity()`.
 
 #### Type declaration
-►(activity: *[Partial]()[Activity](interfaces/botbuilder.activity.md)*, next: *`function`*): [Promiseable]()`void`
+►(context: *[BotContext](classes/botbuilder.botcontext.md)*, activity: *`Partial`.<[Activity](interfaces/botbuilder.activity.md)>*, next: *`function`*): [Promiseable]()`void`
 
 
 
@@ -297,7 +298,8 @@ Signature implemented by functions registered with `context.onUpdateActivity()`.
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| activity | [Partial]()[Activity](interfaces/botbuilder.activity.md)   |  - |
+| context | [BotContext](classes/botbuilder.botcontext.md)   |  - |
+| activity | `Partial`.<[Activity](interfaces/botbuilder.activity.md)>   |  - |
 | next | `function`   |  - |
 
 
@@ -323,7 +325,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/storage.d.ts:73](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/storage.d.ts#L73)*
+*Defined in [libraries/botbuilder-core-extensions/lib/storage.d.ts:73](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/storage.d.ts#L73)*
 
 
 

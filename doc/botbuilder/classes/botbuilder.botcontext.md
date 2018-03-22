@@ -39,13 +39,14 @@ For TypeScript developers the `BotContext` is also exposed as an interface which
 
 ### Methods
 
+* [copyTo](botbuilder.botcontext.md#copyto)
 * [deleteActivity](botbuilder.botcontext.md#deleteactivity)
 * [get](botbuilder.botcontext.md#get)
 * [has](botbuilder.botcontext.md#has)
 * [onDeleteActivity](botbuilder.botcontext.md#ondeleteactivity)
-* [onSendActivities](botbuilder.botcontext.md#onsendactivities)
+* [onSendActivity](botbuilder.botcontext.md#onsendactivity)
 * [onUpdateActivity](botbuilder.botcontext.md#onupdateactivity)
-* [sendActivities](botbuilder.botcontext.md#sendactivities)
+* [sendActivity](botbuilder.botcontext.md#sendactivity)
 * [set](botbuilder.botcontext.md#set)
 * [updateActivity](botbuilder.botcontext.md#updateactivity)
 * [applyConversationReference](botbuilder.botcontext.md#applyconversationreference)
@@ -58,10 +59,13 @@ For TypeScript developers the `BotContext` is also exposed as an interface which
 <a id="constructor"></a>
 
 
-### ⊕ **new BotContext**(adapter: *[BotAdapter](botbuilder.botadapter.md)*, request: *[Partial]()[Activity](../interfaces/botbuilder.activity.md)*): [BotContext](botbuilder.botcontext.md)
+### ⊕ **new BotContext**(adapterOrContext: *[BotAdapter](botbuilder.botadapter.md)*, request: *`Partial`.<[Activity](../interfaces/botbuilder.activity.md)>*): [BotContext](botbuilder.botcontext.md)
 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:64](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core/lib/botContext.d.ts#L64)*
+### ⊕ **new BotContext**(adapterOrContext: *[BotContext](botbuilder.botcontext.md)*): [BotContext](botbuilder.botcontext.md)
+
+
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:64](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core/lib/botContext.d.ts#L64)*
 
 
 
@@ -72,8 +76,27 @@ Creates a new BotContext instance for a turn of conversation.
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| adapter | [BotAdapter](botbuilder.botadapter.md)   |  Adapter that constructed the context. |
-| request | [Partial]()[Activity](../interfaces/botbuilder.activity.md)   |  Request being processed. |
+| adapterOrContext | [BotAdapter](botbuilder.botadapter.md)   |  Adapter that constructed the context or a context object to clone. |
+| request | `Partial`.<[Activity](../interfaces/botbuilder.activity.md)>   |  Request being processed. |
+
+
+
+
+
+**Returns:** [BotContext](botbuilder.botcontext.md)
+
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:70](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core/lib/botContext.d.ts#L70)*
+
+
+
+Creates a new BotContext instance for a turn of conversation.
+
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| adapterOrContext | [BotContext](botbuilder.botcontext.md)   |  Adapter that constructed the context or a context object to clone. |
 
 
 
@@ -91,7 +114,7 @@ Creates a new BotContext instance for a turn of conversation.
 
 **●  adapter**:  *[BotAdapter](botbuilder.botadapter.md)* 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:72](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core/lib/botContext.d.ts#L72)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:79](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core/lib/botContext.d.ts#L79)*
 
 
 
@@ -108,7 +131,7 @@ ___
 
 **●  request**:  *[Activity](../interfaces/botbuilder.activity.md)* 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:74](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core/lib/botContext.d.ts#L74)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:81](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core/lib/botContext.d.ts#L81)*
 
 
 
@@ -125,7 +148,7 @@ ___
 
 **●  responded**:  *`boolean`* 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:76](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core/lib/botContext.d.ts#L76)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:83](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core/lib/botContext.d.ts#L83)*
 
 
 
@@ -138,15 +161,48 @@ ___
 
 
 ## Methods
+<a id="copyto"></a>
+
+### «Protected» copyTo
+
+► **copyTo**(context: *[BotContext](botbuilder.botcontext.md)*): `void`
+
+
+
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:77](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core/lib/botContext.d.ts#L77)*
+
+
+
+Called when this BotContext instance is passed into the constructor of a new BotContext instance.
+
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| context | [BotContext](botbuilder.botcontext.md)   |  The context object to copy private members to. Everything should be copied by reference. |
+
+
+
+
+
+**Returns:** `void`
+
+
+
+
+
+___
+
 <a id="deleteactivity"></a>
 
 ###  deleteActivity
 
-► **deleteActivity**(idOrReference: *`string`⎮[Partial]()[ConversationReference](../interfaces/botbuilder.conversationreference.md)*): `Promise`.<`void`>
+► **deleteActivity**(idOrReference: *`string`⎮`Partial`.<[ConversationReference](../interfaces/botbuilder.conversationreference.md)>*): `Promise`.<`void`>
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:109](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core/lib/botContext.d.ts#L109)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:116](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core/lib/botContext.d.ts#L116)*
 
 
 
@@ -157,7 +213,7 @@ Deletes an existing activity.
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| idOrReference | `string`⎮[Partial]()[ConversationReference](../interfaces/botbuilder.conversationreference.md)   |  ID or conversation of the activity being deleted. If an ID is specified the conversation reference information from the current request will be used to delete the activity. |
+| idOrReference | `string`⎮`Partial`.<[ConversationReference](../interfaces/botbuilder.conversationreference.md)>   |  ID or conversation of the activity being deleted. If an ID is specified the conversation reference information from the current request will be used to delete the activity. |
 
 
 
@@ -175,11 +231,11 @@ ___
 
 ###  get
 
-► **get**T(key: *`string`*): `T`
+► **get**T(key: *`any`*): `T`
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:82](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core/lib/botContext.d.ts#L82)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:89](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core/lib/botContext.d.ts#L89)*
 
 
 
@@ -196,7 +252,7 @@ Gets a value previously cached on the context.
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| key | `string`   |  The key to lookup in the cache. |
+| key | `any`   |  The key to lookup in the cache. |
 
 
 
@@ -214,11 +270,11 @@ ___
 
 ###  has
 
-► **has**(key: *`string`*): `boolean`
+► **has**(key: *`any`*): `boolean`
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:87](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core/lib/botContext.d.ts#L87)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:94](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core/lib/botContext.d.ts#L94)*
 
 
 
@@ -229,7 +285,7 @@ Returns `true` if [set()](#set) has been called for a key. The cached value may 
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| key | `string`   |  The key to lookup in the cache. |
+| key | `any`   |  The key to lookup in the cache. |
 
 
 
@@ -251,7 +307,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:124](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core/lib/botContext.d.ts#L124)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:131](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core/lib/botContext.d.ts#L131)*
 
 
 
@@ -276,15 +332,15 @@ Registers a handler to be notified of and potentially intercept an activity bein
 
 ___
 
-<a id="onsendactivities"></a>
+<a id="onsendactivity"></a>
 
-###  onSendActivities
+###  onSendActivity
 
-► **onSendActivities**(handler: *[SendActivitiesHandler](../#sendactivitieshandler)*): `this`
+► **onSendActivity**(handler: *[SendActivityHandler](../#sendactivityhandler)*): `this`
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:114](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core/lib/botContext.d.ts#L114)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:121](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core/lib/botContext.d.ts#L121)*
 
 
 
@@ -295,7 +351,7 @@ Registers a handler to be notified of and potentially intercept the sending of a
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| handler | [SendActivitiesHandler](../#sendactivitieshandler)   |  A function that will be called anytime [sendActivities()](#sendactivities) is called. The handler should call `next()` to continue sending of the activities. |
+| handler | [SendActivityHandler](../#sendactivityhandler)   |  A function that will be called anytime [sendActivity()](#sendactivity) is called. The handler should call `next()` to continue sending of the activities. |
 
 
 
@@ -317,7 +373,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:119](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core/lib/botContext.d.ts#L119)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:126](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core/lib/botContext.d.ts#L126)*
 
 
 
@@ -342,15 +398,15 @@ Registers a handler to be notified of and potentially intercept an activity bein
 
 ___
 
-<a id="sendactivities"></a>
+<a id="sendactivity"></a>
 
-###  sendActivities
+###  sendActivity
 
-► **sendActivities**(...activities: *[Partial]()[Activity](../interfaces/botbuilder.activity.md)[]*): `Promise`.<[ResourceResponse](../interfaces/botbuilder.resourceresponse.md)[]>
+► **sendActivity**(...activityOrText: *`any`[]*): `Promise`.<[ResourceResponse](../interfaces/botbuilder.resourceresponse.md)[]>
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:99](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core/lib/botContext.d.ts#L99)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:106](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core/lib/botContext.d.ts#L106)*
 
 
 
@@ -361,7 +417,7 @@ Sends a set of activities to the user. An array of responses form the server wil
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| activities | [Partial]()[Activity](../interfaces/botbuilder.activity.md)[]   |  One or more activities to send to the user. |
+| activityOrText | `any`[]   |  One or more activities or messages to send to the user. If a `string` is provided it will be sent to the user as a `message` activity. |
 
 
 
@@ -379,11 +435,11 @@ ___
 
 ###  set
 
-► **set**(key: *`string`*, value: *`any`*): `this`
+► **set**(key: *`any`*, value: *`any`*): `this`
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:93](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core/lib/botContext.d.ts#L93)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:100](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core/lib/botContext.d.ts#L100)*
 
 
 
@@ -394,7 +450,7 @@ Caches a value for the lifetime of the current turn.
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| key | `string`   |  The key of the value being cached. |
+| key | `any`   |  The key of the value being cached. |
 | value | `any`   |  The value to cache. |
 
 
@@ -413,11 +469,11 @@ ___
 
 ###  updateActivity
 
-► **updateActivity**(activity: *[Partial]()[Activity](../interfaces/botbuilder.activity.md)*): `Promise`.<`void`>
+► **updateActivity**(activity: *`Partial`.<[Activity](../interfaces/botbuilder.activity.md)>*): `Promise`.<`void`>
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:104](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core/lib/botContext.d.ts#L104)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:111](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core/lib/botContext.d.ts#L111)*
 
 
 
@@ -428,7 +484,7 @@ Replaces an existing activity.
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| activity | [Partial]()[Activity](../interfaces/botbuilder.activity.md)   |  New replacement activity. The activity should already have it's ID information populated. |
+| activity | `Partial`.<[Activity](../interfaces/botbuilder.activity.md)>   |  New replacement activity. The activity should already have it's ID information populated. |
 
 
 
@@ -446,11 +502,11 @@ ___
 
 ### «Static» applyConversationReference
 
-► **applyConversationReference**(activity: *[Partial]()[Activity](../interfaces/botbuilder.activity.md)*, reference: *[Partial]()[ConversationReference](../interfaces/botbuilder.conversationreference.md)*, isIncoming?: *`undefined`⎮`true`⎮`false`*): [Partial]()[Activity](../interfaces/botbuilder.activity.md)
+► **applyConversationReference**(activity: *`Partial`.<[Activity](../interfaces/botbuilder.activity.md)>*, reference: *`Partial`.<[ConversationReference](../interfaces/botbuilder.conversationreference.md)>*, isIncoming?: *`boolean`*): `Partial`.<[Activity](../interfaces/botbuilder.activity.md)>
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:155](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core/lib/botContext.d.ts#L155)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:162](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core/lib/botContext.d.ts#L162)*
 
 
 
@@ -461,22 +517,22 @@ Updates an activity with the delivery information from a conversation reference.
     // Send a typing indicator without calling any handlers
     const reference = TurnContext.getConversationReference(context.request);
     const activity = TurnContext.applyConversationReference({ type: 'typing' }, reference);
-    return context.adapter.sendActivities([activity]);
+    return context.adapter.sendActivity(activity);
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| activity | [Partial]()[Activity](../interfaces/botbuilder.activity.md)   |  Activity to copy delivery information to. |
-| reference | [Partial]()[ConversationReference](../interfaces/botbuilder.conversationreference.md)   |  Conversation reference containing delivery information. |
-| isIncoming | `undefined`⎮`true`⎮`false`   |  (Optional) flag indicating whether the activity is an incoming or outgoing activity. Defaults to `false` indicating the activity is outgoing. |
+| activity | `Partial`.<[Activity](../interfaces/botbuilder.activity.md)>   |  Activity to copy delivery information to. |
+| reference | `Partial`.<[ConversationReference](../interfaces/botbuilder.conversationreference.md)>   |  Conversation reference containing delivery information. |
+| isIncoming | `boolean`   |  (Optional) flag indicating whether the activity is an incoming or outgoing activity. Defaults to `false` indicating the activity is outgoing. |
 
 
 
 
 
-**Returns:** [Partial]()[Activity](../interfaces/botbuilder.activity.md)
+**Returns:** `Partial`.<[Activity](../interfaces/botbuilder.activity.md)>
 
 
 
@@ -488,11 +544,11 @@ ___
 
 ### «Static» getConversationReference
 
-► **getConversationReference**(activity: *[Partial]()[Activity](../interfaces/botbuilder.activity.md)*): [Partial]()[ConversationReference](../interfaces/botbuilder.conversationreference.md)
+► **getConversationReference**(activity: *`Partial`.<[Activity](../interfaces/botbuilder.activity.md)>*): `Partial`.<[ConversationReference](../interfaces/botbuilder.conversationreference.md)>
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:137](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core/lib/botContext.d.ts#L137)*
+*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:144](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core/lib/botContext.d.ts#L144)*
 
 
 
@@ -507,13 +563,13 @@ Returns the conversation reference for an activity. This can be saved as a plain
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| activity | [Partial]()[Activity](../interfaces/botbuilder.activity.md)   |  The activity to copy the conversation reference from |
+| activity | `Partial`.<[Activity](../interfaces/botbuilder.activity.md)>   |  The activity to copy the conversation reference from |
 
 
 
 
 
-**Returns:** [Partial]()[ConversationReference](../interfaces/botbuilder.conversationreference.md)
+**Returns:** `Partial`.<[ConversationReference](../interfaces/botbuilder.conversationreference.md)>
 
 
 

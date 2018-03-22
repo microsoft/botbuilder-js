@@ -22,11 +22,11 @@
 
 ### «Static» forChannel
 
-► **forChannel**(channelOrContext: *`string`⎮[BotContext]()*, choices: *(`string`⎮[Choice](../interfaces/botbuilder_choices.choice.md))[]*, text?: *`undefined`⎮`string`*, speak?: *`undefined`⎮`string`*, options?: *[ChoiceFactoryOptions](../interfaces/botbuilder_choices.choicefactoryoptions.md)*): [Partial]()[Activity]()
+► **forChannel**(channelOrContext: *`string`⎮`BotContext`*, choices: *(`string`⎮[Choice](../interfaces/botbuilder_choices.choice.md))[]*, text?: *`string`*, speak?: *`string`*, options?: *[ChoiceFactoryOptions](../interfaces/botbuilder_choices.choicefactoryoptions.md)*): `Partial`.<`Activity`>
 
 
 
-*Defined in [libraries/botbuilder-choices/lib/choiceFactory.d.ts:33](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-choices/lib/choiceFactory.d.ts#L33)*
+*Defined in [libraries/botbuilder-choices/lib/choiceFactory.d.ts:33](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/choiceFactory.d.ts#L33)*
 
 
 
@@ -34,17 +34,17 @@
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| channelOrContext | `string`⎮[BotContext]()   |  - |
+| channelOrContext | `string`⎮`BotContext`   |  - |
 | choices | (`string`⎮[Choice](../interfaces/botbuilder_choices.choice.md))[]   |  - |
-| text | `undefined`⎮`string`   |  - |
-| speak | `undefined`⎮`string`   |  - |
+| text | `string`   |  - |
+| speak | `string`   |  - |
 | options | [ChoiceFactoryOptions](../interfaces/botbuilder_choices.choicefactoryoptions.md)   |  - |
 
 
 
 
 
-**Returns:** [Partial]()[Activity]()
+**Returns:** `Partial`.<`Activity`>
 
 
 
@@ -56,11 +56,11 @@ ___
 
 ### «Static» inline
 
-► **inline**(choices: *(`string`⎮[Choice](../interfaces/botbuilder_choices.choice.md))[]*, text?: *`undefined`⎮`string`*, speak?: *`undefined`⎮`string`*, options?: *[ChoiceFactoryOptions](../interfaces/botbuilder_choices.choicefactoryoptions.md)*): [Partial]()[Activity]()
+► **inline**(choices: *(`string`⎮[Choice](../interfaces/botbuilder_choices.choice.md))[]*, text?: *`string`*, speak?: *`string`*, options?: *[ChoiceFactoryOptions](../interfaces/botbuilder_choices.choicefactoryoptions.md)*): `Partial`.<`Activity`>
 
 
 
-*Defined in [libraries/botbuilder-choices/lib/choiceFactory.d.ts:34](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-choices/lib/choiceFactory.d.ts#L34)*
+*Defined in [libraries/botbuilder-choices/lib/choiceFactory.d.ts:34](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/choiceFactory.d.ts#L34)*
 
 
 
@@ -69,15 +69,15 @@ ___
 | Param | Type | Description |
 | ------ | ------ | ------ |
 | choices | (`string`⎮[Choice](../interfaces/botbuilder_choices.choice.md))[]   |  - |
-| text | `undefined`⎮`string`   |  - |
-| speak | `undefined`⎮`string`   |  - |
+| text | `string`   |  - |
+| speak | `string`   |  - |
 | options | [ChoiceFactoryOptions](../interfaces/botbuilder_choices.choicefactoryoptions.md)   |  - |
 
 
 
 
 
-**Returns:** [Partial]()[Activity]()
+**Returns:** `Partial`.<`Activity`>
 
 
 
@@ -89,11 +89,11 @@ ___
 
 ### «Static» list
 
-► **list**(choices: *(`string`⎮[Choice](../interfaces/botbuilder_choices.choice.md))[]*, text?: *`undefined`⎮`string`*, speak?: *`undefined`⎮`string`*, options?: *[ChoiceFactoryOptions](../interfaces/botbuilder_choices.choicefactoryoptions.md)*): [Partial]()[Activity]()
+► **list**(choices: *(`string`⎮[Choice](../interfaces/botbuilder_choices.choice.md))[]*, text?: *`string`*, speak?: *`string`*, options?: *[ChoiceFactoryOptions](../interfaces/botbuilder_choices.choicefactoryoptions.md)*): `Partial`.<`Activity`>
 
 
 
-*Defined in [libraries/botbuilder-choices/lib/choiceFactory.d.ts:35](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-choices/lib/choiceFactory.d.ts#L35)*
+*Defined in [libraries/botbuilder-choices/lib/choiceFactory.d.ts:35](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/choiceFactory.d.ts#L35)*
 
 
 
@@ -102,15 +102,15 @@ ___
 | Param | Type | Description |
 | ------ | ------ | ------ |
 | choices | (`string`⎮[Choice](../interfaces/botbuilder_choices.choice.md))[]   |  - |
-| text | `undefined`⎮`string`   |  - |
-| speak | `undefined`⎮`string`   |  - |
+| text | `string`   |  - |
+| speak | `string`   |  - |
 | options | [ChoiceFactoryOptions](../interfaces/botbuilder_choices.choicefactoryoptions.md)   |  - |
 
 
 
 
 
-**Returns:** [Partial]()[Activity]()
+**Returns:** `Partial`.<`Activity`>
 
 
 
@@ -122,11 +122,11 @@ ___
 
 ### «Static» suggestedAction
 
-► **suggestedAction**(choices: *(`string`⎮[Choice](../interfaces/botbuilder_choices.choice.md))[]*, text?: *`undefined`⎮`string`*, speak?: *`undefined`⎮`string`*, options?: *[ChoiceFactoryOptions](../interfaces/botbuilder_choices.choicefactoryoptions.md)*): [Partial]()[Activity]()
+► **suggestedAction**(choices: *(`string`⎮[Choice](../interfaces/botbuilder_choices.choice.md))[]*, text?: *`string`*, speak?: *`string`*, options?: *[ChoiceFactoryOptions](../interfaces/botbuilder_choices.choicefactoryoptions.md)*): `Partial`.<`Activity`>
 
 
 
-*Defined in [libraries/botbuilder-choices/lib/choiceFactory.d.ts:36](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-choices/lib/choiceFactory.d.ts#L36)*
+*Defined in [libraries/botbuilder-choices/lib/choiceFactory.d.ts:36](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/choiceFactory.d.ts#L36)*
 
 
 
@@ -135,15 +135,15 @@ ___
 | Param | Type | Description |
 | ------ | ------ | ------ |
 | choices | (`string`⎮[Choice](../interfaces/botbuilder_choices.choice.md))[]   |  - |
-| text | `undefined`⎮`string`   |  - |
-| speak | `undefined`⎮`string`   |  - |
+| text | `string`   |  - |
+| speak | `string`   |  - |
 | options | [ChoiceFactoryOptions](../interfaces/botbuilder_choices.choicefactoryoptions.md)   |  - |
 
 
 
 
 
-**Returns:** [Partial]()[Activity]()
+**Returns:** `Partial`.<`Activity`>
 
 
 
@@ -159,7 +159,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-choices/lib/choiceFactory.d.ts:37](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-choices/lib/choiceFactory.d.ts#L37)*
+*Defined in [libraries/botbuilder-choices/lib/choiceFactory.d.ts:37](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/choiceFactory.d.ts#L37)*
 
 
 

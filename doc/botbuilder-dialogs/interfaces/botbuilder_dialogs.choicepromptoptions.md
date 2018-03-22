@@ -26,9 +26,9 @@ Additional options that can be used to configure a `ChoicePrompt`.
 
 ### «Optional» choices
 
-**●  choices**:  *(`string`⎮[Choice]())[]* 
+**●  choices**:  *`any`[]* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:32](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L32)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L15)*
 
 
 
@@ -43,11 +43,11 @@ ___
 
 ### «Optional» prompt
 
-**●  prompt**:  *`string`⎮[Partial]()[Activity]()* 
+**●  prompt**:  *`string`⎮`Partial`.<`Activity`>* 
 
 *Inherited from [PromptOptions](botbuilder_dialogs.promptoptions.md).[prompt](botbuilder_dialogs.promptoptions.md#prompt)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:13](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L13)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:14](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L14)*
 
 
 
@@ -62,11 +62,11 @@ ___
 
 ### «Optional» retryPrompt
 
-**●  retryPrompt**:  *`string`⎮[Partial]()[Activity]()* 
+**●  retryPrompt**:  *`string`⎮`Partial`.<`Activity`>* 
 
 *Inherited from [PromptOptions](botbuilder_dialogs.promptoptions.md).[retryPrompt](botbuilder_dialogs.promptoptions.md#retryprompt)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L17)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L18)*
 
 
 
@@ -81,11 +81,11 @@ ___
 
 ### «Optional» retrySpeak
 
-**●  retrySpeak**:  *`undefined`⎮`string`* 
+**●  retrySpeak**:  *`string`* 
 
 *Inherited from [PromptOptions](botbuilder_dialogs.promptoptions.md).[retrySpeak](botbuilder_dialogs.promptoptions.md#retryspeak)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L19)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:20](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L20)*
 
 
 
@@ -100,32 +100,15 @@ ___
 
 ### «Optional» speak
 
-**●  speak**:  *`undefined`⎮`string`* 
+**●  speak**:  *`string`* 
 
 *Inherited from [PromptOptions](botbuilder_dialogs.promptoptions.md).[speak](botbuilder_dialogs.promptoptions.md#speak)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L15)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:16](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L16)*
 
 
 
 (Optional) Initial SSML to send the user.
-
-
-
-
-___
-
-<a id="style"></a>
-
-### «Optional» style
-
-**●  style**:  *[ListStyle](../enums/botbuilder_dialogs.liststyle.md)* 
-
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:34](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L34)*
-
-
-
-Preferred style of the choices sent to the user. The default value is `ListStyle.auto`.
 
 
 

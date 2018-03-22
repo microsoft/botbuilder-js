@@ -30,7 +30,7 @@ Defines values for AttachmentLayoutTypes. Possible values include: 'list', 'caro
 
 ** Carousel**:    = "carousel"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1635](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1635)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1635](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1635)*
 
 
 
@@ -44,7 +44,7 @@ ___
 
 ** List**:    = "list"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1634](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1634)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1634](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1634)*
 
 
 

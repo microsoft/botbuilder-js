@@ -52,7 +52,7 @@ ActivityAdapter class needed to communicate with a Bot Framework channel or the 
 * [createConversation](botbuilder.botframeworkadapter.md#createconversation)
 * [deleteActivity](botbuilder.botframeworkadapter.md#deleteactivity)
 * [processRequest](botbuilder.botframeworkadapter.md#processrequest)
-* [sendActivities](botbuilder.botframeworkadapter.md#sendactivities)
+* [sendActivity](botbuilder.botframeworkadapter.md#sendactivity)
 * [startConversation](botbuilder.botframeworkadapter.md#startconversation)
 * [updateActivity](botbuilder.botframeworkadapter.md#updateactivity)
 
@@ -63,10 +63,10 @@ ActivityAdapter class needed to communicate with a Bot Framework channel or the 
 <a id="constructor"></a>
 
 
-### ⊕ **new BotFrameworkAdapter**(settings?: *[Partial]()[BotFrameworkAdapterSettings](../interfaces/botbuilder.botframeworkadaptersettings.md)*): [BotFrameworkAdapter](botbuilder.botframeworkadapter.md)
+### ⊕ **new BotFrameworkAdapter**(settings?: *`Partial`.<[BotFrameworkAdapterSettings](../interfaces/botbuilder.botframeworkadaptersettings.md)>*): [BotFrameworkAdapter](botbuilder.botframeworkadapter.md)
 
 
-*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:67](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L67)*
+*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:56](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L56)*
 
 
 
@@ -77,7 +77,7 @@ Creates a new BotFrameworkAdapter instance.
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| settings | [Partial]()[BotFrameworkAdapterSettings](../interfaces/botbuilder.botframeworkadaptersettings.md)   |  (optional) configuration settings for the adapter. |
+| settings | `Partial`.<[BotFrameworkAdapterSettings](../interfaces/botbuilder.botframeworkadaptersettings.md)>   |  (optional) configuration settings for the adapter. |
 
 
 
@@ -95,7 +95,7 @@ Creates a new BotFrameworkAdapter instance.
 
 **●  credentials**:  *`MicrosoftAppCredentials`* 
 
-*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:65](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L65)*
+*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:54](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L54)*
 
 
 
@@ -109,7 +109,7 @@ ___
 
 **●  credentialsProvider**:  *`SimpleCredentialProvider`* 
 
-*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:66](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L66)*
+*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:55](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L55)*
 
 
 
@@ -123,7 +123,7 @@ ___
 
 **●  settings**:  *[BotFrameworkAdapterSettings](../interfaces/botbuilder.botframeworkadaptersettings.md)* 
 
-*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:67](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L67)*
+*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:56](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L56)*
 
 
 
@@ -137,11 +137,11 @@ ___
 
 ### «Protected» authenticateRequest
 
-► **authenticateRequest**(request: *[Partial]()[Activity](../interfaces/botbuilder.activity.md)*, authHeader: *`string`*): `Promise`.<`void`>
+► **authenticateRequest**(request: *`Partial`.<[Activity](../interfaces/botbuilder.activity.md)>*, authHeader: *`string`*): `Promise`.<`void`>
 
 
 
-*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:80](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L80)*
+*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:69](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L69)*
 
 
 
@@ -149,7 +149,7 @@ ___
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| request | [Partial]()[Activity](../interfaces/botbuilder.activity.md)   |  - |
+| request | `Partial`.<[Activity](../interfaces/botbuilder.activity.md)>   |  - |
 | authHeader | `string`   |  - |
 
 
@@ -168,11 +168,11 @@ ___
 
 ###  continueConversation
 
-► **continueConversation**(reference: *[Partial]()[ConversationReference](../interfaces/botbuilder.conversationreference.md)*, logic: *`function`*): `Promise`.<`void`>
+► **continueConversation**(reference: *`Partial`.<[ConversationReference](../interfaces/botbuilder.conversationreference.md)>*, logic: *`function`*): `Promise`.<`void`>
 
 
 
-*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:74](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L74)*
+*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:63](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L63)*
 
 
 
@@ -180,7 +180,7 @@ ___
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| reference | [Partial]()[ConversationReference](../interfaces/botbuilder.conversationreference.md)   |  - |
+| reference | `Partial`.<[ConversationReference](../interfaces/botbuilder.conversationreference.md)>   |  - |
 | logic | `function`   |  - |
 
 
@@ -203,7 +203,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:81](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L81)*
+*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:70](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L70)*
 
 
 
@@ -229,11 +229,11 @@ ___
 
 ### «Protected» createContext
 
-► **createContext**(request: *[Partial]()[Activity](../interfaces/botbuilder.activity.md)*): [BotContext](botbuilder.botcontext.md)
+► **createContext**(request: *`Partial`.<[Activity](../interfaces/botbuilder.activity.md)>*): [BotContext](botbuilder.botcontext.md)
 
 
 
-*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:82](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L82)*
+*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:71](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L71)*
 
 
 
@@ -241,7 +241,7 @@ ___
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| request | [Partial]()[Activity](../interfaces/botbuilder.activity.md)   |  - |
+| request | `Partial`.<[Activity](../interfaces/botbuilder.activity.md)>   |  - |
 
 
 
@@ -259,11 +259,11 @@ ___
 
 ###  createConversation
 
-► **createConversation**(serviceUrl: *`string`*, parameters: *[Partial]()[ConversationParameters](../interfaces/botbuilder.conversationparameters.md)*): `Promise`.<[ConversationResourceResponse](../interfaces/botbuilder.conversationresourceresponse.md)>
+► **createConversation**(serviceUrl: *`string`*, parameters: *`Partial`.<[ConversationParameters](../interfaces/botbuilder.conversationparameters.md)>*): `Promise`.<[ConversationResourceResponse](../interfaces/botbuilder.conversationresourceresponse.md)>
 
 
 
-*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:79](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L79)*
+*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:68](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L68)*
 
 
 
@@ -272,7 +272,7 @@ ___
 | Param | Type | Description |
 | ------ | ------ | ------ |
 | serviceUrl | `string`   |  - |
-| parameters | [Partial]()[ConversationParameters](../interfaces/botbuilder.conversationparameters.md)   |  - |
+| parameters | `Partial`.<[ConversationParameters](../interfaces/botbuilder.conversationparameters.md)>   |  - |
 
 
 
@@ -290,11 +290,11 @@ ___
 
 ###  deleteActivity
 
-► **deleteActivity**(reference: *[Partial]()[ConversationReference](../interfaces/botbuilder.conversationreference.md)*): `Promise`.<`void`>
+► **deleteActivity**(reference: *`Partial`.<[ConversationReference](../interfaces/botbuilder.conversationreference.md)>*): `Promise`.<`void`>
 
 
 
-*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:78](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L78)*
+*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:67](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L67)*
 
 
 
@@ -302,7 +302,7 @@ ___
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| reference | [Partial]()[ConversationReference](../interfaces/botbuilder.conversationreference.md)   |  - |
+| reference | `Partial`.<[ConversationReference](../interfaces/botbuilder.conversationreference.md)>   |  - |
 
 
 
@@ -324,7 +324,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:73](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L73)*
+*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:62](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L62)*
 
 
 
@@ -348,15 +348,15 @@ ___
 
 ___
 
-<a id="sendactivities"></a>
+<a id="sendactivity"></a>
 
-###  sendActivities
+###  sendActivity
 
-► **sendActivities**(activities: *[Partial]()[Activity](../interfaces/botbuilder.activity.md)[]*): `Promise`.<[ResourceResponse](../interfaces/botbuilder.resourceresponse.md)[]>
+► **sendActivity**(activities: *`Partial`.<[Activity](../interfaces/botbuilder.activity.md)>[]*): `Promise`.<[ResourceResponse](../interfaces/botbuilder.resourceresponse.md)[]>
 
 
 
-*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:76](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L76)*
+*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:65](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L65)*
 
 
 
@@ -364,7 +364,7 @@ ___
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| activities | [Partial]()[Activity](../interfaces/botbuilder.activity.md)[]   |  - |
+| activities | `Partial`.<[Activity](../interfaces/botbuilder.activity.md)>[]   |  - |
 
 
 
@@ -382,11 +382,11 @@ ___
 
 ###  startConversation
 
-► **startConversation**(reference: *[Partial]()[ConversationReference](../interfaces/botbuilder.conversationreference.md)*, logic: *`function`*): `Promise`.<`void`>
+► **startConversation**(reference: *`Partial`.<[ConversationReference](../interfaces/botbuilder.conversationreference.md)>*, logic: *`function`*): `Promise`.<`void`>
 
 
 
-*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:75](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L75)*
+*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:64](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L64)*
 
 
 
@@ -394,7 +394,7 @@ ___
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| reference | [Partial]()[ConversationReference](../interfaces/botbuilder.conversationreference.md)   |  - |
+| reference | `Partial`.<[ConversationReference](../interfaces/botbuilder.conversationreference.md)>   |  - |
 | logic | `function`   |  - |
 
 
@@ -413,11 +413,11 @@ ___
 
 ###  updateActivity
 
-► **updateActivity**(activity: *[Partial]()[Activity](../interfaces/botbuilder.activity.md)*): `Promise`.<`void`>
+► **updateActivity**(activity: *`Partial`.<[Activity](../interfaces/botbuilder.activity.md)>*): `Promise`.<`void`>
 
 
 
-*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:77](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L77)*
+*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:66](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L66)*
 
 
 
@@ -425,7 +425,7 @@ ___
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| activity | [Partial]()[Activity](../interfaces/botbuilder.activity.md)   |  - |
+| activity | `Partial`.<[Activity](../interfaces/botbuilder.activity.md)>   |  - |
 
 
 

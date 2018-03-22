@@ -15,7 +15,7 @@
 
 **●  content**:  *`any`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:197](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L197)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:197](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L197)*
 
 
 *__member__*: {any} [content] Embedded content
@@ -32,7 +32,7 @@ ___
 
 **●  contentType**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:189](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L189)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:189](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L189)*
 
 
 *__member__*: {string} [contentType] mimetype/Contenttype for the file
@@ -47,9 +47,9 @@ ___
 
 ### «Optional» contentUrl
 
-**●  contentUrl**:  *`undefined`⎮`string`* 
+**●  contentUrl**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:193](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L193)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:193](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L193)*
 
 
 *__member__*: {string} [contentUrl] Content Url
@@ -64,9 +64,9 @@ ___
 
 ### «Optional» name
 
-**●  name**:  *`undefined`⎮`string`* 
+**●  name**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:201](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L201)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:201](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L201)*
 
 
 *__member__*: {string} [name] (OPTIONAL) The name of the attachment
@@ -81,9 +81,9 @@ ___
 
 ### «Optional» thumbnailUrl
 
-**●  thumbnailUrl**:  *`undefined`⎮`string`* 
+**●  thumbnailUrl**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:206](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L206)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:206](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L206)*
 
 
 *__member__*: {string} [thumbnailUrl] (OPTIONAL) Thumbnail associated with attachment

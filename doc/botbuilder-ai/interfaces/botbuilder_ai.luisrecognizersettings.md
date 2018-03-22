@@ -12,7 +12,7 @@
 
 **●  appId**:  *`string`* 
 
-*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:13](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L13)*
+*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:13](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L13)*
 
 
 
@@ -27,13 +27,65 @@ ___
 
 ### «Optional» options
 
-**●  options**:  *`undefined`⎮`object`* 
+**●  options**:  *`object`* 
 
-*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L19)*
+*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L19)*
 
 
 
 (Optional) request options passed to service call.
+
+#### Type declaration
+
+
+
+
+«Optional»  allowSampling: `string`
+
+
+
+
+
+
+«Optional»  contextId: `string`
+
+
+
+
+
+
+«Optional»  customHeaders: `object`
+
+
+
+
+
+
+[headerName: `string`]: `string`
+
+
+
+
+
+
+«Optional»  forceSet: `string`
+
+
+
+
+
+
+«Optional»  timezoneOffset: `number`
+
+
+
+
+
+
+«Optional»  verbose: `boolean`
+
+
+
 
 
 
@@ -44,9 +96,9 @@ ___
 
 ### «Optional» serviceEndpoint
 
-**●  serviceEndpoint**:  *`undefined`⎮`string`* 
+**●  serviceEndpoint**:  *`string`* 
 
-*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L17)*
+*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L17)*
 
 
 
@@ -63,7 +115,7 @@ ___
 
 **●  subscriptionKey**:  *`string`* 
 
-*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L15)*
+*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L15)*
 
 
 

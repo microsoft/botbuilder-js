@@ -31,7 +31,7 @@ Defines values for TextFormatTypes. Possible values include: 'markdown', 'plain'
 
 ** Markdown**:    = "markdown"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1618](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1618)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1618](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1618)*
 
 
 
@@ -45,7 +45,7 @@ ___
 
 ** Plain**:    = "plain"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1619](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1619)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1619](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1619)*
 
 
 
@@ -59,7 +59,7 @@ ___
 
 ** Xml**:    = "xml"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1620](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L1620)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1620](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1620)*
 
 
 
