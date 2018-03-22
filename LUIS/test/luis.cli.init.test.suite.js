@@ -26,35 +26,35 @@ describe('The LUIS cli --init argument', () => {
 
         await new Promise(resolve => {
             luisProcess.stdout.on('data', data => {
-                const message = (msgCt++, data.toString());
+                const message = (msgCt++, data.toString().toLowerCase());
 
                 switch (msgCt) {
                     case 1:
-                        assert(message === '\nThis util will walk you through creating a .luisrc file\n\nPress ^C at any time to quit.\n\n');
+                        assert(message === '\nthis util will walk you through creating a .luisrc file\n\npress ^c at any time to quit.\n\n');
                         break;
 
                     case 2:
-                        assert(message === 'Subscription key: ');
+                        assert(message.includes('app'));
+                        luisProcess.stdin.write(`${appId}\r`);
+                        break;
+                    
+                    case 3:
+                        assert(message.includes('key'));
                         luisProcess.stdin.write('abc123\r');
                         break;
 
-                    case 3:
-                        assert(message === 'Region: ');
-                        luisProcess.stdin.write(`${location}\r`);
-                        break;
-
                     case 4:
-                        assert(message === 'App ID: ');
-                        luisProcess.stdin.write(`${appId}\r`);
-                        break;
-
-                    case 5:
-                        assert(message === 'Version ID: ');
+                        assert(message.includes('version'));
                         luisProcess.stdin.write(`${versionId}\r`);
                         break;
 
+                    case 5:
+                        assert(message.includes('region'));
+                        luisProcess.stdin.write(`${location}\r`);
+                        break;
+
                     case 6:
-                        assert(message.includes('Does this look ok?'));
+                        assert(message.includes('does this look ok?'));
                         luisProcess.stdin.write('yes\r');
                         break;
 

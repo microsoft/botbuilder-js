@@ -28,13 +28,13 @@ appsService.getApplicationsList({take: 5}).then(apps => {
 
 ## Configuration
 A configuration object is required to provide the endpoint base path, app ID, version ID and the 
-subscription key to each outbound call. There are 3 ways to provide this information to the cli
+authoring key to each outbound call. There are 3 ways to provide this information to the cli
 1. As a `.luisrc` file in the cwd. 
 The json format for the `.luisrc` file is:
 ```json
 {
-  "subscriptionKey": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
   "appId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+  "authoringKey": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
   "versionId": "x.x.xx",
   "endpointBasePath": "https://xxxxxx.api.cognitive.microsoft.com/luis/api/v2.0"
 }
@@ -42,15 +42,15 @@ The json format for the `.luisrc` file is:
 The cli has a utility command that walks through the creation of this file:
 `luis --init`
 or it can be created manually.
-2. As arguments to the cli. `--subscriptionKey <string> --appId <string> --versionId <string> --endpointBasePath <string>`
-3. As environment variables. `LUIS_APP_ID, LUIS_SUBSCRIPTION_KEY, LUIS_VERSION_ID, LUIS_ENDPOINT_BASE_PATH`
+2. As arguments to the cli. `--appId <string> --versionId <string> --authoringKey <string> --endpointBasePath <string>`
+3. As environment variables. `LUIS_APP_ID, LUIS_VERSION_ID, LUIS_AUTHORING_KEY, LUIS_ENDPOINT_BASE_PATH`
 
 The cli will first look for these named configuration variables in the arguments list, then inside the `.luisrc` file, 
 then fallback to environment variables. 
 
-### Securing Your Key
-To better secure your subscription key, it's recommended to omit the key from the `.luisrc` 
-file and instead pass it in to the `--subscriptionKey` argument or store it as the `LUIS_SUBSCRIPTION_KEY` 
+### Securing Your Access Key
+To better secure your access key, it's recommended to omit the key from the `.luisrc` 
+file and instead pass it in to the `--authoringKey` argument or store it as the `LUIS_AUTHORING_KEY` 
 environment variable. If security is not a concern for your particular case, all configuration items 
 can be stored in the `.luisrc` for convenience.
 
@@ -63,8 +63,8 @@ This configuration object is provided as a static property on the `ServicecBase`
 ```js
 import {ServiceBase} from 'luis/lib/serviceBase';
 ServiceBase.config = {
-  "subscriptionKey": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
   "appId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+  "authoringKey": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
   "versionId": "x.x.xx",
   "endpointBasePath": "https://xxxxxx.api.cognitive.microsoft.com/luis/api/v2.0"
 }
@@ -102,9 +102,6 @@ Arguments may be one or more of the following:
 | :-----------------------------------------|------------------------------------------------------------------|
 | --appId                                   | Specifies the application id. This can optionally be specified in the .luisrc |
 | --versionId                               | Specifies the version id. This can optionally be specified in the .luisrc |
-| --in <path>                               | Specifies the input file path. Applicable for create, update and patch actions |
-| --skip <integer>                          | Specifies the number of records to skip. Applicable for the list action only |
-| --take <integer>                          | Specifies the number of records to take. Applicable for the list action only |
 
 Global Arguments:
 

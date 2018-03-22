@@ -94,9 +94,9 @@ function getGeneralHelpContents() {
         {
             head: 'Configuration and Overrides:',
             table: [
-                ['--appId', 'Specifies the application id. Overrides the .luisrc value and the LUIS_APP_ID environment variable.'],
+                ['--appId', 'Specifies the public LUIS application id. Overrides the .luisrc value and the LUIS_APP_ID environment variable.'],
+                ['--authoringKey', 'Specifies the LUIS authoring  key (from luis.ai portal user settings page). Overrides the .luisrc value and the LUIS_AUTHORING_KEY environment variable.'],
                 ['--versionId', 'Specifies the version id. Overrides the .luisrc value and the LUIS_VERSION_ID environment variable.'],
-                ['--subscriptionKey', 'Specifies the subscription key. Overrides the .luisrc value and the LUIS_SUBSCRIPTION_LEY environment variable.'],
                 ['--endpointBasePath', 'Specifies the base URI for all requests. Overrides the .luisrc value and the LUIS_ENDPOINT_BASE_PATH environment variable.'],
             ]
         },

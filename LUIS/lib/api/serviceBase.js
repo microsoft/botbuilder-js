@@ -61,7 +61,7 @@ class ServiceBase {
     get commonHeaders() {
         return {
             'Content-Type': 'application/json',
-            'Ocp-Apim-Subscription-Key': ServiceBase.config.subscriptionKey
+            'Ocp-Apim-Subscription-Key': ServiceBase.config.authoringKey
         };
     }
 }
@@ -85,8 +85,8 @@ ServiceBase.validateParams = function (tokenizedUrl, params) {
 };
 /**
  * @type {*} The configuration object containing
- * the endpointBasePath, appId, versionId and subscriptionKey properties.
+ * the endpointBasePath, appId, versionId and authoringKey properties.
  */
-ServiceBase.config = {endpointBasePath: '', appId: '', versionId: '', subscriptionKey: ''};
+ServiceBase.config = {endpointBasePath: '', appId: '', versionId: '', authoringKey: ''};
 
 module.exports = {ServiceBase};
