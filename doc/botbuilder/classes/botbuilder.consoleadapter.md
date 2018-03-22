@@ -41,7 +41,9 @@ Lets a user communicate with a bot from a console window.
 * [createInterface](botbuilder.consoleadapter.md#createinterface)
 * [deleteActivity](botbuilder.consoleadapter.md#deleteactivity)
 * [listen](botbuilder.consoleadapter.md#listen)
-* [sendActivities](botbuilder.consoleadapter.md#sendactivities)
+* [print](botbuilder.consoleadapter.md#print)
+* [printError](botbuilder.consoleadapter.md#printerror)
+* [sendActivity](botbuilder.consoleadapter.md#sendactivity)
 * [updateActivity](botbuilder.consoleadapter.md#updateactivity)
 
 
@@ -54,7 +56,7 @@ Lets a user communicate with a bot from a console window.
 ### ⊕ **new ConsoleAdapter**(reference?: *[ConversationReference](../interfaces/botbuilder.conversationreference.md)*): [ConsoleAdapter](botbuilder.consoleadapter.md)
 
 
-*Defined in [libraries/botbuilder/lib/consoleAdapter.d.ts:23](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder/lib/consoleAdapter.d.ts#L23)*
+*Defined in [libraries/botbuilder/lib/consoleAdapter.d.ts:23](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder/lib/consoleAdapter.d.ts#L23)*
 
 
 
@@ -82,7 +84,7 @@ Lets a user communicate with a bot from a console window.
 
 
 
-*Defined in [libraries/botbuilder/lib/consoleAdapter.d.ts:33](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder/lib/consoleAdapter.d.ts#L33)*
+*Defined in [libraries/botbuilder/lib/consoleAdapter.d.ts:33](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder/lib/consoleAdapter.d.ts#L33)*
 
 
 
@@ -108,11 +110,11 @@ ___
 
 ###  deleteActivity
 
-► **deleteActivity**(reference: *[Partial]()[ConversationReference](../interfaces/botbuilder.conversationreference.md)*): `Promise`.<`void`>
+► **deleteActivity**(reference: *`Partial`.<[ConversationReference](../interfaces/botbuilder.conversationreference.md)>*): `Promise`.<`void`>
 
 
 
-*Defined in [libraries/botbuilder/lib/consoleAdapter.d.ts:32](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder/lib/consoleAdapter.d.ts#L32)*
+*Defined in [libraries/botbuilder/lib/consoleAdapter.d.ts:32](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder/lib/consoleAdapter.d.ts#L32)*
 
 
 
@@ -120,7 +122,7 @@ ___
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| reference | [Partial]()[ConversationReference](../interfaces/botbuilder.conversationreference.md)   |  - |
+| reference | `Partial`.<[ConversationReference](../interfaces/botbuilder.conversationreference.md)>   |  - |
 
 
 
@@ -142,7 +144,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/consoleAdapter.d.ts:29](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder/lib/consoleAdapter.d.ts#L29)*
+*Defined in [libraries/botbuilder/lib/consoleAdapter.d.ts:29](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder/lib/consoleAdapter.d.ts#L29)*
 
 
 
@@ -167,15 +169,15 @@ Begins listening to console input.
 
 ___
 
-<a id="sendactivities"></a>
+<a id="print"></a>
 
-###  sendActivities
+### «Protected» print
 
-► **sendActivities**(activities: *[Partial]()[Activity](../interfaces/botbuilder.activity.md)[]*): `Promise`.<[ResourceResponse](../interfaces/botbuilder.resourceresponse.md)[]>
+► **print**(line: *`string`*): `void`
 
 
 
-*Defined in [libraries/botbuilder/lib/consoleAdapter.d.ts:30](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder/lib/consoleAdapter.d.ts#L30)*
+*Defined in [libraries/botbuilder/lib/consoleAdapter.d.ts:34](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder/lib/consoleAdapter.d.ts#L34)*
 
 
 
@@ -183,7 +185,67 @@ ___
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| activities | [Partial]()[Activity](../interfaces/botbuilder.activity.md)[]   |  - |
+| line | `string`   |  - |
+
+
+
+
+
+**Returns:** `void`
+
+
+
+
+
+___
+
+<a id="printerror"></a>
+
+### «Protected» printError
+
+► **printError**(line: *`string`*): `void`
+
+
+
+*Defined in [libraries/botbuilder/lib/consoleAdapter.d.ts:35](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder/lib/consoleAdapter.d.ts#L35)*
+
+
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| line | `string`   |  - |
+
+
+
+
+
+**Returns:** `void`
+
+
+
+
+
+___
+
+<a id="sendactivity"></a>
+
+###  sendActivity
+
+► **sendActivity**(activities: *`Partial`.<[Activity](../interfaces/botbuilder.activity.md)>[]*): `Promise`.<[ResourceResponse](../interfaces/botbuilder.resourceresponse.md)[]>
+
+
+
+*Defined in [libraries/botbuilder/lib/consoleAdapter.d.ts:30](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder/lib/consoleAdapter.d.ts#L30)*
+
+
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| activities | `Partial`.<[Activity](../interfaces/botbuilder.activity.md)>[]   |  - |
 
 
 
@@ -201,11 +263,11 @@ ___
 
 ###  updateActivity
 
-► **updateActivity**(activity: *[Partial]()[Activity](../interfaces/botbuilder.activity.md)*): `Promise`.<`void`>
+► **updateActivity**(activity: *`Partial`.<[Activity](../interfaces/botbuilder.activity.md)>*): `Promise`.<`void`>
 
 
 
-*Defined in [libraries/botbuilder/lib/consoleAdapter.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder/lib/consoleAdapter.d.ts#L31)*
+*Defined in [libraries/botbuilder/lib/consoleAdapter.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder/lib/consoleAdapter.d.ts#L31)*
 
 
 
@@ -213,7 +275,7 @@ ___
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| activity | [Partial]()[Activity](../interfaces/botbuilder.activity.md)   |  - |
+| activity | `Partial`.<[Activity](../interfaces/botbuilder.activity.md)>   |  - |
 
 
 

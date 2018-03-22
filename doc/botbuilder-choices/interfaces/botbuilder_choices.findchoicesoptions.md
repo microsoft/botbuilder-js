@@ -23,11 +23,11 @@
 
 ### «Optional» allowPartialMatches
 
-**●  allowPartialMatches**:  *`undefined`⎮`true`⎮`false`* 
+**●  allowPartialMatches**:  *`boolean`* 
 
 *Inherited from [FindValuesOptions](botbuilder_choices.findvaluesoptions.md).[allowPartialMatches](botbuilder_choices.findvaluesoptions.md#allowpartialmatches)*
 
-*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-choices/lib/findValues.d.ts#L15)*
+*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/findValues.d.ts#L15)*
 
 
 
@@ -38,32 +38,15 @@
 
 ___
 
-<a id="culture"></a>
-
-### «Optional» culture
-
-**●  culture**:  *`undefined`⎮`string`* 
-
-*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:24](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-choices/lib/findChoices.d.ts#L24)*
-
-
-
-(Optional) locale of the user preferred language. This is used when recognizing the numerical or ordinal index of the choice. The default is assumed to be `en-US`.
-
-
-
-
-___
-
 <a id="locale"></a>
 
 ### «Optional» locale
 
-**●  locale**:  *`undefined`⎮`string`* 
+**●  locale**:  *`string`* 
 
 *Inherited from [FindValuesOptions](botbuilder_choices.findvaluesoptions.md).[locale](botbuilder_choices.findvaluesoptions.md#locale)*
 
-*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-choices/lib/findValues.d.ts#L19)*
+*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/findValues.d.ts#L19)*
 
 
 
@@ -78,11 +61,11 @@ ___
 
 ### «Optional» maxTokenDistance
 
-**●  maxTokenDistance**:  *`undefined`⎮`number`* 
+**●  maxTokenDistance**:  *`number`* 
 
 *Inherited from [FindValuesOptions](botbuilder_choices.findvaluesoptions.md).[maxTokenDistance](botbuilder_choices.findvaluesoptions.md#maxtokendistance)*
 
-*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:26](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-choices/lib/findValues.d.ts#L26)*
+*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:26](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/findValues.d.ts#L26)*
 
 
 
@@ -97,9 +80,9 @@ ___
 
 ### «Optional» noAction
 
-**●  noAction**:  *`undefined`⎮`true`⎮`false`* 
+**●  noAction**:  *`boolean`* 
 
-*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:32](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-choices/lib/findChoices.d.ts#L32)*
+*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/findChoices.d.ts#L27)*
 
 
 
@@ -114,9 +97,9 @@ ___
 
 ### «Optional» noValue
 
-**●  noValue**:  *`undefined`⎮`true`⎮`false`* 
+**●  noValue**:  *`boolean`* 
 
-*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:28](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-choices/lib/findChoices.d.ts#L28)*
+*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:23](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/findChoices.d.ts#L23)*
 
 
 
@@ -135,7 +118,7 @@ ___
 
 *Inherited from [FindValuesOptions](botbuilder_choices.findvaluesoptions.md).[tokenizer](botbuilder_choices.findvaluesoptions.md#tokenizer)*
 
-*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:30](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-choices/lib/findValues.d.ts#L30)*
+*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:30](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/findValues.d.ts#L30)*
 
 
 

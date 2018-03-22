@@ -10,9 +10,9 @@
 
 ### «Optional» includeNumbers
 
-**●  includeNumbers**:  *`undefined`⎮`true`⎮`false`* 
+**●  includeNumbers**:  *`boolean`* 
 
-*Defined in [libraries/botbuilder-choices/lib/choiceFactory.d.ts:30](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-choices/lib/choiceFactory.d.ts#L30)*
+*Defined in [libraries/botbuilder-choices/lib/choiceFactory.d.ts:30](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/choiceFactory.d.ts#L30)*
 
 
 
@@ -27,9 +27,9 @@ ___
 
 ### «Optional» inlineOr
 
-**●  inlineOr**:  *`undefined`⎮`string`* 
+**●  inlineOr**:  *`string`* 
 
-*Defined in [libraries/botbuilder-choices/lib/choiceFactory.d.ts:20](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-choices/lib/choiceFactory.d.ts#L20)*
+*Defined in [libraries/botbuilder-choices/lib/choiceFactory.d.ts:20](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/choiceFactory.d.ts#L20)*
 
 
 
@@ -44,9 +44,9 @@ ___
 
 ### «Optional» inlineOrMore
 
-**●  inlineOrMore**:  *`undefined`⎮`string`* 
+**●  inlineOrMore**:  *`string`* 
 
-*Defined in [libraries/botbuilder-choices/lib/choiceFactory.d.ts:25](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-choices/lib/choiceFactory.d.ts#L25)*
+*Defined in [libraries/botbuilder-choices/lib/choiceFactory.d.ts:25](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/choiceFactory.d.ts#L25)*
 
 
 
@@ -61,9 +61,9 @@ ___
 
 ### «Optional» inlineSeparator
 
-**●  inlineSeparator**:  *`undefined`⎮`string`* 
+**●  inlineSeparator**:  *`string`* 
 
-*Defined in [libraries/botbuilder-choices/lib/choiceFactory.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-choices/lib/choiceFactory.d.ts#L15)*
+*Defined in [libraries/botbuilder-choices/lib/choiceFactory.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/choiceFactory.d.ts#L15)*
 
 
 

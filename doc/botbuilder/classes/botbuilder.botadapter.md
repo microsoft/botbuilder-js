@@ -17,7 +17,7 @@ Abstract base class for all adapter plugins. Adapters manage the communication b
 
 * [deleteActivity](botbuilder.botadapter.md#deleteactivity)
 * [runMiddleware](botbuilder.botadapter.md#runmiddleware)
-* [sendActivities](botbuilder.botadapter.md#sendactivities)
+* [sendActivity](botbuilder.botadapter.md#sendactivity)
 * [updateActivity](botbuilder.botadapter.md#updateactivity)
 * [use](botbuilder.botadapter.md#use)
 
@@ -29,11 +29,11 @@ Abstract base class for all adapter plugins. Adapters manage the communication b
 
 ###  deleteActivity
 
-► **deleteActivity**(reference: *[Partial]()[ConversationReference](../interfaces/botbuilder.conversationreference.md)*): `Promise`.<`void`>
+► **deleteActivity**(reference: *`Partial`.<[ConversationReference](../interfaces/botbuilder.conversationreference.md)>*): `Promise`.<`void`>
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core/lib/botAdapter.d.ts#L39)*
+*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core/lib/botAdapter.d.ts#L39)*
 
 
 
@@ -44,7 +44,7 @@ Deletes an existing activity.
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| reference | [Partial]()[ConversationReference](../interfaces/botbuilder.conversationreference.md)   |  Conversation reference of the activity being deleted. |
+| reference | `Partial`.<[ConversationReference](../interfaces/botbuilder.conversationreference.md)>   |  Conversation reference of the activity being deleted. |
 
 
 
@@ -66,7 +66,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:55](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core/lib/botAdapter.d.ts#L55)*
+*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:55](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core/lib/botAdapter.d.ts#L55)*
 
 
 
@@ -92,15 +92,15 @@ Called by the parent class to run the adapters middleware set and calls the pass
 
 ___
 
-<a id="sendactivities"></a>
+<a id="sendactivity"></a>
 
-###  sendActivities
+###  sendActivity
 
-► **sendActivities**(activities: *[Partial]()[Activity](../interfaces/botbuilder.activity.md)[]*): `Promise`.<[ResourceResponse](../interfaces/botbuilder.resourceresponse.md)[]>
+► **sendActivity**(activities: *`Partial`.<[Activity](../interfaces/botbuilder.activity.md)>[]*): `Promise`.<[ResourceResponse](../interfaces/botbuilder.resourceresponse.md)[]>
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:29](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core/lib/botAdapter.d.ts#L29)*
+*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:29](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core/lib/botAdapter.d.ts#L29)*
 
 
 
@@ -111,7 +111,7 @@ Sends a set of activities to the user. An array of responses form the server wil
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| activities | [Partial]()[Activity](../interfaces/botbuilder.activity.md)[]   |  Set of activities being sent. |
+| activities | `Partial`.<[Activity](../interfaces/botbuilder.activity.md)>[]   |  Set of activities being sent. |
 
 
 
@@ -129,11 +129,11 @@ ___
 
 ###  updateActivity
 
-► **updateActivity**(activity: *[Partial]()[Activity](../interfaces/botbuilder.activity.md)*): `Promise`.<`void`>
+► **updateActivity**(activity: *`Partial`.<[Activity](../interfaces/botbuilder.activity.md)>*): `Promise`.<`void`>
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:34](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core/lib/botAdapter.d.ts#L34)*
+*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:34](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core/lib/botAdapter.d.ts#L34)*
 
 
 
@@ -144,7 +144,7 @@ Replaces an existing activity.
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| activity | [Partial]()[Activity](../interfaces/botbuilder.activity.md)   |  New replacement activity. The activity should already have it's ID information populated. |
+| activity | `Partial`.<[Activity](../interfaces/botbuilder.activity.md)>   |  New replacement activity. The activity should already have it's ID information populated. |
 
 
 
@@ -166,7 +166,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:44](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core/lib/botAdapter.d.ts#L44)*
+*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:44](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core/lib/botAdapter.d.ts#L44)*
 
 
 

@@ -37,7 +37,7 @@ Middleware that will call `read()` and `write()` in parallel on multiple `BotSta
 ### ⊕ **new BotStateSet**(...middleware: *[BotState](botbuilder.botstate.md)[]*): [BotStateSet](botbuilder.botstateset.md)
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botStateSet.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/botStateSet.d.ts#L18)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botStateSet.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/botStateSet.d.ts#L18)*
 
 
 
@@ -68,7 +68,7 @@ Creates a new BotStateSet instance.
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botStateSet.d.ts:24](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/botStateSet.d.ts#L24)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botStateSet.d.ts:24](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/botStateSet.d.ts#L24)*
 
 
 
@@ -95,11 +95,11 @@ ___
 
 ###  readAll
 
-► **readAll**(context: *[BotContext](botbuilder.botcontext.md)*, force?: *`undefined`⎮`true`⎮`false`*): `Promise`.<[StoreItem](../interfaces/botbuilder.storeitem.md)[]>
+► **readAll**(context: *[BotContext](botbuilder.botcontext.md)*, force?: *`boolean`*): `Promise`.<[StoreItem](../interfaces/botbuilder.storeitem.md)[]>
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botStateSet.d.ts:36](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/botStateSet.d.ts#L36)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botStateSet.d.ts:36](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/botStateSet.d.ts#L36)*
 
 
 
@@ -111,7 +111,7 @@ Calls `BotState.read()` on all of the BotState plugins in the set. This will tri
 | Param | Type | Description |
 | ------ | ------ | ------ |
 | context | [BotContext](botbuilder.botcontext.md)   |  Context for current turn of conversation with the user. |
-| force | `undefined`⎮`true`⎮`false`   |  (Optional) If `true` the cache will be bypassed and the state will always be read in directly from storage. Defaults to `false`. |
+| force | `boolean`   |  (Optional) If `true` the cache will be bypassed and the state will always be read in directly from storage. Defaults to `false`. |
 
 
 
@@ -133,7 +133,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botStateSet.d.ts:29](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/botStateSet.d.ts#L29)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botStateSet.d.ts:29](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/botStateSet.d.ts#L29)*
 
 
 
@@ -162,11 +162,11 @@ ___
 
 ###  writeAll
 
-► **writeAll**(context: *[BotContext](botbuilder.botcontext.md)*, force?: *`undefined`⎮`true`⎮`false`*): `Promise`.<`void`>
+► **writeAll**(context: *[BotContext](botbuilder.botcontext.md)*, force?: *`boolean`*): `Promise`.<`void`>
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botStateSet.d.ts:43](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/botStateSet.d.ts#L43)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botStateSet.d.ts:43](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/botStateSet.d.ts#L43)*
 
 
 
@@ -178,7 +178,7 @@ Calls `BotState.write()` on all of the BotState plugins in the set. This will tr
 | Param | Type | Description |
 | ------ | ------ | ------ |
 | context | [BotContext](botbuilder.botcontext.md)   |  Context for current turn of conversation with the user. |
-| force | `undefined`⎮`true`⎮`false`   |  (Optional) if `true` the state will always be written out regardless of its change state. Defaults to `false`. |
+| force | `boolean`   |  (Optional) if `true` the state will always be written out regardless of its change state. Defaults to `false`. |
 
 
 

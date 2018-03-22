@@ -10,9 +10,9 @@
 
 ### «Optional» answerBeforeNext
 
-**●  answerBeforeNext**:  *`undefined`⎮`true`⎮`false`* 
+**●  answerBeforeNext**:  *`boolean`* 
 
-*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:37](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L37)*
+*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:37](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L37)*
 
 
 
@@ -33,7 +33,7 @@ ___
 
 **●  knowledgeBaseId**:  *`string`* 
 
-*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L15)*
+*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L15)*
 
 
 
@@ -48,9 +48,9 @@ ___
 
 ### «Optional» scoreThreshold
 
-**●  scoreThreshold**:  *`undefined`⎮`number`* 
+**●  scoreThreshold**:  *`number`* 
 
-*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L19)*
+*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L19)*
 
 
 
@@ -65,9 +65,9 @@ ___
 
 ### «Optional» serviceEndpoint
 
-**●  serviceEndpoint**:  *`undefined`⎮`string`* 
+**●  serviceEndpoint**:  *`string`* 
 
-*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L21)*
+*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L21)*
 
 
 
@@ -84,7 +84,7 @@ ___
 
 **●  subscriptionKey**:  *`string`* 
 
-*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L17)*
+*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L17)*
 
 
 
@@ -99,9 +99,9 @@ ___
 
 ### «Optional» top
 
-**●  top**:  *`undefined`⎮`number`* 
+**●  top**:  *`number`* 
 
-*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:23](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L23)*
+*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:23](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L23)*
 
 
 

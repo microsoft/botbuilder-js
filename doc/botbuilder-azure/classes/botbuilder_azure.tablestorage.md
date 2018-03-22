@@ -11,7 +11,7 @@ Middleware that implements an Azure Table based storage provider for a bot.
 
 ## Implements
 
-* [Storage]()
+* `any`
 
 ## Index
 
@@ -38,7 +38,7 @@ Middleware that implements an Azure Table based storage provider for a bot.
 ### ⊕ **new TableStorage**(settings: *[TableStorageSettings](../interfaces/botbuilder_azure.tablestoragesettings.md)*): [TableStorage](botbuilder_azure.tablestorage.md)
 
 
-*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-azure/lib/tableStorage.d.ts#L31)*
+*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-azure/lib/tableStorage.d.ts#L31)*
 
 
 
@@ -69,9 +69,7 @@ Creates a new instance of the storage provider.
 
 
 
-*Implementation of Storage.delete*
-
-*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:60](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-azure/lib/tableStorage.d.ts#L60)*
+*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:60](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-azure/lib/tableStorage.d.ts#L60)*
 
 
 
@@ -104,7 +102,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:42](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-azure/lib/tableStorage.d.ts#L42)*
+*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:42](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-azure/lib/tableStorage.d.ts#L42)*
 
 
 
@@ -129,7 +127,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:40](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-azure/lib/tableStorage.d.ts#L40)*
+*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:40](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-azure/lib/tableStorage.d.ts#L40)*
 
 
 
@@ -150,13 +148,11 @@ ___
 
 ###  read
 
-► **read**(keys: *`string`[]*): `Promise`.<[StoreItems]()>
+► **read**(keys: *`string`[]*): `Promise`.<`StoreItems`>
 
 
 
-*Implementation of Storage.read*
-
-*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:48](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-azure/lib/tableStorage.d.ts#L48)*
+*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:48](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-azure/lib/tableStorage.d.ts#L48)*
 
 
 
@@ -173,7 +169,7 @@ Loads store items from storage
 
 
 
-**Returns:** `Promise`.<[StoreItems]()>
+**Returns:** `Promise`.<`StoreItems`>
 
 
 
@@ -185,13 +181,11 @@ ___
 
 ###  write
 
-► **write**(changes: *[StoreItems]()*): `Promise`.<`void`>
+► **write**(changes: *`StoreItems`*): `Promise`.<`void`>
 
 
 
-*Implementation of Storage.write*
-
-*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:54](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-azure/lib/tableStorage.d.ts#L54)*
+*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:54](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-azure/lib/tableStorage.d.ts#L54)*
 
 
 
@@ -202,7 +196,7 @@ Saves store items to storage.
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| changes | [StoreItems]()   |  Map of items to write to storage. |
+| changes | `StoreItems`   |  Map of items to write to storage. |
 
 
 

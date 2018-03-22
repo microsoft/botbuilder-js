@@ -6,7 +6,7 @@
 
 ## Implements
 
-* [Middleware]()
+* `any`
 
 ## Index
 
@@ -32,7 +32,7 @@
 ### ⊕ **new QnAMaker**(settings: *[QnAMakerSettings](../interfaces/botbuilder_ai.qnamakersettings.md)*): [QnAMaker](botbuilder_ai.qnamaker.md)
 
 
-*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:40](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L40)*
+*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:40](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L40)*
 
 
 
@@ -56,11 +56,11 @@
 
 ###  answer
 
-► **answer**(context: *[BotContext]()*): `Promise`.<`boolean`>
+► **answer**(context: *`BotContext`*): `Promise`.<`boolean`>
 
 
 
-*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:43](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L43)*
+*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:43](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L43)*
 
 
 
@@ -68,7 +68,7 @@
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | [BotContext]()   |  - |
+| context | `BotContext`   |  - |
 
 
 
@@ -90,7 +90,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:45](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L45)*
+*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:45](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L45)*
 
 
 
@@ -118,11 +118,11 @@ ___
 
 ###  generateAnswer
 
-► **generateAnswer**(question: *`string`*, top?: *`undefined`⎮`number`*, scoreThreshold?: *`undefined`⎮`number`*): `Promise`.<[QnAMakerResult](../interfaces/botbuilder_ai.qnamakerresult.md)[]>
+► **generateAnswer**(question: *`string`*, top?: *`number`*, scoreThreshold?: *`number`*): `Promise`.<[QnAMakerResult](../interfaces/botbuilder_ai.qnamakerresult.md)[]>
 
 
 
-*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:44](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L44)*
+*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:44](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L44)*
 
 
 
@@ -131,8 +131,8 @@ ___
 | Param | Type | Description |
 | ------ | ------ | ------ |
 | question | `string`   |  - |
-| top | `undefined`⎮`number`   |  - |
-| scoreThreshold | `undefined`⎮`number`   |  - |
+| top | `number`   |  - |
+| scoreThreshold | `number`   |  - |
 
 
 
@@ -150,11 +150,11 @@ ___
 
 ###  onProcessRequest
 
-► **onProcessRequest**(context: *[BotContext]()*, next: *`function`*): `Promise`.<`void`>
+► **onProcessRequest**(context: *`BotContext`*, next: *`function`*): `Promise`.<`void`>
 
 
 
-*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:42](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L42)*
+*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:42](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L42)*
 
 
 
@@ -162,7 +162,7 @@ ___
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | [BotContext]()   |  - |
+| context | `BotContext`   |  - |
 | next | `function`   |  - |
 
 

@@ -15,7 +15,7 @@
 
 **●  type**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:218](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botframework-schema/lib/index.d.ts#L218)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:218](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L218)*
 
 
 *__member__*: {string} [type] Entity Type (typically from schema.org types)
