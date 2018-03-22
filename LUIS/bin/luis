@@ -61,10 +61,10 @@ async function runProgram() {
 async function initializeConfig() {
     process.stdout.write(chalk.cyan.bold('\nThis util will walk you through creating a .luisrc file\n\nPress ^C at any time to quit.\n\n'));
     const questions = [
-        'Subscription key: ',
-        'Region: ',
-        'App ID: ',
-        'Version ID: '
+        'What is your LUIS App ID: ',
+        'What is your LUIS Authoring key (from luis.ai portal User Settings page): ',
+        'What is your LUIS Version ID (Default: 0.1): ',
+        'What region [(Default) westus, westeurope, australiaeast] : ',
     ];
 
     const prompt = readline.createInterface({
@@ -82,10 +82,10 @@ async function initializeConfig() {
         answers.push(answer);
     }
 
-    const [subscriptionKey, location, appId, versionId] = answers;
+    const [appId, authoringKey, versionId, location] = answers;
     const config = Object.assign({}, {
-        subscriptionKey,
         appId,
+        authoringKey,
         versionId,
         endpointBasePath: `https://${location}.api.cognitive.microsoft.com/luis/api/v2.0`,
     });
@@ -125,11 +125,11 @@ async function getFileInput(args) {
  * @returns {Promise<*>}
  */
 async function composeConfig() {
-    const {LUIS_APP_ID, LUIS_SUBSCRIPTION_KEY, LUIS_VERSION_ID, LUIS_ENDPOINT_BASE_PATH} = process.env;
+    const {LUIS_APP_ID, LUIS_ACCESS_KEY, LUIS_VERSION_ID, LUIS_ENDPOINT_BASE_PATH} = process.env;
 
     const {
         appId: args_appId,
-        subscriptionKey: args_subscriptionKey,
+        authoringKey: args_authoringKey,
         versionId: args_versionId,
         endpointBasePath: args_endpointBasePath
     } = args;
@@ -144,7 +144,7 @@ async function composeConfig() {
     } finally {
         config = {
             appId: (args_appId || luisrcJson.appId || LUIS_APP_ID),
-            subscriptionKey: (args_subscriptionKey || luisrcJson.subscriptionKey || LUIS_SUBSCRIPTION_KEY),
+            authoringKey: (args_authoringKey || luisrcJson.authoringKey || LUIS_ACCESS_KEY),
             versionId: (args_versionId || luisrcJson.versionId || LUIS_VERSION_ID),
             endpointBasePath: (args_endpointBasePath || luisrcJson.endpointBasePath || LUIS_ENDPOINT_BASE_PATH)
         };
@@ -160,12 +160,12 @@ async function composeConfig() {
  * @param {*} config The config object to validate
  */
 function validateConfig(config) {
-    const {versionId, appId, subscriptionKey, endpointBasePath} = config;
+    const {versionId, appId, authoringKey, endpointBasePath} = config;
     const messageTail = `is missing from the configuration.\n\nDid you run ${chalk.cyan.bold('luis --init')} yet?`;
 
-    assert(typeof versionId === 'string', `The versionId ${messageTail}`);
     assert(typeof appId === 'string', `The appId ${messageTail}`);
-    assert(typeof subscriptionKey === 'string', `The subscriptionKey ${messageTail}`);
+    assert(typeof authoringKey === 'string', `The authoringKey  ${messageTail}`);
+    assert(typeof versionId === 'string', `The versionId ${messageTail}`);
     assert(typeof endpointBasePath === 'string', `The endpointBasePath ${messageTail}`);
 }
 

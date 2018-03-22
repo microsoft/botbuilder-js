@@ -34,23 +34,23 @@ describe('The LUIS cli --init argument', () => {
                         break;
 
                     case 2:
-                        assert(message === 'Subscription key: ');
+                        assert(message.indexOf('App') > 0);
+                        luisProcess.stdin.write(`${appId}\r`);
+                        break;
+                    
+                    case 3:
+                        assert(message.indexOf('Key') > 0);
                         luisProcess.stdin.write('abc123\r');
                         break;
 
-                    case 3:
-                        assert(message === 'Region: ');
-                        luisProcess.stdin.write(`${location}\r`);
-                        break;
-
                     case 4:
-                        assert(message === 'App ID: ');
-                        luisProcess.stdin.write(`${appId}\r`);
+                        assert(message.indexOf('Version') > 0);
+                        luisProcess.stdin.write(`${versionId}\r`);
                         break;
 
                     case 5:
-                        assert(message === 'Version ID: ');
-                        luisProcess.stdin.write(`${versionId}\r`);
+                        assert(message.indexOf('Region: ') > 0);
+                        luisProcess.stdin.write(`${location}\r`);
                         break;
 
                     case 6:
