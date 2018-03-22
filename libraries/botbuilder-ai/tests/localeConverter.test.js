@@ -15,8 +15,7 @@ describe('LocaleConverter', function () {
 
         const testAdapter = new builder.TestAdapter(c => c.sendActivity(c.request.text))
         .use(new ai.LocaleConverter(toFrenchSettings))
-        .send('10/21/2018')
-        .assertReply('21/10/2018', 'should have received date in usa french locale')
+        .test('10/21/2018', '21/10/2018', 'should have received date in usa french locale')
         .then(() => done());
     });
 
@@ -30,8 +29,7 @@ describe('LocaleConverter', function () {
 
         const testAdapter = new builder.TestAdapter(c => c.sendActivity(c.request.text))
         .use(new ai.LocaleConverter(toChineseSettings))
-        .send('10/21/2018')
-        .assertReply('2018-10-21', 'should have received date in chinese locale')
+        .test('10/21/2018', '2018-10-21', 'should have received date in chinese locale')
         .then(() => done());
     });
 
@@ -54,6 +52,18 @@ describe('LocaleConverter', function () {
         const testAdapter = new builder.TestAdapter(c => assert.equal(userLocale, 'fr-fr', 'should have changed locale variable to fr-fr'))
         .use(new ai.LocaleConverter(changeLocaleSettings))
         .send('Change my locale to fr-fr')
+        .then(() => done());
+    });
+
+    it('should use en-us as default from locale', function (done) {
+        
+        let noFromLocaleSettings = {
+            toLocale: 'zh-cn',
+        }
+
+        const testAdapter = new builder.TestAdapter(c => c.sendActivity(c.request.text))
+        .use(new ai.LocaleConverter(noFromLocaleSettings))
+        .test('10/21/2018', '2018-10-21', 'should have received date in chinese locale')
         .then(() => done());
     });
 })
