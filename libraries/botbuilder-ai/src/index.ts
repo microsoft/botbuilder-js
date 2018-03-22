@@ -7,3 +7,5 @@
  */
 export * from './luisRecognizer';
 export * from './qnaMaker';
+export * from './languageTranslator';
+export * from './localeConverter';

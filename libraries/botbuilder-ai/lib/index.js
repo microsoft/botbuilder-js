@@ -12,4 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 __export(require("./luisRecognizer"));
 __export(require("./qnaMaker"));
+__export(require("./languageTranslator"));
+__export(require("./localeConverter"));
 //# sourceMappingURL=index.js.map
