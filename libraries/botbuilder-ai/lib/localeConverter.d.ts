@@ -6,6 +6,12 @@
  * Licensed under the MIT License.
  */
 import { Middleware, BotContext } from 'botbuilder';
+export interface LocaleConverterSettings {
+    toLocale: string;
+    fromLocale?: string;
+    getUserLocale?: (context: BotContext) => string;
+    setUserLocale?: (context: BotContext) => Promise<boolean>;
+}
 /**
  * The LocaleConverter converts all locales in a message to a given locale.
  */
@@ -15,8 +21,7 @@ export declare class LocaleConverter implements Middleware {
     private toLocale;
     private getUserLocale;
     private setUserLocale;
-    constructor(toLocale: string, fromLocale: string);
-    constructor(toLocale: string, getUserLocale: (context: BotContext) => string, setUserLocale: (context: BotContext) => Promise<boolean>);
+    constructor(settings: LocaleConverterSettings);
     onProcessRequest(context: BotContext, next: () => Promise<void>): Promise<void>;
     private convertLocalesAsync(context);
 }

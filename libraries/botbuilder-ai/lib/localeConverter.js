@@ -13,19 +13,12 @@ const DateTimeRecognizers = require("@microsoft/recognizers-text-date-time");
  * The LocaleConverter converts all locales in a message to a given locale.
  */
 class LocaleConverter {
-    constructor(toLocale, fromLocale, setUserLocale) {
+    constructor(settings) {
         this.localeConverter = new MicrosoftLocaleConverter();
-        this.toLocale = toLocale;
-        if (!this.localeConverter.isLocaleAvailable(toLocale)) {
-            throw new Error("Unsupported locale");
-        }
-        if (typeof (fromLocale) === 'string') {
-            this.fromLocale = fromLocale;
-        }
-        else {
-            this.getUserLocale = fromLocale;
-            this.setUserLocale = setUserLocale;
-        }
+        this.toLocale = settings.toLocale;
+        this.fromLocale = settings.fromLocale;
+        this.getUserLocale = settings.getUserLocale;
+        this.setUserLocale = settings.setUserLocale;
     }
     /// Incoming activity
     onProcessRequest(context, next) {

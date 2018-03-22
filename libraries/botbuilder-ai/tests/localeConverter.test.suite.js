@@ -7,31 +7,52 @@ describe('LocaleConverter', function () {
     this.timeout(10000);
 
     it('should convert locale to fr', function (done) {
+        
+        let toFrenchSettings = {
+            toLocale: 'fr-fr',
+            fromLocale: 'en-us'
+        }
+
         const testAdapter = new builder.TestAdapter(c => c.sendActivity(c.request.text))
-        .use(new ai.LocaleConverter('fr-fr', 'en-us'))
+        .use(new ai.LocaleConverter(toFrenchSettings))
         .send('10/21/2018')
         .assertReply('21/10/2018', 'should have received date in usa french locale')
         .then(() => done());
     });
 
     it('should convert locale to chinese using delegate', function (done) {
+
+        let toChineseSettings = {
+            toLocale: 'zh-cn',
+            getUserLocale: c => 'en-us',
+            setUserLocale: c => Promise.resolve(false)
+        }
+
         const testAdapter = new builder.TestAdapter(c => c.sendActivity(c.request.text))
-        .use(new ai.LocaleConverter('zh-cn', c => 'en-us', c => Promise.resolve(false)))
+        .use(new ai.LocaleConverter(toChineseSettings))
         .send('10/21/2018')
         .assertReply('2018-10-21', 'should have received date in chinese locale')
         .then(() => done());
     });
 
     it('should support changing locale', function (done) {
+        
         let userLocale = 'en-us';
-        const testAdapter = new builder.TestAdapter(c => assert.equal(userLocale, 'fr-fr', 'should have changed locale variable to fr-fr'))
-        .use(new ai.LocaleConverter('zh-cn', c => userLocale, c => {
-            if (c.request.text == 'Change my locale to fr-fr') {
-                userLocale = 'fr-fr';
-                return Promise.resolve(true);
+
+        let changeLocaleSettings = {
+            toLocale: 'zh-cn',
+            getUserLocale: c => userLocale,
+            setUserLocale: c => {
+                if (c.request.text == 'Change my locale to fr-fr') {
+                    userLocale = 'fr-fr';
+                    return Promise.resolve(true);
+                }
+                return Promise.resolve(false);
             }
-            return Promise.resolve(false);
-        }))
+        }
+
+        const testAdapter = new builder.TestAdapter(c => assert.equal(userLocale, 'fr-fr', 'should have changed locale variable to fr-fr'))
+        .use(new ai.LocaleConverter(changeLocaleSettings))
         .send('Change my locale to fr-fr')
         .then(() => done());
     });

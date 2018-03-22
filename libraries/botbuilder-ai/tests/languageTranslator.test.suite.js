@@ -19,7 +19,7 @@ describe('LanguageTranslator', function () {
         let toFrenchSettings = {
             translatorKey: translatorKey,
             nativeLanguages: ['fr', 'de'],
-            noTranslatePatterns: new Set(),
+            noTranslatePatterns: new Set()
         }
 
         const testAdapter = new builder.TestAdapter(c => c.sendActivity(c.request.text))

@@ -8,6 +8,13 @@
 import { Middleware, BotContext } from 'botbuilder';
 import * as DateTimeRecognizers from '@microsoft/recognizers-text-date-time';
 
+export interface LocaleConverterSettings {
+    toLocale: string,
+    fromLocale?: string,
+    getUserLocale?: (context: BotContext) => string,
+    setUserLocale?: (context: BotContext) => Promise<boolean>
+}
+
 /**
  * The LocaleConverter converts all locales in a message to a given locale.
  */
@@ -18,22 +25,12 @@ export class LocaleConverter implements Middleware {
     private getUserLocale: ((context: BotContext) => string) | undefined;
     private setUserLocale: ((context: BotContext) => Promise<boolean>) | undefined;
 
-    public constructor(toLocale: string, fromLocale: string);
-    public constructor(toLocale: string, getUserLocale: (context: BotContext) => string, setUserLocale: (context: BotContext) => Promise<boolean>);
-    public constructor(toLocale: string, fromLocale: string | ((context: BotContext) => string), setUserLocale?: (context: BotContext) => Promise<boolean>) {
+    public constructor(settings: LocaleConverterSettings) {
         this.localeConverter = new MicrosoftLocaleConverter();
-        this.toLocale = toLocale;
-
-        if (!this.localeConverter.isLocaleAvailable(toLocale)) {
-            throw new Error("Unsupported locale");
-        }
-
-        if (typeof(fromLocale) === 'string') {
-            this.fromLocale = fromLocale as string;
-        } else {
-            this.getUserLocale = fromLocale as (context: BotContext) => string;
-            this.setUserLocale = setUserLocale;
-        }
+        this.toLocale = settings.toLocale;
+        this.fromLocale = settings.fromLocale;
+        this.getUserLocale = settings.getUserLocale;
+        this.setUserLocale = settings.setUserLocale;
     }
 
     /// Incoming activity
