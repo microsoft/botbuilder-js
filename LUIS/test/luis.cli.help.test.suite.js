@@ -16,30 +16,30 @@ describe('The LUIS cli --help -h argument', () => {
 
     it('should print help contents for an <api group>', done => {
         exec(`node ${luis} apps --help`, (error, stdout) => {
-            assert(stdout.includes('Where <action> is one of the following:'));
-            assert(stdout.includes('Where <target> may be one of the following:'));
+            assert(stdout.includes('Valid <action> is one of the following:'));
+            assert(stdout.includes('Valid <subgroup> is one of the following:'));
             done();
         });
     });
 
     it('should print help contents for a <target>', done => {
         exec(`node ${luis} apps customprebuiltdomains -h`, (error, stdout) => {
-            assert(stdout.includes('Where <action> is one of the following:'));
+            assert(stdout.includes('Valid <action> is one of the following:'));
             done();
         });
     });
 
     it('should print help contents for a <subtarget>', done => {
         exec(`node ${luis} models compositeentities -h`, (error, stdout) => {
-            assert(stdout.includes('Where <action> is one of the following:'));
-            assert(stdout.includes('Where <subtarget> may be one of the following:'));
+            assert(stdout.includes('Valid <action> is one of the following:'));
+            assert(stdout.includes('Valid <subgroup> are:'));
             done();
         });
     });
 
     it('should provide suggestions when the action does not exist', done => {
         exec(`node ${luis} apps customprebuiltdomains -h`, (error, stdout) => {
-            assert(stdout.includes('Where <action> is one of the following:'));
+            assert(stdout.includes('Valid <action> is one of the following:'));
             done();
         });
     });

@@ -71,7 +71,7 @@ ServiceBase.config = {
 ```
 
 ## Cli Usage
-Basic usage: `luis <api group> <action> [<target> [<subtarget>] [--<args> --<globalArgs>]]]`
+Basic usage: `luis <api group> [<subgroup> [<subgroup>]] <action> [--<args> --<globalArgs>]]]`
 
 Where `<api group>` is one of the following:
 

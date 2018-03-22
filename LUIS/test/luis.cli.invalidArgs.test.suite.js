@@ -18,7 +18,7 @@ describe('When the arguments are invalid, the LUIS cli', () => {
         it('when the action was not specified', done =>{
             exec(`node ${luis} models compositeentities `, (error, stdout) => {
                 assert(stdout.includes('ArgumentError: The operation does not exist'));
-                assert(stdout.includes('Where <action> is one of the following:'));
+                assert(stdout.includes('Valid <action> is one of the following:'));
                 done();
             });
         });
