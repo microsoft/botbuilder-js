@@ -23,7 +23,9 @@
 	},
 	"nyc": {
 		"exclude": [
-			"**/botframework*/**"
+			"**/botframework*/**",
+			"**/tests/**",
+			"**/internal.*"
 		]
   	}
 }
