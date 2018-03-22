@@ -9,8 +9,7 @@
     "**/node_modules/**",
     "**/tests/**",
     "**/coverage/**",
-    "**/*.d.ts",
-    "../botframework-connector/**"
+    "**/*.d.ts"
   ],
   "reporter": [
     "html"

@@ -51,35 +51,36 @@ export class ConsoleAdapter extends BotAdapter {
             // Create context and run middleware pipe
             const context = new BotContext(this, request);
             this.runMiddleware(context, logic)
-                .catch((err) => { console.error(err.toString()) });
+                .catch((err) => { this.printError(err.toString()) });
         });
-        return function quit() {
+        return function close() {
             rl.close();
         }
     }
 
     public sendActivity(activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
+        const that = this;
         return new Promise((resolve, reject) => {
             const responses: ResourceResponse[] = [];
             function next(i: number) {
                 if (i < activities.length) {
                     responses.push(<ResourceResponse>{});
                     let a = activities[i];
-                    switch (a.type || ActivityTypes.Message) {
+                    switch (a.type) {
                         case <ActivityTypes>'delay':
-                            setTimeout(() => next(i + 1), a.value || 0);
+                            setTimeout(() => next(i + 1), a.value);
                             break;
                         case ActivityTypes.Message:
                             if (a.attachments && a.attachments.length > 0) {
                                 const append = a.attachments.length == 1 ? `(1 attachment)` : `(${a.attachments.length} attachments)`;
-                                console.log(`${a.text || ''} ${append}`);
+                                that.print(`${a.text} ${append}`);
                             } else {
-                                console.log(a.text || '');
+                                that.print(a.text);
                             }
                             next(i + 1);
                             break;
                         default:
-                            console.log(`[${a.type}]`);
+                            that.print(`[${a.type}]`);
                             next(i + 1);
                             break;
                     }
@@ -101,5 +102,13 @@ export class ConsoleAdapter extends BotAdapter {
 
     protected createInterface(options: readline.ReadLineOptions): readline.ReadLine {
         return readline.createInterface(options);
+    }
+
+    protected print(line: string) {
+        console.log(line);
+    }
+
+    protected printError(line: string) {
+        console.error(line);
     }
 }
