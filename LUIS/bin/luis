@@ -20,10 +20,11 @@ let args;
  * @returns {Promise<void>}
  */
 async function runProgram() {
-    var a = process.argv.slice(2);
-     if (!a || a.length == 0)
-        a = ['-h'];
-    args = minimist(a);
+    let argvFragment = process.argv.slice(2);
+    if (argvFragment.length === 0) {
+        argvFragment = ['-h'];
+    }
+    args = minimist(argvFragment);
     if (args.init || args.i) {
         await initializeConfig();
         process.stdout.write(`Successfully wrote ${process.cwd()}/.luisrc`);
@@ -160,12 +161,14 @@ async function composeConfig() {
  * @param {*} config The config object to validate
  */
 function validateConfig(config) {
-    const {versionId, appId, authoringKey, endpointBasePath} = config;
+    // appId and versionId are not validated here since
+    // not all operations require these to be present.
+    // Validation of specific params are done in the
+    // ServiceBase.js
+    const {authoringKey, endpointBasePath} = config;
     const messageTail = `is missing from the configuration.\n\nDid you run ${chalk.cyan.bold('luis --init')} yet?`;
 
-    assert(typeof appId === 'string', `The appId ${messageTail}`);
     assert(typeof authoringKey === 'string', `The authoringKey  ${messageTail}`);
-    assert(typeof versionId === 'string', `The versionId ${messageTail}`);
     assert(typeof endpointBasePath === 'string', `The endpointBasePath ${messageTail}`);
 }
 
