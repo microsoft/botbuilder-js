@@ -61,10 +61,10 @@ async function runProgram() {
 async function initializeConfig() {
     process.stdout.write(chalk.cyan.bold('\nThis util will walk you through creating a .luisrc file\n\nPress ^C at any time to quit.\n\n'));
     const questions = [
-        'What is your LUIS App ID: ',
-        'What is your LUIS Authoring key (from luis.ai portal User Settings page): ',
-        'What is your LUIS Version ID (Default: 0.1): ',
-        'What region [(Default) westus, westeurope, australiaeast] : ',
+        'What is your LUIS App ID? ',
+        'What is your LUIS Authoring key (from luis.ai portal User Settings page)? ',
+        'What is your LUIS Version ID (Default: 0.1)?> ',
+        'What region [westus, westus2, eastus, eastus2, westcentralus, southcentralus, westeurope, northeurope, southeastasia, eastasia, australiaeast, brazilsouth]? ',
     ];
 
     const prompt = readline.createInterface({
@@ -125,7 +125,7 @@ async function getFileInput(args) {
  * @returns {Promise<*>}
  */
 async function composeConfig() {
-    const {LUIS_APP_ID, LUIS_ACCESS_KEY, LUIS_VERSION_ID, LUIS_ENDPOINT_BASE_PATH} = process.env;
+    const {LUIS_APP_ID, LUIS_AUTHORING_KEY, LUIS_VERSION_ID, LUIS_ENDPOINT_BASE_PATH} = process.env;
 
     const {
         appId: args_appId,
@@ -144,7 +144,7 @@ async function composeConfig() {
     } finally {
         config = {
             appId: (args_appId || luisrcJson.appId || LUIS_APP_ID),
-            authoringKey: (args_authoringKey || luisrcJson.authoringKey || LUIS_ACCESS_KEY),
+            authoringKey: (args_authoringKey || luisrcJson.authoringKey || LUIS_AUTHORING_KEY),
             versionId: (args_versionId || luisrcJson.versionId || LUIS_VERSION_ID),
             endpointBasePath: (args_endpointBasePath || luisrcJson.endpointBasePath || LUIS_ENDPOINT_BASE_PATH)
         };
