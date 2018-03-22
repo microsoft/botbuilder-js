@@ -26,8 +26,10 @@ async function runProgram() {
     }
     args = minimist(argvFragment);
     if (args.init || args.i) {
-        await initializeConfig();
-        process.stdout.write(`Successfully wrote ${process.cwd()}/.luisrc`);
+        const result = await initializeConfig();
+        if (result) {
+            process.stdout.write(`Successfully wrote ${process.cwd()}/.luisrc`);
+        }
         return;
     }
     if (args.help ||
@@ -61,11 +63,12 @@ async function runProgram() {
  */
 async function initializeConfig() {
     process.stdout.write(chalk.cyan.bold('\nThis util will walk you through creating a .luisrc file\n\nPress ^C at any time to quit.\n\n'));
+    const validRegions = 'westus westus2 eastus eastus2 westcentralus southcentralus westeurope northeurope southeastasia eastasia australiaeast brazilsouth'.split(' ');
     const questions = [
         'What is your LUIS App ID? ',
         'What is your LUIS Authoring key (from luis.ai portal User Settings page)? ',
         'What is your LUIS Version ID (Default: 0.1)?> ',
-        'What region [westus, westus2, eastus, eastus2, westcentralus, southcentralus, westeurope, northeurope, southeastasia, eastasia, australiaeast, brazilsouth]? ',
+        `What region [${validRegions.join(', ')}]? `,
     ];
 
     const prompt = readline.createInterface({
@@ -74,11 +77,21 @@ async function initializeConfig() {
     });
 
     const answers = [];
-    for (let question of questions) {
+    for (let i = 0; i < questions.length; i++) {
+        const question = questions[i];
         const answer = await new Promise((resolve) => {
-            prompt.question(question, response => {
-                resolve(response);
-            });
+
+            function doPrompt(promptMessage) {
+                prompt.question(promptMessage, response => {
+                    if (i === 3 && (!response || !validRegions.includes(response))) {
+                        doPrompt(chalk.red.bold(`${response} is not a valid region`) + '\n' + question);
+                    } else {
+                        resolve(response);
+                    }
+                });
+            }
+
+            doPrompt(question);
         });
         answers.push(answer);
     }
@@ -94,14 +107,14 @@ async function initializeConfig() {
         await new Promise((resolve, reject) => {
             const confirmation = `\n\nDoes this look ok?\n${JSON.stringify(config, null, 2)}\nYes/No: `;
             prompt.question(confirmation, response => {
-                /^(y|yes)$/.test((response || '').toLowerCase()) ? resolve(response) : reject();
+                /^(y|yes)$/.test((response || 'yes').toLowerCase()) ? resolve(response) : reject();
             });
         });
     } catch (e) {
-        return null;
+        return false;
     }
-
-    return fs.writeJson(path.join(process.cwd(), '.luisrc'), config, {spaces: 2});
+    await fs.writeJson(path.join(process.cwd(), '.luisrc'), config, {spaces: 2});
+    return true;
 }
 
 /**

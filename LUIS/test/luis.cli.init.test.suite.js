@@ -22,7 +22,7 @@ describe('The LUIS cli --init argument', () => {
         let msgCt = 0;
         const appId = Math.floor(Math.random() * 9999999);
         const versionId = Math.floor(Math.random() * 111111);
-        const location = Math.floor(Math.random() * 8888888);
+        const location = 'westus';
 
         await new Promise(resolve => {
             luisProcess.stdout.on('data', data => {
