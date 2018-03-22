@@ -1,0 +1,6 @@
+{
+  "appId": "5709864",
+  "authoringKey": "abc123",
+  "versionId": "32986",
+  "endpointBasePath": "https://westus.api.cognitive.microsoft.com/luis/api/v2.0"
+}
