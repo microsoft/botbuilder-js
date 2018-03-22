@@ -3,6 +3,7 @@ const Connector = require('../lib');
 
 describe('Bot Framework Connector - Auth Tests', function () {
 
+    /*
     before(function (done) {
         // Disable TokenLifetime validation
         Connector.ChannelValidation.ToBotFromChannelTokenValidationParameters.ignoreExpiration = true;
@@ -93,4 +94,5 @@ describe('Bot Framework Connector - Auth Tests', function () {
                 .catch((err) => done(err));
         });
     });
+    */
 });
