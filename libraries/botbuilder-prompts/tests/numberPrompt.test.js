@@ -43,7 +43,7 @@ describe('NumberPrompt', function() {
         });
     });
 
-    it('should recognize() a number.', function (done) {
+    it('should recognize() a number expressed using words.', function (done) {
         const context = new TestContext({ text: `I'd like two hundred please`, type: 'message' });
         const prompt = createNumberPrompt();
         prompt.recognize(context).then((value) => {
