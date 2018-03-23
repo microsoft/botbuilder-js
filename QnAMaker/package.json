@@ -1,0 +1,46 @@
+{
+  "name": "luis-apis",
+  "version": "1.0.7",
+  "description": "Tooling for connectivity with the QnA Maker APIs",
+  "main": "lib/api/index.js",
+  "bin": {
+    "qnamaker": "./bin/qnamaker"
+  },
+  "directories": {
+    "doc": "docs",
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "cd test/ && mocha --opts mocha.opts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Microsoft/botbuilder-tools.git"
+  },
+  "author": "Microsoft",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Microsoft/botbuilder-tools/issues"
+  },
+  "homepage": "https://github.com/Microsoft/botbuilder-tools#readme",
+  "dependencies": {
+    "camelcase": "^4.1.0",
+    "chalk": "^2.3.2",
+    "cli-table2": "^0.2.0",
+    "fs-extra": "^5.0.0",
+    "md5": "^2.2.1",
+    "minimist": "^1.2.0",
+    "node-fetch": "^2.0.0",
+    "pascal-case": "^2.0.1"
+  },
+  "devDependencies": {
+    "eslint": "^4.18.1",
+    "eslint-config-standard": "^11.0.0",
+    "eslint-plugin-import": "^2.9.0",
+    "eslint-plugin-node": "^6.0.1",
+    "eslint-plugin-promise": "^3.6.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "mocha": "^5.0.4"
+  }
+}
