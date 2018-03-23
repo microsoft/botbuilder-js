@@ -9,18 +9,6 @@ import { Storage, StoreItems } from 'botbuilder-core-extensions';
 /**
  * :package: **botbuilder**
  *
- * Additional settings for configuring an instance of `FileStorage`.
- */
-export interface FileStorageSettings {
-    /**
-     * (Optional) path to the backing folder. The default is to use a `storage` folder off
-     * the systems temporary directory.
-     */
-    path?: string;
-}
-/**
- * :package: **botbuilder**
- *
  * A file based storage provider.
  *
  * **Usage Example**
@@ -29,15 +17,15 @@ export interface FileStorageSettings {
  * ```
  */
 export declare class FileStorage implements Storage {
+    protected readonly path: string;
     static nextTag: number;
     private pEnsureFolder;
-    protected readonly path: string;
     /**
      * Creates a new instance of the storage provider.
      *
-     * @param settings (Optional) setting to configure the provider.
+     * @param path Root filesystem path for where the provider should store its objects.
      */
-    constructor(settings?: FileStorageSettings);
+    constructor(path: string);
     /**
      * Loads store items from storage
      *
@@ -59,5 +47,4 @@ export declare class FileStorage implements Storage {
     private ensureFolder();
     private getFileName(key);
     private getFilePath(key);
-    private hashCode(input);
 }

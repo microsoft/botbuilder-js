@@ -12,19 +12,6 @@ import * as file from 'fs';
 import * as os from 'os';
 import * as filenamify from 'filenamify';
 
-/** 
- * :package: **botbuilder**
- * 
- * Additional settings for configuring an instance of `FileStorage`. 
- */
-export interface FileStorageSettings {
-    /** 
-     * (Optional) path to the backing folder. The default is to use a `storage` folder off
-     * the systems temporary directory. 
-     */
-    path?: string;
-}
-
 /**
  * :package: **botbuilder**
  * 
@@ -38,16 +25,13 @@ export interface FileStorageSettings {
 export class FileStorage implements Storage {
     static nextTag = 0;
     private pEnsureFolder: Promise<void>|undefined;
-    protected readonly path: string;
 
     /**
      * Creates a new instance of the storage provider.
      *
-     * @param settings (Optional) setting to configure the provider.
+     * @param path Root filesystem path for where the provider should store its objects.
      */
-    public constructor(settings?: FileStorageSettings) {
-        this.path = settings && settings.path ? settings.path : path.join(os.tmpdir(), 'storage');
-    }
+    public constructor(protected readonly path: string) { }
 
     /** 
      * Loads store items from storage
@@ -125,10 +109,7 @@ export class FileStorage implements Storage {
         if (!this.pEnsureFolder) {
             this.pEnsureFolder = fs.exists(this.path).then((exists) => {
                 if (!exists) {
-                    return fs.mkdirp(this.path).catch((err) => {
-                        console.error(`FileStorage: error creating directory for "${this.path}": ${err.toString()}`);
-                        throw err;
-                    });
+                    return fs.mkdirp(this.path);
                 }
             });
         }
@@ -141,17 +122,6 @@ export class FileStorage implements Storage {
 
     private getFilePath(key: string): string {
         return path.join(this.path, this.getFileName(key));
-    }
-
-    private hashCode(input: string): number {
-        var hash = 0;
-        if (input.length == 0) return hash;
-        for (let i = 0; i < input.length; i++) {
-            let char = input.charCodeAt(i);
-            hash = ((hash << 5) - hash) + char;
-            hash = hash & hash; // Convert to 32bit integer
-        }
-        return hash;
     }
 }
 

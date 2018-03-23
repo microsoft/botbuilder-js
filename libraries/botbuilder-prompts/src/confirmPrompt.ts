@@ -92,7 +92,7 @@ export function createConfirmPrompt<O = boolean>(validator?: PromptValidator<O>,
                         msg = ChoiceFactory.suggestedAction(choices, prompt, speak, this.choiceOptions);
                         break;
                     case ListStyle.none:
-                        msg = { type: 'message', text: prompt || '' };
+                        msg = { type: 'message', text: prompt };
                         if (speak) { msg.speak = speak }
                         break;
                 }

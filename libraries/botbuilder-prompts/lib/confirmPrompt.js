@@ -38,7 +38,7 @@ function createConfirmPrompt(validator, defaultLocale) {
                         msg = botbuilder_choices_1.ChoiceFactory.suggestedAction(choices, prompt, speak, this.choiceOptions);
                         break;
                     case choicePrompt_1.ListStyle.none:
-                        msg = { type: 'message', text: prompt || '' };
+                        msg = { type: 'message', text: prompt };
                         if (speak) {
                             msg.speak = speak;
                         }
