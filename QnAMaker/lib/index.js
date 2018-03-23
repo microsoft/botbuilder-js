@@ -37,6 +37,11 @@ module.exports = async function qnamaker(config, serviceManifest, args, requestB
     // Create the target service and kick off the request.
     const service = new api[identifier]();
     const response = await service[operation.name](args, (requestBodyDataModel || requestBody));
-
-    return response.json();
+    const text = await response.text();
+    try {
+        return JSON.parse(text);
+    }
+    catch (e) {
+        return text;
+    }
 };

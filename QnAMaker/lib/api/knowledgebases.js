@@ -22,8 +22,10 @@ class Knowledgebases extends ServiceBase {
     /**
      * Downloads all the data associated with the specified knowledge base.
      */
-    downloadKnowledgeBase(params) {
-        return this.createRequest('', params, 'get');
+    async downloadKnowledgeBase(params) {
+        const response = await this.createRequest('', params, 'get');
+        const url = await response.json();
+        return fetch(url, {method: 'get'});
     }
 
     /**
