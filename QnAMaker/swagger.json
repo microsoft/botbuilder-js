@@ -1,0 +1,797 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "QnAMaker - V2.0",
+    "version": "1.0"
+  },
+  "host": "westus.api.cognitive.microsoft.com",
+  "basePath": "/qnamaker/v2.0",
+  "schemes": [
+    "https"
+  ],
+  "securityDefinitions": {
+    "apiKeyHeader": {
+      "type": "apiKey",
+      "name": "Ocp-Apim-Subscription-Key",
+      "in": "header"
+    },
+    "apiKeyQuery": {
+      "type": "apiKey",
+      "name": "subscription-key",
+      "in": "query"
+    }
+  },
+  "security": [
+    {
+      "apiKeyHeader": []
+    },
+    {
+      "apiKeyQuery": []
+    }
+  ],
+  "paths": {
+    "/knowledgebases/{knowledgeBaseID}/generateAnswer": {
+      "post": {
+        "description": "Returns the list of answers for the given question sorted in descending order of ranking score.",
+        "operationId": "Generate answer",
+        "parameters": [
+          {
+            "name": "knowledgeBaseID",
+            "in": "path",
+            "description": "knowledgeBasedID, this should be get from QnAMaker portal",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "example": "{\r\n    \"question\": \"is qna maker free?\",\r\n    \"top\": 3\r\n}"
+            },
+            "description": "Post body for generating answer for a given question.\r\n<br/><br/>JSON fields in the request body: <br />\r\n<table class=\"element table\">\r\n<thead>\r\n<tr><th>Fields</th><th>Type</th><th>Description</th></tr>\r\n</thead>\r\n<tbody>\r\n<tr><td>question</td><th>String</th><td>User question to be queried against your knowledge base.</td></tr>\r\n<tr><td>top</td><th>Integer </th><td>Number of ranked results you want in the output. Default is 1.</td></tr>\r\n</tbody>\r\n</table>"
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "responses": {
+          "400": {
+            "description": "Error code and message returned in JSON:\r\n<table class=\"element table\">\r\n    <thead>\r\n        <tr><th>Error Code</th><th>Error Message Description</th></tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr><td>BadArgument</td><td>Argument question is not specified.</td></tr>\r\n        <tr><td>BadArgument</td><td>The length of question is not in a valid range. The valid question length is 1 to 1000.</td></tr>\r\n    </tbody>\r\n</table>",
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "BadArgument",
+                  "message": "Argument question is not specified."
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "A successful call returns the result of the question. The response contains the following fields:\r\n<table class=\"element table\">\r\n            <thead>\r\n            <tr><th>Fields</th><th>Description</th></tr>\r\n            </thead>\r\n            <tbody>\r\n            <tr><td>answers</td><td>List of answers for the user query sorted in decreasing order of ranking score.</td></tr>\r\n             </tbody>\r\n            </table>",
+            "examples": {
+              "application/json": {
+                "answers": [
+                  {
+                    "answer": "Yes, currently the QnA Maker tool is free to use. However, we do meter the usage per account. See the Subscription Keys section of the documentation for details.",
+                    "questions": [
+                      "is the qna maker service free?"
+                    ],
+                    "score": 98.003289226056637
+                  },
+                  {
+                    "answer": "Currently the QnA Maker tool handles semi-structured FAQ content. Eventually the vision is to be able to answer questions from un-structured content as well.",
+                    "questions": [
+                      "what is the roadmap of the qna maker?"
+                    ],
+                    "score": 53.558435074985027
+                  },
+                  {
+                    "answer": "The QnA Maker tool ingests and matches data in UTF-16 encoding. This means that any language should work as is. Having said that, we have only extensively tested the relevance of the service for EN yet.",
+                    "questions": [
+                      "does the qna maker support non-en languages?"
+                    ],
+                    "score": 53.320423148572445
+                  }
+                ]
+              }
+            }
+          },
+          "404": {
+            "description": "Error code and message returned in JSON:\r\n<table class=\"element table\">\r\n    <thead>\r\n        <tr><th>Error Code</th><th>Error Message Description</th></tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr><td>NotFound</td><td>The request knowledge base is invalid.</td></tr>\r\n    </tbody>\r\n</table>\r\n",
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "NotFound",
+                  "message": "The requested knowledge base is not found."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error code and message returned in JSON:\r\n<table class=\"element table\">\r\n    <thead>\r\n        <tr><th>Error Code</th><th>Error Message Description</th></tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr><td>Unauthorized</td><td>Invalid subscription Key or user/plan is blocked. Access denied due to invalid subscription key. Make sure you are subscribed to an API you are trying to call and provide the right key.</td></tr>\r\n    </tbody>\r\n</table>",
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "Unauthorized",
+                  "message": "Access denied due to invalid subscription key. Make sure you are subscribed to an API you are trying to call and provide the right key."
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Error code and message returned in JSON:\r\n<table class=\"element table\">\r\n    <thead>\r\n        <tr><th>Error Code</th><th>Error Message Description</th></tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr><td>QuotaExceeded</td><td>Quota Exceeded.</td></tr>\r\n    </tbody>\r\n</table>",
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "QuotaExceeded",
+                  "message": "Out of call volume quota."
+                }
+              }
+            }
+          },
+          "408": {
+            "description": "Error code and message returned in JSON:\r\n<table class=\"element table\">\r\n    <thead>\r\n        <tr><th>Error Code</th><th>Error Message Description</th></tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr><td>OperationTimeOut</td><td>Request Timeout.</td></tr>\r\n    </tbody>\r\n</table>",
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "OperationTimeOut",
+                  "message": "Request Timeout."
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Error code and message returned in JSON:\r\n<table class=\"element table\">\r\n    <thead>\r\n        <tr><th>Error Code</th><th>Error Message Description</th></tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr><td>RateLimitExceeded</td><td>Too many requests.Rate limit is exceeded.</td></tr>\r\n    </tbody>\r\n</table>",
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "RateLimitExceeded",
+                  "message": "Rate limit is exceeded. Try again later."
+                }
+              }
+            }
+          }
+        },
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/knowledgebases/create": {
+      "post": {
+        "description": "Creates a new knowledge base.",
+        "operationId": "Create Knowledge Base",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "example": "{\r\n    \"name\" : \"QnA Maker FAQ Bot\",\r\n    \"qnaPairs\": [\r\n        {\r\n            \"answer\": \"You can change the default message if you use the QnAMakerDialog. See this for details: https://docs.botframework.com/en-us/azure-bot-service/templates/qnamaker/#navtitle\",\r\n            \"question\": \"How can I change the default message from QnA Maker?\"\r\n        },\r\n        {\r\n            \"answer\": \"You can use our REST apis to manage your KB. See here for details: https://westus.dev.cognitive.microsoft.com/docs/services/58994a073d9e04097c7ba6fe/operations/58994a073d9e041ad42d9baa\",\r\n            \"question\": \"How do I programmatically update my KB?\"\r\n        }\r\n    ],\r\n    \"urls\": [\r\n        \"https://docs.microsoft.com/en-in/azure/cognitive-services/qnamaker/faqs\"\r\n    ]\r\n}"
+            },
+            "description": "Post body for creating a new knowledge base.\r\n<br/><br/>JSON fields in the request body: <br />\r\n<table class=\"element table\">\r\n<thead>\r\n<tr><th>Fields</th><th>Type</th><th>Description</th></tr>\r\n</thead>\r\n<tbody>\r\n<tr><td>name</td><th>String</th><td>Friendly name for the knowledge base (Required).</td></tr>\r\n<tr><td>qnapairs</td><th>Array</th><td>List of question and answer pairs to be added to the knowledge base. Max 1000 Q-A pairs per request.</td></tr>\r\n<tr><td>urls</td><th>Array</th><td>List of URLs to be processed and indexed in the knowledge base. In case of existing URL, it will be fetched again and KB will be updated with new data. Max 5 urls per request.</td></tr>\r\n</tbody>\r\n</table>\r\n"
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful call returns the knowledge base identity.\r\n<table class=\"element table\">\r\n<thead>\r\n<tr><th>Fields</th><th>Type</th><th>Description</th></tr>\r\n</thead>\r\n<tbody>\r\n<tr><td>kbId</td><th>String</th><td>Holds the unique guid representing the knowledge base.</td></tr>\r\n<tr><td>dataExtractionResults</td><th>Array</th><td>Data extraction results.</td></tr>\r\n</tbody>\r\n</table>",
+            "examples": {
+              "application/json": {
+                "kbId": "3413bb58-4289-4461-aa9b-caddf0cc17ed",
+                "dataExtractionResults": [
+                  {
+                    "sourceType": "Url",
+                    "extractionStatusCode": "Success",
+                    "source": "https://docs.microsoft.com/en-in/azure/cognitive-services/qnamaker/faqs"
+                  }
+                ]
+              }
+            }
+          },
+          "400": {
+            "description": "Error code and message returned in JSON:\r\n<table class=\"element table\">\r\n    <thead>\r\n        <tr><th>Error Code</th><th>Error Message Description</th></tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr><td>BadArgument</td><td>Request body is invalid.</td></tr>\r\n    </tbody>\r\n</table>",
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "BadArgument",
+                  "message": "Request body is invalid."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error code and message returned in JSON:\r\n<table class=\"element table\">\r\n    <thead>\r\n        <tr><th>Error Code</th><th>Error Message Description</th></tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr><td>Unauthorized</td><td>Invalid subscription Key or user/plan is blocked. Access denied due to invalid subscription key. Make sure you are subscribed to an API you are trying to call and provide the right key.</td></tr>\r\n    </tbody>\r\n</table>",
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "Unauthorized",
+                  "message": "Access denied due to invalid subscription key. Make sure you are subscribed to an API you are trying to call and provide the right key."
+                }
+              }
+            }
+          }
+        },
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/knowledgebases/{knowledgeBaseID}": {
+      "delete": {
+        "description": "Deletes the specified knowledge base and all data associated with it.",
+        "operationId": "Delete Knowledge Base",
+        "parameters": [
+          {
+            "name": "knowledgeBaseID",
+            "in": "path",
+            "description": "knowledge base identity",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful call returns an empty response body."
+          },
+          "400": {
+            "description": "Error code and message returned in JSON:\r\n<table class=\"element table\">\r\n    <thead>\r\n        <tr><th>Error Code</th><th>Error Message Description</th></tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr><td>BadArgument</td><td>Request body is invalid.</td></tr>\r\n    </tbody>\r\n</table>\r\n",
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "BadArgument",
+                  "message": "Request body is invalid."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error code and message returned in JSON:\r\n<table class=\"element table\">\r\n    <thead>\r\n        <tr><th>Error Code</th><th>Error Message Description</th></tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr><td>Unauthorized</td><td>Invalid subscription Key or user/plan is blocked. Access denied due to invalid subscription key. Make sure you are subscribed to an API you are trying to call and provide the right key.</td></tr>\r\n    </tbody>\r\n</table>\r\n",
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "Unauthorized",
+                  "message": "Access denied due to invalid subscription key. Make sure you are subscribed to an API you are trying to call and provide the right key."
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Error code and message returned in JSON:\r\n<table class=\"element table\">\r\n    <thead>\r\n        <tr><th>Error Code</th><th>Error Message Description</th></tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr><td>Forbidden</td><td>You do not have permissions to access the specified knowledge base.</td></tr>\r\n    </tbody>\r\n</table>\r\n",
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "Forbidden",
+                  "message": "You do not have permissions to access the specified knowledge base."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error code and message returned in JSON:\r\n<table class=\"element table\">\r\n    <thead>\r\n        <tr><th>Error Code</th><th>Error Message Description</th></tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr><td>NotFound</td><td>The request knowledge base is invalid.</td></tr>\r\n    </tbody>\r\n</table>\r\n",
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "NotFound",
+                  "message": "The requested knowledge base is not found."
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Error code and message returned in JSON:\r\n<table class=\"element table\">\r\n    <thead>\r\n        <tr><th>Error Code</th><th>Error Message Description</th></tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr><td>Conflict</td><td>Another operations has locked the knowledge base for modification.</td></tr>\r\n    </tbody>\r\n</table>\r\n",
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "Conflict",
+                  "message": "Another operations has locked the knowledge base for modification."
+                }
+              }
+            }
+          }
+        },
+        "produces": [
+          "application/json"
+        ]
+      },
+      "get": {
+        "description": "Downloads all the data associated with the specified knowledge base.",
+        "operationId": "Download Knowledge Base",
+        "parameters": [
+          {
+            "name": "knowledgeBaseID",
+            "in": "path",
+            "description": "knowledge base identity",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "SAS url (valid for 30 mins) to tsv file in blob storage."
+          },
+          "400": {
+            "description": "Error code and message returned in JSON:\r\n<table class=\"element table\">\r\n    <thead>\r\n        <tr><th>Error Code</th><th>Error Message Description</th></tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr><td>BadArgument</td><td>Request body is invalid.</td></tr>\r\n    </tbody>\r\n</table>\r\n",
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "BadArgument",
+                  "message": "Request body is invalid."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error code and message returned in JSON:\r\n<table class=\"element table\">\r\n    <thead>\r\n        <tr><th>Error Code</th><th>Error Message Description</th></tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr><td>Unauthorized</td><td>Invalid subscription Key or user/plan is blocked. Access denied due to invalid subscription key. Make sure you are subscribed to an API you are trying to call and provide the right key.</td></tr>\r\n    </tbody>\r\n</table>\r\n",
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "Unauthorized",
+                  "message": "Access denied due to invalid subscription key. Make sure you are subscribed to an API you are trying to call and provide the right key."
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Error code and message returned in JSON:\r\n<table class=\"element table\">\r\n    <thead>\r\n        <tr><th>Error Code</th><th>Error Message Description</th></tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr><td>Forbidden</td><td>You do not have permissions to access the specified knowledge base.</td></tr>\r\n    </tbody>\r\n</table>\r\n",
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "Forbidden",
+                  "message": "You do not have permissions to access the specified knowledge base."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error code and message returned in JSON:\r\n<table class=\"element table\">\r\n    <thead>\r\n        <tr><th>Error Code</th><th>Error Message Description</th></tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr><td>NotFound</td><td>The request knowledge base is invalid.</td></tr>\r\n    </tbody>\r\n</table>\r\n",
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "NotFound",
+                  "message": "The requested knowledge base is not found."
+                }
+              }
+            }
+          }
+        },
+        "produces": [
+          "application/json"
+        ]
+      },
+      "patch": {
+        "description": "Add or delete QnA Pairs and / or URLs to an existing knowledge base.",
+        "operationId": "Update Knowledge Base",
+        "parameters": [
+          {
+            "name": "knowledgeBaseID",
+            "in": "path",
+            "description": "knowledge base identity",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "example": "{\r\n    \"add\": {\r\n        \"qnaPairs\": [\r\n            {\r\n                \"answer\": \"Hello, How can I help you?\",\r\n                \"question\": \"Hello\"\r\n            }\r\n        ],\r\n        \"urls\": [\r\n            \"https://docs.microsoft.com/en-in/azure/cognitive-services/qnamaker/faqs\"\r\n        ]\r\n    },\r\n    \"delete\": {\r\n        \"qnaPairs\": [\r\n            {\r\n                \"answer\": \"The QnA Maker tool ingests and matches data in UTF-16 encoding. This means that any language should work as is. Having said that, we have only extensively tested the relevance of the service for EN yet.\",\r\n                \"question\": \"Does the QnA Maker support non-EN languages?\"\r\n            }\r\n        ]\r\n    }\r\n}"
+            },
+            "description": "Post body for updating a knowledge base.\r\n<br/><br/>JSON fields in the request body: <br />\r\n<table class=\"element table\">\r\n<thead>\r\n<tr><th>Fields</th><th>Type</th><th>Description</th></tr>\r\n</thead>\r\n<tbody>\r\n<tr><td>add</td><th>Object</th><td>Data to be added to the knowledge base.</td></tr>\r\n<tr><td>delete</td><th>Object</th><td>Data to be deleted from the knowledge base</td></tr>\r\n</tbody>\r\n</table>\r\n"
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful call returns an empty response body."
+          },
+          "400": {
+            "description": "Error code and message returned in JSON:\r\n<table class=\"element table\">\r\n    <thead>\r\n        <tr><th>Error Code</th><th>Error Message Description</th></tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr><td>BadArgument</td><td>Request body is invalid.</td></tr>\r\n    </tbody>\r\n</table>\r\n",
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "BadArgument",
+                  "message": "Request body is invalid."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error code and message returned in JSON:\r\n<table class=\"element table\">\r\n    <thead>\r\n        <tr><th>Error Code</th><th>Error Message Description</th></tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr><td>Unauthorized</td><td>Invalid subscription Key or user/plan is blocked. Access denied due to invalid subscription key. Make sure you are subscribed to an API you are trying to call and provide the right key.</td></tr>\r\n    </tbody>\r\n</table>\r\n",
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "Unauthorized",
+                  "message": "Access denied due to invalid subscription key. Make sure you are subscribed to an API you are trying to call and provide the right key."
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Error code and message returned in JSON:\r\n<table class=\"element table\">\r\n    <thead>\r\n        <tr><th>Error Code</th><th>Error Message Description</th></tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr><td>Forbidden</td><td>You do not have permissions to access the specified knowledge base.</td></tr>\r\n    </tbody>\r\n</table>\r\n",
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "Forbidden",
+                  "message": "You do not have permissions to access the specified knowledge base."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error code and message returned in JSON:\r\n<table class=\"element table\">\r\n    <thead>\r\n        <tr><th>Error Code</th><th>Error Message Description</th></tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr><td>NotFound</td><td>The request knowledge base is invalid.</td></tr>\r\n    </tbody>\r\n</table>\r\n",
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "NotFound",
+                  "message": "The requested knowledge base is not found."
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Error code and message returned in JSON:\r\n<table class=\"element table\">\r\n    <thead>\r\n        <tr><th>Error Code</th><th>Error Message Description</th></tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr><td>Conflict</td><td>Another operations has locked the knowledge base for modification.</td></tr>\r\n    </tbody>\r\n</table>",
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "Conflict",
+                  "message": "Another operations has locked the knowledge base for modification."
+                }
+              }
+            }
+          }
+        },
+        "produces": [
+          "application/json"
+        ]
+      },
+      "put": {
+        "description": "Publish all unpublished in the knowledgebase to the prod endpoint",
+        "operationId": "Publish Knowledge Base",
+        "parameters": [
+          {
+            "name": "knowledgeBaseID",
+            "in": "path",
+            "description": "Knowledge base identity",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful call returns an empty response body."
+          },
+          "400": {
+            "description": "Error code and message returned in JSON:\r\n<table class=\"element table\">\r\n    <thead>\r\n        <tr><th>Error Code</th><th>Error Message Description</th></tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr><td>BadArgument</td><td>Request body is invalid.</td></tr>\r\n    </tbody>\r\n</table>\r\n",
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "BadArgument",
+                  "message": "Request body is invalid."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error code and message returned in JSON:\r\n<table class=\"element table\">\r\n    <thead>\r\n        <tr><th>Error Code</th><th>Error Message Description</th></tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr><td>Unauthorized</td><td>Invalid subscription Key or user/plan is blocked. Access denied due to invalid subscription key. Make sure you are subscribed to an API you are trying to call and provide the right key.</td></tr>\r\n    </tbody>\r\n</table>\r\n",
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "Unauthorized",
+                  "message": "Access denied due to invalid subscription key. Make sure you are subscribed to an API you are trying to call and provide the right key."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error code and message returned in JSON:\r\n<table class=\"element table\">\r\n    <thead>\r\n        <tr><th>Error Code</th><th>Error Message Description</th></tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr><td>NotFound</td><td>The request knowledge base is invalid.</td></tr>\r\n    </tbody>\r\n</table>\r\n",
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "NotFound",
+                  "message": "The requested knowledge base is not found."
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Error code and message returned in JSON:\r\n<table class=\"element table\">\r\n    <thead>\r\n        <tr><th>Error Code</th><th>Error Message Description</th></tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr><td>Forbidden</td><td>You do not have permissions to access the specified knowledge base.</td></tr>\r\n    </tbody>\r\n</table>\r\n",
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "Forbidden",
+                  "message": "You do not have permissions to access the specified knowledge base."
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Error code and message returned in JSON:\r\n<table class=\"element table\">\r\n    <thead>\r\n        <tr><th>Error Code</th><th>Error Message Description</th></tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr><td>Conflict</td><td>Another operations has locked the knowledge base for modification.</td></tr>\r\n    </tbody>\r\n</table>",
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "Conflict",
+                  "message": "Another operations has locked the knowledge base for modification."
+                }
+              }
+            }
+          }
+        },
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/knowledgebases/{knowledgeBaseID}/train": {
+      "patch": {
+        "description": "The developer of the knowledge base service can use this API to submit user feedback for tuning question-answer matching. QnA Maker uses active learning to learn from the user utterances that come on a published Knowledge base service. In this process, QnA Maker records user feedback from different users and trains the knowledge base to respond accordingly, when there are sufficient number of users sending the same feedback. Every user feedback is logged and model training is triggered when there are 50 new feedback instances. Typically, the model updates are reflected when same question-answer pair from the knowledge base is sent as feedback for a given user query by at least 20 users. Most changes are immediately reflected in both the published and the saved knowledge bases. Some new question-answer pairs are only added to the saved knowledge base and they are moved to the published version in the next knowledge base publish operation by the developer. This gives the flexibility to the developer to keep or discard the newly added question-answer pairs.",
+        "operationId": "Train Knowledge Base",
+        "parameters": [
+          {
+            "name": "knowledgeBaseID",
+            "in": "path",
+            "description": "knowledge base identity",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "example": "{\"feedbackRecords\": [{\"userId\": \"1\",\"userQuestion\": \"hey\",\"kbQuestion\": \"hi\",\"kbAnswer\": \"hey\"}]}"
+            },
+            "description": "Post body for training knowledge base with user feedback.\r\n<br/><br/>JSON fields in the request body: <br />\r\n<table class=\"element table\">\r\n<thead>\r\n<tr><th>Fields</th><th>Type</th><th>Description</th></tr>\r\n</thead>\r\n<tbody>\r\n<tr><td>feedbackRecords</td><th>Array</th><td>Feedback data. Each entry indicates a query asked by a user and the correct question-answer response for this query as given by the user.</td></tr>\r\n<tr><td>userId</td><th>String</th><td>A unique identifier to distinguish feedback from different users.</td></tr>\r\n<tr><td>userQuestion</td><th>String</th><td>Question asked by user (user utterance).</td></tr>\r\n<tr><td>kbQuestion</td><th>String</th><td>Question field from the correct question-answer pair for userQuestion. This field should exactly match the question present in the knowledge base.</td></tr>\r\n<tr><td>kbAnswer</td><th>String</th><td>Answer field from the correct question-answer pair for userQuestion. This field should exactly match the answer present in the knowledge base.</td></tr>\r\n</tbody>\r\n</table>\r\n"
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful call returns an empty response body."
+          },
+          "400": {
+            "description": "Error code and message returned in JSON:\r\n<table class=\"element table\">\r\n    <thead>\r\n        <tr><th>Error Code</th><th>Error Message Description</th></tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr><td>BadArgument</td><td>Request body is invalid.</td></tr>\r\n    </tbody>\r\n</table>\r\n",
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "BadArgument",
+                  "message": "Request body is invalid."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error code and message returned in JSON:\r\n<table class=\"element table\">\r\n    <thead>\r\n        <tr><th>Error Code</th><th>Error Message Description</th></tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr><td>Unauthorized</td><td>Invalid subscription Key or user/plan is blocked. Access denied due to invalid subscription key. Make sure you are subscribed to an API you are trying to call and provide the right key.</td></tr>\r\n    </tbody>\r\n</table>\r\n",
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "Unauthorized",
+                  "message": "Access denied due to invalid subscription key. Make sure you are subscribed to an API you are trying to call and provide the right key."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error code and message returned in JSON:\r\n<table class=\"element table\">\r\n    <thead>\r\n        <tr><th>Error Code</th><th>Error Message Description</th></tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr><td>NotFound</td><td>The request knowledge base is invalid.</td></tr>\r\n    </tbody>\r\n</table>\r\n",
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "NotFound",
+                  "message": "The requested knowledge base is not found."
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Error code and message returned in JSON:\r\n<table class=\"element table\">\r\n    <thead>\r\n        <tr><th>Error Code</th><th>Error Message Description</th></tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr><td>Forbidden</td><td>You do not have permissions to access the specified knowledge base.</td></tr>\r\n    </tbody>\r\n</table>\r\n",
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "Forbidden",
+                  "message": "You do not have permissions to access the specified knowledge base."
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Error code and message returned in JSON:\r\n<table class=\"element table\">\r\n    <thead>\r\n        <tr><th>Error Code</th><th>Error Message Description</th></tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr><td>Conflict</td><td>Another operations has locked the knowledge base for modification.</td></tr>\r\n    </tbody>\r\n</table>",
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "Conflict",
+                  "message": "Another operations has locked the knowledge base for modification."
+                }
+              }
+            }
+          }
+        },
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/knowledgebases/{knowledgeBaseID}/updateAlterations": {
+      "patch": {
+        "description": "Replaces word alterations (synonyms) for the KB with the give records.",
+        "operationId": "Update Alterations",
+        "parameters": [
+          {
+            "name": "knowledgeBaseID",
+            "in": "path",
+            "description": "knowledge base identity",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "example": "{\r\n    \"add\": [\r\n        {\r\n            \"word\": \"botframework\",\r\n            \"alterations\": [\r\n                \"bot frame work\"\r\n            ]\r\n        }\r\n    ],\r\n    \"delete\": [\r\n        {\r\n            \"word\": \"webchat\",\r\n            \"alterations\": [\r\n                \"web chat\"\r\n            ]\r\n        }\r\n    ]\r\n}"
+            },
+            "description": "Post body for creating a new knowledge base.\r\n<br/><br/>JSON fields in the request body: <br />\r\n<table class=\"element table\">\r\n<thead>\r\n<tr><th>Fields</th><th>Type</th><th>Description</th></tr>\r\n</thead>\r\n<tbody>\r\n<tr><td>add</td><th>Array</th><td>Word alterations to be added.\r\n          <ul>\r\n              <li>WordAlterationsData\r\n                  <ul>\r\n                    <li>word: Word for which alterations have to be added. (required)</li>\r\n                       <li>alterations: List of alterations for the word. (required)</li>\r\n                      </ul>\r\n                  </li>\r\n         </ul>\r\n</td></tr>\r\n    <tr>\r\n        <td>delete</td>\r\n        <th>Array</th>\r\n        <td>\r\n            Word alterations to be removed.\r\n            <ul>\r\n                <li>WordAlterationsData\r\n                    <ul>\r\n                        <li>word: Word for which alterations have to be added. (required)</li>\r\n                        <li>alterations: List of alterations for the word. (required)</li>\r\n                    </ul>\r\n                </li>\r\n            </ul>\r\n        </td>\r\n    </tr>\r\n</tbody>\r\n</table>\r\n"
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful call returns an empty response body."
+          },
+          "400": {
+            "description": "Error code and message returned in JSON:\r\n<table class=\"element table\">\r\n    <thead>\r\n        <tr><th>Error Code</th><th>Error Message Description</th></tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr><td>BadArgument</td><td>Request body is invalid.</td></tr>\r\n    </tbody>\r\n</table>\r\n",
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "BadArgument",
+                  "message": "Request body is invalid."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error code and message returned in JSON:\r\n<table class=\"element table\">\r\n    <thead>\r\n        <tr><th>Error Code</th><th>Error Message Description</th></tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr><td>Unauthorized</td><td>Invalid subscription Key or user/plan is blocked. Access denied due to invalid subscription key. Make sure you are subscribed to an API you are trying to call and provide the right key.</td></tr>\r\n    </tbody>\r\n</table>\r\n",
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "Unauthorized",
+                  "message": "Access denied due to invalid subscription key. Make sure you are subscribed to an API you are trying to call and provide the right key."
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Error code and message returned in JSON:\r\n<table class=\"element table\">\r\n    <thead>\r\n        <tr><th>Error Code</th><th>Error Message Description</th></tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr><td>Forbidden</td><td>You do not have permissions to access the specified knowledge base.</td></tr>\r\n    </tbody>\r\n</table>\r\n",
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "Forbidden",
+                  "message": "You do not have permissions to access the specified knowledge base."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error code and message returned in JSON:\r\n<table class=\"element table\">\r\n    <thead>\r\n        <tr><th>Error Code</th><th>Error Message Description</th></tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr><td>NotFound</td><td>The request knowledge base is invalid.</td></tr>\r\n    </tbody>\r\n</table>\r\n",
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "NotFound",
+                  "message": "The requested knowledge base is not found."
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Error code and message returned in JSON:\r\n<table class=\"element table\">\r\n    <thead>\r\n        <tr><th>Error Code</th><th>Error Message Description</th></tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr><td>Conflict</td><td>Another operations has locked the knowledge base for modification.</td></tr>\r\n    </tbody>\r\n</table>",
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "Conflict",
+                  "message": "Another operations has locked the knowledge base for modification."
+                }
+              }
+            }
+          }
+        },
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/knowledgebases/{knowledgeBaseID}/downloadAlterations": {
+      "get": {
+        "description": "Downloads all word alterations (synonyms) that have been automatically mined or added by the user.",
+        "operationId": "Download Alterations",
+        "parameters": [
+          {
+            "name": "knowledgeBaseID",
+            "in": "path",
+            "description": "knowledge base identity",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful call returns the result of all word alterations . The response contains the following fields:\r\n<table class=\"element table\">\r\n            <thead>\r\n            <tr><th>Fields</th><th>Description</th></tr>\r\n            </thead>\r\n            <tbody>\r\n            <tr><td>wordAlterations</td><td>List of word alterations (synonyms).\r\n<ul>\r\n<li>WordAlterationsData\r\n    <ul>\r\n        <li>word: Word for which alterations (synonyms) are defined.</li>\r\n        <li>alterations: List of alterations for word.</li>\r\n    </ul>\r\n    </li>\r\n</ul></td></tr>\r\n             </tbody>\r\n            </table>",
+            "examples": {
+              "application/json": {
+                "wordAlterations": [
+                  {
+                    "word": "qnamaker",
+                    "alterations": [
+                      "qna maker"
+                    ]
+                  },
+                  {
+                    "word": "botframework",
+                    "alterations": [
+                      "bot framework"
+                    ]
+                  },
+                  {
+                    "word": "webchat",
+                    "alterations": [
+                      "web chat"
+                    ]
+                  }
+                ]
+              }
+            }
+          },
+          "400": {
+            "description": "Error code and message returned in JSON:\r\n<table class=\"element table\">\r\n    <thead>\r\n        <tr><th>Error Code</th><th>Error Message Description</th></tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr><td>BadArgument</td><td>Request body is invalid.</td></tr>\r\n    </tbody>\r\n</table>\r\n",
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "BadArgument",
+                  "message": "Request body is invalid."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error code and message returned in JSON:\r\n<table class=\"element table\">\r\n    <thead>\r\n        <tr><th>Error Code</th><th>Error Message Description</th></tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr><td>NotFound</td><td>The request knowledge base is invalid.</td></tr>\r\n    </tbody>\r\n</table>\r\n",
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "NotFound",
+                  "message": "The requested knowledge base is not found."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error code and message returned in JSON:\r\n<table class=\"element table\">\r\n    <thead>\r\n        <tr><th>Error Code</th><th>Error Message Description</th></tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr><td>Unauthorized</td><td>Invalid subscription Key or user/plan is blocked. Access denied due to invalid subscription key. Make sure you are subscribed to an API you are trying to call and provide the right key.</td></tr>\r\n    </tbody>\r\n</table>\r\n",
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "Unauthorized",
+                  "message": "Access denied due to invalid subscription key. Make sure you are subscribed to an API you are trying to call and provide the right key."
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Error code and message returned in JSON:\r\n<table class=\"element table\">\r\n    <thead>\r\n        <tr><th>Error Code</th><th>Error Message Description</th></tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr><td>Forbidden</td><td>You do not have permissions to access the specified knowledge base.</td></tr>\r\n    </tbody>\r\n</table>\r\n",
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "Forbidden",
+                  "message": "You do not have permissions to access the specified knowledge base."
+                }
+              }
+            }
+          }
+        },
+        "produces": [
+          "application/json"
+        ]
+      }
+    }
+  }
+}

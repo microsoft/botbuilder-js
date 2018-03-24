@@ -1,0 +1,183 @@
+{
+  "create": {
+    "className": "Create",
+    "url": "/knowledgebases/create",
+    "operations": {
+      "createKnowledgeBase": {
+        "name": "createKnowledgeBase",
+        "method": "post",
+        "command": "qnamaker createKnowledgeBase --in createKnowledgeBase.json",
+        "pathFragment": "",
+        "description": "Creates a new knowledge base.",
+        "entityName": "createKnowledgeBase",
+        "entityType": "CreateKnowledgeBase"
+      }
+    }
+  },
+  "knowledgebases": {
+    "className": "Knowledgebases",
+    "url": "/knowledgebases/{knowledgeBaseID}",
+    "operations": {
+      "publishKnowledgeBase": {
+        "name": "publishKnowledgeBase",
+        "method": "put",
+        "command": "qnamaker publishKnowledgeBase --knowledgeBaseID <string>",
+        "pathFragment": "",
+        "params": [
+          {
+            "name": "knowledgeBaseID",
+            "in": "path",
+            "description": "Knowledge base identity",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "description": "Publish all unpublished in the knowledgebase to the prod endpoint"
+      },
+      "updateKnowledgeBase": {
+        "name": "updateKnowledgeBase",
+        "method": "patch",
+        "command": "qnamaker updateKnowledgeBase --in updateKnowledgeBase.json --knowledgeBaseID <string>",
+        "pathFragment": "",
+        "params": [
+          {
+            "name": "knowledgeBaseID",
+            "in": "path",
+            "description": "knowledge base identity",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "description": "Add or delete QnA Pairs and / or URLs to an existing knowledge base.",
+        "entityName": "updateKnowledgeBase",
+        "entityType": "UpdateKnowledgeBase"
+      },
+      "downloadKnowledgeBase": {
+        "name": "downloadKnowledgeBase",
+        "method": "get",
+        "command": "qnamaker downloadKnowledgeBase --knowledgeBaseID <string>",
+        "pathFragment": "",
+        "params": [
+          {
+            "name": "knowledgeBaseID",
+            "in": "path",
+            "description": "knowledge base identity",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "description": "Downloads all the data associated with the specified knowledge base."
+      },
+      "deleteKnowledgeBase": {
+        "name": "deleteKnowledgeBase",
+        "method": "delete",
+        "command": "qnamaker deleteKnowledgeBase --knowledgeBaseID <string>",
+        "pathFragment": "",
+        "params": [
+          {
+            "name": "knowledgeBaseID",
+            "in": "path",
+            "description": "knowledge base identity",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "description": "Deletes the specified knowledge base and all data associated with it."
+      }
+    }
+  },
+  "downloadAlterations": {
+    "className": "DownloadAlterations",
+    "url": "/knowledgebases/{knowledgeBaseID}/downloadAlterations",
+    "operations": {
+      "downloadAlterations": {
+        "name": "downloadAlterations",
+        "method": "get",
+        "command": "qnamaker downloadAlterations --knowledgeBaseID <string>",
+        "pathFragment": "",
+        "params": [
+          {
+            "name": "knowledgeBaseID",
+            "in": "path",
+            "description": "knowledge base identity",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "description": "Downloads all word alterations (synonyms) that have been automatically mined or added by the user."
+      }
+    }
+  },
+  "generateAnswer": {
+    "className": "GenerateAnswer",
+    "url": "/knowledgebases/{knowledgeBaseID}/generateAnswer",
+    "operations": {
+      "generateAnswer": {
+        "name": "generateAnswer",
+        "method": "post",
+        "command": "qnamaker generateAnswer --in generateAnswer.json --knowledgeBaseID <string>",
+        "pathFragment": "",
+        "params": [
+          {
+            "name": "knowledgeBaseID",
+            "in": "path",
+            "description": "knowledgeBasedID, this should be get from QnAMaker portal",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "description": "Returns the list of answers for the given question sorted in descending order of ranking score.",
+        "entityName": "generateAnswer",
+        "entityType": "GenerateAnswer"
+      }
+    }
+  },
+  "train": {
+    "className": "Train",
+    "url": "/knowledgebases/{knowledgeBaseID}/train",
+    "operations": {
+      "trainKnowledgeBase": {
+        "name": "trainKnowledgeBase",
+        "method": "patch",
+        "command": "qnamaker trainKnowledgeBase --in trainKnowledgeBase.json --knowledgeBaseID <string>",
+        "pathFragment": "",
+        "params": [
+          {
+            "name": "knowledgeBaseID",
+            "in": "path",
+            "description": "knowledge base identity",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "description": "The developer of the knowledge base service can use this API to submit user feedback for tuning question-answer matching. QnA Maker uses active learning to learn from the user utterances that come on a published Knowledge base service. In this process, QnA Maker records user feedback from different users and trains the knowledge base to respond accordingly, when there are sufficient number of users sending the same feedback. Every user feedback is logged and model training is triggered when there are 50 new feedback instances. Typically, the model updates are reflected when same question-answer pair from the knowledge base is sent as feedback for a given user query by at least 20 users. Most changes are immediately reflected in both the published and the saved knowledge bases. Some new question-answer pairs are only added to the saved knowledge base and they are moved to the published version in the next knowledge base publish operation by the developer. This gives the flexibility to the developer to keep or discard the newly added question-answer pairs.",
+        "entityName": "trainKnowledgeBase",
+        "entityType": "TrainKnowledgeBase"
+      }
+    }
+  },
+  "updateAlterations": {
+    "className": "UpdateAlterations",
+    "url": "/knowledgebases/{knowledgeBaseID}/updateAlterations",
+    "operations": {
+      "updateAlterations": {
+        "name": "updateAlterations",
+        "method": "patch",
+        "command": "qnamaker updateAlterations --in updateAlterations.json --knowledgeBaseID <string>",
+        "pathFragment": "",
+        "params": [
+          {
+            "name": "knowledgeBaseID",
+            "in": "path",
+            "description": "knowledge base identity",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "description": "Replaces word alterations (synonyms) for the KB with the give records.",
+        "entityName": "updateAlterations",
+        "entityType": "UpdateAlterations"
+      }
+    }
+  }
+}

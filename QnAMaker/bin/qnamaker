@@ -1,0 +1,256 @@
+#!/usr/bin/env node
+
+global.fetch = require('node-fetch'); // Browser compatibility
+const assert = require('assert');
+const fs = require('fs-extra');
+const path = require('path');
+const readline = require('readline');
+const minimist = require('minimist');
+const chalk = require('chalk');
+
+const help = require('../lib/help');
+const qnamaker = require('../lib');
+const manifest = require('../lib/api/qnamaker');
+const cc = require('camelcase');
+
+let args;
+
+/**
+ * Entry for the app
+ *
+ * @returns {Promise<void>}
+ */
+async function runProgram() {
+    let argvFragment = process.argv.slice(2);
+    if (argvFragment.length === 0) {
+        argvFragment = ['-h'];
+    }
+    args = minimist(argvFragment);
+    if (args.init || args.i) {
+        const result = await initializeConfig();
+        if (result) {
+            process.stdout.write(`Successfully wrote ${process.cwd()}/.qnamakerrc`);
+        }
+        return;
+    }
+    if (args.help ||
+        args.h ||
+        args['!'] ||
+        args._.includes('help')) {
+        return help(args);
+    }
+    if (args.version || args.v) {
+        return process.stdout.write(require(path.join(__dirname, '../package.json')).version);
+    }
+    const config = await composeConfig();
+    const serviceManifest = getServiceManifest(args);
+    validateArguments(serviceManifest);
+
+    const requestBody = await getFileInput(args);
+    const result = await qnamaker(config, serviceManifest, args, requestBody);
+    if (result.error) {
+        throw new Error(result.error.message);
+    }
+    process.stdout.write(JSON.stringify(result, null, 2));
+}
+
+/**
+ * Walks the user though the creation of the .qnamakerrc
+ * file and writes it to disk. The knowledge base ID and subscription key
+ * are optional but if omitted, --knowledgeBaseID and --subscriptionKey
+ * flags may be required for some commands.
+ *
+ * @returns {Promise<*>}
+ */
+async function initializeConfig() {
+    process.stdout.write(chalk.cyan.bold('\nThis util will walk you through creating a .qnamakerrc file\n\nPress ^C at any time to quit.\n\n'));
+    const validRegions = 'westus westus2 eastus eastus2 westcentralus southcentralus westeurope northeurope southeastasia eastasia australiaeast brazilsouth'.split(' ');
+    const questions = [
+        'What is your QnA Maker Knowledge Base ID (from qnamaker.ai portal My services page)? ',
+        'What is your QnA Maker Subscription key (from qnamaker.ai portal My services page)? ',
+        `What region [${validRegions.join(', ')}]? `,
+    ];
+
+    const prompt = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+    });
+
+    const answers = [];
+    for (let i = 0; i < questions.length; i++) {
+        const question = questions[i];
+        const answer = await new Promise((resolve) => {
+
+            function doPrompt(promptMessage) {
+                prompt.question(promptMessage, response => {
+                    if (i === 2 && (!response || !validRegions.includes(response))) {
+                        doPrompt(chalk.red.bold(`${response} is not a valid region`) + '\n' + question);
+                    } else {
+                        resolve(response);
+                    }
+                });
+            }
+
+            doPrompt(question);
+        });
+        answers.push(answer);
+    }
+
+    const [knowledgeBaseID, subscriptionKey, location] = answers;
+    const config = Object.assign({}, {
+        knowledgeBaseID,
+        subscriptionKey,
+        endpointBasePath: `https://${location}.api.cognitive.microsoft.com/qnamaker/v2.0`,
+    });
+    try {
+        await new Promise((resolve, reject) => {
+            const confirmation = `\n\nDoes this look ok?\n${JSON.stringify(config, null, 2)}\nYes/No: `;
+            prompt.question(confirmation, response => {
+                /^(y|yes)$/.test((response || 'yes').toLowerCase()) ? resolve(response) : reject();
+            });
+        });
+    } catch (e) {
+        return false;
+    }
+    await fs.writeJson(path.join(process.cwd(), '.qnamakerrc'), config, {spaces: 2});
+    return true;
+}
+
+/**
+ * Retrieves the input file to send as
+ * the body of the request.
+ *
+ * @param args
+ * @returns {Promise<*>}
+ */
+async function getFileInput(args) {
+    if (typeof args.in !== 'string') {
+        return null;
+    }
+    // Let any errors fall through to the runProgram() promise
+    return await fs.readJson(path.resolve(args.in));
+}
+
+/**
+ * Composes the config from the 3 sources that it may reside.
+ * Precedence is 1. Arguments, 2. qnamakerrc and 3. env variables
+ *
+ * @returns {Promise<*>}
+ */
+async function composeConfig() {
+    const {QNA_MAKER_KNOWLEDGE_BASE_ID, QNA_MAKER_SUBSCRIPTION_KEY, QNA_MAKER_ENDPOINT_BASE_PATH} = process.env;
+
+    const {
+        knowledgeBaseID: args_knowledgeBaseID,
+        subscriptionKey: args_subscriptionKey,
+        endpointBasePath: args_endpointBasePath
+    } = args;
+
+    let qnamakerrcJson = {};
+    let config;
+    try {
+        await fs.access(path.join(process.cwd(), '.qnamakerrc'), fs.R_OK);
+        qnamakerrcJson = await fs.readJson(path.join(process.cwd(), '.qnamakerrc'));
+    } catch (e) {
+        // Do nothing
+    } finally {
+        config = {
+            knowledgeBaseID: (args_knowledgeBaseID || qnamakerrcJson.knowledgeBaseID || QNA_MAKER_KNOWLEDGE_BASE_ID),
+            subscriptionKey: (args_subscriptionKey || qnamakerrcJson.subscriptionKey || QNA_MAKER_SUBSCRIPTION_KEY),
+            endpointBasePath: (args_endpointBasePath || qnamakerrcJson.endpointBasePath || QNA_MAKER_ENDPOINT_BASE_PATH)
+        };
+        validateConfig(config);
+    }
+    return config;
+}
+
+/**
+ * Validates the config object to contain the
+ * fields necessary for endpoint calls.
+ *
+ * @param {*} config The config object to validate
+ */
+function validateConfig(config) {
+    // appId and versionId are not validated here since
+    // not all operations require these to be present.
+    // Validation of specific params are done in the
+    // ServiceBase.js
+    const {subscriptionKey, knowledgeBaseID, endpointBasePath} = config;
+    const messageTail = `is missing from the configuration.\n\nDid you run ${chalk.cyan.bold('qnamaker --init')} yet?`;
+
+    assert(typeof subscriptionKey === 'string', `The subscriptionKey ${messageTail}`);
+    assert(typeof knowledgeBaseID === 'string', `The knowledgeBaseID ${messageTail}`);
+    assert(typeof endpointBasePath === 'string', `The endpointBasePath ${messageTail}`);
+}
+
+/**
+ * Provides basic validation of the command arguments.
+ *
+ * @param serviceManifest
+ */
+function validateArguments(serviceManifest) {
+    let error = new Error();
+    error.name = 'ArgumentError';
+    if (!serviceManifest) {
+        error.message = 'The service does not exist';
+        throw error;
+    }
+
+    const {operation} = serviceManifest;
+    if (!operation) {
+        error.message = 'The operation does not exist';
+
+        throw error;
+    }
+
+    const entitySpecified = typeof args.in === 'string';
+    const entityRequired = !!operation.entityName;
+
+    if (!entityRequired && entitySpecified) {
+        error.message = `The ${operation.name} operation does not accept an input`;
+
+        throw error;
+    }
+
+    if (entityRequired && !entitySpecified) {
+        error.message = `The ${operation.name} requires an input of type: ${operation.entityType}`;
+
+        throw error;
+    }
+
+    // Note that the ServiceBase will validate params that may be required.
+}
+
+function getServiceManifest(args) {
+    const [operationName] = args._;
+    const keys = Object.keys(manifest);
+    for (let i = 0; i < keys.length; i++) {
+        const manifestEntry = manifest[keys[i]];
+        const {operations} = manifestEntry;
+        if (operationName in operations) {
+            return Object.assign({
+                operation: operations[operationName],
+                identifier: cc(manifestEntry.className),
+            }, manifestEntry);
+        }
+    }
+}
+
+/**
+ * Exits with a non-zero status and prints
+ * the error if present or displays the help
+ *
+ * @param error
+ */
+async function handleError(error) {
+    process.stdout.write('\n' + chalk.red.bold(error + '\n'));
+    if (error.name === 'ArgumentError') {
+        await help(args);
+    }
+    return 1;
+}
+
+runProgram()
+    .then(process.exit)
+    .catch(handleError)
+    .then(process.exit);
