@@ -16,7 +16,7 @@ export interface QnAMakerResult {
     score: number;
 }
 
-const GENERATEANSWER_PATH = '/qnamaker/v3.0/knowledgebases/generateanswer';
+const BASEAPI_PATH = 'qnamaker/v3.0/knowledgebases/';
 
 export interface QnAMakerSettings {
     /** ID of your knowledge base. */
@@ -78,6 +78,12 @@ export class QnAMaker implements Middleware {
         }
     }
 
+    /**
+     * Calls [generateAnswer()](#generateanswer) and sends the answer as a message ot the user. 
+     * Returns a value of `true` if an answer was found and sent. If multiple answers are 
+     * returned the first one will be delivered.
+     * @param context Context for the current turn of conversation with the use.
+     */
     public answer(context: BotContext): Promise<boolean> {
         const { top, scoreThreshold } = this.settings;
         return this.generateAnswer(context.request.text, top, scoreThreshold).then((answers) => {
@@ -90,6 +96,13 @@ export class QnAMaker implements Middleware {
 
     }
 
+    /**
+     * Calls the QnA Maker service to generate answer(s) for a question. The returned answers will
+     * be sorted by score with the top scoring answer returned first.
+     * @param question The question to answer.
+     * @param top (Optional) number of answers to return. Defaults to a value of `1`.
+     * @param scoreThreshold (Optional) minimum answer score needed to be considered a match to questions. Defaults to a value of `0.0`.
+     */
     public generateAnswer(question: string, top?: number, scoreThreshold?: number): Promise<QnAMakerResult[]> {
         const { serviceEndpoint } = this.settings;
         return this.callService(serviceEndpoint as string, question, typeof top === 'number' ? top : 1).then((answers) => {
@@ -99,8 +112,9 @@ export class QnAMaker implements Middleware {
     }
 
     protected callService(serviceEndpoint: string, question: string, top: number): Promise<QnAMakerResult[]> {
+        const url = `${serviceEndpoint}${BASEAPI_PATH}${this.settings.knowledgeBaseId}/generateanswer`;
         return request({
-            url: serviceEndpoint + GENERATEANSWER_PATH,
+            url: url,
             method: 'POST',
             headers: {
                 'Ocp-Apim-Subscription-Key': this.settings.subscriptionKey

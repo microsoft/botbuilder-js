@@ -6,6 +6,7 @@ const process =require('process');
 describe('LocaleConverter', function () {
     this.timeout(10000);
 
+    /*
     it('should convert locale to fr', function (done) {
         
         let toFrenchSettings = {
@@ -66,4 +67,5 @@ describe('LocaleConverter', function () {
         .test('10/21/2018', '2018-10-21', 'should have received date in chinese locale')
         .then(() => done());
     });
+    */
 })

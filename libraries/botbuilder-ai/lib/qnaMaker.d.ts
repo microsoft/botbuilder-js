@@ -40,7 +40,20 @@ export declare class QnAMaker implements Middleware {
     private readonly settings;
     constructor(settings: QnAMakerSettings);
     onProcessRequest(context: BotContext, next: () => Promise<void>): Promise<void>;
+    /**
+     * Calls [generateAnswer()](#generateanswer) and sends the answer as a message ot the user.
+     * Returns a value of `true` if an answer was found and sent. If multiple answers are
+     * returned the first one will be delivered.
+     * @param context Context for the current turn of conversation with the use.
+     */
     answer(context: BotContext): Promise<boolean>;
+    /**
+     * Calls the QnA Maker service to generate answer(s) for a question. The returned answers will
+     * be sorted by score with the top scoring answer returned first.
+     * @param question The question to answer.
+     * @param top (Optional) number of answers to return. Defaults to a value of `1`.
+     * @param scoreThreshold (Optional) minimum answer score needed to be considered a match to questions. Defaults to a value of `0.0`.
+     */
     generateAnswer(question: string, top?: number, scoreThreshold?: number): Promise<QnAMakerResult[]>;
     protected callService(serviceEndpoint: string, question: string, top: number): Promise<QnAMakerResult[]>;
 }

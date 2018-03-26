@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const request = require("request-promise-native");
 const entities = require("html-entities");
 var htmlentities = new entities.AllHtmlEntities();
-const GENERATEANSWER_PATH = '/qnamaker/v3.0/knowledgebases/generateanswer';
+const BASEAPI_PATH = 'qnamaker/v3.0/knowledgebases/';
 class QnAMaker {
     constructor(settings) {
         this.settings = Object.assign({
@@ -30,6 +30,12 @@ class QnAMaker {
                 .then(() => !context.responded ? this.answer(context).then(() => { }) : Promise.resolve());
         }
     }
+    /**
+     * Calls [generateAnswer()](#generateanswer) and sends the answer as a message ot the user.
+     * Returns a value of `true` if an answer was found and sent. If multiple answers are
+     * returned the first one will be delivered.
+     * @param context Context for the current turn of conversation with the use.
+     */
     answer(context) {
         const { top, scoreThreshold } = this.settings;
         return this.generateAnswer(context.request.text, top, scoreThreshold).then((answers) => {
@@ -41,6 +47,13 @@ class QnAMaker {
             }
         });
     }
+    /**
+     * Calls the QnA Maker service to generate answer(s) for a question. The returned answers will
+     * be sorted by score with the top scoring answer returned first.
+     * @param question The question to answer.
+     * @param top (Optional) number of answers to return. Defaults to a value of `1`.
+     * @param scoreThreshold (Optional) minimum answer score needed to be considered a match to questions. Defaults to a value of `0.0`.
+     */
     generateAnswer(question, top, scoreThreshold) {
         const { serviceEndpoint } = this.settings;
         return this.callService(serviceEndpoint, question, typeof top === 'number' ? top : 1).then((answers) => {
@@ -49,8 +62,9 @@ class QnAMaker {
         });
     }
     callService(serviceEndpoint, question, top) {
+        const url = `${serviceEndpoint}${BASEAPI_PATH}${this.settings.knowledgeBaseId}/generateanswer`;
         return request({
-            url: serviceEndpoint + GENERATEANSWER_PATH,
+            url: url,
             method: 'POST',
             headers: {
                 'Ocp-Apim-Subscription-Key': this.settings.subscriptionKey
