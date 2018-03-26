@@ -1,0 +1,15 @@
+{
+  "name": "primitive-es6",
+  "version": "1.0.0",
+  "description": "Bot Builder v4 example showing a simple alarm bot",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "author": "Microsoft",
+  "license": "MIT",
+  "dependencies": {
+    "botbuilder": "^4.0.0-m2.1",
+    "restify": "^7.0.0"
+  }
+}
