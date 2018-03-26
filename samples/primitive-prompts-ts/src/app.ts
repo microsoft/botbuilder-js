@@ -15,7 +15,6 @@ const adapter = new BotFrameworkAdapter({
 
 // Define conversation state shape
 interface PromptBotState {
-    count: number;
     name: string;
     activePrompt: string;
     age: number;
