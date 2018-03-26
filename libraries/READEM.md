@@ -6,9 +6,9 @@ The latest preview release of these packages can be installed from npm using the
 
 ```bash
 npm install --save botbuilder@preview
-npm install --save botbuilder-services@preview
 npm install --save botbuilder-ai@preview
 npm install --save botbuilder-azure@preview
 npm install --save botbuilder-choices@preview
-npm install --save botbuilder-node@preview
+npm install --save botbuilder-prompts@preview
+npm install --save botbuilder-dialogs@preview
 ``` 

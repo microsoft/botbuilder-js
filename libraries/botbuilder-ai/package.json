@@ -2,7 +2,7 @@
   "name": "botbuilder-ai",
   "author": "Microsoft Corp.",
   "description": "Cognitive services extensions for Microsoft BotBuilder.",
-  "version": "4.0.0-m2.1",
+  "version": "4.0.0-m2.2",
   "license": "MIT",
   "keywords": [
     "botbuilder",
@@ -20,8 +20,12 @@
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "dependencies": {
-    "botbuilder": "4.0.0-m2.1",
-    "botframework-luis": "4.0.0-m2.1",
+    "@types/html-entities": "^1.2.16",
+    "@types/node": "^9.3.0",
+    "@types/request-promise-native": "^1.0.10",
+    "@types/xmldom": "^0.1.29",
+    "botbuilder": "4.0.0-m2.2",
+    "botframework-luis": "4.0.0-m2.2",
     "html-entities": "^1.2.1",
     "mstranslator": "^3.0.0",
     "request": "2.83.0",
@@ -30,11 +34,7 @@
     "@microsoft/recognizers-text-date-time": "^1.0.0"
   },
   "devDependencies": {
-    "@types/html-entities": "^1.2.16",
     "@types/mocha": "^2.2.47",
-    "@types/node": "^9.3.0",
-    "@types/request-promise-native": "^1.0.10",
-    "@types/xmldom": "^0.1.29",
     "codelyzer": "^4.1.0",
     "mocha": "^5.0.0",
     "nyc": "^11.4.1",
