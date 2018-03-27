@@ -52,8 +52,8 @@ export declare class QnAMaker implements Middleware {
      * be sorted by score with the top scoring answer returned first.
      * @param question The question to answer.
      * @param top (Optional) number of answers to return. Defaults to a value of `1`.
-     * @param scoreThreshold (Optional) minimum answer score needed to be considered a match to questions. Defaults to a value of `0.0`.
+     * @param scoreThreshold (Optional) minimum answer score needed to be considered a match to questions. Defaults to a value of `0.001`.
      */
-    generateAnswer(question: string, top?: number, scoreThreshold?: number): Promise<QnAMakerResult[]>;
+    generateAnswer(question: string | undefined, top?: number, scoreThreshold?: number): Promise<QnAMakerResult[]>;
     protected callService(serviceEndpoint: string, question: string, top: number): Promise<QnAMakerResult[]>;
 }

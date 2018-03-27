@@ -69,12 +69,14 @@ export class QnAMaker implements Middleware {
     public onProcessRequest(context: BotContext, next: () => Promise<void>): Promise<void> {
         if (this.settings.answerBeforeNext) {
             // Attempt to answer user and only call next() if not answered
-            return this.answer(context)
-                .then((answered) => !answered ? next() : Promise.resolve());
+            return this.answer(context).then((answered) => {
+                return !answered ? next() : Promise.resolve()
+            });
         } else {
             // Call next() and then attempt to answer only if nothing else responded
-            return next()
-                .then(() => !context.responded ? this.answer(context).then(() => {}) : Promise.resolve());
+            return next().then(() => {
+                return !context.responded ? this.answer(context).then(() => {}) : Promise.resolve()
+            });
         }
     }
 
@@ -101,14 +103,18 @@ export class QnAMaker implements Middleware {
      * be sorted by score with the top scoring answer returned first.
      * @param question The question to answer.
      * @param top (Optional) number of answers to return. Defaults to a value of `1`.
-     * @param scoreThreshold (Optional) minimum answer score needed to be considered a match to questions. Defaults to a value of `0.0`.
+     * @param scoreThreshold (Optional) minimum answer score needed to be considered a match to questions. Defaults to a value of `0.001`.
      */
-    public generateAnswer(question: string, top?: number, scoreThreshold?: number): Promise<QnAMakerResult[]> {
+    public generateAnswer(question: string|undefined, top?: number, scoreThreshold?: number): Promise<QnAMakerResult[]> {
         const { serviceEndpoint } = this.settings;
-        return this.callService(serviceEndpoint as string, question, typeof top === 'number' ? top : 1).then((answers) => {
-            const minScore = typeof scoreThreshold === 'number' ? scoreThreshold : 0.0;
-            return answers.filter((ans) => ans.score >= minScore).sort((a, b) => b.score - a.score);
-        });
+        const q = question ? question.trim() : ''; 
+        if (q.length > 0) {
+            return this.callService(serviceEndpoint as string, question, typeof top === 'number' ? top : 1).then((answers) => {
+                const minScore = typeof scoreThreshold === 'number' ? scoreThreshold : 0.001;
+                return answers.filter((ans) => ans.score >= minScore).sort((a, b) => b.score - a.score);
+            });
+        }
+        return Promise.resolve([]);
     }
 
     protected callService(serviceEndpoint: string, question: string, top: number): Promise<QnAMakerResult[]> {
@@ -125,7 +131,7 @@ export class QnAMaker implements Middleware {
             }
         }).then(result => {
             const answers: QnAMakerResult[] = [];
-            return ((result.answers || []) as QnAMakerResult[]).map((ans) => { 
+            return (result.answers as QnAMakerResult[]).map((ans) => { 
                 return { score: ans.score / 100, answer: htmlentities.decode(ans.answer) }  as QnAMakerResult;
             });
         });
