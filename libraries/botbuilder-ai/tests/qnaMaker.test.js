@@ -97,6 +97,25 @@ describe('QnAMaker', function () {
         });
     });
 
+    it('should bypass calling service in middleware for non-message activities.', function (done) {
+        let intercepted = true;
+        const context = new TestContext({ text: `how do I clean the stove?`, type: 'foo' });
+        const qnaMaker = new ai.QnAMaker({
+            knowledgeBaseId: knowlegeBaseId,
+            subscriptionKey: subscriptionKey,
+            top: 1,
+            answerBeforeNext: true
+        });
+
+        qnaMaker.onProcessRequest(context, () => {
+            intercepted = false;
+            return  Promise.resolve();
+        }).then(() => {
+            assert(!intercepted, `intercepted.`)
+            done();
+        });
+    });
+    
     it('should continue on to bot logic when run as intercept middleware and no answer found', function (done) {
         let intercepted = true;
         const context = new TestContext({ text: `foo`, type: 'message' });

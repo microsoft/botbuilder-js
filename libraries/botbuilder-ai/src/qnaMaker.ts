@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.  
  * Licensed under the MIT License.
  */
-import { BotContext, Middleware } from 'botbuilder';
+import { BotContext, Middleware, ActivityTypes } from 'botbuilder';
 import * as request from 'request-promise-native';
 import * as entities from 'html-entities';
 
@@ -67,6 +67,12 @@ export class QnAMaker implements Middleware {
     }
 
     public onProcessRequest(context: BotContext, next: () => Promise<void>): Promise<void> {
+        // Filter out non-message activities
+        if (context.request.type !== ActivityTypes.Message) {
+            return next();
+        }
+
+        // Route request
         if (this.settings.answerBeforeNext) {
             // Attempt to answer user and only call next() if not answered
             return this.answer(context).then((answered) => {
