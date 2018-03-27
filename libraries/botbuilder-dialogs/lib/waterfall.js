@@ -74,7 +74,7 @@ class Waterfall {
      * @param steps Array of waterfall steps.
      */
     constructor(steps) {
-        this.steps = (steps || []).slice(0);
+        this.steps = steps.slice(0);
     }
     dialogBegin(dc, args) {
         const instance = dc.instance;
@@ -84,7 +84,7 @@ class Waterfall {
     dialogContinue(dc) {
         const instance = dc.instance;
         instance.step += 1;
-        return this.runStep(dc, dc.context.request.text || '');
+        return this.runStep(dc, dc.context.request.text);
     }
     dialogResume(dc, result) {
         const instance = dc.instance;

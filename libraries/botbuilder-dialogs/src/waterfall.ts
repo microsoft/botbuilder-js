@@ -132,7 +132,7 @@ export class Waterfall<C extends BotContext> implements Dialog<C> {
      * @param steps Array of waterfall steps. 
      */
     constructor(steps: WaterfallStep<C>[]) {
-        this.steps = (steps || []).slice(0);
+        this.steps = steps.slice(0);
     }
 
     public dialogBegin(dc: DialogContext<C>, args?: any): Promiseable<any> {
@@ -144,7 +144,7 @@ export class Waterfall<C extends BotContext> implements Dialog<C> {
     public dialogContinue(dc: DialogContext<C>): Promise<any> {
         const instance = dc.instance as WaterfallInstance<any>;
         instance.step += 1
-        return this.runStep(dc, dc.context.request.text || '');
+        return this.runStep(dc, dc.context.request.text);
     }
 
     public dialogResume(dc: DialogContext<C>, result?: any): Promiseable<any> {

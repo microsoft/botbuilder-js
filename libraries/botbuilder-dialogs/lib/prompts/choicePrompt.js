@@ -68,17 +68,14 @@ class ChoicePrompt extends prompt_1.Prompt {
         return this;
     }
     onPrompt(dc, options, isRetry) {
-        const choices = options.choices || [];
+        const choices = options.choices;
         if (isRetry && options.retryPrompt) {
             return this.prompt.prompt(dc.context, choices, options.retryPrompt, options.retrySpeak);
         }
-        else if (choices.length || options.prompt) {
-            return this.prompt.prompt(dc.context, choices, options.prompt, options.speak);
-        }
-        return Promise.resolve();
+        return this.prompt.prompt(dc.context, choices, options.prompt, options.speak);
     }
     onRecognize(dc, options) {
-        return this.prompt.recognize(dc.context, options.choices || []);
+        return this.prompt.recognize(dc.context, options.choices);
     }
 }
 exports.ChoicePrompt = ChoicePrompt;
