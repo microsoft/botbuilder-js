@@ -190,7 +190,7 @@ class DialogContext {
     endAll() {
         // Cancel any active dialogs
         if (this.stack.length > 0) {
-            this.stack.splice(0, this.stack.length - 1);
+            this.stack.splice(0, this.stack.length);
         }
         return this;
     }
@@ -216,17 +216,12 @@ class DialogContext {
      * @param dialogArgs (Optional) additional argument(s) to pass to the new dialog.
      */
     replace(dialogId, dialogArgs) {
-        try {
-            // Pop stack
-            if (this.stack.length > 0) {
-                this.stack.pop();
-            }
-            // Start replacement dialog
-            return this.begin(dialogId, dialogArgs);
+        // Pop stack
+        if (this.stack.length > 0) {
+            this.stack.pop();
         }
-        catch (err) {
-            return Promise.reject(err);
-        }
+        // Start replacement dialog
+        return this.begin(dialogId, dialogArgs);
     }
     ensureDialogResult(result) {
         return typeof result === 'object' && typeof result.active === 'boolean' ? result : { active: this.stack.length > 0 };
