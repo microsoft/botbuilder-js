@@ -58,4 +58,13 @@ export declare class TableStorage implements Storage {
      * @param keys Array of item keys to remove from the store.
      **/
     delete(keys: string[]): Promise<void>;
+    protected createTableService(storageAccountOrConnectionString: string, storageAccessKey: string, host: any): TableServiceAsync;
+}
+export interface TableServiceAsync extends azure.TableService {
+    createTableIfNotExistsAsync(table: string): Promise<azure.TableService.TableResult>;
+    deleteTableIfExistsAsync(table: string): Promise<boolean>;
+    retrieveEntityAsync<T>(table: string, partitionKey: string, rowKey: string): Promise<T>;
+    replaceEntityAsync<T>(table: string, entityDescriptor: T): Promise<azure.TableService.EntityMetadata>;
+    insertOrReplaceEntityAsync<T>(table: string, entityDescriptor: T): Promise<azure.TableService.EntityMetadata>;
+    deleteEntityAsync<T>(table: string, entityDescriptor: T): Promise<void>;
 }

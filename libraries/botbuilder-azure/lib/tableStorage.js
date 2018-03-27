@@ -18,18 +18,7 @@ class TableStorage {
      */
     constructor(settings) {
         this.settings = Object.assign({}, settings);
-        if (this.settings.storageAccountOrConnectionString)
-            this.tableService = azure.createTableService(this.settings.storageAccountOrConnectionString, this.settings.storageAccessKey, this.settings.host);
-        else
-            // uses environment variables
-            this.tableService = azure.createTableService();
-        // create TableServiceAsync by using denodeify to create promise wrappers around cb functions
-        this.tableService.createTableIfNotExistsAsync = denodeify(this.tableService, this.tableService.createTableIfNotExists);
-        this.tableService.deleteTableIfExistsAsync = denodeify(this.tableService, this.tableService.deleteTableIfExists);
-        this.tableService.retrieveEntityAsync = denodeify(this.tableService, this.tableService.retrieveEntity);
-        this.tableService.insertOrReplaceEntityAsync = denodeify(this.tableService, this.tableService.insertOrReplaceEntity);
-        this.tableService.replaceEntityAsync = denodeify(this.tableService, this.tableService.replaceEntity);
-        this.tableService.deleteEntityAsync = denodeify(this.tableService, this.tableService.deleteEntity);
+        this.tableService = this.createTableService(this.settings.storageAccountOrConnectionString, this.settings.storageAccessKey, this.settings.host);
     }
     sanitizeKey(key) {
         let badChars = ['\\', '?', '/', '#', '\t', '\n', '\r'];
@@ -166,6 +155,18 @@ class TableStorage {
             return Promise.all(promises)
                 .then(result => { });
         });
+    }
+    createTableService(storageAccountOrConnectionString, storageAccessKey, host) {
+        const tableService = storageAccountOrConnectionString ? azure.createTableService(storageAccountOrConnectionString, storageAccessKey, host) : azure.createTableService();
+        // create TableServiceAsync by using denodeify to create promise wrappers around cb functions
+        return {
+            createTableIfNotExistsAsync: denodeify(tableService, tableService.createTableIfNotExists),
+            deleteTableIfExistsAsync: denodeify(tableService, tableService.deleteTableIfExists),
+            retrieveEntityAsync: denodeify(tableService, tableService.retrieveEntity),
+            insertOrReplaceEntityAsync: denodeify(tableService, tableService.insertOrReplaceEntity),
+            replaceEntityAsync: denodeify(tableService, tableService.replaceEntity),
+            deleteEntityAsync: denodeify(tableService, tableService.deleteEntity)
+        };
     }
 }
 exports.TableStorage = TableStorage;

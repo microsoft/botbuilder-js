@@ -88,16 +88,14 @@ export class ChoicePrompt<C extends BotContext> extends Prompt<C, prompts.FoundC
     }
     
     protected onPrompt(dc: DialogContext<C>, options: ChoicePromptOptions, isRetry: boolean): Promise<void> {
-        const choices = options.choices || [];
+        const choices = options.choices;
         if (isRetry && options.retryPrompt) {
             return this.prompt.prompt(dc.context, choices, options.retryPrompt, options.retrySpeak);
-        } else if (choices.length || options.prompt) {
-            return this.prompt.prompt(dc.context, choices, options.prompt, options.speak);
         }
-        return Promise.resolve();
+        return this.prompt.prompt(dc.context, choices, options.prompt, options.speak);
     }
 
     protected onRecognize(dc: DialogContext<C>, options: ChoicePromptOptions): Promise<prompts.FoundChoice|undefined> {
-        return this.prompt.recognize(dc.context, options.choices || []);
+        return this.prompt.recognize(dc.context, options.choices);
     }
 }

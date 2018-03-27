@@ -44,21 +44,7 @@ export class TableStorage implements Storage {
      */
     public constructor(settings: TableStorageSettings) {
         this.settings = Object.assign({}, settings);
-
-        if (this.settings.storageAccountOrConnectionString)
-            this.tableService = <TableServiceAsync>azure.createTableService(this.settings.storageAccountOrConnectionString as string, this.settings.storageAccessKey as string, this.settings.host);
-        else
-            // uses environment variables
-            this.tableService = <TableServiceAsync>azure.createTableService();
-
-        // create TableServiceAsync by using denodeify to create promise wrappers around cb functions
-        this.tableService.createTableIfNotExistsAsync = denodeify(this.tableService, this.tableService.createTableIfNotExists);
-        this.tableService.deleteTableIfExistsAsync = denodeify(this.tableService, this.tableService.deleteTableIfExists);
-
-        this.tableService.retrieveEntityAsync = denodeify(this.tableService, this.tableService.retrieveEntity);
-        this.tableService.insertOrReplaceEntityAsync = denodeify(this.tableService, this.tableService.insertOrReplaceEntity);
-        this.tableService.replaceEntityAsync = denodeify(this.tableService, this.tableService.replaceEntity);
-        this.tableService.deleteEntityAsync = denodeify(this.tableService, this.tableService.deleteEntity);
+        this.tableService = this.createTableService(this.settings.storageAccountOrConnectionString, this.settings.storageAccessKey, this.settings.host)
     }
 
     private sanitizeKey(key: string): string {
@@ -206,6 +192,20 @@ export class TableStorage implements Storage {
                     .then(result => { });
             });
     }
+
+    protected createTableService(storageAccountOrConnectionString: string, storageAccessKey: string, host: any): TableServiceAsync {
+        const tableService = storageAccountOrConnectionString ? azure.createTableService(storageAccountOrConnectionString, storageAccessKey, host) : azure.createTableService();
+
+        // create TableServiceAsync by using denodeify to create promise wrappers around cb functions
+        return {
+            createTableIfNotExistsAsync: denodeify(tableService, tableService.createTableIfNotExists),
+            deleteTableIfExistsAsync: denodeify(tableService, tableService.deleteTableIfExists),
+            retrieveEntityAsync: denodeify(tableService, tableService.retrieveEntity),
+            insertOrReplaceEntityAsync: denodeify(tableService, tableService.insertOrReplaceEntity),
+            replaceEntityAsync: denodeify(tableService, tableService.replaceEntity),
+            deleteEntityAsync: denodeify(tableService, tableService.deleteEntity)
+        } as any;
+    }
 }
 
 // turn a cb based azure method into a Promisified one
@@ -219,7 +219,7 @@ function denodeify<T>(thisArg: any, fn: Function): (...args: any[]) => Promise<T
 }
 
 // Promise based methods created using denodeify function
-interface TableServiceAsync extends azure.TableService {
+export interface TableServiceAsync extends azure.TableService {
     createTableIfNotExistsAsync(table: string): Promise<azure.TableService.TableResult>;
     deleteTableIfExistsAsync(table: string): Promise<boolean>;
 
