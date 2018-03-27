@@ -76,7 +76,6 @@ export class LanguageTranslator implements Middleware {
             let text = message.text.length <= 65536 ? message.text : message.text.substring(0, 65536);
         
             let lines = text.split('\n');
-            console.log(lines);
             return this.translator.translateArrayAsync({
                 from: sourceLanguage,
                 to: targetLanguage,
@@ -238,8 +237,6 @@ export class PostProcessTranslator {
 
     private wordAlignmentParse(alignment: string, source: string, target: string): { [id: string] : string } {
         let alignMap: { [id: string] : string } = {};
-        console.log('here');
-        console.log(alignment);
         if (alignment.trim().replace('\n', '') == "") {
             return alignMap;
         }
