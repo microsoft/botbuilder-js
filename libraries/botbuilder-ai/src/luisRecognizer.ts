@@ -126,12 +126,10 @@ export class LuisRecognizer implements Middleware {
         let topScore = -1;
         if (results && results.intents) {
             for (const name in results.intents) {
-                if (results.intents.hasOwnProperty(name)) {
-                    const score = results.intents[name];
-                    if (score > topScore && score >= minScore) {
-                        topIntent = name;
-                        topScore = score;
-                    }
+                const score = results.intents[name];
+                if (typeof score === 'number' && score > topScore && score >= minScore) {
+                    topIntent = name;
+                    topScore = score;
                 }
             }
         }
@@ -142,12 +140,11 @@ export class LuisRecognizer implements Middleware {
         const intents: { [name:string]: number; }  = {}
         if(luisResult.intents){
             luisResult.intents.reduce((prev : any, curr : Intent) => {
-                prev[curr.intent || ''] = curr.score;
+                prev[curr.intent] = curr.score;
                 return prev;
             }, intents);
-        }
-        else{
-            const topScoringIntent = luisResult.topScoringIntent || {intent: 'None', score: 0};
+        } else {
+            const topScoringIntent = luisResult.topScoringIntent;
             intents[(topScoringIntent).intent] = topScoringIntent.score;
         }
         return intents;
@@ -181,11 +178,8 @@ export class LuisRecognizer implements Middleware {
     }
 
     private getEntityValue(entity: Entity) : any {
-        if(entity.type.startsWith("builtin.datetimeV2.")){
-            return entity.resolution && entity.resolution.values && entity.resolution.values.length ? 
-                                entity.resolution.values[0].timex : 
-                                entity.resolution;
-           
+        if(entity.type.startsWith("builtin.datetimeV2.") && entity.resolution && entity.resolution.values && entity.resolution.values.length){
+            return entity.resolution.values[0].timex;
         }
         else if(entity.resolution){
             if(entity.type.startsWith("builtin.number")){
@@ -228,10 +222,6 @@ export class LuisRecognizer implements Middleware {
             // multiple times within an utterance, but this is just a stop gap solution till the indices are included in composite entities
             return entity.type === compositeEntity.parentType && entity.entity === compositeEntity.value
         });
-
-        // This is an error case and should not happen in theory
-        if(!compositeEntityMetadata)
-            return entities;
 
         let filteredEntities : Entity[] = [];
         if(verbose){

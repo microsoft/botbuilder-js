@@ -1,6 +1,6 @@
 const assert = require('assert');
 const { TestAdapter, BotContext } = require('botbuilder');
-const ai = require('../');
+const { LuisRecognizer } = require('../');
 
 const luisAppId = process.env.LUISAPPID;
 const subscriptionKey = process.env.LUISAPPKEY;
@@ -31,7 +31,7 @@ describe('LuisRecognizer', function () {
     }
 
     it('should return multiple intents and a simple entity', function(done){
-        var recognizer = new ai.LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey, verbose: true });
+        var recognizer = new LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey, verbose: true });
         var context = new TestContext({ text: 'My name is Emad' });
         recognizer.recognize(context).then(res => {
                 assert(res);
@@ -52,7 +52,7 @@ describe('LuisRecognizer', function () {
     });
 
     it('should return multiple intents and prebuilt entities with a single value', function(done){
-        var recognizer = new ai.LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey, verbose: true,  options: { verbose : true} });
+        var recognizer = new LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey, verbose: true,  options: { verbose : true} });
         var context = new TestContext({ text: 'Please deliver February 2nd 2001' });
         recognizer.recognize(context).then(res => {
                 assert(res);
@@ -60,7 +60,7 @@ describe('LuisRecognizer', function () {
                 assert(res.intents);
                 assert(res.intents.Delivery);
                 assert(res.intents.Delivery > 0 && res.intents.Delivery <= 1);
-                assert(ai.LuisRecognizer.topIntent(res) === 'Delivery');
+                assert(LuisRecognizer.topIntent(res) === 'Delivery');
                 assert(res.entities);
                 assert(res.entities.builtin_number);
                 assert(res.entities.builtin_number[0] === 2001);
@@ -82,7 +82,7 @@ describe('LuisRecognizer', function () {
     });
  
     it('should return multiple intents and prebuilt entities with multiple values', function(done){
-        var recognizer = new ai.LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey, verbose: true, options: { verbose : true} });
+        var recognizer = new LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey, verbose: true, options: { verbose : true} });
         var context = new TestContext({ text: 'Please deliver February 2nd 2001 in room 201' });
         recognizer.recognize(context).then(res => {
                 assert(res);
@@ -103,7 +103,7 @@ describe('LuisRecognizer', function () {
     
 
     it('should return multiple intents and a list entity with a single value', function(done){
-        var recognizer = new ai.LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey, verbose: true, options: { verbose : true} });
+        var recognizer = new LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey, verbose: true, options: { verbose : true} });
         var context = new TestContext({ text: 'I want to travel on united' });
         recognizer.recognize(context).then(res => {
                 assert(res);
@@ -127,7 +127,7 @@ describe('LuisRecognizer', function () {
     });
     
     it('should return multiple intents and a list entity with multiple values', function(done){
-        var recognizer = new ai.LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey, verbose: true, options: { verbose : true} });
+        var recognizer = new LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey, verbose: true, options: { verbose : true} });
         var context = new TestContext({ text: 'I want to travel on DL' });
         recognizer.recognize(context).then(res => {
                 assert(res);
@@ -153,7 +153,7 @@ describe('LuisRecognizer', function () {
     });
 
     it('should return multiple intents and a single composite entity', function(done){
-        var recognizer = new ai.LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey, verbose: true, options: { verbose : true} });
+        var recognizer = new LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey, verbose: true, options: { verbose : true} });
         var context = new TestContext({ text: 'Please deliver it to 98033 WA' });
         recognizer.recognize(context).then(res => {
                 assert(res);
@@ -194,5 +194,74 @@ describe('LuisRecognizer', function () {
                 assert(res.entities.Address[0].$instance.State[0].score > 0 && res.entities.Address[0].$instance.State[0].score <= 1);
                 done();
             });
+    });
+
+    it('should run as a piece of middleware', function(done){
+        var recognizer = new LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey, verbose: true });
+        var context = new TestContext({ text: 'My name is Emad' });
+        recognizer.onProcessRequest(context, () => {
+            const res = recognizer.get(context);
+            assert(res);
+            assert(res.text == 'My name is Emad');
+            done();
+        });
+    });
+
+    it('should cache multiple calls to recognize()', function(done){
+        var recognizer = new LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey, verbose: true });
+        var context = new TestContext({ text: 'My name is Emad' });
+        recognizer.recognize(context).then(res => {
+            assert(res);
+            res.text = 'cached';
+            recognizer.recognize(context).then(res => {
+                assert(res);
+                assert(res.text === 'cached');
+                done();
+            });
+        });
+    });
+
+    it('should only return $instance metadata for entities if verbose flag set', function(done){
+        var recognizer = new LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey, verbose: false });
+        var context = new TestContext({ text:  'My name is Emad' });
+        recognizer.recognize(context).then(res => {
+            assert(res);
+            assert(res.entities);
+            assert(res.entities.$instance === undefined);
+            done();
+        });
+    });
+    
+    it('should only return $instance metadata for composite entities if verbose flag set', function(done){
+        var recognizer = new LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey, verbose: false });
+        var context = new TestContext({ text: 'Please deliver it to 98033 WA' });
+        recognizer.recognize(context).then(res => {
+            assert(res);
+            assert(res.entities);
+            assert(res.entities.$instance === undefined);
+            done();
+        });
+    });
+
+    it('should only return "None" intent for undefined text', function(done){
+        var recognizer = new LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey, verbose: false });
+        var context = new TestContext({ text: undefined });
+        recognizer.recognize(context).then(res => {
+            const top = LuisRecognizer.topIntent(res);
+            assert(top === 'None');
+            done();
+        });
+    });
+    
+    it('should return defaultIntent from topIntent() if results undefined', function(done){
+        const top = LuisRecognizer.topIntent(undefined);
+        assert(top === 'None');
+        done();
+    });
+
+    it('should return defaultIntent from topIntent() if intent scores below threshold', function(done){
+        const top = LuisRecognizer.topIntent({ intents: { TestIntent: 0.49 } }, 'None', 0.5);
+        assert(top === 'None');
+        done();
     });
 });
