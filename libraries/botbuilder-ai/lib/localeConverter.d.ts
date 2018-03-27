@@ -24,4 +24,5 @@ export declare class LocaleConverter implements Middleware {
     constructor(settings: LocaleConverterSettings);
     onProcessRequest(context: BotContext, next: () => Promise<void>): Promise<void>;
     private convertLocalesAsync(context);
+    getAvailableLocales(): Promise<string[]>;
 }

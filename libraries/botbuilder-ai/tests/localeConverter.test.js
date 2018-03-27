@@ -6,7 +6,6 @@ const process =require('process');
 describe('LocaleConverter', function () {
     this.timeout(10000);
 
-    /*
     it('should convert locale to fr', function (done) {
         
         let toFrenchSettings = {
@@ -67,5 +66,94 @@ describe('LocaleConverter', function () {
         .test('10/21/2018', '2018-10-21', 'should have received date in chinese locale')
         .then(() => done());
     });
-    */
+    
+    it('should convert from different locales', function(done) {
+        
+        let noFromLocaleSettings = {
+            toLocale: 'en-us',
+        }
+
+        fromLocales = ['fr', 'pt', 'zh', 'es', 'en'];
+        fromDates = ['21/10/2018', '21/10/2018', '2018-10-21', '21/10/2018', '10/21/2018'];
+
+        let testAdapter;
+
+        for (let index = 0; index < fromLocales.length; index++) {
+            noFromLocaleSettings.fromLocale = fromLocales[index]
+            testAdapter = new builder.TestAdapter(c => c.sendActivity(c.request.text))
+            .use(new ai.LocaleConverter(noFromLocaleSettings))
+            .test(fromDates[index], '10/21/2018', `should have received date in ${fromLocales[index]} locale`)
+        }
+        testAdapter
+        .then(() => done());
+    });
+
+    it('should get all supported locales', function(done) {
+        
+        let localeConverter = new ai.LocaleConverter({ toLocale: 'en-us' });
+        localeConverter.getAvailableLocales()
+        .then(result => {
+            assert.equal(result.length, 22, 'should support 22 locales');
+            return done();
+        })
+    });
+
+    it('should throw unsupported from locale error when an invalid locale is provided', function (done) {
+        
+        let invalidFromLocaleSettings = {
+            fromLocale: '',
+            toLocale: 'zh-cn',
+        }
+
+        const testAdapter = new builder.TestAdapter(c => c.sendActivity(c.request.text))
+        .use(new ai.LocaleConverter(invalidFromLocaleSettings))
+        .send('10/21/2018')
+        .catch(error => {
+            assert.equal(error, 'Error: Unsupported from locale', 'should throw an error');
+            return done();
+        })
+    });
+
+    it('should support converting time only', function (done) {
+        
+        let timeSettings = {
+            fromLocale: 'en-us',
+            toLocale: 'fr-fr',
+        }
+
+        const testAdapter = new builder.TestAdapter(c => c.sendActivity(c.request.text))
+        .use(new ai.LocaleConverter(timeSettings))
+        .test('half past 9 am', '09:30', 'should have converted the time')
+        .then(() => done());
+    });
+
+    it('should support converting ranges', function (done) {
+        
+        let rangeSettings = {
+            fromLocale: 'en-us',
+            toLocale: 'fr-fr',
+        }
+
+        const testAdapter = new builder.TestAdapter(c => c.sendActivity(c.request.text))
+        .use(new ai.LocaleConverter(rangeSettings))
+        .test('from 10/21/2018 to 10/23/2018', '21/10/2018', 'should have converted the range')
+        .then(() => done());
+    });
+
+    it('should throw an error if an unsupported to locale is used', function (done) {
+        
+        let rangeSettings = {
+            fromLocale: 'en-us',
+            toLocale: 'N/A',
+        }
+
+        const testAdapter = new builder.TestAdapter(c => c.sendActivity(c.request.text))
+        .use(new ai.LocaleConverter(rangeSettings))
+        .send('10/21/2018')
+        .catch(error => {
+            assert.equal(error, 'Unsupported to locale N/A', 'should throw an error');
+            return done();
+        })
+    });
+
 })

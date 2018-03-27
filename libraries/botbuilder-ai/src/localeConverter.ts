@@ -43,7 +43,12 @@ export class LocaleConverter implements Middleware {
                     return next();
                 }
             }
-            await this.convertLocalesAsync(context);
+            try {
+                await this.convertLocalesAsync(context);
+            }
+            catch(e) {
+                return Promise.reject(e);
+            }
         }
         return next();
     }
@@ -60,14 +65,18 @@ export class LocaleConverter implements Middleware {
                 fromLocale = 'en-us';
             }
 
-            this.localeConverter.convert(message.text, fromLocale, this.toLocale)
+            return this.localeConverter.convert(message.text, fromLocale, this.toLocale)
             .then(result => {
                 message.text = result;
                 return Promise.resolve();
             })
             .catch(error => Promise.reject(error));
         }
-        return Promise.resolve();
+    }
+
+    public getAvailableLocales(): Promise<string[]> {
+        return this.localeConverter.getAvailableLocales()
+        .then(result => Promise.resolve(result));
     }
 }
 
@@ -140,8 +149,6 @@ class MicrosoftLocaleConverter implements ILocaleConverter {
                 moment = new Date();
                 moment.setHours(parseInt(String(resolutionValues['value']).substr(0, 2)));
                 moment.setMinutes(parseInt(String(resolutionValues['value']).substr(3, 2)));
-            } else {
-                return;
             }
             let curDateTimeText = new TextAndDateTime(result.text, moment);
             foundDates.push(curDateTimeText);
@@ -150,41 +157,41 @@ class MicrosoftLocaleConverter implements ILocaleConverter {
     }
 
     convert(message: string, fromLocale: string, toLocale: string): Promise<string> {
-        if (message.trim().length == 0) {
-            return Promise.reject('Empty message');
-        }
 
         if (!this.isLocaleAvailable(toLocale)) {
-           return Promise.reject('Unsupported locale ' + toLocale);
+           return Promise.reject(`Unsupported to locale ${toLocale}`);
         }
 
-        let dates: TextAndDateTime[] = this.extractDates(message, fromLocale);
-        let processedMessage = message;
-        dates.forEach(date => {
-            if (date.dateTimeObj.toDateString() == (new Date()).toDateString()) {
-                let convertedDate = this.mapLocaleToFunction[toLocale].timeFormat
-                    .replace('hh', (date.dateTimeObj.getHours()).toLocaleString(undefined, {minimumIntegerDigits: 2}))
-                    .replace('mm', (date.dateTimeObj.getMinutes()).toLocaleString(undefined, {minimumIntegerDigits: 2}));
-                
-                processedMessage = processedMessage.replace(date.text, convertedDate)
-            } else {
-                let convertedDate = this.mapLocaleToFunction[toLocale].dateFormat
-                    .replace('yyyy', (date.dateTimeObj.getFullYear()).toLocaleString(undefined, {minimumIntegerDigits: 4}).replace(',', ''))
-                    .replace('MM', (date.dateTimeObj.getMonth() + 1).toLocaleString(undefined, {minimumIntegerDigits: 2}))
-                    .replace('dd', (date.dateTimeObj.getDate()).toLocaleString(undefined, {minimumIntegerDigits: 2}));
+
+        try {
+            let dates: TextAndDateTime[] = this.extractDates(message, fromLocale);
+            let processedMessage = message;
+            dates.forEach(date => {
+                if (date.dateTimeObj.toDateString() == (new Date()).toDateString()) {
+                    let convertedDate = this.mapLocaleToFunction[toLocale].timeFormat
+                        .replace('hh', (date.dateTimeObj.getHours()).toLocaleString(undefined, {minimumIntegerDigits: 2}))
+                        .replace('mm', (date.dateTimeObj.getMinutes()).toLocaleString(undefined, {minimumIntegerDigits: 2}));
                     
-                processedMessage = processedMessage.replace(date.text, convertedDate);
-            }
-        });
-        return Promise.resolve(processedMessage);
+                    processedMessage = processedMessage.replace(date.text, convertedDate)
+                } else {
+                    let convertedDate = this.mapLocaleToFunction[toLocale].dateFormat
+                        .replace('yyyy', (date.dateTimeObj.getFullYear()).toLocaleString(undefined, {minimumIntegerDigits: 4}).replace(',', ''))
+                        .replace('MM', (date.dateTimeObj.getMonth() + 1).toLocaleString(undefined, {minimumIntegerDigits: 2}))
+                        .replace('dd', (date.dateTimeObj.getDate()).toLocaleString(undefined, {minimumIntegerDigits: 2}));
+                        
+                    processedMessage = processedMessage.replace(date.text, convertedDate);
+                }
+            });
+            return Promise.resolve(processedMessage);
+        }
+        catch(e) {
+            return Promise.reject(e);
+        }
+        
     }
 
     getAvailableLocales(): Promise<string[]> {
-        let locales: string[] = [];
-        Object.keys(this.mapLocaleToFunction).forEach(locale => {
-            locales.push(locale)
-        });
-        return Promise.resolve(locales);
+        return Promise.resolve(Object.keys(this.mapLocaleToFunction));
     }
 }
 
