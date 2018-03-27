@@ -32,7 +32,7 @@ The LanguageTranslator will use the Text Translator Cognitive service to transla
 ### ⊕ **new LanguageTranslator**(settings: *[TranslatorSettings](../interfaces/botbuilder_ai.translatorsettings.md)*): [LanguageTranslator](botbuilder_ai.languagetranslator.md)
 
 
-*Defined in [libraries/botbuilder-ai/lib/languageTranslator.d.ts:25](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-ai/lib/languageTranslator.d.ts#L25)*
+*Defined in [libraries/botbuilder-ai/lib/languageTranslator.d.ts:25](https://github.com/Microsoft/botbuilder-js/blob/68b6da0/libraries/botbuilder-ai/lib/languageTranslator.d.ts#L25)*
 
 
 
@@ -60,7 +60,7 @@ The LanguageTranslator will use the Text Translator Cognitive service to transla
 
 
 
-*Defined in [libraries/botbuilder-ai/lib/languageTranslator.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-ai/lib/languageTranslator.d.ts#L27)*
+*Defined in [libraries/botbuilder-ai/lib/languageTranslator.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/68b6da0/libraries/botbuilder-ai/lib/languageTranslator.d.ts#L27)*
 
 
 

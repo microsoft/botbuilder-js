@@ -18,6 +18,7 @@
 ### Interfaces
 
 * [LocaleConverterSettings](interfaces/botbuilder_ai.localeconvertersettings.md)
+* [LuisRecognizerResult](interfaces/botbuilder_ai.luisrecognizerresult.md)
 * [LuisRecognizerSettings](interfaces/botbuilder_ai.luisrecognizersettings.md)
 * [QnAMakerResult](interfaces/botbuilder_ai.qnamakerresult.md)
 * [QnAMakerSettings](interfaces/botbuilder_ai.qnamakersettings.md)

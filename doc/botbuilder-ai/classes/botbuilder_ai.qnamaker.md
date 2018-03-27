@@ -32,7 +32,7 @@
 ### ⊕ **new QnAMaker**(settings: *[QnAMakerSettings](../interfaces/botbuilder_ai.qnamakersettings.md)*): [QnAMaker](botbuilder_ai.qnamaker.md)
 
 
-*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:40](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L40)*
+*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:40](https://github.com/Microsoft/botbuilder-js/blob/68b6da0/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L40)*
 
 
 
@@ -60,15 +60,18 @@
 
 
 
-*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:43](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L43)*
+*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:49](https://github.com/Microsoft/botbuilder-js/blob/68b6da0/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L49)*
 
+
+
+Calls [generateAnswer()](#generateanswer) and sends the answer as a message ot the user. Returns a value of `true` if an answer was found and sent. If multiple answers are returned the first one will be delivered.
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | `BotContext`   |  - |
+| context | `BotContext`   |  Context for the current turn of conversation with the use. |
 
 
 
@@ -90,7 +93,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:45](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L45)*
+*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:58](https://github.com/Microsoft/botbuilder-js/blob/68b6da0/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L58)*
 
 
 
@@ -122,17 +125,20 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:44](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L44)*
+*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:57](https://github.com/Microsoft/botbuilder-js/blob/68b6da0/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L57)*
 
+
+
+Calls the QnA Maker service to generate answer(s) for a question. The returned answers will be sorted by score with the top scoring answer returned first.
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| question | `string`   |  - |
-| top | `number`   |  - |
-| scoreThreshold | `number`   |  - |
+| question | `string`   |  The question to answer. |
+| top | `number`   |  (Optional) number of answers to return. Defaults to a value of `1`. |
+| scoreThreshold | `number`   |  (Optional) minimum answer score needed to be considered a match to questions. Defaults to a value of `0.0`. |
 
 
 
@@ -154,7 +160,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:42](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L42)*
+*Defined in [libraries/botbuilder-ai/lib/qnaMaker.d.ts:42](https://github.com/Microsoft/botbuilder-js/blob/68b6da0/libraries/botbuilder-ai/lib/qnaMaker.d.ts#L42)*
 
 
 

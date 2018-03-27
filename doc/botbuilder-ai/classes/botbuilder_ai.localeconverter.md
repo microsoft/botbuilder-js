@@ -32,7 +32,7 @@ The LocaleConverter converts all locales in a message to a given locale.
 ### ⊕ **new LocaleConverter**(settings: *[LocaleConverterSettings](../interfaces/botbuilder_ai.localeconvertersettings.md)*): [LocaleConverter](botbuilder_ai.localeconverter.md)
 
 
-*Defined in [libraries/botbuilder-ai/lib/localeConverter.d.ts:23](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-ai/lib/localeConverter.d.ts#L23)*
+*Defined in [libraries/botbuilder-ai/lib/localeConverter.d.ts:23](https://github.com/Microsoft/botbuilder-js/blob/68b6da0/libraries/botbuilder-ai/lib/localeConverter.d.ts#L23)*
 
 
 
@@ -60,7 +60,7 @@ The LocaleConverter converts all locales in a message to a given locale.
 
 
 
-*Defined in [libraries/botbuilder-ai/lib/localeConverter.d.ts:25](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-ai/lib/localeConverter.d.ts#L25)*
+*Defined in [libraries/botbuilder-ai/lib/localeConverter.d.ts:25](https://github.com/Microsoft/botbuilder-js/blob/68b6da0/libraries/botbuilder-ai/lib/localeConverter.d.ts#L25)*
 
 
 

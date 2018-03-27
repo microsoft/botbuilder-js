@@ -30,7 +30,7 @@
 ### ⊕ **new PostProcessTranslator**(noTranslatePatterns: *`Set`.<`string`>*): [PostProcessTranslator](botbuilder_ai.postprocesstranslator.md)
 
 
-*Defined in [libraries/botbuilder-ai/lib/languageTranslator.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-ai/lib/languageTranslator.d.ts#L31)*
+*Defined in [libraries/botbuilder-ai/lib/languageTranslator.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/68b6da0/libraries/botbuilder-ai/lib/languageTranslator.d.ts#L31)*
 
 
 
@@ -56,7 +56,7 @@
 
 **●  noTranslatePatterns**:  *`Set`.<`string`>* 
 
-*Defined in [libraries/botbuilder-ai/lib/languageTranslator.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-ai/lib/languageTranslator.d.ts#L31)*
+*Defined in [libraries/botbuilder-ai/lib/languageTranslator.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/68b6da0/libraries/botbuilder-ai/lib/languageTranslator.d.ts#L31)*
 
 
 
@@ -74,7 +74,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-ai/lib/languageTranslator.d.ts:35](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-ai/lib/languageTranslator.d.ts#L35)*
+*Defined in [libraries/botbuilder-ai/lib/languageTranslator.d.ts:35](https://github.com/Microsoft/botbuilder-js/blob/68b6da0/libraries/botbuilder-ai/lib/languageTranslator.d.ts#L35)*
 
 
 

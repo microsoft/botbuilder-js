@@ -12,7 +12,7 @@
 
 **●  appId**:  *`string`* 
 
-*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:13](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L13)*
+*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:12](https://github.com/Microsoft/botbuilder-js/blob/68b6da0/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L12)*
 
 
 
@@ -29,7 +29,7 @@ ___
 
 **●  options**:  *`object`* 
 
-*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L19)*
+*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:20](https://github.com/Microsoft/botbuilder-js/blob/68b6da0/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L20)*
 
 
 
@@ -41,13 +41,6 @@ ___
 
 
 «Optional»  allowSampling: `string`
-
-
-
-
-
-
-«Optional»  contextId: `string`
 
 
 
@@ -98,11 +91,11 @@ ___
 
 **●  serviceEndpoint**:  *`string`* 
 
-*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L17)*
+*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:16](https://github.com/Microsoft/botbuilder-js/blob/68b6da0/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L16)*
 
 
 
-(Optional) service endpoint to call. Defaults to "[https://westus.api.cognitive.microsoft.com/"](https://westus.api.cognitive.microsoft.com/").
+(Optional) service endpoint to call. Defaults to "[https://westus.api.cognitive.microsoft.com](https://westus.api.cognitive.microsoft.com)".
 
 
 
@@ -115,11 +108,28 @@ ___
 
 **●  subscriptionKey**:  *`string`* 
 
-*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L15)*
+*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:14](https://github.com/Microsoft/botbuilder-js/blob/68b6da0/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L14)*
 
 
 
 Your subscription key.
+
+
+
+
+___
+
+<a id="verbose-1"></a>
+
+### «Optional» verbose
+
+**●  verbose**:  *`boolean`* 
+
+*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/68b6da0/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L18)*
+
+
+
+(Optional) if set to true, we return the metadata of the returned intents/entities. Defaults to true
 
 
 

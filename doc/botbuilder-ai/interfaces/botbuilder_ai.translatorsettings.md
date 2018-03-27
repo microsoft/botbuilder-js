@@ -12,7 +12,7 @@
 
 **●  getUserLanguage**:  *`function`⎮`undefined`* 
 
-*Defined in [libraries/botbuilder-ai/lib/languageTranslator.d.ts:13](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-ai/lib/languageTranslator.d.ts#L13)*
+*Defined in [libraries/botbuilder-ai/lib/languageTranslator.d.ts:13](https://github.com/Microsoft/botbuilder-js/blob/68b6da0/libraries/botbuilder-ai/lib/languageTranslator.d.ts#L13)*
 
 
 
@@ -26,7 +26,7 @@ ___
 
 **●  nativeLanguages**:  *`string`[]* 
 
-*Defined in [libraries/botbuilder-ai/lib/languageTranslator.d.ts:11](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-ai/lib/languageTranslator.d.ts#L11)*
+*Defined in [libraries/botbuilder-ai/lib/languageTranslator.d.ts:11](https://github.com/Microsoft/botbuilder-js/blob/68b6da0/libraries/botbuilder-ai/lib/languageTranslator.d.ts#L11)*
 
 
 
@@ -40,7 +40,7 @@ ___
 
 **●  noTranslatePatterns**:  *`Set`.<`string`>* 
 
-*Defined in [libraries/botbuilder-ai/lib/languageTranslator.d.ts:12](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-ai/lib/languageTranslator.d.ts#L12)*
+*Defined in [libraries/botbuilder-ai/lib/languageTranslator.d.ts:12](https://github.com/Microsoft/botbuilder-js/blob/68b6da0/libraries/botbuilder-ai/lib/languageTranslator.d.ts#L12)*
 
 
 
@@ -54,7 +54,7 @@ ___
 
 **●  setUserLanguage**:  *`function`⎮`undefined`* 
 
-*Defined in [libraries/botbuilder-ai/lib/languageTranslator.d.ts:14](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-ai/lib/languageTranslator.d.ts#L14)*
+*Defined in [libraries/botbuilder-ai/lib/languageTranslator.d.ts:14](https://github.com/Microsoft/botbuilder-js/blob/68b6da0/libraries/botbuilder-ai/lib/languageTranslator.d.ts#L14)*
 
 
 
@@ -68,7 +68,7 @@ ___
 
 **●  translatorKey**:  *`string`* 
 
-*Defined in [libraries/botbuilder-ai/lib/languageTranslator.d.ts:10](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-ai/lib/languageTranslator.d.ts#L10)*
+*Defined in [libraries/botbuilder-ai/lib/languageTranslator.d.ts:10](https://github.com/Microsoft/botbuilder-js/blob/68b6da0/libraries/botbuilder-ai/lib/languageTranslator.d.ts#L10)*
 
 
 
