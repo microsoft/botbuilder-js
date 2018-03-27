@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const path = require("path");
 const fs = require("async-file");
 const file = require("fs");
-const os = require("os");
 const filenamify = require("filenamify");
 /**
  * :package: **botbuilder**
@@ -19,10 +18,10 @@ class FileStorage {
     /**
      * Creates a new instance of the storage provider.
      *
-     * @param settings (Optional) setting to configure the provider.
+     * @param path Root filesystem path for where the provider should store its objects.
      */
-    constructor(settings) {
-        this.path = settings && settings.path ? settings.path : path.join(os.tmpdir(), 'storage');
+    constructor(path) {
+        this.path = path;
     }
     /**
      * Loads store items from storage
@@ -97,10 +96,7 @@ class FileStorage {
         if (!this.pEnsureFolder) {
             this.pEnsureFolder = fs.exists(this.path).then((exists) => {
                 if (!exists) {
-                    return fs.mkdirp(this.path).catch((err) => {
-                        console.error(`FileStorage: error creating directory for "${this.path}": ${err.toString()}`);
-                        throw err;
-                    });
+                    return fs.mkdirp(this.path);
                 }
             });
         }
@@ -111,17 +107,6 @@ class FileStorage {
     }
     getFilePath(key) {
         return path.join(this.path, this.getFileName(key));
-    }
-    hashCode(input) {
-        var hash = 0;
-        if (input.length == 0)
-            return hash;
-        for (let i = 0; i < input.length; i++) {
-            let char = input.charCodeAt(i);
-            hash = ((hash << 5) - hash) + char;
-            hash = hash & hash; // Convert to 32bit integer
-        }
-        return hash;
     }
 }
 FileStorage.nextTag = 0;

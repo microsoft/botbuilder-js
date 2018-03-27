@@ -11,6 +11,6 @@
   "license": "MIT",
   "dependencies": {
     "@types/node": "^9.3.0",
-    "botbuilder": "^4.0.0-m2.1"
+    "botbuilder": "^4.0.0-m2.2"
   }
 }

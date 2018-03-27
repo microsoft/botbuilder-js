@@ -31,4 +31,6 @@ export declare class ConsoleAdapter extends BotAdapter {
     updateActivity(activity: Partial<Activity>): Promise<void>;
     deleteActivity(reference: Partial<ConversationReference>): Promise<void>;
     protected createInterface(options: readline.ReadLineOptions): readline.ReadLine;
+    protected print(line: string): void;
+    protected printError(line: string): void;
 }

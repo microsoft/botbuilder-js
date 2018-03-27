@@ -6,7 +6,7 @@
 
 ## Implements
 
-* [Middleware]()
+* `any`
 
 ## Index
 
@@ -15,18 +15,13 @@
 * [constructor](botbuilder_ai.luisrecognizer.md#constructor)
 
 
-### Properties
-
-* [nextInstance](botbuilder_ai.luisrecognizer.md#nextinstance)
-
-
 ### Methods
 
-* [createLuisClient](botbuilder_ai.luisrecognizer.md#createluisclient)
+* [createClient](botbuilder_ai.luisrecognizer.md#createclient)
 * [get](botbuilder_ai.luisrecognizer.md#get)
-* [getIntentsAndEntities](botbuilder_ai.luisrecognizer.md#getintentsandentities)
 * [onProcessRequest](botbuilder_ai.luisrecognizer.md#onprocessrequest)
 * [recognize](botbuilder_ai.luisrecognizer.md#recognize)
+* [topIntent](botbuilder_ai.luisrecognizer.md#topintent)
 
 
 
@@ -38,15 +33,18 @@
 ### ⊕ **new LuisRecognizer**(settings: *[LuisRecognizerSettings](../interfaces/botbuilder_ai.luisrecognizersettings.md)*): [LuisRecognizer](botbuilder_ai.luisrecognizer.md)
 
 
-*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:33](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L33)*
+*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:43](https://github.com/Microsoft/botbuilder-js/blob/68b6da0/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L43)*
 
+
+
+Creates a new LuisRecognizer instance.
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| settings | [LuisRecognizerSettings](../interfaces/botbuilder_ai.luisrecognizersettings.md)   |  - |
+| settings | [LuisRecognizerSettings](../interfaces/botbuilder_ai.luisrecognizersettings.md)   |  Settings used to configure the instance. |
 
 
 
@@ -57,46 +55,33 @@
 ---
 
 
-## Properties
-<a id="nextinstance"></a>
-
-### «Static» nextInstance
-
-**●  nextInstance**:  *`number`* 
-
-*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L31)*
-
-
-
-
-
-___
-
-
 ## Methods
-<a id="createluisclient"></a>
+<a id="createclient"></a>
 
-### «Protected» createLuisClient
+### «Protected» createClient
 
-► **createLuisClient**(serviceEndpoint: *`string`*): [LuisClient]()
+► **createClient**(baseUri: *`string`*): `LuisClient`
 
 
 
-*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L39)*
+*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:71](https://github.com/Microsoft/botbuilder-js/blob/68b6da0/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L71)*
 
+
+
+Called internally to create a LuisClient instance. This is exposed to enable better unit testing of teh recognizer.
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| serviceEndpoint | `string`   |  - |
+| baseUri | `string`   |  Service endpoint being called. |
 
 
 
 
 
-**Returns:** [LuisClient]()
+**Returns:** `LuisClient`
 
 
 
@@ -108,55 +93,28 @@ ___
 
 ###  get
 
-► **get**(context: *[BotContext]()*): [LuisResult]()⎮`undefined`
+► **get**(context: *`BotContext`*): [LuisRecognizerResult](../interfaces/botbuilder_ai.luisrecognizerresult.md)⎮`undefined`
 
 
 
-*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:37](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L37)*
+*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:56](https://github.com/Microsoft/botbuilder-js/blob/68b6da0/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L56)*
 
 
 
-**Parameters:**
-
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| context | [BotContext]()   |  - |
-
-
-
-
-
-**Returns:** [LuisResult]()⎮`undefined`
-
-
-
-
-
-___
-
-<a id="getintentsandentities"></a>
-
-###  getIntentsAndEntities
-
-► **getIntentsAndEntities**(query: *`string`*): `Promise`.<[LuisResult]()>
-
-
-
-*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:38](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L38)*
-
+Returns the results cached from a previous call to [recognize()](#recognize) for the current turn with the user. This will return `undefined` if recognize() hasn't been called for the current turn.
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| query | `string`   |  - |
+| context | `BotContext`   |  Context for the current turn of conversation with the use. |
 
 
 
 
 
-**Returns:** `Promise`.<[LuisResult]()>
+**Returns:** [LuisRecognizerResult](../interfaces/botbuilder_ai.luisrecognizerresult.md)⎮`undefined`
 
 
 
@@ -168,11 +126,11 @@ ___
 
 ###  onProcessRequest
 
-► **onProcessRequest**(context: *[BotContext]()*, next: *`function`*): `Promise`.<`void`>
+► **onProcessRequest**(context: *`BotContext`*, next: *`function`*): `Promise`.<`void`>
 
 
 
-*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:35](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L35)*
+*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:49](https://github.com/Microsoft/botbuilder-js/blob/68b6da0/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L49)*
 
 
 
@@ -180,7 +138,7 @@ ___
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | [BotContext]()   |  - |
+| context | `BotContext`   |  - |
 | next | `function`   |  - |
 
 
@@ -199,26 +157,64 @@ ___
 
 ###  recognize
 
-► **recognize**(context: *[BotContext]()*, force?: *`undefined`⎮`true`⎮`false`*): `Promise`.<[LuisResult]()>
+► **recognize**(context: *`BotContext`*, force?: *`boolean`*): `Promise`.<[LuisRecognizerResult](../interfaces/botbuilder_ai.luisrecognizerresult.md)>
 
 
 
-*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:36](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L36)*
+*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:65](https://github.com/Microsoft/botbuilder-js/blob/68b6da0/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L65)*
 
+
+
+Calls LUIS to recognize intents and entities in a users utterance. The results of the call will be cached to the context object for the turn and future calls to recognize() for the same context object will result in the cached value being returned. This behavior can be overridden using the `force` parameter.
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | [BotContext]()   |  - |
-| force | `undefined`⎮`true`⎮`false`   |  - |
+| context | `BotContext`   |  Context for the current turn of conversation with the use. |
+| force | `boolean`   |  (Optional) flag that if `true` will force the call to LUIS even if a cached result exists. Defaults to a value of `false`. |
 
 
 
 
 
-**Returns:** `Promise`.<[LuisResult]()>
+**Returns:** `Promise`.<[LuisRecognizerResult](../interfaces/botbuilder_ai.luisrecognizerresult.md)>
+
+
+
+
+
+___
+
+<a id="topintent"></a>
+
+### «Static» topIntent
+
+► **topIntent**(results: *[LuisRecognizerResult](../interfaces/botbuilder_ai.luisrecognizerresult.md)⎮`undefined`*, defaultIntent?: *`string`*, minScore?: *`number`*): `string`
+
+
+
+*Defined in [libraries/botbuilder-ai/lib/luisRecognizer.d.ts:78](https://github.com/Microsoft/botbuilder-js/blob/68b6da0/libraries/botbuilder-ai/lib/luisRecognizer.d.ts#L78)*
+
+
+
+Returns the name of the top scoring intent from a set of LUIS results.
+
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| results | [LuisRecognizerResult](../interfaces/botbuilder_ai.luisrecognizerresult.md)⎮`undefined`   |  Result set to be searched. |
+| defaultIntent | `string`   |  (Optional) intent name to return should a top intent be found. Defaults to a value of `None`. |
+| minScore | `number`   |  (Optional) minimum score needed for an intent to be considered as a top intent. If all intents in the set are below this threshold then the `defaultIntent` will be returned. Defaults to a value of `0.0`. |
+
+
+
+
+
+**Returns:** `string`
 
 
 

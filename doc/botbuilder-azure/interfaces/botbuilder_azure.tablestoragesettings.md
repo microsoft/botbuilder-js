@@ -15,7 +15,7 @@ Additional settings for configuring an instance of [TableStorage](../classes/bot
 
 **●  host**:  *`azure.StorageHost`* 
 
-*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-azure/lib/tableStorage.d.ts#L19)*
+*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-azure/lib/tableStorage.d.ts#L19)*
 
 
 
@@ -30,9 +30,9 @@ ___
 
 ### «Optional» storageAccessKey
 
-**●  storageAccessKey**:  *`undefined`⎮`string`* 
+**●  storageAccessKey**:  *`string`* 
 
-*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-azure/lib/tableStorage.d.ts#L15)*
+*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-azure/lib/tableStorage.d.ts#L15)*
 
 
 
@@ -47,9 +47,9 @@ ___
 
 ### «Optional» storageAccountOrConnectionString
 
-**●  storageAccountOrConnectionString**:  *`undefined`⎮`string`* 
+**●  storageAccountOrConnectionString**:  *`string`* 
 
-*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-azure/lib/tableStorage.d.ts#L17)*
+*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-azure/lib/tableStorage.d.ts#L17)*
 
 
 
@@ -66,7 +66,7 @@ ___
 
 **●  tableName**:  *`string`* 
 
-*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:13](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-azure/lib/tableStorage.d.ts#L13)*
+*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:13](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-azure/lib/tableStorage.d.ts#L13)*
 
 
 

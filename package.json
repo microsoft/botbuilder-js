@@ -21,5 +21,12 @@
 		"@types/jsonwebtoken": "7.2.5",
 		"@types/lodash": "^4.14.105",
 		"lerna": "^2.9.0"
-	}
+	},
+	"nyc": {
+		"exclude": [
+			"**/botframework*/**",
+			"**/tests/**",
+			"**/internal.*"
+		]
+  	}
 }

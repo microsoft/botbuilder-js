@@ -1,10 +1,20 @@
 const assert = require('assert');
-const ai = require('../');
-const builder = require('botbuilder');
+const { TestAdapter, BotContext } = require('botbuilder');
+const { LuisRecognizer } = require('../');
 
 const luisAppId = process.env.LUISAPPID;
 const subscriptionKey = process.env.LUISAPPKEY;
 const LuisBaseUri = "https://westus.api.cognitive.microsoft.com/luis";
+
+class TestContext extends BotContext {
+    constructor(request) {
+        super(new TestAdapter(), request);
+        this.sent = undefined;
+        this.onSendActivity((context, activities, next) => {
+            this.sent = activities;
+        });
+    }
+}
 
 describe('LuisRecognizer', function () {
     this.timeout(10000);
@@ -21,173 +31,237 @@ describe('LuisRecognizer', function () {
     }
 
     it('should return multiple intents and a simple entity', function(done){
-        var recognizer = new ai.LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey });
-        var context = { request: { text: 'My name is Emad' } };
+        var recognizer = new LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey, verbose: true });
+        var context = new TestContext({ text: 'My name is Emad' });
         recognizer.recognize(context).then(res => {
                 assert(res);
-                assert(res.length === 1);
-                assert(res[0].text == 'My name is Emad');
-                assert(Object.keys(res[0].intents).length == 1);
-                assert(res[0].intents.SpecifyName);
-                assert(res[0].intents.SpecifyName > 0 && res[0].intents.SpecifyName <= 1);
-                assert(res[0].entities);
-                assert(res[0].entities.Name);
-                assert(res[0].entities.Name[0] === 'emad');
-                assert(res[0].entities.$instance);
-                assert(res[0].entities.$instance.Name);
-                assert(res[0].entities.$instance.Name[0].startIndex === 11);
-                assert(res[0].entities.$instance.Name[0].endIndex === 14);
-                assert(res[0].entities.$instance.Name[0].score > 0 && res[0].entities.$instance.Name[0].score <= 1);
+                assert(res.text == 'My name is Emad');
+                assert(Object.keys(res.intents).length == 1);
+                assert(res.intents.SpecifyName);
+                assert(res.intents.SpecifyName > 0 && res.intents.SpecifyName <= 1);
+                assert(res.entities);
+                assert(res.entities.Name);
+                assert(res.entities.Name[0] === 'emad');
+                assert(res.entities.$instance);
+                assert(res.entities.$instance.Name);
+                assert(res.entities.$instance.Name[0].startIndex === 11);
+                assert(res.entities.$instance.Name[0].endIndex === 14);
+                assert(res.entities.$instance.Name[0].score > 0 && res.entities.$instance.Name[0].score <= 1);
                 done();
             });
     });
 
     it('should return multiple intents and prebuilt entities with a single value', function(done){
-        var recognizer = new ai.LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey, options: { verbose : true} });
-        var context = { request: { text: 'Please deliver February 2nd 2001' } };
+        var recognizer = new LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey, verbose: true,  options: { verbose : true} });
+        var context = new TestContext({ text: 'Please deliver February 2nd 2001' });
         recognizer.recognize(context).then(res => {
                 assert(res);
-                assert(res.length === 1);
-                assert(res[0].text == 'Please deliver February 2nd 2001');
-                assert(res[0].intents);
-                assert(res[0].intents.Delivery);
-                assert(res[0].intents.Delivery > 0 && res[0].intents.Delivery <= 1);
-                assert(res[0].entities);
-                assert(res[0].entities.builtin_number);
-                assert(res[0].entities.builtin_number[0] === 2001);
-                assert(res[0].entities.builtin_datetimeV2_date);
-                assert(res[0].entities.builtin_datetimeV2_date[0] === '2001-02-02');
-                assert(res[0].entities.$instance);
-                assert(res[0].entities.$instance.builtin_number);
-                assert(res[0].entities.$instance.builtin_number[0].startIndex === 28);
-                assert(res[0].entities.$instance.builtin_number[0].endIndex === 31);
-                assert(res[0].entities.$instance.builtin_number[0].text);
-                assert(res[0].entities.$instance.builtin_number[0].text === '2001');
-                assert(res[0].entities.$instance.builtin_datetimeV2_date);
-                assert(res[0].entities.$instance.builtin_datetimeV2_date[0].startIndex === 15);
-                assert(res[0].entities.$instance.builtin_datetimeV2_date[0].endIndex === 31);
-                assert(res[0].entities.$instance.builtin_datetimeV2_date[0].text);
-                assert(res[0].entities.$instance.builtin_datetimeV2_date[0].text === 'february 2nd 2001');
+                assert(res.text == 'Please deliver February 2nd 2001');
+                assert(res.intents);
+                assert(res.intents.Delivery);
+                assert(res.intents.Delivery > 0 && res.intents.Delivery <= 1);
+                assert(LuisRecognizer.topIntent(res) === 'Delivery');
+                assert(res.entities);
+                assert(res.entities.builtin_number);
+                assert(res.entities.builtin_number[0] === 2001);
+                assert(res.entities.builtin_datetimeV2_date);
+                assert(res.entities.builtin_datetimeV2_date[0] === '2001-02-02');
+                assert(res.entities.$instance);
+                assert(res.entities.$instance.builtin_number);
+                assert(res.entities.$instance.builtin_number[0].startIndex === 28);
+                assert(res.entities.$instance.builtin_number[0].endIndex === 31);
+                assert(res.entities.$instance.builtin_number[0].text);
+                assert(res.entities.$instance.builtin_number[0].text === '2001');
+                assert(res.entities.$instance.builtin_datetimeV2_date);
+                assert(res.entities.$instance.builtin_datetimeV2_date[0].startIndex === 15);
+                assert(res.entities.$instance.builtin_datetimeV2_date[0].endIndex === 31);
+                assert(res.entities.$instance.builtin_datetimeV2_date[0].text);
+                assert(res.entities.$instance.builtin_datetimeV2_date[0].text === 'february 2nd 2001');
                 done();
             });
     });
  
     it('should return multiple intents and prebuilt entities with multiple values', function(done){
-        var recognizer = new ai.LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey, options: { verbose : true} });
-        var context = { request: { text: 'Please deliver February 2nd 2001 in room 201' } };
+        var recognizer = new LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey, verbose: true, options: { verbose : true} });
+        var context = new TestContext({ text: 'Please deliver February 2nd 2001 in room 201' });
         recognizer.recognize(context).then(res => {
                 assert(res);
-                assert(res.length === 1);
-                assert(res[0].text == 'Please deliver February 2nd 2001 in room 201');
-                assert(res[0].intents);
-                assert(res[0].intents.Delivery);
-                assert(res[0].intents.Delivery > 0 && res[0].intents.Delivery <= 1);
-                assert(res[0].entities);
-                assert(res[0].entities.builtin_number);
-                assert(res[0].entities.builtin_number.length == 2);
-                assert(res[0].entities.builtin_number.indexOf(2001) > -1);
-                assert(res[0].entities.builtin_number.indexOf(201) > -1);
-                assert(res[0].entities.builtin_datetimeV2_date);
-                assert(res[0].entities.builtin_datetimeV2_date[0] === '2001-02-02');
+                assert(res.text == 'Please deliver February 2nd 2001 in room 201');
+                assert(res.intents);
+                assert(res.intents.Delivery);
+                assert(res.intents.Delivery > 0 && res.intents.Delivery <= 1);
+                assert(res.entities);
+                assert(res.entities.builtin_number);
+                assert(res.entities.builtin_number.length == 2);
+                assert(res.entities.builtin_number.indexOf(2001) > -1);
+                assert(res.entities.builtin_number.indexOf(201) > -1);
+                assert(res.entities.builtin_datetimeV2_date);
+                assert(res.entities.builtin_datetimeV2_date[0] === '2001-02-02');
                 done();
             });
     })
     
 
     it('should return multiple intents and a list entity with a single value', function(done){
-        var recognizer = new ai.LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey, options: { verbose : true} });
-        var context = { request: { text: 'I want to travel on united' } };
+        var recognizer = new LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey, verbose: true, options: { verbose : true} });
+        var context = new TestContext({ text: 'I want to travel on united' });
         recognizer.recognize(context).then(res => {
                 assert(res);
-                assert(res.length === 1);
-                assert(res[0].text == 'I want to travel on united');
-                assert(res[0].intents);
-                assert(res[0].intents.Travel);
-                assert(res[0].intents.Travel > 0 && res[0].intents.Travel <= 1);
-                assert(res[0].entities);
-                assert(res[0].entities.Airline);
-                assert(res[0].entities.Airline[0][0] === 'United');
-                assert(res[0].entities.$instance);
-                assert(res[0].entities.$instance.Airline);
-                assert(res[0].entities.$instance.Airline[0].startIndex);
-                assert(res[0].entities.$instance.Airline[0].startIndex === 20);
-                assert(res[0].entities.$instance.Airline[0].endIndex);
-                assert(res[0].entities.$instance.Airline[0].endIndex === 25);
-                assert(res[0].entities.$instance.Airline[0].text);
-                assert(res[0].entities.$instance.Airline[0].text === 'united');
+                assert(res.text == 'I want to travel on united');
+                assert(res.intents);
+                assert(res.intents.Travel);
+                assert(res.intents.Travel > 0 && res.intents.Travel <= 1);
+                assert(res.entities);
+                assert(res.entities.Airline);
+                assert(res.entities.Airline[0][0] === 'United');
+                assert(res.entities.$instance);
+                assert(res.entities.$instance.Airline);
+                assert(res.entities.$instance.Airline[0].startIndex);
+                assert(res.entities.$instance.Airline[0].startIndex === 20);
+                assert(res.entities.$instance.Airline[0].endIndex);
+                assert(res.entities.$instance.Airline[0].endIndex === 25);
+                assert(res.entities.$instance.Airline[0].text);
+                assert(res.entities.$instance.Airline[0].text === 'united');
                 done();
             });
     });
     
     it('should return multiple intents and a list entity with multiple values', function(done){
-        var recognizer = new ai.LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey, options: { verbose : true} });
-        var context = { request: { text: 'I want to travel on DL' } };
+        var recognizer = new LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey, verbose: true, options: { verbose : true} });
+        var context = new TestContext({ text: 'I want to travel on DL' });
         recognizer.recognize(context).then(res => {
                 assert(res);
-                assert(res.length === 1);
-                assert(res[0].text == 'I want to travel on DL');
-                assert(res[0].intents);
-                assert(res[0].intents.Travel);
-                assert(res[0].intents.Travel > 0 && res[0].intents.Travel <= 1);
-                assert(res[0].entities);
-                assert(res[0].entities.Airline[0]);
-                assert(res[0].entities.Airline[0].length == 2);
-                assert(res[0].entities.Airline[0].indexOf('Delta') > -1);
-                assert(res[0].entities.Airline[0].indexOf('Virgin') > -1);
-                assert(res[0].entities.$instance);
-                assert(res[0].entities.$instance.Airline);
-                assert(res[0].entities.$instance.Airline[0].startIndex);
-                assert(res[0].entities.$instance.Airline[0].startIndex === 20);
-                assert(res[0].entities.$instance.Airline[0].endIndex);
-                assert(res[0].entities.$instance.Airline[0].endIndex === 21);
-                assert(res[0].entities.$instance.Airline[0].text);
-                assert(res[0].entities.$instance.Airline[0].text === 'dl');
+                assert(res.text == 'I want to travel on DL');
+                assert(res.intents);
+                assert(res.intents.Travel);
+                assert(res.intents.Travel > 0 && res.intents.Travel <= 1);
+                assert(res.entities);
+                assert(res.entities.Airline[0]);
+                assert(res.entities.Airline[0].length == 2);
+                assert(res.entities.Airline[0].indexOf('Delta') > -1);
+                assert(res.entities.Airline[0].indexOf('Virgin') > -1);
+                assert(res.entities.$instance);
+                assert(res.entities.$instance.Airline);
+                assert(res.entities.$instance.Airline[0].startIndex);
+                assert(res.entities.$instance.Airline[0].startIndex === 20);
+                assert(res.entities.$instance.Airline[0].endIndex);
+                assert(res.entities.$instance.Airline[0].endIndex === 21);
+                assert(res.entities.$instance.Airline[0].text);
+                assert(res.entities.$instance.Airline[0].text === 'dl');
                 done();
             });
     });
 
     it('should return multiple intents and a single composite entity', function(done){
-        var recognizer = new ai.LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey, options: { verbose : true} });
-        var context = { request: { text: 'Please deliver it to 98033 WA' } };
+        var recognizer = new LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey, verbose: true, options: { verbose : true} });
+        var context = new TestContext({ text: 'Please deliver it to 98033 WA' });
         recognizer.recognize(context).then(res => {
                 assert(res);
-                assert(res.length === 1);
-                assert(res[0].text == 'Please deliver it to 98033 WA');
-                assert(res[0].intents);
-                assert(res[0].intents.Delivery);
-                assert(res[0].intents.Delivery > 0 && res[0].intents.Delivery <= 1);
-                assert(res[0].entities);
-                assert(res[0].entities.builtin_number === undefined);
-                assert(res[0].entities.State === undefined);
-                assert(res[0].entities.Address);
-                assert(res[0].entities.Address[0].builtin_number[0] === 98033);
-                assert(res[0].entities.Address[0].State);
-                assert(res[0].entities.Address[0].State[0] === "wa");
-                assert(res[0].entities.$instance);
-                assert(res[0].entities.$instance.builtin_number === undefined);
-                assert(res[0].entities.$instance.State === undefined);
-                assert(res[0].entities.$instance.Address);
-                assert(res[0].entities.$instance.Address[0].startIndex);
-                assert(res[0].entities.$instance.Address[0].startIndex === 21);
-                assert(res[0].entities.$instance.Address[0].endIndex);
-                assert(res[0].entities.$instance.Address[0].endIndex === 28);
-                assert(res[0].entities.$instance.Address[0].score);
-                assert(res[0].entities.$instance.Address[0].score > 0 && res[0].entities.$instance.Address[0].score <= 1);
-                assert(res[0].entities.Address[0].$instance.builtin_number);
-                assert(res[0].entities.Address[0].$instance.builtin_number[0].startIndex);
-                assert(res[0].entities.Address[0].$instance.builtin_number[0].startIndex === 21);
-                assert(res[0].entities.Address[0].$instance.builtin_number[0].endIndex);
-                assert(res[0].entities.Address[0].$instance.builtin_number[0].endIndex === 25);
-                assert(res[0].entities.Address[0].$instance.builtin_number[0].text);
-                assert(res[0].entities.Address[0].$instance.builtin_number[0].text === "98033");
-                assert(res[0].entities.Address[0].$instance.State);
-                assert(res[0].entities.Address[0].$instance.State[0].startIndex);
-                assert(res[0].entities.Address[0].$instance.State[0].startIndex === 27);
-                assert(res[0].entities.Address[0].$instance.State[0].endIndex);
-                assert(res[0].entities.Address[0].$instance.State[0].endIndex === 28);
-                assert(res[0].entities.Address[0].$instance.State[0].score);
-                assert(res[0].entities.Address[0].$instance.State[0].score > 0 && res[0].entities.Address[0].$instance.State[0].score <= 1);
+                assert(res.text == 'Please deliver it to 98033 WA');
+                assert(res.intents);
+                assert(res.intents.Delivery);
+                assert(res.intents.Delivery > 0 && res.intents.Delivery <= 1);
+                assert(res.entities);
+                assert(res.entities.builtin_number === undefined);
+                assert(res.entities.State === undefined);
+                assert(res.entities.Address);
+                assert(res.entities.Address[0].builtin_number[0] === 98033);
+                assert(res.entities.Address[0].State);
+                assert(res.entities.Address[0].State[0] === "wa");
+                assert(res.entities.$instance);
+                assert(res.entities.$instance.builtin_number === undefined);
+                assert(res.entities.$instance.State === undefined);
+                assert(res.entities.$instance.Address);
+                assert(res.entities.$instance.Address[0].startIndex);
+                assert(res.entities.$instance.Address[0].startIndex === 21);
+                assert(res.entities.$instance.Address[0].endIndex);
+                assert(res.entities.$instance.Address[0].endIndex === 28);
+                assert(res.entities.$instance.Address[0].score);
+                assert(res.entities.$instance.Address[0].score > 0 && res.entities.$instance.Address[0].score <= 1);
+                assert(res.entities.Address[0].$instance.builtin_number);
+                assert(res.entities.Address[0].$instance.builtin_number[0].startIndex);
+                assert(res.entities.Address[0].$instance.builtin_number[0].startIndex === 21);
+                assert(res.entities.Address[0].$instance.builtin_number[0].endIndex);
+                assert(res.entities.Address[0].$instance.builtin_number[0].endIndex === 25);
+                assert(res.entities.Address[0].$instance.builtin_number[0].text);
+                assert(res.entities.Address[0].$instance.builtin_number[0].text === "98033");
+                assert(res.entities.Address[0].$instance.State);
+                assert(res.entities.Address[0].$instance.State[0].startIndex);
+                assert(res.entities.Address[0].$instance.State[0].startIndex === 27);
+                assert(res.entities.Address[0].$instance.State[0].endIndex);
+                assert(res.entities.Address[0].$instance.State[0].endIndex === 28);
+                assert(res.entities.Address[0].$instance.State[0].score);
+                assert(res.entities.Address[0].$instance.State[0].score > 0 && res.entities.Address[0].$instance.State[0].score <= 1);
                 done();
             });
+    });
+
+    it('should run as a piece of middleware', function(done){
+        var recognizer = new LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey, verbose: true });
+        var context = new TestContext({ text: 'My name is Emad' });
+        recognizer.onProcessRequest(context, () => {
+            const res = recognizer.get(context);
+            assert(res);
+            assert(res.text == 'My name is Emad');
+            done();
+        });
+    });
+
+    it('should cache multiple calls to recognize()', function(done){
+        var recognizer = new LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey, verbose: true });
+        var context = new TestContext({ text: 'My name is Emad' });
+        recognizer.recognize(context).then(res => {
+            assert(res);
+            res.text = 'cached';
+            recognizer.recognize(context).then(res => {
+                assert(res);
+                assert(res.text === 'cached');
+                done();
+            });
+        });
+    });
+
+    it('should only return $instance metadata for entities if verbose flag set', function(done){
+        var recognizer = new LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey, verbose: false });
+        var context = new TestContext({ text:  'My name is Emad' });
+        recognizer.recognize(context).then(res => {
+            assert(res);
+            assert(res.entities);
+            assert(res.entities.$instance === undefined);
+            done();
+        });
+    });
+    
+    it('should only return $instance metadata for composite entities if verbose flag set', function(done){
+        var recognizer = new LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey, verbose: false });
+        var context = new TestContext({ text: 'Please deliver it to 98033 WA' });
+        recognizer.recognize(context).then(res => {
+            assert(res);
+            assert(res.entities);
+            assert(res.entities.$instance === undefined);
+            done();
+        });
+    });
+
+    it('should only return "None" intent for undefined text', function(done){
+        var recognizer = new LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey, verbose: false });
+        var context = new TestContext({ text: undefined });
+        recognizer.recognize(context).then(res => {
+            const top = LuisRecognizer.topIntent(res);
+            assert(top === 'None');
+            done();
+        });
+    });
+    
+    it('should return defaultIntent from topIntent() if results undefined', function(done){
+        const top = LuisRecognizer.topIntent(undefined);
+        assert(top === 'None');
+        done();
+    });
+
+    it('should return defaultIntent from topIntent() if intent scores below threshold', function(done){
+        const top = LuisRecognizer.topIntent({ intents: { TestIntent: 0.49 } }, 'None', 0.5);
+        assert(top === 'None');
+        done();
     });
 });

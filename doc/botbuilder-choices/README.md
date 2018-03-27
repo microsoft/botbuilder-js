@@ -46,11 +46,11 @@
 
 **Τ TokenizerFunction**:  *`function`* 
 
-*Defined in [libraries/botbuilder-choices/lib/tokenizer.d.ts:14](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-choices/lib/tokenizer.d.ts#L14)*
+*Defined in [libraries/botbuilder-choices/lib/tokenizer.d.ts:14](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/tokenizer.d.ts#L14)*
 
 
 #### Type declaration
-►(text: *`string`*, locale?: *`undefined`⎮`string`*): [Token](interfaces/botbuilder_choices.token.md)[]
+►(text: *`string`*, locale?: *`string`*): [Token](interfaces/botbuilder_choices.token.md)[]
 
 
 
@@ -59,7 +59,7 @@
 | Param | Type | Description |
 | ------ | ------ | ------ |
 | text | `string`   |  - |
-| locale | `undefined`⎮`string`   |  - |
+| locale | `string`   |  - |
 
 
 
@@ -80,11 +80,11 @@ ___
 
 ###  defaultTokenizer
 
-► **defaultTokenizer**(text: *`string`*, locale?: *`undefined`⎮`string`*): [Token](interfaces/botbuilder_choices.token.md)[]
+► **defaultTokenizer**(text: *`string`*, locale?: *`string`*): [Token](interfaces/botbuilder_choices.token.md)[]
 
 
 
-*Defined in [libraries/botbuilder-choices/lib/tokenizer.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-choices/lib/tokenizer.d.ts#L19)*
+*Defined in [libraries/botbuilder-choices/lib/tokenizer.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/tokenizer.d.ts#L19)*
 
 
 
@@ -96,7 +96,7 @@ Simple tokenizer that breaks on spaces and punctuation. The only normalization d
 | Param | Type | Description |
 | ------ | ------ | ------ |
 | text | `string`   |  - |
-| locale | `undefined`⎮`string`   |  - |
+| locale | `string`   |  - |
 
 
 
@@ -118,7 +118,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:47](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-choices/lib/findChoices.d.ts#L47)*
+*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:42](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/findChoices.d.ts#L42)*
 
 
 
@@ -150,7 +150,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:57](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-choices/lib/findValues.d.ts#L57)*
+*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:57](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/findValues.d.ts#L57)*
 
 
 
@@ -185,7 +185,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-choices/lib/recognizeChoices.d.ts:10](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-choices/lib/recognizeChoices.d.ts#L10)*
+*Defined in [libraries/botbuilder-choices/lib/recognizeChoices.d.ts:10](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/recognizeChoices.d.ts#L10)*
 
 
 

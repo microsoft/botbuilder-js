@@ -214,7 +214,7 @@ export class DialogContext<C extends BotContext> {
     public endAll(): this{
         // Cancel any active dialogs
         if (this.stack.length > 0) {
-            this.stack.splice(0, this.stack.length - 1);
+            this.stack.splice(0, this.stack.length);
         }
         return this;
     }
@@ -241,15 +241,11 @@ export class DialogContext<C extends BotContext> {
      * @param dialogArgs (Optional) additional argument(s) to pass to the new dialog.  
      */
     public replace(dialogId: string, dialogArgs?: any): Promise<DialogResult> {
-        try {
-            // Pop stack
-            if (this.stack.length > 0) { this.stack.pop() }
+        // Pop stack
+        if (this.stack.length > 0) { this.stack.pop() }
 
-            // Start replacement dialog
-            return this.begin(dialogId, dialogArgs);
-        } catch (err) {
-            return Promise.reject(err);
-        }
+        // Start replacement dialog
+        return this.begin(dialogId, dialogArgs);
     }
 
     private ensureDialogResult(result: any): DialogResult {

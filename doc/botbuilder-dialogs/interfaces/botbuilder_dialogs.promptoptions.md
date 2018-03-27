@@ -16,11 +16,6 @@ Basic configuration options supported by all prompts.
 
 
 
-↳  [ConfirmPromptOptions](botbuilder_dialogs.confirmpromptoptions.md)
-
-
-
-
 
 
 
@@ -31,9 +26,9 @@ Basic configuration options supported by all prompts.
 
 ### «Optional» prompt
 
-**●  prompt**:  *`string`⎮[Partial]()[Activity]()* 
+**●  prompt**:  *`string`⎮`Partial`.<`Activity`>* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:13](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L13)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:14](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L14)*
 
 
 
@@ -48,9 +43,9 @@ ___
 
 ### «Optional» retryPrompt
 
-**●  retryPrompt**:  *`string`⎮[Partial]()[Activity]()* 
+**●  retryPrompt**:  *`string`⎮`Partial`.<`Activity`>* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L17)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L18)*
 
 
 
@@ -65,9 +60,9 @@ ___
 
 ### «Optional» retrySpeak
 
-**●  retrySpeak**:  *`undefined`⎮`string`* 
+**●  retrySpeak**:  *`string`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L19)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:20](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L20)*
 
 
 
@@ -82,9 +77,9 @@ ___
 
 ### «Optional» speak
 
-**●  speak**:  *`undefined`⎮`string`* 
+**●  speak**:  *`string`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L15)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:16](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L16)*
 
 
 

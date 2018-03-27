@@ -9,8 +9,8 @@
   "author": "Microsoft",
   "license": "MIT",
   "dependencies": {
-    "botframework-connector": "4.0.0-m1.10",
-    "botframework-schema": "4.0.0-m1.10",
+    "botframework-connector": "^4.0.0-m2.2",
+    "botframework-schema": "^4.0.0-m2.2",
     "restify": "^6.3.4"
   }
 }

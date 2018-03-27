@@ -67,9 +67,9 @@ Key/value pairs.
 
 ### «Optional» eTag
 
-**●  eTag**:  *`undefined`⎮`string`* 
+**●  eTag**:  *`string`* 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/storage.d.ts:52](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/storage.d.ts#L52)*
+*Defined in [libraries/botbuilder-core-extensions/lib/storage.d.ts:52](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/storage.d.ts#L52)*
 
 
 

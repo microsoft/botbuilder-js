@@ -12,7 +12,7 @@
 
 **●  index**:  *`number`* 
 
-*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:38](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-choices/lib/findChoices.d.ts#L38)*
+*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:33](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/findChoices.d.ts#L33)*
 
 
 
@@ -29,7 +29,7 @@ ___
 
 **●  score**:  *`number`* 
 
-*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:43](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-choices/lib/findChoices.d.ts#L43)*
+*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:38](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/findChoices.d.ts#L38)*
 
 
 
@@ -44,9 +44,9 @@ ___
 
 ### «Optional» synonym
 
-**●  synonym**:  *`undefined`⎮`string`* 
+**●  synonym**:  *`string`* 
 
-*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:45](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-choices/lib/findChoices.d.ts#L45)*
+*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:40](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/findChoices.d.ts#L40)*
 
 
 
@@ -63,7 +63,7 @@ ___
 
 **●  value**:  *`string`* 
 
-*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:36](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-choices/lib/findChoices.d.ts#L36)*
+*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/findChoices.d.ts#L31)*
 
 
 

@@ -65,10 +65,10 @@ The class supports mixed modes of usage so it's fine to both use it as middlewar
 <a id="constructor"></a>
 
 
-### ⊕ **new BatchOutput**(context?: *[BotContext](botbuilder.botcontext.md)⎮`undefined`*): [BatchOutput](botbuilder.batchoutput.md)
+### ⊕ **new BatchOutput**(context?: *[BotContext](botbuilder.botcontext.md)*): [BatchOutput](botbuilder.batchoutput.md)
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:57](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L57)*
+*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:57](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L57)*
 
 
 
@@ -79,7 +79,7 @@ Creates a new BatchOutput instance.
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | [BotContext](botbuilder.botcontext.md)⎮`undefined`   |  (Optional) context for the current turn of conversation. This can be omitted when creating an instance of the class to use as middleware. |
+| context | [BotContext](botbuilder.botcontext.md)   |  (Optional) context for the current turn of conversation. This can be omitted when creating an instance of the class to use as middleware. |
 
 
 
@@ -99,7 +99,7 @@ Creates a new BatchOutput instance.
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:75](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L75)*
+*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:75](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L75)*
 
 
 
@@ -134,7 +134,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:93](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L93)*
+*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:93](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L93)*
 
 
 
@@ -171,7 +171,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:100](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L100)*
+*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:100](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L100)*
 
 
 
@@ -205,7 +205,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:104](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L104)*
+*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:104](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L104)*
 
 
 
@@ -230,7 +230,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:64](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L64)*
+*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:64](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L64)*
 
 
 
@@ -260,13 +260,13 @@ ___
 
 ###  reply
 
-► **reply**(textOrActivity: *`string`*, speak?: *`undefined`⎮`string`*, inputHint?: *`undefined`⎮`string`*): `this`
+► **reply**(textOrActivity: *`string`*, speak?: *`string`*, inputHint?: *`string`*): `this`
 
-► **reply**(textOrActivity: *[Partial]()[Activity](../interfaces/botbuilder.activity.md)*): `this`
+► **reply**(textOrActivity: *`Partial`.<[Activity](../interfaces/botbuilder.activity.md)>*): `this`
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:111](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L111)*
+*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:111](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L111)*
 
 
 
@@ -278,8 +278,8 @@ Adds a `message` activity to the batch.
 | Param | Type | Description |
 | ------ | ------ | ------ |
 | textOrActivity | `string`   |  Text or activity to add to the batch. If text a new `message` activity will be created. If an activity and missing a `type`, the type will be set to `message`. |
-| speak | `undefined`⎮`string`   |  (Optional) SSML to add to the activity. |
-| inputHint | `undefined`⎮`string`   |  (Optional) `inputHint` to assign to the activity. |
+| speak | `string`   |  (Optional) SSML to add to the activity. |
+| inputHint | `string`   |  (Optional) `inputHint` to assign to the activity. |
 
 
 
@@ -289,7 +289,7 @@ Adds a `message` activity to the batch.
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:112](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L112)*
+*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:112](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L112)*
 
 
 
@@ -297,7 +297,7 @@ Adds a `message` activity to the batch.
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| textOrActivity | [Partial]()[Activity](../interfaces/botbuilder.activity.md)   |  - |
+| textOrActivity | `Partial`.<[Activity](../interfaces/botbuilder.activity.md)>   |  - |
 
 
 
@@ -319,7 +319,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:116](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L116)*
+*Defined in [libraries/botbuilder-core-extensions/lib/batchOutput.d.ts:116](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/batchOutput.d.ts#L116)*
 
 
 

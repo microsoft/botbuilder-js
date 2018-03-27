@@ -48,35 +48,36 @@ class ConsoleAdapter extends botbuilder_core_1.BotAdapter {
             // Create context and run middleware pipe
             const context = new botbuilder_core_1.BotContext(this, request);
             this.runMiddleware(context, logic)
-                .catch((err) => { console.error(err.toString()); });
+                .catch((err) => { this.printError(err.toString()); });
         });
-        return function quit() {
+        return function close() {
             rl.close();
         };
     }
     sendActivity(activities) {
+        const that = this;
         return new Promise((resolve, reject) => {
             const responses = [];
             function next(i) {
                 if (i < activities.length) {
                     responses.push({});
                     let a = activities[i];
-                    switch (a.type || botbuilder_core_1.ActivityTypes.Message) {
+                    switch (a.type) {
                         case 'delay':
-                            setTimeout(() => next(i + 1), a.value || 0);
+                            setTimeout(() => next(i + 1), a.value);
                             break;
                         case botbuilder_core_1.ActivityTypes.Message:
                             if (a.attachments && a.attachments.length > 0) {
                                 const append = a.attachments.length == 1 ? `(1 attachment)` : `(${a.attachments.length} attachments)`;
-                                console.log(`${a.text || ''} ${append}`);
+                                that.print(`${a.text} ${append}`);
                             }
                             else {
-                                console.log(a.text || '');
+                                that.print(a.text);
                             }
                             next(i + 1);
                             break;
                         default:
-                            console.log(`[${a.type}]`);
+                            that.print(`[${a.type}]`);
                             next(i + 1);
                             break;
                     }
@@ -96,6 +97,12 @@ class ConsoleAdapter extends botbuilder_core_1.BotAdapter {
     }
     createInterface(options) {
         return readline.createInterface(options);
+    }
+    print(line) {
+        console.log(line);
+    }
+    printError(line) {
+        console.error(line);
     }
 }
 exports.ConsoleAdapter = ConsoleAdapter;

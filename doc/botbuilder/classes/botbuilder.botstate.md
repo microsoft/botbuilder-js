@@ -42,7 +42,6 @@ Reads and writes state for your bot to storage. When used as middleware the stat
 
 ### Properties
 
-* [stateName](botbuilder.botstate.md#statename)
 * [storage](botbuilder.botstate.md#storage)
 * [storageKey](botbuilder.botstate.md#storagekey)
 
@@ -50,10 +49,10 @@ Reads and writes state for your bot to storage. When used as middleware the stat
 ### Methods
 
 * [clear](botbuilder.botstate.md#clear)
+* [get](botbuilder.botstate.md#get)
 * [onProcessRequest](botbuilder.botstate.md#onprocessrequest)
 * [read](botbuilder.botstate.md#read)
 * [write](botbuilder.botstate.md#write)
-* [get](botbuilder.botstate.md#get)
 
 
 
@@ -62,10 +61,10 @@ Reads and writes state for your bot to storage. When used as middleware the stat
 <a id="constructor"></a>
 
 
-### ⊕ **new BotState**(storage: *[Storage](../interfaces/botbuilder.storage.md)*, stateName: *`string`*, storageKey: *[StorageKeyFactory](../#storagekeyfactory)*): [BotState](botbuilder.botstate.md)
+### ⊕ **new BotState**(storage: *[Storage](../interfaces/botbuilder.storage.md)*, storageKey: *[StorageKeyFactory](../#storagekeyfactory)*): [BotState](botbuilder.botstate.md)
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/botState.d.ts#L31)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/botState.d.ts#L31)*
 
 
 
@@ -77,7 +76,6 @@ Creates a new BotState instance.
 | Param | Type | Description |
 | ------ | ------ | ------ |
 | storage | [Storage](../interfaces/botbuilder.storage.md)   |  Storage provider to persist the state object to. |
-| stateName | `string`   |  Name of the cached entry on the context object. This will be passed to `context.set()` and `context.get()`. |
 | storageKey | [StorageKeyFactory](../#storagekeyfactory)   |  Function called anytime the storage key for a given turn needs to be known. |
 
 
@@ -90,27 +88,13 @@ Creates a new BotState instance.
 
 
 ## Properties
-<a id="statename"></a>
-
-### «Protected» stateName
-
-**●  stateName**:  *`string`* 
-
-*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:30](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/botState.d.ts#L30)*
-
-
-
-
-
-___
-
 <a id="storage"></a>
 
 ### «Protected» storage
 
 **●  storage**:  *[Storage](../interfaces/botbuilder.storage.md)* 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:29](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/botState.d.ts#L29)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:29](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/botState.d.ts#L29)*
 
 
 
@@ -124,7 +108,7 @@ ___
 
 **●  storageKey**:  *[StorageKeyFactory](../#storagekeyfactory)* 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/botState.d.ts#L31)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:30](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/botState.d.ts#L30)*
 
 
 
@@ -142,7 +126,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:56](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/botState.d.ts#L56)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:55](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/botState.d.ts#L55)*
 
 
 
@@ -167,6 +151,39 @@ Clears the current state object for a turn.
 
 ___
 
+<a id="get"></a>
+
+###  get
+
+► **get**(context: *[BotContext](botbuilder.botcontext.md)*): `T`⎮`undefined`
+
+
+
+*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:60](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/botState.d.ts#L60)*
+
+
+
+Returns a cached state object or undefined if not cached.
+
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| context | [BotContext](botbuilder.botcontext.md)   |  Context for current turn of conversation with the user. |
+
+
+
+
+
+**Returns:** `T`⎮`undefined`
+
+
+
+
+
+___
+
 <a id="onprocessrequest"></a>
 
 ###  onProcessRequest
@@ -175,7 +192,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/botState.d.ts#L39)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:38](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/botState.d.ts#L38)*
 
 
 
@@ -202,11 +219,11 @@ ___
 
 ###  read
 
-► **read**(context: *[BotContext](botbuilder.botcontext.md)*, force?: *`undefined`⎮`true`⎮`false`*): `Promise`.<`T`>
+► **read**(context: *[BotContext](botbuilder.botcontext.md)*, force?: *`boolean`*): `Promise`.<`T`>
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:45](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/botState.d.ts#L45)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:44](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/botState.d.ts#L44)*
 
 
 
@@ -218,7 +235,7 @@ Reads in and caches the current state object for a turn.
 | Param | Type | Description |
 | ------ | ------ | ------ |
 | context | [BotContext](botbuilder.botcontext.md)   |  Context for current turn of conversation with the user. |
-| force | `undefined`⎮`true`⎮`false`   |  (Optional) If `true` the cache will be bypassed and the state will always be read in directly from storage. Defaults to `false`. |
+| force | `boolean`   |  (Optional) If `true` the cache will be bypassed and the state will always be read in directly from storage. Defaults to `false`. |
 
 
 
@@ -236,11 +253,11 @@ ___
 
 ###  write
 
-► **write**(context: *[BotContext](botbuilder.botcontext.md)*, force?: *`undefined`⎮`true`⎮`false`*): `Promise`.<`void`>
+► **write**(context: *[BotContext](botbuilder.botcontext.md)*, force?: *`boolean`*): `Promise`.<`void`>
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:51](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/botState.d.ts#L51)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:50](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/botState.d.ts#L50)*
 
 
 
@@ -252,50 +269,13 @@ Writes out the state object if it's been changed.
 | Param | Type | Description |
 | ------ | ------ | ------ |
 | context | [BotContext](botbuilder.botcontext.md)   |  Context for current turn of conversation with the user. |
-| force | `undefined`⎮`true`⎮`false`   |  (Optional) if `true` the state will always be written out regardless of its change state. Defaults to `false`. |
+| force | `boolean`   |  (Optional) if `true` the state will always be written out regardless of its change state. Defaults to `false`. |
 
 
 
 
 
 **Returns:** `Promise`.<`void`>
-
-
-
-
-
-___
-
-<a id="get"></a>
-
-### «Static» get
-
-► **get**T(context: *[BotContext](botbuilder.botcontext.md)*, stateName: *`string`*): `T`⎮`undefined`
-
-
-
-*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:62](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/botState.d.ts#L62)*
-
-
-
-Returns a cached state object or undefined if not cached.
-
-
-**Type parameters:**
-
-#### T :  [StoreItem](../interfaces/botbuilder.storeitem.md)
-**Parameters:**
-
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| context | [BotContext](botbuilder.botcontext.md)   |  Context for current turn of conversation with the user. |
-| stateName | `string`   |  Name of the cached state object to return. |
-
-
-
-
-
-**Returns:** `T`⎮`undefined`
 
 
 

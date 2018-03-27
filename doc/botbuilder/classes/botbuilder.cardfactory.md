@@ -48,7 +48,7 @@ A set of utility functions designed to assist with the formatting of the various
 
 **●  contentTypes**:  *`object`* 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:28](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L28)*
+*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:28](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L28)*
 
 
 
@@ -128,7 +128,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:129](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L129)*
+*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:129](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L129)*
 
 
 
@@ -161,7 +161,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:53](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L53)*
+*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:53](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L53)*
 
 
 
@@ -194,11 +194,11 @@ ___
 
 ### «Static» animationCard
 
-► **animationCard**(title: *`string`*, media: *`any`[]*, buttons?: *`any`[]*, other?: *[Partial]()[AnimationCard](../interfaces/botbuilder.animationcard.md)*): [Attachment](../interfaces/botbuilder.attachment.md)
+► **animationCard**(title: *`string`*, media: *`any`[]*, buttons?: *`any`[]*, other?: *`Partial`.<[AnimationCard](../interfaces/botbuilder.animationcard.md)>*): [Attachment](../interfaces/botbuilder.attachment.md)
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:62](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L62)*
+*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:62](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L62)*
 
 
 
@@ -212,7 +212,7 @@ Returns an attachment for an animation card.
 | title | `string`   |  The cards title. |
 | media | `any`[]   |  Media URL's for the card. |
 | buttons | `any`[]   |  (Optional) set of buttons to include on the card. |
-| other | [Partial]()[AnimationCard](../interfaces/botbuilder.animationcard.md)   |  (Optional) additional properties to include on the card. |
+| other | `Partial`.<[AnimationCard](../interfaces/botbuilder.animationcard.md)>   |  (Optional) additional properties to include on the card. |
 
 
 
@@ -230,11 +230,11 @@ ___
 
 ### «Static» audioCard
 
-► **audioCard**(title: *`string`*, media: *`any`[]*, buttons?: *`any`[]*, other?: *[Partial]()[AnimationCard](../interfaces/botbuilder.animationcard.md)*): [Attachment](../interfaces/botbuilder.attachment.md)
+► **audioCard**(title: *`string`*, media: *`any`[]*, buttons?: *`any`[]*, other?: *`Partial`.<[AnimationCard](../interfaces/botbuilder.animationcard.md)>*): [Attachment](../interfaces/botbuilder.attachment.md)
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:71](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L71)*
+*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:71](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L71)*
 
 
 
@@ -248,7 +248,7 @@ Returns an attachment for an audio card.
 | title | `string`   |  The cards title. |
 | media | `any`[]   |  Media URL's for the card. |
 | buttons | `any`[]   |  (Optional) set of buttons to include on the card. |
-| other | [Partial]()[AnimationCard](../interfaces/botbuilder.animationcard.md)   |  (Optional) additional properties to include on the card. |
+| other | `Partial`.<[AnimationCard](../interfaces/botbuilder.animationcard.md)>   |  (Optional) additional properties to include on the card. |
 
 
 
@@ -266,13 +266,13 @@ ___
 
 ### «Static» heroCard
 
-► **heroCard**(title: *`string`*, images?: *`any`[]*, buttons?: *`any`[]*, other?: *[Partial]()[HeroCard](../interfaces/botbuilder.herocard.md)*): [Attachment](../interfaces/botbuilder.attachment.md)
+► **heroCard**(title: *`string`*, images?: *`any`[]*, buttons?: *`any`[]*, other?: *`Partial`.<[HeroCard](../interfaces/botbuilder.herocard.md)>*): [Attachment](../interfaces/botbuilder.attachment.md)
 
-► **heroCard**(title: *`string`*, text: *`string`*, images?: *`any`[]*, buttons?: *`any`[]*, other?: *[Partial]()[HeroCard](../interfaces/botbuilder.herocard.md)*): [Attachment](../interfaces/botbuilder.attachment.md)
+► **heroCard**(title: *`string`*, text: *`string`*, images?: *`any`[]*, buttons?: *`any`[]*, other?: *`Partial`.<[HeroCard](../interfaces/botbuilder.herocard.md)>*): [Attachment](../interfaces/botbuilder.attachment.md)
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:82](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L82)*
+*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:82](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L82)*
 
 
 
@@ -286,7 +286,7 @@ Returns an attachment for a hero card. Hero cards tend to have one dominant full
 | title | `string`   |  The cards title. |
 | images | `any`[]   |  (Optional) set of images to include on the card. |
 | buttons | `any`[]   |  (Optional) set of buttons to include on the card. |
-| other | [Partial]()[HeroCard](../interfaces/botbuilder.herocard.md)   |  (Optional) additional properties to include on the card. |
+| other | `Partial`.<[HeroCard](../interfaces/botbuilder.herocard.md)>   |  (Optional) additional properties to include on the card. |
 
 
 
@@ -296,7 +296,7 @@ Returns an attachment for a hero card. Hero cards tend to have one dominant full
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:83](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L83)*
+*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:83](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L83)*
 
 
 
@@ -308,7 +308,7 @@ Returns an attachment for a hero card. Hero cards tend to have one dominant full
 | text | `string`   |  - |
 | images | `any`[]   |  - |
 | buttons | `any`[]   |  - |
-| other | [Partial]()[HeroCard](../interfaces/botbuilder.herocard.md)   |  - |
+| other | `Partial`.<[HeroCard](../interfaces/botbuilder.herocard.md)>   |  - |
 
 
 
@@ -330,7 +330,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:135](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L135)*
+*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:135](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L135)*
 
 
 
@@ -363,7 +363,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:141](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L141)*
+*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:141](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L141)*
 
 
 
@@ -396,7 +396,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:90](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L90)*
+*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:90](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L90)*
 
 
 
@@ -425,11 +425,11 @@ ___
 
 ### «Static» signinCard
 
-► **signinCard**(title: *`string`*, url: *`string`*, text?: *`undefined`⎮`string`*): [Attachment](../interfaces/botbuilder.attachment.md)
+► **signinCard**(title: *`string`*, url: *`string`*, text?: *`string`*): [Attachment](../interfaces/botbuilder.attachment.md)
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:99](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L99)*
+*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:99](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L99)*
 
 
 
@@ -442,7 +442,7 @@ Returns an attachment for a signin card. For channels that don't natively suppor
 | ------ | ------ | ------ |
 | title | `string`   |  The cards title. |
 | url | `string`   |  The link to the signin page the user needs to visit. |
-| text | `undefined`⎮`string`   |  (Optional) additional text to include on the card. |
+| text | `string`   |  (Optional) additional text to include on the card. |
 
 
 
@@ -460,13 +460,13 @@ ___
 
 ### «Static» thumbnailCard
 
-► **thumbnailCard**(title: *`string`*, images?: *`any`[]*, buttons?: *`any`[]*, other?: *[Partial]()[ThumbnailCard](../interfaces/botbuilder.thumbnailcard.md)*): [Attachment](../interfaces/botbuilder.attachment.md)
+► **thumbnailCard**(title: *`string`*, images?: *`any`[]*, buttons?: *`any`[]*, other?: *`Partial`.<[ThumbnailCard](../interfaces/botbuilder.thumbnailcard.md)>*): [Attachment](../interfaces/botbuilder.attachment.md)
 
-► **thumbnailCard**(title: *`string`*, text: *`string`*, images?: *`any`[]*, buttons?: *`any`[]*, other?: *[Partial]()[ThumbnailCard](../interfaces/botbuilder.thumbnailcard.md)*): [Attachment](../interfaces/botbuilder.attachment.md)
+► **thumbnailCard**(title: *`string`*, text: *`string`*, images?: *`any`[]*, buttons?: *`any`[]*, other?: *`Partial`.<[ThumbnailCard](../interfaces/botbuilder.thumbnailcard.md)>*): [Attachment](../interfaces/botbuilder.attachment.md)
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:112](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L112)*
+*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:112](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L112)*
 
 
 
@@ -480,7 +480,7 @@ Returns an attachment for a thumbnail card. Thumbnail cards are similar to [hero
 | title | `string`   |  The cards title. |
 | images | `any`[]   |  (Optional) set of images to include on the card. |
 | buttons | `any`[]   |  (Optional) set of buttons to include on the card. |
-| other | [Partial]()[ThumbnailCard](../interfaces/botbuilder.thumbnailcard.md)   |  (Optional) additional properties to include on the card. |
+| other | `Partial`.<[ThumbnailCard](../interfaces/botbuilder.thumbnailcard.md)>   |  (Optional) additional properties to include on the card. |
 
 
 
@@ -490,7 +490,7 @@ Returns an attachment for a thumbnail card. Thumbnail cards are similar to [hero
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:113](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L113)*
+*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:113](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L113)*
 
 
 
@@ -502,7 +502,7 @@ Returns an attachment for a thumbnail card. Thumbnail cards are similar to [hero
 | text | `string`   |  - |
 | images | `any`[]   |  - |
 | buttons | `any`[]   |  - |
-| other | [Partial]()[ThumbnailCard](../interfaces/botbuilder.thumbnailcard.md)   |  - |
+| other | `Partial`.<[ThumbnailCard](../interfaces/botbuilder.thumbnailcard.md)>   |  - |
 
 
 
@@ -520,11 +520,11 @@ ___
 
 ### «Static» videoCard
 
-► **videoCard**(title: *`string`*, media: *`any`[]*, buttons?: *`any`[]*, other?: *[Partial]()[AnimationCard](../interfaces/botbuilder.animationcard.md)*): [Attachment](../interfaces/botbuilder.attachment.md)
+► **videoCard**(title: *`string`*, media: *`any`[]*, buttons?: *`any`[]*, other?: *`Partial`.<[AnimationCard](../interfaces/botbuilder.animationcard.md)>*): [Attachment](../interfaces/botbuilder.attachment.md)
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:122](https://github.com/Microsoft/botbuilder-js/blob/09ad751/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L122)*
+*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:122](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L122)*
 
 
 
@@ -538,7 +538,7 @@ Returns an attachment for a video card.
 | title | `string`   |  The cards title. |
 | media | `any`[]   |  Media URL's for the card. |
 | buttons | `any`[]   |  (Optional) set of buttons to include on the card. |
-| other | [Partial]()[AnimationCard](../interfaces/botbuilder.animationcard.md)   |  (Optional) additional properties to include on the card. |
+| other | `Partial`.<[AnimationCard](../interfaces/botbuilder.animationcard.md)>   |  (Optional) additional properties to include on the card. |
 
 
 
