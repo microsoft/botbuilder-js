@@ -1,11 +1,94 @@
 const assert = require('assert');
-const azure = require('../');
+const { TableStorage } = require('../');
 const azureStorage = require('azure-storage');
 var fs = require('fs');
 var child_process = require('child_process');
 
+class TestTableStorage extends TableStorage {
+    constructor(settings) {
+        super(settings);
+    }
+
+    createTableService(settings, accessKey, host) {
+        let data;
+        let nextTag = 0;
+        return {
+            createTableIfNotExistsAsync(table) {
+                if (!data) {
+                    data = {};
+                    return Promise.resolve({ isSuccessful: true, created: true, exists: false });
+                }                
+                return Promise.resolve({ isSuccessful: true, created: false, exists: true })
+            },
+
+            deleteTableIfExistsAsync(table) {
+                if (data) {
+                    data = undefined;
+                    return Promise.resolve(true);
+                } else {
+                    return Promise.resolve(false);
+                }
+            },
+        
+            retrieveEntityAsync(table, partitionKey, rowKey) {
+                assert(rowKey === '0');
+                if (data.hasOwnProperty(partitionKey)) {
+                    return Promise.resolve(Object.assign({}, data[partitionKey]));
+                } else {
+                    const err = new Error('not found');
+                    err.statusCode = 404;
+                    return Promise.reject(err);
+                }
+            },
+
+            replaceEntityAsync(table, entity) {
+                // Check eTag
+                assert(entity);
+                if (data.hasOwnProperty(entity.PartitionKey._)) {
+                    const etag = entity['.metadata'].etag;
+                    const cur = data[entity.PartitionKey._];
+                    if (etag === cur['.metadata'].etag) {
+                        const cpy = Object.assign({}, entity);
+                        cpy['.metadata'].etag = (nextTag++).toString();
+                        data[entity.PartitionKey._] = cpy;
+                        return Promise.resolve(cpy['.metadata']);
+                    } else {
+                        const err = new Error('conflict');
+                        err.statusCode = 409;
+                        return Promise.reject(err);
+                    }
+                } else {
+                    const err = new Error('not found');
+                    err.statusCode = 404;
+                    return Promise.reject(err);
+                }
+            },
+
+            insertOrReplaceEntityAsync(table, entity) {
+                const cpy = Object.assign({}, entity);
+                cpy['.metadata'] = { etag: (nextTag++).toString() };
+                data[entity.PartitionKey._] = cpy;
+                return Promise.resolve(cpy['.metadata']);
+            },
+
+            deleteEntityAsync(table, entity) {
+                assert(entity);
+                if (data.hasOwnProperty(entity.PartitionKey._)) {
+                    delete data[entity.PartitionKey._];
+                    return Promise.resolve();
+                } else {
+                    const err = new Error('not found');
+                    err.statusCode = 404;
+                    return Promise.reject(err);
+                }
+            }
+        };
+    }
+}
+
 testStorage = function () {
     let connectionString = 'UseDevelopmentStorage=true';
+    /*
     before(function () {
         let emulatorPath = "c:/Program Files (x86)/Microsoft SDKs/Azure/Storage Emulator/azurestorageemulator.exe";
         if (!fs.existsSync(emulatorPath)){
@@ -15,9 +98,10 @@ testStorage = function () {
         else
             child_process.spawnSync(emulatorPath, ['start']);
     });
+    */
 
     it('read of unknown key', function () {
-        let storage = new azure.TableStorage({ tableName: 'unknown', storageAccountOrConnectionString: connectionString });
+        let storage = new TestTableStorage({ tableName: 'unknown', storageAccountOrConnectionString: connectionString });
         return storage.deleteTable(storage.settings.tableName)
             .then(deleted => storage.read(['unk']))
             .then((result) => {
@@ -33,7 +117,7 @@ testStorage = function () {
     });
 
     it('key creation', function () {
-        let storage = new azure.TableStorage({ tableName: 'keyCreate', storageAccountOrConnectionString: connectionString });
+        let storage = new TestTableStorage({ tableName: 'keyCreate', storageAccountOrConnectionString: connectionString });
         return storage.deleteTable(storage.settings.tableName)
             .then((deleted) => storage.write({ keyCreate: { count: 1 } }))
             .then(() => storage.read(['keyCreate']))
@@ -47,12 +131,12 @@ testStorage = function () {
                 if (reason.code == 'ECONNREFUSED')
                     console.log('skipping test because azure storage emulator is not running');
                 else
-                    assert(false, 'should not throw');
+                    assert(false, `should not throw: ${reason.toString()}`);
             });
     });
 
     it('key update', function () {
-        let storage = new azure.TableStorage({ tableName: 'keyUpdate', storageAccountOrConnectionString: connectionString });
+        let storage = new TestTableStorage({ tableName: 'keyUpdate', storageAccountOrConnectionString: connectionString });
         return storage.deleteTable(storage.settings.tableName)
             .then((deleted) => storage.write({ keyUpdate: { count: 1 } }))
             .then(() => storage.read(['keyUpdate']))
@@ -68,12 +152,12 @@ testStorage = function () {
                 if (reason.code == 'ECONNREFUSED')
                     console.log('skipping test because azure storage emulator is not running');
                 else
-                    assert(false, 'should not throw');
+                    assert(false, `should not throw: ${reason.toString()}`);
             });
     });
 
     it('invalid eTag', function () {
-        let storage = new azure.TableStorage({ tableName: 'invalidETag', storageAccountOrConnectionString: connectionString });
+        let storage = new TestTableStorage({ tableName: 'invalidETag', storageAccountOrConnectionString: connectionString });
         return storage.deleteTable(storage.settings.tableName)
             .then((deleted) => storage.write({ keyUpdate2: { count: 1 } }))
             .then(() => storage.read(['keyUpdate2']))
@@ -95,7 +179,7 @@ testStorage = function () {
     });
 
     it('wildcard eTag', function () {
-        let storage = new azure.TableStorage({ tableName: 'wildcards', storageAccountOrConnectionString: connectionString });
+        let storage = new TestTableStorage({ tableName: 'wildcards', storageAccountOrConnectionString: connectionString });
         return storage.deleteTable(storage.settings.tableName)
             .then((deleted) => storage.write({ keyUpdate3: { count: 1 } }))
             .then(() => storage.read(['keyUpdate3']))
@@ -117,7 +201,7 @@ testStorage = function () {
     });
 
     it('delete unknown', function () {
-        let storage = new azure.TableStorage({ tableName: 'deleteUnknown', storageAccountOrConnectionString: connectionString });
+        let storage = new TestTableStorage({ tableName: 'deleteUnknown', storageAccountOrConnectionString: connectionString });
         return storage.deleteTable(storage.settings.tableName)
             .then((deleted) => storage.delete(['unknown']))
             .catch(reason => {
@@ -129,7 +213,7 @@ testStorage = function () {
     });
 
     it('delete known', function () {
-        let storage = new azure.TableStorage({ tableName: 'delete', storageAccountOrConnectionString: connectionString });
+        let storage = new TestTableStorage({ tableName: 'delete', storageAccountOrConnectionString: connectionString });
         return storage.deleteTable(storage.settings.tableName)
             .then((deleted) => storage.write({ delete1: { count: 1 } }))
             .then(() => storage.delete(['delete1']))
@@ -149,7 +233,7 @@ testStorage = function () {
     });
 
     it('batch operations', function () {
-        let storage = new azure.TableStorage({ tableName: 'batch', storageAccountOrConnectionString: connectionString });
+        let storage = new TestTableStorage({ tableName: 'batch', storageAccountOrConnectionString: connectionString });
         return storage.deleteTable(storage.settings.tableName)
             .then((deleted) => storage.write({
                 batch1: { count: 10 },
@@ -185,7 +269,7 @@ testStorage = function () {
     });
 
     it('crazy keys work', function () {
-        let storage = new azure.TableStorage({ tableName: 'crazy', storageAccountOrConnectionString: connectionString });
+        let storage = new TestTableStorage({ tableName: 'crazy', storageAccountOrConnectionString: connectionString });
         let obj = {};
         let crazyKey = '!@#$%^&*()_+??><":QASD~`';
         obj[crazyKey] = { count: 1 };
@@ -208,7 +292,7 @@ testStorage = function () {
 
 }
 
-describe('TableStorage', function () {
+describe('TestTableStorage', function () {
     this.timeout(10000);
     testStorage();
 });
