@@ -70,7 +70,6 @@ export class LocaleConverter implements Middleware {
                 message.text = result;
                 return Promise.resolve();
             })
-            .catch(error => Promise.reject(error));
         }
     }
 

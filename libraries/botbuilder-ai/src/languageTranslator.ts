@@ -76,6 +76,7 @@ export class LanguageTranslator implements Middleware {
             let text = message.text.length <= 65536 ? message.text : message.text.substring(0, 65536);
         
             let lines = text.split('\n');
+            console.log(lines);
             return this.translator.translateArrayAsync({
                 from: sourceLanguage,
                 to: targetLanguage,
@@ -92,7 +93,6 @@ export class LanguageTranslator implements Middleware {
                     message.text = text;
                     return Promise.resolve();
                 })
-                .catch(error => Promise.reject(error));
         }
         
     }
@@ -115,8 +115,6 @@ interface TranslationResult {
 }
 
 interface Translator {
-    translateArray(options: TranslateArrayOptions, callback: ErrorOrResult<TranslationResult[]>): void;
-
     translateArrayAsync(options: TranslateArrayOptions): Promise<TranslationResult[]>;
 
     detect(text: string): Promise<string>;
@@ -140,8 +138,6 @@ class MicrosoftTranslator implements Translator {
             method: 'POST'
         })
         .then(result => Promise.resolve(result))
-        .catch(error => Promise.reject(error));
-
     }
 
     entityMap: any = {
@@ -171,18 +167,13 @@ class MicrosoftTranslator implements Translator {
             })
         })
         .then(lang => Promise.resolve(lang.replace(/<[^>]*>/g, '')))
-        .catch(error => Promise.reject(error));
-    }
-
-    translateArray(options: TranslateArrayOptions, callback: ErrorOrResult<TranslationResult[]>): void {
-        return;
     }
 
     translateArrayAsync(options: TranslateArrayOptions): Promise<TranslationResult[]> {
-        let from: any = options.from;
-        let to: any = options.to;
-        let texts: string[] = options.texts;
-        let orgTexts: string[] = [];
+        let from = options.from;
+        let to = options.to;
+        let texts = options.texts;
+        let orgTexts = [];
         texts.forEach((text, index, array) => {
             orgTexts.push(text);
             texts[index] = this.escapeHtml(text);
@@ -235,7 +226,6 @@ class MicrosoftTranslator implements Translator {
             });
             return Promise.resolve(results);
         })
-        .catch(error => Promise.reject(error));
     }
 }
 
@@ -248,8 +238,11 @@ export class PostProcessTranslator {
 
     private wordAlignmentParse(alignment: string, source: string, target: string): { [id: string] : string } {
         let alignMap: { [id: string] : string } = {};
-        if (alignment.trim() == "")
+        console.log('here');
+        console.log(alignment);
+        if (alignment.trim().replace('\n', '') == "") {
             return alignMap;
+        }
         let alignments: string[] = alignment.trim().split(' ');
         alignments.forEach(alignData => {
             let wordIndexes = alignData.split('-');

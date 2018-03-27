@@ -58,8 +58,7 @@ class LocaleConverter {
                 .then(result => {
                 message.text = result;
                 return Promise.resolve();
-            })
-                .catch(error => Promise.reject(error));
+            });
         }
     }
     getAvailableLocales() {

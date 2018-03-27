@@ -14,7 +14,7 @@ describe('LanguageTranslator', function () {
         return;
     }
 
-    it('should translate en to fr', function (done) {
+    it('should translate en to fr and support html tags in sentences', function (done) {
         
         let toFrenchSettings = {
             translatorKey: translatorKey,
@@ -24,7 +24,7 @@ describe('LanguageTranslator', function () {
 
         const testAdapter = new builder.TestAdapter(c => c.sendActivity(c.request.text))
         .use(new ai.LanguageTranslator(toFrenchSettings))
-        .test('greetings', 'salutations', 'should have received french')
+        .test('greetings>', 'salutations >', 'should have received french')
         .then(() => done());
     });
 
@@ -80,6 +80,48 @@ describe('LanguageTranslator', function () {
         const testAdapter = new builder.TestAdapter(c => assert.equal(userLang, 'fr', 'should have changed language variable to fr'))
         .use(new ai.LanguageTranslator(changeLanguageSettings))
         .send('I would like to speak french')
+        .then(() => done());
+    });
+
+    it('should handle empty messages', function (done) {
+        
+        let emptyMessageSettings = {
+            translatorKey: translatorKey,
+            nativeLanguages: ['fr', 'de'],
+            noTranslatePatterns: new Set(['(HI)', '(BYE)'])
+        }
+
+        const testAdapter = new builder.TestAdapter(c => c.sendActivity(c.request.text))
+        .use(new ai.LanguageTranslator(emptyMessageSettings))
+        .test('\n\n', '', 'should have received an empty message')
+        .then(() => done());
+    });
+
+    it('should handle wrong api keys', function (done) {
+        
+        let emptyMessageSettings = {
+            translatorKey: 'N/A',
+            nativeLanguages: ['fr', 'de'],
+            noTranslatePatterns: new Set()
+        }
+
+        const testAdapter = new builder.TestAdapter(c => c.sendActivity(c.request.text))
+        .use(new ai.LanguageTranslator(emptyMessageSettings))
+        .send('Hello')
+        .catch(error => done());
+    });
+
+    it('should translate multiple sentences', function (done) {
+        
+        let toFrenchSettings = {
+            translatorKey: translatorKey,
+            nativeLanguages: ['fr', 'de'],
+            noTranslatePatterns: new Set()
+        }
+
+        const testAdapter = new builder.TestAdapter(c => c.sendActivity(c.request.text))
+        .use(new ai.LanguageTranslator(toFrenchSettings))
+        .test('greetings\nhello', 'salutations\nSalut', 'should have received french')
         .then(() => done());
     });
 })

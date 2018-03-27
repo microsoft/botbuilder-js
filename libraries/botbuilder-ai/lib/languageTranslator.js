@@ -60,6 +60,7 @@ class LanguageTranslator {
             // truncate big text
             let text = message.text.length <= 65536 ? message.text : message.text.substring(0, 65536);
             let lines = text.split('\n');
+            console.log(lines);
             return this.translator.translateArrayAsync({
                 from: sourceLanguage,
                 to: targetLanguage,
@@ -75,8 +76,7 @@ class LanguageTranslator {
                 }
                 message.text = text;
                 return Promise.resolve();
-            })
-                .catch(error => Promise.reject(error));
+            });
         }
     }
 }
@@ -100,8 +100,7 @@ class MicrosoftTranslator {
             url: `https://api.cognitive.microsoft.com/sts/v1.0/issueToken?Subscription-Key=${this.apiKey}`,
             method: 'POST'
         })
-            .then(result => Promise.resolve(result))
-            .catch(error => Promise.reject(error));
+            .then(result => Promise.resolve(result));
     }
     escapeHtml(source) {
         return String(source).replace(/[&<>"'\/]/g, s => this.entityMap[s]);
@@ -119,11 +118,7 @@ class MicrosoftTranslator {
                 }
             });
         })
-            .then(lang => Promise.resolve(lang.replace(/<[^>]*>/g, '')))
-            .catch(error => Promise.reject(error));
-    }
-    translateArray(options, callback) {
-        return;
+            .then(lang => Promise.resolve(lang.replace(/<[^>]*>/g, '')));
     }
     translateArrayAsync(options) {
         let from = options.from;
@@ -178,8 +173,7 @@ class MicrosoftTranslator {
                 results.push(result);
             });
             return Promise.resolve(results);
-        })
-            .catch(error => Promise.reject(error));
+        });
     }
 }
 class PostProcessTranslator {
@@ -188,8 +182,11 @@ class PostProcessTranslator {
     }
     wordAlignmentParse(alignment, source, target) {
         let alignMap = {};
-        if (alignment.trim() == "")
+        console.log('here');
+        console.log(alignment);
+        if (alignment.trim().replace('\n', '') == "") {
             return alignMap;
+        }
         let alignments = alignment.trim().split(' ');
         alignments.forEach(alignData => {
             let wordIndexes = alignData.split('-');
