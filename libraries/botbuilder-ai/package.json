@@ -2,7 +2,7 @@
   "name": "botbuilder-ai",
   "author": "Microsoft Corp.",
   "description": "Cognitive services extensions for Microsoft BotBuilder.",
-  "version": "4.0.0-m2.3",
+  "version": "4.0.0-m2.5",
   "license": "MIT",
   "keywords": [
     "botbuilder",
