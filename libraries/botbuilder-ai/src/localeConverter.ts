@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Middleware, BotContext } from 'botbuilder';
+import { Middleware, BotContext, ActivityTypes } from 'botbuilder';
 import * as DateTimeRecognizers from '@microsoft/recognizers-text-date-time';
 
 export interface LocaleConverterSettings {
@@ -35,42 +35,37 @@ export class LocaleConverter implements Middleware {
 
     /// Incoming activity
     public async onProcessRequest(context: BotContext, next: () => Promise<void>): Promise<void> {
-        if (context.request.type == "message" && context.request.text) {
-            // determine the language we are using for this conversation
-            if (this.setUserLocale != undefined) {
-                let changedLocale = await this.setUserLocale(context);
-                if (changedLocale) {
-                    return next();
-                }
-            }
-            try {
-                await this.convertLocalesAsync(context);
-            }
-            catch(e) {
-                return Promise.reject(e);
+        if (context.request.type != ActivityTypes.Message) {
+            return next();
+        }
+        
+        if (this.setUserLocale != undefined) {
+            let changedLocale = await this.setUserLocale(context);
+            if (changedLocale) {
+                return Promise.resolve();
             }
         }
-        return next();
+
+        return this.convertLocalesAsync(context)
+        .then(() => next());
     }
 
-    private convertLocalesAsync(context: BotContext): Promise<void> {
+    private async convertLocalesAsync(context: BotContext): Promise<void> {
         let message = context.request;
-        if (message.text) {
-            let fromLocale: string;
-            if (this.fromLocale != undefined) {
-                fromLocale = this.fromLocale;
-            } else if (this.getUserLocale != undefined) {
-                fromLocale = this.getUserLocale(context);
-            } else {
-                fromLocale = 'en-us';
-            }
-
-            return this.localeConverter.convert(message.text, fromLocale, this.toLocale)
-            .then(result => {
-                message.text = result;
-                return Promise.resolve();
-            })
+        let fromLocale: string;
+        if (this.fromLocale != undefined) {
+            fromLocale = this.fromLocale;
+        } else if (this.getUserLocale != undefined) {
+            fromLocale = this.getUserLocale(context);
+        } else {
+            fromLocale = 'en-us';
         }
+
+        return this.localeConverter.convert(message.text, fromLocale, this.toLocale)
+        .then(result => {
+            message.text = result;
+            return Promise.resolve();
+        });
     }
 
     public getAvailableLocales(): Promise<string[]> {
@@ -144,7 +139,7 @@ class MicrosoftLocaleConverter implements ILocaleConverter {
                 moment = new Date(resolutionValues["value"] + 'Z');
             } else if (type.includes('date') && type.includes('range')) {
                 moment = new Date(resolutionValues['start'] + 'Z');
-            } else if (type.includes('time')) {
+            } else { // Must be a time-only result with no date
                 moment = new Date();
                 moment.setHours(parseInt(String(resolutionValues['value']).substr(0, 2)));
                 moment.setMinutes(parseInt(String(resolutionValues['value']).substr(3, 2)));

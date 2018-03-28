@@ -1,7 +1,16 @@
 const assert = require('assert');
-const ai = require('../');
-const builder = require('botbuilder');
-const process =require('process');
+const { TestAdapter, BotContext } = require('botbuilder');
+const { LocaleConverter } = require('../');
+
+class TestContext extends BotContext {
+    constructor(request) {
+        super(new TestAdapter(), request);
+        this.sent = undefined;
+        this.onSendActivity((context, activities, next) => {
+            this.sent = activities;
+        });
+    }
+}
 
 describe('LocaleConverter', function () {
     this.timeout(10000);
@@ -13,8 +22,8 @@ describe('LocaleConverter', function () {
             fromLocale: 'en-us'
         }
 
-        const testAdapter = new builder.TestAdapter(c => c.sendActivity(c.request.text))
-        .use(new ai.LocaleConverter(toFrenchSettings))
+        const testAdapter = new TestAdapter(c => c.sendActivity(c.request.text))
+        .use(new LocaleConverter(toFrenchSettings))
         .test('10/21/2018', '21/10/2018', 'should have received date in usa french locale')
         .then(() => done());
     });
@@ -27,8 +36,8 @@ describe('LocaleConverter', function () {
             setUserLocale: c => Promise.resolve(false)
         }
 
-        const testAdapter = new builder.TestAdapter(c => c.sendActivity(c.request.text))
-        .use(new ai.LocaleConverter(toChineseSettings))
+        const testAdapter = new TestAdapter(c => c.sendActivity(c.request.text))
+        .use(new LocaleConverter(toChineseSettings))
         .test('10/21/2018', '2018-10-21', 'should have received date in chinese locale')
         .then(() => done());
     });
@@ -49,8 +58,8 @@ describe('LocaleConverter', function () {
             }
         }
 
-        const testAdapter = new builder.TestAdapter(c => assert.equal(userLocale, 'fr-fr', 'should have changed locale variable to fr-fr'))
-        .use(new ai.LocaleConverter(changeLocaleSettings))
+        const testAdapter = new TestAdapter(c => assert.equal(userLocale, 'fr-fr', 'should have changed locale letiable to fr-fr'))
+        .use(new LocaleConverter(changeLocaleSettings))
         .send('Change my locale to fr-fr')
         .then(() => done());
     });
@@ -61,8 +70,8 @@ describe('LocaleConverter', function () {
             toLocale: 'zh-cn',
         }
 
-        const testAdapter = new builder.TestAdapter(c => c.sendActivity(c.request.text))
-        .use(new ai.LocaleConverter(noFromLocaleSettings))
+        const testAdapter = new TestAdapter(c => c.sendActivity(c.request.text))
+        .use(new LocaleConverter(noFromLocaleSettings))
         .test('10/21/2018', '2018-10-21', 'should have received date in chinese locale')
         .then(() => done());
     });
@@ -80,8 +89,8 @@ describe('LocaleConverter', function () {
 
         for (let index = 0; index < fromLocales.length; index++) {
             noFromLocaleSettings.fromLocale = fromLocales[index]
-            testAdapter = new builder.TestAdapter(c => c.sendActivity(c.request.text))
-            .use(new ai.LocaleConverter(noFromLocaleSettings))
+            testAdapter = new TestAdapter(c => c.sendActivity(c.request.text))
+            .use(new LocaleConverter(noFromLocaleSettings))
             .test(fromDates[index], '10/21/2018', `should have received date in ${fromLocales[index]} locale`)
         }
         testAdapter
@@ -90,7 +99,7 @@ describe('LocaleConverter', function () {
 
     it('should get all supported locales', function(done) {
         
-        let localeConverter = new ai.LocaleConverter({ toLocale: 'en-us' });
+        let localeConverter = new LocaleConverter({ toLocale: 'en-us' });
         localeConverter.getAvailableLocales()
         .then(result => {
             assert.equal(result.length, 22, 'should support 22 locales');
@@ -105,8 +114,8 @@ describe('LocaleConverter', function () {
             toLocale: 'zh-cn',
         }
 
-        const testAdapter = new builder.TestAdapter(c => c.sendActivity(c.request.text))
-        .use(new ai.LocaleConverter(invalidFromLocaleSettings))
+        const testAdapter = new TestAdapter(c => c.sendActivity(c.request.text))
+        .use(new LocaleConverter(invalidFromLocaleSettings))
         .send('10/21/2018')
         .catch(error => {
             assert.equal(error, 'Error: Unsupported from locale', 'should throw an error');
@@ -121,8 +130,8 @@ describe('LocaleConverter', function () {
             toLocale: 'fr-fr',
         }
 
-        const testAdapter = new builder.TestAdapter(c => c.sendActivity(c.request.text))
-        .use(new ai.LocaleConverter(timeSettings))
+        const testAdapter = new TestAdapter(c => c.sendActivity(c.request.text))
+        .use(new LocaleConverter(timeSettings))
         .test('half past 9 am', '09:30', 'should have converted the time')
         .then(() => done());
     });
@@ -134,8 +143,8 @@ describe('LocaleConverter', function () {
             toLocale: 'fr-fr',
         }
 
-        const testAdapter = new builder.TestAdapter(c => c.sendActivity(c.request.text))
-        .use(new ai.LocaleConverter(rangeSettings))
+        const testAdapter = new TestAdapter(c => c.sendActivity(c.request.text))
+        .use(new LocaleConverter(rangeSettings))
         .test('from 10/21/2018 to 10/23/2018', '21/10/2018', 'should have converted the range')
         .then(() => done());
     });
@@ -147,8 +156,8 @@ describe('LocaleConverter', function () {
             toLocale: 'N/A',
         }
 
-        const testAdapter = new builder.TestAdapter(c => c.sendActivity(c.request.text))
-        .use(new ai.LocaleConverter(rangeSettings))
+        const testAdapter = new TestAdapter(c => c.sendActivity(c.request.text))
+        .use(new LocaleConverter(rangeSettings))
         .send('10/21/2018')
         .catch(error => {
             assert.equal(error, 'Unsupported to locale N/A', 'should throw an error');
@@ -156,4 +165,22 @@ describe('LocaleConverter', function () {
         })
     });
 
+    it('should bypass calling service in middleware for non-message activities.', function (done) {
+        let intercepted = true;
+        let toFrenchSettings = {
+            toLocale: 'fr-fr',
+            fromLocale: 'en-us'
+        }
+
+        const context = new TestContext({ text: 'bonjour', type: 'foo' })
+        const localeConverter = new LocaleConverter(toFrenchSettings)
+        .onProcessRequest(context, () => {
+            intercepted = false;
+            Promise.resolve();
+        })
+        .then(() => {
+            assert(!intercepted, 'intercepted');
+            done();
+        });
+    });
 })

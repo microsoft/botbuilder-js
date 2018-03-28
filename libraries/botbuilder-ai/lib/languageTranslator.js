@@ -8,6 +8,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @module botbuilder-ai
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+const botbuilder_1 = require("botbuilder");
 const request = require("request-promise-native");
 const xmldom_1 = require("xmldom");
 /**
@@ -25,40 +33,40 @@ class LanguageTranslator {
     /// Incoming activity
     onProcessRequest(context, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (context.request.type == "message" && context.request.text) {
-                if (this.setUserLanguage != undefined) {
-                    let changedLanguage = yield this.setUserLanguage(context);
-                    if (changedLanguage) {
-                        return next();
-                    }
-                }
-                // determine the language we are using for this conversation
-                let sourceLanguage;
-                if (this.getUserLanguage != undefined) {
-                    sourceLanguage = this.getUserLanguage(context);
-                }
-                else if (context.request.locale != undefined) {
-                    sourceLanguage = context.request.locale;
-                }
-                else {
-                    sourceLanguage = yield this.translator.detect(context.request.text);
-                }
-                let targetLanguage = (this.nativeLanguages.indexOf(sourceLanguage) >= 0) ? sourceLanguage : this.nativeLanguages[0];
-                // translate to bots language
-                if (sourceLanguage != targetLanguage) {
-                    yield this.TranslateMessageAsync(context, sourceLanguage, targetLanguage);
+            if (context.request.type != botbuilder_1.ActivityTypes.Message) {
+                return next();
+            }
+            if (this.setUserLanguage != undefined) {
+                let changedLanguage = yield this.setUserLanguage(context);
+                if (changedLanguage) {
+                    return Promise.resolve();
                 }
             }
-            return next();
+            // translate to bots language
+            return this.translateMessageAsync(context)
+                .then(() => next());
         });
     }
     /// Translate .Text field of a message, regardless of direction
-    TranslateMessageAsync(context, sourceLanguage, targetLanguage) {
-        // if we have text and a target language
-        let message = context.request;
-        if (message.text && message.text.length > 0 && targetLanguage != sourceLanguage) {
-            // truncate big text
-            let text = message.text.length <= 65536 ? message.text : message.text.substring(0, 65536);
+    translateMessageAsync(context) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // determine the language we are using for this conversation
+            let sourceLanguage;
+            if (this.getUserLanguage != undefined) {
+                sourceLanguage = this.getUserLanguage(context);
+            }
+            else if (context.request.locale != undefined) {
+                sourceLanguage = context.request.locale;
+            }
+            else {
+                sourceLanguage = yield this.translator.detect(context.request.text);
+            }
+            let targetLanguage = (this.nativeLanguages.indexOf(sourceLanguage) >= 0) ? sourceLanguage : this.nativeLanguages[0];
+            if (sourceLanguage == targetLanguage) {
+                return Promise.resolve();
+            }
+            let message = context.request;
+            let text = context.request.text;
             let lines = text.split('\n');
             return this.translator.translateArrayAsync({
                 from: sourceLanguage,
@@ -76,7 +84,7 @@ class LanguageTranslator {
                 message.text = text;
                 return Promise.resolve();
             });
-        }
+        });
     }
 }
 exports.LanguageTranslator = LanguageTranslator;
@@ -229,6 +237,12 @@ class PostProcessTranslator {
                 let match = regExp.exec(sourceMessage);
                 if (match != null && match[1] != undefined) {
                     let wrdNoTranslate = match[1].split(' ');
+                    wrdNoTranslate.forEach(srcWrd => {
+                        processedTranslation = this.keepSrcWrdInTranslation(alignMap, sourceMessage, processedTranslation, srcWrd);
+                    });
+                }
+                else {
+                    let wrdNoTranslate = match[0].split(' ');
                     wrdNoTranslate.forEach(srcWrd => {
                         processedTranslation = this.keepSrcWrdInTranslation(alignMap, sourceMessage, processedTranslation, srcWrd);
                     });

@@ -1,16 +1,25 @@
 const assert = require('assert');
-const ai = require('../');
-const builder = require('botbuilder');
-const process =require('process');
+const { TestAdapter, BotContext } = require('botbuilder');
+const { LanguageTranslator } = require('../');
+
 const translatorKey = process.env.TRANSLATORKEY;
 
+class TestContext extends BotContext {
+    constructor(request) {
+        super(new TestAdapter(), request);
+        this.sent = undefined;
+        this.onSendActivity((context, activities, next) => {
+            this.sent = activities;
+        });
+    }
+}
 
 describe('LanguageTranslator', function () {
     this.timeout(10000);
     
     if (!translatorKey) 
     {
-        console.warn('WARNING: skipping LanguageTranslator test suite because TRANSLATORKEY environment variable is not defined');
+        console.warn('WARNING: skipping LanguageTranslator test suite because TRANSLATORKEY environment letiable is not defined');
         return;
     }
 
@@ -22,8 +31,8 @@ describe('LanguageTranslator', function () {
             noTranslatePatterns: new Set()
         }
 
-        const testAdapter = new builder.TestAdapter(c => c.sendActivity(c.request.text))
-        .use(new ai.LanguageTranslator(toFrenchSettings))
+        const testAdapter = new TestAdapter(c => c.sendActivity(c.request.text))
+        .use(new LanguageTranslator(toFrenchSettings))
         .test('greetings>', 'salutations >', 'should have received french')
         .then(() => done());
     });
@@ -38,13 +47,13 @@ describe('LanguageTranslator', function () {
             setUserLanguage: c => Promise.resolve(false)
         }
 
-        const testAdapter = new builder.TestAdapter(c => c.sendActivity(c.request.text))
-        .use(new ai.LanguageTranslator(toEnglishSettings))
+        const testAdapter = new TestAdapter(c => c.sendActivity(c.request.text))
+        .use(new LanguageTranslator(toEnglishSettings))
         .test('greetings', 'greetings', 'should have received english')
         .then(() => done());
     });
 
-    it('no translate texts should not be translated', function (done) {
+    it('should not translate no translate texts', function (done) {
 
         let noTranslateSettings = {
             translatorKey: translatorKey,
@@ -54,8 +63,8 @@ describe('LanguageTranslator', function () {
             setUserLanguage: c => Promise.resolve(false)
         }
 
-        const testAdapter = new builder.TestAdapter(c => c.sendActivity(c.request.text))
-        .use(new ai.LanguageTranslator(noTranslateSettings))
+        const testAdapter = new TestAdapter(c => c.sendActivity(c.request.text))
+        .use(new LanguageTranslator(noTranslateSettings))
         .test('HI hello BYE goodbye', 'HI Bonjour Bye adieu', 'should have received no translate patterns')
         .then(() => done())
     });
@@ -77,8 +86,8 @@ describe('LanguageTranslator', function () {
             }
         }
 
-        const testAdapter = new builder.TestAdapter(c => assert.equal(userLang, 'fr', 'should have changed language variable to fr'))
-        .use(new ai.LanguageTranslator(changeLanguageSettings))
+        const testAdapter = new TestAdapter(c => assert.equal(userLang, 'fr', 'should have changed language letiable to fr'))
+        .use(new LanguageTranslator(changeLanguageSettings))
         .send('I would like to speak french')
         .then(() => done());
     });
@@ -91,8 +100,8 @@ describe('LanguageTranslator', function () {
             noTranslatePatterns: new Set(['(HI)', '(BYE)'])
         }
 
-        const testAdapter = new builder.TestAdapter(c => c.sendActivity(c.request.text))
-        .use(new ai.LanguageTranslator(emptyMessageSettings))
+        const testAdapter = new TestAdapter(c => c.sendActivity(c.request.text))
+        .use(new LanguageTranslator(emptyMessageSettings))
         .test('\n\n', '', 'should have received an empty message')
         .then(() => done());
     });
@@ -105,8 +114,8 @@ describe('LanguageTranslator', function () {
             noTranslatePatterns: new Set()
         }
 
-        const testAdapter = new builder.TestAdapter(c => c.sendActivity(c.request.text))
-        .use(new ai.LanguageTranslator(emptyMessageSettings))
+        const testAdapter = new TestAdapter(c => c.sendActivity(c.request.text))
+        .use(new LanguageTranslator(emptyMessageSettings))
         .send('Hello')
         .catch(error => done());
     });
@@ -119,9 +128,62 @@ describe('LanguageTranslator', function () {
             noTranslatePatterns: new Set()
         }
 
-        const testAdapter = new builder.TestAdapter(c => c.sendActivity(c.request.text))
-        .use(new ai.LanguageTranslator(toFrenchSettings))
+        const testAdapter = new TestAdapter(c => c.sendActivity(c.request.text))
+        .use(new LanguageTranslator(toFrenchSettings))
         .test('greetings\nhello', 'salutations\nSalut', 'should have received french')
         .then(() => done());
+    });
+    
+    it('should use context locale', function (done) {
+        
+        let toEnglishSettings = {
+            translatorKey: translatorKey,
+            nativeLanguages: ['en', 'de'],
+            noTranslatePatterns: new Set()
+        }
+
+        const context = new TestContext({ text: 'bonjour', locale: 'fr-fr', type: 'message' })
+        const translator = new LanguageTranslator(toEnglishSettings)
+        .onProcessRequest(context, () => Promise.resolve())
+        .then(() => {
+            assert.equal(context.request.text, 'Hello', 'should have received english');
+            done();
+        });
+    });
+
+    it('should bypass calling service in middleware for non-message activities.', function (done) {
+        let intercepted = true;
+        let toEnglishSettings = {
+            translatorKey: translatorKey,
+            nativeLanguages: ['en', 'de'],
+            noTranslatePatterns: new Set()
+        }
+
+        const context = new TestContext({ text: 'bonjour', type: 'foo' })
+        const translator = new LanguageTranslator(toEnglishSettings)
+        .onProcessRequest(context, () => {
+            intercepted = false;
+            Promise.resolve();
+        })
+        .then(() => {
+            assert(!intercepted, 'intercepted');
+            done();
+        });
+    });
+
+    it('should handle no translate texts with no groups', function (done) {
+
+        let noTranslateSettings = {
+            translatorKey: translatorKey,
+            nativeLanguages: ['fr', 'de'],
+            noTranslatePatterns: new Set(['HI', 'BYE']),
+            getUserLanguage: c => 'en',
+            setUserLanguage: c => Promise.resolve(false)
+        }
+
+        const testAdapter = new TestAdapter(c => c.sendActivity(c.request.text))
+        .use(new LanguageTranslator(noTranslateSettings))
+        .test('HI hello BYE goodbye', 'HI Bonjour Bye adieu', 'should have received no translate patterns')
+        .then(() => done())
     });
 })
