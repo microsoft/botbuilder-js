@@ -23,7 +23,6 @@ interface EchoState {
 const conversationState = new ConversationState<EchoState>(new MemoryStorage());
 adapter.use(conversationState);
 
-
 // Add language translator middleware
 const languageTranslator = new LanguageTranslator({
     translatorKey: "xxxxxx",

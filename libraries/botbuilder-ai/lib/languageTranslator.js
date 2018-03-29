@@ -63,7 +63,7 @@ class LanguageTranslator {
             }
             let targetLanguage = (this.nativeLanguages.indexOf(sourceLanguage) >= 0) ? sourceLanguage : this.nativeLanguages[0];
             if (sourceLanguage == targetLanguage) {
-                return Promise.resolve();
+                return Promise.resolve([]);
             }
             let message = context.request;
             let text = context.request.text;
@@ -79,10 +79,10 @@ class LanguageTranslator {
                 for (let iData in translateResult) {
                     if (text.length > 0)
                         text += '\n';
-                    text += translateResult[iData].TranslatedText;
+                    text += translateResult[iData].translatedText;
                 }
                 message.text = text;
-                return Promise.resolve();
+                return Promise.resolve(translateResult);
             });
         });
     }
@@ -176,7 +176,7 @@ class MicrosoftTranslator {
                 let translation = element.getElementsByTagName('TranslatedText')[0].textContent;
                 let alignment = element.getElementsByTagName('Alignment')[0].textContent;
                 translation = this.postProcessor.fixTranslation(orgTexts[index], alignment, translation);
-                let result = { TranslatedText: translation };
+                let result = { translatedText: translation };
                 results.push(result);
             });
             return Promise.resolve(results);

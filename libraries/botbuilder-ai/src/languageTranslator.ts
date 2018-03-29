@@ -53,7 +53,7 @@ export class LanguageTranslator implements Middleware {
     }
 
     /// Translate .Text field of a message, regardless of direction
-    private async translateMessageAsync(context: BotContext): Promise<void> {
+    private async translateMessageAsync(context: BotContext): Promise<TranslationResult[]> {
         
 
         // determine the language we are using for this conversation
@@ -70,7 +70,7 @@ export class LanguageTranslator implements Middleware {
         let targetLanguage = (this.nativeLanguages.indexOf(sourceLanguage) >= 0) ? sourceLanguage : this.nativeLanguages[0];
 
         if (sourceLanguage == targetLanguage) {
-            return Promise.resolve();
+            return Promise.resolve([]);
         }
         
         let message = context.request;
@@ -88,10 +88,10 @@ export class LanguageTranslator implements Middleware {
             for (let iData in translateResult) {
                 if (text.length > 0)
                     text += '\n';
-                text += translateResult[iData].TranslatedText;
+                text += translateResult[iData].translatedText;
             }
             message.text = text;
-            return Promise.resolve();
+            return Promise.resolve(translateResult);
         })
     }
 }
@@ -104,12 +104,8 @@ declare interface TranslateArrayOptions {
     category?: string;
 }
 
-interface ErrorOrResult<TResult> {
-    (error: Error, result: TResult): void
-}
-
 interface TranslationResult {
-    TranslatedText: string;
+    translatedText: string;
 }
 
 interface Translator {
@@ -219,7 +215,7 @@ class MicrosoftTranslator implements Translator {
                 let translation = element.getElementsByTagName('TranslatedText')[0].textContent as string;
                 let alignment = element.getElementsByTagName('Alignment')[0].textContent as string;
                 translation = this.postProcessor.fixTranslation(orgTexts[index], alignment, translation);
-                let result: TranslationResult = { TranslatedText: translation }
+                let result: TranslationResult = { translatedText: translation }
                 results.push(result)
             });
             return Promise.resolve(results);
