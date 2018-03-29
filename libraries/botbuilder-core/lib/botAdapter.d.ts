@@ -7,7 +7,7 @@
  */
 import { MiddlewareHandler, Middleware, Promiseable } from './middlewareSet';
 import { Activity, ResourceResponse, ConversationReference } from 'botframework-schema';
-import { BotContext } from './botContext';
+import { TurnContext } from './turnContext';
 /**
  * :package: **botbuilder-core**
  *
@@ -26,7 +26,7 @@ export declare abstract class BotAdapter {
      * returned.
      * @param activities Set of activities being sent.
      */
-    abstract sendActivity(activities: Partial<Activity>[]): Promise<ResourceResponse[]>;
+    abstract sendActivities(activities: Partial<Activity>[]): Promise<ResourceResponse[]>;
     /**
      * Replaces an existing activity.
      * @param activity New replacement activity. The activity should already have it's ID information populated.
@@ -52,5 +52,5 @@ export declare abstract class BotAdapter {
      * @param next Function to call at the end of the middleware chain.
      * @param next.callback A revocable version of the context object.
      */
-    protected runMiddleware(context: BotContext, next: (revocableContext: BotContext) => Promiseable<void>): Promise<void>;
+    protected runMiddleware(context: TurnContext, next: (revocableContext: TurnContext) => Promiseable<void>): Promise<void>;
 }

@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Activity, ResourceResponse } from 'botframework-schema';
-import { BotContext } from './botContext';
+import { TurnContext } from './turnContext';
 
 /**
  * :package: **botbuilder-core**
@@ -23,7 +23,7 @@ export type Promiseable <T = void> = Promise<T>|T;
  * Interface implemented by object based middleware. 
  */
 export interface Middleware {
-    onProcessRequest(context: BotContext, next: () => Promise<void>): Promiseable<void>;
+    onTurn(context: TurnContext, next: () => Promise<void>): Promiseable<void>;
 }
 
 /** 
@@ -31,7 +31,7 @@ export interface Middleware {
  * 
  * Signature implemented by function based middleware. 
  */
-export type MiddlewareHandler = (context: BotContext, next: () => Promise<void>) => Promiseable<void>;
+export type MiddlewareHandler = (context: TurnContext, next: () => Promise<void>) => Promiseable<void>;
 
 /**
  * :package: **botbuilder-core**
@@ -51,7 +51,7 @@ export class MiddlewareSet implements Middleware {
         MiddlewareSet.prototype.use.apply(this, middleware);
     }
 
-    public onProcessRequest(context: BotContext, next: () => Promise<void>): Promise<void> {
+    public onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
         return this.run(context, next);
     }
 
@@ -63,8 +63,8 @@ export class MiddlewareSet implements Middleware {
         middleware.forEach((plugin) => {
             if (typeof plugin === 'function') {
                 this.middleware.push(plugin);
-            } else if (typeof plugin === 'object' && plugin.onProcessRequest) {
-                this.middleware.push((context, next) => plugin.onProcessRequest(context, next));
+            } else if (typeof plugin === 'object' && plugin.onTurn) {
+                this.middleware.push((context, next) => plugin.onTurn(context, next));
             } else {
                 throw new Error(`MiddlewareSet.use(): invalid plugin type being added.`);
             }
@@ -77,7 +77,7 @@ export class MiddlewareSet implements Middleware {
      * @param context Context for the current turn of conversation with the user.
      * @param next Function to invoke at the end of the middleware chain.
      */
-    public run(context: BotContext, next: () => Promiseable<void>): Promise<void> {
+    public run(context: TurnContext, next: () => Promiseable<void>): Promise<void> {
         const handlers = this.middleware.slice();
         function runNext(i: number): Promise<void> {
             try {

@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { BotAdapter, BotContext } = require('../');
+const { BotAdapter, TurnContext } = require('../');
 
 const testMessage = {
     type: 'message', 
@@ -38,10 +38,10 @@ class SimpleAdapter extends BotAdapter {
     }
 }
 
-describe(`BotContext`, function () {
+describe(`TurnContext`, function () {
     this.timeout(5000);
 
-    const context = new BotContext(new SimpleAdapter(), testMessage);
+    const context = new TurnContext(new SimpleAdapter(), testMessage);
     it(`should have adapter.`, function (done) {
         assert(context.adapter, `missing property.`);
         assert(context.adapter.deleteActivity, `invalid property.`);
@@ -55,7 +55,7 @@ describe(`BotContext`, function () {
     });
 
     it(`should clone a passed in context.`, function (done) {
-        const ctx = new BotContext(context);
+        const ctx = new TurnContext(context);
         assert(ctx._adapter === context._adapter, `_adapter not cloned.`);
         assert(ctx._request === context._request, `_request not cloned.`);
         assert(ctx._cache === context._cache, `_cache not cloned.`);
@@ -72,7 +72,7 @@ describe(`BotContext`, function () {
     });
 
     it(`should set responded.`, function (done) {
-        const ctx = new BotContext(new SimpleAdapter(), testMessage);
+        const ctx = new TurnContext(new SimpleAdapter(), testMessage);
         ctx.responded = true;
         assert(ctx.responded === true, `responded not set.`);
         done();
@@ -80,7 +80,7 @@ describe(`BotContext`, function () {
     
     it(`should throw if you set responded to false.`, function (done) {
         try {
-            const ctx = new BotContext(new SimpleAdapter(), testMessage);
+            const ctx = new TurnContext(new SimpleAdapter(), testMessage);
             ctx.responded = true;
             ctx.responded = false;
             assert(false, `responded didn't throw when set to false.`);
@@ -89,8 +89,8 @@ describe(`BotContext`, function () {
         }
     });
 
-    it(`should cache a value using set() and get().`, function (done) {
-        assert(context.get('foo') === undefined, `invalid initial state.`);
+    it(`should cache a value using services.set() and services.get().`, function (done) {
+        assert(context.services.get('foo') === undefined, `invalid initial state.`);
         context.set('foo', 'bar');
         assert(context.get('foo') === 'bar', `invalid value of "${context.get('foo')}" after set().`);
         done();
@@ -229,7 +229,7 @@ describe(`BotContext`, function () {
 
     it(`should round trip a conversation reference using getConversationReference() and applyConversationRefernce().`, function (done) {
         // Convert to reference
-        const reference = BotContext.getConversationReference(testMessage);
+        const reference = TurnContext.getConversationReference(testMessage);
         assert(reference.activityId, `reference missing activityId.`);
         assert(reference.bot, `reference missing bot.`);
         assert(reference.bot.id === testMessage.recipient.id, `reference bot.id doesn't match recipient.id.`);
@@ -240,7 +240,7 @@ describe(`BotContext`, function () {
         assert(reference.user.id === testMessage.from.id, `reference user.id doesn't match from.id.`);
         
         // Round trip back to outgoing activity
-        const activity = BotContext.applyConversationReference({ text: 'foo', type: 'message' }, reference);
+        const activity = TurnContext.applyConversationReference({ text: 'foo', type: 'message' }, reference);
         assert(activity.text, `activity missing text`);
         assert(activity.type, `activity missing type`);
         assert(activity.replyToId, `activity missing replyToId`);
@@ -253,7 +253,7 @@ describe(`BotContext`, function () {
         assert(activity.recipient.id === reference.user.id, `activity recipient.id doesn't match user.id`);
 
         // Round trip back to incoming activity
-        const activity2 = BotContext.applyConversationReference({ text: 'foo', type: 'message' }, reference, true);
+        const activity2 = TurnContext.applyConversationReference({ text: 'foo', type: 'message' }, reference, true);
         assert(activity2.id, `activity2 missing id`);
         assert(activity2.from, `activity2 missing from`);
         assert(activity2.from.id === reference.user.id, `activity2 from.id doesn't match user.id`);
@@ -262,12 +262,12 @@ describe(`BotContext`, function () {
         
         // Round trip outgoing activity without a replyToId
         delete reference.activityId;
-        const activity3 = BotContext.applyConversationReference({ text: 'foo', type: 'message' }, reference);
+        const activity3 = TurnContext.applyConversationReference({ text: 'foo', type: 'message' }, reference);
         assert(!activity3.hasOwnProperty('replyToId'), `activity3 has replyToId`);
 
         // Round trip incoming activity without an id
         delete reference.activityId;
-        const activity4 = BotContext.applyConversationReference({ text: 'foo', type: 'message' }, reference, true);
+        const activity4 = TurnContext.applyConversationReference({ text: 'foo', type: 'message' }, reference, true);
         assert(!activity4.hasOwnProperty('id'), `activity4 has id`);
         done();
     });
