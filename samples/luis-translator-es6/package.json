@@ -1,0 +1,16 @@
+{
+  "name": "luis-translator-es6",
+  "version": "1.0.0",
+  "description": "Bot Builder v4 example showing a bot using language translation and LUIS recognizier.",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "botbuilder": "^4.0.0-m2.2",
+    "botbuilder-ai": "^4.0.0-m2.2",
+    "restify": "^6.3.4"
+  }
+}
