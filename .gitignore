@@ -288,3 +288,4 @@ __pycache__/
 *.xsd.cs
 LUIS/.luisrc
 LUIS/.luisrc
+/Bot/bin
