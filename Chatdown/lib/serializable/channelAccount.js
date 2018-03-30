@@ -8,11 +8,16 @@ module.exports = class ChannelAccount {
      */
 
     /**
+     * @property role
+     */
+
+    /**
      *
      * @param id
      * @param name
+     * @param role
      */
-    constructor({id = 'joe@smith.com', name} = {}) {
-        Object.assign(this, {id, name});
+    constructor({id = 'joe@smith.com', name, role} = {}) {
+        Object.assign(this, {id, name, role});
     }
 };
