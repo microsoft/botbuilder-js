@@ -59,8 +59,8 @@ class TurnContext {
      */
     copyTo(context) {
         // Copy private member to other instance.
-        ['_adapter', '_request', '_respondedRef', '_cache',
-            '_onSendActivity', '_onUpdateActivity', '_onDeleteActivity'].forEach((prop) => context[prop] = this[prop]);
+        ['_adapter', '_activity', '_respondedRef', '_services',
+            '_onSendActivities', '_onUpdateActivity', '_onDeleteActivity'].forEach((prop) => context[prop] = this[prop]);
     }
     /** The adapter for this context. */
     get adapter() {
@@ -125,7 +125,7 @@ class TurnContext {
             return o;
         });
         return this.emit(this._onSendActivities, output, () => {
-            return this.adapter.sendActivities(output)
+            return this.adapter.sendActivities(this, output)
                 .then((responses) => {
                 // Set responded flag
                 this.responded = true;
@@ -141,7 +141,7 @@ class TurnContext {
      * @param activity New replacement activity. The activity should already have it's ID information populated.
      */
     updateActivity(activity) {
-        return this.emit(this._onUpdateActivity, activity, () => this.adapter.updateActivity(activity));
+        return this.emit(this._onUpdateActivity, activity, () => this.adapter.updateActivity(this, activity));
     }
     /**
      * Deletes an existing activity.
@@ -159,7 +159,7 @@ class TurnContext {
         else {
             reference = idOrReference;
         }
-        return this.emit(this._onDeleteActivity, reference, () => this.adapter.deleteActivity(reference));
+        return this.emit(this._onDeleteActivity, reference, () => this.adapter.deleteActivity(this, reference));
     }
     /**
      * Registers a handler to be notified of and potentially intercept the sending of activities.

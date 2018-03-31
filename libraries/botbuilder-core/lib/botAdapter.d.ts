@@ -24,19 +24,28 @@ export declare abstract class BotAdapter {
     /**
      * Sends a set of activities to the user. An array of responses form the server will be
      * returned.
+     * @param context Context for the current turn of conversation with the user.
      * @param activities Set of activities being sent.
      */
-    abstract sendActivities(activities: Partial<Activity>[]): Promise<ResourceResponse[]>;
+    abstract sendActivities(context: TurnContext, activities: Partial<Activity>[]): Promise<ResourceResponse[]>;
     /**
      * Replaces an existing activity.
+     * @param context Context for the current turn of conversation with the user.
      * @param activity New replacement activity. The activity should already have it's ID information populated.
      */
-    abstract updateActivity(activity: Partial<Activity>): Promise<void>;
+    abstract updateActivity(context: TurnContext, activity: Partial<Activity>): Promise<void>;
     /**
      * Deletes an existing activity.
+     * @param context Context for the current turn of conversation with the user.
      * @param reference Conversation reference of the activity being deleted.
      */
-    abstract deleteActivity(reference: Partial<ConversationReference>): Promise<void>;
+    abstract deleteActivity(context: TurnContext, reference: Partial<ConversationReference>): Promise<void>;
+    /**
+     * Proactively continues an existing conversation.
+     * @param reference Conversation reference of the conversation being continued.
+     * @param logic Function to execute for performing the bots logic.
+     */
+    abstract continueConversation(reference: Partial<ConversationReference>, logic: (revocableContext: TurnContext) => Promiseable<void>): Promise<void>;
     /**
      * Registers middleware handlers(s) with the adapter.
      * @param middleware One or more middleware handlers(s) to register.

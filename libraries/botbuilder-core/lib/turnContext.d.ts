@@ -89,7 +89,7 @@ export declare class TurnContext {
      * @param speak (Optional) SSML that should be spoken to the user for the message.
      * @param inputHint (Optional) `InputHint` for the message sent to the user.
      */
-    sendActivity(activityOrText: string | Partial<Activity>, speak?: string, inputHint?: string): Promise<ResourceResponse>;
+    sendActivity(activityOrText: string | Partial<Activity>, speak?: string, inputHint?: string): Promise<ResourceResponse | undefined>;
     /**
      * Sends a set of activities to the user. An array of responses form the server will be returned.
      *

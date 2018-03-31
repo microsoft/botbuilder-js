@@ -91,8 +91,8 @@ export class TurnContext {
      */
     protected copyTo(context: TurnContext): void {
         // Copy private member to other instance.
-        ['_adapter', '_request', '_respondedRef', '_cache', 
-         '_onSendActivity', '_onUpdateActivity', '_onDeleteActivity'].forEach((prop) => (context as any)[prop] = (this as any)[prop]);        
+        ['_adapter', '_activity', '_respondedRef', '_services', 
+         '_onSendActivities', '_onUpdateActivity', '_onDeleteActivity'].forEach((prop) => (context as any)[prop] = (this as any)[prop]);        
     }
 
     /** The adapter for this context. */
@@ -126,7 +126,7 @@ export class TurnContext {
      * @param speak (Optional) SSML that should be spoken to the user for the message.
      * @param inputHint (Optional) `InputHint` for the message sent to the user.
      */
-    public sendActivity(activityOrText: string|Partial<Activity>, speak?: string, inputHint?: string): Promise<ResourceResponse> {
+    public sendActivity(activityOrText: string|Partial<Activity>, speak?: string, inputHint?: string): Promise<ResourceResponse|undefined> {
         let a: Partial<Activity>;
         if (typeof activityOrText === 'string') {
             a = { text: activityOrText };
@@ -155,7 +155,7 @@ export class TurnContext {
             return o;
         });
         return this.emit(this._onSendActivities, output, () => {
-            return this.adapter.sendActivities(output)
+            return this.adapter.sendActivities(this, output)
                 .then((responses) => {
                     // Set responded flag
                     this.responded = true;
@@ -172,7 +172,7 @@ export class TurnContext {
      * @param activity New replacement activity. The activity should already have it's ID information populated. 
      */
     public updateActivity(activity: Partial<Activity>): Promise<void> {
-        return this.emit(this._onUpdateActivity, activity, () => this.adapter.updateActivity(activity));
+        return this.emit(this._onUpdateActivity, activity, () => this.adapter.updateActivity(this, activity));
     }
 
     /** 
@@ -190,7 +190,7 @@ export class TurnContext {
         } else {
             reference = idOrReference;
         }
-        return this.emit(this._onDeleteActivity, reference, () => this.adapter.deleteActivity(reference));
+        return this.emit(this._onDeleteActivity, reference, () => this.adapter.deleteActivity(this, reference));
     }
 
     /** 
