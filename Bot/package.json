@@ -11,6 +11,7 @@
     "mocha": "^5.0.5"
   },
   "dependencies": {
+    "@types/cli-table2": "^0.2.1",
     "@types/readline-sync": "^1.4.3",
     "chalk": "^2.3.2",
     "cli-table2": "^0.2.0",

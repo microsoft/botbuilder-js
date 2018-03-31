@@ -4,7 +4,7 @@
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
     <Name>Bot</Name>
     <RootNamespace>Bot</RootNamespace>
-    <ScriptArguments>--name "My Test" --id test -q</ScriptArguments>
+    <ScriptArguments>-n TestBot -i testbot -p 12345</ScriptArguments>
     <DebuggerPort>
     </DebuggerPort>
   </PropertyGroup>

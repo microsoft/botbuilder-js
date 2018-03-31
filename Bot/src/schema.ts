@@ -7,7 +7,7 @@ interface BotEndpoint {
     url: string;
 }
 
-interface BotService {
+interface ConnectedService {
     // type of the service (LUIS, QnA, etc.)
     type: string;
 
@@ -18,11 +18,27 @@ interface BotService {
     id: string;
 }
 
+interface AzureBotService extends ConnectedService {
+    // ms appid for the bot
+    appId: string;
+}
 
-interface LuisService extends BotService {
+interface LuisService extends ConnectedService {
+    // appid for the LUIS service
+    appId: string;
+
     // Regions for this bot 
     regions: string[];
 }
+
+interface QnAKnowledgebase extends ConnectedService {
+    // appid for the QnA service
+    appId: string;
+
+    // region for the service
+    region: string;
+}
+
 
 interface Bot {
     // botId 
@@ -31,12 +47,11 @@ interface Bot {
     // name of the bot
     name: string;
 
-    // ms appid for the bot
-    appId: string;
-
     // Endpoints for the bot
     endpoints: BotEndpoint[];
 
     // connected services for the bot
-    services: BotService[];
+    services: ConnectedService[];
 }
+
+

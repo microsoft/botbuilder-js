@@ -1,7 +1,7 @@
 {
-    "name": "Test",
-    "id": "test",
-    "appId": "123123",
+    "name": "test",
+    "id": "123123",
+    "port": 3978,
     "endpoints": [],
     "services": []
 }

@@ -13,12 +13,9 @@ program
     .command('connect <service>', 'connect to a service');
 
 program
-    .command('connect <service>', 'connect to a service');
-
-program
     .command('disconnect <service>', 'disconnect from a service');
 
 program
-    .command('list', 'list all connected services');
+    .command('list', 'list all connected resource');
 
 program.parse(process.argv);

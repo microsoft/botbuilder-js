@@ -5,9 +5,8 @@ import { Enumerable, List, Dictionary } from 'linq-collections';
 export class BotConfig implements Bot {
     name: string = '';
     id: string = '';
-    appId: string = '';
     endpoints: BotEndpoint[] = [];
-    services: BotService[] = [];
+    services: ConnectedService[] = [];
 
     constructor() {
     }
