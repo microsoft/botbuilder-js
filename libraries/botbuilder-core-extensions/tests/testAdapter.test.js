@@ -12,15 +12,15 @@ describe(`TestAdapter`, function () {
     it(`should call bot logic when receiveActivity() is called.`, function (done) {
         const adapter = new TestAdapter((context) => {
             assert(context, `context not passed to bot logic.`);
-            assert(context.request, `request not passed through.`);
-            assert(context.request.type === ActivityTypes.Message, `wrong type.`);
-            assert(context.request.text === 'test', `wrong text.`);
-            assert(context.request.id, `missing id.`);
-            assert(context.request.from, `missing from.`);
-            assert(context.request.recipient, `missing recipient.`);
-            assert(context.request.conversation, `missing conversation.`);
-            assert(context.request.channelId, `missing channelId.`);
-            assert(context.request.serviceUrl, `missing serviceUrl.`);
+            assert(context.activity, `activity not passed through.`);
+            assert(context.activity.type === ActivityTypes.Message, `wrong type.`);
+            assert(context.activity.text === 'test', `wrong text.`);
+            assert(context.activity.id, `missing id.`);
+            assert(context.activity.from, `missing from.`);
+            assert(context.activity.recipient, `missing recipient.`);
+            assert(context.activity.conversation, `missing conversation.`);
+            assert(context.activity.channelId, `missing channelId.`);
+            assert(context.activity.serviceUrl, `missing serviceUrl.`);
             done();
         });
         adapter.receiveActivity('test');
@@ -28,8 +28,8 @@ describe(`TestAdapter`, function () {
 
     it(`should support receiveActivity() called with an Activity.`, function (done) {
         const adapter = new TestAdapter((context) => {
-            assert(context.request.type === ActivityTypes.Message, `wrong type.`);
-            assert(context.request.text === 'test', `wrong text.`);
+            assert(context.activity.type === ActivityTypes.Message, `wrong type.`);
+            assert(context.activity.text === 'test', `wrong text.`);
             done();
         });
         adapter.receiveActivity({ text: 'test', type: ActivityTypes.Message });
@@ -37,8 +37,8 @@ describe(`TestAdapter`, function () {
 
     it(`should automatically set the type when receiveActivity() is called with an Activity.`, function (done) {
         const adapter = new TestAdapter((context) => {
-            assert(context.request.type === ActivityTypes.Message, `wrong type.`);
-            assert(context.request.text === 'test', `wrong text.`);
+            assert(context.activity.type === ActivityTypes.Message, `wrong type.`);
+            assert(context.activity.text === 'test', `wrong text.`);
             done();
         });
         adapter.receiveActivity({ text: 'test' });
@@ -46,9 +46,9 @@ describe(`TestAdapter`, function () {
 
     it(`should support passing your own Activity.Id to receiveActivity().`, function (done) {
         const adapter = new TestAdapter((context) => {
-            assert(context.request.id === 'myId', `custom ID not passed through.`);
-            assert(context.request.type === ActivityTypes.Message, `wrong type.`);
-            assert(context.request.text === 'test', `wrong text.`);
+            assert(context.activity.id === 'myId', `custom ID not passed through.`);
+            assert(context.activity.type === ActivityTypes.Message, `wrong type.`);
+            assert(context.activity.text === 'test', `wrong text.`);
             done();
         });
         adapter.receiveActivity({ text: 'test', type: ActivityTypes.Message, id: 'myId' });
@@ -216,7 +216,6 @@ describe(`TestAdapter`, function () {
             .then(() => done());
     });
 
-
     it(`should fail assertReplyOneOf() call for invalid response.`, function (done) {
         const start = new Date().getTime();
         const adapter = new TestAdapter((context) => {
@@ -229,5 +228,15 @@ describe(`TestAdapter`, function () {
                 assert(false, `shouldn't pass tets.`);
             })
             .catch(() => done());
+    });
+
+    it(`should return an error from continueConversation().`, function (done) {
+        const adapter = new TestAdapter((context) => {
+            assert(false, `shouldn't run bot logic.`);
+        });
+        adapter.continueConversation().catch((err) => {
+            assert(err, `Error not returned.`);
+            done();
+        });
     });
 });

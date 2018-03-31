@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotAdapter, Activity, ConversationReference, Promiseable, BotContext, ResourceResponse } from 'botbuilder-core';
+import { BotAdapter, Activity, ConversationReference, Promiseable, TurnContext, ResourceResponse } from 'botbuilder-core';
 /**
  * :package: **botbuilder-core-extensions**
  *
@@ -30,10 +30,11 @@ export declare class TestAdapter extends BotAdapter {
      * @param botLogic The bots logic that's under test.
      * @param template (Optional) activity containing default values to assign to all test messages received.
      */
-    constructor(botLogic: (context: BotContext) => Promiseable<void>, template?: ConversationReference);
-    sendActivity(activities: Partial<Activity>[]): Promise<ResourceResponse[]>;
-    updateActivity(activity: Partial<Activity>): Promise<void>;
-    deleteActivity(reference: Partial<ConversationReference>): Promise<void>;
+    constructor(botLogic: (context: TurnContext) => Promiseable<void>, template?: ConversationReference);
+    sendActivities(context: TurnContext, activities: Partial<Activity>[]): Promise<ResourceResponse[]>;
+    updateActivity(context: TurnContext, activity: Partial<Activity>): Promise<void>;
+    deleteActivity(context: TurnContext, reference: Partial<ConversationReference>): Promise<void>;
+    continueConversation(reference: Partial<ConversationReference>, logic: (revocableContext: TurnContext) => Promiseable<void>): Promise<void>;
     /**
      * Processes and activity received from the user.
      * @param activity Text or activity from user.

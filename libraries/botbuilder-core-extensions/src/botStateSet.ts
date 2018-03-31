@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotContext, Middleware } from 'botbuilder-core';
+import { TurnContext, Middleware } from 'botbuilder-core';
 import { BotState } from './botState';
 import { StoreItem } from './storage';
 
@@ -26,7 +26,7 @@ export class BotStateSet implements Middleware {
         BotStateSet.prototype.use.apply(this, middleware);
     }
     
-    public onProcessRequest(context: BotContext, next: () => Promise<void>): Promise<void> {
+    public onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
         // Read in state, continue execution, and then flush changes on completion of turn.
         return this.readAll(context, true)
             .then(() => next())
@@ -54,7 +54,7 @@ export class BotStateSet implements Middleware {
      * @param context Context for current turn of conversation with the user.
      * @param force (Optional) If `true` the cache will be bypassed and the state will always be read in directly from storage. Defaults to `false`.  
      */
-    public readAll(context: BotContext, force = false): Promise<StoreItem[]> {
+    public readAll(context: TurnContext, force = false): Promise<StoreItem[]> {
         const promises = this.middleware.map((plugin) => plugin.read(context, force));
         return Promise.all(promises);
     }
@@ -65,7 +65,7 @@ export class BotStateSet implements Middleware {
      * @param context Context for current turn of conversation with the user.
      * @param force (Optional) if `true` the state will always be written out regardless of its change state. Defaults to `false`. 
      */
-    public writeAll(context: BotContext, force = false): Promise<void> {
+    public writeAll(context: TurnContext, force = false): Promise<void> {
         const promises = this.middleware.map((plugin) => plugin.write(context, force));
         return Promise.all(promises).then(() => {});
     }
