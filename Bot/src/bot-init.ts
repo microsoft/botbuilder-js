@@ -8,6 +8,7 @@ import * as readline from 'readline-sync';
 interface InitArgs {
     id: string;
     name: string;
+    description: string;
     port: number;
     quiet: boolean;
 }
@@ -34,15 +35,22 @@ if (!args.quiet) {
             args.id = readline.question(`What id would you like for your bot? `);
         }
         else {
+            // default to name with no spaces
             let id = args.name.replace(' ', '');
-            args.id = readline.question(`What id would you like for your bot [${id}]? `);
-            if (args.id.length == 0)
-                args.id = id;
+            args.id = readline.question(`What id would you like for your bot [${id}]? `, { defaultInput: id });
         }
     }
 
+    if (!args.description || args.description.length == 0) {
+        args.name = readline.question(`What description would you like for your bot? `);
+    }
+
     while (!args.port || args.port == 0) {
-        args.port = readline.questionInt(`What localhost port does your bot use for debugging [${args.port}]?`);
+        args.port = readline.questionInt(`What localhost port does your bot use for debugging [${args.port || 3978}]? `, {
+            min: 80,
+            max: 65535,
+            defaultInput: `3978`
+        });
     }
 }
 
@@ -51,7 +59,7 @@ bot.name = args.name;
 if (args.id.length > 0)
     bot.id = args.id;
 
-bot.endpoints.push({ name: `http://localhost:${args.port}`, url: `http://localhost:${args.port}/api/messages` });
+bot.endpoints.push({ name: `localhost`, url: `http://localhost:${args.port}/api/messages` });
 
 let filename = bot.name + '.bot';
 bot.Save(filename);

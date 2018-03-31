@@ -1,5 +1,5 @@
 
-interface BotEndpoint {
+interface IBotEndpoint {
     // name of the endpoint
     name: string;
 
@@ -7,7 +7,7 @@ interface BotEndpoint {
     url: string;
 }
 
-interface ConnectedService {
+interface IConnectedService {
     // type of the service (LUIS, QnA, etc.)
     type: string;
 
@@ -18,12 +18,15 @@ interface ConnectedService {
     id: string;
 }
 
-interface AzureBotService extends ConnectedService {
+interface IAzureBotService extends IConnectedService {
+    // botId 
+    id: string;
+
     // ms appid for the bot
-    appId: string;
+    appid: string;
 }
 
-interface LuisService extends ConnectedService {
+interface ILuisService extends IConnectedService {
     // appid for the LUIS service
     appId: string;
 
@@ -31,7 +34,7 @@ interface LuisService extends ConnectedService {
     regions: string[];
 }
 
-interface QnAKnowledgebase extends ConnectedService {
+interface IQnAKnowledgebase extends IConnectedService {
     // appid for the QnA service
     appId: string;
 
@@ -39,19 +42,17 @@ interface QnAKnowledgebase extends ConnectedService {
     region: string;
 }
 
-
-interface Bot {
-    // botId 
-    id: string;
-
+interface IBotConfig {
     // name of the bot
     name: string;
 
+    // description of the bot
+    description: string;
+
     // Endpoints for the bot
-    endpoints: BotEndpoint[];
+    endpoints: IBotEndpoint[];
 
     // connected services for the bot
-    services: ConnectedService[];
+    services: IConnectedService[];
 }
-
 

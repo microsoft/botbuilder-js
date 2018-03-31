@@ -8,13 +8,12 @@ import { Enumerable, List, Dictionary } from 'linq-collections';
 
 
 program
-    .action((cmd, actions) => {
-    });
+    .action((cmd, actions) => { });
 
 let parsed = program.parse(process.argv);
 
 if (parsed.args.length == 0) {
-    BotConfig.FindBot(process.env.__dirname)
+    BotConfig.LoadBotFromFolder(process.env.__dirname)
         .then((bot) => {
             console.log(JSON.stringify(bot.services, null, 4));
         });
@@ -22,13 +21,8 @@ if (parsed.args.length == 0) {
     let file = parsed.args[0];
     if (path.extname(file) != '.bot')
         file = file + '.bot';
-    BotConfig.Load(file).then((bot) => {
-        console.log(JSON.stringify(bot.services, null, 4));
-    });
+    BotConfig.Load(file)
+        .then((bot) => {
+            console.log(JSON.stringify(bot.services, null, 4));
+        });
 }
-
-
-
-
-
-
