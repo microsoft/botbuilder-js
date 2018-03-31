@@ -1,18 +1,15 @@
 ﻿user=Joe
 bot=LulaBot
 
-bot: Hi!
-user: yo!
-bot: [Typing][Delay:3000]
-Greetings!
-What would you like to do?
-* update - You can update your account
-* List - You can list your data
-* help - you can get help
+Joe: Hi!
 
-user: I need help
+LulaBot: Hello there!
 
-bot:
-Here you go.
+Joe: I would like some cheese.
 
-[Attachments:bot-framework.png]
+Lulabot: [Typing][delay 5s] 
+# cheese choices
+* cheess1 
+* cheese 2
+* cheese 3
+

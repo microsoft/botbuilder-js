@@ -8,18 +8,14 @@ import * as readline from 'readline-sync';
 interface InitArgs {
     id: string;
     name: string;
-    appid: string;
-    endpoint: string;
-    localendpoint: string;
+    port: number;
     quiet: boolean;
 }
 
 program
-    .option('-n,--name <botname>', 'name of the bot')
-    .option('-i,--id <id>', 'id of the bot')
-    .option('--appid <appid>', 'MSA App Id of the bot')
-    .option('--public <endpoint>', 'published endpoint for the bot')
-    .option('--local <localendpoint>', 'local endpoint for the bot')
+    .option('-n, --name <botname>', 'name of the bot')
+    .option('-i, --id <id>', 'id of the bot')
+    .option('-p, --port <port>', 'local portendpoint for the bot', parseInt)
     .option('-q, --quiet', 'do not prompt')
     .action((name, x) => {
         console.log(name);
@@ -45,16 +41,8 @@ if (!args.quiet) {
         }
     }
 
-    if (!args.appid) {
-        args.appid = readline.question('What MSA App Id would you like for your bot? (enter to skip)');
-    }
-
-    if (!args.endpoint) {
-        args.endpoint = readline.question('What published endpoint would you like for your bot? (enter to skip)');
-    }
-
-    if (!args.localendpoint) {
-        args.localendpoint = readline.question('What local endpoint would you like for your bot? (enter to skip)');
+    while (!args.port || args.port == 0) {
+        args.port = readline.questionInt(`What localhost port does your bot use for debugging [${args.port}]?`);
     }
 }
 
@@ -63,14 +51,7 @@ bot.name = args.name;
 if (args.id.length > 0)
     bot.id = args.id;
 
-if (args.appid.length > 0)
-    bot.appId = args.appid;
-
-if (args.localendpoint && args.localendpoint.length > 0)
-    bot.endpoints.push({ name: 'local', url: args.localendpoint });
-
-if (args.endpoint && args.endpoint.length > 0)
-    bot.endpoints.push({ name: 'published', url: args.endpoint });
+bot.endpoints.push({ name: `http://localhost:${args.port}`, url: `http://localhost:${args.port}/api/messages` });
 
 let filename = bot.name + '.bot';
 bot.Save(filename);
