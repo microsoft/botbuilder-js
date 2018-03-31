@@ -3,88 +3,101 @@
     "conversation": {
       "id": "1"
     },
-    "id": "c358c242-f50c-4fef-ada7-a5cc1509f906",
-    "recipient": null,
-    "text": "Hi!",
-    "timestamp": "2018-03-01T00:56:13.000Z",
-    "type": "message",
-    "channelId": "chatdown",
+    "id": "57d5ef84-4f83-461d-9972-4e643127e9c3",
+    "recipient": {
+      "id": "85f5848f-e644-3403-81b2-a71e0b7e8d9d",
+      "name": "Joe",
+      "role": "user"
+    },
     "from": {
-      "id": "e8d2b3ca-ae71-3a88-8bf7-b2ec3f2e5aa5",
-      "name": "LulaBot"
-    }
+      "id": "69495507-d381-36b8-a32b-5e065104a192",
+      "name": "LulaBot",
+      "role": "bot"
+    },
+    "text": "Hi!",
+    "timestamp": "2018-03-30T21:30:45.000Z",
+    "type": "message",
+    "channelId": "chatdown"
   },
   {
     "conversation": {
       "id": "1"
     },
-    "id": "134c9466-5c0b-4782-b3be-2126a7f673af",
+    "id": "b7a961af-ab9e-4fc6-86f2-5f17993ca7a4",
     "recipient": {
-      "id": "e8d2b3ca-ae71-3a88-8bf7-b2ec3f2e5aa5",
-      "name": "LulaBot"
+      "id": "69495507-d381-36b8-a32b-5e065104a192",
+      "name": "LulaBot",
+      "role": "bot"
+    },
+    "from": {
+      "id": "85f5848f-e644-3403-81b2-a71e0b7e8d9d",
+      "name": "Joe",
+      "role": "user"
     },
     "text": "yo!",
-    "timestamp": "2018-03-01T00:56:15.000Z",
+    "timestamp": "2018-03-30T21:30:47.000Z",
     "type": "message",
-    "channelId": "chatdown",
-    "from": {
-      "id": "055beb33-46b6-3658-a936-2ae827d804a4",
-      "name": "Joe"
-    }
+    "channelId": "chatdown"
   },
   {
     "conversation": {
       "id": "1"
     },
-    "id": "2439d61e-2373-4d6b-b298-686cf1ed194f",
+    "id": "e1518aea-2a2c-4d10-a5e9-b89d049a01c6",
     "recipient": {
-      "id": "055beb33-46b6-3658-a936-2ae827d804a4",
-      "name": "Joe"
+      "id": "85f5848f-e644-3403-81b2-a71e0b7e8d9d",
+      "name": "Joe",
+      "role": "user"
+    },
+    "from": {
+      "id": "69495507-d381-36b8-a32b-5e065104a192",
+      "name": "LulaBot",
+      "role": "bot"
     },
     "text": "",
-    "timestamp": "2018-03-01T00:56:20.000Z",
+    "timestamp": "2018-03-30T21:30:52.000Z",
     "type": "typing",
-    "channelId": "chatdown",
-    "from": {
-      "id": "e8d2b3ca-ae71-3a88-8bf7-b2ec3f2e5aa5",
-      "name": "LulaBot"
-    }
+    "channelId": "chatdown"
   },
   {
     "conversation": {
       "id": "1"
     },
-    "id": "cbe8760b-84a7-499f-b81f-7be5d1165452",
+    "id": "e82b92d5-7f22-43e7-ace4-489aa270bab1",
     "recipient": {
-      "id": "055beb33-46b6-3658-a936-2ae827d804a4",
-      "name": "Joe"
+      "id": "85f5848f-e644-3403-81b2-a71e0b7e8d9d",
+      "name": "Joe",
+      "role": "user"
+    },
+    "from": {
+      "id": "69495507-d381-36b8-a32b-5e065104a192",
+      "name": "LulaBot",
+      "role": "bot"
     },
     "text": "Greetings!\nWhat would you like to do?\n* update - You can update your account\n* List - You can list your data\n* help - you can get help",
-    "timestamp": "2018-03-01T00:56:30.000Z",
+    "timestamp": "2018-03-30T21:31:02.000Z",
     "type": "message",
-    "channelId": "chatdown",
-    "from": {
-      "id": "e8d2b3ca-ae71-3a88-8bf7-b2ec3f2e5aa5",
-      "name": "LulaBot"
-    }
+    "channelId": "chatdown"
   },
   {
     "conversation": {
       "id": "1"
     },
-    "id": "9443ba48-7a61-49a2-ade9-1d3c34938d0d",
+    "id": "22574587-d20b-4472-97bf-b61a6491b46d",
     "recipient": {
-      "id": "e8d2b3ca-ae71-3a88-8bf7-b2ec3f2e5aa5",
-      "name": "LulaBot"
+      "id": "69495507-d381-36b8-a32b-5e065104a192",
+      "name": "LulaBot",
+      "role": "bot"
+    },
+    "from": {
+      "id": "85f5848f-e644-3403-81b2-a71e0b7e8d9d",
+      "name": "Joe",
+      "role": "user"
     },
     "text": "I need help",
-    "timestamp": "2018-03-01T00:56:32.000Z",
+    "timestamp": "2018-03-30T21:31:04.000Z",
     "type": "message",
-    "channelId": "chatdown",
-    "from": {
-      "id": "055beb33-46b6-3658-a936-2ae827d804a4",
-      "name": "Joe"
-    }
+    "channelId": "chatdown"
   },
   {
     "attachments": [
@@ -97,18 +110,20 @@
     "conversation": {
       "id": "1"
     },
-    "id": "d951f929-a237-44a3-96fa-7c3159af2f97",
+    "id": "77e4c6b4-880c-4f89-b46a-52b2a4d394ab",
     "recipient": {
-      "id": "055beb33-46b6-3658-a936-2ae827d804a4",
-      "name": "Joe"
+      "id": "85f5848f-e644-3403-81b2-a71e0b7e8d9d",
+      "name": "Joe",
+      "role": "user"
+    },
+    "from": {
+      "id": "69495507-d381-36b8-a32b-5e065104a192",
+      "name": "LulaBot",
+      "role": "bot"
     },
     "text": "\nHere you go.\n",
-    "timestamp": "2018-03-01T00:56:38.000Z",
+    "timestamp": "2018-03-30T21:31:10.000Z",
     "type": "message",
-    "channelId": "chatdown",
-    "from": {
-      "id": "e8d2b3ca-ae71-3a88-8bf7-b2ec3f2e5aa5",
-      "name": "LulaBot"
-    }
+    "channelId": "chatdown"
   }
 ]

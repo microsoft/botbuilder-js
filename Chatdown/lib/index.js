@@ -57,8 +57,8 @@ module.exports = async function readContents(fileContents, args) {
                 args[args.user] = args.user;
                 args.botId = botId;
                 args.userId = userId;
-                args[botId] = new ChannelAccount({id: botId, name: args.bot});
-                args[userId] = new ChannelAccount({id: userId, name: args.user});
+                args[botId] = new ChannelAccount({id: botId, name: args.bot, role: 'bot'});
+                args[userId] = new ChannelAccount({id: userId, name: args.user, role: 'user'});
             }
             continue;
         }
