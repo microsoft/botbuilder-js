@@ -104,7 +104,7 @@ class TurnContext {
         else {
             a = activityOrText;
         }
-        return this.sendActivities([a]).then((responses) => responses[0]);
+        return this.sendActivities([a]).then((responses) => responses && responses.length > 0 ? responses[0] : undefined);
     }
     /**
      * Sends a set of activities to the user. An array of responses form the server will be returned.

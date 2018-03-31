@@ -135,7 +135,7 @@ export class TurnContext {
         } else {
             a = activityOrText;
         }
-        return this.sendActivities([a]).then((responses) => responses[0]);
+        return this.sendActivities([a]).then((responses) => responses && responses.length > 0 ? responses[0] : undefined);
     }
 
     /** 
