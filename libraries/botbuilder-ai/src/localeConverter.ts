@@ -136,9 +136,9 @@ class MicrosoftLocaleConverter implements ILocaleConverter {
             let resolutionValues = result.resolution["values"][0];
             let type = result.typeName.replace('datetimeV2.', '');
             if (type.includes('date') && !type.includes('range')) {
-                moment = new Date(resolutionValues["value"] + 'Z');
+                moment = new Date(new Date(resolutionValues["value"]).getTime() + new Date().getTimezoneOffset() * 60 * 1000);
             } else if (type.includes('date') && type.includes('range')) {
-                moment = new Date(resolutionValues['start'] + 'Z');
+                moment = new Date(new Date(resolutionValues["start"]).getTime() + new Date().getTimezoneOffset() * 60 * 1000);
             } else { // Must be a time-only result with no date
                 moment = new Date();
                 moment.setHours(parseInt(String(resolutionValues['value']).substr(0, 2)));
