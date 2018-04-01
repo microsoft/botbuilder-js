@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.  
  * Licensed under the MIT License.
  */
-import { BotContext } from 'botbuilder';
+import { TurnContext } from 'botbuilder';
 
 export const channels = {
     facebook: 'facebook',
@@ -70,6 +70,6 @@ export function maxActionTitleLength(channelId: string) {
     return 20;
 }
 
-export function getChannelId(context: BotContext): string {
-    return context.request.channelId || '';
+export function getChannelId(context: TurnContext): string {
+    return context.activity.channelId || '';
 }

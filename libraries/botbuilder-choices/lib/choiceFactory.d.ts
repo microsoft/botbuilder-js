@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotContext, Activity } from 'botbuilder';
+import { TurnContext, Activity } from 'botbuilder';
 import { Choice } from './findChoices';
 export interface ChoiceFactoryOptions {
     /**
@@ -30,7 +30,7 @@ export interface ChoiceFactoryOptions {
     includeNumbers?: boolean;
 }
 export declare class ChoiceFactory {
-    static forChannel(channelOrContext: string | BotContext, choices: (string | Choice)[], text?: string, speak?: string, options?: ChoiceFactoryOptions): Partial<Activity>;
+    static forChannel(channelOrContext: string | TurnContext, choices: (string | Choice)[], text?: string, speak?: string, options?: ChoiceFactoryOptions): Partial<Activity>;
     static inline(choices: (string | Choice)[], text?: string, speak?: string, options?: ChoiceFactoryOptions): Partial<Activity>;
     static list(choices: (string | Choice)[], text?: string, speak?: string, options?: ChoiceFactoryOptions): Partial<Activity>;
     static suggestedAction(choices: (string | Choice)[], text?: string, speak?: string, options?: ChoiceFactoryOptions): Partial<Activity>;
