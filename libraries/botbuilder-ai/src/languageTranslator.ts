@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Middleware, BotContext } from 'botbuilder';
+import { Middleware, BotContext, ActivityTypes } from 'botbuilder';
 import * as request from 'request-promise-native';
 import { DOMParser } from "xmldom";
 
@@ -37,64 +37,62 @@ export class LanguageTranslator implements Middleware {
 
     /// Incoming activity
     public async onProcessRequest(context: BotContext, next: () => Promise<void>): Promise<void> {
-        if (context.request.type == "message" && context.request.text) {
-            
-            if (this.setUserLanguage != undefined) {
-                let changedLanguage = await this.setUserLanguage(context);
-                if (changedLanguage) {
-                    return next();
-                }
-            }
-            // determine the language we are using for this conversation
-            let sourceLanguage: string;
-            if (this.getUserLanguage != undefined) {
-                sourceLanguage = this.getUserLanguage(context);
-            } else if (context.request.locale != undefined) {
-                sourceLanguage = context.request.locale;
-            } else {
-                sourceLanguage = await this.translator.detect(context.request.text);
-            }
-
-            
-            let targetLanguage = (this.nativeLanguages.indexOf(sourceLanguage) >= 0) ? sourceLanguage : this.nativeLanguages[0];
-            
-
-            // translate to bots language
-            if (sourceLanguage != targetLanguage) {
-                await this.TranslateMessageAsync(context, sourceLanguage, targetLanguage);
+        if (context.request.type != ActivityTypes.Message) {
+            return next();
+        } 
+        if (this.setUserLanguage != undefined) {
+            let changedLanguage = await this.setUserLanguage(context);
+            if (changedLanguage) {
+                return Promise.resolve();
             }
         }
-        return next();
+        // translate to bots language
+        return this.translateMessageAsync(context)
+        .then(() => next());
+        
     }
 
     /// Translate .Text field of a message, regardless of direction
-    private TranslateMessageAsync(context: BotContext, sourceLanguage: string, targetLanguage: string): Promise<void> {
-        // if we have text and a target language
-        let message = context.request;
-        if (message.text && message.text.length > 0 && targetLanguage != sourceLanguage) {
-            // truncate big text
-            let text = message.text.length <= 65536 ? message.text : message.text.substring(0, 65536);
+    private async translateMessageAsync(context: BotContext): Promise<TranslationResult[]> {
         
-            let lines = text.split('\n');
-            return this.translator.translateArrayAsync({
-                from: sourceLanguage,
-                to: targetLanguage,
-                texts: lines,
-                contentType: 'text/plain'
-            })
-                .then((translateResult) => {
-                    text = '';
-                    for (let iData in translateResult) {
-                        if (text.length > 0)
-                            text += '\n';
-                        text += translateResult[iData].TranslatedText;
-                    }
-                    message.text = text;
-                    return Promise.resolve();
-                })
-                .catch(error => Promise.reject(error));
+
+        // determine the language we are using for this conversation
+        let sourceLanguage: string;
+        if (this.getUserLanguage != undefined) {
+            sourceLanguage = this.getUserLanguage(context);
+        } else if (context.request.locale != undefined) {
+            sourceLanguage = context.request.locale;
+        } else {
+            sourceLanguage = await this.translator.detect(context.request.text);
+        }
+
+        
+        let targetLanguage = (this.nativeLanguages.indexOf(sourceLanguage) >= 0) ? sourceLanguage : this.nativeLanguages[0];
+
+        if (sourceLanguage == targetLanguage) {
+            return Promise.resolve([]);
         }
         
+        let message = context.request;
+        let text = context.request.text;
+    
+        let lines = text.split('\n');
+        return this.translator.translateArrayAsync({
+            from: sourceLanguage,
+            to: targetLanguage,
+            texts: lines,
+            contentType: 'text/plain'
+        })
+        .then((translateResult) => {
+            text = '';
+            for (let iData in translateResult) {
+                if (text.length > 0)
+                    text += '\n';
+                text += translateResult[iData].translatedText;
+            }
+            message.text = text;
+            return Promise.resolve(translateResult);
+        })
     }
 }
 
@@ -106,17 +104,11 @@ declare interface TranslateArrayOptions {
     category?: string;
 }
 
-interface ErrorOrResult<TResult> {
-    (error: Error, result: TResult): void
-}
-
 interface TranslationResult {
-    TranslatedText: string;
+    translatedText: string;
 }
 
 interface Translator {
-    translateArray(options: TranslateArrayOptions, callback: ErrorOrResult<TranslationResult[]>): void;
-
     translateArrayAsync(options: TranslateArrayOptions): Promise<TranslationResult[]>;
 
     detect(text: string): Promise<string>;
@@ -140,8 +132,6 @@ class MicrosoftTranslator implements Translator {
             method: 'POST'
         })
         .then(result => Promise.resolve(result))
-        .catch(error => Promise.reject(error));
-
     }
 
     entityMap: any = {
@@ -171,18 +161,13 @@ class MicrosoftTranslator implements Translator {
             })
         })
         .then(lang => Promise.resolve(lang.replace(/<[^>]*>/g, '')))
-        .catch(error => Promise.reject(error));
-    }
-
-    translateArray(options: TranslateArrayOptions, callback: ErrorOrResult<TranslationResult[]>): void {
-        return;
     }
 
     translateArrayAsync(options: TranslateArrayOptions): Promise<TranslationResult[]> {
-        let from: any = options.from;
-        let to: any = options.to;
-        let texts: string[] = options.texts;
-        let orgTexts: string[] = [];
+        let from = options.from;
+        let to = options.to;
+        let texts = options.texts;
+        let orgTexts = [];
         texts.forEach((text, index, array) => {
             orgTexts.push(text);
             texts[index] = this.escapeHtml(text);
@@ -230,12 +215,11 @@ class MicrosoftTranslator implements Translator {
                 let translation = element.getElementsByTagName('TranslatedText')[0].textContent as string;
                 let alignment = element.getElementsByTagName('Alignment')[0].textContent as string;
                 translation = this.postProcessor.fixTranslation(orgTexts[index], alignment, translation);
-                let result: TranslationResult = { TranslatedText: translation }
+                let result: TranslationResult = { translatedText: translation }
                 results.push(result)
             });
             return Promise.resolve(results);
         })
-        .catch(error => Promise.reject(error));
     }
 }
 
@@ -248,8 +232,9 @@ export class PostProcessTranslator {
 
     private wordAlignmentParse(alignment: string, source: string, target: string): { [id: string] : string } {
         let alignMap: { [id: string] : string } = {};
-        if (alignment.trim() == "")
+        if (alignment.trim().replace('\n', '') == "") {
             return alignMap;
+        }
         let alignments: string[] = alignment.trim().split(' ');
         alignments.forEach(alignData => {
             let wordIndexes = alignData.split('-');
@@ -302,6 +287,11 @@ export class PostProcessTranslator {
                 
                 if (match != null && match[1] != undefined) {
                     let wrdNoTranslate = match[1].split(' ');
+                    wrdNoTranslate.forEach(srcWrd => {
+                        processedTranslation = this.keepSrcWrdInTranslation(alignMap, sourceMessage, processedTranslation, srcWrd);
+                    });
+                } else {
+                    let wrdNoTranslate = match[0].split(' ');
                     wrdNoTranslate.forEach(srcWrd => {
                         processedTranslation = this.keepSrcWrdInTranslation(alignMap, sourceMessage, processedTranslation, srcWrd);
                     });

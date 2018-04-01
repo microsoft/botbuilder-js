@@ -25,7 +25,7 @@ export declare class LanguageTranslator implements Middleware {
     private nativeLanguages;
     constructor(settings: TranslatorSettings);
     onProcessRequest(context: BotContext, next: () => Promise<void>): Promise<void>;
-    private TranslateMessageAsync(context, sourceLanguage, targetLanguage);
+    private translateMessageAsync(context);
 }
 export declare class PostProcessTranslator {
     noTranslatePatterns: Set<string>;
