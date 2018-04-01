@@ -1,7 +1,7 @@
-import { BotContext } from 'botbuilder';
+import { TurnContext } from 'botbuilder';
 import { BotStateManager } from './botStateManager';
 
-export async function begin(context: BotContext, state: BotStateManager): Promise<any> {
+export async function begin(context: TurnContext, state: BotStateManager): Promise<any> {
     // Delete any existing topic
     state.conversation(context).topic = undefined;
 
@@ -10,7 +10,7 @@ export async function begin(context: BotContext, state: BotStateManager): Promis
     await renderAlarms(context, state);
 }
 
-export async function renderAlarms(context: BotContext, state: BotStateManager): Promise<number> {
+export async function renderAlarms(context: TurnContext, state: BotStateManager): Promise<number> {
     // Get user state w/alarm list
     const user = state.user(context);
 

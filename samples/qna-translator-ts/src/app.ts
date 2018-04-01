@@ -1,4 +1,4 @@
-import { BotFrameworkAdapter, MemoryStorage, ConversationState, BotContext } from 'botbuilder';
+import { BotFrameworkAdapter, MemoryStorage, ConversationState, TurnContext } from 'botbuilder';
 import { LanguageTranslator, LocaleConverter, QnAMaker } from 'botbuilder-ai';
 import * as restify from 'restify';
 
@@ -25,7 +25,7 @@ const conversationState = new ConversationState<LanguageState>(new MemoryStorage
 adapter.use(conversationState);
 
 // Delegates for getting and setting user language
-function getUserLanguage(context: BotContext): string {
+function getUserLanguage(context: TurnContext): string {
     const state = conversationState.get(context)
     if (state.language == undefined) {
         return 'en';
@@ -34,10 +34,10 @@ function getUserLanguage(context: BotContext): string {
     }
 }
 
-async function setUserLanguage(context: BotContext): Promise<boolean> {
+async function setUserLanguage(context: TurnContext): Promise<boolean> {
     let state = conversationState.get(context)
-    if (context.request.text.toLowerCase().startsWith('set my language to')) {
-        state.language = context.request.text.toLowerCase().replace('set my language to', '').trim();
+    if (context.activity.text.toLowerCase().startsWith('set my language to')) {
+        state.language = context.activity.text.toLowerCase().replace('set my language to', '').trim();
         await context.sendActivity(`Setting your language to ${state.language}`);
         return Promise.resolve(true);
     } else {
@@ -46,7 +46,7 @@ async function setUserLanguage(context: BotContext): Promise<boolean> {
 }
 
 // Delegates for getting and setting user locale
-function getUserLocale(context: BotContext): string {
+function getUserLocale(context: TurnContext): string {
     const state = conversationState.get(context)
     if (state.locale == undefined) {
         return 'en-us';
@@ -55,10 +55,10 @@ function getUserLocale(context: BotContext): string {
     }
 }
 
-async function setUserLocale(context: BotContext): Promise<boolean> {
+async function setUserLocale(context: TurnContext): Promise<boolean> {
     let state = conversationState.get(context)
-    if (context.request.text.toLowerCase().startsWith('set my locale to')) {        
-        state.locale = context.request.text.toLowerCase().replace('set my locale to', '').trim();
+    if (context.activity.text.toLowerCase().startsWith('set my locale to')) {        
+        state.locale = context.activity.text.toLowerCase().replace('set my locale to', '').trim();
         await context.sendActivity(`Setting your locale to ${state.locale}`);
         return Promise.resolve(true);
     } else {
@@ -94,9 +94,9 @@ adapter.use(qnaMaker);
 // Listen for incoming requests 
 server.post('/api/messages', (req, res) => {
     // Route received request to adapter for processing
-    adapter.processRequest(req, res, async (context) => {
-        if (context.request.type != 'message') {
-            await context.sendActivity(`[${context.request.type} event detected]`);
+    adapter.processActivity(req, res, async (context) => {
+        if (context.activity.type != 'message') {
+            await context.sendActivity(`[${context.activity.type} event detected]`);
         }
     });
 });

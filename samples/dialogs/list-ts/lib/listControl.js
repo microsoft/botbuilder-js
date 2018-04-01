@@ -15,7 +15,7 @@ class ListControl extends botbuilder_dialogs_1.Control {
     }
     dialogContinue(dc) {
         // Recognize selected action
-        const utterance = (dc.context.request.text || '').trim();
+        const utterance = (dc.context.activity.text || '').trim();
         const choices = this.actions.map((a) => {
             return typeof a === 'object' ? { value: a.value, action: a } : a;
         });

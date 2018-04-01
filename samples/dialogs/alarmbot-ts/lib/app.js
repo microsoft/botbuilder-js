@@ -26,14 +26,12 @@ const adapter = new botbuilder_1.BotFrameworkAdapter({
 // Add state middleware
 const state = new botStateManager_1.BotStateManager(new botbuilder_1.MemoryStorage());
 adapter.use(state);
-// Add batch output middleware
-adapter.use(new botbuilder_1.BatchOutput());
 // Listen for incoming requests 
 server.post('/api/messages', (req, res) => {
     // Route received request to adapter for processing
-    adapter.processRequest(req, res, (context) => __awaiter(this, void 0, void 0, function* () {
-        if (context.request.type === 'message') {
-            const utterance = (context.request.text || '').trim().toLowerCase();
+    adapter.processActivity(req, res, (context) => __awaiter(this, void 0, void 0, function* () {
+        if (context.activity.type === 'message') {
+            const utterance = (context.activity.text || '').trim().toLowerCase();
             // Create dialog context
             const dc = dialogs.createContext(context, state.conversation(context));
             // Start addAlarm dialog

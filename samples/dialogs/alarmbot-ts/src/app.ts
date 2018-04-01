@@ -1,4 +1,4 @@
-import { BotFrameworkAdapter, MemoryStorage, BatchOutput, BotContext } from 'botbuilder';
+import { BotFrameworkAdapter, MemoryStorage,TurnContext } from 'botbuilder';
 import { 
     DialogSet, TextPrompt, ChoicePrompt, ConfirmPrompt, DatetimePrompt, 
     FoundChoice, FoundDatetime, ListStyle 
@@ -23,15 +23,12 @@ const adapter = new BotFrameworkAdapter( {
 const state = new BotStateManager(new MemoryStorage());
 adapter.use(state);
 
-// Add batch output middleware
-adapter.use(new BatchOutput());
-
 // Listen for incoming requests 
 server.post('/api/messages', (req, res) => {
     // Route received request to adapter for processing
-    adapter.processRequest(req, res, async (context) => {
-        if (context.request.type === 'message') {
-            const utterance = (context.request.text || '').trim().toLowerCase();
+    adapter.processActivity(req, res, async (context) => {
+        if (context.activity.type === 'message') {
+            const utterance = (context.activity.text || '').trim().toLowerCase();
 
             // Create dialog context
             const dc = dialogs.createContext(context, state.conversation(context));

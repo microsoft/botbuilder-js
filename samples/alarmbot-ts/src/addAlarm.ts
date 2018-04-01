@@ -1,7 +1,7 @@
-import { BotContext } from 'botbuilder';
+import { TurnContext } from 'botbuilder';
 import { BotStateManager, Alarm } from './botStateManager';
 
-export async function begin(context: BotContext, state: BotStateManager): Promise<any> {
+export async function begin(context: TurnContext, state: BotStateManager): Promise<any> {
     // Set topic and initialize empty alarm
     const conversation = state.conversation(context);
     conversation.topic = 'addAlarm';
@@ -11,10 +11,10 @@ export async function begin(context: BotContext, state: BotStateManager): Promis
     await nextField(context, state);
 }
 
-export async function routeReply(context: BotContext, state: BotStateManager): Promise<any> {
+export async function routeReply(context: TurnContext, state: BotStateManager): Promise<any> {
     // Handle users reply to prompt
     const conversation = state.conversation(context);
-    const utterance = context.request.text.trim();
+    const utterance = context.activity.text.trim();
     switch (conversation.prompt) {
         case 'title':
             // Validate reply and save to alarm
@@ -34,7 +34,7 @@ export async function routeReply(context: BotContext, state: BotStateManager): P
     await nextField(context, state);
 }
 
-async function nextField(context: BotContext, state: BotStateManager): Promise<any> {
+async function nextField(context: TurnContext, state: BotStateManager): Promise<any> {
     // Prompt user for next missing field
     const conversation = state.conversation(context);
     const alarm = conversation.alarm;

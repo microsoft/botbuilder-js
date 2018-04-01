@@ -1,4 +1,4 @@
-import { BotFrameworkAdapter, MemoryStorage, ConversationState, BotContext, MessageFactory, CardFactory, Attachment } from 'botbuilder';
+import { BotFrameworkAdapter, MemoryStorage, ConversationState, TurnContext, MessageFactory, CardFactory, Attachment } from 'botbuilder';
 import { DialogSet } from 'botbuilder-dialogs';
 import * as restify from 'restify';
 
@@ -26,14 +26,14 @@ adapter.use(conversationState);
 
 // Listen for incoming requests 
 server.post('/api/messages', (req, res) => {
-    adapter.processRequest(req, res, async (context) => {
-        if (context.request.type === 'message') {
+    adapter.processActivity(req, res, async (context) => {
+        if (context.activity.type === 'message') {
             // Create dialog context.
             const state = conversationState.get(context);
             const dc = dialogs.createContext(context, state);
 
             // Check for list to show
-            const utterance = (context.request.text || '').trim().toLowerCase();
+            const utterance = (context.activity.text || '').trim().toLowerCase();
             if (utterance.includes('images')) {
                 const startImage = Math.floor(Math.random() * 100);
                 await dc.endAll().begin('imageList', { filter: { start: startImage }});

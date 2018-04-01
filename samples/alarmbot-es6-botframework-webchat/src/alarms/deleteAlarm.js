@@ -17,7 +17,7 @@ export function begin(context) {
 export function routeReply(context) {
     // Validate users reply and delete alarm
     let deleted = false;
-    const title = context.request.text.trim();
+    const title = context.activity.text.trim();
     const list = context.state.user.alarms || [];
     for (let i = 0; i < list.length; i++) {
         if (list[i].title.toLowerCase() === title.toLowerCase()) {

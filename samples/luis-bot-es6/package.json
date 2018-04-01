@@ -13,6 +13,6 @@
     "botbuilder-ai": "^4.0.0-m2.1",
     "botbuilder-dialogs": "^4.0.0-m2.2",
     "lodash": "^4.17.5",
-    "restify": "^7.0.0"
+    "restify": "^6.3.4"
   }
 }

@@ -29,8 +29,8 @@ function getUserLanguage(context) {
 
 async function setUserLanguage(context) {
     let state = conversationState.get(context)
-    if (context.request.text.toLowerCase().startsWith('set my language to')) {
-        state.language = context.request.text.toLowerCase().replace('set my language to', '').trim();
+    if (context.activity.text.toLowerCase().startsWith('set my language to')) {
+        state.language = context.activity.text.toLowerCase().replace('set my language to', '').trim();
         await context.sendActivity(`Setting your language to ${state.language}`);
         return Promise.resolve(true);
     } else {
@@ -50,8 +50,8 @@ function getUserLocale(context) {
 
 async function setUserLocale(context) {
     let state = conversationState.get(context)
-    if (context.request.text.toLowerCase().startsWith('set my locale to')) {        
-        state.locale = context.request.text.toLowerCase().replace('set my locale to', '').trim();
+    if (context.activity.text.toLowerCase().startsWith('set my locale to')) {        
+        state.locale = context.activity.text.toLowerCase().replace('set my locale to', '').trim();
         await context.sendActivity(`Setting your locale to ${state.locale}`);
         return Promise.resolve(true);
     } else {
@@ -87,9 +87,9 @@ adapter.use(luisRecognizer);
 // Listen for incoming requests 
 server.post('/api/messages', (req, res) => {
     // Route received request to adapter for processing
-    adapter.processRequest(req, res, (context) => {
-        if (context.request.type != 'message') {
-            await context.sendActivity(`[${context.request.type} event detected]`);
+    adapter.processActivity(req, res, (context) => {
+        if (context.activity.type != 'message') {
+            await context.sendActivity(`[${context.activity.type} event detected]`);
         } else {
             let results = luisRecognizer.get(context);
             for (const intent in results.intents) {
