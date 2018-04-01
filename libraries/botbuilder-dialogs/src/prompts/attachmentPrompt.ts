@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotContext, Attachment } from 'botbuilder';
+import { TurnContext, Attachment } from 'botbuilder';
 import { DialogContext } from '../dialogContext';
 import { Prompt, PromptOptions, PromptValidator } from './prompt';
 import * as prompts from 'botbuilder-prompts';
@@ -34,7 +34,7 @@ import * as prompts from 'botbuilder-prompts';
  * ]);
  * ```
  */
-export class AttachmentPrompt<C extends BotContext> extends Prompt<C, Attachment[]> {
+export class AttachmentPrompt<C extends TurnContext> extends Prompt<C, Attachment[]> {
     private prompt: prompts.AttachmentPrompt;
 
     /**

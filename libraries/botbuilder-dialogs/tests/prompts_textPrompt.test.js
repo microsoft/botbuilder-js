@@ -1,4 +1,4 @@
-const { TestAdapter, BotContext } = require('botbuilder');
+const { TestAdapter, TurnContext } = require('botbuilder');
 const { DialogSet, TextPrompt } =  require('../');
 const assert = require('assert');
 
@@ -7,11 +7,11 @@ const continueMessage = { text: `continue`, type: 'message' };
 const shortMessage = { text: `a`, type: 'message' };
 const longMessage = { text: `abcdefg`, type: 'message' };
 
-class TestContext extends BotContext {
+class TestContext extends TurnContext {
     constructor(request) {
         super(new TestAdapter(), request);
         this.sent = undefined;
-        this.onSendActivity((context, activities, next) => {
+        this.onSendActivities((context, activities, next) => {
             this.sent = activities;
             context.responded = true;
         });

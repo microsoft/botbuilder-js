@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotContext } from 'botbuilder';
+import { TurnContext } from 'botbuilder';
 import { Dialog } from './dialog';
 import { Waterfall, WaterfallStep } from './waterfall';
 import { DialogContext } from './dialogContext';
@@ -42,7 +42,7 @@ import { DialogContext } from './dialogContext';
  *      });
  * ```
  */
-export declare class DialogSet<C extends BotContext = BotContext> {
+export declare class DialogSet<C extends TurnContext = TurnContext> {
     private readonly dialogs;
     /**
      * Adds a new dialog to the set and returns the added dialog.

@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotContext } from 'botbuilder';
+import { TurnContext } from 'botbuilder';
 import { DialogContext } from '../dialogContext';
 import { Prompt, PromptOptions, PromptValidator } from './prompt';
 import * as prompts from 'botbuilder-prompts';
@@ -40,7 +40,7 @@ export interface ChoicePromptOptions extends PromptOptions {
  * ]);
  * ```
  */
-export class ChoicePrompt<C extends BotContext> extends Prompt<C, prompts.FoundChoice> {
+export class ChoicePrompt<C extends TurnContext> extends Prompt<C, prompts.FoundChoice> {
     private prompt: prompts.ChoicePrompt;
 
     /**
@@ -52,7 +52,7 @@ export class ChoicePrompt<C extends BotContext> extends Prompt<C, prompts.FoundC
      * dialogs.add('choicePrompt', new ChoicePrompt());
      * ```
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.  
-     * @param defaultLocale (Optional) locale to use if `dc.context.request.locale` not specified. Defaults to a value of `en-us`.
+     * @param defaultLocale (Optional) locale to use if `dc.context.activity.locale` not specified. Defaults to a value of `en-us`.
      */
     constructor(validator?: PromptValidator<C, prompts.FoundChoice>, defaultLocale?: string) {
         super(validator);

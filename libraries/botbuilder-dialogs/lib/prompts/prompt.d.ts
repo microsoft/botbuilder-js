@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotContext, Activity, Promiseable } from 'botbuilder';
+import { TurnContext, Activity, Promiseable } from 'botbuilder';
 import { DialogContext } from '../dialogContext';
 import { Control } from '../control';
 /** Basic configuration options supported by all prompts. */
@@ -30,8 +30,8 @@ export interface PromptOptions {
  * @param PromptValidator.context Dialog context for the current turn of conversation with the user.
  * @param PromptValidator.value The value that was recognized or wasn't recognized. Depending on the prompt this can be either undefined or an empty array to indicate an unrecognized value.
  */
-export declare type PromptValidator<C extends BotContext, R> = (dc: DialogContext<C>, value: R | undefined) => Promiseable<any>;
-export declare abstract class Prompt<C extends BotContext, T> extends Control<C> {
+export declare type PromptValidator<C extends TurnContext, R> = (dc: DialogContext<C>, value: R | undefined) => Promiseable<any>;
+export declare abstract class Prompt<C extends TurnContext, T> extends Control<C> {
     private validator;
     constructor(validator?: PromptValidator<C, T>);
     protected abstract onPrompt(dc: DialogContext<C>, options: PromptOptions, isRetry: boolean): Promise<any>;

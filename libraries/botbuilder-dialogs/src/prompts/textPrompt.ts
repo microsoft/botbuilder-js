@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotContext } from 'botbuilder';
+import { TurnContext } from 'botbuilder';
 import { DialogContext } from '../dialogContext';
 import { Prompt, PromptOptions, PromptValidator } from './prompt';
 import * as prompts from 'botbuilder-prompts';
@@ -34,7 +34,7 @@ import * as prompts from 'botbuilder-prompts';
  * ]);
  * ```
  */
-export class TextPrompt<C extends BotContext> extends Prompt<C, string> {
+export class TextPrompt<C extends TurnContext> extends Prompt<C, string> {
     private prompt: prompts.TextPrompt;
 
     /**

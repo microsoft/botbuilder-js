@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotContext, Attachment } from 'botbuilder';
+import { TurnContext, Attachment } from 'botbuilder';
 import { DialogContext } from '../dialogContext';
 import { Prompt, PromptOptions, PromptValidator } from './prompt';
 /**
@@ -32,7 +32,7 @@ import { Prompt, PromptOptions, PromptValidator } from './prompt';
  * ]);
  * ```
  */
-export declare class AttachmentPrompt<C extends BotContext> extends Prompt<C, Attachment[]> {
+export declare class AttachmentPrompt<C extends TurnContext> extends Prompt<C, Attachment[]> {
     private prompt;
     /**
      * Creates a new instance of the prompt.

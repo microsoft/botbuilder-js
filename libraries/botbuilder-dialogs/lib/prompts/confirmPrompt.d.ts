@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotContext } from 'botbuilder';
+import { TurnContext } from 'botbuilder';
 import { DialogContext } from '../dialogContext';
 import { Prompt, PromptOptions, PromptValidator } from './prompt';
 import * as prompts from 'botbuilder-prompts';
@@ -33,7 +33,7 @@ import * as prompts from 'botbuilder-prompts';
  * ]);
  * ```
  */
-export declare class ConfirmPrompt<C extends BotContext> extends Prompt<C, boolean> {
+export declare class ConfirmPrompt<C extends TurnContext> extends Prompt<C, boolean> {
     private prompt;
     /**
      * Allows for the localization of the confirm prompts yes/no choices to other locales besides
@@ -66,7 +66,7 @@ export declare class ConfirmPrompt<C extends BotContext> extends Prompt<C, boole
      * }));
      * ```
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
-     * @param defaultLocale (Optional) locale to use if `dc.context.request.locale` not specified. Defaults to a value of `en-us`.
+     * @param defaultLocale (Optional) locale to use if `dc.context.activity.locale` not specified. Defaults to a value of `en-us`.
      */
     constructor(validator?: PromptValidator<C, boolean>, defaultLocale?: string);
     /**

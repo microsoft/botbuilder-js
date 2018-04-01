@@ -43,7 +43,7 @@ class NumberPrompt extends prompt_1.Prompt {
      * }));
      * ```
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
-     * @param defaultLocale (Optional) locale to use if `dc.context.request.locale` not specified. Defaults to a value of `en-us`.
+     * @param defaultLocale (Optional) locale to use if `dc.context.activity.locale` not specified. Defaults to a value of `en-us`.
      */
     constructor(validator, defaultLocale) {
         super(validator);
