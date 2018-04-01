@@ -5,14 +5,14 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Middleware, BotContext, ActivityTypes } from 'botbuilder';
+import { Middleware, TurnContext, ActivityTypes } from 'botbuilder';
 import * as DateTimeRecognizers from '@microsoft/recognizers-text-date-time';
 
 export interface LocaleConverterSettings {
     toLocale: string,
     fromLocale?: string,
-    getUserLocale?: (context: BotContext) => string,
-    setUserLocale?: (context: BotContext) => Promise<boolean>
+    getUserLocale?: (context: TurnContext) => string,
+    setUserLocale?: (context: TurnContext) => Promise<boolean>
 }
 
 /**
@@ -22,8 +22,8 @@ export class LocaleConverter implements Middleware {
     private localeConverter: ILocaleConverter;
     private fromLocale: string | undefined;
     private toLocale: string;
-    private getUserLocale: ((context: BotContext) => string) | undefined;
-    private setUserLocale: ((context: BotContext) => Promise<boolean>) | undefined;
+    private getUserLocale: ((context: TurnContext) => string) | undefined;
+    private setUserLocale: ((context: TurnContext) => Promise<boolean>) | undefined;
 
     public constructor(settings: LocaleConverterSettings) {
         this.localeConverter = new MicrosoftLocaleConverter();
@@ -34,8 +34,8 @@ export class LocaleConverter implements Middleware {
     }
 
     /// Incoming activity
-    public async onProcessRequest(context: BotContext, next: () => Promise<void>): Promise<void> {
-        if (context.request.type != ActivityTypes.Message) {
+    public async onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
+        if (context.activity.type != ActivityTypes.Message) {
             return next();
         }
         
@@ -50,8 +50,8 @@ export class LocaleConverter implements Middleware {
         .then(() => next());
     }
 
-    private async convertLocalesAsync(context: BotContext): Promise<void> {
-        let message = context.request;
+    private async convertLocalesAsync(context: TurnContext): Promise<void> {
+        let message = context.activity;
         let fromLocale: string;
         if (this.fromLocale != undefined) {
             fromLocale = this.fromLocale;

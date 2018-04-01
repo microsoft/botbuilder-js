@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotContext, Middleware } from 'botbuilder';
+import { TurnContext, Middleware } from 'botbuilder';
 export interface QnAMakerResult {
     answer: string;
     score: number;
@@ -39,14 +39,14 @@ export interface QnAMakerSettings {
 export declare class QnAMaker implements Middleware {
     private readonly settings;
     constructor(settings: QnAMakerSettings);
-    onProcessRequest(context: BotContext, next: () => Promise<void>): Promise<void>;
+    onTurn(context: TurnContext, next: () => Promise<void>): Promise<void>;
     /**
      * Calls [generateAnswer()](#generateanswer) and sends the answer as a message ot the user.
      * Returns a value of `true` if an answer was found and sent. If multiple answers are
      * returned the first one will be delivered.
      * @param context Context for the current turn of conversation with the use.
      */
-    answer(context: BotContext): Promise<boolean>;
+    answer(context: TurnContext): Promise<boolean>;
     /**
      * Calls the QnA Maker service to generate answer(s) for a question. The returned answers will
      * be sorted by score with the top scoring answer returned first.

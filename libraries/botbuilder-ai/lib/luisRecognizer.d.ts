@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Middleware, BotContext } from 'botbuilder';
+import { Middleware, TurnContext } from 'botbuilder';
 import LuisClient = require('botframework-luis');
 export interface LuisRecognizerSettings {
     /** Your models AppId */
@@ -46,14 +46,14 @@ export declare class LuisRecognizer implements Middleware {
      * @param settings Settings used to configure the instance.
      */
     constructor(settings: LuisRecognizerSettings);
-    onProcessRequest(context: BotContext, next: () => Promise<void>): Promise<void>;
+    onTurn(context: TurnContext, next: () => Promise<void>): Promise<void>;
     /**
      * Returns the results cached from a previous call to [recognize()](#recognize) for the current
      * turn with the user.  This will return `undefined` if recognize() hasn't been called for the
      * current turn.
      * @param context Context for the current turn of conversation with the use.
      */
-    get(context: BotContext): LuisRecognizerResult | undefined;
+    get(context: TurnContext): LuisRecognizerResult | undefined;
     /**
      * Calls LUIS to recognize intents and entities in a users utterance. The results of the call
      * will be cached to the context object for the turn and future calls to recognize() for the
@@ -62,7 +62,7 @@ export declare class LuisRecognizer implements Middleware {
      * @param context Context for the current turn of conversation with the use.
      * @param force (Optional) flag that if `true` will force the call to LUIS even if a cached result exists. Defaults to a value of `false`.
      */
-    recognize(context: BotContext, force?: boolean): Promise<LuisRecognizerResult>;
+    recognize(context: TurnContext, force?: boolean): Promise<LuisRecognizerResult>;
     /**
      * Called internally to create a LuisClient instance. This is exposed to enable better unit
      * testing of teh recognizer.

@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Middleware, BotContext, ActivityTypes } from 'botbuilder';
+import { Middleware, TurnContext, ActivityTypes } from 'botbuilder';
 import * as request from 'request-promise-native';
 import { DOMParser } from "xmldom";
 
@@ -13,8 +13,8 @@ export interface TranslatorSettings {
     translatorKey: string,
     nativeLanguages: string[],
     noTranslatePatterns: Set<string>,
-    getUserLanguage?: ((c: BotContext) => string) | undefined,
-    setUserLanguage?: ((context: BotContext) => Promise<boolean>) | undefined
+    getUserLanguage?: ((c: TurnContext) => string) | undefined,
+    setUserLanguage?: ((context: TurnContext) => Promise<boolean>) | undefined
 }
 
 /**
@@ -24,8 +24,8 @@ export interface TranslatorSettings {
  */
 export class LanguageTranslator implements Middleware {
     private translator: Translator;
-    private getUserLanguage: ((context: BotContext) => string) | undefined;
-    private setUserLanguage: ((context: BotContext) => Promise<boolean>) | undefined;
+    private getUserLanguage: ((context: TurnContext) => string) | undefined;
+    private setUserLanguage: ((context: TurnContext) => Promise<boolean>) | undefined;
     private nativeLanguages: string[];
 
     public constructor(settings: TranslatorSettings) {
@@ -36,8 +36,8 @@ export class LanguageTranslator implements Middleware {
     }
 
     /// Incoming activity
-    public async onProcessRequest(context: BotContext, next: () => Promise<void>): Promise<void> {
-        if (context.request.type != ActivityTypes.Message) {
+    public async onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
+        if (context.activity.type != ActivityTypes.Message) {
             return next();
         } 
         if (this.setUserLanguage != undefined) {
@@ -53,17 +53,17 @@ export class LanguageTranslator implements Middleware {
     }
 
     /// Translate .Text field of a message, regardless of direction
-    private async translateMessageAsync(context: BotContext): Promise<TranslationResult[]> {
+    private async translateMessageAsync(context: TurnContext): Promise<TranslationResult[]> {
         
 
         // determine the language we are using for this conversation
         let sourceLanguage: string;
         if (this.getUserLanguage != undefined) {
             sourceLanguage = this.getUserLanguage(context);
-        } else if (context.request.locale != undefined) {
-            sourceLanguage = context.request.locale;
+        } else if (context.activity.locale != undefined) {
+            sourceLanguage = context.activity.locale;
         } else {
-            sourceLanguage = await this.translator.detect(context.request.text);
+            sourceLanguage = await this.translator.detect(context.activity.text);
         }
 
         
@@ -73,8 +73,8 @@ export class LanguageTranslator implements Middleware {
             return Promise.resolve([]);
         }
         
-        let message = context.request;
-        let text = context.request.text;
+        let message = context.activity;
+        let text = context.activity.text;
     
         let lines = text.split('\n');
         return this.translator.translateArrayAsync({

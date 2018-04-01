@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.  
  * Licensed under the MIT License.
  */
-import { BotContext, Middleware, ActivityTypes } from 'botbuilder';
+import { TurnContext, Middleware, ActivityTypes } from 'botbuilder';
 import * as request from 'request-promise-native';
 import * as entities from 'html-entities';
 
@@ -66,9 +66,9 @@ export class QnAMaker implements Middleware {
         }
     }
 
-    public onProcessRequest(context: BotContext, next: () => Promise<void>): Promise<void> {
+    public onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
         // Filter out non-message activities
-        if (context.request.type !== ActivityTypes.Message) {
+        if (context.activity.type !== ActivityTypes.Message) {
             return next();
         }
 
@@ -92,9 +92,9 @@ export class QnAMaker implements Middleware {
      * returned the first one will be delivered.
      * @param context Context for the current turn of conversation with the use.
      */
-    public answer(context: BotContext): Promise<boolean> {
+    public answer(context: TurnContext): Promise<boolean> {
         const { top, scoreThreshold } = this.settings;
-        return this.generateAnswer(context.request.text, top, scoreThreshold).then((answers) => {
+        return this.generateAnswer(context.activity.text, top, scoreThreshold).then((answers) => {
             if (answers.length > 0) {
                 return context.sendActivity({ text: answers[0].answer, type: 'message' }).then(() => true);
             } else {

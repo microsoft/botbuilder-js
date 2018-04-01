@@ -31,9 +31,9 @@ class LanguageTranslator {
         this.setUserLanguage = settings.setUserLanguage;
     }
     /// Incoming activity
-    onProcessRequest(context, next) {
+    onTurn(context, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (context.request.type != botbuilder_1.ActivityTypes.Message) {
+            if (context.activity.type != botbuilder_1.ActivityTypes.Message) {
                 return next();
             }
             if (this.setUserLanguage != undefined) {
@@ -55,18 +55,18 @@ class LanguageTranslator {
             if (this.getUserLanguage != undefined) {
                 sourceLanguage = this.getUserLanguage(context);
             }
-            else if (context.request.locale != undefined) {
-                sourceLanguage = context.request.locale;
+            else if (context.activity.locale != undefined) {
+                sourceLanguage = context.activity.locale;
             }
             else {
-                sourceLanguage = yield this.translator.detect(context.request.text);
+                sourceLanguage = yield this.translator.detect(context.activity.text);
             }
             let targetLanguage = (this.nativeLanguages.indexOf(sourceLanguage) >= 0) ? sourceLanguage : this.nativeLanguages[0];
             if (sourceLanguage == targetLanguage) {
                 return Promise.resolve([]);
             }
-            let message = context.request;
-            let text = context.request.text;
+            let message = context.activity;
+            let text = context.activity.text;
             let lines = text.split('\n');
             return this.translator.translateArrayAsync({
                 from: sourceLanguage,
