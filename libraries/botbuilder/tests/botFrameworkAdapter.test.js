@@ -153,12 +153,12 @@ describe(`BotFrameworkAdapter`, function () {
         done();
     });
     
-    it(`should processRequest().`, function (done) {
+    it(`should processActivity().`, function (done) {
         let called = false;
         const req = new MockRequest(incomingMessage);
         const res = new MockResponse();
         const adapter = new AdapterUnderTest();
-        adapter.processRequest(req, res, (context) => {
+        adapter.processActivity(req, res, (context) => {
             assert(context, `context not passed.`);
             called = true;
         }).then(() => {
@@ -168,12 +168,12 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should processRequest() sent as body.`, function (done) {
+    it(`should processActivity() sent as body.`, function (done) {
         let called = false;
         const req = new MockBodyRequest(incomingMessage);
         const res = new MockResponse();
         const adapter = new AdapterUnderTest();
-        adapter.processRequest(req, res, (context) => {
+        adapter.processActivity(req, res, (context) => {
             assert(context, `context not passed.`);
             called = true;
         }).then(() => {
@@ -183,11 +183,11 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should reject a bogus request sent to processRequest().`, function (done) {
+    it(`should reject a bogus request sent to processActivity().`, function (done) {
         const req = new MockRequest('bogus');
         const res = new MockResponse();
         const adapter = new AdapterUnderTest();
-        adapter.processRequest(req, res, (context) => {
+        adapter.processActivity(req, res, (context) => {
             assert(false, `shouldn't have called bot logic.`);
         }).then(() => {
             assert(false, `shouldn't have passed.`);
@@ -198,11 +198,11 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should reject a request without activity type sent to processRequest().`, function (done) {
+    it(`should reject a request without activity type sent to processActivity().`, function (done) {
         const req = new MockBodyRequest({ text: 'foo' });
         const res = new MockResponse();
         const adapter = new AdapterUnderTest();
-        adapter.processRequest(req, res, (context) => {
+        adapter.processActivity(req, res, (context) => {
             assert(false, `shouldn't have called bot logic.`);
         }).then(() => {
             assert(false, `shouldn't have passed.`);
@@ -213,12 +213,12 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should fail to auth on call to processRequest().`, function (done) {
+    it(`should fail to auth on call to processActivity().`, function (done) {
         const req = new MockRequest(incomingMessage);
         const res = new MockResponse();
         const adapter = new AdapterUnderTest();
         adapter.failAuth = true;
-        adapter.processRequest(req, res, (context) => {
+        adapter.processActivity(req, res, (context) => {
             assert(false, `shouldn't have called bot logic.`);
         }).then(() => {
             assert(false, `shouldn't have passed.`);
@@ -229,11 +229,11 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should return 500 error on bot logic exception during processRequest().`, function (done) {
+    it(`should return 500 error on bot logic exception during processActivity().`, function (done) {
         const req = new MockRequest(incomingMessage);
         const res = new MockResponse();
         const adapter = new AdapterUnderTest();
-        adapter.processRequest(req, res, (context) => {
+        adapter.processActivity(req, res, (context) => {
             throw new Error(`bot exception`);
         }).then(() => {
             assert(false, `shouldn't have passed.`);
@@ -355,7 +355,7 @@ describe(`BotFrameworkAdapter`, function () {
         const req = new MockRequest(incomingInvoke);
         const res = new MockResponse();
         const adapter = new AdapterUnderTest();
-        adapter.processRequest(req, res, (context) => {
+        adapter.processActivity(req, res, (context) => {
             return context.sendActivity({ type: 'invokeResponse', value: { status: 200, body: 'body' }})
         }).then(() => {
             assertResponse(res, 200, true);
@@ -367,7 +367,7 @@ describe(`BotFrameworkAdapter`, function () {
         const req = new MockRequest(incomingInvoke);
         const res = new MockResponse();
         const adapter = new AdapterUnderTest();
-        adapter.processRequest(req, res, (context) => {
+        adapter.processActivity(req, res, (context) => {
             // don't return anything
         }).then(() => {
             assert(false, `shouldn't have passed.`);

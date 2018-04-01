@@ -31,7 +31,7 @@ class BotFrameworkAdapter extends botbuilder_core_1.BotAdapter {
         this.credentials = new botframework_connector_1.MicrosoftAppCredentials(this.settings.appId, this.settings.appPassword || '');
         this.credentialsProvider = new botframework_connector_1.SimpleCredentialProvider(this.credentials.appId, this.credentials.appPassword);
     }
-    processRequest(req, res, logic) {
+    processActivity(req, res, logic) {
         // Parse body of request
         let errorCode = 500;
         return parseRequest(req).then((request) => {

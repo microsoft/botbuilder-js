@@ -59,7 +59,7 @@ export declare class BotFrameworkAdapter extends BotAdapter {
      * @param settings (optional) configuration settings for the adapter.
      */
     constructor(settings?: Partial<BotFrameworkAdapterSettings>);
-    processRequest(req: WebRequest, res: WebResponse, logic: (context: TurnContext) => Promiseable<any>): Promise<void>;
+    processActivity(req: WebRequest, res: WebResponse, logic: (context: TurnContext) => Promiseable<any>): Promise<void>;
     continueConversation(reference: Partial<ConversationReference>, logic: (context: TurnContext) => Promiseable<void>): Promise<void>;
     createConversation(reference: Partial<ConversationReference>, logic: (context: TurnContext) => Promiseable<void>): Promise<void>;
     sendActivities(context: TurnContext, activities: Partial<Activity>[]): Promise<ResourceResponse[]>;

@@ -71,7 +71,7 @@ export class BotFrameworkAdapter extends BotAdapter {
         this.credentialsProvider = new SimpleCredentialProvider(this.credentials.appId, this.credentials.appPassword);
     }
 
-    public processRequest(req: WebRequest, res: WebResponse, logic: (context: TurnContext) => Promiseable<any>): Promise<void> {
+    public processActivity(req: WebRequest, res: WebResponse, logic: (context: TurnContext) => Promiseable<any>): Promise<void> {
         // Parse body of request
         let errorCode = 500;
         return parseRequest(req).then((request) => {
