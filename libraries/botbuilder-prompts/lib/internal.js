@@ -17,10 +17,8 @@ function sendPrompt(context, prompt, speak) {
     if (!msg.inputHint) {
         msg.inputHint = botbuilder_1.InputHints.ExpectingInput;
     }
-    // Send using batch output to ensure that prompt gets appended if batching is being used.
-    return new botbuilder_1.BatchOutput(context).reply(msg).flush().then(() => {
-        // eat response body 
-    });
+    // Send activity and eat response.
+    return context.sendActivity(msg).then(() => { });
 }
 exports.sendPrompt = sendPrompt;
 //# sourceMappingURL=internal.js.map
