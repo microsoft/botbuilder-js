@@ -11,7 +11,7 @@
   "dependencies": {
     "botbuilder": "^4.0.0-m2.1",
     "botbuilder-ai": "^4.0.0-m2.1",
-    "botbuilder-dialogs": "^4.0.0-m2.2",
+    "botbuilder-dialogs": "^4.0.0-m3.0",
     "lodash": "^4.17.5",
     "restify": "^6.3.4"
   }

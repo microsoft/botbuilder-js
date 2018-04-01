@@ -10,8 +10,8 @@
   "author": "Microsoft",
   "license": "MIT",
   "dependencies": {
-    "botbuilder-core": "^4.0.0-m2.2",
-    "botbuilder-core-extensions": "^4.0.0-m2.2",
+    "botbuilder-core": "^4.0.0-m3.0",
+    "botbuilder-core-extensions": "^4.0.0-m3.0",
     "botframework-webchat": "^0.11.4"
   },
   "devDependencies": {

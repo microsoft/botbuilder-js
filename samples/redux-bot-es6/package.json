@@ -6,7 +6,7 @@
   "author": "Microsoft",
   "license": "MIT",
   "dependencies": {
-    "botframework-connector": "^4.0.0-m2.2",
+    "botframework-connector": "^4.0.0-m3.0",
     "redux": "^3.7.2",
     "redux-logger": "^3.0.6",
     "restify": "^6.3.4"
