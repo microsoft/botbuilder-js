@@ -1,0 +1,27 @@
+#!/usr/bin/env node
+import * as program from 'commander';
+program
+    .description("The msbot program makes it easy to manipulate .bot files for Microsoft Bot Framework tools")
+
+program
+    .command('init', 'create a new .bot file');
+
+program
+    .command('export', 'export all connected services');
+
+program
+    .command('clone', 'create a new .bot file based on another .bot file');
+
+program
+    .command('endpoints', 'add/remove activity endpoints');
+
+program
+    .command('connect <service>', 'connect to a resource (Luis/Qna/Azure/...) used by the bot');
+
+program
+    .command('disconnect <service>', 'disconnect from a resource used by the bot');
+
+program
+    .command('list', 'list all connected resources');
+
+program.parse(process.argv);
