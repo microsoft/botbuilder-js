@@ -18,36 +18,32 @@ interface IConnectedService {
     id: string;
 }
 
-interface IAzureBotService extends IConnectedService {
-    // botId 
-    id: string;
-
-    // ms appid for the bot
-    appid: string;
-}
 
 interface ILuisService extends IConnectedService {
-    // appid for the LUIS service
-    appId: string;
+    // type = ServiceTypes.Luis
+    // id = appid
 
-    // Regions for this bot 
+    // Regions for this bot
     regions: string[];
 }
 
-interface IQnAKnowledgebase extends IConnectedService {
-    // appid for the QnA service
-    appId: string;
-
-    // region for the service
-    region: string;
+interface IQnAService extends IConnectedService {
+    // type=Servicestypes.QnA
+    // id = appid for the QnA service
 }
 
 interface IBotConfig {
+    // bot id
+    id: string;
+
     // name of the bot
     name: string;
 
     // description of the bot
     description: string;
+
+    // ms appid for the bot
+    appid: string;
 
     // Endpoints for the bot
     endpoints: IBotEndpoint[];
@@ -55,4 +51,3 @@ interface IBotConfig {
     // connected services for the bot
     services: IConnectedService[];
 }
-

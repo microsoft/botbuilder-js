@@ -10,6 +10,9 @@ program
     .command('clone [.bot]', 'clone a bot');
 
 program
+    .command('endpoints', 'add/remove endpoints');
+
+program
     .command('connect <service>', 'connect to a service');
 
 program
