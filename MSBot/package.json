@@ -1,10 +1,13 @@
 {
-  "name": "bot",
+  "name": "msbot",
   "version": "1.0.0-alpha",
-  "description": "Bot command line tool for manipulating Microsoft .bot files",
-  "main": "bot.js", 
+  "description": "MSBot command line tool for manipulating Microsoft Bot Framework .bot files",
+  "main": "msbot.js",
   "author": {
     "name": "tomlm"
+  },
+  "bin" : {
+    "msbot" : "bin/msbot.js"
   },
   "devDependencies": {
     "@types/node": "^6.0.87",

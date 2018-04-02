@@ -34,7 +34,7 @@ if (!args.bot) {
 async function processConnectLuisArgs(config: BotConfig): Promise<BotConfig> {
     args.name = args.hasOwnProperty('name') ? args.name : config.name;
 
-    let regions = Enumerable.fromSource(args.regions.split(',')).select(r => r.trim()).toArray();
+    let regions = Enumerable.fromSource((args.regions || '').split(',')).select(r => r.trim()).toArray();
 
     // add the service
     config.addService(<ILuisService>{
