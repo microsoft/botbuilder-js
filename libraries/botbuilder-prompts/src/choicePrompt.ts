@@ -7,6 +7,7 @@
  */
 import { Promiseable, Activity, TurnContext } from 'botbuilder';
 import { ChoiceFactory, FoundChoice, Choice, ChoiceFactoryOptions, recognizeChoices, FindChoicesOptions } from 'botbuilder-choices';
+import { PromptValidator } from './textPrompt';
 import { sendPrompt } from './internal';
 
 /**
@@ -62,21 +63,11 @@ export interface ChoicePrompt<O = FoundChoice> {
 }
 
 /**
- * Signature of a handler that can be passed to a prompt to provide additional validation logic
- * or to customize the reply sent to the user when their response is invalid.
- * @param O Type of output that will be returned by the validator. This can be changed from the input type by the validator.
- * @param ChoicePromptValidator.context Context for the current turn of conversation.
- * @param ChoicePromptValidator.value The value that was recognized or `undefined` if not recognized.
- * @param ChoicePromptValidator.choices Array of choices that should be prompted for.
- */
-export type ChoicePromptValidator<O = FoundChoice> = (context: TurnContext, value: FoundChoice|undefined, choices: (string|Choice)[]) => Promiseable<O|undefined>;
-
-/**
  * Creates a new prompt that asks the user to select from a list of choices.
  * @param validator (Optional) validator for providing additional validation logic or customizing the prompt sent to the user when invalid.
  * @param defaultLocale (Optional) locale to use if `context.activity.locale` not specified. Defaults to a value of `en-us`.
  */
-export function createChoicePrompt<O = FoundChoice>(validator?: ChoicePromptValidator<O>, defaultLocale?: string): ChoicePrompt<O> {
+export function createChoicePrompt<O = FoundChoice>(validator?: PromptValidator<FoundChoice, O>, defaultLocale?: string): ChoicePrompt<O> {
     return {
         style: ListStyle.auto,
         choiceOptions: {},
@@ -116,7 +107,7 @@ export function createChoicePrompt<O = FoundChoice>(validator?: ChoicePromptVali
             options.locale = request.locale || this.recognizerOptions.locale || defaultLocale || 'en-us';
             const results = recognizeChoices(utterance, choices, options);
             const value = results.length > 0 ? results[0].resolution : undefined;
-            return Promise.resolve(validator ? validator(context, value, choices) : value as any);
+            return Promise.resolve(validator ? validator(context, value) : value as any);
         }
     };
 }

@@ -5,8 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Promiseable, Activity, TurnContext } from 'botbuilder';
+import { Activity, TurnContext } from 'botbuilder';
 import { FoundChoice, Choice, ChoiceFactoryOptions, FindChoicesOptions } from 'botbuilder-choices';
+import { PromptValidator } from './textPrompt';
 /**
  * Controls the way that choices for a `ChoicePrompt` or yes/no options for a `ConfirmPrompt` are
  * presented to a user.
@@ -50,17 +51,8 @@ export interface ChoicePrompt<O = FoundChoice> {
     recognize(context: TurnContext, choices: (string | Choice)[]): Promise<O | undefined>;
 }
 /**
- * Signature of a handler that can be passed to a prompt to provide additional validation logic
- * or to customize the reply sent to the user when their response is invalid.
- * @param O Type of output that will be returned by the validator. This can be changed from the input type by the validator.
- * @param ChoicePromptValidator.context Context for the current turn of conversation.
- * @param ChoicePromptValidator.value The value that was recognized or `undefined` if not recognized.
- * @param ChoicePromptValidator.choices Array of choices that should be prompted for.
- */
-export declare type ChoicePromptValidator<O = FoundChoice> = (context: TurnContext, value: FoundChoice | undefined, choices: (string | Choice)[]) => Promiseable<O | undefined>;
-/**
  * Creates a new prompt that asks the user to select from a list of choices.
  * @param validator (Optional) validator for providing additional validation logic or customizing the prompt sent to the user when invalid.
  * @param defaultLocale (Optional) locale to use if `context.activity.locale` not specified. Defaults to a value of `en-us`.
  */
-export declare function createChoicePrompt<O = FoundChoice>(validator?: ChoicePromptValidator<O>, defaultLocale?: string): ChoicePrompt<O>;
+export declare function createChoicePrompt<O = FoundChoice>(validator?: PromptValidator<FoundChoice, O>, defaultLocale?: string): ChoicePrompt<O>;

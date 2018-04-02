@@ -69,7 +69,7 @@ function createChoicePrompt(validator, defaultLocale) {
             options.locale = request.locale || this.recognizerOptions.locale || defaultLocale || 'en-us';
             const results = botbuilder_choices_1.recognizeChoices(utterance, choices, options);
             const value = results.length > 0 ? results[0].resolution : undefined;
-            return Promise.resolve(validator ? validator(context, value, choices) : value);
+            return Promise.resolve(validator ? validator(context, value) : value);
         }
     };
 }
