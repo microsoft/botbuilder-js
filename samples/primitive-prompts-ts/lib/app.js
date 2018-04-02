@@ -26,8 +26,8 @@ adapter.use(conversationState);
 // Listen for incoming requests 
 server.post(`/api/messages`, (req, res) => {
     // Route received request to adapter for processing
-    adapter.processRequest(req, res, (context) => __awaiter(this, void 0, void 0, function* () {
-        if (context.request.type === `message`) {
+    adapter.processActivity(req, res, (context) => __awaiter(this, void 0, void 0, function* () {
+        if (context.activity.type === `message`) {
             // Get state for this turn 
             const state = conversationState.get(context);
             // Check to see if we are actively in any prompts
@@ -35,10 +35,10 @@ server.post(`/api/messages`, (req, res) => {
                 switch (state.activePrompt) {
                     // Set state respective to the prompt that we're in 
                     case `namePrompt`:
-                        state.name = context.request.text;
+                        state.name = context.activity.text;
                         break;
                     case `agePrompt`:
-                        state.age = parseInt(context.request.text);
+                        state.age = parseInt(context.activity.text);
                         break;
                 }
                 // End prompt, since we successfully gathered our state

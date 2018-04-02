@@ -1,4 +1,4 @@
-const { ConversationState, UserState, BotStateSet, BotContext, Storage } = require('botbuilder');
+const { ConversationState, UserState, BotStateSet, TurnContext, Storage } = require('botbuilder');
 
 class BotStateManager extends BotStateSet {
 

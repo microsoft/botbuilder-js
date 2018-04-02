@@ -61,7 +61,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "7a27fea07c56cdc22f84"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "cbe574d9f3d36dd70150"; // eslint-disable-line no-unused-vars
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
@@ -727,13 +727,478 @@
 /************************************************************************/
 /******/ ({
 
-/***/ "../../libraries/botbuilder-schema/lib/index.js":
+/***/ "../../libraries/botbuilder-core/lib/botAdapter.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @module botbuilder
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+const middlewareSet_1 = __webpack_require__("../../libraries/botbuilder-core/lib/middlewareSet.js");
+const internal_1 = __webpack_require__("../../libraries/botbuilder-core/lib/internal.js");
+/**
+ * :package: **botbuilder-core**
+ *
+ * Abstract base class for all adapter plugins. Adapters manage the communication between the bot
+ * and a user over a specific channel, or set of channels.
+ *
+ * **Usage Example**
+ *
+ * ```JavaScript
+ * ```
+ */
+class BotAdapter {
+    constructor() {
+        this.middleware = new middlewareSet_1.MiddlewareSet();
+    }
+    /**
+     * Registers middleware handlers(s) with the adapter.
+     * @param middleware One or more middleware handlers(s) to register.
+     */
+    use(...middleware) {
+        middlewareSet_1.MiddlewareSet.prototype.use.apply(this.middleware, middleware);
+        return this;
+    }
+    /**
+     * Called by the parent class to run the adapters middleware set and calls the passed in
+     * `next()` handler at the end of the chain.  While the context object is passed in from the
+     * caller is created by the caller, what gets passed to the `next()` is a wrapped version of
+     * the context which will automatically be revoked upon completion of the turn.  This causes
+     * the bots logic to throw an error if it tries to use the context after the turn completes.
+     * @param context Context for the current turn of conversation with the user.
+     * @param next Function to call at the end of the middleware chain.
+     * @param next.callback A revocable version of the context object.
+     */
+    runMiddleware(context, next) {
+        // Wrap context with revocable proxy
+        const pContext = internal_1.makeRevocable(context);
+        return this.middleware.run(pContext.proxy, () => {
+            // Call next with revocable context
+            return next(pContext.proxy);
+        }).then(() => {
+            // Revoke use of context
+            pContext.revoke();
+        });
+    }
+}
+exports.BotAdapter = BotAdapter;
+//# sourceMappingURL=botAdapter.js.map
+
+/***/ }),
+
+/***/ "../../libraries/botbuilder-core/lib/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 /**
- * @module botbuilder-schema
+ * @module botbuilder
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+__export(__webpack_require__("../../libraries/botbuilder-core/lib/botAdapter.js"));
+__export(__webpack_require__("../../libraries/botbuilder-core/lib/middlewareSet.js"));
+__export(__webpack_require__("../../libraries/botbuilder-core/lib/turnContext.js"));
+__export(__webpack_require__("../../libraries/botframework-schema/lib/index.js"));
+//# sourceMappingURL=index.js.map
+
+/***/ }),
+
+/***/ "../../libraries/botbuilder-core/lib/internal.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+function shallowCopy(value) {
+    if (Array.isArray(value)) {
+        return value.slice(0);
+    }
+    if (typeof value === 'object') {
+        return Object.assign({}, value);
+    }
+    return value;
+}
+exports.shallowCopy = shallowCopy;
+function makeRevocable(target, handler) {
+    // Ensure proxy supported (some browsers don't)
+    if (Proxy && Proxy.revocable) {
+        return Proxy.revocable(target, handler || {});
+    }
+    else {
+        return { proxy: target, revoke: () => { } };
+    }
+}
+exports.makeRevocable = makeRevocable;
+//# sourceMappingURL=internal.js.map
+
+/***/ }),
+
+/***/ "../../libraries/botbuilder-core/lib/middlewareSet.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * :package: **botbuilder-core**
+ *
+ * A set of `Middleware` plugins. The set itself is middleware so you can easily package up a set
+ * of middleware that can be composed into a bot with a single `bot.use(mySet)` call or even into
+ * another middleware set using `set.use(mySet)`.
+ */
+class MiddlewareSet {
+    /**
+     * Creates a new instance of a MiddlewareSet.
+     * @param middleware Zero or more middleware handlers(s) to register.
+     */
+    constructor(...middleware) {
+        this.middleware = [];
+        MiddlewareSet.prototype.use.apply(this, middleware);
+    }
+    onTurn(context, next) {
+        return this.run(context, next);
+    }
+    /**
+     * Registers middleware handlers(s) with the set.
+     * @param middleware One or more middleware handlers(s) to register.
+     */
+    use(...middleware) {
+        middleware.forEach((plugin) => {
+            if (typeof plugin === 'function') {
+                this.middleware.push(plugin);
+            }
+            else if (typeof plugin === 'object' && plugin.onTurn) {
+                this.middleware.push((context, next) => plugin.onTurn(context, next));
+            }
+            else {
+                throw new Error(`MiddlewareSet.use(): invalid plugin type being added.`);
+            }
+        });
+        return this;
+    }
+    /**
+     * Executes a set of middleware in series.
+     * @param context Context for the current turn of conversation with the user.
+     * @param next Function to invoke at the end of the middleware chain.
+     */
+    run(context, next) {
+        const handlers = this.middleware.slice();
+        function runNext(i) {
+            try {
+                if (i < handlers.length) {
+                    return Promise.resolve(handlers[i](context, () => runNext(i + 1)));
+                }
+                else {
+                    return Promise.resolve(next());
+                }
+            }
+            catch (err) {
+                return Promise.reject(err);
+            }
+        }
+        return runNext(0);
+    }
+}
+exports.MiddlewareSet = MiddlewareSet;
+//# sourceMappingURL=middlewareSet.js.map
+
+/***/ }),
+
+/***/ "../../libraries/botbuilder-core/lib/turnContext.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @module botbuilder
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+const botframework_schema_1 = __webpack_require__("../../libraries/botframework-schema/lib/index.js");
+const internal_1 = __webpack_require__("../../libraries/botbuilder-core/lib/internal.js");
+/**
+ * :package: **botbuilder-core**
+ *
+ * Context object containing information cached for a single turn of conversation with a user. This
+ * will typically be created by the adapter you're using and then passed to middleware and your
+ * bots logic.
+ *
+ * For TypeScript developers the `BotContext` is also exposed as an interface which you can derive
+ * from to better describe the actual shape of the context object being passed around.  Middleware
+ * can potentially extend the context object with additional members so in order to get intellisense
+ * for those added members you'll need to define them on an interface that extends BotContext:
+ *
+ * ```JavaScript
+ * interface MyContext extends BotContext {
+ *      // Added by UserState middleware.
+ *      readonly userState: MyUserState;
+ *
+ *      // Added by ConversationState middleware.
+ *      readonly conversationState: MyConversationState;
+ * }
+ *
+ * adapter.processRequest(req, res, (context: MyContext) => {
+ *      const state = context.conversationState;
+ * });
+ * ```
+ */
+class TurnContext {
+    constructor(adapterOrContext, request) {
+        this._adapter = undefined;
+        this._activity = undefined;
+        this._respondedRef = { responded: false };
+        this._services = new Map();
+        this._onSendActivities = [];
+        this._onUpdateActivity = [];
+        this._onDeleteActivity = [];
+        if (adapterOrContext instanceof TurnContext) {
+            adapterOrContext.copyTo(this);
+        }
+        else {
+            this._adapter = adapterOrContext;
+            this._activity = request;
+        }
+    }
+    /**
+     * Called when this BotContext instance is passed into the constructor of a new BotContext
+     * instance.
+     * @param context The context object to copy private members to. Everything should be copied by reference.
+     */
+    copyTo(context) {
+        // Copy private member to other instance.
+        ['_adapter', '_activity', '_respondedRef', '_services',
+            '_onSendActivities', '_onUpdateActivity', '_onDeleteActivity'].forEach((prop) => context[prop] = this[prop]);
+    }
+    /** The adapter for this context. */
+    get adapter() {
+        return this._adapter;
+    }
+    /** The received activity. */
+    get activity() {
+        return this._activity;
+    }
+    /** If `true` at least one response has been sent for the current turn of conversation. */
+    get responded() {
+        return this._respondedRef.responded;
+    }
+    set responded(value) {
+        if (!value) {
+            throw new Error(`TurnContext: cannot set 'responded' to a value of 'false'.`);
+        }
+        this._respondedRef.responded = true;
+    }
+    /** Map of services and other values cached for the lifetime of the turn. */
+    get services() {
+        return this._services;
+    }
+    /**
+     * Sends a single activity or message to the user.
+     * @param activityOrText Activity or text of a message to send the user.
+     * @param speak (Optional) SSML that should be spoken to the user for the message.
+     * @param inputHint (Optional) `InputHint` for the message sent to the user.
+     */
+    sendActivity(activityOrText, speak, inputHint) {
+        let a;
+        if (typeof activityOrText === 'string') {
+            a = { text: activityOrText };
+            if (speak) {
+                a.speak = speak;
+            }
+            if (inputHint) {
+                a.inputHint = inputHint;
+            }
+        }
+        else {
+            a = activityOrText;
+        }
+        return this.sendActivities([a]).then((responses) => responses && responses.length > 0 ? responses[0] : undefined);
+    }
+    /**
+     * Sends a set of activities to the user. An array of responses form the server will be returned.
+     *
+     * Prior to delivery, the activities will be updated with information from the `ConversationReference`
+     * for the contexts [activity](#activity) and if an activities `type` field hasn't been set it will be
+     * set to a type of `message`. The array of activities will then be routed through any [onSendActivities()](#onsendactivities)
+     * handlers and then passed to `adapter.sendActivities()`.
+     * @param activities One or more activities to send to the user.
+     */
+    sendActivities(activities) {
+        const ref = TurnContext.getConversationReference(this.activity);
+        const output = activities.map((a) => {
+            const o = TurnContext.applyConversationReference(Object.assign({}, a), ref);
+            if (!o.type) {
+                o.type = botframework_schema_1.ActivityTypes.Message;
+            }
+            return o;
+        });
+        return this.emit(this._onSendActivities, output, () => {
+            return this.adapter.sendActivities(this, output)
+                .then((responses) => {
+                // Set responded flag
+                this.responded = true;
+                return responses;
+            });
+        });
+    }
+    /**
+     * Replaces an existing activity.
+     *
+     * The activity will be routed through any registered [onUpdateActivity](#onupdateactivity) handlers
+     * before being passed to `adapter.updateActivity()`.
+     * @param activity New replacement activity. The activity should already have it's ID information populated.
+     */
+    updateActivity(activity) {
+        return this.emit(this._onUpdateActivity, activity, () => this.adapter.updateActivity(this, activity));
+    }
+    /**
+     * Deletes an existing activity.
+     *
+     * The `ConversationReference` for the activity being deleted will be routed through any registered
+     * [onDeleteActivity](#ondeleteactivity) handlers before being passed to `adapter.deleteActivity()`.
+     * @param idOrReference ID or conversation of the activity being deleted. If an ID is specified the conversation reference information from the current request will be used to delete the activity.
+     */
+    deleteActivity(idOrReference) {
+        let reference;
+        if (typeof idOrReference === 'string') {
+            reference = TurnContext.getConversationReference(this.activity);
+            reference.activityId = idOrReference;
+        }
+        else {
+            reference = idOrReference;
+        }
+        return this.emit(this._onDeleteActivity, reference, () => this.adapter.deleteActivity(this, reference));
+    }
+    /**
+     * Registers a handler to be notified of and potentially intercept the sending of activities.
+     * @param handler A function that will be called anytime [sendActivity()](#sendactivity) is called. The handler should call `next()` to continue sending of the activities.
+     */
+    onSendActivities(handler) {
+        this._onSendActivities.push(handler);
+        return this;
+    }
+    /**
+     * Registers a handler to be notified of and potentially intercept an activity being updated.
+     * @param handler A function that will be called anytime [updateActivity()](#updateactivity) is called. The handler should call `next()` to continue sending of the replacement activity.
+     */
+    onUpdateActivity(handler) {
+        this._onUpdateActivity.push(handler);
+        return this;
+    }
+    /**
+     * Registers a handler to be notified of and potentially intercept an activity being deleted.
+     * @param handler A function that will be called anytime [deleteActivity()](#deleteactivity) is called. The handler should call `next()` to continue deletion of the activity.
+     */
+    onDeleteActivity(handler) {
+        this._onDeleteActivity.push(handler);
+        return this;
+    }
+    emit(handlers, arg, next) {
+        const list = handlers.slice();
+        const context = this;
+        function emitNext(i) {
+            try {
+                if (i < list.length) {
+                    return Promise.resolve(list[i](context, arg, () => emitNext(i + 1)));
+                }
+                return Promise.resolve(next());
+            }
+            catch (err) {
+                return Promise.reject(err);
+            }
+        }
+        return emitNext(0);
+    }
+    /**
+     * Returns the conversation reference for an activity. This can be saved as a plain old JSON
+     * object and then later used to message the user proactively.
+     *
+     * **Usage Example**
+     *
+     * ```JavaScript
+     * const reference = TurnContext.getConversationReference(context.request);
+     * ```
+     * @param activity The activity to copy the conversation reference from
+     */
+    static getConversationReference(activity) {
+        return {
+            activityId: activity.id,
+            user: internal_1.shallowCopy(activity.from),
+            bot: internal_1.shallowCopy(activity.recipient),
+            conversation: internal_1.shallowCopy(activity.conversation),
+            channelId: activity.channelId,
+            serviceUrl: activity.serviceUrl
+        };
+    }
+    /**
+     * Updates an activity with the delivery information from a conversation reference. Calling
+     * this after [getConversationReference()](#getconversationreference) on an incoming activity
+     * will properly address the reply to a received activity.
+     *
+     * **Usage Example**
+     *
+     * ```JavaScript
+     * // Send a typing indicator without calling any handlers
+     * const reference = TurnContext.getConversationReference(context.request);
+     * const activity = TurnContext.applyConversationReference({ type: 'typing' }, reference);
+     * return context.adapter.sendActivity(activity);
+     * ```
+     * @param activity Activity to copy delivery information to.
+     * @param reference Conversation reference containing delivery information.
+     * @param isIncoming (Optional) flag indicating whether the activity is an incoming or outgoing activity. Defaults to `false` indicating the activity is outgoing.
+     */
+    static applyConversationReference(activity, reference, isIncoming = false) {
+        activity.channelId = reference.channelId;
+        activity.serviceUrl = reference.serviceUrl;
+        activity.conversation = reference.conversation;
+        if (isIncoming) {
+            activity.from = reference.user;
+            activity.recipient = reference.bot;
+            if (reference.activityId) {
+                activity.id = reference.activityId;
+            }
+        }
+        else {
+            activity.from = reference.bot;
+            activity.recipient = reference.user;
+            if (reference.activityId) {
+                activity.replyToId = reference.activityId;
+            }
+        }
+        return activity;
+    }
+}
+exports.TurnContext = TurnContext;
+//# sourceMappingURL=turnContext.js.map
+
+/***/ }),
+
+/***/ "../../libraries/botframework-schema/lib/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @module botbuilder
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -937,3184 +1402,6 @@ var ActivityImportance;
 
 /***/ }),
 
-/***/ "../../libraries/botbuilder/lib/attachmentRecognizer.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @module botbuilder
- */
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
-const intentRecognizer_1 = __webpack_require__("../../libraries/botbuilder/lib/intentRecognizer.js");
-const entityObject_1 = __webpack_require__("../../libraries/botbuilder/lib/entityObject.js");
-/**
- * An intent recognizer for detecting that the user has uploaded an attachment.
- *
- * **Usage Example**
- *
- * ```js
- * const bot = new Bot(adapter)
- *      .use(new AttachmentRecognizer())
- *      .onReceive((context) => {
- *          if (context.ifIntent('Intents.AttachmentsReceived')) {
- *              // ... process uploaded file
- *          } else {
- *              // ... default logic
- *          }
- *      });
- * ```
- */
-class AttachmentRecognizer extends intentRecognizer_1.IntentRecognizer {
-    /**
-     * Creates a new instance of the recognizer.
-     *
-     * @param settings (Optional) settings to customize the recognizer.
-     */
-    constructor(settings) {
-        super();
-        this.typeFilters = [];
-        this.settings = Object.assign({
-            intentName: 'Intents.AttachmentsReceived'
-        }, settings);
-        this.onRecognize((context) => {
-            const intents = [];
-            if (context.request.attachments && context.request.attachments.length > 0) {
-                // Map attachments to entities
-                const entities = [];
-                context.request.attachments.forEach((a) => entities.push({
-                    type: a.contentType || entityObject_1.EntityTypes.attachment,
-                    score: 1.0,
-                    value: a
-                }));
-                // Filter by content type
-                if (this.typeFilters.length > 0) {
-                    // Sort by content type
-                    const matches = {};
-                    entities.forEach((entity) => {
-                        if (matches.hasOwnProperty(entity.type)) {
-                            matches[entity.type].push(entity);
-                        }
-                        else {
-                            matches[entity.type] = [entity];
-                        }
-                    });
-                    // Return intents for matches
-                    this.typeFilters.forEach((filter) => {
-                        const stringFilter = typeof filter.type === 'string';
-                        for (const type in matches) {
-                            let addIntent;
-                            if (stringFilter) {
-                                addIntent = type === filter.type;
-                            }
-                            else {
-                                addIntent = filter.type.test(type);
-                            }
-                            if (addIntent) {
-                                intents.push({
-                                    score: 1.0,
-                                    name: filter.intentName,
-                                    entities: matches[type]
-                                });
-                            }
-                        }
-                    });
-                }
-                else {
-                    // Return a single intent for all attachments
-                    intents.push({
-                        score: 1.0,
-                        name: this.settings.intentName,
-                        entities: entities
-                    });
-                }
-            }
-            return intents;
-        });
-    }
-    /**
-     * Add a new content type filter to the recognizer. Adding one or more `contentType()` filters
-     * will result in only attachments of the specified type(s) being recognized.
-     *
-     * @param contentType The `Attachment.contentType` to look for.
-     * @param intentName Name of the intent to return when the given type is matched.
-     */
-    contentType(contentType, intentName) {
-        this.typeFilters.push({ type: contentType, intentName: intentName });
-        return this;
-    }
-}
-exports.AttachmentRecognizer = AttachmentRecognizer;
-//# sourceMappingURL=attachmentRecognizer.js.map
-
-/***/ }),
-
-/***/ "../../libraries/botbuilder/lib/bot.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @module botbuilder
- */
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
-const middlewareSet_1 = __webpack_require__("../../libraries/botbuilder/lib/middlewareSet.js");
-const botbuilder_schema_1 = __webpack_require__("../../libraries/botbuilder-schema/lib/index.js");
-const botContext_1 = __webpack_require__("../../libraries/botbuilder/lib/botContext.js");
-const templateManager_1 = __webpack_require__("../../libraries/botbuilder/lib/templateManager.js");
-const botbuilder_1 = __webpack_require__("../../libraries/botbuilder/lib/botbuilder.js");
-/**
- * Manages all communication between the bot and a user.
- *
- * **Usage Example**
- *
- * ```js
- * import { Bot } from 'botbuilder'; // typescript
- *
- * const bot = new Bot(adapter); // init bot and bind to adapter
- *
- * bot.onReceive((context) => { // define the bot's onReceive handler
- *   context.reply(`Hello World`); // send message to user
- * });
- * ```
- */
-class Bot extends middlewareSet_1.MiddlewareSet {
-    /**
-     * Creates a new instance of a bot
-     *
-     * @param adapter Connector used to link the bot to the user communication wise.
-     */
-    constructor(adapter) {
-        super();
-        this.receivers = [];
-        // Bind to adapter
-        this._adapter = adapter;
-        this._adapter.onReceive = (activity) => this.receive(activity).then(() => { });
-        // built in middleware
-        // QUESTION: Should we really have built-in middleware?
-        this.use(new templateManager_1.TemplateManager());
-    }
-    /** Returns the current adapter. */
-    get adapter() {
-        return this._adapter;
-    }
-    /**
-     * Creates a new context object given an activity or conversation reference. The context object
-     * will be disposed of automatically once the callback completes or the promise it returns
-     * completes.
-     *
-     * **Usage Example**
-     *
-     * ```js
-     * subscribers.forEach((subscriber) => {
-     *      bot.createContext(subscriber.savedReference, (context) => {
-     *          context.reply(`Hi ${subscriber.name}... Here's what's new with us.`)
-     *                 .reply(newsFlash);
-     *      });
-     * });
-     * ```
-     *
-     * @param activityOrReference Activity or ConversationReference to initialize the context object with.
-     * @param onReady Function that will use the created context object.
-     */
-    createContext(activityOrReference, onReady) {
-        // Initialize context object
-        let context;
-        if (activityOrReference.type) {
-            context = botContext_1.createBotContext(this, activityOrReference);
-        }
-        else {
-            context = botContext_1.createBotContext(this);
-            context.conversationReference = activityOrReference;
-        }
-        // Run context created pipeline
-        return this.contextCreated(context, function contextReady() {
-            // Run proactive or reactive logic
-            return Promise.resolve(onReady(context));
-        }).then(() => {
-            // Next flush any queued up responses
-            return context.flushResponses();
-        }).then(() => {
-            // Dispose of the context object
-            context.dispose();
-        });
-    }
-    /**
-     * Registers a new receiver with the bot. All incoming activities are routed to receivers in
-     * the order they're registered. The first receiver to return `{ handled: true }` prevents
-     * the receivers after it from being called.
-     *
-     * **Usage Example**
-     *
-     * ```js
-     * const bot = new Bot(adapter)
-     *      .onReceive((context) => {
-     *         context.reply(`Hello World`);
-     *      });
-     * ```
-     *
-     * @param receivers One or more receivers to register.
-     */
-    onReceive(...receivers) {
-        receivers.forEach((fn) => {
-            this.use({
-                receiveActivity: function onReceive(context, next) {
-                    return Promise.resolve(fn(context)).then(() => next());
-                }
-            });
-        });
-        return this;
-    }
-    /**
-     * Register template renderer  as middleware
-     * @param templateRenderer templateRenderer
-     */
-    useTemplateRenderer(templateRenderer) {
-        return this.use({
-            contextCreated: (ctx, next) => {
-                ctx.templateManager.register(templateRenderer);
-                return next();
-            }
-        });
-    }
-    /**
-     * Register TemplateDictionary as templates
-     * @param templates templateDictionary to register
-     */
-    useTemplates(templates) {
-        return this.use(new botbuilder_1.DictionaryRenderer(templates));
-    }
-    /**
-     * INTERNAL sends an outgoing set of activities to the user. Calling `context.flushResponses()` achieves the same
-     * effect and is the preferred way of sending activities to the user.
-     *
-     * @param context Context for the current turn of the conversation.
-     * @param activities Set of activities to send.
-     */
-    post(context, ...activities) {
-        // Ensure activities are well formed.
-        for (let i = 0; i < activities.length; i++) {
-            let activity = activities[i];
-            if (!activity.type) {
-                activity.type = botbuilder_schema_1.ActivityTypes.Message;
-            }
-            botContext_1.applyConversationReference(activity, context.conversationReference);
-        }
-        // Run post activity pipeline
-        const adapter = this.adapter;
-        return this.postActivity(context, activities, function postActivities() {
-            // Post the set of output activities
-            return adapter.post(activities)
-                .then((responses) => {
-                // Ensure responses array populated
-                if (!Array.isArray(responses)) {
-                    let mockResponses = [];
-                    for (let i = 0; i < activities.length; i++) {
-                        mockResponses.push({});
-                    }
-                    return mockResponses;
-                }
-                return responses;
-            });
-        });
-    }
-    /**
-     * Dispatches an incoming set of activities. This method can be used to dispatch an activity
-     * to the bot as if a user had sent it which is sometimes useful.
-     *
-     * @param activity The activity that was received.
-     * @returns `{ handled: true }` if the activity was handled by a middleware plugin or one of the bots receivers.
-     */
-    receive(activity) {
-        // Create context and run receive activity pipeline
-        return this.createContext(activity, (context) => this.receiveActivity(context, () => Promise.resolve()));
-    }
-}
-exports.Bot = Bot;
-//# sourceMappingURL=bot.js.map
-
-/***/ }),
-
-/***/ "../../libraries/botbuilder/lib/botContext.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @module botbuilder
- */
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
-const botbuilder_schema_1 = __webpack_require__("../../libraries/botbuilder-schema/lib/index.js");
-const bot_1 = __webpack_require__("../../libraries/botbuilder/lib/bot.js");
-/**
- * Creates a new BotContext instance.
- *
- * @param bot Bot the context is for.
- * @param request (Optional) request to initialize the context with.
- */
-function createBotContext(bot, request) {
-    const context = {};
-    context.bot = bot;
-    context.request = request || {};
-    context.responses = [];
-    context.conversationReference = {};
-    context.state = {};
-    context.templateEngines = [];
-    // Populate conversation reference
-    if (request) {
-        context.conversationReference = getConversationReference(request);
-    }
-    // Add methods
-    // !!!!!!! Be sure to use "this." when accessing members of the context object because
-    // !!!!!!! you could be working with a clone.
-    function throwIfDisposed(method) {
-        if (disposed) {
-            throw new Error(`BotContext.${method}(): error calling method after context has been disposed.`);
-        }
-    }
-    let disposed = false;
-    context.delay = function delay(duration) {
-        throwIfDisposed('delay');
-        this.responses.push({ type: 'delay', value: duration });
-        return this;
-    };
-    context.dispose = function dispose() {
-        disposed = true;
-    };
-    context.endOfConversation = function endOfConversation(code) {
-        throwIfDisposed('endOfConversation');
-        const activity = {
-            type: botbuilder_schema_1.ActivityTypes.EndOfConversation,
-            code: code || botbuilder_schema_1.EndOfConversationCodes.CompletedSuccessfully
-        };
-        this.responses.push(activity);
-        return this;
-    };
-    context.reply = function reply(textOrActivity, speak, additional) {
-        throwIfDisposed('reply');
-        // Check other parameters
-        if (!additional && typeof speak === 'object') {
-            additional = speak;
-            speak = undefined;
-        }
-        if (typeof textOrActivity === 'object') {
-            if (!textOrActivity.type) {
-                textOrActivity.type = botbuilder_schema_1.ActivityTypes.Message;
-            }
-            this.responses.push(textOrActivity);
-        }
-        else {
-            const activity = Object.assign({
-                type: botbuilder_schema_1.ActivityTypes.Message,
-                text: textOrActivity || '',
-            }, additional || {});
-            if (typeof speak === 'string') {
-                activity.speak = speak;
-            }
-            this.responses.push(activity);
-        }
-        return this;
-    };
-    context.replyWith = function replyWith(templateId, data) {
-        throwIfDisposed('replyTemplate');
-        // push internal template record
-        const activity = {
-            type: "template",
-        };
-        activity.text = templateId;
-        activity.value = data;
-        this.responses.push(activity);
-        return this;
-    };
-    let responded = false;
-    context.flushResponses = function flushResponses() {
-        throwIfDisposed('flushResponses');
-        const args = this.responses.slice(0);
-        const cnt = args.length;
-        args.unshift(this);
-        return bot_1.Bot.prototype.post.apply(this.bot, args)
-            .then((results) => {
-            if (cnt > 0) {
-                this.responses.splice(0, cnt);
-                responded = true;
-            }
-            return results;
-        });
-    };
-    context.showTyping = function showTyping() {
-        throwIfDisposed('showTyping');
-        this.responses.push({ type: botbuilder_schema_1.ActivityTypes.Typing });
-        return this;
-    };
-    Object.defineProperty(context, 'responded', {
-        get: function () {
-            return this.responses.length > 0 || responded;
-        }
-    });
-    return context;
-}
-exports.createBotContext = createBotContext;
-function getConversationReference(activity) {
-    return {
-        activityId: activity.id,
-        user: activity.from,
-        bot: activity.recipient,
-        conversation: activity.conversation,
-        channelId: activity.channelId,
-        serviceUrl: activity.serviceUrl
-    };
-}
-exports.getConversationReference = getConversationReference;
-function applyConversationReference(activity, reference) {
-    activity.channelId = reference.channelId;
-    activity.serviceUrl = reference.serviceUrl;
-    activity.conversation = reference.conversation;
-    activity.from = reference.bot;
-    activity.recipient = reference.user;
-    activity.replyToId = reference.activityId;
-}
-exports.applyConversationReference = applyConversationReference;
-//# sourceMappingURL=botContext.js.map
-
-/***/ }),
-
-/***/ "../../libraries/botbuilder/lib/botService.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * Middleware that simplifies adding a new service to the BotContext. Services expose themselves
- * as a new property of the BotContext and this class formalizes that process.
- *
- * This class is typically derived from but can also be used like
- * `bot.use(new BotService('myService', new MyService()));`. The registered service would be
- * accessible globally by developers through `context.myService`.
- *
- * __Extends BotContext:__
- * * context.<service name> - New service
- */
-class BotService {
-    /**
-     * Creates a new instance of a service definition.
-     *
-     * @param name Name of the service being registered. This is the property off the context object
-     * that will be used by developers to access the service.
-     * @param instance (Optional) singleton instance of the service to add to the context object.
-     * Dynamic instances can be added by implementing [getService()](#getservice).
-     */
-    constructor(name, instance) {
-        this.name = name;
-        this.instance = instance;
-    }
-    contextCreated(context, next) {
-        context[this.name] = this.getService(context);
-        return next();
-    }
-    /**
-     * Overrided by derived classes to register a dynamic instance of the service.
-     *
-     * @param context Context for the current turn of the conversation.
-     */
-    getService(context) {
-        return this.instance;
-    }
-}
-exports.BotService = BotService;
-//# sourceMappingURL=botService.js.map
-
-/***/ }),
-
-/***/ "../../libraries/botbuilder/lib/botStateManager.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * Middleware for tracking conversation and user state using the `context.storage` provider.
- *
- * __Extends BotContext:__
- * * context.state.user - User persisted state
- * * context.state.conversation - Conversation persisted data
- *
- * __Depends on:__
- * * context.storage - Storage provider for storing and retrieving objects
- *
- * **Usage Example**
- *
- * ```js
- * const bot = new Bot(adapter)
- *      .use(new MemoryStorage())
- *      .use(new BotStateManager())
- *      .onReceive((context) => {
- *          context.reply(`Hello World`);
- *      })
- * ```
- */
-class BotStateManager {
-    /**
-     * Creates a new instance of the state manager.
-     *
-     * @param settings (Optional) settings to adjust the behavior of the state manager.
-     */
-    constructor(settings) {
-        this.settings = Object.assign({
-            persistUserState: true,
-            persistConversationState: true,
-            writeBeforePost: true,
-            lastWriterWins: true
-        }, settings || {});
-    }
-    contextCreated(context, next) {
-        // read state from storage
-        return this.read(context, []).then(() => next());
-    }
-    postActivity(context, activities, next) {
-        if (this.settings.writeBeforePost) {
-            // save state
-            return this.write(context, {}).then(() => next());
-        }
-        else {
-            return next();
-        }
-    }
-    contextDone(context, next) {
-        // save state
-        return this.write(context, {}).then(() => next());
-    }
-    read(context, keys) {
-        // Ensure storage
-        if (!context.storage) {
-            return Promise.reject(new Error(`BotStateManager: context.storage not found.`));
-        }
-        // Calculate keys
-        if (this.settings.persistUserState) {
-            keys.push(this.userKey(context));
-        }
-        if (this.settings.persistConversationState) {
-            keys.push(this.conversationKey(context));
-        }
-        // Read values
-        return context.storage.read(keys).then((data) => {
-            // Copy data to context
-            keys.forEach((key) => {
-                switch (key.split('/')[0]) {
-                    case 'user':
-                        context.state.user = data[key] || {};
-                        break;
-                    case 'conversation':
-                        context.state.conversation = data[key] || {};
-                        break;
-                }
-            });
-            return data;
-        });
-    }
-    write(context, changes) {
-        // Ensure storage
-        if (!context.storage) {
-            return Promise.reject(new Error(`BotStateManager: context.storage not found.`));
-        }
-        // Append changes
-        if (this.settings.persistUserState) {
-            changes[this.userKey(context)] = context.state.user || {};
-        }
-        if (this.settings.persistConversationState) {
-            changes[this.conversationKey(context)] = context.state.conversation || {};
-        }
-        // Update eTags
-        if (this.settings.lastWriterWins) {
-            for (const key in changes) {
-                changes[key].eTag = '*';
-            }
-        }
-        // Write changes
-        return context.storage.write(changes);
-    }
-    userKey(context) {
-        const ref = context.conversationReference;
-        return 'user/' + ref.channelId + '/' + ref.user.id;
-    }
-    conversationKey(context) {
-        const ref = context.conversationReference;
-        return 'conversation/' + ref.channelId + '/' + ref.conversation.id;
-    }
-}
-exports.BotStateManager = BotStateManager;
-//# sourceMappingURL=botStateManager.js.map
-
-/***/ }),
-
-/***/ "../../libraries/botbuilder/lib/botbuilder.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-/**
- * @module botbuilder
- */
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
-function __export(m) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-}
-Object.defineProperty(exports, "__esModule", { value: true });
-__export(__webpack_require__("../../libraries/botbuilder/lib/attachmentRecognizer.js"));
-__export(__webpack_require__("../../libraries/botbuilder/lib/bot.js"));
-__export(__webpack_require__("../../libraries/botbuilder/lib/botService.js"));
-__export(__webpack_require__("../../libraries/botbuilder/lib/botStateManager.js"));
-__export(__webpack_require__("../../libraries/botbuilder/lib/browserStorage.js"));
-__export(__webpack_require__("../../libraries/botbuilder/lib/cardStyler.js"));
-__export(__webpack_require__("../../libraries/botbuilder/lib/entityObject.js"));
-__export(__webpack_require__("../../libraries/botbuilder/lib/intentRecognizer.js"));
-__export(__webpack_require__("../../libraries/botbuilder/lib/intentRecognizerSet.js"));
-__export(__webpack_require__("../../libraries/botbuilder/lib/jsonTemplates.test.suite.js"));
-__export(__webpack_require__("../../libraries/botbuilder/lib/middleware.js"));
-__export(__webpack_require__("../../libraries/botbuilder/lib/memoryStorage.js"));
-__export(__webpack_require__("../../libraries/botbuilder/lib/messageStyler.js"));
-__export(__webpack_require__("../../libraries/botbuilder/lib/middleware.js"));
-__export(__webpack_require__("../../libraries/botbuilder/lib/middlewareSet.js"));
-__export(__webpack_require__("../../libraries/botbuilder/lib/regExpRecognizer.js"));
-__export(__webpack_require__("../../libraries/botbuilder/lib/storageMiddleware.js"));
-__export(__webpack_require__("../../libraries/botbuilder/lib/templateManager.js"));
-__export(__webpack_require__("../../libraries/botbuilder/lib/dictionaryRenderer.js"));
-__export(__webpack_require__("../../libraries/botbuilder/lib/testAdapter.js"));
-__export(__webpack_require__("../../libraries/botbuilder-schema/lib/index.js"));
-//# sourceMappingURL=botbuilder.js.map
-
-/***/ }),
-
-/***/ "../../libraries/botbuilder/lib/browserStorage.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @module botbuilder
- */
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
-const memoryStorage_1 = __webpack_require__("../../libraries/botbuilder/lib/memoryStorage.js");
-/**
- * Storage middleware that uses browser local storage.
- *
- * __Extends BotContext:__
- * * context.storage - Storage provider for storing and retrieving objects.
- *
- * **Usage Example**
- *
- * ```js
- * const bot = new Bot(adapter)
- *      .use(new BrowserLocalStorage())
- *      .use(new BotStateManage())
- *      .onReceive((context) => {
- *          context.reply(`Hello World`);
- *      })
- * ```
- */
-class BrowserLocalStorage extends memoryStorage_1.MemoryStorage {
-    constructor(options) {
-        super(options, localStorage);
-    }
-}
-exports.BrowserLocalStorage = BrowserLocalStorage;
-/**
- * Storage middleware that uses browser session storage.
- *
- * __Extends BotContext:__
- * * context.storage - Storage provider for storing and retrieving objects.
- *
- * **Usage Example**
- *
- * ```js
- * const bot = new Bot(adapter)
- *      .use(new BrowserSessionStorage())
- *      .use(new BotStateManage())
- *      .onReceive((context) => {
- *          context.reply(`Hello World`);
- *      })
- * ```
- */
-class BrowserSessionStorage extends memoryStorage_1.MemoryStorage {
-    constructor(options) {
-        super(options, sessionStorage);
-    }
-}
-exports.BrowserSessionStorage = BrowserSessionStorage;
-//# sourceMappingURL=browserStorage.js.map
-
-/***/ }),
-
-/***/ "../../libraries/botbuilder/lib/cardStyler.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @module botbuilder
- */
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
-const botbuilder_schema_1 = __webpack_require__("../../libraries/botbuilder-schema/lib/index.js");
-/**
- * A set of utility functions designed to assist with the formatting of the various card types a
- * bot can return. All of these functions return an `Attachment` which can be added to an `Activity`
- * directly or passed as input to a `MessageStyler` function.
- *
- * **Usage Example**
- *
- * ```js
- * const card = CardStyler.heroCard(
- *      'White T-Shirt',
- *      ['https://example.com/whiteShirt.jpg'],
- *      ['buy']
- * );
- * ```
- */
-class CardStyler {
-    /**
-     * Returns an attachment for an adaptive card. The attachment will contain the card and the
-     * appropriate `contentType`.
-     *
-     * Adaptive Cards are a new way for bots to send interactive and immersive card content to
-     * users. For channels that don't yet support Adaptive Cards natively, the Bot Framework will
-     * down render the card to an image that's been styled to look good on the target channel. For
-     * channels that support [hero cards](#herocards) you can continue to include Adaptive Card
-     * actions and they will be sent as buttons along with the rendered version of the card.
-     *
-     * For more information about Adaptive Cards and to download the latest SDK, visit
-     * [adaptivecards.io](http://adaptivecards.io/).
-     *
-     * @param card The adaptive card to return as an attachment.
-     */
-    static adaptiveCard(card) {
-        return { contentType: CardStyler.contentTypes.adaptiveCard, content: card };
-    }
-    /**
-     * Returns an attachment for an animation card.
-     *
-     * @param title The cards title.
-     * @param media Media URL's for the card.
-     * @param buttons (Optional) set of buttons to include on the card.
-     * @param other (Optional) additional properties to include on the card.
-     */
-    static animationCard(title, media, buttons, other) {
-        return mediaCard(CardStyler.contentTypes.animationCard, title, media, buttons, other);
-    }
-    /**
-     * Returns an attachment for an audio card.
-     *
-     * @param title The cards title.
-     * @param media Media URL's for the card.
-     * @param buttons (Optional) set of buttons to include on the card.
-     * @param other (Optional) additional properties to include on the card.
-     */
-    static audioCard(title, media, buttons, other) {
-        return mediaCard(CardStyler.contentTypes.audioCard, title, media, buttons, other);
-    }
-    static heroCard(title, text, images, buttons, other) {
-        const a = CardStyler.thumbnailCard(title, text, images, buttons, other);
-        a.contentType = CardStyler.contentTypes.heroCard;
-        return a;
-    }
-    /**
-     * Returns an attachment for a receipt card. The attachment will contain the card and the
-     * appropriate `contentType`.
-     *
-     * @param card The adaptive card to return as an attachment.
-     */
-    static receiptCard(card) {
-        return { contentType: CardStyler.contentTypes.receiptCard, content: card };
-    }
-    /**
-     * Returns an attachment for a signin card. For channels that don't natively support signin
-     * cards an alternative message will be rendered.
-     *
-     * @param title The cards title.
-     * @param url The link to the signin page the user needs to visit.
-     * @param text (Optional) additional text to include on the card.
-     */
-    static signinCard(title, url, text) {
-        const card = { buttons: [{ type: botbuilder_schema_1.ActionTypes.Signin, title: title, value: url }] };
-        if (text) {
-            card.text = text;
-        }
-        return { contentType: CardStyler.contentTypes.signinCard, content: card };
-    }
-    static thumbnailCard(title, text, images, buttons, other) {
-        if (typeof text !== 'string') {
-            other = buttons;
-            buttons = images;
-            images = text;
-            text = undefined;
-        }
-        const card = Object.assign({}, other);
-        if (title) {
-            card.title = title;
-        }
-        if (text) {
-            card.text = text;
-        }
-        if (images) {
-            card.images = CardStyler.images(images);
-        }
-        if (buttons) {
-            card.buttons = CardStyler.actions(buttons);
-        }
-        return { contentType: CardStyler.contentTypes.thumbnailCard, content: card };
-    }
-    /**
-     * Returns an attachment for a video card.
-     *
-     * @param title The cards title.
-     * @param media Media URL's for the card.
-     * @param buttons (Optional) set of buttons to include on the card.
-     * @param other (Optional) additional properties to include on the card.
-     */
-    static videoCard(title, media, buttons, other) {
-        return mediaCard(CardStyler.contentTypes.videoCard, title, media, buttons, other);
-    }
-    /**
-     * Returns a properly formatted array of actions. Supports converting strings to `messageBack`
-     * actions (note: using 'imBack' for now as 'messageBack' doesn't work properly in emulator.)
-     *
-     * @param actions Array of card actions or strings. Strings will be converted to `messageBack` actions.
-     */
-    static actions(actions) {
-        const list = [];
-        (actions || []).forEach((a) => {
-            if (typeof a === 'object') {
-                list.push(a);
-            }
-            else {
-                list.push({ type: botbuilder_schema_1.ActionTypes.ImBack, value: a.toString(), title: a.toString() });
-            }
-        });
-        return list;
-    }
-    /**
-     * Returns a properly formatted array of card images.
-     *
-     * @param images Array of card images or strings. Strings will be converted to card images.
-     */
-    static images(images) {
-        const list = [];
-        (images || []).forEach((img) => {
-            if (typeof img === 'object') {
-                list.push(img);
-            }
-            else {
-                list.push({ url: img });
-            }
-        });
-        return list;
-    }
-    /**
-     * Returns a properly formatted array of media url objects.
-     *
-     * @param links Array of media url objects or strings. Strings will be converted to a media url object.
-     */
-    static media(links) {
-        const list = [];
-        (links || []).forEach((lnk) => {
-            if (typeof lnk === 'object') {
-                list.push(lnk);
-            }
-            else {
-                list.push({ url: lnk });
-            }
-        });
-        return list;
-    }
-}
-/** List of content types for each card style. */
-CardStyler.contentTypes = {
-    adaptiveCard: 'application/vnd.microsoft.card.adaptive',
-    animationCard: 'application/vnd.microsoft.card.animation',
-    audioCard: 'application/vnd.microsoft.card.audio',
-    heroCard: 'application/vnd.microsoft.card.hero',
-    receiptCard: 'application/vnd.microsoft.card.receipt',
-    signinCard: 'application/vnd.microsoft.card.signin',
-    thumbnailCard: 'application/vnd.microsoft.card.thumbnail',
-    videoCard: 'application/vnd.microsoft.card.video'
-};
-exports.CardStyler = CardStyler;
-function mediaCard(contentType, title, media, buttons, other) {
-    const card = Object.assign({}, other);
-    if (title) {
-        card.title = title;
-    }
-    if (media) {
-        card.media = CardStyler.media(media);
-    }
-    if (buttons) {
-        card.buttons = CardStyler.actions(buttons);
-    }
-    return { contentType: contentType, content: card };
-}
-//# sourceMappingURL=cardStyler.js.map
-
-/***/ }),
-
-/***/ "../../libraries/botbuilder/lib/dictionaryRenderer.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * This is a simple template renderer which has a resource map of template functions
- * let myTemplates  = {
- *      "en" : {
- *          "templateId": (context, data) => `your name  is ${data.name}`
- *      }
- * }
- *
- * To use, simply add to your pipeline
- * bot.use(new DictionaryRenderer(myTemplates))
- */
-class DictionaryRenderer {
-    constructor(templates) {
-        this.templates = templates;
-    }
-    contextCreated(context, next) {
-        context.templateManager.register(this);
-        return next();
-    }
-    renderTemplate(context, language, templateId, data) {
-        if (!(language in this.templates)) {
-            //console.warn(`didn't find language ${language}`);
-            return Promise.resolve(undefined);
-        }
-        let languageResource = this.templates[language];
-        if (!(templateId in languageResource)) {
-            //console.warn(`didn't find templateId ${templateId}`);
-            return Promise.resolve(undefined);
-        }
-        let template = languageResource[templateId];
-        return Promise.resolve(template(context, data));
-    }
-}
-exports.DictionaryRenderer = DictionaryRenderer;
-//# sourceMappingURL=dictionaryRenderer.js.map
-
-/***/ }),
-
-/***/ "../../libraries/botbuilder/lib/entityObject.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/** Well known entity types. */
-exports.EntityTypes = {
-    attachment: 'attachment',
-    string: 'string',
-    number: 'number',
-    boolean: 'boolean'
-};
-//# sourceMappingURL=entityObject.js.map
-
-/***/ }),
-
-/***/ "../../libraries/botbuilder/lib/intentRecognizer.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * Middleware that's the base class for all intent recognizers.
- *
- * __Extends BotContext:__
- * * context.topIntent - The top recognized `Intent` for the users utterance.
- */
-class IntentRecognizer {
-    constructor() {
-        this.enabledChain = [];
-        this.recognizeChain = [];
-        this.filterChain = [];
-    }
-    receiveActivity(context, next) {
-        return this.recognize(context)
-            .then((intents) => IntentRecognizer.findTopIntent(intents))
-            .then((intent) => {
-            if (intent && intent.score > 0.0) {
-                context.topIntent = intent;
-            }
-            return next();
-        });
-    }
-    /**
-     * Recognizes intents for the current context. The return value is 0 or more recognized intents.
-     *
-     * @param context Context for the current turn of the conversation.
-     */
-    recognize(context) {
-        return new Promise((resolve, reject) => {
-            this.runEnabled(context)
-                .then((enabled) => {
-                if (enabled) {
-                    this.runRecognize(context)
-                        .then((intents) => this.runFilter(context, intents || []))
-                        .then((intents) => resolve(intents))
-                        .catch((err) => reject(err));
-                }
-                else {
-                    resolve([]);
-                }
-            })
-                .catch((err) => reject(err));
-        });
-    }
-    /**
-     * Adds a handler that lets you conditionally determine if a recognizer should run. Multiple
-     * handlers can be registered and they will be called in the reverse order they are added
-     * so the last handler added will be the first called.
-     *
-     * @param handler Function that will be called anytime the recognizer is run. If the handler
-     * returns true the recognizer will be run. Returning false disables the recognizer.
-     */
-    onEnabled(handler) {
-        this.enabledChain.unshift(handler);
-        return this;
-    }
-    /**
-     * Adds a handler that will be called to recognize the users intent. Multiple handlers can
-     * be registered and they will be called in the reverse order they are added so the last
-     * handler added will be the first called.
-     *
-     * @param handler Function that will be called to recognize a users intent.
-     */
-    onRecognize(handler) {
-        this.recognizeChain.unshift(handler);
-        return this;
-    }
-    /**
-     * Adds a handler that will be called post recognition to filter the output of the recognizer.
-     * The filter receives all of the intents that were recognized and can return a subset, or
-     * additional, or even all new intents as its response. This filtering adds a convenient second
-     * layer of processing to intent recognition. Multiple handlers can be registered and they will
-     * be called in the order they are added.
-     *
-     * @param handler Function that will be called to filter the output intents. If an array is returned
-     * that will become the new set of output intents passed on to the next filter. The final filter in
-     * the chain will reduce the output set of intents to a single top scoring intent.
-     */
-    onFilter(handler) {
-        this.filterChain.push(handler);
-        return this;
-    }
-    runEnabled(context) {
-        return new Promise((resolve, reject) => {
-            const chain = this.enabledChain.slice();
-            function next(i) {
-                if (i < chain.length) {
-                    try {
-                        Promise.resolve(chain[i](context)).then((enabled) => {
-                            if (typeof enabled === 'boolean' && enabled === false) {
-                                resolve(false); // Short-circuit chain
-                            }
-                            else {
-                                next(i + 1);
-                            }
-                        }).catch((err) => reject(err));
-                    }
-                    catch (err) {
-                        reject(err);
-                    }
-                }
-                else {
-                    resolve(true);
-                }
-            }
-            next(0);
-        });
-    }
-    runRecognize(context) {
-        return new Promise((resolve, reject) => {
-            let intents = [];
-            const chain = this.recognizeChain.slice();
-            function next(i) {
-                if (i < chain.length) {
-                    try {
-                        Promise.resolve(chain[i](context)).then((result) => {
-                            if (Array.isArray(result)) {
-                                intents = intents.concat(result);
-                            }
-                            next(i + 1);
-                        }).catch((err) => reject(err));
-                    }
-                    catch (err) {
-                        reject(err);
-                    }
-                }
-                else {
-                    resolve(intents);
-                }
-            }
-            next(0);
-        });
-    }
-    runFilter(context, intents) {
-        return new Promise((resolve, reject) => {
-            let filtered = intents;
-            const chain = this.filterChain.slice();
-            function next(i) {
-                if (i < chain.length) {
-                    try {
-                        Promise.resolve(chain[i](context, filtered)).then((result) => {
-                            if (Array.isArray(result)) {
-                                filtered = result;
-                            }
-                            next(i + 1);
-                        }).catch((err) => reject(err));
-                    }
-                    catch (err) {
-                        reject(err);
-                    }
-                }
-                else {
-                    resolve(filtered);
-                }
-            }
-            next(0);
-        });
-    }
-    /**
-     * Finds the top scoring intent given a set of intents.
-     *
-     * @param intents Array of intents to filter.
-     */
-    static findTopIntent(intents) {
-        return new Promise((resolve, reject) => {
-            let top = undefined;
-            (intents || []).forEach((intent) => {
-                if (!top || intent.score > top.score) {
-                    top = intent;
-                }
-            });
-            resolve(top);
-        });
-    }
-}
-exports.IntentRecognizer = IntentRecognizer;
-//# sourceMappingURL=intentRecognizer.js.map
-
-/***/ }),
-
-/***/ "../../libraries/botbuilder/lib/intentRecognizerSet.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @module botbuilder
- */
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
-const intentRecognizer_1 = __webpack_require__("../../libraries/botbuilder/lib/intentRecognizer.js");
-var RecognizeOrder;
-(function (RecognizeOrder) {
-    RecognizeOrder[RecognizeOrder["parallel"] = 0] = "parallel";
-    RecognizeOrder[RecognizeOrder["series"] = 1] = "series";
-})(RecognizeOrder = exports.RecognizeOrder || (exports.RecognizeOrder = {}));
-/**
- * Optimizes the execution of multiple intent recognizers. An intent recognizer set can be
- * configured to execute its recognizers either in parallel (the default) or in series. The
- * output of the set will be a single intent that had the highest score.
- *
- * The intent recognizer set is itself an intent recognizer which means that it can be
- * conditionally disabled or have its output filtered just like any other recognizer. It can
- * even be composed into other recognizer sets allowing for sophisticated recognizer
- * hierarchies to be created.
- *
- * **Usage Example**
- *
- * ```js
- * // Define RegExp's for well known commands.
- * const recognizer = new RegExpRecognizer({ minScore: 1.0 })
- *      .addIntent('HelpIntent', /^help/i)
- *      .addIntent('CancelIntent', /^cancel/i);
- *
- * // Create a set that will only call LUIS for unknown commands.
- * const recognizerSet = new IntentRecognizerSet({ recognizeOrder: RecognizeOrder.series })
- *      .add(recognizer)
- *      .add(new LuisRecognizer('Model ID', 'Subscription Key'));
- *
- * // Add set to bot.
- * const bot = new Bot(adapter)
- *      .use(recognizerSet)
- *      .onReceive((context) => {
- *          if (context.ifIntent('HelpIntent')) {
- *              // ... help
- *          } else if (context.ifIntent('CancelIntent')) {
- *              // ... cancel
- *          } else {
- *              // ... default logic
- *          }
- *      });
- * ```
- */
-class IntentRecognizerSet extends intentRecognizer_1.IntentRecognizer {
-    /**
-     * Creates a new instance of a recognizer set.
-     *
-     * @param settings (Optional) settings to customize the sets execution strategy.
-     */
-    constructor(settings) {
-        super();
-        this.recognizers = [];
-        this.settings = Object.assign({
-            recognizeOrder: RecognizeOrder.parallel,
-            stopOnExactMatch: true
-        }, settings);
-        this.onRecognize((context) => {
-            if (this.settings.recognizeOrder === RecognizeOrder.parallel) {
-                return this.recognizeInParallel(context);
-            }
-            else {
-                return this.recognizeInSeries(context);
-            }
-        });
-    }
-    /**
-     * Adds recognizer(s) to the set. Recognizers will be evaluated in the order they're
-     * added to the set.
-     *
-     * @param recognizers One or more recognizers to add to the set.
-     */
-    add(...recognizers) {
-        Array.prototype.push.apply(this.recognizers, recognizers);
-        return this;
-    }
-    recognizeInParallel(context) {
-        // Call recognize on all children
-        const promises = [];
-        this.recognizers.forEach((r) => promises.push(r.recognize(context)));
-        // Wait for all of the promises to resolve
-        return Promise.all(promises).then((results) => {
-            // Merge intents
-            let intents = [];
-            results.forEach((r) => intents = intents.concat(r));
-            return intents;
-        });
-    }
-    recognizeInSeries(context) {
-        return new Promise((resolve, reject) => {
-            let intents = [];
-            const that = this;
-            function next(i) {
-                if (i < that.recognizers.length) {
-                    that.recognizers[i].recognize(context)
-                        .then((r) => {
-                        intents = intents.concat(r);
-                        if (that.settings.stopOnExactMatch && that.hasExactMatch(r)) {
-                            resolve(intents);
-                        }
-                        else {
-                            next(i + 1);
-                        }
-                    })
-                        .catch((err) => reject(err));
-                }
-                else {
-                    resolve(intents);
-                }
-            }
-            next(0);
-        });
-    }
-    hasExactMatch(intents) {
-        return intents.filter((intent) => intent.score >= 1.0).length > 0;
-    }
-}
-exports.IntentRecognizerSet = IntentRecognizerSet;
-//# sourceMappingURL=intentRecognizerSet.js.map
-
-/***/ }),
-
-/***/ "../../libraries/botbuilder/lib/jsonTemplates.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * Template source for rendering dynamic JSON objects. To use add to the pipeline
- * bot
- *    .use(new JsonTemplateEngine()
- *          .add('templateId', function()=>{} ))
- */
-class JsonTemplates {
-    constructor() {
-        this.templates = {};
-    }
-    contextCreated(context, next) {
-        context.templateManager.register(this);
-        return next();
-    }
-    renderTemplate(context, language, templateId, data) {
-        var result = this.render(`${language}-${templateId}`, data);
-        if (result)
-            return Promise.resolve(JSON.parse(result));
-        return Promise.resolve(undefined);
-    }
-    /**
-     * Registers a new JSON template. The template will be compiled and cached.
-     *
-     * @param name Name of the template to register.
-     * @param json JSON template.
-     */
-    add(name, json) {
-        this.templates[name] = JsonTemplates.compile(json, this.templates);
-        return this;
-    }
-    /**
-     * Registers a named function that can be called within a template.
-     *
-     * @param name Name of the function to register.
-     * @param fn Function to register.
-     */
-    addFunction(name, fn) {
-        this.templates[name] = fn;
-        return this;
-    }
-    /**
-     * Renders a registered JSON template to a string using the given data object.
-     *
-     * @param name Name of the registered template to render.
-     * @param data Data object to render template against.
-     */
-    render(name, data) {
-        let template = this.templates[name];
-        if (!template)
-            return undefined;
-        return template(data);
-    }
-    /**
-     * Renders a registered JSON template using the given data object. The rendered string will
-     * be `JSON.parsed()` into a JSON object prior to returning.
-     *
-     * @param name Name of the registered template to render.
-     * @param data Data object to render template against.
-     * @param postProcess (Optional) if `true` the rendered output object will be scanned looking
-     * for any processing directives, such as @prune. The default value is `true`.
-     */
-    renderAsJSON(name, data, postProcess) {
-        var json = this.render(name, data);
-        if (!json)
-            return null;
-        let obj = JSON.parse(json);
-        if (postProcess || postProcess === undefined) {
-            obj = this.postProcess(obj);
-        }
-        return obj;
-    }
-    /**
-     * Post processes a JSON object by walking the object and evaluating any processing directives
-     * like @prune.
-     * @param object Object to post process.
-     */
-    postProcess(object) {
-        if (!processNode(object, {})) {
-            // Failed top level @if condition
-            return undefined;
-        }
-        return object;
-    }
-    /**
-     * Compiles a JSON template into a function that can be called to render a JSON object using
-     * a data object.
-     *
-     * @param json The JSON template to compile.
-     * @param templates (Optional) map of template functions (and other compiled templates) that
-     * can be called at render time.
-     */
-    static compile(json, templates) {
-        // Convert objects to strings for parsing
-        if (typeof json !== 'string') {
-            json = JSON.stringify(json);
-        }
-        // Parse JSON into an array of template functions. These will be called in order
-        // to build up the output JSON object as a string.
-        const parsed = parse(json, templates);
-        // Return closure that will execute the parsed template.
-        return (data, path) => {
-            // Check for optional path.
-            // - Templates can be executed as children of other templates so the path
-            //   specifies the property off the parent to execute the template for.
-            let obj = '';
-            if (path) {
-                const value = getValue(data, path);
-                if (Array.isArray(value)) {
-                    // Execute for each child object
-                    let connector = '';
-                    obj += '[';
-                    value.forEach((child) => {
-                        obj += connector;
-                        parsed.forEach((fn) => obj += fn(child));
-                        connector = ',';
-                    });
-                    obj += ']';
-                }
-                else if (typeof value === 'object') {
-                    parsed.forEach((fn) => obj += fn(value));
-                }
-            }
-            else {
-                parsed.forEach((fn) => obj += fn(data));
-            }
-            return obj;
-        };
-    }
-}
-exports.JsonTemplates = JsonTemplates;
-var ParseState;
-(function (ParseState) {
-    ParseState[ParseState["none"] = 0] = "none";
-    ParseState[ParseState["string"] = 1] = "string";
-    ParseState[ParseState["path"] = 2] = "path";
-})(ParseState || (ParseState = {}));
-function parse(json, templates) {
-    const parsed = [];
-    let txt = '';
-    let endString = '';
-    let endPath = '';
-    let nextState = ParseState.none;
-    let state = ParseState.none;
-    for (let i = 0, l = json.length; i < l; i++) {
-        const char = json[i];
-        switch (state) {
-            case ParseState.none:
-            default:
-                if ((char == '\'' || char == '"') && i < (l - 1)) {
-                    // Check for literal
-                    if (json[i + 1] == '!') {
-                        i++; // <- skip next char
-                        state = ParseState.path;
-                        parsed.push(appendText(txt));
-                        endPath = char;
-                        nextState = ParseState.none;
-                        txt = '';
-                    }
-                    else {
-                        state = ParseState.string;
-                        endString = char;
-                        txt += char;
-                    }
-                }
-                else {
-                    txt += char;
-                }
-                break;
-            case ParseState.string:
-                if (char == '$' && i < (l - 1) && json[i + 1] == '{') {
-                    i++; // <- skip next char
-                    state = ParseState.path;
-                    parsed.push(appendText(txt));
-                    endPath = '}';
-                    nextState = ParseState.string;
-                    txt = '';
-                }
-                else if (char == endString && json[i - 1] !== '\\') {
-                    state = ParseState.none;
-                    txt += char;
-                }
-                else {
-                    txt += char;
-                }
-                break;
-            case ParseState.path:
-                if (char == endPath) {
-                    state = nextState;
-                    const trimmed = txt.trim();
-                    if (trimmed && trimmed[trimmed.length - 1] == ')') {
-                        let open = txt.indexOf('(');
-                        const close = txt.lastIndexOf(')');
-                        if (open && close) {
-                            const name = txt.substr(0, open++);
-                            const args = close > open ? txt.substr(open, close - open) : '';
-                            parsed.push(appendFunction(name, args, templates));
-                        }
-                        else {
-                            parsed.push(appendProperty(txt));
-                        }
-                    }
-                    else {
-                        parsed.push(appendProperty(txt));
-                    }
-                    txt = '';
-                }
-                else {
-                    txt += char;
-                }
-                break;
-        }
-    }
-    if (txt.length > 0) {
-        parsed.push(appendText(txt));
-    }
-    return parsed;
-}
-function appendText(text) {
-    return (data) => text;
-}
-function appendFunction(name, args, templates) {
-    return (data) => {
-        const result = templates[name](data, args);
-        return typeof result === 'string' ? result : JSON.stringify(result);
-    };
-}
-function appendProperty(path) {
-    return (data) => {
-        const result = getValue(data, path);
-        if (typeof result === 'string') {
-            return result;
-        }
-        else if (result === undefined || result === null) {
-            return '';
-        }
-        return JSON.stringify(result);
-    };
-}
-function getValue(data, path) {
-    let value = data;
-    const parts = path.split('.');
-    for (let i = 0, l = parts.length; i < l; i++) {
-        const member = parts[i].trim();
-        if (typeof value === 'object') {
-            value = value[member];
-        }
-        else {
-            value = undefined;
-            break;
-        }
-    }
-    return value;
-}
-function processNode(node, prune) {
-    if (Array.isArray(node)) {
-        // Process array members
-        for (let i = node.length - 1; i >= 0; i--) {
-            const value = node[i];
-            if ((prune.nullMembers && (value === undefined || value === null)) ||
-                !processNode(value, prune)) {
-                // Remove array member
-                node.splice(i, 1);
-            }
-        }
-        // Prune out the array if it's now empty
-        if (prune.emptyArrays && node.length == 0) {
-            return false;
-        }
-    }
-    else if (typeof node === 'object') {
-        // Process object members
-        let conditions = [];
-        for (const key in node) {
-            const value = node[key];
-            if (key === '@prune') {
-                // Clone and update pruning options
-                prune = Object.assign({}, prune, value);
-                delete node[key];
-            }
-            else if (key === '@if') {
-                // Defer processing of condition until after the entire node and
-                // children have been evaluated.
-                conditions.push(value);
-                delete node[key];
-            }
-            else {
-                // Prune members
-                if (prune.nullMembers && (value === undefined || value === null)) {
-                    delete node[key];
-                }
-                else if (prune.emptyStrings && typeof value === 'string' && value.trim().length == 0) {
-                    delete node[key];
-                }
-                else if (prune.emptyArrays && Array.isArray(value) && value.length == 0) {
-                    delete node[key];
-                }
-                else if (!processNode(value, prune)) {
-                    // @if condition failed so prune it.
-                    delete node[key];
-                }
-            }
-        }
-        // Process @if conditions
-        // - multiple @if conditions are AND'ed
-        for (let i = 0; i < conditions.length; i++) {
-            if (!getValue(node, conditions[i])) {
-                return false;
-            }
-        }
-    }
-    return true;
-}
-//# sourceMappingURL=jsonTemplates.js.map
-
-/***/ }),
-
-/***/ "../../libraries/botbuilder/lib/memoryStorage.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const storageMiddleware_1 = __webpack_require__("../../libraries/botbuilder/lib/storageMiddleware.js");
-/**
- * Middleware that implements an in memory based storage provider for a bot.
- *
- * __Extends BotContext:__
- * * context.storage - Storage provider for storing and retrieving objects.
- *
- * **Usage Example**
- *
- * ```js
- * const bot = new Bot(adapter)
- *      .use(new MemoryStorage())
- *      .use(new BotStateManage())
- *      .onReceive((context) => {
- *          context.reply(`Hello World`);
- *      })
- * ```
- */
-class MemoryStorage extends storageMiddleware_1.StorageMiddleware {
-    /**
-     * Creates a new instance of the storage provider.
-     *
-     * @param settings (Optional) setting to configure the provider.
-     * @param memory (Optional) memory to use for storing items.
-     */
-    constructor(settings, memory = {}) {
-        super(settings || {});
-        this.memory = memory;
-        this.etag = 1;
-    }
-    read(keys) {
-        return new Promise((resolve, reject) => {
-            const data = {};
-            (keys || []).forEach((key) => {
-                const item = this.memory[key];
-                if (item) {
-                    data[key] = JSON.parse(item);
-                }
-            });
-            resolve(data);
-        });
-    }
-    ;
-    write(changes) {
-        const that = this;
-        function saveItem(key, item) {
-            const clone = Object.assign({}, item);
-            clone.eTag = (that.etag++).toString();
-            that.memory[key] = JSON.stringify(clone);
-        }
-        return new Promise((resolve, reject) => {
-            for (const key in changes) {
-                const newItem = changes[key];
-                const old = this.memory[key];
-                if (!old || newItem.eTag === '*') {
-                    saveItem(key, newItem);
-                }
-                else {
-                    const oldItem = JSON.parse(old);
-                    if (newItem.eTag === oldItem.eTag) {
-                        saveItem(key, newItem);
-                    }
-                    else {
-                        reject(new Error(`Storage: error writing "${key}" due to eTag conflict.`));
-                    }
-                }
-            }
-            resolve();
-        });
-    }
-    ;
-    delete(keys) {
-        return new Promise((resolve, reject) => {
-            (keys || []).forEach((key) => this.memory[key] = undefined);
-            resolve();
-        });
-    }
-    getStorage(context) {
-        return this;
-    }
-}
-exports.MemoryStorage = MemoryStorage;
-//# sourceMappingURL=memoryStorage.js.map
-
-/***/ }),
-
-/***/ "../../libraries/botbuilder/lib/messageStyler.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @module botbuilder
- */
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
-const cardStyler_1 = __webpack_require__("../../libraries/botbuilder/lib/cardStyler.js");
-const botbuilder_schema_1 = __webpack_require__("../../libraries/botbuilder-schema/lib/index.js");
-/**
- * A set of utility functions to assist with the formatting of the various message types a bot can
- * return.
- *
- * **Usage Example**
- *
- * ```js
- * // init message object
- * const message = MessageStyler.attachment(
- *     CardStyler.heroCard(
- *         'White T-Shirt',
- *         ['https://example.com/whiteShirt.jpg'],
- *         ['buy']
- *      )
- * );
- *
- * context.reply(message); // send message
- * ```
- */
-class MessageStyler {
-    /**
-     * Returns a simple text message.
-     *
-     * **Usage Example**
-     *
-     * ```js
-     * // init message object
-     * const basicMessage = MessageStyler.text('Greetings from example message');
-     *
-     * context.reply(basicMessage); // send message
-     * ```
-     *
-     * @param text Text to include in the message.
-     * @param speak (Optional) SSML to include in the message.
-     */
-    static text(text, speak) {
-        const msg = {
-            type: botbuilder_schema_1.ActivityTypes.Message,
-            text: text || ''
-        };
-        if (speak) {
-            msg.speak = speak;
-        }
-        return msg;
-    }
-    /**
-     * Returns a message that includes a set of suggested actions and optional text.
-     *
-     * @param actions Array of card actions or strings to include. Strings will be converted to `messageBack` actions.
-     * @param text (Optional) text of the message.
-     * @param speak (Optional) SSML to include with the message.
-     */
-    static suggestedActions(actions, text, speak) {
-        const msg = {
-            type: botbuilder_schema_1.ActivityTypes.Message,
-            suggestedActions: {
-                actions: cardStyler_1.CardStyler.actions(actions)
-            }
-        };
-        if (text) {
-            msg.text = text;
-        }
-        if (speak) {
-            msg.speak = speak;
-        }
-        return msg;
-    }
-    /**
-     * Returns a single message activity containing an attachment.
-     *
-     * @param attachment Adaptive card to include in the message.
-     * @param text (Optional) text of the message.
-     * @param speak (Optional) SSML to include with the message.
-     */
-    static attachment(attachment, text, speak) {
-        return attachmentActivity(botbuilder_schema_1.AttachmentLayoutTypes.List, [attachment], text, speak);
-    }
-    /**
-     * Returns a message that will display a set of attachments in list form.
-     *
-     * @param attachments Array of attachments to include in the message.
-     * @param text (Optional) text of the message.
-     * @param speak (Optional) SSML to include with the message.
-     */
-    static list(attachments, text, speak) {
-        return attachmentActivity(botbuilder_schema_1.AttachmentLayoutTypes.List, attachments, text, speak);
-    }
-    /**
-     * Returns a message that will display a set of attachments using a carousel layout.
-     *
-     * **Usage Example**
-     *
-     * ```js
-     * // init message object
-     * let messageWithCarouselOfCards = MessageStyler.carousel([
-     *   CardStyler.heroCard('title1', ['imageUrl1'], ['button1']),
-     *   CardStyler.heroCard('title2', ['imageUrl2'], ['button2']),
-     *   CardStyler.heroCard('title3', ['imageUrl3'], ['button3'])
-     * ]);
-     *
-     * context.reply(messageWithCarouselOfCards); // send the message
-     * ```
-     *
-     * @param attachments Array of attachments to include in the message.
-     * @param text (Optional) text of the message.
-     * @param speak (Optional) SSML to include with the message.
-     */
-    static carousel(attachments, text, speak) {
-        return attachmentActivity(botbuilder_schema_1.AttachmentLayoutTypes.Carousel, attachments, text, speak);
-    }
-    /**
-     * Returns a message that will display a single image or video to a user.
-     *
-     * **Usage Example**
-     *
-     * ```js
-     * // init message object
-     * let imageOrVideoMessage = MessageStyler.contentUrl('url', 'content-type', 'optional-name', 'optional-text', 'optional-speak');
-     *
-     * context.reply(imageOrVideoMessage); // send the message
-     * ```
-     *
-     * @param url Url of the image/video to send.
-     * @param contentType The MIME type of the image/video.
-     * @param name (Optional) Name of the image/video file.
-     * @param text (Optional) text of the message.
-     * @param speak (Optional) SSML to include with the message.
-     */
-    static contentUrl(url, contentType, name, text, speak) {
-        const a = { contentType: contentType, contentUrl: url };
-        if (name) {
-            a.name = name;
-        }
-        return attachmentActivity(botbuilder_schema_1.AttachmentLayoutTypes.List, [a], text, speak);
-    }
-}
-exports.MessageStyler = MessageStyler;
-function attachmentActivity(attachmentLayout, attachments, text, speak) {
-    const msg = {
-        type: botbuilder_schema_1.ActivityTypes.Message,
-        attachmentLayout: attachmentLayout,
-        attachments: attachments
-    };
-    if (text) {
-        msg.text = text;
-    }
-    if (speak) {
-        msg.speak = speak;
-    }
-    return msg;
-}
-//# sourceMappingURL=messageStyler.js.map
-
-/***/ }),
-
-/***/ "../../libraries/botbuilder/lib/middleware.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * Returns true if a result that can (Optionally) be a Promise looks like a Promise.
- * @param result The result to test.
- */
-function isPromised(result) {
-    return result && result.then !== undefined;
-}
-exports.isPromised = isPromised;
-//# sourceMappingURL=middleware.js.map
-
-/***/ }),
-
-/***/ "../../libraries/botbuilder/lib/middlewareSet.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * A set of `Middleware` plugins. The set itself is middleware so you can easily package up a set
- * of middleware that can be composed into a bot with a single `bot.use(mySet)` call or even into
- * another middleware set using `set.use(mySet)`.
- */
-class MiddlewareSet {
-    constructor() {
-        this._middleware = [];
-    }
-    /**
-     * Returns the underlying array of middleware.
-     */
-    get middleware() {
-        return this._middleware;
-    }
-    /**
-     * Registers middleware plugin(s) with the bot or set.
-     *
-     * @param middleware One or more middleware plugin(s) to register.
-     */
-    use(...middleware) {
-        Array.prototype.push.apply(this._middleware, middleware);
-        return this;
-    }
-    contextCreated(context, next) {
-        function callMiddleware(set, i) {
-            try {
-                if (i < set.length) {
-                    const plugin = set[i];
-                    if (plugin.contextCreated !== undefined) {
-                        return plugin.contextCreated(context, () => callMiddleware(set, i + 1));
-                    }
-                    else {
-                        return callMiddleware(set, i + 1);
-                    }
-                }
-                else {
-                    return next();
-                }
-            }
-            catch (err) {
-                return Promise.reject(err);
-            }
-        }
-        return callMiddleware(this._middleware.slice(0), 0);
-    }
-    receiveActivity(context, next) {
-        function callMiddleware(set, i) {
-            try {
-                if (i < set.length) {
-                    const plugin = set[i];
-                    if (plugin.receiveActivity !== undefined) {
-                        return plugin.receiveActivity(context, () => callMiddleware(set, i + 1));
-                    }
-                    else {
-                        return callMiddleware(set, i + 1);
-                    }
-                }
-                else {
-                    return next();
-                }
-            }
-            catch (err) {
-                return Promise.reject(err);
-            }
-        }
-        return callMiddleware(this._middleware.slice(0), 0);
-    }
-    postActivity(context, activities, next) {
-        function callMiddleware(set, i) {
-            try {
-                if (i < set.length) {
-                    const plugin = set[i];
-                    if (plugin.postActivity !== undefined) {
-                        return plugin.postActivity(context, activities, () => callMiddleware(set, i + 1));
-                    }
-                    else {
-                        return callMiddleware(set, i + 1);
-                    }
-                }
-                else {
-                    return next();
-                }
-            }
-            catch (err) {
-                return Promise.reject(err);
-            }
-        }
-        return callMiddleware(this._middleware.slice(0), 0);
-    }
-}
-exports.MiddlewareSet = MiddlewareSet;
-//# sourceMappingURL=middlewareSet.js.map
-
-/***/ }),
-
-/***/ "../../libraries/botbuilder/lib/regExpRecognizer.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @module botbuilder
- */
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
-const intentRecognizer_1 = __webpack_require__("../../libraries/botbuilder/lib/intentRecognizer.js");
-const entityObject_1 = __webpack_require__("../../libraries/botbuilder/lib/entityObject.js");
-/**
- * An intent recognizer for detecting the users intent using a series of regular expressions.
- *
- * One of the primary advantages of using a RegExpRecognizer is that you can easily switch between
- * the use of regular expressions and a LUIS model. This could be useful for running unit tests
- * locally without having to make a cloud request.
- *
- * The other advantage for non-LUIS bots is that it potentially lets your bot support multiple
- * languages by providing a unique set of expressions for each language.
- *
- * **Usage Example**
- *
- * ```js
- * import { RegExpRecognizer } from 'botbuilder';
- *
- * // Define RegExp's for well known commands.
- * const recognizer = new RegExpRecognizer()
- *      .addIntent('HelpIntent', /^help/i)
- *      .addIntent('CancelIntent', /^cancel/i);
- *
- * // init bot and bind to adapter
- * const bot = new Bot(adapter);
- * // bind recognizer to bot
- * bot.use(recognizer);
- * // define bot's message handlers
- * bot.onReceive((context) => {
- *     if (context.ifIntent('HelpIntent')) {
- *         // handle help intent
- *         context.reply('You selected HelpIntent');
- *     } else if (context.ifIntent('CancelIntent')) {
- *        // handle cancel intent
- *        context.reply('You selected CancelIntent');
- *     } else {
- *        // handle all other messages
- *        context.reply('Welcome to the RegExpRecognizer example. Type "help" for commands, "cancel" to quit');
- *     }
- * });
- * ```
- */
-class RegExpRecognizer extends intentRecognizer_1.IntentRecognizer {
-    /**
-     * Creates a new instance of the recognizer.
-     *
-     * @param settings (Optional) settings to customize the recognizer.
-     */
-    constructor(settings) {
-        super();
-        this.intents = {};
-        this.settings = Object.assign({
-            minScore: 0.0
-        }, settings);
-        if (this.settings.minScore < 0 || this.settings.minScore > 1.0) {
-            throw new Error(`RegExpRecognizer: a minScore of '${this.settings.minScore}' is out of range.`);
-        }
-        this.onRecognize((context) => {
-            const intents = [];
-            const utterance = (context.request.text || '').trim();
-            const minScore = this.settings.minScore;
-            for (const name in this.intents) {
-                const map = this.intents[name];
-                const expressions = this.getExpressions(context, map);
-                let top;
-                (expressions || []).forEach((exp) => {
-                    const intent = RegExpRecognizer.recognize(utterance, exp, [], minScore);
-                    if (intent && (!top || intent.score > top.score)) {
-                        top = intent;
-                    }
-                });
-                if (top) {
-                    top.name = name;
-                    intents.push(top);
-                }
-            }
-            return intents;
-        });
-    }
-    /**
-     * Adds a definition for a named intent to the recognizer.
-     *
-     * **Usage Example**
-     *
-     * ```js
-     * // init recognizer
-     * let foodRecognizer = new RegExpRecognizer();
-     *
-     * // add intents to recognizer
-     * foodRecognizer.addIntent('TacosIntent', /taco/i);
-     * foodRecognizer.addIntent('BurritosIntent', /burrito/i);
-     * foodRecognizer.addIntent('EnchiladasIntent', /enchiladas/i);
-     *
-     * // add recognizer to bot
-     * bot.use(foodRecognizer);
-     * bot.onRecognize((context) => {
-     *     if (context.ifIntent('TacosIntent')) {
-     *         // handle tacos intent
-     *         context.reply('Added one taco to your order');
-     *     }
-     *     else if (context.ifIntent('BurritosIntent')) {
-     *         // handle burritos intent
-     *         context.reply('Added one burrito to your order');
-     *     }
-     *     else if (context.ifIntent('EnchiladasIntent')) {
-     *         // handle enchiladas intent
-     *         context.reply('Added one enchilada to your order');
-     *     }
-     *     else {
-     *        // handle other messages
-     *     }
-     * })
-     * ```
-     *
-     * @param name Name of the intent to return when one of the expression(s) is matched.
-     * @param expressions Expression(s) to match for this intent. Passing a `RegExpLocaleMap` lets
-     * specify an alternate set of expressions for each language that your bot supports.
-     */
-    addIntent(name, expressions) {
-        if (this.intents.hasOwnProperty(name)) {
-            throw new Error(`RegExpRecognizer: an intent name '${name}' already exists.`);
-        }
-        // Register as locale map
-        if (Array.isArray(expressions)) {
-            this.intents[name] = { '*': expressions };
-        }
-        else if (expressions instanceof RegExp) {
-            this.intents[name] = { '*': [expressions] };
-        }
-        else {
-            this.intents[name] = expressions;
-        }
-        return this;
-    }
-    getExpressions(context, map) {
-        const locale = context.request.locale || '*';
-        const entry = map.hasOwnProperty(locale) ? map[locale] : map['*'];
-        return entry ? (Array.isArray(entry) ? entry : [entry]) : undefined;
-    }
-    /**
-     * Matches a text string using the given expression. If matched, an `Intent` will be returned
-     * containing a coverage score, from 0.0 to 1.0, indicating how much of the text matched
-     * the expression. The more of the text the matched the greater the score. The name of
-     * the intent will be the value of `expression.toString()` and any capture groups will be
-     * returned as individual entities of type `string`.
-     *
-     * @param text The text string to match against.
-     * @param expression The expression to match.
-     * @param entityTypes (Optional) array of types to assign to each entity returned for a numbered
-     * capture group. As an example, for the expression `/flight from (.*) to (.*)/i` you could
-     * pass a value of `['fromCity', 'toCity']`. The entity returned for the first capture group will
-     * have a type of `fromCity` and the entity for the second capture group will have a type of
-     * `toCity`. The default entity type returned when not specified is `string`.
-     * @param minScore (Optional) minimum score to return for the coverage score. The default value
-     * is 0.0 but if provided, the calculated coverage score will be scaled to a value between the
-     * minScore and 1.0. For example, a expression that matches 50% of the text will result in a
-     * base coverage score of 0.5. If the minScore supplied is also 0.5 the returned score will be
-     * scaled to be 0.75 or 50% between 0.5 and 1.0. As another example, providing a minScore of 1.0
-     * will always result in a match returning a score of 1.0.
-     */
-    static recognize(text, expression, entityTypes = [], minScore = 0.0) {
-        if (typeof minScore !== 'number' || minScore < 0 || minScore > 1.0) {
-            throw new Error(`RegExpRecognizer: a minScore of '${minScore}' is out of range for expression '${expression.toString()}'.`);
-        }
-        const matched = expression.exec(text);
-        if (matched) {
-            // Calculate coverage
-            const coverage = matched[0].length / text.length;
-            const score = minScore + ((1.0 - minScore) * coverage);
-            // Populate entities
-            const entities = [];
-            if (matched.length > 1) {
-                for (let i = 1; i < matched.length; i++) {
-                    const type = (i - 1) < entityTypes.length ? entityTypes[i - 1] : entityObject_1.EntityTypes.string;
-                    entities.push({ type: type, score: 1.0, value: matched[i] });
-                }
-            }
-            // Return intent
-            return { name: expression.toString(), score: score, entities: entities };
-        }
-        return undefined;
-    }
-}
-exports.RegExpRecognizer = RegExpRecognizer;
-//# sourceMappingURL=regExpRecognizer.js.map
-
-/***/ }),
-
-/***/ "../../libraries/botbuilder/lib/storageMiddleware.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @module botbuilder
- */
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
-const botService_1 = __webpack_require__("../../libraries/botbuilder/lib/botService.js");
-/**
- * Abstract base class for all storage middleware.
- *
- * @param SETTINGS (Optional) settings to configure additional features of the storage provider.
- */
-class StorageMiddleware extends botService_1.BotService {
-    /**
-     * Creates a new instance of the storage provider.
-     *
-     * @param settings (Optional) settings to configure additional features of the storage provider.
-     */
-    constructor(settings) {
-        super('storage');
-        this.warningLogged = false;
-        this.settings = Object.assign({
-            optimizeWrites: true
-        }, settings);
-    }
-    getService(context) {
-        const storage = this.getStorage(context);
-        return this.settings.optimizeWrites ? new WriteOptimizer(context, storage) : storage;
-    }
-}
-exports.StorageMiddleware = StorageMiddleware;
-class WriteOptimizer {
-    constructor(context, storage) {
-        this.context = context;
-        this.storage = storage;
-    }
-    read(keys) {
-        return this.storage.read(keys).then((items) => {
-            // Remember hashes
-            keys.forEach((key) => this.updatheashes(key, items[key]));
-            return items;
-        });
-    }
-    /** save StoreItems to storage  **/
-    write(changes) {
-        // Identify changes to commit
-        let count = 0;
-        const hashes = this.context.state.writeOptimizer || {};
-        const newHashes = {};
-        const commits = {};
-        for (const key in changes) {
-            const item = changes[key] || {};
-            const hash = this.getHash(item);
-            if (hashes[key] !== hash) {
-                // New or changed item
-                commits[key] = item;
-                newHashes[key] = hash;
-                count++;
-            }
-        }
-        // Commit changes to storage
-        if (count > 0) {
-            return this.storage.write(commits).then(() => {
-                // Update hashes
-                for (const key in newHashes) {
-                    this.updatheashes(key, newHashes[key]);
-                }
-            });
-        }
-        else {
-            return Promise.resolve();
-        }
-    }
-    /** Delete storeItems from storage **/
-    delete(keys) {
-        return this.storage.delete(keys).then(() => {
-            // Remove hashes
-            (keys || []).forEach((key) => this.updatheashes(key));
-        });
-    }
-    updatheashes(key, itemOrHash) {
-        // Ensure hashes
-        let hashes = this.context.state.writeOptimizer;
-        if (!hashes) {
-            hashes = this.context.state.writeOptimizer = {};
-        }
-        // Update entry
-        if (typeof itemOrHash === 'string') {
-            hashes[key] = itemOrHash;
-        }
-        else if (itemOrHash) {
-            hashes[key] = this.getHash(itemOrHash);
-        }
-        else if (hashes && hashes.hasOwnProperty(key)) {
-            delete hashes[key];
-        }
-    }
-    getHash(item) {
-        const clone = Object.assign({}, item);
-        if (clone.eTag) {
-            delete clone.eTag;
-        }
-        ;
-        return JSON.stringify(clone);
-    }
-}
-//# sourceMappingURL=storageMiddleware.js.map
-
-/***/ }),
-
-/***/ "../../libraries/botbuilder/lib/templateManager.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const botbuilder_schema_1 = __webpack_require__("../../libraries/botbuilder-schema/lib/index.js");
-class TemplateManager {
-    constructor() {
-        this.templateRenderers = [];
-        this.languageFallback = [];
-    }
-    contextCreated(context, next) {
-        context.templateManager = this;
-        return next();
-    }
-    postActivity(context, activities, next) {
-        return __awaiter(this, void 0, void 0, function* () {
-            // Ensure activities are well formed.
-            for (let i = 0; i < activities.length; i++) {
-                let activity = activities[i];
-                if (activity.type == "template") {
-                    yield this.bindActivityTemplate(context, activity);
-                }
-            }
-            return next();
-        });
-    }
-    /**
-     * register template renderer
-     * @param renderer
-     */
-    register(renderer) {
-        this.templateRenderers.push(renderer);
-        return this;
-    }
-    /**
-     * list of registered template renderers
-     */
-    list() {
-        return this.templateRenderers;
-    }
-    /**
-     * SetLanguagePolicy allows you to set the fallback strategy
-     * @param fallback array of languages to try when binding templates
-     */
-    setLanguagePolicy(fallback) {
-        this.languageFallback = fallback;
-    }
-    /**
-     * Get the current language fallback policy
-     */
-    getLanguagePolicy() {
-        return this.languageFallback;
-    }
-    findAndApplyTemplate(context, language, templateId, data) {
-        return __awaiter(this, void 0, void 0, function* () {
-            for (var renderer of this.templateRenderers) {
-                let templateOutput = yield renderer.renderTemplate(context, language, templateId, data);
-                if (templateOutput) {
-                    if (typeof templateOutput === 'object') {
-                        if (!templateOutput.type) {
-                            templateOutput.type = botbuilder_schema_1.ActivityTypes.Message;
-                        }
-                        return templateOutput;
-                    }
-                    else {
-                        const activity = {
-                            type: botbuilder_schema_1.ActivityTypes.Message,
-                            text: templateOutput || '',
-                        };
-                        return activity;
-                    }
-                }
-            }
-            return undefined;
-        });
-    }
-    bindActivityTemplate(context, activity) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const fallbackLocales = this.languageFallback.slice(0); // clone fallback
-            if (!!context.request.locale)
-                fallbackLocales.push(context.request.locale);
-            fallbackLocales.push('default');
-            // Ensure activities are well formed.
-            // bind any template activity
-            if (activity.type == "template") {
-                // try each locale until successful
-                for (let locale of fallbackLocales) {
-                    // apply template
-                    let boundActivity = yield this.findAndApplyTemplate(context, locale, activity.text, activity.value);
-                    if (boundActivity) {
-                        Object.assign(activity, boundActivity);
-                        return;
-                    }
-                }
-                throw new Error(`Could not resolve template id:${activity.text}`);
-            }
-        });
-    }
-}
-exports.TemplateManager = TemplateManager;
-//# sourceMappingURL=templateManager.js.map
-
-/***/ }),
-
-/***/ "../../libraries/botbuilder/lib/testAdapter.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const botbuilder_schema_1 = __webpack_require__("../../libraries/botbuilder-schema/lib/index.js");
-const assert = __webpack_require__("../../node_modules/assert/assert.js");
-/**
- * Test adapter used for unit tests.
- * @example
- * <pre><code>
- * const adapter = new TestAdapater();
- * const bot = new Bot(adapter)
- *      .use(new MemoryStorage())
- *      .use(new BotStateManage())
- *      .onReceive((context) => {
- *          const cnt = context.state.conversation.next || 1;
- *          context.reply(`reply: ${cnt}`);
- *          context.state.conversation.next = cnt + 1;
- *      });
- * adapter.test('inc', 'reply: 1')
- *          .test('inc', 'reply: 2')
- *          .test('inc', 'reply: 3')
- *          .then(() => done());
- * </code></pre>
- */
-class TestAdapter {
-    /**
-     * Creates a new instance of the test adapter.
-     * @param reference (Optional) conversation reference that lets you customize the address
-     * information for messages sent during a test.
-     */
-    constructor(reference) {
-        this.nextId = 0;
-        this.botReplies = [];
-        this.onReceive = undefined;
-        this.reference = Object.assign({}, reference, {
-            channelId: 'test',
-            serviceUrl: 'https://test.com',
-            user: { id: 'user', name: 'User1' },
-            bot: { id: 'bot', name: 'Bot' },
-            conversation: { id: 'Convo1' }
-        });
-    }
-    /** INTERNAL implementation of `Adapter.post()`. */
-    post(activities) {
-        activities.forEach((activity) => this.botReplies.push(activity));
-        return Promise.resolve(undefined);
-    }
-    /* INTERNAL */
-    _sendActivityToBot(userSays) {
-        // ready for next reply
-        let activity = (typeof userSays === 'string' ? { type: botbuilder_schema_1.ActivityTypes.Message, text: userSays } : userSays);
-        if (!activity.type)
-            throw new Error("Missing activity.type");
-        activity.channelId = this.reference.channelId;
-        activity.from = this.reference.user;
-        activity.recipient = this.reference.bot;
-        activity.conversation = this.reference.conversation;
-        activity.serviceUrl = this.reference.serviceUrl;
-        const id = activity.id = (this.nextId++).toString();
-        return this.onReceive(activity).then(result => { });
-    }
-    /**
-     * Send something to the bot
-     * @param userSays text or activity simulating user input
-     */
-    send(userSays) {
-        return new TestFlow(this._sendActivityToBot(userSays), this);
-    }
-    /**
-     * wait for time period to pass before continuing
-     * @param ms ms to wait for
-     */
-    delay(ms) {
-        return new TestFlow(new Promise((resolve, reject) => { setTimeout(() => resolve(), ms); }), this);
-    }
-    /**
-     * Send something to the bot and expect the bot to reply
-     * @param userSays text or activity simulating user input
-     * @param expected expected text or activity from the bot
-     * @param description description of test case
-     * @param timeout (default 3000ms) time to wait for response from bot
-     */
-    test(userSays, expected, description, timeout) {
-        return this.send(userSays)
-            .assertReply(expected, description);
-    }
-    /**
-     * Throws if the bot's response doesn't match the expected text/activity
-     * @param expected expected text or activity from the bot
-     * @param description description of test case
-     * @param timeout (default 3000ms) time to wait for response from bot
-     */
-    assertReply(expected, description, timeout) {
-        return new TestFlow(Promise.resolve(), this).assertReply(expected, description, timeout);
-    }
-    /**
-     * throws if the bot's response is not one of the candidate strings
-     * @param candidates candidate responses
-     * @param description description of test case
-     * @param timeout (default 3000ms) time to wait for response from bot
-     */
-    assertReplyOneOf(candidates, description, timeout) {
-        return new TestFlow(Promise.resolve(), this).assertReplyOneOf(candidates, description, timeout);
-    }
-}
-exports.TestAdapter = TestAdapter;
-/** INTERNAL support class for `TestAdapter`. */
-class TestFlow {
-    constructor(previous, adapter) {
-        this.previous = previous;
-        this.adapter = adapter;
-        if (!this.previous)
-            this.previous = Promise.resolve();
-    }
-    /**
-     * Send something to the bot and expect the bot to reply
-     * @param userSays text or activity simulating user input
-     * @param expected expected text or activity from the bot
-     * @param description description of test case
-     * @param timeout (default 3000ms) time to wait for response from bot
-     */
-    test(userSays, expected, description, timeout) {
-        if (!expected)
-            throw new Error(".test() Missing expected parameter");
-        return this.send(userSays)
-            .assertReply(expected, description || `test("${userSays}", "${expected}")`, timeout);
-    }
-    /**
-     * Send something to the bot
-     * @param userSays text or activity simulating user input
-     */
-    send(userSays) {
-        return new TestFlow(this.previous.then(() => this.adapter._sendActivityToBot(userSays)), this.adapter);
-    }
-    /**
-     * Throws if the bot's response doesn't match the expected text/activity
-     * @param expected expected text or activity from the bot, or callback to inspect object
-     * @param description description of test case
-     * @param timeout (default 3000ms) time to wait for response from bot
-     */
-    assertReply(expected, description, timeout) {
-        if (!expected)
-            throw new Error(".assertReply() Missing expected parameter");
-        return new TestFlow(this.previous.then(() => {
-            return new Promise((resolve, reject) => {
-                if (!timeout)
-                    timeout = 3000;
-                let interval = 0;
-                let start = new Date().getTime();
-                let myInterval = setInterval(() => {
-                    let current = new Date().getTime();
-                    if ((current - start) > timeout) {
-                        let expectedActivity = (typeof expected === 'string' ? { type: botbuilder_schema_1.ActivityTypes.Message, text: expected } : expected);
-                        throw new Error(`${timeout}ms Timed out waiting for:${description || expectedActivity.text}`);
-                    }
-                    // if we have replies
-                    if (this.adapter.botReplies.length > 0) {
-                        clearInterval(myInterval);
-                        let botReply = this.adapter.botReplies[0];
-                        this.adapter.botReplies.splice(0, 1);
-                        if (typeof expected === 'function') {
-                            expected(botReply, description);
-                        }
-                        else if (typeof expected === 'string') {
-                            assert.equal(botReply.type, botbuilder_schema_1.ActivityTypes.Message, (description || '') + ` type === '${botReply.type}'. `);
-                            assert.equal(botReply.text, expected, (description || '') + ` text === "${botReply.text}"`);
-                        }
-                        else {
-                            this.validateActivity(botReply, expected);
-                        }
-                        resolve();
-                        return;
-                    }
-                }, interval);
-            });
-        }), this.adapter);
-    }
-    /**
-     * throws if the bot's response is not one of the candidate strings
-     * @param candidates candidate responses
-     * @param description description of test case
-     * @param timeout (default 3000ms) time to wait for response from bot
-     */
-    assertReplyOneOf(candidates, description, timeout) {
-        return this.assertReply((activity) => {
-            for (let candidate of candidates) {
-                if (activity.text == candidate) {
-                    return;
-                }
-            }
-            assert.fail(`${description} FAILED, Expected one of :${JSON.stringify(candidates)}`);
-        });
-    }
-    /**
-     * Insert delay before continuing
-     * @param ms ms to wait
-     */
-    delay(ms) {
-        return new TestFlow(this.previous.then(() => {
-            return new Promise((resolve, reject) => { setTimeout(() => resolve(), ms); });
-        }), this.adapter);
-    }
-    validateActivity(activity, expected) {
-        for (let prop in expected) {
-            assert.equal(activity[prop], expected[prop]);
-        }
-    }
-    then(onFulfilled) {
-        return new TestFlow(this.previous.then(onFulfilled), this.adapter);
-    }
-    catch(onRejected) {
-        return new TestFlow(this.previous.catch(onRejected), this.adapter);
-    }
-}
-exports.TestFlow = TestFlow;
-//# sourceMappingURL=testAdapter.js.map
-
-/***/ }),
-
-/***/ "../../node_modules/assert/assert.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(global) {
-
-// compare and isBuffer taken from https://github.com/feross/buffer/blob/680e9e5e488f22aac27599a57dc844a6315928dd/index.js
-// original notice:
-
-/*!
- * The buffer module from node.js, for the browser.
- *
- * @author   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
- * @license  MIT
- */
-function compare(a, b) {
-  if (a === b) {
-    return 0;
-  }
-
-  var x = a.length;
-  var y = b.length;
-
-  for (var i = 0, len = Math.min(x, y); i < len; ++i) {
-    if (a[i] !== b[i]) {
-      x = a[i];
-      y = b[i];
-      break;
-    }
-  }
-
-  if (x < y) {
-    return -1;
-  }
-  if (y < x) {
-    return 1;
-  }
-  return 0;
-}
-function isBuffer(b) {
-  if (global.Buffer && typeof global.Buffer.isBuffer === 'function') {
-    return global.Buffer.isBuffer(b);
-  }
-  return !!(b != null && b._isBuffer);
-}
-
-// based on node assert, original notice:
-
-// http://wiki.commonjs.org/wiki/Unit_Testing/1.0
-//
-// THIS IS NOT TESTED NOR LIKELY TO WORK OUTSIDE V8!
-//
-// Originally from narwhal.js (http://narwhaljs.org)
-// Copyright (c) 2009 Thomas Robinson <280north.com>
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the 'Software'), to
-// deal in the Software without restriction, including without limitation the
-// rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-// sell copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-// ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-var util = __webpack_require__("../../node_modules/util/util.js");
-var hasOwn = Object.prototype.hasOwnProperty;
-var pSlice = Array.prototype.slice;
-var functionsHaveNames = (function () {
-  return function foo() {}.name === 'foo';
-}());
-function pToString (obj) {
-  return Object.prototype.toString.call(obj);
-}
-function isView(arrbuf) {
-  if (isBuffer(arrbuf)) {
-    return false;
-  }
-  if (typeof global.ArrayBuffer !== 'function') {
-    return false;
-  }
-  if (typeof ArrayBuffer.isView === 'function') {
-    return ArrayBuffer.isView(arrbuf);
-  }
-  if (!arrbuf) {
-    return false;
-  }
-  if (arrbuf instanceof DataView) {
-    return true;
-  }
-  if (arrbuf.buffer && arrbuf.buffer instanceof ArrayBuffer) {
-    return true;
-  }
-  return false;
-}
-// 1. The assert module provides functions that throw
-// AssertionError's when particular conditions are not met. The
-// assert module must conform to the following interface.
-
-var assert = module.exports = ok;
-
-// 2. The AssertionError is defined in assert.
-// new assert.AssertionError({ message: message,
-//                             actual: actual,
-//                             expected: expected })
-
-var regex = /\s*function\s+([^\(\s]*)\s*/;
-// based on https://github.com/ljharb/function.prototype.name/blob/adeeeec8bfcc6068b187d7d9fb3d5bb1d3a30899/implementation.js
-function getName(func) {
-  if (!util.isFunction(func)) {
-    return;
-  }
-  if (functionsHaveNames) {
-    return func.name;
-  }
-  var str = func.toString();
-  var match = str.match(regex);
-  return match && match[1];
-}
-assert.AssertionError = function AssertionError(options) {
-  this.name = 'AssertionError';
-  this.actual = options.actual;
-  this.expected = options.expected;
-  this.operator = options.operator;
-  if (options.message) {
-    this.message = options.message;
-    this.generatedMessage = false;
-  } else {
-    this.message = getMessage(this);
-    this.generatedMessage = true;
-  }
-  var stackStartFunction = options.stackStartFunction || fail;
-  if (Error.captureStackTrace) {
-    Error.captureStackTrace(this, stackStartFunction);
-  } else {
-    // non v8 browsers so we can have a stacktrace
-    var err = new Error();
-    if (err.stack) {
-      var out = err.stack;
-
-      // try to strip useless frames
-      var fn_name = getName(stackStartFunction);
-      var idx = out.indexOf('\n' + fn_name);
-      if (idx >= 0) {
-        // once we have located the function frame
-        // we need to strip out everything before it (and its line)
-        var next_line = out.indexOf('\n', idx + 1);
-        out = out.substring(next_line + 1);
-      }
-
-      this.stack = out;
-    }
-  }
-};
-
-// assert.AssertionError instanceof Error
-util.inherits(assert.AssertionError, Error);
-
-function truncate(s, n) {
-  if (typeof s === 'string') {
-    return s.length < n ? s : s.slice(0, n);
-  } else {
-    return s;
-  }
-}
-function inspect(something) {
-  if (functionsHaveNames || !util.isFunction(something)) {
-    return util.inspect(something);
-  }
-  var rawname = getName(something);
-  var name = rawname ? ': ' + rawname : '';
-  return '[Function' +  name + ']';
-}
-function getMessage(self) {
-  return truncate(inspect(self.actual), 128) + ' ' +
-         self.operator + ' ' +
-         truncate(inspect(self.expected), 128);
-}
-
-// At present only the three keys mentioned above are used and
-// understood by the spec. Implementations or sub modules can pass
-// other keys to the AssertionError's constructor - they will be
-// ignored.
-
-// 3. All of the following functions must throw an AssertionError
-// when a corresponding condition is not met, with a message that
-// may be undefined if not provided.  All assertion methods provide
-// both the actual and expected values to the assertion error for
-// display purposes.
-
-function fail(actual, expected, message, operator, stackStartFunction) {
-  throw new assert.AssertionError({
-    message: message,
-    actual: actual,
-    expected: expected,
-    operator: operator,
-    stackStartFunction: stackStartFunction
-  });
-}
-
-// EXTENSION! allows for well behaved errors defined elsewhere.
-assert.fail = fail;
-
-// 4. Pure assertion tests whether a value is truthy, as determined
-// by !!guard.
-// assert.ok(guard, message_opt);
-// This statement is equivalent to assert.equal(true, !!guard,
-// message_opt);. To test strictly for the value true, use
-// assert.strictEqual(true, guard, message_opt);.
-
-function ok(value, message) {
-  if (!value) fail(value, true, message, '==', assert.ok);
-}
-assert.ok = ok;
-
-// 5. The equality assertion tests shallow, coercive equality with
-// ==.
-// assert.equal(actual, expected, message_opt);
-
-assert.equal = function equal(actual, expected, message) {
-  if (actual != expected) fail(actual, expected, message, '==', assert.equal);
-};
-
-// 6. The non-equality assertion tests for whether two objects are not equal
-// with != assert.notEqual(actual, expected, message_opt);
-
-assert.notEqual = function notEqual(actual, expected, message) {
-  if (actual == expected) {
-    fail(actual, expected, message, '!=', assert.notEqual);
-  }
-};
-
-// 7. The equivalence assertion tests a deep equality relation.
-// assert.deepEqual(actual, expected, message_opt);
-
-assert.deepEqual = function deepEqual(actual, expected, message) {
-  if (!_deepEqual(actual, expected, false)) {
-    fail(actual, expected, message, 'deepEqual', assert.deepEqual);
-  }
-};
-
-assert.deepStrictEqual = function deepStrictEqual(actual, expected, message) {
-  if (!_deepEqual(actual, expected, true)) {
-    fail(actual, expected, message, 'deepStrictEqual', assert.deepStrictEqual);
-  }
-};
-
-function _deepEqual(actual, expected, strict, memos) {
-  // 7.1. All identical values are equivalent, as determined by ===.
-  if (actual === expected) {
-    return true;
-  } else if (isBuffer(actual) && isBuffer(expected)) {
-    return compare(actual, expected) === 0;
-
-  // 7.2. If the expected value is a Date object, the actual value is
-  // equivalent if it is also a Date object that refers to the same time.
-  } else if (util.isDate(actual) && util.isDate(expected)) {
-    return actual.getTime() === expected.getTime();
-
-  // 7.3 If the expected value is a RegExp object, the actual value is
-  // equivalent if it is also a RegExp object with the same source and
-  // properties (`global`, `multiline`, `lastIndex`, `ignoreCase`).
-  } else if (util.isRegExp(actual) && util.isRegExp(expected)) {
-    return actual.source === expected.source &&
-           actual.global === expected.global &&
-           actual.multiline === expected.multiline &&
-           actual.lastIndex === expected.lastIndex &&
-           actual.ignoreCase === expected.ignoreCase;
-
-  // 7.4. Other pairs that do not both pass typeof value == 'object',
-  // equivalence is determined by ==.
-  } else if ((actual === null || typeof actual !== 'object') &&
-             (expected === null || typeof expected !== 'object')) {
-    return strict ? actual === expected : actual == expected;
-
-  // If both values are instances of typed arrays, wrap their underlying
-  // ArrayBuffers in a Buffer each to increase performance
-  // This optimization requires the arrays to have the same type as checked by
-  // Object.prototype.toString (aka pToString). Never perform binary
-  // comparisons for Float*Arrays, though, since e.g. +0 === -0 but their
-  // bit patterns are not identical.
-  } else if (isView(actual) && isView(expected) &&
-             pToString(actual) === pToString(expected) &&
-             !(actual instanceof Float32Array ||
-               actual instanceof Float64Array)) {
-    return compare(new Uint8Array(actual.buffer),
-                   new Uint8Array(expected.buffer)) === 0;
-
-  // 7.5 For all other Object pairs, including Array objects, equivalence is
-  // determined by having the same number of owned properties (as verified
-  // with Object.prototype.hasOwnProperty.call), the same set of keys
-  // (although not necessarily the same order), equivalent values for every
-  // corresponding key, and an identical 'prototype' property. Note: this
-  // accounts for both named and indexed properties on Arrays.
-  } else if (isBuffer(actual) !== isBuffer(expected)) {
-    return false;
-  } else {
-    memos = memos || {actual: [], expected: []};
-
-    var actualIndex = memos.actual.indexOf(actual);
-    if (actualIndex !== -1) {
-      if (actualIndex === memos.expected.indexOf(expected)) {
-        return true;
-      }
-    }
-
-    memos.actual.push(actual);
-    memos.expected.push(expected);
-
-    return objEquiv(actual, expected, strict, memos);
-  }
-}
-
-function isArguments(object) {
-  return Object.prototype.toString.call(object) == '[object Arguments]';
-}
-
-function objEquiv(a, b, strict, actualVisitedObjects) {
-  if (a === null || a === undefined || b === null || b === undefined)
-    return false;
-  // if one is a primitive, the other must be same
-  if (util.isPrimitive(a) || util.isPrimitive(b))
-    return a === b;
-  if (strict && Object.getPrototypeOf(a) !== Object.getPrototypeOf(b))
-    return false;
-  var aIsArgs = isArguments(a);
-  var bIsArgs = isArguments(b);
-  if ((aIsArgs && !bIsArgs) || (!aIsArgs && bIsArgs))
-    return false;
-  if (aIsArgs) {
-    a = pSlice.call(a);
-    b = pSlice.call(b);
-    return _deepEqual(a, b, strict);
-  }
-  var ka = objectKeys(a);
-  var kb = objectKeys(b);
-  var key, i;
-  // having the same number of owned properties (keys incorporates
-  // hasOwnProperty)
-  if (ka.length !== kb.length)
-    return false;
-  //the same set of keys (although not necessarily the same order),
-  ka.sort();
-  kb.sort();
-  //~~~cheap key test
-  for (i = ka.length - 1; i >= 0; i--) {
-    if (ka[i] !== kb[i])
-      return false;
-  }
-  //equivalent values for every corresponding key, and
-  //~~~possibly expensive deep test
-  for (i = ka.length - 1; i >= 0; i--) {
-    key = ka[i];
-    if (!_deepEqual(a[key], b[key], strict, actualVisitedObjects))
-      return false;
-  }
-  return true;
-}
-
-// 8. The non-equivalence assertion tests for any deep inequality.
-// assert.notDeepEqual(actual, expected, message_opt);
-
-assert.notDeepEqual = function notDeepEqual(actual, expected, message) {
-  if (_deepEqual(actual, expected, false)) {
-    fail(actual, expected, message, 'notDeepEqual', assert.notDeepEqual);
-  }
-};
-
-assert.notDeepStrictEqual = notDeepStrictEqual;
-function notDeepStrictEqual(actual, expected, message) {
-  if (_deepEqual(actual, expected, true)) {
-    fail(actual, expected, message, 'notDeepStrictEqual', notDeepStrictEqual);
-  }
-}
-
-
-// 9. The strict equality assertion tests strict equality, as determined by ===.
-// assert.strictEqual(actual, expected, message_opt);
-
-assert.strictEqual = function strictEqual(actual, expected, message) {
-  if (actual !== expected) {
-    fail(actual, expected, message, '===', assert.strictEqual);
-  }
-};
-
-// 10. The strict non-equality assertion tests for strict inequality, as
-// determined by !==.  assert.notStrictEqual(actual, expected, message_opt);
-
-assert.notStrictEqual = function notStrictEqual(actual, expected, message) {
-  if (actual === expected) {
-    fail(actual, expected, message, '!==', assert.notStrictEqual);
-  }
-};
-
-function expectedException(actual, expected) {
-  if (!actual || !expected) {
-    return false;
-  }
-
-  if (Object.prototype.toString.call(expected) == '[object RegExp]') {
-    return expected.test(actual);
-  }
-
-  try {
-    if (actual instanceof expected) {
-      return true;
-    }
-  } catch (e) {
-    // Ignore.  The instanceof check doesn't work for arrow functions.
-  }
-
-  if (Error.isPrototypeOf(expected)) {
-    return false;
-  }
-
-  return expected.call({}, actual) === true;
-}
-
-function _tryBlock(block) {
-  var error;
-  try {
-    block();
-  } catch (e) {
-    error = e;
-  }
-  return error;
-}
-
-function _throws(shouldThrow, block, expected, message) {
-  var actual;
-
-  if (typeof block !== 'function') {
-    throw new TypeError('"block" argument must be a function');
-  }
-
-  if (typeof expected === 'string') {
-    message = expected;
-    expected = null;
-  }
-
-  actual = _tryBlock(block);
-
-  message = (expected && expected.name ? ' (' + expected.name + ').' : '.') +
-            (message ? ' ' + message : '.');
-
-  if (shouldThrow && !actual) {
-    fail(actual, expected, 'Missing expected exception' + message);
-  }
-
-  var userProvidedMessage = typeof message === 'string';
-  var isUnwantedException = !shouldThrow && util.isError(actual);
-  var isUnexpectedException = !shouldThrow && actual && !expected;
-
-  if ((isUnwantedException &&
-      userProvidedMessage &&
-      expectedException(actual, expected)) ||
-      isUnexpectedException) {
-    fail(actual, expected, 'Got unwanted exception' + message);
-  }
-
-  if ((shouldThrow && actual && expected &&
-      !expectedException(actual, expected)) || (!shouldThrow && actual)) {
-    throw actual;
-  }
-}
-
-// 11. Expected to throw an error:
-// assert.throws(block, Error_opt, message_opt);
-
-assert.throws = function(block, /*optional*/error, /*optional*/message) {
-  _throws(true, block, error, message);
-};
-
-// EXTENSION! This is annoying to write outside this module.
-assert.doesNotThrow = function(block, /*optional*/error, /*optional*/message) {
-  _throws(false, block, error, message);
-};
-
-assert.ifError = function(err) { if (err) throw err; };
-
-var objectKeys = Object.keys || function (obj) {
-  var keys = [];
-  for (var key in obj) {
-    if (hasOwn.call(obj, key)) keys.push(key);
-  }
-  return keys;
-};
-
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__("../../node_modules/webpack/buildin/global.js")))
-
-/***/ }),
-
 /***/ "../../node_modules/css-loader/index.js!../../node_modules/skeleton-css/css/normalize.css":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -4239,197 +1526,6 @@ function toComment(sourceMap) {
 
 	return '/*# ' + data + ' */';
 }
-
-
-/***/ }),
-
-/***/ "../../node_modules/process/browser.js":
-/***/ (function(module, exports) {
-
-// shim for using process in browser
-var process = module.exports = {};
-
-// cached from whatever global is present so that test runners that stub it
-// don't break things.  But we need to wrap it in a try catch in case it is
-// wrapped in strict mode code which doesn't define any globals.  It's inside a
-// function because try/catches deoptimize in certain engines.
-
-var cachedSetTimeout;
-var cachedClearTimeout;
-
-function defaultSetTimout() {
-    throw new Error('setTimeout has not been defined');
-}
-function defaultClearTimeout () {
-    throw new Error('clearTimeout has not been defined');
-}
-(function () {
-    try {
-        if (typeof setTimeout === 'function') {
-            cachedSetTimeout = setTimeout;
-        } else {
-            cachedSetTimeout = defaultSetTimout;
-        }
-    } catch (e) {
-        cachedSetTimeout = defaultSetTimout;
-    }
-    try {
-        if (typeof clearTimeout === 'function') {
-            cachedClearTimeout = clearTimeout;
-        } else {
-            cachedClearTimeout = defaultClearTimeout;
-        }
-    } catch (e) {
-        cachedClearTimeout = defaultClearTimeout;
-    }
-} ())
-function runTimeout(fun) {
-    if (cachedSetTimeout === setTimeout) {
-        //normal enviroments in sane situations
-        return setTimeout(fun, 0);
-    }
-    // if setTimeout wasn't available but was latter defined
-    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
-        cachedSetTimeout = setTimeout;
-        return setTimeout(fun, 0);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedSetTimeout(fun, 0);
-    } catch(e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-            return cachedSetTimeout.call(null, fun, 0);
-        } catch(e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-            return cachedSetTimeout.call(this, fun, 0);
-        }
-    }
-
-
-}
-function runClearTimeout(marker) {
-    if (cachedClearTimeout === clearTimeout) {
-        //normal enviroments in sane situations
-        return clearTimeout(marker);
-    }
-    // if clearTimeout wasn't available but was latter defined
-    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
-        cachedClearTimeout = clearTimeout;
-        return clearTimeout(marker);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedClearTimeout(marker);
-    } catch (e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-            return cachedClearTimeout.call(null, marker);
-        } catch (e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-            return cachedClearTimeout.call(this, marker);
-        }
-    }
-
-
-
-}
-var queue = [];
-var draining = false;
-var currentQueue;
-var queueIndex = -1;
-
-function cleanUpNextTick() {
-    if (!draining || !currentQueue) {
-        return;
-    }
-    draining = false;
-    if (currentQueue.length) {
-        queue = currentQueue.concat(queue);
-    } else {
-        queueIndex = -1;
-    }
-    if (queue.length) {
-        drainQueue();
-    }
-}
-
-function drainQueue() {
-    if (draining) {
-        return;
-    }
-    var timeout = runTimeout(cleanUpNextTick);
-    draining = true;
-
-    var len = queue.length;
-    while(len) {
-        currentQueue = queue;
-        queue = [];
-        while (++queueIndex < len) {
-            if (currentQueue) {
-                currentQueue[queueIndex].run();
-            }
-        }
-        queueIndex = -1;
-        len = queue.length;
-    }
-    currentQueue = null;
-    draining = false;
-    runClearTimeout(timeout);
-}
-
-process.nextTick = function (fun) {
-    var args = new Array(arguments.length - 1);
-    if (arguments.length > 1) {
-        for (var i = 1; i < arguments.length; i++) {
-            args[i - 1] = arguments[i];
-        }
-    }
-    queue.push(new Item(fun, args));
-    if (queue.length === 1 && !draining) {
-        runTimeout(drainQueue);
-    }
-};
-
-// v8 likes predictible objects
-function Item(fun, array) {
-    this.fun = fun;
-    this.array = array;
-}
-Item.prototype.run = function () {
-    this.fun.apply(null, this.array);
-};
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-process.version = ''; // empty string to avoid regexp issues
-process.versions = {};
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-process.prependListener = noop;
-process.prependOnceListener = noop;
-
-process.listeners = function (name) { return [] }
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-process.umask = function() { return 0; };
 
 
 /***/ }),
@@ -4986,7 +2082,7 @@ module.exports = function (css) {
 			.replace(/^'(.*)'$/, function(o, $1){ return $1; });
 
 		// already a full url? no change
-		if (/^(#|data:|http:\/\/|https:\/\/|file:\/\/\/)/i.test(unquotedOrigUrl)) {
+		if (/^(#|data:|http:\/\/|https:\/\/|file:\/\/\/|\s*$)/i.test(unquotedOrigUrl)) {
 		  return fullMatch;
 		}
 
@@ -5011,670 +2107,6 @@ module.exports = function (css) {
 	// send back the fixed css
 	return fixedCss;
 };
-
-
-/***/ }),
-
-/***/ "../../node_modules/util/node_modules/inherits/inherits_browser.js":
-/***/ (function(module, exports) {
-
-if (typeof Object.create === 'function') {
-  // implementation from standard node.js 'util' module
-  module.exports = function inherits(ctor, superCtor) {
-    ctor.super_ = superCtor
-    ctor.prototype = Object.create(superCtor.prototype, {
-      constructor: {
-        value: ctor,
-        enumerable: false,
-        writable: true,
-        configurable: true
-      }
-    });
-  };
-} else {
-  // old school shim for old browsers
-  module.exports = function inherits(ctor, superCtor) {
-    ctor.super_ = superCtor
-    var TempCtor = function () {}
-    TempCtor.prototype = superCtor.prototype
-    ctor.prototype = new TempCtor()
-    ctor.prototype.constructor = ctor
-  }
-}
-
-
-/***/ }),
-
-/***/ "../../node_modules/util/support/isBufferBrowser.js":
-/***/ (function(module, exports) {
-
-module.exports = function isBuffer(arg) {
-  return arg && typeof arg === 'object'
-    && typeof arg.copy === 'function'
-    && typeof arg.fill === 'function'
-    && typeof arg.readUInt8 === 'function';
-}
-
-/***/ }),
-
-/***/ "../../node_modules/util/util.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-/* WEBPACK VAR INJECTION */(function(global, process) {// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-var formatRegExp = /%[sdj%]/g;
-exports.format = function(f) {
-  if (!isString(f)) {
-    var objects = [];
-    for (var i = 0; i < arguments.length; i++) {
-      objects.push(inspect(arguments[i]));
-    }
-    return objects.join(' ');
-  }
-
-  var i = 1;
-  var args = arguments;
-  var len = args.length;
-  var str = String(f).replace(formatRegExp, function(x) {
-    if (x === '%%') return '%';
-    if (i >= len) return x;
-    switch (x) {
-      case '%s': return String(args[i++]);
-      case '%d': return Number(args[i++]);
-      case '%j':
-        try {
-          return JSON.stringify(args[i++]);
-        } catch (_) {
-          return '[Circular]';
-        }
-      default:
-        return x;
-    }
-  });
-  for (var x = args[i]; i < len; x = args[++i]) {
-    if (isNull(x) || !isObject(x)) {
-      str += ' ' + x;
-    } else {
-      str += ' ' + inspect(x);
-    }
-  }
-  return str;
-};
-
-
-// Mark that a method should not be used.
-// Returns a modified function which warns once by default.
-// If --no-deprecation is set, then it is a no-op.
-exports.deprecate = function(fn, msg) {
-  // Allow for deprecating things in the process of starting up.
-  if (isUndefined(global.process)) {
-    return function() {
-      return exports.deprecate(fn, msg).apply(this, arguments);
-    };
-  }
-
-  if (process.noDeprecation === true) {
-    return fn;
-  }
-
-  var warned = false;
-  function deprecated() {
-    if (!warned) {
-      if (process.throwDeprecation) {
-        throw new Error(msg);
-      } else if (process.traceDeprecation) {
-        console.trace(msg);
-      } else {
-        console.error(msg);
-      }
-      warned = true;
-    }
-    return fn.apply(this, arguments);
-  }
-
-  return deprecated;
-};
-
-
-var debugs = {};
-var debugEnviron;
-exports.debuglog = function(set) {
-  if (isUndefined(debugEnviron))
-    debugEnviron = process.env.NODE_DEBUG || '';
-  set = set.toUpperCase();
-  if (!debugs[set]) {
-    if (new RegExp('\\b' + set + '\\b', 'i').test(debugEnviron)) {
-      var pid = process.pid;
-      debugs[set] = function() {
-        var msg = exports.format.apply(exports, arguments);
-        console.error('%s %d: %s', set, pid, msg);
-      };
-    } else {
-      debugs[set] = function() {};
-    }
-  }
-  return debugs[set];
-};
-
-
-/**
- * Echos the value of a value. Trys to print the value out
- * in the best way possible given the different types.
- *
- * @param {Object} obj The object to print out.
- * @param {Object} opts Optional options object that alters the output.
- */
-/* legacy: obj, showHidden, depth, colors*/
-function inspect(obj, opts) {
-  // default options
-  var ctx = {
-    seen: [],
-    stylize: stylizeNoColor
-  };
-  // legacy...
-  if (arguments.length >= 3) ctx.depth = arguments[2];
-  if (arguments.length >= 4) ctx.colors = arguments[3];
-  if (isBoolean(opts)) {
-    // legacy...
-    ctx.showHidden = opts;
-  } else if (opts) {
-    // got an "options" object
-    exports._extend(ctx, opts);
-  }
-  // set default options
-  if (isUndefined(ctx.showHidden)) ctx.showHidden = false;
-  if (isUndefined(ctx.depth)) ctx.depth = 2;
-  if (isUndefined(ctx.colors)) ctx.colors = false;
-  if (isUndefined(ctx.customInspect)) ctx.customInspect = true;
-  if (ctx.colors) ctx.stylize = stylizeWithColor;
-  return formatValue(ctx, obj, ctx.depth);
-}
-exports.inspect = inspect;
-
-
-// http://en.wikipedia.org/wiki/ANSI_escape_code#graphics
-inspect.colors = {
-  'bold' : [1, 22],
-  'italic' : [3, 23],
-  'underline' : [4, 24],
-  'inverse' : [7, 27],
-  'white' : [37, 39],
-  'grey' : [90, 39],
-  'black' : [30, 39],
-  'blue' : [34, 39],
-  'cyan' : [36, 39],
-  'green' : [32, 39],
-  'magenta' : [35, 39],
-  'red' : [31, 39],
-  'yellow' : [33, 39]
-};
-
-// Don't use 'blue' not visible on cmd.exe
-inspect.styles = {
-  'special': 'cyan',
-  'number': 'yellow',
-  'boolean': 'yellow',
-  'undefined': 'grey',
-  'null': 'bold',
-  'string': 'green',
-  'date': 'magenta',
-  // "name": intentionally not styling
-  'regexp': 'red'
-};
-
-
-function stylizeWithColor(str, styleType) {
-  var style = inspect.styles[styleType];
-
-  if (style) {
-    return '\u001b[' + inspect.colors[style][0] + 'm' + str +
-           '\u001b[' + inspect.colors[style][1] + 'm';
-  } else {
-    return str;
-  }
-}
-
-
-function stylizeNoColor(str, styleType) {
-  return str;
-}
-
-
-function arrayToHash(array) {
-  var hash = {};
-
-  array.forEach(function(val, idx) {
-    hash[val] = true;
-  });
-
-  return hash;
-}
-
-
-function formatValue(ctx, value, recurseTimes) {
-  // Provide a hook for user-specified inspect functions.
-  // Check that value is an object with an inspect function on it
-  if (ctx.customInspect &&
-      value &&
-      isFunction(value.inspect) &&
-      // Filter out the util module, it's inspect function is special
-      value.inspect !== exports.inspect &&
-      // Also filter out any prototype objects using the circular check.
-      !(value.constructor && value.constructor.prototype === value)) {
-    var ret = value.inspect(recurseTimes, ctx);
-    if (!isString(ret)) {
-      ret = formatValue(ctx, ret, recurseTimes);
-    }
-    return ret;
-  }
-
-  // Primitive types cannot have properties
-  var primitive = formatPrimitive(ctx, value);
-  if (primitive) {
-    return primitive;
-  }
-
-  // Look up the keys of the object.
-  var keys = Object.keys(value);
-  var visibleKeys = arrayToHash(keys);
-
-  if (ctx.showHidden) {
-    keys = Object.getOwnPropertyNames(value);
-  }
-
-  // IE doesn't make error fields non-enumerable
-  // http://msdn.microsoft.com/en-us/library/ie/dww52sbt(v=vs.94).aspx
-  if (isError(value)
-      && (keys.indexOf('message') >= 0 || keys.indexOf('description') >= 0)) {
-    return formatError(value);
-  }
-
-  // Some type of object without properties can be shortcutted.
-  if (keys.length === 0) {
-    if (isFunction(value)) {
-      var name = value.name ? ': ' + value.name : '';
-      return ctx.stylize('[Function' + name + ']', 'special');
-    }
-    if (isRegExp(value)) {
-      return ctx.stylize(RegExp.prototype.toString.call(value), 'regexp');
-    }
-    if (isDate(value)) {
-      return ctx.stylize(Date.prototype.toString.call(value), 'date');
-    }
-    if (isError(value)) {
-      return formatError(value);
-    }
-  }
-
-  var base = '', array = false, braces = ['{', '}'];
-
-  // Make Array say that they are Array
-  if (isArray(value)) {
-    array = true;
-    braces = ['[', ']'];
-  }
-
-  // Make functions say that they are functions
-  if (isFunction(value)) {
-    var n = value.name ? ': ' + value.name : '';
-    base = ' [Function' + n + ']';
-  }
-
-  // Make RegExps say that they are RegExps
-  if (isRegExp(value)) {
-    base = ' ' + RegExp.prototype.toString.call(value);
-  }
-
-  // Make dates with properties first say the date
-  if (isDate(value)) {
-    base = ' ' + Date.prototype.toUTCString.call(value);
-  }
-
-  // Make error with message first say the error
-  if (isError(value)) {
-    base = ' ' + formatError(value);
-  }
-
-  if (keys.length === 0 && (!array || value.length == 0)) {
-    return braces[0] + base + braces[1];
-  }
-
-  if (recurseTimes < 0) {
-    if (isRegExp(value)) {
-      return ctx.stylize(RegExp.prototype.toString.call(value), 'regexp');
-    } else {
-      return ctx.stylize('[Object]', 'special');
-    }
-  }
-
-  ctx.seen.push(value);
-
-  var output;
-  if (array) {
-    output = formatArray(ctx, value, recurseTimes, visibleKeys, keys);
-  } else {
-    output = keys.map(function(key) {
-      return formatProperty(ctx, value, recurseTimes, visibleKeys, key, array);
-    });
-  }
-
-  ctx.seen.pop();
-
-  return reduceToSingleString(output, base, braces);
-}
-
-
-function formatPrimitive(ctx, value) {
-  if (isUndefined(value))
-    return ctx.stylize('undefined', 'undefined');
-  if (isString(value)) {
-    var simple = '\'' + JSON.stringify(value).replace(/^"|"$/g, '')
-                                             .replace(/'/g, "\\'")
-                                             .replace(/\\"/g, '"') + '\'';
-    return ctx.stylize(simple, 'string');
-  }
-  if (isNumber(value))
-    return ctx.stylize('' + value, 'number');
-  if (isBoolean(value))
-    return ctx.stylize('' + value, 'boolean');
-  // For some reason typeof null is "object", so special case here.
-  if (isNull(value))
-    return ctx.stylize('null', 'null');
-}
-
-
-function formatError(value) {
-  return '[' + Error.prototype.toString.call(value) + ']';
-}
-
-
-function formatArray(ctx, value, recurseTimes, visibleKeys, keys) {
-  var output = [];
-  for (var i = 0, l = value.length; i < l; ++i) {
-    if (hasOwnProperty(value, String(i))) {
-      output.push(formatProperty(ctx, value, recurseTimes, visibleKeys,
-          String(i), true));
-    } else {
-      output.push('');
-    }
-  }
-  keys.forEach(function(key) {
-    if (!key.match(/^\d+$/)) {
-      output.push(formatProperty(ctx, value, recurseTimes, visibleKeys,
-          key, true));
-    }
-  });
-  return output;
-}
-
-
-function formatProperty(ctx, value, recurseTimes, visibleKeys, key, array) {
-  var name, str, desc;
-  desc = Object.getOwnPropertyDescriptor(value, key) || { value: value[key] };
-  if (desc.get) {
-    if (desc.set) {
-      str = ctx.stylize('[Getter/Setter]', 'special');
-    } else {
-      str = ctx.stylize('[Getter]', 'special');
-    }
-  } else {
-    if (desc.set) {
-      str = ctx.stylize('[Setter]', 'special');
-    }
-  }
-  if (!hasOwnProperty(visibleKeys, key)) {
-    name = '[' + key + ']';
-  }
-  if (!str) {
-    if (ctx.seen.indexOf(desc.value) < 0) {
-      if (isNull(recurseTimes)) {
-        str = formatValue(ctx, desc.value, null);
-      } else {
-        str = formatValue(ctx, desc.value, recurseTimes - 1);
-      }
-      if (str.indexOf('\n') > -1) {
-        if (array) {
-          str = str.split('\n').map(function(line) {
-            return '  ' + line;
-          }).join('\n').substr(2);
-        } else {
-          str = '\n' + str.split('\n').map(function(line) {
-            return '   ' + line;
-          }).join('\n');
-        }
-      }
-    } else {
-      str = ctx.stylize('[Circular]', 'special');
-    }
-  }
-  if (isUndefined(name)) {
-    if (array && key.match(/^\d+$/)) {
-      return str;
-    }
-    name = JSON.stringify('' + key);
-    if (name.match(/^"([a-zA-Z_][a-zA-Z_0-9]*)"$/)) {
-      name = name.substr(1, name.length - 2);
-      name = ctx.stylize(name, 'name');
-    } else {
-      name = name.replace(/'/g, "\\'")
-                 .replace(/\\"/g, '"')
-                 .replace(/(^"|"$)/g, "'");
-      name = ctx.stylize(name, 'string');
-    }
-  }
-
-  return name + ': ' + str;
-}
-
-
-function reduceToSingleString(output, base, braces) {
-  var numLinesEst = 0;
-  var length = output.reduce(function(prev, cur) {
-    numLinesEst++;
-    if (cur.indexOf('\n') >= 0) numLinesEst++;
-    return prev + cur.replace(/\u001b\[\d\d?m/g, '').length + 1;
-  }, 0);
-
-  if (length > 60) {
-    return braces[0] +
-           (base === '' ? '' : base + '\n ') +
-           ' ' +
-           output.join(',\n  ') +
-           ' ' +
-           braces[1];
-  }
-
-  return braces[0] + base + ' ' + output.join(', ') + ' ' + braces[1];
-}
-
-
-// NOTE: These type checking functions intentionally don't use `instanceof`
-// because it is fragile and can be easily faked with `Object.create()`.
-function isArray(ar) {
-  return Array.isArray(ar);
-}
-exports.isArray = isArray;
-
-function isBoolean(arg) {
-  return typeof arg === 'boolean';
-}
-exports.isBoolean = isBoolean;
-
-function isNull(arg) {
-  return arg === null;
-}
-exports.isNull = isNull;
-
-function isNullOrUndefined(arg) {
-  return arg == null;
-}
-exports.isNullOrUndefined = isNullOrUndefined;
-
-function isNumber(arg) {
-  return typeof arg === 'number';
-}
-exports.isNumber = isNumber;
-
-function isString(arg) {
-  return typeof arg === 'string';
-}
-exports.isString = isString;
-
-function isSymbol(arg) {
-  return typeof arg === 'symbol';
-}
-exports.isSymbol = isSymbol;
-
-function isUndefined(arg) {
-  return arg === void 0;
-}
-exports.isUndefined = isUndefined;
-
-function isRegExp(re) {
-  return isObject(re) && objectToString(re) === '[object RegExp]';
-}
-exports.isRegExp = isRegExp;
-
-function isObject(arg) {
-  return typeof arg === 'object' && arg !== null;
-}
-exports.isObject = isObject;
-
-function isDate(d) {
-  return isObject(d) && objectToString(d) === '[object Date]';
-}
-exports.isDate = isDate;
-
-function isError(e) {
-  return isObject(e) &&
-      (objectToString(e) === '[object Error]' || e instanceof Error);
-}
-exports.isError = isError;
-
-function isFunction(arg) {
-  return typeof arg === 'function';
-}
-exports.isFunction = isFunction;
-
-function isPrimitive(arg) {
-  return arg === null ||
-         typeof arg === 'boolean' ||
-         typeof arg === 'number' ||
-         typeof arg === 'string' ||
-         typeof arg === 'symbol' ||  // ES6 symbol
-         typeof arg === 'undefined';
-}
-exports.isPrimitive = isPrimitive;
-
-exports.isBuffer = __webpack_require__("../../node_modules/util/support/isBufferBrowser.js");
-
-function objectToString(o) {
-  return Object.prototype.toString.call(o);
-}
-
-
-function pad(n) {
-  return n < 10 ? '0' + n.toString(10) : n.toString(10);
-}
-
-
-var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
-              'Oct', 'Nov', 'Dec'];
-
-// 26 Feb 16:19:34
-function timestamp() {
-  var d = new Date();
-  var time = [pad(d.getHours()),
-              pad(d.getMinutes()),
-              pad(d.getSeconds())].join(':');
-  return [d.getDate(), months[d.getMonth()], time].join(' ');
-}
-
-
-// log is just a thin wrapper to console.log that prepends a timestamp
-exports.log = function() {
-  console.log('%s - %s', timestamp(), exports.format.apply(exports, arguments));
-};
-
-
-/**
- * Inherit the prototype methods from one constructor into another.
- *
- * The Function.prototype.inherits from lang.js rewritten as a standalone
- * function (not on Function.prototype). NOTE: If this file is to be loaded
- * during bootstrapping this function needs to be rewritten using some native
- * functions as prototype setup using normal JavaScript does not work as
- * expected during bootstrapping (see mirror.js in r114903).
- *
- * @param {function} ctor Constructor function which needs to inherit the
- *     prototype.
- * @param {function} superCtor Constructor function to inherit prototype from.
- */
-exports.inherits = __webpack_require__("../../node_modules/util/node_modules/inherits/inherits_browser.js");
-
-exports._extend = function(origin, add) {
-  // Don't do anything if add isn't an object
-  if (!add || !isObject(add)) return origin;
-
-  var keys = Object.keys(add);
-  var i = keys.length;
-  while (i--) {
-    origin[keys[i]] = add[keys[i]];
-  }
-  return origin;
-};
-
-function hasOwnProperty(obj, prop) {
-  return Object.prototype.hasOwnProperty.call(obj, prop);
-}
-
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__("../../node_modules/webpack/buildin/global.js"), __webpack_require__("../../node_modules/process/browser.js")))
-
-/***/ }),
-
-/***/ "../../node_modules/webpack/buildin/global.js":
-/***/ (function(module, exports) {
-
-var g;
-
-// This works in non-strict mode
-g = (function() {
-	return this;
-})();
-
-try {
-	// This works if eval is allowed (see CSP)
-	g = g || Function("return this")() || (1,eval)("this");
-} catch(e) {
-	// This works if the window reference is available
-	if(typeof window === "object")
-		g = window;
-}
-
-// g can still be undefined, but nothing to do about it...
-// We return undefined, instead of nothing here, so it's
-// easier to handle this case. if(!global) { ...}
-
-module.exports = g;
 
 
 /***/ }),
@@ -5714,7 +2146,7 @@ function begin(context) {
 
 function routeReply(context) {
     // Handle users reply to prompt
-    const utterance = context.request.text.trim();
+    const utterance = context.activity.text.trim();
     switch (context.state.conversation.prompt) {
         case 'title':
             // Validate reply and save to alarm
@@ -5807,7 +2239,7 @@ function begin(context) {
 function routeReply(context) {
     // Validate users reply and delete alarm
     let deleted = false;
-    const title = context.request.text.trim();
+    const title = context.activity.text.trim();
     const list = context.state.user.alarms || [];
     for (let i = 0; i < list.length; i++) {
         if (list[i].title.toLowerCase() === title.toLowerCase()) {
@@ -5877,8 +2309,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_skeleton_css_css_skeleton_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_skeleton_css_css_skeleton_css__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__css_alarmBot_css__ = __webpack_require__("./src/css/alarmBot.css");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__css_alarmBot_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__css_alarmBot_css__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_botbuilder__ = __webpack_require__("../../libraries/botbuilder/lib/botbuilder.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_botbuilder___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_botbuilder__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_botbuilder_core__ = __webpack_require__("../../libraries/botbuilder-core/lib/index.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_botbuilder_core___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_botbuilder_core__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__webChatAdapter__ = __webpack_require__("./src/webChatAdapter.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__chatComponent__ = __webpack_require__("./src/chatComponent.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__alarmRenderer__ = __webpack_require__("./src/alarmRenderer.js");
@@ -5895,9 +2327,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 const webChatAdapter = new __WEBPACK_IMPORTED_MODULE_4__webChatAdapter__["a" /* WebChatAdapter */]();
 
-const bot = new __WEBPACK_IMPORTED_MODULE_3_botbuilder__["Bot"](webChatAdapter)
-    .use(new __WEBPACK_IMPORTED_MODULE_3_botbuilder__["MemoryStorage"](),
-        new __WEBPACK_IMPORTED_MODULE_3_botbuilder__["BotStateManager"](),
+const bot = new __WEBPACK_IMPORTED_MODULE_3_botbuilder_core__["Bot"](webChatAdapter)
+    .use(new __WEBPACK_IMPORTED_MODULE_3_botbuilder_core__["MemoryStorage"](),
+        new BotStateManager(),
         new __WEBPACK_IMPORTED_MODULE_6__alarmRenderer__["a" /* AlarmRenderer */]());
 
 __WEBPACK_IMPORTED_MODULE_5__chatComponent__["a" /* ChatComponent */].bootstrap(webChatAdapter.getMessagePipelineToBot(), document.querySelector('section'));
@@ -6112,9 +2544,9 @@ if(true) {
 
 
 function routes(context) {
-    if (context.request.type === 'message') {
+    if (context.activity.type === 'message') {
         // Check for the triggering of a new topic
-        const utterance = (context.request.text || '').trim().toLowerCase();
+        const utterance = (context.activity.text || '').trim().toLowerCase();
         if (utterance.includes('add alarm')) {
             return __WEBPACK_IMPORTED_MODULE_0__alarms_addAlarm__["a" /* begin */](context);
         } else if (utterance.includes('delete alarm')) {
@@ -6144,8 +2576,7 @@ function routes(context) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_botbuilder__ = __webpack_require__("../../libraries/botbuilder/lib/botbuilder.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_botbuilder___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_botbuilder__);
+throw new Error("Cannot find module \"botbuilder\"");
 
 
 const activitiesById = {};

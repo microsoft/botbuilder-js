@@ -27,13 +27,13 @@ adapter.use(conversationState);
 // Listen for incoming requests 
 server.post('/api/messages', (req, res) => {
     // Route received request to adapter for processing
-    adapter.processRequest(req, res, (context) => __awaiter(this, void 0, void 0, function* () {
-        if (context.request.type === 'message') {
+    adapter.processActivity(req, res, (context) => __awaiter(this, void 0, void 0, function* () {
+        if (context.activity.type === 'message') {
             // Create dialog context
             const state = conversationState.get(context);
             const dc = dialogs.createContext(context, state);
             // Check for cancel
-            const utterance = (context.request.text || '').trim().toLowerCase();
+            const utterance = (context.activity.text || '').trim().toLowerCase();
             if (utterance === 'menu' || utterance === 'cancel') {
                 yield dc.endAll();
             }

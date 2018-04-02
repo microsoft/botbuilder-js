@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Promiseable, BotContext } from 'botbuilder';
+import { Promiseable, TurnContext } from 'botbuilder';
 import { Dialog, DialogInstance } from './dialog';
 import { DialogContext, DialogResult } from './dialogContext';
 import { DialogSet } from './dialogSet';
@@ -13,7 +13,7 @@ import { DialogSet } from './dialogSet';
 /**
  * 
  */
-export abstract class Control<R = any, O = {}, C extends BotContext = BotContext> implements Dialog<C> {
+export abstract class Control<R = any, O = {}, C extends TurnContext = TurnContext> implements Dialog<C> {
 
     /**
      * Creates a new Control instance.

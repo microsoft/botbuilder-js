@@ -5,8 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.  
  * Licensed under the MIT License.
  */
-import { Promiseable, Activity, BotContext } from 'botbuilder';
+import { Promiseable, Activity, TurnContext } from 'botbuilder';
 import { ChoiceFactory, FoundChoice, Choice, ChoiceFactoryOptions, recognizeChoices, FindChoicesOptions } from 'botbuilder-choices';
+import { PromptValidator } from './textPrompt';
 import { sendPrompt } from './internal';
 
 /**
@@ -51,32 +52,22 @@ export interface ChoicePrompt<O = FoundChoice> {
      * @param prompt (Optional) Text or activity to send as the prompt.
      * @param speak (Optional) SSML that should be spoken for prompt. The prompts `inputHint` will be automatically set to `expectingInput`.
      */
-    prompt(context: BotContext, choices: (string|Choice)[], prompt?: string|Partial<Activity>, speak?: string): Promise<void>;
+    prompt(context: TurnContext, choices: (string|Choice)[], prompt?: string|Partial<Activity>, speak?: string): Promise<void>;
 
     /**
      * Recognizes and validates the users reply.
      * @param context Context for the current turn of conversation.
      * @param choices Array of choices that should be recognized against.
      */
-    recognize(context: BotContext, choices: (string|Choice)[]): Promise<O|undefined>;
+    recognize(context: TurnContext, choices: (string|Choice)[]): Promise<O|undefined>;
 }
-
-/**
- * Signature of a handler that can be passed to a prompt to provide additional validation logic
- * or to customize the reply sent to the user when their response is invalid.
- * @param O Type of output that will be returned by the validator. This can be changed from the input type by the validator.
- * @param ChoicePromptValidator.context Context for the current turn of conversation.
- * @param ChoicePromptValidator.value The value that was recognized or `undefined` if not recognized.
- * @param ChoicePromptValidator.choices Array of choices that should be prompted for.
- */
-export type ChoicePromptValidator<O = FoundChoice> = (context: BotContext, value: FoundChoice|undefined, choices: (string|Choice)[]) => Promiseable<O|undefined>;
 
 /**
  * Creates a new prompt that asks the user to select from a list of choices.
  * @param validator (Optional) validator for providing additional validation logic or customizing the prompt sent to the user when invalid.
- * @param defaultLocale (Optional) locale to use if `context.request.locale` not specified. Defaults to a value of `en-us`.
+ * @param defaultLocale (Optional) locale to use if `context.activity.locale` not specified. Defaults to a value of `en-us`.
  */
-export function createChoicePrompt<O = FoundChoice>(validator?: ChoicePromptValidator<O>, defaultLocale?: string): ChoicePrompt<O> {
+export function createChoicePrompt<O = FoundChoice>(validator?: PromptValidator<FoundChoice, O>, defaultLocale?: string): ChoicePrompt<O> {
     return {
         style: ListStyle.auto,
         choiceOptions: {},
@@ -110,13 +101,13 @@ export function createChoicePrompt<O = FoundChoice>(validator?: ChoicePromptVali
             return sendPrompt(context, msg);
         },
         recognize: function recognize(context, choices) {
-            const request = context.request || {};
+            const request = context.activity || {};
             const utterance = request.text || '';
             const options = Object.assign({}, this.recognizerOptions);
             options.locale = request.locale || this.recognizerOptions.locale || defaultLocale || 'en-us';
             const results = recognizeChoices(utterance, choices, options);
             const value = results.length > 0 ? results[0].resolution : undefined;
-            return Promise.resolve(validator ? validator(context, value, choices) : value as any);
+            return Promise.resolve(validator ? validator(context, value) : value as any);
         }
     };
 }

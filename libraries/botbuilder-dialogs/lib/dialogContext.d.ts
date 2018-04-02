@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotContext, BatchOutput, Activity } from 'botbuilder';
+import { TurnContext, Activity } from 'botbuilder';
 import { DialogInstance } from './dialog';
 import { DialogSet } from './dialogSet';
 import { PromptOptions } from './prompts/index';
@@ -28,16 +28,10 @@ export interface DialogResult<T = any> {
      */
     result?: T;
 }
-export declare class DialogContext<C extends BotContext> {
+export declare class DialogContext<C extends TurnContext> {
     readonly dialogs: DialogSet<C>;
     readonly context: C;
     readonly stack: DialogInstance[];
-    /**
-     * Allows for batch based responses from the bot. Optional to use but you should add `BatchOutput`
-     * to your adapters middleware stack if you do, otherwise you'll need to manually call
-     * `dc.batch.flush()` somewhere within your bots logic.
-     */
-    readonly batch: BatchOutput;
     /**
      * Creates a new DialogContext instance.
      * @param dialogs Parent dialog set.

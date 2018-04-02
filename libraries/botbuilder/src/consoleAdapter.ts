@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotAdapter, BotContext, Activity, ActivityTypes, ResourceResponse, Promiseable, ConversationReference } from 'botbuilder-core';
+import { BotAdapter, TurnContext, Activity, ActivityTypes, ResourceResponse, Promiseable, ConversationReference } from 'botbuilder-core';
 import * as readline from 'readline';
 
 /**
@@ -37,11 +37,11 @@ export class ConsoleAdapter extends BotAdapter {
      * Begins listening to console input. 
      * @param logic Function which will be called each time a message is input by the user.
      */
-    public listen(logic: (context: BotContext) => Promiseable<void>): Function {
+    public listen(logic: (context: TurnContext) => Promiseable<void>): Function {
         const rl = this.createInterface({ input: process.stdin, output: process.stdout, terminal: false });
         rl.on('line', (line: string) => {
-            // Initialize request
-            const request = BotContext.applyConversationReference({
+            // Initialize activity
+            const activity = TurnContext.applyConversationReference({
                 type: ActivityTypes.Message,
                 id: (this.nextId++).toString(),
                 timestamp: new Date(),
@@ -49,7 +49,7 @@ export class ConsoleAdapter extends BotAdapter {
             }, this.reference, true);
 
             // Create context and run middleware pipe
-            const context = new BotContext(this, request);
+            const context = new TurnContext(this, activity);
             this.runMiddleware(context, logic)
                 .catch((err) => { this.printError(err.toString()) });
         });
@@ -58,7 +58,15 @@ export class ConsoleAdapter extends BotAdapter {
         }
     }
 
-    public sendActivity(activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
+    public continueConversation(reference: ConversationReference, logic: (context: TurnContext) => Promiseable<void>): Promise<void> {
+            // Create context and run middleware pipe
+            const activity = TurnContext.applyConversationReference({}, reference, true);
+            const context = new TurnContext(this, activity);
+            return this.runMiddleware(context, logic)
+                       .catch((err) => { this.printError(err.toString()) });
+    }
+
+    public sendActivities(context: TurnContext, activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
         const that = this;
         return new Promise((resolve, reject) => {
             const responses: ResourceResponse[] = [];
@@ -92,11 +100,11 @@ export class ConsoleAdapter extends BotAdapter {
         });
     }
 
-    public updateActivity(activity: Partial<Activity>): Promise<void> {
+    public updateActivity(context: TurnContext, activity: Partial<Activity>): Promise<void> {
         return Promise.reject(new Error(`ConsoleAdapter.updateActivity(): not supported.`));
     }
 
-    public deleteActivity(reference: Partial<ConversationReference>): Promise<void> {
+    public deleteActivity(context: TurnContext, reference: Partial<ConversationReference>): Promise<void> {
         return Promise.reject(new Error(`ConsoleAdapter.deleteActivity(): not supported.`));
     }
 

@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotContext } from 'botbuilder-core';
+import { TurnContext } from 'botbuilder-core';
 import { BotState } from './botState';
 import { Storage, StoreItem } from './storage';
 /**
@@ -16,14 +16,16 @@ import { Storage, StoreItem } from './storage';
  * completion of your bots logic.
  */
 export declare class UserState<T extends StoreItem = StoreItem> extends BotState<T> {
+    private namespace;
     /**
      * Creates a new UserState instance.
      * @param storage Storage provider to persist user state to.
+     * @param namespace (Optional) namespace to append to storage keys. Defaults to an empty string.
      */
-    constructor(storage: Storage);
+    constructor(storage: Storage, namespace?: string);
     /**
      * Returns the storage key for the current user state.
      * @param context Context for current turn of conversation with the user.
      */
-    getStorageKey(context: BotContext): string | undefined;
+    getStorageKey(context: TurnContext): string | undefined;
 }

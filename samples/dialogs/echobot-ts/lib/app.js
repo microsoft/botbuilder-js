@@ -28,8 +28,8 @@ const dialogs = new botbuilder_dialogs_1.DialogSet();
 // Listen for incoming requests 
 server.post('/api/messages', (req, res) => {
     // Route received request to adapter for processing
-    adapter.processRequest(req, res, (context) => __awaiter(this, void 0, void 0, function* () {
-        if (context.request.type === 'message') {
+    adapter.processActivity(req, res, (context) => __awaiter(this, void 0, void 0, function* () {
+        if (context.activity.type === 'message') {
             // Create dialog context and continue executing the "current" dialog, if any.
             const state = conversationState.get(context);
             const dc = dialogs.createContext(context, state);
@@ -40,7 +40,7 @@ server.post('/api/messages', (req, res) => {
             }
         }
         else {
-            yield context.sendActivity(`[${context.request.type} event detected]`);
+            yield context.sendActivity(`[${context.activity.type} event detected]`);
         }
     }));
 });
@@ -50,7 +50,7 @@ dialogs.add('echo', [
         return __awaiter(this, void 0, void 0, function* () {
             const state = conversationState.get(dc.context);
             const count = state.count === undefined ? state.count = 0 : ++state.count;
-            yield dc.context.sendActivity(`${count}: You said "${dc.context.request.text}"`);
+            yield dc.context.sendActivity(`${count}: You said "${dc.context.activity.text}"`);
             yield dc.end();
         });
     }

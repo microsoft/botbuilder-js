@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotContext, Middleware } from 'botbuilder-core';
+import { TurnContext, Middleware } from 'botbuilder-core';
 import { BotState } from './botState';
 import { StoreItem } from './storage';
 /**
@@ -21,7 +21,7 @@ export declare class BotStateSet implements Middleware {
      * @param middleware Zero or more BotState plugins to register.
      */
     constructor(...middleware: BotState[]);
-    onProcessRequest(context: BotContext, next: () => Promise<void>): Promise<void>;
+    onTurn(context: TurnContext, next: () => Promise<void>): Promise<void>;
     /**
      * Registers `BotState` middleware plugins with the set.
      * @param middleware One or more BotState plugins to register.
@@ -33,12 +33,12 @@ export declare class BotStateSet implements Middleware {
      * @param context Context for current turn of conversation with the user.
      * @param force (Optional) If `true` the cache will be bypassed and the state will always be read in directly from storage. Defaults to `false`.
      */
-    readAll(context: BotContext, force?: boolean): Promise<StoreItem[]>;
+    readAll(context: TurnContext, force?: boolean): Promise<StoreItem[]>;
     /**
      * Calls `BotState.write()` on all of the BotState plugins in the set. This will trigger all of
      * the plugins to write out their state in parallel.
      * @param context Context for current turn of conversation with the user.
      * @param force (Optional) if `true` the state will always be written out regardless of its change state. Defaults to `false`.
      */
-    writeAll(context: BotContext, force?: boolean): Promise<void>;
+    writeAll(context: TurnContext, force?: boolean): Promise<void>;
 }

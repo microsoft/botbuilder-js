@@ -15,7 +15,7 @@ class BotStateSet {
         this.middleware = [];
         BotStateSet.prototype.use.apply(this, middleware);
     }
-    onProcessRequest(context, next) {
+    onTurn(context, next) {
         // Read in state, continue execution, and then flush changes on completion of turn.
         return this.readAll(context, true)
             .then(() => next())

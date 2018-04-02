@@ -18,12 +18,12 @@ adapter.use(conversationState);
 console.log(`Hi... I'm an echobot. Whatever you say I'll echo back.`);
 // Listen for incoming requests 
 adapter.listen((context) => __awaiter(this, void 0, void 0, function* () {
-    if (context.request.type === 'message') {
+    if (context.activity.type === 'message') {
         const state = conversationState.get(context);
         const count = state.count === undefined ? state.count = 0 : ++state.count;
-        yield context.sendActivity(`${count}: You said "${context.request.text}"`);
+        yield context.sendActivity(`${count}: You said "${context.activity.text}"`);
     }
     else {
-        yield context.sendActivity(`[${context.request.type} event detected]`);
+        yield context.sendActivity(`[${context.activity.type} event detected]`);
     }
 }));

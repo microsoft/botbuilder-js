@@ -36,13 +36,13 @@ adapter.use(localeConverter);
 // Listen for incoming requests 
 server.post('/api/messages', (req, res) => {
     // Route received request to adapter for processing
-    adapter.processRequest(req, res, (context) => {
-        if (context.request.type === 'message') {
+    adapter.processActivity(req, res, (context) => {
+        if (context.activity.type === 'message') {
             const state = conversationState.get(context);
             const count = state.count === undefined ? state.count = 0 : ++state.count;
-            return context.sendActivity(`${count}: You said "${context.request.text}"`);
+            return context.sendActivity(`${count}: You said "${context.activity.text}"`);
         } else {
-            return context.sendActivity(`[${context.request.type} event detected]`);
+            return context.sendActivity(`[${context.activity.type} event detected]`);
         }
     });
 });

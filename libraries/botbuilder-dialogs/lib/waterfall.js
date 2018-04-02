@@ -84,7 +84,7 @@ class Waterfall {
     dialogContinue(dc) {
         const instance = dc.instance;
         instance.step += 1;
-        return this.runStep(dc, dc.context.request.text);
+        return this.runStep(dc, dc.context.activity.text);
     }
     dialogResume(dc, result) {
         const instance = dc.instance;

@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { BotContext } = require('botbuilder-core');
+const { TurnContext } = require('botbuilder-core');
 const { UserState, MemoryStorage, TestAdapter } = require('../');
 
 const receivedMessage = { text: 'received', type: 'message', channelId: 'test', from: { id: 'user' } };
@@ -11,11 +11,11 @@ describe(`UserState`, function () {
 
     const storage = new MemoryStorage();
     const adapter = new TestAdapter();
-    const context = new BotContext(adapter, receivedMessage);
+    const context = new TurnContext(adapter, receivedMessage);
     const middleware = new UserState(storage);
     it(`should load and save state from storage.`, function (done) {
         let key;
-        middleware.onProcessRequest(context, () => {
+        middleware.onTurn(context, () => {
             key = middleware.getStorageKey(context);
             const state = middleware.get(context);
             assert(state, `State not loaded`);
@@ -31,8 +31,8 @@ describe(`UserState`, function () {
     });
 
     it(`should reject with error if channelId missing.`, function (done) {
-        const ctx = new BotContext(adapter, missingChannelId);
-        middleware.onProcessRequest(ctx, () => {
+        const ctx = new TurnContext(adapter, missingChannelId);
+        middleware.onTurn(ctx, () => {
             assert(false, `shouldn't have called next.`);
         })
         .then(() => {
@@ -45,8 +45,8 @@ describe(`UserState`, function () {
     });
 
     it(`should reject with error if from missing.`, function (done) {
-        const ctx = new BotContext(adapter, missingFrom);
-        middleware.onProcessRequest(ctx, () => {
+        const ctx = new TurnContext(adapter, missingFrom);
+        middleware.onTurn(ctx, () => {
             assert(false, `shouldn't have called next.`);
         })
         .then(() => {
@@ -59,7 +59,7 @@ describe(`UserState`, function () {
     });
 
     it(`should throw install exception if get() called without a cached entry.`, function (done) {
-        context.set('userState', undefined);
+        context.services.set('userState', undefined);
         try {
             UserState.get(context);
             assert(false, `exception not thrown.`);

@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotContext, Middleware } from 'botbuilder-core';
+import { TurnContext, Middleware } from 'botbuilder-core';
 import { BotState, CachedBotState } from './botState';
 import { Storage, StoreItem } from './storage';
 
@@ -23,8 +23,9 @@ export class UserState<T extends StoreItem = StoreItem> extends BotState<T> {
     /**
      * Creates a new UserState instance. 
      * @param storage Storage provider to persist user state to.
+     * @param namespace (Optional) namespace to append to storage keys. Defaults to an empty string.
      */
-    constructor(storage: Storage) { 
+    constructor(storage: Storage, private namespace = '') { 
         super(storage, (context) => {
             // Calculate storage key
             const key = this.getStorageKey(context);
@@ -36,10 +37,10 @@ export class UserState<T extends StoreItem = StoreItem> extends BotState<T> {
      * Returns the storage key for the current user state.
      * @param context Context for current turn of conversation with the user.
      */
-    public getStorageKey(context: BotContext): string|undefined {
-        const req = context.request;
-        const channelId = req.channelId;
-        const userId = req && req.from && req.from.id ? req.from.id : undefined;
-        return channelId && userId ? `user/${channelId}/${userId}` : undefined;
+    public getStorageKey(context: TurnContext): string|undefined {
+        const activity = context.activity;
+        const channelId = activity.channelId;
+        const userId = activity && activity.from && activity.from.id ? activity.from.id : undefined;
+        return channelId && userId ? `user/${channelId}/${userId}/${this.namespace}` : undefined;
     }
 }

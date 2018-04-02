@@ -9,7 +9,11 @@ class TestTableStorage extends TableStorage {
         super(settings);
     }
 
-    createTableService(settings, accessKey, host) {
+    testCreateTableService() {
+        return super.createTableService(this.settings.storageAccountOrConnectionString, this.settings.storageAccessKey, this.settings.host);
+    }
+
+    createTableService(accountOrConnectionString, accessKey, host) {
         let data;
         let nextTag = 0;
         return {
@@ -232,6 +236,24 @@ testStorage = function () {
 
     });
 
+    it('delete table after use', function () {
+        let storage = new TestTableStorage({ tableName: 'delete', storageAccountOrConnectionString: connectionString });
+        return storage.deleteTable(storage.settings.tableName)
+            .then((deleted) => storage.write({ delete1: { count: 1 } }))
+            .then(() => storage.deleteTable(storage.settings.tableName))
+            .then((deleted) => {
+                assert(deleted, 'table not deleted');
+            })
+            .catch(reason => {
+                if (reason.code == 'ECONNREFUSED')
+                    console.log('skipping test because azure storage emulator is not running');
+                else
+                    assert(false, 'should not throw');
+            });
+
+    });
+
+    
     it('batch operations', function () {
         let storage = new TestTableStorage({ tableName: 'batch', storageAccountOrConnectionString: connectionString });
         return storage.deleteTable(storage.settings.tableName)
@@ -290,6 +312,26 @@ testStorage = function () {
 
     });
 
+    it('should create table storage client', function (done) {
+        let storage = new TestTableStorage({ tableName: 'client', storageAccountOrConnectionString: connectionString });
+        const client = storage.testCreateTableService();
+        assert(client, `client not created.`);
+        done();
+    });
+
+    it('should denodify() a callback based function', function (done) {
+        let storage = new TestTableStorage({ tableName: 'client' });
+        const fn = storage.denodeify(null, function (err, result, cb) {
+            cb(err, result);
+        });
+        fn(undefined, 'foo').then((result) => {
+            assert(result === 'foo', `result not passed through`);
+            return fn(new Error(`failed`), undefined).catch((err) => {
+                assert(err, `error not passed through.`);
+                done();
+            });
+        })
+    });
 }
 
 describe('TestTableStorage', function () {

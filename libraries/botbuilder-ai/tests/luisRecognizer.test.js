@@ -1,16 +1,16 @@
 const assert = require('assert');
-const { TestAdapter, BotContext } = require('botbuilder');
+const { TestAdapter, TurnContext } = require('botbuilder');
 const { LuisRecognizer } = require('../');
 
 const luisAppId = process.env.LUISAPPID;
 const subscriptionKey = process.env.LUISAPPKEY;
 const LuisBaseUri = "https://westus.api.cognitive.microsoft.com/luis";
 
-class TestContext extends BotContext {
+class TestContext extends TurnContext {
     constructor(request) {
         super(new TestAdapter(), request);
         this.sent = undefined;
-        this.onSendActivity((context, activities, next) => {
+        this.onSendActivities((context, activities, next) => {
             this.sent = activities;
         });
     }
@@ -199,7 +199,7 @@ describe('LuisRecognizer', function () {
     it('should run as a piece of middleware', function(done){
         var recognizer = new LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey, verbose: true });
         var context = new TestContext({ text: 'My name is Emad' });
-        recognizer.onProcessRequest(context, () => {
+        recognizer.onTurn(context, () => {
             const res = recognizer.get(context);
             assert(res);
             assert(res.text == 'My name is Emad');

@@ -26,14 +26,12 @@ const adapter = new botbuilder_1.BotFrameworkAdapter({
 // Add state middleware
 const state = new botStateManager_1.BotStateManager(new botbuilder_1.MemoryStorage());
 adapter.use(state);
-// Add batch output middleware
-adapter.use(new botbuilder_1.BatchOutput());
 // Listen for incoming requests 
 server.post('/api/messages', (req, res) => {
     // Route received request to adapter for processing
-    adapter.processRequest(req, res, (context) => __awaiter(this, void 0, void 0, function* () {
-        if (context.request.type === 'message') {
-            const utterance = (context.request.text || '').trim().toLowerCase();
+    adapter.processActivity(req, res, (context) => __awaiter(this, void 0, void 0, function* () {
+        if (context.activity.type === 'message') {
+            const utterance = (context.activity.text || '').trim().toLowerCase();
             // Create dialog context
             const dc = dialogs.createContext(context, state.conversation(context));
             // Start addAlarm dialog
@@ -103,16 +101,16 @@ dialogs.add('addAlarm', [
         });
     }
 ]);
-dialogs.add('titlePrompt', new botbuilder_dialogs_1.TextPrompt((dc, value) => __awaiter(this, void 0, void 0, function* () {
+dialogs.add('titlePrompt', new botbuilder_dialogs_1.TextPrompt((context, value) => __awaiter(this, void 0, void 0, function* () {
     if (!value || value.length < 3) {
-        yield dc.context.sendActivity(`Title should be at least 3 characters long.`);
+        yield context.sendActivity(`Title should be at least 3 characters long.`);
         return undefined;
     }
     else {
         return value.trim();
     }
 })));
-dialogs.add('timePrompt', new botbuilder_dialogs_1.DatetimePrompt((dc, values) => __awaiter(this, void 0, void 0, function* () {
+dialogs.add('timePrompt', new botbuilder_dialogs_1.DatetimePrompt((context, values) => __awaiter(this, void 0, void 0, function* () {
     try {
         if (!Array.isArray(values) || values.length < 0) {
             throw new Error('missing time');
@@ -127,7 +125,7 @@ dialogs.add('timePrompt', new botbuilder_dialogs_1.DatetimePrompt((dc, values) =
         return value;
     }
     catch (err) {
-        yield dc.context.sendActivity(`Please enter a valid time in the future like "tomorrow at 9am" or say "cancel".`);
+        yield context.sendActivity(`Please enter a valid time in the future like "tomorrow at 9am" or say "cancel".`);
         return undefined;
     }
 })));

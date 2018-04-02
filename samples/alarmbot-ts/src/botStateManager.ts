@@ -1,4 +1,4 @@
-import { ConversationState, UserState, BotStateSet, Storage, BotContext } from 'botbuilder';
+import { ConversationState, UserState, BotStateSet, Storage, TurnContext } from 'botbuilder';
 
 export interface Alarm {
     title: string;
@@ -30,12 +30,12 @@ export class BotStateManager extends BotStateSet {
         this.use(this._conversation, this._user);
     }
 
-    public conversation(context: BotContext): AlarmConversation {
+    public conversation(context: TurnContext): AlarmConversation {
         // Get cached conversation state
         return this._conversation.get(context);
     }
 
-    public user(context: BotContext): AlarmUser {
+    public user(context: TurnContext): AlarmUser {
         // Get cached user state and ensure initialized
         const user = this._user.get(context);
         if (!user.alarms) { user.alarms = [] }

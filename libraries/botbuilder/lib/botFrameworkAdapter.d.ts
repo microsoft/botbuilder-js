@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotAdapter, BotContext, Promiseable, Activity, ConversationReference, ResourceResponse, ConversationResourceResponse, ConversationParameters } from 'botbuilder-core';
+import { BotAdapter, TurnContext, Promiseable, Activity, ConversationReference, ResourceResponse } from 'botbuilder-core';
 import { ConnectorClient, SimpleCredentialProvider, MicrosoftAppCredentials } from 'botframework-connector';
 /**
  * :package: **botbuilder-core**
@@ -59,14 +59,13 @@ export declare class BotFrameworkAdapter extends BotAdapter {
      * @param settings (optional) configuration settings for the adapter.
      */
     constructor(settings?: Partial<BotFrameworkAdapterSettings>);
-    processRequest(req: WebRequest, res: WebResponse, logic: (context: BotContext) => Promiseable<any>): Promise<void>;
-    continueConversation(reference: Partial<ConversationReference>, logic: (context: BotContext) => Promiseable<void>): Promise<void>;
-    startConversation(reference: Partial<ConversationReference>, logic: (context: BotContext) => Promiseable<void>): Promise<void>;
-    sendActivity(activities: Partial<Activity>[]): Promise<ResourceResponse[]>;
-    updateActivity(activity: Partial<Activity>): Promise<void>;
-    deleteActivity(reference: Partial<ConversationReference>): Promise<void>;
-    createConversation(serviceUrl: string, parameters: Partial<ConversationParameters>): Promise<ConversationResourceResponse>;
+    processActivity(req: WebRequest, res: WebResponse, logic: (context: TurnContext) => Promiseable<any>): Promise<void>;
+    continueConversation(reference: Partial<ConversationReference>, logic: (context: TurnContext) => Promiseable<void>): Promise<void>;
+    createConversation(reference: Partial<ConversationReference>, logic: (context: TurnContext) => Promiseable<void>): Promise<void>;
+    sendActivities(context: TurnContext, activities: Partial<Activity>[]): Promise<ResourceResponse[]>;
+    updateActivity(context: TurnContext, activity: Partial<Activity>): Promise<void>;
+    deleteActivity(context: TurnContext, reference: Partial<ConversationReference>): Promise<void>;
     protected authenticateRequest(request: Partial<Activity>, authHeader: string): Promise<void>;
     protected createConnectorClient(serviceUrl: string): ConnectorClient;
-    protected createContext(request: Partial<Activity>): BotContext;
+    protected createContext(request: Partial<Activity>): TurnContext;
 }

@@ -5,9 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotContext } from 'botbuilder';
+import { TurnContext } from 'botbuilder';
+import { PromptValidator } from 'botbuilder-prompts';
 import { DialogContext } from '../dialogContext';
-import { Prompt, PromptOptions, PromptValidator } from './prompt';
+import { Prompt, PromptOptions } from './prompt';
 import * as prompts from 'botbuilder-prompts';
 /**
  * Prompts a user to confirm something with a yes/no response. By default the prompt will return
@@ -23,17 +24,17 @@ import * as prompts from 'botbuilder-prompts';
  * dialogs.add('confirmPrompt', new ConfirmPrompt());
  *
  * dialogs.add('confirmDemo', [
- *      function (dc) {
+ *      async function (dc) {
  *          return dc.prompt('confirmPrompt', `confirm: answer "yes" or "no"`);
  *      },
- *      function (dc, value) {
- *          dc.batch.reply(`Recognized value: ${value}`);
+ *      async function (dc, value) {
+ *          await dc.context.sendActivity(`Recognized value: ${value}`);
  *          return dc.end();
  *      }
  * ]);
  * ```
  */
-export declare class ConfirmPrompt<C extends BotContext> extends Prompt<C, boolean> {
+export declare class ConfirmPrompt<C extends TurnContext, O = boolean> extends Prompt<C> {
     private prompt;
     /**
      * Allows for the localization of the confirm prompts yes/no choices to other locales besides
@@ -56,9 +57,9 @@ export declare class ConfirmPrompt<C extends BotContext> extends Prompt<C, boole
      * **Example usage:**
      *
      * ```JavaScript
-     * dialogs.add('confirmPrompt', new ConfirmPrompt((dc, value) => {
+     * dialogs.add('confirmPrompt', new ConfirmPrompt(async (context, value) => {
      *      if (value === undefined) {
-     *          dc.batch.reply(`Invalid answer. Answer with "yes" or "no".`);
+     *          await context.sendActivity(`Invalid answer. Answer with "yes" or "no".`);
      *          return undefined;
      *      } else {
      *          return value;
@@ -66,9 +67,9 @@ export declare class ConfirmPrompt<C extends BotContext> extends Prompt<C, boole
      * }));
      * ```
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
-     * @param defaultLocale (Optional) locale to use if `dc.context.request.locale` not specified. Defaults to a value of `en-us`.
+     * @param defaultLocale (Optional) locale to use if `dc.context.activity.locale` not specified. Defaults to a value of `en-us`.
      */
-    constructor(validator?: PromptValidator<C, boolean>, defaultLocale?: string);
+    constructor(validator?: PromptValidator<boolean, O>, defaultLocale?: string);
     /**
      * Sets additional options passed to the `ChoiceFactory` and used to tweak the style of choices
      * rendered to the user.
@@ -81,5 +82,5 @@ export declare class ConfirmPrompt<C extends BotContext> extends Prompt<C, boole
      */
     style(listStyle: prompts.ListStyle): this;
     protected onPrompt(dc: DialogContext<C>, options: PromptOptions, isRetry: boolean): Promise<void>;
-    protected onRecognize(dc: DialogContext<C>, options: PromptOptions): Promise<boolean | undefined>;
+    protected onRecognize(dc: DialogContext<C>, options: PromptOptions): Promise<O | undefined>;
 }

@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.  
  * Licensed under the MIT License.
  */
-import { Promiseable, Activity, Attachment, BotContext } from 'botbuilder';
+import { Promiseable, Activity, Attachment, TurnContext } from 'botbuilder';
 import { PromptValidator } from './textPrompt';
 import { sendPrompt } from './internal';
 
@@ -17,13 +17,13 @@ export interface AttachmentPrompt<O = Attachment[]> {
      * @param prompt Text or activity to send as the prompt.
      * @param speak (Optional) SSML that should be spoken for prompt. The prompts `inputHint` will be automatically set to `expectingInput`.
      */
-    prompt(context: BotContext, prompt: string|Partial<Activity>, speak?: string): Promise<void>;
+    prompt(context: TurnContext, prompt: string|Partial<Activity>, speak?: string): Promise<void>;
 
     /**
      * Recognizes and validates the users reply.
      * @param context Context for the current turn of conversation.
      */
-    recognize(context: BotContext): Promise<O|undefined>;
+    recognize(context: TurnContext): Promise<O|undefined>;
 }
 
 /**
@@ -36,7 +36,7 @@ export function createAttachmentPrompt<O = Attachment[]>(validator?: PromptValid
             return sendPrompt(context, prompt, speak);
         },
         recognize: function recognize(context) {
-            const values = context.request ? context.request.attachments : undefined;
+            const values = context.activity ? context.activity.attachments : undefined;
             return Promise.resolve(validator ? validator(context, values) : values as any);
         }
     };

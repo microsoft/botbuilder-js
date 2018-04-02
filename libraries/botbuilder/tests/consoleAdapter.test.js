@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { BotContext } = require('botbuilder-core');
+const { TurnContext } = require('botbuilder-core');
 const { ConsoleAdapter } = require('../');
 
 const reference = { 
@@ -10,9 +10,9 @@ const reference = {
     bot: { id: 'bot', name: 'Bot Name' },
     conversation: { id: 'convo1' }   
 };
-const outgoingMessage = BotContext.applyConversationReference({ text: 'test', type: 'message' }, reference);
-const singleAttachmentMessage = BotContext.applyConversationReference({ text: 'test', type: 'message', attachments: [{ contentType: 'foo' }] }, reference);
-const multiAttachmentMessage = BotContext.applyConversationReference({ text: 'test', type: 'message', attachments: [{ contentType: 'foo' }, { contentType: 'foo' }] }, reference);
+const outgoingMessage = TurnContext.applyConversationReference({ text: 'test', type: 'message' }, reference);
+const singleAttachmentMessage = TurnContext.applyConversationReference({ text: 'test', type: 'message', attachments: [{ contentType: 'foo' }] }, reference);
+const multiAttachmentMessage = TurnContext.applyConversationReference({ text: 'test', type: 'message', attachments: [{ contentType: 'foo' }, { contentType: 'foo' }] }, reference);
 const delayActivity = { type: 'delay', value: 500 };
 
 class AdapterUnderTest extends ConsoleAdapter {
@@ -30,9 +30,9 @@ class AdapterUnderTest extends ConsoleAdapter {
         return this.onLine(text);
     }
 
-    sendActivity(activities) {
+    sendActivities(context, activities) {
         this.sent = activities.length;
-        return super.sendActivity(activities);
+        return super.sendActivities(context, activities);
     }
 
     testCreateInterface() {
@@ -70,17 +70,27 @@ describe(`ConsoleAdapter`, function () {
         const adapter = new AdapterUnderTest();
         adapter.listen((context) => {
             assert(context, `No context passed.`);
-            assert(context.request && context.request.text === 'test', `Invalid request text passed.`);
+            assert(context.activity && context.activity.text === 'test', `Invalid activity text passed.`);
             done();
         });
         adapter.input('test');
     });
 
+    it(`should continueConversation().`, function (done) {
+        const adapter = new AdapterUnderTest();
+        adapter.continueConversation(reference, (context) => {
+            assert(context, `No context passed.`);
+            assert(context.activity && context.activity.type === undefined, `Invalid activity type passed.`);
+            done();
+        });
+        adapter.input('test');
+    });
+    
     it(`should send text reply to user via sendActivity().`, function (done) {
         const adapter = new AdapterUnderTest();
         adapter.listen((context) => {
             assert(context, `No context passed.`);
-            assert(context.request && context.request.text === 'test', `Invalid request text passed.`);
+            assert(context.activity && context.activity.text === 'test', `Invalid activity text passed.`);
             return context.sendActivity(`output`).then(() => {
                 assert(adapter.sent === 1, `Activity not sent.`);
                 done();
@@ -103,7 +113,7 @@ describe(`ConsoleAdapter`, function () {
     it(`should send multiple replies to user via sendActivity().`, function (done) {
         const adapter = new AdapterUnderTest();
         adapter.listen((context) => {
-            return context.sendActivity(`output1`, 'output2', 'output3').then(() => {
+            return context.sendActivities([outgoingMessage, outgoingMessage, outgoingMessage]).then(() => {
                 assert(adapter.sent === 3, `Invalid number of activities sent.`);
                 done();
             });
@@ -149,7 +159,7 @@ describe(`ConsoleAdapter`, function () {
         const adapter = new AdapterUnderTest((output) => printCnt++);
         adapter.listen((context) => {
             const start = new Date().getTime();
-            return context.sendActivity(`output1`, delayActivity, 'output2').then(() => {
+            return context.sendActivities([outgoingMessage, delayActivity, outgoingMessage]).then(() => {
                 const duration = (new Date().getTime() - start) + 10;
                 assert(adapter.sent === 3, `Invalid number of activities sent.`);
                 assert(printCnt === 2, `Invalid number of activities output.`);
@@ -220,5 +230,15 @@ describe(`ConsoleAdapter`, function () {
             throw new Error(`exception`);
         });
         adapter.input('test');
+    });
+
+    it(`should catch and log error thrown in continueConversation().`, function (done) {
+        const adapter = new AdapterUnderTest((output) => {
+            assert(output, `error text not printed`);
+            done();
+        });
+        adapter.continueConversation(reference, (context) => {
+            throw new Error(`exception`);
+        });
     });
 });

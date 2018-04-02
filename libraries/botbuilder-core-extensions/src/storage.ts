@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.  
  * Licensed under the MIT License.
  */
-import { BotContext, Promiseable } from 'botbuilder-core';
+import { TurnContext, Promiseable } from 'botbuilder-core';
 
 /** 
  * :package: **botbuilder-core-extensions**
@@ -13,7 +13,7 @@ import { BotContext, Promiseable } from 'botbuilder-core';
  * Callback to calculate a storage key.
  * @param StorageKeyFactory.context Context for the current turn of conversation with a user. 
  */
-export type StorageKeyFactory = (context: BotContext) => Promiseable<string>; 
+export type StorageKeyFactory = (context: TurnContext) => Promiseable<string>; 
 
 /** 
  * :package: **botbuilder-core-extensions**

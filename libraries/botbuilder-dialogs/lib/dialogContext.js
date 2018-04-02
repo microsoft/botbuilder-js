@@ -1,13 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @module botbuilder-dialogs
- */
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
-const botbuilder_1 = require("botbuilder");
 class DialogContext {
     /**
      * Creates a new DialogContext instance.
@@ -19,7 +11,6 @@ class DialogContext {
         this.dialogs = dialogs;
         this.context = context;
         this.stack = stack;
-        this.batch = new botbuilder_1.BatchOutput(context);
     }
     /** Returns the cached instance of the active dialog on the top of the stack or `undefined` if the stack is empty. */
     get instance() {

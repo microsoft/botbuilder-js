@@ -16,11 +16,11 @@ const prompts = require("botbuilder-prompts");
  * dialogs.add('textPrompt', new TextPrompt());
  *
  * dialogs.add('textDemo', [
- *      function (dc) {
+ *      async function (dc) {
  *          return dc.prompt('textPrompt', `text: enter some text`);
  *      },
- *      function (dc, value) {
- *          dc.batch.reply(`Recognized value: ${value}`);
+ *      async function (dc, value) {
+ *          await dc.context.sendActivity(`Recognized value: ${value}`);
  *          return dc.end();
  *      }
  * ]);
@@ -33,9 +33,9 @@ class TextPrompt extends prompt_1.Prompt {
      * **Example usage:**
      *
      * ```JavaScript
-     * dialogs.add('titlePrompt', new TextPrompt((dc, value) => {
+     * dialogs.add('titlePrompt', new TextPrompt(async (context, value) => {
      *      if (!value || value.length < 3) {
-     *          dc.batch.reply(`Title should be at least 3 characters long.`);
+     *          await context.sendActivity(`Title should be at least 3 characters long.`);
      *          return undefined;
      *      } else {
      *          return value.trim();

@@ -47,7 +47,7 @@ bot
             return next();
         },
         receiveActivity: (context, next) => {
-            let text = context.request.text;
+            let text = context.activity.text;
             let me = getUser(context.state.conversation.id);
             if (me.connectId) {
                 let them = getUser(me.connectId);
@@ -67,9 +67,9 @@ bot
 
 // Define the bots onReceive message handler
 bot.onReceive((context) => {
-    if (context.request.type === 'message') {
+    if (context.activity.type === 'message') {
         if (context.state.user.agent) {
-            const input = context.request.text.split(" ");
+            const input = context.activity.text.split(" ");
             let command = input[0].toLowerCase(), arg;
             if (input.length > 1) {
                 arg = input.slice(1).join(" ");

@@ -5,13 +5,13 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Middleware, BotContext } from 'botbuilder';
+import { Middleware, TurnContext } from 'botbuilder';
 export interface TranslatorSettings {
     translatorKey: string;
     nativeLanguages: string[];
     noTranslatePatterns: Set<string>;
-    getUserLanguage?: ((c: BotContext) => string) | undefined;
-    setUserLanguage?: ((context: BotContext) => Promise<boolean>) | undefined;
+    getUserLanguage?: ((c: TurnContext) => string) | undefined;
+    setUserLanguage?: ((context: TurnContext) => Promise<boolean>) | undefined;
 }
 /**
  * The LanguageTranslator will use the Text Translator Cognitive service to translate text from a source language
@@ -24,7 +24,7 @@ export declare class LanguageTranslator implements Middleware {
     private setUserLanguage;
     private nativeLanguages;
     constructor(settings: TranslatorSettings);
-    onProcessRequest(context: BotContext, next: () => Promise<void>): Promise<void>;
+    onTurn(context: TurnContext, next: () => Promise<void>): Promise<void>;
     private translateMessageAsync(context);
 }
 export declare class PostProcessTranslator {

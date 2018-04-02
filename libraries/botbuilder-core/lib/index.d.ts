@@ -7,5 +7,5 @@
  */
 export * from './botAdapter';
 export * from './middlewareSet';
-export * from './botContext';
+export * from './turnContext';
 export * from 'botframework-schema';

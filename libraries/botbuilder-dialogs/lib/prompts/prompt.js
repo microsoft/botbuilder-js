@@ -20,7 +20,7 @@ class Prompt extends control_1.Control {
             .then((recognized) => {
             if (this.validator) {
                 // Call validator
-                return Promise.resolve(this.validator(dc, recognized));
+                return Promise.resolve(this.validator(dc.context, recognized));
             }
             else {
                 // Pass through recognized value

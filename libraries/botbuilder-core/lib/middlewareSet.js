@@ -16,7 +16,7 @@ class MiddlewareSet {
         this.middleware = [];
         MiddlewareSet.prototype.use.apply(this, middleware);
     }
-    onProcessRequest(context, next) {
+    onTurn(context, next) {
         return this.run(context, next);
     }
     /**
@@ -28,8 +28,8 @@ class MiddlewareSet {
             if (typeof plugin === 'function') {
                 this.middleware.push(plugin);
             }
-            else if (typeof plugin === 'object' && plugin.onProcessRequest) {
-                this.middleware.push((context, next) => plugin.onProcessRequest(context, next));
+            else if (typeof plugin === 'object' && plugin.onTurn) {
+                this.middleware.push((context, next) => plugin.onTurn(context, next));
             }
             else {
                 throw new Error(`MiddlewareSet.use(): invalid plugin type being added.`);
