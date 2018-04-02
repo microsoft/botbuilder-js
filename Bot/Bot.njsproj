@@ -4,7 +4,7 @@
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
     <Name>Bot</Name>
     <RootNamespace>Bot</RootNamespace>
-    <ScriptArguments>--id testbot --appid 2 --endpoint https://testbot2.azurewebsites.net/api/messages</ScriptArguments>
+    <ScriptArguments>99999</ScriptArguments>
     <DebuggerPort>
     </DebuggerPort>
   </PropertyGroup>
@@ -14,7 +14,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>9eec4a3a-8523-43d5-9f5d-c1fcedae012f</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>bin\bot-connect-azure.js</StartupFile>
+    <StartupFile>bin\bot-disconnect.js</StartupFile>
     <StartWebBrowser>False</StartWebBrowser>
     <SearchPath>
     </SearchPath>
@@ -35,11 +35,12 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="src\bot-endpoints.ts" />
     <TypeScriptCompile Include="src\bot-connect-azure.ts" />
     <TypeScriptCompile Include="src\BotConfig.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="src\botUtils.ts" />
+    <TypeScriptCompile Include="src\utils.ts" />
     <TypeScriptCompile Include="src\bot-init.ts" />
     <TypeScriptCompile Include="src\bot-export.ts" />
     <TypeScriptCompile Include="src\bot-clone.ts" />

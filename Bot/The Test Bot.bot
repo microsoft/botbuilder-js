@@ -1,0 +1,23 @@
+{
+    "id": "testbot",
+    "name": "The Test Bot",
+    "description": "",
+    "appid": "123123123",
+    "endpoints": [
+        {
+            "name": "localhost",
+            "url": "http://localhost:3978/api/messages"
+        },
+        {
+            "name": "testbot.azurewebsites.net",
+            "url": "http://testbot.azurewebsites.net/api/messages"
+        }
+    ],
+    "services": [
+        {
+            "type": "qna",
+            "name": "test",
+            "id": "123123"
+        }
+    ]
+}
