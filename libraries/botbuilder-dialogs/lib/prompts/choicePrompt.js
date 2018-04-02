@@ -16,11 +16,11 @@ const prompts = require("botbuilder-prompts");
  * dialogs.add('choicePrompt', new ChoicePrompt());
  *
  * dialogs.add('choiceDemo', [
- *      function (dc) {
+ *      async function (dc) {
  *          return dc.prompt('choicePrompt', `choice: select a color`, ['red', 'green', 'blue']);
  *      },
- *      function (dc, choice) {
- *          dc.batch.reply(`Recognized choice: ${JSON.stringify(choice)}`);
+ *      async function (dc, choice) {
+ *          await dc.context.sendActivity(`Recognized choice: ${JSON.stringify(choice)}`);
  *          return dc.end();
  *      }
  * ]);
@@ -33,7 +33,14 @@ class ChoicePrompt extends prompt_1.Prompt {
      * **Example usage:**
      *
      * ```JavaScript
-     * dialogs.add('choicePrompt', new ChoicePrompt());
+     * dialogs.add('choicePrompt', new ChoicePrompt(async (context, value) => {
+     *      if (value === undefined) {
+     *          await context.sendActivity(`I didn't recognize your choice. Please select from the choices on the list.`);
+     *          return undefined;
+     *      } else {
+     *          return value;
+     *      }
+     * }));
      * ```
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
      * @param defaultLocale (Optional) locale to use if `dc.context.activity.locale` not specified. Defaults to a value of `en-us`.

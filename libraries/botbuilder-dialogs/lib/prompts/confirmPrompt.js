@@ -16,11 +16,11 @@ const prompts = require("botbuilder-prompts");
  * dialogs.add('confirmPrompt', new ConfirmPrompt());
  *
  * dialogs.add('confirmDemo', [
- *      function (dc) {
+ *      async function (dc) {
  *          return dc.prompt('confirmPrompt', `confirm: answer "yes" or "no"`);
  *      },
- *      function (dc, value) {
- *          dc.batch.reply(`Recognized value: ${value}`);
+ *      async function (dc, value) {
+ *          await dc.context.sendActivity(`Recognized value: ${value}`);
  *          return dc.end();
  *      }
  * ]);
@@ -33,9 +33,9 @@ class ConfirmPrompt extends prompt_1.Prompt {
      * **Example usage:**
      *
      * ```JavaScript
-     * dialogs.add('confirmPrompt', new ConfirmPrompt((dc, value) => {
+     * dialogs.add('confirmPrompt', new ConfirmPrompt(async (context, value) => {
      *      if (value === undefined) {
-     *          dc.batch.reply(`Invalid answer. Answer with "yes" or "no".`);
+     *          await context.sendActivity(`Invalid answer. Answer with "yes" or "no".`);
      *          return undefined;
      *      } else {
      *          return value;

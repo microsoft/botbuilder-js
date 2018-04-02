@@ -47,8 +47,8 @@ describe('prompts/ChoicePrompt', function() {
     
     it('should call ChoicePrompt with custom validator.', function (done) {
         const dialogs = new DialogSet();
-        dialogs.add('prompt', new ChoicePrompt((dc, value) => {
-            assert(dc);
+        dialogs.add('prompt', new ChoicePrompt((context, value) => {
+            assert(context);
             return value;
         }).style(ListStyle.none));
         dialogs.add('a', [
@@ -79,8 +79,8 @@ describe('prompts/ChoicePrompt', function() {
 
     it('should send custom retryPrompt.', function (done) {
         const dialogs = new DialogSet();
-        dialogs.add('prompt', new ChoicePrompt((dc, value) => {
-            assert(dc);
+        dialogs.add('prompt', new ChoicePrompt((context, value) => {
+            assert(context);
             return value;
         }).style(ListStyle.none));
         dialogs.add('a', [
@@ -111,10 +111,10 @@ describe('prompts/ChoicePrompt', function() {
 
     it('should send ignore retryPrompt if validator replies.', function (done) {
         const dialogs = new DialogSet();
-        dialogs.add('prompt', new ChoicePrompt((dc, value) => {
-            assert(dc);
+        dialogs.add('prompt', new ChoicePrompt((context, value) => {
+            assert(context);
             if (value === undefined) {
-                return dc.context.sendActivity(`bad input`);
+                return context.sendActivity(`bad input`).then(() => undefined);
             }
             return value;
         }));

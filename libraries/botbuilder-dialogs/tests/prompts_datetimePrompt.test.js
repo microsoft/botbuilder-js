@@ -45,8 +45,8 @@ describe('prompts/DatetimePrompt', function() {
     
     it('should call DatetimePrompt with custom validator.', function (done) {
         const dialogs = new DialogSet();
-        dialogs.add('prompt', new DatetimePrompt((dc, value) => {
-            assert(dc);
+        dialogs.add('prompt', new DatetimePrompt((context, value) => {
+            assert(context);
             return value;
         }));
         dialogs.add('a', [
@@ -77,8 +77,8 @@ describe('prompts/DatetimePrompt', function() {
 
     it('should send custom retryPrompt.', function (done) {
         const dialogs = new DialogSet();
-        dialogs.add('prompt', new DatetimePrompt((dc, value) => {
-            assert(dc);
+        dialogs.add('prompt', new DatetimePrompt((context, value) => {
+            assert(context);
             return value;
         }));
         dialogs.add('a', [
@@ -109,10 +109,10 @@ describe('prompts/DatetimePrompt', function() {
 
     it('should send ignore retryPrompt if validator replies.', function (done) {
         const dialogs = new DialogSet();
-        dialogs.add('prompt', new DatetimePrompt((dc, value) => {
-            assert(dc);
+        dialogs.add('prompt', new DatetimePrompt((context, value) => {
+            assert(context);
             if (value === undefined) {
-                return dc.context.sendActivity(`bad date`);
+                return context.sendActivity(`bad date`).then(() => undefined);
             }
             return value;
         }));
@@ -144,8 +144,8 @@ describe('prompts/DatetimePrompt', function() {
 
     it('should not send any retryPrompt no prompt specified.', function (done) {
         const dialogs = new DialogSet();
-        dialogs.add('prompt', new DatetimePrompt((dc, value) => {
-            assert(dc);
+        dialogs.add('prompt', new DatetimePrompt((context, value) => {
+            assert(context);
             return value;
         }));
         dialogs.add('a', [

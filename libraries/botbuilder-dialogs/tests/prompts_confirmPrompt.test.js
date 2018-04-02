@@ -45,8 +45,8 @@ describe('prompts/ConfirmPrompt', function() {
     
     it('should call ConfirmPrompt with custom validator.', function (done) {
         const dialogs = new DialogSet();
-        dialogs.add('prompt', new ConfirmPrompt((dc, value) => {
-            assert(dc);
+        dialogs.add('prompt', new ConfirmPrompt((context, value) => {
+            assert(context);
             return value;
         }).style(ListStyle.none));
         dialogs.add('a', [
@@ -77,8 +77,8 @@ describe('prompts/ConfirmPrompt', function() {
 
     it('should send custom retryPrompt.', function (done) {
         const dialogs = new DialogSet();
-        dialogs.add('prompt', new ConfirmPrompt((dc, value) => {
-            assert(dc);
+        dialogs.add('prompt', new ConfirmPrompt((context, value) => {
+            assert(context);
             return value;
         }).style(ListStyle.none));
         dialogs.add('a', [
@@ -109,10 +109,10 @@ describe('prompts/ConfirmPrompt', function() {
 
     it('should send ignore retryPrompt if validator replies.', function (done) {
         const dialogs = new DialogSet();
-        dialogs.add('prompt', new ConfirmPrompt((dc, value) => {
-            assert(dc);
+        dialogs.add('prompt', new ConfirmPrompt((context, value) => {
+            assert(context);
             if (value === undefined) {
-                return dc.context.sendActivity(`bad input`);
+                return context.sendActivity(`bad input`).then(() => undefined);
             }
             return value;
         }));
@@ -144,8 +144,8 @@ describe('prompts/ConfirmPrompt', function() {
 
     it('should not send any retryPrompt no prompt specified.', function (done) {
         const dialogs = new DialogSet();
-        dialogs.add('prompt', new ConfirmPrompt((dc, value) => {
-            assert(dc);
+        dialogs.add('prompt', new ConfirmPrompt((context, value) => {
+            assert(context);
             return value;
         }));
         dialogs.add('a', [

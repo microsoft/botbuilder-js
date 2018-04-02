@@ -6,8 +6,9 @@
  * Licensed under the MIT License.
  */
 import { TurnContext } from 'botbuilder';
+import { PromptValidator } from 'botbuilder-prompts';
 import { DialogContext } from '../dialogContext';
-import { Prompt, PromptOptions, PromptValidator } from './prompt';
+import { Prompt, PromptOptions } from './prompt';
 import * as prompts from 'botbuilder-prompts';
 
 /** Additional options that can be used to configure a `ChoicePrompt`. */
@@ -30,18 +31,18 @@ export interface ChoicePromptOptions extends PromptOptions {
  * dialogs.add('choicePrompt', new ChoicePrompt());
  * 
  * dialogs.add('choiceDemo', [
- *      function (dc) {
+ *      async function (dc) {
  *          return dc.prompt('choicePrompt', `choice: select a color`, ['red', 'green', 'blue']);
  *      },
- *      function (dc, choice) {
- *          dc.batch.reply(`Recognized choice: ${JSON.stringify(choice)}`);
+ *      async function (dc, choice) {
+ *          await dc.context.sendActivity(`Recognized choice: ${JSON.stringify(choice)}`);
  *          return dc.end();
  *      }
  * ]);
  * ```
  */
-export class ChoicePrompt<C extends TurnContext> extends Prompt<C, prompts.FoundChoice> {
-    private prompt: prompts.ChoicePrompt;
+export class ChoicePrompt<C extends TurnContext, O = prompts.FoundChoice> extends Prompt<C> {
+    private prompt: prompts.ChoicePrompt<O>;
 
     /**
      * Creates a new instance of the prompt.
@@ -49,12 +50,19 @@ export class ChoicePrompt<C extends TurnContext> extends Prompt<C, prompts.Found
      * **Example usage:**
      * 
      * ```JavaScript
-     * dialogs.add('choicePrompt', new ChoicePrompt());
+     * dialogs.add('choicePrompt', new ChoicePrompt(async (context, value) => {
+     *      if (value === undefined) {
+     *          await context.sendActivity(`I didn't recognize your choice. Please select from the choices on the list.`);
+     *          return undefined;
+     *      } else {
+     *          return value;
+     *      }
+     * }));
      * ```
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.  
      * @param defaultLocale (Optional) locale to use if `dc.context.activity.locale` not specified. Defaults to a value of `en-us`.
      */
-    constructor(validator?: PromptValidator<C, prompts.FoundChoice>, defaultLocale?: string) {
+    constructor(validator?: PromptValidator<prompts.FoundChoice, O>, defaultLocale?: string) {
         super(validator);
         this.prompt = prompts.createChoicePrompt(undefined, defaultLocale);
     }
@@ -95,7 +103,7 @@ export class ChoicePrompt<C extends TurnContext> extends Prompt<C, prompts.Found
         return this.prompt.prompt(dc.context, choices, options.prompt, options.speak);
     }
 
-    protected onRecognize(dc: DialogContext<C>, options: ChoicePromptOptions): Promise<prompts.FoundChoice|undefined> {
+    protected onRecognize(dc: DialogContext<C>, options: ChoicePromptOptions): Promise<O|undefined> {
         return this.prompt.recognize(dc.context, options.choices);
     }
 }

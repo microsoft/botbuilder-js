@@ -16,11 +16,11 @@ const prompts = require("botbuilder-prompts");
  * dialogs.add('attachmentPrompt', new AttachmentPrompt());
  *
  * dialogs.add('uploadImage', [
- *      function (dc) {
+ *      async function (dc) {
  *          return dc.prompt('attachmentPrompt', `Send me image(s)`);
  *      },
- *      function (dc, attachments) {
- *          dc.batch.reply(`Processing ${attachments.length} images.`);
+ *      async function (dc, attachments) {
+ *          await dc.context.sendActivity(`Processing ${attachments.length} images.`);
  *          return dc.end();
  *      }
  * ]);
@@ -33,9 +33,9 @@ class AttachmentPrompt extends prompt_1.Prompt {
      * **Example usage:**
      *
      * ```JavaScript
-     * dialogs.add('imagePrompt', new AttachmentPrompt((dc, values) => {
+     * dialogs.add('imagePrompt', new AttachmentPrompt(async (context, values) => {
      *      if (!Array.isArray(values) || values.length < 1) {
-     *          dc.batch.reply(`Send me an image or say "cancel".`);
+     *          await context.sendActivity(`Send me an image or say "cancel".`);
      *          return undefined;
      *      } else {
      *          return values;

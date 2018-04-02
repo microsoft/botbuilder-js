@@ -6,8 +6,9 @@
  * Licensed under the MIT License.
  */
 import { TurnContext, Attachment } from 'botbuilder';
+import { PromptValidator } from 'botbuilder-prompts';
 import { DialogContext } from '../dialogContext';
-import { Prompt, PromptOptions, PromptValidator } from './prompt';
+import { Prompt, PromptOptions } from './prompt';
 import * as prompts from 'botbuilder-prompts';
 
 /**
@@ -24,18 +25,18 @@ import * as prompts from 'botbuilder-prompts';
  * dialogs.add('attachmentPrompt', new AttachmentPrompt());
  * 
  * dialogs.add('uploadImage', [
- *      function (dc) {
+ *      async function (dc) {
  *          return dc.prompt('attachmentPrompt', `Send me image(s)`);
  *      },
- *      function (dc, attachments) {
- *          dc.batch.reply(`Processing ${attachments.length} images.`);
+ *      async function (dc, attachments) {
+ *          await dc.context.sendActivity(`Processing ${attachments.length} images.`);
  *          return dc.end();
  *      }
  * ]);
  * ```
  */
-export class AttachmentPrompt<C extends TurnContext> extends Prompt<C, Attachment[]> {
-    private prompt: prompts.AttachmentPrompt;
+export class AttachmentPrompt<C extends TurnContext, O = Attachment[]> extends Prompt<C> {
+    private prompt: prompts.AttachmentPrompt<O>;
 
     /**
      * Creates a new instance of the prompt.
@@ -43,9 +44,9 @@ export class AttachmentPrompt<C extends TurnContext> extends Prompt<C, Attachmen
      * **Example usage:**
      * 
      * ```JavaScript
-     * dialogs.add('imagePrompt', new AttachmentPrompt((dc, values) => {
+     * dialogs.add('imagePrompt', new AttachmentPrompt(async (context, values) => {
      *      if (!Array.isArray(values) || values.length < 1) {
-     *          dc.batch.reply(`Send me an image or say "cancel".`);
+     *          await context.sendActivity(`Send me an image or say "cancel".`);
      *          return undefined;
      *      } else {
      *          return values;
@@ -54,7 +55,7 @@ export class AttachmentPrompt<C extends TurnContext> extends Prompt<C, Attachmen
      * ```
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.  
      */
-    constructor(validator?: PromptValidator<C, Attachment[]>) {
+    constructor(validator?: PromptValidator<Attachment[], O>) {
         super(validator);
         this.prompt = prompts.createAttachmentPrompt(); 
     }
@@ -68,7 +69,7 @@ export class AttachmentPrompt<C extends TurnContext> extends Prompt<C, Attachmen
         return Promise.resolve();
     }
 
-    protected onRecognize(dc: DialogContext<C>, options: PromptOptions): Promise<Attachment[]|undefined> {
+    protected onRecognize(dc: DialogContext<C>, options: PromptOptions): Promise<O|undefined> {
         return this.prompt.recognize(dc.context);
     }
 }

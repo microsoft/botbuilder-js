@@ -16,11 +16,11 @@ const prompts = require("botbuilder-prompts");
  * dialogs.add('numberPrompt', new NumberPrompt());
  *
  * dialogs.add('numberDemo', [
- *      function (dc) {
+ *      async function (dc) {
  *          return dc.prompt('numberPrompt', `number: enter a number`);
  *      },
- *      function (dc, value) {
- *          dc.batch.reply(`Recognized value: ${value}`);
+ *      async function (dc, value) {
+ *          await dc.context.sendActivity(`Recognized value: ${value}`);
  *          return dc.end();
  *      }
  * ]);
@@ -33,9 +33,9 @@ class NumberPrompt extends prompt_1.Prompt {
      * **Example usage:**
      *
      * ```JavaScript
-     * dialogs.add('agePrompt', new NumberPrompt((dc, value) => {
+     * dialogs.add('agePrompt', new NumberPrompt(async (context, value) => {
      *      if (value === undefined || value < 1 || value > 110) {
-     *          dc.batch.reply(`Invalid age. Only ages between 1 and 110 are allowed.`);
+     *          await context.sendActivity(`Invalid age. Only ages between 1 and 110 are allowed.`);
      *          return undefined;
      *      } else {
      *          return value;

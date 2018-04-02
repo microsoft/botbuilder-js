@@ -6,8 +6,9 @@
  * Licensed under the MIT License.
  */
 import { TurnContext } from 'botbuilder';
+import { PromptValidator } from 'botbuilder-prompts';
 import { DialogContext } from '../dialogContext';
-import { Prompt, PromptOptions, PromptValidator } from './prompt';
+import { Prompt, PromptOptions } from './prompt';
 import * as prompts from 'botbuilder-prompts';
 
 /**
@@ -24,18 +25,18 @@ import * as prompts from 'botbuilder-prompts';
  * dialogs.add('datetimePrompt', new DatetimePrompt());
  * 
  * dialogs.add('datetimeDemo', [
- *      function (dc) {
+ *      async function (dc) {
  *          return dc.prompt('datetimePrompt', `datetime: enter a datetime`);
  *      },
- *      function (dc, values) {
- *          dc.batch.reply(`Recognized values: ${JSON.stringify(values)}`);
+ *      async function (dc, values) {
+ *          await dc.context.sendActivity(`Recognized values: ${JSON.stringify(values)}`);
  *          return dc.end();
  *      }
  * ]);
  * ```
  */
-export class DatetimePrompt<C extends TurnContext> extends Prompt<C, prompts.FoundDatetime[]> {
-    private prompt: prompts.DatetimePrompt;
+export class DatetimePrompt<C extends TurnContext, O = prompts.FoundDatetime[]> extends Prompt<C> {
+    private prompt: prompts.DatetimePrompt<O>;
 
     /**
      * Creates a new instance of the prompt.
@@ -43,7 +44,7 @@ export class DatetimePrompt<C extends TurnContext> extends Prompt<C, prompts.Fou
      * **Example usage:**
      * 
      * ```JavaScript
-     * dialogs.add('timePrompt', new DatetimePrompt((dc, values) => {
+     * dialogs.add('timePrompt', new DatetimePrompt(async (context, values) => {
      *      try {
      *          if (!Array.isArray(values) || values.length < 0) { throw new Error('missing time') }
      *          if (values[0].type !== 'datetime') { throw new Error('unsupported type') }
@@ -51,7 +52,7 @@ export class DatetimePrompt<C extends TurnContext> extends Prompt<C, prompts.Fou
      *          if (value.getTime() < new Date().getTime()) { throw new Error('in the past') }
      *          return value;
      *      } catch (err) {
-     *          dc.batch.reply(`Invalid time. Answer with a time in the future like "tomorrow at 9am" or say "cancel".`);
+     *          await context.sendActivity(`Invalid time. Answer with a time in the future like "tomorrow at 9am" or say "cancel".`);
      *          return undefined;
      *      }
      * }));
@@ -59,7 +60,7 @@ export class DatetimePrompt<C extends TurnContext> extends Prompt<C, prompts.Fou
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.  
      * @param defaultLocale (Optional) locale to use if `dc.context.activity.locale` not specified. Defaults to a value of `en-us`.
      */
-    constructor(validator?: PromptValidator<C, prompts.FoundDatetime[]>, defaultLocale?: string) {
+    constructor(validator?: PromptValidator<prompts.FoundDatetime[], O>, defaultLocale?: string) {
         super(validator);
         this.prompt = prompts.createDatetimePrompt(undefined, defaultLocale); 
     }
@@ -73,7 +74,7 @@ export class DatetimePrompt<C extends TurnContext> extends Prompt<C, prompts.Fou
         return Promise.resolve();
     }
 
-    protected onRecognize(dc: DialogContext<C>, options: PromptOptions): Promise<prompts.FoundDatetime[]|undefined> {
+    protected onRecognize(dc: DialogContext<C>, options: PromptOptions): Promise<O|undefined> {
         return this.prompt.recognize(dc.context);
     }
 }

@@ -45,8 +45,8 @@ describe('prompts/AttachmentPrompt', function() {
     
     it('should call AttachmentPrompt with custom validator.', function (done) {
         const dialogs = new DialogSet();
-        dialogs.add('prompt', new AttachmentPrompt((dc, value) => {
-            assert(dc);
+        dialogs.add('prompt', new AttachmentPrompt((context, value) => {
+            assert(context);
             return value;
         }));
         dialogs.add('a', [
@@ -77,8 +77,8 @@ describe('prompts/AttachmentPrompt', function() {
 
     it('should send custom retryPrompt.', function (done) {
         const dialogs = new DialogSet();
-        dialogs.add('prompt', new AttachmentPrompt((dc, value) => {
-            assert(dc);
+        dialogs.add('prompt', new AttachmentPrompt((context, value) => {
+            assert(context);
             return value;
         }));
         dialogs.add('a', [
@@ -109,10 +109,10 @@ describe('prompts/AttachmentPrompt', function() {
 
     it('should send ignore retryPrompt if validator replies.', function (done) {
         const dialogs = new DialogSet();
-        dialogs.add('prompt', new AttachmentPrompt((dc, value) => {
-            assert(dc);
+        dialogs.add('prompt', new AttachmentPrompt((context, value) => {
+            assert(context);
             if (!value) {
-                return dc.context.sendActivity(`bad input`);
+                return context.sendActivity(`bad input`).then(() => undefined);
             }
             return value;
         }));
@@ -144,8 +144,8 @@ describe('prompts/AttachmentPrompt', function() {
 
     it('should not send any retryPrompt no prompt specified.', function (done) {
         const dialogs = new DialogSet();
-        dialogs.add('prompt', new AttachmentPrompt((dc, value) => {
-            assert(dc);
+        dialogs.add('prompt', new AttachmentPrompt((context, value) => {
+            assert(context);
             return value;
         }));
         dialogs.add('a', [

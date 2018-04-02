@@ -6,8 +6,9 @@
  * Licensed under the MIT License.
  */
 import { TurnContext } from 'botbuilder';
+import { PromptValidator } from 'botbuilder-prompts';
 import { DialogContext } from '../dialogContext';
-import { Prompt, PromptOptions, PromptValidator } from './prompt';
+import { Prompt, PromptOptions } from './prompt';
 import * as prompts from 'botbuilder-prompts';
 
 /**
@@ -24,18 +25,18 @@ import * as prompts from 'botbuilder-prompts';
  * dialogs.add('confirmPrompt', new ConfirmPrompt());
  * 
  * dialogs.add('confirmDemo', [
- *      function (dc) {
+ *      async function (dc) {
  *          return dc.prompt('confirmPrompt', `confirm: answer "yes" or "no"`);
  *      },
- *      function (dc, value) {
- *          dc.batch.reply(`Recognized value: ${value}`);
+ *      async function (dc, value) {
+ *          await dc.context.sendActivity(`Recognized value: ${value}`);
  *          return dc.end();
  *      }
  * ]);
  * ```
  */
-export class ConfirmPrompt<C extends TurnContext> extends Prompt<C, boolean> {
-    private prompt: prompts.ConfirmPrompt;
+export class ConfirmPrompt<C extends TurnContext, O = boolean> extends Prompt<C> {
+    private prompt: prompts.ConfirmPrompt<O>;
 
     /** 
      * Allows for the localization of the confirm prompts yes/no choices to other locales besides 
@@ -59,9 +60,9 @@ export class ConfirmPrompt<C extends TurnContext> extends Prompt<C, boolean> {
      * **Example usage:**
      * 
      * ```JavaScript
-     * dialogs.add('confirmPrompt', new ConfirmPrompt((dc, value) => {
+     * dialogs.add('confirmPrompt', new ConfirmPrompt(async (context, value) => {
      *      if (value === undefined) {
-     *          dc.batch.reply(`Invalid answer. Answer with "yes" or "no".`);
+     *          await context.sendActivity(`Invalid answer. Answer with "yes" or "no".`);
      *          return undefined;
      *      } else {
      *          return value;
@@ -71,7 +72,7 @@ export class ConfirmPrompt<C extends TurnContext> extends Prompt<C, boolean> {
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.  
      * @param defaultLocale (Optional) locale to use if `dc.context.activity.locale` not specified. Defaults to a value of `en-us`.
      */
-    constructor(validator?: PromptValidator<C, boolean>, defaultLocale?: string) {
+    constructor(validator?: PromptValidator<boolean, O>, defaultLocale?: string) {
         super(validator);
         this.prompt = prompts.createConfirmPrompt(undefined, defaultLocale);
         this.prompt.choices = ConfirmPrompt.choices;
@@ -105,7 +106,7 @@ export class ConfirmPrompt<C extends TurnContext> extends Prompt<C, boolean> {
         return Promise.resolve();
     }
 
-    protected onRecognize(dc: DialogContext<C>, options: PromptOptions): Promise<boolean|undefined> {
+    protected onRecognize(dc: DialogContext<C>, options: PromptOptions): Promise<O|undefined> {
         return this.prompt.recognize(dc.context);
     }
 }
