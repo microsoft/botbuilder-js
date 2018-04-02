@@ -64,6 +64,20 @@ export class BotConfig implements IBotConfig {
         }
     }
 
+    public removeServiceByNameOrId(nameOrId: string): void {
+        let svs = new List<IConnectedService>(this.services);
+
+        for (let i = 0; i < svs.count(); i++) {
+            let service = svs.elementAt(i);
+            if (service.id == nameOrId || service.name == nameOrId) {
+                svs.removeAt(i);
+                this.services = svs.toArray();
+                return;
+            }
+        }
+        throw new Error(`a service with id or name of ${nameOrId} was not found`);
+    }
+
     public removeService(type: string, id: string): void {
         let svs = new List<IConnectedService>(this.services);
 

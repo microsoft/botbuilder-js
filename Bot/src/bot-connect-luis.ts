@@ -10,7 +10,7 @@ interface ConnectLuisArgs {
 }
 
 program
-    .command('luis', 'connect to LUIS a service')
+    .description('Connect the bot to a LUIS application')
     .option('-b, --bot <path>', "path to bot file.  If omitted, local folder will look for a .bot file")
     .option('-n, --name <name>', 'name for the LUIS app')
     .option('-a, --appid <appid>', 'AppId for the LUIS App')

@@ -8,9 +8,8 @@ interface ConnectQnaArgs {
     kbid: string;
 }
 
-
 program
-    .command('qna', 'connect to a QNA knowledge base')
+    .description('Connect the bot to a QnA knowledgebase')
     .option('-b, --bot <path>', "path to bot file.  If omitted, local folder will look for a .bot file")
     .option('-n, --name <name>', 'name for the QNA database')
     .option('-k, --kbid <kbid>', 'QnA Knowledgebase Id ')
@@ -33,7 +32,7 @@ if (!args.bot) {
 }
 
 async function processConnectQnaArgs(config: BotConfig): Promise<BotConfig> {
-    args.name = args.name || config.name;
+    args.name = args.hasOwnProperty('name') ? args.name : config.name;
 
     // add the service
     config.addService(<IQnAService>{

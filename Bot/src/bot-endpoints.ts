@@ -15,7 +15,8 @@ interface EndpointArgs {
 }
 
 program
-    .command('endpoints [url]', 'manipulate endpoints for the bot')
+    .arguments('[url]')
+    .description('add or remove an endpoint url for the bot')
     .option('-b, --bot <path>', "path to bot file.  If omitted, local folder will look for a .bot file")
     .option('-r, --remove', "remove endpoint url")
     .option('-l, --list', "list endpoints")

@@ -4,7 +4,7 @@
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
     <Name>Bot</Name>
     <RootNamespace>Bot</RootNamespace>
-    <ScriptArguments> --name TestApp --appid 123123 --regions westus,eastus</ScriptArguments>
+    <ScriptArguments>99999</ScriptArguments>
     <DebuggerPort>
     </DebuggerPort>
   </PropertyGroup>
@@ -14,7 +14,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>9eec4a3a-8523-43d5-9f5d-c1fcedae012f</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>bin\bot-connect-luis.js</StartupFile>
+    <StartupFile>bin\bot-disconnect.js</StartupFile>
     <StartWebBrowser>False</StartWebBrowser>
     <SearchPath>
     </SearchPath>

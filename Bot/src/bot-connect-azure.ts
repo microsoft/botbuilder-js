@@ -10,6 +10,7 @@ interface ConnectAzureArgs {
 }
 
 program
+    .description('Connect the bot to Azure Bot Service')
     .option('-b, --bot <path>', "path to bot file.  If omitted, local folder will look for a .bot file")
     .option('-i, --id <id>', 'Azure Bot Service bot id')
     .option('-a, --appid <appid>', 'Microsoft AppId for the Azure Bot Service')

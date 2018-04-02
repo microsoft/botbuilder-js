@@ -15,13 +15,9 @@
     ],
     "services": [
         {
-            "type": "luis",
-            "name": "TestApp",
-            "id": "123123",
-            "regions": [
-                "westus",
-                "eastus"
-            ]
+            "type": "qna",
+            "name": "test",
+            "id": "123123"
         }
     ]
 }
