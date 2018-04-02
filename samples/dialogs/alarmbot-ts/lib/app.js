@@ -101,16 +101,16 @@ dialogs.add('addAlarm', [
         });
     }
 ]);
-dialogs.add('titlePrompt', new botbuilder_dialogs_1.TextPrompt((dc, value) => __awaiter(this, void 0, void 0, function* () {
+dialogs.add('titlePrompt', new botbuilder_dialogs_1.TextPrompt((context, value) => __awaiter(this, void 0, void 0, function* () {
     if (!value || value.length < 3) {
-        yield dc.context.sendActivity(`Title should be at least 3 characters long.`);
+        yield context.sendActivity(`Title should be at least 3 characters long.`);
         return undefined;
     }
     else {
         return value.trim();
     }
 })));
-dialogs.add('timePrompt', new botbuilder_dialogs_1.DatetimePrompt((dc, values) => __awaiter(this, void 0, void 0, function* () {
+dialogs.add('timePrompt', new botbuilder_dialogs_1.DatetimePrompt((context, values) => __awaiter(this, void 0, void 0, function* () {
     try {
         if (!Array.isArray(values) || values.length < 0) {
             throw new Error('missing time');
@@ -125,7 +125,7 @@ dialogs.add('timePrompt', new botbuilder_dialogs_1.DatetimePrompt((dc, values) =
         return value;
     }
     catch (err) {
-        yield dc.context.sendActivity(`Please enter a valid time in the future like "tomorrow at 9am" or say "cancel".`);
+        yield context.sendActivity(`Please enter a valid time in the future like "tomorrow at 9am" or say "cancel".`);
         return undefined;
     }
 })));

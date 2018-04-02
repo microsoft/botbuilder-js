@@ -101,16 +101,16 @@ dialogs.add('addAlarm', [
     }
 ]);
 
-dialogs.add('titlePrompt', new TextPrompt(async (dc, value) => {
+dialogs.add('titlePrompt', new TextPrompt(async (context, value) => {
     if (!value || value.length < 3) {
-        await dc.context.sendActivity(`Title should be at least 3 characters long.`);
+        await context.sendActivity(`Title should be at least 3 characters long.`);
         return undefined;
     } else {
         return value.trim();
     }
 }));
 
-dialogs.add('timePrompt', new DatetimePrompt(async (dc, values) => {
+dialogs.add('timePrompt', new DatetimePrompt(async (context, values) => {
     try {
         if (!Array.isArray(values) || values.length < 0) { throw new Error('missing time') }
         if (values[0].type !== 'datetime') { throw new Error('unsupported type') }
@@ -118,7 +118,7 @@ dialogs.add('timePrompt', new DatetimePrompt(async (dc, values) => {
         if (value.getTime() < new Date().getTime()) { throw new Error('in the past') }
         return value;
     } catch (err) {
-        await dc.context.sendActivity(`Please enter a valid time in the future like "tomorrow at 9am" or say "cancel".`);
+        await context.sendActivity(`Please enter a valid time in the future like "tomorrow at 9am" or say "cancel".`);
         return undefined;
     }
 }));
