@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotContext, Middleware } from 'botbuilder-core';
+import { TurnContext, Middleware } from 'botbuilder-core';
 import { Storage, StoreItem, StorageKeyFactory } from './storage';
 /**
  * State information cached off the context object by a `BotState` instance.
@@ -35,27 +35,27 @@ export declare class BotState<T extends StoreItem = StoreItem> implements Middle
      * @param storageKey Function called anytime the storage key for a given turn needs to be known.
      */
     constructor(storage: Storage, storageKey: StorageKeyFactory);
-    onProcessRequest(context: BotContext, next: () => Promise<void>): Promise<void>;
+    onTurn(context: TurnContext, next: () => Promise<void>): Promise<void>;
     /**
      * Reads in and caches the current state object for a turn.
      * @param context Context for current turn of conversation with the user.
      * @param force (Optional) If `true` the cache will be bypassed and the state will always be read in directly from storage. Defaults to `false`.
      */
-    read(context: BotContext, force?: boolean): Promise<T>;
+    read(context: TurnContext, force?: boolean): Promise<T>;
     /**
      * Writes out the state object if it's been changed.
      * @param context Context for current turn of conversation with the user.
      * @param force (Optional) if `true` the state will always be written out regardless of its change state. Defaults to `false`.
      */
-    write(context: BotContext, force?: boolean): Promise<void>;
+    write(context: TurnContext, force?: boolean): Promise<void>;
     /**
      * Clears the current state object for a turn.
      * @param context Context for current turn of conversation with the user.
      */
-    clear(context: BotContext): void;
+    clear(context: TurnContext): void;
     /**
      * Returns a cached state object or undefined if not cached.
      * @param context Context for current turn of conversation with the user.
      */
-    get(context: BotContext): T | undefined;
+    get(context: TurnContext): T | undefined;
 }

@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Promiseable, BotContext } from 'botbuilder';
+import { Promiseable, TurnContext } from 'botbuilder';
 import { Dialog } from './dialog';
 import { DialogContext } from './dialogContext';
 /**
@@ -47,7 +47,7 @@ import { DialogContext } from './dialogContext';
  * @param WaterfallStep.args Argument(s) passed into the dialog for the first step and then the results from calling a prompt or other dialog for subsequent steps.
  * @param WaterfallStep.next Function passed into the step to let you manually skip to the next step in the waterfall.
  */
-export declare type WaterfallStep<C extends BotContext> = (dc: DialogContext<C>, args?: any, next?: SkipStepFunction) => Promiseable<any>;
+export declare type WaterfallStep<C extends TurnContext> = (dc: DialogContext<C>, args?: any, next?: SkipStepFunction) => Promiseable<any>;
 /**
  * When called, control will skip to the next waterfall step.
  * @param SkipStepFunction.args (Optional) additional argument(s) to pass into the next step.
@@ -121,7 +121,7 @@ export declare type SkipStepFunction = (args?: any) => Promise<any>;
  * to do that the dialog will be automatically ended for you on the users next reply.  The users
  * response will be passed to the calling dialogs next waterfall step if there is one.
  */
-export declare class Waterfall<C extends BotContext> implements Dialog<C> {
+export declare class Waterfall<C extends TurnContext> implements Dialog<C> {
     private readonly steps;
     /**
      * Creates a new waterfall dialog containing the given array of steps.

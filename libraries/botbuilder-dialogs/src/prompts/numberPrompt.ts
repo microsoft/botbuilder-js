@@ -5,9 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotContext } from 'botbuilder';
+import { TurnContext } from 'botbuilder';
+import { PromptValidator } from 'botbuilder-prompts';
 import { DialogContext } from '../dialogContext';
-import { Prompt, PromptOptions, PromptValidator } from './prompt';
+import { Prompt, PromptOptions } from './prompt';
 import * as prompts from 'botbuilder-prompts';
 
 /**
@@ -24,18 +25,18 @@ import * as prompts from 'botbuilder-prompts';
  * dialogs.add('numberPrompt', new NumberPrompt());
  * 
  * dialogs.add('numberDemo', [
- *      function (dc) {
+ *      async function (dc) {
  *          return dc.prompt('numberPrompt', `number: enter a number`);
  *      },
- *      function (dc, value) {
- *          dc.batch.reply(`Recognized value: ${value}`);
+ *      async function (dc, value) {
+ *          await dc.context.sendActivity(`Recognized value: ${value}`);
  *          return dc.end();
  *      }
  * ]);
  * ```
  */
-export class NumberPrompt<C extends BotContext> extends Prompt<C, number> {
-    private prompt: prompts.NumberPrompt;
+export class NumberPrompt<C extends TurnContext, O = number> extends Prompt<C> {
+    private prompt: prompts.NumberPrompt<O>;
 
     /**
      * Creates a new instance of the prompt.
@@ -43,9 +44,9 @@ export class NumberPrompt<C extends BotContext> extends Prompt<C, number> {
      * **Example usage:**
      * 
      * ```JavaScript
-     * dialogs.add('agePrompt', new NumberPrompt((dc, value) => {
+     * dialogs.add('agePrompt', new NumberPrompt(async (context, value) => {
      *      if (value === undefined || value < 1 || value > 110) {
-     *          dc.batch.reply(`Invalid age. Only ages between 1 and 110 are allowed.`);
+     *          await context.sendActivity(`Invalid age. Only ages between 1 and 110 are allowed.`);
      *          return undefined;
      *      } else {
      *          return value;
@@ -53,9 +54,9 @@ export class NumberPrompt<C extends BotContext> extends Prompt<C, number> {
      * }));
      * ```
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.  
-     * @param defaultLocale (Optional) locale to use if `dc.context.request.locale` not specified. Defaults to a value of `en-us`.
+     * @param defaultLocale (Optional) locale to use if `dc.context.activity.locale` not specified. Defaults to a value of `en-us`.
      */
-    constructor(validator?: PromptValidator<C, number>, defaultLocale?: string) {
+    constructor(validator?: PromptValidator<number, O>, defaultLocale?: string) {
         super(validator);
         this.prompt = prompts.createNumberPrompt(undefined, defaultLocale); 
     }
@@ -69,7 +70,7 @@ export class NumberPrompt<C extends BotContext> extends Prompt<C, number> {
         return Promise.resolve();
     }
 
-    protected onRecognize(dc: DialogContext<C>, options: PromptOptions): Promise<number|undefined> {
+    protected onRecognize(dc: DialogContext<C>, options: PromptOptions): Promise<O|undefined> {
         return this.prompt.recognize(dc.context);
     }
 }

@@ -11,7 +11,7 @@ function createAttachmentPrompt(validator) {
             return internal_1.sendPrompt(context, prompt, speak);
         },
         recognize: function recognize(context) {
-            const values = context.request ? context.request.attachments : undefined;
+            const values = context.activity ? context.activity.attachments : undefined;
             return Promise.resolve(validator ? validator(context, values) : values);
         }
     };

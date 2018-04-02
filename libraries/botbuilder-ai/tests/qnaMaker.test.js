@@ -1,16 +1,16 @@
 const assert = require('assert');
-const { TestAdapter, BotContext } = require('botbuilder');
+const { TestAdapter, TurnContext } = require('botbuilder');
 const ai = require('../');
 
 // Save test keys
 const knowlegeBaseId = process.env.QNAKNOWLEDGEBASEID;
 const subscriptionKey = process.env.QNASUBSCRIPTIONKEY;
 
-class TestContext extends BotContext {
+class TestContext extends TurnContext {
     constructor(request) {
         super(new TestAdapter(), request);
         this.sent = undefined;
-        this.onSendActivity((context, activities, next) => {
+        this.onSendActivities((context, activities, next) => {
             this.sent = activities;
             context.responded = true;
         });
@@ -57,7 +57,7 @@ describe('QnAMaker', function () {
             top: 1
         });
 
-        qnaMaker.onProcessRequest(context, () => Promise.resolve()).then(() => {
+        qnaMaker.onTurn(context, () => Promise.resolve()).then(() => {
             assert(Array.isArray(context.sent) && context.sent.length === 1, `reply not sent.`);
             done();
         });
@@ -71,7 +71,7 @@ describe('QnAMaker', function () {
             top: 1
         });
 
-        qnaMaker.onProcessRequest(context, () => context.sendActivity('foo')).then(() => {
+        qnaMaker.onTurn(context, () => context.sendActivity('foo')).then(() => {
             assert(Array.isArray(context.sent) && context.sent[0].text === 'foo', `service must have been called.`);
             done();
         });
@@ -87,7 +87,7 @@ describe('QnAMaker', function () {
             answerBeforeNext: true
         });
 
-        qnaMaker.onProcessRequest(context, () => {
+        qnaMaker.onTurn(context, () => {
             intercepted = false;
             return  Promise.resolve();
         }).then(() => {
@@ -107,7 +107,7 @@ describe('QnAMaker', function () {
             answerBeforeNext: true
         });
 
-        qnaMaker.onProcessRequest(context, () => {
+        qnaMaker.onTurn(context, () => {
             intercepted = false;
             return  Promise.resolve();
         }).then(() => {
@@ -126,7 +126,7 @@ describe('QnAMaker', function () {
             answerBeforeNext: true
         });
 
-        qnaMaker.onProcessRequest(context, () => {
+        qnaMaker.onTurn(context, () => {
             intercepted = false;
             return  Promise.resolve();
         }).then(() => {

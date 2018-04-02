@@ -29,9 +29,9 @@ class LocaleConverter {
         this.setUserLocale = settings.setUserLocale;
     }
     /// Incoming activity
-    onProcessRequest(context, next) {
+    onTurn(context, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (context.request.type != botbuilder_1.ActivityTypes.Message) {
+            if (context.activity.type != botbuilder_1.ActivityTypes.Message) {
                 return next();
             }
             if (this.setUserLocale != undefined) {
@@ -46,7 +46,7 @@ class LocaleConverter {
     }
     convertLocalesAsync(context) {
         return __awaiter(this, void 0, void 0, function* () {
-            let message = context.request;
+            let message = context.activity;
             let fromLocale;
             if (this.fromLocale != undefined) {
                 fromLocale = this.fromLocale;

@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { MessageFactory, BotContext, ActionTypes, InputHints, Activity, CardAction } from 'botbuilder';
+import { MessageFactory, TurnContext, ActionTypes, InputHints, Activity, CardAction } from 'botbuilder';
 import { Choice } from './findChoices';
 import * as channel from './channel';
 
@@ -38,7 +38,7 @@ export interface ChoiceFactoryOptions {
 
 export class ChoiceFactory {
 
-    static forChannel(channelOrContext: string|BotContext, choices: (string|Choice)[], text?: string, speak?: string, options?: ChoiceFactoryOptions): Partial<Activity> {
+    static forChannel(channelOrContext: string|TurnContext, choices: (string|Choice)[], text?: string, speak?: string, options?: ChoiceFactoryOptions): Partial<Activity> {
         const channelId = typeof channelOrContext === 'string' ? channelOrContext : channel.getChannelId(channelOrContext);
 
         // Normalize choices

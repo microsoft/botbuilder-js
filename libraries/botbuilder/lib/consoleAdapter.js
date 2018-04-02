@@ -38,15 +38,15 @@ class ConsoleAdapter extends botbuilder_core_1.BotAdapter {
     listen(logic) {
         const rl = this.createInterface({ input: process.stdin, output: process.stdout, terminal: false });
         rl.on('line', (line) => {
-            // Initialize request
-            const request = botbuilder_core_1.BotContext.applyConversationReference({
+            // Initialize activity
+            const activity = botbuilder_core_1.TurnContext.applyConversationReference({
                 type: botbuilder_core_1.ActivityTypes.Message,
                 id: (this.nextId++).toString(),
                 timestamp: new Date(),
                 text: line
             }, this.reference, true);
             // Create context and run middleware pipe
-            const context = new botbuilder_core_1.BotContext(this, request);
+            const context = new botbuilder_core_1.TurnContext(this, activity);
             this.runMiddleware(context, logic)
                 .catch((err) => { this.printError(err.toString()); });
         });
@@ -54,7 +54,14 @@ class ConsoleAdapter extends botbuilder_core_1.BotAdapter {
             rl.close();
         };
     }
-    sendActivity(activities) {
+    continueConversation(reference, logic) {
+        // Create context and run middleware pipe
+        const activity = botbuilder_core_1.TurnContext.applyConversationReference({}, reference, true);
+        const context = new botbuilder_core_1.TurnContext(this, activity);
+        return this.runMiddleware(context, logic)
+            .catch((err) => { this.printError(err.toString()); });
+    }
+    sendActivities(context, activities) {
         const that = this;
         return new Promise((resolve, reject) => {
             const responses = [];
@@ -89,10 +96,10 @@ class ConsoleAdapter extends botbuilder_core_1.BotAdapter {
             next(0);
         });
     }
-    updateActivity(activity) {
+    updateActivity(context, activity) {
         return Promise.reject(new Error(`ConsoleAdapter.updateActivity(): not supported.`));
     }
-    deleteActivity(reference) {
+    deleteActivity(context, reference) {
         return Promise.reject(new Error(`ConsoleAdapter.deleteActivity(): not supported.`));
     }
     createInterface(options) {

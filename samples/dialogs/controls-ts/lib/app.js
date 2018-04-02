@@ -17,16 +17,16 @@ const conversationState = new botbuilder_1.ConversationState(new botbuilder_1.Me
 adapter.use(conversationState);
 // Listen for incoming requests 
 server.post('/api/messages', (req, res) => {
-    adapter.processRequest(req, res, async (context) => {
-        if (context.request.type === 'message') {
+    adapter.processActivity(req, res, async (context) => {
+        if (context.activity.type === 'message') {
             // Update request with current locale
             const state = conversationState.get(context);
             if (state.currentLocale) {
-                context.request.locale = state.currentLocale;
+                context.activity.locale = state.currentLocale;
             }
             // Route received request
             if (!state.demo) {
-                const utterance = (context.request.text || '').trim().toLowerCase();
+                const utterance = (context.activity.text || '').trim().toLowerCase();
                 if (utterance.includes('dialog')) {
                     await beginDialogDemo(context, state);
                 }

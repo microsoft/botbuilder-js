@@ -198,25 +198,26 @@ export class TableStorage implements Storage {
 
         // create TableServiceAsync by using denodeify to create promise wrappers around cb functions
         return {
-            createTableIfNotExistsAsync: denodeify(tableService, tableService.createTableIfNotExists),
-            deleteTableIfExistsAsync: denodeify(tableService, tableService.deleteTableIfExists),
-            retrieveEntityAsync: denodeify(tableService, tableService.retrieveEntity),
-            insertOrReplaceEntityAsync: denodeify(tableService, tableService.insertOrReplaceEntity),
-            replaceEntityAsync: denodeify(tableService, tableService.replaceEntity),
-            deleteEntityAsync: denodeify(tableService, tableService.deleteEntity)
+            createTableIfNotExistsAsync: this.denodeify(tableService, tableService.createTableIfNotExists),
+            deleteTableIfExistsAsync: this.denodeify(tableService, tableService.deleteTableIfExists),
+            retrieveEntityAsync: this.denodeify(tableService, tableService.retrieveEntity),
+            insertOrReplaceEntityAsync: this.denodeify(tableService, tableService.insertOrReplaceEntity),
+            replaceEntityAsync: this.denodeify(tableService, tableService.replaceEntity),
+            deleteEntityAsync: this.denodeify(tableService, tableService.deleteEntity)
         } as any;
+    }
+
+    // turn a cb based azure method into a Promisified one
+    private denodeify<T>(thisArg: any, fn: Function): (...args: any[]) => Promise<T> {
+        return (...args: any[]) => {
+            return new Promise<T>((resolve, reject) => {
+                args.push((error: Error, result: any) => (error) ? reject(error) : resolve(result));
+                fn.apply(thisArg, args);
+            });
+        };
     }
 }
 
-// turn a cb based azure method into a Promisified one
-function denodeify<T>(thisArg: any, fn: Function): (...args: any[]) => Promise<T> {
-    return (...args: any[]) => {
-        return new Promise<T>((resolve, reject) => {
-            args.push((error: Error, result: any) => (error) ? reject(error) : resolve(result));
-            fn.apply(thisArg, args);
-        });
-    };
-}
 
 // Promise based methods created using denodeify function
 export interface TableServiceAsync extends azure.TableService {

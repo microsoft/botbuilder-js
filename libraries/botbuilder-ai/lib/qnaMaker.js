@@ -26,9 +26,9 @@ class QnAMaker {
             this.settings.serviceEndpoint += '/';
         }
     }
-    onProcessRequest(context, next) {
+    onTurn(context, next) {
         // Filter out non-message activities
-        if (context.request.type !== botbuilder_1.ActivityTypes.Message) {
+        if (context.activity.type !== botbuilder_1.ActivityTypes.Message) {
             return next();
         }
         // Route request
@@ -53,7 +53,7 @@ class QnAMaker {
      */
     answer(context) {
         const { top, scoreThreshold } = this.settings;
-        return this.generateAnswer(context.request.text, top, scoreThreshold).then((answers) => {
+        return this.generateAnswer(context.activity.text, top, scoreThreshold).then((answers) => {
             if (answers.length > 0) {
                 return context.sendActivity({ text: answers[0].answer, type: 'message' }).then(() => true);
             }

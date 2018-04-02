@@ -13,7 +13,7 @@ class LuisRecognizer {
         const baseUri = (this.settings.serviceEndpoint || 'https://westus.api.cognitive.microsoft.com');
         this.luisClient = this.createClient(baseUri + '/luis/');
     }
-    onProcessRequest(context, next) {
+    onTurn(context, next) {
         return this.recognize(context, true)
             .then(() => next());
     }
@@ -24,7 +24,7 @@ class LuisRecognizer {
      * @param context Context for the current turn of conversation with the use.
      */
     get(context) {
-        return context.get(this.cacheKey);
+        return context.services.get(this.cacheKey);
     }
     /**
      * Calls LUIS to recognize intents and entities in a users utterance. The results of the call
@@ -35,9 +35,9 @@ class LuisRecognizer {
      * @param force (Optional) flag that if `true` will force the call to LUIS even if a cached result exists. Defaults to a value of `false`.
      */
     recognize(context, force) {
-        const cached = context.get(this.cacheKey);
+        const cached = context.services.get(this.cacheKey);
         if (force || !cached) {
-            const utterance = context.request.text || '';
+            const utterance = context.activity.text || '';
             return this.luisClient.getIntentsAndEntitiesV2(this.settings.appId, this.settings.subscriptionKey, utterance, this.settings.options)
                 .then((result) => {
                 // Map results
@@ -47,7 +47,7 @@ class LuisRecognizer {
                     entities: this.getEntitiesAndMetadata(result.entities, result.compositeEntities, this.settings.verbose)
                 };
                 // Write to cache
-                context.set(this.cacheKey, recognizerResult);
+                context.services.set(this.cacheKey, recognizerResult);
                 return recognizerResult;
             });
         }

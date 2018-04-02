@@ -5,14 +5,14 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotContext, Promiseable } from 'botbuilder';
+import { TurnContext, Promiseable } from 'botbuilder';
 import { DialogContext } from './dialogContext';
 /**
  * Interface of Dialog objects that can be added to a `DialogSet`. The dialog should generally
  * be a singleton and added to a dialog set using `DialogSet.add()` at which point it will be
  * assigned a unique ID.
  */
-export interface Dialog<C extends BotContext> {
+export interface Dialog<C extends TurnContext> {
     /**
      * Method called when a new dialog has been pushed onto the stack and is being activated.
      * @param dc The dialog context for the current turn of conversation.

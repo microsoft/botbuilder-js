@@ -1,5 +1,5 @@
 import { DialogSet, CompositeControl, ChoicePrompt, DialogResult, FoundChoice } from 'botbuilder-dialogs';
-import { BotContext } from 'botbuilder';
+import { TurnContext } from 'botbuilder';
 
 export interface LanguagePickerOptions {
     defaultLocale?: string;
@@ -27,7 +27,7 @@ dialogs.add('chooseLanguage', [
         } as LanguagePickerOptions, args);
 
         // Find the current local (split on '-' for root LCID)
-        let locale = (dc.context.request.locale || options.defaultLocale).split('-')[0];
+        let locale = (dc.context.activity.locale || options.defaultLocale).split('-')[0];
         
         // Ensure that the users current locale is one we support.
         if (!localeToPrompt.hasOwnProperty(locale)) { locale = options.defaultLocale };

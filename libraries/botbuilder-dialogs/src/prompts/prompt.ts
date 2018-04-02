@@ -5,7 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotContext, Activity, Promiseable } from 'botbuilder';
+import { TurnContext, Activity, Promiseable } from 'botbuilder';
+import { PromptValidator } from 'botbuilder-prompts';
 import { DialogContext } from '../dialogContext';
 import { Control } from '../control';
 
@@ -24,27 +25,14 @@ export interface PromptOptions {
     retrySpeak?: string;
 }
 
-/**
- * Signature of a function that can be passed in to the constructor of all prompts. This function 
- * will be called every time the user replies to a prompt and can be used to add additional 
- * validation logic to a prompt or to customize the reply sent when the user send a reply that isn't
- * recognized.
- * @param C Type of dialog context object passed to validator.
- * @param R Type of value that will recognized and passed to the validator as input.
- * @param O Type of output that will be returned by the validator. This can be changed from the input type by the validator.
- * @param PromptValidator.context Dialog context for the current turn of conversation with the user.
- * @param PromptValidator.value The value that was recognized or wasn't recognized. Depending on the prompt this can be either undefined or an empty array to indicate an unrecognized value.
- */
-export type PromptValidator<C extends BotContext, R> = (dc: DialogContext<C>, value: R|undefined) => Promiseable<any>;
-
-export abstract class Prompt<C extends BotContext, T> extends Control<C> {
-    constructor(private validator?: PromptValidator<C, T>) { 
+export abstract class Prompt<C extends TurnContext> extends Control<C> {
+    constructor(private validator?: PromptValidator<any, any>) { 
         super();
     }
 
     protected abstract onPrompt(dc: DialogContext<C>, options: PromptOptions, isRetry: boolean): Promise<any>;
 
-    protected abstract onRecognize(dc: DialogContext<C>, options: PromptOptions): Promise<T|undefined>;
+    protected abstract onRecognize(dc: DialogContext<C>, options: PromptOptions): Promise<any|undefined>;
 
     public dialogBegin(dc: DialogContext<C>, options: PromptOptions): Promise<any> {
         // Persist options
@@ -62,7 +50,7 @@ export abstract class Prompt<C extends BotContext, T> extends Control<C> {
             .then((recognized) => {
                 if (this.validator) {
                     // Call validator
-                    return Promise.resolve(this.validator(dc, recognized));
+                    return Promise.resolve(this.validator(dc.context, recognized));
                 } else {
                     // Pass through recognized value
                     return recognized;

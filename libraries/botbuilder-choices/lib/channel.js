@@ -63,7 +63,7 @@ function maxActionTitleLength(channelId) {
 }
 exports.maxActionTitleLength = maxActionTitleLength;
 function getChannelId(context) {
-    return context.request.channelId || '';
+    return context.activity.channelId || '';
 }
 exports.getChannelId = getChannelId;
 //# sourceMappingURL=channel.js.map

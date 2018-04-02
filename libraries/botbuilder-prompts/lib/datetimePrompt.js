@@ -5,7 +5,7 @@ const Recognizers = require("@microsoft/recognizers-text-date-time");
 /**
  * Creates a new prompt that asks the user to reply with a date or time.
  * @param validator (Optional) validator for providing additional validation logic or customizing the prompt sent to the user when invalid.
- * @param defaultLocale (Optional) locale to use if `context.request.locale` not specified. Defaults to a value of `en-us`.
+ * @param defaultLocale (Optional) locale to use if `context.activity.locale` not specified. Defaults to a value of `en-us`.
  */
 function createDatetimePrompt(validator, defaultLocale) {
     return {
@@ -13,7 +13,7 @@ function createDatetimePrompt(validator, defaultLocale) {
             return internal_1.sendPrompt(context, prompt, speak);
         },
         recognize: function recognize(context) {
-            const request = context.request || {};
+            const request = context.activity || {};
             const utterance = request.text || '';
             const locale = request.locale || defaultLocale || 'en-us';
             const results = Recognizers.recognizeDateTime(utterance, locale);

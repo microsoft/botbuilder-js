@@ -31,7 +31,7 @@ class BotFrameworkAdapter extends botbuilder_core_1.BotAdapter {
         this.credentials = new botframework_connector_1.MicrosoftAppCredentials(this.settings.appId, this.settings.appPassword || '');
         this.credentialsProvider = new botframework_connector_1.SimpleCredentialProvider(this.credentials.appId, this.credentials.appPassword);
     }
-    processRequest(req, res, logic) {
+    processActivity(req, res, logic) {
         // Parse body of request
         let errorCode = 500;
         return parseRequest(req).then((request) => {
@@ -78,20 +78,21 @@ class BotFrameworkAdapter extends botbuilder_core_1.BotAdapter {
         });
     }
     continueConversation(reference, logic) {
-        const request = botbuilder_core_1.BotContext.applyConversationReference({}, reference, true);
+        const request = botbuilder_core_1.TurnContext.applyConversationReference({}, reference, true);
         const context = this.createContext(request);
         return this.runMiddleware(context, logic);
     }
-    startConversation(reference, logic) {
+    createConversation(reference, logic) {
         try {
             if (!reference.serviceUrl) {
-                throw new Error(`BotFrameworkAdapter.startConversation(): missing serviceUrl.`);
+                throw new Error(`BotFrameworkAdapter.createConversation(): missing serviceUrl.`);
             }
             // Create conversation
             const parameters = { bot: reference.bot };
-            return this.createConversation(reference.serviceUrl, parameters).then((response) => {
+            const client = this.createConnectorClient(reference.serviceUrl);
+            return client.conversations.createConversation(parameters).then((response) => {
                 // Initialize request and copy over new conversation ID and updated serviceUrl.
-                const request = botbuilder_core_1.BotContext.applyConversationReference({}, reference, true);
+                const request = botbuilder_core_1.TurnContext.applyConversationReference({}, reference, true);
                 request.conversation = { id: response.id };
                 if (response.serviceUrl) {
                     request.serviceUrl = response.serviceUrl;
@@ -105,7 +106,7 @@ class BotFrameworkAdapter extends botbuilder_core_1.BotAdapter {
             return Promise.reject(err);
         }
     }
-    sendActivity(activities) {
+    sendActivities(context, activities) {
         return new Promise((resolve, reject) => {
             const responses = [];
             const that = this;
@@ -158,7 +159,7 @@ class BotFrameworkAdapter extends botbuilder_core_1.BotAdapter {
             next(0);
         });
     }
-    updateActivity(activity) {
+    updateActivity(context, activity) {
         try {
             if (!activity.serviceUrl) {
                 throw new Error(`BotFrameworkAdapter.updateActivity(): missing serviceUrl`);
@@ -176,7 +177,7 @@ class BotFrameworkAdapter extends botbuilder_core_1.BotAdapter {
             return Promise.reject(err);
         }
     }
-    deleteActivity(reference) {
+    deleteActivity(context, reference) {
         try {
             if (!reference.serviceUrl) {
                 throw new Error(`BotFrameworkAdapter.deleteActivity(): missing serviceUrl`);
@@ -194,10 +195,6 @@ class BotFrameworkAdapter extends botbuilder_core_1.BotAdapter {
             return Promise.reject(err);
         }
     }
-    createConversation(serviceUrl, parameters) {
-        const client = this.createConnectorClient(serviceUrl);
-        return client.conversations.createConversation(parameters);
-    }
     authenticateRequest(request, authHeader) {
         return botframework_connector_1.JwtTokenValidation.assertValidActivity(request, authHeader, this.credentialsProvider);
     }
@@ -205,7 +202,7 @@ class BotFrameworkAdapter extends botbuilder_core_1.BotAdapter {
         return new botframework_connector_1.ConnectorClient(this.credentials, serviceUrl);
     }
     createContext(request) {
-        return new botbuilder_core_1.BotContext(this, request);
+        return new botbuilder_core_1.TurnContext(this, request);
     }
 }
 exports.BotFrameworkAdapter = BotFrameworkAdapter;

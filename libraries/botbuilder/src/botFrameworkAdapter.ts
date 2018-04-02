@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotAdapter, BotContext, Promiseable, ActivityTypes, Activity, ConversationReference, ResourceResponse, ConversationResourceResponse, ConversationParameters, ConversationAccount } from 'botbuilder-core';
+import { BotAdapter, TurnContext, Promiseable, ActivityTypes, Activity, ConversationReference, ResourceResponse, ConversationResourceResponse, ConversationParameters, ConversationAccount } from 'botbuilder-core';
 import { ConnectorClient, SimpleCredentialProvider, MicrosoftAppCredentials, JwtTokenValidation } from 'botframework-connector';
 
 /** 
@@ -71,7 +71,7 @@ export class BotFrameworkAdapter extends BotAdapter {
         this.credentialsProvider = new SimpleCredentialProvider(this.credentials.appId, this.credentials.appPassword);
     }
 
-    public processRequest(req: WebRequest, res: WebResponse, logic: (context: BotContext) => Promiseable<any>): Promise<void> {
+    public processActivity(req: WebRequest, res: WebResponse, logic: (context: TurnContext) => Promiseable<any>): Promise<void> {
         // Parse body of request
         let errorCode = 500;
         return parseRequest(req).then((request) => {
@@ -113,21 +113,22 @@ export class BotFrameworkAdapter extends BotAdapter {
         });
     }
 
-    public continueConversation(reference: Partial<ConversationReference>, logic: (context: BotContext) => Promiseable<void>): Promise<void> {
-        const request = BotContext.applyConversationReference({}, reference, true);
+    public continueConversation(reference: Partial<ConversationReference>, logic: (context: TurnContext) => Promiseable<void>): Promise<void> {
+        const request = TurnContext.applyConversationReference({}, reference, true);
         const context = this.createContext(request);
         return this.runMiddleware(context, logic as any);
     }
 
-    public startConversation(reference: Partial<ConversationReference>, logic: (context: BotContext) => Promiseable<void>): Promise<void> {
+    public createConversation(reference: Partial<ConversationReference>, logic: (context: TurnContext) => Promiseable<void>): Promise<void> {
         try {
-            if (!reference.serviceUrl) { throw new Error(`BotFrameworkAdapter.startConversation(): missing serviceUrl.`) }
+            if (!reference.serviceUrl) { throw new Error(`BotFrameworkAdapter.createConversation(): missing serviceUrl.`) }
             
             // Create conversation
-            const parameters: Partial<ConversationParameters> = { bot: reference.bot };
-            return this.createConversation(reference.serviceUrl, parameters).then((response) => {
+            const parameters = { bot: reference.bot } as ConversationParameters;
+            const client = this.createConnectorClient(reference.serviceUrl);
+            return client.conversations.createConversation(parameters).then((response) => {
                 // Initialize request and copy over new conversation ID and updated serviceUrl.
-                const request = BotContext.applyConversationReference({}, reference, true);
+                const request = TurnContext.applyConversationReference({}, reference, true);
                 request.conversation = { id: response.id } as ConversationAccount;
                 if (response.serviceUrl) { request.serviceUrl = response.serviceUrl }
 
@@ -140,7 +141,7 @@ export class BotFrameworkAdapter extends BotAdapter {
         }
     }
 
-    public sendActivity(activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
+    public sendActivities(context: TurnContext, activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
         return new Promise((resolve, reject) => {
             const responses: ResourceResponse[] = [];
             const that = this;
@@ -194,7 +195,7 @@ export class BotFrameworkAdapter extends BotAdapter {
         });
     }
 
-    public updateActivity(activity: Partial<Activity>): Promise<void> {
+    public updateActivity(context: TurnContext, activity: Partial<Activity>): Promise<void> {
         try {
             if (!activity.serviceUrl) { throw new Error(`BotFrameworkAdapter.updateActivity(): missing serviceUrl`) }
             if (!activity.conversation || !activity.conversation.id) { throw new Error(`BotFrameworkAdapter.updateActivity(): missing conversation or conversation.id`) }
@@ -210,7 +211,7 @@ export class BotFrameworkAdapter extends BotAdapter {
         }
     }
 
-    public deleteActivity(reference: Partial<ConversationReference>): Promise<void> {
+    public deleteActivity(context: TurnContext, reference: Partial<ConversationReference>): Promise<void> {
         try {
             if (!reference.serviceUrl) { throw new Error(`BotFrameworkAdapter.deleteActivity(): missing serviceUrl`) }
             if (!reference.conversation || !reference.conversation.id) { throw new Error(`BotFrameworkAdapter.deleteActivity(): missing conversation or conversation.id`) }
@@ -222,11 +223,6 @@ export class BotFrameworkAdapter extends BotAdapter {
         }
     }
 
-    public createConversation(serviceUrl: string, parameters: Partial<ConversationParameters>): Promise<ConversationResourceResponse> {
-        const client = this.createConnectorClient(serviceUrl);
-        return client.conversations.createConversation(parameters as ConversationParameters);
-    }
-
     protected authenticateRequest(request: Partial<Activity>, authHeader: string): Promise<void> {
         return JwtTokenValidation.assertValidActivity(request as Activity, authHeader, this.credentialsProvider);
     }
@@ -235,8 +231,8 @@ export class BotFrameworkAdapter extends BotAdapter {
         return new ConnectorClient(this.credentials, serviceUrl);
     }
 
-    protected createContext(request: Partial<Activity>): BotContext {
-        return new BotContext(this as any, request);
+    protected createContext(request: Partial<Activity>): TurnContext {
+        return new TurnContext(this as any, request);
     }
 }
 

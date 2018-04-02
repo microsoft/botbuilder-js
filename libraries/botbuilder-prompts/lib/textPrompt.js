@@ -11,7 +11,7 @@ function createTextPrompt(validator) {
             return internal_1.sendPrompt(context, prompt, speak);
         },
         recognize: function recognize(context) {
-            const value = context.request && context.request.text ? context.request.text : '';
+            const value = context.activity && context.activity.text ? context.activity.text : '';
             return Promise.resolve(validator ? validator(context, value) : value);
         }
     };

@@ -16,11 +16,11 @@ const prompts = require("botbuilder-prompts");
  * dialogs.add('datetimePrompt', new DatetimePrompt());
  *
  * dialogs.add('datetimeDemo', [
- *      function (dc) {
+ *      async function (dc) {
  *          return dc.prompt('datetimePrompt', `datetime: enter a datetime`);
  *      },
- *      function (dc, values) {
- *          dc.batch.reply(`Recognized values: ${JSON.stringify(values)}`);
+ *      async function (dc, values) {
+ *          await dc.context.sendActivity(`Recognized values: ${JSON.stringify(values)}`);
  *          return dc.end();
  *      }
  * ]);
@@ -33,7 +33,7 @@ class DatetimePrompt extends prompt_1.Prompt {
      * **Example usage:**
      *
      * ```JavaScript
-     * dialogs.add('timePrompt', new DatetimePrompt((dc, values) => {
+     * dialogs.add('timePrompt', new DatetimePrompt(async (context, values) => {
      *      try {
      *          if (!Array.isArray(values) || values.length < 0) { throw new Error('missing time') }
      *          if (values[0].type !== 'datetime') { throw new Error('unsupported type') }
@@ -41,13 +41,13 @@ class DatetimePrompt extends prompt_1.Prompt {
      *          if (value.getTime() < new Date().getTime()) { throw new Error('in the past') }
      *          return value;
      *      } catch (err) {
-     *          dc.batch.reply(`Invalid time. Answer with a time in the future like "tomorrow at 9am" or say "cancel".`);
+     *          await context.sendActivity(`Invalid time. Answer with a time in the future like "tomorrow at 9am" or say "cancel".`);
      *          return undefined;
      *      }
      * }));
      * ```
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
-     * @param defaultLocale (Optional) locale to use if `dc.context.request.locale` not specified. Defaults to a value of `en-us`.
+     * @param defaultLocale (Optional) locale to use if `dc.context.activity.locale` not specified. Defaults to a value of `en-us`.
      */
     constructor(validator, defaultLocale) {
         super(validator);

@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.  
  * Licensed under the MIT License.
  */
-import { Promiseable, Activity, BotContext } from 'botbuilder';
+import { Promiseable, Activity, TurnContext } from 'botbuilder';
 import { ChoiceFactory, ChoiceFactoryOptions, Choice } from 'botbuilder-choices';
 import { PromptValidator } from './textPrompt';
 import { sendPrompt } from './internal';
@@ -50,19 +50,19 @@ export interface ConfirmPrompt<O = boolean> {
      * @param prompt Text or activity to send as the prompt.
      * @param speak (Optional) SSML that should be spoken for prompt. The prompts `inputHint` will be automatically set to `expectingInput`.
      */
-    prompt(context: BotContext, prompt: string|Partial<Activity>, speak?: string): Promise<void>;
+    prompt(context: TurnContext, prompt: string|Partial<Activity>, speak?: string): Promise<void>;
 
     /**
      * Recognizes and validates the users reply.
      * @param context Context for the current turn of conversation.
      */
-    recognize(context: BotContext): Promise<O|undefined>;
+    recognize(context: TurnContext): Promise<O|undefined>;
 }
 
 /**
  * Creates a new prompt that asks the user to answer a yes/no question.
  * @param validator (Optional) validator for providing additional validation logic or customizing the prompt sent to the user when invalid.
- * @param defaultLocale (Optional) locale to use if `context.request.locale` not specified. Defaults to a value of `en-us`.
+ * @param defaultLocale (Optional) locale to use if `context.activity.locale` not specified. Defaults to a value of `en-us`.
  */
 export function createConfirmPrompt<O = boolean>(validator?: PromptValidator<O>, defaultLocale?: string): ConfirmPrompt<O> {
     return {
@@ -71,7 +71,7 @@ export function createConfirmPrompt<O = boolean>(validator?: PromptValidator<O>,
         choiceOptions: { includeNumbers: false },
         prompt: function prompt(context, prompt, speak) {
             // Get locale specific choices
-            let locale = context.request && context.request.locale ? context.request.locale.toLowerCase() : '*';
+            let locale = context.activity && context.activity.locale ? context.activity.locale.toLowerCase() : '*';
             if (!this.choices.hasOwnProperty(locale)) { locale = '*' }
             const choices = this.choices[locale];
 
@@ -103,7 +103,7 @@ export function createConfirmPrompt<O = boolean>(validator?: PromptValidator<O>,
             return sendPrompt(context, msg)
         },
         recognize: function recognize(context) {
-            const request = context.request || {};
+            const request = context.activity || {};
             const utterance = request.text || '';
             const locale =  request.locale || defaultLocale || 'en-us';
             const results = Recognizers.recognizeBoolean(utterance, locale);

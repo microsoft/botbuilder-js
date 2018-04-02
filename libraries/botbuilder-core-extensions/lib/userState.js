@@ -14,23 +14,25 @@ class UserState extends botState_1.BotState {
     /**
      * Creates a new UserState instance.
      * @param storage Storage provider to persist user state to.
+     * @param namespace (Optional) namespace to append to storage keys. Defaults to an empty string.
      */
-    constructor(storage) {
+    constructor(storage, namespace = '') {
         super(storage, (context) => {
             // Calculate storage key
             const key = this.getStorageKey(context);
             return key ? Promise.resolve(key) : Promise.reject(new Error(NO_KEY));
         });
+        this.namespace = namespace;
     }
     /**
      * Returns the storage key for the current user state.
      * @param context Context for current turn of conversation with the user.
      */
     getStorageKey(context) {
-        const req = context.request;
-        const channelId = req.channelId;
-        const userId = req && req.from && req.from.id ? req.from.id : undefined;
-        return channelId && userId ? `user/${channelId}/${userId}` : undefined;
+        const activity = context.activity;
+        const channelId = activity.channelId;
+        const userId = activity && activity.from && activity.from.id ? activity.from.id : undefined;
+        return channelId && userId ? `user/${channelId}/${userId}/${this.namespace}` : undefined;
     }
 }
 exports.UserState = UserState;

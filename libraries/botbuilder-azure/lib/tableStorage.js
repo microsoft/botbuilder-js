@@ -160,23 +160,23 @@ class TableStorage {
         const tableService = storageAccountOrConnectionString ? azure.createTableService(storageAccountOrConnectionString, storageAccessKey, host) : azure.createTableService();
         // create TableServiceAsync by using denodeify to create promise wrappers around cb functions
         return {
-            createTableIfNotExistsAsync: denodeify(tableService, tableService.createTableIfNotExists),
-            deleteTableIfExistsAsync: denodeify(tableService, tableService.deleteTableIfExists),
-            retrieveEntityAsync: denodeify(tableService, tableService.retrieveEntity),
-            insertOrReplaceEntityAsync: denodeify(tableService, tableService.insertOrReplaceEntity),
-            replaceEntityAsync: denodeify(tableService, tableService.replaceEntity),
-            deleteEntityAsync: denodeify(tableService, tableService.deleteEntity)
+            createTableIfNotExistsAsync: this.denodeify(tableService, tableService.createTableIfNotExists),
+            deleteTableIfExistsAsync: this.denodeify(tableService, tableService.deleteTableIfExists),
+            retrieveEntityAsync: this.denodeify(tableService, tableService.retrieveEntity),
+            insertOrReplaceEntityAsync: this.denodeify(tableService, tableService.insertOrReplaceEntity),
+            replaceEntityAsync: this.denodeify(tableService, tableService.replaceEntity),
+            deleteEntityAsync: this.denodeify(tableService, tableService.deleteEntity)
+        };
+    }
+    // turn a cb based azure method into a Promisified one
+    denodeify(thisArg, fn) {
+        return (...args) => {
+            return new Promise((resolve, reject) => {
+                args.push((error, result) => (error) ? reject(error) : resolve(result));
+                fn.apply(thisArg, args);
+            });
         };
     }
 }
 exports.TableStorage = TableStorage;
-// turn a cb based azure method into a Promisified one
-function denodeify(thisArg, fn) {
-    return (...args) => {
-        return new Promise((resolve, reject) => {
-            args.push((error, result) => (error) ? reject(error) : resolve(result));
-            fn.apply(thisArg, args);
-        });
-    };
-}
 //# sourceMappingURL=tableStorage.js.map

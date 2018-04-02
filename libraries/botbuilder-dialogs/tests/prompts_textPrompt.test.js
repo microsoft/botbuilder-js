@@ -1,4 +1,4 @@
-const { TestAdapter, BotContext } = require('botbuilder');
+const { TestAdapter, TurnContext } = require('botbuilder');
 const { DialogSet, TextPrompt } =  require('../');
 const assert = require('assert');
 
@@ -7,11 +7,11 @@ const continueMessage = { text: `continue`, type: 'message' };
 const shortMessage = { text: `a`, type: 'message' };
 const longMessage = { text: `abcdefg`, type: 'message' };
 
-class TestContext extends BotContext {
+class TestContext extends TurnContext {
     constructor(request) {
         super(new TestAdapter(), request);
         this.sent = undefined;
-        this.onSendActivity((context, activities, next) => {
+        this.onSendActivities((context, activities, next) => {
             this.sent = activities;
             context.responded = true;
         });
@@ -46,8 +46,8 @@ describe('prompts/TextPrompt', function() {
     
     it('should call TextPrompt with custom validator.', function (done) {
         const dialogs = new DialogSet();
-        dialogs.add('prompt', new TextPrompt((dc, value) => {
-            assert(dc);
+        dialogs.add('prompt', new TextPrompt((context, value) => {
+            assert(context);
             return value.length >= 3 ? value : undefined;
         }));
         dialogs.add('a', [
@@ -78,8 +78,8 @@ describe('prompts/TextPrompt', function() {
 
     it('should send custom retryPrompt.', function (done) {
         const dialogs = new DialogSet();
-        dialogs.add('prompt', new TextPrompt((dc, value) => {
-            assert(dc);
+        dialogs.add('prompt', new TextPrompt((context, value) => {
+            assert(context);
             return value.length >= 3 ? value : undefined;
         }));
         dialogs.add('a', [
@@ -110,10 +110,10 @@ describe('prompts/TextPrompt', function() {
 
     it('should send ignore retryPrompt if validator replies.', function (done) {
         const dialogs = new DialogSet();
-        dialogs.add('prompt', new TextPrompt((dc, value) => {
-            assert(dc);
+        dialogs.add('prompt', new TextPrompt((context, value) => {
+            assert(context);
             if (value.length < 3) {
-                return dc.context.sendActivity(`too short`);
+                return context.sendActivity(`too short`).then(() => undefined);
             }
             return value;
         }));
@@ -145,8 +145,8 @@ describe('prompts/TextPrompt', function() {
 
     it('should not send any retryPrompt no prompt specified.', function (done) {
         const dialogs = new DialogSet();
-        dialogs.add('prompt', new TextPrompt((dc, value) => {
-            assert(dc);
+        dialogs.add('prompt', new TextPrompt((context, value) => {
+            assert(context);
             return value.length >= 3 ? value : undefined;
         }));
         dialogs.add('a', [
@@ -174,5 +174,4 @@ describe('prompts/TextPrompt', function() {
             });
         });
     });
-    
 });

@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { BotContext } = require('botbuilder-core');
+const { TurnContext } = require('botbuilder-core');
 const { BotStateSet, TestAdapter } = require('../');
 
 const receivedMessage = { text: 'received', type: 'message' };
@@ -34,7 +34,7 @@ describe(`BotStateSet`, function () {
     this.timeout(5000);
 
     const adapter = new TestAdapter();
-    const context = new BotContext(adapter, receivedMessage);
+    const context = new TurnContext(adapter, receivedMessage);
     it(`should use() and call readAll() on a single BotState plugin.`, function (done) {
         const fooState = new BotStateMock({ foo: 'bar' });
         const set = new BotStateSet().use(fooState);
@@ -97,7 +97,7 @@ describe(`BotStateSet`, function () {
     it(`should work as a middleware plugin.`, function (done) {
         const fooState = new BotStateMock({ foo: 'bar' });
         const set = new BotStateSet().use(fooState);
-        set.onProcessRequest(context, () => Promise.resolve())
+        set.onTurn(context, () => Promise.resolve())
            .then(() => {
                 assert(fooState.readCalled, `readAll() not called.`);
                 assert(fooState.writeCalled, `writeAll() not called.`);
@@ -108,7 +108,7 @@ describe(`BotStateSet`, function () {
     it(`should support plugins passed to constructor.`, function (done) {
         const fooState = new BotStateMock({ foo: 'bar' });
         const set = new BotStateSet(fooState);
-        set.onProcessRequest(context, () => Promise.resolve())
+        set.onTurn(context, () => Promise.resolve())
            .then(() => {
                 assert(fooState.readCalled, `readAll() not called.`);
                 assert(fooState.writeCalled, `writeAll() not called.`);

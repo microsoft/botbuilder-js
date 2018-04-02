@@ -22,7 +22,7 @@ var ListStyle;
 /**
  * Creates a new prompt that asks the user to select from a list of choices.
  * @param validator (Optional) validator for providing additional validation logic or customizing the prompt sent to the user when invalid.
- * @param defaultLocale (Optional) locale to use if `context.request.locale` not specified. Defaults to a value of `en-us`.
+ * @param defaultLocale (Optional) locale to use if `context.activity.locale` not specified. Defaults to a value of `en-us`.
  */
 function createChoicePrompt(validator, defaultLocale) {
     return {
@@ -63,13 +63,13 @@ function createChoicePrompt(validator, defaultLocale) {
             return internal_1.sendPrompt(context, msg);
         },
         recognize: function recognize(context, choices) {
-            const request = context.request || {};
+            const request = context.activity || {};
             const utterance = request.text || '';
             const options = Object.assign({}, this.recognizerOptions);
             options.locale = request.locale || this.recognizerOptions.locale || defaultLocale || 'en-us';
             const results = botbuilder_choices_1.recognizeChoices(utterance, choices, options);
             const value = results.length > 0 ? results[0].resolution : undefined;
-            return Promise.resolve(validator ? validator(context, value, choices) : value);
+            return Promise.resolve(validator ? validator(context, value) : value);
         }
     };
 }

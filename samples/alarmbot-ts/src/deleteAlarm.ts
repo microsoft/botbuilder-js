@@ -1,8 +1,8 @@
-import { BotContext } from 'botbuilder';
+import { TurnContext } from 'botbuilder';
 import { BotStateManager } from './botStateManager';
 import { renderAlarms } from './showAlarms';
 
-export async function begin(context: BotContext, state: BotStateManager): Promise<any> {
+export async function begin(context: TurnContext, state: BotStateManager): Promise<any> {
     // Delete any existing topic
     const conversation = state.conversation(context);
     conversation.topic = undefined;
@@ -16,10 +16,10 @@ export async function begin(context: BotContext, state: BotStateManager): Promis
     }
 }
 
-export async function routeReply(context: BotContext, state: BotStateManager): Promise<any> {
+export async function routeReply(context: TurnContext, state: BotStateManager): Promise<any> {
     // Validate users reply and delete alarm
     let deleted = false;
-    const title = context.request.text.trim();
+    const title = context.activity.text.trim();
     const user = state.user(context);
     for (let i = 0; i < user.alarms.length; i++) {
         if (user.alarms[i].title.toLowerCase() === title.toLowerCase()) {

@@ -5,9 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotContext } from 'botbuilder';
+import { TurnContext } from 'botbuilder';
+import { PromptValidator } from 'botbuilder-prompts';
 import { DialogContext } from '../dialogContext';
-import { Prompt, PromptOptions, PromptValidator } from './prompt';
+import { Prompt, PromptOptions } from './prompt';
 import * as prompts from 'botbuilder-prompts';
 /** Additional options that can be used to configure a `ChoicePrompt`. */
 export interface ChoicePromptOptions extends PromptOptions {
@@ -28,17 +29,17 @@ export interface ChoicePromptOptions extends PromptOptions {
  * dialogs.add('choicePrompt', new ChoicePrompt());
  *
  * dialogs.add('choiceDemo', [
- *      function (dc) {
+ *      async function (dc) {
  *          return dc.prompt('choicePrompt', `choice: select a color`, ['red', 'green', 'blue']);
  *      },
- *      function (dc, choice) {
- *          dc.batch.reply(`Recognized choice: ${JSON.stringify(choice)}`);
+ *      async function (dc, choice) {
+ *          await dc.context.sendActivity(`Recognized choice: ${JSON.stringify(choice)}`);
  *          return dc.end();
  *      }
  * ]);
  * ```
  */
-export declare class ChoicePrompt<C extends BotContext> extends Prompt<C, prompts.FoundChoice> {
+export declare class ChoicePrompt<C extends TurnContext, O = prompts.FoundChoice> extends Prompt<C> {
     private prompt;
     /**
      * Creates a new instance of the prompt.
@@ -46,12 +47,19 @@ export declare class ChoicePrompt<C extends BotContext> extends Prompt<C, prompt
      * **Example usage:**
      *
      * ```JavaScript
-     * dialogs.add('choicePrompt', new ChoicePrompt());
+     * dialogs.add('choicePrompt', new ChoicePrompt(async (context, value) => {
+     *      if (value === undefined) {
+     *          await context.sendActivity(`I didn't recognize your choice. Please select from the choices on the list.`);
+     *          return undefined;
+     *      } else {
+     *          return value;
+     *      }
+     * }));
      * ```
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
-     * @param defaultLocale (Optional) locale to use if `dc.context.request.locale` not specified. Defaults to a value of `en-us`.
+     * @param defaultLocale (Optional) locale to use if `dc.context.activity.locale` not specified. Defaults to a value of `en-us`.
      */
-    constructor(validator?: PromptValidator<C, prompts.FoundChoice>, defaultLocale?: string);
+    constructor(validator?: PromptValidator<prompts.FoundChoice, O>, defaultLocale?: string);
     /**
      * Sets additional options passed to the `ChoiceFactory` and used to tweak the style of choices
      * rendered to the user.
@@ -69,5 +77,5 @@ export declare class ChoicePrompt<C extends BotContext> extends Prompt<C, prompt
      */
     style(listStyle: prompts.ListStyle): this;
     protected onPrompt(dc: DialogContext<C>, options: ChoicePromptOptions, isRetry: boolean): Promise<void>;
-    protected onRecognize(dc: DialogContext<C>, options: ChoicePromptOptions): Promise<prompts.FoundChoice | undefined>;
+    protected onRecognize(dc: DialogContext<C>, options: ChoicePromptOptions): Promise<O | undefined>;
 }

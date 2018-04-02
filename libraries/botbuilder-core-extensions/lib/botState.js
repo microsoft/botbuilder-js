@@ -19,7 +19,7 @@ class BotState {
         this.storageKey = storageKey;
         this.stateKey = Symbol('state');
     }
-    onProcessRequest(context, next) {
+    onTurn(context, next) {
         // Read in state, continue execution, and then flush changes on completion of turn.
         return this.read(context, true)
             .then(() => next())
@@ -31,13 +31,13 @@ class BotState {
      * @param force (Optional) If `true` the cache will be bypassed and the state will always be read in directly from storage. Defaults to `false`.
      */
     read(context, force = false) {
-        const cached = context.get(this.stateKey);
+        const cached = context.services.get(this.stateKey);
         if (force || !cached || !cached.state) {
             return Promise.resolve(this.storageKey(context)).then((key) => {
                 return this.storage.read([key]).then((items) => {
                     const state = items[key] || {};
                     const hash = storage_1.calculateChangeHash(state);
-                    context.set(this.stateKey, { state: state, hash: hash });
+                    context.services.set(this.stateKey, { state: state, hash: hash });
                     return state;
                 });
             });
@@ -50,7 +50,7 @@ class BotState {
      * @param force (Optional) if `true` the state will always be written out regardless of its change state. Defaults to `false`.
      */
     write(context, force = false) {
-        let cached = context.get(this.stateKey);
+        let cached = context.services.get(this.stateKey);
         if (force || (cached && cached.hash !== storage_1.calculateChangeHash(cached.state))) {
             return Promise.resolve(this.storageKey(context)).then((key) => {
                 if (!cached) {
@@ -62,7 +62,7 @@ class BotState {
                 return this.storage.write(changes).then(() => {
                     // Update change hash and cache
                     cached.hash = storage_1.calculateChangeHash(cached.state);
-                    context.set(this.stateKey, cached);
+                    context.services.set(this.stateKey, cached);
                 });
             });
         }
@@ -74,10 +74,10 @@ class BotState {
      */
     clear(context) {
         // We leave the change hash un-touched which will force the cleared state changes to get persisted.
-        const cached = context.get(this.stateKey);
+        const cached = context.services.get(this.stateKey);
         if (cached) {
             cached.state = {};
-            context.set(this.stateKey, cached);
+            context.services.set(this.stateKey, cached);
         }
     }
     /**
@@ -85,7 +85,7 @@ class BotState {
      * @param context Context for current turn of conversation with the user.
      */
     get(context) {
-        const cached = context.get(this.stateKey);
+        const cached = context.services.get(this.stateKey);
         return typeof cached === 'object' && typeof cached.state === 'object' ? cached.state : undefined;
     }
 }

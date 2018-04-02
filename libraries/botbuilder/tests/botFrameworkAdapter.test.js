@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { BotContext } = require('botbuilder-core');
+const { TurnContext } = require('botbuilder-core');
 const { BotFrameworkAdapter } = require('../');
 
 const reference = { 
@@ -10,9 +10,9 @@ const reference = {
     bot: { id: 'bot', name: 'Bot Name' },
     conversation: { id: 'convo1' }   
 };
-const incomingMessage = BotContext.applyConversationReference({ text: 'test', type: 'message' }, reference, true);
-const outgoingMessage = BotContext.applyConversationReference({ text: 'test', type: 'message' }, reference);
-const incomingInvoke = BotContext.applyConversationReference({ type: 'invoke' }, reference, true);
+const incomingMessage = TurnContext.applyConversationReference({ text: 'test', type: 'message' }, reference, true);
+const outgoingMessage = TurnContext.applyConversationReference({ text: 'test', type: 'message' }, reference);
+const incomingInvoke = TurnContext.applyConversationReference({ type: 'invoke' }, reference, true);
 
 class AdapterUnderTest extends BotFrameworkAdapter {
     constructor(settings) {
@@ -153,12 +153,12 @@ describe(`BotFrameworkAdapter`, function () {
         done();
     });
     
-    it(`should processRequest().`, function (done) {
+    it(`should processActivity().`, function (done) {
         let called = false;
         const req = new MockRequest(incomingMessage);
         const res = new MockResponse();
         const adapter = new AdapterUnderTest();
-        adapter.processRequest(req, res, (context) => {
+        adapter.processActivity(req, res, (context) => {
             assert(context, `context not passed.`);
             called = true;
         }).then(() => {
@@ -168,12 +168,12 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should processRequest() sent as body.`, function (done) {
+    it(`should processActivity() sent as body.`, function (done) {
         let called = false;
         const req = new MockBodyRequest(incomingMessage);
         const res = new MockResponse();
         const adapter = new AdapterUnderTest();
-        adapter.processRequest(req, res, (context) => {
+        adapter.processActivity(req, res, (context) => {
             assert(context, `context not passed.`);
             called = true;
         }).then(() => {
@@ -183,11 +183,11 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should reject a bogus request sent to processRequest().`, function (done) {
+    it(`should reject a bogus request sent to processActivity().`, function (done) {
         const req = new MockRequest('bogus');
         const res = new MockResponse();
         const adapter = new AdapterUnderTest();
-        adapter.processRequest(req, res, (context) => {
+        adapter.processActivity(req, res, (context) => {
             assert(false, `shouldn't have called bot logic.`);
         }).then(() => {
             assert(false, `shouldn't have passed.`);
@@ -198,11 +198,11 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should reject a request without activity type sent to processRequest().`, function (done) {
+    it(`should reject a request without activity type sent to processActivity().`, function (done) {
         const req = new MockBodyRequest({ text: 'foo' });
         const res = new MockResponse();
         const adapter = new AdapterUnderTest();
-        adapter.processRequest(req, res, (context) => {
+        adapter.processActivity(req, res, (context) => {
             assert(false, `shouldn't have called bot logic.`);
         }).then(() => {
             assert(false, `shouldn't have passed.`);
@@ -213,12 +213,12 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should fail to auth on call to processRequest().`, function (done) {
+    it(`should fail to auth on call to processActivity().`, function (done) {
         const req = new MockRequest(incomingMessage);
         const res = new MockResponse();
         const adapter = new AdapterUnderTest();
         adapter.failAuth = true;
-        adapter.processRequest(req, res, (context) => {
+        adapter.processActivity(req, res, (context) => {
             assert(false, `shouldn't have called bot logic.`);
         }).then(() => {
             assert(false, `shouldn't have passed.`);
@@ -229,11 +229,11 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should return 500 error on bot logic exception during processRequest().`, function (done) {
+    it(`should return 500 error on bot logic exception during processActivity().`, function (done) {
         const req = new MockRequest(incomingMessage);
         const res = new MockResponse();
         const adapter = new AdapterUnderTest();
-        adapter.processRequest(req, res, (context) => {
+        adapter.processActivity(req, res, (context) => {
             throw new Error(`bot exception`);
         }).then(() => {
             assert(false, `shouldn't have passed.`);
@@ -249,10 +249,10 @@ describe(`BotFrameworkAdapter`, function () {
         const adapter = new AdapterUnderTest();
         adapter.continueConversation(reference, (context) => {
             assert(context, `context not passed.`);
-            assert(context.request, `context has no request.`);
-            assert(context.request.type === undefined, `request has invalid type.`);
-            assert(context.request.from && context.request.from.id === reference.user.id, `request has invalid from.id.`);
-            assert(context.request.recipient && context.request.recipient.id === reference.bot.id, `request has invalid recipient.id.`);
+            assert(context.activity, `context has no request.`);
+            assert(context.activity.type === undefined, `request has invalid type.`);
+            assert(context.activity.from && context.activity.from.id === reference.user.id, `request has invalid from.id.`);
+            assert(context.activity.recipient && context.activity.recipient.id === reference.bot.id, `request has invalid recipient.id.`);
             called = true;
         }).then(() => {
             assert(called, `bot logic not called.`);
@@ -260,13 +260,13 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should startConversation().`, function (done) {
+    it(`should createConversation().`, function (done) {
         let called = false;
         const adapter = new AdapterUnderTest();
-        adapter.startConversation(reference, (context) => {
+        adapter.createConversation(reference, (context) => {
             assert(context, `context not passed.`);
-            assert(context.request, `context has no request.`);
-            assert(context.request.conversation && context.request.conversation.id === 'convo2', `request has invalid conversation.id.`);
+            assert(context.activity, `context has no request.`);
+            assert(context.activity.conversation && context.activity.conversation.id === 'convo2', `request has invalid conversation.id.`);
             called = true;
         }).then(() => {
             assert(called, `bot logic not called.`);
@@ -274,15 +274,15 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should startConversation() and assign new serviceUrl.`, function (done) {
+    it(`should createConversation() and assign new serviceUrl.`, function (done) {
         let called = false;
         const adapter = new AdapterUnderTest();
         adapter.newServiceUrl = 'https://example.org/channel2';
-        adapter.startConversation(reference, (context) => {
+        adapter.createConversation(reference, (context) => {
             assert(context, `context not passed.`);
-            assert(context.request, `context has no request.`);
-            assert(context.request.conversation && context.request.conversation.id === 'convo2', `request has invalid conversation.id.`);
-            assert(context.request.serviceUrl === 'https://example.org/channel2', `request has invalid conversation.id.`);
+            assert(context.activity, `context has no request.`);
+            assert(context.activity.conversation && context.activity.conversation.id === 'convo2', `request has invalid conversation.id.`);
+            assert(context.activity.serviceUrl === 'https://example.org/channel2', `request has invalid conversation.id.`);
             called = true;
         }).then(() => {
             assert(called, `bot logic not called.`);
@@ -290,11 +290,11 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
     
-    it(`should fail to startConversation() if serviceUrl missing.`, function (done) {
+    it(`should fail to createConversation() if serviceUrl missing.`, function (done) {
         const adapter = new AdapterUnderTest();
         const bogus = Object.assign({}, reference);
         delete bogus.serviceUrl;
-        adapter.startConversation(bogus, (context) => {
+        adapter.createConversation(bogus, (context) => {
             assert(false, `bot logic shouldn't be called.`);
         }).then(() => {
             assert(false, `shouldn't have passed.`);
@@ -304,9 +304,10 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should deliver a single activity using sendActivity().`, function (done) {
+    it(`should deliver a single activity using sendActivities().`, function (done) {
         const adapter = new AdapterUnderTest();
-        adapter.sendActivity([outgoingMessage]).then((responses) => {
+        const context = new TurnContext(adapter, incomingMessage);
+        adapter.sendActivities(context, [outgoingMessage]).then((responses) => {
             assert(Array.isArray(responses), `array of responses not returned.`);
             assert(responses.length === 1, `invalid number of responses returned.`);
             assert(responses[0].id === '5678', `invalid response returned.`);
@@ -314,19 +315,21 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should deliver multiple activities using sendActivity().`, function (done) {
+    it(`should deliver multiple activities using sendActivities().`, function (done) {
         const adapter = new AdapterUnderTest();
-        adapter.sendActivity([outgoingMessage, outgoingMessage]).then((responses) => {
+        const context = new TurnContext(adapter, incomingMessage);
+        adapter.sendActivities(context, [outgoingMessage, outgoingMessage]).then((responses) => {
             assert(Array.isArray(responses), `array of responses not returned.`);
             assert(responses.length === 2, `invalid number of responses returned.`);
             done();
         });
     });
 
-    it(`should wait for a 'delay' using sendActivity().`, function (done) {
+    it(`should wait for a 'delay' using sendActivities().`, function (done) {
         const start = new Date().getTime();
         const adapter = new AdapterUnderTest();
-        adapter.sendActivity([outgoingMessage, { type: 'delay', value: 600 }, outgoingMessage]).then((responses) => {
+        const context = new TurnContext(adapter, incomingMessage);
+        adapter.sendActivities(context, [outgoingMessage, { type: 'delay', value: 600 }, outgoingMessage]).then((responses) => {
             const end = new Date().getTime();
             assert(Array.isArray(responses), `array of responses not returned.`);
             assert(responses.length === 3, `invalid number of responses returned.`);
@@ -335,10 +338,11 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should wait for a 'delay' withut a value using sendActivity().`, function (done) {
+    it(`should wait for a 'delay' withut a value using sendActivities().`, function (done) {
         const start = new Date().getTime();
         const adapter = new AdapterUnderTest();
-        adapter.sendActivity([outgoingMessage, { type: 'delay' }, outgoingMessage]).then((responses) => {
+        const context = new TurnContext(adapter, incomingMessage);
+        adapter.sendActivities(context, [outgoingMessage, { type: 'delay' }, outgoingMessage]).then((responses) => {
             const end = new Date().getTime();
             assert(Array.isArray(responses), `array of responses not returned.`);
             assert(responses.length === 3, `invalid number of responses returned.`);
@@ -351,7 +355,19 @@ describe(`BotFrameworkAdapter`, function () {
         const req = new MockRequest(incomingInvoke);
         const res = new MockResponse();
         const adapter = new AdapterUnderTest();
-        adapter.processRequest(req, res, (context) => {
+        adapter.processActivity(req, res, (context) => {
+            return context.sendActivity({ type: 'invokeResponse', value: { status: 200, body: 'body' }})
+        }).then(() => {
+            assertResponse(res, 200, true);
+            done();
+        });
+    });
+
+    it(`should return 500 error if bot fails to return an 'invokeResponse'.`, function (done) {
+        const req = new MockRequest(incomingInvoke);
+        const res = new MockResponse();
+        const adapter = new AdapterUnderTest();
+        adapter.processActivity(req, res, (context) => {
             // don't return anything
         }).then(() => {
             assert(false, `shouldn't have passed.`);
@@ -362,23 +378,12 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should return 500 error if bot fails to return an 'invokeResponse'.`, function (done) {
-        const req = new MockRequest(incomingInvoke);
-        const res = new MockResponse();
+    it(`should fail to sendActivities().`, function (done) {
         const adapter = new AdapterUnderTest();
-        adapter.processRequest(req, res, (context) => {
-            return context.sendActivity({ type: 'invokeResponse', value: { status: 200, body: 'body' }})
-        }).then(() => {
-            assertResponse(res, 200, true);
-            done();
-        });
-    });
-
-    it(`should fail to sendActivity().`, function (done) {
-        const adapter = new AdapterUnderTest();
+        const context = new TurnContext(adapter, incomingMessage);
         adapter.failOperation = true;
         const cpy = Object.assign({}, outgoingMessage);
-        adapter.sendActivity([cpy]).then((responses) => {
+        adapter.sendActivities(context, [cpy]).then((responses) => {
             assert(false, `shouldn't succeed`);
         }, (err) => {
             assert(err, `error not returned.`);
@@ -386,10 +391,11 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should fail to sendActivity() without a serviceUrl.`, function (done) {
+    it(`should fail to sendActivities() without a serviceUrl.`, function (done) {
         const adapter = new AdapterUnderTest();
+        const context = new TurnContext(adapter, incomingMessage);
         const cpy = Object.assign({}, outgoingMessage, { serviceUrl: undefined });
-        adapter.sendActivity([cpy]).then((responses) => {
+        adapter.sendActivities(context, [cpy]).then((responses) => {
             assert(false, `shouldn't succeed`);
         }, (err) => {
             assert(err, `error not returned.`);
@@ -397,10 +403,11 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should fail to sendActivity() without a conversation.id.`, function (done) {
+    it(`should fail to sendActivities() without a conversation.id.`, function (done) {
         const adapter = new AdapterUnderTest();
+        const context = new TurnContext(adapter, incomingMessage);
         const cpy = Object.assign({}, outgoingMessage, { conversation: undefined });
-        adapter.sendActivity([cpy]).then((responses) => {
+        adapter.sendActivities(context, [cpy]).then((responses) => {
             assert(false, `shouldn't succeed`);
         }, (err) => {
             assert(err, `error not returned.`);
@@ -408,10 +415,11 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should post to a whole conversation using sendActivity() if replyToId missing.`, function (done) {
+    it(`should post to a whole conversation using sendActivities() if replyToId missing.`, function (done) {
         const adapter = new AdapterUnderTest();
+        const context = new TurnContext(adapter, incomingMessage);
         const cpy = Object.assign({}, outgoingMessage, { replyToId: undefined });
-        adapter.sendActivity([cpy]).then((responses) => {
+        adapter.sendActivities(context, [cpy]).then((responses) => {
             assert(Array.isArray(responses), `array of responses not returned.`);
             assert(responses.length === 1, `invalid number of responses returned.`);
             assert(responses[0].id === '5678', `invalid response returned.`);
@@ -421,13 +429,15 @@ describe(`BotFrameworkAdapter`, function () {
 
     it(`should updateActivity().`, function (done) {
         const adapter = new AdapterUnderTest();
-        adapter.updateActivity(incomingMessage).then(() => done());
+        const context = new TurnContext(adapter, incomingMessage);
+        adapter.updateActivity(context, incomingMessage).then(() => done());
     });
 
     it(`should fail to updateActivity() if serviceUrl missing.`, function (done) {
         const adapter = new AdapterUnderTest();
+        const context = new TurnContext(adapter, incomingMessage);
         const cpy = Object.assign({}, incomingMessage, { serviceUrl: undefined });
-        adapter.updateActivity(cpy).then((responses) => {
+        adapter.updateActivity(context, cpy).then((responses) => {
             assert(false, `shouldn't succeed`);
         }, (err) => {
             assert(err, `error not returned.`);
@@ -437,8 +447,9 @@ describe(`BotFrameworkAdapter`, function () {
 
     it(`should fail to updateActivity() if conversation missing.`, function (done) {
         const adapter = new AdapterUnderTest();
+        const context = new TurnContext(adapter, incomingMessage);
         const cpy = Object.assign({}, incomingMessage, { conversation: undefined });
-        adapter.updateActivity(cpy).then((responses) => {
+        adapter.updateActivity(context, cpy).then((responses) => {
             assert(false, `shouldn't succeed`);
         }, (err) => {
             assert(err, `error not returned.`);
@@ -448,8 +459,9 @@ describe(`BotFrameworkAdapter`, function () {
 
     it(`should fail to updateActivity() if activity.id missing.`, function (done) {
         const adapter = new AdapterUnderTest();
+        const context = new TurnContext(adapter, incomingMessage);
         const cpy = Object.assign({}, incomingMessage, { id: undefined });
-        adapter.updateActivity(cpy).then((responses) => {
+        adapter.updateActivity(context, cpy).then((responses) => {
             assert(false, `shouldn't succeed`);
         }, (err) => {
             assert(err, `error not returned.`);
@@ -459,13 +471,15 @@ describe(`BotFrameworkAdapter`, function () {
 
     it(`should deleteActivity().`, function (done) {
         const adapter = new AdapterUnderTest();
-        adapter.deleteActivity(reference).then(() => done());
+        const context = new TurnContext(adapter, incomingMessage);
+        adapter.deleteActivity(context, reference).then(() => done());
     });
 
     it(`should fail to deleteActivity() if serviceUrl missing.`, function (done) {
         const adapter = new AdapterUnderTest();
+        const context = new TurnContext(adapter, incomingMessage);
         const cpy = Object.assign({}, reference, { serviceUrl: undefined });
-        adapter.deleteActivity(cpy).then((responses) => {
+        adapter.deleteActivity(context, cpy).then((responses) => {
             assert(false, `shouldn't succeed`);
         }, (err) => {
             assert(err, `error not returned.`);
@@ -475,8 +489,9 @@ describe(`BotFrameworkAdapter`, function () {
 
     it(`should fail to deleteActivity() if conversation missing.`, function (done) {
         const adapter = new AdapterUnderTest();
+        const context = new TurnContext(adapter, incomingMessage);
         const cpy = Object.assign({}, reference, { conversation: undefined });
-        adapter.deleteActivity(cpy).then((responses) => {
+        adapter.deleteActivity(context, cpy).then((responses) => {
             assert(false, `shouldn't succeed`);
         }, (err) => {
             assert(err, `error not returned.`);
@@ -486,8 +501,9 @@ describe(`BotFrameworkAdapter`, function () {
 
     it(`should fail to deleteActivity() if activityId missing.`, function (done) {
         const adapter = new AdapterUnderTest();
+        const context = new TurnContext(adapter, incomingMessage);
         const cpy = Object.assign({}, reference, { activityId: undefined });
-        adapter.deleteActivity(cpy).then((responses) => {
+        adapter.deleteActivity(context, cpy).then((responses) => {
             assert(false, `shouldn't succeed`);
         }, (err) => {
             assert(err, `error not returned.`);

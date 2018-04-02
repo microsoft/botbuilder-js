@@ -59,6 +59,7 @@ export declare class TableStorage implements Storage {
      **/
     delete(keys: string[]): Promise<void>;
     protected createTableService(storageAccountOrConnectionString: string, storageAccessKey: string, host: any): TableServiceAsync;
+    private denodeify<T>(thisArg, fn);
 }
 export interface TableServiceAsync extends azure.TableService {
     createTableIfNotExistsAsync(table: string): Promise<azure.TableService.TableResult>;

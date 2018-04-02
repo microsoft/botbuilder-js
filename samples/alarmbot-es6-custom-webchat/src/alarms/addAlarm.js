@@ -7,7 +7,7 @@ export function begin(context) {
 
 export function routeReply(context) {
     // Handle users reply to prompt
-    const utterance = context.request.text.trim();
+    const utterance = context.activity.text.trim();
     switch (context.state.conversation.prompt) {
         case 'title':
             // Validate reply and save to alarm

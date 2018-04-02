@@ -28,7 +28,7 @@ function routeReply(context, state) {
     return __awaiter(this, void 0, void 0, function* () {
         // Validate users reply and delete alarm
         let deleted = false;
-        const title = context.request.text.trim();
+        const title = context.activity.text.trim();
         const user = state.user(context);
         for (let i = 0; i < user.alarms.length; i++) {
             if (user.alarms[i].title.toLowerCase() === title.toLowerCase()) {

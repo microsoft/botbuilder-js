@@ -9,4 +9,4 @@ export * from './dialog';
 export * from './dialogContext';
 export * from './dialogSet';
 export * from './waterfall';
-export { FoundChoice, Choice, ChoiceFactoryOptions, FoundDatetime, FindChoicesOptions, ListStyle } from 'botbuilder-prompts';
+export { FoundChoice, Choice, ChoiceFactoryOptions, FoundDatetime, FindChoicesOptions, ListStyle, PromptValidator } from 'botbuilder-prompts';

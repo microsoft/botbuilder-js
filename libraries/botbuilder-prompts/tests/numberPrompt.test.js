@@ -1,12 +1,12 @@
 const assert = require('assert');
-const { BotContext, TestAdapter } = require('botbuilder');
+const { TurnContext, TestAdapter } = require('botbuilder');
 const { createNumberPrompt } = require('../lib');
 
-class TestContext extends BotContext {
+class TestContext extends TurnContext {
     constructor(request) {
         super(new TestAdapter(), request);
         this.sent = undefined;
-        this.onSendActivity((context, activities, next) => {
+        this.onSendActivities((context, activities, next) => {
             this.sent = activities;
         });
     }

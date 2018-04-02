@@ -37,8 +37,8 @@ function getUserLanguage(context) {
 function setUserLanguage(context) {
     return __awaiter(this, void 0, void 0, function* () {
         let state = conversationState.get(context);
-        if (context.request.text.toLowerCase().startsWith('set my language to')) {
-            state.language = context.request.text.toLowerCase().replace('set my language to', '').trim();
+        if (context.activity.text.toLowerCase().startsWith('set my language to')) {
+            state.language = context.activity.text.toLowerCase().replace('set my language to', '').trim();
             yield context.sendActivity(`Setting your language to ${state.language}`);
             return Promise.resolve(true);
         }
@@ -60,8 +60,8 @@ function getUserLocale(context) {
 function setUserLocale(context) {
     return __awaiter(this, void 0, void 0, function* () {
         let state = conversationState.get(context);
-        if (context.request.text.toLowerCase().startsWith('set my locale to')) {
-            state.locale = context.request.text.toLowerCase().replace('set my locale to', '').trim();
+        if (context.activity.text.toLowerCase().startsWith('set my locale to')) {
+            state.locale = context.activity.text.toLowerCase().replace('set my locale to', '').trim();
             yield context.sendActivity(`Setting your locale to ${state.locale}`);
             return Promise.resolve(true);
         }
@@ -95,9 +95,9 @@ adapter.use(qnaMaker);
 // Listen for incoming requests 
 server.post('/api/messages', (req, res) => {
     // Route received request to adapter for processing
-    adapter.processRequest(req, res, (context) => __awaiter(this, void 0, void 0, function* () {
-        if (context.request.type != 'message') {
-            yield context.sendActivity(`[${context.request.type} event detected]`);
+    adapter.processActivity(req, res, (context) => __awaiter(this, void 0, void 0, function* () {
+        if (context.activity.type != 'message') {
+            yield context.sendActivity(`[${context.activity.type} event detected]`);
         }
     }));
 });

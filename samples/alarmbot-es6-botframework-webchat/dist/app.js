@@ -61,7 +61,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "e3c6ebea458dd94d2510"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "7cbbf5b4fa6d00323a10"; // eslint-disable-line no-unused-vars
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
@@ -726,3394 +726,6 @@
 /******/ })
 /************************************************************************/
 /******/ ({
-
-/***/ "../../libraries/botbuilder-schema/lib/index.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-/**
- * @module botbuilder-schema
- */
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * Defines values for ActivityTypes.
- * Possible values include: 'message', 'contactRelationUpdate',
- * 'conversationUpdate', 'typing', 'ping', 'endOfConversation', 'event',
- * 'invoke', 'deleteUserData', 'messageUpdate', 'messageDelete',
- * 'installationUpdate', 'messageReaction', 'suggestion'
- * There could be more values for this enum apart from the ones defined here.If
- * you want to set a value that is not from the known values then you can do
- * the following:
- * let param: ActivityTypes =
- * <ActivityTypes>"someUnknownValueThatWillStillBeValid";
- * @readonly
- * @enum {string}
- */
-var ActivityTypes;
-(function (ActivityTypes) {
-    ActivityTypes["Message"] = "message";
-    ActivityTypes["ContactRelationUpdate"] = "contactRelationUpdate";
-    ActivityTypes["ConversationUpdate"] = "conversationUpdate";
-    ActivityTypes["Typing"] = "typing";
-    ActivityTypes["Ping"] = "ping";
-    ActivityTypes["EndOfConversation"] = "endOfConversation";
-    ActivityTypes["Event"] = "event";
-    ActivityTypes["Invoke"] = "invoke";
-    ActivityTypes["DeleteUserData"] = "deleteUserData";
-    ActivityTypes["MessageUpdate"] = "messageUpdate";
-    ActivityTypes["MessageDelete"] = "messageDelete";
-    ActivityTypes["InstallationUpdate"] = "installationUpdate";
-    ActivityTypes["MessageReaction"] = "messageReaction";
-    ActivityTypes["Suggestion"] = "suggestion";
-})(ActivityTypes = exports.ActivityTypes || (exports.ActivityTypes = {}));
-/**
- * Defines values for TextFormatTypes.
- * Possible values include: 'markdown', 'plain', 'xml'
- * There could be more values for this enum apart from the ones defined here.If
- * you want to set a value that is not from the known values then you can do
- * the following:
- * let param: TextFormatTypes =
- * <TextFormatTypes>"someUnknownValueThatWillStillBeValid";
- * @readonly
- * @enum {string}
- */
-var TextFormatTypes;
-(function (TextFormatTypes) {
-    TextFormatTypes["Markdown"] = "markdown";
-    TextFormatTypes["Plain"] = "plain";
-    TextFormatTypes["Xml"] = "xml";
-})(TextFormatTypes = exports.TextFormatTypes || (exports.TextFormatTypes = {}));
-/**
- * Defines values for AttachmentLayoutTypes.
- * Possible values include: 'list', 'carousel'
- * There could be more values for this enum apart from the ones defined here.If
- * you want to set a value that is not from the known values then you can do
- * the following:
- * let param: AttachmentLayoutTypes =
- * <AttachmentLayoutTypes>"someUnknownValueThatWillStillBeValid";
- * @readonly
- * @enum {string}
- */
-var AttachmentLayoutTypes;
-(function (AttachmentLayoutTypes) {
-    AttachmentLayoutTypes["List"] = "list";
-    AttachmentLayoutTypes["Carousel"] = "carousel";
-})(AttachmentLayoutTypes = exports.AttachmentLayoutTypes || (exports.AttachmentLayoutTypes = {}));
-/**
- * Defines values for MessageReactionTypes.
- * Possible values include: 'like', 'plusOne'
- * There could be more values for this enum apart from the ones defined here.If
- * you want to set a value that is not from the known values then you can do
- * the following:
- * let param: MessageReactionTypes =
- * <MessageReactionTypes>"someUnknownValueThatWillStillBeValid";
- * @readonly
- * @enum {string}
- */
-var MessageReactionTypes;
-(function (MessageReactionTypes) {
-    MessageReactionTypes["Like"] = "like";
-    MessageReactionTypes["PlusOne"] = "plusOne";
-})(MessageReactionTypes = exports.MessageReactionTypes || (exports.MessageReactionTypes = {}));
-/**
- * Defines values for InputHints.
- * Possible values include: 'acceptingInput', 'ignoringInput', 'expectingInput'
- * There could be more values for this enum apart from the ones defined here.If
- * you want to set a value that is not from the known values then you can do
- * the following:
- * let param: InputHints = <InputHints>"someUnknownValueThatWillStillBeValid";
- * @readonly
- * @enum {string}
- */
-var InputHints;
-(function (InputHints) {
-    InputHints["AcceptingInput"] = "acceptingInput";
-    InputHints["IgnoringInput"] = "ignoringInput";
-    InputHints["ExpectingInput"] = "expectingInput";
-})(InputHints = exports.InputHints || (exports.InputHints = {}));
-/**
- * Defines values for ActionTypes.
- * Possible values include: 'openUrl', 'imBack', 'postBack', 'playAudio',
- * 'playVideo', 'showImage', 'downloadFile', 'signin', 'call', 'payment',
- * 'messageBack'
- * There could be more values for this enum apart from the ones defined here.If
- * you want to set a value that is not from the known values then you can do
- * the following:
- * let param: ActionTypes =
- * <ActionTypes>"someUnknownValueThatWillStillBeValid";
- * @readonly
- * @enum {string}
- */
-var ActionTypes;
-(function (ActionTypes) {
-    ActionTypes["OpenUrl"] = "openUrl";
-    ActionTypes["ImBack"] = "imBack";
-    ActionTypes["PostBack"] = "postBack";
-    ActionTypes["PlayAudio"] = "playAudio";
-    ActionTypes["PlayVideo"] = "playVideo";
-    ActionTypes["ShowImage"] = "showImage";
-    ActionTypes["DownloadFile"] = "downloadFile";
-    ActionTypes["Signin"] = "signin";
-    ActionTypes["Call"] = "call";
-    ActionTypes["Payment"] = "payment";
-    ActionTypes["MessageBack"] = "messageBack";
-})(ActionTypes = exports.ActionTypes || (exports.ActionTypes = {}));
-/**
- * Defines values for EndOfConversationCodes.
- * Possible values include: 'unknown', 'completedSuccessfully',
- * 'userCancelled', 'botTimedOut', 'botIssuedInvalidMessage', 'channelFailed'
- * There could be more values for this enum apart from the ones defined here.If
- * you want to set a value that is not from the known values then you can do
- * the following:
- * let param: EndOfConversationCodes =
- * <EndOfConversationCodes>"someUnknownValueThatWillStillBeValid";
- * @readonly
- * @enum {string}
- */
-var EndOfConversationCodes;
-(function (EndOfConversationCodes) {
-    EndOfConversationCodes["Unknown"] = "unknown";
-    EndOfConversationCodes["CompletedSuccessfully"] = "completedSuccessfully";
-    EndOfConversationCodes["UserCancelled"] = "userCancelled";
-    EndOfConversationCodes["BotTimedOut"] = "botTimedOut";
-    EndOfConversationCodes["BotIssuedInvalidMessage"] = "botIssuedInvalidMessage";
-    EndOfConversationCodes["ChannelFailed"] = "channelFailed";
-})(EndOfConversationCodes = exports.EndOfConversationCodes || (exports.EndOfConversationCodes = {}));
-/**
- * Defines values for ContactRelationUpdateActionTypes.
- * Possible values include: 'add', 'remove'
- * There could be more values for this enum apart from the ones defined here.If
- * you want to set a value that is not from the known values then you can do
- * the following:
- * let param: ContactRelationUpdateActionTypes =
- * <ContactRelationUpdateActionTypes>"someUnknownValueThatWillStillBeValid";
- * @readonly
- * @enum {string}
- */
-var ContactRelationUpdateActionTypes;
-(function (ContactRelationUpdateActionTypes) {
-    ContactRelationUpdateActionTypes["Add"] = "add";
-    ContactRelationUpdateActionTypes["Remove"] = "remove";
-})(ContactRelationUpdateActionTypes = exports.ContactRelationUpdateActionTypes || (exports.ContactRelationUpdateActionTypes = {}));
-/**
- * Defines values for InstallationUpdateActionTypes.
- * Possible values include: 'add', 'remove'
- * There could be more values for this enum apart from the ones defined here.If
- * you want to set a value that is not from the known values then you can do
- * the following:
- * let param: InstallationUpdateActionTypes =
- * <InstallationUpdateActionTypes>"someUnknownValueThatWillStillBeValid";
- * @readonly
- * @enum {string}
- */
-var InstallationUpdateActionTypes;
-(function (InstallationUpdateActionTypes) {
-    InstallationUpdateActionTypes["Add"] = "add";
-    InstallationUpdateActionTypes["Remove"] = "remove";
-})(InstallationUpdateActionTypes = exports.InstallationUpdateActionTypes || (exports.InstallationUpdateActionTypes = {}));
-/**
- * Defines values for ActivityImportance.
- * Possible values include: 'low', 'normal', 'high'
- * There could be more values for this enum apart from the ones defined here.If
- * you want to set a value that is not from the known values then you can do
- * the following:
- * let param: ActivityImportance =
- * <ActivityImportance>"someUnknownValueThatWillStillBeValid";
- * @readonly
- * @enum {string}
- */
-var ActivityImportance;
-(function (ActivityImportance) {
-    ActivityImportance["Low"] = "low";
-    ActivityImportance["Normal"] = "normal";
-    ActivityImportance["High"] = "high";
-})(ActivityImportance = exports.ActivityImportance || (exports.ActivityImportance = {}));
-//# sourceMappingURL=index.js.map
-
-/***/ }),
-
-/***/ "../../libraries/botbuilder/lib/attachmentRecognizer.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @module botbuilder
- */
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
-const intentRecognizer_1 = __webpack_require__("../../libraries/botbuilder/lib/intentRecognizer.js");
-const entityObject_1 = __webpack_require__("../../libraries/botbuilder/lib/entityObject.js");
-/**
- * An intent recognizer for detecting that the user has uploaded an attachment.
- *
- * **Usage Example**
- *
- * ```js
- * const bot = new Bot(adapter)
- *      .use(new AttachmentRecognizer())
- *      .onReceive((context) => {
- *          if (context.ifIntent('Intents.AttachmentsReceived')) {
- *              // ... process uploaded file
- *          } else {
- *              // ... default logic
- *          }
- *      });
- * ```
- */
-class AttachmentRecognizer extends intentRecognizer_1.IntentRecognizer {
-    /**
-     * Creates a new instance of the recognizer.
-     *
-     * @param settings (Optional) settings to customize the recognizer.
-     */
-    constructor(settings) {
-        super();
-        this.typeFilters = [];
-        this.settings = Object.assign({
-            intentName: 'Intents.AttachmentsReceived'
-        }, settings);
-        this.onRecognize((context) => {
-            const intents = [];
-            if (context.request.attachments && context.request.attachments.length > 0) {
-                // Map attachments to entities
-                const entities = [];
-                context.request.attachments.forEach((a) => entities.push({
-                    type: a.contentType || entityObject_1.EntityTypes.attachment,
-                    score: 1.0,
-                    value: a
-                }));
-                // Filter by content type
-                if (this.typeFilters.length > 0) {
-                    // Sort by content type
-                    const matches = {};
-                    entities.forEach((entity) => {
-                        if (matches.hasOwnProperty(entity.type)) {
-                            matches[entity.type].push(entity);
-                        }
-                        else {
-                            matches[entity.type] = [entity];
-                        }
-                    });
-                    // Return intents for matches
-                    this.typeFilters.forEach((filter) => {
-                        const stringFilter = typeof filter.type === 'string';
-                        for (const type in matches) {
-                            let addIntent;
-                            if (stringFilter) {
-                                addIntent = type === filter.type;
-                            }
-                            else {
-                                addIntent = filter.type.test(type);
-                            }
-                            if (addIntent) {
-                                intents.push({
-                                    score: 1.0,
-                                    name: filter.intentName,
-                                    entities: matches[type]
-                                });
-                            }
-                        }
-                    });
-                }
-                else {
-                    // Return a single intent for all attachments
-                    intents.push({
-                        score: 1.0,
-                        name: this.settings.intentName,
-                        entities: entities
-                    });
-                }
-            }
-            return intents;
-        });
-    }
-    /**
-     * Add a new content type filter to the recognizer. Adding one or more `contentType()` filters
-     * will result in only attachments of the specified type(s) being recognized.
-     *
-     * @param contentType The `Attachment.contentType` to look for.
-     * @param intentName Name of the intent to return when the given type is matched.
-     */
-    contentType(contentType, intentName) {
-        this.typeFilters.push({ type: contentType, intentName: intentName });
-        return this;
-    }
-}
-exports.AttachmentRecognizer = AttachmentRecognizer;
-//# sourceMappingURL=attachmentRecognizer.js.map
-
-/***/ }),
-
-/***/ "../../libraries/botbuilder/lib/bot.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @module botbuilder
- */
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
-const middlewareSet_1 = __webpack_require__("../../libraries/botbuilder/lib/middlewareSet.js");
-const botbuilder_schema_1 = __webpack_require__("../../libraries/botbuilder-schema/lib/index.js");
-const botContext_1 = __webpack_require__("../../libraries/botbuilder/lib/botContext.js");
-const templateManager_1 = __webpack_require__("../../libraries/botbuilder/lib/templateManager.js");
-const botbuilder_1 = __webpack_require__("../../libraries/botbuilder/lib/botbuilder.js");
-/**
- * Manages all communication between the bot and a user.
- *
- * **Usage Example**
- *
- * ```js
- * import { Bot } from 'botbuilder'; // typescript
- *
- * const bot = new Bot(adapter); // init bot and bind to adapter
- *
- * bot.onReceive((context) => { // define the bot's onReceive handler
- *   context.reply(`Hello World`); // send message to user
- * });
- * ```
- */
-class Bot extends middlewareSet_1.MiddlewareSet {
-    /**
-     * Creates a new instance of a bot
-     *
-     * @param adapter Connector used to link the bot to the user communication wise.
-     */
-    constructor(adapter) {
-        super();
-        this.receivers = [];
-        // Bind to adapter
-        this._adapter = adapter;
-        this._adapter.onReceive = (activity) => this.receive(activity).then(() => { });
-        // built in middleware
-        // QUESTION: Should we really have built-in middleware?
-        this.use(new templateManager_1.TemplateManager());
-    }
-    /** Returns the current adapter. */
-    get adapter() {
-        return this._adapter;
-    }
-    /**
-     * Creates a new context object given an activity or conversation reference. The context object
-     * will be disposed of automatically once the callback completes or the promise it returns
-     * completes.
-     *
-     * **Usage Example**
-     *
-     * ```js
-     * subscribers.forEach((subscriber) => {
-     *      bot.createContext(subscriber.savedReference, (context) => {
-     *          context.reply(`Hi ${subscriber.name}... Here's what's new with us.`)
-     *                 .reply(newsFlash);
-     *      });
-     * });
-     * ```
-     *
-     * @param activityOrReference Activity or ConversationReference to initialize the context object with.
-     * @param onReady Function that will use the created context object.
-     */
-    createContext(activityOrReference, onReady) {
-        // Initialize context object
-        let context;
-        if (activityOrReference.type) {
-            context = botContext_1.createBotContext(this, activityOrReference);
-        }
-        else {
-            context = botContext_1.createBotContext(this);
-            context.conversationReference = activityOrReference;
-        }
-        // Run context created pipeline
-        return this.contextCreated(context, function contextReady() {
-            // Run proactive or reactive logic
-            return Promise.resolve(onReady(context));
-        }).then(() => {
-            // Next flush any queued up responses
-            return context.flushResponses();
-        }).then(() => {
-            // Dispose of the context object
-            context.dispose();
-        });
-    }
-    /**
-     * Registers a new receiver with the bot. All incoming activities are routed to receivers in
-     * the order they're registered. The first receiver to return `{ handled: true }` prevents
-     * the receivers after it from being called.
-     *
-     * **Usage Example**
-     *
-     * ```js
-     * const bot = new Bot(adapter)
-     *      .onReceive((context) => {
-     *         context.reply(`Hello World`);
-     *      });
-     * ```
-     *
-     * @param receivers One or more receivers to register.
-     */
-    onReceive(...receivers) {
-        receivers.forEach((fn) => {
-            this.use({
-                receiveActivity: function onReceive(context, next) {
-                    return Promise.resolve(fn(context)).then(() => next());
-                }
-            });
-        });
-        return this;
-    }
-    /**
-     * Register template renderer  as middleware
-     * @param templateRenderer templateRenderer
-     */
-    useTemplateRenderer(templateRenderer) {
-        return this.use({
-            contextCreated: (ctx, next) => {
-                ctx.templateManager.register(templateRenderer);
-                return next();
-            }
-        });
-    }
-    /**
-     * Register TemplateDictionary as templates
-     * @param templates templateDictionary to register
-     */
-    useTemplates(templates) {
-        return this.use(new botbuilder_1.DictionaryRenderer(templates));
-    }
-    /**
-     * INTERNAL sends an outgoing set of activities to the user. Calling `context.flushResponses()` achieves the same
-     * effect and is the preferred way of sending activities to the user.
-     *
-     * @param context Context for the current turn of the conversation.
-     * @param activities Set of activities to send.
-     */
-    post(context, ...activities) {
-        // Ensure activities are well formed.
-        for (let i = 0; i < activities.length; i++) {
-            let activity = activities[i];
-            if (!activity.type) {
-                activity.type = botbuilder_schema_1.ActivityTypes.Message;
-            }
-            botContext_1.applyConversationReference(activity, context.conversationReference);
-        }
-        // Run post activity pipeline
-        const adapter = this.adapter;
-        return this.postActivity(context, activities, function postActivities() {
-            // Post the set of output activities
-            return adapter.post(activities)
-                .then((responses) => {
-                // Ensure responses array populated
-                if (!Array.isArray(responses)) {
-                    let mockResponses = [];
-                    for (let i = 0; i < activities.length; i++) {
-                        mockResponses.push({});
-                    }
-                    return mockResponses;
-                }
-                return responses;
-            });
-        });
-    }
-    /**
-     * Dispatches an incoming set of activities. This method can be used to dispatch an activity
-     * to the bot as if a user had sent it which is sometimes useful.
-     *
-     * @param activity The activity that was received.
-     * @returns `{ handled: true }` if the activity was handled by a middleware plugin or one of the bots receivers.
-     */
-    receive(activity) {
-        // Create context and run receive activity pipeline
-        return this.createContext(activity, (context) => this.receiveActivity(context, () => Promise.resolve()));
-    }
-}
-exports.Bot = Bot;
-//# sourceMappingURL=bot.js.map
-
-/***/ }),
-
-/***/ "../../libraries/botbuilder/lib/botContext.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @module botbuilder
- */
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
-const botbuilder_schema_1 = __webpack_require__("../../libraries/botbuilder-schema/lib/index.js");
-const bot_1 = __webpack_require__("../../libraries/botbuilder/lib/bot.js");
-/**
- * Creates a new BotContext instance.
- *
- * @param bot Bot the context is for.
- * @param request (Optional) request to initialize the context with.
- */
-function createBotContext(bot, request) {
-    const context = {};
-    context.bot = bot;
-    context.request = request || {};
-    context.responses = [];
-    context.conversationReference = {};
-    context.state = {};
-    context.templateEngines = [];
-    // Populate conversation reference
-    if (request) {
-        context.conversationReference = getConversationReference(request);
-    }
-    // Add methods
-    // !!!!!!! Be sure to use "this." when accessing members of the context object because
-    // !!!!!!! you could be working with a clone.
-    function throwIfDisposed(method) {
-        if (disposed) {
-            throw new Error(`BotContext.${method}(): error calling method after context has been disposed.`);
-        }
-    }
-    let disposed = false;
-    context.delay = function delay(duration) {
-        throwIfDisposed('delay');
-        this.responses.push({ type: 'delay', value: duration });
-        return this;
-    };
-    context.dispose = function dispose() {
-        disposed = true;
-    };
-    context.endOfConversation = function endOfConversation(code) {
-        throwIfDisposed('endOfConversation');
-        const activity = {
-            type: botbuilder_schema_1.ActivityTypes.EndOfConversation,
-            code: code || botbuilder_schema_1.EndOfConversationCodes.CompletedSuccessfully
-        };
-        this.responses.push(activity);
-        return this;
-    };
-    context.reply = function reply(textOrActivity, speak, additional) {
-        throwIfDisposed('reply');
-        // Check other parameters
-        if (!additional && typeof speak === 'object') {
-            additional = speak;
-            speak = undefined;
-        }
-        if (typeof textOrActivity === 'object') {
-            if (!textOrActivity.type) {
-                textOrActivity.type = botbuilder_schema_1.ActivityTypes.Message;
-            }
-            this.responses.push(textOrActivity);
-        }
-        else {
-            const activity = Object.assign({
-                type: botbuilder_schema_1.ActivityTypes.Message,
-                text: textOrActivity || '',
-            }, additional || {});
-            if (typeof speak === 'string') {
-                activity.speak = speak;
-            }
-            this.responses.push(activity);
-        }
-        return this;
-    };
-    context.replyWith = function replyWith(templateId, data) {
-        throwIfDisposed('replyTemplate');
-        // push internal template record
-        const activity = {
-            type: "template",
-        };
-        activity.text = templateId;
-        activity.value = data;
-        this.responses.push(activity);
-        return this;
-    };
-    let responded = false;
-    context.flushResponses = function flushResponses() {
-        throwIfDisposed('flushResponses');
-        const args = this.responses.slice(0);
-        const cnt = args.length;
-        args.unshift(this);
-        return bot_1.Bot.prototype.post.apply(this.bot, args)
-            .then((results) => {
-            if (cnt > 0) {
-                this.responses.splice(0, cnt);
-                responded = true;
-            }
-            return results;
-        });
-    };
-    context.showTyping = function showTyping() {
-        throwIfDisposed('showTyping');
-        this.responses.push({ type: botbuilder_schema_1.ActivityTypes.Typing });
-        return this;
-    };
-    Object.defineProperty(context, 'responded', {
-        get: function () {
-            return this.responses.length > 0 || responded;
-        }
-    });
-    return context;
-}
-exports.createBotContext = createBotContext;
-function getConversationReference(activity) {
-    return {
-        activityId: activity.id,
-        user: activity.from,
-        bot: activity.recipient,
-        conversation: activity.conversation,
-        channelId: activity.channelId,
-        serviceUrl: activity.serviceUrl
-    };
-}
-exports.getConversationReference = getConversationReference;
-function applyConversationReference(activity, reference) {
-    activity.channelId = reference.channelId;
-    activity.serviceUrl = reference.serviceUrl;
-    activity.conversation = reference.conversation;
-    activity.from = reference.bot;
-    activity.recipient = reference.user;
-    activity.replyToId = reference.activityId;
-}
-exports.applyConversationReference = applyConversationReference;
-//# sourceMappingURL=botContext.js.map
-
-/***/ }),
-
-/***/ "../../libraries/botbuilder/lib/botService.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * Middleware that simplifies adding a new service to the BotContext. Services expose themselves
- * as a new property of the BotContext and this class formalizes that process.
- *
- * This class is typically derived from but can also be used like
- * `bot.use(new BotService('myService', new MyService()));`. The registered service would be
- * accessible globally by developers through `context.myService`.
- *
- * __Extends BotContext:__
- * * context.<service name> - New service
- */
-class BotService {
-    /**
-     * Creates a new instance of a service definition.
-     *
-     * @param name Name of the service being registered. This is the property off the context object
-     * that will be used by developers to access the service.
-     * @param instance (Optional) singleton instance of the service to add to the context object.
-     * Dynamic instances can be added by implementing [getService()](#getservice).
-     */
-    constructor(name, instance) {
-        this.name = name;
-        this.instance = instance;
-    }
-    contextCreated(context, next) {
-        context[this.name] = this.getService(context);
-        return next();
-    }
-    /**
-     * Overrided by derived classes to register a dynamic instance of the service.
-     *
-     * @param context Context for the current turn of the conversation.
-     */
-    getService(context) {
-        return this.instance;
-    }
-}
-exports.BotService = BotService;
-//# sourceMappingURL=botService.js.map
-
-/***/ }),
-
-/***/ "../../libraries/botbuilder/lib/botStateManager.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * Middleware for tracking conversation and user state using the `context.storage` provider.
- *
- * __Extends BotContext:__
- * * context.state.user - User persisted state
- * * context.state.conversation - Conversation persisted data
- *
- * __Depends on:__
- * * context.storage - Storage provider for storing and retrieving objects
- *
- * **Usage Example**
- *
- * ```js
- * const bot = new Bot(adapter)
- *      .use(new MemoryStorage())
- *      .use(new BotStateManager())
- *      .onReceive((context) => {
- *          context.reply(`Hello World`);
- *      })
- * ```
- */
-class BotStateManager {
-    /**
-     * Creates a new instance of the state manager.
-     *
-     * @param settings (Optional) settings to adjust the behavior of the state manager.
-     */
-    constructor(settings) {
-        this.settings = Object.assign({
-            persistUserState: true,
-            persistConversationState: true,
-            writeBeforePost: true,
-            lastWriterWins: true
-        }, settings || {});
-    }
-    contextCreated(context, next) {
-        // read state from storage
-        return this.read(context, []).then(() => next());
-    }
-    postActivity(context, activities, next) {
-        if (this.settings.writeBeforePost) {
-            // save state
-            return this.write(context, {}).then(() => next());
-        }
-        else {
-            return next();
-        }
-    }
-    contextDone(context, next) {
-        // save state
-        return this.write(context, {}).then(() => next());
-    }
-    read(context, keys) {
-        // Ensure storage
-        if (!context.storage) {
-            return Promise.reject(new Error(`BotStateManager: context.storage not found.`));
-        }
-        // Calculate keys
-        if (this.settings.persistUserState) {
-            keys.push(this.userKey(context));
-        }
-        if (this.settings.persistConversationState) {
-            keys.push(this.conversationKey(context));
-        }
-        // Read values
-        return context.storage.read(keys).then((data) => {
-            // Copy data to context
-            keys.forEach((key) => {
-                switch (key.split('/')[0]) {
-                    case 'user':
-                        context.state.user = data[key] || {};
-                        break;
-                    case 'conversation':
-                        context.state.conversation = data[key] || {};
-                        break;
-                }
-            });
-            return data;
-        });
-    }
-    write(context, changes) {
-        // Ensure storage
-        if (!context.storage) {
-            return Promise.reject(new Error(`BotStateManager: context.storage not found.`));
-        }
-        // Append changes
-        if (this.settings.persistUserState) {
-            changes[this.userKey(context)] = context.state.user || {};
-        }
-        if (this.settings.persistConversationState) {
-            changes[this.conversationKey(context)] = context.state.conversation || {};
-        }
-        // Update eTags
-        if (this.settings.lastWriterWins) {
-            for (const key in changes) {
-                changes[key].eTag = '*';
-            }
-        }
-        // Write changes
-        return context.storage.write(changes);
-    }
-    userKey(context) {
-        const ref = context.conversationReference;
-        return 'user/' + ref.channelId + '/' + ref.user.id;
-    }
-    conversationKey(context) {
-        const ref = context.conversationReference;
-        return 'conversation/' + ref.channelId + '/' + ref.conversation.id;
-    }
-}
-exports.BotStateManager = BotStateManager;
-//# sourceMappingURL=botStateManager.js.map
-
-/***/ }),
-
-/***/ "../../libraries/botbuilder/lib/botbuilder.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-/**
- * @module botbuilder
- */
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
-function __export(m) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-}
-Object.defineProperty(exports, "__esModule", { value: true });
-__export(__webpack_require__("../../libraries/botbuilder/lib/attachmentRecognizer.js"));
-__export(__webpack_require__("../../libraries/botbuilder/lib/bot.js"));
-__export(__webpack_require__("../../libraries/botbuilder/lib/botService.js"));
-__export(__webpack_require__("../../libraries/botbuilder/lib/botStateManager.js"));
-__export(__webpack_require__("../../libraries/botbuilder/lib/browserStorage.js"));
-__export(__webpack_require__("../../libraries/botbuilder/lib/cardStyler.js"));
-__export(__webpack_require__("../../libraries/botbuilder/lib/entityObject.js"));
-__export(__webpack_require__("../../libraries/botbuilder/lib/intentRecognizer.js"));
-__export(__webpack_require__("../../libraries/botbuilder/lib/intentRecognizerSet.js"));
-__export(__webpack_require__("../../libraries/botbuilder/lib/jsonTemplates.test.suite.js"));
-__export(__webpack_require__("../../libraries/botbuilder/lib/middleware.js"));
-__export(__webpack_require__("../../libraries/botbuilder/lib/memoryStorage.js"));
-__export(__webpack_require__("../../libraries/botbuilder/lib/messageStyler.js"));
-__export(__webpack_require__("../../libraries/botbuilder/lib/middleware.js"));
-__export(__webpack_require__("../../libraries/botbuilder/lib/middlewareSet.js"));
-__export(__webpack_require__("../../libraries/botbuilder/lib/regExpRecognizer.js"));
-__export(__webpack_require__("../../libraries/botbuilder/lib/storageMiddleware.js"));
-__export(__webpack_require__("../../libraries/botbuilder/lib/templateManager.js"));
-__export(__webpack_require__("../../libraries/botbuilder/lib/dictionaryRenderer.js"));
-__export(__webpack_require__("../../libraries/botbuilder/lib/testAdapter.js"));
-__export(__webpack_require__("../../libraries/botbuilder-schema/lib/index.js"));
-//# sourceMappingURL=botbuilder.js.map
-
-/***/ }),
-
-/***/ "../../libraries/botbuilder/lib/browserStorage.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @module botbuilder
- */
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
-const memoryStorage_1 = __webpack_require__("../../libraries/botbuilder/lib/memoryStorage.js");
-/**
- * Storage middleware that uses browser local storage.
- *
- * __Extends BotContext:__
- * * context.storage - Storage provider for storing and retrieving objects.
- *
- * **Usage Example**
- *
- * ```js
- * const bot = new Bot(adapter)
- *      .use(new BrowserLocalStorage())
- *      .use(new BotStateManage())
- *      .onReceive((context) => {
- *          context.reply(`Hello World`);
- *      })
- * ```
- */
-class BrowserLocalStorage extends memoryStorage_1.MemoryStorage {
-    constructor(options) {
-        super(options, localStorage);
-    }
-}
-exports.BrowserLocalStorage = BrowserLocalStorage;
-/**
- * Storage middleware that uses browser session storage.
- *
- * __Extends BotContext:__
- * * context.storage - Storage provider for storing and retrieving objects.
- *
- * **Usage Example**
- *
- * ```js
- * const bot = new Bot(adapter)
- *      .use(new BrowserSessionStorage())
- *      .use(new BotStateManage())
- *      .onReceive((context) => {
- *          context.reply(`Hello World`);
- *      })
- * ```
- */
-class BrowserSessionStorage extends memoryStorage_1.MemoryStorage {
-    constructor(options) {
-        super(options, sessionStorage);
-    }
-}
-exports.BrowserSessionStorage = BrowserSessionStorage;
-//# sourceMappingURL=browserStorage.js.map
-
-/***/ }),
-
-/***/ "../../libraries/botbuilder/lib/cardStyler.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @module botbuilder
- */
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
-const botbuilder_schema_1 = __webpack_require__("../../libraries/botbuilder-schema/lib/index.js");
-/**
- * A set of utility functions designed to assist with the formatting of the various card types a
- * bot can return. All of these functions return an `Attachment` which can be added to an `Activity`
- * directly or passed as input to a `MessageStyler` function.
- *
- * **Usage Example**
- *
- * ```js
- * const card = CardStyler.heroCard(
- *      'White T-Shirt',
- *      ['https://example.com/whiteShirt.jpg'],
- *      ['buy']
- * );
- * ```
- */
-class CardStyler {
-    /**
-     * Returns an attachment for an adaptive card. The attachment will contain the card and the
-     * appropriate `contentType`.
-     *
-     * Adaptive Cards are a new way for bots to send interactive and immersive card content to
-     * users. For channels that don't yet support Adaptive Cards natively, the Bot Framework will
-     * down render the card to an image that's been styled to look good on the target channel. For
-     * channels that support [hero cards](#herocards) you can continue to include Adaptive Card
-     * actions and they will be sent as buttons along with the rendered version of the card.
-     *
-     * For more information about Adaptive Cards and to download the latest SDK, visit
-     * [adaptivecards.io](http://adaptivecards.io/).
-     *
-     * @param card The adaptive card to return as an attachment.
-     */
-    static adaptiveCard(card) {
-        return { contentType: CardStyler.contentTypes.adaptiveCard, content: card };
-    }
-    /**
-     * Returns an attachment for an animation card.
-     *
-     * @param title The cards title.
-     * @param media Media URL's for the card.
-     * @param buttons (Optional) set of buttons to include on the card.
-     * @param other (Optional) additional properties to include on the card.
-     */
-    static animationCard(title, media, buttons, other) {
-        return mediaCard(CardStyler.contentTypes.animationCard, title, media, buttons, other);
-    }
-    /**
-     * Returns an attachment for an audio card.
-     *
-     * @param title The cards title.
-     * @param media Media URL's for the card.
-     * @param buttons (Optional) set of buttons to include on the card.
-     * @param other (Optional) additional properties to include on the card.
-     */
-    static audioCard(title, media, buttons, other) {
-        return mediaCard(CardStyler.contentTypes.audioCard, title, media, buttons, other);
-    }
-    static heroCard(title, text, images, buttons, other) {
-        const a = CardStyler.thumbnailCard(title, text, images, buttons, other);
-        a.contentType = CardStyler.contentTypes.heroCard;
-        return a;
-    }
-    /**
-     * Returns an attachment for a receipt card. The attachment will contain the card and the
-     * appropriate `contentType`.
-     *
-     * @param card The adaptive card to return as an attachment.
-     */
-    static receiptCard(card) {
-        return { contentType: CardStyler.contentTypes.receiptCard, content: card };
-    }
-    /**
-     * Returns an attachment for a signin card. For channels that don't natively support signin
-     * cards an alternative message will be rendered.
-     *
-     * @param title The cards title.
-     * @param url The link to the signin page the user needs to visit.
-     * @param text (Optional) additional text to include on the card.
-     */
-    static signinCard(title, url, text) {
-        const card = { buttons: [{ type: botbuilder_schema_1.ActionTypes.Signin, title: title, value: url }] };
-        if (text) {
-            card.text = text;
-        }
-        return { contentType: CardStyler.contentTypes.signinCard, content: card };
-    }
-    static thumbnailCard(title, text, images, buttons, other) {
-        if (typeof text !== 'string') {
-            other = buttons;
-            buttons = images;
-            images = text;
-            text = undefined;
-        }
-        const card = Object.assign({}, other);
-        if (title) {
-            card.title = title;
-        }
-        if (text) {
-            card.text = text;
-        }
-        if (images) {
-            card.images = CardStyler.images(images);
-        }
-        if (buttons) {
-            card.buttons = CardStyler.actions(buttons);
-        }
-        return { contentType: CardStyler.contentTypes.thumbnailCard, content: card };
-    }
-    /**
-     * Returns an attachment for a video card.
-     *
-     * @param title The cards title.
-     * @param media Media URL's for the card.
-     * @param buttons (Optional) set of buttons to include on the card.
-     * @param other (Optional) additional properties to include on the card.
-     */
-    static videoCard(title, media, buttons, other) {
-        return mediaCard(CardStyler.contentTypes.videoCard, title, media, buttons, other);
-    }
-    /**
-     * Returns a properly formatted array of actions. Supports converting strings to `messageBack`
-     * actions (note: using 'imBack' for now as 'messageBack' doesn't work properly in emulator.)
-     *
-     * @param actions Array of card actions or strings. Strings will be converted to `messageBack` actions.
-     */
-    static actions(actions) {
-        const list = [];
-        (actions || []).forEach((a) => {
-            if (typeof a === 'object') {
-                list.push(a);
-            }
-            else {
-                list.push({ type: botbuilder_schema_1.ActionTypes.ImBack, value: a.toString(), title: a.toString() });
-            }
-        });
-        return list;
-    }
-    /**
-     * Returns a properly formatted array of card images.
-     *
-     * @param images Array of card images or strings. Strings will be converted to card images.
-     */
-    static images(images) {
-        const list = [];
-        (images || []).forEach((img) => {
-            if (typeof img === 'object') {
-                list.push(img);
-            }
-            else {
-                list.push({ url: img });
-            }
-        });
-        return list;
-    }
-    /**
-     * Returns a properly formatted array of media url objects.
-     *
-     * @param links Array of media url objects or strings. Strings will be converted to a media url object.
-     */
-    static media(links) {
-        const list = [];
-        (links || []).forEach((lnk) => {
-            if (typeof lnk === 'object') {
-                list.push(lnk);
-            }
-            else {
-                list.push({ url: lnk });
-            }
-        });
-        return list;
-    }
-}
-/** List of content types for each card style. */
-CardStyler.contentTypes = {
-    adaptiveCard: 'application/vnd.microsoft.card.adaptive',
-    animationCard: 'application/vnd.microsoft.card.animation',
-    audioCard: 'application/vnd.microsoft.card.audio',
-    heroCard: 'application/vnd.microsoft.card.hero',
-    receiptCard: 'application/vnd.microsoft.card.receipt',
-    signinCard: 'application/vnd.microsoft.card.signin',
-    thumbnailCard: 'application/vnd.microsoft.card.thumbnail',
-    videoCard: 'application/vnd.microsoft.card.video'
-};
-exports.CardStyler = CardStyler;
-function mediaCard(contentType, title, media, buttons, other) {
-    const card = Object.assign({}, other);
-    if (title) {
-        card.title = title;
-    }
-    if (media) {
-        card.media = CardStyler.media(media);
-    }
-    if (buttons) {
-        card.buttons = CardStyler.actions(buttons);
-    }
-    return { contentType: contentType, content: card };
-}
-//# sourceMappingURL=cardStyler.js.map
-
-/***/ }),
-
-/***/ "../../libraries/botbuilder/lib/dictionaryRenderer.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * This is a simple template renderer which has a resource map of template functions
- * let myTemplates  = {
- *      "en" : {
- *          "templateId": (context, data) => `your name  is ${data.name}`
- *      }
- * }
- *
- * To use, simply add to your pipeline
- * bot.use(new DictionaryRenderer(myTemplates))
- */
-class DictionaryRenderer {
-    constructor(templates) {
-        this.templates = templates;
-    }
-    contextCreated(context, next) {
-        context.templateManager.register(this);
-        return next();
-    }
-    renderTemplate(context, language, templateId, data) {
-        if (!(language in this.templates)) {
-            //console.warn(`didn't find language ${language}`);
-            return Promise.resolve(undefined);
-        }
-        let languageResource = this.templates[language];
-        if (!(templateId in languageResource)) {
-            //console.warn(`didn't find templateId ${templateId}`);
-            return Promise.resolve(undefined);
-        }
-        let template = languageResource[templateId];
-        return Promise.resolve(template(context, data));
-    }
-}
-exports.DictionaryRenderer = DictionaryRenderer;
-//# sourceMappingURL=dictionaryRenderer.js.map
-
-/***/ }),
-
-/***/ "../../libraries/botbuilder/lib/entityObject.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/** Well known entity types. */
-exports.EntityTypes = {
-    attachment: 'attachment',
-    string: 'string',
-    number: 'number',
-    boolean: 'boolean'
-};
-//# sourceMappingURL=entityObject.js.map
-
-/***/ }),
-
-/***/ "../../libraries/botbuilder/lib/intentRecognizer.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * Middleware that's the base class for all intent recognizers.
- *
- * __Extends BotContext:__
- * * context.topIntent - The top recognized `Intent` for the users utterance.
- */
-class IntentRecognizer {
-    constructor() {
-        this.enabledChain = [];
-        this.recognizeChain = [];
-        this.filterChain = [];
-    }
-    receiveActivity(context, next) {
-        return this.recognize(context)
-            .then((intents) => IntentRecognizer.findTopIntent(intents))
-            .then((intent) => {
-            if (intent && intent.score > 0.0) {
-                context.topIntent = intent;
-            }
-            return next();
-        });
-    }
-    /**
-     * Recognizes intents for the current context. The return value is 0 or more recognized intents.
-     *
-     * @param context Context for the current turn of the conversation.
-     */
-    recognize(context) {
-        return new Promise((resolve, reject) => {
-            this.runEnabled(context)
-                .then((enabled) => {
-                if (enabled) {
-                    this.runRecognize(context)
-                        .then((intents) => this.runFilter(context, intents || []))
-                        .then((intents) => resolve(intents))
-                        .catch((err) => reject(err));
-                }
-                else {
-                    resolve([]);
-                }
-            })
-                .catch((err) => reject(err));
-        });
-    }
-    /**
-     * Adds a handler that lets you conditionally determine if a recognizer should run. Multiple
-     * handlers can be registered and they will be called in the reverse order they are added
-     * so the last handler added will be the first called.
-     *
-     * @param handler Function that will be called anytime the recognizer is run. If the handler
-     * returns true the recognizer will be run. Returning false disables the recognizer.
-     */
-    onEnabled(handler) {
-        this.enabledChain.unshift(handler);
-        return this;
-    }
-    /**
-     * Adds a handler that will be called to recognize the users intent. Multiple handlers can
-     * be registered and they will be called in the reverse order they are added so the last
-     * handler added will be the first called.
-     *
-     * @param handler Function that will be called to recognize a users intent.
-     */
-    onRecognize(handler) {
-        this.recognizeChain.unshift(handler);
-        return this;
-    }
-    /**
-     * Adds a handler that will be called post recognition to filter the output of the recognizer.
-     * The filter receives all of the intents that were recognized and can return a subset, or
-     * additional, or even all new intents as its response. This filtering adds a convenient second
-     * layer of processing to intent recognition. Multiple handlers can be registered and they will
-     * be called in the order they are added.
-     *
-     * @param handler Function that will be called to filter the output intents. If an array is returned
-     * that will become the new set of output intents passed on to the next filter. The final filter in
-     * the chain will reduce the output set of intents to a single top scoring intent.
-     */
-    onFilter(handler) {
-        this.filterChain.push(handler);
-        return this;
-    }
-    runEnabled(context) {
-        return new Promise((resolve, reject) => {
-            const chain = this.enabledChain.slice();
-            function next(i) {
-                if (i < chain.length) {
-                    try {
-                        Promise.resolve(chain[i](context)).then((enabled) => {
-                            if (typeof enabled === 'boolean' && enabled === false) {
-                                resolve(false); // Short-circuit chain
-                            }
-                            else {
-                                next(i + 1);
-                            }
-                        }).catch((err) => reject(err));
-                    }
-                    catch (err) {
-                        reject(err);
-                    }
-                }
-                else {
-                    resolve(true);
-                }
-            }
-            next(0);
-        });
-    }
-    runRecognize(context) {
-        return new Promise((resolve, reject) => {
-            let intents = [];
-            const chain = this.recognizeChain.slice();
-            function next(i) {
-                if (i < chain.length) {
-                    try {
-                        Promise.resolve(chain[i](context)).then((result) => {
-                            if (Array.isArray(result)) {
-                                intents = intents.concat(result);
-                            }
-                            next(i + 1);
-                        }).catch((err) => reject(err));
-                    }
-                    catch (err) {
-                        reject(err);
-                    }
-                }
-                else {
-                    resolve(intents);
-                }
-            }
-            next(0);
-        });
-    }
-    runFilter(context, intents) {
-        return new Promise((resolve, reject) => {
-            let filtered = intents;
-            const chain = this.filterChain.slice();
-            function next(i) {
-                if (i < chain.length) {
-                    try {
-                        Promise.resolve(chain[i](context, filtered)).then((result) => {
-                            if (Array.isArray(result)) {
-                                filtered = result;
-                            }
-                            next(i + 1);
-                        }).catch((err) => reject(err));
-                    }
-                    catch (err) {
-                        reject(err);
-                    }
-                }
-                else {
-                    resolve(filtered);
-                }
-            }
-            next(0);
-        });
-    }
-    /**
-     * Finds the top scoring intent given a set of intents.
-     *
-     * @param intents Array of intents to filter.
-     */
-    static findTopIntent(intents) {
-        return new Promise((resolve, reject) => {
-            let top = undefined;
-            (intents || []).forEach((intent) => {
-                if (!top || intent.score > top.score) {
-                    top = intent;
-                }
-            });
-            resolve(top);
-        });
-    }
-}
-exports.IntentRecognizer = IntentRecognizer;
-//# sourceMappingURL=intentRecognizer.js.map
-
-/***/ }),
-
-/***/ "../../libraries/botbuilder/lib/intentRecognizerSet.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @module botbuilder
- */
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
-const intentRecognizer_1 = __webpack_require__("../../libraries/botbuilder/lib/intentRecognizer.js");
-var RecognizeOrder;
-(function (RecognizeOrder) {
-    RecognizeOrder[RecognizeOrder["parallel"] = 0] = "parallel";
-    RecognizeOrder[RecognizeOrder["series"] = 1] = "series";
-})(RecognizeOrder = exports.RecognizeOrder || (exports.RecognizeOrder = {}));
-/**
- * Optimizes the execution of multiple intent recognizers. An intent recognizer set can be
- * configured to execute its recognizers either in parallel (the default) or in series. The
- * output of the set will be a single intent that had the highest score.
- *
- * The intent recognizer set is itself an intent recognizer which means that it can be
- * conditionally disabled or have its output filtered just like any other recognizer. It can
- * even be composed into other recognizer sets allowing for sophisticated recognizer
- * hierarchies to be created.
- *
- * **Usage Example**
- *
- * ```js
- * // Define RegExp's for well known commands.
- * const recognizer = new RegExpRecognizer({ minScore: 1.0 })
- *      .addIntent('HelpIntent', /^help/i)
- *      .addIntent('CancelIntent', /^cancel/i);
- *
- * // Create a set that will only call LUIS for unknown commands.
- * const recognizerSet = new IntentRecognizerSet({ recognizeOrder: RecognizeOrder.series })
- *      .add(recognizer)
- *      .add(new LuisRecognizer('Model ID', 'Subscription Key'));
- *
- * // Add set to bot.
- * const bot = new Bot(adapter)
- *      .use(recognizerSet)
- *      .onReceive((context) => {
- *          if (context.ifIntent('HelpIntent')) {
- *              // ... help
- *          } else if (context.ifIntent('CancelIntent')) {
- *              // ... cancel
- *          } else {
- *              // ... default logic
- *          }
- *      });
- * ```
- */
-class IntentRecognizerSet extends intentRecognizer_1.IntentRecognizer {
-    /**
-     * Creates a new instance of a recognizer set.
-     *
-     * @param settings (Optional) settings to customize the sets execution strategy.
-     */
-    constructor(settings) {
-        super();
-        this.recognizers = [];
-        this.settings = Object.assign({
-            recognizeOrder: RecognizeOrder.parallel,
-            stopOnExactMatch: true
-        }, settings);
-        this.onRecognize((context) => {
-            if (this.settings.recognizeOrder === RecognizeOrder.parallel) {
-                return this.recognizeInParallel(context);
-            }
-            else {
-                return this.recognizeInSeries(context);
-            }
-        });
-    }
-    /**
-     * Adds recognizer(s) to the set. Recognizers will be evaluated in the order they're
-     * added to the set.
-     *
-     * @param recognizers One or more recognizers to add to the set.
-     */
-    add(...recognizers) {
-        Array.prototype.push.apply(this.recognizers, recognizers);
-        return this;
-    }
-    recognizeInParallel(context) {
-        // Call recognize on all children
-        const promises = [];
-        this.recognizers.forEach((r) => promises.push(r.recognize(context)));
-        // Wait for all of the promises to resolve
-        return Promise.all(promises).then((results) => {
-            // Merge intents
-            let intents = [];
-            results.forEach((r) => intents = intents.concat(r));
-            return intents;
-        });
-    }
-    recognizeInSeries(context) {
-        return new Promise((resolve, reject) => {
-            let intents = [];
-            const that = this;
-            function next(i) {
-                if (i < that.recognizers.length) {
-                    that.recognizers[i].recognize(context)
-                        .then((r) => {
-                        intents = intents.concat(r);
-                        if (that.settings.stopOnExactMatch && that.hasExactMatch(r)) {
-                            resolve(intents);
-                        }
-                        else {
-                            next(i + 1);
-                        }
-                    })
-                        .catch((err) => reject(err));
-                }
-                else {
-                    resolve(intents);
-                }
-            }
-            next(0);
-        });
-    }
-    hasExactMatch(intents) {
-        return intents.filter((intent) => intent.score >= 1.0).length > 0;
-    }
-}
-exports.IntentRecognizerSet = IntentRecognizerSet;
-//# sourceMappingURL=intentRecognizerSet.js.map
-
-/***/ }),
-
-/***/ "../../libraries/botbuilder/lib/jsonTemplates.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * Template source for rendering dynamic JSON objects. To use add to the pipeline
- * bot
- *    .use(new JsonTemplateEngine()
- *          .add('templateId', function()=>{} ))
- */
-class JsonTemplates {
-    constructor() {
-        this.templates = {};
-    }
-    contextCreated(context, next) {
-        context.templateManager.register(this);
-        return next();
-    }
-    renderTemplate(context, language, templateId, data) {
-        var result = this.render(`${language}-${templateId}`, data);
-        if (result)
-            return Promise.resolve(JSON.parse(result));
-        return Promise.resolve(undefined);
-    }
-    /**
-     * Registers a new JSON template. The template will be compiled and cached.
-     *
-     * @param name Name of the template to register.
-     * @param json JSON template.
-     */
-    add(name, json) {
-        this.templates[name] = JsonTemplates.compile(json, this.templates);
-        return this;
-    }
-    /**
-     * Registers a named function that can be called within a template.
-     *
-     * @param name Name of the function to register.
-     * @param fn Function to register.
-     */
-    addFunction(name, fn) {
-        this.templates[name] = fn;
-        return this;
-    }
-    /**
-     * Renders a registered JSON template to a string using the given data object.
-     *
-     * @param name Name of the registered template to render.
-     * @param data Data object to render template against.
-     */
-    render(name, data) {
-        let template = this.templates[name];
-        if (!template)
-            return undefined;
-        return template(data);
-    }
-    /**
-     * Renders a registered JSON template using the given data object. The rendered string will
-     * be `JSON.parsed()` into a JSON object prior to returning.
-     *
-     * @param name Name of the registered template to render.
-     * @param data Data object to render template against.
-     * @param postProcess (Optional) if `true` the rendered output object will be scanned looking
-     * for any processing directives, such as @prune. The default value is `true`.
-     */
-    renderAsJSON(name, data, postProcess) {
-        var json = this.render(name, data);
-        if (!json)
-            return null;
-        let obj = JSON.parse(json);
-        if (postProcess || postProcess === undefined) {
-            obj = this.postProcess(obj);
-        }
-        return obj;
-    }
-    /**
-     * Post processes a JSON object by walking the object and evaluating any processing directives
-     * like @prune.
-     * @param object Object to post process.
-     */
-    postProcess(object) {
-        if (!processNode(object, {})) {
-            // Failed top level @if condition
-            return undefined;
-        }
-        return object;
-    }
-    /**
-     * Compiles a JSON template into a function that can be called to render a JSON object using
-     * a data object.
-     *
-     * @param json The JSON template to compile.
-     * @param templates (Optional) map of template functions (and other compiled templates) that
-     * can be called at render time.
-     */
-    static compile(json, templates) {
-        // Convert objects to strings for parsing
-        if (typeof json !== 'string') {
-            json = JSON.stringify(json);
-        }
-        // Parse JSON into an array of template functions. These will be called in order
-        // to build up the output JSON object as a string.
-        const parsed = parse(json, templates);
-        // Return closure that will execute the parsed template.
-        return (data, path) => {
-            // Check for optional path.
-            // - Templates can be executed as children of other templates so the path
-            //   specifies the property off the parent to execute the template for.
-            let obj = '';
-            if (path) {
-                const value = getValue(data, path);
-                if (Array.isArray(value)) {
-                    // Execute for each child object
-                    let connector = '';
-                    obj += '[';
-                    value.forEach((child) => {
-                        obj += connector;
-                        parsed.forEach((fn) => obj += fn(child));
-                        connector = ',';
-                    });
-                    obj += ']';
-                }
-                else if (typeof value === 'object') {
-                    parsed.forEach((fn) => obj += fn(value));
-                }
-            }
-            else {
-                parsed.forEach((fn) => obj += fn(data));
-            }
-            return obj;
-        };
-    }
-}
-exports.JsonTemplates = JsonTemplates;
-var ParseState;
-(function (ParseState) {
-    ParseState[ParseState["none"] = 0] = "none";
-    ParseState[ParseState["string"] = 1] = "string";
-    ParseState[ParseState["path"] = 2] = "path";
-})(ParseState || (ParseState = {}));
-function parse(json, templates) {
-    const parsed = [];
-    let txt = '';
-    let endString = '';
-    let endPath = '';
-    let nextState = ParseState.none;
-    let state = ParseState.none;
-    for (let i = 0, l = json.length; i < l; i++) {
-        const char = json[i];
-        switch (state) {
-            case ParseState.none:
-            default:
-                if ((char == '\'' || char == '"') && i < (l - 1)) {
-                    // Check for literal
-                    if (json[i + 1] == '!') {
-                        i++; // <- skip next char
-                        state = ParseState.path;
-                        parsed.push(appendText(txt));
-                        endPath = char;
-                        nextState = ParseState.none;
-                        txt = '';
-                    }
-                    else {
-                        state = ParseState.string;
-                        endString = char;
-                        txt += char;
-                    }
-                }
-                else {
-                    txt += char;
-                }
-                break;
-            case ParseState.string:
-                if (char == '$' && i < (l - 1) && json[i + 1] == '{') {
-                    i++; // <- skip next char
-                    state = ParseState.path;
-                    parsed.push(appendText(txt));
-                    endPath = '}';
-                    nextState = ParseState.string;
-                    txt = '';
-                }
-                else if (char == endString && json[i - 1] !== '\\') {
-                    state = ParseState.none;
-                    txt += char;
-                }
-                else {
-                    txt += char;
-                }
-                break;
-            case ParseState.path:
-                if (char == endPath) {
-                    state = nextState;
-                    const trimmed = txt.trim();
-                    if (trimmed && trimmed[trimmed.length - 1] == ')') {
-                        let open = txt.indexOf('(');
-                        const close = txt.lastIndexOf(')');
-                        if (open && close) {
-                            const name = txt.substr(0, open++);
-                            const args = close > open ? txt.substr(open, close - open) : '';
-                            parsed.push(appendFunction(name, args, templates));
-                        }
-                        else {
-                            parsed.push(appendProperty(txt));
-                        }
-                    }
-                    else {
-                        parsed.push(appendProperty(txt));
-                    }
-                    txt = '';
-                }
-                else {
-                    txt += char;
-                }
-                break;
-        }
-    }
-    if (txt.length > 0) {
-        parsed.push(appendText(txt));
-    }
-    return parsed;
-}
-function appendText(text) {
-    return (data) => text;
-}
-function appendFunction(name, args, templates) {
-    return (data) => {
-        const result = templates[name](data, args);
-        return typeof result === 'string' ? result : JSON.stringify(result);
-    };
-}
-function appendProperty(path) {
-    return (data) => {
-        const result = getValue(data, path);
-        if (typeof result === 'string') {
-            return result;
-        }
-        else if (result === undefined || result === null) {
-            return '';
-        }
-        return JSON.stringify(result);
-    };
-}
-function getValue(data, path) {
-    let value = data;
-    const parts = path.split('.');
-    for (let i = 0, l = parts.length; i < l; i++) {
-        const member = parts[i].trim();
-        if (typeof value === 'object') {
-            value = value[member];
-        }
-        else {
-            value = undefined;
-            break;
-        }
-    }
-    return value;
-}
-function processNode(node, prune) {
-    if (Array.isArray(node)) {
-        // Process array members
-        for (let i = node.length - 1; i >= 0; i--) {
-            const value = node[i];
-            if ((prune.nullMembers && (value === undefined || value === null)) ||
-                !processNode(value, prune)) {
-                // Remove array member
-                node.splice(i, 1);
-            }
-        }
-        // Prune out the array if it's now empty
-        if (prune.emptyArrays && node.length == 0) {
-            return false;
-        }
-    }
-    else if (typeof node === 'object') {
-        // Process object members
-        let conditions = [];
-        for (const key in node) {
-            const value = node[key];
-            if (key === '@prune') {
-                // Clone and update pruning options
-                prune = Object.assign({}, prune, value);
-                delete node[key];
-            }
-            else if (key === '@if') {
-                // Defer processing of condition until after the entire node and
-                // children have been evaluated.
-                conditions.push(value);
-                delete node[key];
-            }
-            else {
-                // Prune members
-                if (prune.nullMembers && (value === undefined || value === null)) {
-                    delete node[key];
-                }
-                else if (prune.emptyStrings && typeof value === 'string' && value.trim().length == 0) {
-                    delete node[key];
-                }
-                else if (prune.emptyArrays && Array.isArray(value) && value.length == 0) {
-                    delete node[key];
-                }
-                else if (!processNode(value, prune)) {
-                    // @if condition failed so prune it.
-                    delete node[key];
-                }
-            }
-        }
-        // Process @if conditions
-        // - multiple @if conditions are AND'ed
-        for (let i = 0; i < conditions.length; i++) {
-            if (!getValue(node, conditions[i])) {
-                return false;
-            }
-        }
-    }
-    return true;
-}
-//# sourceMappingURL=jsonTemplates.js.map
-
-/***/ }),
-
-/***/ "../../libraries/botbuilder/lib/memoryStorage.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const storageMiddleware_1 = __webpack_require__("../../libraries/botbuilder/lib/storageMiddleware.js");
-/**
- * Middleware that implements an in memory based storage provider for a bot.
- *
- * __Extends BotContext:__
- * * context.storage - Storage provider for storing and retrieving objects.
- *
- * **Usage Example**
- *
- * ```js
- * const bot = new Bot(adapter)
- *      .use(new MemoryStorage())
- *      .use(new BotStateManage())
- *      .onReceive((context) => {
- *          context.reply(`Hello World`);
- *      })
- * ```
- */
-class MemoryStorage extends storageMiddleware_1.StorageMiddleware {
-    /**
-     * Creates a new instance of the storage provider.
-     *
-     * @param settings (Optional) setting to configure the provider.
-     * @param memory (Optional) memory to use for storing items.
-     */
-    constructor(settings, memory = {}) {
-        super(settings || {});
-        this.memory = memory;
-        this.etag = 1;
-    }
-    read(keys) {
-        return new Promise((resolve, reject) => {
-            const data = {};
-            (keys || []).forEach((key) => {
-                const item = this.memory[key];
-                if (item) {
-                    data[key] = JSON.parse(item);
-                }
-            });
-            resolve(data);
-        });
-    }
-    ;
-    write(changes) {
-        const that = this;
-        function saveItem(key, item) {
-            const clone = Object.assign({}, item);
-            clone.eTag = (that.etag++).toString();
-            that.memory[key] = JSON.stringify(clone);
-        }
-        return new Promise((resolve, reject) => {
-            for (const key in changes) {
-                const newItem = changes[key];
-                const old = this.memory[key];
-                if (!old || newItem.eTag === '*') {
-                    saveItem(key, newItem);
-                }
-                else {
-                    const oldItem = JSON.parse(old);
-                    if (newItem.eTag === oldItem.eTag) {
-                        saveItem(key, newItem);
-                    }
-                    else {
-                        reject(new Error(`Storage: error writing "${key}" due to eTag conflict.`));
-                    }
-                }
-            }
-            resolve();
-        });
-    }
-    ;
-    delete(keys) {
-        return new Promise((resolve, reject) => {
-            (keys || []).forEach((key) => this.memory[key] = undefined);
-            resolve();
-        });
-    }
-    getStorage(context) {
-        return this;
-    }
-}
-exports.MemoryStorage = MemoryStorage;
-//# sourceMappingURL=memoryStorage.js.map
-
-/***/ }),
-
-/***/ "../../libraries/botbuilder/lib/messageStyler.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @module botbuilder
- */
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
-const cardStyler_1 = __webpack_require__("../../libraries/botbuilder/lib/cardStyler.js");
-const botbuilder_schema_1 = __webpack_require__("../../libraries/botbuilder-schema/lib/index.js");
-/**
- * A set of utility functions to assist with the formatting of the various message types a bot can
- * return.
- *
- * **Usage Example**
- *
- * ```js
- * // init message object
- * const message = MessageStyler.attachment(
- *     CardStyler.heroCard(
- *         'White T-Shirt',
- *         ['https://example.com/whiteShirt.jpg'],
- *         ['buy']
- *      )
- * );
- *
- * context.reply(message); // send message
- * ```
- */
-class MessageStyler {
-    /**
-     * Returns a simple text message.
-     *
-     * **Usage Example**
-     *
-     * ```js
-     * // init message object
-     * const basicMessage = MessageStyler.text('Greetings from example message');
-     *
-     * context.reply(basicMessage); // send message
-     * ```
-     *
-     * @param text Text to include in the message.
-     * @param speak (Optional) SSML to include in the message.
-     */
-    static text(text, speak) {
-        const msg = {
-            type: botbuilder_schema_1.ActivityTypes.Message,
-            text: text || ''
-        };
-        if (speak) {
-            msg.speak = speak;
-        }
-        return msg;
-    }
-    /**
-     * Returns a message that includes a set of suggested actions and optional text.
-     *
-     * @param actions Array of card actions or strings to include. Strings will be converted to `messageBack` actions.
-     * @param text (Optional) text of the message.
-     * @param speak (Optional) SSML to include with the message.
-     */
-    static suggestedActions(actions, text, speak) {
-        const msg = {
-            type: botbuilder_schema_1.ActivityTypes.Message,
-            suggestedActions: {
-                actions: cardStyler_1.CardStyler.actions(actions)
-            }
-        };
-        if (text) {
-            msg.text = text;
-        }
-        if (speak) {
-            msg.speak = speak;
-        }
-        return msg;
-    }
-    /**
-     * Returns a single message activity containing an attachment.
-     *
-     * @param attachment Adaptive card to include in the message.
-     * @param text (Optional) text of the message.
-     * @param speak (Optional) SSML to include with the message.
-     */
-    static attachment(attachment, text, speak) {
-        return attachmentActivity(botbuilder_schema_1.AttachmentLayoutTypes.List, [attachment], text, speak);
-    }
-    /**
-     * Returns a message that will display a set of attachments in list form.
-     *
-     * @param attachments Array of attachments to include in the message.
-     * @param text (Optional) text of the message.
-     * @param speak (Optional) SSML to include with the message.
-     */
-    static list(attachments, text, speak) {
-        return attachmentActivity(botbuilder_schema_1.AttachmentLayoutTypes.List, attachments, text, speak);
-    }
-    /**
-     * Returns a message that will display a set of attachments using a carousel layout.
-     *
-     * **Usage Example**
-     *
-     * ```js
-     * // init message object
-     * let messageWithCarouselOfCards = MessageStyler.carousel([
-     *   CardStyler.heroCard('title1', ['imageUrl1'], ['button1']),
-     *   CardStyler.heroCard('title2', ['imageUrl2'], ['button2']),
-     *   CardStyler.heroCard('title3', ['imageUrl3'], ['button3'])
-     * ]);
-     *
-     * context.reply(messageWithCarouselOfCards); // send the message
-     * ```
-     *
-     * @param attachments Array of attachments to include in the message.
-     * @param text (Optional) text of the message.
-     * @param speak (Optional) SSML to include with the message.
-     */
-    static carousel(attachments, text, speak) {
-        return attachmentActivity(botbuilder_schema_1.AttachmentLayoutTypes.Carousel, attachments, text, speak);
-    }
-    /**
-     * Returns a message that will display a single image or video to a user.
-     *
-     * **Usage Example**
-     *
-     * ```js
-     * // init message object
-     * let imageOrVideoMessage = MessageStyler.contentUrl('url', 'content-type', 'optional-name', 'optional-text', 'optional-speak');
-     *
-     * context.reply(imageOrVideoMessage); // send the message
-     * ```
-     *
-     * @param url Url of the image/video to send.
-     * @param contentType The MIME type of the image/video.
-     * @param name (Optional) Name of the image/video file.
-     * @param text (Optional) text of the message.
-     * @param speak (Optional) SSML to include with the message.
-     */
-    static contentUrl(url, contentType, name, text, speak) {
-        const a = { contentType: contentType, contentUrl: url };
-        if (name) {
-            a.name = name;
-        }
-        return attachmentActivity(botbuilder_schema_1.AttachmentLayoutTypes.List, [a], text, speak);
-    }
-}
-exports.MessageStyler = MessageStyler;
-function attachmentActivity(attachmentLayout, attachments, text, speak) {
-    const msg = {
-        type: botbuilder_schema_1.ActivityTypes.Message,
-        attachmentLayout: attachmentLayout,
-        attachments: attachments
-    };
-    if (text) {
-        msg.text = text;
-    }
-    if (speak) {
-        msg.speak = speak;
-    }
-    return msg;
-}
-//# sourceMappingURL=messageStyler.js.map
-
-/***/ }),
-
-/***/ "../../libraries/botbuilder/lib/middleware.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * Returns true if a result that can (Optionally) be a Promise looks like a Promise.
- * @param result The result to test.
- */
-function isPromised(result) {
-    return result && result.then !== undefined;
-}
-exports.isPromised = isPromised;
-//# sourceMappingURL=middleware.js.map
-
-/***/ }),
-
-/***/ "../../libraries/botbuilder/lib/middlewareSet.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * A set of `Middleware` plugins. The set itself is middleware so you can easily package up a set
- * of middleware that can be composed into a bot with a single `bot.use(mySet)` call or even into
- * another middleware set using `set.use(mySet)`.
- */
-class MiddlewareSet {
-    constructor() {
-        this._middleware = [];
-    }
-    /**
-     * Returns the underlying array of middleware.
-     */
-    get middleware() {
-        return this._middleware;
-    }
-    /**
-     * Registers middleware plugin(s) with the bot or set.
-     *
-     * @param middleware One or more middleware plugin(s) to register.
-     */
-    use(...middleware) {
-        Array.prototype.push.apply(this._middleware, middleware);
-        return this;
-    }
-    contextCreated(context, next) {
-        function callMiddleware(set, i) {
-            try {
-                if (i < set.length) {
-                    const plugin = set[i];
-                    if (plugin.contextCreated !== undefined) {
-                        return plugin.contextCreated(context, () => callMiddleware(set, i + 1));
-                    }
-                    else {
-                        return callMiddleware(set, i + 1);
-                    }
-                }
-                else {
-                    return next();
-                }
-            }
-            catch (err) {
-                return Promise.reject(err);
-            }
-        }
-        return callMiddleware(this._middleware.slice(0), 0);
-    }
-    receiveActivity(context, next) {
-        function callMiddleware(set, i) {
-            try {
-                if (i < set.length) {
-                    const plugin = set[i];
-                    if (plugin.receiveActivity !== undefined) {
-                        return plugin.receiveActivity(context, () => callMiddleware(set, i + 1));
-                    }
-                    else {
-                        return callMiddleware(set, i + 1);
-                    }
-                }
-                else {
-                    return next();
-                }
-            }
-            catch (err) {
-                return Promise.reject(err);
-            }
-        }
-        return callMiddleware(this._middleware.slice(0), 0);
-    }
-    postActivity(context, activities, next) {
-        function callMiddleware(set, i) {
-            try {
-                if (i < set.length) {
-                    const plugin = set[i];
-                    if (plugin.postActivity !== undefined) {
-                        return plugin.postActivity(context, activities, () => callMiddleware(set, i + 1));
-                    }
-                    else {
-                        return callMiddleware(set, i + 1);
-                    }
-                }
-                else {
-                    return next();
-                }
-            }
-            catch (err) {
-                return Promise.reject(err);
-            }
-        }
-        return callMiddleware(this._middleware.slice(0), 0);
-    }
-}
-exports.MiddlewareSet = MiddlewareSet;
-//# sourceMappingURL=middlewareSet.js.map
-
-/***/ }),
-
-/***/ "../../libraries/botbuilder/lib/regExpRecognizer.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @module botbuilder
- */
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
-const intentRecognizer_1 = __webpack_require__("../../libraries/botbuilder/lib/intentRecognizer.js");
-const entityObject_1 = __webpack_require__("../../libraries/botbuilder/lib/entityObject.js");
-/**
- * An intent recognizer for detecting the users intent using a series of regular expressions.
- *
- * One of the primary advantages of using a RegExpRecognizer is that you can easily switch between
- * the use of regular expressions and a LUIS model. This could be useful for running unit tests
- * locally without having to make a cloud request.
- *
- * The other advantage for non-LUIS bots is that it potentially lets your bot support multiple
- * languages by providing a unique set of expressions for each language.
- *
- * **Usage Example**
- *
- * ```js
- * import { RegExpRecognizer } from 'botbuilder';
- *
- * // Define RegExp's for well known commands.
- * const recognizer = new RegExpRecognizer()
- *      .addIntent('HelpIntent', /^help/i)
- *      .addIntent('CancelIntent', /^cancel/i);
- *
- * // init bot and bind to adapter
- * const bot = new Bot(adapter);
- * // bind recognizer to bot
- * bot.use(recognizer);
- * // define bot's message handlers
- * bot.onReceive((context) => {
- *     if (context.ifIntent('HelpIntent')) {
- *         // handle help intent
- *         context.reply('You selected HelpIntent');
- *     } else if (context.ifIntent('CancelIntent')) {
- *        // handle cancel intent
- *        context.reply('You selected CancelIntent');
- *     } else {
- *        // handle all other messages
- *        context.reply('Welcome to the RegExpRecognizer example. Type "help" for commands, "cancel" to quit');
- *     }
- * });
- * ```
- */
-class RegExpRecognizer extends intentRecognizer_1.IntentRecognizer {
-    /**
-     * Creates a new instance of the recognizer.
-     *
-     * @param settings (Optional) settings to customize the recognizer.
-     */
-    constructor(settings) {
-        super();
-        this.intents = {};
-        this.settings = Object.assign({
-            minScore: 0.0
-        }, settings);
-        if (this.settings.minScore < 0 || this.settings.minScore > 1.0) {
-            throw new Error(`RegExpRecognizer: a minScore of '${this.settings.minScore}' is out of range.`);
-        }
-        this.onRecognize((context) => {
-            const intents = [];
-            const utterance = (context.request.text || '').trim();
-            const minScore = this.settings.minScore;
-            for (const name in this.intents) {
-                const map = this.intents[name];
-                const expressions = this.getExpressions(context, map);
-                let top;
-                (expressions || []).forEach((exp) => {
-                    const intent = RegExpRecognizer.recognize(utterance, exp, [], minScore);
-                    if (intent && (!top || intent.score > top.score)) {
-                        top = intent;
-                    }
-                });
-                if (top) {
-                    top.name = name;
-                    intents.push(top);
-                }
-            }
-            return intents;
-        });
-    }
-    /**
-     * Adds a definition for a named intent to the recognizer.
-     *
-     * **Usage Example**
-     *
-     * ```js
-     * // init recognizer
-     * let foodRecognizer = new RegExpRecognizer();
-     *
-     * // add intents to recognizer
-     * foodRecognizer.addIntent('TacosIntent', /taco/i);
-     * foodRecognizer.addIntent('BurritosIntent', /burrito/i);
-     * foodRecognizer.addIntent('EnchiladasIntent', /enchiladas/i);
-     *
-     * // add recognizer to bot
-     * bot.use(foodRecognizer);
-     * bot.onRecognize((context) => {
-     *     if (context.ifIntent('TacosIntent')) {
-     *         // handle tacos intent
-     *         context.reply('Added one taco to your order');
-     *     }
-     *     else if (context.ifIntent('BurritosIntent')) {
-     *         // handle burritos intent
-     *         context.reply('Added one burrito to your order');
-     *     }
-     *     else if (context.ifIntent('EnchiladasIntent')) {
-     *         // handle enchiladas intent
-     *         context.reply('Added one enchilada to your order');
-     *     }
-     *     else {
-     *        // handle other messages
-     *     }
-     * })
-     * ```
-     *
-     * @param name Name of the intent to return when one of the expression(s) is matched.
-     * @param expressions Expression(s) to match for this intent. Passing a `RegExpLocaleMap` lets
-     * specify an alternate set of expressions for each language that your bot supports.
-     */
-    addIntent(name, expressions) {
-        if (this.intents.hasOwnProperty(name)) {
-            throw new Error(`RegExpRecognizer: an intent name '${name}' already exists.`);
-        }
-        // Register as locale map
-        if (Array.isArray(expressions)) {
-            this.intents[name] = { '*': expressions };
-        }
-        else if (expressions instanceof RegExp) {
-            this.intents[name] = { '*': [expressions] };
-        }
-        else {
-            this.intents[name] = expressions;
-        }
-        return this;
-    }
-    getExpressions(context, map) {
-        const locale = context.request.locale || '*';
-        const entry = map.hasOwnProperty(locale) ? map[locale] : map['*'];
-        return entry ? (Array.isArray(entry) ? entry : [entry]) : undefined;
-    }
-    /**
-     * Matches a text string using the given expression. If matched, an `Intent` will be returned
-     * containing a coverage score, from 0.0 to 1.0, indicating how much of the text matched
-     * the expression. The more of the text the matched the greater the score. The name of
-     * the intent will be the value of `expression.toString()` and any capture groups will be
-     * returned as individual entities of type `string`.
-     *
-     * @param text The text string to match against.
-     * @param expression The expression to match.
-     * @param entityTypes (Optional) array of types to assign to each entity returned for a numbered
-     * capture group. As an example, for the expression `/flight from (.*) to (.*)/i` you could
-     * pass a value of `['fromCity', 'toCity']`. The entity returned for the first capture group will
-     * have a type of `fromCity` and the entity for the second capture group will have a type of
-     * `toCity`. The default entity type returned when not specified is `string`.
-     * @param minScore (Optional) minimum score to return for the coverage score. The default value
-     * is 0.0 but if provided, the calculated coverage score will be scaled to a value between the
-     * minScore and 1.0. For example, a expression that matches 50% of the text will result in a
-     * base coverage score of 0.5. If the minScore supplied is also 0.5 the returned score will be
-     * scaled to be 0.75 or 50% between 0.5 and 1.0. As another example, providing a minScore of 1.0
-     * will always result in a match returning a score of 1.0.
-     */
-    static recognize(text, expression, entityTypes = [], minScore = 0.0) {
-        if (typeof minScore !== 'number' || minScore < 0 || minScore > 1.0) {
-            throw new Error(`RegExpRecognizer: a minScore of '${minScore}' is out of range for expression '${expression.toString()}'.`);
-        }
-        const matched = expression.exec(text);
-        if (matched) {
-            // Calculate coverage
-            const coverage = matched[0].length / text.length;
-            const score = minScore + ((1.0 - minScore) * coverage);
-            // Populate entities
-            const entities = [];
-            if (matched.length > 1) {
-                for (let i = 1; i < matched.length; i++) {
-                    const type = (i - 1) < entityTypes.length ? entityTypes[i - 1] : entityObject_1.EntityTypes.string;
-                    entities.push({ type: type, score: 1.0, value: matched[i] });
-                }
-            }
-            // Return intent
-            return { name: expression.toString(), score: score, entities: entities };
-        }
-        return undefined;
-    }
-}
-exports.RegExpRecognizer = RegExpRecognizer;
-//# sourceMappingURL=regExpRecognizer.js.map
-
-/***/ }),
-
-/***/ "../../libraries/botbuilder/lib/storageMiddleware.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @module botbuilder
- */
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
-const botService_1 = __webpack_require__("../../libraries/botbuilder/lib/botService.js");
-/**
- * Abstract base class for all storage middleware.
- *
- * @param SETTINGS (Optional) settings to configure additional features of the storage provider.
- */
-class StorageMiddleware extends botService_1.BotService {
-    /**
-     * Creates a new instance of the storage provider.
-     *
-     * @param settings (Optional) settings to configure additional features of the storage provider.
-     */
-    constructor(settings) {
-        super('storage');
-        this.warningLogged = false;
-        this.settings = Object.assign({
-            optimizeWrites: true
-        }, settings);
-    }
-    getService(context) {
-        const storage = this.getStorage(context);
-        return this.settings.optimizeWrites ? new WriteOptimizer(context, storage) : storage;
-    }
-}
-exports.StorageMiddleware = StorageMiddleware;
-class WriteOptimizer {
-    constructor(context, storage) {
-        this.context = context;
-        this.storage = storage;
-    }
-    read(keys) {
-        return this.storage.read(keys).then((items) => {
-            // Remember hashes
-            keys.forEach((key) => this.updatheashes(key, items[key]));
-            return items;
-        });
-    }
-    /** save StoreItems to storage  **/
-    write(changes) {
-        // Identify changes to commit
-        let count = 0;
-        const hashes = this.context.state.writeOptimizer || {};
-        const newHashes = {};
-        const commits = {};
-        for (const key in changes) {
-            const item = changes[key] || {};
-            const hash = this.getHash(item);
-            if (hashes[key] !== hash) {
-                // New or changed item
-                commits[key] = item;
-                newHashes[key] = hash;
-                count++;
-            }
-        }
-        // Commit changes to storage
-        if (count > 0) {
-            return this.storage.write(commits).then(() => {
-                // Update hashes
-                for (const key in newHashes) {
-                    this.updatheashes(key, newHashes[key]);
-                }
-            });
-        }
-        else {
-            return Promise.resolve();
-        }
-    }
-    /** Delete storeItems from storage **/
-    delete(keys) {
-        return this.storage.delete(keys).then(() => {
-            // Remove hashes
-            (keys || []).forEach((key) => this.updatheashes(key));
-        });
-    }
-    updatheashes(key, itemOrHash) {
-        // Ensure hashes
-        let hashes = this.context.state.writeOptimizer;
-        if (!hashes) {
-            hashes = this.context.state.writeOptimizer = {};
-        }
-        // Update entry
-        if (typeof itemOrHash === 'string') {
-            hashes[key] = itemOrHash;
-        }
-        else if (itemOrHash) {
-            hashes[key] = this.getHash(itemOrHash);
-        }
-        else if (hashes && hashes.hasOwnProperty(key)) {
-            delete hashes[key];
-        }
-    }
-    getHash(item) {
-        const clone = Object.assign({}, item);
-        if (clone.eTag) {
-            delete clone.eTag;
-        }
-        ;
-        return JSON.stringify(clone);
-    }
-}
-//# sourceMappingURL=storageMiddleware.js.map
-
-/***/ }),
-
-/***/ "../../libraries/botbuilder/lib/templateManager.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const botbuilder_schema_1 = __webpack_require__("../../libraries/botbuilder-schema/lib/index.js");
-class TemplateManager {
-    constructor() {
-        this.templateRenderers = [];
-        this.languageFallback = [];
-    }
-    contextCreated(context, next) {
-        context.templateManager = this;
-        return next();
-    }
-    postActivity(context, activities, next) {
-        return __awaiter(this, void 0, void 0, function* () {
-            // Ensure activities are well formed.
-            for (let i = 0; i < activities.length; i++) {
-                let activity = activities[i];
-                if (activity.type == "template") {
-                    yield this.bindActivityTemplate(context, activity);
-                }
-            }
-            return next();
-        });
-    }
-    /**
-     * register template renderer
-     * @param renderer
-     */
-    register(renderer) {
-        this.templateRenderers.push(renderer);
-        return this;
-    }
-    /**
-     * list of registered template renderers
-     */
-    list() {
-        return this.templateRenderers;
-    }
-    /**
-     * SetLanguagePolicy allows you to set the fallback strategy
-     * @param fallback array of languages to try when binding templates
-     */
-    setLanguagePolicy(fallback) {
-        this.languageFallback = fallback;
-    }
-    /**
-     * Get the current language fallback policy
-     */
-    getLanguagePolicy() {
-        return this.languageFallback;
-    }
-    findAndApplyTemplate(context, language, templateId, data) {
-        return __awaiter(this, void 0, void 0, function* () {
-            for (var renderer of this.templateRenderers) {
-                let templateOutput = yield renderer.renderTemplate(context, language, templateId, data);
-                if (templateOutput) {
-                    if (typeof templateOutput === 'object') {
-                        if (!templateOutput.type) {
-                            templateOutput.type = botbuilder_schema_1.ActivityTypes.Message;
-                        }
-                        return templateOutput;
-                    }
-                    else {
-                        const activity = {
-                            type: botbuilder_schema_1.ActivityTypes.Message,
-                            text: templateOutput || '',
-                        };
-                        return activity;
-                    }
-                }
-            }
-            return undefined;
-        });
-    }
-    bindActivityTemplate(context, activity) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const fallbackLocales = this.languageFallback.slice(0); // clone fallback
-            if (!!context.request.locale)
-                fallbackLocales.push(context.request.locale);
-            fallbackLocales.push('default');
-            // Ensure activities are well formed.
-            // bind any template activity
-            if (activity.type == "template") {
-                // try each locale until successful
-                for (let locale of fallbackLocales) {
-                    // apply template
-                    let boundActivity = yield this.findAndApplyTemplate(context, locale, activity.text, activity.value);
-                    if (boundActivity) {
-                        Object.assign(activity, boundActivity);
-                        return;
-                    }
-                }
-                throw new Error(`Could not resolve template id:${activity.text}`);
-            }
-        });
-    }
-}
-exports.TemplateManager = TemplateManager;
-//# sourceMappingURL=templateManager.js.map
-
-/***/ }),
-
-/***/ "../../libraries/botbuilder/lib/testAdapter.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const botbuilder_schema_1 = __webpack_require__("../../libraries/botbuilder-schema/lib/index.js");
-const assert = __webpack_require__("../../node_modules/assert/assert.js");
-/**
- * Test adapter used for unit tests.
- * @example
- * <pre><code>
- * const adapter = new TestAdapater();
- * const bot = new Bot(adapter)
- *      .use(new MemoryStorage())
- *      .use(new BotStateManage())
- *      .onReceive((context) => {
- *          const cnt = context.state.conversation.next || 1;
- *          context.reply(`reply: ${cnt}`);
- *          context.state.conversation.next = cnt + 1;
- *      });
- * adapter.test('inc', 'reply: 1')
- *          .test('inc', 'reply: 2')
- *          .test('inc', 'reply: 3')
- *          .then(() => done());
- * </code></pre>
- */
-class TestAdapter {
-    /**
-     * Creates a new instance of the test adapter.
-     * @param reference (Optional) conversation reference that lets you customize the address
-     * information for messages sent during a test.
-     */
-    constructor(reference) {
-        this.nextId = 0;
-        this.botReplies = [];
-        this.onReceive = undefined;
-        this.reference = Object.assign({}, reference, {
-            channelId: 'test',
-            serviceUrl: 'https://test.com',
-            user: { id: 'user', name: 'User1' },
-            bot: { id: 'bot', name: 'Bot' },
-            conversation: { id: 'Convo1' }
-        });
-    }
-    /** INTERNAL implementation of `Adapter.post()`. */
-    post(activities) {
-        activities.forEach((activity) => this.botReplies.push(activity));
-        return Promise.resolve(undefined);
-    }
-    /* INTERNAL */
-    _sendActivityToBot(userSays) {
-        // ready for next reply
-        let activity = (typeof userSays === 'string' ? { type: botbuilder_schema_1.ActivityTypes.Message, text: userSays } : userSays);
-        if (!activity.type)
-            throw new Error("Missing activity.type");
-        activity.channelId = this.reference.channelId;
-        activity.from = this.reference.user;
-        activity.recipient = this.reference.bot;
-        activity.conversation = this.reference.conversation;
-        activity.serviceUrl = this.reference.serviceUrl;
-        const id = activity.id = (this.nextId++).toString();
-        return this.onReceive(activity).then(result => { });
-    }
-    /**
-     * Send something to the bot
-     * @param userSays text or activity simulating user input
-     */
-    send(userSays) {
-        return new TestFlow(this._sendActivityToBot(userSays), this);
-    }
-    /**
-     * wait for time period to pass before continuing
-     * @param ms ms to wait for
-     */
-    delay(ms) {
-        return new TestFlow(new Promise((resolve, reject) => { setTimeout(() => resolve(), ms); }), this);
-    }
-    /**
-     * Send something to the bot and expect the bot to reply
-     * @param userSays text or activity simulating user input
-     * @param expected expected text or activity from the bot
-     * @param description description of test case
-     * @param timeout (default 3000ms) time to wait for response from bot
-     */
-    test(userSays, expected, description, timeout) {
-        return this.send(userSays)
-            .assertReply(expected, description);
-    }
-    /**
-     * Throws if the bot's response doesn't match the expected text/activity
-     * @param expected expected text or activity from the bot
-     * @param description description of test case
-     * @param timeout (default 3000ms) time to wait for response from bot
-     */
-    assertReply(expected, description, timeout) {
-        return new TestFlow(Promise.resolve(), this).assertReply(expected, description, timeout);
-    }
-    /**
-     * throws if the bot's response is not one of the candidate strings
-     * @param candidates candidate responses
-     * @param description description of test case
-     * @param timeout (default 3000ms) time to wait for response from bot
-     */
-    assertReplyOneOf(candidates, description, timeout) {
-        return new TestFlow(Promise.resolve(), this).assertReplyOneOf(candidates, description, timeout);
-    }
-}
-exports.TestAdapter = TestAdapter;
-/** INTERNAL support class for `TestAdapter`. */
-class TestFlow {
-    constructor(previous, adapter) {
-        this.previous = previous;
-        this.adapter = adapter;
-        if (!this.previous)
-            this.previous = Promise.resolve();
-    }
-    /**
-     * Send something to the bot and expect the bot to reply
-     * @param userSays text or activity simulating user input
-     * @param expected expected text or activity from the bot
-     * @param description description of test case
-     * @param timeout (default 3000ms) time to wait for response from bot
-     */
-    test(userSays, expected, description, timeout) {
-        if (!expected)
-            throw new Error(".test() Missing expected parameter");
-        return this.send(userSays)
-            .assertReply(expected, description || `test("${userSays}", "${expected}")`, timeout);
-    }
-    /**
-     * Send something to the bot
-     * @param userSays text or activity simulating user input
-     */
-    send(userSays) {
-        return new TestFlow(this.previous.then(() => this.adapter._sendActivityToBot(userSays)), this.adapter);
-    }
-    /**
-     * Throws if the bot's response doesn't match the expected text/activity
-     * @param expected expected text or activity from the bot, or callback to inspect object
-     * @param description description of test case
-     * @param timeout (default 3000ms) time to wait for response from bot
-     */
-    assertReply(expected, description, timeout) {
-        if (!expected)
-            throw new Error(".assertReply() Missing expected parameter");
-        return new TestFlow(this.previous.then(() => {
-            return new Promise((resolve, reject) => {
-                if (!timeout)
-                    timeout = 3000;
-                let interval = 0;
-                let start = new Date().getTime();
-                let myInterval = setInterval(() => {
-                    let current = new Date().getTime();
-                    if ((current - start) > timeout) {
-                        let expectedActivity = (typeof expected === 'string' ? { type: botbuilder_schema_1.ActivityTypes.Message, text: expected } : expected);
-                        throw new Error(`${timeout}ms Timed out waiting for:${description || expectedActivity.text}`);
-                    }
-                    // if we have replies
-                    if (this.adapter.botReplies.length > 0) {
-                        clearInterval(myInterval);
-                        let botReply = this.adapter.botReplies[0];
-                        this.adapter.botReplies.splice(0, 1);
-                        if (typeof expected === 'function') {
-                            expected(botReply, description);
-                        }
-                        else if (typeof expected === 'string') {
-                            assert.equal(botReply.type, botbuilder_schema_1.ActivityTypes.Message, (description || '') + ` type === '${botReply.type}'. `);
-                            assert.equal(botReply.text, expected, (description || '') + ` text === "${botReply.text}"`);
-                        }
-                        else {
-                            this.validateActivity(botReply, expected);
-                        }
-                        resolve();
-                        return;
-                    }
-                }, interval);
-            });
-        }), this.adapter);
-    }
-    /**
-     * throws if the bot's response is not one of the candidate strings
-     * @param candidates candidate responses
-     * @param description description of test case
-     * @param timeout (default 3000ms) time to wait for response from bot
-     */
-    assertReplyOneOf(candidates, description, timeout) {
-        return this.assertReply((activity) => {
-            for (let candidate of candidates) {
-                if (activity.text == candidate) {
-                    return;
-                }
-            }
-            assert.fail(`${description} FAILED, Expected one of :${JSON.stringify(candidates)}`);
-        });
-    }
-    /**
-     * Insert delay before continuing
-     * @param ms ms to wait
-     */
-    delay(ms) {
-        return new TestFlow(this.previous.then(() => {
-            return new Promise((resolve, reject) => { setTimeout(() => resolve(), ms); });
-        }), this.adapter);
-    }
-    validateActivity(activity, expected) {
-        for (let prop in expected) {
-            assert.equal(activity[prop], expected[prop]);
-        }
-    }
-    then(onFulfilled) {
-        return new TestFlow(this.previous.then(onFulfilled), this.adapter);
-    }
-    catch(onRejected) {
-        return new TestFlow(this.previous.catch(onRejected), this.adapter);
-    }
-}
-exports.TestFlow = TestFlow;
-//# sourceMappingURL=testAdapter.js.map
-
-/***/ }),
-
-/***/ "../../node_modules/assert/assert.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(global) {
-
-// compare and isBuffer taken from https://github.com/feross/buffer/blob/680e9e5e488f22aac27599a57dc844a6315928dd/index.js
-// original notice:
-
-/*!
- * The buffer module from node.js, for the browser.
- *
- * @author   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
- * @license  MIT
- */
-function compare(a, b) {
-  if (a === b) {
-    return 0;
-  }
-
-  var x = a.length;
-  var y = b.length;
-
-  for (var i = 0, len = Math.min(x, y); i < len; ++i) {
-    if (a[i] !== b[i]) {
-      x = a[i];
-      y = b[i];
-      break;
-    }
-  }
-
-  if (x < y) {
-    return -1;
-  }
-  if (y < x) {
-    return 1;
-  }
-  return 0;
-}
-function isBuffer(b) {
-  if (global.Buffer && typeof global.Buffer.isBuffer === 'function') {
-    return global.Buffer.isBuffer(b);
-  }
-  return !!(b != null && b._isBuffer);
-}
-
-// based on node assert, original notice:
-
-// http://wiki.commonjs.org/wiki/Unit_Testing/1.0
-//
-// THIS IS NOT TESTED NOR LIKELY TO WORK OUTSIDE V8!
-//
-// Originally from narwhal.js (http://narwhaljs.org)
-// Copyright (c) 2009 Thomas Robinson <280north.com>
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the 'Software'), to
-// deal in the Software without restriction, including without limitation the
-// rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-// sell copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-// ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-var util = __webpack_require__("../../node_modules/util/util.js");
-var hasOwn = Object.prototype.hasOwnProperty;
-var pSlice = Array.prototype.slice;
-var functionsHaveNames = (function () {
-  return function foo() {}.name === 'foo';
-}());
-function pToString (obj) {
-  return Object.prototype.toString.call(obj);
-}
-function isView(arrbuf) {
-  if (isBuffer(arrbuf)) {
-    return false;
-  }
-  if (typeof global.ArrayBuffer !== 'function') {
-    return false;
-  }
-  if (typeof ArrayBuffer.isView === 'function') {
-    return ArrayBuffer.isView(arrbuf);
-  }
-  if (!arrbuf) {
-    return false;
-  }
-  if (arrbuf instanceof DataView) {
-    return true;
-  }
-  if (arrbuf.buffer && arrbuf.buffer instanceof ArrayBuffer) {
-    return true;
-  }
-  return false;
-}
-// 1. The assert module provides functions that throw
-// AssertionError's when particular conditions are not met. The
-// assert module must conform to the following interface.
-
-var assert = module.exports = ok;
-
-// 2. The AssertionError is defined in assert.
-// new assert.AssertionError({ message: message,
-//                             actual: actual,
-//                             expected: expected })
-
-var regex = /\s*function\s+([^\(\s]*)\s*/;
-// based on https://github.com/ljharb/function.prototype.name/blob/adeeeec8bfcc6068b187d7d9fb3d5bb1d3a30899/implementation.js
-function getName(func) {
-  if (!util.isFunction(func)) {
-    return;
-  }
-  if (functionsHaveNames) {
-    return func.name;
-  }
-  var str = func.toString();
-  var match = str.match(regex);
-  return match && match[1];
-}
-assert.AssertionError = function AssertionError(options) {
-  this.name = 'AssertionError';
-  this.actual = options.actual;
-  this.expected = options.expected;
-  this.operator = options.operator;
-  if (options.message) {
-    this.message = options.message;
-    this.generatedMessage = false;
-  } else {
-    this.message = getMessage(this);
-    this.generatedMessage = true;
-  }
-  var stackStartFunction = options.stackStartFunction || fail;
-  if (Error.captureStackTrace) {
-    Error.captureStackTrace(this, stackStartFunction);
-  } else {
-    // non v8 browsers so we can have a stacktrace
-    var err = new Error();
-    if (err.stack) {
-      var out = err.stack;
-
-      // try to strip useless frames
-      var fn_name = getName(stackStartFunction);
-      var idx = out.indexOf('\n' + fn_name);
-      if (idx >= 0) {
-        // once we have located the function frame
-        // we need to strip out everything before it (and its line)
-        var next_line = out.indexOf('\n', idx + 1);
-        out = out.substring(next_line + 1);
-      }
-
-      this.stack = out;
-    }
-  }
-};
-
-// assert.AssertionError instanceof Error
-util.inherits(assert.AssertionError, Error);
-
-function truncate(s, n) {
-  if (typeof s === 'string') {
-    return s.length < n ? s : s.slice(0, n);
-  } else {
-    return s;
-  }
-}
-function inspect(something) {
-  if (functionsHaveNames || !util.isFunction(something)) {
-    return util.inspect(something);
-  }
-  var rawname = getName(something);
-  var name = rawname ? ': ' + rawname : '';
-  return '[Function' +  name + ']';
-}
-function getMessage(self) {
-  return truncate(inspect(self.actual), 128) + ' ' +
-         self.operator + ' ' +
-         truncate(inspect(self.expected), 128);
-}
-
-// At present only the three keys mentioned above are used and
-// understood by the spec. Implementations or sub modules can pass
-// other keys to the AssertionError's constructor - they will be
-// ignored.
-
-// 3. All of the following functions must throw an AssertionError
-// when a corresponding condition is not met, with a message that
-// may be undefined if not provided.  All assertion methods provide
-// both the actual and expected values to the assertion error for
-// display purposes.
-
-function fail(actual, expected, message, operator, stackStartFunction) {
-  throw new assert.AssertionError({
-    message: message,
-    actual: actual,
-    expected: expected,
-    operator: operator,
-    stackStartFunction: stackStartFunction
-  });
-}
-
-// EXTENSION! allows for well behaved errors defined elsewhere.
-assert.fail = fail;
-
-// 4. Pure assertion tests whether a value is truthy, as determined
-// by !!guard.
-// assert.ok(guard, message_opt);
-// This statement is equivalent to assert.equal(true, !!guard,
-// message_opt);. To test strictly for the value true, use
-// assert.strictEqual(true, guard, message_opt);.
-
-function ok(value, message) {
-  if (!value) fail(value, true, message, '==', assert.ok);
-}
-assert.ok = ok;
-
-// 5. The equality assertion tests shallow, coercive equality with
-// ==.
-// assert.equal(actual, expected, message_opt);
-
-assert.equal = function equal(actual, expected, message) {
-  if (actual != expected) fail(actual, expected, message, '==', assert.equal);
-};
-
-// 6. The non-equality assertion tests for whether two objects are not equal
-// with != assert.notEqual(actual, expected, message_opt);
-
-assert.notEqual = function notEqual(actual, expected, message) {
-  if (actual == expected) {
-    fail(actual, expected, message, '!=', assert.notEqual);
-  }
-};
-
-// 7. The equivalence assertion tests a deep equality relation.
-// assert.deepEqual(actual, expected, message_opt);
-
-assert.deepEqual = function deepEqual(actual, expected, message) {
-  if (!_deepEqual(actual, expected, false)) {
-    fail(actual, expected, message, 'deepEqual', assert.deepEqual);
-  }
-};
-
-assert.deepStrictEqual = function deepStrictEqual(actual, expected, message) {
-  if (!_deepEqual(actual, expected, true)) {
-    fail(actual, expected, message, 'deepStrictEqual', assert.deepStrictEqual);
-  }
-};
-
-function _deepEqual(actual, expected, strict, memos) {
-  // 7.1. All identical values are equivalent, as determined by ===.
-  if (actual === expected) {
-    return true;
-  } else if (isBuffer(actual) && isBuffer(expected)) {
-    return compare(actual, expected) === 0;
-
-  // 7.2. If the expected value is a Date object, the actual value is
-  // equivalent if it is also a Date object that refers to the same time.
-  } else if (util.isDate(actual) && util.isDate(expected)) {
-    return actual.getTime() === expected.getTime();
-
-  // 7.3 If the expected value is a RegExp object, the actual value is
-  // equivalent if it is also a RegExp object with the same source and
-  // properties (`global`, `multiline`, `lastIndex`, `ignoreCase`).
-  } else if (util.isRegExp(actual) && util.isRegExp(expected)) {
-    return actual.source === expected.source &&
-           actual.global === expected.global &&
-           actual.multiline === expected.multiline &&
-           actual.lastIndex === expected.lastIndex &&
-           actual.ignoreCase === expected.ignoreCase;
-
-  // 7.4. Other pairs that do not both pass typeof value == 'object',
-  // equivalence is determined by ==.
-  } else if ((actual === null || typeof actual !== 'object') &&
-             (expected === null || typeof expected !== 'object')) {
-    return strict ? actual === expected : actual == expected;
-
-  // If both values are instances of typed arrays, wrap their underlying
-  // ArrayBuffers in a Buffer each to increase performance
-  // This optimization requires the arrays to have the same type as checked by
-  // Object.prototype.toString (aka pToString). Never perform binary
-  // comparisons for Float*Arrays, though, since e.g. +0 === -0 but their
-  // bit patterns are not identical.
-  } else if (isView(actual) && isView(expected) &&
-             pToString(actual) === pToString(expected) &&
-             !(actual instanceof Float32Array ||
-               actual instanceof Float64Array)) {
-    return compare(new Uint8Array(actual.buffer),
-                   new Uint8Array(expected.buffer)) === 0;
-
-  // 7.5 For all other Object pairs, including Array objects, equivalence is
-  // determined by having the same number of owned properties (as verified
-  // with Object.prototype.hasOwnProperty.call), the same set of keys
-  // (although not necessarily the same order), equivalent values for every
-  // corresponding key, and an identical 'prototype' property. Note: this
-  // accounts for both named and indexed properties on Arrays.
-  } else if (isBuffer(actual) !== isBuffer(expected)) {
-    return false;
-  } else {
-    memos = memos || {actual: [], expected: []};
-
-    var actualIndex = memos.actual.indexOf(actual);
-    if (actualIndex !== -1) {
-      if (actualIndex === memos.expected.indexOf(expected)) {
-        return true;
-      }
-    }
-
-    memos.actual.push(actual);
-    memos.expected.push(expected);
-
-    return objEquiv(actual, expected, strict, memos);
-  }
-}
-
-function isArguments(object) {
-  return Object.prototype.toString.call(object) == '[object Arguments]';
-}
-
-function objEquiv(a, b, strict, actualVisitedObjects) {
-  if (a === null || a === undefined || b === null || b === undefined)
-    return false;
-  // if one is a primitive, the other must be same
-  if (util.isPrimitive(a) || util.isPrimitive(b))
-    return a === b;
-  if (strict && Object.getPrototypeOf(a) !== Object.getPrototypeOf(b))
-    return false;
-  var aIsArgs = isArguments(a);
-  var bIsArgs = isArguments(b);
-  if ((aIsArgs && !bIsArgs) || (!aIsArgs && bIsArgs))
-    return false;
-  if (aIsArgs) {
-    a = pSlice.call(a);
-    b = pSlice.call(b);
-    return _deepEqual(a, b, strict);
-  }
-  var ka = objectKeys(a);
-  var kb = objectKeys(b);
-  var key, i;
-  // having the same number of owned properties (keys incorporates
-  // hasOwnProperty)
-  if (ka.length !== kb.length)
-    return false;
-  //the same set of keys (although not necessarily the same order),
-  ka.sort();
-  kb.sort();
-  //~~~cheap key test
-  for (i = ka.length - 1; i >= 0; i--) {
-    if (ka[i] !== kb[i])
-      return false;
-  }
-  //equivalent values for every corresponding key, and
-  //~~~possibly expensive deep test
-  for (i = ka.length - 1; i >= 0; i--) {
-    key = ka[i];
-    if (!_deepEqual(a[key], b[key], strict, actualVisitedObjects))
-      return false;
-  }
-  return true;
-}
-
-// 8. The non-equivalence assertion tests for any deep inequality.
-// assert.notDeepEqual(actual, expected, message_opt);
-
-assert.notDeepEqual = function notDeepEqual(actual, expected, message) {
-  if (_deepEqual(actual, expected, false)) {
-    fail(actual, expected, message, 'notDeepEqual', assert.notDeepEqual);
-  }
-};
-
-assert.notDeepStrictEqual = notDeepStrictEqual;
-function notDeepStrictEqual(actual, expected, message) {
-  if (_deepEqual(actual, expected, true)) {
-    fail(actual, expected, message, 'notDeepStrictEqual', notDeepStrictEqual);
-  }
-}
-
-
-// 9. The strict equality assertion tests strict equality, as determined by ===.
-// assert.strictEqual(actual, expected, message_opt);
-
-assert.strictEqual = function strictEqual(actual, expected, message) {
-  if (actual !== expected) {
-    fail(actual, expected, message, '===', assert.strictEqual);
-  }
-};
-
-// 10. The strict non-equality assertion tests for strict inequality, as
-// determined by !==.  assert.notStrictEqual(actual, expected, message_opt);
-
-assert.notStrictEqual = function notStrictEqual(actual, expected, message) {
-  if (actual === expected) {
-    fail(actual, expected, message, '!==', assert.notStrictEqual);
-  }
-};
-
-function expectedException(actual, expected) {
-  if (!actual || !expected) {
-    return false;
-  }
-
-  if (Object.prototype.toString.call(expected) == '[object RegExp]') {
-    return expected.test(actual);
-  }
-
-  try {
-    if (actual instanceof expected) {
-      return true;
-    }
-  } catch (e) {
-    // Ignore.  The instanceof check doesn't work for arrow functions.
-  }
-
-  if (Error.isPrototypeOf(expected)) {
-    return false;
-  }
-
-  return expected.call({}, actual) === true;
-}
-
-function _tryBlock(block) {
-  var error;
-  try {
-    block();
-  } catch (e) {
-    error = e;
-  }
-  return error;
-}
-
-function _throws(shouldThrow, block, expected, message) {
-  var actual;
-
-  if (typeof block !== 'function') {
-    throw new TypeError('"block" argument must be a function');
-  }
-
-  if (typeof expected === 'string') {
-    message = expected;
-    expected = null;
-  }
-
-  actual = _tryBlock(block);
-
-  message = (expected && expected.name ? ' (' + expected.name + ').' : '.') +
-            (message ? ' ' + message : '.');
-
-  if (shouldThrow && !actual) {
-    fail(actual, expected, 'Missing expected exception' + message);
-  }
-
-  var userProvidedMessage = typeof message === 'string';
-  var isUnwantedException = !shouldThrow && util.isError(actual);
-  var isUnexpectedException = !shouldThrow && actual && !expected;
-
-  if ((isUnwantedException &&
-      userProvidedMessage &&
-      expectedException(actual, expected)) ||
-      isUnexpectedException) {
-    fail(actual, expected, 'Got unwanted exception' + message);
-  }
-
-  if ((shouldThrow && actual && expected &&
-      !expectedException(actual, expected)) || (!shouldThrow && actual)) {
-    throw actual;
-  }
-}
-
-// 11. Expected to throw an error:
-// assert.throws(block, Error_opt, message_opt);
-
-assert.throws = function(block, /*optional*/error, /*optional*/message) {
-  _throws(true, block, error, message);
-};
-
-// EXTENSION! This is annoying to write outside this module.
-assert.doesNotThrow = function(block, /*optional*/error, /*optional*/message) {
-  _throws(false, block, error, message);
-};
-
-assert.ifError = function(err) { if (err) throw err; };
-
-var objectKeys = Object.keys || function (obj) {
-  var keys = [];
-  for (var key in obj) {
-    if (hasOwn.call(obj, key)) keys.push(key);
-  }
-  return keys;
-};
-
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__("../../node_modules/webpack/buildin/global.js")))
-
-/***/ }),
 
 /***/ "../../node_modules/botframework-directlinejs/built/directLine.js":
 /***/ (function(module, exports, __webpack_require__) {
@@ -5041,6 +1653,34 @@ exports.AttachmentView = function (props) {
     }
 };
 //# sourceMappingURL=Attachment.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/botframework-webchat/built/BotChat.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+var App_1 = __webpack_require__("../../node_modules/botframework-webchat/built/App.js");
+exports.App = App_1.App;
+var Chat_1 = __webpack_require__("../../node_modules/botframework-webchat/built/Chat.js");
+exports.Chat = Chat_1.Chat;
+__export(__webpack_require__("../../node_modules/botframework-directlinejs/built/directLine.js"));
+var Attachment_1 = __webpack_require__("../../node_modules/botframework-webchat/built/Attachment.js");
+exports.queryParams = Attachment_1.queryParams;
+var SpeechOptions_1 = __webpack_require__("../../node_modules/botframework-webchat/built/SpeechOptions.js");
+exports.SpeechOptions = SpeechOptions_1.SpeechOptions;
+var SpeechModule_1 = __webpack_require__("../../node_modules/botframework-webchat/built/SpeechModule.js");
+exports.Speech = SpeechModule_1.Speech;
+// below are shims for compatibility with old browsers (IE 10 being the main culprit)
+__webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/es6.string.starts-with.js");
+__webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/es6.array.find.js");
+__webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/es6.array.find-index.js");
+//# sourceMappingURL=BotChat.js.map
 
 /***/ }),
 
@@ -6418,6 +3058,22 @@ var Speech;
 
 /***/ }),
 
+/***/ "../../node_modules/botframework-webchat/built/SpeechOptions.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var SpeechOptions = (function () {
+    function SpeechOptions() {
+    }
+    return SpeechOptions;
+}());
+exports.SpeechOptions = SpeechOptions;
+//# sourceMappingURL=SpeechOptions.js.map
+
+/***/ }),
+
 /***/ "../../node_modules/botframework-webchat/built/Store.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7194,6 +3850,619 @@ function getTabIndex(element) {
 exports.getTabIndex = getTabIndex;
 ;
 //# sourceMappingURL=getTabIndex.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/botframework-webchat/node_modules/core-js/modules/_a-function.js":
+/***/ (function(module, exports) {
+
+module.exports = function(it){
+  if(typeof it != 'function')throw TypeError(it + ' is not a function!');
+  return it;
+};
+
+/***/ }),
+
+/***/ "../../node_modules/botframework-webchat/node_modules/core-js/modules/_add-to-unscopables.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+// 22.1.3.31 Array.prototype[@@unscopables]
+var UNSCOPABLES = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_wks.js")('unscopables')
+  , ArrayProto  = Array.prototype;
+if(ArrayProto[UNSCOPABLES] == undefined)__webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_hide.js")(ArrayProto, UNSCOPABLES, {});
+module.exports = function(key){
+  ArrayProto[UNSCOPABLES][key] = true;
+};
+
+/***/ }),
+
+/***/ "../../node_modules/botframework-webchat/node_modules/core-js/modules/_an-object.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+var isObject = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_is-object.js");
+module.exports = function(it){
+  if(!isObject(it))throw TypeError(it + ' is not an object!');
+  return it;
+};
+
+/***/ }),
+
+/***/ "../../node_modules/botframework-webchat/node_modules/core-js/modules/_array-methods.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+// 0 -> Array#forEach
+// 1 -> Array#map
+// 2 -> Array#filter
+// 3 -> Array#some
+// 4 -> Array#every
+// 5 -> Array#find
+// 6 -> Array#findIndex
+var ctx      = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_ctx.js")
+  , IObject  = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_iobject.js")
+  , toObject = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_to-object.js")
+  , toLength = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_to-length.js")
+  , asc      = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_array-species-create.js");
+module.exports = function(TYPE, $create){
+  var IS_MAP        = TYPE == 1
+    , IS_FILTER     = TYPE == 2
+    , IS_SOME       = TYPE == 3
+    , IS_EVERY      = TYPE == 4
+    , IS_FIND_INDEX = TYPE == 6
+    , NO_HOLES      = TYPE == 5 || IS_FIND_INDEX
+    , create        = $create || asc;
+  return function($this, callbackfn, that){
+    var O      = toObject($this)
+      , self   = IObject(O)
+      , f      = ctx(callbackfn, that, 3)
+      , length = toLength(self.length)
+      , index  = 0
+      , result = IS_MAP ? create($this, length) : IS_FILTER ? create($this, 0) : undefined
+      , val, res;
+    for(;length > index; index++)if(NO_HOLES || index in self){
+      val = self[index];
+      res = f(val, index, O);
+      if(TYPE){
+        if(IS_MAP)result[index] = res;            // map
+        else if(res)switch(TYPE){
+          case 3: return true;                    // some
+          case 5: return val;                     // find
+          case 6: return index;                   // findIndex
+          case 2: result.push(val);               // filter
+        } else if(IS_EVERY)return false;          // every
+      }
+    }
+    return IS_FIND_INDEX ? -1 : IS_SOME || IS_EVERY ? IS_EVERY : result;
+  };
+};
+
+/***/ }),
+
+/***/ "../../node_modules/botframework-webchat/node_modules/core-js/modules/_array-species-constructor.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+var isObject = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_is-object.js")
+  , isArray  = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_is-array.js")
+  , SPECIES  = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_wks.js")('species');
+
+module.exports = function(original){
+  var C;
+  if(isArray(original)){
+    C = original.constructor;
+    // cross-realm fallback
+    if(typeof C == 'function' && (C === Array || isArray(C.prototype)))C = undefined;
+    if(isObject(C)){
+      C = C[SPECIES];
+      if(C === null)C = undefined;
+    }
+  } return C === undefined ? Array : C;
+};
+
+/***/ }),
+
+/***/ "../../node_modules/botframework-webchat/node_modules/core-js/modules/_array-species-create.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+// 9.4.2.3 ArraySpeciesCreate(originalArray, length)
+var speciesConstructor = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_array-species-constructor.js");
+
+module.exports = function(original, length){
+  return new (speciesConstructor(original))(length);
+};
+
+/***/ }),
+
+/***/ "../../node_modules/botframework-webchat/node_modules/core-js/modules/_cof.js":
+/***/ (function(module, exports) {
+
+var toString = {}.toString;
+
+module.exports = function(it){
+  return toString.call(it).slice(8, -1);
+};
+
+/***/ }),
+
+/***/ "../../node_modules/botframework-webchat/node_modules/core-js/modules/_core.js":
+/***/ (function(module, exports) {
+
+var core = module.exports = {version: '2.4.0'};
+if(typeof __e == 'number')__e = core; // eslint-disable-line no-undef
+
+/***/ }),
+
+/***/ "../../node_modules/botframework-webchat/node_modules/core-js/modules/_ctx.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+// optional / simple context binding
+var aFunction = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_a-function.js");
+module.exports = function(fn, that, length){
+  aFunction(fn);
+  if(that === undefined)return fn;
+  switch(length){
+    case 1: return function(a){
+      return fn.call(that, a);
+    };
+    case 2: return function(a, b){
+      return fn.call(that, a, b);
+    };
+    case 3: return function(a, b, c){
+      return fn.call(that, a, b, c);
+    };
+  }
+  return function(/* ...args */){
+    return fn.apply(that, arguments);
+  };
+};
+
+/***/ }),
+
+/***/ "../../node_modules/botframework-webchat/node_modules/core-js/modules/_defined.js":
+/***/ (function(module, exports) {
+
+// 7.2.1 RequireObjectCoercible(argument)
+module.exports = function(it){
+  if(it == undefined)throw TypeError("Can't call method on  " + it);
+  return it;
+};
+
+/***/ }),
+
+/***/ "../../node_modules/botframework-webchat/node_modules/core-js/modules/_descriptors.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+// Thank's IE8 for his funny defineProperty
+module.exports = !__webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_fails.js")(function(){
+  return Object.defineProperty({}, 'a', {get: function(){ return 7; }}).a != 7;
+});
+
+/***/ }),
+
+/***/ "../../node_modules/botframework-webchat/node_modules/core-js/modules/_dom-create.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+var isObject = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_is-object.js")
+  , document = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_global.js").document
+  // in old IE typeof document.createElement is 'object'
+  , is = isObject(document) && isObject(document.createElement);
+module.exports = function(it){
+  return is ? document.createElement(it) : {};
+};
+
+/***/ }),
+
+/***/ "../../node_modules/botframework-webchat/node_modules/core-js/modules/_export.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+var global    = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_global.js")
+  , core      = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_core.js")
+  , hide      = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_hide.js")
+  , redefine  = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_redefine.js")
+  , ctx       = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_ctx.js")
+  , PROTOTYPE = 'prototype';
+
+var $export = function(type, name, source){
+  var IS_FORCED = type & $export.F
+    , IS_GLOBAL = type & $export.G
+    , IS_STATIC = type & $export.S
+    , IS_PROTO  = type & $export.P
+    , IS_BIND   = type & $export.B
+    , target    = IS_GLOBAL ? global : IS_STATIC ? global[name] || (global[name] = {}) : (global[name] || {})[PROTOTYPE]
+    , exports   = IS_GLOBAL ? core : core[name] || (core[name] = {})
+    , expProto  = exports[PROTOTYPE] || (exports[PROTOTYPE] = {})
+    , key, own, out, exp;
+  if(IS_GLOBAL)source = name;
+  for(key in source){
+    // contains in native
+    own = !IS_FORCED && target && target[key] !== undefined;
+    // export native or passed
+    out = (own ? target : source)[key];
+    // bind timers to global for call from export context
+    exp = IS_BIND && own ? ctx(out, global) : IS_PROTO && typeof out == 'function' ? ctx(Function.call, out) : out;
+    // extend global
+    if(target)redefine(target, key, out, type & $export.U);
+    // export
+    if(exports[key] != out)hide(exports, key, exp);
+    if(IS_PROTO && expProto[key] != out)expProto[key] = out;
+  }
+};
+global.core = core;
+// type bitmap
+$export.F = 1;   // forced
+$export.G = 2;   // global
+$export.S = 4;   // static
+$export.P = 8;   // proto
+$export.B = 16;  // bind
+$export.W = 32;  // wrap
+$export.U = 64;  // safe
+$export.R = 128; // real proto method for `library` 
+module.exports = $export;
+
+/***/ }),
+
+/***/ "../../node_modules/botframework-webchat/node_modules/core-js/modules/_fails-is-regexp.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+var MATCH = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_wks.js")('match');
+module.exports = function(KEY){
+  var re = /./;
+  try {
+    '/./'[KEY](re);
+  } catch(e){
+    try {
+      re[MATCH] = false;
+      return !'/./'[KEY](re);
+    } catch(f){ /* empty */ }
+  } return true;
+};
+
+/***/ }),
+
+/***/ "../../node_modules/botframework-webchat/node_modules/core-js/modules/_fails.js":
+/***/ (function(module, exports) {
+
+module.exports = function(exec){
+  try {
+    return !!exec();
+  } catch(e){
+    return true;
+  }
+};
+
+/***/ }),
+
+/***/ "../../node_modules/botframework-webchat/node_modules/core-js/modules/_global.js":
+/***/ (function(module, exports) {
+
+// https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
+var global = module.exports = typeof window != 'undefined' && window.Math == Math
+  ? window : typeof self != 'undefined' && self.Math == Math ? self : Function('return this')();
+if(typeof __g == 'number')__g = global; // eslint-disable-line no-undef
+
+/***/ }),
+
+/***/ "../../node_modules/botframework-webchat/node_modules/core-js/modules/_has.js":
+/***/ (function(module, exports) {
+
+var hasOwnProperty = {}.hasOwnProperty;
+module.exports = function(it, key){
+  return hasOwnProperty.call(it, key);
+};
+
+/***/ }),
+
+/***/ "../../node_modules/botframework-webchat/node_modules/core-js/modules/_hide.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+var dP         = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_object-dp.js")
+  , createDesc = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_property-desc.js");
+module.exports = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_descriptors.js") ? function(object, key, value){
+  return dP.f(object, key, createDesc(1, value));
+} : function(object, key, value){
+  object[key] = value;
+  return object;
+};
+
+/***/ }),
+
+/***/ "../../node_modules/botframework-webchat/node_modules/core-js/modules/_ie8-dom-define.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = !__webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_descriptors.js") && !__webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_fails.js")(function(){
+  return Object.defineProperty(__webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_dom-create.js")('div'), 'a', {get: function(){ return 7; }}).a != 7;
+});
+
+/***/ }),
+
+/***/ "../../node_modules/botframework-webchat/node_modules/core-js/modules/_iobject.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+// fallback for non-array-like ES3 and non-enumerable old V8 strings
+var cof = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_cof.js");
+module.exports = Object('z').propertyIsEnumerable(0) ? Object : function(it){
+  return cof(it) == 'String' ? it.split('') : Object(it);
+};
+
+/***/ }),
+
+/***/ "../../node_modules/botframework-webchat/node_modules/core-js/modules/_is-array.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+// 7.2.2 IsArray(argument)
+var cof = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_cof.js");
+module.exports = Array.isArray || function isArray(arg){
+  return cof(arg) == 'Array';
+};
+
+/***/ }),
+
+/***/ "../../node_modules/botframework-webchat/node_modules/core-js/modules/_is-object.js":
+/***/ (function(module, exports) {
+
+module.exports = function(it){
+  return typeof it === 'object' ? it !== null : typeof it === 'function';
+};
+
+/***/ }),
+
+/***/ "../../node_modules/botframework-webchat/node_modules/core-js/modules/_is-regexp.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+// 7.2.8 IsRegExp(argument)
+var isObject = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_is-object.js")
+  , cof      = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_cof.js")
+  , MATCH    = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_wks.js")('match');
+module.exports = function(it){
+  var isRegExp;
+  return isObject(it) && ((isRegExp = it[MATCH]) !== undefined ? !!isRegExp : cof(it) == 'RegExp');
+};
+
+/***/ }),
+
+/***/ "../../node_modules/botframework-webchat/node_modules/core-js/modules/_object-dp.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+var anObject       = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_an-object.js")
+  , IE8_DOM_DEFINE = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_ie8-dom-define.js")
+  , toPrimitive    = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_to-primitive.js")
+  , dP             = Object.defineProperty;
+
+exports.f = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_descriptors.js") ? Object.defineProperty : function defineProperty(O, P, Attributes){
+  anObject(O);
+  P = toPrimitive(P, true);
+  anObject(Attributes);
+  if(IE8_DOM_DEFINE)try {
+    return dP(O, P, Attributes);
+  } catch(e){ /* empty */ }
+  if('get' in Attributes || 'set' in Attributes)throw TypeError('Accessors not supported!');
+  if('value' in Attributes)O[P] = Attributes.value;
+  return O;
+};
+
+/***/ }),
+
+/***/ "../../node_modules/botframework-webchat/node_modules/core-js/modules/_property-desc.js":
+/***/ (function(module, exports) {
+
+module.exports = function(bitmap, value){
+  return {
+    enumerable  : !(bitmap & 1),
+    configurable: !(bitmap & 2),
+    writable    : !(bitmap & 4),
+    value       : value
+  };
+};
+
+/***/ }),
+
+/***/ "../../node_modules/botframework-webchat/node_modules/core-js/modules/_redefine.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+var global    = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_global.js")
+  , hide      = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_hide.js")
+  , has       = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_has.js")
+  , SRC       = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_uid.js")('src')
+  , TO_STRING = 'toString'
+  , $toString = Function[TO_STRING]
+  , TPL       = ('' + $toString).split(TO_STRING);
+
+__webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_core.js").inspectSource = function(it){
+  return $toString.call(it);
+};
+
+(module.exports = function(O, key, val, safe){
+  var isFunction = typeof val == 'function';
+  if(isFunction)has(val, 'name') || hide(val, 'name', key);
+  if(O[key] === val)return;
+  if(isFunction)has(val, SRC) || hide(val, SRC, O[key] ? '' + O[key] : TPL.join(String(key)));
+  if(O === global){
+    O[key] = val;
+  } else {
+    if(!safe){
+      delete O[key];
+      hide(O, key, val);
+    } else {
+      if(O[key])O[key] = val;
+      else hide(O, key, val);
+    }
+  }
+// add fake Function#toString for correct work wrapped methods / constructors with methods like LoDash isNative
+})(Function.prototype, TO_STRING, function toString(){
+  return typeof this == 'function' && this[SRC] || $toString.call(this);
+});
+
+/***/ }),
+
+/***/ "../../node_modules/botframework-webchat/node_modules/core-js/modules/_shared.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+var global = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_global.js")
+  , SHARED = '__core-js_shared__'
+  , store  = global[SHARED] || (global[SHARED] = {});
+module.exports = function(key){
+  return store[key] || (store[key] = {});
+};
+
+/***/ }),
+
+/***/ "../../node_modules/botframework-webchat/node_modules/core-js/modules/_string-context.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+// helper for String#{startsWith, endsWith, includes}
+var isRegExp = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_is-regexp.js")
+  , defined  = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_defined.js");
+
+module.exports = function(that, searchString, NAME){
+  if(isRegExp(searchString))throw TypeError('String#' + NAME + " doesn't accept regex!");
+  return String(defined(that));
+};
+
+/***/ }),
+
+/***/ "../../node_modules/botframework-webchat/node_modules/core-js/modules/_to-integer.js":
+/***/ (function(module, exports) {
+
+// 7.1.4 ToInteger
+var ceil  = Math.ceil
+  , floor = Math.floor;
+module.exports = function(it){
+  return isNaN(it = +it) ? 0 : (it > 0 ? floor : ceil)(it);
+};
+
+/***/ }),
+
+/***/ "../../node_modules/botframework-webchat/node_modules/core-js/modules/_to-length.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+// 7.1.15 ToLength
+var toInteger = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_to-integer.js")
+  , min       = Math.min;
+module.exports = function(it){
+  return it > 0 ? min(toInteger(it), 0x1fffffffffffff) : 0; // pow(2, 53) - 1 == 9007199254740991
+};
+
+/***/ }),
+
+/***/ "../../node_modules/botframework-webchat/node_modules/core-js/modules/_to-object.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+// 7.1.13 ToObject(argument)
+var defined = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_defined.js");
+module.exports = function(it){
+  return Object(defined(it));
+};
+
+/***/ }),
+
+/***/ "../../node_modules/botframework-webchat/node_modules/core-js/modules/_to-primitive.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+// 7.1.1 ToPrimitive(input [, PreferredType])
+var isObject = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_is-object.js");
+// instead of the ES6 spec version, we didn't implement @@toPrimitive case
+// and the second argument - flag - preferred type is a string
+module.exports = function(it, S){
+  if(!isObject(it))return it;
+  var fn, val;
+  if(S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it)))return val;
+  if(typeof (fn = it.valueOf) == 'function' && !isObject(val = fn.call(it)))return val;
+  if(!S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it)))return val;
+  throw TypeError("Can't convert object to primitive value");
+};
+
+/***/ }),
+
+/***/ "../../node_modules/botframework-webchat/node_modules/core-js/modules/_uid.js":
+/***/ (function(module, exports) {
+
+var id = 0
+  , px = Math.random();
+module.exports = function(key){
+  return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
+};
+
+/***/ }),
+
+/***/ "../../node_modules/botframework-webchat/node_modules/core-js/modules/_wks.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+var store      = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_shared.js")('wks')
+  , uid        = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_uid.js")
+  , Symbol     = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_global.js").Symbol
+  , USE_SYMBOL = typeof Symbol == 'function';
+
+var $exports = module.exports = function(name){
+  return store[name] || (store[name] =
+    USE_SYMBOL && Symbol[name] || (USE_SYMBOL ? Symbol : uid)('Symbol.' + name));
+};
+
+$exports.store = store;
+
+/***/ }),
+
+/***/ "../../node_modules/botframework-webchat/node_modules/core-js/modules/es6.array.find-index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+// 22.1.3.9 Array.prototype.findIndex(predicate, thisArg = undefined)
+var $export = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_export.js")
+  , $find   = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_array-methods.js")(6)
+  , KEY     = 'findIndex'
+  , forced  = true;
+// Shouldn't skip holes
+if(KEY in [])Array(1)[KEY](function(){ forced = false; });
+$export($export.P + $export.F * forced, 'Array', {
+  findIndex: function findIndex(callbackfn/*, that = undefined */){
+    return $find(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
+  }
+});
+__webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_add-to-unscopables.js")(KEY);
+
+/***/ }),
+
+/***/ "../../node_modules/botframework-webchat/node_modules/core-js/modules/es6.array.find.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+// 22.1.3.8 Array.prototype.find(predicate, thisArg = undefined)
+var $export = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_export.js")
+  , $find   = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_array-methods.js")(5)
+  , KEY     = 'find'
+  , forced  = true;
+// Shouldn't skip holes
+if(KEY in [])Array(1)[KEY](function(){ forced = false; });
+$export($export.P + $export.F * forced, 'Array', {
+  find: function find(callbackfn/*, that = undefined */){
+    return $find(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
+  }
+});
+__webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_add-to-unscopables.js")(KEY);
+
+/***/ }),
+
+/***/ "../../node_modules/botframework-webchat/node_modules/core-js/modules/es6.string.starts-with.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+// 21.1.3.18 String.prototype.startsWith(searchString [, position ])
+
+var $export     = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_export.js")
+  , toLength    = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_to-length.js")
+  , context     = __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_string-context.js")
+  , STARTS_WITH = 'startsWith'
+  , $startsWith = ''[STARTS_WITH];
+
+$export($export.P + $export.F * __webpack_require__("../../node_modules/botframework-webchat/node_modules/core-js/modules/_fails-is-regexp.js")(STARTS_WITH), 'String', {
+  startsWith: function startsWith(searchString /*, position = 0 */){
+    var that   = context(this, searchString, STARTS_WITH)
+      , index  = toLength(Math.min(arguments.length > 1 ? arguments[1] : undefined, that.length))
+      , search = String(searchString);
+    return $startsWith
+      ? $startsWith.call(that, search, index)
+      : that.slice(index, index + search.length) === search;
+  }
+});
 
 /***/ }),
 
@@ -9507,12 +6776,10 @@ module.exports = function hoistNonReactStatics(targetComponent, sourceComponent,
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {/**
- * Copyright 2013-2015, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
 
@@ -44076,6 +41343,351 @@ exports.OuterSubscriber = OuterSubscriber;
 
 /***/ }),
 
+/***/ "../../node_modules/rxjs/ReplaySubject.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subject_1 = __webpack_require__("../../node_modules/rxjs/Subject.js");
+var queue_1 = __webpack_require__("../../node_modules/rxjs/scheduler/queue.js");
+var Subscription_1 = __webpack_require__("../../node_modules/rxjs/Subscription.js");
+var observeOn_1 = __webpack_require__("../../node_modules/rxjs/operator/observeOn.js");
+var ObjectUnsubscribedError_1 = __webpack_require__("../../node_modules/rxjs/util/ObjectUnsubscribedError.js");
+var SubjectSubscription_1 = __webpack_require__("../../node_modules/rxjs/SubjectSubscription.js");
+/**
+ * @class ReplaySubject<T>
+ */
+var ReplaySubject = (function (_super) {
+    __extends(ReplaySubject, _super);
+    function ReplaySubject(bufferSize, windowTime, scheduler) {
+        if (bufferSize === void 0) { bufferSize = Number.POSITIVE_INFINITY; }
+        if (windowTime === void 0) { windowTime = Number.POSITIVE_INFINITY; }
+        _super.call(this);
+        this.scheduler = scheduler;
+        this._events = [];
+        this._bufferSize = bufferSize < 1 ? 1 : bufferSize;
+        this._windowTime = windowTime < 1 ? 1 : windowTime;
+    }
+    ReplaySubject.prototype.next = function (value) {
+        var now = this._getNow();
+        this._events.push(new ReplayEvent(now, value));
+        this._trimBufferThenGetEvents();
+        _super.prototype.next.call(this, value);
+    };
+    ReplaySubject.prototype._subscribe = function (subscriber) {
+        var _events = this._trimBufferThenGetEvents();
+        var scheduler = this.scheduler;
+        var subscription;
+        if (this.closed) {
+            throw new ObjectUnsubscribedError_1.ObjectUnsubscribedError();
+        }
+        else if (this.hasError) {
+            subscription = Subscription_1.Subscription.EMPTY;
+        }
+        else if (this.isStopped) {
+            subscription = Subscription_1.Subscription.EMPTY;
+        }
+        else {
+            this.observers.push(subscriber);
+            subscription = new SubjectSubscription_1.SubjectSubscription(this, subscriber);
+        }
+        if (scheduler) {
+            subscriber.add(subscriber = new observeOn_1.ObserveOnSubscriber(subscriber, scheduler));
+        }
+        var len = _events.length;
+        for (var i = 0; i < len && !subscriber.closed; i++) {
+            subscriber.next(_events[i].value);
+        }
+        if (this.hasError) {
+            subscriber.error(this.thrownError);
+        }
+        else if (this.isStopped) {
+            subscriber.complete();
+        }
+        return subscription;
+    };
+    ReplaySubject.prototype._getNow = function () {
+        return (this.scheduler || queue_1.queue).now();
+    };
+    ReplaySubject.prototype._trimBufferThenGetEvents = function () {
+        var now = this._getNow();
+        var _bufferSize = this._bufferSize;
+        var _windowTime = this._windowTime;
+        var _events = this._events;
+        var eventsCount = _events.length;
+        var spliceCount = 0;
+        // Trim events that fall out of the time window.
+        // Start at the front of the list. Break early once
+        // we encounter an event that falls within the window.
+        while (spliceCount < eventsCount) {
+            if ((now - _events[spliceCount].time) < _windowTime) {
+                break;
+            }
+            spliceCount++;
+        }
+        if (eventsCount > _bufferSize) {
+            spliceCount = Math.max(spliceCount, eventsCount - _bufferSize);
+        }
+        if (spliceCount > 0) {
+            _events.splice(0, spliceCount);
+        }
+        return _events;
+    };
+    return ReplaySubject;
+}(Subject_1.Subject));
+exports.ReplaySubject = ReplaySubject;
+var ReplayEvent = (function () {
+    function ReplayEvent(time, value) {
+        this.time = time;
+        this.value = value;
+    }
+    return ReplayEvent;
+}());
+//# sourceMappingURL=ReplaySubject.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/Rx.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* tslint:disable:no-unused-variable */
+// Subject imported before Observable to bypass circular dependency issue since
+// Subject extends Observable and Observable references Subject in it's
+// definition
+var Subject_1 = __webpack_require__("../../node_modules/rxjs/Subject.js");
+exports.Subject = Subject_1.Subject;
+exports.AnonymousSubject = Subject_1.AnonymousSubject;
+/* tslint:enable:no-unused-variable */
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+exports.Observable = Observable_1.Observable;
+// statics
+/* tslint:disable:no-use-before-declare */
+__webpack_require__("../../node_modules/rxjs/add/observable/bindCallback.js");
+__webpack_require__("../../node_modules/rxjs/add/observable/bindNodeCallback.js");
+__webpack_require__("../../node_modules/rxjs/add/observable/combineLatest.js");
+__webpack_require__("../../node_modules/rxjs/add/observable/concat.js");
+__webpack_require__("../../node_modules/rxjs/add/observable/defer.js");
+__webpack_require__("../../node_modules/rxjs/add/observable/empty.js");
+__webpack_require__("../../node_modules/rxjs/add/observable/forkJoin.js");
+__webpack_require__("../../node_modules/rxjs/add/observable/from.js");
+__webpack_require__("../../node_modules/rxjs/add/observable/fromEvent.js");
+__webpack_require__("../../node_modules/rxjs/add/observable/fromEventPattern.js");
+__webpack_require__("../../node_modules/rxjs/add/observable/fromPromise.js");
+__webpack_require__("../../node_modules/rxjs/add/observable/generate.js");
+__webpack_require__("../../node_modules/rxjs/add/observable/if.js");
+__webpack_require__("../../node_modules/rxjs/add/observable/interval.js");
+__webpack_require__("../../node_modules/rxjs/add/observable/merge.js");
+__webpack_require__("../../node_modules/rxjs/add/observable/race.js");
+__webpack_require__("../../node_modules/rxjs/add/observable/never.js");
+__webpack_require__("../../node_modules/rxjs/add/observable/of.js");
+__webpack_require__("../../node_modules/rxjs/add/observable/onErrorResumeNext.js");
+__webpack_require__("../../node_modules/rxjs/add/observable/pairs.js");
+__webpack_require__("../../node_modules/rxjs/add/observable/range.js");
+__webpack_require__("../../node_modules/rxjs/add/observable/using.js");
+__webpack_require__("../../node_modules/rxjs/add/observable/throw.js");
+__webpack_require__("../../node_modules/rxjs/add/observable/timer.js");
+__webpack_require__("../../node_modules/rxjs/add/observable/zip.js");
+//dom
+__webpack_require__("../../node_modules/rxjs/add/observable/dom/ajax.js");
+__webpack_require__("../../node_modules/rxjs/add/observable/dom/webSocket.js");
+//operators
+__webpack_require__("../../node_modules/rxjs/add/operator/buffer.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/bufferCount.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/bufferTime.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/bufferToggle.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/bufferWhen.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/catch.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/combineAll.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/combineLatest.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/concat.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/concatAll.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/concatMap.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/concatMapTo.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/count.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/dematerialize.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/debounce.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/debounceTime.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/defaultIfEmpty.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/delay.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/delayWhen.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/distinct.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/distinctUntilChanged.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/distinctUntilKeyChanged.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/do.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/exhaust.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/exhaustMap.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/expand.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/elementAt.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/filter.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/finally.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/find.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/findIndex.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/first.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/groupBy.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/ignoreElements.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/isEmpty.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/audit.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/auditTime.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/last.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/let.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/every.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/map.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/mapTo.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/materialize.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/max.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/merge.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/mergeAll.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/mergeMap.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/mergeMapTo.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/mergeScan.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/min.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/multicast.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/observeOn.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/onErrorResumeNext.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/pairwise.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/partition.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/pluck.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/publish.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/publishBehavior.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/publishReplay.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/publishLast.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/race.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/reduce.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/repeat.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/repeatWhen.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/retry.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/retryWhen.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/sample.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/sampleTime.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/scan.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/sequenceEqual.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/share.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/shareReplay.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/single.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/skip.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/skipLast.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/skipUntil.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/skipWhile.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/startWith.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/subscribeOn.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/switch.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/switchMap.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/switchMapTo.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/take.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/takeLast.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/takeUntil.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/takeWhile.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/throttle.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/throttleTime.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/timeInterval.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/timeout.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/timeoutWith.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/timestamp.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/toArray.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/toPromise.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/window.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/windowCount.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/windowTime.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/windowToggle.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/windowWhen.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/withLatestFrom.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/zip.js");
+__webpack_require__("../../node_modules/rxjs/add/operator/zipAll.js");
+/* tslint:disable:no-unused-variable */
+var Subscription_1 = __webpack_require__("../../node_modules/rxjs/Subscription.js");
+exports.Subscription = Subscription_1.Subscription;
+var Subscriber_1 = __webpack_require__("../../node_modules/rxjs/Subscriber.js");
+exports.Subscriber = Subscriber_1.Subscriber;
+var AsyncSubject_1 = __webpack_require__("../../node_modules/rxjs/AsyncSubject.js");
+exports.AsyncSubject = AsyncSubject_1.AsyncSubject;
+var ReplaySubject_1 = __webpack_require__("../../node_modules/rxjs/ReplaySubject.js");
+exports.ReplaySubject = ReplaySubject_1.ReplaySubject;
+var BehaviorSubject_1 = __webpack_require__("../../node_modules/rxjs/BehaviorSubject.js");
+exports.BehaviorSubject = BehaviorSubject_1.BehaviorSubject;
+var ConnectableObservable_1 = __webpack_require__("../../node_modules/rxjs/observable/ConnectableObservable.js");
+exports.ConnectableObservable = ConnectableObservable_1.ConnectableObservable;
+var Notification_1 = __webpack_require__("../../node_modules/rxjs/Notification.js");
+exports.Notification = Notification_1.Notification;
+var EmptyError_1 = __webpack_require__("../../node_modules/rxjs/util/EmptyError.js");
+exports.EmptyError = EmptyError_1.EmptyError;
+var ArgumentOutOfRangeError_1 = __webpack_require__("../../node_modules/rxjs/util/ArgumentOutOfRangeError.js");
+exports.ArgumentOutOfRangeError = ArgumentOutOfRangeError_1.ArgumentOutOfRangeError;
+var ObjectUnsubscribedError_1 = __webpack_require__("../../node_modules/rxjs/util/ObjectUnsubscribedError.js");
+exports.ObjectUnsubscribedError = ObjectUnsubscribedError_1.ObjectUnsubscribedError;
+var TimeoutError_1 = __webpack_require__("../../node_modules/rxjs/util/TimeoutError.js");
+exports.TimeoutError = TimeoutError_1.TimeoutError;
+var UnsubscriptionError_1 = __webpack_require__("../../node_modules/rxjs/util/UnsubscriptionError.js");
+exports.UnsubscriptionError = UnsubscriptionError_1.UnsubscriptionError;
+var timeInterval_1 = __webpack_require__("../../node_modules/rxjs/operator/timeInterval.js");
+exports.TimeInterval = timeInterval_1.TimeInterval;
+var timestamp_1 = __webpack_require__("../../node_modules/rxjs/operator/timestamp.js");
+exports.Timestamp = timestamp_1.Timestamp;
+var TestScheduler_1 = __webpack_require__("../../node_modules/rxjs/testing/TestScheduler.js");
+exports.TestScheduler = TestScheduler_1.TestScheduler;
+var VirtualTimeScheduler_1 = __webpack_require__("../../node_modules/rxjs/scheduler/VirtualTimeScheduler.js");
+exports.VirtualTimeScheduler = VirtualTimeScheduler_1.VirtualTimeScheduler;
+var AjaxObservable_1 = __webpack_require__("../../node_modules/rxjs/observable/dom/AjaxObservable.js");
+exports.AjaxResponse = AjaxObservable_1.AjaxResponse;
+exports.AjaxError = AjaxObservable_1.AjaxError;
+exports.AjaxTimeoutError = AjaxObservable_1.AjaxTimeoutError;
+var asap_1 = __webpack_require__("../../node_modules/rxjs/scheduler/asap.js");
+var async_1 = __webpack_require__("../../node_modules/rxjs/scheduler/async.js");
+var queue_1 = __webpack_require__("../../node_modules/rxjs/scheduler/queue.js");
+var animationFrame_1 = __webpack_require__("../../node_modules/rxjs/scheduler/animationFrame.js");
+var rxSubscriber_1 = __webpack_require__("../../node_modules/rxjs/symbol/rxSubscriber.js");
+var iterator_1 = __webpack_require__("../../node_modules/rxjs/symbol/iterator.js");
+var observable_1 = __webpack_require__("../../node_modules/rxjs/symbol/observable.js");
+/* tslint:enable:no-unused-variable */
+/**
+ * @typedef {Object} Rx.Scheduler
+ * @property {Scheduler} queue Schedules on a queue in the current event frame
+ * (trampoline scheduler). Use this for iteration operations.
+ * @property {Scheduler} asap Schedules on the micro task queue, which uses the
+ * fastest transport mechanism available, either Node.js' `process.nextTick()`
+ * or Web Worker MessageChannel or setTimeout or others. Use this for
+ * asynchronous conversions.
+ * @property {Scheduler} async Schedules work with `setInterval`. Use this for
+ * time-based operations.
+ * @property {Scheduler} animationFrame Schedules work with `requestAnimationFrame`.
+ * Use this for synchronizing with the platform's painting
+ */
+var Scheduler = {
+    asap: asap_1.asap,
+    queue: queue_1.queue,
+    animationFrame: animationFrame_1.animationFrame,
+    async: async_1.async
+};
+exports.Scheduler = Scheduler;
+/**
+ * @typedef {Object} Rx.Symbol
+ * @property {Symbol|string} rxSubscriber A symbol to use as a property name to
+ * retrieve an "Rx safe" Observer from an object. "Rx safety" can be defined as
+ * an object that has all of the traits of an Rx Subscriber, including the
+ * ability to add and remove subscriptions to the subscription chain and
+ * guarantees involving event triggering (can't "next" after unsubscription,
+ * etc).
+ * @property {Symbol|string} observable A symbol to use as a property name to
+ * retrieve an Observable as defined by the [ECMAScript "Observable" spec](https://github.com/zenparsing/es-observable).
+ * @property {Symbol|string} iterator The ES6 symbol to use as a property name
+ * to retrieve an iterator from an object.
+ */
+var Symbol = {
+    rxSubscriber: rxSubscriber_1.rxSubscriber,
+    observable: observable_1.observable,
+    iterator: iterator_1.iterator
+};
+exports.Symbol = Symbol;
+//# sourceMappingURL=Rx.js.map
+
+/***/ }),
+
 /***/ "../../node_modules/rxjs/Scheduler.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -44837,6 +42449,54 @@ Observable_1.Observable.bindCallback = bindCallback_1.bindCallback;
 
 /***/ }),
 
+/***/ "../../node_modules/rxjs/add/observable/bindNodeCallback.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var bindNodeCallback_1 = __webpack_require__("../../node_modules/rxjs/observable/bindNodeCallback.js");
+Observable_1.Observable.bindNodeCallback = bindNodeCallback_1.bindNodeCallback;
+//# sourceMappingURL=bindNodeCallback.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/observable/combineLatest.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var combineLatest_1 = __webpack_require__("../../node_modules/rxjs/observable/combineLatest.js");
+Observable_1.Observable.combineLatest = combineLatest_1.combineLatest;
+//# sourceMappingURL=combineLatest.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/observable/concat.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var concat_1 = __webpack_require__("../../node_modules/rxjs/observable/concat.js");
+Observable_1.Observable.concat = concat_1.concat;
+//# sourceMappingURL=concat.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/observable/defer.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var defer_1 = __webpack_require__("../../node_modules/rxjs/observable/defer.js");
+Observable_1.Observable.defer = defer_1.defer;
+//# sourceMappingURL=defer.js.map
+
+/***/ }),
+
 /***/ "../../node_modules/rxjs/add/observable/dom/ajax.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -44849,6 +42509,18 @@ Observable_1.Observable.ajax = ajax_1.ajax;
 
 /***/ }),
 
+/***/ "../../node_modules/rxjs/add/observable/dom/webSocket.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var webSocket_1 = __webpack_require__("../../node_modules/rxjs/observable/dom/webSocket.js");
+Observable_1.Observable.webSocket = webSocket_1.webSocket;
+//# sourceMappingURL=webSocket.js.map
+
+/***/ }),
+
 /***/ "../../node_modules/rxjs/add/observable/empty.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -44858,6 +42530,18 @@ var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
 var empty_1 = __webpack_require__("../../node_modules/rxjs/observable/empty.js");
 Observable_1.Observable.empty = empty_1.empty;
 //# sourceMappingURL=empty.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/observable/forkJoin.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var forkJoin_1 = __webpack_require__("../../node_modules/rxjs/observable/forkJoin.js");
+Observable_1.Observable.forkJoin = forkJoin_1.forkJoin;
+//# sourceMappingURL=forkJoin.js.map
 
 /***/ }),
 
@@ -44885,6 +42569,54 @@ Observable_1.Observable.fromEvent = fromEvent_1.fromEvent;
 
 /***/ }),
 
+/***/ "../../node_modules/rxjs/add/observable/fromEventPattern.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var fromEventPattern_1 = __webpack_require__("../../node_modules/rxjs/observable/fromEventPattern.js");
+Observable_1.Observable.fromEventPattern = fromEventPattern_1.fromEventPattern;
+//# sourceMappingURL=fromEventPattern.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/observable/fromPromise.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var fromPromise_1 = __webpack_require__("../../node_modules/rxjs/observable/fromPromise.js");
+Observable_1.Observable.fromPromise = fromPromise_1.fromPromise;
+//# sourceMappingURL=fromPromise.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/observable/generate.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var generate_1 = __webpack_require__("../../node_modules/rxjs/observable/generate.js");
+Observable_1.Observable.generate = generate_1.generate;
+//# sourceMappingURL=generate.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/observable/if.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var if_1 = __webpack_require__("../../node_modules/rxjs/observable/if.js");
+Observable_1.Observable.if = if_1._if;
+//# sourceMappingURL=if.js.map
+
+/***/ }),
+
 /***/ "../../node_modules/rxjs/add/observable/interval.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -44909,6 +42641,18 @@ Observable_1.Observable.merge = merge_1.merge;
 
 /***/ }),
 
+/***/ "../../node_modules/rxjs/add/observable/never.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var never_1 = __webpack_require__("../../node_modules/rxjs/observable/never.js");
+Observable_1.Observable.never = never_1.never;
+//# sourceMappingURL=never.js.map
+
+/***/ }),
+
 /***/ "../../node_modules/rxjs/add/observable/of.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -44921,6 +42665,54 @@ Observable_1.Observable.of = of_1.of;
 
 /***/ }),
 
+/***/ "../../node_modules/rxjs/add/observable/onErrorResumeNext.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var onErrorResumeNext_1 = __webpack_require__("../../node_modules/rxjs/observable/onErrorResumeNext.js");
+Observable_1.Observable.onErrorResumeNext = onErrorResumeNext_1.onErrorResumeNext;
+//# sourceMappingURL=onErrorResumeNext.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/observable/pairs.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var pairs_1 = __webpack_require__("../../node_modules/rxjs/observable/pairs.js");
+Observable_1.Observable.pairs = pairs_1.pairs;
+//# sourceMappingURL=pairs.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/observable/race.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var race_1 = __webpack_require__("../../node_modules/rxjs/observable/race.js");
+Observable_1.Observable.race = race_1.race;
+//# sourceMappingURL=race.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/observable/range.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var range_1 = __webpack_require__("../../node_modules/rxjs/observable/range.js");
+Observable_1.Observable.range = range_1.range;
+//# sourceMappingURL=range.js.map
+
+/***/ }),
+
 /***/ "../../node_modules/rxjs/add/observable/throw.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -44930,6 +42722,126 @@ var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
 var throw_1 = __webpack_require__("../../node_modules/rxjs/observable/throw.js");
 Observable_1.Observable.throw = throw_1._throw;
 //# sourceMappingURL=throw.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/observable/timer.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var timer_1 = __webpack_require__("../../node_modules/rxjs/observable/timer.js");
+Observable_1.Observable.timer = timer_1.timer;
+//# sourceMappingURL=timer.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/observable/using.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var using_1 = __webpack_require__("../../node_modules/rxjs/observable/using.js");
+Observable_1.Observable.using = using_1.using;
+//# sourceMappingURL=using.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/observable/zip.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var zip_1 = __webpack_require__("../../node_modules/rxjs/observable/zip.js");
+Observable_1.Observable.zip = zip_1.zip;
+//# sourceMappingURL=zip.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/audit.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var audit_1 = __webpack_require__("../../node_modules/rxjs/operator/audit.js");
+Observable_1.Observable.prototype.audit = audit_1.audit;
+//# sourceMappingURL=audit.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/auditTime.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var auditTime_1 = __webpack_require__("../../node_modules/rxjs/operator/auditTime.js");
+Observable_1.Observable.prototype.auditTime = auditTime_1.auditTime;
+//# sourceMappingURL=auditTime.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/buffer.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var buffer_1 = __webpack_require__("../../node_modules/rxjs/operator/buffer.js");
+Observable_1.Observable.prototype.buffer = buffer_1.buffer;
+//# sourceMappingURL=buffer.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/bufferCount.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var bufferCount_1 = __webpack_require__("../../node_modules/rxjs/operator/bufferCount.js");
+Observable_1.Observable.prototype.bufferCount = bufferCount_1.bufferCount;
+//# sourceMappingURL=bufferCount.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/bufferTime.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var bufferTime_1 = __webpack_require__("../../node_modules/rxjs/operator/bufferTime.js");
+Observable_1.Observable.prototype.bufferTime = bufferTime_1.bufferTime;
+//# sourceMappingURL=bufferTime.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/bufferToggle.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var bufferToggle_1 = __webpack_require__("../../node_modules/rxjs/operator/bufferToggle.js");
+Observable_1.Observable.prototype.bufferToggle = bufferToggle_1.bufferToggle;
+//# sourceMappingURL=bufferToggle.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/bufferWhen.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var bufferWhen_1 = __webpack_require__("../../node_modules/rxjs/operator/bufferWhen.js");
+Observable_1.Observable.prototype.bufferWhen = bufferWhen_1.bufferWhen;
+//# sourceMappingURL=bufferWhen.js.map
 
 /***/ }),
 
@@ -44946,6 +42858,18 @@ Observable_1.Observable.prototype._catch = catch_1._catch;
 
 /***/ }),
 
+/***/ "../../node_modules/rxjs/add/operator/combineAll.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var combineAll_1 = __webpack_require__("../../node_modules/rxjs/operator/combineAll.js");
+Observable_1.Observable.prototype.combineAll = combineAll_1.combineAll;
+//# sourceMappingURL=combineAll.js.map
+
+/***/ }),
+
 /***/ "../../node_modules/rxjs/add/operator/combineLatest.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -44955,6 +42879,54 @@ var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
 var combineLatest_1 = __webpack_require__("../../node_modules/rxjs/operator/combineLatest.js");
 Observable_1.Observable.prototype.combineLatest = combineLatest_1.combineLatest;
 //# sourceMappingURL=combineLatest.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/concat.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var concat_1 = __webpack_require__("../../node_modules/rxjs/operator/concat.js");
+Observable_1.Observable.prototype.concat = concat_1.concat;
+//# sourceMappingURL=concat.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/concatAll.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var concatAll_1 = __webpack_require__("../../node_modules/rxjs/operator/concatAll.js");
+Observable_1.Observable.prototype.concatAll = concatAll_1.concatAll;
+//# sourceMappingURL=concatAll.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/concatMap.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var concatMap_1 = __webpack_require__("../../node_modules/rxjs/operator/concatMap.js");
+Observable_1.Observable.prototype.concatMap = concatMap_1.concatMap;
+//# sourceMappingURL=concatMap.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/concatMapTo.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var concatMapTo_1 = __webpack_require__("../../node_modules/rxjs/operator/concatMapTo.js");
+Observable_1.Observable.prototype.concatMapTo = concatMapTo_1.concatMapTo;
+//# sourceMappingURL=concatMapTo.js.map
 
 /***/ }),
 
@@ -44970,6 +42942,42 @@ Observable_1.Observable.prototype.count = count_1.count;
 
 /***/ }),
 
+/***/ "../../node_modules/rxjs/add/operator/debounce.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var debounce_1 = __webpack_require__("../../node_modules/rxjs/operator/debounce.js");
+Observable_1.Observable.prototype.debounce = debounce_1.debounce;
+//# sourceMappingURL=debounce.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/debounceTime.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var debounceTime_1 = __webpack_require__("../../node_modules/rxjs/operator/debounceTime.js");
+Observable_1.Observable.prototype.debounceTime = debounceTime_1.debounceTime;
+//# sourceMappingURL=debounceTime.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/defaultIfEmpty.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var defaultIfEmpty_1 = __webpack_require__("../../node_modules/rxjs/operator/defaultIfEmpty.js");
+Observable_1.Observable.prototype.defaultIfEmpty = defaultIfEmpty_1.defaultIfEmpty;
+//# sourceMappingURL=defaultIfEmpty.js.map
+
+/***/ }),
+
 /***/ "../../node_modules/rxjs/add/operator/delay.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -44979,6 +42987,66 @@ var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
 var delay_1 = __webpack_require__("../../node_modules/rxjs/operator/delay.js");
 Observable_1.Observable.prototype.delay = delay_1.delay;
 //# sourceMappingURL=delay.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/delayWhen.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var delayWhen_1 = __webpack_require__("../../node_modules/rxjs/operator/delayWhen.js");
+Observable_1.Observable.prototype.delayWhen = delayWhen_1.delayWhen;
+//# sourceMappingURL=delayWhen.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/dematerialize.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var dematerialize_1 = __webpack_require__("../../node_modules/rxjs/operator/dematerialize.js");
+Observable_1.Observable.prototype.dematerialize = dematerialize_1.dematerialize;
+//# sourceMappingURL=dematerialize.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/distinct.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var distinct_1 = __webpack_require__("../../node_modules/rxjs/operator/distinct.js");
+Observable_1.Observable.prototype.distinct = distinct_1.distinct;
+//# sourceMappingURL=distinct.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/distinctUntilChanged.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var distinctUntilChanged_1 = __webpack_require__("../../node_modules/rxjs/operator/distinctUntilChanged.js");
+Observable_1.Observable.prototype.distinctUntilChanged = distinctUntilChanged_1.distinctUntilChanged;
+//# sourceMappingURL=distinctUntilChanged.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/distinctUntilKeyChanged.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var distinctUntilKeyChanged_1 = __webpack_require__("../../node_modules/rxjs/operator/distinctUntilKeyChanged.js");
+Observable_1.Observable.prototype.distinctUntilKeyChanged = distinctUntilKeyChanged_1.distinctUntilKeyChanged;
+//# sourceMappingURL=distinctUntilKeyChanged.js.map
 
 /***/ }),
 
@@ -44995,6 +43063,66 @@ Observable_1.Observable.prototype._do = do_1._do;
 
 /***/ }),
 
+/***/ "../../node_modules/rxjs/add/operator/elementAt.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var elementAt_1 = __webpack_require__("../../node_modules/rxjs/operator/elementAt.js");
+Observable_1.Observable.prototype.elementAt = elementAt_1.elementAt;
+//# sourceMappingURL=elementAt.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/every.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var every_1 = __webpack_require__("../../node_modules/rxjs/operator/every.js");
+Observable_1.Observable.prototype.every = every_1.every;
+//# sourceMappingURL=every.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/exhaust.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var exhaust_1 = __webpack_require__("../../node_modules/rxjs/operator/exhaust.js");
+Observable_1.Observable.prototype.exhaust = exhaust_1.exhaust;
+//# sourceMappingURL=exhaust.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/exhaustMap.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var exhaustMap_1 = __webpack_require__("../../node_modules/rxjs/operator/exhaustMap.js");
+Observable_1.Observable.prototype.exhaustMap = exhaustMap_1.exhaustMap;
+//# sourceMappingURL=exhaustMap.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/expand.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var expand_1 = __webpack_require__("../../node_modules/rxjs/operator/expand.js");
+Observable_1.Observable.prototype.expand = expand_1.expand;
+//# sourceMappingURL=expand.js.map
+
+/***/ }),
+
 /***/ "../../node_modules/rxjs/add/operator/filter.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -45004,6 +43132,116 @@ var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
 var filter_1 = __webpack_require__("../../node_modules/rxjs/operator/filter.js");
 Observable_1.Observable.prototype.filter = filter_1.filter;
 //# sourceMappingURL=filter.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/finally.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var finally_1 = __webpack_require__("../../node_modules/rxjs/operator/finally.js");
+Observable_1.Observable.prototype.finally = finally_1._finally;
+Observable_1.Observable.prototype._finally = finally_1._finally;
+//# sourceMappingURL=finally.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/find.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var find_1 = __webpack_require__("../../node_modules/rxjs/operator/find.js");
+Observable_1.Observable.prototype.find = find_1.find;
+//# sourceMappingURL=find.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/findIndex.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var findIndex_1 = __webpack_require__("../../node_modules/rxjs/operator/findIndex.js");
+Observable_1.Observable.prototype.findIndex = findIndex_1.findIndex;
+//# sourceMappingURL=findIndex.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/first.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var first_1 = __webpack_require__("../../node_modules/rxjs/operator/first.js");
+Observable_1.Observable.prototype.first = first_1.first;
+//# sourceMappingURL=first.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/groupBy.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var groupBy_1 = __webpack_require__("../../node_modules/rxjs/operator/groupBy.js");
+Observable_1.Observable.prototype.groupBy = groupBy_1.groupBy;
+//# sourceMappingURL=groupBy.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/ignoreElements.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var ignoreElements_1 = __webpack_require__("../../node_modules/rxjs/operator/ignoreElements.js");
+Observable_1.Observable.prototype.ignoreElements = ignoreElements_1.ignoreElements;
+//# sourceMappingURL=ignoreElements.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/isEmpty.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var isEmpty_1 = __webpack_require__("../../node_modules/rxjs/operator/isEmpty.js");
+Observable_1.Observable.prototype.isEmpty = isEmpty_1.isEmpty;
+//# sourceMappingURL=isEmpty.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/last.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var last_1 = __webpack_require__("../../node_modules/rxjs/operator/last.js");
+Observable_1.Observable.prototype.last = last_1.last;
+//# sourceMappingURL=last.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/let.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var let_1 = __webpack_require__("../../node_modules/rxjs/operator/let.js");
+Observable_1.Observable.prototype.let = let_1.letProto;
+Observable_1.Observable.prototype.letBind = let_1.letProto;
+//# sourceMappingURL=let.js.map
 
 /***/ }),
 
@@ -45019,6 +43257,42 @@ Observable_1.Observable.prototype.map = map_1.map;
 
 /***/ }),
 
+/***/ "../../node_modules/rxjs/add/operator/mapTo.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var mapTo_1 = __webpack_require__("../../node_modules/rxjs/operator/mapTo.js");
+Observable_1.Observable.prototype.mapTo = mapTo_1.mapTo;
+//# sourceMappingURL=mapTo.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/materialize.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var materialize_1 = __webpack_require__("../../node_modules/rxjs/operator/materialize.js");
+Observable_1.Observable.prototype.materialize = materialize_1.materialize;
+//# sourceMappingURL=materialize.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/max.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var max_1 = __webpack_require__("../../node_modules/rxjs/operator/max.js");
+Observable_1.Observable.prototype.max = max_1.max;
+//# sourceMappingURL=max.js.map
+
+/***/ }),
+
 /***/ "../../node_modules/rxjs/add/operator/merge.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -45028,6 +43302,18 @@ var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
 var merge_1 = __webpack_require__("../../node_modules/rxjs/operator/merge.js");
 Observable_1.Observable.prototype.merge = merge_1.merge;
 //# sourceMappingURL=merge.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/mergeAll.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var mergeAll_1 = __webpack_require__("../../node_modules/rxjs/operator/mergeAll.js");
+Observable_1.Observable.prototype.mergeAll = mergeAll_1.mergeAll;
+//# sourceMappingURL=mergeAll.js.map
 
 /***/ }),
 
@@ -45044,6 +43330,223 @@ Observable_1.Observable.prototype.flatMap = mergeMap_1.mergeMap;
 
 /***/ }),
 
+/***/ "../../node_modules/rxjs/add/operator/mergeMapTo.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var mergeMapTo_1 = __webpack_require__("../../node_modules/rxjs/operator/mergeMapTo.js");
+Observable_1.Observable.prototype.flatMapTo = mergeMapTo_1.mergeMapTo;
+Observable_1.Observable.prototype.mergeMapTo = mergeMapTo_1.mergeMapTo;
+//# sourceMappingURL=mergeMapTo.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/mergeScan.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var mergeScan_1 = __webpack_require__("../../node_modules/rxjs/operator/mergeScan.js");
+Observable_1.Observable.prototype.mergeScan = mergeScan_1.mergeScan;
+//# sourceMappingURL=mergeScan.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/min.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var min_1 = __webpack_require__("../../node_modules/rxjs/operator/min.js");
+Observable_1.Observable.prototype.min = min_1.min;
+//# sourceMappingURL=min.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/multicast.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var multicast_1 = __webpack_require__("../../node_modules/rxjs/operator/multicast.js");
+Observable_1.Observable.prototype.multicast = multicast_1.multicast;
+//# sourceMappingURL=multicast.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/observeOn.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var observeOn_1 = __webpack_require__("../../node_modules/rxjs/operator/observeOn.js");
+Observable_1.Observable.prototype.observeOn = observeOn_1.observeOn;
+//# sourceMappingURL=observeOn.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/onErrorResumeNext.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var onErrorResumeNext_1 = __webpack_require__("../../node_modules/rxjs/operator/onErrorResumeNext.js");
+Observable_1.Observable.prototype.onErrorResumeNext = onErrorResumeNext_1.onErrorResumeNext;
+//# sourceMappingURL=onErrorResumeNext.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/pairwise.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var pairwise_1 = __webpack_require__("../../node_modules/rxjs/operator/pairwise.js");
+Observable_1.Observable.prototype.pairwise = pairwise_1.pairwise;
+//# sourceMappingURL=pairwise.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/partition.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var partition_1 = __webpack_require__("../../node_modules/rxjs/operator/partition.js");
+Observable_1.Observable.prototype.partition = partition_1.partition;
+//# sourceMappingURL=partition.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/pluck.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var pluck_1 = __webpack_require__("../../node_modules/rxjs/operator/pluck.js");
+Observable_1.Observable.prototype.pluck = pluck_1.pluck;
+//# sourceMappingURL=pluck.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/publish.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var publish_1 = __webpack_require__("../../node_modules/rxjs/operator/publish.js");
+Observable_1.Observable.prototype.publish = publish_1.publish;
+//# sourceMappingURL=publish.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/publishBehavior.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var publishBehavior_1 = __webpack_require__("../../node_modules/rxjs/operator/publishBehavior.js");
+Observable_1.Observable.prototype.publishBehavior = publishBehavior_1.publishBehavior;
+//# sourceMappingURL=publishBehavior.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/publishLast.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var publishLast_1 = __webpack_require__("../../node_modules/rxjs/operator/publishLast.js");
+Observable_1.Observable.prototype.publishLast = publishLast_1.publishLast;
+//# sourceMappingURL=publishLast.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/publishReplay.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var publishReplay_1 = __webpack_require__("../../node_modules/rxjs/operator/publishReplay.js");
+Observable_1.Observable.prototype.publishReplay = publishReplay_1.publishReplay;
+//# sourceMappingURL=publishReplay.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/race.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var race_1 = __webpack_require__("../../node_modules/rxjs/operator/race.js");
+Observable_1.Observable.prototype.race = race_1.race;
+//# sourceMappingURL=race.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/reduce.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var reduce_1 = __webpack_require__("../../node_modules/rxjs/operator/reduce.js");
+Observable_1.Observable.prototype.reduce = reduce_1.reduce;
+//# sourceMappingURL=reduce.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/repeat.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var repeat_1 = __webpack_require__("../../node_modules/rxjs/operator/repeat.js");
+Observable_1.Observable.prototype.repeat = repeat_1.repeat;
+//# sourceMappingURL=repeat.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/repeatWhen.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var repeatWhen_1 = __webpack_require__("../../node_modules/rxjs/operator/repeatWhen.js");
+Observable_1.Observable.prototype.repeatWhen = repeatWhen_1.repeatWhen;
+//# sourceMappingURL=repeatWhen.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/retry.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var retry_1 = __webpack_require__("../../node_modules/rxjs/operator/retry.js");
+Observable_1.Observable.prototype.retry = retry_1.retry;
+//# sourceMappingURL=retry.js.map
+
+/***/ }),
+
 /***/ "../../node_modules/rxjs/add/operator/retryWhen.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -45053,6 +43556,54 @@ var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
 var retryWhen_1 = __webpack_require__("../../node_modules/rxjs/operator/retryWhen.js");
 Observable_1.Observable.prototype.retryWhen = retryWhen_1.retryWhen;
 //# sourceMappingURL=retryWhen.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/sample.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var sample_1 = __webpack_require__("../../node_modules/rxjs/operator/sample.js");
+Observable_1.Observable.prototype.sample = sample_1.sample;
+//# sourceMappingURL=sample.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/sampleTime.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var sampleTime_1 = __webpack_require__("../../node_modules/rxjs/operator/sampleTime.js");
+Observable_1.Observable.prototype.sampleTime = sampleTime_1.sampleTime;
+//# sourceMappingURL=sampleTime.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/scan.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var scan_1 = __webpack_require__("../../node_modules/rxjs/operator/scan.js");
+Observable_1.Observable.prototype.scan = scan_1.scan;
+//# sourceMappingURL=scan.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/sequenceEqual.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var sequenceEqual_1 = __webpack_require__("../../node_modules/rxjs/operator/sequenceEqual.js");
+Observable_1.Observable.prototype.sequenceEqual = sequenceEqual_1.sequenceEqual;
+//# sourceMappingURL=sequenceEqual.js.map
 
 /***/ }),
 
@@ -45068,6 +43619,139 @@ Observable_1.Observable.prototype.share = share_1.share;
 
 /***/ }),
 
+/***/ "../../node_modules/rxjs/add/operator/shareReplay.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var shareReplay_1 = __webpack_require__("../../node_modules/rxjs/operator/shareReplay.js");
+Observable_1.Observable.prototype.shareReplay = shareReplay_1.shareReplay;
+//# sourceMappingURL=shareReplay.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/single.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var single_1 = __webpack_require__("../../node_modules/rxjs/operator/single.js");
+Observable_1.Observable.prototype.single = single_1.single;
+//# sourceMappingURL=single.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/skip.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var skip_1 = __webpack_require__("../../node_modules/rxjs/operator/skip.js");
+Observable_1.Observable.prototype.skip = skip_1.skip;
+//# sourceMappingURL=skip.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/skipLast.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var skipLast_1 = __webpack_require__("../../node_modules/rxjs/operator/skipLast.js");
+Observable_1.Observable.prototype.skipLast = skipLast_1.skipLast;
+//# sourceMappingURL=skipLast.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/skipUntil.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var skipUntil_1 = __webpack_require__("../../node_modules/rxjs/operator/skipUntil.js");
+Observable_1.Observable.prototype.skipUntil = skipUntil_1.skipUntil;
+//# sourceMappingURL=skipUntil.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/skipWhile.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var skipWhile_1 = __webpack_require__("../../node_modules/rxjs/operator/skipWhile.js");
+Observable_1.Observable.prototype.skipWhile = skipWhile_1.skipWhile;
+//# sourceMappingURL=skipWhile.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/startWith.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var startWith_1 = __webpack_require__("../../node_modules/rxjs/operator/startWith.js");
+Observable_1.Observable.prototype.startWith = startWith_1.startWith;
+//# sourceMappingURL=startWith.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/subscribeOn.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var subscribeOn_1 = __webpack_require__("../../node_modules/rxjs/operator/subscribeOn.js");
+Observable_1.Observable.prototype.subscribeOn = subscribeOn_1.subscribeOn;
+//# sourceMappingURL=subscribeOn.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/switch.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var switch_1 = __webpack_require__("../../node_modules/rxjs/operator/switch.js");
+Observable_1.Observable.prototype.switch = switch_1._switch;
+Observable_1.Observable.prototype._switch = switch_1._switch;
+//# sourceMappingURL=switch.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/switchMap.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var switchMap_1 = __webpack_require__("../../node_modules/rxjs/operator/switchMap.js");
+Observable_1.Observable.prototype.switchMap = switchMap_1.switchMap;
+//# sourceMappingURL=switchMap.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/switchMapTo.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var switchMapTo_1 = __webpack_require__("../../node_modules/rxjs/operator/switchMapTo.js");
+Observable_1.Observable.prototype.switchMapTo = switchMapTo_1.switchMapTo;
+//# sourceMappingURL=switchMapTo.js.map
+
+/***/ }),
+
 /***/ "../../node_modules/rxjs/add/operator/take.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -45077,6 +43761,18 @@ var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
 var take_1 = __webpack_require__("../../node_modules/rxjs/operator/take.js");
 Observable_1.Observable.prototype.take = take_1.take;
 //# sourceMappingURL=take.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/takeLast.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var takeLast_1 = __webpack_require__("../../node_modules/rxjs/operator/takeLast.js");
+Observable_1.Observable.prototype.takeLast = takeLast_1.takeLast;
+//# sourceMappingURL=takeLast.js.map
 
 /***/ }),
 
@@ -45092,6 +43788,30 @@ Observable_1.Observable.prototype.takeUntil = takeUntil_1.takeUntil;
 
 /***/ }),
 
+/***/ "../../node_modules/rxjs/add/operator/takeWhile.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var takeWhile_1 = __webpack_require__("../../node_modules/rxjs/operator/takeWhile.js");
+Observable_1.Observable.prototype.takeWhile = takeWhile_1.takeWhile;
+//# sourceMappingURL=takeWhile.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/throttle.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var throttle_1 = __webpack_require__("../../node_modules/rxjs/operator/throttle.js");
+Observable_1.Observable.prototype.throttle = throttle_1.throttle;
+//# sourceMappingURL=throttle.js.map
+
+/***/ }),
+
 /***/ "../../node_modules/rxjs/add/operator/throttleTime.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -45101,6 +43821,174 @@ var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
 var throttleTime_1 = __webpack_require__("../../node_modules/rxjs/operator/throttleTime.js");
 Observable_1.Observable.prototype.throttleTime = throttleTime_1.throttleTime;
 //# sourceMappingURL=throttleTime.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/timeInterval.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var timeInterval_1 = __webpack_require__("../../node_modules/rxjs/operator/timeInterval.js");
+Observable_1.Observable.prototype.timeInterval = timeInterval_1.timeInterval;
+//# sourceMappingURL=timeInterval.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/timeout.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var timeout_1 = __webpack_require__("../../node_modules/rxjs/operator/timeout.js");
+Observable_1.Observable.prototype.timeout = timeout_1.timeout;
+//# sourceMappingURL=timeout.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/timeoutWith.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var timeoutWith_1 = __webpack_require__("../../node_modules/rxjs/operator/timeoutWith.js");
+Observable_1.Observable.prototype.timeoutWith = timeoutWith_1.timeoutWith;
+//# sourceMappingURL=timeoutWith.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/timestamp.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var timestamp_1 = __webpack_require__("../../node_modules/rxjs/operator/timestamp.js");
+Observable_1.Observable.prototype.timestamp = timestamp_1.timestamp;
+//# sourceMappingURL=timestamp.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/toArray.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var toArray_1 = __webpack_require__("../../node_modules/rxjs/operator/toArray.js");
+Observable_1.Observable.prototype.toArray = toArray_1.toArray;
+//# sourceMappingURL=toArray.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/toPromise.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var toPromise_1 = __webpack_require__("../../node_modules/rxjs/operator/toPromise.js");
+Observable_1.Observable.prototype.toPromise = toPromise_1.toPromise;
+//# sourceMappingURL=toPromise.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/window.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var window_1 = __webpack_require__("../../node_modules/rxjs/operator/window.js");
+Observable_1.Observable.prototype.window = window_1.window;
+//# sourceMappingURL=window.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/windowCount.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var windowCount_1 = __webpack_require__("../../node_modules/rxjs/operator/windowCount.js");
+Observable_1.Observable.prototype.windowCount = windowCount_1.windowCount;
+//# sourceMappingURL=windowCount.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/windowTime.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var windowTime_1 = __webpack_require__("../../node_modules/rxjs/operator/windowTime.js");
+Observable_1.Observable.prototype.windowTime = windowTime_1.windowTime;
+//# sourceMappingURL=windowTime.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/windowToggle.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var windowToggle_1 = __webpack_require__("../../node_modules/rxjs/operator/windowToggle.js");
+Observable_1.Observable.prototype.windowToggle = windowToggle_1.windowToggle;
+//# sourceMappingURL=windowToggle.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/windowWhen.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var windowWhen_1 = __webpack_require__("../../node_modules/rxjs/operator/windowWhen.js");
+Observable_1.Observable.prototype.windowWhen = windowWhen_1.windowWhen;
+//# sourceMappingURL=windowWhen.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/withLatestFrom.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var withLatestFrom_1 = __webpack_require__("../../node_modules/rxjs/operator/withLatestFrom.js");
+Observable_1.Observable.prototype.withLatestFrom = withLatestFrom_1.withLatestFrom;
+//# sourceMappingURL=withLatestFrom.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/zip.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var zip_1 = __webpack_require__("../../node_modules/rxjs/operator/zip.js");
+Observable_1.Observable.prototype.zip = zip_1.zipProto;
+//# sourceMappingURL=zip.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/add/operator/zipAll.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var zipAll_1 = __webpack_require__("../../node_modules/rxjs/operator/zipAll.js");
+Observable_1.Observable.prototype.zipAll = zipAll_1.zipAll;
+//# sourceMappingURL=zipAll.js.map
 
 /***/ }),
 
@@ -45585,6 +44473,276 @@ function dispatchError(arg) {
 
 /***/ }),
 
+/***/ "../../node_modules/rxjs/observable/BoundNodeCallbackObservable.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var tryCatch_1 = __webpack_require__("../../node_modules/rxjs/util/tryCatch.js");
+var errorObject_1 = __webpack_require__("../../node_modules/rxjs/util/errorObject.js");
+var AsyncSubject_1 = __webpack_require__("../../node_modules/rxjs/AsyncSubject.js");
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @extends {Ignored}
+ * @hide true
+ */
+var BoundNodeCallbackObservable = (function (_super) {
+    __extends(BoundNodeCallbackObservable, _super);
+    function BoundNodeCallbackObservable(callbackFunc, selector, args, context, scheduler) {
+        _super.call(this);
+        this.callbackFunc = callbackFunc;
+        this.selector = selector;
+        this.args = args;
+        this.context = context;
+        this.scheduler = scheduler;
+    }
+    /* tslint:enable:max-line-length */
+    /**
+     * Converts a Node.js-style callback API to a function that returns an
+     * Observable.
+     *
+     * <span class="informal">It's just like {@link bindCallback}, but the
+     * callback is expected to be of type `callback(error, result)`.</span>
+     *
+     * `bindNodeCallback` is not an operator because its input and output are not
+     * Observables. The input is a function `func` with some parameters, but the
+     * last parameter must be a callback function that `func` calls when it is
+     * done. The callback function is expected to follow Node.js conventions,
+     * where the first argument to the callback is an error object, signaling
+     * whether call was successful. If that object is passed to callback, it means
+     * something went wrong.
+     *
+     * The output of `bindNodeCallback` is a function that takes the same
+     * parameters as `func`, except the last one (the callback). When the output
+     * function is called with arguments, it will return an Observable.
+     * If `func` calls its callback with error parameter present, Observable will
+     * error with that value as well. If error parameter is not passed, Observable will emit
+     * second parameter. If there are more parameters (third and so on),
+     * Observable will emit an array with all arguments, except first error argument.
+     *
+     * Optionally `bindNodeCallback` accepts selector function, which allows you to
+     * make resulting Observable emit value computed by selector, instead of regular
+     * callback arguments. It works similarly to {@link bindCallback} selector, but
+     * Node.js-style error argument will never be passed to that function.
+     *
+     * Note that `func` will not be called at the same time output function is,
+     * but rather whenever resulting Observable is subscribed. By default call to
+     * `func` will happen synchronously after subscription, but that can be changed
+     * with proper {@link Scheduler} provided as optional third parameter. Scheduler
+     * can also control when values from callback will be emitted by Observable.
+     * To find out more, check out documentation for {@link bindCallback}, where
+     * Scheduler works exactly the same.
+     *
+     * As in {@link bindCallback}, context (`this` property) of input function will be set to context
+     * of returned function, when it is called.
+     *
+     * After Observable emits value, it will complete immediately. This means
+     * even if `func` calls callback again, values from second and consecutive
+     * calls will never appear on the stream. If you need to handle functions
+     * that call callbacks multiple times, check out {@link fromEvent} or
+     * {@link fromEventPattern} instead.
+     *
+     * Note that `bindNodeCallback` can be used in non-Node.js environments as well.
+     * "Node.js-style" callbacks are just a convention, so if you write for
+     * browsers or any other environment and API you use implements that callback style,
+     * `bindNodeCallback` can be safely used on that API functions as well.
+     *
+     * Remember that Error object passed to callback does not have to be an instance
+     * of JavaScript built-in `Error` object. In fact, it does not even have to an object.
+     * Error parameter of callback function is interpreted as "present", when value
+     * of that parameter is truthy. It could be, for example, non-zero number, non-empty
+     * string or boolean `true`. In all of these cases resulting Observable would error
+     * with that value. This means usually regular style callbacks will fail very often when
+     * `bindNodeCallback` is used. If your Observable errors much more often then you
+     * would expect, check if callback really is called in Node.js-style and, if not,
+     * switch to {@link bindCallback} instead.
+     *
+     * Note that even if error parameter is technically present in callback, but its value
+     * is falsy, it still won't appear in array emitted by Observable or in selector function.
+     *
+     *
+     * @example <caption>Read a file from the filesystem and get the data as an Observable</caption>
+     * import * as fs from 'fs';
+     * var readFileAsObservable = Rx.Observable.bindNodeCallback(fs.readFile);
+     * var result = readFileAsObservable('./roadNames.txt', 'utf8');
+     * result.subscribe(x => console.log(x), e => console.error(e));
+     *
+     *
+     * @example <caption>Use on function calling callback with multiple arguments</caption>
+     * someFunction((err, a, b) => {
+     *   console.log(err); // null
+     *   console.log(a); // 5
+     *   console.log(b); // "some string"
+     * });
+     * var boundSomeFunction = Rx.Observable.bindNodeCallback(someFunction);
+     * boundSomeFunction()
+     * .subscribe(value => {
+     *   console.log(value); // [5, "some string"]
+     * });
+     *
+     *
+     * @example <caption>Use with selector function</caption>
+     * someFunction((err, a, b) => {
+     *   console.log(err); // undefined
+     *   console.log(a); // "abc"
+     *   console.log(b); // "DEF"
+     * });
+     * var boundSomeFunction = Rx.Observable.bindNodeCallback(someFunction, (a, b) => a + b);
+     * boundSomeFunction()
+     * .subscribe(value => {
+     *   console.log(value); // "abcDEF"
+     * });
+     *
+     *
+     * @example <caption>Use on function calling callback in regular style</caption>
+     * someFunction(a => {
+     *   console.log(a); // 5
+     * });
+     * var boundSomeFunction = Rx.Observable.bindNodeCallback(someFunction);
+     * boundSomeFunction()
+     * .subscribe(
+     *   value => {}             // never gets called
+     *   err => console.log(err) // 5
+     *);
+     *
+     *
+     * @see {@link bindCallback}
+     * @see {@link from}
+     * @see {@link fromPromise}
+     *
+     * @param {function} func Function with a Node.js-style callback as the last parameter.
+     * @param {function} [selector] A function which takes the arguments from the
+     * callback and maps those to a value to emit on the output Observable.
+     * @param {Scheduler} [scheduler] The scheduler on which to schedule the
+     * callbacks.
+     * @return {function(...params: *): Observable} A function which returns the
+     * Observable that delivers the same values the Node.js callback would
+     * deliver.
+     * @static true
+     * @name bindNodeCallback
+     * @owner Observable
+     */
+    BoundNodeCallbackObservable.create = function (func, selector, scheduler) {
+        if (selector === void 0) { selector = undefined; }
+        return function () {
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i - 0] = arguments[_i];
+            }
+            return new BoundNodeCallbackObservable(func, selector, args, this, scheduler);
+        };
+    };
+    BoundNodeCallbackObservable.prototype._subscribe = function (subscriber) {
+        var callbackFunc = this.callbackFunc;
+        var args = this.args;
+        var scheduler = this.scheduler;
+        var subject = this.subject;
+        if (!scheduler) {
+            if (!subject) {
+                subject = this.subject = new AsyncSubject_1.AsyncSubject();
+                var handler = function handlerFn() {
+                    var innerArgs = [];
+                    for (var _i = 0; _i < arguments.length; _i++) {
+                        innerArgs[_i - 0] = arguments[_i];
+                    }
+                    var source = handlerFn.source;
+                    var selector = source.selector, subject = source.subject;
+                    var err = innerArgs.shift();
+                    if (err) {
+                        subject.error(err);
+                    }
+                    else if (selector) {
+                        var result_1 = tryCatch_1.tryCatch(selector).apply(this, innerArgs);
+                        if (result_1 === errorObject_1.errorObject) {
+                            subject.error(errorObject_1.errorObject.e);
+                        }
+                        else {
+                            subject.next(result_1);
+                            subject.complete();
+                        }
+                    }
+                    else {
+                        subject.next(innerArgs.length <= 1 ? innerArgs[0] : innerArgs);
+                        subject.complete();
+                    }
+                };
+                // use named function instance to avoid closure.
+                handler.source = this;
+                var result = tryCatch_1.tryCatch(callbackFunc).apply(this.context, args.concat(handler));
+                if (result === errorObject_1.errorObject) {
+                    subject.error(errorObject_1.errorObject.e);
+                }
+            }
+            return subject.subscribe(subscriber);
+        }
+        else {
+            return scheduler.schedule(dispatch, 0, { source: this, subscriber: subscriber, context: this.context });
+        }
+    };
+    return BoundNodeCallbackObservable;
+}(Observable_1.Observable));
+exports.BoundNodeCallbackObservable = BoundNodeCallbackObservable;
+function dispatch(state) {
+    var self = this;
+    var source = state.source, subscriber = state.subscriber, context = state.context;
+    // XXX: cast to `any` to access to the private field in `source`.
+    var _a = source, callbackFunc = _a.callbackFunc, args = _a.args, scheduler = _a.scheduler;
+    var subject = source.subject;
+    if (!subject) {
+        subject = source.subject = new AsyncSubject_1.AsyncSubject();
+        var handler = function handlerFn() {
+            var innerArgs = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                innerArgs[_i - 0] = arguments[_i];
+            }
+            var source = handlerFn.source;
+            var selector = source.selector, subject = source.subject;
+            var err = innerArgs.shift();
+            if (err) {
+                self.add(scheduler.schedule(dispatchError, 0, { err: err, subject: subject }));
+            }
+            else if (selector) {
+                var result_2 = tryCatch_1.tryCatch(selector).apply(this, innerArgs);
+                if (result_2 === errorObject_1.errorObject) {
+                    self.add(scheduler.schedule(dispatchError, 0, { err: errorObject_1.errorObject.e, subject: subject }));
+                }
+                else {
+                    self.add(scheduler.schedule(dispatchNext, 0, { value: result_2, subject: subject }));
+                }
+            }
+            else {
+                var value = innerArgs.length <= 1 ? innerArgs[0] : innerArgs;
+                self.add(scheduler.schedule(dispatchNext, 0, { value: value, subject: subject }));
+            }
+        };
+        // use named function to pass values in without closure
+        handler.source = source;
+        var result = tryCatch_1.tryCatch(callbackFunc).apply(context, args.concat(handler));
+        if (result === errorObject_1.errorObject) {
+            self.add(scheduler.schedule(dispatchError, 0, { err: errorObject_1.errorObject.e, subject: subject }));
+        }
+    }
+    self.add(subject.subscribe(subscriber));
+}
+function dispatchNext(arg) {
+    var value = arg.value, subject = arg.subject;
+    subject.next(value);
+    subject.complete();
+}
+function dispatchError(arg) {
+    var err = arg.err, subject = arg.subject;
+    subject.error(err);
+}
+//# sourceMappingURL=BoundNodeCallbackObservable.js.map
+
+/***/ }),
+
 /***/ "../../node_modules/rxjs/observable/ConnectableObservable.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -45758,6 +44916,112 @@ var RefCountSubscriber = (function (_super) {
     return RefCountSubscriber;
 }(Subscriber_1.Subscriber));
 //# sourceMappingURL=ConnectableObservable.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/observable/DeferObservable.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var subscribeToResult_1 = __webpack_require__("../../node_modules/rxjs/util/subscribeToResult.js");
+var OuterSubscriber_1 = __webpack_require__("../../node_modules/rxjs/OuterSubscriber.js");
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @extends {Ignored}
+ * @hide true
+ */
+var DeferObservable = (function (_super) {
+    __extends(DeferObservable, _super);
+    function DeferObservable(observableFactory) {
+        _super.call(this);
+        this.observableFactory = observableFactory;
+    }
+    /**
+     * Creates an Observable that, on subscribe, calls an Observable factory to
+     * make an Observable for each new Observer.
+     *
+     * <span class="informal">Creates the Observable lazily, that is, only when it
+     * is subscribed.
+     * </span>
+     *
+     * <img src="./img/defer.png" width="100%">
+     *
+     * `defer` allows you to create the Observable only when the Observer
+     * subscribes, and create a fresh Observable for each Observer. It waits until
+     * an Observer subscribes to it, and then it generates an Observable,
+     * typically with an Observable factory function. It does this afresh for each
+     * subscriber, so although each subscriber may think it is subscribing to the
+     * same Observable, in fact each subscriber gets its own individual
+     * Observable.
+     *
+     * @example <caption>Subscribe to either an Observable of clicks or an Observable of interval, at random</caption>
+     * var clicksOrInterval = Rx.Observable.defer(function () {
+     *   if (Math.random() > 0.5) {
+     *     return Rx.Observable.fromEvent(document, 'click');
+     *   } else {
+     *     return Rx.Observable.interval(1000);
+     *   }
+     * });
+     * clicksOrInterval.subscribe(x => console.log(x));
+     *
+     * // Results in the following behavior:
+     * // If the result of Math.random() is greater than 0.5 it will listen
+     * // for clicks anywhere on the "document"; when document is clicked it
+     * // will log a MouseEvent object to the console. If the result is less
+     * // than 0.5 it will emit ascending numbers, one every second(1000ms).
+     *
+     * @see {@link create}
+     *
+     * @param {function(): SubscribableOrPromise} observableFactory The Observable
+     * factory function to invoke for each Observer that subscribes to the output
+     * Observable. May also return a Promise, which will be converted on the fly
+     * to an Observable.
+     * @return {Observable} An Observable whose Observers' subscriptions trigger
+     * an invocation of the given Observable factory function.
+     * @static true
+     * @name defer
+     * @owner Observable
+     */
+    DeferObservable.create = function (observableFactory) {
+        return new DeferObservable(observableFactory);
+    };
+    DeferObservable.prototype._subscribe = function (subscriber) {
+        return new DeferSubscriber(subscriber, this.observableFactory);
+    };
+    return DeferObservable;
+}(Observable_1.Observable));
+exports.DeferObservable = DeferObservable;
+var DeferSubscriber = (function (_super) {
+    __extends(DeferSubscriber, _super);
+    function DeferSubscriber(destination, factory) {
+        _super.call(this, destination);
+        this.factory = factory;
+        this.tryDefer();
+    }
+    DeferSubscriber.prototype.tryDefer = function () {
+        try {
+            this._callFactory();
+        }
+        catch (err) {
+            this._error(err);
+        }
+    };
+    DeferSubscriber.prototype._callFactory = function () {
+        var result = this.factory();
+        if (result) {
+            this.add(subscribeToResult_1.subscribeToResult(this, result));
+        }
+    };
+    return DeferSubscriber;
+}(OuterSubscriber_1.OuterSubscriber));
+//# sourceMappingURL=DeferObservable.js.map
 
 /***/ }),
 
@@ -45939,6 +45203,125 @@ exports.ErrorObservable = ErrorObservable;
 
 /***/ }),
 
+/***/ "../../node_modules/rxjs/observable/ForkJoinObservable.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var EmptyObservable_1 = __webpack_require__("../../node_modules/rxjs/observable/EmptyObservable.js");
+var isArray_1 = __webpack_require__("../../node_modules/rxjs/util/isArray.js");
+var subscribeToResult_1 = __webpack_require__("../../node_modules/rxjs/util/subscribeToResult.js");
+var OuterSubscriber_1 = __webpack_require__("../../node_modules/rxjs/OuterSubscriber.js");
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @extends {Ignored}
+ * @hide true
+ */
+var ForkJoinObservable = (function (_super) {
+    __extends(ForkJoinObservable, _super);
+    function ForkJoinObservable(sources, resultSelector) {
+        _super.call(this);
+        this.sources = sources;
+        this.resultSelector = resultSelector;
+    }
+    /* tslint:enable:max-line-length */
+    /**
+     * @param sources
+     * @return {any}
+     * @static true
+     * @name forkJoin
+     * @owner Observable
+     */
+    ForkJoinObservable.create = function () {
+        var sources = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            sources[_i - 0] = arguments[_i];
+        }
+        if (sources === null || arguments.length === 0) {
+            return new EmptyObservable_1.EmptyObservable();
+        }
+        var resultSelector = null;
+        if (typeof sources[sources.length - 1] === 'function') {
+            resultSelector = sources.pop();
+        }
+        // if the first and only other argument besides the resultSelector is an array
+        // assume it's been called with `forkJoin([obs1, obs2, obs3], resultSelector)`
+        if (sources.length === 1 && isArray_1.isArray(sources[0])) {
+            sources = sources[0];
+        }
+        if (sources.length === 0) {
+            return new EmptyObservable_1.EmptyObservable();
+        }
+        return new ForkJoinObservable(sources, resultSelector);
+    };
+    ForkJoinObservable.prototype._subscribe = function (subscriber) {
+        return new ForkJoinSubscriber(subscriber, this.sources, this.resultSelector);
+    };
+    return ForkJoinObservable;
+}(Observable_1.Observable));
+exports.ForkJoinObservable = ForkJoinObservable;
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var ForkJoinSubscriber = (function (_super) {
+    __extends(ForkJoinSubscriber, _super);
+    function ForkJoinSubscriber(destination, sources, resultSelector) {
+        _super.call(this, destination);
+        this.sources = sources;
+        this.resultSelector = resultSelector;
+        this.completed = 0;
+        this.haveValues = 0;
+        var len = sources.length;
+        this.total = len;
+        this.values = new Array(len);
+        for (var i = 0; i < len; i++) {
+            var source = sources[i];
+            var innerSubscription = subscribeToResult_1.subscribeToResult(this, source, null, i);
+            if (innerSubscription) {
+                innerSubscription.outerIndex = i;
+                this.add(innerSubscription);
+            }
+        }
+    }
+    ForkJoinSubscriber.prototype.notifyNext = function (outerValue, innerValue, outerIndex, innerIndex, innerSub) {
+        this.values[outerIndex] = innerValue;
+        if (!innerSub._hasValue) {
+            innerSub._hasValue = true;
+            this.haveValues++;
+        }
+    };
+    ForkJoinSubscriber.prototype.notifyComplete = function (innerSub) {
+        var destination = this.destination;
+        var _a = this, haveValues = _a.haveValues, resultSelector = _a.resultSelector, values = _a.values;
+        var len = values.length;
+        if (!innerSub._hasValue) {
+            destination.complete();
+            return;
+        }
+        this.completed++;
+        if (this.completed !== len) {
+            return;
+        }
+        if (haveValues === len) {
+            var value = resultSelector ? resultSelector.apply(this, values) : values;
+            destination.next(value);
+        }
+        destination.complete();
+    };
+    return ForkJoinSubscriber;
+}(OuterSubscriber_1.OuterSubscriber));
+//# sourceMappingURL=ForkJoinObservable.js.map
+
+/***/ }),
+
 /***/ "../../node_modules/rxjs/observable/FromEventObservable.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -46086,6 +45469,126 @@ exports.FromEventObservable = FromEventObservable;
 
 /***/ }),
 
+/***/ "../../node_modules/rxjs/observable/FromEventPatternObservable.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var isFunction_1 = __webpack_require__("../../node_modules/rxjs/util/isFunction.js");
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var Subscription_1 = __webpack_require__("../../node_modules/rxjs/Subscription.js");
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @extends {Ignored}
+ * @hide true
+ */
+var FromEventPatternObservable = (function (_super) {
+    __extends(FromEventPatternObservable, _super);
+    function FromEventPatternObservable(addHandler, removeHandler, selector) {
+        _super.call(this);
+        this.addHandler = addHandler;
+        this.removeHandler = removeHandler;
+        this.selector = selector;
+    }
+    /**
+     * Creates an Observable from an API based on addHandler/removeHandler
+     * functions.
+     *
+     * <span class="informal">Converts any addHandler/removeHandler API to an
+     * Observable.</span>
+     *
+     * <img src="./img/fromEventPattern.png" width="100%">
+     *
+     * Creates an Observable by using the `addHandler` and `removeHandler`
+     * functions to add and remove the handlers, with an optional selector
+     * function to project the event arguments to a result. The `addHandler` is
+     * called when the output Observable is subscribed, and `removeHandler` is
+     * called when the Subscription is unsubscribed.
+     *
+     * @example <caption>Emits clicks happening on the DOM document</caption>
+     * function addClickHandler(handler) {
+     *   document.addEventListener('click', handler);
+     * }
+     *
+     * function removeClickHandler(handler) {
+     *   document.removeEventListener('click', handler);
+     * }
+     *
+     * var clicks = Rx.Observable.fromEventPattern(
+     *   addClickHandler,
+     *   removeClickHandler
+     * );
+     * clicks.subscribe(x => console.log(x));
+     *
+     * @see {@link from}
+     * @see {@link fromEvent}
+     *
+     * @param {function(handler: Function): any} addHandler A function that takes
+     * a `handler` function as argument and attaches it somehow to the actual
+     * source of events.
+     * @param {function(handler: Function, signal?: any): void} [removeHandler] An optional function that
+     * takes a `handler` function as argument and removes it in case it was
+     * previously attached using `addHandler`. if addHandler returns signal to teardown when remove,
+     * removeHandler function will forward it.
+     * @param {function(...args: any): T} [selector] An optional function to
+     * post-process results. It takes the arguments from the event handler and
+     * should return a single value.
+     * @return {Observable<T>}
+     * @static true
+     * @name fromEventPattern
+     * @owner Observable
+     */
+    FromEventPatternObservable.create = function (addHandler, removeHandler, selector) {
+        return new FromEventPatternObservable(addHandler, removeHandler, selector);
+    };
+    FromEventPatternObservable.prototype._subscribe = function (subscriber) {
+        var _this = this;
+        var removeHandler = this.removeHandler;
+        var handler = !!this.selector ? function () {
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i - 0] = arguments[_i];
+            }
+            _this._callSelector(subscriber, args);
+        } : function (e) { subscriber.next(e); };
+        var retValue = this._callAddHandler(handler, subscriber);
+        if (!isFunction_1.isFunction(removeHandler)) {
+            return;
+        }
+        subscriber.add(new Subscription_1.Subscription(function () {
+            //TODO: determine whether or not to forward to error handler
+            removeHandler(handler, retValue);
+        }));
+    };
+    FromEventPatternObservable.prototype._callSelector = function (subscriber, args) {
+        try {
+            var result = this.selector.apply(this, args);
+            subscriber.next(result);
+        }
+        catch (e) {
+            subscriber.error(e);
+        }
+    };
+    FromEventPatternObservable.prototype._callAddHandler = function (handler, errorSubscriber) {
+        try {
+            return this.addHandler(handler) || null;
+        }
+        catch (e) {
+            errorSubscriber.error(e);
+        }
+    };
+    return FromEventPatternObservable;
+}(Observable_1.Observable));
+exports.FromEventPatternObservable = FromEventPatternObservable;
+//# sourceMappingURL=FromEventPatternObservable.js.map
+
+/***/ }),
+
 /***/ "../../node_modules/rxjs/observable/FromObservable.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -46212,6 +45715,216 @@ var FromObservable = (function (_super) {
 }(Observable_1.Observable));
 exports.FromObservable = FromObservable;
 //# sourceMappingURL=FromObservable.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/observable/GenerateObservable.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var isScheduler_1 = __webpack_require__("../../node_modules/rxjs/util/isScheduler.js");
+var selfSelector = function (value) { return value; };
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @extends {Ignored}
+ * @hide true
+ */
+var GenerateObservable = (function (_super) {
+    __extends(GenerateObservable, _super);
+    function GenerateObservable(initialState, condition, iterate, resultSelector, scheduler) {
+        _super.call(this);
+        this.initialState = initialState;
+        this.condition = condition;
+        this.iterate = iterate;
+        this.resultSelector = resultSelector;
+        this.scheduler = scheduler;
+    }
+    GenerateObservable.create = function (initialStateOrOptions, condition, iterate, resultSelectorOrObservable, scheduler) {
+        if (arguments.length == 1) {
+            return new GenerateObservable(initialStateOrOptions.initialState, initialStateOrOptions.condition, initialStateOrOptions.iterate, initialStateOrOptions.resultSelector || selfSelector, initialStateOrOptions.scheduler);
+        }
+        if (resultSelectorOrObservable === undefined || isScheduler_1.isScheduler(resultSelectorOrObservable)) {
+            return new GenerateObservable(initialStateOrOptions, condition, iterate, selfSelector, resultSelectorOrObservable);
+        }
+        return new GenerateObservable(initialStateOrOptions, condition, iterate, resultSelectorOrObservable, scheduler);
+    };
+    GenerateObservable.prototype._subscribe = function (subscriber) {
+        var state = this.initialState;
+        if (this.scheduler) {
+            return this.scheduler.schedule(GenerateObservable.dispatch, 0, {
+                subscriber: subscriber,
+                iterate: this.iterate,
+                condition: this.condition,
+                resultSelector: this.resultSelector,
+                state: state });
+        }
+        var _a = this, condition = _a.condition, resultSelector = _a.resultSelector, iterate = _a.iterate;
+        do {
+            if (condition) {
+                var conditionResult = void 0;
+                try {
+                    conditionResult = condition(state);
+                }
+                catch (err) {
+                    subscriber.error(err);
+                    return;
+                }
+                if (!conditionResult) {
+                    subscriber.complete();
+                    break;
+                }
+            }
+            var value = void 0;
+            try {
+                value = resultSelector(state);
+            }
+            catch (err) {
+                subscriber.error(err);
+                return;
+            }
+            subscriber.next(value);
+            if (subscriber.closed) {
+                break;
+            }
+            try {
+                state = iterate(state);
+            }
+            catch (err) {
+                subscriber.error(err);
+                return;
+            }
+        } while (true);
+    };
+    GenerateObservable.dispatch = function (state) {
+        var subscriber = state.subscriber, condition = state.condition;
+        if (subscriber.closed) {
+            return;
+        }
+        if (state.needIterate) {
+            try {
+                state.state = state.iterate(state.state);
+            }
+            catch (err) {
+                subscriber.error(err);
+                return;
+            }
+        }
+        else {
+            state.needIterate = true;
+        }
+        if (condition) {
+            var conditionResult = void 0;
+            try {
+                conditionResult = condition(state.state);
+            }
+            catch (err) {
+                subscriber.error(err);
+                return;
+            }
+            if (!conditionResult) {
+                subscriber.complete();
+                return;
+            }
+            if (subscriber.closed) {
+                return;
+            }
+        }
+        var value;
+        try {
+            value = state.resultSelector(state.state);
+        }
+        catch (err) {
+            subscriber.error(err);
+            return;
+        }
+        if (subscriber.closed) {
+            return;
+        }
+        subscriber.next(value);
+        if (subscriber.closed) {
+            return;
+        }
+        return this.schedule(state);
+    };
+    return GenerateObservable;
+}(Observable_1.Observable));
+exports.GenerateObservable = GenerateObservable;
+//# sourceMappingURL=GenerateObservable.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/observable/IfObservable.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var subscribeToResult_1 = __webpack_require__("../../node_modules/rxjs/util/subscribeToResult.js");
+var OuterSubscriber_1 = __webpack_require__("../../node_modules/rxjs/OuterSubscriber.js");
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @extends {Ignored}
+ * @hide true
+ */
+var IfObservable = (function (_super) {
+    __extends(IfObservable, _super);
+    function IfObservable(condition, thenSource, elseSource) {
+        _super.call(this);
+        this.condition = condition;
+        this.thenSource = thenSource;
+        this.elseSource = elseSource;
+    }
+    IfObservable.create = function (condition, thenSource, elseSource) {
+        return new IfObservable(condition, thenSource, elseSource);
+    };
+    IfObservable.prototype._subscribe = function (subscriber) {
+        var _a = this, condition = _a.condition, thenSource = _a.thenSource, elseSource = _a.elseSource;
+        return new IfSubscriber(subscriber, condition, thenSource, elseSource);
+    };
+    return IfObservable;
+}(Observable_1.Observable));
+exports.IfObservable = IfObservable;
+var IfSubscriber = (function (_super) {
+    __extends(IfSubscriber, _super);
+    function IfSubscriber(destination, condition, thenSource, elseSource) {
+        _super.call(this, destination);
+        this.condition = condition;
+        this.thenSource = thenSource;
+        this.elseSource = elseSource;
+        this.tryIf();
+    }
+    IfSubscriber.prototype.tryIf = function () {
+        var _a = this, condition = _a.condition, thenSource = _a.thenSource, elseSource = _a.elseSource;
+        var result;
+        try {
+            result = condition();
+            var source = result ? thenSource : elseSource;
+            if (source) {
+                this.add(subscribeToResult_1.subscribeToResult(this, source));
+            }
+            else {
+                this._complete();
+            }
+        }
+        catch (err) {
+            this._error(err);
+        }
+    };
+    return IfSubscriber;
+}(OuterSubscriber_1.OuterSubscriber));
+//# sourceMappingURL=IfObservable.js.map
 
 /***/ }),
 
@@ -46480,6 +46193,164 @@ function sign(value) {
 
 /***/ }),
 
+/***/ "../../node_modules/rxjs/observable/NeverObservable.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var noop_1 = __webpack_require__("../../node_modules/rxjs/util/noop.js");
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @extends {Ignored}
+ * @hide true
+ */
+var NeverObservable = (function (_super) {
+    __extends(NeverObservable, _super);
+    function NeverObservable() {
+        _super.call(this);
+    }
+    /**
+     * Creates an Observable that emits no items to the Observer.
+     *
+     * <span class="informal">An Observable that never emits anything.</span>
+     *
+     * <img src="./img/never.png" width="100%">
+     *
+     * This static operator is useful for creating a simple Observable that emits
+     * neither values nor errors nor the completion notification. It can be used
+     * for testing purposes or for composing with other Observables. Please note
+     * that by never emitting a complete notification, this Observable keeps the
+     * subscription from being disposed automatically. Subscriptions need to be
+     * manually disposed.
+     *
+     * @example <caption>Emit the number 7, then never emit anything else (not even complete).</caption>
+     * function info() {
+     *   console.log('Will not be called');
+     * }
+     * var result = Rx.Observable.never().startWith(7);
+     * result.subscribe(x => console.log(x), info, info);
+     *
+     * @see {@link create}
+     * @see {@link empty}
+     * @see {@link of}
+     * @see {@link throw}
+     *
+     * @return {Observable} A "never" Observable: never emits anything.
+     * @static true
+     * @name never
+     * @owner Observable
+     */
+    NeverObservable.create = function () {
+        return new NeverObservable();
+    };
+    NeverObservable.prototype._subscribe = function (subscriber) {
+        noop_1.noop();
+    };
+    return NeverObservable;
+}(Observable_1.Observable));
+exports.NeverObservable = NeverObservable;
+//# sourceMappingURL=NeverObservable.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/observable/PairsObservable.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+function dispatch(state) {
+    var obj = state.obj, keys = state.keys, length = state.length, index = state.index, subscriber = state.subscriber;
+    if (index === length) {
+        subscriber.complete();
+        return;
+    }
+    var key = keys[index];
+    subscriber.next([key, obj[key]]);
+    state.index = index + 1;
+    this.schedule(state);
+}
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @extends {Ignored}
+ * @hide true
+ */
+var PairsObservable = (function (_super) {
+    __extends(PairsObservable, _super);
+    function PairsObservable(obj, scheduler) {
+        _super.call(this);
+        this.obj = obj;
+        this.scheduler = scheduler;
+        this.keys = Object.keys(obj);
+    }
+    /**
+     * Convert an object into an observable sequence of [key, value] pairs
+     * using an optional IScheduler to enumerate the object.
+     *
+     * @example <caption>Converts a javascript object to an Observable</caption>
+     * var obj = {
+     *   foo: 42,
+     *   bar: 56,
+     *   baz: 78
+     * };
+     *
+     * var source = Rx.Observable.pairs(obj);
+     *
+     * var subscription = source.subscribe(
+     *   function (x) {
+     *     console.log('Next: %s', x);
+     *   },
+     *   function (err) {
+     *     console.log('Error: %s', err);
+     *   },
+     *   function () {
+     *     console.log('Completed');
+     *   });
+     *
+     * @param {Object} obj The object to inspect and turn into an
+     * Observable sequence.
+     * @param {Scheduler} [scheduler] An optional IScheduler to run the
+     * enumeration of the input sequence on.
+     * @returns {(Observable<Array<string | T>>)} An observable sequence of
+     * [key, value] pairs from the object.
+     */
+    PairsObservable.create = function (obj, scheduler) {
+        return new PairsObservable(obj, scheduler);
+    };
+    PairsObservable.prototype._subscribe = function (subscriber) {
+        var _a = this, keys = _a.keys, scheduler = _a.scheduler;
+        var length = keys.length;
+        if (scheduler) {
+            return scheduler.schedule(dispatch, 0, {
+                obj: this.obj, keys: keys, length: length, index: 0, subscriber: subscriber
+            });
+        }
+        else {
+            for (var idx = 0; idx < length; idx++) {
+                var key = keys[idx];
+                subscriber.next([key, this.obj[key]]);
+            }
+            subscriber.complete();
+        }
+    };
+    return PairsObservable;
+}(Observable_1.Observable));
+exports.PairsObservable = PairsObservable;
+//# sourceMappingURL=PairsObservable.js.map
+
+/***/ }),
+
 /***/ "../../node_modules/rxjs/observable/PromiseObservable.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -46608,6 +46479,109 @@ function dispatchError(arg) {
 
 /***/ }),
 
+/***/ "../../node_modules/rxjs/observable/RangeObservable.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @extends {Ignored}
+ * @hide true
+ */
+var RangeObservable = (function (_super) {
+    __extends(RangeObservable, _super);
+    function RangeObservable(start, count, scheduler) {
+        _super.call(this);
+        this.start = start;
+        this._count = count;
+        this.scheduler = scheduler;
+    }
+    /**
+     * Creates an Observable that emits a sequence of numbers within a specified
+     * range.
+     *
+     * <span class="informal">Emits a sequence of numbers in a range.</span>
+     *
+     * <img src="./img/range.png" width="100%">
+     *
+     * `range` operator emits a range of sequential integers, in order, where you
+     * select the `start` of the range and its `length`. By default, uses no
+     * IScheduler and just delivers the notifications synchronously, but may use
+     * an optional IScheduler to regulate those deliveries.
+     *
+     * @example <caption>Emits the numbers 1 to 10</caption>
+     * var numbers = Rx.Observable.range(1, 10);
+     * numbers.subscribe(x => console.log(x));
+     *
+     * @see {@link timer}
+     * @see {@link interval}
+     *
+     * @param {number} [start=0] The value of the first integer in the sequence.
+     * @param {number} [count=0] The number of sequential integers to generate.
+     * @param {Scheduler} [scheduler] A {@link IScheduler} to use for scheduling
+     * the emissions of the notifications.
+     * @return {Observable} An Observable of numbers that emits a finite range of
+     * sequential integers.
+     * @static true
+     * @name range
+     * @owner Observable
+     */
+    RangeObservable.create = function (start, count, scheduler) {
+        if (start === void 0) { start = 0; }
+        if (count === void 0) { count = 0; }
+        return new RangeObservable(start, count, scheduler);
+    };
+    RangeObservable.dispatch = function (state) {
+        var start = state.start, index = state.index, count = state.count, subscriber = state.subscriber;
+        if (index >= count) {
+            subscriber.complete();
+            return;
+        }
+        subscriber.next(start);
+        if (subscriber.closed) {
+            return;
+        }
+        state.index = index + 1;
+        state.start = start + 1;
+        this.schedule(state);
+    };
+    RangeObservable.prototype._subscribe = function (subscriber) {
+        var index = 0;
+        var start = this.start;
+        var count = this._count;
+        var scheduler = this.scheduler;
+        if (scheduler) {
+            return scheduler.schedule(RangeObservable.dispatch, 0, {
+                index: index, count: count, start: start, subscriber: subscriber
+            });
+        }
+        else {
+            do {
+                if (index++ >= count) {
+                    subscriber.complete();
+                    break;
+                }
+                subscriber.next(start++);
+                if (subscriber.closed) {
+                    break;
+                }
+            } while (true);
+        }
+    };
+    return RangeObservable;
+}(Observable_1.Observable));
+exports.RangeObservable = RangeObservable;
+//# sourceMappingURL=RangeObservable.js.map
+
+/***/ }),
+
 /***/ "../../node_modules/rxjs/observable/ScalarObservable.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -46673,6 +46647,246 @@ exports.ScalarObservable = ScalarObservable;
 
 /***/ }),
 
+/***/ "../../node_modules/rxjs/observable/SubscribeOnObservable.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var asap_1 = __webpack_require__("../../node_modules/rxjs/scheduler/asap.js");
+var isNumeric_1 = __webpack_require__("../../node_modules/rxjs/util/isNumeric.js");
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @extends {Ignored}
+ * @hide true
+ */
+var SubscribeOnObservable = (function (_super) {
+    __extends(SubscribeOnObservable, _super);
+    function SubscribeOnObservable(source, delayTime, scheduler) {
+        if (delayTime === void 0) { delayTime = 0; }
+        if (scheduler === void 0) { scheduler = asap_1.asap; }
+        _super.call(this);
+        this.source = source;
+        this.delayTime = delayTime;
+        this.scheduler = scheduler;
+        if (!isNumeric_1.isNumeric(delayTime) || delayTime < 0) {
+            this.delayTime = 0;
+        }
+        if (!scheduler || typeof scheduler.schedule !== 'function') {
+            this.scheduler = asap_1.asap;
+        }
+    }
+    SubscribeOnObservable.create = function (source, delay, scheduler) {
+        if (delay === void 0) { delay = 0; }
+        if (scheduler === void 0) { scheduler = asap_1.asap; }
+        return new SubscribeOnObservable(source, delay, scheduler);
+    };
+    SubscribeOnObservable.dispatch = function (arg) {
+        var source = arg.source, subscriber = arg.subscriber;
+        return this.add(source.subscribe(subscriber));
+    };
+    SubscribeOnObservable.prototype._subscribe = function (subscriber) {
+        var delay = this.delayTime;
+        var source = this.source;
+        var scheduler = this.scheduler;
+        return scheduler.schedule(SubscribeOnObservable.dispatch, delay, {
+            source: source, subscriber: subscriber
+        });
+    };
+    return SubscribeOnObservable;
+}(Observable_1.Observable));
+exports.SubscribeOnObservable = SubscribeOnObservable;
+//# sourceMappingURL=SubscribeOnObservable.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/observable/TimerObservable.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var isNumeric_1 = __webpack_require__("../../node_modules/rxjs/util/isNumeric.js");
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var async_1 = __webpack_require__("../../node_modules/rxjs/scheduler/async.js");
+var isScheduler_1 = __webpack_require__("../../node_modules/rxjs/util/isScheduler.js");
+var isDate_1 = __webpack_require__("../../node_modules/rxjs/util/isDate.js");
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @extends {Ignored}
+ * @hide true
+ */
+var TimerObservable = (function (_super) {
+    __extends(TimerObservable, _super);
+    function TimerObservable(dueTime, period, scheduler) {
+        if (dueTime === void 0) { dueTime = 0; }
+        _super.call(this);
+        this.period = -1;
+        this.dueTime = 0;
+        if (isNumeric_1.isNumeric(period)) {
+            this.period = Number(period) < 1 && 1 || Number(period);
+        }
+        else if (isScheduler_1.isScheduler(period)) {
+            scheduler = period;
+        }
+        if (!isScheduler_1.isScheduler(scheduler)) {
+            scheduler = async_1.async;
+        }
+        this.scheduler = scheduler;
+        this.dueTime = isDate_1.isDate(dueTime) ?
+            (+dueTime - this.scheduler.now()) :
+            dueTime;
+    }
+    /**
+     * Creates an Observable that starts emitting after an `initialDelay` and
+     * emits ever increasing numbers after each `period` of time thereafter.
+     *
+     * <span class="informal">Its like {@link interval}, but you can specify when
+     * should the emissions start.</span>
+     *
+     * <img src="./img/timer.png" width="100%">
+     *
+     * `timer` returns an Observable that emits an infinite sequence of ascending
+     * integers, with a constant interval of time, `period` of your choosing
+     * between those emissions. The first emission happens after the specified
+     * `initialDelay`. The initial delay may be a {@link Date}. By default, this
+     * operator uses the `async` IScheduler to provide a notion of time, but you
+     * may pass any IScheduler to it. If `period` is not specified, the output
+     * Observable emits only one value, `0`. Otherwise, it emits an infinite
+     * sequence.
+     *
+     * @example <caption>Emits ascending numbers, one every second (1000ms), starting after 3 seconds</caption>
+     * var numbers = Rx.Observable.timer(3000, 1000);
+     * numbers.subscribe(x => console.log(x));
+     *
+     * @example <caption>Emits one number after five seconds</caption>
+     * var numbers = Rx.Observable.timer(5000);
+     * numbers.subscribe(x => console.log(x));
+     *
+     * @see {@link interval}
+     * @see {@link delay}
+     *
+     * @param {number|Date} initialDelay The initial delay time to wait before
+     * emitting the first value of `0`.
+     * @param {number} [period] The period of time between emissions of the
+     * subsequent numbers.
+     * @param {Scheduler} [scheduler=async] The IScheduler to use for scheduling
+     * the emission of values, and providing a notion of "time".
+     * @return {Observable} An Observable that emits a `0` after the
+     * `initialDelay` and ever increasing numbers after each `period` of time
+     * thereafter.
+     * @static true
+     * @name timer
+     * @owner Observable
+     */
+    TimerObservable.create = function (initialDelay, period, scheduler) {
+        if (initialDelay === void 0) { initialDelay = 0; }
+        return new TimerObservable(initialDelay, period, scheduler);
+    };
+    TimerObservable.dispatch = function (state) {
+        var index = state.index, period = state.period, subscriber = state.subscriber;
+        var action = this;
+        subscriber.next(index);
+        if (subscriber.closed) {
+            return;
+        }
+        else if (period === -1) {
+            return subscriber.complete();
+        }
+        state.index = index + 1;
+        action.schedule(state, period);
+    };
+    TimerObservable.prototype._subscribe = function (subscriber) {
+        var index = 0;
+        var _a = this, period = _a.period, dueTime = _a.dueTime, scheduler = _a.scheduler;
+        return scheduler.schedule(TimerObservable.dispatch, dueTime, {
+            index: index, period: period, subscriber: subscriber
+        });
+    };
+    return TimerObservable;
+}(Observable_1.Observable));
+exports.TimerObservable = TimerObservable;
+//# sourceMappingURL=TimerObservable.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/observable/UsingObservable.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var subscribeToResult_1 = __webpack_require__("../../node_modules/rxjs/util/subscribeToResult.js");
+var OuterSubscriber_1 = __webpack_require__("../../node_modules/rxjs/OuterSubscriber.js");
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @extends {Ignored}
+ * @hide true
+ */
+var UsingObservable = (function (_super) {
+    __extends(UsingObservable, _super);
+    function UsingObservable(resourceFactory, observableFactory) {
+        _super.call(this);
+        this.resourceFactory = resourceFactory;
+        this.observableFactory = observableFactory;
+    }
+    UsingObservable.create = function (resourceFactory, observableFactory) {
+        return new UsingObservable(resourceFactory, observableFactory);
+    };
+    UsingObservable.prototype._subscribe = function (subscriber) {
+        var _a = this, resourceFactory = _a.resourceFactory, observableFactory = _a.observableFactory;
+        var resource;
+        try {
+            resource = resourceFactory();
+            return new UsingSubscriber(subscriber, resource, observableFactory);
+        }
+        catch (err) {
+            subscriber.error(err);
+        }
+    };
+    return UsingObservable;
+}(Observable_1.Observable));
+exports.UsingObservable = UsingObservable;
+var UsingSubscriber = (function (_super) {
+    __extends(UsingSubscriber, _super);
+    function UsingSubscriber(destination, resource, observableFactory) {
+        _super.call(this, destination);
+        this.resource = resource;
+        this.observableFactory = observableFactory;
+        destination.add(resource);
+        this.tryUse();
+    }
+    UsingSubscriber.prototype.tryUse = function () {
+        try {
+            var source = this.observableFactory.call(this, this.resource);
+            if (source) {
+                this.add(subscribeToResult_1.subscribeToResult(this, source));
+            }
+        }
+        catch (err) {
+            this._error(err);
+        }
+    };
+    return UsingSubscriber;
+}(OuterSubscriber_1.OuterSubscriber));
+//# sourceMappingURL=UsingObservable.js.map
+
+/***/ }),
+
 /***/ "../../node_modules/rxjs/observable/bindCallback.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -46681,6 +46895,182 @@ exports.ScalarObservable = ScalarObservable;
 var BoundCallbackObservable_1 = __webpack_require__("../../node_modules/rxjs/observable/BoundCallbackObservable.js");
 exports.bindCallback = BoundCallbackObservable_1.BoundCallbackObservable.create;
 //# sourceMappingURL=bindCallback.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/observable/bindNodeCallback.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var BoundNodeCallbackObservable_1 = __webpack_require__("../../node_modules/rxjs/observable/BoundNodeCallbackObservable.js");
+exports.bindNodeCallback = BoundNodeCallbackObservable_1.BoundNodeCallbackObservable.create;
+//# sourceMappingURL=bindNodeCallback.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/observable/combineLatest.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var isScheduler_1 = __webpack_require__("../../node_modules/rxjs/util/isScheduler.js");
+var isArray_1 = __webpack_require__("../../node_modules/rxjs/util/isArray.js");
+var ArrayObservable_1 = __webpack_require__("../../node_modules/rxjs/observable/ArrayObservable.js");
+var combineLatest_1 = __webpack_require__("../../node_modules/rxjs/operator/combineLatest.js");
+/* tslint:enable:max-line-length */
+/**
+ * Combines multiple Observables to create an Observable whose values are
+ * calculated from the latest values of each of its input Observables.
+ *
+ * <span class="informal">Whenever any input Observable emits a value, it
+ * computes a formula using the latest values from all the inputs, then emits
+ * the output of that formula.</span>
+ *
+ * <img src="./img/combineLatest.png" width="100%">
+ *
+ * `combineLatest` combines the values from all the Observables passed as
+ * arguments. This is done by subscribing to each Observable in order and,
+ * whenever any Observable emits, collecting an array of the most recent
+ * values from each Observable. So if you pass `n` Observables to operator,
+ * returned Observable will always emit an array of `n` values, in order
+ * corresponding to order of passed Observables (value from the first Observable
+ * on the first place and so on).
+ *
+ * Static version of `combineLatest` accepts either an array of Observables
+ * or each Observable can be put directly as an argument. Note that array of
+ * Observables is good choice, if you don't know beforehand how many Observables
+ * you will combine. Passing empty array will result in Observable that
+ * completes immediately.
+ *
+ * To ensure output array has always the same length, `combineLatest` will
+ * actually wait for all input Observables to emit at least once,
+ * before it starts emitting results. This means if some Observable emits
+ * values before other Observables started emitting, all that values but last
+ * will be lost. On the other hand, is some Observable does not emit value but
+ * completes, resulting Observable will complete at the same moment without
+ * emitting anything, since it will be now impossible to include value from
+ * completed Observable in resulting array. Also, if some input Observable does
+ * not emit any value and never completes, `combineLatest` will also never emit
+ * and never complete, since, again, it will wait for all streams to emit some
+ * value.
+ *
+ * If at least one Observable was passed to `combineLatest` and all passed Observables
+ * emitted something, resulting Observable will complete when all combined
+ * streams complete. So even if some Observable completes, result of
+ * `combineLatest` will still emit values when other Observables do. In case
+ * of completed Observable, its value from now on will always be the last
+ * emitted value. On the other hand, if any Observable errors, `combineLatest`
+ * will error immediately as well, and all other Observables will be unsubscribed.
+ *
+ * `combineLatest` accepts as optional parameter `project` function, which takes
+ * as arguments all values that would normally be emitted by resulting Observable.
+ * `project` can return any kind of value, which will be then emitted by Observable
+ * instead of default array. Note that `project` does not take as argument that array
+ * of values, but values themselves. That means default `project` can be imagined
+ * as function that takes all its arguments and puts them into an array.
+ *
+ *
+ * @example <caption>Combine two timer Observables</caption>
+ * const firstTimer = Rx.Observable.timer(0, 1000); // emit 0, 1, 2... after every second, starting from now
+ * const secondTimer = Rx.Observable.timer(500, 1000); // emit 0, 1, 2... after every second, starting 0,5s from now
+ * const combinedTimers = Rx.Observable.combineLatest(firstTimer, secondTimer);
+ * combinedTimers.subscribe(value => console.log(value));
+ * // Logs
+ * // [0, 0] after 0.5s
+ * // [1, 0] after 1s
+ * // [1, 1] after 1.5s
+ * // [2, 1] after 2s
+ *
+ *
+ * @example <caption>Combine an array of Observables</caption>
+ * const observables = [1, 5, 10].map(
+ *   n => Rx.Observable.of(n).delay(n * 1000).startWith(0) // emit 0 and then emit n after n seconds
+ * );
+ * const combined = Rx.Observable.combineLatest(observables);
+ * combined.subscribe(value => console.log(value));
+ * // Logs
+ * // [0, 0, 0] immediately
+ * // [1, 0, 0] after 1s
+ * // [1, 5, 0] after 5s
+ * // [1, 5, 10] after 10s
+ *
+ *
+ * @example <caption>Use project function to dynamically calculate the Body-Mass Index</caption>
+ * var weight = Rx.Observable.of(70, 72, 76, 79, 75);
+ * var height = Rx.Observable.of(1.76, 1.77, 1.78);
+ * var bmi = Rx.Observable.combineLatest(weight, height, (w, h) => w / (h * h));
+ * bmi.subscribe(x => console.log('BMI is ' + x));
+ *
+ * // With output to console:
+ * // BMI is 24.212293388429753
+ * // BMI is 23.93948099205209
+ * // BMI is 23.671253629592222
+ *
+ *
+ * @see {@link combineAll}
+ * @see {@link merge}
+ * @see {@link withLatestFrom}
+ *
+ * @param {ObservableInput} observable1 An input Observable to combine with other Observables.
+ * @param {ObservableInput} observable2 An input Observable to combine with other Observables.
+ * More than one input Observables may be given as arguments
+ * or an array of Observables may be given as the first argument.
+ * @param {function} [project] An optional function to project the values from
+ * the combined latest values into a new value on the output Observable.
+ * @param {Scheduler} [scheduler=null] The IScheduler to use for subscribing to
+ * each input Observable.
+ * @return {Observable} An Observable of projected values from the most recent
+ * values from each input Observable, or an array of the most recent values from
+ * each input Observable.
+ * @static true
+ * @name combineLatest
+ * @owner Observable
+ */
+function combineLatest() {
+    var observables = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        observables[_i - 0] = arguments[_i];
+    }
+    var project = null;
+    var scheduler = null;
+    if (isScheduler_1.isScheduler(observables[observables.length - 1])) {
+        scheduler = observables.pop();
+    }
+    if (typeof observables[observables.length - 1] === 'function') {
+        project = observables.pop();
+    }
+    // if the first and only other argument besides the resultSelector is an array
+    // assume it's been called with `combineLatest([obs1, obs2, obs3], project)`
+    if (observables.length === 1 && isArray_1.isArray(observables[0])) {
+        observables = observables[0];
+    }
+    return new ArrayObservable_1.ArrayObservable(observables, scheduler).lift(new combineLatest_1.CombineLatestOperator(project));
+}
+exports.combineLatest = combineLatest;
+//# sourceMappingURL=combineLatest.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/observable/concat.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var concat_1 = __webpack_require__("../../node_modules/rxjs/operator/concat.js");
+exports.concat = concat_1.concatStatic;
+//# sourceMappingURL=concat.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/observable/defer.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var DeferObservable_1 = __webpack_require__("../../node_modules/rxjs/observable/DeferObservable.js");
+exports.defer = DeferObservable_1.DeferObservable.create;
+//# sourceMappingURL=defer.js.map
 
 /***/ }),
 
@@ -47106,6 +47496,263 @@ exports.AjaxTimeoutError = AjaxTimeoutError;
 
 /***/ }),
 
+/***/ "../../node_modules/rxjs/observable/dom/WebSocketSubject.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subject_1 = __webpack_require__("../../node_modules/rxjs/Subject.js");
+var Subscriber_1 = __webpack_require__("../../node_modules/rxjs/Subscriber.js");
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var Subscription_1 = __webpack_require__("../../node_modules/rxjs/Subscription.js");
+var root_1 = __webpack_require__("../../node_modules/rxjs/util/root.js");
+var ReplaySubject_1 = __webpack_require__("../../node_modules/rxjs/ReplaySubject.js");
+var tryCatch_1 = __webpack_require__("../../node_modules/rxjs/util/tryCatch.js");
+var errorObject_1 = __webpack_require__("../../node_modules/rxjs/util/errorObject.js");
+var assign_1 = __webpack_require__("../../node_modules/rxjs/util/assign.js");
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @extends {Ignored}
+ * @hide true
+ */
+var WebSocketSubject = (function (_super) {
+    __extends(WebSocketSubject, _super);
+    function WebSocketSubject(urlConfigOrSource, destination) {
+        if (urlConfigOrSource instanceof Observable_1.Observable) {
+            _super.call(this, destination, urlConfigOrSource);
+        }
+        else {
+            _super.call(this);
+            this.WebSocketCtor = root_1.root.WebSocket;
+            this._output = new Subject_1.Subject();
+            if (typeof urlConfigOrSource === 'string') {
+                this.url = urlConfigOrSource;
+            }
+            else {
+                // WARNING: config object could override important members here.
+                assign_1.assign(this, urlConfigOrSource);
+            }
+            if (!this.WebSocketCtor) {
+                throw new Error('no WebSocket constructor can be found');
+            }
+            this.destination = new ReplaySubject_1.ReplaySubject();
+        }
+    }
+    WebSocketSubject.prototype.resultSelector = function (e) {
+        return JSON.parse(e.data);
+    };
+    /**
+     * Wrapper around the w3c-compatible WebSocket object provided by the browser.
+     *
+     * @example <caption>Wraps browser WebSocket</caption>
+     *
+     * let socket$ = Observable.webSocket('ws://localhost:8081');
+     *
+     * socket$.subscribe(
+     *    (msg) => console.log('message received: ' + msg),
+     *    (err) => console.log(err),
+     *    () => console.log('complete')
+     *  );
+     *
+     * socket$.next(JSON.stringify({ op: 'hello' }));
+     *
+     * @example <caption>Wraps WebSocket from nodejs-websocket (using node.js)</caption>
+     *
+     * import { w3cwebsocket } from 'websocket';
+     *
+     * let socket$ = Observable.webSocket({
+     *   url: 'ws://localhost:8081',
+     *   WebSocketCtor: w3cwebsocket
+     * });
+     *
+     * socket$.subscribe(
+     *    (msg) => console.log('message received: ' + msg),
+     *    (err) => console.log(err),
+     *    () => console.log('complete')
+     *  );
+     *
+     * socket$.next(JSON.stringify({ op: 'hello' }));
+     *
+     * @param {string | WebSocketSubjectConfig} urlConfigOrSource the source of the websocket as an url or a structure defining the websocket object
+     * @return {WebSocketSubject}
+     * @static true
+     * @name webSocket
+     * @owner Observable
+     */
+    WebSocketSubject.create = function (urlConfigOrSource) {
+        return new WebSocketSubject(urlConfigOrSource);
+    };
+    WebSocketSubject.prototype.lift = function (operator) {
+        var sock = new WebSocketSubject(this, this.destination);
+        sock.operator = operator;
+        return sock;
+    };
+    WebSocketSubject.prototype._resetState = function () {
+        this.socket = null;
+        if (!this.source) {
+            this.destination = new ReplaySubject_1.ReplaySubject();
+        }
+        this._output = new Subject_1.Subject();
+    };
+    // TODO: factor this out to be a proper Operator/Subscriber implementation and eliminate closures
+    WebSocketSubject.prototype.multiplex = function (subMsg, unsubMsg, messageFilter) {
+        var self = this;
+        return new Observable_1.Observable(function (observer) {
+            var result = tryCatch_1.tryCatch(subMsg)();
+            if (result === errorObject_1.errorObject) {
+                observer.error(errorObject_1.errorObject.e);
+            }
+            else {
+                self.next(result);
+            }
+            var subscription = self.subscribe(function (x) {
+                var result = tryCatch_1.tryCatch(messageFilter)(x);
+                if (result === errorObject_1.errorObject) {
+                    observer.error(errorObject_1.errorObject.e);
+                }
+                else if (result) {
+                    observer.next(x);
+                }
+            }, function (err) { return observer.error(err); }, function () { return observer.complete(); });
+            return function () {
+                var result = tryCatch_1.tryCatch(unsubMsg)();
+                if (result === errorObject_1.errorObject) {
+                    observer.error(errorObject_1.errorObject.e);
+                }
+                else {
+                    self.next(result);
+                }
+                subscription.unsubscribe();
+            };
+        });
+    };
+    WebSocketSubject.prototype._connectSocket = function () {
+        var _this = this;
+        var WebSocketCtor = this.WebSocketCtor;
+        var observer = this._output;
+        var socket = null;
+        try {
+            socket = this.protocol ?
+                new WebSocketCtor(this.url, this.protocol) :
+                new WebSocketCtor(this.url);
+            this.socket = socket;
+            if (this.binaryType) {
+                this.socket.binaryType = this.binaryType;
+            }
+        }
+        catch (e) {
+            observer.error(e);
+            return;
+        }
+        var subscription = new Subscription_1.Subscription(function () {
+            _this.socket = null;
+            if (socket && socket.readyState === 1) {
+                socket.close();
+            }
+        });
+        socket.onopen = function (e) {
+            var openObserver = _this.openObserver;
+            if (openObserver) {
+                openObserver.next(e);
+            }
+            var queue = _this.destination;
+            _this.destination = Subscriber_1.Subscriber.create(function (x) { return socket.readyState === 1 && socket.send(x); }, function (e) {
+                var closingObserver = _this.closingObserver;
+                if (closingObserver) {
+                    closingObserver.next(undefined);
+                }
+                if (e && e.code) {
+                    socket.close(e.code, e.reason);
+                }
+                else {
+                    observer.error(new TypeError('WebSocketSubject.error must be called with an object with an error code, ' +
+                        'and an optional reason: { code: number, reason: string }'));
+                }
+                _this._resetState();
+            }, function () {
+                var closingObserver = _this.closingObserver;
+                if (closingObserver) {
+                    closingObserver.next(undefined);
+                }
+                socket.close();
+                _this._resetState();
+            });
+            if (queue && queue instanceof ReplaySubject_1.ReplaySubject) {
+                subscription.add(queue.subscribe(_this.destination));
+            }
+        };
+        socket.onerror = function (e) {
+            _this._resetState();
+            observer.error(e);
+        };
+        socket.onclose = function (e) {
+            _this._resetState();
+            var closeObserver = _this.closeObserver;
+            if (closeObserver) {
+                closeObserver.next(e);
+            }
+            if (e.wasClean) {
+                observer.complete();
+            }
+            else {
+                observer.error(e);
+            }
+        };
+        socket.onmessage = function (e) {
+            var result = tryCatch_1.tryCatch(_this.resultSelector)(e);
+            if (result === errorObject_1.errorObject) {
+                observer.error(errorObject_1.errorObject.e);
+            }
+            else {
+                observer.next(result);
+            }
+        };
+    };
+    WebSocketSubject.prototype._subscribe = function (subscriber) {
+        var _this = this;
+        var source = this.source;
+        if (source) {
+            return source.subscribe(subscriber);
+        }
+        if (!this.socket) {
+            this._connectSocket();
+        }
+        var subscription = new Subscription_1.Subscription();
+        subscription.add(this._output.subscribe(subscriber));
+        subscription.add(function () {
+            var socket = _this.socket;
+            if (_this._output.observers.length === 0) {
+                if (socket && socket.readyState === 1) {
+                    socket.close();
+                }
+                _this._resetState();
+            }
+        });
+        return subscription;
+    };
+    WebSocketSubject.prototype.unsubscribe = function () {
+        var _a = this, source = _a.source, socket = _a.socket;
+        if (socket && socket.readyState === 1) {
+            socket.close();
+            this._resetState();
+        }
+        _super.prototype.unsubscribe.call(this);
+        if (!source) {
+            this.destination = new ReplaySubject_1.ReplaySubject();
+        }
+    };
+    return WebSocketSubject;
+}(Subject_1.AnonymousSubject));
+exports.WebSocketSubject = WebSocketSubject;
+//# sourceMappingURL=WebSocketSubject.js.map
+
+/***/ }),
+
 /***/ "../../node_modules/rxjs/observable/dom/ajax.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -47117,6 +47764,17 @@ exports.ajax = AjaxObservable_1.AjaxObservable.create;
 
 /***/ }),
 
+/***/ "../../node_modules/rxjs/observable/dom/webSocket.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var WebSocketSubject_1 = __webpack_require__("../../node_modules/rxjs/observable/dom/WebSocketSubject.js");
+exports.webSocket = WebSocketSubject_1.WebSocketSubject.create;
+//# sourceMappingURL=webSocket.js.map
+
+/***/ }),
+
 /***/ "../../node_modules/rxjs/observable/empty.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -47125,6 +47783,17 @@ exports.ajax = AjaxObservable_1.AjaxObservable.create;
 var EmptyObservable_1 = __webpack_require__("../../node_modules/rxjs/observable/EmptyObservable.js");
 exports.empty = EmptyObservable_1.EmptyObservable.create;
 //# sourceMappingURL=empty.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/observable/forkJoin.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var ForkJoinObservable_1 = __webpack_require__("../../node_modules/rxjs/observable/ForkJoinObservable.js");
+exports.forkJoin = ForkJoinObservable_1.ForkJoinObservable.create;
+//# sourceMappingURL=forkJoin.js.map
 
 /***/ }),
 
@@ -47150,6 +47819,50 @@ exports.fromEvent = FromEventObservable_1.FromEventObservable.create;
 
 /***/ }),
 
+/***/ "../../node_modules/rxjs/observable/fromEventPattern.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var FromEventPatternObservable_1 = __webpack_require__("../../node_modules/rxjs/observable/FromEventPatternObservable.js");
+exports.fromEventPattern = FromEventPatternObservable_1.FromEventPatternObservable.create;
+//# sourceMappingURL=fromEventPattern.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/observable/fromPromise.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var PromiseObservable_1 = __webpack_require__("../../node_modules/rxjs/observable/PromiseObservable.js");
+exports.fromPromise = PromiseObservable_1.PromiseObservable.create;
+//# sourceMappingURL=fromPromise.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/observable/generate.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var GenerateObservable_1 = __webpack_require__("../../node_modules/rxjs/observable/GenerateObservable.js");
+exports.generate = GenerateObservable_1.GenerateObservable.create;
+//# sourceMappingURL=generate.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/observable/if.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var IfObservable_1 = __webpack_require__("../../node_modules/rxjs/observable/IfObservable.js");
+exports._if = IfObservable_1.IfObservable.create;
+//# sourceMappingURL=if.js.map
+
+/***/ }),
+
 /***/ "../../node_modules/rxjs/observable/interval.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -47172,6 +47885,17 @@ exports.merge = merge_1.mergeStatic;
 
 /***/ }),
 
+/***/ "../../node_modules/rxjs/observable/never.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var NeverObservable_1 = __webpack_require__("../../node_modules/rxjs/observable/NeverObservable.js");
+exports.never = NeverObservable_1.NeverObservable.create;
+//# sourceMappingURL=never.js.map
+
+/***/ }),
+
 /***/ "../../node_modules/rxjs/observable/of.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -47183,6 +47907,50 @@ exports.of = ArrayObservable_1.ArrayObservable.of;
 
 /***/ }),
 
+/***/ "../../node_modules/rxjs/observable/onErrorResumeNext.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var onErrorResumeNext_1 = __webpack_require__("../../node_modules/rxjs/operator/onErrorResumeNext.js");
+exports.onErrorResumeNext = onErrorResumeNext_1.onErrorResumeNextStatic;
+//# sourceMappingURL=onErrorResumeNext.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/observable/pairs.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var PairsObservable_1 = __webpack_require__("../../node_modules/rxjs/observable/PairsObservable.js");
+exports.pairs = PairsObservable_1.PairsObservable.create;
+//# sourceMappingURL=pairs.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/observable/race.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var race_1 = __webpack_require__("../../node_modules/rxjs/operator/race.js");
+exports.race = race_1.raceStatic;
+//# sourceMappingURL=race.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/observable/range.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var RangeObservable_1 = __webpack_require__("../../node_modules/rxjs/observable/RangeObservable.js");
+exports.range = RangeObservable_1.RangeObservable.create;
+//# sourceMappingURL=range.js.map
+
+/***/ }),
+
 /***/ "../../node_modules/rxjs/observable/throw.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -47191,6 +47959,997 @@ exports.of = ArrayObservable_1.ArrayObservable.of;
 var ErrorObservable_1 = __webpack_require__("../../node_modules/rxjs/observable/ErrorObservable.js");
 exports._throw = ErrorObservable_1.ErrorObservable.create;
 //# sourceMappingURL=throw.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/observable/timer.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var TimerObservable_1 = __webpack_require__("../../node_modules/rxjs/observable/TimerObservable.js");
+exports.timer = TimerObservable_1.TimerObservable.create;
+//# sourceMappingURL=timer.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/observable/using.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var UsingObservable_1 = __webpack_require__("../../node_modules/rxjs/observable/UsingObservable.js");
+exports.using = UsingObservable_1.UsingObservable.create;
+//# sourceMappingURL=using.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/observable/zip.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var zip_1 = __webpack_require__("../../node_modules/rxjs/operator/zip.js");
+exports.zip = zip_1.zipStatic;
+//# sourceMappingURL=zip.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/audit.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var tryCatch_1 = __webpack_require__("../../node_modules/rxjs/util/tryCatch.js");
+var errorObject_1 = __webpack_require__("../../node_modules/rxjs/util/errorObject.js");
+var OuterSubscriber_1 = __webpack_require__("../../node_modules/rxjs/OuterSubscriber.js");
+var subscribeToResult_1 = __webpack_require__("../../node_modules/rxjs/util/subscribeToResult.js");
+/**
+ * Ignores source values for a duration determined by another Observable, then
+ * emits the most recent value from the source Observable, then repeats this
+ * process.
+ *
+ * <span class="informal">It's like {@link auditTime}, but the silencing
+ * duration is determined by a second Observable.</span>
+ *
+ * <img src="./img/audit.png" width="100%">
+ *
+ * `audit` is similar to `throttle`, but emits the last value from the silenced
+ * time window, instead of the first value. `audit` emits the most recent value
+ * from the source Observable on the output Observable as soon as its internal
+ * timer becomes disabled, and ignores source values while the timer is enabled.
+ * Initially, the timer is disabled. As soon as the first source value arrives,
+ * the timer is enabled by calling the `durationSelector` function with the
+ * source value, which returns the "duration" Observable. When the duration
+ * Observable emits a value or completes, the timer is disabled, then the most
+ * recent source value is emitted on the output Observable, and this process
+ * repeats for the next source value.
+ *
+ * @example <caption>Emit clicks at a rate of at most one click per second</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var result = clicks.audit(ev => Rx.Observable.interval(1000));
+ * result.subscribe(x => console.log(x));
+ *
+ * @see {@link auditTime}
+ * @see {@link debounce}
+ * @see {@link delayWhen}
+ * @see {@link sample}
+ * @see {@link throttle}
+ *
+ * @param {function(value: T): SubscribableOrPromise} durationSelector A function
+ * that receives a value from the source Observable, for computing the silencing
+ * duration, returned as an Observable or a Promise.
+ * @return {Observable<T>} An Observable that performs rate-limiting of
+ * emissions from the source Observable.
+ * @method audit
+ * @owner Observable
+ */
+function audit(durationSelector) {
+    return this.lift(new AuditOperator(durationSelector));
+}
+exports.audit = audit;
+var AuditOperator = (function () {
+    function AuditOperator(durationSelector) {
+        this.durationSelector = durationSelector;
+    }
+    AuditOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new AuditSubscriber(subscriber, this.durationSelector));
+    };
+    return AuditOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var AuditSubscriber = (function (_super) {
+    __extends(AuditSubscriber, _super);
+    function AuditSubscriber(destination, durationSelector) {
+        _super.call(this, destination);
+        this.durationSelector = durationSelector;
+        this.hasValue = false;
+    }
+    AuditSubscriber.prototype._next = function (value) {
+        this.value = value;
+        this.hasValue = true;
+        if (!this.throttled) {
+            var duration = tryCatch_1.tryCatch(this.durationSelector)(value);
+            if (duration === errorObject_1.errorObject) {
+                this.destination.error(errorObject_1.errorObject.e);
+            }
+            else {
+                var innerSubscription = subscribeToResult_1.subscribeToResult(this, duration);
+                if (innerSubscription.closed) {
+                    this.clearThrottle();
+                }
+                else {
+                    this.add(this.throttled = innerSubscription);
+                }
+            }
+        }
+    };
+    AuditSubscriber.prototype.clearThrottle = function () {
+        var _a = this, value = _a.value, hasValue = _a.hasValue, throttled = _a.throttled;
+        if (throttled) {
+            this.remove(throttled);
+            this.throttled = null;
+            throttled.unsubscribe();
+        }
+        if (hasValue) {
+            this.value = null;
+            this.hasValue = false;
+            this.destination.next(value);
+        }
+    };
+    AuditSubscriber.prototype.notifyNext = function (outerValue, innerValue, outerIndex, innerIndex) {
+        this.clearThrottle();
+    };
+    AuditSubscriber.prototype.notifyComplete = function () {
+        this.clearThrottle();
+    };
+    return AuditSubscriber;
+}(OuterSubscriber_1.OuterSubscriber));
+//# sourceMappingURL=audit.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/auditTime.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var async_1 = __webpack_require__("../../node_modules/rxjs/scheduler/async.js");
+var Subscriber_1 = __webpack_require__("../../node_modules/rxjs/Subscriber.js");
+/**
+ * Ignores source values for `duration` milliseconds, then emits the most recent
+ * value from the source Observable, then repeats this process.
+ *
+ * <span class="informal">When it sees a source values, it ignores that plus
+ * the next ones for `duration` milliseconds, and then it emits the most recent
+ * value from the source.</span>
+ *
+ * <img src="./img/auditTime.png" width="100%">
+ *
+ * `auditTime` is similar to `throttleTime`, but emits the last value from the
+ * silenced time window, instead of the first value. `auditTime` emits the most
+ * recent value from the source Observable on the output Observable as soon as
+ * its internal timer becomes disabled, and ignores source values while the
+ * timer is enabled. Initially, the timer is disabled. As soon as the first
+ * source value arrives, the timer is enabled. After `duration` milliseconds (or
+ * the time unit determined internally by the optional `scheduler`) has passed,
+ * the timer is disabled, then the most recent source value is emitted on the
+ * output Observable, and this process repeats for the next source value.
+ * Optionally takes a {@link IScheduler} for managing timers.
+ *
+ * @example <caption>Emit clicks at a rate of at most one click per second</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var result = clicks.auditTime(1000);
+ * result.subscribe(x => console.log(x));
+ *
+ * @see {@link audit}
+ * @see {@link debounceTime}
+ * @see {@link delay}
+ * @see {@link sampleTime}
+ * @see {@link throttleTime}
+ *
+ * @param {number} duration Time to wait before emitting the most recent source
+ * value, measured in milliseconds or the time unit determined internally
+ * by the optional `scheduler`.
+ * @param {Scheduler} [scheduler=async] The {@link IScheduler} to use for
+ * managing the timers that handle the rate-limiting behavior.
+ * @return {Observable<T>} An Observable that performs rate-limiting of
+ * emissions from the source Observable.
+ * @method auditTime
+ * @owner Observable
+ */
+function auditTime(duration, scheduler) {
+    if (scheduler === void 0) { scheduler = async_1.async; }
+    return this.lift(new AuditTimeOperator(duration, scheduler));
+}
+exports.auditTime = auditTime;
+var AuditTimeOperator = (function () {
+    function AuditTimeOperator(duration, scheduler) {
+        this.duration = duration;
+        this.scheduler = scheduler;
+    }
+    AuditTimeOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new AuditTimeSubscriber(subscriber, this.duration, this.scheduler));
+    };
+    return AuditTimeOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var AuditTimeSubscriber = (function (_super) {
+    __extends(AuditTimeSubscriber, _super);
+    function AuditTimeSubscriber(destination, duration, scheduler) {
+        _super.call(this, destination);
+        this.duration = duration;
+        this.scheduler = scheduler;
+        this.hasValue = false;
+    }
+    AuditTimeSubscriber.prototype._next = function (value) {
+        this.value = value;
+        this.hasValue = true;
+        if (!this.throttled) {
+            this.add(this.throttled = this.scheduler.schedule(dispatchNext, this.duration, this));
+        }
+    };
+    AuditTimeSubscriber.prototype.clearThrottle = function () {
+        var _a = this, value = _a.value, hasValue = _a.hasValue, throttled = _a.throttled;
+        if (throttled) {
+            this.remove(throttled);
+            this.throttled = null;
+            throttled.unsubscribe();
+        }
+        if (hasValue) {
+            this.value = null;
+            this.hasValue = false;
+            this.destination.next(value);
+        }
+    };
+    return AuditTimeSubscriber;
+}(Subscriber_1.Subscriber));
+function dispatchNext(subscriber) {
+    subscriber.clearThrottle();
+}
+//# sourceMappingURL=auditTime.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/buffer.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var OuterSubscriber_1 = __webpack_require__("../../node_modules/rxjs/OuterSubscriber.js");
+var subscribeToResult_1 = __webpack_require__("../../node_modules/rxjs/util/subscribeToResult.js");
+/**
+ * Buffers the source Observable values until `closingNotifier` emits.
+ *
+ * <span class="informal">Collects values from the past as an array, and emits
+ * that array only when another Observable emits.</span>
+ *
+ * <img src="./img/buffer.png" width="100%">
+ *
+ * Buffers the incoming Observable values until the given `closingNotifier`
+ * Observable emits a value, at which point it emits the buffer on the output
+ * Observable and starts a new buffer internally, awaiting the next time
+ * `closingNotifier` emits.
+ *
+ * @example <caption>On every click, emit array of most recent interval events</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var interval = Rx.Observable.interval(1000);
+ * var buffered = interval.buffer(clicks);
+ * buffered.subscribe(x => console.log(x));
+ *
+ * @see {@link bufferCount}
+ * @see {@link bufferTime}
+ * @see {@link bufferToggle}
+ * @see {@link bufferWhen}
+ * @see {@link window}
+ *
+ * @param {Observable<any>} closingNotifier An Observable that signals the
+ * buffer to be emitted on the output Observable.
+ * @return {Observable<T[]>} An Observable of buffers, which are arrays of
+ * values.
+ * @method buffer
+ * @owner Observable
+ */
+function buffer(closingNotifier) {
+    return this.lift(new BufferOperator(closingNotifier));
+}
+exports.buffer = buffer;
+var BufferOperator = (function () {
+    function BufferOperator(closingNotifier) {
+        this.closingNotifier = closingNotifier;
+    }
+    BufferOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new BufferSubscriber(subscriber, this.closingNotifier));
+    };
+    return BufferOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var BufferSubscriber = (function (_super) {
+    __extends(BufferSubscriber, _super);
+    function BufferSubscriber(destination, closingNotifier) {
+        _super.call(this, destination);
+        this.buffer = [];
+        this.add(subscribeToResult_1.subscribeToResult(this, closingNotifier));
+    }
+    BufferSubscriber.prototype._next = function (value) {
+        this.buffer.push(value);
+    };
+    BufferSubscriber.prototype.notifyNext = function (outerValue, innerValue, outerIndex, innerIndex, innerSub) {
+        var buffer = this.buffer;
+        this.buffer = [];
+        this.destination.next(buffer);
+    };
+    return BufferSubscriber;
+}(OuterSubscriber_1.OuterSubscriber));
+//# sourceMappingURL=buffer.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/bufferCount.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subscriber_1 = __webpack_require__("../../node_modules/rxjs/Subscriber.js");
+/**
+ * Buffers the source Observable values until the size hits the maximum
+ * `bufferSize` given.
+ *
+ * <span class="informal">Collects values from the past as an array, and emits
+ * that array only when its size reaches `bufferSize`.</span>
+ *
+ * <img src="./img/bufferCount.png" width="100%">
+ *
+ * Buffers a number of values from the source Observable by `bufferSize` then
+ * emits the buffer and clears it, and starts a new buffer each
+ * `startBufferEvery` values. If `startBufferEvery` is not provided or is
+ * `null`, then new buffers are started immediately at the start of the source
+ * and when each buffer closes and is emitted.
+ *
+ * @example <caption>Emit the last two click events as an array</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var buffered = clicks.bufferCount(2);
+ * buffered.subscribe(x => console.log(x));
+ *
+ * @example <caption>On every click, emit the last two click events as an array</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var buffered = clicks.bufferCount(2, 1);
+ * buffered.subscribe(x => console.log(x));
+ *
+ * @see {@link buffer}
+ * @see {@link bufferTime}
+ * @see {@link bufferToggle}
+ * @see {@link bufferWhen}
+ * @see {@link pairwise}
+ * @see {@link windowCount}
+ *
+ * @param {number} bufferSize The maximum size of the buffer emitted.
+ * @param {number} [startBufferEvery] Interval at which to start a new buffer.
+ * For example if `startBufferEvery` is `2`, then a new buffer will be started
+ * on every other value from the source. A new buffer is started at the
+ * beginning of the source by default.
+ * @return {Observable<T[]>} An Observable of arrays of buffered values.
+ * @method bufferCount
+ * @owner Observable
+ */
+function bufferCount(bufferSize, startBufferEvery) {
+    if (startBufferEvery === void 0) { startBufferEvery = null; }
+    return this.lift(new BufferCountOperator(bufferSize, startBufferEvery));
+}
+exports.bufferCount = bufferCount;
+var BufferCountOperator = (function () {
+    function BufferCountOperator(bufferSize, startBufferEvery) {
+        this.bufferSize = bufferSize;
+        this.startBufferEvery = startBufferEvery;
+        if (!startBufferEvery || bufferSize === startBufferEvery) {
+            this.subscriberClass = BufferCountSubscriber;
+        }
+        else {
+            this.subscriberClass = BufferSkipCountSubscriber;
+        }
+    }
+    BufferCountOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new this.subscriberClass(subscriber, this.bufferSize, this.startBufferEvery));
+    };
+    return BufferCountOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var BufferCountSubscriber = (function (_super) {
+    __extends(BufferCountSubscriber, _super);
+    function BufferCountSubscriber(destination, bufferSize) {
+        _super.call(this, destination);
+        this.bufferSize = bufferSize;
+        this.buffer = [];
+    }
+    BufferCountSubscriber.prototype._next = function (value) {
+        var buffer = this.buffer;
+        buffer.push(value);
+        if (buffer.length == this.bufferSize) {
+            this.destination.next(buffer);
+            this.buffer = [];
+        }
+    };
+    BufferCountSubscriber.prototype._complete = function () {
+        var buffer = this.buffer;
+        if (buffer.length > 0) {
+            this.destination.next(buffer);
+        }
+        _super.prototype._complete.call(this);
+    };
+    return BufferCountSubscriber;
+}(Subscriber_1.Subscriber));
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var BufferSkipCountSubscriber = (function (_super) {
+    __extends(BufferSkipCountSubscriber, _super);
+    function BufferSkipCountSubscriber(destination, bufferSize, startBufferEvery) {
+        _super.call(this, destination);
+        this.bufferSize = bufferSize;
+        this.startBufferEvery = startBufferEvery;
+        this.buffers = [];
+        this.count = 0;
+    }
+    BufferSkipCountSubscriber.prototype._next = function (value) {
+        var _a = this, bufferSize = _a.bufferSize, startBufferEvery = _a.startBufferEvery, buffers = _a.buffers, count = _a.count;
+        this.count++;
+        if (count % startBufferEvery === 0) {
+            buffers.push([]);
+        }
+        for (var i = buffers.length; i--;) {
+            var buffer = buffers[i];
+            buffer.push(value);
+            if (buffer.length === bufferSize) {
+                buffers.splice(i, 1);
+                this.destination.next(buffer);
+            }
+        }
+    };
+    BufferSkipCountSubscriber.prototype._complete = function () {
+        var _a = this, buffers = _a.buffers, destination = _a.destination;
+        while (buffers.length > 0) {
+            var buffer = buffers.shift();
+            if (buffer.length > 0) {
+                destination.next(buffer);
+            }
+        }
+        _super.prototype._complete.call(this);
+    };
+    return BufferSkipCountSubscriber;
+}(Subscriber_1.Subscriber));
+//# sourceMappingURL=bufferCount.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/bufferTime.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var async_1 = __webpack_require__("../../node_modules/rxjs/scheduler/async.js");
+var Subscriber_1 = __webpack_require__("../../node_modules/rxjs/Subscriber.js");
+var isScheduler_1 = __webpack_require__("../../node_modules/rxjs/util/isScheduler.js");
+/* tslint:enable:max-line-length */
+/**
+ * Buffers the source Observable values for a specific time period.
+ *
+ * <span class="informal">Collects values from the past as an array, and emits
+ * those arrays periodically in time.</span>
+ *
+ * <img src="./img/bufferTime.png" width="100%">
+ *
+ * Buffers values from the source for a specific time duration `bufferTimeSpan`.
+ * Unless the optional argument `bufferCreationInterval` is given, it emits and
+ * resets the buffer every `bufferTimeSpan` milliseconds. If
+ * `bufferCreationInterval` is given, this operator opens the buffer every
+ * `bufferCreationInterval` milliseconds and closes (emits and resets) the
+ * buffer every `bufferTimeSpan` milliseconds. When the optional argument
+ * `maxBufferSize` is specified, the buffer will be closed either after
+ * `bufferTimeSpan` milliseconds or when it contains `maxBufferSize` elements.
+ *
+ * @example <caption>Every second, emit an array of the recent click events</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var buffered = clicks.bufferTime(1000);
+ * buffered.subscribe(x => console.log(x));
+ *
+ * @example <caption>Every 5 seconds, emit the click events from the next 2 seconds</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var buffered = clicks.bufferTime(2000, 5000);
+ * buffered.subscribe(x => console.log(x));
+ *
+ * @see {@link buffer}
+ * @see {@link bufferCount}
+ * @see {@link bufferToggle}
+ * @see {@link bufferWhen}
+ * @see {@link windowTime}
+ *
+ * @param {number} bufferTimeSpan The amount of time to fill each buffer array.
+ * @param {number} [bufferCreationInterval] The interval at which to start new
+ * buffers.
+ * @param {number} [maxBufferSize] The maximum buffer size.
+ * @param {Scheduler} [scheduler=async] The scheduler on which to schedule the
+ * intervals that determine buffer boundaries.
+ * @return {Observable<T[]>} An observable of arrays of buffered values.
+ * @method bufferTime
+ * @owner Observable
+ */
+function bufferTime(bufferTimeSpan) {
+    var length = arguments.length;
+    var scheduler = async_1.async;
+    if (isScheduler_1.isScheduler(arguments[arguments.length - 1])) {
+        scheduler = arguments[arguments.length - 1];
+        length--;
+    }
+    var bufferCreationInterval = null;
+    if (length >= 2) {
+        bufferCreationInterval = arguments[1];
+    }
+    var maxBufferSize = Number.POSITIVE_INFINITY;
+    if (length >= 3) {
+        maxBufferSize = arguments[2];
+    }
+    return this.lift(new BufferTimeOperator(bufferTimeSpan, bufferCreationInterval, maxBufferSize, scheduler));
+}
+exports.bufferTime = bufferTime;
+var BufferTimeOperator = (function () {
+    function BufferTimeOperator(bufferTimeSpan, bufferCreationInterval, maxBufferSize, scheduler) {
+        this.bufferTimeSpan = bufferTimeSpan;
+        this.bufferCreationInterval = bufferCreationInterval;
+        this.maxBufferSize = maxBufferSize;
+        this.scheduler = scheduler;
+    }
+    BufferTimeOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new BufferTimeSubscriber(subscriber, this.bufferTimeSpan, this.bufferCreationInterval, this.maxBufferSize, this.scheduler));
+    };
+    return BufferTimeOperator;
+}());
+var Context = (function () {
+    function Context() {
+        this.buffer = [];
+    }
+    return Context;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var BufferTimeSubscriber = (function (_super) {
+    __extends(BufferTimeSubscriber, _super);
+    function BufferTimeSubscriber(destination, bufferTimeSpan, bufferCreationInterval, maxBufferSize, scheduler) {
+        _super.call(this, destination);
+        this.bufferTimeSpan = bufferTimeSpan;
+        this.bufferCreationInterval = bufferCreationInterval;
+        this.maxBufferSize = maxBufferSize;
+        this.scheduler = scheduler;
+        this.contexts = [];
+        var context = this.openContext();
+        this.timespanOnly = bufferCreationInterval == null || bufferCreationInterval < 0;
+        if (this.timespanOnly) {
+            var timeSpanOnlyState = { subscriber: this, context: context, bufferTimeSpan: bufferTimeSpan };
+            this.add(context.closeAction = scheduler.schedule(dispatchBufferTimeSpanOnly, bufferTimeSpan, timeSpanOnlyState));
+        }
+        else {
+            var closeState = { subscriber: this, context: context };
+            var creationState = { bufferTimeSpan: bufferTimeSpan, bufferCreationInterval: bufferCreationInterval, subscriber: this, scheduler: scheduler };
+            this.add(context.closeAction = scheduler.schedule(dispatchBufferClose, bufferTimeSpan, closeState));
+            this.add(scheduler.schedule(dispatchBufferCreation, bufferCreationInterval, creationState));
+        }
+    }
+    BufferTimeSubscriber.prototype._next = function (value) {
+        var contexts = this.contexts;
+        var len = contexts.length;
+        var filledBufferContext;
+        for (var i = 0; i < len; i++) {
+            var context = contexts[i];
+            var buffer = context.buffer;
+            buffer.push(value);
+            if (buffer.length == this.maxBufferSize) {
+                filledBufferContext = context;
+            }
+        }
+        if (filledBufferContext) {
+            this.onBufferFull(filledBufferContext);
+        }
+    };
+    BufferTimeSubscriber.prototype._error = function (err) {
+        this.contexts.length = 0;
+        _super.prototype._error.call(this, err);
+    };
+    BufferTimeSubscriber.prototype._complete = function () {
+        var _a = this, contexts = _a.contexts, destination = _a.destination;
+        while (contexts.length > 0) {
+            var context = contexts.shift();
+            destination.next(context.buffer);
+        }
+        _super.prototype._complete.call(this);
+    };
+    BufferTimeSubscriber.prototype._unsubscribe = function () {
+        this.contexts = null;
+    };
+    BufferTimeSubscriber.prototype.onBufferFull = function (context) {
+        this.closeContext(context);
+        var closeAction = context.closeAction;
+        closeAction.unsubscribe();
+        this.remove(closeAction);
+        if (!this.closed && this.timespanOnly) {
+            context = this.openContext();
+            var bufferTimeSpan = this.bufferTimeSpan;
+            var timeSpanOnlyState = { subscriber: this, context: context, bufferTimeSpan: bufferTimeSpan };
+            this.add(context.closeAction = this.scheduler.schedule(dispatchBufferTimeSpanOnly, bufferTimeSpan, timeSpanOnlyState));
+        }
+    };
+    BufferTimeSubscriber.prototype.openContext = function () {
+        var context = new Context();
+        this.contexts.push(context);
+        return context;
+    };
+    BufferTimeSubscriber.prototype.closeContext = function (context) {
+        this.destination.next(context.buffer);
+        var contexts = this.contexts;
+        var spliceIndex = contexts ? contexts.indexOf(context) : -1;
+        if (spliceIndex >= 0) {
+            contexts.splice(contexts.indexOf(context), 1);
+        }
+    };
+    return BufferTimeSubscriber;
+}(Subscriber_1.Subscriber));
+function dispatchBufferTimeSpanOnly(state) {
+    var subscriber = state.subscriber;
+    var prevContext = state.context;
+    if (prevContext) {
+        subscriber.closeContext(prevContext);
+    }
+    if (!subscriber.closed) {
+        state.context = subscriber.openContext();
+        state.context.closeAction = this.schedule(state, state.bufferTimeSpan);
+    }
+}
+function dispatchBufferCreation(state) {
+    var bufferCreationInterval = state.bufferCreationInterval, bufferTimeSpan = state.bufferTimeSpan, subscriber = state.subscriber, scheduler = state.scheduler;
+    var context = subscriber.openContext();
+    var action = this;
+    if (!subscriber.closed) {
+        subscriber.add(context.closeAction = scheduler.schedule(dispatchBufferClose, bufferTimeSpan, { subscriber: subscriber, context: context }));
+        action.schedule(state, bufferCreationInterval);
+    }
+}
+function dispatchBufferClose(arg) {
+    var subscriber = arg.subscriber, context = arg.context;
+    subscriber.closeContext(context);
+}
+//# sourceMappingURL=bufferTime.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/bufferToggle.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subscription_1 = __webpack_require__("../../node_modules/rxjs/Subscription.js");
+var subscribeToResult_1 = __webpack_require__("../../node_modules/rxjs/util/subscribeToResult.js");
+var OuterSubscriber_1 = __webpack_require__("../../node_modules/rxjs/OuterSubscriber.js");
+/**
+ * Buffers the source Observable values starting from an emission from
+ * `openings` and ending when the output of `closingSelector` emits.
+ *
+ * <span class="informal">Collects values from the past as an array. Starts
+ * collecting only when `opening` emits, and calls the `closingSelector`
+ * function to get an Observable that tells when to close the buffer.</span>
+ *
+ * <img src="./img/bufferToggle.png" width="100%">
+ *
+ * Buffers values from the source by opening the buffer via signals from an
+ * Observable provided to `openings`, and closing and sending the buffers when
+ * a Subscribable or Promise returned by the `closingSelector` function emits.
+ *
+ * @example <caption>Every other second, emit the click events from the next 500ms</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var openings = Rx.Observable.interval(1000);
+ * var buffered = clicks.bufferToggle(openings, i =>
+ *   i % 2 ? Rx.Observable.interval(500) : Rx.Observable.empty()
+ * );
+ * buffered.subscribe(x => console.log(x));
+ *
+ * @see {@link buffer}
+ * @see {@link bufferCount}
+ * @see {@link bufferTime}
+ * @see {@link bufferWhen}
+ * @see {@link windowToggle}
+ *
+ * @param {SubscribableOrPromise<O>} openings A Subscribable or Promise of notifications to start new
+ * buffers.
+ * @param {function(value: O): SubscribableOrPromise} closingSelector A function that takes
+ * the value emitted by the `openings` observable and returns a Subscribable or Promise,
+ * which, when it emits, signals that the associated buffer should be emitted
+ * and cleared.
+ * @return {Observable<T[]>} An observable of arrays of buffered values.
+ * @method bufferToggle
+ * @owner Observable
+ */
+function bufferToggle(openings, closingSelector) {
+    return this.lift(new BufferToggleOperator(openings, closingSelector));
+}
+exports.bufferToggle = bufferToggle;
+var BufferToggleOperator = (function () {
+    function BufferToggleOperator(openings, closingSelector) {
+        this.openings = openings;
+        this.closingSelector = closingSelector;
+    }
+    BufferToggleOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new BufferToggleSubscriber(subscriber, this.openings, this.closingSelector));
+    };
+    return BufferToggleOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var BufferToggleSubscriber = (function (_super) {
+    __extends(BufferToggleSubscriber, _super);
+    function BufferToggleSubscriber(destination, openings, closingSelector) {
+        _super.call(this, destination);
+        this.openings = openings;
+        this.closingSelector = closingSelector;
+        this.contexts = [];
+        this.add(subscribeToResult_1.subscribeToResult(this, openings));
+    }
+    BufferToggleSubscriber.prototype._next = function (value) {
+        var contexts = this.contexts;
+        var len = contexts.length;
+        for (var i = 0; i < len; i++) {
+            contexts[i].buffer.push(value);
+        }
+    };
+    BufferToggleSubscriber.prototype._error = function (err) {
+        var contexts = this.contexts;
+        while (contexts.length > 0) {
+            var context = contexts.shift();
+            context.subscription.unsubscribe();
+            context.buffer = null;
+            context.subscription = null;
+        }
+        this.contexts = null;
+        _super.prototype._error.call(this, err);
+    };
+    BufferToggleSubscriber.prototype._complete = function () {
+        var contexts = this.contexts;
+        while (contexts.length > 0) {
+            var context = contexts.shift();
+            this.destination.next(context.buffer);
+            context.subscription.unsubscribe();
+            context.buffer = null;
+            context.subscription = null;
+        }
+        this.contexts = null;
+        _super.prototype._complete.call(this);
+    };
+    BufferToggleSubscriber.prototype.notifyNext = function (outerValue, innerValue, outerIndex, innerIndex, innerSub) {
+        outerValue ? this.closeBuffer(outerValue) : this.openBuffer(innerValue);
+    };
+    BufferToggleSubscriber.prototype.notifyComplete = function (innerSub) {
+        this.closeBuffer(innerSub.context);
+    };
+    BufferToggleSubscriber.prototype.openBuffer = function (value) {
+        try {
+            var closingSelector = this.closingSelector;
+            var closingNotifier = closingSelector.call(this, value);
+            if (closingNotifier) {
+                this.trySubscribe(closingNotifier);
+            }
+        }
+        catch (err) {
+            this._error(err);
+        }
+    };
+    BufferToggleSubscriber.prototype.closeBuffer = function (context) {
+        var contexts = this.contexts;
+        if (contexts && context) {
+            var buffer = context.buffer, subscription = context.subscription;
+            this.destination.next(buffer);
+            contexts.splice(contexts.indexOf(context), 1);
+            this.remove(subscription);
+            subscription.unsubscribe();
+        }
+    };
+    BufferToggleSubscriber.prototype.trySubscribe = function (closingNotifier) {
+        var contexts = this.contexts;
+        var buffer = [];
+        var subscription = new Subscription_1.Subscription();
+        var context = { buffer: buffer, subscription: subscription };
+        contexts.push(context);
+        var innerSubscription = subscribeToResult_1.subscribeToResult(this, closingNotifier, context);
+        if (!innerSubscription || innerSubscription.closed) {
+            this.closeBuffer(context);
+        }
+        else {
+            innerSubscription.context = context;
+            this.add(innerSubscription);
+            subscription.add(innerSubscription);
+        }
+    };
+    return BufferToggleSubscriber;
+}(OuterSubscriber_1.OuterSubscriber));
+//# sourceMappingURL=bufferToggle.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/bufferWhen.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subscription_1 = __webpack_require__("../../node_modules/rxjs/Subscription.js");
+var tryCatch_1 = __webpack_require__("../../node_modules/rxjs/util/tryCatch.js");
+var errorObject_1 = __webpack_require__("../../node_modules/rxjs/util/errorObject.js");
+var OuterSubscriber_1 = __webpack_require__("../../node_modules/rxjs/OuterSubscriber.js");
+var subscribeToResult_1 = __webpack_require__("../../node_modules/rxjs/util/subscribeToResult.js");
+/**
+ * Buffers the source Observable values, using a factory function of closing
+ * Observables to determine when to close, emit, and reset the buffer.
+ *
+ * <span class="informal">Collects values from the past as an array. When it
+ * starts collecting values, it calls a function that returns an Observable that
+ * tells when to close the buffer and restart collecting.</span>
+ *
+ * <img src="./img/bufferWhen.png" width="100%">
+ *
+ * Opens a buffer immediately, then closes the buffer when the observable
+ * returned by calling `closingSelector` function emits a value. When it closes
+ * the buffer, it immediately opens a new buffer and repeats the process.
+ *
+ * @example <caption>Emit an array of the last clicks every [1-5] random seconds</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var buffered = clicks.bufferWhen(() =>
+ *   Rx.Observable.interval(1000 + Math.random() * 4000)
+ * );
+ * buffered.subscribe(x => console.log(x));
+ *
+ * @see {@link buffer}
+ * @see {@link bufferCount}
+ * @see {@link bufferTime}
+ * @see {@link bufferToggle}
+ * @see {@link windowWhen}
+ *
+ * @param {function(): Observable} closingSelector A function that takes no
+ * arguments and returns an Observable that signals buffer closure.
+ * @return {Observable<T[]>} An observable of arrays of buffered values.
+ * @method bufferWhen
+ * @owner Observable
+ */
+function bufferWhen(closingSelector) {
+    return this.lift(new BufferWhenOperator(closingSelector));
+}
+exports.bufferWhen = bufferWhen;
+var BufferWhenOperator = (function () {
+    function BufferWhenOperator(closingSelector) {
+        this.closingSelector = closingSelector;
+    }
+    BufferWhenOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new BufferWhenSubscriber(subscriber, this.closingSelector));
+    };
+    return BufferWhenOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var BufferWhenSubscriber = (function (_super) {
+    __extends(BufferWhenSubscriber, _super);
+    function BufferWhenSubscriber(destination, closingSelector) {
+        _super.call(this, destination);
+        this.closingSelector = closingSelector;
+        this.subscribing = false;
+        this.openBuffer();
+    }
+    BufferWhenSubscriber.prototype._next = function (value) {
+        this.buffer.push(value);
+    };
+    BufferWhenSubscriber.prototype._complete = function () {
+        var buffer = this.buffer;
+        if (buffer) {
+            this.destination.next(buffer);
+        }
+        _super.prototype._complete.call(this);
+    };
+    BufferWhenSubscriber.prototype._unsubscribe = function () {
+        this.buffer = null;
+        this.subscribing = false;
+    };
+    BufferWhenSubscriber.prototype.notifyNext = function (outerValue, innerValue, outerIndex, innerIndex, innerSub) {
+        this.openBuffer();
+    };
+    BufferWhenSubscriber.prototype.notifyComplete = function () {
+        if (this.subscribing) {
+            this.complete();
+        }
+        else {
+            this.openBuffer();
+        }
+    };
+    BufferWhenSubscriber.prototype.openBuffer = function () {
+        var closingSubscription = this.closingSubscription;
+        if (closingSubscription) {
+            this.remove(closingSubscription);
+            closingSubscription.unsubscribe();
+        }
+        var buffer = this.buffer;
+        if (this.buffer) {
+            this.destination.next(buffer);
+        }
+        this.buffer = [];
+        var closingNotifier = tryCatch_1.tryCatch(this.closingSelector)();
+        if (closingNotifier === errorObject_1.errorObject) {
+            this.error(errorObject_1.errorObject.e);
+        }
+        else {
+            closingSubscription = new Subscription_1.Subscription();
+            this.closingSubscription = closingSubscription;
+            this.add(closingSubscription);
+            this.subscribing = true;
+            closingSubscription.add(subscribeToResult_1.subscribeToResult(this, closingNotifier));
+            this.subscribing = false;
+        }
+    };
+    return BufferWhenSubscriber;
+}(OuterSubscriber_1.OuterSubscriber));
+//# sourceMappingURL=bufferWhen.js.map
 
 /***/ }),
 
@@ -47314,6 +49073,60 @@ var CatchSubscriber = (function (_super) {
     return CatchSubscriber;
 }(OuterSubscriber_1.OuterSubscriber));
 //# sourceMappingURL=catch.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/combineAll.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var combineLatest_1 = __webpack_require__("../../node_modules/rxjs/operator/combineLatest.js");
+/**
+ * Converts a higher-order Observable into a first-order Observable by waiting
+ * for the outer Observable to complete, then applying {@link combineLatest}.
+ *
+ * <span class="informal">Flattens an Observable-of-Observables by applying
+ * {@link combineLatest} when the Observable-of-Observables completes.</span>
+ *
+ * <img src="./img/combineAll.png" width="100%">
+ *
+ * Takes an Observable of Observables, and collects all Observables from it.
+ * Once the outer Observable completes, it subscribes to all collected
+ * Observables and combines their values using the {@link combineLatest}
+ * strategy, such that:
+ * - Every time an inner Observable emits, the output Observable emits.
+ * - When the returned observable emits, it emits all of the latest values by:
+ *   - If a `project` function is provided, it is called with each recent value
+ *     from each inner Observable in whatever order they arrived, and the result
+ *     of the `project` function is what is emitted by the output Observable.
+ *   - If there is no `project` function, an array of all of the most recent
+ *     values is emitted by the output Observable.
+ *
+ * @example <caption>Map two click events to a finite interval Observable, then apply combineAll</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var higherOrder = clicks.map(ev =>
+ *   Rx.Observable.interval(Math.random()*2000).take(3)
+ * ).take(2);
+ * var result = higherOrder.combineAll();
+ * result.subscribe(x => console.log(x));
+ *
+ * @see {@link combineLatest}
+ * @see {@link mergeAll}
+ *
+ * @param {function} [project] An optional function to map the most recent
+ * values from each inner Observable into a new result. Takes each of the most
+ * recent values from each collected inner Observable as arguments, in order.
+ * @return {Observable} An Observable of projected results or arrays of recent
+ * values.
+ * @method combineAll
+ * @owner Observable
+ */
+function combineAll(project) {
+    return this.lift(new combineLatest_1.CombineLatestOperator(project));
+}
+exports.combineAll = combineAll;
+//# sourceMappingURL=combineAll.js.map
 
 /***/ }),
 
@@ -47476,6 +49289,395 @@ exports.CombineLatestSubscriber = CombineLatestSubscriber;
 
 /***/ }),
 
+/***/ "../../node_modules/rxjs/operator/concat.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var isScheduler_1 = __webpack_require__("../../node_modules/rxjs/util/isScheduler.js");
+var ArrayObservable_1 = __webpack_require__("../../node_modules/rxjs/observable/ArrayObservable.js");
+var mergeAll_1 = __webpack_require__("../../node_modules/rxjs/operator/mergeAll.js");
+/* tslint:enable:max-line-length */
+/**
+ * Creates an output Observable which sequentially emits all values from every
+ * given input Observable after the current Observable.
+ *
+ * <span class="informal">Concatenates multiple Observables together by
+ * sequentially emitting their values, one Observable after the other.</span>
+ *
+ * <img src="./img/concat.png" width="100%">
+ *
+ * Joins this Observable with multiple other Observables by subscribing to them
+ * one at a time, starting with the source, and merging their results into the
+ * output Observable. Will wait for each Observable to complete before moving
+ * on to the next.
+ *
+ * @example <caption>Concatenate a timer counting from 0 to 3 with a synchronous sequence from 1 to 10</caption>
+ * var timer = Rx.Observable.interval(1000).take(4);
+ * var sequence = Rx.Observable.range(1, 10);
+ * var result = timer.concat(sequence);
+ * result.subscribe(x => console.log(x));
+ *
+ * // results in:
+ * // 1000ms-> 0 -1000ms-> 1 -1000ms-> 2 -1000ms-> 3 -immediate-> 1 ... 10
+ *
+ * @example <caption>Concatenate 3 Observables</caption>
+ * var timer1 = Rx.Observable.interval(1000).take(10);
+ * var timer2 = Rx.Observable.interval(2000).take(6);
+ * var timer3 = Rx.Observable.interval(500).take(10);
+ * var result = timer1.concat(timer2, timer3);
+ * result.subscribe(x => console.log(x));
+ *
+ * // results in the following:
+ * // (Prints to console sequentially)
+ * // -1000ms-> 0 -1000ms-> 1 -1000ms-> ... 9
+ * // -2000ms-> 0 -2000ms-> 1 -2000ms-> ... 5
+ * // -500ms-> 0 -500ms-> 1 -500ms-> ... 9
+ *
+ * @see {@link concatAll}
+ * @see {@link concatMap}
+ * @see {@link concatMapTo}
+ *
+ * @param {ObservableInput} other An input Observable to concatenate after the source
+ * Observable. More than one input Observables may be given as argument.
+ * @param {Scheduler} [scheduler=null] An optional IScheduler to schedule each
+ * Observable subscription on.
+ * @return {Observable} All values of each passed Observable merged into a
+ * single Observable, in order, in serial fashion.
+ * @method concat
+ * @owner Observable
+ */
+function concat() {
+    var observables = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        observables[_i - 0] = arguments[_i];
+    }
+    return this.lift.call(concatStatic.apply(void 0, [this].concat(observables)));
+}
+exports.concat = concat;
+/* tslint:enable:max-line-length */
+/**
+ * Creates an output Observable which sequentially emits all values from given
+ * Observable and then moves on to the next.
+ *
+ * <span class="informal">Concatenates multiple Observables together by
+ * sequentially emitting their values, one Observable after the other.</span>
+ *
+ * <img src="./img/concat.png" width="100%">
+ *
+ * `concat` joins multiple Observables together, by subscribing to them one at a time and
+ * merging their results into the output Observable. You can pass either an array of
+ * Observables, or put them directly as arguments. Passing an empty array will result
+ * in Observable that completes immediately.
+ *
+ * `concat` will subscribe to first input Observable and emit all its values, without
+ * changing or affecting them in any way. When that Observable completes, it will
+ * subscribe to then next Observable passed and, again, emit its values. This will be
+ * repeated, until the operator runs out of Observables. When last input Observable completes,
+ * `concat` will complete as well. At any given moment only one Observable passed to operator
+ * emits values. If you would like to emit values from passed Observables concurrently, check out
+ * {@link merge} instead, especially with optional `concurrent` parameter. As a matter of fact,
+ * `concat` is an equivalent of `merge` operator with `concurrent` parameter set to `1`.
+ *
+ * Note that if some input Observable never completes, `concat` will also never complete
+ * and Observables following the one that did not complete will never be subscribed. On the other
+ * hand, if some Observable simply completes immediately after it is subscribed, it will be
+ * invisible for `concat`, which will just move on to the next Observable.
+ *
+ * If any Observable in chain errors, instead of passing control to the next Observable,
+ * `concat` will error immediately as well. Observables that would be subscribed after
+ * the one that emitted error, never will.
+ *
+ * If you pass to `concat` the same Observable many times, its stream of values
+ * will be "replayed" on every subscription, which means you can repeat given Observable
+ * as many times as you like. If passing the same Observable to `concat` 1000 times becomes tedious,
+ * you can always use {@link repeat}.
+ *
+ * @example <caption>Concatenate a timer counting from 0 to 3 with a synchronous sequence from 1 to 10</caption>
+ * var timer = Rx.Observable.interval(1000).take(4);
+ * var sequence = Rx.Observable.range(1, 10);
+ * var result = Rx.Observable.concat(timer, sequence);
+ * result.subscribe(x => console.log(x));
+ *
+ * // results in:
+ * // 0 -1000ms-> 1 -1000ms-> 2 -1000ms-> 3 -immediate-> 1 ... 10
+ *
+ *
+ * @example <caption>Concatenate an array of 3 Observables</caption>
+ * var timer1 = Rx.Observable.interval(1000).take(10);
+ * var timer2 = Rx.Observable.interval(2000).take(6);
+ * var timer3 = Rx.Observable.interval(500).take(10);
+ * var result = Rx.Observable.concat([timer1, timer2, timer3]); // note that array is passed
+ * result.subscribe(x => console.log(x));
+ *
+ * // results in the following:
+ * // (Prints to console sequentially)
+ * // -1000ms-> 0 -1000ms-> 1 -1000ms-> ... 9
+ * // -2000ms-> 0 -2000ms-> 1 -2000ms-> ... 5
+ * // -500ms-> 0 -500ms-> 1 -500ms-> ... 9
+ *
+ *
+ * @example <caption>Concatenate the same Observable to repeat it</caption>
+ * const timer = Rx.Observable.interval(1000).take(2);
+ *
+ * Rx.Observable.concat(timer, timer) // concating the same Observable!
+ * .subscribe(
+ *   value => console.log(value),
+ *   err => {},
+ *   () => console.log('...and it is done!')
+ * );
+ *
+ * // Logs:
+ * // 0 after 1s
+ * // 1 after 2s
+ * // 0 after 3s
+ * // 1 after 4s
+ * // "...and it is done!" also after 4s
+ *
+ * @see {@link concatAll}
+ * @see {@link concatMap}
+ * @see {@link concatMapTo}
+ *
+ * @param {ObservableInput} input1 An input Observable to concatenate with others.
+ * @param {ObservableInput} input2 An input Observable to concatenate with others.
+ * More than one input Observables may be given as argument.
+ * @param {Scheduler} [scheduler=null] An optional IScheduler to schedule each
+ * Observable subscription on.
+ * @return {Observable} All values of each passed Observable merged into a
+ * single Observable, in order, in serial fashion.
+ * @static true
+ * @name concat
+ * @owner Observable
+ */
+function concatStatic() {
+    var observables = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        observables[_i - 0] = arguments[_i];
+    }
+    var scheduler = null;
+    var args = observables;
+    if (isScheduler_1.isScheduler(args[observables.length - 1])) {
+        scheduler = args.pop();
+    }
+    if (scheduler === null && observables.length === 1 && observables[0] instanceof Observable_1.Observable) {
+        return observables[0];
+    }
+    return new ArrayObservable_1.ArrayObservable(observables, scheduler).lift(new mergeAll_1.MergeAllOperator(1));
+}
+exports.concatStatic = concatStatic;
+//# sourceMappingURL=concat.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/concatAll.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var mergeAll_1 = __webpack_require__("../../node_modules/rxjs/operator/mergeAll.js");
+/* tslint:enable:max-line-length */
+/**
+ * Converts a higher-order Observable into a first-order Observable by
+ * concatenating the inner Observables in order.
+ *
+ * <span class="informal">Flattens an Observable-of-Observables by putting one
+ * inner Observable after the other.</span>
+ *
+ * <img src="./img/concatAll.png" width="100%">
+ *
+ * Joins every Observable emitted by the source (a higher-order Observable), in
+ * a serial fashion. It subscribes to each inner Observable only after the
+ * previous inner Observable has completed, and merges all of their values into
+ * the returned observable.
+ *
+ * __Warning:__ If the source Observable emits Observables quickly and
+ * endlessly, and the inner Observables it emits generally complete slower than
+ * the source emits, you can run into memory issues as the incoming Observables
+ * collect in an unbounded buffer.
+ *
+ * Note: `concatAll` is equivalent to `mergeAll` with concurrency parameter set
+ * to `1`.
+ *
+ * @example <caption>For each click event, tick every second from 0 to 3, with no concurrency</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var higherOrder = clicks.map(ev => Rx.Observable.interval(1000).take(4));
+ * var firstOrder = higherOrder.concatAll();
+ * firstOrder.subscribe(x => console.log(x));
+ *
+ * // Results in the following:
+ * // (results are not concurrent)
+ * // For every click on the "document" it will emit values 0 to 3 spaced
+ * // on a 1000ms interval
+ * // one click = 1000ms-> 0 -1000ms-> 1 -1000ms-> 2 -1000ms-> 3
+ *
+ * @see {@link combineAll}
+ * @see {@link concat}
+ * @see {@link concatMap}
+ * @see {@link concatMapTo}
+ * @see {@link exhaust}
+ * @see {@link mergeAll}
+ * @see {@link switch}
+ * @see {@link zipAll}
+ *
+ * @return {Observable} An Observable emitting values from all the inner
+ * Observables concatenated.
+ * @method concatAll
+ * @owner Observable
+ */
+function concatAll() {
+    return this.lift(new mergeAll_1.MergeAllOperator(1));
+}
+exports.concatAll = concatAll;
+//# sourceMappingURL=concatAll.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/concatMap.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var mergeMap_1 = __webpack_require__("../../node_modules/rxjs/operator/mergeMap.js");
+/* tslint:enable:max-line-length */
+/**
+ * Projects each source value to an Observable which is merged in the output
+ * Observable, in a serialized fashion waiting for each one to complete before
+ * merging the next.
+ *
+ * <span class="informal">Maps each value to an Observable, then flattens all of
+ * these inner Observables using {@link concatAll}.</span>
+ *
+ * <img src="./img/concatMap.png" width="100%">
+ *
+ * Returns an Observable that emits items based on applying a function that you
+ * supply to each item emitted by the source Observable, where that function
+ * returns an (so-called "inner") Observable. Each new inner Observable is
+ * concatenated with the previous inner Observable.
+ *
+ * __Warning:__ if source values arrive endlessly and faster than their
+ * corresponding inner Observables can complete, it will result in memory issues
+ * as inner Observables amass in an unbounded buffer waiting for their turn to
+ * be subscribed to.
+ *
+ * Note: `concatMap` is equivalent to `mergeMap` with concurrency parameter set
+ * to `1`.
+ *
+ * @example <caption>For each click event, tick every second from 0 to 3, with no concurrency</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var result = clicks.concatMap(ev => Rx.Observable.interval(1000).take(4));
+ * result.subscribe(x => console.log(x));
+ *
+ * // Results in the following:
+ * // (results are not concurrent)
+ * // For every click on the "document" it will emit values 0 to 3 spaced
+ * // on a 1000ms interval
+ * // one click = 1000ms-> 0 -1000ms-> 1 -1000ms-> 2 -1000ms-> 3
+ *
+ * @see {@link concat}
+ * @see {@link concatAll}
+ * @see {@link concatMapTo}
+ * @see {@link exhaustMap}
+ * @see {@link mergeMap}
+ * @see {@link switchMap}
+ *
+ * @param {function(value: T, ?index: number): ObservableInput} project A function
+ * that, when applied to an item emitted by the source Observable, returns an
+ * Observable.
+ * @param {function(outerValue: T, innerValue: I, outerIndex: number, innerIndex: number): any} [resultSelector]
+ * A function to produce the value on the output Observable based on the values
+ * and the indices of the source (outer) emission and the inner Observable
+ * emission. The arguments passed to this function are:
+ * - `outerValue`: the value that came from the source
+ * - `innerValue`: the value that came from the projected Observable
+ * - `outerIndex`: the "index" of the value that came from the source
+ * - `innerIndex`: the "index" of the value from the projected Observable
+ * @return {Observable} An Observable that emits the result of applying the
+ * projection function (and the optional `resultSelector`) to each item emitted
+ * by the source Observable and taking values from each projected inner
+ * Observable sequentially.
+ * @method concatMap
+ * @owner Observable
+ */
+function concatMap(project, resultSelector) {
+    return this.lift(new mergeMap_1.MergeMapOperator(project, resultSelector, 1));
+}
+exports.concatMap = concatMap;
+//# sourceMappingURL=concatMap.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/concatMapTo.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var mergeMapTo_1 = __webpack_require__("../../node_modules/rxjs/operator/mergeMapTo.js");
+/* tslint:enable:max-line-length */
+/**
+ * Projects each source value to the same Observable which is merged multiple
+ * times in a serialized fashion on the output Observable.
+ *
+ * <span class="informal">It's like {@link concatMap}, but maps each value
+ * always to the same inner Observable.</span>
+ *
+ * <img src="./img/concatMapTo.png" width="100%">
+ *
+ * Maps each source value to the given Observable `innerObservable` regardless
+ * of the source value, and then flattens those resulting Observables into one
+ * single Observable, which is the output Observable. Each new `innerObservable`
+ * instance emitted on the output Observable is concatenated with the previous
+ * `innerObservable` instance.
+ *
+ * __Warning:__ if source values arrive endlessly and faster than their
+ * corresponding inner Observables can complete, it will result in memory issues
+ * as inner Observables amass in an unbounded buffer waiting for their turn to
+ * be subscribed to.
+ *
+ * Note: `concatMapTo` is equivalent to `mergeMapTo` with concurrency parameter
+ * set to `1`.
+ *
+ * @example <caption>For each click event, tick every second from 0 to 3, with no concurrency</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var result = clicks.concatMapTo(Rx.Observable.interval(1000).take(4));
+ * result.subscribe(x => console.log(x));
+ *
+ * // Results in the following:
+ * // (results are not concurrent)
+ * // For every click on the "document" it will emit values 0 to 3 spaced
+ * // on a 1000ms interval
+ * // one click = 1000ms-> 0 -1000ms-> 1 -1000ms-> 2 -1000ms-> 3
+ *
+ * @see {@link concat}
+ * @see {@link concatAll}
+ * @see {@link concatMap}
+ * @see {@link mergeMapTo}
+ * @see {@link switchMapTo}
+ *
+ * @param {ObservableInput} innerObservable An Observable to replace each value from
+ * the source Observable.
+ * @param {function(outerValue: T, innerValue: I, outerIndex: number, innerIndex: number): any} [resultSelector]
+ * A function to produce the value on the output Observable based on the values
+ * and the indices of the source (outer) emission and the inner Observable
+ * emission. The arguments passed to this function are:
+ * - `outerValue`: the value that came from the source
+ * - `innerValue`: the value that came from the projected Observable
+ * - `outerIndex`: the "index" of the value that came from the source
+ * - `innerIndex`: the "index" of the value from the projected Observable
+ * @return {Observable} An observable of values merged together by joining the
+ * passed observable with itself, one after the other, for each value emitted
+ * from the source.
+ * @method concatMapTo
+ * @owner Observable
+ */
+function concatMapTo(innerObservable, resultSelector) {
+    return this.lift(new mergeMapTo_1.MergeMapToOperator(innerObservable, resultSelector, 1));
+}
+exports.concatMapTo = concatMapTo;
+//# sourceMappingURL=concatMapTo.js.map
+
+/***/ }),
+
 /***/ "../../node_modules/rxjs/operator/count.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -47591,6 +49793,347 @@ var CountSubscriber = (function (_super) {
     return CountSubscriber;
 }(Subscriber_1.Subscriber));
 //# sourceMappingURL=count.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/debounce.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var OuterSubscriber_1 = __webpack_require__("../../node_modules/rxjs/OuterSubscriber.js");
+var subscribeToResult_1 = __webpack_require__("../../node_modules/rxjs/util/subscribeToResult.js");
+/**
+ * Emits a value from the source Observable only after a particular time span
+ * determined by another Observable has passed without another source emission.
+ *
+ * <span class="informal">It's like {@link debounceTime}, but the time span of
+ * emission silence is determined by a second Observable.</span>
+ *
+ * <img src="./img/debounce.png" width="100%">
+ *
+ * `debounce` delays values emitted by the source Observable, but drops previous
+ * pending delayed emissions if a new value arrives on the source Observable.
+ * This operator keeps track of the most recent value from the source
+ * Observable, and spawns a duration Observable by calling the
+ * `durationSelector` function. The value is emitted only when the duration
+ * Observable emits a value or completes, and if no other value was emitted on
+ * the source Observable since the duration Observable was spawned. If a new
+ * value appears before the duration Observable emits, the previous value will
+ * be dropped and will not be emitted on the output Observable.
+ *
+ * Like {@link debounceTime}, this is a rate-limiting operator, and also a
+ * delay-like operator since output emissions do not necessarily occur at the
+ * same time as they did on the source Observable.
+ *
+ * @example <caption>Emit the most recent click after a burst of clicks</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var result = clicks.debounce(() => Rx.Observable.interval(1000));
+ * result.subscribe(x => console.log(x));
+ *
+ * @see {@link audit}
+ * @see {@link debounceTime}
+ * @see {@link delayWhen}
+ * @see {@link throttle}
+ *
+ * @param {function(value: T): SubscribableOrPromise} durationSelector A function
+ * that receives a value from the source Observable, for computing the timeout
+ * duration for each source value, returned as an Observable or a Promise.
+ * @return {Observable} An Observable that delays the emissions of the source
+ * Observable by the specified duration Observable returned by
+ * `durationSelector`, and may drop some values if they occur too frequently.
+ * @method debounce
+ * @owner Observable
+ */
+function debounce(durationSelector) {
+    return this.lift(new DebounceOperator(durationSelector));
+}
+exports.debounce = debounce;
+var DebounceOperator = (function () {
+    function DebounceOperator(durationSelector) {
+        this.durationSelector = durationSelector;
+    }
+    DebounceOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new DebounceSubscriber(subscriber, this.durationSelector));
+    };
+    return DebounceOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var DebounceSubscriber = (function (_super) {
+    __extends(DebounceSubscriber, _super);
+    function DebounceSubscriber(destination, durationSelector) {
+        _super.call(this, destination);
+        this.durationSelector = durationSelector;
+        this.hasValue = false;
+        this.durationSubscription = null;
+    }
+    DebounceSubscriber.prototype._next = function (value) {
+        try {
+            var result = this.durationSelector.call(this, value);
+            if (result) {
+                this._tryNext(value, result);
+            }
+        }
+        catch (err) {
+            this.destination.error(err);
+        }
+    };
+    DebounceSubscriber.prototype._complete = function () {
+        this.emitValue();
+        this.destination.complete();
+    };
+    DebounceSubscriber.prototype._tryNext = function (value, duration) {
+        var subscription = this.durationSubscription;
+        this.value = value;
+        this.hasValue = true;
+        if (subscription) {
+            subscription.unsubscribe();
+            this.remove(subscription);
+        }
+        subscription = subscribeToResult_1.subscribeToResult(this, duration);
+        if (!subscription.closed) {
+            this.add(this.durationSubscription = subscription);
+        }
+    };
+    DebounceSubscriber.prototype.notifyNext = function (outerValue, innerValue, outerIndex, innerIndex, innerSub) {
+        this.emitValue();
+    };
+    DebounceSubscriber.prototype.notifyComplete = function () {
+        this.emitValue();
+    };
+    DebounceSubscriber.prototype.emitValue = function () {
+        if (this.hasValue) {
+            var value = this.value;
+            var subscription = this.durationSubscription;
+            if (subscription) {
+                this.durationSubscription = null;
+                subscription.unsubscribe();
+                this.remove(subscription);
+            }
+            this.value = null;
+            this.hasValue = false;
+            _super.prototype._next.call(this, value);
+        }
+    };
+    return DebounceSubscriber;
+}(OuterSubscriber_1.OuterSubscriber));
+//# sourceMappingURL=debounce.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/debounceTime.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subscriber_1 = __webpack_require__("../../node_modules/rxjs/Subscriber.js");
+var async_1 = __webpack_require__("../../node_modules/rxjs/scheduler/async.js");
+/**
+ * Emits a value from the source Observable only after a particular time span
+ * has passed without another source emission.
+ *
+ * <span class="informal">It's like {@link delay}, but passes only the most
+ * recent value from each burst of emissions.</span>
+ *
+ * <img src="./img/debounceTime.png" width="100%">
+ *
+ * `debounceTime` delays values emitted by the source Observable, but drops
+ * previous pending delayed emissions if a new value arrives on the source
+ * Observable. This operator keeps track of the most recent value from the
+ * source Observable, and emits that only when `dueTime` enough time has passed
+ * without any other value appearing on the source Observable. If a new value
+ * appears before `dueTime` silence occurs, the previous value will be dropped
+ * and will not be emitted on the output Observable.
+ *
+ * This is a rate-limiting operator, because it is impossible for more than one
+ * value to be emitted in any time window of duration `dueTime`, but it is also
+ * a delay-like operator since output emissions do not occur at the same time as
+ * they did on the source Observable. Optionally takes a {@link IScheduler} for
+ * managing timers.
+ *
+ * @example <caption>Emit the most recent click after a burst of clicks</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var result = clicks.debounceTime(1000);
+ * result.subscribe(x => console.log(x));
+ *
+ * @see {@link auditTime}
+ * @see {@link debounce}
+ * @see {@link delay}
+ * @see {@link sampleTime}
+ * @see {@link throttleTime}
+ *
+ * @param {number} dueTime The timeout duration in milliseconds (or the time
+ * unit determined internally by the optional `scheduler`) for the window of
+ * time required to wait for emission silence before emitting the most recent
+ * source value.
+ * @param {Scheduler} [scheduler=async] The {@link IScheduler} to use for
+ * managing the timers that handle the timeout for each value.
+ * @return {Observable} An Observable that delays the emissions of the source
+ * Observable by the specified `dueTime`, and may drop some values if they occur
+ * too frequently.
+ * @method debounceTime
+ * @owner Observable
+ */
+function debounceTime(dueTime, scheduler) {
+    if (scheduler === void 0) { scheduler = async_1.async; }
+    return this.lift(new DebounceTimeOperator(dueTime, scheduler));
+}
+exports.debounceTime = debounceTime;
+var DebounceTimeOperator = (function () {
+    function DebounceTimeOperator(dueTime, scheduler) {
+        this.dueTime = dueTime;
+        this.scheduler = scheduler;
+    }
+    DebounceTimeOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new DebounceTimeSubscriber(subscriber, this.dueTime, this.scheduler));
+    };
+    return DebounceTimeOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var DebounceTimeSubscriber = (function (_super) {
+    __extends(DebounceTimeSubscriber, _super);
+    function DebounceTimeSubscriber(destination, dueTime, scheduler) {
+        _super.call(this, destination);
+        this.dueTime = dueTime;
+        this.scheduler = scheduler;
+        this.debouncedSubscription = null;
+        this.lastValue = null;
+        this.hasValue = false;
+    }
+    DebounceTimeSubscriber.prototype._next = function (value) {
+        this.clearDebounce();
+        this.lastValue = value;
+        this.hasValue = true;
+        this.add(this.debouncedSubscription = this.scheduler.schedule(dispatchNext, this.dueTime, this));
+    };
+    DebounceTimeSubscriber.prototype._complete = function () {
+        this.debouncedNext();
+        this.destination.complete();
+    };
+    DebounceTimeSubscriber.prototype.debouncedNext = function () {
+        this.clearDebounce();
+        if (this.hasValue) {
+            this.destination.next(this.lastValue);
+            this.lastValue = null;
+            this.hasValue = false;
+        }
+    };
+    DebounceTimeSubscriber.prototype.clearDebounce = function () {
+        var debouncedSubscription = this.debouncedSubscription;
+        if (debouncedSubscription !== null) {
+            this.remove(debouncedSubscription);
+            debouncedSubscription.unsubscribe();
+            this.debouncedSubscription = null;
+        }
+    };
+    return DebounceTimeSubscriber;
+}(Subscriber_1.Subscriber));
+function dispatchNext(subscriber) {
+    subscriber.debouncedNext();
+}
+//# sourceMappingURL=debounceTime.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/defaultIfEmpty.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subscriber_1 = __webpack_require__("../../node_modules/rxjs/Subscriber.js");
+/* tslint:enable:max-line-length */
+/**
+ * Emits a given value if the source Observable completes without emitting any
+ * `next` value, otherwise mirrors the source Observable.
+ *
+ * <span class="informal">If the source Observable turns out to be empty, then
+ * this operator will emit a default value.</span>
+ *
+ * <img src="./img/defaultIfEmpty.png" width="100%">
+ *
+ * `defaultIfEmpty` emits the values emitted by the source Observable or a
+ * specified default value if the source Observable is empty (completes without
+ * having emitted any `next` value).
+ *
+ * @example <caption>If no clicks happen in 5 seconds, then emit "no clicks"</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var clicksBeforeFive = clicks.takeUntil(Rx.Observable.interval(5000));
+ * var result = clicksBeforeFive.defaultIfEmpty('no clicks');
+ * result.subscribe(x => console.log(x));
+ *
+ * @see {@link empty}
+ * @see {@link last}
+ *
+ * @param {any} [defaultValue=null] The default value used if the source
+ * Observable is empty.
+ * @return {Observable} An Observable that emits either the specified
+ * `defaultValue` if the source Observable emits no items, or the values emitted
+ * by the source Observable.
+ * @method defaultIfEmpty
+ * @owner Observable
+ */
+function defaultIfEmpty(defaultValue) {
+    if (defaultValue === void 0) { defaultValue = null; }
+    return this.lift(new DefaultIfEmptyOperator(defaultValue));
+}
+exports.defaultIfEmpty = defaultIfEmpty;
+var DefaultIfEmptyOperator = (function () {
+    function DefaultIfEmptyOperator(defaultValue) {
+        this.defaultValue = defaultValue;
+    }
+    DefaultIfEmptyOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new DefaultIfEmptySubscriber(subscriber, this.defaultValue));
+    };
+    return DefaultIfEmptyOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var DefaultIfEmptySubscriber = (function (_super) {
+    __extends(DefaultIfEmptySubscriber, _super);
+    function DefaultIfEmptySubscriber(destination, defaultValue) {
+        _super.call(this, destination);
+        this.defaultValue = defaultValue;
+        this.isEmpty = true;
+    }
+    DefaultIfEmptySubscriber.prototype._next = function (value) {
+        this.isEmpty = false;
+        this.destination.next(value);
+    };
+    DefaultIfEmptySubscriber.prototype._complete = function () {
+        if (this.isEmpty) {
+            this.destination.next(this.defaultValue);
+        }
+        this.destination.complete();
+    };
+    return DefaultIfEmptySubscriber;
+}(Subscriber_1.Subscriber));
+//# sourceMappingURL=defaultIfEmpty.js.map
 
 /***/ }),
 
@@ -47736,6 +50279,606 @@ var DelayMessage = (function () {
 
 /***/ }),
 
+/***/ "../../node_modules/rxjs/operator/delayWhen.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subscriber_1 = __webpack_require__("../../node_modules/rxjs/Subscriber.js");
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var OuterSubscriber_1 = __webpack_require__("../../node_modules/rxjs/OuterSubscriber.js");
+var subscribeToResult_1 = __webpack_require__("../../node_modules/rxjs/util/subscribeToResult.js");
+/**
+ * Delays the emission of items from the source Observable by a given time span
+ * determined by the emissions of another Observable.
+ *
+ * <span class="informal">It's like {@link delay}, but the time span of the
+ * delay duration is determined by a second Observable.</span>
+ *
+ * <img src="./img/delayWhen.png" width="100%">
+ *
+ * `delayWhen` time shifts each emitted value from the source Observable by a
+ * time span determined by another Observable. When the source emits a value,
+ * the `delayDurationSelector` function is called with the source value as
+ * argument, and should return an Observable, called the "duration" Observable.
+ * The source value is emitted on the output Observable only when the duration
+ * Observable emits a value or completes.
+ *
+ * Optionally, `delayWhen` takes a second argument, `subscriptionDelay`, which
+ * is an Observable. When `subscriptionDelay` emits its first value or
+ * completes, the source Observable is subscribed to and starts behaving like
+ * described in the previous paragraph. If `subscriptionDelay` is not provided,
+ * `delayWhen` will subscribe to the source Observable as soon as the output
+ * Observable is subscribed.
+ *
+ * @example <caption>Delay each click by a random amount of time, between 0 and 5 seconds</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var delayedClicks = clicks.delayWhen(event =>
+ *   Rx.Observable.interval(Math.random() * 5000)
+ * );
+ * delayedClicks.subscribe(x => console.log(x));
+ *
+ * @see {@link debounce}
+ * @see {@link delay}
+ *
+ * @param {function(value: T): Observable} delayDurationSelector A function that
+ * returns an Observable for each value emitted by the source Observable, which
+ * is then used to delay the emission of that item on the output Observable
+ * until the Observable returned from this function emits a value.
+ * @param {Observable} subscriptionDelay An Observable that triggers the
+ * subscription to the source Observable once it emits any value.
+ * @return {Observable} An Observable that delays the emissions of the source
+ * Observable by an amount of time specified by the Observable returned by
+ * `delayDurationSelector`.
+ * @method delayWhen
+ * @owner Observable
+ */
+function delayWhen(delayDurationSelector, subscriptionDelay) {
+    if (subscriptionDelay) {
+        return new SubscriptionDelayObservable(this, subscriptionDelay)
+            .lift(new DelayWhenOperator(delayDurationSelector));
+    }
+    return this.lift(new DelayWhenOperator(delayDurationSelector));
+}
+exports.delayWhen = delayWhen;
+var DelayWhenOperator = (function () {
+    function DelayWhenOperator(delayDurationSelector) {
+        this.delayDurationSelector = delayDurationSelector;
+    }
+    DelayWhenOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new DelayWhenSubscriber(subscriber, this.delayDurationSelector));
+    };
+    return DelayWhenOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var DelayWhenSubscriber = (function (_super) {
+    __extends(DelayWhenSubscriber, _super);
+    function DelayWhenSubscriber(destination, delayDurationSelector) {
+        _super.call(this, destination);
+        this.delayDurationSelector = delayDurationSelector;
+        this.completed = false;
+        this.delayNotifierSubscriptions = [];
+        this.values = [];
+    }
+    DelayWhenSubscriber.prototype.notifyNext = function (outerValue, innerValue, outerIndex, innerIndex, innerSub) {
+        this.destination.next(outerValue);
+        this.removeSubscription(innerSub);
+        this.tryComplete();
+    };
+    DelayWhenSubscriber.prototype.notifyError = function (error, innerSub) {
+        this._error(error);
+    };
+    DelayWhenSubscriber.prototype.notifyComplete = function (innerSub) {
+        var value = this.removeSubscription(innerSub);
+        if (value) {
+            this.destination.next(value);
+        }
+        this.tryComplete();
+    };
+    DelayWhenSubscriber.prototype._next = function (value) {
+        try {
+            var delayNotifier = this.delayDurationSelector(value);
+            if (delayNotifier) {
+                this.tryDelay(delayNotifier, value);
+            }
+        }
+        catch (err) {
+            this.destination.error(err);
+        }
+    };
+    DelayWhenSubscriber.prototype._complete = function () {
+        this.completed = true;
+        this.tryComplete();
+    };
+    DelayWhenSubscriber.prototype.removeSubscription = function (subscription) {
+        subscription.unsubscribe();
+        var subscriptionIdx = this.delayNotifierSubscriptions.indexOf(subscription);
+        var value = null;
+        if (subscriptionIdx !== -1) {
+            value = this.values[subscriptionIdx];
+            this.delayNotifierSubscriptions.splice(subscriptionIdx, 1);
+            this.values.splice(subscriptionIdx, 1);
+        }
+        return value;
+    };
+    DelayWhenSubscriber.prototype.tryDelay = function (delayNotifier, value) {
+        var notifierSubscription = subscribeToResult_1.subscribeToResult(this, delayNotifier, value);
+        if (notifierSubscription && !notifierSubscription.closed) {
+            this.add(notifierSubscription);
+            this.delayNotifierSubscriptions.push(notifierSubscription);
+        }
+        this.values.push(value);
+    };
+    DelayWhenSubscriber.prototype.tryComplete = function () {
+        if (this.completed && this.delayNotifierSubscriptions.length === 0) {
+            this.destination.complete();
+        }
+    };
+    return DelayWhenSubscriber;
+}(OuterSubscriber_1.OuterSubscriber));
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var SubscriptionDelayObservable = (function (_super) {
+    __extends(SubscriptionDelayObservable, _super);
+    function SubscriptionDelayObservable(source, subscriptionDelay) {
+        _super.call(this);
+        this.source = source;
+        this.subscriptionDelay = subscriptionDelay;
+    }
+    SubscriptionDelayObservable.prototype._subscribe = function (subscriber) {
+        this.subscriptionDelay.subscribe(new SubscriptionDelaySubscriber(subscriber, this.source));
+    };
+    return SubscriptionDelayObservable;
+}(Observable_1.Observable));
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var SubscriptionDelaySubscriber = (function (_super) {
+    __extends(SubscriptionDelaySubscriber, _super);
+    function SubscriptionDelaySubscriber(parent, source) {
+        _super.call(this);
+        this.parent = parent;
+        this.source = source;
+        this.sourceSubscribed = false;
+    }
+    SubscriptionDelaySubscriber.prototype._next = function (unused) {
+        this.subscribeToSource();
+    };
+    SubscriptionDelaySubscriber.prototype._error = function (err) {
+        this.unsubscribe();
+        this.parent.error(err);
+    };
+    SubscriptionDelaySubscriber.prototype._complete = function () {
+        this.subscribeToSource();
+    };
+    SubscriptionDelaySubscriber.prototype.subscribeToSource = function () {
+        if (!this.sourceSubscribed) {
+            this.sourceSubscribed = true;
+            this.unsubscribe();
+            this.source.subscribe(this.parent);
+        }
+    };
+    return SubscriptionDelaySubscriber;
+}(Subscriber_1.Subscriber));
+//# sourceMappingURL=delayWhen.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/dematerialize.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subscriber_1 = __webpack_require__("../../node_modules/rxjs/Subscriber.js");
+/**
+ * Converts an Observable of {@link Notification} objects into the emissions
+ * that they represent.
+ *
+ * <span class="informal">Unwraps {@link Notification} objects as actual `next`,
+ * `error` and `complete` emissions. The opposite of {@link materialize}.</span>
+ *
+ * <img src="./img/dematerialize.png" width="100%">
+ *
+ * `dematerialize` is assumed to operate an Observable that only emits
+ * {@link Notification} objects as `next` emissions, and does not emit any
+ * `error`. Such Observable is the output of a `materialize` operation. Those
+ * notifications are then unwrapped using the metadata they contain, and emitted
+ * as `next`, `error`, and `complete` on the output Observable.
+ *
+ * Use this operator in conjunction with {@link materialize}.
+ *
+ * @example <caption>Convert an Observable of Notifications to an actual Observable</caption>
+ * var notifA = new Rx.Notification('N', 'A');
+ * var notifB = new Rx.Notification('N', 'B');
+ * var notifE = new Rx.Notification('E', void 0,
+ *   new TypeError('x.toUpperCase is not a function')
+ * );
+ * var materialized = Rx.Observable.of(notifA, notifB, notifE);
+ * var upperCase = materialized.dematerialize();
+ * upperCase.subscribe(x => console.log(x), e => console.error(e));
+ *
+ * // Results in:
+ * // A
+ * // B
+ * // TypeError: x.toUpperCase is not a function
+ *
+ * @see {@link Notification}
+ * @see {@link materialize}
+ *
+ * @return {Observable} An Observable that emits items and notifications
+ * embedded in Notification objects emitted by the source Observable.
+ * @method dematerialize
+ * @owner Observable
+ */
+function dematerialize() {
+    return this.lift(new DeMaterializeOperator());
+}
+exports.dematerialize = dematerialize;
+var DeMaterializeOperator = (function () {
+    function DeMaterializeOperator() {
+    }
+    DeMaterializeOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new DeMaterializeSubscriber(subscriber));
+    };
+    return DeMaterializeOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var DeMaterializeSubscriber = (function (_super) {
+    __extends(DeMaterializeSubscriber, _super);
+    function DeMaterializeSubscriber(destination) {
+        _super.call(this, destination);
+    }
+    DeMaterializeSubscriber.prototype._next = function (value) {
+        value.observe(this.destination);
+    };
+    return DeMaterializeSubscriber;
+}(Subscriber_1.Subscriber));
+//# sourceMappingURL=dematerialize.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/distinct.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var OuterSubscriber_1 = __webpack_require__("../../node_modules/rxjs/OuterSubscriber.js");
+var subscribeToResult_1 = __webpack_require__("../../node_modules/rxjs/util/subscribeToResult.js");
+var Set_1 = __webpack_require__("../../node_modules/rxjs/util/Set.js");
+/**
+ * Returns an Observable that emits all items emitted by the source Observable that are distinct by comparison from previous items.
+ *
+ * If a keySelector function is provided, then it will project each value from the source observable into a new value that it will
+ * check for equality with previously projected values. If a keySelector function is not provided, it will use each value from the
+ * source observable directly with an equality check against previous values.
+ *
+ * In JavaScript runtimes that support `Set`, this operator will use a `Set` to improve performance of the distinct value checking.
+ *
+ * In other runtimes, this operator will use a minimal implementation of `Set` that relies on an `Array` and `indexOf` under the
+ * hood, so performance will degrade as more values are checked for distinction. Even in newer browsers, a long-running `distinct`
+ * use might result in memory leaks. To help alleviate this in some scenarios, an optional `flushes` parameter is also provided so
+ * that the internal `Set` can be "flushed", basically clearing it of values.
+ *
+ * @example <caption>A simple example with numbers</caption>
+ * Observable.of(1, 1, 2, 2, 2, 1, 2, 3, 4, 3, 2, 1)
+ *   .distinct()
+ *   .subscribe(x => console.log(x)); // 1, 2, 3, 4
+ *
+ * @example <caption>An example using a keySelector function</caption>
+ * interface Person {
+ *    age: number,
+ *    name: string
+ * }
+ *
+ * Observable.of<Person>(
+ *     { age: 4, name: 'Foo'},
+ *     { age: 7, name: 'Bar'},
+ *     { age: 5, name: 'Foo'})
+ *     .distinct((p: Person) => p.name)
+ *     .subscribe(x => console.log(x));
+ *
+ * // displays:
+ * // { age: 4, name: 'Foo' }
+ * // { age: 7, name: 'Bar' }
+ *
+ * @see {@link distinctUntilChanged}
+ * @see {@link distinctUntilKeyChanged}
+ *
+ * @param {function} [keySelector] Optional function to select which value you want to check as distinct.
+ * @param {Observable} [flushes] Optional Observable for flushing the internal HashSet of the operator.
+ * @return {Observable} An Observable that emits items from the source Observable with distinct values.
+ * @method distinct
+ * @owner Observable
+ */
+function distinct(keySelector, flushes) {
+    return this.lift(new DistinctOperator(keySelector, flushes));
+}
+exports.distinct = distinct;
+var DistinctOperator = (function () {
+    function DistinctOperator(keySelector, flushes) {
+        this.keySelector = keySelector;
+        this.flushes = flushes;
+    }
+    DistinctOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new DistinctSubscriber(subscriber, this.keySelector, this.flushes));
+    };
+    return DistinctOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var DistinctSubscriber = (function (_super) {
+    __extends(DistinctSubscriber, _super);
+    function DistinctSubscriber(destination, keySelector, flushes) {
+        _super.call(this, destination);
+        this.keySelector = keySelector;
+        this.values = new Set_1.Set();
+        if (flushes) {
+            this.add(subscribeToResult_1.subscribeToResult(this, flushes));
+        }
+    }
+    DistinctSubscriber.prototype.notifyNext = function (outerValue, innerValue, outerIndex, innerIndex, innerSub) {
+        this.values.clear();
+    };
+    DistinctSubscriber.prototype.notifyError = function (error, innerSub) {
+        this._error(error);
+    };
+    DistinctSubscriber.prototype._next = function (value) {
+        if (this.keySelector) {
+            this._useKeySelector(value);
+        }
+        else {
+            this._finalizeNext(value, value);
+        }
+    };
+    DistinctSubscriber.prototype._useKeySelector = function (value) {
+        var key;
+        var destination = this.destination;
+        try {
+            key = this.keySelector(value);
+        }
+        catch (err) {
+            destination.error(err);
+            return;
+        }
+        this._finalizeNext(key, value);
+    };
+    DistinctSubscriber.prototype._finalizeNext = function (key, value) {
+        var values = this.values;
+        if (!values.has(key)) {
+            values.add(key);
+            this.destination.next(value);
+        }
+    };
+    return DistinctSubscriber;
+}(OuterSubscriber_1.OuterSubscriber));
+exports.DistinctSubscriber = DistinctSubscriber;
+//# sourceMappingURL=distinct.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/distinctUntilChanged.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subscriber_1 = __webpack_require__("../../node_modules/rxjs/Subscriber.js");
+var tryCatch_1 = __webpack_require__("../../node_modules/rxjs/util/tryCatch.js");
+var errorObject_1 = __webpack_require__("../../node_modules/rxjs/util/errorObject.js");
+/* tslint:enable:max-line-length */
+/**
+ * Returns an Observable that emits all items emitted by the source Observable that are distinct by comparison from the previous item.
+ *
+ * If a comparator function is provided, then it will be called for each item to test for whether or not that value should be emitted.
+ *
+ * If a comparator function is not provided, an equality check is used by default.
+ *
+ * @example <caption>A simple example with numbers</caption>
+ * Observable.of(1, 1, 2, 2, 2, 1, 1, 2, 3, 3, 4)
+ *   .distinctUntilChanged()
+ *   .subscribe(x => console.log(x)); // 1, 2, 1, 2, 3, 4
+ *
+ * @example <caption>An example using a compare function</caption>
+ * interface Person {
+ *    age: number,
+ *    name: string
+ * }
+ *
+ * Observable.of<Person>(
+ *     { age: 4, name: 'Foo'},
+ *     { age: 7, name: 'Bar'},
+ *     { age: 5, name: 'Foo'})
+ *     { age: 6, name: 'Foo'})
+ *     .distinctUntilChanged((p: Person, q: Person) => p.name === q.name)
+ *     .subscribe(x => console.log(x));
+ *
+ * // displays:
+ * // { age: 4, name: 'Foo' }
+ * // { age: 7, name: 'Bar' }
+ * // { age: 5, name: 'Foo' }
+ *
+ * @see {@link distinct}
+ * @see {@link distinctUntilKeyChanged}
+ *
+ * @param {function} [compare] Optional comparison function called to test if an item is distinct from the previous item in the source.
+ * @return {Observable} An Observable that emits items from the source Observable with distinct values.
+ * @method distinctUntilChanged
+ * @owner Observable
+ */
+function distinctUntilChanged(compare, keySelector) {
+    return this.lift(new DistinctUntilChangedOperator(compare, keySelector));
+}
+exports.distinctUntilChanged = distinctUntilChanged;
+var DistinctUntilChangedOperator = (function () {
+    function DistinctUntilChangedOperator(compare, keySelector) {
+        this.compare = compare;
+        this.keySelector = keySelector;
+    }
+    DistinctUntilChangedOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new DistinctUntilChangedSubscriber(subscriber, this.compare, this.keySelector));
+    };
+    return DistinctUntilChangedOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var DistinctUntilChangedSubscriber = (function (_super) {
+    __extends(DistinctUntilChangedSubscriber, _super);
+    function DistinctUntilChangedSubscriber(destination, compare, keySelector) {
+        _super.call(this, destination);
+        this.keySelector = keySelector;
+        this.hasKey = false;
+        if (typeof compare === 'function') {
+            this.compare = compare;
+        }
+    }
+    DistinctUntilChangedSubscriber.prototype.compare = function (x, y) {
+        return x === y;
+    };
+    DistinctUntilChangedSubscriber.prototype._next = function (value) {
+        var keySelector = this.keySelector;
+        var key = value;
+        if (keySelector) {
+            key = tryCatch_1.tryCatch(this.keySelector)(value);
+            if (key === errorObject_1.errorObject) {
+                return this.destination.error(errorObject_1.errorObject.e);
+            }
+        }
+        var result = false;
+        if (this.hasKey) {
+            result = tryCatch_1.tryCatch(this.compare)(this.key, key);
+            if (result === errorObject_1.errorObject) {
+                return this.destination.error(errorObject_1.errorObject.e);
+            }
+        }
+        else {
+            this.hasKey = true;
+        }
+        if (Boolean(result) === false) {
+            this.key = key;
+            this.destination.next(value);
+        }
+    };
+    return DistinctUntilChangedSubscriber;
+}(Subscriber_1.Subscriber));
+//# sourceMappingURL=distinctUntilChanged.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/distinctUntilKeyChanged.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var distinctUntilChanged_1 = __webpack_require__("../../node_modules/rxjs/operator/distinctUntilChanged.js");
+/* tslint:enable:max-line-length */
+/**
+ * Returns an Observable that emits all items emitted by the source Observable that are distinct by comparison from the previous item,
+ * using a property accessed by using the key provided to check if the two items are distinct.
+ *
+ * If a comparator function is provided, then it will be called for each item to test for whether or not that value should be emitted.
+ *
+ * If a comparator function is not provided, an equality check is used by default.
+ *
+ * @example <caption>An example comparing the name of persons</caption>
+ *
+ *  interface Person {
+ *     age: number,
+ *     name: string
+ *  }
+ *
+ * Observable.of<Person>(
+ *     { age: 4, name: 'Foo'},
+ *     { age: 7, name: 'Bar'},
+ *     { age: 5, name: 'Foo'},
+ *     { age: 6, name: 'Foo'})
+ *     .distinctUntilKeyChanged('name')
+ *     .subscribe(x => console.log(x));
+ *
+ * // displays:
+ * // { age: 4, name: 'Foo' }
+ * // { age: 7, name: 'Bar' }
+ * // { age: 5, name: 'Foo' }
+ *
+ * @example <caption>An example comparing the first letters of the name</caption>
+ *
+ * interface Person {
+ *     age: number,
+ *     name: string
+ *  }
+ *
+ * Observable.of<Person>(
+ *     { age: 4, name: 'Foo1'},
+ *     { age: 7, name: 'Bar'},
+ *     { age: 5, name: 'Foo2'},
+ *     { age: 6, name: 'Foo3'})
+ *     .distinctUntilKeyChanged('name', (x: string, y: string) => x.substring(0, 3) === y.substring(0, 3))
+ *     .subscribe(x => console.log(x));
+ *
+ * // displays:
+ * // { age: 4, name: 'Foo1' }
+ * // { age: 7, name: 'Bar' }
+ * // { age: 5, name: 'Foo2' }
+ *
+ * @see {@link distinct}
+ * @see {@link distinctUntilChanged}
+ *
+ * @param {string} key String key for object property lookup on each item.
+ * @param {function} [compare] Optional comparison function called to test if an item is distinct from the previous item in the source.
+ * @return {Observable} An Observable that emits items from the source Observable with distinct values based on the key specified.
+ * @method distinctUntilKeyChanged
+ * @owner Observable
+ */
+function distinctUntilKeyChanged(key, compare) {
+    return distinctUntilChanged_1.distinctUntilChanged.call(this, function (x, y) {
+        if (compare) {
+            return compare(x[key], y[key]);
+        }
+        return x[key] === y[key];
+    });
+}
+exports.distinctUntilKeyChanged = distinctUntilKeyChanged;
+//# sourceMappingURL=distinctUntilKeyChanged.js.map
+
+/***/ }),
+
 /***/ "../../node_modules/rxjs/operator/do.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -47856,6 +50999,593 @@ var DoSubscriber = (function (_super) {
 
 /***/ }),
 
+/***/ "../../node_modules/rxjs/operator/elementAt.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subscriber_1 = __webpack_require__("../../node_modules/rxjs/Subscriber.js");
+var ArgumentOutOfRangeError_1 = __webpack_require__("../../node_modules/rxjs/util/ArgumentOutOfRangeError.js");
+/**
+ * Emits the single value at the specified `index` in a sequence of emissions
+ * from the source Observable.
+ *
+ * <span class="informal">Emits only the i-th value, then completes.</span>
+ *
+ * <img src="./img/elementAt.png" width="100%">
+ *
+ * `elementAt` returns an Observable that emits the item at the specified
+ * `index` in the source Observable, or a default value if that `index` is out
+ * of range and the `default` argument is provided. If the `default` argument is
+ * not given and the `index` is out of range, the output Observable will emit an
+ * `ArgumentOutOfRangeError` error.
+ *
+ * @example <caption>Emit only the third click event</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var result = clicks.elementAt(2);
+ * result.subscribe(x => console.log(x));
+ *
+ * // Results in:
+ * // click 1 = nothing
+ * // click 2 = nothing
+ * // click 3 = MouseEvent object logged to console
+ *
+ * @see {@link first}
+ * @see {@link last}
+ * @see {@link skip}
+ * @see {@link single}
+ * @see {@link take}
+ *
+ * @throws {ArgumentOutOfRangeError} When using `elementAt(i)`, it delivers an
+ * ArgumentOutOrRangeError to the Observer's `error` callback if `i < 0` or the
+ * Observable has completed before emitting the i-th `next` notification.
+ *
+ * @param {number} index Is the number `i` for the i-th source emission that has
+ * happened since the subscription, starting from the number `0`.
+ * @param {T} [defaultValue] The default value returned for missing indices.
+ * @return {Observable} An Observable that emits a single item, if it is found.
+ * Otherwise, will emit the default value if given. If not, then emits an error.
+ * @method elementAt
+ * @owner Observable
+ */
+function elementAt(index, defaultValue) {
+    return this.lift(new ElementAtOperator(index, defaultValue));
+}
+exports.elementAt = elementAt;
+var ElementAtOperator = (function () {
+    function ElementAtOperator(index, defaultValue) {
+        this.index = index;
+        this.defaultValue = defaultValue;
+        if (index < 0) {
+            throw new ArgumentOutOfRangeError_1.ArgumentOutOfRangeError;
+        }
+    }
+    ElementAtOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new ElementAtSubscriber(subscriber, this.index, this.defaultValue));
+    };
+    return ElementAtOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var ElementAtSubscriber = (function (_super) {
+    __extends(ElementAtSubscriber, _super);
+    function ElementAtSubscriber(destination, index, defaultValue) {
+        _super.call(this, destination);
+        this.index = index;
+        this.defaultValue = defaultValue;
+    }
+    ElementAtSubscriber.prototype._next = function (x) {
+        if (this.index-- === 0) {
+            this.destination.next(x);
+            this.destination.complete();
+        }
+    };
+    ElementAtSubscriber.prototype._complete = function () {
+        var destination = this.destination;
+        if (this.index >= 0) {
+            if (typeof this.defaultValue !== 'undefined') {
+                destination.next(this.defaultValue);
+            }
+            else {
+                destination.error(new ArgumentOutOfRangeError_1.ArgumentOutOfRangeError);
+            }
+        }
+        destination.complete();
+    };
+    return ElementAtSubscriber;
+}(Subscriber_1.Subscriber));
+//# sourceMappingURL=elementAt.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/every.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subscriber_1 = __webpack_require__("../../node_modules/rxjs/Subscriber.js");
+/**
+ * Returns an Observable that emits whether or not every item of the source satisfies the condition specified.
+ *
+ * @example <caption>A simple example emitting true if all elements are less than 5, false otherwise</caption>
+ *  Observable.of(1, 2, 3, 4, 5, 6)
+ *     .every(x => x < 5)
+ *     .subscribe(x => console.log(x)); // -> false
+ *
+ * @param {function} predicate A function for determining if an item meets a specified condition.
+ * @param {any} [thisArg] Optional object to use for `this` in the callback.
+ * @return {Observable} An Observable of booleans that determines if all items of the source Observable meet the condition specified.
+ * @method every
+ * @owner Observable
+ */
+function every(predicate, thisArg) {
+    return this.lift(new EveryOperator(predicate, thisArg, this));
+}
+exports.every = every;
+var EveryOperator = (function () {
+    function EveryOperator(predicate, thisArg, source) {
+        this.predicate = predicate;
+        this.thisArg = thisArg;
+        this.source = source;
+    }
+    EveryOperator.prototype.call = function (observer, source) {
+        return source.subscribe(new EverySubscriber(observer, this.predicate, this.thisArg, this.source));
+    };
+    return EveryOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var EverySubscriber = (function (_super) {
+    __extends(EverySubscriber, _super);
+    function EverySubscriber(destination, predicate, thisArg, source) {
+        _super.call(this, destination);
+        this.predicate = predicate;
+        this.thisArg = thisArg;
+        this.source = source;
+        this.index = 0;
+        this.thisArg = thisArg || this;
+    }
+    EverySubscriber.prototype.notifyComplete = function (everyValueMatch) {
+        this.destination.next(everyValueMatch);
+        this.destination.complete();
+    };
+    EverySubscriber.prototype._next = function (value) {
+        var result = false;
+        try {
+            result = this.predicate.call(this.thisArg, value, this.index++, this.source);
+        }
+        catch (err) {
+            this.destination.error(err);
+            return;
+        }
+        if (!result) {
+            this.notifyComplete(false);
+        }
+    };
+    EverySubscriber.prototype._complete = function () {
+        this.notifyComplete(true);
+    };
+    return EverySubscriber;
+}(Subscriber_1.Subscriber));
+//# sourceMappingURL=every.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/exhaust.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var OuterSubscriber_1 = __webpack_require__("../../node_modules/rxjs/OuterSubscriber.js");
+var subscribeToResult_1 = __webpack_require__("../../node_modules/rxjs/util/subscribeToResult.js");
+/**
+ * Converts a higher-order Observable into a first-order Observable by dropping
+ * inner Observables while the previous inner Observable has not yet completed.
+ *
+ * <span class="informal">Flattens an Observable-of-Observables by dropping the
+ * next inner Observables while the current inner is still executing.</span>
+ *
+ * <img src="./img/exhaust.png" width="100%">
+ *
+ * `exhaust` subscribes to an Observable that emits Observables, also known as a
+ * higher-order Observable. Each time it observes one of these emitted inner
+ * Observables, the output Observable begins emitting the items emitted by that
+ * inner Observable. So far, it behaves like {@link mergeAll}. However,
+ * `exhaust` ignores every new inner Observable if the previous Observable has
+ * not yet completed. Once that one completes, it will accept and flatten the
+ * next inner Observable and repeat this process.
+ *
+ * @example <caption>Run a finite timer for each click, only if there is no currently active timer</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var higherOrder = clicks.map((ev) => Rx.Observable.interval(1000).take(5));
+ * var result = higherOrder.exhaust();
+ * result.subscribe(x => console.log(x));
+ *
+ * @see {@link combineAll}
+ * @see {@link concatAll}
+ * @see {@link switch}
+ * @see {@link mergeAll}
+ * @see {@link exhaustMap}
+ * @see {@link zipAll}
+ *
+ * @return {Observable} An Observable that takes a source of Observables and propagates the first observable
+ * exclusively until it completes before subscribing to the next.
+ * @method exhaust
+ * @owner Observable
+ */
+function exhaust() {
+    return this.lift(new SwitchFirstOperator());
+}
+exports.exhaust = exhaust;
+var SwitchFirstOperator = (function () {
+    function SwitchFirstOperator() {
+    }
+    SwitchFirstOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new SwitchFirstSubscriber(subscriber));
+    };
+    return SwitchFirstOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var SwitchFirstSubscriber = (function (_super) {
+    __extends(SwitchFirstSubscriber, _super);
+    function SwitchFirstSubscriber(destination) {
+        _super.call(this, destination);
+        this.hasCompleted = false;
+        this.hasSubscription = false;
+    }
+    SwitchFirstSubscriber.prototype._next = function (value) {
+        if (!this.hasSubscription) {
+            this.hasSubscription = true;
+            this.add(subscribeToResult_1.subscribeToResult(this, value));
+        }
+    };
+    SwitchFirstSubscriber.prototype._complete = function () {
+        this.hasCompleted = true;
+        if (!this.hasSubscription) {
+            this.destination.complete();
+        }
+    };
+    SwitchFirstSubscriber.prototype.notifyComplete = function (innerSub) {
+        this.remove(innerSub);
+        this.hasSubscription = false;
+        if (this.hasCompleted) {
+            this.destination.complete();
+        }
+    };
+    return SwitchFirstSubscriber;
+}(OuterSubscriber_1.OuterSubscriber));
+//# sourceMappingURL=exhaust.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/exhaustMap.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var OuterSubscriber_1 = __webpack_require__("../../node_modules/rxjs/OuterSubscriber.js");
+var subscribeToResult_1 = __webpack_require__("../../node_modules/rxjs/util/subscribeToResult.js");
+/* tslint:enable:max-line-length */
+/**
+ * Projects each source value to an Observable which is merged in the output
+ * Observable only if the previous projected Observable has completed.
+ *
+ * <span class="informal">Maps each value to an Observable, then flattens all of
+ * these inner Observables using {@link exhaust}.</span>
+ *
+ * <img src="./img/exhaustMap.png" width="100%">
+ *
+ * Returns an Observable that emits items based on applying a function that you
+ * supply to each item emitted by the source Observable, where that function
+ * returns an (so-called "inner") Observable. When it projects a source value to
+ * an Observable, the output Observable begins emitting the items emitted by
+ * that projected Observable. However, `exhaustMap` ignores every new projected
+ * Observable if the previous projected Observable has not yet completed. Once
+ * that one completes, it will accept and flatten the next projected Observable
+ * and repeat this process.
+ *
+ * @example <caption>Run a finite timer for each click, only if there is no currently active timer</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var result = clicks.exhaustMap((ev) => Rx.Observable.interval(1000).take(5));
+ * result.subscribe(x => console.log(x));
+ *
+ * @see {@link concatMap}
+ * @see {@link exhaust}
+ * @see {@link mergeMap}
+ * @see {@link switchMap}
+ *
+ * @param {function(value: T, ?index: number): ObservableInput} project A function
+ * that, when applied to an item emitted by the source Observable, returns an
+ * Observable.
+ * @param {function(outerValue: T, innerValue: I, outerIndex: number, innerIndex: number): any} [resultSelector]
+ * A function to produce the value on the output Observable based on the values
+ * and the indices of the source (outer) emission and the inner Observable
+ * emission. The arguments passed to this function are:
+ * - `outerValue`: the value that came from the source
+ * - `innerValue`: the value that came from the projected Observable
+ * - `outerIndex`: the "index" of the value that came from the source
+ * - `innerIndex`: the "index" of the value from the projected Observable
+ * @return {Observable} An Observable containing projected Observables
+ * of each item of the source, ignoring projected Observables that start before
+ * their preceding Observable has completed.
+ * @method exhaustMap
+ * @owner Observable
+ */
+function exhaustMap(project, resultSelector) {
+    return this.lift(new SwitchFirstMapOperator(project, resultSelector));
+}
+exports.exhaustMap = exhaustMap;
+var SwitchFirstMapOperator = (function () {
+    function SwitchFirstMapOperator(project, resultSelector) {
+        this.project = project;
+        this.resultSelector = resultSelector;
+    }
+    SwitchFirstMapOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new SwitchFirstMapSubscriber(subscriber, this.project, this.resultSelector));
+    };
+    return SwitchFirstMapOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var SwitchFirstMapSubscriber = (function (_super) {
+    __extends(SwitchFirstMapSubscriber, _super);
+    function SwitchFirstMapSubscriber(destination, project, resultSelector) {
+        _super.call(this, destination);
+        this.project = project;
+        this.resultSelector = resultSelector;
+        this.hasSubscription = false;
+        this.hasCompleted = false;
+        this.index = 0;
+    }
+    SwitchFirstMapSubscriber.prototype._next = function (value) {
+        if (!this.hasSubscription) {
+            this.tryNext(value);
+        }
+    };
+    SwitchFirstMapSubscriber.prototype.tryNext = function (value) {
+        var index = this.index++;
+        var destination = this.destination;
+        try {
+            var result = this.project(value, index);
+            this.hasSubscription = true;
+            this.add(subscribeToResult_1.subscribeToResult(this, result, value, index));
+        }
+        catch (err) {
+            destination.error(err);
+        }
+    };
+    SwitchFirstMapSubscriber.prototype._complete = function () {
+        this.hasCompleted = true;
+        if (!this.hasSubscription) {
+            this.destination.complete();
+        }
+    };
+    SwitchFirstMapSubscriber.prototype.notifyNext = function (outerValue, innerValue, outerIndex, innerIndex, innerSub) {
+        var _a = this, resultSelector = _a.resultSelector, destination = _a.destination;
+        if (resultSelector) {
+            this.trySelectResult(outerValue, innerValue, outerIndex, innerIndex);
+        }
+        else {
+            destination.next(innerValue);
+        }
+    };
+    SwitchFirstMapSubscriber.prototype.trySelectResult = function (outerValue, innerValue, outerIndex, innerIndex) {
+        var _a = this, resultSelector = _a.resultSelector, destination = _a.destination;
+        try {
+            var result = resultSelector(outerValue, innerValue, outerIndex, innerIndex);
+            destination.next(result);
+        }
+        catch (err) {
+            destination.error(err);
+        }
+    };
+    SwitchFirstMapSubscriber.prototype.notifyError = function (err) {
+        this.destination.error(err);
+    };
+    SwitchFirstMapSubscriber.prototype.notifyComplete = function (innerSub) {
+        this.remove(innerSub);
+        this.hasSubscription = false;
+        if (this.hasCompleted) {
+            this.destination.complete();
+        }
+    };
+    return SwitchFirstMapSubscriber;
+}(OuterSubscriber_1.OuterSubscriber));
+//# sourceMappingURL=exhaustMap.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/expand.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var tryCatch_1 = __webpack_require__("../../node_modules/rxjs/util/tryCatch.js");
+var errorObject_1 = __webpack_require__("../../node_modules/rxjs/util/errorObject.js");
+var OuterSubscriber_1 = __webpack_require__("../../node_modules/rxjs/OuterSubscriber.js");
+var subscribeToResult_1 = __webpack_require__("../../node_modules/rxjs/util/subscribeToResult.js");
+/* tslint:enable:max-line-length */
+/**
+ * Recursively projects each source value to an Observable which is merged in
+ * the output Observable.
+ *
+ * <span class="informal">It's similar to {@link mergeMap}, but applies the
+ * projection function to every source value as well as every output value.
+ * It's recursive.</span>
+ *
+ * <img src="./img/expand.png" width="100%">
+ *
+ * Returns an Observable that emits items based on applying a function that you
+ * supply to each item emitted by the source Observable, where that function
+ * returns an Observable, and then merging those resulting Observables and
+ * emitting the results of this merger. *Expand* will re-emit on the output
+ * Observable every source value. Then, each output value is given to the
+ * `project` function which returns an inner Observable to be merged on the
+ * output Observable. Those output values resulting from the projection are also
+ * given to the `project` function to produce new output values. This is how
+ * *expand* behaves recursively.
+ *
+ * @example <caption>Start emitting the powers of two on every click, at most 10 of them</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var powersOfTwo = clicks
+ *   .mapTo(1)
+ *   .expand(x => Rx.Observable.of(2 * x).delay(1000))
+ *   .take(10);
+ * powersOfTwo.subscribe(x => console.log(x));
+ *
+ * @see {@link mergeMap}
+ * @see {@link mergeScan}
+ *
+ * @param {function(value: T, index: number) => Observable} project A function
+ * that, when applied to an item emitted by the source or the output Observable,
+ * returns an Observable.
+ * @param {number} [concurrent=Number.POSITIVE_INFINITY] Maximum number of input
+ * Observables being subscribed to concurrently.
+ * @param {Scheduler} [scheduler=null] The IScheduler to use for subscribing to
+ * each projected inner Observable.
+ * @return {Observable} An Observable that emits the source values and also
+ * result of applying the projection function to each value emitted on the
+ * output Observable and and merging the results of the Observables obtained
+ * from this transformation.
+ * @method expand
+ * @owner Observable
+ */
+function expand(project, concurrent, scheduler) {
+    if (concurrent === void 0) { concurrent = Number.POSITIVE_INFINITY; }
+    if (scheduler === void 0) { scheduler = undefined; }
+    concurrent = (concurrent || 0) < 1 ? Number.POSITIVE_INFINITY : concurrent;
+    return this.lift(new ExpandOperator(project, concurrent, scheduler));
+}
+exports.expand = expand;
+var ExpandOperator = (function () {
+    function ExpandOperator(project, concurrent, scheduler) {
+        this.project = project;
+        this.concurrent = concurrent;
+        this.scheduler = scheduler;
+    }
+    ExpandOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new ExpandSubscriber(subscriber, this.project, this.concurrent, this.scheduler));
+    };
+    return ExpandOperator;
+}());
+exports.ExpandOperator = ExpandOperator;
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var ExpandSubscriber = (function (_super) {
+    __extends(ExpandSubscriber, _super);
+    function ExpandSubscriber(destination, project, concurrent, scheduler) {
+        _super.call(this, destination);
+        this.project = project;
+        this.concurrent = concurrent;
+        this.scheduler = scheduler;
+        this.index = 0;
+        this.active = 0;
+        this.hasCompleted = false;
+        if (concurrent < Number.POSITIVE_INFINITY) {
+            this.buffer = [];
+        }
+    }
+    ExpandSubscriber.dispatch = function (arg) {
+        var subscriber = arg.subscriber, result = arg.result, value = arg.value, index = arg.index;
+        subscriber.subscribeToProjection(result, value, index);
+    };
+    ExpandSubscriber.prototype._next = function (value) {
+        var destination = this.destination;
+        if (destination.closed) {
+            this._complete();
+            return;
+        }
+        var index = this.index++;
+        if (this.active < this.concurrent) {
+            destination.next(value);
+            var result = tryCatch_1.tryCatch(this.project)(value, index);
+            if (result === errorObject_1.errorObject) {
+                destination.error(errorObject_1.errorObject.e);
+            }
+            else if (!this.scheduler) {
+                this.subscribeToProjection(result, value, index);
+            }
+            else {
+                var state = { subscriber: this, result: result, value: value, index: index };
+                this.add(this.scheduler.schedule(ExpandSubscriber.dispatch, 0, state));
+            }
+        }
+        else {
+            this.buffer.push(value);
+        }
+    };
+    ExpandSubscriber.prototype.subscribeToProjection = function (result, value, index) {
+        this.active++;
+        this.add(subscribeToResult_1.subscribeToResult(this, result, value, index));
+    };
+    ExpandSubscriber.prototype._complete = function () {
+        this.hasCompleted = true;
+        if (this.hasCompleted && this.active === 0) {
+            this.destination.complete();
+        }
+    };
+    ExpandSubscriber.prototype.notifyNext = function (outerValue, innerValue, outerIndex, innerIndex, innerSub) {
+        this._next(innerValue);
+    };
+    ExpandSubscriber.prototype.notifyComplete = function (innerSub) {
+        var buffer = this.buffer;
+        this.remove(innerSub);
+        this.active--;
+        if (buffer && buffer.length > 0) {
+            this._next(buffer.shift());
+        }
+        if (this.hasCompleted && this.active === 0) {
+            this.destination.complete();
+        }
+    };
+    return ExpandSubscriber;
+}(OuterSubscriber_1.OuterSubscriber));
+exports.ExpandSubscriber = ExpandSubscriber;
+//# sourceMappingURL=expand.js.map
+
+/***/ }),
+
 /***/ "../../node_modules/rxjs/operator/filter.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -47955,6 +51685,910 @@ var FilterSubscriber = (function (_super) {
 
 /***/ }),
 
+/***/ "../../node_modules/rxjs/operator/finally.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subscriber_1 = __webpack_require__("../../node_modules/rxjs/Subscriber.js");
+var Subscription_1 = __webpack_require__("../../node_modules/rxjs/Subscription.js");
+/**
+ * Returns an Observable that mirrors the source Observable, but will call a specified function when
+ * the source terminates on complete or error.
+ * @param {function} callback Function to be called when source terminates.
+ * @return {Observable} An Observable that mirrors the source, but will call the specified function on termination.
+ * @method finally
+ * @owner Observable
+ */
+function _finally(callback) {
+    return this.lift(new FinallyOperator(callback));
+}
+exports._finally = _finally;
+var FinallyOperator = (function () {
+    function FinallyOperator(callback) {
+        this.callback = callback;
+    }
+    FinallyOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new FinallySubscriber(subscriber, this.callback));
+    };
+    return FinallyOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var FinallySubscriber = (function (_super) {
+    __extends(FinallySubscriber, _super);
+    function FinallySubscriber(destination, callback) {
+        _super.call(this, destination);
+        this.add(new Subscription_1.Subscription(callback));
+    }
+    return FinallySubscriber;
+}(Subscriber_1.Subscriber));
+//# sourceMappingURL=finally.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/find.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subscriber_1 = __webpack_require__("../../node_modules/rxjs/Subscriber.js");
+/* tslint:enable:max-line-length */
+/**
+ * Emits only the first value emitted by the source Observable that meets some
+ * condition.
+ *
+ * <span class="informal">Finds the first value that passes some test and emits
+ * that.</span>
+ *
+ * <img src="./img/find.png" width="100%">
+ *
+ * `find` searches for the first item in the source Observable that matches the
+ * specified condition embodied by the `predicate`, and returns the first
+ * occurrence in the source. Unlike {@link first}, the `predicate` is required
+ * in `find`, and does not emit an error if a valid value is not found.
+ *
+ * @example <caption>Find and emit the first click that happens on a DIV element</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var result = clicks.find(ev => ev.target.tagName === 'DIV');
+ * result.subscribe(x => console.log(x));
+ *
+ * @see {@link filter}
+ * @see {@link first}
+ * @see {@link findIndex}
+ * @see {@link take}
+ *
+ * @param {function(value: T, index: number, source: Observable<T>): boolean} predicate
+ * A function called with each item to test for condition matching.
+ * @param {any} [thisArg] An optional argument to determine the value of `this`
+ * in the `predicate` function.
+ * @return {Observable<T>} An Observable of the first item that matches the
+ * condition.
+ * @method find
+ * @owner Observable
+ */
+function find(predicate, thisArg) {
+    if (typeof predicate !== 'function') {
+        throw new TypeError('predicate is not a function');
+    }
+    return this.lift(new FindValueOperator(predicate, this, false, thisArg));
+}
+exports.find = find;
+var FindValueOperator = (function () {
+    function FindValueOperator(predicate, source, yieldIndex, thisArg) {
+        this.predicate = predicate;
+        this.source = source;
+        this.yieldIndex = yieldIndex;
+        this.thisArg = thisArg;
+    }
+    FindValueOperator.prototype.call = function (observer, source) {
+        return source.subscribe(new FindValueSubscriber(observer, this.predicate, this.source, this.yieldIndex, this.thisArg));
+    };
+    return FindValueOperator;
+}());
+exports.FindValueOperator = FindValueOperator;
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var FindValueSubscriber = (function (_super) {
+    __extends(FindValueSubscriber, _super);
+    function FindValueSubscriber(destination, predicate, source, yieldIndex, thisArg) {
+        _super.call(this, destination);
+        this.predicate = predicate;
+        this.source = source;
+        this.yieldIndex = yieldIndex;
+        this.thisArg = thisArg;
+        this.index = 0;
+    }
+    FindValueSubscriber.prototype.notifyComplete = function (value) {
+        var destination = this.destination;
+        destination.next(value);
+        destination.complete();
+    };
+    FindValueSubscriber.prototype._next = function (value) {
+        var _a = this, predicate = _a.predicate, thisArg = _a.thisArg;
+        var index = this.index++;
+        try {
+            var result = predicate.call(thisArg || this, value, index, this.source);
+            if (result) {
+                this.notifyComplete(this.yieldIndex ? index : value);
+            }
+        }
+        catch (err) {
+            this.destination.error(err);
+        }
+    };
+    FindValueSubscriber.prototype._complete = function () {
+        this.notifyComplete(this.yieldIndex ? -1 : undefined);
+    };
+    return FindValueSubscriber;
+}(Subscriber_1.Subscriber));
+exports.FindValueSubscriber = FindValueSubscriber;
+//# sourceMappingURL=find.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/findIndex.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var find_1 = __webpack_require__("../../node_modules/rxjs/operator/find.js");
+/**
+ * Emits only the index of the first value emitted by the source Observable that
+ * meets some condition.
+ *
+ * <span class="informal">It's like {@link find}, but emits the index of the
+ * found value, not the value itself.</span>
+ *
+ * <img src="./img/findIndex.png" width="100%">
+ *
+ * `findIndex` searches for the first item in the source Observable that matches
+ * the specified condition embodied by the `predicate`, and returns the
+ * (zero-based) index of the first occurrence in the source. Unlike
+ * {@link first}, the `predicate` is required in `findIndex`, and does not emit
+ * an error if a valid value is not found.
+ *
+ * @example <caption>Emit the index of first click that happens on a DIV element</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var result = clicks.findIndex(ev => ev.target.tagName === 'DIV');
+ * result.subscribe(x => console.log(x));
+ *
+ * @see {@link filter}
+ * @see {@link find}
+ * @see {@link first}
+ * @see {@link take}
+ *
+ * @param {function(value: T, index: number, source: Observable<T>): boolean} predicate
+ * A function called with each item to test for condition matching.
+ * @param {any} [thisArg] An optional argument to determine the value of `this`
+ * in the `predicate` function.
+ * @return {Observable} An Observable of the index of the first item that
+ * matches the condition.
+ * @method find
+ * @owner Observable
+ */
+function findIndex(predicate, thisArg) {
+    return this.lift(new find_1.FindValueOperator(predicate, this, true, thisArg));
+}
+exports.findIndex = findIndex;
+//# sourceMappingURL=findIndex.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/first.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subscriber_1 = __webpack_require__("../../node_modules/rxjs/Subscriber.js");
+var EmptyError_1 = __webpack_require__("../../node_modules/rxjs/util/EmptyError.js");
+/**
+ * Emits only the first value (or the first value that meets some condition)
+ * emitted by the source Observable.
+ *
+ * <span class="informal">Emits only the first value. Or emits only the first
+ * value that passes some test.</span>
+ *
+ * <img src="./img/first.png" width="100%">
+ *
+ * If called with no arguments, `first` emits the first value of the source
+ * Observable, then completes. If called with a `predicate` function, `first`
+ * emits the first value of the source that matches the specified condition. It
+ * may also take a `resultSelector` function to produce the output value from
+ * the input value, and a `defaultValue` to emit in case the source completes
+ * before it is able to emit a valid value. Throws an error if `defaultValue`
+ * was not provided and a matching element is not found.
+ *
+ * @example <caption>Emit only the first click that happens on the DOM</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var result = clicks.first();
+ * result.subscribe(x => console.log(x));
+ *
+ * @example <caption>Emits the first click that happens on a DIV</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var result = clicks.first(ev => ev.target.tagName === 'DIV');
+ * result.subscribe(x => console.log(x));
+ *
+ * @see {@link filter}
+ * @see {@link find}
+ * @see {@link take}
+ *
+ * @throws {EmptyError} Delivers an EmptyError to the Observer's `error`
+ * callback if the Observable completes before any `next` notification was sent.
+ *
+ * @param {function(value: T, index: number, source: Observable<T>): boolean} [predicate]
+ * An optional function called with each item to test for condition matching.
+ * @param {function(value: T, index: number): R} [resultSelector] A function to
+ * produce the value on the output Observable based on the values
+ * and the indices of the source Observable. The arguments passed to this
+ * function are:
+ * - `value`: the value that was emitted on the source.
+ * - `index`: the "index" of the value from the source.
+ * @param {R} [defaultValue] The default value emitted in case no valid value
+ * was found on the source.
+ * @return {Observable<T|R>} An Observable of the first item that matches the
+ * condition.
+ * @method first
+ * @owner Observable
+ */
+function first(predicate, resultSelector, defaultValue) {
+    return this.lift(new FirstOperator(predicate, resultSelector, defaultValue, this));
+}
+exports.first = first;
+var FirstOperator = (function () {
+    function FirstOperator(predicate, resultSelector, defaultValue, source) {
+        this.predicate = predicate;
+        this.resultSelector = resultSelector;
+        this.defaultValue = defaultValue;
+        this.source = source;
+    }
+    FirstOperator.prototype.call = function (observer, source) {
+        return source.subscribe(new FirstSubscriber(observer, this.predicate, this.resultSelector, this.defaultValue, this.source));
+    };
+    return FirstOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var FirstSubscriber = (function (_super) {
+    __extends(FirstSubscriber, _super);
+    function FirstSubscriber(destination, predicate, resultSelector, defaultValue, source) {
+        _super.call(this, destination);
+        this.predicate = predicate;
+        this.resultSelector = resultSelector;
+        this.defaultValue = defaultValue;
+        this.source = source;
+        this.index = 0;
+        this.hasCompleted = false;
+        this._emitted = false;
+    }
+    FirstSubscriber.prototype._next = function (value) {
+        var index = this.index++;
+        if (this.predicate) {
+            this._tryPredicate(value, index);
+        }
+        else {
+            this._emit(value, index);
+        }
+    };
+    FirstSubscriber.prototype._tryPredicate = function (value, index) {
+        var result;
+        try {
+            result = this.predicate(value, index, this.source);
+        }
+        catch (err) {
+            this.destination.error(err);
+            return;
+        }
+        if (result) {
+            this._emit(value, index);
+        }
+    };
+    FirstSubscriber.prototype._emit = function (value, index) {
+        if (this.resultSelector) {
+            this._tryResultSelector(value, index);
+            return;
+        }
+        this._emitFinal(value);
+    };
+    FirstSubscriber.prototype._tryResultSelector = function (value, index) {
+        var result;
+        try {
+            result = this.resultSelector(value, index);
+        }
+        catch (err) {
+            this.destination.error(err);
+            return;
+        }
+        this._emitFinal(result);
+    };
+    FirstSubscriber.prototype._emitFinal = function (value) {
+        var destination = this.destination;
+        if (!this._emitted) {
+            this._emitted = true;
+            destination.next(value);
+            destination.complete();
+            this.hasCompleted = true;
+        }
+    };
+    FirstSubscriber.prototype._complete = function () {
+        var destination = this.destination;
+        if (!this.hasCompleted && typeof this.defaultValue !== 'undefined') {
+            destination.next(this.defaultValue);
+            destination.complete();
+        }
+        else if (!this.hasCompleted) {
+            destination.error(new EmptyError_1.EmptyError);
+        }
+    };
+    return FirstSubscriber;
+}(Subscriber_1.Subscriber));
+//# sourceMappingURL=first.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/groupBy.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subscriber_1 = __webpack_require__("../../node_modules/rxjs/Subscriber.js");
+var Subscription_1 = __webpack_require__("../../node_modules/rxjs/Subscription.js");
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var Subject_1 = __webpack_require__("../../node_modules/rxjs/Subject.js");
+var Map_1 = __webpack_require__("../../node_modules/rxjs/util/Map.js");
+var FastMap_1 = __webpack_require__("../../node_modules/rxjs/util/FastMap.js");
+/* tslint:enable:max-line-length */
+/**
+ * Groups the items emitted by an Observable according to a specified criterion,
+ * and emits these grouped items as `GroupedObservables`, one
+ * {@link GroupedObservable} per group.
+ *
+ * <img src="./img/groupBy.png" width="100%">
+ *
+ * @example <caption>Group objects by id and return as array</caption>
+ * Observable.of<Obj>({id: 1, name: 'aze1'},
+ *                    {id: 2, name: 'sf2'},
+ *                    {id: 2, name: 'dg2'},
+ *                    {id: 1, name: 'erg1'},
+ *                    {id: 1, name: 'df1'},
+ *                    {id: 2, name: 'sfqfb2'},
+ *                    {id: 3, name: 'qfs3'},
+ *                    {id: 2, name: 'qsgqsfg2'}
+ *     )
+ *     .groupBy(p => p.id)
+ *     .flatMap( (group$) => group$.reduce((acc, cur) => [...acc, cur], []))
+ *     .subscribe(p => console.log(p));
+ *
+ * // displays:
+ * // [ { id: 1, name: 'aze1' },
+ * //   { id: 1, name: 'erg1' },
+ * //   { id: 1, name: 'df1' } ]
+ * //
+ * // [ { id: 2, name: 'sf2' },
+ * //   { id: 2, name: 'dg2' },
+ * //   { id: 2, name: 'sfqfb2' },
+ * //   { id: 2, name: 'qsgqsfg2' } ]
+ * //
+ * // [ { id: 3, name: 'qfs3' } ]
+ *
+ * @example <caption>Pivot data on the id field</caption>
+ * Observable.of<Obj>({id: 1, name: 'aze1'},
+ *                    {id: 2, name: 'sf2'},
+ *                    {id: 2, name: 'dg2'},
+ *                    {id: 1, name: 'erg1'},
+ *                    {id: 1, name: 'df1'},
+ *                    {id: 2, name: 'sfqfb2'},
+ *                    {id: 3, name: 'qfs1'},
+ *                    {id: 2, name: 'qsgqsfg2'}
+ *                   )
+ *     .groupBy(p => p.id, p => p.name)
+ *     .flatMap( (group$) => group$.reduce((acc, cur) => [...acc, cur], ["" + group$.key]))
+ *     .map(arr => ({'id': parseInt(arr[0]), 'values': arr.slice(1)}))
+ *     .subscribe(p => console.log(p));
+ *
+ * // displays:
+ * // { id: 1, values: [ 'aze1', 'erg1', 'df1' ] }
+ * // { id: 2, values: [ 'sf2', 'dg2', 'sfqfb2', 'qsgqsfg2' ] }
+ * // { id: 3, values: [ 'qfs1' ] }
+ *
+ * @param {function(value: T): K} keySelector A function that extracts the key
+ * for each item.
+ * @param {function(value: T): R} [elementSelector] A function that extracts the
+ * return element for each item.
+ * @param {function(grouped: GroupedObservable<K,R>): Observable<any>} [durationSelector]
+ * A function that returns an Observable to determine how long each group should
+ * exist.
+ * @return {Observable<GroupedObservable<K,R>>} An Observable that emits
+ * GroupedObservables, each of which corresponds to a unique key value and each
+ * of which emits those items from the source Observable that share that key
+ * value.
+ * @method groupBy
+ * @owner Observable
+ */
+function groupBy(keySelector, elementSelector, durationSelector, subjectSelector) {
+    return this.lift(new GroupByOperator(keySelector, elementSelector, durationSelector, subjectSelector));
+}
+exports.groupBy = groupBy;
+var GroupByOperator = (function () {
+    function GroupByOperator(keySelector, elementSelector, durationSelector, subjectSelector) {
+        this.keySelector = keySelector;
+        this.elementSelector = elementSelector;
+        this.durationSelector = durationSelector;
+        this.subjectSelector = subjectSelector;
+    }
+    GroupByOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new GroupBySubscriber(subscriber, this.keySelector, this.elementSelector, this.durationSelector, this.subjectSelector));
+    };
+    return GroupByOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var GroupBySubscriber = (function (_super) {
+    __extends(GroupBySubscriber, _super);
+    function GroupBySubscriber(destination, keySelector, elementSelector, durationSelector, subjectSelector) {
+        _super.call(this, destination);
+        this.keySelector = keySelector;
+        this.elementSelector = elementSelector;
+        this.durationSelector = durationSelector;
+        this.subjectSelector = subjectSelector;
+        this.groups = null;
+        this.attemptedToUnsubscribe = false;
+        this.count = 0;
+    }
+    GroupBySubscriber.prototype._next = function (value) {
+        var key;
+        try {
+            key = this.keySelector(value);
+        }
+        catch (err) {
+            this.error(err);
+            return;
+        }
+        this._group(value, key);
+    };
+    GroupBySubscriber.prototype._group = function (value, key) {
+        var groups = this.groups;
+        if (!groups) {
+            groups = this.groups = typeof key === 'string' ? new FastMap_1.FastMap() : new Map_1.Map();
+        }
+        var group = groups.get(key);
+        var element;
+        if (this.elementSelector) {
+            try {
+                element = this.elementSelector(value);
+            }
+            catch (err) {
+                this.error(err);
+            }
+        }
+        else {
+            element = value;
+        }
+        if (!group) {
+            group = this.subjectSelector ? this.subjectSelector() : new Subject_1.Subject();
+            groups.set(key, group);
+            var groupedObservable = new GroupedObservable(key, group, this);
+            this.destination.next(groupedObservable);
+            if (this.durationSelector) {
+                var duration = void 0;
+                try {
+                    duration = this.durationSelector(new GroupedObservable(key, group));
+                }
+                catch (err) {
+                    this.error(err);
+                    return;
+                }
+                this.add(duration.subscribe(new GroupDurationSubscriber(key, group, this)));
+            }
+        }
+        if (!group.closed) {
+            group.next(element);
+        }
+    };
+    GroupBySubscriber.prototype._error = function (err) {
+        var groups = this.groups;
+        if (groups) {
+            groups.forEach(function (group, key) {
+                group.error(err);
+            });
+            groups.clear();
+        }
+        this.destination.error(err);
+    };
+    GroupBySubscriber.prototype._complete = function () {
+        var groups = this.groups;
+        if (groups) {
+            groups.forEach(function (group, key) {
+                group.complete();
+            });
+            groups.clear();
+        }
+        this.destination.complete();
+    };
+    GroupBySubscriber.prototype.removeGroup = function (key) {
+        this.groups.delete(key);
+    };
+    GroupBySubscriber.prototype.unsubscribe = function () {
+        if (!this.closed) {
+            this.attemptedToUnsubscribe = true;
+            if (this.count === 0) {
+                _super.prototype.unsubscribe.call(this);
+            }
+        }
+    };
+    return GroupBySubscriber;
+}(Subscriber_1.Subscriber));
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var GroupDurationSubscriber = (function (_super) {
+    __extends(GroupDurationSubscriber, _super);
+    function GroupDurationSubscriber(key, group, parent) {
+        _super.call(this, group);
+        this.key = key;
+        this.group = group;
+        this.parent = parent;
+    }
+    GroupDurationSubscriber.prototype._next = function (value) {
+        this.complete();
+    };
+    GroupDurationSubscriber.prototype._unsubscribe = function () {
+        var _a = this, parent = _a.parent, key = _a.key;
+        this.key = this.parent = null;
+        if (parent) {
+            parent.removeGroup(key);
+        }
+    };
+    return GroupDurationSubscriber;
+}(Subscriber_1.Subscriber));
+/**
+ * An Observable representing values belonging to the same group represented by
+ * a common key. The values emitted by a GroupedObservable come from the source
+ * Observable. The common key is available as the field `key` on a
+ * GroupedObservable instance.
+ *
+ * @class GroupedObservable<K, T>
+ */
+var GroupedObservable = (function (_super) {
+    __extends(GroupedObservable, _super);
+    function GroupedObservable(key, groupSubject, refCountSubscription) {
+        _super.call(this);
+        this.key = key;
+        this.groupSubject = groupSubject;
+        this.refCountSubscription = refCountSubscription;
+    }
+    GroupedObservable.prototype._subscribe = function (subscriber) {
+        var subscription = new Subscription_1.Subscription();
+        var _a = this, refCountSubscription = _a.refCountSubscription, groupSubject = _a.groupSubject;
+        if (refCountSubscription && !refCountSubscription.closed) {
+            subscription.add(new InnerRefCountSubscription(refCountSubscription));
+        }
+        subscription.add(groupSubject.subscribe(subscriber));
+        return subscription;
+    };
+    return GroupedObservable;
+}(Observable_1.Observable));
+exports.GroupedObservable = GroupedObservable;
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var InnerRefCountSubscription = (function (_super) {
+    __extends(InnerRefCountSubscription, _super);
+    function InnerRefCountSubscription(parent) {
+        _super.call(this);
+        this.parent = parent;
+        parent.count++;
+    }
+    InnerRefCountSubscription.prototype.unsubscribe = function () {
+        var parent = this.parent;
+        if (!parent.closed && !this.closed) {
+            _super.prototype.unsubscribe.call(this);
+            parent.count -= 1;
+            if (parent.count === 0 && parent.attemptedToUnsubscribe) {
+                parent.unsubscribe();
+            }
+        }
+    };
+    return InnerRefCountSubscription;
+}(Subscription_1.Subscription));
+//# sourceMappingURL=groupBy.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/ignoreElements.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subscriber_1 = __webpack_require__("../../node_modules/rxjs/Subscriber.js");
+var noop_1 = __webpack_require__("../../node_modules/rxjs/util/noop.js");
+/**
+ * Ignores all items emitted by the source Observable and only passes calls of `complete` or `error`.
+ *
+ * <img src="./img/ignoreElements.png" width="100%">
+ *
+ * @return {Observable} An empty Observable that only calls `complete`
+ * or `error`, based on which one is called by the source Observable.
+ * @method ignoreElements
+ * @owner Observable
+ */
+function ignoreElements() {
+    return this.lift(new IgnoreElementsOperator());
+}
+exports.ignoreElements = ignoreElements;
+;
+var IgnoreElementsOperator = (function () {
+    function IgnoreElementsOperator() {
+    }
+    IgnoreElementsOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new IgnoreElementsSubscriber(subscriber));
+    };
+    return IgnoreElementsOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var IgnoreElementsSubscriber = (function (_super) {
+    __extends(IgnoreElementsSubscriber, _super);
+    function IgnoreElementsSubscriber() {
+        _super.apply(this, arguments);
+    }
+    IgnoreElementsSubscriber.prototype._next = function (unused) {
+        noop_1.noop();
+    };
+    return IgnoreElementsSubscriber;
+}(Subscriber_1.Subscriber));
+//# sourceMappingURL=ignoreElements.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/isEmpty.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subscriber_1 = __webpack_require__("../../node_modules/rxjs/Subscriber.js");
+/**
+ * If the source Observable is empty it returns an Observable that emits true, otherwise it emits false.
+ *
+ * <img src="./img/isEmpty.png" width="100%">
+ *
+ * @return {Observable} An Observable that emits a Boolean.
+ * @method isEmpty
+ * @owner Observable
+ */
+function isEmpty() {
+    return this.lift(new IsEmptyOperator());
+}
+exports.isEmpty = isEmpty;
+var IsEmptyOperator = (function () {
+    function IsEmptyOperator() {
+    }
+    IsEmptyOperator.prototype.call = function (observer, source) {
+        return source.subscribe(new IsEmptySubscriber(observer));
+    };
+    return IsEmptyOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var IsEmptySubscriber = (function (_super) {
+    __extends(IsEmptySubscriber, _super);
+    function IsEmptySubscriber(destination) {
+        _super.call(this, destination);
+    }
+    IsEmptySubscriber.prototype.notifyComplete = function (isEmpty) {
+        var destination = this.destination;
+        destination.next(isEmpty);
+        destination.complete();
+    };
+    IsEmptySubscriber.prototype._next = function (value) {
+        this.notifyComplete(false);
+    };
+    IsEmptySubscriber.prototype._complete = function () {
+        this.notifyComplete(true);
+    };
+    return IsEmptySubscriber;
+}(Subscriber_1.Subscriber));
+//# sourceMappingURL=isEmpty.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/last.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subscriber_1 = __webpack_require__("../../node_modules/rxjs/Subscriber.js");
+var EmptyError_1 = __webpack_require__("../../node_modules/rxjs/util/EmptyError.js");
+/* tslint:enable:max-line-length */
+/**
+ * Returns an Observable that emits only the last item emitted by the source Observable.
+ * It optionally takes a predicate function as a parameter, in which case, rather than emitting
+ * the last item from the source Observable, the resulting Observable will emit the last item
+ * from the source Observable that satisfies the predicate.
+ *
+ * <img src="./img/last.png" width="100%">
+ *
+ * @throws {EmptyError} Delivers an EmptyError to the Observer's `error`
+ * callback if the Observable completes before any `next` notification was sent.
+ * @param {function} predicate - The condition any source emitted item has to satisfy.
+ * @return {Observable} An Observable that emits only the last item satisfying the given condition
+ * from the source, or an NoSuchElementException if no such items are emitted.
+ * @throws - Throws if no items that match the predicate are emitted by the source Observable.
+ * @method last
+ * @owner Observable
+ */
+function last(predicate, resultSelector, defaultValue) {
+    return this.lift(new LastOperator(predicate, resultSelector, defaultValue, this));
+}
+exports.last = last;
+var LastOperator = (function () {
+    function LastOperator(predicate, resultSelector, defaultValue, source) {
+        this.predicate = predicate;
+        this.resultSelector = resultSelector;
+        this.defaultValue = defaultValue;
+        this.source = source;
+    }
+    LastOperator.prototype.call = function (observer, source) {
+        return source.subscribe(new LastSubscriber(observer, this.predicate, this.resultSelector, this.defaultValue, this.source));
+    };
+    return LastOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var LastSubscriber = (function (_super) {
+    __extends(LastSubscriber, _super);
+    function LastSubscriber(destination, predicate, resultSelector, defaultValue, source) {
+        _super.call(this, destination);
+        this.predicate = predicate;
+        this.resultSelector = resultSelector;
+        this.defaultValue = defaultValue;
+        this.source = source;
+        this.hasValue = false;
+        this.index = 0;
+        if (typeof defaultValue !== 'undefined') {
+            this.lastValue = defaultValue;
+            this.hasValue = true;
+        }
+    }
+    LastSubscriber.prototype._next = function (value) {
+        var index = this.index++;
+        if (this.predicate) {
+            this._tryPredicate(value, index);
+        }
+        else {
+            if (this.resultSelector) {
+                this._tryResultSelector(value, index);
+                return;
+            }
+            this.lastValue = value;
+            this.hasValue = true;
+        }
+    };
+    LastSubscriber.prototype._tryPredicate = function (value, index) {
+        var result;
+        try {
+            result = this.predicate(value, index, this.source);
+        }
+        catch (err) {
+            this.destination.error(err);
+            return;
+        }
+        if (result) {
+            if (this.resultSelector) {
+                this._tryResultSelector(value, index);
+                return;
+            }
+            this.lastValue = value;
+            this.hasValue = true;
+        }
+    };
+    LastSubscriber.prototype._tryResultSelector = function (value, index) {
+        var result;
+        try {
+            result = this.resultSelector(value, index);
+        }
+        catch (err) {
+            this.destination.error(err);
+            return;
+        }
+        this.lastValue = result;
+        this.hasValue = true;
+    };
+    LastSubscriber.prototype._complete = function () {
+        var destination = this.destination;
+        if (this.hasValue) {
+            destination.next(this.lastValue);
+            destination.complete();
+        }
+        else {
+            destination.error(new EmptyError_1.EmptyError);
+        }
+    };
+    return LastSubscriber;
+}(Subscriber_1.Subscriber));
+//# sourceMappingURL=last.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/let.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * @param func
+ * @return {Observable<R>}
+ * @method let
+ * @owner Observable
+ */
+function letProto(func) {
+    return func(this);
+}
+exports.letProto = letProto;
+//# sourceMappingURL=let.js.map
+
+/***/ }),
+
 /***/ "../../node_modules/rxjs/operator/map.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -48046,6 +52680,221 @@ var MapSubscriber = (function (_super) {
     return MapSubscriber;
 }(Subscriber_1.Subscriber));
 //# sourceMappingURL=map.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/mapTo.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subscriber_1 = __webpack_require__("../../node_modules/rxjs/Subscriber.js");
+/**
+ * Emits the given constant value on the output Observable every time the source
+ * Observable emits a value.
+ *
+ * <span class="informal">Like {@link map}, but it maps every source value to
+ * the same output value every time.</span>
+ *
+ * <img src="./img/mapTo.png" width="100%">
+ *
+ * Takes a constant `value` as argument, and emits that whenever the source
+ * Observable emits a value. In other words, ignores the actual source value,
+ * and simply uses the emission moment to know when to emit the given `value`.
+ *
+ * @example <caption>Map every click to the string 'Hi'</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var greetings = clicks.mapTo('Hi');
+ * greetings.subscribe(x => console.log(x));
+ *
+ * @see {@link map}
+ *
+ * @param {any} value The value to map each source value to.
+ * @return {Observable} An Observable that emits the given `value` every time
+ * the source Observable emits something.
+ * @method mapTo
+ * @owner Observable
+ */
+function mapTo(value) {
+    return this.lift(new MapToOperator(value));
+}
+exports.mapTo = mapTo;
+var MapToOperator = (function () {
+    function MapToOperator(value) {
+        this.value = value;
+    }
+    MapToOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new MapToSubscriber(subscriber, this.value));
+    };
+    return MapToOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var MapToSubscriber = (function (_super) {
+    __extends(MapToSubscriber, _super);
+    function MapToSubscriber(destination, value) {
+        _super.call(this, destination);
+        this.value = value;
+    }
+    MapToSubscriber.prototype._next = function (x) {
+        this.destination.next(this.value);
+    };
+    return MapToSubscriber;
+}(Subscriber_1.Subscriber));
+//# sourceMappingURL=mapTo.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/materialize.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subscriber_1 = __webpack_require__("../../node_modules/rxjs/Subscriber.js");
+var Notification_1 = __webpack_require__("../../node_modules/rxjs/Notification.js");
+/**
+ * Represents all of the notifications from the source Observable as `next`
+ * emissions marked with their original types within {@link Notification}
+ * objects.
+ *
+ * <span class="informal">Wraps `next`, `error` and `complete` emissions in
+ * {@link Notification} objects, emitted as `next` on the output Observable.
+ * </span>
+ *
+ * <img src="./img/materialize.png" width="100%">
+ *
+ * `materialize` returns an Observable that emits a `next` notification for each
+ * `next`, `error`, or `complete` emission of the source Observable. When the
+ * source Observable emits `complete`, the output Observable will emit `next` as
+ * a Notification of type "complete", and then it will emit `complete` as well.
+ * When the source Observable emits `error`, the output will emit `next` as a
+ * Notification of type "error", and then `complete`.
+ *
+ * This operator is useful for producing metadata of the source Observable, to
+ * be consumed as `next` emissions. Use it in conjunction with
+ * {@link dematerialize}.
+ *
+ * @example <caption>Convert a faulty Observable to an Observable of Notifications</caption>
+ * var letters = Rx.Observable.of('a', 'b', 13, 'd');
+ * var upperCase = letters.map(x => x.toUpperCase());
+ * var materialized = upperCase.materialize();
+ * materialized.subscribe(x => console.log(x));
+ *
+ * // Results in the following:
+ * // - Notification {kind: "N", value: "A", error: undefined, hasValue: true}
+ * // - Notification {kind: "N", value: "B", error: undefined, hasValue: true}
+ * // - Notification {kind: "E", value: undefined, error: TypeError:
+ * //   x.toUpperCase is not a function at MapSubscriber.letters.map.x
+ * //   [as project] (http://1…, hasValue: false}
+ *
+ * @see {@link Notification}
+ * @see {@link dematerialize}
+ *
+ * @return {Observable<Notification<T>>} An Observable that emits
+ * {@link Notification} objects that wrap the original emissions from the source
+ * Observable with metadata.
+ * @method materialize
+ * @owner Observable
+ */
+function materialize() {
+    return this.lift(new MaterializeOperator());
+}
+exports.materialize = materialize;
+var MaterializeOperator = (function () {
+    function MaterializeOperator() {
+    }
+    MaterializeOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new MaterializeSubscriber(subscriber));
+    };
+    return MaterializeOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var MaterializeSubscriber = (function (_super) {
+    __extends(MaterializeSubscriber, _super);
+    function MaterializeSubscriber(destination) {
+        _super.call(this, destination);
+    }
+    MaterializeSubscriber.prototype._next = function (value) {
+        this.destination.next(Notification_1.Notification.createNext(value));
+    };
+    MaterializeSubscriber.prototype._error = function (err) {
+        var destination = this.destination;
+        destination.next(Notification_1.Notification.createError(err));
+        destination.complete();
+    };
+    MaterializeSubscriber.prototype._complete = function () {
+        var destination = this.destination;
+        destination.next(Notification_1.Notification.createComplete());
+        destination.complete();
+    };
+    return MaterializeSubscriber;
+}(Subscriber_1.Subscriber));
+//# sourceMappingURL=materialize.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/max.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var reduce_1 = __webpack_require__("../../node_modules/rxjs/operator/reduce.js");
+/**
+ * The Max operator operates on an Observable that emits numbers (or items that can be compared with a provided function),
+ * and when source Observable completes it emits a single item: the item with the largest value.
+ *
+ * <img src="./img/max.png" width="100%">
+ *
+ * @example <caption>Get the maximal value of a series of numbers</caption>
+ * Rx.Observable.of(5, 4, 7, 2, 8)
+ *   .max()
+ *   .subscribe(x => console.log(x)); // -> 8
+ *
+ * @example <caption>Use a comparer function to get the maximal item</caption>
+ * interface Person {
+ *   age: number,
+ *   name: string
+ * }
+ * Observable.of<Person>({age: 7, name: 'Foo'},
+ *                       {age: 5, name: 'Bar'},
+ *                       {age: 9, name: 'Beer'})
+ *           .max<Person>((a: Person, b: Person) => a.age < b.age ? -1 : 1)
+ *           .subscribe((x: Person) => console.log(x.name)); // -> 'Beer'
+ * }
+ *
+ * @see {@link min}
+ *
+ * @param {Function} [comparer] - Optional comparer function that it will use instead of its default to compare the
+ * value of two items.
+ * @return {Observable} An Observable that emits item with the largest value.
+ * @method max
+ * @owner Observable
+ */
+function max(comparer) {
+    var max = (typeof comparer === 'function')
+        ? function (x, y) { return comparer(x, y) > 0 ? x : y; }
+        : function (x, y) { return x > y ? x : y; };
+    return this.lift(new reduce_1.ReduceOperator(max));
+}
+exports.max = max;
+//# sourceMappingURL=max.js.map
 
 /***/ }),
 
@@ -48497,6 +53346,352 @@ exports.MergeMapSubscriber = MergeMapSubscriber;
 
 /***/ }),
 
+/***/ "../../node_modules/rxjs/operator/mergeMapTo.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var OuterSubscriber_1 = __webpack_require__("../../node_modules/rxjs/OuterSubscriber.js");
+var subscribeToResult_1 = __webpack_require__("../../node_modules/rxjs/util/subscribeToResult.js");
+/* tslint:enable:max-line-length */
+/**
+ * Projects each source value to the same Observable which is merged multiple
+ * times in the output Observable.
+ *
+ * <span class="informal">It's like {@link mergeMap}, but maps each value always
+ * to the same inner Observable.</span>
+ *
+ * <img src="./img/mergeMapTo.png" width="100%">
+ *
+ * Maps each source value to the given Observable `innerObservable` regardless
+ * of the source value, and then merges those resulting Observables into one
+ * single Observable, which is the output Observable.
+ *
+ * @example <caption>For each click event, start an interval Observable ticking every 1 second</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var result = clicks.mergeMapTo(Rx.Observable.interval(1000));
+ * result.subscribe(x => console.log(x));
+ *
+ * @see {@link concatMapTo}
+ * @see {@link merge}
+ * @see {@link mergeAll}
+ * @see {@link mergeMap}
+ * @see {@link mergeScan}
+ * @see {@link switchMapTo}
+ *
+ * @param {ObservableInput} innerObservable An Observable to replace each value from
+ * the source Observable.
+ * @param {function(outerValue: T, innerValue: I, outerIndex: number, innerIndex: number): any} [resultSelector]
+ * A function to produce the value on the output Observable based on the values
+ * and the indices of the source (outer) emission and the inner Observable
+ * emission. The arguments passed to this function are:
+ * - `outerValue`: the value that came from the source
+ * - `innerValue`: the value that came from the projected Observable
+ * - `outerIndex`: the "index" of the value that came from the source
+ * - `innerIndex`: the "index" of the value from the projected Observable
+ * @param {number} [concurrent=Number.POSITIVE_INFINITY] Maximum number of input
+ * Observables being subscribed to concurrently.
+ * @return {Observable} An Observable that emits items from the given
+ * `innerObservable` (and optionally transformed through `resultSelector`) every
+ * time a value is emitted on the source Observable.
+ * @method mergeMapTo
+ * @owner Observable
+ */
+function mergeMapTo(innerObservable, resultSelector, concurrent) {
+    if (concurrent === void 0) { concurrent = Number.POSITIVE_INFINITY; }
+    if (typeof resultSelector === 'number') {
+        concurrent = resultSelector;
+        resultSelector = null;
+    }
+    return this.lift(new MergeMapToOperator(innerObservable, resultSelector, concurrent));
+}
+exports.mergeMapTo = mergeMapTo;
+// TODO: Figure out correct signature here: an Operator<Observable<T>, R>
+//       needs to implement call(observer: Subscriber<R>): Subscriber<Observable<T>>
+var MergeMapToOperator = (function () {
+    function MergeMapToOperator(ish, resultSelector, concurrent) {
+        if (concurrent === void 0) { concurrent = Number.POSITIVE_INFINITY; }
+        this.ish = ish;
+        this.resultSelector = resultSelector;
+        this.concurrent = concurrent;
+    }
+    MergeMapToOperator.prototype.call = function (observer, source) {
+        return source.subscribe(new MergeMapToSubscriber(observer, this.ish, this.resultSelector, this.concurrent));
+    };
+    return MergeMapToOperator;
+}());
+exports.MergeMapToOperator = MergeMapToOperator;
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var MergeMapToSubscriber = (function (_super) {
+    __extends(MergeMapToSubscriber, _super);
+    function MergeMapToSubscriber(destination, ish, resultSelector, concurrent) {
+        if (concurrent === void 0) { concurrent = Number.POSITIVE_INFINITY; }
+        _super.call(this, destination);
+        this.ish = ish;
+        this.resultSelector = resultSelector;
+        this.concurrent = concurrent;
+        this.hasCompleted = false;
+        this.buffer = [];
+        this.active = 0;
+        this.index = 0;
+    }
+    MergeMapToSubscriber.prototype._next = function (value) {
+        if (this.active < this.concurrent) {
+            var resultSelector = this.resultSelector;
+            var index = this.index++;
+            var ish = this.ish;
+            var destination = this.destination;
+            this.active++;
+            this._innerSub(ish, destination, resultSelector, value, index);
+        }
+        else {
+            this.buffer.push(value);
+        }
+    };
+    MergeMapToSubscriber.prototype._innerSub = function (ish, destination, resultSelector, value, index) {
+        this.add(subscribeToResult_1.subscribeToResult(this, ish, value, index));
+    };
+    MergeMapToSubscriber.prototype._complete = function () {
+        this.hasCompleted = true;
+        if (this.active === 0 && this.buffer.length === 0) {
+            this.destination.complete();
+        }
+    };
+    MergeMapToSubscriber.prototype.notifyNext = function (outerValue, innerValue, outerIndex, innerIndex, innerSub) {
+        var _a = this, resultSelector = _a.resultSelector, destination = _a.destination;
+        if (resultSelector) {
+            this.trySelectResult(outerValue, innerValue, outerIndex, innerIndex);
+        }
+        else {
+            destination.next(innerValue);
+        }
+    };
+    MergeMapToSubscriber.prototype.trySelectResult = function (outerValue, innerValue, outerIndex, innerIndex) {
+        var _a = this, resultSelector = _a.resultSelector, destination = _a.destination;
+        var result;
+        try {
+            result = resultSelector(outerValue, innerValue, outerIndex, innerIndex);
+        }
+        catch (err) {
+            destination.error(err);
+            return;
+        }
+        destination.next(result);
+    };
+    MergeMapToSubscriber.prototype.notifyError = function (err) {
+        this.destination.error(err);
+    };
+    MergeMapToSubscriber.prototype.notifyComplete = function (innerSub) {
+        var buffer = this.buffer;
+        this.remove(innerSub);
+        this.active--;
+        if (buffer.length > 0) {
+            this._next(buffer.shift());
+        }
+        else if (this.active === 0 && this.hasCompleted) {
+            this.destination.complete();
+        }
+    };
+    return MergeMapToSubscriber;
+}(OuterSubscriber_1.OuterSubscriber));
+exports.MergeMapToSubscriber = MergeMapToSubscriber;
+//# sourceMappingURL=mergeMapTo.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/mergeScan.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var tryCatch_1 = __webpack_require__("../../node_modules/rxjs/util/tryCatch.js");
+var errorObject_1 = __webpack_require__("../../node_modules/rxjs/util/errorObject.js");
+var subscribeToResult_1 = __webpack_require__("../../node_modules/rxjs/util/subscribeToResult.js");
+var OuterSubscriber_1 = __webpack_require__("../../node_modules/rxjs/OuterSubscriber.js");
+/**
+ * Applies an accumulator function over the source Observable where the
+ * accumulator function itself returns an Observable, then each intermediate
+ * Observable returned is merged into the output Observable.
+ *
+ * <span class="informal">It's like {@link scan}, but the Observables returned
+ * by the accumulator are merged into the outer Observable.</span>
+ *
+ * @example <caption>Count the number of click events</caption>
+ * const click$ = Rx.Observable.fromEvent(document, 'click');
+ * const one$ = click$.mapTo(1);
+ * const seed = 0;
+ * const count$ = one$.mergeScan((acc, one) => Rx.Observable.of(acc + one), seed);
+ * count$.subscribe(x => console.log(x));
+ *
+ * // Results:
+ * 1
+ * 2
+ * 3
+ * 4
+ * // ...and so on for each click
+ *
+ * @param {function(acc: R, value: T): Observable<R>} accumulator
+ * The accumulator function called on each source value.
+ * @param seed The initial accumulation value.
+ * @param {number} [concurrent=Number.POSITIVE_INFINITY] Maximum number of
+ * input Observables being subscribed to concurrently.
+ * @return {Observable<R>} An observable of the accumulated values.
+ * @method mergeScan
+ * @owner Observable
+ */
+function mergeScan(accumulator, seed, concurrent) {
+    if (concurrent === void 0) { concurrent = Number.POSITIVE_INFINITY; }
+    return this.lift(new MergeScanOperator(accumulator, seed, concurrent));
+}
+exports.mergeScan = mergeScan;
+var MergeScanOperator = (function () {
+    function MergeScanOperator(accumulator, seed, concurrent) {
+        this.accumulator = accumulator;
+        this.seed = seed;
+        this.concurrent = concurrent;
+    }
+    MergeScanOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new MergeScanSubscriber(subscriber, this.accumulator, this.seed, this.concurrent));
+    };
+    return MergeScanOperator;
+}());
+exports.MergeScanOperator = MergeScanOperator;
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var MergeScanSubscriber = (function (_super) {
+    __extends(MergeScanSubscriber, _super);
+    function MergeScanSubscriber(destination, accumulator, acc, concurrent) {
+        _super.call(this, destination);
+        this.accumulator = accumulator;
+        this.acc = acc;
+        this.concurrent = concurrent;
+        this.hasValue = false;
+        this.hasCompleted = false;
+        this.buffer = [];
+        this.active = 0;
+        this.index = 0;
+    }
+    MergeScanSubscriber.prototype._next = function (value) {
+        if (this.active < this.concurrent) {
+            var index = this.index++;
+            var ish = tryCatch_1.tryCatch(this.accumulator)(this.acc, value);
+            var destination = this.destination;
+            if (ish === errorObject_1.errorObject) {
+                destination.error(errorObject_1.errorObject.e);
+            }
+            else {
+                this.active++;
+                this._innerSub(ish, value, index);
+            }
+        }
+        else {
+            this.buffer.push(value);
+        }
+    };
+    MergeScanSubscriber.prototype._innerSub = function (ish, value, index) {
+        this.add(subscribeToResult_1.subscribeToResult(this, ish, value, index));
+    };
+    MergeScanSubscriber.prototype._complete = function () {
+        this.hasCompleted = true;
+        if (this.active === 0 && this.buffer.length === 0) {
+            if (this.hasValue === false) {
+                this.destination.next(this.acc);
+            }
+            this.destination.complete();
+        }
+    };
+    MergeScanSubscriber.prototype.notifyNext = function (outerValue, innerValue, outerIndex, innerIndex, innerSub) {
+        var destination = this.destination;
+        this.acc = innerValue;
+        this.hasValue = true;
+        destination.next(innerValue);
+    };
+    MergeScanSubscriber.prototype.notifyComplete = function (innerSub) {
+        var buffer = this.buffer;
+        this.remove(innerSub);
+        this.active--;
+        if (buffer.length > 0) {
+            this._next(buffer.shift());
+        }
+        else if (this.active === 0 && this.hasCompleted) {
+            if (this.hasValue === false) {
+                this.destination.next(this.acc);
+            }
+            this.destination.complete();
+        }
+    };
+    return MergeScanSubscriber;
+}(OuterSubscriber_1.OuterSubscriber));
+exports.MergeScanSubscriber = MergeScanSubscriber;
+//# sourceMappingURL=mergeScan.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/min.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var reduce_1 = __webpack_require__("../../node_modules/rxjs/operator/reduce.js");
+/**
+ * The Min operator operates on an Observable that emits numbers (or items that can be compared with a provided function),
+ * and when source Observable completes it emits a single item: the item with the smallest value.
+ *
+ * <img src="./img/min.png" width="100%">
+ *
+ * @example <caption>Get the minimal value of a series of numbers</caption>
+ * Rx.Observable.of(5, 4, 7, 2, 8)
+ *   .min()
+ *   .subscribe(x => console.log(x)); // -> 2
+ *
+ * @example <caption>Use a comparer function to get the minimal item</caption>
+ * interface Person {
+ *   age: number,
+ *   name: string
+ * }
+ * Observable.of<Person>({age: 7, name: 'Foo'},
+ *                       {age: 5, name: 'Bar'},
+ *                       {age: 9, name: 'Beer'})
+ *           .min<Person>( (a: Person, b: Person) => a.age < b.age ? -1 : 1)
+ *           .subscribe((x: Person) => console.log(x.name)); // -> 'Bar'
+ * }
+ *
+ * @see {@link max}
+ *
+ * @param {Function} [comparer] - Optional comparer function that it will use instead of its default to compare the
+ * value of two items.
+ * @return {Observable<R>} An Observable that emits item with the smallest value.
+ * @method min
+ * @owner Observable
+ */
+function min(comparer) {
+    var min = (typeof comparer === 'function')
+        ? function (x, y) { return comparer(x, y) < 0 ? x : y; }
+        : function (x, y) { return x < y ? x : y; };
+    return this.lift(new reduce_1.ReduceOperator(min));
+}
+exports.min = min;
+//# sourceMappingURL=min.js.map
+
+/***/ }),
+
 /***/ "../../node_modules/rxjs/operator/multicast.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -48681,6 +53876,968 @@ exports.ObserveOnMessage = ObserveOnMessage;
 
 /***/ }),
 
+/***/ "../../node_modules/rxjs/operator/onErrorResumeNext.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var FromObservable_1 = __webpack_require__("../../node_modules/rxjs/observable/FromObservable.js");
+var isArray_1 = __webpack_require__("../../node_modules/rxjs/util/isArray.js");
+var OuterSubscriber_1 = __webpack_require__("../../node_modules/rxjs/OuterSubscriber.js");
+var subscribeToResult_1 = __webpack_require__("../../node_modules/rxjs/util/subscribeToResult.js");
+/* tslint:enable:max-line-length */
+/**
+ * When any of the provided Observable emits an complete or error notification, it immediately subscribes to the next one
+ * that was passed.
+ *
+ * <span class="informal">Execute series of Observables no matter what, even if it means swallowing errors.</span>
+ *
+ * <img src="./img/onErrorResumeNext.png" width="100%">
+ *
+ * `onErrorResumeNext` is an operator that accepts a series of Observables, provided either directly as
+ * arguments or as an array. If no single Observable is provided, returned Observable will simply behave the same
+ * as the source.
+ *
+ * `onErrorResumeNext` returns an Observable that starts by subscribing and re-emitting values from the source Observable.
+ * When its stream of values ends - no matter if Observable completed or emitted an error - `onErrorResumeNext`
+ * will subscribe to the first Observable that was passed as an argument to the method. It will start re-emitting
+ * its values as well and - again - when that stream ends, `onErrorResumeNext` will proceed to subscribing yet another
+ * Observable in provided series, no matter if previous Observable completed or ended with an error. This will
+ * be happening until there is no more Observables left in the series, at which point returned Observable will
+ * complete - even if the last subscribed stream ended with an error.
+ *
+ * `onErrorResumeNext` can be therefore thought of as version of {@link concat} operator, which is more permissive
+ * when it comes to the errors emitted by its input Observables. While `concat` subscribes to the next Observable
+ * in series only if previous one successfully completed, `onErrorResumeNext` subscribes even if it ended with
+ * an error.
+ *
+ * Note that you do not get any access to errors emitted by the Observables. In particular do not
+ * expect these errors to appear in error callback passed to {@link subscribe}. If you want to take
+ * specific actions based on what error was emitted by an Observable, you should try out {@link catch} instead.
+ *
+ *
+ * @example <caption>Subscribe to the next Observable after map fails</caption>
+ * Rx.Observable.of(1, 2, 3, 0)
+ *   .map(x => {
+ *       if (x === 0) { throw Error(); }
+         return 10 / x;
+ *   })
+ *   .onErrorResumeNext(Rx.Observable.of(1, 2, 3))
+ *   .subscribe(
+ *     val => console.log(val),
+ *     err => console.log(err),          // Will never be called.
+ *     () => console.log('that\'s it!')
+ *   );
+ *
+ * // Logs:
+ * // 10
+ * // 5
+ * // 3.3333333333333335
+ * // 1
+ * // 2
+ * // 3
+ * // "that's it!"
+ *
+ * @see {@link concat}
+ * @see {@link catch}
+ *
+ * @param {...ObservableInput} observables Observables passed either directly or as an array.
+ * @return {Observable} An Observable that emits values from source Observable, but - if it errors - subscribes
+ * to the next passed Observable and so on, until it completes or runs out of Observables.
+ * @method onErrorResumeNext
+ * @owner Observable
+ */
+function onErrorResumeNext() {
+    var nextSources = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        nextSources[_i - 0] = arguments[_i];
+    }
+    if (nextSources.length === 1 && isArray_1.isArray(nextSources[0])) {
+        nextSources = nextSources[0];
+    }
+    return this.lift(new OnErrorResumeNextOperator(nextSources));
+}
+exports.onErrorResumeNext = onErrorResumeNext;
+/* tslint:enable:max-line-length */
+function onErrorResumeNextStatic() {
+    var nextSources = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        nextSources[_i - 0] = arguments[_i];
+    }
+    var source = null;
+    if (nextSources.length === 1 && isArray_1.isArray(nextSources[0])) {
+        nextSources = nextSources[0];
+    }
+    source = nextSources.shift();
+    return new FromObservable_1.FromObservable(source, null).lift(new OnErrorResumeNextOperator(nextSources));
+}
+exports.onErrorResumeNextStatic = onErrorResumeNextStatic;
+var OnErrorResumeNextOperator = (function () {
+    function OnErrorResumeNextOperator(nextSources) {
+        this.nextSources = nextSources;
+    }
+    OnErrorResumeNextOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new OnErrorResumeNextSubscriber(subscriber, this.nextSources));
+    };
+    return OnErrorResumeNextOperator;
+}());
+var OnErrorResumeNextSubscriber = (function (_super) {
+    __extends(OnErrorResumeNextSubscriber, _super);
+    function OnErrorResumeNextSubscriber(destination, nextSources) {
+        _super.call(this, destination);
+        this.destination = destination;
+        this.nextSources = nextSources;
+    }
+    OnErrorResumeNextSubscriber.prototype.notifyError = function (error, innerSub) {
+        this.subscribeToNextSource();
+    };
+    OnErrorResumeNextSubscriber.prototype.notifyComplete = function (innerSub) {
+        this.subscribeToNextSource();
+    };
+    OnErrorResumeNextSubscriber.prototype._error = function (err) {
+        this.subscribeToNextSource();
+    };
+    OnErrorResumeNextSubscriber.prototype._complete = function () {
+        this.subscribeToNextSource();
+    };
+    OnErrorResumeNextSubscriber.prototype.subscribeToNextSource = function () {
+        var next = this.nextSources.shift();
+        if (next) {
+            this.add(subscribeToResult_1.subscribeToResult(this, next));
+        }
+        else {
+            this.destination.complete();
+        }
+    };
+    return OnErrorResumeNextSubscriber;
+}(OuterSubscriber_1.OuterSubscriber));
+//# sourceMappingURL=onErrorResumeNext.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/pairwise.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subscriber_1 = __webpack_require__("../../node_modules/rxjs/Subscriber.js");
+/**
+ * Groups pairs of consecutive emissions together and emits them as an array of
+ * two values.
+ *
+ * <span class="informal">Puts the current value and previous value together as
+ * an array, and emits that.</span>
+ *
+ * <img src="./img/pairwise.png" width="100%">
+ *
+ * The Nth emission from the source Observable will cause the output Observable
+ * to emit an array [(N-1)th, Nth] of the previous and the current value, as a
+ * pair. For this reason, `pairwise` emits on the second and subsequent
+ * emissions from the source Observable, but not on the first emission, because
+ * there is no previous value in that case.
+ *
+ * @example <caption>On every click (starting from the second), emit the relative distance to the previous click</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var pairs = clicks.pairwise();
+ * var distance = pairs.map(pair => {
+ *   var x0 = pair[0].clientX;
+ *   var y0 = pair[0].clientY;
+ *   var x1 = pair[1].clientX;
+ *   var y1 = pair[1].clientY;
+ *   return Math.sqrt(Math.pow(x0 - x1, 2) + Math.pow(y0 - y1, 2));
+ * });
+ * distance.subscribe(x => console.log(x));
+ *
+ * @see {@link buffer}
+ * @see {@link bufferCount}
+ *
+ * @return {Observable<Array<T>>} An Observable of pairs (as arrays) of
+ * consecutive values from the source Observable.
+ * @method pairwise
+ * @owner Observable
+ */
+function pairwise() {
+    return this.lift(new PairwiseOperator());
+}
+exports.pairwise = pairwise;
+var PairwiseOperator = (function () {
+    function PairwiseOperator() {
+    }
+    PairwiseOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new PairwiseSubscriber(subscriber));
+    };
+    return PairwiseOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var PairwiseSubscriber = (function (_super) {
+    __extends(PairwiseSubscriber, _super);
+    function PairwiseSubscriber(destination) {
+        _super.call(this, destination);
+        this.hasPrev = false;
+    }
+    PairwiseSubscriber.prototype._next = function (value) {
+        if (this.hasPrev) {
+            this.destination.next([this.prev, value]);
+        }
+        else {
+            this.hasPrev = true;
+        }
+        this.prev = value;
+    };
+    return PairwiseSubscriber;
+}(Subscriber_1.Subscriber));
+//# sourceMappingURL=pairwise.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/partition.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var not_1 = __webpack_require__("../../node_modules/rxjs/util/not.js");
+var filter_1 = __webpack_require__("../../node_modules/rxjs/operator/filter.js");
+/**
+ * Splits the source Observable into two, one with values that satisfy a
+ * predicate, and another with values that don't satisfy the predicate.
+ *
+ * <span class="informal">It's like {@link filter}, but returns two Observables:
+ * one like the output of {@link filter}, and the other with values that did not
+ * pass the condition.</span>
+ *
+ * <img src="./img/partition.png" width="100%">
+ *
+ * `partition` outputs an array with two Observables that partition the values
+ * from the source Observable through the given `predicate` function. The first
+ * Observable in that array emits source values for which the predicate argument
+ * returns true. The second Observable emits source values for which the
+ * predicate returns false. The first behaves like {@link filter} and the second
+ * behaves like {@link filter} with the predicate negated.
+ *
+ * @example <caption>Partition click events into those on DIV elements and those elsewhere</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var parts = clicks.partition(ev => ev.target.tagName === 'DIV');
+ * var clicksOnDivs = parts[0];
+ * var clicksElsewhere = parts[1];
+ * clicksOnDivs.subscribe(x => console.log('DIV clicked: ', x));
+ * clicksElsewhere.subscribe(x => console.log('Other clicked: ', x));
+ *
+ * @see {@link filter}
+ *
+ * @param {function(value: T, index: number): boolean} predicate A function that
+ * evaluates each value emitted by the source Observable. If it returns `true`,
+ * the value is emitted on the first Observable in the returned array, if
+ * `false` the value is emitted on the second Observable in the array. The
+ * `index` parameter is the number `i` for the i-th source emission that has
+ * happened since the subscription, starting from the number `0`.
+ * @param {any} [thisArg] An optional argument to determine the value of `this`
+ * in the `predicate` function.
+ * @return {[Observable<T>, Observable<T>]} An array with two Observables: one
+ * with values that passed the predicate, and another with values that did not
+ * pass the predicate.
+ * @method partition
+ * @owner Observable
+ */
+function partition(predicate, thisArg) {
+    return [
+        filter_1.filter.call(this, predicate, thisArg),
+        filter_1.filter.call(this, not_1.not(predicate, thisArg))
+    ];
+}
+exports.partition = partition;
+//# sourceMappingURL=partition.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/pluck.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var map_1 = __webpack_require__("../../node_modules/rxjs/operator/map.js");
+/**
+ * Maps each source value (an object) to its specified nested property.
+ *
+ * <span class="informal">Like {@link map}, but meant only for picking one of
+ * the nested properties of every emitted object.</span>
+ *
+ * <img src="./img/pluck.png" width="100%">
+ *
+ * Given a list of strings describing a path to an object property, retrieves
+ * the value of a specified nested property from all values in the source
+ * Observable. If a property can't be resolved, it will return `undefined` for
+ * that value.
+ *
+ * @example <caption>Map every click to the tagName of the clicked target element</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var tagNames = clicks.pluck('target', 'tagName');
+ * tagNames.subscribe(x => console.log(x));
+ *
+ * @see {@link map}
+ *
+ * @param {...string} properties The nested properties to pluck from each source
+ * value (an object).
+ * @return {Observable} A new Observable of property values from the source values.
+ * @method pluck
+ * @owner Observable
+ */
+function pluck() {
+    var properties = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        properties[_i - 0] = arguments[_i];
+    }
+    var length = properties.length;
+    if (length === 0) {
+        throw new Error('list of properties cannot be empty.');
+    }
+    return map_1.map.call(this, plucker(properties, length));
+}
+exports.pluck = pluck;
+function plucker(props, length) {
+    var mapper = function (x) {
+        var currentProp = x;
+        for (var i = 0; i < length; i++) {
+            var p = currentProp[props[i]];
+            if (typeof p !== 'undefined') {
+                currentProp = p;
+            }
+            else {
+                return undefined;
+            }
+        }
+        return currentProp;
+    };
+    return mapper;
+}
+//# sourceMappingURL=pluck.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/publish.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var Subject_1 = __webpack_require__("../../node_modules/rxjs/Subject.js");
+var multicast_1 = __webpack_require__("../../node_modules/rxjs/operator/multicast.js");
+/* tslint:enable:max-line-length */
+/**
+ * Returns a ConnectableObservable, which is a variety of Observable that waits until its connect method is called
+ * before it begins emitting items to those Observers that have subscribed to it.
+ *
+ * <img src="./img/publish.png" width="100%">
+ *
+ * @param {Function} [selector] - Optional selector function which can use the multicasted source sequence as many times
+ * as needed, without causing multiple subscriptions to the source sequence.
+ * Subscribers to the given source will receive all notifications of the source from the time of the subscription on.
+ * @return A ConnectableObservable that upon connection causes the source Observable to emit items to its Observers.
+ * @method publish
+ * @owner Observable
+ */
+function publish(selector) {
+    return selector ? multicast_1.multicast.call(this, function () { return new Subject_1.Subject(); }, selector) :
+        multicast_1.multicast.call(this, new Subject_1.Subject());
+}
+exports.publish = publish;
+//# sourceMappingURL=publish.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/publishBehavior.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var BehaviorSubject_1 = __webpack_require__("../../node_modules/rxjs/BehaviorSubject.js");
+var multicast_1 = __webpack_require__("../../node_modules/rxjs/operator/multicast.js");
+/**
+ * @param value
+ * @return {ConnectableObservable<T>}
+ * @method publishBehavior
+ * @owner Observable
+ */
+function publishBehavior(value) {
+    return multicast_1.multicast.call(this, new BehaviorSubject_1.BehaviorSubject(value));
+}
+exports.publishBehavior = publishBehavior;
+//# sourceMappingURL=publishBehavior.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/publishLast.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var AsyncSubject_1 = __webpack_require__("../../node_modules/rxjs/AsyncSubject.js");
+var multicast_1 = __webpack_require__("../../node_modules/rxjs/operator/multicast.js");
+/**
+ * @return {ConnectableObservable<T>}
+ * @method publishLast
+ * @owner Observable
+ */
+function publishLast() {
+    return multicast_1.multicast.call(this, new AsyncSubject_1.AsyncSubject());
+}
+exports.publishLast = publishLast;
+//# sourceMappingURL=publishLast.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/publishReplay.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var ReplaySubject_1 = __webpack_require__("../../node_modules/rxjs/ReplaySubject.js");
+var multicast_1 = __webpack_require__("../../node_modules/rxjs/operator/multicast.js");
+/**
+ * @param bufferSize
+ * @param windowTime
+ * @param scheduler
+ * @return {ConnectableObservable<T>}
+ * @method publishReplay
+ * @owner Observable
+ */
+function publishReplay(bufferSize, windowTime, scheduler) {
+    if (bufferSize === void 0) { bufferSize = Number.POSITIVE_INFINITY; }
+    if (windowTime === void 0) { windowTime = Number.POSITIVE_INFINITY; }
+    return multicast_1.multicast.call(this, new ReplaySubject_1.ReplaySubject(bufferSize, windowTime, scheduler));
+}
+exports.publishReplay = publishReplay;
+//# sourceMappingURL=publishReplay.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/race.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var isArray_1 = __webpack_require__("../../node_modules/rxjs/util/isArray.js");
+var ArrayObservable_1 = __webpack_require__("../../node_modules/rxjs/observable/ArrayObservable.js");
+var OuterSubscriber_1 = __webpack_require__("../../node_modules/rxjs/OuterSubscriber.js");
+var subscribeToResult_1 = __webpack_require__("../../node_modules/rxjs/util/subscribeToResult.js");
+/* tslint:enable:max-line-length */
+/**
+ * Returns an Observable that mirrors the first source Observable to emit an item
+ * from the combination of this Observable and supplied Observables.
+ * @param {...Observables} ...observables Sources used to race for which Observable emits first.
+ * @return {Observable} An Observable that mirrors the output of the first Observable to emit an item.
+ * @method race
+ * @owner Observable
+ */
+function race() {
+    var observables = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        observables[_i - 0] = arguments[_i];
+    }
+    // if the only argument is an array, it was most likely called with
+    // `pair([obs1, obs2, ...])`
+    if (observables.length === 1 && isArray_1.isArray(observables[0])) {
+        observables = observables[0];
+    }
+    return this.lift.call(raceStatic.apply(void 0, [this].concat(observables)));
+}
+exports.race = race;
+function raceStatic() {
+    var observables = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        observables[_i - 0] = arguments[_i];
+    }
+    // if the only argument is an array, it was most likely called with
+    // `race([obs1, obs2, ...])`
+    if (observables.length === 1) {
+        if (isArray_1.isArray(observables[0])) {
+            observables = observables[0];
+        }
+        else {
+            return observables[0];
+        }
+    }
+    return new ArrayObservable_1.ArrayObservable(observables).lift(new RaceOperator());
+}
+exports.raceStatic = raceStatic;
+var RaceOperator = (function () {
+    function RaceOperator() {
+    }
+    RaceOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new RaceSubscriber(subscriber));
+    };
+    return RaceOperator;
+}());
+exports.RaceOperator = RaceOperator;
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var RaceSubscriber = (function (_super) {
+    __extends(RaceSubscriber, _super);
+    function RaceSubscriber(destination) {
+        _super.call(this, destination);
+        this.hasFirst = false;
+        this.observables = [];
+        this.subscriptions = [];
+    }
+    RaceSubscriber.prototype._next = function (observable) {
+        this.observables.push(observable);
+    };
+    RaceSubscriber.prototype._complete = function () {
+        var observables = this.observables;
+        var len = observables.length;
+        if (len === 0) {
+            this.destination.complete();
+        }
+        else {
+            for (var i = 0; i < len && !this.hasFirst; i++) {
+                var observable = observables[i];
+                var subscription = subscribeToResult_1.subscribeToResult(this, observable, observable, i);
+                if (this.subscriptions) {
+                    this.subscriptions.push(subscription);
+                }
+                this.add(subscription);
+            }
+            this.observables = null;
+        }
+    };
+    RaceSubscriber.prototype.notifyNext = function (outerValue, innerValue, outerIndex, innerIndex, innerSub) {
+        if (!this.hasFirst) {
+            this.hasFirst = true;
+            for (var i = 0; i < this.subscriptions.length; i++) {
+                if (i !== outerIndex) {
+                    var subscription = this.subscriptions[i];
+                    subscription.unsubscribe();
+                    this.remove(subscription);
+                }
+            }
+            this.subscriptions = null;
+        }
+        this.destination.next(innerValue);
+    };
+    return RaceSubscriber;
+}(OuterSubscriber_1.OuterSubscriber));
+exports.RaceSubscriber = RaceSubscriber;
+//# sourceMappingURL=race.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/reduce.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subscriber_1 = __webpack_require__("../../node_modules/rxjs/Subscriber.js");
+/* tslint:enable:max-line-length */
+/**
+ * Applies an accumulator function over the source Observable, and returns the
+ * accumulated result when the source completes, given an optional seed value.
+ *
+ * <span class="informal">Combines together all values emitted on the source,
+ * using an accumulator function that knows how to join a new source value into
+ * the accumulation from the past.</span>
+ *
+ * <img src="./img/reduce.png" width="100%">
+ *
+ * Like
+ * [Array.prototype.reduce()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce),
+ * `reduce` applies an `accumulator` function against an accumulation and each
+ * value of the source Observable (from the past) to reduce it to a single
+ * value, emitted on the output Observable. Note that `reduce` will only emit
+ * one value, only when the source Observable completes. It is equivalent to
+ * applying operator {@link scan} followed by operator {@link last}.
+ *
+ * Returns an Observable that applies a specified `accumulator` function to each
+ * item emitted by the source Observable. If a `seed` value is specified, then
+ * that value will be used as the initial value for the accumulator. If no seed
+ * value is specified, the first item of the source is used as the seed.
+ *
+ * @example <caption>Count the number of click events that happened in 5 seconds</caption>
+ * var clicksInFiveSeconds = Rx.Observable.fromEvent(document, 'click')
+ *   .takeUntil(Rx.Observable.interval(5000));
+ * var ones = clicksInFiveSeconds.mapTo(1);
+ * var seed = 0;
+ * var count = ones.reduce((acc, one) => acc + one, seed);
+ * count.subscribe(x => console.log(x));
+ *
+ * @see {@link count}
+ * @see {@link expand}
+ * @see {@link mergeScan}
+ * @see {@link scan}
+ *
+ * @param {function(acc: R, value: T, index: number): R} accumulator The accumulator function
+ * called on each source value.
+ * @param {R} [seed] The initial accumulation value.
+ * @return {Observable<R>} An Observable that emits a single value that is the
+ * result of accumulating the values emitted by the source Observable.
+ * @method reduce
+ * @owner Observable
+ */
+function reduce(accumulator, seed) {
+    var hasSeed = false;
+    // providing a seed of `undefined` *should* be valid and trigger
+    // hasSeed! so don't use `seed !== undefined` checks!
+    // For this reason, we have to check it here at the original call site
+    // otherwise inside Operator/Subscriber we won't know if `undefined`
+    // means they didn't provide anything or if they literally provided `undefined`
+    if (arguments.length >= 2) {
+        hasSeed = true;
+    }
+    return this.lift(new ReduceOperator(accumulator, seed, hasSeed));
+}
+exports.reduce = reduce;
+var ReduceOperator = (function () {
+    function ReduceOperator(accumulator, seed, hasSeed) {
+        if (hasSeed === void 0) { hasSeed = false; }
+        this.accumulator = accumulator;
+        this.seed = seed;
+        this.hasSeed = hasSeed;
+    }
+    ReduceOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new ReduceSubscriber(subscriber, this.accumulator, this.seed, this.hasSeed));
+    };
+    return ReduceOperator;
+}());
+exports.ReduceOperator = ReduceOperator;
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var ReduceSubscriber = (function (_super) {
+    __extends(ReduceSubscriber, _super);
+    function ReduceSubscriber(destination, accumulator, seed, hasSeed) {
+        _super.call(this, destination);
+        this.accumulator = accumulator;
+        this.hasSeed = hasSeed;
+        this.index = 0;
+        this.hasValue = false;
+        this.acc = seed;
+        if (!this.hasSeed) {
+            this.index++;
+        }
+    }
+    ReduceSubscriber.prototype._next = function (value) {
+        if (this.hasValue || (this.hasValue = this.hasSeed)) {
+            this._tryReduce(value);
+        }
+        else {
+            this.acc = value;
+            this.hasValue = true;
+        }
+    };
+    ReduceSubscriber.prototype._tryReduce = function (value) {
+        var result;
+        try {
+            result = this.accumulator(this.acc, value, this.index++);
+        }
+        catch (err) {
+            this.destination.error(err);
+            return;
+        }
+        this.acc = result;
+    };
+    ReduceSubscriber.prototype._complete = function () {
+        if (this.hasValue || this.hasSeed) {
+            this.destination.next(this.acc);
+        }
+        this.destination.complete();
+    };
+    return ReduceSubscriber;
+}(Subscriber_1.Subscriber));
+exports.ReduceSubscriber = ReduceSubscriber;
+//# sourceMappingURL=reduce.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/repeat.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subscriber_1 = __webpack_require__("../../node_modules/rxjs/Subscriber.js");
+var EmptyObservable_1 = __webpack_require__("../../node_modules/rxjs/observable/EmptyObservable.js");
+/**
+ * Returns an Observable that repeats the stream of items emitted by the source Observable at most count times.
+ *
+ * <img src="./img/repeat.png" width="100%">
+ *
+ * @param {number} [count] The number of times the source Observable items are repeated, a count of 0 will yield
+ * an empty Observable.
+ * @return {Observable} An Observable that repeats the stream of items emitted by the source Observable at most
+ * count times.
+ * @method repeat
+ * @owner Observable
+ */
+function repeat(count) {
+    if (count === void 0) { count = -1; }
+    if (count === 0) {
+        return new EmptyObservable_1.EmptyObservable();
+    }
+    else if (count < 0) {
+        return this.lift(new RepeatOperator(-1, this));
+    }
+    else {
+        return this.lift(new RepeatOperator(count - 1, this));
+    }
+}
+exports.repeat = repeat;
+var RepeatOperator = (function () {
+    function RepeatOperator(count, source) {
+        this.count = count;
+        this.source = source;
+    }
+    RepeatOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new RepeatSubscriber(subscriber, this.count, this.source));
+    };
+    return RepeatOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var RepeatSubscriber = (function (_super) {
+    __extends(RepeatSubscriber, _super);
+    function RepeatSubscriber(destination, count, source) {
+        _super.call(this, destination);
+        this.count = count;
+        this.source = source;
+    }
+    RepeatSubscriber.prototype.complete = function () {
+        if (!this.isStopped) {
+            var _a = this, source = _a.source, count = _a.count;
+            if (count === 0) {
+                return _super.prototype.complete.call(this);
+            }
+            else if (count > -1) {
+                this.count = count - 1;
+            }
+            source.subscribe(this._unsubscribeAndRecycle());
+        }
+    };
+    return RepeatSubscriber;
+}(Subscriber_1.Subscriber));
+//# sourceMappingURL=repeat.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/repeatWhen.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subject_1 = __webpack_require__("../../node_modules/rxjs/Subject.js");
+var tryCatch_1 = __webpack_require__("../../node_modules/rxjs/util/tryCatch.js");
+var errorObject_1 = __webpack_require__("../../node_modules/rxjs/util/errorObject.js");
+var OuterSubscriber_1 = __webpack_require__("../../node_modules/rxjs/OuterSubscriber.js");
+var subscribeToResult_1 = __webpack_require__("../../node_modules/rxjs/util/subscribeToResult.js");
+/**
+ * Returns an Observable that mirrors the source Observable with the exception of a `complete`. If the source
+ * Observable calls `complete`, this method will emit to the Observable returned from `notifier`. If that Observable
+ * calls `complete` or `error`, then this method will call `complete` or `error` on the child subscription. Otherwise
+ * this method will resubscribe to the source Observable.
+ *
+ * <img src="./img/repeatWhen.png" width="100%">
+ *
+ * @param {function(notifications: Observable): Observable} notifier - Receives an Observable of notifications with
+ * which a user can `complete` or `error`, aborting the repetition.
+ * @return {Observable} The source Observable modified with repeat logic.
+ * @method repeatWhen
+ * @owner Observable
+ */
+function repeatWhen(notifier) {
+    return this.lift(new RepeatWhenOperator(notifier));
+}
+exports.repeatWhen = repeatWhen;
+var RepeatWhenOperator = (function () {
+    function RepeatWhenOperator(notifier) {
+        this.notifier = notifier;
+    }
+    RepeatWhenOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new RepeatWhenSubscriber(subscriber, this.notifier, source));
+    };
+    return RepeatWhenOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var RepeatWhenSubscriber = (function (_super) {
+    __extends(RepeatWhenSubscriber, _super);
+    function RepeatWhenSubscriber(destination, notifier, source) {
+        _super.call(this, destination);
+        this.notifier = notifier;
+        this.source = source;
+        this.sourceIsBeingSubscribedTo = true;
+    }
+    RepeatWhenSubscriber.prototype.notifyNext = function (outerValue, innerValue, outerIndex, innerIndex, innerSub) {
+        this.sourceIsBeingSubscribedTo = true;
+        this.source.subscribe(this);
+    };
+    RepeatWhenSubscriber.prototype.notifyComplete = function (innerSub) {
+        if (this.sourceIsBeingSubscribedTo === false) {
+            return _super.prototype.complete.call(this);
+        }
+    };
+    RepeatWhenSubscriber.prototype.complete = function () {
+        this.sourceIsBeingSubscribedTo = false;
+        if (!this.isStopped) {
+            if (!this.retries) {
+                this.subscribeToRetries();
+            }
+            else if (this.retriesSubscription.closed) {
+                return _super.prototype.complete.call(this);
+            }
+            this._unsubscribeAndRecycle();
+            this.notifications.next();
+        }
+    };
+    RepeatWhenSubscriber.prototype._unsubscribe = function () {
+        var _a = this, notifications = _a.notifications, retriesSubscription = _a.retriesSubscription;
+        if (notifications) {
+            notifications.unsubscribe();
+            this.notifications = null;
+        }
+        if (retriesSubscription) {
+            retriesSubscription.unsubscribe();
+            this.retriesSubscription = null;
+        }
+        this.retries = null;
+    };
+    RepeatWhenSubscriber.prototype._unsubscribeAndRecycle = function () {
+        var _a = this, notifications = _a.notifications, retries = _a.retries, retriesSubscription = _a.retriesSubscription;
+        this.notifications = null;
+        this.retries = null;
+        this.retriesSubscription = null;
+        _super.prototype._unsubscribeAndRecycle.call(this);
+        this.notifications = notifications;
+        this.retries = retries;
+        this.retriesSubscription = retriesSubscription;
+        return this;
+    };
+    RepeatWhenSubscriber.prototype.subscribeToRetries = function () {
+        this.notifications = new Subject_1.Subject();
+        var retries = tryCatch_1.tryCatch(this.notifier)(this.notifications);
+        if (retries === errorObject_1.errorObject) {
+            return _super.prototype.complete.call(this);
+        }
+        this.retries = retries;
+        this.retriesSubscription = subscribeToResult_1.subscribeToResult(this, retries);
+    };
+    return RepeatWhenSubscriber;
+}(OuterSubscriber_1.OuterSubscriber));
+//# sourceMappingURL=repeatWhen.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/retry.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subscriber_1 = __webpack_require__("../../node_modules/rxjs/Subscriber.js");
+/**
+ * Returns an Observable that mirrors the source Observable with the exception of an `error`. If the source Observable
+ * calls `error`, this method will resubscribe to the source Observable for a maximum of `count` resubscriptions (given
+ * as a number parameter) rather than propagating the `error` call.
+ *
+ * <img src="./img/retry.png" width="100%">
+ *
+ * Any and all items emitted by the source Observable will be emitted by the resulting Observable, even those emitted
+ * during failed subscriptions. For example, if an Observable fails at first but emits [1, 2] then succeeds the second
+ * time and emits: [1, 2, 3, 4, 5] then the complete stream of emissions and notifications
+ * would be: [1, 2, 1, 2, 3, 4, 5, `complete`].
+ * @param {number} count - Number of retry attempts before failing.
+ * @return {Observable} The source Observable modified with the retry logic.
+ * @method retry
+ * @owner Observable
+ */
+function retry(count) {
+    if (count === void 0) { count = -1; }
+    return this.lift(new RetryOperator(count, this));
+}
+exports.retry = retry;
+var RetryOperator = (function () {
+    function RetryOperator(count, source) {
+        this.count = count;
+        this.source = source;
+    }
+    RetryOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new RetrySubscriber(subscriber, this.count, this.source));
+    };
+    return RetryOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var RetrySubscriber = (function (_super) {
+    __extends(RetrySubscriber, _super);
+    function RetrySubscriber(destination, count, source) {
+        _super.call(this, destination);
+        this.count = count;
+        this.source = source;
+    }
+    RetrySubscriber.prototype.error = function (err) {
+        if (!this.isStopped) {
+            var _a = this, source = _a.source, count = _a.count;
+            if (count === 0) {
+                return _super.prototype.error.call(this, err);
+            }
+            else if (count > -1) {
+                this.count = count - 1;
+            }
+            source.subscribe(this._unsubscribeAndRecycle());
+        }
+    };
+    return RetrySubscriber;
+}(Subscriber_1.Subscriber));
+//# sourceMappingURL=retry.js.map
+
+/***/ }),
+
 /***/ "../../node_modules/rxjs/operator/retryWhen.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -48789,6 +54946,496 @@ var RetryWhenSubscriber = (function (_super) {
 
 /***/ }),
 
+/***/ "../../node_modules/rxjs/operator/sample.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var OuterSubscriber_1 = __webpack_require__("../../node_modules/rxjs/OuterSubscriber.js");
+var subscribeToResult_1 = __webpack_require__("../../node_modules/rxjs/util/subscribeToResult.js");
+/**
+ * Emits the most recently emitted value from the source Observable whenever
+ * another Observable, the `notifier`, emits.
+ *
+ * <span class="informal">It's like {@link sampleTime}, but samples whenever
+ * the `notifier` Observable emits something.</span>
+ *
+ * <img src="./img/sample.png" width="100%">
+ *
+ * Whenever the `notifier` Observable emits a value or completes, `sample`
+ * looks at the source Observable and emits whichever value it has most recently
+ * emitted since the previous sampling, unless the source has not emitted
+ * anything since the previous sampling. The `notifier` is subscribed to as soon
+ * as the output Observable is subscribed.
+ *
+ * @example <caption>On every click, sample the most recent "seconds" timer</caption>
+ * var seconds = Rx.Observable.interval(1000);
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var result = seconds.sample(clicks);
+ * result.subscribe(x => console.log(x));
+ *
+ * @see {@link audit}
+ * @see {@link debounce}
+ * @see {@link sampleTime}
+ * @see {@link throttle}
+ *
+ * @param {Observable<any>} notifier The Observable to use for sampling the
+ * source Observable.
+ * @return {Observable<T>} An Observable that emits the results of sampling the
+ * values emitted by the source Observable whenever the notifier Observable
+ * emits value or completes.
+ * @method sample
+ * @owner Observable
+ */
+function sample(notifier) {
+    return this.lift(new SampleOperator(notifier));
+}
+exports.sample = sample;
+var SampleOperator = (function () {
+    function SampleOperator(notifier) {
+        this.notifier = notifier;
+    }
+    SampleOperator.prototype.call = function (subscriber, source) {
+        var sampleSubscriber = new SampleSubscriber(subscriber);
+        var subscription = source.subscribe(sampleSubscriber);
+        subscription.add(subscribeToResult_1.subscribeToResult(sampleSubscriber, this.notifier));
+        return subscription;
+    };
+    return SampleOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var SampleSubscriber = (function (_super) {
+    __extends(SampleSubscriber, _super);
+    function SampleSubscriber() {
+        _super.apply(this, arguments);
+        this.hasValue = false;
+    }
+    SampleSubscriber.prototype._next = function (value) {
+        this.value = value;
+        this.hasValue = true;
+    };
+    SampleSubscriber.prototype.notifyNext = function (outerValue, innerValue, outerIndex, innerIndex, innerSub) {
+        this.emitValue();
+    };
+    SampleSubscriber.prototype.notifyComplete = function () {
+        this.emitValue();
+    };
+    SampleSubscriber.prototype.emitValue = function () {
+        if (this.hasValue) {
+            this.hasValue = false;
+            this.destination.next(this.value);
+        }
+    };
+    return SampleSubscriber;
+}(OuterSubscriber_1.OuterSubscriber));
+//# sourceMappingURL=sample.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/sampleTime.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subscriber_1 = __webpack_require__("../../node_modules/rxjs/Subscriber.js");
+var async_1 = __webpack_require__("../../node_modules/rxjs/scheduler/async.js");
+/**
+ * Emits the most recently emitted value from the source Observable within
+ * periodic time intervals.
+ *
+ * <span class="informal">Samples the source Observable at periodic time
+ * intervals, emitting what it samples.</span>
+ *
+ * <img src="./img/sampleTime.png" width="100%">
+ *
+ * `sampleTime` periodically looks at the source Observable and emits whichever
+ * value it has most recently emitted since the previous sampling, unless the
+ * source has not emitted anything since the previous sampling. The sampling
+ * happens periodically in time every `period` milliseconds (or the time unit
+ * defined by the optional `scheduler` argument). The sampling starts as soon as
+ * the output Observable is subscribed.
+ *
+ * @example <caption>Every second, emit the most recent click at most once</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var result = clicks.sampleTime(1000);
+ * result.subscribe(x => console.log(x));
+ *
+ * @see {@link auditTime}
+ * @see {@link debounceTime}
+ * @see {@link delay}
+ * @see {@link sample}
+ * @see {@link throttleTime}
+ *
+ * @param {number} period The sampling period expressed in milliseconds or the
+ * time unit determined internally by the optional `scheduler`.
+ * @param {Scheduler} [scheduler=async] The {@link IScheduler} to use for
+ * managing the timers that handle the sampling.
+ * @return {Observable<T>} An Observable that emits the results of sampling the
+ * values emitted by the source Observable at the specified time interval.
+ * @method sampleTime
+ * @owner Observable
+ */
+function sampleTime(period, scheduler) {
+    if (scheduler === void 0) { scheduler = async_1.async; }
+    return this.lift(new SampleTimeOperator(period, scheduler));
+}
+exports.sampleTime = sampleTime;
+var SampleTimeOperator = (function () {
+    function SampleTimeOperator(period, scheduler) {
+        this.period = period;
+        this.scheduler = scheduler;
+    }
+    SampleTimeOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new SampleTimeSubscriber(subscriber, this.period, this.scheduler));
+    };
+    return SampleTimeOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var SampleTimeSubscriber = (function (_super) {
+    __extends(SampleTimeSubscriber, _super);
+    function SampleTimeSubscriber(destination, period, scheduler) {
+        _super.call(this, destination);
+        this.period = period;
+        this.scheduler = scheduler;
+        this.hasValue = false;
+        this.add(scheduler.schedule(dispatchNotification, period, { subscriber: this, period: period }));
+    }
+    SampleTimeSubscriber.prototype._next = function (value) {
+        this.lastValue = value;
+        this.hasValue = true;
+    };
+    SampleTimeSubscriber.prototype.notifyNext = function () {
+        if (this.hasValue) {
+            this.hasValue = false;
+            this.destination.next(this.lastValue);
+        }
+    };
+    return SampleTimeSubscriber;
+}(Subscriber_1.Subscriber));
+function dispatchNotification(state) {
+    var subscriber = state.subscriber, period = state.period;
+    subscriber.notifyNext();
+    this.schedule(state, period);
+}
+//# sourceMappingURL=sampleTime.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/scan.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subscriber_1 = __webpack_require__("../../node_modules/rxjs/Subscriber.js");
+/* tslint:enable:max-line-length */
+/**
+ * Applies an accumulator function over the source Observable, and returns each
+ * intermediate result, with an optional seed value.
+ *
+ * <span class="informal">It's like {@link reduce}, but emits the current
+ * accumulation whenever the source emits a value.</span>
+ *
+ * <img src="./img/scan.png" width="100%">
+ *
+ * Combines together all values emitted on the source, using an accumulator
+ * function that knows how to join a new source value into the accumulation from
+ * the past. Is similar to {@link reduce}, but emits the intermediate
+ * accumulations.
+ *
+ * Returns an Observable that applies a specified `accumulator` function to each
+ * item emitted by the source Observable. If a `seed` value is specified, then
+ * that value will be used as the initial value for the accumulator. If no seed
+ * value is specified, the first item of the source is used as the seed.
+ *
+ * @example <caption>Count the number of click events</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var ones = clicks.mapTo(1);
+ * var seed = 0;
+ * var count = ones.scan((acc, one) => acc + one, seed);
+ * count.subscribe(x => console.log(x));
+ *
+ * @see {@link expand}
+ * @see {@link mergeScan}
+ * @see {@link reduce}
+ *
+ * @param {function(acc: R, value: T, index: number): R} accumulator
+ * The accumulator function called on each source value.
+ * @param {T|R} [seed] The initial accumulation value.
+ * @return {Observable<R>} An observable of the accumulated values.
+ * @method scan
+ * @owner Observable
+ */
+function scan(accumulator, seed) {
+    var hasSeed = false;
+    // providing a seed of `undefined` *should* be valid and trigger
+    // hasSeed! so don't use `seed !== undefined` checks!
+    // For this reason, we have to check it here at the original call site
+    // otherwise inside Operator/Subscriber we won't know if `undefined`
+    // means they didn't provide anything or if they literally provided `undefined`
+    if (arguments.length >= 2) {
+        hasSeed = true;
+    }
+    return this.lift(new ScanOperator(accumulator, seed, hasSeed));
+}
+exports.scan = scan;
+var ScanOperator = (function () {
+    function ScanOperator(accumulator, seed, hasSeed) {
+        if (hasSeed === void 0) { hasSeed = false; }
+        this.accumulator = accumulator;
+        this.seed = seed;
+        this.hasSeed = hasSeed;
+    }
+    ScanOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new ScanSubscriber(subscriber, this.accumulator, this.seed, this.hasSeed));
+    };
+    return ScanOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var ScanSubscriber = (function (_super) {
+    __extends(ScanSubscriber, _super);
+    function ScanSubscriber(destination, accumulator, _seed, hasSeed) {
+        _super.call(this, destination);
+        this.accumulator = accumulator;
+        this._seed = _seed;
+        this.hasSeed = hasSeed;
+        this.index = 0;
+    }
+    Object.defineProperty(ScanSubscriber.prototype, "seed", {
+        get: function () {
+            return this._seed;
+        },
+        set: function (value) {
+            this.hasSeed = true;
+            this._seed = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    ScanSubscriber.prototype._next = function (value) {
+        if (!this.hasSeed) {
+            this.seed = value;
+            this.destination.next(value);
+        }
+        else {
+            return this._tryNext(value);
+        }
+    };
+    ScanSubscriber.prototype._tryNext = function (value) {
+        var index = this.index++;
+        var result;
+        try {
+            result = this.accumulator(this.seed, value, index);
+        }
+        catch (err) {
+            this.destination.error(err);
+        }
+        this.seed = result;
+        this.destination.next(result);
+    };
+    return ScanSubscriber;
+}(Subscriber_1.Subscriber));
+//# sourceMappingURL=scan.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/sequenceEqual.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subscriber_1 = __webpack_require__("../../node_modules/rxjs/Subscriber.js");
+var tryCatch_1 = __webpack_require__("../../node_modules/rxjs/util/tryCatch.js");
+var errorObject_1 = __webpack_require__("../../node_modules/rxjs/util/errorObject.js");
+/**
+ * Compares all values of two observables in sequence using an optional comparor function
+ * and returns an observable of a single boolean value representing whether or not the two sequences
+ * are equal.
+ *
+ * <span class="informal">Checks to see of all values emitted by both observables are equal, in order.</span>
+ *
+ * <img src="./img/sequenceEqual.png" width="100%">
+ *
+ * `sequenceEqual` subscribes to two observables and buffers incoming values from each observable. Whenever either
+ * observable emits a value, the value is buffered and the buffers are shifted and compared from the bottom
+ * up; If any value pair doesn't match, the returned observable will emit `false` and complete. If one of the
+ * observables completes, the operator will wait for the other observable to complete; If the other
+ * observable emits before completing, the returned observable will emit `false` and complete. If one observable never
+ * completes or emits after the other complets, the returned observable will never complete.
+ *
+ * @example <caption>figure out if the Konami code matches</caption>
+ * var code = Rx.Observable.from([
+ *  "ArrowUp",
+ *  "ArrowUp",
+ *  "ArrowDown",
+ *  "ArrowDown",
+ *  "ArrowLeft",
+ *  "ArrowRight",
+ *  "ArrowLeft",
+ *  "ArrowRight",
+ *  "KeyB",
+ *  "KeyA",
+ *  "Enter" // no start key, clearly.
+ * ]);
+ *
+ * var keys = Rx.Observable.fromEvent(document, 'keyup')
+ *  .map(e => e.code);
+ * var matches = keys.bufferCount(11, 1)
+ *  .mergeMap(
+ *    last11 =>
+ *      Rx.Observable.from(last11)
+ *        .sequenceEqual(code)
+ *   );
+ * matches.subscribe(matched => console.log('Successful cheat at Contra? ', matched));
+ *
+ * @see {@link combineLatest}
+ * @see {@link zip}
+ * @see {@link withLatestFrom}
+ *
+ * @param {Observable} compareTo The observable sequence to compare the source sequence to.
+ * @param {function} [comparor] An optional function to compare each value pair
+ * @return {Observable} An Observable of a single boolean value representing whether or not
+ * the values emitted by both observables were equal in sequence.
+ * @method sequenceEqual
+ * @owner Observable
+ */
+function sequenceEqual(compareTo, comparor) {
+    return this.lift(new SequenceEqualOperator(compareTo, comparor));
+}
+exports.sequenceEqual = sequenceEqual;
+var SequenceEqualOperator = (function () {
+    function SequenceEqualOperator(compareTo, comparor) {
+        this.compareTo = compareTo;
+        this.comparor = comparor;
+    }
+    SequenceEqualOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new SequenceEqualSubscriber(subscriber, this.compareTo, this.comparor));
+    };
+    return SequenceEqualOperator;
+}());
+exports.SequenceEqualOperator = SequenceEqualOperator;
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var SequenceEqualSubscriber = (function (_super) {
+    __extends(SequenceEqualSubscriber, _super);
+    function SequenceEqualSubscriber(destination, compareTo, comparor) {
+        _super.call(this, destination);
+        this.compareTo = compareTo;
+        this.comparor = comparor;
+        this._a = [];
+        this._b = [];
+        this._oneComplete = false;
+        this.add(compareTo.subscribe(new SequenceEqualCompareToSubscriber(destination, this)));
+    }
+    SequenceEqualSubscriber.prototype._next = function (value) {
+        if (this._oneComplete && this._b.length === 0) {
+            this.emit(false);
+        }
+        else {
+            this._a.push(value);
+            this.checkValues();
+        }
+    };
+    SequenceEqualSubscriber.prototype._complete = function () {
+        if (this._oneComplete) {
+            this.emit(this._a.length === 0 && this._b.length === 0);
+        }
+        else {
+            this._oneComplete = true;
+        }
+    };
+    SequenceEqualSubscriber.prototype.checkValues = function () {
+        var _c = this, _a = _c._a, _b = _c._b, comparor = _c.comparor;
+        while (_a.length > 0 && _b.length > 0) {
+            var a = _a.shift();
+            var b = _b.shift();
+            var areEqual = false;
+            if (comparor) {
+                areEqual = tryCatch_1.tryCatch(comparor)(a, b);
+                if (areEqual === errorObject_1.errorObject) {
+                    this.destination.error(errorObject_1.errorObject.e);
+                }
+            }
+            else {
+                areEqual = a === b;
+            }
+            if (!areEqual) {
+                this.emit(false);
+            }
+        }
+    };
+    SequenceEqualSubscriber.prototype.emit = function (value) {
+        var destination = this.destination;
+        destination.next(value);
+        destination.complete();
+    };
+    SequenceEqualSubscriber.prototype.nextB = function (value) {
+        if (this._oneComplete && this._a.length === 0) {
+            this.emit(false);
+        }
+        else {
+            this._b.push(value);
+            this.checkValues();
+        }
+    };
+    return SequenceEqualSubscriber;
+}(Subscriber_1.Subscriber));
+exports.SequenceEqualSubscriber = SequenceEqualSubscriber;
+var SequenceEqualCompareToSubscriber = (function (_super) {
+    __extends(SequenceEqualCompareToSubscriber, _super);
+    function SequenceEqualCompareToSubscriber(destination, parent) {
+        _super.call(this, destination);
+        this.parent = parent;
+    }
+    SequenceEqualCompareToSubscriber.prototype._next = function (value) {
+        this.parent.nextB(value);
+    };
+    SequenceEqualCompareToSubscriber.prototype._error = function (err) {
+        this.parent.error(err);
+    };
+    SequenceEqualCompareToSubscriber.prototype._complete = function () {
+        this.parent._complete();
+    };
+    return SequenceEqualCompareToSubscriber;
+}(Subscriber_1.Subscriber));
+//# sourceMappingURL=sequenceEqual.js.map
+
+/***/ }),
+
 /***/ "../../node_modules/rxjs/operator/share.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -48817,6 +55464,648 @@ function share() {
 exports.share = share;
 ;
 //# sourceMappingURL=share.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/shareReplay.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var multicast_1 = __webpack_require__("../../node_modules/rxjs/operator/multicast.js");
+var ReplaySubject_1 = __webpack_require__("../../node_modules/rxjs/ReplaySubject.js");
+/**
+ * @method shareReplay
+ * @owner Observable
+ */
+function shareReplay(bufferSize, windowTime, scheduler) {
+    var subject;
+    var connectable = multicast_1.multicast.call(this, function shareReplaySubjectFactory() {
+        if (this._isComplete) {
+            return subject;
+        }
+        else {
+            return (subject = new ReplaySubject_1.ReplaySubject(bufferSize, windowTime, scheduler));
+        }
+    });
+    return connectable.refCount();
+}
+exports.shareReplay = shareReplay;
+;
+//# sourceMappingURL=shareReplay.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/single.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subscriber_1 = __webpack_require__("../../node_modules/rxjs/Subscriber.js");
+var EmptyError_1 = __webpack_require__("../../node_modules/rxjs/util/EmptyError.js");
+/**
+ * Returns an Observable that emits the single item emitted by the source Observable that matches a specified
+ * predicate, if that Observable emits one such item. If the source Observable emits more than one such item or no
+ * such items, notify of an IllegalArgumentException or NoSuchElementException respectively.
+ *
+ * <img src="./img/single.png" width="100%">
+ *
+ * @throws {EmptyError} Delivers an EmptyError to the Observer's `error`
+ * callback if the Observable completes before any `next` notification was sent.
+ * @param {Function} predicate - A predicate function to evaluate items emitted by the source Observable.
+ * @return {Observable<T>} An Observable that emits the single item emitted by the source Observable that matches
+ * the predicate.
+ .
+ * @method single
+ * @owner Observable
+ */
+function single(predicate) {
+    return this.lift(new SingleOperator(predicate, this));
+}
+exports.single = single;
+var SingleOperator = (function () {
+    function SingleOperator(predicate, source) {
+        this.predicate = predicate;
+        this.source = source;
+    }
+    SingleOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new SingleSubscriber(subscriber, this.predicate, this.source));
+    };
+    return SingleOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var SingleSubscriber = (function (_super) {
+    __extends(SingleSubscriber, _super);
+    function SingleSubscriber(destination, predicate, source) {
+        _super.call(this, destination);
+        this.predicate = predicate;
+        this.source = source;
+        this.seenValue = false;
+        this.index = 0;
+    }
+    SingleSubscriber.prototype.applySingleValue = function (value) {
+        if (this.seenValue) {
+            this.destination.error('Sequence contains more than one element');
+        }
+        else {
+            this.seenValue = true;
+            this.singleValue = value;
+        }
+    };
+    SingleSubscriber.prototype._next = function (value) {
+        var index = this.index++;
+        if (this.predicate) {
+            this.tryNext(value, index);
+        }
+        else {
+            this.applySingleValue(value);
+        }
+    };
+    SingleSubscriber.prototype.tryNext = function (value, index) {
+        try {
+            if (this.predicate(value, index, this.source)) {
+                this.applySingleValue(value);
+            }
+        }
+        catch (err) {
+            this.destination.error(err);
+        }
+    };
+    SingleSubscriber.prototype._complete = function () {
+        var destination = this.destination;
+        if (this.index > 0) {
+            destination.next(this.seenValue ? this.singleValue : undefined);
+            destination.complete();
+        }
+        else {
+            destination.error(new EmptyError_1.EmptyError);
+        }
+    };
+    return SingleSubscriber;
+}(Subscriber_1.Subscriber));
+//# sourceMappingURL=single.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/skip.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subscriber_1 = __webpack_require__("../../node_modules/rxjs/Subscriber.js");
+/**
+ * Returns an Observable that skips the first `count` items emitted by the source Observable.
+ *
+ * <img src="./img/skip.png" width="100%">
+ *
+ * @param {Number} count - The number of times, items emitted by source Observable should be skipped.
+ * @return {Observable} An Observable that skips values emitted by the source Observable.
+ *
+ * @method skip
+ * @owner Observable
+ */
+function skip(count) {
+    return this.lift(new SkipOperator(count));
+}
+exports.skip = skip;
+var SkipOperator = (function () {
+    function SkipOperator(total) {
+        this.total = total;
+    }
+    SkipOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new SkipSubscriber(subscriber, this.total));
+    };
+    return SkipOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var SkipSubscriber = (function (_super) {
+    __extends(SkipSubscriber, _super);
+    function SkipSubscriber(destination, total) {
+        _super.call(this, destination);
+        this.total = total;
+        this.count = 0;
+    }
+    SkipSubscriber.prototype._next = function (x) {
+        if (++this.count > this.total) {
+            this.destination.next(x);
+        }
+    };
+    return SkipSubscriber;
+}(Subscriber_1.Subscriber));
+//# sourceMappingURL=skip.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/skipLast.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subscriber_1 = __webpack_require__("../../node_modules/rxjs/Subscriber.js");
+var ArgumentOutOfRangeError_1 = __webpack_require__("../../node_modules/rxjs/util/ArgumentOutOfRangeError.js");
+/**
+ * Skip the last `count` values emitted by the source Observable.
+ *
+ * <img src="./img/skipLast.png" width="100%">
+ *
+ * `skipLast` returns an Observable that accumulates a queue with a length
+ * enough to store the first `count` values. As more values are received,
+ * values are taken from the front of the queue and produced on the result
+ * sequence. This causes values to be delayed.
+ *
+ * @example <caption>Skip the last 2 values of an Observable with many values</caption>
+ * var many = Rx.Observable.range(1, 5);
+ * var skipLastTwo = many.skipLast(2);
+ * skipLastTwo.subscribe(x => console.log(x));
+ *
+ * // Results in:
+ * // 1 2 3
+ *
+ * @see {@link skip}
+ * @see {@link skipUntil}
+ * @see {@link skipWhile}
+ * @see {@link take}
+ *
+ * @throws {ArgumentOutOfRangeError} When using `skipLast(i)`, it throws
+ * ArgumentOutOrRangeError if `i < 0`.
+ *
+ * @param {number} count Number of elements to skip from the end of the source Observable.
+ * @returns {Observable<T>} An Observable that skips the last count values
+ * emitted by the source Observable.
+ * @method skipLast
+ * @owner Observable
+ */
+function skipLast(count) {
+    return this.lift(new SkipLastOperator(count));
+}
+exports.skipLast = skipLast;
+var SkipLastOperator = (function () {
+    function SkipLastOperator(_skipCount) {
+        this._skipCount = _skipCount;
+        if (this._skipCount < 0) {
+            throw new ArgumentOutOfRangeError_1.ArgumentOutOfRangeError;
+        }
+    }
+    SkipLastOperator.prototype.call = function (subscriber, source) {
+        if (this._skipCount === 0) {
+            // If we don't want to skip any values then just subscribe
+            // to Subscriber without any further logic.
+            return source.subscribe(new Subscriber_1.Subscriber(subscriber));
+        }
+        else {
+            return source.subscribe(new SkipLastSubscriber(subscriber, this._skipCount));
+        }
+    };
+    return SkipLastOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var SkipLastSubscriber = (function (_super) {
+    __extends(SkipLastSubscriber, _super);
+    function SkipLastSubscriber(destination, _skipCount) {
+        _super.call(this, destination);
+        this._skipCount = _skipCount;
+        this._count = 0;
+        this._ring = new Array(_skipCount);
+    }
+    SkipLastSubscriber.prototype._next = function (value) {
+        var skipCount = this._skipCount;
+        var count = this._count++;
+        if (count < skipCount) {
+            this._ring[count] = value;
+        }
+        else {
+            var currentIndex = count % skipCount;
+            var ring = this._ring;
+            var oldValue = ring[currentIndex];
+            ring[currentIndex] = value;
+            this.destination.next(oldValue);
+        }
+    };
+    return SkipLastSubscriber;
+}(Subscriber_1.Subscriber));
+//# sourceMappingURL=skipLast.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/skipUntil.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var OuterSubscriber_1 = __webpack_require__("../../node_modules/rxjs/OuterSubscriber.js");
+var subscribeToResult_1 = __webpack_require__("../../node_modules/rxjs/util/subscribeToResult.js");
+/**
+ * Returns an Observable that skips items emitted by the source Observable until a second Observable emits an item.
+ *
+ * <img src="./img/skipUntil.png" width="100%">
+ *
+ * @param {Observable} notifier - The second Observable that has to emit an item before the source Observable's elements begin to
+ * be mirrored by the resulting Observable.
+ * @return {Observable<T>} An Observable that skips items from the source Observable until the second Observable emits
+ * an item, then emits the remaining items.
+ * @method skipUntil
+ * @owner Observable
+ */
+function skipUntil(notifier) {
+    return this.lift(new SkipUntilOperator(notifier));
+}
+exports.skipUntil = skipUntil;
+var SkipUntilOperator = (function () {
+    function SkipUntilOperator(notifier) {
+        this.notifier = notifier;
+    }
+    SkipUntilOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new SkipUntilSubscriber(subscriber, this.notifier));
+    };
+    return SkipUntilOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var SkipUntilSubscriber = (function (_super) {
+    __extends(SkipUntilSubscriber, _super);
+    function SkipUntilSubscriber(destination, notifier) {
+        _super.call(this, destination);
+        this.hasValue = false;
+        this.isInnerStopped = false;
+        this.add(subscribeToResult_1.subscribeToResult(this, notifier));
+    }
+    SkipUntilSubscriber.prototype._next = function (value) {
+        if (this.hasValue) {
+            _super.prototype._next.call(this, value);
+        }
+    };
+    SkipUntilSubscriber.prototype._complete = function () {
+        if (this.isInnerStopped) {
+            _super.prototype._complete.call(this);
+        }
+        else {
+            this.unsubscribe();
+        }
+    };
+    SkipUntilSubscriber.prototype.notifyNext = function (outerValue, innerValue, outerIndex, innerIndex, innerSub) {
+        this.hasValue = true;
+    };
+    SkipUntilSubscriber.prototype.notifyComplete = function () {
+        this.isInnerStopped = true;
+        if (this.isStopped) {
+            _super.prototype._complete.call(this);
+        }
+    };
+    return SkipUntilSubscriber;
+}(OuterSubscriber_1.OuterSubscriber));
+//# sourceMappingURL=skipUntil.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/skipWhile.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subscriber_1 = __webpack_require__("../../node_modules/rxjs/Subscriber.js");
+/**
+ * Returns an Observable that skips all items emitted by the source Observable as long as a specified condition holds
+ * true, but emits all further source items as soon as the condition becomes false.
+ *
+ * <img src="./img/skipWhile.png" width="100%">
+ *
+ * @param {Function} predicate - A function to test each item emitted from the source Observable.
+ * @return {Observable<T>} An Observable that begins emitting items emitted by the source Observable when the
+ * specified predicate becomes false.
+ * @method skipWhile
+ * @owner Observable
+ */
+function skipWhile(predicate) {
+    return this.lift(new SkipWhileOperator(predicate));
+}
+exports.skipWhile = skipWhile;
+var SkipWhileOperator = (function () {
+    function SkipWhileOperator(predicate) {
+        this.predicate = predicate;
+    }
+    SkipWhileOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new SkipWhileSubscriber(subscriber, this.predicate));
+    };
+    return SkipWhileOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var SkipWhileSubscriber = (function (_super) {
+    __extends(SkipWhileSubscriber, _super);
+    function SkipWhileSubscriber(destination, predicate) {
+        _super.call(this, destination);
+        this.predicate = predicate;
+        this.skipping = true;
+        this.index = 0;
+    }
+    SkipWhileSubscriber.prototype._next = function (value) {
+        var destination = this.destination;
+        if (this.skipping) {
+            this.tryCallPredicate(value);
+        }
+        if (!this.skipping) {
+            destination.next(value);
+        }
+    };
+    SkipWhileSubscriber.prototype.tryCallPredicate = function (value) {
+        try {
+            var result = this.predicate(value, this.index++);
+            this.skipping = Boolean(result);
+        }
+        catch (err) {
+            this.destination.error(err);
+        }
+    };
+    return SkipWhileSubscriber;
+}(Subscriber_1.Subscriber));
+//# sourceMappingURL=skipWhile.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/startWith.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var ArrayObservable_1 = __webpack_require__("../../node_modules/rxjs/observable/ArrayObservable.js");
+var ScalarObservable_1 = __webpack_require__("../../node_modules/rxjs/observable/ScalarObservable.js");
+var EmptyObservable_1 = __webpack_require__("../../node_modules/rxjs/observable/EmptyObservable.js");
+var concat_1 = __webpack_require__("../../node_modules/rxjs/operator/concat.js");
+var isScheduler_1 = __webpack_require__("../../node_modules/rxjs/util/isScheduler.js");
+/* tslint:enable:max-line-length */
+/**
+ * Returns an Observable that emits the items you specify as arguments before it begins to emit
+ * items emitted by the source Observable.
+ *
+ * <img src="./img/startWith.png" width="100%">
+ *
+ * @param {...T} values - Items you want the modified Observable to emit first.
+ * @param {Scheduler} [scheduler] - A {@link IScheduler} to use for scheduling
+ * the emissions of the `next` notifications.
+ * @return {Observable} An Observable that emits the items in the specified Iterable and then emits the items
+ * emitted by the source Observable.
+ * @method startWith
+ * @owner Observable
+ */
+function startWith() {
+    var array = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        array[_i - 0] = arguments[_i];
+    }
+    var scheduler = array[array.length - 1];
+    if (isScheduler_1.isScheduler(scheduler)) {
+        array.pop();
+    }
+    else {
+        scheduler = null;
+    }
+    var len = array.length;
+    if (len === 1) {
+        return concat_1.concatStatic(new ScalarObservable_1.ScalarObservable(array[0], scheduler), this);
+    }
+    else if (len > 1) {
+        return concat_1.concatStatic(new ArrayObservable_1.ArrayObservable(array, scheduler), this);
+    }
+    else {
+        return concat_1.concatStatic(new EmptyObservable_1.EmptyObservable(scheduler), this);
+    }
+}
+exports.startWith = startWith;
+//# sourceMappingURL=startWith.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/subscribeOn.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var SubscribeOnObservable_1 = __webpack_require__("../../node_modules/rxjs/observable/SubscribeOnObservable.js");
+/**
+ * Asynchronously subscribes Observers to this Observable on the specified IScheduler.
+ *
+ * <img src="./img/subscribeOn.png" width="100%">
+ *
+ * @param {Scheduler} scheduler - The IScheduler to perform subscription actions on.
+ * @return {Observable<T>} The source Observable modified so that its subscriptions happen on the specified IScheduler.
+ .
+ * @method subscribeOn
+ * @owner Observable
+ */
+function subscribeOn(scheduler, delay) {
+    if (delay === void 0) { delay = 0; }
+    return this.lift(new SubscribeOnOperator(scheduler, delay));
+}
+exports.subscribeOn = subscribeOn;
+var SubscribeOnOperator = (function () {
+    function SubscribeOnOperator(scheduler, delay) {
+        this.scheduler = scheduler;
+        this.delay = delay;
+    }
+    SubscribeOnOperator.prototype.call = function (subscriber, source) {
+        return new SubscribeOnObservable_1.SubscribeOnObservable(source, this.delay, this.scheduler).subscribe(subscriber);
+    };
+    return SubscribeOnOperator;
+}());
+//# sourceMappingURL=subscribeOn.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/switch.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var OuterSubscriber_1 = __webpack_require__("../../node_modules/rxjs/OuterSubscriber.js");
+var subscribeToResult_1 = __webpack_require__("../../node_modules/rxjs/util/subscribeToResult.js");
+/**
+ * Converts a higher-order Observable into a first-order Observable by
+ * subscribing to only the most recently emitted of those inner Observables.
+ *
+ * <span class="informal">Flattens an Observable-of-Observables by dropping the
+ * previous inner Observable once a new one appears.</span>
+ *
+ * <img src="./img/switch.png" width="100%">
+ *
+ * `switch` subscribes to an Observable that emits Observables, also known as a
+ * higher-order Observable. Each time it observes one of these emitted inner
+ * Observables, the output Observable subscribes to the inner Observable and
+ * begins emitting the items emitted by that. So far, it behaves
+ * like {@link mergeAll}. However, when a new inner Observable is emitted,
+ * `switch` unsubscribes from the earlier-emitted inner Observable and
+ * subscribes to the new inner Observable and begins emitting items from it. It
+ * continues to behave like this for subsequent inner Observables.
+ *
+ * @example <caption>Rerun an interval Observable on every click event</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * // Each click event is mapped to an Observable that ticks every second
+ * var higherOrder = clicks.map((ev) => Rx.Observable.interval(1000));
+ * var switched = higherOrder.switch();
+ * // The outcome is that `switched` is essentially a timer that restarts
+ * // on every click. The interval Observables from older clicks do not merge
+ * // with the current interval Observable.
+ * switched.subscribe(x => console.log(x));
+ *
+ * @see {@link combineAll}
+ * @see {@link concatAll}
+ * @see {@link exhaust}
+ * @see {@link mergeAll}
+ * @see {@link switchMap}
+ * @see {@link switchMapTo}
+ * @see {@link zipAll}
+ *
+ * @return {Observable<T>} An Observable that emits the items emitted by the
+ * Observable most recently emitted by the source Observable.
+ * @method switch
+ * @name switch
+ * @owner Observable
+ */
+function _switch() {
+    return this.lift(new SwitchOperator());
+}
+exports._switch = _switch;
+var SwitchOperator = (function () {
+    function SwitchOperator() {
+    }
+    SwitchOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new SwitchSubscriber(subscriber));
+    };
+    return SwitchOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var SwitchSubscriber = (function (_super) {
+    __extends(SwitchSubscriber, _super);
+    function SwitchSubscriber(destination) {
+        _super.call(this, destination);
+        this.active = 0;
+        this.hasCompleted = false;
+    }
+    SwitchSubscriber.prototype._next = function (value) {
+        this.unsubscribeInner();
+        this.active++;
+        this.add(this.innerSubscription = subscribeToResult_1.subscribeToResult(this, value));
+    };
+    SwitchSubscriber.prototype._complete = function () {
+        this.hasCompleted = true;
+        if (this.active === 0) {
+            this.destination.complete();
+        }
+    };
+    SwitchSubscriber.prototype.unsubscribeInner = function () {
+        this.active = this.active > 0 ? this.active - 1 : 0;
+        var innerSubscription = this.innerSubscription;
+        if (innerSubscription) {
+            innerSubscription.unsubscribe();
+            this.remove(innerSubscription);
+        }
+    };
+    SwitchSubscriber.prototype.notifyNext = function (outerValue, innerValue, outerIndex, innerIndex, innerSub) {
+        this.destination.next(innerValue);
+    };
+    SwitchSubscriber.prototype.notifyError = function (err) {
+        this.destination.error(err);
+    };
+    SwitchSubscriber.prototype.notifyComplete = function () {
+        this.unsubscribeInner();
+        if (this.hasCompleted && this.active === 0) {
+            this.destination.complete();
+        }
+    };
+    return SwitchSubscriber;
+}(OuterSubscriber_1.OuterSubscriber));
+//# sourceMappingURL=switch.js.map
 
 /***/ }),
 
@@ -48967,6 +56256,138 @@ var SwitchMapSubscriber = (function (_super) {
 
 /***/ }),
 
+/***/ "../../node_modules/rxjs/operator/switchMapTo.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var OuterSubscriber_1 = __webpack_require__("../../node_modules/rxjs/OuterSubscriber.js");
+var subscribeToResult_1 = __webpack_require__("../../node_modules/rxjs/util/subscribeToResult.js");
+/* tslint:enable:max-line-length */
+/**
+ * Projects each source value to the same Observable which is flattened multiple
+ * times with {@link switch} in the output Observable.
+ *
+ * <span class="informal">It's like {@link switchMap}, but maps each value
+ * always to the same inner Observable.</span>
+ *
+ * <img src="./img/switchMapTo.png" width="100%">
+ *
+ * Maps each source value to the given Observable `innerObservable` regardless
+ * of the source value, and then flattens those resulting Observables into one
+ * single Observable, which is the output Observable. The output Observables
+ * emits values only from the most recently emitted instance of
+ * `innerObservable`.
+ *
+ * @example <caption>Rerun an interval Observable on every click event</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var result = clicks.switchMapTo(Rx.Observable.interval(1000));
+ * result.subscribe(x => console.log(x));
+ *
+ * @see {@link concatMapTo}
+ * @see {@link switch}
+ * @see {@link switchMap}
+ * @see {@link mergeMapTo}
+ *
+ * @param {ObservableInput} innerObservable An Observable to replace each value from
+ * the source Observable.
+ * @param {function(outerValue: T, innerValue: I, outerIndex: number, innerIndex: number): any} [resultSelector]
+ * A function to produce the value on the output Observable based on the values
+ * and the indices of the source (outer) emission and the inner Observable
+ * emission. The arguments passed to this function are:
+ * - `outerValue`: the value that came from the source
+ * - `innerValue`: the value that came from the projected Observable
+ * - `outerIndex`: the "index" of the value that came from the source
+ * - `innerIndex`: the "index" of the value from the projected Observable
+ * @return {Observable} An Observable that emits items from the given
+ * `innerObservable` (and optionally transformed through `resultSelector`) every
+ * time a value is emitted on the source Observable, and taking only the values
+ * from the most recently projected inner Observable.
+ * @method switchMapTo
+ * @owner Observable
+ */
+function switchMapTo(innerObservable, resultSelector) {
+    return this.lift(new SwitchMapToOperator(innerObservable, resultSelector));
+}
+exports.switchMapTo = switchMapTo;
+var SwitchMapToOperator = (function () {
+    function SwitchMapToOperator(observable, resultSelector) {
+        this.observable = observable;
+        this.resultSelector = resultSelector;
+    }
+    SwitchMapToOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new SwitchMapToSubscriber(subscriber, this.observable, this.resultSelector));
+    };
+    return SwitchMapToOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var SwitchMapToSubscriber = (function (_super) {
+    __extends(SwitchMapToSubscriber, _super);
+    function SwitchMapToSubscriber(destination, inner, resultSelector) {
+        _super.call(this, destination);
+        this.inner = inner;
+        this.resultSelector = resultSelector;
+        this.index = 0;
+    }
+    SwitchMapToSubscriber.prototype._next = function (value) {
+        var innerSubscription = this.innerSubscription;
+        if (innerSubscription) {
+            innerSubscription.unsubscribe();
+        }
+        this.add(this.innerSubscription = subscribeToResult_1.subscribeToResult(this, this.inner, value, this.index++));
+    };
+    SwitchMapToSubscriber.prototype._complete = function () {
+        var innerSubscription = this.innerSubscription;
+        if (!innerSubscription || innerSubscription.closed) {
+            _super.prototype._complete.call(this);
+        }
+    };
+    SwitchMapToSubscriber.prototype._unsubscribe = function () {
+        this.innerSubscription = null;
+    };
+    SwitchMapToSubscriber.prototype.notifyComplete = function (innerSub) {
+        this.remove(innerSub);
+        this.innerSubscription = null;
+        if (this.isStopped) {
+            _super.prototype._complete.call(this);
+        }
+    };
+    SwitchMapToSubscriber.prototype.notifyNext = function (outerValue, innerValue, outerIndex, innerIndex, innerSub) {
+        var _a = this, resultSelector = _a.resultSelector, destination = _a.destination;
+        if (resultSelector) {
+            this.tryResultSelector(outerValue, innerValue, outerIndex, innerIndex);
+        }
+        else {
+            destination.next(innerValue);
+        }
+    };
+    SwitchMapToSubscriber.prototype.tryResultSelector = function (outerValue, innerValue, outerIndex, innerIndex) {
+        var _a = this, resultSelector = _a.resultSelector, destination = _a.destination;
+        var result;
+        try {
+            result = resultSelector(outerValue, innerValue, outerIndex, innerIndex);
+        }
+        catch (err) {
+            destination.error(err);
+            return;
+        }
+        destination.next(result);
+    };
+    return SwitchMapToSubscriber;
+}(OuterSubscriber_1.OuterSubscriber));
+//# sourceMappingURL=switchMapTo.js.map
+
+/***/ }),
+
 /***/ "../../node_modules/rxjs/operator/take.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -49063,6 +56484,120 @@ var TakeSubscriber = (function (_super) {
 
 /***/ }),
 
+/***/ "../../node_modules/rxjs/operator/takeLast.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subscriber_1 = __webpack_require__("../../node_modules/rxjs/Subscriber.js");
+var ArgumentOutOfRangeError_1 = __webpack_require__("../../node_modules/rxjs/util/ArgumentOutOfRangeError.js");
+var EmptyObservable_1 = __webpack_require__("../../node_modules/rxjs/observable/EmptyObservable.js");
+/**
+ * Emits only the last `count` values emitted by the source Observable.
+ *
+ * <span class="informal">Remembers the latest `count` values, then emits those
+ * only when the source completes.</span>
+ *
+ * <img src="./img/takeLast.png" width="100%">
+ *
+ * `takeLast` returns an Observable that emits at most the last `count` values
+ * emitted by the source Observable. If the source emits fewer than `count`
+ * values then all of its values are emitted. This operator must wait until the
+ * `complete` notification emission from the source in order to emit the `next`
+ * values on the output Observable, because otherwise it is impossible to know
+ * whether or not more values will be emitted on the source. For this reason,
+ * all values are emitted synchronously, followed by the complete notification.
+ *
+ * @example <caption>Take the last 3 values of an Observable with many values</caption>
+ * var many = Rx.Observable.range(1, 100);
+ * var lastThree = many.takeLast(3);
+ * lastThree.subscribe(x => console.log(x));
+ *
+ * @see {@link take}
+ * @see {@link takeUntil}
+ * @see {@link takeWhile}
+ * @see {@link skip}
+ *
+ * @throws {ArgumentOutOfRangeError} When using `takeLast(i)`, it delivers an
+ * ArgumentOutOrRangeError to the Observer's `error` callback if `i < 0`.
+ *
+ * @param {number} count The maximum number of values to emit from the end of
+ * the sequence of values emitted by the source Observable.
+ * @return {Observable<T>} An Observable that emits at most the last count
+ * values emitted by the source Observable.
+ * @method takeLast
+ * @owner Observable
+ */
+function takeLast(count) {
+    if (count === 0) {
+        return new EmptyObservable_1.EmptyObservable();
+    }
+    else {
+        return this.lift(new TakeLastOperator(count));
+    }
+}
+exports.takeLast = takeLast;
+var TakeLastOperator = (function () {
+    function TakeLastOperator(total) {
+        this.total = total;
+        if (this.total < 0) {
+            throw new ArgumentOutOfRangeError_1.ArgumentOutOfRangeError;
+        }
+    }
+    TakeLastOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new TakeLastSubscriber(subscriber, this.total));
+    };
+    return TakeLastOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var TakeLastSubscriber = (function (_super) {
+    __extends(TakeLastSubscriber, _super);
+    function TakeLastSubscriber(destination, total) {
+        _super.call(this, destination);
+        this.total = total;
+        this.ring = new Array();
+        this.count = 0;
+    }
+    TakeLastSubscriber.prototype._next = function (value) {
+        var ring = this.ring;
+        var total = this.total;
+        var count = this.count++;
+        if (ring.length < total) {
+            ring.push(value);
+        }
+        else {
+            var index = count % total;
+            ring[index] = value;
+        }
+    };
+    TakeLastSubscriber.prototype._complete = function () {
+        var destination = this.destination;
+        var count = this.count;
+        if (count > 0) {
+            var total = this.count >= this.total ? this.total : this.count;
+            var ring = this.ring;
+            for (var i = 0; i < total; i++) {
+                var idx = (count++) % total;
+                destination.next(ring[idx]);
+            }
+        }
+        destination.complete();
+    };
+    return TakeLastSubscriber;
+}(Subscriber_1.Subscriber));
+//# sourceMappingURL=takeLast.js.map
+
+/***/ }),
+
 /***/ "../../node_modules/rxjs/operator/takeUntil.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -49142,6 +56677,105 @@ var TakeUntilSubscriber = (function (_super) {
     return TakeUntilSubscriber;
 }(OuterSubscriber_1.OuterSubscriber));
 //# sourceMappingURL=takeUntil.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/takeWhile.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subscriber_1 = __webpack_require__("../../node_modules/rxjs/Subscriber.js");
+/**
+ * Emits values emitted by the source Observable so long as each value satisfies
+ * the given `predicate`, and then completes as soon as this `predicate` is not
+ * satisfied.
+ *
+ * <span class="informal">Takes values from the source only while they pass the
+ * condition given. When the first value does not satisfy, it completes.</span>
+ *
+ * <img src="./img/takeWhile.png" width="100%">
+ *
+ * `takeWhile` subscribes and begins mirroring the source Observable. Each value
+ * emitted on the source is given to the `predicate` function which returns a
+ * boolean, representing a condition to be satisfied by the source values. The
+ * output Observable emits the source values until such time as the `predicate`
+ * returns false, at which point `takeWhile` stops mirroring the source
+ * Observable and completes the output Observable.
+ *
+ * @example <caption>Emit click events only while the clientX property is greater than 200</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var result = clicks.takeWhile(ev => ev.clientX > 200);
+ * result.subscribe(x => console.log(x));
+ *
+ * @see {@link take}
+ * @see {@link takeLast}
+ * @see {@link takeUntil}
+ * @see {@link skip}
+ *
+ * @param {function(value: T, index: number): boolean} predicate A function that
+ * evaluates a value emitted by the source Observable and returns a boolean.
+ * Also takes the (zero-based) index as the second argument.
+ * @return {Observable<T>} An Observable that emits the values from the source
+ * Observable so long as each value satisfies the condition defined by the
+ * `predicate`, then completes.
+ * @method takeWhile
+ * @owner Observable
+ */
+function takeWhile(predicate) {
+    return this.lift(new TakeWhileOperator(predicate));
+}
+exports.takeWhile = takeWhile;
+var TakeWhileOperator = (function () {
+    function TakeWhileOperator(predicate) {
+        this.predicate = predicate;
+    }
+    TakeWhileOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new TakeWhileSubscriber(subscriber, this.predicate));
+    };
+    return TakeWhileOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var TakeWhileSubscriber = (function (_super) {
+    __extends(TakeWhileSubscriber, _super);
+    function TakeWhileSubscriber(destination, predicate) {
+        _super.call(this, destination);
+        this.predicate = predicate;
+        this.index = 0;
+    }
+    TakeWhileSubscriber.prototype._next = function (value) {
+        var destination = this.destination;
+        var result;
+        try {
+            result = this.predicate(value, this.index++);
+        }
+        catch (err) {
+            destination.error(err);
+            return;
+        }
+        this.nextOrComplete(value, result);
+    };
+    TakeWhileSubscriber.prototype.nextOrComplete = function (value, predicateResult) {
+        var destination = this.destination;
+        if (Boolean(predicateResult)) {
+            destination.next(value);
+        }
+        else {
+            destination.complete();
+        }
+    };
+    return TakeWhileSubscriber;
+}(Subscriber_1.Subscriber));
+//# sourceMappingURL=takeWhile.js.map
 
 /***/ }),
 
@@ -49417,6 +57051,1689 @@ function dispatchNext(arg) {
 
 /***/ }),
 
+/***/ "../../node_modules/rxjs/operator/timeInterval.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subscriber_1 = __webpack_require__("../../node_modules/rxjs/Subscriber.js");
+var async_1 = __webpack_require__("../../node_modules/rxjs/scheduler/async.js");
+/**
+ * @param scheduler
+ * @return {Observable<TimeInterval<any>>|WebSocketSubject<T>|Observable<T>}
+ * @method timeInterval
+ * @owner Observable
+ */
+function timeInterval(scheduler) {
+    if (scheduler === void 0) { scheduler = async_1.async; }
+    return this.lift(new TimeIntervalOperator(scheduler));
+}
+exports.timeInterval = timeInterval;
+var TimeInterval = (function () {
+    function TimeInterval(value, interval) {
+        this.value = value;
+        this.interval = interval;
+    }
+    return TimeInterval;
+}());
+exports.TimeInterval = TimeInterval;
+;
+var TimeIntervalOperator = (function () {
+    function TimeIntervalOperator(scheduler) {
+        this.scheduler = scheduler;
+    }
+    TimeIntervalOperator.prototype.call = function (observer, source) {
+        return source.subscribe(new TimeIntervalSubscriber(observer, this.scheduler));
+    };
+    return TimeIntervalOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var TimeIntervalSubscriber = (function (_super) {
+    __extends(TimeIntervalSubscriber, _super);
+    function TimeIntervalSubscriber(destination, scheduler) {
+        _super.call(this, destination);
+        this.scheduler = scheduler;
+        this.lastTime = 0;
+        this.lastTime = scheduler.now();
+    }
+    TimeIntervalSubscriber.prototype._next = function (value) {
+        var now = this.scheduler.now();
+        var span = now - this.lastTime;
+        this.lastTime = now;
+        this.destination.next(new TimeInterval(value, span));
+    };
+    return TimeIntervalSubscriber;
+}(Subscriber_1.Subscriber));
+//# sourceMappingURL=timeInterval.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/timeout.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var async_1 = __webpack_require__("../../node_modules/rxjs/scheduler/async.js");
+var isDate_1 = __webpack_require__("../../node_modules/rxjs/util/isDate.js");
+var Subscriber_1 = __webpack_require__("../../node_modules/rxjs/Subscriber.js");
+var TimeoutError_1 = __webpack_require__("../../node_modules/rxjs/util/TimeoutError.js");
+/**
+ *
+ * Errors if Observable does not emit a value in given time span.
+ *
+ * <span class="informal">Timeouts on Observable that doesn't emit values fast enough.</span>
+ *
+ * <img src="./img/timeout.png" width="100%">
+ *
+ * `timeout` operator accepts as an argument either a number or a Date.
+ *
+ * If number was provided, it returns an Observable that behaves like a source
+ * Observable, unless there is a period of time where there is no value emitted.
+ * So if you provide `100` as argument and first value comes after 50ms from
+ * the moment of subscription, this value will be simply re-emitted by the resulting
+ * Observable. If however after that 100ms passes without a second value being emitted,
+ * stream will end with an error and source Observable will be unsubscribed.
+ * These checks are performed throughout whole lifecycle of Observable - from the moment
+ * it was subscribed to, until it completes or errors itself. Thus every value must be
+ * emitted within specified period since previous value.
+ *
+ * If provided argument was Date, returned Observable behaves differently. It throws
+ * if Observable did not complete before provided Date. This means that periods between
+ * emission of particular values do not matter in this case. If Observable did not complete
+ * before provided Date, source Observable will be unsubscribed. Other than that, resulting
+ * stream behaves just as source Observable.
+ *
+ * `timeout` accepts also a Scheduler as a second parameter. It is used to schedule moment (or moments)
+ * when returned Observable will check if source stream emitted value or completed.
+ *
+ * @example <caption>Check if ticks are emitted within certain timespan</caption>
+ * const seconds = Rx.Observable.interval(1000);
+ *
+ * seconds.timeout(1100) // Let's use bigger timespan to be safe,
+ *                       // since `interval` might fire a bit later then scheduled.
+ * .subscribe(
+ *     value => console.log(value), // Will emit numbers just as regular `interval` would.
+ *     err => console.log(err) // Will never be called.
+ * );
+ *
+ * seconds.timeout(900).subscribe(
+ *     value => console.log(value), // Will never be called.
+ *     err => console.log(err) // Will emit error before even first value is emitted,
+ *                             // since it did not arrive within 900ms period.
+ * );
+ *
+ * @example <caption>Use Date to check if Observable completed</caption>
+ * const seconds = Rx.Observable.interval(1000);
+ *
+ * seconds.timeout(new Date("December 17, 2020 03:24:00"))
+ * .subscribe(
+ *     value => console.log(value), // Will emit values as regular `interval` would
+ *                                  // until December 17, 2020 at 03:24:00.
+ *     err => console.log(err) // On December 17, 2020 at 03:24:00 it will emit an error,
+ *                             // since Observable did not complete by then.
+ * );
+ *
+ * @see {@link timeoutWith}
+ *
+ * @param {number|Date} due Number specifying period within which Observable must emit values
+ *                          or Date specifying before when Observable should complete
+ * @param {Scheduler} [scheduler] Scheduler controlling when timeout checks occur.
+ * @return {Observable<T>} Observable that mirrors behaviour of source, unless timeout checks fail.
+ * @method timeout
+ * @owner Observable
+ */
+function timeout(due, scheduler) {
+    if (scheduler === void 0) { scheduler = async_1.async; }
+    var absoluteTimeout = isDate_1.isDate(due);
+    var waitFor = absoluteTimeout ? (+due - scheduler.now()) : Math.abs(due);
+    return this.lift(new TimeoutOperator(waitFor, absoluteTimeout, scheduler, new TimeoutError_1.TimeoutError()));
+}
+exports.timeout = timeout;
+var TimeoutOperator = (function () {
+    function TimeoutOperator(waitFor, absoluteTimeout, scheduler, errorInstance) {
+        this.waitFor = waitFor;
+        this.absoluteTimeout = absoluteTimeout;
+        this.scheduler = scheduler;
+        this.errorInstance = errorInstance;
+    }
+    TimeoutOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new TimeoutSubscriber(subscriber, this.absoluteTimeout, this.waitFor, this.scheduler, this.errorInstance));
+    };
+    return TimeoutOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var TimeoutSubscriber = (function (_super) {
+    __extends(TimeoutSubscriber, _super);
+    function TimeoutSubscriber(destination, absoluteTimeout, waitFor, scheduler, errorInstance) {
+        _super.call(this, destination);
+        this.absoluteTimeout = absoluteTimeout;
+        this.waitFor = waitFor;
+        this.scheduler = scheduler;
+        this.errorInstance = errorInstance;
+        this.action = null;
+        this.scheduleTimeout();
+    }
+    TimeoutSubscriber.dispatchTimeout = function (subscriber) {
+        subscriber.error(subscriber.errorInstance);
+    };
+    TimeoutSubscriber.prototype.scheduleTimeout = function () {
+        var action = this.action;
+        if (action) {
+            // Recycle the action if we've already scheduled one. All the production
+            // Scheduler Actions mutate their state/delay time and return themeselves.
+            // VirtualActions are immutable, so they create and return a clone. In this
+            // case, we need to set the action reference to the most recent VirtualAction,
+            // to ensure that's the one we clone from next time.
+            this.action = action.schedule(this, this.waitFor);
+        }
+        else {
+            this.add(this.action = this.scheduler.schedule(TimeoutSubscriber.dispatchTimeout, this.waitFor, this));
+        }
+    };
+    TimeoutSubscriber.prototype._next = function (value) {
+        if (!this.absoluteTimeout) {
+            this.scheduleTimeout();
+        }
+        _super.prototype._next.call(this, value);
+    };
+    TimeoutSubscriber.prototype._unsubscribe = function () {
+        this.action = null;
+        this.scheduler = null;
+        this.errorInstance = null;
+    };
+    return TimeoutSubscriber;
+}(Subscriber_1.Subscriber));
+//# sourceMappingURL=timeout.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/timeoutWith.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var async_1 = __webpack_require__("../../node_modules/rxjs/scheduler/async.js");
+var isDate_1 = __webpack_require__("../../node_modules/rxjs/util/isDate.js");
+var OuterSubscriber_1 = __webpack_require__("../../node_modules/rxjs/OuterSubscriber.js");
+var subscribeToResult_1 = __webpack_require__("../../node_modules/rxjs/util/subscribeToResult.js");
+/* tslint:enable:max-line-length */
+/**
+ * @param due
+ * @param withObservable
+ * @param scheduler
+ * @return {Observable<R>|WebSocketSubject<T>|Observable<T>}
+ * @method timeoutWith
+ * @owner Observable
+ */
+function timeoutWith(due, withObservable, scheduler) {
+    if (scheduler === void 0) { scheduler = async_1.async; }
+    var absoluteTimeout = isDate_1.isDate(due);
+    var waitFor = absoluteTimeout ? (+due - scheduler.now()) : Math.abs(due);
+    return this.lift(new TimeoutWithOperator(waitFor, absoluteTimeout, withObservable, scheduler));
+}
+exports.timeoutWith = timeoutWith;
+var TimeoutWithOperator = (function () {
+    function TimeoutWithOperator(waitFor, absoluteTimeout, withObservable, scheduler) {
+        this.waitFor = waitFor;
+        this.absoluteTimeout = absoluteTimeout;
+        this.withObservable = withObservable;
+        this.scheduler = scheduler;
+    }
+    TimeoutWithOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new TimeoutWithSubscriber(subscriber, this.absoluteTimeout, this.waitFor, this.withObservable, this.scheduler));
+    };
+    return TimeoutWithOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var TimeoutWithSubscriber = (function (_super) {
+    __extends(TimeoutWithSubscriber, _super);
+    function TimeoutWithSubscriber(destination, absoluteTimeout, waitFor, withObservable, scheduler) {
+        _super.call(this, destination);
+        this.absoluteTimeout = absoluteTimeout;
+        this.waitFor = waitFor;
+        this.withObservable = withObservable;
+        this.scheduler = scheduler;
+        this.action = null;
+        this.scheduleTimeout();
+    }
+    TimeoutWithSubscriber.dispatchTimeout = function (subscriber) {
+        var withObservable = subscriber.withObservable;
+        subscriber._unsubscribeAndRecycle();
+        subscriber.add(subscribeToResult_1.subscribeToResult(subscriber, withObservable));
+    };
+    TimeoutWithSubscriber.prototype.scheduleTimeout = function () {
+        var action = this.action;
+        if (action) {
+            // Recycle the action if we've already scheduled one. All the production
+            // Scheduler Actions mutate their state/delay time and return themeselves.
+            // VirtualActions are immutable, so they create and return a clone. In this
+            // case, we need to set the action reference to the most recent VirtualAction,
+            // to ensure that's the one we clone from next time.
+            this.action = action.schedule(this, this.waitFor);
+        }
+        else {
+            this.add(this.action = this.scheduler.schedule(TimeoutWithSubscriber.dispatchTimeout, this.waitFor, this));
+        }
+    };
+    TimeoutWithSubscriber.prototype._next = function (value) {
+        if (!this.absoluteTimeout) {
+            this.scheduleTimeout();
+        }
+        _super.prototype._next.call(this, value);
+    };
+    TimeoutWithSubscriber.prototype._unsubscribe = function () {
+        this.action = null;
+        this.scheduler = null;
+        this.withObservable = null;
+    };
+    return TimeoutWithSubscriber;
+}(OuterSubscriber_1.OuterSubscriber));
+//# sourceMappingURL=timeoutWith.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/timestamp.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subscriber_1 = __webpack_require__("../../node_modules/rxjs/Subscriber.js");
+var async_1 = __webpack_require__("../../node_modules/rxjs/scheduler/async.js");
+/**
+ * @param scheduler
+ * @return {Observable<Timestamp<any>>|WebSocketSubject<T>|Observable<T>}
+ * @method timestamp
+ * @owner Observable
+ */
+function timestamp(scheduler) {
+    if (scheduler === void 0) { scheduler = async_1.async; }
+    return this.lift(new TimestampOperator(scheduler));
+}
+exports.timestamp = timestamp;
+var Timestamp = (function () {
+    function Timestamp(value, timestamp) {
+        this.value = value;
+        this.timestamp = timestamp;
+    }
+    return Timestamp;
+}());
+exports.Timestamp = Timestamp;
+;
+var TimestampOperator = (function () {
+    function TimestampOperator(scheduler) {
+        this.scheduler = scheduler;
+    }
+    TimestampOperator.prototype.call = function (observer, source) {
+        return source.subscribe(new TimestampSubscriber(observer, this.scheduler));
+    };
+    return TimestampOperator;
+}());
+var TimestampSubscriber = (function (_super) {
+    __extends(TimestampSubscriber, _super);
+    function TimestampSubscriber(destination, scheduler) {
+        _super.call(this, destination);
+        this.scheduler = scheduler;
+    }
+    TimestampSubscriber.prototype._next = function (value) {
+        var now = this.scheduler.now();
+        this.destination.next(new Timestamp(value, now));
+    };
+    return TimestampSubscriber;
+}(Subscriber_1.Subscriber));
+//# sourceMappingURL=timestamp.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/toArray.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subscriber_1 = __webpack_require__("../../node_modules/rxjs/Subscriber.js");
+/**
+ * @return {Observable<any[]>|WebSocketSubject<T>|Observable<T>}
+ * @method toArray
+ * @owner Observable
+ */
+function toArray() {
+    return this.lift(new ToArrayOperator());
+}
+exports.toArray = toArray;
+var ToArrayOperator = (function () {
+    function ToArrayOperator() {
+    }
+    ToArrayOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new ToArraySubscriber(subscriber));
+    };
+    return ToArrayOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var ToArraySubscriber = (function (_super) {
+    __extends(ToArraySubscriber, _super);
+    function ToArraySubscriber(destination) {
+        _super.call(this, destination);
+        this.array = [];
+    }
+    ToArraySubscriber.prototype._next = function (x) {
+        this.array.push(x);
+    };
+    ToArraySubscriber.prototype._complete = function () {
+        this.destination.next(this.array);
+        this.destination.complete();
+    };
+    return ToArraySubscriber;
+}(Subscriber_1.Subscriber));
+//# sourceMappingURL=toArray.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/toPromise.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var root_1 = __webpack_require__("../../node_modules/rxjs/util/root.js");
+/* tslint:enable:max-line-length */
+/**
+ * Converts an Observable sequence to a ES2015 compliant promise.
+ *
+ * @example
+ * // Using normal ES2015
+ * let source = Rx.Observable
+ *   .of(42)
+ *   .toPromise();
+ *
+ * source.then((value) => console.log('Value: %s', value));
+ * // => Value: 42
+ *
+ * // Rejected Promise
+ * // Using normal ES2015
+ * let source = Rx.Observable
+ *   .throw(new Error('woops'))
+ *   .toPromise();
+ *
+ * source
+ *   .then((value) => console.log('Value: %s', value))
+ *   .catch((err) => console.log('Error: %s', err));
+ * // => Error: Error: woops
+ *
+ * // Setting via the config
+ * Rx.config.Promise = RSVP.Promise;
+ *
+ * let source = Rx.Observable
+ *   .of(42)
+ *   .toPromise();
+ *
+ * source.then((value) => console.log('Value: %s', value));
+ * // => Value: 42
+ *
+ * // Setting via the method
+ * let source = Rx.Observable
+ *   .of(42)
+ *   .toPromise(RSVP.Promise);
+ *
+ * source.then((value) => console.log('Value: %s', value));
+ * // => Value: 42
+ *
+ * @param {PromiseConstructor} [PromiseCtor] The constructor of the promise. If not provided,
+ * it will look for a constructor first in Rx.config.Promise then fall back to
+ * the native Promise constructor if available.
+ * @return {Promise<T>} An ES2015 compatible promise with the last value from
+ * the observable sequence.
+ * @method toPromise
+ * @owner Observable
+ */
+function toPromise(PromiseCtor) {
+    var _this = this;
+    if (!PromiseCtor) {
+        if (root_1.root.Rx && root_1.root.Rx.config && root_1.root.Rx.config.Promise) {
+            PromiseCtor = root_1.root.Rx.config.Promise;
+        }
+        else if (root_1.root.Promise) {
+            PromiseCtor = root_1.root.Promise;
+        }
+    }
+    if (!PromiseCtor) {
+        throw new Error('no Promise impl found');
+    }
+    return new PromiseCtor(function (resolve, reject) {
+        var value;
+        _this.subscribe(function (x) { return value = x; }, function (err) { return reject(err); }, function () { return resolve(value); });
+    });
+}
+exports.toPromise = toPromise;
+//# sourceMappingURL=toPromise.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/window.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subject_1 = __webpack_require__("../../node_modules/rxjs/Subject.js");
+var OuterSubscriber_1 = __webpack_require__("../../node_modules/rxjs/OuterSubscriber.js");
+var subscribeToResult_1 = __webpack_require__("../../node_modules/rxjs/util/subscribeToResult.js");
+/**
+ * Branch out the source Observable values as a nested Observable whenever
+ * `windowBoundaries` emits.
+ *
+ * <span class="informal">It's like {@link buffer}, but emits a nested Observable
+ * instead of an array.</span>
+ *
+ * <img src="./img/window.png" width="100%">
+ *
+ * Returns an Observable that emits windows of items it collects from the source
+ * Observable. The output Observable emits connected, non-overlapping
+ * windows. It emits the current window and opens a new one whenever the
+ * Observable `windowBoundaries` emits an item. Because each window is an
+ * Observable, the output is a higher-order Observable.
+ *
+ * @example <caption>In every window of 1 second each, emit at most 2 click events</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var interval = Rx.Observable.interval(1000);
+ * var result = clicks.window(interval)
+ *   .map(win => win.take(2)) // each window has at most 2 emissions
+ *   .mergeAll(); // flatten the Observable-of-Observables
+ * result.subscribe(x => console.log(x));
+ *
+ * @see {@link windowCount}
+ * @see {@link windowTime}
+ * @see {@link windowToggle}
+ * @see {@link windowWhen}
+ * @see {@link buffer}
+ *
+ * @param {Observable<any>} windowBoundaries An Observable that completes the
+ * previous window and starts a new window.
+ * @return {Observable<Observable<T>>} An Observable of windows, which are
+ * Observables emitting values of the source Observable.
+ * @method window
+ * @owner Observable
+ */
+function window(windowBoundaries) {
+    return this.lift(new WindowOperator(windowBoundaries));
+}
+exports.window = window;
+var WindowOperator = (function () {
+    function WindowOperator(windowBoundaries) {
+        this.windowBoundaries = windowBoundaries;
+    }
+    WindowOperator.prototype.call = function (subscriber, source) {
+        var windowSubscriber = new WindowSubscriber(subscriber);
+        var sourceSubscription = source.subscribe(windowSubscriber);
+        if (!sourceSubscription.closed) {
+            windowSubscriber.add(subscribeToResult_1.subscribeToResult(windowSubscriber, this.windowBoundaries));
+        }
+        return sourceSubscription;
+    };
+    return WindowOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var WindowSubscriber = (function (_super) {
+    __extends(WindowSubscriber, _super);
+    function WindowSubscriber(destination) {
+        _super.call(this, destination);
+        this.window = new Subject_1.Subject();
+        destination.next(this.window);
+    }
+    WindowSubscriber.prototype.notifyNext = function (outerValue, innerValue, outerIndex, innerIndex, innerSub) {
+        this.openWindow();
+    };
+    WindowSubscriber.prototype.notifyError = function (error, innerSub) {
+        this._error(error);
+    };
+    WindowSubscriber.prototype.notifyComplete = function (innerSub) {
+        this._complete();
+    };
+    WindowSubscriber.prototype._next = function (value) {
+        this.window.next(value);
+    };
+    WindowSubscriber.prototype._error = function (err) {
+        this.window.error(err);
+        this.destination.error(err);
+    };
+    WindowSubscriber.prototype._complete = function () {
+        this.window.complete();
+        this.destination.complete();
+    };
+    WindowSubscriber.prototype._unsubscribe = function () {
+        this.window = null;
+    };
+    WindowSubscriber.prototype.openWindow = function () {
+        var prevWindow = this.window;
+        if (prevWindow) {
+            prevWindow.complete();
+        }
+        var destination = this.destination;
+        var newWindow = this.window = new Subject_1.Subject();
+        destination.next(newWindow);
+    };
+    return WindowSubscriber;
+}(OuterSubscriber_1.OuterSubscriber));
+//# sourceMappingURL=window.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/windowCount.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subscriber_1 = __webpack_require__("../../node_modules/rxjs/Subscriber.js");
+var Subject_1 = __webpack_require__("../../node_modules/rxjs/Subject.js");
+/**
+ * Branch out the source Observable values as a nested Observable with each
+ * nested Observable emitting at most `windowSize` values.
+ *
+ * <span class="informal">It's like {@link bufferCount}, but emits a nested
+ * Observable instead of an array.</span>
+ *
+ * <img src="./img/windowCount.png" width="100%">
+ *
+ * Returns an Observable that emits windows of items it collects from the source
+ * Observable. The output Observable emits windows every `startWindowEvery`
+ * items, each containing no more than `windowSize` items. When the source
+ * Observable completes or encounters an error, the output Observable emits
+ * the current window and propagates the notification from the source
+ * Observable. If `startWindowEvery` is not provided, then new windows are
+ * started immediately at the start of the source and when each window completes
+ * with size `windowSize`.
+ *
+ * @example <caption>Ignore every 3rd click event, starting from the first one</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var result = clicks.windowCount(3)
+ *   .map(win => win.skip(1)) // skip first of every 3 clicks
+ *   .mergeAll(); // flatten the Observable-of-Observables
+ * result.subscribe(x => console.log(x));
+ *
+ * @example <caption>Ignore every 3rd click event, starting from the third one</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var result = clicks.windowCount(2, 3)
+ *   .mergeAll(); // flatten the Observable-of-Observables
+ * result.subscribe(x => console.log(x));
+ *
+ * @see {@link window}
+ * @see {@link windowTime}
+ * @see {@link windowToggle}
+ * @see {@link windowWhen}
+ * @see {@link bufferCount}
+ *
+ * @param {number} windowSize The maximum number of values emitted by each
+ * window.
+ * @param {number} [startWindowEvery] Interval at which to start a new window.
+ * For example if `startWindowEvery` is `2`, then a new window will be started
+ * on every other value from the source. A new window is started at the
+ * beginning of the source by default.
+ * @return {Observable<Observable<T>>} An Observable of windows, which in turn
+ * are Observable of values.
+ * @method windowCount
+ * @owner Observable
+ */
+function windowCount(windowSize, startWindowEvery) {
+    if (startWindowEvery === void 0) { startWindowEvery = 0; }
+    return this.lift(new WindowCountOperator(windowSize, startWindowEvery));
+}
+exports.windowCount = windowCount;
+var WindowCountOperator = (function () {
+    function WindowCountOperator(windowSize, startWindowEvery) {
+        this.windowSize = windowSize;
+        this.startWindowEvery = startWindowEvery;
+    }
+    WindowCountOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new WindowCountSubscriber(subscriber, this.windowSize, this.startWindowEvery));
+    };
+    return WindowCountOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var WindowCountSubscriber = (function (_super) {
+    __extends(WindowCountSubscriber, _super);
+    function WindowCountSubscriber(destination, windowSize, startWindowEvery) {
+        _super.call(this, destination);
+        this.destination = destination;
+        this.windowSize = windowSize;
+        this.startWindowEvery = startWindowEvery;
+        this.windows = [new Subject_1.Subject()];
+        this.count = 0;
+        destination.next(this.windows[0]);
+    }
+    WindowCountSubscriber.prototype._next = function (value) {
+        var startWindowEvery = (this.startWindowEvery > 0) ? this.startWindowEvery : this.windowSize;
+        var destination = this.destination;
+        var windowSize = this.windowSize;
+        var windows = this.windows;
+        var len = windows.length;
+        for (var i = 0; i < len && !this.closed; i++) {
+            windows[i].next(value);
+        }
+        var c = this.count - windowSize + 1;
+        if (c >= 0 && c % startWindowEvery === 0 && !this.closed) {
+            windows.shift().complete();
+        }
+        if (++this.count % startWindowEvery === 0 && !this.closed) {
+            var window_1 = new Subject_1.Subject();
+            windows.push(window_1);
+            destination.next(window_1);
+        }
+    };
+    WindowCountSubscriber.prototype._error = function (err) {
+        var windows = this.windows;
+        if (windows) {
+            while (windows.length > 0 && !this.closed) {
+                windows.shift().error(err);
+            }
+        }
+        this.destination.error(err);
+    };
+    WindowCountSubscriber.prototype._complete = function () {
+        var windows = this.windows;
+        if (windows) {
+            while (windows.length > 0 && !this.closed) {
+                windows.shift().complete();
+            }
+        }
+        this.destination.complete();
+    };
+    WindowCountSubscriber.prototype._unsubscribe = function () {
+        this.count = 0;
+        this.windows = null;
+    };
+    return WindowCountSubscriber;
+}(Subscriber_1.Subscriber));
+//# sourceMappingURL=windowCount.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/windowTime.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subject_1 = __webpack_require__("../../node_modules/rxjs/Subject.js");
+var async_1 = __webpack_require__("../../node_modules/rxjs/scheduler/async.js");
+var Subscriber_1 = __webpack_require__("../../node_modules/rxjs/Subscriber.js");
+var isNumeric_1 = __webpack_require__("../../node_modules/rxjs/util/isNumeric.js");
+var isScheduler_1 = __webpack_require__("../../node_modules/rxjs/util/isScheduler.js");
+function windowTime(windowTimeSpan) {
+    var scheduler = async_1.async;
+    var windowCreationInterval = null;
+    var maxWindowSize = Number.POSITIVE_INFINITY;
+    if (isScheduler_1.isScheduler(arguments[3])) {
+        scheduler = arguments[3];
+    }
+    if (isScheduler_1.isScheduler(arguments[2])) {
+        scheduler = arguments[2];
+    }
+    else if (isNumeric_1.isNumeric(arguments[2])) {
+        maxWindowSize = arguments[2];
+    }
+    if (isScheduler_1.isScheduler(arguments[1])) {
+        scheduler = arguments[1];
+    }
+    else if (isNumeric_1.isNumeric(arguments[1])) {
+        windowCreationInterval = arguments[1];
+    }
+    return this.lift(new WindowTimeOperator(windowTimeSpan, windowCreationInterval, maxWindowSize, scheduler));
+}
+exports.windowTime = windowTime;
+var WindowTimeOperator = (function () {
+    function WindowTimeOperator(windowTimeSpan, windowCreationInterval, maxWindowSize, scheduler) {
+        this.windowTimeSpan = windowTimeSpan;
+        this.windowCreationInterval = windowCreationInterval;
+        this.maxWindowSize = maxWindowSize;
+        this.scheduler = scheduler;
+    }
+    WindowTimeOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new WindowTimeSubscriber(subscriber, this.windowTimeSpan, this.windowCreationInterval, this.maxWindowSize, this.scheduler));
+    };
+    return WindowTimeOperator;
+}());
+var CountedSubject = (function (_super) {
+    __extends(CountedSubject, _super);
+    function CountedSubject() {
+        _super.apply(this, arguments);
+        this._numberOfNextedValues = 0;
+    }
+    CountedSubject.prototype.next = function (value) {
+        this._numberOfNextedValues++;
+        _super.prototype.next.call(this, value);
+    };
+    Object.defineProperty(CountedSubject.prototype, "numberOfNextedValues", {
+        get: function () {
+            return this._numberOfNextedValues;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    return CountedSubject;
+}(Subject_1.Subject));
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var WindowTimeSubscriber = (function (_super) {
+    __extends(WindowTimeSubscriber, _super);
+    function WindowTimeSubscriber(destination, windowTimeSpan, windowCreationInterval, maxWindowSize, scheduler) {
+        _super.call(this, destination);
+        this.destination = destination;
+        this.windowTimeSpan = windowTimeSpan;
+        this.windowCreationInterval = windowCreationInterval;
+        this.maxWindowSize = maxWindowSize;
+        this.scheduler = scheduler;
+        this.windows = [];
+        var window = this.openWindow();
+        if (windowCreationInterval !== null && windowCreationInterval >= 0) {
+            var closeState = { subscriber: this, window: window, context: null };
+            var creationState = { windowTimeSpan: windowTimeSpan, windowCreationInterval: windowCreationInterval, subscriber: this, scheduler: scheduler };
+            this.add(scheduler.schedule(dispatchWindowClose, windowTimeSpan, closeState));
+            this.add(scheduler.schedule(dispatchWindowCreation, windowCreationInterval, creationState));
+        }
+        else {
+            var timeSpanOnlyState = { subscriber: this, window: window, windowTimeSpan: windowTimeSpan };
+            this.add(scheduler.schedule(dispatchWindowTimeSpanOnly, windowTimeSpan, timeSpanOnlyState));
+        }
+    }
+    WindowTimeSubscriber.prototype._next = function (value) {
+        var windows = this.windows;
+        var len = windows.length;
+        for (var i = 0; i < len; i++) {
+            var window_1 = windows[i];
+            if (!window_1.closed) {
+                window_1.next(value);
+                if (window_1.numberOfNextedValues >= this.maxWindowSize) {
+                    this.closeWindow(window_1);
+                }
+            }
+        }
+    };
+    WindowTimeSubscriber.prototype._error = function (err) {
+        var windows = this.windows;
+        while (windows.length > 0) {
+            windows.shift().error(err);
+        }
+        this.destination.error(err);
+    };
+    WindowTimeSubscriber.prototype._complete = function () {
+        var windows = this.windows;
+        while (windows.length > 0) {
+            var window_2 = windows.shift();
+            if (!window_2.closed) {
+                window_2.complete();
+            }
+        }
+        this.destination.complete();
+    };
+    WindowTimeSubscriber.prototype.openWindow = function () {
+        var window = new CountedSubject();
+        this.windows.push(window);
+        var destination = this.destination;
+        destination.next(window);
+        return window;
+    };
+    WindowTimeSubscriber.prototype.closeWindow = function (window) {
+        window.complete();
+        var windows = this.windows;
+        windows.splice(windows.indexOf(window), 1);
+    };
+    return WindowTimeSubscriber;
+}(Subscriber_1.Subscriber));
+function dispatchWindowTimeSpanOnly(state) {
+    var subscriber = state.subscriber, windowTimeSpan = state.windowTimeSpan, window = state.window;
+    if (window) {
+        subscriber.closeWindow(window);
+    }
+    state.window = subscriber.openWindow();
+    this.schedule(state, windowTimeSpan);
+}
+function dispatchWindowCreation(state) {
+    var windowTimeSpan = state.windowTimeSpan, subscriber = state.subscriber, scheduler = state.scheduler, windowCreationInterval = state.windowCreationInterval;
+    var window = subscriber.openWindow();
+    var action = this;
+    var context = { action: action, subscription: null };
+    var timeSpanState = { subscriber: subscriber, window: window, context: context };
+    context.subscription = scheduler.schedule(dispatchWindowClose, windowTimeSpan, timeSpanState);
+    action.add(context.subscription);
+    action.schedule(state, windowCreationInterval);
+}
+function dispatchWindowClose(state) {
+    var subscriber = state.subscriber, window = state.window, context = state.context;
+    if (context && context.action && context.subscription) {
+        context.action.remove(context.subscription);
+    }
+    subscriber.closeWindow(window);
+}
+//# sourceMappingURL=windowTime.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/windowToggle.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subject_1 = __webpack_require__("../../node_modules/rxjs/Subject.js");
+var Subscription_1 = __webpack_require__("../../node_modules/rxjs/Subscription.js");
+var tryCatch_1 = __webpack_require__("../../node_modules/rxjs/util/tryCatch.js");
+var errorObject_1 = __webpack_require__("../../node_modules/rxjs/util/errorObject.js");
+var OuterSubscriber_1 = __webpack_require__("../../node_modules/rxjs/OuterSubscriber.js");
+var subscribeToResult_1 = __webpack_require__("../../node_modules/rxjs/util/subscribeToResult.js");
+/**
+ * Branch out the source Observable values as a nested Observable starting from
+ * an emission from `openings` and ending when the output of `closingSelector`
+ * emits.
+ *
+ * <span class="informal">It's like {@link bufferToggle}, but emits a nested
+ * Observable instead of an array.</span>
+ *
+ * <img src="./img/windowToggle.png" width="100%">
+ *
+ * Returns an Observable that emits windows of items it collects from the source
+ * Observable. The output Observable emits windows that contain those items
+ * emitted by the source Observable between the time when the `openings`
+ * Observable emits an item and when the Observable returned by
+ * `closingSelector` emits an item.
+ *
+ * @example <caption>Every other second, emit the click events from the next 500ms</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var openings = Rx.Observable.interval(1000);
+ * var result = clicks.windowToggle(openings, i =>
+ *   i % 2 ? Rx.Observable.interval(500) : Rx.Observable.empty()
+ * ).mergeAll();
+ * result.subscribe(x => console.log(x));
+ *
+ * @see {@link window}
+ * @see {@link windowCount}
+ * @see {@link windowTime}
+ * @see {@link windowWhen}
+ * @see {@link bufferToggle}
+ *
+ * @param {Observable<O>} openings An observable of notifications to start new
+ * windows.
+ * @param {function(value: O): Observable} closingSelector A function that takes
+ * the value emitted by the `openings` observable and returns an Observable,
+ * which, when it emits (either `next` or `complete`), signals that the
+ * associated window should complete.
+ * @return {Observable<Observable<T>>} An observable of windows, which in turn
+ * are Observables.
+ * @method windowToggle
+ * @owner Observable
+ */
+function windowToggle(openings, closingSelector) {
+    return this.lift(new WindowToggleOperator(openings, closingSelector));
+}
+exports.windowToggle = windowToggle;
+var WindowToggleOperator = (function () {
+    function WindowToggleOperator(openings, closingSelector) {
+        this.openings = openings;
+        this.closingSelector = closingSelector;
+    }
+    WindowToggleOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new WindowToggleSubscriber(subscriber, this.openings, this.closingSelector));
+    };
+    return WindowToggleOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var WindowToggleSubscriber = (function (_super) {
+    __extends(WindowToggleSubscriber, _super);
+    function WindowToggleSubscriber(destination, openings, closingSelector) {
+        _super.call(this, destination);
+        this.openings = openings;
+        this.closingSelector = closingSelector;
+        this.contexts = [];
+        this.add(this.openSubscription = subscribeToResult_1.subscribeToResult(this, openings, openings));
+    }
+    WindowToggleSubscriber.prototype._next = function (value) {
+        var contexts = this.contexts;
+        if (contexts) {
+            var len = contexts.length;
+            for (var i = 0; i < len; i++) {
+                contexts[i].window.next(value);
+            }
+        }
+    };
+    WindowToggleSubscriber.prototype._error = function (err) {
+        var contexts = this.contexts;
+        this.contexts = null;
+        if (contexts) {
+            var len = contexts.length;
+            var index = -1;
+            while (++index < len) {
+                var context = contexts[index];
+                context.window.error(err);
+                context.subscription.unsubscribe();
+            }
+        }
+        _super.prototype._error.call(this, err);
+    };
+    WindowToggleSubscriber.prototype._complete = function () {
+        var contexts = this.contexts;
+        this.contexts = null;
+        if (contexts) {
+            var len = contexts.length;
+            var index = -1;
+            while (++index < len) {
+                var context = contexts[index];
+                context.window.complete();
+                context.subscription.unsubscribe();
+            }
+        }
+        _super.prototype._complete.call(this);
+    };
+    WindowToggleSubscriber.prototype._unsubscribe = function () {
+        var contexts = this.contexts;
+        this.contexts = null;
+        if (contexts) {
+            var len = contexts.length;
+            var index = -1;
+            while (++index < len) {
+                var context = contexts[index];
+                context.window.unsubscribe();
+                context.subscription.unsubscribe();
+            }
+        }
+    };
+    WindowToggleSubscriber.prototype.notifyNext = function (outerValue, innerValue, outerIndex, innerIndex, innerSub) {
+        if (outerValue === this.openings) {
+            var closingSelector = this.closingSelector;
+            var closingNotifier = tryCatch_1.tryCatch(closingSelector)(innerValue);
+            if (closingNotifier === errorObject_1.errorObject) {
+                return this.error(errorObject_1.errorObject.e);
+            }
+            else {
+                var window_1 = new Subject_1.Subject();
+                var subscription = new Subscription_1.Subscription();
+                var context = { window: window_1, subscription: subscription };
+                this.contexts.push(context);
+                var innerSubscription = subscribeToResult_1.subscribeToResult(this, closingNotifier, context);
+                if (innerSubscription.closed) {
+                    this.closeWindow(this.contexts.length - 1);
+                }
+                else {
+                    innerSubscription.context = context;
+                    subscription.add(innerSubscription);
+                }
+                this.destination.next(window_1);
+            }
+        }
+        else {
+            this.closeWindow(this.contexts.indexOf(outerValue));
+        }
+    };
+    WindowToggleSubscriber.prototype.notifyError = function (err) {
+        this.error(err);
+    };
+    WindowToggleSubscriber.prototype.notifyComplete = function (inner) {
+        if (inner !== this.openSubscription) {
+            this.closeWindow(this.contexts.indexOf(inner.context));
+        }
+    };
+    WindowToggleSubscriber.prototype.closeWindow = function (index) {
+        if (index === -1) {
+            return;
+        }
+        var contexts = this.contexts;
+        var context = contexts[index];
+        var window = context.window, subscription = context.subscription;
+        contexts.splice(index, 1);
+        window.complete();
+        subscription.unsubscribe();
+    };
+    return WindowToggleSubscriber;
+}(OuterSubscriber_1.OuterSubscriber));
+//# sourceMappingURL=windowToggle.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/windowWhen.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subject_1 = __webpack_require__("../../node_modules/rxjs/Subject.js");
+var tryCatch_1 = __webpack_require__("../../node_modules/rxjs/util/tryCatch.js");
+var errorObject_1 = __webpack_require__("../../node_modules/rxjs/util/errorObject.js");
+var OuterSubscriber_1 = __webpack_require__("../../node_modules/rxjs/OuterSubscriber.js");
+var subscribeToResult_1 = __webpack_require__("../../node_modules/rxjs/util/subscribeToResult.js");
+/**
+ * Branch out the source Observable values as a nested Observable using a
+ * factory function of closing Observables to determine when to start a new
+ * window.
+ *
+ * <span class="informal">It's like {@link bufferWhen}, but emits a nested
+ * Observable instead of an array.</span>
+ *
+ * <img src="./img/windowWhen.png" width="100%">
+ *
+ * Returns an Observable that emits windows of items it collects from the source
+ * Observable. The output Observable emits connected, non-overlapping windows.
+ * It emits the current window and opens a new one whenever the Observable
+ * produced by the specified `closingSelector` function emits an item. The first
+ * window is opened immediately when subscribing to the output Observable.
+ *
+ * @example <caption>Emit only the first two clicks events in every window of [1-5] random seconds</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var result = clicks
+ *   .windowWhen(() => Rx.Observable.interval(1000 + Math.random() * 4000))
+ *   .map(win => win.take(2)) // each window has at most 2 emissions
+ *   .mergeAll(); // flatten the Observable-of-Observables
+ * result.subscribe(x => console.log(x));
+ *
+ * @see {@link window}
+ * @see {@link windowCount}
+ * @see {@link windowTime}
+ * @see {@link windowToggle}
+ * @see {@link bufferWhen}
+ *
+ * @param {function(): Observable} closingSelector A function that takes no
+ * arguments and returns an Observable that signals (on either `next` or
+ * `complete`) when to close the previous window and start a new one.
+ * @return {Observable<Observable<T>>} An observable of windows, which in turn
+ * are Observables.
+ * @method windowWhen
+ * @owner Observable
+ */
+function windowWhen(closingSelector) {
+    return this.lift(new WindowOperator(closingSelector));
+}
+exports.windowWhen = windowWhen;
+var WindowOperator = (function () {
+    function WindowOperator(closingSelector) {
+        this.closingSelector = closingSelector;
+    }
+    WindowOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new WindowSubscriber(subscriber, this.closingSelector));
+    };
+    return WindowOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var WindowSubscriber = (function (_super) {
+    __extends(WindowSubscriber, _super);
+    function WindowSubscriber(destination, closingSelector) {
+        _super.call(this, destination);
+        this.destination = destination;
+        this.closingSelector = closingSelector;
+        this.openWindow();
+    }
+    WindowSubscriber.prototype.notifyNext = function (outerValue, innerValue, outerIndex, innerIndex, innerSub) {
+        this.openWindow(innerSub);
+    };
+    WindowSubscriber.prototype.notifyError = function (error, innerSub) {
+        this._error(error);
+    };
+    WindowSubscriber.prototype.notifyComplete = function (innerSub) {
+        this.openWindow(innerSub);
+    };
+    WindowSubscriber.prototype._next = function (value) {
+        this.window.next(value);
+    };
+    WindowSubscriber.prototype._error = function (err) {
+        this.window.error(err);
+        this.destination.error(err);
+        this.unsubscribeClosingNotification();
+    };
+    WindowSubscriber.prototype._complete = function () {
+        this.window.complete();
+        this.destination.complete();
+        this.unsubscribeClosingNotification();
+    };
+    WindowSubscriber.prototype.unsubscribeClosingNotification = function () {
+        if (this.closingNotification) {
+            this.closingNotification.unsubscribe();
+        }
+    };
+    WindowSubscriber.prototype.openWindow = function (innerSub) {
+        if (innerSub === void 0) { innerSub = null; }
+        if (innerSub) {
+            this.remove(innerSub);
+            innerSub.unsubscribe();
+        }
+        var prevWindow = this.window;
+        if (prevWindow) {
+            prevWindow.complete();
+        }
+        var window = this.window = new Subject_1.Subject();
+        this.destination.next(window);
+        var closingNotifier = tryCatch_1.tryCatch(this.closingSelector)();
+        if (closingNotifier === errorObject_1.errorObject) {
+            var err = errorObject_1.errorObject.e;
+            this.destination.error(err);
+            this.window.error(err);
+        }
+        else {
+            this.add(this.closingNotification = subscribeToResult_1.subscribeToResult(this, closingNotifier));
+        }
+    };
+    return WindowSubscriber;
+}(OuterSubscriber_1.OuterSubscriber));
+//# sourceMappingURL=windowWhen.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/withLatestFrom.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var OuterSubscriber_1 = __webpack_require__("../../node_modules/rxjs/OuterSubscriber.js");
+var subscribeToResult_1 = __webpack_require__("../../node_modules/rxjs/util/subscribeToResult.js");
+/* tslint:enable:max-line-length */
+/**
+ * Combines the source Observable with other Observables to create an Observable
+ * whose values are calculated from the latest values of each, only when the
+ * source emits.
+ *
+ * <span class="informal">Whenever the source Observable emits a value, it
+ * computes a formula using that value plus the latest values from other input
+ * Observables, then emits the output of that formula.</span>
+ *
+ * <img src="./img/withLatestFrom.png" width="100%">
+ *
+ * `withLatestFrom` combines each value from the source Observable (the
+ * instance) with the latest values from the other input Observables only when
+ * the source emits a value, optionally using a `project` function to determine
+ * the value to be emitted on the output Observable. All input Observables must
+ * emit at least one value before the output Observable will emit a value.
+ *
+ * @example <caption>On every click event, emit an array with the latest timer event plus the click event</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var timer = Rx.Observable.interval(1000);
+ * var result = clicks.withLatestFrom(timer);
+ * result.subscribe(x => console.log(x));
+ *
+ * @see {@link combineLatest}
+ *
+ * @param {ObservableInput} other An input Observable to combine with the source
+ * Observable. More than one input Observables may be given as argument.
+ * @param {Function} [project] Projection function for combining values
+ * together. Receives all values in order of the Observables passed, where the
+ * first parameter is a value from the source Observable. (e.g.
+ * `a.withLatestFrom(b, c, (a1, b1, c1) => a1 + b1 + c1)`). If this is not
+ * passed, arrays will be emitted on the output Observable.
+ * @return {Observable} An Observable of projected values from the most recent
+ * values from each input Observable, or an array of the most recent values from
+ * each input Observable.
+ * @method withLatestFrom
+ * @owner Observable
+ */
+function withLatestFrom() {
+    var args = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        args[_i - 0] = arguments[_i];
+    }
+    var project;
+    if (typeof args[args.length - 1] === 'function') {
+        project = args.pop();
+    }
+    var observables = args;
+    return this.lift(new WithLatestFromOperator(observables, project));
+}
+exports.withLatestFrom = withLatestFrom;
+var WithLatestFromOperator = (function () {
+    function WithLatestFromOperator(observables, project) {
+        this.observables = observables;
+        this.project = project;
+    }
+    WithLatestFromOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new WithLatestFromSubscriber(subscriber, this.observables, this.project));
+    };
+    return WithLatestFromOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var WithLatestFromSubscriber = (function (_super) {
+    __extends(WithLatestFromSubscriber, _super);
+    function WithLatestFromSubscriber(destination, observables, project) {
+        _super.call(this, destination);
+        this.observables = observables;
+        this.project = project;
+        this.toRespond = [];
+        var len = observables.length;
+        this.values = new Array(len);
+        for (var i = 0; i < len; i++) {
+            this.toRespond.push(i);
+        }
+        for (var i = 0; i < len; i++) {
+            var observable = observables[i];
+            this.add(subscribeToResult_1.subscribeToResult(this, observable, observable, i));
+        }
+    }
+    WithLatestFromSubscriber.prototype.notifyNext = function (outerValue, innerValue, outerIndex, innerIndex, innerSub) {
+        this.values[outerIndex] = innerValue;
+        var toRespond = this.toRespond;
+        if (toRespond.length > 0) {
+            var found = toRespond.indexOf(outerIndex);
+            if (found !== -1) {
+                toRespond.splice(found, 1);
+            }
+        }
+    };
+    WithLatestFromSubscriber.prototype.notifyComplete = function () {
+        // noop
+    };
+    WithLatestFromSubscriber.prototype._next = function (value) {
+        if (this.toRespond.length === 0) {
+            var args = [value].concat(this.values);
+            if (this.project) {
+                this._tryProject(args);
+            }
+            else {
+                this.destination.next(args);
+            }
+        }
+    };
+    WithLatestFromSubscriber.prototype._tryProject = function (args) {
+        var result;
+        try {
+            result = this.project.apply(this, args);
+        }
+        catch (err) {
+            this.destination.error(err);
+            return;
+        }
+        this.destination.next(result);
+    };
+    return WithLatestFromSubscriber;
+}(OuterSubscriber_1.OuterSubscriber));
+//# sourceMappingURL=withLatestFrom.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/zip.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var ArrayObservable_1 = __webpack_require__("../../node_modules/rxjs/observable/ArrayObservable.js");
+var isArray_1 = __webpack_require__("../../node_modules/rxjs/util/isArray.js");
+var Subscriber_1 = __webpack_require__("../../node_modules/rxjs/Subscriber.js");
+var OuterSubscriber_1 = __webpack_require__("../../node_modules/rxjs/OuterSubscriber.js");
+var subscribeToResult_1 = __webpack_require__("../../node_modules/rxjs/util/subscribeToResult.js");
+var iterator_1 = __webpack_require__("../../node_modules/rxjs/symbol/iterator.js");
+/* tslint:enable:max-line-length */
+/**
+ * @param observables
+ * @return {Observable<R>}
+ * @method zip
+ * @owner Observable
+ */
+function zipProto() {
+    var observables = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        observables[_i - 0] = arguments[_i];
+    }
+    return this.lift.call(zipStatic.apply(void 0, [this].concat(observables)));
+}
+exports.zipProto = zipProto;
+/* tslint:enable:max-line-length */
+/**
+ * Combines multiple Observables to create an Observable whose values are calculated from the values, in order, of each
+ * of its input Observables.
+ *
+ * If the latest parameter is a function, this function is used to compute the created value from the input values.
+ * Otherwise, an array of the input values is returned.
+ *
+ * @example <caption>Combine age and name from different sources</caption>
+ *
+ * let age$ = Observable.of<number>(27, 25, 29);
+ * let name$ = Observable.of<string>('Foo', 'Bar', 'Beer');
+ * let isDev$ = Observable.of<boolean>(true, true, false);
+ *
+ * Observable
+ *     .zip(age$,
+ *          name$,
+ *          isDev$,
+ *          (age: number, name: string, isDev: boolean) => ({ age, name, isDev }))
+ *     .subscribe(x => console.log(x));
+ *
+ * // outputs
+ * // { age: 27, name: 'Foo', isDev: true }
+ * // { age: 25, name: 'Bar', isDev: true }
+ * // { age: 29, name: 'Beer', isDev: false }
+ *
+ * @param observables
+ * @return {Observable<R>}
+ * @static true
+ * @name zip
+ * @owner Observable
+ */
+function zipStatic() {
+    var observables = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        observables[_i - 0] = arguments[_i];
+    }
+    var project = observables[observables.length - 1];
+    if (typeof project === 'function') {
+        observables.pop();
+    }
+    return new ArrayObservable_1.ArrayObservable(observables).lift(new ZipOperator(project));
+}
+exports.zipStatic = zipStatic;
+var ZipOperator = (function () {
+    function ZipOperator(project) {
+        this.project = project;
+    }
+    ZipOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new ZipSubscriber(subscriber, this.project));
+    };
+    return ZipOperator;
+}());
+exports.ZipOperator = ZipOperator;
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var ZipSubscriber = (function (_super) {
+    __extends(ZipSubscriber, _super);
+    function ZipSubscriber(destination, project, values) {
+        if (values === void 0) { values = Object.create(null); }
+        _super.call(this, destination);
+        this.iterators = [];
+        this.active = 0;
+        this.project = (typeof project === 'function') ? project : null;
+        this.values = values;
+    }
+    ZipSubscriber.prototype._next = function (value) {
+        var iterators = this.iterators;
+        if (isArray_1.isArray(value)) {
+            iterators.push(new StaticArrayIterator(value));
+        }
+        else if (typeof value[iterator_1.iterator] === 'function') {
+            iterators.push(new StaticIterator(value[iterator_1.iterator]()));
+        }
+        else {
+            iterators.push(new ZipBufferIterator(this.destination, this, value));
+        }
+    };
+    ZipSubscriber.prototype._complete = function () {
+        var iterators = this.iterators;
+        var len = iterators.length;
+        if (len === 0) {
+            this.destination.complete();
+            return;
+        }
+        this.active = len;
+        for (var i = 0; i < len; i++) {
+            var iterator = iterators[i];
+            if (iterator.stillUnsubscribed) {
+                this.add(iterator.subscribe(iterator, i));
+            }
+            else {
+                this.active--; // not an observable
+            }
+        }
+    };
+    ZipSubscriber.prototype.notifyInactive = function () {
+        this.active--;
+        if (this.active === 0) {
+            this.destination.complete();
+        }
+    };
+    ZipSubscriber.prototype.checkIterators = function () {
+        var iterators = this.iterators;
+        var len = iterators.length;
+        var destination = this.destination;
+        // abort if not all of them have values
+        for (var i = 0; i < len; i++) {
+            var iterator = iterators[i];
+            if (typeof iterator.hasValue === 'function' && !iterator.hasValue()) {
+                return;
+            }
+        }
+        var shouldComplete = false;
+        var args = [];
+        for (var i = 0; i < len; i++) {
+            var iterator = iterators[i];
+            var result = iterator.next();
+            // check to see if it's completed now that you've gotten
+            // the next value.
+            if (iterator.hasCompleted()) {
+                shouldComplete = true;
+            }
+            if (result.done) {
+                destination.complete();
+                return;
+            }
+            args.push(result.value);
+        }
+        if (this.project) {
+            this._tryProject(args);
+        }
+        else {
+            destination.next(args);
+        }
+        if (shouldComplete) {
+            destination.complete();
+        }
+    };
+    ZipSubscriber.prototype._tryProject = function (args) {
+        var result;
+        try {
+            result = this.project.apply(this, args);
+        }
+        catch (err) {
+            this.destination.error(err);
+            return;
+        }
+        this.destination.next(result);
+    };
+    return ZipSubscriber;
+}(Subscriber_1.Subscriber));
+exports.ZipSubscriber = ZipSubscriber;
+var StaticIterator = (function () {
+    function StaticIterator(iterator) {
+        this.iterator = iterator;
+        this.nextResult = iterator.next();
+    }
+    StaticIterator.prototype.hasValue = function () {
+        return true;
+    };
+    StaticIterator.prototype.next = function () {
+        var result = this.nextResult;
+        this.nextResult = this.iterator.next();
+        return result;
+    };
+    StaticIterator.prototype.hasCompleted = function () {
+        var nextResult = this.nextResult;
+        return nextResult && nextResult.done;
+    };
+    return StaticIterator;
+}());
+var StaticArrayIterator = (function () {
+    function StaticArrayIterator(array) {
+        this.array = array;
+        this.index = 0;
+        this.length = 0;
+        this.length = array.length;
+    }
+    StaticArrayIterator.prototype[iterator_1.iterator] = function () {
+        return this;
+    };
+    StaticArrayIterator.prototype.next = function (value) {
+        var i = this.index++;
+        var array = this.array;
+        return i < this.length ? { value: array[i], done: false } : { value: null, done: true };
+    };
+    StaticArrayIterator.prototype.hasValue = function () {
+        return this.array.length > this.index;
+    };
+    StaticArrayIterator.prototype.hasCompleted = function () {
+        return this.array.length === this.index;
+    };
+    return StaticArrayIterator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var ZipBufferIterator = (function (_super) {
+    __extends(ZipBufferIterator, _super);
+    function ZipBufferIterator(destination, parent, observable) {
+        _super.call(this, destination);
+        this.parent = parent;
+        this.observable = observable;
+        this.stillUnsubscribed = true;
+        this.buffer = [];
+        this.isComplete = false;
+    }
+    ZipBufferIterator.prototype[iterator_1.iterator] = function () {
+        return this;
+    };
+    // NOTE: there is actually a name collision here with Subscriber.next and Iterator.next
+    //    this is legit because `next()` will never be called by a subscription in this case.
+    ZipBufferIterator.prototype.next = function () {
+        var buffer = this.buffer;
+        if (buffer.length === 0 && this.isComplete) {
+            return { value: null, done: true };
+        }
+        else {
+            return { value: buffer.shift(), done: false };
+        }
+    };
+    ZipBufferIterator.prototype.hasValue = function () {
+        return this.buffer.length > 0;
+    };
+    ZipBufferIterator.prototype.hasCompleted = function () {
+        return this.buffer.length === 0 && this.isComplete;
+    };
+    ZipBufferIterator.prototype.notifyComplete = function () {
+        if (this.buffer.length > 0) {
+            this.isComplete = true;
+            this.parent.notifyInactive();
+        }
+        else {
+            this.destination.complete();
+        }
+    };
+    ZipBufferIterator.prototype.notifyNext = function (outerValue, innerValue, outerIndex, innerIndex, innerSub) {
+        this.buffer.push(innerValue);
+        this.parent.checkIterators();
+    };
+    ZipBufferIterator.prototype.subscribe = function (value, index) {
+        return subscribeToResult_1.subscribeToResult(this, this.observable, this, index);
+    };
+    return ZipBufferIterator;
+}(OuterSubscriber_1.OuterSubscriber));
+//# sourceMappingURL=zip.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/operator/zipAll.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var zip_1 = __webpack_require__("../../node_modules/rxjs/operator/zip.js");
+/**
+ * @param project
+ * @return {Observable<R>|WebSocketSubject<T>|Observable<T>}
+ * @method zipAll
+ * @owner Observable
+ */
+function zipAll(project) {
+    return this.lift(new zip_1.ZipOperator(project));
+}
+exports.zipAll = zipAll;
+//# sourceMappingURL=zipAll.js.map
+
+/***/ }),
+
 /***/ "../../node_modules/rxjs/scheduler/Action.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -49465,6 +58782,218 @@ var Action = (function (_super) {
 }(Subscription_1.Subscription));
 exports.Action = Action;
 //# sourceMappingURL=Action.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/scheduler/AnimationFrameAction.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var AsyncAction_1 = __webpack_require__("../../node_modules/rxjs/scheduler/AsyncAction.js");
+var AnimationFrame_1 = __webpack_require__("../../node_modules/rxjs/util/AnimationFrame.js");
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var AnimationFrameAction = (function (_super) {
+    __extends(AnimationFrameAction, _super);
+    function AnimationFrameAction(scheduler, work) {
+        _super.call(this, scheduler, work);
+        this.scheduler = scheduler;
+        this.work = work;
+    }
+    AnimationFrameAction.prototype.requestAsyncId = function (scheduler, id, delay) {
+        if (delay === void 0) { delay = 0; }
+        // If delay is greater than 0, request as an async action.
+        if (delay !== null && delay > 0) {
+            return _super.prototype.requestAsyncId.call(this, scheduler, id, delay);
+        }
+        // Push the action to the end of the scheduler queue.
+        scheduler.actions.push(this);
+        // If an animation frame has already been requested, don't request another
+        // one. If an animation frame hasn't been requested yet, request one. Return
+        // the current animation frame request id.
+        return scheduler.scheduled || (scheduler.scheduled = AnimationFrame_1.AnimationFrame.requestAnimationFrame(scheduler.flush.bind(scheduler, null)));
+    };
+    AnimationFrameAction.prototype.recycleAsyncId = function (scheduler, id, delay) {
+        if (delay === void 0) { delay = 0; }
+        // If delay exists and is greater than 0, or if the delay is null (the
+        // action wasn't rescheduled) but was originally scheduled as an async
+        // action, then recycle as an async action.
+        if ((delay !== null && delay > 0) || (delay === null && this.delay > 0)) {
+            return _super.prototype.recycleAsyncId.call(this, scheduler, id, delay);
+        }
+        // If the scheduler queue is empty, cancel the requested animation frame and
+        // set the scheduled flag to undefined so the next AnimationFrameAction will
+        // request its own.
+        if (scheduler.actions.length === 0) {
+            AnimationFrame_1.AnimationFrame.cancelAnimationFrame(id);
+            scheduler.scheduled = undefined;
+        }
+        // Return undefined so the action knows to request a new async id if it's rescheduled.
+        return undefined;
+    };
+    return AnimationFrameAction;
+}(AsyncAction_1.AsyncAction));
+exports.AnimationFrameAction = AnimationFrameAction;
+//# sourceMappingURL=AnimationFrameAction.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/scheduler/AnimationFrameScheduler.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var AsyncScheduler_1 = __webpack_require__("../../node_modules/rxjs/scheduler/AsyncScheduler.js");
+var AnimationFrameScheduler = (function (_super) {
+    __extends(AnimationFrameScheduler, _super);
+    function AnimationFrameScheduler() {
+        _super.apply(this, arguments);
+    }
+    AnimationFrameScheduler.prototype.flush = function (action) {
+        this.active = true;
+        this.scheduled = undefined;
+        var actions = this.actions;
+        var error;
+        var index = -1;
+        var count = actions.length;
+        action = action || actions.shift();
+        do {
+            if (error = action.execute(action.state, action.delay)) {
+                break;
+            }
+        } while (++index < count && (action = actions.shift()));
+        this.active = false;
+        if (error) {
+            while (++index < count && (action = actions.shift())) {
+                action.unsubscribe();
+            }
+            throw error;
+        }
+    };
+    return AnimationFrameScheduler;
+}(AsyncScheduler_1.AsyncScheduler));
+exports.AnimationFrameScheduler = AnimationFrameScheduler;
+//# sourceMappingURL=AnimationFrameScheduler.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/scheduler/AsapAction.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Immediate_1 = __webpack_require__("../../node_modules/rxjs/util/Immediate.js");
+var AsyncAction_1 = __webpack_require__("../../node_modules/rxjs/scheduler/AsyncAction.js");
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var AsapAction = (function (_super) {
+    __extends(AsapAction, _super);
+    function AsapAction(scheduler, work) {
+        _super.call(this, scheduler, work);
+        this.scheduler = scheduler;
+        this.work = work;
+    }
+    AsapAction.prototype.requestAsyncId = function (scheduler, id, delay) {
+        if (delay === void 0) { delay = 0; }
+        // If delay is greater than 0, request as an async action.
+        if (delay !== null && delay > 0) {
+            return _super.prototype.requestAsyncId.call(this, scheduler, id, delay);
+        }
+        // Push the action to the end of the scheduler queue.
+        scheduler.actions.push(this);
+        // If a microtask has already been scheduled, don't schedule another
+        // one. If a microtask hasn't been scheduled yet, schedule one now. Return
+        // the current scheduled microtask id.
+        return scheduler.scheduled || (scheduler.scheduled = Immediate_1.Immediate.setImmediate(scheduler.flush.bind(scheduler, null)));
+    };
+    AsapAction.prototype.recycleAsyncId = function (scheduler, id, delay) {
+        if (delay === void 0) { delay = 0; }
+        // If delay exists and is greater than 0, or if the delay is null (the
+        // action wasn't rescheduled) but was originally scheduled as an async
+        // action, then recycle as an async action.
+        if ((delay !== null && delay > 0) || (delay === null && this.delay > 0)) {
+            return _super.prototype.recycleAsyncId.call(this, scheduler, id, delay);
+        }
+        // If the scheduler queue is empty, cancel the requested microtask and
+        // set the scheduled flag to undefined so the next AsapAction will schedule
+        // its own.
+        if (scheduler.actions.length === 0) {
+            Immediate_1.Immediate.clearImmediate(id);
+            scheduler.scheduled = undefined;
+        }
+        // Return undefined so the action knows to request a new async id if it's rescheduled.
+        return undefined;
+    };
+    return AsapAction;
+}(AsyncAction_1.AsyncAction));
+exports.AsapAction = AsapAction;
+//# sourceMappingURL=AsapAction.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/scheduler/AsapScheduler.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var AsyncScheduler_1 = __webpack_require__("../../node_modules/rxjs/scheduler/AsyncScheduler.js");
+var AsapScheduler = (function (_super) {
+    __extends(AsapScheduler, _super);
+    function AsapScheduler() {
+        _super.apply(this, arguments);
+    }
+    AsapScheduler.prototype.flush = function (action) {
+        this.active = true;
+        this.scheduled = undefined;
+        var actions = this.actions;
+        var error;
+        var index = -1;
+        var count = actions.length;
+        action = action || actions.shift();
+        do {
+            if (error = action.execute(action.state, action.delay)) {
+                break;
+            }
+        } while (++index < count && (action = actions.shift()));
+        this.active = false;
+        if (error) {
+            while (++index < count && (action = actions.shift())) {
+                action.unsubscribe();
+            }
+            throw error;
+        }
+    };
+    return AsapScheduler;
+}(AsyncScheduler_1.AsyncScheduler));
+exports.AsapScheduler = AsapScheduler;
+//# sourceMappingURL=AsapScheduler.js.map
 
 /***/ }),
 
@@ -49675,6 +59204,293 @@ exports.AsyncScheduler = AsyncScheduler;
 
 /***/ }),
 
+/***/ "../../node_modules/rxjs/scheduler/QueueAction.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var AsyncAction_1 = __webpack_require__("../../node_modules/rxjs/scheduler/AsyncAction.js");
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var QueueAction = (function (_super) {
+    __extends(QueueAction, _super);
+    function QueueAction(scheduler, work) {
+        _super.call(this, scheduler, work);
+        this.scheduler = scheduler;
+        this.work = work;
+    }
+    QueueAction.prototype.schedule = function (state, delay) {
+        if (delay === void 0) { delay = 0; }
+        if (delay > 0) {
+            return _super.prototype.schedule.call(this, state, delay);
+        }
+        this.delay = delay;
+        this.state = state;
+        this.scheduler.flush(this);
+        return this;
+    };
+    QueueAction.prototype.execute = function (state, delay) {
+        return (delay > 0 || this.closed) ?
+            _super.prototype.execute.call(this, state, delay) :
+            this._execute(state, delay);
+    };
+    QueueAction.prototype.requestAsyncId = function (scheduler, id, delay) {
+        if (delay === void 0) { delay = 0; }
+        // If delay exists and is greater than 0, or if the delay is null (the
+        // action wasn't rescheduled) but was originally scheduled as an async
+        // action, then recycle as an async action.
+        if ((delay !== null && delay > 0) || (delay === null && this.delay > 0)) {
+            return _super.prototype.requestAsyncId.call(this, scheduler, id, delay);
+        }
+        // Otherwise flush the scheduler starting with this action.
+        return scheduler.flush(this);
+    };
+    return QueueAction;
+}(AsyncAction_1.AsyncAction));
+exports.QueueAction = QueueAction;
+//# sourceMappingURL=QueueAction.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/scheduler/QueueScheduler.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var AsyncScheduler_1 = __webpack_require__("../../node_modules/rxjs/scheduler/AsyncScheduler.js");
+var QueueScheduler = (function (_super) {
+    __extends(QueueScheduler, _super);
+    function QueueScheduler() {
+        _super.apply(this, arguments);
+    }
+    return QueueScheduler;
+}(AsyncScheduler_1.AsyncScheduler));
+exports.QueueScheduler = QueueScheduler;
+//# sourceMappingURL=QueueScheduler.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/scheduler/VirtualTimeScheduler.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var AsyncAction_1 = __webpack_require__("../../node_modules/rxjs/scheduler/AsyncAction.js");
+var AsyncScheduler_1 = __webpack_require__("../../node_modules/rxjs/scheduler/AsyncScheduler.js");
+var VirtualTimeScheduler = (function (_super) {
+    __extends(VirtualTimeScheduler, _super);
+    function VirtualTimeScheduler(SchedulerAction, maxFrames) {
+        var _this = this;
+        if (SchedulerAction === void 0) { SchedulerAction = VirtualAction; }
+        if (maxFrames === void 0) { maxFrames = Number.POSITIVE_INFINITY; }
+        _super.call(this, SchedulerAction, function () { return _this.frame; });
+        this.maxFrames = maxFrames;
+        this.frame = 0;
+        this.index = -1;
+    }
+    /**
+     * Prompt the Scheduler to execute all of its queued actions, therefore
+     * clearing its queue.
+     * @return {void}
+     */
+    VirtualTimeScheduler.prototype.flush = function () {
+        var _a = this, actions = _a.actions, maxFrames = _a.maxFrames;
+        var error, action;
+        while ((action = actions.shift()) && (this.frame = action.delay) <= maxFrames) {
+            if (error = action.execute(action.state, action.delay)) {
+                break;
+            }
+        }
+        if (error) {
+            while (action = actions.shift()) {
+                action.unsubscribe();
+            }
+            throw error;
+        }
+    };
+    VirtualTimeScheduler.frameTimeFactor = 10;
+    return VirtualTimeScheduler;
+}(AsyncScheduler_1.AsyncScheduler));
+exports.VirtualTimeScheduler = VirtualTimeScheduler;
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var VirtualAction = (function (_super) {
+    __extends(VirtualAction, _super);
+    function VirtualAction(scheduler, work, index) {
+        if (index === void 0) { index = scheduler.index += 1; }
+        _super.call(this, scheduler, work);
+        this.scheduler = scheduler;
+        this.work = work;
+        this.index = index;
+        this.active = true;
+        this.index = scheduler.index = index;
+    }
+    VirtualAction.prototype.schedule = function (state, delay) {
+        if (delay === void 0) { delay = 0; }
+        if (!this.id) {
+            return _super.prototype.schedule.call(this, state, delay);
+        }
+        this.active = false;
+        // If an action is rescheduled, we save allocations by mutating its state,
+        // pushing it to the end of the scheduler queue, and recycling the action.
+        // But since the VirtualTimeScheduler is used for testing, VirtualActions
+        // must be immutable so they can be inspected later.
+        var action = new VirtualAction(this.scheduler, this.work);
+        this.add(action);
+        return action.schedule(state, delay);
+    };
+    VirtualAction.prototype.requestAsyncId = function (scheduler, id, delay) {
+        if (delay === void 0) { delay = 0; }
+        this.delay = scheduler.frame + delay;
+        var actions = scheduler.actions;
+        actions.push(this);
+        actions.sort(VirtualAction.sortActions);
+        return true;
+    };
+    VirtualAction.prototype.recycleAsyncId = function (scheduler, id, delay) {
+        if (delay === void 0) { delay = 0; }
+        return undefined;
+    };
+    VirtualAction.prototype._execute = function (state, delay) {
+        if (this.active === true) {
+            return _super.prototype._execute.call(this, state, delay);
+        }
+    };
+    VirtualAction.sortActions = function (a, b) {
+        if (a.delay === b.delay) {
+            if (a.index === b.index) {
+                return 0;
+            }
+            else if (a.index > b.index) {
+                return 1;
+            }
+            else {
+                return -1;
+            }
+        }
+        else if (a.delay > b.delay) {
+            return 1;
+        }
+        else {
+            return -1;
+        }
+    };
+    return VirtualAction;
+}(AsyncAction_1.AsyncAction));
+exports.VirtualAction = VirtualAction;
+//# sourceMappingURL=VirtualTimeScheduler.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/scheduler/animationFrame.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var AnimationFrameAction_1 = __webpack_require__("../../node_modules/rxjs/scheduler/AnimationFrameAction.js");
+var AnimationFrameScheduler_1 = __webpack_require__("../../node_modules/rxjs/scheduler/AnimationFrameScheduler.js");
+/**
+ *
+ * Animation Frame Scheduler
+ *
+ * <span class="informal">Perform task when `window.requestAnimationFrame` would fire</span>
+ *
+ * When `animationFrame` scheduler is used with delay, it will fall back to {@link async} scheduler
+ * behaviour.
+ *
+ * Without delay, `animationFrame` scheduler can be used to create smooth browser animations.
+ * It makes sure scheduled task will happen just before next browser content repaint,
+ * thus performing animations as efficiently as possible.
+ *
+ * @example <caption>Schedule div height animation</caption>
+ * const div = document.querySelector('.some-div');
+ *
+ * Rx.Scheduler.schedule(function(height) {
+ *   div.style.height = height + "px";
+ *
+ *   this.schedule(height + 1);  // `this` references currently executing Action,
+ *                               // which we reschedule with new state
+ * }, 0, 0);
+ *
+ * // You will see .some-div element growing in height
+ *
+ *
+ * @static true
+ * @name animationFrame
+ * @owner Scheduler
+ */
+exports.animationFrame = new AnimationFrameScheduler_1.AnimationFrameScheduler(AnimationFrameAction_1.AnimationFrameAction);
+//# sourceMappingURL=animationFrame.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/scheduler/asap.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var AsapAction_1 = __webpack_require__("../../node_modules/rxjs/scheduler/AsapAction.js");
+var AsapScheduler_1 = __webpack_require__("../../node_modules/rxjs/scheduler/AsapScheduler.js");
+/**
+ *
+ * Asap Scheduler
+ *
+ * <span class="informal">Perform task as fast as it can be performed asynchronously</span>
+ *
+ * `asap` scheduler behaves the same as {@link async} scheduler when you use it to delay task
+ * in time. If however you set delay to `0`, `asap` will wait for current synchronously executing
+ * code to end and then it will try to execute given task as fast as possible.
+ *
+ * `asap` scheduler will do its best to minimize time between end of currently executing code
+ * and start of scheduled task. This makes it best candidate for performing so called "deferring".
+ * Traditionally this was achieved by calling `setTimeout(deferredTask, 0)`, but that technique involves
+ * some (although minimal) unwanted delay.
+ *
+ * Note that using `asap` scheduler does not necessarily mean that your task will be first to process
+ * after currently executing code. In particular, if some task was also scheduled with `asap` before,
+ * that task will execute first. That being said, if you need to schedule task asynchronously, but
+ * as soon as possible, `asap` scheduler is your best bet.
+ *
+ * @example <caption>Compare async and asap scheduler</caption>
+ *
+ * Rx.Scheduler.async.schedule(() => console.log('async')); // scheduling 'async' first...
+ * Rx.Scheduler.asap.schedule(() => console.log('asap'));
+ *
+ * // Logs:
+ * // "asap"
+ * // "async"
+ * // ... but 'asap' goes first!
+ *
+ * @static true
+ * @name asap
+ * @owner Scheduler
+ */
+exports.asap = new AsapScheduler_1.AsapScheduler(AsapAction_1.AsapAction);
+//# sourceMappingURL=asap.js.map
+
+/***/ }),
+
 /***/ "../../node_modules/rxjs/scheduler/async.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -49726,6 +59542,79 @@ var AsyncScheduler_1 = __webpack_require__("../../node_modules/rxjs/scheduler/As
  */
 exports.async = new AsyncScheduler_1.AsyncScheduler(AsyncAction_1.AsyncAction);
 //# sourceMappingURL=async.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/scheduler/queue.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var QueueAction_1 = __webpack_require__("../../node_modules/rxjs/scheduler/QueueAction.js");
+var QueueScheduler_1 = __webpack_require__("../../node_modules/rxjs/scheduler/QueueScheduler.js");
+/**
+ *
+ * Queue Scheduler
+ *
+ * <span class="informal">Put every next task on a queue, instead of executing it immediately</span>
+ *
+ * `queue` scheduler, when used with delay, behaves the same as {@link async} scheduler.
+ *
+ * When used without delay, it schedules given task synchronously - executes it right when
+ * it is scheduled. However when called recursively, that is when inside the scheduled task,
+ * another task is scheduled with queue scheduler, instead of executing immediately as well,
+ * that task will be put on a queue and wait for current one to finish.
+ *
+ * This means that when you execute task with `queue` scheduler, you are sure it will end
+ * before any other task scheduled with that scheduler will start.
+ *
+ * @examples <caption>Schedule recursively first, then do something</caption>
+ *
+ * Rx.Scheduler.queue.schedule(() => {
+ *   Rx.Scheduler.queue.schedule(() => console.log('second')); // will not happen now, but will be put on a queue
+ *
+ *   console.log('first');
+ * });
+ *
+ * // Logs:
+ * // "first"
+ * // "second"
+ *
+ *
+ * @example <caption>Reschedule itself recursively</caption>
+ *
+ * Rx.Scheduler.queue.schedule(function(state) {
+ *   if (state !== 0) {
+ *     console.log('before', state);
+ *     this.schedule(state - 1); // `this` references currently executing Action,
+ *                               // which we reschedule with new state
+ *     console.log('after', state);
+ *   }
+ * }, 0, 3);
+ *
+ * // In scheduler that runs recursively, you would expect:
+ * // "before", 3
+ * // "before", 2
+ * // "before", 1
+ * // "after", 1
+ * // "after", 2
+ * // "after", 3
+ *
+ * // But with queue it logs:
+ * // "before", 3
+ * // "after", 3
+ * // "before", 2
+ * // "after", 2
+ * // "before", 1
+ * // "after", 1
+ *
+ *
+ * @static true
+ * @name queue
+ * @owner Scheduler
+ */
+exports.queue = new QueueScheduler_1.QueueScheduler(QueueAction_1.QueueAction);
+//# sourceMappingURL=queue.js.map
 
 /***/ }),
 
@@ -49824,6 +59713,429 @@ exports.$$rxSubscriber = exports.rxSubscriber;
 
 /***/ }),
 
+/***/ "../../node_modules/rxjs/testing/ColdObservable.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var Subscription_1 = __webpack_require__("../../node_modules/rxjs/Subscription.js");
+var SubscriptionLoggable_1 = __webpack_require__("../../node_modules/rxjs/testing/SubscriptionLoggable.js");
+var applyMixins_1 = __webpack_require__("../../node_modules/rxjs/util/applyMixins.js");
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var ColdObservable = (function (_super) {
+    __extends(ColdObservable, _super);
+    function ColdObservable(messages, scheduler) {
+        _super.call(this, function (subscriber) {
+            var observable = this;
+            var index = observable.logSubscribedFrame();
+            subscriber.add(new Subscription_1.Subscription(function () {
+                observable.logUnsubscribedFrame(index);
+            }));
+            observable.scheduleMessages(subscriber);
+            return subscriber;
+        });
+        this.messages = messages;
+        this.subscriptions = [];
+        this.scheduler = scheduler;
+    }
+    ColdObservable.prototype.scheduleMessages = function (subscriber) {
+        var messagesLength = this.messages.length;
+        for (var i = 0; i < messagesLength; i++) {
+            var message = this.messages[i];
+            subscriber.add(this.scheduler.schedule(function (_a) {
+                var message = _a.message, subscriber = _a.subscriber;
+                message.notification.observe(subscriber);
+            }, message.frame, { message: message, subscriber: subscriber }));
+        }
+    };
+    return ColdObservable;
+}(Observable_1.Observable));
+exports.ColdObservable = ColdObservable;
+applyMixins_1.applyMixins(ColdObservable, [SubscriptionLoggable_1.SubscriptionLoggable]);
+//# sourceMappingURL=ColdObservable.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/testing/HotObservable.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subject_1 = __webpack_require__("../../node_modules/rxjs/Subject.js");
+var Subscription_1 = __webpack_require__("../../node_modules/rxjs/Subscription.js");
+var SubscriptionLoggable_1 = __webpack_require__("../../node_modules/rxjs/testing/SubscriptionLoggable.js");
+var applyMixins_1 = __webpack_require__("../../node_modules/rxjs/util/applyMixins.js");
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var HotObservable = (function (_super) {
+    __extends(HotObservable, _super);
+    function HotObservable(messages, scheduler) {
+        _super.call(this);
+        this.messages = messages;
+        this.subscriptions = [];
+        this.scheduler = scheduler;
+    }
+    HotObservable.prototype._subscribe = function (subscriber) {
+        var subject = this;
+        var index = subject.logSubscribedFrame();
+        subscriber.add(new Subscription_1.Subscription(function () {
+            subject.logUnsubscribedFrame(index);
+        }));
+        return _super.prototype._subscribe.call(this, subscriber);
+    };
+    HotObservable.prototype.setup = function () {
+        var subject = this;
+        var messagesLength = subject.messages.length;
+        /* tslint:disable:no-var-keyword */
+        for (var i = 0; i < messagesLength; i++) {
+            (function () {
+                var message = subject.messages[i];
+                /* tslint:enable */
+                subject.scheduler.schedule(function () { message.notification.observe(subject); }, message.frame);
+            })();
+        }
+    };
+    return HotObservable;
+}(Subject_1.Subject));
+exports.HotObservable = HotObservable;
+applyMixins_1.applyMixins(HotObservable, [SubscriptionLoggable_1.SubscriptionLoggable]);
+//# sourceMappingURL=HotObservable.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/testing/SubscriptionLog.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var SubscriptionLog = (function () {
+    function SubscriptionLog(subscribedFrame, unsubscribedFrame) {
+        if (unsubscribedFrame === void 0) { unsubscribedFrame = Number.POSITIVE_INFINITY; }
+        this.subscribedFrame = subscribedFrame;
+        this.unsubscribedFrame = unsubscribedFrame;
+    }
+    return SubscriptionLog;
+}());
+exports.SubscriptionLog = SubscriptionLog;
+//# sourceMappingURL=SubscriptionLog.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/testing/SubscriptionLoggable.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var SubscriptionLog_1 = __webpack_require__("../../node_modules/rxjs/testing/SubscriptionLog.js");
+var SubscriptionLoggable = (function () {
+    function SubscriptionLoggable() {
+        this.subscriptions = [];
+    }
+    SubscriptionLoggable.prototype.logSubscribedFrame = function () {
+        this.subscriptions.push(new SubscriptionLog_1.SubscriptionLog(this.scheduler.now()));
+        return this.subscriptions.length - 1;
+    };
+    SubscriptionLoggable.prototype.logUnsubscribedFrame = function (index) {
+        var subscriptionLogs = this.subscriptions;
+        var oldSubscriptionLog = subscriptionLogs[index];
+        subscriptionLogs[index] = new SubscriptionLog_1.SubscriptionLog(oldSubscriptionLog.subscribedFrame, this.scheduler.now());
+    };
+    return SubscriptionLoggable;
+}());
+exports.SubscriptionLoggable = SubscriptionLoggable;
+//# sourceMappingURL=SubscriptionLoggable.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/testing/TestScheduler.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Observable_1 = __webpack_require__("../../node_modules/rxjs/Observable.js");
+var Notification_1 = __webpack_require__("../../node_modules/rxjs/Notification.js");
+var ColdObservable_1 = __webpack_require__("../../node_modules/rxjs/testing/ColdObservable.js");
+var HotObservable_1 = __webpack_require__("../../node_modules/rxjs/testing/HotObservable.js");
+var SubscriptionLog_1 = __webpack_require__("../../node_modules/rxjs/testing/SubscriptionLog.js");
+var VirtualTimeScheduler_1 = __webpack_require__("../../node_modules/rxjs/scheduler/VirtualTimeScheduler.js");
+var defaultMaxFrame = 750;
+var TestScheduler = (function (_super) {
+    __extends(TestScheduler, _super);
+    function TestScheduler(assertDeepEqual) {
+        _super.call(this, VirtualTimeScheduler_1.VirtualAction, defaultMaxFrame);
+        this.assertDeepEqual = assertDeepEqual;
+        this.hotObservables = [];
+        this.coldObservables = [];
+        this.flushTests = [];
+    }
+    TestScheduler.prototype.createTime = function (marbles) {
+        var indexOf = marbles.indexOf('|');
+        if (indexOf === -1) {
+            throw new Error('marble diagram for time should have a completion marker "|"');
+        }
+        return indexOf * TestScheduler.frameTimeFactor;
+    };
+    TestScheduler.prototype.createColdObservable = function (marbles, values, error) {
+        if (marbles.indexOf('^') !== -1) {
+            throw new Error('cold observable cannot have subscription offset "^"');
+        }
+        if (marbles.indexOf('!') !== -1) {
+            throw new Error('cold observable cannot have unsubscription marker "!"');
+        }
+        var messages = TestScheduler.parseMarbles(marbles, values, error);
+        var cold = new ColdObservable_1.ColdObservable(messages, this);
+        this.coldObservables.push(cold);
+        return cold;
+    };
+    TestScheduler.prototype.createHotObservable = function (marbles, values, error) {
+        if (marbles.indexOf('!') !== -1) {
+            throw new Error('hot observable cannot have unsubscription marker "!"');
+        }
+        var messages = TestScheduler.parseMarbles(marbles, values, error);
+        var subject = new HotObservable_1.HotObservable(messages, this);
+        this.hotObservables.push(subject);
+        return subject;
+    };
+    TestScheduler.prototype.materializeInnerObservable = function (observable, outerFrame) {
+        var _this = this;
+        var messages = [];
+        observable.subscribe(function (value) {
+            messages.push({ frame: _this.frame - outerFrame, notification: Notification_1.Notification.createNext(value) });
+        }, function (err) {
+            messages.push({ frame: _this.frame - outerFrame, notification: Notification_1.Notification.createError(err) });
+        }, function () {
+            messages.push({ frame: _this.frame - outerFrame, notification: Notification_1.Notification.createComplete() });
+        });
+        return messages;
+    };
+    TestScheduler.prototype.expectObservable = function (observable, unsubscriptionMarbles) {
+        var _this = this;
+        if (unsubscriptionMarbles === void 0) { unsubscriptionMarbles = null; }
+        var actual = [];
+        var flushTest = { actual: actual, ready: false };
+        var unsubscriptionFrame = TestScheduler
+            .parseMarblesAsSubscriptions(unsubscriptionMarbles).unsubscribedFrame;
+        var subscription;
+        this.schedule(function () {
+            subscription = observable.subscribe(function (x) {
+                var value = x;
+                // Support Observable-of-Observables
+                if (x instanceof Observable_1.Observable) {
+                    value = _this.materializeInnerObservable(value, _this.frame);
+                }
+                actual.push({ frame: _this.frame, notification: Notification_1.Notification.createNext(value) });
+            }, function (err) {
+                actual.push({ frame: _this.frame, notification: Notification_1.Notification.createError(err) });
+            }, function () {
+                actual.push({ frame: _this.frame, notification: Notification_1.Notification.createComplete() });
+            });
+        }, 0);
+        if (unsubscriptionFrame !== Number.POSITIVE_INFINITY) {
+            this.schedule(function () { return subscription.unsubscribe(); }, unsubscriptionFrame);
+        }
+        this.flushTests.push(flushTest);
+        return {
+            toBe: function (marbles, values, errorValue) {
+                flushTest.ready = true;
+                flushTest.expected = TestScheduler.parseMarbles(marbles, values, errorValue, true);
+            }
+        };
+    };
+    TestScheduler.prototype.expectSubscriptions = function (actualSubscriptionLogs) {
+        var flushTest = { actual: actualSubscriptionLogs, ready: false };
+        this.flushTests.push(flushTest);
+        return {
+            toBe: function (marbles) {
+                var marblesArray = (typeof marbles === 'string') ? [marbles] : marbles;
+                flushTest.ready = true;
+                flushTest.expected = marblesArray.map(function (marbles) {
+                    return TestScheduler.parseMarblesAsSubscriptions(marbles);
+                });
+            }
+        };
+    };
+    TestScheduler.prototype.flush = function () {
+        var hotObservables = this.hotObservables;
+        while (hotObservables.length > 0) {
+            hotObservables.shift().setup();
+        }
+        _super.prototype.flush.call(this);
+        var readyFlushTests = this.flushTests.filter(function (test) { return test.ready; });
+        while (readyFlushTests.length > 0) {
+            var test = readyFlushTests.shift();
+            this.assertDeepEqual(test.actual, test.expected);
+        }
+    };
+    TestScheduler.parseMarblesAsSubscriptions = function (marbles) {
+        if (typeof marbles !== 'string') {
+            return new SubscriptionLog_1.SubscriptionLog(Number.POSITIVE_INFINITY);
+        }
+        var len = marbles.length;
+        var groupStart = -1;
+        var subscriptionFrame = Number.POSITIVE_INFINITY;
+        var unsubscriptionFrame = Number.POSITIVE_INFINITY;
+        for (var i = 0; i < len; i++) {
+            var frame = i * this.frameTimeFactor;
+            var c = marbles[i];
+            switch (c) {
+                case '-':
+                case ' ':
+                    break;
+                case '(':
+                    groupStart = frame;
+                    break;
+                case ')':
+                    groupStart = -1;
+                    break;
+                case '^':
+                    if (subscriptionFrame !== Number.POSITIVE_INFINITY) {
+                        throw new Error('found a second subscription point \'^\' in a ' +
+                            'subscription marble diagram. There can only be one.');
+                    }
+                    subscriptionFrame = groupStart > -1 ? groupStart : frame;
+                    break;
+                case '!':
+                    if (unsubscriptionFrame !== Number.POSITIVE_INFINITY) {
+                        throw new Error('found a second subscription point \'^\' in a ' +
+                            'subscription marble diagram. There can only be one.');
+                    }
+                    unsubscriptionFrame = groupStart > -1 ? groupStart : frame;
+                    break;
+                default:
+                    throw new Error('there can only be \'^\' and \'!\' markers in a ' +
+                        'subscription marble diagram. Found instead \'' + c + '\'.');
+            }
+        }
+        if (unsubscriptionFrame < 0) {
+            return new SubscriptionLog_1.SubscriptionLog(subscriptionFrame);
+        }
+        else {
+            return new SubscriptionLog_1.SubscriptionLog(subscriptionFrame, unsubscriptionFrame);
+        }
+    };
+    TestScheduler.parseMarbles = function (marbles, values, errorValue, materializeInnerObservables) {
+        if (materializeInnerObservables === void 0) { materializeInnerObservables = false; }
+        if (marbles.indexOf('!') !== -1) {
+            throw new Error('conventional marble diagrams cannot have the ' +
+                'unsubscription marker "!"');
+        }
+        var len = marbles.length;
+        var testMessages = [];
+        var subIndex = marbles.indexOf('^');
+        var frameOffset = subIndex === -1 ? 0 : (subIndex * -this.frameTimeFactor);
+        var getValue = typeof values !== 'object' ?
+            function (x) { return x; } :
+            function (x) {
+                // Support Observable-of-Observables
+                if (materializeInnerObservables && values[x] instanceof ColdObservable_1.ColdObservable) {
+                    return values[x].messages;
+                }
+                return values[x];
+            };
+        var groupStart = -1;
+        for (var i = 0; i < len; i++) {
+            var frame = i * this.frameTimeFactor + frameOffset;
+            var notification = void 0;
+            var c = marbles[i];
+            switch (c) {
+                case '-':
+                case ' ':
+                    break;
+                case '(':
+                    groupStart = frame;
+                    break;
+                case ')':
+                    groupStart = -1;
+                    break;
+                case '|':
+                    notification = Notification_1.Notification.createComplete();
+                    break;
+                case '^':
+                    break;
+                case '#':
+                    notification = Notification_1.Notification.createError(errorValue || 'error');
+                    break;
+                default:
+                    notification = Notification_1.Notification.createNext(getValue(c));
+                    break;
+            }
+            if (notification) {
+                testMessages.push({ frame: groupStart > -1 ? groupStart : frame, notification: notification });
+            }
+        }
+        return testMessages;
+    };
+    return TestScheduler;
+}(VirtualTimeScheduler_1.VirtualTimeScheduler));
+exports.TestScheduler = TestScheduler;
+//# sourceMappingURL=TestScheduler.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/util/AnimationFrame.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var root_1 = __webpack_require__("../../node_modules/rxjs/util/root.js");
+var RequestAnimationFrameDefinition = (function () {
+    function RequestAnimationFrameDefinition(root) {
+        if (root.requestAnimationFrame) {
+            this.cancelAnimationFrame = root.cancelAnimationFrame.bind(root);
+            this.requestAnimationFrame = root.requestAnimationFrame.bind(root);
+        }
+        else if (root.mozRequestAnimationFrame) {
+            this.cancelAnimationFrame = root.mozCancelAnimationFrame.bind(root);
+            this.requestAnimationFrame = root.mozRequestAnimationFrame.bind(root);
+        }
+        else if (root.webkitRequestAnimationFrame) {
+            this.cancelAnimationFrame = root.webkitCancelAnimationFrame.bind(root);
+            this.requestAnimationFrame = root.webkitRequestAnimationFrame.bind(root);
+        }
+        else if (root.msRequestAnimationFrame) {
+            this.cancelAnimationFrame = root.msCancelAnimationFrame.bind(root);
+            this.requestAnimationFrame = root.msRequestAnimationFrame.bind(root);
+        }
+        else if (root.oRequestAnimationFrame) {
+            this.cancelAnimationFrame = root.oCancelAnimationFrame.bind(root);
+            this.requestAnimationFrame = root.oRequestAnimationFrame.bind(root);
+        }
+        else {
+            this.cancelAnimationFrame = root.clearTimeout.bind(root);
+            this.requestAnimationFrame = function (cb) { return root.setTimeout(cb, 1000 / 60); };
+        }
+    }
+    return RequestAnimationFrameDefinition;
+}());
+exports.RequestAnimationFrameDefinition = RequestAnimationFrameDefinition;
+exports.AnimationFrame = new RequestAnimationFrameDefinition(root_1.root);
+//# sourceMappingURL=AnimationFrame.js.map
+
+/***/ }),
+
 /***/ "../../node_modules/rxjs/util/ArgumentOutOfRangeError.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -49856,6 +60168,362 @@ var ArgumentOutOfRangeError = (function (_super) {
 }(Error));
 exports.ArgumentOutOfRangeError = ArgumentOutOfRangeError;
 //# sourceMappingURL=ArgumentOutOfRangeError.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/util/EmptyError.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+/**
+ * An error thrown when an Observable or a sequence was queried but has no
+ * elements.
+ *
+ * @see {@link first}
+ * @see {@link last}
+ * @see {@link single}
+ *
+ * @class EmptyError
+ */
+var EmptyError = (function (_super) {
+    __extends(EmptyError, _super);
+    function EmptyError() {
+        var err = _super.call(this, 'no elements in sequence');
+        this.name = err.name = 'EmptyError';
+        this.stack = err.stack;
+        this.message = err.message;
+    }
+    return EmptyError;
+}(Error));
+exports.EmptyError = EmptyError;
+//# sourceMappingURL=EmptyError.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/util/FastMap.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var FastMap = (function () {
+    function FastMap() {
+        this.values = {};
+    }
+    FastMap.prototype.delete = function (key) {
+        this.values[key] = null;
+        return true;
+    };
+    FastMap.prototype.set = function (key, value) {
+        this.values[key] = value;
+        return this;
+    };
+    FastMap.prototype.get = function (key) {
+        return this.values[key];
+    };
+    FastMap.prototype.forEach = function (cb, thisArg) {
+        var values = this.values;
+        for (var key in values) {
+            if (values.hasOwnProperty(key) && values[key] !== null) {
+                cb.call(thisArg, values[key], key);
+            }
+        }
+    };
+    FastMap.prototype.clear = function () {
+        this.values = {};
+    };
+    return FastMap;
+}());
+exports.FastMap = FastMap;
+//# sourceMappingURL=FastMap.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/util/Immediate.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(clearImmediate, setImmediate) {/**
+Some credit for this helper goes to http://github.com/YuzuJS/setImmediate
+*/
+
+var root_1 = __webpack_require__("../../node_modules/rxjs/util/root.js");
+var ImmediateDefinition = (function () {
+    function ImmediateDefinition(root) {
+        this.root = root;
+        if (root.setImmediate && typeof root.setImmediate === 'function') {
+            this.setImmediate = root.setImmediate.bind(root);
+            this.clearImmediate = root.clearImmediate.bind(root);
+        }
+        else {
+            this.nextHandle = 1;
+            this.tasksByHandle = {};
+            this.currentlyRunningATask = false;
+            // Don't get fooled by e.g. browserify environments.
+            if (this.canUseProcessNextTick()) {
+                // For Node.js before 0.9
+                this.setImmediate = this.createProcessNextTickSetImmediate();
+            }
+            else if (this.canUsePostMessage()) {
+                // For non-IE10 modern browsers
+                this.setImmediate = this.createPostMessageSetImmediate();
+            }
+            else if (this.canUseMessageChannel()) {
+                // For web workers, where supported
+                this.setImmediate = this.createMessageChannelSetImmediate();
+            }
+            else if (this.canUseReadyStateChange()) {
+                // For IE 6–8
+                this.setImmediate = this.createReadyStateChangeSetImmediate();
+            }
+            else {
+                // For older browsers
+                this.setImmediate = this.createSetTimeoutSetImmediate();
+            }
+            var ci = function clearImmediate(handle) {
+                delete clearImmediate.instance.tasksByHandle[handle];
+            };
+            ci.instance = this;
+            this.clearImmediate = ci;
+        }
+    }
+    ImmediateDefinition.prototype.identify = function (o) {
+        return this.root.Object.prototype.toString.call(o);
+    };
+    ImmediateDefinition.prototype.canUseProcessNextTick = function () {
+        return this.identify(this.root.process) === '[object process]';
+    };
+    ImmediateDefinition.prototype.canUseMessageChannel = function () {
+        return Boolean(this.root.MessageChannel);
+    };
+    ImmediateDefinition.prototype.canUseReadyStateChange = function () {
+        var document = this.root.document;
+        return Boolean(document && 'onreadystatechange' in document.createElement('script'));
+    };
+    ImmediateDefinition.prototype.canUsePostMessage = function () {
+        var root = this.root;
+        // The test against `importScripts` prevents this implementation from being installed inside a web worker,
+        // where `root.postMessage` means something completely different and can't be used for this purpose.
+        if (root.postMessage && !root.importScripts) {
+            var postMessageIsAsynchronous_1 = true;
+            var oldOnMessage = root.onmessage;
+            root.onmessage = function () {
+                postMessageIsAsynchronous_1 = false;
+            };
+            root.postMessage('', '*');
+            root.onmessage = oldOnMessage;
+            return postMessageIsAsynchronous_1;
+        }
+        return false;
+    };
+    // This function accepts the same arguments as setImmediate, but
+    // returns a function that requires no arguments.
+    ImmediateDefinition.prototype.partiallyApplied = function (handler) {
+        var args = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            args[_i - 1] = arguments[_i];
+        }
+        var fn = function result() {
+            var _a = result, handler = _a.handler, args = _a.args;
+            if (typeof handler === 'function') {
+                handler.apply(undefined, args);
+            }
+            else {
+                (new Function('' + handler))();
+            }
+        };
+        fn.handler = handler;
+        fn.args = args;
+        return fn;
+    };
+    ImmediateDefinition.prototype.addFromSetImmediateArguments = function (args) {
+        this.tasksByHandle[this.nextHandle] = this.partiallyApplied.apply(undefined, args);
+        return this.nextHandle++;
+    };
+    ImmediateDefinition.prototype.createProcessNextTickSetImmediate = function () {
+        var fn = function setImmediate() {
+            var instance = setImmediate.instance;
+            var handle = instance.addFromSetImmediateArguments(arguments);
+            instance.root.process.nextTick(instance.partiallyApplied(instance.runIfPresent, handle));
+            return handle;
+        };
+        fn.instance = this;
+        return fn;
+    };
+    ImmediateDefinition.prototype.createPostMessageSetImmediate = function () {
+        // Installs an event handler on `global` for the `message` event: see
+        // * https://developer.mozilla.org/en/DOM/window.postMessage
+        // * http://www.whatwg.org/specs/web-apps/current-work/multipage/comms.html#crossDocumentMessages
+        var root = this.root;
+        var messagePrefix = 'setImmediate$' + root.Math.random() + '$';
+        var onGlobalMessage = function globalMessageHandler(event) {
+            var instance = globalMessageHandler.instance;
+            if (event.source === root &&
+                typeof event.data === 'string' &&
+                event.data.indexOf(messagePrefix) === 0) {
+                instance.runIfPresent(+event.data.slice(messagePrefix.length));
+            }
+        };
+        onGlobalMessage.instance = this;
+        root.addEventListener('message', onGlobalMessage, false);
+        var fn = function setImmediate() {
+            var _a = setImmediate, messagePrefix = _a.messagePrefix, instance = _a.instance;
+            var handle = instance.addFromSetImmediateArguments(arguments);
+            instance.root.postMessage(messagePrefix + handle, '*');
+            return handle;
+        };
+        fn.instance = this;
+        fn.messagePrefix = messagePrefix;
+        return fn;
+    };
+    ImmediateDefinition.prototype.runIfPresent = function (handle) {
+        // From the spec: 'Wait until any invocations of this algorithm started before this one have completed.'
+        // So if we're currently running a task, we'll need to delay this invocation.
+        if (this.currentlyRunningATask) {
+            // Delay by doing a setTimeout. setImmediate was tried instead, but in Firefox 7 it generated a
+            // 'too much recursion' error.
+            this.root.setTimeout(this.partiallyApplied(this.runIfPresent, handle), 0);
+        }
+        else {
+            var task = this.tasksByHandle[handle];
+            if (task) {
+                this.currentlyRunningATask = true;
+                try {
+                    task();
+                }
+                finally {
+                    this.clearImmediate(handle);
+                    this.currentlyRunningATask = false;
+                }
+            }
+        }
+    };
+    ImmediateDefinition.prototype.createMessageChannelSetImmediate = function () {
+        var _this = this;
+        var channel = new this.root.MessageChannel();
+        channel.port1.onmessage = function (event) {
+            var handle = event.data;
+            _this.runIfPresent(handle);
+        };
+        var fn = function setImmediate() {
+            var _a = setImmediate, channel = _a.channel, instance = _a.instance;
+            var handle = instance.addFromSetImmediateArguments(arguments);
+            channel.port2.postMessage(handle);
+            return handle;
+        };
+        fn.channel = channel;
+        fn.instance = this;
+        return fn;
+    };
+    ImmediateDefinition.prototype.createReadyStateChangeSetImmediate = function () {
+        var fn = function setImmediate() {
+            var instance = setImmediate.instance;
+            var root = instance.root;
+            var doc = root.document;
+            var html = doc.documentElement;
+            var handle = instance.addFromSetImmediateArguments(arguments);
+            // Create a <script> element; its readystatechange event will be fired asynchronously once it is inserted
+            // into the document. Do so, thus queuing up the task. Remember to clean up once it's been called.
+            var script = doc.createElement('script');
+            script.onreadystatechange = function () {
+                instance.runIfPresent(handle);
+                script.onreadystatechange = null;
+                html.removeChild(script);
+                script = null;
+            };
+            html.appendChild(script);
+            return handle;
+        };
+        fn.instance = this;
+        return fn;
+    };
+    ImmediateDefinition.prototype.createSetTimeoutSetImmediate = function () {
+        var fn = function setImmediate() {
+            var instance = setImmediate.instance;
+            var handle = instance.addFromSetImmediateArguments(arguments);
+            instance.root.setTimeout(instance.partiallyApplied(instance.runIfPresent, handle), 0);
+            return handle;
+        };
+        fn.instance = this;
+        return fn;
+    };
+    return ImmediateDefinition;
+}());
+exports.ImmediateDefinition = ImmediateDefinition;
+exports.Immediate = new ImmediateDefinition(root_1.root);
+//# sourceMappingURL=Immediate.js.map
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__("../../node_modules/timers-browserify/main.js").clearImmediate, __webpack_require__("../../node_modules/timers-browserify/main.js").setImmediate))
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/util/Map.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var root_1 = __webpack_require__("../../node_modules/rxjs/util/root.js");
+var MapPolyfill_1 = __webpack_require__("../../node_modules/rxjs/util/MapPolyfill.js");
+exports.Map = root_1.root.Map || (function () { return MapPolyfill_1.MapPolyfill; })();
+//# sourceMappingURL=Map.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/util/MapPolyfill.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var MapPolyfill = (function () {
+    function MapPolyfill() {
+        this.size = 0;
+        this._values = [];
+        this._keys = [];
+    }
+    MapPolyfill.prototype.get = function (key) {
+        var i = this._keys.indexOf(key);
+        return i === -1 ? undefined : this._values[i];
+    };
+    MapPolyfill.prototype.set = function (key, value) {
+        var i = this._keys.indexOf(key);
+        if (i === -1) {
+            this._keys.push(key);
+            this._values.push(value);
+            this.size++;
+        }
+        else {
+            this._values[i] = value;
+        }
+        return this;
+    };
+    MapPolyfill.prototype.delete = function (key) {
+        var i = this._keys.indexOf(key);
+        if (i === -1) {
+            return false;
+        }
+        this._values.splice(i, 1);
+        this._keys.splice(i, 1);
+        this.size--;
+        return true;
+    };
+    MapPolyfill.prototype.clear = function () {
+        this._keys.length = 0;
+        this._values.length = 0;
+        this.size = 0;
+    };
+    MapPolyfill.prototype.forEach = function (cb, thisArg) {
+        for (var i = 0; i < this.size; i++) {
+            cb.call(thisArg, this._values[i], this._keys[i]);
+        }
+    };
+    return MapPolyfill;
+}());
+exports.MapPolyfill = MapPolyfill;
+//# sourceMappingURL=MapPolyfill.js.map
 
 /***/ }),
 
@@ -49893,6 +60561,78 @@ exports.ObjectUnsubscribedError = ObjectUnsubscribedError;
 
 /***/ }),
 
+/***/ "../../node_modules/rxjs/util/Set.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var root_1 = __webpack_require__("../../node_modules/rxjs/util/root.js");
+function minimalSetImpl() {
+    // THIS IS NOT a full impl of Set, this is just the minimum
+    // bits of functionality we need for this library.
+    return (function () {
+        function MinimalSet() {
+            this._values = [];
+        }
+        MinimalSet.prototype.add = function (value) {
+            if (!this.has(value)) {
+                this._values.push(value);
+            }
+        };
+        MinimalSet.prototype.has = function (value) {
+            return this._values.indexOf(value) !== -1;
+        };
+        Object.defineProperty(MinimalSet.prototype, "size", {
+            get: function () {
+                return this._values.length;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        MinimalSet.prototype.clear = function () {
+            this._values.length = 0;
+        };
+        return MinimalSet;
+    }());
+}
+exports.minimalSetImpl = minimalSetImpl;
+exports.Set = root_1.root.Set || minimalSetImpl();
+//# sourceMappingURL=Set.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/util/TimeoutError.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+/**
+ * An error thrown when duetime elapses.
+ *
+ * @see {@link timeout}
+ *
+ * @class TimeoutError
+ */
+var TimeoutError = (function (_super) {
+    __extends(TimeoutError, _super);
+    function TimeoutError() {
+        var err = _super.call(this, 'Timeout has occurred');
+        this.name = err.name = 'TimeoutError';
+        this.stack = err.stack;
+        this.message = err.message;
+    }
+    return TimeoutError;
+}(Error));
+exports.TimeoutError = TimeoutError;
+//# sourceMappingURL=TimeoutError.js.map
+
+/***/ }),
+
 /***/ "../../node_modules/rxjs/util/UnsubscriptionError.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -49922,6 +60662,59 @@ var UnsubscriptionError = (function (_super) {
 }(Error));
 exports.UnsubscriptionError = UnsubscriptionError;
 //# sourceMappingURL=UnsubscriptionError.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/util/applyMixins.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+function applyMixins(derivedCtor, baseCtors) {
+    for (var i = 0, len = baseCtors.length; i < len; i++) {
+        var baseCtor = baseCtors[i];
+        var propertyKeys = Object.getOwnPropertyNames(baseCtor.prototype);
+        for (var j = 0, len2 = propertyKeys.length; j < len2; j++) {
+            var name_1 = propertyKeys[j];
+            derivedCtor.prototype[name_1] = baseCtor.prototype[name_1];
+        }
+    }
+}
+exports.applyMixins = applyMixins;
+//# sourceMappingURL=applyMixins.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/util/assign.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var root_1 = __webpack_require__("../../node_modules/rxjs/util/root.js");
+function assignImpl(target) {
+    var sources = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        sources[_i - 1] = arguments[_i];
+    }
+    var len = sources.length;
+    for (var i = 0; i < len; i++) {
+        var source = sources[i];
+        for (var k in source) {
+            if (source.hasOwnProperty(k)) {
+                target[k] = source[k];
+            }
+        }
+    }
+    return target;
+}
+exports.assignImpl = assignImpl;
+;
+function getAssign(root) {
+    return root.Object.assign || assignImpl;
+}
+exports.getAssign = getAssign;
+exports.assign = getAssign(root_1.root);
+//# sourceMappingURL=assign.js.map
 
 /***/ }),
 
@@ -50037,6 +60830,36 @@ function isScheduler(value) {
 }
 exports.isScheduler = isScheduler;
 //# sourceMappingURL=isScheduler.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/util/noop.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* tslint:disable:no-empty */
+function noop() { }
+exports.noop = noop;
+//# sourceMappingURL=noop.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/rxjs/util/not.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+function not(pred, thisArg) {
+    function notPred() {
+        return !(notPred.pred.apply(notPred.thisArg, arguments));
+    }
+    notPred.pred = pred;
+    notPred.thisArg = thisArg;
+    return notPred;
+}
+exports.not = not;
+//# sourceMappingURL=not.js.map
 
 /***/ }),
 
@@ -50202,6 +61025,200 @@ function tryCatch(fn) {
 exports.tryCatch = tryCatch;
 ;
 //# sourceMappingURL=tryCatch.js.map
+
+/***/ }),
+
+/***/ "../../node_modules/setimmediate/setImmediate.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(global, process) {(function (global, undefined) {
+    "use strict";
+
+    if (global.setImmediate) {
+        return;
+    }
+
+    var nextHandle = 1; // Spec says greater than zero
+    var tasksByHandle = {};
+    var currentlyRunningATask = false;
+    var doc = global.document;
+    var registerImmediate;
+
+    function setImmediate(callback) {
+      // Callback can either be a function or a string
+      if (typeof callback !== "function") {
+        callback = new Function("" + callback);
+      }
+      // Copy function arguments
+      var args = new Array(arguments.length - 1);
+      for (var i = 0; i < args.length; i++) {
+          args[i] = arguments[i + 1];
+      }
+      // Store and register the task
+      var task = { callback: callback, args: args };
+      tasksByHandle[nextHandle] = task;
+      registerImmediate(nextHandle);
+      return nextHandle++;
+    }
+
+    function clearImmediate(handle) {
+        delete tasksByHandle[handle];
+    }
+
+    function run(task) {
+        var callback = task.callback;
+        var args = task.args;
+        switch (args.length) {
+        case 0:
+            callback();
+            break;
+        case 1:
+            callback(args[0]);
+            break;
+        case 2:
+            callback(args[0], args[1]);
+            break;
+        case 3:
+            callback(args[0], args[1], args[2]);
+            break;
+        default:
+            callback.apply(undefined, args);
+            break;
+        }
+    }
+
+    function runIfPresent(handle) {
+        // From the spec: "Wait until any invocations of this algorithm started before this one have completed."
+        // So if we're currently running a task, we'll need to delay this invocation.
+        if (currentlyRunningATask) {
+            // Delay by doing a setTimeout. setImmediate was tried instead, but in Firefox 7 it generated a
+            // "too much recursion" error.
+            setTimeout(runIfPresent, 0, handle);
+        } else {
+            var task = tasksByHandle[handle];
+            if (task) {
+                currentlyRunningATask = true;
+                try {
+                    run(task);
+                } finally {
+                    clearImmediate(handle);
+                    currentlyRunningATask = false;
+                }
+            }
+        }
+    }
+
+    function installNextTickImplementation() {
+        registerImmediate = function(handle) {
+            process.nextTick(function () { runIfPresent(handle); });
+        };
+    }
+
+    function canUsePostMessage() {
+        // The test against `importScripts` prevents this implementation from being installed inside a web worker,
+        // where `global.postMessage` means something completely different and can't be used for this purpose.
+        if (global.postMessage && !global.importScripts) {
+            var postMessageIsAsynchronous = true;
+            var oldOnMessage = global.onmessage;
+            global.onmessage = function() {
+                postMessageIsAsynchronous = false;
+            };
+            global.postMessage("", "*");
+            global.onmessage = oldOnMessage;
+            return postMessageIsAsynchronous;
+        }
+    }
+
+    function installPostMessageImplementation() {
+        // Installs an event handler on `global` for the `message` event: see
+        // * https://developer.mozilla.org/en/DOM/window.postMessage
+        // * http://www.whatwg.org/specs/web-apps/current-work/multipage/comms.html#crossDocumentMessages
+
+        var messagePrefix = "setImmediate$" + Math.random() + "$";
+        var onGlobalMessage = function(event) {
+            if (event.source === global &&
+                typeof event.data === "string" &&
+                event.data.indexOf(messagePrefix) === 0) {
+                runIfPresent(+event.data.slice(messagePrefix.length));
+            }
+        };
+
+        if (global.addEventListener) {
+            global.addEventListener("message", onGlobalMessage, false);
+        } else {
+            global.attachEvent("onmessage", onGlobalMessage);
+        }
+
+        registerImmediate = function(handle) {
+            global.postMessage(messagePrefix + handle, "*");
+        };
+    }
+
+    function installMessageChannelImplementation() {
+        var channel = new MessageChannel();
+        channel.port1.onmessage = function(event) {
+            var handle = event.data;
+            runIfPresent(handle);
+        };
+
+        registerImmediate = function(handle) {
+            channel.port2.postMessage(handle);
+        };
+    }
+
+    function installReadyStateChangeImplementation() {
+        var html = doc.documentElement;
+        registerImmediate = function(handle) {
+            // Create a <script> element; its readystatechange event will be fired asynchronously once it is inserted
+            // into the document. Do so, thus queuing up the task. Remember to clean up once it's been called.
+            var script = doc.createElement("script");
+            script.onreadystatechange = function () {
+                runIfPresent(handle);
+                script.onreadystatechange = null;
+                html.removeChild(script);
+                script = null;
+            };
+            html.appendChild(script);
+        };
+    }
+
+    function installSetTimeoutImplementation() {
+        registerImmediate = function(handle) {
+            setTimeout(runIfPresent, 0, handle);
+        };
+    }
+
+    // If supported, we should attach to the prototype of global, since that is where setTimeout et al. live.
+    var attachTo = Object.getPrototypeOf && Object.getPrototypeOf(global);
+    attachTo = attachTo && attachTo.setTimeout ? attachTo : global;
+
+    // Don't get fooled by e.g. browserify environments.
+    if ({}.toString.call(global.process) === "[object process]") {
+        // For Node.js before 0.9
+        installNextTickImplementation();
+
+    } else if (canUsePostMessage()) {
+        // For non-IE10 modern browsers
+        installPostMessageImplementation();
+
+    } else if (global.MessageChannel) {
+        // For web workers, where supported
+        installMessageChannelImplementation();
+
+    } else if (doc && "onreadystatechange" in doc.createElement("script")) {
+        // For IE 6–8
+        installReadyStateChangeImplementation();
+
+    } else {
+        // For older browsers
+        installSetTimeoutImplementation();
+    }
+
+    attachTo.setImmediate = setImmediate;
+    attachTo.clearImmediate = clearImmediate;
+}(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__("../../node_modules/webpack/buildin/global.js"), __webpack_require__("../../node_modules/process/browser.js")))
 
 /***/ }),
 
@@ -50655,7 +61672,7 @@ module.exports = function (css) {
 			.replace(/^'(.*)'$/, function(o, $1){ return $1; });
 
 		// already a full url? no change
-		if (/^(#|data:|http:\/\/|https:\/\/|file:\/\/\/)/i.test(unquotedOrigUrl)) {
+		if (/^(#|data:|http:\/\/|https:\/\/|file:\/\/\/|\s*$)/i.test(unquotedOrigUrl)) {
 		  return fullMatch;
 		}
 
@@ -50736,6 +61753,74 @@ function symbolObservablePonyfill(root) {
 	return result;
 };
 
+
+/***/ }),
+
+/***/ "../../node_modules/timers-browserify/main.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(global) {var apply = Function.prototype.apply;
+
+// DOM APIs, for completeness
+
+exports.setTimeout = function() {
+  return new Timeout(apply.call(setTimeout, window, arguments), clearTimeout);
+};
+exports.setInterval = function() {
+  return new Timeout(apply.call(setInterval, window, arguments), clearInterval);
+};
+exports.clearTimeout =
+exports.clearInterval = function(timeout) {
+  if (timeout) {
+    timeout.close();
+  }
+};
+
+function Timeout(id, clearFn) {
+  this._id = id;
+  this._clearFn = clearFn;
+}
+Timeout.prototype.unref = Timeout.prototype.ref = function() {};
+Timeout.prototype.close = function() {
+  this._clearFn.call(window, this._id);
+};
+
+// Does not start the time, just sets up the members needed.
+exports.enroll = function(item, msecs) {
+  clearTimeout(item._idleTimeoutId);
+  item._idleTimeout = msecs;
+};
+
+exports.unenroll = function(item) {
+  clearTimeout(item._idleTimeoutId);
+  item._idleTimeout = -1;
+};
+
+exports._unrefActive = exports.active = function(item) {
+  clearTimeout(item._idleTimeoutId);
+
+  var msecs = item._idleTimeout;
+  if (msecs >= 0) {
+    item._idleTimeoutId = setTimeout(function onTimeout() {
+      if (item._onTimeout)
+        item._onTimeout();
+    }, msecs);
+  }
+};
+
+// setimmediate attaches itself to the global object
+__webpack_require__("../../node_modules/setimmediate/setImmediate.js");
+// On some exotic environments, it's not clear which object `setimmeidate` was
+// able to install onto.  Search each possibility in the same order as the
+// `setimmediate` library.
+exports.setImmediate = (typeof self !== "undefined" && self.setImmediate) ||
+                       (typeof global !== "undefined" && global.setImmediate) ||
+                       (this && this.setImmediate);
+exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
+                         (typeof global !== "undefined" && global.clearImmediate) ||
+                         (this && this.clearImmediate);
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__("../../node_modules/webpack/buildin/global.js")))
 
 /***/ }),
 
@@ -50974,642 +62059,6 @@ module.exports=/[\0-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-
 
 /***/ }),
 
-/***/ "../../node_modules/util/node_modules/inherits/inherits_browser.js":
-/***/ (function(module, exports) {
-
-if (typeof Object.create === 'function') {
-  // implementation from standard node.js 'util' module
-  module.exports = function inherits(ctor, superCtor) {
-    ctor.super_ = superCtor
-    ctor.prototype = Object.create(superCtor.prototype, {
-      constructor: {
-        value: ctor,
-        enumerable: false,
-        writable: true,
-        configurable: true
-      }
-    });
-  };
-} else {
-  // old school shim for old browsers
-  module.exports = function inherits(ctor, superCtor) {
-    ctor.super_ = superCtor
-    var TempCtor = function () {}
-    TempCtor.prototype = superCtor.prototype
-    ctor.prototype = new TempCtor()
-    ctor.prototype.constructor = ctor
-  }
-}
-
-
-/***/ }),
-
-/***/ "../../node_modules/util/support/isBufferBrowser.js":
-/***/ (function(module, exports) {
-
-module.exports = function isBuffer(arg) {
-  return arg && typeof arg === 'object'
-    && typeof arg.copy === 'function'
-    && typeof arg.fill === 'function'
-    && typeof arg.readUInt8 === 'function';
-}
-
-/***/ }),
-
-/***/ "../../node_modules/util/util.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-/* WEBPACK VAR INJECTION */(function(global, process) {// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-var formatRegExp = /%[sdj%]/g;
-exports.format = function(f) {
-  if (!isString(f)) {
-    var objects = [];
-    for (var i = 0; i < arguments.length; i++) {
-      objects.push(inspect(arguments[i]));
-    }
-    return objects.join(' ');
-  }
-
-  var i = 1;
-  var args = arguments;
-  var len = args.length;
-  var str = String(f).replace(formatRegExp, function(x) {
-    if (x === '%%') return '%';
-    if (i >= len) return x;
-    switch (x) {
-      case '%s': return String(args[i++]);
-      case '%d': return Number(args[i++]);
-      case '%j':
-        try {
-          return JSON.stringify(args[i++]);
-        } catch (_) {
-          return '[Circular]';
-        }
-      default:
-        return x;
-    }
-  });
-  for (var x = args[i]; i < len; x = args[++i]) {
-    if (isNull(x) || !isObject(x)) {
-      str += ' ' + x;
-    } else {
-      str += ' ' + inspect(x);
-    }
-  }
-  return str;
-};
-
-
-// Mark that a method should not be used.
-// Returns a modified function which warns once by default.
-// If --no-deprecation is set, then it is a no-op.
-exports.deprecate = function(fn, msg) {
-  // Allow for deprecating things in the process of starting up.
-  if (isUndefined(global.process)) {
-    return function() {
-      return exports.deprecate(fn, msg).apply(this, arguments);
-    };
-  }
-
-  if (process.noDeprecation === true) {
-    return fn;
-  }
-
-  var warned = false;
-  function deprecated() {
-    if (!warned) {
-      if (process.throwDeprecation) {
-        throw new Error(msg);
-      } else if (process.traceDeprecation) {
-        console.trace(msg);
-      } else {
-        console.error(msg);
-      }
-      warned = true;
-    }
-    return fn.apply(this, arguments);
-  }
-
-  return deprecated;
-};
-
-
-var debugs = {};
-var debugEnviron;
-exports.debuglog = function(set) {
-  if (isUndefined(debugEnviron))
-    debugEnviron = process.env.NODE_DEBUG || '';
-  set = set.toUpperCase();
-  if (!debugs[set]) {
-    if (new RegExp('\\b' + set + '\\b', 'i').test(debugEnviron)) {
-      var pid = process.pid;
-      debugs[set] = function() {
-        var msg = exports.format.apply(exports, arguments);
-        console.error('%s %d: %s', set, pid, msg);
-      };
-    } else {
-      debugs[set] = function() {};
-    }
-  }
-  return debugs[set];
-};
-
-
-/**
- * Echos the value of a value. Trys to print the value out
- * in the best way possible given the different types.
- *
- * @param {Object} obj The object to print out.
- * @param {Object} opts Optional options object that alters the output.
- */
-/* legacy: obj, showHidden, depth, colors*/
-function inspect(obj, opts) {
-  // default options
-  var ctx = {
-    seen: [],
-    stylize: stylizeNoColor
-  };
-  // legacy...
-  if (arguments.length >= 3) ctx.depth = arguments[2];
-  if (arguments.length >= 4) ctx.colors = arguments[3];
-  if (isBoolean(opts)) {
-    // legacy...
-    ctx.showHidden = opts;
-  } else if (opts) {
-    // got an "options" object
-    exports._extend(ctx, opts);
-  }
-  // set default options
-  if (isUndefined(ctx.showHidden)) ctx.showHidden = false;
-  if (isUndefined(ctx.depth)) ctx.depth = 2;
-  if (isUndefined(ctx.colors)) ctx.colors = false;
-  if (isUndefined(ctx.customInspect)) ctx.customInspect = true;
-  if (ctx.colors) ctx.stylize = stylizeWithColor;
-  return formatValue(ctx, obj, ctx.depth);
-}
-exports.inspect = inspect;
-
-
-// http://en.wikipedia.org/wiki/ANSI_escape_code#graphics
-inspect.colors = {
-  'bold' : [1, 22],
-  'italic' : [3, 23],
-  'underline' : [4, 24],
-  'inverse' : [7, 27],
-  'white' : [37, 39],
-  'grey' : [90, 39],
-  'black' : [30, 39],
-  'blue' : [34, 39],
-  'cyan' : [36, 39],
-  'green' : [32, 39],
-  'magenta' : [35, 39],
-  'red' : [31, 39],
-  'yellow' : [33, 39]
-};
-
-// Don't use 'blue' not visible on cmd.exe
-inspect.styles = {
-  'special': 'cyan',
-  'number': 'yellow',
-  'boolean': 'yellow',
-  'undefined': 'grey',
-  'null': 'bold',
-  'string': 'green',
-  'date': 'magenta',
-  // "name": intentionally not styling
-  'regexp': 'red'
-};
-
-
-function stylizeWithColor(str, styleType) {
-  var style = inspect.styles[styleType];
-
-  if (style) {
-    return '\u001b[' + inspect.colors[style][0] + 'm' + str +
-           '\u001b[' + inspect.colors[style][1] + 'm';
-  } else {
-    return str;
-  }
-}
-
-
-function stylizeNoColor(str, styleType) {
-  return str;
-}
-
-
-function arrayToHash(array) {
-  var hash = {};
-
-  array.forEach(function(val, idx) {
-    hash[val] = true;
-  });
-
-  return hash;
-}
-
-
-function formatValue(ctx, value, recurseTimes) {
-  // Provide a hook for user-specified inspect functions.
-  // Check that value is an object with an inspect function on it
-  if (ctx.customInspect &&
-      value &&
-      isFunction(value.inspect) &&
-      // Filter out the util module, it's inspect function is special
-      value.inspect !== exports.inspect &&
-      // Also filter out any prototype objects using the circular check.
-      !(value.constructor && value.constructor.prototype === value)) {
-    var ret = value.inspect(recurseTimes, ctx);
-    if (!isString(ret)) {
-      ret = formatValue(ctx, ret, recurseTimes);
-    }
-    return ret;
-  }
-
-  // Primitive types cannot have properties
-  var primitive = formatPrimitive(ctx, value);
-  if (primitive) {
-    return primitive;
-  }
-
-  // Look up the keys of the object.
-  var keys = Object.keys(value);
-  var visibleKeys = arrayToHash(keys);
-
-  if (ctx.showHidden) {
-    keys = Object.getOwnPropertyNames(value);
-  }
-
-  // IE doesn't make error fields non-enumerable
-  // http://msdn.microsoft.com/en-us/library/ie/dww52sbt(v=vs.94).aspx
-  if (isError(value)
-      && (keys.indexOf('message') >= 0 || keys.indexOf('description') >= 0)) {
-    return formatError(value);
-  }
-
-  // Some type of object without properties can be shortcutted.
-  if (keys.length === 0) {
-    if (isFunction(value)) {
-      var name = value.name ? ': ' + value.name : '';
-      return ctx.stylize('[Function' + name + ']', 'special');
-    }
-    if (isRegExp(value)) {
-      return ctx.stylize(RegExp.prototype.toString.call(value), 'regexp');
-    }
-    if (isDate(value)) {
-      return ctx.stylize(Date.prototype.toString.call(value), 'date');
-    }
-    if (isError(value)) {
-      return formatError(value);
-    }
-  }
-
-  var base = '', array = false, braces = ['{', '}'];
-
-  // Make Array say that they are Array
-  if (isArray(value)) {
-    array = true;
-    braces = ['[', ']'];
-  }
-
-  // Make functions say that they are functions
-  if (isFunction(value)) {
-    var n = value.name ? ': ' + value.name : '';
-    base = ' [Function' + n + ']';
-  }
-
-  // Make RegExps say that they are RegExps
-  if (isRegExp(value)) {
-    base = ' ' + RegExp.prototype.toString.call(value);
-  }
-
-  // Make dates with properties first say the date
-  if (isDate(value)) {
-    base = ' ' + Date.prototype.toUTCString.call(value);
-  }
-
-  // Make error with message first say the error
-  if (isError(value)) {
-    base = ' ' + formatError(value);
-  }
-
-  if (keys.length === 0 && (!array || value.length == 0)) {
-    return braces[0] + base + braces[1];
-  }
-
-  if (recurseTimes < 0) {
-    if (isRegExp(value)) {
-      return ctx.stylize(RegExp.prototype.toString.call(value), 'regexp');
-    } else {
-      return ctx.stylize('[Object]', 'special');
-    }
-  }
-
-  ctx.seen.push(value);
-
-  var output;
-  if (array) {
-    output = formatArray(ctx, value, recurseTimes, visibleKeys, keys);
-  } else {
-    output = keys.map(function(key) {
-      return formatProperty(ctx, value, recurseTimes, visibleKeys, key, array);
-    });
-  }
-
-  ctx.seen.pop();
-
-  return reduceToSingleString(output, base, braces);
-}
-
-
-function formatPrimitive(ctx, value) {
-  if (isUndefined(value))
-    return ctx.stylize('undefined', 'undefined');
-  if (isString(value)) {
-    var simple = '\'' + JSON.stringify(value).replace(/^"|"$/g, '')
-                                             .replace(/'/g, "\\'")
-                                             .replace(/\\"/g, '"') + '\'';
-    return ctx.stylize(simple, 'string');
-  }
-  if (isNumber(value))
-    return ctx.stylize('' + value, 'number');
-  if (isBoolean(value))
-    return ctx.stylize('' + value, 'boolean');
-  // For some reason typeof null is "object", so special case here.
-  if (isNull(value))
-    return ctx.stylize('null', 'null');
-}
-
-
-function formatError(value) {
-  return '[' + Error.prototype.toString.call(value) + ']';
-}
-
-
-function formatArray(ctx, value, recurseTimes, visibleKeys, keys) {
-  var output = [];
-  for (var i = 0, l = value.length; i < l; ++i) {
-    if (hasOwnProperty(value, String(i))) {
-      output.push(formatProperty(ctx, value, recurseTimes, visibleKeys,
-          String(i), true));
-    } else {
-      output.push('');
-    }
-  }
-  keys.forEach(function(key) {
-    if (!key.match(/^\d+$/)) {
-      output.push(formatProperty(ctx, value, recurseTimes, visibleKeys,
-          key, true));
-    }
-  });
-  return output;
-}
-
-
-function formatProperty(ctx, value, recurseTimes, visibleKeys, key, array) {
-  var name, str, desc;
-  desc = Object.getOwnPropertyDescriptor(value, key) || { value: value[key] };
-  if (desc.get) {
-    if (desc.set) {
-      str = ctx.stylize('[Getter/Setter]', 'special');
-    } else {
-      str = ctx.stylize('[Getter]', 'special');
-    }
-  } else {
-    if (desc.set) {
-      str = ctx.stylize('[Setter]', 'special');
-    }
-  }
-  if (!hasOwnProperty(visibleKeys, key)) {
-    name = '[' + key + ']';
-  }
-  if (!str) {
-    if (ctx.seen.indexOf(desc.value) < 0) {
-      if (isNull(recurseTimes)) {
-        str = formatValue(ctx, desc.value, null);
-      } else {
-        str = formatValue(ctx, desc.value, recurseTimes - 1);
-      }
-      if (str.indexOf('\n') > -1) {
-        if (array) {
-          str = str.split('\n').map(function(line) {
-            return '  ' + line;
-          }).join('\n').substr(2);
-        } else {
-          str = '\n' + str.split('\n').map(function(line) {
-            return '   ' + line;
-          }).join('\n');
-        }
-      }
-    } else {
-      str = ctx.stylize('[Circular]', 'special');
-    }
-  }
-  if (isUndefined(name)) {
-    if (array && key.match(/^\d+$/)) {
-      return str;
-    }
-    name = JSON.stringify('' + key);
-    if (name.match(/^"([a-zA-Z_][a-zA-Z_0-9]*)"$/)) {
-      name = name.substr(1, name.length - 2);
-      name = ctx.stylize(name, 'name');
-    } else {
-      name = name.replace(/'/g, "\\'")
-                 .replace(/\\"/g, '"')
-                 .replace(/(^"|"$)/g, "'");
-      name = ctx.stylize(name, 'string');
-    }
-  }
-
-  return name + ': ' + str;
-}
-
-
-function reduceToSingleString(output, base, braces) {
-  var numLinesEst = 0;
-  var length = output.reduce(function(prev, cur) {
-    numLinesEst++;
-    if (cur.indexOf('\n') >= 0) numLinesEst++;
-    return prev + cur.replace(/\u001b\[\d\d?m/g, '').length + 1;
-  }, 0);
-
-  if (length > 60) {
-    return braces[0] +
-           (base === '' ? '' : base + '\n ') +
-           ' ' +
-           output.join(',\n  ') +
-           ' ' +
-           braces[1];
-  }
-
-  return braces[0] + base + ' ' + output.join(', ') + ' ' + braces[1];
-}
-
-
-// NOTE: These type checking functions intentionally don't use `instanceof`
-// because it is fragile and can be easily faked with `Object.create()`.
-function isArray(ar) {
-  return Array.isArray(ar);
-}
-exports.isArray = isArray;
-
-function isBoolean(arg) {
-  return typeof arg === 'boolean';
-}
-exports.isBoolean = isBoolean;
-
-function isNull(arg) {
-  return arg === null;
-}
-exports.isNull = isNull;
-
-function isNullOrUndefined(arg) {
-  return arg == null;
-}
-exports.isNullOrUndefined = isNullOrUndefined;
-
-function isNumber(arg) {
-  return typeof arg === 'number';
-}
-exports.isNumber = isNumber;
-
-function isString(arg) {
-  return typeof arg === 'string';
-}
-exports.isString = isString;
-
-function isSymbol(arg) {
-  return typeof arg === 'symbol';
-}
-exports.isSymbol = isSymbol;
-
-function isUndefined(arg) {
-  return arg === void 0;
-}
-exports.isUndefined = isUndefined;
-
-function isRegExp(re) {
-  return isObject(re) && objectToString(re) === '[object RegExp]';
-}
-exports.isRegExp = isRegExp;
-
-function isObject(arg) {
-  return typeof arg === 'object' && arg !== null;
-}
-exports.isObject = isObject;
-
-function isDate(d) {
-  return isObject(d) && objectToString(d) === '[object Date]';
-}
-exports.isDate = isDate;
-
-function isError(e) {
-  return isObject(e) &&
-      (objectToString(e) === '[object Error]' || e instanceof Error);
-}
-exports.isError = isError;
-
-function isFunction(arg) {
-  return typeof arg === 'function';
-}
-exports.isFunction = isFunction;
-
-function isPrimitive(arg) {
-  return arg === null ||
-         typeof arg === 'boolean' ||
-         typeof arg === 'number' ||
-         typeof arg === 'string' ||
-         typeof arg === 'symbol' ||  // ES6 symbol
-         typeof arg === 'undefined';
-}
-exports.isPrimitive = isPrimitive;
-
-exports.isBuffer = __webpack_require__("../../node_modules/util/support/isBufferBrowser.js");
-
-function objectToString(o) {
-  return Object.prototype.toString.call(o);
-}
-
-
-function pad(n) {
-  return n < 10 ? '0' + n.toString(10) : n.toString(10);
-}
-
-
-var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
-              'Oct', 'Nov', 'Dec'];
-
-// 26 Feb 16:19:34
-function timestamp() {
-  var d = new Date();
-  var time = [pad(d.getHours()),
-              pad(d.getMinutes()),
-              pad(d.getSeconds())].join(':');
-  return [d.getDate(), months[d.getMonth()], time].join(' ');
-}
-
-
-// log is just a thin wrapper to console.log that prepends a timestamp
-exports.log = function() {
-  console.log('%s - %s', timestamp(), exports.format.apply(exports, arguments));
-};
-
-
-/**
- * Inherit the prototype methods from one constructor into another.
- *
- * The Function.prototype.inherits from lang.js rewritten as a standalone
- * function (not on Function.prototype). NOTE: If this file is to be loaded
- * during bootstrapping this function needs to be rewritten using some native
- * functions as prototype setup using normal JavaScript does not work as
- * expected during bootstrapping (see mirror.js in r114903).
- *
- * @param {function} ctor Constructor function which needs to inherit the
- *     prototype.
- * @param {function} superCtor Constructor function to inherit prototype from.
- */
-exports.inherits = __webpack_require__("../../node_modules/util/node_modules/inherits/inherits_browser.js");
-
-exports._extend = function(origin, add) {
-  // Don't do anything if add isn't an object
-  if (!add || !isObject(add)) return origin;
-
-  var keys = Object.keys(add);
-  var i = keys.length;
-  while (i--) {
-    origin[keys[i]] = add[keys[i]];
-  }
-  return origin;
-};
-
-function hasOwnProperty(obj, prop) {
-  return Object.prototype.hasOwnProperty.call(obj, prop);
-}
-
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__("../../node_modules/webpack/buildin/global.js"), __webpack_require__("../../node_modules/process/browser.js")))
-
-/***/ }),
-
 /***/ "../../node_modules/webpack/buildin/global.js":
 /***/ (function(module, exports) {
 
@@ -51733,7 +62182,7 @@ function begin(context) {
 
 function routeReply(context) {
     // Handle users reply to prompt
-    const utterance = context.request.text.trim();
+    const utterance = context.activity.text.trim();
     switch (context.state.conversation.prompt) {
         case 'title':
             // Validate reply and save to alarm
@@ -51826,7 +62275,7 @@ function begin(context) {
 function routeReply(context) {
     // Validate users reply and delete alarm
     let deleted = false;
-    const title = context.request.text.trim();
+    const title = context.activity.text.trim();
     const list = context.state.user.alarms || [];
     for (let i = 0; i < list.length; i++) {
         if (list[i].title.toLowerCase() === title.toLowerCase()) {
@@ -51962,17 +62411,15 @@ AlarmsListComponent.bootstrap = function (activityPipeline, domContext) {
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__css_app_css__ = __webpack_require__("./src/css/app.css");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__css_app_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__css_app_css__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_botbuilder__ = __webpack_require__("../../libraries/botbuilder/lib/botbuilder.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_botbuilder___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_botbuilder__);
+throw new Error("Cannot find module \"botbuilder\"");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_botframework_webchat_botchat_css__ = __webpack_require__("../../node_modules/botframework-webchat/botchat.css");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_botframework_webchat_botchat_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_botframework_webchat_botchat_css__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_botframework_webchat_built_App__ = __webpack_require__("../../node_modules/botframework-webchat/built/App.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_botframework_webchat_built_App___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_botframework_webchat_built_App__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__botConnection__ = __webpack_require__("./src/botConnection.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__webChatAdapter__ = __webpack_require__("./src/webChatAdapter.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__alarmRenderer__ = __webpack_require__("./src/alarmRenderer.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__routes__ = __webpack_require__("./src/routes.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__alarmsListComponent__ = __webpack_require__("./src/alarmsListComponent.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__webChatAdapter__ = __webpack_require__("./src/webChatAdapter.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__alarmRenderer__ = __webpack_require__("./src/alarmRenderer.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__routes__ = __webpack_require__("./src/routes.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__alarmsListComponent__ = __webpack_require__("./src/alarmsListComponent.js");
 
 
 
@@ -51983,66 +62430,26 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
-
-const webChatAdapter = new __WEBPACK_IMPORTED_MODULE_5__webChatAdapter__["a" /* WebChatAdapter */]();
+const webChatAdapter = new __WEBPACK_IMPORTED_MODULE_4__webChatAdapter__["a" /* WebChatAdapter */]();
 
 const bot = new __WEBPACK_IMPORTED_MODULE_1_botbuilder__["Bot"](webChatAdapter)
     .use(new __WEBPACK_IMPORTED_MODULE_1_botbuilder__["MemoryStorage"](),
         new __WEBPACK_IMPORTED_MODULE_1_botbuilder__["BotStateManager"](),
-        new __WEBPACK_IMPORTED_MODULE_6__alarmRenderer__["a" /* AlarmRenderer */]());
-const botConnection = new __WEBPACK_IMPORTED_MODULE_4__botConnection__["a" /* BotConnection */](webChatAdapter.getMessagePipelineToBot());
+        new __WEBPACK_IMPORTED_MODULE_5__alarmRenderer__["a" /* AlarmRenderer */]());
 Object(__WEBPACK_IMPORTED_MODULE_3_botframework_webchat_built_App__["App"])({
     user: {id: "Me!"},
-    bot: {id: "The Bot"},
-    botConnection,
+    bot: {id: "bot"},
+    botConnection: webChatAdapter.botConnection,
 }, document.getElementById('bot'));
-__WEBPACK_IMPORTED_MODULE_8__alarmsListComponent__["a" /* AlarmsListComponent */].bootstrap(botConnection.activity$, document.querySelector('.alarms-container'));
+
+__WEBPACK_IMPORTED_MODULE_7__alarmsListComponent__["a" /* AlarmsListComponent */].bootstrap(webChatAdapter.botConnection.activity$, document.querySelector('.alarms-container'));
 // handle activities
-bot.onReceive((context) => Object(__WEBPACK_IMPORTED_MODULE_7__routes__["a" /* routes */])(context));
+bot.onReceive((context) => Object(__WEBPACK_IMPORTED_MODULE_6__routes__["a" /* routes */])(context));
 
 // FOUC
 document.addEventListener('DOMContentLoaded', function () {
     requestAnimationFrame(() => document.body.style.visibility = 'visible');
 });
-
-/***/ }),
-
-/***/ "./src/botConnection.js":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_rxjs_Observable__ = __webpack_require__("../../node_modules/rxjs/Observable.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_rxjs_Observable___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_rxjs_Observable__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_rxjs_BehaviorSubject__ = __webpack_require__("../../node_modules/rxjs/BehaviorSubject.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_rxjs_BehaviorSubject___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_rxjs_BehaviorSubject__);
-
-
-
-class BotConnection {
-    constructor(botMessagePipeline) {
-        this.botMessagePipeline = botMessagePipeline;
-        this.connectionStatus$ = new __WEBPACK_IMPORTED_MODULE_1_rxjs_BehaviorSubject__["BehaviorSubject"]("Uninitialized");
-        this.connectionStatus$.next("Online");
-        this.activity$ = __WEBPACK_IMPORTED_MODULE_0_rxjs_Observable__["Observable"].create(observer => this.messagePipelineToWebchat = observer).share();
-    }
-
-    // connectionStatus$ /*: BehaviorSubject<ConnectionStatus>*/;
-    // activity$ /*: Observable<Activity>*/;
-    end() {
-        debugger
-    }
-
-    postActivity(activity) /* : Observable<string>; */ {
-        this.botMessagePipeline(activity).then(this.handleActivitiesFromBot.bind(this));
-        return __WEBPACK_IMPORTED_MODULE_0_rxjs_Observable__["Observable"].of(Date.now()); // id - can be an ordinal or computed
-    }
-
-    handleActivitiesFromBot(activities) {
-        activities.forEach(activity => this.messagePipelineToWebchat.next(activity));
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = BotConnection;
-
 
 /***/ }),
 
@@ -52113,9 +62520,9 @@ if(true) {
 
 
 function routes(context) {
-    if (context.request.type === 'message') {
+    if (context.activity.type === 'message') {
         // Check for the triggering of a new topic
-        const utterance = (context.request.text || '').trim().toLowerCase();
+        const utterance = (context.activity.text || '').trim().toLowerCase();
         if (utterance.includes('add alarm')) {
             return __WEBPACK_IMPORTED_MODULE_0__alarms_addAlarm__["a" /* begin */](context);
         } else if (utterance.includes('delete alarm')) {
@@ -52145,32 +62552,58 @@ function routes(context) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-const activitiesById = {};
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_botframework_webchat__ = __webpack_require__("../../node_modules/botframework-webchat/built/BotChat.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_botframework_webchat___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_botframework_webchat__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_rxjs__ = __webpack_require__("../../node_modules/rxjs/Rx.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_rxjs___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_rxjs__);
+
+
 
 class WebChatAdapter {
+    constructor() {
+        this.activity$ = new __WEBPACK_IMPORTED_MODULE_1_rxjs__["Subject"]();
+        this.botConnection = {
+            connectionStatus$: new __WEBPACK_IMPORTED_MODULE_1_rxjs__["BehaviorSubject"](__WEBPACK_IMPORTED_MODULE_0_botframework_webchat__["ConnectionStatus"].Online),
+            activity$: this.activity$.share(),
+            end() {
+                debugger
+            },
+            postActivity: activity => {
+                const id = Date.now().toString();
+                return __WEBPACK_IMPORTED_MODULE_1_rxjs__["Observable"].fromPromise(this
+                    .onReceive(Object.assign({}, activity, {
+                        id,
+                        conversation: { id: "bot" },
+                        channelId: 'WebChat'
+                    }))
+                    .then(() => id)
+                )
+            }
+        }
+    }
+
     post(activities) {
-        activitiesById[activities[0].replyToId] = activities;
-        activities.forEach(activity => Object.assign(activity, {id: activity.replyToId, from: {id: "The Bot"}}));
-        return Promise.resolve(activities);
+        const sentActivities = activities.map(activity => Object.assign({}, activity, {
+            id: Date.now().toString(),
+            channelId: 'WebChat',
+            conversation: { id: 'bot' },
+            from: { id: 'bot' }
+        }));
+
+        sentActivities.forEach(activity => this.activity$.next(activity));
+
+        return Promise.resolve(sentActivities.map(activity => {
+            id: activity.id
+        }));
     }
 
     onReceive(activity) {
         // overwritten by bot
-    }
-
-    getMessagePipelineToBot() {
-        return async activity => {
-            // Activity from the web chat is missing
-            // data needed for the BotStateManager.
-            const id = Date.now();
-            activity = Object.assign({id, conversation: {id: "The Bot"}, channelId: 1}, activity);
-            await this.onReceive(activity);
-            const replyFromBot = activitiesById[id];
-            return Promise.resolve(replyFromBot);
-        }
+        return Promise.resolve();
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = WebChatAdapter;
+
 
 
 /***/ })
