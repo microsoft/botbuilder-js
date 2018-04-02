@@ -57,15 +57,15 @@ describe('LanguageTranslator', function () {
 
         let noTranslateSettings = {
             translatorKey: translatorKey,
-            nativeLanguages: ['fr', 'de'],
-            noTranslatePatterns: new Set(['(HI)', '(BYE)']),
-            getUserLanguage: c => 'en',
+            nativeLanguages: ['en', 'de'],
+            noTranslatePatterns: new Set(['(Jean mon ami)']),
+            getUserLanguage: c => 'fr',
             setUserLanguage: c => Promise.resolve(false)
         }
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(new LanguageTranslator(noTranslateSettings))
-        .test('HI hello BYE goodbye', 'HI Bonjour Bye adieu', 'should have received no translate patterns')
+        .test('Bonjour Jean mon ami', 'Hello Jean mon ami', 'should have received no translate patterns')
         .then(() => done())
     });
 
@@ -175,15 +175,15 @@ describe('LanguageTranslator', function () {
 
         let noTranslateSettings = {
             translatorKey: translatorKey,
-            nativeLanguages: ['fr', 'de'],
-            noTranslatePatterns: new Set(['HI', 'BYE']),
-            getUserLanguage: c => 'en',
+            nativeLanguages: ['en', 'de'],
+            noTranslatePatterns: new Set(['Jean mon ami']),
+            getUserLanguage: c => 'fr',
             setUserLanguage: c => Promise.resolve(false)
         }
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(new LanguageTranslator(noTranslateSettings))
-        .test('HI hello BYE goodbye', 'HI Bonjour Bye adieu', 'should have received no translate patterns')
+        .test('Bonjour Jean mon ami', 'Hello Jean mon ami', 'should have received no translate patterns')
         .then(() => done())
     });
 })

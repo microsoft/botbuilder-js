@@ -31,6 +31,6 @@ export declare class PostProcessTranslator {
     noTranslatePatterns: Set<string>;
     constructor(noTranslatePatterns: Set<string>);
     private wordAlignmentParse(alignment, source, target);
-    private keepSrcWrdInTranslation(alignment, source, target, srcWrd);
+    private keepSrcWrdInTranslation(alignment, source, target, srcWrdIndex);
     fixTranslation(sourceMessage: string, alignment: string, targetMessage: string): string;
 }

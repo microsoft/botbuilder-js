@@ -227,34 +227,53 @@ export class PostProcessTranslator {
     noTranslatePatterns: Set<string>;
 
     constructor(noTranslatePatterns: Set<string>) {
-        this.noTranslatePatterns = noTranslatePatterns;
+        this.noTranslatePatterns = new Set<string>();
+
+        if(noTranslatePatterns) {
+            noTranslatePatterns.forEach(pattern => {
+                if (pattern.indexOf('(') == -1) {
+                    pattern = `(${pattern})`;
+                }
+                this.noTranslatePatterns.add(pattern);
+            });
+        }  
     }
 
-    private wordAlignmentParse(alignment: string, source: string, target: string): { [id: string] : string } {
-        let alignMap: { [id: string] : string } = {};
+    private wordAlignmentParse(alignment: string, source: string, target: string): { [id: number] : number } {
+        let alignMap: { [id: number] : number } = {};
         if (alignment.trim().replace('\n', '') == "") {
             return alignMap;
         }
-        let alignments: string[] = alignment.trim().split(' ');
+        
+        let alignments = alignment.trim().split(' ');
+        let srcWrds = source.trim().split(' ');
+        let trgWrds = target.trim().split(' ');
         alignments.forEach(alignData => {
             let wordIndexes = alignData.split('-');
+            let srcStartIndex = parseInt(wordIndexes[0].split(':')[0]);
+            let srcLength = parseInt(wordIndexes[0].split(':')[1]) - srcStartIndex + 1;
+            let srcWrd = source.substr(srcStartIndex, srcLength);
+            
+            let srcWrdIndex = srcWrds.findIndex(wrd => wrd == srcWrd);
+            
             let trgstartIndex = parseInt(wordIndexes[1].split(':')[0]);
             let trgLength = parseInt(wordIndexes[1].split(':')[1]) - trgstartIndex + 1;
-            alignMap[wordIndexes[0]] = trgstartIndex + ":" + trgLength
+            let trgWrd = target.substr(trgstartIndex, trgLength);
+            let trgWrdIndex = trgWrds.findIndex(wrd => wrd == trgWrd);
+
+            alignMap[srcWrdIndex] = trgWrdIndex;
         });
         return alignMap;
     }
 
-    private keepSrcWrdInTranslation(alignment: { [id: string] : string }, source: string, target: string, srcWrd: string) {
-        let processedTranslation: string = target;
-        let wrdStartIndex = source.indexOf(srcWrd);
-        let wrdEndIndex = wrdStartIndex + srcWrd.length - 1;
-        let wrdIndexesString = wrdStartIndex + ":" + wrdEndIndex;
-        if (!(typeof alignment[wrdIndexesString] === "undefined")) {
-            let trgWrdLocation = alignment[wrdIndexesString].split(':');
-            let targetWrd = target.substr(parseInt(trgWrdLocation[0]), parseInt(trgWrdLocation[1]));
-            if (targetWrd.trim().length == parseInt(trgWrdLocation[1]) && targetWrd != srcWrd)
-                processedTranslation = processedTranslation.replace(targetWrd, srcWrd);
+    private keepSrcWrdInTranslation(alignment: { [id: number] : number }, source: string, target: string, srcWrdIndex: number) {
+        let processedTranslation = target;
+        
+        if (!(typeof alignment[srcWrdIndex] === "undefined")) {
+            let trgWrds = processedTranslation.split(' ');
+            trgWrds[alignment[srcWrdIndex]] = source.split(' ')[srcWrdIndex];
+            
+            processedTranslation = trgWrds.join(' ');
         }
         return processedTranslation;
     }
@@ -264,7 +283,7 @@ export class PostProcessTranslator {
         let numericMatches = sourceMessage.match(new RegExp("\d+", "g"));
         let containsNum = numericMatches != null;
         let noTranslatePatterns = Array.from(this.noTranslatePatterns);
-
+        
         if (!containsNum && noTranslatePatterns.length == 0) {
             return processedTranslation;
         }
@@ -279,29 +298,46 @@ export class PostProcessTranslator {
         });
         
         let alignMap = this.wordAlignmentParse(alignment, sourceMessage, targetMessage);
+        let srcWrds = sourceMessage.split(' ');
 
         if (toBeReplaced.length > 0) {
             toBeReplaced.forEach(pattern => {
                 let regExp = new RegExp(pattern, "i");
+                let captureGroup = pattern.match('\(.*\)')[0].replace('(', '').replace(')', '');
                 let match = regExp.exec(sourceMessage);
                 
-                if (match != null && match[1] != undefined) {
-                    let wrdNoTranslate = match[1].split(' ');
-                    wrdNoTranslate.forEach(srcWrd => {
-                        processedTranslation = this.keepSrcWrdInTranslation(alignMap, sourceMessage, processedTranslation, srcWrd);
-                    });
-                } else {
-                    let wrdNoTranslate = match[0].split(' ');
-                    wrdNoTranslate.forEach(srcWrd => {
-                        processedTranslation = this.keepSrcWrdInTranslation(alignMap, sourceMessage, processedTranslation, srcWrd);
-                    });
+                let noTranslateStarChrIndex = match.index + match[0].toLowerCase().indexOf(captureGroup.toLowerCase());
+                
+                let wrdIndx = 0;
+                let chrIndx = 0;
+                let srcIndx = -1;
+
+                for (const wrd in srcWrds) {
+                    if (srcWrds.hasOwnProperty(wrd)) {
+                        const element = srcWrds[wrd];
+                        if (chrIndx == noTranslateStarChrIndex) {
+                            srcIndx = wrdIndx;
+                            break;
+                        }
+                        chrIndx += element.length + 1;
+                        wrdIndx++;
+                    }
                 }
+
+                let wrdNoTranslate = match[1].split(' ');
+                
+                wrdNoTranslate.forEach(srcWrds => {
+                    processedTranslation = this.keepSrcWrdInTranslation(alignMap, sourceMessage, processedTranslation, srcIndx);
+                    srcIndx++;
+                });
+                
             });
         }
 
         if (numericMatches != null) {
             for (const numericMatch in numericMatches) {
-                processedTranslation = this.keepSrcWrdInTranslation(alignMap, sourceMessage, processedTranslation, numericMatch);
+                let srcIndx = srcWrds.findIndex(wrd => wrd == numericMatch)
+                processedTranslation = this.keepSrcWrdInTranslation(alignMap, sourceMessage, processedTranslation, srcIndx);
             }
         }
         return processedTranslation;
