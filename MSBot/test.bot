@@ -1,0 +1,13 @@
+{
+    "id": "",
+    "name": "test",
+    "description": "",
+    "appid": "",
+    "endpoints": [
+        {
+            "name": "localhost",
+            "url": "http://localhost:3978/api/messages"
+        }
+    ],
+    "services": []
+}

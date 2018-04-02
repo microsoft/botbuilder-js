@@ -2,8 +2,8 @@
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">14.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
-    <Name>Bot</Name>
-    <RootNamespace>Bot</RootNamespace>
+    <Name>MSBot</Name>
+    <RootNamespace>MSBot</RootNamespace>
     <ScriptArguments>99999</ScriptArguments>
     <DebuggerPort>
     </DebuggerPort>
@@ -35,28 +35,28 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="src\bot-endpoints.ts" />
-    <TypeScriptCompile Include="src\bot-connect-azure.ts" />
+    <TypeScriptCompile Include="src\msbot-endpoints.ts" />
+    <TypeScriptCompile Include="src\msbot-connect-azure.ts" />
     <TypeScriptCompile Include="src\BotConfig.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="src\utils.ts" />
-    <TypeScriptCompile Include="src\bot-init.ts" />
-    <TypeScriptCompile Include="src\bot-export.ts" />
-    <TypeScriptCompile Include="src\bot-clone.ts" />
-    <TypeScriptCompile Include="src\bot-list.ts" />
-    <TypeScriptCompile Include="src\bot-disconnect.ts" />
-    <TypeScriptCompile Include="src\bot-connect-luis.ts">
+    <TypeScriptCompile Include="src\msbot-init.ts" />
+    <TypeScriptCompile Include="src\msbot-export.ts" />
+    <TypeScriptCompile Include="src\msbot-clone.ts" />
+    <TypeScriptCompile Include="src\msbot-list.ts" />
+    <TypeScriptCompile Include="src\msbot-disconnect.ts" />
+    <TypeScriptCompile Include="src\msbot-connect-luis.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="src\bot-connect-qna.ts">
+    <TypeScriptCompile Include="src\msbot-connect-qna.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="src\bot.ts" />
+    <TypeScriptCompile Include="src\msbot.ts" />
     <Content Include="package.json" />
     <Content Include="README.md" />
     <Content Include="tsconfig.json" />
-    <TypeScriptCompile Include="src\bot-connect.ts">
+    <TypeScriptCompile Include="src\msbot-connect.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="src\schema.ts">

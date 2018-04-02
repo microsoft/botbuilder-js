@@ -1,4 +1,6 @@
 import * as program from 'commander';
+program
+    .description("The msbot program makes it easy to manipulate .bot files for Microsoft Bot Framework tools")
 
 program
     .command('init', 'create a new .bot file');
