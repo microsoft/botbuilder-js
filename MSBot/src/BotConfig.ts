@@ -77,7 +77,7 @@ export class BotConfig implements IBotConfig {
                 return;
             }
         }
-        throw new Error(`a service with id or name of ${nameOrId} was not found`);
+        throw new Error(`a service with id or name of [${nameOrId}] was not found`);
     }
 
     // remove a service
@@ -93,30 +93,33 @@ export class BotConfig implements IBotConfig {
             }
         }
     }
+    public static boundary: string = '~^~';
 
     public encryptValue(value: string): string {
         if (!value)
             return value;
 
         if (!this.cryptoPassword || this.cryptoPassword.length == 0) {
-            throw new Error("No password is set");
+            throw new Error("You are attempting to store a value which needs to be encrypted and --secret is not set.  Pass --secret to encrypt/decrypt resource keys.");
         }
 
         var cipher = crypto.createCipher('aes192', this.cryptoPassword);
         var encryptedValue = cipher.update(value, 'utf8', 'hex');
         encryptedValue += cipher.final('hex');
-        return encryptedValue;
+        return `${BotConfig.boundary}${encryptedValue}${BotConfig.boundary}`;
     }
 
     public decryptValue(encryptedValue: string): string {
         if (!this.cryptoPassword || this.cryptoPassword.length == 0) {
             throw new Error("No password is set");
         }
-
-        const decipher = crypto.createDecipher('aes192', this.cryptoPassword);
-        let value = decipher.update(encryptedValue, 'hex', 'utf8');
-        value += decipher.final('utf8');
-        return value;
+        if (encryptedValue.startsWith(BotConfig.boundary) && encryptedValue.endsWith(BotConfig.boundary)) {
+            const decipher = crypto.createDecipher('aes192', this.cryptoPassword);
+            let value = decipher.update(encryptedValue.substring(3, encryptedValue.length - 3), 'hex', 'utf8');
+            value += decipher.final('utf8');
+            return value;
+        }
+        return encryptedValue;
     }
 }
 

@@ -46,14 +46,8 @@ interface ILuisService extends IConnectedService {
     // luis appid
     appId: string;
 
-    // subscriptionkey for calling the query service 
-    subscriptionkey: string;
-
     // authoring key for using authoring api
-    authoringkey: string;
-
-    // Regions for this bot
-    regions: string[];
+    authoringKey: string;
 }
 
 interface IQnAService extends IConnectedService {
@@ -64,7 +58,7 @@ interface IQnAService extends IConnectedService {
     kbid: string;
 
     // subscriptionkey for calling api
-    subscriptionkey: string;
+    subscriptionKey: string;
 }
 
 interface IBotConfig {
