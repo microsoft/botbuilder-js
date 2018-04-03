@@ -1,12 +1,4 @@
 
-interface IBotEndpoint {
-    // name of the endpoint
-    name: string;
-
-    // url for the endpoint
-    url: string;
-}
-
 interface IConnectedService {
     // type of the service (LUIS, QnA, etc.)
     type: string;
@@ -19,9 +11,46 @@ interface IConnectedService {
 }
 
 
+interface ILocalhostService extends IConnectedService {
+    // type = ServiceTypes.Luis
+    // id = bot id
+
+    // MSA Appid
+    appId: string;
+
+    // MSA app password for the bot 
+    appPassword: string;
+
+    // endpoint of localhost service
+    endpoint: string;
+}
+
+interface IAzureBotService extends IConnectedService {
+    // type = ServiceTypes.Luis
+    // id = bot id
+
+    // MSA Appid
+    appId: string;
+
+    // MSA app password for the bot 
+    appPassword: string;
+
+    // endpoint of service
+    endpoint: string;
+}
+
 interface ILuisService extends IConnectedService {
     // type = ServiceTypes.Luis
     // id = appid
+
+    // luis appid
+    appId: string;
+
+    // subscriptionkey for calling the query service 
+    subscriptionkey: string;
+
+    // authoring key for using authoring api
+    authoringkey: string;
 
     // Regions for this bot
     regions: string[];
@@ -30,23 +59,20 @@ interface ILuisService extends IConnectedService {
 interface IQnAService extends IConnectedService {
     // type=Servicestypes.QnA
     // id = appid for the QnA service
+
+    // kb id
+    kbid: string;
+
+    // subscriptionkey for calling api
+    subscriptionkey: string;
 }
 
 interface IBotConfig {
-    // bot id
-    id: string;
-
     // name of the bot
     name: string;
 
     // description of the bot
     description: string;
-
-    // ms appid for the bot
-    appid: string;
-
-    // Endpoints for the bot
-    endpoints: IBotEndpoint[];
 
     // connected services for the bot
     services: IConnectedService[];

@@ -6,23 +6,30 @@ import * as program from 'commander';
 import { BotConfig } from './BotConfig';
 import { Enumerable, List, Dictionary } from 'linq-collections';
 
+interface ListArgs {
+    bot: string;
+    secret: string;
+}
 
 program
-    .action((cmd, actions) => { });
+    .option('-b, --bot <path>', "path to bot file.  If omitted, local folder will look for a .bot file")
+    .option('--secret <secret>', 'bot file secret password for encrypting service secrets')
+    .action((cmd, actions) => {
+    });
 
-let parsed = program.parse(process.argv);
+let parsed = <ListArgs><any>program.parse(process.argv);
 
-if (parsed.args.length == 0) {
-    BotConfig.LoadBotFromFolder(process.env.__dirname)
-        .then((bot) => {
-            console.log(JSON.stringify(bot.services, null, 4));
-        });
+if (!parsed.bot) {
+    BotConfig.LoadBotFromFolder(process.cwd())
+        .then(processListArgs)
+        .catch((reason) => console.error(reason.toString().split("\n")[0]));
 } else {
-    let file = parsed.args[0];
-    if (path.extname(file) != '.bot')
-        file = file + '.bot';
-    BotConfig.Load(file)
-        .then((bot) => {
-            console.log(JSON.stringify(bot.services, null, 4));
-        });
+    BotConfig.Load(parsed.bot)
+        .then(processListArgs)
+        .catch((reason) => console.error(reason.toString().split("\n")[0]));
+}
+
+async function processListArgs(config: BotConfig): Promise<BotConfig> {
+    console.log(JSON.stringify(config.services, null, 4));
+    return config;
 }

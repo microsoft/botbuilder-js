@@ -1,0 +1,14 @@
+{
+    "name": "test",
+    "description": "",
+    "services": [
+        {
+            "type": "localhost",
+            "id": "http://localhost:3978/api/messages",
+            "name": "MyLocalHost",
+            "appId": "123123",
+            "appPassword": "75485ddac04befef1a392573b939fdd8",
+            "endpoint": "http://localhost:3978/api/messages"
+        }
+    ]
+}

@@ -1,4 +1,5 @@
 import * as process from 'process';
+import * as crypto from 'crypto';
 import * as url from 'url';
 import * as validurl from 'valid-url';
 import * as path from 'path';
@@ -6,19 +7,21 @@ import * as fsx from 'fs-extra';
 import { Enumerable, List, Dictionary } from 'linq-collections';
 
 export enum ServiceType {
+    Localhost = "localhost",
+    AzureBotService = "abs",
     Luis = "luis",
     QnA = "qna"
 }
 
 export class BotConfig implements IBotConfig {
     private location: string;
+    // not saved
+    cryptoPassword: string;
 
-    id: string = '';
-    appid: string = '';
     name: string = '';
     description: string = '';
-    endpoints: IBotEndpoint[] = [];
     services: IConnectedService[] = [];
+
 
     constructor() {
     }
@@ -44,16 +47,14 @@ export class BotConfig implements IBotConfig {
     // save the config file
     public async Save(botpath?: string): Promise<void> {
         await fsx.writeJson(botpath || this.location, <IBotConfig>{
-            id: this.id,
             name: this.name,
             description: this.description,
-            appid: this.appid,
-            endpoints: this.endpoints,
             services: this.services
         }, { spaces: 4 });
     }
 
-    public addService(newService: IConnectedService): void {
+    // connect to a service
+    public connectService(newService: IConnectedService): void {
         if (Enumerable.fromSource(this.services)
             .where(s => s.type == newService.type)
             .where(s => s.id == newService.id)
@@ -64,7 +65,8 @@ export class BotConfig implements IBotConfig {
         }
     }
 
-    public removeServiceByNameOrId(nameOrId: string): void {
+    // remove service by name or id
+    public disconnectServiceByNameOrId(nameOrId: string): void {
         let svs = new List<IConnectedService>(this.services);
 
         for (let i = 0; i < svs.count(); i++) {
@@ -78,7 +80,8 @@ export class BotConfig implements IBotConfig {
         throw new Error(`a service with id or name of ${nameOrId} was not found`);
     }
 
-    public removeService(type: string, id: string): void {
+    // remove a service
+    public disconnectService(type: string, id: string): void {
         let svs = new List<IConnectedService>(this.services);
 
         for (let i = 0; i < svs.count(); i++) {
@@ -91,35 +94,29 @@ export class BotConfig implements IBotConfig {
         }
     }
 
-    public addEndpoint(endpointUrl: string, name?: string): void {
-        let endpoints = new List<IBotEndpoint>(this.endpoints);
+    public encryptValue(value: string): string {
+        if (!value)
+            return value;
 
-        if (endpoints.where(ep => ep.url == endpointUrl).any()) {
-            // already in there
-            return;
+        if (!this.cryptoPassword || this.cryptoPassword.length == 0) {
+            throw new Error("No password is set");
         }
 
-        if (!validurl.isWebUri(endpointUrl)) {
-            throw new Error(`${endpointUrl} is not a valid url`);
-        }
-        let endpoint = {
-            name: name || url.parse(endpointUrl).hostname || endpointUrl,
-            url: endpointUrl
-        };
-
-        this.endpoints.push(endpoint);
+        var cipher = crypto.createCipher('aes192', this.cryptoPassword);
+        var encryptedValue = cipher.update(value, 'utf8', 'hex');
+        encryptedValue += cipher.final('hex');
+        return encryptedValue;
     }
 
-    public removeEndpoint(nameOrUrl: string) {
-        let eps = new List<IBotEndpoint>(this.endpoints);
-        for (let i = 0; i < this.endpoints.length; i++) {
-            let endpoint = eps.elementAt(i);
-            if (endpoint.name == nameOrUrl || endpoint.url == nameOrUrl) {
-                eps.removeAt(i);
-                this.endpoints = eps.toArray();
-                return;
-            }
+    public decryptValue(encryptedValue: string): string {
+        if (!this.cryptoPassword || this.cryptoPassword.length == 0) {
+            throw new Error("No password is set");
         }
+
+        const decipher = crypto.createDecipher('aes192', this.cryptoPassword);
+        let value = decipher.update(encryptedValue, 'hex', 'utf8');
+        value += decipher.final('utf8');
+        return value;
     }
 }
 

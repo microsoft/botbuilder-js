@@ -2,7 +2,7 @@ import * as os from 'os';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import * as program from 'commander';
-import { BotConfig } from './BotConfig';
+import { BotConfig, ServiceType } from './BotConfig';
 import * as readline from 'readline-sync';
 
 interface InitArgs {
@@ -14,6 +14,7 @@ interface InitArgs {
 
 program
     .option('-n, --name <botname>', 'name of the bot')
+    .option('-d, --description <description>', 'description of the bot')
     .option('-e, --endpoint <endpoint>', 'local endpoint for the bot', parseInt)
     .option('-q, --quiet', 'do not prompt')
     .action((name, x) => {
@@ -28,19 +29,8 @@ if (!args.quiet) {
         args.name = readline.question(`What name would you like for your bot? `);
     }
 
-    //while (!args.id || args.id.trim().length == 0) {
-    //    if (!args.hasOwnProperty("name")) {
-    //        args.id = readline.question(`What id would you like for your bot? `);
-    //    }
-    //    else {
-    //        // default to name with no spaces
-    //        let id = args.name.replace(' ', '');
-    //        args.id = readline.question(`What id would you like for your bot [${id}]? `, { defaultInput: id });
-    //    }
-    //}
-
     if (!args.description || args.description.length == 0) {
-        args.name = readline.question(`What description would you like for your bot? `);
+        args.description = readline.question(`What description would you like for your bot? `);
     }
 
     while (!args.endpoint) {
@@ -52,8 +42,16 @@ if (!args.quiet) {
 
 let bot = new BotConfig();
 bot.name = args.name;
+bot.description = args.description;
 
-bot.endpoints.push({ name: `localhost`, url: args.endpoint });
+bot.connectService(<ILocalhostService>{
+    type: ServiceType.Localhost,
+    endpoint: args.endpoint,
+    name: args.name,
+    id: '',
+    appId: '',
+    appPassword: ''
+});
 
 let filename = bot.name + '.bot';
 bot.Save(filename);
