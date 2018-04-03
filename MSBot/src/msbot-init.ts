@@ -2,6 +2,7 @@ import * as os from 'os';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import * as program from 'commander';
+import * as chalk from 'chalk';
 import { BotConfig, ServiceType } from './BotConfig';
 import * as readline from 'readline-sync';
 
@@ -15,7 +16,7 @@ interface InitArgs {
 program
     .option('-n, --name <botname>', 'name of the bot')
     .option('-d, --description <description>', 'description of the bot')
-    .option('-e, --endpoint <endpoint>', 'local endpoint for the bot', parseInt)
+    .option('-e, --endpoint <endpoint>', 'local endpoint for the bot')
     .option('-q, --quiet', 'do not prompt')
     .action((name, x) => {
         console.log(name);
@@ -33,7 +34,7 @@ if (!args.quiet) {
         args.description = readline.question(`What description would you like for your bot? `);
     }
 
-    while (!args.endpoint) {
+    while (!args.endpoint || args.endpoint.length == 0) {
         args.endpoint = readline.question(`What localhost endpoint does your bot use for debugging [Example: http://localhost:3978/api/messages]? `, {
             defaultInput: `http://localhost:3978/api/messages`
         });
@@ -46,9 +47,10 @@ bot.description = args.description;
 
 bot.connectService(<ILocalhostService>{
     type: ServiceType.Localhost,
-    endpoint: args.endpoint,
     name: args.name,
-    id: '',
+    endpoint: args.endpoint,
+    description: args.description,
+    id: args.endpoint,
     appId: '',
     appPassword: ''
 });

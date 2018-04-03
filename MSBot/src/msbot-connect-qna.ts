@@ -1,13 +1,11 @@
 import * as program from 'commander';
+import * as chalk from 'chalk';
 import { BotConfig, ServiceType } from './BotConfig';
 import { Enumerable, List, Dictionary } from 'linq-collections';
 
-interface ConnectQnaArgs {
+interface ConnectQnaArgs extends IQnAService{
     bot: string;
     secret: string;
-    name: string;
-    kbid: string;
-    subscriptionkey: string;
 }
 
 program
@@ -16,7 +14,7 @@ program
     .option('--secret <secret>', 'bot file secret password for encrypting service secrets')
     .option('-n, --name <name>', 'name for the QNA database')
     .option('-k, --kbid <kbid>', 'QnA Knowledgebase Id ')
-    .option('--subscriptionkey <subscriptionkey>', 'subscriptionKey for calling the QnA service')
+    .option('--subscriptionKey <subscriptionKey>', 'subscriptionKey for calling the QnA service')
     .action((cmd, actions) => {
 
     });
@@ -25,14 +23,24 @@ program.parse(process.argv);
 
 let args = <ConnectQnaArgs><any>program.parse(process.argv);
 
-if (!args.bot) {
-    BotConfig.LoadBotFromFolder(process.cwd())
-        .then(processConnectQnaArgs)
-        .catch((reason) => console.error(reason.toString().split("\n")[0]));
+if (process.argv.length < 3) {
+    program.help();
 } else {
-    BotConfig.Load(args.bot)
-        .then(processConnectQnaArgs)
-        .catch((reason) => console.error(reason.toString().split("\n")[0]));
+    if (!args.bot) {
+        BotConfig.LoadBotFromFolder(process.cwd())
+            .then(processConnectQnaArgs)
+            .catch((reason) => {
+                console.error(chalk.default.redBright(reason.toString().split("\n")[0]));
+                program.help();
+            });
+    } else {
+        BotConfig.Load(args.bot)
+            .then(processConnectQnaArgs)
+            .catch((reason) => {
+                console.error(chalk.default.redBright(reason.toString().split("\n")[0]));
+                program.help();
+            });
+    }
 }
 
 async function processConnectQnaArgs(config: BotConfig): Promise<BotConfig> {
@@ -48,7 +56,7 @@ async function processConnectQnaArgs(config: BotConfig): Promise<BotConfig> {
         name: args.name,
         id: args.kbid,
         kbid: args.kbid,
-        subscriptionkey: args.subscriptionkey
+        subscriptionKey: args.subscriptionKey
     });
 
     await config.Save();

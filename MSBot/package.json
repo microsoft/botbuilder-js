@@ -20,6 +20,7 @@
     "fs-extra": "^5.0.0",
     "linq-collections": "^1.0.251",
     "readline-sync": "^1.4.9",
-    "valid-url": "^1.0.9"
+    "valid-url": "^1.0.9",
+    "chalk": "^2.3.2"
   }
 }
