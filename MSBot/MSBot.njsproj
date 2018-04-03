@@ -4,7 +4,7 @@
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
     <Name>MSBot</Name>
     <RootNamespace>MSBot</RootNamespace>
-    <ScriptArguments>99999</ScriptArguments>
+    <ScriptArguments>-s password -a 123123123 -n MyTestApp -sk 199991919 -ak 189992</ScriptArguments>
     <DebuggerPort>
     </DebuggerPort>
   </PropertyGroup>
@@ -14,7 +14,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>9eec4a3a-8523-43d5-9f5d-c1fcedae012f</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>bin\bot-disconnect.js</StartupFile>
+    <StartupFile>bin\msbot-connect-luis.js</StartupFile>
     <StartWebBrowser>False</StartWebBrowser>
     <SearchPath>
     </SearchPath>
@@ -35,7 +35,7 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="src\msbot-endpoints.ts" />
+    <TypeScriptCompile Include="src\msbot-connect-localhost.ts" />
     <TypeScriptCompile Include="src\msbot-connect-azure.ts" />
     <TypeScriptCompile Include="src\BotConfig.ts">
       <SubType>Code</SubType>

@@ -13,15 +13,12 @@ program
     .command('clone', 'create a new .bot file based on another .bot file');
 
 program
-    .command('endpoints', 'add/remove activity endpoints');
-
-program
     .command('connect <service>', 'connect to a resource (Luis/Qna/Azure/...) used by the bot');
 
 program
     .command('disconnect <service>', 'disconnect from a resource used by the bot');
 
 program
-    .command('list', 'list all connected resources');
+    .command('list', 'list all connected services');
 
 program.parse(process.argv);

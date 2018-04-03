@@ -28,7 +28,7 @@ if (!args.bot) {
 }
 
 async function processConnectAzureArgs(config: BotConfig): Promise<BotConfig> {
-    config.removeServiceByNameOrId(args.idOrName);
+    config.disconnectServiceByNameOrId(args.idOrName);
     await config.Save();
     return config;
 }
