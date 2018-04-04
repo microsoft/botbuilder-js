@@ -4,6 +4,7 @@ const program = require("commander");
 const BotConfig_1 = require("./BotConfig");
 const readline = require("readline-sync");
 program
+    .name("msbot init")
     .option('-n, --name <botname>', 'name of the bot')
     .option('-d, --description <description>', 'description of the bot')
     .option('-e, --endpoint <endpoint>', 'local endpoint for the bot')

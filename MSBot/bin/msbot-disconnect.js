@@ -12,6 +12,7 @@ const program = require("commander");
 const chalk = require("chalk");
 const BotConfig_1 = require("./BotConfig");
 program
+    .name("msbot disconnect")
     .arguments("<service_id_or_Name>")
     .description("disconnect a connected service by id or name")
     .option('-b, --bot <path>', "path to bot file.  If omitted, local folder will look for a .bot file")

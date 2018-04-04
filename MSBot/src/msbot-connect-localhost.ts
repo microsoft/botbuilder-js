@@ -10,6 +10,7 @@ interface ConnectLocalhostArgs extends ILocalhostService {
 }
 
 program
+    .name("msbot connect localhost")
     .description('Connect the bot to localhost endpoint')
     .option('-b, --bot <path>', "path to bot file.  If omitted, local folder will look for a .bot file")
     .option('--secret <secret>', 'bot file secret password for encrypting service secrets')

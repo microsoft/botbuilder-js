@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const program = require("commander");
 program
+    .name("msbot connect")
     .command('azure', 'connect to Azure Bot Service')
     .command('localhost', 'connect to localhost Service')
     .command('luis', 'connect to LUIS a service')

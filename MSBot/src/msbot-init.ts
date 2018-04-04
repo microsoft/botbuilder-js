@@ -14,6 +14,7 @@ interface InitArgs {
 }
 
 program
+    .name("msbot init")
     .option('-n, --name <botname>', 'name of the bot')
     .option('-d, --description <description>', 'description of the bot')
     .option('-e, --endpoint <endpoint>', 'local endpoint for the bot')

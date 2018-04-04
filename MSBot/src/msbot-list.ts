@@ -12,6 +12,7 @@ interface ListArgs {
 }
 
 program
+    .name("msbot list")
     .option('-b, --bot <path>', "path to bot file.  If omitted, local folder will look for a .bot file")
     .option('--secret <secret>', 'bot file secret password for encrypting service secrets')
     .action((cmd, actions) => {
