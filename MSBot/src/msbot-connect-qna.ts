@@ -50,6 +50,15 @@ async function processConnectQnaArgs(config: BotConfig): Promise<BotConfig> {
         config.cryptoPassword = args.secret;
     }
 
+    if (!args.kbid)
+        throw new Error("missing kbid");
+
+    if (!args.hasOwnProperty('name'))
+        throw new Error("missing name");
+
+    if (!args.subscriptionKey)
+        throw new Error('missing subscriptionKey');
+
     // add the service
     config.connectService(<IQnAService>{
         type: ServiceType.QnA,

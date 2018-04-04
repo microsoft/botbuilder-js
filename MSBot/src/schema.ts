@@ -48,6 +48,9 @@ interface ILuisService extends IConnectedService {
 
     // authoring key for using authoring api
     authoringKey: string;
+
+    // version of the application
+    version: string;
 }
 
 interface IQnAService extends IConnectedService {
