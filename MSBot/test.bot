@@ -1,13 +1,21 @@
 {
     "name": "test",
-    "description": "this is a description of my bot",
+    "description": "",
     "services": [
         {
+            "type": "localhost",
+            "name": "test",
+            "endpoint": "http://localhost:3978/api/messages",
+            "id": "http://localhost:3978/api/messages",
+            "appId": "",
+            "appPassword": ""
+        },
+        {
             "type": "abs",
-            "id": "testbot",
-            "name": "testbot",
-            "appId": "1231231232",
-            "appPassword": "~^~ae63c41890a8e094d8cd2a9ff3819aca~^~",
+            "id": "-d",
+            "name": "-d",
+            "appId": "123123123",
+            "appPassword": "~^~3cbe99c1491307af5bb88be551c2eb51~^~",
             "endpoint": "https://testbot.azurewebsites.net/api/messages"
         }
     ]

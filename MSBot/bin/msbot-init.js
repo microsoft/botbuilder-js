@@ -1,18 +1,8 @@
-import * as os from 'os';
-import * as path from 'path';
-import * as fs from 'fs-extra';
-import * as program from 'commander';
-import * as chalk from 'chalk';
-import { BotConfig, ServiceType } from './BotConfig';
-import * as readline from 'readline-sync';
-
-interface InitArgs {
-    name: string;
-    description: string;
-    endpoint: string;
-    quiet: boolean;
-}
-
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const program = require("commander");
+const BotConfig_1 = require("./BotConfig");
+const readline = require("readline-sync");
 program
     .name("msbot init")
     .option('-n, --name <botname>', 'name of the bot')
@@ -20,34 +10,27 @@ program
     .option('-e, --endpoint <endpoint>', 'local endpoint for the bot')
     .option('-q, --quiet', 'do not prompt')
     .action((name, x) => {
-        console.log(name);
-    });
-
-let args: InitArgs = <InitArgs><any>program.parse(process.argv);
-
+    console.log(name);
+});
+let args = program.parse(process.argv);
 if (!args.quiet) {
-
     while (!args.hasOwnProperty("name") || args.name.length == 0) {
         args.name = readline.question(`What name would you like for your bot? `);
     }
-
     if (!args.description || args.description.length == 0) {
         args.description = readline.question(`What description would you like for your bot? `);
     }
-
     while (!args.endpoint || args.endpoint.length == 0) {
         args.endpoint = readline.question(`What localhost endpoint does your bot use for debugging [Example: http://localhost:3978/api/messages]? `, {
             defaultInput: `http://localhost:3978/api/messages`
         });
     }
 }
-
-let bot = new BotConfig();
+let bot = new BotConfig_1.BotConfig();
 bot.name = args.name;
 bot.description = args.description;
-
-bot.connectService(<ILocalhostService>{
-    type: ServiceType.Localhost,
+bot.connectService({
+    type: BotConfig_1.ServiceType.Localhost,
     name: args.name,
     endpoint: args.endpoint,
     description: args.description,
@@ -55,7 +38,7 @@ bot.connectService(<ILocalhostService>{
     appId: '',
     appPassword: ''
 });
-
 let filename = bot.name + '.bot';
 bot.Save(filename);
 console.log(`${filename} created`);
+//# sourceMappingURL=msbot-init.js.map

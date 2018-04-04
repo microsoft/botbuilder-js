@@ -9,6 +9,7 @@ interface ConnectQnaArgs extends IQnAService{
 }
 
 program
+    .name("msbot connect qna")
     .description('Connect the bot to a QnA knowledgebase')
     .option('-b, --bot <path>', "path to bot file.  If omitted, local folder will look for a .bot file")
     .option('--secret <secret>', 'bot file secret password for encrypting service secrets')
@@ -49,6 +50,15 @@ async function processConnectQnaArgs(config: BotConfig): Promise<BotConfig> {
     if (args.secret) {
         config.cryptoPassword = args.secret;
     }
+
+    if (!args.kbid)
+        throw new Error("missing kbid");
+
+    if (!args.hasOwnProperty('name'))
+        throw new Error("missing name");
+
+    if (!args.subscriptionKey)
+        throw new Error('missing subscriptionKey');
 
     // add the service
     config.connectService(<IQnAService>{
