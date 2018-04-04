@@ -3,7 +3,7 @@ import * as process from 'process';
 import * as path from 'path';
 import * as program from 'commander';
 import * as chalk from 'chalk';
-import { BotConfig } from './BotConfig';
+import { BotConfig, ServiceType } from './BotConfig';
 import { Enumerable, List, Dictionary } from 'linq-collections';
 
 interface ListArgs {

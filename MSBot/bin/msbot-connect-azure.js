@@ -1,12 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const program = require("commander");
 const validurl = require("valid-url");
@@ -46,31 +38,29 @@ else {
         });
     }
 }
-function processConnectAzureArgs(config) {
-    return __awaiter(this, void 0, void 0, function* () {
-        if (args.secret) {
-            config.cryptoPassword = args.secret;
-        }
-        if (!args.id)
-            throw new Error("Bad or missing id");
-        if (!args.appId)
-            throw new Error("Bad or missing appId");
-        if (!args.appPassword)
-            throw new Error("Bad or missing appPassword");
-        if (!args.endpoint)
-            throw new Error("missing endpoint");
-        if (!validurl.isWebUri(args.endpoint))
-            throw new Error(`${args.endpoint} is not a valid url`);
-        config.connectService({
-            type: BotConfig_1.ServiceType.AzureBotService,
-            id: args.id,
-            name: args.hasOwnProperty('name') ? args.name : args.id,
-            appId: args.appId,
-            appPassword: config.encryptValue(args.appPassword),
-            endpoint: args.endpoint
-        });
-        yield config.Save();
-        return config;
+async function processConnectAzureArgs(config) {
+    if (args.secret) {
+        config.cryptoPassword = args.secret;
+    }
+    if (!args.id)
+        throw new Error("Bad or missing id");
+    if (!args.appId)
+        throw new Error("Bad or missing appId");
+    if (!args.appPassword)
+        throw new Error("Bad or missing appPassword");
+    if (!args.endpoint)
+        throw new Error("missing endpoint");
+    if (!validurl.isWebUri(args.endpoint))
+        throw new Error(`${args.endpoint} is not a valid url`);
+    config.connectService({
+        type: BotConfig_1.ServiceType.AzureBotService,
+        id: args.id,
+        name: args.hasOwnProperty('name') ? args.name : args.id,
+        appId: args.appId,
+        appPassword: config.encryptValue(args.appPassword),
+        endpoint: args.endpoint
     });
+    await config.Save();
+    return config;
 }
 //# sourceMappingURL=msbot-connect-azure.js.map

@@ -1,12 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const program = require("commander");
 const validurl = require("valid-url");
@@ -45,29 +37,27 @@ else {
         });
     }
 }
-function processConnectAzureArgs(config) {
-    return __awaiter(this, void 0, void 0, function* () {
-        if (args.secret) {
-            config.cryptoPassword = args.secret;
-        }
-        if (!args.endpoint)
-            throw new Error("missing endpoint");
-        if (!validurl.isWebUri(args.endpoint)) {
-            throw new Error(`${args.endpoint} is not a valid url`);
-        }
-        let id = `${args.appId}${args.endpoint}`;
-        let hasCredentials = (args.appId && args.appPassword && args.appId.length > 0 && args.appPassword.length > 0);
-        let credentialLabel = (hasCredentials) ? ' with AppID' : '';
-        config.connectService({
-            type: BotConfig_1.ServiceType.Localhost,
-            id: id,
-            name: args.hasOwnProperty('name') ? args.name : `${args.endpoint}${credentialLabel}`,
-            appId: (args.appId && args.appId.length > 0) ? args.appId : null,
-            appPassword: (args.appPassword && args.appPassword.length > 0) ? config.encryptValue(args.appPassword) : null,
-            endpoint: args.endpoint
-        });
-        yield config.Save();
-        return config;
+async function processConnectAzureArgs(config) {
+    if (args.secret) {
+        config.cryptoPassword = args.secret;
+    }
+    if (!args.endpoint)
+        throw new Error("missing endpoint");
+    if (!validurl.isWebUri(args.endpoint)) {
+        throw new Error(`${args.endpoint} is not a valid url`);
+    }
+    let id = `${args.appId}${args.endpoint}`;
+    let hasCredentials = (args.appId && args.appPassword && args.appId.length > 0 && args.appPassword.length > 0);
+    let credentialLabel = (hasCredentials) ? ' with AppID' : '';
+    config.connectService({
+        type: BotConfig_1.ServiceType.Localhost,
+        id: id,
+        name: args.hasOwnProperty('name') ? args.name : `${args.endpoint}${credentialLabel}`,
+        appId: (args.appId && args.appId.length > 0) ? args.appId : null,
+        appPassword: (args.appPassword && args.appPassword.length > 0) ? config.encryptValue(args.appPassword) : null,
+        endpoint: args.endpoint
     });
+    await config.Save();
+    return config;
 }
 //# sourceMappingURL=msbot-connect-localhost.js.map

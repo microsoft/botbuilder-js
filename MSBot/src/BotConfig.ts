@@ -28,10 +28,10 @@ export class BotConfig implements IBotConfig {
 
     public static async LoadBotFromFolder(folder?: string): Promise<BotConfig> {
         let files = Enumerable.fromSource(await fsx.readdir(folder || process.cwd()))
-            .where(file => path.extname(file) == '.bot');
+            .where(file => path.extname(<string>file) == '.bot');
 
         if (files.any()) {
-            return await BotConfig.Load(files.first());
+            return await BotConfig.Load(<string>files.first());
         }
         throw new Error(`no bot file found in ${folder}`);
     }
