@@ -1,14 +1,14 @@
 const assert = require('assert');
-const { TestAdapter, BotContext } = require('botbuilder');
+const { TestAdapter, TurnContext } = require('botbuilder');
 const { LanguageTranslator } = require('../');
 
 const translatorKey = process.env.TRANSLATORKEY;
 
-class TestContext extends BotContext {
+class TestContext extends TurnContext {
     constructor(request) {
         super(new TestAdapter(), request);
         this.sent = undefined;
-        this.onSendActivity((context, activities, next) => {
+        this.onSendActivities((context, activities, next) => {
             this.sent = activities;
         });
     }
@@ -31,7 +31,7 @@ describe('LanguageTranslator', function () {
             noTranslatePatterns: new Set()
         }
 
-        const testAdapter = new TestAdapter(c => c.sendActivity(c.request.text))
+        const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(new LanguageTranslator(toFrenchSettings))
         .test('greetings>', 'salutations >', 'should have received french')
         .then(() => done());
@@ -47,7 +47,7 @@ describe('LanguageTranslator', function () {
             setUserLanguage: c => Promise.resolve(false)
         }
 
-        const testAdapter = new TestAdapter(c => c.sendActivity(c.request.text))
+        const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(new LanguageTranslator(toEnglishSettings))
         .test('greetings', 'greetings', 'should have received english')
         .then(() => done());
@@ -63,7 +63,7 @@ describe('LanguageTranslator', function () {
             setUserLanguage: c => Promise.resolve(false)
         }
 
-        const testAdapter = new TestAdapter(c => c.sendActivity(c.request.text))
+        const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(new LanguageTranslator(noTranslateSettings))
         .test('Bonjour Jean mon ami 2018', 'Hello Jean mon ami 2018', 'should have received no translate patterns')
         .then(() => done())
@@ -78,7 +78,7 @@ describe('LanguageTranslator', function () {
             nativeLanguages: ['en'],
             getUserLanguage: c => userLang,
             setUserLanguage: c => {
-                if (c.request.text == 'I would like to speak french') {
+                if (c.activity.text == 'I would like to speak french') {
                     userLang = 'fr';
                     return Promise.resolve(true);
                 }
@@ -100,7 +100,7 @@ describe('LanguageTranslator', function () {
             noTranslatePatterns: new Set(['(HI)', '(BYE)'])
         }
 
-        const testAdapter = new TestAdapter(c => c.sendActivity(c.request.text))
+        const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(new LanguageTranslator(emptyMessageSettings))
         .test('\n\n', '', 'should have received an empty message')
         .then(() => done());
@@ -114,7 +114,7 @@ describe('LanguageTranslator', function () {
             noTranslatePatterns: new Set()
         }
 
-        const testAdapter = new TestAdapter(c => c.sendActivity(c.request.text))
+        const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(new LanguageTranslator(emptyMessageSettings))
         .send('Hello')
         .catch(error => done());
@@ -128,7 +128,7 @@ describe('LanguageTranslator', function () {
             noTranslatePatterns: new Set()
         }
 
-        const testAdapter = new TestAdapter(c => c.sendActivity(c.request.text))
+        const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(new LanguageTranslator(toFrenchSettings))
         .test('greetings\nhello', 'salutations\nSalut', 'should have received french')
         .then(() => done());
@@ -144,9 +144,9 @@ describe('LanguageTranslator', function () {
 
         const context = new TestContext({ text: 'bonjour', locale: 'fr-fr', type: 'message' })
         const translator = new LanguageTranslator(toEnglishSettings)
-        .onProcessRequest(context, () => Promise.resolve())
+        .onTurn(context, () => Promise.resolve())
         .then(() => {
-            assert.equal(context.request.text, 'Hello', 'should have received english');
+            assert.equal(context.activity.text, 'Hello', 'should have received english');
             done();
         });
     });
@@ -161,7 +161,7 @@ describe('LanguageTranslator', function () {
 
         const context = new TestContext({ text: 'bonjour', type: 'foo' })
         const translator = new LanguageTranslator(toEnglishSettings)
-        .onProcessRequest(context, () => {
+        .onTurn(context, () => {
             intercepted = false;
             Promise.resolve();
         })
@@ -181,7 +181,7 @@ describe('LanguageTranslator', function () {
             setUserLanguage: c => Promise.resolve(false)
         }
 
-        const testAdapter = new TestAdapter(c => c.sendActivity(c.request.text))
+        const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(new LanguageTranslator(noTranslateSettings))
         .test('Bonjour Jean mon ami', 'Hello Jean mon ami', 'should have received no translate patterns')
         .then(() => done())

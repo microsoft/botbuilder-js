@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, ResourceResponse, ConversationReference } from 'botframework-schema';
+import { Activity, ResourceResponse, ConversationReference, ActivityTypes, InputHints } from 'botframework-schema';
 import { BotAdapter } from './botAdapter';
 import { shallowCopy } from './internal';
 import { Promiseable } from './middlewareSet';
@@ -15,23 +15,23 @@ import { Promiseable } from './middlewareSet';
  * 
  * Signature implemented by functions registered with `context.onSendActivity()`. 
  */
-export type SendActivityHandler = (context: BotContext, activities: Partial<Activity>[], next: () => Promise<ResourceResponse[]>) => Promiseable<ResourceResponse[]>;
+export type SendActivitiesHandler = (context: TurnContext, activities: Partial<Activity>[], next: () => Promise<ResourceResponse[]>) => Promiseable<ResourceResponse[]>;
 
 /** 
  * :package: **botbuilder-core**
  * 
  * Signature implemented by functions registered with `context.onUpdateActivity()`. 
  */
-export type UpdateActivityHandler = (context: BotContext, activity: Partial<Activity>, next: () => Promise<void>) => Promiseable<void>;
+export type UpdateActivityHandler = (context: TurnContext, activity: Partial<Activity>, next: () => Promise<void>) => Promiseable<void>;
 
 /** 
  * :package: **botbuilder-core**
  * 
  * Signature implemented by functions registered with `context.onDeleteActivity()`. 
  */
-export type DeleteActivityHandler = (context: BotContext, reference: Partial<ConversationReference>, next: () => Promise<void>) => Promiseable<void>;
+export type DeleteActivityHandler = (context: TurnContext, reference: Partial<ConversationReference>, next: () => Promise<void>) => Promiseable<void>;
 
-export interface BotContext { }
+export interface TurnContext { }
 
 /** 
  * :package: **botbuilder-core**
@@ -59,12 +59,12 @@ export interface BotContext { }
  * });
  * ```
  */
-export class BotContext {
+export class TurnContext {
     private _adapter: BotAdapter|undefined =  undefined;
-    private _request: Activity| undefined = undefined;
+    private _activity: Activity| undefined = undefined;
     private _respondedRef: { responded: boolean; } = { responded: false };
-    private _cache = new Map<string, any>();
-    private _onSendActivity: SendActivityHandler[] = [];
+    private _services = new Map<any, any>();
+    private _onSendActivities: SendActivitiesHandler[] = [];
     private _onUpdateActivity: UpdateActivityHandler[] = [];
     private _onDeleteActivity: DeleteActivityHandler[] = [];
 
@@ -74,13 +74,13 @@ export class BotContext {
      * @param request Request being processed.
      */
     constructor(adapterOrContext: BotAdapter, request: Partial<Activity>);
-    constructor(adapterOrContext: BotContext);
-    constructor(adapterOrContext: BotAdapter|BotContext, request?: Partial<Activity>) {
-        if (adapterOrContext instanceof BotContext) {
+    constructor(adapterOrContext: TurnContext);
+    constructor(adapterOrContext: BotAdapter|TurnContext, request?: Partial<Activity>) {
+        if (adapterOrContext instanceof TurnContext) {
             adapterOrContext.copyTo(this);
         } else {
             this._adapter = adapterOrContext;
-            this._request = request as Activity;
+            this._activity = request as Activity;
         }
     }
 
@@ -89,10 +89,10 @@ export class BotContext {
      * instance. 
      * @param context The context object to copy private members to. Everything should be copied by reference. 
      */
-    protected copyTo(context: BotContext): void {
+    protected copyTo(context: TurnContext): void {
         // Copy private member to other instance.
-        ['_adapter', '_request', '_respondedRef', '_cache', 
-         '_onSendActivity', '_onUpdateActivity', '_onDeleteActivity'].forEach((prop) => (context as any)[prop] = (this as any)[prop]);        
+        ['_adapter', '_activity', '_respondedRef', '_services', 
+         '_onSendActivities', '_onUpdateActivity', '_onDeleteActivity'].forEach((prop) => (context as any)[prop] = (this as any)[prop]);        
     }
 
     /** The adapter for this context. */
@@ -101,8 +101,8 @@ export class BotContext {
     }
 
     /** The received activity. */
-    public get request(): Activity {
-        return this._request as Activity;
+    public get activity(): Activity {
+        return this._activity as Activity;
     }
 
     /** If `true` at least one response has been sent for the current turn of conversation. */
@@ -115,43 +115,47 @@ export class BotContext {
         this._respondedRef.responded = true;
     }
 
-    /** 
-     * Gets a value previously cached on the context.
-     * @param T (Optional) type of value being returned.
-     * @param key The key to lookup in the cache. 
+    /** Map of services and other values cached for the lifetime of the turn. */
+    public get services(): Map<any, any> {
+        return this._services;
+    }
+
+    /**
+     * Sends a single activity or message to the user.
+     * @param activityOrText Activity or text of a message to send the user.
+     * @param speak (Optional) SSML that should be spoken to the user for the message.
+     * @param inputHint (Optional) `InputHint` for the message sent to the user.
      */
-    public get<T = any>(key: any): T {
-        return this._cache.get(key) as T;
+    public sendActivity(activityOrText: string|Partial<Activity>, speak?: string, inputHint?: string): Promise<ResourceResponse|undefined> {
+        let a: Partial<Activity>;
+        if (typeof activityOrText === 'string') {
+            a = { text: activityOrText };
+            if (speak) { a.speak = speak }
+            if (inputHint) { a.inputHint = inputHint }
+        } else {
+            a = activityOrText;
+        }
+        return this.sendActivities([a]).then((responses) => responses && responses.length > 0 ? responses[0] : undefined);
     }
 
     /** 
-     * Returns `true` if [set()](#set) has been called for a key. The cached value may be `undefined`. 
-     * @param key The key to lookup in the cache. 
+     * Sends a set of activities to the user. An array of responses form the server will be returned.
+     * 
+     * Prior to delivery, the activities will be updated with information from the `ConversationReference`
+     * for the contexts [activity](#activity) and if an activities `type` field hasn't been set it will be
+     * set to a type of `message`. The array of activities will then be routed through any [onSendActivities()](#onsendactivities)
+     * handlers and then passed to `adapter.sendActivities()`. 
+     * @param activities One or more activities to send to the user.
      */
-    public has(key: any): boolean {
-        return this._cache.has(key);
-    }
-
-    /** 
-     * Caches a value for the lifetime of the current turn. 
-     * @param key The key of the value being cached. 
-     * @param value The value to cache. 
-     */
-    public set(key: any, value: any): this {
-        this._cache.set(key, value);
-        return this;
-    }
-
-    /** 
-     * Sends a set of activities to the user. An array of responses form the server will be 
-     * returned.
-     * @param activityOrText One or more activities or messages to send to the user. If a `string` is provided it will be sent to the user as a `message` activity.
-     */
-    public sendActivity(...activityOrText: (Partial<Activity>|string)[]): Promise<ResourceResponse[]> {
-        const ref = BotContext.getConversationReference(this.request);
-        const output = activityOrText.map((a) => BotContext.applyConversationReference(typeof a === 'string' ? { text: a, type: 'message' } : a, ref));
-        return this.emit(this._onSendActivity, output, () => {
-            return this.adapter.sendActivity(output)
+    public sendActivities(activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
+        const ref = TurnContext.getConversationReference(this.activity);
+        const output = activities.map((a) => {
+            const o = TurnContext.applyConversationReference(Object.assign({}, a), ref);
+            if (!o.type) { o.type = ActivityTypes.Message }
+            return o;
+        });
+        return this.emit(this._onSendActivities, output, () => {
+            return this.adapter.sendActivities(this, output)
                 .then((responses) => {
                     // Set responded flag
                     this.responded = true;
@@ -162,33 +166,39 @@ export class BotContext {
 
     /** 
      * Replaces an existing activity. 
+     * 
+     * The activity will be routed through any registered [onUpdateActivity](#onupdateactivity) handlers 
+     * before being passed to `adapter.updateActivity()`.
      * @param activity New replacement activity. The activity should already have it's ID information populated. 
      */
     public updateActivity(activity: Partial<Activity>): Promise<void> {
-        return this.emit(this._onUpdateActivity, activity, () => this.adapter.updateActivity(activity));
+        return this.emit(this._onUpdateActivity, activity, () => this.adapter.updateActivity(this, activity));
     }
 
     /** 
      * Deletes an existing activity. 
+     * 
+     * The `ConversationReference` for the activity being deleted will be routed through any registered 
+     * [onDeleteActivity](#ondeleteactivity) handlers before being passed to `adapter.deleteActivity()`.
      * @param idOrReference ID or conversation of the activity being deleted. If an ID is specified the conversation reference information from the current request will be used to delete the activity.
      */
     public deleteActivity(idOrReference: string|Partial<ConversationReference>): Promise<void> {
         let reference: Partial<ConversationReference>;
         if (typeof idOrReference === 'string') {
-            reference = BotContext.getConversationReference(this.request);
+            reference = TurnContext.getConversationReference(this.activity);
             reference.activityId = idOrReference;
         } else {
             reference = idOrReference;
         }
-        return this.emit(this._onDeleteActivity, reference, () => this.adapter.deleteActivity(reference));
+        return this.emit(this._onDeleteActivity, reference, () => this.adapter.deleteActivity(this, reference));
     }
 
     /** 
      * Registers a handler to be notified of and potentially intercept the sending of activities. 
      * @param handler A function that will be called anytime [sendActivity()](#sendactivity) is called. The handler should call `next()` to continue sending of the activities. 
      */
-    public onSendActivity(handler: SendActivityHandler): this {
-        this._onSendActivity.push(handler);
+    public onSendActivities(handler: SendActivitiesHandler): this {
+        this._onSendActivities.push(handler);
         return this;
     }
 
@@ -210,7 +220,7 @@ export class BotContext {
         return this;
     }
 
-    private emit<T>(handlers: ((context: BotContext, arg: T, next: () => Promise<any>) => Promiseable<any>)[], arg: T, next: () => Promise<any>): Promise<any> {
+    private emit<T>(handlers: ((context: TurnContext, arg: T, next: () => Promise<any>) => Promiseable<any>)[], arg: T, next: () => Promise<any>): Promise<any> {
         const list = handlers.slice();
         const context = this;
         function emitNext(i: number): Promise<void> {

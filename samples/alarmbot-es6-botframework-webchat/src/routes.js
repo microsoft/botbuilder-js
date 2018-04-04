@@ -5,9 +5,9 @@ import * as deleteAlarm from './alarms/deleteAlarm';
 import * as cancel from './alarms/cancel';
 
 export function routes(context) {
-    if (context.request.type === 'message') {
+    if (context.activity.type === 'message') {
         // Check for the triggering of a new topic
-        const utterance = (context.request.text || '').trim().toLowerCase();
+        const utterance = (context.activity.text || '').trim().toLowerCase();
         if (utterance.includes('add alarm')) {
             return addAlarm.begin(context);
         } else if (utterance.includes('delete alarm')) {

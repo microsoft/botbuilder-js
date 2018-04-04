@@ -1,4 +1,4 @@
-import { BotFrameworkAdapter, MemoryStorage, ConversationState, BatchOutput, BotContext } from 'botbuilder';
+import { BotFrameworkAdapter, MemoryStorage, ConversationState, TurnContext } from 'botbuilder';
 import { DialogSet } from 'botbuilder-dialogs';
 import * as restify from 'restify';
 
@@ -28,8 +28,8 @@ const dialogs = new DialogSet();
 // Listen for incoming requests 
 server.post('/api/messages', (req, res) => {
     // Route received request to adapter for processing
-    adapter.processRequest(req, res, async (context) => {
-        if (context.request.type === 'message') {
+    adapter.processActivity(req, res, async (context) => {
+        if (context.activity.type === 'message') {
             // Create dialog context and continue executing the "current" dialog, if any.
             const state = conversationState.get(context);
             const dc = dialogs.createContext(context, state);
@@ -40,7 +40,7 @@ server.post('/api/messages', (req, res) => {
                 await dc.begin('echo');
             }
         } else {
-            await context.sendActivity(`[${context.request.type} event detected]`);
+            await context.sendActivity(`[${context.activity.type} event detected]`);
         }
     });
 });
@@ -50,7 +50,7 @@ dialogs.add('echo', [
     async function (dc) {
         const state = conversationState.get(dc.context);
         const count = state.count === undefined ? state.count = 0 : ++state.count;
-        await dc.context.sendActivity(`${count}: You said "${dc.context.request.text}"`);
+        await dc.context.sendActivity(`${count}: You said "${dc.context.activity.text}"`);
         await dc.end();
     }
 ]);

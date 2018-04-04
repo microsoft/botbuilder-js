@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotContext, BatchOutput, Activity } from 'botbuilder';
+import { TurnContext, Activity } from 'botbuilder';
 import { DialogInstance } from './dialog';
 import { DialogSet } from './dialogSet';
 import { PromptOptions, ChoicePromptOptions } from './prompts/index';
@@ -31,14 +31,7 @@ export interface DialogResult<T = any> {
     result?: T;
 }
 
-export class DialogContext<C extends BotContext> {
-
-     /** 
-      * Allows for batch based responses from the bot. Optional to use but you should add `BatchOutput` 
-      * to your adapters middleware stack if you do, otherwise you'll need to manually call 
-      * `dc.batch.flush()` somewhere within your bots logic.
-      */    
-    public readonly batch: BatchOutput;
+export class DialogContext<C extends TurnContext> {
     
      /**
       * Creates a new DialogContext instance.
@@ -46,9 +39,7 @@ export class DialogContext<C extends BotContext> {
       * @param context Context for the current turn of conversation with the user.
       * @param stack Current dialog stack.
       */
-    constructor(public readonly dialogs: DialogSet<C>, public readonly context: C, public readonly stack: DialogInstance[]) {
-        this.batch = new BatchOutput(context);
-    }
+    constructor(public readonly dialogs: DialogSet<C>, public readonly context: C, public readonly stack: DialogInstance[]) { }
 
     /** Returns the cached instance of the active dialog on the top of the stack or `undefined` if the stack is empty. */
     public get instance(): DialogInstance|undefined {

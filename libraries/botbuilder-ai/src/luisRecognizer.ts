@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.  
  * Licensed under the MIT License.
  */
-import { Middleware, BotContext } from 'botbuilder';
+import { Middleware, TurnContext } from 'botbuilder';
 import { LuisResult, Intent, Entity, CompositeEntity } from 'botframework-luis/lib/models';
 import LuisClient = require('botframework-luis');
 
@@ -61,7 +61,7 @@ export class LuisRecognizer implements Middleware {
         this.luisClient = this.createClient(baseUri + '/luis/');
     }
 
-    public onProcessRequest(context: BotContext, next: () => Promise<void>): Promise<void> {
+    public onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
         return this.recognize(context, true)
                    .then(() => next());
     }
@@ -72,8 +72,8 @@ export class LuisRecognizer implements Middleware {
      * current turn.
      * @param context Context for the current turn of conversation with the use.
      */
-    public get(context: BotContext): LuisRecognizerResult|undefined {
-        return context.get(this.cacheKey);
+    public get(context: TurnContext): LuisRecognizerResult|undefined {
+        return context.services.get(this.cacheKey);
     }
 
     /**
@@ -84,10 +84,10 @@ export class LuisRecognizer implements Middleware {
      * @param context Context for the current turn of conversation with the use.
      * @param force (Optional) flag that if `true` will force the call to LUIS even if a cached result exists. Defaults to a value of `false`. 
      */
-    public recognize(context: BotContext, force?: boolean): Promise<LuisRecognizerResult> {
-        const cached = context.get(this.cacheKey);
+    public recognize(context: TurnContext, force?: boolean): Promise<LuisRecognizerResult> {
+        const cached = context.services.get(this.cacheKey);
         if (force || !cached) {
-            const utterance = context.request.text || '';
+            const utterance = context.activity.text || '';
             return this.luisClient.getIntentsAndEntitiesV2(this.settings.appId, this.settings.subscriptionKey, utterance, this.settings.options)
                 .then((result : LuisResult) => {
                     // Map results
@@ -98,7 +98,7 @@ export class LuisRecognizer implements Middleware {
                     };
                     
                     // Write to cache
-                    context.set(this.cacheKey, recognizerResult);
+                    context.services.set(this.cacheKey, recognizerResult);
                     return recognizerResult;
                 });
     

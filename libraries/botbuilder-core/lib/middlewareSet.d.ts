@@ -1,4 +1,4 @@
-import { BotContext } from './botContext';
+import { TurnContext } from './turnContext';
 /**
  * :package: **botbuilder-core**
  *
@@ -13,14 +13,14 @@ export declare type Promiseable<T = void> = Promise<T> | T;
  * Interface implemented by object based middleware.
  */
 export interface Middleware {
-    onProcessRequest(context: BotContext, next: () => Promise<void>): Promiseable<void>;
+    onTurn(context: TurnContext, next: () => Promise<void>): Promiseable<void>;
 }
 /**
  * :package: **botbuilder-core**
  *
  * Signature implemented by function based middleware.
  */
-export declare type MiddlewareHandler = (context: BotContext, next: () => Promise<void>) => Promiseable<void>;
+export declare type MiddlewareHandler = (context: TurnContext, next: () => Promise<void>) => Promiseable<void>;
 /**
  * :package: **botbuilder-core**
  *
@@ -35,7 +35,7 @@ export declare class MiddlewareSet implements Middleware {
      * @param middleware Zero or more middleware handlers(s) to register.
      */
     constructor(...middleware: (MiddlewareHandler | Middleware)[]);
-    onProcessRequest(context: BotContext, next: () => Promise<void>): Promise<void>;
+    onTurn(context: TurnContext, next: () => Promise<void>): Promise<void>;
     /**
      * Registers middleware handlers(s) with the set.
      * @param middleware One or more middleware handlers(s) to register.
@@ -46,5 +46,5 @@ export declare class MiddlewareSet implements Middleware {
      * @param context Context for the current turn of conversation with the user.
      * @param next Function to invoke at the end of the middleware chain.
      */
-    run(context: BotContext, next: () => Promiseable<void>): Promise<void>;
+    run(context: TurnContext, next: () => Promiseable<void>): Promise<void>;
 }

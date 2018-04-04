@@ -12,6 +12,6 @@ function __export(m) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./botAdapter"));
 __export(require("./middlewareSet"));
-__export(require("./botContext"));
+__export(require("./turnContext"));
 __export(require("botframework-schema"));
 //# sourceMappingURL=index.js.map

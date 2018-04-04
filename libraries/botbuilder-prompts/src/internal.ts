@@ -3,18 +3,16 @@
  * Licensed under the MIT License.
  */
 
-import { Activity, BotContext, BatchOutput, ActivityTypes, InputHints } from 'botbuilder';
+import { Activity, TurnContext, ActivityTypes, InputHints } from 'botbuilder';
 
 
- export function sendPrompt(context: BotContext, prompt: string|Partial<Activity>, speak?: string): Promise<void> {
+ export function sendPrompt(context: TurnContext, prompt: string|Partial<Activity>, speak?: string): Promise<void> {
     // Compose activity
     const msg: Partial<Activity> = typeof prompt === 'string' ? { text: prompt } : Object.assign({}, prompt);
     if (speak) { msg.speak = speak }
     if (!msg.type) { msg.type = ActivityTypes.Message }
     if (!msg.inputHint) { msg.inputHint = InputHints.ExpectingInput }
 
-    // Send using batch output to ensure that prompt gets appended if batching is being used.
-    return new BatchOutput(context).reply(msg).flush().then(() => { 
-        // eat response body 
-    });
+    // Send activity and eat response.
+    return context.sendActivity(msg).then(() => { });
  }

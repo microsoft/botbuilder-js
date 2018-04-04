@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { BotContext, ActivityTypes } = require('botbuilder-core');
+const { TurnContext, ActivityTypes } = require('botbuilder-core');
 const { ConversationState, MemoryStorage, TestAdapter } = require('../');
 
 const receivedMessage = { text: 'received', type: 'message', channelId: 'test', conversation: { id: 'convo' } };
@@ -12,11 +12,11 @@ describe(`ConversationState`, function () {
 
     const storage = new MemoryStorage();
     const adapter = new TestAdapter();
-    const context = new BotContext(adapter, receivedMessage);
+    const context = new TurnContext(adapter, receivedMessage);
     const middleware = new ConversationState(storage);
     it(`should load and save state from storage.`, function (done) {
         let key;
-        middleware.onProcessRequest(context, () => {
+        middleware.onTurn(context, () => {
             key = middleware.getStorageKey(context);
             const state = middleware.get(context);
             assert(state, `State not loaded`);
@@ -33,7 +33,7 @@ describe(`ConversationState`, function () {
 
     it(`should ignore any activities that aren't "endOfConversation".`, function (done) {
         let key;
-        middleware.onProcessRequest(context, () => {
+        middleware.onTurn(context, () => {
             key = middleware.getStorageKey(context);
             assert(middleware.get(context).test === 'foo', `invalid initial state`);
             return context.sendActivity({ type: ActivityTypes.Message, text: 'foo' });
@@ -46,8 +46,8 @@ describe(`ConversationState`, function () {
     });
 
     it(`should reject with error if channelId missing.`, function (done) {
-        const ctx = new BotContext(adapter, missingChannelId);
-        middleware.onProcessRequest(ctx, () => {
+        const ctx = new TurnContext(adapter, missingChannelId);
+        middleware.onTurn(ctx, () => {
             assert(false, `shouldn't have called next.`);
         })
         .then(() => {
@@ -60,8 +60,8 @@ describe(`ConversationState`, function () {
     });
 
     it(`should reject with error if conversation missing.`, function (done) {
-        const ctx = new BotContext(adapter, missingConversation);
-        middleware.onProcessRequest(ctx, () => {
+        const ctx = new TurnContext(adapter, missingConversation);
+        middleware.onTurn(ctx, () => {
             assert(false, `shouldn't have called next.`);
         })
         .then(() => {
@@ -74,7 +74,7 @@ describe(`ConversationState`, function () {
     });
 
     it(`should throw install exception if get() called without a cached entry.`, function (done) {
-        context.set('conversationState', undefined);
+        context.services.set('conversationState', undefined);
         try {
             middleware.get(context);
             assert(false, `exception not thrown.`);

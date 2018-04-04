@@ -7,7 +7,7 @@
  */
 import { 
     BotAdapter, ActivityTypes, Activity, ConversationReference, ChannelAccount,
-    Promiseable, BotContext, ResourceResponse 
+    Promiseable, TurnContext, ResourceResponse 
 } from 'botbuilder-core';
 import assert = require('assert');
 
@@ -38,7 +38,7 @@ export class TestAdapter extends BotAdapter {
      * @param botLogic The bots logic that's under test.
      * @param template (Optional) activity containing default values to assign to all test messages received.
      */
-    constructor(private botLogic: (context: BotContext) => Promiseable<void>, template?: ConversationReference) {
+    constructor(private botLogic: (context: TurnContext) => Promiseable<void>, template?: ConversationReference) {
         super();
         this.template = Object.assign({
             channelId: 'test',
@@ -49,7 +49,7 @@ export class TestAdapter extends BotAdapter {
         } as Activity, template);
     }
 
-    public sendActivity(activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
+    public sendActivities(context: TurnContext, activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
         const responses = activities.map((activity) => {  
             this.activityBuffer.push(activity);
             return { id: (this.nextId++).toString() };
@@ -57,14 +57,18 @@ export class TestAdapter extends BotAdapter {
         return Promise.resolve(responses);
     }
 
-    public updateActivity(activity: Partial<Activity>): Promise<void> {
+    public updateActivity(context: TurnContext, activity: Partial<Activity>): Promise<void> {
         this.updatedActivities.push(activity);
         return Promise.resolve();
     }
 
-    public deleteActivity(reference: Partial<ConversationReference>): Promise<void> {
+    public deleteActivity(context: TurnContext, reference: Partial<ConversationReference>): Promise<void> {
         this.deletedActivities.push(reference);
         return Promise.resolve();
+    }
+
+    public continueConversation(reference: Partial<ConversationReference>, logic: (revocableContext: TurnContext) => Promiseable<void>): Promise<void> {
+        return Promise.reject(new Error(`not implemented`));
     }
 
     /**
@@ -78,7 +82,7 @@ export class TestAdapter extends BotAdapter {
         if (!request.id) { request.id = (this.nextId++).toString() }
 
         // Create context object and run middleware
-        const context = new BotContext(this, request);
+        const context = new TurnContext(this, request);
         return this.runMiddleware(context, this.botLogic);
     }
 

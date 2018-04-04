@@ -1,8 +1,8 @@
 import { Control, DialogContext } from 'botbuilder-dialogs';
 import { Choice, findChoices } from 'botbuilder-choices';
-import { BotContext, Promiseable, Activity, CardAction, MessageFactory } from 'botbuilder';
+import { TurnContext, Promiseable, Activity, CardAction, MessageFactory } from 'botbuilder';
 
-export type ListPager<C extends BotContext> = (dc: DialogContext<C>, filter: any, continueToken: any) => Promiseable<ListPagerResult>
+export type ListPager<C extends TurnContext> = (dc: DialogContext<C>, filter: any, continueToken: any) => Promiseable<ListPagerResult>
 
 export interface ListPagerResult {
     results: Partial<Activity>;
@@ -20,7 +20,7 @@ export interface ListControlResult {
     continueToken?: any;
 }
 
-export class ListControl<C extends BotContext> extends Control<ListControlResult, ListControlOptions, C> {
+export class ListControl<C extends TurnContext> extends Control<ListControlResult, ListControlOptions, C> {
     private readonly actions: (string|CardAction)[];
 
     constructor(protected pager: ListPager<C>, actions?: (string|CardAction)[]) { 
@@ -35,7 +35,7 @@ export class ListControl<C extends BotContext> extends Control<ListControlResult
 
     public dialogContinue(dc: DialogContext<C>): Promise<any> {
         // Recognize selected action
-        const utterance = (dc.context.request.text || '').trim();
+        const utterance = (dc.context.activity.text || '').trim();
         const choices = this.actions.map((a) => {
             return typeof a === 'object' ? { value: a.value, action: a } : a;
         }) as (string|Choice)[] 

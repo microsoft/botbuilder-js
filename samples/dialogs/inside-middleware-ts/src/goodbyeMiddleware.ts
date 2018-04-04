@@ -1,4 +1,4 @@
-import { Middleware, BotContext, ConversationState } from 'botbuilder';
+import { Middleware, TurnContext, ConversationState } from 'botbuilder';
 import { DialogSet, ConfirmPrompt } from 'botbuilder-dialogs';
 
 export class GoodbyeMiddleware implements Middleware {
@@ -25,8 +25,8 @@ export class GoodbyeMiddleware implements Middleware {
         this.dialogs.add('confirmPrompt', new ConfirmPrompt());
     }
 
-    public async onProcessRequest(context: BotContext, next: () => Promise<void>) {
-        if (context.request.type === 'message') {
+    public async onTurn(context: TurnContext, next: () => Promise<void>) {
+        if (context.activity.type === 'message') {
             // Create dialog context using our middlewares private dialog stack
             const state = await this.conversationState.read(context);
             if (!state['goodbyeMiddlewareState']) { state['goodbyeMiddlewareState'] = {} }
@@ -39,7 +39,7 @@ export class GoodbyeMiddleware implements Middleware {
             }
 
             // Check for user to say "goodbye"
-            const utterance = (context.request.text || '').trim().toLowerCase();
+            const utterance = (context.activity.text || '').trim().toLowerCase();
             if (utterance === 'goodbye') {
                 // Start confirmation dialog
                 await dc.begin('confirmGoodbye');

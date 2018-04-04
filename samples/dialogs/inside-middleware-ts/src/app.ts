@@ -29,13 +29,13 @@ adapter.use(new GoodbyeMiddleware(conversationState));
 // Listen for incoming requests 
 server.post('/api/messages', (req, res) => {
     // Route received request to adapter for processing
-    adapter.processRequest(req, res, async (context) => {
-        if (context.request.type === 'message') {
+    adapter.processActivity(req, res, async (context) => {
+        if (context.activity.type === 'message') {
             const state = conversationState.get(context);
             const count = state.count === undefined ? state.count = 0 : ++state.count;
-            await context.sendActivity(`${count}: You said "${context.request.text}"`);
+            await context.sendActivity(`${count}: You said "${context.activity.text}"`);
         } else {
-            await context.sendActivity(`[${context.request.type} event detected]`);
+            await context.sendActivity(`[${context.activity.type} event detected]`);
         }
     });
 });

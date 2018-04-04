@@ -1,4 +1,4 @@
-const { BotFrameworkAdapter, MemoryStorage, BatchOutput, BotContext, ConversationState } = require('botbuilder');
+const { BotFrameworkAdapter, MemoryStorage, TurnContext, ConversationState } = require('botbuilder');
 const {
     DialogSet,
     TextPrompt,
@@ -44,18 +44,15 @@ const adapter = new BotFrameworkAdapter({
 const state = new BotStateManager(new MemoryStorage());
 adapter.use(state);
 
-// Add batch output middleware
-adapter.use(new BatchOutput());
-
 // Listen for incoming requests
 server.post('/api/messages', (req, res) => {
     // Route received request to adapter for processing
-    adapter.processRequest(req, res, async context => {
-        if (context.request.type === 'conversationUpdate' && context.request.membersAdded[0].name === 'Bot') {
+    adapter.processActivity(req, res, async context => {
+        if (context.activity.type === 'conversationUpdate' && context.activity.membersAdded[0].name === 'Bot') {
             // Welcome message here, bot will message you first
             return context.sendActivity(`Hi! I'm a simple reminder bot. I can help add reminders, delete and show them.`);
-        } else if (context.request.type === 'message') {
-            const utterance = (context.request.text || '').trim().toLowerCase();
+        } else if (context.activity.type === 'message') {
+            const utterance = (context.activity.text || '').trim().toLowerCase();
 
             // Create dialog context
             const dc = dialogs.createContext(context, state);

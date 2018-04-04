@@ -36,9 +36,9 @@ class GoodbyeMiddleware {
         ]);
         this.dialogs.add('confirmPrompt', new botbuilder_dialogs_1.ConfirmPrompt());
     }
-    onProcessRequest(context, next) {
+    onTurn(context, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (context.request.type === 'message') {
+            if (context.activity.type === 'message') {
                 // Create dialog context using our middlewares private dialog stack
                 const state = yield this.conversationState.read(context);
                 if (!state['goodbyeMiddlewareState']) {
@@ -51,7 +51,7 @@ class GoodbyeMiddleware {
                     return;
                 }
                 // Check for user to say "goodbye"
-                const utterance = (context.request.text || '').trim().toLowerCase();
+                const utterance = (context.activity.text || '').trim().toLowerCase();
                 if (utterance === 'goodbye') {
                     // Start confirmation dialog
                     yield dc.begin('confirmGoodbye');

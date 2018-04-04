@@ -1,4 +1,4 @@
-import { BotFrameworkAdapter, MemoryStorage, ConversationState, BatchOutput, BotContext } from 'botbuilder';
+import { BotFrameworkAdapter, MemoryStorage, ConversationState, TurnContext } from 'botbuilder';
 import { DialogSet } from 'botbuilder-dialogs';
 import * as restify from 'restify';
 
@@ -25,15 +25,15 @@ adapter.use(conversationState);
 
 // Listen for incoming requests 
 server.post('/api/messages', (req, res) => {
-    adapter.processRequest(req, res, async (context) => {
-        if (context.request.type === 'message') {
+    adapter.processActivity(req, res, async (context) => {
+        if (context.activity.type === 'message') {
             // Update request with current locale
             const state = conversationState.get(context);
-            if (state.currentLocale) { context.request.locale = state.currentLocale }
+            if (state.currentLocale) { context.activity.locale = state.currentLocale }
 
             // Route received request
             if (!state.demo) {
-                const utterance = (context.request.text || '').trim().toLowerCase();
+                const utterance = (context.activity.text || '').trim().toLowerCase();
                 if (utterance.includes('dialog')) {
                     await beginDialogDemo(context, state);
                 } else if (utterance.includes('topic')) {
@@ -61,14 +61,14 @@ import { LanguagePicker } from './language';
 // Dialog Based Usage
 //---------------------------------------------------------
 
-async function beginDialogDemo(context: BotContext, state: DemoState) {
+async function beginDialogDemo(context: TurnContext, state: DemoState) {
     state.demo = 'dialog';
     state.demoState = {};
     const dc = dialogs.createContext(context, state.demoState);
     await dc.begin('demo');
 }
 
-async function continueDialogDemo(context: BotContext, state: DemoState) {
+async function continueDialogDemo(context: TurnContext, state: DemoState) {
     const dc = dialogs.createContext(context, state.demoState);
     const result = await dc.continue();
     if (!result.active) {
@@ -99,13 +99,13 @@ dialogs.add('localePicker', new LanguagePicker({ defaultLocale: 'en' }));
 
 const localePicker = new LanguagePicker({ defaultLocale: 'en' });
 
-async function beginTopicDemo(context: BotContext, state: DemoState) {
+async function beginTopicDemo(context: TurnContext, state: DemoState) {
     state.demo = 'topic';
     state.demoState = {};
     await localePicker.begin(context, state.demoState);
 }
 
-async function continueTopicDemo(context: BotContext, state: DemoState) {
+async function continueTopicDemo(context: TurnContext, state: DemoState) {
     const result = await localePicker.continue(context, state.demoState);
     if (!result.active) {
         state.demo = undefined;

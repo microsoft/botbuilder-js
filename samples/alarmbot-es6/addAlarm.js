@@ -11,7 +11,7 @@ module.exports = {
         // Handle users reply to prompt
         let invalid = undefined;
         const conversation = state.conversation(context);
-        const utterance = context.request.text.trim();
+        const utterance = context.activity.text.trim();
         switch (conversation.prompt) {
             case 'title':
                 // Validate reply and save to alarm

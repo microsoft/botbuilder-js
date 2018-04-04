@@ -36,20 +36,23 @@ class TestAdapter extends botbuilder_core_1.BotAdapter {
             conversation: { id: 'Convo1' }
         }, template);
     }
-    sendActivity(activities) {
+    sendActivities(context, activities) {
         const responses = activities.map((activity) => {
             this.activityBuffer.push(activity);
             return { id: (this.nextId++).toString() };
         });
         return Promise.resolve(responses);
     }
-    updateActivity(activity) {
+    updateActivity(context, activity) {
         this.updatedActivities.push(activity);
         return Promise.resolve();
     }
-    deleteActivity(reference) {
+    deleteActivity(context, reference) {
         this.deletedActivities.push(reference);
         return Promise.resolve();
+    }
+    continueConversation(reference, logic) {
+        return Promise.reject(new Error(`not implemented`));
     }
     /**
      * Processes and activity received from the user.
@@ -65,7 +68,7 @@ class TestAdapter extends botbuilder_core_1.BotAdapter {
             request.id = (this.nextId++).toString();
         }
         // Create context object and run middleware
-        const context = new botbuilder_core_1.BotContext(this, request);
+        const context = new botbuilder_core_1.TurnContext(this, request);
         return this.runMiddleware(context, this.botLogic);
     }
     /**

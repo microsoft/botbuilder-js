@@ -23,7 +23,7 @@ function routeReply(context, state) {
     return __awaiter(this, void 0, void 0, function* () {
         // Handle users reply to prompt
         const conversation = state.conversation(context);
-        const utterance = context.request.text.trim();
+        const utterance = context.activity.text.trim();
         switch (conversation.prompt) {
             case 'title':
                 // Validate reply and save to alarm

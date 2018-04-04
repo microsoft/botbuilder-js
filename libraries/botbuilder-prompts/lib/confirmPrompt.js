@@ -7,7 +7,7 @@ const Recognizers = require("@microsoft/recognizers-text-choice");
 /**
  * Creates a new prompt that asks the user to answer a yes/no question.
  * @param validator (Optional) validator for providing additional validation logic or customizing the prompt sent to the user when invalid.
- * @param defaultLocale (Optional) locale to use if `context.request.locale` not specified. Defaults to a value of `en-us`.
+ * @param defaultLocale (Optional) locale to use if `context.activity.locale` not specified. Defaults to a value of `en-us`.
  */
 function createConfirmPrompt(validator, defaultLocale) {
     return {
@@ -16,7 +16,7 @@ function createConfirmPrompt(validator, defaultLocale) {
         choiceOptions: { includeNumbers: false },
         prompt: function prompt(context, prompt, speak) {
             // Get locale specific choices
-            let locale = context.request && context.request.locale ? context.request.locale.toLowerCase() : '*';
+            let locale = context.activity && context.activity.locale ? context.activity.locale.toLowerCase() : '*';
             if (!this.choices.hasOwnProperty(locale)) {
                 locale = '*';
             }
@@ -54,7 +54,7 @@ function createConfirmPrompt(validator, defaultLocale) {
             return internal_1.sendPrompt(context, msg);
         },
         recognize: function recognize(context) {
-            const request = context.request || {};
+            const request = context.activity || {};
             const utterance = request.text || '';
             const locale = request.locale || defaultLocale || 'en-us';
             const results = Recognizers.recognizeBoolean(utterance, locale);
