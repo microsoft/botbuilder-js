@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 import * as program from 'commander';
+var pjson = require('../package.json');
 
 program
+    .version(pjson.version)
     .description("The msbot program makes it easy to manipulate .bot files for Microsoft Bot Framework tools.")
 
 program
