@@ -3,7 +3,7 @@
 The msbot tool is a command line tool to create and manipulate a bot resources via a .bot. 
 
 
-# The .bot file
+# What is a .bot file?
 
 Bots usually consume lots of diverse services such as LUIS.ai, or QnMaker.com. When you are developing a bot there is no uniform place to store the the metadata about the services that are in use.  This prevents us from building tooling that looks at a bot as a whole.
 
@@ -18,6 +18,16 @@ Via the .bot file you can register services like:
 * **Dispatcher** models for dispatching across heterogeneous sources
 * *etc*
 
+
+# Installation
+
+To install simply invoke npm 
+
+```shell
+npm install -g msbot
+```
+
+This will install msbot into your global path.
 
 # Usage
 
