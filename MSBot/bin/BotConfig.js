@@ -1,12 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const process = require("process");
 const crypto = require("crypto");
@@ -26,34 +18,28 @@ class BotConfig {
         this.description = '';
         this.services = [];
     }
-    static LoadBotFromFolder(folder) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let files = linq_collections_1.Enumerable.fromSource(yield fsx.readdir(folder || process.cwd()))
-                .where(file => path.extname(file) == '.bot');
-            if (files.any()) {
-                return yield BotConfig.Load(files.first());
-            }
-            throw new Error(`no bot file found in ${folder}`);
-        });
+    static async LoadBotFromFolder(folder) {
+        let files = linq_collections_1.Enumerable.fromSource(await fsx.readdir(folder || process.cwd()))
+            .where(file => path.extname(file) == '.bot');
+        if (files.any()) {
+            return await BotConfig.Load(files.first());
+        }
+        throw new Error(`no bot file found in ${folder}`);
     }
     // load the config file
-    static Load(botpath) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let bot = new BotConfig();
-            Object.assign(bot, yield fsx.readJson(botpath));
-            bot.location = botpath;
-            return bot;
-        });
+    static async Load(botpath) {
+        let bot = new BotConfig();
+        Object.assign(bot, await fsx.readJson(botpath));
+        bot.location = botpath;
+        return bot;
     }
     // save the config file
-    Save(botpath) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield fsx.writeJson(botpath || this.location, {
-                name: this.name,
-                description: this.description,
-                services: this.services
-            }, { spaces: 4 });
-        });
+    async Save(botpath) {
+        await fsx.writeJson(botpath || this.location, {
+            name: this.name,
+            description: this.description,
+            services: this.services
+        }, { spaces: 4 });
     }
     // connect to a service
     connectService(newService) {

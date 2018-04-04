@@ -4,8 +4,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const program = require("commander");
 var pjson = require('../package.json');
 program
-    .version(pjson.version)
-    .description("The msbot program makes it easy to manipulate .bot files for Microsoft Bot Framework tools.");
+    .version(pjson.version, '-V, --Version')
+    .description(`The msbot program makes it easy to manipulate .bot files for Microsoft Bot Framework tools.`);
 program
     .command('init', 'create a new .bot file');
 program

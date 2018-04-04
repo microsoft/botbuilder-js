@@ -35,36 +35,43 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="src\msbot-connect-localhost.ts" />
-    <TypeScriptCompile Include="src\msbot-connect-azure.ts" />
-    <TypeScriptCompile Include="src\BotConfig.ts">
+    <TypeScriptCompile Include="src\cli\msbot-connect-localhost.ts" />
+    <TypeScriptCompile Include="src\cli\msbot-connect-azure.ts" />
+    <TypeScriptCompile Include="src\lib\BotConfig.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="src\utils.ts" />
-    <TypeScriptCompile Include="src\msbot-init.ts" />
-    <TypeScriptCompile Include="src\msbot-export.ts" />
-    <TypeScriptCompile Include="src\msbot-clone.ts" />
-    <TypeScriptCompile Include="src\msbot-list.ts" />
-    <TypeScriptCompile Include="src\msbot-disconnect.ts" />
-    <TypeScriptCompile Include="src\msbot-connect-luis.ts">
+    <TypeScriptCompile Include="src\cli\msbot-init.ts" />
+    <TypeScriptCompile Include="src\cli\msbot-export.ts" />
+    <TypeScriptCompile Include="src\cli\msbot-clone.ts" />
+    <TypeScriptCompile Include="src\cli\msbot-list.ts" />
+    <TypeScriptCompile Include="src\cli\msbot-disconnect.ts" />
+    <TypeScriptCompile Include="src\cli\msbot-connect-luis.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="src\msbot-connect-qna.ts">
+    <TypeScriptCompile Include="src\cli\msbot-connect-qna.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="src\msbot.ts" />
+    <TypeScriptCompile Include="src\cli\msbot.ts" />
     <Content Include="package.json" />
     <Content Include="README.md" />
-    <Content Include="tsconfig.json" />
-    <TypeScriptCompile Include="src\msbot-connect.ts">
+    <Content Include="src\cli\tsconfig.json" />
+    <Content Include="src\lib\tsconfig.json" />
+    <TypeScriptCompile Include="src\cli\msbot-connect.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="src\schema.ts">
+    <TypeScriptCompile Include="src\lib\schema.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\" />
+    <Folder Include="src\cli\" />
+    <Folder Include="src\lib\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="gulp.js">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <!-- Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them. -->
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="False" />

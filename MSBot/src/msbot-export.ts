@@ -1,3 +1,4 @@
+import { BotConfig, ServiceType } from './BotConfig';
 import * as program from 'commander';
 
 program

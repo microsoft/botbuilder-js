@@ -11,12 +11,12 @@
             "appPassword": ""
         },
         {
-            "type": "abs",
-            "id": "-d",
-            "name": "-d",
-            "appId": "123123123",
-            "appPassword": "~^~3cbe99c1491307af5bb88be551c2eb51~^~",
-            "endpoint": "https://testbot.azurewebsites.net/api/messages"
+            "type": "luis",
+            "name": "My Luis Model",
+            "id": "sdfkjid",
+            "appId": "sdfkjid",
+            "version": "v0.1",
+            "authoringKey": "~^~0d0e838796b7e0e8a06e962e1f6d9dfd~^~"
         }
     ]
 }
