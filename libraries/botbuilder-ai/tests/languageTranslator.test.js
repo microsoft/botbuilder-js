@@ -53,7 +53,7 @@ describe('LanguageTranslator', function () {
         .then(() => done());
     });
 
-    it('should not translate no translate texts', function (done) {
+    it('should not translate no translate texts and numbers', function (done) {
 
         let noTranslateSettings = {
             translatorKey: translatorKey,
@@ -65,7 +65,7 @@ describe('LanguageTranslator', function () {
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.request.text))
         .use(new LanguageTranslator(noTranslateSettings))
-        .test('Bonjour Jean mon ami', 'Hello Jean mon ami', 'should have received no translate patterns')
+        .test('Bonjour Jean mon ami 2018', 'Hello Jean mon ami 2018', 'should have received no translate patterns')
         .then(() => done())
     });
 

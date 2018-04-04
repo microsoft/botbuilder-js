@@ -228,7 +228,7 @@ class PostProcessTranslator {
     }
     fixTranslation(sourceMessage, alignment, targetMessage) {
         let processedTranslation = targetMessage;
-        let numericMatches = sourceMessage.match(new RegExp("\d+", "g"));
+        let numericMatches = sourceMessage.match(new RegExp("[0-9]+", "g"));
         let containsNum = numericMatches != null;
         let noTranslatePatterns = Array.from(this.noTranslatePatterns);
         if (!containsNum && noTranslatePatterns.length == 0) {
@@ -254,15 +254,13 @@ class PostProcessTranslator {
                 let chrIndx = 0;
                 let srcIndx = -1;
                 for (const wrd in srcWrds) {
-                    if (srcWrds.hasOwnProperty(wrd)) {
-                        const element = srcWrds[wrd];
-                        if (chrIndx == noTranslateStarChrIndex) {
-                            srcIndx = wrdIndx;
-                            break;
-                        }
-                        chrIndx += element.length + 1;
-                        wrdIndx++;
+                    const element = srcWrds[wrd];
+                    if (chrIndx == noTranslateStarChrIndex) {
+                        srcIndx = wrdIndx;
+                        break;
                     }
+                    chrIndx += element.length + 1;
+                    wrdIndx++;
                 }
                 let wrdNoTranslate = match[1].split(' ');
                 wrdNoTranslate.forEach(srcWrds => {
@@ -271,7 +269,7 @@ class PostProcessTranslator {
                 });
             });
         }
-        if (numericMatches != null) {
+        if (containsNum) {
             for (const numericMatch in numericMatches) {
                 let srcIndx = srcWrds.findIndex(wrd => wrd == numericMatch);
                 processedTranslation = this.keepSrcWrdInTranslation(alignMap, sourceMessage, processedTranslation, srcIndx);
