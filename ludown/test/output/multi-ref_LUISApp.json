@@ -1,0 +1,112 @@
+{
+  "intents": [
+    {
+      "name": "Greeting"
+    },
+    {
+      "name": "DeleteAlarm"
+    },
+    {
+      "name": "Buy chocolate"
+    }
+  ],
+  "entities": [
+    {
+      "name": "ChocolateType",
+      "roles": []
+    }
+  ],
+  "composites": [],
+  "closedLists": [],
+  "bing_entities": [
+    "datetimeV2"
+  ],
+  "model_features": [
+    {
+      "name": "ChocolateType",
+      "mode": false,
+      "words": "mints,m&m,mars,spearmings,payday,jelly,kit kat,kitkat,twix",
+      "activated": true
+    }
+  ],
+  "regex_features": [],
+  "utterances": [
+    {
+      "text": "Hi",
+      "intent": "Greeting",
+      "entities": []
+    },
+    {
+      "text": "Hello",
+      "intent": "Greeting",
+      "entities": []
+    },
+    {
+      "text": "Good morning",
+      "intent": "Greeting",
+      "entities": []
+    },
+    {
+      "text": "Good evening",
+      "intent": "Greeting",
+      "entities": []
+    },
+    {
+      "text": "can I get some m&m",
+      "intent": "Buy chocolate",
+      "entities": [
+        {
+          "entity": "ChocolateType",
+          "startPos": 15,
+          "endPos": 17
+        }
+      ]
+    },
+    {
+      "text": "I want some twix",
+      "intent": "Buy chocolate",
+      "entities": [
+        {
+          "entity": "ChocolateType",
+          "startPos": 12,
+          "endPos": 15
+        }
+      ]
+    },
+    {
+      "text": "I would like to buy some kit kat",
+      "intent": "Buy chocolate",
+      "entities": [
+        {
+          "entity": "ChocolateType",
+          "startPos": 25,
+          "endPos": 31
+        }
+      ]
+    }
+  ],
+  "patterns": [
+    {
+      "text": "delete alarm",
+      "intent": "DeleteAlarm"
+    },
+    {
+      "text": "(delete|remove) the {alarmTime} alarm",
+      "intent": "DeleteAlarm"
+    }
+  ],
+  "patternAnyEntities": [],
+  "prebuiltEntities": [
+    {
+      "type": "datetimeV2",
+      "roles": [
+        "alarmTime"
+      ]
+    }
+  ],
+  "luis_schema_version": "2.1.0",
+  "versionId": "0.1",
+  "name": "multi-ref",
+  "desc": "",
+  "culture": "en-us"
+}
