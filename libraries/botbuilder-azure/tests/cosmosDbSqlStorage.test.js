@@ -216,6 +216,13 @@ testStorage = function () {
                 }
             });
     });
+
+    it('should call connectionPolicyConfigurator', function () {
+        let policy = null;
+        let storage = new CosmosDbSqlStorage(getSettings(), (policyInstance) => policy = policyInstance);
+
+        assert(policy != null, 'connectionPolicyConfigurator should have been called.')
+    });
 }
 
 describe('CosmosDbSqlStorage', function () {
