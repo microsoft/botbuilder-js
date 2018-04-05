@@ -49,8 +49,24 @@ function getOrCreateCollection(client, databaseLink, collectionId) {
     });
 }
 function sanitizeKey(key) {
-    // TODO:
-    return key;
+    let badChars = ['\\', '?', '/', '#', '\t', '\n', '\r'];
+    let sb = '';
+    for (let iCh = 0; iCh < key.length; iCh++) {
+        let ch = key[iCh];
+        let isBad = false;
+        for (let iBad in badChars) {
+            let badChar = badChars[iBad];
+            if (ch === badChar) {
+                // We cannot use % because DocumentClient will try to re-encode the % with encodeURI()
+                sb += '*' + ch.charCodeAt(0).toString(16);
+                isBad = true;
+                break;
+            }
+        }
+        if (!isBad)
+            sb += ch;
+    }
+    return sb;
 }
 class CosmosDbSqlStorage {
     constructor(settings) {
@@ -63,7 +79,6 @@ class CosmosDbSqlStorage {
         if (!checkedCollections[key]) {
             checkedCollections[key] = getOrCreateDatabase(this.client, this.settings.databaseId)
                 .then(databaseLink => getOrCreateCollection(this.client, databaseLink, this.settings.collectionId));
-            // .catch((err) => console.error('Error creating CosmosDB resources:', err));
         }
         return checkedCollections[key];
     }
@@ -74,7 +89,6 @@ class CosmosDbSqlStorage {
                     let documentLink = documentdb_1.UriFactory.createDocumentUri(this.settings.databaseId, this.settings.collectionId, sanitizeKey(k));
                     this.client.readDocument(documentLink, (err, response) => {
                         if (err) {
-                            // console.error(`Error retrieving key: ${k}`, err);
                             if (err.code === 404) {
                                 return resolve({ id: k, document: null });
                             }
@@ -99,7 +113,6 @@ class CosmosDbSqlStorage {
         });
     }
     write(changes) {
-        // TODO: Should clone items?
         return this.ensureCollectionExists().then(() => {
             return Promise.all(Object.keys(changes).map(k => {
                 let documentChange = {
@@ -127,7 +140,7 @@ class CosmosDbSqlStorage {
         });
     }
     delete(keys) {
-        return this.ensureCollectionExists().then(() => Promise.all(keys.map(k => new Promise((resolve, reject) => this.client.deleteDocument(documentdb_1.UriFactory.createDocumentUri(this.settings.databaseId, this.settings.collectionId, sanitizeKey(k)), (err, data) => err ? reject(err) : resolve())))))
+        return this.ensureCollectionExists().then(() => Promise.all(keys.map(k => new Promise((resolve, reject) => this.client.deleteDocument(documentdb_1.UriFactory.createDocumentUri(this.settings.databaseId, this.settings.collectionId, sanitizeKey(k)), (err, data) => err && err.code !== 404 ? reject(err) : resolve()))))) // handle notfound as Ok
             .then(() => { }); // void
     }
 }

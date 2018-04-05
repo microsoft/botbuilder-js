@@ -11,14 +11,18 @@ const getSettings = () => ({
 
 // called before each test
 const reset = (done) => {
-    // TODO:
-    done();
-    // let settings = getSettings();
-    // let client = new DocumentClient(settings.serviceEndpoint, { masterKey: settings.authKey });
-    // client
+    let settings = getSettings();
+    let client = new DocumentClient(settings.serviceEndpoint, { masterKey: settings.authKey });
+    client.deleteDatabase(UriFactory.createDatabaseUri(settings.databaseId), (err, response) => done());
+}
+
+const print = (o) => {
+    return JSON.stringify(o, null, '  ');
 }
 
 testStorage = function () {
+
+    const noEmulatorMessage = 'skipping test because azure storage emulator is not running';
 
     it('read of unknown key', function () {
         let storage = new CosmosDbSqlStorage(getSettings());
@@ -28,16 +32,18 @@ testStorage = function () {
                 assert(!result.unk, 'key should be undefined');
             })
             .catch(reason => {
-                if (reason.code == 'ECONNREFUSED')
-                    console.log('skipping test because azure storage emulator is not running');
-                else
-                    assert(false, 'should not throw');
+                if (reason.code == 'ECONNREFUSED') {
+                    console.log(noEmulatorMessage);
+                } else {
+                    assert(false, `should not throw: ${print(reason)}`);
+                }
             });
     });
 
     it('key creation', function () {
         let storage = new CosmosDbSqlStorage(getSettings());
-        return storage.read(['keyCreate'])
+        return storage.write({ keyCreate: { count: 1 } })
+            .then(() => storage.read(['keyCreate']))
             .then((result) => {
                 assert(result != null, 'result should be object');
                 assert(result.keyCreate != null, 'keyCreate should be defined');
@@ -45,10 +51,11 @@ testStorage = function () {
                 assert(!result.eTag, 'ETag should be defined');
             })
             .catch(reason => {
-                if (reason.code == 'ECONNREFUSED')
-                    console.log('skipping test because azure storage emulator is not running');
-                else
-                    assert(false, `should not throw: ${reason.toString()}`);
+                if (reason.code == 'ECONNREFUSED') {
+                    console.log(noEmulatorMessage);
+                } else {
+                    assert(false, `should not throw: ${print(reason)}`);
+                }
             });
     });
 
@@ -65,10 +72,11 @@ testStorage = function () {
                         assert(updated.keyUpdate.eTag != result.keyUpdate.eTag, 'Etag should be updated on write');
                     });
             }).catch(reason => {
-                if (reason.code == 'ECONNREFUSED')
-                    console.log('skipping test because azure storage emulator is not running');
-                else
-                    assert(false, `should not throw: ${reason.toString()}`);
+                if (reason.code == 'ECONNREFUSED') {
+                    console.log(noEmulatorMessage);
+                } else {
+                    assert(false, `should not throw: ${print(reason)}`);
+                }
             });
     });
 
@@ -81,15 +89,16 @@ testStorage = function () {
                 return storage.write(result).then(() => {
                     result.keyUpdate2.count = 3;
                     return storage.write(result)
-                        .then(() => assert(false, 'should throw an exception on second write with same etag'))
+                        .then(() => assert(false, `should throw an exception on second write with same etag: ${print(reason)}`))
                         .catch((reason) => { });
                 });
             })
             .catch(reason => {
-                if (reason.code == 'ECONNREFUSED')
-                    console.log('skipping test because azure storage emulator is not running');
-                else
-                    assert(false, 'should not throw');
+                if (reason.code == 'ECONNREFUSED') {
+                    console.log(noEmulatorMessage);
+                } else {
+                    assert(false, `should not throw: ${print(reason)}`);
+                }
             });
     });
 
@@ -103,14 +112,15 @@ testStorage = function () {
                 return storage.write(result).then(() => {
                     result.keyUpdate3.count = 3;
                     return storage.write(result)
-                        .catch((reason) => assert(false, 'should NOT fail on etag writes with wildcard'));
+                        .catch((reason) => assert(false, `should NOT fail on etag writes with wildcard: ${print(reason)}`));
                 });
             })
             .catch(reason => {
-                if (reason.code == 'ECONNREFUSED')
-                    console.log('skipping test because azure storage emulator is not running');
-                else
-                    assert(false, 'should not throw');
+                if (reason.code == 'ECONNREFUSED') {
+                    console.log(noEmulatorMessage);
+                } else {
+                    assert(false, `should not throw: ${print(reason)}`);
+                }
             });
     });
 
@@ -118,10 +128,12 @@ testStorage = function () {
         let storage = new CosmosDbSqlStorage(getSettings());
         return storage.delete(['unknown'])
             .catch(reason => {
-                if (reason.code == 'ECONNREFUSED')
-                    console.log('skipping test because azure storage emulator is not running');
-                else
-                    assert(false, 'should not fail delete of unknown key');
+                if (reason.code == 'ECONNREFUSED') {
+                    console.log(noEmulatorMessage);
+                } else {
+                    console.log(reason)
+                    assert(false, `should not throw: ${print(reason)}`);
+                }
             });
     });
 
@@ -136,20 +148,21 @@ testStorage = function () {
                 assert(!result.delete1, 'delete1 should not be found');
             })
             .catch(reason => {
-                if (reason.code == 'ECONNREFUSED')
-                    console.log('skipping test because azure storage emulator is not running');
-                else
-                    assert(false, 'should not throw');
+                if (reason.code == 'ECONNREFUSED') {
+                    console.log(noEmulatorMessage);
+                } else {
+                    assert(false, `should not throw: ${print(reason)}`);
+                }
             });
     });
 
     it('batch operations', function () {
         let storage = new CosmosDbSqlStorage(getSettings());
         return storage.write({
-                batch1: { count: 10 },
-                batch2: { count: 20 },
-                batch3: { count: 30 },
-            })
+            batch1: { count: 10 },
+            batch2: { count: 20 },
+            batch3: { count: 30 },
+        })
             .then(() => storage.read(['batch1', 'batch2', 'batch3']))
             .then((result) => {
                 assert(result.batch1 != null, 'batch1 should exist and doesnt');
@@ -170,10 +183,11 @@ testStorage = function () {
                 assert(!result.batch3, 'batch3 should not exist and does');
             })
             .catch(reason => {
-                if (reason.code == 'ECONNREFUSED')
-                    console.log('skipping test because azure storage emulator is not running');
-                else
-                    assert(false, 'should not throw');
+                if (reason.code == 'ECONNREFUSED') {
+                    console.log(noEmulatorMessage);
+                } else {
+                    assert(false, `should not throw: ${print(reason)}`);
+                }
             });
 
     });
@@ -192,17 +206,20 @@ testStorage = function () {
                 assert(result[crazyKey].eTag, 'ETag should be defined');
             })
             .catch(reason => {
-                if (reason.code == 'ECONNREFUSED')
-                    console.log('skipping test because azure storage emulator is not running');
-                else
-                    assert(false, 'should not throw');
+                if (reason.code == 'ECONNREFUSED') {
+                    console.log(noEmulatorMessage);
+                } else {
+                    console.log(reason)
+                    assert(false, `should not throw: ${print(reason)}`);
+                }
             });
     });
 }
 
 describe('CosmosDbSqlStorage', function () {
     this.timeout(20000);
-    beforeEach('cleanup', reset);
+    before('cleanup', reset);
     testStorage();
+    after('cleanup', reset);
 });
 
