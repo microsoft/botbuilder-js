@@ -25,8 +25,10 @@ export interface CosmosDbSqlStorageSettings {
  * Internal data structure for storing items in DocumentDB
  */
 interface DocumentStoreItem {
-    /** Represents the Key and used as PartitionKey on DocumentDB */
+    /** Represents the Sanitized Key and used as PartitionKey on DocumentDB */
     id: string;
+    /** Represents the original Id/Key */
+    realId: string;
     /** The item itself + eTag information */
     document: any;
 }
@@ -47,7 +49,7 @@ export class CosmosDbSqlStorage implements Storage {
      * @param connectionPolicyConfigurator (Optional) An optional delegate that accepts a ConnectionPolicy for customizing policies.
      */
     public constructor(settings: CosmosDbSqlStorageSettings, connectionPolicyConfigurator: (policy: DocumentBase.ConnectionPolicy) => void = null) {
-        if(!settings) {
+        if (!settings) {
             throw new Error('The settings parameter is required.');
         }
 
@@ -67,34 +69,47 @@ export class CosmosDbSqlStorage implements Storage {
      * @param keys Array of item keys to read from the store.
      */
     read(keys: string[]): Promise<StoreItems> {
+
+        let parameterSequence = Array.from(Array(keys.length).keys())
+            .map(ix => `@id${ix}`)
+            .join(',');
+        let parameterValues = keys.map((key, ix) => ({
+            name: `@id${ix}`,
+            value: sanitizeKey(key)
+        }));
+
+        let querySpec = {
+            query: `SELECT * FROM c WHERE c.id in (${parameterSequence})`,
+            parameters: parameterValues
+        };
+
         return this.ensureCollectionExists().then((collectionLink) => {
-            return Promise.all(keys.map(k => {
-                return new Promise<DocumentStoreItem>((resolve, reject) => {
-                    let documentLink = UriFactory.createDocumentUri(this.settings.databaseId, this.settings.collectionId, sanitizeKey(k));
-                    this.client.readDocument(documentLink, (err, response) => {
+            return new Promise<StoreItems>((resolve, reject) => {
+                let storeItems: StoreItems = {};
+                let query = this.client.queryDocuments(collectionLink, querySpec);
+                let getNext = function (query) {
+                    query.nextItem(function (err, resource) {
                         if (err) {
-                            if (err.code === 404) {
-                                return resolve({ id: k, document: null });
-                            } else {
-                                return reject(err);
-                            }
+                            return reject(err);
                         }
 
-                        let documentStore = { id: k, document: response.document };
-                        documentStore.document.eTag = response._etag;
-                        resolve(documentStore);
+                        if (resource === undefined) {
+                            // completed
+                            return resolve(storeItems);
+                        }
+
+                        // push item
+                        storeItems[resource.realId] = resource.document;
+                        storeItems[resource.realId].eTag = resource._etag;
+
+                        // visit the remaining results recursively
+                        getNext(query);
                     })
-                });
-            })).then(items => {
-                return items.filter(i => !!i.document)
-                    .reduce((acc, item) => {
-                        acc[item.id] = item.document
-                        return acc;
-                    }, {});
-            })
-        }).then((data) => {
-            return data;
-        })
+                }
+                // invoke the function
+                getNext(query);
+            });
+        });
     }
 
     /**
@@ -107,11 +122,12 @@ export class CosmosDbSqlStorage implements Storage {
             return Promise.all(Object.keys(changes).map(k => {
                 let documentChange: DocumentStoreItem = {
                     id: sanitizeKey(k),
+                    realId: k,
                     document: changes[k]
                 };
 
                 return new Promise((resolve, reject) => {
-                    var handleCallback = (err, data) => err ? reject(err) : resolve();
+                    let handleCallback = (err, data) => err ? reject(err) : resolve();
 
                     let eTag = changes[k].eTag;
                     if (!eTag || eTag === '*') {

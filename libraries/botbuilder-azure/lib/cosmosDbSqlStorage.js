@@ -36,33 +36,40 @@ class CosmosDbSqlStorage {
      * @param keys Array of item keys to read from the store.
      */
     read(keys) {
+        let parameterSequence = Array.from(Array(keys.length).keys())
+            .map(ix => `@id${ix}`)
+            .join(',');
+        let parameterValues = keys.map((key, ix) => ({
+            name: `@id${ix}`,
+            value: sanitizeKey(key)
+        }));
+        let querySpec = {
+            query: `SELECT * FROM c WHERE c.id in (${parameterSequence})`,
+            parameters: parameterValues
+        };
         return this.ensureCollectionExists().then((collectionLink) => {
-            return Promise.all(keys.map(k => {
-                return new Promise((resolve, reject) => {
-                    let documentLink = documentdb_1.UriFactory.createDocumentUri(this.settings.databaseId, this.settings.collectionId, sanitizeKey(k));
-                    this.client.readDocument(documentLink, (err, response) => {
+            return new Promise((resolve, reject) => {
+                let storeItems = {};
+                let query = this.client.queryDocuments(collectionLink, querySpec);
+                let getNext = function (query) {
+                    query.nextItem(function (err, resource) {
                         if (err) {
-                            if (err.code === 404) {
-                                return resolve({ id: k, document: null });
-                            }
-                            else {
-                                return reject(err);
-                            }
+                            return reject(err);
                         }
-                        let documentStore = { id: k, document: response.document };
-                        documentStore.document.eTag = response._etag;
-                        resolve(documentStore);
+                        if (resource === undefined) {
+                            // completed
+                            return resolve(storeItems);
+                        }
+                        // push item
+                        storeItems[resource.realId] = resource.document;
+                        storeItems[resource.realId].eTag = resource._etag;
+                        // visit the remaining results recursively
+                        getNext(query);
                     });
-                });
-            })).then(items => {
-                return items.filter(i => !!i.document)
-                    .reduce((acc, item) => {
-                    acc[item.id] = item.document;
-                    return acc;
-                }, {});
+                };
+                // invoke the function
+                getNext(query);
             });
-        }).then((data) => {
-            return data;
         });
     }
     /**
@@ -75,10 +82,11 @@ class CosmosDbSqlStorage {
             return Promise.all(Object.keys(changes).map(k => {
                 let documentChange = {
                     id: sanitizeKey(k),
+                    realId: k,
                     document: changes[k]
                 };
                 return new Promise((resolve, reject) => {
-                    var handleCallback = (err, data) => err ? reject(err) : resolve();
+                    let handleCallback = (err, data) => err ? reject(err) : resolve();
                     let eTag = changes[k].eTag;
                     if (!eTag || eTag === '*') {
                         let uri = documentdb_1.UriFactory.createDocumentCollectionUri(this.settings.databaseId, this.settings.collectionId);
