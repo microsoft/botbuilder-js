@@ -9,6 +9,114 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const documentdb_1 = require("documentdb");
 let checkedCollections = {};
+/**
+ * Middleware that implements a CosmosDB SQL (DocumentDB) based storage provider for a bot.
+ */
+class CosmosDbSqlStorage {
+    /**
+     * Creates a new instance of the storage provider.
+     *
+     * @param settings Setting to configure the provider.
+     * @param connectionPolicyConfigurator (Optional) An optional delegate that accepts a ConnectionPolicy for customizing policies.
+     */
+    constructor(settings, connectionPolicyConfigurator = null) {
+        if (!settings) {
+            throw new Error('The settings parameter is required.');
+        }
+        this.settings = Object.assign({}, settings);
+        let policy = new documentdb_1.DocumentBase.ConnectionPolicy();
+        if (connectionPolicyConfigurator && typeof connectionPolicyConfigurator === 'function') {
+            connectionPolicyConfigurator(policy);
+        }
+        this.client = new documentdb_1.DocumentClient(settings.serviceEndpoint, { masterKey: settings.authKey }, policy);
+    }
+    /**
+     * Loads store items from storage
+     *
+     * @param keys Array of item keys to read from the store.
+     */
+    read(keys) {
+        return this.ensureCollectionExists().then((collectionLink) => {
+            return Promise.all(keys.map(k => {
+                return new Promise((resolve, reject) => {
+                    let documentLink = documentdb_1.UriFactory.createDocumentUri(this.settings.databaseId, this.settings.collectionId, sanitizeKey(k));
+                    this.client.readDocument(documentLink, (err, response) => {
+                        if (err) {
+                            if (err.code === 404) {
+                                return resolve({ id: k, document: null });
+                            }
+                            else {
+                                return reject(err);
+                            }
+                        }
+                        let documentStore = { id: k, document: response.document };
+                        documentStore.document.eTag = response._etag;
+                        resolve(documentStore);
+                    });
+                });
+            })).then(items => {
+                return items.filter(i => !!i.document)
+                    .reduce((acc, item) => {
+                    acc[item.id] = item.document;
+                    return acc;
+                }, {});
+            });
+        }).then((data) => {
+            return data;
+        });
+    }
+    /**
+     * Saves store items to storage.
+     *
+     * @param changes Map of items to write to storage.
+     **/
+    write(changes) {
+        return this.ensureCollectionExists().then(() => {
+            return Promise.all(Object.keys(changes).map(k => {
+                let documentChange = {
+                    id: sanitizeKey(k),
+                    document: changes[k]
+                };
+                return new Promise((resolve, reject) => {
+                    var handleCallback = (err, data) => err ? reject(err) : resolve();
+                    let eTag = changes[k].eTag;
+                    if (!eTag || eTag === '*') {
+                        let uri = documentdb_1.UriFactory.createDocumentCollectionUri(this.settings.databaseId, this.settings.collectionId);
+                        this.client.upsertDocument(uri, documentChange, { disableAutomaticIdGeneration: true }, handleCallback);
+                    }
+                    else if (eTag.length > 0) {
+                        // Optimistic Update
+                        let uri = documentdb_1.UriFactory.createDocumentUri(this.settings.databaseId, this.settings.collectionId, documentChange.id);
+                        let ac = { type: 'IfMatch', condition: eTag };
+                        this.client.replaceDocument(uri, documentChange, { accessCondition: ac }, handleCallback);
+                    }
+                    else {
+                        reject(new Error('etag empty'));
+                    }
+                });
+            })).then(() => { }); // void
+        });
+    }
+    /**
+     * Removes store items from storage
+     *
+     * @param keys Array of item keys to remove from the store.
+     **/
+    delete(keys) {
+        return this.ensureCollectionExists().then(() => Promise.all(keys.map(k => new Promise((resolve, reject) => this.client.deleteDocument(documentdb_1.UriFactory.createDocumentUri(this.settings.databaseId, this.settings.collectionId, sanitizeKey(k)), (err, data) => err && err.code !== 404 ? reject(err) : resolve()))))) // handle notfound as Ok
+            .then(() => { }); // void
+    }
+    ensureCollectionExists() {
+        let key = `${this.settings.databaseId}-${this.settings.collectionId}`;
+        if (!checkedCollections[key]) {
+            checkedCollections[key] = getOrCreateDatabase(this.client, this.settings.databaseId)
+                .then(databaseLink => getOrCreateCollection(this.client, databaseLink, this.settings.collectionId));
+        }
+        return checkedCollections[key];
+    }
+}
+exports.CosmosDbSqlStorage = CosmosDbSqlStorage;
+// Helpers
 function getOrCreateDatabase(client, databaseId) {
     let querySpec = {
         query: 'SELECT * FROM root r WHERE r.id = @id',
@@ -68,84 +176,4 @@ function sanitizeKey(key) {
     }
     return sb;
 }
-class CosmosDbSqlStorage {
-    constructor(settings, connectionPolicyConfigurator = null) {
-        this.settings = Object.assign({}, settings);
-        let policy = new documentdb_1.DocumentBase.ConnectionPolicy();
-        if (connectionPolicyConfigurator && typeof connectionPolicyConfigurator === 'function') {
-            connectionPolicyConfigurator(policy);
-        }
-        this.client = new documentdb_1.DocumentClient(settings.serviceEndpoint, { masterKey: settings.authKey }, policy);
-    }
-    ensureCollectionExists() {
-        let key = `${this.settings.databaseId}-${this.settings.collectionId}`;
-        if (!checkedCollections[key]) {
-            checkedCollections[key] = getOrCreateDatabase(this.client, this.settings.databaseId)
-                .then(databaseLink => getOrCreateCollection(this.client, databaseLink, this.settings.collectionId));
-        }
-        return checkedCollections[key];
-    }
-    read(keys) {
-        return this.ensureCollectionExists().then((collectionLink) => {
-            return Promise.all(keys.map(k => {
-                return new Promise((resolve, reject) => {
-                    let documentLink = documentdb_1.UriFactory.createDocumentUri(this.settings.databaseId, this.settings.collectionId, sanitizeKey(k));
-                    this.client.readDocument(documentLink, (err, response) => {
-                        if (err) {
-                            if (err.code === 404) {
-                                return resolve({ id: k, document: null });
-                            }
-                            else {
-                                return reject(err);
-                            }
-                        }
-                        let documentStore = { id: k, document: response.document };
-                        documentStore.document.eTag = response._etag;
-                        resolve(documentStore);
-                    });
-                });
-            })).then(items => {
-                return items.filter(i => !!i.document)
-                    .reduce((acc, item) => {
-                    acc[item.id] = item.document;
-                    return acc;
-                }, {});
-            });
-        }).then((data) => {
-            return data;
-        });
-    }
-    write(changes) {
-        return this.ensureCollectionExists().then(() => {
-            return Promise.all(Object.keys(changes).map(k => {
-                let documentChange = {
-                    id: sanitizeKey(k),
-                    document: changes[k]
-                };
-                return new Promise((resolve, reject) => {
-                    var handleCallback = (err, data) => err ? reject(err) : resolve();
-                    let eTag = changes[k].eTag;
-                    if (!eTag || eTag === '*') {
-                        let uri = documentdb_1.UriFactory.createDocumentCollectionUri(this.settings.databaseId, this.settings.collectionId);
-                        this.client.upsertDocument(uri, documentChange, { disableAutomaticIdGeneration: true }, handleCallback);
-                    }
-                    else if (eTag.length > 0) {
-                        // Optimistic Update
-                        let uri = documentdb_1.UriFactory.createDocumentUri(this.settings.databaseId, this.settings.collectionId, documentChange.id);
-                        let ac = { type: 'IfMatch', condition: eTag };
-                        this.client.replaceDocument(uri, documentChange, { accessCondition: ac }, handleCallback);
-                    }
-                    else {
-                        reject(new Error('etag empty'));
-                    }
-                });
-            })).then(() => { }); // void
-        });
-    }
-    delete(keys) {
-        return this.ensureCollectionExists().then(() => Promise.all(keys.map(k => new Promise((resolve, reject) => this.client.deleteDocument(documentdb_1.UriFactory.createDocumentUri(this.settings.databaseId, this.settings.collectionId, sanitizeKey(k)), (err, data) => err && err.code !== 404 ? reject(err) : resolve()))))) // handle notfound as Ok
-            .then(() => { }); // void
-    }
-}
-exports.CosmosDbSqlStorage = CosmosDbSqlStorage;
 //# sourceMappingURL=cosmosDbSqlStorage.js.map
