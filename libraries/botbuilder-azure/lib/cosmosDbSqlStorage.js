@@ -69,10 +69,13 @@ function sanitizeKey(key) {
     return sb;
 }
 class CosmosDbSqlStorage {
-    constructor(settings) {
+    constructor(settings, connectionPolicyConfigurator = null) {
         this.settings = Object.assign({}, settings);
-        // TODO: Add connection policy with useragent string
-        this.client = new documentdb_1.DocumentClient(settings.serviceEndpoint, { masterKey: settings.authKey });
+        let policy = new documentdb_1.DocumentBase.ConnectionPolicy();
+        if (connectionPolicyConfigurator && typeof connectionPolicyConfigurator === 'function') {
+            connectionPolicyConfigurator(policy);
+        }
+        this.client = new documentdb_1.DocumentClient(settings.serviceEndpoint, { masterKey: settings.authKey }, policy);
     }
     ensureCollectionExists() {
         let key = `${this.settings.databaseId}-${this.settings.collectionId}`;

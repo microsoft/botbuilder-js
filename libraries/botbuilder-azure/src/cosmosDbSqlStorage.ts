@@ -7,7 +7,7 @@
  */
 
 import { Storage, StoreItems, StoreItem } from 'botbuilder';
-import { DocumentClient, UriFactory } from 'documentdb';
+import { DocumentClient, DocumentBase, UriFactory } from 'documentdb';
 
 export interface CosmosDbSqlStorageSettings {
     serviceEndpoint: string;
@@ -87,11 +87,15 @@ export class CosmosDbSqlStorage implements Storage {
     private settings: CosmosDbSqlStorageSettings;
     private client: DocumentClient;
 
-    public constructor(settings: CosmosDbSqlStorageSettings) {
+    public constructor(settings: CosmosDbSqlStorageSettings, connectionPolicyConfigurator: (policy: DocumentBase.ConnectionPolicy) => void = null) {
         this.settings = Object.assign({}, settings);
 
-        // TODO: Add connection policy with useragent string
-        this.client = new DocumentClient(settings.serviceEndpoint, { masterKey: settings.authKey });
+        let policy = new DocumentBase.ConnectionPolicy();
+        if (connectionPolicyConfigurator && typeof connectionPolicyConfigurator === 'function') {
+            connectionPolicyConfigurator(policy);
+        }
+
+        this.client = new DocumentClient(settings.serviceEndpoint, { masterKey: settings.authKey }, policy);
     }
 
     private ensureCollectionExists(): Promise<string> {
