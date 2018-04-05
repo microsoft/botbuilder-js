@@ -223,6 +223,10 @@ testStorage = function () {
 
         assert(policy != null, 'connectionPolicyConfigurator should have been called.')
     });
+
+    it('missing settings should throw error', function() {
+        assert.throws(() => new CosmosDbSqlStorage(), Error, 'constructor should have thrown error about missing settings.');
+    })
 }
 
 describe('CosmosDbSqlStorage', function () {
