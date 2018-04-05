@@ -280,7 +280,7 @@ export class PostProcessTranslator {
 
     public fixTranslation(sourceMessage: string, alignment: string, targetMessage: string): string {
         let processedTranslation = targetMessage;
-        let numericMatches = sourceMessage.match(new RegExp("\d+", "g"));
+        let numericMatches = sourceMessage.match(new RegExp("[0-9]+", "g"));
         let containsNum = numericMatches != null;
         let noTranslatePatterns = Array.from(this.noTranslatePatterns);
         
@@ -313,15 +313,13 @@ export class PostProcessTranslator {
                 let srcIndx = -1;
 
                 for (const wrd in srcWrds) {
-                    if (srcWrds.hasOwnProperty(wrd)) {
-                        const element = srcWrds[wrd];
-                        if (chrIndx == noTranslateStarChrIndex) {
-                            srcIndx = wrdIndx;
-                            break;
-                        }
-                        chrIndx += element.length + 1;
-                        wrdIndx++;
+                    const element = srcWrds[wrd];
+                    if (chrIndx == noTranslateStarChrIndex) {
+                        srcIndx = wrdIndx;
+                        break;
                     }
+                    chrIndx += element.length + 1;
+                    wrdIndx++;
                 }
 
                 let wrdNoTranslate = match[1].split(' ');
@@ -334,7 +332,7 @@ export class PostProcessTranslator {
             });
         }
 
-        if (numericMatches != null) {
+        if (containsNum) {
             for (const numericMatch in numericMatches) {
                 let srcIndx = srcWrds.findIndex(wrd => wrd == numericMatch)
                 processedTranslation = this.keepSrcWrdInTranslation(alignMap, sourceMessage, processedTranslation, srcIndx);
