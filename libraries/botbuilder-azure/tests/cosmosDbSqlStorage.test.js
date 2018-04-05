@@ -1,5 +1,6 @@
 const assert = require('assert');
 const { CosmosDbSqlStorage } = require('../');
+const { DocumentClient, UriFactory } = require('documentdb');
 
 const getSettings = () => ({
     serviceEndpoint: 'https://localhost:8081',
@@ -9,8 +10,12 @@ const getSettings = () => ({
 });
 
 // called before each test
-const reset = () => {
-    // ...
+const reset = (done) => {
+    // TODO:
+    done();
+    // let settings = getSettings();
+    // let client = new DocumentClient(settings.serviceEndpoint, { masterKey: settings.authKey });
+    // client
 }
 
 testStorage = function () {
@@ -197,7 +202,7 @@ testStorage = function () {
 
 describe('CosmosDbSqlStorage', function () {
     this.timeout(20000);
-    beforeEach(reset);
+    beforeEach('cleanup', reset);
     testStorage();
 });
 
