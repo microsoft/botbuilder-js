@@ -15,7 +15,7 @@ Additional settings for configuring an instance of [CosmosDbSqlStorage](../class
 
 **●  authKey**:  *`string`* 
 
-*Defined in [libraries/botbuilder-azure/lib/cosmosDbSqlStorage.d.ts:15](https://github.com/Microsoft/BotBuilder-JS/blob/31bad91/libraries/botbuilder-azure/lib/cosmosDbSqlStorage.d.ts#L15)*
+*Defined in [libraries/botbuilder-azure/lib/cosmosDbSqlStorage.d.ts:15](https://github.com/Microsoft/BotBuilder-JS/blob/0d615fe/libraries/botbuilder-azure/lib/cosmosDbSqlStorage.d.ts#L15)*
 
 
 
@@ -32,7 +32,7 @@ ___
 
 **●  collectionId**:  *`string`* 
 
-*Defined in [libraries/botbuilder-azure/lib/cosmosDbSqlStorage.d.ts:19](https://github.com/Microsoft/BotBuilder-JS/blob/31bad91/libraries/botbuilder-azure/lib/cosmosDbSqlStorage.d.ts#L19)*
+*Defined in [libraries/botbuilder-azure/lib/cosmosDbSqlStorage.d.ts:19](https://github.com/Microsoft/BotBuilder-JS/blob/0d615fe/libraries/botbuilder-azure/lib/cosmosDbSqlStorage.d.ts#L19)*
 
 
 
@@ -49,7 +49,7 @@ ___
 
 **●  databaseId**:  *`string`* 
 
-*Defined in [libraries/botbuilder-azure/lib/cosmosDbSqlStorage.d.ts:17](https://github.com/Microsoft/BotBuilder-JS/blob/31bad91/libraries/botbuilder-azure/lib/cosmosDbSqlStorage.d.ts#L17)*
+*Defined in [libraries/botbuilder-azure/lib/cosmosDbSqlStorage.d.ts:17](https://github.com/Microsoft/BotBuilder-JS/blob/0d615fe/libraries/botbuilder-azure/lib/cosmosDbSqlStorage.d.ts#L17)*
 
 
 
@@ -66,7 +66,7 @@ ___
 
 **●  serviceEndpoint**:  *`string`* 
 
-*Defined in [libraries/botbuilder-azure/lib/cosmosDbSqlStorage.d.ts:13](https://github.com/Microsoft/BotBuilder-JS/blob/31bad91/libraries/botbuilder-azure/lib/cosmosDbSqlStorage.d.ts#L13)*
+*Defined in [libraries/botbuilder-azure/lib/cosmosDbSqlStorage.d.ts:13](https://github.com/Microsoft/BotBuilder-JS/blob/0d615fe/libraries/botbuilder-azure/lib/cosmosDbSqlStorage.d.ts#L13)*
 
 
 
