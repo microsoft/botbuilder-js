@@ -60,7 +60,7 @@ class JSONApp {
      */
 
 
-    constructor({name /* string */, versionId /* string */, desc /* string */, culture /* string */, intents /* HierarchicalModel[] */, entities /* HierarchicalModel[] */, bing_entities /* string[] */, actions /* JSONAction[] */, closedLists /* JSONClosedList[] */, composites /* HierarchicalModel[] */, regex_features /* JSONRegexFeature[] */, model_features /* JSONModelFeature[] */, utterances /* JSONUtterance[] */} = {}) {
+    constructor({name /* string */, versionId /* string */, desc /* string */, culture /* string */, intents /* HierarchicalModel[] */, entities /* HierarchicalModel[] */, bing_entities /* string[] */, actions /* JSONAction[] */, closedLists /* JSONClosedList[] */, composites /* HierarchicalModel[] */, regex_features /* JSONRegexFeature[] */, model_features /* JSONModelFeature[] */, utterances /* JSONUtterance[] */, prebuiltEntities /* prebuiltEntities[] */} = {}) {
         Object.assign(this, {
             name /* string */,
             versionId /* string */,
@@ -74,7 +74,8 @@ class JSONApp {
             composites /* HierarchicalModel[] */,
             regex_features /* JSONRegexFeature[] */,
             model_features /* JSONModelFeature[] */,
-            utterances /* JSONUtterance[] */
+            utterances /* JSONUtterance[] */,
+            prebuiltEntities /* prebuitl entities[] */
         });
     }
 }
@@ -99,7 +100,7 @@ JSONApp.fromJSON = function (source) {
 
     source.utterances = JSONUtterance.fromJSON(source.utterances) || undefined;
 
-    const {name /* string */, versionId /* string */, desc /* string */, culture /* string */, intents /* HierarchicalModel[] */, entities /* HierarchicalModel[] */, bing_entities /* string[] */, actions /* JSONAction[] */, closedLists /* JSONClosedList[] */, composites /* HierarchicalModel[] */, regex_features /* JSONRegexFeature[] */, model_features /* JSONModelFeature[] */, utterances /* JSONUtterance[] */} = source;
+    const {name /* string */, versionId /* string */, desc /* string */, culture /* string */, intents /* HierarchicalModel[] */, entities /* HierarchicalModel[] */, bing_entities /* string[] */, actions /* JSONAction[] */, closedLists /* JSONClosedList[] */, composites /* HierarchicalModel[] */, regex_features /* JSONRegexFeature[] */, model_features /* JSONModelFeature[] */, utterances /* JSONUtterance[] */, prebuiltEntities /* prebuiltEntities[] */} = source;
     return new JSONApp({
         name /* string */,
         versionId /* string */,
@@ -113,7 +114,8 @@ JSONApp.fromJSON = function (source) {
         composites /* HierarchicalModel[] */,
         regex_features /* JSONRegexFeature[] */,
         model_features /* JSONModelFeature[] */,
-        utterances /* JSONUtterance[] */
+        utterances /* JSONUtterance[] */,
+        prebuiltEntities /* prebuitl entities[] */
     });
 };
 
