@@ -85,10 +85,12 @@ class CosmosDbStorage {
         }
         return this.ensureCollectionExists().then(() => {
             return Promise.all(Object.keys(changes).map(k => {
+                let changesCopy = Object.assign({}, changes[k]);
+                delete changesCopy.eTag;
                 let documentChange = {
                     id: sanitizeKey(k),
                     realId: k,
-                    document: changes[k]
+                    document: changesCopy
                 };
                 return new Promise((resolve, reject) => {
                     let handleCallback = (err, data) => err ? reject(err) : resolve();

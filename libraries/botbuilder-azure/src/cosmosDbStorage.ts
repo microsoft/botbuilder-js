@@ -126,10 +126,12 @@ export class CosmosDbStorage implements Storage {
 
         return this.ensureCollectionExists().then(() => {
             return Promise.all(Object.keys(changes).map(k => {
+                let changesCopy = Object.assign({}, changes[k]);
+                delete changesCopy.eTag;
                 let documentChange: DocumentStoreItem = {
                     id: sanitizeKey(k),
                     realId: k,
-                    document: changes[k]
+                    document: changesCopy
                 };
 
                 return new Promise((resolve, reject) => {
