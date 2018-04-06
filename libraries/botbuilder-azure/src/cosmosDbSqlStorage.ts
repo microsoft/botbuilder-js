@@ -33,14 +33,13 @@ interface DocumentStoreItem {
     document: any;
 }
 
-let checkedCollections: { [key: string]: Promise<string>; } = {};
-
 /**
  * Middleware that implements a CosmosDB SQL (DocumentDB) based storage provider for a bot.
  */
 export class CosmosDbSqlStorage implements Storage {
     private settings: CosmosDbSqlStorageSettings;
     private client: DocumentClient;
+    private collectionExists: Promise<string>;
 
     /**
      * Creates a new instance of the storage provider.
@@ -169,13 +168,12 @@ export class CosmosDbSqlStorage implements Storage {
     }
 
     private ensureCollectionExists(): Promise<string> {
-        let key = `${this.settings.databaseId}-${this.settings.collectionId}`;
-        if (!checkedCollections[key]) {
-            checkedCollections[key] = getOrCreateDatabase(this.client, this.settings.databaseId)
+        if (!this.collectionExists) {
+            this.collectionExists = getOrCreateDatabase(this.client, this.settings.databaseId)
                 .then(databaseLink => getOrCreateCollection(this.client, databaseLink, this.settings.collectionId))
         }
 
-        return checkedCollections[key];
+        return this.collectionExists;
     }
 }
 
