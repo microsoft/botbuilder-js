@@ -330,7 +330,7 @@ var addItemIfNotPresent = function(collection, type, value) {
     if(!hasValue) {
         var itemObj = {};
         itemObj.name = value;
-        if(type !== LUISObjNameEnum.INTENT) {
+        if(type !== LUISObjNameEnum.INTENT && type !== LUISObjNameEnum.ENTITIES) {
             itemObj.roles = new Array();
         }
         collection[type].push(itemObj);
