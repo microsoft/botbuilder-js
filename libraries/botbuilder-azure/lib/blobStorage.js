@@ -18,7 +18,94 @@ class BlobStorage {
             throw new Error('The settings parameter is required.');
         }
         this.settings = Object.assign({}, settings);
-        this.client = new azure.BlobService(this.settings.storageAccountOrConnectionString, this.settings.storageAccessKey, this.settings.host, this.settings.sasToken, this.settings.endpointSuffix);
+        this.client = this.createBlobService(this.settings.storageAccountOrConnectionString, this.settings.storageAccessKey, this.settings.host);
+    }
+    /**
+     * Loads store items from storage
+     *
+     * @param keys Array of item keys to read from the store.
+     */
+    read(keys) {
+        let sanitizedKeys = keys.map((key) => this.sanitizeKey(key));
+        return this.ensureContainerExists().then((container) => {
+            return new Promise((resolve, reject) => {
+                Promise.all(sanitizedKeys.map((key) => {
+                    return new Promise((resolve, reject) => {
+                        this.client.getBlobMetadataAsync(container.name, key).then((blobMetadata) => {
+                            this.client.getBlobToTextAsync(blobMetadata.container, blobMetadata.name).then((result) => {
+                                let document = JSON.parse(result);
+                                document.document.eTag = blobMetadata.etag;
+                                resolve(document);
+                            }, err => {
+                                resolve(null);
+                            });
+                        }, (err) => {
+                            resolve(null);
+                        });
+                    });
+                })).then((items) => {
+                    if (items !== null && items.length > 0) {
+                        let storeItems = {};
+                        items.filter(x => x).forEach((item) => {
+                            storeItems[item.realId] = item.document;
+                        });
+                        resolve(storeItems);
+                    }
+                });
+            });
+        });
+    }
+    /**
+     * Saves store items to storage.
+     *
+     * @param changes Map of items to write to storage.
+     **/
+    write(changes) {
+        return this.ensureContainerExists().then((container) => {
+            let blobs = Object.keys(changes).map((key) => {
+                let documentChange = {
+                    id: this.sanitizeKey(key),
+                    realId: key,
+                    document: changes[key]
+                };
+                let payload = JSON.stringify(documentChange);
+                let options = {
+                    accessConditions: azure.AccessCondition.generateIfMatchCondition(changes[key].eTag)
+                };
+                return {
+                    blob: documentChange.id,
+                    payload: payload,
+                    options: options
+                };
+            });
+            let createBlob = (index, callback) => {
+                let current = blobs[index];
+                this.client.createBlockBlobFromTextAsync(container.name, current.blob, current.payload, current.options).then((result) => {
+                    if (index < blobs.length - 1) {
+                        createBlob(index + 1, callback);
+                    }
+                    else {
+                        callback();
+                    }
+                }, (err) => callback(err));
+            };
+            return new Promise((resolve, reject) => {
+                createBlob(0, (err) => err ? reject(err) : resolve());
+            });
+        });
+    }
+    /**
+     * Removes store items from storage
+     *
+     * @param keys Array of item keys to remove from the store.
+     **/
+    delete(keys) {
+        let sanitizedKeys = keys.map((key) => this.sanitizeKey(key));
+        return this.ensureContainerExists().then((container) => {
+            return Promise.all(sanitizedKeys.map(key => {
+                return this.client.deleteBlobIfExistsAsync(container.name, key);
+            }));
+        }, err => console.log(err)).then(() => { }); //void
     }
     sanitizeKey(key) {
         let badChars = ['\\', '?', '/', '#', '\t', '\n', '\r'];
@@ -42,89 +129,30 @@ class BlobStorage {
     ensureContainerExists() {
         let key = this.settings.containerName;
         if (!checkedCollections[key]) {
-            checkedCollections[key] = this.getOrCreateContainer();
+            checkedCollections[key] = this.client.createContainerIfNotExistsAsync(key);
         }
         return checkedCollections[key];
     }
-    getOrCreateContainer() {
-        return new Promise((resolve, reject) => {
-            this.client.createContainerIfNotExists(this.settings.containerName, {}, err => {
-                if (err) {
-                    reject(err);
-                }
-                else {
-                    resolve(this.settings.containerName);
-                }
-            });
-        });
+    createBlobService(storageAccountOrConnectionString, storageAccessKey, host) {
+        const blobService = azure.createBlobService(storageAccountOrConnectionString, storageAccessKey, host).withFilter(new azure.LinearRetryPolicyFilter(5, 5));
+        // create BlobServiceAsync by using denodeify to create promise wrappers around cb functions
+        return {
+            createContainerIfNotExistsAsync: this.denodeify(blobService, blobService.createContainerIfNotExists),
+            deleteContainerIfExistsAsync: this.denodeify(blobService, blobService.deleteContainerIfExists),
+            createBlockBlobFromTextAsync: this.denodeify(blobService, blobService.createBlockBlobFromText),
+            getBlobMetadataAsync: this.denodeify(blobService, blobService.getBlobMetadata),
+            getBlobToTextAsync: this.denodeify(blobService, blobService.getBlobToText),
+            deleteBlobIfExistsAsync: this.denodeify(blobService, blobService.deleteBlobIfExists)
+        };
     }
-    /**
-     * Loads store items from storage
-     *
-     * @param keys Array of item keys to read from the store.
-     */
-    read(keys) {
-        let sanitizedKeys = keys.map((key) => this.sanitizeKey(key));
-        return this.ensureContainerExists().then((containerName) => {
+    // turn a cb based azure method into a Promisified one
+    denodeify(thisArg, fn) {
+        return (...args) => {
             return new Promise((resolve, reject) => {
-                let storeItems = {};
-                let results = sanitizedKeys.map(key => {
-                    this.client.getBlobToText(containerName, key, (err, content, blob) => {
-                        if (err) {
-                            return null;
-                        }
-                        else {
-                            return JSON.parse(content);
-                        }
-                    });
-                });
-                resolve(storeItems);
+                args.push((error, result) => (error) ? reject(error) : resolve(result));
+                fn.apply(thisArg, args);
             });
-        });
-    }
-    /**
-     * Saves store items to storage.
-     *
-     * @param changes Map of items to write to storage.
-     **/
-    write(changes) {
-        return this.ensureContainerExists().then((containerName) => {
-            return Promise.all(Object.keys(changes).map(k => {
-                let documentChange = {
-                    id: this.sanitizeKey(k),
-                    realId: k,
-                    document: changes[k]
-                };
-                return new Promise((resolve, reject) => {
-                    let handleCallback = (err, data) => err ? reject(err) : resolve(data);
-                    let eTag = changes[k].eTag;
-                    if (!eTag || eTag === '*') {
-                        this.client.createBlockBlobFromText(containerName, k, JSON.stringify(documentChange), (err, result) => {
-                            if (err) {
-                                reject(err);
-                            }
-                            else {
-                                resolve(result);
-                            }
-                        });
-                    }
-                });
-            }));
-        }).then(() => { });
-    }
-    /**
-     * Removes store items from storage
-     *
-     * @param keys Array of item keys to remove from the store.
-     **/
-    delete(keys) {
-        return this.ensureContainerExists().then((containerName) => {
-            Promise.all(keys.map(key => {
-                new Promise((resolve, reject) => {
-                    this.client.deleteBlobIfExists(containerName, this.sanitizeKey(key), (err, result) => err ? reject(err) : resolve(result));
-                });
-            }));
-        }).then(() => { }); //void
+        };
     }
 }
 exports.BlobStorage = BlobStorage;

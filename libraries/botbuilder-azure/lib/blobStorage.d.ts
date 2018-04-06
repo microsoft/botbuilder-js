@@ -1,3 +1,4 @@
+/// <reference types="node" />
 /**
  * @module botbuilder-azure
  */
@@ -6,6 +7,7 @@
  * Licensed under the MIT License.
  */
 import { Storage, StoreItems } from 'botbuilder';
+import * as azure from 'azure-storage';
 /** Additional settings for configuring an instance of [BlobStorage](../classes/botbuilder_azure_v4.blobstorage.html). */
 export interface BlobStorageSettings {
     /** The storage account or the connection string. */
@@ -14,10 +16,6 @@ export interface BlobStorageSettings {
     storageAccessKey: string;
     /** The host address. */
     host: string;
-    /** The Shared Access Signature token. */
-    sasToken: string;
-    /** The endpoint suffix. */
-    endpointSuffix: string;
     /** The container name. */
     containerName: string;
 }
@@ -28,9 +26,6 @@ export declare class BlobStorage implements Storage {
     private settings;
     private client;
     constructor(settings: BlobStorageSettings);
-    private sanitizeKey(key);
-    private ensureContainerExists();
-    private getOrCreateContainer();
     /**
      * Loads store items from storage
      *
@@ -49,4 +44,16 @@ export declare class BlobStorage implements Storage {
      * @param keys Array of item keys to remove from the store.
      **/
     delete(keys: string[]): Promise<void>;
+    private sanitizeKey(key);
+    private ensureContainerExists();
+    protected createBlobService(storageAccountOrConnectionString: string, storageAccessKey: string, host: any): BlobServiceAsync;
+    private denodeify<T>(thisArg, fn);
+}
+export interface BlobServiceAsync extends azure.BlobService {
+    createContainerIfNotExistsAsync(container: string): Promise<azure.BlobService.ContainerResult>;
+    deleteContainerIfExistsAsync(container: string): Promise<boolean>;
+    createBlockBlobFromTextAsync(container: string, blob: string, text: string | Buffer, options: azure.BlobService.CreateBlobRequestOptions): Promise<azure.BlobService.BlobResult>;
+    getBlobMetadataAsync(container: string, blob: string): Promise<azure.BlobService.BlobResult>;
+    getBlobToTextAsync(container: string, blob: string): Promise<azure.BlobService.BlobToText>;
+    deleteBlobIfExistsAsync(container: string, blob: string): Promise<boolean>;
 }
