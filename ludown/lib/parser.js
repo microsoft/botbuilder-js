@@ -45,7 +45,7 @@ module.exports = {
         }
         while(filesToParse.length > 0) {
             var file = filesToParse[0];
-            if(!fs.existsSync(file)) {
+            if(!fs.existsSync(path.resolve(file))) {
                 process.stdout.write(chalk.red('Sorry unable to open [' + file + ']\n'));        
                 process.exit(1);
             }

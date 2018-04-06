@@ -288,7 +288,7 @@ module.exports.parseFile = function(fileContent, log)
                     if(qnaLine.indexOf(PARSERCONSTS.QNA) === 0) {
                         qnaQuestions.push(qnaLine.replace(PARSERCONSTS.QNA, '').trim());
                     } else {
-                        qnaAnswer = qnaLine;
+                        qnaAnswer = qnaAnswer + '\r\n' + qnaLine;
                     }
                 });
                 // for each question, add a qna pair

@@ -17,6 +17,7 @@ module.exports.splitFileBySections = function(fileContent) {
     var middleOfSection = false;
     var sectionsInFile = [];
     var currentSectionType = null; //PARSERCONSTS
+    var inQnaAnswer = false;
     for(lineIndex in linesInFile) {
         var currentLine = linesInFile[lineIndex].trim();
         // skip line if it is just a comment
@@ -70,6 +71,12 @@ module.exports.splitFileBySections = function(fileContent) {
             }
         } else if((currentLine.indexOf(PARSERCONSTS.QNA) === 0)) {
             // there can be multiple questions to answer here. So keep adding.
+            if(inQnaAnswer) {
+                var previousSection = currentSection.substring(0, currentSection.lastIndexOf("\r\n"));
+                sectionsInFile = validateAndPushCurrentBuffer(previousSection, sectionsInFile, currentSectionType, lineIndex);
+                currentSection = null;
+                inQnaAnswer = false;
+            }
             middleOfSection = true;
             currentSectionType = PARSERCONSTS.QNA;
             if(currentSection !== null) {
@@ -79,9 +86,11 @@ module.exports.splitFileBySections = function(fileContent) {
             }            
         } else {
             if(middleOfSection) {
+                inQnaAnswer = true
                 currentSection += currentLine + "\r\n";
+
                 // did we just have an answer for QnA? 
-                if(currentSectionType === PARSERCONSTS.QNA) {
+                if(currentSectionType === PARSERCONSTS.QNA && currentLine.trim() === '') {
                     var previousSection = currentSection.substring(0, currentSection.lastIndexOf("\r\n"));
                     sectionsInFile = validateAndPushCurrentBuffer(previousSection, sectionsInFile, currentSectionType, lineIndex);
                     currentSection = null;
