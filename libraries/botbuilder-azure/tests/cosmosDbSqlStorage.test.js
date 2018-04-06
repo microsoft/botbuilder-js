@@ -2,6 +2,7 @@ const assert = require('assert');
 const { CosmosDbSqlStorage } = require('../');
 const { DocumentClient, UriFactory } = require('documentdb');
 
+// Endpoint and Authkey for the CosmosDB Emulator running locally
 const getSettings = () => ({
     serviceEndpoint: 'https://localhost:8081',
     authKey: 'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==',
