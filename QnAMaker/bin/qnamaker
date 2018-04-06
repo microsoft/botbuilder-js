@@ -177,9 +177,7 @@ function validateConfig(config) {
     // ServiceBase.js
     const {subscriptionKey, knowledgeBaseID, endpointBasePath} = config;
     const messageTail = `is missing from the configuration.\n\nDid you run ${chalk.cyan.bold('qnamaker --init')} yet?`;
-
     assert(typeof subscriptionKey === 'string', `The subscriptionKey ${messageTail}`);
-    assert(typeof knowledgeBaseID === 'string', `The knowledgeBaseID ${messageTail}`);
     assert(typeof endpointBasePath === 'string', `The endpointBasePath ${messageTail}`);
 }
 
