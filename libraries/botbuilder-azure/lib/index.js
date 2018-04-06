@@ -11,4 +11,5 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Licensed under the MIT License.
  */
 __export(require("./tableStorage"));
+__export(require("./cosmosDbSqlStorage"));
 //# sourceMappingURL=index.js.map
