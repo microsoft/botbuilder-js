@@ -79,7 +79,7 @@ export class CosmosDbSqlStorage implements Storage {
         }));
 
         let querySpec = {
-            query: `SELECT * FROM c WHERE c.id in (${parameterSequence})`,
+            query: `SELECT c.id, c.realId, c.document, c._etag FROM c WHERE c.id in (${parameterSequence})`,
             parameters: parameterValues
         };
 
