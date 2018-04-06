@@ -225,9 +225,21 @@ testStorage = function () {
         assert(policy != null, 'connectionPolicyConfigurator should have been called.')
     });
 
-    it('missing settings should throw error', function() {
+    it('missing settings should throw', function() {
         assert.throws(() => new CosmosDbSqlStorage(), Error, 'constructor should have thrown error about missing settings.');
-    })
+    });
+
+    it('read with no key should throw', function() {
+        let storage = new CosmosDbSqlStorage(getSettings(), policyConfigurator);
+        assert.throws(() => storage.read(), Error, 'read() should have thrown error about missing keys.');
+        assert.throws(() => storage.read([]), Error, 'read() should have thrown error about missing keys.');
+    });
+
+    it('write with null/undefined StoreItems should throw', function() {
+        let storage = new CosmosDbSqlStorage(getSettings(), policyConfigurator);
+        assert.throws(() => storage.write(), Error, 'write() should have thrown error about missing changes.');
+        assert.throws(() => storage.write(null), Error, 'write() should have thrown error about missing changes.');
+    });
 }
 
 describe('CosmosDbSqlStorage', function () {

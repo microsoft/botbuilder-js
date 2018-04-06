@@ -69,6 +69,9 @@ export class CosmosDbSqlStorage implements Storage {
      * @param keys Array of item keys to read from the store.
      */
     read(keys: string[]): Promise<StoreItems> {
+        if (!keys || keys.length === 0) {
+            throw new Error('Please provide at least one key to read from storage.');
+        }
 
         let parameterSequence = Array.from(Array(keys.length).keys())
             .map(ix => `@id${ix}`)
@@ -118,6 +121,10 @@ export class CosmosDbSqlStorage implements Storage {
      * @param changes Map of items to write to storage.
      **/
     write(changes: StoreItems): Promise<void> {
+        if (!changes) {
+            throw new Error('Please provide a StoreItems with changes to persist.');
+        }
+
         return this.ensureCollectionExists().then(() => {
             return Promise.all(Object.keys(changes).map(k => {
                 let documentChange: DocumentStoreItem = {
