@@ -8,13 +8,13 @@
 
 ### Classes
 
-* [CosmosDbSqlStorage](classes/botbuilder_azure.cosmosdbsqlstorage.md)
+* [CosmosDbStorage](classes/botbuilder_azure.cosmosdbstorage.md)
 * [TableStorage](classes/botbuilder_azure.tablestorage.md)
 
 
 ### Interfaces
 
-* [CosmosDbSqlStorageSettings](interfaces/botbuilder_azure.cosmosdbsqlstoragesettings.md)
+* [CosmosDbStorageSettings](interfaces/botbuilder_azure.cosmosdbstoragesettings.md)
 * [TableStorageSettings](interfaces/botbuilder_azure.tablestoragesettings.md)
 
 
