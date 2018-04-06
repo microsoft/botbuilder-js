@@ -6,4 +6,4 @@
  * Licensed under the MIT License.
  */
 export * from './tableStorage';
-export * from './cosmosDbSqlStorage';
+export * from './cosmosDbStorage';

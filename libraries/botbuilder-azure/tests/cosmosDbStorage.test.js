@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { CosmosDbSqlStorage } = require('../');
+const { CosmosDbStorage } = require('../');
 const { DocumentClient, UriFactory } = require('documentdb');
 
 // Endpoint and Authkey for the CosmosDB Emulator running locally
@@ -28,7 +28,7 @@ testStorage = function () {
     const noEmulatorMessage = 'skipping test because azure storage emulator is not running';
 
     it('read of unknown key', function () {
-        let storage = new CosmosDbSqlStorage(getSettings(), policyConfigurator);
+        let storage = new CosmosDbStorage(getSettings(), policyConfigurator);
         return storage.read(['unk'])
             .then((result) => {
                 assert(result != null, 'result should be object');
@@ -44,7 +44,7 @@ testStorage = function () {
     });
 
     it('key creation', function () {
-        let storage = new CosmosDbSqlStorage(getSettings(), policyConfigurator);
+        let storage = new CosmosDbStorage(getSettings(), policyConfigurator);
         return storage.write({ keyCreate: { count: 1 } })
             .then(() => storage.read(['keyCreate']))
             .then((result) => {
@@ -63,7 +63,7 @@ testStorage = function () {
     });
 
     it('key update', function () {
-        let storage = new CosmosDbSqlStorage(getSettings(), policyConfigurator);
+        let storage = new CosmosDbStorage(getSettings(), policyConfigurator);
         return storage.write({ keyUpdate: { count: 1 } })
             .then(() => storage.read(['keyUpdate']))
             .then((result) => {
@@ -84,7 +84,7 @@ testStorage = function () {
     });
 
     it('invalid eTag', function () {
-        let storage = new CosmosDbSqlStorage(getSettings(), policyConfigurator);
+        let storage = new CosmosDbStorage(getSettings(), policyConfigurator);
         return storage.write({ keyUpdate2: { count: 1 } })
             .then(() => storage.read(['keyUpdate2']))
             .then((result) => {
@@ -106,7 +106,7 @@ testStorage = function () {
     });
 
     it('wildcard eTag', function () {
-        let storage = new CosmosDbSqlStorage(getSettings(), policyConfigurator);
+        let storage = new CosmosDbStorage(getSettings(), policyConfigurator);
         return storage.write({ keyUpdate3: { count: 1 } })
             .then(() => storage.read(['keyUpdate3']))
             .then((result) => {
@@ -128,7 +128,7 @@ testStorage = function () {
     });
 
     it('delete unknown', function () {
-        let storage = new CosmosDbSqlStorage(getSettings(), policyConfigurator);
+        let storage = new CosmosDbStorage(getSettings(), policyConfigurator);
         return storage.delete(['unknown'])
             .catch(reason => {
                 if (reason.code == 'ECONNREFUSED') {
@@ -141,7 +141,7 @@ testStorage = function () {
     });
 
     it('delete known', function () {
-        let storage = new CosmosDbSqlStorage(getSettings(), policyConfigurator);
+        let storage = new CosmosDbStorage(getSettings(), policyConfigurator);
         return storage.write({ delete1: { count: 1 } })
             .then(() => storage.delete(['delete1']))
             .then(() => storage.read(['delete1']))
@@ -160,7 +160,7 @@ testStorage = function () {
     });
 
     it('batch operations', function () {
-        let storage = new CosmosDbSqlStorage(getSettings(), policyConfigurator);
+        let storage = new CosmosDbStorage(getSettings(), policyConfigurator);
         return storage.write({
             batch1: { count: 10 },
             batch2: { count: 20 },
@@ -196,7 +196,7 @@ testStorage = function () {
     });
 
     it('crazy keys work', function () {
-        let storage = new CosmosDbSqlStorage(getSettings(), policyConfigurator);
+        let storage = new CosmosDbStorage(getSettings(), policyConfigurator);
         let obj = {};
         let crazyKey = '!@#$%^&*()_+??><":QASD~`';
         obj[crazyKey] = { count: 1 };
@@ -220,29 +220,29 @@ testStorage = function () {
 
     it('should call connectionPolicyConfigurator', function () {
         let policy = null;
-        let storage = new CosmosDbSqlStorage(getSettings(), (policyInstance) => policy = policyInstance);
+        let storage = new CosmosDbStorage(getSettings(), (policyInstance) => policy = policyInstance);
 
         assert(policy != null, 'connectionPolicyConfigurator should have been called.')
     });
 
     it('missing settings should throw', function() {
-        assert.throws(() => new CosmosDbSqlStorage(), Error, 'constructor should have thrown error about missing settings.');
+        assert.throws(() => new CosmosDbStorage(), Error, 'constructor should have thrown error about missing settings.');
     });
 
     it('read with no key should throw', function() {
-        let storage = new CosmosDbSqlStorage(getSettings(), policyConfigurator);
+        let storage = new CosmosDbStorage(getSettings(), policyConfigurator);
         assert.throws(() => storage.read(), Error, 'read() should have thrown error about missing keys.');
         assert.throws(() => storage.read([]), Error, 'read() should have thrown error about missing keys.');
     });
 
     it('write with null/undefined StoreItems should throw', function() {
-        let storage = new CosmosDbSqlStorage(getSettings(), policyConfigurator);
+        let storage = new CosmosDbStorage(getSettings(), policyConfigurator);
         assert.throws(() => storage.write(), Error, 'write() should have thrown error about missing changes.');
         assert.throws(() => storage.write(null), Error, 'write() should have thrown error about missing changes.');
     });
 }
 
-describe('CosmosDbSqlStorage', function () {
+describe('CosmosDbStorage', function () {
     this.timeout(20000);
     before('cleanup', reset);
     testStorage();
