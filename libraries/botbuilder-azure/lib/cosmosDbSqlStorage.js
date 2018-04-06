@@ -94,12 +94,11 @@ class CosmosDbSqlStorage {
                     let handleCallback = (err, data) => err ? reject(err) : resolve();
                     let eTag = changes[k].eTag;
                     if (!eTag || eTag === '*') {
-                        // if new item or * then insert or replace unconditionaly
                         let uri = documentdb_1.UriFactory.createDocumentCollectionUri(this.settings.databaseId, this.settings.collectionId);
                         this.client.upsertDocument(uri, documentChange, { disableAutomaticIdGeneration: true }, handleCallback);
                     }
                     else if (eTag.length > 0) {
-                        // if we have an etag, do opt. concurrency replace
+                        // Optimistic Update
                         let uri = documentdb_1.UriFactory.createDocumentUri(this.settings.databaseId, this.settings.collectionId, documentChange.id);
                         let ac = { type: 'IfMatch', condition: eTag };
                         this.client.replaceDocument(uri, documentChange, { accessCondition: ac }, handleCallback);
@@ -121,11 +120,11 @@ class CosmosDbSqlStorage {
             .then(() => { }); // void
     }
     ensureCollectionExists() {
-        if (!this.collectionChecked) {
-            this.collectionChecked = getOrCreateDatabase(this.client, this.settings.databaseId)
+        if (!this.collectionExists) {
+            this.collectionExists = getOrCreateDatabase(this.client, this.settings.databaseId)
                 .then(databaseLink => getOrCreateCollection(this.client, databaseLink, this.settings.collectionId));
         }
-        return this.collectionChecked;
+        return this.collectionExists;
     }
 }
 exports.CosmosDbSqlStorage = CosmosDbSqlStorage;

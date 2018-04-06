@@ -24,7 +24,7 @@ export interface CosmosDbSqlStorageSettings {
 export declare class CosmosDbSqlStorage implements Storage {
     private settings;
     private client;
-    private collectionChecked;
+    private collectionExists;
     /**
      * Creates a new instance of the storage provider.
      *
