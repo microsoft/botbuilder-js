@@ -7,3 +7,4 @@
  */
 export * from './tableStorage';
 export * from './cosmosDbSqlStorage';
+export * from './blobStorage';
