@@ -49,6 +49,9 @@ interface ILuisService extends IConnectedService {
     // authoring key for using authoring api
     authoringKey: string;
 
+    // subscription key for using calling model api for predictions
+    subscriptionKey: string;
+
     // version of the application
     version: string;
 }
@@ -70,6 +73,9 @@ interface IBotConfig {
 
     // description of the bot
     description: string;
+
+    // secret secret
+    secretKey: string;
 
     // connected services for the bot
     services: IConnectedService[];

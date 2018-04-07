@@ -3,41 +3,42 @@ import * as validurl from 'valid-url';
 import * as chalk from 'chalk';
 import { BotConfig, ServiceType } from './BotConfig';
 import { Enumerable, List, Dictionary } from 'linq-collections';
+import { uuidValidate } from './utils';
 
-interface ConnectLocalhostArgs extends ILocalhostService {
+interface ConnectEndpointArgs extends ILocalhostService {
     bot: string;
     secret: string;
 }
 
 program
-    .name("msbot connect localhost")
-    .description('Connect the bot to localhost endpoint')
+    .name("msbot connect endpoint")
+    .description('Connect the bot to an endpoint')
     .option('-b, --bot <path>', "path to bot file.  If omitted, local folder will look for a .bot file")
     .option('--secret <secret>', 'bot file secret password for encrypting service secrets')
-    .option('-n, --name <name>', 'name of the azure bot service')
-    .option('-a, --appId  <appid>', 'Microsoft AppId for the Azure Bot Service')
-    .option('-p, --appPassword <password>', 'Microsoft app password for the Azure Bot Service')
-    .option('-e, --endpoint <endpoint>', "endpoint for the bot using the MSA AppId")
+    .option('-n, --name <name>', 'name of the endpoint')
+    .option('-a, --appId  <appid>', 'Microsoft AppId used for auth with the endpoint')
+    .option('-p, --appPassword <password>', 'Microsoft app password used for auth with the endpoint')
+    .option('-e, --endpoint <endpoint>', "url for the endpoint")
     .action((cmd, actions) => {
 
     });
 
-let args = <ConnectLocalhostArgs><any>program.parse(process.argv);
+let args = <ConnectEndpointArgs><any>program.parse(process.argv);
 
 if (process.argv.length < 3) {
     program.help();
 } else {
 
     if (!args.bot) {
-        BotConfig.LoadBotFromFolder(process.cwd())
-            .then(processConnectAzureArgs)
+        BotConfig.LoadBotFromFolder(process.cwd(), args.secret)
+            .then(processConnectEndpointArgs)
             .catch((reason) => {
                 console.error(chalk.default.redBright(reason.toString().split("\n")[0]));
                 program.help();
             });
     } else {
-        BotConfig.Load(args.bot)
-            .then(processConnectAzureArgs)
+        BotConfig.Load(args.bot, args.secret)
+            .then(processConnectEndpointArgs)
             .catch((reason) => {
                 console.error(chalk.default.redBright(reason.toString().split("\n")[0]));
                 program.help();
@@ -45,25 +46,27 @@ if (process.argv.length < 3) {
     }
 }
 
-async function processConnectAzureArgs(config: BotConfig): Promise<BotConfig> {
-
-    if (args.secret) {
-        config.cryptoPassword = args.secret;
-    }
+async function processConnectEndpointArgs(config: BotConfig): Promise<BotConfig> {
 
     if (!args.endpoint)
-        throw new Error("missing endpoint");
+        throw new Error("missing --endpoint");
 
     if (!validurl.isWebUri(args.endpoint)) {
-        throw new Error(`${args.endpoint} is not a valid url`);
+        throw new Error(`--endpoint ${args.endpoint} is not a valid url`);
     }
+
+    if (args.appId && !uuidValidate(args.appId))
+        throw new Error("--appId is not valid");
+
+    if (args.appId && !args.appPassword)
+        throw new Error("Bad or missing --appPassword");
 
     let id = `${args.appId}${args.endpoint}`;
     let hasCredentials = (args.appId && args.appPassword && args.appId.length > 0 && args.appPassword.length > 0);
     let credentialLabel = (hasCredentials) ? ' with AppID' : '';
 
     config.connectService(<ILocalhostService>{
-        type: ServiceType.Localhost,
+        type: ServiceType.Endpoint,
         id: id,
         name: args.hasOwnProperty('name') ? args.name : `${args.endpoint}${credentialLabel}`,
         appId: (args.appId && args.appId.length > 0) ? args.appId : null,

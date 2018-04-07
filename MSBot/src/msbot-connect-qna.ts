@@ -2,6 +2,7 @@ import * as program from 'commander';
 import * as chalk from 'chalk';
 import { BotConfig, ServiceType } from './BotConfig';
 import { Enumerable, List, Dictionary } from 'linq-collections';
+import { uuidValidate } from './utils';
 
 interface ConnectQnaArgs extends IQnAService{
     bot: string;
@@ -28,14 +29,14 @@ if (process.argv.length < 3) {
     program.help();
 } else {
     if (!args.bot) {
-        BotConfig.LoadBotFromFolder(process.cwd())
+        BotConfig.LoadBotFromFolder(process.cwd(), args.secret)
             .then(processConnectQnaArgs)
             .catch((reason) => {
                 console.error(chalk.default.redBright(reason.toString().split("\n")[0]));
                 program.help();
             });
     } else {
-        BotConfig.Load(args.bot)
+        BotConfig.Load(args.bot, args.secret)
             .then(processConnectQnaArgs)
             .catch((reason) => {
                 console.error(chalk.default.redBright(reason.toString().split("\n")[0]));
@@ -47,18 +48,14 @@ if (process.argv.length < 3) {
 async function processConnectQnaArgs(config: BotConfig): Promise<BotConfig> {
     args.name = args.hasOwnProperty('name') ? args.name : config.name;
 
-    if (args.secret) {
-        config.cryptoPassword = args.secret;
-    }
-
-    if (!args.kbid)
-        throw new Error("missing kbid");
+    if (!args.kbid || !uuidValidate(args.kbid))
+        throw new Error("bad or missing --kbid");
 
     if (!args.hasOwnProperty('name'))
-        throw new Error("missing name");
+        throw new Error("missing --name");
 
-    if (!args.subscriptionKey)
-        throw new Error('missing subscriptionKey');
+    if (!args.subscriptionKey || !uuidValidate(args.subscriptionKey))
+        throw new Error("bad or missing --subscriptionKey");
 
     // add the service
     config.connectService(<IQnAService>{

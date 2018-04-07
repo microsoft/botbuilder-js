@@ -4,15 +4,16 @@ const program = require("commander");
 const validurl = require("valid-url");
 const chalk = require("chalk");
 const BotConfig_1 = require("./BotConfig");
+const utils_1 = require("./utils");
 program
-    .name("msbot connect localhost")
-    .description('Connect the bot to localhost endpoint')
+    .name("msbot connect endpoint")
+    .description('Connect the bot to an endpoint')
     .option('-b, --bot <path>', "path to bot file.  If omitted, local folder will look for a .bot file")
     .option('--secret <secret>', 'bot file secret password for encrypting service secrets')
-    .option('-n, --name <name>', 'name of the azure bot service')
-    .option('-a, --appId  <appid>', 'Microsoft AppId for the Azure Bot Service')
-    .option('-p, --appPassword <password>', 'Microsoft app password for the Azure Bot Service')
-    .option('-e, --endpoint <endpoint>', "endpoint for the bot using the MSA AppId")
+    .option('-n, --name <name>', 'name of the endpoint')
+    .option('-a, --appId  <appid>', 'Microsoft AppId used for auth with the endpoint')
+    .option('-p, --appPassword <password>', 'Microsoft app password used for auth with the endpoint')
+    .option('-e, --endpoint <endpoint>', "url for the endpoint")
     .action((cmd, actions) => {
 });
 let args = program.parse(process.argv);
@@ -39,15 +40,19 @@ else {
 }
 async function processConnectEndpointArgs(config) {
     if (!args.endpoint)
-        throw new Error("missing endpoint");
+        throw new Error("missing --endpoint");
     if (!validurl.isWebUri(args.endpoint)) {
-        throw new Error(`${args.endpoint} is not a valid url`);
+        throw new Error(`--endpoint ${args.endpoint} is not a valid url`);
     }
+    if (args.appId && !utils_1.uuidValidate(args.appId))
+        throw new Error("--appId is not valid");
+    if (args.appId && !args.appPassword)
+        throw new Error("Bad or missing --appPassword");
     let id = `${args.appId}${args.endpoint}`;
     let hasCredentials = (args.appId && args.appPassword && args.appId.length > 0 && args.appPassword.length > 0);
     let credentialLabel = (hasCredentials) ? ' with AppID' : '';
     config.connectService({
-        type: BotConfig_1.ServiceType.Localhost,
+        type: BotConfig_1.ServiceType.Endpoint,
         id: id,
         name: args.hasOwnProperty('name') ? args.name : `${args.endpoint}${credentialLabel}`,
         appId: (args.appId && args.appId.length > 0) ? args.appId : null,
@@ -57,4 +62,4 @@ async function processConnectEndpointArgs(config) {
     await config.Save();
     return config;
 }
-//# sourceMappingURL=msbot-connect-localhost.js.map
+//# sourceMappingURL=msbot-connect-endpoint.js.map

@@ -9,12 +9,14 @@ import * as readline from 'readline-sync';
 interface InitArgs {
     name: string;
     description: string;
+    secret: string;
     endpoint: string;
     quiet: boolean;
 }
 
 program
     .name("msbot init")
+    .option('--secret <secret>', 'secret used to encrypt service keys')
     .option('-n, --name <botname>', 'name of the bot')
     .option('-d, --description <description>', 'description of the bot')
     .option('-e, --endpoint <endpoint>', 'local endpoint for the bot')
@@ -31,6 +33,10 @@ if (!args.quiet) {
         args.name = readline.question(`What name would you like for your bot? `);
     }
 
+    while (!args.secret || args.secret.length == 0) {
+        args.secret = readline.question(`What secret would you like to use to secure your keys? `);
+    }
+
     if (!args.description || args.description.length == 0) {
         args.description = readline.question(`What description would you like for your bot? `);
     }
@@ -42,20 +48,29 @@ if (!args.quiet) {
     }
 }
 
-let bot = new BotConfig();
-bot.name = args.name;
-bot.description = args.description;
+if (!args.name) {
+    console.error('missing --name argument');
+} else if (!args.secret) {
+    console.error('missing --secret argument');
+}
+else {
+    let bot = new BotConfig(args.secret);
+    bot.name = args.name;
+    bot.description = args.description;
+    bot.validateSecretKey();
+    
+    bot.connectService(<ILocalhostService>{
+        type: ServiceType.Endpoint,
+        name: args.name,
+        endpoint: args.endpoint,
+        description: args.description,
+        id: args.endpoint,
+        appId: '',
+        appPassword: ''
+    });
 
-bot.connectService(<ILocalhostService>{
-    type: ServiceType.Localhost,
-    name: args.name,
-    endpoint: args.endpoint,
-    description: args.description,
-    id: args.endpoint,
-    appId: '',
-    appPassword: ''
-});
+    let filename = bot.name + '.bot';
+    bot.Save(filename);
+    console.log(`${filename} created`);
 
-let filename = bot.name + '.bot';
-bot.Save(filename);
-console.log(`${filename} created`);
+}

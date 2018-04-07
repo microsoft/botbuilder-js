@@ -16,6 +16,7 @@ interface IAzureBotService extends IConnectedService {
 interface ILuisService extends IConnectedService {
     appId: string;
     authoringKey: string;
+    subscriptionKey: string;
     version: string;
 }
 interface IQnAService extends IConnectedService {
@@ -25,5 +26,6 @@ interface IQnAService extends IConnectedService {
 interface IBotConfig {
     name: string;
     description: string;
+    secretKey: string;
     services: IConnectedService[];
 }

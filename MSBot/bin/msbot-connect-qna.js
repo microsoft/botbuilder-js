@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const program = require("commander");
 const chalk = require("chalk");
 const BotConfig_1 = require("./BotConfig");
+const utils_1 = require("./utils");
 program
     .name("msbot connect qna")
     .description('Connect the bot to a QnA knowledgebase')
@@ -20,7 +21,7 @@ if (process.argv.length < 3) {
 }
 else {
     if (!args.bot) {
-        BotConfig_1.BotConfig.LoadBotFromFolder(process.cwd())
+        BotConfig_1.BotConfig.LoadBotFromFolder(process.cwd(), args.secret)
             .then(processConnectQnaArgs)
             .catch((reason) => {
             console.error(chalk.default.redBright(reason.toString().split("\n")[0]));
@@ -28,7 +29,7 @@ else {
         });
     }
     else {
-        BotConfig_1.BotConfig.Load(args.bot)
+        BotConfig_1.BotConfig.Load(args.bot, args.secret)
             .then(processConnectQnaArgs)
             .catch((reason) => {
             console.error(chalk.default.redBright(reason.toString().split("\n")[0]));
@@ -38,15 +39,12 @@ else {
 }
 async function processConnectQnaArgs(config) {
     args.name = args.hasOwnProperty('name') ? args.name : config.name;
-    if (args.secret) {
-        config.cryptoPassword = args.secret;
-    }
-    if (!args.kbid)
-        throw new Error("missing kbid");
+    if (!args.kbid || !utils_1.uuidValidate(args.kbid))
+        throw new Error("bad or missing --kbid");
     if (!args.hasOwnProperty('name'))
-        throw new Error("missing name");
-    if (!args.subscriptionKey)
-        throw new Error('missing subscriptionKey');
+        throw new Error("missing --name");
+    if (!args.subscriptionKey || !utils_1.uuidValidate(args.subscriptionKey))
+        throw new Error("bad or missing --subscriptionKey");
     // add the service
     config.connectService({
         type: BotConfig_1.ServiceType.QnA,

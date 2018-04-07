@@ -2,6 +2,7 @@ import * as program from 'commander';
 import * as chalk from 'chalk';
 import { BotConfig, ServiceType } from './BotConfig';
 import { Enumerable, List, Dictionary } from 'linq-collections';
+import { uuidValidate } from './utils';
 
 interface ConnectLuisArgs extends ILuisService {
     bot: string;
@@ -16,7 +17,8 @@ program
     .option('-n, --name <name>', 'name for the LUIS app')
     .option('-a, --appId <appid>', 'AppId for the LUIS App')
     .option('-v, --version <version>', 'version for the LUIS App, (example: v0.1)')
-    .option('--authoringKey <authoringkey>', 'authoering key for authoring LUIS models via the authoring API')
+    .option('--subscriptionKey <subscriptionKey>', 'subscription key used for querying a LUIS model')
+    .option('--authoringKey <authoringkey>', 'authoring key for using manipulating LUIS apps via the authoring API')
     .action((cmd, actions) => {
 
     });
@@ -27,14 +29,14 @@ if (process.argv.length < 3) {
     program.help();
 } else {
     if (!args.bot) {
-        BotConfig.LoadBotFromFolder(process.cwd())
+        BotConfig.LoadBotFromFolder(process.cwd(), args.secret)
             .then(processConnectLuisArgs)
             .catch((reason) => {
                 console.error(chalk.default.redBright(reason.toString().split("\n")[0]));
                 program.help();
             });
     } else {
-        BotConfig.Load(args.bot)
+        BotConfig.Load(args.bot, args.secret)
             .then(processConnectLuisArgs)
             .catch((reason) => {
                 console.error(chalk.default.redBright(reason.toString().split("\n")[0]));
@@ -46,21 +48,20 @@ if (process.argv.length < 3) {
 async function processConnectLuisArgs(config: BotConfig): Promise<BotConfig> {
     args.name = args.hasOwnProperty('name') ? args.name : config.name;
 
-    if (args.secret) {
-        config.cryptoPassword = args.secret;
-    }
-
     if (!args.hasOwnProperty('name'))
         throw new Error("Bad or missing name");
 
-    if (!args.appId)
-        throw new Error("Bad or missing appId");
+    if (!args.appId || !uuidValidate(args.appId))
+        throw new Error("bad or missing --appId");
 
-    if (!args.version)
-        throw new Error("missing version");
+    if (!args.version || parseInt(args.version))
+        throw new Error("bad or missing --version");
 
-    if (!args.authoringKey)
-        throw new Error("missing authoringKey");
+    if (!args.authoringKey || !uuidValidate(args.authoringKey))
+        throw new Error("bad or missing --authoringKey");
+
+    if (!args.subscriptionKey || !uuidValidate(args.subscriptionKey))
+        throw new Error("bad or missing --subscriptionKey");
 
     // add the service
     config.connectService(<ILuisService>{
@@ -69,6 +70,7 @@ async function processConnectLuisArgs(config: BotConfig): Promise<BotConfig> {
         id: args.appId,
         appId: args.appId,
         version: args.version,
+        subscriptionKey: config.encryptValue(args.subscriptionKey),
         authoringKey: config.encryptValue(args.authoringKey)
     });
     await config.Save();

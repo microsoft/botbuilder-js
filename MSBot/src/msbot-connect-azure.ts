@@ -3,6 +3,7 @@ import * as validurl from 'valid-url';
 import * as chalk from 'chalk';
 import { BotConfig, ServiceType } from './BotConfig';
 import { Enumerable, List, Dictionary } from 'linq-collections';
+import { uuidValidate } from './utils';
 
 interface ConnectAzureArgs extends IAzureBotService {
     bot: string;
@@ -29,14 +30,14 @@ if (process.argv.length < 3) {
     program.help();
 } else {
     if (!args.bot) {
-        BotConfig.LoadBotFromFolder(process.cwd())
+        BotConfig.LoadBotFromFolder(process.cwd(), args.secret)
             .then(processConnectAzureArgs)
             .catch((reason) => {
                 console.error(chalk.default.redBright(reason.toString().split("\n")[0]));
                 program.help();
             });
     } else {
-        BotConfig.Load(args.bot)
+        BotConfig.Load(args.bot, args.secret)
             .then(processConnectAzureArgs)
             .catch((reason) => {
                 console.error(chalk.default.redBright(reason.toString().split("\n")[0]));
@@ -47,24 +48,20 @@ if (process.argv.length < 3) {
 
 async function processConnectAzureArgs(config: BotConfig): Promise<BotConfig> {
 
-    if (args.secret) {
-        config.cryptoPassword = args.secret;
-    }
-
     if (!args.id)
-        throw new Error("Bad or missing id");
+        throw new Error("Bad or missing --id");
 
-    if (!args.appId)
-        throw new Error("Bad or missing appId");
+    if (!args.appId || !uuidValidate(args.appId))
+        throw new Error("Bad or missing --appId");
 
     if (!args.appPassword)
-        throw new Error("Bad or missing appPassword");
+        throw new Error("Bad or missing --appPassword");
 
     if (!args.endpoint)
-        throw new Error("missing endpoint");
+        throw new Error("missing --endpoint");
 
     if (!validurl.isWebUri(args.endpoint)) 
-        throw new Error(`${args.endpoint} is not a valid url`);
+        throw new Error(`--endpoint ${args.endpoint} is not a valid url`);
 
     config.connectService(<IAzureBotService>{
         type: ServiceType.AzureBotService,

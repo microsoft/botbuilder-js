@@ -12,7 +12,7 @@ program
 });
 let parsed = program.parse(process.argv);
 if (!parsed.bot) {
-    BotConfig_1.BotConfig.LoadBotFromFolder(process.cwd())
+    BotConfig_1.BotConfig.LoadBotFromFolder(process.cwd(), parsed.secret)
         .then(processListArgs)
         .catch((reason) => {
         console.error(chalk.default.redBright(reason.toString().split("\n")[0]));
@@ -20,7 +20,7 @@ if (!parsed.bot) {
     });
 }
 else {
-    BotConfig_1.BotConfig.Load(parsed.bot)
+    BotConfig_1.BotConfig.Load(parsed.bot, parsed.secret)
         .then(processListArgs)
         .catch((reason) => {
         console.error(chalk.default.redBright(reason.toString().split("\n")[0]));
@@ -29,7 +29,6 @@ else {
 }
 async function processListArgs(config) {
     if (parsed.secret) {
-        config.cryptoPassword = parsed.secret;
         for (let service of config.services) {
             for (var prop in service) {
                 let val = service[prop];
