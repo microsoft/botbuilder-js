@@ -49,7 +49,7 @@ async function processConnectLuisArgs(config: BotConfig): Promise<BotConfig> {
     args.name = args.hasOwnProperty('name') ? args.name : config.name;
 
     if (!args.hasOwnProperty('name'))
-        throw new Error("Bad or missing name");
+        throw new Error("Bad or missing --name");
 
     if (!args.appId || !uuidValidate(args.appId))
         throw new Error("bad or missing --appId");

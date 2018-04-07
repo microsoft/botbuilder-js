@@ -41,7 +41,7 @@ else {
 async function processConnectLuisArgs(config) {
     args.name = args.hasOwnProperty('name') ? args.name : config.name;
     if (!args.hasOwnProperty('name'))
-        throw new Error("Bad or missing name");
+        throw new Error("Bad or missing --name");
     if (!args.appId || !utils_1.uuidValidate(args.appId))
         throw new Error("bad or missing --appId");
     if (!args.version || parseInt(args.version))

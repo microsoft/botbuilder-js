@@ -6,6 +6,7 @@ import * as validurl from 'valid-url';
 import * as path from 'path';
 import * as fsx from 'fs-extra';
 import { Enumerable, List, Dictionary } from 'linq-collections';
+import { encode } from 'punycode';
 
 export enum ServiceType {
     Endpoint = "endpoint",
@@ -18,11 +19,14 @@ export enum ServiceType {
 interface internalBotConfig {
     location?: string;
     secret?: string;
+    secretValidated: boolean;
 }
 
 export class BotConfig implements IBotConfig {
     // internal is not serialized
-    private internal: internalBotConfig = {};
+    private internal: internalBotConfig = {
+        secretValidated: false
+    };
 
     public name: string = '';
     public secretKey: string = '';
@@ -67,8 +71,24 @@ export class BotConfig implements IBotConfig {
             .where(s => s.type == newService.type)
             .where(s => s.id == newService.id)
             .any()) {
-            throw Error(`Azure Bot Service with appid:${newService.id} already connected`);
+            throw Error(`service with ${newService.id} already connected`);
         } else {
+
+            // give unique name
+            let nameCount = 1;
+            let name = newService.name;
+
+            while (true) {
+                if (nameCount > 1) {
+                    name = `${newService.name} (${nameCount})`;
+                }
+
+                if (!Enumerable.fromSource(this.services).where(s => s.name == name).any())
+                    break;
+                nameCount++;
+            }
+            newService.name = name;
+
             this.services.push(newService);
         }
     }
@@ -101,7 +121,6 @@ export class BotConfig implements IBotConfig {
             }
         }
     }
-    public static boundary: string = '~^~';
 
     public encryptValue(value: string): string {
         if (!value || value.length == 0)
@@ -109,25 +128,27 @@ export class BotConfig implements IBotConfig {
 
         this.validateSecretKey();
 
-        let encryptedValue = this.internalEncrypt(value);
-        return `${BotConfig.boundary}${encryptedValue}${BotConfig.boundary}`;
+        return this.internalEncrypt(value);
     }
 
     public decryptValue(encryptedValue: string): string {
-        if (encryptedValue.startsWith(BotConfig.boundary) && encryptedValue.endsWith(BotConfig.boundary)) {
-            this.validateSecretKey();
+        if (!encryptedValue || encryptedValue.length == 0)
+            return encryptedValue;
 
-            return this.internalDecrypt(encryptedValue.substring(3, encryptedValue.length - 3));
-        }
-        return encryptedValue;
+        this.validateSecretKey();
+
+        return this.internalDecrypt(encryptedValue);
     }
 
 
     // make sure secret is correct by decrypting the secretKey with it
     public validateSecretKey(): void {
         try {
+            if (this.internal.secretValidated)
+                return;
+
             if (!this.internal.secret || this.internal.secret.length == 0) {
-                throw new Error("bad secret");
+                throw new Error("bad or missing secret");
             }
             if (!this.secretKey || this.secretKey.length == 0) {
                 // if no key, create a guid and enrypt that to use as secret validator
@@ -137,6 +158,8 @@ export class BotConfig implements IBotConfig {
                 let value = decipher.update(this.secretKey, 'hex', 'utf8');
                 value += decipher.final('utf8');
             }
+
+            this.internal.secretValidated = true;
         } catch{
             throw new Error("You are attempting to perform an operation which needs access to the secret and --secret is not set or is incorrect.");
         }
@@ -154,6 +177,20 @@ export class BotConfig implements IBotConfig {
         let value = decipher.update(encryptedValue, 'hex', 'utf8');
         value += decipher.final('utf8');
         return value;
+    }
+
+    public getEncryptedProperties(type: ServiceType): string[] {
+        switch (type) {
+            case ServiceType.AzureBotService:
+                return ["appPassword"];
+            case ServiceType.Endpoint:
+                return ["appPassword"];
+            case ServiceType.Luis:
+                return ["subscriptionKey", "authoringKey"];
+            case ServiceType.QnA:
+                return ["subscriptionKey"];
+        }
+        return [];
     }
 }
 

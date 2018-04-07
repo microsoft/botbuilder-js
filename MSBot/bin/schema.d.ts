@@ -1,9 +1,9 @@
 interface IConnectedService {
     type: string;
     name: string;
-    id: string;
+    id?: string;
 }
-interface ILocalhostService extends IConnectedService {
+interface IEndpointService extends IConnectedService {
     appId: string;
     appPassword: string;
     endpoint: string;

@@ -1,6 +1,6 @@
 {
   "name": "msbot",
-  "version": "1.0.9-alpha",
+  "version": "1.0.10-alpha",
   "description": "MSBot command line tool for manipulating Microsoft Bot Framework .bot files",
   "main": "bin/BotConfig.js",
   "repository": {
@@ -18,7 +18,8 @@
   },
   "files": [
     "bin/*.js",
-    "bin/BotConfig.*"
+    "bin/BotConfig.*",
+    "bin/schema.*"
   ],
   "devDependencies": {
     "@types/node": "^6.0.87",

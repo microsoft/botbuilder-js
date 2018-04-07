@@ -59,7 +59,7 @@ else {
     bot.description = args.description;
     bot.validateSecretKey();
     
-    bot.connectService(<ILocalhostService>{
+    bot.connectService(<IEndpointService>{
         type: ServiceType.Endpoint,
         name: args.name,
         endpoint: args.endpoint,

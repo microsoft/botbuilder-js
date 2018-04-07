@@ -7,11 +7,11 @@ interface IConnectedService {
     name: string;
 
     // unique Id for the service (appid, etc)
-    id: string;
+    id?: string;
 }
 
 
-interface ILocalhostService extends IConnectedService {
+interface IEndpointService extends IConnectedService {
     // type = ServiceTypes.Luis
     // id = bot id
 

@@ -41,7 +41,7 @@ else {
 }
 async function processConnectAzureArgs(config) {
     if (!args.id)
-        throw new Error("Bad or missing --id");
+        throw new Error("Bad or missing --id for registered bot");
     if (!args.appId || !utils_1.uuidValidate(args.appId))
         throw new Error("Bad or missing --appId");
     if (!args.appPassword)

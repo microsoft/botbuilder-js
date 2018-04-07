@@ -5,7 +5,7 @@ import { BotConfig, ServiceType } from './BotConfig';
 import { Enumerable, List, Dictionary } from 'linq-collections';
 import { uuidValidate } from './utils';
 
-interface ConnectEndpointArgs extends ILocalhostService {
+interface ConnectEndpointArgs extends IEndpointService {
     bot: string;
     secret: string;
 }
@@ -55,20 +55,32 @@ async function processConnectEndpointArgs(config: BotConfig): Promise<BotConfig>
         throw new Error(`--endpoint ${args.endpoint} is not a valid url`);
     }
 
+    if (!args.hasOwnProperty('name'))
+        throw new Error("Bad or missing --name");
+
     if (args.appId && !uuidValidate(args.appId))
         throw new Error("--appId is not valid");
 
     if (args.appId && !args.appPassword)
         throw new Error("Bad or missing --appPassword");
 
-    let id = `${args.appId}${args.endpoint}`;
-    let hasCredentials = (args.appId && args.appPassword && args.appId.length > 0 && args.appPassword.length > 0);
-    let credentialLabel = (hasCredentials) ? ' with AppID' : '';
+    let idCount = 1;
+    let id: string;
+    while (true) {
+        id = `${idCount}`;
 
-    config.connectService(<ILocalhostService>{
+        if (Enumerable.fromSource(config.services)
+            .where(s => s.type == ServiceType.Endpoint && s.id == id)
+            .any() == false)
+            break;
+
+        idCount++;
+    }
+
+    config.connectService(<IEndpointService>{
         type: ServiceType.Endpoint,
         id: id,
-        name: args.hasOwnProperty('name') ? args.name : `${args.endpoint}${credentialLabel}`,
+        name: args.name,
         appId: (args.appId && args.appId.length > 0) ? args.appId : null,
         appPassword: (args.appPassword && args.appPassword.length > 0) ? config.encryptValue(args.appPassword) : null,
         endpoint: args.endpoint

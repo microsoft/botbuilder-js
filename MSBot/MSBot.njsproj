@@ -4,7 +4,7 @@
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
     <Name>MSBot</Name>
     <RootNamespace>MSBot</RootNamespace>
-    <ScriptArguments>-n test -e http://localhost:123123/api/messages -a 123123213 -p password --secret shh</ScriptArguments>
+    <ScriptArguments> -n test -e http://foo.com/api/messages -a 38469968-072a-4074-b3bd-d3fed823faa0  -p 123213123  --secret shh</ScriptArguments>
     <DebuggerPort>
     </DebuggerPort>
   </PropertyGroup>
@@ -14,7 +14,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>9eec4a3a-8523-43d5-9f5d-c1fcedae012f</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>bin\msbot-connect-localhost.js</StartupFile>
+    <StartupFile>bin\msbot-connect-endpoint.js</StartupFile>
     <StartWebBrowser>False</StartWebBrowser>
     <SearchPath>
     </SearchPath>

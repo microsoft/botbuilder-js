@@ -17,7 +17,9 @@ var ServiceType;
 class BotConfig {
     constructor(secret) {
         // internal is not serialized
-        this.internal = {};
+        this.internal = {
+            secretValidated: false
+        };
         this.name = '';
         this.secretKey = '';
         this.description = '';
@@ -54,9 +56,21 @@ class BotConfig {
             .where(s => s.type == newService.type)
             .where(s => s.id == newService.id)
             .any()) {
-            throw Error(`Azure Bot Service with appid:${newService.id} already connected`);
+            throw Error(`service with ${newService.id} already connected`);
         }
         else {
+            // give unique name
+            let nameCount = 1;
+            let name = newService.name;
+            while (true) {
+                if (nameCount > 1) {
+                    name = `${newService.name} (${nameCount})`;
+                }
+                if (!linq_collections_1.Enumerable.fromSource(this.services).where(s => s.name == name).any())
+                    break;
+                nameCount++;
+            }
+            newService.name = name;
             this.services.push(newService);
         }
     }
@@ -89,21 +103,21 @@ class BotConfig {
         if (!value || value.length == 0)
             return value;
         this.validateSecretKey();
-        let encryptedValue = this.internalEncrypt(value);
-        return `${BotConfig.boundary}${encryptedValue}${BotConfig.boundary}`;
+        return this.internalEncrypt(value);
     }
     decryptValue(encryptedValue) {
-        if (encryptedValue.startsWith(BotConfig.boundary) && encryptedValue.endsWith(BotConfig.boundary)) {
-            this.validateSecretKey();
-            return this.internalDecrypt(encryptedValue.substring(3, encryptedValue.length - 3));
-        }
-        return encryptedValue;
+        if (!encryptedValue || encryptedValue.length == 0)
+            return encryptedValue;
+        this.validateSecretKey();
+        return this.internalDecrypt(encryptedValue);
     }
     // make sure secret is correct by decrypting the secretKey with it
     validateSecretKey() {
         try {
+            if (this.internal.secretValidated)
+                return;
             if (!this.internal.secret || this.internal.secret.length == 0) {
-                throw new Error("bad secret");
+                throw new Error("bad or missing secret");
             }
             if (!this.secretKey || this.secretKey.length == 0) {
                 // if no key, create a guid and enrypt that to use as secret validator
@@ -114,6 +128,7 @@ class BotConfig {
                 let value = decipher.update(this.secretKey, 'hex', 'utf8');
                 value += decipher.final('utf8');
             }
+            this.internal.secretValidated = true;
         }
         catch (_a) {
             throw new Error("You are attempting to perform an operation which needs access to the secret and --secret is not set or is incorrect.");
@@ -131,7 +146,19 @@ class BotConfig {
         value += decipher.final('utf8');
         return value;
     }
+    getEncryptedProperties(type) {
+        switch (type) {
+            case ServiceType.AzureBotService:
+                return ["appPassword"];
+            case ServiceType.Endpoint:
+                return ["appPassword"];
+            case ServiceType.Luis:
+                return ["subscriptionKey", "authoringKey"];
+            case ServiceType.QnA:
+                return ["subscriptionKey"];
+        }
+        return [];
+    }
 }
-BotConfig.boundary = '~^~';
 exports.BotConfig = BotConfig;
 //# sourceMappingURL=BotConfig.js.map

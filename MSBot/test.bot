@@ -4,12 +4,28 @@
     "secretKey": "000aaab86c0e452697b158a5d16b7a0d1097853f282b9c53ae4fac766ff1053be5d92841303a081af3dafbb2408fb98f",
     "services": [
         {
-            "type": "luis",
-            "name": "luis",
-            "id": "38469968-072a-4074-b3bd-d3fed823faa0",
+            "type": "endpoint",
+            "id": "1",
+            "name": "test",
             "appId": "38469968-072a-4074-b3bd-d3fed823faa0",
-            "subscriptionKey": "~^~8841366c4c1a9c9737e27a7d20f0aff9f40d05a5d872bacb837835e9cda97796a2452993bfd258231a00de0ba2c05a3d~^~",
-            "authoringKey": "~^~8841366c4c1a9c9737e27a7d20f0aff9c83102a5c4f2a483adb88980e91f6aa3635e38537457443b498e919369a3c601~^~"
+            "appPassword": "55adff9cdb189624c9e108f2cc49f4ea",
+            "endpoint": "http://foo.com/api/messages2"
+        },
+        {
+            "type": "endpoint",
+            "id": "3",
+            "name": "test (3)",
+            "appId": "38469968-072a-4074-b3bd-d3fed823faa0",
+            "appPassword": "55adff9cdb189624c9e108f2cc49f4ea",
+            "endpoint": "http://foo.com/api/messages2"
+        },
+        {
+            "type": "endpoint",
+            "id": "2",
+            "name": "test (2)",
+            "appId": "38469968-072a-4074-b3bd-d3fed823faa0",
+            "appPassword": "55adff9cdb189624c9e108f2cc49f4ea",
+            "endpoint": "http://foo.com/api/messages2"
         }
     ]
 }

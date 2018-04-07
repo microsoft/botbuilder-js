@@ -18,10 +18,10 @@ export declare class BotConfig implements IBotConfig {
     connectService(newService: IConnectedService): void;
     disconnectServiceByNameOrId(nameOrId: string): void;
     disconnectService(type: string, id: string): void;
-    static boundary: string;
     encryptValue(value: string): string;
     decryptValue(encryptedValue: string): string;
     validateSecretKey(): void;
     private internalEncrypt(value);
     private internalDecrypt(encryptedValue);
+    getEncryptedProperties(type: ServiceType): string[];
 }

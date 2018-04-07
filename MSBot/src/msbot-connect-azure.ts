@@ -49,7 +49,7 @@ if (process.argv.length < 3) {
 async function processConnectAzureArgs(config: BotConfig): Promise<BotConfig> {
 
     if (!args.id)
-        throw new Error("Bad or missing --id");
+        throw new Error("Bad or missing --id for registered bot");
 
     if (!args.appId || !uuidValidate(args.appId))
         throw new Error("Bad or missing --appId");
@@ -65,7 +65,7 @@ async function processConnectAzureArgs(config: BotConfig): Promise<BotConfig> {
 
     config.connectService(<IAzureBotService>{
         type: ServiceType.AzureBotService,
-        id: args.id,
+        id: args.id, // bot id
         name: args.hasOwnProperty('name') ? args.name : args.id,
         appId: args.appId,
         appPassword: config.encryptValue(args.appPassword),
