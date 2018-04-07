@@ -86,7 +86,7 @@ module.exports.splitFileBySections = function(fileContent) {
             }            
         } else {
             if(middleOfSection) {
-                inQnaAnswer = true
+                if(currentSectionType === PARSERCONSTS.QNA) inQnaAnswer = true
                 currentSection += currentLine + "\r\n";
 
                 // did we just have an answer for QnA? 
