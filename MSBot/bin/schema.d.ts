@@ -19,6 +19,12 @@ interface ILuisService extends IConnectedService {
     subscriptionKey: string;
     version: string;
 }
+interface IDispatchService extends IConnectedService {
+    appId: string;
+    authoringKey: string;
+    subscriptionKey: string;
+    version: string;
+}
 interface IQnAService extends IConnectedService {
     kbid: string;
     subscriptionKey: string;

@@ -13,7 +13,7 @@ export enum ServiceType {
     AzureBotService = "abs",
     Luis = "luis",
     QnA = "qna",
-    Dispatcher = 'dispatch'
+    Dispatch = 'dispatch'
 }
 
 interface internalBotConfig {

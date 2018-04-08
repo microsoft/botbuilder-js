@@ -56,6 +56,23 @@ interface ILuisService extends IConnectedService {
     version: string;
 }
 
+interface IDispatchService extends IConnectedService {
+    // type = ServiceTypes.Luis
+    // id = appid
+
+    // luis appid
+    appId: string;
+
+    // authoring key for using authoring api
+    authoringKey: string;
+
+    // subscription key for using calling model api for predictions
+    subscriptionKey: string;
+
+    // version of the application
+    version: string;
+}
+
 interface IQnAService extends IConnectedService {
     // type=Servicestypes.QnA
     // id = appid for the QnA service

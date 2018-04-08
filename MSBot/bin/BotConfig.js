@@ -12,7 +12,7 @@ var ServiceType;
     ServiceType["AzureBotService"] = "abs";
     ServiceType["Luis"] = "luis";
     ServiceType["QnA"] = "qna";
-    ServiceType["Dispatcher"] = "dispatch";
+    ServiceType["Dispatch"] = "dispatch";
 })(ServiceType = exports.ServiceType || (exports.ServiceType = {}));
 class BotConfig {
     constructor(secret) {

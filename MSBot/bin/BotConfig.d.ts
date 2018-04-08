@@ -3,7 +3,7 @@ export declare enum ServiceType {
     AzureBotService = "abs",
     Luis = "luis",
     QnA = "qna",
-    Dispatcher = "dispatch",
+    Dispatch = "dispatch",
 }
 export declare class BotConfig implements IBotConfig {
     private internal;
