@@ -1,0 +1,40 @@
+#Greeting
+Hi
+Hello
+Good morning
+Good evening
+
+#Help
+help
+I need help
+please help
+
+#AskForUserName
+{userName:vishwac}
+I'm {userName:vishwac}
+call me {userName:vishwac}
+my name is {userName:vishwac}
+{userName:vishwac} is my name
+you can call me {userName:vishwac}
+
+$userName:simple
+
+$PREBUILT:datetimeV2
+
+#CreateAlarm
+create an alarm
+create an alarm for 7AM
+set an alarm for 7AM next thursday
+
+// add these as patterns
+#DeleteAlarm
+~delete alarm
+~(delete|remove) the {alarmTime} alarm
+
+// alarmTime is a role for prebuilt datetimev2 entity
+$alarmTime:datetimeV2
+
+// These are defined as patterns with commPreference as pattern.any entity type
+#CommunicationPreference
+~set {commPreference} as my communication preference
+~I prefer to receive {commPreference}
