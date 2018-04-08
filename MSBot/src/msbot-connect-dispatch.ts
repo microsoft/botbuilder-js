@@ -30,14 +30,14 @@ if (process.argv.length < 3) {
 } else {
     if (!args.bot) {
         BotConfig.LoadBotFromFolder(process.cwd(), args.secret)
-            .then(processConnectLuisArgs)
+            .then(processConnectDispatch)
             .catch((reason) => {
                 console.error(chalk.default.redBright(reason.toString().split("\n")[0]));
                 program.help();
             });
     } else {
         BotConfig.Load(args.bot, args.secret)
-            .then(processConnectLuisArgs)
+            .then(processConnectDispatch)
             .catch((reason) => {
                 console.error(chalk.default.redBright(reason.toString().split("\n")[0]));
                 program.help();
@@ -45,7 +45,7 @@ if (process.argv.length < 3) {
     }
 }
 
-async function processConnectLuisArgs(config: BotConfig): Promise<BotConfig> {
+async function processConnectDispatch(config: BotConfig): Promise<BotConfig> {
     args.name = args.hasOwnProperty('name') ? args.name : config.name;
 
     if (!args.hasOwnProperty('name'))
