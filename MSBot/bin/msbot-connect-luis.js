@@ -2,6 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const program = require("commander");
 const chalk = require("chalk");
+const fs = require("fs-extra");
+const getStdin = require("get-stdin");
 const BotConfig_1 = require("./BotConfig");
 const utils_1 = require("./utils");
 program
@@ -14,6 +16,8 @@ program
     .option('-v, --version <version>', 'version for the LUIS App, (example: v0.1)')
     .option('--subscriptionKey <subscriptionKey>', 'subscription key used for querying a LUIS model')
     .option('--authoringKey <authoringkey>', 'authoring key for using manipulating LUIS apps via the authoring API')
+    .option('--stdin', "arguments are passed in as JSON object via stdin")
+    .option('--input <jsonfile>', "arguments passed in as path to arguments in JSON format")
     .action((cmd, actions) => {
 });
 let args = program.parse(process.argv);
@@ -40,6 +44,12 @@ else {
 }
 async function processConnectLuisArgs(config) {
     args.name = args.hasOwnProperty('name') ? args.name : config.name;
+    if (args.stdin) {
+        Object.assign(args, JSON.parse(await getStdin()));
+    }
+    else if (args.input != null) {
+        Object.assign(args, JSON.parse(fs.readFileSync(args.input, 'utf8')));
+    }
     if (!args.hasOwnProperty('name'))
         throw new Error("Bad or missing --name");
     if (!args.appId || !utils_1.uuidValidate(args.appId))

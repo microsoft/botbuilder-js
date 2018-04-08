@@ -3,6 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const program = require("commander");
 const validurl = require("valid-url");
 const chalk = require("chalk");
+const fs = require("fs-extra");
+const getStdin = require("get-stdin");
 const BotConfig_1 = require("./BotConfig");
 const utils_1 = require("./utils");
 program
@@ -15,6 +17,8 @@ program
     .option('-a, --appId  <appid>', 'Microsoft AppId for the Azure Bot Service')
     .option('-p, --appPassword <password>', 'Microsoft app password for the Azure Bot Service')
     .option('-e, --endpoint <endpoint>', "endpoint for the bot using the MSA AppId")
+    .option('--stdin', "arguments are passed in as JSON object via stdin")
+    .option('--input <jsonfile>', "arguments passed in as path to arguments in JSON format")
     .action((cmd, actions) => {
 });
 let args = program.parse(process.argv);
@@ -40,6 +44,12 @@ else {
     }
 }
 async function processConnectAzureArgs(config) {
+    if (args.stdin) {
+        Object.assign(args, JSON.parse(await getStdin()));
+    }
+    else if (args.input != null) {
+        Object.assign(args, JSON.parse(fs.readFileSync(args.input, 'utf8')));
+    }
     if (!args.id)
         throw new Error("Bad or missing --id for registered bot");
     if (!args.appId || !utils_1.uuidValidate(args.appId))

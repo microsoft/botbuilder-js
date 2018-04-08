@@ -3,6 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const program = require("commander");
 const validurl = require("valid-url");
 const chalk = require("chalk");
+const fs = require("fs-extra");
+const getStdin = require("get-stdin");
 const BotConfig_1 = require("./BotConfig");
 const linq_collections_1 = require("linq-collections");
 const utils_1 = require("./utils");
@@ -15,6 +17,8 @@ program
     .option('-a, --appId  <appid>', 'Microsoft AppId used for auth with the endpoint')
     .option('-p, --appPassword <password>', 'Microsoft app password used for auth with the endpoint')
     .option('-e, --endpoint <endpoint>', "url for the endpoint")
+    .option('--stdin', "arguments are passed in as JSON object via stdin")
+    .option('--input <jsonfile>', "arguments passed in as path to arguments in JSON format")
     .action((cmd, actions) => {
 });
 let args = program.parse(process.argv);
@@ -40,6 +44,12 @@ else {
     }
 }
 async function processConnectEndpointArgs(config) {
+    if (args.stdin) {
+        Object.assign(args, JSON.parse(await getStdin()));
+    }
+    else if (args.input != null) {
+        Object.assign(args, JSON.parse(fs.readFileSync(args.input, 'utf8')));
+    }
     if (!args.endpoint)
         throw new Error("missing --endpoint");
     if (!validurl.isWebUri(args.endpoint)) {
