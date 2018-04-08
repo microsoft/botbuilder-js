@@ -1,6 +1,8 @@
 import * as program from 'commander';
 import * as validurl from 'valid-url';
 import * as chalk from 'chalk';
+import * as fs from 'fs-extra';
+import * as getStdin from 'get-stdin';
 import { BotConfig, ServiceType } from './BotConfig';
 import { Enumerable, List, Dictionary } from 'linq-collections';
 import { uuidValidate } from './utils';
@@ -8,6 +10,8 @@ import { uuidValidate } from './utils';
 interface ConnectEndpointArgs extends IEndpointService {
     bot: string;
     secret: string;
+    stdin: boolean;
+    input?: string;
 }
 
 program
@@ -19,6 +23,8 @@ program
     .option('-a, --appId  <appid>', 'Microsoft AppId used for auth with the endpoint')
     .option('-p, --appPassword <password>', 'Microsoft app password used for auth with the endpoint')
     .option('-e, --endpoint <endpoint>', "url for the endpoint")
+    .option('--stdin', "arguments are passed in as JSON object via stdin")
+    .option('--input <jsonfile>', "arguments passed in as path to arguments in JSON format")
     .action((cmd, actions) => {
 
     });
@@ -47,6 +53,12 @@ if (process.argv.length < 3) {
 }
 
 async function processConnectEndpointArgs(config: BotConfig): Promise<BotConfig> {
+    if (args.stdin) {
+        Object.assign(args, JSON.parse(await getStdin()));
+    }
+    else if (args.input != null) {
+        Object.assign(args, JSON.parse(fs.readFileSync(<string>args.input, 'utf8')));
+    }
 
     if (!args.endpoint)
         throw new Error("missing --endpoint");

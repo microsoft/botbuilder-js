@@ -1,5 +1,7 @@
 import * as program from 'commander';
 import * as chalk from 'chalk';
+import * as fs from 'fs-extra';
+import * as getStdin from 'get-stdin';
 import { BotConfig, ServiceType } from './BotConfig';
 import { Enumerable, List, Dictionary } from 'linq-collections';
 import { uuidValidate } from './utils';
@@ -7,6 +9,8 @@ import { uuidValidate } from './utils';
 interface ConnectLuisArgs extends ILuisService {
     bot: string;
     secret: string;
+    stdin: boolean;
+    input?: string;
 }
 
 program
@@ -19,6 +23,8 @@ program
     .option('-v, --version <version>', 'version for the dispatch app, (example: 0.1)')
     .option('--subscriptionKey <subscriptionKey>', 'subscription key used for querying the dispatch model')
     .option('--authoringKey <authoringkey>', 'authoring key for using manipulating the dispatch model via the LUIS authoring API')
+    .option('--stdin', "arguments are passed in as JSON object via stdin")
+    .option('--input <jsonfile>', "arguments passed in as path to arguments in JSON format")
     .action((cmd, actions) => {
 
     });
@@ -47,6 +53,13 @@ if (process.argv.length < 3) {
 
 async function processConnectDispatch(config: BotConfig): Promise<BotConfig> {
     args.name = args.hasOwnProperty('name') ? args.name : config.name;
+
+    if (args.stdin) {
+        Object.assign(args, JSON.parse(await getStdin()));
+    }
+    else if (args.input != null) {
+        Object.assign(args, JSON.parse(fs.readFileSync(<string>args.input, 'utf8')));
+    }
 
     if (!args.hasOwnProperty('name'))
         throw new Error("Bad or missing --name");

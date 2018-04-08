@@ -2,6 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const program = require("commander");
 const chalk = require("chalk");
+const fs = require("fs-extra");
+const getStdin = require("get-stdin");
 const BotConfig_1 = require("./BotConfig");
 const utils_1 = require("./utils");
 program
@@ -12,6 +14,8 @@ program
     .option('-n, --name <name>', 'name for the QNA database')
     .option('-k, --kbid <kbid>', 'QnA Knowledgebase Id ')
     .option('--subscriptionKey <subscriptionKey>', 'subscriptionKey for calling the QnA service')
+    .option('--stdin', "arguments are passed in as JSON object via stdin")
+    .option('--input <jsonfile>', "arguments passed in as path to arguments in JSON format")
     .action((cmd, actions) => {
 });
 program.parse(process.argv);
@@ -39,6 +43,12 @@ else {
 }
 async function processConnectQnaArgs(config) {
     args.name = args.hasOwnProperty('name') ? args.name : config.name;
+    if (args.stdin) {
+        Object.assign(args, JSON.parse(await getStdin()));
+    }
+    else if (args.input != null) {
+        Object.assign(args, JSON.parse(fs.readFileSync(args.input, 'utf8')));
+    }
     if (!args.kbid || !utils_1.uuidValidate(args.kbid))
         throw new Error("bad or missing --kbid");
     if (!args.hasOwnProperty('name'))

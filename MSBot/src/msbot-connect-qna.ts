@@ -1,5 +1,7 @@
 import * as program from 'commander';
 import * as chalk from 'chalk';
+import * as fs from 'fs-extra';
+import * as getStdin from 'get-stdin';
 import { BotConfig, ServiceType } from './BotConfig';
 import { Enumerable, List, Dictionary } from 'linq-collections';
 import { uuidValidate } from './utils';
@@ -7,6 +9,8 @@ import { uuidValidate } from './utils';
 interface ConnectQnaArgs extends IQnAService{
     bot: string;
     secret: string;
+    stdin: boolean;
+    input?: string;
 }
 
 program
@@ -17,6 +21,8 @@ program
     .option('-n, --name <name>', 'name for the QNA database')
     .option('-k, --kbid <kbid>', 'QnA Knowledgebase Id ')
     .option('--subscriptionKey <subscriptionKey>', 'subscriptionKey for calling the QnA service')
+    .option('--stdin', "arguments are passed in as JSON object via stdin")
+    .option('--input <jsonfile>', "arguments passed in as path to arguments in JSON format")
     .action((cmd, actions) => {
 
     });
@@ -47,6 +53,13 @@ if (process.argv.length < 3) {
 
 async function processConnectQnaArgs(config: BotConfig): Promise<BotConfig> {
     args.name = args.hasOwnProperty('name') ? args.name : config.name;
+
+    if (args.stdin) {
+        Object.assign(args, JSON.parse(await getStdin()));
+    }
+    else if (args.input != null) {
+        Object.assign(args, JSON.parse(fs.readFileSync(<string>args.input, 'utf8')));
+    }
 
     if (!args.kbid || !uuidValidate(args.kbid))
         throw new Error("bad or missing --kbid");
