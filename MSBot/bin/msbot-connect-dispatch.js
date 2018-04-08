@@ -23,7 +23,7 @@ if (process.argv.length < 3) {
 else {
     if (!args.bot) {
         BotConfig_1.BotConfig.LoadBotFromFolder(process.cwd(), args.secret)
-            .then(processConnectDispatchArgs)
+            .then(processConnectDispatch)
             .catch((reason) => {
             console.error(chalk.default.redBright(reason.toString().split("\n")[0]));
             program.help();
@@ -31,14 +31,14 @@ else {
     }
     else {
         BotConfig_1.BotConfig.Load(args.bot, args.secret)
-            .then(processConnectDispatchArgs)
+            .then(processConnectDispatch)
             .catch((reason) => {
             console.error(chalk.default.redBright(reason.toString().split("\n")[0]));
             program.help();
         });
     }
 }
-async function processConnectDispatchArgs(config) {
+async function processConnectDispatch(config) {
     args.name = args.hasOwnProperty('name') ? args.name : config.name;
     if (!args.hasOwnProperty('name'))
         throw new Error("Bad or missing --name");
