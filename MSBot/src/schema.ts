@@ -1,6 +1,6 @@
 
 interface IConnectedService {
-    // type of the service (LUIS, QnA, etc.)
+    // ServiceType of the service (LUIS, QnA, etc.)
     type: string;
 
     // Friendly name for the service
@@ -12,7 +12,7 @@ interface IConnectedService {
 
 
 interface IEndpointService extends IConnectedService {
-    // type = ServiceTypes.Luis
+    // type = ServiceTypes.Endpoint
     // id = bot id
 
     // MSA Appid
@@ -26,7 +26,7 @@ interface IEndpointService extends IConnectedService {
 }
 
 interface IAzureBotService extends IConnectedService {
-    // type = ServiceTypes.Luis
+    // type = ServiceTypes.AzureBotService
     // id = bot id
 
     // MSA Appid
@@ -57,7 +57,7 @@ interface ILuisService extends IConnectedService {
 }
 
 interface IDispatchService extends IConnectedService {
-    // type = ServiceTypes.Luis
+    // type = ServiceTypes.Dispatch
     // id = appid
 
     // luis appid
@@ -91,7 +91,8 @@ interface IBotConfig {
     // description of the bot
     description: string;
 
-    // secret secret
+    // encrypted guid used to validate password is the same,
+    // you need to be able to decrypt this key with passed in secret before we will use the secret to encrypt new values
     secretKey: string;
 
     // connected services for the bot
