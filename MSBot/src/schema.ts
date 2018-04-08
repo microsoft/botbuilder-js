@@ -7,11 +7,11 @@ interface IConnectedService {
     name: string;
 
     // unique Id for the service (appid, etc)
-    id: string;
+    id?: string;
 }
 
 
-interface ILocalhostService extends IConnectedService {
+interface IEndpointService extends IConnectedService {
     // type = ServiceTypes.Luis
     // id = bot id
 
@@ -49,6 +49,26 @@ interface ILuisService extends IConnectedService {
     // authoring key for using authoring api
     authoringKey: string;
 
+    // subscription key for using calling model api for predictions
+    subscriptionKey: string;
+
+    // version of the application
+    version: string;
+}
+
+interface IDispatchService extends IConnectedService {
+    // type = ServiceTypes.Luis
+    // id = appid
+
+    // luis appid
+    appId: string;
+
+    // authoring key for using authoring api
+    authoringKey: string;
+
+    // subscription key for using calling model api for predictions
+    subscriptionKey: string;
+
     // version of the application
     version: string;
 }
@@ -70,6 +90,9 @@ interface IBotConfig {
 
     // description of the bot
     description: string;
+
+    // secret secret
+    secretKey: string;
 
     // connected services for the bot
     services: IConnectedService[];

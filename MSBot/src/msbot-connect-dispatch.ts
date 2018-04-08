@@ -10,15 +10,15 @@ interface ConnectLuisArgs extends ILuisService {
 }
 
 program
-    .name("msbot connect luis")
-    .description('Connect the bot to a LUIS application')
+    .name("msbot connect dispatch")
+    .description('Connect the bot to a dispatch model')
     .option('-b, --bot <path>', "path to bot file.  If omitted, local folder will look for a .bot file")
     .option('--secret <secret>', 'bot file secret password for encrypting service secrets')
-    .option('-n, --name <name>', 'name for the LUIS app')
-    .option('-a, --appId <appid>', 'AppId for the LUIS App')
-    .option('-v, --version <version>', 'version for the LUIS App, (example: v0.1)')
-    .option('--subscriptionKey <subscriptionKey>', 'subscription key used for querying a LUIS model')
-    .option('--authoringKey <authoringkey>', 'authoring key for using manipulating LUIS apps via the authoring API')
+    .option('-n, --name <name>', 'name for the dispatch')
+    .option('-a, --appId <appid>', 'LUID AppId for the dispatch app')
+    .option('-v, --version <version>', 'version for the dispatch app, (example: 0.1)')
+    .option('--subscriptionKey <subscriptionKey>', 'subscription key used for querying the dispatch model')
+    .option('--authoringKey <authoringkey>', 'authoring key for using manipulating the dispatch model via the LUIS authoring API')
     .action((cmd, actions) => {
 
     });
@@ -30,14 +30,14 @@ if (process.argv.length < 3) {
 } else {
     if (!args.bot) {
         BotConfig.LoadBotFromFolder(process.cwd(), args.secret)
-            .then(processConnectLuisArgs)
+            .then(processConnectDispatchArgs)
             .catch((reason) => {
                 console.error(chalk.default.redBright(reason.toString().split("\n")[0]));
                 program.help();
             });
     } else {
         BotConfig.Load(args.bot, args.secret)
-            .then(processConnectLuisArgs)
+            .then(processConnectDispatchArgs)
             .catch((reason) => {
                 console.error(chalk.default.redBright(reason.toString().split("\n")[0]));
                 program.help();
@@ -45,7 +45,7 @@ if (process.argv.length < 3) {
     }
 }
 
-async function processConnectLuisArgs(config: BotConfig): Promise<BotConfig> {
+async function processConnectDispatchArgs(config: BotConfig): Promise<BotConfig> {
     args.name = args.hasOwnProperty('name') ? args.name : config.name;
 
     if (!args.hasOwnProperty('name'))
@@ -64,8 +64,8 @@ async function processConnectLuisArgs(config: BotConfig): Promise<BotConfig> {
         throw new Error("bad or missing --subscriptionKey");
 
     // add the service
-    config.connectService(<ILuisService>{
-        type: ServiceType.Luis,
+    config.connectService(<IDispatchService>{
+        type: ServiceType.Dispatch,
         name: args.name,
         id: args.appId,
         appId: args.appId,

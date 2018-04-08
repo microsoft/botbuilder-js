@@ -12,7 +12,7 @@ program
 });
 let parsed = program.parse(process.argv);
 if (!parsed.bot) {
-    BotConfig_1.BotConfig.LoadBotFromFolder(process.cwd())
+    BotConfig_1.BotConfig.LoadBotFromFolder(process.cwd(), parsed.secret)
         .then(processListArgs)
         .catch((reason) => {
         console.error(chalk.default.redBright(reason.toString().split("\n")[0]));
@@ -20,7 +20,7 @@ if (!parsed.bot) {
     });
 }
 else {
-    BotConfig_1.BotConfig.Load(parsed.bot)
+    BotConfig_1.BotConfig.Load(parsed.bot, parsed.secret)
         .then(processListArgs)
         .catch((reason) => {
         console.error(chalk.default.redBright(reason.toString().split("\n")[0]));
@@ -28,18 +28,17 @@ else {
     });
 }
 async function processListArgs(config) {
+    let services = config.services;
     if (parsed.secret) {
-        config.cryptoPassword = parsed.secret;
-        for (let service of config.services) {
-            for (var prop in service) {
+        for (let service of services) {
+            let encryptedProperties = config.getEncryptedProperties(service.type);
+            for (var prop of encryptedProperties) {
                 let val = service[prop];
-                if (typeof val === "string") {
-                    service[prop] = config.decryptValue(val);
-                }
+                service[prop] = config.decryptValue(val);
             }
         }
     }
-    console.log(JSON.stringify(config.services, null, 4));
+    console.log(JSON.stringify(services, null, 4));
     return config;
 }
 //# sourceMappingURL=msbot-list.js.map

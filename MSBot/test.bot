@@ -1,22 +1,31 @@
 {
     "name": "test",
     "description": "",
+    "secretKey": "18407f8cc2c6d44b9e34319af1c97bc947f8d941983c07eaed16a5aa48634f18e07da0101f7bb05b7b4cd82c9835cd5d",
     "services": [
         {
-            "type": "localhost",
-            "name": "test",
-            "endpoint": "http://localhost:3978/api/messages",
-            "id": "http://localhost:3978/api/messages",
-            "appId": "",
-            "appPassword": ""
+            "type": "endpoint",
+            "id": "3",
+            "name": "test (3)",
+            "appId": "38469968-072a-4074-b3bd-d3fed823faa0",
+            "appPassword": "55adff9cdb189624c9e108f2cc49f4ea",
+            "endpoint": "http://foo.com/api/messages2"
         },
         {
-            "type": "luis",
-            "name": "My Luis Model",
-            "id": "sdfkjid",
-            "appId": "sdfkjid",
-            "version": "v0.1",
-            "authoringKey": "~^~0d0e838796b7e0e8a06e962e1f6d9dfd~^~"
+            "type": "endpoint",
+            "id": "2",
+            "name": "test (2)",
+            "appId": "38469968-072a-4074-b3bd-d3fed823faa0",
+            "appPassword": "55adff9cdb189624c9e108f2cc49f4ea",
+            "endpoint": "http://foo.com/api/messages2"
+        },
+        {
+            "type": "dispatch",
+            "name": "MyDispatch",
+            "id": "13f35f0d-d199-466d-a441-52846f3a9401",
+            "appId": "13f35f0d-d199-466d-a441-52846f3a9401",
+            "subscriptionKey": "b4fe2434f5eaaab8374548a1592f2e8d4df53bff1116ffb4b0239cffc3c8f6f5238fc00952866cf2cbad416559e738ff",
+            "authoringKey": "b4fe2434f5eaaab8374548a1592f2e8d4df53bff1116ffb4b0239cffc3c8f6f5238fc00952866cf2cbad416559e738ff"
         }
     ]
 }

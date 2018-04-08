@@ -4,6 +4,7 @@ const program = require("commander");
 const validurl = require("valid-url");
 const chalk = require("chalk");
 const BotConfig_1 = require("./BotConfig");
+const utils_1 = require("./utils");
 program
     .name("msbot connect azure")
     .description('Connect the bot to Azure Bot Service')
@@ -22,7 +23,7 @@ if (process.argv.length < 3) {
 }
 else {
     if (!args.bot) {
-        BotConfig_1.BotConfig.LoadBotFromFolder(process.cwd())
+        BotConfig_1.BotConfig.LoadBotFromFolder(process.cwd(), args.secret)
             .then(processConnectAzureArgs)
             .catch((reason) => {
             console.error(chalk.default.redBright(reason.toString().split("\n")[0]));
@@ -30,7 +31,7 @@ else {
         });
     }
     else {
-        BotConfig_1.BotConfig.Load(args.bot)
+        BotConfig_1.BotConfig.Load(args.bot, args.secret)
             .then(processConnectAzureArgs)
             .catch((reason) => {
             console.error(chalk.default.redBright(reason.toString().split("\n")[0]));
@@ -39,19 +40,16 @@ else {
     }
 }
 async function processConnectAzureArgs(config) {
-    if (args.secret) {
-        config.cryptoPassword = args.secret;
-    }
     if (!args.id)
-        throw new Error("Bad or missing id");
-    if (!args.appId)
-        throw new Error("Bad or missing appId");
+        throw new Error("Bad or missing --id for registered bot");
+    if (!args.appId || !utils_1.uuidValidate(args.appId))
+        throw new Error("Bad or missing --appId");
     if (!args.appPassword)
-        throw new Error("Bad or missing appPassword");
+        throw new Error("Bad or missing --appPassword");
     if (!args.endpoint)
-        throw new Error("missing endpoint");
+        throw new Error("missing --endpoint");
     if (!validurl.isWebUri(args.endpoint))
-        throw new Error(`${args.endpoint} is not a valid url`);
+        throw new Error(`--endpoint ${args.endpoint} is not a valid url`);
     config.connectService({
         type: BotConfig_1.ServiceType.AzureBotService,
         id: args.id,
