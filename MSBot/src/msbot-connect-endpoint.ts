@@ -6,6 +6,7 @@ import * as getStdin from 'get-stdin';
 import { BotConfig, ServiceType } from './BotConfig';
 import { Enumerable, List, Dictionary } from 'linq-collections';
 import { uuidValidate } from './utils';
+import { IConnectedService, ILuisService, IDispatchService, IAzureBotService, IBotConfig, IEndpointService, IQnAService } from './schema';
 
 interface ConnectEndpointArgs extends IEndpointService {
     bot: string;

@@ -7,6 +7,7 @@ import * as path from 'path';
 import * as fsx from 'fs-extra';
 import { Enumerable, List, Dictionary } from 'linq-collections';
 import { encode } from 'punycode';
+import { IBotConfig, IConnectedService } from './schema';
 
 export enum ServiceType {
     Endpoint = "endpoint",

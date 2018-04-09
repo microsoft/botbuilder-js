@@ -39,6 +39,7 @@
     <TypeScriptCompile Include="src\BotConfig.ts" />
     <Content Include="package.json" />
     <Content Include="README.md" />
+    <TypeScriptCompile Include="src\index.ts" />
     <TypeScriptCompile Include="src\msbot-clone.ts" />
     <TypeScriptCompile Include="src\msbot-connect-azure.ts" />
     <TypeScriptCompile Include="src\msbot-connect-endpoint.ts" />

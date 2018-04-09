@@ -1,5 +1,5 @@
 
-interface IConnectedService {
+export interface IConnectedService {
     // ServiceType of the service (LUIS, QnA, etc.)
     type: string;
 
@@ -11,7 +11,7 @@ interface IConnectedService {
 }
 
 
-interface IEndpointService extends IConnectedService {
+export interface IEndpointService extends IConnectedService {
     // type = ServiceTypes.Endpoint
     // id = bot id
 
@@ -25,7 +25,7 @@ interface IEndpointService extends IConnectedService {
     endpoint: string;
 }
 
-interface IAzureBotService extends IConnectedService {
+export interface IAzureBotService extends IConnectedService {
     // type = ServiceTypes.AzureBotService
     // id = bot id
 
@@ -39,7 +39,7 @@ interface IAzureBotService extends IConnectedService {
     endpoint: string;
 }
 
-interface ILuisService extends IConnectedService {
+export interface ILuisService extends IConnectedService {
     // type = ServiceTypes.Luis
     // id = appid
 
@@ -56,7 +56,7 @@ interface ILuisService extends IConnectedService {
     version: string;
 }
 
-interface IDispatchService extends IConnectedService {
+export interface IDispatchService extends IConnectedService {
     // type = ServiceTypes.Dispatch
     // id = appid
 
@@ -73,7 +73,7 @@ interface IDispatchService extends IConnectedService {
     version: string;
 }
 
-interface IQnAService extends IConnectedService {
+export interface IQnAService extends IConnectedService {
     // type=Servicestypes.QnA
     // id = appid for the QnA service
 
@@ -84,7 +84,7 @@ interface IQnAService extends IConnectedService {
     subscriptionKey: string;
 }
 
-interface IBotConfig {
+export interface IBotConfig {
     // name of the bot
     name: string;
 
