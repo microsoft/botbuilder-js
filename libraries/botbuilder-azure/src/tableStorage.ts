@@ -2,7 +2,7 @@
  * @module botbuilder-azure
  */
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 import { Storage, StoreItems, StoreItem } from 'botbuilder';
@@ -34,6 +34,7 @@ let checkedTables: { [name: string]: Promise<azure.TableService.TableResult>; } 
  * ```
 */
 export class TableStorage implements Storage {
+
     private settings: TableStorageSettings;
     private tableService: TableServiceAsync;
 
@@ -47,153 +48,163 @@ export class TableStorage implements Storage {
         this.tableService = this.createTableService(this.settings.storageAccountOrConnectionString, this.settings.storageAccessKey, this.settings.host)
     }
 
-    private sanitizeKey(key: string): string {
-        let badChars = ['\\', '?', '/', '#', '\t', '\n', '\r'];
-        let sb = '';
-        for (let iCh = 0; iCh < key.length; iCh++) {
-            let ch = key[iCh];
-            let isBad: boolean = false;
-            for (let iBad in badChars) {
-                let badChar = badChars[iBad];
-                if (ch === badChar) {
-                    sb += '%' + ch.charCodeAt(0).toString(16);
-                    isBad = true;
-                    break;
-                }
-            }
-            if (!isBad)
-                sb += ch;
-        }
-        return sb;
-    }
-
     /** Ensure the table is created. */
-    public ensureTable(): Promise<azure.TableService.TableResult> {
+    private ensureTable(): Promise<azure.TableService.TableResult> {
         if (!checkedTables[this.settings.tableName])
             checkedTables[this.settings.tableName] = this.tableService.createTableIfNotExistsAsync(this.settings.tableName);
         return checkedTables[this.settings.tableName];
     }
 
-    /** Delete backing table (mostly used for unit testing.) */
-    public deleteTable(): Promise<boolean> {
-        if (checkedTables[this.settings.tableName])
-            delete checkedTables[this.settings.tableName];
-        return this.tableService.deleteTableIfExistsAsync(this.settings.tableName);
-    }
-
-    /** 
+    /**
      * Loads store items from storage
      *
-     * @param keys Array of item keys to read from the store. 
+     * @param keys Array of item keys to read from the store.
      **/
     public read(keys: string[]): Promise<StoreItems> {
         let storeItems: StoreItems = {};
+        let tableService = this.tableService;
+        let tableName = this.settings.tableName;
         return this.ensureTable()
             .then((created) => {
-                let promises: Promise<void>[] = [];
+                let promises = keys.map(key => {
+                    // get all items with the same PK as the sanitized(key)
+                    let query = new azure.TableQuery()
+                        .where('PartitionKey eq ?', sanitizeKey(key));
 
-                // foreach key, get a promise for the entity
-                for (let iKey in keys) {
-                    let key = keys[iKey];
-                    var entityKey = this.sanitizeKey(key);
+                    // convert chunks back into StoreItemContainer for reading
+                    return this.executeQuery<StoreItemEntity>(this.tableService, this.settings.tableName, query)
+                        .then(chunks => chunks.length ? StoreItemContainer.join(chunks) : null);
+                });
 
-                    // fetch entity
-                    promises.push(this.tableService.retrieveEntityAsync<void>(this.settings.tableName, entityKey, '0')
-                        .then((result) => {
-                            let entity: any = result;
-                            let storeItem: StoreItem = JSON.parse(entity.json._);
-                            storeItem.eTag = entity['.metadata'].etag;
-                            storeItems[key] = storeItem;
-                        },
-                        (error) => {
-                            if ((<any>error).statusCode === 404)
-                                // we treat as null result
-                                return;
-                            else
-                                throw error;
-                        }));
-                }
-                // wait for all promises to complete
                 return Promise.all(promises)
-                    // return storeItems result
-                    .then(result => storeItems);
+                    .then(results => results.filter(e => !!e))           // ignore null returns
+                    .then(results => results.reduce((acc, e) => {        // as StoreItems
+                        acc[e.key] = e.obj;
+                        return acc;
+                    }, {}));
             });
     };
 
-
-    /** 
+    /**
      * Saves store items to storage.
      *
-     * @param changes Map of items to write to storage.  
+     * @param changes Map of items to write to storage.
      **/
     public write(changes: StoreItems): Promise<void> {
         return this.ensureTable()
             .then((created) => {
-                let promises: Promise<azure.TableService.EntityMetadata>[] = [];
-                // foreach key => change
-                for (let key in changes) {
-                    let storeItem: StoreItem = changes[key];
-                    var entityKey = this.sanitizeKey(key);
-                    // create entity for the json
-                    let entGen = azure.TableUtilities.entityGenerator;
-                    let entity = {
-                        PartitionKey: entGen.String(entityKey),
-                        RowKey: entGen.String('0'),
-                        json: entGen.String(JSON.stringify(storeItem))
-                    };
-                    let metadata = { etag: storeItem.eTag };
-                    (<any>entity)['.metadata'] = metadata;
+                let promises = Object.keys(changes)
+                    .map(key => new StoreItemContainer(key, changes[key]))
+                    .map(entity => {
 
-                    if (storeItem.eTag == null || storeItem.eTag == "*") {
-                        // if new item or * then insert or replace unconditionaly
-                        promises.push(this.tableService.insertOrReplaceEntityAsync(this.settings.tableName, entity));
-                    }
-                    else if (storeItem.eTag.length > 0) {
-                        // if we have an etag, do opt. concurrency replace
-                        promises.push(this.tableService.replaceEntityAsync(this.settings.tableName, entity));
-                    }
-                    else {
-                        // bogus etag, it's empty string
-                        throw new Error('etag empty');
-                    }
-                }
+                        // Split entity into smaller chunks that fit within column max size and update (1)
+                        // Then proceed to delete any remaining chunks from a previous version (2)
+
+                        // (1)
+                        let writePromises = entity.split().map(chunk => {
+                            let eTag = chunk['.metadata'] ? chunk['.metadata'].etag : null;
+                            if (eTag === null || eTag === "*") {
+                                // When replacing with optimistic update, only check for the first chunk and replace the others directly
+                                return this.tableService.insertOrReplaceEntityAsync(this.settings.tableName, chunk)
+                                    .then(() => { });            // void
+                            }
+                            else if (eTag.length > 0) {
+                                // Optimistic Update (first chunk only)
+                                return this.tableService.replaceEntityAsync(this.settings.tableName, chunk)
+                                    .then(() => { });            // void
+                            }
+                            else {
+                                // TODO: Extract check into StoreItemContainer
+                                // bogus etag, it's empty string
+                                throw new Error(`Etag for ${chunk.RealKey} is empty.`);
+                            }
+                        });
+
+                        // (2) Delete any remaining chunks from a previous obj version
+                        var maxRowKey = writePromises.length;
+                        let query = new azure.TableQuery()
+                            .select('PartitionKey', 'RowKey')
+                            .where('PartitionKey eq ? && RowKey >= ?', sanitizeKey(entity.key), maxRowKey.toString());
+
+                        // Retrieve and delete each row, wrap a single promise
+                        var deleteRemainingsPromise = this.executeQuery<any>(this.tableService, this.settings.tableName, query)
+                            .then(rows => Promise.all(
+                                rows.map(row => this.deleteRow(row))))
+                            .then(() => { });
+
+                        return writePromises.concat(deleteRemainingsPromise);
+
+                    }).reduce(flatten, []);         // flatten
+
                 return Promise.all(promises)
-                    .then(result => { });
+                    .then(result => { });           // void
             });
     };
 
-    /** 
+    /**
      * Removes store items from storage
      *
-     * @param keys Array of item keys to remove from the store. 
+     * @param keys Array of item keys to remove from the store.
      **/
     public delete(keys: string[]): Promise<void> {
         return this.ensureTable()
             .then((created) => {
-                let promises: Promise<void>[] = [];
-                let entGen = azure.TableUtilities.entityGenerator;
-                // foreach key to delete
-                for (let iKey in keys) {
-                    let key = keys[iKey];
-                    let entityKey = this.sanitizeKey(key);
-                    // create entity for it with * etag
-                    let entity = {
-                        PartitionKey: entGen.String(entityKey),
-                        RowKey: entGen.String('0')
-                    };
-                    let metadata = { etag: '*' };
-                    (<any>entity)['.metadata'] = metadata;
-                    // delete it
-                    promises.push(this.tableService.deleteEntityAsync(this.settings.tableName, entity)
-                        .catch(error => { }));
-                }
-                // wait for promises to complete
+
+                var promises = keys.map(key => {
+
+                    // retrieve all RowKeys for this PK
+                    let query = new azure.TableQuery()
+                        .select('PartitionKey', 'RowKey')
+                        .where('PartitionKey eq ?', sanitizeKey(key));
+
+                    return this.executeQuery<any>(this.tableService, this.settings.tableName, query)
+                        .then((rows) => Promise.all(
+                            rows.map(row => this.deleteRow(row))))
+
+                }).reduce(flatten, []);
+
                 return Promise.all(promises)
-                    .then(result => { });
+                    .then(() => { });            // void
             });
     }
 
-    protected createTableService(storageAccountOrConnectionString: string, storageAccessKey: string, host: any): TableServiceAsync {
+    private executeQuery<T>(tableService: TableServiceAsync, tableName: string, query: azure.TableQuery): Promise<T[]> {
+        return new Promise<T[]>((resolve, reject) => {
+            let collected: T[] = [];
+            let getNext = function (query, token: azure.TableService.TableContinuationToken = null) {
+                tableService.queryEntitiesAsync<T>(tableName, query, token, null)
+                    .then(queryResults => {
+
+                        // append items
+                        collected = collected.concat(queryResults.entries);
+
+                        if (queryResults.continuationToken) {
+                            // continue reading
+                            getNext(query, queryResults.continuationToken);
+                        } else {
+                            // collect and return
+                            resolve(collected);
+                        }
+                    }).catch(reject);
+            }
+
+            getNext(query);
+        });
+    }
+
+    private deleteRow(row: any): Promise<void> {
+        // delete each RowKey
+        let entity = {
+            PartitionKey: row.PartitionKey,
+            RowKey: row.RowKey
+        };
+        entity['.metadata'] = { etag: '*' };
+
+        // enqueue deletion
+        return this.tableService.deleteEntityAsync(this.settings.tableName, entity)
+    }
+
+    private createTableService(storageAccountOrConnectionString: string, storageAccessKey: string, host: any): TableServiceAsync {
         const tableService = storageAccountOrConnectionString ? azure.createTableService(storageAccountOrConnectionString, storageAccessKey, host) : azure.createTableService();
 
         // create TableServiceAsync by using denodeify to create promise wrappers around cb functions
@@ -203,7 +214,8 @@ export class TableStorage implements Storage {
             retrieveEntityAsync: this.denodeify(tableService, tableService.retrieveEntity),
             insertOrReplaceEntityAsync: this.denodeify(tableService, tableService.insertOrReplaceEntity),
             replaceEntityAsync: this.denodeify(tableService, tableService.replaceEntity),
-            deleteEntityAsync: this.denodeify(tableService, tableService.deleteEntity)
+            deleteEntityAsync: this.denodeify(tableService, tableService.deleteEntity),
+            queryEntitiesAsync: this.denodeify(tableService, tableService.queryEntities)
         } as any;
     }
 
@@ -218,7 +230,6 @@ export class TableStorage implements Storage {
     }
 }
 
-
 // Promise based methods created using denodeify function
 export interface TableServiceAsync extends azure.TableService {
     createTableIfNotExistsAsync(table: string): Promise<azure.TableService.TableResult>;
@@ -228,5 +239,85 @@ export interface TableServiceAsync extends azure.TableService {
     replaceEntityAsync<T>(table: string, entityDescriptor: T): Promise<azure.TableService.EntityMetadata>;
     insertOrReplaceEntityAsync<T>(table: string, entityDescriptor: T): Promise<azure.TableService.EntityMetadata>;
     deleteEntityAsync<T>(table: string, entityDescriptor: T): Promise<void>;
+
+    queryEntitiesAsync<T>(table: string, tableQuery: azure.TableQuery, currentToken: azure.TableService.TableContinuationToken, options: azure.TableService.TableEntityRequestOptions): Promise<azure.TableService.QueryEntitiesResult<T>>
 }
 
+const chunkMaxSize: Number = 32 * 1024;
+export class StoreItemContainer {
+    public readonly key: string;
+    public readonly obj: any;
+    public readonly eTag: string;
+
+    constructor(key: string, obj: any) {
+        this.key = key;
+        this.obj = obj;
+        this.eTag = !!obj.eTag ? obj.eTag : null;
+    }
+
+    public split(): StoreItemEntity[] {
+        let entGen = azure.TableUtilities.entityGenerator
+
+        let json = JSON.stringify(this.obj);
+        let chunks = splitSlice(json, chunkMaxSize);
+        return chunks.map((chunk, ix) => ({
+            PartitionKey: entGen.String(sanitizeKey(this.key)),
+            RowKey: entGen.String(ix.toString()),
+            RealKey: entGen.String(this.key),
+            Json: entGen.String(chunk),
+            '.metadata': !!this.eTag && ix === 0 ? { etag: this.eTag } : null           // save etag as metadata for first element only
+        }));
+    }
+
+    public static join(chunks: StoreItemEntity[]): StoreItemContainer {
+        let ordered = chunks.sort((i1, i2) => parseInt(i1.RowKey._, 10) - parseInt(i2.RowKey._, 10));
+        let key = ordered[0].RealKey._;
+        let eTag = ordered[0]['.metadata'] ? ordered[0]['.metadata'].etag : null;
+        let json = ordered.map(o => o.Json._).join('');
+
+        let obj: any = JSON.parse(json);
+        if (eTag) obj.eTag = eTag;
+
+        return new StoreItemContainer(key, obj);
+    }
+}
+
+export interface StoreItemEntity {
+    PartitionKey: azure.TableUtilities.entityGenerator.EntityProperty<string>,
+    RowKey: azure.TableUtilities.entityGenerator.EntityProperty<string>,
+    RealKey: azure.TableUtilities.entityGenerator.EntityProperty<string>,
+    Json: azure.TableUtilities.entityGenerator.EntityProperty<string>,
+}
+
+// Helpers
+function sanitizeKey(key: string): string {
+    let badChars = ['\\', '?', '/', '#', '\t', '\n', '\r'];
+    let sb = '';
+    for (let iCh = 0; iCh < key.length; iCh++) {
+        let ch = key[iCh];
+        let isBad: boolean = false;
+        for (let iBad in badChars) {
+            let badChar = badChars[iBad];
+            if (ch === badChar) {
+                sb += '%' + ch.charCodeAt(0).toString(16);
+                isBad = true;
+                break;
+            }
+        }
+        if (!isBad)
+            sb += ch;
+    }
+    return sb;
+}
+
+function splitSlice(str, len) {
+    let chunks: string[] = [];
+    let strLen: number = str.length;
+    for (var ix: number = 0; ix < strLen; ix += len) {
+        chunks.push(str.slice(ix, len + ix));
+    }
+
+    return chunks;
+}
+
+const flatten = (acc, curr) => acc.concat(curr);

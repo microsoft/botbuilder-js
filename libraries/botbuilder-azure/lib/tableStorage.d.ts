@@ -35,11 +35,8 @@ export declare class TableStorage implements Storage {
      * @param settings (Optional) setting to configure the provider.
      */
     constructor(settings: TableStorageSettings);
-    private sanitizeKey(key);
     /** Ensure the table is created. */
-    ensureTable(): Promise<azure.TableService.TableResult>;
-    /** Delete backing table (mostly used for unit testing.) */
-    deleteTable(): Promise<boolean>;
+    private ensureTable();
     /**
      * Loads store items from storage
      *
@@ -58,7 +55,9 @@ export declare class TableStorage implements Storage {
      * @param keys Array of item keys to remove from the store.
      **/
     delete(keys: string[]): Promise<void>;
-    protected createTableService(storageAccountOrConnectionString: string, storageAccessKey: string, host: any): TableServiceAsync;
+    private executeQuery<T>(tableService, tableName, query);
+    private deleteRow(row);
+    private createTableService(storageAccountOrConnectionString, storageAccessKey, host);
     private denodeify<T>(thisArg, fn);
 }
 export interface TableServiceAsync extends azure.TableService {
@@ -68,4 +67,19 @@ export interface TableServiceAsync extends azure.TableService {
     replaceEntityAsync<T>(table: string, entityDescriptor: T): Promise<azure.TableService.EntityMetadata>;
     insertOrReplaceEntityAsync<T>(table: string, entityDescriptor: T): Promise<azure.TableService.EntityMetadata>;
     deleteEntityAsync<T>(table: string, entityDescriptor: T): Promise<void>;
+    queryEntitiesAsync<T>(table: string, tableQuery: azure.TableQuery, currentToken: azure.TableService.TableContinuationToken, options: azure.TableService.TableEntityRequestOptions): Promise<azure.TableService.QueryEntitiesResult<T>>;
+}
+export declare class StoreItemContainer {
+    readonly key: string;
+    readonly obj: any;
+    readonly eTag: string;
+    constructor(key: string, obj: any);
+    split(): StoreItemEntity[];
+    static join(chunks: StoreItemEntity[]): StoreItemContainer;
+}
+export interface StoreItemEntity {
+    PartitionKey: azure.TableUtilities.entityGenerator.EntityProperty<string>;
+    RowKey: azure.TableUtilities.entityGenerator.EntityProperty<string>;
+    RealKey: azure.TableUtilities.entityGenerator.EntityProperty<string>;
+    Json: azure.TableUtilities.entityGenerator.EntityProperty<string>;
 }
