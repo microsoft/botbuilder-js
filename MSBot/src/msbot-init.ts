@@ -5,6 +5,7 @@ import * as program from 'commander';
 import * as chalk from 'chalk';
 import { BotConfig, ServiceType } from './BotConfig';
 import * as readline from 'readline-sync';
+import { IConnectedService, ILuisService, IDispatchService, IAzureBotService, IBotConfig, IEndpointService, IQnAService } from './schema';
 
 interface InitArgs {
     name: string;
