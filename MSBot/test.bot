@@ -26,6 +26,14 @@
             "appId": "38469968-072a-4074-b3bd-d3fed823faa0",
             "appPassword": "89db41f9082d907d0a9155d0a8bbed17838921561b2183bfc9c84ad257cfbcdf2b0d5f852c3a8a685b0e93bda7e41e79",
             "endpoint": "http://foo.com/api/messages2"
+        },
+        {
+            "type": "endpoint",
+            "id": "3",
+            "name": "x",
+            "appId": null,
+            "appPassword": null,
+            "endpoint": "http://foo.com/pi"
         }
     ]
 }
