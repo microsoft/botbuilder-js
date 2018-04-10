@@ -178,6 +178,7 @@ class MicrosoftTranslator {
                 translation = this.postProcessor.fixTranslation(orgTexts[index], alignment, translation);
                 let result = { translatedText: translation };
                 results.push(result);
+                index += 1;
             });
             return Promise.resolve(results);
         });
@@ -208,11 +209,11 @@ class PostProcessTranslator {
             let srcStartIndex = parseInt(wordIndexes[0].split(':')[0]);
             let srcLength = parseInt(wordIndexes[0].split(':')[1]) - srcStartIndex + 1;
             let srcWrd = source.substr(srcStartIndex, srcLength);
-            let srcWrdIndex = srcWrds.findIndex(wrd => wrd == srcWrd);
+            let srcWrdIndex = srcWrds.findIndex(wrd => wrd.indexOf(srcWrd) != -1);
             let trgstartIndex = parseInt(wordIndexes[1].split(':')[0]);
             let trgLength = parseInt(wordIndexes[1].split(':')[1]) - trgstartIndex + 1;
             let trgWrd = target.substr(trgstartIndex, trgLength);
-            let trgWrdIndex = trgWrds.findIndex(wrd => wrd == trgWrd);
+            let trgWrdIndex = trgWrds.findIndex(wrd => wrd.indexOf(trgWrd) != -1);
             alignMap[srcWrdIndex] = trgWrdIndex;
         });
         return alignMap;
@@ -221,7 +222,11 @@ class PostProcessTranslator {
         let processedTranslation = target;
         if (!(typeof alignment[srcWrdIndex] === "undefined")) {
             let trgWrds = processedTranslation.split(' ');
-            trgWrds[alignment[srcWrdIndex]] = source.split(' ')[srcWrdIndex];
+            let appendTrailApostrophe = "";
+            if (trgWrds[alignment[srcWrdIndex]].indexOf("'") != -1) {
+                appendTrailApostrophe = "'" + trgWrds[alignment[srcWrdIndex]].split("'")[1];
+            }
+            trgWrds[alignment[srcWrdIndex]] = source.split(' ')[srcWrdIndex] + appendTrailApostrophe;
             processedTranslation = trgWrds.join(' ');
         }
         return processedTranslation;
@@ -247,9 +252,8 @@ class PostProcessTranslator {
         if (toBeReplaced.length > 0) {
             toBeReplaced.forEach(pattern => {
                 let regExp = new RegExp(pattern, "i");
-                let captureGroup = pattern.match('\(.*\)')[0].replace('(', '').replace(')', '');
                 let match = regExp.exec(sourceMessage);
-                let noTranslateStarChrIndex = match.index + match[0].toLowerCase().indexOf(captureGroup.toLowerCase());
+                let noTranslateStarChrIndex = match.index + match[0].indexOf(match[1]);
                 let wrdIndx = 0;
                 let chrIndx = 0;
                 let srcIndx = -1;

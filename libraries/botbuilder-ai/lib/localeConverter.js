@@ -123,7 +123,7 @@ class MicrosoftLocaleConverter {
             else if (type.includes('date') && type.includes('range')) {
                 moment = new Date(new Date(resolutionValues["start"]).getTime() + new Date().getTimezoneOffset() * 60 * 1000);
             }
-            else {
+            else { // Must be a time-only result with no date
                 moment = new Date();
                 moment.setHours(parseInt(String(resolutionValues['value']).substr(0, 2)));
                 moment.setMinutes(parseInt(String(resolutionValues['value']).substr(3, 2)));
