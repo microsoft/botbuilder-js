@@ -19,6 +19,6 @@
     "dispatch": "bin/dispatch"
   },
   "dependencies": {
-    "dotnet-2.0.0": "*"
+    "dotnet-2.0.0": "^1.4.4"
   }
 }
