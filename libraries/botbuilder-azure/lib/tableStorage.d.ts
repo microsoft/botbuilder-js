@@ -56,7 +56,7 @@ export declare class TableStorage implements Storage {
      **/
     delete(keys: string[]): Promise<void>;
     private executeQuery<T>(tableService, tableName, query);
-    private deleteRow(row);
+    private deleteInBatch(batch, query);
     private createTableService(storageAccountOrConnectionString, storageAccessKey, host);
     private denodeify<T>(thisArg, fn);
 }
@@ -68,6 +68,7 @@ export interface TableServiceAsync extends azure.TableService {
     insertOrReplaceEntityAsync<T>(table: string, entityDescriptor: T): Promise<azure.TableService.EntityMetadata>;
     deleteEntityAsync<T>(table: string, entityDescriptor: T): Promise<void>;
     queryEntitiesAsync<T>(table: string, tableQuery: azure.TableQuery, currentToken: azure.TableService.TableContinuationToken, options: azure.TableService.TableEntityRequestOptions): Promise<azure.TableService.QueryEntitiesResult<T>>;
+    executeBatchAsync(table: string, batch: azure.TableBatch): Promise<azure.TableService.BatchResult[]>;
 }
 export declare class StoreItemContainer {
     readonly key: string;

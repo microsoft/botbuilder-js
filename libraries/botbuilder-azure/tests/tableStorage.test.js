@@ -10,7 +10,11 @@ const testTableName = 'storagetests';
 testStorage = function () {
     var storage = new TableStorage({ tableName: testTableName, storageAccountOrConnectionString: connectionString });
 
-    after(cleanup);
+    // cleanup
+    after((done) => {
+        var table = new azureStorage.TableService(connectionString);
+        table.deleteTableIfExists(testTableName, done);
+    });
 
     /*
     before(function () {
@@ -24,6 +28,15 @@ testStorage = function () {
     });
     */
 
+    function handleError(err) {
+        if (err.code == 'ECONNREFUSED') {
+            console.log('skipping test because azure storage emulator is not running');
+        } else {
+            console.error('error', err);
+            assert(false, 'should not throw');
+        }
+    }
+
     function randomString(size) {
         var text = '';
         var chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
@@ -32,20 +45,6 @@ testStorage = function () {
         }
 
         return text;
-    }
-
-    function cleanup(done) {
-        var table = new azureStorage.TableService(connectionString);
-        table.deleteTableIfExists(testTableName, done);
-    }
-
-    function handleError(err) {
-        if (err.code == 'ECONNREFUSED') {
-            console.log('skipping test because azure storage emulator is not running');
-        } else {
-            console.error('error', err);
-            assert(false, 'should not throw');
-        }
     }
 
     it('read of unknown key', function () {

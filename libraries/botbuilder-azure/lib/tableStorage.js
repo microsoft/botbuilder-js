@@ -33,10 +33,7 @@ class TableStorage {
      **/
     read(keys) {
         let storeItems = {};
-        let tableService = this.tableService;
-        let tableName = this.settings.tableName;
-        return this.ensureTable()
-            .then((created) => {
+        return this.ensureTable().then((created) => {
             let promises = keys.map(key => {
                 // get all items with the same PK as the sanitized(key)
                 let query = new azure.TableQuery()
@@ -60,43 +57,35 @@ class TableStorage {
      * @param changes Map of items to write to storage.
      **/
     write(changes) {
-        return this.ensureTable()
-            .then((created) => {
+        return this.ensureTable().then((created) => {
             let promises = Object.keys(changes)
                 .map(key => new StoreItemContainer(key, changes[key]))
                 .map(entity => {
                 // Split entity into smaller chunks that fit within column max size and update (1)
-                // Then proceed to delete any remaining chunks from a previous version (2)
+                // Then proceed to delete any remaining chunks that may remain from a previous object version (2)
+                let batch = new azure.TableBatch();
                 // (1)
-                let writePromises = entity.split().map(chunk => {
+                let chunks = entity.split();
+                chunks.forEach(chunk => {
                     let eTag = chunk['.metadata'] ? chunk['.metadata'].etag : null;
                     if (eTag === null || eTag === "*") {
                         // When replacing with optimistic update, only check for the first chunk and replace the others directly
-                        return this.tableService.insertOrReplaceEntityAsync(this.settings.tableName, chunk)
-                            .then(() => { }); // void
+                        batch.insertOrReplaceEntity(chunk);
                     }
                     else if (eTag.length > 0) {
                         // Optimistic Update (first chunk only)
-                        return this.tableService.replaceEntityAsync(this.settings.tableName, chunk)
-                            .then(() => { }); // void
-                    }
-                    else {
-                        // TODO: Extract check into StoreItemContainer
-                        // bogus etag, it's empty string
-                        throw new Error(`Etag for ${chunk.RealKey} is empty.`);
+                        batch.replaceEntity(chunk);
                     }
                 });
                 // (2) Delete any remaining chunks from a previous obj version
-                var maxRowKey = writePromises.length;
+                let maxRowKey = chunks.length;
                 let query = new azure.TableQuery()
                     .select('PartitionKey', 'RowKey')
                     .where('PartitionKey eq ? && RowKey >= ?', sanitizeKey(entity.key), maxRowKey.toString());
-                // Retrieve and delete each row, wrap a single promise
-                var deleteRemainingsPromise = this.executeQuery(this.tableService, this.settings.tableName, query)
-                    .then(rows => Promise.all(rows.map(row => this.deleteRow(row))))
-                    .then(() => { });
-                return writePromises.concat(deleteRemainingsPromise);
-            }).reduce(flatten, []); // flatten
+                // Retrieve and (if found) add to batch for deletion
+                return this.deleteInBatch(batch, query)
+                    .then(batch => this.tableService.executeBatchAsync(this.settings.tableName, batch));
+            });
             return Promise.all(promises)
                 .then(result => { }); // void
         });
@@ -108,16 +97,17 @@ class TableStorage {
      * @param keys Array of item keys to remove from the store.
      **/
     delete(keys) {
-        return this.ensureTable()
-            .then((created) => {
-            var promises = keys.map(key => {
-                // retrieve all RowKeys for this PK
-                let query = new azure.TableQuery()
-                    .select('PartitionKey', 'RowKey')
-                    .where('PartitionKey eq ?', sanitizeKey(key));
-                return this.executeQuery(this.tableService, this.settings.tableName, query)
-                    .then((rows) => Promise.all(rows.map(row => this.deleteRow(row))));
-            }).reduce(flatten, []);
+        return this.ensureTable().then((created) => {
+            // for each key, remove its rows based on PK
+            let promises = keys.map(key => {
+                return this.deleteInBatch(new azure.TableBatch(), new azure.TableQuery().select('PartitionKey', 'RowKey')
+                    .where('PartitionKey eq ?', sanitizeKey(key)))
+                    .then(batch => {
+                    if (!batch.operations.length)
+                        return Promise.resolve([]); // no records (and operations) were generated from querying the PK
+                    return this.tableService.executeBatchAsync(this.settings.tableName, batch);
+                });
+            });
             return Promise.all(promises)
                 .then(() => { }); // void
         });
@@ -143,15 +133,22 @@ class TableStorage {
             getNext(query);
         });
     }
-    deleteRow(row) {
-        // delete each RowKey
-        let entity = {
-            PartitionKey: row.PartitionKey,
-            RowKey: row.RowKey
-        };
-        entity['.metadata'] = { etag: '*' };
-        // enqueue deletion
-        return this.tableService.deleteEntityAsync(this.settings.tableName, entity);
+    deleteInBatch(batch, query) {
+        // retrieve all row based on query
+        return this.executeQuery(this.tableService, this.settings.tableName, query)
+            .then(rows => {
+            // empty? return...
+            if (!rows.length)
+                return Promise.resolve(batch);
+            // batch delete using PrimaryKey and RowKey
+            // let batch = new azure.TableBatch();
+            rows.map(r => ({
+                PartitionKey: r.PartitionKey,
+                RowKey: r.RowKey,
+                '.metadata': { etag: '*' }
+            })).forEach(r => batch.deleteEntity(r));
+            return batch;
+        });
     }
     createTableService(storageAccountOrConnectionString, storageAccessKey, host) {
         const tableService = storageAccountOrConnectionString ? azure.createTableService(storageAccountOrConnectionString, storageAccessKey, host) : azure.createTableService();
@@ -163,7 +160,8 @@ class TableStorage {
             insertOrReplaceEntityAsync: this.denodeify(tableService, tableService.insertOrReplaceEntity),
             replaceEntityAsync: this.denodeify(tableService, tableService.replaceEntity),
             deleteEntityAsync: this.denodeify(tableService, tableService.deleteEntity),
-            queryEntitiesAsync: this.denodeify(tableService, tableService.queryEntities)
+            queryEntitiesAsync: this.denodeify(tableService, tableService.queryEntities),
+            executeBatchAsync: this.denodeify(tableService, tableService.executeBatch)
         };
     }
     // turn a cb based azure method into a Promisified one
@@ -231,7 +229,7 @@ function sanitizeKey(key) {
 function splitSlice(str, len) {
     let chunks = [];
     let strLen = str.length;
-    for (var ix = 0; ix < strLen; ix += len) {
+    for (let ix = 0; ix < strLen; ix += len) {
         chunks.push(str.slice(ix, len + ix));
     }
     return chunks;
