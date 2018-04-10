@@ -9,7 +9,9 @@ import { Storage, StoreItems } from 'botbuilder';
 import * as azure from 'azure-storage';
 /** Additional settings for configuring an instance of [TableStorage](../classes/botbuilder_azure_v4.tablestorage.html). */
 export interface TableStorageSettings {
-    /** Name of the table to use for storage. */
+    /** Name of the table to use for storage.
+     *  Check table name rules: https://docs.microsoft.com/en-us/rest/api/storageservices/Understanding-the-Table-Service-Data-Model?redirectedfrom=MSDN#table-names
+    */
     tableName: string;
     /** Storage access key. */
     storageAccessKey?: string;
@@ -24,19 +26,24 @@ export interface TableStorageSettings {
  * **Usage Example**
  *
  * ```javascript
+ * var storage = new TableStorage({
+ *     storageAccountOrConnectionString: 'UseDevelopmentStorage=true',
+ *     tableName: 'mybotstate'
+ *   });
+ *
+ * )
  * ```
 */
 export declare class TableStorage implements Storage {
     private settings;
     private tableService;
+    private tableCheck;
     /**
      * Creates a new instance of the storage provider.
      *
      * @param settings (Optional) setting to configure the provider.
      */
     constructor(settings: TableStorageSettings);
-    /** Ensure the table is created. */
-    private ensureTable();
     /**
      * Loads store items from storage
      *
@@ -55,8 +62,10 @@ export declare class TableStorage implements Storage {
      * @param keys Array of item keys to remove from the store.
      **/
     delete(keys: string[]): Promise<void>;
-    private executeQuery<T>(tableService, tableName, query);
-    private deleteInBatch(batch, query);
+    static SanitizeKey(key: string): string;
+    private ensureTable();
+    private executeQuery<T>(query);
+    private deleteInBatch(batch, deleteQuery);
     private createTableService(storageAccountOrConnectionString, storageAccessKey, host);
     private denodeify<T>(thisArg, fn);
 }
@@ -71,12 +80,14 @@ export interface TableServiceAsync extends azure.TableService {
     executeBatchAsync(table: string, batch: azure.TableBatch): Promise<azure.TableService.BatchResult[]>;
 }
 export declare class StoreItemContainer {
+    static readonly MaxRowSize: number;
     readonly key: string;
     readonly obj: any;
     readonly eTag: string;
     constructor(key: string, obj: any);
     split(): StoreItemEntity[];
     static join(chunks: StoreItemEntity[]): StoreItemContainer;
+    private sliceString(str, sliceLen);
 }
 export interface StoreItemEntity {
     PartitionKey: azure.TableUtilities.entityGenerator.EntityProperty<string>;

@@ -13,18 +13,21 @@ testStorage = function () {
     // cleanup
     after((done) => {
         var table = new azureStorage.TableService(connectionString);
-        table.deleteTableIfExists(testTableName, done);
+        table.deleteTableIfExists(testTableName, () => done());
     });
 
     // check & start emulator
     before(function () {
-        var emulatorPath = "c:/Program Files (x86)/Microsoft SDKs/Azure/Storage Emulator/azurestorageemulator.exe";
-        if (!fs.existsSync(emulatorPath)){
-            console.log('skipping azure storage tests because azure storage emulator is not installed');
-            this.skip();
+        if (process.platform === 'win32') {
+            var emulatorPath = "c:/Program Files (x86)/Microsoft SDKs/Azure/Storage Emulator/azurestorageemulator.exe";
+            if (!fs.existsSync(emulatorPath)) {
+                console.log('skipping azure storage tests because azure storage emulator is not installed');
+                this.skip();
+            }
+            else {
+                child_process.spawnSync(emulatorPath, ['start']);
+            }
         }
-        else
-            child_process.spawnSync(emulatorPath, ['start']);
     });
 
     function handleError(err) {
@@ -292,7 +295,7 @@ testStorage = function () {
     });
 }
 
-describe('TestTableStorage', function () {
+describe('TableStorage', function () {
     this.timeout(10000);
     testStorage();
 });

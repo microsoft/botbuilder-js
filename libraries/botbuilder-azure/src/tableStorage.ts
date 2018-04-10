@@ -10,7 +10,9 @@ import * as azure from 'azure-storage';
 
 /** Additional settings for configuring an instance of [TableStorage](../classes/botbuilder_azure_v4.tablestorage.html). */
 export interface TableStorageSettings {
-    /** Name of the table to use for storage. */
+    /** Name of the table to use for storage.
+     *  Check table name rules: https://docs.microsoft.com/en-us/rest/api/storageservices/Understanding-the-Table-Service-Data-Model?redirectedfrom=MSDN#table-names
+    */
     tableName: string;
 
     /** Storage access key. */
@@ -23,6 +25,9 @@ export interface TableStorageSettings {
     host?: azure.StorageHost;
 }
 
+/**
+ * Map of already initialized tables. Key = tableName, Value = Promise with TableResult creation.
+ */
 let checkedTables: { [name: string]: Promise<azure.TableService.TableResult>; } = {};
 
 /**
@@ -31,6 +36,15 @@ let checkedTables: { [name: string]: Promise<azure.TableService.TableResult>; } 
  * **Usage Example**
  *
  * ```javascript
+ * const BotBuilderAzure = require('botbuilder-azure');
+ * const storage = new BotBuilderAzure.TableStorage({
+ *     storageAccountOrConnectionString: 'UseDevelopmentStorage=true',
+ *     tableName: 'mybotstate'
+ *   });
+ *
+ * // Add state middleware
+ * const state = new BotStateManager(storage);
+ * adapter.use(state);
  * ```
 */
 export class TableStorage implements Storage {
@@ -41,18 +55,19 @@ export class TableStorage implements Storage {
     /**
      * Creates a new instance of the storage provider.
      *
-     * @param settings (Optional) setting to configure the provider.
+     * @param settings Setting to configure the provider.
      */
     public constructor(settings: TableStorageSettings) {
+        if (!settings) {
+            throw new Error('The settings parameter is required.');
+        }
+
+        if (!/^[A-Za-z][A-Za-z0-9]{2,62}$/.test(settings.tableName)) {
+            throw new Error('The table name contains invalid characters.')
+        }
+
         this.settings = Object.assign({}, settings);
         this.tableService = this.createTableService(this.settings.storageAccountOrConnectionString, this.settings.storageAccessKey, this.settings.host)
-    }
-
-    /** Ensure the table is created. */
-    private ensureTable(): Promise<azure.TableService.TableResult> {
-        if (!checkedTables[this.settings.tableName])
-            checkedTables[this.settings.tableName] = this.tableService.createTableIfNotExistsAsync(this.settings.tableName);
-        return checkedTables[this.settings.tableName];
     }
 
     /**
@@ -61,19 +76,22 @@ export class TableStorage implements Storage {
      * @param keys Array of item keys to read from the store.
      **/
     public read(keys: string[]): Promise<StoreItems> {
-        let storeItems: StoreItems = {};
-        return this.ensureTable().then((created) => {
-            let promises = keys.map(key => {
+        if (!keys || !keys.length) {
+            throw new Error('Please provide at least one key to read from storage.');
+        }
+
+        return this.ensureTable().then(() => {
+            let readPromises = keys.map(key => {
                 // get all items with the same PK as the sanitized(key)
                 let query = new azure.TableQuery()
-                    .where('PartitionKey eq ?', sanitizeKey(key));
+                    .where('PartitionKey eq ?', TableStorage.SanitizeKey(key));
 
                 // convert chunks back into StoreItemContainer for reading
-                return this.executeQuery<StoreItemEntity>(this.tableService, this.settings.tableName, query)
+                return this.executeQuery<StoreItemEntity>(query)
                     .then(chunks => chunks.length ? StoreItemContainer.join(chunks) : null);
             });
 
-            return Promise.all(promises)
+            return Promise.all(readPromises)
                 .then(results => results.filter(e => !!e))           // ignore null returns
                 .then(results => results.reduce((acc, e) => {        // flatten as StoreItems
                     acc[e.key] = e.obj;
@@ -88,8 +106,12 @@ export class TableStorage implements Storage {
      * @param changes Map of items to write to storage.
      **/
     public write(changes: StoreItems): Promise<void> {
-        return this.ensureTable().then((created) => {
-            let promises = Object.keys(changes)
+        if (!changes) {
+            throw new Error('Please provide a StoreItems with changes to persist.')
+        }
+
+        return this.ensureTable().then(() => {
+            let batches = Object.keys(changes)
                 .map(key => new StoreItemContainer(key, changes[key]))
                 .map(entity => {
 
@@ -116,14 +138,14 @@ export class TableStorage implements Storage {
                     let maxRowKey = chunks.length;
                     let query = new azure.TableQuery()
                         .select('PartitionKey', 'RowKey')
-                        .where('PartitionKey eq ? && RowKey >= ?', sanitizeKey(entity.key), maxRowKey.toString());
+                        .where('PartitionKey eq ? && RowKey >= ?', TableStorage.SanitizeKey(entity.key), maxRowKey.toString());
 
                     // Retrieve and (if found) add to batch for deletion
                     return this.deleteInBatch(batch, query)
                         .then(batch => this.tableService.executeBatchAsync(this.settings.tableName, batch));
                 });
 
-            return Promise.all(promises)
+            return Promise.all(batches)
                 .then(result => { });           // void
         });
     };
@@ -134,29 +156,61 @@ export class TableStorage implements Storage {
      * @param keys Array of item keys to remove from the store.
      **/
     public delete(keys: string[]): Promise<void> {
-        return this.ensureTable().then((created) => {
+        if (!keys || keys.length) return Promise.resolve();
+
+        return this.ensureTable().then(() => {
             // for each key, remove its rows based on PK
-            let promises = keys.map(key => {
-                return this.deleteInBatch(
-                    new azure.TableBatch(),
-                    new azure.TableQuery().select('PartitionKey', 'RowKey')
-                        .where('PartitionKey eq ?', sanitizeKey(key)))
+            let batches = keys.map(key => {
+                let batch = new azure.TableBatch();
+                let query = new azure.TableQuery()
+                    .select('PartitionKey', 'RowKey')
+                    .where('PartitionKey eq ?', TableStorage.SanitizeKey(key));
+                return this.deleteInBatch(batch, query)
                     .then(batch => {
-                        if (!batch.operations.length) return Promise.resolve([]);                   // no records (and operations) were generated from querying the PK
+                        // no ops
+                        if (!batch.operations.length) return Promise.resolve([]);
+                        // execute
                         return this.tableService.executeBatchAsync(this.settings.tableName, batch)
                     });
             });
 
-            return Promise.all(promises)
+            return Promise.all(batches)
                 .then(() => { });            // void
         });
     }
 
-    private executeQuery<T>(tableService: TableServiceAsync, tableName: string, query: azure.TableQuery): Promise<T[]> {
+    public static SanitizeKey(key: string): string {
+        let badChars = ['\\', '?', '/', '#', '\t', '\n', '\r'];
+        let sb = '';
+        for (let iCh = 0; iCh < key.length; iCh++) {
+            let ch = key[iCh];
+            let isBad: boolean = false;
+            for (let iBad in badChars) {
+                let badChar = badChars[iBad];
+                if (ch === badChar) {
+                    sb += '%' + ch.charCodeAt(0).toString(16);
+                    isBad = true;
+                    break;
+                }
+            }
+            if (!isBad)
+                sb += ch;
+        }
+        return sb;
+    }
+
+    /** Ensure the table is created. */
+    private ensureTable(): Promise<azure.TableService.TableResult> {
+        if (!checkedTables[this.settings.tableName])
+            checkedTables[this.settings.tableName] = this.tableService.createTableIfNotExistsAsync(this.settings.tableName);
+        return checkedTables[this.settings.tableName];
+    }
+
+    private executeQuery<T>(query: azure.TableQuery): Promise<T[]> {
         return new Promise<T[]>((resolve, reject) => {
             let collected: T[] = [];
-            let getNext = function (query, token: azure.TableService.TableContinuationToken = null) {
-                tableService.queryEntitiesAsync<T>(tableName, query, token, null)
+            let getNext = (query, token: azure.TableService.TableContinuationToken = null) => {
+                this.tableService.queryEntitiesAsync<T>(this.settings.tableName, query, token, null)
                     .then(queryResults => {
 
                         // append items
@@ -176,12 +230,12 @@ export class TableStorage implements Storage {
         });
     }
 
-    private deleteInBatch(batch: azure.TableBatch, query: azure.TableQuery): Promise<azure.TableBatch> {
+    private deleteInBatch(batch: azure.TableBatch, deleteQuery: azure.TableQuery): Promise<azure.TableBatch> {
         // retrieve all row based on query
-        return this.executeQuery<any>(this.tableService, this.settings.tableName, query)
+        return this.executeQuery<any>(deleteQuery)
             .then(rows => {
-                // empty? return...
-                if (!rows.length) return Promise.resolve(batch);
+                // empty
+                if (!rows.length) return batch;
 
                 // batch delete using PrimaryKey and RowKey
                 // let batch = new azure.TableBatch();
@@ -223,7 +277,7 @@ export class TableStorage implements Storage {
 }
 
 // Promise based methods created using denodeify function
-export interface TableServiceAsync extends azure.TableService {
+interface TableServiceAsync extends azure.TableService {
     createTableIfNotExistsAsync(table: string): Promise<azure.TableService.TableResult>;
     deleteTableIfExistsAsync(table: string): Promise<boolean>;
 
@@ -236,8 +290,12 @@ export interface TableServiceAsync extends azure.TableService {
     executeBatchAsync(table: string, batch: azure.TableBatch): Promise<azure.TableService.BatchResult[]>;
 }
 
-const chunkMaxSize: Number = 32 * 1024;
+/**
+ * Internal data structure for splitting items into smaller pieces and overcome Azure Table Row size limit.
+ * More info: https://docs.microsoft.com/en-us/rest/api/storageservices/understanding-the-table-service-data-model#property-types
+ */
 export class StoreItemContainer {
+    public static readonly MaxRowSize = 32 * 1024;
     public readonly key: string;
     public readonly obj: any;
     public readonly eTag: string;
@@ -252,9 +310,9 @@ export class StoreItemContainer {
         let entGen = azure.TableUtilities.entityGenerator
 
         let json = JSON.stringify(this.obj);
-        let chunks = splitSlice(json, chunkMaxSize);
+        let chunks = this.sliceString(json, StoreItemContainer.MaxRowSize);
         return chunks.map((chunk, ix) => ({
-            PartitionKey: entGen.String(sanitizeKey(this.key)),
+            PartitionKey: entGen.String(TableStorage.SanitizeKey(this.key)),
             RowKey: entGen.String(ix.toString()),
             RealKey: entGen.String(this.key),
             Json: entGen.String(chunk),
@@ -273,44 +331,24 @@ export class StoreItemContainer {
 
         return new StoreItemContainer(key, obj);
     }
+
+    private sliceString(str, sliceLen) {
+        let chunks: string[] = [];
+        let strLen: number = str.length;
+        for (let ix: number = 0; ix < strLen; ix += sliceLen) {
+            chunks.push(str.slice(ix, sliceLen + ix));
+        }
+
+        return chunks;
+    }
 }
 
+/**
+ * Internal data structure for storing items in Azure Tables
+ */
 export interface StoreItemEntity {
     PartitionKey: azure.TableUtilities.entityGenerator.EntityProperty<string>,
     RowKey: azure.TableUtilities.entityGenerator.EntityProperty<string>,
     RealKey: azure.TableUtilities.entityGenerator.EntityProperty<string>,
     Json: azure.TableUtilities.entityGenerator.EntityProperty<string>
 }
-
-// Helpers
-function sanitizeKey(key: string): string {
-    let badChars = ['\\', '?', '/', '#', '\t', '\n', '\r'];
-    let sb = '';
-    for (let iCh = 0; iCh < key.length; iCh++) {
-        let ch = key[iCh];
-        let isBad: boolean = false;
-        for (let iBad in badChars) {
-            let badChar = badChars[iBad];
-            if (ch === badChar) {
-                sb += '%' + ch.charCodeAt(0).toString(16);
-                isBad = true;
-                break;
-            }
-        }
-        if (!isBad)
-            sb += ch;
-    }
-    return sb;
-}
-
-function splitSlice(str, len) {
-    let chunks: string[] = [];
-    let strLen: number = str.length;
-    for (let ix: number = 0; ix < strLen; ix += len) {
-        chunks.push(str.slice(ix, len + ix));
-    }
-
-    return chunks;
-}
-
-const flatten = (acc, curr) => acc.concat(curr);
