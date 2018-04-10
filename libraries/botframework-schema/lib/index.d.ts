@@ -5,6 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { RequestOptionsBase } from "ms-rest-js";
 /**
  * @interface
  * An interface representing AttachmentView.
@@ -85,6 +86,11 @@ export interface ChannelAccount {
      * @member {string} [name] Display friendly name
      */
     name: string;
+    /**
+     * @member {RoleTypes} [role] Role of the entity behind the account (Example:
+     * User, Bot, etc.). Possible values include: 'user', 'bot'
+     */
+    role: RoleTypes | string;
 }
 /**
  * @interface
@@ -94,9 +100,15 @@ export interface ChannelAccount {
  */
 export interface ConversationAccount {
     /**
-     * @member {boolean} [isGroup] Is this a reference to a group
+     * @member {boolean} [isGroup] Indicates whether the conversation contains
+     * more than two participants at the time the activity was generated
      */
     isGroup: boolean;
+    /**
+     * @member {string} [conversationType] Indicates the type of the conversation
+     * in channels that distinguish between conversation types
+     */
+    conversationType: string;
     /**
      * @member {string} [id] Channel id for the user or bot on this channel
      * (Example: joe@smith.com, or @joesmith or 123456)
@@ -106,6 +118,11 @@ export interface ConversationAccount {
      * @member {string} [name] Display friendly name
      */
     name: string;
+    /**
+     * @member {RoleTypes} [role] Role of the entity behind the account (Example:
+     * User, Bot, etc.). Possible values include: 'user', 'bot'
+     */
+    role: RoleTypes;
 }
 /**
  * @interface
@@ -153,10 +170,10 @@ export interface CardAction {
      */
     displayText?: string;
     /**
-     * @member {string} [value] Supplementary parameter for action. Content of
-     * this property depends on the ActionType
+     * @member {any} [value] Supplementary parameter for action. Content of this
+     * property depends on the ActionType
      */
-    value: string;
+    value: any;
 }
 /**
  * @interface
@@ -279,7 +296,7 @@ export interface Activity {
      * include: 'message', 'contactRelationUpdate', 'conversationUpdate',
      * 'typing', 'ping', 'endOfConversation', 'event', 'invoke',
      * 'deleteUserData', 'messageUpdate', 'messageDelete', 'installationUpdate',
-     * 'messageReaction', 'suggestion'
+     * 'messageReaction', 'suggestion', 'trace'
      */
     type: ActivityTypes | string;
     /**
@@ -407,6 +424,15 @@ export interface Activity {
      */
     replyToId?: string;
     /**
+     * @member {string} [label] Descriptive label
+     */
+    label: string;
+    /**
+     * @member {string} [valueType] Unique string which identifies the shape of
+     * the value object
+     */
+    valueType: string;
+    /**
      * @member {any} [value] Open-ended value
      */
     value?: any;
@@ -506,6 +532,38 @@ export interface ConversationResourceResponse {
      * @member {string} [id] Id of the resource
      */
     id: string;
+}
+/**
+ * @interface
+ * An interface representing ConversationMembers.
+ * Conversation and its members
+ *
+ */
+export interface ConversationMembers {
+    /**
+     * @member {string} [id] Conversation ID
+     */
+    id: string;
+    /**
+     * @member {ChannelAccount[]} [members] List of members in this conversation
+     */
+    members: ChannelAccount[];
+}
+/**
+ * @interface
+ * An interface representing ConversationsResult.
+ * Conversations result
+ *
+ */
+export interface ConversationsResult {
+    /**
+     * @member {string} [continuationToken] Paging token
+     */
+    continuationToken: string;
+    /**
+     * @member {ConversationMembers[]} [conversations] List of conversations
+     */
+    conversations: ConversationMembers[];
 }
 /**
  * @interface
@@ -683,9 +741,9 @@ export interface AnimationCard {
      */
     aspect: string;
     /**
-     * @member {string} [value] Supplementary parameter for this card
+     * @member {any} [value] Supplementary parameter for this card
      */
-    value: string;
+    value: any;
 }
 /**
  * @interface
@@ -739,9 +797,9 @@ export interface AudioCard {
      */
     aspect: string;
     /**
-     * @member {string} [value] Supplementary parameter for this card
+     * @member {any} [value] Supplementary parameter for this card
      */
-    value: string;
+    value: any;
 }
 /**
  * @interface
@@ -829,7 +887,26 @@ export interface MediaCard {
      */
     aspect: string;
     /**
-     * @member {string} [value] Supplementary parameter for this card
+     * @member {any} [value] Supplementary parameter for this card
+     */
+    value: any;
+}
+/**
+ * @interface
+ * An interface representing Fact.
+ * Set of key-value pairs. Advantage of this section is that key and value
+ * properties will be
+ * rendered with default style information with some delimiter between them. So
+ * there is no need for developer to specify style information.
+ *
+ */
+export interface Fact {
+    /**
+     * @member {string} [key] The key for this Fact
+     */
+    key: string;
+    /**
+     * @member {string} [value] The value for this Fact
      */
     value: string;
 }
@@ -874,25 +951,6 @@ export interface ReceiptItem {
 }
 /**
  * @interface
- * An interface representing Fact.
- * Set of key-value pairs. Advantage of this section is that key and value
- * properties will be
- * rendered with default style information with some delimiter between them. So
- * there is no need for developer to specify style information.
- *
- */
-export interface Fact {
-    /**
-     * @member {string} [key] The key for this Fact
-     */
-    key: string;
-    /**
-     * @member {string} [value] The value for this Fact
-     */
-    value: string;
-}
-/**
- * @interface
  * An interface representing ReceiptCard.
  * A receipt card
  *
@@ -903,28 +961,28 @@ export interface ReceiptCard {
      */
     title: string;
     /**
+     * @member {Fact[]} [facts] Array of Fact objects
+     */
+    facts: Fact[];
+    /**
      * @member {ReceiptItem[]} [items] Array of Receipt Items
      */
     items: ReceiptItem[];
-    /**
-     * @member {Fact[]} [facts] Array of Fact Objects   Array of key-value pairs.
-     */
-    facts: Fact[];
     /**
      * @member {CardAction} [tap] This action will be activated when user taps on
      * the card
      */
     tap: CardAction;
     /**
-     * @member {string} [total] Total amount of money paid (or should be paid)
+     * @member {string} [total] Total amount of money paid (or to be paid)
      */
     total: string;
     /**
-     * @member {string} [tax] Total amount of TAX paid(or should be paid)
+     * @member {string} [tax] Total amount of tax paid (or to be paid)
      */
     tax: string;
     /**
-     * @member {string} [vat] Total amount of VAT paid(or should be paid)
+     * @member {string} [vat] Total amount of VAT paid (or to be paid)
      */
     vat: string;
     /**
@@ -944,6 +1002,26 @@ export interface SigninCard {
      * @member {string} [text] Text for signin request
      */
     text?: string;
+    /**
+     * @member {CardAction[]} [buttons] Action to use to perform signin
+     */
+    buttons: CardAction[];
+}
+/**
+ * @interface
+ * An interface representing OAuthCard.
+ * A card representing a request to peform a sign in via OAuth
+ *
+ */
+export interface OAuthCard {
+    /**
+     * @member {string} [text] Text for signin request
+     */
+    text: string;
+    /**
+     * @member {string} [connectionName] The name of the registered connection
+     */
+    connectionName: string;
     /**
      * @member {CardAction[]} [buttons] Action to use to perform signin
      */
@@ -1035,9 +1113,9 @@ export interface VideoCard {
      */
     aspect: string;
     /**
-     * @member {string} [value] Supplementary parameter for this card
+     * @member {any} [value] Supplementary parameter for this card
      */
-    value: string;
+    value: any;
 }
 /**
  * @interface
@@ -1150,6 +1228,46 @@ export interface MediaEventValue {
      * of the MediaCard that originated this event
      */
     cardValue: any;
+}
+/**
+ * @interface
+ * An interface representing TokenRequest.
+ * A request to receive a user token
+ *
+ */
+export interface TokenRequest {
+    /**
+     * @member {string} [provider] The provider to request a user token from
+     */
+    provider: string;
+    /**
+     * @member {{ [propertyName: string]: any }} [settings] A collection of
+     * settings for the specific provider for this request
+     */
+    settings: {
+        [propertyName: string]: any;
+    };
+}
+/**
+ * @interface
+ * An interface representing TokenResponse.
+ * A response that includes a user token
+ *
+ */
+export interface TokenResponse {
+    /**
+     * @member {string} [connectionName] The connection name
+     */
+    connectionName: string;
+    /**
+     * @member {string} [token] The user token
+     */
+    token: string;
+    /**
+     * @member {string} [expiration] Expiration for the token, in ISO 8601 format
+     * (e.g. "2007-04-05T14:30Z")
+     */
+    expiration: string;
 }
 /**
  * @interface
@@ -1574,11 +1692,38 @@ export interface PaymentRequestUpdateResult {
     details: PaymentDetails;
 }
 /**
+ * @interface
+ * An interface representing ConversationsGetConversationsOptionalParams.
+ * Optional Parameters.
+ *
+ * @extends RequestOptionsBase
+ */
+export interface ConversationsGetConversationsOptionalParams extends RequestOptionsBase {
+    /**
+     * @member {string} [continuationToken] skip or continuation token
+     */
+    continuationToken: string;
+}
+/**
+ * Defines values for RoleTypes.
+ * Possible values include: 'user', 'bot'
+ * There could be more values for this enum apart from the ones defined here.If
+ * you want to set a value that is not from the known values then you can do
+ * the following:
+ * let param: RoleTypes = <RoleTypes>"someUnknownValueThatWillStillBeValid";
+ * @readonly
+ * @enum {string}
+ */
+export declare enum RoleTypes {
+    User = "user",
+    Bot = "bot",
+}
+/**
  * Defines values for ActivityTypes.
  * Possible values include: 'message', 'contactRelationUpdate',
  * 'conversationUpdate', 'typing', 'ping', 'endOfConversation', 'event',
  * 'invoke', 'deleteUserData', 'messageUpdate', 'messageDelete',
- * 'installationUpdate', 'messageReaction', 'suggestion'
+ * 'installationUpdate', 'messageReaction', 'suggestion', 'trace'
  * There could be more values for this enum apart from the ones defined here.If
  * you want to set a value that is not from the known values then you can do
  * the following:
@@ -1602,6 +1747,7 @@ export declare enum ActivityTypes {
     InstallationUpdate = "installationUpdate",
     MessageReaction = "messageReaction",
     Suggestion = "suggestion",
+    Trace = "trace",
 }
 /**
  * Defines values for TextFormatTypes.
