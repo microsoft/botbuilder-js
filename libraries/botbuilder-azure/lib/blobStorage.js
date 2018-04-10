@@ -7,7 +7,9 @@
  * Licensed under the MIT License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+const querystring_1 = require("querystring");
 const azure = require("azure-storage");
+const ContainerNameCheck = new RegExp('^[a-z0-9](?!.*--)[a-z0-9-]{1,61}[a-z0-9]$');
 let checkedCollections = {};
 /**
  * Middleware that implements a BlobStorage based storage provider for a bot.
@@ -16,6 +18,9 @@ class BlobStorage {
     constructor(settings) {
         if (!settings) {
             throw new Error('The settings parameter is required.');
+        }
+        if (!settings.containerName || !this.checkContainerName(settings.containerName)) {
+            throw new Error('Invalid container name.');
         }
         this.settings = Object.assign({}, settings);
         this.client = this.createBlobService(this.settings.storageAccountOrConnectionString, this.settings.storageAccessKey, this.settings.host);
@@ -26,7 +31,10 @@ class BlobStorage {
      * @param keys Array of item keys to read from the store.
      */
     read(keys) {
-        let sanitizedKeys = keys.map((key) => this.sanitizeKey(key));
+        if (!keys) {
+            throw new Error('The keys parameter is required.');
+        }
+        let sanitizedKeys = keys.filter(k => k).map((key) => this.sanitizeKey(key));
         return this.ensureContainerExists().then((container) => {
             return new Promise((resolve, reject) => {
                 Promise.all(sanitizedKeys.map((key) => {
@@ -36,12 +44,8 @@ class BlobStorage {
                                 let document = JSON.parse(result);
                                 document.document.eTag = blobMetadata.etag;
                                 resolve(document);
-                            }, err => {
-                                resolve(null);
-                            });
-                        }, (err) => {
-                            resolve(null);
-                        });
+                            }, err => resolve(null));
+                        }, (err) => resolve(null));
                     });
                 })).then((items) => {
                     if (items !== null && items.length > 0) {
@@ -61,6 +65,9 @@ class BlobStorage {
      * @param changes Map of items to write to storage.
      **/
     write(changes) {
+        if (!changes) {
+            throw new Error('The changes parameter is required.');
+        }
         return this.ensureContainerExists().then((container) => {
             let blobs = Object.keys(changes).map((key) => {
                 let documentChange = {
@@ -80,7 +87,8 @@ class BlobStorage {
             });
             let createBlob = (index, callback) => {
                 let current = blobs[index];
-                this.client.createBlockBlobFromTextAsync(container.name, current.blob, current.payload, current.options).then((result) => {
+                this.client.createBlockBlobFromTextAsync(container.name, current.blob, current.payload, current.options)
+                    .then((result) => {
                     if (index < blobs.length - 1) {
                         createBlob(index + 1, callback);
                     }
@@ -100,31 +108,26 @@ class BlobStorage {
      * @param keys Array of item keys to remove from the store.
      **/
     delete(keys) {
-        let sanitizedKeys = keys.map((key) => this.sanitizeKey(key));
+        if (!keys) {
+            throw new Error('The keys parameter is required.');
+        }
+        let sanitizedKeys = keys.filter(k => k).map((key) => this.sanitizeKey(key));
         return this.ensureContainerExists().then((container) => {
             return Promise.all(sanitizedKeys.map(key => {
                 return this.client.deleteBlobIfExistsAsync(container.name, key);
             }));
-        }, err => console.log(err)).then(() => { }); //void
+        }).then(() => { }); //void
     }
     sanitizeKey(key) {
-        let badChars = ['\\', '?', '/', '#', '\t', '\n', '\r'];
-        let sb = '';
-        for (let iCh = 0; iCh < key.length; iCh++) {
-            let ch = key[iCh];
-            let isBad = false;
-            for (let iBad in badChars) {
-                let badChar = badChars[iBad];
-                if (ch === badChar) {
-                    sb += '%' + ch.charCodeAt(0).toString(16);
-                    isBad = true;
-                    break;
-                }
-            }
-            if (!isBad)
-                sb += ch;
-        }
-        return sb;
+        let segments = key.split('/');
+        let base = segments.splice(0)[0];
+        // The number of path segments comprising the blob name cannot exceed 254
+        let validKey = segments.reduce((acc, curr, index) => [acc, curr].join(index < 255 ? '/' : ''), base);
+        // Reserved URL characters must be properly escaped.
+        return querystring_1.escape(validKey).substr(0, 1024);
+    }
+    checkContainerName(container) {
+        return ContainerNameCheck.test(container);
     }
     ensureContainerExists() {
         let key = this.settings.containerName;
@@ -134,6 +137,9 @@ class BlobStorage {
         return checkedCollections[key];
     }
     createBlobService(storageAccountOrConnectionString, storageAccessKey, host) {
+        if (!storageAccountOrConnectionString) {
+            throw new Error('The storageAccountOrConnectionString parameter is required.');
+        }
         const blobService = azure.createBlobService(storageAccountOrConnectionString, storageAccessKey, host).withFilter(new azure.LinearRetryPolicyFilter(5, 5));
         // create BlobServiceAsync by using denodeify to create promise wrappers around cb functions
         return {

@@ -8,6 +8,11 @@
  */
 import { Storage, StoreItems } from 'botbuilder';
 import * as azure from 'azure-storage';
+/** The host address. */
+export interface Host {
+    primaryHost: string;
+    secondaryHost: string;
+}
 /** Additional settings for configuring an instance of [BlobStorage](../classes/botbuilder_azure_v4.blobstorage.html). */
 export interface BlobStorageSettings {
     /** The storage account or the connection string. */
@@ -15,7 +20,7 @@ export interface BlobStorageSettings {
     /** The storage access key. */
     storageAccessKey: string;
     /** The host address. */
-    host: string;
+    host: string | Host;
     /** The container name. */
     containerName: string;
 }
@@ -45,6 +50,7 @@ export declare class BlobStorage implements Storage {
      **/
     delete(keys: string[]): Promise<void>;
     private sanitizeKey(key);
+    private checkContainerName(container);
     private ensureContainerExists();
     protected createBlobService(storageAccountOrConnectionString: string, storageAccessKey: string, host: any): BlobServiceAsync;
     private denodeify<T>(thisArg, fn);

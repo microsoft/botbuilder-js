@@ -7,7 +7,14 @@
  */
 
 import { Storage, StoreItems, StoreItem } from 'botbuilder';
+import { escape } from 'querystring';
 import * as azure from 'azure-storage';
+
+/** The host address. */
+export interface Host {
+    primaryHost: string;
+    secondaryHost: string;
+}
 
 /** Additional settings for configuring an instance of [BlobStorage](../classes/botbuilder_azure_v4.blobstorage.html). */
 export interface BlobStorageSettings {
@@ -16,7 +23,7 @@ export interface BlobStorageSettings {
     /** The storage access key. */
     storageAccessKey: string;
     /** The host address. */
-    host: string;
+    host: string | Host;
     /** The container name. */
     containerName: string;
 }
@@ -33,6 +40,8 @@ interface DocumentStoreItem {
     document: any;
 }
 
+const ContainerNameCheck = new RegExp('^[a-z0-9](?!.*--)[a-z0-9-]{1,61}[a-z0-9]$');
+
 let checkedCollections: { [key: string]: Promise<azure.BlobService.ContainerResult>; } = {};
 
 /**
@@ -47,17 +56,26 @@ export class BlobStorage implements Storage {
             throw new Error('The settings parameter is required.');
         }
 
+        if (!settings.containerName || !this.checkContainerName(settings.containerName)) {
+            throw new Error('Invalid container name.');
+        }
+
         this.settings = Object.assign({}, settings)
         this.client = this.createBlobService(this.settings.storageAccountOrConnectionString, this.settings.storageAccessKey, this.settings.host);
     }
 
     /**
-     * Loads store items from storage
+     * Loads store items from storage.
+     * Returns the values for the specified keys that were found in the container.
      *
      * @param keys Array of item keys to read from the store.
      */
     read(keys: string[]): Promise<StoreItems> {
-        let sanitizedKeys = keys.map((key) => this.sanitizeKey(key))
+        if (!keys) {
+            throw new Error('Please provide at least one key to read from storage.');
+        }
+
+        let sanitizedKeys = keys.filter(k => k).map((key) => this.sanitizeKey(key))
         return this.ensureContainerExists().then((container) => {
             return new Promise<StoreItems>((resolve, reject) => {
                 Promise.all<DocumentStoreItem>(sanitizedKeys.map((key) => {
@@ -67,23 +85,19 @@ export class BlobStorage implements Storage {
                                 let document: DocumentStoreItem = JSON.parse(result as any);
                                 document.document.eTag = blobMetadata.etag;
                                 resolve(document);
-                            }, err => {
-                                resolve(null);
-                            })
-                        }, (err) => {
-                            resolve(null);
-                        })
+                            }, err => resolve(null));
+                        }, (err) => resolve(null));
                     });
                 })).then((items) => {
                     if (items !== null && items.length > 0) {
                         let storeItems: StoreItems = {};
                         items.filter(x => x).forEach((item) => {
-                            storeItems[item.realId] = item.document
+                            storeItems[item.realId] = item.document;
                         });
-                        resolve(storeItems)
+                        resolve(storeItems);
                     }
                 });
-            })
+            });
         });
     }
 
@@ -93,6 +107,10 @@ export class BlobStorage implements Storage {
      * @param changes Map of items to write to storage.
      **/
     write(changes: StoreItems): Promise<void> {
+        if (!changes) {
+            throw new Error('Please provide a StoreItems with changes to persist.');
+        }
+
         return this.ensureContainerExists().then((container) => {
             let blobs = Object.keys(changes).map((key) => {
                 let documentChange: DocumentStoreItem = {
@@ -100,28 +118,32 @@ export class BlobStorage implements Storage {
                     realId: key,
                     document: changes[key]
                 };
+
                 let payload = JSON.stringify(documentChange);
                 let options: azure.BlobService.CreateBlobRequestOptions = {
                     accessConditions: azure.AccessCondition.generateIfMatchCondition(changes[key].eTag)
                 }
+
                 return {
                     blob: documentChange.id,
                     payload: payload,
                     options: options
                 }
+
             });
             let createBlob = (index, callback) => {
                 let current = blobs[index]
-                this.client.createBlockBlobFromTextAsync(container.name, current.blob, current.payload, current.options).then(
-                    (result) => {
-                        if (index < blobs.length - 1) {
-                            createBlob(index + 1, callback)
-                        } else {
-                            callback()
-                        }
-                    }, (err) => callback(err)
-                );
+                this.client.createBlockBlobFromTextAsync(container.name, current.blob, current.payload, current.options)
+                .then((result) => {
+                    if (index < blobs.length - 1) {
+                        createBlob(index + 1, callback)
+                    } else {
+                        callback()
+                    }
+
+                }, (err) => callback(err));
             }
+
             return new Promise<void>((resolve, reject) => {
                 createBlob(0, (err) => err ? reject(err) : resolve())
             });
@@ -134,32 +156,29 @@ export class BlobStorage implements Storage {
      * @param keys Array of item keys to remove from the store.
      **/
     delete(keys: string[]): Promise<void> {
-        let sanitizedKeys = keys.map((key) => this.sanitizeKey(key))
+        if (!keys) {
+            throw new Error('Please provide at least one key to delete from storage.');
+        }
+
+        let sanitizedKeys = keys.filter(k => k).map((key) => this.sanitizeKey(key))
         return this.ensureContainerExists().then((container) => {
             return Promise.all(sanitizedKeys.map(key => {
                 return this.client.deleteBlobIfExistsAsync(container.name, key);
             }));
-        }, err => console.log(err)).then(() => { }); //void
+        }).then(() => { }); //void
     }
 
     private sanitizeKey(key: string): string {
-        let badChars = ['\\', '?', '/', '#', '\t', '\n', '\r'];
-        let sb = '';
-        for (let iCh = 0; iCh < key.length; iCh++) {
-            let ch = key[iCh];
-            let isBad: boolean = false;
-            for (let iBad in badChars) {
-                let badChar = badChars[iBad];
-                if (ch === badChar) {
-                    sb += '%' + ch.charCodeAt(0).toString(16);
-                    isBad = true;
-                    break;
-                }
-            }
-            if (!isBad)
-                sb += ch;
-        }
-        return sb;
+        let segments = key.split('/');
+        let base = segments.splice(0)[0];
+        // The number of path segments comprising the blob name cannot exceed 254
+        let validKey = segments.reduce((acc, curr, index) => [acc, curr].join(index < 255 ? '/' : ''), base);
+        // Reserved URL characters must be escaped.
+        return escape(validKey).substr(0, 1024);
+    }
+
+    private checkContainerName(container: string): boolean {
+        return ContainerNameCheck.test(container);
     }
 
     private ensureContainerExists(): Promise<azure.BlobService.ContainerResult> {
@@ -171,6 +190,10 @@ export class BlobStorage implements Storage {
     }
     
     protected createBlobService(storageAccountOrConnectionString: string, storageAccessKey: string, host: any): BlobServiceAsync {
+        if (!storageAccountOrConnectionString) {
+            throw new Error('The storageAccountOrConnectionString parameter is required.');
+        }
+
         const blobService = azure.createBlobService(storageAccountOrConnectionString, storageAccessKey, host).withFilter(new azure.LinearRetryPolicyFilter(5, 5));
 
         // create BlobServiceAsync by using denodeify to create promise wrappers around cb functions

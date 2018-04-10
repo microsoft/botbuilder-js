@@ -214,6 +214,10 @@ testStorage = function () {
     it('missing settings should throw error', function() {
         assert.throws(() => new BlobStorage(), Error, 'constructor should have thrown error about missing settings.');
     })
+
+    it('Invalid container name should throw error', function() {
+        assert.throws(() => new BlobStorage(getSettings('invalid--name')), Error, 'constructor should have thrown error about invalid container name.');
+    })
 }
 
 describe('BlobStorage', function () {
