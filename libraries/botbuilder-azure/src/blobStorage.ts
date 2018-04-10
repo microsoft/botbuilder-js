@@ -16,7 +16,7 @@ export interface Host {
     secondaryHost: string;
 }
 
-/** Additional settings for configuring an instance of [BlobStorage](../classes/botbuilder_azure_v4.blobstorage.html). */
+/** Settings for configuring an instance of [BlobStorage](../classes/botbuilder_azure_v4.blobstorage.html). */
 export interface BlobStorageSettings {
     /** The storage account or the connection string. */
     storageAccountOrConnectionString: string;
@@ -29,7 +29,7 @@ export interface BlobStorageSettings {
 }
 
 /**
- * Internal data structure for storing items in BlobStorage
+ * Internal data structure for storing items in BlobStorage.
  */
 interface DocumentStoreItem {
     /** Represents the Sanitized Key and used as name of blob */
@@ -42,15 +42,28 @@ interface DocumentStoreItem {
 
 const ContainerNameCheck = new RegExp('^[a-z0-9](?!.*--)[a-z0-9-]{1,61}[a-z0-9]$');
 
+/**
+ * Internal dictionary with the containers where entities will be stored.
+ */
 let checkedCollections: { [key: string]: Promise<azure.BlobService.ContainerResult>; } = {};
 
 /**
  * Middleware that implements a BlobStorage based storage provider for a bot.
+ * 
+ * The BlobStorage implements State's Storage using a single Azure Storage Blob Container.
+ * Each entity or StoreItem is serialized into a JSON string and stored in an individual text blob.
+ * Each blob is named after the StoreItem key which is encoded and ensure it conforms a valid blob name.
  */
 export class BlobStorage implements Storage {
     private settings: BlobStorageSettings
     private client: BlobServiceAsync
 
+    /**
+     * Loads store items from storage.
+     * Returns the values for the specified keys that were found in the container.
+     *
+     * @param settings Settings for configuring an instance of BlobStorage.
+     */
     public constructor(settings: BlobStorageSettings) {
         if (!settings) {
             throw new Error('The settings parameter is required.');
@@ -155,7 +168,7 @@ export class BlobStorage implements Storage {
     }
 
     /**
-     * Removes store items from storage
+     * Removes store items from storage.
      *
      * @param keys Array of item keys to remove from the store.
      **/
@@ -172,7 +185,16 @@ export class BlobStorage implements Storage {
         }).then(() => { }); //void
     }
 
+    /**
+     * Get a blob name validated representation of an entity to be used as a key.
+     * 
+     * @param key The key used to identify the entity
+     */
     private sanitizeKey(key: string): string {
+        if (!key || key.length < 1) {
+            throw new Error('Please provide a not empty key.');
+        }
+
         let segments = key.split('/');
         let base = segments.splice(0)[0];
         // The number of path segments comprising the blob name cannot exceed 254
