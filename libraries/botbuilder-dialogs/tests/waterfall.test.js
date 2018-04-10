@@ -59,7 +59,8 @@ describe('Waterfall', function() {
         const state = {};
         const context = new TestContext(beginMessage);
         const dc = dialogs.createContext(context, state);
-        dc.begin('a', 'z').then((result) => {
+        dc.begin('a', 'z').then(() => {
+            const result = dc.dialogResult;
             assert(result && !result.active);
             assert(result.result === 'z');
             done();

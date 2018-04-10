@@ -28,7 +28,8 @@ export abstract class Control<R = any, O = {}, C extends TurnContext = TurnConte
 
         // Start the control
         const cdc = dialogs.createContext(context, state);
-        return cdc.begin('control', Object.assign({}, this.defaultOptions, options));
+        return cdc.begin('control', Object.assign({}, this.defaultOptions, options))
+                  .then(() => cdc.dialogResult);
     }
 
     public continue(context: C, state: object): Promise<DialogResult<R>> {
@@ -38,7 +39,8 @@ export abstract class Control<R = any, O = {}, C extends TurnContext = TurnConte
 
         // Continue the control
         const cdc = dialogs.createContext(context, state);
-        return cdc.continue();         
+        return cdc.continue()
+                  .then(() => cdc.dialogResult);         
     }
 
     abstract dialogBegin(dc: DialogContext<C>, dialogArgs?: any): Promise<any>;
