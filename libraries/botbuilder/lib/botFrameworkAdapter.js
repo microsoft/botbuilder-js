@@ -71,7 +71,7 @@ class BotFrameworkAdapter extends botbuilder_core_1.BotAdapter {
             });
         }).catch((err) => {
             // Reject response with error code
-            console.warn(`BotFrameworkAdapter.processRequest(): ${errorCode} ERROR - ${err.toString()}`);
+            console.warn(`BotFrameworkAdapter.processActivity(): ${errorCode} ERROR - ${err.toString()}`);
             res.send(errorCode, err.toString());
             res.end();
             throw err;
