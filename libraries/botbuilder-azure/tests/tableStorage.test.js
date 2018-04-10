@@ -293,6 +293,14 @@ testStorage = function () {
 
         assert.equal(key, joined.key);
     });
+
+    it('table name should be validated', function () {
+        var invalidSampleNames = ['test-test', '0001test', 'test_test', ''];
+        invalidSampleNames.forEach(invalidName =>
+            assert.throws(() =>
+                new TableStorage({ tableName: invalidName, storageAccountOrConnectionString: connectionString }),
+                (err) => err.message.includes('table name')));
+    });
 }
 
 describe('TableStorage', function () {

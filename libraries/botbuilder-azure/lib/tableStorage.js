@@ -2,27 +2,39 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const azure = require("azure-storage");
 /**
+ * Map of already initialized tables. Key = tableName, Value = Promise with TableResult creation.
+ */
+let checkedTables = {};
+/**
  * Middleware that implements an Azure Table based storage provider for a bot.
  *
  * **Usage Example**
  *
  * ```javascript
- * var storage = new TableStorage({
+ * const BotBuilderAzure = require('botbuilder-azure');
+ * const storage = new BotBuilderAzure.TableStorage({
  *     storageAccountOrConnectionString: 'UseDevelopmentStorage=true',
  *     tableName: 'mybotstate'
  *   });
  *
- * )
+ * // Add state middleware
+ * const state = new BotStateManager(storage);
+ * adapter.use(state);
  * ```
 */
 class TableStorage {
     /**
      * Creates a new instance of the storage provider.
      *
-     * @param settings (Optional) setting to configure the provider.
+     * @param settings Setting to configure the provider.
      */
     constructor(settings) {
-        // TODO: validate settings.tableName with ^[A-Za-z][A-Za-z0-9]{2,62}$
+        if (!settings) {
+            throw new Error('The settings parameter is required.');
+        }
+        if (!/^[A-Za-z][A-Za-z0-9]{2,62}$/.test(settings.tableName)) {
+            throw new Error('The table name contains invalid characters.');
+        }
         this.settings = Object.assign({}, settings);
         this.tableService = this.createTableService(this.settings.storageAccountOrConnectionString, this.settings.storageAccessKey, this.settings.host);
     }
@@ -32,6 +44,9 @@ class TableStorage {
      * @param keys Array of item keys to read from the store.
      **/
     read(keys) {
+        if (!keys || !keys.length) {
+            throw new Error('Please provide at least one key to read from storage.');
+        }
         return this.ensureTable().then(() => {
             let readPromises = keys.map(key => {
                 // get all items with the same PK as the sanitized(key)
@@ -56,6 +71,9 @@ class TableStorage {
      * @param changes Map of items to write to storage.
      **/
     write(changes) {
+        if (!changes) {
+            throw new Error('Please provide a StoreItems with changes to persist.');
+        }
         return this.ensureTable().then(() => {
             let batches = Object.keys(changes)
                 .map(key => new StoreItemContainer(key, changes[key]))
@@ -96,6 +114,8 @@ class TableStorage {
      * @param keys Array of item keys to remove from the store.
      **/
     delete(keys) {
+        if (!keys || keys.length)
+            return Promise.resolve();
         return this.ensureTable().then(() => {
             // for each key, remove its rows based on PK
             let batches = keys.map(key => {
@@ -135,12 +155,11 @@ class TableStorage {
         }
         return sb;
     }
-    // Ensure the table is created
+    /** Ensure the table is created. */
     ensureTable() {
-        if (!this.tableCheck) {
-            this.tableCheck = this.tableService.createTableIfNotExistsAsync(this.settings.tableName);
-        }
-        return this.tableCheck;
+        if (!checkedTables[this.settings.tableName])
+            checkedTables[this.settings.tableName] = this.tableService.createTableIfNotExistsAsync(this.settings.tableName);
+        return checkedTables[this.settings.tableName];
     }
     executeQuery(query) {
         return new Promise((resolve, reject) => {
@@ -205,6 +224,10 @@ class TableStorage {
     }
 }
 exports.TableStorage = TableStorage;
+/**
+ * Internal data structure for splitting items into smaller pieces and overcome Azure Table Row size limit.
+ * More info: https://docs.microsoft.com/en-us/rest/api/storageservices/understanding-the-table-service-data-model#property-types
+ */
 class StoreItemContainer {
     constructor(key, obj) {
         this.key = key;

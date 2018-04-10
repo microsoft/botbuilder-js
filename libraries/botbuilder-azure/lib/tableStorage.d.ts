@@ -26,22 +26,24 @@ export interface TableStorageSettings {
  * **Usage Example**
  *
  * ```javascript
- * var storage = new TableStorage({
+ * const BotBuilderAzure = require('botbuilder-azure');
+ * const storage = new BotBuilderAzure.TableStorage({
  *     storageAccountOrConnectionString: 'UseDevelopmentStorage=true',
  *     tableName: 'mybotstate'
  *   });
  *
- * )
+ * // Add state middleware
+ * const state = new BotStateManager(storage);
+ * adapter.use(state);
  * ```
 */
 export declare class TableStorage implements Storage {
     private settings;
     private tableService;
-    private tableCheck;
     /**
      * Creates a new instance of the storage provider.
      *
-     * @param settings (Optional) setting to configure the provider.
+     * @param settings Setting to configure the provider.
      */
     constructor(settings: TableStorageSettings);
     /**
@@ -63,22 +65,17 @@ export declare class TableStorage implements Storage {
      **/
     delete(keys: string[]): Promise<void>;
     static SanitizeKey(key: string): string;
+    /** Ensure the table is created. */
     private ensureTable();
     private executeQuery<T>(query);
     private deleteInBatch(batch, deleteQuery);
     private createTableService(storageAccountOrConnectionString, storageAccessKey, host);
     private denodeify<T>(thisArg, fn);
 }
-export interface TableServiceAsync extends azure.TableService {
-    createTableIfNotExistsAsync(table: string): Promise<azure.TableService.TableResult>;
-    deleteTableIfExistsAsync(table: string): Promise<boolean>;
-    retrieveEntityAsync<T>(table: string, partitionKey: string, rowKey: string): Promise<T>;
-    replaceEntityAsync<T>(table: string, entityDescriptor: T): Promise<azure.TableService.EntityMetadata>;
-    insertOrReplaceEntityAsync<T>(table: string, entityDescriptor: T): Promise<azure.TableService.EntityMetadata>;
-    deleteEntityAsync<T>(table: string, entityDescriptor: T): Promise<void>;
-    queryEntitiesAsync<T>(table: string, tableQuery: azure.TableQuery, currentToken: azure.TableService.TableContinuationToken, options: azure.TableService.TableEntityRequestOptions): Promise<azure.TableService.QueryEntitiesResult<T>>;
-    executeBatchAsync(table: string, batch: azure.TableBatch): Promise<azure.TableService.BatchResult[]>;
-}
+/**
+ * Internal data structure for splitting items into smaller pieces and overcome Azure Table Row size limit.
+ * More info: https://docs.microsoft.com/en-us/rest/api/storageservices/understanding-the-table-service-data-model#property-types
+ */
 export declare class StoreItemContainer {
     static readonly MaxRowSize: number;
     readonly key: string;
@@ -89,6 +86,9 @@ export declare class StoreItemContainer {
     static join(chunks: StoreItemEntity[]): StoreItemContainer;
     private sliceString(str, sliceLen);
 }
+/**
+ * Internal data structure for storing items in Azure Tables
+ */
 export interface StoreItemEntity {
     PartitionKey: azure.TableUtilities.entityGenerator.EntityProperty<string>;
     RowKey: azure.TableUtilities.entityGenerator.EntityProperty<string>;
