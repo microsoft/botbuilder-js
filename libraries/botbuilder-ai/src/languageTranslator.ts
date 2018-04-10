@@ -303,10 +303,9 @@ export class PostProcessTranslator {
         if (toBeReplaced.length > 0) {
             toBeReplaced.forEach(pattern => {
                 let regExp = new RegExp(pattern, "i");
-                let captureGroup = pattern.match('\(.*\)')[0].replace('(', '').replace(')', '');
                 let match = regExp.exec(sourceMessage);
                 
-                let noTranslateStarChrIndex = match.index + match[0].toLowerCase().indexOf(captureGroup.toLowerCase());
+                let noTranslateStarChrIndex = match.index + match[0].indexOf(match[1]);
                 
                 let wrdIndx = 0;
                 let chrIndx = 0;

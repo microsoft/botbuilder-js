@@ -58,7 +58,7 @@ describe('LanguageTranslator', function () {
         let noTranslateSettings = {
             translatorKey: translatorKey,
             nativeLanguages: ['en', 'de'],
-            noTranslatePatterns: new Set(['(Jean mon ami)']),
+            noTranslatePatterns: new Set(['Bonjour (Jean mon ami)']),
             getUserLanguage: c => 'fr',
             setUserLanguage: c => Promise.resolve(false)
         }
@@ -130,7 +130,7 @@ describe('LanguageTranslator', function () {
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(new LanguageTranslator(toFrenchSettings))
-        .test('greetings\nhello', 'salutations\nSalut', 'should have received french')
+        .test('Greetings\nHello', 'Salutations\nSalut', 'should have received french')
         .then(() => done());
     });
     
