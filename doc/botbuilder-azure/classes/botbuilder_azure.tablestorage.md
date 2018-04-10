@@ -9,6 +9,16 @@ Middleware that implements an Azure Table based storage provider for a bot.
 
 **Usage Example**
 
+    const BotBuilderAzure = require('botbuilder-azure');
+    const storage = new BotBuilderAzure.TableStorage({
+        storageAccountOrConnectionString: 'UseDevelopmentStorage=true',
+        tableName: 'mybotstate'
+      });
+
+    // Add state middleware
+    const state = new BotStateManager(storage);
+    adapter.use(state);
+
 ## Implements
 
 * `any`
@@ -23,10 +33,9 @@ Middleware that implements an Azure Table based storage provider for a bot.
 ### Methods
 
 * [delete](botbuilder_azure.tablestorage.md#delete)
-* [deleteTable](botbuilder_azure.tablestorage.md#deletetable)
-* [ensureTable](botbuilder_azure.tablestorage.md#ensuretable)
 * [read](botbuilder_azure.tablestorage.md#read)
 * [write](botbuilder_azure.tablestorage.md#write)
+* [SanitizeKey](botbuilder_azure.tablestorage.md#sanitizekey)
 
 
 
@@ -38,7 +47,7 @@ Middleware that implements an Azure Table based storage provider for a bot.
 ### ⊕ **new TableStorage**(settings: *[TableStorageSettings](../interfaces/botbuilder_azure.tablestoragesettings.md)*): [TableStorage](botbuilder_azure.tablestorage.md)
 
 
-*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-azure/lib/tableStorage.d.ts#L31)*
+*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:42](https://github.com/Microsoft/BotBuilder-JS/blob/ecd39de/libraries/botbuilder-azure/lib/tableStorage.d.ts#L42)*
 
 
 
@@ -49,7 +58,7 @@ Creates a new instance of the storage provider.
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| settings | [TableStorageSettings](../interfaces/botbuilder_azure.tablestoragesettings.md)   |  (Optional) setting to configure the provider. |
+| settings | [TableStorageSettings](../interfaces/botbuilder_azure.tablestoragesettings.md)   |  Setting to configure the provider. |
 
 
 
@@ -69,7 +78,7 @@ Creates a new instance of the storage provider.
 
 
 
-*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:60](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-azure/lib/tableStorage.d.ts#L60)*
+*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:66](https://github.com/Microsoft/BotBuilder-JS/blob/ecd39de/libraries/botbuilder-azure/lib/tableStorage.d.ts#L66)*
 
 
 
@@ -94,56 +103,6 @@ Removes store items from storage
 
 ___
 
-<a id="deletetable"></a>
-
-###  deleteTable
-
-► **deleteTable**(): `Promise`.<`boolean`>
-
-
-
-*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:42](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-azure/lib/tableStorage.d.ts#L42)*
-
-
-
-Delete backing table (mostly used for unit testing.)
-
-
-
-
-**Returns:** `Promise`.<`boolean`>
-
-
-
-
-
-___
-
-<a id="ensuretable"></a>
-
-###  ensureTable
-
-► **ensureTable**(): `Promise`.<`azure.TableService.TableResult`>
-
-
-
-*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:40](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-azure/lib/tableStorage.d.ts#L40)*
-
-
-
-Ensure the table is created.
-
-
-
-
-**Returns:** `Promise`.<`azure.TableService.TableResult`>
-
-
-
-
-
-___
-
 <a id="read"></a>
 
 ###  read
@@ -152,7 +111,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:48](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-azure/lib/tableStorage.d.ts#L48)*
+*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:54](https://github.com/Microsoft/BotBuilder-JS/blob/ecd39de/libraries/botbuilder-azure/lib/tableStorage.d.ts#L54)*
 
 
 
@@ -185,7 +144,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:54](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-azure/lib/tableStorage.d.ts#L54)*
+*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:60](https://github.com/Microsoft/BotBuilder-JS/blob/ecd39de/libraries/botbuilder-azure/lib/tableStorage.d.ts#L60)*
 
 
 
@@ -203,6 +162,36 @@ Saves store items to storage.
 
 
 **Returns:** `Promise`.<`void`>
+
+
+
+
+
+___
+
+<a id="sanitizekey"></a>
+
+### «Static» SanitizeKey
+
+► **SanitizeKey**(key: *`string`*): `string`
+
+
+
+*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:67](https://github.com/Microsoft/BotBuilder-JS/blob/ecd39de/libraries/botbuilder-azure/lib/tableStorage.d.ts#L67)*
+
+
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| key | `string`   |  - |
+
+
+
+
+
+**Returns:** `string`
 
 
 
