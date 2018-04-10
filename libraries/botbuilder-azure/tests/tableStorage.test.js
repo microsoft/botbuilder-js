@@ -16,7 +16,7 @@ testStorage = function () {
         table.deleteTableIfExists(testTableName, done);
     });
 
-    /*
+    // check & start emulator
     before(function () {
         var emulatorPath = "c:/Program Files (x86)/Microsoft SDKs/Azure/Storage Emulator/azurestorageemulator.exe";
         if (!fs.existsSync(emulatorPath)){
@@ -26,7 +26,6 @@ testStorage = function () {
         else
             child_process.spawnSync(emulatorPath, ['start']);
     });
-    */
 
     function handleError(err) {
         if (err.code == 'ECONNREFUSED') {
