@@ -255,14 +255,15 @@ export class PostProcessTranslator {
             let srcLength = parseInt(wordIndexes[0].split(':')[1]) - srcStartIndex + 1;
             let srcWrd = source.substr(srcStartIndex, srcLength);
             
-            let srcWrdIndex = srcWrds.findIndex(wrd => wrd == srcWrd);
+            let srcWrdIndex = srcWrds.findIndex(wrd => wrd.indexOf(srcWrd) != -1);
             
             let trgstartIndex = parseInt(wordIndexes[1].split(':')[0]);
             let trgLength = parseInt(wordIndexes[1].split(':')[1]) - trgstartIndex + 1;
             let trgWrd = target.substr(trgstartIndex, trgLength);
-            let trgWrdIndex = trgWrds.findIndex(wrd => wrd == trgWrd);
+            let trgWrdIndex = trgWrds.findIndex(wrd => wrd.indexOf(trgWrd) != -1);
 
             alignMap[srcWrdIndex] = trgWrdIndex;
+
         });
         return alignMap;
     }
@@ -272,8 +273,12 @@ export class PostProcessTranslator {
         
         if (!(typeof alignment[srcWrdIndex] === "undefined")) {
             let trgWrds = processedTranslation.split(' ');
-            trgWrds[alignment[srcWrdIndex]] = source.split(' ')[srcWrdIndex];
-            
+            let appendTrailApostrophe = "";
+            if (trgWrds[alignment[srcWrdIndex]].indexOf("'") != -1) {
+                appendTrailApostrophe = "'" + trgWrds[alignment[srcWrdIndex]].split("'")[1];
+            }
+            trgWrds[alignment[srcWrdIndex]] = source.split(' ')[srcWrdIndex] + appendTrailApostrophe;
+
             processedTranslation = trgWrds.join(' ');
         }
         return processedTranslation;

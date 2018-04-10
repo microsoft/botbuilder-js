@@ -186,4 +186,20 @@ describe('LanguageTranslator', function () {
         .test('Bonjour Jean mon ami', 'Hello Jean mon ami', 'should have received no translate patterns')
         .then(() => done())
     });
+
+    it('should handle special cases in no translates', function (done) {
+
+        let noTranslateSettings = {
+            translatorKey: translatorKey,
+            nativeLanguages: ['en'],
+            noTranslatePatterns: new Set(['perr[oa]']),
+            getUserLanguage: c => 'es',
+            setUserLanguage: c => Promise.resolve(false)
+        }
+
+        const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
+        .use(new LanguageTranslator(noTranslateSettings))
+        .test('mi perro se llama Enzo', "My perro's name is Enzo.", 'should have received no translate patterns')
+        .then(() => done())
+    });
 })
