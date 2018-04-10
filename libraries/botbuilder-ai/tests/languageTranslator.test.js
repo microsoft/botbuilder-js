@@ -130,7 +130,7 @@ describe('LanguageTranslator', function () {
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(new LanguageTranslator(toFrenchSettings))
-        .test('greetings\nhello', 'salutations\nSalut', 'should have received french')
+        .test('greetings\nhello', 'Salutations\nSalut', 'should have received french')
         .then(() => done());
     });
     
