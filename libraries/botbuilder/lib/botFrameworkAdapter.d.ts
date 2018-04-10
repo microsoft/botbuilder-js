@@ -50,7 +50,6 @@ export interface InvokeResponse {
  * ```
  */
 export declare class BotFrameworkAdapter extends BotAdapter {
-    private readonly invokeResponses;
     protected readonly credentials: MicrosoftAppCredentials;
     protected readonly credentialsProvider: SimpleCredentialProvider;
     protected readonly settings: BotFrameworkAdapterSettings;
