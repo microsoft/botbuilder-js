@@ -117,7 +117,10 @@ class MicrosoftLocaleConverter {
         results.forEach(result => {
             let resolutionValues = result.resolution["values"][0];
             let type = result.typeName.replace('datetimeV2.', '');
-            if (type.includes('date') && !type.includes('range')) {
+            if (!isNaN(Number(result.text))) {
+                return;
+            }
+            else if (type.includes('date') && !type.includes('range')) {
                 moment = new Date(new Date(resolutionValues["value"]).getTime() + new Date().getTimezoneOffset() * 60 * 1000);
             }
             else if (type.includes('date') && type.includes('range')) {

@@ -215,8 +215,9 @@ class MicrosoftTranslator implements Translator {
                 let translation = element.getElementsByTagName('TranslatedText')[0].textContent as string;
                 let alignment = element.getElementsByTagName('Alignment')[0].textContent as string;
                 translation = this.postProcessor.fixTranslation(orgTexts[index], alignment, translation);
-                let result: TranslationResult = { translatedText: translation }
-                results.push(result)
+                let result: TranslationResult = { translatedText: translation };
+                results.push(result);
+                index += 1;
             });
             return Promise.resolve(results);
         })

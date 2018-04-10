@@ -178,6 +178,7 @@ class MicrosoftTranslator {
                 translation = this.postProcessor.fixTranslation(orgTexts[index], alignment, translation);
                 let result = { translatedText: translation };
                 results.push(result);
+                index += 1;
             });
             return Promise.resolve(results);
         });

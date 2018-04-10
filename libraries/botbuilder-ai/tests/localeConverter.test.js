@@ -183,4 +183,17 @@ describe('LocaleConverter', function () {
             done();
         });
     });
+
+    it('should not convert numbers that are similar to dates', function (done) {
+        
+        let timeSettings = {
+            fromLocale: 'en-us',
+            toLocale: 'fr-fr',
+        }
+
+        const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
+        .use(new LocaleConverter(timeSettings))
+        .test('I have 2000 pens', 'I have 2000 pens', 'should not have converted the number')
+        .then(() => done());
+    });
 })
