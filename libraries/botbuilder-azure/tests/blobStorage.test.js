@@ -2,9 +2,9 @@ const assert = require('assert');
 const { BlobStorage } = require('../');
 const azure = require('azure-storage');
 
-const getSettings = () => ({
+const getSettings = (container = null) => ({
     storageAccountOrConnectionString: 'UseDevelopmentStorage=true;',
-    containerName: 'test'
+    containerName: container || 'test'
 });
 
 const reset = (done) => {

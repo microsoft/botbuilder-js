@@ -56,7 +56,11 @@ export class BlobStorage implements Storage {
             throw new Error('The settings parameter is required.');
         }
 
-        if (!settings.containerName || !this.checkContainerName(settings.containerName)) {
+        if (!settings.containerName) {
+            throw new Error('The containerName is required.');
+        }
+
+        if (!this.checkContainerName(settings.containerName)) {
             throw new Error('Invalid container name.');
         }
 

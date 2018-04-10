@@ -19,20 +19,24 @@ class BlobStorage {
         if (!settings) {
             throw new Error('The settings parameter is required.');
         }
-        if (!settings.containerName || !this.checkContainerName(settings.containerName)) {
+        if (!settings.containerName) {
+            throw new Error('The containerName is required.');
+        }
+        if (!this.checkContainerName(settings.containerName)) {
             throw new Error('Invalid container name.');
         }
         this.settings = Object.assign({}, settings);
         this.client = this.createBlobService(this.settings.storageAccountOrConnectionString, this.settings.storageAccessKey, this.settings.host);
     }
     /**
-     * Loads store items from storage
+     * Loads store items from storage.
+     * Returns the values for the specified keys that were found in the container.
      *
      * @param keys Array of item keys to read from the store.
      */
     read(keys) {
         if (!keys) {
-            throw new Error('The keys parameter is required.');
+            throw new Error('Please provide at least one key to read from storage.');
         }
         let sanitizedKeys = keys.filter(k => k).map((key) => this.sanitizeKey(key));
         return this.ensureContainerExists().then((container) => {
@@ -66,7 +70,7 @@ class BlobStorage {
      **/
     write(changes) {
         if (!changes) {
-            throw new Error('The changes parameter is required.');
+            throw new Error('Please provide a StoreItems with changes to persist.');
         }
         return this.ensureContainerExists().then((container) => {
             let blobs = Object.keys(changes).map((key) => {
@@ -109,7 +113,7 @@ class BlobStorage {
      **/
     delete(keys) {
         if (!keys) {
-            throw new Error('The keys parameter is required.');
+            throw new Error('Please provide at least one key to delete from storage.');
         }
         let sanitizedKeys = keys.filter(k => k).map((key) => this.sanitizeKey(key));
         return this.ensureContainerExists().then((container) => {
@@ -123,7 +127,7 @@ class BlobStorage {
         let base = segments.splice(0)[0];
         // The number of path segments comprising the blob name cannot exceed 254
         let validKey = segments.reduce((acc, curr, index) => [acc, curr].join(index < 255 ? '/' : ''), base);
-        // Reserved URL characters must be properly escaped.
+        // Reserved URL characters must be escaped.
         return querystring_1.escape(validKey).substr(0, 1024);
     }
     checkContainerName(container) {

@@ -32,7 +32,8 @@ export declare class BlobStorage implements Storage {
     private client;
     constructor(settings: BlobStorageSettings);
     /**
-     * Loads store items from storage
+     * Loads store items from storage.
+     * Returns the values for the specified keys that were found in the container.
      *
      * @param keys Array of item keys to read from the store.
      */
