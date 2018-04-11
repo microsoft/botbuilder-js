@@ -35,8 +35,11 @@ interface DocumentStoreItem {
 
 /**
  * Middleware that implements a CosmosDB based storage provider for a bot.
+ * The ConnectionPolicy delegate can be used to further customize the connection to CosmosDB (Connection mode, retry options, timeouts).
+ * More information at http://azure.github.io/azure-documentdb-node/global.html#ConnectionPolicy
  */
 export class CosmosDbStorage implements Storage {
+
     private settings: CosmosDbStorageSettings;
     private client: DocumentClient;
     private collectionExists: Promise<string>;
@@ -45,7 +48,7 @@ export class CosmosDbStorage implements Storage {
      * Creates a new instance of the storage provider.
      *
      * @param settings Setting to configure the provider.
-     * @param connectionPolicyConfigurator (Optional) An optional delegate that accepts a ConnectionPolicy for customizing policies.
+     * @param connectionPolicyConfigurator (Optional) An optional delegate that accepts a ConnectionPolicy for customizing policies. More information at http://azure.github.io/azure-documentdb-node/global.html#ConnectionPolicy
      */
     public constructor(settings: CosmosDbStorageSettings, connectionPolicyConfigurator: (policy: DocumentBase.ConnectionPolicy) => void = null) {
         if (!settings) {
@@ -54,6 +57,7 @@ export class CosmosDbStorage implements Storage {
 
         this.settings = Object.assign({}, settings);
 
+        // Invoke collectionPolicy delegate to further customize settings
         let policy = new DocumentBase.ConnectionPolicy();
         if (connectionPolicyConfigurator && typeof connectionPolicyConfigurator === 'function') {
             connectionPolicyConfigurator(policy);
@@ -127,6 +131,9 @@ export class CosmosDbStorage implements Storage {
         return this.ensureCollectionExists().then(() => {
             return Promise.all(Object.keys(changes).map(k => {
                 let changesCopy = Object.assign({}, changes[k]);
+
+                // Remove etag from JSON object that was copied from IStoreItem.
+                // The ETag information is updated as an _etag attribute in the document metadata.
                 delete changesCopy.eTag;
                 let documentChange: DocumentStoreItem = {
                     id: sanitizeKey(k),
@@ -139,10 +146,11 @@ export class CosmosDbStorage implements Storage {
 
                     let eTag = changes[k].eTag;
                     if (!eTag || eTag === '*') {
+                        // if new item or * then insert or replace unconditionaly
                         let uri = UriFactory.createDocumentCollectionUri(this.settings.databaseId, this.settings.collectionId);
                         this.client.upsertDocument(uri, documentChange, { disableAutomaticIdGeneration: true }, handleCallback);
                     } else if (eTag.length > 0) {
-                        // Optimistic Update
+                        // if we have an etag, do opt. concurrency replace
                         let uri = UriFactory.createDocumentUri(this.settings.databaseId, this.settings.collectionId, documentChange.id);
                         let ac = { type: 'IfMatch', condition: eTag };
                         this.client.replaceDocument(uri, documentChange, { accessCondition: ac }, handleCallback);
@@ -169,6 +177,9 @@ export class CosmosDbStorage implements Storage {
             .then(() => { }); // void
     }
 
+    /**
+     * Delayed Database and Collection creation if they do not exist.
+     */
     private ensureCollectionExists(): Promise<string> {
         if (!this.collectionExists) {
             this.collectionExists = getOrCreateDatabase(this.client, this.settings.databaseId)
@@ -219,6 +230,9 @@ function getOrCreateCollection(client: DocumentClient, databaseLink: string, col
     });
 }
 
+// Converts the key into a DocumentID that can be used safely with CosmosDB.
+// The following characters are restricted and cannot be used in the Id property: '/', '\', '?', '#'
+// More information at https://docs.microsoft.com/en-us/dotnet/api/microsoft.azure.documents.resource.id?view=azure-dotnet#remarks
 function sanitizeKey(key: string): string {
     let badChars = ['\\', '?', '/', '#', '\t', '\n', '\r'];
     let sb = '';
