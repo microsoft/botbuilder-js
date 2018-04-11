@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Middleware, TurnContext, ActivityTypes } from 'botbuilder';
+import { Middleware, TurnContext, ActivityTypes, Activity } from 'botbuilder';
 import * as request from 'request-promise-native';
 import { DOMParser } from "xmldom";
 
@@ -14,7 +14,8 @@ export interface TranslatorSettings {
     nativeLanguages: string[],
     noTranslatePatterns: Set<string>,
     getUserLanguage?: ((c: TurnContext) => string) | undefined,
-    setUserLanguage?: ((context: TurnContext) => Promise<boolean>) | undefined
+    setUserLanguage?: ((context: TurnContext) => Promise<boolean>) | undefined,
+    translateBackToUserLanguage?: boolean
 }
 
 /**
@@ -27,12 +28,14 @@ export class LanguageTranslator implements Middleware {
     private getUserLanguage: ((context: TurnContext) => string) | undefined;
     private setUserLanguage: ((context: TurnContext) => Promise<boolean>) | undefined;
     private nativeLanguages: string[];
+    private translateBackToUserLanguage: boolean
 
     public constructor(settings: TranslatorSettings) {
         this.translator = new MicrosoftTranslator(settings.translatorKey, settings.noTranslatePatterns);
         this.nativeLanguages = settings.nativeLanguages;
         this.getUserLanguage = settings.getUserLanguage;
         this.setUserLanguage = settings.setUserLanguage;
+        this.translateBackToUserLanguage = settings.translateBackToUserLanguage;
     }
 
     /// Incoming activity
@@ -46,37 +49,42 @@ export class LanguageTranslator implements Middleware {
                 return Promise.resolve();
             }
         }
-        // translate to bots language
-        return this.translateMessageAsync(context)
-        .then(() => next());
-        
-    }
-
-    /// Translate .Text field of a message, regardless of direction
-    private async translateMessageAsync(context: TurnContext): Promise<TranslationResult[]> {
-        
-
         // determine the language we are using for this conversation
         let sourceLanguage: string;
         if (this.getUserLanguage != undefined) {
             sourceLanguage = this.getUserLanguage(context);
-        } else if (context.activity.locale != undefined) {
-            sourceLanguage = context.activity.locale;
         } else {
             sourceLanguage = await this.translator.detect(context.activity.text);
         }
-
         
         let targetLanguage = (this.nativeLanguages.indexOf(sourceLanguage) >= 0) ? sourceLanguage : this.nativeLanguages[0];
+        
+        await this.translateMessageAsync(context, context.activity, sourceLanguage, targetLanguage);
 
+        if (this.translateBackToUserLanguage) {
+            context.onSendActivities(async (newContext, activities, newNext) => {
+                let currentMessageActivity = activities[0];
+                await this.translateMessageAsync(newContext, currentMessageActivity, targetLanguage, sourceLanguage);
+                activities[0].text = currentMessageActivity.text;
+                
+                return newNext();
+            })
+        }
+        // translate to bots language
+        return next();
+        
+    }
+
+    /// Translate .Text field of a message, regardless of direction
+    private async translateMessageAsync(context: TurnContext, message: Partial<Activity>, sourceLanguage: string, targetLanguage: string): Promise<TranslationResult[]> {
         if (sourceLanguage == targetLanguage) {
             return Promise.resolve([]);
         }
         
-        let message = context.activity;
-        let text = context.activity.text;
-    
+        let text = message.text;
+        
         let lines = text.split('\n');
+        
         return this.translator.translateArrayAsync({
             from: sourceLanguage,
             to: targetLanguage,

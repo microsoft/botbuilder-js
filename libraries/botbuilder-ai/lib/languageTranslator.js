@@ -29,6 +29,7 @@ class LanguageTranslator {
         this.nativeLanguages = settings.nativeLanguages;
         this.getUserLanguage = settings.getUserLanguage;
         this.setUserLanguage = settings.setUserLanguage;
+        this.translateBackToUserLanguage = settings.translateBackToUserLanguage;
     }
     /// Incoming activity
     onTurn(context, next) {
@@ -42,31 +43,35 @@ class LanguageTranslator {
                     return Promise.resolve();
                 }
             }
-            // translate to bots language
-            return this.translateMessageAsync(context)
-                .then(() => next());
-        });
-    }
-    /// Translate .Text field of a message, regardless of direction
-    translateMessageAsync(context) {
-        return __awaiter(this, void 0, void 0, function* () {
             // determine the language we are using for this conversation
             let sourceLanguage;
             if (this.getUserLanguage != undefined) {
                 sourceLanguage = this.getUserLanguage(context);
             }
-            else if (context.activity.locale != undefined) {
-                sourceLanguage = context.activity.locale;
-            }
             else {
                 sourceLanguage = yield this.translator.detect(context.activity.text);
             }
             let targetLanguage = (this.nativeLanguages.indexOf(sourceLanguage) >= 0) ? sourceLanguage : this.nativeLanguages[0];
+            yield this.translateMessageAsync(context, context.activity, sourceLanguage, targetLanguage);
+            if (this.translateBackToUserLanguage) {
+                context.onSendActivities((newContext, activities, newNext) => __awaiter(this, void 0, void 0, function* () {
+                    let currentMessageActivity = activities[0];
+                    yield this.translateMessageAsync(newContext, currentMessageActivity, targetLanguage, sourceLanguage);
+                    activities[0].text = currentMessageActivity.text;
+                    return newNext();
+                }));
+            }
+            // translate to bots language
+            return next();
+        });
+    }
+    /// Translate .Text field of a message, regardless of direction
+    translateMessageAsync(context, message, sourceLanguage, targetLanguage) {
+        return __awaiter(this, void 0, void 0, function* () {
             if (sourceLanguage == targetLanguage) {
                 return Promise.resolve([]);
             }
-            let message = context.activity;
-            let text = context.activity.text;
+            let text = message.text;
             let lines = text.split('\n');
             return this.translator.translateArrayAsync({
                 from: sourceLanguage,
