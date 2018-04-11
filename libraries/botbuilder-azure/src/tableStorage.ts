@@ -156,7 +156,7 @@ export class TableStorage implements Storage {
      * @param keys Array of item keys to remove from the store.
      **/
     public delete(keys: string[]): Promise<void> {
-        if (!keys || keys.length) return Promise.resolve();
+        if (!keys || !keys.length) return Promise.resolve();
 
         return this.ensureTable().then(() => {
             // for each key, remove its rows based on PK
