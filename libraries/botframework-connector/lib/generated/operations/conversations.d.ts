@@ -311,7 +311,6 @@ export declare class Conversations {
      */
     getConversations(): Promise<Models.ConversationsResult>;
     getConversations(options: Models.ConversationsGetConversationsOptionalParams): Promise<Models.ConversationsResult>;
-    getConversations(callback: msRest.ServiceCallback<Models.ConversationsResult>): void;
     getConversations(options: Models.ConversationsGetConversationsOptionalParams, callback: msRest.ServiceCallback<Models.ConversationsResult>): void;
     /**
      * @summary CreateConversation

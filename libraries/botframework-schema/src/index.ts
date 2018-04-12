@@ -6,7 +6,23 @@
  * Licensed under the MIT License.
  */
 
-import { RequestOptionsBase } from "ms-rest-js";
+/**
+ * copy of RequestOptionsBase so we don't have dependency on ms-rest-js in our schema package
+ */
+ 
+/**
+ * Describes the base structure of the options object that will be used in every operation.
+ */
+export interface RequestOptionsBase {
+  /**
+   * @property {object} [customHeaders] - User defined custom request headers that
+   * will be applied before the request is sent.
+   */
+  customHeaders?: {
+      [key: string]: string;
+  };
+  [key: string]: any;
+}
 
 
 /**
