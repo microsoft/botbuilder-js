@@ -34,6 +34,7 @@ export interface BlobStorageSettings {
 export declare class BlobStorage implements Storage {
     private settings;
     private client;
+    private useEmulator;
     /**
      * Loads store items from storage.
      * Returns the values for the specified keys that were found in the container.

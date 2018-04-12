@@ -42,10 +42,16 @@ interface DocumentStoreItem {
 
 const ContainerNameCheck = new RegExp('^[a-z0-9](?!.*--)[a-z0-9-]{1,61}[a-z0-9]$');
 
+const ResolvePromisesSerial = (values, promise) => values.map(value => () => promise(value)).reduce((promise, func) => promise.then(result => func().then(Array.prototype.concat.bind(result))), Promise.resolve([]));
+const ResolvePromisesParallel = (values, promise) => Promise.all(values.map(promise));
+
+
 /**
  * Internal dictionary with the containers where entities will be stored.
  */
 let checkedCollections: { [key: string]: Promise<azure.BlobService.ContainerResult>; } = {};
+
+
 
 /**
  * Middleware that implements a BlobStorage based storage provider for a bot.
@@ -57,6 +63,7 @@ let checkedCollections: { [key: string]: Promise<azure.BlobService.ContainerResu
 export class BlobStorage implements Storage {
     private settings: BlobStorageSettings
     private client: BlobServiceAsync
+    private useEmulator: boolean
 
     /**
      * Loads store items from storage.
@@ -79,6 +86,7 @@ export class BlobStorage implements Storage {
 
         this.settings = Object.assign({}, settings)
         this.client = this.createBlobService(this.settings.storageAccountOrConnectionString, this.settings.storageAccessKey, this.settings.host);
+        this.useEmulator = settings.storageAccountOrConnectionString == 'UseDevelopmentStorage=true;';
     }
 
     /**
@@ -138,32 +146,26 @@ export class BlobStorage implements Storage {
 
                 let payload = JSON.stringify(documentChange);
                 let options: azure.BlobService.CreateBlobRequestOptions = {
-                    accessConditions: azure.AccessCondition.generateIfMatchCondition(changes[key].eTag)
-                }
+                    accessConditions: azure.AccessCondition.generateIfMatchCondition(changes[key].eTag),
+                    parallelOperationThreadCount: 4
+                };
 
                 return {
-                    blob: documentChange.id,
-                    payload: payload,
+                    id: documentChange.id,
+                    data: payload,
                     options: options
-                }
-
+                };
             });
-            let createBlob = (index, callback) => {
-                let current = blobs[index]
-                this.client.createBlockBlobFromTextAsync(container.name, current.blob, current.payload, current.options)
-                .then((result) => {
-                    if (index < blobs.length - 1) {
-                        createBlob(index + 1, callback)
-                    } else {
-                        callback()
-                    }
 
-                }, (err) => callback(err));
-            }
+            let promise = (blob) => this.client.createBlockBlobFromTextAsync(container.name, blob.id, blob.data, blob.options);
 
-            return new Promise<void>((resolve, reject) => {
-                createBlob(0, (err) => err ? reject(err) : resolve())
-            });
+            // if the blob service client is using the storage emulator, all write operations must be performed in a sequential mode
+            // because of the storage emulator internal implementation, that includes a SQL LocalDb
+            // that crash with a deadlock when performing parallel uploads.
+            // This behavior does not occur when using an Azure Blob Storage account.
+            let results = this.useEmulator ? ResolvePromisesSerial(blobs, promise) : ResolvePromisesParallel(blobs, promise);
+
+            return results.then(() => { }); //void
         });
     }
 
@@ -214,13 +216,13 @@ export class BlobStorage implements Storage {
         }
         return checkedCollections[key];
     }
-    
+
     protected createBlobService(storageAccountOrConnectionString: string, storageAccessKey: string, host: any): BlobServiceAsync {
         if (!storageAccountOrConnectionString) {
             throw new Error('The storageAccountOrConnectionString parameter is required.');
         }
 
-        const blobService = azure.createBlobService(storageAccountOrConnectionString, storageAccessKey, host).withFilter(new azure.LinearRetryPolicyFilter(5, 5));
+        const blobService = azure.createBlobService(storageAccountOrConnectionString, storageAccessKey, host).withFilter(new azure.LinearRetryPolicyFilter(5, 500));
 
         // create BlobServiceAsync by using denodeify to create promise wrappers around cb functions
         return {
