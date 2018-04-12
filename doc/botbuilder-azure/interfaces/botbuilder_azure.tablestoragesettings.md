@@ -15,7 +15,7 @@ Additional settings for configuring an instance of [TableStorage](../classes/bot
 
 **●  host**:  *`azure.StorageHost`* 
 
-*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-azure/lib/tableStorage.d.ts#L19)*
+*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:21](https://github.com/Microsoft/BotBuilder-JS/blob/ecd39de/libraries/botbuilder-azure/lib/tableStorage.d.ts#L21)*
 
 
 
@@ -32,7 +32,7 @@ ___
 
 **●  storageAccessKey**:  *`string`* 
 
-*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-azure/lib/tableStorage.d.ts#L15)*
+*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:17](https://github.com/Microsoft/BotBuilder-JS/blob/ecd39de/libraries/botbuilder-azure/lib/tableStorage.d.ts#L17)*
 
 
 
@@ -49,7 +49,7 @@ ___
 
 **●  storageAccountOrConnectionString**:  *`string`* 
 
-*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-azure/lib/tableStorage.d.ts#L17)*
+*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:19](https://github.com/Microsoft/BotBuilder-JS/blob/ecd39de/libraries/botbuilder-azure/lib/tableStorage.d.ts#L19)*
 
 
 
@@ -66,11 +66,11 @@ ___
 
 **●  tableName**:  *`string`* 
 
-*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:13](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-azure/lib/tableStorage.d.ts#L13)*
+*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:15](https://github.com/Microsoft/BotBuilder-JS/blob/ecd39de/libraries/botbuilder-azure/lib/tableStorage.d.ts#L15)*
 
 
 
-Name of the table to use for storage.
+Name of the table to use for storage. Check table name rules: [https://docs.microsoft.com/en-us/rest/api/storageservices/Understanding-the-Table-Service-Data-Model?redirectedfrom=MSDN#table-names](https://docs.microsoft.com/en-us/rest/api/storageservices/Understanding-the-Table-Service-Data-Model?redirectedfrom=MSDN#table-names)
 
 
 

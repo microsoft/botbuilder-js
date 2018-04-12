@@ -9,7 +9,9 @@ import { Storage, StoreItems } from 'botbuilder';
 import * as azure from 'azure-storage';
 /** Additional settings for configuring an instance of [TableStorage](../classes/botbuilder_azure_v4.tablestorage.html). */
 export interface TableStorageSettings {
-    /** Name of the table to use for storage. */
+    /** Name of the table to use for storage.
+     *  Check table name rules: https://docs.microsoft.com/en-us/rest/api/storageservices/Understanding-the-Table-Service-Data-Model?redirectedfrom=MSDN#table-names
+    */
     tableName: string;
     /** Storage access key. */
     storageAccessKey?: string;
@@ -24,6 +26,15 @@ export interface TableStorageSettings {
  * **Usage Example**
  *
  * ```javascript
+ * const BotBuilderAzure = require('botbuilder-azure');
+ * const storage = new BotBuilderAzure.TableStorage({
+ *     storageAccountOrConnectionString: 'UseDevelopmentStorage=true',
+ *     tableName: 'mybotstate'
+ *   });
+ *
+ * // Add state middleware
+ * const state = new BotStateManager(storage);
+ * adapter.use(state);
  * ```
 */
 export declare class TableStorage implements Storage {
@@ -32,14 +43,9 @@ export declare class TableStorage implements Storage {
     /**
      * Creates a new instance of the storage provider.
      *
-     * @param settings (Optional) setting to configure the provider.
+     * @param settings Setting to configure the provider.
      */
     constructor(settings: TableStorageSettings);
-    private sanitizeKey(key);
-    /** Ensure the table is created. */
-    ensureTable(): Promise<azure.TableService.TableResult>;
-    /** Delete backing table (mostly used for unit testing.) */
-    deleteTable(): Promise<boolean>;
     /**
      * Loads store items from storage
      *
@@ -58,14 +64,34 @@ export declare class TableStorage implements Storage {
      * @param keys Array of item keys to remove from the store.
      **/
     delete(keys: string[]): Promise<void>;
-    protected createTableService(storageAccountOrConnectionString: string, storageAccessKey: string, host: any): TableServiceAsync;
+    static SanitizeKey(key: string): string;
+    /** Ensure the table is created. */
+    private ensureTable();
+    private executeQuery<T>(query);
+    private deleteInBatch(batch, deleteQuery);
+    private createTableService(storageAccountOrConnectionString, storageAccessKey, host);
     private denodeify<T>(thisArg, fn);
 }
-export interface TableServiceAsync extends azure.TableService {
-    createTableIfNotExistsAsync(table: string): Promise<azure.TableService.TableResult>;
-    deleteTableIfExistsAsync(table: string): Promise<boolean>;
-    retrieveEntityAsync<T>(table: string, partitionKey: string, rowKey: string): Promise<T>;
-    replaceEntityAsync<T>(table: string, entityDescriptor: T): Promise<azure.TableService.EntityMetadata>;
-    insertOrReplaceEntityAsync<T>(table: string, entityDescriptor: T): Promise<azure.TableService.EntityMetadata>;
-    deleteEntityAsync<T>(table: string, entityDescriptor: T): Promise<void>;
+/**
+ * Internal data structure for splitting items into smaller pieces and overcome Azure Table Row size limit.
+ * More info: https://docs.microsoft.com/en-us/rest/api/storageservices/understanding-the-table-service-data-model#property-types
+ */
+export declare class StoreItemContainer {
+    static readonly MaxRowSize: number;
+    readonly key: string;
+    readonly obj: any;
+    readonly eTag: string;
+    constructor(key: string, obj: any);
+    split(): StoreItemEntity[];
+    static join(chunks: StoreItemEntity[]): StoreItemContainer;
+    private sliceString(str, sliceLen);
+}
+/**
+ * Internal data structure for storing items in Azure Tables
+ */
+export interface StoreItemEntity {
+    PartitionKey: azure.TableUtilities.entityGenerator.EntityProperty<string>;
+    RowKey: azure.TableUtilities.entityGenerator.EntityProperty<string>;
+    RealKey: azure.TableUtilities.entityGenerator.EntityProperty<string>;
+    Json: azure.TableUtilities.entityGenerator.EntityProperty<string>;
 }

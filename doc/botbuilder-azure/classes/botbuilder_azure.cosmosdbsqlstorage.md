@@ -34,7 +34,7 @@ Middleware that implements a CosmosDB SQL (DocumentDB) based storage provider fo
 ### ⊕ **new CosmosDbSqlStorage**(settings: *[CosmosDbSqlStorageSettings](../interfaces/botbuilder_azure.cosmosdbsqlstoragesettings.md)*, connectionPolicyConfigurator?: *`function`*): [CosmosDbSqlStorage](botbuilder_azure.cosmosdbsqlstorage.md)
 
 
-*Defined in [libraries/botbuilder-azure/lib/cosmosDbSqlStorage.d.ts:26](https://github.com/Microsoft/BotBuilder-JS/blob/0d615fe/libraries/botbuilder-azure/lib/cosmosDbSqlStorage.d.ts#L26)*
+*Defined in [libraries/botbuilder-azure/lib/cosmosDbSqlStorage.d.ts:26](https://github.com/Microsoft/BotBuilder-JS/blob/ecd39de/libraries/botbuilder-azure/lib/cosmosDbSqlStorage.d.ts#L26)*
 
 
 
@@ -66,7 +66,7 @@ Creates a new instance of the storage provider.
 
 
 
-*Defined in [libraries/botbuilder-azure/lib/cosmosDbSqlStorage.d.ts:51](https://github.com/Microsoft/BotBuilder-JS/blob/0d615fe/libraries/botbuilder-azure/lib/cosmosDbSqlStorage.d.ts#L51)*
+*Defined in [libraries/botbuilder-azure/lib/cosmosDbSqlStorage.d.ts:51](https://github.com/Microsoft/BotBuilder-JS/blob/ecd39de/libraries/botbuilder-azure/lib/cosmosDbSqlStorage.d.ts#L51)*
 
 
 
@@ -99,7 +99,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-azure/lib/cosmosDbSqlStorage.d.ts:39](https://github.com/Microsoft/BotBuilder-JS/blob/0d615fe/libraries/botbuilder-azure/lib/cosmosDbSqlStorage.d.ts#L39)*
+*Defined in [libraries/botbuilder-azure/lib/cosmosDbSqlStorage.d.ts:39](https://github.com/Microsoft/BotBuilder-JS/blob/ecd39de/libraries/botbuilder-azure/lib/cosmosDbSqlStorage.d.ts#L39)*
 
 
 
@@ -132,7 +132,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-azure/lib/cosmosDbSqlStorage.d.ts:45](https://github.com/Microsoft/BotBuilder-JS/blob/0d615fe/libraries/botbuilder-azure/lib/cosmosDbSqlStorage.d.ts#L45)*
+*Defined in [libraries/botbuilder-azure/lib/cosmosDbSqlStorage.d.ts:45](https://github.com/Microsoft/BotBuilder-JS/blob/ecd39de/libraries/botbuilder-azure/lib/cosmosDbSqlStorage.d.ts#L45)*
 
 
 
