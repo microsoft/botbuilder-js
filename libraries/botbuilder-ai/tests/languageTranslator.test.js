@@ -170,7 +170,7 @@ describe('LanguageTranslator', function () {
         .then(() => done())
     });
 
-    it('should handle special cases in no translates', function (done) {
+    it('should handle special cases in no translates - 1', function (done) {
 
         let noTranslateSettings = {
             translatorKey: translatorKey,
@@ -182,7 +182,23 @@ describe('LanguageTranslator', function () {
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(new LanguageTranslator(noTranslateSettings))
-        .test('mi perro se llama Enzo', "My perro's name is Enzo.", 'should have received no translate patterns')
+        .test('mi perro se llama Enzo', "My perro's name is Enzo", 'should have received no translate patterns')
+        .then(() => done())
+    });
+
+    it('should handle special cases in no translates - 2', function (done) {
+
+        let noTranslateSettings = {
+            translatorKey: translatorKey,
+            nativeLanguages: ['en'],
+            noTranslatePatterns: new Set(['mon nom est (.+)']),
+            getUserLanguage: c => 'fr',
+            setUserLanguage: c => Promise.resolve(false)
+        }
+
+        const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
+        .use(new LanguageTranslator(noTranslateSettings))
+        .test("mon nom est l'etat", "My name is l'etat", 'should have received no translate patterns')
         .then(() => done())
     });
 

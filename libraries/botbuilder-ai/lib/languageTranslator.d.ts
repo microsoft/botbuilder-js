@@ -32,7 +32,9 @@ export declare class LanguageTranslator implements Middleware {
 export declare class PostProcessTranslator {
     noTranslatePatterns: Set<string>;
     constructor(noTranslatePatterns: Set<string>);
-    private wordAlignmentParse(alignment, source, target);
-    private keepSrcWrdInTranslation(alignment, source, target, srcWrdIndex);
+    private join(delimiter, words);
+    private splitSentence(sentence, alignments, isSrcSentence?);
+    private wordAlignmentParse(alignments, srcWords, trgWords);
+    private keepSrcWrdInTranslation(alignment, sourceWords, targetWords, srcWrdIndex);
     fixTranslation(sourceMessage: string, alignment: string, targetMessage: string): string;
 }
