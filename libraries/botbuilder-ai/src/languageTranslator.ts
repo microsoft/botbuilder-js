@@ -10,12 +10,12 @@ import * as request from 'request-promise-native';
 import { DOMParser } from "xmldom";
 
 export interface TranslatorSettings {
-    translatorKey: string,
-    nativeLanguages: string[],
-    noTranslatePatterns: Set<string>,
-    getUserLanguage?: ((c: TurnContext) => string) | undefined,
-    setUserLanguage?: ((context: TurnContext) => Promise<boolean>) | undefined,
-    translateBackToUserLanguage?: boolean
+    translatorKey: string;
+    nativeLanguages: string[];
+    noTranslatePatterns: Set<string>;
+    getUserLanguage?: (context: TurnContext) => string;
+    setUserLanguage?: (context: TurnContext) => Promise<boolean>;
+    translateBackToUserLanguage?: boolean;
 }
 
 /**
@@ -63,9 +63,11 @@ export class LanguageTranslator implements Middleware {
 
         if (this.translateBackToUserLanguage) {
             context.onSendActivities(async (newContext, activities, newNext) => {
-                let currentMessageActivity = activities[0];
-                await this.translateMessageAsync(newContext, currentMessageActivity, targetLanguage, sourceLanguage);
-                activities[0].text = currentMessageActivity.text;
+                await Promise.all(activities.map(async (activity) => {
+                    if (activity.type == ActivityTypes.Message) {
+                        await this.translateMessageAsync(newContext, activity, targetLanguage, sourceLanguage);
+                    }
+                }));
                 
                 return newNext();
             })

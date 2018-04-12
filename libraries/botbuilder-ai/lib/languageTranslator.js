@@ -55,9 +55,11 @@ class LanguageTranslator {
             yield this.translateMessageAsync(context, context.activity, sourceLanguage, targetLanguage);
             if (this.translateBackToUserLanguage) {
                 context.onSendActivities((newContext, activities, newNext) => __awaiter(this, void 0, void 0, function* () {
-                    let currentMessageActivity = activities[0];
-                    yield this.translateMessageAsync(newContext, currentMessageActivity, targetLanguage, sourceLanguage);
-                    activities[0].text = currentMessageActivity.text;
+                    yield Promise.all(activities.map((activity) => __awaiter(this, void 0, void 0, function* () {
+                        if (activity.type == botbuilder_1.ActivityTypes.Message) {
+                            yield this.translateMessageAsync(newContext, activity, targetLanguage, sourceLanguage);
+                        }
+                    })));
                     return newNext();
                 }));
             }

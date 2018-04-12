@@ -10,8 +10,8 @@ export interface TranslatorSettings {
     translatorKey: string;
     nativeLanguages: string[];
     noTranslatePatterns: Set<string>;
-    getUserLanguage?: ((c: TurnContext) => string) | undefined;
-    setUserLanguage?: ((context: TurnContext) => Promise<boolean>) | undefined;
+    getUserLanguage?: (context: TurnContext) => string;
+    setUserLanguage?: (context: TurnContext) => Promise<boolean>;
     translateBackToUserLanguage?: boolean;
 }
 /**
