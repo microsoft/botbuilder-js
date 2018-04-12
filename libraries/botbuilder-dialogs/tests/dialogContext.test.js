@@ -167,7 +167,8 @@ describe('DialogContext', function() {
         const dc = dialogs.createContext(context, state);
         dc.begin('a').then(() => {
             const dc2 = dialogs.createContext(context, state);
-            return dc2.continue().then((result) => {
+            return dc2.continue().then(() => {
+                const result = dc2.dialogResult;
                 assert(result && !result.active);
                 done();
             });
@@ -232,7 +233,8 @@ describe('DialogContext', function() {
         const state = {};
         const context = new TestContext(beginMessage);
         const dc = dialogs.createContext(context, state);
-        dc.begin('a').then((result) => {
+        dc.begin('a').then(() => {
+            const result = dc.dialogResult;
             assert(result && !result.active);
             assert(result.result === 120);
             done();
@@ -256,7 +258,8 @@ describe('DialogContext', function() {
         const state = {};
         const context = new TestContext(beginMessage);
         const dc = dialogs.createContext(context, state);
-        dc.begin('a').then((result) => {
+        dc.begin('a').then(() => {
+            const result = dc.dialogResult;
             assert(result && !result.active);
             done();
         });
@@ -285,7 +288,8 @@ describe('DialogContext', function() {
         const state = {};
         const context = new TestContext(beginMessage);
         const dc = dialogs.createContext(context, state);
-        dc.begin('a').then((result) => {
+        dc.begin('a').then(() => {
+            const result = dc.dialogResult;
             assert(state.dialogStack && state.dialogStack[0] && state.dialogStack[0].id === 'a');
             state.dialogStack[0].id = 'c';
             const dc2 = dialogs.createContext(context, state);
@@ -301,7 +305,8 @@ describe('DialogContext', function() {
         const state = {};
         const context = new TestContext(beginMessage);
         const dc = dialogs.createContext(context, state);
-        dc.end().then((result) => {
+        dc.end().then(() => {
+            const result = dc.dialogResult;
             assert(result && !result.active);
             done();
         });
@@ -330,7 +335,7 @@ describe('DialogContext', function() {
         const state = {};
         const context = new TestContext(beginMessage);
         const dc = dialogs.createContext(context, state);
-        dc.begin('a').then((result) => {
+        dc.begin('a').then(() => {
             assert(dc.stack.length > 0, `Unexpected stack length.`);
             dc.endAll();
             assert(dc.stack.length == 0, `Didn't clear stack.`);
@@ -357,7 +362,7 @@ describe('DialogContext', function() {
         const state = {};
         const context = new TestContext(beginMessage);
         const dc = dialogs.createContext(context, state);
-        dc.begin('a', 'z').then((result) => {
+        dc.begin('a', 'z').then(() => {
             assert(dc.stack.length == 1);
             assert(dc.stack[0].id == 'b');
             done();

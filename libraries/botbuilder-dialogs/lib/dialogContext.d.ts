@@ -14,7 +14,7 @@ import { Choice } from 'botbuilder-prompts';
  * Result returned to the caller of one of the various stack manipulation methods and used to
  * return the result from a final call to `DialogContext.end()` to the bots logic.
  */
-export interface DialogResult<T = any> {
+export interface DialogResult<T> {
     /** This will be `true` if there is still an active dialog on the stack. */
     active: boolean;
     /**
@@ -26,12 +26,13 @@ export interface DialogResult<T = any> {
      *
      * In all cases where it's populated, [active](#active) will be `false`.
      */
-    result?: T;
+    result: T | undefined;
 }
 export declare class DialogContext<C extends TurnContext> {
     readonly dialogs: DialogSet<C>;
     readonly context: C;
     readonly stack: DialogInstance[];
+    private finalResult;
     /**
      * Creates a new DialogContext instance.
      * @param dialogs Parent dialog set.
@@ -41,6 +42,11 @@ export declare class DialogContext<C extends TurnContext> {
     constructor(dialogs: DialogSet<C>, context: C, stack: DialogInstance[]);
     /** Returns the cached instance of the active dialog on the top of the stack or `undefined` if the stack is empty. */
     readonly instance: DialogInstance | undefined;
+    /**
+     * Returns a structure that indicates whether there is still an active dialog on the stack
+     * along with the result returned by a dialog that just ended.
+     */
+    readonly dialogResult: DialogResult<any>;
     /**
      * Pushes a new dialog onto the dialog stack.
      *
@@ -53,7 +59,7 @@ export declare class DialogContext<C extends TurnContext> {
      * @param dialogId ID of the dialog to start.
      * @param dialogArgs (Optional) additional argument(s) to pass to the dialog being started.
      */
-    begin(dialogId: string, dialogArgs?: any): Promise<DialogResult>;
+    begin(dialogId: string, dialogArgs?: any): Promise<any>;
     /**
      * Helper function to simplify formatting the options for calling a prompt dialog. This helper will
      * construct a `PromptOptions` structure and then call [begin(context, dialogId, options)](#begin).
@@ -68,7 +74,7 @@ export declare class DialogContext<C extends TurnContext> {
      * @param prompt Initial prompt to send the user.
      * @param choicesOrOptions (Optional) array of choices to prompt the user for or additional prompt options.
      */
-    prompt<O extends PromptOptions = PromptOptions>(dialogId: string, prompt: string | Partial<Activity>, choicesOrOptions?: O | (string | Choice)[], options?: O): Promise<DialogResult>;
+    prompt<O extends PromptOptions = PromptOptions>(dialogId: string, prompt: string | Partial<Activity>, choicesOrOptions?: O | (string | Choice)[], options?: O): Promise<any>;
     /**
      * Continues execution of the active dialog, if there is one, by passing the context object to
      * its `Dialog.continue()` method. You can check `context.responded` after the call completes
@@ -85,7 +91,7 @@ export declare class DialogContext<C extends TurnContext> {
      * });
      * ```
      */
-    continue(): Promise<DialogResult>;
+    continue(): Promise<any>;
     /**
      * Ends a dialog by popping it off the stack and returns an optional result to the dialogs
      * parent. The parent dialog is the dialog the started the on being ended via a call to
@@ -110,7 +116,7 @@ export declare class DialogContext<C extends TurnContext> {
      * ```
      * @param result (Optional) result to pass to the parent dialogs `Dialog.resume()` method.
      */
-    end(result?: any): Promise<DialogResult>;
+    end(result?: any): Promise<any>;
     /**
      * Deletes any existing dialog stack thus cancelling all dialogs on the stack.
      *
@@ -142,6 +148,5 @@ export declare class DialogContext<C extends TurnContext> {
      * @param dialogId ID of the new dialog to start.
      * @param dialogArgs (Optional) additional argument(s) to pass to the new dialog.
      */
-    replace(dialogId: string, dialogArgs?: any): Promise<DialogResult>;
-    private ensureDialogResult(result);
+    replace(dialogId: string, dialogArgs?: any): Promise<any>;
 }

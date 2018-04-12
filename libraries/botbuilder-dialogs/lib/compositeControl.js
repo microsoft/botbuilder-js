@@ -17,29 +17,31 @@ class CompositeControl {
     }
     begin(context, state, options) {
         const cdc = this.dialogs.createContext(context, state);
-        return cdc.begin(this.dialogId, Object.assign({}, this.defaultOptions, options));
+        return cdc.begin(this.dialogId, Object.assign({}, this.defaultOptions, options))
+            .then(() => cdc.dialogResult);
     }
     continue(context, state) {
         const cdc = this.dialogs.createContext(context, state);
-        return cdc.continue();
+        return cdc.continue()
+            .then(() => cdc.dialogResult);
     }
     dialogBegin(dc, dialogArgs) {
         // Start the controls entry point dialog. 
         const cdc = this.dialogs.createContext(dc.context, dc.instance.state);
-        return cdc.begin(this.dialogId, Object.assign({}, this.defaultOptions, dialogArgs)).then((result) => {
+        return cdc.begin(this.dialogId, Object.assign({}, this.defaultOptions, dialogArgs)).then(() => {
             // End if the controls dialog ends.
-            if (!result.active) {
-                return dc.end(result.result);
+            if (!cdc.dialogResult.active) {
+                return dc.end(cdc.dialogResult.result);
             }
         });
     }
     dialogContinue(dc) {
         // Continue controls dialog stack.
         const cdc = this.dialogs.createContext(dc.context, dc.instance.state);
-        return cdc.continue().then((result) => {
+        return cdc.continue().then(() => {
             // End if the controls dialog ends.
-            if (!result.active) {
-                return dc.end(result.result);
+            if (!cdc.dialogResult.active) {
+                return dc.end(cdc.dialogResult.result);
             }
         });
     }

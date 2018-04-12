@@ -53,19 +53,19 @@ describe('LanguageTranslator', function () {
         .then(() => done());
     });
 
-    it('should not translate no translate texts', function (done) {
+    it('should not translate no translate texts and numbers', function (done) {
 
         let noTranslateSettings = {
             translatorKey: translatorKey,
             nativeLanguages: ['en', 'de'],
-            noTranslatePatterns: new Set(['(Jean mon ami)']),
+            noTranslatePatterns: new Set(['Bonjour (Jean mon ami)']),
             getUserLanguage: c => 'fr',
             setUserLanguage: c => Promise.resolve(false)
         }
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(new LanguageTranslator(noTranslateSettings))
-        .test('Bonjour Jean mon ami', 'Hello Jean mon ami', 'should have received no translate patterns')
+        .test('Bonjour Jean mon ami 2018', 'Hello Jean mon ami 2018', 'should have received no translate patterns')
         .then(() => done())
     });
 
@@ -130,7 +130,7 @@ describe('LanguageTranslator', function () {
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(new LanguageTranslator(toFrenchSettings))
-        .test('greetings\nhello', 'salutations\nSalut', 'should have received french')
+        .test('Greetings\nHello', 'Salutations\nSalut', 'should have received french')
         .then(() => done());
     });
     
@@ -184,6 +184,22 @@ describe('LanguageTranslator', function () {
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(new LanguageTranslator(noTranslateSettings))
         .test('Bonjour Jean mon ami', 'Hello Jean mon ami', 'should have received no translate patterns')
+        .then(() => done())
+    });
+
+    it('should handle special cases in no translates', function (done) {
+
+        let noTranslateSettings = {
+            translatorKey: translatorKey,
+            nativeLanguages: ['en'],
+            noTranslatePatterns: new Set(['perr[oa]']),
+            getUserLanguage: c => 'es',
+            setUserLanguage: c => Promise.resolve(false)
+        }
+
+        const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
+        .use(new LanguageTranslator(noTranslateSettings))
+        .test('mi perro se llama Enzo', "My perro's name is Enzo.", 'should have received no translate patterns')
         .then(() => done())
     });
 })

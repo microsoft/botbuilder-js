@@ -55,7 +55,8 @@ describe('CompositeControl', function() {
         const state = {};
         const context = new TestContext(beginMessage);
         const dc = dialogs.createContext(context, state);
-        dc.begin('control').then((result) => {
+        dc.begin('control').then(() => {
+            const result = dc.dialogResult;
             assert(result && !result.active);
             assert(result.result === 120);
             done();
@@ -83,11 +84,14 @@ describe('CompositeControl', function() {
         const state = {};
         const context = new TestContext(beginMessage);
         const dc = dialogs.createContext(context, state);
-        dc.begin('control').then((result) => {
+        dc.begin('control').then(() => {
+            const result = dc.dialogResult;
             assert(result && result.active);
-            dc.continue().then((result) => {
+            dc.continue().then(() => {
+                const result = dc.dialogResult;
                 assert(result && result.active);
-                dc.continue().then((result) => {
+                dc.continue().then(() => {
+                    const result = dc.dialogResult;
                     assert(result && !result.active);
                     assert(result.result === 120);
                     done();

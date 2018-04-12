@@ -5,11 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-
- /**
- *  import RequestOptionsBase so we don't have dependency on ms-rest-js in our schema package
+/**
+ * copy of RequestOptionsBase so we don't have dependency on ms-rest-js in our schema package
  */
- // import { RequestOptionsBase } from "ms-rest-js";
 /**
  * Describes the base structure of the options object that will be used in every operation.
  */
@@ -23,7 +21,6 @@ export interface RequestOptionsBase {
     };
     [key: string]: any;
 }
-
 /**
  * @interface
  * An interface representing AttachmentView.
