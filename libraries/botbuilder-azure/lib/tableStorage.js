@@ -1,6 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const azure = require("azure-storage");
+/**
+ * Map of already initialized tables. Key = tableName, Value = Promise with TableResult creation.
+ */
 let checkedTables = {};
 /**
  * Middleware that implements an Azure Table based storage provider for a bot.
@@ -8,36 +11,33 @@ let checkedTables = {};
  * **Usage Example**
  *
  * ```javascript
+ * const BotBuilderAzure = require('botbuilder-azure');
+ * const storage = new BotBuilderAzure.TableStorage({
+ *     storageAccountOrConnectionString: 'UseDevelopmentStorage=true',
+ *     tableName: 'mybotstate'
+ *   });
+ *
+ * // Add state middleware
+ * const state = new BotStateManager(storage);
+ * adapter.use(state);
  * ```
 */
 class TableStorage {
     /**
      * Creates a new instance of the storage provider.
      *
-     * @param settings (Optional) setting to configure the provider.
+     * @param settings (Optional) Setting to configure the provider.
      */
     constructor(settings) {
+        if (!settings) {
+            throw new Error('The settings parameter is required.');
+        }
+        // https://docs.microsoft.com/en-us/rest/api/storageservices/Understanding-the-Table-Service-Data-Model?redirectedfrom=MSDN#table-names
+        if (!/^[A-Za-z][A-Za-z0-9]{2,62}$/.test(settings.tableName)) {
+            throw new Error('The table name contains invalid characters.');
+        }
         this.settings = Object.assign({}, settings);
         this.tableService = this.createTableService(this.settings.storageAccountOrConnectionString, this.settings.storageAccessKey, this.settings.host);
-    }
-    sanitizeKey(key) {
-        let badChars = ['\\', '?', '/', '#', '\t', '\n', '\r'];
-        let sb = '';
-        for (let iCh = 0; iCh < key.length; iCh++) {
-            let ch = key[iCh];
-            let isBad = false;
-            for (let iBad in badChars) {
-                let badChar = badChars[iBad];
-                if (ch === badChar) {
-                    sb += '%' + ch.charCodeAt(0).toString(16);
-                    isBad = true;
-                    break;
-                }
-            }
-            if (!isBad)
-                sb += ch;
-        }
-        return sb;
     }
     /** Ensure the table is created. */
     ensureTable() {
@@ -57,6 +57,9 @@ class TableStorage {
      * @param keys Array of item keys to read from the store.
      **/
     read(keys) {
+        if (!keys || !keys.length) {
+            throw new Error('Please provide at least one key to read from storage.');
+        }
         let storeItems = {};
         return this.ensureTable()
             .then((created) => {
@@ -92,6 +95,9 @@ class TableStorage {
      * @param changes Map of items to write to storage.
      **/
     write(changes) {
+        if (!changes) {
+            throw new Error('Please provide a StoreItems with changes to persist.');
+        }
         return this.ensureTable()
             .then((created) => {
             let promises = [];
@@ -132,6 +138,8 @@ class TableStorage {
      * @param keys Array of item keys to remove from the store.
      **/
     delete(keys) {
+        if (!keys || !keys.length)
+            return Promise.resolve();
         return this.ensureTable()
             .then((created) => {
             let promises = [];
@@ -155,6 +163,25 @@ class TableStorage {
             return Promise.all(promises)
                 .then(result => { });
         });
+    }
+    sanitizeKey(key) {
+        let badChars = ['\\', '?', '/', '#', '\t', '\n', '\r'];
+        let sb = '';
+        for (let iCh = 0; iCh < key.length; iCh++) {
+            let ch = key[iCh];
+            let isBad = false;
+            for (let iBad in badChars) {
+                let badChar = badChars[iBad];
+                if (ch === badChar) {
+                    sb += '%' + ch.charCodeAt(0).toString(16);
+                    isBad = true;
+                    break;
+                }
+            }
+            if (!isBad)
+                sb += ch;
+        }
+        return sb;
     }
     createTableService(storageAccountOrConnectionString, storageAccessKey, host) {
         const tableService = storageAccountOrConnectionString ? azure.createTableService(storageAccountOrConnectionString, storageAccessKey, host) : azure.createTableService();
