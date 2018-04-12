@@ -7,6 +7,7 @@
  */
 import { Storage, StoreItems, StoreItem } from 'botbuilder';
 import * as azure from 'azure-storage';
+import { JsonDateReviver } from './utils';
 
 /** Additional settings for configuring an instance of [TableStorage](../classes/botbuilder_azure_v4.tablestorage.html). */
 export interface TableStorageSettings {
@@ -326,7 +327,7 @@ export class StoreItemContainer {
         let eTag = ordered[0]['.metadata'] ? ordered[0]['.metadata'].etag : null;
         let json = ordered.map(o => o.Json._).join('');
 
-        let obj: any = JSON.parse(json);
+        let obj: any = JSON.parse(json, JsonDateReviver);
         if (eTag) obj.eTag = eTag;
 
         return new StoreItemContainer(key, obj);

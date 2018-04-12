@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const azure = require("azure-storage");
+const utils_1 = require("./utils");
 /**
  * Map of already initialized tables. Key = tableName, Value = Promise with TableResult creation.
  */
@@ -114,7 +115,7 @@ class TableStorage {
      * @param keys Array of item keys to remove from the store.
      **/
     delete(keys) {
-        if (!keys || keys.length)
+        if (!keys || !keys.length)
             return Promise.resolve();
         return this.ensureTable().then(() => {
             // for each key, remove its rows based on PK
@@ -251,7 +252,7 @@ class StoreItemContainer {
         let key = ordered[0].RealKey._;
         let eTag = ordered[0]['.metadata'] ? ordered[0]['.metadata'].etag : null;
         let json = ordered.map(o => o.Json._).join('');
-        let obj = JSON.parse(json);
+        let obj = JSON.parse(json, utils_1.JsonDateReviver);
         if (eTag)
             obj.eTag = eTag;
         return new StoreItemContainer(key, obj);

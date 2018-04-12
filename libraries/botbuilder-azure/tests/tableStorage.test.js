@@ -70,6 +70,52 @@ testStorage = function () {
             .catch(handleError);
     });
 
+    it('read/write object with date', function () {
+        var date = new Date();
+        return storage.write({ keyDate: { date: date } })
+            .then(() => storage.read(['keyDate']))
+            .then((result) => {
+                assert(result != null, 'result should be object');
+                assert(result.keyDate != null, 'keyDate should be defined');
+                console.log([result.keyDate.date, date])
+                assert(result.keyDate.date.getTime() == date.getTime(), 'object should have date');
+            })
+            .catch(handleError);
+    });
+
+    it('multiple key creation', function () {
+        var date = new Date();
+        return storage.write({
+            keyCreateA: { count: 1 },
+            keyCreateB: { count: 2 },
+         })
+            .then(() => storage.read(['keyCreateA', 'keyCreateB']))
+            .then((result) => {
+                assert(result != null, 'result should be object');
+                assert(result.keyCreateA != null, 'keyCreateA should be defined');
+                assert(result.keyCreateA.count == 1, 'object should have count of 1');
+                assert(result.keyCreateB != null, 'keyCreateB should be defined');
+                assert(result.keyCreateB.count == 2, 'object should have count of 2');
+                assert(!result.eTag, 'ETag should be defined');
+            })
+            .catch(handleError);
+    });
+
+    it('multiple key deletion', function () {
+        return storage.write({
+            keyDeleteA: { count: 1 },
+            keyDeleteB: { count: 2 },
+         })
+            .then(() => storage.delete(['keyDeleteA', 'keyDeleteB']))
+            .then(() => storage.read(['keyDeleteA', 'keyDeleteB']))
+            .then((result) => {
+                assert(result != null, 'result should be object');
+                assert(!result.keyDeleteA, 'keyDeleteA should not be defined');
+                assert(!result.keyDeleteB, 'keyDeleteB should not be defined');
+            })
+            .catch(handleError);
+    });
+
     it('key update', function () {
         return storage.write({ keyUpdate: { count: 1 } })
             .then(() => storage.read(['keyUpdate']))
