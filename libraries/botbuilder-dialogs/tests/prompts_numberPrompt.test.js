@@ -36,7 +36,8 @@ describe('prompts/NumberPrompt', function() {
         const state = {};
         const context = new TestContext(beginMessage);
         const dc = dialogs.createContext(context, state);
-        dc.begin('a').then((result) => {
+        dc.begin('a').then(() => {
+            const result = dc.dialogResult;
             assert(result && result.active);
             const dc2 = dialogs.createContext(new TestContext(answerMessage), state);
             return dc2.continue();
@@ -59,15 +60,18 @@ describe('prompts/NumberPrompt', function() {
         const state = {};
         const context = new TestContext(beginMessage);
         const dc = dialogs.createContext(context, state);
-        dc.begin('a').then((result) => {
+        dc.begin('a').then(() => {
+            const result = dc.dialogResult;
             assert(result && result.active);
             const context2 = new TestContext(invalidMessage);
             const dc2 = dialogs.createContext(context2, state);
-            return dc2.continue().then((result) => {
+            return dc2.continue().then(() => {
+                const result = dc2.dialogResult;
                 assert(result && result.active);
                 assert(context2.sent && context2.sent[0].text === 'foo');
                 const dc3 = dialogs.createContext(new TestContext(answerMessage), state);
-                return dc3.continue().then((result) => {
+                return dc3.continue().then(() => {
+                    const result = dc3.dialogResult;
                     assert(result && !result.active);
                     assert(result.result === 35);
                     done();
@@ -92,15 +96,18 @@ describe('prompts/NumberPrompt', function() {
         const state = {};
         const context = new TestContext(beginMessage);
         const dc = dialogs.createContext(context, state);
-        dc.begin('a').then((result) => {
+        dc.begin('a').then(() => {
+            const result = dc.dialogResult;
             assert(result && result.active);
             const context2 = new TestContext(invalidMessage);
             const dc2 = dialogs.createContext(context2, state);
-            return dc2.continue().then((result) => {
+            return dc2.continue().then(() => {
+                const result = dc2.dialogResult;
                 assert(result && result.active);
                 assert(context2.sent && context2.sent[0].text === 'bar');
                 const dc3 = dialogs.createContext(new TestContext(answerMessage), state);
-                return dc3.continue().then((result) => {
+                return dc3.continue().then(() => {
+                    const result = dc3.dialogResult;
                     assert(result && !result.active);
                     assert(result.result === 35);
                     done();
@@ -128,15 +135,18 @@ describe('prompts/NumberPrompt', function() {
         const state = {};
         const context = new TestContext(beginMessage);
         const dc = dialogs.createContext(context, state);
-        dc.begin('a').then((result) => {
+        dc.begin('a').then(() => {
+            const result = dc.dialogResult;
             assert(result && result.active);
             const context2 = new TestContext(invalidMessage);
             const dc2 = dialogs.createContext(context2, state);
-            return dc2.continue().then((result) => {
+            return dc2.continue().then(() => {
+                const result = dc2.dialogResult;
                 assert(result && result.active);
                 assert(context2.sent && context2.sent[0].text === 'out of range');
                 const dc3 = dialogs.createContext(new TestContext(answerMessage), state);
-                return dc3.continue().then((result) => {
+                return dc3.continue().then(() => {
+                    const result = dc3.dialogResult;
                     assert(result && !result.active);
                     assert(result.result === 35);
                     done();
@@ -161,15 +171,18 @@ describe('prompts/NumberPrompt', function() {
         const state = {};
         const context = new TestContext(beginMessage);
         const dc = dialogs.createContext(context, state);
-        dc.begin('a').then((result) => {
+        dc.begin('a').then(() => {
+            const result = dc.dialogResult;
             assert(result && result.active);
             const context2 = new TestContext(invalidMessage);
             const dc2 = dialogs.createContext(context2, state);
-            return dc2.continue().then((result) => {
+            return dc2.continue().then(() => {
+                const result = dc2.dialogResult;
                 assert(result && result.active);
                 assert(!context2.sent);
                 const dc3 = dialogs.createContext(new TestContext(answerMessage), state);
-                return dc3.continue().then((result) => {
+                return dc3.continue().then(() => {
+                    const result = dc3.dialogResult;
                     assert(result && !result.active);
                     assert(result.result === 35);
                     done();

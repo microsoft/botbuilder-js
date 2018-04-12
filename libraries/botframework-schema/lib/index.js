@@ -8,11 +8,26 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
+ * Defines values for RoleTypes.
+ * Possible values include: 'user', 'bot'
+ * There could be more values for this enum apart from the ones defined here.If
+ * you want to set a value that is not from the known values then you can do
+ * the following:
+ * let param: RoleTypes = <RoleTypes>"someUnknownValueThatWillStillBeValid";
+ * @readonly
+ * @enum {string}
+ */
+var RoleTypes;
+(function (RoleTypes) {
+    RoleTypes["User"] = "user";
+    RoleTypes["Bot"] = "bot";
+})(RoleTypes = exports.RoleTypes || (exports.RoleTypes = {}));
+/**
  * Defines values for ActivityTypes.
  * Possible values include: 'message', 'contactRelationUpdate',
  * 'conversationUpdate', 'typing', 'ping', 'endOfConversation', 'event',
  * 'invoke', 'deleteUserData', 'messageUpdate', 'messageDelete',
- * 'installationUpdate', 'messageReaction', 'suggestion'
+ * 'installationUpdate', 'messageReaction', 'suggestion', 'trace'
  * There could be more values for this enum apart from the ones defined here.If
  * you want to set a value that is not from the known values then you can do
  * the following:
@@ -37,6 +52,7 @@ var ActivityTypes;
     ActivityTypes["InstallationUpdate"] = "installationUpdate";
     ActivityTypes["MessageReaction"] = "messageReaction";
     ActivityTypes["Suggestion"] = "suggestion";
+    ActivityTypes["Trace"] = "trace";
 })(ActivityTypes = exports.ActivityTypes || (exports.ActivityTypes = {}));
 /**
  * Defines values for TextFormatTypes.

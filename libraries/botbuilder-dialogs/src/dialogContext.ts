@@ -15,7 +15,7 @@ import { Choice } from 'botbuilder-prompts';
  * Result returned to the caller of one of the various stack manipulation methods and used to 
  * return the result from a final call to `DialogContext.end()` to the bots logic.
  */
-export interface DialogResult<T = any> {
+export interface DialogResult<T> {
     /** This will be `true` if there is still an active dialog on the stack. */
     active: boolean;
 
@@ -28,10 +28,11 @@ export interface DialogResult<T = any> {
      * 
      * In all cases where it's populated, [active](#active) will be `false`. 
      */
-    result?: T;
+    result: T|undefined;
 }
 
 export class DialogContext<C extends TurnContext> {
+    private finalResult: any = undefined;
     
      /**
       * Creates a new DialogContext instance.
@@ -46,6 +47,17 @@ export class DialogContext<C extends TurnContext> {
         return this.stack.length > 0 ? this.stack[this.stack.length - 1] : undefined;
     }
 
+    /** 
+     * Returns a structure that indicates whether there is still an active dialog on the stack 
+     * along with the result returned by a dialog that just ended.
+     */
+    public get dialogResult(): DialogResult<any> {
+        return {
+            active: this.stack.length > 0,
+            result: this.finalResult
+        };
+    }
+
     /**
      * Pushes a new dialog onto the dialog stack.
      * 
@@ -58,7 +70,7 @@ export class DialogContext<C extends TurnContext> {
      * @param dialogId ID of the dialog to start.
      * @param dialogArgs (Optional) additional argument(s) to pass to the dialog being started.
      */
-    public begin(dialogId: string, dialogArgs?: any): Promise<DialogResult> {
+    public begin(dialogId: string, dialogArgs?: any): Promise<any> {
         try {
             // Lookup dialog
             const dialog = this.dialogs.find(dialogId);
@@ -72,7 +84,7 @@ export class DialogContext<C extends TurnContext> {
             this.stack.push(instance);
             
             // Call dialogs begin() method.
-            return Promise.resolve(dialog.dialogBegin(this, dialogArgs)).then((r) => this.ensureDialogResult(r));
+            return Promise.resolve(dialog.dialogBegin(this, dialogArgs));
         } catch(err) {
             return Promise.reject(err);
         }
@@ -92,7 +104,7 @@ export class DialogContext<C extends TurnContext> {
      * @param prompt Initial prompt to send the user.
      * @param choicesOrOptions (Optional) array of choices to prompt the user for or additional prompt options.
      */
-    public prompt<O extends PromptOptions = PromptOptions>(dialogId: string, prompt: string|Partial<Activity>, choicesOrOptions?: O|(string|Choice)[], options?: O): Promise<DialogResult> {
+    public prompt<O extends PromptOptions = PromptOptions>(dialogId: string, prompt: string|Partial<Activity>, choicesOrOptions?: O|(string|Choice)[], options?: O): Promise<any> {
         const args = Object.assign({}, Array.isArray(choicesOrOptions) ? { choices: choicesOrOptions } : choicesOrOptions) as O;
         if (prompt) { args.prompt = prompt }
         return this.begin(dialogId, args);
@@ -114,7 +126,7 @@ export class DialogContext<C extends TurnContext> {
      * });
      * ```
      */
-    public continue(): Promise<DialogResult> {
+    public continue(): Promise<any> {
         try {
             // Check for a dialog on the stack
             const instance = this.instance;
@@ -127,13 +139,13 @@ export class DialogContext<C extends TurnContext> {
                 // Check for existence of a continue() method
                 if (dialog.dialogContinue) {
                     // Continue execution of dialog
-                    return Promise.resolve(dialog.dialogContinue(this)).then((r) => this.ensureDialogResult(r));
+                    return Promise.resolve(dialog.dialogContinue(this));
                 } else {
                     // Just end the dialog
                     return this.end();
                 }
             } else {
-                return Promise.resolve({ active: false });
+                return Promise.resolve();
             }
         } catch(err) {
             return Promise.reject(err);
@@ -164,7 +176,7 @@ export class DialogContext<C extends TurnContext> {
      * ```
      * @param result (Optional) result to pass to the parent dialogs `Dialog.resume()` method.
      */
-    public end(result?: any): Promise<DialogResult> {
+    public end(result?: any): Promise<any> {
         try {
             // Pop active dialog off the stack
             if (this.stack.length > 0) { this.stack.pop() }
@@ -180,13 +192,15 @@ export class DialogContext<C extends TurnContext> {
                 // Check for existence of a resumeDialog() method
                 if (dialog.dialogResume) {
                     // Return result to previous dialog
-                    return Promise.resolve(dialog.dialogResume(this, result)).then((r) => this.ensureDialogResult(r));
+                    return Promise.resolve(dialog.dialogResume(this, result));
                 } else {
                     // Just end the dialog and pass result to parent dialog
                     return this.end(result);
                 }
             } else {
-                return Promise.resolve({ active: false, result: result });
+                // Remember final result
+                this.finalResult = result;
+                return Promise.resolve();
             }
         } catch(err) {
             return Promise.reject(err);
@@ -202,7 +216,7 @@ export class DialogContext<C extends TurnContext> {
      * await dc.endAll().begin('bookFlightTask');
      * ```
      */
-    public endAll(): this{
+    public endAll(): this {
         // Cancel any active dialogs
         if (this.stack.length > 0) {
             this.stack.splice(0, this.stack.length);
@@ -231,16 +245,12 @@ export class DialogContext<C extends TurnContext> {
      * @param dialogId ID of the new dialog to start.
      * @param dialogArgs (Optional) additional argument(s) to pass to the new dialog.  
      */
-    public replace(dialogId: string, dialogArgs?: any): Promise<DialogResult> {
+    public replace(dialogId: string, dialogArgs?: any): Promise<any> {
         // Pop stack
         if (this.stack.length > 0) { this.stack.pop() }
 
         // Start replacement dialog
         return this.begin(dialogId, dialogArgs);
-    }
-
-    private ensureDialogResult(result: any): DialogResult {
-        return typeof result === 'object' && typeof (result as DialogResult).active === 'boolean' ? result : { active: this.stack.length > 0 };
     }
 }
 

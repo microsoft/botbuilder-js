@@ -26,21 +26,23 @@ export class CompositeControl<R = any, O = {}, C extends TurnContext = TurnConte
 
     public begin(context: C, state: object, options?: O): Promise<DialogResult<R>> {
         const cdc = this.dialogs.createContext(context, state);
-        return cdc.begin(this.dialogId, Object.assign({}, this.defaultOptions, options));
+        return cdc.begin(this.dialogId, Object.assign({}, this.defaultOptions, options))
+                  .then(() => cdc.dialogResult);
     }
 
     public continue(context: C, state: object): Promise<DialogResult<R>> {
         const cdc = this.dialogs.createContext(context, state);
-        return cdc.continue();         
+        return cdc.continue()
+                  .then(() => cdc.dialogResult);         
     }
 
     public dialogBegin(dc: DialogContext<C>, dialogArgs?: any): Promise<any> {
         // Start the controls entry point dialog. 
         const cdc = this.dialogs.createContext(dc.context, dc.instance.state);
-        return cdc.begin(this.dialogId, Object.assign({}, this.defaultOptions, dialogArgs)).then((result) => {
+        return cdc.begin(this.dialogId, Object.assign({}, this.defaultOptions, dialogArgs)).then(() => {
             // End if the controls dialog ends.
-            if (!result.active) {
-                return dc.end(result.result);
+            if (!cdc.dialogResult.active) {
+                return dc.end(cdc.dialogResult.result);
             }
         });
     }
@@ -48,10 +50,10 @@ export class CompositeControl<R = any, O = {}, C extends TurnContext = TurnConte
     public dialogContinue(dc: DialogContext<C>): Promise<any> {
         // Continue controls dialog stack.
         const cdc = this.dialogs.createContext(dc.context, dc.instance.state);
-        return cdc.continue().then((result) => {
+        return cdc.continue().then(() => {
             // End if the controls dialog ends.
-            if (!result.active) {
-                return dc.end(result.result);
+            if (!cdc.dialogResult.active) {
+                return dc.end(cdc.dialogResult.result);
             }
         });
     }

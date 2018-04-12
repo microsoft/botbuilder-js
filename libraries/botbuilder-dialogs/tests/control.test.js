@@ -48,7 +48,8 @@ describe('Control', function() {
         const state = {};
         const context = new TestContext(beginMessage);
         const dc = dialogs.createContext(context, state);
-        dc.begin('control', { foo: 'bar' }).then((result) => {
+        dc.begin('control', { foo: 'bar' }).then(() => {
+            const result = dc.dialogResult;
             assert(result && result.active);
             assert(control.beginCalled);
             assert(control.beginArgs && control.beginArgs.foo === 'bar');

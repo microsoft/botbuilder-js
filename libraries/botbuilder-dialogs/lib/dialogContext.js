@@ -11,10 +11,21 @@ class DialogContext {
         this.dialogs = dialogs;
         this.context = context;
         this.stack = stack;
+        this.finalResult = undefined;
     }
     /** Returns the cached instance of the active dialog on the top of the stack or `undefined` if the stack is empty. */
     get instance() {
         return this.stack.length > 0 ? this.stack[this.stack.length - 1] : undefined;
+    }
+    /**
+     * Returns a structure that indicates whether there is still an active dialog on the stack
+     * along with the result returned by a dialog that just ended.
+     */
+    get dialogResult() {
+        return {
+            active: this.stack.length > 0,
+            result: this.finalResult
+        };
     }
     /**
      * Pushes a new dialog onto the dialog stack.
@@ -42,7 +53,7 @@ class DialogContext {
             };
             this.stack.push(instance);
             // Call dialogs begin() method.
-            return Promise.resolve(dialog.dialogBegin(this, dialogArgs)).then((r) => this.ensureDialogResult(r));
+            return Promise.resolve(dialog.dialogBegin(this, dialogArgs));
         }
         catch (err) {
             return Promise.reject(err);
@@ -98,7 +109,7 @@ class DialogContext {
                 // Check for existence of a continue() method
                 if (dialog.dialogContinue) {
                     // Continue execution of dialog
-                    return Promise.resolve(dialog.dialogContinue(this)).then((r) => this.ensureDialogResult(r));
+                    return Promise.resolve(dialog.dialogContinue(this));
                 }
                 else {
                     // Just end the dialog
@@ -106,7 +117,7 @@ class DialogContext {
                 }
             }
             else {
-                return Promise.resolve({ active: false });
+                return Promise.resolve();
             }
         }
         catch (err) {
@@ -154,7 +165,7 @@ class DialogContext {
                 // Check for existence of a resumeDialog() method
                 if (dialog.dialogResume) {
                     // Return result to previous dialog
-                    return Promise.resolve(dialog.dialogResume(this, result)).then((r) => this.ensureDialogResult(r));
+                    return Promise.resolve(dialog.dialogResume(this, result));
                 }
                 else {
                     // Just end the dialog and pass result to parent dialog
@@ -162,7 +173,9 @@ class DialogContext {
                 }
             }
             else {
-                return Promise.resolve({ active: false, result: result });
+                // Remember final result
+                this.finalResult = result;
+                return Promise.resolve();
             }
         }
         catch (err) {
@@ -213,9 +226,6 @@ class DialogContext {
         }
         // Start replacement dialog
         return this.begin(dialogId, dialogArgs);
-    }
-    ensureDialogResult(result) {
-        return typeof result === 'object' && typeof result.active === 'boolean' ? result : { active: this.stack.length > 0 };
     }
 }
 exports.DialogContext = DialogContext;
