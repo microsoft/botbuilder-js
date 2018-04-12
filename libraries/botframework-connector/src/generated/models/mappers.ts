@@ -136,6 +136,13 @@ export const ChannelAccount = {
         type: {
           name: 'String'
         }
+      },
+      role: {
+        required: false,
+        serializedName: 'role',
+        type: {
+          name: 'String'
+        }
       }
     }
   }
@@ -155,6 +162,13 @@ export const ConversationAccount = {
           name: 'Boolean'
         }
       },
+      conversationType: {
+        required: false,
+        serializedName: 'conversationType',
+        type: {
+          name: 'String'
+        }
+      },
       id: {
         required: false,
         serializedName: 'id',
@@ -165,6 +179,13 @@ export const ConversationAccount = {
       name: {
         required: false,
         serializedName: 'name',
+        type: {
+          name: 'String'
+        }
+      },
+      role: {
+        required: false,
+        serializedName: 'role',
         type: {
           name: 'String'
         }
@@ -237,7 +258,7 @@ export const CardAction = {
         required: false,
         serializedName: 'value',
         type: {
-          name: 'String'
+          name: 'Object'
         }
       }
     }
@@ -684,6 +705,20 @@ export const Activity = {
           name: 'String'
         }
       },
+      label: {
+        required: false,
+        serializedName: 'label',
+        type: {
+          name: 'String'
+        }
+      },
+      valueType: {
+        required: false,
+        serializedName: 'valueType',
+        type: {
+          name: 'String'
+        }
+      },
       value: {
         required: false,
         serializedName: 'value',
@@ -842,6 +877,72 @@ export const ConversationResourceResponse = {
         serializedName: 'id',
         type: {
           name: 'String'
+        }
+      }
+    }
+  }
+};
+
+export const ConversationMembers = {
+  required: false,
+  serializedName: 'ConversationMembers',
+  type: {
+    name: 'Composite',
+    className: 'ConversationMembers',
+    modelProperties: {
+      id: {
+        required: false,
+        serializedName: 'id',
+        type: {
+          name: 'String'
+        }
+      },
+      members: {
+        required: false,
+        serializedName: 'members',
+        type: {
+          name: 'Sequence',
+          element: {
+              required: false,
+              serializedName: 'ChannelAccountElementType',
+              type: {
+                name: 'Composite',
+                className: 'ChannelAccount'
+              }
+          }
+        }
+      }
+    }
+  }
+};
+
+export const ConversationsResult = {
+  required: false,
+  serializedName: 'ConversationsResult',
+  type: {
+    name: 'Composite',
+    className: 'ConversationsResult',
+    modelProperties: {
+      continuationToken: {
+        required: false,
+        serializedName: 'continuationToken',
+        type: {
+          name: 'String'
+        }
+      },
+      conversations: {
+        required: false,
+        serializedName: 'conversations',
+        type: {
+          name: 'Sequence',
+          element: {
+              required: false,
+              serializedName: 'ConversationMembersElementType',
+              type: {
+                name: 'Composite',
+                className: 'ConversationMembers'
+              }
+          }
         }
       }
     }
@@ -1156,7 +1257,7 @@ export const AnimationCard = {
         required: false,
         serializedName: 'value',
         type: {
-          name: 'String'
+          name: 'Object'
         }
       }
     }
@@ -1261,7 +1362,7 @@ export const AudioCard = {
         required: false,
         serializedName: 'value',
         type: {
-          name: 'String'
+          name: 'Object'
         }
       }
     }
@@ -1436,6 +1537,31 @@ export const MediaCard = {
         required: false,
         serializedName: 'value',
         type: {
+          name: 'Object'
+        }
+      }
+    }
+  }
+};
+
+export const Fact = {
+  required: false,
+  serializedName: 'Fact',
+  type: {
+    name: 'Composite',
+    className: 'Fact',
+    modelProperties: {
+      key: {
+        required: false,
+        serializedName: 'key',
+        type: {
+          name: 'String'
+        }
+      },
+      value: {
+        required: false,
+        serializedName: 'value',
+        type: {
           name: 'String'
         }
       }
@@ -1505,31 +1631,6 @@ export const ReceiptItem = {
   }
 };
 
-export const Fact = {
-  required: false,
-  serializedName: 'Fact',
-  type: {
-    name: 'Composite',
-    className: 'Fact',
-    modelProperties: {
-      key: {
-        required: false,
-        serializedName: 'key',
-        type: {
-          name: 'String'
-        }
-      },
-      value: {
-        required: false,
-        serializedName: 'value',
-        type: {
-          name: 'String'
-        }
-      }
-    }
-  }
-};
-
 export const ReceiptCard = {
   required: false,
   serializedName: 'ReceiptCard',
@@ -1544,21 +1645,6 @@ export const ReceiptCard = {
           name: 'String'
         }
       },
-      items: {
-        required: false,
-        serializedName: 'items',
-        type: {
-          name: 'Sequence',
-          element: {
-              required: false,
-              serializedName: 'ReceiptItemElementType',
-              type: {
-                name: 'Composite',
-                className: 'ReceiptItem'
-              }
-          }
-        }
-      },
       facts: {
         required: false,
         serializedName: 'facts',
@@ -1570,6 +1656,21 @@ export const ReceiptCard = {
               type: {
                 name: 'Composite',
                 className: 'Fact'
+              }
+          }
+        }
+      },
+      items: {
+        required: false,
+        serializedName: 'items',
+        type: {
+          name: 'Sequence',
+          element: {
+              required: false,
+              serializedName: 'ReceiptItemElementType',
+              type: {
+                name: 'Composite',
+                className: 'ReceiptItem'
               }
           }
         }
@@ -1632,6 +1733,46 @@ export const SigninCard = {
       text: {
         required: false,
         serializedName: 'text',
+        type: {
+          name: 'String'
+        }
+      },
+      buttons: {
+        required: false,
+        serializedName: 'buttons',
+        type: {
+          name: 'Sequence',
+          element: {
+              required: false,
+              serializedName: 'CardActionElementType',
+              type: {
+                name: 'Composite',
+                className: 'CardAction'
+              }
+          }
+        }
+      }
+    }
+  }
+};
+
+export const OAuthCard = {
+  required: false,
+  serializedName: 'OAuthCard',
+  type: {
+    name: 'Composite',
+    className: 'OAuthCard',
+    modelProperties: {
+      text: {
+        required: false,
+        serializedName: 'text',
+        type: {
+          name: 'String'
+        }
+      },
+      connectionName: {
+        required: false,
+        serializedName: 'connectionName',
         type: {
           name: 'String'
         }
@@ -1823,7 +1964,7 @@ export const VideoCard = {
         required: false,
         serializedName: 'value',
         type: {
-          name: 'String'
+          name: 'Object'
         }
       }
     }
@@ -1992,6 +2133,70 @@ export const MediaEventValue = {
         serializedName: 'cardValue',
         type: {
           name: 'Object'
+        }
+      }
+    }
+  }
+};
+
+export const TokenRequest = {
+  required: false,
+  serializedName: 'TokenRequest',
+  type: {
+    name: 'Composite',
+    className: 'TokenRequest',
+    modelProperties: {
+      provider: {
+        required: false,
+        serializedName: 'provider',
+        type: {
+          name: 'String'
+        }
+      },
+      settings: {
+        required: false,
+        serializedName: 'settings',
+        type: {
+          name: 'Dictionary',
+          value: {
+              required: false,
+              serializedName: 'ObjectElementType',
+              type: {
+                name: 'Object'
+              }
+          }
+        }
+      }
+    }
+  }
+};
+
+export const TokenResponse = {
+  required: false,
+  serializedName: 'TokenResponse',
+  type: {
+    name: 'Composite',
+    className: 'TokenResponse',
+    modelProperties: {
+      connectionName: {
+        required: false,
+        serializedName: 'connectionName',
+        type: {
+          name: 'String'
+        }
+      },
+      token: {
+        required: false,
+        serializedName: 'token',
+        type: {
+          name: 'String'
+        }
+      },
+      expiration: {
+        required: false,
+        serializedName: 'expiration',
+        type: {
+          name: 'String'
         }
       }
     }
@@ -2664,6 +2869,24 @@ export const PaymentRequestUpdateResult = {
         type: {
           name: 'Composite',
           className: 'PaymentDetails'
+        }
+      }
+    }
+  }
+};
+
+export const ConversationsGetConversationsOptionalParams = {
+  required: false,
+  serializedName: 'GetConversationsOptions',
+  type: {
+    name: 'Composite',
+    className: 'ConversationsGetConversationsOptionalParams',
+    modelProperties: {
+      continuationToken: {
+        required: false,
+        serializedName: 'continuationToken',
+        type: {
+          name: 'String'
         }
       }
     }

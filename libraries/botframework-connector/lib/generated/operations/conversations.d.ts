@@ -17,6 +17,31 @@ export declare class Conversations {
      */
     constructor(client: ConnectorClient);
     /**
+     * @summary GetConversations
+     *
+     * List the Conversations in which this bot has participated.
+     *
+     * GET from this method with a skip token
+     *
+     * The return value is a ConversationsResult, which contains an array of
+     * ConversationMembers and a skip token.  If the skip token is not empty, then
+     * there are further values to be returned. Call this method again with the
+     * returned token to get more values.
+     *
+     * Each ConversationMembers object contains the ID of the conversation and an
+     * array of ChannelAccounts that describe the members of the conversation.
+     *
+     * @param {ConversationsGetConversationsOptionalParams} [options] Optional
+     * Parameters.
+     *
+     * @returns {Promise} A promise is returned
+     *
+     * @resolve {HttpOperationResponse} - The deserialized result object.
+     *
+     * @reject {Error|ServiceError} - The error object.
+     */
+    getConversationsWithHttpOperationResponse(options?: Models.ConversationsGetConversationsOptionalParams): Promise<msRest.HttpOperationResponse>;
+    /**
      * @summary CreateConversation
      *
      * Create a new Conversation.
@@ -184,6 +209,29 @@ export declare class Conversations {
      */
     getConversationMembersWithHttpOperationResponse(conversationId: string, options?: msRest.RequestOptionsBase): Promise<msRest.HttpOperationResponse>;
     /**
+     * @summary DeleteConversationMember
+     *
+     * Deletes a member from a converstion.
+     *
+     * This REST API takes a ConversationId and a memberId (of type string) and
+     * removes that member from the conversation. If that member was the last
+     * member
+     * of the conversation, the conversation will also be deleted.
+     *
+     * @param {string} conversationId Conversation ID
+     *
+     * @param {string} memberId ID of the member to delete from this conversation
+     *
+     * @param {RequestOptionsBase} [options] Optional Parameters.
+     *
+     * @returns {Promise} A promise is returned
+     *
+     * @resolve {HttpOperationResponse} - The deserialized result object.
+     *
+     * @reject {Error|ServiceError} - The error object.
+     */
+    deleteConversationMemberWithHttpOperationResponse(conversationId: string, memberId: string, options?: msRest.RequestOptionsBase): Promise<msRest.HttpOperationResponse>;
+    /**
      * @summary GetActivityMembers
      *
      * Enumerate the members of an activity.
@@ -229,6 +277,41 @@ export declare class Conversations {
      * @reject {Error|ServiceError} - The error object.
      */
     uploadAttachmentWithHttpOperationResponse(conversationId: string, attachmentUpload: Models.AttachmentData, options?: msRest.RequestOptionsBase): Promise<msRest.HttpOperationResponse>;
+    /**
+     * @summary GetConversations
+     *
+     * List the Conversations in which this bot has participated.
+     *
+     * GET from this method with a skip token
+     *
+     * The return value is a ConversationsResult, which contains an array of
+     * ConversationMembers and a skip token.  If the skip token is not empty, then
+     * there are further values to be returned. Call this method again with the
+     * returned token to get more values.
+     *
+     * Each ConversationMembers object contains the ID of the conversation and an
+     * array of ChannelAccounts that describe the members of the conversation.
+     *
+     * @param {ConversationsGetConversationsOptionalParams} [options] Optional
+     * Parameters.
+     *
+     * @param {ServiceCallback} callback - The callback.
+     *
+     * @returns {ServiceCallback} callback(err, result, request, response)
+     *
+     *                      {Error|ServiceError}  err        - The Error object if an error occurred, null otherwise.
+     *
+     *                      {Models.ConversationsResult} [result]   - The deserialized result object if an error did not occur.
+     *                      See {@link Models.ConversationsResult} for more
+     *                      information.
+     *
+     *                      {WebResource} [request]  - The HTTP Request object if an error did not occur.
+     *
+     *                      {Response} [response] - The HTTP Response stream if an error did not occur.
+     */
+    getConversations(): Promise<Models.ConversationsResult>;
+    getConversations(options: Models.ConversationsGetConversationsOptionalParams): Promise<Models.ConversationsResult>;
+    getConversations(options: Models.ConversationsGetConversationsOptionalParams, callback: msRest.ServiceCallback<Models.ConversationsResult>): void;
     /**
      * @summary CreateConversation
      *
@@ -458,6 +541,38 @@ export declare class Conversations {
     getConversationMembers(conversationId: string, options: msRest.RequestOptionsBase): Promise<Models.ChannelAccount[]>;
     getConversationMembers(conversationId: string, callback: msRest.ServiceCallback<Models.ChannelAccount[]>): void;
     getConversationMembers(conversationId: string, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<Models.ChannelAccount[]>): void;
+    /**
+     * @summary DeleteConversationMember
+     *
+     * Deletes a member from a converstion.
+     *
+     * This REST API takes a ConversationId and a memberId (of type string) and
+     * removes that member from the conversation. If that member was the last
+     * member
+     * of the conversation, the conversation will also be deleted.
+     *
+     * @param {string} conversationId Conversation ID
+     *
+     * @param {string} memberId ID of the member to delete from this conversation
+     *
+     * @param {RequestOptionsBase} [options] Optional Parameters.
+     *
+     * @param {ServiceCallback} callback - The callback.
+     *
+     * @returns {ServiceCallback} callback(err, result, request, response)
+     *
+     *                      {Error|ServiceError}  err        - The Error object if an error occurred, null otherwise.
+     *
+     *                      {void} [result]   - The deserialized result object if an error did not occur.
+     *
+     *                      {WebResource} [request]  - The HTTP Request object if an error did not occur.
+     *
+     *                      {Response} [response] - The HTTP Response stream if an error did not occur.
+     */
+    deleteConversationMember(conversationId: string, memberId: string): Promise<void>;
+    deleteConversationMember(conversationId: string, memberId: string, options: msRest.RequestOptionsBase): Promise<void>;
+    deleteConversationMember(conversationId: string, memberId: string, callback: msRest.ServiceCallback<void>): void;
+    deleteConversationMember(conversationId: string, memberId: string, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<void>): void;
     /**
      * @summary GetActivityMembers
      *

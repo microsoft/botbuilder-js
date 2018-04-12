@@ -131,6 +131,13 @@ export declare const ChannelAccount: {
                     name: string;
                 };
             };
+            role: {
+                required: boolean;
+                serializedName: string;
+                type: {
+                    name: string;
+                };
+            };
         };
     };
 };
@@ -148,6 +155,13 @@ export declare const ConversationAccount: {
                     name: string;
                 };
             };
+            conversationType: {
+                required: boolean;
+                serializedName: string;
+                type: {
+                    name: string;
+                };
+            };
             id: {
                 required: boolean;
                 serializedName: string;
@@ -156,6 +170,13 @@ export declare const ConversationAccount: {
                 };
             };
             name: {
+                required: boolean;
+                serializedName: string;
+                type: {
+                    name: string;
+                };
+            };
+            role: {
                 required: boolean;
                 serializedName: string;
                 type: {
@@ -669,6 +690,20 @@ export declare const Activity: {
                     name: string;
                 };
             };
+            label: {
+                required: boolean;
+                serializedName: string;
+                type: {
+                    name: string;
+                };
+            };
+            valueType: {
+                required: boolean;
+                serializedName: string;
+                type: {
+                    name: string;
+                };
+            };
             value: {
                 required: boolean;
                 serializedName: string;
@@ -825,6 +860,70 @@ export declare const ConversationResourceResponse: {
                 serializedName: string;
                 type: {
                     name: string;
+                };
+            };
+        };
+    };
+};
+export declare const ConversationMembers: {
+    required: boolean;
+    serializedName: string;
+    type: {
+        name: string;
+        className: string;
+        modelProperties: {
+            id: {
+                required: boolean;
+                serializedName: string;
+                type: {
+                    name: string;
+                };
+            };
+            members: {
+                required: boolean;
+                serializedName: string;
+                type: {
+                    name: string;
+                    element: {
+                        required: boolean;
+                        serializedName: string;
+                        type: {
+                            name: string;
+                            className: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
+};
+export declare const ConversationsResult: {
+    required: boolean;
+    serializedName: string;
+    type: {
+        name: string;
+        className: string;
+        modelProperties: {
+            continuationToken: {
+                required: boolean;
+                serializedName: string;
+                type: {
+                    name: string;
+                };
+            };
+            conversations: {
+                required: boolean;
+                serializedName: string;
+                type: {
+                    name: string;
+                    element: {
+                        required: boolean;
+                        serializedName: string;
+                        type: {
+                            name: string;
+                            className: string;
+                        };
+                    };
                 };
             };
         };
@@ -1415,6 +1514,30 @@ export declare const MediaCard: {
         };
     };
 };
+export declare const Fact: {
+    required: boolean;
+    serializedName: string;
+    type: {
+        name: string;
+        className: string;
+        modelProperties: {
+            key: {
+                required: boolean;
+                serializedName: string;
+                type: {
+                    name: string;
+                };
+            };
+            value: {
+                required: boolean;
+                serializedName: string;
+                type: {
+                    name: string;
+                };
+            };
+        };
+    };
+};
 export declare const ReceiptItem: {
     required: boolean;
     serializedName: string;
@@ -1476,30 +1599,6 @@ export declare const ReceiptItem: {
         };
     };
 };
-export declare const Fact: {
-    required: boolean;
-    serializedName: string;
-    type: {
-        name: string;
-        className: string;
-        modelProperties: {
-            key: {
-                required: boolean;
-                serializedName: string;
-                type: {
-                    name: string;
-                };
-            };
-            value: {
-                required: boolean;
-                serializedName: string;
-                type: {
-                    name: string;
-                };
-            };
-        };
-    };
-};
 export declare const ReceiptCard: {
     required: boolean;
     serializedName: string;
@@ -1514,7 +1613,7 @@ export declare const ReceiptCard: {
                     name: string;
                 };
             };
-            items: {
+            facts: {
                 required: boolean;
                 serializedName: string;
                 type: {
@@ -1529,7 +1628,7 @@ export declare const ReceiptCard: {
                     };
                 };
             };
-            facts: {
+            items: {
                 required: boolean;
                 serializedName: string;
                 type: {
@@ -1599,6 +1698,45 @@ export declare const SigninCard: {
         className: string;
         modelProperties: {
             text: {
+                required: boolean;
+                serializedName: string;
+                type: {
+                    name: string;
+                };
+            };
+            buttons: {
+                required: boolean;
+                serializedName: string;
+                type: {
+                    name: string;
+                    element: {
+                        required: boolean;
+                        serializedName: string;
+                        type: {
+                            name: string;
+                            className: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
+};
+export declare const OAuthCard: {
+    required: boolean;
+    serializedName: string;
+    type: {
+        name: string;
+        className: string;
+        modelProperties: {
+            text: {
+                required: boolean;
+                serializedName: string;
+                type: {
+                    name: string;
+                };
+            };
+            connectionName: {
                 required: boolean;
                 serializedName: string;
                 type: {
@@ -1950,6 +2088,68 @@ export declare const MediaEventValue: {
         className: string;
         modelProperties: {
             cardValue: {
+                required: boolean;
+                serializedName: string;
+                type: {
+                    name: string;
+                };
+            };
+        };
+    };
+};
+export declare const TokenRequest: {
+    required: boolean;
+    serializedName: string;
+    type: {
+        name: string;
+        className: string;
+        modelProperties: {
+            provider: {
+                required: boolean;
+                serializedName: string;
+                type: {
+                    name: string;
+                };
+            };
+            settings: {
+                required: boolean;
+                serializedName: string;
+                type: {
+                    name: string;
+                    value: {
+                        required: boolean;
+                        serializedName: string;
+                        type: {
+                            name: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
+};
+export declare const TokenResponse: {
+    required: boolean;
+    serializedName: string;
+    type: {
+        name: string;
+        className: string;
+        modelProperties: {
+            connectionName: {
+                required: boolean;
+                serializedName: string;
+                type: {
+                    name: string;
+                };
+            };
+            token: {
+                required: boolean;
+                serializedName: string;
+                type: {
+                    name: string;
+                };
+            };
+            expiration: {
                 required: boolean;
                 serializedName: string;
                 type: {
@@ -2611,6 +2811,23 @@ export declare const PaymentRequestUpdateResult: {
                 type: {
                     name: string;
                     className: string;
+                };
+            };
+        };
+    };
+};
+export declare const ConversationsGetConversationsOptionalParams: {
+    required: boolean;
+    serializedName: string;
+    type: {
+        name: string;
+        className: string;
+        modelProperties: {
+            continuationToken: {
+                required: boolean;
+                serializedName: string;
+                type: {
+                    name: string;
                 };
             };
         };
