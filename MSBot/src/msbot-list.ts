@@ -52,6 +52,6 @@ async function processListArgs(config: BotConfig): Promise<BotConfig> {
         }
     }
 
-    console.log(JSON.stringify(services, null, 4));
+    console.log(JSON.stringify(config, null, 4));
     return config;
 }
