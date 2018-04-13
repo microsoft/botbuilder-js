@@ -9,11 +9,15 @@ import { Storage, StoreItems } from 'botbuilder-core-extensions';
 /**
  * :package: **botbuilder**
  *
- * A file based storage provider.
+ * A file based storage provider. Items will be persisted to a folder on disk.
  *
  * **Usage Example**
  *
  * ```JavaScript
+ * const { FileStorage } = require('botbuilder');
+ * const path = require('path');
+ *
+ * const storage = new FileStorage(path.join(__dirname, './state'));
  * ```
  */
 export declare class FileStorage implements Storage {
@@ -21,28 +25,12 @@ export declare class FileStorage implements Storage {
     static nextTag: number;
     private pEnsureFolder;
     /**
-     * Creates a new instance of the storage provider.
-     *
-     * @param path Root filesystem path for where the provider should store its objects.
+     * Creates a new FileStorage instance.
+     * @param path Root filesystem path for where the provider should store its items.
      */
     constructor(path: string);
-    /**
-     * Loads store items from storage
-     *
-     * @param keys Array of item keys to read from the store.
-     **/
     read(keys: string[]): Promise<StoreItems>;
-    /**
-     * Saves store items to storage.
-     *
-     * @param changes Map of items to write to storage.
-     **/
     write(changes: StoreItems): Promise<void>;
-    /**
-     * Removes store items from storage
-     *
-     * @param keys Array of item keys to remove from the store.
-     **/
     delete(keys: string[]): Promise<void>;
     private ensureFolder();
     private getFileName(key);

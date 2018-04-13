@@ -11,13 +11,15 @@ const botbuilder_core_1 = require("botbuilder-core");
 const botframework_connector_1 = require("botframework-connector");
 const INVOKE_RESPONSE_KEY = Symbol('invokeResponse');
 /**
- * :package: **botbuilder-core**
+ * :package: **botbuilder**
  *
  * ActivityAdapter class needed to communicate with a Bot Framework channel or the Emulator.
  *
  * **Usage Example**
  *
  * ```JavaScript
+ * const { BotFrameworkAdapter } = require('botbuilder');
+ *
  * const adapter = new BotFrameworkAdapter({
  *    appId: process.env.MICROSOFT_APP_ID,
  *    appPassword: process.env.MICROSOFT_APP_PASSWORD

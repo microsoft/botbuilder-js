@@ -15,11 +15,15 @@ import * as filenamify from 'filenamify';
 /**
  * :package: **botbuilder**
  * 
- * A file based storage provider.
+ * A file based storage provider. Items will be persisted to a folder on disk.
  *
  * **Usage Example**
  *
  * ```JavaScript
+ * const { FileStorage } = require('botbuilder');
+ * const path = require('path');
+ *  
+ * const storage = new FileStorage(path.join(__dirname, './state'));
  * ```
  */
 export class FileStorage implements Storage {
@@ -27,17 +31,11 @@ export class FileStorage implements Storage {
     private pEnsureFolder: Promise<void>|undefined;
 
     /**
-     * Creates a new instance of the storage provider.
-     *
-     * @param path Root filesystem path for where the provider should store its objects.
+     * Creates a new FileStorage instance.
+     * @param path Root filesystem path for where the provider should store its items.
      */
     public constructor(protected readonly path: string) { }
 
-    /** 
-     * Loads store items from storage
-     *
-     * @param keys Array of item keys to read from the store. 
-     **/
     public read(keys: string[]): Promise<StoreItems> {
         return this.ensureFolder().then(() => {
             const data: StoreItems = {};
@@ -57,11 +55,6 @@ export class FileStorage implements Storage {
         });
     }
 
-    /** 
-     * Saves store items to storage.
-     *
-     * @param changes Map of items to write to storage.  
-     **/
     public write(changes: StoreItems): Promise<void> {
         return this.ensureFolder().then(() => {
                 let promises: Promise<void>[] = [];
@@ -83,11 +76,6 @@ export class FileStorage implements Storage {
             });
     };
 
-    /** 
-     * Removes store items from storage
-     *
-     * @param keys Array of item keys to remove from the store. 
-     **/
     public delete(keys: string[]): Promise<void> {
         return this.ensureFolder().then(() => {
                 const promises = [];

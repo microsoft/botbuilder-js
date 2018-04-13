@@ -18,12 +18,18 @@ export type StorageKeyFactory = (context: TurnContext) => Promiseable<string>;
 /** 
  * :package: **botbuilder-core-extensions**
  * 
- * Interface for a store provider that stores and retrieves objects. 
+ * Interface for a storage provider that stores and retrieves plain old JSON objects. 
  */
 export interface Storage {
     /** 
      * Loads store items from storage
      *
+     * **Usage Example**
+     *
+     * ```JavaScript
+     * const items = await storage.read(['botState']);
+     * const state = 'botState' in items ? items['botState'] : {};
+     * ```
      * @param keys Array of item keys to read from the store. 
      **/
     read(keys: string[]): Promise<StoreItems>;
@@ -31,6 +37,12 @@ export interface Storage {
     /** 
      * Saves store items to storage.
      *
+     * **Usage Example**
+     *
+     * ```JavaScript
+     * state.topic = 'someTopic';
+     * await storage.write({ 'botState': state });
+     * ```
      * @param changes Map of items to write to storage.  
      **/
     write(changes: StoreItems): Promise<void>;
@@ -38,17 +50,20 @@ export interface Storage {
     /** 
      * Removes store items from storage
      *
+     * **Usage Example**
+     *
+     * ```JavaScript
+     * await storage.delete(['botState']);
+     * ```
      * @param keys Array of item keys to remove from the store. 
      **/
     delete(keys: string[]): Promise<void>;
 }
 
 /** 
+ * :package: **botbuilder-core-extensions**
+ *
  * Object which is stored in Storage with an optional eTag.
- * 
- * | package |
- * | ------- |
- * | botbuilder-core-extensions | 
  */
 export interface StoreItem {
     /** Key/value pairs. */
@@ -59,23 +74,33 @@ export interface StoreItem {
 }
 
 /** 
- * Map of named `StoreItem` objects. 
+ * :package: **botbuilder-core-extensions**
  * 
- * | package |
- * | ------- |
- * | botbuilder-core-extensions | 
+ * Map of named `StoreItem` objects. 
  */
 export interface StoreItems {
     [key: string]: StoreItem;
 }
 
 /**
+ * :package: **botbuilder-core-extensions**
+ * 
  * Utility function to calculate a change hash for a `StoreItem`.
+ *
+ * **Usage Example**
+ *
+ * ```JavaScript
+ * // Calculate state objects initial hash
+ * const hash = calculateChangeHash(state);
  * 
- * | package |
- * | ------- |
- * | botbuilder-core-extensions | 
+ * // Process the received activity 
+ * await processActivity(context, state);
  * 
+ * // Save state if changed
+ * if (calculateChangeHash(state) !== hash) {
+ *    await storage.write({ 'botState': state });
+ * }
+ * ```
  * @param item Item to calculate the change hash for.
  */
 export function calculateChangeHash(item: StoreItem): string {

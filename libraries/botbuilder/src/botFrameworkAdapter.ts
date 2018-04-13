@@ -9,7 +9,7 @@ import { BotAdapter, TurnContext, Promiseable, ActivityTypes, Activity, Conversa
 import { ConnectorClient, SimpleCredentialProvider, MicrosoftAppCredentials, JwtTokenValidation } from 'botframework-connector';
 
 /** 
- * :package: **botbuilder-core**
+ * :package: **botbuilder**
  * 
  * Express or Restify Request object. 
  */
@@ -20,7 +20,7 @@ export interface WebRequest {
 }
 
 /** 
- * :package: **botbuilder-core**
+ * :package: **botbuilder**
  * 
  * Express or Restify Response object. 
  */
@@ -30,7 +30,7 @@ export interface WebResponse {
 }
 
 /** 
- * :package: **botbuilder-core**
+ * :package: **botbuilder**
  * 
  * Bot Framework Adapter Settings. 
  */
@@ -40,7 +40,7 @@ export interface BotFrameworkAdapterSettings {
 }
 
 /** 
- * :package: **botbuilder-core**
+ * :package: **botbuilder**
  * 
  * Response object expected to be sent in response to an `invoke` activity. 
  */
@@ -52,13 +52,15 @@ export interface InvokeResponse {
 const INVOKE_RESPONSE_KEY = Symbol('invokeResponse');
 
 /**
- * :package: **botbuilder-core**
+ * :package: **botbuilder**
  * 
  * ActivityAdapter class needed to communicate with a Bot Framework channel or the Emulator.
  *
  * **Usage Example**
  *
  * ```JavaScript
+ * const { BotFrameworkAdapter } = require('botbuilder');
+ * 
  * const adapter = new BotFrameworkAdapter({ 
  *    appId: process.env.MICROSOFT_APP_ID, 
  *    appPassword: process.env.MICROSOFT_APP_PASSWORD 

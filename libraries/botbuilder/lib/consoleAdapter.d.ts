@@ -9,13 +9,15 @@
 import { BotAdapter, TurnContext, Activity, ResourceResponse, Promiseable, ConversationReference } from 'botbuilder-core';
 import * as readline from 'readline';
 /**
- * :package: **botbuilder-core**
+ * :package: **botbuilder**
  *
  * Lets a user communicate with a bot from a console window.
  *
  * **Usage Example**
  *
  * ```JavaScript
+ * const { ConsoleAdapter } = require('botbuilder');
+ *
  * const adapter = new ConsoleAdapter();
  * const closeFn = adapter.listen(async (context) => {
  *    await context.sendActivity(`Hello World`);
