@@ -343,6 +343,7 @@
         "dependencies": {
           "ClassificationEvaluatorNetStandard": "1.0.0",
           "ClassificationSummaryNetStandard": "1.0.0",
+          "DescriptiveStatisticsComputerNetStandard": "1.0.0",
           "Fuse.Core": "1.0.0",
           "Newtonsoft.Json": "11.0.2",
           "ReservoirSamplerNetStandard": "1.0.0",
