@@ -12,4 +12,5 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 __export(require("./tableStorage"));
 __export(require("./cosmosDbSqlStorage"));
+__export(require("./blobStorage"));
 //# sourceMappingURL=index.js.map
