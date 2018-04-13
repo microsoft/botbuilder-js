@@ -13,7 +13,7 @@ const botbuilder_core_1 = require("botbuilder-core");
  *
  * A set of utility functions designed to assist with the formatting of the various card types a
  * bot can return. All of these functions return an `Attachment` which can be added to an `Activity`
- * directly or passed as input to a `MessageStyler` function.
+ * directly or passed as input to a `MessageFactory` method.
  *
  * **Usage Example**
  *
@@ -39,6 +39,25 @@ class CardFactory {
      * For more information about Adaptive Cards and to download the latest SDK, visit
      * [adaptivecards.io](http://adaptivecards.io/).
      *
+     * ```JavaScript
+     * const card = CardFactory.adaptiveCard({
+     *   "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+     *   "type": "AdaptiveCard",
+     *   "version": "1.0",
+     *   "body": [
+     *       {
+     *          "type": "TextBlock",
+     *          "text": "Default text input"
+     *       }
+     *   ],
+     *   "actions": [
+     *       {
+     *          "type": "Action.Submit",
+     *          "title": "OK"
+     *       }
+     *   ]
+     * });
+     * ```
      * @param card The adaptive card to return as an attachment.
      */
     static adaptiveCard(card) {
@@ -121,7 +140,7 @@ class CardFactory {
      * Returns an attachment for a video card.
      *
      * @param title The cards title.
-     * @param media Media URL's for the card.
+     * @param media Media URLs for the card.
      * @param buttons (Optional) set of buttons to include on the card.
      * @param other (Optional) additional properties to include on the card.
      */

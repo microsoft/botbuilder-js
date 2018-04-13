@@ -12,15 +12,14 @@ import {
 } from 'botbuilder-core';
 
 /**
-  * :package: **botbuilder-core-extensions**
+ * :package: **botbuilder-core-extensions**
  * 
-* A set of utility functions to assist with the formatting of the various message types a bot can
+ * A set of utility functions to assist with the formatting of the various message types a bot can
  * return.
  *
  * **Usage Example**
  *
  * ```JavaScript
- * // init message object
  * const message = MessageFactory.attachment(
  *     CardFactory.heroCard(
  *         'White T-Shirt',
@@ -28,8 +27,7 @@ import {
  *         ['buy']
  *      )
  * );
- *
- * context.sendActivity(message); // send message
+ * await context.sendActivity(message);
  * ```
  */
 export class MessageFactory {
@@ -39,10 +37,8 @@ export class MessageFactory {
      * **Usage Example**
      *
      * ```JavaScript
-     * // init message object
-     * const basicMessage = MessageFactory.text('Greetings from example message');
-     *
-     * context.reply(basicMessage); // send message
+     * const message = MessageFactory.text('Greetings from example message');
+     * await context.sendActivity(message);
      * ```
      *
      * @param text Text to include in the message.
@@ -62,6 +58,10 @@ export class MessageFactory {
     /**
      * Returns a message that includes a set of suggested actions and optional text.
      *
+     * ```JavaScript
+     * const message = MessageFactory.suggestedActions(['red', 'green', 'blue'], `Choose a color`);
+     * await context.sendActivity(message);
+     * ```
      * @param actions Array of card actions or strings to include. Strings will be converted to `messageBack` actions.
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
@@ -83,6 +83,19 @@ export class MessageFactory {
     /**
      * Returns a single message activity containing an attachment.
      *
+     * **Usage Example**
+     *
+     * ```JavaScript
+     * const message = MessageFactory.attachment(
+     *     CardFactory.heroCard(
+     *         'White T-Shirt',
+     *         ['https://example.com/whiteShirt.jpg'],
+     *         ['buy']
+     *      )
+     * );
+     * await context.sendActivity(message);
+     * ```
+     *
      * @param attachment Adaptive card to include in the message.
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
@@ -95,6 +108,16 @@ export class MessageFactory {
     /**
      * Returns a message that will display a set of attachments in list form.
      *
+     * **Usage Example**
+     *
+     * ```JavaScript
+     * const message = MessageFactory.list([
+     *    CardFactory.heroCard('title1', ['imageUrl1'], ['button1']),
+     *    CardFactory.heroCard('title2', ['imageUrl2'], ['button2']),
+     *    CardFactory.heroCard('title3', ['imageUrl3'], ['button3'])
+     * ]);
+     * await context.sendActivity(message);
+     * ```
      * @param attachments Array of attachments to include in the message.
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
@@ -110,14 +133,12 @@ export class MessageFactory {
      * **Usage Example**
      *
      * ```JavaScript
-     * // init message object
-     * let messageWithCarouselOfCards = MessageFactory.carousel([
-     *   CardFactory.heroCard('title1', ['imageUrl1'], ['button1']),
-     *   CardFactory.heroCard('title2', ['imageUrl2'], ['button2']),
-     *   CardFactory.heroCard('title3', ['imageUrl3'], ['button3'])
+     * const message = MessageFactory.carousel([
+     *    CardFactory.heroCard('title1', ['imageUrl1'], ['button1']),
+     *    CardFactory.heroCard('title2', ['imageUrl2'], ['button2']),
+     *    CardFactory.heroCard('title3', ['imageUrl3'], ['button3'])
      * ]);
-     *
-     * context.reply(messageWithCarouselOfCards); // send the message
+     * await context.sendActivity(message);
      * ```
      *
      * @param attachments Array of attachments to include in the message.
@@ -135,10 +156,8 @@ export class MessageFactory {
      * **Usage Example**
      *
      * ```JavaScript
-     * // init message object
-     * let imageOrVideoMessage = MessageFactory.contentUrl('url', 'content-type', 'optional-name', 'optional-text', 'optional-speak');
-     *
-     * context.reply(imageOrVideoMessage); // send the message
+     * const message = MessageFactory.contentUrl('https://example.com/hawaii.jpg', 'image/jpeg', 'Hawaii Trip', 'A photo from our family vacation.');
+     * await context.sendActivity(message);
      * ```
      *
      * @param url Url of the image/video to send.

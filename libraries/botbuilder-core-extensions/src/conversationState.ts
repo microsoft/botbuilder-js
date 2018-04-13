@@ -15,9 +15,34 @@ const NO_KEY = `ConversationState: channelId and/or conversation missing from co
 /** 
  * :package: **botbuilder-core-extensions**
  * 
- * Reads and writes conversation state for your bot to storage. When used as middleware the state 
- * will automatically be read in before your bots logic runs and then written back out open
- * completion of your bots logic.
+ * Reads and writes conversation state for your bot to storage. Each conversation your bot has 
+ * with a user or group will have its own isolated storage object that can be used to persist 
+ * conversation tracking information between turns of the conversation.  This state information
+ * can be reset at any point by calling [clear()](#clear).
+ * 
+ * Since the `ConversationState` class derives from `BotState` it can be used as middleware to
+ * automatically read and write the bots conversation state for each turn. And it also means it
+ * can be passed to a `BotStateSet` middleware instance to be managed in parallel with other state
+ * providers.
+ *
+ * **Usage Example**
+ *
+ * ```JavaScript
+ * const { ConversationState, MemoryStorage } = require('botbuilder');
+ * 
+ * const conversationState = new ConversationState(new MemoryStorage());
+ * adapter.use(conversationState);
+ *  
+ * server.post('/api/messages', (req, res) => {
+ *    adapter.processActivity(req, res, async (context) => {
+ *       // Get loaded conversation state
+ *       const convo = conversationState.get(context);
+ * 
+ *       // ... route activity ...
+ * 
+ *    });
+ * });
+ * ```
  */
 export class ConversationState<T extends StoreItem = StoreItem> extends BotState<T> {
     /**
