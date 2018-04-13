@@ -34,11 +34,13 @@ else {
 async function processListArgs(config) {
     let services = config.services;
     if (parsed.secret) {
-        for (let service of services) {
-            config.decryptService(service);
-        }
+        config.decryptAll();
     }
-    console.log(JSON.stringify(services, null, 4));
+    console.log(JSON.stringify({
+        name: config.name,
+        description: config.description,
+        services: config.services
+    }, null, 4));
     return config;
 }
 //# sourceMappingURL=msbot-list.js.map

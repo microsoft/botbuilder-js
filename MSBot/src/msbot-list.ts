@@ -4,6 +4,7 @@ import * as path from 'path';
 import * as program from 'commander';
 import * as chalk from 'chalk';
 import { BotConfig, ServiceType } from './BotConfig';
+import { IBotConfig } from './schema';
 import { Enumerable, List, Dictionary } from 'linq-collections';
 
 program.Command.prototype.unknownOption = function (flag: any) {
@@ -46,12 +47,13 @@ async function processListArgs(config: BotConfig): Promise<BotConfig> {
     let services = config.services;
 
     if (parsed.secret) {
-
-        for (let service of <any>services) {
-            config.decryptService(service);
-        }
+        config.decryptAll();
     }
 
-    console.log(JSON.stringify(services, null, 4));
+    console.log(JSON.stringify(<IBotConfig>{
+        name: config.name,
+        description: config.description,
+        services: config.services
+    }, null, 4));
     return config;
 }
