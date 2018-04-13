@@ -6,6 +6,11 @@ import * as chalk from 'chalk';
 import { BotConfig, ServiceType } from './BotConfig';
 import { Enumerable, List, Dictionary } from 'linq-collections';
 
+program.Command.prototype.unknownOption = function (flag: any) {
+    console.error(chalk.default.redBright(`Unknown arguments: ${process.argv.slice(2).join(' ')}`));
+    program.help();
+};
+
 interface ListArgs {
     bot: string;
     secret: string;
@@ -43,12 +48,7 @@ async function processListArgs(config: BotConfig): Promise<BotConfig> {
     if (parsed.secret) {
 
         for (let service of <any>services) {
-            let encryptedProperties = config.getEncryptedProperties(<ServiceType>service.type);
-
-            for (var prop of encryptedProperties) {
-                let val = service[prop];
-                service[prop] = config.decryptValue(val);
-            }
+            config.decryptService(service);
         }
     }
 

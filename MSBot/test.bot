@@ -1,10 +1,10 @@
 {
     "name": "test",
     "description": "",
-    "secretKey": "3b06fccbbb760ec5654d707098a2a12b63431a3f9804091089f30219133998a4aa6f1b901c12f89fae3623898333d83e",
+    "secretKey": "d8396b7bfa9a00749cc29f5e7cad9e73cdb72d86cf1e6ea43a482064b2c8e4c5b63e1de0ae33f120ca1b8930b9714de5",
     "services": [
         {
-            "type": "localhost",
+            "type": "endpoint",
             "name": "test",
             "endpoint": "http://localhost:3978/api/messages",
             "id": "http://localhost:3978/api/messages",
@@ -14,26 +14,18 @@
         {
             "type": "endpoint",
             "id": "1",
-            "name": "test (2)",
-            "appId": "38469968-072a-4074-b3bd-d3fed823faa0",
-            "appPassword": "89db41f9082d907d0a9155d0a8bbed17838921561b2183bfc9c84ad257cfbcdf2b0d5f852c3a8a685b0e93bda7e41e79",
-            "endpoint": "http://foo.com/api/messages2"
+            "name": "test3",
+            "appId": "7d6cbe5d797b4aecbc73ba8aa186bcd3",
+            "appPassword": "75485ddac04befef1a392573b939fdd8",
+            "endpoint": "http://foo.com/asdfasdf"
         },
         {
             "type": "endpoint",
             "id": "2",
-            "name": "test (3)",
-            "appId": "38469968-072a-4074-b3bd-d3fed823faa0",
-            "appPassword": "89db41f9082d907d0a9155d0a8bbed17838921561b2183bfc9c84ad257cfbcdf2b0d5f852c3a8a685b0e93bda7e41e79",
-            "endpoint": "http://foo.com/api/messages2"
-        },
-        {
-            "type": "endpoint",
-            "id": "3",
-            "name": "x",
-            "appId": null,
-            "appPassword": null,
-            "endpoint": "http://foo.com/pi"
+            "name": "test3 (2)",
+            "appId": "7d6cbe5d797b4aecbc73ba8aa186bcd3",
+            "appPassword": "75485ddac04befef1a392573b939fdd8",
+            "endpoint": "http://foo.com/asdfasdf"
         }
     ]
 }

@@ -8,6 +8,10 @@ const getStdin = require("get-stdin");
 const BotConfig_1 = require("./BotConfig");
 const linq_collections_1 = require("linq-collections");
 const utils_1 = require("./utils");
+program.Command.prototype.unknownOption = function (flag) {
+    console.error(chalk.default.redBright(`Unknown arguments: ${process.argv.slice(2).join(' ')}`));
+    program.help();
+};
 program
     .name("msbot connect endpoint")
     .description('Connect the bot to an endpoint')
@@ -76,7 +80,7 @@ async function processConnectEndpointArgs(config) {
         id: id,
         name: args.name,
         appId: (args.appId && args.appId.length > 0) ? args.appId : null,
-        appPassword: (args.appPassword && args.appPassword.length > 0) ? config.encryptValue(args.appPassword) : null,
+        appPassword: (args.appPassword && args.appPassword.length > 0) ? args.appPassword : null,
         endpoint: args.endpoint
     });
     await config.Save();
