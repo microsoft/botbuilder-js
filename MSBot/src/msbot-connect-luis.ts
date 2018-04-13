@@ -83,15 +83,17 @@ async function processConnectLuisArgs(config: BotConfig): Promise<BotConfig> {
         throw new Error("bad or missing --subscriptionKey");
 
     // add the service
-    config.connectService(<ILuisService>{
-        type: ServiceType.Luis,
-        name: args.name,
-        id: args.appId,
-        appId: args.appId,
-        version: args.version,
-        subscriptionKey: args.subscriptionKey,
-        authoringKey: args.authoringKey
-    });
+    config.connectService(
+        config.encryptService(<ILuisService>{
+            type: ServiceType.Luis,
+            name: args.name,
+            id: args.appId,
+            appId: args.appId,
+            version: args.version,
+            subscriptionKey: args.subscriptionKey,
+            authoringKey: args.authoringKey
+        })
+    );
     await config.Save();
     return config;
 }

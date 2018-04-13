@@ -60,13 +60,13 @@ async function processConnectQnaArgs(config) {
     if (!args.subscriptionKey || !utils_1.uuidValidate(args.subscriptionKey))
         throw new Error("bad or missing --subscriptionKey");
     // add the service
-    config.connectService({
+    config.connectService(config.encryptService({
         type: BotConfig_1.ServiceType.QnA,
         name: args.name,
         id: args.kbid,
         kbid: args.kbid,
         subscriptionKey: args.subscriptionKey
-    });
+    }));
     await config.Save();
     return config;
 }

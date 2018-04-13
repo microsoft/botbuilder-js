@@ -97,9 +97,6 @@ export class BotConfig implements IBotConfig {
             }
             newService.name = name;
 
-            // encrypt service properties
-            this.encryptService(newService);
-
             this.services.push(newService);
         }
     }
@@ -119,23 +116,25 @@ export class BotConfig implements IBotConfig {
     }
 
     // encrypt just a service
-    public encryptService(service: IConnectedService) {
+    public encryptService(service: IConnectedService) : IConnectedService {
         let encryptedProperties = this.getEncryptedProperties(<ServiceType>service.type);
         for (let i = 0; i < encryptedProperties.length; i++) {
             let prop = encryptedProperties[i];
             let val = <string>(<any>service)[prop];
             (<any>service)[prop] = this.encryptValue(val);
         }
+        return service;
     }
 
     // decrypt just a service
-    public decryptService(service: IConnectedService) {
+    public decryptService(service: IConnectedService) : IConnectedService {
         let encryptedProperties = this.getEncryptedProperties(<ServiceType>service.type);
         for (let i = 0; i < encryptedProperties.length; i++) {
             let prop = encryptedProperties[i];
             let val = <string>(<any>service)[prop];
             (<any>service)[prop] = this.decryptValue(val);
         }
+        return service;
     }
 
     // remove service by name or id

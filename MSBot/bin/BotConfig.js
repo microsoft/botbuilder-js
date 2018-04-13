@@ -78,8 +78,6 @@ class BotConfig {
                 nameCount++;
             }
             newService.name = name;
-            // encrypt service properties
-            this.encryptService(newService);
             this.services.push(newService);
         }
     }
@@ -103,6 +101,7 @@ class BotConfig {
             let val = service[prop];
             service[prop] = this.encryptValue(val);
         }
+        return service;
     }
     // decrypt just a service
     decryptService(service) {
@@ -112,6 +111,7 @@ class BotConfig {
             let val = service[prop];
             service[prop] = this.decryptValue(val);
         }
+        return service;
     }
     // remove service by name or id
     disconnectServiceByNameOrId(nameOrId) {

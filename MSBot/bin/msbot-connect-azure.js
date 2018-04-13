@@ -64,14 +64,14 @@ async function processConnectAzureArgs(config) {
         throw new Error("missing --endpoint");
     if (!validurl.isWebUri(args.endpoint))
         throw new Error(`--endpoint ${args.endpoint} is not a valid url`);
-    config.connectService({
+    config.connectService(config.encryptService({
         type: BotConfig_1.ServiceType.AzureBotService,
         id: args.id,
         name: args.hasOwnProperty('name') ? args.name : args.id,
         appId: args.appId,
         appPassword: args.appPassword,
         endpoint: args.endpoint
-    });
+    }));
     await config.Save();
     return config;
 }

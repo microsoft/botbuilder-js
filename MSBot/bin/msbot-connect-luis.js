@@ -65,7 +65,7 @@ async function processConnectLuisArgs(config) {
     if (!args.subscriptionKey || !utils_1.uuidValidate(args.subscriptionKey))
         throw new Error("bad or missing --subscriptionKey");
     // add the service
-    config.connectService({
+    config.connectService(config.encryptService({
         type: BotConfig_1.ServiceType.Luis,
         name: args.name,
         id: args.appId,
@@ -73,7 +73,7 @@ async function processConnectLuisArgs(config) {
         version: args.version,
         subscriptionKey: args.subscriptionKey,
         authoringKey: args.authoringKey
-    });
+    }));
     await config.Save();
     return config;
 }
