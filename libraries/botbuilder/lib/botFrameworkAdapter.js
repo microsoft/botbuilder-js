@@ -9,6 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const botbuilder_core_1 = require("botbuilder-core");
 const botframework_connector_1 = require("botframework-connector");
+const INVOKE_RESPONSE_KEY = Symbol('invokeResponse');
 /**
  * :package: **botbuilder-core**
  *
@@ -26,7 +27,6 @@ class BotFrameworkAdapter extends botbuilder_core_1.BotAdapter {
      */
     constructor(settings) {
         super();
-        this.invokeResponses = {};
         this.settings = Object.assign({ appId: '', appPassword: '' }, settings);
         this.credentials = new botframework_connector_1.MicrosoftAppCredentials(this.settings.appId, this.settings.appPassword || '');
         this.credentialsProvider = new botframework_connector_1.SimpleCredentialProvider(this.credentials.appId, this.credentials.appPassword);
@@ -45,22 +45,15 @@ class BotFrameworkAdapter extends botbuilder_core_1.BotAdapter {
                 return this.runMiddleware(context, logic)
                     .then(() => {
                     if (request.type === botbuilder_core_1.ActivityTypes.Invoke) {
-                        const key = request.channelId + '/' + request.id;
-                        try {
-                            const invokeResponse = this.invokeResponses[key];
-                            if (invokeResponse && invokeResponse.value) {
-                                const value = invokeResponse.value;
-                                res.send(value.status, value.body);
-                                res.end();
-                            }
-                            else {
-                                throw new Error(`Bot failed to return a valid 'invokeResponse' activity.`);
-                            }
+                        // Retrieve cached invoke response.
+                        const invokeResponse = context.services.get(INVOKE_RESPONSE_KEY);
+                        if (invokeResponse && invokeResponse.value) {
+                            const value = invokeResponse.value;
+                            res.send(value.status, value.body);
+                            res.end();
                         }
-                        finally {
-                            if (this.invokeResponses.hasOwnProperty(key)) {
-                                delete this.invokeResponses[key];
-                            }
+                        else {
+                            throw new Error(`Bot failed to return a valid 'invokeResponse' activity.`);
                         }
                     }
                     else {
@@ -71,7 +64,7 @@ class BotFrameworkAdapter extends botbuilder_core_1.BotAdapter {
             });
         }).catch((err) => {
             // Reject response with error code
-            console.warn(`BotFrameworkAdapter.processRequest(): ${errorCode} ERROR - ${err.toString()}`);
+            console.warn(`BotFrameworkAdapter.processActivity(): ${errorCode} ERROR - ${err.toString()}`);
             res.send(errorCode, err.toString());
             res.end();
             throw err;
@@ -122,8 +115,9 @@ class BotFrameworkAdapter extends botbuilder_core_1.BotAdapter {
                                 }, typeof activity.value === 'number' ? activity.value : 1000);
                                 break;
                             case 'invokeResponse':
-                                const key = activity.channelId + '/' + activity.replyToId;
-                                that.invokeResponses[key] = activity;
+                                // Cache response to context object. This will be retrieved when turn completes.
+                                context.services.set(INVOKE_RESPONSE_KEY, activity);
+                                responses.push({});
                                 next(i + 1);
                                 break;
                             default:

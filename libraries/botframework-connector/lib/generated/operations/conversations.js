@@ -28,6 +28,122 @@ class Conversations {
         this.client = client;
     }
     /**
+     * @summary GetConversations
+     *
+     * List the Conversations in which this bot has participated.
+     *
+     * GET from this method with a skip token
+     *
+     * The return value is a ConversationsResult, which contains an array of
+     * ConversationMembers and a skip token.  If the skip token is not empty, then
+     * there are further values to be returned. Call this method again with the
+     * returned token to get more values.
+     *
+     * Each ConversationMembers object contains the ID of the conversation and an
+     * array of ChannelAccounts that describe the members of the conversation.
+     *
+     * @param {ConversationsGetConversationsOptionalParams} [options] Optional
+     * Parameters.
+     *
+     * @returns {Promise} A promise is returned
+     *
+     * @resolve {HttpOperationResponse} - The deserialized result object.
+     *
+     * @reject {Error|ServiceError} - The error object.
+     */
+    getConversationsWithHttpOperationResponse(options) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let client = this.client;
+            let continuationToken = (options && options.continuationToken !== undefined) ? options.continuationToken : undefined;
+            // Validate
+            try {
+                if (continuationToken !== null && continuationToken !== undefined && typeof continuationToken.valueOf() !== 'string') {
+                    throw new Error('continuationToken must be of type string.');
+                }
+            }
+            catch (error) {
+                return Promise.reject(error);
+            }
+            // Construct URL
+            let baseUrl = this.client.baseUri;
+            let requestUrl = baseUrl + (baseUrl.endsWith('/') ? '' : '/') + 'v3/conversations';
+            let queryParamsArray = [];
+            if (continuationToken !== null && continuationToken !== undefined) {
+                queryParamsArray.push('continuationToken=' + encodeURIComponent(continuationToken));
+            }
+            if (queryParamsArray.length > 0) {
+                requestUrl += '?' + queryParamsArray.join('&');
+            }
+            // Create HTTP transport objects
+            let httpRequest = new WebResource();
+            httpRequest.method = 'GET';
+            httpRequest.url = requestUrl;
+            httpRequest.headers = {};
+            // Set Headers
+            httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
+            if (options && options.customHeaders) {
+                for (let headerName in options.customHeaders) {
+                    if (options.customHeaders.hasOwnProperty(headerName)) {
+                        httpRequest.headers[headerName] = options.customHeaders[headerName];
+                    }
+                }
+            }
+            // Send Request
+            let operationRes;
+            try {
+                operationRes = yield client.pipeline(httpRequest);
+                let response = operationRes.response;
+                let statusCode = response.status;
+                if (statusCode !== 200) {
+                    let error = new msRest.RestError(operationRes.bodyAsText);
+                    error.statusCode = response.status;
+                    error.request = msRest.stripRequest(httpRequest);
+                    error.response = msRest.stripResponse(response);
+                    let parsedErrorResponse = operationRes.bodyAsJson;
+                    try {
+                        if (parsedErrorResponse) {
+                            let internalError = null;
+                            if (parsedErrorResponse.error)
+                                internalError = parsedErrorResponse.error;
+                            error.code = internalError ? internalError.code : parsedErrorResponse.code;
+                            error.message = internalError ? internalError.message : parsedErrorResponse.message;
+                        }
+                        if (parsedErrorResponse !== null && parsedErrorResponse !== undefined) {
+                            let resultMapper = Mappers.ErrorResponse;
+                            error.body = client.serializer.deserialize(resultMapper, parsedErrorResponse, 'error.body');
+                        }
+                    }
+                    catch (defaultError) {
+                        error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
+                            `- "${operationRes.bodyAsText}" for the default response.`;
+                        return Promise.reject(error);
+                    }
+                    return Promise.reject(error);
+                }
+                // Deserialize Response
+                if (statusCode === 200) {
+                    let parsedResponse = operationRes.bodyAsJson;
+                    try {
+                        if (parsedResponse !== null && parsedResponse !== undefined) {
+                            let resultMapper = Mappers.ConversationsResult;
+                            operationRes.bodyAsJson = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.bodyAsJson');
+                        }
+                    }
+                    catch (error) {
+                        let deserializationError = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
+                        deserializationError.request = msRest.stripRequest(httpRequest);
+                        deserializationError.response = msRest.stripResponse(response);
+                        return Promise.reject(deserializationError);
+                    }
+                }
+            }
+            catch (err) {
+                return Promise.reject(err);
+            }
+            return Promise.resolve(operationRes);
+        });
+    }
+    /**
      * @summary CreateConversation
      *
      * Create a new Conversation.
@@ -909,6 +1025,101 @@ class Conversations {
         });
     }
     /**
+     * @summary DeleteConversationMember
+     *
+     * Deletes a member from a converstion.
+     *
+     * This REST API takes a ConversationId and a memberId (of type string) and
+     * removes that member from the conversation. If that member was the last
+     * member
+     * of the conversation, the conversation will also be deleted.
+     *
+     * @param {string} conversationId Conversation ID
+     *
+     * @param {string} memberId ID of the member to delete from this conversation
+     *
+     * @param {RequestOptionsBase} [options] Optional Parameters.
+     *
+     * @returns {Promise} A promise is returned
+     *
+     * @resolve {HttpOperationResponse} - The deserialized result object.
+     *
+     * @reject {Error|ServiceError} - The error object.
+     */
+    deleteConversationMemberWithHttpOperationResponse(conversationId, memberId, options) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let client = this.client;
+            // Validate
+            try {
+                if (conversationId === null || conversationId === undefined || typeof conversationId.valueOf() !== 'string') {
+                    throw new Error('conversationId cannot be null or undefined and it must be of type string.');
+                }
+                if (memberId === null || memberId === undefined || typeof memberId.valueOf() !== 'string') {
+                    throw new Error('memberId cannot be null or undefined and it must be of type string.');
+                }
+            }
+            catch (error) {
+                return Promise.reject(error);
+            }
+            // Construct URL
+            let baseUrl = this.client.baseUri;
+            let requestUrl = baseUrl + (baseUrl.endsWith('/') ? '' : '/') + 'v3/conversations/{conversationId}/members/{memberId}';
+            requestUrl = requestUrl.replace('{conversationId}', encodeURIComponent(conversationId));
+            requestUrl = requestUrl.replace('{memberId}', encodeURIComponent(memberId));
+            // Create HTTP transport objects
+            let httpRequest = new WebResource();
+            httpRequest.method = 'DELETE';
+            httpRequest.url = requestUrl;
+            httpRequest.headers = {};
+            // Set Headers
+            httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
+            if (options && options.customHeaders) {
+                for (let headerName in options.customHeaders) {
+                    if (options.customHeaders.hasOwnProperty(headerName)) {
+                        httpRequest.headers[headerName] = options.customHeaders[headerName];
+                    }
+                }
+            }
+            // Send Request
+            let operationRes;
+            try {
+                operationRes = yield client.pipeline(httpRequest);
+                let response = operationRes.response;
+                let statusCode = response.status;
+                if (statusCode !== 200 && statusCode !== 204) {
+                    let error = new msRest.RestError(operationRes.bodyAsText);
+                    error.statusCode = response.status;
+                    error.request = msRest.stripRequest(httpRequest);
+                    error.response = msRest.stripResponse(response);
+                    let parsedErrorResponse = operationRes.bodyAsJson;
+                    try {
+                        if (parsedErrorResponse) {
+                            let internalError = null;
+                            if (parsedErrorResponse.error)
+                                internalError = parsedErrorResponse.error;
+                            error.code = internalError ? internalError.code : parsedErrorResponse.code;
+                            error.message = internalError ? internalError.message : parsedErrorResponse.message;
+                        }
+                        if (parsedErrorResponse !== null && parsedErrorResponse !== undefined) {
+                            let resultMapper = Mappers.ErrorResponse;
+                            error.body = client.serializer.deserialize(resultMapper, parsedErrorResponse, 'error.body');
+                        }
+                    }
+                    catch (defaultError) {
+                        error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
+                            `- "${operationRes.bodyAsText}" for the default response.`;
+                        return Promise.reject(error);
+                    }
+                    return Promise.reject(error);
+                }
+            }
+            catch (err) {
+                return Promise.reject(err);
+            }
+            return Promise.resolve(operationRes);
+        });
+    }
+    /**
      * @summary GetActivityMembers
      *
      * Enumerate the members of an activity.
@@ -1191,6 +1402,29 @@ class Conversations {
             return Promise.resolve(operationRes);
         });
     }
+    getConversations(options, callback) {
+        if (!callback && typeof options === 'function') {
+            callback = options;
+            options = undefined;
+        }
+        let cb = callback;
+        if (!callback) {
+            return this.getConversationsWithHttpOperationResponse(options).then((operationRes) => {
+                return Promise.resolve(operationRes.bodyAsJson);
+            }).catch((err) => {
+                return Promise.reject(err);
+            });
+        }
+        else {
+            msRest.promiseToCallback(this.getConversationsWithHttpOperationResponse(options))((err, data) => {
+                if (err) {
+                    return cb(err);
+                }
+                let result = data.bodyAsJson;
+                return cb(err, result, data.request, data.response);
+            });
+        }
+    }
     createConversation(parameters, options, callback) {
         if (!callback && typeof options === 'function') {
             callback = options;
@@ -1321,6 +1555,29 @@ class Conversations {
         }
         else {
             msRest.promiseToCallback(this.getConversationMembersWithHttpOperationResponse(conversationId, options))((err, data) => {
+                if (err) {
+                    return cb(err);
+                }
+                let result = data.bodyAsJson;
+                return cb(err, result, data.request, data.response);
+            });
+        }
+    }
+    deleteConversationMember(conversationId, memberId, options, callback) {
+        if (!callback && typeof options === 'function') {
+            callback = options;
+            options = undefined;
+        }
+        let cb = callback;
+        if (!callback) {
+            return this.deleteConversationMemberWithHttpOperationResponse(conversationId, memberId, options).then((operationRes) => {
+                return Promise.resolve(operationRes.bodyAsJson);
+            }).catch((err) => {
+                return Promise.reject(err);
+            });
+        }
+        else {
+            msRest.promiseToCallback(this.deleteConversationMemberWithHttpOperationResponse(conversationId, memberId, options))((err, data) => {
                 if (err) {
                     return cb(err);
                 }

@@ -18,7 +18,8 @@ class Control {
         dialogs.add('control', this);
         // Start the control
         const cdc = dialogs.createContext(context, state);
-        return cdc.begin('control', Object.assign({}, this.defaultOptions, options));
+        return cdc.begin('control', Object.assign({}, this.defaultOptions, options))
+            .then(() => cdc.dialogResult);
     }
     continue(context, state) {
         // Create empty dialog set and ourselves to it
@@ -26,7 +27,8 @@ class Control {
         dialogs.add('control', this);
         // Continue the control
         const cdc = dialogs.createContext(context, state);
-        return cdc.continue();
+        return cdc.continue()
+            .then(() => cdc.dialogResult);
     }
 }
 exports.Control = Control;

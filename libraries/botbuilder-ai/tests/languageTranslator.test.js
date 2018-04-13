@@ -58,7 +58,7 @@ describe('LanguageTranslator', function () {
         let noTranslateSettings = {
             translatorKey: translatorKey,
             nativeLanguages: ['en', 'de'],
-            noTranslatePatterns: new Set(['(Jean mon ami)']),
+            noTranslatePatterns: new Set(['Bonjour (Jean mon ami)']),
             getUserLanguage: c => 'fr',
             setUserLanguage: c => Promise.resolve(false)
         }
@@ -130,27 +130,10 @@ describe('LanguageTranslator', function () {
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(new LanguageTranslator(toFrenchSettings))
-        .test('greetings\nhello', 'salutations\nSalut', 'should have received french')
+        .test('Greetings\nHello', 'Salutations\nSalut', 'should have received french')
         .then(() => done());
     });
     
-    it('should use context locale', function (done) {
-        
-        let toEnglishSettings = {
-            translatorKey: translatorKey,
-            nativeLanguages: ['en', 'de'],
-            noTranslatePatterns: new Set()
-        }
-
-        const context = new TestContext({ text: 'bonjour', locale: 'fr-fr', type: 'message' })
-        const translator = new LanguageTranslator(toEnglishSettings)
-        .onTurn(context, () => Promise.resolve())
-        .then(() => {
-            assert.equal(context.activity.text, 'Hello', 'should have received english');
-            done();
-        });
-    });
-
     it('should bypass calling service in middleware for non-message activities.', function (done) {
         let intercepted = true;
         let toEnglishSettings = {
@@ -159,7 +142,7 @@ describe('LanguageTranslator', function () {
             noTranslatePatterns: new Set()
         }
 
-        const context = new TestContext({ text: 'bonjour', type: 'foo' })
+        const context = new TestContext({ text: 'bonjour', type: 'foo' });
         const translator = new LanguageTranslator(toEnglishSettings)
         .onTurn(context, () => {
             intercepted = false;
@@ -185,5 +168,70 @@ describe('LanguageTranslator', function () {
         .use(new LanguageTranslator(noTranslateSettings))
         .test('Bonjour Jean mon ami', 'Hello Jean mon ami', 'should have received no translate patterns')
         .then(() => done())
+    });
+
+    it('should handle special cases in no translates - 1', function (done) {
+
+        let noTranslateSettings = {
+            translatorKey: translatorKey,
+            nativeLanguages: ['en'],
+            noTranslatePatterns: new Set(['perr[oa]']),
+            getUserLanguage: c => 'es',
+            setUserLanguage: c => Promise.resolve(false)
+        }
+
+        const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
+        .use(new LanguageTranslator(noTranslateSettings))
+        .test('mi perro se llama Enzo', "My perro's name is Enzo", 'should have received no translate patterns')
+        .then(() => done())
+    });
+
+    it('should handle special cases in no translates - 2', function (done) {
+
+        let noTranslateSettings = {
+            translatorKey: translatorKey,
+            nativeLanguages: ['en'],
+            noTranslatePatterns: new Set(['mon nom est (.+)']),
+            getUserLanguage: c => 'fr',
+            setUserLanguage: c => Promise.resolve(false)
+        }
+
+        const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
+        .use(new LanguageTranslator(noTranslateSettings))
+        .test("mon nom est l'etat", "My name is l'etat", 'should have received no translate patterns')
+        .then(() => done())
+    });
+
+    it('should translate back to user language', function (done) {
+        
+        let translateBackSettings = {
+            translatorKey: translatorKey,
+            nativeLanguages: ['en'],
+            noTranslatePatterns: new Set(),
+            getUserLanguage: () => 'fr',
+            translateBackToUserLanguage: true
+        }
+
+        const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
+        .use(new LanguageTranslator(translateBackSettings))
+        .test('bonjour', 'Salut', 'should have received french')
+        .then(() => done());
+    });
+
+    it('should not translate back to user language for non-message activites', function (done) {
+        
+        let translateBackSettings = {
+            translatorKey: translatorKey,
+            nativeLanguages: ['en'],
+            noTranslatePatterns: new Set(),
+            getUserLanguage: () => 'fr',
+            translateBackToUserLanguage: true
+        }
+
+        const context = new TestContext({ text: 'hello', type: 'foo' });
+        const testAdapter = new TestAdapter(c => c.sendActivity(context.activity))
+        .use(new LanguageTranslator(translateBackSettings))
+        .test('foo', context.activity, 'should have received hello with no translation')
+        .then(() => done());
     });
 })
