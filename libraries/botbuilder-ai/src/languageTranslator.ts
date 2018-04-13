@@ -5,16 +5,17 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Middleware, TurnContext, ActivityTypes } from 'botbuilder';
+import { Middleware, TurnContext, ActivityTypes, Activity } from 'botbuilder';
 import * as request from 'request-promise-native';
 import { DOMParser } from "xmldom";
 
 export interface TranslatorSettings {
-    translatorKey: string,
-    nativeLanguages: string[],
-    noTranslatePatterns: Set<string>,
-    getUserLanguage?: ((c: TurnContext) => string) | undefined,
-    setUserLanguage?: ((context: TurnContext) => Promise<boolean>) | undefined
+    translatorKey: string;
+    nativeLanguages: string[];
+    noTranslatePatterns: Set<string>;
+    getUserLanguage?: (context: TurnContext) => string;
+    setUserLanguage?: (context: TurnContext) => Promise<boolean>;
+    translateBackToUserLanguage?: boolean;
 }
 
 /**
@@ -27,12 +28,14 @@ export class LanguageTranslator implements Middleware {
     private getUserLanguage: ((context: TurnContext) => string) | undefined;
     private setUserLanguage: ((context: TurnContext) => Promise<boolean>) | undefined;
     private nativeLanguages: string[];
+    private translateBackToUserLanguage: boolean
 
     public constructor(settings: TranslatorSettings) {
         this.translator = new MicrosoftTranslator(settings.translatorKey, settings.noTranslatePatterns);
         this.nativeLanguages = settings.nativeLanguages;
         this.getUserLanguage = settings.getUserLanguage;
         this.setUserLanguage = settings.setUserLanguage;
+        this.translateBackToUserLanguage = settings.translateBackToUserLanguage;
     }
 
     /// Incoming activity
@@ -46,37 +49,44 @@ export class LanguageTranslator implements Middleware {
                 return Promise.resolve();
             }
         }
-        // translate to bots language
-        return this.translateMessageAsync(context)
-        .then(() => next());
-        
-    }
-
-    /// Translate .Text field of a message, regardless of direction
-    private async translateMessageAsync(context: TurnContext): Promise<TranslationResult[]> {
-        
-
         // determine the language we are using for this conversation
         let sourceLanguage: string;
         if (this.getUserLanguage != undefined) {
             sourceLanguage = this.getUserLanguage(context);
-        } else if (context.activity.locale != undefined) {
-            sourceLanguage = context.activity.locale;
         } else {
             sourceLanguage = await this.translator.detect(context.activity.text);
         }
-
         
         let targetLanguage = (this.nativeLanguages.indexOf(sourceLanguage) >= 0) ? sourceLanguage : this.nativeLanguages[0];
+        
+        await this.translateMessageAsync(context, context.activity, sourceLanguage, targetLanguage);
 
+        if (this.translateBackToUserLanguage) {
+            context.onSendActivities(async (newContext, activities, newNext) => {
+                await Promise.all(activities.map(async (activity) => {
+                    if (activity.type == ActivityTypes.Message) {
+                        await this.translateMessageAsync(newContext, activity, targetLanguage, sourceLanguage);
+                    }
+                }));
+                
+                return newNext();
+            })
+        }
+        // translate to bots language
+        return next();
+        
+    }
+
+    /// Translate .Text field of a message, regardless of direction
+    private async translateMessageAsync(context: TurnContext, message: Partial<Activity>, sourceLanguage: string, targetLanguage: string): Promise<TranslationResult[]> {
         if (sourceLanguage == targetLanguage) {
             return Promise.resolve([]);
         }
         
-        let message = context.activity;
-        let text = context.activity.text;
-    
+        let text = message.text;
+        
         let lines = text.split('\n');
+        
         return this.translator.translateArrayAsync({
             from: sourceLanguage,
             to: targetLanguage,
@@ -240,27 +250,73 @@ export class PostProcessTranslator {
         }  
     }
 
-    private wordAlignmentParse(alignment: string, source: string, target: string): { [id: number] : number } {
-        let alignMap: { [id: number] : number } = {};
-        if (alignment.trim().replace('\n', '') == "") {
-            return alignMap;
-        }
+    private join(delimiter: string, words: string[]): string {
+        let sentence = words.join(delimiter);
+        sentence = sentence.replace(new RegExp("[ ]?'[ ]?", "g"), "'");
         
-        let alignments = alignment.trim().split(' ');
-        let srcWrds = source.trim().split(' ');
-        let trgWrds = target.trim().split(' ');
+        return sentence;
+    }
+
+    private splitSentence(sentence: string, alignments: string[], isSrcSentence = true): string[] {
+        let wrds = sentence.split(' ');
+        if (alignments.length > 0) {
+            let outWrds: string[] = [];
+            let wrdIndexInAlignment = 1;
+
+            if (isSrcSentence) {
+                wrdIndexInAlignment = 0;
+            } else {
+                alignments.sort((a, b) => {
+                    let aIndex = parseInt(a.split('-')[wrdIndexInAlignment].split(':')[0]);
+                    let bIndex = parseInt(b.split('-')[wrdIndexInAlignment].split(':')[0]);
+                    if (aIndex <= bIndex) {
+                        return -1;
+                    } else {
+                        return 1;
+                    }
+                });
+            }
+
+            for (let alignData of alignments) {
+                wrds = outWrds;
+                let wordIndexes = alignData.split('-')[wrdIndexInAlignment];
+                let startIndex = parseInt(wordIndexes.split(':')[0]);
+                let length = parseInt(wordIndexes.split(':')[1]) - startIndex + 1;
+                let wrd = sentence.substr(startIndex, length);
+                let newWrds: string[] = new Array(outWrds.length + 1);
+                if (newWrds.length > 1) {
+                    newWrds = wrds.slice();
+                }
+                newWrds[outWrds.length] = wrd;
+                
+                let subSentence = this.join(" ", newWrds);
+                if (sentence.indexOf(subSentence) != -1) {
+                    outWrds.push(wrd);
+                }
+            }
+            wrds = outWrds;
+        }
+        return wrds;
+    }
+
+    private wordAlignmentParse(alignments: string[], srcWords: string[], trgWords: string[]): { [id: number] : number } {
+        let alignMap: { [id: number] : number } = {};
+
+        let sourceMessage = this.join(" ", srcWords);
+        let trgMessage = this.join(" ", trgWords);
+
         alignments.forEach(alignData => {
             let wordIndexes = alignData.split('-');
+            
             let srcStartIndex = parseInt(wordIndexes[0].split(':')[0]);
             let srcLength = parseInt(wordIndexes[0].split(':')[1]) - srcStartIndex + 1;
-            let srcWrd = source.substr(srcStartIndex, srcLength);
-            
-            let srcWrdIndex = srcWrds.findIndex(wrd => wrd.indexOf(srcWrd) != -1);
+            let srcWrd = sourceMessage.substr(srcStartIndex, srcLength);
+            let srcWrdIndex = srcWords.findIndex(wrd => wrd == srcWrd);
             
             let trgstartIndex = parseInt(wordIndexes[1].split(':')[0]);
             let trgLength = parseInt(wordIndexes[1].split(':')[1]) - trgstartIndex + 1;
-            let trgWrd = target.substr(trgstartIndex, trgLength);
-            let trgWrdIndex = trgWrds.findIndex(wrd => wrd.indexOf(trgWrd) != -1);
+            let trgWrd = trgMessage.substr(trgstartIndex, trgLength);
+            let trgWrdIndex = trgWords.findIndex(wrd => wrd == trgWrd);
 
             alignMap[srcWrdIndex] = trgWrdIndex;
 
@@ -268,30 +324,20 @@ export class PostProcessTranslator {
         return alignMap;
     }
 
-    private keepSrcWrdInTranslation(alignment: { [id: number] : number }, source: string, target: string, srcWrdIndex: number) {
-        let processedTranslation = target;
-        
+    private keepSrcWrdInTranslation(alignment: { [id: number] : number }, sourceWords: string[], targetWords: string[], srcWrdIndex: number) {
         if (!(typeof alignment[srcWrdIndex] === "undefined")) {
-            let trgWrds = processedTranslation.split(' ');
-            let appendTrailApostrophe = "";
-            if (trgWrds[alignment[srcWrdIndex]].indexOf("'") != -1) {
-                appendTrailApostrophe = "'" + trgWrds[alignment[srcWrdIndex]].split("'")[1];
-            }
-            trgWrds[alignment[srcWrdIndex]] = source.split(' ')[srcWrdIndex] + appendTrailApostrophe;
-
-            processedTranslation = trgWrds.join(' ');
+            targetWords[alignment[srcWrdIndex]] = sourceWords[srcWrdIndex];
         }
-        return processedTranslation;
+        return targetWords;
     }
 
     public fixTranslation(sourceMessage: string, alignment: string, targetMessage: string): string {
-        let processedTranslation = targetMessage;
         let numericMatches = sourceMessage.match(new RegExp("[0-9]+", "g"));
         let containsNum = numericMatches != null;
         let noTranslatePatterns = Array.from(this.noTranslatePatterns);
         
         if (!containsNum && noTranslatePatterns.length == 0) {
-            return processedTranslation;
+            return targetMessage;
         }
 
         let toBeReplaced: string[] = [];
@@ -302,35 +348,51 @@ export class PostProcessTranslator {
                 toBeReplaced.push(pattern);
             }
         });
+
+        let alignments: string[];
         
-        let alignMap = this.wordAlignmentParse(alignment, sourceMessage, targetMessage);
-        let srcWrds = sourceMessage.split(' ');
+        if (alignment.trim() == '') {
+            alignments = [];
+        } else {
+            alignments = alignment.trim().split(' ');
+        }
+       
+        let srcWords = this.splitSentence(sourceMessage, alignments);
+        let trgWords = this.splitSentence(targetMessage, alignments, false);
+        let alignMap = this.wordAlignmentParse(alignments, srcWords, trgWords);
 
         if (toBeReplaced.length > 0) {
             toBeReplaced.forEach(pattern => {
                 let regExp = new RegExp(pattern, "i");
                 let match = regExp.exec(sourceMessage);
                 
-                let noTranslateStarChrIndex = match.index + match[0].indexOf(match[1]);
-                
+                let noTranslateStartChrIndex = match.index + match[0].indexOf(match[1]);
+                let noTranslateMatchLength = match[1].length;
                 let wrdIndx = 0;
                 let chrIndx = 0;
+                let newChrLengthFromMatch = 0;
                 let srcIndx = -1;
+                let newNoTranslateArrayLength = 1;
 
-                for (const wrd in srcWrds) {
-                    const element = srcWrds[wrd];
-                    if (chrIndx == noTranslateStarChrIndex) {
-                        srcIndx = wrdIndx;
-                        break;
-                    }
-                    chrIndx += element.length + 1;
+                for (let wrd of srcWords) {
+                    chrIndx += wrd.length + 1;
                     wrdIndx++;
+                    if (chrIndx == noTranslateStartChrIndex) {
+                        srcIndx = wrdIndx;
+                    }
+                    if (srcIndx != -1) {
+                        if (newChrLengthFromMatch + srcWords[wrdIndx].length >= noTranslateMatchLength) {
+                            break;
+                        }
+                        newNoTranslateArrayLength++;
+                        newChrLengthFromMatch += srcWords[wrdIndx].length + 1;
+                    }
                 }
-
-                let wrdNoTranslate = match[1].split(' ');
+                
+                let wrdNoTranslate = srcWords.slice(srcIndx, srcIndx + newNoTranslateArrayLength)
                 
                 wrdNoTranslate.forEach(srcWrds => {
-                    processedTranslation = this.keepSrcWrdInTranslation(alignMap, sourceMessage, processedTranslation, srcIndx);
+                    trgWords = this.keepSrcWrdInTranslation(alignMap, srcWords, trgWords, srcIndx);
                     srcIndx++;
                 });
                 
@@ -339,10 +401,10 @@ export class PostProcessTranslator {
 
         if (containsNum) {
             for (const numericMatch in numericMatches) {
-                let srcIndx = srcWrds.findIndex(wrd => wrd == numericMatch)
-                processedTranslation = this.keepSrcWrdInTranslation(alignMap, sourceMessage, processedTranslation, srcIndx);
+                let srcIndx = srcWords.findIndex(wrd => wrd == numericMatch)
+                trgWords = this.keepSrcWrdInTranslation(alignMap, srcWords, trgWords, srcIndx);
             }
         }
-        return processedTranslation;
+        return this.join(" ", trgWords);
     }
 }

@@ -10,8 +10,9 @@ export interface TranslatorSettings {
     translatorKey: string;
     nativeLanguages: string[];
     noTranslatePatterns: Set<string>;
-    getUserLanguage?: ((c: TurnContext) => string) | undefined;
-    setUserLanguage?: ((context: TurnContext) => Promise<boolean>) | undefined;
+    getUserLanguage?: (context: TurnContext) => string;
+    setUserLanguage?: (context: TurnContext) => Promise<boolean>;
+    translateBackToUserLanguage?: boolean;
 }
 /**
  * The LanguageTranslator will use the Text Translator Cognitive service to translate text from a source language
@@ -23,14 +24,17 @@ export declare class LanguageTranslator implements Middleware {
     private getUserLanguage;
     private setUserLanguage;
     private nativeLanguages;
+    private translateBackToUserLanguage;
     constructor(settings: TranslatorSettings);
     onTurn(context: TurnContext, next: () => Promise<void>): Promise<void>;
-    private translateMessageAsync(context);
+    private translateMessageAsync(context, message, sourceLanguage, targetLanguage);
 }
 export declare class PostProcessTranslator {
     noTranslatePatterns: Set<string>;
     constructor(noTranslatePatterns: Set<string>);
-    private wordAlignmentParse(alignment, source, target);
-    private keepSrcWrdInTranslation(alignment, source, target, srcWrdIndex);
+    private join(delimiter, words);
+    private splitSentence(sentence, alignments, isSrcSentence?);
+    private wordAlignmentParse(alignments, srcWords, trgWords);
+    private keepSrcWrdInTranslation(alignment, sourceWords, targetWords, srcWrdIndex);
     fixTranslation(sourceMessage: string, alignment: string, targetMessage: string): string;
 }
