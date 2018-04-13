@@ -113,12 +113,13 @@ class BotConfig {
     }
     // make sure secret is correct by decrypting the secretKey with it
     validateSecretKey() {
+        if (this.internal.secretValidated) {
+            return;
+        }
+        if (!this.internal.secret || this.internal.secret.length == 0) {
+            throw new Error("You are attempting to perform an operation which needs access to the secret and --secret is missing");
+        }
         try {
-            if (this.internal.secretValidated)
-                return;
-            if (!this.internal.secret || this.internal.secret.length == 0) {
-                throw new Error("bad or missing secret");
-            }
             if (!this.secretKey || this.secretKey.length == 0) {
                 // if no key, create a guid and enrypt that to use as secret validator
                 this.secretKey = this.internalEncrypt(uuid());
@@ -131,7 +132,7 @@ class BotConfig {
             this.internal.secretValidated = true;
         }
         catch (_a) {
-            throw new Error("You are attempting to perform an operation which needs access to the secret and --secret is not set or is incorrect.");
+            throw new Error("You are attempting to perform an operation which needs access to the secret and --secret is incorrect.");
         }
     }
     internalEncrypt(value) {

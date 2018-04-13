@@ -7,6 +7,7 @@ import * as path from 'path';
 import * as fsx from 'fs-extra';
 import { Enumerable, List, Dictionary } from 'linq-collections';
 import { encode } from 'punycode';
+import { IBotConfig, IConnectedService } from './schema';
 
 export enum ServiceType {
     Endpoint = "endpoint",
@@ -143,13 +144,15 @@ export class BotConfig implements IBotConfig {
 
     // make sure secret is correct by decrypting the secretKey with it
     public validateSecretKey(): void {
-        try {
-            if (this.internal.secretValidated)
-                return;
+        if (this.internal.secretValidated) {
+            return;
+        }
 
-            if (!this.internal.secret || this.internal.secret.length == 0) {
-                throw new Error("bad or missing secret");
-            }
+        if (!this.internal.secret || this.internal.secret.length == 0) {
+            throw new Error("You are attempting to perform an operation which needs access to the secret and --secret is missing");
+        }
+
+        try {
             if (!this.secretKey || this.secretKey.length == 0) {
                 // if no key, create a guid and enrypt that to use as secret validator
                 this.secretKey = this.internalEncrypt(uuid());
@@ -161,7 +164,7 @@ export class BotConfig implements IBotConfig {
 
             this.internal.secretValidated = true;
         } catch{
-            throw new Error("You are attempting to perform an operation which needs access to the secret and --secret is not set or is incorrect.");
+            throw new Error("You are attempting to perform an operation which needs access to the secret and --secret is incorrect.");
         }
     }
 

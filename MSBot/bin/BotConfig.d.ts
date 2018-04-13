@@ -1,3 +1,4 @@
+import { IBotConfig, IConnectedService } from './schema';
 export declare enum ServiceType {
     Endpoint = "endpoint",
     AzureBotService = "abs",

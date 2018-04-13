@@ -1,8 +1,18 @@
 {
   "name": "msbot",
-  "version": "1.0.12-alpha",
+  "version": "1.0.15-alpha",
   "description": "MSBot command line tool for manipulating Microsoft Bot Framework .bot files",
   "main": "bin/BotConfig.js",
+  "bin": {
+    "msbot": "bin/msbot.js"
+  },
+  "types": "bin/index.d.ts",
+  "files": [
+    "bin/*.js",
+    "bin/BotConfig.*",
+    "bin/schema.*",
+    "bin/index.d.ts"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Microsoft/botbuilder-tools.git"
@@ -13,14 +23,6 @@
     "url": "https://github.com/Microsoft/botbuilder-tools/issues"
   },
   "homepage": "https://github.com/Microsoft/botbuilder-tools#readme",
-  "bin": {
-    "msbot": "bin/msbot.js"
-  },
-  "files": [
-    "bin/*.js",
-    "bin/BotConfig.*",
-    "bin/schema.*"
-  ],
   "devDependencies": {
     "@types/get-stdin": "^5.0.1",
     "@types/node": "^6.0.87",
