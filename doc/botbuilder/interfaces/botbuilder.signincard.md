@@ -15,7 +15,7 @@
 
 **●  buttons**:  *[CardAction](botbuilder.cardaction.md)[]* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:950](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L950)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1023](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1023)*
 
 
 *__member__*: {CardAction[]} [buttons] Action to use to perform signin
@@ -32,7 +32,7 @@ ___
 
 **●  text**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:946](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L946)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1019](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1019)*
 
 
 *__member__*: {string} [text] Text for signin request

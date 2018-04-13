@@ -30,7 +30,7 @@ Defines values for InstallationUpdateActionTypes. Possible values include: 'add'
 
 ** Add**:    = "add"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1740](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1740)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1901](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1901)*
 
 
 
@@ -44,7 +44,7 @@ ___
 
 ** Remove**:    = "remove"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1741](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1741)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1902](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1902)*
 
 
 

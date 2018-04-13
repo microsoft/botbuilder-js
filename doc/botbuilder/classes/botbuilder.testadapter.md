@@ -7,7 +7,18 @@
 
 :package: **botbuilder-core-extensions**
 
-Test adapter used for unit tests.
+Test adapter used for unit tests. This adapter can be used to simulate sending messages from the user to the bot.
+
+**Usage Example**
+
+    const { TestAdapter } = require('botbuilder');
+
+    const adapter = new TestAdapter(async (context) => {
+         await context.sendActivity(`Hello World`);
+    });
+
+    adapter.test(`hi`, `Hello World`)
+           .then(() => done());
 
 ## Hierarchy
 
@@ -44,10 +55,11 @@ Test adapter used for unit tests.
 
 ### Methods
 
+* [continueConversation](botbuilder.testadapter.md#continueconversation)
 * [deleteActivity](botbuilder.testadapter.md#deleteactivity)
 * [receiveActivity](botbuilder.testadapter.md#receiveactivity)
 * [send](botbuilder.testadapter.md#send)
-* [sendActivity](botbuilder.testadapter.md#sendactivity)
+* [sendActivities](botbuilder.testadapter.md#sendactivities)
 * [test](botbuilder.testadapter.md#test)
 * [updateActivity](botbuilder.testadapter.md#updateactivity)
 
@@ -58,21 +70,21 @@ Test adapter used for unit tests.
 <a id="constructor"></a>
 
 
-### ⊕ **new TestAdapter**(botLogic: *`function`*, template?: *[ConversationReference](../interfaces/botbuilder.conversationreference.md)*): [TestAdapter](botbuilder.testadapter.md)
+### ⊕ **new TestAdapter**(logic: *`function`*, template?: *[ConversationReference](../interfaces/botbuilder.conversationreference.md)*): [TestAdapter](botbuilder.testadapter.md)
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L27)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:74](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L74)*
 
 
 
-Creates a new instance of the test adapter.
+Creates a new TestAdapter instance.
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| botLogic | `function`   |  The bots logic that's under test. |
+| logic | `function`   |  The bots logic that's under test. |
 | template | [ConversationReference](../interfaces/botbuilder.conversationreference.md)   |  (Optional) activity containing default values to assign to all test messages received. |
 
 
@@ -91,7 +103,7 @@ Creates a new instance of the test adapter.
 
 **●  activityBuffer**:  *`Partial`.<[Activity](../interfaces/botbuilder.activity.md)>[]* 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:24](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L24)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L39)*
 
 
 
@@ -108,8 +120,19 @@ ___
 
 **●  deletedActivities**:  *`Partial`.<[ConversationReference](../interfaces/botbuilder.conversationreference.md)>[]* 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L27)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:74](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L74)*
 
+
+
+List of deleted activities passed to the adapter which can be inspected after the current turn completes.
+
+**Usage Example**
+
+    adapter.test('delete', '1 deleted').then(() => {
+       assert(adapter.deletedActivities.length === 1);
+       assert(adapter.deletedActivities[0].activityId === '12345');
+       done();
+    });
 
 
 
@@ -122,8 +145,11 @@ ___
 
 **●  template**:  *`Partial`.<[Activity](../interfaces/botbuilder.activity.md)>* 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:25](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L25)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:44](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L44)*
 
+
+
+`ConversationReference` template that will be merged with all activities sent to the logic under test.
 
 
 
@@ -136,8 +162,19 @@ ___
 
 **●  updatedActivities**:  *`Partial`.<[Activity](../interfaces/botbuilder.activity.md)>[]* 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:26](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L26)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:59](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L59)*
 
+
+
+List of updated activities passed to the adapter which can be inspected after the current turn completes.
+
+**Usage Example**
+
+    adapter.test('update', '1 updated').then(() => {
+       assert(adapter.updatedActivities.length === 1);
+       assert(adapter.updatedActivities[0].id === '12345');
+       done();
+    });
 
 
 
@@ -146,16 +183,19 @@ ___
 
 
 ## Methods
-<a id="deleteactivity"></a>
+<a id="continueconversation"></a>
 
-###  deleteActivity
+###  continueConversation
 
-► **deleteActivity**(reference: *`Partial`.<[ConversationReference](../interfaces/botbuilder.conversationreference.md)>*): `Promise`.<`void`>
+► **continueConversation**(reference: *`Partial`.<[ConversationReference](../interfaces/botbuilder.conversationreference.md)>*, logic: *`function`*): `Promise`.<`void`>
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:36](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L36)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:108](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L108)*
 
+
+
+The `TestAdapter` doesn't implement `continueConversation()` and will return an error if it's called.
 
 
 **Parameters:**
@@ -163,6 +203,41 @@ ___
 | Param | Type | Description |
 | ------ | ------ | ------ |
 | reference | `Partial`.<[ConversationReference](../interfaces/botbuilder.conversationreference.md)>   |  - |
+| logic | `function`   |  - |
+
+
+
+
+
+**Returns:** `Promise`.<`void`>
+
+
+
+
+
+___
+
+<a id="deleteactivity"></a>
+
+###  deleteActivity
+
+► **deleteActivity**(context: *[TurnContext](botbuilder.turncontext.md)*, reference: *`Partial`.<[ConversationReference](../interfaces/botbuilder.conversationreference.md)>*): `Promise`.<`void`>
+
+
+
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:103](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L103)*
+
+
+
+INTERNAL: called by the logic under test to delete an existing activity. These are simply pushed onto a [deletedActivities](#deletedactivities) array for inspection after the turn completes.
+
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| context | [TurnContext](botbuilder.turncontext.md)   |  Context object for the current turn of conversation with the user. |
+| reference | `Partial`.<[ConversationReference](../interfaces/botbuilder.conversationreference.md)>   |  `ConversationReference` for activity being deleted. |
 
 
 
@@ -184,18 +259,18 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:41](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L41)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:114](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L114)*
 
 
 
-Processes and activity received from the user.
+INTERNAL: called by a `TestFlow` instance to simulate a user sending a message to the bot. This will cause the adapters middleware pipe to be run and it's logic to be called.
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| activity | `string`⎮`Partial`.<[Activity](../interfaces/botbuilder.activity.md)>   |  Text or activity from user. |
+| activity | `string`⎮`Partial`.<[Activity](../interfaces/botbuilder.activity.md)>   |  Text or activity from user. The current conversation reference [template](#template) will be merged the passed in activity to properly address the activity. Fields specified in the activity override fields in the template. |
 
 
 
@@ -217,18 +292,24 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:46](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L46)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:128](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L128)*
 
 
 
-Send something to the bot
+Sends something to the bot. This returns a new `TestFlow` instance which can be used to add additional steps for inspecting the bots reply and then sending additional activities.
+
+**Usage Example**
+
+    adapter.send('hi')
+           .assertReply('Hello World')
+           .then(() => done());
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| userSays | `string`⎮`Partial`.<[Activity](../interfaces/botbuilder.activity.md)>   |  text or activity simulating user input |
+| userSays | `string`⎮`Partial`.<[Activity](../interfaces/botbuilder.activity.md)>   |  Text or activity simulating user input. |
 
 
 
@@ -242,23 +323,27 @@ Send something to the bot
 
 ___
 
-<a id="sendactivity"></a>
+<a id="sendactivities"></a>
 
-###  sendActivity
+###  sendActivities
 
-► **sendActivity**(activities: *`Partial`.<[Activity](../interfaces/botbuilder.activity.md)>[]*): `Promise`.<[ResourceResponse](../interfaces/botbuilder.resourceresponse.md)[]>
+► **sendActivities**(context: *[TurnContext](botbuilder.turncontext.md)*, activities: *`Partial`.<[Activity](../interfaces/botbuilder.activity.md)>[]*): `Promise`.<[ResourceResponse](../interfaces/botbuilder.resourceresponse.md)[]>
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:34](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L34)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:87](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L87)*
 
+
+
+INTERNAL: called by the logic under test to send a set of activities. These will be buffered to the current `TestFlow` instance for comparison against the expected results.
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| activities | `Partial`.<[Activity](../interfaces/botbuilder.activity.md)>[]   |  - |
+| context | [TurnContext](botbuilder.turncontext.md)   |  Context object for the current turn of conversation with the user. |
+| activities | `Partial`.<[Activity](../interfaces/botbuilder.activity.md)>[]   |  Set of activities sent by logic under test. |
 
 
 
@@ -280,21 +365,26 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:54](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L54)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:145](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L145)*
 
 
 
-Send something to the bot and expect the bot to reply
+Send something to the bot and expects the bot to return with a given reply. This is simply a wrapper around calls to `send()` and `assertReply()`. This is such a common pattern that a helper is provided.
+
+**Usage Example**
+
+    adapter.test('hi', 'Hello World')
+           .then(() => done());
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| userSays | `string`⎮`Partial`.<[Activity](../interfaces/botbuilder.activity.md)>   |  text or activity simulating user input |
-| expected | `string`⎮`Partial`.<[Activity](../interfaces/botbuilder.activity.md)>⎮`function`   |  expected text or activity from the bot |
-| description | `string`   |  description of test case |
-| timeout | `number`   |  (default 3000ms) time to wait for response from bot |
+| userSays | `string`⎮`Partial`.<[Activity](../interfaces/botbuilder.activity.md)>   |  Text or activity simulating user input. |
+| expected | `string`⎮`Partial`.<[Activity](../interfaces/botbuilder.activity.md)>⎮`function`   |  Expected text or activity of the reply sent by the bot. |
+| description | `string`   |  (Optional) Description of the test case. If not provided one will be generated. |
+| timeout | `number`   |  (Optional) number of milliseconds to wait for a response from bot. Defaults to a value of `3000`. |
 
 
 
@@ -312,19 +402,23 @@ ___
 
 ###  updateActivity
 
-► **updateActivity**(activity: *`Partial`.<[Activity](../interfaces/botbuilder.activity.md)>*): `Promise`.<`void`>
+► **updateActivity**(context: *[TurnContext](botbuilder.turncontext.md)*, activity: *`Partial`.<[Activity](../interfaces/botbuilder.activity.md)>*): `Promise`.<`void`>
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:35](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L35)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:95](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L95)*
 
+
+
+INTERNAL: called by the logic under test to replace an existing activity. These are simply pushed onto an [updatedActivities](#updatedactivities) array for inspection after the turn completes.
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| activity | `Partial`.<[Activity](../interfaces/botbuilder.activity.md)>   |  - |
+| context | [TurnContext](botbuilder.turncontext.md)   |  Context object for the current turn of conversation with the user. |
+| activity | `Partial`.<[Activity](../interfaces/botbuilder.activity.md)>   |  Activity being updated. |
 
 
 

@@ -5,6 +5,11 @@
 # Interface: InvokeResponse
 
 
+:package: **botbuilder**
+
+Response object expected to be sent in response to an `invoke` activity.
+
+
 ## Properties
 <a id="body"></a>
 
@@ -12,7 +17,7 @@
 
 **●  body**:  *`any`* 
 
-*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:40](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L40)*
+*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:45](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L45)*
 
 
 
@@ -26,7 +31,7 @@ ___
 
 **●  status**:  *`number`* 
 
-*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L39)*
+*Defined in [libraries/botbuilder/lib/botFrameworkAdapter.d.ts:44](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder/lib/botFrameworkAdapter.d.ts#L44)*
 
 
 

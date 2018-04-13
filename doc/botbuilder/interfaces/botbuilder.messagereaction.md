@@ -15,7 +15,7 @@
 
 **●  type**:  *[MessageReactionTypes](../enums/botbuilder.messagereactiontypes.md)⎮`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:121](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L121)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:153](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L153)*
 
 
 *__member__*: {MessageReactionTypes} [type] Message reaction type. Possible values include: 'like', 'plusOne'

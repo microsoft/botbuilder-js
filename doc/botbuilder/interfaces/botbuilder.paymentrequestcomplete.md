@@ -15,7 +15,7 @@
 
 **●  id**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1518](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1518)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1651](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1651)*
 
 
 *__member__*: {string} [id] Payment request ID
@@ -32,7 +32,7 @@ ___
 
 **●  paymentRequest**:  *[PaymentRequest](botbuilder.paymentrequest.md)* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1522](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1522)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1655](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1655)*
 
 
 *__member__*: {PaymentRequest} [paymentRequest] Initial payment request
@@ -49,7 +49,7 @@ ___
 
 **●  paymentResponse**:  *[PaymentResponse](botbuilder.paymentresponse.md)* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1526](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1526)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1659](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1659)*
 
 
 *__member__*: {PaymentResponse} [paymentResponse] Corresponding payment response

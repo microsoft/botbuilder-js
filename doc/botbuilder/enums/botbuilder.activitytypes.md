@@ -5,7 +5,7 @@
 # Enumeration: ActivityTypes
 
 
-Defines values for ActivityTypes. Possible values include: 'message', 'contactRelationUpdate', 'conversationUpdate', 'typing', 'ping', 'endOfConversation', 'event', 'invoke', 'deleteUserData', 'messageUpdate', 'messageDelete', 'installationUpdate', 'messageReaction', 'suggestion' There could be more values for this enum apart from the ones defined here.If you want to set a value that is not from the known values then you can do the following: let param: ActivityTypes =
+Defines values for ActivityTypes. Possible values include: 'message', 'contactRelationUpdate', 'conversationUpdate', 'typing', 'ping', 'endOfConversation', 'event', 'invoke', 'deleteUserData', 'messageUpdate', 'messageDelete', 'installationUpdate', 'messageReaction', 'suggestion', 'trace' There could be more values for this enum apart from the ones defined here.If you want to set a value that is not from the known values then you can do the following: let param: ActivityTypes =
 
 <activitytypes>"someUnknownValueThatWillStillBeValid";</activitytypes>
 *__readonly__*: 
@@ -30,6 +30,7 @@ Defines values for ActivityTypes. Possible values include: 'message', 'contactRe
 * [MessageUpdate](botbuilder.activitytypes.md#messageupdate)
 * [Ping](botbuilder.activitytypes.md#ping)
 * [Suggestion](botbuilder.activitytypes.md#suggestion)
+* [Trace](botbuilder.activitytypes.md#trace)
 * [Typing](botbuilder.activitytypes.md#typing)
 
 
@@ -42,7 +43,7 @@ Defines values for ActivityTypes. Possible values include: 'message', 'contactRe
 
 ** ContactRelationUpdate**:    = "contactRelationUpdate"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1592](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1592)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1752](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1752)*
 
 
 
@@ -56,7 +57,7 @@ ___
 
 ** ConversationUpdate**:    = "conversationUpdate"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1593](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1593)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1753](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1753)*
 
 
 
@@ -70,7 +71,7 @@ ___
 
 ** DeleteUserData**:    = "deleteUserData"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1599](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1599)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1759](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1759)*
 
 
 
@@ -84,7 +85,7 @@ ___
 
 ** EndOfConversation**:    = "endOfConversation"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1596](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1596)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1756](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1756)*
 
 
 
@@ -98,7 +99,7 @@ ___
 
 ** Event**:    = "event"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1597](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1597)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1757](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1757)*
 
 
 
@@ -112,7 +113,7 @@ ___
 
 ** InstallationUpdate**:    = "installationUpdate"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1602](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1602)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1762](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1762)*
 
 
 
@@ -126,7 +127,7 @@ ___
 
 ** Invoke**:    = "invoke"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1598](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1598)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1758](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1758)*
 
 
 
@@ -140,7 +141,7 @@ ___
 
 ** Message**:    = "message"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1591](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1591)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1751](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1751)*
 
 
 
@@ -154,7 +155,7 @@ ___
 
 ** MessageDelete**:    = "messageDelete"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1601](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1601)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1761](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1761)*
 
 
 
@@ -168,7 +169,7 @@ ___
 
 ** MessageReaction**:    = "messageReaction"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1603](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1603)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1763](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1763)*
 
 
 
@@ -182,7 +183,7 @@ ___
 
 ** MessageUpdate**:    = "messageUpdate"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1600](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1600)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1760](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1760)*
 
 
 
@@ -196,7 +197,7 @@ ___
 
 ** Ping**:    = "ping"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1595](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1595)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1755](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1755)*
 
 
 
@@ -210,7 +211,21 @@ ___
 
 ** Suggestion**:    = "suggestion"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1604](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1604)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1764](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1764)*
+
+
+
+
+
+___
+
+<a id="trace"></a>
+
+###  Trace
+
+** Trace**:    = "trace"
+
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1765](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1765)*
 
 
 
@@ -224,7 +239,7 @@ ___
 
 ** Typing**:    = "typing"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1594](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1594)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1754](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1754)*
 
 
 

@@ -15,7 +15,7 @@
 
 **●  activityId**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:230](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L230)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:262](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L262)*
 
 
 *__member__*: {string} [activityId] (Optional) ID of the activity to refer to
@@ -32,7 +32,7 @@ ___
 
 **●  bot**:  *[ChannelAccount](botbuilder.channelaccount.md)* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:239](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L239)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:271](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L271)*
 
 
 *__member__*: {ChannelAccount} [bot] Bot participating in this conversation
@@ -49,7 +49,7 @@ ___
 
 **●  channelId**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:247](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L247)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:279](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L279)*
 
 
 *__member__*: {string} [channelId] Channel ID
@@ -66,7 +66,7 @@ ___
 
 **●  conversation**:  *[ConversationAccount](botbuilder.conversationaccount.md)* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:243](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L243)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:275](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L275)*
 
 
 *__member__*: {ConversationAccount} [conversation] Conversation reference
@@ -83,7 +83,7 @@ ___
 
 **●  serviceUrl**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:252](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L252)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:284](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L284)*
 
 
 *__member__*: {string} [serviceUrl] Service endpoint where operations concerning the referenced conversation may be performed
@@ -100,7 +100,7 @@ ___
 
 **●  user**:  *[ChannelAccount](botbuilder.channelaccount.md)* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:235](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L235)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:267](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L267)*
 
 
 *__member__*: {ChannelAccount} [user] (Optional) User participating in this conversation

@@ -7,7 +7,7 @@
 
 :package: **botbuilder-core-extensions**
 
-A set of utility functions designed to assist with the formatting of the various card types a bot can return. All of these functions return an `Attachment` which can be added to an `Activity` directly or passed as input to a `MessageStyler` function.
+A set of utility functions designed to assist with the formatting of the various card types a bot can return. All of these functions return an `Attachment` which can be added to an `Activity` directly or passed as input to a `MessageFactory` method.
 
 **Usage Example**
 
@@ -48,7 +48,7 @@ A set of utility functions designed to assist with the formatting of the various
 
 **●  contentTypes**:  *`object`* 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:28](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L28)*
+*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:28](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L28)*
 
 
 
@@ -128,7 +128,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:129](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L129)*
+*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:157](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L157)*
 
 
 
@@ -161,7 +161,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:53](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L53)*
+*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:72](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L72)*
 
 
 
@@ -170,6 +170,24 @@ Returns an attachment for an adaptive card. The attachment will contain the card
 Adaptive Cards are a new way for bots to send interactive and immersive card content to users. For channels that don't yet support Adaptive Cards natively, the Bot Framework will down render the card to an image that's been styled to look good on the target channel. For channels that support [hero cards](#herocards) you can continue to include Adaptive Card actions and they will be sent as buttons along with the rendered version of the card.
 
 For more information about Adaptive Cards and to download the latest SDK, visit [adaptivecards.io](http://adaptivecards.io/).
+
+    const card = CardFactory.adaptiveCard({
+      "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+      "type": "AdaptiveCard",
+      "version": "1.0",
+      "body": [
+          {
+             "type": "TextBlock",
+             "text": "Default text input"
+          }
+      ],
+      "actions": [
+          {
+             "type": "Action.Submit",
+             "title": "OK"
+          }
+      ]
+    });
 
 
 **Parameters:**
@@ -198,7 +216,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:62](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L62)*
+*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:81](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L81)*
 
 
 
@@ -234,7 +252,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:71](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L71)*
+*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:90](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L90)*
 
 
 
@@ -272,11 +290,19 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:82](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L82)*
+*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:110](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L110)*
 
 
 
 Returns an attachment for a hero card. Hero cards tend to have one dominant full width image and the cards text & buttons can usually be found below the image.
+
+**Usage Example**
+
+    const card = CardFactory.heroCard(
+         'White T-Shirt',
+         ['https://example.com/whiteShirt.jpg'],
+         ['buy']
+    );
 
 
 **Parameters:**
@@ -296,7 +322,7 @@ Returns an attachment for a hero card. Hero cards tend to have one dominant full
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:83](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L83)*
+*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:111](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L111)*
 
 
 
@@ -330,7 +356,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:135](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L135)*
+*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:163](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L163)*
 
 
 
@@ -363,7 +389,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:141](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L141)*
+*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:169](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L169)*
 
 
 
@@ -396,7 +422,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:90](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L90)*
+*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:118](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L118)*
 
 
 
@@ -429,7 +455,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:99](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L99)*
+*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:127](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L127)*
 
 
 
@@ -466,7 +492,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:112](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L112)*
+*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:140](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L140)*
 
 
 
@@ -490,7 +516,7 @@ Returns an attachment for a thumbnail card. Thumbnail cards are similar to [hero
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:113](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L113)*
+*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:141](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L141)*
 
 
 
@@ -524,7 +550,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:122](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L122)*
+*Defined in [libraries/botbuilder-core-extensions/lib/cardFactory.d.ts:150](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/cardFactory.d.ts#L150)*
 
 
 
@@ -536,7 +562,7 @@ Returns an attachment for a video card.
 | Param | Type | Description |
 | ------ | ------ | ------ |
 | title | `string`   |  The cards title. |
-| media | `any`[]   |  Media URL's for the card. |
+| media | `any`[]   |  Media URLs for the card. |
 | buttons | `any`[]   |  (Optional) set of buttons to include on the card. |
 | other | `Partial`.<[AnimationCard](../interfaces/botbuilder.animationcard.md)>   |  (Optional) additional properties to include on the card. |
 

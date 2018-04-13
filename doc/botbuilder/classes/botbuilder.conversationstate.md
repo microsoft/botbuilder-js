@@ -7,7 +7,26 @@
 
 :package: **botbuilder-core-extensions**
 
-Reads and writes conversation state for your bot to storage. When used as middleware the state will automatically be read in before your bots logic runs and then written back out open completion of your bots logic.
+Reads and writes conversation state for your bot to storage. Each conversation your bot has with a user or group will have its own isolated storage object that can be used to persist conversation tracking information between turns of the conversation. This state information can be reset at any point by calling [clear()](#clear).
+
+Since the `ConversationState` class derives from `BotState` it can be used as middleware to automatically read and write the bots conversation state for each turn. And it also means it can be passed to a `BotStateSet` middleware instance to be managed in parallel with other state providers.
+
+**Usage Example**
+
+    const { ConversationState, MemoryStorage } = require('botbuilder');
+
+    const conversationState = new ConversationState(new MemoryStorage());
+    adapter.use(conversationState);
+
+    server.post('/api/messages', (req, res) => {
+       adapter.processActivity(req, res, async (context) => {
+          // Get loaded conversation state
+          const convo = conversationState.get(context);
+
+          // ... route activity ...
+
+       });
+    });
 
 ## Type parameters
 #### T :  [StoreItem](../interfaces/botbuilder.storeitem.md)
@@ -46,7 +65,7 @@ Reads and writes conversation state for your bot to storage. When used as middle
 * [clear](botbuilder.conversationstate.md#clear)
 * [get](botbuilder.conversationstate.md#get)
 * [getStorageKey](botbuilder.conversationstate.md#getstoragekey)
-* [onProcessRequest](botbuilder.conversationstate.md#onprocessrequest)
+* [onTurn](botbuilder.conversationstate.md#onturn)
 * [read](botbuilder.conversationstate.md#read)
 * [write](botbuilder.conversationstate.md#write)
 
@@ -57,12 +76,12 @@ Reads and writes conversation state for your bot to storage. When used as middle
 <a id="constructor"></a>
 
 
-### ⊕ **new ConversationState**(storage: *[Storage](../interfaces/botbuilder.storage.md)*): [ConversationState](botbuilder.conversationstate.md)
+### ⊕ **new ConversationState**(storage: *[Storage](../interfaces/botbuilder.storage.md)*, namespace?: *`string`*): [ConversationState](botbuilder.conversationstate.md)
 
 
 *Overrides [BotState](botbuilder.botstate.md).[constructor](botbuilder.botstate.md#constructor)*
 
-*Defined in [libraries/botbuilder-core-extensions/lib/conversationState.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/conversationState.d.ts#L18)*
+*Defined in [libraries/botbuilder-core-extensions/lib/conversationState.d.ts:44](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/conversationState.d.ts#L44)*
 
 
 
@@ -74,6 +93,7 @@ Creates a new ConversationState instance.
 | Param | Type | Description |
 | ------ | ------ | ------ |
 | storage | [Storage](../interfaces/botbuilder.storage.md)   |  Storage provider to persist conversation state to. |
+| namespace | `string`   |  (Optional) namespace to append to storage keys. Defaults to an empty string. |
 
 
 
@@ -93,7 +113,7 @@ Creates a new ConversationState instance.
 
 *Inherited from [BotState](botbuilder.botstate.md).[storage](botbuilder.botstate.md#storage)*
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:29](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/botState.d.ts#L29)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:53](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/botState.d.ts#L53)*
 
 
 
@@ -109,7 +129,7 @@ ___
 
 *Inherited from [BotState](botbuilder.botstate.md).[storageKey](botbuilder.botstate.md#storagekey)*
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:30](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/botState.d.ts#L30)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:54](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/botState.d.ts#L54)*
 
 
 
@@ -123,24 +143,28 @@ ___
 
 ###  clear
 
-► **clear**(context: *[BotContext](botbuilder.botcontext.md)*): `void`
+► **clear**(context: *[TurnContext](botbuilder.turncontext.md)*): `void`
 
 
 
 *Inherited from [BotState](botbuilder.botstate.md).[clear](botbuilder.botstate.md#clear)*
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:55](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/botState.d.ts#L55)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:101](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/botState.d.ts#L101)*
 
 
 
 Clears the current state object for a turn.
+
+**Usage Example**
+
+    botState.clear(context);
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | [BotContext](botbuilder.botcontext.md)   |  Context for current turn of conversation with the user. |
+| context | [TurnContext](botbuilder.turncontext.md)   |  Context for current turn of conversation with the user. |
 
 
 
@@ -158,24 +182,28 @@ ___
 
 ###  get
 
-► **get**(context: *[BotContext](botbuilder.botcontext.md)*): `T`⎮`undefined`
+► **get**(context: *[TurnContext](botbuilder.turncontext.md)*): `T`⎮`undefined`
 
 
 
 *Inherited from [BotState](botbuilder.botstate.md).[get](botbuilder.botstate.md#get)*
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:60](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/botState.d.ts#L60)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:112](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/botState.d.ts#L112)*
 
 
 
 Returns a cached state object or undefined if not cached.
+
+**Usage Example**
+
+    const state botState.get(context);
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | [BotContext](botbuilder.botcontext.md)   |  Context for current turn of conversation with the user. |
+| context | [TurnContext](botbuilder.turncontext.md)   |  Context for current turn of conversation with the user. |
 
 
 
@@ -193,11 +221,11 @@ ___
 
 ###  getStorageKey
 
-► **getStorageKey**(context: *[BotContext](botbuilder.botcontext.md)*): `string`⎮`undefined`
+► **getStorageKey**(context: *[TurnContext](botbuilder.turncontext.md)*): `string`⎮`undefined`
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/conversationState.d.ts:28](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/conversationState.d.ts#L28)*
+*Defined in [libraries/botbuilder-core-extensions/lib/conversationState.d.ts:55](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/conversationState.d.ts#L55)*
 
 
 
@@ -208,7 +236,7 @@ Returns the storage key for the current conversation state.
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | [BotContext](botbuilder.botcontext.md)   |  Context for current turn of conversation with the user. |
+| context | [TurnContext](botbuilder.turncontext.md)   |  Context for current turn of conversation with the user. |
 
 
 
@@ -222,17 +250,17 @@ Returns the storage key for the current conversation state.
 
 ___
 
-<a id="onprocessrequest"></a>
+<a id="onturn"></a>
 
-###  onProcessRequest
+###  onTurn
 
-► **onProcessRequest**(context: *[BotContext](botbuilder.botcontext.md)*, next: *`function`*): `Promise`.<`void`>
+► **onTurn**(context: *[TurnContext](botbuilder.turncontext.md)*, next: *`function`*): `Promise`.<`void`>
 
 
 
-*Inherited from [BotState](botbuilder.botstate.md).[onProcessRequest](botbuilder.botstate.md#onprocessrequest)*
+*Inherited from [BotState](botbuilder.botstate.md).[onTurn](botbuilder.botstate.md#onturn)*
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:38](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/botState.d.ts#L38)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:62](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/botState.d.ts#L62)*
 
 
 
@@ -240,7 +268,7 @@ ___
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | [BotContext](botbuilder.botcontext.md)   |  - |
+| context | [TurnContext](botbuilder.turncontext.md)   |  - |
 | next | `function`   |  - |
 
 
@@ -259,24 +287,28 @@ ___
 
 ###  read
 
-► **read**(context: *[BotContext](botbuilder.botcontext.md)*, force?: *`boolean`*): `Promise`.<`T`>
+► **read**(context: *[TurnContext](botbuilder.turncontext.md)*, force?: *`boolean`*): `Promise`.<`T`>
 
 
 
 *Inherited from [BotState](botbuilder.botstate.md).[read](botbuilder.botstate.md#read)*
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:44](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/botState.d.ts#L44)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:76](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/botState.d.ts#L76)*
 
 
 
-Reads in and caches the current state object for a turn.
+Reads in and caches the current state object for a turn. Subsequent reads will return the cached object unless the `force` flag is passed in which will force the state object to be re-read.
+
+**Usage Example**
+
+    const state = await botState.read(context);
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | [BotContext](botbuilder.botcontext.md)   |  Context for current turn of conversation with the user. |
+| context | [TurnContext](botbuilder.turncontext.md)   |  Context for current turn of conversation with the user. |
 | force | `boolean`   |  (Optional) If `true` the cache will be bypassed and the state will always be read in directly from storage. Defaults to `false`. |
 
 
@@ -295,24 +327,28 @@ ___
 
 ###  write
 
-► **write**(context: *[BotContext](botbuilder.botcontext.md)*, force?: *`boolean`*): `Promise`.<`void`>
+► **write**(context: *[TurnContext](botbuilder.turncontext.md)*, force?: *`boolean`*): `Promise`.<`void`>
 
 
 
 *Inherited from [BotState](botbuilder.botstate.md).[write](botbuilder.botstate.md#write)*
 
-*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:50](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/botState.d.ts#L50)*
+*Defined in [libraries/botbuilder-core-extensions/lib/botState.d.ts:90](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/botState.d.ts#L90)*
 
 
 
-Writes out the state object if it's been changed.
+Save the cached state object if it's been changed. If the `force` flag is passed in the cached state object will be saved regardless of whether its been changed and if no object has been a cached an empty object will created and saved.
+
+**Usage Example**
+
+    await botState.write(context);
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | [BotContext](botbuilder.botcontext.md)   |  Context for current turn of conversation with the user. |
+| context | [TurnContext](botbuilder.turncontext.md)   |  Context for current turn of conversation with the user. |
 | force | `boolean`   |  (Optional) if `true` the state will always be written out regardless of its change state. Defaults to `false`. |
 
 

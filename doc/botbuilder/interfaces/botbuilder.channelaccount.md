@@ -15,10 +15,10 @@
 
 **●  id**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:83](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L83)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:99](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L99)*
 
 
-*__member__*: {string} [id] Channel id for the user or bot on this channel (Example: [joe@smith.com](mailto:joe@smith.com), or @joesmith or 123456)
+*__member__*: {string} [id] Channel id for the user or bot on this channel (Example: joe@smith.com, or @joesmith or 123456)
 
 
 
@@ -32,10 +32,27 @@ ___
 
 **●  name**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:87](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L87)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:103](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L103)*
 
 
 *__member__*: {string} [name] Display friendly name
+
+
+
+
+
+___
+
+<a id="role"></a>
+
+###  role
+
+**●  role**:  *[RoleTypes](../enums/botbuilder.roletypes.md)⎮`string`* 
+
+*Defined in [libraries/botframework-schema/lib/index.d.ts:108](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L108)*
+
+
+*__member__*: {RoleTypes} [role] Role of the entity behind the account (Example: User, Bot, etc.). Possible values include: 'user', 'bot'
 
 
 

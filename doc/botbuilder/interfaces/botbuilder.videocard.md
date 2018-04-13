@@ -15,7 +15,7 @@
 
 **●  aspect**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1036](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1036)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1129](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1129)*
 
 
 *__member__*: {string} [aspect] Aspect ratio of thumbnail/media placeholder, allowed values are "16:9" and "4:3"
@@ -32,7 +32,7 @@ ___
 
 **●  autoloop**:  *`boolean`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1026](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1026)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1119](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1119)*
 
 
 *__member__*: {boolean} [autoloop] Should the client loop playback at end of content (default:true)
@@ -49,7 +49,7 @@ ___
 
 **●  autostart**:  *`boolean`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1031](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1031)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1124](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1124)*
 
 
 *__member__*: {boolean} [autostart] Should the client automatically start playback of media in this card (default:true)
@@ -66,7 +66,7 @@ ___
 
 **●  buttons**:  *[CardAction](botbuilder.cardaction.md)[]* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1016](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1016)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1109](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1109)*
 
 
 *__member__*: {CardAction[]} [buttons] Actions on this card
@@ -83,7 +83,7 @@ ___
 
 **●  image**:  *[ThumbnailUrl](botbuilder.thumbnailurl.md)* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1008](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1008)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1101](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1101)*
 
 
 *__member__*: {ThumbnailUrl} [image] Thumbnail placeholder
@@ -100,7 +100,7 @@ ___
 
 **●  media**:  *[MediaUrl](botbuilder.mediaurl.md)[]* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1012](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1012)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1105](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1105)*
 
 
 *__member__*: {MediaUrl[]} [media] Media URLs for this card
@@ -117,7 +117,7 @@ ___
 
 **●  shareable**:  *`boolean`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1021](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1021)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1114](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1114)*
 
 
 *__member__*: {boolean} [shareable] This content may be shared with others (default:true)
@@ -134,7 +134,7 @@ ___
 
 **●  subtitle**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1000](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1000)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1093](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1093)*
 
 
 *__member__*: {string} [subtitle] Subtitle of this card
@@ -151,7 +151,7 @@ ___
 
 **●  text**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1004](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1004)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1097](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1097)*
 
 
 *__member__*: {string} [text] Text of this card
@@ -168,7 +168,7 @@ ___
 
 **●  title**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:996](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L996)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1089](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1089)*
 
 
 *__member__*: {string} [title] Title of this card
@@ -183,12 +183,12 @@ ___
 
 ###  value
 
-**●  value**:  *`string`* 
+**●  value**:  *`any`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1040](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1040)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1133](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1133)*
 
 
-*__member__*: {string} [value] Supplementary parameter for this card
+*__member__*: {any} [value] Supplementary parameter for this card
 
 
 

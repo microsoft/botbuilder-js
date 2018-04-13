@@ -5,11 +5,18 @@
 # Class: ConsoleAdapter
 
 
-:package: **botbuilder-core**
+:package: **botbuilder**
 
 Lets a user communicate with a bot from a console window.
 
 **Usage Example**
+
+    const { ConsoleAdapter } = require('botbuilder');
+
+    const adapter = new ConsoleAdapter();
+    const closeFn = adapter.listen(async (context) => {
+       await context.sendActivity(`Hello World`);
+    });
 
 ## Hierarchy
 
@@ -38,12 +45,13 @@ Lets a user communicate with a bot from a console window.
 
 ### Methods
 
+* [continueConversation](botbuilder.consoleadapter.md#continueconversation)
 * [createInterface](botbuilder.consoleadapter.md#createinterface)
 * [deleteActivity](botbuilder.consoleadapter.md#deleteactivity)
 * [listen](botbuilder.consoleadapter.md#listen)
 * [print](botbuilder.consoleadapter.md#print)
 * [printError](botbuilder.consoleadapter.md#printerror)
-* [sendActivity](botbuilder.consoleadapter.md#sendactivity)
+* [sendActivities](botbuilder.consoleadapter.md#sendactivities)
 * [updateActivity](botbuilder.consoleadapter.md#updateactivity)
 
 
@@ -56,15 +64,18 @@ Lets a user communicate with a bot from a console window.
 ### ⊕ **new ConsoleAdapter**(reference?: *[ConversationReference](../interfaces/botbuilder.conversationreference.md)*): [ConsoleAdapter](botbuilder.consoleadapter.md)
 
 
-*Defined in [libraries/botbuilder/lib/consoleAdapter.d.ts:23](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder/lib/consoleAdapter.d.ts#L23)*
+*Defined in [libraries/botbuilder/lib/consoleAdapter.d.ts:29](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder/lib/consoleAdapter.d.ts#L29)*
 
+
+
+Creates a new ConsoleAdapter instance.
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| reference | [ConversationReference](../interfaces/botbuilder.conversationreference.md)   |  - |
+| reference | [ConversationReference](../interfaces/botbuilder.conversationreference.md)   |  (Optional) reference used to customize the address information of activites sent from the adapter. |
 
 
 
@@ -76,6 +87,53 @@ Lets a user communicate with a bot from a console window.
 
 
 ## Methods
+<a id="continueconversation"></a>
+
+###  continueConversation
+
+► **continueConversation**(reference: *[ConversationReference](../interfaces/botbuilder.conversationreference.md)*, logic: *`function`*): `Promise`.<`void`>
+
+
+
+*Defined in [libraries/botbuilder/lib/consoleAdapter.d.ts:89](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder/lib/consoleAdapter.d.ts#L89)*
+
+
+
+Lets a bot proactively message the user.
+
+The processing steps for this method are very similar to [listen()](#listen) in that a `TurnContext` will be created which is then routed through the adapters middleware before calling the passed in logic handler. The key difference being that since an activity wasn't actually received it has to be created. The created activity will have its address related fields populated but will have a `context.activity.type === undefined`.
+
+**Usage Example**
+
+    function delayedNotify(context, message, delay) {
+       const reference = TurnContext.getConversationReference(context.activity);
+       setTimeout(() => {
+          adapter.continueConversation(reference, async (ctx) => {
+             await ctx.sendActivity(message);
+          });
+       }, delay);
+    }
+
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| reference | [ConversationReference](../interfaces/botbuilder.conversationreference.md)   |  A `ConversationReference` saved during a previous message from a user. This can be calculated for any incoming activity using `TurnContext.getConversationReference(context.activity)`. |
+| logic | `function`   |  A function handler that will be called to perform the bots logic after the the adapters middleware has been run. |
+
+
+
+
+
+**Returns:** `Promise`.<`void`>
+
+
+
+
+
+___
+
 <a id="createinterface"></a>
 
 ### «Protected» createInterface
@@ -84,15 +142,18 @@ Lets a user communicate with a bot from a console window.
 
 
 
-*Defined in [libraries/botbuilder/lib/consoleAdapter.d.ts:33](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder/lib/consoleAdapter.d.ts#L33)*
+*Defined in [libraries/botbuilder/lib/consoleAdapter.d.ts:114](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder/lib/consoleAdapter.d.ts#L114)*
 
+
+
+Allows for mocking of the console interface in unit tests.
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| options | [ReadLineOptions]()   |  - |
+| options | [ReadLineOptions]()   |  Console interface options. |
 
 
 
@@ -110,18 +171,22 @@ ___
 
 ###  deleteActivity
 
-► **deleteActivity**(reference: *`Partial`.<[ConversationReference](../interfaces/botbuilder.conversationreference.md)>*): `Promise`.<`void`>
+► **deleteActivity**(context: *[TurnContext](botbuilder.turncontext.md)*, reference: *`Partial`.<[ConversationReference](../interfaces/botbuilder.conversationreference.md)>*): `Promise`.<`void`>
 
 
 
-*Defined in [libraries/botbuilder/lib/consoleAdapter.d.ts:32](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder/lib/consoleAdapter.d.ts#L32)*
+*Defined in [libraries/botbuilder/lib/consoleAdapter.d.ts:109](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder/lib/consoleAdapter.d.ts#L109)*
 
+
+
+Not supported for the ConsoleAdapter. Calling this method or `TurnContext.deleteActivity()` will result an error being returned.
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
+| context | [TurnContext](botbuilder.turncontext.md)   |  - |
 | reference | `Partial`.<[ConversationReference](../interfaces/botbuilder.conversationreference.md)>   |  - |
 
 
@@ -144,11 +209,32 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/consoleAdapter.d.ts:29](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder/lib/consoleAdapter.d.ts#L29)*
+*Defined in [libraries/botbuilder/lib/consoleAdapter.d.ts:64](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder/lib/consoleAdapter.d.ts#L64)*
 
 
 
-Begins listening to console input.
+Begins listening to console input. A function will be returned that can be used to stop the bot listening and therefore end the process.
+
+Upon receiving input from the console the flow is as follows:
+
+*   An 'message' activity will be created containing the users input text.
+*   A revokable `TurnContext` will be created for the activity.
+*   The context will be routed through any middleware registered with [use()](#use).
+*   The bots logic handler that was passed in will be executed.
+*   The promise chain setup by the middleware stack will be resolved.
+*   The context object will be revoked and any future calls to its members will result in a `TypeError` being thrown.
+
+**Usage Example**
+
+    const closeFn = adapter.listen(async (context) => {
+       const utterance = context.activity.text.toLowerCase();
+       if (utterance.includes('goodbye')) {
+          await context.sendActivity(`Ok... Goodbye`);
+          closeFn();
+       } else {
+          await context.sendActivity(`Hello World`);
+       }
+    });
 
 
 **Parameters:**
@@ -177,15 +263,18 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/consoleAdapter.d.ts:34](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder/lib/consoleAdapter.d.ts#L34)*
+*Defined in [libraries/botbuilder/lib/consoleAdapter.d.ts:119](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder/lib/consoleAdapter.d.ts#L119)*
 
+
+
+Logs text to the console.
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| line | `string`   |  - |
+| line | `string`   |  Text to print. |
 
 
 
@@ -207,15 +296,18 @@ ___
 
 
 
-*Defined in [libraries/botbuilder/lib/consoleAdapter.d.ts:35](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder/lib/consoleAdapter.d.ts#L35)*
+*Defined in [libraries/botbuilder/lib/consoleAdapter.d.ts:124](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder/lib/consoleAdapter.d.ts#L124)*
 
+
+
+Logs an error to the console.
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| line | `string`   |  - |
+| line | `string`   |  Error text to print. |
 
 
 
@@ -229,23 +321,29 @@ ___
 
 ___
 
-<a id="sendactivity"></a>
+<a id="sendactivities"></a>
 
-###  sendActivity
+###  sendActivities
 
-► **sendActivity**(activities: *`Partial`.<[Activity](../interfaces/botbuilder.activity.md)>[]*): `Promise`.<[ResourceResponse](../interfaces/botbuilder.resourceresponse.md)[]>
+► **sendActivities**(context: *[TurnContext](botbuilder.turncontext.md)*, activities: *`Partial`.<[Activity](../interfaces/botbuilder.activity.md)>[]*): `Promise`.<[ResourceResponse](../interfaces/botbuilder.resourceresponse.md)[]>
 
 
 
-*Defined in [libraries/botbuilder/lib/consoleAdapter.d.ts:30](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder/lib/consoleAdapter.d.ts#L30)*
+*Defined in [libraries/botbuilder/lib/consoleAdapter.d.ts:99](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder/lib/consoleAdapter.d.ts#L99)*
 
+
+
+Logs a set of activities to the console.
+
+Calling `TurnContext.sendActivities()` or `TurnContext.sendActivity()` is the preferred way of sending activities as that will ensure that outgoing activities have been properly addressed and that any interested middleware has been notified.
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| activities | `Partial`.<[Activity](../interfaces/botbuilder.activity.md)>[]   |  - |
+| context | [TurnContext](botbuilder.turncontext.md)   |  Context for the current turn of conversation with the user. |
+| activities | `Partial`.<[Activity](../interfaces/botbuilder.activity.md)>[]   |  List of activities to send. |
 
 
 
@@ -263,18 +361,22 @@ ___
 
 ###  updateActivity
 
-► **updateActivity**(activity: *`Partial`.<[Activity](../interfaces/botbuilder.activity.md)>*): `Promise`.<`void`>
+► **updateActivity**(context: *[TurnContext](botbuilder.turncontext.md)*, activity: *`Partial`.<[Activity](../interfaces/botbuilder.activity.md)>*): `Promise`.<`void`>
 
 
 
-*Defined in [libraries/botbuilder/lib/consoleAdapter.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder/lib/consoleAdapter.d.ts#L31)*
+*Defined in [libraries/botbuilder/lib/consoleAdapter.d.ts:104](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder/lib/consoleAdapter.d.ts#L104)*
 
+
+
+Not supported for the ConsoleAdapter. Calling this method or `TurnContext.updateActivity()` will result an error being returned.
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
+| context | [TurnContext](botbuilder.turncontext.md)   |  - |
 | activity | `Partial`.<[Activity](../interfaces/botbuilder.activity.md)>   |  - |
 
 

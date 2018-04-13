@@ -15,7 +15,7 @@
 
 **●  displayText**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:154](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L154)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:186](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L186)*
 
 
 *__member__*: {string} [displayText] (Optional) text to display in the chat feed if the button is clicked
@@ -32,7 +32,7 @@ ___
 
 **●  image**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:145](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L145)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:177](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L177)*
 
 
 *__member__*: {string} [image] Image URL which will appear on the button, next to text label
@@ -49,7 +49,7 @@ ___
 
 **●  text**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:149](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L149)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:181](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L181)*
 
 
 *__member__*: {string} [text] Text for this action
@@ -66,7 +66,7 @@ ___
 
 **●  title**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:140](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L140)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:172](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L172)*
 
 
 *__member__*: {string} [title] Text description which appears on the button
@@ -83,7 +83,7 @@ ___
 
 **●  type**:  *[ActionTypes](../enums/botbuilder.actiontypes.md)⎮`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:136](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L136)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:168](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L168)*
 
 
 *__member__*: {ActionTypes} [type] The type of action implemented by this button. Possible values include: 'openUrl', 'imBack', 'postBack', 'playAudio', 'playVideo', 'showImage', 'downloadFile', 'signin', 'call', 'payment', 'messageBack'
@@ -98,12 +98,12 @@ ___
 
 ###  value
 
-**●  value**:  *`string`* 
+**●  value**:  *`any`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:159](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L159)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:191](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L191)*
 
 
-*__member__*: {string} [value] Supplementary parameter for action. Content of this property depends on the ActionType
+*__member__*: {any} [value] Supplementary parameter for action. Content of this property depends on the ActionType
 
 
 

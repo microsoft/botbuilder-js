@@ -39,7 +39,7 @@ Defines values for ActionTypes. Possible values include: 'openUrl', 'imBack', 'p
 
 ** Call**:    = "call"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1689](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1689)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1850](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1850)*
 
 
 
@@ -53,7 +53,7 @@ ___
 
 ** DownloadFile**:    = "downloadFile"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1687](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1687)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1848](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1848)*
 
 
 
@@ -67,7 +67,7 @@ ___
 
 ** ImBack**:    = "imBack"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1682](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1682)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1843](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1843)*
 
 
 
@@ -81,7 +81,7 @@ ___
 
 ** MessageBack**:    = "messageBack"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1691](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1691)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1852](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1852)*
 
 
 
@@ -95,7 +95,7 @@ ___
 
 ** OpenUrl**:    = "openUrl"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1681](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1681)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1842](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1842)*
 
 
 
@@ -109,7 +109,7 @@ ___
 
 ** Payment**:    = "payment"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1690](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1690)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1851](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1851)*
 
 
 
@@ -123,7 +123,7 @@ ___
 
 ** PlayAudio**:    = "playAudio"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1684](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1684)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1845](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1845)*
 
 
 
@@ -137,7 +137,7 @@ ___
 
 ** PlayVideo**:    = "playVideo"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1685](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1685)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1846](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1846)*
 
 
 
@@ -151,7 +151,7 @@ ___
 
 ** PostBack**:    = "postBack"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1683](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1683)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1844](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1844)*
 
 
 
@@ -165,7 +165,7 @@ ___
 
 ** ShowImage**:    = "showImage"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1686](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1686)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1847](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1847)*
 
 
 
@@ -179,7 +179,7 @@ ___
 
 ** Signin**:    = "signin"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1688](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1688)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1849](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1849)*
 
 
 

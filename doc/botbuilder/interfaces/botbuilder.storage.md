@@ -7,7 +7,7 @@
 
 :package: **botbuilder-core-extensions**
 
-Interface for a store provider that stores and retrieves objects.
+Interface for a storage provider that stores and retrieves plain old JSON objects.
 
 ## Implemented by
 
@@ -25,11 +25,15 @@ Interface for a store provider that stores and retrieves objects.
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/storage.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/storage.d.ts#L39)*
+*Defined in [libraries/botbuilder-core-extensions/lib/storage.d.ts:56](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/storage.d.ts#L56)*
 
 
 
 Removes store items from storage
+
+**Usage Example**
+
+    await storage.delete(['botState']);
 
 
 **Parameters:**
@@ -58,11 +62,16 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/storage.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/storage.d.ts#L27)*
+*Defined in [libraries/botbuilder-core-extensions/lib/storage.d.ts:33](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/storage.d.ts#L33)*
 
 
 
 Loads store items from storage
+
+**Usage Example**
+
+    const items = await storage.read(['botState']);
+    const state = 'botState' in items ? items['botState'] : {};
 
 
 **Parameters:**
@@ -91,11 +100,16 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/storage.d.ts:33](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/storage.d.ts#L33)*
+*Defined in [libraries/botbuilder-core-extensions/lib/storage.d.ts:45](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/storage.d.ts#L45)*
 
 
 
 Saves store items to storage.
+
+**Usage Example**
+
+    state.topic = 'someTopic';
+    await storage.write({ 'botState': state });
 
 
 **Parameters:**

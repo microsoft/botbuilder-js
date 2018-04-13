@@ -15,7 +15,7 @@
 
 **●  result**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1538](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1538)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1671](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1671)*
 
 
 *__member__*: {string} [result] Result of the payment request completion

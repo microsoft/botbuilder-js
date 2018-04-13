@@ -15,7 +15,7 @@
 
 **●  actions**:  *[CardAction](botbuilder.cardaction.md)[]* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:177](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L177)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:209](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L209)*
 
 
 *__member__*: {CardAction[]} [actions] Actions that can be shown to the user
@@ -32,7 +32,7 @@ ___
 
 **●  to**:  *`string`[]* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:173](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L173)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:205](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L205)*
 
 
 *__member__*: {string[]} [to] Ids of the recipients that the actions should be shown to. These Ids are relative to the channelId and a subset of all recipients of the activity

@@ -15,7 +15,7 @@
 
 **●  key**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:888](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L888)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:922](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L922)*
 
 
 *__member__*: {string} [key] The key for this Fact
@@ -32,7 +32,7 @@ ___
 
 **●  value**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:892](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L892)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:926](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L926)*
 
 
 *__member__*: {string} [value] The value for this Fact
