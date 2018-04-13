@@ -75,14 +75,14 @@ async function processConnectEndpointArgs(config) {
             break;
         idCount++;
     }
-    config.connectService({
+    config.connectService(config.encryptService({
         type: BotConfig_1.ServiceType.Endpoint,
         id: id,
         name: args.name,
         appId: (args.appId && args.appId.length > 0) ? args.appId : null,
         appPassword: (args.appPassword && args.appPassword.length > 0) ? args.appPassword : null,
         endpoint: args.endpoint
-    });
+    }));
     await config.Save();
     return config;
 }

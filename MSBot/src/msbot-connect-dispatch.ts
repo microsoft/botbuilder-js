@@ -83,15 +83,16 @@ async function processConnectDispatch(config: BotConfig): Promise<BotConfig> {
         throw new Error("bad or missing --subscriptionKey");
 
     // add the service
-    config.connectService(<IDispatchService>{
-        type: ServiceType.Dispatch,
-        name: args.name,
-        id: args.appId,
-        appId: args.appId,
-        version: args.version,
-        subscriptionKey: args.subscriptionKey,
-        authoringKey: args.authoringKey
-    });
+    config.connectService(
+        config.encryptService(<IDispatchService>{
+            type: ServiceType.Dispatch,
+            name: args.name,
+            id: args.appId,
+            appId: args.appId,
+            version: args.version,
+            subscriptionKey: args.subscriptionKey,
+            authoringKey: args.authoringKey
+        }));
     await config.Save();
     return config;
 }

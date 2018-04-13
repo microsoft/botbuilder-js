@@ -81,14 +81,16 @@ async function processConnectAzureArgs(config: BotConfig): Promise<BotConfig> {
     if (!validurl.isWebUri(args.endpoint))
         throw new Error(`--endpoint ${args.endpoint} is not a valid url`);
 
-    config.connectService(<IAzureBotService>{
-        type: ServiceType.AzureBotService,
-        id: args.id, // bot id
-        name: args.hasOwnProperty('name') ? args.name : args.id,
-        appId: args.appId,
-        appPassword: args.appPassword,
-        endpoint: args.endpoint
-    });
+    config.connectService(
+        config.encryptService(<IAzureBotService>{
+            type: ServiceType.AzureBotService,
+            id: args.id, // bot id
+            name: args.hasOwnProperty('name') ? args.name : args.id,
+            appId: args.appId,
+            appPassword: args.appPassword,
+            endpoint: args.endpoint
+        })
+    );
 
     await config.Save();
     return config;

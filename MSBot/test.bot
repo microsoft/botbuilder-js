@@ -26,6 +26,14 @@
             "appId": "7d6cbe5d797b4aecbc73ba8aa186bcd3",
             "appPassword": "75485ddac04befef1a392573b939fdd8",
             "endpoint": "http://foo.com/asdfasdf"
+        },
+        {
+            "type": "endpoint",
+            "id": "3",
+            "name": "test4",
+            "appId": "7d6cbe5d797b4aecbc73ba8aa186bcd3",
+            "appPassword": "75485ddac04befef1a392573b939fdd8",
+            "endpoint": "http://foo.com/asdfasdf"
         }
     ]
 }
