@@ -32,7 +32,7 @@ class JSONApp {
      */
 
     /**
-     * @property {string[]} bingEntities
+     * @property {string[]} bing_entities
      */
 
     /**
@@ -48,7 +48,7 @@ class JSONApp {
      */
 
     /**
-     * @property {JSONRegexFeature[]} regexFeatures
+     * @property {JSONRegexFeature[]} regex_features
      */
 
     /**
@@ -60,7 +60,7 @@ class JSONApp {
      */
 
 
-    constructor({name /* string */, versionId /* string */, desc /* string */, culture /* string */, intents /* HierarchicalModel[] */, entities /* HierarchicalModel[] */, bingEntities /* string[] */, actions /* JSONAction[] */, closedLists /* JSONClosedList[] */, composites /* HierarchicalModel[] */, regexFeatures /* JSONRegexFeature[] */, modelFeatures /* JSONModelFeature[] */, utterances /* JSONUtterance[] */} = {}) {
+    constructor({name /* string */, versionId /* string */, desc /* string */, culture /* string */, intents /* HierarchicalModel[] */, entities /* HierarchicalModel[] */, bing_entities /* string[] */, actions /* JSONAction[] */, closedLists /* JSONClosedList[] */, composites /* HierarchicalModel[] */, regex_features /* JSONRegexFeature[] */, modelFeatures /* JSONModelFeature[] */, utterances /* JSONUtterance[] */, prebuiltEntities, luis_schema_version, patterns, patternAnyEntities,model_features} = {}) {
         Object.assign(this, {
             name /* string */,
             versionId /* string */,
@@ -68,13 +68,17 @@ class JSONApp {
             culture /* string */,
             intents /* HierarchicalModel[] */,
             entities /* HierarchicalModel[] */,
-            bingEntities /* string[] */,
+            bing_entities /* string[] */,
             actions /* JSONAction[] */,
             closedLists /* JSONClosedList[] */,
             composites /* HierarchicalModel[] */,
-            regexFeatures /* JSONRegexFeature[] */,
-            modelFeatures /* JSONModelFeature[] */,
-            utterances /* JSONUtterance[] */
+            regex_features /* JSONRegexFeature[] */,
+            utterances /* JSONUtterance[] */,
+            patterns /* patterns[] */,
+            patternAnyEntities /* patternAnyEntities[] */,
+            prebuiltEntities /* prebuitl entities[] */,
+            luis_schema_version /* string */,
+            model_features /* model_features[] */
         });
     }
 }
@@ -93,13 +97,14 @@ JSONApp.fromJSON = function (source) {
 
     source.closedLists = JSONClosedList.fromJSON(source.closedLists) || undefined;
 
-    source.regexFeatures = JSONRegexFeature.fromJSON(source.regexFeatures) || undefined;
+    source.regex_features = JSONRegexFeature.fromJSON(source.regex_features) || undefined;
 
-    source.modelFeatures = JSONModelFeature.fromJSON(source.modelFeatures) || undefined;
+    source.model_features = JSONModelFeature.fromJSON(source.model_features) || undefined;
 
     source.utterances = JSONUtterance.fromJSON(source.utterances) || undefined;
 
-    const {name /* string */, versionId /* string */, desc /* string */, culture /* string */, intents /* HierarchicalModel[] */, entities /* HierarchicalModel[] */, bingEntities /* string[] */, actions /* JSONAction[] */, closedLists /* JSONClosedList[] */, composites /* HierarchicalModel[] */, regexFeatures /* JSONRegexFeature[] */, modelFeatures /* JSONModelFeature[] */, utterances /* JSONUtterance[] */} = source;
+
+    const {name /* string */, versionId /* string */, desc /* string */, culture /* string */, intents /* HierarchicalModel[] */, entities /* HierarchicalModel[] */, bing_entities /* string[] */, actions /* JSONAction[] */, closedLists /* JSONClosedList[] */, composites /* HierarchicalModel[] */, regex_features /* JSONRegexFeature[] */, modelFeatures /* JSONModelFeature[] */, utterances /* JSONUtterance[] */, prebuiltEntities, luis_schema_version, patterns, patternAnyEntities,model_features} = source;
     return new JSONApp({
         name /* string */,
         versionId /* string */,
@@ -107,13 +112,17 @@ JSONApp.fromJSON = function (source) {
         culture /* string */,
         intents /* HierarchicalModel[] */,
         entities /* HierarchicalModel[] */,
-        bingEntities /* string[] */,
+        bing_entities /* string[] */,
         actions /* JSONAction[] */,
         closedLists /* JSONClosedList[] */,
         composites /* HierarchicalModel[] */,
-        regexFeatures /* JSONRegexFeature[] */,
-        modelFeatures /* JSONModelFeature[] */,
-        utterances /* JSONUtterance[] */
+        regex_features /* JSONRegexFeature[] */,
+        utterances /* JSONUtterance[] */,
+        patterns /* patterns[] */,
+        patternAnyEntities /* patternAnyEntities[] */,
+        prebuiltEntities /* prebuitl entities[] */,
+        luis_schema_version /* string */,
+        model_features /* model_features[] */
     });
 };
 

@@ -1,0 +1,8 @@
+// This is a comment
+#Greeting
+Hi
+Hello
+// You can have comments interleaved within content. These lines will be skipped.
+Good morning // another comment - everything after // in a line will be treated as a comment
+ 
+Good evening 
