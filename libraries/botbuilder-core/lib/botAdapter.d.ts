@@ -13,11 +13,6 @@ import { TurnContext } from './turnContext';
  *
  * Abstract base class for all adapter plugins. Adapters manage the communication between the bot
  * and a user over a specific channel, or set of channels.
- *
- * **Usage Example**
- *
- * ```JavaScript
- * ```
  */
 export declare abstract class BotAdapter {
     private middleware;

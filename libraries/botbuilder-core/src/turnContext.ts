@@ -40,13 +40,13 @@ export interface TurnContext { }
  * will typically be created by the adapter you're using and then passed to middleware and your 
  * bots logic.
  * 
- * For TypeScript developers the `BotContext` is also exposed as an interface which you can derive
+ * For TypeScript developers the `TurnContext` is also exposed as an interface which you can derive
  * from to better describe the actual shape of the context object being passed around.  Middleware
  * can potentially extend the context object with additional members so in order to get intellisense 
- * for those added members you'll need to define them on an interface that extends BotContext:
+ * for those added members you'll need to define them on an interface that extends TurnContext:
  *
- * ```JavaScript
- * interface MyContext extends BotContext {
+ * ```JS
+ * interface MyContext extends TurnContext {
  *      // Added by UserState middleware.
  *      readonly userState: MyUserState;
  * 
@@ -54,7 +54,7 @@ export interface TurnContext { }
  *      readonly conversationState: MyConversationState;
  * }
  * 
- * adapter.processRequest(req, res, (context: MyContext) => {
+ * adapter.processActivity(req, res, (context: MyContext) => {
  *      const state = context.conversationState;
  * });
  * ```
@@ -69,7 +69,7 @@ export class TurnContext {
     private _onDeleteActivity: DeleteActivityHandler[] = [];
 
     /**
-     * Creates a new BotContext instance for a turn of conversation.
+     * Creates a new TurnContext instance.
      * @param adapterOrContext Adapter that constructed the context or a context object to clone.
      * @param request Request being processed.
      */
@@ -85,8 +85,8 @@ export class TurnContext {
     }
 
     /**
-     * Called when this BotContext instance is passed into the constructor of a new BotContext 
-     * instance. 
+     * Called when this TurnContext instance is passed into the constructor of a new TurnContext 
+     * instance. Can be overridden in derived classes.
      * @param context The context object to copy private members to. Everything should be copied by reference. 
      */
     protected copyTo(context: TurnContext): void {
@@ -95,17 +95,48 @@ export class TurnContext {
          '_onSendActivities', '_onUpdateActivity', '_onDeleteActivity'].forEach((prop) => (context as any)[prop] = (this as any)[prop]);        
     }
 
-    /** The adapter for this context. */
+    /** 
+     * The adapter for this context. 
+     *
+     * **Usage Example**
+     *
+     * ```javascript
+     * // Send a typing indicator without going through an middleware listeners.
+     * const reference = TurnContext.getConversationReference(context.request);
+     * const activity = TurnContext.applyConversationReference({ type: 'typing' }, reference);
+     * await context.adapter.sendActivities([activity]);
+     * ```
+     */
     public get adapter(): BotAdapter {
         return this._adapter as BotAdapter;
     }
 
-    /** The received activity. */
+    /** 
+     * The received activity. 
+     * 
+     * **Usage Example**
+     *
+     * ```javascript
+     * const utterance = (context.activity.text || '').trim();
+     * ```
+     */
     public get activity(): Activity {
         return this._activity as Activity;
     }
 
-    /** If `true` at least one response has been sent for the current turn of conversation. */
+    /** 
+     * If `true` at least one response has been sent for the current turn of conversation. This is
+     * primarily useful for determining if a bot should run fallback routing logic. 
+     * 
+     * **Usage Example**
+     *
+     * ```javascript
+     * await routeActivity(context);
+     * if (!context.responded) {
+     *    await context.sendActivity(`I'm sorry. I didn't understand.`);
+     * }
+     * ```
+     */
     public get responded(): boolean {
         return this._respondedRef.responded;
     }
@@ -115,13 +146,36 @@ export class TurnContext {
         this._respondedRef.responded = true;
     }
 
-    /** Map of services and other values cached for the lifetime of the turn. */
+    /** 
+     * Map of services and other values cached for the lifetime of the turn. Middleware, other
+     * components, and services will typically use this to cache information that could be asked
+     * for by a bot multiple times during a turn.  The bots logic is free to use this to pass 
+     * information between its own components.   
+     * 
+     * > NOTE: For middleware and third party components, consider using a `Symbol()` for your 
+     *   cache key to avoid potential naming collisions with the bots caching and other 
+     *   components.
+     *  
+     * **Usage Example**
+     *
+     * ```javascript
+     * const cart = await loadUsersShoppingCart(context);
+     * context.services.set('cart', cart);
+     * ```
+     */
     public get services(): Map<any, any> {
         return this._services;
     }
 
     /**
-     * Sends a single activity or message to the user.
+     * Sends a single activity or message to the user. This ultimately calls [sendActivities()](#sendactivites)
+     * and is provided as a convenience to make formating and sending individual activities easier.
+     *  
+     * **Usage Example**
+     *
+     * ```javascript
+     * await context.sendActivity(`Hello World`);
+     * ```
      * @param activityOrText Activity or text of a message to send the user.
      * @param speak (Optional) SSML that should be spoken to the user for the message.
      * @param inputHint (Optional) `InputHint` for the message sent to the user.
@@ -144,7 +198,17 @@ export class TurnContext {
      * Prior to delivery, the activities will be updated with information from the `ConversationReference`
      * for the contexts [activity](#activity) and if an activities `type` field hasn't been set it will be
      * set to a type of `message`. The array of activities will then be routed through any [onSendActivities()](#onsendactivities)
-     * handlers and then passed to `adapter.sendActivities()`. 
+     * handlers and then passed to `adapter.sendActivities()`.
+     * 
+     * **Usage Example**
+     *
+     * ```javascript
+     * await context.sendActivities([
+     *    { type: 'typing' },
+     *    { type: 'delay', value: 2000 },
+     *    { type: 'message', text: 'Hello... How are you?' }
+     * ]);
+     * ```
      * @param activities One or more activities to send to the user.
      */
     public sendActivities(activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
@@ -169,6 +233,16 @@ export class TurnContext {
      * 
      * The activity will be routed through any registered [onUpdateActivity](#onupdateactivity) handlers 
      * before being passed to `adapter.updateActivity()`.
+     * 
+     * **Usage Example**
+     *
+     * ```javascript
+     * const matched = /approve (.*)/i.exec(context.text);
+     * if (matched) {
+     *    const update = await approveExpenseReport(matched[1]);
+     *    await context.updateActivity(update);
+     * }
+     * ```
      * @param activity New replacement activity. The activity should already have it's ID information populated. 
      */
     public updateActivity(activity: Partial<Activity>): Promise<void> {
@@ -180,6 +254,16 @@ export class TurnContext {
      * 
      * The `ConversationReference` for the activity being deleted will be routed through any registered 
      * [onDeleteActivity](#ondeleteactivity) handlers before being passed to `adapter.deleteActivity()`.
+     * 
+     * **Usage Example**
+     *
+     * ```javascript
+     * const matched = /approve (.*)/i.exec(context.text);
+     * if (matched) {
+     *    const savedId = await approveExpenseReport(matched[1]);
+     *    await context.deleteActivity(savedId);
+     * }
+     * ```
      * @param idOrReference ID or conversation of the activity being deleted. If an ID is specified the conversation reference information from the current request will be used to delete the activity.
      */
     public deleteActivity(idOrReference: string|Partial<ConversationReference>): Promise<void> {
@@ -195,6 +279,18 @@ export class TurnContext {
 
     /** 
      * Registers a handler to be notified of and potentially intercept the sending of activities. 
+     * 
+     * **Usage Example**
+     *
+     * ```javascript
+     * context.onSendActivities(await (ctx, activities, next) => {
+     *    // Deliver activities
+     *    await next();
+     *    
+     *    // Log sent messages
+     *    activities.filter(a => a.type === 'message').forEach(a => logSend(a));
+     * });
+     * ```
      * @param handler A function that will be called anytime [sendActivity()](#sendactivity) is called. The handler should call `next()` to continue sending of the activities. 
      */
     public onSendActivities(handler: SendActivitiesHandler): this {
@@ -204,6 +300,18 @@ export class TurnContext {
 
     /** 
      * Registers a handler to be notified of and potentially intercept an activity being updated. 
+     * 
+     * **Usage Example**
+     *
+     * ```javascript
+     * context.onUpdateActivities(await (ctx, activity, next) => {
+     *    // Replace activity
+     *    await next();
+     *    
+     *    // Log update
+     *    logUpdate(activity);
+     * });
+     * ```
      * @param handler A function that will be called anytime [updateActivity()](#updateactivity) is called. The handler should call `next()` to continue sending of the replacement activity. 
      */
     public onUpdateActivity(handler: UpdateActivityHandler): this {
@@ -213,6 +321,18 @@ export class TurnContext {
 
     /** 
      * Registers a handler to be notified of and potentially intercept an activity being deleted. 
+     * 
+     * **Usage Example**
+     *
+     * ```javascript
+     * context.onDeleteActivities(await (ctx, reference, next) => {
+     *    // Delete activity
+     *    await next();
+     *    
+     *    // Log delete
+     *    logDelete(activity);
+     * });
+     * ```
      * @param handler A function that will be called anytime [deleteActivity()](#deleteactivity) is called. The handler should call `next()` to continue deletion of the activity. 
      */
     public onDeleteActivity(handler: DeleteActivityHandler): this {
@@ -266,10 +386,10 @@ export class TurnContext {
      * **Usage Example**
      *
      * ```JavaScript
-     * // Send a typing indicator without calling any handlers
+     * // Send a typing indicator without going through an middleware listeners.
      * const reference = TurnContext.getConversationReference(context.request);
      * const activity = TurnContext.applyConversationReference({ type: 'typing' }, reference);
-     * return context.adapter.sendActivity(activity);
+     * await context.adapter.sendActivities([activity]);
      * ```
      * @param activity Activity to copy delivery information to.
      * @param reference Conversation reference containing delivery information.
