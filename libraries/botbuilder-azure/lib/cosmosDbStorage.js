@@ -9,20 +9,23 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const documentdb_1 = require("documentdb");
 /**
- * Middleware that implements a CosmosDB SQL (DocumentDB) based storage provider for a bot.
+ * Middleware that implements a CosmosDB based storage provider for a bot.
+ * The ConnectionPolicy delegate can be used to further customize the connection to CosmosDB (Connection mode, retry options, timeouts).
+ * More information at http://azure.github.io/azure-documentdb-node/global.html#ConnectionPolicy
  */
-class CosmosDbSqlStorage {
+class CosmosDbStorage {
     /**
      * Creates a new instance of the storage provider.
      *
      * @param settings Setting to configure the provider.
-     * @param connectionPolicyConfigurator (Optional) An optional delegate that accepts a ConnectionPolicy for customizing policies.
+     * @param connectionPolicyConfigurator (Optional) An optional delegate that accepts a ConnectionPolicy for customizing policies. More information at http://azure.github.io/azure-documentdb-node/global.html#ConnectionPolicy
      */
     constructor(settings, connectionPolicyConfigurator = null) {
         if (!settings) {
             throw new Error('The settings parameter is required.');
         }
         this.settings = Object.assign({}, settings);
+        // Invoke collectionPolicy delegate to further customize settings
         let policy = new documentdb_1.DocumentBase.ConnectionPolicy();
         if (connectionPolicyConfigurator && typeof connectionPolicyConfigurator === 'function') {
             connectionPolicyConfigurator(policy);
@@ -85,20 +88,25 @@ class CosmosDbSqlStorage {
         }
         return this.ensureCollectionExists().then(() => {
             return Promise.all(Object.keys(changes).map(k => {
+                let changesCopy = Object.assign({}, changes[k]);
+                // Remove etag from JSON object that was copied from IStoreItem.
+                // The ETag information is updated as an _etag attribute in the document metadata.
+                delete changesCopy.eTag;
                 let documentChange = {
                     id: sanitizeKey(k),
                     realId: k,
-                    document: changes[k]
+                    document: changesCopy
                 };
                 return new Promise((resolve, reject) => {
                     let handleCallback = (err, data) => err ? reject(err) : resolve();
                     let eTag = changes[k].eTag;
                     if (!eTag || eTag === '*') {
+                        // if new item or * then insert or replace unconditionaly
                         let uri = documentdb_1.UriFactory.createDocumentCollectionUri(this.settings.databaseId, this.settings.collectionId);
                         this.client.upsertDocument(uri, documentChange, { disableAutomaticIdGeneration: true }, handleCallback);
                     }
                     else if (eTag.length > 0) {
-                        // Optimistic Update
+                        // if we have an etag, do opt. concurrency replace
                         let uri = documentdb_1.UriFactory.createDocumentUri(this.settings.databaseId, this.settings.collectionId, documentChange.id);
                         let ac = { type: 'IfMatch', condition: eTag };
                         this.client.replaceDocument(uri, documentChange, { accessCondition: ac }, handleCallback);
@@ -119,6 +127,9 @@ class CosmosDbSqlStorage {
         return this.ensureCollectionExists().then(() => Promise.all(keys.map(k => new Promise((resolve, reject) => this.client.deleteDocument(documentdb_1.UriFactory.createDocumentUri(this.settings.databaseId, this.settings.collectionId, sanitizeKey(k)), (err, data) => err && err.code !== 404 ? reject(err) : resolve()))))) // handle notfound as Ok
             .then(() => { }); // void
     }
+    /**
+     * Delayed Database and Collection creation if they do not exist.
+     */
     ensureCollectionExists() {
         if (!this.collectionExists) {
             this.collectionExists = getOrCreateDatabase(this.client, this.settings.databaseId)
@@ -127,7 +138,7 @@ class CosmosDbSqlStorage {
         return this.collectionExists;
     }
 }
-exports.CosmosDbSqlStorage = CosmosDbSqlStorage;
+exports.CosmosDbStorage = CosmosDbStorage;
 // Helpers
 function getOrCreateDatabase(client, databaseId) {
     let querySpec = {
@@ -168,6 +179,9 @@ function getOrCreateCollection(client, databaseLink, collectionId) {
         });
     });
 }
+// Converts the key into a DocumentID that can be used safely with CosmosDB.
+// The following characters are restricted and cannot be used in the Id property: '/', '\', '?', '#'
+// More information at https://docs.microsoft.com/en-us/dotnet/api/microsoft.azure.documents.resource.id?view=azure-dotnet#remarks
 function sanitizeKey(key) {
     let badChars = ['\\', '?', '/', '#', '\t', '\n', '\r'];
     let sb = '';
@@ -188,4 +202,4 @@ function sanitizeKey(key) {
     }
     return sb;
 }
-//# sourceMappingURL=cosmosDbSqlStorage.js.map
+//# sourceMappingURL=cosmosDbStorage.js.map

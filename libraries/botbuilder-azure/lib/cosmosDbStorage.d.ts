@@ -7,8 +7,8 @@
  */
 import { Storage, StoreItems } from 'botbuilder';
 import { DocumentBase } from 'documentdb';
-/** Additional settings for configuring an instance of [CosmosDbSqlStorage](../classes/botbuilder_azure_v4.cosmosdbsqlstorage.html). */
-export interface CosmosDbSqlStorageSettings {
+/** Additional settings for configuring an instance of [CosmosDbStorage](../classes/botbuilder_azure_v4.cosmosdbstorage.html). */
+export interface CosmosDbStorageSettings {
     /** The endpoint Uri for the service endpoint from the Azure Cosmos DB service. */
     serviceEndpoint: string;
     /** The AuthKey used by the client from the Azure Cosmos DB service. */
@@ -19,9 +19,11 @@ export interface CosmosDbSqlStorageSettings {
     collectionId: string;
 }
 /**
- * Middleware that implements a CosmosDB SQL (DocumentDB) based storage provider for a bot.
+ * Middleware that implements a CosmosDB based storage provider for a bot.
+ * The ConnectionPolicy delegate can be used to further customize the connection to CosmosDB (Connection mode, retry options, timeouts).
+ * More information at http://azure.github.io/azure-documentdb-node/global.html#ConnectionPolicy
  */
-export declare class CosmosDbSqlStorage implements Storage {
+export declare class CosmosDbStorage implements Storage {
     private settings;
     private client;
     private collectionExists;
@@ -29,9 +31,9 @@ export declare class CosmosDbSqlStorage implements Storage {
      * Creates a new instance of the storage provider.
      *
      * @param settings Setting to configure the provider.
-     * @param connectionPolicyConfigurator (Optional) An optional delegate that accepts a ConnectionPolicy for customizing policies.
+     * @param connectionPolicyConfigurator (Optional) An optional delegate that accepts a ConnectionPolicy for customizing policies. More information at http://azure.github.io/azure-documentdb-node/global.html#ConnectionPolicy
      */
-    constructor(settings: CosmosDbSqlStorageSettings, connectionPolicyConfigurator?: (policy: DocumentBase.ConnectionPolicy) => void);
+    constructor(settings: CosmosDbStorageSettings, connectionPolicyConfigurator?: (policy: DocumentBase.ConnectionPolicy) => void);
     /**
      * Loads store items from storage
      *
@@ -50,5 +52,8 @@ export declare class CosmosDbSqlStorage implements Storage {
      * @param keys Array of item keys to remove from the store.
      **/
     delete(keys: string[]): Promise<void>;
+    /**
+     * Delayed Database and Collection creation if they do not exist.
+     */
     private ensureCollectionExists();
 }
