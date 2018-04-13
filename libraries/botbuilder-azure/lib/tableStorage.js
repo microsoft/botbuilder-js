@@ -103,6 +103,7 @@ class TableStorage {
                 // flatten the object graph into single columns
                 let flat = flat_1.flatten(storeItem, flattenOptions);
                 let entity = asEntityDescriptor(flat);
+                delete entity.eTag;
                 // add PK/RK and ETag
                 let pk = this.sanitizeKey(key);
                 entity.PartitionKey = EntityGenerator.String(pk);

@@ -144,6 +144,7 @@ export class TableStorage implements Storage {
                 // flatten the object graph into single columns
                 let flat = flatten(storeItem, flattenOptions);
                 let entity = asEntityDescriptor(flat);
+                delete entity.eTag;
 
                 // add PK/RK and ETag
                 let pk = this.sanitizeKey(key);
