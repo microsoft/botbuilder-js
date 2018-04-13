@@ -81,7 +81,7 @@ async function processConnectAzureArgs(config: BotConfig): Promise<BotConfig> {
         id: args.id, // bot id
         name: args.hasOwnProperty('name') ? args.name : args.id,
         appId: args.appId,
-        appPassword: config.encryptValue(args.appPassword),
+        appPassword: args.appPassword,
         endpoint: args.endpoint
     });
 

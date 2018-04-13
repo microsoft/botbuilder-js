@@ -31,11 +31,7 @@ async function processListArgs(config) {
     let services = config.services;
     if (parsed.secret) {
         for (let service of services) {
-            let encryptedProperties = config.getEncryptedProperties(service.type);
-            for (var prop of encryptedProperties) {
-                let val = service[prop];
-                service[prop] = config.decryptValue(val);
-            }
+            config.decryptService(service);
         }
     }
     console.log(JSON.stringify(services, null, 4));

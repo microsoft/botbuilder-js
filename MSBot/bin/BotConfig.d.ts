@@ -20,6 +20,10 @@ export declare class BotConfig implements IBotConfig {
     static Load(botpath: string, secret?: string): Promise<BotConfig>;
     Save(botpath?: string): Promise<void>;
     connectService(newService: IConnectedService): void;
+    encryptAll(): void;
+    decryptAll(): void;
+    encryptService(service: IConnectedService): void;
+    decryptService(service: IConnectedService): void;
     disconnectServiceByNameOrId(nameOrId: string): void;
     disconnectService(type: string, id: string): void;
     encryptValue(value: string): string;

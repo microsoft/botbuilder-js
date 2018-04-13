@@ -82,7 +82,6 @@ export class BotConfig implements IBotConfig {
             .any()) {
             throw Error(`service with ${newService.id} already connected`);
         } else {
-
             // give unique name
             let nameCount = 1;
             let name = newService.name;
@@ -98,7 +97,44 @@ export class BotConfig implements IBotConfig {
             }
             newService.name = name;
 
+            // encrypt service properties
+            this.encryptService(newService);
+
             this.services.push(newService);
+        }
+    }
+
+    // encrypt all values in the config
+    public encryptAll() {
+        for (let service of this.services) {
+            this.encryptService(service);
+        }
+    }
+
+    // decrypt all values in the config
+    public decryptAll() {
+        for (let service of this.services) {
+            this.decryptService(service);
+        }
+    }
+
+    // encrypt just a service
+    public encryptService(service: IConnectedService) {
+        let encryptedProperties = this.getEncryptedProperties(<ServiceType>service.type);
+        for (let i = 0; i < encryptedProperties.length; i++) {
+            let prop = encryptedProperties[i];
+            let val = <string>(<any>service)[prop];
+            (<any>service)[prop] = this.encryptValue(val);
+        }
+    }
+
+    // decrypt just a service
+    public decryptService(service: IConnectedService) {
+        let encryptedProperties = this.getEncryptedProperties(<ServiceType>service.type);
+        for (let i = 0; i < encryptedProperties.length; i++) {
+            let prop = encryptedProperties[i];
+            let val = <string>(<any>service)[prop];
+            (<any>service)[prop] = this.decryptValue(val);
         }
     }
 

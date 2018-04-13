@@ -65,7 +65,7 @@ async function processConnectAzureArgs(config) {
         id: args.id,
         name: args.hasOwnProperty('name') ? args.name : args.id,
         appId: args.appId,
-        appPassword: config.encryptValue(args.appPassword),
+        appPassword: args.appPassword,
         endpoint: args.endpoint
     });
     await config.Save();

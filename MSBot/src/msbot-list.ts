@@ -43,12 +43,7 @@ async function processListArgs(config: BotConfig): Promise<BotConfig> {
     if (parsed.secret) {
 
         for (let service of <any>services) {
-            let encryptedProperties = config.getEncryptedProperties(<ServiceType>service.type);
-
-            for (var prop of encryptedProperties) {
-                let val = service[prop];
-                service[prop] = config.decryptValue(val);
-            }
+            config.decryptService(service);
         }
     }
 

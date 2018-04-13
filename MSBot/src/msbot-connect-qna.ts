@@ -77,7 +77,7 @@ async function processConnectQnaArgs(config: BotConfig): Promise<BotConfig> {
         name: args.name,
         id: args.kbid,
         kbid: args.kbid,
-        subscriptionKey: config.encryptValue(args.subscriptionKey)
+        subscriptionKey: args.subscriptionKey
     });
 
     await config.Save();

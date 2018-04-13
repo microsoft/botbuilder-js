@@ -1,7 +1,7 @@
 {
     "name": "test",
     "description": "",
-    "secretKey": "696b9a5dd1ff91db438c5c15493bff542b18261cfa174e00ca002787bc4f31c863cb02de4fb1c1ebb667228f5f3a08fa",
+    "secretKey": "d8396b7bfa9a00749cc29f5e7cad9e73cdb72d86cf1e6ea43a482064b2c8e4c5b63e1de0ae33f120ca1b8930b9714de5",
     "services": [
         {
             "type": "endpoint",
@@ -14,18 +14,10 @@
         {
             "type": "endpoint",
             "id": "1",
-            "name": "test (2)",
-            "appId": "e6d2d7b833f845a89847f2242d5db863",
-            "appPassword": "7b8c29be17d8b3dae75a42231c5a2cf5",
-            "endpoint": "http://foo.com"
-        },
-        {
-            "type": "endpoint",
-            "id": "2",
-            "name": "test2",
-            "appId": "e6d2d7b833f845a89847f2242d5db863",
-            "appPassword": "7b8c29be17d8b3dae75a42231c5a2cf5",
-            "endpoint": "http://foo.com/2"
+            "name": "test3",
+            "appId": "7d6cbe5d797b4aecbc73ba8aa186bcd3",
+            "appPassword": "75485ddac04befef1a392573b939fdd8",
+            "endpoint": "http://foo.com/asdfasdf"
         }
     ]
 }

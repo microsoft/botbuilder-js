@@ -84,8 +84,8 @@ async function processConnectDispatch(config: BotConfig): Promise<BotConfig> {
         id: args.appId,
         appId: args.appId,
         version: args.version,
-        subscriptionKey: config.encryptValue(args.subscriptionKey),
-        authoringKey: config.encryptValue(args.authoringKey)
+        subscriptionKey: args.subscriptionKey,
+        authoringKey: args.authoringKey
     });
     await config.Save();
     return config;

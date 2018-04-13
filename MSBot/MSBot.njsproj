@@ -4,7 +4,7 @@
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
     <Name>MSBot</Name>
     <RootNamespace>MSBot</RootNamespace>
-    <ScriptArguments>-test</ScriptArguments>
+    <ScriptArguments>-e http://foo.com/asdfasdf -n test3 -a 7d6cbe5d797b4aecbc73ba8aa186bcd3 -p password --secret shh</ScriptArguments>
     <DebuggerPort>
     </DebuggerPort>
   </PropertyGroup>
@@ -14,7 +14,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>9eec4a3a-8523-43d5-9f5d-c1fcedae012f</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>bin\msbot.js</StartupFile>
+    <StartupFile>bin\msbot-connect-endpoint.js</StartupFile>
     <StartWebBrowser>False</StartWebBrowser>
     <SearchPath>
     </SearchPath>

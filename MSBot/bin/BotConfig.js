@@ -78,7 +78,39 @@ class BotConfig {
                 nameCount++;
             }
             newService.name = name;
+            // encrypt service properties
+            this.encryptService(newService);
             this.services.push(newService);
+        }
+    }
+    // encrypt all values in the config
+    encryptAll() {
+        for (let service of this.services) {
+            this.encryptService(service);
+        }
+    }
+    // decrypt all values in the config
+    decryptAll() {
+        for (let service of this.services) {
+            this.decryptService(service);
+        }
+    }
+    // encrypt just a service
+    encryptService(service) {
+        let encryptedProperties = this.getEncryptedProperties(service.type);
+        for (let i = 0; i < encryptedProperties.length; i++) {
+            let prop = encryptedProperties[i];
+            let val = service[prop];
+            service[prop] = this.encryptValue(val);
+        }
+    }
+    // decrypt just a service
+    decryptService(service) {
+        let encryptedProperties = this.getEncryptedProperties(service.type);
+        for (let i = 0; i < encryptedProperties.length; i++) {
+            let prop = encryptedProperties[i];
+            let val = service[prop];
+            service[prop] = this.decryptValue(val);
         }
     }
     // remove service by name or id

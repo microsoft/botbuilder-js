@@ -76,7 +76,7 @@ async function processConnectEndpointArgs(config) {
         id: id,
         name: args.name,
         appId: (args.appId && args.appId.length > 0) ? args.appId : null,
-        appPassword: (args.appPassword && args.appPassword.length > 0) ? config.encryptValue(args.appPassword) : null,
+        appPassword: (args.appPassword && args.appPassword.length > 0) ? args.appPassword : null,
         endpoint: args.endpoint
     });
     await config.Save();
