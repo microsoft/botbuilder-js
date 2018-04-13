@@ -61,7 +61,7 @@ async function processConnectQnaArgs(config) {
         name: args.name,
         id: args.kbid,
         kbid: args.kbid,
-        subscriptionKey: args.subscriptionKey
+        subscriptionKey: config.encryptValue(args.subscriptionKey)
     });
     await config.Save();
     return config;

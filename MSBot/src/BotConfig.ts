@@ -29,6 +29,14 @@ export class BotConfig implements IBotConfig {
         secretValidated: false
     };
 
+    protected encryptedProperties: { [key: string]: string[]; } = {
+        endpoint: ['appPassword'],
+        abs: ['appPassord'],
+        luis: ['authoringKey', 'subscriptionKey'],
+        qna: ['subscriptionKey'],
+        dispatch: ['authoringKey', 'subscriptionKey']
+    };
+
     public name: string = '';
     public secretKey: string = '';
     public description: string = '';
@@ -183,17 +191,7 @@ export class BotConfig implements IBotConfig {
     }
 
     public getEncryptedProperties(type: ServiceType): string[] {
-        switch (type) {
-            case ServiceType.AzureBotService:
-                return ["appPassword"];
-            case ServiceType.Endpoint:
-                return ["appPassword"];
-            case ServiceType.Luis:
-                return ["subscriptionKey", "authoringKey"];
-            case ServiceType.QnA:
-                return ["subscriptionKey"];
-        }
-        return [];
+        return this.encryptedProperties[<string>type];
     }
 }
 

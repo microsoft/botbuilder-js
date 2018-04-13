@@ -1,7 +1,0 @@
-{
-            "name": "test",
-            "appId": "38469968-072a-4074-b3bd-d3fed823faa0",
-            "appPassword": "55adff9cdb189624c9e108f2cc49f4ea",
-            "endpoint": "http://foo.com/api/messages2"
- }
-        

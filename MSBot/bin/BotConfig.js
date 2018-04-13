@@ -20,6 +20,13 @@ class BotConfig {
         this.internal = {
             secretValidated: false
         };
+        this.encryptedProperties = {
+            endpoint: ['appPassword'],
+            abs: ['appPassord'],
+            luis: ['authoringKey', 'subscriptionKey'],
+            qna: ['subscriptionKey'],
+            dispatch: ['authoringKey', 'subscriptionKey']
+        };
         this.name = '';
         this.secretKey = '';
         this.description = '';
@@ -148,17 +155,7 @@ class BotConfig {
         return value;
     }
     getEncryptedProperties(type) {
-        switch (type) {
-            case ServiceType.AzureBotService:
-                return ["appPassword"];
-            case ServiceType.Endpoint:
-                return ["appPassword"];
-            case ServiceType.Luis:
-                return ["subscriptionKey", "authoringKey"];
-            case ServiceType.QnA:
-                return ["subscriptionKey"];
-        }
-        return [];
+        return this.encryptedProperties[type];
     }
 }
 exports.BotConfig = BotConfig;

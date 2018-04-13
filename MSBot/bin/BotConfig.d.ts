@@ -8,6 +8,9 @@ export declare enum ServiceType {
 }
 export declare class BotConfig implements IBotConfig {
     private internal;
+    protected encryptedProperties: {
+        [key: string]: string[];
+    };
     name: string;
     secretKey: string;
     description: string;

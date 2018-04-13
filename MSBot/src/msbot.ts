@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import * as program from 'commander';
+import * as chalk from 'chalk';
 var pjson = require('../package.json');
 
 program
@@ -24,4 +25,11 @@ program
 program
     .command('list', 'list all connected services');
 
-program.parse(process.argv);
+var args = program.parse(process.argv);
+
+// args should be undefined is subcommand is executed
+if (args) {
+    var a = process.argv.slice(2);
+    console.error(chalk.default.redBright(`Unknown arguments: ${a.join(' ')}`));
+    program.help();
+}
