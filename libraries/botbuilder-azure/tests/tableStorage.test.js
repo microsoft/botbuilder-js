@@ -4,8 +4,7 @@ const azureStorage = require('azure-storage');
 var fs = require('fs');
 var child_process = require('child_process');
 
-const connectionString = 'DefaultEndpointsProtocol=https;AccountName=pcsandbox2tfynyz;AccountKey=sHj3+rD8HhWJrpA/TJicnnF18IEVh8aIuOUNNLLZZWBTFp7LBFfxocVQq6nOxDQ0G4KbnGoqKYiTr2MOvOUB7w==;EndpointSuffix=core.windows.net';
-// const connectionString = 'UseDevelopmentStorage=true';
+const connectionString = 'UseDevelopmentStorage=true';
 const testTableName = 'storagetests';
 
 testStorage = function () {
@@ -50,6 +49,12 @@ testStorage = function () {
         return text;
     }
 
+    function getValueOf(value) {
+        return (typeof value.valueOf  === 'function')
+            ? value.valueOf()
+            : value;
+    }
+
     it('read of unknown key', function () {
         return storage.read(['unk'])
             .then((result) => {
@@ -67,6 +72,29 @@ testStorage = function () {
                 assert(result.keyCreate != null, 'keyCreate should be defined');
                 assert(result.keyCreate.count == 1, 'object should have count of 1');
                 assert(!result.eTag, 'ETag should be defined');
+            })
+            .catch(handleError);
+    });
+
+    it('saves with proper types', function () {
+        var typesObj = {
+            int32: 1,
+            int64: 9007199254740992,
+            double: Math.PI,
+            boolean: true,
+            stringy: "hello world!",
+            date: new Date()
+        };
+
+        return storage.write({ types: typesObj })
+            .then(() => storage.read(['types']))
+            .then((result) => {
+                assert(result != null, 'result should be object');
+                assert(result.types != null, 'result.types should be object');
+                var retrievedTypes = result.types;
+                Object.keys(typesObj).forEach(key => {
+                    assert(getValueOf(retrievedTypes[key]) === getValueOf(typesObj[key]), key + ' should be equal: ' + retrievedTypes[key] + ' !== ' + typesObj[key]);
+                });
             })
             .catch(handleError);
     });
@@ -176,6 +204,52 @@ testStorage = function () {
             .catch(handleError);
     });
 
+    it('create large object', function () {
+        var bigString = randomString(30000);
+        var changes = {
+            bigObject: {
+                text1: '1' + bigString,
+                text2: '2' + bigString,
+                text3: '3' + bigString
+            }
+        };
+
+        return storage.write(changes)
+            .then(() => storage.read(['bigObject']))
+            .then(result => {
+                assert(result != null, 'result should be object');
+                assert(result.bigObject, 'bigObject is not defined');
+                assert.equal(result.bigObject.text1, '1' + bigString);
+                assert.equal(result.bigObject.text2, '2' + bigString);
+                assert.equal(result.bigObject.text3, '3' + bigString);
+            })
+            .catch(handleError);
+    });
+
+    it('update large object with etag', function () {
+        var bigString = randomString(20000);
+        var newString = randomString(30000);
+        var changes = {
+            bigObjectWithEtag: {
+                text: bigString
+            }
+        };
+
+        return storage.write(changes)
+            .then(() => storage.read(['bigObjectWithEtag']))
+            .then((obj) => {
+                obj.bigObjectWithEtag.text = newString;
+                return storage.write(obj);
+            })
+            .then(() => storage.read(['bigObjectWithEtag']))
+            .then(result => {
+                assert(result != null, 'result should be object');
+                assert(result.bigObjectWithEtag, 'bigObjectWithEtag is not defined');
+                assert.equal(result.bigObjectWithEtag.text, newString);
+            })
+            .catch(handleError);
+    });
+
     it('table name should be validated', function () {
         var invalidSampleNames = ['test-test', '0001test', 'test_test', ''];
         invalidSampleNames.forEach(invalidName =>
@@ -186,6 +260,6 @@ testStorage = function () {
 }
 
 describe('TableStorage', function () {
-    this.timeout(40000);
+    this.timeout(10000);
     testStorage();
 });
