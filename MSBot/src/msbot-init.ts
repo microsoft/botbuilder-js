@@ -7,6 +7,11 @@ import { BotConfig, ServiceType } from './BotConfig';
 import * as readline from 'readline-sync';
 import { IConnectedService, ILuisService, IDispatchService, IAzureBotService, IBotConfig, IEndpointService, IQnAService } from './schema';
 
+program.Command.prototype.unknownOption = function (flag: any) {
+    console.error(chalk.default.redBright(`Unknown arguments: ${process.argv.slice(2).join(' ')}`));
+    program.help();
+};
+
 interface InitArgs {
     name: string;
     description: string;

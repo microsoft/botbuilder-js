@@ -14,7 +14,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>9eec4a3a-8523-43d5-9f5d-c1fcedae012f</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>bin\msbot-connect-endpoint.js</StartupFile>
+    <StartupFile>bin\msbot.js</StartupFile>
     <StartWebBrowser>False</StartWebBrowser>
     <SearchPath>
     </SearchPath>

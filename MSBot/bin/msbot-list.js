@@ -4,6 +4,10 @@ const process = require("process");
 const program = require("commander");
 const chalk = require("chalk");
 const BotConfig_1 = require("./BotConfig");
+program.Command.prototype.unknownOption = function (flag) {
+    console.error(chalk.default.redBright(`Unknown arguments: ${process.argv.slice(2).join(' ')}`));
+    program.help();
+};
 program
     .name("msbot list")
     .option('-b, --bot <path>', "path to bot file.  If omitted, local folder will look for a .bot file")

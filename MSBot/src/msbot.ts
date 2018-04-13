@@ -3,6 +3,12 @@ import * as program from 'commander';
 import * as chalk from 'chalk';
 var pjson = require('../package.json');
 
+program.Command.prototype.unknownOption = function (flag: any) {
+    console.error(chalk.default.redBright(`Unknown arguments: ${process.argv.slice(2).join(' ')}`));
+    program.help();
+};
+
+
 program
     .version(pjson.version, '-V, --Version')
     .description(`The msbot program makes it easy to manipulate .bot files for Microsoft Bot Framework tools.`);

@@ -1,8 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const program = require("commander");
+const chalk = require("chalk");
 const BotConfig_1 = require("./BotConfig");
 const readline = require("readline-sync");
+program.Command.prototype.unknownOption = function (flag) {
+    console.error(chalk.default.redBright(`Unknown arguments: ${process.argv.slice(2).join(' ')}`));
+    program.help();
+};
 program
     .name("msbot init")
     .option('--secret <secret>', 'secret used to encrypt service keys')

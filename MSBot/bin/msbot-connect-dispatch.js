@@ -6,6 +6,10 @@ const fs = require("fs-extra");
 const getStdin = require("get-stdin");
 const BotConfig_1 = require("./BotConfig");
 const utils_1 = require("./utils");
+program.Command.prototype.unknownOption = function (flag) {
+    console.error(chalk.default.redBright(`Unknown arguments: ${process.argv.slice(2).join(' ')}`));
+    program.help();
+};
 program
     .name("msbot connect dispatch")
     .description('Connect the bot to a dispatch model')

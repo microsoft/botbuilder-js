@@ -8,6 +8,11 @@ import { Enumerable, List, Dictionary } from 'linq-collections';
 import { uuidValidate } from './utils';
 import { IConnectedService, ILuisService, IDispatchService, IAzureBotService, IBotConfig, IEndpointService, IQnAService } from './schema';
 
+program.Command.prototype.unknownOption = function (flag: any) {
+    console.error(chalk.default.redBright(`Unknown arguments: ${process.argv.slice(2).join(' ')}`));
+    program.help();
+};
+
 interface ConnectAzureArgs extends IAzureBotService {
     bot: string;
     secret: string;
