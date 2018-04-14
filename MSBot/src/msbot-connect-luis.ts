@@ -7,6 +7,11 @@ import { Enumerable, List, Dictionary } from 'linq-collections';
 import { uuidValidate } from './utils';
 import { IConnectedService, ILuisService, IDispatchService, IAzureBotService, IBotConfig, IEndpointService, IQnAService } from './schema';
 
+program.Command.prototype.unknownOption = function (flag: any) {
+    console.error(chalk.default.redBright(`Unknown arguments: ${process.argv.slice(2).join(' ')}`));
+    program.help();
+};
+
 interface ConnectLuisArgs extends ILuisService {
     bot: string;
     secret: string;
@@ -22,10 +27,10 @@ program
     .option('-n, --name <name>', 'name for the LUIS app')
     .option('-a, --appId <appid>', 'AppId for the LUIS App')
     .option('-v, --version <version>', 'version for the LUIS App, (example: v0.1)')
-    .option('--subscriptionKey <subscriptionKey>', 'subscription key used for querying a LUIS model')
-    .option('--authoringKey <authoringkey>', 'authoring key for using manipulating LUIS apps via the authoring API')
-    .option('--stdin', "arguments are passed in as JSON object via stdin")
-    .option('--input <jsonfile>', "arguments passed in as path to arguments in JSON format")
+    .option('--authoringKey <authoringkey>', 'authoring key for using manipulating LUIS apps via the authoring API (See http://aka.ms/luiskeys for help)')
+    .option('--stdin', "(OPTIONAL) arguments are passed in as JSON object via stdin")
+    .option('--subscriptionKey <subscriptionKey>', '(OPTIONAL) subscription key used for querying a LUIS model')
+    .option('--input <jsonfile>', "(OPTIONAL) arguments passed in as path to arguments in JSON format")
     .action((cmd, actions) => {
 
     });
@@ -74,19 +79,21 @@ async function processConnectLuisArgs(config: BotConfig): Promise<BotConfig> {
     if (!args.authoringKey || !uuidValidate(args.authoringKey))
         throw new Error("bad or missing --authoringKey");
 
-    if (!args.subscriptionKey || !uuidValidate(args.subscriptionKey))
-        throw new Error("bad or missing --subscriptionKey");
+    //if (!args.subscriptionKey || !uuidValidate(args.subscriptionKey))
+    //    throw new Error("bad or missing --subscriptionKey");
 
     // add the service
-    config.connectService(<ILuisService>{
-        type: ServiceType.Luis,
-        name: args.name,
-        id: args.appId,
-        appId: args.appId,
-        version: args.version,
-        subscriptionKey: config.encryptValue(args.subscriptionKey),
-        authoringKey: config.encryptValue(args.authoringKey)
-    });
+    config.connectService(
+        config.encryptService(<ILuisService>{
+            type: ServiceType.Luis,
+            name: args.name,
+            id: args.appId,
+            appId: args.appId,
+            version: args.version,
+            subscriptionKey: args.subscriptionKey,
+            authoringKey: args.authoringKey
+        })
+    );
     await config.Save();
     return config;
 }

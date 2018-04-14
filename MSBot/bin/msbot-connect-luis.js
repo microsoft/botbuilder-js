@@ -6,6 +6,10 @@ const fs = require("fs-extra");
 const getStdin = require("get-stdin");
 const BotConfig_1 = require("./BotConfig");
 const utils_1 = require("./utils");
+program.Command.prototype.unknownOption = function (flag) {
+    console.error(chalk.default.redBright(`Unknown arguments: ${process.argv.slice(2).join(' ')}`));
+    program.help();
+};
 program
     .name("msbot connect luis")
     .description('Connect the bot to a LUIS application')
@@ -14,10 +18,10 @@ program
     .option('-n, --name <name>', 'name for the LUIS app')
     .option('-a, --appId <appid>', 'AppId for the LUIS App')
     .option('-v, --version <version>', 'version for the LUIS App, (example: v0.1)')
-    .option('--subscriptionKey <subscriptionKey>', 'subscription key used for querying a LUIS model')
     .option('--authoringKey <authoringkey>', 'authoring key for using manipulating LUIS apps via the authoring API')
-    .option('--stdin', "arguments are passed in as JSON object via stdin")
-    .option('--input <jsonfile>', "arguments passed in as path to arguments in JSON format")
+    .option('--stdin', "(OPTIONAL) arguments are passed in as JSON object via stdin")
+    .option('--subscriptionKey <subscriptionKey>', '(OPTIONAL) subscription key used for querying a LUIS model')
+    .option('--input <jsonfile>', "(OPTIONAL) arguments passed in as path to arguments in JSON format")
     .action((cmd, actions) => {
 });
 let args = program.parse(process.argv);
@@ -58,18 +62,18 @@ async function processConnectLuisArgs(config) {
         throw new Error("bad or missing --version");
     if (!args.authoringKey || !utils_1.uuidValidate(args.authoringKey))
         throw new Error("bad or missing --authoringKey");
-    if (!args.subscriptionKey || !utils_1.uuidValidate(args.subscriptionKey))
-        throw new Error("bad or missing --subscriptionKey");
+    //if (!args.subscriptionKey || !uuidValidate(args.subscriptionKey))
+    //    throw new Error("bad or missing --subscriptionKey");
     // add the service
-    config.connectService({
+    config.connectService(config.encryptService({
         type: BotConfig_1.ServiceType.Luis,
         name: args.name,
         id: args.appId,
         appId: args.appId,
         version: args.version,
-        subscriptionKey: config.encryptValue(args.subscriptionKey),
-        authoringKey: config.encryptValue(args.authoringKey)
-    });
+        subscriptionKey: args.subscriptionKey,
+        authoringKey: args.authoringKey
+    }));
     await config.Save();
     return config;
 }

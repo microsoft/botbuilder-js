@@ -7,7 +7,12 @@ import { Enumerable, List, Dictionary } from 'linq-collections';
 import { uuidValidate } from './utils';
 import { IConnectedService, ILuisService, IDispatchService, IAzureBotService, IBotConfig, IEndpointService, IQnAService } from './schema';
 
-interface ConnectQnaArgs extends IQnAService{
+program.Command.prototype.unknownOption = function (flag: any) {
+    console.error(chalk.default.redBright(`Unknown arguments: ${process.argv.slice(2).join(' ')}`));
+    program.help();
+};
+
+interface ConnectQnaArgs extends IQnAService {
     bot: string;
     secret: string;
     stdin: boolean;
@@ -72,13 +77,15 @@ async function processConnectQnaArgs(config: BotConfig): Promise<BotConfig> {
         throw new Error("bad or missing --subscriptionKey");
 
     // add the service
-    config.connectService(<IQnAService>{
-        type: ServiceType.QnA,
-        name: args.name,
-        id: args.kbid,
-        kbid: args.kbid,
-        subscriptionKey: args.subscriptionKey
-    });
+    config.connectService(
+        config.encryptService(<IQnAService>{
+            type: ServiceType.QnA,
+            name: args.name,
+            id: args.kbid,
+            kbid: args.kbid,
+            subscriptionKey: args.subscriptionKey
+        })
+    );
 
     await config.Save();
     return config;

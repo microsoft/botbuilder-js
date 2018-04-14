@@ -7,6 +7,11 @@ import { Enumerable, List, Dictionary } from 'linq-collections';
 import { uuidValidate } from './utils';
 import { IConnectedService, ILuisService, IDispatchService, IAzureBotService, IBotConfig, IEndpointService, IQnAService } from './schema';
 
+program.Command.prototype.unknownOption = function (flag: any) {
+    console.error(chalk.default.redBright(`Unknown arguments: ${process.argv.slice(2).join(' ')}`));
+    program.help();
+};
+
 interface ConnectLuisArgs extends ILuisService {
     bot: string;
     secret: string;
@@ -78,15 +83,16 @@ async function processConnectDispatch(config: BotConfig): Promise<BotConfig> {
         throw new Error("bad or missing --subscriptionKey");
 
     // add the service
-    config.connectService(<IDispatchService>{
-        type: ServiceType.Dispatch,
-        name: args.name,
-        id: args.appId,
-        appId: args.appId,
-        version: args.version,
-        subscriptionKey: config.encryptValue(args.subscriptionKey),
-        authoringKey: config.encryptValue(args.authoringKey)
-    });
+    config.connectService(
+        config.encryptService(<IDispatchService>{
+            type: ServiceType.Dispatch,
+            name: args.name,
+            id: args.appId,
+            appId: args.appId,
+            version: args.version,
+            subscriptionKey: args.subscriptionKey,
+            authoringKey: args.authoringKey
+        }));
     await config.Save();
     return config;
 }

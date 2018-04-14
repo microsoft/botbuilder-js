@@ -1,5 +1,11 @@
 import { BotConfig, ServiceType } from './BotConfig';
 import * as program from 'commander';
+import * as chalk from 'chalk';
+
+program.Command.prototype.unknownOption = function (flag: any) {
+    console.error(chalk.default.redBright(`Unknown arguments: ${process.argv.slice(2).join(' ')}`));
+    program.help();
+};
 
 program
     .name("msbot export")

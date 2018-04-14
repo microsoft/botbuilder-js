@@ -20,6 +20,13 @@ class BotConfig {
         this.internal = {
             secretValidated: false
         };
+        this.encryptedProperties = {
+            endpoint: ['appPassword'],
+            abs: ['appPassord'],
+            luis: ['authoringKey', 'subscriptionKey'],
+            qna: ['subscriptionKey'],
+            dispatch: ['authoringKey', 'subscriptionKey']
+        };
         this.name = '';
         this.secretKey = '';
         this.description = '';
@@ -73,6 +80,38 @@ class BotConfig {
             newService.name = name;
             this.services.push(newService);
         }
+    }
+    // encrypt all values in the config
+    encryptAll() {
+        for (let service of this.services) {
+            this.encryptService(service);
+        }
+    }
+    // decrypt all values in the config
+    decryptAll() {
+        for (let service of this.services) {
+            this.decryptService(service);
+        }
+    }
+    // encrypt just a service
+    encryptService(service) {
+        let encryptedProperties = this.getEncryptedProperties(service.type);
+        for (let i = 0; i < encryptedProperties.length; i++) {
+            let prop = encryptedProperties[i];
+            let val = service[prop];
+            service[prop] = this.encryptValue(val);
+        }
+        return service;
+    }
+    // decrypt just a service
+    decryptService(service) {
+        let encryptedProperties = this.getEncryptedProperties(service.type);
+        for (let i = 0; i < encryptedProperties.length; i++) {
+            let prop = encryptedProperties[i];
+            let val = service[prop];
+            service[prop] = this.decryptValue(val);
+        }
+        return service;
     }
     // remove service by name or id
     disconnectServiceByNameOrId(nameOrId) {
@@ -148,17 +187,7 @@ class BotConfig {
         return value;
     }
     getEncryptedProperties(type) {
-        switch (type) {
-            case ServiceType.AzureBotService:
-                return ["appPassword"];
-            case ServiceType.Endpoint:
-                return ["appPassword"];
-            case ServiceType.Luis:
-                return ["subscriptionKey", "authoringKey"];
-            case ServiceType.QnA:
-                return ["subscriptionKey"];
-        }
-        return [];
+        return this.encryptedProperties[type];
     }
 }
 exports.BotConfig = BotConfig;

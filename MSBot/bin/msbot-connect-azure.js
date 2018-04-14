@@ -7,6 +7,10 @@ const fs = require("fs-extra");
 const getStdin = require("get-stdin");
 const BotConfig_1 = require("./BotConfig");
 const utils_1 = require("./utils");
+program.Command.prototype.unknownOption = function (flag) {
+    console.error(chalk.default.redBright(`Unknown arguments: ${process.argv.slice(2).join(' ')}`));
+    program.help();
+};
 program
     .name("msbot connect azure")
     .description('Connect the bot to Azure Bot Service')
@@ -60,14 +64,14 @@ async function processConnectAzureArgs(config) {
         throw new Error("missing --endpoint");
     if (!validurl.isWebUri(args.endpoint))
         throw new Error(`--endpoint ${args.endpoint} is not a valid url`);
-    config.connectService({
+    config.connectService(config.encryptService({
         type: BotConfig_1.ServiceType.AzureBotService,
         id: args.id,
         name: args.hasOwnProperty('name') ? args.name : args.id,
         appId: args.appId,
-        appPassword: config.encryptValue(args.appPassword),
+        appPassword: args.appPassword,
         endpoint: args.endpoint
-    });
+    }));
     await config.Save();
     return config;
 }

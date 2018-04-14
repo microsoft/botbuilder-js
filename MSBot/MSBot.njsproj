@@ -4,7 +4,7 @@
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
     <Name>MSBot</Name>
     <RootNamespace>MSBot</RootNamespace>
-    <ScriptArguments>-n test --appId 13f35f0d-d199-466d-a441-52846f3a9401 --subscriptionKey 13f35f0d-d199-466d-a441-52846f3a9401 --authoringKey 13f35f0d-d199-466d-a441-52846f3a9401</ScriptArguments>
+    <ScriptArguments>-e http://foo.com/asdfasdf -n test3 -a 7d6cbe5d797b4aecbc73ba8aa186bcd3 -p password --secret shh</ScriptArguments>
     <DebuggerPort>
     </DebuggerPort>
   </PropertyGroup>
@@ -14,7 +14,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>9eec4a3a-8523-43d5-9f5d-c1fcedae012f</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>bin\msbot-connect-dispatch.js</StartupFile>
+    <StartupFile>bin\msbot.js</StartupFile>
     <StartWebBrowser>False</StartWebBrowser>
     <SearchPath>
     </SearchPath>

@@ -29,6 +29,14 @@ export class BotConfig implements IBotConfig {
         secretValidated: false
     };
 
+    protected encryptedProperties: { [key: string]: string[]; } = {
+        endpoint: ['appPassword'],
+        abs: ['appPassord'],
+        luis: ['authoringKey', 'subscriptionKey'],
+        qna: ['subscriptionKey'],
+        dispatch: ['authoringKey', 'subscriptionKey']
+    };
+
     public name: string = '';
     public secretKey: string = '';
     public description: string = '';
@@ -74,7 +82,6 @@ export class BotConfig implements IBotConfig {
             .any()) {
             throw Error(`service with ${newService.id} already connected`);
         } else {
-
             // give unique name
             let nameCount = 1;
             let name = newService.name;
@@ -92,6 +99,42 @@ export class BotConfig implements IBotConfig {
 
             this.services.push(newService);
         }
+    }
+
+    // encrypt all values in the config
+    public encryptAll() {
+        for (let service of this.services) {
+            this.encryptService(service);
+        }
+    }
+
+    // decrypt all values in the config
+    public decryptAll() {
+        for (let service of this.services) {
+            this.decryptService(service);
+        }
+    }
+
+    // encrypt just a service
+    public encryptService(service: IConnectedService) : IConnectedService {
+        let encryptedProperties = this.getEncryptedProperties(<ServiceType>service.type);
+        for (let i = 0; i < encryptedProperties.length; i++) {
+            let prop = encryptedProperties[i];
+            let val = <string>(<any>service)[prop];
+            (<any>service)[prop] = this.encryptValue(val);
+        }
+        return service;
+    }
+
+    // decrypt just a service
+    public decryptService(service: IConnectedService) : IConnectedService {
+        let encryptedProperties = this.getEncryptedProperties(<ServiceType>service.type);
+        for (let i = 0; i < encryptedProperties.length; i++) {
+            let prop = encryptedProperties[i];
+            let val = <string>(<any>service)[prop];
+            (<any>service)[prop] = this.decryptValue(val);
+        }
+        return service;
     }
 
     // remove service by name or id
@@ -183,17 +226,7 @@ export class BotConfig implements IBotConfig {
     }
 
     public getEncryptedProperties(type: ServiceType): string[] {
-        switch (type) {
-            case ServiceType.AzureBotService:
-                return ["appPassword"];
-            case ServiceType.Endpoint:
-                return ["appPassword"];
-            case ServiceType.Luis:
-                return ["subscriptionKey", "authoringKey"];
-            case ServiceType.QnA:
-                return ["subscriptionKey"];
-        }
-        return [];
+        return this.encryptedProperties[<string>type];
     }
 }
 

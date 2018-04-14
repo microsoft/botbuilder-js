@@ -4,7 +4,13 @@ import * as path from 'path';
 import * as program from 'commander';
 import * as chalk from 'chalk';
 import { BotConfig, ServiceType } from './BotConfig';
+import { IBotConfig } from './schema';
 import { Enumerable, List, Dictionary } from 'linq-collections';
+
+program.Command.prototype.unknownOption = function (flag: any) {
+    console.error(chalk.default.redBright(`Unknown arguments: ${process.argv.slice(2).join(' ')}`));
+    program.help();
+};
 
 interface ListArgs {
     bot: string;
@@ -41,17 +47,17 @@ async function processListArgs(config: BotConfig): Promise<BotConfig> {
     let services = config.services;
 
     if (parsed.secret) {
-
-        for (let service of <any>services) {
-            let encryptedProperties = config.getEncryptedProperties(<ServiceType>service.type);
-
-            for (var prop of encryptedProperties) {
-                let val = service[prop];
-                service[prop] = config.decryptValue(val);
-            }
-        }
+        config.decryptAll();
     }
 
+<<<<<<< HEAD
     console.log(JSON.stringify(config, null, 4));
+=======
+    console.log(JSON.stringify(<IBotConfig>{
+        name: config.name,
+        description: config.description,
+        services: config.services
+    }, null, 4));
+>>>>>>> master
     return config;
 }
