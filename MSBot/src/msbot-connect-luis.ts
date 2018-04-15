@@ -8,7 +8,7 @@ import { uuidValidate } from './utils';
 import { IConnectedService, ILuisService, IDispatchService, IAzureBotService, IBotConfig, IEndpointService, IQnAService } from './schema';
 
 program.Command.prototype.unknownOption = function (flag: any) {
-    console.error(chalk.default.redBright(`Unknown arguments: ${process.argv.slice(2).join(' ')}`));
+    console.error(chalk.default.redBright(`Unknown arguments: ${flag}`));
     program.help();
 };
 
@@ -83,17 +83,15 @@ async function processConnectLuisArgs(config: BotConfig): Promise<BotConfig> {
     //    throw new Error("bad or missing --subscriptionKey");
 
     // add the service
-    config.connectService(
-        config.encryptService(<ILuisService>{
-            type: ServiceType.Luis,
-            name: args.name,
-            id: args.appId,
-            appId: args.appId,
-            version: args.version,
-            subscriptionKey: args.subscriptionKey,
-            authoringKey: args.authoringKey
-        })
-    );
+    config.connectService(<ILuisService>{
+        type: ServiceType.Luis,
+        name: args.name,
+        id: args.appId,
+        appId: args.appId,
+        version: args.version,
+        subscriptionKey: args.subscriptionKey,
+        authoringKey: args.authoringKey
+    });
     await config.Save();
     return config;
 }

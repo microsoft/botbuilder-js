@@ -8,7 +8,7 @@ import { IBotConfig } from './schema';
 import { Enumerable, List, Dictionary } from 'linq-collections';
 
 program.Command.prototype.unknownOption = function (flag: any) {
-    console.error(chalk.default.redBright(`Unknown arguments: ${process.argv.slice(2).join(' ')}`));
+    console.error(chalk.default.redBright(`Unknown arguments: ${flag}`));
     program.help();
 };
 
@@ -46,18 +46,10 @@ if (!parsed.bot) {
 async function processListArgs(config: BotConfig): Promise<BotConfig> {
     let services = config.services;
 
-    if (parsed.secret) {
-        config.decryptAll();
-    }
-
-<<<<<<< HEAD
-    console.log(JSON.stringify(config, null, 4));
-=======
     console.log(JSON.stringify(<IBotConfig>{
         name: config.name,
         description: config.description,
         services: config.services
     }, null, 4));
->>>>>>> master
     return config;
 }

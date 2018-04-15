@@ -9,7 +9,7 @@ const BotConfig_1 = require("./BotConfig");
 const linq_collections_1 = require("linq-collections");
 const utils_1 = require("./utils");
 program.Command.prototype.unknownOption = function (flag) {
-    console.error(chalk.default.redBright(`Unknown arguments: ${process.argv.slice(2).join(' ')}`));
+    console.error(chalk.default.redBright(`Unknown arguments: ${flag}`));
     program.help();
 };
 program
@@ -63,7 +63,7 @@ async function processConnectEndpointArgs(config) {
         throw new Error("Bad or missing --name");
     if (args.appId && !utils_1.uuidValidate(args.appId))
         throw new Error("--appId is not valid");
-    if (args.appId && !args.appPassword)
+    if (args.appPassword && !args.appPassword)
         throw new Error("Bad or missing --appPassword");
     let idCount = 1;
     let id;
@@ -75,14 +75,14 @@ async function processConnectEndpointArgs(config) {
             break;
         idCount++;
     }
-    config.connectService(config.encryptService({
+    config.connectService({
         type: BotConfig_1.ServiceType.Endpoint,
         id: id,
         name: args.name,
         appId: (args.appId && args.appId.length > 0) ? args.appId : null,
         appPassword: (args.appPassword && args.appPassword.length > 0) ? args.appPassword : null,
         endpoint: args.endpoint
-    }));
+    });
     await config.Save();
     return config;
 }

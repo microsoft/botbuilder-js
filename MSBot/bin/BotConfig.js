@@ -46,16 +46,28 @@ class BotConfig {
         let bot = new BotConfig(secret);
         Object.assign(bot, await fsx.readJson(botpath));
         bot.internal.location = botpath;
+        let hasSecret = (secret && bot.secretKey && bot.secretKey.length > 0);
+        if (hasSecret)
+            bot.decryptAll();
         return bot;
     }
     // save the config file
     async Save(botpath) {
+        let hasSecret = (this.secretKey && this.secretKey.length > 0);
+        if (hasSecret)
+            this.encryptAll();
         await fsx.writeJson(botpath || this.internal.location, {
             name: this.name,
             description: this.description,
             secretKey: this.secretKey,
             services: this.services
         }, { spaces: 4 });
+        if (hasSecret)
+            this.decryptAll();
+    }
+    clearSecret() {
+        this.validateSecretKey();
+        this.secretKey = '';
     }
     // connect to a service
     connectService(newService) {
@@ -141,14 +153,20 @@ class BotConfig {
     encryptValue(value) {
         if (!value || value.length == 0)
             return value;
-        this.validateSecretKey();
-        return this.internalEncrypt(value);
+        if (this.secretKey.length > 0) {
+            this.validateSecretKey();
+            return this.internalEncrypt(value);
+        }
+        return value;
     }
     decryptValue(encryptedValue) {
         if (!encryptedValue || encryptedValue.length == 0)
             return encryptedValue;
-        this.validateSecretKey();
-        return this.internalDecrypt(encryptedValue);
+        if (this.secretKey.length > 0) {
+            this.validateSecretKey();
+            return this.internalDecrypt(encryptedValue);
+        }
+        return encryptedValue;
     }
     // make sure secret is correct by decrypting the secretKey with it
     validateSecretKey() {

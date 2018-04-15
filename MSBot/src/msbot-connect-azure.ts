@@ -9,7 +9,7 @@ import { uuidValidate } from './utils';
 import { IConnectedService, ILuisService, IDispatchService, IAzureBotService, IBotConfig, IEndpointService, IQnAService } from './schema';
 
 program.Command.prototype.unknownOption = function (flag: any) {
-    console.error(chalk.default.redBright(`Unknown arguments: ${process.argv.slice(2).join(' ')}`));
+    console.error(chalk.default.redBright(`Unknown arguments: ${flag}`));
     program.help();
 };
 
@@ -81,16 +81,14 @@ async function processConnectAzureArgs(config: BotConfig): Promise<BotConfig> {
     if (!validurl.isWebUri(args.endpoint))
         throw new Error(`--endpoint ${args.endpoint} is not a valid url`);
 
-    config.connectService(
-        config.encryptService(<IAzureBotService>{
-            type: ServiceType.AzureBotService,
-            id: args.id, // bot id
-            name: args.hasOwnProperty('name') ? args.name : args.id,
-            appId: args.appId,
-            appPassword: args.appPassword,
-            endpoint: args.endpoint
-        })
-    );
+    config.connectService(<IAzureBotService>{
+        type: ServiceType.AzureBotService,
+        id: args.id, // bot id
+        name: args.hasOwnProperty('name') ? args.name : args.id,
+        appId: args.appId,
+        appPassword: args.appPassword,
+        endpoint: args.endpoint
+    });
 
     await config.Save();
     return config;

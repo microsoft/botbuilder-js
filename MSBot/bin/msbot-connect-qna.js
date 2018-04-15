@@ -7,7 +7,7 @@ const getStdin = require("get-stdin");
 const BotConfig_1 = require("./BotConfig");
 const utils_1 = require("./utils");
 program.Command.prototype.unknownOption = function (flag) {
-    console.error(chalk.default.redBright(`Unknown arguments: ${process.argv.slice(2).join(' ')}`));
+    console.error(chalk.default.redBright(`Unknown arguments: ${flag}`));
     program.help();
 };
 program
@@ -60,13 +60,13 @@ async function processConnectQnaArgs(config) {
     if (!args.subscriptionKey || !utils_1.uuidValidate(args.subscriptionKey))
         throw new Error("bad or missing --subscriptionKey");
     // add the service
-    config.connectService(config.encryptService({
+    config.connectService({
         type: BotConfig_1.ServiceType.QnA,
         name: args.name,
         id: args.kbid,
         kbid: args.kbid,
         subscriptionKey: args.subscriptionKey
-    }));
+    });
     await config.Save();
     return config;
 }

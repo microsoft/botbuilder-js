@@ -5,7 +5,7 @@ const program = require("commander");
 const chalk = require("chalk");
 const BotConfig_1 = require("./BotConfig");
 program.Command.prototype.unknownOption = function (flag) {
-    console.error(chalk.default.redBright(`Unknown arguments: ${process.argv.slice(2).join(' ')}`));
+    console.error(chalk.default.redBright(`Unknown arguments: ${flag}`));
     program.help();
 };
 program
@@ -33,18 +33,11 @@ else {
 }
 async function processListArgs(config) {
     let services = config.services;
-    if (parsed.secret) {
-        config.decryptAll();
-    }
-<<<<<<< HEAD
-    console.log(JSON.stringify(config, null, 4));
-=======
     console.log(JSON.stringify({
         name: config.name,
         description: config.description,
         services: config.services
     }, null, 4));
->>>>>>> master
     return config;
 }
 //# sourceMappingURL=msbot-list.js.map
