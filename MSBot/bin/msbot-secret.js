@@ -4,16 +4,16 @@ const program = require("commander");
 const chalk = require("chalk");
 const BotConfig_1 = require("./BotConfig");
 program.Command.prototype.unknownOption = function (flag) {
-    console.error(chalk.default.redBright(`Unknown arguments: ${flag}`));
+    console.error(chalk.default.redBright(`Unknown arguments: ${process.argv.slice(2).join(' ')}`));
     program.help();
 };
 program
-    .name("msbot disconnect")
-    .arguments("<service_id_or_Name>")
-    .description("disconnect a connected service by id or name")
+    .name("msbot secret")
     .option('-b, --bot <path>', "path to bot file.  If omitted, local folder will look for a .bot file")
-    .action((idOrName, actions) => {
-    actions.idOrName = idOrName;
+    .option('--secret <secret>', 'secret used to encrypt service keys')
+    .option('-c, --clear', 'clear the secret and store keys unencrypted')
+    .action((name, x) => {
+    console.log(name);
 });
 let args = program.parse(process.argv);
 if (process.argv.length < 3) {
@@ -21,28 +21,29 @@ if (process.argv.length < 3) {
 }
 else {
     if (!args.bot) {
-        BotConfig_1.BotConfig.LoadBotFromFolder(process.cwd())
-            .then(processConnectAzureArgs)
+        BotConfig_1.BotConfig.LoadBotFromFolder(process.cwd(), args.secret)
+            .then(processSecret)
             .catch((reason) => {
             console.error(chalk.default.redBright(reason.toString().split("\n")[0]));
             program.help();
         });
     }
     else {
-        BotConfig_1.BotConfig.Load(args.bot)
-            .then(processConnectAzureArgs)
+        BotConfig_1.BotConfig.Load(args.bot, args.secret)
+            .then(processSecret)
             .catch((reason) => {
             console.error(chalk.default.redBright(reason.toString().split("\n")[0]));
             program.help();
         });
     }
 }
-async function processConnectAzureArgs(config) {
-    if (!args.idOrName) {
-        throw new Error("missing id or name of service to disconnect");
+async function processSecret(config) {
+    config.validateSecretKey();
+    if (args.clear) {
+        config.clearSecret();
     }
-    config.disconnectServiceByNameOrId(args.idOrName);
-    await config.Save();
+    let filename = config.name + '.bot';
+    config.Save(filename);
     return config;
 }
-//# sourceMappingURL=msbot-disconnect.js.map
+//# sourceMappingURL=msbot-secret.js.map

@@ -8,7 +8,7 @@ import * as readline from 'readline-sync';
 import { IConnectedService, ILuisService, IDispatchService, IAzureBotService, IBotConfig, IEndpointService, IQnAService } from './schema';
 
 program.Command.prototype.unknownOption = function (flag: any) {
-    console.error(chalk.default.redBright(`Unknown arguments: ${process.argv.slice(2).join(' ')}`));
+    console.error(chalk.default.redBright(`Unknown arguments: ${flag}`));
     program.help();
 };
 

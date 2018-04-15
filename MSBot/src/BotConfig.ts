@@ -61,17 +61,35 @@ export class BotConfig implements IBotConfig {
         let bot = new BotConfig(secret);
         Object.assign(bot, await fsx.readJson(botpath));
         bot.internal.location = botpath;
+
+        let hasSecret = (secret && bot.secretKey && bot.secretKey.length > 0);
+        if (hasSecret)
+            bot.decryptAll();
+
         return bot;
     }
 
     // save the config file
     public async Save(botpath?: string): Promise<void> {
+        let hasSecret = (this.secretKey && this.secretKey.length > 0);
+
+        if (hasSecret)
+            this.encryptAll();
+
         await fsx.writeJson(botpath || <string>this.internal.location, <IBotConfig>{
             name: this.name,
             description: this.description,
             secretKey: this.secretKey,
             services: this.services
         }, { spaces: 4 });
+
+        if (hasSecret)
+            this.decryptAll();
+    }
+
+    public clearSecret() {
+        this.validateSecretKey();
+        this.secretKey = '';
     }
 
     // connect to a service
@@ -116,7 +134,7 @@ export class BotConfig implements IBotConfig {
     }
 
     // encrypt just a service
-    public encryptService(service: IConnectedService) : IConnectedService {
+    private encryptService(service: IConnectedService): IConnectedService {
         let encryptedProperties = this.getEncryptedProperties(<ServiceType>service.type);
         for (let i = 0; i < encryptedProperties.length; i++) {
             let prop = encryptedProperties[i];
@@ -127,7 +145,7 @@ export class BotConfig implements IBotConfig {
     }
 
     // decrypt just a service
-    public decryptService(service: IConnectedService) : IConnectedService {
+    private decryptService(service: IConnectedService): IConnectedService {
         let encryptedProperties = this.getEncryptedProperties(<ServiceType>service.type);
         for (let i = 0; i < encryptedProperties.length; i++) {
             let prop = encryptedProperties[i];
@@ -170,18 +188,24 @@ export class BotConfig implements IBotConfig {
         if (!value || value.length == 0)
             return value;
 
-        this.validateSecretKey();
+        if (this.secretKey.length > 0) {
+            this.validateSecretKey();
 
-        return this.internalEncrypt(value);
+            return this.internalEncrypt(value);
+        }
+        return value;
     }
 
     public decryptValue(encryptedValue: string): string {
         if (!encryptedValue || encryptedValue.length == 0)
             return encryptedValue;
 
-        this.validateSecretKey();
+        if (this.secretKey.length > 0) {
+            this.validateSecretKey();
 
-        return this.internalDecrypt(encryptedValue);
+            return this.internalDecrypt(encryptedValue);
+        }
+        return encryptedValue;
     }
 
 

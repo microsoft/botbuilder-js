@@ -9,7 +9,7 @@ import { uuidValidate } from './utils';
 import { IConnectedService, ILuisService, IDispatchService, IAzureBotService, IBotConfig, IEndpointService, IQnAService } from './schema';
 
 program.Command.prototype.unknownOption = function (flag: any) {
-    console.error(chalk.default.redBright(`Unknown arguments: ${process.argv.slice(2).join(' ')}`));
+    console.error(chalk.default.redBright(`Unknown arguments: ${flag}`));
     program.help();
 };
 
@@ -79,7 +79,7 @@ async function processConnectEndpointArgs(config: BotConfig): Promise<BotConfig>
     if (args.appId && !uuidValidate(args.appId))
         throw new Error("--appId is not valid");
 
-    if (args.appId && !args.appPassword)
+    if (args.appPassword && !args.appPassword)
         throw new Error("Bad or missing --appPassword");
 
     let idCount = 1;
@@ -95,16 +95,14 @@ async function processConnectEndpointArgs(config: BotConfig): Promise<BotConfig>
         idCount++;
     }
 
-    config.connectService(
-        config.encryptService(<IEndpointService>{
-            type: ServiceType.Endpoint,
-            id: id,
-            name: args.name,
-            appId: (args.appId && args.appId.length > 0) ? args.appId : null,
-            appPassword: (args.appPassword && args.appPassword.length > 0) ? args.appPassword : null,
-            endpoint: args.endpoint
-        })
-    );
+    config.connectService(<IEndpointService>{
+        type: ServiceType.Endpoint,
+        id: id,
+        name: args.name,
+        appId: (args.appId && args.appId.length > 0) ? args.appId : null,
+        appPassword: (args.appPassword && args.appPassword.length > 0) ? args.appPassword : null,
+        endpoint: args.endpoint
+    });
 
     await config.Save();
     return config;

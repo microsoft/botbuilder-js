@@ -8,7 +8,7 @@ const getStdin = require("get-stdin");
 const BotConfig_1 = require("./BotConfig");
 const utils_1 = require("./utils");
 program.Command.prototype.unknownOption = function (flag) {
-    console.error(chalk.default.redBright(`Unknown arguments: ${process.argv.slice(2).join(' ')}`));
+    console.error(chalk.default.redBright(`Unknown arguments: ${flag}`));
     program.help();
 };
 program
@@ -64,14 +64,14 @@ async function processConnectAzureArgs(config) {
         throw new Error("missing --endpoint");
     if (!validurl.isWebUri(args.endpoint))
         throw new Error(`--endpoint ${args.endpoint} is not a valid url`);
-    config.connectService(config.encryptService({
+    config.connectService({
         type: BotConfig_1.ServiceType.AzureBotService,
         id: args.id,
         name: args.hasOwnProperty('name') ? args.name : args.id,
         appId: args.appId,
         appPassword: args.appPassword,
         endpoint: args.endpoint
-    }));
+    });
     await config.Save();
     return config;
 }

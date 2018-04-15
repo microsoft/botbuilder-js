@@ -5,7 +5,7 @@ const chalk = require("chalk");
 const BotConfig_1 = require("./BotConfig");
 const readline = require("readline-sync");
 program.Command.prototype.unknownOption = function (flag) {
-    console.error(chalk.default.redBright(`Unknown arguments: ${process.argv.slice(2).join(' ')}`));
+    console.error(chalk.default.redBright(`Unknown arguments: ${flag}`));
     program.help();
 };
 program

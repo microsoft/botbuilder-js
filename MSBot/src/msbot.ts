@@ -17,6 +17,9 @@ program
     .command('init', 'create a new .bot file');
 
 program
+    .command('secret', 'set or clear the secret for a .bot file');
+
+program
     .command('export', 'export all connected services');
 
 program
