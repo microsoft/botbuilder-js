@@ -337,7 +337,7 @@ export class PostProcessTranslator {
         let containsNum = numericMatches != null;
         let noTranslatePatterns = Array.from(this.noTranslatePatterns);
         
-        if (!containsNum && noTranslatePatterns.length == 0) {
+        if ((!containsNum && noTranslatePatterns.length == 0) || alignment.trim() == '') {
             return targetMessage;
         }
 
@@ -350,13 +350,7 @@ export class PostProcessTranslator {
             }
         });
 
-        let alignments: string[];
-        
-        if (alignment.trim() == '') {
-            alignments = [];
-        } else {
-            alignments = alignment.trim().split(' ');
-        }
+        let alignments = alignment.trim().split(' ');
        
         let srcWords = this.splitSentence(sourceMessage, alignments);
         let trgWords = this.splitSentence(targetMessage, alignments, false);

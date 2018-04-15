@@ -277,7 +277,7 @@ class PostProcessTranslator {
         let numericMatches = sourceMessage.match(/[0-9]+/g);
         let containsNum = numericMatches != null;
         let noTranslatePatterns = Array.from(this.noTranslatePatterns);
-        if (!containsNum && noTranslatePatterns.length == 0) {
+        if ((!containsNum && noTranslatePatterns.length == 0) || alignment.trim() == '') {
             return targetMessage;
         }
         let toBeReplaced = [];
@@ -288,13 +288,7 @@ class PostProcessTranslator {
                 toBeReplaced.push(pattern);
             }
         });
-        let alignments;
-        if (alignment.trim() == '') {
-            alignments = [];
-        }
-        else {
-            alignments = alignment.trim().split(' ');
-        }
+        let alignments = alignment.trim().split(' ');
         let srcWords = this.splitSentence(sourceMessage, alignments);
         let trgWords = this.splitSentence(targetMessage, alignments, false);
         let alignMap = this.wordAlignmentParse(alignments, srcWords, trgWords);
