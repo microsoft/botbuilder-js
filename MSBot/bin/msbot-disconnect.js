@@ -3,6 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const program = require("commander");
 const chalk = require("chalk");
 const BotConfig_1 = require("./BotConfig");
+program.Command.prototype.unknownOption = function (flag) {
+    console.error(chalk.default.redBright(`Unknown arguments: ${flag}`));
+    program.help();
+};
 program
     .name("msbot disconnect")
     .arguments("<service_id_or_Name>")

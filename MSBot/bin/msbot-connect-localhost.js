@@ -21,26 +21,23 @@ if (process.argv.length < 3) {
 }
 else {
     if (!args.bot) {
-        BotConfig_1.BotConfig.LoadBotFromFolder(process.cwd())
-            .then(processConnectAzureArgs)
+        BotConfig_1.BotConfig.LoadBotFromFolder(process.cwd(), args.secret)
+            .then(processConnectEndpointArgs)
             .catch((reason) => {
             console.error(chalk.default.redBright(reason.toString().split("\n")[0]));
             program.help();
         });
     }
     else {
-        BotConfig_1.BotConfig.Load(args.bot)
-            .then(processConnectAzureArgs)
+        BotConfig_1.BotConfig.Load(args.bot, args.secret)
+            .then(processConnectEndpointArgs)
             .catch((reason) => {
             console.error(chalk.default.redBright(reason.toString().split("\n")[0]));
             program.help();
         });
     }
 }
-async function processConnectAzureArgs(config) {
-    if (args.secret) {
-        config.cryptoPassword = args.secret;
-    }
+async function processConnectEndpointArgs(config) {
     if (!args.endpoint)
         throw new Error("missing endpoint");
     if (!validurl.isWebUri(args.endpoint)) {

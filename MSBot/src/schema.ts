@@ -1,18 +1,18 @@
 
-interface IConnectedService {
-    // type of the service (LUIS, QnA, etc.)
+export interface IConnectedService {
+    // ServiceType of the service (LUIS, QnA, etc.)
     type: string;
 
     // Friendly name for the service
     name: string;
 
     // unique Id for the service (appid, etc)
-    id: string;
+    id?: string;
 }
 
 
-interface ILocalhostService extends IConnectedService {
-    // type = ServiceTypes.Luis
+export interface IEndpointService extends IConnectedService {
+    // type = ServiceTypes.Endpoint
     // id = bot id
 
     // MSA Appid
@@ -25,8 +25,8 @@ interface ILocalhostService extends IConnectedService {
     endpoint: string;
 }
 
-interface IAzureBotService extends IConnectedService {
-    // type = ServiceTypes.Luis
+export interface IAzureBotService extends IConnectedService {
+    // type = ServiceTypes.AzureBotService
     // id = bot id
 
     // MSA Appid
@@ -39,7 +39,7 @@ interface IAzureBotService extends IConnectedService {
     endpoint: string;
 }
 
-interface ILuisService extends IConnectedService {
+export interface ILuisService extends IConnectedService {
     // type = ServiceTypes.Luis
     // id = appid
 
@@ -49,11 +49,31 @@ interface ILuisService extends IConnectedService {
     // authoring key for using authoring api
     authoringKey: string;
 
+    // subscription key for using calling model api for predictions
+    subscriptionKey: string;
+
     // version of the application
     version: string;
 }
 
-interface IQnAService extends IConnectedService {
+export interface IDispatchService extends IConnectedService {
+    // type = ServiceTypes.Dispatch
+    // id = appid
+
+    // luis appid
+    appId: string;
+
+    // authoring key for using authoring api
+    authoringKey: string;
+
+    // subscription key for using calling model api for predictions
+    subscriptionKey: string;
+
+    // version of the application
+    version: string;
+}
+
+export interface IQnAService extends IConnectedService {
     // type=Servicestypes.QnA
     // id = appid for the QnA service
 
@@ -64,12 +84,16 @@ interface IQnAService extends IConnectedService {
     subscriptionKey: string;
 }
 
-interface IBotConfig {
+export interface IBotConfig {
     // name of the bot
     name: string;
 
     // description of the bot
     description: string;
+
+    // encrypted guid used to validate password is the same,
+    // you need to be able to decrypt this key with passed in secret before we will use the secret to encrypt new values
+    secretKey: string;
 
     // connected services for the bot
     services: IConnectedService[];

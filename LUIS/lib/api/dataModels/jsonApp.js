@@ -59,7 +59,6 @@ class JSONApp {
      * @property {JSONUtterance[]} utterances
      */
 
-
     constructor({name /* string */, versionId /* string */, desc /* string */, culture /* string */, intents /* HierarchicalModel[] */, entities /* HierarchicalModel[] */, bing_entities /* string[] */, actions /* JSONAction[] */, closedLists /* JSONClosedList[] */, composites /* HierarchicalModel[] */, regex_features /* JSONRegexFeature[] */, model_features /* JSONModelFeature[] */, utterances /* JSONUtterance[] */} = {}) {
         Object.assign(this, {
             name /* string */,
@@ -73,8 +72,10 @@ class JSONApp {
             closedLists /* JSONClosedList[] */,
             composites /* HierarchicalModel[] */,
             regex_features /* JSONRegexFeature[] */,
+
             model_features /* JSONModelFeature[] */,
             utterances /* JSONUtterance[] */
+
         });
     }
 }
@@ -114,8 +115,7 @@ JSONApp.fromJSON = function (source) {
         regex_features /* JSONRegexFeature[] */,
         model_features /* JSONModelFeature[] */,
         utterances /* JSONUtterance[] */
-        
-    });
+     });
 };
 
 module.exports = JSONApp;

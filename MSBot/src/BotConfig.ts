@@ -1,56 +1,95 @@
 import * as process from 'process';
+import * as uuid from 'uuid';
 import * as crypto from 'crypto';
 import * as url from 'url';
 import * as validurl from 'valid-url';
 import * as path from 'path';
 import * as fsx from 'fs-extra';
 import { Enumerable, List, Dictionary } from 'linq-collections';
+import { encode } from 'punycode';
+import { IBotConfig, IConnectedService } from './schema';
 
 export enum ServiceType {
-    Localhost = "localhost",
+    Endpoint = "endpoint",
     AzureBotService = "abs",
     Luis = "luis",
-    QnA = "qna"
+    QnA = "qna",
+    Dispatch = 'dispatch'
+}
+
+interface internalBotConfig {
+    location?: string;
+    secret?: string;
+    secretValidated: boolean;
 }
 
 export class BotConfig implements IBotConfig {
-    private location: string;
-    // not saved
-    cryptoPassword: string;
+    // internal is not serialized
+    private internal: internalBotConfig = {
+        secretValidated: false
+    };
 
-    name: string = '';
-    description: string = '';
-    services: IConnectedService[] = [];
+    protected encryptedProperties: { [key: string]: string[]; } = {
+        endpoint: ['appPassword'],
+        abs: ['appPassord'],
+        luis: ['authoringKey', 'subscriptionKey'],
+        qna: ['subscriptionKey'],
+        dispatch: ['authoringKey', 'subscriptionKey']
+    };
 
+    public name: string = '';
+    public secretKey: string = '';
+    public description: string = '';
+    public services: IConnectedService[] = [];
 
-    constructor() {
+    constructor(secret?: string) {
+        this.internal.secret = secret;
     }
 
-    public static async LoadBotFromFolder(folder?: string): Promise<BotConfig> {
+    public static async LoadBotFromFolder(folder?: string, secret?: string): Promise<BotConfig> {
         let files = Enumerable.fromSource(await fsx.readdir(folder || process.cwd()))
             .where(file => path.extname(<string>file) == '.bot');
 
         if (files.any()) {
-            return await BotConfig.Load(<string>files.first());
+            return await BotConfig.Load(<string>files.first(), secret);
         }
         throw new Error(`no bot file found in ${folder}`);
     }
 
     // load the config file
-    public static async Load(botpath: string): Promise<BotConfig> {
-        let bot = new BotConfig();
+    public static async Load(botpath: string, secret?: string): Promise<BotConfig> {
+        let bot = new BotConfig(secret);
         Object.assign(bot, await fsx.readJson(botpath));
-        bot.location = botpath;
+        bot.internal.location = botpath;
+
+        let hasSecret = (secret && bot.secretKey && bot.secretKey.length > 0);
+        if (hasSecret)
+            bot.decryptAll();
+
         return bot;
     }
 
     // save the config file
     public async Save(botpath?: string): Promise<void> {
-        await fsx.writeJson(botpath || this.location, <IBotConfig>{
+        let hasSecret = (this.secretKey && this.secretKey.length > 0);
+
+        if (hasSecret)
+            this.encryptAll();
+
+        await fsx.writeJson(botpath || <string>this.internal.location, <IBotConfig>{
             name: this.name,
             description: this.description,
+            secretKey: this.secretKey,
             services: this.services
         }, { spaces: 4 });
+
+        if (hasSecret)
+            this.decryptAll();
+    }
+
+    public clearSecret() {
+        this.validateSecretKey();
+        this.secretKey = '';
     }
 
     // connect to a service
@@ -59,10 +98,61 @@ export class BotConfig implements IBotConfig {
             .where(s => s.type == newService.type)
             .where(s => s.id == newService.id)
             .any()) {
-            throw Error(`Azure Bot Service with appid:${newService.id} already connected`);
+            throw Error(`service with ${newService.id} already connected`);
         } else {
+            // give unique name
+            let nameCount = 1;
+            let name = newService.name;
+
+            while (true) {
+                if (nameCount > 1) {
+                    name = `${newService.name} (${nameCount})`;
+                }
+
+                if (!Enumerable.fromSource(this.services).where(s => s.name == name).any())
+                    break;
+                nameCount++;
+            }
+            newService.name = name;
+
             this.services.push(newService);
         }
+    }
+
+    // encrypt all values in the config
+    public encryptAll() {
+        for (let service of this.services) {
+            this.encryptService(service);
+        }
+    }
+
+    // decrypt all values in the config
+    public decryptAll() {
+        for (let service of this.services) {
+            this.decryptService(service);
+        }
+    }
+
+    // encrypt just a service
+    private encryptService(service: IConnectedService): IConnectedService {
+        let encryptedProperties = this.getEncryptedProperties(<ServiceType>service.type);
+        for (let i = 0; i < encryptedProperties.length; i++) {
+            let prop = encryptedProperties[i];
+            let val = <string>(<any>service)[prop];
+            (<any>service)[prop] = this.encryptValue(val);
+        }
+        return service;
+    }
+
+    // decrypt just a service
+    private decryptService(service: IConnectedService): IConnectedService {
+        let encryptedProperties = this.getEncryptedProperties(<ServiceType>service.type);
+        for (let i = 0; i < encryptedProperties.length; i++) {
+            let prop = encryptedProperties[i];
+            let val = <string>(<any>service)[prop];
+            (<any>service)[prop] = this.decryptValue(val);
+        }
+        return service;
     }
 
     // remove service by name or id
@@ -93,33 +183,74 @@ export class BotConfig implements IBotConfig {
             }
         }
     }
-    public static boundary: string = '~^~';
 
     public encryptValue(value: string): string {
-        if (!value)
+        if (!value || value.length == 0)
             return value;
 
-        if (!this.cryptoPassword || this.cryptoPassword.length == 0) {
-            throw new Error("You are attempting to store a value which needs to be encrypted and --secret is not set.  Pass --secret to encrypt/decrypt resource keys.");
-        }
+        if (this.secretKey.length > 0) {
+            this.validateSecretKey();
 
-        var cipher = crypto.createCipher('aes192', this.cryptoPassword);
-        var encryptedValue = cipher.update(value, 'utf8', 'hex');
-        encryptedValue += cipher.final('hex');
-        return `${BotConfig.boundary}${encryptedValue}${BotConfig.boundary}`;
+            return this.internalEncrypt(value);
+        }
+        return value;
     }
 
     public decryptValue(encryptedValue: string): string {
-        if (!this.cryptoPassword || this.cryptoPassword.length == 0) {
-            throw new Error("No password is set");
-        }
-        if (encryptedValue.startsWith(BotConfig.boundary) && encryptedValue.endsWith(BotConfig.boundary)) {
-            const decipher = crypto.createDecipher('aes192', this.cryptoPassword);
-            let value = decipher.update(encryptedValue.substring(3, encryptedValue.length - 3), 'hex', 'utf8');
-            value += decipher.final('utf8');
-            return value;
+        if (!encryptedValue || encryptedValue.length == 0)
+            return encryptedValue;
+
+        if (this.secretKey.length > 0) {
+            this.validateSecretKey();
+
+            return this.internalDecrypt(encryptedValue);
         }
         return encryptedValue;
+    }
+
+
+    // make sure secret is correct by decrypting the secretKey with it
+    public validateSecretKey(): void {
+        if (this.internal.secretValidated) {
+            return;
+        }
+
+        if (!this.internal.secret || this.internal.secret.length == 0) {
+            throw new Error("You are attempting to perform an operation which needs access to the secret and --secret is missing");
+        }
+
+        try {
+            if (!this.secretKey || this.secretKey.length == 0) {
+                // if no key, create a guid and enrypt that to use as secret validator
+                this.secretKey = this.internalEncrypt(uuid());
+            } else {
+                const decipher = crypto.createDecipher('aes192', this.internal.secret);
+                let value = decipher.update(this.secretKey, 'hex', 'utf8');
+                value += decipher.final('utf8');
+            }
+
+            this.internal.secretValidated = true;
+        } catch{
+            throw new Error("You are attempting to perform an operation which needs access to the secret and --secret is incorrect.");
+        }
+    }
+
+    private internalEncrypt(value: string): string {
+        var cipher = crypto.createCipher('aes192', this.internal.secret);
+        var encryptedValue = cipher.update(value, 'utf8', 'hex');
+        encryptedValue += cipher.final('hex');
+        return encryptedValue;
+    }
+
+    private internalDecrypt(encryptedValue: string): string {
+        const decipher = crypto.createDecipher('aes192', this.internal.secret);
+        let value = decipher.update(encryptedValue, 'hex', 'utf8');
+        value += decipher.final('utf8');
+        return value;
+    }
+
+    public getEncryptedProperties(type: ServiceType): string[] {
+        return this.encryptedProperties[<string>type];
     }
 }
 

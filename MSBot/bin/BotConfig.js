@@ -1,45 +1,73 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const process = require("process");
+const uuid = require("uuid");
 const crypto = require("crypto");
 const path = require("path");
 const fsx = require("fs-extra");
 const linq_collections_1 = require("linq-collections");
 var ServiceType;
 (function (ServiceType) {
-    ServiceType["Localhost"] = "localhost";
+    ServiceType["Endpoint"] = "endpoint";
     ServiceType["AzureBotService"] = "abs";
     ServiceType["Luis"] = "luis";
     ServiceType["QnA"] = "qna";
+    ServiceType["Dispatch"] = "dispatch";
 })(ServiceType = exports.ServiceType || (exports.ServiceType = {}));
 class BotConfig {
-    constructor() {
+    constructor(secret) {
+        // internal is not serialized
+        this.internal = {
+            secretValidated: false
+        };
+        this.encryptedProperties = {
+            endpoint: ['appPassword'],
+            abs: ['appPassord'],
+            luis: ['authoringKey', 'subscriptionKey'],
+            qna: ['subscriptionKey'],
+            dispatch: ['authoringKey', 'subscriptionKey']
+        };
         this.name = '';
+        this.secretKey = '';
         this.description = '';
         this.services = [];
+        this.internal.secret = secret;
     }
-    static async LoadBotFromFolder(folder) {
+    static async LoadBotFromFolder(folder, secret) {
         let files = linq_collections_1.Enumerable.fromSource(await fsx.readdir(folder || process.cwd()))
             .where(file => path.extname(file) == '.bot');
         if (files.any()) {
-            return await BotConfig.Load(files.first());
+            return await BotConfig.Load(files.first(), secret);
         }
         throw new Error(`no bot file found in ${folder}`);
     }
     // load the config file
-    static async Load(botpath) {
-        let bot = new BotConfig();
+    static async Load(botpath, secret) {
+        let bot = new BotConfig(secret);
         Object.assign(bot, await fsx.readJson(botpath));
-        bot.location = botpath;
+        bot.internal.location = botpath;
+        let hasSecret = (secret && bot.secretKey && bot.secretKey.length > 0);
+        if (hasSecret)
+            bot.decryptAll();
         return bot;
     }
     // save the config file
     async Save(botpath) {
-        await fsx.writeJson(botpath || this.location, {
+        let hasSecret = (this.secretKey && this.secretKey.length > 0);
+        if (hasSecret)
+            this.encryptAll();
+        await fsx.writeJson(botpath || this.internal.location, {
             name: this.name,
             description: this.description,
+            secretKey: this.secretKey,
             services: this.services
         }, { spaces: 4 });
+        if (hasSecret)
+            this.decryptAll();
+    }
+    clearSecret() {
+        this.validateSecretKey();
+        this.secretKey = '';
     }
     // connect to a service
     connectService(newService) {
@@ -47,11 +75,55 @@ class BotConfig {
             .where(s => s.type == newService.type)
             .where(s => s.id == newService.id)
             .any()) {
-            throw Error(`Azure Bot Service with appid:${newService.id} already connected`);
+            throw Error(`service with ${newService.id} already connected`);
         }
         else {
+            // give unique name
+            let nameCount = 1;
+            let name = newService.name;
+            while (true) {
+                if (nameCount > 1) {
+                    name = `${newService.name} (${nameCount})`;
+                }
+                if (!linq_collections_1.Enumerable.fromSource(this.services).where(s => s.name == name).any())
+                    break;
+                nameCount++;
+            }
+            newService.name = name;
             this.services.push(newService);
         }
+    }
+    // encrypt all values in the config
+    encryptAll() {
+        for (let service of this.services) {
+            this.encryptService(service);
+        }
+    }
+    // decrypt all values in the config
+    decryptAll() {
+        for (let service of this.services) {
+            this.decryptService(service);
+        }
+    }
+    // encrypt just a service
+    encryptService(service) {
+        let encryptedProperties = this.getEncryptedProperties(service.type);
+        for (let i = 0; i < encryptedProperties.length; i++) {
+            let prop = encryptedProperties[i];
+            let val = service[prop];
+            service[prop] = this.encryptValue(val);
+        }
+        return service;
+    }
+    // decrypt just a service
+    decryptService(service) {
+        let encryptedProperties = this.getEncryptedProperties(service.type);
+        for (let i = 0; i < encryptedProperties.length; i++) {
+            let prop = encryptedProperties[i];
+            let val = service[prop];
+            service[prop] = this.decryptValue(val);
+        }
+        return service;
     }
     // remove service by name or id
     disconnectServiceByNameOrId(nameOrId) {
@@ -79,29 +151,62 @@ class BotConfig {
         }
     }
     encryptValue(value) {
-        if (!value)
+        if (!value || value.length == 0)
             return value;
-        if (!this.cryptoPassword || this.cryptoPassword.length == 0) {
-            throw new Error("You are attempting to store a value which needs to be encrypted and --secret is not set.  Pass --secret to encrypt/decrypt resource keys.");
+        if (this.secretKey.length > 0) {
+            this.validateSecretKey();
+            return this.internalEncrypt(value);
         }
-        var cipher = crypto.createCipher('aes192', this.cryptoPassword);
-        var encryptedValue = cipher.update(value, 'utf8', 'hex');
-        encryptedValue += cipher.final('hex');
-        return `${BotConfig.boundary}${encryptedValue}${BotConfig.boundary}`;
+        return value;
     }
     decryptValue(encryptedValue) {
-        if (!this.cryptoPassword || this.cryptoPassword.length == 0) {
-            throw new Error("No password is set");
-        }
-        if (encryptedValue.startsWith(BotConfig.boundary) && encryptedValue.endsWith(BotConfig.boundary)) {
-            const decipher = crypto.createDecipher('aes192', this.cryptoPassword);
-            let value = decipher.update(encryptedValue.substring(3, encryptedValue.length - 3), 'hex', 'utf8');
-            value += decipher.final('utf8');
-            return value;
+        if (!encryptedValue || encryptedValue.length == 0)
+            return encryptedValue;
+        if (this.secretKey.length > 0) {
+            this.validateSecretKey();
+            return this.internalDecrypt(encryptedValue);
         }
         return encryptedValue;
     }
+    // make sure secret is correct by decrypting the secretKey with it
+    validateSecretKey() {
+        if (this.internal.secretValidated) {
+            return;
+        }
+        if (!this.internal.secret || this.internal.secret.length == 0) {
+            throw new Error("You are attempting to perform an operation which needs access to the secret and --secret is missing");
+        }
+        try {
+            if (!this.secretKey || this.secretKey.length == 0) {
+                // if no key, create a guid and enrypt that to use as secret validator
+                this.secretKey = this.internalEncrypt(uuid());
+            }
+            else {
+                const decipher = crypto.createDecipher('aes192', this.internal.secret);
+                let value = decipher.update(this.secretKey, 'hex', 'utf8');
+                value += decipher.final('utf8');
+            }
+            this.internal.secretValidated = true;
+        }
+        catch (_a) {
+            throw new Error("You are attempting to perform an operation which needs access to the secret and --secret is incorrect.");
+        }
+    }
+    internalEncrypt(value) {
+        var cipher = crypto.createCipher('aes192', this.internal.secret);
+        var encryptedValue = cipher.update(value, 'utf8', 'hex');
+        encryptedValue += cipher.final('hex');
+        return encryptedValue;
+    }
+    internalDecrypt(encryptedValue) {
+        const decipher = crypto.createDecipher('aes192', this.internal.secret);
+        let value = decipher.update(encryptedValue, 'hex', 'utf8');
+        value += decipher.final('utf8');
+        return value;
+    }
+    getEncryptedProperties(type) {
+        return this.encryptedProperties[type];
+    }
 }
-BotConfig.boundary = '~^~';
 exports.BotConfig = BotConfig;
 //# sourceMappingURL=BotConfig.js.map

@@ -1,29 +1,37 @@
-interface IConnectedService {
+export interface IConnectedService {
     type: string;
     name: string;
-    id: string;
+    id?: string;
 }
-interface ILocalhostService extends IConnectedService {
+export interface IEndpointService extends IConnectedService {
     appId: string;
     appPassword: string;
     endpoint: string;
 }
-interface IAzureBotService extends IConnectedService {
+export interface IAzureBotService extends IConnectedService {
     appId: string;
     appPassword: string;
     endpoint: string;
 }
-interface ILuisService extends IConnectedService {
+export interface ILuisService extends IConnectedService {
     appId: string;
     authoringKey: string;
+    subscriptionKey: string;
     version: string;
 }
-interface IQnAService extends IConnectedService {
+export interface IDispatchService extends IConnectedService {
+    appId: string;
+    authoringKey: string;
+    subscriptionKey: string;
+    version: string;
+}
+export interface IQnAService extends IConnectedService {
     kbid: string;
     subscriptionKey: string;
 }
-interface IBotConfig {
+export interface IBotConfig {
     name: string;
     description: string;
+    secretKey: string;
     services: IConnectedService[];
 }

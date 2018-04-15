@@ -1,0 +1,20 @@
+// Doing everything as a pattern
+#Greeting
+~Hi
+~Hello
+~Good morning
+~Good evening
+
+#Help
+~help
+~I need help
+~please help
+
+// username will be added as a pattern.any entity
+#AskForUserName
+~{userName}
+~I'm {userName}
+~call me {userName}
+~my name is {userName}
+~{userName} is my name
+~you can call me {userName}

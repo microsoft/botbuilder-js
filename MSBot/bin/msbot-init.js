@@ -1,10 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const program = require("commander");
+const chalk = require("chalk");
 const BotConfig_1 = require("./BotConfig");
 const readline = require("readline-sync");
+program.Command.prototype.unknownOption = function (flag) {
+    console.error(chalk.default.redBright(`Unknown arguments: ${flag}`));
+    program.help();
+};
 program
     .name("msbot init")
+    .option('--secret <secret>', 'secret used to encrypt service keys')
     .option('-n, --name <botname>', 'name of the bot')
     .option('-d, --description <description>', 'description of the bot')
     .option('-e, --endpoint <endpoint>', 'local endpoint for the bot')
@@ -17,6 +23,11 @@ if (!args.quiet) {
     while (!args.hasOwnProperty("name") || args.name.length == 0) {
         args.name = readline.question(`What name would you like for your bot? `);
     }
+    if (!args.secret || args.secret.length == 0) {
+        let answer = readline.question(`Would you to secure your bot keys with a secret? [No]`);
+        if (answer == 'y' || answer == 'yes')
+            args.secret = readline.question(`What secret would you like to use?`);
+    }
     if (!args.description || args.description.length == 0) {
         args.description = readline.question(`What description would you like for your bot? `);
     }
@@ -26,19 +37,26 @@ if (!args.quiet) {
         });
     }
 }
-let bot = new BotConfig_1.BotConfig();
-bot.name = args.name;
-bot.description = args.description;
-bot.connectService({
-    type: BotConfig_1.ServiceType.Localhost,
-    name: args.name,
-    endpoint: args.endpoint,
-    description: args.description,
-    id: args.endpoint,
-    appId: '',
-    appPassword: ''
-});
-let filename = bot.name + '.bot';
-bot.Save(filename);
-console.log(`${filename} created`);
+if (!args.name) {
+    console.error('missing --name argument');
+}
+else {
+    let bot = new BotConfig_1.BotConfig(args.secret);
+    bot.name = args.name;
+    bot.description = args.description;
+    bot.connectService({
+        type: BotConfig_1.ServiceType.Endpoint,
+        name: args.name,
+        endpoint: args.endpoint,
+        description: args.description,
+        id: args.endpoint,
+        appId: '',
+        appPassword: ''
+    });
+    if (args.secret && args.secret.length > 0)
+        bot.validateSecretKey();
+    let filename = bot.name + '.bot';
+    bot.Save(filename);
+    console.log(`${filename} created`);
+}
 //# sourceMappingURL=msbot-init.js.map

@@ -2,6 +2,12 @@ import * as program from 'commander';
 import * as chalk from 'chalk';
 import { BotConfig, ServiceType } from './BotConfig';
 import { Enumerable, List, Dictionary } from 'linq-collections';
+import { IConnectedService, ILuisService, IDispatchService, IAzureBotService, IBotConfig, IEndpointService, IQnAService } from './schema';
+
+program.Command.prototype.unknownOption = function (flag: any) {
+    console.error(chalk.default.redBright(`Unknown arguments: ${flag}`));
+    program.help();
+};
 
 interface DisconnectServiceArgs {
     bot: string;

@@ -7,8 +7,9 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Program",
-            "program": "${workspaceFolder}/bin/app.js"
+            "name": "Launch Program", 
+            "program": "${workspaceFolder}/bin/msbot-connect-localhost.js",
+            "args": ["-n test -e http://localhost:3973/api/messages -a 123123213 -p password --secret shh"]
         }
     ]
 }

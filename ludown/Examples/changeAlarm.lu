@@ -1,0 +1,8 @@
+// Patterns
+#changeAlarm
+~change an alarm
+~change {remTime} to {newTime}
+
+// Both newTime and remTime are roles to prebuilt datetimev2 entity
+$newTime:datetimeV2
+$remTime:datetimeV2
