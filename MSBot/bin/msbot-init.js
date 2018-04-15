@@ -23,8 +23,10 @@ if (!args.quiet) {
     while (!args.hasOwnProperty("name") || args.name.length == 0) {
         args.name = readline.question(`What name would you like for your bot? `);
     }
-    while (!args.secret || args.secret.length == 0) {
-        args.secret = readline.question(`What secret would you like to use to secure your keys? `);
+    if (!args.secret || args.secret.length == 0) {
+        let answer = readline.question(`Would you to secure your bot keys with a secret? [No]`);
+        if (answer == 'y' || answer == 'yes')
+            args.secret = readline.question(`What secret would you like to use?`);
     }
     if (!args.description || args.description.length == 0) {
         args.description = readline.question(`What description would you like for your bot? `);
@@ -38,14 +40,10 @@ if (!args.quiet) {
 if (!args.name) {
     console.error('missing --name argument');
 }
-else if (!args.secret) {
-    console.error('missing --secret argument');
-}
 else {
     let bot = new BotConfig_1.BotConfig(args.secret);
     bot.name = args.name;
     bot.description = args.description;
-    bot.validateSecretKey();
     bot.connectService({
         type: BotConfig_1.ServiceType.Endpoint,
         name: args.name,
@@ -55,6 +53,8 @@ else {
         appId: '',
         appPassword: ''
     });
+    if (args.secret && args.secret.length > 0)
+        bot.validateSecretKey();
     let filename = bot.name + '.bot';
     bot.Save(filename);
     console.log(`${filename} created`);
