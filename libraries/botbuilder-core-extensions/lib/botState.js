@@ -4,15 +4,41 @@ const storage_1 = require("./storage");
 /**
  * :package: **botbuilder-core-extensions**
  *
- * Reads and writes state for your bot to storage. When used as middleware the state will
- * automatically be read in before your bots logic runs and then written back out open
- * completion of your bots logic.
+ * Reads and writes state for your bot to storage. The state object will be automatically cached on
+ * the context object for the lifetime of the turn and will only be written to storage if they have
+ * been modified.
+ *
+ * When a `BotState` instance is used as middleware its state object will be automatically read in
+ * before your bots logic runs and then intelligently written back out upon completion of your bots
+ * logic. Multiple instances can be read and written in parallel using the `BotStateSet` middleware.
+ *
+ * **Usage Example**
+ *
+ * ```JavaScript
+ * const { BotState, MemoryStorage } = require('botbuilder');
+ *
+ * const storage = new MemoryStorage();
+ * const botState = new BotState(storage, (context) => 'botState');
+ * adapter.use(botState);
+ *
+ * server.post('/api/messages', (req, res) => {
+ *    adapter.processActivity(req, res, async (context) => {
+ *       // Track up time
+ *       const state = botState.get(context);
+ *       if (!('startTime' in state)) { state.startTime = new Date().getTime() }
+ *       state.upTime = new Date().getTime() - state.stateTime;
+ *
+ *       // ... route activity ...
+ *
+ *    });
+ * });
+ * ```
  */
 class BotState {
     /**
      * Creates a new BotState instance.
      * @param storage Storage provider to persist the state object to.
-     * @param storageKey Function called anytime the storage key for a given turn needs to be known.
+     * @param storageKey Function called anytime the storage key for a given turn needs to be calculated.
      */
     constructor(storage, storageKey) {
         this.storage = storage;
@@ -26,7 +52,15 @@ class BotState {
             .then(() => this.write(context));
     }
     /**
-     * Reads in and caches the current state object for a turn.
+     * Reads in and caches the current state object for a turn. Subsequent reads will return the
+     * cached object unless the `force` flag is passed in which will force the state object to
+     * be re-read.
+     *
+     * **Usage Example**
+     *
+     * ```JavaScript
+     * const state = await botState.read(context);
+     * ```
      * @param context Context for current turn of conversation with the user.
      * @param force (Optional) If `true` the cache will be bypassed and the state will always be read in directly from storage. Defaults to `false`.
      */
@@ -45,7 +79,15 @@ class BotState {
         return Promise.resolve(cached.state);
     }
     /**
-     * Writes out the state object if it's been changed.
+     * Save the cached state object if it's been changed. If the `force` flag is passed in the
+     * cached state object will be saved regardless of whether its been changed and if no object
+     * has been a cached an empty object will created and saved.
+     *
+     * **Usage Example**
+     *
+     * ```JavaScript
+     * await botState.write(context);
+     * ```
      * @param context Context for current turn of conversation with the user.
      * @param force (Optional) if `true` the state will always be written out regardless of its change state. Defaults to `false`.
      */
@@ -70,6 +112,12 @@ class BotState {
     }
     /**
      * Clears the current state object for a turn.
+     *
+     * **Usage Example**
+     *
+     * ```JavaScript
+     * botState.clear(context);
+     * ```
      * @param context Context for current turn of conversation with the user.
      */
     clear(context) {
@@ -82,6 +130,12 @@ class BotState {
     }
     /**
      * Returns a cached state object or undefined if not cached.
+     *
+     * **Usage Example**
+     *
+     * ```JavaScript
+     * const state botState.get(context);
+     * ```
      * @param context Context for current turn of conversation with the user.
      */
     get(context) {

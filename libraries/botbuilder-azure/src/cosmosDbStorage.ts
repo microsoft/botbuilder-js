@@ -9,8 +9,8 @@
 import { Storage, StoreItems, StoreItem } from 'botbuilder';
 import { DocumentClient, DocumentBase, UriFactory } from 'documentdb';
 
-/** Additional settings for configuring an instance of [CosmosDbSqlStorage](../classes/botbuilder_azure_v4.cosmosdbsqlstorage.html). */
-export interface CosmosDbSqlStorageSettings {
+/** Additional settings for configuring an instance of [CosmosDbStorage](../classes/botbuilder_azure_v4.cosmosdbstorage.html). */
+export interface CosmosDbStorageSettings {
     /** The endpoint Uri for the service endpoint from the Azure Cosmos DB service. */
     serviceEndpoint: string;
     /** The AuthKey used by the client from the Azure Cosmos DB service. */
@@ -33,28 +33,31 @@ interface DocumentStoreItem {
     document: any;
 }
 
-let checkedCollections: { [key: string]: Promise<string>; } = {};
-
 /**
- * Middleware that implements a CosmosDB SQL (DocumentDB) based storage provider for a bot.
+ * Middleware that implements a CosmosDB based storage provider for a bot.
+ * The ConnectionPolicy delegate can be used to further customize the connection to CosmosDB (Connection mode, retry options, timeouts).
+ * More information at http://azure.github.io/azure-documentdb-node/global.html#ConnectionPolicy
  */
-export class CosmosDbSqlStorage implements Storage {
-    private settings: CosmosDbSqlStorageSettings;
+export class CosmosDbStorage implements Storage {
+
+    private settings: CosmosDbStorageSettings;
     private client: DocumentClient;
+    private collectionExists: Promise<string>;
 
     /**
      * Creates a new instance of the storage provider.
      *
      * @param settings Setting to configure the provider.
-     * @param connectionPolicyConfigurator (Optional) An optional delegate that accepts a ConnectionPolicy for customizing policies.
+     * @param connectionPolicyConfigurator (Optional) An optional delegate that accepts a ConnectionPolicy for customizing policies. More information at http://azure.github.io/azure-documentdb-node/global.html#ConnectionPolicy
      */
-    public constructor(settings: CosmosDbSqlStorageSettings, connectionPolicyConfigurator: (policy: DocumentBase.ConnectionPolicy) => void = null) {
+    public constructor(settings: CosmosDbStorageSettings, connectionPolicyConfigurator: (policy: DocumentBase.ConnectionPolicy) => void = null) {
         if (!settings) {
             throw new Error('The settings parameter is required.');
         }
 
         this.settings = Object.assign({}, settings);
 
+        // Invoke collectionPolicy delegate to further customize settings
         let policy = new DocumentBase.ConnectionPolicy();
         if (connectionPolicyConfigurator && typeof connectionPolicyConfigurator === 'function') {
             connectionPolicyConfigurator(policy);
@@ -69,6 +72,9 @@ export class CosmosDbSqlStorage implements Storage {
      * @param keys Array of item keys to read from the store.
      */
     read(keys: string[]): Promise<StoreItems> {
+        if (!keys || keys.length === 0) {
+            throw new Error('Please provide at least one key to read from storage.');
+        }
 
         let parameterSequence = Array.from(Array(keys.length).keys())
             .map(ix => `@id${ix}`)
@@ -79,7 +85,7 @@ export class CosmosDbSqlStorage implements Storage {
         }));
 
         let querySpec = {
-            query: `SELECT * FROM c WHERE c.id in (${parameterSequence})`,
+            query: `SELECT c.id, c.realId, c.document, c._etag FROM c WHERE c.id in (${parameterSequence})`,
             parameters: parameterValues
         };
 
@@ -118,12 +124,21 @@ export class CosmosDbSqlStorage implements Storage {
      * @param changes Map of items to write to storage.
      **/
     write(changes: StoreItems): Promise<void> {
+        if (!changes) {
+            throw new Error('Please provide a StoreItems with changes to persist.');
+        }
+
         return this.ensureCollectionExists().then(() => {
             return Promise.all(Object.keys(changes).map(k => {
+                let changesCopy = Object.assign({}, changes[k]);
+
+                // Remove etag from JSON object that was copied from IStoreItem.
+                // The ETag information is updated as an _etag attribute in the document metadata.
+                delete changesCopy.eTag;
                 let documentChange: DocumentStoreItem = {
                     id: sanitizeKey(k),
                     realId: k,
-                    document: changes[k]
+                    document: changesCopy
                 };
 
                 return new Promise((resolve, reject) => {
@@ -131,10 +146,11 @@ export class CosmosDbSqlStorage implements Storage {
 
                     let eTag = changes[k].eTag;
                     if (!eTag || eTag === '*') {
+                        // if new item or * then insert or replace unconditionaly
                         let uri = UriFactory.createDocumentCollectionUri(this.settings.databaseId, this.settings.collectionId);
                         this.client.upsertDocument(uri, documentChange, { disableAutomaticIdGeneration: true }, handleCallback);
                     } else if (eTag.length > 0) {
-                        // Optimistic Update
+                        // if we have an etag, do opt. concurrency replace
                         let uri = UriFactory.createDocumentUri(this.settings.databaseId, this.settings.collectionId, documentChange.id);
                         let ac = { type: 'IfMatch', condition: eTag };
                         this.client.replaceDocument(uri, documentChange, { accessCondition: ac }, handleCallback);
@@ -161,14 +177,16 @@ export class CosmosDbSqlStorage implements Storage {
             .then(() => { }); // void
     }
 
+    /**
+     * Delayed Database and Collection creation if they do not exist.
+     */
     private ensureCollectionExists(): Promise<string> {
-        let key = `${this.settings.databaseId}-${this.settings.collectionId}`;
-        if (!checkedCollections[key]) {
-            checkedCollections[key] = getOrCreateDatabase(this.client, this.settings.databaseId)
+        if (!this.collectionExists) {
+            this.collectionExists = getOrCreateDatabase(this.client, this.settings.databaseId)
                 .then(databaseLink => getOrCreateCollection(this.client, databaseLink, this.settings.collectionId))
         }
 
-        return checkedCollections[key];
+        return this.collectionExists;
     }
 }
 
@@ -212,6 +230,9 @@ function getOrCreateCollection(client: DocumentClient, databaseLink: string, col
     });
 }
 
+// Converts the key into a DocumentID that can be used safely with CosmosDB.
+// The following characters are restricted and cannot be used in the Id property: '/', '\', '?', '#'
+// More information at https://docs.microsoft.com/en-us/dotnet/api/microsoft.azure.documents.resource.id?view=azure-dotnet#remarks
 function sanitizeKey(key: string): string {
     let badChars = ['\\', '?', '/', '#', '\t', '\n', '\r'];
     let sb = '';

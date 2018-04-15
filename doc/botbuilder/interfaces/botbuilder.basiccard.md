@@ -15,7 +15,7 @@
 
 **●  buttons**:  *[CardAction](botbuilder.cardaction.md)[]* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:773](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L773)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:846](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L846)*
 
 
 *__member__*: {CardAction[]} [buttons] Set of actions applicable to the current card
@@ -32,7 +32,7 @@ ___
 
 **●  images**:  *[CardImage](botbuilder.cardimage.md)[]* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:768](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L768)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:841](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L841)*
 
 
 *__member__*: {CardImage[]} [images] Array of images for the card
@@ -49,7 +49,7 @@ ___
 
 **●  subtitle**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:760](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L760)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:833](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L833)*
 
 
 *__member__*: {string} [subtitle] Subtitle of the card
@@ -66,7 +66,7 @@ ___
 
 **●  tap**:  *[CardAction](botbuilder.cardaction.md)* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:778](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L778)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:851](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L851)*
 
 
 *__member__*: {CardAction} [tap] This action will be activated when user taps on the card itself
@@ -83,7 +83,7 @@ ___
 
 **●  text**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:764](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L764)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:837](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L837)*
 
 
 *__member__*: {string} [text] Text for the card
@@ -100,7 +100,7 @@ ___
 
 **●  title**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:756](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L756)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:829](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L829)*
 
 
 *__member__*: {string} [title] Title of the card

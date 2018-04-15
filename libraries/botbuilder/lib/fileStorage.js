@@ -7,27 +7,25 @@ const filenamify = require("filenamify");
 /**
  * :package: **botbuilder**
  *
- * A file based storage provider.
+ * A file based storage provider. Items will be persisted to a folder on disk.
  *
  * **Usage Example**
  *
  * ```JavaScript
+ * const { FileStorage } = require('botbuilder');
+ * const path = require('path');
+ *
+ * const storage = new FileStorage(path.join(__dirname, './state'));
  * ```
  */
 class FileStorage {
     /**
-     * Creates a new instance of the storage provider.
-     *
-     * @param path Root filesystem path for where the provider should store its objects.
+     * Creates a new FileStorage instance.
+     * @param path Root filesystem path for where the provider should store its items.
      */
     constructor(path) {
         this.path = path;
     }
-    /**
-     * Loads store items from storage
-     *
-     * @param keys Array of item keys to read from the store.
-     **/
     read(keys) {
         return this.ensureFolder().then(() => {
             const data = {};
@@ -45,11 +43,6 @@ class FileStorage {
             return Promise.all(promises).then(() => data);
         });
     }
-    /**
-     * Saves store items to storage.
-     *
-     * @param changes Map of items to write to storage.
-     **/
     write(changes) {
         return this.ensureFolder().then(() => {
             let promises = [];
@@ -71,11 +64,6 @@ class FileStorage {
         });
     }
     ;
-    /**
-     * Removes store items from storage
-     *
-     * @param keys Array of item keys to remove from the store.
-     **/
     delete(keys) {
         return this.ensureFolder().then(() => {
             const promises = [];

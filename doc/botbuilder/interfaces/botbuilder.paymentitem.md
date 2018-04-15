@@ -15,7 +15,7 @@
 
 **●  amount**:  *[PaymentCurrencyAmount](botbuilder.paymentcurrencyamount.md)* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1277](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1277)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1410](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1410)*
 
 
 *__member__*: {PaymentCurrencyAmount} [amount] Monetary amount for the item
@@ -32,7 +32,7 @@ ___
 
 **●  label**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1273](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1273)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1406](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1406)*
 
 
 *__member__*: {string} [label] Human-readable description of the item
@@ -49,7 +49,7 @@ ___
 
 **●  pending**:  *`boolean`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1282](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1282)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1415](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1415)*
 
 
 *__member__*: {boolean} [pending] When set to true this flag means that the amount field is not final.

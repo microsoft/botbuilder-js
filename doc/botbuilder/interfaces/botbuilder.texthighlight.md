@@ -15,7 +15,7 @@
 
 **●  occurence**:  *`number`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:267](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L267)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:299](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L299)*
 
 
 *__member__*: {number} [occurence] index of occurence of the Text (Starting at 1)
@@ -32,7 +32,7 @@ ___
 
 **●  text**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:262](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L262)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:294](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L294)*
 
 
 *__member__*: {string} [text] plain text fragment to highlight

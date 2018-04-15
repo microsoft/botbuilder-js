@@ -17,14 +17,13 @@
 * [InputHints](enums/botbuilder.inputhints.md)
 * [InstallationUpdateActionTypes](enums/botbuilder.installationupdateactiontypes.md)
 * [MessageReactionTypes](enums/botbuilder.messagereactiontypes.md)
+* [RoleTypes](enums/botbuilder.roletypes.md)
 * [TextFormatTypes](enums/botbuilder.textformattypes.md)
 
 
 ### Classes
 
-* [BatchOutput](classes/botbuilder.batchoutput.md)
 * [BotAdapter](classes/botbuilder.botadapter.md)
-* [BotContext](classes/botbuilder.botcontext.md)
 * [BotFrameworkAdapter](classes/botbuilder.botframeworkadapter.md)
 * [BotState](classes/botbuilder.botstate.md)
 * [BotStateSet](classes/botbuilder.botstateset.md)
@@ -36,6 +35,7 @@
 * [MemoryStorage](classes/botbuilder.memorystorage.md)
 * [TestAdapter](classes/botbuilder.testadapter.md)
 * [TestFlow](classes/botbuilder.testflow.md)
+* [TurnContext](classes/botbuilder.turncontext.md)
 * [UserState](classes/botbuilder.userstate.md)
 
 
@@ -55,9 +55,12 @@
 * [CardImage](interfaces/botbuilder.cardimage.md)
 * [ChannelAccount](interfaces/botbuilder.channelaccount.md)
 * [ConversationAccount](interfaces/botbuilder.conversationaccount.md)
+* [ConversationMembers](interfaces/botbuilder.conversationmembers.md)
 * [ConversationParameters](interfaces/botbuilder.conversationparameters.md)
 * [ConversationReference](interfaces/botbuilder.conversationreference.md)
 * [ConversationResourceResponse](interfaces/botbuilder.conversationresourceresponse.md)
+* [ConversationsGetConversationsOptionalParams](interfaces/botbuilder.conversationsgetconversationsoptionalparams.md)
+* [ConversationsResult](interfaces/botbuilder.conversationsresult.md)
 * [Entity](interfaces/botbuilder.entity.md)
 * [ErrorModel](interfaces/botbuilder.errormodel.md)
 * [ErrorResponse](interfaces/botbuilder.errorresponse.md)
@@ -71,6 +74,7 @@
 * [Mention](interfaces/botbuilder.mention.md)
 * [MessageReaction](interfaces/botbuilder.messagereaction.md)
 * [MicrosoftPayMethodData](interfaces/botbuilder.microsoftpaymethoddata.md)
+* [OAuthCard](interfaces/botbuilder.oauthcard.md)
 * [PaymentAddress](interfaces/botbuilder.paymentaddress.md)
 * [PaymentCurrencyAmount](interfaces/botbuilder.paymentcurrencyamount.md)
 * [PaymentDetails](interfaces/botbuilder.paymentdetails.md)
@@ -88,6 +92,7 @@
 * [Place](interfaces/botbuilder.place.md)
 * [ReceiptCard](interfaces/botbuilder.receiptcard.md)
 * [ReceiptItem](interfaces/botbuilder.receiptitem.md)
+* [RequestOptionsBase](interfaces/botbuilder.requestoptionsbase.md)
 * [ResourceResponse](interfaces/botbuilder.resourceresponse.md)
 * [SigninCard](interfaces/botbuilder.signincard.md)
 * [Storage](interfaces/botbuilder.storage.md)
@@ -98,6 +103,8 @@
 * [Thing](interfaces/botbuilder.thing.md)
 * [ThumbnailCard](interfaces/botbuilder.thumbnailcard.md)
 * [ThumbnailUrl](interfaces/botbuilder.thumbnailurl.md)
+* [TokenRequest](interfaces/botbuilder.tokenrequest.md)
+* [TokenResponse](interfaces/botbuilder.tokenresponse.md)
 * [VideoCard](interfaces/botbuilder.videocard.md)
 * [WebRequest](interfaces/botbuilder.webrequest.md)
 * [WebResponse](interfaces/botbuilder.webresponse.md)
@@ -106,7 +113,7 @@
 ### Type aliases
 
 * [DeleteActivityHandler](#deleteactivityhandler)
-* [SendActivityHandler](#sendactivityhandler)
+* [SendActivitiesHandler](#sendactivitieshandler)
 * [StorageKeyFactory](#storagekeyfactory)
 * [TestActivityInspector](#testactivityinspector)
 * [UpdateActivityHandler](#updateactivityhandler)
@@ -126,7 +133,7 @@
 
 **Τ DeleteActivityHandler**:  *`function`* 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:28](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core/lib/botContext.d.ts#L28)*
+*Defined in [libraries/botbuilder-core/lib/turnContext.d.ts:28](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core/lib/turnContext.d.ts#L28)*
 
 
 
@@ -135,7 +142,7 @@
 Signature implemented by functions registered with `context.onDeleteActivity()`.
 
 #### Type declaration
-►(context: *[BotContext](classes/botbuilder.botcontext.md)*, reference: *`Partial`.<[ConversationReference](interfaces/botbuilder.conversationreference.md)>*, next: *`function`*): [Promiseable]()`void`
+►(context: *[TurnContext](classes/botbuilder.turncontext.md)*, reference: *`Partial`.<[ConversationReference](interfaces/botbuilder.conversationreference.md)>*, next: *`function`*): [Promiseable]()`void`
 
 
 
@@ -143,7 +150,7 @@ Signature implemented by functions registered with `context.onDeleteActivity()`.
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | [BotContext](classes/botbuilder.botcontext.md)   |  - |
+| context | [TurnContext](classes/botbuilder.turncontext.md)   |  - |
 | reference | `Partial`.<[ConversationReference](interfaces/botbuilder.conversationreference.md)>   |  - |
 | next | `function`   |  - |
 
@@ -160,13 +167,13 @@ Signature implemented by functions registered with `context.onDeleteActivity()`.
 
 ___
 
-<a id="sendactivityhandler"></a>
+<a id="sendactivitieshandler"></a>
 
-###  SendActivityHandler
+###  SendActivitiesHandler
 
-**Τ SendActivityHandler**:  *`function`* 
+**Τ SendActivitiesHandler**:  *`function`* 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:16](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core/lib/botContext.d.ts#L16)*
+*Defined in [libraries/botbuilder-core/lib/turnContext.d.ts:16](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core/lib/turnContext.d.ts#L16)*
 
 
 
@@ -175,7 +182,7 @@ ___
 Signature implemented by functions registered with `context.onSendActivity()`.
 
 #### Type declaration
-►(context: *[BotContext](classes/botbuilder.botcontext.md)*, activities: *`Partial`.<[Activity](interfaces/botbuilder.activity.md)>[]*, next: *`function`*): [Promiseable]()[ResourceResponse](interfaces/botbuilder.resourceresponse.md)[]
+►(context: *[TurnContext](classes/botbuilder.turncontext.md)*, activities: *`Partial`.<[Activity](interfaces/botbuilder.activity.md)>[]*, next: *`function`*): [Promiseable]()[ResourceResponse](interfaces/botbuilder.resourceresponse.md)[]
 
 
 
@@ -183,7 +190,7 @@ Signature implemented by functions registered with `context.onSendActivity()`.
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | [BotContext](classes/botbuilder.botcontext.md)   |  - |
+| context | [TurnContext](classes/botbuilder.turncontext.md)   |  - |
 | activities | `Partial`.<[Activity](interfaces/botbuilder.activity.md)>[]   |  - |
 | next | `function`   |  - |
 
@@ -206,7 +213,7 @@ ___
 
 **Τ StorageKeyFactory**:  *`function`* 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/storage.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/storage.d.ts#L15)*
+*Defined in [libraries/botbuilder-core-extensions/lib/storage.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/storage.d.ts#L15)*
 
 
 
@@ -215,7 +222,7 @@ ___
 Callback to calculate a storage key.
 
 #### Type declaration
-►(context: *[BotContext](classes/botbuilder.botcontext.md)*): [Promiseable]()`string`
+►(context: *[TurnContext](classes/botbuilder.turncontext.md)*): [Promiseable]()`string`
 
 
 
@@ -223,7 +230,7 @@ Callback to calculate a storage key.
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | [BotContext](classes/botbuilder.botcontext.md)   |  Context for the current turn of conversation with a user. |
+| context | [TurnContext](classes/botbuilder.turncontext.md)   |  Context for the current turn of conversation with a user. |
 
 
 
@@ -244,11 +251,13 @@ ___
 
 **Τ TestActivityInspector**:  *`function`* 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:14](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L14)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L15)*
 
 
 
 :package: **botbuilder-core-extensions**
+
+Signature for a function that can be used to inspect individual activities returned by a bot that's being tested using the `TestAdapter`.
 
 #### Type declaration
 ►(activity: *`Partial`.<[Activity](interfaces/botbuilder.activity.md)>*, description: *`string`*): `void`
@@ -281,7 +290,7 @@ ___
 
 **Τ UpdateActivityHandler**:  *`function`* 
 
-*Defined in [libraries/botbuilder-core/lib/botContext.d.ts:22](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core/lib/botContext.d.ts#L22)*
+*Defined in [libraries/botbuilder-core/lib/turnContext.d.ts:22](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core/lib/turnContext.d.ts#L22)*
 
 
 
@@ -290,7 +299,7 @@ ___
 Signature implemented by functions registered with `context.onUpdateActivity()`.
 
 #### Type declaration
-►(context: *[BotContext](classes/botbuilder.botcontext.md)*, activity: *`Partial`.<[Activity](interfaces/botbuilder.activity.md)>*, next: *`function`*): [Promiseable]()`void`
+►(context: *[TurnContext](classes/botbuilder.turncontext.md)*, activity: *`Partial`.<[Activity](interfaces/botbuilder.activity.md)>*, next: *`function`*): [Promiseable]()`void`
 
 
 
@@ -298,7 +307,7 @@ Signature implemented by functions registered with `context.onUpdateActivity()`.
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | [BotContext](classes/botbuilder.botcontext.md)   |  - |
+| context | [TurnContext](classes/botbuilder.turncontext.md)   |  - |
 | activity | `Partial`.<[Activity](interfaces/botbuilder.activity.md)>   |  - |
 | next | `function`   |  - |
 
@@ -325,35 +334,26 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/storage.d.ts:73](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/storage.d.ts#L73)*
+*Defined in [libraries/botbuilder-core-extensions/lib/storage.d.ts:98](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/storage.d.ts#L98)*
 
 
+
+:package: **botbuilder-core-extensions**
 
 Utility function to calculate a change hash for a `StoreItem`.
 
-<table>
+**Usage Example**
 
-<thead>
+    // Calculate state objects initial hash
+    const hash = calculateChangeHash(state);
 
-<tr>
+    // Process the received activity
+    await processActivity(context, state);
 
-<th>package</th>
-
-</tr>
-
-</thead>
-
-<tbody>
-
-<tr>
-
-<td>botbuilder-core-extensions</td>
-
-</tr>
-
-</tbody>
-
-</table>
+    // Save state if changed
+    if (calculateChangeHash(state) !== hash) {
+       await storage.write({ 'botState': state });
+    }
 
 
 **Parameters:**

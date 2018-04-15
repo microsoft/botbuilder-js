@@ -4,7 +4,7 @@
 
 # Interface: Thing
 
-*__interface__*: An interface representing Thing. Thing (entity type: "[https://schema.org/Thing"](https://schema.org/Thing"))
+*__interface__*: An interface representing Thing. Thing (entity type: "[https://schema.org/Thing](https://schema.org/Thing)")
 
 
 
@@ -15,7 +15,7 @@
 
 **●  name**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1139](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1139)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1232](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1232)*
 
 
 *__member__*: {string} [name] The name of the thing
@@ -32,7 +32,7 @@ ___
 
 **●  type**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1135](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1135)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1228](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1228)*
 
 
 *__member__*: {string} [type] The type of the thing

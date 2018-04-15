@@ -15,7 +15,7 @@
 
 **●  currency**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1253](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1253)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1386](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1386)*
 
 
 *__member__*: {string} [currency] A currency identifier
@@ -32,7 +32,7 @@ ___
 
 **●  currencySystem**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1261](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1261)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1394](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1394)*
 
 
 *__member__*: {string} [currencySystem] Currency system
@@ -49,7 +49,7 @@ ___
 
 **●  value**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1257](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1257)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1390](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1390)*
 
 
 *__member__*: {string} [value] Decimal monetary value

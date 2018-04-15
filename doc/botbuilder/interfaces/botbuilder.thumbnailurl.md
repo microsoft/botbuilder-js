@@ -15,7 +15,7 @@
 
 **●  alt**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:615](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L615)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:688](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L688)*
 
 
 *__member__*: {string} [alt] HTML alt text to include on this thumbnail image
@@ -32,7 +32,7 @@ ___
 
 **●  url**:  *`string`* 
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:611](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L611)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:684](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L684)*
 
 
 *__member__*: {string} [url] URL pointing to the thumbnail to use for media content

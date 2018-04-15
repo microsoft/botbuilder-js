@@ -5,60 +5,16 @@
 # Interface: StoreItem
 
 
+:package: **botbuilder-core-extensions**
+
 Object which is stored in Storage with an optional eTag.
-
-<table>
-
-<thead>
-
-<tr>
-
-<th>package</th>
-
-</tr>
-
-</thead>
-
-<tbody>
-
-<tr>
-
-<td>botbuilder-core-extensions</td>
-
-</tr>
-
-</tbody>
-
-</table>
 
 ## Indexable
 
 \[key: `string`\]:&nbsp;`any`
 Key/value pairs.
 
-<table>
-
-<thead>
-
-<tr>
-
-<th>package</th>
-
-</tr>
-
-</thead>
-
-<tbody>
-
-<tr>
-
-<td>botbuilder-core-extensions</td>
-
-</tr>
-
-</tbody>
-
-</table>
+Object which is stored in Storage with an optional eTag.
 
 
 
@@ -69,7 +25,7 @@ Key/value pairs.
 
 **●  eTag**:  *`string`* 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/storage.d.ts:52](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/storage.d.ts#L52)*
+*Defined in [libraries/botbuilder-core-extensions/lib/storage.d.ts:67](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/storage.d.ts#L67)*
 
 
 

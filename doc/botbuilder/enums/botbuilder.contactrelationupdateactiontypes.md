@@ -30,7 +30,7 @@ Defines values for ContactRelationUpdateActionTypes. Possible values include: 'a
 
 ** Add**:    = "add"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1725](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1725)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1886](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1886)*
 
 
 
@@ -44,7 +44,7 @@ ___
 
 ** Remove**:    = "remove"
 
-*Defined in [libraries/botframework-schema/lib/index.d.ts:1726](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botframework-schema/lib/index.d.ts#L1726)*
+*Defined in [libraries/botframework-schema/lib/index.d.ts:1887](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botframework-schema/lib/index.d.ts#L1887)*
 
 
 

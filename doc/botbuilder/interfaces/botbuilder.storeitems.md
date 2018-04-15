@@ -5,60 +5,16 @@
 # Interface: StoreItems
 
 
+:package: **botbuilder-core-extensions**
+
 Map of named `StoreItem` objects.
-
-<table>
-
-<thead>
-
-<tr>
-
-<th>package</th>
-
-</tr>
-
-</thead>
-
-<tbody>
-
-<tr>
-
-<td>botbuilder-core-extensions</td>
-
-</tr>
-
-</tbody>
-
-</table>
 
 ## Indexable
 
 \[key: `string`\]:&nbsp;[StoreItem](botbuilder.storeitem.md)
+:package: **botbuilder-core-extensions**
+
 Map of named `StoreItem` objects.
-
-<table>
-
-<thead>
-
-<tr>
-
-<th>package</th>
-
-</tr>
-
-</thead>
-
-<tbody>
-
-<tr>
-
-<td>botbuilder-core-extensions</td>
-
-</tr>
-
-</tbody>
-
-</table>
 
 
 

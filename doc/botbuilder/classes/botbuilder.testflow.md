@@ -7,7 +7,23 @@
 
 :package: **botbuilder-core-extensions**
 
-INTERNAL support class for `TestAdapter`.
+Support class for `TestAdapter` that allows for the simple construction of a sequence of tests. Calling `adapter.send()` or `adapter.test()` will create a new test flow which you can chain together additional tests using a fluent syntax.
+
+**Usage Example**
+
+    const { TestAdapter } = require('botbuilder');
+
+    const adapter = new TestAdapter(async (context) => {
+       if (context.text === 'hi') {
+          await context.sendActivity(`Hello World`);
+       } else if (context.text === 'bye') {
+          await context.sendActivity(`Goodbye`);
+       }
+    });
+
+    adapter.test(`hi`, `Hello World`)
+           .test(`bye`, `Goodbye`)
+           .then(() => done());
 
 ## Index
 
@@ -41,16 +57,19 @@ INTERNAL support class for `TestAdapter`.
 ### ⊕ **new TestFlow**(previous: *`Promise`.<`void`>*, adapter: *[TestAdapter](botbuilder.testadapter.md)*): [TestFlow](botbuilder.testflow.md)
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:63](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L63)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:175](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L175)*
 
+
+
+INTERNAL: creates a new TestFlow instance.
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| previous | `Promise`.<`void`>   |  - |
-| adapter | [TestAdapter](botbuilder.testadapter.md)   |  - |
+| previous | `Promise`.<`void`>   |  Promise chain for the current test sequence. |
+| adapter | [TestAdapter](botbuilder.testadapter.md)   |  Adapter under tested. |
 
 
 
@@ -68,7 +87,7 @@ INTERNAL support class for `TestAdapter`.
 
 **●  previous**:  *`Promise`.<`void`>* 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:62](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L62)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:174](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L174)*
 
 
 
@@ -86,20 +105,20 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:84](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L84)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:203](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L203)*
 
 
 
-Throws if the bot's response doesn't match the expected text/activity
+Generates an assertion if the bots response doesn't match the expected text/activity.
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| expected | `string`⎮`Partial`.<[Activity](../interfaces/botbuilder.activity.md)>⎮[TestActivityInspector](../#testactivityinspector)   |  expected text or activity from the bot, or callback to inspect object |
-| description | `string`   |  description of test case |
-| timeout | `number`   |  (default 3000ms) time to wait for response from bot |
+| expected | `string`⎮`Partial`.<[Activity](../interfaces/botbuilder.activity.md)>⎮[TestActivityInspector](../#testactivityinspector)   |  Expected text or activity from the bot. Can be a callback to inspect the response using custom logic. |
+| description | `string`   |  (Optional) Description of the test case. If not provided one will be generated. |
+| timeout | `number`   |  (Optional) number of milliseconds to wait for a response from bot. Defaults to a value of `3000`. |
 
 
 
@@ -121,20 +140,20 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:91](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L91)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:210](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L210)*
 
 
 
-throws if the bot's response is not one of the candidate strings
+Generates an assertion if the bots response is not one of the candidate strings.
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| candidates | `string`[]   |  candidate responses |
-| description | `string`   |  description of test case |
-| timeout | `number`   |  (default 3000ms) time to wait for response from bot |
+| candidates | `string`[]   |  List of candidate responses. |
+| description | `string`   |  (Optional) Description of the test case. If not provided one will be generated. |
+| timeout | `number`   |  (Optional) number of milliseconds to wait for a response from bot. Defaults to a value of `3000`. |
 
 
 
@@ -156,15 +175,18 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:98](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L98)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:225](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L225)*
 
+
+
+Adds a `catch()` clause to the tests promise chain.
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| onRejected | `function`   |  - |
+| onRejected | `function`   |  Code to run if the test has thrown an error. |
 
 
 
@@ -186,11 +208,11 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:96](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L96)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:215](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L215)*
 
 
 
-Insert delay before continuing
+Inserts a delay before continuing.
 
 
 **Parameters:**
@@ -219,18 +241,18 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:77](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L77)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:196](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L196)*
 
 
 
-Send something to the bot
+Sends something to the bot.
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| userSays | `string`⎮`Partial`.<[Activity](../interfaces/botbuilder.activity.md)>   |  text or activity simulating user input |
+| userSays | `string`⎮`Partial`.<[Activity](../interfaces/botbuilder.activity.md)>   |  Text or activity simulating user input. |
 
 
 
@@ -252,21 +274,21 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:72](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L72)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:191](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L191)*
 
 
 
-Send something to the bot and expect the bot to reply
+Send something to the bot and expects the bot to return with a given reply. This is simply a wrapper around calls to `send()` and `assertReply()`. This is such a common pattern that a helper is provided.
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| userSays | `string`⎮`Partial`.<[Activity](../interfaces/botbuilder.activity.md)>   |  text or activity simulating user input |
-| expected | `string`⎮`Partial`.<[Activity](../interfaces/botbuilder.activity.md)>⎮`function`   |  expected text or activity from the bot |
-| description | `string`   |  description of test case |
-| timeout | `number`   |  (default 3000ms) time to wait for response from bot |
+| userSays | `string`⎮`Partial`.<[Activity](../interfaces/botbuilder.activity.md)>   |  Text or activity simulating user input. |
+| expected | `string`⎮`Partial`.<[Activity](../interfaces/botbuilder.activity.md)>⎮`function`   |  Expected text or activity of the reply sent by the bot. |
+| description | `string`   |  (Optional) Description of the test case. If not provided one will be generated. |
+| timeout | `number`   |  (Optional) number of milliseconds to wait for a response from bot. Defaults to a value of `3000`. |
 
 
 
@@ -288,15 +310,18 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:97](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L97)*
+*Defined in [libraries/botbuilder-core-extensions/lib/testAdapter.d.ts:220](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core-extensions/lib/testAdapter.d.ts#L220)*
 
+
+
+Adds a `then()` step to the tests promise chain.
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| onFulfilled | `function`   |  - |
+| onFulfilled | `function`   |  Code to run if the test is currently passing. |
 
 
 

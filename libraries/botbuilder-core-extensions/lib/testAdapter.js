@@ -12,21 +12,63 @@ const assert = require("assert");
 /**
  * :package: **botbuilder-core-extensions**
  *
- * Test adapter used for unit tests.
+ * Test adapter used for unit tests. This adapter can be used to simulate sending messages from the
+ * user to the bot.
+ *
+ * **Usage Example**
+ *
+ * ```JavaScript
+ * const { TestAdapter } = require('botbuilder');
+ *
+ * const adapter = new TestAdapter(async (context) => {
+ *      await context.sendActivity(`Hello World`);
+ * });
+ *
+ * adapter.test(`hi`, `Hello World`)
+ *        .then(() => done());
+ * ```
  */
 class TestAdapter extends botbuilder_core_1.BotAdapter {
     /**
-     * Creates a new instance of the test adapter.
-     * @param botLogic The bots logic that's under test.
+     * Creates a new TestAdapter instance.
+     * @param logic The bots logic that's under test.
      * @param template (Optional) activity containing default values to assign to all test messages received.
      */
-    constructor(botLogic, template) {
+    constructor(logic, template) {
         super();
-        this.botLogic = botLogic;
+        this.logic = logic;
         this.nextId = 0;
         /** INTERNAL: used to drive the promise chain forward when running tests. */
         this.activityBuffer = [];
+        /**
+         * List of updated activities passed to the adapter which can be inspected after the current
+         * turn completes.
+         *
+         * **Usage Example**
+         *
+         * ```JavaScript
+         * adapter.test('update', '1 updated').then(() => {
+         *    assert(adapter.updatedActivities.length === 1);
+         *    assert(adapter.updatedActivities[0].id === '12345');
+         *    done();
+         * });
+         * ```
+         */
         this.updatedActivities = [];
+        /**
+         * List of deleted activities passed to the adapter which can be inspected after the current
+         * turn completes.
+         *
+         * **Usage Example**
+         *
+         * ```JavaScript
+         * adapter.test('delete', '1 deleted').then(() => {
+         *    assert(adapter.deletedActivities.length === 1);
+         *    assert(adapter.deletedActivities[0].activityId === '12345');
+         *    done();
+         * });
+         * ```
+         */
         this.deletedActivities = [];
         this.template = Object.assign({
             channelId: 'test',
@@ -36,6 +78,12 @@ class TestAdapter extends botbuilder_core_1.BotAdapter {
             conversation: { id: 'Convo1' }
         }, template);
     }
+    /**
+     * INTERNAL: called by the logic under test to send a set of activities. These will be buffered
+     * to the current `TestFlow` instance for comparison against the expected results.
+     * @param context Context object for the current turn of conversation with the user.
+     * @param activities Set of activities sent by logic under test.
+     */
     sendActivities(context, activities) {
         const responses = activities.map((activity) => {
             this.activityBuffer.push(activity);
@@ -43,20 +91,39 @@ class TestAdapter extends botbuilder_core_1.BotAdapter {
         });
         return Promise.resolve(responses);
     }
+    /**
+     * INTERNAL: called by the logic under test to replace an existing activity. These are simply
+     * pushed onto an [updatedActivities](#updatedactivities) array for inspection after the turn
+     * completes.
+     * @param context Context object for the current turn of conversation with the user.
+     * @param activity Activity being updated.
+     */
     updateActivity(context, activity) {
         this.updatedActivities.push(activity);
         return Promise.resolve();
     }
+    /**
+     * INTERNAL: called by the logic under test to delete an existing activity. These are simply
+     * pushed onto a [deletedActivities](#deletedactivities) array for inspection after the turn
+     * completes.
+     * @param context Context object for the current turn of conversation with the user.
+     * @param reference `ConversationReference` for activity being deleted.
+     */
     deleteActivity(context, reference) {
         this.deletedActivities.push(reference);
         return Promise.resolve();
     }
+    /**
+     * The `TestAdapter` doesn't implement `continueConversation()` and will return an error if it's
+     * called.
+     */
     continueConversation(reference, logic) {
         return Promise.reject(new Error(`not implemented`));
     }
     /**
-     * Processes and activity received from the user.
-     * @param activity Text or activity from user.
+     * INTERNAL: called by a `TestFlow` instance to simulate a user sending a message to the bot.
+     * This will cause the adapters middleware pipe to be run and it's logic to be called.
+     * @param activity Text or activity from user. The current conversation reference [template](#template) will be merged the passed in activity to properly address the activity. Fields specified in the activity override fields in the template.
      */
     receiveActivity(activity) {
         // Initialize request
@@ -69,21 +136,39 @@ class TestAdapter extends botbuilder_core_1.BotAdapter {
         }
         // Create context object and run middleware
         const context = new botbuilder_core_1.TurnContext(this, request);
-        return this.runMiddleware(context, this.botLogic);
+        return this.runMiddleware(context, this.logic);
     }
     /**
-     * Send something to the bot
-     * @param userSays text or activity simulating user input
+     * Sends something to the bot. This returns a new `TestFlow` instance which can be used to add
+     * additional steps for inspecting the bots reply and then sending additional activities.
+     *
+     * **Usage Example**
+     *
+     * ```JavaScript
+     * adapter.send('hi')
+     *        .assertReply('Hello World')
+     *        .then(() => done());
+     * ```
+     * @param userSays Text or activity simulating user input.
      */
     send(userSays) {
         return new TestFlow(this.receiveActivity(userSays), this);
     }
     /**
-     * Send something to the bot and expect the bot to reply
-     * @param userSays text or activity simulating user input
-     * @param expected expected text or activity from the bot
-     * @param description description of test case
-     * @param timeout (default 3000ms) time to wait for response from bot
+     * Send something to the bot and expects the bot to return with a given reply. This is simply a
+     * wrapper around calls to `send()` and `assertReply()`. This is such a common pattern that a
+     * helper is provided.
+     *
+     * **Usage Example**
+     *
+     * ```JavaScript
+     * adapter.test('hi', 'Hello World')
+     *        .then(() => done());
+     * ```
+     * @param userSays Text or activity simulating user input.
+     * @param expected Expected text or activity of the reply sent by the bot.
+     * @param description (Optional) Description of the test case. If not provided one will be generated.
+     * @param timeout (Optional) number of milliseconds to wait for a response from bot. Defaults to a value of `3000`.
      */
     test(userSays, expected, description, timeout) {
         return this.send(userSays)
@@ -94,36 +179,64 @@ exports.TestAdapter = TestAdapter;
 /**
  * :package: **botbuilder-core-extensions**
  *
- *  INTERNAL support class for `TestAdapter`.
+ * Support class for `TestAdapter` that allows for the simple construction of a sequence of tests.
+ * Calling `adapter.send()` or `adapter.test()` will create a new test flow which you can chain
+ * together additional tests using a fluent syntax.
+ *
+ *
+ * **Usage Example**
+ *
+ * ```JavaScript
+ * const { TestAdapter } = require('botbuilder');
+ *
+ * const adapter = new TestAdapter(async (context) => {
+ *    if (context.text === 'hi') {
+ *       await context.sendActivity(`Hello World`);
+ *    } else if (context.text === 'bye') {
+ *       await context.sendActivity(`Goodbye`);
+ *    }
+ * });
+ *
+ * adapter.test(`hi`, `Hello World`)
+ *        .test(`bye`, `Goodbye`)
+ *        .then(() => done());
+ * ```
  */
 class TestFlow {
+    /**
+     * INTERNAL: creates a new TestFlow instance.
+     * @param previous Promise chain for the current test sequence.
+     * @param adapter Adapter under tested.
+     */
     constructor(previous, adapter) {
         this.previous = previous;
         this.adapter = adapter;
     }
     /**
-     * Send something to the bot and expect the bot to reply
-     * @param userSays text or activity simulating user input
-     * @param expected expected text or activity from the bot
-     * @param description description of test case
-     * @param timeout (default 3000ms) time to wait for response from bot
+     * Send something to the bot and expects the bot to return with a given reply. This is simply a
+     * wrapper around calls to `send()` and `assertReply()`. This is such a common pattern that a
+     * helper is provided.
+     * @param userSays Text or activity simulating user input.
+     * @param expected Expected text or activity of the reply sent by the bot.
+     * @param description (Optional) Description of the test case. If not provided one will be generated.
+     * @param timeout (Optional) number of milliseconds to wait for a response from bot. Defaults to a value of `3000`.
      */
     test(userSays, expected, description, timeout) {
         return this.send(userSays)
             .assertReply(expected, description || `test("${userSays}", "${expected}")`, timeout);
     }
     /**
-     * Send something to the bot
-     * @param userSays text or activity simulating user input
+     * Sends something to the bot.
+     * @param userSays Text or activity simulating user input.
      */
     send(userSays) {
         return new TestFlow(this.previous.then(() => this.adapter.receiveActivity(userSays)), this.adapter);
     }
     /**
-     * Throws if the bot's response doesn't match the expected text/activity
-     * @param expected expected text or activity from the bot, or callback to inspect object
-     * @param description description of test case
-     * @param timeout (default 3000ms) time to wait for response from bot
+     * Generates an assertion if the bots response doesn't match the expected text/activity.
+     * @param expected Expected text or activity from the bot. Can be a callback to inspect the response using custom logic.
+     * @param description (Optional) Description of the test case. If not provided one will be generated.
+     * @param timeout (Optional) number of milliseconds to wait for a response from bot. Defaults to a value of `3000`.
      */
     assertReply(expected, description, timeout) {
         function defaultInspector(reply, description) {
@@ -180,10 +293,10 @@ class TestFlow {
         }), this.adapter);
     }
     /**
-     * throws if the bot's response is not one of the candidate strings
-     * @param candidates candidate responses
-     * @param description description of test case
-     * @param timeout (default 3000ms) time to wait for response from bot
+     * Generates an assertion if the bots response is not one of the candidate strings.
+     * @param candidates List of candidate responses.
+     * @param description (Optional) Description of the test case. If not provided one will be generated.
+     * @param timeout (Optional) number of milliseconds to wait for a response from bot. Defaults to a value of `3000`.
      */
     assertReplyOneOf(candidates, description, timeout) {
         return this.assertReply((activity, description) => {
@@ -196,7 +309,7 @@ class TestFlow {
         }, description, timeout);
     }
     /**
-     * Insert delay before continuing
+     * Inserts a delay before continuing.
      * @param ms ms to wait
      */
     delay(ms) {
@@ -204,9 +317,17 @@ class TestFlow {
             return new Promise((resolve, reject) => { setTimeout(() => resolve(), ms); });
         }), this.adapter);
     }
+    /**
+     * Adds a `then()` step to the tests promise chain.
+     * @param onFulfilled Code to run if the test is currently passing.
+     */
     then(onFulfilled) {
         return new TestFlow(this.previous.then(onFulfilled), this.adapter);
     }
+    /**
+     * Adds a `catch()` clause to the tests promise chain.
+     * @param onRejected Code to run if the test has thrown an error.
+     */
     catch(onRejected) {
         return new TestFlow(this.previous.catch(onRejected), this.adapter);
     }

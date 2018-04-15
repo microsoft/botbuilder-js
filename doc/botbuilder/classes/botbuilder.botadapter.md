@@ -9,15 +9,14 @@
 
 Abstract base class for all adapter plugins. Adapters manage the communication between the bot and a user over a specific channel, or set of channels.
 
-**Usage Example**
-
 ## Index
 
 ### Methods
 
+* [continueConversation](botbuilder.botadapter.md#continueconversation)
 * [deleteActivity](botbuilder.botadapter.md#deleteactivity)
 * [runMiddleware](botbuilder.botadapter.md#runmiddleware)
-* [sendActivity](botbuilder.botadapter.md#sendactivity)
+* [sendActivities](botbuilder.botadapter.md#sendactivities)
 * [updateActivity](botbuilder.botadapter.md#updateactivity)
 * [use](botbuilder.botadapter.md#use)
 
@@ -25,15 +24,49 @@ Abstract base class for all adapter plugins. Adapters manage the communication b
 
 ---
 ## Methods
+<a id="continueconversation"></a>
+
+###  continueConversation
+
+► **continueConversation**(reference: *`Partial`.<[ConversationReference](../interfaces/botbuilder.conversationreference.md)>*, logic: *`function`*): `Promise`.<`void`>
+
+
+
+*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:43](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core/lib/botAdapter.d.ts#L43)*
+
+
+
+Proactively continues an existing conversation.
+
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| reference | `Partial`.<[ConversationReference](../interfaces/botbuilder.conversationreference.md)>   |  Conversation reference of the conversation being continued. |
+| logic | `function`   |  Function to execute for performing the bots logic. |
+
+
+
+
+
+**Returns:** `Promise`.<`void`>
+
+
+
+
+
+___
+
 <a id="deleteactivity"></a>
 
 ###  deleteActivity
 
-► **deleteActivity**(reference: *`Partial`.<[ConversationReference](../interfaces/botbuilder.conversationreference.md)>*): `Promise`.<`void`>
+► **deleteActivity**(context: *[TurnContext](botbuilder.turncontext.md)*, reference: *`Partial`.<[ConversationReference](../interfaces/botbuilder.conversationreference.md)>*): `Promise`.<`void`>
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core/lib/botAdapter.d.ts#L39)*
+*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:37](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core/lib/botAdapter.d.ts#L37)*
 
 
 
@@ -44,6 +77,7 @@ Deletes an existing activity.
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
+| context | [TurnContext](botbuilder.turncontext.md)   |  Context for the current turn of conversation with the user. |
 | reference | `Partial`.<[ConversationReference](../interfaces/botbuilder.conversationreference.md)>   |  Conversation reference of the activity being deleted. |
 
 
@@ -62,11 +96,11 @@ ___
 
 ### «Protected» runMiddleware
 
-► **runMiddleware**(context: *[BotContext](botbuilder.botcontext.md)*, next: *`function`*): `Promise`.<`void`>
+► **runMiddleware**(context: *[TurnContext](botbuilder.turncontext.md)*, next: *`function`*): `Promise`.<`void`>
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:55](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core/lib/botAdapter.d.ts#L55)*
+*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:59](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core/lib/botAdapter.d.ts#L59)*
 
 
 
@@ -77,7 +111,7 @@ Called by the parent class to run the adapters middleware set and calls the pass
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | [BotContext](botbuilder.botcontext.md)   |  Context for the current turn of conversation with the user. |
+| context | [TurnContext](botbuilder.turncontext.md)   |  Context for the current turn of conversation with the user. |
 | next | `function`   |  Function to call at the end of the middleware chain. |
 
 
@@ -92,15 +126,15 @@ Called by the parent class to run the adapters middleware set and calls the pass
 
 ___
 
-<a id="sendactivity"></a>
+<a id="sendactivities"></a>
 
-###  sendActivity
+###  sendActivities
 
-► **sendActivity**(activities: *`Partial`.<[Activity](../interfaces/botbuilder.activity.md)>[]*): `Promise`.<[ResourceResponse](../interfaces/botbuilder.resourceresponse.md)[]>
+► **sendActivities**(context: *[TurnContext](botbuilder.turncontext.md)*, activities: *`Partial`.<[Activity](../interfaces/botbuilder.activity.md)>[]*): `Promise`.<[ResourceResponse](../interfaces/botbuilder.resourceresponse.md)[]>
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:29](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core/lib/botAdapter.d.ts#L29)*
+*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:25](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core/lib/botAdapter.d.ts#L25)*
 
 
 
@@ -111,6 +145,7 @@ Sends a set of activities to the user. An array of responses form the server wil
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
+| context | [TurnContext](botbuilder.turncontext.md)   |  Context for the current turn of conversation with the user. |
 | activities | `Partial`.<[Activity](../interfaces/botbuilder.activity.md)>[]   |  Set of activities being sent. |
 
 
@@ -129,11 +164,11 @@ ___
 
 ###  updateActivity
 
-► **updateActivity**(activity: *`Partial`.<[Activity](../interfaces/botbuilder.activity.md)>*): `Promise`.<`void`>
+► **updateActivity**(context: *[TurnContext](botbuilder.turncontext.md)*, activity: *`Partial`.<[Activity](../interfaces/botbuilder.activity.md)>*): `Promise`.<`void`>
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:34](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core/lib/botAdapter.d.ts#L34)*
+*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core/lib/botAdapter.d.ts#L31)*
 
 
 
@@ -144,6 +179,7 @@ Replaces an existing activity.
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
+| context | [TurnContext](botbuilder.turncontext.md)   |  Context for the current turn of conversation with the user. |
 | activity | `Partial`.<[Activity](../interfaces/botbuilder.activity.md)>   |  New replacement activity. The activity should already have it's ID information populated. |
 
 
@@ -166,7 +202,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:44](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-core/lib/botAdapter.d.ts#L44)*
+*Defined in [libraries/botbuilder-core/lib/botAdapter.d.ts:48](https://github.com/Microsoft/botbuilder-js/blob/c748a95/libraries/botbuilder-core/lib/botAdapter.d.ts#L48)*
 
 
 

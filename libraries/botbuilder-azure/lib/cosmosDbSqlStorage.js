@@ -8,7 +8,6 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 const documentdb_1 = require("documentdb");
-let checkedCollections = {};
 /**
  * Middleware that implements a CosmosDB SQL (DocumentDB) based storage provider for a bot.
  */
@@ -36,6 +35,9 @@ class CosmosDbSqlStorage {
      * @param keys Array of item keys to read from the store.
      */
     read(keys) {
+        if (!keys || keys.length === 0) {
+            throw new Error('Please provide at least one key to read from storage.');
+        }
         let parameterSequence = Array.from(Array(keys.length).keys())
             .map(ix => `@id${ix}`)
             .join(',');
@@ -44,7 +46,7 @@ class CosmosDbSqlStorage {
             value: sanitizeKey(key)
         }));
         let querySpec = {
-            query: `SELECT * FROM c WHERE c.id in (${parameterSequence})`,
+            query: `SELECT c.id, c.realId, c.document, c._etag FROM c WHERE c.id in (${parameterSequence})`,
             parameters: parameterValues
         };
         return this.ensureCollectionExists().then((collectionLink) => {
@@ -78,6 +80,9 @@ class CosmosDbSqlStorage {
      * @param changes Map of items to write to storage.
      **/
     write(changes) {
+        if (!changes) {
+            throw new Error('Please provide a StoreItems with changes to persist.');
+        }
         return this.ensureCollectionExists().then(() => {
             return Promise.all(Object.keys(changes).map(k => {
                 let documentChange = {
@@ -115,12 +120,11 @@ class CosmosDbSqlStorage {
             .then(() => { }); // void
     }
     ensureCollectionExists() {
-        let key = `${this.settings.databaseId}-${this.settings.collectionId}`;
-        if (!checkedCollections[key]) {
-            checkedCollections[key] = getOrCreateDatabase(this.client, this.settings.databaseId)
+        if (!this.collectionExists) {
+            this.collectionExists = getOrCreateDatabase(this.client, this.settings.databaseId)
                 .then(databaseLink => getOrCreateCollection(this.client, databaseLink, this.settings.collectionId));
         }
-        return checkedCollections[key];
+        return this.collectionExists;
     }
 }
 exports.CosmosDbSqlStorage = CosmosDbSqlStorage;
