@@ -52,15 +52,14 @@ class JSONApp {
      */
 
     /**
-     * @property {JSONModelFeature[]} modelFeatures
+     * @property {JSONModelFeature[]} model_features
      */
 
     /**
      * @property {JSONUtterance[]} utterances
      */
 
-
-    constructor({name /* string */, versionId /* string */, desc /* string */, culture /* string */, intents /* HierarchicalModel[] */, entities /* HierarchicalModel[] */, bing_entities /* string[] */, actions /* JSONAction[] */, closedLists /* JSONClosedList[] */, composites /* HierarchicalModel[] */, regex_features /* JSONRegexFeature[] */, modelFeatures /* JSONModelFeature[] */, utterances /* JSONUtterance[] */, prebuiltEntities, luis_schema_version, patterns, patternAnyEntities,model_features} = {}) {
+    constructor({name /* string */, versionId /* string */, desc /* string */, culture /* string */, intents /* HierarchicalModel[] */, entities /* HierarchicalModel[] */, bing_entities /* string[] */, actions /* JSONAction[] */, closedLists /* JSONClosedList[] */, composites /* HierarchicalModel[] */, regex_features /* JSONRegexFeature[] */, model_features /* JSONModelFeature[] */, utterances /* JSONUtterance[] */} = {}) {
         Object.assign(this, {
             name /* string */,
             versionId /* string */,
@@ -73,12 +72,10 @@ class JSONApp {
             closedLists /* JSONClosedList[] */,
             composites /* HierarchicalModel[] */,
             regex_features /* JSONRegexFeature[] */,
-            utterances /* JSONUtterance[] */,
-            patterns /* patterns[] */,
-            patternAnyEntities /* patternAnyEntities[] */,
-            prebuiltEntities /* prebuitl entities[] */,
-            luis_schema_version /* string */,
-            model_features /* model_features[] */
+
+            model_features /* JSONModelFeature[] */,
+            utterances /* JSONUtterance[] */
+
         });
     }
 }
@@ -103,8 +100,7 @@ JSONApp.fromJSON = function (source) {
 
     source.utterances = JSONUtterance.fromJSON(source.utterances) || undefined;
 
-
-    const {name /* string */, versionId /* string */, desc /* string */, culture /* string */, intents /* HierarchicalModel[] */, entities /* HierarchicalModel[] */, bing_entities /* string[] */, actions /* JSONAction[] */, closedLists /* JSONClosedList[] */, composites /* HierarchicalModel[] */, regex_features /* JSONRegexFeature[] */, modelFeatures /* JSONModelFeature[] */, utterances /* JSONUtterance[] */, prebuiltEntities, luis_schema_version, patterns, patternAnyEntities,model_features} = source;
+    const {name /* string */, versionId /* string */, desc /* string */, culture /* string */, intents /* HierarchicalModel[] */, entities /* HierarchicalModel[] */, bing_entities /* string[] */, actions /* JSONAction[] */, closedLists /* JSONClosedList[] */, composites /* HierarchicalModel[] */, regex_features /* JSONRegexFeature[] */, model_features /* JSONModelFeature[] */, utterances /* JSONUtterance[] */} = source;
     return new JSONApp({
         name /* string */,
         versionId /* string */,
@@ -117,13 +113,9 @@ JSONApp.fromJSON = function (source) {
         closedLists /* JSONClosedList[] */,
         composites /* HierarchicalModel[] */,
         regex_features /* JSONRegexFeature[] */,
-        utterances /* JSONUtterance[] */,
-        patterns /* patterns[] */,
-        patternAnyEntities /* patternAnyEntities[] */,
-        prebuiltEntities /* prebuitl entities[] */,
-        luis_schema_version /* string */,
-        model_features /* model_features[] */
-    });
+        model_features /* JSONModelFeature[] */,
+        utterances /* JSONUtterance[] */
+     });
 };
 
 module.exports = JSONApp;
