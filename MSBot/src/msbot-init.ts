@@ -8,7 +8,7 @@ import * as readline from 'readline-sync';
 import { IConnectedService, ILuisService, IDispatchService, IAzureBotService, IBotConfig, IEndpointService, IQnAService } from './schema';
 
 program.Command.prototype.unknownOption = function (flag: any) {
-    console.error(chalk.default.redBright(`Unknown arguments: ${process.argv.slice(2).join(' ')}`));
+    console.error(chalk.default.redBright(`Unknown arguments: ${flag}`));
     program.help();
 };
 
@@ -39,8 +39,10 @@ if (!args.quiet) {
         args.name = readline.question(`What name would you like for your bot? `);
     }
 
-    while (!args.secret || args.secret.length == 0) {
-        args.secret = readline.question(`What secret would you like to use to secure your keys? `);
+    if (!args.secret || args.secret.length == 0) {
+        let answer = readline.question(`Would you to secure your bot keys with a secret? [No]`);
+        if (answer == 'y' || answer == 'yes')
+            args.secret = readline.question(`What secret would you like to use?`);
     }
 
     if (!args.description || args.description.length == 0) {
@@ -56,14 +58,11 @@ if (!args.quiet) {
 
 if (!args.name) {
     console.error('missing --name argument');
-} else if (!args.secret) {
-    console.error('missing --secret argument');
 }
 else {
     let bot = new BotConfig(args.secret);
     bot.name = args.name;
     bot.description = args.description;
-    bot.validateSecretKey();
     
     bot.connectService(<IEndpointService>{
         type: ServiceType.Endpoint,
@@ -74,6 +73,9 @@ else {
         appId: '',
         appPassword: ''
     });
+
+    if (args.secret && args.secret.length > 0)
+        bot.validateSecretKey();
 
     let filename = bot.name + '.bot';
     bot.Save(filename);

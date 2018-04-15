@@ -19,11 +19,12 @@ export declare class BotConfig implements IBotConfig {
     static LoadBotFromFolder(folder?: string, secret?: string): Promise<BotConfig>;
     static Load(botpath: string, secret?: string): Promise<BotConfig>;
     Save(botpath?: string): Promise<void>;
+    clearSecret(): void;
     connectService(newService: IConnectedService): void;
     encryptAll(): void;
     decryptAll(): void;
-    encryptService(service: IConnectedService): IConnectedService;
-    decryptService(service: IConnectedService): IConnectedService;
+    private encryptService(service);
+    private decryptService(service);
     disconnectServiceByNameOrId(nameOrId: string): void;
     disconnectService(type: string, id: string): void;
     encryptValue(value: string): string;

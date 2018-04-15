@@ -7,7 +7,7 @@ const getStdin = require("get-stdin");
 const BotConfig_1 = require("./BotConfig");
 const utils_1 = require("./utils");
 program.Command.prototype.unknownOption = function (flag) {
-    console.error(chalk.default.redBright(`Unknown arguments: ${process.argv.slice(2).join(' ')}`));
+    console.error(chalk.default.redBright(`Unknown arguments: ${flag}`));
     program.help();
 };
 program
@@ -18,7 +18,7 @@ program
     .option('-n, --name <name>', 'name for the LUIS app')
     .option('-a, --appId <appid>', 'AppId for the LUIS App')
     .option('-v, --version <version>', 'version for the LUIS App, (example: v0.1)')
-    .option('--authoringKey <authoringkey>', 'authoring key for using manipulating LUIS apps via the authoring API')
+    .option('--authoringKey <authoringkey>', 'authoring key for using manipulating LUIS apps via the authoring API (See http://aka.ms/luiskeys for help)')
     .option('--stdin', "(OPTIONAL) arguments are passed in as JSON object via stdin")
     .option('--subscriptionKey <subscriptionKey>', '(OPTIONAL) subscription key used for querying a LUIS model')
     .option('--input <jsonfile>', "(OPTIONAL) arguments passed in as path to arguments in JSON format")
@@ -65,7 +65,7 @@ async function processConnectLuisArgs(config) {
     //if (!args.subscriptionKey || !uuidValidate(args.subscriptionKey))
     //    throw new Error("bad or missing --subscriptionKey");
     // add the service
-    config.connectService(config.encryptService({
+    config.connectService({
         type: BotConfig_1.ServiceType.Luis,
         name: args.name,
         id: args.appId,
@@ -73,7 +73,7 @@ async function processConnectLuisArgs(config) {
         version: args.version,
         subscriptionKey: args.subscriptionKey,
         authoringKey: args.authoringKey
-    }));
+    });
     await config.Save();
     return config;
 }
