@@ -9,6 +9,24 @@ import { Middleware, TurnContext } from 'botbuilder';
 import { LuisResult, Intent, Entity, CompositeEntity } from 'botframework-luis/lib/models';
 import LuisClient = require('botframework-luis');
 
+const LUIS_TRACE_TYPE = 'https://www.luis.ai/schemas/trace';
+const LUIS_TRACE_NAME = 'LuisRecognizerMiddleware';
+const LUIS_TRACE_LABEL = 'Luis Trace';
+
+interface LuisOptions {
+    Staging?: boolean
+}
+
+interface LuisModel {
+    ModelID: string,
+}
+
+interface LuisTraceInfo {
+    recognizerResult: LuisRecognizerResult;
+    luisResult: LuisResult;
+    luisOptions: LuisOptions;
+    luisModel: LuisModel;
+}
 
 export interface LuisRecognizerSettings {
     /** Your models AppId */
@@ -30,6 +48,7 @@ export interface LuisRecognizerSettings {
         forceSet? : string; 
         allowSampling?: string; 
         customHeaders?: { [headerName: string]: string; };
+        staging?: boolean;
     };
 }
 
@@ -73,7 +92,7 @@ export class LuisRecognizer implements Middleware {
      * @param context Context for the current turn of conversation with the use.
      */
     public get(context: TurnContext): LuisRecognizerResult|undefined {
-        return context.services.get(this.cacheKey);
+        return context.services.get(this.cacheKey).recognizerResult;
     }
 
     /**
@@ -89,21 +108,25 @@ export class LuisRecognizer implements Middleware {
         if (force || !cached) {
             const utterance = context.activity.text || '';
             return this.luisClient.getIntentsAndEntitiesV2(this.settings.appId, this.settings.subscriptionKey, utterance, this.settings.options)
-                .then((result : LuisResult) => {
+                .then((luisResult : LuisResult) => {
                     // Map results
                     const recognizerResult: LuisRecognizerResult = {
-                        text: result.query,
-                        intents: this.getIntents(result),
-                        entities: this.getEntitiesAndMetadata(result.entities, result.compositeEntities, this.settings.verbose)
+                        text: luisResult.query,
+                        intents: this.getIntents(luisResult),
+                        entities: this.getEntitiesAndMetadata(luisResult.entities, luisResult.compositeEntities, this.settings.verbose)
                     };
-                    
                     // Write to cache
-                    context.services.set(this.cacheKey, recognizerResult);
-                    return recognizerResult;
+                    context.services.set(this.cacheKey, {recognizerResult, luisResult});
+                    
+                    return this.emitTraceInfo(context, luisResult, recognizerResult).then(() => {
+                        return recognizerResult;
+                    });
                 });
     
         }
-        return Promise.resolve(cached);
+        return this.emitTraceInfo(context, cached.recognizerResult, cached.luisResult).then(() => {
+            return cached.recognizerResult;
+        });
     }
 
     /**
@@ -134,6 +157,26 @@ export class LuisRecognizer implements Middleware {
             }
         }
         return topIntent || defaultIntent;
+    }
+
+    private emitTraceInfo(context: TurnContext, luisResult: LuisResult, recognizerResult: LuisRecognizerResult): Promise<any> {
+        const traceInfo: LuisTraceInfo = {
+            recognizerResult: recognizerResult,
+            luisResult: luisResult,
+            luisOptions: {
+                Staging: this.settings.options && this.settings.options.staging
+            },
+            luisModel: {
+                ModelID: this.settings.appId
+            }
+        }
+        return context.sendActivity({
+            type: 'trace',
+            valueType: LUIS_TRACE_TYPE,
+            name: LUIS_TRACE_NAME,
+            label: LUIS_TRACE_LABEL,
+            value: traceInfo
+        });
     }
 
     private getIntents(luisResult: LuisResult) : any {

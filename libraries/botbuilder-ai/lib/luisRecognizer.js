@@ -1,6 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const LuisClient = require("botframework-luis");
+const LUIS_TRACE_TYPE = 'https://www.luis.ai/schemas/trace';
+const LUIS_TRACE_NAME = 'LuisRecognizerMiddleware';
+const LUIS_TRACE_LABEL = 'Luis Trace';
 class LuisRecognizer {
     /**
      * Creates a new LuisRecognizer instance.
@@ -24,7 +27,7 @@ class LuisRecognizer {
      * @param context Context for the current turn of conversation with the use.
      */
     get(context) {
-        return context.services.get(this.cacheKey);
+        return context.services.get(this.cacheKey).recognizerResult;
     }
     /**
      * Calls LUIS to recognize intents and entities in a users utterance. The results of the call
@@ -39,19 +42,23 @@ class LuisRecognizer {
         if (force || !cached) {
             const utterance = context.activity.text || '';
             return this.luisClient.getIntentsAndEntitiesV2(this.settings.appId, this.settings.subscriptionKey, utterance, this.settings.options)
-                .then((result) => {
+                .then((luisResult) => {
                 // Map results
                 const recognizerResult = {
-                    text: result.query,
-                    intents: this.getIntents(result),
-                    entities: this.getEntitiesAndMetadata(result.entities, result.compositeEntities, this.settings.verbose)
+                    text: luisResult.query,
+                    intents: this.getIntents(luisResult),
+                    entities: this.getEntitiesAndMetadata(luisResult.entities, luisResult.compositeEntities, this.settings.verbose)
                 };
                 // Write to cache
-                context.services.set(this.cacheKey, recognizerResult);
-                return recognizerResult;
+                context.services.set(this.cacheKey, { recognizerResult, luisResult });
+                return this.emitTraceInfo(context, luisResult, recognizerResult).then(() => {
+                    return recognizerResult;
+                });
             });
         }
-        return Promise.resolve(cached);
+        return this.emitTraceInfo(context, cached.recognizerResult, cached.luisResult).then(() => {
+            return cached.recognizerResult;
+        });
     }
     /**
      * Called internally to create a LuisClient instance. This is exposed to enable better unit
@@ -80,6 +87,25 @@ class LuisRecognizer {
             }
         }
         return topIntent || defaultIntent;
+    }
+    emitTraceInfo(context, luisResult, recognizerResult) {
+        const traceInfo = {
+            recognizerResult: recognizerResult,
+            luisResult: luisResult,
+            luisOptions: {
+                Staging: this.settings.options && this.settings.options.staging
+            },
+            luisModel: {
+                ModelID: this.settings.appId
+            }
+        };
+        return context.sendActivity({
+            type: 'trace',
+            valueType: LUIS_TRACE_TYPE,
+            name: LUIS_TRACE_NAME,
+            label: LUIS_TRACE_LABEL,
+            value: traceInfo
+        });
     }
     getIntents(luisResult) {
         const intents = {};
