@@ -1,0 +1,28 @@
+{
+  "luis_schema_version": "2.1.0",
+  "versionId": "0.2",
+  "name": "LUIS travel app",
+  "desc": "",
+  "culture": "en-us",
+  "intents": [
+    ...
+  ],
+  "entities": [
+    ...
+  ],
+  "composites": [
+    ...
+  ],
+  "closedLists": [
+    ...
+  ],
+  "bing_entities": [
+    "datetimeV2",
+    "number"
+  ],
+  "model_features": [],
+  "regex_features": [],
+  "utterances": [
+    ...
+  ]
+}

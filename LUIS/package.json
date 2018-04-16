@@ -1,6 +1,6 @@
 {
   "name": "luis-apis",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Tooling for connectivity with LUIS APIs",
   "main": "lib/api/index.js",
   "bin": {
@@ -9,6 +9,7 @@
   "directories": {
     "doc": "docs",
     "lib": "lib",
+    "examples": "examples",
     "test": "test"
   },
   "scripts": {

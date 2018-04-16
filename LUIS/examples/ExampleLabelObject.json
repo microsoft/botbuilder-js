@@ -1,0 +1,16 @@
+{
+  "text": "Book me a flight from Cairo to Redmond next Thursday",
+  "intentName": "BookFlight",
+  "entityLabels": [
+    {
+      "entityName": "Location::From",
+      "startCharIndex": 22,
+      "endCharIndex": 26
+    },
+    {
+      "entityName": "Location::To",
+      "startCharIndex": 31,
+      "endCharIndex": 37
+    }
+  ]
+}
