@@ -1,51 +1,56 @@
 const manifest = require('../api/luis');
-const {OperationCommandMap} = require('../enums/operationCommandMap');
+const { OperationCommandMap } = require('../enums/operationCommandMap');
 
 function getServiceManifest(args, includeAllOperations) {
-    let {apiGroup, methodAlias, target, subTarget} = getNamedArgsMap(args);
-    methodAlias = OperationCommandMap[methodAlias];
-    const {'--': params} = args;
-    const category = getCategoryManifest(args);
-    const manifestEntry = (category || {})[(target || apiGroup)];
+    if (args._.length < 2)
+        return null; //bail show help
+    let verb = args._[0];
+    let target = args._[1];
+    let arguments = (args._.length > 2) ? args._.slice(2) : [];
 
-    // Bail - shows help contents
-    if (!manifestEntry) {
-        return null;
-    }
+    let payload = getOperation(verb, target);
 
-    const {operations, entityType, className: identifier, category: identifierPath} = manifestEntry;
-    // Find all operations keys that contain matches.
-    const operationCandidates = operations.slice()
-        .filter(operation => operation.methodAlias === methodAlias && operation.subTarget === subTarget);
+    // if (includeAllOperations) {
+    //     payload.operations = operations;
+    // }
 
-    let operation;
-    if (operationCandidates.length > 1) {
-        // Most of the time, the operationCandidates array will
-        // contain just a single element. If it doesn't,
-        // we need a heuristic to identify the correct operation
-        // That matches the operation by the number of params that
-        // are passed in.
-        operation = operationCandidates.find(detail => (detail.params || []).length === params.length);
-    } else {
-        operation = operationCandidates[0];
-    }
-
-    const payload = {
-        key: (target || apiGroup),
-        entityType,
-        identifier,
-        identifierPath,
-        operation,
-    };
-
-    if (includeAllOperations) {
-        payload.operations = operations;
-    }
-
-    if (!operation) {
-        payload.closestMatches = operationCandidates || operations; // used to produce error details.
-    }
+    // if (!operation) {
+    //     payload.closestMatches = operationCandidates || operations; // used to produce error details.
+    // }
     return payload;
+}
+
+
+function getOperation(verb, target ) {
+    let operation;
+    let apiGroups = ['apps', 'examples', 'features', 'models', 'permissions', 'train', 'user', 'versions']
+    for (let iGroup in apiGroups) {
+        let apiGroupName = apiGroups[iGroup];
+        const apiGroup = getCategoryManifest(apiGroupName);
+
+        for (let iCategory in apiGroup) {
+            let category = apiGroup[iCategory];
+
+            for (let iOperation in category.operations) {
+                let operation = category.operations[iOperation];
+                
+                if ((operation.methodAlias == verb) && 
+                    (operation.target.indexOf(target.toLowerCase()) >=0 ))
+                    {
+                        const {operations, entityType, className: identifier, category: identifierPath} = category;
+                        const payload = {
+                            key: (category || apiGroup),
+                            entityType,
+                            identifier,
+                            identifierPath,
+                            operation,
+                        };
+                        return payload;
+                    }
+            }
+        }
+    }
+    return null;
 }
 
 function getNamedArgsMap(args) {
@@ -62,12 +67,11 @@ function getNamedArgsMap(args) {
         const methodAlias = thisArgs.splice(methodAliasIndex, 1)[0];
         thisArgs.splice(1, 0, methodAlias);
     }
-    let [apiGroup, methodAlias, target, subTarget] = thisArgs;
-    return {apiGroup, methodAlias, target, subTarget};
+    let [verb, target] = thisArgs;
+    return { verb, target };
 }
 
-function getCategoryManifest(args) {
-    const {apiGroup} = getNamedArgsMap(args);
+function getCategoryManifest(apiGroup) {
     return manifest[apiGroup];
 }
 

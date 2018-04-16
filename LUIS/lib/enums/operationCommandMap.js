@@ -1,23 +1,30 @@
 const OperationCommandMap = {
-    g: 'get',
+    add: 'add',
+
     get: 'get',
 
-    l: 'list',
     list: 'list',
 
-    c: 'create',
     create: 'create',
-    post: 'create',
 
-    p: 'patch',
+    clone: 'clone',
+
+    'delete': 'delete',
+
+    import: 'import',
+
+    export: 'export',
+
+    train: 'train',
+    
     patch: 'patch',
 
-    u: 'update',
     update: 'update',
-    put: 'update',
 
-    d: 'delete',
-    'delete': 'delete'
+    suggest: 'suggest',
+
+    rename: 'rename'
+    
 };
 Object.freeze(OperationCommandMap);
-module.exports = {OperationCommandMap};
+module.exports = { OperationCommandMap };

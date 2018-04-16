@@ -8,11 +8,7 @@
         {
           "method": "get",
           "methodAlias": "list",
-          "target": [
-            "applications",
-            "apps"
-          ],
-          "command": "luis list applications  --skip <integer> --take <integer>",
+          "command": "luis apps list --skip <integer> --take <integer>",
           "pathFragment": "/",
           "params": [
             {
@@ -41,12 +37,8 @@
         },
         {
           "method": "post",
-          "methodAlias": "add",
-          "target": [
-            "application",
-            "app"
-          ],
-          "command": "luis add application --in applicationCreateObject.json",
+          "methodAlias": "create",
+          "command": "luis apps create --in applicationCreateObject.json",
           "pathFragment": "/",
           "description": "Creates a new LUIS app.",
           "name": "addApplication",
@@ -56,11 +48,7 @@
         {
           "method": "delete",
           "methodAlias": "delete",
-          "target": [
-            "application",
-            "app"
-          ],
-          "command": "luis delete application --appId <string>",
+          "command": "luis apps delete --appId <string>",
           "pathFragment": "/{appId}",
           "params": [
             {
@@ -77,11 +65,7 @@
         {
           "method": "put",
           "methodAlias": "update",
-          "target": [
-            "application",
-            "app"
-          ],
-          "command": "luis update application --in applicationUpdateObject.json --appId <string>",
+          "command": "luis apps update --in applicationUpdateObject.json --appId <string>",
           "pathFragment": "/{appId}",
           "params": [
             {
@@ -100,11 +84,7 @@
         {
           "method": "get",
           "methodAlias": "get",
-          "target": [
-            "application",
-            "app"
-          ],
-          "command": "luis get application --appId <string>",
+          "command": "luis apps get --appId <string>",
           "pathFragment": "/{appId}",
           "params": [
             {
@@ -127,11 +107,8 @@
       "operations": [
         {
           "method": "get",
-          "methodAlias": "list",
-          "target": [
-            "assistants"
-          ],
-          "command": "luis list assistants",
+          "methodAlias": "get",
+          "command": "luis apps get assistants",
           "pathFragment": "",
           "description": "Gets the endpoint URLs for the prebuilt Cortana applications.",
           "name": "getPersonalAssistantApplications"
@@ -145,11 +122,8 @@
       "operations": [
         {
           "method": "get",
-          "methodAlias": "list",
-          "target": [
-            "cultures"
-          ],
-          "command": "luis list cultures",
+          "methodAlias": "get",
+          "command": "luis apps get cultures",
           "pathFragment": "",
           "description": "Gets the supported LUIS application cultures.",
           "name": "getLUISApplicationCulturesList"
@@ -163,26 +137,18 @@
       "operations": [
         {
           "method": "post",
-          "methodAlias": "add",
-          "target": [
-            "customPrebuiltDomain",
-            "customprebuiltdomain"
-          ],
-          "command": "luis add customprebuiltdomain --in prebuiltDomainCreateObject.json",
+          "methodAlias": "create",
+          "command": "luis apps create customprebuiltdomains --in prebuiltDomainCreateObject.json",
           "pathFragment": "",
-          "description": "Adds a prebuilt domain along with its models as a new application. Returns new application ID. ",
+          "description": "Adds a prebuilt domain along with its models as a new application. Returns new app ID. ",
           "name": "addPrebuiltApplication",
           "entityName": "prebuiltDomainCreateObject",
           "entityType": "PrebuiltDomainCreateObject"
         },
         {
           "method": "get",
-          "methodAlias": "list",
-          "target": [
-            "customPrebuiltDomains",
-            "customprebuiltdomains"
-          ],
-          "command": "luis list customprebuiltdomains",
+          "methodAlias": "get",
+          "command": "luis apps get customprebuiltdomains",
           "pathFragment": "",
           "description": "Gets all the available custom prebuilt domains for all cultures",
           "name": "getLUISPrebuiltDomainsList"
@@ -190,11 +156,7 @@
         {
           "method": "get",
           "methodAlias": "get",
-          "target": [
-            "customPrebuiltDomain",
-            "customprebuiltdomain"
-          ],
-          "command": "luis get customprebuiltdomain --culture <string>",
+          "command": "luis apps get customprebuiltdomains --culture <string>",
           "pathFragment": "/{culture}",
           "params": [
             {
@@ -217,11 +179,8 @@
       "operations": [
         {
           "method": "get",
-          "methodAlias": "list",
-          "target": [
-            "domains"
-          ],
-          "command": "luis list domains",
+          "methodAlias": "get",
+          "command": "luis apps get domains",
           "pathFragment": "",
           "description": "Gets the available application domains.",
           "name": "getLUISApplicationDomainsList"
@@ -235,12 +194,8 @@
       "operations": [
         {
           "method": "post",
-          "methodAlias": "import",
-          "target": [
-            "application",
-            "app"
-          ],
-          "command": "luis import application --in jSONApp.json --appName <string>",
+          "methodAlias": "create",
+          "command": "luis apps create import --in jSONApp.json --appName <string>",
           "pathFragment": "",
           "params": [
             {
@@ -250,7 +205,7 @@
               "type": "string"
             }
           ],
-          "description": "Imports an application to LUIS, the application's JSON should be included in the request body. Returns new application ID.",
+          "description": "Imports an application to LUIS, the application's JSON should be included in the request body. Returns new app ID.",
           "name": "importApplication",
           "entityName": "jSONApp",
           "entityType": "JSONApp"
@@ -264,12 +219,8 @@
       "operations": [
         {
           "method": "get",
-          "methodAlias": "list",
-          "target": [
-            "usageScenarios",
-            "usagescenarios"
-          ],
-          "command": "luis list usagescenarios",
+          "methodAlias": "get",
+          "command": "luis apps get usagescenarios",
           "pathFragment": "",
           "description": "Gets the application available usage scenarios.",
           "name": "getLUISApplicationUsageScenariosList"
@@ -283,12 +234,8 @@
       "operations": [
         {
           "method": "get",
-          "methodAlias": "list",
-          "target": [
-            "endpoints",
-            "endpoint"
-          ],
-          "command": "luis list endpoints --appId <string>",
+          "methodAlias": "get",
+          "command": "luis apps get endpoints --appId <string>",
           "pathFragment": "",
           "params": [
             {
@@ -311,11 +258,8 @@
       "operations": [
         {
           "method": "post",
-          "methodAlias": "publish",
-          "target": [
-            "version"
-          ],
-          "command": "luis publish version --in applicationPublishObject.json --appId <string>",
+          "methodAlias": "create",
+          "command": "luis apps create publish --in applicationPublishObject.json --appId <string>",
           "pathFragment": "",
           "params": [
             {
@@ -340,12 +284,8 @@
       "operations": [
         {
           "method": "get",
-          "methodAlias": "list",
-          "target": [
-            "querylogs",
-            "querylog"
-          ],
-          "command": "luis list querylogs --appId <string>",
+          "methodAlias": "get",
+          "command": "luis apps get querylogs --appId <string>",
           "pathFragment": "",
           "params": [
             {
@@ -369,10 +309,7 @@
         {
           "method": "put",
           "methodAlias": "update",
-          "target": [
-            "settings"
-          ],
-          "command": "luis update settings --in applicationSettingUpdateObject.json --appId <string>",
+          "command": "luis apps update settings --in applicationSettingUpdateObject.json --appId <string>",
           "pathFragment": "",
           "params": [
             {
@@ -391,10 +328,7 @@
         {
           "method": "get",
           "methodAlias": "get",
-          "target": [
-            "settings"
-          ],
-          "command": "luis get settings --appId <string>",
+          "command": "luis apps get settings --appId <string>",
           "pathFragment": "",
           "params": [
             {
@@ -420,10 +354,7 @@
         {
           "method": "put",
           "methodAlias": "update",
-          "target": [
-            "permissions"
-          ],
-          "command": "luis update permissions  --in body.json",
+          "command": "luis permissions update --in body.json",
           "pathFragment": "",
           "params": [
             {
@@ -442,10 +373,7 @@
         {
           "method": "delete",
           "methodAlias": "delete",
-          "target": [
-            "permissions"
-          ],
-          "command": "luis delete permissions --in body.json",
+          "command": "luis permissions delete --in body.json",
           "pathFragment": "",
           "params": [
             {
@@ -463,11 +391,8 @@
         },
         {
           "method": "post",
-          "methodAlias": "add",
-          "target": [
-            "permissions"
-          ],
-          "command": "luis add permissions --in body.json",
+          "methodAlias": "create",
+          "command": "luis permissions create --in body.json",
           "pathFragment": "",
           "params": [
             {
@@ -485,11 +410,8 @@
         },
         {
           "method": "get",
-          "methodAlias": "list",
-          "target": [
-            "permissions"
-          ],
-          "command": "luis list permissions",
+          "methodAlias": "get",
+          "command": "luis permissions get",
           "pathFragment": "",
           "params": [
             {
@@ -515,10 +437,7 @@
         {
           "method": "get",
           "methodAlias": "list",
-          "target": [
-            "versions"
-          ],
-          "command": "luis list versions --appId <string> --skip <integer> --take <integer>",
+          "command": "luis versions list --appId <string> --skip <integer> --take <integer>",
           "pathFragment": "",
           "params": [
             {
@@ -554,11 +473,8 @@
         },
         {
           "method": "post",
-          "methodAlias": "import",
-          "target": [
-            "version"
-          ],
-          "command": "luis import version  --in jSONApp.json --appId <string> --versionId <string>",
+          "methodAlias": "create",
+          "command": "luis versions create import  --in jSONApp.json --appId <string> --versionId <string>",
           "pathFragment": "/import",
           "params": [
             {
@@ -584,10 +500,7 @@
         {
           "method": "delete",
           "methodAlias": "delete",
-          "target": [
-            "version"
-          ],
-          "command": "luis delete versions --appId <string> --versionId <string>",
+          "command": "luis versions delete --appId <string> --versionId <string>",
           "pathFragment": "/{versionId}/",
           "params": [
             {
@@ -611,10 +524,7 @@
         {
           "method": "put",
           "methodAlias": "update",
-          "target": [
-            "version"
-          ],
-          "command": "luis update version --in taskUpdateObject.json --appId <string> --versionId <string>",
+          "command": "luis versions update --in taskUpdateObject.json --appId <string> --versionId <string>",
           "pathFragment": "/{versionId}/",
           "params": [
             {
@@ -640,10 +550,7 @@
         {
           "method": "get",
           "methodAlias": "get",
-          "target": [
-            "version"
-          ],
-          "command": "luis get version --appId <string> --versionId <string>",
+          "command": "luis versions get --appId <string> --versionId <string>",
           "pathFragment": "/{versionId}/",
           "params": [
             {
@@ -673,11 +580,8 @@
       "operations": [
         {
           "method": "post",
-          "methodAlias": "clone",
-          "target": [
-            "version"
-          ],
-          "command": "luis clone version --in taskUpdateObject.json --appId <string> --versionId <string>",
+          "methodAlias": "create",
+          "command": "luis versions create clone --in taskUpdateObject.json --appId <string> --versionId <string>",
           "pathFragment": "",
           "params": [
             {
@@ -709,11 +613,8 @@
       "operations": [
         {
           "method": "get",
-          "methodAlias": "export",
-          "target": [
-            "version"
-          ],
-          "command": "luis export version --appId <string> --versionId <string>",
+          "methodAlias": "get",
+          "command": "luis versions get export --appId <string> --versionId <string>",
           "pathFragment": "",
           "params": [
             {
@@ -743,12 +644,8 @@
       "operations": [
         {
           "method": "get",
-          "methodAlias": "list",
-          "target": [
-            "externalKeys",
-            "externalkeys"
-          ],
-          "command": "luis list externalKeys --appId <string> --versionId <string>",
+          "methodAlias": "get",
+          "command": "luis versions get externalKeys --appId <string> --versionId <string>",
           "pathFragment": "",
           "params": [
             {
@@ -772,11 +669,7 @@
         {
           "method": "put",
           "methodAlias": "update",
-          "target": [
-            "externalKey",
-            "externalkey"
-          ],
-          "command": "luis update externalKeys --in externalKeyUpdateObject.json --appId <string> --versionId <string>",
+          "command": "luis versions update externalKeys --in externalKeyUpdateObject.json --appId <string> --versionId <string>",
           "pathFragment": "",
           "params": [
             {
@@ -809,11 +702,7 @@
         {
           "method": "delete",
           "methodAlias": "delete",
-          "target": [
-            "unlabeledUtterance",
-            "unlabeledutterance"
-          ],
-          "command": "luis delete unlabeledutterance --in body.json --appId <string> --versionId <string>",
+          "command": "luis versions delete suggest --in body.json --appId <string> --versionId <string>",
           "pathFragment": "",
           "params": [
             {
@@ -848,11 +737,7 @@
         {
           "method": "get",
           "methodAlias": "list",
-          "target": [
-            "closedLists",
-            "closedlists"
-          ],
-          "command": "luis list closedlists --skip <integer> --take <integer>",
+          "command": "luis models list closedlists --skip <integer> --take <integer>",
           "pathFragment": "",
           "params": [
             {
@@ -895,12 +780,8 @@
         },
         {
           "method": "post",
-          "methodAlias": "add",
-          "target": [
-            "closedListEntity",
-            "closedlistentity"
-          ],
-          "command": "luis add closedlistentity --in closedListModelCreateObject.json",
+          "methodAlias": "create",
+          "command": "luis models create closedlists --in closedListModelCreateObject.json",
           "pathFragment": "",
           "params": [
             {
@@ -926,11 +807,7 @@
         {
           "method": "delete",
           "methodAlias": "delete",
-          "target": [
-            "closedListEntity",
-            "closedlistentity"
-          ],
-          "command": "luis delete closedlistentity --clEntityId <string>",
+          "command": "luis models delete closedlists --clEntityId <string>",
           "pathFragment": "/{clEntityId}",
           "params": [
             {
@@ -960,12 +837,8 @@
         },
         {
           "method": "patch",
-          "methodAlias": "update",
-          "target": [
-            "closedListEntity",
-            "closedlistentity"
-          ],
-          "command": "luis update closedlistentity --in closedListModelPatchObject.json --clEntityId <string>",
+          "methodAlias": "patch",
+          "command": "luis models patch closedlists --in closedListModelPatchObject.json --clEntityId <string>",
           "pathFragment": "/{clEntityId}",
           "params": [
             {
@@ -998,11 +871,7 @@
         {
           "method": "put",
           "methodAlias": "update",
-          "target": [
-            "closedListEntity",
-            "closedlistentity"
-          ],
-          "command": "luis update closedlistentity --in closedListModelUpdateObject.json --clEntityId <string>",
+          "command": "luis models update closedlists --in closedListModelUpdateObject.json --clEntityId <string>",
           "pathFragment": "/{clEntityId}",
           "params": [
             {
@@ -1035,11 +904,7 @@
         {
           "method": "get",
           "methodAlias": "get",
-          "target": [
-            "closedListEntity",
-            "closedlistentity"
-          ],
-          "command": "luis get closedlistentity --clEntityId <string>",
+          "command": "luis models get closedlists --clEntityId <string>",
           "pathFragment": "/{clEntityId}",
           "params": [
             {
@@ -1069,12 +934,8 @@
         },
         {
           "method": "post",
-          "methodAlias": "add",
-          "target": [
-            "closedListsSublist",
-            "closedlistssublist"
-          ],
-          "command": "luis add closedListsSublist --in wordListCreateObject.json --clEntityId <string>",
+          "methodAlias": "create",
+          "command": "luis models create closedlists sublists  --in wordListCreateObject.json --clEntityId <string>",
           "pathFragment": "/{clEntityId}/sublists",
           "params": [
             {
@@ -1108,11 +969,7 @@
         {
           "method": "put",
           "methodAlias": "update",
-          "target": [
-            "closedListsSublist",
-            "closedlistssublist"
-          ],
-          "command": "luis update closedListsSublist --in wordListBaseUpdateObject.json --clEntityId <string> --subListId <string>",
+          "command": "luis models update closedlists sublists  --in wordListBaseUpdateObject.json --clEntityId <string> --subListId <string>",
           "pathFragment": "/{clEntityId}/sublists/{subListId}",
           "params": [
             {
@@ -1153,11 +1010,7 @@
         {
           "method": "delete",
           "methodAlias": "delete",
-          "target": [
-            "sublistEntity",
-            "sublistentity"
-          ],
-          "command": "luis delete sublistEntity  --clEntityId <string> --subListId <integer>",
+          "command": "luis models delete closedlists sublists  --clEntityId <string> --subListId <integer>",
           "pathFragment": "/{clEntityId}/sublists/{subListId}",
           "params": [
             {
@@ -1203,11 +1056,7 @@
         {
           "method": "get",
           "methodAlias": "list",
-          "target": [
-            "compositeEntities",
-            "compositeentities"
-          ],
-          "command": "luis list compositeEntities --skip <integer> --take <integer>",
+          "command": "luis models list compositeentities --skip <integer> --take <integer>",
           "pathFragment": "",
           "params": [
             {
@@ -1250,12 +1099,8 @@
         },
         {
           "method": "post",
-          "methodAlias": "add",
-          "target": [
-            "compositeEntity",
-            "compositeentity"
-          ],
-          "command": "luis add compositeEntity --in hierarchicalModelCreateObject.json",
+          "methodAlias": "create",
+          "command": "luis models create compositeentities --in hierarchicalModelCreateObject.json",
           "pathFragment": "",
           "params": [
             {
@@ -1281,11 +1126,7 @@
         {
           "method": "delete",
           "methodAlias": "delete",
-          "target": [
-            "compositeEntity",
-            "compositeentity"
-          ],
-          "command": "luis delete compositeEntity --cEntityId <string>",
+          "command": "luis models delete compositeentities --cEntityId <string>",
           "pathFragment": "/{cEntityId}",
           "params": [
             {
@@ -1316,11 +1157,7 @@
         {
           "method": "put",
           "methodAlias": "update",
-          "target": [
-            "compositeEntity",
-            "compositeentity"
-          ],
-          "command": "luis update compositeEntity --in hierarchicalModelUpdateObject.json --cEntityId <string>",
+          "command": "luis models update compositeentities --in hierarchicalModelUpdateObject.json --cEntityId <string>",
           "pathFragment": "/{cEntityId}",
           "params": [
             {
@@ -1353,11 +1190,7 @@
         {
           "method": "get",
           "methodAlias": "get",
-          "target": [
-            "compositeEntity",
-            "compositeentity"
-          ],
-          "command": "luis get compositeEntity --cEntityId <string>",
+          "command": "luis models get compositeentities --cEntityId <string>",
           "pathFragment": "/{cEntityId}",
           "params": [
             {
@@ -1387,12 +1220,8 @@
         },
         {
           "method": "post",
-          "methodAlias": "add",
-          "target": [
-            "compositeChildEntity",
-            "compositechildentity"
-          ],
-          "command": "luis add compositeChildEntity children  --in body.json --cEntityId <string>",
+          "methodAlias": "create",
+          "command": "luis models create compositeentities children  --in body.json --cEntityId <string>",
           "pathFragment": "/{cEntityId}/children",
           "params": [
             {
@@ -1426,11 +1255,7 @@
         {
           "method": "delete",
           "methodAlias": "delete",
-          "target": [
-            "compositeChildEntity",
-            "compositechildentity"
-          ],
-          "command": "luis delete compositeChildEntity  --cEntityId <string> --cChildId <string>",
+          "command": "luis models delete compositeentities children  --cEntityId <string> --cChildId <string>",
           "pathFragment": "/{cEntityId}/children/{cChildId}",
           "params": [
             {
@@ -1475,12 +1300,8 @@
       "operations": [
         {
           "method": "post",
-          "methodAlias": "add",
-          "target": [
-            "customPrebuiltDomain",
-            "customprebuiltdomain"
-          ],
-          "command": "luis add customPrebuiltDomain --in prebuiltDomainCreateBaseObject.json",
+          "methodAlias": "create",
+          "command": "luis models create customprebuiltdomains --in prebuiltDomainCreateBaseObject.json",
           "pathFragment": "",
           "params": [
             {
@@ -1506,11 +1327,7 @@
         {
           "method": "delete",
           "methodAlias": "delete",
-          "target": [
-            "customPrebuiltDomain",
-            "customprebuiltdomain"
-          ],
-          "command": "luis delete customPrebuiltDomain --domainName <string>",
+          "command": "luis models delete customprebuiltdomains --domainName <string>",
           "pathFragment": "/{domainName}",
           "params": [
             {
@@ -1547,12 +1364,8 @@
       "operations": [
         {
           "method": "get",
-          "methodAlias": "list",
-          "target": [
-            "customPrebuiltDomainEntities",
-            "customprebuiltdomainentities"
-          ],
-          "command": "luis list customPrebuiltDomainEntities",
+          "methodAlias": "get",
+          "command": "luis models get customprebuiltentities",
           "pathFragment": "",
           "params": [
             {
@@ -1575,12 +1388,8 @@
         },
         {
           "method": "post",
-          "methodAlias": "add",
-          "target": [
-            "customPrebuiltDomainEntity",
-            "customprebuiltdomainentity"
-          ],
-          "command": "luis add customPrebuiltDomainEntity --in prebuiltDomainModelCreateObject.json",
+          "methodAlias": "create",
+          "command": "luis models create customprebuiltentities --in prebuiltDomainModelCreateObject.json",
           "pathFragment": "",
           "params": [
             {
@@ -1613,11 +1422,7 @@
         {
           "method": "get",
           "methodAlias": "get",
-          "target": [
-            "customPrebuiltIntents",
-            "customprebuiltintents"
-          ],
-          "command": "luis get customPrebuiltIntents",
+          "command": "luis models get customprebuiltintents",
           "pathFragment": "",
           "params": [
             {
@@ -1640,12 +1445,8 @@
         },
         {
           "method": "post",
-          "methodAlias": "add",
-          "target": [
-            "customPrebuiltIntent",
-            "customprebuiltintent"
-          ],
-          "command": "luis add customPrebuiltIntent --in prebuiltDomainModelCreateObject.json",
+          "methodAlias": "create",
+          "command": "luis models create customprebuiltintents --in prebuiltDomainModelCreateObject.json",
           "pathFragment": "",
           "params": [
             {
@@ -1677,12 +1478,8 @@
       "operations": [
         {
           "method": "get",
-          "methodAlias": "list",
-          "target": [
-            "customPrebuiltModels",
-            "customprebuiltmodels"
-          ],
-          "command": "luis list customPrebuiltModels",
+          "methodAlias": "get",
+          "command": "luis models get customprebuiltmodels",
           "pathFragment": "",
           "params": [
             {
@@ -1713,10 +1510,7 @@
         {
           "method": "get",
           "methodAlias": "list",
-          "target": [
-            "entities"
-          ],
-          "command": "luis list entities --skip <integer> --take <integer>",
+          "command": "luis models list entities --skip <integer> --take <integer>",
           "pathFragment": "",
           "params": [
             {
@@ -1759,11 +1553,8 @@
         },
         {
           "method": "post",
-          "methodAlias": "add",
-          "target": [
-            "entities"
-          ],
-          "command": "luis add entity --in modelCreateObject.json",
+          "methodAlias": "create",
+          "command": "luis models create entities --in modelCreateObject.json",
           "pathFragment": "",
           "params": [
             {
@@ -1789,10 +1580,7 @@
         {
           "method": "delete",
           "methodAlias": "delete",
-          "target": [
-            "entity"
-          ],
-          "command": "luis delete entity --entityId <string>",
+          "command": "luis models delete entities --entityId <string>",
           "pathFragment": "/{entityId}",
           "params": [
             {
@@ -1823,10 +1611,7 @@
         {
           "method": "put",
           "methodAlias": "update",
-          "target": [
-            "entity"
-          ],
-          "command": "luis update entity --in modelUpdateObject.json --entityId <string>",
+          "command": "luis models update entities --in modelUpdateObject.json --entityId <string>",
           "pathFragment": "/{entityId}",
           "params": [
             {
@@ -1859,10 +1644,7 @@
         {
           "method": "get",
           "methodAlias": "get",
-          "target": [
-            "entity"
-          ],
-          "command": "luis get entity --entityId <string>",
+          "command": "luis models get entities --entityId <string>",
           "pathFragment": "/{entityId}",
           "params": [
             {
@@ -1892,11 +1674,8 @@
         },
         {
           "method": "get",
-          "methodAlias": "suggest",
-          "target": [
-            "entities"
-          ],
-          "command": "luis suggest entities  --entityId <string> --take <integer>",
+          "methodAlias": "list",
+          "command": "luis models list entities suggest  --entityId <string> --take <integer>",
           "pathFragment": "/{entityId}/suggest",
           "params": [
             {
@@ -1945,11 +1724,7 @@
         {
           "method": "get",
           "methodAlias": "list",
-          "target": [
-            "hierarchicalEntities",
-            "hierarchicalentities"
-          ],
-          "command": "luis list hierarchicalEntities --skip <integer> --take <integer>",
+          "command": "luis models list hierarchicalentities --skip <integer> --take <integer>",
           "pathFragment": "",
           "params": [
             {
@@ -1992,12 +1767,8 @@
         },
         {
           "method": "post",
-          "methodAlias": "add",
-          "target": [
-            "hierarchicalEntity",
-            "hierarchicalentity"
-          ],
-          "command": "luis add hierarchicalEntity --in hierarchicalModelCreateObject.json",
+          "methodAlias": "create",
+          "command": "luis models create hierarchicalentities --in hierarchicalModelCreateObject.json",
           "pathFragment": "",
           "params": [
             {
@@ -2023,11 +1794,7 @@
         {
           "method": "delete",
           "methodAlias": "delete",
-          "target": [
-            "hierarchicalEntity",
-            "hierarchicalentity"
-          ],
-          "command": "luis delete hierarchicalEntity --hEntityId <string>",
+          "command": "luis models delete hierarchicalentities --hEntityId <string>",
           "pathFragment": "/{hEntityId}",
           "params": [
             {
@@ -2058,11 +1825,7 @@
         {
           "method": "put",
           "methodAlias": "update",
-          "target": [
-            "hierarchicalEntity",
-            "hierarchicalentity"
-          ],
-          "command": "luis update hierarchicalEntity --in hierarchicalModelUpdateObject.json --hEntityId <string>",
+          "command": "luis models update hierarchicalentities --in hierarchicalModelUpdateObject.json --hEntityId <string>",
           "pathFragment": "/{hEntityId}",
           "params": [
             {
@@ -2095,11 +1858,7 @@
         {
           "method": "get",
           "methodAlias": "get",
-          "target": [
-            "hierarchicalEntity",
-            "hierarchicalentity"
-          ],
-          "command": "luis get hierarchicalEntity --hEntityId <string>",
+          "command": "luis models get hierarchicalentities --hEntityId <string>",
           "pathFragment": "/{hEntityId}",
           "params": [
             {
@@ -2129,12 +1888,8 @@
         },
         {
           "method": "post",
-          "methodAlias": "add",
-          "target": [
-            "hierarchicalChildEntity",
-            "hierarchicalchildentity"
-          ],
-          "command": "luis add hierarchicalChildEntity  --in body.json --hEntityId <string>",
+          "methodAlias": "create",
+          "command": "luis models create hierarchicalentities children  --in body.json --hEntityId <string>",
           "pathFragment": "/{hEntityId}/children",
           "params": [
             {
@@ -2168,11 +1923,7 @@
         {
           "method": "delete",
           "methodAlias": "delete",
-          "target": [
-            "hierarchicalChildEntity",
-            "hierarchicalchildentity"
-          ],
-          "command": "luis delete hierarchicalChildEntity  --hEntityId <string> --hChildId <string>",
+          "command": "luis models delete hierarchicalentities children  --hEntityId <string> --hChildId <string>",
           "pathFragment": "/{hEntityId}/children/{hChildId}",
           "params": [
             {
@@ -2211,11 +1962,7 @@
         {
           "method": "put",
           "methodAlias": "update",
-          "target": [
-            "hierarchicalChildEntity",
-            "hierarchicalchildentity"
-          ],
-          "command": "luis update hierarchicalChildEntity --in body.json --hEntityId <string> --hChildId <string>",
+          "command": "luis models update hierarchicalentities children  --in body.json --hEntityId <string> --hChildId <string>",
           "pathFragment": "/{hEntityId}/children/{hChildId}",
           "params": [
             {
@@ -2256,11 +2003,7 @@
         {
           "method": "get",
           "methodAlias": "get",
-          "target": [
-            "hierarchicalChildEntity",
-            "hierarchicalchildentity"
-          ],
-          "command": "luis get hierarchicalChildEntity --hEntityId <string> --hChildId <string>",
+          "command": "luis models get hierarchicalentities children  --hEntityId <string> --hChildId <string>",
           "pathFragment": "/{hEntityId}/children/{hChildId}",
           "params": [
             {
@@ -2306,10 +2049,7 @@
         {
           "method": "get",
           "methodAlias": "list",
-          "target": [
-            "intents"
-          ],
-          "command": "luis list intents --skip <integer> --take <integer>",
+          "command": "luis models list intents --skip <integer> --take <integer>",
           "pathFragment": "",
           "params": [
             {
@@ -2352,11 +2092,8 @@
         },
         {
           "method": "post",
-          "methodAlias": "add",
-          "target": [
-            "intent"
-          ],
-          "command": "luis add intent --in modelCreateObject.json",
+          "methodAlias": "create",
+          "command": "luis models create intents --in modelCreateObject.json",
           "pathFragment": "",
           "params": [
             {
@@ -2382,10 +2119,7 @@
         {
           "method": "delete",
           "methodAlias": "delete",
-          "target": [
-            "intent"
-          ],
-          "command": "luis delete intent --intentId <string>",
+          "command": "luis models delete intents --intentId <string>",
           "pathFragment": "/{intentId}",
           "params": [
             {
@@ -2416,10 +2150,7 @@
         {
           "method": "put",
           "methodAlias": "update",
-          "target": [
-            "intent"
-          ],
-          "command": "luis update intent --in modelUpdateObject.json --intentId <string>",
+          "command": "luis models update intents --in modelUpdateObject.json --intentId <string>",
           "pathFragment": "/{intentId}",
           "params": [
             {
@@ -2452,10 +2183,7 @@
         {
           "method": "get",
           "methodAlias": "get",
-          "target": [
-            "intent"
-          ],
-          "command": "luis get intent --intentId <string>",
+          "command": "luis models get intents --intentId <string>",
           "pathFragment": "/{intentId}",
           "params": [
             {
@@ -2485,11 +2213,8 @@
         },
         {
           "method": "get",
-          "methodAlias": "suggest",
-          "target": [
-            "intents"
-          ],
-          "command": "luis suggest intents --intentId <string> --take <integer>",
+          "methodAlias": "list",
+          "command": "luis models list intents suggest  --intentId <string> --take <integer>",
           "pathFragment": "/{intentId}/suggest",
           "params": [
             {
@@ -2537,12 +2262,8 @@
       "operations": [
         {
           "method": "get",
-          "methodAlias": "list",
-          "target": [
-            "prebuiltEntities",
-            "prebuiltentities"
-          ],
-          "command": "luis list prebuiltEntities",
+          "methodAlias": "get",
+          "command": "luis models get listprebuilts",
           "pathFragment": "",
           "params": [
             {
@@ -2573,10 +2294,7 @@
         {
           "method": "get",
           "methodAlias": "list",
-          "target": [
-            "versions"
-          ],
-          "command": "luis list versions --skip <integer> --take <integer>",
+          "command": "luis models list --skip <integer> --take <integer>",
           "pathFragment": "",
           "params": [
             {
@@ -2627,11 +2345,7 @@
         {
           "method": "get",
           "methodAlias": "list",
-          "target": [
-            "prebuiltEntities",
-            "prebuiltentities"
-          ],
-          "command": "luis list prebuiltEntities --skip <integer> --take <integer>",
+          "command": "luis models list prebuilts --skip <integer> --take <integer>",
           "pathFragment": "",
           "params": [
             {
@@ -2674,12 +2388,8 @@
         },
         {
           "method": "post",
-          "methodAlias": "add",
-          "target": [
-            "prebuiltEntityList",
-            "prebuiltentitylist"
-          ],
-          "command": "luis add prebuiltEntityList --in prebuiltExtractorNames.json",
+          "methodAlias": "create",
+          "command": "luis models create prebuilts --in prebuiltExtractorNames.json",
           "pathFragment": "",
           "params": [
             {
@@ -2705,11 +2415,7 @@
         {
           "method": "delete",
           "methodAlias": "delete",
-          "target": [
-            "prebuiltEntity",
-            "prebuiltentity"
-          ],
-          "command": "luis delete prebuiltEntity --prebuiltId <string>",
+          "command": "luis models delete prebuilts --prebuiltId <string>",
           "pathFragment": "/{prebuiltId}",
           "params": [
             {
@@ -2740,11 +2446,7 @@
         {
           "method": "get",
           "methodAlias": "get",
-          "target": [
-            "prebuiltEntity",
-            "prebuiltentity"
-          ],
-          "command": "luis get prebuiltEntity --prebuiltId <string>",
+          "command": "luis models get prebuilts --prebuiltId <string>",
           "pathFragment": "/{prebuiltId}",
           "params": [
             {
@@ -2783,11 +2485,8 @@
       "operations": [
         {
           "method": "post",
-          "methodAlias": "add",
-          "target": [
-            "example"
-          ],
-          "command": "luis add example --in exampleLabelObject.json",
+          "methodAlias": "create",
+          "command": "luis examples create example --in exampleLabelObject.json",
           "pathFragment": "",
           "params": [
             {
@@ -2820,10 +2519,7 @@
         {
           "method": "get",
           "methodAlias": "list",
-          "target": [
-            "examples"
-          ],
-          "command": "luis list examples --skip <integer> --take <integer>",
+          "command": "luis examples list --skip <integer> --take <integer>",
           "pathFragment": "",
           "params": [
             {
@@ -2866,11 +2562,8 @@
         },
         {
           "method": "post",
-          "methodAlias": "add",
-          "target": [
-            "examples"
-          ],
-          "command": "luis add examples --in exampleLabelObjectArray.json",
+          "methodAlias": "create",
+          "command": "luis examples create --in exampleLabelObjectArray.json",
           "pathFragment": "",
           "params": [
             {
@@ -2896,10 +2589,7 @@
         {
           "method": "delete",
           "methodAlias": "delete",
-          "target": [
-            "example"
-          ],
-          "command": "luis delete example --exampleId <integer>",
+          "command": "luis examples delete --exampleId <integer>",
           "pathFragment": "/{exampleId}",
           "params": [
             {
@@ -2939,10 +2629,7 @@
         {
           "method": "get",
           "methodAlias": "list",
-          "target": [
-            "features"
-          ],
-          "command": "luis list features --skip <integer> --take <integer>",
+          "command": "luis features list --skip <integer> --take <integer>",
           "pathFragment": "",
           "params": [
             {
@@ -2993,10 +2680,7 @@
         {
           "method": "get",
           "methodAlias": "list",
-          "target": [
-            "patterns"
-          ],
-          "command": "luis list patterns --skip <integer> --take <integer>",
+          "command": "luis features list patterns --skip <integer> --take <integer>",
           "pathFragment": "",
           "params": [
             {
@@ -3039,11 +2723,8 @@
         },
         {
           "method": "post",
-          "methodAlias": "add",
-          "target": [
-            "pattern"
-          ],
-          "command": "luis add pattern --in patternCreateObject.json",
+          "methodAlias": "create",
+          "command": "luis features create patterns --in patternCreateObject.json",
           "pathFragment": "",
           "params": [
             {
@@ -3069,10 +2750,7 @@
         {
           "method": "delete",
           "methodAlias": "delete",
-          "target": [
-            "pattern"
-          ],
-          "command": "luis delete pattern --patternId <integer>",
+          "command": "luis features delete patterns --patternId <integer>",
           "pathFragment": "/{patternId}",
           "params": [
             {
@@ -3103,10 +2781,7 @@
         {
           "method": "put",
           "methodAlias": "update",
-          "target": [
-            "pattern"
-          ],
-          "command": "luis update pattern --in patternUpdateObject.json --patternId <integer>",
+          "command": "luis features update patterns --in patternUpdateObject.json --patternId <integer>",
           "pathFragment": "/{patternId}",
           "params": [
             {
@@ -3139,10 +2814,7 @@
         {
           "method": "get",
           "methodAlias": "get",
-          "target": [
-            "pattern"
-          ],
-          "command": "luis get pattern --patternId <integer>",
+          "command": "luis features get patterns --patternId <integer>",
           "pathFragment": "/{patternId}",
           "params": [
             {
@@ -3180,10 +2852,7 @@
         {
           "method": "get",
           "methodAlias": "list",
-          "target": [
-            "phraselists"
-          ],
-          "command": "luis list phraselists --skip <integer> --take <integer>",
+          "command": "luis features list phraselists --skip <integer> --take <integer>",
           "pathFragment": "",
           "params": [
             {
@@ -3226,11 +2895,8 @@
         },
         {
           "method": "post",
-          "methodAlias": "add",
-          "target": [
-            "phraselist"
-          ],
-          "command": "luis add phraselist --in phraselistCreateObject.json",
+          "methodAlias": "create",
+          "command": "luis features create phraselists --in phraselistCreateObject.json",
           "pathFragment": "",
           "params": [
             {
@@ -3256,10 +2922,7 @@
         {
           "method": "delete",
           "methodAlias": "delete",
-          "target": [
-            "phraselist"
-          ],
-          "command": "luis delete phraselist --phraselistId <integer>",
+          "command": "luis features delete phraselists --phraselistId <integer>",
           "pathFragment": "/{phraselistId}",
           "params": [
             {
@@ -3290,10 +2953,7 @@
         {
           "method": "put",
           "methodAlias": "update",
-          "target": [
-            "phraselist"
-          ],
-          "command": "luis update phraselist --in phraselistUpdateObject.json --phraselistId <integer>",
+          "command": "luis features update phraselists --in phraselistUpdateObject.json --phraselistId <integer>",
           "pathFragment": "/{phraselistId}",
           "params": [
             {
@@ -3326,10 +2986,7 @@
         {
           "method": "get",
           "methodAlias": "get",
-          "target": [
-            "phraselist"
-          ],
-          "command": "luis get phraselist --phraselistId <integer>",
+          "command": "luis features get phraselists --phraselistId <integer>",
           "pathFragment": "/{phraselistId}",
           "params": [
             {
@@ -3369,10 +3026,7 @@
         {
           "method": "get",
           "methodAlias": "get",
-          "target": [
-            "status"
-          ],
-          "command": "luis get status",
+          "command": "luis train get",
           "pathFragment": "",
           "params": [
             {
@@ -3390,16 +3044,13 @@
               "type": "string"
             }
           ],
-          "description": "Gets the training status of all models (intents and entities) for the specified LUIS app. You must call the train API to train the LUIS application before you call this API to get training status.\n",
+          "description": "Gets the training status of all models (intents and entities) for the specified LUIS app. You must <a href=\"https://westus.dev.cognitive.microsoft.com/docs/services/5890b47c39e2bb17b84a55ff/operations/5890b47c39e2bb052c5b9c45\">call the train API</a> to train the LUIS app before you call this API to get training status.\n",
           "name": "getVersionTrainingStatus"
         },
         {
           "method": "post",
-          "methodAlias": "train",
-          "target": [
-            "version"
-          ],
-          "command": "luis train version",
+          "methodAlias": "create",
+          "command": "luis train create",
           "pathFragment": "",
           "params": [
             {
@@ -3417,7 +3068,7 @@
               "type": "string"
             }
           ],
-          "description": "Sends a training request for a version of a specified LUIS app. \n\nThis request initiates a request asynchronously. To determine whether the training request is successful, use command:\n    LUIS get status\n\n**Note**: The application version is not fully trained unless all the models (intents and entities) are trained successfully or are up to date.\n\nTo verify training success, get the training status at least once after training is complete.",
+          "description": "Sends a training request for a version of a specified LUIS app. \n\nThis POST request initiates a request asynchronously. To determine whether the training request is successful, submit a GET request to get training status.\n\n* **Note**: The application version is not fully trained unless all the models (intents and entities) are trained successfully or are up to date.\n\nTo verify training success, get the training status at least once after training is complete.",
           "name": "trainApplicationVersion"
         }
       ]
