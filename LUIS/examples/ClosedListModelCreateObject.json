@@ -1,0 +1,28 @@
+{
+  "name": "States",
+  "sublists": [
+    {
+      "canonicalForm": "New York",
+      "list": [
+        "NY",
+        "New York"
+      ]
+    },
+    {
+      "canonicalForm": "Washington",
+      "list": [
+        "Washington",
+        "WA"
+      ]
+    },
+    {
+      "canonicalForm": "California",
+      "list": [
+        "California",
+        "CA",
+        "Calif.",
+        "Cal."
+      ]
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 const Table = require('cli-table2');
 const chalk = require('chalk');
-
+const fs = require('fs');
+const path = require('path');
 const manifest = require('./api/luis');
 const { getServiceManifest, getCategoryManifest, getNamedArgsMap } = require('./utils/argsUtil');
 
@@ -17,31 +18,33 @@ module.exports = async function help(args) {
     const helpContents = await getHelpContents(args);
 
     helpContents.forEach(helpContent => {
-        const rows = helpContent.table[0].length;
-        let i = rows - 1;
-        const leftColWidth = 40;
-        const colWidthsFor2On = ((x * .85) - leftColWidth) / i;
-        const colWidths = [leftColWidth];
-
-        while (i--) {
-            colWidths.push(~~colWidthsFor2On);
-        }
-
-        const table = new Table({
-            // don't use lines for table
-            chars: {
-                'top': '', 'top-mid': '', 'top-left': '', 'top-right': '',
-                'bottom': '', 'bottom-mid': '', 'bottom-left': '', 'bottom-right': '',
-                'left': '', 'left-mid': '', 'right': '', 'right-mid': '',
-                'mid': '', 'mid-mid': '', 'middle': ''
-            },
-            colWidths,
-            style: { 'padding-left': 1, 'padding-right': 1 },
-            wordWrap: true
-        });
-        table.push(...helpContent.table);
         process.stdout.write(helpContent.head + '\n');
-        process.stdout.write(table.toString());
+        if (helpContent.table && helpContent.table[0].length > 0) {
+            const rows = helpContent.table[0].length;
+            let i = rows - 1;
+            const leftColWidth = 40;
+            const colWidthsFor2On = ((x * .85) - leftColWidth) / i;
+            const colWidths = [leftColWidth];
+
+            while (i--) {
+                colWidths.push(~~colWidthsFor2On);
+            }
+
+            const table = new Table({
+                // don't use lines for table
+                chars: {
+                    'top': '', 'top-mid': '', 'top-left': '', 'top-right': '',
+                    'bottom': '', 'bottom-mid': '', 'bottom-left': '', 'bottom-right': '',
+                    'left': '', 'left-mid': '', 'right': '', 'right-mid': '',
+                    'mid': '', 'mid-mid': '', 'middle': ''
+                },
+                colWidths,
+                style: { 'padding-left': 1, 'padding-right': 1 },
+                wordWrap: true
+            });
+            table.push(...helpContent.table);
+            process.stdout.write(table.toString());
+        }
         process.stdout.write('\n\n');
     });
 }
@@ -70,13 +73,11 @@ async function getHelpContents(args) {
 
             process.stdout.write(`${operation.description}\n\n`);
             process.stdout.write(`Usage:\n${chalk.bold(operation.command)}\n\n`);
-        } else 
-        {
+        } else {
             return getVerbHelp(args._[0]);
         }
     }
 
-    const category = getCategoryManifest(args);
     const serviceManifest = getServiceManifest(args);
     if (serviceManifest) {
         return getHelpContentsForService(serviceManifest);
@@ -94,16 +95,16 @@ let configSection = {
     ]
 };
 
-let globalArgs = 
-{
-    head: 'Global Arguments:',
-    table: [
-        ['--help,    -h', `Prints this help file. `],
-        ['--!          ', 'Dumps absolutely all documented commands to the console with descriptions'],
-        ['--init,    -i', 'Initializes the .luisrc file with settings specific to your LUIS instance'],
-        ['--version, -v', 'Prints the version of this cli tool']
-    ]
-};
+let globalArgs =
+    {
+        head: 'Global Arguments:',
+        table: [
+            ['--help,    -h', `Prints this help file. `],
+            ['--!          ', 'Dumps absolutely all documented commands to the console with descriptions'],
+            ['--init,    -i', 'Initializes the .luisrc file with settings specific to your LUIS instance'],
+            ['--version, -v', 'Prints the version of this cli tool']
+        ]
+    };
 
 
 /**
@@ -201,8 +202,8 @@ function getAllCommands() {
             const { operations } = category[categoryKey];
             operations.forEach((operation, index) => {
                 let opCategory = operation.target[0];
-                if (opCategory[opCategory.length-1] == 's')
-                    opCategory = opCategory.substring(0, opCategory.length-1);
+                if (opCategory[opCategory.length - 1] == 's')
+                    opCategory = opCategory.substring(0, opCategory.length - 1);
                 table.push([index ? '' : chalk.white.bold(opCategory), chalk.cyan.bold(operation.command), operation.description]);
             });
         });
@@ -232,69 +233,40 @@ function getHelpContentsForService(serviceManifest) {
     const sections = [];
     // params table is shown only if we have a single
     // operation with 1 or more params.
-    if (serviceManifest.operation && serviceManifest.operation.params) {
-        const { operation } = serviceManifest;
-        const { params } = operation;
-        const paramsHelp = {
-            head: `Command arguments are:`,
-            table: params.map(param => [`--${param.name} <${param.type}>${param.required ? ' (required)' : ''}`, param.description])
-        };
-        if (operation.entityName) {
-            paramsHelp.table.unshift(['--in (required)', `The ${operation.entityType} object to send in the body of the request`]);
+    if (serviceManifest.operation) {
+        if (serviceManifest.operation.params) {
+            const { params } = operation;
+            const paramsHelp = {
+                head: `Command arguments are:`,
+                table: params.map(param => [`--${param.name} <${param.type}>${param.required ? ' (required)' : ''}`, param.description])
+            };
+            if (operation.entityName) {
+                paramsHelp.table.unshift(['--in (required)', `The ${operation.entityType} object to send in the body of the request`],
+                                         ['', getEntityTypeExample(operation.entityType)]);
+            }
+            sections.push(paramsHelp);
+        } else if (operation.entityName) {
+            const paramsHelp = {
+                head: `Command arguments are:`,
+                table: [
+                    ['--in (required)', `The ${operation.entityType} object to send in the body of the request`],
+                    ['', getEntityTypeExample(operation.entityType)]
+                ]
+            };
+            sections.push(paramsHelp);
         }
-        sections.push(paramsHelp);
     }
     sections.push(configSection);
     sections.push(globalArgs);
     return sections;
 }
 
-// /**
-//  * Gets the help content for a named category, a.k.a. <api group>
-//  *
-//  * @param {*} category The category containing the manifests for each target within it.
-//  * @param {string} categoryName The name of the category
-//  *
-//  * @returns {*[]}
-//  */
-// function getHelpContentsForCategory(category, categoryName) {
-//     return [{
-//         head: chalk.bold(`Valid ${chalk.cyan('<subgroup>')} is one of the following:`),
-//         table: [
-//             [chalk.cyan.bold(`luis ${categoryName} [<subgroup>] <action> `), Object.keys(category).filter(key => key !== categoryName).join(', ')],
-//             ['', chalk.bold(`Use ${chalk.cyan(`luis ${categoryName} <subgroup> --help`)} for details on a specific target`)]
-//         ]
-//     }];
-// }
+function getEntityTypeExample(entityType) {
+    var examplePath = path.join(__dirname, `../examples/${entityType}.json`);
+    let json = fs.readFileSync(examplePath, { encoding: 'utf8' }).replace(/[\r\f]+/g, '\n');
+    return json;
+}
 
-// /**
-//  * Gets the help content for the named <subtarget>
-//  *
-//  * @param {{}[]} operations An array of operations that contain the named subtarget
-//  * @param {string} categoryName The name of the category owning the subtarget
-//  * @param {string} targetName The name of the target owning the subtarget
-//  *
-//  * @returns {{head: *|string, table: *[]}}
-//  */
-// function getHelpForSubTargets(operations, categoryName, targetName) {
-//     // Since subtargets are derived from operations, there could be
-//     // duplicates if a subtarget has more than one operation associated with it.
-//     const operationNameMap = {};
-//     operations = operations.filter(op => {
-//         if (!operationNameMap[op.subTarget]) {
-//             operationNameMap[op.subTarget] = true;
-//             return true;
-//         }
-//         return false;
-//     });
-//     return {
-//         head: chalk.bold(`Valid ${chalk.cyan('<subgroup>')} are:`),
-//         table: [
-//             [chalk.cyan.bold(`luis ${categoryName} ${targetName} [<subgroup>] <action>`), operations.map(operation => operation.subTarget).join(', ')],
-//             ['', chalk.bold(`Use ${chalk.cyan(`luis ${categoryName} ${targetName} [<subgroup>] --help`)} for details on a specific subtarget`)]
-//         ]
-//     };
-// }
 
 /**
  * Gets the help content for an operation

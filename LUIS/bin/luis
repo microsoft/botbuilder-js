@@ -215,7 +215,7 @@ function validateArguments(serviceManifest) {
     }
 
     if (entityRequired && !entitySpecified) {
-        error.message = `The ${operation.name} requires an input of type: ${operation.entityType}\ncopy`;
+        error.message = `The ${operation.name} requires an input of type: ${operation.entityType}\n`;
 
         throw error;
     }

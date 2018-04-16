@@ -3370,9 +3370,10 @@
           "method": "get",
           "methodAlias": "get",
           "target": [
-            "status"
+            "trainingStatus",
+            "trainingstatus"
           ],
-          "command": "luis get status",
+          "command": "luis get trainingStatus",
           "pathFragment": "",
           "params": [
             {
