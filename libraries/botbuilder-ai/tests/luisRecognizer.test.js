@@ -264,4 +264,25 @@ describe('LuisRecognizer', function () {
         assert(top === 'None');
         done();
     });
+
+    it('should emit trace info', function(done){
+        var recognizer = new LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey, verbose: true });
+        var context = new TestContext({ text: 'My name is Emad' });
+        recognizer.recognize(context).then(res => {
+                assert(res);
+                assert(res.text == 'My name is Emad');
+            }).then(() => {
+                let traceActivity = context.sent[0];
+                assert(traceActivity.type === 'trace');
+                assert(traceActivity.name === 'LuisRecognizerMiddleware');
+                assert(traceActivity.label === 'Luis Trace');
+                assert(traceActivity.valueType === 'https://www.luis.ai/schemas/trace');
+                assert(traceActivity.value);
+                assert(traceActivity.value.luisResult);
+                assert(traceActivity.value.recognizerResult);
+                assert(traceActivity.value.luisOptions);
+                assert(traceActivity.value.luisModel);
+                done();
+            });
+    });
 });
