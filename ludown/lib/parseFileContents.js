@@ -49,12 +49,23 @@ module.exports.parseFile = function(fileContent, log)
         if(!(chunk.indexOf(PARSERCONSTS.COMMENT) === 0)) {
             if(chunk.indexOf(PARSERCONSTS.URLREF) === 0) {
                 var chunkSplitByLine = chunk.split(/\r\n|\r|\n/g);
-                var urlRef = chunkSplitByLine[0].replace(PARSERCONSTS.URLREF + "('", '').replace(")",'').replace("'",'');
-                qnaJsonStruct.urls.push(urlRef);
+                var urlRef_regex = chunkSplitByLine[0].trim().replace(PARSERCONSTS.URLREF, '').split(/\(['"](.*?)['"]\)/g);
+                if(urlRef_regex.length !== 3 || urlRef_regex[1].trim() === '') {
+                    process.stdout.write(chalk.red('[ERROR]: ' + 'Invalid URL Ref: ' + chunkSplitByLine[0]));
+                    process.exit(1);
+                } else {
+                    qnaJsonStruct.urls.push(urlRef_regex[1]);
+                }
             } else if(chunk.indexOf(PARSERCONSTS.FILEREF) === 0) {
                 var chunkSplitByLine = chunk.split(/\r\n|\r|\n/g);
-                var fileRef = chunkSplitByLine[0].replace(PARSERCONSTS.FILEREF + "('", '').replace(")",'').replace("'",'');
-                additionalFilesToParse.push(fileRef);
+                var urlRef_regex = chunkSplitByLine[0].trim().replace(PARSERCONSTS.FILEREF, '').split(/\(['"](.*?)['"]\)/g);
+                if(urlRef_regex.length !== 3 || urlRef_regex[1].trim() === '') {
+                    process.stdout.write(chalk.red('[ERROR]: ' + 'Invalid LU File Ref: ' + chunkSplitByLine[0]));
+                    process.exit(1);
+                } else {
+                    additionalFilesToParse.push(urlRef_regex[1]);
+                }
+                
             } else if(chunk.indexOf(PARSERCONSTS.INTENT) === 0) {
                 // split contents in this chunk by newline
                 var chunkSplitByLine = chunk.split(/\r\n|\r|\n/g);

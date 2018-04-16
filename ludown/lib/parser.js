@@ -24,7 +24,7 @@ module.exports = {
         var allParsedQnAContent = new Array();
         
         // is there an output folder?
-        var outFolder = __dirname;
+        var outFolder = process.cwd();
         if(program.out_folder) {
             if(path.isAbsolute(program.out_folder)) {
                 outFolder = program.out_folder;
@@ -123,7 +123,7 @@ module.exports = {
 
         if(!program.lOutFile) {
             if(!program.luis_name) {
-                program.lOutFile = path.basename(rootFile, path.extname(rootFile)) + "_LUISApp.json";    
+                program.lOutFile = path.basename(rootFile, path.extname(rootFile)) + "_LUISApp.json";  
             } else {
                 program.lOutFile = program.luis_name + "_LUISApp.json";
             }
@@ -179,7 +179,7 @@ module.exports = {
 
         // write luis batch test file if requested
         if(program.write_luis_batch_tests) {
-            var LUISBatchFileName = path.basename(rootFile, path.extname(rootFile)) + "_LUISBatchTest.json";
+            var LUISBatchFileName = program.lOutFile.replace("_LUISApp.json","_LUISBatchTest.json");
             // write out the final LUIS Json
             fs.writeFileSync(outFolder + '\\' + LUISBatchFileName, JSON.stringify(finalLUISJSON.utterances, null, 2), function(error) {
                 if(error) {

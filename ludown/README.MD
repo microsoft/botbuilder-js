@@ -32,6 +32,7 @@ npm i -g ludown
 |-m, --qna_name \<qna_Name\>                          	| QnA KB name |
 |-l, --qOutFile \<qnaMakerJSONFileName\>				| QnA Maker JSON output file name	|
 |-e, --qTSVFile \<qnaMakerTSVFileName\>					| QnA Maker TSV ouput file name 	|
+|-V, --Version											| Current tool version information  |
 
 ## Output
 LUDown tool will output:
