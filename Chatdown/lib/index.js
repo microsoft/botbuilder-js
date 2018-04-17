@@ -195,9 +195,9 @@ async function readActivitiesFromAggregate(aggregate, currentActivity, recipient
 
 function addAttachmentLayout(currentActivity, rest) {
     if (rest && rest.toLowerCase() == AttachmentLayoutTypes.Carousel)
-        currentActivity.AttachmentLayout = AttachmentLayoutTypes.Carousel;
+        currentActivity.attachmentLayout = AttachmentLayoutTypes.Carousel;
     else if (rest && rest.toLowerCase() == AttachmentLayoutTypes.List)
-        currentActivity.AttachmentLayout = AttachmentLayoutTypes.List;
+        currentActivity.attachmentLayout = AttachmentLayoutTypes.List;
     else
         console.error(`AttachmentLayout of ${rest[0]} is not List or Carousel`);
 }
