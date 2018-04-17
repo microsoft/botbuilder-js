@@ -9,7 +9,7 @@ npm i -g chatdown
 ## Arguments
 Usage:
 ```
-luis <chat> --out <transcript> --help
+chatdown <chat> --out <transcript> --help
 ```
 
 | Argument| Description|
