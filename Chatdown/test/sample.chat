@@ -7,11 +7,14 @@ LulaBot: Hello there!
 
 Joe: I would like some cheese.
 
-Lulabot: 
-# cheese choices
+Lulabot: # cheese choices
 * cheess1 
 * cheese 2
 * cheese 3
-[AttachmentLayout:carousel]
-[Attachment:image.png]
-[Attachment:samplecard.json]
+[AttachmentLayout=carousel]
+[Attachment(image/png)=http://4.bp.blogspot.com/--cFa6t-x4qY/UAqEgUvPd2I/AAAAAAAANIg/pMLE080Zjh4/s1600/turtle.jpg]
+[Attachment=http://viagemempauta.com.br/wp-content/uploads/2015/09/2_All-Angle-By-Andreza-dos-Santos_FTS_2914-344-620x415.jpg]
+[Attachment=http://images.fineartamerica.com/images-medium-large/good-morning-turtles-freund-gloria.jpg]
+[Attachment(adaptivecard)=test\samplecard.json]
+
+

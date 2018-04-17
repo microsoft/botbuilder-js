@@ -5,40 +5,47 @@ Chatdown is a transcript generator which consumes a markdown file to generate ac
 ```bash
 npm i -g chatdown
 ```
+
 ## Arguments
+Usage:
+```
+luis <chat> --out <transcript> --help
+```
 
 | Argument| Description|
 |-------------| ------------------------- |
-| <chat> [optional]| The path of the chat file to be parsed. If omitted, stdin will be used |
-| --out <transcript> [optional] | The path of the transcript to be written. If omitted, stdout will be used |
-| --help    | Output the help to the console|
+| `<chatfile>` | The path of the chat file to be parsed. If omitted, stdin will be used |
+| `--out <transcript>` | The path of the transcript to be written. If omitted, stdout will be used |
+| `--help`    | Output the help to the console|
 
 ## .chat File Format
 Chat files are markdown files that contain 2 parts:
-##### ### Header
+
+### Header
 The header defines who the participants are in the conversation and other options.
+
 |Option               |Description|
 |---------------------|------------------------------|
 |`user=<user>` |This option tells chatdown that a user message will begin with `<user>` followed by a colon. for example: `user=Joe` instructs chatdown that lines beginning with `Joe:` or `user:` are the start of a message from the user Joe|
 |`bot=<bot>` | This options tells chatdown that a bot message will begin with `<bot>` followed by a colon.  For example: `bot=LulaBot` instructs chadown that lines beginning with `LulaBot:` or `bot:` are the start of a message from the bot Lulabot |
-| `channelId=<channel id>`| This option tells chatdown to use the specified channel id for each activity.|
+| `channelId=<channelid>`| This option tells chatdown to use the specified `channelid` for each activity.|
 
 Once the configuration options for `user` and `bot` are defined, the rest of the conversation can use the alias prefixes `user:` and `bot:` or the names directly.  Chatdown will correctly make the associations to the specified names for you.
 
-##### ### Commands
+### Commands
 The conversation text represents markdown between the user and the bot.  Every time a `user:` or `bot:`  is found at the beginning of the line a new activity will be inserted into the transcript.  Inside of the markdown you can insert commands generate richer transcripts.
 
 | Command        | Description                                                |
 | --------------- | ------------------------------------------------------------ |
 |`[Typing]` | Inserts a typing activity into the transcript to signify that a user or a bot is typing. |
-| `[Delay:<milliseconds>]` | Delays the transcript by milliseconds |
-|`[Attachment:<filePath>]` | Add an attachment to the activity. the content type is derived from the file extension if omitted. |
-| `[Attachment:<filePath>:<contentType>]` | Add an attachment to the activity. The content type should be one of the content type values or a raw mime type |
-|`[AttachmentLayout:layout]`| Specify how multiple attachments whould be dislpayed.  layout values are `carousel` or `list`|
+|`[Delay=<milliseconds>]` | Delays the transcript by `<milliseconds>` |
+|`[Attachment=<contentPath>]` | Add an attachment to the activity. the content type is derived from the file extension. `<contentPath>` can be a url or file system path |
+| `[Attachment(<contentType>)=<contentPath>]` | Add an attachment to the activity. The `<contentType>` is a contentType shortcut values or a raw mime type. `<contentPath>` can be a url or file system path |
+|`[AttachmentLayout=carousel|list]`| Specify how multiple attachments whould be dislpayed.  layout values are `carousel` or `list`|
 
-#### Attachment content type shortcuts
+### Attachment content type shortcuts
 Some content types have shortcuts
-| ContentType | Description |
+| ContentType Shortcuts | Description |
 | -------------------|-------------------|
 |animation| `application/vnd.microsoft.card.animation`|
 |audio| `application/vnd.microsoft.card.audio`|
@@ -58,7 +65,7 @@ bot=LulaBot
 
 bot: Hi!
 user: yo!
-bot: [Typing][Delay:3000]
+bot: [Typing][Delay=3000]
 Greetings!
 What would you like to do?
 * update - You can update your account
@@ -69,14 +76,16 @@ user: I need the bot framework logo.
 
 bot:
 Here you go.
-[Attachment:bot-framework.png]
+[Attachment=bot-framework.png]
+[Attachment=http://yahoo.com/bot-framework.png]
 
 user: thanks
 bot:
 Here's a form for you
-[Attachment:card.json:adaptivecard]
+[Attachment(adaptivecard)=card.json]
 
 ```
+
 ## CLI Examples
 
 ### Basic use
@@ -128,3 +137,4 @@ chatdown(conversation, config)
          // oops! Something went wrong
     });
 ```
+
