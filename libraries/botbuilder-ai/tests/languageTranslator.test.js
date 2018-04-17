@@ -37,6 +37,20 @@ describe('LanguageTranslator', function () {
         .then(() => done());
     });
 
+    it('should handle punctuations', function (done) {
+        
+        let toFrenchSettings = {
+            translatorKey: translatorKey,
+            nativeLanguages: ['fr', 'de'],
+            noTranslatePatterns: new Set()
+        }
+
+        const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
+        .use(new LanguageTranslator(toFrenchSettings))
+        .test('0: You said "hello"', '0 : vous avez dit " Bonjour "', 'should have received french')
+        .then(() => done());
+    });
+
     it('should not translate when a native language', function (done) {
 
         let toEnglishSettings = {

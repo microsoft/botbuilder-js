@@ -252,7 +252,7 @@ export class PostProcessTranslator {
 
     private join(delimiter: string, words: string[]): string {
         let sentence = words.join(delimiter);
-        sentence = sentence.replace(new RegExp("[ ]?'[ ]?", "g"), "'");
+        sentence = sentence.replace(/[ ]?'[ ]?/g, "'");
         
         return sentence;
     }
@@ -276,7 +276,7 @@ export class PostProcessTranslator {
                     }
                 });
             }
-
+            let sentenceWithoutSpaces = sentence.replace(/\s/g, '');
             for (let alignData of alignments) {
                 wrds = outWrds;
                 let wordIndexes = alignData.split('-')[wrdIndexInAlignment];
@@ -289,8 +289,9 @@ export class PostProcessTranslator {
                 }
                 newWrds[outWrds.length] = wrd;
                 
-                let subSentence = this.join(" ", newWrds);
-                if (sentence.indexOf(subSentence) != -1) {
+                let subSentence = this.join("", newWrds);
+                
+                if (sentenceWithoutSpaces.indexOf(subSentence) != -1) {
                     outWrds.push(wrd);
                 }
             }
@@ -332,11 +333,11 @@ export class PostProcessTranslator {
     }
 
     public fixTranslation(sourceMessage: string, alignment: string, targetMessage: string): string {
-        let numericMatches = sourceMessage.match(new RegExp("[0-9]+", "g"));
+        let numericMatches = sourceMessage.match(/[0-9]+/g);
         let containsNum = numericMatches != null;
         let noTranslatePatterns = Array.from(this.noTranslatePatterns);
         
-        if (!containsNum && noTranslatePatterns.length == 0) {
+        if ((!containsNum && noTranslatePatterns.length == 0) || alignment.trim() == '') {
             return targetMessage;
         }
 
@@ -349,16 +350,11 @@ export class PostProcessTranslator {
             }
         });
 
-        let alignments: string[];
-        
-        if (alignment.trim() == '') {
-            alignments = [];
-        } else {
-            alignments = alignment.trim().split(' ');
-        }
+        let alignments = alignment.trim().split(' ');
        
         let srcWords = this.splitSentence(sourceMessage, alignments);
         let trgWords = this.splitSentence(targetMessage, alignments, false);
+        
         let alignMap = this.wordAlignmentParse(alignments, srcWords, trgWords);
 
         if (toBeReplaced.length > 0) {
