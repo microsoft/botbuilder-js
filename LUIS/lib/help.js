@@ -13,16 +13,30 @@ const { getServiceManifest, getCategoryManifest, getNamedArgsMap } = require('./
  */
 module.exports = async function help(args) {
 
-    let x = 'getWindowSize' in process.stdout ? process.stdout.getWindowSize()[0] : 50;
+    let x = 'getWindowSize' in process.stdout ? process.stdout.getWindowSize()[0] : 250;
     process.stdout.write('LUIS Command Line Interface - © 2018 Microsoft Corporation\n\n');
     const helpContents = await getHelpContents(args);
 
+    let leftColWidth = 0;
+    for (let hc of helpContents) {
+        if (hc.table && hc.table[0].length > 0) {
+            const rows = hc.table[0].length;
+            for (let row in hc.table) {
+                let len = hc.table[row][0].length;
+                if (len > leftColWidth) {
+                    leftColWidth = Math.min(len, Math.floor(x / 3));
+                }
+            }
+            let i = rows - 1;
+        }
+    }
+
     helpContents.forEach(helpContent => {
-        process.stdout.write(helpContent.head + '\n');
+        process.stdout.write(chalk.white.bold(helpContent.head + '\n'));
         if (helpContent.table && helpContent.table[0].length > 0) {
             const rows = helpContent.table[0].length;
             let i = rows - 1;
-            const leftColWidth = 40;
+
             const colWidthsFor2On = ((x * .85) - leftColWidth) / i;
             const colWidths = [leftColWidth];
 
@@ -72,7 +86,7 @@ async function getHelpContents(args) {
             const { operation } = serviceManifest;
 
             process.stdout.write(`${operation.description}\n\n`);
-            process.stdout.write(`Usage:\n${chalk.bold(operation.command)}\n\n`);
+            process.stdout.write(`Usage:\n${chalk.cyan.bold(operation.command)}\n\n`);
         } else {
             return getVerbHelp(args._[0]);
         }
@@ -88,10 +102,10 @@ async function getHelpContents(args) {
 let configSection = {
     head: 'Configuration and Overrides:',
     table: [
-        ['--appId', 'Specifies the public LUIS application id. Overrides the .luisrc value and the LUIS_APP_ID environment variable.'],
-        ['--authoringKey', 'Specifies the LUIS authoring  key (from luis.ai portal user settings page). Overrides the .luisrc value and the LUIS_AUTHORING_KEY environment variable.'],
-        ['--versionId', 'Specifies the version id. Overrides the .luisrc value and the LUIS_VERSION_ID environment variable.'],
-        ['--endpointBasePath', 'Specifies the base URI for all requests. Overrides the .luisrc value and the LUIS_ENDPOINT_BASE_PATH environment variable.'],
+        [chalk.cyan.bold('--appId'), 'Specifies the public LUIS application id. Overrides the .luisrc value and the LUIS_APP_ID environment variable.'],
+        [chalk.cyan.bold('--authoringKey'), 'Specifies the LUIS authoring  key (from luis.ai portal user settings page). Overrides the .luisrc value and the LUIS_AUTHORING_KEY environment variable.'],
+        [chalk.cyan.bold('--versionId'), 'Specifies the version id. Overrides the .luisrc value and the LUIS_VERSION_ID environment variable.'],
+        [chalk.cyan.bold('--endpointBasePath'), 'Specifies the base URI for all requests. Overrides the .luisrc value and the LUIS_ENDPOINT_BASE_PATH environment variable.'],
     ]
 };
 
@@ -99,10 +113,10 @@ let globalArgs =
     {
         head: 'Global Arguments:',
         table: [
-            ['--help,    -h', `Prints this help file. `],
-            ['--!          ', 'Dumps absolutely all documented commands to the console with descriptions'],
-            ['--init,    -i', 'Initializes the .luisrc file with settings specific to your LUIS instance'],
-            ['--version, -v', 'Prints the version of this cli tool']
+            [chalk.cyan.bold('--help,    -h'), `Prints this help file. `],
+            [chalk.cyan.bold('--!          '), 'Dumps absolutely all documented commands to the console with descriptions'],
+            [chalk.cyan.bold('--init,    -i'), 'Initializes the .luisrc file with settings specific to your LUIS instance'],
+            [chalk.cyan.bold('--version, -v'), 'Prints the version of this cli tool']
         ]
     };
 
@@ -119,17 +133,17 @@ function getGeneralHelpContents() {
     let options = {
         head: chalk.bold(`Available actions are:`),
         table: [
-            ["add", "add a resource"],
-            ["clone", "clone a resource"],
-            ["delete", "delete a resource"],
-            ["export", "export resources"],
-            ["get", "get a resource"],
-            ["import", "import resources"],
-            ["list", "list resources"],
-            ["publish", "publish resource"],
-            ["suggest", "suggest resources"],
-            ["train", "train resource"],
-            ["update", "update resources"]
+            [chalk.cyan.bold("add"), "add a resource"],
+            [chalk.cyan.bold("clone"), "clone a resource"],
+            [chalk.cyan.bold("delete"), "delete a resource"],
+            [chalk.cyan.bold("export"), "export resources"],
+            [chalk.cyan.bold("get"), "get a resource"],
+            [chalk.cyan.bold("import"), "import resources"],
+            [chalk.cyan.bold("list"), "list resources"],
+            [chalk.cyan.bold("publish"), "publish resource"],
+            [chalk.cyan.bold("suggest"), "suggest resources"],
+            [chalk.cyan.bold("train"), "train resource"],
+            [chalk.cyan.bold("update"), "update resources"]
         ]
     };
 
@@ -178,7 +192,7 @@ function getVerbHelp(verb) {
 
     targets.sort();
     for (let verb of targets) {
-        options.table.push([verb, '']);
+        options.table.push([chalk.cyan.bold(verb), '']);
     }
     let sections = [];
     sections.push(options);
@@ -196,24 +210,34 @@ function getVerbHelp(verb) {
  */
 function getAllCommands() {
     const table = [];
+    let resourceTypes = [];
+    let tables = {};
     Object.keys(manifest).forEach(key => {
         const { [key]: category } = manifest;
         Object.keys(category).forEach(categoryKey => {
             const { operations } = category[categoryKey];
             operations.forEach((operation, index) => {
                 let opCategory = operation.target[0];
-                if (opCategory[opCategory.length - 1] == 's')
-                    opCategory = opCategory.substring(0, opCategory.length - 1);
-                table.push([index ? '' : chalk.white.bold(opCategory), chalk.cyan.bold(operation.command), operation.description]);
+                if (resourceTypes.indexOf(opCategory) < 0) {
+                    resourceTypes.push(opCategory);
+                    tables[opCategory] = [];
+                }
+                tables[opCategory].push([chalk.cyan.bold(operation.command), operation.description]);
             });
         });
     });
-    return [
-        {
-            head: chalk.cyan.bold('All documented commands:'),
-            table
-        }
-    ];
+
+    resourceTypes.sort();
+
+    let sections = [];
+    for (resourceType of resourceTypes) {
+        sections.push({
+            head: chalk.white.bold(resourceType),
+            table: tables[resourceType]
+        });
+    }
+
+    return sections;
 }
 
 /**
@@ -238,19 +262,19 @@ function getHelpContentsForService(serviceManifest) {
             const { params } = operation;
             const paramsHelp = {
                 head: `Command arguments are:`,
-                table: params.map(param => [`--${param.name} <${param.type}>${param.required ? ' (required)' : ''}`, param.description])
+                table: params.map(param => [chalk.cyan.bold(`--${param.name} <${param.type}>${param.required ? ' (required)' : ''}`), param.description])
             };
             if (operation.entityName) {
-                paramsHelp.table.unshift(['--in (required)', `The ${operation.entityType} object to send in the body of the request`],
-                                         ['', getEntityTypeExample(operation.entityType)]);
+                paramsHelp.table.unshift([chalk.cyan.bold('--in (required)'), `The ${operation.entityType} object to send in the body of the request`],
+                    ['', chalk.dim(getEntityTypeExample(operation.entityType))]);
             }
             sections.push(paramsHelp);
         } else if (operation.entityName) {
             const paramsHelp = {
                 head: `Command arguments are:`,
                 table: [
-                    ['--in (required)', `The ${operation.entityType} object to send in the body of the request`],
-                    ['', getEntityTypeExample(operation.entityType)]
+                    [chalk.cyan.bold('--in (required)'), `The ${operation.entityType} object to send in the body of the request`],
+                    ['', chalk.dim(getEntityTypeExample(operation.entityType))]
                 ]
             };
             sections.push(paramsHelp);
