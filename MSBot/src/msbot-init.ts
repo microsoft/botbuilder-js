@@ -17,6 +17,8 @@ interface InitArgs {
     description: string;
     secret: string;
     endpoint: string;
+    appId: string;
+    appPassword: string;
     quiet: boolean;
 }
 
@@ -25,6 +27,8 @@ program
     .option('--secret <secret>', 'secret used to encrypt service keys')
     .option('-n, --name <botname>', 'name of the bot')
     .option('-d, --description <description>', 'description of the bot')
+    .option('-a, --appId  <appid>', 'Microsoft AppId used for auth with the endpoint')
+    .option('-p, --appPassword <password>', 'Microsoft app password used for auth with the endpoint')
     .option('-e, --endpoint <endpoint>', 'local endpoint for the bot')
     .option('-q, --quiet', 'do not prompt')
     .action((name, x) => {
@@ -40,9 +44,9 @@ if (!args.quiet) {
     }
 
     if (!args.secret || args.secret.length == 0) {
-        let answer = readline.question(`Would you to secure your bot keys with a secret? [No]`);
+        let answer = readline.question(`Would you to secure your bot keys with a secret? [no]`);
         if (answer == 'y' || answer == 'yes')
-            args.secret = readline.question(`What secret would you like to use?`);
+            args.secret = readline.question(`What secret would you like to use? `);
     }
 
     if (!args.description || args.description.length == 0) {
@@ -54,6 +58,23 @@ if (!args.quiet) {
             defaultInput: `http://localhost:3978/api/messages`
         });
     }
+
+    if (!args.appId || args.appId.length == 0) {
+        var answer = readline.question(`Do you have an Application Id for this bot? [no] `, {
+            defaultInput: 'no'
+        })
+        if (answer == 'y' || answer == 'yes') {
+            args.appId = readline.question(`What is your Application Id? [none] `, {
+                defaultInput: ''
+            });
+        }
+    }
+
+    while (args.appId && args.appId.length > 0 && (!args.appPassword || args.appPassword.length == 0)) {
+        args.appPassword = readline.question(`What is your Msa Application password for ${args.appId}? `, {
+            defaultInput: ''
+        });
+    }
 }
 
 if (!args.name) {
@@ -63,15 +84,15 @@ else {
     let bot = new BotConfig(args.secret);
     bot.name = args.name;
     bot.description = args.description;
-    
+
     bot.connectService(<IEndpointService>{
         type: ServiceType.Endpoint,
         name: args.name,
         endpoint: args.endpoint,
         description: args.description,
         id: args.endpoint,
-        appId: '',
-        appPassword: ''
+        appId: args.appId || '',
+        appPassword: args.appPassword || ''
     });
 
     if (args.secret && args.secret.length > 0)

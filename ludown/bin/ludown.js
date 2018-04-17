@@ -6,10 +6,11 @@
 const program = require('commander');
 const fParser = require('../lib/parser');
 const chalk = require('chalk');
-
+var pjson = require('../package.json');
 let rootFile = "";
 program
     .arguments('<file>')
+    .description(`LUDown is a command line tool that converts .lu file(s) into JSON and TSV files.`)
     .option('-o, --out_folder <outputFolder>', 'Output folder for all files the tool will generate')
     .option('-q, --quiet', 'Quiet, no trace messages')
     .option('-s, --luis_schema_version <luis_schema_version>', 'LUIS Schema version')
@@ -24,12 +25,16 @@ program
     .option('-e, --qTSVFile <qnaTSVFileName>', 'QnA Maker TSV ouput file name')
     .option('-g, --gen_luis_only','Write generated LUIS JSON to stdout')
     .option('-a, --gen_qna_only', 'Write generated QnA JSON to stdout')
+    .version(pjson.version, '-V, --Version')
     .action(function(file) {
         rootFile = file;
     })
     .parse(process.argv);
     if(!rootFile) {
         process.stdout.write(chalk.red('\n  No .lu file specified. \n'));
+        process.stdout.write('\n');
+        process.stdout.write('  LUDown is a command line tool that converts .lu file(s) into JSON and TSV files.');
+        process.stdout.write('\n');
         process.stdout.write('\n');
         process.stdout.write('  Usage: ludown [options] <file>\n');
         process.stdout.write('\n');
