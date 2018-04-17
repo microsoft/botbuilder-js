@@ -1,17 +1,27 @@
 const Table = require('cli-table2');
+const chalk = require('chalk');
+
 module.exports = function () {
-    process.stdout.write('\nChatdown cli tool used to parse chat dialogs into tran; scripts\n\n© 2018 Microsoft Corporation\n\nUsage:\n\n');
+    process.stdout.write('\nChatdown cli tool used to parse chat dialogs into transcripts\n\n© 2018 Microsoft Corporation\n\n');
+    process.stdout.write(chalk.cyan.bold(`chatdown [chat] [--stdin] [--out transcript] [--help]\n\n`));
     let x = 'getWindowSize' in process.stdout ? process.stdout.getWindowSize()[0] : 50;
-    let left = 16;
+    let left = 20;
     let right = x - left - 3; // 3 is for 3 vertical bar characters
     const table = new Table({
-        head: ['Argument', 'Description'],
+        head: [chalk.bold('Argument'), chalk.bold('Description')],
+        // don't use lines for table
+        chars: {
+            'top': '', 'top-mid': '', 'top-left': '', 'top-right': '',
+            'bottom': '', 'bottom-mid': '', 'bottom-left': '', 'bottom-right': '',
+            'left': '', 'left-mid': '', 'right': '', 'right-mid': '',
+            'mid': '', 'mid-mid': '', 'middle': ''
+        },
         colWidths: [left, right],
-        style: {head: ['green'], 'padding-left': 1, 'padding-right': 1},
+        style: { head: ['white'], 'padding-left': 1, 'padding-right': 1 },
         wordWrap: true
     });
-    table.push({'--in [file]': ['[file] is the location of the chat file to parse. If omitted, piping is assumed and stdin will be used.']});
-    table.push({'--out [file]': ['[file] is the location transcript file to write. If omitted, the transcript will be written to stdout.']});
-    table.push({'--help': ['Prints this help info to the console.']});
-    process.stdout.write(table.toString());
+    table.push([chalk.cyan.bold('[chat]'), '[chat] is the location of the chat file to parse. If omitted, piping is assumed and stdin will be used.']);
+    table.push([chalk.cyan.bold('--out [transcript]'), '[transcript] is the location transcript file to write. If omitted, the transcript will be written to stdout.']);
+    table.push([chalk.cyan.bold('--help'), 'Prints this help info to the console.']);
+    process.stdout.write(table.toString()+'\n');
 };

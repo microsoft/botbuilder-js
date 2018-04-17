@@ -3,11 +3,11 @@ const path = require('path');
 const uuid = require('uuid');
 const uuidv3 = require('uuid/v3');
 const mime = require('mime-types');
-const {ActivityTypes} = require('botbuilder-schema');
+const { ActivityTypes, AttachmentLayoutTypes } = require('botframework-schema');
 const Activity = require('./serializable/activity');
 const ActivityField = require('./enums/activityField');
 const Instructions = require('./enums/instructions');
-const {cardContentTypes, isCard} = require('./enums/cardContentTypes');
+const { cardContentTypes, isCard } = require('./enums/cardContentTypes');
 const ChannelAccount = require('./serializable/channelAccount');
 const ConversationAccount = require('./serializable/conversationAccount');
 const Attachment = require('./serializable/attachment');
@@ -57,8 +57,8 @@ module.exports = async function readContents(fileContents, args) {
                 args[args.user] = args.user;
                 args.botId = botId;
                 args.userId = userId;
-                args[botId] = new ChannelAccount({id: botId, name: args.bot, role: 'bot'});
-                args[userId] = new ChannelAccount({id: userId, name: args.user, role: 'user'});
+                args[botId] = new ChannelAccount({ id: botId, name: args.bot, role: 'bot' });
+                args[userId] = new ChannelAccount({ id: userId, name: args.user, role: 'user' });
             }
             continue;
         }
@@ -67,7 +67,7 @@ module.exports = async function readContents(fileContents, args) {
         }
         // If we've gotten to this point, we've defined
         // user, bot and other config options
-        const {channelId = '1', user, bot} = args;
+        const { channelId = '1', user, bot } = args;
         const newMessageRegEx = new RegExp(`(${user}|${bot}|bot|user):`, 'i');
         if (newMessageRegEx.test(line)) {
             // Complete the previous activity
@@ -83,7 +83,7 @@ module.exports = async function readContents(fileContents, args) {
             recipient = args[recipientChannelAccountId];
 
             // Start the new activity
-            currentActivity = createActivity({recipient, from, channelId});
+            currentActivity = createActivity({ recipient, from, channelId });
             // Trim off the user or bot and continue since
             // this line may still have a message or other
             // activities to parse.
@@ -154,16 +154,23 @@ async function readActivitiesFromAggregate(aggregate, currentActivity, recipient
             // to the message.
             const index = aggregate.indexOf(`[${result[1]}]`);
             (currentActivity.text || (currentActivity.text = '')).concat(`\n${aggregate.substr(0, index).trim()}`);
-            currentActivity = createActivity({type, recipient, from, channelId});
+            currentActivity = createActivity({ type, recipient, from, channelId });
             newActivities.push(currentActivity);
         }
 
         const delay = instruction === Instructions.Delay ? rest[0] : messageTimeGap;
         currentActivity.timestamp = getIncrementedDate(delay);
+
         // As more activity fields are supported,
         // this should become a util or helper class.
-        if (field === ActivityField.Attachments) {
-            await addAttachment(currentActivity, rest);
+        switch(field)
+        {
+            case ActivityField.Attachment:
+                await addAttachment(currentActivity, rest);
+                break;
+            case ActivityField.AttachmentLayout:
+                addAttachmentLayout(currentActivity, rest);
+                break;
         }
         // Trim off this activity or activity field and continue.
         aggregate = aggregate.replace(`[${result[1]}]`, '');
@@ -175,6 +182,15 @@ async function readActivitiesFromAggregate(aggregate, currentActivity, recipient
         currentActivity.text += aggregate.trim();
     }
     return newActivities.length ? newActivities : null;
+}
+
+function addAttachmentLayout(currentActivity, rest) {
+    if (rest.length > 0 && rest[0].toLowerCase() ==  AttachmentLayoutTypes.Carousel)
+        currentActivity.AttachmentLayout = AttachmentLayoutTypes.Carousel;
+    else if (rest.length > 0 && rest[0].toLowerCase()  == AttachmentLayoutTypes.List)
+        currentActivity.AttachmentLayout = AttachmentLayoutTypes.List;
+    else
+        console.error(`AttachmentLayout of ${rest[0]} is not List or Carousel`);
 }
 
 /**
@@ -193,13 +209,16 @@ async function addAttachment(activity, attachmentInfo) {
     let [fileLocation, contentType] = attachmentInfo;
     if (!contentType) {
         contentType = mime.lookup(fileLocation) || cardContentTypes[path.extname(fileLocation)];
+    } else if (cardContentTypes[contentType]) {
+        contentType = cardContentTypes[contentType];
     }
+    
     const charset = mime.charset(contentType);
     let content = await readAttachmentFile(fileLocation, contentType);
     if (!isCard(contentType) && charset !== 'UTF-8') {
         content = new Buffer(content).toString('base64');
     }
-    return (activity.attachments || (activity.attachments = [])).push(new Attachment({contentType, content}));
+    return (activity.attachments || (activity.attachments = [])).push(new Attachment({ contentType, content }));
 }
 
 /**
@@ -218,7 +237,7 @@ async function readAttachmentFile(fileLocation, contentType) {
         resolvedFileLocation = path.resolve(fileLocation);
     }
     // Throws if the fallback does not exist.
-    return contentType.includes('json') ? fs.readJson(resolvedFileLocation) : fs.readFile(resolvedFileLocation);
+    return contentType.includes('json') || isCard(contentType) ? fs.readJson(resolvedFileLocation) : fs.readFile(resolvedFileLocation);
 }
 
 /**
@@ -230,9 +249,9 @@ async function readAttachmentFile(fileLocation, contentType) {
  * @param {string} channelId The id of the channel
  * @returns {Activity} The newly created activity
  */
-function createActivity({type = ActivityTypes.Message, recipient, from, channelId}) {
-    const activity = new Activity({from, recipient, type, text: '', id: uuid()});
-    activity.conversation = new ConversationAccount({id: channelId});
+function createActivity({ type = ActivityTypes.Message, recipient, from, channelId }) {
+    const activity = new Activity({ from, recipient, type, text: '', id: uuid() });
+    activity.conversation = new ConversationAccount({ id: channelId });
     return activity;
 }
 
