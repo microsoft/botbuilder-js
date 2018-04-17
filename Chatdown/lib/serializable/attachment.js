@@ -18,7 +18,7 @@ module.exports = class Attachment {
      * @param contentUrl
      * @param content
      */
-    constructor({ contentType = '', contentUrl = null, content = null } = {}) {
+    constructor({ contentType = '', contentUrl = undefined, content = undefined } = {}) {
         Object.assign(this, { contentType, contentUrl, content });
     }
 };

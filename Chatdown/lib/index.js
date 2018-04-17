@@ -14,7 +14,7 @@ const Attachment = require('./serializable/attachment');
 
 const NS = uuid();
 // Matches [someActivityOrInstruction:argument0:argument1:argumentn...]
-const activityRegExp = /(?:\[)([\w+:/.-]*)+(?:])/g;
+const commandRegExp = /(?:\[)([^\s]+)+(?=])/g;
 const configurationRegExp = /^(bot|user|channelId)(?:=)/;
 const messageTimeGap = 2000;
 let now = Date.now();
@@ -53,8 +53,8 @@ module.exports = async function readContents(fileContents, args) {
             if (args.bot && args.user) {
                 const botId = uuidv3(args.bot, NS);
                 const userId = uuidv3(args.user, NS);
-                args[args.bot] = args.bot;
-                args[args.user] = args.user;
+                args[args.bot.toLowerCase()] = args.bot;
+                args[args.user.toLowerCase()] = args.user;
                 args.botId = botId;
                 args.userId = userId;
                 args[botId] = new ChannelAccount({ id: botId, name: args.bot, role: 'bot' });
@@ -68,22 +68,24 @@ module.exports = async function readContents(fileContents, args) {
         // If we've gotten to this point, we've defined
         // user, bot and other config options
         const { channelId = '1', user, bot } = args;
-        const newMessageRegEx = new RegExp(`(${user}|${bot}|bot|user):`, 'i');
+        const newMessageRegEx = new RegExp(`^(${user}|${bot}|bot|user):`, 'i');
         if (newMessageRegEx.test(line)) {
             // Complete the previous activity
             if (currentActivity) {
                 currentActivity.text = currentActivity.text ? currentActivity.text.trim() : null;
                 activities.push(currentActivity);
             }
-            const fromId = args[newMessageRegEx.exec(line)[1]];
-            const fromChannelAccountId = fromId === args.bot ? args.botId : args.userId;
-            const recipientChannelAccountId = fromId === args.bot ? args.userId : args.botId;
+            const fromId = args[newMessageRegEx.exec(line)[1].toLowerCase()];
+            const fromChannelAccountId = fromId.toLowerCase() === args.bot.toLowerCase() ? args.botId : args.userId;
+            const recipientChannelAccountId = fromId.toLowerCase() === args.bot.toLowerCase() ? args.userId : args.botId;
 
             from = args[fromChannelAccountId];
             recipient = args[recipientChannelAccountId];
 
             // Start the new activity
             currentActivity = createActivity({ recipient, from, channelId });
+            currentActivity.timestamp = getIncrementedDate();
+
             // Trim off the user or bot and continue since
             // this line may still have a message or other
             // activities to parse.
@@ -97,7 +99,7 @@ module.exports = async function readContents(fileContents, args) {
 
         // signature for an activity that contains a type other than
         // message with or without arguments. e.g. [delay:3000]
-        if (activityRegExp.test(aggregate)) {
+        if (commandRegExp.test(aggregate)) {
             const newActivities = await readActivitiesFromAggregate(aggregate, currentActivity, recipient, from, channelId);
             if (newActivities) {
                 activities.push(...newActivities);
@@ -105,7 +107,6 @@ module.exports = async function readContents(fileContents, args) {
             }
         } else {
             currentActivity.text += (aggregate !== null ? aggregate : line).trim() + '\n';
-            currentActivity.timestamp = getIncrementedDate();
         }
     }
     // We've run out of lines but may still have
@@ -131,11 +132,20 @@ module.exports = async function readContents(fileContents, args) {
  */
 async function readActivitiesFromAggregate(aggregate, currentActivity, recipient, from, channelId) {
     const newActivities = [];
-    activityRegExp.lastIndex = 0;
+    commandRegExp.lastIndex = 0;
     let result;
-    while ((result = activityRegExp.exec(aggregate))) {
+    while ((result = commandRegExp.exec(aggregate))) {
         // typeOrField should always be listed first
-        const [typeOrField, ...rest] = result[1].split(':');
+        let split = result[1].indexOf('=');
+        let typeOrField = split > 0 ? result[1].substring(0, split) : result[0];
+        let rest = (split > 0) ? result[1].substring(split + 1) : undefined;
+        let args = [];
+        let startParen = typeOrField.indexOf('(');
+        let endParen = typeOrField.indexOf(')')
+        if (startParen > 0 && endParen == typeOrField.length - 1) {
+            args = typeOrField.substring(startParen + 1, endParen).split(',');
+            typeOrField = typeOrField.substring(0, startParen);
+        }
         const type = ActivityTypes[typeOrField];
         const field = ActivityField[typeOrField];
         const instruction = Instructions[typeOrField];
@@ -158,15 +168,14 @@ async function readActivitiesFromAggregate(aggregate, currentActivity, recipient
             newActivities.push(currentActivity);
         }
 
-        const delay = instruction === Instructions.Delay ? rest[0] : messageTimeGap;
+        const delay = instruction === Instructions.Delay ? rest : messageTimeGap;
         currentActivity.timestamp = getIncrementedDate(delay);
 
         // As more activity fields are supported,
         // this should become a util or helper class.
-        switch(field)
-        {
+        switch (field) {
             case ActivityField.Attachment:
-                await addAttachment(currentActivity, rest);
+                await addAttachment(currentActivity, args, rest);
                 break;
             case ActivityField.AttachmentLayout:
                 addAttachmentLayout(currentActivity, rest);
@@ -174,7 +183,7 @@ async function readActivitiesFromAggregate(aggregate, currentActivity, recipient
         }
         // Trim off this activity or activity field and continue.
         aggregate = aggregate.replace(`[${result[1]}]`, '');
-        activityRegExp.lastIndex = 0;
+        commandRegExp.lastIndex = 0;
     }
     // If we have text left on this line after extracting
     // all instructions or activities, treat it like a message fragment.
@@ -185,9 +194,9 @@ async function readActivitiesFromAggregate(aggregate, currentActivity, recipient
 }
 
 function addAttachmentLayout(currentActivity, rest) {
-    if (rest.length > 0 && rest[0].toLowerCase() ==  AttachmentLayoutTypes.Carousel)
+    if (rest && rest.toLowerCase() == AttachmentLayoutTypes.Carousel)
         currentActivity.AttachmentLayout = AttachmentLayoutTypes.Carousel;
-    else if (rest.length > 0 && rest[0].toLowerCase()  == AttachmentLayoutTypes.List)
+    else if (rest && rest.toLowerCase() == AttachmentLayoutTypes.List)
         currentActivity.AttachmentLayout = AttachmentLayoutTypes.List;
     else
         console.error(`AttachmentLayout of ${rest[0]} is not List or Carousel`);
@@ -199,26 +208,38 @@ function addAttachmentLayout(currentActivity, rest) {
  * from the file extension.
  *
  * @param {Activity} activity The activity to add the attachment to
- * @param {*} attachmentInfo An object resulting from the parsed
- * attachment instruction. e.g. [Attachment:image.png:application/image]
- * results in {fileLocation:'image.png', contentType:'application/image'}
+ * @param args array of strings from Attachment(args)
+ * @param {*} contentUrl contenturl
  *
  * @returns {Promise<number>} The new number of attachments for the activity
  */
-async function addAttachment(activity, attachmentInfo) {
-    let [fileLocation, contentType] = attachmentInfo;
-    if (!contentType) {
-        contentType = mime.lookup(fileLocation) || cardContentTypes[path.extname(fileLocation)];
-    } else if (cardContentTypes[contentType]) {
-        contentType = cardContentTypes[contentType];
+async function addAttachment(activity, args, contentUrl) {
+    let contentType;
+    if (args && args.length > 0) {
+        if (cardContentTypes[args[0].toLowerCase()])
+            contentType = cardContentTypes[args[0].toLowerCase()];
+        else
+            contentType = args[0];
     }
-    
+    else if (!contentType) {
+        contentType = mime.lookup(contentUrl) || cardContentTypes[path.extname(contentUrl)];
+    }
+
     const charset = mime.charset(contentType);
-    let content = await readAttachmentFile(fileLocation, contentType);
-    if (!isCard(contentType) && charset !== 'UTF-8') {
-        content = new Buffer(content).toString('base64');
+
+    // if not a url
+    if (contentUrl.indexOf('http') != 0) {
+        // read the file
+        let content = await readAttachmentFile(contentUrl, contentType);
+        // if it is not a card
+        if (!isCard(contentType) && charset !== 'UTF-8') {
+            // send as base64
+            content = new Buffer(content).toString('base64');
+        }
+        return (activity.attachments || (activity.attachments = [])).push(new Attachment({ contentType, content }));
     }
-    return (activity.attachments || (activity.attachments = [])).push(new Attachment({ contentType, content }));
+    // send as contentUrl
+    return (activity.attachments || (activity.attachments = [])).push(new Attachment({ contentType, contentUrl }));
 }
 
 /**
