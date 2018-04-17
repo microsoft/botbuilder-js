@@ -2574,9 +2574,10 @@
           "method": "get",
           "methodAlias": "list",
           "target": [
-            "versions"
+            "versionModels",
+            "versionmodels"
           ],
-          "command": "luis list versions --skip <integer> --take <integer>",
+          "command": "luis list versionModels --skip <integer> --take <integer>",
           "pathFragment": "",
           "params": [
             {
