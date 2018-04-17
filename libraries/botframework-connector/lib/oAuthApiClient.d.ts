@@ -6,6 +6,7 @@
  * Licensed under the MIT License.
  */
 import * as msRest from "ms-rest-js";
+import * as Models from "botframework-schema";
 import { ConnectorClient } from "./generated/connectorClient";
 /** Exposes methods for calling the channels OAuth Methods. */
 export declare class OAuthApiClient {
@@ -53,4 +54,32 @@ export declare class OAuthApiClient {
    * @reject {Error|ServiceError} - The error object.
    */
     signOutUserWithHttpOperationResponse(userId: string, connectionName: string, options?: msRest.RequestOptionsBase): Promise<msRest.HttpOperationResponse>;
+    /**
+     * @summary GetUserToken
+     *
+     * Attempts to retrieve the token for a user that's in a logging flow.
+     *
+     * @param {string} userId Id of the user being authenticated.
+     *
+     * @param {string} connectionName Name of the auth connection to use.
+     *
+     * @param {string} [magicCode] Optional user entered code to validate.
+     *
+     * @param {RequestOptionsBase} [options] Optional Parameters.
+     */
+    getUserToken(userId: string, connectionName: string, magicCode?: string, options?: msRest.RequestOptionsBase): Promise<Models.TokenResponse>;
+    /**
+   * @summary SignOutUser
+   *
+   * Signs the user out with the token server.
+   *
+   * @param {string} userId Id of the user to sign out.
+   *
+   * @param {string} connectionName Name of the auth connection to use.
+   *
+   * @param {RequestOptionsBase} [options] Optional Parameters.
+   *
+   * @returns {Promise} A promise is returned
+   */
+    signOutUser(userId: string, connectionName: string, options?: msRest.RequestOptionsBase): Promise<void>;
 }

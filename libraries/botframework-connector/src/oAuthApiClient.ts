@@ -220,4 +220,46 @@ export class OAuthApiClient {
 
     return Promise.resolve(operationRes);
   }
+
+  /**
+   * @summary GetUserToken
+   *
+   * Attempts to retrieve the token for a user that's in a logging flow.
+   * 
+   * @param {string} userId Id of the user being authenticated.
+   *
+   * @param {string} connectionName Name of the auth connection to use.
+   *
+   * @param {string} [magicCode] Optional user entered code to validate.
+   *
+   * @param {RequestOptionsBase} [options] Optional Parameters.
+   */
+  getUserToken(userId: string, connectionName: string, magicCode?: string, options?: msRest.RequestOptionsBase): Promise<Models.TokenResponse> {
+    return this.getUserTokenWithHttpOperationResponse(userId, connectionName, magicCode, options).then((operationRes: msRest.HttpOperationResponse) => {
+      return Promise.resolve(operationRes.bodyAsJson as Models.TokenResponse);
+    }).catch((err: Error) => {
+      return Promise.reject(err);
+    });
+  }
+
+    /**
+   * @summary SignOutUser
+   *
+   * Signs the user out with the token server.
+   *
+   * @param {string} userId Id of the user to sign out.
+   *
+   * @param {string} connectionName Name of the auth connection to use.
+   *
+   * @param {RequestOptionsBase} [options] Optional Parameters.
+   *
+   * @returns {Promise} A promise is returned
+   */
+  async signOutUser(userId: string, connectionName: string, options?: msRest.RequestOptionsBase): Promise<void> {
+    return this.signOutUserWithHttpOperationResponse(userId, connectionName, options).then((operationRes: msRest.HttpOperationResponse) => {
+      return Promise.resolve();
+    }).catch((err: Error) => {
+      return Promise.reject(err);
+    });
+  }
 }

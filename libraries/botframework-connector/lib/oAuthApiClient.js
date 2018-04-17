@@ -224,6 +224,48 @@ class OAuthApiClient {
             return Promise.resolve(operationRes);
         });
     }
+    /**
+     * @summary GetUserToken
+     *
+     * Attempts to retrieve the token for a user that's in a logging flow.
+     *
+     * @param {string} userId Id of the user being authenticated.
+     *
+     * @param {string} connectionName Name of the auth connection to use.
+     *
+     * @param {string} [magicCode] Optional user entered code to validate.
+     *
+     * @param {RequestOptionsBase} [options] Optional Parameters.
+     */
+    getUserToken(userId, connectionName, magicCode, options) {
+        return this.getUserTokenWithHttpOperationResponse(userId, connectionName, magicCode, options).then((operationRes) => {
+            return Promise.resolve(operationRes.bodyAsJson);
+        }).catch((err) => {
+            return Promise.reject(err);
+        });
+    }
+    /**
+   * @summary SignOutUser
+   *
+   * Signs the user out with the token server.
+   *
+   * @param {string} userId Id of the user to sign out.
+   *
+   * @param {string} connectionName Name of the auth connection to use.
+   *
+   * @param {RequestOptionsBase} [options] Optional Parameters.
+   *
+   * @returns {Promise} A promise is returned
+   */
+    signOutUser(userId, connectionName, options) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.signOutUserWithHttpOperationResponse(userId, connectionName, options).then((operationRes) => {
+                return Promise.resolve();
+            }).catch((err) => {
+                return Promise.reject(err);
+            });
+        });
+    }
 }
 exports.OAuthApiClient = OAuthApiClient;
 //# sourceMappingURL=oAuthApiClient.js.map
