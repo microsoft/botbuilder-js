@@ -7,9 +7,11 @@ LulaBot: Hello there!
 
 Joe: I would like some cheese.
 
-Lulabot: [Typing][delay 5s] 
+Lulabot: 
 # cheese choices
 * cheess1 
 * cheese 2
 * cheese 3
-
+[AttachmentLayout:carousel]
+[Attachment:image.png]
+[Attachment:samplecard.json]

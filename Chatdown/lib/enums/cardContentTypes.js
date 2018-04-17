@@ -1,4 +1,4 @@
-const base = ' ${base}';
+const base = 'application/vnd.microsoft.card.';
 module.exports.cardContentTypes = {
     animation: `${base}animation`,
     audio: `${base}audio`,
@@ -7,6 +7,7 @@ module.exports.cardContentTypes = {
     thumbnail: `${base}thumbnail`,
     signin: `${base}signin`,
     video: `${base}video`,
+    adaptivecard: `${base}adaptive`
 };
 module.exports.isCard = function (contentType) {
     return contentType.includes(base);
