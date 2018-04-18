@@ -91,6 +91,20 @@ class CardFactory {
         return a;
     }
     /**
+     * Returns an attachment for an OAuth card used by the Bot Frameworks Single Sign On (SSO) service.
+     *
+     * @param connectionName The name of the OAuth connection to use.
+     * @param title Title of the cards signin button.
+     * @param text (Optional) additional text to include on the card.
+     */
+    static oauthCard(connectionName, title, text) {
+        const card = { buttons: [{ type: botbuilder_core_1.ActionTypes.Signin, title: title, value: undefined }], connectionName: connectionName };
+        if (text) {
+            card.text = text;
+        }
+        return { contentType: CardFactory.contentTypes.oauthCard, content: card };
+    }
+    /**
      * Returns an attachment for a receipt card. The attachment will contain the card and the
      * appropriate `contentType`.
      *
@@ -103,7 +117,7 @@ class CardFactory {
      * Returns an attachment for a signin card. For channels that don't natively support signin
      * cards an alternative message will be rendered.
      *
-     * @param title The cards title.
+     * @param title Title of the cards signin button.
      * @param url The link to the signin page the user needs to visit.
      * @param text (Optional) additional text to include on the card.
      */
@@ -207,6 +221,7 @@ CardFactory.contentTypes = {
     audioCard: 'application/vnd.microsoft.card.audio',
     heroCard: 'application/vnd.microsoft.card.hero',
     receiptCard: 'application/vnd.microsoft.card.receipt',
+    oauthCard: 'application/vnd.microsoft.card.oauth',
     signinCard: 'application/vnd.microsoft.card.signin',
     thumbnailCard: 'application/vnd.microsoft.card.thumbnail',
     videoCard: 'application/vnd.microsoft.card.video'
