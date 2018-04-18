@@ -15,7 +15,6 @@ chatdown <chat> --out <transcript> --help
 | Argument| Description|
 |-------------| ------------------------- |
 | `<chatfile>` | The path of the chat file to be parsed. If omitted, stdin will be used |
-| `--out <transcript>` | The path of the transcript to be written. If omitted, stdout will be used |
 | `--help`    | Output the help to the console|
 
 ## .chat File Format
