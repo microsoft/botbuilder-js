@@ -24,10 +24,11 @@
   },
   "homepage": "https://github.com/microsoft/botbuilder-tools#readme",
   "dependencies": {
-    "chatdown": "0.0.8",
+    "botdispatch": "0.0.1",
+    "chatdown": "0.0.9",
+    "ludown": "^1.0.0",
     "luis-apis": "^1.0.11",
     "msbot": "^1.0.23-alpha",
-    "qnamaker": "^1.0.7",
-    "bot-dispatch":"^0.0.1",
+    "qnamaker": "^1.0.7"
   }
 }
