@@ -18,7 +18,7 @@ class OAuthPrompt extends control_1.Control {
     }
     dialogBegin(dc, options) {
         // Persist options and state
-        const timeout = typeof this.settings.timeout === 'number' ? this.settings.timeout : 5400000;
+        const timeout = typeof this.settings.timeout === 'number' ? this.settings.timeout : 54000000;
         const instance = dc.instance;
         instance.state = Object.assign({
             expires: new Date().getTime() + timeout

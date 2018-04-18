@@ -13,7 +13,7 @@ import { PromptOptions } from './prompt';
 export interface OAuthPromptSettingsWithTimeout extends prompts.OAuthPromptSettings {
     /**
      * (Optional) number of milliseconds the prompt will wait for the user to authenticate.
-     * Defaults to a value `5,400,000` (15 minutes.)
+     * Defaults to a value `54,000,000` (15 minutes.)
      */
     timeout?: number;
 }

@@ -14,7 +14,7 @@ import { PromptOptions } from './prompt';
 export interface OAuthPromptSettingsWithTimeout extends prompts.OAuthPromptSettings {
     /** 
      * (Optional) number of milliseconds the prompt will wait for the user to authenticate. 
-     * Defaults to a value `5,400,000` (15 minutes.)
+     * Defaults to a value `54,000,000` (15 minutes.)
      */
     timeout?: number;
 }
@@ -34,7 +34,7 @@ export class OAuthPrompt<C extends TurnContext> extends Control<C> {
 
     public dialogBegin(dc: DialogContext<C>, options: PromptOptions): Promise<any> {
         // Persist options and state
-        const timeout = typeof this.settings.timeout === 'number' ? this.settings.timeout : 5400000; 
+        const timeout = typeof this.settings.timeout === 'number' ? this.settings.timeout : 54000000; 
         const instance = dc.instance;
         instance.state = Object.assign({
             expires: new Date().getTime() + timeout
