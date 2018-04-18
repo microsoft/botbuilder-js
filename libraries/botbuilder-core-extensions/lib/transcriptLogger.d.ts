@@ -10,12 +10,29 @@ import { Middleware, TurnContext, Activity } from "botbuilder-core";
  * When added, this middleware will log incoming and outgoing activitites to a ITranscriptStore.
  */
 export declare class TranscriptLoggerMiddleware implements Middleware {
+    private logger;
+    private transcript;
+    /**
+     * Middleware for logging incoming and outgoing activities to a transcript store.
+     * @param logger Transcript logger
+     */
+    constructor(logger: TranscriptLogger);
     /**
      * Initialization for middleware turn.
      * @param context Context for the current turn of conversation with the user.
      * @param next Function to call at the end of the middleware chain.
      */
     onTurn(context: TurnContext, next: () => Promise<void>): void | Promise<void>;
+    /**
+     * Logs the Activity.
+     * @param activity Activity to log.
+     */
+    private logActivity(activity);
+    /**
+     * Clones the Activity entity.
+     * @param activity Activity to clone.
+     */
+    private cloneActivity(activity);
 }
 /**
  * Transcript logger stores activities for conversations for recall
