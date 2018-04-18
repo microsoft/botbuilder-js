@@ -294,7 +294,10 @@ export class BotFrameworkAdapter extends BotAdapter {
                                 if (!activity.conversation || !activity.conversation.id) { throw new Error(`BotFrameworkAdapter.sendActivity(): missing conversation id.`) }
                                 let p: Promise<ResourceResponse>;
                                 const client = that.createConnectorClient(activity.serviceUrl);
-                                if (activity.replyToId) {
+                                if (activity.type === 'trace' && activity.channelId !== 'emulator') {
+                                    // Just eat activity
+                                    p = Promise.resolve({} as ResourceResponse);
+                                } else if (activity.replyToId) {
                                     p = client.conversations.replyToActivity(
                                         activity.conversation.id,
                                         activity.replyToId,
