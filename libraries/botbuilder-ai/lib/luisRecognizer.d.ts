@@ -25,6 +25,7 @@ export interface LuisRecognizerSettings {
         customHeaders?: {
             [headerName: string]: string;
         };
+        staging?: boolean;
     };
 }
 export interface LuisRecognizerResult {
@@ -76,6 +77,7 @@ export declare class LuisRecognizer implements Middleware {
      * @param minScore (Optional) minimum score needed for an intent to be considered as a top intent. If all intents in the set are below this threshold then the `defaultIntent` will be returned.  Defaults to a value of `0.0`.
      */
     static topIntent(results: LuisRecognizerResult | undefined, defaultIntent?: string, minScore?: number): string;
+    private emitTraceInfo(context, luisResult, recognizerResult);
     private getIntents(luisResult);
     private getEntitiesAndMetadata(entities, compositeEntities, verbose);
     private getEntityValue(entity);

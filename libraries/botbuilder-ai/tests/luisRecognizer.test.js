@@ -264,4 +264,31 @@ describe('LuisRecognizer', function () {
         assert(top === 'None');
         done();
     });
+
+    it('should emit trace info once per call to recognize', function(done){
+        var recognizer = new LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey, verbose: true });
+        var context = new TestContext({ text: 'My name is Emad' });
+        recognizer.recognize(context).then(res => {
+            return recognizer.recognize(context);
+        }).then(res=> {
+            return recognizer.recognize(context);
+        }).then(res=> {
+                assert(res);
+                assert(res.text == 'My name is Emad');
+            }).then(() => {
+                let luisTraceActivities = context.sent.filter(s => s.type === 'trace' && s.name === 'LuisRecognizerMiddleware');
+                assert(luisTraceActivities.length === 1);
+                let traceActivity = luisTraceActivities[0];
+                assert(traceActivity.type === 'trace');
+                assert(traceActivity.name === 'LuisRecognizerMiddleware');
+                assert(traceActivity.label === 'Luis Trace');
+                assert(traceActivity.valueType === 'https://www.luis.ai/schemas/trace');
+                assert(traceActivity.value);
+                assert(traceActivity.value.luisResult);
+                assert(traceActivity.value.recognizerResult);
+                assert(traceActivity.value.luisOptions);
+                assert(traceActivity.value.luisModel);
+                done();
+            });
+    });
 });
