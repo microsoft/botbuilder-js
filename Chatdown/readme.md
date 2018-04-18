@@ -1,6 +1,7 @@
 # Chatdown
 
-Chatdown is a transcript generator which consumes a markdown file to generate activity transcripts
+Chatdown is a transcript generator which consumes a markdown file to generate activity transcripts. Generated transcript files are output to stdout.
+
 ## Installation
 ```bash
 npm i -g chatdown
@@ -9,7 +10,7 @@ npm i -g chatdown
 ## Arguments
 Usage:
 ```
-chatdown <chat> --out <transcript> --help
+chatdown <chat> --help
 ```
 
 | Argument| Description|
