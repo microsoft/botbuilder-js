@@ -13,8 +13,8 @@ const ConversationAccount = require('./serializable/conversationAccount');
 const Attachment = require('./serializable/attachment');
 
 const NS = uuid();
-// Matches [someActivityOrInstruction:argument0:argument1:argumentn...]
-const commandRegExp = /(?:\[)([^\s]+)+(?=])/g;
+// Matches [someActivityOrInstruction=value]
+const commandRegExp = /(?:\[)(.*?)(?:])/i;
 const configurationRegExp = /^(bot|user|channelId)(?:=)/;
 const messageTimeGap = 2000;
 let now = Date.now();
@@ -105,7 +105,8 @@ module.exports = async function readContents(fileContents, args) {
                 activities.push(...newActivities);
                 aggregate = null;
             }
-        } else {
+        }
+        else {
             currentActivity.text += (aggregate !== null ? aggregate : line).trim() + '\n';
         }
     }
@@ -139,13 +140,6 @@ async function readActivitiesFromAggregate(aggregate, currentActivity, recipient
         let split = result[1].indexOf('=');
         let typeOrField = split > 0 ? result[1].substring(0, split) : result[0];
         let rest = (split > 0) ? result[1].substring(split + 1) : undefined;
-        let args = [];
-        let startParen = typeOrField.indexOf('(');
-        let endParen = typeOrField.indexOf(')')
-        if (startParen > 0 && endParen == typeOrField.length - 1) {
-            args = typeOrField.substring(startParen + 1, endParen).split(',');
-            typeOrField = typeOrField.substring(0, startParen);
-        }
         const type = ActivityTypes[typeOrField];
         const field = ActivityField[typeOrField];
         const instruction = Instructions[typeOrField];
@@ -175,7 +169,7 @@ async function readActivitiesFromAggregate(aggregate, currentActivity, recipient
         // this should become a util or helper class.
         switch (field) {
             case ActivityField.Attachment:
-                await addAttachment(currentActivity, args, rest);
+                await addAttachment(currentActivity, rest);
                 break;
             case ActivityField.AttachmentLayout:
                 addAttachmentLayout(currentActivity, rest);
@@ -208,20 +202,21 @@ function addAttachmentLayout(currentActivity, rest) {
  * from the file extension.
  *
  * @param {Activity} activity The activity to add the attachment to
- * @param args array of strings from Attachment(args)
  * @param {*} contentUrl contenturl
+ * @param {*} contentType contentType
  *
  * @returns {Promise<number>} The new number of attachments for the activity
  */
-async function addAttachment(activity, args, contentUrl) {
-    let contentType;
-    if (args && args.length > 0) {
-        if (cardContentTypes[args[0].toLowerCase()])
-            contentType = cardContentTypes[args[0].toLowerCase()];
-        else
-            contentType = args[0];
+async function addAttachment(activity, arg) {
+    let parts = arg.trim().split(' ');
+    let contentUrl = parts[0].trim();
+    let contentType = (parts.length > 1) ? parts[1].trim() : undefined;
+    if (contentType) {
+        contentType = contentType.toLowerCase();
+        if (cardContentTypes[contentType])
+            contentType = cardContentTypes[contentType];
     }
-    else if (!contentType) {
+    else {
         contentType = mime.lookup(contentUrl) || cardContentTypes[path.extname(contentUrl)];
     }
 
@@ -251,14 +246,18 @@ async function addAttachment(activity, args, contentUrl) {
  */
 async function readAttachmentFile(fileLocation, contentType) {
     let resolvedFileLocation = path.join(workingDirectory, fileLocation);
-    let exists = await fs.pathExists(resolvedFileLocation);
+    let exists = fs.pathExistsSync(resolvedFileLocation);
 
     // fallback to cwd
     if (!exists) {
         resolvedFileLocation = path.resolve(fileLocation);
     }
     // Throws if the fallback does not exist.
-    return contentType.includes('json') || isCard(contentType) ? fs.readJson(resolvedFileLocation) : fs.readFile(resolvedFileLocation);
+    if (contentType.includes('json') || isCard(contentType)) {
+        return fs.readJsonSync(resolvedFileLocation);
+    } else {
+        return fs.readFileSync(resolvedFileLocation);
+    }
 }
 
 /**
