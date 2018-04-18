@@ -42,27 +42,26 @@ The conversation text represents markdown between the user and the bot.  Every t
 |`[AttachmentLayout=carousel|list]`| Specify how multiple attachments whould be dislpayed.  layout values are `carousel` or `list`|
 
 ### Attachments
-To add an attachment you use markdown image or link syntax.  The path can be a url or a local path (either absolute or relative to .chat file).  The content type will be inferred from the file extension, or you can pass it in as a raw mime type or as a content type shortcut for well known content types.
+To add an attachment you use `[Attachment=path contentPath]`.  The path can be a url or a local path (either absolute or relative to .chat file).  The content type is optional and if not passed will be inferred from the file extension, or you can pass it using shortcut or full mime type.
 
 ```markdown
-To add images: ![label](path)
-To add other types: [label](path "contentType")
+[Attachment:path contentType]
 ```
 
 Here is an example sending a carousel of photos
 ```markdown
 Enjoy these pictures!
 [AttachmentLayout=carousel]
-![turtle1](http://4.bp.blogspot.com/--cFa6t-x4qY/UAqEgUvPd2I/AAAAAAAANIg/pMLE080Zjh4/s1600/turtle.jpg)
-![turtle2](http://viagemempauta.com.br/wp-content/uploads/2015/09/2_All-Angle-By-Andreza-dos-Santos_FTS_2914-344-620x415.jpg)
-![turtle3](http://images.fineartamerica.com/images-medium-large/good-morning-turtles-freund-gloria.jpg)
-![turtle4](http://4.bp.blogspot.com/--cFa6t-x4qY/UAqEgUvPd2I/AAAAAAAANIg/pMLE080Zjh4/s1600/turtle.jpg)
-![local](image.png)
+[Attachment=http://4.bp.blogspot.com/--cFa6t-x4qY/UAqEgUvPd2I/AAAAAAAANIg/pMLE080Zjh4/s1600/turtle.jpg]
+[Attachment=http://viagemempauta.com.br/wp-content/uploads/2015/09/2_All-Angle-By-Andreza-dos-Santos_FTS_2914-344-620x415.jpg]
+[Attachment=http://images.fineartamerica.com/images-medium-large/good-morning-turtles-freund-gloria.jpg]
+[Attachment=http://4.bp.blogspot.com/--cFa6t-x4qY/UAqEgUvPd2I/AAAAAAAANIg/pMLE080Zjh4/s1600/turtle.jpg]
+[Attachment=image.png]
 ```
 
-Here is an exaple sending a local adaptive card:
+Here is an exaple sending a local adaptive card using a content type shortcut:
 ```markdown
-[example](folder/sample.json "adaptivecard")
+[Attachment=folder/sample.json "adaptivecard"]
 ```
 
 #### Attachment content type shortcuts
@@ -99,13 +98,14 @@ user: I need the bot framework logo.
 
 bot:
 Here you go.
-![](bot-framework.png)
-![](http://yahoo.com/bot-framework.png)
+[Attachment=bot-framework.png]
+[Attachment=http://yahoo.com/bot-framework.png]
+[AttachmentLayout=carousel]
 
 user: thanks
 bot:
 Here's a form for you
-[](card.json adaptivecard)
+[Attachment=card.json adaptivecard]
 
 ```
 

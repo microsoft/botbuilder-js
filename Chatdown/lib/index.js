@@ -14,8 +14,7 @@ const Attachment = require('./serializable/attachment');
 
 const NS = uuid();
 // Matches [someActivityOrInstruction=value]
-const commandRegExp = /(?:\[)([\w+=/.-]*)+(?:])/g;
-const linkRegExp = /(?:!?\[.*?\]\(.*?\))/i;
+const commandRegExp = /(?:\[)(.*?)(?:])/i;
 const configurationRegExp = /^(bot|user|channelId)(?:=)/;
 const messageTimeGap = 2000;
 let now = Date.now();
@@ -98,23 +97,9 @@ module.exports = async function readContents(fileContents, args) {
             aggregate = line;
         }
 
-        // map links to attachments
-        if (linkRegExp.test(aggregate)) {
-            let left = aggregate.indexOf('(');
-            let right = aggregate.indexOf(')', left);
-            let contentUrl = aggregate.substring(++left, right);
-            let contentType;
-            let split = contentUrl.indexOf(' ');
-            if (split > 0) {
-                contentType = contentUrl.substring(split).trim();
-                contentUrl = contentUrl.substring(0, split).trim();
-            }
-            addAttachment(currentActivity, contentUrl, contentType);
-            aggregate = null;
-        }
         // signature for an activity that contains a type other than
         // message with or without arguments. e.g. [delay:3000]
-        else if (commandRegExp.test(aggregate)) {
+        if (commandRegExp.test(aggregate)) {
             const newActivities = await readActivitiesFromAggregate(aggregate, currentActivity, recipient, from, channelId);
             if (newActivities) {
                 activities.push(...newActivities);
@@ -155,13 +140,6 @@ async function readActivitiesFromAggregate(aggregate, currentActivity, recipient
         let split = result[1].indexOf('=');
         let typeOrField = split > 0 ? result[1].substring(0, split) : result[0];
         let rest = (split > 0) ? result[1].substring(split + 1) : undefined;
-        let args = [];
-        let startParen = typeOrField.indexOf('(');
-        let endParen = typeOrField.indexOf(')')
-        if (startParen > 0 && endParen == typeOrField.length - 1) {
-            args = typeOrField.substring(startParen + 1, endParen).split(',');
-            typeOrField = typeOrField.substring(0, startParen);
-        }
         const type = ActivityTypes[typeOrField];
         const field = ActivityField[typeOrField];
         const instruction = Instructions[typeOrField];
@@ -191,7 +169,7 @@ async function readActivitiesFromAggregate(aggregate, currentActivity, recipient
         // this should become a util or helper class.
         switch (field) {
             case ActivityField.Attachment:
-                await addAttachment(currentActivity, args, rest);
+                await addAttachment(currentActivity, rest);
                 break;
             case ActivityField.AttachmentLayout:
                 addAttachmentLayout(currentActivity, rest);
@@ -229,17 +207,16 @@ function addAttachmentLayout(currentActivity, rest) {
  *
  * @returns {Promise<number>} The new number of attachments for the activity
  */
-async function addAttachment(activity, contentUrl, contentType) {
-    if (contentType)
-    {
+async function addAttachment(activity, arg) {
+    let parts = arg.trim().split(' ');
+    let contentUrl = parts[0].trim();
+    let contentType = (parts.length > 1) ? parts[1].trim() : undefined;
+    if (contentType) {
         contentType = contentType.toLowerCase();
-        if (contentType[0] == '"' && contentType[contentType.length-1] == '"')
-            contentType = contentType.substring(1, contentType.length-1);
         if (cardContentTypes[contentType])
             contentType = cardContentTypes[contentType];
     }
-
-    if (!contentType) {
+    else {
         contentType = mime.lookup(contentUrl) || cardContentTypes[path.extname(contentUrl)];
     }
 
