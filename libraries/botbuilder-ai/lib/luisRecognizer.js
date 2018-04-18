@@ -27,7 +27,7 @@ class LuisRecognizer {
      * @param context Context for the current turn of conversation with the use.
      */
     get(context) {
-        return context.services.get(this.cacheKey).recognizerResult;
+        return context.services.get(this.cacheKey);
     }
     /**
      * Calls LUIS to recognize intents and entities in a users utterance. The results of the call
@@ -50,15 +50,13 @@ class LuisRecognizer {
                     entities: this.getEntitiesAndMetadata(luisResult.entities, luisResult.compositeEntities, this.settings.verbose)
                 };
                 // Write to cache
-                context.services.set(this.cacheKey, { recognizerResult, luisResult });
+                context.services.set(this.cacheKey, recognizerResult);
                 return this.emitTraceInfo(context, luisResult, recognizerResult).then(() => {
                     return recognizerResult;
                 });
             });
         }
-        return this.emitTraceInfo(context, cached.recognizerResult, cached.luisResult).then(() => {
-            return cached.recognizerResult;
-        });
+        return Promise.resolve(cached);
     }
     /**
      * Called internally to create a LuisClient instance. This is exposed to enable better unit

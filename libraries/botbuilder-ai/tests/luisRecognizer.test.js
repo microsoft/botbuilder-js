@@ -265,14 +265,20 @@ describe('LuisRecognizer', function () {
         done();
     });
 
-    it('should emit trace info', function(done){
+    it('should emit trace info once per call to recognize', function(done){
         var recognizer = new LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey, verbose: true });
         var context = new TestContext({ text: 'My name is Emad' });
         recognizer.recognize(context).then(res => {
+            return recognizer.recognize(context);
+        }).then(res=> {
+            return recognizer.recognize(context);
+        }).then(res=> {
                 assert(res);
                 assert(res.text == 'My name is Emad');
             }).then(() => {
-                let traceActivity = context.sent[0];
+                let luisTraceActivities = context.sent.filter(s => s.type === 'trace' && s.name === 'LuisRecognizerMiddleware');
+                assert(luisTraceActivities.length === 1);
+                let traceActivity = luisTraceActivities[0];
                 assert(traceActivity.type === 'trace');
                 assert(traceActivity.name === 'LuisRecognizerMiddleware');
                 assert(traceActivity.label === 'Luis Trace');
