@@ -21,4 +21,5 @@ __export(require("./storage"));
 __export(require("./testAdapter"));
 __export(require("./userState"));
 __export(require("./transcriptLogger"));
+__export(require("./memoryTranscriptStore"));
 //# sourceMappingURL=index.js.map
