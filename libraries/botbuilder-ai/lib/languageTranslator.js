@@ -141,8 +141,8 @@ class MicrosoftTranslator {
         let orgTexts = [];
         texts.forEach((text, index, array) => {
             orgTexts.push(text);
-            texts[index] = this.escapeHtml(text);
-            texts[index] = `<string xmlns="http://schemas.microsoft.com/2003/10/Serialization/Arrays">${text}</string>`;
+            let escapedText = this.escapeHtml(text);
+            texts[index] = `<string xmlns="http://schemas.microsoft.com/2003/10/Serialization/Arrays">${escapedText}</string>`;
         });
         let uri = "https://api.microsofttranslator.com/v2/Http.svc/TranslateArray2";
         let body = "<TranslateArrayRequest>" +
