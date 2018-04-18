@@ -73,6 +73,7 @@ export declare class DialogContext<C extends TurnContext> {
      * @param dialogId ID of the prompt to start.
      * @param prompt Initial prompt to send the user.
      * @param choicesOrOptions (Optional) array of choices to prompt the user for or additional prompt options.
+     * @param options (Optional) additional prompt options.
      */
     prompt<O extends PromptOptions = PromptOptions>(dialogId: string, prompt: string | Partial<Activity>, choicesOrOptions?: O | (string | Choice)[], options?: O): Promise<any>;
     /**

@@ -10,5 +10,6 @@ export * from './choicePrompt';
 export * from './confirmPrompt';
 export * from './datetimePrompt';
 export * from './numberPrompt';
+export * from './oauthPrompt';
 export * from './prompt';
 export * from './textPrompt';

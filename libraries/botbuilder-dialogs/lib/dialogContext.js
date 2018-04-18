@@ -72,9 +72,10 @@ class DialogContext {
      * @param dialogId ID of the prompt to start.
      * @param prompt Initial prompt to send the user.
      * @param choicesOrOptions (Optional) array of choices to prompt the user for or additional prompt options.
+     * @param options (Optional) additional prompt options.
      */
     prompt(dialogId, prompt, choicesOrOptions, options) {
-        const args = Object.assign({}, Array.isArray(choicesOrOptions) ? { choices: choicesOrOptions } : choicesOrOptions);
+        const args = Object.assign({}, Array.isArray(choicesOrOptions) ? { choices: choicesOrOptions } : choicesOrOptions, options);
         if (prompt) {
             args.prompt = prompt;
         }
