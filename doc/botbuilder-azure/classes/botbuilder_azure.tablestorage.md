@@ -9,6 +9,16 @@ Middleware that implements an Azure Table based storage provider for a bot.
 
 **Usage Example**
 
+    const BotBuilderAzure = require('botbuilder-azure');
+    const storage = new BotBuilderAzure.TableStorage({
+        storageAccountOrConnectionString: 'UseDevelopmentStorage=true',
+        tableName: 'mybotstate'
+      });
+
+    // Add state middleware
+    const state = new BotStateManager(storage);
+    adapter.use(state);
+
 ## Implements
 
 * `any`
@@ -38,7 +48,7 @@ Middleware that implements an Azure Table based storage provider for a bot.
 ### ⊕ **new TableStorage**(settings: *[TableStorageSettings](../interfaces/botbuilder_azure.tablestoragesettings.md)*): [TableStorage](botbuilder_azure.tablestorage.md)
 
 
-*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-azure/lib/tableStorage.d.ts#L31)*
+*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:43](https://github.com/Microsoft/botbuilder-js/blob/aaaccb8/libraries/botbuilder-azure/lib/tableStorage.d.ts#L43)*
 
 
 
@@ -49,7 +59,7 @@ Creates a new instance of the storage provider.
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| settings | [TableStorageSettings](../interfaces/botbuilder_azure.tablestoragesettings.md)   |  (Optional) setting to configure the provider. |
+| settings | [TableStorageSettings](../interfaces/botbuilder_azure.tablestoragesettings.md)   |  (Optional) Setting to configure the provider. |
 
 
 
@@ -69,7 +79,7 @@ Creates a new instance of the storage provider.
 
 
 
-*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:60](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-azure/lib/tableStorage.d.ts#L60)*
+*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:71](https://github.com/Microsoft/botbuilder-js/blob/aaaccb8/libraries/botbuilder-azure/lib/tableStorage.d.ts#L71)*
 
 
 
@@ -102,7 +112,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:42](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-azure/lib/tableStorage.d.ts#L42)*
+*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:53](https://github.com/Microsoft/botbuilder-js/blob/aaaccb8/libraries/botbuilder-azure/lib/tableStorage.d.ts#L53)*
 
 
 
@@ -127,7 +137,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:40](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-azure/lib/tableStorage.d.ts#L40)*
+*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:51](https://github.com/Microsoft/botbuilder-js/blob/aaaccb8/libraries/botbuilder-azure/lib/tableStorage.d.ts#L51)*
 
 
 
@@ -152,7 +162,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:48](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-azure/lib/tableStorage.d.ts#L48)*
+*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:59](https://github.com/Microsoft/botbuilder-js/blob/aaaccb8/libraries/botbuilder-azure/lib/tableStorage.d.ts#L59)*
 
 
 
@@ -185,7 +195,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:54](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-azure/lib/tableStorage.d.ts#L54)*
+*Defined in [libraries/botbuilder-azure/lib/tableStorage.d.ts:65](https://github.com/Microsoft/botbuilder-js/blob/aaaccb8/libraries/botbuilder-azure/lib/tableStorage.d.ts#L65)*
 
 
 
