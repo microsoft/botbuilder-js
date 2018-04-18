@@ -141,8 +141,8 @@ class MicrosoftTranslator {
         let orgTexts = [];
         texts.forEach((text, index, array) => {
             orgTexts.push(text);
-            texts[index] = this.escapeHtml(text);
-            texts[index] = `<string xmlns="http://schemas.microsoft.com/2003/10/Serialization/Arrays">${text}</string>`;
+            let escapedText = this.escapeHtml(text);
+            texts[index] = `<string xmlns="http://schemas.microsoft.com/2003/10/Serialization/Arrays">${escapedText}</string>`;
         });
         let uri = "https://api.microsofttranslator.com/v2/Http.svc/TranslateArray2";
         let body = "<TranslateArrayRequest>" +
@@ -178,14 +178,12 @@ class MicrosoftTranslator {
             let parser = new xmldom_1.DOMParser();
             let responseObj = parser.parseFromString(response);
             let elements = responseObj.getElementsByTagName("TranslateArray2Response");
-            let index = 0;
-            Array.from(elements).forEach(element => {
+            Array.from(elements).forEach((element, index, array) => {
                 let translation = element.getElementsByTagName('TranslatedText')[0].textContent;
                 let alignment = element.getElementsByTagName('Alignment')[0].textContent;
                 translation = this.postProcessor.fixTranslation(orgTexts[index], alignment, translation);
                 let result = { translatedText: translation };
                 results.push(result);
-                index += 1;
             });
             return Promise.resolve(results);
         });
@@ -210,44 +208,48 @@ class PostProcessTranslator {
     }
     splitSentence(sentence, alignments, isSrcSentence = true) {
         let wrds = sentence.split(' ');
-        if (alignments.length > 0) {
-            let outWrds = [];
-            let wrdIndexInAlignment = 1;
-            if (isSrcSentence) {
-                wrdIndexInAlignment = 0;
-            }
-            else {
-                alignments.sort((a, b) => {
-                    let aIndex = parseInt(a.split('-')[wrdIndexInAlignment].split(':')[0]);
-                    let bIndex = parseInt(b.split('-')[wrdIndexInAlignment].split(':')[0]);
-                    if (aIndex <= bIndex) {
-                        return -1;
-                    }
-                    else {
-                        return 1;
-                    }
-                });
-            }
-            let sentenceWithoutSpaces = sentence.replace(/\s/g, '');
-            for (let alignData of alignments) {
-                wrds = outWrds;
-                let wordIndexes = alignData.split('-')[wrdIndexInAlignment];
-                let startIndex = parseInt(wordIndexes.split(':')[0]);
-                let length = parseInt(wordIndexes.split(':')[1]) - startIndex + 1;
-                let wrd = sentence.substr(startIndex, length);
-                let newWrds = new Array(outWrds.length + 1);
-                if (newWrds.length > 1) {
-                    newWrds = wrds.slice();
-                }
-                newWrds[outWrds.length] = wrd;
-                let subSentence = this.join("", newWrds);
-                if (sentenceWithoutSpaces.indexOf(subSentence) != -1) {
-                    outWrds.push(wrd);
-                }
-            }
-            wrds = outWrds;
+        let alignSplitWrds = [];
+        let outWrds = [];
+        let wrdIndexInAlignment = 1;
+        if (isSrcSentence) {
+            wrdIndexInAlignment = 0;
         }
-        return wrds;
+        else {
+            alignments.sort((a, b) => {
+                let aIndex = parseInt(a.split('-')[wrdIndexInAlignment].split(':')[0]);
+                let bIndex = parseInt(b.split('-')[wrdIndexInAlignment].split(':')[0]);
+                if (aIndex <= bIndex) {
+                    return -1;
+                }
+                else {
+                    return 1;
+                }
+            });
+        }
+        let sentenceWithoutSpaces = sentence.replace(/\s/g, '');
+        for (let alignData of alignments) {
+            alignSplitWrds = outWrds;
+            let wordIndexes = alignData.split('-')[wrdIndexInAlignment];
+            let startIndex = parseInt(wordIndexes.split(':')[0]);
+            let length = parseInt(wordIndexes.split(':')[1]) - startIndex + 1;
+            let wrd = sentence.substr(startIndex, length);
+            let newWrds = new Array(outWrds.length + 1);
+            if (newWrds.length > 1) {
+                newWrds = alignSplitWrds.slice();
+            }
+            newWrds[outWrds.length] = wrd;
+            let subSentence = this.join("", newWrds);
+            if (sentenceWithoutSpaces.indexOf(subSentence) != -1) {
+                outWrds.push(wrd);
+            }
+        }
+        alignSplitWrds = outWrds;
+        if (alignSplitWrds.length >= wrds.length) {
+            return alignSplitWrds;
+        }
+        else {
+            return wrds;
+        }
     }
     wordAlignmentParse(alignments, srcWords, trgWords) {
         let alignMap = {};
