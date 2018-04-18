@@ -13,8 +13,9 @@ const ConversationAccount = require('./serializable/conversationAccount');
 const Attachment = require('./serializable/attachment');
 
 const NS = uuid();
-// Matches [someActivityOrInstruction:argument0:argument1:argumentn...]
-const commandRegExp = /(?:\[)([^\s]+)+(?=])/g;
+// Matches [someActivityOrInstruction=value]
+const commandRegExp = /(?:\[)([\w+=/.-]*)+(?:])/g;
+const linkRegExp = /(?:!?\[.*?\]\(.*?\))/i;
 const configurationRegExp = /^(bot|user|channelId)(?:=)/;
 const messageTimeGap = 2000;
 let now = Date.now();
@@ -97,15 +98,30 @@ module.exports = async function readContents(fileContents, args) {
             aggregate = line;
         }
 
+        // map links to attachments
+        if (linkRegExp.test(aggregate)) {
+            let left = aggregate.indexOf('(');
+            let right = aggregate.indexOf(')', left);
+            let contentUrl = aggregate.substring(++left, right);
+            let contentType;
+            let split = contentUrl.indexOf(' ');
+            if (split > 0) {
+                contentType = contentUrl.substring(split).trim();
+                contentUrl = contentUrl.substring(0, split).trim();
+            }
+            addAttachment(currentActivity, contentUrl, contentType);
+            aggregate = null;
+        }
         // signature for an activity that contains a type other than
         // message with or without arguments. e.g. [delay:3000]
-        if (commandRegExp.test(aggregate)) {
+        else if (commandRegExp.test(aggregate)) {
             const newActivities = await readActivitiesFromAggregate(aggregate, currentActivity, recipient, from, channelId);
             if (newActivities) {
                 activities.push(...newActivities);
                 aggregate = null;
             }
-        } else {
+        }
+        else {
             currentActivity.text += (aggregate !== null ? aggregate : line).trim() + '\n';
         }
     }
@@ -208,20 +224,22 @@ function addAttachmentLayout(currentActivity, rest) {
  * from the file extension.
  *
  * @param {Activity} activity The activity to add the attachment to
- * @param args array of strings from Attachment(args)
  * @param {*} contentUrl contenturl
+ * @param {*} contentType contentType
  *
  * @returns {Promise<number>} The new number of attachments for the activity
  */
-async function addAttachment(activity, args, contentUrl) {
-    let contentType;
-    if (args && args.length > 0) {
-        if (cardContentTypes[args[0].toLowerCase()])
-            contentType = cardContentTypes[args[0].toLowerCase()];
-        else
-            contentType = args[0];
+async function addAttachment(activity, contentUrl, contentType) {
+    if (contentType)
+    {
+        contentType = contentType.toLowerCase();
+        if (contentType[0] == '"' && contentType[contentType.length-1] == '"')
+            contentType = contentType.substring(1, contentType.length-1);
+        if (cardContentTypes[contentType])
+            contentType = cardContentTypes[contentType];
     }
-    else if (!contentType) {
+
+    if (!contentType) {
         contentType = mime.lookup(contentUrl) || cardContentTypes[path.extname(contentUrl)];
     }
 
@@ -251,14 +269,18 @@ async function addAttachment(activity, args, contentUrl) {
  */
 async function readAttachmentFile(fileLocation, contentType) {
     let resolvedFileLocation = path.join(workingDirectory, fileLocation);
-    let exists = await fs.pathExists(resolvedFileLocation);
+    let exists = fs.pathExistsSync(resolvedFileLocation);
 
     // fallback to cwd
     if (!exists) {
         resolvedFileLocation = path.resolve(fileLocation);
     }
     // Throws if the fallback does not exist.
-    return contentType.includes('json') || isCard(contentType) ? fs.readJson(resolvedFileLocation) : fs.readFile(resolvedFileLocation);
+    if (contentType.includes('json') || isCard(contentType)) {
+        return fs.readJsonSync(resolvedFileLocation);
+    } else {
+        return fs.readFileSync(resolvedFileLocation);
+    }
 }
 
 /**

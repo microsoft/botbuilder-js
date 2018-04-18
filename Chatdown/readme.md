@@ -39,23 +39,46 @@ The conversation text represents markdown between the user and the bot.  Every t
 | --------------- | ------------------------------------------------------------ |
 |`[Typing]` | Inserts a typing activity into the transcript to signify that a user or a bot is typing. |
 |`[Delay=<milliseconds>]` | Delays the transcript by `<milliseconds>` |
-|`[Attachment=<contentPath>]` | Add an attachment to the activity. the content type is derived from the file extension. `<contentPath>` can be a url or file system path |
-| `[Attachment(<contentType>)=<contentPath>]` | Add an attachment to the activity. The `<contentType>` is a contentType shortcut values or a raw mime type. `<contentPath>` can be a url or file system path |
 |`[AttachmentLayout=carousel|list]`| Specify how multiple attachments whould be dislpayed.  layout values are `carousel` or `list`|
 
-### Attachment content type shortcuts
+### Attachments
+To add an attachment you use markdown image or link syntax.  The path can be a url or a local path (either absolute or relative to .chat file).  The content type will be inferred from the file extension, or you can pass it in as a raw mime type or as a content type shortcut for well known content types.
+
+```markdown
+To add images: ![label](path)
+To add other types: [label](path "contentType")
+```
+
+Here is an example sending a carousel of photos
+```markdown
+Enjoy these pictures!
+[AttachmentLayout=carousel]
+![turtle1](http://4.bp.blogspot.com/--cFa6t-x4qY/UAqEgUvPd2I/AAAAAAAANIg/pMLE080Zjh4/s1600/turtle.jpg)
+![turtle2](http://viagemempauta.com.br/wp-content/uploads/2015/09/2_All-Angle-By-Andreza-dos-Santos_FTS_2914-344-620x415.jpg)
+![turtle3](http://images.fineartamerica.com/images-medium-large/good-morning-turtles-freund-gloria.jpg)
+![turtle4](http://4.bp.blogspot.com/--cFa6t-x4qY/UAqEgUvPd2I/AAAAAAAANIg/pMLE080Zjh4/s1600/turtle.jpg)
+![local](image.png)
+```
+
+Here is an exaple sending a local adaptive card:
+```markdown
+[example](folder/sample.json "adaptivecard")
+```
+
+#### Attachment content type shortcuts
 Some content types have shortcuts
-| ContentType Shortcuts | Description |
-| -------------------|-------------------|
-|animation| `application/vnd.microsoft.card.animation`|
-|audio| `application/vnd.microsoft.card.audio`|
-|hero| `application/vnd.microsoft.card.hero`|
-|receipt| `application/vnd.microsoft.card.receipt`|
-|thumbnail| `application/vnd.microsoft.card.thumbnail`|
-|signin| `application/vnd.microsoft.card.signin`|
-|video| `application/vnd.microsoft.card.video`|
-|adaptivecard| `application/vnd.microsoft.card.adaptive`|
-| *application/custom* | `application/custom` |
+
+| ContentType Shortcuts | Description                                |
+| ----------------------|--------------------------------------------|
+| animation             | `application/vnd.microsoft.card.animation` |
+| audio                 | `application/vnd.microsoft.card.audio`     |
+| hero                  | `application/vnd.microsoft.card.hero`      |
+| receipt               | `application/vnd.microsoft.card.receipt`   |
+| thumbnail             | `application/vnd.microsoft.card.thumbnail` |
+| signin                | `application/vnd.microsoft.card.signin`    |
+| video                 | `application/vnd.microsoft.card.video`     |
+| adaptivecard          | `application/vnd.microsoft.card.adaptive`  |
+| *application/custom*  | `application/custom`                       |
 
 ### Example .chat
 
@@ -76,13 +99,13 @@ user: I need the bot framework logo.
 
 bot:
 Here you go.
-[Attachment=bot-framework.png]
-[Attachment=http://yahoo.com/bot-framework.png]
+![](bot-framework.png)
+![](http://yahoo.com/bot-framework.png)
 
 user: thanks
 bot:
 Here's a form for you
-[Attachment(adaptivecard)=card.json]
+[](card.json adaptivecard)
 
 ```
 

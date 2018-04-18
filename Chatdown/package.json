@@ -1,6 +1,6 @@
 {
   "name": "chatdown",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Tool for parsing chat files and outputting replayable activities",
   "main": "lib/index.js",
   "directories": {
@@ -20,8 +20,9 @@
   },
   "homepage": "https://github.com/Microsoft/botbuilder-tools#readme",
   "dependencies": {
-    "botbuilder-schema": "^4.0.0-m1.5",
+    "botframework-schema": "^4.0.0-m3.0",
     "chalk": "^2.3.2",
+    "chokidar": "^2.0.3",
     "cli-table2": "^0.2.0",
     "fs-extra": "^5.0.0",
     "mime-types": "^2.1.18",
