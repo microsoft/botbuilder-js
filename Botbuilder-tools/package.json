@@ -1,0 +1,33 @@
+{
+  "name": "botbuilder-tools",
+  "version": "1.0.0",
+  "description": "Bundle of tools for working with Bot Builder bots and services",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/microsoft/botbuilder-tools.git"
+  },
+  "keywords": [
+    "bot",
+    "framework",
+    "bot",
+    "builder",
+    "botbuilder"
+  ],
+  "author": "Microsoft",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/microsoft/botbuilder-tools/issues"
+  },
+  "homepage": "https://github.com/microsoft/botbuilder-tools#readme",
+  "dependencies": {
+    "chatdown": "0.0.8",
+    "luis-apis": "^1.0.11",
+    "msbot": "^1.0.23-alpha",
+    "qnamaker": "^1.0.7",
+    "bot-dispatch":"^0.0.1",
+  }
+}
