@@ -161,3 +161,18 @@ chatdown(conversation, config)
     });
 ```
 
+## Setting up a watcher to automatically transcribe chat files
+Chokidar-cli is a great utility to do this.
+
+To install:
+```bash
+npm install -g chokidar-cli
+```
+
+To run as a watcher
+```bash
+chokidar "**/*.chat" -c "chatdown {path} > {path}.transcript"
+```
+
+Now, any time a .chat file is created or saved chatdown will automatically create the transcript file beside it.
+
