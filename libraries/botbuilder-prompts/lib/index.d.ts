@@ -10,5 +10,6 @@ export * from './choicePrompt';
 export * from './confirmPrompt';
 export * from './datetimePrompt';
 export * from './numberPrompt';
+export * from './oauthPrompt';
 export * from './textPrompt';
 export { FoundChoice, Choice, ChoiceFactoryOptions, FindChoicesOptions } from 'botbuilder-choices';

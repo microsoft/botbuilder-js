@@ -31,6 +31,7 @@ export declare class CardFactory {
         audioCard: string;
         heroCard: string;
         receiptCard: string;
+        oauthCard: string;
         signinCard: string;
         thumbnailCard: string;
         videoCard: string;
@@ -110,6 +111,14 @@ export declare class CardFactory {
     static heroCard(title: string, images?: (CardImage | string)[], buttons?: (CardAction | string)[], other?: Partial<HeroCard>): Attachment;
     static heroCard(title: string, text: string, images?: (CardImage | string)[], buttons?: (CardAction | string)[], other?: Partial<HeroCard>): Attachment;
     /**
+     * Returns an attachment for an OAuth card used by the Bot Frameworks Single Sign On (SSO) service.
+     *
+     * @param connectionName The name of the OAuth connection to use.
+     * @param title Title of the cards signin button.
+     * @param text (Optional) additional text to include on the card.
+     */
+    static oauthCard(connectionName: string, title: string, text?: string): Attachment;
+    /**
      * Returns an attachment for a receipt card. The attachment will contain the card and the
      * appropriate `contentType`.
      *
@@ -120,7 +129,7 @@ export declare class CardFactory {
      * Returns an attachment for a signin card. For channels that don't natively support signin
      * cards an alternative message will be rendered.
      *
-     * @param title The cards title.
+     * @param title Title of the cards signin button.
      * @param url The link to the signin page the user needs to visit.
      * @param text (Optional) additional text to include on the card.
      */

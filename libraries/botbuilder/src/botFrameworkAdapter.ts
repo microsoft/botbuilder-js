@@ -5,8 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotAdapter, TurnContext, Promiseable, ActivityTypes, Activity, ConversationReference, ResourceResponse, ConversationResourceResponse, ConversationParameters, ConversationAccount } from 'botbuilder-core';
-import { ConnectorClient, SimpleCredentialProvider, MicrosoftAppCredentials, JwtTokenValidation } from 'botframework-connector';
+import { BotAdapter, TurnContext, Promiseable, ActivityTypes, Activity, ConversationReference, ResourceResponse, ConversationResourceResponse, ConversationParameters, ConversationAccount, TokenResponse } from 'botbuilder-core';
+import { ConnectorClient, SimpleCredentialProvider, MicrosoftAppCredentials, JwtTokenValidation, OAuthApiClient } from 'botframework-connector';
 
 /** 
  * :package: **botbuilder**
@@ -81,90 +81,6 @@ export class BotFrameworkAdapter extends BotAdapter {
         this.settings = Object.assign({ appId: '', appPassword: '' }, settings);
         this.credentials = new MicrosoftAppCredentials(this.settings.appId, this.settings.appPassword || '');
         this.credentialsProvider = new SimpleCredentialProvider(this.credentials.appId, this.credentials.appPassword);
-    }
-
-    /**
-     * Processes an activity received by the bots web server. This includes any messages sent from a 
-     * user and is the method that drives what's often referred to as the bots "Reactive Messaging"
-     * flow.
-     * 
-     * The following steps will be taken to process the activity:
-     * 
-     * - The identity of the sender will be verified to be either the Emulator or a valid Microsoft 
-     *   server. The bots `appId` and `appPassword` will be used during this process and the request
-     *   will be rejected if the senders identity can't be verified.
-     * - The activity will be parsed from the body of the incoming request. An error will be returned 
-     *   if the activity can't be parsed.
-     * - A `TurnContext` instance will be created for the received activity and wrapped with a 
-     *   [Revocable Proxy](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy/revocable). 
-     * - The context will be routed through any middleware registered with the adapter using 
-     *   [use()](#use).  Middleware is executed in the order in which it's added and any middleware
-     *   can intercept or prevent further routing of the context by simply not calling the passed
-     *   in `next()` function. This is called the "Leading Edge" of the request and middleware will
-     *   get a second chance to run on the "Trailing Edge" of the request after the bots logic has run.
-     * - Assuming the context hasn't been intercepted by a piece of middleware, the context will be 
-     *   passed to the logic handler passed in.  The bot may perform an additional routing or
-     *   processing at this time. Returning a promise (or providing an `async` handler) will cause the
-     *   adapter to wait for any asynchronous operations to complete.
-     * - Once the bots logic completes the promise chain setup by the middleware stack will be resolved
-     *   giving middleware a second chance to run on the "Trailing Edge" of the request.
-     * - After the middleware stacks promise chain has been fully resolved the context object will be 
-     *   `revoked()` and any future calls to the context will result in a `TypeError: Cannot perform 
-     *   'set' on a proxy that has been revoked` being thrown. 
-     *        
-     * **Usage Example**
-     *
-     * ```JavaScript
-     * server.post('/api/messages', (req, res) => {
-     *    // Route received request to adapter for processing
-     *    adapter.processActivity(req, res, async (context) => {
-     *        // Process any messages received
-     *        if (context.activity.type === 'message') {
-     *            await context.sendActivity(`Hello World`);
-     *        }
-     *    });
-     * });
-     * ```
-     * @param req An Express or Restify style Request object.
-     * @param res An Express or Restify style Response object.
-     * @param logic A function handler that will be called to perform the bots logic after the received activity has been pre-processed by the adapter and routed through any middleware for processing.
-     */
-    public processActivity(req: WebRequest, res: WebResponse, logic: (context: TurnContext) => Promiseable<any>): Promise<void> {
-        // Parse body of request
-        let errorCode = 500;
-        return parseRequest(req).then((request) => {
-            // Authenticate the incoming request
-            errorCode = 401;
-            const authHeader = req.headers["authorization"] || '';
-            return this.authenticateRequest(request, authHeader).then(() => {
-                // Process received activity
-                errorCode = 500;
-                const context = this.createContext(request);
-                return this.runMiddleware(context, logic as any)
-                    .then(() => {
-                        if (request.type === ActivityTypes.Invoke) {
-                            // Retrieve cached invoke response.
-                            const invokeResponse = context.services.get(INVOKE_RESPONSE_KEY);
-                            if (invokeResponse && invokeResponse.value) {
-                                const value = invokeResponse.value as InvokeResponse;
-                                res.send(value.status, value.body);
-                                res.end();
-                            } else {
-                                throw new Error(`Bot failed to return a valid 'invokeResponse' activity.`);
-                            }
-                        } else {
-                            res.send(202);
-                            res.end();
-                        }
-                    });
-            });
-        }).catch((err) => {
-            // Reject response with error code
-            console.warn(`BotFrameworkAdapter.processActivity(): ${errorCode} ERROR - ${err.toString()}`);
-            res.send(errorCode, err.toString());
-            res.end();
-            throw err;
-        });
     }
 
     /**
@@ -250,6 +166,150 @@ export class BotFrameworkAdapter extends BotAdapter {
         } catch (err) {
             return Promise.reject(err);
         }
+    }
+
+    /**
+     * Deletes an activity that was previously sent to a channel. It should be noted that not all
+     * channels support this feature.
+     * 
+     * Calling `TurnContext.deleteActivity()` is the preferred way of deleting activities as that 
+     * will ensure that any interested middleware has been notified. 
+     * @param context Context for the current turn of conversation with the user.
+     * @param reference Conversation reference information for the activity being deleted.
+     */
+    public deleteActivity(context: TurnContext, reference: Partial<ConversationReference>): Promise<void> {
+        try {
+            if (!reference.serviceUrl) { throw new Error(`BotFrameworkAdapter.deleteActivity(): missing serviceUrl`) }
+            if (!reference.conversation || !reference.conversation.id) { throw new Error(`BotFrameworkAdapter.deleteActivity(): missing conversation or conversation.id`) }
+            if (!reference.activityId) { throw new Error(`BotFrameworkAdapter.deleteActivity(): missing activityId`) }
+            const client = this.createConnectorClient(reference.serviceUrl);
+            return client.conversations.deleteActivity(reference.conversation.id, reference.activityId);
+        } catch (err) {
+            return Promise.reject(err);
+        }
+    }
+
+
+    /**
+     * Attempts to retrieve the token for a user that's in a logging flow.
+     * @param context Context for the current turn of conversation with the user.
+     * @param connectionName Name of the auth connection to use.
+     * @param magicCode (Optional) Optional user entered code to validate.
+     */
+    public getUserToken(context: TurnContext, connectionName: string, magicCode?: string): Promise<TokenResponse> {
+        try {
+            if (!context.activity.serviceUrl) { throw new Error(`BotFrameworkAdapter.getUserToken(): missing serviceUrl`) }
+            if (!context.activity.from || !context.activity.from.id) { throw new Error(`BotFrameworkAdapter.getUserToken(): missing from or from.id`) }
+            const serviceUrl = context.activity.serviceUrl;
+            const userId = context.activity.from.id;
+            const client = this.createOAuthApiClient(serviceUrl);
+            return client.getUserToken(userId, connectionName, magicCode);
+        } catch (err) {
+            return Promise.reject(err);
+        }
+    }
+
+    /**
+     * Signs the user out with the token server.
+     * @param context Context for the current turn of conversation with the user.
+     * @param connectionName Name of the auth connection to use.
+     * @param magicCode (Optional) Optional user entered code to validate.
+     */
+    public signOutUser(context: TurnContext, connectionName: string): Promise<void> {
+        try {
+            if (!context.activity.serviceUrl) { throw new Error(`BotFrameworkAdapter.signOutUser(): missing serviceUrl`) }
+            if (!context.activity.from || !context.activity.from.id) { throw new Error(`BotFrameworkAdapter.signOutUser(): missing from or from.id`) }
+            const serviceUrl = context.activity.serviceUrl;
+            const userId = context.activity.from.id;
+            const client = this.createOAuthApiClient(serviceUrl);
+            return client.signOutUser(userId, connectionName);
+        } catch (err) {
+            return Promise.reject(err);
+        }
+    }
+    
+    /**
+     * Processes an activity received by the bots web server. This includes any messages sent from a 
+     * user and is the method that drives what's often referred to as the bots "Reactive Messaging"
+     * flow.
+     * 
+     * The following steps will be taken to process the activity:
+     * 
+     * - The identity of the sender will be verified to be either the Emulator or a valid Microsoft 
+     *   server. The bots `appId` and `appPassword` will be used during this process and the request
+     *   will be rejected if the senders identity can't be verified.
+     * - The activity will be parsed from the body of the incoming request. An error will be returned 
+     *   if the activity can't be parsed.
+     * - A `TurnContext` instance will be created for the received activity and wrapped with a 
+     *   [Revocable Proxy](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy/revocable). 
+     * - The context will be routed through any middleware registered with the adapter using 
+     *   [use()](#use).  Middleware is executed in the order in which it's added and any middleware
+     *   can intercept or prevent further routing of the context by simply not calling the passed
+     *   in `next()` function. This is called the "Leading Edge" of the request and middleware will
+     *   get a second chance to run on the "Trailing Edge" of the request after the bots logic has run.
+     * - Assuming the context hasn't been intercepted by a piece of middleware, the context will be 
+     *   passed to the logic handler passed in.  The bot may perform an additional routing or
+     *   processing at this time. Returning a promise (or providing an `async` handler) will cause the
+     *   adapter to wait for any asynchronous operations to complete.
+     * - Once the bots logic completes the promise chain setup by the middleware stack will be resolved
+     *   giving middleware a second chance to run on the "Trailing Edge" of the request.
+     * - After the middleware stacks promise chain has been fully resolved the context object will be 
+     *   `revoked()` and any future calls to the context will result in a `TypeError: Cannot perform 
+     *   'set' on a proxy that has been revoked` being thrown. 
+     *        
+     * **Usage Example**
+     *
+     * ```JavaScript
+     * server.post('/api/messages', (req, res) => {
+     *    // Route received request to adapter for processing
+     *    adapter.processActivity(req, res, async (context) => {
+     *        // Process any messages received
+     *        if (context.activity.type === 'message') {
+     *            await context.sendActivity(`Hello World`);
+     *        }
+     *    });
+     * });
+     * ```
+     * @param req An Express or Restify style Request object.
+     * @param res An Express or Restify style Response object.
+     * @param logic A function handler that will be called to perform the bots logic after the received activity has been pre-processed by the adapter and routed through any middleware for processing.
+     */
+    public processActivity(req: WebRequest, res: WebResponse, logic: (context: TurnContext) => Promiseable<any>): Promise<void> {
+        // Parse body of request
+        let errorCode = 500;
+        return parseRequest(req).then((request) => {
+            // Authenticate the incoming request
+            errorCode = 401;
+            const authHeader = req.headers["authorization"] || '';
+            return this.authenticateRequest(request, authHeader).then(() => {
+                // Process received activity
+                errorCode = 500;
+                const context = this.createContext(request);
+                return this.runMiddleware(context, logic as any)
+                    .then(() => {
+                        if (request.type === ActivityTypes.Invoke) {
+                            // Retrieve cached invoke response.
+                            const invokeResponse = context.services.get(INVOKE_RESPONSE_KEY);
+                            if (invokeResponse && invokeResponse.value) {
+                                const value = invokeResponse.value as InvokeResponse;
+                                res.send(value.status, value.body);
+                                res.end();
+                            } else {
+                                throw new Error(`Bot failed to return a valid 'invokeResponse' activity.`);
+                            }
+                        } else {
+                            res.send(202);
+                            res.end();
+                        }
+                    });
+            });
+        }).catch((err) => {
+            // Reject response with error code
+            console.warn(`BotFrameworkAdapter.processActivity(): ${errorCode} ERROR - ${err.toString()}`);
+            res.send(errorCode, err.toString());
+            res.end();
+            throw err;
+        });
     }
 
     /**
@@ -352,27 +412,6 @@ export class BotFrameworkAdapter extends BotAdapter {
     }
 
     /**
-     * Deletes an activity that was previously sent to a channel. It should be noted that not all
-     * channels support this feature.
-     * 
-     * Calling `TurnContext.deleteActivity()` is the preferred way of deleting activities as that 
-     * will ensure that any interested middleware has been notified. 
-     * @param context Context for the current turn of conversation with the user.
-     * @param reference Conversation reference information for the activity being deleted.
-     */
-    public deleteActivity(context: TurnContext, reference: Partial<ConversationReference>): Promise<void> {
-        try {
-            if (!reference.serviceUrl) { throw new Error(`BotFrameworkAdapter.deleteActivity(): missing serviceUrl`) }
-            if (!reference.conversation || !reference.conversation.id) { throw new Error(`BotFrameworkAdapter.deleteActivity(): missing conversation or conversation.id`) }
-            if (!reference.activityId) { throw new Error(`BotFrameworkAdapter.deleteActivity(): missing activityId`) }
-            const client = this.createConnectorClient(reference.serviceUrl);
-            return client.conversations.deleteActivity(reference.conversation.id, reference.activityId);
-        } catch (err) {
-            return Promise.reject(err);
-        }
-    }
-
-    /**
      * Allows for the overriding of authentication in unit tests.
      * @param request Received request.
      * @param authHeader Received authentication header.
@@ -389,6 +428,14 @@ export class BotFrameworkAdapter extends BotAdapter {
         return new ConnectorClient(this.credentials, serviceUrl);
     }
 
+    /**
+     * Allows for mocking of the OAuth API Client in unit tests.
+     * @param serviceUrl Clients service url.
+     */
+    protected createOAuthApiClient(serviceUrl: string): OAuthApiClient {
+        return new OAuthApiClient(this.createConnectorClient(serviceUrl));
+    }
+    
     /**
      * Allows for the overriding of the context object in unit tests and derived adapters.
      * @param request Received request.

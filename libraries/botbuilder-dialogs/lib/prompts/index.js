@@ -15,6 +15,7 @@ __export(require("./choicePrompt"));
 __export(require("./confirmPrompt"));
 __export(require("./datetimePrompt"));
 __export(require("./numberPrompt"));
+__export(require("./oauthPrompt"));
 __export(require("./prompt"));
 __export(require("./textPrompt"));
 //# sourceMappingURL=index.js.map
