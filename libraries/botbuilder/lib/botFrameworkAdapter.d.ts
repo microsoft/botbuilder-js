@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotAdapter, TurnContext, Promiseable, Activity, ConversationReference, ResourceResponse, TokenResponse } from 'botbuilder-core';
+import { BotAdapter, TurnContext, Promiseable, Activity, ConversationReference, ResourceResponse, TokenResponse, ConversationsResult, ChannelAccount } from 'botbuilder-core';
 import { ConnectorClient, SimpleCredentialProvider, MicrosoftAppCredentials, OAuthApiClient } from 'botframework-connector';
 /**
  * :package: **botbuilder**
@@ -138,6 +138,31 @@ export declare class BotFrameworkAdapter extends BotAdapter {
      * @param reference Conversation reference information for the activity being deleted.
      */
     deleteActivity(context: TurnContext, reference: Partial<ConversationReference>): Promise<void>;
+    /**
+     * Deletes a member from the current conversation.
+     * @param context Context for the current turn of conversation with the user.
+     * @param memberId ID of the member to delete from the conversation.
+     */
+    deleteConversationMember(context: TurnContext, memberId: string): Promise<void>;
+    /**
+     * Lists the members of a given activity.
+     * @param context Context for the current turn of conversation with the user.
+     * @param activityId (Optional) activity ID to enumerate. If not specified the current activities ID will be used.
+     */
+    getActivityMembers(context: TurnContext, activityId?: string): Promise<ChannelAccount[]>;
+    /**
+     * Lists the members of the current conversation.
+     * @param context Context for the current turn of conversation with the user.
+     */
+    getConversationMembers(context: TurnContext): Promise<ChannelAccount[]>;
+    /**
+     * Lists the Conversations in which this bot has participated for a given channel server. The
+     * channel server returns results in pages and each page will include a `continuationToken`
+     * that can be used to fetch the next page of results from the server.
+     * @param serviceUrl The URL of the channel server to query.  This can be retrieved from `context.activity.serviceUrl`.
+     * @param continuationToken (Optional) token used to fetch the next page of results from the channel server. This should be left as `undefined` to retrieve the first page of results.
+     */
+    getConversations(serviceUrl: string, continuationToken?: string): Promise<ConversationsResult>;
     /**
      * Attempts to retrieve the token for a user that's in a logging flow.
      * @param context Context for the current turn of conversation with the user.
