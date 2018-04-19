@@ -179,7 +179,7 @@ export class PagedResult<T> {
     /**
      * Page of items.
      */
-    items: T[];
+    items: T[] = [];
 
     /**
      * Token used to page through multiple pages.

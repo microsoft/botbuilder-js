@@ -105,6 +105,12 @@ exports.Transcript = Transcript;
  * Page of results.
  */
 class PagedResult {
+    constructor() {
+        /**
+         * Page of items.
+         */
+        this.items = [];
+    }
 }
 exports.PagedResult = PagedResult;
 //# sourceMappingURL=transcriptLogger.js.map
