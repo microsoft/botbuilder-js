@@ -179,7 +179,7 @@ async function getFileInput(args) {
  * @returns {Promise<*>}
  */
 async function composeConfig() {
-    const { QNA_MAKER_KNOWLEDGE_BASE_ID, QNA_MAKER_SUBSCRIPTION_KEY, QNA_MAKER_ENDPOINT_BASE_PATH } = process.env;
+    const { QNA_MAKER_KBID, QNA_MAKER_SUBSCRIPTION_KEY, QNA_MAKER_ENDPOINT_BASE_PATH } = process.env;
 
     const {
         knowledgeBaseID: args_knowledgeBaseID,
@@ -196,7 +196,7 @@ async function composeConfig() {
         // Do nothing
     } finally {
         config = {
-            knowledgeBaseID: (args_knowledgeBaseID || qnamakerrcJson.knowledgeBaseID || QNA_MAKER_KNOWLEDGE_BASE_ID),
+            knowledgeBaseID: (args_knowledgeBaseID || qnamakerrcJson.knowledgeBaseID || QNA_MAKER_KBID),
             subscriptionKey: (args_subscriptionKey || qnamakerrcJson.subscriptionKey || QNA_MAKER_SUBSCRIPTION_KEY),
             endpointBasePath: (args_endpointBasePath || qnamakerrcJson.endpointBasePath || QNA_MAKER_ENDPOINT_BASE_PATH)
         };
