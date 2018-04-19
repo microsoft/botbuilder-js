@@ -115,6 +115,22 @@ export class TranscriptLoggerMiddleware implements Middleware {
 }
 
 /**
+ * ConsoleTranscriptLogger , writes activites to Console output
+ */
+export class ConsoleTranscriptLogger implements TranscriptLogger {
+    /**
+     * Log an activity to the transcript.
+     * @param activity Activity being logged.
+     */
+    logActivity(activity: Activity): void | Promise<void> {
+        if (!activity)
+            throw new Error('Activity is required.');
+
+        console.log('Activity Log:', activity);
+    }
+}
+
+/**
  * Transcript logger stores activities for conversations for recall
  */
 export interface TranscriptLogger {

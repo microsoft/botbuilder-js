@@ -35,6 +35,16 @@ export declare class TranscriptLoggerMiddleware implements Middleware {
     private cloneActivity(activity);
 }
 /**
+ * ConsoleTranscriptLogger , writes activites to Console output
+ */
+export declare class ConsoleTranscriptLogger implements TranscriptLogger {
+    /**
+     * Log an activity to the transcript.
+     * @param activity Activity being logged.
+     */
+    logActivity(activity: Activity): void | Promise<void>;
+}
+/**
  * Transcript logger stores activities for conversations for recall
  */
 export interface TranscriptLogger {

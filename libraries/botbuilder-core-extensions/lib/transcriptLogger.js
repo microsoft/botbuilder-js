@@ -98,6 +98,21 @@ class TranscriptLoggerMiddleware {
     }
 }
 exports.TranscriptLoggerMiddleware = TranscriptLoggerMiddleware;
+/**
+ * ConsoleTranscriptLogger , writes activites to Console output
+ */
+class ConsoleTranscriptLogger {
+    /**
+     * Log an activity to the transcript.
+     * @param activity Activity being logged.
+     */
+    logActivity(activity) {
+        if (!activity)
+            throw new Error('Activity is required.');
+        console.log('Activity Log:', activity);
+    }
+}
+exports.ConsoleTranscriptLogger = ConsoleTranscriptLogger;
 class Transcript {
 }
 exports.Transcript = Transcript;
