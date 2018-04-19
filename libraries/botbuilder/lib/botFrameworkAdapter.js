@@ -254,7 +254,11 @@ class BotFrameworkAdapter extends botbuilder_core_1.BotAdapter {
                                 }
                                 let p;
                                 const client = that.createConnectorClient(activity.serviceUrl);
-                                if (activity.replyToId) {
+                                if (activity.type === 'trace' && activity.channelId !== 'emulator') {
+                                    // Just eat activity
+                                    p = Promise.resolve({});
+                                }
+                                else if (activity.replyToId) {
                                     p = client.conversations.replyToActivity(activity.conversation.id, activity.replyToId, activity);
                                 }
                                 else {
