@@ -9,6 +9,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const botbuilder_core_1 = require("botbuilder-core");
 const botframework_connector_1 = require("botframework-connector");
+const pjson = require('../package.json');
+const USER_AGENT = "Microsoft-BotFramework/3.1 (BotBuilder JS/" + pjson.version + ")";
 const INVOKE_RESPONSE_KEY = Symbol('invokeResponse');
 /**
  * :package: **botbuilder**
@@ -395,7 +397,9 @@ class BotFrameworkAdapter extends botbuilder_core_1.BotAdapter {
      * @param serviceUrl Clients service url.
      */
     createConnectorClient(serviceUrl) {
-        return new botframework_connector_1.ConnectorClient(this.credentials, serviceUrl);
+        const client = new botframework_connector_1.ConnectorClient(this.credentials, serviceUrl);
+        client.addUserAgentInfo(USER_AGENT);
+        return client;
     }
     /**
      * Allows for mocking of the OAuth API Client in unit tests.

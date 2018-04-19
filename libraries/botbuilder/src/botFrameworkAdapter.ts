@@ -49,7 +49,11 @@ export interface InvokeResponse {
     body?: any;
 }
 
+const pjson: any = require('../package.json');
+const USER_AGENT = "Microsoft-BotFramework/3.1 (BotBuilder JS/" + pjson.version + ")";
+
 const INVOKE_RESPONSE_KEY = Symbol('invokeResponse');
+
 
 /**
  * :package: **botbuilder**
@@ -425,7 +429,9 @@ export class BotFrameworkAdapter extends BotAdapter {
      * @param serviceUrl Clients service url.
      */
     protected createConnectorClient(serviceUrl: string): ConnectorClient {
-        return new ConnectorClient(this.credentials, serviceUrl);
+        const client = new ConnectorClient(this.credentials, serviceUrl);
+        client.addUserAgentInfo(USER_AGENT);
+        return client;
     }
 
     /**
