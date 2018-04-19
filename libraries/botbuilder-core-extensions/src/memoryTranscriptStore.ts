@@ -30,7 +30,7 @@ export class MemoryTranscriptStore implements TranscriptStore {
         let channel: Map<string, Array<Activity>>;
         if (!this.channels.has(activity.channelId)) {
             channel = new Map<string, Array<Activity>>();
-            this.channels[activity.channelId] = channel;
+            this.channels.set(activity.channelId, channel);
         } else {
             channel = this.channels.get(activity.channelId);
         }
@@ -39,9 +39,9 @@ export class MemoryTranscriptStore implements TranscriptStore {
         let transcript: Array<Activity>;
         if (!channel.has(activity.conversation.id)) {
             transcript = []
-            channel[activity.conversation.id] = transcript;
+            channel.set(activity.conversation.id, transcript);
         } else {
-            transcript = channel[activity.conversation.id];
+            transcript = channel.get(activity.conversation.id);
         }
 
         transcript.push(activity);
@@ -55,7 +55,37 @@ export class MemoryTranscriptStore implements TranscriptStore {
      * @param startDate Earliest time to include.
      */
     getTranscriptActivities(channelId: string, conversationId: string, continuationToken?: string, startDate?: Date): Promise<PagedResult<Activity>> {
-        throw new Error("Method not implemented.");
+        if (!channelId)
+            throw new Error('Missing channelId');
+
+        if (!conversationId)
+            throw new Error('Missing conversationId');
+
+        let pagedResult = new PagedResult<Activity>();
+        if (this.channels.has(channelId)) {
+            let channel = this.channels.get(channelId);
+            if (channel.has(conversationId)) {
+                let transcript = channel.get(conversationId);
+                if (continuationToken) {
+                    pagedResult.items = transcript
+                        .sort(timestampSorter)
+                        .filter(a => !startDate || a.timestamp >= startDate)
+                        .filter(skipWhileExpression(a => a.id !== continuationToken))
+                        .slice(1, 21);
+                } else {
+                    pagedResult.items = transcript
+                        .sort(timestampSorter)
+                        .filter(a => !startDate || a.timestamp >= startDate)
+                        .slice(0, 20);
+                }
+
+                if (pagedResult.items.length == 20) {
+                    pagedResult.continuationToken = pagedResult.items[pagedResult.items.length - 1].id;
+                }
+            }
+        }
+
+        return Promise.resolve(pagedResult);
     }
 
     /**
@@ -64,7 +94,36 @@ export class MemoryTranscriptStore implements TranscriptStore {
      * @param continuationToken Continuatuation token to page through results.
      */
     listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<Transcript>> {
-        throw new Error("Method not implemented.");
+        if (!channelId)
+            throw new Error('Missing channelId');
+
+        let pagedResult = new PagedResult<Transcript>();
+        if (this.channels.has(channelId)) {
+            let channel = this.channels.get(channelId);
+
+            if (continuationToken) {
+                pagedResult.items = Array.from(channel.entries()).map(kv => ({
+                    channelId,
+                    id: kv[0],
+                    created: getDate(kv[1])
+                })).sort(createdSorter)
+                    .filter(skipWhileExpression(a => a.id !== continuationToken))
+                    .slice(1, 21);
+            } else {
+                pagedResult.items = Array.from(channel.entries()).map(kv => ({
+                    channelId,
+                    id: kv[0],
+                    created: getDate(kv[1])
+                })).sort(createdSorter)
+                    .slice(0, 20);
+            }
+
+            if (pagedResult.items.length == 20) {
+                pagedResult.continuationToken = pagedResult.items[pagedResult.items.length - 1].id;
+            }
+        }
+
+        return Promise.resolve(pagedResult);
     }
 
     /**
@@ -73,6 +132,44 @@ export class MemoryTranscriptStore implements TranscriptStore {
      * @param conversationId Id of the conversation to delete.
      */
     deleteTranscript(channelId: string, conversationId: string): Promise<void> {
-        throw new Error("Method not implemented.");
+        if (!channelId)
+            throw new Error('Missing channelId');
+
+        if (!conversationId)
+            throw new Error('Missing conversationId');
+
+        if (this.channels.has(channelId)) {
+            var channel = this.channels.get(channelId);
+            if (channel.has(conversationId)) {
+                channel.delete(conversationId);
+            }
+        }
+
+        return Promise.resolve();
     }
+}
+
+const createdSorter = (a: Transcript, b: Transcript): number =>
+    a.created.getTime() - b.created.getTime();
+
+const timestampSorter = (a: Activity, b: Activity): number =>
+    a.timestamp.getTime() - b.timestamp.getTime();
+
+const skipWhileExpression = (expression) => {
+    let skipping = true;
+    return (item) => {
+        if (!skipping) return true;
+        if (!expression(item)) {
+            skipping = false;
+        }
+        return false;
+    };
+}
+
+const getDate = (activities: Activity[]): Date => {
+    if (activities && activities.length > 0) {
+        return activities[0].timestamp || new Date(0);
+    }
+
+    return new Date(0);
 }
