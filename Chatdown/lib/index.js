@@ -11,6 +11,7 @@ const { cardContentTypes, isCard } = require('./enums/cardContentTypes');
 const ChannelAccount = require('./serializable/channelAccount');
 const ConversationAccount = require('./serializable/conversationAccount');
 const Attachment = require('./serializable/attachment');
+const chalk = require('chalk');
 
 const NS = uuid();
 // Matches [someActivityOrInstruction=value]
@@ -137,14 +138,18 @@ async function readActivitiesFromAggregate(aggregate, currentActivity, recipient
     let result;
     while ((result = commandRegExp.exec(aggregate))) {
         // typeOrField should always be listed first
-        let split = result[1].indexOf('=');
-        let typeOrField = split > 0 ? result[1].substring(0, split) : result[0];
-        let rest = (split > 0) ? result[1].substring(split + 1) : undefined;
+        let match = result[1]; // result[] doesn't have [] on it
+        let split = match.indexOf('=');
+        let typeOrField = split > 0 ? match.substring(0, split) : match;
+        let rest = (split > 0) ? match.substring(split + 1) : undefined;
         const type = ActivityTypes[typeOrField];
         const field = ActivityField[typeOrField];
         const instruction = Instructions[typeOrField];
         // This isn't an activity - bail
         if (!type && !field && !instruction) {
+            // skip unknown tag
+            console.error(chalk.red.bold(`skipping unknown tag ${result[0]}`));
+            aggregate = aggregate.replace(`${result[0]}`, '');
             continue;
         }
         // Indicates a new activity -
