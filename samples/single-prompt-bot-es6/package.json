@@ -1,0 +1,16 @@
+{
+  "name": "single-prompt-bot-es6",
+  "version": "1.0.0",
+  "description": "Bot Builder v4 example showing a simple bot prompting a user for their name",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "author": "Microsoft",
+  "license": "MIT",
+  "dependencies": {
+    "botbuilder": "^4.0.0-m3.0",
+    "botbuilder-prompts": "^4.0.0-m3.0",
+    "restify": "^6.3.4"
+  }
+}
