@@ -10,7 +10,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const botbuilder_core_1 = require("botbuilder-core");
 const botframework_connector_1 = require("botframework-connector");
 const pjson = require('../package.json');
-const USER_AGENT = "Microsoft-BotFramework/3.1 (BotBuilder Node.js/" + pjson.version + ")";
+const USER_AGENT = "Microsoft-BotFramework/3.1 (BotBuilder JS/" + pjson.version + ")";
 const INVOKE_RESPONSE_KEY = Symbol('invokeResponse');
 /**
  * :package: **botbuilder**
