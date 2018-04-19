@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext, Activity, Promiseable } from 'botbuilder';
+import { TurnContext, Activity, Promiseable, ActivityTypes } from 'botbuilder';
 import { PromptValidator } from 'botbuilder-prompts';
 import { DialogContext } from '../dialogContext';
 import { Control } from '../control';
@@ -44,6 +44,11 @@ export abstract class Prompt<C extends TurnContext> extends Control<C> {
     }
 
     public dialogContinue(dc: DialogContext<C>): Promise<any> {
+        // Don't do anything for non-message activities
+        if (dc.context.activity.type !== ActivityTypes.Message) {
+            return Promise.resolve();
+        }
+
         // Recognize value
         const instance = dc.instance;
         return this.onRecognize(dc, instance.state)
