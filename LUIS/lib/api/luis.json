@@ -46,7 +46,7 @@
             "application",
             "app"
           ],
-          "command": "luis add application --in applicationCreateObject.json",
+          "command": "luis add application --in applicationCreateObject.json --bot",
           "pathFragment": "/",
           "description": "Creates a new LUIS app.",
           "name": "addApplication",
@@ -315,7 +315,7 @@
           "target": [
             "version"
           ],
-          "command": "luis publish version --in applicationPublishObject.json --appId <string>",
+          "command": "luis publish version --in applicationPublishObject.json --appId <string> --versionId <version> --region <region> --staging",
           "pathFragment": "",
           "params": [
             {

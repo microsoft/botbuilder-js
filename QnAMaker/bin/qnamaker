@@ -4,7 +4,7 @@ global.fetch = require('node-fetch'); // Browser compatibility
 const assert = require('assert');
 const fs = require('fs-extra');
 const path = require('path');
-const readline = require('readline');
+const readline = require('readline-sync');
 const minimist = require('minimist');
 const chalk = require('chalk');
 
@@ -33,25 +33,74 @@ async function runProgram() {
         }
         return;
     }
-    if (args.help ||
-        args.h ||
-        args['!'] ||
-        args._.includes('help')) {
-        return help(args);
-    }
     if (args.version || args.v) {
         return process.stdout.write(require(path.join(__dirname, '../package.json')).version);
     }
+    
+    if (args.kbid) {
+        args.knowledgeBaseID = args.kbid;
+        delete args.kbid;
+    }
+
     const config = await composeConfig();
     const serviceManifest = getServiceManifest(args);
-    validateArguments(serviceManifest);
 
-    const requestBody = await getFileInput(args);
+    if (args.help || args.h) {
+        return help(args, serviceManifest);
+    }
+
+    requestBody = await validateArguments(serviceManifest);
+
+    // special case operations
+    switch (serviceManifest.operation.methodAlias) {
+        case "delete":
+            let answer = readline.question(`Are you sure you would like to delete this knowledgebase? [no] `, { defaultInput: 'no' });
+            if (answer.trim()[0] == 'n') {
+                process.stdout.write('operation canceled');
+                return;
+            }
+            break;
+    }
+
     const result = await qnamaker(config, serviceManifest, args, requestBody);
     if (result.error) {
         throw new Error(result.error.message);
     }
-    process.stdout.write(JSON.stringify(result, null, 2));
+
+    // special case response
+    switch (serviceManifest.operation.methodAlias) {
+        case "create": {
+            if (args.bot) {
+                process.stdout.write(JSON.stringify({
+                    type: "qna",
+                    name: `QnA KB`,
+                    id : result.kbId,
+                    kbid: result.kbId,
+                    subscriptionKey: config.subscriptionKey
+                }, null, 2));
+            } else {
+                process.stdout.write(JSON.stringify(result, null, 2));
+            }
+            if (!args.q) {
+                let answer = readline.question(`\nWould you like to save ${result.kbId} in your .qnamakerrc so that future commands will be with this KB? [yes]`, { defaultInput: 'yes'});
+                if (answer[0] == 'y'){
+                    config.knowledgeBaseID = result.kbId;
+                    await fs.writeJson(path.join(process.cwd(), '.qnamakerrc'), config, { spaces: 2 });
+                    process.stdout.write('.qnamakerrc updated');
+                }
+            }
+            break;
+        }
+
+        default: {
+            // dump json as json stringified
+            if (typeof result == 'string')
+                process.stdout.write(result);
+            else
+                process.stdout.write(JSON.stringify(result, null, 2));
+            break;
+        }
+    }
 }
 
 /**
@@ -112,7 +161,7 @@ async function initializeConfig() {
     } catch (e) {
         return false;
     }
-    await fs.writeJson(path.join(process.cwd(), '.qnamakerrc'), config, {spaces: 2});
+    await fs.writeJson(path.join(process.cwd(), '.qnamakerrc'), config, { spaces: 2 });
     return true;
 }
 
@@ -138,7 +187,7 @@ async function getFileInput(args) {
  * @returns {Promise<*>}
  */
 async function composeConfig() {
-    const {QNA_MAKER_KNOWLEDGE_BASE_ID, QNA_MAKER_SUBSCRIPTION_KEY, QNA_MAKER_ENDPOINT_BASE_PATH} = process.env;
+    const { QNA_MAKER_KBID, QNA_MAKER_SUBSCRIPTION_KEY, QNA_MAKER_ENDPOINT_BASE_PATH } = process.env;
 
     const {
         knowledgeBaseID: args_knowledgeBaseID,
@@ -155,7 +204,7 @@ async function composeConfig() {
         // Do nothing
     } finally {
         config = {
-            knowledgeBaseID: (args_knowledgeBaseID || qnamakerrcJson.knowledgeBaseID || QNA_MAKER_KNOWLEDGE_BASE_ID),
+            knowledgeBaseID: (args_knowledgeBaseID || qnamakerrcJson.knowledgeBaseID || QNA_MAKER_KBID),
             subscriptionKey: (args_subscriptionKey || qnamakerrcJson.subscriptionKey || QNA_MAKER_SUBSCRIPTION_KEY),
             endpointBasePath: (args_endpointBasePath || qnamakerrcJson.endpointBasePath || QNA_MAKER_ENDPOINT_BASE_PATH)
         };
@@ -175,7 +224,7 @@ function validateConfig(config) {
     // not all operations require these to be present.
     // Validation of specific params are done in the
     // ServiceBase.js
-    const {subscriptionKey, knowledgeBaseID, endpointBasePath} = config;
+    const { subscriptionKey, knowledgeBaseID, endpointBasePath } = config;
     const messageTail = `is missing from the configuration.\n\nDid you run ${chalk.cyan.bold('qnamaker --init')} yet?`;
     assert(typeof subscriptionKey === 'string', `The subscriptionKey ${messageTail}`);
     assert(typeof endpointBasePath === 'string', `The endpointBasePath ${messageTail}`);
@@ -186,15 +235,16 @@ function validateConfig(config) {
  *
  * @param serviceManifest
  */
-function validateArguments(serviceManifest) {
+async function validateArguments(serviceManifest) {
     let error = new Error();
+    let body = undefined;
     error.name = 'ArgumentError';
     if (!serviceManifest) {
         error.message = 'The service does not exist';
         throw error;
     }
 
-    const {operation} = serviceManifest;
+    const { operation } = serviceManifest;
     if (!operation) {
         error.message = 'The operation does not exist';
 
@@ -210,28 +260,59 @@ function validateArguments(serviceManifest) {
         throw error;
     }
 
-    if (entityRequired && !entitySpecified) {
-        error.message = `The ${operation.name} requires an input of type: ${operation.entityType}`;
-
-        throw error;
+    if (entityRequired) {
+        if (entitySpecified) {
+            body = await getFileInput(args);
+        }
+        else {
+            switch (serviceManifest.operation.methodAlias) {
+                case "ask":
+                    body = {
+                        question: args.question,
+                        top: args.top
+                    };
+                    break;
+                default:
+                    error.message = `The ${operation.name} requires an input of type: ${operation.entityType}`;
+                    throw error;
+            }
+        }
     }
 
     // Note that the ServiceBase will validate params that may be required.
+    return body;
 }
 
 function getServiceManifest(args) {
-    const [operationName] = args._;
-    const keys = Object.keys(manifest);
-    for (let i = 0; i < keys.length; i++) {
-        const manifestEntry = manifest[keys[i]];
-        const {operations} = manifestEntry;
-        if (operationName in operations) {
-            return Object.assign({
-                operation: operations[operationName],
-                identifier: cc(manifestEntry.className),
-            }, manifestEntry);
+    if (args._.length < 1)
+        return null; //bail show help
+    let verb = args._[0];
+    let target = (args._.length >= 2) ? args._[1] : undefined;
+    let arguments = (args._.length > 2) ? args._.slice(2) : [];
+
+    let payload = getOperation(verb, target);
+    return payload;
+}
+
+
+function getOperation(verb, target) {
+    let operation;
+    for (let apiGroupName in manifest) {
+        let apiGroup = manifest[apiGroupName];
+        for (let iOperation in apiGroup.operations) {
+            let operation = apiGroup.operations[iOperation];
+
+            if ((operation.methodAlias == verb) &&
+                ((operation.target.length == 0 && !target) ||
+                    (target && operation.target.indexOf(target.toLowerCase()) >= 0))) {
+                return Object.assign({
+                    operation: operation,
+                    identifier: cc(apiGroup.className),
+                }, apiGroup);
+            }
         }
     }
+    return null;
 }
 
 /**

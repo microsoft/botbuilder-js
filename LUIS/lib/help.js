@@ -141,6 +141,7 @@ function getGeneralHelpContents() {
             [chalk.cyan.bold("import"), "import resources"],
             [chalk.cyan.bold("list"), "list resources"],
             [chalk.cyan.bold("publish"), "publish resource"],
+            [chalk.cyan.bold("query"), "query model for prediction"],
             [chalk.cyan.bold("suggest"), "suggest resources"],
             [chalk.cyan.bold("train"), "train resource"],
             [chalk.cyan.bold("update"), "update resources"]
@@ -168,6 +169,19 @@ function getVerbHelp(verb) {
         table: []
     };
 
+    // special verb
+    if (verb == "query") {
+        let sections = [];
+        process.stdout.write(chalk.cyan.bold("luis query -q <querytext> --region <region>\n\n"))
+        options.table.push([chalk.cyan.bold("-q <query>"), "query to get a LUIS prediction for"]);
+        options.table.push([chalk.cyan.bold("--subscriptionKey"), "Specifies the LUIS subscriptionKey. Overrides the .luisrc value and the LUIS_SUBSCRIPTION_KEY environment variable."]);
+        options.table.push([chalk.cyan.bold("--region <region>"), "region to call"]);
+        sections.push(options);
+        sections.push(configSection);
+        sections.push(globalArgs);
+        return sections;
+    }
+
     for (let iGroup in apiGroups) {
         let apiGroupName = apiGroups[iGroup];
         const apiGroup = getCategoryManifest(apiGroupName);
@@ -186,6 +200,7 @@ function getVerbHelp(verb) {
             }
         }
     }
+
 
     if (targets.length == 0)
         return getGeneralHelpContents();

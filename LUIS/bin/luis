@@ -7,10 +7,11 @@ const path = require('path');
 const readline = require('readline');
 const minimist = require('minimist');
 const chalk = require('chalk');
+const request = require('request-promise');
 
 const help = require('../lib/help');
 const luis = require('../lib');
-const {getServiceManifest} = require('../lib/utils/argsUtil');
+const { getServiceManifest } = require('../lib/utils/argsUtil');
 
 let args;
 
@@ -42,15 +43,33 @@ async function runProgram() {
         return process.stdout.write(require(path.join(__dirname, '../package.json')).version);
     }
     const config = await composeConfig();
-    const serviceManifest = getServiceManifest(args);
-    validateArguments(serviceManifest);
 
-    const requestBody = await getFileInput(args);
-    const result = await luis(config, serviceManifest, args, requestBody);
-    if (result.error) {
-        throw new Error(result.error.message);
+    // special command
+    if (args._[0] == "query") {
+        return await handleQueryCommand(args, config);
+    } else {
+        const serviceManifest = getServiceManifest(args);
+        const requestBody = await validateArguments(serviceManifest);
+
+        const result = await luis(config, serviceManifest, args, requestBody);
+        if (result.error) {
+            throw new Error(result.error.message);
+        }
+
+        if (serviceManifest.operation.name == "addApplication" && args.bot) {
+            process.stdout.write(JSON.stringify({
+                type: "luis",
+                name: requestBody.name,
+                id: result,
+                appId: result,
+                authoringKey: config.authoringKey,
+                subscriptionKey: config.authoringKey,
+                version: requestBody.initialVersionId
+            }, null, 2));
+        } else {
+            process.stdout.write(JSON.stringify(result, null, 2));
+        }
     }
-    process.stdout.write(JSON.stringify(result, null, 2));
 }
 
 /**
@@ -113,7 +132,7 @@ async function initializeConfig() {
     } catch (e) {
         return false;
     }
-    await fs.writeJson(path.join(process.cwd(), '.luisrc'), config, {spaces: 2});
+    await fs.writeJson(path.join(process.cwd(), '.luisrc'), config, { spaces: 2 });
     return true;
 }
 
@@ -139,7 +158,7 @@ async function getFileInput(args) {
  * @returns {Promise<*>}
  */
 async function composeConfig() {
-    const {LUIS_APP_ID, LUIS_AUTHORING_KEY, LUIS_VERSION_ID, LUIS_ENDPOINT_BASE_PATH} = process.env;
+    const { LUIS_APP_ID, LUIS_AUTHORING_KEY, LUIS_VERSION_ID, LUIS_ENDPOINT_BASE_PATH } = process.env;
 
     const {
         appId: args_appId,
@@ -178,7 +197,7 @@ function validateConfig(config) {
     // not all operations require these to be present.
     // Validation of specific params are done in the
     // ServiceBase.js
-    const {authoringKey, endpointBasePath} = config;
+    const { authoringKey, endpointBasePath } = config;
     const messageTail = `is missing from the configuration.\n\nDid you run ${chalk.cyan.bold('luis --init')} yet?`;
 
     assert(typeof authoringKey === 'string', `The authoringKey  ${messageTail}`);
@@ -190,15 +209,17 @@ function validateConfig(config) {
  *
  * @param serviceManifest
  */
-function validateArguments(serviceManifest) {
+async function validateArguments(serviceManifest) {
     let error = new Error();
+    let body = undefined;
+
     error.name = 'ArgumentError';
     if (!serviceManifest) {
         error.message = 'Bad or missing arguments\n';
         throw error;
     }
 
-    const {operation} = serviceManifest;
+    const { operation } = serviceManifest;
     if (!operation) {
         error.message = 'The operation does not exist\n';
 
@@ -208,18 +229,26 @@ function validateArguments(serviceManifest) {
     const entitySpecified = typeof args.in === 'string';
     const entityRequired = !!operation.entityName;
 
-    if (!entityRequired && entitySpecified) {
-        error.message = `The ${operation.name} operation does not accept an input\n`;
-
-        throw error;
+    if (entityRequired) {
+        if (entitySpecified) {
+            body = await getFileInput(args);
+        }
+        else {
+            switch (serviceManifest.operation.name) {
+                case "publishApplication":
+                    body = {
+                        versionId: args.versionId,
+                        isStaging: args.staging === true,
+                        region: args.region
+                    };
+                    break;
+                default:
+                    error.message = `The ${operation.name} requires an input of type: ${operation.entityType}`;
+                    throw error;
+            }
+        }
     }
-
-    if (entityRequired && !entitySpecified) {
-        error.message = `The ${operation.name} requires an input of type: ${operation.entityType}\n`;
-
-        throw error;
-    }
-
+    return body;
     // Note that the ServiceBase will validate params that may be required.
 }
 
@@ -235,6 +264,49 @@ async function handleError(error) {
         await help(args);
     }
     return 1;
+}
+
+async function  handleQueryCommand(args, config) {
+    let query = args.q || args.question;
+    if (!query) {
+        process.stdout.write(chalk.red.bold(`missing -q\n`));
+        return help(args);
+    }
+    let appId = args.appId || config.appId;
+    if (!appId) {
+        process.stdout.write(chalk.red.bold(`missing --appid\n`));
+        return help(args);
+    }
+
+    let subscriptionKey = args.subscriptionKey || config.authoringKey;
+    if (!subscriptionKey) {
+        process.stdout.write(chalk.red.bold(`missing --subscriptionKey\n`));
+        return help(args);
+    }
+    let region = args.region || config.region;
+    if (!region) {
+        process.stdout.write(chalk.red.bold(`missing --region\n`));
+        return help(args);
+    }
+
+    if (query && appId && subscriptionKey && region) {
+        var options = {
+            uri: `https://${region}.api.cognitive.microsoft.com/luis/v2.0/apps/${appId}`,
+            method: "GET",
+            qs: {  // Query string like ?key=value&...
+                "subscription-key": `${subscriptionKey}`,
+                verbose: true,
+                timezoneOffset: 0,
+                q: `${query}`
+            },
+            json: true
+        }
+
+        let result = await request(options);
+        process.stdout.write(JSON.stringify(result, null, 2));
+        return;
+    }
+    return help(args);
 }
 
 runProgram()
