@@ -71,6 +71,9 @@ export interface IDispatchService extends IConnectedService {
 
     // version of the application
     version: string;
+
+    // connected services to dispatch to
+    services: IConnectedService[];
 }
 
 export interface IQnAService extends IConnectedService {
@@ -82,6 +85,14 @@ export interface IQnAService extends IConnectedService {
 
     // subscriptionkey for calling api
     subscriptionKey: string;
+}
+
+export interface IFileService extends IConnectedService {
+    // type = ServiceTypes.File
+    // id = filePath
+
+    // filePath
+    filePath: string;
 }
 
 export interface IBotConfig {
