@@ -10,7 +10,7 @@
             "request": "launch",
             "name": "Launch Program",
             "program": "${workspaceFolder}\\bin\\luis",
-            "args": ["publish", "version", "--versionId", "2.0", "--region", "westus"]
+            "args": ["query", "-q", "yes", "--region", "westus"]
         }
     ]
 }
