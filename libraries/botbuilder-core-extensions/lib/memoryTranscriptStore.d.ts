@@ -12,6 +12,7 @@ import { Activity } from "botbuilder-core";
  * Because this uses an unbounded volitile dictionary this should only be used for unit tests or non-production environments.
  */
 export declare class MemoryTranscriptStore implements TranscriptStore {
+    private static readonly PageSize;
     private channels;
     /**
      * Log an activity to the transcript.

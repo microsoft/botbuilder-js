@@ -66,15 +66,15 @@ class MemoryTranscriptStore {
                         .sort(timestampSorter)
                         .filter(a => !startDate || a.timestamp >= startDate)
                         .filter(skipWhileExpression(a => a.id !== continuationToken))
-                        .slice(1, 21);
+                        .slice(1, MemoryTranscriptStore.PageSize + 1);
                 }
                 else {
                     pagedResult.items = transcript
                         .sort(timestampSorter)
                         .filter(a => !startDate || a.timestamp >= startDate)
-                        .slice(0, 20);
+                        .slice(0, MemoryTranscriptStore.PageSize);
                 }
-                if (pagedResult.items.length == 20) {
+                if (pagedResult.items.length == MemoryTranscriptStore.PageSize) {
                     pagedResult.continuationToken = pagedResult.items[pagedResult.items.length - 1].id;
                 }
             }
@@ -99,7 +99,7 @@ class MemoryTranscriptStore {
                     created: getDate(kv[1])
                 })).sort(createdSorter)
                     .filter(skipWhileExpression(a => a.id !== continuationToken))
-                    .slice(1, 21);
+                    .slice(1, MemoryTranscriptStore.PageSize + 1);
             }
             else {
                 pagedResult.items = Array.from(channel.entries()).map(kv => ({
@@ -107,9 +107,9 @@ class MemoryTranscriptStore {
                     id: kv[0],
                     created: getDate(kv[1])
                 })).sort(createdSorter)
-                    .slice(0, 20);
+                    .slice(0, MemoryTranscriptStore.PageSize);
             }
-            if (pagedResult.items.length == 20) {
+            if (pagedResult.items.length == MemoryTranscriptStore.PageSize) {
                 pagedResult.continuationToken = pagedResult.items[pagedResult.items.length - 1].id;
             }
         }
@@ -134,6 +134,7 @@ class MemoryTranscriptStore {
         return Promise.resolve();
     }
 }
+MemoryTranscriptStore.PageSize = 20;
 exports.MemoryTranscriptStore = MemoryTranscriptStore;
 const createdSorter = (a, b) => a.created.getTime() - b.created.getTime();
 const timestampSorter = (a, b) => a.timestamp.getTime() - b.timestamp.getTime();
