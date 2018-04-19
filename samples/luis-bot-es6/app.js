@@ -62,27 +62,27 @@ server.post('/api/messages', (req, res) => {
                 .recognize(context)
                 .then(res => {
                     // Resolve intents returned from LUIS
-                    let topIntent = res.topScoringIntent.intent;
+                    let topIntent = LuisRecognizer.topIntent(res);
                     state.intent = topIntent;
 
                     // Start addReminder dialog
                     if (topIntent === 'Calendar.Add') {
                         // Resolve entities returned from LUIS, and save these to state
-                        let title = (state.title = _.find(res.entities, ['type', 'Calendar.Subject']));
-
-                        let date = _.find(res.entities, ['type', 'builtin.datetimeV2.date']);
-                        let time = _.find(res.entities, ['type', 'builtin.datetimeV2.time']);
-                        let datetime = _.find(res.entities, ['type', 'builtin.datetimeV2.datetime']);
-
+                        let title = state.title = res.entities['Calendar.Subject'];
+                        let date = res.entities.builtin_datetimeV2_date;
+                        let time = res.entities.builtin_datetimeV2_time;
+                        let datetime = res.entities.builtin_datetimeV2_datetime;
+                        // TODO: The datetime parsing below should be 
+                        // updated to use TIMEX parsing instead of moment parsing
                         if (datetime) {
-                            let dtvalue = datetime.resolution.values[0].value;
+                            let dtvalue = datetime[0];
                             state.date = moment(dtvalue).format('DD-MM-YYYY');
                             state.time = moment(dtvalue).format('hh:mm a');
                         } else if (date) {
-                            let datevalue = date.resolution.values[0].value;
+                            let datevalue = date[0];
                             state.date = moment(datevalue).format('DD-MM-YYYY');
                         } else if (time) {
-                            let timevalue = time.resolution.values[0].value;
+                            let timevalue = time[0];
                             // Assume user is talking about today
                             let datetime = moment(timevalue, 'hh:mm a');
                             state.date = datetime.format('DD-MM-YYYY');

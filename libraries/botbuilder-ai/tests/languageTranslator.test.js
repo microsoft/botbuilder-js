@@ -189,7 +189,7 @@ describe('LanguageTranslator', function () {
         let noTranslateSettings = {
             translatorKey: translatorKey,
             nativeLanguages: ['en'],
-            noTranslatePatterns: new Set(['perr[oa]']),
+            noTranslatePatterns: new Set(['perr[oa]', 'Hi']),
             getUserLanguage: c => 'es',
             setUserLanguage: c => Promise.resolve(false)
         }
@@ -246,6 +246,35 @@ describe('LanguageTranslator', function () {
         const testAdapter = new TestAdapter(c => c.sendActivity(context.activity))
         .use(new LanguageTranslator(translateBackSettings))
         .test('foo', context.activity, 'should have received hello with no translation')
+        .then(() => done());
+    });
+
+    it('should handle long sentences', function (done) {
+        
+        let toFrenchSettings = {
+            translatorKey: translatorKey,
+            nativeLanguages: ['fr', 'de'],
+            noTranslatePatterns: new Set()
+        }
+
+        let message = 'Prior to your first visit, preferably starting in the morning '
+        + 'to fully benefit from your day, remember to write your name, first name and '
+        + 'the current date (without overwriting and crossing out) on the back of your '
+        + 'pass in order to activate it consecutively for 2, 4, or 6 days. '
+        + 'Presenting your pass at the entrance of monuments and museums grants you '
+        + 'FREE access with no waiting time at the cash register.';
+        
+        let translatedMessage = "Avant votre première visite, "
+        + "de préférence à partir du matin pour profiter pleinement de votre journée, "
+        + "n'oubliez pas d'écrire votre nom, prénom et la date actuelle "
+        + "(sans écraser et de passage) sur le dos de votre laissez-passer "
+        + "afin de l'activer consécutivement pour 2 , 4 ou 6 jours. "
+        + "La présentation de votre laissez-passer à l'entrée des monuments et des musées "
+        + "vous accorde un accès gratuit sans temps d'attente à la caisse enregistreuse.";
+
+        const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
+        .use(new LanguageTranslator(toFrenchSettings))
+        .test(message, translatedMessage, 'should have received french')
         .then(() => done());
     });
 })
