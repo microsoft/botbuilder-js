@@ -7,6 +7,7 @@ const path = require('path');
 const readline = require('readline');
 const minimist = require('minimist');
 const chalk = require('chalk');
+const request = require('request-promise');
 
 const help = require('../lib/help');
 const luis = require('../lib');
@@ -42,26 +43,32 @@ async function runProgram() {
         return process.stdout.write(require(path.join(__dirname, '../package.json')).version);
     }
     const config = await composeConfig();
-    const serviceManifest = getServiceManifest(args);
-    const requestBody = await validateArguments(serviceManifest);
 
-    const result = await luis(config, serviceManifest, args, requestBody);
-    if (result.error) {
-        throw new Error(result.error.message);
-    }
-
-    if (serviceManifest.operation.name == "addApplication" && args.bot) {
-        process.stdout.write(JSON.stringify({
-            type: "luis",
-            name: requestBody.name,
-            id: result,
-            appId: result,
-            authoringKey: config.authoringKey,
-            subscriptionKey: config.authoringKey,
-            version: requestBody.initialVersionId
-        }, null, 2));
+    // special command
+    if (args._[0] == "query") {
+        return await handleQueryCommand(args, config);
     } else {
-        process.stdout.write(JSON.stringify(result, null, 2));
+        const serviceManifest = getServiceManifest(args);
+        const requestBody = await validateArguments(serviceManifest);
+
+        const result = await luis(config, serviceManifest, args, requestBody);
+        if (result.error) {
+            throw new Error(result.error.message);
+        }
+
+        if (serviceManifest.operation.name == "addApplication" && args.bot) {
+            process.stdout.write(JSON.stringify({
+                type: "luis",
+                name: requestBody.name,
+                id: result,
+                appId: result,
+                authoringKey: config.authoringKey,
+                subscriptionKey: config.authoringKey,
+                version: requestBody.initialVersionId
+            }, null, 2));
+        } else {
+            process.stdout.write(JSON.stringify(result, null, 2));
+        }
     }
 }
 
@@ -257,6 +264,49 @@ async function handleError(error) {
         await help(args);
     }
     return 1;
+}
+
+async function  handleQueryCommand(args, config) {
+    let query = args.q || args.question;
+    if (!query) {
+        process.stdout.write(chalk.red.bold(`missing -q\n`));
+        return help(args);
+    }
+    let appId = args.appId || config.appId;
+    if (!appId) {
+        process.stdout.write(chalk.red.bold(`missing --appid\n`));
+        return help(args);
+    }
+
+    let subscriptionKey = args.subscriptionKey || config.authoringKey;
+    if (!subscriptionKey) {
+        process.stdout.write(chalk.red.bold(`missing --subscriptionKey\n`));
+        return help(args);
+    }
+    let region = args.region || config.region;
+    if (!region) {
+        process.stdout.write(chalk.red.bold(`missing --region\n`));
+        return help(args);
+    }
+
+    if (query && appId && subscriptionKey && region) {
+        var options = {
+            uri: `https://${region}.api.cognitive.microsoft.com/luis/v2.0/apps/${appId}`,
+            method: "GET",
+            qs: {  // Query string like ?key=value&...
+                "subscription-key": `${subscriptionKey}`,
+                verbose: true,
+                timezoneOffset: 0,
+                q: `${query}`
+            },
+            json: true
+        }
+
+        let result = await request(options);
+        process.stdout.write(JSON.stringify(result, null, 2));
+        return;
+    }
+    return help(args);
 }
 
 runProgram()
