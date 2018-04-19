@@ -28,13 +28,13 @@ Arguments
 
 | Option               | Description                       |
 | -------------------- | --------------------------------- |
-| -name                | (optional) name of the dispatch   |
+| -name                | (optional) Name of the dispatch   |
 | -luisAuthoringKey    | (optional) LUIS authoring key     |
 | -luisAuthoringRegion | (optional) LUIS authoring region  |
 | -bot                 | (optional) .bot file path         |
 | -hierarchical        | (optional) Default to false.  If false, existing intents from source LUIS model(s) will be available as the dispatch intents. |
 | -dataFolder          | (optional) Output folder for tool |
-| -h                   | output usage information |
+| -h                   | Output usage information |
 
 Example:
 
@@ -46,7 +46,7 @@ dispatch init -bot c:\src\bot\testbot.bot
 
 ## Adding source to dispatch
 
-This step is not needed if you have a .bot file already connected with services (ie Luis/QnA). Dispatch will take the services in .bot file
+This step is not needed if you have a .bot file already connected with services (ie LUIS/QnA). Dispatch will take the services in .bot file
 and add each of the services it can dispatch to .dispatchrc.
 
 ```shell
@@ -60,13 +60,13 @@ Arguments
 | Option       | Description |
 | -----------  | ----------- |
 | -type        | luis, qna, file|
-| -id          | (required only if type is luis/qna) Luis app id or QnA kb id - from application settings page)|
-| -name        | Luis app name or QnA name (from application settings page) or module/file name for file type |
-| -key         | (required only if type is luis/qna) Luis authoring key (from https://www.luis.ai/user/settings) or QnA maker key (from https://qnamaker.ai/UserSettings) |
-| -version     | (Required only if type is luis) Luis app version |
-| -filePath    | (Required only if type is file) path to tsv file containing tab delimited intent and utterance fields |
+| -id          | (required only if type is luis/qna) LUIS app id or QnA kb id - from application settings page)|
+| -name        | LUIS app name or QnA name (from application settings page) or module/file name for file type |
+| -key         | (required only if type is luis/qna) LUIS authoring key (from https://www.luis.ai/user/settings) or QnA maker key (from https://qnamaker.ai/UserSettings) |
+| -version     | (Required only if type is luis) LUIS app version |
+| -filePath    | (Required only if type is file) Path to tsv file containing tab delimited intent and utterance fields or .txt file with an utterance on each line |
 | -dataFolder  | (optional) Output folder for tool |
-| -h           | output usage information |
+| -h           | Output usage information |
 
 
 ## Creating your dispatch model  
@@ -84,8 +84,25 @@ With the following options
 | -bot                 | (optional) .bot file path         |
 | -hierarchical        | (optional) Default to false or the value in .dispatchrc if set in init.  If false, existing intents from source LUIS model(s) will be available as the dispatch intents. |
 | -dataFolder          | (optional) Output folder for tool |
-| -h                   | output usage information |
+| -h                   | Output usage information |
 
+## Testing your dispatch model  
+
+To test your dispatch model againsts test set, run
+
+```shell
+dispatch test [options]
+```
+
+With the following options
+
+| Option               | Description                                                  |
+| ----------------     | ------------------------------------------------------------ |
+| -testFilePath        | Path to a tsv file with three (or two) fields: expected intent, weight and utterance in that order; the first line (header) will be skipped; the weight column is optional     |
+| -luisPredictingKey   | (optional, will be prompted) LUIS predicting key     |
+| -luisPredictingRegion| (optional, will be prompted) LUIS predicting region  |
+| -dataFolder          | (optional) Output folder for tool |
+| -h                   | Output usage information |
 
 ## Evaluating your dispatch model  
 
@@ -102,5 +119,5 @@ With the following options.  If not given, the tool will prompt for the required
 | -luisPredictingKey    | (optional, will be prompted) LUIS predicting key     |
 | -luisPredictingRegion | (optional, will be prompted) LUIS predicting region  |
 | -dataFolder           | (optional) Output folder for tool |
-| -h, --help             | output usage information|
+| -h, --help            | Output usage information|
 
