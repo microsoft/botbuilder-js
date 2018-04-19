@@ -10,7 +10,7 @@ const chalk = require('chalk');
 
 const help = require('../lib/help');
 const luis = require('../lib');
-const {getServiceManifest} = require('../lib/utils/argsUtil');
+const { getServiceManifest } = require('../lib/utils/argsUtil');
 
 let args;
 
@@ -50,7 +50,20 @@ async function runProgram() {
     if (result.error) {
         throw new Error(result.error.message);
     }
-    process.stdout.write(JSON.stringify(result, null, 2));
+
+    if (serviceManifest.operation.name == "addApplication" && args.bot) {
+        process.stdout.write(JSON.stringify({
+            type: "luis",
+            name: requestBody.name,
+            id: result,
+            appId: result,
+            authoringKey: config.authoringKey,
+            subscriptionKey: config.authoringKey,
+            version: requestBody.initialVersionId
+        }, null, 2));
+    } else {
+        process.stdout.write(JSON.stringify(result, null, 2));
+    }
 }
 
 /**
@@ -113,7 +126,7 @@ async function initializeConfig() {
     } catch (e) {
         return false;
     }
-    await fs.writeJson(path.join(process.cwd(), '.luisrc'), config, {spaces: 2});
+    await fs.writeJson(path.join(process.cwd(), '.luisrc'), config, { spaces: 2 });
     return true;
 }
 
@@ -139,7 +152,7 @@ async function getFileInput(args) {
  * @returns {Promise<*>}
  */
 async function composeConfig() {
-    const {LUIS_APP_ID, LUIS_AUTHORING_KEY, LUIS_VERSION_ID, LUIS_ENDPOINT_BASE_PATH} = process.env;
+    const { LUIS_APP_ID, LUIS_AUTHORING_KEY, LUIS_VERSION_ID, LUIS_ENDPOINT_BASE_PATH } = process.env;
 
     const {
         appId: args_appId,
@@ -178,7 +191,7 @@ function validateConfig(config) {
     // not all operations require these to be present.
     // Validation of specific params are done in the
     // ServiceBase.js
-    const {authoringKey, endpointBasePath} = config;
+    const { authoringKey, endpointBasePath } = config;
     const messageTail = `is missing from the configuration.\n\nDid you run ${chalk.cyan.bold('luis --init')} yet?`;
 
     assert(typeof authoringKey === 'string', `The authoringKey  ${messageTail}`);
@@ -198,7 +211,7 @@ function validateArguments(serviceManifest) {
         throw error;
     }
 
-    const {operation} = serviceManifest;
+    const { operation } = serviceManifest;
     if (!operation) {
         error.message = 'The operation does not exist\n';
 

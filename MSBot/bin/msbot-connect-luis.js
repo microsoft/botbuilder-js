@@ -58,7 +58,7 @@ async function processConnectLuisArgs(config) {
         throw new Error("Bad or missing --name");
     if (!args.appId || !utils_1.uuidValidate(args.appId))
         throw new Error("bad or missing --appId");
-    if (!args.version || parseInt(args.version))
+    if (!args.version || parseFloat(args.version) == 0)
         throw new Error("bad or missing --version");
     if (!args.authoringKey || !utils_1.uuidValidate(args.authoringKey))
         throw new Error("bad or missing --authoringKey");
