@@ -1,6 +1,6 @@
 {
   "name": "qnamaker",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Tooling for connectivity with the QnA Maker APIs",
   "main": "lib/api/index.js",
   "bin": {

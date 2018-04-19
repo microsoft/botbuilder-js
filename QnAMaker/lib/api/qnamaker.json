@@ -8,7 +8,7 @@
         "method": "post",
         "methodAlias": "create",
         "target": [],
-        "command": "qnamaker create --in createKnowledgeBase.json",
+        "command": "qnamaker create --in createKnowledgeBase.json --bot",
         "pathFragment": "",
         "description": "Creates a new knowledge base.",
         "entityName": "createKnowledgeBase",
@@ -30,6 +30,7 @@
         "params": [
           {
             "name": "knowledgeBaseID",
+            "alias": "kbid",
             "in": "path",
             "description": "Knowledge base identity",
             "required": true,
@@ -48,6 +49,7 @@
         "params": [
           {
             "name": "knowledgeBaseID",
+            "alias": "kbid",
             "in": "path",
             "description": "knowledge base identity",
             "required": true,
@@ -68,6 +70,7 @@
         "params": [
           {
             "name": "knowledgeBaseID",
+            "alias": "kbid",
             "in": "path",
             "description": "knowledge base identity",
             "required": true,
@@ -86,6 +89,7 @@
         "params": [
           {
             "name": "knowledgeBaseID",
+            "alias": "kbid",
             "in": "path",
             "description": "knowledge base identity",
             "required": true,
@@ -112,6 +116,7 @@
         "params": [
           {
             "name": "knowledgeBaseID",
+            "alias": "kbid",
             "in": "path",
             "description": "knowledge base identity",
             "required": true,
@@ -150,6 +155,7 @@
           },
           {
             "name": "knowledgeBaseID",
+            "alias": "kbid",
             "in": "path",
             "description": "knowledgeBasedID, this should be get from QnAMaker portal",
             "required": false,
@@ -176,6 +182,7 @@
         "params": [
           {
             "name": "knowledgeBaseID",
+            "alias": "kbid",
             "in": "path",
             "description": "knowledge base identity",
             "required": true,
@@ -204,6 +211,7 @@
         "params": [
           {
             "name": "knowledgeBaseID",
+            "alias": "kbid",
             "in": "path",
             "description": "knowledge base identity",
             "required": true,

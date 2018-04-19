@@ -36,6 +36,12 @@ async function runProgram() {
     if (args.version || args.v) {
         return process.stdout.write(require(path.join(__dirname, '../package.json')).version);
     }
+    
+    if (args.kbid) {
+        args.knowledgeBaseID = args.kbid;
+        delete args.kbid;
+    }
+
     const config = await composeConfig();
     const serviceManifest = getServiceManifest(args);
 
@@ -60,11 +66,33 @@ async function runProgram() {
     if (result.error) {
         throw new Error(result.error.message);
     }
-    // dump json as json stringified
-    if (typeof result == 'string')
-        process.stdout.write(result);
-    else
-        process.stdout.write(JSON.stringify(result, null, 2));
+
+    // special case response
+    switch (serviceManifest.operation.methodAlias) {
+        case "create": {
+            if (args.bot) {
+                process.stdout.write(JSON.stringify({
+                    type: "qna",
+                    name: `QnA KB`,
+                    id : result.kbId,
+                    kbid: result.kbId,
+                    subscriptionKey: config.subscriptionKey
+                }, null, 2));
+            } else {
+                process.stdout.write(JSON.stringify(result, null, 2));
+            }
+            break;
+        }
+
+        default: {
+            // dump json as json stringified
+            if (typeof result == 'string')
+                process.stdout.write(result);
+            else
+                process.stdout.write(JSON.stringify(result, null, 2));
+            break;
+        }
+    }
 }
 
 /**
@@ -229,8 +257,7 @@ async function validateArguments(serviceManifest) {
             body = await getFileInput(args);
         }
         else {
-            switch(serviceManifest.operation.methodAlias)
-            {
+            switch (serviceManifest.operation.methodAlias) {
                 case "ask":
                     body = {
                         question: args.question,

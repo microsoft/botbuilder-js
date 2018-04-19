@@ -54,9 +54,9 @@ module.exports = async function help(args, serviceManifest) {
 let configSection = {
     head: 'Configuration and Overrides:',
     table: [
-        [chalk.cyan.bold('--knowledgeBaseID'), 'Specifies the public qnamaker knowledgebase id. Overrides the .qnamakerrc value and the QNAMAKER_APP_ID environment variable.'],
-        [chalk.cyan.bold('--subscriptionKey'), 'Specifies the qnamaker subscription key (from qnamaker.ai portal user settings page). Overrides the .qnamakerrc value and the QNAMAKER_AUTHORING_KEY environment variable.'],
-        [chalk.cyan.bold('--endpointBasePath'), 'Specifies the base URI for all requests. Overrides the .qnamakerrc value and the QNAMAKER_ENDPOINT_BASE_PATH environment variable.'],
+        [chalk.cyan.bold('--kbid <kbid>'), 'Specifies the public qnamaker knowledgebase id. Overrides the .qnamakerrc value and the QNAMAKER_APP_ID environment variable.'],
+        [chalk.cyan.bold('--subscriptionKey <key>'), 'Specifies the qnamaker subscription key (from qnamaker.ai portal user settings page). Overrides the .qnamakerrc value and the QNAMAKER_AUTHORING_KEY environment variable.'],
+        [chalk.cyan.bold('--endpointBasePath <path>'), 'Specifies the base URI for all requests. Overrides the .qnamakerrc value and the QNAMAKER_ENDPOINT_BASE_PATH environment variable.'],
     ]
 };
 
@@ -124,7 +124,7 @@ function getHelpContentsForService(serviceManifest) {
             const { params } = operation;
             const paramsHelp = {
                 head: `Command arguments are:`,
-                table: params.map(param => [chalk.cyan.bold(`--${param.name} <${param.type}>${param.required ? ' (required)' : ''}`), param.description])
+                table: params.map(param => [chalk.cyan.bold(`--${param.alias || param.name} <${param.type}>${param.required ? ' (required)' : ''}`), param.description])
             };
             if (operation.entityName) {
                 paramsHelp.table.unshift([chalk.cyan.bold(`--in ${operation.entityType}.json`), `The ${operation.entityType} object to send in the body of the request`],
