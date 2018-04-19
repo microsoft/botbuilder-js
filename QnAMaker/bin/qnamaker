@@ -81,6 +81,14 @@ async function runProgram() {
             } else {
                 process.stdout.write(JSON.stringify(result, null, 2));
             }
+            if (!args.q) {
+                let answer = readline.question(`\nWould you like to save ${result.kbId} in your .qnamakerrc so that future commands will be with this KB? [yes]`, { defaultInput: 'yes'});
+                if (answer[0] == 'y'){
+                    config.knowledgeBaseID = result.kbId;
+                    await fs.writeJson(path.join(process.cwd(), '.qnamakerrc'), config, { spaces: 2 });
+                    process.stdout.write('.qnamakerrc updated');
+                }
+            }
             break;
         }
 
