@@ -6,7 +6,9 @@
       "createKnowledgeBase": {
         "name": "createKnowledgeBase",
         "method": "post",
-        "command": "qnamaker createKnowledgeBase --in createKnowledgeBase.json",
+        "methodAlias": "create",
+        "target": [],
+        "command": "qnamaker create --in createKnowledgeBase.json",
         "pathFragment": "",
         "description": "Creates a new knowledge base.",
         "entityName": "createKnowledgeBase",
@@ -21,7 +23,9 @@
       "publishKnowledgeBase": {
         "name": "publishKnowledgeBase",
         "method": "put",
-        "command": "qnamaker publishKnowledgeBase --knowledgeBaseID <string>",
+        "methodAlias": "publish",
+        "target": [],
+        "command": "qnamaker publish ",
         "pathFragment": "",
         "params": [
           {
@@ -37,7 +41,9 @@
       "updateKnowledgeBase": {
         "name": "updateKnowledgeBase",
         "method": "patch",
-        "command": "qnamaker updateKnowledgeBase --in updateKnowledgeBase.json --knowledgeBaseID <string>",
+        "methodAlias": "update",
+        "target": [],
+        "command": "qnamaker update --in updateKnowledgeBase.json ",
         "pathFragment": "",
         "params": [
           {
@@ -55,7 +61,9 @@
       "downloadKnowledgeBase": {
         "name": "downloadKnowledgeBase",
         "method": "get",
-        "command": "qnamaker downloadKnowledgeBase --knowledgeBaseID <string>",
+        "methodAlias": "get",
+        "target": [],
+        "command": "qnamaker get ",
         "pathFragment": "",
         "params": [
           {
@@ -71,7 +79,9 @@
       "deleteKnowledgeBase": {
         "name": "deleteKnowledgeBase",
         "method": "delete",
-        "command": "qnamaker deleteKnowledgeBase --knowledgeBaseID <string>",
+        "methodAlias": "delete",
+        "target": [],
+        "command": "qnamaker delete",
         "pathFragment": "",
         "params": [
           {
@@ -93,7 +103,11 @@
       "downloadAlterations": {
         "name": "downloadAlterations",
         "method": "get",
-        "command": "qnamaker downloadAlterations --knowledgeBaseID <string>",
+        "methodAlias": "get",
+        "target": [
+          "alterations"
+        ],
+        "command": "qnamaker get alterations ",
         "pathFragment": "",
         "params": [
           {
@@ -115,14 +129,30 @@
       "generateAnswer": {
         "name": "generateAnswer",
         "method": "post",
-        "command": "qnamaker generateAnswer --in generateAnswer.json --knowledgeBaseID <string>",
+        "methodAlias": "ask",
+        "target": [],
+        "command": "qnamaker ask --question \"how do I turn it on\" --top 5",
         "pathFragment": "",
         "params": [
+          {
+            "name": "question",
+            "in": "question",
+            "description": "question you want to ask",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "top",
+            "in": "top",
+            "description": "number of answers you would like",
+            "required": false,
+            "type": "number"
+          },
           {
             "name": "knowledgeBaseID",
             "in": "path",
             "description": "knowledgeBasedID, this should be get from QnAMaker portal",
-            "required": true,
+            "required": false,
             "type": "string"
           }
         ],
@@ -139,7 +169,9 @@
       "trainKnowledgeBase": {
         "name": "trainKnowledgeBase",
         "method": "patch",
-        "command": "qnamaker trainKnowledgeBase --in trainKnowledgeBase.json --knowledgeBaseID <string>",
+        "methodAlias": "train",
+        "target": [],
+        "command": "qnamaker train --in trainKnowledgeBase.json ",
         "pathFragment": "",
         "params": [
           {
@@ -163,7 +195,11 @@
       "updateAlterations": {
         "name": "updateAlterations",
         "method": "patch",
-        "command": "qnamaker updateAlterations --in updateAlterations.json --knowledgeBaseID <string>",
+        "methodAlias": "update",
+        "target": [
+          "alterations"
+        ],
+        "command": "qnamaker update alterations --in updateAlterations.json ",
         "pathFragment": "",
         "params": [
           {
