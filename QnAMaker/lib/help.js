@@ -54,8 +54,8 @@ module.exports = async function help(args, serviceManifest) {
 let configSection = {
     head: 'Configuration and Overrides:',
     table: [
-        [chalk.cyan.bold('--kbid <kbid>'), 'Specifies the public qnamaker knowledgebase id. Overrides the .qnamakerrc value and the QNAMAKER_APP_ID environment variable.'],
-        [chalk.cyan.bold('--subscriptionKey <key>'), 'Specifies the qnamaker subscription key (from qnamaker.ai portal user settings page). Overrides the .qnamakerrc value and the QNAMAKER_AUTHORING_KEY environment variable.'],
+        [chalk.cyan.bold('--kbid <kbid>'), 'Specifies the public qnamaker knowledgebase id. Overrides the .qnamakerrc value and the QNAMAKER_KBID environment variable.'],
+        [chalk.cyan.bold('--subscriptionKey <key>'), 'Specifies the qnamaker subscription key (from qnamaker.ai portal user settings page). Overrides the .qnamakerrc value and the QNAMAKER_SUBSCRIPTION_KEY environment variable.'],
         [chalk.cyan.bold('--endpointBasePath <path>'), 'Specifies the base URI for all requests. Overrides the .qnamakerrc value and the QNAMAKER_ENDPOINT_BASE_PATH environment variable.'],
     ]
 };

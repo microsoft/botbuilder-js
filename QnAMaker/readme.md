@@ -1,148 +1,78 @@
 # Project
 
-QnAMaker is command line tool for interacting with QnAMaker service
+QnAMaker is command line tool and library for interacting with QnAMaker service using the QnAMaker REST API
 
-* this should be node based
-* It should be delivered via npm
-* it should have consistent switches with other tooling
-* it should have usage 
-* it should have appropriate copyright notice
+## Installation
 
-## example Usage
+### As a cli
+Make sure you have node >=8.5 and npm installed on your machine. then use:
 
-QnAMaker 1.0.0
-(c) Microsoft All Rights Reserved.
-ERROR(S):
-No verb selected.
+`npm i -g qnamaker`
 
-create      CreateKB using urls or QnAMakerPairs
-delete      Delete a KB
-download    Download KB QnAMakerPairs as tab delimited pairs
-ask         ask a question
-update      update knowledgebase
-help        Display more information on a specific command.
-version     Display version information.
+### As a library
+The QnAMaker apis can be installed and used as a library in any Node or UI JavaScript projects for the browser.
 
-# verbs 
+`npm i -s qnamaker`
 
-## create verb
+You can then import and use service classes specific to the endpoint and operation you wish to call.
 
-USAGE:
+## Command line usage
 
-- CREATE KB using QnaPairs from file (either in JSON or TSV form):
-```
-QnA create --file [qnapairs.tsv|qnapairs.json] --name [name] --subscriptionkey [subscriptionKey]
-```
-- CREATE KB using urls from file:
-```
-	QnA create --file [urls.txt] --name [name] --subscriptionkey [subscriptionKey]
+QnA Maker cli for interacting with the QnA Maker api - © 2018 Microsoft Corporation
 
-  ```
-  ```
-  -n, --name               Required. Name of the knowledge base
-  -f, --file               The path to a file containing urls or QnA Pairs as JSON, (if you omit the file parameter then console input will be assumed)
-  -s, --subscriptionkey    Required. The subscription key
-  --help                   Display this help screen.
-  --version                Display version information.
-```
-  
-## delete verb
+|Commands|  |
+|----|----|
+| qnamaker create --in createKnowledgeBase.json --bot      |Creates a new knowledge base.|
+| qnamaker publish                                         |Publish all unpublished in the knowledgebase to the prod endpoint|
+| qnamaker update --in updateKnowledgeBase.json            |Add or delete QnA Pairs and / or URLs to an existing knowledge base.|
+| qnamaker get                                             |Downloads all the data associated with the specified knowledge base.|
+| qnamaker delete                                          |Deletes the specified knowledge base and all data associated with it.|
+| qnamaker ask --question "how do I turn it on" --top 5    |Returns the list of answers for the given question sorted in descending order of ranking score.|
+| qnamaker train --in trainKnowledgeBase.json              |train the model |
+| qnamaker get alterations                                 |Downloads all word alterations (synonyms) that have been automatically mined or added by the user.|
+| qnamaker update alterations --in updateAlterations.json |Replaces word alterations (synonyms) for the KB with the give records.|
 
-USAGE:
 
-- DELETE Knowledge Base
-```
-	QnAMaker delete --kbid [knowledgebaseId] --subscriptionkey [subscriptionKey]
-```
-```
-  -k, --kbid               Required. The knowledge base to create knowledge in
-  -s, --subscriptionkey    Required. The subscription key
-  --help                   Display this help screen.
-  --version                Display version information.
+|Configuration and Overrides|description|
+|---|---|
+| --kbid <kbid>                                                                             |Specifies the public qnamaker knowledgebase id. Overrides the .qnamakerrc value and the QNAMAKER_KBID environment variable.|
+| --subscriptionKey <key>                                                                   |Specifies the qnamaker subscription key (from qnamaker.ai portal user settings page). Overrides the .qnamakerrc value and the QNAMAKER_SUBSCRIPTION_KEY environment variable.|
+| --endpointBasePath <path>                                                                 |Specifies the base URI for all requests. Overrides the .qnamakerrc value and the QNAMAKER_ENDPOINT_BASE_PATH environment variable.|
+
+|Global Arguments | description |
+| ---- | --- |
+| --help,    -h |  this help file.|
+| --version, -v | the version of this cli tool|
+
+## Configuration
+A configuration object is required to provide the endpoint base path, app ID, version ID and the 
+authoring key to each outbound call. There are 3 ways to provide this information to the cli
+
+1. As a `.qnamakerrc` file in the cwd. 
+The json format for the `.qnamakerrc` file is:
+```json
+{
+  "knowledgeBaseID": "xxxxxxx-xxxxx-xxxx-xxxx-xxxxxxxx",
+  "subscriptionKey": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  "endpointBasePath": "https://westus.api.cognitive.microsoft.com/qnamaker/v2.0"
+}
 ```
 
-## Download verb
+> NOTE: Simply run `qnamaker --init` to answer simple questions to create your .qnamakerrc file
 
-USAGE:
+2. As arguments to the cli. `--kbid <string> --subscriptionKey <string> --endpointBasePath <string>`
 
-- Download KB to output:
-```
-	QnAMaker download --kbid [knowledgebaseId] --subscriptionkey [subscriptionKey]
-```
-- To Download KB to tsv file:
-```
-	QnAMaker download -f kb.tsv --kbid [knowledgebaseId] --subscriptionkey [subscriptionKey]
-```
-```
-  -f                       Download KB to tsv (tab delimited) file
-  -k, --kbid               Required. The knowledge base to create knowledge in
-  -s, --subscriptionkey    Required. The subscription key
-  -q, --questions     -> export questions only
-  -a, --answers       -> export answers only
-  --help                   Display this help screen.
-  --version                Display version information.
-```
+3. As environment variables. `QNAMAKER_KBID, QNAMAKER_SUBSCRIPTION_KEY, QNAMAKER_ENDPOINT_BASE_PATH`
 
-## Ask Verb
-USAGE:
+The cli will first look for these named configuration variables in the arguments list, then inside the `.qnamakerrc` file, then fallback to environment variables. 
 
-- Ask a question of a KB :
-```
-	QnAMaker ask --kbid [knowledgebaseId] --subscriptionkey [subscriptionKey] "\"why is the sky blue\""
-```
-- Get more then 1 answer from a KB :
-```
-	QnAMaker ask --kbid [knowledgebaseId] --subscriptionkey [subscriptionKey] --top 5 "\"why is the sky blue\""
-```
-```  
-  -t, --top                (Default: 1) How many answers do you want?
-  -k, --kbid               Required. The knowledge base to create knowledge in
-  -s, --subscriptionkey    Required. The subscription key
-  --help                   Display this help screen.
-  --version                Display version information.
-  [question] (pos. 0)      Question to ask
-```
+### Securing Your Access Key
+To better secure your access key, it's recommended to omit the key from the `.qnamakerrc` 
+file and instead pass it in to the `--subscriptionKey` argument or store it as the `QNAMAKER_SUBSCRIPTION_KEY` 
+environment variable. If security is not a concern for your particular case, all configuration items 
+can be stored in the `.qnamaker` for convenience.
 
-## update verb
-USAGE:
-- ADD QnA pairs from file:
-```
-	QnAMaker update -a Add -f qnapairs.json --kbid [knowledgebaseId] --subscriptionkey [subscriptionKey]
-```
-- ADD QnA pairs from stdin:
-```	
-QnAMaker update -a Add --kbid [knowledgebaseId] --subscriptionkey [subscriptionKey]
-```
-- ADD URLs from file:
-```	
-QnAMaker update -a Add -f urls.txt --kbid [knowledgebaseId] --subscriptionkey [subscriptionKey]
-```
-- ADD URLs from stdin:
-```
-QnAMaker update -a Add --kbid [knowledgebaseId] --subscriptionkey [subscriptionKey]
-```
-- DELTE QnA pairs from file:
-```
-QnAMaker update -a Delete -f qnapairs.json --kbid [knowledgebaseId] --subscriptionkey [subscriptionKey]
-```
-- DELETE QnA pairs from stdin:
-```
-QnAMaker update -a Delete --kbid [knowledgebaseId] --subscriptionkey [subscriptionKey]
-```
-- DELETE URLs from file:
-```
-QnAMaker update -a Delete -f urls.txt --kbid [knowledgebaseId] --subscriptionkey [subscriptionKey]
-```
-- DELETE URLs from stdin:
-```
-QnAMaker update -a Delete --kbid [knowledgebaseId] --subscriptionkey [subscriptionKey]
-```
-```
- -f                       : The path to a file containing urls or QnA Pairs as JSON, (if missing, then console input will be assumed)
- -a                       : The action to perform [Add|Delete] If not specified then Add
- -k, --kbid               : **Required.** knowledge base id to add qna pairs
- -s, --subscriptionkey     : **Required.**  subscription key
- --help                  : Display help screen.
- --version               :  Display version information.
-```
+### Overriding Configurations
+Since configuration items can be passed as arguments to the cli, using arguments to specify 
+the configuration will override the `.qnamakerrc` and any environment variables that may have been specified.
 
