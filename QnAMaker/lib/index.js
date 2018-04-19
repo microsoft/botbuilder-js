@@ -22,6 +22,7 @@ const dataModels = require('./api/dataModels');
 module.exports = async function qnamaker(config, serviceManifest, args, requestBody) {
     // Provide the config to the ServiceBase
     ServiceBase.config = config;
+    
     // If a request body is specified and a typed data model
     // is available, create it and pass the source in.
     // This guarantees the endpoint will get only the

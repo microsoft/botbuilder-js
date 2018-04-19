@@ -1,6 +1,6 @@
 {
   "name": "qnamaker",
-  "version": "1.0.7",
+  "version": "1.0.9",
   "description": "Tooling for connectivity with the QnA Maker APIs",
   "main": "lib/api/index.js",
   "bin": {
@@ -9,6 +9,7 @@
   "directories": {
     "doc": "docs",
     "lib": "lib",
+    "examples": "examples",
     "test": "test"
   },
   "scripts": {
@@ -32,7 +33,8 @@
     "md5": "^2.2.1",
     "minimist": "^1.2.0",
     "node-fetch": "^2.0.0",
-    "pascal-case": "^2.0.1"
+    "pascal-case": "^2.0.1",
+    "readline-sync": "^1.4.9"
   },
   "devDependencies": {
     "eslint": "^4.18.1",

@@ -1,0 +1,10 @@
+{
+    "feedbackRecords": [
+        {
+            "userId": "1",
+            "userQuestion": "hey",
+            "kbQuestion": "hi",
+            "kbAnswer": "hey"
+        }
+    ]
+}
