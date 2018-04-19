@@ -2,9 +2,10 @@ const assert = require('assert');
 const { ActivityTypes } = require('botbuilder-core');
 
 function uuid() {
-    return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
-        (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-    )
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
 }
 
 function createActivities(conversationId, ts, count = 5) {
@@ -19,7 +20,7 @@ function createActivities(conversationId, ts, count = 5) {
             from: { id: `User${i}` },
             conversation: { id: conversationId },
             recipient: { id: 'Bot1', name: '2' },
-            ServiceUrl: 'http://foo.com/api/messages'
+            serviceUrl: 'http://foo.com/api/messages'
         });
         ts.setMinutes(ts.getMinutes() + 1);
 
@@ -32,7 +33,7 @@ function createActivities(conversationId, ts, count = 5) {
             from: { id: 'Bot1', name: '2' },
             conversation: { id: conversationId },
             recipient: { id: `User${i}` },
-            ServiceUrl: 'http://foo.com/api/messages'
+            serviceUrl: 'http://foo.com/api/messages'
         });
         ts.setMinutes(ts.getMinutes() + 1);
     }
@@ -40,14 +41,53 @@ function createActivities(conversationId, ts, count = 5) {
 }
 
 exports._badArgs = function _badArgs(store) {
-    return new Promise((resolve, reject) => {
-        reject('not implemented');
+    var assertPromise = (promiseFunc, errMessage) => new Promise((resolve, reject) => {
+        try { promiseFunc().then(() => reject(errMessage)) }
+        catch (error) { resolve('expected error') }
     });
+
+    return Promise.all([
+        assertPromise(
+            () => store.logActivity(null),
+            'logActivity should have thrown error about missing activity'
+        ),
+        assertPromise(
+            () => store.getTranscriptActivities(null, null),
+            'getTranscriptActivities should have thrown error about missing channelId'
+        ),
+        assertPromise(
+            () => store.getTranscriptActivities('foo', null),
+            'getTranscriptActivities should have thrown error about missing conversationId'
+        ),
+        assertPromise(
+            () => store.listTranscripts(null),
+            'listTranscripts should have thrown error about missing channelId'
+        ),
+        assertPromise(
+            () => store.deleteTranscript(null, null),
+            'deleteTranscript should have thrown error about missing channelId'
+        ),
+        assertPromise(
+            () => store.deleteTranscript('foo', null),
+            'deleteTranscript should have thrown error about missing conversationId'
+        )
+    ]);
 }
 
-exports._logActivity =  function _logActivity(store) {
+exports._logActivity = function _logActivity(store) {
     return new Promise((resolve, reject) => {
-        reject('not implemented');
+        var conversationId = '_logActivity';
+        var date = new Date()
+        var activity = createActivities(conversationId, date, 1).pop();
+        
+        store.logActivity(activity)
+            .then(() => store.getTranscriptActivities('test', conversationId, null, date))
+            .then((result) => {
+                assert.equal(result.items.length, 1);
+                assert.deepEqual(result.items[0], activity);
+                resolve();
+            })
+            .catch(error => reject(error));
     });
 }
 

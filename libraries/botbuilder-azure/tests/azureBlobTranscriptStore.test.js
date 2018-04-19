@@ -5,7 +5,7 @@ const base = require('../../botbuilder-core-extensions/tests/transcriptStoreBase
 
 const getSettings = (container = null) => ({
     storageAccountOrConnectionString: 'UseDevelopmentStorage=true;',
-    containerName: container || 'test'
+    containerName: container || 'test-transcript'
 });
 
 const reset = (done) => {
@@ -24,7 +24,24 @@ testStorage = function () {
 
     it('bad args', function () {
         let storage = new AzureBlobTranscriptStore(getSettings());
-        return base._badArgs(storage).catch(reason => {
+        return base._badArgs(storage)
+        .then(messages => {
+            assert(messages.every(message => message.startsWith('expected error')));
+        })
+        .catch(reason => {
+            if (reason.code == 'ECONNREFUSED') {
+                console.log(noEmulatorMessage);
+            } else {
+                assert(false, `should not throw: ${print(reason)}`);
+            }
+        })
+    })
+    
+    it('log activity', function () {
+        let storage = new AzureBlobTranscriptStore(getSettings());
+        return base._logActivity(storage)
+        .then(() => assert(true))
+        .catch(reason => {
             if (reason.code == 'ECONNREFUSED') {
                 console.log(noEmulatorMessage);
             } else {
