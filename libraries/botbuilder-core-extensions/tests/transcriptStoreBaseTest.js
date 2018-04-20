@@ -88,14 +88,86 @@ exports._logActivity = function _logActivity(store) {
 }
 
 exports._logMultipleActivities = function _logMultipleActivities(store) {
-    return new Promise((resolve, reject) => {
-        reject('not implemented');
+    var conversationId = '_logMultipleActivities';
+    var start = new Date();
+    var activities = createActivities(conversationId, start);
+
+    // log activities
+    var writes = activities.map(a => store.logActivity(a));
+
+    // wait for all logs
+    return Promise.all(writes).then(() => {
+        // group the different queries into promises
+        return Promise.all([
+            // make sure other channels and conversations don't return results
+            store.getTranscriptActivities('bogus', conversationId).then(pagedResult => {
+                assert(!pagedResult.continuationToken);
+                assert.equal(pagedResult.items.length, 0);
+            }),
+            // make sure other channels and conversations don't return results
+            store.getTranscriptActivities('test', 'bogus').then(pagedResult => {
+                assert(!pagedResult.continuationToken);
+                assert.equal(pagedResult.items.length, 0);
+            }),
+            // make sure all created activities where persisted
+            store.getTranscriptActivities('test', conversationId).then(pagedResult => {
+                assert(!pagedResult.continuationToken);
+                assert.equal(pagedResult.items.length, activities.length);
+
+                // assert all are equal
+                assert.equal(
+                    JSON.stringify(pagedResult.items.sort(dateSorter)),
+                    JSON.stringify(activities)
+                );
+            }),
+            // assert half page, get activities +5 minutes
+            store.getTranscriptActivities('test', conversationId, null, new Date(start.getTime() + 60000 * 5)).then(pagedResult => {
+                assert.equal(activities.length / 2, pagedResult.items.length);
+                var expected = activities.slice(5);
+                assert.equal(
+                    JSON.stringify(pagedResult.items.sort(dateSorter)),
+                    JSON.stringify(expected));
+            })
+        ]);
     });
 }
 
 exports._deleteTranscript = function _deleteTranscript(store) {
-    return new Promise((resolve, reject) => {
-        reject('not implemented');
+    var conversationId = '_deleteConversation';
+    var conversationId2 = '_deleteConversation2';
+    var start = new Date();
+    var activities = createActivities(conversationId, start);
+    var activities2 = createActivities(conversationId2, start);
+
+    // log all activities
+    var writes = activities.concat(activities2)
+        .map(a => store.logActivity(a));
+
+    // wait for all writes
+    return Promise.all(writes).then(() => {
+        return Promise.all([
+            // test A
+            store.getTranscriptActivities('test', conversationId).then(pagedResult => {
+                assert.equal(pagedResult.items.length, activities.length);
+                // delete!
+                store.deleteTranscript('test', conversationId).then(() => {
+                    return Promise.all([
+                        // check deleted
+                        store.getTranscriptActivities('test', conversationId).then(pagedResult => {
+                            assert.equal(pagedResult.items.length, 0);
+                        }),
+                        // check second transcript still exists
+                        store.getTranscriptActivities('test', conversationId2).then(pagedResult => {
+                            assert.equal(pagedResult.items.length, activities2.length);
+                        })
+                    ])
+                })
+            }),
+            // test B
+            store.getTranscriptActivities('test', conversationId2).then(pagedResult => {
+                assert.equal(pagedResult.items.length, activities2.length);
+            })
+        ])
     });
 }
 
@@ -116,3 +188,6 @@ exports._listTranscripts = function _listTranscripts(store) {
         reject('not implemented');
     });
 }
+
+var dateSorter = (a, b) =>
+    a.timestamp.getTime() - b.timestamp.getTime();
