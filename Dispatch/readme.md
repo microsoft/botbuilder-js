@@ -50,7 +50,8 @@ This step is not needed if you have a .bot file already connected with services 
 and add each of the services it can dispatch to .dispatchrc.
 
 ```shell
-dispatch add -type luis -id 1090A3452D894BED99EF1CE3E08B690E -name TestLuisApp -version 0.1 -key F57AEEEBE67349C282E1DC51F6BA66D9
+dispatch add -type luis -id 1090A345-2D89-4BED-99EF-1CE3E08B690E -name TestLuisApp -version 0.1 -key F57AEEEBE67349C282E1DC51F6BA66D9
+dispatch add -type qna -id 09DF8311-9MSA-L2I9-DJEE-4MT434481212 -name Faq -key L2340T8NM78OSFDWAS23B4TAASMPO1N1
 dispatch add -type file -name TestModule -filePath c:\src\testmodule.tsv
 
 ```
