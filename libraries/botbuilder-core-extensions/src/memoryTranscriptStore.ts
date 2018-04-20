@@ -47,6 +47,8 @@ export class MemoryTranscriptStore implements TranscriptStore {
         }
 
         transcript.push(activity);
+
+        return Promise.resolve();
     }
 
     /**

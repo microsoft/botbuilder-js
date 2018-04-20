@@ -43,6 +43,7 @@ class MemoryTranscriptStore {
             transcript = channel.get(activity.conversation.id);
         }
         transcript.push(activity);
+        return Promise.resolve();
     }
     /**
      * Get activities from the memory transcript store
