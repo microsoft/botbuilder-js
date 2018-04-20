@@ -39,6 +39,20 @@
                 "6f9d33ef-a204-4c9c-8f7e-66fa304f5f0c",
                 "fef4339c84624005b9d6fe327b81d8ec"
             ]
+        },
+        {
+            "type": "endpoint",
+            "id": "1",
+            "name": "http://testbot.azurewebsites.net/api/messages",
+            "appId": null,
+            "appPassword": null,
+            "endpoint": "http://testbot.azurewebsites.net/api/messages"
+        },
+        {
+            "type": "abs",
+            "id": "testbot",
+            "name": "testbot",
+            "appId": "aff9b2b1356a48e9804e3379bcc2ae41"
         }
     ]
 }

@@ -10,8 +10,6 @@ export interface IEndpointService extends IConnectedService {
 }
 export interface IAzureBotService extends IConnectedService {
     appId: string;
-    appPassword: string;
-    endpoint: string;
 }
 export interface ILuisService extends IConnectedService {
     appId: string;
