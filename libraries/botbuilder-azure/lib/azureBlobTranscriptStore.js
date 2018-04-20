@@ -117,21 +117,20 @@ class AzureBlobTranscriptStore {
         }
         let prefix = this.getDirName(channelId);
         let token = null;
-        return this.ensureContainerExists().then((container) => {
-            return this.getTranscriptsFolders([], container.name, prefix, continuationToken, channelId, token).then((transcripts) => {
-                let pagedResult = new botbuilder_1.PagedResult();
-                pagedResult.items = transcripts;
-                if (pagedResult.items.length == this.pageSize) {
-                    pagedResult.continuationToken = transcripts.slice(-1).pop().id;
-                }
-                return pagedResult;
-            });
+        return this.ensureContainerExists()
+            .then(container => this.getTranscriptsFolders([], container.name, prefix, continuationToken, channelId, token))
+            .then(transcripts => {
+            let pagedResult = new botbuilder_1.PagedResult();
+            pagedResult.items = transcripts;
+            if (pagedResult.items.length == this.pageSize) {
+                pagedResult.continuationToken = transcripts.slice(-1).pop().id;
+            }
+            return pagedResult;
         });
     }
     getTranscriptsFolders(transcripts, container, prefix, continuationToken, channelId, token) {
         return new Promise((resolve, reject) => {
             this.client.listBlobDirectoriesSegmentedWithPrefixAsync(container, prefix, token).then((result) => {
-                console.log(result);
                 result.entries.some((blob) => {
                     let conversation = new botbuilder_1.Transcript();
                     conversation.id = blob.name.split('/').slice(-1).pop();
@@ -151,9 +150,8 @@ class AzureBlobTranscriptStore {
                     resolve(this.getTranscriptsFolders(transcripts, container, prefix, continuationToken, channelId, result.continuationToken));
                 }
                 resolve(transcripts);
-            }).catch(err => {
-                console.log(err);
-            });
+            })
+                .catch(error => reject(error));
         });
     }
     deleteTranscript(channelId, conversationId) {
@@ -165,22 +163,25 @@ class AzureBlobTranscriptStore {
         }
         let prefix = this.getDirName(channelId, conversationId) + '/';
         let token = null;
-        return this.ensureContainerExists().then((container) => {
-            return this.getConversationsBlobs([], container.name, prefix, token).then((blobs) => {
-                return Promise.all(blobs.map((blob) => {
-                    return this.client.deleteBlobIfExistsAsync(container.name, blob.name);
-                })).then(() => { });
-            });
-        });
+        return this.ensureContainerExists()
+            .then(container => this.getConversationsBlobs([], container.name, prefix, token))
+            .then(blobs => Promise.all(blobs.map(blob => this.client.deleteBlobIfExistsAsync(blob.container, blob.name))))
+            .then(results => { });
     }
     getConversationsBlobs(blobs, container, prefix, token) {
         return new Promise((resolve, reject) => {
-            this.client.listBlobsSegmentedWithPrefixAsync(container, prefix, token, null).then((result) => {
+            this.client.listBlobsSegmentedWithPrefixAsync(container, prefix, token, null)
+                .then((result) => {
+                blobs = blobs.concat(result.entries.map(blob => {
+                    blob.container = container;
+                    return blob;
+                }));
                 if (result.continuationToken) {
-                    resolve(this.getConversationsBlobs(blobs.concat(result.entries), container, prefix, result.continuationToken));
+                    resolve(this.getConversationsBlobs(blobs, container, prefix, result.continuationToken));
                 }
-                resolve(blobs.concat(result.entries));
-            });
+                resolve(blobs);
+            })
+                .catch(error => reject(error));
         });
     }
     checkContainerName(container) {
