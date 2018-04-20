@@ -103,15 +103,15 @@ module.exports.parseFile = function(fileContent, log)
                                 var labelledValue = "";
                                 entity = entity.replace("{", "").replace("}", "");
                                 // see if this is a trained simple entity of format {entityName:labelled value}
-                                if(entity.includes(":")) {
-                                    var entitySplit = entity.split(":");
+                                if(entity.includes("=")) {
+                                    var entitySplit = entity.split("=");
                                     entity = entitySplit[0];
                                     labelledValue = entitySplit[1];
                                     if(labelledValue !== "") {
                                         // add this to entities collection unless it already exists
                                         addItemIfNotPresent(LUISJsonStruct, LUISObjNameEnum.ENTITIES, entity);
                                         // clean up uttearnce to only include labelledentityValue and add to utterances collection
-                                        var updatedUtterance = utterance.replace("{" + entity + ":" + labelledValue + "}", labelledValue);
+                                        var updatedUtterance = utterance.replace("{" + entity + "=" + labelledValue + "}", labelledValue);
                                         var startPos = updatedUtterance.search(labelledValue);
                                         var endPos = startPos + labelledValue.length - 1;
                                         var utteranceObject = {
@@ -130,7 +130,36 @@ module.exports.parseFile = function(fileContent, log)
                                         if(!log) process.stdout.write(chalk.yellow('[WARN]: No labelled value found for entity: ' + entity + ' in utterance: ' + utterance + '\n'));
                                     }
                                 } else {
-                                    if(!log)  process.stdout.write(chalk.yellow('[WARN]: Entity ' + entity + ' in utterance: "' + utterance + '" is missing labelled value \n'));
+                                    // push this utterance to patterns
+                                    var patternObject = {
+                                        "text": utterance,
+                                        "intent": intentName
+                                    }
+                                    // if this intent does not have any utterances, push this pattern as an utterance as well. 
+                                    var intentInUtterance = LUISJsonStruct.utterances.filter(function(item) {
+                                        return item.intent == intentName;
+                                      });
+                                    
+                                    if(intentInUtterance.length === 0) {
+                                        var utteranceObject = {
+                                            "text": utterance,
+                                            "intent":intentName,
+                                            "entities": []
+                                        }
+                                        LUISJsonStruct.utterances.push(utteranceObject);
+                                    }
+                                      
+                                    LUISJsonStruct.patterns.push(patternObject);
+                                    if(utterance.includes("{")) {
+                                        // handle entities
+                                        var entityRegex = new RegExp(/\{(.*?)\}/g);
+                                        var entitiesFound = utterance.match(entityRegex);
+                                        entitiesFound.forEach(function(entity) {
+                                            entity = entity.replace("{", "").replace("}", "");
+                                            addItemIfNotPresent(LUISJsonStruct, LUISObjNameEnum.PATTERNANYENTITY, entity);
+                                        });
+                                    }
+                                    //if(!log)  process.stdout.write(chalk.yellow('[WARN]: Entity ' + entity + ' in utterance: "' + utterance + '" is missing labelled value \n'));
                                 }
                             });
                         } else {
