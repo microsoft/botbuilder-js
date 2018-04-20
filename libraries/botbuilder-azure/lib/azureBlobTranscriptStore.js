@@ -15,9 +15,17 @@ const ContainerNameCheck = new RegExp('^[a-z0-9](?!.*--)[a-z0-9-]{1,61}[a-z0-9]$
  * Internal dictionary with the containers where entities will be stored.
  */
 let checkedCollections = {};
+/**
+ * The blob transcript store stores transcripts in an Azure Blob container where each activity is stored as json blob in structure of
+ * container/{channelId]/{conversationId}/{Timestamp.ticks}-{activity.id}.json
+ */
 class AzureBlobTranscriptStore {
+    /**
+     * Creates an instance of AzureBlobTranscriptStore
+     * @param settings Settings for configuring an instance of BlobStorage
+     */
     constructor(settings) {
-        this.pageSize = 5;
+        this.pageSize = 20;
         if (!settings) {
             throw new Error('The settings parameter is required.');
         }
@@ -30,6 +38,10 @@ class AzureBlobTranscriptStore {
         this.settings = Object.assign({}, settings);
         this.client = this.createBlobService(this.settings.storageAccountOrConnectionString, this.settings.storageAccessKey, this.settings.host);
     }
+    /**
+     * Log an activity to the transcript.
+     * @param activity Activity being logged.
+     */
     logActivity(activity) {
         if (!activity) {
             throw new Error('Missing activity.');
@@ -49,6 +61,13 @@ class AzureBlobTranscriptStore {
             return writeData().then(writeProperties).then(writeMetadata).then(() => { });
         });
     }
+    /**
+     * Get activities for a conversation (Aka the transcript)
+     * @param channelId Channel Id.
+     * @param conversationId Conversation Id.
+     * @param continuationToken Continuatuation token to page through results.
+     * @param startDate Earliest time to include.
+     */
     getTranscriptActivities(channelId, conversationId, continuationToken, startDate) {
         if (!channelId) {
             throw new Error("Missing channelId");
@@ -111,6 +130,11 @@ class AzureBlobTranscriptStore {
                 .catch(error => reject(error));
         });
     }
+    /**
+     * List conversations in the channelId.
+     * @param channelId Channel Id.
+     * @param continuationToken Continuatuation token to page through results.
+     */
     listTranscripts(channelId, continuationToken) {
         if (!channelId) {
             throw new Error("Missing channelId");
@@ -154,6 +178,11 @@ class AzureBlobTranscriptStore {
                 .catch(error => reject(error));
         });
     }
+    /**
+     * Delete a specific conversation and all of it's activities.
+     * @param channelId Channel Id where conversation took place.
+     * @param conversationId Id of the conversation to delete.
+     */
     deleteTranscript(channelId, conversationId) {
         if (!channelId) {
             throw new Error("Missing channelId");
