@@ -166,7 +166,7 @@ const skipWhileExpression = (expression) => {
         if (!expression(item)) {
             skipping = false;
         }
-        return false;
+        return !skipping;
     };
 }
 

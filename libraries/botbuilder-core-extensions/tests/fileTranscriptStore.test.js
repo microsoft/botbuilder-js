@@ -45,9 +45,33 @@ testStorage = function () {
                 assert(false, `should not throw: ${print(reason)}`))
     })
 
-    it('delete transcript', function() {
+    it('delete transcript', function () {
         let storage = new FileTranscriptStore(workingFolder);
         return base._deleteTranscript(storage)
+            .then(() => assert(true))
+            .catch(reason =>
+                assert(false, `should not throw: ${print(reason)}`))
+    })
+
+    it('get transcript activities', function() {
+        let storage = new FileTranscriptStore(workingFolder);
+        return base._getTranscriptActivities(storage)
+            .then(() => assert(true))
+            .catch(reason =>
+                assert(false, `should not throw: ${print(reason)}`))
+    })
+
+    it('get transcript activities with state date', function() {
+        let storage = new FileTranscriptStore(workingFolder);
+        return base._getTranscriptActivitiesStartDate(storage)
+            .then(() => assert(true))
+            .catch(reason =>
+                assert(false, `should not throw: ${print(reason)}`))
+    })
+
+    it('list transcripts', function() {
+        let storage = new FileTranscriptStore(workingFolder);
+        return base._listTranscripts(storage)
             .then(() => assert(true))
             .catch(reason =>
                 assert(false, `should not throw: ${print(reason)}`))

@@ -181,7 +181,7 @@ const withContinuationToken = (continuationToken) => {
     if (!continuationToken)
         return () => true;
     return skipWhileExpression(fileName => {
-        var id = fileName.split('-')[1].split('.json')[0];
+        var id = fileName.substring(fileName.indexOf('-') + 1, fileName.indexOf('.'));
         return id !== continuationToken;
     });
 };
@@ -193,7 +193,7 @@ const skipWhileExpression = (expression) => {
         if (!expression(item)) {
             skipping = false;
         }
-        return false;
+        return !skipping;
     };
 };
 const parseActivity = (json) => {

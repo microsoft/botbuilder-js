@@ -113,7 +113,6 @@ export class FileTranscriptStore implements TranscriptStore {
             if (!exists) return pagedResult;
             return fs.readdir(channelFolder)
                 .then(dirs => {
-
                     let items = [];
                     if (continuationToken) {
                         items = dirs
@@ -193,7 +192,7 @@ const getTicks = (timestamp: Date): string => {
     return ticks.toString(16);
 }
 
-const readDate = (ticks) =>{
+const readDate = (ticks) => {
     let t = Math.round((parseInt(ticks, 16) - epochTicks) / ticksPerMillisecond);
     return new Date(t);
 }
@@ -210,7 +209,7 @@ const withContinuationToken = (continuationToken: string) => {
     if (!continuationToken) return () => true;
 
     return skipWhileExpression(fileName => {
-        var id = fileName.split('-')[1].split('.json')[0];
+        var id = fileName.substring(fileName.indexOf('-') + 1, fileName.indexOf('.'));
         return id !== continuationToken;
     });
 }
@@ -222,7 +221,7 @@ const skipWhileExpression = (expression) => {
         if (!expression(item)) {
             skipping = false;
         }
-        return false;
+        return !skipping;
     };
 }
 
