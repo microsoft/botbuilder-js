@@ -18,11 +18,19 @@ const ContainerNameCheck = new RegExp('^[a-z0-9](?!.*--)[a-z0-9-]{1,61}[a-z0-9]$
  */
 let checkedCollections: { [key: string]: Promise<azure.BlobService.ContainerResult>; } = {};
 
+/**
+ * The blob transcript store stores transcripts in an Azure Blob container where each activity is stored as json blob in structure of
+ * container/{channelId]/{conversationId}/{Timestamp.ticks}-{activity.id}.json
+ */
 export class AzureBlobTranscriptStore implements TranscriptStore {
     private settings: BlobStorageSettings
     private client: BlobServiceAsync
     private pageSize = 20;
 
+    /**
+     * Creates an instance of AzureBlobTranscriptStore
+     * @param settings Settings for configuring an instance of BlobStorage
+     */
     public constructor(settings: BlobStorageSettings) {
         if (!settings) {
             throw new Error('The settings parameter is required.');
@@ -40,6 +48,10 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
         this.client = this.createBlobService(this.settings.storageAccountOrConnectionString, this.settings.storageAccessKey, this.settings.host);
     }
 
+    /**
+     * Log an activity to the transcript.
+     * @param activity Activity being logged.
+     */
     logActivity(activity: Activity): void | Promise<void> {
         if (!activity) {
             throw new Error('Missing activity.');
@@ -66,6 +78,13 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
 
     }
 
+    /**
+     * Get activities for a conversation (Aka the transcript)
+     * @param channelId Channel Id.
+     * @param conversationId Conversation Id.
+     * @param continuationToken Continuatuation token to page through results.
+     * @param startDate Earliest time to include.
+     */
     getTranscriptActivities(channelId: string, conversationId: string, continuationToken?: string, startDate?: Date): Promise<PagedResult<Activity>> {
         if (!channelId) {
             throw new Error("Missing channelId");
@@ -134,6 +153,11 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
         });
     }
 
+    /**
+     * List conversations in the channelId.
+     * @param channelId Channel Id.
+     * @param continuationToken Continuatuation token to page through results.
+     */
     listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<Transcript>> {
         if (!channelId) {
             throw new Error("Missing channelId");
@@ -180,6 +204,11 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
         });
     }
 
+    /**
+     * Delete a specific conversation and all of it's activities.
+     * @param channelId Channel Id where conversation took place.
+     * @param conversationId Id of the conversation to delete.
+     */
     deleteTranscript(channelId: string, conversationId: string): Promise<void> {
         if (!channelId) {
             throw new Error("Missing channelId");
