@@ -24,10 +24,14 @@ export interface IDispatchService extends IConnectedService {
     authoringKey: string;
     subscriptionKey: string;
     version: string;
+    serviceIds: string[];
 }
 export interface IQnAService extends IConnectedService {
     kbid: string;
     subscriptionKey: string;
+}
+export interface IFileService extends IConnectedService {
+    filePath: string;
 }
 export interface IBotConfig {
     name: string;

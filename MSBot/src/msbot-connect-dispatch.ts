@@ -73,7 +73,7 @@ async function processConnectDispatch(config: BotConfig): Promise<BotConfig> {
     if (!args.appId || !uuidValidate(args.appId))
         throw new Error("bad or missing --appId");
 
-    if (!args.version || parseInt(args.version))
+    if (!args.version || parseInt(args.version) == 0)
         throw new Error("bad or missing --version");
 
     if (!args.authoringKey || !uuidValidate(args.authoringKey))
@@ -81,17 +81,34 @@ async function processConnectDispatch(config: BotConfig): Promise<BotConfig> {
 
     if (!args.subscriptionKey || !uuidValidate(args.subscriptionKey))
         throw new Error("bad or missing --subscriptionKey");
-
+    
+        let dispatchService = <IDispatchService>{
+        type: ServiceType.Dispatch,
+        name: args.name,
+        id: args.appId,
+        appId: args.appId,
+        version: args.version,
+        subscriptionKey: args.subscriptionKey,
+        authoringKey: args.authoringKey,
+        serviceIds: []
+    };
+    let dispatchServices = <IConnectedService[]>(<any>args).services;
+    if (<IConnectedService[]>dispatchServices) {
+        for (let service of dispatchServices) {
+            dispatchService.serviceIds.push(service.id || '');
+            if (!Enumerable.fromSource(config.services).any(s => s.id == service.id)) {
+                switch (service.type) {
+                    case ServiceType.File:
+                    case ServiceType.Luis:
+                    case ServiceType.QnA:
+                        config.connectService(service);
+                        break;
+                }
+            }
+        }
+    }
     // add the service
-    config.connectService(<IDispatchService>{
-            type: ServiceType.Dispatch,
-            name: args.name,
-            id: args.appId,
-            appId: args.appId,
-            version: args.version,
-            subscriptionKey: args.subscriptionKey,
-            authoringKey: args.authoringKey
-        });
+    config.connectService(dispatchService);
     await config.Save();
     return config;
 }

@@ -1,7 +1,7 @@
 {
     "name": "test",
     "description": "",
-    "secretKey": "b313011bd9752112d187bb10c6fd139c09dd1377d044d7db6607e253b352b6c75f5a3b417d640fe0f77435bd441fe626",
+    "secretKey": "",
     "services": [
         {
             "type": "endpoint",
@@ -9,7 +9,14 @@
             "endpoint": "http://localhost:3978/api/messages",
             "id": "http://localhost:3978/api/messages",
             "appId": "12313123123",
-            "appPassword": "75485ddac04befef1a392573b939fdd8"
+            "appPassword": "password"
+        },
+        {
+            "type": "qna",
+            "name": "Qna1",
+            "id": "fef4339c84624005b9d6fe327b81d8ec",
+            "kbid": "fef4339c84624005b9d6fe327b81d8ec",
+            "subscriptionKey": "fef4339c84624005b9d6fe327b81d8ec"
         },
         {
             "type": "luis",
@@ -17,8 +24,21 @@
             "id": "6f9d33ef-a204-4c9c-8f7e-66fa304f5f0c",
             "appId": "6f9d33ef-a204-4c9c-8f7e-66fa304f5f0c",
             "version": "1.0",
-            "subscriptionKey": "16ace5e547076005b62fd4a1878b478d6968deb8c85c27eeff2278b9c78d0df565c1458f385d32c8dd6d5f4826e71eaa",
-            "authoringKey": "16ace5e547076005b62fd4a1878b478d6968deb8c85c27eeff2278b9c78d0df565c1458f385d32c8dd6d5f4826e71eaa"
+            "subscriptionKey": "736465dedefd479093d666ab661d7b31",
+            "authoringKey": "736465dedefd479093d666ab661d7b31"
+        },
+        {
+            "type": "dispatch",
+            "name": "mydispatch",
+            "id": "8d61d51f5a9e4cac9399f9f45d94aff7",
+            "appId": "8d61d51f5a9e4cac9399f9f45d94aff7",
+            "version": "1.0",
+            "subscriptionKey": "aff9b2b1356a48e9804e3379bcc2ae01",
+            "authoringKey": "aff9b2b1356a48e9804e3379bcc2ae01",
+            "serviceIds": [
+                "6f9d33ef-a204-4c9c-8f7e-66fa304f5f0c",
+                "fef4339c84624005b9d6fe327b81d8ec"
+            ]
         }
     ]
 }
