@@ -21,9 +21,11 @@ const print = (o) => {
 testStorage = function () {
 
     const noEmulatorMessage = 'skipping test because azure storage emulator is not running';
+    const settings = getSettings();
+    const useParallel = settings.storageAccountOrConnectionString !== 'UseDevelopmentStorage=true;';
 
     it('bad args', function () {
-        let storage = new AzureBlobTranscriptStore(getSettings());
+        let storage = new AzureBlobTranscriptStore(settings);
         return base._badArgs(storage)
         .then(messages => {
             assert(messages.every(message => message.startsWith('expected error')));
@@ -38,7 +40,7 @@ testStorage = function () {
     })
 
     it('log activity', function () {
-        let storage = new AzureBlobTranscriptStore(getSettings());
+        let storage = new AzureBlobTranscriptStore(settings);
         return base._logActivity(storage)
         .then(() => assert(true))
         .catch(reason => {
@@ -51,8 +53,8 @@ testStorage = function () {
     })
 
     it('log multiple activities', function () {
-        let storage = new AzureBlobTranscriptStore(getSettings());
-        return base._logMultipleActivities(storage, false)
+        let storage = new AzureBlobTranscriptStore(settings);
+        return base._logMultipleActivities(storage, useParallel)
         .then(() => assert(true))
         .catch(reason => {
             if (reason.code == 'ECONNREFUSED') {
@@ -64,8 +66,8 @@ testStorage = function () {
     })
 
     it('delete transcript', function () {
-        let storage = new AzureBlobTranscriptStore(getSettings());
-        return base._deleteTranscript(storage, false)
+        let storage = new AzureBlobTranscriptStore(settings);
+        return base._deleteTranscript(storage, useParallel)
         .then(() => assert(true))
         .catch(reason => {
             if (reason.code == 'ECONNREFUSED') {
@@ -77,8 +79,8 @@ testStorage = function () {
     })
 
     it('get transcript activities', function () {
-        let storage = new AzureBlobTranscriptStore(getSettings());
-        return base._getTranscriptActivities(storage, false)
+        let storage = new AzureBlobTranscriptStore(settings);
+        return base._getTranscriptActivities(storage, useParallel)
         .then(() => assert(true))
         .catch(reason => {
             if (reason.code == 'ECONNREFUSED') {
@@ -90,8 +92,8 @@ testStorage = function () {
     })
 
     it('get transcript activities with startDate', function () {
-        let storage = new AzureBlobTranscriptStore(getSettings());
-        return base._getTranscriptActivitiesStartDate(storage, false)
+        let storage = new AzureBlobTranscriptStore(settings);
+        return base._getTranscriptActivitiesStartDate(storage, useParallel)
         .then(() => assert(true))
         .catch(reason => {
             if (reason.code == 'ECONNREFUSED') {
@@ -103,8 +105,8 @@ testStorage = function () {
     })
 
     it('list transcripts', function () {
-        let storage = new AzureBlobTranscriptStore(getSettings());
-        return base._listTranscripts(storage, false)
+        let storage = new AzureBlobTranscriptStore(settings);
+        return base._listTranscripts(storage, useParallel)
         .then(() => assert(true))
         .catch(reason => {
             if (reason.code == 'ECONNREFUSED') {
