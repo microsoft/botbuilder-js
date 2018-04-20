@@ -1,0 +1,16 @@
+{
+  "name": "multiple-prompts-bot-es6",
+  "version": "1.0.0",
+  "description": "Bot Builder v4 example showing a multi-turn prompt bot",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "author": "Microsoft",
+  "license": "MIT",
+  "dependencies": {
+    "botbuilder": "^4.0.0-m3.0",
+    "botbuilder-dialogs": "^4.0.0-m3.0",
+    "restify": "^6.3.4"
+  }
+}
