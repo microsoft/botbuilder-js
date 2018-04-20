@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Promiseable, TurnContext } from 'botbuilder';
+import { Promiseable, TurnContext, ActivityTypes } from 'botbuilder';
 import { Dialog, DialogInstance } from './dialog';
 import { DialogContext } from './dialogContext';
 
@@ -142,9 +142,14 @@ export class Waterfall<C extends TurnContext> implements Dialog<C> {
     }
 
     public dialogContinue(dc: DialogContext<C>): Promise<any> {
-        const instance = dc.instance as WaterfallInstance<any>;
-        instance.step += 1
-        return this.runStep(dc, dc.context.activity.text);
+        // Don't do anything for non-message activities
+        if (dc.context.activity.type === ActivityTypes.Message) {
+            const instance = dc.instance as WaterfallInstance<any>;
+            instance.step += 1
+            return this.runStep(dc, dc.context.activity.text);
+        } else {
+            return Promise.resolve();
+        }
     }
 
     public dialogResume(dc: DialogContext<C>, result?: any): Promiseable<any> {
