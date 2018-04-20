@@ -49,7 +49,7 @@ Once you have run LUDown, you can use the resulting JSON files in several ways:
 ### Creating a new LUIS app
 #### using command line 
 ```bash
-luis apps create import --in _LUISApp.json --authoringKey ""
+luis import application --in _LUISApp.json --authoringKey ""
 ```
 Note: You can install LUIS CLI from [here](https://github.com/Microsoft/botbuilder-tools/tree/master/LUIS)
 
@@ -83,7 +83,7 @@ You can then import this to batch testing by following these steps
 ### Creating a new QnAMaker KB
 #### using command line
 ```bash
-qnamaker createKnowledgebase --in _qnaKB.json
+qnamaker create --in _qnaKB.json
 ```
 #### using [QnAMaker.ai](http://qnamaker.ai) portal
 - Naviagate to [QnAMaker](http://qnamaker.ai)
