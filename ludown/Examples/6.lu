@@ -10,18 +10,19 @@ I need help
 please help
 
 #AskForUserName
-{userName:vishwac}
-I'm {userName:vishwac}
-call me {userName:vishwac}
-my name is {userName:vishwac}
-{userName:vishwac} is my name
-you can call me {userName:vishwac}
+{userName=vishwac}
+I'm {userName=vishwac}
+call me {userName=vishwac}
+my name is {userName=vishwac}
+{userName=vishwac} is my name
+you can call me {userName=vishwac}
 
 $userName:simple
 
+// This is added to global scope. LUIS will automatically recognize any date time in any utterance across all intents.
 $PREBUILT:datetimeV2
 
 #CreateAlarm
 create an alarm
-create an alarm for 7AM
+create an alarm for 7AM //7AM will get picked up as datetimeV2
 set an alarm for 7AM next thursday
