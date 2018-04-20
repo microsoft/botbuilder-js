@@ -5,6 +5,7 @@ export declare enum ServiceType {
     Luis = "luis",
     QnA = "qna",
     Dispatch = "dispatch",
+    File = "file",
 }
 export declare class BotConfig implements IBotConfig {
     private internal;

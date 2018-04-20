@@ -72,8 +72,8 @@ export interface IDispatchService extends IConnectedService {
     // version of the application
     version: string;
 
-    // connected services to dispatch to
-    services: IConnectedService[];
+    // service Ids that the dispatch model will dispatch across
+    serviceIds: string[];
 }
 
 export interface IQnAService extends IConnectedService {
