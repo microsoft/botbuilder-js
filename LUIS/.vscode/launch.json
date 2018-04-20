@@ -10,7 +10,7 @@
             "request": "launch",
             "name": "Launch Program",
             "program": "${workspaceFolder}\\bin\\luis",
-            "args": ["query", "-q", "yes", "--region", "westus"]
+            "args": ["--init"]
         }
     ]
 }
