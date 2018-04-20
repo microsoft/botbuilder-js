@@ -19,7 +19,7 @@ const print = (o) => {
 }
 
 testStorage = function () {
-    
+
     const noEmulatorMessage = 'skipping test because azure storage emulator is not running';
 
     it('bad args', function () {
@@ -36,7 +36,7 @@ testStorage = function () {
             }
         })
     })
-    
+
     it('log activity', function () {
         let storage = new AzureBlobTranscriptStore(getSettings());
         return base._logActivity(storage)
@@ -48,8 +48,34 @@ testStorage = function () {
                 assert(false, `should not throw: ${print(reason)}`);
             }
         })
-    })  
-    
+    })
+
+    it('log multiple activities', function () {
+        let storage = new AzureBlobTranscriptStore(getSettings());
+        return base._logMultipleActivities(storage, false)
+        .then(() => assert(true))
+        .catch(reason => {
+            if (reason.code == 'ECONNREFUSED') {
+                console.log(noEmulatorMessage);
+            } else {
+                assert(false, `should not throw: ${print(reason)}`);
+            }
+        })
+    })
+
+    it('delete transcript', function () {
+        let storage = new AzureBlobTranscriptStore(getSettings());
+        return base._deleteTranscript(storage, false)
+        .then(() => assert(true))
+        .catch(reason => {
+            if (reason.code == 'ECONNREFUSED') {
+                console.log(noEmulatorMessage);
+            } else {
+                assert(false, `should not throw: ${print(reason)}`);
+            }
+        })
+    })
+
     it('get transcript activities', function () {
         let storage = new AzureBlobTranscriptStore(getSettings());
         return base._getTranscriptActivities(storage, false)
@@ -65,7 +91,7 @@ testStorage = function () {
 }
 
 describe('AzureBlobTranscriptStore', function () {
-    this.timeout(20000);
+    this.timeout(30000);
     before('cleanup', reset);
     testStorage();
     after('cleanup', reset);

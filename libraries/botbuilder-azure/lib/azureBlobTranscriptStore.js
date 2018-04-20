@@ -59,7 +59,7 @@ class AzureBlobTranscriptStore {
         if (!startDate) {
             startDate = new Date(0);
         }
-        let prefix = this.getDirName(channelId, conversationId);
+        let prefix = this.getDirName(channelId, conversationId) + '/';
         let token = null;
         return this.ensureContainerExists()
             .then(container => this.getActivityBlobs([], container.name, prefix, continuationToken, startDate, token))
@@ -163,8 +163,8 @@ class AzureBlobTranscriptStore {
         if (!conversationId) {
             throw new Error("Missing conversationId");
         }
-        let prefix = this.getDirName(channelId, conversationId);
-        let token = {};
+        let prefix = this.getDirName(channelId, conversationId) + '/';
+        let token = null;
         return this.ensureContainerExists().then((container) => {
             return this.getConversationsBlobs([], container.name, prefix, token).then((blobs) => {
                 return Promise.all(blobs.map((blob) => {
@@ -176,7 +176,7 @@ class AzureBlobTranscriptStore {
     getConversationsBlobs(blobs, container, prefix, token) {
         return new Promise((resolve, reject) => {
             this.client.listBlobsSegmentedWithPrefixAsync(container, prefix, token, null).then((result) => {
-                if (result.continuationToken !== null) {
+                if (result.continuationToken) {
                     resolve(this.getConversationsBlobs(blobs.concat(result.entries), container, prefix, result.continuationToken));
                 }
                 resolve(blobs.concat(result.entries));

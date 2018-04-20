@@ -53,8 +53,8 @@ function group(array, size) {
 
 function promiseSeq(promiseFuncArray) {
     return promiseFuncArray.reduce((chain, promiseFunc) => {
-        return chain.then(chainResult => 
-            promiseFunc().then(currentResult => 
+        return chain.then(chainResult =>
+            promiseFunc().then(currentResult =>
                 [ ...chainResult, currentResult ]
             )
         );
@@ -116,16 +116,16 @@ exports._logActivity = function _logActivity(store) {
             });
 }
 
-exports._logMultipleActivities = function _logMultipleActivities(store) {
+exports._logMultipleActivities = function _logMultipleActivities(store, useParallel = true) {
     var conversationId = '_logMultipleActivities';
     var start = new Date();
     var activities = createActivities(conversationId, start);
 
     // log activities
-    var writes = activities.map(a => store.logActivity(a));
+    var writes = activities.map(a => () => store.logActivity(a));
 
     // wait for all logs
-    return Promise.all(writes).then(() => {
+    return resolvePromises(writes, useParallel).then(() => {
         // group the different queries into promises
         return Promise.all([
             // make sure other channels and conversations don't return results
@@ -161,7 +161,7 @@ exports._logMultipleActivities = function _logMultipleActivities(store) {
     });
 }
 
-exports._deleteTranscript = function _deleteTranscript(store) {
+exports._deleteTranscript = function _deleteTranscript(store, useParallel = true) {
     var conversationId = '_deleteConversation';
     var conversationId2 = '_deleteConversation2';
     var start = new Date();
@@ -170,10 +170,10 @@ exports._deleteTranscript = function _deleteTranscript(store) {
 
     // log all activities
     var writes = activities.concat(activities2)
-        .map(a => store.logActivity(a));
+        .map(a => () => store.logActivity(a));
 
     // wait for all writes
-    return Promise.all(writes).then(() => {
+    return resolvePromises(writes, useParallel).then(() => {
         return Promise.all([
             // test A
             store.getTranscriptActivities('test', conversationId).then(pagedResult => {
@@ -196,7 +196,7 @@ exports._deleteTranscript = function _deleteTranscript(store) {
             store.getTranscriptActivities('test', conversationId2).then(pagedResult => {
                 assert.equal(pagedResult.items.length, activities2.length);
             })
-        ])
+        ]);
     });
 }
 
