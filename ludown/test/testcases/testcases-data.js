@@ -87,10 +87,6 @@ module.exports.tests = {
         $PREBUILT:phoneNumber
         $PREBUILT:temperature
         $PREBUILT:url
-        $r1:age
-        $r2:age
-        $e1:dimension
-        $e2:email
         $commPreference:list
         call:
             phone call
@@ -101,73 +97,52 @@ module.exports.tests = {
             phone
         `,
         "luisJSON":{
-            "intents": [],
-            "entities": [
-              {
-                "name": "userName",
-                "roles": []
-              }
-            ],
-            "composites": [],
-            "closedLists": [
-              {
-                "name": "commPreference",
-                "subLists": [
-                  {
-                    "canonicalForm": "call",
-                    "list": [
-                      "phone call",
-                      "give me a ring",
-                      "ring",
-                      "call",
-                      "cell phone",
-                      "phone"
-                    ]
-                  }
-                ],
-                "roles": []
-              }
-            ],
-            "bing_entities": [
-              "datetimeV2",
-              "age",
-              "dimension",
-              "email",
-              "money",
-              "number",
-              "ordinal",
-              "percentage",
-              "phoneNumber",
-              "temperature",
-              "url"
-            ],
-            "model_features": [],
-            "regex_features": [],
-            "utterances": [],
-            "patterns": [],
-            "patternAnyEntities": [],
-            "prebuiltEntities": [
-              {
-                "type": "age",
-                "roles": [
-                  "r1",
-                  "r2"
-                ]
-              },
-              {
-                "type": "dimension",
-                "roles": [
-                  "e1"
-                ]
-              },
-              {
-                "type": "email",
-                "roles": [
-                  "e2"
-                ]
-              }
-            ],
-          }
+          "intents": [],
+          "entities": [
+            {
+              "name": "userName"
+            }
+          ],
+          "composites": [],
+          "closedLists": [
+            {
+              "name": "commPreference",
+              "subLists": [
+                {
+                  "canonicalForm": "call",
+                  "list": [
+                    "phone call",
+                    "give me a ring",
+                    "ring",
+                    "call",
+                    "cell phone",
+                    "phone"
+                  ]
+                }
+              ],
+              "roles": []
+            }
+          ],
+          "bing_entities": [
+            "datetimeV2",
+            "age",
+            "dimension",
+            "email",
+            "money",
+            "number",
+            "ordinal",
+            "percentage",
+            "phoneNumber",
+            "temperature",
+            "url"
+          ],
+          "model_features": [],
+          "regex_features": [],
+          "utterances": [],
+          "patterns": [],
+          "patternAnyEntities": [],
+          "prebuiltEntities": [],
+        }
     },
     "3-intents-patterns":{
         "lufile":`// Doing everything as a pattern
@@ -685,200 +660,198 @@ module.exports.tests = {
     },
     "1-intent-labelled-utterances": {
         "lufile":`#AskForUserName
-        {userName:vishwac}
-        I'm {userName:vishwac}
-        call me {userName:vishwac}
-        my name is {userName:vishwac}
-        {userName:vishwac} is my name
-        you can call me {userName:vishwac}`,
+        {userName=vishwac}
+        I'm {userName=vishwac}
+        call me {userName=vishwac}
+        my name is {userName=vishwac}
+        {userName=vishwac} is my name
+        you can call me {userName=vishwac}`,
         "luisJSON": {
-            "intents": [
-              {
-                "name": "AskForUserName"
-              }
-            ],
-            "entities": [
-              {
-                "name": "userName",
-                "roles": []
-              }
-            ],
-            "composites": [],
-            "closedLists": [],
-            "bing_entities": [],
-            "model_features": [],
-            "regex_features": [],
-            "utterances": [
-              {
-                "text": "vishwac",
-                "intent": "AskForUserName",
-                "entities": [
-                  {
-                    "entity": "userName",
-                    "startPos": 0,
-                    "endPos": 6
-                  }
-                ]
-              },
-              {
-                "text": "I'm vishwac",
-                "intent": "AskForUserName",
-                "entities": [
-                  {
-                    "entity": "userName",
-                    "startPos": 4,
-                    "endPos": 10
-                  }
-                ]
-              },
-              {
-                "text": "call me vishwac",
-                "intent": "AskForUserName",
-                "entities": [
-                  {
-                    "entity": "userName",
-                    "startPos": 8,
-                    "endPos": 14
-                  }
-                ]
-              },
-              {
-                "text": "my name is vishwac",
-                "intent": "AskForUserName",
-                "entities": [
-                  {
-                    "entity": "userName",
-                    "startPos": 11,
-                    "endPos": 17
-                  }
-                ]
-              },
-              {
-                "text": "vishwac is my name",
-                "intent": "AskForUserName",
-                "entities": [
-                  {
-                    "entity": "userName",
-                    "startPos": 0,
-                    "endPos": 6
-                  }
-                ]
-              },
-              {
-                "text": "you can call me vishwac",
-                "intent": "AskForUserName",
-                "entities": [
-                  {
-                    "entity": "userName",
-                    "startPos": 16,
-                    "endPos": 22
-                  }
-                ]
-              }
-            ],
-            "patterns": [],
-            "patternAnyEntities": [],
-            "prebuiltEntities": [],
+          "intents": [
+            {
+              "name": "AskForUserName"
+            }
+          ],
+          "entities": [
+            {
+              "name": "userName"
+            }
+          ],
+          "composites": [],
+          "closedLists": [],
+          "bing_entities": [],
+          "model_features": [],
+          "regex_features": [],
+          "utterances": [
+            {
+              "text": "vishwac",
+              "intent": "AskForUserName",
+              "entities": [
+                {
+                  "entity": "userName",
+                  "startPos": 0,
+                  "endPos": 6
+                }
+              ]
+            },
+            {
+              "text": "I'm vishwac",
+              "intent": "AskForUserName",
+              "entities": [
+                {
+                  "entity": "userName",
+                  "startPos": 4,
+                  "endPos": 10
+                }
+              ]
+            },
+            {
+              "text": "call me vishwac",
+              "intent": "AskForUserName",
+              "entities": [
+                {
+                  "entity": "userName",
+                  "startPos": 8,
+                  "endPos": 14
+                }
+              ]
+            },
+            {
+              "text": "my name is vishwac",
+              "intent": "AskForUserName",
+              "entities": [
+                {
+                  "entity": "userName",
+                  "startPos": 11,
+                  "endPos": 17
+                }
+              ]
+            },
+            {
+              "text": "vishwac is my name",
+              "intent": "AskForUserName",
+              "entities": [
+                {
+                  "entity": "userName",
+                  "startPos": 0,
+                  "endPos": 6
+                }
+              ]
+            },
+            {
+              "text": "you can call me vishwac",
+              "intent": "AskForUserName",
+              "entities": [
+                {
+                  "entity": "userName",
+                  "startPos": 16,
+                  "endPos": 22
+                }
+              ]
+            }
+          ],
+          "patterns": [],
+          "patternAnyEntities": [],
+          "prebuiltEntities": [],
         }
     },
     "1-intent-1-entity": {
         "lufile": `#AskForUserName
-        {userName:vishwac}
-        I'm {userName:vishwac}
-        call me {userName:vishwac}
-        my name is {userName:vishwac}
-        {userName:vishwac} is my name
-        you can call me {userName:vishwac}
+        {userName=vishwac}
+        I'm {userName=vishwac}
+        call me {userName=vishwac}
+        my name is {userName=vishwac}
+        {userName=vishwac} is my name
+        you can call me {userName=vishwac}
         
         $userName:simple`,
         "luisJSON": {
-            "intents": [
-              {
-                "name": "AskForUserName"
-              }
-            ],
-            "entities": [
-              {
-                "name": "userName",
-                "roles": []
-              }
-            ],
-            "composites": [],
-            "closedLists": [],
-            "bing_entities": [],
-            "model_features": [],
-            "regex_features": [],
-            "utterances": [
-              {
-                "text": "vishwac",
-                "intent": "AskForUserName",
-                "entities": [
-                  {
-                    "entity": "userName",
-                    "startPos": 0,
-                    "endPos": 6
-                  }
-                ]
-              },
-              {
-                "text": "I'm vishwac",
-                "intent": "AskForUserName",
-                "entities": [
-                  {
-                    "entity": "userName",
-                    "startPos": 4,
-                    "endPos": 10
-                  }
-                ]
-              },
-              {
-                "text": "call me vishwac",
-                "intent": "AskForUserName",
-                "entities": [
-                  {
-                    "entity": "userName",
-                    "startPos": 8,
-                    "endPos": 14
-                  }
-                ]
-              },
-              {
-                "text": "my name is vishwac",
-                "intent": "AskForUserName",
-                "entities": [
-                  {
-                    "entity": "userName",
-                    "startPos": 11,
-                    "endPos": 17
-                  }
-                ]
-              },
-              {
-                "text": "vishwac is my name",
-                "intent": "AskForUserName",
-                "entities": [
-                  {
-                    "entity": "userName",
-                    "startPos": 0,
-                    "endPos": 6
-                  }
-                ]
-              },
-              {
-                "text": "you can call me vishwac",
-                "intent": "AskForUserName",
-                "entities": [
-                  {
-                    "entity": "userName",
-                    "startPos": 16,
-                    "endPos": 22
-                  }
-                ]
-              }
-            ],
-            "patterns": [],
-            "patternAnyEntities": [],
-            "prebuiltEntities": [],
-          }
+          "intents": [
+            {
+              "name": "AskForUserName"
+            }
+          ],
+          "entities": [
+            {
+              "name": "userName"
+            }
+          ],
+          "composites": [],
+          "closedLists": [],
+          "bing_entities": [],
+          "model_features": [],
+          "regex_features": [],
+          "utterances": [
+            {
+              "text": "vishwac",
+              "intent": "AskForUserName",
+              "entities": [
+                {
+                  "entity": "userName",
+                  "startPos": 0,
+                  "endPos": 6
+                }
+              ]
+            },
+            {
+              "text": "I'm vishwac",
+              "intent": "AskForUserName",
+              "entities": [
+                {
+                  "entity": "userName",
+                  "startPos": 4,
+                  "endPos": 10
+                }
+              ]
+            },
+            {
+              "text": "call me vishwac",
+              "intent": "AskForUserName",
+              "entities": [
+                {
+                  "entity": "userName",
+                  "startPos": 8,
+                  "endPos": 14
+                }
+              ]
+            },
+            {
+              "text": "my name is vishwac",
+              "intent": "AskForUserName",
+              "entities": [
+                {
+                  "entity": "userName",
+                  "startPos": 11,
+                  "endPos": 17
+                }
+              ]
+            },
+            {
+              "text": "vishwac is my name",
+              "intent": "AskForUserName",
+              "entities": [
+                {
+                  "entity": "userName",
+                  "startPos": 0,
+                  "endPos": 6
+                }
+              ]
+            },
+            {
+              "text": "you can call me vishwac",
+              "intent": "AskForUserName",
+              "entities": [
+                {
+                  "entity": "userName",
+                  "startPos": 16,
+                  "endPos": 22
+                }
+              ]
+            }
+          ],
+          "patterns": [],
+          "patternAnyEntities": [],
+          "prebuiltEntities": [],
+        }
     }
 };
