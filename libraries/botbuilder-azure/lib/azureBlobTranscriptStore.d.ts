@@ -14,6 +14,7 @@ export declare class AzureBlobTranscriptStore implements TranscriptStore {
     constructor(settings: BlobStorageSettings);
     logActivity(activity: Activity): void | Promise<void>;
     getTranscriptActivities(channelId: string, conversationId: string, continuationToken?: string, startDate?: Date): Promise<PagedResult<Activity>>;
+    private blobToActivity(blob);
     private getActivityBlobs(blobs, container, prefix, continuationToken, startDate, token);
     listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<Transcript>>;
     private getTranscriptsFolders(transcripts, container, prefix, continuationToken, channelId, token);
