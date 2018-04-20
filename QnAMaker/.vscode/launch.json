@@ -10,7 +10,7 @@
             "name": "Launch Program",
             "program": "${workspaceFolder}\\bin\\qnamaker",
             "args": [
-                "get", "--kbid", "72ac790b-4c22-41fa-ab65-bf6215e32a33"
+                "--init"
             ]
         }
     ]

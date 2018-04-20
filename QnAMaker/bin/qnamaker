@@ -4,7 +4,8 @@ global.fetch = require('node-fetch'); // Browser compatibility
 const assert = require('assert');
 const fs = require('fs-extra');
 const path = require('path');
-const readline = require('readline-sync');
+const readline = require('readline');
+const readlineSync = require('readline-sync');
 const minimist = require('minimist');
 const chalk = require('chalk');
 
@@ -54,7 +55,7 @@ async function runProgram() {
     // special case operations
     switch (serviceManifest.operation.methodAlias) {
         case "delete":
-            let answer = readline.question(`Are you sure you would like to delete this knowledgebase? [no] `, { defaultInput: 'no' });
+            let answer = readlineSync.question(`Are you sure you would like to delete this knowledgebase? [no] `, { defaultInput: 'no' });
             if (answer.trim()[0] == 'n') {
                 process.stdout.write('operation canceled');
                 return;
@@ -82,7 +83,7 @@ async function runProgram() {
                 process.stdout.write(JSON.stringify(result, null, 2));
             }
             if (!args.q) {
-                let answer = readline.question(`\nWould you like to save ${result.kbId} in your .qnamakerrc so that future commands will be with this KB? [yes]`, { defaultInput: 'yes'});
+                let answer = readlineSync.question(`\nWould you like to save ${result.kbId} in your .qnamakerrc so that future commands will be with this KB? [yes]`, { defaultInput: 'yes'});
                 if (answer[0] == 'y'){
                     config.knowledgeBaseID = result.kbId;
                     await fs.writeJson(path.join(process.cwd(), '.qnamakerrc'), config, { spaces: 2 });
