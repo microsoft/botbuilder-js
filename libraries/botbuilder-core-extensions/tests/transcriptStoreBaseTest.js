@@ -40,6 +40,35 @@ function createActivities(conversationId, ts, count = 5) {
     return activities;
 }
 
+function group(array, size) {
+    return array.reduce((acc, x, i) => {
+        if (i % size) {
+            acc[acc.length - 1].push(x);
+        } else {
+            acc.push([x]);
+        }
+        return acc;
+    }, []);
+}
+
+function promiseSeq(promiseFuncArray) {
+    return promiseFuncArray.reduce((chain, promiseFunc) => {
+        return chain.then(chainResult => 
+            promiseFunc().then(currentResult => 
+                [ ...chainResult, currentResult ]
+            )
+        );
+    }, Promise.resolve([]));
+}
+
+function promiseParallel(promiseFuncArray) {
+    return Promise.all(promiseFuncArray.map(promiseFunc => promiseFunc()));
+}
+
+function resolvePromises(promiseFuncArray, useParallel = true) {
+    return useParallel ? promiseParallel(promiseFuncArray) : promiseSeq(promiseFuncArray);
+}
+
 exports._badArgs = function _badArgs(store) {
     var assertPromise = (promiseFunc, errMessage) => new Promise((resolve, reject) => {
         try { promiseFunc().then(() => reject(errMessage)) }
@@ -171,9 +200,17 @@ exports._deleteTranscript = function _deleteTranscript(store) {
     });
 }
 
-exports._getTranscriptActivities = function _getTranscriptActivities(store) {
+exports._getTranscriptActivities = function _getTranscriptActivities(store, useParallel = true) {
     return new Promise((resolve, reject) => {
-        reject('not implemented');
+        var conversationId = '_getTranscriptActivities';
+        var date = new Date();
+        var activities = createActivities(conversationId, date, 50);
+        // log in parallel batches of 10
+        var groups = group(activities, 10);
+        return promiseSeq(groups.map(group => () => resolvePromises(useParallel, group.map(item => () => store.logActivity(item)))))
+        .then(result => {
+            console.log(result);
+        });
     });
 }
 

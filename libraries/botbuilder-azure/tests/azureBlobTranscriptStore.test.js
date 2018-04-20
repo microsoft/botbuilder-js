@@ -21,7 +21,7 @@ const print = (o) => {
 testStorage = function () {
     
     const noEmulatorMessage = 'skipping test because azure storage emulator is not running';
-
+/*
     it('bad args', function () {
         let storage = new AzureBlobTranscriptStore(getSettings());
         return base._badArgs(storage)
@@ -40,6 +40,21 @@ testStorage = function () {
     it('log activity', function () {
         let storage = new AzureBlobTranscriptStore(getSettings());
         return base._logActivity(storage)
+        .then(() => assert(true))
+        .catch(reason => {
+            if (reason.code == 'ECONNREFUSED') {
+                console.log(noEmulatorMessage);
+            } else {
+                assert(false, `should not throw: ${print(reason)}`);
+            }
+        })
+    })
+*/
+    
+    
+    it('get transcript activities', function () {
+        let storage = new AzureBlobTranscriptStore(getSettings());
+        return base._getTranscriptActivities(storage, false)
         .then(() => assert(true))
         .catch(reason => {
             if (reason.code == 'ECONNREFUSED') {
