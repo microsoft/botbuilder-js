@@ -207,7 +207,7 @@ exports._getTranscriptActivities = function _getTranscriptActivities(store, useP
         var activities = createActivities(conversationId, date, 50);
         // log in parallel batches of 10
         var groups = group(activities, 10);
-        return promiseSeq(groups.map(group => () => resolvePromises(useParallel, group.map(item => () => store.logActivity(item)))))
+        return promiseSeq(groups.map(group => () => resolvePromises(group.map(item => () => store.logActivity(item)), useParallel)))
         .then(result => {
             console.log(result);
         });
@@ -222,9 +222,21 @@ exports._getTranscriptActivitiesStartDate = function _getTranscriptActivitiesSta
 
 exports._listTranscripts = function _listTranscripts(store) {
     return new Promise((resolve, reject) => {
-        reject('not implemented');
+        var conversationIds = [];
+        var start = new Date();
+        for (let i = 1; i <= 100; i++) {
+            conversationIds.push(`_ListConversations${i}`)
+        }
+
+        var activities = [].concat.apply([], conversationIds.map(
+            conversationId => createActivities(conversationId, start, 1)));
+
+        // log in parallel batches of 10
+        var groups = group(activities, 10);
+        await promiseSeq(groups.map(group => () => resolvePromises(group.map(item => () => store.logActivity(item)), useParallel)))
+
+        reject('not implemented - work in progress');
     });
 }
-
 var dateSorter = (a, b) =>
     a.timestamp.getTime() - b.timestamp.getTime();
