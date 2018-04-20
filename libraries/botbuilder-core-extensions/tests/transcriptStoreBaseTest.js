@@ -75,20 +75,16 @@ exports._badArgs = function _badArgs(store) {
 }
 
 exports._logActivity = function _logActivity(store) {
-    return new Promise((resolve, reject) => {
         var conversationId = '_logActivity';
-        var date = new Date()
+        var date = new Date();
         var activity = createActivities(conversationId, date, 1).pop();
-        
-        store.logActivity(activity)
+
+        return store.logActivity(activity)
             .then(() => store.getTranscriptActivities('test', conversationId))
             .then((result) => {
                 assert.equal(result.items.length, 1);
-                assert.deepEqual(result.items[0], activity);
-                resolve();
-            })
-            .catch(error => reject(error));
-    });
+                assert.equal(JSON.stringify(result.items[0]), JSON.stringify(activity));
+            });
 }
 
 exports._logMultipleActivities = function _logMultipleActivities(store) {
