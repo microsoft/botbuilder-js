@@ -10,6 +10,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const path = require("path");
 const fs = require("async-file");
 const filenamify = require("filenamify");
+const rimraf = require("rimraf");
 const transcriptLogger_1 = require("./transcriptLogger");
 /**
  * The file transcript store stores transcripts in file system with each activity as a file.
@@ -58,7 +59,7 @@ class FileTranscriptStore {
                 .then(files => files
                 .filter(f => f.endsWith('.json')) // .json only
                 .sort() // sorted
-                .filter(dateFilter(startDate))) // >= startDate
+                .filter(withDateFilter(startDate))) // >= startDate
                 .then(files => {
                 // get proper page
                 if (continuationToken) {
@@ -73,7 +74,7 @@ class FileTranscriptStore {
                 .then(files => files.map(activityFilename => fs.readFile(path.join(transcriptFolder, activityFilename), 'utf8')))
                 .then(reads => Promise.all(reads))
                 .then(jsons => {
-                let items = jsons.map(json => JSON.parse(json));
+                let items = jsons.map(parseActivity);
                 pagedResult.items = items;
                 if (pagedResult.items.length === FileTranscriptStore.PageSize) {
                     pagedResult.continuationToken = pagedResult.items[pagedResult.items.length - 1].id;
@@ -129,9 +130,7 @@ class FileTranscriptStore {
         if (!conversationId)
             throw new Error('Missing conversationId');
         let transcriptFolder = this.getTranscriptFolder(channelId, conversationId);
-        return fs.exists(transcriptFolder).then(exists => {
-            return exists ? fs.rmdir(transcriptFolder) : Promise.resolve();
-        });
+        return new Promise((resolve) => rimraf(transcriptFolder, () => resolve()));
     }
     saveActivity(activity, transcriptPath, activityFilename) {
         let json = JSON.stringify(activity, null, '\t');
@@ -146,7 +145,7 @@ class FileTranscriptStore {
         });
     }
     getActivityFilename(activity) {
-        return `${activity.timestamp.getTime()}-${this.sanitizeKey(activity.id)}.json`;
+        return `${getTicks(activity.timestamp)}-${this.sanitizeKey(activity.id)}.json`;
     }
     getChannelFolder(channelId) {
         return path.join(this.rootFolder, this.sanitizeKey(channelId));
@@ -160,13 +159,22 @@ class FileTranscriptStore {
 }
 FileTranscriptStore.PageSize = 20;
 exports.FileTranscriptStore = FileTranscriptStore;
-const dateFilter = (date) => {
+const epochTicks = 621355968000000000; // the number of .net ticks at the unix epoch
+const ticksPerMillisecond = 10000; // there are 10000 .net ticks per millisecond
+const getTicks = (timestamp) => {
+    let ticks = epochTicks + (timestamp.getTime() * ticksPerMillisecond);
+    return ticks.toString(16);
+};
+const readDate = (ticks) => {
+    let t = Math.round((parseInt(ticks, 16) - epochTicks) / ticksPerMillisecond);
+    return new Date(t);
+};
+const withDateFilter = (date) => {
     if (!date)
         return () => true;
-    let ticks = date.getTime();
     return (filename) => {
-        let activityTicks = parseInt(filename.split('-')[0], 10);
-        return activityTicks >= ticks;
+        let ticks = filename.split('-')[0];
+        return readDate(ticks) >= date;
     };
 };
 const withContinuationToken = (continuationToken) => {
@@ -187,5 +195,10 @@ const skipWhileExpression = (expression) => {
         }
         return false;
     };
+};
+const parseActivity = (json) => {
+    let activity = JSON.parse(json);
+    activity.timestamp = new Date(activity.timestamp);
+    return activity;
 };
 //# sourceMappingURL=fileTranscriptStore.js.map
