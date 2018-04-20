@@ -22,13 +22,14 @@ interface ConnectQnaArgs extends IQnAService {
 program
     .name("msbot connect qna")
     .description('Connect the bot to a QnA knowledgebase')
-    .option('-b, --bot <path>', "path to bot file.  If omitted, local folder will look for a .bot file")
-    .option('--secret <secret>', 'bot file secret password for encrypting service secrets')
     .option('-n, --name <name>', 'name for the QNA database')
     .option('-k, --kbid <kbid>', 'QnA Knowledgebase Id ')
-    .option('--subscriptionKey <subscriptionKey>', 'subscriptionKey for calling the QnA service')
+    .option('--subscriptionKey <subscriptionKey>', 'subscriptionKey for calling the QnA service\n')
+
+    .option('-b, --bot <path>', "path to bot file.  If omitted, local folder will look for a .bot file")
+    .option('--input <jsonfile>', "path to arguments in JSON format { id:'',name:'', ... }")
+    .option('--secret <secret>', 'bot file secret password for encrypting service secrets')
     .option('--stdin', "arguments are passed in as JSON object via stdin")
-    .option('--input <jsonfile>', "arguments passed in as path to arguments in JSON format")
     .action((cmd, actions) => {
 
     });

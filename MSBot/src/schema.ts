@@ -31,12 +31,6 @@ export interface IAzureBotService extends IConnectedService {
 
     // MSA Appid
     appId: string;
-
-    // MSA app password for the bot 
-    appPassword: string;
-
-    // endpoint of service
-    endpoint: string;
 }
 
 export interface ILuisService extends IConnectedService {
