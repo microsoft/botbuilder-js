@@ -81,7 +81,7 @@ exports._logActivity = function _logActivity(store) {
         var activity = createActivities(conversationId, date, 1).pop();
         
         store.logActivity(activity)
-            .then(() => store.getTranscriptActivities('test', conversationId, null, date))
+            .then(() => store.getTranscriptActivities('test', conversationId))
             .then((result) => {
                 assert.equal(result.items.length, 1);
                 assert.deepEqual(result.items[0], activity);
