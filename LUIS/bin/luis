@@ -56,7 +56,9 @@ async function runProgram() {
             throw new Error(result.error.message);
         }
 
-        if (serviceManifest.operation.name == "addApplication" && args.bot) {
+        if (args.bot && 
+           ((serviceManifest.operation.name == "addApplication") || 
+            (serviceManifest.operation.name == "importApplication"))) {
             process.stdout.write(JSON.stringify({
                 type: "luis",
                 name: requestBody.name,
