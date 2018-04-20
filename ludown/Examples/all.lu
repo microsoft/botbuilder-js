@@ -10,12 +10,12 @@ I need help
 please help
 
 #AskForUserName
-{userName:vishwac}
-I'm {userName:vishwac}
-call me {userName:vishwac}
-my name is {userName:vishwac}
-{userName:vishwac} is my name
-you can call me {userName:vishwac}
+{userName=Vishwac Sena}
+I'm {userName=Tom}
+call me {userName=John}
+my name is {userName=chris}
+{userName=steve} is my name
+you can call me {userName=Alan}
 
 $userName:simple
 
@@ -28,16 +28,14 @@ set an alarm for 7AM next thursday
 
 // add these as patterns
 #DeleteAlarm
-~delete alarm
-~(delete|remove) the {alarmTime} alarm
+delete alarm
+delete the {alarmTime} alarm // this utterance will be added as a pattern since there is no labelled value for the alarmTime entity
+remove the {alarmTime} alarm // default type for {entity} is pattern.any
 
-// alarmTime is a role for prebuilt datetimev2 entity
-$alarmTime:datetimeV2
-
-// These are defined as patterns with commPreference as pattern.any entity type
+// Since there is a list entity definition, any synonyms in this list will get picked up as list entity type
 #CommunicationPreference
-~set {commPreference} as my communication preference
-~I prefer to receive {commPreference}
+set phone call as my communication preference
+I prefer to receive text message
 
 // you can break up list entity definitions into multiple chunks, interleaved within a .lu file or even spread across .lu files.
 $commPreference:list

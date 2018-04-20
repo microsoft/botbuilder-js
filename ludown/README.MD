@@ -49,7 +49,7 @@ Once you have run LUDown, you can use the resulting JSON files in several ways:
 ### Creating a new LUIS app
 #### using command line 
 ```bash
-luis apps create import --in _LUISApp.json --authoringKey ""
+luis import application --in _LUISApp.json --authoringKey ""
 ```
 Note: You can install LUIS CLI from [here](https://github.com/Microsoft/botbuilder-tools/tree/master/LUIS)
 
@@ -83,7 +83,7 @@ You can then import this to batch testing by following these steps
 ### Creating a new QnAMaker KB
 #### using command line
 ```bash
-qnamaker createKnowledgebase --in _qnaKB.json
+qnamaker create --in _qnaKB.json
 ```
 #### using [QnAMaker.ai](http://qnamaker.ai) portal
 - Naviagate to [QnAMaker](http://qnamaker.ai)
@@ -135,12 +135,12 @@ An entity represents detailed information that is relevant in the utterance. For
 |"When does your store **open**?"|open|
 |"Schedule a meeting at **1pm** with **Bob** in Distribution"|1pm, Bob|
 
-Entity in .lu file is denoted using {\<entityName\>:\<labelled value\>} notation. Here's an example: 
+Entity in .lu file is denoted using {\<entityName\>=\<labelled value\>} notation. Here's an example: 
 
 ```
 # CreateAlarm
-create an alarm for {alarmTime:7AM}
-set an alarm for {alarmTime:7AM}
+book a flight to {toCity=seattle}
+book a flight from {fromCity=new york} to {toCity=seattle}
 ```
 
 LUDown tool supports the following [LUIS entity types](https://docs.microsoft.com/en-us/azure/cognitive-services/LUIS/luis-concept-entity-types)
@@ -162,10 +162,26 @@ set an alarm for {alarmTime:7AM}
 
 $alarmTime:Simple
 ```
+Pre-built entities only need to be defined once and are applicable to your entire application. Here's an example: 
+``` 
+# Add
+1 + 1
+
+// 1's in the "1 + 1" utterance will automatically be picked up as numbers by LUIS
+$PREBUILT:number 
+
+# BookTable
+book a table for tomorrow
+book a table for 3pm
+book a table for next thursday 4pm
+
+// all date or time or date and time in utterances will automatically be picked by LUIS as datetime values
+$PREBUILT:datetimeV2
+```
 
 You can describe list entites using the following notation:
 $listEntity:list
-\<itemName\>
+\<itemName\>:
     \<synonym1\>
     \<synonym2\>
 
@@ -198,34 +214,19 @@ m&m,mars,mints,spearmings,payday,jelly,kit kat,kitkat,twix
 Note that the parser defaults to simple entity type.
 
 ### Patterns
-Patterns are a new feature in LUIS that allows you to define a set of rules that augment the machine learned model. You can define patterns in the .lu file by prefixing the utterance with '~'. Here's an example: 
+Patterns are a new feature in LUIS that allows you to define a set of rules that augment the machine learned model. You can define patterns in the .lu file simply by defining an entity in an utterance without a labelled value. 
 
+As an example, this would be treated as a pattern with alarmTime set as a Pattern.Any entity type
 ```
 # DeleteAlarm
-~delete alarm
-~(delete|remove) the {alarmTime} alarm
+delete the {alarmTime} alarm
+``` 
+This example would be treated as an utterance since it has a labelled value with 7AM being the labelled value for entity alarmTime
 ```
-One of the benefits of patterns is that you do not have to provide a labelled value to an entity.
+delete the {alarmTime=7AM} alarm
+```
 
 Note: By default any entity that is left undescribed in a pattern will be mapped to Pattern.Any entity type.
-
-### Roles
-Entities can have roles. You can define roles for entities using the $\<entityRole\>:\<entityType\> notation. Here's an example where both addTime and remTime are roles of the datetimeV2 entity: 
-
-```
-# CreateAlarm
-~create an alarm
-~create an alarm for {addTime}
-~set an alarm for {addTime}
-
-$addTime:datetimeV2
-
-# DeleteAlarm
-~delete alarm
-~(delete|remove) the {remTime} alarm
-
-$remTime:datetimeV2
-```
 
 ### Question and Answer pairs
 .lu file (and the parser) supports question and answer definitions as well. You can this notation to describe them

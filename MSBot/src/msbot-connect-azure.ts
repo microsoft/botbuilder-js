@@ -23,15 +23,14 @@ interface ConnectAzureArgs extends IAzureBotService {
 program
     .name("msbot connect azure")
     .description('Connect the bot to Azure Bot Service')
-    .option('-b, --bot <path>', "path to bot file.  If omitted, local folder will look for a .bot file")
-    .option('--secret <secret>', 'bot file secret password for encrypting service secrets')
     .option('-i, --id <id>', 'Azure Bot Service bot id')
-    .option('-n, --name <name>', 'name of the azure bot service')
-    .option('-a, --appId  <appid>', 'Microsoft AppId for the Azure Bot Service')
-    .option('-p, --appPassword <password>', 'Microsoft app password for the Azure Bot Service')
-    .option('-e, --endpoint <endpoint>', "endpoint for the bot using the MSA AppId")
+    .option('-a, --appId  <appid>', 'Microsoft AppId for the Azure Bot Service\n')
+    .option('-n, --name <name>', '(OPTIONAL) name of the azure bot service')
+    
+    .option('-b, --bot <path>', "path to bot file.  If omitted, local folder will look for a .bot file")
+    .option('--input <jsonfile>', "path to arguments in JSON format { id:'',name:'', ... }")
+    .option('--secret <secret>', 'bot file secret password for encrypting service secrets')
     .option('--stdin', "arguments are passed in as JSON object via stdin")
-    .option('--input <jsonfile>', "arguments passed in as path to arguments in JSON format")
     .action((cmd, actions) => {
 
     });
@@ -72,22 +71,11 @@ async function processConnectAzureArgs(config: BotConfig): Promise<BotConfig> {
     if (!args.appId || !uuidValidate(args.appId))
         throw new Error("Bad or missing --appId");
 
-    if (!args.appPassword)
-        throw new Error("Bad or missing --appPassword");
-
-    if (!args.endpoint)
-        throw new Error("missing --endpoint");
-
-    if (!validurl.isWebUri(args.endpoint))
-        throw new Error(`--endpoint ${args.endpoint} is not a valid url`);
-
     config.connectService(<IAzureBotService>{
         type: ServiceType.AzureBotService,
         id: args.id, // bot id
         name: args.hasOwnProperty('name') ? args.name : args.id,
-        appId: args.appId,
-        appPassword: args.appPassword,
-        endpoint: args.endpoint
+        appId: args.appId
     });
 
     await config.Save();

@@ -11,6 +11,7 @@ program
     .command('azure', 'connect to Azure Bot Service')
     .command('dispatch', 'connect to a Dispatch model')
     .command('endpoint', 'connect to endpoint')
+    .command('file', 'connect to file to the bot')
     .command('luis', 'connect to a LUIS application')
     .command('qna', 'connect to QNA a service');
 var args = program.parse(process.argv);

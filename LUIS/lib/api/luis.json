@@ -240,7 +240,7 @@
             "application",
             "app"
           ],
-          "command": "luis import application --in jSONApp.json --appName <string>",
+          "command": "luis import application --in jSONApp.json --appName <string> --bot",
           "pathFragment": "",
           "params": [
             {

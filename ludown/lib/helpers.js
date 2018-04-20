@@ -44,6 +44,7 @@ module.exports.splitFileBySections = function(fileContent) {
             currentSection = null;
             sectionsInFile.push(currentLine);
             middleOfSection = false;
+            inQnaAnswer = false;
         } else if((currentLine.indexOf(PARSERCONSTS.INTENT) === 0)) {
             // handle anything in currentSection buffer
             if(currentSection !== null) {
