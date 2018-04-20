@@ -13,6 +13,8 @@ To install all CLI tools,
 npm install -g chatdown msbot ludown luis-apis qnamaker botdispatch
 ```
 
+Please see [here](https://docs.microsoft.com/en-us/azure/bot-service/) for an example end to end development workflow using Bot Builder tools.
+
 ## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
