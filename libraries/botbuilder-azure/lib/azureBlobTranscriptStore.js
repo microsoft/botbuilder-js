@@ -115,7 +115,7 @@ class AzureBlobTranscriptStore {
         if (!channelId) {
             throw new Error("Missing channelId");
         }
-        let prefix = this.getDirName(channelId);
+        let prefix = this.getDirName(channelId) + '/';
         let token = null;
         return this.ensureContainerExists()
             .then(container => this.getTranscriptsFolders([], container.name, prefix, continuationToken, channelId, token))
@@ -133,7 +133,7 @@ class AzureBlobTranscriptStore {
             this.client.listBlobDirectoriesSegmentedWithPrefixAsync(container, prefix, token).then((result) => {
                 result.entries.some((blob) => {
                     let conversation = new botbuilder_1.Transcript();
-                    conversation.id = blob.name.split('/').slice(-1).pop();
+                    conversation.id = blob.name.split('/').filter(part => part).slice(-1).pop();
                     conversation.channelId = channelId;
                     if (continuationToken) {
                         if (conversation.id === continuationToken) {

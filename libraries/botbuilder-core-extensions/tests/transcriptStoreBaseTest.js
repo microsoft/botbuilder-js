@@ -69,6 +69,10 @@ function resolvePromises(promiseFuncArray, useParallel = true) {
     return useParallel ? promiseParallel(promiseFuncArray) : promiseSeq(promiseFuncArray);
 }
 
+function dateSorter(a, b) {
+    return a.timestamp.getTime() - b.timestamp.getTime();
+}
+
 exports._badArgs = function _badArgs(store) {
     var assertPromise = (promiseFunc, errMessage) => new Promise((resolve, reject) => {
         try { promiseFunc().then(() => reject(errMessage)) }
@@ -202,7 +206,7 @@ exports._deleteTranscript = function _deleteTranscript(store, useParallel = true
 
 exports._getTranscriptActivities = function _getTranscriptActivities(store, useParallel = true) {
     return new Promise((resolve, reject) => {
-        var conversationId = '_getTranscriptActivities';
+        var conversationId = '_getTranscriptActivitiesPaging';
         var date = new Date();
         var activities = createActivities(conversationId, date, 50);
         // log in parallel batches of 10
@@ -234,13 +238,43 @@ exports._getTranscriptActivities = function _getTranscriptActivities(store, useP
     });
 }
 
-exports._getTranscriptActivitiesStartDate = function _getTranscriptActivitiesStartDate(store) {
+exports._getTranscriptActivitiesStartDate = function _getTranscriptActivitiesStartDate(store, useParallel = true) {
     return new Promise((resolve, reject) => {
-        reject('not implemented');
+        var conversationId = '_getTranscriptActivitiesStartDate';
+        var date = new Date();
+        var activities = createActivities(conversationId, date, 50);
+        // log in parallel batches of 10
+        var groups = group(activities, 10);
+        return promiseSeq(groups.map(group => () => resolvePromises(group.map(item => () => store.logActivity(item)), useParallel)))
+        .then(async () => {
+            var actualPageSize = 0;
+            var pagedResult = {};
+            var seen = [];
+            var referenceDate = new Date(date.getTime() + (50 * 60 * 1000));
+            do {
+                pagedResult = await store.getTranscriptActivities('test', conversationId, pagedResult.continuationToken, referenceDate);
+                assert(pagedResult);
+                assert(pagedResult.items);
+
+                if (!actualPageSize) {
+                    actualPageSize = pagedResult.items.length;
+                } else if (actualPageSize === pagedResult.items.length) {
+                    assert(pagedResult.continuationToken)
+                }
+                pagedResult.items.forEach(item => {
+                    assert(!seen.includes(item.id));
+                    seen.push(item.id);
+                });
+            } while (pagedResult.continuationToken);
+            assert.equal(seen.length, activities.length / 2);
+            activities.filter(a => a.timestamp.getTime() >= referenceDate.getTime()).forEach(activity => assert(seen.includes(activity.id)));
+            activities.filter(a => a.timestamp.getTime() < referenceDate.getTime()).forEach(activity => assert(!seen.includes(activity.id)));
+            resolve();
+        }).catch(error => reject(error));
     });
 }
 
-exports._listTranscripts = function _listTranscripts(store) {
+exports._listTranscripts = function _listTranscripts(store, useParallel = true) {
     return new Promise((resolve, reject) => {
         var conversationIds = [];
         var start = new Date();
@@ -248,15 +282,35 @@ exports._listTranscripts = function _listTranscripts(store) {
             conversationIds.push(`_ListConversations${i}`)
         }
 
-        var activities = [].concat.apply([], conversationIds.map(
-            conversationId => createActivities(conversationId, start, 1)));
+        var activities = [].concat(...conversationIds.map(cId => createActivities(cId, start, 1)));
 
         // log in parallel batches of 10
         var groups = group(activities, 10);
-        await promiseSeq(groups.map(group => () => resolvePromises(group.map(item => () => store.logActivity(item)), useParallel)))
+        return promiseSeq(groups.map(group => () => resolvePromises(group.map(item => () => store.logActivity(item)), useParallel)))
+        .then(async () => {
+            var actualPageSize = 0;
+            var pagedResult = {};
+            var seen = [];
+            do {
+                pagedResult = await store.listTranscripts('test', pagedResult.continuationToken);
+                assert(pagedResult);
+                assert(pagedResult.items);
 
-        reject('not implemented - work in progress');
+                if (!actualPageSize) {
+                    actualPageSize = pagedResult.items.length;
+                } else if (actualPageSize === pagedResult.items.length) {
+                    assert(pagedResult.continuationToken)
+                }
+                pagedResult.items.forEach(item => {
+                    assert(!seen.includes(item.id));
+                    if (item.id.startsWith('_ListConversations')) {
+                        seen.push(item.id);
+                    }
+                });
+            } while (pagedResult.continuationToken);
+            assert.equal(seen.length, conversationIds.length);
+            conversationIds.forEach(cId => assert(seen.includes(cId)));
+            resolve();
+        }).catch(error => reject(error));
     });
 }
-var dateSorter = (a, b) =>
-    a.timestamp.getTime() - b.timestamp.getTime();

@@ -139,7 +139,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
             throw new Error("Missing channelId");
         }
 
-        let prefix = this.getDirName(channelId);
+        let prefix = this.getDirName(channelId) + '/';
         let token = null;
         
         return this.ensureContainerExists()
@@ -159,7 +159,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
             this.client.listBlobDirectoriesSegmentedWithPrefixAsync(container, prefix, token).then((result) => {
                 result.entries.some((blob) => {
                     let conversation = new Transcript();
-                    conversation.id = blob.name.split('/').slice(-1).pop();
+                    conversation.id = blob.name.split('/').filter(part => part).slice(-1).pop();
                     conversation.channelId = channelId;
                     if (continuationToken) {
                         if (conversation.id === continuationToken) {

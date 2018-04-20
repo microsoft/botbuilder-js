@@ -88,10 +88,36 @@ testStorage = function () {
             }
         })
     })
+
+    it('get transcript activities with startDate', function () {
+        let storage = new AzureBlobTranscriptStore(getSettings());
+        return base._getTranscriptActivitiesStartDate(storage, false)
+        .then(() => assert(true))
+        .catch(reason => {
+            if (reason.code == 'ECONNREFUSED') {
+                console.log(noEmulatorMessage);
+            } else {
+                assert(false, `should not throw: ${print(reason)}`);
+            }
+        })
+    })
+
+    it('list transcripts', function () {
+        let storage = new AzureBlobTranscriptStore(getSettings());
+        return base._listTranscripts(storage, false)
+        .then(() => assert(true))
+        .catch(reason => {
+            if (reason.code == 'ECONNREFUSED') {
+                console.log(noEmulatorMessage);
+            } else {
+                assert(false, `should not throw: ${print(reason)}`);
+            }
+        })
+    })
 }
 
 describe('AzureBlobTranscriptStore', function () {
-    this.timeout(30000);
+    this.timeout(20000);
     before('cleanup', reset);
     testStorage();
     after('cleanup', reset);
