@@ -21,7 +21,7 @@ const print = (o) => {
 testStorage = function () {
     
     const noEmulatorMessage = 'skipping test because azure storage emulator is not running';
-/*
+
     it('bad args', function () {
         let storage = new AzureBlobTranscriptStore(getSettings());
         return base._badArgs(storage)
@@ -48,9 +48,7 @@ testStorage = function () {
                 assert(false, `should not throw: ${print(reason)}`);
             }
         })
-    })
-*/
-    
+    })  
     
     it('get transcript activities', function () {
         let storage = new AzureBlobTranscriptStore(getSettings());

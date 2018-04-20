@@ -113,8 +113,10 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
                 result.entries.some((blob) => {
                     let timestamp = Number.parseInt(blob.metadata['timestamp'], 10);
                     if (timestamp >= startDate.getTime()) {
-                        if (continuationToken && blob.name === continuationToken) {
-                            continuationToken = null;
+                        if (continuationToken){
+                            if (blob.name === continuationToken) {
+                                continuationToken = null;
+                            } 
                         } else {
                             blob.container = container;
                             blobs.push(blob);

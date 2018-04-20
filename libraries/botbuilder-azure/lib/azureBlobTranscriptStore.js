@@ -17,7 +17,7 @@ const ContainerNameCheck = new RegExp('^[a-z0-9](?!.*--)[a-z0-9-]{1,61}[a-z0-9]$
 let checkedCollections = {};
 class AzureBlobTranscriptStore {
     constructor(settings) {
-        this.pageSize = 20;
+        this.pageSize = 5;
         if (!settings) {
             throw new Error('The settings parameter is required.');
         }
@@ -90,8 +90,10 @@ class AzureBlobTranscriptStore {
                 result.entries.some((blob) => {
                     let timestamp = Number.parseInt(blob.metadata['timestamp'], 10);
                     if (timestamp >= startDate.getTime()) {
-                        if (continuationToken && blob.name === continuationToken) {
-                            continuationToken = null;
+                        if (continuationToken) {
+                            if (blob.name === continuationToken) {
+                                continuationToken = null;
+                            }
                         }
                         else {
                             blob.container = container;

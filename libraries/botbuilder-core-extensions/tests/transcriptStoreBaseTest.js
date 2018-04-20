@@ -208,9 +208,29 @@ exports._getTranscriptActivities = function _getTranscriptActivities(store, useP
         // log in parallel batches of 10
         var groups = group(activities, 10);
         return promiseSeq(groups.map(group => () => resolvePromises(group.map(item => () => store.logActivity(item)), useParallel)))
-        .then(result => {
-            console.log(result);
-        });
+        .then(async () => {
+            var actualPageSize = 0;
+            var pagedResult = {};
+            var seen = [];
+            do {
+                pagedResult = await store.getTranscriptActivities('test', conversationId, pagedResult.continuationToken);
+                assert(pagedResult);
+                assert(pagedResult.items);
+
+                if (!actualPageSize) {
+                    actualPageSize = pagedResult.items.length;
+                } else if (actualPageSize === pagedResult.items.length) {
+                    assert(pagedResult.continuationToken)
+                }
+                pagedResult.items.forEach(item => {
+                    assert(!seen.includes(item.id));
+                    seen.push(item.id);
+                });
+            } while (pagedResult.continuationToken);
+            assert.equal(seen.length, activities.length);
+            activities.forEach(activity => assert(seen.includes(activity.id)));
+            resolve();
+        }).catch(error => reject(error));
     });
 }
 
