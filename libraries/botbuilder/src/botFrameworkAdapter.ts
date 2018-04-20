@@ -5,7 +5,11 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotAdapter, TurnContext, Promiseable, ActivityTypes, Activity, ConversationReference, ResourceResponse, ConversationResourceResponse, ConversationParameters, ConversationAccount, TokenResponse } from 'botbuilder-core';
+import { 
+    BotAdapter, TurnContext, Promiseable, ActivityTypes, Activity, ConversationReference, 
+    ResourceResponse, ConversationResourceResponse, ConversationParameters, ConversationAccount, 
+    TokenResponse, ConversationsResult, ChannelAccount
+} from 'botbuilder-core';
 import { ConnectorClient, SimpleCredentialProvider, MicrosoftAppCredentials, JwtTokenValidation, OAuthApiClient } from 'botframework-connector';
 
 /** 
@@ -193,6 +197,72 @@ export class BotFrameworkAdapter extends BotAdapter {
         }
     }
 
+    /**
+     * Deletes a member from the current conversation.
+     * @param context Context for the current turn of conversation with the user.
+     * @param memberId ID of the member to delete from the conversation.
+     */
+    public deleteConversationMember(context: TurnContext, memberId: string): Promise<void> {
+        try {
+            if (!context.activity.serviceUrl) { throw new Error(`BotFrameworkAdapter.deleteConversationMember(): missing serviceUrl`) }
+            if (!context.activity.conversation || !context.activity.conversation.id) { throw new Error(`BotFrameworkAdapter.deleteConversationMember(): missing conversation or conversation.id`) }
+            const serviceUrl = context.activity.serviceUrl;
+            const conversationId = context.activity.conversation.id;
+            const client = this.createConnectorClient(serviceUrl);
+            return client.conversations.deleteConversationMember(conversationId, memberId);
+        } catch (err) {
+            return Promise.reject(err);
+        }
+    } 
+
+    /**
+     * Lists the members of a given activity.
+     * @param context Context for the current turn of conversation with the user.
+     * @param activityId (Optional) activity ID to enumerate. If not specified the current activities ID will be used.
+     */
+    public getActivityMembers(context: TurnContext, activityId?: string): Promise<ChannelAccount[]> {
+        try {
+            if (!activityId) { activityId = context.activity.id }
+            if (!context.activity.serviceUrl) { throw new Error(`BotFrameworkAdapter.getActivityMembers(): missing serviceUrl`) }
+            if (!context.activity.conversation || !context.activity.conversation.id) { throw new Error(`BotFrameworkAdapter.getActivityMembers(): missing conversation or conversation.id`) }
+            if (!activityId) { throw new Error(`BotFrameworkAdapter.getActivityMembers(): missing both activityId and context.activity.id`) }
+            const serviceUrl = context.activity.serviceUrl;
+            const conversationId = context.activity.conversation.id;
+            const client = this.createConnectorClient(serviceUrl);
+            return client.conversations.getActivityMembers(conversationId, activityId);
+        } catch (err) {
+            return Promise.reject(err);
+        }
+    } 
+    
+    /**
+     * Lists the members of the current conversation.
+     * @param context Context for the current turn of conversation with the user.
+     */
+    public getConversationMembers(context: TurnContext): Promise<ChannelAccount[]> {
+        try {
+            if (!context.activity.serviceUrl) { throw new Error(`BotFrameworkAdapter.getConversationMembers(): missing serviceUrl`) }
+            if (!context.activity.conversation || !context.activity.conversation.id) { throw new Error(`BotFrameworkAdapter.getConversationMembers(): missing conversation or conversation.id`) }
+            const serviceUrl = context.activity.serviceUrl;
+            const conversationId = context.activity.conversation.id;
+            const client = this.createConnectorClient(serviceUrl);
+            return client.conversations.getConversationMembers(conversationId);
+        } catch (err) {
+            return Promise.reject(err);
+        }
+    } 
+    
+    /**
+     * Lists the Conversations in which this bot has participated for a given channel server. The 
+     * channel server returns results in pages and each page will include a `continuationToken`
+     * that can be used to fetch the next page of results from the server.
+     * @param serviceUrl The URL of the channel server to query.  This can be retrieved from `context.activity.serviceUrl`. 
+     * @param continuationToken (Optional) token used to fetch the next page of results from the channel server. This should be left as `undefined` to retrieve the first page of results.
+     */
+    public getConversations(serviceUrl: string, continuationToken?: string): Promise<ConversationsResult> {
+        const client = this.createConnectorClient(serviceUrl);
+        return client.conversations.getConversations(continuationToken ? { continuationToken: continuationToken } : undefined);
+    }
 
     /**
      * Attempts to retrieve the token for a user that's in a logging flow.
