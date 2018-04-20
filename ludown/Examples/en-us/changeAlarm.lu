@@ -1,7 +1,3 @@
 #changeAlarm
-~change an alarm
-~change {remTime} to {newTime}
-
-$newTime:datetimeV2
-
-$remTime:datetimeV2
+change an alarm //utterance
+change {remTime} to {newTime} //pattern
