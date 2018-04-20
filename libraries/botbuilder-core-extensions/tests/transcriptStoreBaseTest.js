@@ -10,7 +10,7 @@ function uuid() {
 
 function createActivities(conversationId, ts, count = 5) {
     var activities = [];
-    for (let i = 0; i <= count; i++) {
+    for (let i = 1; i <= count; i++) {
         activities.push({
             type: ActivityTypes.Message,
             timestamp: ts,
@@ -22,7 +22,7 @@ function createActivities(conversationId, ts, count = 5) {
             recipient: { id: 'Bot1', name: '2' },
             serviceUrl: 'http://foo.com/api/messages'
         });
-        ts.setMinutes(ts.getMinutes() + 1);
+        ts = new Date(ts.getTime() + 60000);
 
         activities.push({
             type: ActivityTypes.Message,
@@ -35,7 +35,7 @@ function createActivities(conversationId, ts, count = 5) {
             recipient: { id: `User${i}` },
             serviceUrl: 'http://foo.com/api/messages'
         });
-        ts.setMinutes(ts.getMinutes() + 1);
+        ts = new Date(ts.getTime() + 60000);
     }
     return activities;
 }
