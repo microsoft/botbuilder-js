@@ -8,3 +8,4 @@
 export * from './tableStorage';
 export * from './cosmosDbStorage';
 export * from './blobStorage';
+export * from './azureBlobTranscriptStore';

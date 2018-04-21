@@ -15,3 +15,6 @@ export * from './messageFactory';
 export * from './storage';
 export * from './testAdapter';
 export * from './userState';
+export * from './transcriptLogger';
+export * from './memoryTranscriptStore';
+export * from './fileTranscriptStore';
