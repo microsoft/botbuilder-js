@@ -1,6 +1,8 @@
-#ref('./9.lu')
+> You can have an lu file that just has references to other lu files
 
-#ref('./changeAlarm.lu')
+[Intent collection 9](./9.lu)
 
-#ref('./none.lu')
+[Change Alarm intent](./changeAlarm.lu)
+
+[None intent](./none.lu)
 

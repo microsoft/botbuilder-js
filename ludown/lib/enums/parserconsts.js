@@ -9,5 +9,7 @@ module.exports = {
     QNA: "?",
     URLREF: "#url",
     COMMENT: ">",
-    URLORFILEREF: "["
+    URLORFILEREF: "[",
+    QNATABLE: "|",
+    ANSWER: "```"
 };

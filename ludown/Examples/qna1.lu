@@ -1,17 +1,8 @@
-$ChocolateType:phraseList
-- m&m
+> # QnA Definitions
+> This is a QnA definition. Follows # ? Question: \<list of questions\> \```markdown \<Answer> ``` format
 
-> This is a QnA definition. follows ? <question> \n <answer> format.
-
-? How can I change the default message from QnA Maker?
+### ? who is the ceo?
+```markdown
 You can change the default message if you use the QnAMakerDialog. 
-See this for details: https://docs.botframework.com/en-us/azure-bot-service/templates/qnamaker/#navtitle
-
-$ChocolateType:phraseList
-- twix
-
-> You can define multilple questions for single answer as well
-
-? Who is your ceo?
-? get me your ceo info
-Vishwac
+See [this link](https://docs.botframework.com/en-us/azure-bot-service/templates/qnamaker/#navtitle) for details. 
+```

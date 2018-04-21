@@ -48,50 +48,87 @@ module.exports.parseFile = function(fileContent, log)
         chunk = chunk.trim();
         // ignore if this line is a comment.
 
-        // TODO: ignore inline comments
-        if(!(chunk.indexOf(PARSERCONSTS.COMMENT) === 0)) {
-            if(chunk.indexOf(PARSERCONSTS.URLREF) === 0) {
-                var chunkSplitByLine = chunk.split(/\r\n|\r|\n/g);
-                var urlRef_regex = chunkSplitByLine[0].trim().replace(PARSERCONSTS.URLREF, '').split(/\(['"](.*?)['"]\)/g);
-                if(urlRef_regex.length !== 3 || urlRef_regex[1].trim() === '') {
-                    process.stdout.write(chalk.red('[ERROR]: ' + 'Invalid URL Ref: ' + chunkSplitByLine[0]));
-                    process.exit(1);
-                } else {
-                    qnaJsonStruct.urls.push(urlRef_regex[1]);
-                }
-            } else if(chunk.indexOf(PARSERCONSTS.FILEREF) === 0) {
-                var chunkSplitByLine = chunk.split(/\r\n|\r|\n/g);
-                var urlRef_regex = chunkSplitByLine[0].trim().replace(PARSERCONSTS.FILEREF, '').split(/\(['"](.*?)['"]\)/g);
-                if(urlRef_regex.length !== 3 || urlRef_regex[1].trim() === '') {
-                    process.stdout.write(chalk.red('[ERROR]: ' + 'Invalid LU File Ref: ' + chunkSplitByLine[0]));
-                    process.exit(1);
-                } else {
-                    additionalFilesToParse.push(urlRef_regex[1]);
-                }
-                
-            } else if(chunk.indexOf(PARSERCONSTS.URLORFILEREF) === 0) {
-                var chunkSplitByLine = chunk.split(/\r\n|\r|\n/g);
-                var linkValueRegEx = new RegExp(/\(.*?\)/g);
-                var linkValueList = chunkSplitByLine[0].trim().match(linkValueRegEx);
-                var linkValue = linkValueList[0].replace('(','').replace(')','');
-                var parseUrl = url.parse(linkValue);
-                if (parseUrl.host || parseUrl.hostname) {
-                    qnaJsonStruct.urls.push(linkValue);
-                } else {
-                    additionalFilesToParse.push(linkValue);
-                }
-                /*
-                if(linkValue.toLowerCase().includes('.lu')) {
-                    additionalFilesToParse.push(linkValue);
-                } else {
-                    qnaJsonStruct.urls.push(linkValue);
-                }
-                */
-                var p = 0
-            } else if(chunk.indexOf(PARSERCONSTS.INTENT) === 0) {
-                // split contents in this chunk by newline
-                var chunkSplitByLine = chunk.split(/\r\n|\r|\n/g);
-                var intentName = chunkSplitByLine[0].substring(chunkSplitByLine[0].indexOf(' ') + 1);
+        if(chunk.indexOf(PARSERCONSTS.URLREF) === 0) {
+            var chunkSplitByLine = chunk.split(/\r\n|\r|\n/g);
+            var urlRef_regex = chunkSplitByLine[0].trim().replace(PARSERCONSTS.URLREF, '').split(/\(['"](.*?)['"]\)/g);
+            if(urlRef_regex.length !== 3 || urlRef_regex[1].trim() === '') {
+                process.stdout.write(chalk.red('[ERROR]: ' + 'Invalid URL Ref: ' + chunkSplitByLine[0]));
+                process.exit(1);
+            } else {
+                qnaJsonStruct.urls.push(urlRef_regex[1]);
+            }
+        } else if(chunk.indexOf(PARSERCONSTS.FILEREF) === 0) {
+            var chunkSplitByLine = chunk.split(/\r\n|\r|\n/g);
+            var urlRef_regex = chunkSplitByLine[0].trim().replace(PARSERCONSTS.FILEREF, '').split(/\(['"](.*?)['"]\)/g);
+            if(urlRef_regex.length !== 3 || urlRef_regex[1].trim() === '') {
+                process.stdout.write(chalk.red('[ERROR]: ' + 'Invalid LU File Ref: ' + chunkSplitByLine[0]));
+                process.exit(1);
+            } else {
+                additionalFilesToParse.push(urlRef_regex[1]);
+            }
+            
+        } else if(chunk.indexOf(PARSERCONSTS.URLORFILEREF) === 0) {
+            var chunkSplitByLine = chunk.split(/\r\n|\r|\n/g);
+            var linkValueRegEx = new RegExp(/\(.*?\)/g);
+            var linkValueList = chunkSplitByLine[0].trim().match(linkValueRegEx);
+            var linkValue = linkValueList[0].replace('(','').replace(')','');
+            var parseUrl = url.parse(linkValue);
+            if (parseUrl.host || parseUrl.hostname) {
+                qnaJsonStruct.urls.push(linkValue);
+            } else {
+                additionalFilesToParse.push(linkValue);
+            }
+        } else if(chunk.indexOf(PARSERCONSTS.INTENT) === 0) {
+            // split contents in this chunk by newline
+            var chunkSplitByLine = chunk.split(/\r\n|\r|\n/g);
+            var intentName = chunkSplitByLine[0].substring(chunkSplitByLine[0].indexOf(' ') + 1);
+
+            // is this a QnA section? Qna sections have intent names that begin with ?
+            if(intentName.trim().indexOf(PARSERCONSTS.QNA) === 0) {
+                var questions = new Array();
+                var answer = "";
+                var InanswerSection = false;
+                questions.push(intentName.replace('?', '').trim());
+                chunkSplitByLine.splice(0,1);
+                chunkSplitByLine.forEach(function(utterance) {
+                    // are we already in an answer section? 
+                    if(InanswerSection) {
+                        answer += utterance + '\r\n';
+                    } else {
+                        // we need either another question here or a start of answer section
+                        if(utterance.trim().indexOf(PARSERCONSTS.ANSWER) === 0)
+                        {
+                            if(InanswerSection) {
+                                answer += utterance + '\r\n';
+                            } else {
+                                // do not add the line that includes the beginning of answer
+                                answer = "";
+                                InanswerSection = true;
+                            }
+                        } else {
+                            // do we have another question? 
+                            if((utterance.indexOf('-') !== 0) &&
+                                (utterance.indexOf('*') !== 0) && 
+                                (utterance.indexOf('+') !== 0)) {
+                                    process.stdout.write(chalk.red('Utterance: "' + utterance + '" does not have list decoration. Use either - or * \n'));
+                                    process.stdout.write(chalk.red('Stopping further processing.\n'));
+                                    process.exit(1);
+                                }
+                            utterance = utterance.slice(2);
+                            questions.push(utterance.trim());
+                        }
+                    }
+                });
+
+                questions.forEach(function(question) {
+                    var p = answer.substring(0, answer.lastIndexOf('\r\n'));
+                    var qnaObj = {
+                        "answer": p.substring(0, p.lastIndexOf('```')),
+                        "question": question
+                    };
+                    qnaJsonStruct.qnaPairs.push(qnaObj);
+                });
+            } else {
                 // insert only if the intent is not already present.
                 addItemIfNotPresent(LUISJsonStruct, LUISObjNameEnum.INTENT, intentName);
                 // remove first line from chunk
@@ -100,12 +137,12 @@ module.exports.parseFile = function(fileContent, log)
                 {
                     // remove the list decoration from line.
                     if((utterance.indexOf('-') !== 0) &&
-                       (utterance.indexOf('*') !== 0) && 
-                       (utterance.indexOf('+') !== 0)) {
+                        (utterance.indexOf('*') !== 0) && 
+                        (utterance.indexOf('+') !== 0)) {
                         process.stdout.write(chalk.red('Utterance: "' + utterance + '" does not have list decoration. Use either - or * \n'));
                         process.stdout.write(chalk.red('Stopping further processing.\n'));
                         process.exit(1);
-                       }
+                        }
                     utterance = utterance.slice(2);
 
                     // is this a pattern? 
@@ -170,7 +207,7 @@ module.exports.parseFile = function(fileContent, log)
                                     // if this intent does not have any utterances, push this pattern as an utterance as well. 
                                     var intentInUtterance = LUISJsonStruct.utterances.filter(function(item) {
                                         return item.intent == intentName;
-                                      });
+                                        });
                                     
                                     if(intentInUtterance.length === 0) {
                                         var utteranceObject = {
@@ -180,7 +217,7 @@ module.exports.parseFile = function(fileContent, log)
                                         }
                                         LUISJsonStruct.utterances.push(utteranceObject);
                                     }
-                                      
+                                        
                                     LUISJsonStruct.patterns.push(patternObject);
                                     if(utterance.includes("{")) {
                                         // handle entities
@@ -205,139 +242,131 @@ module.exports.parseFile = function(fileContent, log)
                         }
                     }
                 });
-            } else if(chunk.indexOf(PARSERCONSTS.ENTITY) === 0) {
-                // we have an entity definition
-                // split contents in this chunk by newline
-                var chunkSplitByLine = chunk.split(/\r\n|\r|\n/g);
-                var entityDef = chunkSplitByLine[0].replace(PARSERCONSTS.ENTITY, '').split(':');
-                var entityName = entityDef[0];
-                var entityType = entityDef[1];
-                // see if we already have this as Pattern.Any entity
-                // see if we already have this in patternAny entity collection; if so, remove it
-                for(var i in LUISJsonStruct.patternAnyEntities) {
-                    if(LUISJsonStruct.patternAnyEntities[i].name === entityName) {
-                        LUISJsonStruct.patternAnyEntities.splice(i, 1);
-                        break;
-                    }
+            }
+        } else if(chunk.indexOf(PARSERCONSTS.ENTITY) === 0) {
+            // we have an entity definition
+            // split contents in this chunk by newline
+            var chunkSplitByLine = chunk.split(/\r\n|\r|\n/g);
+            var entityDef = chunkSplitByLine[0].replace(PARSERCONSTS.ENTITY, '').split(':');
+            var entityName = entityDef[0];
+            var entityType = entityDef[1];
+            // see if we already have this as Pattern.Any entity
+            // see if we already have this in patternAny entity collection; if so, remove it
+            for(var i in LUISJsonStruct.patternAnyEntities) {
+                if(LUISJsonStruct.patternAnyEntities[i].name === entityName) {
+                    LUISJsonStruct.patternAnyEntities.splice(i, 1);
+                    break;
                 }
-                // add this entity to appropriate place
-                // is this a builtin type? 
-                if(builtInTypes.includes(entityType)) {
-                    // add to bing_entities if it does not exist there.
-                    if(!LUISJsonStruct.bing_entities.includes(entityType)) LUISJsonStruct.bing_entities.push(entityType);
-                    if(entityName !== "PREBUILT") {
-                        // add to prebuilt entities if this does not already exist there and if this is not PREBUILT
-                        var lMatch = true;
-                        for(var i in LUISJsonStruct.prebuiltEntities) {
-                            if(LUISJsonStruct.prebuiltEntities[i].type === entityType) {
-                                // add the entityName as a role if it does not already exist
-                                if(!LUISJsonStruct.prebuiltEntities[i].roles.includes(entityName)) {
-                                    LUISJsonStruct.prebuiltEntities[i].roles.push(entityName);
-                                } 
-                                lMatch = false;
-                                break;
-                            }
-                        }
-                        if(lMatch) {
-                            var prebuiltEntitesObj = {
-                                "type": entityType,
-                                "roles": [entityName]
-                            };
-                            LUISJsonStruct.prebuiltEntities.push(prebuiltEntitesObj);
-                        } 
-                    }
-                }
-    
-                // is this a list type?
-                else if(entityType.indexOf('=', entityType.length - 1) >= 0) {
-                //else if(entityType.toLowerCase() === 'list') {
-                    // get normalized value
-                    var normalizedValue = entityType.substring(0, entityType.length - 1);
-
-                    // remove the first entity declaration line
-                    chunkSplitByLine.splice(0,1);
-                    var closedListObj = {};
-                    
-                    // do we already have this closed list? 
-                    var hasValue = false;
-                    var i;
-                    for(i in LUISJsonStruct.closedLists) {
-                        if(LUISJsonStruct.closedLists[i].name === entityName) {
-                            hasValue = true;
+            }
+            // add this entity to appropriate place
+            // is this a builtin type? 
+            if(builtInTypes.includes(entityType)) {
+                // add to bing_entities if it does not exist there.
+                if(!LUISJsonStruct.bing_entities.includes(entityType)) LUISJsonStruct.bing_entities.push(entityType);
+                if(entityName !== "PREBUILT") {
+                    // add to prebuilt entities if this does not already exist there and if this is not PREBUILT
+                    var lMatch = true;
+                    for(var i in LUISJsonStruct.prebuiltEntities) {
+                        if(LUISJsonStruct.prebuiltEntities[i].type === entityType) {
+                            // add the entityName as a role if it does not already exist
+                            if(!LUISJsonStruct.prebuiltEntities[i].roles.includes(entityName)) {
+                                LUISJsonStruct.prebuiltEntities[i].roles.push(entityName);
+                            } 
+                            lMatch = false;
                             break;
                         }
                     }
-                    if(!hasValue) {
-                        closedListObj.name = entityName;
-                        closedListObj.subLists = new Array();
-                        closedListObj.roles = new Array();
-                    } else {
-                        closedListObj = LUISJsonStruct.closedLists[i];
+                    if(lMatch) {
+                        var prebuiltEntitesObj = {
+                            "type": entityType,
+                            "roles": [entityName]
+                        };
+                        LUISJsonStruct.prebuiltEntities.push(prebuiltEntitesObj);
+                    } 
+                }
+            }
+
+            // is this a list type?
+            else if(entityType.indexOf('=', entityType.length - 1) >= 0) {
+            //else if(entityType.toLowerCase() === 'list') {
+                // get normalized value
+                var normalizedValue = entityType.substring(0, entityType.length - 1);
+
+                // remove the first entity declaration line
+                chunkSplitByLine.splice(0,1);
+                var closedListObj = {};
+                
+                // do we already have this closed list? 
+                var hasValue = false;
+                var i;
+                for(i in LUISJsonStruct.closedLists) {
+                    if(LUISJsonStruct.closedLists[i].name === entityName) {
+                        hasValue = true;
+                        break;
                     }
-    
-                    var readingSubList = false;
-                    var synonymsList = new Array();
-                    
-                    // go through the list chunk and parse. Add these as synonyms
-                    chunkSplitByLine.forEach(function(listLine) {
-                        if((listLine.indexOf('-') !== 0) &&
-                        (listLine.indexOf('*') !== 0) && 
-                        (listLine.indexOf('+') !== 0)) {
-                            process.stdout.write(chalk.red('[ERROR]: Synonyms list value: "' + listLine + '" does not have list decoration. Use either - or * \n'));
-                            process.stdout.write(chalk.red('Stopping further processing.\n'));
-                            process.exit(1);
+                }
+                if(!hasValue) {
+                    closedListObj.name = entityName;
+                    closedListObj.subLists = new Array();
+                    closedListObj.roles = new Array();
+                } else {
+                    closedListObj = LUISJsonStruct.closedLists[i];
+                }
+
+                var readingSubList = false;
+                var synonymsList = new Array();
+                
+                // go through the list chunk and parse. Add these as synonyms
+                chunkSplitByLine.forEach(function(listLine) {
+                    if((listLine.indexOf('-') !== 0) &&
+                    (listLine.indexOf('*') !== 0) && 
+                    (listLine.indexOf('+') !== 0)) {
+                        process.stdout.write(chalk.red('[ERROR]: Synonyms list value: "' + listLine + '" does not have list decoration. Use either - or * \n'));
+                        process.stdout.write(chalk.red('Stopping further processing.\n'));
+                        process.exit(1);
+                    }
+                    listLine = listLine.slice(2);       
+                    synonymsList.push(listLine.trim());
+                })
+
+                // push anything we might have left
+                var subListObj = {
+                    "canonicalForm": normalizedValue,
+                    "list": synonymsList
+                };
+                closedListObj.subLists.push(subListObj);
+                if(!hasValue) LUISJsonStruct.closedLists.push(closedListObj);
+            } else if(entityType.toLowerCase() === 'simple') {
+                // add this to entities if it doesnt exist
+                addItemIfNotPresent(LUISJsonStruct, LUISObjNameEnum.ENTITIES, entityName);
+            } else if(entityType.toLowerCase() === 'phraselist') {
+                // add this to phraseList if it doesnt exist
+                chunkSplitByLine.splice(0,1);
+                var pLValues = "";
+                chunkSplitByLine.forEach(function(phraseListValues) {
+                    if((phraseListValues.indexOf('-') !== 0) &&
+                    (phraseListValues.indexOf('*') !== 0) && 
+                    (phraseListValues.indexOf('+') !== 0)) {
+                        process.stdout.write(chalk.red('[ERROR]: Phrase list value: "' + phraseListValues + '" does not have list decoration. Use either - or * \n'));
+                        process.stdout.write(chalk.red('Stopping further processing.\n'));
+                        process.exit(1);
+                    }
+                    phraseListValues = phraseListValues.slice(2);
+                    pLValues = pLValues + phraseListValues + ',';
+                });
+                // remove the last ',' 
+                pLValues = pLValues.substring(0, pLValues.lastIndexOf(","));
+                var modelExists = false;
+                if(LUISJsonStruct.model_features.length > 0) {
+                    var modelIdx = 0;
+                    for(modelIdx in LUISJsonStruct.model_features) {
+                        if(LUISJsonStruct.model_features[modelIdx].name === entityName) {
+                            modelExists = true;
+                            break;
                         }
-                        listLine = listLine.slice(2);       
-                        synonymsList.push(listLine.trim());
-                    })
-    
-                    // push anything we might have left
-                    var subListObj = {
-                        "canonicalForm": normalizedValue,
-                        "list": synonymsList
-                    };
-                    closedListObj.subLists.push(subListObj);
-                    if(!hasValue) LUISJsonStruct.closedLists.push(closedListObj);
-                } else if(entityType.toLowerCase() === 'simple') {
-                    // add this to entities if it doesnt exist
-                    addItemIfNotPresent(LUISJsonStruct, LUISObjNameEnum.ENTITIES, entityName);
-                } else if(entityType.toLowerCase() === 'phraselist') {
-                    // add this to phraseList if it doesnt exist
-                    chunkSplitByLine.splice(0,1);
-                    var pLValues = "";
-                    chunkSplitByLine.forEach(function(phraseListValues) {
-                        if((phraseListValues.indexOf('-') !== 0) &&
-                        (phraseListValues.indexOf('*') !== 0) && 
-                        (phraseListValues.indexOf('+') !== 0)) {
-                            process.stdout.write(chalk.red('[ERROR]: Phrase list value: "' + phraseListValues + '" does not have list decoration. Use either - or * \n'));
-                            process.stdout.write(chalk.red('Stopping further processing.\n'));
-                            process.exit(1);
-                        }
-                        phraseListValues = phraseListValues.slice(2);
-                        pLValues = pLValues + phraseListValues + ',';
-                    });
-                    // remove the last ',' 
-                    pLValues = pLValues.substring(0, pLValues.lastIndexOf(","));
-                    var modelExists = false;
-                    if(LUISJsonStruct.model_features.length > 0) {
-                        var modelIdx = 0;
-                        for(modelIdx in LUISJsonStruct.model_features) {
-                            if(LUISJsonStruct.model_features[modelIdx].name === entityName) {
-                                modelExists = true;
-                                break;
-                            }
-                        }
-                        if(modelExists) {
-                            LUISJsonStruct.model_features[modelIdx].words += ',' + pLValues;
-                        } else {
-                            var modelObj = {
-                                "name": entityName,
-                                "mode": false,
-                                "words": pLValues,
-                                "activated": true
-                            };
-                            LUISJsonStruct.model_features.push(modelObj);
-                        }
+                    }
+                    if(modelExists) {
+                        LUISJsonStruct.model_features[modelIdx].words += ',' + pLValues;
                     } else {
                         var modelObj = {
                             "name": entityName,
@@ -347,32 +376,25 @@ module.exports.parseFile = function(fileContent, log)
                         };
                         LUISJsonStruct.model_features.push(modelObj);
                     }
-                }
-            } else if(chunk.indexOf(PARSERCONSTS.QNA) === 0) {
-                // split contents in this chunk by newline
-                var chunkSplitByLine = chunk.split(/\r\n|\r|\n/g);
-                var qnaQuestions = new Array();
-                var qnaAnswer = "";
-                chunkSplitByLine.forEach(function (qnaLine) {
-                    qnaLine = qnaLine.trim();
-                    // is this a question or answer?
-                    if(qnaLine.indexOf(PARSERCONSTS.QNA) === 0) {
-                        qnaQuestions.push(qnaLine.replace(PARSERCONSTS.QNA, '').trim());
-                    } else {
-                        qnaAnswer = qnaAnswer + '\r\n' + qnaLine;
-                    }
-                });
-                // for each question, add a qna pair
-                qnaQuestions.forEach(function(qnaQuestion) {
-                    var qnaObj = {
-                        "answer": qnaAnswer,
-                        "question": qnaQuestion
+                } else {
+                    var modelObj = {
+                        "name": entityName,
+                        "mode": false,
+                        "words": pLValues,
+                        "activated": true
                     };
-                    qnaJsonStruct.qnaPairs.push(qnaObj);
-                });
-            } 
-        }
-
+                    LUISJsonStruct.model_features.push(modelObj);
+                }
+            }
+        } else if(chunk.indexOf(PARSERCONSTS.QNA) === 0) {
+            // split contents in this chunk by newline
+            var chunkSplitByLine = chunk.split(/\r\n|\r|\n/g);
+            var qnaObj = {
+                "answer": chunkSplitByLine[1],
+                "question": chunkSplitByLine[0].replace(PARSERCONSTS.QNA, '').trim()
+            };
+            qnaJsonStruct.qnaPairs.push(qnaObj);
+        } 
     });
     return {
         "fParse": additionalFilesToParse,
