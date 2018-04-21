@@ -19,12 +19,6 @@ describe('LUIS patterns concepts in .lu files', function() {
             testcases.tests["1-intent-pattern-patternAny"].luisJSON);
     });
 
-    it('should be parsed correctly when 1 intent 1 prebuilt entity is specified', function() {
-        assert.deepEqual(
-            parseFileContents.parseFile(testcases.tests["1-intent-patern-prebuilt"].lufile,false).LUISBlob, 
-            testcases.tests["1-intent-patern-prebuilt"].luisJSON);
-    });
-    
     it('should be parsed correctly when 3 intents as patterns is specified', function() {
         assert.deepEqual(
             parseFileContents.parseFile(testcases.tests["3-intents-patterns"].lufile,false).LUISBlob, 
