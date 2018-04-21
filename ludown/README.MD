@@ -63,7 +63,7 @@ Note: You can install LUIS CLI from [here](https://github.com/Microsoft/botbuild
 #### Creating and adding batch tests to [LUIS](http://luis.ai) app
 You can create the input JSON for [batch testing](https://docs.microsoft.com/en-us/azure/cognitive-services/luis/luis-concept-batch-test) in LUIS using:
 
-```
+```bash
 ludown --write_luis_batch_tests <.lufile>
 ```
 This command will write out a _LUISBatchTest.json file
@@ -98,31 +98,31 @@ qnamaker create --in _qnaKB.json
 ### Intent
 An intent represents actions the user wants to perform. The intent is a purpose or goal expressed in a user's input, such as booking a flight, paying a bill, or finding a news article. You define and name intents that correspond to these actions. A travel app may define an intent named "BookFlight."
 
-Here's a simple .lu file that captures a simple 'Greeting' intent with example utterances that capture ways users can express this intent:
+Here's a simple .lu file that captures a simple 'Greeting' intent with a list of example utterances that capture ways users can express this intent. You can use - or + or * to denote lists. Numbered lists are not supported.
 
-```
+```markdown
 # Greeting
-Hi
-Hello
-Good morning
-Good evening
+- Hi
+- Hello
+- Good morning
+- Good evening
 ```
 
 '#\<intent-name\>' describes a new intent definition section. Each line after the intent definition are example utterances that describe that intent.
 
 You can stitch together multiple intent definitions in a single file like this:
 
-```
+```markdown
 # Greeting
-Hi
-Hello
-Good morning
-Good evening
+- Hi
+- Hello
+- Good morning
+- Good evening
 
 # Help
-help
-I need help
-please help
+- help
+- I need help
+- please help
 ```
 Each section is idenfied by #\<intent name\> notation. Blank lines are skipped when parsing the file.
 
@@ -137,10 +137,10 @@ An entity represents detailed information that is relevant in the utterance. For
 
 Entity in .lu file is denoted using {\<entityName\>=\<labelled value\>} notation. Here's an example: 
 
-```
+```markdown
 # CreateAlarm
-book a flight to {toCity=seattle}
-book a flight from {fromCity=new york} to {toCity=seattle}
+- book a flight to {toCity=seattle}
+- book a flight from {fromCity=new york} to {toCity=seattle}
 ```
 
 LUDown tool supports the following [LUIS entity types](https://docs.microsoft.com/en-us/azure/cognitive-services/LUIS/luis-concept-entity-types)
@@ -153,129 +153,146 @@ LUDown tool <b>*does not*</b> support the following LUIS entity types:
 - Hierarchical
 - Composite
 
-You can define an entity type by using the $\<entityName\>:\<entityType\> notation. Here's an example: 
+You can define an entity type by using the $\<entityName\>:\<entityType\> notation. Note that the parser defaults to simple entity type.
+Here's an example: 
 
-```
+```markdown
 # CreateAlarm
-create an alarm for {alarmTime:7AM}
-set an alarm for {alarmTime:7AM}
+- create an alarm for {alarmTime=7AM}
+- set an alarm for {alarmTime=7AM}
 
 $alarmTime:Simple
 ```
 Pre-built entities only need to be defined once and are applicable to your entire application. Here's an example: 
-``` 
+```markdown 
 # Add
-1 + 1
+- 1 + 1
 
 // 1's in the "1 + 1" utterance will automatically be picked up as numbers by LUIS
 $PREBUILT:number 
 
 # BookTable
-book a table for tomorrow
-book a table for 3pm
-book a table for next thursday 4pm
+- book a table for tomorrow
+- book a table for 3pm
+- book a table for next thursday 4pm
 
 // all date or time or date and time in utterances will automatically be picked by LUIS as datetime values
 $PREBUILT:datetimeV2
 ```
 
 You can describe list entites using the following notation:
-$listEntity:list
-\<itemName\>:
-    \<synonym1\>
-    \<synonym2\>
+$listEntity:\<normalized-value\>=
+    - \<synonym1\>
+    - \<synonym2\>
 
 Here's an example definition of a list entity: 
 
-```
-$commPreference:list
-call:
-	phone call
-	give me a ring
-	ring
-	call
-	cell phone
-	phone
-text:
-	message
-	text
-	sms
-	text message
+```markdown
+$commPreference:call=
+	- phone call
+	- give me a ring
+	- ring
+	- call
+	- cell phone
+	- phone
+$commPreference:text=
+	- message
+	- text
+	- sms
+	- text message
 ```
 
 You can also enhance LUIS understanding of your model using [PhraseLists](https://docs.microsoft.com/en-us/azure/cognitive-services/LUIS/luis-tutorial-interchangeable-phrase-list)
 
 Here's an example of a phrase list definition:
 
-```
+```markdown
 $ChocolateType:phraseList
-m&m,mars,mints,spearmings,payday,jelly,kit kat,kitkat,twix
+    - m&m,mars,mints,spearmings,payday
+
+> You can also break up the phrase list values into an actual list
+$ChocolateType:phraseList
+    - jelly
+	- kit kat
+	- kitkat
+	- twix
 ```
-Note that the parser defaults to simple entity type.
 
 ### Patterns
 Patterns are a new feature in LUIS that allows you to define a set of rules that augment the machine learned model. You can define patterns in the .lu file simply by defining an entity in an utterance without a labelled value. 
 
 As an example, this would be treated as a pattern with alarmTime set as a Pattern.Any entity type
-```
+```markdown
 # DeleteAlarm
-delete the {alarmTime} alarm
+- delete the {alarmTime} alarm
 ``` 
 This example would be treated as an utterance since it has a labelled value with 7AM being the labelled value for entity alarmTime
-```
-delete the {alarmTime=7AM} alarm
+```markdown
+# DeleteAlarm
+- delete the {alarmTime=7AM} alarm
 ```
 
 Note: By default any entity that is left undescribed in a pattern will be mapped to Pattern.Any entity type.
 
 ### Question and Answer pairs
 .lu file (and the parser) supports question and answer definitions as well. You can this notation to describe them
-?\<question\>
-\<answer\>
+\# ?\<question\>
+\[list of question variations]
+\```
+	\<answer\>
+\```
 
 Here's an example of question and answer definitions. The LUDown tool will automatically separate question and answers into a qnamaker JSON file that you can then use to create your new [QnaMaker.ai](http://qnamaker.ai) knowledge base article.
 
-```
-? How can I change the default message from QnA Maker?
-You can change the default message if you use the QnAMakerDialog. See this for details: https://docs.botframework.com/en-us/azure-bot-service/templates/qnamaker/#navtitle
+```markdown
+> # QnA Definitions
+> This is a QnA definition. Follows # ? Question: \<list of questions\> \```markdown \<Answer> ``` format
 
-? How do I programmatically update my KB?
-You can use our REST apis to manage your KB. See here for details: https://westus.dev.cognitive.microsoft.com/docs/services/58994a073d9e04097c7ba6fe/operations/58994a073d9e041ad42d9baa
+### ? who is the ceo?
+	\```markdown
+	You can change the default message if you use the QnAMakerDialog. 
+	See [this link](https://docs.botframework.com/en-us/azure-bot-service/templates/qnamaker/#navtitle) for details. 
+	\```
+
+### ? How do I programmatically update my KB?
+	\```markdown
+	You can use our REST apis to manage your KB. 
+	\#1. See here for details: https://westus.dev.cognitive.microsoft.com/docs/services/58994a073d9e04097c7ba6fe/operations/58994a073d9e041ad42d9baa
+	\```
 ```
 
 You can add multiple questions to the same answer by simply additing variations to questions. Here's an example
 
 ```
-? Who is your name?
-? What should I call you?
-I'm the echoBot! Nice to meet you.
+### ? Who is your ceo?
+- get me your ceo info
+	\```markdown
+	Vishwac
+	\```
 ```
 
 ### External references
-Two different references are supported in the .lu file:
-- Reference to another .lu file via #ref('\<.lu file name\>'). Ref can be an absolute path or <b>relative path from the containing .lu file</b>
-- Reference to URL for QnAMaker to ingest during KB creation via #url('\<URL\>')
+Two different references are supported in the .lu file. These follow Markdown link syntax.
+- Reference to another .lu file via \[link name](\<.lu file name\>). Ref can be an absolute path or <b>relative path from the containing .lu file</b>
+- Reference to URL for QnAMaker to ingest during KB creation via \[link name](\<URL\>)
 
 Here's an example of those references: 
 
-```
-? How can I change the default message from QnA Maker?
-You can change the default message if you use the QnAMakerDialog. See this for details: https://docs.botframework.com/en-us/azure-bot-service/templates/qnamaker/#navtitle
+```markdown
+[QnaURL](https://docs.microsoft.com/en-in/azure/cognitive-services/qnamaker/faqs)
 
-#url('https://docs.microsoft.com/en-in/azure/cognitive-services/qnamaker/faqs')
-
-#ref('./none.lu')
+[none intent definition](./none.lu)
 ```
 
 ### Adding comments
-You can add comments to your .lu document by prefixing the comment with //. Here's an example: 
+You can add comments to your .lu document by prefixing the comment with >. Here's an example: 
 
+```markdown
+> This is a comment and will be ignored
+
+# Greeting
+- hi
+- hello
 ```
-// This is a comment and will be ignored
 
-#Greeting
-hi
-hello
-```
-
-You can also add comments in a line. All text after // will be ignored and treated as a comment.
+Checkout the [examples](https://github.com/Microsoft/botbuilder-tools/tree/master/ludown/Examples) folder for additional example .lu files.
