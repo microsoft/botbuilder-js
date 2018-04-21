@@ -8,5 +8,6 @@ module.exports = {
     ENTITY: "$",
     QNA: "?",
     URLREF: "#url",
-    COMMENT: "//"
+    COMMENT: ">",
+    URLORFILEREF: "["
 };

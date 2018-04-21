@@ -24,18 +24,11 @@ module.exports.splitFileBySections = function(fileContent) {
         if(currentLine.indexOf(PARSERCONSTS.COMMENT) === 0) continue;
         // skip line if it is blank
         if(currentLine === "") continue;
-        // drop any contents in this line after a comment block
-        // e.g. #Greeting //this is the root intent should return #Greeting
-        // #Greeting \// this should be considered should return everything
-        var currentLineWithoutComments = currentLine.split(/\/\/\s*/); 
-        if(currentLineWithoutComments.length > 0) {
-            // exclude http[s]://
-            if(!currentLineWithoutComments[0].includes('http')) currentLine = currentLineWithoutComments[0].trim();
-        }
 
         // is this a FILEREF or URLREF section? 
         if((currentLine.indexOf(PARSERCONSTS.FILEREF) === 0) ||
-           (currentLine.indexOf(PARSERCONSTS.URLREF) === 0)) {
+           (currentLine.indexOf(PARSERCONSTS.URLREF) === 0)  ||
+           (currentLine.indexOf(PARSERCONSTS.URLORFILEREF) === 0)) {
             // handle anything in currentSection buffer
             if(currentSection !== null) {
                 var previousSection = currentSection.substring(0, currentSection.lastIndexOf("\r\n"));
@@ -46,6 +39,11 @@ module.exports.splitFileBySections = function(fileContent) {
             middleOfSection = false;
             inQnaAnswer = false;
         } else if((currentLine.indexOf(PARSERCONSTS.INTENT) === 0)) {
+            if(currentLine.indexOf(' ') === -1) {
+                process.stdout.write(chalk.red('Error: Line #' + lineIndex + '. "' + currentLine + '" does not have valid intent definition \n'));
+                process.stdout.write(chalk.red('Stopping further processing.\n'));
+                process.exit(1);
+            }
             // handle anything in currentSection buffer
             if(currentSection !== null) {
                 var previousSection = currentSection.substring(0, currentSection.lastIndexOf("\r\n"));
@@ -59,9 +57,13 @@ module.exports.splitFileBySections = function(fileContent) {
             if(currentSection !== null) {
                 var previousSection = currentSection.substring(0, currentSection.lastIndexOf("\r\n"));
                 sectionsInFile = validateAndPushCurrentBuffer(previousSection, sectionsInFile, currentSectionType, lineIndex);
+                inQnaAnswer = false;
+                currentSection !== null
             } 
             // only list entity types can have multi-line definition
-            if(currentLine.toLowerCase().includes(':list') || currentLine.toLowerCase().includes(':phraselist')){
+            var isListEntity = (currentLine.indexOf('=', currentLine.length - 1) >= 0)?true:false;
+
+            if(isListEntity || currentLine.toLowerCase().includes(':phraselist')){
                 middleOfSection = true;
                 currentSectionType = PARSERCONSTS.ENTITY;
                 currentSection = currentLine + "\r\n";
@@ -77,6 +79,13 @@ module.exports.splitFileBySections = function(fileContent) {
                 sectionsInFile = validateAndPushCurrentBuffer(previousSection, sectionsInFile, currentSectionType, lineIndex);
                 currentSection = null;
                 inQnaAnswer = false;
+            } else {
+                // handle anything in currentSection buffer
+                if(currentSection !== null && (currentSectionType === PARSERCONSTS.ENTITY)) {
+                    var previousSection = currentSection.substring(0, currentSection.lastIndexOf("\r\n"));
+                    sectionsInFile = validateAndPushCurrentBuffer(previousSection, sectionsInFile, currentSectionType, lineIndex);
+                    currentSection = null;
+                } 
             }
             middleOfSection = true;
             currentSectionType = PARSERCONSTS.QNA;

@@ -7,6 +7,9 @@ const PARSERCONSTS = require('./enums/parserconsts');
 const builtInTypes = require('./enums/luisbuiltintypes');
 const helpers = require('./helpers');
 const chalk = require('chalk');
+const fs = require('fs');
+const path = require('path');
+const url = require('url');
 /**
  * Main parser code to parse current file contents into LUIS and QNA sections.
  *
@@ -66,16 +69,45 @@ module.exports.parseFile = function(fileContent, log)
                     additionalFilesToParse.push(urlRef_regex[1]);
                 }
                 
+            } else if(chunk.indexOf(PARSERCONSTS.URLORFILEREF) === 0) {
+                var chunkSplitByLine = chunk.split(/\r\n|\r|\n/g);
+                var linkValueRegEx = new RegExp(/\(.*?\)/g);
+                var linkValueList = chunkSplitByLine[0].trim().match(linkValueRegEx);
+                var linkValue = linkValueList[0].replace('(','').replace(')','');
+                var parseUrl = url.parse(linkValue);
+                if (parseUrl.host || parseUrl.hostname) {
+                    qnaJsonStruct.urls.push(linkValue);
+                } else {
+                    additionalFilesToParse.push(linkValue);
+                }
+                /*
+                if(linkValue.toLowerCase().includes('.lu')) {
+                    additionalFilesToParse.push(linkValue);
+                } else {
+                    qnaJsonStruct.urls.push(linkValue);
+                }
+                */
+                var p = 0
             } else if(chunk.indexOf(PARSERCONSTS.INTENT) === 0) {
                 // split contents in this chunk by newline
                 var chunkSplitByLine = chunk.split(/\r\n|\r|\n/g);
-                var intentName = chunkSplitByLine[0].replace(PARSERCONSTS.INTENT, '').trim();
+                var intentName = chunkSplitByLine[0].substring(chunkSplitByLine[0].indexOf(' ') + 1);
                 // insert only if the intent is not already present.
                 addItemIfNotPresent(LUISJsonStruct, LUISObjNameEnum.INTENT, intentName);
                 // remove first line from chunk
                 chunkSplitByLine.splice(0,1);
                 chunkSplitByLine.forEach(function(utterance)
                 {
+                    // remove the list decoration from line.
+                    if((utterance.indexOf('-') !== 0) &&
+                       (utterance.indexOf('*') !== 0) && 
+                       (utterance.indexOf('+') !== 0)) {
+                        process.stdout.write(chalk.red('Utterance: "' + utterance + '" does not have list decoration. Use either - or * \n'));
+                        process.stdout.write(chalk.red('Stopping further processing.\n'));
+                        process.exit(1);
+                       }
+                    utterance = utterance.slice(2);
+
                     // is this a pattern? 
                     if(utterance.trim().indexOf("~") === 0) {
                         // push this utterance to patterns
@@ -217,7 +249,11 @@ module.exports.parseFile = function(fileContent, log)
                 }
     
                 // is this a list type?
-                else if(entityType.toLowerCase() === 'list') {
+                else if(entityType.indexOf('=', entityType.length - 1) >= 0) {
+                //else if(entityType.toLowerCase() === 'list') {
+                    // get normalized value
+                    var normalizedValue = entityType.substring(0, entityType.length - 1);
+
                     // remove the first entity declaration line
                     chunkSplitByLine.splice(0,1);
                     var closedListObj = {};
@@ -240,37 +276,24 @@ module.exports.parseFile = function(fileContent, log)
                     }
     
                     var readingSubList = false;
-                    var cForm = "";
                     var synonymsList = new Array();
                     
-                    // go through the list chunk and parse
+                    // go through the list chunk and parse. Add these as synonyms
                     chunkSplitByLine.forEach(function(listLine) {
-                        // do we have canonicalForm on this line? 
-                        if(listLine.includes(":")) {
-                            // if we are already reading a sublist, push that because we have hit a new collection.
-                            if(readingSubList) {
-                                var subListObj = {
-                                    "canonicalForm": cForm,
-                                    "list": synonymsList
-                                };
-                                closedListObj.subLists.push(subListObj);
-                                cForm = listLine.replace(':','').trim();
-                                synonymsList = new Array();
-                                readingSubList = false;
-                            } else {
-                                cForm = listLine.replace(':','').trim();
-                                synonymsList = new Array();
-                                readingSubList = true;
-                            }
-                        } else {
-                            // push this line to list values
-                            synonymsList.push(listLine.trim());
+                        if((listLine.indexOf('-') !== 0) &&
+                        (listLine.indexOf('*') !== 0) && 
+                        (listLine.indexOf('+') !== 0)) {
+                            process.stdout.write(chalk.red('[ERROR]: Synonyms list value: "' + listLine + '" does not have list decoration. Use either - or * \n'));
+                            process.stdout.write(chalk.red('Stopping further processing.\n'));
+                            process.exit(1);
                         }
+                        listLine = listLine.slice(2);       
+                        synonymsList.push(listLine.trim());
                     })
     
                     // push anything we might have left
                     var subListObj = {
-                        "canonicalForm": cForm,
+                        "canonicalForm": normalizedValue,
                         "list": synonymsList
                     };
                     closedListObj.subLists.push(subListObj);
@@ -283,6 +306,14 @@ module.exports.parseFile = function(fileContent, log)
                     chunkSplitByLine.splice(0,1);
                     var pLValues = "";
                     chunkSplitByLine.forEach(function(phraseListValues) {
+                        if((phraseListValues.indexOf('-') !== 0) &&
+                        (phraseListValues.indexOf('*') !== 0) && 
+                        (phraseListValues.indexOf('+') !== 0)) {
+                            process.stdout.write(chalk.red('[ERROR]: Phrase list value: "' + phraseListValues + '" does not have list decoration. Use either - or * \n'));
+                            process.stdout.write(chalk.red('Stopping further processing.\n'));
+                            process.exit(1);
+                        }
+                        phraseListValues = phraseListValues.slice(2);
                         pLValues = pLValues + phraseListValues + ',';
                     });
                     // remove the last ',' 

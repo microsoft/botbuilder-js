@@ -1,4 +1,17 @@
-// This is a QnA definition. follows ? <question> \n <answer> format.
+$ChocolateType:phraseList
+- m&m
+
+> This is a QnA definition. follows ? <question> \n <answer> format.
+
 ? How can I change the default message from QnA Maker?
 You can change the default message if you use the QnAMakerDialog. 
 See this for details: https://docs.botframework.com/en-us/azure-bot-service/templates/qnamaker/#navtitle
+
+$ChocolateType:phraseList
+- twix
+
+> You can define multilple questions for single answer as well
+
+? Who is your ceo?
+? get me your ceo info
+Vishwac

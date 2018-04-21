@@ -17,12 +17,12 @@ my name is {userName=vishwac}
 {userName=vishwac} is my name
 you can call me {userName=vishwac}
 
-$userName:simple
 
-// This is added to global scope. LUIS will automatically recognize any date time in any utterance across all intents.
+> This is added to global scope. LUIS will automatically recognize any date time in any utterance across all intents.
 $PREBUILT:datetimeV2
+$userName:simple
 
 #CreateAlarm
 create an alarm
-create an alarm for 7AM //7AM will get picked up as datetimeV2
+create an alarm for 7AM 
 set an alarm for 7AM next thursday
