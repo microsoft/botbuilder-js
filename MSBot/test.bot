@@ -12,35 +12,6 @@
             "appPassword": "password"
         },
         {
-            "type": "qna",
-            "name": "Qna1",
-            "id": "fef4339c84624005b9d6fe327b81d8ec",
-            "kbid": "fef4339c84624005b9d6fe327b81d8ec",
-            "subscriptionKey": "fef4339c84624005b9d6fe327b81d8ec"
-        },
-        {
-            "type": "luis",
-            "name": "MyFirstDummyApp",
-            "id": "6f9d33ef-a204-4c9c-8f7e-66fa304f5f0c",
-            "appId": "6f9d33ef-a204-4c9c-8f7e-66fa304f5f0c",
-            "version": "1.0",
-            "subscriptionKey": "736465dedefd479093d666ab661d7b31",
-            "authoringKey": "736465dedefd479093d666ab661d7b31"
-        },
-        {
-            "type": "dispatch",
-            "name": "mydispatch",
-            "id": "8d61d51f5a9e4cac9399f9f45d94aff7",
-            "appId": "8d61d51f5a9e4cac9399f9f45d94aff7",
-            "version": "1.0",
-            "subscriptionKey": "aff9b2b1356a48e9804e3379bcc2ae01",
-            "authoringKey": "aff9b2b1356a48e9804e3379bcc2ae01",
-            "serviceIds": [
-                "6f9d33ef-a204-4c9c-8f7e-66fa304f5f0c",
-                "fef4339c84624005b9d6fe327b81d8ec"
-            ]
-        },
-        {
             "type": "endpoint",
             "id": "1",
             "name": "http://testbot.azurewebsites.net/api/messages",
@@ -53,6 +24,42 @@
             "id": "testbot",
             "name": "testbot",
             "appId": "aff9b2b1356a48e9804e3379bcc2ae41"
+        },
+        {
+            "appId": "2f866487-55db-4631-a6e2-965f6cad7953",
+            "authoringKey": "4db5bf288edd4945822aeb124c59d8a5",
+            "version": "0.1",
+            "type": "luis",
+            "name": "TienTest",
+            "id": "2f866487-55db-4631-a6e2-965f6cad7953"
+        },
+        {
+            "appId": "d630d177-0346-43ce-a62b-7e23aa25a53c",
+            "authoringKey": "4db5bf288edd4945822aeb124c59d8a5",
+            "version": "0.1",
+            "type": "luis",
+            "name": "FonicaDispatchEn",
+            "id": "d630d177-0346-43ce-a62b-7e23aa25a53c"
+        },
+        {
+            "kbid": "f1d94084-40b9-429f-ac3a-73347ae99eeb",
+            "subscriptionKey": "a8d4e023a1274107bfeec2676412fc0c",
+            "type": "qna",
+            "name": "Fonica",
+            "id": "f1d94084-40b9-429f-ac3a-73347ae99eeb"
+        },
+        {
+            "type": "dispatch",
+            "name": "TienDispatch",
+            "id": "db20a28f-3c6b-4cd4-9b63-ee87c19b7b76",
+            "appId": "db20a28f-3c6b-4cd4-9b63-ee87c19b7b76",
+            "version": "Dispatch",
+            "authoringKey": "4db5bf288edd4945822aeb124c59d8a5",
+            "serviceIds": [
+                "2f866487-55db-4631-a6e2-965f6cad7953",
+                "d630d177-0346-43ce-a62b-7e23aa25a53c",
+                "f1d94084-40b9-429f-ac3a-73347ae99eeb"
+            ]
         }
     ]
 }

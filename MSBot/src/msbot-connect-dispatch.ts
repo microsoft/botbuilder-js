@@ -80,10 +80,10 @@ async function processConnectDispatch(config: BotConfig): Promise<BotConfig> {
     if (!args.authoringKey || !uuidValidate(args.authoringKey))
         throw new Error("bad or missing --authoringKey");
 
-    if (!args.subscriptionKey || !uuidValidate(args.subscriptionKey))
-        throw new Error("bad or missing --subscriptionKey");
-    
-        let dispatchService = <IDispatchService>{
+    if (args.subscriptionKey && !uuidValidate(args.subscriptionKey))
+        throw new Error("bad --subscriptionKey");
+
+    let dispatchService = <IDispatchService>{
         type: ServiceType.Dispatch,
         name: args.name,
         id: args.appId,

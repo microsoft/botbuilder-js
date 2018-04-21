@@ -23,7 +23,7 @@ class BotConfig {
         };
         this.encryptedProperties = {
             endpoint: ['appPassword'],
-            abs: ['appPassord'],
+            abs: ['appPassword'],
             luis: ['authoringKey', 'subscriptionKey'],
             qna: ['subscriptionKey'],
             dispatch: ['authoringKey', 'subscriptionKey']
