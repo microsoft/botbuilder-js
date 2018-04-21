@@ -5,6 +5,11 @@
 # Interface: FoundValue
 
 
+:package: **botbuilder-choices**
+
+INTERNAL: Raw search result returned by `findValues()`.
+
+
 ## Properties
 <a id="index"></a>
 
@@ -12,7 +17,7 @@
 
 **●  index**:  *`number`* 
 
-*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:40](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/findValues.d.ts#L40)*
+*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:50](https://github.com/Microsoft/botbuilder-js/blob/fbf16f5/libraries/botbuilder-choices/lib/findValues.d.ts#L50)*
 
 
 
@@ -29,7 +34,7 @@ ___
 
 **●  score**:  *`number`* 
 
-*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:45](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/findValues.d.ts#L45)*
+*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:55](https://github.com/Microsoft/botbuilder-js/blob/fbf16f5/libraries/botbuilder-choices/lib/findValues.d.ts#L55)*
 
 
 
@@ -46,7 +51,7 @@ ___
 
 **●  value**:  *`string`* 
 
-*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:36](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/findValues.d.ts#L36)*
+*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:46](https://github.com/Microsoft/botbuilder-js/blob/fbf16f5/libraries/botbuilder-choices/lib/findValues.d.ts#L46)*
 
 
 

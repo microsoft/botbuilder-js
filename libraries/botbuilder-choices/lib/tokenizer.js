@@ -8,8 +8,30 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
- * Simple tokenizer that breaks on spaces and punctuation. The only normalization done is to lowercase
+ * :package: **botbuilder-choices**
  *
+ * Simple tokenizer that breaks on spaces and punctuation. The only normalization done is to
+ * lowercase the tokens. Developers can wrap this tokenizer with their own function to perform
+ * additional normalization like [stemming](https://github.com/words/stemmer).
+ *
+ * **Usage Example**
+ *
+ * ```JavaScript
+ * const { recognizeChoices, defaultTokenizer } = require('botbuilder-choices');
+ * const stemmer = require('stemmer');
+ *
+ * function customTokenizer(text, locale) {
+ *     const tokens = defaultTokenizer(text, locale);
+ *     tokens.forEach((t) => {
+ *         t.normalized = stemmer(t.normalized);
+ *     });
+ *     return tokens;
+ * }
+ *
+ * const choices = ['red', 'green', 'blue'];
+ * const utterance = context.activity.text;
+ * const results = recognizeChoices(utterance, choices, { tokenizer: customTokenizer });
+ * ```
  */
 function defaultTokenizer(text, locale) {
     const tokens = [];

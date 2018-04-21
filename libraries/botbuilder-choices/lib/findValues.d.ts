@@ -7,6 +7,11 @@
  */
 import { TokenizerFunction } from './tokenizer';
 import { ModelResult } from './modelResult';
+/**
+ * :package: **botbuilder-choices**
+ *
+ * Basic search options used to control how choices are recognized in a users utterance.
+ */
 export interface FindValuesOptions {
     /**
      * (Optional) if true, then only some of the tokens in a value need to exist to be considered
@@ -29,6 +34,11 @@ export interface FindValuesOptions {
      */
     tokenizer?: TokenizerFunction;
 }
+/**
+ * :package: **botbuilder-choices**
+ *
+ * INTERNAL: Raw search result returned by `findValues()`.
+ */
 export interface FoundValue {
     /**
      * The value that was matched.
@@ -44,7 +54,15 @@ export interface FoundValue {
      */
     score: number;
 }
-/** A value that can be sorted and still refer to its original position with a source array. */
+/**
+ * :package: **botbuilder-choices**
+ *
+ * INTERNAL: A value that can be sorted and still refer to its original position within a source
+ * array. The `findChoices()` function expands the passed in choices to individual `SortedValue`
+ * instances and passes them to `findValues()`. Each individual `Choice` can result in multiple
+ * synonyms that should be searched for so this data structure lets us pass each synonym as a value
+ * to search while maintaining the index of the choice that value came from.
+ */
 export interface SortedValue {
     /** The value that will be sorted. */
     value: string;
@@ -52,6 +70,14 @@ export interface SortedValue {
     index: number;
 }
 /**
- * Looks for a set of values within an utterance.
+ * :package: **botbuilder-choices**
+ *
+ * INTERNAL: Low-level function that searches for a set of values within an utterance. Higher level
+ * functions like `findChoices()` and `recognizeChoices()` are layered above this function.  In most
+ * cases its easier to just call one of the higher level functions instead but this function contains
+ * the fuzzy search algorithm that drives choice recognition.
+ * @param utterance The text or user utterance to search over.
+ * @param values List of values to search over.
+ * @param options (Optional) options used to tweak the search that's performed.
  */
 export declare function findValues(utterance: string, values: SortedValue[], options?: FindValuesOptions): ModelResult<FoundValue>[];
