@@ -142,6 +142,7 @@ function getGeneralHelpContents() {
             [chalk.cyan.bold("list"), "list resources"],
             [chalk.cyan.bold("publish"), "publish resource"],
             [chalk.cyan.bold("query"), "query model for prediction"],
+            [chalk.cyan.bold("set"), "change the .luisrc settings"],
             [chalk.cyan.bold("suggest"), "suggest resources"],
             [chalk.cyan.bold("train"), "train resource"],
             [chalk.cyan.bold("update"), "update resources"]
@@ -169,17 +170,29 @@ function getVerbHelp(verb) {
         table: []
     };
 
-    // special verb
-    if (verb == "query") {
-        let sections = [];
-        process.stdout.write(chalk.cyan.bold("luis query -q <querytext> --region <region>\n\n"))
-        options.table.push([chalk.cyan.bold("-q <query>"), "query to get a LUIS prediction for"]);
-        options.table.push([chalk.cyan.bold("--subscriptionKey"), "Specifies the LUIS subscriptionKey. Overrides the .luisrc value and the LUIS_SUBSCRIPTION_KEY environment variable."]);
-        options.table.push([chalk.cyan.bold("--region <region>"), "region to call"]);
-        sections.push(options);
-        sections.push(configSection);
-        sections.push(globalArgs);
-        return sections;
+    // special verbs
+    let sections = [];
+    switch (verb) {
+        case "query":
+            process.stdout.write(chalk.cyan.bold("luis query -q <querytext> --region <region>\n\n"))
+            options.table.push([chalk.cyan.bold("-q <query>"), "query to get a LUIS prediction for"]);
+            options.table.push([chalk.cyan.bold("--subscriptionKey"), "Specifies the LUIS subscriptionKey. Overrides the .luisrc value and the LUIS_SUBSCRIPTION_KEY environment variable."]);
+            options.table.push([chalk.cyan.bold("--region <region>"), "region to call"]);
+            sections.push(options);
+            sections.push(configSection);
+            sections.push(globalArgs);
+            return sections;
+
+        case "set":
+            process.stdout.write(chalk.cyan.bold("luis set <.luisrcSetting> <value>\n\n"))
+            options.table.push([chalk.cyan.bold("application <appIdOrName>"), "change the active application id "]);
+            options.table.push([chalk.cyan.bold("version <version>"), "change the active version id "]);
+            options.table.push([chalk.cyan.bold("authoringKey <authoringKey>"), "change the active authoringKey◘"]);
+            options.table.push([chalk.cyan.bold("endpoint <endpointUrl>"), "change the active endpointBasePath url"]);
+            sections.push(options);
+            sections.push(configSection);
+            sections.push(globalArgs);
+            return sections;
     }
 
     for (let iGroup in apiGroups) {
@@ -209,7 +222,6 @@ function getVerbHelp(verb) {
     for (let verb of targets) {
         options.table.push([chalk.cyan.bold(verb), '']);
     }
-    let sections = [];
     sections.push(options);
     sections.push(configSection);
     sections.push(globalArgs);
@@ -273,9 +285,10 @@ function getHelpContentsForService(serviceManifest) {
     // params table is shown only if we have a single
     // operation with 1 or more params.
     if (serviceManifest.operation) {
+        let paramsHelp = { head: '', table: [] };
         if (serviceManifest.operation.params) {
             const { params } = operation;
-            const paramsHelp = {
+            paramsHelp = {
                 head: `Command arguments are:`,
                 table: params.map(param => [chalk.cyan.bold(`--${param.name} <${param.type}>${param.required ? ' (required)' : ''}`), param.description])
             };
@@ -283,17 +296,23 @@ function getHelpContentsForService(serviceManifest) {
                 paramsHelp.table.unshift([chalk.cyan.bold('--in (required)'), `The ${operation.entityType} object to send in the body of the request`],
                     ['', chalk.dim(getEntityTypeExample(operation.entityType))]);
             }
-            sections.push(paramsHelp);
         } else if (operation.entityName) {
-            const paramsHelp = {
+            paramsHelp = {
                 head: `Command arguments are:`,
                 table: [
                     [chalk.cyan.bold('--in (required)'), `The ${operation.entityType} object to send in the body of the request`],
                     ['', chalk.dim(getEntityTypeExample(operation.entityType))]
                 ]
             };
-            sections.push(paramsHelp);
         }
+        switch (operation.name) {
+            case 'addApplication':
+            case 'importApplication':
+            case "getApplicationInfo":
+                paramsHelp.table.push([chalk.cyan.bold(`--msbot`), `(OPTIONAL) Format the output as json for piping into msbot connect luis command`]);
+                break;
+        }
+        sections.push(paramsHelp);
     }
     sections.push(configSection);
     sections.push(globalArgs);
