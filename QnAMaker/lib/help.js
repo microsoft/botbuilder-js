@@ -120,9 +120,10 @@ function getHelpContentsForService(serviceManifest) {
     // params table is shown only if we have a single
     // operation with 1 or more params.
     if (serviceManifest.operation) {
+        let paramsHelp = { head: '', table: [] };
         if (serviceManifest.operation.params) {
             const { params } = operation;
-            const paramsHelp = {
+            paramsHelp = {
                 head: `Command arguments are:`,
                 table: params.map(param => [chalk.cyan.bold(`--${param.alias || param.name} <${param.type}>${param.required ? ' (required)' : ''}`), param.description])
             };
@@ -130,17 +131,20 @@ function getHelpContentsForService(serviceManifest) {
                 paramsHelp.table.unshift([chalk.cyan.bold(`--in ${operation.entityType}.json`), `The ${operation.entityType} object to send in the body of the request`],
                     ['', chalk.dim(getEntityTypeExample(operation.entityType))]);
             }
-            sections.push(paramsHelp);
         } else if (operation.entityName) {
-            const paramsHelp = {
+            paramsHelp = {
                 head: `Command arguments are:`,
                 table: [
                     [chalk.cyan.bold(`--in ${operation.entityType}.json`), `The ${operation.entityType} object to send in the body of the request`],
                     ['', chalk.dim(getEntityTypeExample(operation.entityType))]
                 ]
             };
-            sections.push(paramsHelp);
         }
+        if (operation.name == 'createKnowledgeBase') {
+            paramsHelp.table.push([chalk.cyan.bold(`-q, --quiet`), `(OPTIONAL) disable prompt for saving to .qnamakerrc file`]);
+            paramsHelp.table.push([chalk.cyan.bold(`--msbot`), `(OPTIONAL) Format the output as json for piping into msbot connect qna command`]);
+        }
+        sections.push(paramsHelp);
     }
     sections.push(configSection);
     sections.push(globalArgs);

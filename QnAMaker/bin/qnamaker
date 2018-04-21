@@ -69,9 +69,9 @@ async function runProgram() {
     }
 
     // special case response
-    switch (serviceManifest.operation.methodAlias) {
-        case "create": {
-            if (args.bot) {
+    switch (serviceManifest.operation.name) {
+        case "createKnowledgeBase": {
+            if (args.msbot) {
                 process.stdout.write(JSON.stringify({
                     type: "qna",
                     name: `QnA KB`,
@@ -82,7 +82,7 @@ async function runProgram() {
             } else {
                 process.stdout.write(JSON.stringify(result, null, 2));
             }
-            if (!args.q) {
+            if (!(args.q || args.quiet) && !args.msbot) {
                 let answer = readlineSync.question(`\nWould you like to save ${result.kbId} in your .qnamakerrc so that future commands will be with this KB? [yes]`, { defaultInput: 'yes'});
                 if (answer[0] == 'y'){
                     config.knowledgeBaseID = result.kbId;

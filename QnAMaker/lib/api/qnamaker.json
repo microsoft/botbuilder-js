@@ -8,7 +8,7 @@
         "method": "post",
         "methodAlias": "create",
         "target": [],
-        "command": "qnamaker create --in createKnowledgeBase.json --bot",
+        "command": "qnamaker create --in createKnowledgeBase.json",
         "pathFragment": "",
         "description": "Creates a new knowledge base.",
         "entityName": "createKnowledgeBase",
