@@ -32,7 +32,7 @@ export class BotConfig implements IBotConfig {
 
     protected encryptedProperties: { [key: string]: string[]; } = {
         endpoint: ['appPassword'],
-        abs: ['appPassord'],
+        abs: ['appPassword'],
         luis: ['authoringKey', 'subscriptionKey'],
         qna: ['subscriptionKey'],
         dispatch: ['authoringKey', 'subscriptionKey']
