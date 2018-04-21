@@ -388,40 +388,40 @@ function createHeroCard() {
 
 function createReceiptCard() {
     return CardFactory.receiptCard({
-        title: "Your Receipt",
-        facts: [],
-        items: [
+        title: "John Doe",
+        facts: [
             {
-                title: 'Black Tea',
-                price: '$2.00',
-                quantity: 1
+                key: 'Order Number',
+                value: '1234'
             },
             {
-                title: 'Salad',
-                price: '$9.50',
-                quantity: 1
-            },
-            {
-                title: 'Coffee',
-                price: '$3.00',
-                quantity: 1
-            },
-            {
-                title: 'Pizza',
-                subtitle: '_Pepperoni_',
-                price: '$11.00',
-                quantity: 1
+                key: 'Payment Method',
+                value: 'VISA 5555-****'
             }
         ],
-        tax: '$2.55',
-        total: '$28.05',
+        items: [
+            {
+                title: 'Data Transfer',
+                price: '$38.45',
+                quantity: 368,
+                image: { url: 'https://github.com/amido/azure-vector-icons/raw/master/renders/traffic-manager.png' }
+            },
+            {
+                title: 'App Service',
+                price: '$45.00',
+                quantity: 720,
+                image: { url: 'https://github.com/amido/azure-vector-icons/raw/master/renders/cloud-service.png' }
+            }
+        ],
+        tax: '$7.50',
+        total: '$90.95',
         buttons: CardFactory.actions([
             {
                 type: 'openUrl',
                 title: 'More Information',
                 value: 'https://azure.microsoft.com/en-us/pricing/details/bot-service/'
             }
-        ]),
+        ])
     })
 }
 
