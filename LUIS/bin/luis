@@ -5,6 +5,7 @@ const assert = require('assert');
 const fs = require('fs-extra');
 const path = require('path');
 const readline = require('readline');
+const readlineSync = require('readline-sync');
 const minimist = require('minimist');
 const chalk = require('chalk');
 const request = require('request-promise');
@@ -47,26 +48,44 @@ async function runProgram() {
     // special command
     if (args._[0] == "query") {
         return await handleQueryCommand(args, config);
+    } if (args._[0] == "set") {
+        return await handleSetCommand(args, config);
     } else {
         const serviceManifest = getServiceManifest(args);
         const requestBody = await validateArguments(serviceManifest);
+
+        if (serviceManifest.operation.name == "deleteApplication") {
+            if (!args.q) {
+                let getArgs = { _: ['get', 'application'] };
+                const getApplication = getServiceManifest(getArgs);
+                const result = await luis(config, getApplication, getArgs, {});
+                if (result.error) {
+                    throw new Error(result.error.message);
+                }
+                let answer = readlineSync.question(`Are you sure you want to delete the application ${result.name} (${result.id})? [no] `, { defaultResponse: 'no' });
+                if (answer.length == 0 || answer[0] != 'y') {
+                    return process.stdout.write('delete operation canceled');
+                }
+            }
+        }
 
         const result = await luis(config, serviceManifest, args, requestBody);
         if (result.error) {
             throw new Error(result.error.message);
         }
 
-        if (args.bot && 
-           ((serviceManifest.operation.name == "addApplication") || 
-            (serviceManifest.operation.name == "importApplication"))) {
+        if (args.msbot &&
+            ((serviceManifest.operation.name == "addApplication") ||
+                (serviceManifest.operation.name == "getApplicationInfo") ||
+                (serviceManifest.operation.name == "importApplication"))) {
             process.stdout.write(JSON.stringify({
                 type: "luis",
-                name: requestBody.name,
-                id: result,
-                appId: result,
+                name: result.name,
+                id: result.id || result,
+                appId: result.id || result,
                 authoringKey: config.authoringKey,
                 subscriptionKey: config.authoringKey,
-                version: requestBody.initialVersionId
+                version: result.activeVersion || requestBody.initialVersionId
             }, null, 2));
         } else {
             process.stdout.write(JSON.stringify(result, null, 2));
@@ -236,6 +255,7 @@ async function validateArguments(serviceManifest) {
             body = await getFileInput(args);
         }
         else {
+            // make up a request body from command line args
             switch (serviceManifest.operation.name) {
                 case "publishApplication":
                     body = {
@@ -268,7 +288,7 @@ async function handleError(error) {
     return 1;
 }
 
-async function  handleQueryCommand(args, config) {
+async function handleQueryCommand(args, config) {
     let query = args.q || args.question;
     if (!query) {
         process.stdout.write(chalk.red.bold(`missing -q\n`));
@@ -309,6 +329,61 @@ async function  handleQueryCommand(args, config) {
         return;
     }
     return help(args);
+}
+
+async function handleSetCommand(args, config) {
+    let target = args._.length >= 2 ? args._[1].toLowerCase() : undefined;
+    if (!target || (target != 'application' && target != 'version' && target != 'app')) {
+        process.stdout.write(chalk.red.bold(`missing .luisrc property name: [application|version|authoringKey|endpoint]\n`));
+        return help(args);
+    }
+
+    let targetName = (args._.length >= 3) ? args._.slice(2).join(' ').toLowerCase().trim() : undefined;
+    if (!targetName) {
+        process.stdout.write(chalk.red.bold(`missing the value\n`));
+        return help(args);
+    }
+
+    switch (target) {
+        case 'endpoint':
+        case 'endpointbasepath':
+            config.endpointBasePath = targetName;
+            break;
+            
+        case 'authoringkey':
+            config.authoringKey = targetName;
+            break;
+
+        case 'app':
+        case 'application':
+            let listAppsArgs = { _: ['list', 'applications'] };
+            const listApplication = getServiceManifest(listAppsArgs);
+            let results = await luis(config, listApplication, listAppsArgs, {});
+            if (results.error) {
+                throw new Error(result.error.message);
+            }
+            let found = false;
+            for (let app of results) {
+                if (app.name.toLowerCase() == targetName || app.id.toLowerCase() == targetName) {
+                    config.appId = app.id;
+                    found = true;
+                    break;
+                }
+            }
+            if (!found)
+                throw new Error(`Did not find an application with id or name of '${targetName}'`);
+            break;
+
+        case 'versionid':
+        case 'version':
+            config.versionId = args._[2].toString();
+            break;
+
+        default:
+            return help(args);
+    }
+    await fs.writeJson(path.join(process.cwd(), '.luisrc'), config, { spaces: 2 });
+    return true;
 }
 
 runProgram()
