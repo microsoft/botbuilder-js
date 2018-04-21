@@ -5,4 +5,4 @@ process.argv.forEach((val, index) => {
     args = args + ' ' + val;
   }
 });
-require('child_process').execSync('dotnet ' + __dirname + '\\netcoreapp2.0\\dispatch.dll ' + args, {stdio:[0,1,2]});
+require('child_process').execSync('dotnet ' + __dirname + '/netcoreapp2.0/Dispatch.dll ' + args, {stdio:[0,1,2]});
