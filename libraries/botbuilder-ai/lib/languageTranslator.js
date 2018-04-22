@@ -31,6 +31,7 @@ class LanguageTranslator {
         this.setUserLanguage = settings.setUserLanguage;
         this.translateBackToUserLanguage = settings.translateBackToUserLanguage;
         this.noTranslatePatterns = settings.noTranslatePatterns;
+        this.wordDictionary = settings.wordDictionary;
     }
     /// Incoming activity
     onTurn(context, next) {
@@ -77,7 +78,10 @@ class LanguageTranslator {
             let text = message.text;
             let lines = text.split('\n');
             if (this.noTranslatePatterns && this.noTranslatePatterns[sourceLanguage] && this.noTranslatePatterns[sourceLanguage].length > 0) {
-                this.translator.setPostProcessorTemplate(this.noTranslatePatterns[sourceLanguage]);
+                this.translator.setPostProcessorTemplate(this.noTranslatePatterns[sourceLanguage], this.wordDictionary);
+            }
+            else if (this.wordDictionary) {
+                this.translator.setPostProcessorTemplate([], this.wordDictionary);
             }
             return this.translator.translateArrayAsync({
                 from: sourceLanguage,
@@ -112,8 +116,8 @@ class MicrosoftTranslator {
         this.apiKey = apiKey;
         this.postProcessor = new PostProcessTranslator();
     }
-    setPostProcessorTemplate(noTranslatePatterns) {
-        this.postProcessor = new PostProcessTranslator(noTranslatePatterns);
+    setPostProcessorTemplate(noTranslatePatterns, wordDictionary) {
+        this.postProcessor = new PostProcessTranslator(noTranslatePatterns, wordDictionary);
     }
     getAccessToken() {
         return request({
@@ -196,8 +200,15 @@ class MicrosoftTranslator {
     }
 }
 class PostProcessTranslator {
-    constructor(noTranslatePatterns) {
+    constructor(noTranslatePatterns, wordDictionary) {
         this.noTranslatePatterns = [];
+        this.wordDictionary = wordDictionary;
+        if (wordDictionary) {
+            Object.keys(this.wordDictionary).forEach(key => {
+                Object.defineProperty(this.wordDictionary, key.toLowerCase(), Object.getOwnPropertyDescriptor(this.wordDictionary, key));
+                delete this.wordDictionary[key];
+            });
+        }
         if (noTranslatePatterns) {
             noTranslatePatterns.forEach(pattern => {
                 if (pattern.indexOf('(') == -1) {
@@ -283,10 +294,16 @@ class PostProcessTranslator {
         }
         return targetWords;
     }
+    replaceWordInDictionary(alignment, sourceWords, targetWords, srcWrdIndex) {
+        if (!(typeof alignment[srcWrdIndex] === "undefined")) {
+            targetWords[alignment[srcWrdIndex]] = this.wordDictionary[sourceWords[srcWrdIndex].toLowerCase()];
+        }
+        return targetWords;
+    }
     fixTranslation(sourceMessage, alignment, targetMessage) {
         let numericMatches = sourceMessage.match(/[0-9]+/g);
         let containsNum = numericMatches != null;
-        if ((!containsNum && this.noTranslatePatterns.length == 0) || alignment.trim() == '') {
+        if ((!containsNum && this.noTranslatePatterns.length == 0 && !this.wordDictionary) || alignment.trim() == '') {
             return targetMessage;
         }
         let toBeReplaced = [];
@@ -297,6 +314,14 @@ class PostProcessTranslator {
                 toBeReplaced.push(pattern);
             }
         });
+        let toBeReplacedByDictionary = [];
+        if (this.wordDictionary) {
+            Object.keys(this.wordDictionary).forEach(key => {
+                if (sourceMessage.toLowerCase().indexOf(key.toLowerCase()) != -1) {
+                    toBeReplacedByDictionary.push(key);
+                }
+            });
+        }
         let alignments = alignment.trim().split(' ');
         let srcWords = this.splitSentence(sourceMessage, alignments);
         let trgWords = this.splitSentence(targetMessage, alignments, false);
@@ -313,8 +338,6 @@ class PostProcessTranslator {
                 let srcIndx = -1;
                 let newNoTranslateArrayLength = 1;
                 for (let wrd of srcWords) {
-                    chrIndx += wrd.length + 1;
-                    wrdIndx++;
                     if (chrIndx == noTranslateStartChrIndex) {
                         srcIndx = wrdIndx;
                     }
@@ -325,10 +348,38 @@ class PostProcessTranslator {
                         newNoTranslateArrayLength++;
                         newChrLengthFromMatch += srcWords[wrdIndx].length + 1;
                     }
+                    chrIndx += wrd.length + 1;
+                    wrdIndx++;
                 }
                 let wrdNoTranslate = srcWords.slice(srcIndx, srcIndx + newNoTranslateArrayLength);
                 wrdNoTranslate.forEach(srcWrds => {
                     trgWords = this.keepSrcWrdInTranslation(alignMap, srcWords, trgWords, srcIndx);
+                    srcIndx++;
+                });
+            });
+        }
+        if (toBeReplacedByDictionary.length > 0) {
+            toBeReplacedByDictionary.forEach(word => {
+                let regExp = new RegExp(word, "i");
+                let match = regExp.exec(sourceMessage);
+                let noTranslateStartChrIndex = match.index;
+                let noTranslateMatchLength = match[0].length;
+                let wrdIndx = 0;
+                let chrIndx = 0;
+                let newChrLengthFromMatch = 0;
+                let srcIndx = -1;
+                let newNoTranslateArrayLength = 1;
+                for (let wrd of srcWords) {
+                    chrIndx += wrd.length + 1;
+                    wrdIndx++;
+                    if (chrIndx == noTranslateStartChrIndex) {
+                        srcIndx = wrdIndx;
+                        break;
+                    }
+                }
+                let wrdNoTranslate = srcWords.slice(srcIndx, srcIndx + 1);
+                wrdNoTranslate.forEach(srcWrds => {
+                    trgWords = this.replaceWordInDictionary(alignMap, srcWords, trgWords, srcIndx);
                     srcIndx++;
                 });
             });

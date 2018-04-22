@@ -246,6 +246,7 @@ describe('LanguageTranslator', function () {
         let toFrenchSettings = {
             translatorKey: translatorKey,
             nativeLanguages: ['fr', 'de'],
+            wordDictionary: { 'resgister': 'enregistreuse' }
         }
 
         let message = 'Prior to your first visit, preferably starting in the morning '
@@ -267,5 +268,21 @@ describe('LanguageTranslator', function () {
         .use(new LanguageTranslator(toFrenchSettings))
         .test(message, translatedMessage, 'should have received french')
         .then(() => done());
+    });
+
+    it('should use dictionary', function (done) {
+
+        let dictionarySettings = {
+            translatorKey: translatorKey,
+            nativeLanguages: ['fr', 'de'],
+            wordDictionary: { 'Mahmoud': 'John', 'Mohamed': 'Harvey' },
+            getUserLanguage: c => 'en',
+            setUserLanguage: c => Promise.resolve(false)
+        }
+
+        const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
+        .use(new LanguageTranslator(dictionarySettings))
+        .test('I am Mahmoud', 'Je suis John', 'should have translated word')
+        .then(() => done())
     });
 })
