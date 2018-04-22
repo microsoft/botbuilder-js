@@ -10,6 +10,7 @@ export * from './choicePrompt';
 export * from './confirmPrompt';
 export * from './datetimePrompt';
 export * from './numberPrompt';
+export * from './oauthPrompt';
 export * from './textPrompt';
 
 // Re-exporting choice related interfaces used just to avoid TS developers from needing to 

@@ -13,4 +13,5 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./tableStorage"));
 __export(require("./cosmosDbStorage"));
 __export(require("./blobStorage"));
+__export(require("./azureBlobTranscriptStore"));
 //# sourceMappingURL=index.js.map

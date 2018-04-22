@@ -1,5 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @module botbuilder-dialogs
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+const botbuilder_1 = require("botbuilder");
 const control_1 = require("../control");
 class Prompt extends control_1.Control {
     constructor(validator) {
@@ -14,6 +22,10 @@ class Prompt extends control_1.Control {
         return this.onPrompt(dc, instance.state, false);
     }
     dialogContinue(dc) {
+        // Don't do anything for non-message activities
+        if (dc.context.activity.type !== botbuilder_1.ActivityTypes.Message) {
+            return Promise.resolve();
+        }
         // Recognize value
         const instance = dc.instance;
         return this.onRecognize(dc, instance.state)
