@@ -25,11 +25,12 @@ const xmldom_1 = require("xmldom");
  */
 class LanguageTranslator {
     constructor(settings) {
-        this.translator = new MicrosoftTranslator(settings.translatorKey, settings.noTranslatePatterns);
+        this.translator = new MicrosoftTranslator(settings.translatorKey);
         this.nativeLanguages = settings.nativeLanguages;
         this.getUserLanguage = settings.getUserLanguage;
         this.setUserLanguage = settings.setUserLanguage;
         this.translateBackToUserLanguage = settings.translateBackToUserLanguage;
+        this.noTranslatePatterns = settings.noTranslatePatterns;
     }
     /// Incoming activity
     onTurn(context, next) {
@@ -75,6 +76,9 @@ class LanguageTranslator {
             }
             let text = message.text;
             let lines = text.split('\n');
+            if (this.noTranslatePatterns && this.noTranslatePatterns[sourceLanguage] && this.noTranslatePatterns[sourceLanguage].length > 0) {
+                this.translator.setPostProcessorTemplate(this.noTranslatePatterns[sourceLanguage]);
+            }
             return this.translator.translateArrayAsync({
                 from: sourceLanguage,
                 to: targetLanguage,
@@ -96,8 +100,7 @@ class LanguageTranslator {
 }
 exports.LanguageTranslator = LanguageTranslator;
 class MicrosoftTranslator {
-    constructor(apiKey, noTranslatePatterns) {
-        this.noTranslatePatterns = new Set();
+    constructor(apiKey) {
         this.entityMap = {
             "&": "&amp;",
             "<": "&lt;",
@@ -107,6 +110,9 @@ class MicrosoftTranslator {
             "/": '&#x2F;'
         };
         this.apiKey = apiKey;
+        this.postProcessor = new PostProcessTranslator();
+    }
+    setPostProcessorTemplate(noTranslatePatterns) {
         this.postProcessor = new PostProcessTranslator(noTranslatePatterns);
     }
     getAccessToken() {
@@ -191,23 +197,25 @@ class MicrosoftTranslator {
 }
 class PostProcessTranslator {
     constructor(noTranslatePatterns) {
-        this.noTranslatePatterns = new Set();
+        this.noTranslatePatterns = [];
         if (noTranslatePatterns) {
             noTranslatePatterns.forEach(pattern => {
                 if (pattern.indexOf('(') == -1) {
                     pattern = `(${pattern})`;
                 }
-                this.noTranslatePatterns.add(pattern);
+                this.noTranslatePatterns.push(pattern);
             });
         }
     }
     join(delimiter, words) {
-        let sentence = words.join(delimiter);
-        sentence = sentence.replace(/[ ]?'[ ]?/g, "'");
-        return sentence;
+        return words.join(delimiter).replace(/[ ]?'[ ]?/g, "'").trim();
     }
     splitSentence(sentence, alignments, isSrcSentence = true) {
         let wrds = sentence.split(' ');
+        let lastWrd = wrds[wrds.length - 1];
+        if (".,:;?!".indexOf(lastWrd[lastWrd.length - 1]) != -1) {
+            wrds[wrds.length - 1] = lastWrd.substr(0, lastWrd.length - 1);
+        }
         let alignSplitWrds = [];
         let outWrds = [];
         let wrdIndexInAlignment = 1;
@@ -244,7 +252,7 @@ class PostProcessTranslator {
             }
         }
         alignSplitWrds = outWrds;
-        if (alignSplitWrds.length >= wrds.length) {
+        if (this.join("", alignSplitWrds) == this.join("", wrds)) {
             return alignSplitWrds;
         }
         else {
@@ -278,12 +286,11 @@ class PostProcessTranslator {
     fixTranslation(sourceMessage, alignment, targetMessage) {
         let numericMatches = sourceMessage.match(/[0-9]+/g);
         let containsNum = numericMatches != null;
-        let noTranslatePatterns = Array.from(this.noTranslatePatterns);
-        if ((!containsNum && noTranslatePatterns.length == 0) || alignment.trim() == '') {
+        if ((!containsNum && this.noTranslatePatterns.length == 0) || alignment.trim() == '') {
             return targetMessage;
         }
         let toBeReplaced = [];
-        noTranslatePatterns.forEach(pattern => {
+        this.noTranslatePatterns.forEach(pattern => {
             let regExp = new RegExp(pattern, "i");
             let matches = sourceMessage.match(regExp);
             if (matches != null) {

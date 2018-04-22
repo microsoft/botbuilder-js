@@ -62,11 +62,11 @@ async function setUserLocale(context) {
 
 // Add language translator middleware
 const languageTranslator = new LanguageTranslator({
-    translatorKey: "xxxxxx ",
-    noTranslatePatterns: new Set(),
+    translatorKey: "xxxxxx",
     nativeLanguages: ['en'],
     setUserLanguage: setUserLanguage,
-    getUserLanguage: getUserLanguage 
+    getUserLanguage: getUserLanguage,
+    translateBackToUserLanguage: true
 });
 adapter.use(languageTranslator);
 
@@ -74,7 +74,7 @@ adapter.use(languageTranslator);
 const localeConverter = new LocaleConverter({
     toLocale: 'en-us',
     setUserLocale: setUserLocale,
-    getUserLocale: getUserLocale
+    getUserLocale: getUserLocale,
 });
 adapter.use(localeConverter);
 
@@ -82,7 +82,7 @@ adapter.use(localeConverter);
 const qnaMaker = new QnAMaker({
     knowledgeBaseId: "xxxxxx",
     subscriptionKey: "xxxxxx",
-    answerBeforeNext: true
+    answerBeforeNext: true,
 });
 adapter.use(qnaMaker);
 

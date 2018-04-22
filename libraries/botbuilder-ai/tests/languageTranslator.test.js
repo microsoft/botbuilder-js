@@ -28,7 +28,6 @@ describe('LanguageTranslator', function () {
         let toFrenchSettings = {
             translatorKey: translatorKey,
             nativeLanguages: ['fr', 'de'],
-            noTranslatePatterns: new Set()
         }
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
@@ -42,7 +41,6 @@ describe('LanguageTranslator', function () {
         let toFrenchSettings = {
             translatorKey: translatorKey,
             nativeLanguages: ['fr', 'de'],
-            noTranslatePatterns: new Set()
         }
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
@@ -56,7 +54,6 @@ describe('LanguageTranslator', function () {
         let toEnglishSettings = {
             translatorKey: translatorKey,
             nativeLanguages: ['fr', 'de', 'en'],
-            noTranslatePatterns: new Set(),
             getUserLanguage: c => 'fr',
             setUserLanguage: c => Promise.resolve(false)
         }
@@ -72,7 +69,7 @@ describe('LanguageTranslator', function () {
         let noTranslateSettings = {
             translatorKey: translatorKey,
             nativeLanguages: ['en', 'de'],
-            noTranslatePatterns: new Set(['Bonjour (Jean mon ami)']),
+            noTranslatePatterns: { 'fr': ['Bonjour (Jean mon ami)'] },
             getUserLanguage: c => 'fr',
             setUserLanguage: c => Promise.resolve(false)
         }
@@ -111,7 +108,7 @@ describe('LanguageTranslator', function () {
         let emptyMessageSettings = {
             translatorKey: translatorKey,
             nativeLanguages: ['fr', 'de'],
-            noTranslatePatterns: new Set(['(HI)', '(BYE)'])
+            noTranslatePatterns: { 'en': ['(HI)', '(BYE)'] }
         }
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
@@ -125,7 +122,6 @@ describe('LanguageTranslator', function () {
         let emptyMessageSettings = {
             translatorKey: 'N/A',
             nativeLanguages: ['fr', 'de'],
-            noTranslatePatterns: new Set()
         }
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
@@ -139,7 +135,6 @@ describe('LanguageTranslator', function () {
         let toFrenchSettings = {
             translatorKey: translatorKey,
             nativeLanguages: ['fr', 'de'],
-            noTranslatePatterns: new Set()
         }
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
@@ -153,7 +148,6 @@ describe('LanguageTranslator', function () {
         let toEnglishSettings = {
             translatorKey: translatorKey,
             nativeLanguages: ['en', 'de'],
-            noTranslatePatterns: new Set()
         }
 
         const context = new TestContext({ text: 'bonjour', type: 'foo' });
@@ -173,7 +167,7 @@ describe('LanguageTranslator', function () {
         let noTranslateSettings = {
             translatorKey: translatorKey,
             nativeLanguages: ['en', 'de'],
-            noTranslatePatterns: new Set(['Jean mon ami']),
+            noTranslatePatterns: { 'fr':['Jean mon ami'] },
             getUserLanguage: c => 'fr',
             setUserLanguage: c => Promise.resolve(false)
         }
@@ -189,7 +183,7 @@ describe('LanguageTranslator', function () {
         let noTranslateSettings = {
             translatorKey: translatorKey,
             nativeLanguages: ['en'],
-            noTranslatePatterns: new Set(['perr[oa]', 'Hi']),
+            noTranslatePatterns: { 'es': ['perr[oa]', 'Hi'] },
             getUserLanguage: c => 'es',
             setUserLanguage: c => Promise.resolve(false)
         }
@@ -205,7 +199,7 @@ describe('LanguageTranslator', function () {
         let noTranslateSettings = {
             translatorKey: translatorKey,
             nativeLanguages: ['en'],
-            noTranslatePatterns: new Set(['mon nom est (.+)']),
+            noTranslatePatterns: { 'fr': ['mon nom est (.+)'] },
             getUserLanguage: c => 'fr',
             setUserLanguage: c => Promise.resolve(false)
         }
@@ -221,7 +215,6 @@ describe('LanguageTranslator', function () {
         let translateBackSettings = {
             translatorKey: translatorKey,
             nativeLanguages: ['en'],
-            noTranslatePatterns: new Set(),
             getUserLanguage: () => 'fr',
             translateBackToUserLanguage: true
         }
@@ -237,7 +230,6 @@ describe('LanguageTranslator', function () {
         let translateBackSettings = {
             translatorKey: translatorKey,
             nativeLanguages: ['en'],
-            noTranslatePatterns: new Set(),
             getUserLanguage: () => 'fr',
             translateBackToUserLanguage: true
         }
@@ -254,7 +246,6 @@ describe('LanguageTranslator', function () {
         let toFrenchSettings = {
             translatorKey: translatorKey,
             nativeLanguages: ['fr', 'de'],
-            noTranslatePatterns: new Set()
         }
 
         let message = 'Prior to your first visit, preferably starting in the morning '
@@ -270,7 +261,7 @@ describe('LanguageTranslator', function () {
         + "(sans écraser et de passage) sur le dos de votre laissez-passer "
         + "afin de l'activer consécutivement pour 2 , 4 ou 6 jours. "
         + "La présentation de votre laissez-passer à l'entrée des monuments et des musées "
-        + "vous accorde un accès gratuit sans temps d'attente à la caisse enregistreuse.";
+        + "vous accorde un accès gratuit sans temps d'attente à la caisse enregistreuse";
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(new LanguageTranslator(toFrenchSettings))

@@ -62,7 +62,6 @@ async function setUserLocale(context) {
 // Add language translator middleware
 const languageTranslator = new LanguageTranslator({
     translatorKey: "xxxxxx",
-    noTranslatePatterns: new Set(),
     nativeLanguages: ['en'],
     setUserLanguage: setUserLanguage,
     getUserLanguage: getUserLanguage 

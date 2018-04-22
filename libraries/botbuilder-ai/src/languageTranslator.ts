@@ -12,7 +12,7 @@ import { DOMParser } from "xmldom";
 export interface TranslatorSettings {
     translatorKey: string;
     nativeLanguages: string[];
-    noTranslatePatterns: Set<string>;
+    noTranslatePatterns?: { [id: string] : string[] };
     getUserLanguage?: (context: TurnContext) => string;
     setUserLanguage?: (context: TurnContext) => Promise<boolean>;
     translateBackToUserLanguage?: boolean;
@@ -28,14 +28,16 @@ export class LanguageTranslator implements Middleware {
     private getUserLanguage: ((context: TurnContext) => string) | undefined;
     private setUserLanguage: ((context: TurnContext) => Promise<boolean>) | undefined;
     private nativeLanguages: string[];
-    private translateBackToUserLanguage: boolean
+    private translateBackToUserLanguage: boolean;
+    private noTranslatePatterns: { [id: string] : string[] };
 
     public constructor(settings: TranslatorSettings) {
-        this.translator = new MicrosoftTranslator(settings.translatorKey, settings.noTranslatePatterns);
+        this.translator = new MicrosoftTranslator(settings.translatorKey);
         this.nativeLanguages = settings.nativeLanguages;
         this.getUserLanguage = settings.getUserLanguage;
         this.setUserLanguage = settings.setUserLanguage;
         this.translateBackToUserLanguage = settings.translateBackToUserLanguage;
+        this.noTranslatePatterns = settings.noTranslatePatterns;
     }
 
     /// Incoming activity
@@ -87,6 +89,10 @@ export class LanguageTranslator implements Middleware {
         
         let lines = text.split('\n');
         
+        if (this.noTranslatePatterns && this.noTranslatePatterns[sourceLanguage] && this.noTranslatePatterns[sourceLanguage].length > 0) {
+            this.translator.setPostProcessorTemplate(this.noTranslatePatterns[sourceLanguage]);
+        }
+
         return this.translator.translateArrayAsync({
             from: sourceLanguage,
             to: targetLanguage,
@@ -122,16 +128,21 @@ interface Translator {
     translateArrayAsync(options: TranslateArrayOptions): Promise<TranslationResult[]>;
 
     detect(text: string): Promise<string>;
+
+    setPostProcessorTemplate(noTranslatePatterns: string[]);
 }
 
 class MicrosoftTranslator implements Translator {
     
     apiKey: string;
     postProcessor: PostProcessTranslator;
-    noTranslatePatterns: Set<string> = new Set<string>();
 
-    constructor(apiKey: string, noTranslatePatterns: Set<string>) {
+    constructor(apiKey: string) {
         this.apiKey = apiKey;
+        this.postProcessor = new PostProcessTranslator();
+    }
+
+    setPostProcessorTemplate(noTranslatePatterns: string[]) {
         this.postProcessor = new PostProcessTranslator(noTranslatePatterns);
     }
 
@@ -233,30 +244,31 @@ class MicrosoftTranslator implements Translator {
 }
 
 export class PostProcessTranslator {
-    noTranslatePatterns: Set<string>;
+    noTranslatePatterns: string[];
 
-    constructor(noTranslatePatterns: Set<string>) {
-        this.noTranslatePatterns = new Set<string>();
+    constructor(noTranslatePatterns?: string[]) {
+        this.noTranslatePatterns = [];
 
         if(noTranslatePatterns) {
             noTranslatePatterns.forEach(pattern => {
                 if (pattern.indexOf('(') == -1) {
                     pattern = `(${pattern})`;
                 }
-                this.noTranslatePatterns.add(pattern);
+                this.noTranslatePatterns.push(pattern);
             });
         }  
     }
 
     private join(delimiter: string, words: string[]): string {
-        let sentence = words.join(delimiter);
-        sentence = sentence.replace(/[ ]?'[ ]?/g, "'");
-        
-        return sentence;
+        return words.join(delimiter).replace(/[ ]?'[ ]?/g, "'").trim();
     }
 
     private splitSentence(sentence: string, alignments: string[], isSrcSentence = true): string[] {
         let wrds = sentence.split(' ');
+        let lastWrd = wrds[wrds.length - 1];
+        if (".,:;?!".indexOf(lastWrd[lastWrd.length - 1]) != -1) {
+            wrds[wrds.length - 1] = lastWrd.substr(0, lastWrd.length - 1);
+        }
         let alignSplitWrds: string[] = [];
         let outWrds: string[] = [];
         let wrdIndexInAlignment = 1;
@@ -294,7 +306,8 @@ export class PostProcessTranslator {
             }
         }
         alignSplitWrds = outWrds;
-        if (alignSplitWrds.length >= wrds.length) {
+        
+        if (this.join("", alignSplitWrds) == this.join("", wrds)) {
             return alignSplitWrds;
         } else {
             return wrds;
@@ -336,21 +349,20 @@ export class PostProcessTranslator {
     public fixTranslation(sourceMessage: string, alignment: string, targetMessage: string): string {
         let numericMatches = sourceMessage.match(/[0-9]+/g);
         let containsNum = numericMatches != null;
-        let noTranslatePatterns = Array.from(this.noTranslatePatterns);
         
-        if ((!containsNum && noTranslatePatterns.length == 0) || alignment.trim() == '') {
+        if ((!containsNum && this.noTranslatePatterns.length == 0) || alignment.trim() == '') {
             return targetMessage;
         }
 
         let toBeReplaced: string[] = [];
-        noTranslatePatterns.forEach(pattern => {
+        this.noTranslatePatterns.forEach(pattern => {
             let regExp = new RegExp(pattern, "i");
             let matches = sourceMessage.match(regExp);
             if (matches != null) {
                 toBeReplaced.push(pattern);
             }
         });
-
+        
         let alignments = alignment.trim().split(' ');
        
         let srcWords = this.splitSentence(sourceMessage, alignments);

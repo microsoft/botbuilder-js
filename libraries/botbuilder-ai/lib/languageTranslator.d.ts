@@ -9,7 +9,9 @@ import { Middleware, TurnContext } from 'botbuilder';
 export interface TranslatorSettings {
     translatorKey: string;
     nativeLanguages: string[];
-    noTranslatePatterns: Set<string>;
+    noTranslatePatterns?: {
+        [id: string]: string[];
+    };
     getUserLanguage?: (context: TurnContext) => string;
     setUserLanguage?: (context: TurnContext) => Promise<boolean>;
     translateBackToUserLanguage?: boolean;
@@ -25,13 +27,14 @@ export declare class LanguageTranslator implements Middleware {
     private setUserLanguage;
     private nativeLanguages;
     private translateBackToUserLanguage;
+    private noTranslatePatterns;
     constructor(settings: TranslatorSettings);
     onTurn(context: TurnContext, next: () => Promise<void>): Promise<void>;
     private translateMessageAsync(context, message, sourceLanguage, targetLanguage);
 }
 export declare class PostProcessTranslator {
-    noTranslatePatterns: Set<string>;
-    constructor(noTranslatePatterns: Set<string>);
+    noTranslatePatterns: string[];
+    constructor(noTranslatePatterns?: string[]);
     private join(delimiter, words);
     private splitSentence(sentence, alignments, isSrcSentence?);
     private wordAlignmentParse(alignments, srcWords, trgWords);
