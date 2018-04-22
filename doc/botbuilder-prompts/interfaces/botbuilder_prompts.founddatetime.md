@@ -5,6 +5,8 @@
 # Interface: FoundDatetime
 
 
+:package: **botbuilder-prompts**
+
 Datetime result returned by `DatetimePrompt`. For more details see the LUIS docs for [builtin.datetimev2](https://docs.microsoft.com/en-us/azure/cognitive-services/luis/luis-reference-prebuilt-entities#builtindatetimev2).
 
 
@@ -15,7 +17,7 @@ Datetime result returned by `DatetimePrompt`. For more details see the LUIS docs
 
 **●  timex**:  *`string`* 
 
-*Defined in [libraries/botbuilder-prompts/lib/datetimePrompt.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-prompts/lib/datetimePrompt.d.ts#L18)*
+*Defined in [libraries/botbuilder-prompts/lib/datetimePrompt.d.ts:20](https://github.com/Microsoft/botbuilder-js/blob/e54b802/libraries/botbuilder-prompts/lib/datetimePrompt.d.ts#L20)*
 
 
 
@@ -32,7 +34,7 @@ ___
 
 **●  type**:  *`string`* 
 
-*Defined in [libraries/botbuilder-prompts/lib/datetimePrompt.d.ts:23](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-prompts/lib/datetimePrompt.d.ts#L23)*
+*Defined in [libraries/botbuilder-prompts/lib/datetimePrompt.d.ts:25](https://github.com/Microsoft/botbuilder-js/blob/e54b802/libraries/botbuilder-prompts/lib/datetimePrompt.d.ts#L25)*
 
 
 
@@ -49,7 +51,7 @@ ___
 
 **●  value**:  *`string`* 
 
-*Defined in [libraries/botbuilder-prompts/lib/datetimePrompt.d.ts:28](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-prompts/lib/datetimePrompt.d.ts#L28)*
+*Defined in [libraries/botbuilder-prompts/lib/datetimePrompt.d.ts:30](https://github.com/Microsoft/botbuilder-js/blob/e54b802/libraries/botbuilder-prompts/lib/datetimePrompt.d.ts#L30)*
 
 
 
