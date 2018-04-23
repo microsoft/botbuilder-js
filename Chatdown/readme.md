@@ -1,5 +1,7 @@
 # Chatdown
 
+[![npm version](https://badge.fury.io/js/chatdown.svg)](https://badge.fury.io/js/chatdown)
+
 Chatdown is a transcript generator which consumes a markdown file to generate activity transcripts. Generated transcript files are output to stdout.
 
 ## Installation

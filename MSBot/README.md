@@ -1,5 +1,7 @@
 ﻿# MSBot Command Line tool
 
+[![npm version](https://badge.fury.io/js/msbot.svg)](https://badge.fury.io/js/msbot)
+
 The msbot tool is a command line tool to create and manipulate a bot resources via a .bot. 
 
 
