@@ -13,15 +13,15 @@ This will install dispatch into your global path.
 
 # Usage
 
-## Creating a .dispatchrc 
+## Initializing dispatch
 
-To create .dispatchrc file you run 
+To initialize dispatch you run 
 
 ```shell
 dispatch init [options]
 ```
 
-It will ask you the name of the dispatch, LUIS authoring key and region needed to create a LUIS application.  This commands then creates .dispatchrc file.
+It will ask you the name of the dispatch, LUIS authoring key and region needed to create a LUIS application.  This commands then creates {dispatchName}.dispatch file.
 To bypass the prompts, values could be passed in via arguments below.
 
 Arguments
@@ -33,7 +33,7 @@ Arguments
 | -luisAuthoringRegion | (optional) LUIS authoring region  |
 | -bot                 | (optional) .bot file path         |
 | -hierarchical        | (optional) Default to false.  If false, existing intents from source LUIS model(s) will be available as the dispatch intents. |
-| -dataFolder          | (optional) Output folder for tool |
+| -dataFolder          | (optional) Working directory for tool |
 | -h                   | Output usage information |
 
 Example:
@@ -47,12 +47,14 @@ dispatch init -bot c:\src\bot\testbot.bot
 ## Adding source to dispatch
 
 This step is not needed if you have a .bot file already connected with services (ie LUIS/QnA). Dispatch will take the services in .bot file
-and add each of the services it can dispatch to .dispatchrc.
+and add each of the services it can dispatch to .dispatch file.
 
 ```shell
 dispatch add -type luis -id 1090A345-2D89-4BED-99EF-1CE3E08B690E -name TestLuisApp -version 0.1 -key F57AEEEBE67349C282E1DC51F6BA66D9
 dispatch add -type qna -id 09DF8311-9MSA-L2I9-DJEE-4MT434481212 -name Faq -key L2340T8NM78OSFDWAS23B4TAASMPO1N1
 dispatch add -type file -name TestModule -filePath c:\src\testmodule.tsv
+dispatch add -type file -name TestModule2 -filePath c:\src\testmodule2.txt
+dispatch add -type file -name TestModule3 -filePath c:\src\testmodule3.json
 
 ```
 
@@ -66,13 +68,14 @@ Arguments
 | -key         | (required only if type is luis/qna) LUIS authoring key (from https://www.luis.ai/user/settings) or QnA maker key (from https://qnamaker.ai/UserSettings) |
 | -version     | (Required only if type is luis) LUIS app version |
 | -filePath    | (Required only if type is file) Path to tsv file containing tab delimited intent and utterance fields or .txt file with an utterance on each line |
-| -dataFolder  | (optional) Output folder for tool |
+| -dispatch    | (optional) Path to .dispatch file |
+| -dataFolder  | (optional) Working directory for tool |
 | -h           | Output usage information |
 
 
 ## Creating your dispatch model  
 
-To create, train and publish your dispatch model, run
+To create, train and publish your new dispatch model, run
 
 ```shell
 dispatch create [options]
@@ -83,9 +86,30 @@ With the following options
 | Option               | Description                                                  |
 | ----------------     | ------------------------------------------------------------ |
 | -bot                 | (optional) .bot file path         |
-| -hierarchical        | (optional) Default to false or the value in .dispatchrc if set in init.  If false, existing intents from source LUIS model(s) will be available as the dispatch intents. |
-| -dataFolder          | (optional) Output folder for tool |
+| -dispatch            | (optional) .dispatch file path    |
+| -dataFolder          | (optional) Working directory for tool |
 | -h                   | Output usage information |
+
+This command creates a brand new LUIS application.
+
+## Refreshing your dispatch model  
+
+To train and publish your existing dispatch model after modification, run
+
+```shell
+dispatch refresh [options]
+```
+
+With the following options
+
+| Option               | Description                                                  |
+| ----------------     | ------------------------------------------------------------ |
+| -bot                 | (optional) .bot file path         |
+| -dispatch            | (optional) .dispatch file path    |
+| -dataFolder          | (optional) Working directory for tool |
+| -h                   | Output usage information |
+
+This command updates existing LUIS application in .dispatch file.
 
 ## Testing your dispatch model  
 
@@ -102,6 +126,7 @@ With the following options
 | -testFilePath        | Path to a tsv file with three (or two) fields: expected intent, weight and utterance in that order; the first line (header) will be skipped; the weight column is optional     |
 | -luisPredictingKey   | (optional, will be prompted) LUIS predicting key     |
 | -luisPredictingRegion| (optional, will be prompted) LUIS predicting region  |
+| -dispatch            | (optional) .dispatch file path    |
 | -dataFolder          | (optional) Output folder for tool |
 | -h                   | Output usage information |
 
@@ -119,6 +144,7 @@ With the following options.  If not given, the tool will prompt for the required
 | ------ | ----------- |
 | -luisPredictingKey    | (optional, will be prompted) LUIS predicting key     |
 | -luisPredictingRegion | (optional, will be prompted) LUIS predicting region  |
+| -dispatch            | (optional) .dispatch file path    |
 | -dataFolder           | (optional) Output folder for tool |
 | -h, --help            | Output usage information|
 
