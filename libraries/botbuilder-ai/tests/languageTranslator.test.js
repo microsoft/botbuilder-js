@@ -246,7 +246,7 @@ describe('LanguageTranslator', function () {
         let toFrenchSettings = {
             translatorKey: translatorKey,
             nativeLanguages: ['fr', 'de'],
-            wordDictionary: { 'resgister': 'enregistreuse' }
+            wordDictionary: { 'first': 'enregistreuse' }
         }
 
         let message = 'Prior to your first visit, preferably starting in the morning '

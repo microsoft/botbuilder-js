@@ -106,10 +106,10 @@ export class LanguageTranslator implements Middleware {
         })
         .then((translateResult) => {
             text = '';
-            for (let iData in translateResult) {
+            for (const translatedSentence of translateResult) {
                 if (text.length > 0)
                     text += '\n';
-                text += translateResult[iData].translatedText;
+                text += translatedSentence.translatedText;
             }
             message.text = text;
             return Promise.resolve(translateResult);
@@ -255,12 +255,14 @@ export class PostProcessTranslator {
     constructor(noTranslatePatterns?: string[], wordDictionary?: { [id: string]: string }) {
         this.noTranslatePatterns = [];
         this.wordDictionary = wordDictionary;
-
+        
         if (wordDictionary) {
-            Object.keys(this.wordDictionary).forEach(key => {
-                Object.defineProperty(this.wordDictionary, key.toLowerCase(),
-                    Object.getOwnPropertyDescriptor(this.wordDictionary, key));
-                delete this.wordDictionary[key];
+            Object.keys(this.wordDictionary).forEach(word => {
+                if (word != word.toLowerCase()) {
+                    Object.defineProperty(this.wordDictionary, word.toLowerCase(),
+                        Object.getOwnPropertyDescriptor(this.wordDictionary, word));
+                    delete this.wordDictionary[word];
+                }
             });
             
         }
@@ -349,8 +351,9 @@ export class PostProcessTranslator {
             let trgWrd = trgMessage.substr(trgstartIndex, trgLength);
             let trgWrdIndex = trgWords.findIndex(wrd => wrd == trgWrd);
 
-            alignMap[srcWrdIndex] = trgWrdIndex;
-
+            if (srcWrdIndex != -1 && trgWrdIndex != -1) {
+                alignMap[srcWrdIndex] = trgWrdIndex;   
+            }
         });
         return alignMap;
     }
@@ -387,17 +390,16 @@ export class PostProcessTranslator {
         });
 
         let toBeReplacedByDictionary: string [] = [];
-        
         if (this.wordDictionary) {
-            Object.keys(this.wordDictionary).forEach(key => {
-                if (sourceMessage.toLowerCase().indexOf(key.toLowerCase()) != -1) {
-                    toBeReplacedByDictionary.push(key);
+            Object.keys(this.wordDictionary).forEach(word => {
+                if (sourceMessage.toLowerCase().indexOf(word.toLowerCase()) != -1) {
+                    toBeReplacedByDictionary.push(word);
                 }
             });
         }
         
         let alignments = alignment.trim().split(' ');
-       
+        
         let srcWords = this.splitSentence(sourceMessage, alignments);
         let trgWords = this.splitSentence(targetMessage, alignments, false);
         
@@ -430,7 +432,7 @@ export class PostProcessTranslator {
                     chrIndx += wrd.length + 1;
                     wrdIndx++;
                 }
-                
+                                
                 let wrdNoTranslate = srcWords.slice(srcIndx, srcIndx + newNoTranslateArrayLength)
                 
                 wrdNoTranslate.forEach(srcWrds => {
@@ -441,6 +443,8 @@ export class PostProcessTranslator {
             });
         }
 
+        console.log(toBeReplacedByDictionary);
+        
         if (toBeReplacedByDictionary.length > 0) {
             toBeReplacedByDictionary.forEach(word => {
                 let regExp = new RegExp(word, "i");
@@ -477,7 +481,7 @@ export class PostProcessTranslator {
         }
 
         if (containsNum) {
-            for (const numericMatch in numericMatches) {
+            for (const numericMatch of numericMatches) {
                 let srcIndx = srcWords.findIndex(wrd => wrd == numericMatch)
                 trgWords = this.keepSrcWrdInTranslation(alignMap, srcWords, trgWords, srcIndx);
             }
