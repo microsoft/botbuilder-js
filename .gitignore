@@ -295,3 +295,6 @@ __pycache__/
 
 #derived
 /test-runner/out
+
+#typescript map files
+*.js.map
