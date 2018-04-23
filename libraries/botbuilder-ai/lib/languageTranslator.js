@@ -91,11 +91,11 @@ class LanguageTranslator {
             })
                 .then((translateResult) => {
                 text = '';
-                for (const translatedSentence of translateResult) {
+                translateResult.forEach(translatedSentence => {
                     if (text.length > 0)
                         text += '\n';
                     text += translatedSentence.translatedText;
-                }
+                });
                 message.text = text;
                 return Promise.resolve(translateResult);
             });
@@ -248,7 +248,7 @@ class PostProcessTranslator {
             });
         }
         let sentenceWithoutSpaces = sentence.replace(/\s/g, '');
-        for (let alignData of alignments) {
+        alignments.forEach(alignData => {
             alignSplitWrds = outWrds;
             let wordIndexes = alignData.split('-')[wrdIndexInAlignment];
             let startIndex = parseInt(wordIndexes.split(':')[0]);
@@ -263,7 +263,7 @@ class PostProcessTranslator {
             if (sentenceWithoutSpaces.indexOf(subSentence) != -1) {
                 outWrds.push(wrd);
             }
-        }
+        });
         alignSplitWrds = outWrds;
         if (this.join("", alignSplitWrds) == this.join("", wrds)) {
             return alignSplitWrds;
@@ -341,20 +341,20 @@ class PostProcessTranslator {
                 let newChrLengthFromMatch = 0;
                 let srcIndx = -1;
                 let newNoTranslateArrayLength = 1;
-                for (let wrd of srcWords) {
+                srcWords.forEach(wrd => {
                     if (chrIndx == noTranslateStartChrIndex) {
                         srcIndx = wrdIndx;
                     }
                     if (srcIndx != -1) {
                         if (newChrLengthFromMatch + srcWords[wrdIndx].length >= noTranslateMatchLength) {
-                            break;
+                            return;
                         }
                         newNoTranslateArrayLength++;
                         newChrLengthFromMatch += srcWords[wrdIndx].length + 1;
                     }
                     chrIndx += wrd.length + 1;
                     wrdIndx++;
-                }
+                });
                 let wrdNoTranslate = srcWords.slice(srcIndx, srcIndx + newNoTranslateArrayLength);
                 wrdNoTranslate.forEach(srcWrds => {
                     trgWords = this.keepSrcWrdInTranslation(alignMap, srcWords, trgWords, srcIndx);
@@ -374,14 +374,14 @@ class PostProcessTranslator {
                 let newChrLengthFromMatch = 0;
                 let srcIndx = -1;
                 let newNoTranslateArrayLength = 1;
-                for (let wrd of srcWords) {
+                srcWords.forEach(wrd => {
                     chrIndx += wrd.length + 1;
                     wrdIndx++;
                     if (chrIndx == noTranslateStartChrIndex) {
                         srcIndx = wrdIndx;
-                        break;
+                        return;
                     }
-                }
+                });
                 let wrdNoTranslate = srcWords.slice(srcIndx, srcIndx + 1);
                 wrdNoTranslate.forEach(srcWrds => {
                     trgWords = this.replaceWordInDictionary(alignMap, srcWords, trgWords, srcIndx);
@@ -390,10 +390,10 @@ class PostProcessTranslator {
             });
         }
         if (containsNum) {
-            for (const numericMatch of numericMatches) {
+            numericMatches.forEach(numericMatch => {
                 let srcIndx = srcWords.findIndex(wrd => wrd == numericMatch);
                 trgWords = this.keepSrcWrdInTranslation(alignMap, srcWords, trgWords, srcIndx);
-            }
+            });
         }
         return this.join(" ", trgWords);
     }
