@@ -27,15 +27,16 @@ async function runProgram() {
         argvFragment = ['-h'];
     }
     args = minimist(argvFragment);
-    if (args.init || args.i) {
+    if (args.version || args.v) {
+        return process.stdout.write(require(path.join(__dirname, '../package.json')).version);
+    }
+
+    if (args.init) {
         const result = await initializeConfig();
         if (result) {
             process.stdout.write(`Successfully wrote ${process.cwd()}/.qnamakerrc`);
         }
         return;
-    }
-    if (args.version || args.v) {
-        return process.stdout.write(require(path.join(__dirname, '../package.json')).version);
     }
     
     if (args.kbid) {
@@ -241,7 +242,7 @@ async function validateArguments(serviceManifest) {
     let body = undefined;
     error.name = 'ArgumentError';
     if (!serviceManifest) {
-        error.message = 'The service does not exist';
+        error.message = 'The operation does not exist';
         throw error;
     }
 
@@ -324,9 +325,9 @@ function getOperation(verb, target) {
  */
 async function handleError(error) {
     process.stdout.write('\n' + chalk.red.bold(error + '\n'));
-    if (error.name === 'ArgumentError') {
+//    if (error.name === 'ArgumentError') {
         await help(args);
-    }
+//    }
     return 1;
 }
 
