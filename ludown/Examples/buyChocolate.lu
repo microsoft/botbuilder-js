@@ -1,8 +1,0 @@
-> reference to phrase lists for this bot
-
-[Phrase list definitions](./phraseLists.lu)
-
-# Buy chocolate
-- can I get some {ChocolateType=m&m}
-- I want some {ChocolateType=twix}
-- I would like to buy some {ChocolateType=kit kat}
