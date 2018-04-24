@@ -161,11 +161,13 @@ With the following options
 
 End-to-end example of a bot consisting of a LUIS module and a QnA Maker knowledge base module:
 
+```shell
 dispatch init -name mybot_dispatch -luisAuthoringKey <luis_authoring_key> -luisAuthoringRegion <region>
 dispatch add -name LuisChitChat -type luis -id <luis_app_id> -name <luis_app_name> -version <luis_app_version> -key <luis_app_authoring_key>
 dispatch add -name MyKnowledgeBase -type qna -id <qna_kb_id> -name <kb_name> -key <qna_maker_key>
 dispatch create
 dispatch eval -luisPredictingKey <azure_luis_key> -luisPredictingRegion <azure_luis_region>
+```
 
 The output is Summary.html file located in local file system directory where the commands were issued. It includes all the evaluation results and suggestions for improving the bot components.
 
@@ -173,17 +175,21 @@ The output is Summary.html file located in local file system directory where the
 
 Evaluate a LUIS model performing cross validation:
 
+```shell
 dispatch init -name mybot_dispatch -luisAuthoringKey <luis_authoring_key> -luisAuthoringRegion <region>
 dispatch add -name LuisChitChat -type luis -id <luis_app_id> -name <luis_app_name> -version <luis_app_version> -key <luis_app_authoring_key>
 dispatch create -hierarchical false
 dispatch eval -luisPredictingKey <azure_luis_key> -luisPredictingRegion <azure_luis_region>
+```
 
 The output, Summary.html, contains all the evaluation results. The file is located in local file system directory where the commands were issued.
 
-## Test a LUIS model using hold-out labeled test utterances
+## Test a LUIS model using test utterances
 
 Suppose the dispatcher model was already created following the steps of one of the above tasks. To test this model with a tab-delimitted text file run these commands:
 
+```shell
 dispatch test -testFilePath <text_file>
+```
 
 The output, Summary.html, contains all the evaluation results. The file is located in the location of the test file.
