@@ -1,8 +1,11 @@
 # Dispatch Command Line tool
+[![npm version](https://badge.fury.io/js/botdispatch.svg)](https://badge.fury.io/js/botdispatch) 
+Dispatch is a tool to create and evaluate LUIS model used to dispatch intent across multiple bot modules such as LUIS model(s), QnA knowledge base(s) and others (added to dispatch as a file type).
 
-[![npm version](https://badge.fury.io/js/botdispatch.svg)](https://badge.fury.io/js/botdispatch)
-
-Dispatch is a tool to create and evaluate LUIS model used to dispatch intent across multiple bot components such as LUIS model(s), QnA knowledge base(s) and others (added to dispatch as a file type - tab delimited file of intent and utterances).
+Use the Dispatch model in cases when:
+1. Your bot consists of multiple modules and you need assistance in routing user's utterances to these modules and evaluate the bot integration.
+2. Evaluate quality of intents classification of a single LUIS model.
+3. Create a text classification model from a TSV text file.
 
 ## Installation
 To install simply invoke npm 
@@ -90,6 +93,7 @@ With the following options
 | -bot                 | (optional) .bot file path         |
 | -dispatch            | (optional) .dispatch file path    |
 | -dataFolder          | (optional) Working directory for tool |
+| -hierarchical        | (optional) Set to true (default) for all tasks except for single LUIS model evaluation when this should be set to false |
 | -h                   | Output usage information |
 
 This command creates a brand new LUIS application.
@@ -113,6 +117,24 @@ With the following options
 
 This command updates existing LUIS application in .dispatch file.
 
+## Evaluating your dispatch model  
+
+This command will run cross validation evaluation on the dispatch model and generate a summary of the evaluation.    
+
+```shell
+dispatch eval [options]
+```
+
+With the following options.  If not given, the tool will prompt for the required information it needs to run model evaluation.
+
+|Option | Description|
+| ------ | ----------- |
+| -luisPredictingKey    | (optional, will be prompted) LUIS predicting key     |
+| -luisPredictingRegion | (optional, will be prompted) LUIS predicting region  |
+| -dispatch            | (optional) .dispatch file path    |
+| -dataFolder           | (optional) Output folder for tool |
+| -h, --help            | Output usage information|
+
 ## Testing your dispatch model  
 
 To test your dispatch model againsts test set, run
@@ -132,21 +154,36 @@ With the following options
 | -dataFolder          | (optional) Output folder for tool |
 | -h                   | Output usage information |
 
-## Evaluating your dispatch model  
 
-This command will run cross validation evaluation on the dispatch model and generate a summary of the evaluation.    
+# Common Tasks
 
-```shell
-dispatch evaluate [options]
-```
+## Create and evaluate bot dispatch
 
-With the following options.  If not given, the tool will prompt for the required information it needs to run model evaluation.
+End-to-end example of a bot consisting of a LUIS module and a QnA Maker knowledge base module:
 
-|Option | Description|
-| ------ | ----------- |
-| -luisPredictingKey    | (optional, will be prompted) LUIS predicting key     |
-| -luisPredictingRegion | (optional, will be prompted) LUIS predicting region  |
-| -dispatch            | (optional) .dispatch file path    |
-| -dataFolder           | (optional) Output folder for tool |
-| -h, --help            | Output usage information|
+dispatch init -name mybot_dispatch -luisAuthoringKey <luis_authoring_key> -luisAuthoringRegion <region>
+dispatch add -name LuisChitChat -type luis -id <luis_app_id> -name <luis_app_name> -version <luis_app_version> -key <luis_app_authoring_key>
+dispatch add -name MyKnowledgeBase -type qna -id <qna_kb_id> -name <kb_name> -key <qna_maker_key>
+dispatch create
+dispatch eval -luisPredictingKey <azure_luis_key> -luisPredictingRegion <azure_luis_region>
 
+The output is Summary.html file located in local file system directory where the commands were issued. It includes all the evaluation results and suggestions for improving the bot components.
+
+## Evaluate single LUIS model
+
+Evaluate a LUIS model performing cross validation:
+
+dispatch init -name mybot_dispatch -luisAuthoringKey <luis_authoring_key> -luisAuthoringRegion <region>
+dispatch add -name LuisChitChat -type luis -id <luis_app_id> -name <luis_app_name> -version <luis_app_version> -key <luis_app_authoring_key>
+dispatch create -hierarchical false
+dispatch eval -luisPredictingKey <azure_luis_key> -luisPredictingRegion <azure_luis_region>
+
+The output, Summary.html, contains all the evaluation results. The file is located in local file system directory where the commands were issued.
+
+## Test a LUIS model using hold-out labeled test utterances
+
+Suppose the dispatcher model was already created following the steps of one of the above tasks. To test this model with a tab-delimitted text file run these commands:
+
+dispatch test -testFilePath <text_file>
+
+The output, Summary.html, contains all the evaluation results. The file is located in the location of the test file.
