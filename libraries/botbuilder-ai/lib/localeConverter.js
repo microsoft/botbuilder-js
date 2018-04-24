@@ -150,18 +150,6 @@ class MicrosoftLocaleConverter {
             let dates = this.extractDates(message, fromLocale);
             let processedMessage = message;
             dates.forEach(date => {
-                // if (date.dateTimeObj.toDateString() == (new Date()).toDateString()) {
-                //     let convertedDate = this.mapLocaleToFunction[toLocale].timeFormat
-                //         .replace('hh', (date.dateTimeObj.getHours()).toLocaleString(undefined, {minimumIntegerDigits: 2}))
-                //         .replace('mm', (date.dateTimeObj.getMinutes()).toLocaleString(undefined, {minimumIntegerDigits: 2}));
-                //     processedMessage = processedMessage.replace(date.text, convertedDate)
-                // } else {
-                //     let convertedDate = this.mapLocaleToFunction[toLocale].dateFormat
-                //         .replace('yyyy', (date.dateTimeObj.getFullYear()).toLocaleString(undefined, {minimumIntegerDigits: 4}).replace(',', ''))
-                //         .replace('MM', (date.dateTimeObj.getMonth() + 1).toLocaleString(undefined, {minimumIntegerDigits: 2}))
-                //         .replace('dd', (date.dateTimeObj.getDate()).toLocaleString(undefined, {minimumIntegerDigits: 2}));
-                //     processedMessage = processedMessage.replace(date.text, convertedDate);
-                // }
                 if (date.type == 'time') {
                     let convertedDate = this.mapLocaleToFunction[toLocale].timeFormat
                         .replace('hh', (date.dateTimeObj.getHours()).toLocaleString(undefined, { minimumIntegerDigits: 2 }))
@@ -183,7 +171,7 @@ class MicrosoftLocaleConverter {
                         .replace('yyyy', (date.dateTimeObj.getFullYear()).toLocaleString(undefined, { minimumIntegerDigits: 4 }).replace(',', ''))
                         .replace('MM', (date.dateTimeObj.getMonth() + 1).toLocaleString(undefined, { minimumIntegerDigits: 2 }))
                         .replace('dd', (date.dateTimeObj.getDate()).toLocaleString(undefined, { minimumIntegerDigits: 2 }));
-                    let convertedDateTime = `${convertedTime} ${convertedDate}`;
+                    let convertedDateTime = `${convertedDate} ${convertedTime}`;
                     processedMessage = processedMessage.replace(date.text, convertedDateTime);
                 }
             });

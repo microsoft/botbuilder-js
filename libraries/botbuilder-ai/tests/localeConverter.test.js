@@ -132,7 +132,7 @@ describe('LocaleConverter', function () {
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(new LocaleConverter(timeSettings))
-        .test('half past 9 am 02/03/2010', '09:30 03/02/2010', 'should have converted the time and the date')
+        .test('half past 9 am 02/03/2010', '03/02/2010 09:30', 'should have converted the time and the date')
         .then(() => done());
     });
 
