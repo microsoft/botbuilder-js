@@ -362,7 +362,6 @@ class PostProcessTranslator {
                 });
             });
         }
-        console.log(toBeReplacedByDictionary);
         if (toBeReplacedByDictionary.length > 0) {
             toBeReplacedByDictionary.forEach(word => {
                 let regExp = new RegExp(word, "i");

@@ -443,8 +443,6 @@ export class PostProcessTranslator {
                 
             });
         }
-
-        console.log(toBeReplacedByDictionary);
         
         if (toBeReplacedByDictionary.length > 0) {
             toBeReplacedByDictionary.forEach(word => {

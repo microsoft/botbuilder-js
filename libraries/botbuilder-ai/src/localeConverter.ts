@@ -7,6 +7,7 @@
  */
 import { Middleware, TurnContext, ActivityTypes } from 'botbuilder';
 import * as DateTimeRecognizers from '@microsoft/recognizers-text-date-time';
+import * as moment from 'moment';
 
 export interface LocaleConverterSettings {
     toLocale: string,
@@ -130,21 +131,21 @@ class MicrosoftLocaleConverter implements ILocaleConverter {
 
         let model = new DateTimeRecognizers.DateTimeRecognizer(culture).getDateTimeModel();
         let results = model.parse(message);
-        let moment: Date;
+        let momentTime: Date;
         let foundDates: TextAndDateTime[] = [];
         results.forEach(result => {
             let resolutionValues = result.resolution["values"][0];
             let type = result.typeName.replace('datetimeV2.', '');
             if (type.includes('date') && !type.includes('range')) {
-                moment = new Date(new Date(resolutionValues["value"]).getTime() + new Date().getTimezoneOffset() * 60 * 1000 + 60 * 60 * 1000);
+                momentTime = moment(resolutionValues["value"]).toDate();
             } else if (type.includes('date') && type.includes('range')) {
-                moment = new Date(new Date(resolutionValues["start"]).getTime() + new Date().getTimezoneOffset() * 60 * 1000 + 60 * 60 * 1000);
+                momentTime = moment(resolutionValues["start"]).toDate();
             } else { // Must be a time-only result with no date
-                moment = new Date();
-                moment.setHours(parseInt(String(resolutionValues['value']).substr(0, 2)));
-                moment.setMinutes(parseInt(String(resolutionValues['value']).substr(3, 2)));
+                momentTime = new Date();
+                momentTime.setHours(parseInt(String(resolutionValues['value']).substr(0, 2)));
+                momentTime.setMinutes(parseInt(String(resolutionValues['value']).substr(3, 2)));
             }
-            let curDateTimeText = new TextAndDateTime(result.text, moment);
+            let curDateTimeText = new TextAndDateTime(result.text, momentTime);
             foundDates.push(curDateTimeText);
         });
         return foundDates;
