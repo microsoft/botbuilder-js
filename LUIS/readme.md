@@ -1,5 +1,7 @@
 # LUIS
 
+[![npm version](https://badge.fury.io/js/luis-apis.svg)](https://badge.fury.io/js/luis-apis)
+
 The LUIS apis tool allows communication with the LUIS endpoints via command line, node or browser project. 
 Any endpoint listed in the [documentation for the LUIS Programmatic APIs v2.0](https://westus.dev.cognitive.microsoft.com/docs/services/5890b47c39e2bb17b84a55ff/operations/5890b47c39e2bb052c5b9c2f)
 is also available using the cli or the library (for node and browser projects). 

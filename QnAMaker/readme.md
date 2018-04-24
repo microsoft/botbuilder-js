@@ -1,4 +1,6 @@
-# Project
+# QnAMaker
+
+[![npm version](https://badge.fury.io/js/qnamaker.svg)](https://badge.fury.io/js/qnamaker)
 
 QnAMaker is command line tool and library for interacting with QnAMaker service using the QnAMaker REST API
 
