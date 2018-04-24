@@ -75,6 +75,11 @@ async function writeOut(activities, args) {
  */
 async function runProgram() {
     const args = minimist(process.argv.slice(2));
+
+    if (args.version || args.v) {
+        return process.stdout.write(require(path.join(__dirname, '../package.json')).version);
+    }
+
     const fileContents = await getInput(args);
     if (fileContents) {
         const activities = await chatdown(fileContents, args);

@@ -18,6 +18,7 @@ chatdown <chat> --help
 | Argument| Description|
 |-------------| ------------------------- |
 | `<chatfile>` | The path of the chat file to be parsed. If omitted, stdin will be used |
+| `-v, --version` | show version |
 | `--help`    | Output the help to the console|
 
 ## .chat File Format
