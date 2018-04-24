@@ -5,7 +5,7 @@ Dispatch is a tool to create and evaluate LUIS model used to dispatch intent acr
 Use the Dispatch model in cases when:
 1. Your bot consists of multiple modules and you need assistance in routing user's utterances to these modules and evaluate the bot integration.
 2. Evaluate quality of intents classification of a single LUIS model.
-3. Create a text classification model from a TSV text file.
+3. Create a text classification model from text file(s).
 
 ## Installation
 To install simply invoke npm 
