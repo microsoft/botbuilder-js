@@ -1,7 +1,0 @@
-> this is just an example that shows how you can group per-language x locale lu files with a root file that ties them together.
-
-[None intent](./none.lu)
-
-[QnA pairs](./qna4.lu)
-
-[Change alarm](./changeAlarm.lu)
