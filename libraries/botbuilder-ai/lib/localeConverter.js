@@ -118,10 +118,10 @@ class MicrosoftLocaleConverter {
             let resolutionValues = result.resolution["values"][0];
             let type = result.typeName.replace('datetimeV2.', '');
             if (type.includes('date') && !type.includes('range')) {
-                moment = new Date(new Date(resolutionValues["value"]).getTime() + new Date().getTimezoneOffset() * 60 * 1000);
+                moment = new Date(new Date(resolutionValues["value"]).getTime() + new Date().getTimezoneOffset() * 60 * 1000 + 60 * 60 * 1000);
             }
             else if (type.includes('date') && type.includes('range')) {
-                moment = new Date(new Date(resolutionValues["start"]).getTime() + new Date().getTimezoneOffset() * 60 * 1000);
+                moment = new Date(new Date(resolutionValues["start"]).getTime() + new Date().getTimezoneOffset() * 60 * 1000 + 60 * 60 * 1000);
             }
             else {
                 moment = new Date();
