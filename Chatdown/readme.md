@@ -1,5 +1,7 @@
 # Chatdown
 
+[![npm version](https://badge.fury.io/js/chatdown.svg)](https://badge.fury.io/js/chatdown)
+
 Chatdown is a transcript generator which consumes a markdown file to generate activity transcripts. Generated transcript files are output to stdout.
 
 ## Installation
@@ -39,7 +41,7 @@ The conversation text represents markdown between the user and the bot.  Every t
 | --------------- | ------------------------------------------------------------ |
 |`[Typing]` | Inserts a typing activity into the transcript to signify that a user or a bot is typing. |
 |`[Delay=<milliseconds>]` | Delays the transcript by `<milliseconds>` |
-|`[AttachmentLayout=carousel|list]`| Specify how multiple attachments whould be dislpayed.  layout values are `carousel` or `list`|
+|`[AttachmentLayout=LayoutType]`| Specify how multiple attachments would be dislpayed. Layout types are `carousel` or `list`|
 
 ### Attachments
 To add an attachment you use `[Attachment=path contentPath]`.  The path can be a url or a local path (either absolute or relative to .chat file).  The content type is optional and if not passed will be inferred from the file extension, or you can pass it using shortcut or full mime type.
@@ -80,6 +82,7 @@ Some content types have shortcuts
 | *application/custom*  | `application/custom`                       |
 
 ### Example .chat
+Checkout the [Examples](.\Examples) folder for more samples.
 
 ```markdown
 user=Joe
@@ -114,7 +117,7 @@ Here's a form for you
 ### Basic use
 In the simplest form, a chatdown command looks like the following:
 ```bash
-chatdown sample.chat --out sample.transcript
+chatdown sample.chat > sample.transcript
 ```
 This will consume `sample.chat` and output `sample.transcript`
 

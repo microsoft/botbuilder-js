@@ -15,14 +15,14 @@ program.Command.prototype.unknownOption = function (flag) {
 program
     .name("msbot connect endpoint")
     .description('Connect the bot to an endpoint')
+    .option('-e, --endpoint <endpoint>', "url for the endpoint\n")
+    .option('-n, --name <name>', '(OPTIONAL) name of the endpoint')
+    .option('-a, --appId  <appid>', '(OPTIONAL) Microsoft AppId used for auth with the endpoint')
+    .option('-p, --appPassword <password>', '(OPTIONAL) Microsoft app password used for auth with the endpoint')
     .option('-b, --bot <path>', "path to bot file.  If omitted, local folder will look for a .bot file")
+    .option('--input <jsonfile>', "path to arguments in JSON format { id:'',name:'', ... }")
     .option('--secret <secret>', 'bot file secret password for encrypting service secrets')
-    .option('-n, --name <name>', 'name of the endpoint')
-    .option('-a, --appId  <appid>', 'Microsoft AppId used for auth with the endpoint')
-    .option('-p, --appPassword <password>', 'Microsoft app password used for auth with the endpoint')
-    .option('-e, --endpoint <endpoint>', "url for the endpoint")
     .option('--stdin', "arguments are passed in as JSON object via stdin")
-    .option('--input <jsonfile>', "arguments passed in as path to arguments in JSON format")
     .action((cmd, actions) => {
 });
 let args = program.parse(process.argv);
@@ -59,12 +59,16 @@ async function processConnectEndpointArgs(config) {
     if (!validurl.isWebUri(args.endpoint)) {
         throw new Error(`--endpoint ${args.endpoint} is not a valid url`);
     }
-    if (!args.hasOwnProperty('name'))
-        throw new Error("Bad or missing --name");
     if (args.appId && !utils_1.uuidValidate(args.appId))
         throw new Error("--appId is not valid");
-    if (args.appPassword && !args.appPassword)
-        throw new Error("Bad or missing --appPassword");
+    if (args.appPassword && args.appPassword.length == 0)
+        throw new Error("zero length --appPassword");
+    if (!args.hasOwnProperty('name')) {
+        if (args.appId)
+            args.name = `${args.endpoint} - ${args.appId}`;
+        else
+            args.name = args.endpoint;
+    }
     let idCount = 1;
     let id;
     while (true) {

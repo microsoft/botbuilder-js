@@ -1,6 +1,7 @@
 {
     "name": "test",
-    "secretKey": "b313011bd9752112d187bb10c6fd139c09dd1377d044d7db6607e253b352b6c75f5a3b417d640fe0f77435bd441fe626",
+    "description": "",
+    "secretKey": "",
     "services": [
         {
             "type": "endpoint",
@@ -8,7 +9,57 @@
             "endpoint": "http://localhost:3978/api/messages",
             "id": "http://localhost:3978/api/messages",
             "appId": "12313123123",
-            "appPassword": "75485ddac04befef1a392573b939fdd8"
+            "appPassword": "password"
+        },
+        {
+            "type": "endpoint",
+            "id": "1",
+            "name": "http://testbot.azurewebsites.net/api/messages",
+            "appId": null,
+            "appPassword": null,
+            "endpoint": "http://testbot.azurewebsites.net/api/messages"
+        },
+        {
+            "type": "abs",
+            "id": "testbot",
+            "name": "testbot",
+            "appId": "aff9b2b1356a48e9804e3379bcc2ae41"
+        },
+        {
+            "appId": "2f866487-55db-4631-a6e2-965f6cad7953",
+            "authoringKey": "4db5bf288edd4945822aeb124c59d8a5",
+            "version": "0.1",
+            "type": "luis",
+            "name": "TienTest",
+            "id": "2f866487-55db-4631-a6e2-965f6cad7953"
+        },
+        {
+            "appId": "d630d177-0346-43ce-a62b-7e23aa25a53c",
+            "authoringKey": "4db5bf288edd4945822aeb124c59d8a5",
+            "version": "0.1",
+            "type": "luis",
+            "name": "FonicaDispatchEn",
+            "id": "d630d177-0346-43ce-a62b-7e23aa25a53c"
+        },
+        {
+            "kbid": "f1d94084-40b9-429f-ac3a-73347ae99eeb",
+            "subscriptionKey": "a8d4e023a1274107bfeec2676412fc0c",
+            "type": "qna",
+            "name": "Fonica",
+            "id": "f1d94084-40b9-429f-ac3a-73347ae99eeb"
+        },
+        {
+            "type": "dispatch",
+            "name": "TienDispatch",
+            "id": "db20a28f-3c6b-4cd4-9b63-ee87c19b7b76",
+            "appId": "db20a28f-3c6b-4cd4-9b63-ee87c19b7b76",
+            "version": "Dispatch",
+            "authoringKey": "4db5bf288edd4945822aeb124c59d8a5",
+            "serviceIds": [
+                "2f866487-55db-4631-a6e2-965f6cad7953",
+                "d630d177-0346-43ce-a62b-7e23aa25a53c",
+                "f1d94084-40b9-429f-ac3a-73347ae99eeb"
+            ]
         }
     ]
 }

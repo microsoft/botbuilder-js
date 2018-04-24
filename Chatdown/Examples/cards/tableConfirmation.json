@@ -1,0 +1,98 @@
+﻿{
+  "$schema": "https://microsoft.github.io/AdaptiveCards/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.0",
+  "body": [
+    {
+      "speak": "<s>Serious Pie is a Pizza restaurant which is rated 9.3 by customers.</s>",
+      "type": "ColumnSet",
+      "columns": [
+        {
+          "type": "Column",
+          "size": "2",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "Contoso Cafe",
+              "weight": "bolder",
+              "size": "extraLarge"
+            },
+            {
+              "type": "TextBlock",
+              "text": "Book a table",
+              "wrap": true
+            }
+          ]
+        },
+        {
+          "type": "Column",
+          "size": "1",
+          "items": [
+            {
+              "type": "Image",
+              "url": "http://contososcubabot.azurewebsites.net/assets/steak.jpg",
+              "size": "auto"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "TextBlock",
+      "text": "Location:"
+    },
+    {
+      "type": "Input.Text",
+      "value": "Seattle",
+      "style": "text",
+      "maxLength": 0,
+      "id": "cafeLocation",
+      "speak": "Select a Location"
+    },
+    {
+      "type": "TextBlock",
+      "text": "Event date:"
+    },
+    {
+      "type": "Input.Text",
+      "value": "Tomorrow",
+      "id": "builtin.datetime.date",
+      "speak": "What event time?"
+    },
+    {
+      "type": "TextBlock",
+      "text": "Event time:"
+    },
+    {
+      "type": "Input.Text",
+      "value": "3PM",
+      "id": "builtin.datetime.time",
+      "speak": "What event time?"
+    },
+    {
+      "type": "TextBlock",
+      "text": "Party size:"
+    },
+    {
+      "type": "Input.Text",
+      "value": "3",
+      "id": "partySize",
+      "speak": "What time to start?"
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.Submit",
+      "title": "Book it",
+      "data": {
+        "confirmationList": "yes"
+      }
+    },
+    {
+      "type": "Action.Http",
+      "method": "POST",
+      "title": "Book on opentable",
+      "url": "www.opentable.com/"
+    }
+  ]
+}

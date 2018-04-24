@@ -1,4 +1,6 @@
-# Project
+# QnAMaker
+
+[![npm version](https://badge.fury.io/js/qnamaker.svg)](https://badge.fury.io/js/qnamaker)
 
 QnAMaker is command line tool and library for interacting with QnAMaker service using the QnAMaker REST API
 
@@ -22,7 +24,7 @@ QnA Maker cli for interacting with the QnA Maker api - © 2018 Microsoft Corpora
 
 |Commands|  |
 |----|----|
-| qnamaker create --in createKnowledgeBase.json --bot      |Creates a new knowledge base.|
+| qnamaker create --in createKnowledgeBase.json            |Creates a new knowledge base.|
 | qnamaker publish                                         |Publish all unpublished in the knowledgebase to the prod endpoint|
 | qnamaker update --in updateKnowledgeBase.json            |Add or delete QnA Pairs and / or URLs to an existing knowledge base.|
 | qnamaker get                                             |Downloads all the data associated with the specified knowledge base.|

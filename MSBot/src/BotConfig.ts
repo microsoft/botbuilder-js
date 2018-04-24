@@ -7,14 +7,15 @@ import * as path from 'path';
 import * as fsx from 'fs-extra';
 import { Enumerable, List, Dictionary } from 'linq-collections';
 import { encode } from 'punycode';
-import { IBotConfig, IConnectedService } from './schema';
+import { IBotConfig, IConnectedService, IDispatchService } from './schema';
 
 export enum ServiceType {
     Endpoint = "endpoint",
     AzureBotService = "abs",
     Luis = "luis",
     QnA = "qna",
-    Dispatch = 'dispatch'
+    Dispatch = 'dispatch',
+    File = "file"
 }
 
 interface internalBotConfig {
@@ -31,7 +32,7 @@ export class BotConfig implements IBotConfig {
 
     protected encryptedProperties: { [key: string]: string[]; } = {
         endpoint: ['appPassword'],
-        abs: ['appPassord'],
+        abs: ['appPassword'],
         luis: ['authoringKey', 'subscriptionKey'],
         qna: ['subscriptionKey'],
         dispatch: ['authoringKey', 'subscriptionKey']
@@ -73,6 +74,16 @@ export class BotConfig implements IBotConfig {
     public async Save(botpath?: string): Promise<void> {
         let hasSecret = (this.secretKey && this.secretKey.length > 0);
 
+        // make sure that all dispatch serviceIds still match services that are in the bot
+        for (let service of this.services) {
+            if (service.type == ServiceType.Dispatch) {
+                let dispatchService = <IDispatchService>service;
+                dispatchService.serviceIds = Enumerable.fromSource(dispatchService.serviceIds)
+                    .where(serviceId => Enumerable.fromSource(this.services).any(s => s.id == serviceId))
+                    .toArray();
+            }
+        }
+        
         if (hasSecret)
             this.encryptAll();
 

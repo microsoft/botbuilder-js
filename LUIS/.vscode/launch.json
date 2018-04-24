@@ -10,7 +10,7 @@
             "request": "launch",
             "name": "Launch Program",
             "program": "${workspaceFolder}\\bin\\luis",
-            "args": ["--!"]
+            "args": ["set", "-h"]
         }
     ]
 }

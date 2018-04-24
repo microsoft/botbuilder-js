@@ -1,7 +1,0 @@
-#changeAlarm
-~change an alarm
-~change {remTime} to {newTime}
-
-$newTime:datetimeV2
-
-$remTime:datetimeV2

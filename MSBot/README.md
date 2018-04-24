@@ -1,11 +1,13 @@
 ﻿# MSBot Command Line tool
 
+[![npm version](https://badge.fury.io/js/msbot.svg)](https://badge.fury.io/js/msbot)
+
 The msbot tool is a command line tool to create and manipulate a bot resources via a .bot. 
 
 
 # What is a .bot file?
 
-Bots usually consume lots of diverse services such as LUIS.ai, or QnMaker.com. When you are developing a bot there is no uniform place to store the the metadata about the services that are in use.  This prevents us from building tooling that looks at a bot as a whole.
+Bots usually consume lots of diverse services such as [LUIS.ai](http://luis.ai), or [QnaMaker.ai](http://qnamaker.ai). When you are developing a bot there is no uniform place to store the the metadata about the services that are in use.  This prevents us from building tooling that looks at a bot as a whole.
 
 To address this problem we have created a **.bot file** to act as the place to unify all of these services together to enable tooling.  For example: the new Bot Framework Emulator uses a the .bot file to create a unified view over the connected services your bot consumes.  
 
@@ -184,6 +186,33 @@ Here is an example invocation:
 msbot connect qna --secret EncryptItPlease --name "QnA Sauce" --kbid "cfbc14a3-9f69-4fb1-8882-e6f333691a2a" --subscriptionKey "cfbc14a3-9f69-4fb1-8882-e6f333691a2a"
 ```
 
+### Connecting to Bot Dispatch
+
+To connect your bot to bot dispatch definition you run
+
+```shell
+msbot connect dispatch [options]
+```
+
+With the following options
+
+|Option | Description|
+| ------ | ----------- |
+|-b, --bot <path>                     | path to bot file.  If omitted, local folder will look for a .bot file|
+|--secret <secret>                    | bot file secret password for encrypting service secrets|
+|-n, --name <name>                    | name for the dispatch|
+|-a, --appId <appid>                  | LUID AppId for the dispatch app|
+|-v, --version <version>              | version for the dispatch app, (example: 0.1)|
+|--subscriptionKey <subscriptionKey>  | subscription key used for querying the dispatch model|
+|--authoringKey <authoringkey>        | authoring key for using manipulating the dispatch model via the LUIS authoring API|
+|--stdin                              | arguments are passed in as JSON object via stdin|
+|--input <dispatchfile>               | arguments passed in as path to arguments in JSON format|
+
+Here is an example invocation:
+```shell
+msbot connect dispatch --input my.dispatch
+```
+
 ## Listing connected services
 
 To access the list of connected services you run
@@ -217,12 +246,6 @@ Example using id:
 ```shell
 msbot disconnect "339411fa-ac8d-47ad-8d92-4b083a2c5305"
 ```
-
-## Exporting a bot
-TBD
-
-## Cloning a bot
-TBD
 
 # Bot Secrets
 

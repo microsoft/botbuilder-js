@@ -5,12 +5,14 @@ const assert = require('assert');
 const fs = require('fs-extra');
 const path = require('path');
 const readline = require('readline');
+const readlineSync = require('readline-sync');
 const minimist = require('minimist');
 const chalk = require('chalk');
+const request = require('request-promise');
 
 const help = require('../lib/help');
 const luis = require('../lib');
-const {getServiceManifest} = require('../lib/utils/argsUtil');
+const { getServiceManifest } = require('../lib/utils/argsUtil');
 
 let args;
 
@@ -42,15 +44,53 @@ async function runProgram() {
         return process.stdout.write(require(path.join(__dirname, '../package.json')).version);
     }
     const config = await composeConfig();
-    const serviceManifest = getServiceManifest(args);
-    validateArguments(serviceManifest);
 
-    const requestBody = await getFileInput(args);
-    const result = await luis(config, serviceManifest, args, requestBody);
-    if (result.error) {
-        throw new Error(result.error.message);
+    // special command
+    if (args._[0] == "query") {
+        return await handleQueryCommand(args, config);
+    } if (args._[0] == "set") {
+        return await handleSetCommand(args, config);
+    } else {
+        const serviceManifest = getServiceManifest(args);
+        const requestBody = await validateArguments(serviceManifest);
+
+        if (serviceManifest.operation.name == "deleteApplication") {
+            if (!args.q) {
+                let getArgs = { _: ['get', 'application'] };
+                const getApplication = getServiceManifest(getArgs);
+                const result = await luis(config, getApplication, getArgs, {});
+                if (result.error) {
+                    throw new Error(result.error.message);
+                }
+                let answer = readlineSync.question(`Are you sure you want to delete the application ${result.name} (${result.id})? [no] `, { defaultResponse: 'no' });
+                if (answer.length == 0 || answer[0] != 'y') {
+                    return process.stdout.write('delete operation canceled');
+                }
+            }
+        }
+
+        const result = await luis(config, serviceManifest, args, requestBody);
+        if (result.error) {
+            throw new Error(result.error.message);
+        }
+
+        if (args.msbot &&
+            ((serviceManifest.operation.name == "addApplication") ||
+                (serviceManifest.operation.name == "getApplicationInfo") ||
+                (serviceManifest.operation.name == "importApplication"))) {
+            process.stdout.write(JSON.stringify({
+                type: "luis",
+                name: result.name,
+                id: result.id || result,
+                appId: result.id || result,
+                authoringKey: config.authoringKey,
+                subscriptionKey: config.authoringKey,
+                version: result.activeVersion || requestBody.initialVersionId
+            }, null, 2));
+        } else {
+            process.stdout.write(JSON.stringify(result, null, 2));
+        }
     }
-    process.stdout.write(JSON.stringify(result, null, 2));
 }
 
 /**
@@ -113,7 +153,7 @@ async function initializeConfig() {
     } catch (e) {
         return false;
     }
-    await fs.writeJson(path.join(process.cwd(), '.luisrc'), config, {spaces: 2});
+    await fs.writeJson(path.join(process.cwd(), '.luisrc'), config, { spaces: 2 });
     return true;
 }
 
@@ -139,7 +179,7 @@ async function getFileInput(args) {
  * @returns {Promise<*>}
  */
 async function composeConfig() {
-    const {LUIS_APP_ID, LUIS_AUTHORING_KEY, LUIS_VERSION_ID, LUIS_ENDPOINT_BASE_PATH} = process.env;
+    const { LUIS_APP_ID, LUIS_AUTHORING_KEY, LUIS_VERSION_ID, LUIS_ENDPOINT_BASE_PATH } = process.env;
 
     const {
         appId: args_appId,
@@ -178,7 +218,7 @@ function validateConfig(config) {
     // not all operations require these to be present.
     // Validation of specific params are done in the
     // ServiceBase.js
-    const {authoringKey, endpointBasePath} = config;
+    const { authoringKey, endpointBasePath } = config;
     const messageTail = `is missing from the configuration.\n\nDid you run ${chalk.cyan.bold('luis --init')} yet?`;
 
     assert(typeof authoringKey === 'string', `The authoringKey  ${messageTail}`);
@@ -190,15 +230,17 @@ function validateConfig(config) {
  *
  * @param serviceManifest
  */
-function validateArguments(serviceManifest) {
+async function validateArguments(serviceManifest) {
     let error = new Error();
+    let body = undefined;
+
     error.name = 'ArgumentError';
     if (!serviceManifest) {
         error.message = 'Bad or missing arguments\n';
         throw error;
     }
 
-    const {operation} = serviceManifest;
+    const { operation } = serviceManifest;
     if (!operation) {
         error.message = 'The operation does not exist\n';
 
@@ -208,18 +250,27 @@ function validateArguments(serviceManifest) {
     const entitySpecified = typeof args.in === 'string';
     const entityRequired = !!operation.entityName;
 
-    if (!entityRequired && entitySpecified) {
-        error.message = `The ${operation.name} operation does not accept an input\n`;
-
-        throw error;
+    if (entityRequired) {
+        if (entitySpecified) {
+            body = await getFileInput(args);
+        }
+        else {
+            // make up a request body from command line args
+            switch (serviceManifest.operation.name) {
+                case "publishApplication":
+                    body = {
+                        versionId: args.versionId,
+                        isStaging: args.staging === true,
+                        region: args.region
+                    };
+                    break;
+                default:
+                    error.message = `The ${operation.name} requires an input of type: ${operation.entityType}`;
+                    throw error;
+            }
+        }
     }
-
-    if (entityRequired && !entitySpecified) {
-        error.message = `The ${operation.name} requires an input of type: ${operation.entityType}\n`;
-
-        throw error;
-    }
-
+    return body;
     // Note that the ServiceBase will validate params that may be required.
 }
 
@@ -235,6 +286,104 @@ async function handleError(error) {
         await help(args);
     }
     return 1;
+}
+
+async function handleQueryCommand(args, config) {
+    let query = args.q || args.question;
+    if (!query) {
+        process.stdout.write(chalk.red.bold(`missing -q\n`));
+        return help(args);
+    }
+    let appId = args.appId || config.appId;
+    if (!appId) {
+        process.stdout.write(chalk.red.bold(`missing --appid\n`));
+        return help(args);
+    }
+
+    let subscriptionKey = args.subscriptionKey || config.authoringKey;
+    if (!subscriptionKey) {
+        process.stdout.write(chalk.red.bold(`missing --subscriptionKey\n`));
+        return help(args);
+    }
+    let region = args.region || config.region;
+    if (!region) {
+        process.stdout.write(chalk.red.bold(`missing --region\n`));
+        return help(args);
+    }
+
+    if (query && appId && subscriptionKey && region) {
+        var options = {
+            uri: `https://${region}.api.cognitive.microsoft.com/luis/v2.0/apps/${appId}`,
+            method: "GET",
+            qs: {  // Query string like ?key=value&...
+                "subscription-key": `${subscriptionKey}`,
+                verbose: true,
+                timezoneOffset: 0,
+                q: `${query}`
+            },
+            json: true
+        }
+
+        let result = await request(options);
+        process.stdout.write(JSON.stringify(result, null, 2));
+        return;
+    }
+    return help(args);
+}
+
+async function handleSetCommand(args, config) {
+    let target = args._.length >= 2 ? args._[1].toLowerCase() : undefined;
+    if (!target || (target != 'application' && target != 'version' && target != 'app')) {
+        process.stdout.write(chalk.red.bold(`missing .luisrc property name: [application|version|authoringKey|endpoint]\n`));
+        return help(args);
+    }
+
+    let targetName = (args._.length >= 3) ? args._.slice(2).join(' ').toLowerCase().trim() : undefined;
+    if (!targetName) {
+        process.stdout.write(chalk.red.bold(`missing the value\n`));
+        return help(args);
+    }
+
+    switch (target) {
+        case 'endpoint':
+        case 'endpointbasepath':
+            config.endpointBasePath = targetName;
+            break;
+            
+        case 'authoringkey':
+            config.authoringKey = targetName;
+            break;
+
+        case 'app':
+        case 'application':
+            let listAppsArgs = { _: ['list', 'applications'] };
+            const listApplication = getServiceManifest(listAppsArgs);
+            let results = await luis(config, listApplication, listAppsArgs, {});
+            if (results.error) {
+                throw new Error(result.error.message);
+            }
+            let found = false;
+            for (let app of results) {
+                if (app.name.toLowerCase() == targetName || app.id.toLowerCase() == targetName) {
+                    config.appId = app.id;
+                    found = true;
+                    break;
+                }
+            }
+            if (!found)
+                throw new Error(`Did not find an application with id or name of '${targetName}'`);
+            break;
+
+        case 'versionid':
+        case 'version':
+            config.versionId = args._[2].toString();
+            break;
+
+        default:
+            return help(args);
+    }
+    await fs.writeJson(path.join(process.cwd(), '.luisrc'), config, { spaces: 2 });
+    return true;
 }
 
 runProgram()
