@@ -19,11 +19,11 @@ program
 program
     .command('secret', 'set or clear the secret for a .bot file');
 
-program
-    .command('export', 'export all connected services');
+// program
+//     .command('export', 'export all connected services');
 
-program
-    .command('clone', 'create a new .bot file based on another .bot file');
+// program
+//     .command('clone', 'create a new .bot file based on another .bot file');
 
 program
     .command('connect <service>', 'connect to a resource (Luis/Qna/Azure/...) used by the bot');
