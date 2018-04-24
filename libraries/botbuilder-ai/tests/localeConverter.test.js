@@ -123,6 +123,19 @@ describe('LocaleConverter', function () {
         })
     });
 
+    it('should support converting time and dates', function (done) {
+        
+        let timeSettings = {
+            fromLocale: 'en-us',
+            toLocale: 'fr-fr',
+        }
+
+        const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
+        .use(new LocaleConverter(timeSettings))
+        .test('half past 9 am 02/03/2010', '09:30 03/02/2010', 'should have converted the time and the date')
+        .then(() => done());
+    });
+
     it('should support converting time only', function (done) {
         
         let timeSettings = {

@@ -114,22 +114,30 @@ class MicrosoftLocaleConverter {
         let model = new DateTimeRecognizers.DateTimeRecognizer(culture).getDateTimeModel();
         let results = model.parse(message);
         let momentTime;
+        let type;
         let foundDates = [];
         results.forEach(result => {
             let resolutionValues = result.resolution["values"][0];
             let type = result.typeName.replace('datetimeV2.', '');
-            if (type.includes('date') && !type.includes('range')) {
+            if (type.includes('date') && type.includes('time')) {
                 momentTime = moment(resolutionValues["value"]).toDate();
+                type = 'datetime';
+            }
+            else if (type.includes('date') && !type.includes('range')) {
+                momentTime = moment(resolutionValues["value"]).toDate();
+                type = 'date';
             }
             else if (type.includes('date') && type.includes('range')) {
                 momentTime = moment(resolutionValues["start"]).toDate();
+                type = 'date';
             }
             else {
                 momentTime = new Date();
                 momentTime.setHours(parseInt(String(resolutionValues['value']).substr(0, 2)));
                 momentTime.setMinutes(parseInt(String(resolutionValues['value']).substr(3, 2)));
+                type = 'time';
             }
-            let curDateTimeText = new TextAndDateTime(result.text, momentTime);
+            let curDateTimeText = new TextAndDateTime(result.text, momentTime, type);
             foundDates.push(curDateTimeText);
         });
         return foundDates;
@@ -142,18 +150,41 @@ class MicrosoftLocaleConverter {
             let dates = this.extractDates(message, fromLocale);
             let processedMessage = message;
             dates.forEach(date => {
-                if (date.dateTimeObj.toDateString() == (new Date()).toDateString()) {
+                // if (date.dateTimeObj.toDateString() == (new Date()).toDateString()) {
+                //     let convertedDate = this.mapLocaleToFunction[toLocale].timeFormat
+                //         .replace('hh', (date.dateTimeObj.getHours()).toLocaleString(undefined, {minimumIntegerDigits: 2}))
+                //         .replace('mm', (date.dateTimeObj.getMinutes()).toLocaleString(undefined, {minimumIntegerDigits: 2}));
+                //     processedMessage = processedMessage.replace(date.text, convertedDate)
+                // } else {
+                //     let convertedDate = this.mapLocaleToFunction[toLocale].dateFormat
+                //         .replace('yyyy', (date.dateTimeObj.getFullYear()).toLocaleString(undefined, {minimumIntegerDigits: 4}).replace(',', ''))
+                //         .replace('MM', (date.dateTimeObj.getMonth() + 1).toLocaleString(undefined, {minimumIntegerDigits: 2}))
+                //         .replace('dd', (date.dateTimeObj.getDate()).toLocaleString(undefined, {minimumIntegerDigits: 2}));
+                //     processedMessage = processedMessage.replace(date.text, convertedDate);
+                // }
+                if (date.type == 'time') {
                     let convertedDate = this.mapLocaleToFunction[toLocale].timeFormat
                         .replace('hh', (date.dateTimeObj.getHours()).toLocaleString(undefined, { minimumIntegerDigits: 2 }))
                         .replace('mm', (date.dateTimeObj.getMinutes()).toLocaleString(undefined, { minimumIntegerDigits: 2 }));
                     processedMessage = processedMessage.replace(date.text, convertedDate);
                 }
-                else {
+                else if (date.type == 'date') {
                     let convertedDate = this.mapLocaleToFunction[toLocale].dateFormat
                         .replace('yyyy', (date.dateTimeObj.getFullYear()).toLocaleString(undefined, { minimumIntegerDigits: 4 }).replace(',', ''))
                         .replace('MM', (date.dateTimeObj.getMonth() + 1).toLocaleString(undefined, { minimumIntegerDigits: 2 }))
                         .replace('dd', (date.dateTimeObj.getDate()).toLocaleString(undefined, { minimumIntegerDigits: 2 }));
                     processedMessage = processedMessage.replace(date.text, convertedDate);
+                }
+                else {
+                    let convertedTime = this.mapLocaleToFunction[toLocale].timeFormat
+                        .replace('hh', (date.dateTimeObj.getHours()).toLocaleString(undefined, { minimumIntegerDigits: 2 }))
+                        .replace('mm', (date.dateTimeObj.getMinutes()).toLocaleString(undefined, { minimumIntegerDigits: 2 }));
+                    let convertedDate = this.mapLocaleToFunction[toLocale].dateFormat
+                        .replace('yyyy', (date.dateTimeObj.getFullYear()).toLocaleString(undefined, { minimumIntegerDigits: 4 }).replace(',', ''))
+                        .replace('MM', (date.dateTimeObj.getMonth() + 1).toLocaleString(undefined, { minimumIntegerDigits: 2 }))
+                        .replace('dd', (date.dateTimeObj.getDate()).toLocaleString(undefined, { minimumIntegerDigits: 2 }));
+                    let convertedDateTime = `${convertedTime} ${convertedDate}`;
+                    processedMessage = processedMessage.replace(date.text, convertedDateTime);
                 }
             });
             return Promise.resolve(processedMessage);
@@ -173,9 +204,10 @@ class DateAndTimeLocaleFormat {
     }
 }
 class TextAndDateTime {
-    constructor(text, dateTimeObj) {
+    constructor(text, dateTimeObj, type) {
         this.text = text;
         this.dateTimeObj = dateTimeObj;
+        this.type = type;
     }
 }
 //# sourceMappingURL=localeConverter.js.map
