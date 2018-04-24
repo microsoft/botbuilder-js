@@ -1,12 +1,12 @@
 const Table = require('cli-table2');
 const chalk = require('chalk');
+const windowSize = require('window-size');
 
 module.exports = function () {
     process.stdout.write('\nChatdown cli tool used to parse chat dialogs into transcripts\n\n© 2018 Microsoft Corporation\n\n');
     process.stdout.write(chalk.cyan.bold(`chatdown [chat] [--help] [--version]\n\n`));
-    let x = 'getWindowSize' in process.stdout ? process.stdout.getWindowSize()[0] : 50;
     let left = 20;
-    let right = x - left - 3; // 3 is for 3 vertical bar characters
+    let right = windowSize.width - left - 3; // 3 is for 3 vertical bar characters
     const table = new Table({
         head: [chalk.bold('Argument'), chalk.bold('Description')],
         // don't use lines for table
