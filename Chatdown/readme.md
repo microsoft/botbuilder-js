@@ -18,6 +18,7 @@ chatdown <chat> --help
 | Argument| Description|
 |-------------| ------------------------- |
 | `<chatfile>` | The path of the chat file to be parsed. If omitted, stdin will be used |
+| `-v, --version` | show version |
 | `--help`    | Output the help to the console|
 
 ## .chat File Format
@@ -124,7 +125,7 @@ This will consume `sample.chat` and output `sample.transcript`
 ### Using stdin
 stdin can be used as an alternative to specifying an input file.
 ```bash
-(echo user=Joe && echo bot=LulaBot && echo Joe: Hi! && echo LulaBot: Hi there!) | chatdown --out sample.transcript
+(echo user=Joe && echo bot=LulaBot && echo Joe: Hi! && echo LulaBot: Hi there!) | chatdown > sample.transcript
 ```
 
 ### Using stdout
