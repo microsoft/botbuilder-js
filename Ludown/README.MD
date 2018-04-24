@@ -239,29 +239,28 @@ Note: By default any entity that is left undescribed in a pattern will be mapped
 
 ### Question and Answer pairs
 .lu file (and the parser) supports question and answer definitions as well. You can this notation to describe them
-\# ?\<question\>
+\# ? Question
 \[list of question variations]
-\```
-	\<answer\>
-\```
+```markdown
+	Answer
+```
 
 Here's an example of question and answer definitions. The LUDown tool will automatically separate question and answers into a qnamaker JSON file that you can then use to create your new [QnaMaker.ai](http://qnamaker.ai) knowledge base article.
 
 ```markdown
 > # QnA Definitions
-> This is a QnA definition. Follows # ? Question: \<list of questions\> \```markdown \<Answer> ``` format
-
+> 
 ### ? who is the ceo?
-	\```markdown
+	```markdown
 	You can change the default message if you use the QnAMakerDialog. 
 	See [this link](https://docs.botframework.com/en-us/azure-bot-service/templates/qnamaker/#navtitle) for details. 
-	\```
+	```
 
 ### ? How do I programmatically update my KB?
-	\```markdown
+	```markdown
 	You can use our REST apis to manage your KB. 
 	\#1. See here for details: https://westus.dev.cognitive.microsoft.com/docs/services/58994a073d9e04097c7ba6fe/operations/58994a073d9e041ad42d9baa
-	\```
+	```
 ```
 
 You can add multiple questions to the same answer by simply additing variations to questions. Here's an example
@@ -269,9 +268,9 @@ You can add multiple questions to the same answer by simply additing variations 
 ```
 ### ? Who is your ceo?
 - get me your ceo info
-	\```markdown
-	Vishwac
-	\```
+	```
+		Vishwac
+	```
 ```
 
 ### External references
