@@ -1,6 +1,6 @@
 {
   "name": "luis-apis",
-  "version": "1.0.16",
+  "version": "1.0.17",
   "description": "Tooling for connectivity with LUIS APIs",
   "main": "lib/api/index.js",
   "bin": {
@@ -34,7 +34,8 @@
     "node-fetch": "^2.0.0",
     "readline-sync": "^1.4.9",
     "request": "^2.85.0",
-    "request-promise": "^4.2.2"
+    "request-promise": "^4.2.2",
+    "window-size": "^1.1.0"
   },
   "devDependencies": {
     "eslint": "^4.18.1",

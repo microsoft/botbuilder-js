@@ -3,6 +3,7 @@ const chalk = require('chalk');
 const path = require('path');
 const fs = require('fs');
 const manifest = require('./api/qnamaker');
+const windowSize = require('window-size');
 
 /**
  * Displays help content from the arguments.
@@ -10,7 +11,6 @@ const manifest = require('./api/qnamaker');
  * @returns {Promise<void>}
  */
 module.exports = async function help(args, serviceManifest) {
-    let x = 'getWindowSize' in process.stdout ? process.stdout.getWindowSize()[0] : 250;
     process.stdout.write('\nQnA Maker cli for interacting with the QnA Maker api - © 2018 Microsoft Corporation\n\n');
     let helpContents;
     if (serviceManifest) {
@@ -23,13 +23,13 @@ module.exports = async function help(args, serviceManifest) {
     }
     helpContents.forEach(helpContent => {
         const rows = helpContent.table[0].length;
-        const colWidth = Math.floor(x / 4);
+        const colWidth = Math.floor(windowSize.width / 4);
         const colWidths = [colWidth];
         if (rows === 2) {
-            colWidths.push(~~((x * .95) - colWidth));
+            colWidths.push(~~((windowSize.width * .95) - colWidth));
         }
         if (rows === 3) {
-            colWidths.push(~~((x * .30) - colWidth / 2), ~~((x * .65) - colWidth / 2));
+            colWidths.push(~~((windowSize.width * .30) - colWidth / 2), ~~((windowSize.width * .65) - colWidth / 2));
         }
 
         const table = new Table({

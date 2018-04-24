@@ -3,6 +3,7 @@ const chalk = require('chalk');
 const fs = require('fs');
 const path = require('path');
 const manifest = require('./api/luis');
+const windowSize = require('window-size');
 const { getServiceManifest, getCategoryManifest, getNamedArgsMap } = require('./utils/argsUtil');
 
 /**
@@ -13,7 +14,6 @@ const { getServiceManifest, getCategoryManifest, getNamedArgsMap } = require('./
  */
 module.exports = async function help(args) {
 
-    let x = 'getWindowSize' in process.stdout ? process.stdout.getWindowSize()[0] : 250;
     process.stdout.write('LUIS Command Line Interface - © 2018 Microsoft Corporation\n\n');
     const helpContents = await getHelpContents(args);
 
@@ -24,7 +24,7 @@ module.exports = async function help(args) {
             for (let row in hc.table) {
                 let len = hc.table[row][0].length;
                 if (len > leftColWidth) {
-                    leftColWidth = Math.min(len, Math.floor(x / 3));
+                    leftColWidth = Math.min(len, Math.floor(windowSize.width / 3));
                 }
             }
             let i = rows - 1;
@@ -37,7 +37,7 @@ module.exports = async function help(args) {
             const rows = helpContent.table[0].length;
             let i = rows - 1;
 
-            const colWidthsFor2On = ((x * .85) - leftColWidth) / i;
+            const colWidthsFor2On = ((windowSize.width * .85) - leftColWidth) / i;
             const colWidths = [leftColWidth];
 
             while (i--) {
