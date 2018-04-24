@@ -1,5 +1,7 @@
 # Dispatch Command Line tool
 
+[![npm version](https://badge.fury.io/js/botdispatch.svg)](https://badge.fury.io/js/botdispatch)
+
 Dispatch is a tool to create and evaluate LUIS model used to dispatch intent across multiple bot components such as LUIS model(s), QnA knowledge base(s) and others (added to dispatch as a file type - tab delimited file of intent and utterances).
 
 ## Installation

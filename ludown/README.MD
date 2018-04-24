@@ -1,4 +1,7 @@
 # LUDown
+
+[![npm version](https://badge.fury.io/js/ludown.svg)](https://badge.fury.io/js/ludown)
+
 .lu files help describe language understanding components for your bot. LUDown is a command line tool that helps convert .lu file(s) into JSON and TSV files that you can then use to create your [LUIS](http://luis.ai) app or [QnAMaker](http://qnamaker.ai) Knowledge base. 
 
 The .lu file and the LUDown tool was born to serve few use cases:
