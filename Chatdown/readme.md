@@ -125,7 +125,7 @@ This will consume `sample.chat` and output `sample.transcript`
 ### Using stdin
 stdin can be used as an alternative to specifying an input file.
 ```bash
-(echo user=Joe && echo bot=LulaBot && echo Joe: Hi! && echo LulaBot: Hi there!) | chatdown --out sample.transcript
+(echo user=Joe && echo bot=LulaBot && echo Joe: Hi! && echo LulaBot: Hi there!) | chatdown > sample.transcript
 ```
 
 ### Using stdout
