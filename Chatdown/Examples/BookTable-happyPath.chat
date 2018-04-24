@@ -1,0 +1,18 @@
+﻿user=vishwac
+bot=cafebot
+
+user: book a table
+bot: Did you have a location in mind?
+bot: [Attachment=cards/AskForLocation.json adaptivecard]
+user: How about seattle?
+bot: Did you have a date in mind?
+user: tomorrow
+bot: What time? 
+user: 3PM
+bot: How many guests? 
+user: 3
+bot: Ok. Should I go ahead and book a table for 3 at seattle for tomorrow at 3PM? 
+bot: [Attachment=cards/tableConfirmation.json adaptivecard]
+user: yes
+bot: [Typing][Delay=3000]
+Your table is booked. Reference number: #K89HG38SZ
