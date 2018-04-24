@@ -1,0 +1,67 @@
+﻿{
+  "$schema": "https://microsoft.github.io/AdaptiveCards/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.0",
+  "body": [
+    {
+      "speak": "<s>Serious Pie is a Pizza restaurant which is rated 9.3 by customers.</s>",
+      "type": "ColumnSet",
+      "columns": [
+        {
+          "type": "Column",
+          "size": "2",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "Contoso Cafe",
+              "weight": "bolder",
+              "size": "extraLarge"
+            }
+          ]
+        },
+        {
+          "type": "Column",
+          "size": "1",
+          "items": [
+            {
+              "type": "Image",
+              "url": "http://contososcubabot.azurewebsites.net/assets/steak.jpg",
+              "size": "auto"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "TextBlock",
+      "text": "What city:"
+    },
+    {
+      "type": "Input.ChoiceSet",
+      "id": "cafeLocation",
+      "style": "compact",
+      "isMultiSelect": false,
+      "choices": [
+        {
+          "title": "Seattle",
+          "value": "seattle",
+          "isSelected": true
+        },
+        {
+          "title": "Redmond",
+          "value": "redmond"
+        },
+        {
+          "title": "Renton",
+          "value": "renton"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.Submit",
+      "title": "Ok"
+    }
+  ]
+}

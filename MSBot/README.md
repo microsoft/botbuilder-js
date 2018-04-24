@@ -247,12 +247,6 @@ Example using id:
 msbot disconnect "339411fa-ac8d-47ad-8d92-4b083a2c5305"
 ```
 
-## Exporting a bot
-TBD
-
-## Cloning a bot
-TBD
-
 # Bot Secrets
 
 It is useful for tools like the emulator to have secure access to keys it needs to work with the services that are connected to the bot.  The MSBot tool supports this by allowing you to specify a **secret** which is a password that is used to encrypt/decrypt secure keys in the .bot file.
