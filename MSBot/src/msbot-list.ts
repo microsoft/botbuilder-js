@@ -1,11 +1,8 @@
-import * as os from 'os';
-import * as process from 'process';
-import * as path from 'path';
-import * as program from 'commander';
 import * as chalk from 'chalk';
-import { BotConfig, ServiceType } from './BotConfig';
+import * as program from 'commander';
+import * as process from 'process';
+import { BotConfig } from './BotConfig';
 import { IBotConfig } from './schema';
-import { Enumerable, List, Dictionary } from 'linq-collections';
 
 program.Command.prototype.unknownOption = function (flag: any) {
     console.error(chalk.default.redBright(`Unknown arguments: ${flag}`));
@@ -18,8 +15,8 @@ interface ListArgs {
 }
 
 program
-    .name("msbot list")
-    .option('-b, --bot <path>', "path to bot file.  If omitted, local folder will look for a .bot file")
+    .name('msbot list')
+    .option('-b, --bot <path>', 'path to bot file.  If omitted, local folder will look for a .bot file')
     .option('--secret <secret>', 'bot file secret password for encrypting service secrets')
     .action((cmd, actions) => {
     });
@@ -30,14 +27,14 @@ if (!parsed.bot) {
     BotConfig.LoadBotFromFolder(process.cwd(), parsed.secret)
         .then(processListArgs)
         .catch((reason) => {
-            console.error(chalk.default.redBright(reason.toString().split("\n")[0]));
+            console.error(chalk.default.redBright(reason.toString().split('\n')[0]));
             program.help();
         });
 } else {
     BotConfig.Load(parsed.bot, parsed.secret)
         .then(processListArgs)
         .catch((reason) => {
-            console.error(chalk.default.redBright(reason.toString().split("\n")[0]));
+            console.error(chalk.default.redBright(reason.toString().split('\n')[0]));
             program.help();
         });
 }

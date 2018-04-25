@@ -1,22 +1,11 @@
+import * as crypto from 'crypto';
+import * as fsx from 'fs-extra';
+import { Enumerable, List } from 'linq-collections';
+import * as path from 'path';
 import * as process from 'process';
 import * as uuid from 'uuid';
-import * as crypto from 'crypto';
-import * as url from 'url';
-import * as validurl from 'valid-url';
-import * as path from 'path';
-import * as fsx from 'fs-extra';
-import { Enumerable, List, Dictionary } from 'linq-collections';
-import { encode } from 'punycode';
-import { IBotConfig, IConnectedService, IDispatchService } from './schema';
-
-export enum ServiceType {
-    Endpoint = "endpoint",
-    AzureBotService = "abs",
-    Luis = "luis",
-    QnA = "qna",
-    Dispatch = 'dispatch',
-    File = "file"
-}
+import { BotConfigModel } from './models';
+import { IBotConfig, IConnectedService, IDispatchService, ServiceType } from './schema';
 
 interface internalBotConfig {
     location?: string;
@@ -24,7 +13,8 @@ interface internalBotConfig {
     secretValidated: boolean;
 }
 
-export class BotConfig implements IBotConfig {
+export class BotConfig extends BotConfigModel {
+    public secretKey: string = '';
     // internal is not serialized
     private internal: internalBotConfig = {
         secretValidated: false
@@ -38,12 +28,8 @@ export class BotConfig implements IBotConfig {
         dispatch: ['authoringKey', 'subscriptionKey']
     };
 
-    public name: string = '';
-    public secretKey: string = '';
-    public description: string = '';
-    public services: IConnectedService[] = [];
-
     constructor(secret?: string) {
+        super();
         this.internal.secret = secret;
     }
 
@@ -63,7 +49,7 @@ export class BotConfig implements IBotConfig {
         Object.assign(bot, await fsx.readJson(botpath));
         bot.internal.location = botpath;
 
-        let hasSecret = (secret && bot.secretKey && bot.secretKey.length > 0);
+        let hasSecret = ( secret && bot.secretKey && bot.secretKey.length > 0 );
         if (hasSecret)
             bot.decryptAll();
 
@@ -72,7 +58,7 @@ export class BotConfig implements IBotConfig {
 
     // save the config file
     public async Save(botpath?: string): Promise<void> {
-        let hasSecret = (this.secretKey && this.secretKey.length > 0);
+        let hasSecret = ( this.secretKey && this.secretKey.length > 0 );
 
         // make sure that all dispatch serviceIds still match services that are in the bot
         for (let service of this.services) {
@@ -83,7 +69,7 @@ export class BotConfig implements IBotConfig {
                     .toArray();
             }
         }
-        
+
         if (hasSecret)
             this.encryptAll();
 
@@ -126,7 +112,7 @@ export class BotConfig implements IBotConfig {
             }
             newService.name = name;
 
-            this.services.push(newService);
+            this.services.push(BotConfigModel.serviceFromJSON(newService));
         }
     }
 
@@ -149,8 +135,8 @@ export class BotConfig implements IBotConfig {
         let encryptedProperties = this.getEncryptedProperties(<ServiceType>service.type);
         for (let i = 0; i < encryptedProperties.length; i++) {
             let prop = encryptedProperties[i];
-            let val = <string>(<any>service)[prop];
-            (<any>service)[prop] = this.encryptValue(val);
+            let val = <string>( <any>service )[prop];
+            ( <any>service )[prop] = this.encryptValue(val);
         }
         return service;
     }
@@ -160,8 +146,8 @@ export class BotConfig implements IBotConfig {
         let encryptedProperties = this.getEncryptedProperties(<ServiceType>service.type);
         for (let i = 0; i < encryptedProperties.length; i++) {
             let prop = encryptedProperties[i];
-            let val = <string>(<any>service)[prop];
-            (<any>service)[prop] = this.decryptValue(val);
+            let val = <string>( <any>service )[prop];
+            ( <any>service )[prop] = this.decryptValue(val);
         }
         return service;
     }
@@ -227,7 +213,7 @@ export class BotConfig implements IBotConfig {
         }
 
         if (!this.internal.secret || this.internal.secret.length == 0) {
-            throw new Error("You are attempting to perform an operation which needs access to the secret and --secret is missing");
+            throw new Error('You are attempting to perform an operation which needs access to the secret and --secret is missing');
         }
 
         try {
@@ -241,14 +227,14 @@ export class BotConfig implements IBotConfig {
             }
 
             this.internal.secretValidated = true;
-        } catch{
-            throw new Error("You are attempting to perform an operation which needs access to the secret and --secret is incorrect.");
+        } catch {
+            throw new Error('You are attempting to perform an operation which needs access to the secret and --secret is incorrect.');
         }
     }
 
     private internalEncrypt(value: string): string {
-        var cipher = crypto.createCipher('aes192', this.internal.secret);
-        var encryptedValue = cipher.update(value, 'utf8', 'hex');
+        const cipher = crypto.createCipher('aes192', this.internal.secret);
+        let encryptedValue = cipher.update(value, 'utf8', 'hex');
         encryptedValue += cipher.final('hex');
         return encryptedValue;
     }
