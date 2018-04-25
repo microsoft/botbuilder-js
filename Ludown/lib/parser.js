@@ -38,13 +38,6 @@ module.exports = {
                     process.exit(1);
                 }
             }
-            // get and save the path to root file
-            var rootFilePath = __dirname;
-            if(path.isAbsolute(rootFile)) {
-                rootFilePath = rootFile;
-            } else {
-                rootFilePath = path.parse(path.resolve('', rootFile)).dir;
-            }
             while(filesToParse.length > 0) {
                 var file = filesToParse[0];
                 if(!fs.existsSync(path.resolve(file))) {

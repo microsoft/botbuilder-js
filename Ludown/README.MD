@@ -234,6 +234,7 @@ $ChocolateType:phraseList
     - m&m,mars,mints,spearmings,payday
 
 > You can also break up the phrase list values into an actual list
+
 $ChocolateType:phraseList
     - jelly
 	- kit kat
@@ -288,7 +289,7 @@ You can add multiple questions to the same answer by simply additing variations 
 ```
 ### ? Who is your ceo?
 - get me your ceo info
-	```
+	```markdown
 		Vishwac
 	```
 ```
