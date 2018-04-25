@@ -47,7 +47,7 @@ The type of `TurnContext` being passed around. This simply lets the typing infor
 ### ⊕ **new DialogContext**(dialogs: *[DialogSet](botbuilder_dialogs.dialogset.md)`C`*, context: *`C`*, stack: *[DialogInstance](../interfaces/botbuilder_dialogs.dialoginstance.md)[]*): [DialogContext](botbuilder_dialogs.dialogcontext.md)
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:43](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L43)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:43](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L43)*
 
 
 
@@ -78,7 +78,7 @@ Creates a new DialogContext instance.
 
 **●  context**:  *`C`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:41](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L41)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:41](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L41)*
 
 
 
@@ -92,7 +92,7 @@ ___
 
 **●  dialogResult**:  *[DialogResult](../interfaces/botbuilder_dialogs.dialogresult.md)`any`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:57](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L57)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:57](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L57)*
 
 
 
@@ -109,7 +109,7 @@ ___
 
 **●  dialogs**:  *[DialogSet](botbuilder_dialogs.dialogset.md)`C`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:40](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L40)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:40](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L40)*
 
 
 
@@ -123,7 +123,7 @@ ___
 
 **●  instance**:  *[DialogInstance](../interfaces/botbuilder_dialogs.dialoginstance.md)⎮`undefined`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:52](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L52)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:52](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L52)*
 
 
 
@@ -140,7 +140,7 @@ ___
 
 **●  stack**:  *[DialogInstance](../interfaces/botbuilder_dialogs.dialoginstance.md)[]* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:42](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L42)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:42](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L42)*
 
 
 
@@ -158,7 +158,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:70](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L70)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:70](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L70)*
 
 
 
@@ -197,7 +197,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:103](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L103)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:103](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L103)*
 
 
 
@@ -231,7 +231,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:128](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L128)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:128](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L128)*
 
 
 
@@ -277,7 +277,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:138](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L138)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:138](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L138)*
 
 
 
@@ -306,7 +306,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:86](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L86)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:86](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L86)*
 
 
 
@@ -352,7 +352,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:160](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L160)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:160](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L160)*
 
 
 

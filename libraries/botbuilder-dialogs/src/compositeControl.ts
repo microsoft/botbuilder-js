@@ -92,7 +92,7 @@ import { DialogSet } from './dialogSet';
  * ]);
  * ```
  * 
- * ### Control Usage
+ * ### Consume as Control
  * 
  * If the consuming bot isn't dialog based they can still use your control. They will just need 
  * start the control from somewhere within their bots logic by calling the controls `begin()` 

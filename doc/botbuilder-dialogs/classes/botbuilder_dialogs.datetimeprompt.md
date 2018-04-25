@@ -123,7 +123,7 @@ The type of `TurnContext` being passed around. This simply lets the typing infor
 
 *Overrides [Prompt](botbuilder_dialogs.prompt.md).[constructor](botbuilder_dialogs.prompt.md#constructor)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts:92](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts#L92)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts:92](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts#L92)*
 
 
 
@@ -155,7 +155,7 @@ Creates a new `DatetimePrompt` instance.
 
 *Inherited from [Control](botbuilder_dialogs.control.md).[defaultOptions](botbuilder_dialogs.control.md#defaultoptions)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/control.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/control.d.ts#L27)*
+*Defined in [libraries/botbuilder-dialogs/lib/control.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/control.d.ts#L27)*
 
 
 
@@ -175,7 +175,7 @@ ___
 
 *Inherited from [Control](botbuilder_dialogs.control.md).[begin](botbuilder_dialogs.control.md#begin)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/control.d.ts:51](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/control.d.ts#L51)*
+*Defined in [libraries/botbuilder-dialogs/lib/control.d.ts:51](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/control.d.ts#L51)*
 
 
 
@@ -220,7 +220,7 @@ ___
 
 *Inherited from [Control](botbuilder_dialogs.control.md).[continue](botbuilder_dialogs.control.md#continue)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/control.d.ts:68](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/control.d.ts#L68)*
+*Defined in [libraries/botbuilder-dialogs/lib/control.d.ts:68](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/control.d.ts#L68)*
 
 
 
@@ -265,7 +265,7 @@ ___
 
 *Overrides [Control](botbuilder_dialogs.control.md).[dialogBegin](botbuilder_dialogs.control.md#dialogbegin)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:38](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L38)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:38](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L38)*
 
 
 
@@ -300,7 +300,7 @@ ___
 
 *Inherited from [Prompt](botbuilder_dialogs.prompt.md).[dialogContinue](botbuilder_dialogs.prompt.md#dialogcontinue)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L39)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L39)*
 
 
 
@@ -332,7 +332,7 @@ ___
 
 *Overrides [Prompt](botbuilder_dialogs.prompt.md).[onPrompt](botbuilder_dialogs.prompt.md#onprompt)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts:99](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts#L99)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts:99](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts#L99)*
 
 
 
@@ -366,7 +366,7 @@ ___
 
 *Overrides [Prompt](botbuilder_dialogs.prompt.md).[onRecognize](botbuilder_dialogs.prompt.md#onrecognize)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts:100](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts#L100)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts:100](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/prompts/datetimePrompt.d.ts#L100)*
 
 
 

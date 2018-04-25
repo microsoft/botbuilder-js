@@ -131,7 +131,7 @@ The type of `TurnContext` being passed around. This simply lets the typing infor
 
 *Overrides [Prompt](botbuilder_dialogs.prompt.md).[constructor](botbuilder_dialogs.prompt.md#constructor)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:124](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L124)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:124](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L124)*
 
 
 
@@ -163,7 +163,7 @@ Creates a new `ConfirmPrompt` instance.
 
 *Inherited from [Control](botbuilder_dialogs.control.md).[defaultOptions](botbuilder_dialogs.control.md#defaultoptions)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/control.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/control.d.ts#L27)*
+*Defined in [libraries/botbuilder-dialogs/lib/control.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/control.d.ts#L27)*
 
 
 
@@ -177,7 +177,7 @@ ___
 
 **●  choices**:  *`prompts.ConfirmChoices`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:124](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L124)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:124](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L124)*
 
 
 
@@ -212,7 +212,7 @@ ___
 
 *Inherited from [Control](botbuilder_dialogs.control.md).[begin](botbuilder_dialogs.control.md#begin)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/control.d.ts:51](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/control.d.ts#L51)*
+*Defined in [libraries/botbuilder-dialogs/lib/control.d.ts:51](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/control.d.ts#L51)*
 
 
 
@@ -255,7 +255,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:136](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L136)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:136](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L136)*
 
 
 
@@ -290,7 +290,7 @@ ___
 
 *Inherited from [Control](botbuilder_dialogs.control.md).[continue](botbuilder_dialogs.control.md#continue)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/control.d.ts:68](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/control.d.ts#L68)*
+*Defined in [libraries/botbuilder-dialogs/lib/control.d.ts:68](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/control.d.ts#L68)*
 
 
 
@@ -335,7 +335,7 @@ ___
 
 *Overrides [Control](botbuilder_dialogs.control.md).[dialogBegin](botbuilder_dialogs.control.md#dialogbegin)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:38](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L38)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:38](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L38)*
 
 
 
@@ -370,7 +370,7 @@ ___
 
 *Inherited from [Prompt](botbuilder_dialogs.prompt.md).[dialogContinue](botbuilder_dialogs.prompt.md#dialogcontinue)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L39)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L39)*
 
 
 
@@ -402,7 +402,7 @@ ___
 
 *Overrides [Prompt](botbuilder_dialogs.prompt.md).[onPrompt](botbuilder_dialogs.prompt.md#onprompt)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:142](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L142)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:142](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L142)*
 
 
 
@@ -436,7 +436,7 @@ ___
 
 *Overrides [Prompt](botbuilder_dialogs.prompt.md).[onRecognize](botbuilder_dialogs.prompt.md#onrecognize)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:143](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L143)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:143](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L143)*
 
 
 
@@ -467,7 +467,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:141](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L141)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:141](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L141)*
 
 
 

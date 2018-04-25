@@ -48,7 +48,7 @@
 
 **Τ SkipStepFunction**:  *`function`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:59](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L59)*
+*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:59](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L59)*
 
 
 
@@ -86,7 +86,7 @@ ___
 
 **Τ WaterfallStep**:  *`function`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:52](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L52)*
+*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:52](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L52)*
 
 
 

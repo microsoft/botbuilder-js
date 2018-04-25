@@ -90,7 +90,7 @@ The type of `TurnContext` being passed around. This simply lets the typing infor
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:121](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L121)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:121](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L121)*
 
 
 
@@ -121,7 +121,7 @@ Adds a new dialog to the set and returns the added dialog.
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:122](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L122)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:122](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L122)*
 
 
 
@@ -152,7 +152,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:123](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L123)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:123](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L123)*
 
 
 
@@ -183,7 +183,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:135](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L135)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:135](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L135)*
 
 
 

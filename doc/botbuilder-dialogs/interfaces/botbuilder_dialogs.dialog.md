@@ -38,7 +38,7 @@ The type of `TurnContext` being passed around. This simply lets the typing infor
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialog.d.ts:24](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/dialog.d.ts#L24)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialog.d.ts:24](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/dialog.d.ts#L24)*
 
 
 
@@ -72,7 +72,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialog.d.ts:34](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/dialog.d.ts#L34)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialog.d.ts:34](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/dialog.d.ts#L34)*
 
 
 
@@ -107,7 +107,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialog.d.ts:45](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/dialog.d.ts#L45)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialog.d.ts:45](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/dialog.d.ts#L45)*
 
 
 

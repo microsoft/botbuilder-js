@@ -69,7 +69,7 @@ On the consumption side the control we created can be used by a bot in much the 
          }
     ]);
 
-### Control Usage
+### Consume as Control
 
 If the consuming bot isn't dialog based they can still use your control. They will just need start the control from somewhere within their bots logic by calling the controls `begin()` method:
 
@@ -131,7 +131,7 @@ The `continue()` method returns a `DialogResult` object which can be used to det
 ### ⊕ **new CompositeControl**(dialogs: *[DialogSet](botbuilder_dialogs.dialogset.md)`TurnContext`*, dialogId: *`string`*, defaultOptions?: *`O`*): [CompositeControl](botbuilder_dialogs.compositecontrol.md)
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/compositeControl.d.ts:126](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/compositeControl.d.ts#L126)*
+*Defined in [libraries/botbuilder-dialogs/lib/compositeControl.d.ts:126](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/compositeControl.d.ts#L126)*
 
 
 
@@ -162,7 +162,7 @@ Creates a new `CompositeControl` instance.
 
 **●  defaultOptions**:  *`O`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/compositeControl.d.ts:126](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/compositeControl.d.ts#L126)*
+*Defined in [libraries/botbuilder-dialogs/lib/compositeControl.d.ts:126](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/compositeControl.d.ts#L126)*
 
 
 
@@ -176,7 +176,7 @@ ___
 
 **●  dialogId**:  *`string`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/compositeControl.d.ts:125](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/compositeControl.d.ts#L125)*
+*Defined in [libraries/botbuilder-dialogs/lib/compositeControl.d.ts:125](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/compositeControl.d.ts#L125)*
 
 
 
@@ -190,7 +190,7 @@ ___
 
 **●  dialogs**:  *[DialogSet](botbuilder_dialogs.dialogset.md)`TurnContext`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/compositeControl.d.ts:124](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/compositeControl.d.ts#L124)*
+*Defined in [libraries/botbuilder-dialogs/lib/compositeControl.d.ts:124](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/compositeControl.d.ts#L124)*
 
 
 
@@ -208,7 +208,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/compositeControl.d.ts:152](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/compositeControl.d.ts#L152)*
+*Defined in [libraries/botbuilder-dialogs/lib/compositeControl.d.ts:152](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/compositeControl.d.ts#L152)*
 
 
 
@@ -251,7 +251,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/compositeControl.d.ts:169](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/compositeControl.d.ts#L169)*
+*Defined in [libraries/botbuilder-dialogs/lib/compositeControl.d.ts:169](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/compositeControl.d.ts#L169)*
 
 
 
@@ -294,7 +294,7 @@ ___
 
 *Implementation of [Dialog](../interfaces/botbuilder_dialogs.dialog.md).[dialogBegin](../interfaces/botbuilder_dialogs.dialog.md#dialogbegin)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/compositeControl.d.ts:170](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/compositeControl.d.ts#L170)*
+*Defined in [libraries/botbuilder-dialogs/lib/compositeControl.d.ts:170](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/compositeControl.d.ts#L170)*
 
 
 
@@ -327,7 +327,7 @@ ___
 
 *Implementation of [Dialog](../interfaces/botbuilder_dialogs.dialog.md).[dialogContinue](../interfaces/botbuilder_dialogs.dialog.md#dialogcontinue)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/compositeControl.d.ts:171](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/compositeControl.d.ts#L171)*
+*Defined in [libraries/botbuilder-dialogs/lib/compositeControl.d.ts:171](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/compositeControl.d.ts#L171)*
 
 
 

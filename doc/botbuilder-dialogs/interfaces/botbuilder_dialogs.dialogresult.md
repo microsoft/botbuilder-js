@@ -19,7 +19,7 @@ Result returned to the caller of one of the various stack manipulation methods a
 
 **●  active**:  *`boolean`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L21)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L21)*
 
 
 
@@ -36,7 +36,7 @@ ___
 
 **●  result**:  *`T`⎮`undefined`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L31)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L31)*
 
 
 
