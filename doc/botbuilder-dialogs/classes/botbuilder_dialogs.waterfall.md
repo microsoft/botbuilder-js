@@ -5,6 +5,8 @@
 # Class: Waterfall
 
 
+:package: **botbuilder-dialogs**
+
 Dialog optimized for prompting a user with a series of questions. Waterfalls accept a stack of functions which will be executed in sequence. Each waterfall step can ask a question of the user and the users response will be passed as an argument to the next waterfall step.
 
 For simple text questions you can send the user a message and then process their answer in the next step:
@@ -61,7 +63,7 @@ The example builds on the previous `namePrompt` sample and shows how you can cal
 You should generally call `dc.end()` or `dc.replace()` from your last waterfall step but if you fail to do that the dialog will be automatically ended for you on the users next reply. The users response will be passed to the calling dialogs next waterfall step if there is one.
 
 ## Type parameters
-#### C :  `BotContext`
+#### C :  `TurnContext`
 ## Implements
 
 * [Dialog](../interfaces/botbuilder_dialogs.dialog.md)`C`
@@ -89,7 +91,7 @@ You should generally call `dc.end()` or `dc.replace()` from your last waterfall 
 ### ⊕ **new Waterfall**(steps: *[WaterfallStep](../#waterfallstep)`C`[]*): [Waterfall](botbuilder_dialogs.waterfall.md)
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:125](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L125)*
+*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:131](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L131)*
 
 
 
@@ -122,7 +124,7 @@ Creates a new waterfall dialog containing the given array of steps.
 
 *Implementation of [Dialog](../interfaces/botbuilder_dialogs.dialog.md).[dialogBegin](../interfaces/botbuilder_dialogs.dialog.md#dialogbegin)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:131](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L131)*
+*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:137](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L137)*
 
 
 
@@ -155,7 +157,7 @@ ___
 
 *Implementation of [Dialog](../interfaces/botbuilder_dialogs.dialog.md).[dialogContinue](../interfaces/botbuilder_dialogs.dialog.md#dialogcontinue)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:132](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L132)*
+*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:138](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L138)*
 
 
 
@@ -187,7 +189,7 @@ ___
 
 *Implementation of [Dialog](../interfaces/botbuilder_dialogs.dialog.md).[dialogResume](../interfaces/botbuilder_dialogs.dialog.md#dialogresume)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:133](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L133)*
+*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:139](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L139)*
 
 
 

@@ -5,10 +5,15 @@
 # Interface: Dialog
 
 
+:package: **botbuilder-dialogs**
+
 Interface of Dialog objects that can be added to a `DialogSet`. The dialog should generally be a singleton and added to a dialog set using `DialogSet.add()` at which point it will be assigned a unique ID.
 
 ## Type parameters
-#### C :  `BotContext`
+#### C :  `TurnContext`
+
+The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
+
 ## Implemented by
 
 * [AttachmentPrompt](../classes/botbuilder_dialogs.attachmentprompt.md)
@@ -18,6 +23,7 @@ Interface of Dialog objects that can be added to a `DialogSet`. The dialog shoul
 * [Control](../classes/botbuilder_dialogs.control.md)
 * [DatetimePrompt](../classes/botbuilder_dialogs.datetimeprompt.md)
 * [NumberPrompt](../classes/botbuilder_dialogs.numberprompt.md)
+* [OAuthPrompt](../classes/botbuilder_dialogs.oauthprompt.md)
 * [Prompt](../classes/botbuilder_dialogs.prompt.md)
 * [TextPrompt](../classes/botbuilder_dialogs.textprompt.md)
 * [Waterfall](../classes/botbuilder_dialogs.waterfall.md)
@@ -32,7 +38,7 @@ Interface of Dialog objects that can be added to a `DialogSet`. The dialog shoul
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialog.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/dialog.d.ts#L21)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialog.d.ts:24](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/dialog.d.ts#L24)*
 
 
 
@@ -66,7 +72,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialog.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/dialog.d.ts#L31)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialog.d.ts:34](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/dialog.d.ts#L34)*
 
 
 
@@ -101,7 +107,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialog.d.ts:42](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/dialog.d.ts#L42)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialog.d.ts:45](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/dialog.d.ts#L45)*
 
 
 

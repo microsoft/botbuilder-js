@@ -7,7 +7,7 @@ const Recognizers = require("@microsoft/recognizers-text-date-time");
  *
  * Creates a new prompt that asks the user to reply with a date or time.
  *
- * **Usage Example**
+ * **Usage Example:**
  *
  * ```JavaScript
  * const { createDatetimePrompt } = require('botbuilder-prompts');
@@ -20,7 +20,7 @@ const Recognizers = require("@microsoft/recognizers-text-date-time");
  *       if (value.getTime() < new Date().getTime()) { throw new Error('in the past') }
  *       return value;
  *    } catch (err) {
- *       await context.sendActivity(`Answer with a time in the future like "tomorrow at 9am" or say "cancel".`);
+ *       await timePrompt.prompt(context, `Answer with a time in the future like "tomorrow at 9am" or say "cancel".`);
  *       return undefined;
  *    }
  * });

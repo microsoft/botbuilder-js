@@ -9,7 +9,7 @@
 
 Prompts the user to sign in using the Bot Frameworks Single Sign On (SSO) service.
 
-**Usage Example**
+**Usage Example:**
 
     const { createOAuthPrompt } = require('botbuilder-prompts');
 
@@ -33,13 +33,13 @@ Prompts the user to sign in using the Bot Frameworks Single Sign On (SSO) servic
 
 
 
-*Defined in [libraries/botbuilder-prompts/lib/oauthPrompt.d.ts:101](https://github.com/Microsoft/botbuilder-js/blob/e54b802/libraries/botbuilder-prompts/lib/oauthPrompt.d.ts#L101)*
+*Defined in [libraries/botbuilder-prompts/lib/oauthPrompt.d.ts:101](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-prompts/lib/oauthPrompt.d.ts#L101)*
 
 
 
 Attempts to retrieve the cached token for a signed in user. You will generally want to call this before calling [prompt()](#prompt) to send the user a signin card.
 
-**Usage Example**
+**Usage Example:**
 
     const token = await loginPrompt.getUserToken(context);
     if (!token) {
@@ -73,7 +73,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-prompts/lib/oauthPrompt.d.ts:57](https://github.com/Microsoft/botbuilder-js/blob/e54b802/libraries/botbuilder-prompts/lib/oauthPrompt.d.ts#L57)*
+*Defined in [libraries/botbuilder-prompts/lib/oauthPrompt.d.ts:57](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-prompts/lib/oauthPrompt.d.ts#L57)*
 
 
 
@@ -81,7 +81,7 @@ Sends a formated prompt to the user.
 
 An `OAuthCard` will be automatically created and sent to the user requesting them to signin. If you need to localize the card or customize the message sent to the user for any reason you can pass in the `Activity` to send. This should just be an activity of type `message` and contain at least one attachment that's an `OAuthCard`.
 
-**Usage Example**
+**Usage Example:**
 
     await loginPrompt.prompt(context);
 
@@ -113,7 +113,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-prompts/lib/oauthPrompt.d.ts:86](https://github.com/Microsoft/botbuilder-js/blob/e54b802/libraries/botbuilder-prompts/lib/oauthPrompt.d.ts#L86)*
+*Defined in [libraries/botbuilder-prompts/lib/oauthPrompt.d.ts:86](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-prompts/lib/oauthPrompt.d.ts#L86)*
 
 
 
@@ -126,7 +126,7 @@ The `recognize()` method automatically handles both flows for the bot but you sh
 
 You should also be prepared for the case where the user fails to enter the correct "magic code" or simply decides they don't want to click the signin button.
 
-**Usage Example**
+**Usage Example:**
 
     const token = await loginPrompt.recognize(context);
     if (token) {
@@ -160,13 +160,13 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-prompts/lib/oauthPrompt.d.ts:112](https://github.com/Microsoft/botbuilder-js/blob/e54b802/libraries/botbuilder-prompts/lib/oauthPrompt.d.ts#L112)*
+*Defined in [libraries/botbuilder-prompts/lib/oauthPrompt.d.ts:112](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-prompts/lib/oauthPrompt.d.ts#L112)*
 
 
 
 Signs the user out of the service.
 
-**Usage Example**
+**Usage Example:**
 
     await loginPrompt.signOutUser(context);
 

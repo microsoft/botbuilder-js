@@ -29,7 +29,7 @@ Controls the way that choices for a `ChoicePrompt` or yes/no options for a `Conf
 
 ** auto**:    = 1
 
-*Defined in [libraries/botbuilder-prompts/lib/choicePrompt.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/e54b802/libraries/botbuilder-prompts/lib/choicePrompt.d.ts#L21)*
+*Defined in [libraries/botbuilder-prompts/lib/choicePrompt.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-prompts/lib/choicePrompt.d.ts#L21)*
 
 
 
@@ -46,7 +46,7 @@ ___
 
 ** inline**:    = 2
 
-*Defined in [libraries/botbuilder-prompts/lib/choicePrompt.d.ts:23](https://github.com/Microsoft/botbuilder-js/blob/e54b802/libraries/botbuilder-prompts/lib/choicePrompt.d.ts#L23)*
+*Defined in [libraries/botbuilder-prompts/lib/choicePrompt.d.ts:23](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-prompts/lib/choicePrompt.d.ts#L23)*
 
 
 
@@ -63,7 +63,7 @@ ___
 
 ** list**:    = 3
 
-*Defined in [libraries/botbuilder-prompts/lib/choicePrompt.d.ts:25](https://github.com/Microsoft/botbuilder-js/blob/e54b802/libraries/botbuilder-prompts/lib/choicePrompt.d.ts#L25)*
+*Defined in [libraries/botbuilder-prompts/lib/choicePrompt.d.ts:25](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-prompts/lib/choicePrompt.d.ts#L25)*
 
 
 
@@ -80,7 +80,7 @@ ___
 
 ** none**:    = 0
 
-*Defined in [libraries/botbuilder-prompts/lib/choicePrompt.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/e54b802/libraries/botbuilder-prompts/lib/choicePrompt.d.ts#L19)*
+*Defined in [libraries/botbuilder-prompts/lib/choicePrompt.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-prompts/lib/choicePrompt.d.ts#L19)*
 
 
 
@@ -97,7 +97,7 @@ ___
 
 ** suggestedAction**:    = 4
 
-*Defined in [libraries/botbuilder-prompts/lib/choicePrompt.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/e54b802/libraries/botbuilder-prompts/lib/choicePrompt.d.ts#L27)*
+*Defined in [libraries/botbuilder-prompts/lib/choicePrompt.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-prompts/lib/choicePrompt.d.ts#L27)*
 
 
 

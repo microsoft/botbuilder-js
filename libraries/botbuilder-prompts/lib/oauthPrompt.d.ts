@@ -25,7 +25,7 @@ export interface OAuthPromptSettings {
  *
  * Prompts the user to sign in using the Bot Frameworks Single Sign On (SSO) service.
  *
- * **Usage Example**
+ * **Usage Example:**
  *
  * ```JavaScript
  * const { createOAuthPrompt } = require('botbuilder-prompts');
@@ -46,7 +46,7 @@ export interface OAuthPrompt<O = TokenResponse> {
      * reason you can pass in the `Activity` to send. This should just be an activity of type
      * `message` and contain at least one attachment that's an `OAuthCard`.
      *
-     * **Usage Example**
+     * **Usage Example:**
      *
      * ```JavaScript
      * await loginPrompt.prompt(context);
@@ -72,7 +72,7 @@ export interface OAuthPrompt<O = TokenResponse> {
      * You should also be prepared for the case where the user fails to enter the correct
      * "magic code" or simply decides they don't want to click the signin button.
      *
-     * **Usage Example**
+     * **Usage Example:**
      *
      * ```JavaScript
      * const token = await loginPrompt.recognize(context);
@@ -88,7 +88,7 @@ export interface OAuthPrompt<O = TokenResponse> {
      * Attempts to retrieve the cached token for a signed in user. You will generally want to call
      * this before calling [prompt()](#prompt) to send the user a signin card.
      *
-     * **Usage Example**
+     * **Usage Example:**
      *
      * ```JavaScript
      * const token = await loginPrompt.getUserToken(context);
@@ -102,7 +102,7 @@ export interface OAuthPrompt<O = TokenResponse> {
     /**
      * Signs the user out of the service.
      *
-     * **Usage Example**
+     * **Usage Example:**
      *
      * ```JavaScript
      * await loginPrompt.signOutUser(context);
@@ -117,7 +117,7 @@ export interface OAuthPrompt<O = TokenResponse> {
  * Creates a new prompt that asks the user to sign in using the Bot Frameworks Single Sign On (SSO)
  * service.
  *
- * **Usage Example**
+ * **Usage Example:**
  *
  * ```JavaScript
  * async function ensureLogin(context, state, botLogic) {

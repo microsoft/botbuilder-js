@@ -11,7 +11,7 @@ Prompts the user to answer a yes/no question.
 
 The [prompt()](#prompt) method will attempt to send a set of buttons yes/no buttons for the user to click. By default, the text of the titles for these buttons will always be in English but you can easily add support for other languages using the prompts [choices](#choices) property.
 
-**Usage Example**
+**Usage Example:**
 
     const { createConfirmPrompt } = require('botbuilder-prompts');
 
@@ -30,7 +30,7 @@ The [prompt()](#prompt) method will attempt to send a set of buttons yes/no butt
 
 **●  choiceOptions**:  *[ChoiceFactoryOptions]()* 
 
-*Defined in [libraries/botbuilder-prompts/lib/confirmPrompt.d.ts:68](https://github.com/Microsoft/botbuilder-js/blob/e54b802/libraries/botbuilder-prompts/lib/confirmPrompt.d.ts#L68)*
+*Defined in [libraries/botbuilder-prompts/lib/confirmPrompt.d.ts:68](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-prompts/lib/confirmPrompt.d.ts#L68)*
 
 
 
@@ -47,7 +47,7 @@ ___
 
 **●  choices**:  *[ConfirmChoices](botbuilder_prompts.confirmchoices.md)* 
 
-*Defined in [libraries/botbuilder-prompts/lib/confirmPrompt.d.ts:58](https://github.com/Microsoft/botbuilder-js/blob/e54b802/libraries/botbuilder-prompts/lib/confirmPrompt.d.ts#L58)*
+*Defined in [libraries/botbuilder-prompts/lib/confirmPrompt.d.ts:58](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-prompts/lib/confirmPrompt.d.ts#L58)*
 
 
 
@@ -75,7 +75,7 @@ ___
 
 **●  style**:  *[ListStyle](../enums/botbuilder_prompts.liststyle.md)* 
 
-*Defined in [libraries/botbuilder-prompts/lib/confirmPrompt.d.ts:63](https://github.com/Microsoft/botbuilder-js/blob/e54b802/libraries/botbuilder-prompts/lib/confirmPrompt.d.ts#L63)*
+*Defined in [libraries/botbuilder-prompts/lib/confirmPrompt.d.ts:63](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-prompts/lib/confirmPrompt.d.ts#L63)*
 
 
 
@@ -96,7 +96,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-prompts/lib/confirmPrompt.d.ts:89](https://github.com/Microsoft/botbuilder-js/blob/e54b802/libraries/botbuilder-prompts/lib/confirmPrompt.d.ts#L89)*
+*Defined in [libraries/botbuilder-prompts/lib/confirmPrompt.d.ts:89](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-prompts/lib/confirmPrompt.d.ts#L89)*
 
 
 
@@ -106,7 +106,7 @@ By default, this will attempt to send the user yes & no choices as buttons using
 
 Further tweaks can be made to the rendering of the yes/no choices using the [choiceOptions](#choiceoptions) property.
 
-**Usage Example**
+**Usage Example:**
 
     await confirmPrompt.prompt(context, `This will cancel your order. Are you sure?`);
 
@@ -139,7 +139,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-prompts/lib/confirmPrompt.d.ts:111](https://github.com/Microsoft/botbuilder-js/blob/e54b802/libraries/botbuilder-prompts/lib/confirmPrompt.d.ts#L111)*
+*Defined in [libraries/botbuilder-prompts/lib/confirmPrompt.d.ts:111](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-prompts/lib/confirmPrompt.d.ts#L111)*
 
 
 
@@ -147,7 +147,7 @@ Recognizes and validates the users reply. The result of the call will either be 
 
 The recognize() method will not automatically re-prompt the user so either the caller or the prompts custom validator will need to implement re-prompting logic.
 
-**Usage Example**
+**Usage Example:**
 
     const confirmed = await confirmPrompt.recognize(context);
     if (typeof confirmed == 'boolean') {

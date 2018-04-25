@@ -31,7 +31,7 @@ export interface ConfirmChoices {
  * but you can easily add support for other languages using the prompts [choices](#choices) 
  * property.   
  *
- * **Usage Example**
+ * **Usage Example:**
  *
  * ```JavaScript
  * const { createConfirmPrompt } = require('botbuilder-prompts');
@@ -52,7 +52,7 @@ export interface ConfirmPrompt<O = boolean> {
      * 
      * ```JavaScript
      * const confirmPrompt = createConfirmPrompt();
-
+     * 
      * // Configure yes/no choices for english and spanish (default)
      * confirmPrompt.choices['*'] = ['sí', 'no'];
      * confirmPrompt.choices['es'] = ['sí', 'no'];
@@ -84,7 +84,7 @@ export interface ConfirmPrompt<O = boolean> {
      * Further tweaks can be made to the rendering of the yes/no choices using the 
      * [choiceOptions](#choiceoptions) property. 
      *
-     * **Usage Example**
+     * **Usage Example:**
      *
      * ```JavaScript
      * await confirmPrompt.prompt(context, `This will cancel your order. Are you sure?`);
@@ -102,7 +102,7 @@ export interface ConfirmPrompt<O = boolean> {
      * The recognize() method will not automatically re-prompt the user so either the caller or the
      * prompts custom validator will need to implement re-prompting logic.
      *
-     * **Usage Example**
+     * **Usage Example:**
      *
      * ```JavaScript
      * const confirmed = await confirmPrompt.recognize(context);
@@ -124,7 +124,7 @@ export interface ConfirmPrompt<O = boolean> {
  * 
  * Creates a new prompt that asks the user to answer a yes/no question.
  *
- * **Usage Example**
+ * **Usage Example:**
  *
  * ```JavaScript
  * const { createConfirmPrompt } = require('botbuilder-prompts');

@@ -7,7 +7,7 @@ const Recognizers = require("@microsoft/recognizers-text-number");
  *
  * Creates a new prompt that asks the user to reply with a number.
  *
- * **Usage Example**
+ * **Usage Example:**
  *
  * ```JavaScript
  * const { createNumberPrompt } = require('botbuilder-prompts');

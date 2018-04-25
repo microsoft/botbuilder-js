@@ -5,6 +5,8 @@
 # Interface: DialogResult
 
 
+:package: **botbuilder-dialogs**
+
 Result returned to the caller of one of the various stack manipulation methods and used to return the result from a final call to `DialogContext.end()` to the bots logic.
 
 ## Type parameters
@@ -17,7 +19,7 @@ Result returned to the caller of one of the various stack manipulation methods a
 
 **●  active**:  *`boolean`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L19)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L21)*
 
 
 
@@ -30,11 +32,11 @@ ___
 
 <a id="result"></a>
 
-### «Optional» result
+###  result
 
-**●  result**:  *`T`* 
+**●  result**:  *`T`⎮`undefined`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:29](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L29)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L31)*
 
 
 

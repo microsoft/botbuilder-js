@@ -41,7 +41,7 @@ export interface FoundDatetime {
  * Prompts the user to reply with a date and/or time. The user can use natural language utterances 
  * like "tomorrow at 9am". 
  *
- * **Usage Example**
+ * **Usage Example:**
  *
  * ```JavaScript
  * const { createDatetimePrompt } = require('botbuilder-prompts');
@@ -54,7 +54,7 @@ export interface DatetimePrompt<O = FoundDatetime[]> {
     /**
      * Sends a formated prompt to the user. 
      *
-     * **Usage Example**
+     * **Usage Example:**
      *
      * ```JavaScript
      * await timePrompt.prompt(context, `What time should I set your alarm for?`);
@@ -72,7 +72,7 @@ export interface DatetimePrompt<O = FoundDatetime[]> {
      * The recognize() method will not automatically re-prompt the user so either the caller or the
      * prompts custom validator will need to implement re-prompting logic.
      *
-     * **Usage Example**
+     * **Usage Example:**
      *
      * ```JavaScript
      * const values = await timePrompt.recognize(context);
@@ -97,7 +97,7 @@ export interface DatetimePrompt<O = FoundDatetime[]> {
  * 
  * Creates a new prompt that asks the user to reply with a date or time.
  *
- * **Usage Example**
+ * **Usage Example:**
  *
  * ```JavaScript
  * const { createDatetimePrompt } = require('botbuilder-prompts');
@@ -110,7 +110,7 @@ export interface DatetimePrompt<O = FoundDatetime[]> {
  *       if (value.getTime() < new Date().getTime()) { throw new Error('in the past') }
  *       return value;
  *    } catch (err) {
- *       await context.sendActivity(`Answer with a time in the future like "tomorrow at 9am" or say "cancel".`);
+ *       await timePrompt.prompt(context, `Answer with a time in the future like "tomorrow at 9am" or say "cancel".`);
  *       return undefined;
  *    }
  * });

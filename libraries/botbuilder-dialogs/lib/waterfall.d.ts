@@ -9,6 +9,8 @@ import { Promiseable, TurnContext } from 'botbuilder';
 import { Dialog } from './dialog';
 import { DialogContext } from './dialogContext';
 /**
+ * :package: **botbuilder-dialogs**
+ *
  * Function signature of a waterfall step.
  *
  * **Example usage:**
@@ -49,11 +51,15 @@ import { DialogContext } from './dialogContext';
  */
 export declare type WaterfallStep<C extends TurnContext> = (dc: DialogContext<C>, args?: any, next?: SkipStepFunction) => Promiseable<any>;
 /**
+ * :package: **botbuilder-dialogs**
+ *
  * When called, control will skip to the next waterfall step.
  * @param SkipStepFunction.args (Optional) additional argument(s) to pass into the next step.
  */
 export declare type SkipStepFunction = (args?: any) => Promise<any>;
 /**
+ * :package: **botbuilder-dialogs**
+ *
  * Dialog optimized for prompting a user with a series of questions. Waterfalls accept a stack of
  * functions which will be executed in sequence. Each waterfall step can ask a question of the user
  * and the users response will be passed as an argument to the next waterfall step.

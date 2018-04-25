@@ -26,7 +26,7 @@ var ListStyle;
  *
  * Creates a new prompt that asks the user to select from a list of choices.
  *
- * **Usage Example**
+ * **Usage Example:**
  *
  * ```JavaScript
  * const { createChoicePrompt } = require('botbuilder-prompts');

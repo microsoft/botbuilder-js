@@ -17,7 +17,7 @@ Datetime result returned by `DatetimePrompt`. For more details see the LUIS docs
 
 **●  timex**:  *`string`* 
 
-*Defined in [libraries/botbuilder-prompts/lib/datetimePrompt.d.ts:20](https://github.com/Microsoft/botbuilder-js/blob/e54b802/libraries/botbuilder-prompts/lib/datetimePrompt.d.ts#L20)*
+*Defined in [libraries/botbuilder-prompts/lib/datetimePrompt.d.ts:20](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-prompts/lib/datetimePrompt.d.ts#L20)*
 
 
 
@@ -34,7 +34,7 @@ ___
 
 **●  type**:  *`string`* 
 
-*Defined in [libraries/botbuilder-prompts/lib/datetimePrompt.d.ts:25](https://github.com/Microsoft/botbuilder-js/blob/e54b802/libraries/botbuilder-prompts/lib/datetimePrompt.d.ts#L25)*
+*Defined in [libraries/botbuilder-prompts/lib/datetimePrompt.d.ts:25](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-prompts/lib/datetimePrompt.d.ts#L25)*
 
 
 
@@ -51,7 +51,7 @@ ___
 
 **●  value**:  *`string`* 
 
-*Defined in [libraries/botbuilder-prompts/lib/datetimePrompt.d.ts:30](https://github.com/Microsoft/botbuilder-js/blob/e54b802/libraries/botbuilder-prompts/lib/datetimePrompt.d.ts#L30)*
+*Defined in [libraries/botbuilder-prompts/lib/datetimePrompt.d.ts:30](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-prompts/lib/datetimePrompt.d.ts#L30)*
 
 
 

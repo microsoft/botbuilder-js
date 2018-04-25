@@ -12,7 +12,7 @@ import { PromptValidator } from './textPrompt';
  *
  * Prompts the user to reply with a number.
  *
- * **Usage Example**
+ * **Usage Example:**
  *
  * ```JavaScript
  * const { createNumberPrompt } = require('botbuilder-prompts');
@@ -25,7 +25,7 @@ export interface NumberPrompt<O = number> {
     /**
      * Sends a formated prompt to the user.
      *
-     * **Usage Example**
+     * **Usage Example:**
      *
      * ```JavaScript
      * await agePrompt.prompt(context, `How old are you?`);
@@ -42,7 +42,7 @@ export interface NumberPrompt<O = number> {
      * The recognize() method will not automatically re-prompt the user so either the caller or the
      * prompts custom validator will need to implement re-prompting logic.
      *
-     * **Usage Example**
+     * **Usage Example:**
      *
      * ```JavaScript
      * const age = await agePrompt.recognize(context);
@@ -59,7 +59,7 @@ export interface NumberPrompt<O = number> {
  *
  * Creates a new prompt that asks the user to reply with a number.
  *
- * **Usage Example**
+ * **Usage Example:**
  *
  * ```JavaScript
  * const { createNumberPrompt } = require('botbuilder-prompts');

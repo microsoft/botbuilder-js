@@ -17,7 +17,7 @@ Defines settings for an OAuthPrompt.
 
 **●  connectionName**:  *`string`* 
 
-*Defined in [libraries/botbuilder-prompts/lib/oauthPrompt.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/e54b802/libraries/botbuilder-prompts/lib/oauthPrompt.d.ts#L17)*
+*Defined in [libraries/botbuilder-prompts/lib/oauthPrompt.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-prompts/lib/oauthPrompt.d.ts#L17)*
 
 
 
@@ -34,7 +34,7 @@ ___
 
 **●  text**:  *`undefined`⎮`string`* 
 
-*Defined in [libraries/botbuilder-prompts/lib/oauthPrompt.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/e54b802/libraries/botbuilder-prompts/lib/oauthPrompt.d.ts#L21)*
+*Defined in [libraries/botbuilder-prompts/lib/oauthPrompt.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-prompts/lib/oauthPrompt.d.ts#L21)*
 
 
 
@@ -51,7 +51,7 @@ ___
 
 **●  title**:  *`string`* 
 
-*Defined in [libraries/botbuilder-prompts/lib/oauthPrompt.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/e54b802/libraries/botbuilder-prompts/lib/oauthPrompt.d.ts#L19)*
+*Defined in [libraries/botbuilder-prompts/lib/oauthPrompt.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-prompts/lib/oauthPrompt.d.ts#L19)*
 
 
 

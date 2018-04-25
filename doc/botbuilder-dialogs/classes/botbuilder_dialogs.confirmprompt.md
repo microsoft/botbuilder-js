@@ -5,9 +5,15 @@
 # Class: ConfirmPrompt
 
 
+:package: **botbuilder-dialogs**
+
 Prompts a user to confirm something with a yes/no response. By default the prompt will return to the calling dialog a `boolean` representing the users selection.
 
-**Example usage:**
+The prompt can be used either as a dialog added to your bots `DialogSet` or on its own as a control if your bot is using some other conversation management system.
+
+### Dialog Usage
+
+When used with your bots `DialogSet` you can simply add a new instance of the prompt as a named dialog using `DialogSet.add()`. You can then start the prompt from a waterfall step using either `DialogContext.begin()` or `DialogContext.prompt()`. The user will be prompted to answer a `yes/no` or `true/false` question and the users response will be passed as an argument to the callers next waterfall step:
 
     const { DialogSet, ConfirmPrompt } = require('botbuilder-dialogs');
 
@@ -15,24 +21,67 @@ Prompts a user to confirm something with a yes/no response. By default the promp
 
     dialogs.add('confirmPrompt', new ConfirmPrompt());
 
-    dialogs.add('confirmDemo', [
-         function (dc) {
-             return dc.prompt('confirmPrompt', `confirm: answer "yes" or "no"`);
+    dialogs.add('confirmCancel', [
+         async function (dc) {
+             return dc.prompt('confirmPrompt', `This will cancel your order. Are you sure?`);
          },
-         function (dc, value) {
-             dc.batch.reply(`Recognized value: ${value}`);
+         async function (dc, cancel) {
+             if (cancel) {
+                 await dc.context.sendActivity(`Order cancelled.`);
+             }
              return dc.end();
          }
     ]);
 
+If the users response to the prompt fails to be recognized they will be automatically re-prompted to try again. By default the original prompt is re-sent to the user but you can provide an alternate prompt to send by passing in additional options:
+
+    return dc.prompt('confirmPrompt', `This will cancel your order. Are you sure?`, { retryPrompt: `Please answer "yes" or "no".` });
+
+The prompts retry logic can also be completely customized by passing the prompts constructor a custom validator:
+
+    dialogs.add('confirmPrompt', new ConfirmPrompt(async (context, value) => {
+       if (typeof confirmed != 'boolean') {
+          await context.sendActivity(`Please answer "yes" or "no".`);
+       }
+       return confirmed;
+    }));
+
+### Control Usage
+
+If your bot isn't dialog based you can still use the prompt on its own as a control. You will just need start the prompt from somewhere within your bots logic by calling the prompts `begin()` method:
+
+    const state = {};
+    const prompt = new ConfirmPrompt();
+    await prompt.begin(context, state, {
+        prompt: `This will cancel your order. Are you sure?`,
+        retryPrompt: `Please answer "yes" or "no".`
+    });
+
+The prompt will populate the `state` object you passed in with information it needs to process the users response. You should save this off to your bots conversation state as you'll need to pass it to the prompts `continue()` method on the next turn of conversation with the user:
+
+    const prompt = new ConfirmPrompt();
+    const result = await prompt.continue(context, state);
+    if (!result.active) {
+        const cancelOrder = result.result;
+    }
+
+The `continue()` method returns a `DialogResult` object which can be used to determine when the prompt is finished and then to access the results of the prompt. To interrupt or cancel the prompt simply delete the `state` object your bot is persisting.
+
 ## Type parameters
-#### C :  `BotContext`
+#### C :  `TurnContext`
+
+The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
+
 #### O 
-#### C :  `BotContext`
+
+(Optional) output type returned by prompt. This defaults to a boolean `true` or `false` but can be changed by a custom validator passed to the prompt.
+
+#### R 
+#### O 
 ## Hierarchy
 
 
-↳  [Prompt](botbuilder_dialogs.prompt.md)`C`, `boolean`
+↳  [Prompt](botbuilder_dialogs.prompt.md)`C`
 
 **↳ ConfirmPrompt**
 
@@ -77,35 +126,24 @@ Prompts a user to confirm something with a yes/no response. By default the promp
 <a id="constructor"></a>
 
 
-### ⊕ **new ConfirmPrompt**(validator?: *[PromptValidator](../#promptvalidator)`C`, `boolean`*, defaultLocale?: *`string`*): [ConfirmPrompt](botbuilder_dialogs.confirmprompt.md)
+### ⊕ **new ConfirmPrompt**(validator?: *`PromptValidator`.<`boolean`>,.<`O`>*, defaultLocale?: *`string`*): [ConfirmPrompt](botbuilder_dialogs.confirmprompt.md)
 
 
 *Overrides [Prompt](botbuilder_dialogs.prompt.md).[constructor](botbuilder_dialogs.prompt.md#constructor)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:52](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L52)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:124](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L124)*
 
 
 
-Creates a new instance of the prompt.
-
-**Example usage:**
-
-    dialogs.add('confirmPrompt', new ConfirmPrompt((dc, value) => {
-         if (value === undefined) {
-             dc.batch.reply(`Invalid answer. Answer with "yes" or "no".`);
-             return undefined;
-         } else {
-             return value;
-         }
-    }));
+Creates a new `ConfirmPrompt` instance.
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| validator | [PromptValidator](../#promptvalidator)`C`, `boolean`   |  (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent. |
-| defaultLocale | `string`   |  (Optional) locale to use if `dc.context.request.locale` not specified. Defaults to a value of `en-us`. |
+| validator | `PromptValidator`.<`boolean`>,.<`O`>   |  (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent. |
+| defaultLocale | `string`   |  (Optional) locale to use if `dc.context.activity.locale` not specified. Defaults to a value of `en-us`. |
 
 
 
@@ -125,7 +163,7 @@ Creates a new instance of the prompt.
 
 *Inherited from [Control](botbuilder_dialogs.control.md).[defaultOptions](botbuilder_dialogs.control.md#defaultoptions)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/control.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/control.d.ts#L15)*
+*Defined in [libraries/botbuilder-dialogs/lib/control.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/control.d.ts#L27)*
 
 
 
@@ -139,7 +177,7 @@ ___
 
 **●  choices**:  *`prompts.ConfirmChoices`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:52](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L52)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:124](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L124)*
 
 
 
@@ -147,10 +185,15 @@ Allows for the localization of the confirm prompts yes/no choices to other local
 
 **Example usage:**
 
+    const confirmPrompt = new ConfirmPrompt();
+
     // Configure yes/no choices for english and spanish (default)
-    ConfirmPrompt.choices['*'] = ['sí', 'no'];
-    ConfirmPrompt.choices['es'] = ['sí', 'no'];
-    ConfirmPrompt.choices['en-us'] = ['yes', 'no'];
+    confirmPrompt.choices['*'] = ['sí', 'no'];
+    confirmPrompt.choices['es'] = ['sí', 'no'];
+    confirmPrompt.choices['en-us'] = ['yes', 'no'];
+
+    // Add to dialogs
+    dialogs.add('confirmPrompt', confirmPrompt);
 
 
 
@@ -163,29 +206,40 @@ ___
 
 ###  begin
 
-► **begin**(context: *`C`*, state: *`object`*, options?: *`O`*): `Promise`.<[DialogResult](../interfaces/botbuilder_dialogs.dialogresult.md)`C`>
+► **begin**(context: *`C`*, state: *`object`*, options?: *`O`*): `Promise`.<[DialogResult](../interfaces/botbuilder_dialogs.dialogresult.md)`R`>
 
 
 
 *Inherited from [Control](botbuilder_dialogs.control.md).[begin](botbuilder_dialogs.control.md#begin)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/control.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/control.d.ts#L21)*
+*Defined in [libraries/botbuilder-dialogs/lib/control.d.ts:51](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/control.d.ts#L51)*
 
+
+
+Starts the control. Depending on the control, its possible for the control to finish immediately so it's advised to check the result object returned by `begin()` and ensure that the control is still active before continuing.
+
+**Usage Example:**
+
+    const state = {};
+    const result = await control.begin(context, state);
+    if (!result.active) {
+        const value = result.result;
+    }
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | `C`   |  - |
-| state | `object`   |  - |
-| options | `O`   |  - |
+| context | `C`   |  Context for the current turn of the conversation with the user. |
+| state | `object`   |  A state object that the control will use to persist its current state. This should be an empty object which the control will populate. The bot should persist this with its other conversation state for as long as the control is still active. |
+| options | `O`   |  (Optional) additional options supported by the control. |
 
 
 
 
 
-**Returns:** `Promise`.<[DialogResult](../interfaces/botbuilder_dialogs.dialogresult.md)`C`>
+**Returns:** `Promise`.<[DialogResult](../interfaces/botbuilder_dialogs.dialogresult.md)`R`>
 
 
 
@@ -201,7 +255,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:77](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L77)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:136](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L136)*
 
 
 
@@ -212,7 +266,7 @@ Sets additional options passed to the `ChoiceFactory` and used to tweak the styl
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| options | `prompts.ChoiceFactoryOptions`   |  Additional options to set. |
+| options | `prompts.ChoiceFactoryOptions`   |  Additional options to set. Defaults to `{ includeNumbers: false }` |
 
 
 
@@ -230,28 +284,38 @@ ___
 
 ###  continue
 
-► **continue**(context: *`C`*, state: *`object`*): `Promise`.<[DialogResult](../interfaces/botbuilder_dialogs.dialogresult.md)`C`>
+► **continue**(context: *`C`*, state: *`object`*): `Promise`.<[DialogResult](../interfaces/botbuilder_dialogs.dialogresult.md)`R`>
 
 
 
 *Inherited from [Control](botbuilder_dialogs.control.md).[continue](botbuilder_dialogs.control.md#continue)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/control.d.ts:22](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/control.d.ts#L22)*
+*Defined in [libraries/botbuilder-dialogs/lib/control.d.ts:68](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/control.d.ts#L68)*
 
+
+
+Passes a users reply to the control for further processing. The bot should keep calling `continue()` for future turns until the control returns a result with `Active == false`. To cancel or interrupt the prompt simply delete the `state` object being persisted.
+
+**Usage Example:**
+
+    const result = await control.continue(context, state);
+    if (!result.active) {
+        const value = result.result;
+    }
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| context | `C`   |  - |
-| state | `object`   |  - |
+| context | `C`   |  Context for the current turn of the conversation with the user. |
+| state | `object`   |  A state object that was previously initialized by a call to [begin()](#begin). |
 
 
 
 
 
-**Returns:** `Promise`.<[DialogResult](../interfaces/botbuilder_dialogs.dialogresult.md)`C`>
+**Returns:** `Promise`.<[DialogResult](../interfaces/botbuilder_dialogs.dialogresult.md)`R`>
 
 
 
@@ -271,7 +335,7 @@ ___
 
 *Overrides [Control](botbuilder_dialogs.control.md).[dialogBegin](botbuilder_dialogs.control.md#dialogbegin)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L39)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:38](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L38)*
 
 
 
@@ -306,7 +370,7 @@ ___
 
 *Inherited from [Prompt](botbuilder_dialogs.prompt.md).[dialogContinue](botbuilder_dialogs.prompt.md#dialogcontinue)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:40](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L40)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L39)*
 
 
 
@@ -338,7 +402,7 @@ ___
 
 *Overrides [Prompt](botbuilder_dialogs.prompt.md).[onPrompt](botbuilder_dialogs.prompt.md#onprompt)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:83](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L83)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:142](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L142)*
 
 
 
@@ -366,13 +430,13 @@ ___
 
 ### «Protected» onRecognize
 
-► **onRecognize**(dc: *[DialogContext](botbuilder_dialogs.dialogcontext.md)`C`*, options: *[PromptOptions](../interfaces/botbuilder_dialogs.promptoptions.md)*): `Promise`.<`boolean`⎮`undefined`>
+► **onRecognize**(dc: *[DialogContext](botbuilder_dialogs.dialogcontext.md)`C`*, options: *[PromptOptions](../interfaces/botbuilder_dialogs.promptoptions.md)*): `Promise`.<`O`⎮`undefined`>
 
 
 
 *Overrides [Prompt](botbuilder_dialogs.prompt.md).[onRecognize](botbuilder_dialogs.prompt.md#onrecognize)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:84](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L84)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:143](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L143)*
 
 
 
@@ -387,7 +451,7 @@ ___
 
 
 
-**Returns:** `Promise`.<`boolean`⎮`undefined`>
+**Returns:** `Promise`.<`O`⎮`undefined`>
 
 
 
@@ -403,7 +467,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:82](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L82)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts:141](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/prompts/confirmPrompt.d.ts#L141)*
 
 
 

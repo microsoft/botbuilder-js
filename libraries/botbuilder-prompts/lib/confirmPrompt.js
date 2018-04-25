@@ -9,7 +9,7 @@ const Recognizers = require("@microsoft/recognizers-text-choice");
  *
  * Creates a new prompt that asks the user to answer a yes/no question.
  *
- * **Usage Example**
+ * **Usage Example:**
  *
  * ```JavaScript
  * const { createConfirmPrompt } = require('botbuilder-prompts');

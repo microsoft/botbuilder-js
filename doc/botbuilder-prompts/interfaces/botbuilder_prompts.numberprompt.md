@@ -9,7 +9,7 @@
 
 Prompts the user to reply with a number.
 
-**Usage Example**
+**Usage Example:**
 
     const { createNumberPrompt } = require('botbuilder-prompts');
 
@@ -30,13 +30,13 @@ Prompts the user to reply with a number.
 
 
 
-*Defined in [libraries/botbuilder-prompts/lib/numberPrompt.d.ts:37](https://github.com/Microsoft/botbuilder-js/blob/e54b802/libraries/botbuilder-prompts/lib/numberPrompt.d.ts#L37)*
+*Defined in [libraries/botbuilder-prompts/lib/numberPrompt.d.ts:37](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-prompts/lib/numberPrompt.d.ts#L37)*
 
 
 
 Sends a formated prompt to the user.
 
-**Usage Example**
+**Usage Example:**
 
     await agePrompt.prompt(context, `How old are you?`);
 
@@ -69,7 +69,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-prompts/lib/numberPrompt.d.ts:55](https://github.com/Microsoft/botbuilder-js/blob/e54b802/libraries/botbuilder-prompts/lib/numberPrompt.d.ts#L55)*
+*Defined in [libraries/botbuilder-prompts/lib/numberPrompt.d.ts:55](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-prompts/lib/numberPrompt.d.ts#L55)*
 
 
 
@@ -77,7 +77,7 @@ Recognizes and validates the users reply. The result of the call will either be 
 
 The recognize() method will not automatically re-prompt the user so either the caller or the prompts custom validator will need to implement re-prompting logic.
 
-**Usage Example**
+**Usage Example:**
 
     const age = await agePrompt.recognize(context);
     if (typeof age == 'number') {

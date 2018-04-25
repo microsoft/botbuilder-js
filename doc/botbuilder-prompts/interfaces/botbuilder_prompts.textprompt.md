@@ -9,7 +9,7 @@
 
 Prompts the user to reply with some text.
 
-**Usage Example**
+**Usage Example:**
 
     const { createTextPrompt } = require('botbuilder-prompts');
 
@@ -30,15 +30,15 @@ Prompts the user to reply with some text.
 
 
 
-*Defined in [libraries/botbuilder-prompts/lib/textPrompt.d.ts:36](https://github.com/Microsoft/botbuilder-js/blob/e54b802/libraries/botbuilder-prompts/lib/textPrompt.d.ts#L36)*
+*Defined in [libraries/botbuilder-prompts/lib/textPrompt.d.ts:36](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-prompts/lib/textPrompt.d.ts#L36)*
 
 
 
 Sends a formated prompt to the user.
 
-**Usage Example**
+**Usage Example:**
 
-    await namePrompt.prompt(context, `What's name?`);
+    await namePrompt.prompt(context, `What's your name?`);
 
 
 **Parameters:**
@@ -69,7 +69,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-prompts/lib/textPrompt.d.ts:54](https://github.com/Microsoft/botbuilder-js/blob/e54b802/libraries/botbuilder-prompts/lib/textPrompt.d.ts#L54)*
+*Defined in [libraries/botbuilder-prompts/lib/textPrompt.d.ts:54](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-prompts/lib/textPrompt.d.ts#L54)*
 
 
 
@@ -77,7 +77,7 @@ Recognizes and validates the users reply. The result of the call will either be 
 
 The recognize() method will not automatically re-prompt the user so either the caller or the prompts custom validator will need to implement re-prompting logic.
 
-**Usage Example**
+**Usage Example:**
 
     const name = await namePrompt.recognize(context);
     if (name) {

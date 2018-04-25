@@ -50,7 +50,7 @@
 
 **Τ PromptValidator**:  *`function`* 
 
-*Defined in [libraries/botbuilder-prompts/lib/textPrompt.d.ts:66](https://github.com/Microsoft/botbuilder-js/blob/e54b802/libraries/botbuilder-prompts/lib/textPrompt.d.ts#L66)*
+*Defined in [libraries/botbuilder-prompts/lib/textPrompt.d.ts:66](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-prompts/lib/textPrompt.d.ts#L66)*
 
 
 
@@ -97,7 +97,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-prompts/lib/attachmentPrompt.d.ts:84](https://github.com/Microsoft/botbuilder-js/blob/e54b802/libraries/botbuilder-prompts/lib/attachmentPrompt.d.ts#L84)*
+*Defined in [libraries/botbuilder-prompts/lib/attachmentPrompt.d.ts:84](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-prompts/lib/attachmentPrompt.d.ts#L84)*
 
 
 
@@ -105,7 +105,7 @@ ___
 
 Creates a new prompt that asks the user to upload one or more attachments.
 
-**Usage Example**
+**Usage Example:**
 
     const { createAttachmentPrompt } = require('botbuilder-prompts');
 
@@ -156,7 +156,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-prompts/lib/choicePrompt.d.ts:119](https://github.com/Microsoft/botbuilder-js/blob/e54b802/libraries/botbuilder-prompts/lib/choicePrompt.d.ts#L119)*
+*Defined in [libraries/botbuilder-prompts/lib/choicePrompt.d.ts:119](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-prompts/lib/choicePrompt.d.ts#L119)*
 
 
 
@@ -164,7 +164,7 @@ ___
 
 Creates a new prompt that asks the user to select from a list of choices.
 
-**Usage Example**
+**Usage Example:**
 
     const { createChoicePrompt } = require('botbuilder-prompts');
 
@@ -209,7 +209,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-prompts/lib/confirmPrompt.d.ts:134](https://github.com/Microsoft/botbuilder-js/blob/e54b802/libraries/botbuilder-prompts/lib/confirmPrompt.d.ts#L134)*
+*Defined in [libraries/botbuilder-prompts/lib/confirmPrompt.d.ts:134](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-prompts/lib/confirmPrompt.d.ts#L134)*
 
 
 
@@ -217,7 +217,7 @@ ___
 
 Creates a new prompt that asks the user to answer a yes/no question.
 
-**Usage Example**
+**Usage Example:**
 
     const { createConfirmPrompt } = require('botbuilder-prompts');
 
@@ -262,7 +262,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-prompts/lib/datetimePrompt.d.ts:114](https://github.com/Microsoft/botbuilder-js/blob/e54b802/libraries/botbuilder-prompts/lib/datetimePrompt.d.ts#L114)*
+*Defined in [libraries/botbuilder-prompts/lib/datetimePrompt.d.ts:114](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-prompts/lib/datetimePrompt.d.ts#L114)*
 
 
 
@@ -270,7 +270,7 @@ ___
 
 Creates a new prompt that asks the user to reply with a date or time.
 
-**Usage Example**
+**Usage Example:**
 
     const { createDatetimePrompt } = require('botbuilder-prompts');
 
@@ -282,7 +282,7 @@ Creates a new prompt that asks the user to reply with a date or time.
           if (value.getTime() < new Date().getTime()) { throw new Error('in the past') }
           return value;
        } catch (err) {
-          await context.sendActivity(`Answer with a time in the future like "tomorrow at 9am" or say "cancel".`);
+          await timePrompt.prompt(context, `Answer with a time in the future like "tomorrow at 9am" or say "cancel".`);
           return undefined;
        }
     });
@@ -321,7 +321,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-prompts/lib/numberPrompt.d.ts:82](https://github.com/Microsoft/botbuilder-js/blob/e54b802/libraries/botbuilder-prompts/lib/numberPrompt.d.ts#L82)*
+*Defined in [libraries/botbuilder-prompts/lib/numberPrompt.d.ts:82](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-prompts/lib/numberPrompt.d.ts#L82)*
 
 
 
@@ -329,7 +329,7 @@ ___
 
 Creates a new prompt that asks the user to reply with a number.
 
-**Usage Example**
+**Usage Example:**
 
     const { createNumberPrompt } = require('botbuilder-prompts');
 
@@ -378,7 +378,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-prompts/lib/oauthPrompt.d.ts:154](https://github.com/Microsoft/botbuilder-js/blob/e54b802/libraries/botbuilder-prompts/lib/oauthPrompt.d.ts#L154)*
+*Defined in [libraries/botbuilder-prompts/lib/oauthPrompt.d.ts:154](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-prompts/lib/oauthPrompt.d.ts#L154)*
 
 
 
@@ -386,7 +386,7 @@ ___
 
 Creates a new prompt that asks the user to sign in using the Bot Frameworks Single Sign On (SSO) service.
 
-**Usage Example**
+**Usage Example:**
 
     async function ensureLogin(context, state, botLogic) {
        const now = new Date().getTime();
@@ -449,7 +449,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-prompts/lib/textPrompt.d.ts:88](https://github.com/Microsoft/botbuilder-js/blob/e54b802/libraries/botbuilder-prompts/lib/textPrompt.d.ts#L88)*
+*Defined in [libraries/botbuilder-prompts/lib/textPrompt.d.ts:88](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-prompts/lib/textPrompt.d.ts#L88)*
 
 
 
@@ -457,7 +457,7 @@ ___
 
 Creates a new prompt that asks the user to enter some text.
 
-**Usage Example**
+**Usage Example:**
 
     const { createTextPrompt } = require('botbuilder-prompts');
 

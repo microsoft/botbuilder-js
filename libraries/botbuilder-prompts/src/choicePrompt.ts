@@ -38,7 +38,7 @@ export enum ListStyle {
  * 
  * Prompts the user to select from a list of choices. 
  *
- * **Usage Example**
+ * **Usage Example:**
  *
  * ```JavaScript
  * const { createChoicePrompt } = require('botbuilder-prompts');
@@ -71,7 +71,7 @@ export interface ChoicePrompt<O = FoundChoice> {
      * Further tweaks can be made to the rendering of choices using the 
      * [choiceOptions](#choiceoptions) property. 
      *
-     * **Usage Example**
+     * **Usage Example:**
      *
      * ```JavaScript
      * await colorPrompt.prompt(context, ['red', 'green', 'blue'], `Pick a color.`);
@@ -93,7 +93,7 @@ export interface ChoicePrompt<O = FoundChoice> {
      * The search options for the underlying choice recognizer can be tweaked using the prompts
      * [recognizerOptions](#recognizeroptions) property.
      *
-     * **Usage Example**
+     * **Usage Example:**
      *
      * ```JavaScript
      * const choice = await colorPrompt.recognize(context, ['red', 'green', 'blue']);
@@ -112,7 +112,7 @@ export interface ChoicePrompt<O = FoundChoice> {
  * 
  * Creates a new prompt that asks the user to select from a list of choices.
  *
- * **Usage Example**
+ * **Usage Example:**
  *
  * ```JavaScript
  * const { createChoicePrompt } = require('botbuilder-prompts');

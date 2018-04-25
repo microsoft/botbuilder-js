@@ -11,6 +11,8 @@ import { DialogSet } from './dialogSet';
 import { PromptOptions } from './prompts/index';
 import { Choice } from 'botbuilder-prompts';
 /**
+ * :package: **botbuilder-dialogs**
+ *
  * Result returned to the caller of one of the various stack manipulation methods and used to
  * return the result from a final call to `DialogContext.end()` to the bots logic.
  */
@@ -28,6 +30,12 @@ export interface DialogResult<T> {
      */
     result: T | undefined;
 }
+/**
+ * :package: **botbuilder-dialogs**
+ *
+ *
+ * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
+ */
 export declare class DialogContext<C extends TurnContext> {
     readonly dialogs: DialogSet<C>;
     readonly context: C;

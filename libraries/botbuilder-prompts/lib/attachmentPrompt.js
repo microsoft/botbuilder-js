@@ -6,7 +6,7 @@ const internal_1 = require("./internal");
  *
  * Creates a new prompt that asks the user to upload one or more attachments.
  *
- * **Usage Example**
+ * **Usage Example:**
  *
  * ```JavaScript
  * const { createAttachmentPrompt } = require('botbuilder-prompts');

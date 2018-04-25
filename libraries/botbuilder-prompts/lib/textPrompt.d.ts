@@ -11,7 +11,7 @@ import { Promiseable, Activity, TurnContext } from 'botbuilder';
  *
  * Prompts the user to reply with some text.
  *
- * **Usage Example**
+ * **Usage Example:**
  *
  * ```JavaScript
  * const { createTextPrompt } = require('botbuilder-prompts');
@@ -24,10 +24,10 @@ export interface TextPrompt<O = string> {
     /**
      * Sends a formated prompt to the user.
      *
-     * **Usage Example**
+     * **Usage Example:**
      *
      * ```JavaScript
-     * await namePrompt.prompt(context, `What's name?`);
+     * await namePrompt.prompt(context, `What's your name?`);
      * ```
      * @param context Context for the current turn of conversation.
      * @param prompt Text or activity to send as the prompt.
@@ -41,7 +41,7 @@ export interface TextPrompt<O = string> {
      * The recognize() method will not automatically re-prompt the user so either the caller or the
      * prompts custom validator will need to implement re-prompting logic.
      *
-     * **Usage Example**
+     * **Usage Example:**
      *
      * ```JavaScript
      * const name = await namePrompt.recognize(context);
@@ -69,7 +69,7 @@ export declare type PromptValidator<R, O = R> = (context: TurnContext, value: R 
  *
  * Creates a new prompt that asks the user to enter some text.
  *
- * **Usage Example**
+ * **Usage Example:**
  *
  * ```JavaScript
  * const { createTextPrompt } = require('botbuilder-prompts');

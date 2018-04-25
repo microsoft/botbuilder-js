@@ -15,7 +15,7 @@ const internal_1 = require("./internal");
  * Creates a new prompt that asks the user to sign in using the Bot Frameworks Single Sign On (SSO)
  * service.
  *
- * **Usage Example**
+ * **Usage Example:**
  *
  * ```JavaScript
  * async function ensureLogin(context, state, botLogic) {

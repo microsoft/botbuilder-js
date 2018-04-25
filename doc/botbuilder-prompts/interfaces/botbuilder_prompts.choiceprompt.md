@@ -9,7 +9,7 @@
 
 Prompts the user to select from a list of choices.
 
-**Usage Example**
+**Usage Example:**
 
     const { createChoicePrompt } = require('botbuilder-prompts');
 
@@ -28,7 +28,7 @@ Prompts the user to select from a list of choices.
 
 **●  choiceOptions**:  *[ChoiceFactoryOptions]()* 
 
-*Defined in [libraries/botbuilder-prompts/lib/choicePrompt.d.ts:50](https://github.com/Microsoft/botbuilder-js/blob/e54b802/libraries/botbuilder-prompts/lib/choicePrompt.d.ts#L50)*
+*Defined in [libraries/botbuilder-prompts/lib/choicePrompt.d.ts:50](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-prompts/lib/choicePrompt.d.ts#L50)*
 
 
 
@@ -45,7 +45,7 @@ ___
 
 **●  recognizerOptions**:  *[FindChoicesOptions]()* 
 
-*Defined in [libraries/botbuilder-prompts/lib/choicePrompt.d.ts:52](https://github.com/Microsoft/botbuilder-js/blob/e54b802/libraries/botbuilder-prompts/lib/choicePrompt.d.ts#L52)*
+*Defined in [libraries/botbuilder-prompts/lib/choicePrompt.d.ts:52](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-prompts/lib/choicePrompt.d.ts#L52)*
 
 
 
@@ -62,7 +62,7 @@ ___
 
 **●  style**:  *[ListStyle](../enums/botbuilder_prompts.liststyle.md)* 
 
-*Defined in [libraries/botbuilder-prompts/lib/choicePrompt.d.ts:48](https://github.com/Microsoft/botbuilder-js/blob/e54b802/libraries/botbuilder-prompts/lib/choicePrompt.d.ts#L48)*
+*Defined in [libraries/botbuilder-prompts/lib/choicePrompt.d.ts:48](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-prompts/lib/choicePrompt.d.ts#L48)*
 
 
 
@@ -83,7 +83,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-prompts/lib/choicePrompt.d.ts:74](https://github.com/Microsoft/botbuilder-js/blob/e54b802/libraries/botbuilder-prompts/lib/choicePrompt.d.ts#L74)*
+*Defined in [libraries/botbuilder-prompts/lib/choicePrompt.d.ts:74](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-prompts/lib/choicePrompt.d.ts#L74)*
 
 
 
@@ -93,7 +93,7 @@ By default, this will attempt to send the provided list of choices as buttons us
 
 Further tweaks can be made to the rendering of choices using the [choiceOptions](#choiceoptions) property.
 
-**Usage Example**
+**Usage Example:**
 
     await colorPrompt.prompt(context, ['red', 'green', 'blue'], `Pick a color.`);
 
@@ -127,7 +127,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-prompts/lib/choicePrompt.d.ts:96](https://github.com/Microsoft/botbuilder-js/blob/e54b802/libraries/botbuilder-prompts/lib/choicePrompt.d.ts#L96)*
+*Defined in [libraries/botbuilder-prompts/lib/choicePrompt.d.ts:96](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-prompts/lib/choicePrompt.d.ts#L96)*
 
 
 
@@ -137,7 +137,7 @@ The recognize() method will not automatically re-prompt the user so either the c
 
 The search options for the underlying choice recognizer can be tweaked using the prompts [recognizerOptions](#recognizeroptions) property.
 
-**Usage Example**
+**Usage Example:**
 
     const choice = await colorPrompt.recognize(context, ['red', 'green', 'blue']);
     if (choice) {

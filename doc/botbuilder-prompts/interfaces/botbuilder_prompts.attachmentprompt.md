@@ -9,7 +9,7 @@
 
 Prompts the user to upload one or more attachments.
 
-**Usage Example**
+**Usage Example:**
 
     const { createAttachmentPrompt } = require('botbuilder-prompts');
 
@@ -30,13 +30,13 @@ Prompts the user to upload one or more attachments.
 
 
 
-*Defined in [libraries/botbuilder-prompts/lib/attachmentPrompt.d.ts:37](https://github.com/Microsoft/botbuilder-js/blob/e54b802/libraries/botbuilder-prompts/lib/attachmentPrompt.d.ts#L37)*
+*Defined in [libraries/botbuilder-prompts/lib/attachmentPrompt.d.ts:37](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-prompts/lib/attachmentPrompt.d.ts#L37)*
 
 
 
 Sends a formated prompt to the user.
 
-**Usage Example**
+**Usage Example:**
 
     await imagePrompt.prompt(context, `Upload an image(s).`);
 
@@ -69,7 +69,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-prompts/lib/attachmentPrompt.d.ts:55](https://github.com/Microsoft/botbuilder-js/blob/e54b802/libraries/botbuilder-prompts/lib/attachmentPrompt.d.ts#L55)*
+*Defined in [libraries/botbuilder-prompts/lib/attachmentPrompt.d.ts:55](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-prompts/lib/attachmentPrompt.d.ts#L55)*
 
 
 
@@ -77,7 +77,7 @@ Recognizes and validates the users reply. The result of the call will either be 
 
 The recognize() method will not automatically re-prompt the user so either the caller or the prompts custom validator will need to implement re-prompting logic.
 
-**Usage Example**
+**Usage Example:**
 
     const images = await imagePrompt.recognize(context);
     if (images) {

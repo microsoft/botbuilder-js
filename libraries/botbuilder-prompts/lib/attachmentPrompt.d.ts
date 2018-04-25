@@ -12,7 +12,7 @@ import { PromptValidator } from './textPrompt';
  *
  * Prompts the user to upload one or more attachments.
  *
- * **Usage Example**
+ * **Usage Example:**
  *
  * ```JavaScript
  * const { createAttachmentPrompt } = require('botbuilder-prompts');
@@ -25,7 +25,7 @@ export interface AttachmentPrompt<O = Attachment[]> {
     /**
      * Sends a formated prompt to the user.
      *
-     * **Usage Example**
+     * **Usage Example:**
      *
      * ```JavaScript
      * await imagePrompt.prompt(context, `Upload an image(s).`);
@@ -42,7 +42,7 @@ export interface AttachmentPrompt<O = Attachment[]> {
      * The recognize() method will not automatically re-prompt the user so either the caller or the
      * prompts custom validator will need to implement re-prompting logic.
      *
-     * **Usage Example**
+     * **Usage Example:**
      *
      * ```JavaScript
      * const images = await imagePrompt.recognize(context);
@@ -59,7 +59,7 @@ export interface AttachmentPrompt<O = Attachment[]> {
  *
  * Creates a new prompt that asks the user to upload one or more attachments.
  *
- * **Usage Example**
+ * **Usage Example:**
  *
  * ```JavaScript
  * const { createAttachmentPrompt } = require('botbuilder-prompts');

@@ -10,6 +10,9 @@ Tracking information for a dialog on the stack.
 ## Type parameters
 #### T :  `any`
 
+(Optional) type of state being persisted for dialog.
+
+
 ## Properties
 <a id="id"></a>
 
@@ -17,7 +20,7 @@ Tracking information for a dialog on the stack.
 
 **●  id**:  *`string`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialog.d.ts:49](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/dialog.d.ts#L49)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialog.d.ts:53](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/dialog.d.ts#L53)*
 
 
 
@@ -34,7 +37,7 @@ ___
 
 **●  state**:  *`T`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialog.d.ts:51](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/dialog.d.ts#L51)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialog.d.ts:55](https://github.com/Microsoft/botbuilder-js/blob/b50d910/libraries/botbuilder-dialogs/lib/dialog.d.ts#L55)*
 
 
 
