@@ -84,7 +84,7 @@ async function processConnectLuisArgs(config: BotConfig): Promise<BotConfig> {
     //    throw new Error("bad or missing --subscriptionKey");
 
     // add the service
-    config.connectService(<ILuisService>{
+    let newService = <ILuisService>{
         type: ServiceType.Luis,
         name: args.name,
         id: args.appId,
@@ -92,7 +92,9 @@ async function processConnectLuisArgs(config: BotConfig): Promise<BotConfig> {
         version: args.version,
         subscriptionKey: args.subscriptionKey,
         authoringKey: args.authoringKey
-    });
+    };
+    config.connectService(newService);
     await config.Save();
+    process.stdout.write(`Connected ${newService.type}:${newService.name} v${newService.version}`);
     return config;
 }

@@ -60,14 +60,16 @@ async function processConnectQnaArgs(config) {
     if (!args.subscriptionKey || !utils_1.uuidValidate(args.subscriptionKey))
         throw new Error("bad or missing --subscriptionKey");
     // add the service
-    config.connectService({
+    let newService = {
         type: BotConfig_1.ServiceType.QnA,
         name: args.name,
         id: args.kbid,
         kbid: args.kbid,
         subscriptionKey: args.subscriptionKey
-    });
+    };
+    config.connectService(newService);
     await config.Save();
+    process.stdout.write(`Connected ${newService.type}:${newService.name} ${newService.kbid}`);
     return config;
 }
 //# sourceMappingURL=msbot-connect-qna.js.map

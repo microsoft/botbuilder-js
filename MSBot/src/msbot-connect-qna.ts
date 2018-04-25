@@ -78,14 +78,16 @@ async function processConnectQnaArgs(config: BotConfig): Promise<BotConfig> {
         throw new Error("bad or missing --subscriptionKey");
 
     // add the service
-    config.connectService(<IQnAService>{
+    let newService = <IQnAService>{
         type: ServiceType.QnA,
         name: args.name,
         id: args.kbid,
         kbid: args.kbid,
         subscriptionKey: args.subscriptionKey
-    });
+    };
+    config.connectService(newService);
 
     await config.Save();
+    process.stdout.write(`Connected ${newService.type}:${newService.name} ${newService.kbid}`);
     return config;
 }

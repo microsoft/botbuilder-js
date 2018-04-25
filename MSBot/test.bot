@@ -12,14 +12,6 @@
             "appPassword": "password"
         },
         {
-            "type": "endpoint",
-            "id": "1",
-            "name": "http://testbot.azurewebsites.net/api/messages",
-            "appId": null,
-            "appPassword": null,
-            "endpoint": "http://testbot.azurewebsites.net/api/messages"
-        },
-        {
             "type": "abs",
             "id": "testbot",
             "name": "testbot",
@@ -60,6 +52,30 @@
                 "d630d177-0346-43ce-a62b-7e23aa25a53c",
                 "f1d94084-40b9-429f-ac3a-73347ae99eeb"
             ]
+        },
+        {
+            "type": "endpoint",
+            "id": "1",
+            "name": "http://foo.com/2",
+            "appId": null,
+            "appPassword": null,
+            "endpoint": "http://foo.com/2"
+        },
+        {
+            "type": "endpoint",
+            "id": "2",
+            "name": "Cool",
+            "appId": null,
+            "appPassword": null,
+            "endpoint": "http://foo.com/2"
+        },
+        {
+            "type": "endpoint",
+            "id": "3",
+            "name": "Cool (2)",
+            "appId": null,
+            "appPassword": null,
+            "endpoint": "http://foo.com/2"
         }
     ]
 }

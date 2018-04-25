@@ -41,8 +41,11 @@ async function processConnectAzureArgs(config) {
     if (!args.idOrName) {
         throw new Error("missing id or name of service to disconnect");
     }
-    config.disconnectServiceByNameOrId(args.idOrName);
-    await config.Save();
+    let removedService = config.disconnectServiceByNameOrId(args.idOrName);
+    if (removedService != null) {
+        await config.Save();
+        process.stdout.write(`Disconnected ${removedService.type}:${removedService.name} ${removedService.id}`);
+    }
     return config;
 }
 //# sourceMappingURL=msbot-disconnect.js.map

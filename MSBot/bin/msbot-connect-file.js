@@ -44,13 +44,15 @@ async function processConnectFile(config) {
     if (!args.hasOwnProperty('filePath'))
         throw new Error("Bad or missing file");
     // add the service
-    config.connectService({
+    let newService = {
         type: BotConfig_1.ServiceType.File,
         id: args.filePath,
         name: path.basename(args.filePath),
         filePath: args.filePath
-    });
+    };
+    config.connectService(newService);
     await config.Save();
+    process.stdout.write(`Connected ${newService.type}:${newService.name} ${newService.filePath}`);
     return config;
 }
 //# sourceMappingURL=msbot-connect-file.js.map

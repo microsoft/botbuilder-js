@@ -143,7 +143,7 @@ class BotConfig {
             if (service.id == nameOrId || service.name == nameOrId) {
                 svs.removeAt(i);
                 this.services = svs.toArray();
-                return;
+                return service;
             }
         }
         throw new Error(`a service with id or name of [${nameOrId}] was not found`);

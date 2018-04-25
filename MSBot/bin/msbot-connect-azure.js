@@ -55,13 +55,15 @@ async function processConnectAzureArgs(config) {
         throw new Error("Bad or missing --id for registered bot");
     if (!args.appId || !utils_1.uuidValidate(args.appId))
         throw new Error("Bad or missing --appId");
-    config.connectService({
+    let service = {
         type: BotConfig_1.ServiceType.AzureBotService,
         id: args.id,
         name: args.hasOwnProperty('name') ? args.name : args.id,
         appId: args.appId
-    });
+    };
+    config.connectService(service);
     await config.Save();
+    process.stdout.write(`Connected ${service.type}:${service.name} ${service.id}`);
     return config;
 }
 //# sourceMappingURL=msbot-connect-azure.js.map

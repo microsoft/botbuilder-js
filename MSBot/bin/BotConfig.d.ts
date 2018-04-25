@@ -26,7 +26,7 @@ export declare class BotConfig implements IBotConfig {
     decryptAll(): void;
     private encryptService(service);
     private decryptService(service);
-    disconnectServiceByNameOrId(nameOrId: string): void;
+    disconnectServiceByNameOrId(nameOrId: string): IConnectedService;
     disconnectService(type: string, id: string): void;
     encryptValue(value: string): string;
     decryptValue(encryptedValue: string): string;

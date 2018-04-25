@@ -65,7 +65,7 @@ async function processConnectLuisArgs(config) {
     //if (!args.subscriptionKey || !uuidValidate(args.subscriptionKey))
     //    throw new Error("bad or missing --subscriptionKey");
     // add the service
-    config.connectService({
+    let newService = {
         type: BotConfig_1.ServiceType.Luis,
         name: args.name,
         id: args.appId,
@@ -73,8 +73,10 @@ async function processConnectLuisArgs(config) {
         version: args.version,
         subscriptionKey: args.subscriptionKey,
         authoringKey: args.authoringKey
-    });
+    };
+    config.connectService(newService);
     await config.Save();
+    process.stdout.write(`Connected ${newService.type}:${newService.name} v${newService.version}`);
     return config;
 }
 //# sourceMappingURL=msbot-connect-luis.js.map

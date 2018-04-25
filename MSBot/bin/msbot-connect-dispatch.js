@@ -65,7 +65,7 @@ async function processConnectDispatch(config) {
         throw new Error("bad or missing --authoringKey");
     if (args.subscriptionKey && !utils_1.uuidValidate(args.subscriptionKey))
         throw new Error("bad --subscriptionKey");
-    let dispatchService = {
+    let newService = {
         type: BotConfig_1.ServiceType.Dispatch,
         name: args.name,
         id: args.appId,
@@ -78,7 +78,7 @@ async function processConnectDispatch(config) {
     let dispatchServices = args.services;
     if (dispatchServices) {
         for (let service of dispatchServices) {
-            dispatchService.serviceIds.push(service.id || '');
+            newService.serviceIds.push(service.id || '');
             if (!linq_collections_1.Enumerable.fromSource(config.services).any(s => s.id == service.id)) {
                 switch (service.type) {
                     case BotConfig_1.ServiceType.File:
@@ -91,8 +91,9 @@ async function processConnectDispatch(config) {
         }
     }
     // add the service
-    config.connectService(dispatchService);
+    config.connectService(newService);
     await config.Save();
+    process.stdout.write(`Connected ${newService.type}:${newService.name} v${newService.version}`);
     return config;
 }
 //# sourceMappingURL=msbot-connect-dispatch.js.map

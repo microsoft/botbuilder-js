@@ -167,7 +167,7 @@ export class BotConfig implements IBotConfig {
     }
 
     // remove service by name or id
-    public disconnectServiceByNameOrId(nameOrId: string): void {
+    public disconnectServiceByNameOrId(nameOrId: string): IConnectedService {
         let svs = new List<IConnectedService>(this.services);
 
         for (let i = 0; i < svs.count(); i++) {
@@ -175,7 +175,7 @@ export class BotConfig implements IBotConfig {
             if (service.id == nameOrId || service.name == nameOrId) {
                 svs.removeAt(i);
                 this.services = svs.toArray();
-                return;
+                return service;
             }
         }
         throw new Error(`a service with id or name of [${nameOrId}] was not found`);

@@ -57,12 +57,14 @@ async function processConnectFile(config: BotConfig): Promise<BotConfig> {
         throw new Error("Bad or missing file");
 
     // add the service
-    config.connectService(<IFileService>{
-            type: ServiceType.File,
-            id: args.filePath,
-            name: path.basename(args.filePath),
-            filePath: args.filePath
-        });
+    let newService = <IFileService>{
+        type: ServiceType.File,
+        id: args.filePath,
+        name: path.basename(args.filePath),
+        filePath: args.filePath
+    };
+    config.connectService(newService);
     await config.Save();
+    process.stdout.write(`Connected ${newService.type}:${newService.name} ${newService.filePath}`);
     return config;
 }

@@ -99,16 +99,17 @@ async function processConnectEndpointArgs(config: BotConfig): Promise<BotConfig>
 
         idCount++;
     }
-
-    config.connectService(<IEndpointService>{
+    let newService  = <IEndpointService>{
         type: ServiceType.Endpoint,
         id: id,
         name: args.name,
         appId: (args.appId && args.appId.length > 0) ? args.appId : null,
         appPassword: (args.appPassword && args.appPassword.length > 0) ? args.appPassword : null,
         endpoint: args.endpoint
-    });
+    };
+    config.connectService(newService);
 
     await config.Save();
+    process.stdout.write(`Connected ${newService.type}:${newService.name} ${newService.endpoint}`);
     return config;
 }

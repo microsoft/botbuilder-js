@@ -83,7 +83,7 @@ async function processConnectDispatch(config: BotConfig): Promise<BotConfig> {
     if (args.subscriptionKey && !uuidValidate(args.subscriptionKey))
         throw new Error("bad --subscriptionKey");
 
-    let dispatchService = <IDispatchService>{
+    let newService = <IDispatchService>{
         type: ServiceType.Dispatch,
         name: args.name,
         id: args.appId,
@@ -96,7 +96,7 @@ async function processConnectDispatch(config: BotConfig): Promise<BotConfig> {
     let dispatchServices = <IConnectedService[]>(<any>args).services;
     if (<IConnectedService[]>dispatchServices) {
         for (let service of dispatchServices) {
-            dispatchService.serviceIds.push(service.id || '');
+            newService.serviceIds.push(service.id || '');
             if (!Enumerable.fromSource(config.services).any(s => s.id == service.id)) {
                 switch (service.type) {
                     case ServiceType.File:
@@ -109,7 +109,8 @@ async function processConnectDispatch(config: BotConfig): Promise<BotConfig> {
         }
     }
     // add the service
-    config.connectService(dispatchService);
+    config.connectService(newService);
     await config.Save();
+    process.stdout.write(`Connected ${newService.type}:${newService.name} v${newService.version}`);
     return config;
 }

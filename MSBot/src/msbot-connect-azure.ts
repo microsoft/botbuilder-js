@@ -71,13 +71,16 @@ async function processConnectAzureArgs(config: BotConfig): Promise<BotConfig> {
     if (!args.appId || !uuidValidate(args.appId))
         throw new Error("Bad or missing --appId");
 
-    config.connectService(<IAzureBotService>{
+    let service = <IAzureBotService>{
         type: ServiceType.AzureBotService,
         id: args.id, // bot id
         name: args.hasOwnProperty('name') ? args.name : args.id,
         appId: args.appId
-    });
+    };
+    config.connectService(service);
 
     await config.Save();
+    
+    process.stdout.write(`Connected ${service.type}:${service.name} ${service.id}`);
     return config;
 }
