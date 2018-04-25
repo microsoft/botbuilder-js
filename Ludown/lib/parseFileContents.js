@@ -52,7 +52,7 @@ module.exports.parseFile = function(fileContent, log)
             var chunkSplitByLine = chunk.split(/\r\n|\r|\n/g);
             var urlRef_regex = chunkSplitByLine[0].trim().replace(PARSERCONSTS.URLREF, '').split(/\(['"](.*?)['"]\)/g);
             if(urlRef_regex.length !== 3 || urlRef_regex[1].trim() === '') {
-                process.stdout.write(chalk.red('[ERROR]: ' + 'Invalid URL Ref: ' + chunkSplitByLine[0]));
+                process.stdout.write(chalk.default.redBright('[ERROR]: ' + 'Invalid URL Ref: ' + chunkSplitByLine[0]));
                 process.exit(1);
             } else {
                 qnaJsonStruct.urls.push(urlRef_regex[1]);
@@ -61,7 +61,7 @@ module.exports.parseFile = function(fileContent, log)
             var chunkSplitByLine = chunk.split(/\r\n|\r|\n/g);
             var urlRef_regex = chunkSplitByLine[0].trim().replace(PARSERCONSTS.FILEREF, '').split(/\(['"](.*?)['"]\)/g);
             if(urlRef_regex.length !== 3 || urlRef_regex[1].trim() === '') {
-                process.stdout.write(chalk.red('[ERROR]: ' + 'Invalid LU File Ref: ' + chunkSplitByLine[0]));
+                process.stdout.write(chalk.default.redBright('[ERROR]: ' + 'Invalid LU File Ref: ' + chunkSplitByLine[0]));
                 process.exit(1);
             } else {
                 additionalFilesToParse.push(urlRef_regex[1]);
@@ -110,8 +110,8 @@ module.exports.parseFile = function(fileContent, log)
                             if((utterance.indexOf('-') !== 0) &&
                                 (utterance.indexOf('*') !== 0) && 
                                 (utterance.indexOf('+') !== 0)) {
-                                    process.stdout.write(chalk.red('Utterance: "' + utterance + '" does not have list decoration. Use either - or * \n'));
-                                    process.stdout.write(chalk.red('Stopping further processing.\n'));
+                                    process.stdout.write(chalk.default.redBright('Utterance: "' + utterance + '" does not have list decoration. Use either - or * \n'));
+                                    process.stdout.write(chalk.default.redBright('Stopping further processing.\n'));
                                     process.exit(1);
                                 }
                             utterance = utterance.slice(2);
@@ -139,8 +139,8 @@ module.exports.parseFile = function(fileContent, log)
                     if((utterance.indexOf('-') !== 0) &&
                         (utterance.indexOf('*') !== 0) && 
                         (utterance.indexOf('+') !== 0)) {
-                        process.stdout.write(chalk.red('Utterance: "' + utterance + '" does not have list decoration. Use either - or * \n'));
-                        process.stdout.write(chalk.red('Stopping further processing.\n'));
+                        process.stdout.write(chalk.default.redBright('Utterance: "' + utterance + '" does not have list decoration. Use either - or * \n'));
+                        process.stdout.write(chalk.default.redBright('Stopping further processing.\n'));
                         process.exit(1);
                         }
                     utterance = utterance.slice(2);
@@ -196,7 +196,7 @@ module.exports.parseFile = function(fileContent, log)
                                         }
                                         LUISJsonStruct.utterances.push(utteranceObject);
                                     } else {
-                                        if(!log) process.stdout.write(chalk.yellow('[WARN]: No labelled value found for entity: ' + entity + ' in utterance: ' + utterance + '\n'));
+                                        console.log(chalk.yellow('[WARN]: No labelled value found for entity: ' + entity + ' in utterance: ' + utterance + '\n'));
                                     }
                                 } else {
                                     // push this utterance to patterns
@@ -299,9 +299,9 @@ module.exports.parseFile = function(fileContent, log)
                 }); 
 
                 if(entityInSimpleCollection.length > 0) {
-                    process.stdout.write(chalk.red('\n List entity ' + entityName + ' is also defined as a simple entity type. Duplicate names are not allowed.\n'));
-                    process.stdout.write(chalk.red('\n List entities do must not have labelled value in example utterances.\n'));
-                    process.stdout.write(chalk.red('\n Stopping further processing.\n'));
+                    process.stdout.write(chalk.default.redBright('\n List entity ' + entityName + ' is also defined as a simple entity type. Duplicate names are not allowed.\n'));
+                    process.stdout.write(chalk.default.redBright('\n List entities cannot have labelled value in example utterances.\n'));
+                    process.stdout.write(chalk.default.redBright('\n Stopping further processing.\n'));
                     process.exit(1);
                 }
                 
@@ -334,8 +334,8 @@ module.exports.parseFile = function(fileContent, log)
                     if((listLine.indexOf('-') !== 0) &&
                     (listLine.indexOf('*') !== 0) && 
                     (listLine.indexOf('+') !== 0)) {
-                        process.stdout.write(chalk.red('[ERROR]: Synonyms list value: "' + listLine + '" does not have list decoration. Use either - or * \n'));
-                        process.stdout.write(chalk.red('Stopping further processing.\n'));
+                        process.stdout.write(chalk.default.redBright('[ERROR]: Synonyms list value: "' + listLine + '" does not have list decoration. Use either - or * \n'));
+                        process.stdout.write(chalk.default.redBright('Stopping further processing.\n'));
                         process.exit(1);
                     }
                     listLine = listLine.slice(2);       
@@ -360,8 +360,8 @@ module.exports.parseFile = function(fileContent, log)
                     if((phraseListValues.indexOf('-') !== 0) &&
                     (phraseListValues.indexOf('*') !== 0) && 
                     (phraseListValues.indexOf('+') !== 0)) {
-                        process.stdout.write(chalk.red('[ERROR]: Phrase list value: "' + phraseListValues + '" does not have list decoration. Use either - or * \n'));
-                        process.stdout.write(chalk.red('Stopping further processing.\n'));
+                        process.stdout.write(chalk.default.redBright('[ERROR]: Phrase list value: "' + phraseListValues + '" does not have list decoration. Use either - or * \n'));
+                        process.stdout.write(chalk.default.redBright('Stopping further processing.\n'));
                         process.exit(1);
                     }
                     phraseListValues = phraseListValues.slice(2);
