@@ -291,7 +291,7 @@ var validateLUISBlob = function(LUISJSONBlob) {
     }
     // for each entityFound, see if there are duplicate definitions
     entitiesList.forEach(function(entity) {
-        if(entity.type.length > 0) {
+        if(entity.type.length > 1) {
             process.stdout.write(chalk.default.redBright('  Entity "' + entity.name + '" has duplicate definitions. \n\n'));
             process.stdout.write(chalk.default.redBright('  ' + JSON.stringify(entity.type, 2, null) + '  \n'));
             process.stdout.write(chalk.default.redBright('\n  Stopping further processing \n'));
