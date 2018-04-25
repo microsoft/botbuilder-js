@@ -46,8 +46,8 @@ const weather = new LuisRecognizer({
 
 // The QnAMaker knowledge base used in this sample is `sampleKnowledgeBase.tsv`
 const faq = new QnAMaker({
-    knowledgeBaseId: process.env.QNAMAKER_KNOWLEDGE_BASE,
-    subscriptionKey: process.env.QNAMAKER_SUBSCRIPTION_KEY,
+    knowledgeBaseId: '71df79a5-31ef-448e-91c5-4e04532e9fc8',
+    subscriptionKey: 'cd630cc7238a43a286d6e6de1c5682af',
     serviceEndpoint: 'https://westus.api.cognitive.microsoft.com/'
 });
 
@@ -58,42 +58,85 @@ adapter.use(conversationState);
 // register some dialogs for usage with the LUIS apps that are being dispatched to
 const dialogs = new DialogSet();
 
+function findEntities(entityName, entityResults) {
+    let entities = []
+    if (entityName in entityResults) {
+        entityResults[entityName].forEach((entity, idx) => {
+            entities.push(entity);
+        });
+    }
+    return entities.length > 0 ? entities : undefined;
+}
+
 dialogs.add('HomeAutomation.TurnOff', [
-    async (dialogContext) => {
+    async (dialogContext, args) => {
+        const devices = findEntities('HomeAutomation_Device', args.entities);
+        const operations = findEntities('HomeAutomation_Operation', args.entities);
+
         const state = conversationState.get(dialogContext.context);
         state.homeAutomationTurnOff = state.homeAutomationTurnOff ? state.homeAutomationTurnOff + 1 : 1;
         await dialogContext.context.sendActivity(`${state.homeAutomationTurnOff}: You reached the "HomeAutomation.TurnOff" dialog.`);
-
+        if (devices) {
+            await dialogContext.context.sendActivity(`Found these "HomeAutomation_Device" entities:\n${devices.join(', ')}`);
+        }
+        if (operations) {
+            await dialogContext.context.sendActivity(`Found these "HomeAutomation_Operation" entities:\n${operations.join(', ')}`);
+        }
         await dialogContext.end();
     }
 ]);
 
 dialogs.add('HomeAutomation.TurnOn', [
-    async (dialogContext) => {
+    async (dialogContext, args) => {
+        const devices = findEntities('HomeAutomation_Device', args.entities);
+        const operations = findEntities('HomeAutomation_Operation', args.entities);
+
         const state = conversationState.get(dialogContext.context);
         state.homeAutomationTurnOn = state.homeAutomationTurnOn ? state.homeAutomationTurnOn + 1 : 1;
         await dialogContext.context.sendActivity(`${state.homeAutomationTurnOn}: You reached the "HomeAutomation.TurnOn" dialog.`);
-
+        if (devices) {
+            await dialogContext.context.sendActivity(`Found these "HomeAutomation_Device" entities:\n${devices.join(', ')}`);
+        }
+        if (operations) {
+            await dialogContext.context.sendActivity(`Found these "HomeAutomation_Operation" entities:\n${operations.join(', ')}`);
+        }
         await dialogContext.end();
     }
 ]);
 
 dialogs.add('Weather.GetForecast', [
-    async (dialogContext) => {
+    async (dialogContext, args) => {
+        const locations = findEntities('Weather_Location', args.entities);
+
         const state = conversationState.get(dialogContext.context);
         state.weatherGetForecast = state.weatherGetForecast ? state.weatherGetForecast + 1 : 1;
         await dialogContext.context.sendActivity(`${state.weatherGetForecast}: You reached the "Weather.GetForecast" dialog.`);
-
+        if (locations) {
+            await dialogContext.context.sendActivity(`Found these "Weather_Location" entities:\n${locations.join(', ')}`);
+        }
         await dialogContext.end();
     }
 ]);
 
 dialogs.add('Weather.GetCondition', [
-    async (dialogContext) => {
+    async (dialogContext, args) => {
+        const locations = findEntities('Weather_Location', args.entities);
+
         const state = conversationState.get(dialogContext.context);
         state.weatherGetCondition = state.weatherGetCondition ? state.weatherGetCondition + 1 : 1;
         await dialogContext.context.sendActivity(`${state.weatherGetCondition}: You reached the "Weather.GetCondition" dialog.`);
+        if (locations) {
+            await dialogContext.context.sendActivity(`Found these "Weather_Location" entities:\n${locations.join(', ')}`);
+        }
+        await dialogContext.end();
+    }
+]);
 
+dialogs.add('None', [
+    async (dialogContext) => {
+        const state = conversationState.get(dialogContext.context);
+        state.noneIntent = state.noneIntent ? state.noneIntent + 1 : 1;
+        await dialogContext.context.sendActivity(`${state.noneIntent}: You reached the "None" dialog.`);
         await dialogContext.end();
     }
 ]);
@@ -117,16 +160,20 @@ server.post('/api/messages', (req, res) => {
 
             switch (topIntent) {
                 case 'l_homeautomation':
-                    const topHomeAutoIntent = LuisRecognizer.topIntent(await homeAutomation.recognize(context));
-                    await dc.begin(topHomeAutoIntent);
+                    const homeAutoResults = await homeAutomation.recognize(context);
+                    const topHomeAutoIntent = LuisRecognizer.topIntent(homeAutoResults);
+                    await dc.begin(topHomeAutoIntent, homeAutoResults);
                     break;
                 case 'l_weather':
-                    const topWeatherIntent = LuisRecognizer.topIntent(await weather.recognize(context));
-                    await dc.begin(topWeatherIntent);
+                    const weatherResults = await weather.recognize(context);
+                    const topWeatherIntent = LuisRecognizer.topIntent(weatherResults);
+                    await dc.begin(topWeatherIntent, weatherResults);
                     break;
                 case 'q_faq':
                     await faq.answer(context);
                     break;
+                default:
+                    await dc.begin('None');
             }
         }
     });
