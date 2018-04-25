@@ -1,6 +1,6 @@
 {
   "name": "chatdown",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "Tool for parsing chat files and outputting replayable activities",
   "main": "lib/index.js",
   "directories": {
@@ -8,6 +8,9 @@
   },
   "scripts": {
     "test": "cd test/ && mocha --opts mocha.opts"
+  },
+  "engines": {
+    "node": ">=8.0.0"
   },
   "repository": {
     "type": "git",
@@ -26,6 +29,7 @@
     "fs-extra": "^5.0.0",
     "mime-types": "^2.1.18",
     "minimist": "^1.2.0",
+    "please-upgrade-node": "^3.0.1",
     "uuid": "^3.2.1",
     "window-size": "^1.1.0"
   },

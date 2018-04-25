@@ -1,6 +1,6 @@
 {
   "name": "luis-apis",
-  "version": "1.0.17",
+  "version": "1.0.21",
   "description": "Tooling for connectivity with LUIS APIs",
   "main": "lib/api/index.js",
   "bin": {
@@ -14,6 +14,9 @@
   },
   "scripts": {
     "test": "cd test/ && mocha --opts mocha.opts"
+  },
+  "engines": {
+    "node": ">=8.0"
   },
   "repository": {
     "type": "git",
@@ -35,6 +38,7 @@
     "readline-sync": "^1.4.9",
     "request": "^2.85.0",
     "request-promise": "^4.2.2",
+    "semver": "^5.5.0",
     "window-size": "^1.1.0"
   },
   "devDependencies": {

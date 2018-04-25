@@ -1,7 +1,13 @@
 #!/usr/bin/env node
 import * as program from 'commander';
 import * as chalk from 'chalk';
-var pjson = require('../package.json');
+const pkg = require('../package.json');
+const semver = require('semver');
+let requiredVersion = pkg.engines.node;
+if (!semver.satisfies(process.version, requiredVersion)) {
+    console.log(`Required node version ${requiredVersion} not satisfied with current version ${process.version}.`);
+    process.exit(1);
+}
 
 program.Command.prototype.unknownOption = function (flag: any) {
     console.error(chalk.default.redBright(`Unknown arguments: ${process.argv.slice(2).join(' ')}`));
@@ -10,7 +16,7 @@ program.Command.prototype.unknownOption = function (flag: any) {
 
 
 program
-    .version(pjson.version, '-V, --Version')
+    .version(pkg.version, '-V, --Version')
     .description(`The msbot program makes it easy to manipulate .bot files for Microsoft Bot Framework tools.`);
 
 program

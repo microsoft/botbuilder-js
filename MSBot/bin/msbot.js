@@ -3,13 +3,19 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const program = require("commander");
 const chalk = require("chalk");
-var pjson = require('../package.json');
+const pkg = require('../package.json');
+const semver = require('semver');
+let requiredVersion = pkg.engines.node;
+if (!semver.satisfies(process.version, requiredVersion)) {
+    console.log(`Required node version ${requiredVersion} not satisfied with current version ${process.version}.`);
+    process.exit(1);
+}
 program.Command.prototype.unknownOption = function (flag) {
     console.error(chalk.default.redBright(`Unknown arguments: ${process.argv.slice(2).join(' ')}`));
     program.help();
 };
 program
-    .version(pjson.version, '-V, --Version')
+    .version(pkg.version, '-V, --Version')
     .description(`The msbot program makes it easy to manipulate .bot files for Microsoft Bot Framework tools.`);
 program
     .command('init', 'create a new .bot file');
