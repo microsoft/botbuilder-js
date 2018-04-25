@@ -288,10 +288,23 @@ module.exports.parseFile = function(fileContent, log)
 
             // is this a list type?
             else if(entityType.indexOf('=', entityType.length - 1) >= 0) {
+                
             //else if(entityType.toLowerCase() === 'list') {
                 // get normalized value
                 var normalizedValue = entityType.substring(0, entityType.length - 1);
 
+                // list entity cannot be duplicated under a simple entity type
+                var entityInSimpleCollection = LUISJsonStruct.entities.filter(function(item){
+                    return item.name == entityName
+                }); 
+
+                if(entityInSimpleCollection.length > 0) {
+                    process.stdout.write(chalk.red('\n List entity ' + entityName + ' is also defined as a simple entity type. Duplicate names are not allowed.\n'));
+                    process.stdout.write(chalk.red('\n List entities do must not have labelled value in example utterances.\n'));
+                    process.stdout.write(chalk.red('\n Stopping further processing.\n'));
+                    process.exit(1);
+                }
+                
                 // remove the first entity declaration line
                 chunkSplitByLine.splice(0,1);
                 var closedListObj = {};

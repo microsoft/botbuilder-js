@@ -4,6 +4,17 @@
 
 Chatdown is a transcript generator which consumes a markdown file to generate activity transcripts. Generated transcript files are output to stdout.
 
+A good bot just like any successful application or website out there starts with clarity on supported scenarios. Creating mockups of conversations between bot and user is useful for: 
+- Framing the scenarios supported by the bot
+- Business deicion makaers to review, provide feedback.
+- Flushing out happy path (as well as others) through conversational flows between user and bot
+
+.Chat file format helps you create mockups of conversations between user and bot. Chatdown CLI tool convert .chat files into conversation transcripts (.transcript file) that can be viewed in the Bot Framework Emulator.
+
+## Pre-requisite
+
+- [Node.js](https://nodejs.org/) version 8.5 or higher
+
 ## Installation
 ```bash
 npm i -g chatdown
@@ -22,7 +33,43 @@ chatdown <chat> --help
 | `--help`    | Output the help to the console|
 
 ## .chat File Format
+
+Here's an example .chat file:
+
+```markdown
+user=Joe
+bot=LulaBot
+
+bot: Hi!
+user: yo!
+bot: [Typing][Delay=3000]
+Greetings!
+What would you like to do?
+* update - You can update your account
+* List - You can list your data
+* help - you can get help
+
+user: I need the bot framework logo.
+
+bot:
+Here you go.
+[Attachment=bot-framework.png]
+[Attachment=http://yahoo.com/bot-framework.png]
+[AttachmentLayout=carousel]
+
+user: thanks
+bot:
+Here's a form for you
+[Attachment=card.json adaptivecard]
+
+```
+
+Checkout the [Examples](https://github.com/Microsoft/botbuilder-tools/tree/master/Chatdown/Examples) folder for more samples.
+
+
 Chat files are markdown files that contain 2 parts:
+- Header that defines who the participants are in the conversation
+- Back and forth conversation between user and bot
 
 ### Header
 The header defines who the participants are in the conversation and other options.
@@ -35,8 +82,8 @@ The header defines who the participants are in the conversation and other option
 
 Once the configuration options for `user` and `bot` are defined, the rest of the conversation can use the alias prefixes `user:` and `bot:` or the names directly.  Chatdown will correctly make the associations to the specified names for you.
 
-### Commands
-The conversation text represents markdown between the user and the bot.  Every time a `user:` or `bot:`  is found at the beginning of the line a new activity will be inserted into the transcript.  Inside of the markdown you can insert commands generate richer transcripts.
+### Conversation
+The conversation between the user and the bot with markdown support for bot's responses. Every time a `user:` or `bot:`  is found at the beginning of the line a new activity will be inserted into the transcript.  Inside of the markdown you can insert commands generate richer transcripts.
 
 | Command        | Description                                                |
 | --------------- | ------------------------------------------------------------ |
@@ -82,36 +129,7 @@ Some content types have shortcuts
 | adaptivecard          | `application/vnd.microsoft.card.adaptive`  |
 | *application/custom*  | `application/custom`                       |
 
-### Example .chat
-Checkout the [Examples](.\Examples) folder for more samples.
 
-```markdown
-user=Joe
-bot=LulaBot
-
-bot: Hi!
-user: yo!
-bot: [Typing][Delay=3000]
-Greetings!
-What would you like to do?
-* update - You can update your account
-* List - You can list your data
-* help - you can get help
-
-user: I need the bot framework logo.
-
-bot:
-Here you go.
-[Attachment=bot-framework.png]
-[Attachment=http://yahoo.com/bot-framework.png]
-[AttachmentLayout=carousel]
-
-user: thanks
-bot:
-Here's a form for you
-[Attachment=card.json adaptivecard]
-
-```
 
 ## CLI Examples
 

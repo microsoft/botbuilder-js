@@ -7,6 +7,11 @@ Use the Dispatch model in cases when:
 2. Evaluate quality of intents classification of a single LUIS model.
 3. Create a text classification model from text file(s).
 
+## Pre-requisite
+
+- [Node.js](https://nodejs.org/) version 8.5 or higher
+
+
 ## Installation
 To install simply invoke npm 
 
