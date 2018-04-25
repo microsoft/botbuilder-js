@@ -84,7 +84,7 @@ module.exports = {
                     process.stdout.write(chalk.default.redBright('Sorry, file ' + file + 'had invalid content\n'));
                     process.exit(1);
                 } else {
-                    allParsedLUISContent.push(parsedContent.LUISBlob);
+                    if(validateLUISBlob(parsedContent.LUISBlob)) allParsedLUISContent.push(parsedContent.LUISBlob);
                     allParsedQnAContent.push(parsedContent.QnABlob);
                 }
                 // remove this file from the list
@@ -225,6 +225,82 @@ module.exports = {
         }
     }
 };
+
+/**
+ * Helper function to validate parsed LUISJsonblob
+ * @param {Object} LUISJSONBlob input LUIS Json blob
+ * @returns {Boolean} True if validation succeeds.
+ */
+var validateLUISBlob = function(LUISJSONBlob) {
+    // look for entity name collisions - list, simple, patternAny, phraselist
+    // look for list entities labelled
+    // look for prebuilt entity labels in utterances
+    var entitiesList = [];
+    if(LUISJSONBlob.entities.length > 0) {
+        LUISJSONBlob.entities.forEach(function(entity) {
+            entitiesList.push({
+                "name": entity.name,
+                "type": ["simple"]
+            });
+        });
+    }
+    if(LUISJSONBlob.closedLists.length > 0){
+        LUISJSONBlob.closedLists.forEach(function(entity) {
+            var entityFound = entitiesList.filter(function(item) {
+                return item.name == entity.name;
+            });
+            if(entityFound.length === 0) {
+                entitiesList.push({
+                    "name": entity.name,
+                    "type": ["simple"]
+                });
+            } else {
+                entityFound.type.push("list");
+            }
+        });
+    }
+    if(LUISJSONBlob.patternAnyEntities.length > 0) {
+        LUISJSONBlob.patternAnyEntities.forEach(function(entity) {
+            var entityFound = entitiesList.filter(function(item) {
+                return item.name == entity.name;
+            });
+            if(entityFound.length === 0) {
+                entitiesList.push({
+                    "name": entity.name,
+                    "type": ["patternAny"]
+                });
+            } else {
+                entityFound[0].type.push("patternAny");
+            }
+        });
+    }
+    if(LUISJSONBlob.model_features.length > 0) {
+        LUISJSONBlob.model_features.forEach(function(entity) {
+            var entityFound = entitiesList.filter(function(item) {
+                return item.name == entity.name;
+            });
+            if(entityFound.length === 0) {
+                entitiesList.push({
+                    "name": entity.name,
+                    "type": ["phraseList"]
+                });
+            } else {
+                entityFound.type.push("phraseList");
+            }
+        });
+    }
+    // for each entityFound, see if there are duplicate definitions
+    entitiesList.forEach(function(entity) {
+        if(entity.type.length > 0) {
+            process.stdout.write(chalk.default.redBright('  Entity "' + entity.name + '" has duplicate definitions. \n\n'));
+            process.stdout.write(chalk.default.redBright('  ' + JSON.stringify(entity.type, 2, null) + '  \n'));
+            process.stdout.write(chalk.default.redBright('\n  Stopping further processing \n'));
+            process.exit(1);
+        }
+    })
+    return true;
+}
+
 /**
  * Helper function to recursively get all .lu files
  * @param {string} inputfolder input folder name
