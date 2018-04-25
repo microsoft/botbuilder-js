@@ -14,11 +14,12 @@ program.Command.prototype.unknownOption = function (flag) {
 program
     .name("ludown refresh")
     .description(`Convert LUIS JSON and QnAMaker TSV files into .lu file`)
-    .option('-o, --out_folder <outputFolder>', 'Output folder for all files the tool will generate')
-    .option('-q, --quiet', 'Quiet, no trace messages')
-    .option('-i, --LUIS_File <LUIS_JSON_File>', 'LUIS JSON input file name')
-    .option('-l, --QNA_File <QNA_TSV_File>', 'QnA Maker JSON output file name')
-    .option('-n, --lu_File <LU_File>', 'Output .lu file name')
+    .usage('-i <LUISJsonFile> | -l <QnATSVFile>')
+    .option('-i, --LUIS_File <LUIS_JSON_File> [Optional]', 'LUIS JSON input file name')
+    .option('-l, --QNA_File <QNA_TSV_File> [Optional]', 'QnA Maker JSON output file name')
+    .option('-o, --out_folder <outputFolder> [optional]', 'Output folder for all files the tool will generate')
+    .option('--verbose [optional]', 'Get verbose messages from parser')
+    .option('-n, --lu_File <LU_File> [optional]', 'Output .lu file name')
     .parse(process.argv);
 
     if (process.argv.length < 3) {

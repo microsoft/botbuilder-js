@@ -3,7 +3,7 @@ const chalk = require('chalk');
 const windowSize = require('window-size');
 
 module.exports = function () {
-    process.stdout.write('\nChatdown cli tool used to parse chat dialogs into transcripts\n\n© 2018 Microsoft Corporation\n\n');
+    process.stdout.write('\nChatdown cli tool used to parse chat dialogs (.chat file) into a mock transcript file\n\n© 2018 Microsoft Corporation\n\n');
     process.stdout.write(chalk.cyan.bold(`chatdown [chat] [--help] [--version]\n\n`));
     let left = 20;
     let right = windowSize.width - left - 3; // 3 is for 3 vertical bar characters

@@ -299,7 +299,7 @@ module.exports.parseFile = function(fileContent, log)
                 }); 
 
                 if(entityInSimpleCollection.length > 0) {
-                    process.stdout.write(chalk.default.redBright('\n List entity ' + entityName + ' is also defined as a simple entity type. Duplicate names are not allowed.\n'));
+                    process.stdout.write(chalk.default.redBright('\n List entity "' + entityName + '" is also defined as a simple entity type. Duplicate names are not allowed.\n'));
                     process.stdout.write(chalk.default.redBright('\n List entities cannot have labelled value in example utterances.\n'));
                     process.stdout.write(chalk.default.redBright('\n Stopping further processing.\n'));
                     process.exit(1);
@@ -409,6 +409,7 @@ module.exports.parseFile = function(fileContent, log)
             qnaJsonStruct.qnaPairs.push(qnaObj);
         } 
     });
+
     return {
         "fParse": additionalFilesToParse,
         "LUISBlob": LUISJsonStruct,

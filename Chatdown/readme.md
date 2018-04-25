@@ -2,7 +2,7 @@
 
 [![npm version](https://badge.fury.io/js/chatdown.svg)](https://badge.fury.io/js/chatdown)
 
-Chatdown is a transcript generator which consumes a markdown file to generate activity transcripts. Generated transcript files are output to stdout.
+Chatdown is a transcript generator which consumes a .chat file to generate mock transcripts. Generated mock transcript files are output to stdout.
 
 A good bot just like any successful application or website out there starts with clarity on supported scenarios. Creating mockups of conversations between bot and user is useful for: 
 - Framing the scenarios supported by the bot

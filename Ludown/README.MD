@@ -75,24 +75,24 @@ Convert .lu file(s) into LUIS JSON file. Optionally you can also generate a LUIS
 ```bash
 >ludown parse toluis -h
 
-  Usage: ludown parse ToLuis [options]
+  Usage: ludown parse ToLuis --in <luFile> | --lu_folder <inputFolder> [-s]
 
   Convert .lu file(s) into LUIS JSON file. You can optionally also request LUIS batch test input file
 
   Options:
 
-    --in <luFile>                                    .lu file to parse
-    -l, --lu_folder <inputFolder>                    Folder that has the .lu file. By default ludown will only look at the current folder. To look at all subfolders, include -s
-    -o, --out_folder <outputFolder>                  Output folder for all files the tool will generate
-    -s, --subfolder                                  Include sub-folders as well when looking for .lu files
-    --verbose                                        Get verbose messages from parser
-    -r, --luis_schema_version <luis_schema_version>  LUIS Schema version
-    -v, --luis_versionId <luis_versionId>            LUIS app version
-    -n, --luis_name <luis_appName>                   LUIS app name
-    -d, --luis_desc <luis_appDesc>                   LUIS app description
-    -c, --luis_culture <luis_appCulture>             LUIS app culture
-    -t, --write_luis_batch_tests                     Write out LUIS batch test json file
-    -h, --help                                       output usage information
+    --in <luFile>                                               .lu file to parse
+    -l, --lu_folder <inputFolder> [optional]                    Folder that has the .lu file. By default ludown will only look at the current folder. To look at all subfolders, include -s
+    -o, --out_folder <outputFolder> [optional]                  Output folder for all files the tool will generate
+    -s, --subfolder [optional]                                  Include sub-folders as well when looking for .lu files
+    --verbose [optional]                                        Get verbose messages from parser
+    -r, --luis_schema_version <luis_schema_version> [optional]  LUIS Schema version
+    -v, --luis_versionId <luis_versionId> [optional]            LUIS app version
+    -n, --luis_name <luis_appName> [optional]                   LUIS app name
+    -d, --luis_desc <luis_appDesc> [optional]                   LUIS app description
+    -c, --luis_culture <luis_appCulture> [optional]             LUIS app culture
+    -t, --write_luis_batch_tests [optional]                     Write out LUIS batch test json file
+    -h, --help                                                  output usage information
 ```
 
 #### Parse ToQna command
@@ -102,19 +102,19 @@ Convert .lu file(s) into QnA Maker JSON and TSV files.
 ```bash
 >ludown parse toqna -h
 
-  Usage: ludown parse ToQna [options]
+   Usage: ludown parse ToQna --in <luFile> | --lu_folder <inputFolder> [-s]
 
   Convert .lu file(s) into QnA Maker JSON and TSV files.
 
   Options:
 
-    --in <luFile>                    .lu file to parse
-    -l, --lu_folder <inputFolder>    Folder with .lu file(s). By default ludown will only look at the current folder. -s to include subfolders
-    -o, --out_folder <outputFolder>  Output folder for all files the tool will generate
-    -s, --subfolder                  Include sub-folders as well when looking for .lu files
-    --verbose                        Get verbose messages from parser
-    -m, --qna_name <QnA_KB_Name>     QnA KB name
-    -h, --help                       output usage information
+    --in <luFile>                               .lu file to parse
+    -l, --lu_folder <inputFolder> [optional]    Folder with .lu file(s). By default ludown will only look at the current folder. -s to include subfolders
+    -o, --out_folder <outputFolder> [optional]  Output folder for all files the tool will generate
+    -s, --subfolder [optional]                  Include sub-folders as well when looking for .lu files
+    --verbose [optional]                        Get verbose messages from parser
+    -m, --qna_name <QnA_KB_Name> [optional]     QnA KB name
+    -h, --help                                  output usage information
 ```
 
 ### Refresh command
@@ -123,18 +123,18 @@ After you have bootstrapped and created your LUIS model and/ or QnAMaker knowled
 ```bash
 >ludown refresh -h
 
-  Usage: ludown refresh [options]
+  Usage: ludown refresh -i <LUISJsonFile> | -l <QnATSVFile>
 
   Convert LUIS JSON and QnAMaker TSV files into .lu file
 
   Options:
 
-    -o, --out_folder <outputFolder>   Output folder for all files the tool will generate
-    -q, --quiet                       Quiet, no trace messages
-    -i, --LUIS_File <LUIS_JSON_File>  LUIS JSON input file name
-    -l, --QNA_File <QNA_TSV_File>     QnA Maker JSON output file name
-    -n, --lu_File <LU_File>           Output .lu file name
-    -h, --help                        output usage information
+    -i, --LUIS_File <LUIS_JSON_File> [Optional]  LUIS JSON input file name
+    -l, --QNA_File <QNA_TSV_File> [Optional]     QnA Maker JSON output file name
+    -o, --out_folder <outputFolder> [optional]   Output folder for all files the tool will generate
+    --verbose [optional]                         Get verbose messages from parser
+    -n, --lu_File <LU_File> [optional]           Output .lu file name
+    -h, --help                                   output usage information
 
 ```
 
