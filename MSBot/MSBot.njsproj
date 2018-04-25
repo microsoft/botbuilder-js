@@ -37,7 +37,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="tsconfig.json" />
-    <TypeScriptCompile Include="src\BotConfig.ts" />
+    <TypeScriptCompile Include="src\BotConfigModel.ts" />
     <Content Include="package.json" />
     <Content Include="README.md" />
     <TypeScriptCompile Include="src\index.ts" />
