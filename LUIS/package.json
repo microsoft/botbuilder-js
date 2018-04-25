@@ -1,6 +1,6 @@
 {
   "name": "luis-apis",
-  "version": "1.0.21",
+  "version": "1.0.22",
   "description": "Tooling for connectivity with LUIS APIs",
   "main": "lib/api/index.js",
   "bin": {

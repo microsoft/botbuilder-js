@@ -112,10 +112,10 @@ async function initializeConfig() {
     process.stdout.write(chalk.cyan.bold('\nThis util will walk you through creating a .luisrc file\n\nPress ^C at any time to quit.\n\n'));
     const validRegions = 'westus westus2 eastus eastus2 westcentralus southcentralus westeurope northeurope southeastasia eastasia australiaeast brazilsouth'.split(' ');
     const questions = [
-        'What is your LUIS App ID? ',
         'What is your LUIS Authoring key (from luis.ai portal User Settings page)? ',
-        'What is your LUIS Version ID (Default: 0.1)?> ',
-        `What region [${validRegions.join(', ')}]? `,
+        `What is your region? [${validRegions.join(', ')}] `,
+        'What is your LUIS App ID? [Default: skip] ',
+        'What is your LUIS Version ID? [Default: 0.1] ',
     ];
 
     const prompt = readline.createInterface({
@@ -130,7 +130,7 @@ async function initializeConfig() {
 
             function doPrompt(promptMessage) {
                 prompt.question(promptMessage, response => {
-                    if (i === 3 && (!response || !validRegions.includes(response))) {
+                    if (i === 1 && (!response || !validRegions.includes(response))) {
                         doPrompt(chalk.red.bold(`${response} is not a valid region`) + '\n' + question);
                     } else {
                         resolve(response);
@@ -140,10 +140,12 @@ async function initializeConfig() {
 
             doPrompt(question);
         });
+        if (i == 2 && answer.trim().length == 0)
+            break;
         answers.push(answer);
     }
 
-    const [appId, authoringKey, versionId, location] = answers;
+    const [authoringKey, location, appId, versionId] = answers;
     const config = Object.assign({}, {
         appId,
         authoringKey,
@@ -152,7 +154,7 @@ async function initializeConfig() {
     });
     try {
         await new Promise((resolve, reject) => {
-            const confirmation = `\n\nDoes this look ok?\n${JSON.stringify(config, null, 2)}\nYes/No: `;
+            const confirmation = `\n\nDoes this look ok?\n${JSON.stringify(config, null, 2)}\n[Yes]/No: `;
             prompt.question(confirmation, response => {
                 /^(y|yes)$/.test((response || 'yes').toLowerCase()) ? resolve(response) : reject();
             });
