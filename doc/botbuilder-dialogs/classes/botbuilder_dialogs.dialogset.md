@@ -20,17 +20,17 @@ The dialogs library uses a stack based metaphor to manage a bot conversation wit
     dialogs.add('fillProfile', [
         async function (dc, options) {
             dc.instance.state = {};
-            return dc.prompt('textPrompt', `What's your name?`);
+            await dc.prompt('textPrompt', `What's your name?`);
         },
         async function (dc, name) {
             dc.instance.state.name = name;
-            return dc.prompt('textPrompt', `What's your phone number?`);
+            await dc.prompt('textPrompt', `What's your phone number?`);
         },
         async function (dc, phone) {
             dc.instance.state.phone = phone;
 
             // Return completed profile
-            return dc.end(dc.instance.state);
+            await dc.end(dc.instance.state);
         }
     ]);
 
@@ -90,7 +90,7 @@ The type of `TurnContext` being passed around. This simply lets the typing infor
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:121](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L121)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:121](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L121)*
 
 
 
@@ -101,7 +101,7 @@ Adds a new dialog to the set and returns the added dialog.
     dialogs.add('greeting', [
          async function (dc) {
              await dc.context.sendActivity(`Hello world!`);
-             return dc.end();
+             await dc.end();
          }
     ]);
 
@@ -121,7 +121,7 @@ Adds a new dialog to the set and returns the added dialog.
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:122](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L122)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:122](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L122)*
 
 
 
@@ -152,7 +152,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:123](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L123)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:123](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L123)*
 
 
 
@@ -183,7 +183,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:135](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L135)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogSet.d.ts:135](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/dialogSet.d.ts#L135)*
 
 
 

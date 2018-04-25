@@ -91,7 +91,7 @@ You should generally call `dc.end()` or `dc.replace()` from your last waterfall 
 ### ⊕ **new Waterfall**(steps: *[WaterfallStep](../#waterfallstep)`C`[]*): [Waterfall](botbuilder_dialogs.waterfall.md)
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:131](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L131)*
+*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:131](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L131)*
 
 
 
@@ -124,7 +124,7 @@ Creates a new waterfall dialog containing the given array of steps.
 
 *Implementation of [Dialog](../interfaces/botbuilder_dialogs.dialog.md).[dialogBegin](../interfaces/botbuilder_dialogs.dialog.md#dialogbegin)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:137](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L137)*
+*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:137](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L137)*
 
 
 
@@ -157,7 +157,7 @@ ___
 
 *Implementation of [Dialog](../interfaces/botbuilder_dialogs.dialog.md).[dialogContinue](../interfaces/botbuilder_dialogs.dialog.md#dialogcontinue)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:138](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L138)*
+*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:138](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L138)*
 
 
 
@@ -189,7 +189,7 @@ ___
 
 *Implementation of [Dialog](../interfaces/botbuilder_dialogs.dialog.md).[dialogResume](../interfaces/botbuilder_dialogs.dialog.md#dialogresume)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:139](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L139)*
+*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:139](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L139)*
 
 
 

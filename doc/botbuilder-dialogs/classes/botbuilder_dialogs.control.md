@@ -74,7 +74,7 @@ The type of `TurnContext` being passed around. This simply lets the typing infor
 ### ⊕ **new Control**(defaultOptions?: *`O`*): [Control](botbuilder_dialogs.control.md)
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/control.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/control.d.ts#L27)*
+*Defined in [libraries/botbuilder-dialogs/lib/control.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/control.d.ts#L27)*
 
 
 
@@ -103,7 +103,7 @@ Creates a new Control instance.
 
 **●  defaultOptions**:  *`O`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/control.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/control.d.ts#L27)*
+*Defined in [libraries/botbuilder-dialogs/lib/control.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/control.d.ts#L27)*
 
 
 
@@ -121,7 +121,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/control.d.ts:51](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/control.d.ts#L51)*
+*Defined in [libraries/botbuilder-dialogs/lib/control.d.ts:51](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/control.d.ts#L51)*
 
 
 
@@ -164,7 +164,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/control.d.ts:68](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/control.d.ts#L68)*
+*Defined in [libraries/botbuilder-dialogs/lib/control.d.ts:68](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/control.d.ts#L68)*
 
 
 
@@ -207,7 +207,7 @@ ___
 
 *Implementation of [Dialog](../interfaces/botbuilder_dialogs.dialog.md).[dialogBegin](../interfaces/botbuilder_dialogs.dialog.md#dialogbegin)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/control.d.ts:69](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/control.d.ts#L69)*
+*Defined in [libraries/botbuilder-dialogs/lib/control.d.ts:69](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/control.d.ts#L69)*
 
 
 

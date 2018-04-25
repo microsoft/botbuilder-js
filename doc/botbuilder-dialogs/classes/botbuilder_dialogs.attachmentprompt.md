@@ -23,17 +23,17 @@ When used with your bots `DialogSet` you can simply add a new instance of the pr
 
     dialogs.add('uploadImage', [
          async function (dc) {
-             return dc.prompt('attachmentPrompt', `Send me image(s)`);
+             await dc.prompt('attachmentPrompt', `Send me image(s)`);
          },
          async function (dc, attachments) {
              await dc.context.sendActivity(`Processing ${attachments.length} images.`);
-             return dc.end();
+             await dc.end();
          }
     ]);
 
 If the users response to the prompt fails to be recognized they will be automatically re-prompted to try again. By default the original prompt is re-sent to the user but you can provide an alternate prompt to send by passing in additional options:
 
-    return dc.prompt('attachmentPrompt', `Send me image(s)`, { retryPrompt: `I didn't get anything. Send me an image.` });
+    await dc.prompt('attachmentPrompt', `Send me image(s)`, { retryPrompt: `I didn't get anything. Send me an image.` });
 
 The prompts retry logic can also be completely customized by passing the prompts constructor a custom validator:
 
@@ -133,7 +133,7 @@ The type of `TurnContext` being passed around. This simply lets the typing infor
 
 *Overrides [Prompt](botbuilder_dialogs.prompt.md).[constructor](botbuilder_dialogs.prompt.md#constructor)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts:107](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts#L107)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts:107](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts#L107)*
 
 
 
@@ -164,7 +164,7 @@ Creates a new `AttachmentPrompt` instance.
 
 *Inherited from [Control](botbuilder_dialogs.control.md).[defaultOptions](botbuilder_dialogs.control.md#defaultoptions)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/control.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/control.d.ts#L27)*
+*Defined in [libraries/botbuilder-dialogs/lib/control.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/control.d.ts#L27)*
 
 
 
@@ -184,7 +184,7 @@ ___
 
 *Inherited from [Control](botbuilder_dialogs.control.md).[begin](botbuilder_dialogs.control.md#begin)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/control.d.ts:51](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/control.d.ts#L51)*
+*Defined in [libraries/botbuilder-dialogs/lib/control.d.ts:51](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/control.d.ts#L51)*
 
 
 
@@ -229,7 +229,7 @@ ___
 
 *Inherited from [Control](botbuilder_dialogs.control.md).[continue](botbuilder_dialogs.control.md#continue)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/control.d.ts:68](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/control.d.ts#L68)*
+*Defined in [libraries/botbuilder-dialogs/lib/control.d.ts:68](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/control.d.ts#L68)*
 
 
 
@@ -274,7 +274,7 @@ ___
 
 *Overrides [Control](botbuilder_dialogs.control.md).[dialogBegin](botbuilder_dialogs.control.md#dialogbegin)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:38](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L38)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:38](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L38)*
 
 
 
@@ -309,7 +309,7 @@ ___
 
 *Inherited from [Prompt](botbuilder_dialogs.prompt.md).[dialogContinue](botbuilder_dialogs.prompt.md#dialogcontinue)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L39)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:39](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L39)*
 
 
 
@@ -341,7 +341,7 @@ ___
 
 *Overrides [Prompt](botbuilder_dialogs.prompt.md).[onPrompt](botbuilder_dialogs.prompt.md#onprompt)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts:113](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts#L113)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts:113](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts#L113)*
 
 
 
@@ -375,7 +375,7 @@ ___
 
 *Overrides [Prompt](botbuilder_dialogs.prompt.md).[onRecognize](botbuilder_dialogs.prompt.md#onrecognize)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts:114](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts#L114)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts:114](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/prompts/attachmentPrompt.d.ts#L114)*
 
 
 

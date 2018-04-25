@@ -36,7 +36,7 @@ import * as prompts from 'botbuilder-prompts';
  * 
  * dialogs.add('askAge', [
  *      async function (dc) {
- *          return dc.prompt('agePrompt', `How old are you?`);
+ *          await dc.prompt('agePrompt', `How old are you?`);
  *      },
  *      async function (dc, age) {
  *          if (age < 40) {
@@ -44,7 +44,7 @@ import * as prompts from 'botbuilder-prompts';
  *          } else {
  *              await dc.context.sendActivity(`I hear ${age} is the new ${age - 10} :)`);
  *          }
- *          return dc.end();
+ *          await dc.end();
  *      }
  * ]);
  * ```

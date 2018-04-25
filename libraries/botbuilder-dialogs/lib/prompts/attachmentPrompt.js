@@ -27,11 +27,11 @@ const prompts = require("botbuilder-prompts");
  *
  * dialogs.add('uploadImage', [
  *      async function (dc) {
- *          return dc.prompt('attachmentPrompt', `Send me image(s)`);
+ *          await dc.prompt('attachmentPrompt', `Send me image(s)`);
  *      },
  *      async function (dc, attachments) {
  *          await dc.context.sendActivity(`Processing ${attachments.length} images.`);
- *          return dc.end();
+ *          await dc.end();
  *      }
  * ]);
  * ```
@@ -41,7 +41,7 @@ const prompts = require("botbuilder-prompts");
  * alternate prompt to send by passing in additional options:
  *
  * ```JavaScript
- * return dc.prompt('attachmentPrompt', `Send me image(s)`, { retryPrompt: `I didn't get anything. Send me an image.` });
+ * await dc.prompt('attachmentPrompt', `Send me image(s)`, { retryPrompt: `I didn't get anything. Send me an image.` });
  * ```
  *
  * The prompts retry logic can also be completely customized by passing the prompts constructor a

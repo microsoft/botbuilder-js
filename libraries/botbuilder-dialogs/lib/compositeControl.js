@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const dialogSet_1 = require("./dialogSet");
 /**
  * :package: **botbuilder-dialogs**
  *
@@ -29,29 +30,29 @@ Object.defineProperty(exports, "__esModule", { value: true });
  *
  * class ProfileControl extends CompositeControl {
  *     constructor() {
- *         super(dialogs, 'fillProfile');
+ *         super('fillProfile');
+ *
+ *         this.dialogs.add('fillProfile', [
+ *             async function (dc, options) {
+ *                 dc.instance.state = {};
+ *                 await dc.prompt('textPrompt', `What's your name?`);
+ *             },
+ *             async function (dc, name) {
+ *                 dc.instance.state.name = name;
+ *                 await dc.prompt('textPrompt', `What's your phone number?`);
+ *             },
+ *             async function (dc, phone) {
+ *                 dc.instance.state.phone = phone;
+ *
+ *                 // Return completed profile
+ *                 await dc.end(dc.instance.state);
+ *            }
+ *        ]);
+ *
+ *        this.dialogs.add('textPrompt', new TextPrompt());
  *     }
  * }
  * module.exports.ProfileControl = ProfileControl;
- *
- * dialogs.add('fillProfile', [
- *     async function (dc, options) {
- *         dc.instance.state = {};
- *         return dc.prompt('textPrompt', `What's your name?`);
- *     },
- *     async function (dc, name) {
- *         dc.instance.state.name = name;
- *         return dc.prompt('textPrompt', `What's your phone number?`);
- *     },
- *     async function (dc, phone) {
- *         dc.instance.state.phone = phone;
- *
- *         // Return completed profile
- *         return dc.end(dc.instance.state);
- *     }
- * ]);
- *
- * dialogs.add('textPrompt', new TextPrompt());
  * ```
  *
  * ### Consume as Dialog
@@ -72,11 +73,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * dialogs.add('firstrun', [
  *      async function (dc) {
  *          await dc.context.sendActivity(`Welcome! We need to ask a few questions to get started.`);
- *          return dc.begin('getProfile');
+ *          await dc.begin('getProfile');
  *      },
  *      async function (dc, profile) {
  *          await dc.context.sendActivity(`Thanks ${profile.name}!`);
- *          return dc.end();
+ *          await dc.end();
  *      }
  * ]);
  * ```
@@ -109,19 +110,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * the control is finished and then to access any results it might have returned. To interrupt or
  * cancel the control simply delete the `state` object the bot has been persisting.
  * @param R (Optional) type of result that's expected to be returned by the control.
- * @param O (Optional) options that can be passed into the [begin()](#begin) method.
+ * @param O (Optional) options that can be passed into the begin() method.
+ * @param C (Optional) type of `TurnContext` being passed to dialogs in the set.
  */
 class CompositeControl {
     /**
      * Creates a new `CompositeControl` instance.
-     * @param dialogs Controls dialog set.
      * @param dialogId ID of the root dialog that should be started anytime the control is started.
-     * @param defaultOptions (Optional) set of default options that should be passed to controls root dialog. These will be merged with arguments passed in by the caller.
+     * @param dialogs (Optional) set of existing dialogs the control should use. If omitted an empty set will be created.
      */
-    constructor(dialogs, dialogId, defaultOptions) {
-        this.dialogs = dialogs;
+    constructor(dialogId, dialogs) {
         this.dialogId = dialogId;
-        this.defaultOptions = defaultOptions;
+        this.dialogs = dialogs || new dialogSet_1.DialogSet();
     }
     /**
      * Starts the control. Depending on the control, its possible for the control to finish
@@ -143,7 +143,7 @@ class CompositeControl {
      */
     begin(context, state, options) {
         const cdc = this.dialogs.createContext(context, state);
-        return cdc.begin(this.dialogId, Object.assign({}, this.defaultOptions, options))
+        return cdc.begin(this.dialogId, options)
             .then(() => cdc.dialogResult);
     }
     /**
@@ -170,7 +170,7 @@ class CompositeControl {
     dialogBegin(dc, dialogArgs) {
         // Start the controls entry point dialog. 
         const cdc = this.dialogs.createContext(dc.context, dc.instance.state);
-        return cdc.begin(this.dialogId, Object.assign({}, this.defaultOptions, dialogArgs)).then(() => {
+        return cdc.begin(this.dialogId, Object.assign({}, dialogArgs)).then(() => {
             // End if the controls dialog ends.
             if (!cdc.dialogResult.active) {
                 return dc.end(cdc.dialogResult.result);

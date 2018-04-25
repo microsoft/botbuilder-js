@@ -52,14 +52,14 @@ const control_1 = require("../control");
  *
  * dialogs.add('taskNeedingLogin', [
  *      async function (dc) {
- *          return dc.begin('loginPrompt');
+ *          await dc.begin('loginPrompt');
  *      },
  *      async function (dc, token) {
  *          if (token) {
  *              // Continue with task needing access token
  *          } else {
  *              await dc.context.sendActivity(`Sorry... We couldn't log you in. Try again later.`);
- *              return dc.end();
+ *              await dc.end();
  *          }
  *      }
  * ]);

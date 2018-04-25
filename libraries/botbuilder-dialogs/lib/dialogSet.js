@@ -26,17 +26,17 @@ const dialogContext_1 = require("./dialogContext");
  * dialogs.add('fillProfile', [
  *     async function (dc, options) {
  *         dc.instance.state = {};
- *         return dc.prompt('textPrompt', `What's your name?`);
+ *         await dc.prompt('textPrompt', `What's your name?`);
  *     },
  *     async function (dc, name) {
  *         dc.instance.state.name = name;
- *         return dc.prompt('textPrompt', `What's your phone number?`);
+ *         await dc.prompt('textPrompt', `What's your phone number?`);
  *     },
  *     async function (dc, phone) {
  *         dc.instance.state.phone = phone;
  *
  *         // Return completed profile
- *         return dc.end(dc.instance.state);
+ *         await dc.end(dc.instance.state);
  *     }
  * ]);
  *

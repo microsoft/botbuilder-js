@@ -27,12 +27,12 @@ const prompts = require("botbuilder-prompts");
  *
  * dialogs.add('colorPrompt', [
  *      async function (dc) {
- *          return dc.prompt('choicePrompt', `Select a color`, ['red', 'green', 'blue']);
+ *          await dc.prompt('choicePrompt', `Select a color`, ['red', 'green', 'blue']);
  *      },
  *      async function (dc, choice) {
  *          const color = choice.value;
  *          await dc.context.sendActivity(`I like ${color} too!`);
- *          return dc.end();
+ *          await dc.end();
  *      }
  * ]);
  * ```
@@ -42,7 +42,7 @@ const prompts = require("botbuilder-prompts");
  * alternate prompt to send by passing in additional options:
  *
  * ```JavaScript
- * return dc.prompt('choicePrompt', `Select a color`, ['red', 'green', 'blue'], { retryPrompt: `I didn't catch that. Select a color from the list.` });
+ * await dc.prompt('choicePrompt', `Select a color`, ['red', 'green', 'blue'], { retryPrompt: `I didn't catch that. Select a color from the list.` });
  * ```
  *
  * ### Control Usage

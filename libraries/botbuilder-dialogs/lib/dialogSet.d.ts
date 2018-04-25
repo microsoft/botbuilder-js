@@ -33,17 +33,17 @@ import { DialogContext } from './dialogContext';
  * dialogs.add('fillProfile', [
  *     async function (dc, options) {
  *         dc.instance.state = {};
- *         return dc.prompt('textPrompt', `What's your name?`);
+ *         await dc.prompt('textPrompt', `What's your name?`);
  *     },
  *     async function (dc, name) {
  *         dc.instance.state.name = name;
- *         return dc.prompt('textPrompt', `What's your phone number?`);
+ *         await dc.prompt('textPrompt', `What's your phone number?`);
  *     },
  *     async function (dc, phone) {
  *         dc.instance.state.phone = phone;
  *
  *         // Return completed profile
- *         return dc.end(dc.instance.state);
+ *         await dc.end(dc.instance.state);
  *     }
  * ]);
  *
@@ -111,7 +111,7 @@ export declare class DialogSet<C extends TurnContext = TurnContext> {
      * dialogs.add('greeting', [
      *      async function (dc) {
      *          await dc.context.sendActivity(`Hello world!`);
-     *          return dc.end();
+     *          await dc.end();
      *      }
      * ]);
      * ```

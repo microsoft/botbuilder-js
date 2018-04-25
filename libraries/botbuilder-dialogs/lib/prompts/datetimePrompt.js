@@ -28,11 +28,11 @@ const prompts = require("botbuilder-prompts");
  *
  * dialogs.add('setAlarmTime', [
  *      async function (dc) {
- *          return dc.prompt('datetimePrompt', `What time should I set your alarm for?`);
+ *          await dc.prompt('datetimePrompt', `What time should I set your alarm for?`);
  *      },
  *      async function (dc, time) {
  *          await dc.context.sendActivity(`Alarm time set`);
- *          return dc.end();
+ *          await dc.end();
  *      }
  * ]);
  *

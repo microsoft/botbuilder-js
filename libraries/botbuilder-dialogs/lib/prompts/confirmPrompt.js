@@ -28,13 +28,13 @@ const prompts = require("botbuilder-prompts");
  *
  * dialogs.add('confirmCancel', [
  *      async function (dc) {
- *          return dc.prompt('confirmPrompt', `This will cancel your order. Are you sure?`);
+ *          await dc.prompt('confirmPrompt', `This will cancel your order. Are you sure?`);
  *      },
  *      async function (dc, cancel) {
  *          if (cancel) {
  *              await dc.context.sendActivity(`Order cancelled.`);
  *          }
- *          return dc.end();
+ *          await dc.end();
  *      }
  * ]);
  * ```
@@ -44,7 +44,7 @@ const prompts = require("botbuilder-prompts");
  * alternate prompt to send by passing in additional options:
  *
  * ```JavaScript
- * return dc.prompt('confirmPrompt', `This will cancel your order. Are you sure?`, { retryPrompt: `Please answer "yes" or "no".` });
+ * await dc.prompt('confirmPrompt', `This will cancel your order. Are you sure?`, { retryPrompt: `Please answer "yes" or "no".` });
  * ```
  *
  * The prompts retry logic can also be completely customized by passing the prompts constructor a

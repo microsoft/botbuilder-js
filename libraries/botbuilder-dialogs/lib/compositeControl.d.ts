@@ -38,29 +38,29 @@ import { DialogSet } from './dialogSet';
  *
  * class ProfileControl extends CompositeControl {
  *     constructor() {
- *         super(dialogs, 'fillProfile');
+ *         super('fillProfile');
+ *
+ *         this.dialogs.add('fillProfile', [
+ *             async function (dc, options) {
+ *                 dc.instance.state = {};
+ *                 await dc.prompt('textPrompt', `What's your name?`);
+ *             },
+ *             async function (dc, name) {
+ *                 dc.instance.state.name = name;
+ *                 await dc.prompt('textPrompt', `What's your phone number?`);
+ *             },
+ *             async function (dc, phone) {
+ *                 dc.instance.state.phone = phone;
+ *
+ *                 // Return completed profile
+ *                 await dc.end(dc.instance.state);
+ *            }
+ *        ]);
+ *
+ *        this.dialogs.add('textPrompt', new TextPrompt());
  *     }
  * }
  * module.exports.ProfileControl = ProfileControl;
- *
- * dialogs.add('fillProfile', [
- *     async function (dc, options) {
- *         dc.instance.state = {};
- *         return dc.prompt('textPrompt', `What's your name?`);
- *     },
- *     async function (dc, name) {
- *         dc.instance.state.name = name;
- *         return dc.prompt('textPrompt', `What's your phone number?`);
- *     },
- *     async function (dc, phone) {
- *         dc.instance.state.phone = phone;
- *
- *         // Return completed profile
- *         return dc.end(dc.instance.state);
- *     }
- * ]);
- *
- * dialogs.add('textPrompt', new TextPrompt());
  * ```
  *
  * ### Consume as Dialog
@@ -81,11 +81,11 @@ import { DialogSet } from './dialogSet';
  * dialogs.add('firstrun', [
  *      async function (dc) {
  *          await dc.context.sendActivity(`Welcome! We need to ask a few questions to get started.`);
- *          return dc.begin('getProfile');
+ *          await dc.begin('getProfile');
  *      },
  *      async function (dc, profile) {
  *          await dc.context.sendActivity(`Thanks ${profile.name}!`);
- *          return dc.end();
+ *          await dc.end();
  *      }
  * ]);
  * ```
@@ -118,19 +118,19 @@ import { DialogSet } from './dialogSet';
  * the control is finished and then to access any results it might have returned. To interrupt or
  * cancel the control simply delete the `state` object the bot has been persisting.
  * @param R (Optional) type of result that's expected to be returned by the control.
- * @param O (Optional) options that can be passed into the [begin()](#begin) method.
+ * @param O (Optional) options that can be passed into the begin() method.
+ * @param C (Optional) type of `TurnContext` being passed to dialogs in the set.
  */
-export declare class CompositeControl<R = any, O = {}> implements Dialog<TurnContext> {
-    protected dialogs: DialogSet<TurnContext>;
+export declare class CompositeControl<R = any, O = {}, C extends TurnContext = TurnContext> implements Dialog<C> {
     protected dialogId: string;
-    protected defaultOptions: O;
+    /** The controls dialog set. */
+    protected dialogs: DialogSet<C>;
     /**
      * Creates a new `CompositeControl` instance.
-     * @param dialogs Controls dialog set.
      * @param dialogId ID of the root dialog that should be started anytime the control is started.
-     * @param defaultOptions (Optional) set of default options that should be passed to controls root dialog. These will be merged with arguments passed in by the caller.
+     * @param dialogs (Optional) set of existing dialogs the control should use. If omitted an empty set will be created.
      */
-    constructor(dialogs: DialogSet<TurnContext>, dialogId: string, defaultOptions?: O);
+    constructor(dialogId: string, dialogs?: DialogSet<C>);
     /**
      * Starts the control. Depending on the control, its possible for the control to finish
      * immediately so it's advised to check the result object returned by `begin()` and ensure that
@@ -149,7 +149,7 @@ export declare class CompositeControl<R = any, O = {}> implements Dialog<TurnCon
      * @param state A state object that the control will use to persist its current state. This should be an empty object which the control will populate. The bot should persist this with its other conversation state for as long as the control is still active.
      * @param options (Optional) additional options supported by the control.
      */
-    begin(context: TurnContext, state: object, options?: O): Promise<DialogResult<R>>;
+    begin(context: C, state: object, options?: O): Promise<DialogResult<R>>;
     /**
      * Passes a users reply to the control for further processing. The bot should keep calling
      * `continue()` for future turns until the control returns a result with `Active == false`.
@@ -166,7 +166,7 @@ export declare class CompositeControl<R = any, O = {}> implements Dialog<TurnCon
      * @param context Context for the current turn of the conversation with the user.
      * @param state A state object that was previously initialized by a call to [begin()](#begin).
      */
-    continue(context: TurnContext, state: object): Promise<DialogResult<R>>;
-    dialogBegin(dc: DialogContext<TurnContext>, dialogArgs?: any): Promise<any>;
-    dialogContinue(dc: DialogContext<TurnContext>): Promise<any>;
+    continue(context: C, state: object): Promise<DialogResult<R>>;
+    dialogBegin(dc: DialogContext<C>, dialogArgs?: any): Promise<any>;
+    dialogContinue(dc: DialogContext<C>): Promise<any>;
 }

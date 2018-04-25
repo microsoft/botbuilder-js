@@ -34,11 +34,11 @@ import { Prompt, PromptOptions } from './prompt';
  *
  * dialogs.add('askName', [
  *      async function (dc) {
- *          return dc.prompt('namePrompt', `What's your name?`);
+ *          await dc.prompt('namePrompt', `What's your name?`);
  *      },
  *      async function (dc, name) {
  *          await dc.context.sendActivity(`Hi ${name}!`);
- *          return dc.end();
+ *          await dc.end();
  *      }
  * ]);
  * ```

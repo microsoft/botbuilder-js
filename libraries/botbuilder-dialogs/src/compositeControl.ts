@@ -40,29 +40,29 @@ import { DialogSet } from './dialogSet';
  * 
  * class ProfileControl extends CompositeControl {
  *     constructor() {
- *         super(dialogs, 'fillProfile');
+ *         super('fillProfile');
+ *         
+ *         this.dialogs.add('fillProfile', [
+ *             async function (dc, options) {
+ *                 dc.instance.state = {};
+ *                 await dc.prompt('textPrompt', `What's your name?`);
+ *             },
+ *             async function (dc, name) {
+ *                 dc.instance.state.name = name;
+ *                 await dc.prompt('textPrompt', `What's your phone number?`);
+ *             },
+ *             async function (dc, phone) {
+ *                 dc.instance.state.phone = phone;
+ * 
+ *                 // Return completed profile
+ *                 await dc.end(dc.instance.state); 
+ *            }
+ *        ]);
+ * 
+ *        this.dialogs.add('textPrompt', new TextPrompt());
  *     }
  * }
  * module.exports.ProfileControl = ProfileControl;
- * 
- * dialogs.add('fillProfile', [
- *     async function (dc, options) {
- *         dc.instance.state = {};
- *         return dc.prompt('textPrompt', `What's your name?`);
- *     },
- *     async function (dc, name) {
- *         dc.instance.state.name = name;
- *         return dc.prompt('textPrompt', `What's your phone number?`);
- *     },
- *     async function (dc, phone) {
- *         dc.instance.state.phone = phone;
- * 
- *         // Return completed profile
- *         return dc.end(dc.instance.state); 
- *     }
- * ]);
- * 
- * dialogs.add('textPrompt', new TextPrompt());
  * ```
  * 
  * ### Consume as Dialog
@@ -83,11 +83,11 @@ import { DialogSet } from './dialogSet';
  * dialogs.add('firstrun', [
  *      async function (dc) {
  *          await dc.context.sendActivity(`Welcome! We need to ask a few questions to get started.`);
- *          return dc.begin('getProfile');
+ *          await dc.begin('getProfile');
  *      },
  *      async function (dc, profile) {
  *          await dc.context.sendActivity(`Thanks ${profile.name}!`);
- *          return dc.end();
+ *          await dc.end();
  *      }
  * ]);
  * ```
@@ -120,17 +120,21 @@ import { DialogSet } from './dialogSet';
  * the control is finished and then to access any results it might have returned. To interrupt or 
  * cancel the control simply delete the `state` object the bot has been persisting.
  * @param R (Optional) type of result that's expected to be returned by the control.
- * @param O (Optional) options that can be passed into the [begin()](#begin) method.
+ * @param O (Optional) options that can be passed into the begin() method.
+ * @param C (Optional) type of `TurnContext` being passed to dialogs in the set.
  */
-export class CompositeControl<R = any, O = {}> implements Dialog<TurnContext> {
+export class CompositeControl<R = any, O = {}, C extends TurnContext = TurnContext> implements Dialog<C> {
+    /** The controls dialog set. */
+    protected dialogs: DialogSet<C>;
 
     /**
      * Creates a new `CompositeControl` instance.
-     * @param dialogs Controls dialog set.
      * @param dialogId ID of the root dialog that should be started anytime the control is started.
-     * @param defaultOptions (Optional) set of default options that should be passed to controls root dialog. These will be merged with arguments passed in by the caller.
+     * @param dialogs (Optional) set of existing dialogs the control should use. If omitted an empty set will be created. 
      */
-    constructor(protected dialogs: DialogSet<TurnContext>, protected dialogId: string, protected defaultOptions?: O) { }
+    constructor(protected dialogId: string, dialogs?: DialogSet<C>) { 
+        this.dialogs = dialogs || new DialogSet<C>();
+    }
 
     /**
      * Starts the control. Depending on the control, its possible for the control to finish 
@@ -150,9 +154,9 @@ export class CompositeControl<R = any, O = {}> implements Dialog<TurnContext> {
      * @param state A state object that the control will use to persist its current state. This should be an empty object which the control will populate. The bot should persist this with its other conversation state for as long as the control is still active.
      * @param options (Optional) additional options supported by the control.
      */
-    public begin(context: TurnContext, state: object, options?: O): Promise<DialogResult<R>> {
+    public begin(context: C, state: object, options?: O): Promise<DialogResult<R>> {
         const cdc = this.dialogs.createContext(context, state);
-        return cdc.begin(this.dialogId, Object.assign({}, this.defaultOptions, options))
+        return cdc.begin(this.dialogId, options)
                   .then(() => cdc.dialogResult);
     }
 
@@ -172,16 +176,16 @@ export class CompositeControl<R = any, O = {}> implements Dialog<TurnContext> {
      * @param context Context for the current turn of the conversation with the user.
      * @param state A state object that was previously initialized by a call to [begin()](#begin).
      */
-    public continue(context: TurnContext, state: object): Promise<DialogResult<R>> {
+    public continue(context: C, state: object): Promise<DialogResult<R>> {
         const cdc = this.dialogs.createContext(context, state);
         return cdc.continue()
                   .then(() => cdc.dialogResult);         
     }
 
-    public dialogBegin(dc: DialogContext<TurnContext>, dialogArgs?: any): Promise<any> {
+    public dialogBegin(dc: DialogContext<C>, dialogArgs?: any): Promise<any> {
         // Start the controls entry point dialog. 
         const cdc = this.dialogs.createContext(dc.context, dc.instance.state);
-        return cdc.begin(this.dialogId, Object.assign({}, this.defaultOptions, dialogArgs)).then(() => {
+        return cdc.begin(this.dialogId, Object.assign({}, dialogArgs)).then(() => {
             // End if the controls dialog ends.
             if (!cdc.dialogResult.active) {
                 return dc.end(cdc.dialogResult.result);
@@ -189,7 +193,7 @@ export class CompositeControl<R = any, O = {}> implements Dialog<TurnContext> {
         });
     }
 
-    public dialogContinue(dc: DialogContext<TurnContext>): Promise<any> {
+    public dialogContinue(dc: DialogContext<C>): Promise<any> {
         // Continue controls dialog stack.
         const cdc = this.dialogs.createContext(dc.context, dc.instance.state);
         return cdc.continue().then(() => {

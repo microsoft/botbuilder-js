@@ -30,7 +30,7 @@ Settings used to configure an `OAuthPrompt` instance. Includes the ability to ad
 
 **●  timeout**:  *`number`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/oauthPrompt.d.ts:24](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/prompts/oauthPrompt.d.ts#L24)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/oauthPrompt.d.ts:24](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/prompts/oauthPrompt.d.ts#L24)*
 
 
 

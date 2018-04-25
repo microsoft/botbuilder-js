@@ -32,14 +32,14 @@ When used with your bots `DialogSet` you can simply add a new instance of the pr
 
     dialogs.add('taskNeedingLogin', [
          async function (dc) {
-             return dc.begin('loginPrompt');
+             await dc.begin('loginPrompt');
          },
          async function (dc, token) {
              if (token) {
                  // Continue with task needing access token
              } else {
                  await dc.context.sendActivity(`Sorry... We couldn't log you in. Try again later.`);
-                 return dc.end();
+                 await dc.end();
              }
          }
     ]);
@@ -132,7 +132,7 @@ The type of `TurnContext` being passed around. This simply lets the typing infor
 
 *Overrides [Control](botbuilder_dialogs.control.md).[constructor](botbuilder_dialogs.control.md#constructor)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/oauthPrompt.d.ts:126](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/prompts/oauthPrompt.d.ts#L126)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/oauthPrompt.d.ts:126](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/prompts/oauthPrompt.d.ts#L126)*
 
 
 
@@ -164,7 +164,7 @@ Creates a new `OAuthPrompt` instance.
 
 *Inherited from [Control](botbuilder_dialogs.control.md).[defaultOptions](botbuilder_dialogs.control.md#defaultoptions)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/control.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/control.d.ts#L27)*
+*Defined in [libraries/botbuilder-dialogs/lib/control.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/control.d.ts#L27)*
 
 
 
@@ -184,7 +184,7 @@ ___
 
 *Inherited from [Control](botbuilder_dialogs.control.md).[begin](botbuilder_dialogs.control.md#begin)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/control.d.ts:51](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/control.d.ts#L51)*
+*Defined in [libraries/botbuilder-dialogs/lib/control.d.ts:51](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/control.d.ts#L51)*
 
 
 
@@ -229,7 +229,7 @@ ___
 
 *Inherited from [Control](botbuilder_dialogs.control.md).[continue](botbuilder_dialogs.control.md#continue)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/control.d.ts:68](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/control.d.ts#L68)*
+*Defined in [libraries/botbuilder-dialogs/lib/control.d.ts:68](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/control.d.ts#L68)*
 
 
 
@@ -272,7 +272,7 @@ ___
 
 *Overrides [Control](botbuilder_dialogs.control.md).[dialogBegin](botbuilder_dialogs.control.md#dialogbegin)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/oauthPrompt.d.ts:133](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/prompts/oauthPrompt.d.ts#L133)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/oauthPrompt.d.ts:133](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/prompts/oauthPrompt.d.ts#L133)*
 
 
 
@@ -305,7 +305,7 @@ ___
 
 *Implementation of [Dialog](../interfaces/botbuilder_dialogs.dialog.md).[dialogContinue](../interfaces/botbuilder_dialogs.dialog.md#dialogcontinue)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/oauthPrompt.d.ts:134](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/prompts/oauthPrompt.d.ts#L134)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/oauthPrompt.d.ts:134](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/prompts/oauthPrompt.d.ts#L134)*
 
 
 
@@ -335,7 +335,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/oauthPrompt.d.ts:149](https://github.com/Microsoft/botbuilder-js/blob/ce7c4b3/libraries/botbuilder-dialogs/lib/prompts/oauthPrompt.d.ts#L149)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/oauthPrompt.d.ts:149](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/prompts/oauthPrompt.d.ts#L149)*
 
 
 

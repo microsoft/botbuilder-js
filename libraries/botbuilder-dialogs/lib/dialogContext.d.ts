@@ -62,7 +62,7 @@ export declare class DialogContext<C extends TurnContext> {
      *
      * ```JavaScript
      * const dc = dialogs.createContext(context, stack);
-     * return dc.begin('greeting', user);
+     * await dc.begin('greeting', user);
      * ```
      * @param dialogId ID of the dialog to start.
      * @param dialogArgs (Optional) additional argument(s) to pass to the dialog being started.
@@ -75,7 +75,7 @@ export declare class DialogContext<C extends TurnContext> {
      * **Example usage:**
      *
      * ```JavaScript
-     * return dc.prompt('confirmPrompt', `Are you sure you'd like to quit?`);
+     * await dc.prompt('confirmPrompt', `Are you sure you'd like to quit?`);
      * ```
      * @param O (Optional) type of options expected by the prompt.
      * @param dialogId ID of the prompt to start.
@@ -95,7 +95,7 @@ export declare class DialogContext<C extends TurnContext> {
      * const dc = dialogs.createContext(context, dialogStack);
      * return dc.continue().then(() => {
      *      if (!context.responded) {
-     *          return dc.begin('fallback');
+     *          await dc.begin('fallback');
      *      }
      * });
      * ```
@@ -118,7 +118,7 @@ export declare class DialogContext<C extends TurnContext> {
      *      function (dc) {
      *          const elapsed = new Date().getTime() - started;
      *          dc.batch.reply(`I've been running for ${elapsed / 1000} seconds.`);
-     *          return dc.end(elapsed);
+     *          await dc.end(elapsed);
      *      }
      * ]);
      * const started = new Date().getTime();
@@ -146,7 +146,7 @@ export declare class DialogContext<C extends TurnContext> {
      * dialogs.add('loop', [
      *      function (dc, args) {
      *          dc.instance.state = args;
-     *          return dc.begin(args.dialogId);
+     *          await dc.begin(args.dialogId);
      *      },
      *      function (dc) {
      *          const args = dc.instance.state;
