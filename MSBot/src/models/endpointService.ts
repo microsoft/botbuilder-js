@@ -1,12 +1,12 @@
-import { IEndpointService, ServiceType } from '../types';
+import { IEndpointService, ServiceType } from '../schema';
 import { ConnectedService } from './connectedService';
 
 export class EndpointService extends ConnectedService implements IEndpointService {
     public readonly type = ServiceType.Endpoint;
 
-    public appId: string;
-    public appPassword: string;
-    public endpoint: string;
+    public appId = '';
+    public appPassword = '';
+    public endpoint = '';
 
     constructor(source: Partial<IEndpointService>) {
         super(source);

@@ -58,7 +58,7 @@ export class BotConfig extends BotConfigModel {
 
     // save the config file
     public async Save(botpath?: string): Promise<void> {
-        let hasSecret = (this.secretKey && this.secretKey.length > 0);
+        let hasSecret = ( this.secretKey && this.secretKey.length > 0 );
 
         // make sure that all dispatch serviceIds still match services that are in the bot
         for (let service of this.services) {
@@ -112,7 +112,7 @@ export class BotConfig extends BotConfigModel {
             }
             newService.name = name;
 
-            this.services.push(newService);
+            this.services.push(BotConfigModel.serviceFromJSON(newService));
         }
     }
 
@@ -146,8 +146,8 @@ export class BotConfig extends BotConfigModel {
         let encryptedProperties = this.getEncryptedProperties(<ServiceType>service.type);
         for (let i = 0; i < encryptedProperties.length; i++) {
             let prop = encryptedProperties[i];
-            let val = <string>(<any>service)[prop];
-            (<any>service)[prop] = this.decryptValue(val);
+            let val = <string>( <any>service )[prop];
+            ( <any>service )[prop] = this.decryptValue(val);
         }
         return service;
     }
@@ -233,8 +233,8 @@ export class BotConfig extends BotConfigModel {
     }
 
     private internalEncrypt(value: string): string {
-        var cipher = crypto.createCipher('aes192', this.internal.secret);
-        var encryptedValue = cipher.update(value, 'utf8', 'hex');
+        const cipher = crypto.createCipher('aes192', this.internal.secret);
+        let encryptedValue = cipher.update(value, 'utf8', 'hex');
         encryptedValue += cipher.final('hex');
         return encryptedValue;
     }

@@ -1,8 +1,6 @@
-import * as program from 'commander';
 import * as chalk from 'chalk';
-import { BotConfig, ServiceType } from './BotConfig';
-import { Enumerable, List, Dictionary } from 'linq-collections';
-import { IConnectedService, ILuisService, IDispatchService, IAzureBotService, IBotConfig, IEndpointService, IQnAService } from './schema';
+import * as program from 'commander';
+import { BotConfig } from './BotConfig';
 
 program.Command.prototype.unknownOption = function (flag: any) {
     console.error(chalk.default.redBright(`Unknown arguments: ${flag}`));
@@ -15,10 +13,10 @@ interface DisconnectServiceArgs {
 }
 
 program
-    .name("msbot disconnect")
-    .arguments("<service_id_or_Name>")
-    .description("disconnect a connected service by id or name")
-    .option('-b, --bot <path>', "path to bot file.  If omitted, local folder will look for a .bot file")
+    .name('msbot disconnect')
+    .arguments('<service_id_or_Name>')
+    .description('disconnect a connected service by id or name')
+    .option('-b, --bot <path>', 'path to bot file.  If omitted, local folder will look for a .bot file')
     .action((idOrName, actions) => {
         actions.idOrName = idOrName;
     });
@@ -32,14 +30,14 @@ if (process.argv.length < 3) {
         BotConfig.LoadBotFromFolder(process.cwd())
             .then(processConnectAzureArgs)
             .catch((reason) => {
-                console.error(chalk.default.redBright(reason.toString().split("\n")[0]));
+                console.error(chalk.default.redBright(reason.toString().split('\n')[0]));
                 program.help();
             });
     } else {
         BotConfig.Load(args.bot)
             .then(processConnectAzureArgs)
             .catch((reason) => {
-                console.error(chalk.default.redBright(reason.toString().split("\n")[0]));
+                console.error(chalk.default.redBright(reason.toString().split('\n')[0]));
                 program.help();
             });
     }
@@ -47,7 +45,7 @@ if (process.argv.length < 3) {
 
 async function processConnectAzureArgs(config: BotConfig): Promise<BotConfig> {
     if (!args.idOrName) {
-        throw new Error("missing id or name of service to disconnect");
+        throw new Error('missing id or name of service to disconnect');
     }
 
     let removedService = config.disconnectServiceByNameOrId(args.idOrName);

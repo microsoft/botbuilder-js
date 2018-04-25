@@ -1,4 +1,4 @@
-import { IQnAService, ServiceType } from '../types';
+import { IQnAService, ServiceType } from '../schema';
 import { ConnectedService } from './connectedService';
 
 export class QnaMakerService extends ConnectedService implements IQnAService {

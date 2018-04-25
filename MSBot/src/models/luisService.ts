@@ -1,4 +1,4 @@
-import { ILuisService, ServiceType } from '../types';
+import { ILuisService, ServiceType } from '../schema';
 import { ConnectedService } from './connectedService';
 
 export class LuisService extends ConnectedService implements ILuisService {

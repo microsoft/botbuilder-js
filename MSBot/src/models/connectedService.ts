@@ -1,4 +1,4 @@
-import { IConnectedService, ServiceType } from '../types';
+import { IConnectedService, ServiceType } from '../schema';
 
 export abstract class ConnectedService implements IConnectedService {
     public id = '';

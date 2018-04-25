@@ -1,9 +1,9 @@
-import { IAzureBotService, ServiceType } from '../types';
+import { IAzureBotService, ServiceType } from '../schema';
 import { ConnectedService } from './connectedService';
 
 export class AzureBotService extends ConnectedService implements IAzureBotService {
     public readonly type = ServiceType.AzureBotService;
-    public appId: string;
+    public appId = '';
 
     constructor(source: Partial<IAzureBotService> = {}) {
         super(source);
