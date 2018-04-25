@@ -5,7 +5,7 @@ import * as path from 'path';
 import * as process from 'process';
 import * as uuid from 'uuid';
 import { BotConfigModel } from './models';
-import { IBotConfig, IConnectedService, ServiceType } from './schema';
+import { IBotConfig, IConnectedService, IDispatchService, ServiceType } from './schema';
 
 interface internalBotConfig {
     location?: string;
@@ -22,7 +22,7 @@ export class BotConfig extends BotConfigModel {
 
     protected encryptedProperties: { [key: string]: string[]; } = {
         endpoint: ['appPassword'],
-        abs: ['appPassord'],
+        abs: ['appPassword'],
         luis: ['authoringKey', 'subscriptionKey'],
         qna: ['subscriptionKey'],
         dispatch: ['authoringKey', 'subscriptionKey']
@@ -58,7 +58,17 @@ export class BotConfig extends BotConfigModel {
 
     // save the config file
     public async Save(botpath?: string): Promise<void> {
-        let hasSecret = ( this.secretKey && this.secretKey.length > 0 );
+        let hasSecret = (this.secretKey && this.secretKey.length > 0);
+
+        // make sure that all dispatch serviceIds still match services that are in the bot
+        for (let service of this.services) {
+            if (service.type == ServiceType.Dispatch) {
+                let dispatchService = <IDispatchService>service;
+                dispatchService.serviceIds = Enumerable.fromSource(dispatchService.serviceIds)
+                    .where(serviceId => Enumerable.fromSource(this.services).any(s => s.id == serviceId))
+                    .toArray();
+            }
+        }
 
         if (hasSecret)
             this.encryptAll();
@@ -136,14 +146,14 @@ export class BotConfig extends BotConfigModel {
         let encryptedProperties = this.getEncryptedProperties(<ServiceType>service.type);
         for (let i = 0; i < encryptedProperties.length; i++) {
             let prop = encryptedProperties[i];
-            let val = <string>( <any>service )[prop];
-            ( <any>service )[prop] = this.decryptValue(val);
+            let val = <string>(<any>service)[prop];
+            (<any>service)[prop] = this.decryptValue(val);
         }
         return service;
     }
 
     // remove service by name or id
-    public disconnectServiceByNameOrId(nameOrId: string): void {
+    public disconnectServiceByNameOrId(nameOrId: string): IConnectedService {
         let svs = new List<IConnectedService>(this.services);
 
         for (let i = 0; i < svs.count(); i++) {
@@ -151,7 +161,7 @@ export class BotConfig extends BotConfigModel {
             if (service.id == nameOrId || service.name == nameOrId) {
                 svs.removeAt(i);
                 this.services = svs.toArray();
-                return;
+                return service;
             }
         }
         throw new Error(`a service with id or name of [${nameOrId}] was not found`);

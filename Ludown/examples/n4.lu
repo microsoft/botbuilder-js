@@ -1,0 +1,3 @@
+# addAlarm
+- set an alarm for {alarmTime}
+- set an alarm for {alarmTime=7AM}

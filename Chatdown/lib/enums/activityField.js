@@ -1,4 +1,4 @@
 module.exports = {
-    Attachment: 'attachment',
-    AttachmentLayout: 'attachmentlayout'
+    attachment: 'attachment',
+    attachmentlayout: 'attachmentlayout'
 };

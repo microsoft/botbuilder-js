@@ -13,6 +13,7 @@ var ServiceType;
     ServiceType["Luis"] = "luis";
     ServiceType["QnA"] = "qna";
     ServiceType["Dispatch"] = "dispatch";
+    ServiceType["File"] = "file";
 })(ServiceType = exports.ServiceType || (exports.ServiceType = {}));
 class BotConfig {
     constructor(secret) {
@@ -22,7 +23,7 @@ class BotConfig {
         };
         this.encryptedProperties = {
             endpoint: ['appPassword'],
-            abs: ['appPassord'],
+            abs: ['appPassword'],
             luis: ['authoringKey', 'subscriptionKey'],
             qna: ['subscriptionKey'],
             dispatch: ['authoringKey', 'subscriptionKey']
@@ -54,6 +55,15 @@ class BotConfig {
     // save the config file
     async Save(botpath) {
         let hasSecret = (this.secretKey && this.secretKey.length > 0);
+        // make sure that all dispatch serviceIds still match services that are in the bot
+        for (let service of this.services) {
+            if (service.type == ServiceType.Dispatch) {
+                let dispatchService = service;
+                dispatchService.serviceIds = linq_collections_1.Enumerable.fromSource(dispatchService.serviceIds)
+                    .where(serviceId => linq_collections_1.Enumerable.fromSource(this.services).any(s => s.id == serviceId))
+                    .toArray();
+            }
+        }
         if (hasSecret)
             this.encryptAll();
         await fsx.writeJson(botpath || this.internal.location, {
@@ -133,7 +143,7 @@ class BotConfig {
             if (service.id == nameOrId || service.name == nameOrId) {
                 svs.removeAt(i);
                 this.services = svs.toArray();
-                return;
+                return service;
             }
         }
         throw new Error(`a service with id or name of [${nameOrId}] was not found`);

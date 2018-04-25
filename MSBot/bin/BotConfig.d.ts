@@ -5,6 +5,7 @@ export declare enum ServiceType {
     Luis = "luis",
     QnA = "qna",
     Dispatch = "dispatch",
+    File = "file",
 }
 export declare class BotConfig implements IBotConfig {
     private internal;
@@ -25,7 +26,7 @@ export declare class BotConfig implements IBotConfig {
     decryptAll(): void;
     private encryptService(service);
     private decryptService(service);
-    disconnectServiceByNameOrId(nameOrId: string): void;
+    disconnectServiceByNameOrId(nameOrId: string): IConnectedService;
     disconnectService(type: string, id: string): void;
     encryptValue(value: string): string;
     decryptValue(encryptedValue: string): string;

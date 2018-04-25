@@ -1,8 +1,12 @@
 # LUIS
 
+[![npm version](https://badge.fury.io/js/luis-apis.svg)](https://badge.fury.io/js/luis-apis)
+
 The LUIS apis tool allows communication with the LUIS endpoints via command line, node or browser project. 
 Any endpoint listed in the [documentation for the LUIS Programmatic APIs v2.0](https://westus.dev.cognitive.microsoft.com/docs/services/5890b47c39e2bb17b84a55ff/operations/5890b47c39e2bb052c5b9c2f)
 is also available using the cli or the library (for node and browser projects). 
+
+Language Understanding ([LUIS.ai](https://luis.ai/)) allows your application to understand what a person wants in their own words. LUIS uses machine learning to allow developers to build applications that can receive user input in natural language and extract meaning from it.
 
 ## Installation
 ### As a cli
@@ -44,6 +48,10 @@ The cli has a utility command that walks through the creation of this file:
 or it can be created manually.
 2. As arguments to the cli. `--appId <string> --versionId <string> --authoringKey <string> --endpointBasePath <string>`
 3. As environment variables. `LUIS_APP_ID, LUIS_VERSION_ID, LUIS_AUTHORING_KEY, LUIS_ENDPOINT_BASE_PATH`
+
+You need a [LUIS](http://luis.ai/) account to get an authoring key. See [here](https://docs.microsoft.com/en-us/azure/cognitive-services/luis/luis-concept-keys) for more information. 
+If you have already built a LUIS application and would like to work on it with the LUIS CLI, you can appId, versionId by following instructions [here](https://github.com/Microsoft/BotBuilder-Samples/tree/master/CSharp/intelligence-LUIS). 
+See [here](https://docs.microsoft.com/en-us/azure/cognitive-services/luis/luis-reference-regions) for help with endpointBasePath. 
 
 The cli will first look for these named configuration variables in the arguments list, then inside the `.luisrc` file, 
 then fallback to environment variables. 

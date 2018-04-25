@@ -10,8 +10,6 @@ export interface IEndpointService extends IConnectedService {
 }
 export interface IAzureBotService extends IConnectedService {
     appId: string;
-    appPassword: string;
-    endpoint: string;
 }
 export interface ILuisService extends IConnectedService {
     appId: string;
@@ -24,10 +22,14 @@ export interface IDispatchService extends IConnectedService {
     authoringKey: string;
     subscriptionKey: string;
     version: string;
+    serviceIds: string[];
 }
 export interface IQnAService extends IConnectedService {
     kbid: string;
     subscriptionKey: string;
+}
+export interface IFileService extends IConnectedService {
+    filePath: string;
 }
 export interface IBotConfig {
     name: string;

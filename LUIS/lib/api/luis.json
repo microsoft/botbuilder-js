@@ -315,7 +315,7 @@
           "target": [
             "version"
           ],
-          "command": "luis publish version --in applicationPublishObject.json --appId <string>",
+          "command": "luis publish version --in applicationPublishObject.json --appId <string> --versionId <version> --region <region> --staging",
           "pathFragment": "",
           "params": [
             {

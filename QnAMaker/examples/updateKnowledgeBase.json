@@ -1,0 +1,19 @@
+
+{
+    "add": [
+        {
+            "word": "botframework",
+            "alterations": [
+                "bot frame work"
+            ]
+        }
+    ],
+    "delete": [
+        {
+            "word": "webchat",
+            "alterations": [
+                "web chat"
+            ]
+        }
+    ]
+}
