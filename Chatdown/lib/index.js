@@ -140,11 +140,11 @@ async function readActivitiesFromAggregate(aggregate, currentActivity, recipient
         // typeOrField should always be listed first
         let match = result[1]; // result[] doesn't have [] on it
         let split = match.indexOf('=');
-        let typeOrField = split > 0 ? match.substring(0, split) : match;
-        let rest = (split > 0) ? match.substring(split + 1) : undefined;
-        const type = ActivityTypes[typeOrField];
-        const field = ActivityField[typeOrField];
-        const instruction = Instructions[typeOrField];
+        let typeOrField = split > 0 ? match.substring(0, split).trim() : match.trim();
+        let rest = (split > 0) ? match.substring(split + 1).trim() : undefined;
+        const type = ActivityTypes[typeOrField.toLowerCase()];
+        const field = ActivityField[typeOrField.toLowerCase()];
+        const instruction = Instructions[typeOrField.toLowerCase()];
         // This isn't an activity - bail
         if (!type && !field && !instruction) {
             // skip unknown tag
@@ -167,18 +167,28 @@ async function readActivitiesFromAggregate(aggregate, currentActivity, recipient
             newActivities.push(currentActivity);
         }
 
-        const delay = instruction === Instructions.Delay ? rest : messageTimeGap;
+        let delay = messageTimeGap;
+
+        if (instruction) {
+            switch (instruction) {
+                case Instructions.delay:
+                    delay = parseInt(rest);
+                    break;
+            }
+        }
         currentActivity.timestamp = getIncrementedDate(delay);
 
-        // As more activity fields are supported,
-        // this should become a util or helper class.
-        switch (field) {
-            case ActivityField.Attachment:
-                await addAttachment(currentActivity, rest);
-                break;
-            case ActivityField.AttachmentLayout:
-                addAttachmentLayout(currentActivity, rest);
-                break;
+        if (field) {
+            // As more activity fields are supported,
+            // this should become a util or helper class.
+            switch (field) {
+                case ActivityField.Attachment:
+                    await addAttachment(currentActivity, rest);
+                    break;
+                case ActivityField.AttachmentLayout:
+                    addAttachmentLayout(currentActivity, rest);
+                    break;
+            }
         }
         // Trim off this activity or activity field and continue.
         aggregate = aggregate.replace(`[${result[1]}]`, '');

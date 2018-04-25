@@ -1,4 +1,0 @@
-Chatdown
-LUIS
-MSBot
-QnAMaker

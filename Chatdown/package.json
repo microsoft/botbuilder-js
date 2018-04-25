@@ -1,6 +1,6 @@
 {
   "name": "chatdown",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "Tool for parsing chat files and outputting replayable activities",
   "main": "lib/index.js",
   "directories": {
@@ -30,6 +30,7 @@
     "mime-types": "^2.1.18",
     "minimist": "^1.2.0",
     "please-upgrade-node": "^3.0.1",
+    "semver": "^5.5.0",
     "uuid": "^3.2.1",
     "window-size": "^1.1.0"
   },
