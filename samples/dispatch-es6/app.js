@@ -61,7 +61,7 @@ const dialogs = new DialogSet();
 function findEntities(entityName, entityResults) {
     let entities = []
     if (entityName in entityResults) {
-        entityResults[entityName].forEach((entity, idx) => {
+        entityResults[entityName].forEach(entity => {
             entities.push(entity);
         });
     }

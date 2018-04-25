@@ -1,12 +1,12 @@
 {
-  "name": "qna-translator-es6",
+  "name": "qna-maker-bot-es6",
   "version": "1.0.0",
-  "description": "Bot Builder v4 example showing a bot using language translation and QnA Maker.",
+  "description": "Bot Builder v4 example showing a bot using QnA Maker.",
   "main": "app.js",
   "scripts": {
     "start": "node app.js"
   },
-  "author": "",
+  "author": "Microsoft",
   "license": "MIT",
   "dependencies": {
     "botbuilder": "^4.0.0-m3.0",
