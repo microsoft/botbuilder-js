@@ -12,6 +12,7 @@ const ChannelAccount = require('./serializable/channelAccount');
 const ConversationAccount = require('./serializable/conversationAccount');
 const Attachment = require('./serializable/attachment');
 const chalk = require('chalk');
+const request = require('request-promise-native');
 
 const NS = uuid();
 // Matches [someActivityOrInstruction=value]
@@ -182,10 +183,10 @@ async function readActivitiesFromAggregate(aggregate, currentActivity, recipient
             // As more activity fields are supported,
             // this should become a util or helper class.
             switch (field) {
-                case ActivityField.Attachment:
+                case ActivityField.attachment:
                     await addAttachment(currentActivity, rest);
                     break;
-                case ActivityField.AttachmentLayout:
+                case ActivityField.attachmentlayout:
                     addAttachmentLayout(currentActivity, rest);
                     break;
             }
@@ -233,6 +234,12 @@ async function addAttachment(activity, arg) {
     }
     else {
         contentType = mime.lookup(contentUrl) || cardContentTypes[path.extname(contentUrl)];
+
+        if (!contentType && contentUrl && contentUrl.indexOf('http') == 0) {
+            let options = { method: 'HEAD', uri: contentUrl };
+            let response = await request(options);
+            contentType = response['content-type'].split(';')[0];
+        }
     }
 
     const charset = mime.charset(contentType);
