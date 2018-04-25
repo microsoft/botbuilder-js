@@ -4,6 +4,10 @@
 
 .lu files help describe language understanding components for your bot. LUDown is a command line tool that helps convert .lu file(s) into JSON and TSV files that you can then use to create your [LUIS](http://luis.ai) app or [QnAMaker](http://qnamaker.ai) Knowledge base. 
 
+Language Understanding ([LUIS.ai](https://luis.ai/)) allows your application to understand what a person wants in their own words. LUIS uses machine learning to allow developers to build applications that can receive user input in natural language and extract meaning from it.
+
+[QnA Maker](http://qnamaker.ai) enables you to go from FAQ to Bot in minutes. With QnA Maker you can build, train and publish a simple question and answer bot based on FAQ URLs, structured documents or editorial content in minutes.
+
 The .lu file and the LUDown tool was born to serve few use cases:
 - Quick, simple and easy way to bootstrap language understanding for your bot
 - Describe intents, entities, utterances and patterns for your bot in simple markdown documents
@@ -12,7 +16,12 @@ The .lu file and the LUDown tool was born to serve few use cases:
 - Define question and answer pairs for your bot.
 - Works in conjunction with other Microsoft Bot Builder tools like [luis CLI](https://github.com/Microsoft/botbuilder-tools/tree/master/LUIS), [QnAMaker CLI](https://github.com/Microsoft/botbuilder-tools/tree/master/QnAMaker)
 
+## Pre-requisite
+
+- [Node.js](https://nodejs.org/) version 8.5 or higher
 ## Installation
+
+
 ```bash
 npm i -g ludown
 ```
@@ -54,7 +63,7 @@ Once you have run LUDown, you can use the resulting JSON files in several ways:
 ```bash
 luis import application --in _LUISApp.json --authoringKey ""
 ```
-Note: You can install LUIS CLI from [here](https://github.com/Microsoft/botbuilder-tools/tree/master/LUIS)
+Note: You can install LUIS CLI from [here](https://github.com/Microsoft/botbuilder-tools/tree/master/LUIS). If you are using LUIS CLI, you might see the option to provide a versionId, application name directly in the LUIS CLI. You can also provide this information to the Ludown tool to generate your LUIS JSON model as well. Information explicitly spcified in the LUIS CLI will override any information captured by Ludown tool. 
 
 #### using [LUIS](http://luis.ai) portal
 - Navigate to [LUIS](http://luis.ai)
@@ -150,13 +159,19 @@ LUDown tool supports the following [LUIS entity types](https://docs.microsoft.co
 - Prebuilt ("datetimeV2", "age", "dimension", "email", "money", "number", "ordinal", "percentage", "phoneNumber","temperature", "url")
 - List
 - Simple
+- Phrase List features
 
-LUDown tool <b>*does not*</b> support the following LUIS entity types:
+LUDown tool **does not** support the following LUIS entity types:
 - Regular expression
 - Hierarchical
 - Composite
 
-You can define an entity type by using the $\<entityName\>:\<entityType\> notation. Note that the parser defaults to simple entity type.
+You can define: 
+- [Simple](https://docs.microsoft.com/en-us/azure/cognitive-services/luis/luis-quickstart-primary-and-secondary-data) entities by using $\<entityName\>:simple notation. Note that the parser defaults to simple entity type.
+- [PREBUILT](https://docs.microsoft.com/en-us/azure/cognitive-services/luis/pre-builtentities) entities by using $PREBUILT:\<entityType\> notation. 
+- [List](https://docs.microsoft.com/en-us/azure/cognitive-services/luis/luis-quickstart-intent-and-list-entity) entities by using $\<entityName\>:\<CanonicalValue\>**=**<List of values> notation.
+- [Phrase List](https://docs.microsoft.com/en-us/azure/cognitive-services/luis/luis-tutorial-interchangeable-phrase-list) entities by using $\<entityName\>:PhraseList <List of synonyms> notation.
+
 Here's an example: 
 
 ```markdown
@@ -206,6 +221,11 @@ $commPreference:text=
 ```
 
 You can also enhance LUIS understanding of your model using [PhraseLists](https://docs.microsoft.com/en-us/azure/cognitive-services/LUIS/luis-tutorial-interchangeable-phrase-list)
+
+You can describe Phrase List entities using the following notation:
+$\<entityName\>:PhraseList
+    - \<synonym1\>
+    - \<synonym2\>
 
 Here's an example of a phrase list definition:
 

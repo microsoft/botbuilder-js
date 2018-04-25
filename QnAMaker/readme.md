@@ -4,6 +4,10 @@
 
 QnAMaker is command line tool and library for interacting with QnAMaker service using the QnAMaker REST API
 
+## Pre-requisite
+
+- [Node.js](https://nodejs.org/) version 8.5 or higher
+
 ## Installation
 
 ### As a cli
