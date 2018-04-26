@@ -62,11 +62,10 @@ async function beginDialogDemo(context, state) {
 }
 async function continueDialogDemo(context, state) {
     const dc = dialogs.createContext(context, state.demoState);
-    const result = await dc.continue();
-    if (!result.active) {
+    await dc.continue();
+    if (!dc.currentDialog) {
         state.demo = undefined;
         state.demoState = undefined;
-        state.currentLocale = result.result;
     }
 }
 const dialogs = new botbuilder_dialogs_1.DialogSet();
@@ -76,7 +75,9 @@ dialogs.add('demo', [
     },
     async function (dc, locale) {
         await dc.context.sendActivity(`Switching locale to "${locale}".`);
-        return await dc.end(locale);
+        const state = conversationState.get(dc.context);
+        state.currentLocale = locale;
+        return await dc.end();
     }
 ]);
 dialogs.add('localePicker', new language_1.LanguagePicker({ defaultLocale: 'en' }));
@@ -98,3 +99,4 @@ async function continueTopicDemo(context, state) {
         await context.sendActivity(`Switching locale to "${state.currentLocale}".`);
     }
 }
+//# sourceMappingURL=app.js.map

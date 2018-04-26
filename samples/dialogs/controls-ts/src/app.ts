@@ -70,11 +70,10 @@ async function beginDialogDemo(context: TurnContext, state: DemoState) {
 
 async function continueDialogDemo(context: TurnContext, state: DemoState) {
     const dc = dialogs.createContext(context, state.demoState);
-    const result = await dc.continue();
-    if (!result.active) {
+    await dc.continue();
+    if (!dc.currentDialog) {
         state.demo = undefined;
         state.demoState = undefined;
-        state.currentLocale = result.result;
     }
 }
 
@@ -86,7 +85,11 @@ dialogs.add('demo', [
     },
     async function (dc, locale: string) {
         await dc.context.sendActivity(`Switching locale to "${locale}".`);
-        return await dc.end(locale);
+
+        const state = conversationState.get(dc.context);
+        state.currentLocale = locale; 
+
+        return await dc.end();
     }
 ]);
 
