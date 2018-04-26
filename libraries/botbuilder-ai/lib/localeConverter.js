@@ -132,7 +132,7 @@ class MicrosoftLocaleConverter {
                     momentTimeEnd = moment(resolutionValues["end"]).toDate();
                     foundType = 'date';
                 }
-                else {
+                else { // Must be a time-only result with no date
                     momentTime = new Date();
                     momentTime.setHours(parseInt(String(resolutionValues['start']).substr(0, 2)));
                     momentTime.setMinutes(parseInt(String(resolutionValues['start']).substr(3, 2)));
@@ -158,7 +158,7 @@ class MicrosoftLocaleConverter {
                     momentTime = moment(resolutionValues["value"]).toDate();
                     foundType = 'date';
                 }
-                else {
+                else { // Must be a time-only result with no date
                     momentTime = new Date();
                     momentTime.setHours(parseInt(String(resolutionValues['value']).substr(0, 2)));
                     momentTime.setMinutes(parseInt(String(resolutionValues['value']).substr(3, 2)));
@@ -175,6 +175,20 @@ class MicrosoftLocaleConverter {
         });
         return foundDates;
     }
+    formatDate(date, toLocale) {
+        return this.mapLocaleToFunction[toLocale].dateFormat
+            .replace('yyyy', (date.getFullYear()).toLocaleString(undefined, { minimumIntegerDigits: 4 }).replace(',', ''))
+            .replace('MM', (date.getMonth() + 1).toLocaleString(undefined, { minimumIntegerDigits: 2 }))
+            .replace('dd', (date.getDate()).toLocaleString(undefined, { minimumIntegerDigits: 2 }));
+    }
+    formatTime(date, toLocale) {
+        return this.mapLocaleToFunction[toLocale].timeFormat
+            .replace('hh', (date.getHours()).toLocaleString(undefined, { minimumIntegerDigits: 2 }))
+            .replace('mm', (date.getMinutes()).toLocaleString(undefined, { minimumIntegerDigits: 2 }));
+    }
+    formatDateAndTime(date, toLocale) {
+        return `${this.formatDate(date, toLocale)} ${this.formatTime(date, toLocale)}`;
+    }
     convert(message, fromLocale, toLocale) {
         if (!this.isLocaleAvailable(toLocale)) {
             return Promise.reject(`Unsupported to locale ${toLocale}`);
@@ -185,67 +199,32 @@ class MicrosoftLocaleConverter {
             dates.forEach(date => {
                 if (date.range) {
                     if (date.type == 'time') {
-                        let convertedStartDate = this.mapLocaleToFunction[toLocale].timeFormat
-                            .replace('hh', (date.dateTimeObj.getHours()).toLocaleString(undefined, { minimumIntegerDigits: 2 }))
-                            .replace('mm', (date.dateTimeObj.getMinutes()).toLocaleString(undefined, { minimumIntegerDigits: 2 }));
-                        let convertedEndDate = this.mapLocaleToFunction[toLocale].timeFormat
-                            .replace('hh', (date.endDateTimeObj.getHours()).toLocaleString(undefined, { minimumIntegerDigits: 2 }))
-                            .replace('mm', (date.endDateTimeObj.getMinutes()).toLocaleString(undefined, { minimumIntegerDigits: 2 }));
+                        let convertedStartDate = this.formatTime(date.dateTimeObj, toLocale);
+                        let convertedEndDate = this.formatTime(date.endDateTimeObj, toLocale);
                         processedMessage = processedMessage.replace(date.text, `${convertedStartDate} - ${convertedEndDate}`);
                     }
                     else if (date.type == 'date') {
-                        let convertedStartDate = this.mapLocaleToFunction[toLocale].dateFormat
-                            .replace('yyyy', (date.dateTimeObj.getFullYear()).toLocaleString(undefined, { minimumIntegerDigits: 4 }).replace(',', ''))
-                            .replace('MM', (date.dateTimeObj.getMonth() + 1).toLocaleString(undefined, { minimumIntegerDigits: 2 }))
-                            .replace('dd', (date.dateTimeObj.getDate()).toLocaleString(undefined, { minimumIntegerDigits: 2 }));
-                        let convertedEndDate = this.mapLocaleToFunction[toLocale].dateFormat
-                            .replace('yyyy', (date.endDateTimeObj.getFullYear()).toLocaleString(undefined, { minimumIntegerDigits: 4 }).replace(',', ''))
-                            .replace('MM', (date.endDateTimeObj.getMonth() + 1).toLocaleString(undefined, { minimumIntegerDigits: 2 }))
-                            .replace('dd', (date.endDateTimeObj.getDate()).toLocaleString(undefined, { minimumIntegerDigits: 2 }));
+                        let convertedStartDate = this.formatDate(date.dateTimeObj, toLocale);
+                        let convertedEndDate = this.formatDate(date.endDateTimeObj, toLocale);
                         processedMessage = processedMessage.replace(date.text, `${convertedStartDate} - ${convertedEndDate}`);
                     }
                     else {
-                        let convertedStartTime = this.mapLocaleToFunction[toLocale].timeFormat
-                            .replace('hh', (date.dateTimeObj.getHours()).toLocaleString(undefined, { minimumIntegerDigits: 2 }))
-                            .replace('mm', (date.dateTimeObj.getMinutes()).toLocaleString(undefined, { minimumIntegerDigits: 2 }));
-                        let convertedStartDate = this.mapLocaleToFunction[toLocale].dateFormat
-                            .replace('yyyy', (date.dateTimeObj.getFullYear()).toLocaleString(undefined, { minimumIntegerDigits: 4 }).replace(',', ''))
-                            .replace('MM', (date.dateTimeObj.getMonth() + 1).toLocaleString(undefined, { minimumIntegerDigits: 2 }))
-                            .replace('dd', (date.dateTimeObj.getDate()).toLocaleString(undefined, { minimumIntegerDigits: 2 }));
-                        let convertedEndTime = this.mapLocaleToFunction[toLocale].timeFormat
-                            .replace('hh', (date.endDateTimeObj.getHours()).toLocaleString(undefined, { minimumIntegerDigits: 2 }))
-                            .replace('mm', (date.endDateTimeObj.getMinutes()).toLocaleString(undefined, { minimumIntegerDigits: 2 }));
-                        let convertedEndDate = this.mapLocaleToFunction[toLocale].dateFormat
-                            .replace('yyyy', (date.endDateTimeObj.getFullYear()).toLocaleString(undefined, { minimumIntegerDigits: 4 }).replace(',', ''))
-                            .replace('MM', (date.endDateTimeObj.getMonth() + 1).toLocaleString(undefined, { minimumIntegerDigits: 2 }))
-                            .replace('dd', (date.endDateTimeObj.getDate()).toLocaleString(undefined, { minimumIntegerDigits: 2 }));
-                        let convertedDateTimeRange = `${convertedStartDate} ${convertedStartTime} - ${convertedEndDate} ${convertedEndTime}`;
-                        processedMessage = processedMessage.replace(date.text, convertedDateTimeRange);
+                        let convertedStartDate = this.formatDateAndTime(date.dateTimeObj, toLocale);
+                        let convertedEndDate = this.formatDateAndTime(date.endDateTimeObj, toLocale);
+                        processedMessage = processedMessage.replace(date.text, `${convertedStartDate} - ${convertedEndDate}`);
                     }
                 }
                 else {
                     if (date.type == 'time') {
-                        let convertedDate = this.mapLocaleToFunction[toLocale].timeFormat
-                            .replace('hh', (date.dateTimeObj.getHours()).toLocaleString(undefined, { minimumIntegerDigits: 2 }))
-                            .replace('mm', (date.dateTimeObj.getMinutes()).toLocaleString(undefined, { minimumIntegerDigits: 2 }));
+                        let convertedDate = this.formatTime(date.dateTimeObj, toLocale);
                         processedMessage = processedMessage.replace(date.text, convertedDate);
                     }
                     else if (date.type == 'date') {
-                        let convertedDate = this.mapLocaleToFunction[toLocale].dateFormat
-                            .replace('yyyy', (date.dateTimeObj.getFullYear()).toLocaleString(undefined, { minimumIntegerDigits: 4 }).replace(',', ''))
-                            .replace('MM', (date.dateTimeObj.getMonth() + 1).toLocaleString(undefined, { minimumIntegerDigits: 2 }))
-                            .replace('dd', (date.dateTimeObj.getDate()).toLocaleString(undefined, { minimumIntegerDigits: 2 }));
+                        let convertedDate = this.formatDate(date.dateTimeObj, toLocale);
                         processedMessage = processedMessage.replace(date.text, convertedDate);
                     }
                     else {
-                        let convertedTime = this.mapLocaleToFunction[toLocale].timeFormat
-                            .replace('hh', (date.dateTimeObj.getHours()).toLocaleString(undefined, { minimumIntegerDigits: 2 }))
-                            .replace('mm', (date.dateTimeObj.getMinutes()).toLocaleString(undefined, { minimumIntegerDigits: 2 }));
-                        let convertedDate = this.mapLocaleToFunction[toLocale].dateFormat
-                            .replace('yyyy', (date.dateTimeObj.getFullYear()).toLocaleString(undefined, { minimumIntegerDigits: 4 }).replace(',', ''))
-                            .replace('MM', (date.dateTimeObj.getMonth() + 1).toLocaleString(undefined, { minimumIntegerDigits: 2 }))
-                            .replace('dd', (date.dateTimeObj.getDate()).toLocaleString(undefined, { minimumIntegerDigits: 2 }));
-                        let convertedDateTime = `${convertedDate} ${convertedTime}`;
+                        let convertedDateTime = this.formatDateAndTime(date.dateTimeObj, toLocale);
                         processedMessage = processedMessage.replace(date.text, convertedDateTime);
                     }
                 }
