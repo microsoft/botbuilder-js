@@ -10,7 +10,42 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const botbuilder_1 = require("botbuilder");
 const internal_1 = require("./internal");
 /**
- * Creates a new prompt that asks the user to enter some text.
+ * :package: **botbuilder-prompts**
+ *
+ * Creates a new prompt that asks the user to sign in using the Bot Frameworks Single Sign On (SSO)
+ * service.
+ *
+ * **Usage Example:**
+ *
+ * ```JavaScript
+ * async function ensureLogin(context, state, botLogic) {
+ *    const now = new Date().getTime();
+ *    if (state.token && now < (new Date(state.token.expiration).getTime() - 60000)) {
+ *       return botLogic(context);
+ *    } else {
+ *       const loginPrompt = createOAuthPrompt({
+ *           connectionName: 'GitConnection',
+ *           title: 'Login To GitHub'
+ *       });
+ *       const token = await state.loginActive ? loginPrompt.recognize(context) : loginPrompt.getUserToken(context);
+ *       if (token) {
+ *           state.loginActive = false;
+ *           state.token = token;
+ *           return botLogic(context);
+ *       } else if (context.activity.type === 'message') {
+ *           if (!state.loginActive) {
+ *               state.loginActive = true;
+ *               state.loginStart = now;
+ *               await loginPrompt.prompt(context);
+ *           } else if (now >= (state.loginStart + (5 * 60 * 1000))) {
+ *               state.loginActive = false;
+ *               await context.sendActivity(`We're having a problem logging you in. Please try again later.`);
+ *           }
+ *       }
+ *    }
+ * }
+ * ```
+ * @param O (Optional) type of result returned by the `recognize()` method. This defaults to an instance of `TokenResponse` but can be changed by the prompts custom validator.
  * @param settings Configuration settings for the OAuthPrompt.
  * @param validator (Optional) validator for providing additional validation logic or customizing the prompt sent to the user when invalid.
  */

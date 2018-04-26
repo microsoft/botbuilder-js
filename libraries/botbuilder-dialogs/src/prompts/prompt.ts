@@ -10,7 +10,11 @@ import { PromptValidator } from 'botbuilder-prompts';
 import { DialogContext } from '../dialogContext';
 import { Control } from '../control';
 
-/** Basic configuration options supported by all prompts. */
+/** 
+ * :package: **botbuilder-dialogs**
+ * 
+ * Basic configuration options supported by all prompts. 
+ */
 export interface PromptOptions {
     /** (Optional) Initial prompt to send the user. */
     prompt?: string|Partial<Activity>;
@@ -25,6 +29,12 @@ export interface PromptOptions {
     retrySpeak?: string;
 }
 
+/**
+ * :package: **botbuilder-dialogs**
+ * 
+ * Base class for all prompts.
+ * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
+ */
 export abstract class Prompt<C extends TurnContext> extends Control<C> {
     constructor(private validator?: PromptValidator<any, any>) { 
         super();

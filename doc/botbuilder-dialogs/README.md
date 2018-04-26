@@ -17,6 +17,7 @@
 * [DialogContext](classes/botbuilder_dialogs.dialogcontext.md)
 * [DialogSet](classes/botbuilder_dialogs.dialogset.md)
 * [NumberPrompt](classes/botbuilder_dialogs.numberprompt.md)
+* [OAuthPrompt](classes/botbuilder_dialogs.oauthprompt.md)
 * [Prompt](classes/botbuilder_dialogs.prompt.md)
 * [TextPrompt](classes/botbuilder_dialogs.textprompt.md)
 * [Waterfall](classes/botbuilder_dialogs.waterfall.md)
@@ -28,12 +29,12 @@
 * [Dialog](interfaces/botbuilder_dialogs.dialog.md)
 * [DialogInstance](interfaces/botbuilder_dialogs.dialoginstance.md)
 * [DialogResult](interfaces/botbuilder_dialogs.dialogresult.md)
+* [OAuthPromptSettingsWithTimeout](interfaces/botbuilder_dialogs.oauthpromptsettingswithtimeout.md)
 * [PromptOptions](interfaces/botbuilder_dialogs.promptoptions.md)
 
 
 ### Type aliases
 
-* [PromptValidator](#promptvalidator)
 * [SkipStepFunction](#skipstepfunction)
 * [WaterfallStep](#waterfallstep)
 
@@ -41,60 +42,17 @@
 
 ---
 ## Type aliases
-<a id="promptvalidator"></a>
-
-###  PromptValidator
-
-**Τ PromptValidator**:  *`function`* 
-
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:33](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L33)*
-
-
-
-Signature of a function that can be passed in to the constructor of all prompts. This function will be called every time the user replies to a prompt and can be used to add additional validation logic to a prompt or to customize the reply sent when the user send a reply that isn't recognized.
-*__param__*: Type of dialog context object passed to validator.
-
-*__param__*: Type of value that will recognized and passed to the validator as input.
-
-*__param__*: Type of output that will be returned by the validator. This can be changed from the input type by the validator.
-
-*__param__*: Dialog context for the current turn of conversation with the user.
-
-
-#### Type declaration
-►(dc: *[DialogContext](classes/botbuilder_dialogs.dialogcontext.md)`C`*, value: *`R`⎮`undefined`*): `Promiseable`.<`any`>
-
-
-
-**Parameters:**
-
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| dc | [DialogContext](classes/botbuilder_dialogs.dialogcontext.md)`C`   |  - |
-| value | `R`⎮`undefined`   |  The value that was recognized or wasn't recognized. Depending on the prompt this can be either undefined or an empty array to indicate an unrecognized value. |
-
-
-
-
-
-**Returns:** `Promiseable`.<`any`>
-
-
-
-
-
-
-___
-
 <a id="skipstepfunction"></a>
 
 ###  SkipStepFunction
 
 **Τ SkipStepFunction**:  *`function`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:55](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L55)*
+*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:59](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L59)*
 
 
+
+:package: **botbuilder-dialogs**
 
 When called, control will skip to the next waterfall step.
 
@@ -128,9 +86,11 @@ ___
 
 **Τ WaterfallStep**:  *`function`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:50](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L50)*
+*Defined in [libraries/botbuilder-dialogs/lib/waterfall.d.ts:52](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/waterfall.d.ts#L52)*
 
 
+
+:package: **botbuilder-dialogs**
 
 Function signature of a waterfall step.
 

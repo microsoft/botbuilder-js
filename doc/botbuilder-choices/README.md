@@ -46,8 +46,13 @@
 
 **Τ TokenizerFunction**:  *`function`* 
 
-*Defined in [libraries/botbuilder-choices/lib/tokenizer.d.ts:14](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/tokenizer.d.ts#L14)*
+*Defined in [libraries/botbuilder-choices/lib/tokenizer.d.ts:32](https://github.com/Microsoft/botbuilder-js/blob/fbf16f5/libraries/botbuilder-choices/lib/tokenizer.d.ts#L32)*
 
+
+
+:package: **botbuilder-choices**
+
+Signature for an alternate word breaker that can be passed to `recognizeChoices()`, `findChoices()`, or `findValues()`. The `defaultTokenizer()` is fairly simple and only breaks on spaces and punctuation.
 
 #### Type declaration
 ►(text: *`string`*, locale?: *`string`*): [Token](interfaces/botbuilder_choices.token.md)[]
@@ -58,8 +63,8 @@
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| text | `string`   |  - |
-| locale | `string`   |  - |
+| text | `string`   |  The text to be tokenized. |
+| locale | `string`   |  (Optional) locale of the text if known. |
 
 
 
@@ -84,11 +89,30 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-choices/lib/tokenizer.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/tokenizer.d.ts#L19)*
+*Defined in [libraries/botbuilder-choices/lib/tokenizer.d.ts:59](https://github.com/Microsoft/botbuilder-js/blob/fbf16f5/libraries/botbuilder-choices/lib/tokenizer.d.ts#L59)*
 
 
 
-Simple tokenizer that breaks on spaces and punctuation. The only normalization done is to lowercase
+:package: **botbuilder-choices**
+
+Simple tokenizer that breaks on spaces and punctuation. The only normalization done is to lowercase the tokens. Developers can wrap this tokenizer with their own function to perform additional normalization like [stemming](https://github.com/words/stemmer).
+
+**Usage Example**
+
+    const { recognizeChoices, defaultTokenizer } = require('botbuilder-choices');
+    const stemmer = require('stemmer');
+
+    function customTokenizer(text, locale) {
+        const tokens = defaultTokenizer(text, locale);
+        tokens.forEach((t) => {
+            t.normalized = stemmer(t.normalized);
+        });
+        return tokens;
+    }
+
+    const choices = ['red', 'green', 'blue'];
+    const utterance = context.activity.text;
+    const results = recognizeChoices(utterance, choices, { tokenizer: customTokenizer });
 
 
 **Parameters:**
@@ -118,17 +142,38 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:42](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/findChoices.d.ts#L42)*
+*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:122](https://github.com/Microsoft/botbuilder-js/blob/fbf16f5/libraries/botbuilder-choices/lib/findChoices.d.ts#L122)*
 
+
+
+:package: **botbuilder-choices**
+
+Mid-level search function for recognizing a choice in an utterance. This function is layered above `findValues()` and simply determines all of the synonyms that should be searched for before calling `findValues()` to perform the actual search. The `recognizeChoices()` function is layered above this function and adds the ability to select a choice by index or ordinal position in the list. Calling this particular function is useful when you don't want the index and ordinal position recognition done by `recognizeChoices()`.
+
+**Usage Example**
+
+    const { findChoices } = require('botbuilder-choices');
+
+    const choices = ['red', 'green', 'blue'];
+    const utterance = context.activity.text;
+    const results = findChoices(utterance, choices);
+    if (results.length == 1) {
+        await context.sendActivity(`I like ${results[0].resolution.value} too!`);
+    } else if (results.length > 1) {
+        const ambiguous = results.map((r) => r.resolution.value);
+        await context.sendActivity(ChoiceFactory.forChannel(context, ambiguous, `Which one?`));
+    } else {
+        await context.sendActivity(ChoiceFactory.forChannel(context, choices, `I didn't get that... Which color?`));
+    }
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| utterance | `string`   |  - |
-| choices | (`string`⎮[Choice](interfaces/botbuilder_choices.choice.md))[]   |  - |
-| options | [FindChoicesOptions](interfaces/botbuilder_choices.findchoicesoptions.md)   |  - |
+| utterance | `string`   |  The text or user utterance to search over. For an incoming 'message' activity you can simply use `context.activity.text`. |
+| choices | (`string`⎮[Choice](interfaces/botbuilder_choices.choice.md))[]   |  List of choices to search over. |
+| options | [FindChoicesOptions](interfaces/botbuilder_choices.findchoicesoptions.md)   |  (Optional) options used to tweak the search that's performed. |
 
 
 
@@ -150,20 +195,22 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:57](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/findValues.d.ts#L57)*
+*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:83](https://github.com/Microsoft/botbuilder-js/blob/fbf16f5/libraries/botbuilder-choices/lib/findValues.d.ts#L83)*
 
 
 
-Looks for a set of values within an utterance.
+:package: **botbuilder-choices**
+
+INTERNAL: Low-level function that searches for a set of values within an utterance. Higher level functions like `findChoices()` and `recognizeChoices()` are layered above this function. In most cases its easier to just call one of the higher level functions instead but this function contains the fuzzy search algorithm that drives choice recognition.
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| utterance | `string`   |  - |
-| values | [SortedValue](interfaces/botbuilder_choices.sortedvalue.md)[]   |  - |
-| options | [FindValuesOptions](interfaces/botbuilder_choices.findvaluesoptions.md)   |  - |
+| utterance | `string`   |  The text or user utterance to search over. |
+| values | [SortedValue](interfaces/botbuilder_choices.sortedvalue.md)[]   |  List of values to search over. |
+| options | [FindValuesOptions](interfaces/botbuilder_choices.findvaluesoptions.md)   |  (Optional) options used to tweak the search that's performed. |
 
 
 
@@ -185,17 +232,42 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-choices/lib/recognizeChoices.d.ts:10](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/recognizeChoices.d.ts#L10)*
+*Defined in [libraries/botbuilder-choices/lib/recognizeChoices.d.ts:43](https://github.com/Microsoft/botbuilder-js/blob/fbf16f5/libraries/botbuilder-choices/lib/recognizeChoices.d.ts#L43)*
 
+
+
+:package: **botbuilder-choices**
+
+High level function for recognizing a choice in a users utterance. This is layered above the `findChoices()` function and adds logic to let the user specify their choice by index (they can say "one" to pick `choice[0]`) or ordinal position (they can say "the second one" to pick `choice[1]`.) The users utterance is recognized in the following order:
+
+*   By name using `findChoices()`.
+*   By 1's based ordinal position.
+*   By 1's based index position.
+
+**Usage Example**
+
+    const { recognizeChoices } = require('botbuilder-choices');
+
+    const choices = ['red', 'green', 'blue'];
+    const utterance = context.activity.text;
+    const results = recognizeChoices(utterance, choices);
+    if (results.length == 1) {
+        await context.sendActivity(`I like ${results[0].resolution.value} too!`);
+    } else if (results.length > 1) {
+        const ambiguous = results.map((r) => r.resolution.value);
+        await context.sendActivity(ChoiceFactory.forChannel(context, ambiguous, `Which one?`));
+    } else {
+        await context.sendActivity(ChoiceFactory.forChannel(context, choices, `I didn't get that... Which color?`));
+    }
 
 
 **Parameters:**
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| utterance | `string`   |  - |
-| choices | (`string`⎮[Choice](interfaces/botbuilder_choices.choice.md))[]   |  - |
-| options | [FindChoicesOptions](interfaces/botbuilder_choices.findchoicesoptions.md)   |  - |
+| utterance | `string`   |  The text or user utterance to search over. For an incoming 'message' activity you can simply use `context.activity.text`. |
+| choices | (`string`⎮[Choice](interfaces/botbuilder_choices.choice.md))[]   |  List of choices to search over. |
+| options | [FindChoicesOptions](interfaces/botbuilder_choices.findchoicesoptions.md)   |  (Optional) options used to tweak the search that's performed. |
 
 
 

@@ -5,11 +5,15 @@
 # Interface: ConfirmChoices
 
 
+:package: **botbuilder-prompts**
+
 Map of `ConfirmPrompt` choices for each locale the bot supports.
 
 ## Indexable
 
 \[locale: `string`\]:&nbsp;(`string`⎮[Choice]())[]
+:package: **botbuilder-prompts**
+
 Map of `ConfirmPrompt` choices for each locale the bot supports.
 
 

@@ -29,7 +29,7 @@ describe('CompositeControl', function() {
                 done();
             }
         ]);
-        const control = new CompositeControl(cDialogs, 'start');
+        const control = new CompositeControl('start', cDialogs);
 
         const dialogs = new DialogSet();
         dialogs.add('control', control);
@@ -47,7 +47,7 @@ describe('CompositeControl', function() {
                 return dc.end(120);
             }
         ]);
-        const control = new CompositeControl(cDialogs, 'start');
+        const control = new CompositeControl('start', cDialogs);
 
         const dialogs = new DialogSet();
         dialogs.add('control', control);
@@ -76,7 +76,7 @@ describe('CompositeControl', function() {
                 return dc.end(120);
             }
         ]);
-        const control = new CompositeControl(cDialogs, 'start');
+        const control = new CompositeControl('start', cDialogs);
 
         const dialogs = new DialogSet();
         dialogs.add('control', control);
@@ -110,25 +110,7 @@ describe('CompositeControl', function() {
                 done();
             }
         ]);
-        const control = new CompositeControl(cDialogs, 'start');
-
-        const state = {};
-        const context = new TestContext(beginMessage);
-        control.begin(context, state, { foo: 'bar' });
-    });
-
-    it('should merge options passed to begin() with default options.', function (done) {
-        const cDialogs = new DialogSet();
-        cDialogs.add('start', [
-            function (dc, args) {
-                assert(dc);
-                assert(typeof args === 'object');
-                assert(args.foo === 'bar');
-                assert(args.bar === 'foo');
-                done();
-            }
-        ]);
-        const control = new CompositeControl(cDialogs, 'start', { bar: 'foo' });
+        const control = new CompositeControl('start', cDialogs);
 
         const state = {};
         const context = new TestContext(beginMessage);
@@ -148,7 +130,7 @@ describe('CompositeControl', function() {
                 return dc.end(120);
             }
         ]);
-        const control = new CompositeControl(cDialogs, 'start');
+        const control = new CompositeControl('start', cDialogs);
 
         const state = {};
         const context = new TestContext(beginMessage);

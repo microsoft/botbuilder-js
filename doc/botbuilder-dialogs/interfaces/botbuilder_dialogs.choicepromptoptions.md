@@ -5,6 +5,8 @@
 # Interface: ChoicePromptOptions
 
 
+:package: **botbuilder-dialogs**
+
 Additional options that can be used to configure a `ChoicePrompt`.
 
 ## Hierarchy
@@ -28,7 +30,7 @@ Additional options that can be used to configure a `ChoicePrompt`.
 
 **●  choices**:  *`any`[]* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L15)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts:20](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/prompts/choicePrompt.d.ts#L20)*
 
 
 
@@ -47,7 +49,7 @@ ___
 
 *Inherited from [PromptOptions](botbuilder_dialogs.promptoptions.md).[prompt](botbuilder_dialogs.promptoptions.md#prompt)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:14](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L14)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L19)*
 
 
 
@@ -66,7 +68,7 @@ ___
 
 *Inherited from [PromptOptions](botbuilder_dialogs.promptoptions.md).[retryPrompt](botbuilder_dialogs.promptoptions.md#retryprompt)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L18)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:23](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L23)*
 
 
 
@@ -85,7 +87,7 @@ ___
 
 *Inherited from [PromptOptions](botbuilder_dialogs.promptoptions.md).[retrySpeak](botbuilder_dialogs.promptoptions.md#retryspeak)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:20](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L20)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:25](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L25)*
 
 
 
@@ -104,7 +106,7 @@ ___
 
 *Inherited from [PromptOptions](botbuilder_dialogs.promptoptions.md).[speak](botbuilder_dialogs.promptoptions.md#speak)*
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:16](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L16)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L21)*
 
 
 
