@@ -116,9 +116,9 @@ let globalArgs =
         head: 'Global Arguments:',
         table: [
             [chalk.cyan.bold('--help,    -h'), `Prints this help file. `],
-            [chalk.cyan.bold('--!          '), 'Dumps absolutely all documented commands to the console with descriptions'],
             [chalk.cyan.bold('--init,    -i'), 'Initializes the .luisrc file with settings specific to your LUIS instance'],
-            [chalk.cyan.bold('--version, -v'), 'Prints the version of this cli tool']
+            [chalk.cyan.bold('--version, -v'), 'Prints the version of this cli tool'],
+            [chalk.cyan.bold('--!          '), 'Dumps all documented commands to the console with descriptions']
         ]
     };
 
@@ -256,6 +256,7 @@ function getAllCommands() {
 
     let sections = [];
     for (resourceType of resourceTypes) {
+        tables[resourceType].sort((a,b) => a[0].localeCompare(b[0]));
         sections.push({
             head: chalk.white.bold(resourceType),
             table: tables[resourceType]

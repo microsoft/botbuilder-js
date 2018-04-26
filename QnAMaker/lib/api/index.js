@@ -1,5 +1,6 @@
 module.exports.alterations = require('./alterations');
 module.exports.endpointkeys = require('./endpointkeys');
+module.exports.knowledgebase = require('./knowledgebase');
 module.exports.knowledgebases = require('./knowledgebases');
 module.exports.createasync = require('./createasync');
 module.exports.UpdateAsync = require('./UpdateAsync');

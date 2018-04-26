@@ -10,8 +10,10 @@
             "name": "Launch Program",
             "program": "${workspaceFolder}\\bin\\qnamaker",
             "args": [
-                "get",
-                "kb"
+                "query",
+                "--question",
+                "fire",
+                "--!"
                 //, "create","kb","--debug","--in","examples\\createKnowledgeBase.json"
             ]
         }

@@ -13,9 +13,11 @@ class ServiceBase {
     /**
      *
      * @param {String} relativeEndpoint the endpoint for this service
+     * @param {bool} useEndpoint (default is false) if true, use the endpoint service url, not the admin service url 
      */
-    constructor(relativeEndpoint) {
+    constructor(relativeEndpoint, useEndpoint) {
         this.relativeEndpoint = relativeEndpoint;
+        this.useEndpoint = (useEndpoint === true);
     }
 
     /**
@@ -31,8 +33,13 @@ class ServiceBase {
     createRequest(pathFragment, params, method, dataModel = null) {
         const { commonHeaders: headers, relativeEndpoint } = this;
         const { endpoint, kbId } = ServiceBase.config;
-        const adminEndpoint = (params.legacy) ? "https://westus.api.cognitive.microsoft.com/qnamaker/v3.0" : "https://westus.api.cognitive.microsoft.com/qnamaker/v4.0";
-        const tokenizedUrl = adminEndpoint  + relativeEndpoint + pathFragment;
+        let requestEndpoint;
+        if (this.useEndpoint)
+            requestEndpoint = params.endpoint;
+        else
+            requestEndpoint = params.legacy ? "https://westus.api.cognitive.microsoft.com/qnamaker/v3.0" : "https://westus.api.cognitive.microsoft.com/qnamaker/v4.0";
+
+        const tokenizedUrl = requestEndpoint + relativeEndpoint + pathFragment;
         // Order is important since we want to allow the user to
         // override their config with the data in the params object.
         params = Object.assign({}, (dataModel || {}), { kbId }, params);
@@ -63,13 +70,19 @@ class ServiceBase {
     /**
      * Headers that are common to all requests
      *
-         * @returns {{'Content-Type': string, 'Ocp-Apim-Subscription-Key': string}}
-         */
+     * @returns {{'Content-Type': string, 'Ocp-Apim-Subscription-Key': string, 'Authorization':string }}
+     */
     get commonHeaders() {
-        return {
-            'Content-Type': 'application/json',
-            'Ocp-Apim-Subscription-Key': ServiceBase.config.subscriptionKey
-        };
+        if (this.useEndpoint)
+            return {
+                'Content-Type': 'application/json',
+                'Authorization': "EndpointKey " + ServiceBase.config.endpointKey
+            };
+        else
+            return {
+                'Content-Type': 'application/json',
+                'Ocp-Apim-Subscription-Key': ServiceBase.config.subscriptionKey
+            };
     }
 }
 

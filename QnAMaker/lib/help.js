@@ -14,7 +14,7 @@ const { getServiceManifest } = require('../lib/utils/argsUtil');
  */
 module.exports = async function help(args) {
 
-    process.stdout.write('QnA Maker Command line interface - © 2018 Microsoft Corporation\n');
+    process.stdout.write('QnA Maker Command line interface - © 2018 Microsoft Corporation\n\n');
     const helpContents = await getHelpContents(args);
     let width = windowSize ? windowSize.width : 250;
 
@@ -105,9 +105,10 @@ async function getHelpContents(args) {
 let configSection = {
     head: 'Configuration and Overrides:',
     table: [
-        [chalk.cyan.bold('--kbId <kbId>'), 'Specifies the public qnamaker knowledgebase id. Overrides the .qnamakerrc value and the QNAMAKER_KBID environment variable.'],
         [chalk.cyan.bold('--subscriptionKey <key>'), 'Specifies the qnamaker ocp-apim-subscription key (from qnamaker.ai portal user settings page). Overrides the .qnamakerrc value and the QNAMAKER_SUBSCRIPTION_KEY environment variable.'],
-        [chalk.cyan.bold('--endpoint <path>'), 'Specifies the api endpoint for your QnA service. Overrides the .qnamakerrc value and the QNAMAKER_ENDPOINT environment variable.'],
+        [chalk.cyan.bold('--endpoint <url>'), 'Specifies the url for your private QnA service. Overrides the .qnamakerrc value and the QNAMAKER_ENDPOINT environment variable.'],
+        [chalk.cyan.bold('--endpointKey <key>'), 'Specifies the endpoint key for your private QnA service. Overrides the .qnamakerrc value and the QNAMAKER_ENDPOINTKEY environment variable.'],
+        [chalk.cyan.bold('--kbId <kbId>'), 'Specifies the active qnamaker knowledgebase id. Overrides the .qnamakerrc value and the QNAMAKER_KBID environment variable.'],
     ]
 };
 
@@ -115,7 +116,9 @@ let globalArgs = {
     head: 'Global Arguments:',
     table: [
         [chalk.cyan.bold('--help,    -h'), 'Prints this help file.'],
-        [chalk.cyan.bold('--version, -v'), 'Prints the version of this cli tool']
+        [chalk.cyan.bold('--init,    -i'), 'Initializes the .qnamakerrc file with settings'],
+        [chalk.cyan.bold('--version, -v'), 'Prints the version of this cli tool'],
+        [chalk.cyan.bold('--!          '), 'Dumps all documented commands to the console with descriptions']
     ]
 };
 
@@ -167,7 +170,7 @@ function getVerbHelp(verb) {
     let sections = [];
     switch (verb) {
         case "query":
-            process.stdout.write(chalk.cyan.bold("qnamaker query --question <querytext>\n\n"))
+            process.stdout.write(chalk.cyan.bold("qnamaker query --question <querytext>\n\n"));
             options.table.push([chalk.cyan.bold("--question <query>"), "query to get a prediction for"]);
             sections.push(options);
             sections.push(configSection);
@@ -175,12 +178,13 @@ function getVerbHelp(verb) {
             return sections;
 
         case "set":
-            process.stdout.write(chalk.cyan.bold("qnamaker set <.qnamakerrcSetting> <value>\n\n"))
+            process.stdout.write(chalk.cyan.bold("qnamaker set <.qnamakerrcSetting> <value>\n\n"));
             options.table.push([chalk.cyan.bold("kbid <kbid>"), "change the active knowledgebase id "]);
             options.table.push([chalk.cyan.bold("subscriptionkey <subscriptionkey>"), "change the active subscriptionkey"]);
             options.table.push([chalk.cyan.bold("endpoint <endpointUrl>"), "change the active endpoint url"]);
+            options.table.push([chalk.cyan.bold("endpointKey <endpointKey>"), `change the active endpointKey (You can view via ${chalk.cyan.bold("qnamaker list endpointkeys")})`]);
             sections.push(options);
-            sections.push(configSection);
+            //sections.push(configSection);
             sections.push(globalArgs);
             return sections;
     }
@@ -220,17 +224,33 @@ function getVerbHelp(verb) {
  */
 function getAllCommands() {
     const table = [];
+    let resourceTypes = [];
+    let tables = {};
     Object.keys(manifest).forEach(key => {
-        const { [key]: group } = manifest;
-        Object.keys(group.operations).forEach(operationName => {
-            const operation = group.operations[operationName];
-            table.push([chalk.cyan.bold(operation.command), operation.description]);
+        const { [key]: category } = manifest;
+        Object.keys(category.operations).forEach((operationKey, index) => {
+            let operation = category.operations[operationKey];
+            let opCategory = operation.target[0] || operation.methodAlias;
+            if (resourceTypes.indexOf(opCategory) < 0) {
+                resourceTypes.push(opCategory);
+                tables[opCategory] = [];
+            }
+            tables[opCategory].push([chalk.cyan.bold(operation.command), operation.description]);
         });
     });
-    return {
-        head: chalk.white.bold('Commands:'),
-        table
-    };
+
+    resourceTypes.sort();
+
+    let sections = [];
+    for (resourceType of resourceTypes) {
+        tables[resourceType].sort((a,b) => a[0].localeCompare(b[0]));
+        sections.push({
+            head: chalk.white.bold(resourceType),
+            table: tables[resourceType]
+        });
+    }
+
+    return sections;
 }
 
 /**
@@ -272,7 +292,7 @@ function getHelpContentsForService(serviceManifest) {
             };
         }
         if (operation.name == 'createKnowledgeBase') {
-//            paramsHelp.table.push([chalk.cyan.bold(`-q, --quiet`), `(OPTIONAL) disable prompt for saving to .qnamakerrc file`]);
+            //            paramsHelp.table.push([chalk.cyan.bold(`-q, --quiet`), `(OPTIONAL) disable prompt for saving to .qnamakerrc file`]);
             paramsHelp.table.push([chalk.cyan.bold(`--msbot`), `(OPTIONAL) Format the output as json for piping into msbot connect qna command`]);
         }
         if (paramsHelp.table.length > 0)

@@ -1,7 +1,7 @@
 const {ServiceBase} = require('./serviceBase');
 class GenerateAnswer extends ServiceBase {
     constructor() {
-        super('/knowledgebases/{kbId}/generateAnswer');
+        super('/qnamaker/knowledgebases/{kbId}/generateAnswer', true /* useEndpoint */);
     }
 
     /**

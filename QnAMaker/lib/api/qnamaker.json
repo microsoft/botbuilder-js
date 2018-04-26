@@ -12,7 +12,7 @@
         ],
         "command": "qnamaker replace alterations --in wordAlterations.json",
         "pathFragment": "",
-        "description": "",
+        "description": "Replaces word alterations (synonyms) for the KB with the give records.",
         "entityName": "wordAlterations",
         "entityType": "WordAlterationsDTO"
       },
@@ -25,7 +25,7 @@
         ],
         "command": "qnamaker list alterations",
         "pathFragment": "",
-        "description": ""
+        "description": "Downloads all word alterations (synonyms) that have been automatically mined or added by the user."
       }
     }
   },
@@ -42,7 +42,7 @@
         ],
         "command": "qnamaker list endpointkeys",
         "pathFragment": "",
-        "description": ""
+        "description": "list all the currently valid endpointKeys for querying your private endpoint"
       },
       "refreshEndpointKeys": {
         "name": "refreshEndpointKeys",
@@ -63,7 +63,7 @@
             "description": "type of Key"
           }
         ],
-        "description": ""
+        "description": "Re-generates an endpoint key, in case you suspect your keys have been compromised"
       }
     }
   },
@@ -82,8 +82,14 @@
         ],
         "command": "qnamaker list kbs",
         "pathFragment": "",
-        "description": ""
-      },
+        "description": "List all of your knowledgebases"
+      }
+    }
+  },
+  "knowledgebase": {
+    "className": "Knowledgebase",
+    "url": "/knowledgebase/{kbId}",
+    "operations": {
       "replaceKnowledgebase": {
         "name": "replaceKnowledgebase",
         "method": "put",
@@ -104,7 +110,7 @@
             "description": "Knowledgebase id"
           }
         ],
-        "description": "",
+        "description": "Replace a knowledgebase contents with new contents",
         "entityName": "replaceKb",
         "entityType": "ReplaceKbDTO"
       },
@@ -128,7 +134,7 @@
             "description": "Knowledgebase id"
           }
         ],
-        "description": ""
+        "description": "Publish all unpublished in the knowledgebase to the prod endpoint"
       },
       "deleteKnowledgebase": {
         "name": "deleteKnowledgebase",
@@ -150,7 +156,7 @@
             "description": "Knowledgebase id."
           }
         ],
-        "description": ""
+        "description": "Delete a knowledgebase by id"
       },
       "getKnowledgebaseDetails": {
         "name": "getKnowledgebaseDetails",
@@ -181,7 +187,7 @@
             "description": "The environment [prod or test] default is prod"
           }
         ],
-        "description": ""
+        "description": "Get metadata about a knowledgebase"
       }
     }
   },
@@ -199,7 +205,7 @@
         ],
         "command": "qnamaker create kb --in createKbPayload.json",
         "pathFragment": "",
-        "description": "",
+        "description": "Create a new knowledgebase",
         "entityName": "createKbPayload",
         "entityType": "CreateKbDTO"
       }
@@ -229,7 +235,7 @@
             "description": "Knowledgebase id"
           }
         ],
-        "description": "",
+        "description": "Add or delete QnA Pairs and / or URLs to an existing knowledge base",
         "entityName": "updateKb",
         "entityType": "UpdateKbOperationDTO"
       }
@@ -262,11 +268,27 @@
             "type": "number"
           },
           {
-            "name": "knowledgeBaseID",
-            "alias": "kbid",
+            "name": "kbId",
+            "alias": "knowledgeBaseID",
             "in": "path",
-            "description": "kbI, this should be get from QnAMaker portal",
-            "required": false,
+            "description": "kbId, this should be get from QnAMaker portal",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "endpoint",
+            "alias": "endpoint",
+            "in": "path",
+            "description": "the url of your private qnamaker service",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "endpointKey",
+            "alias": "endpointKey",
+            "in": "path",
+            "description": "the endpoint key for of your private qnamaker service",
+            "required": true,
             "type": "string"
           }
         ],
@@ -333,7 +355,7 @@
         ],
         "command": "qnamaker export legacykb --kbId <legacyKB>",
         "pathFragment": "",
-        "legacy": true, 
+        "legacy": true,
         "params": [
           {
             "type": "string",
@@ -341,10 +363,18 @@
             "in": "path",
             "required": true,
             "x-nullable": false,
-            "description": "Knowledgebase id"
+            "description": "legacy Knowledgebase id"
+          },
+          {
+            "type": "string",
+            "name": "name",
+            "in": "path",
+            "required": false,
+            "x-nullable": false,
+            "description": "name of the knowledgebase. (NOTE: This is used to modify the output to be compliant with V4 import, not to lookup the knowledgebase)"
           }
         ],
-        "description": "Download legacy KB (requires legacy kbid and legacy subscriptionKey)"
+        "description": "Export legacy knowledgebase (requires legacy --kbid and --subscriptionKey to be passed in)"
       }
     }
   },
@@ -372,7 +402,7 @@
             "description": "Operation id."
           }
         ],
-        "description": ""
+        "description": "Gets details of a specific long running operation."
       }
     }
   }
