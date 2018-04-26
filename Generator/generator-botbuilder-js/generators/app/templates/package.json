@@ -1,7 +1,7 @@
 {
     "name": "<%= botName %>",
     "dependencies": {
-        "botbuilder": "^3.14.1",
+        "botbuilder": "^4.0.0-m3.0",
         "dotenv": "^2.0.0",
         "restify": "^4.3.0"
     },

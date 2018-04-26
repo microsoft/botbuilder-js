@@ -78,15 +78,7 @@ module.exports = class extends Generator {
     this.fs.copyTpl(this.templatePath('package.json'), this.destinationPath('package.json'), { botName: directoryName });
     this.fs.copy(this.templatePath('_gitignore'), this.destinationPath('.gitignore'));
     this.fs.copy(this.templatePath('_env'), this.destinationPath('.env'));
-
-
     this.fs.copy(this.templatePath(`app.${extension}`), this.destinationPath(`app.${extension}`));
-    this.fs.copyTpl(this.templatePath(`bot.${extension}`), this.destinationPath(`bot.${extension}`), {
-      defaultDialog, luisRegistration
-    });
-    this.fs.copyTpl(this.templatePath(`dialogs-${extension}`), this.destinationPath(`dialogs`), {
-      botName: this.props.botName, botDescription: this.props.description
-    });
   
     if(extension === 'ts') {
       this.fs.copy(this.templatePath('tsconfig.json'), this.destinationPath('tsconfig.json'));
