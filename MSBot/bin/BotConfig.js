@@ -1,22 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const process = require("process");
-const uuid = require("uuid");
 const crypto = require("crypto");
-const path = require("path");
 const fsx = require("fs-extra");
 const linq_collections_1 = require("linq-collections");
-var ServiceType;
-(function (ServiceType) {
-    ServiceType["Endpoint"] = "endpoint";
-    ServiceType["AzureBotService"] = "abs";
-    ServiceType["Luis"] = "luis";
-    ServiceType["QnA"] = "qna";
-    ServiceType["Dispatch"] = "dispatch";
-    ServiceType["File"] = "file";
-})(ServiceType = exports.ServiceType || (exports.ServiceType = {}));
-class BotConfig {
+const path = require("path");
+const process = require("process");
+const uuid = require("uuid");
+const models_1 = require("./models");
+const schema_1 = require("./schema");
+class BotConfig extends models_1.BotConfigModel {
     constructor(secret) {
+        super();
         // internal is not serialized
         this.internal = {
             secretValidated: false
@@ -28,10 +22,6 @@ class BotConfig {
             qna: ['subscriptionKey'],
             dispatch: ['authoringKey', 'subscriptionKey']
         };
-        this.name = '';
-        this.secretKey = '';
-        this.description = '';
-        this.services = [];
         this.internal.secret = secret;
     }
     static async LoadBotFromFolder(folder, secret) {
@@ -53,11 +43,11 @@ class BotConfig {
         return bot;
     }
     // save the config file
-    async Save(botpath) {
+    async save(botpath) {
         let hasSecret = (this.secretKey && this.secretKey.length > 0);
         // make sure that all dispatch serviceIds still match services that are in the bot
         for (let service of this.services) {
-            if (service.type == ServiceType.Dispatch) {
+            if (service.type == schema_1.ServiceType.Dispatch) {
                 let dispatchService = service;
                 dispatchService.serviceIds = linq_collections_1.Enumerable.fromSource(dispatchService.serviceIds)
                     .where(serviceId => linq_collections_1.Enumerable.fromSource(this.services).any(s => s.id == serviceId))
@@ -100,7 +90,7 @@ class BotConfig {
                 nameCount++;
             }
             newService.name = name;
-            this.services.push(newService);
+            this.services.push(models_1.BotConfigModel.serviceFromJSON(newService));
         }
     }
     // encrypt all values in the config
@@ -184,7 +174,7 @@ class BotConfig {
             return;
         }
         if (!this.internal.secret || this.internal.secret.length == 0) {
-            throw new Error("You are attempting to perform an operation which needs access to the secret and --secret is missing");
+            throw new Error('You are attempting to perform an operation which needs access to the secret and --secret is missing');
         }
         try {
             if (!this.secretKey || this.secretKey.length == 0) {
@@ -199,12 +189,12 @@ class BotConfig {
             this.internal.secretValidated = true;
         }
         catch (_a) {
-            throw new Error("You are attempting to perform an operation which needs access to the secret and --secret is incorrect.");
+            throw new Error('You are attempting to perform an operation which needs access to the secret and --secret is incorrect.');
         }
     }
     internalEncrypt(value) {
-        var cipher = crypto.createCipher('aes192', this.internal.secret);
-        var encryptedValue = cipher.update(value, 'utf8', 'hex');
+        const cipher = crypto.createCipher('aes192', this.internal.secret);
+        let encryptedValue = cipher.update(value, 'utf8', 'hex');
         encryptedValue += cipher.final('hex');
         return encryptedValue;
     }

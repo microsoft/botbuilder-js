@@ -13,6 +13,7 @@ class BotConfigModel {
         this.name = '';
         this.description = '';
         this.services = new ServicesCollection();
+        this.secretKey = '';
     }
     static serviceFromJSON(service) {
         switch (service.type) {
@@ -33,15 +34,15 @@ class BotConfigModel {
         }
     }
     static fromJSON(source = {}) {
-        let { name = '', description = '', services = [] } = source;
+        let { name = '', description = '', secretKey = '', services = [] } = source;
         services = services.slice().map(BotConfigModel.serviceFromJSON);
         const botConfig = new BotConfigModel();
-        Object.assign(botConfig, { services: new ServicesCollection(services), description, name });
+        Object.assign(botConfig, { services: new ServicesCollection(services), description, name, secretKey });
         return botConfig;
     }
     toJSON() {
-        const { name, description, services } = this;
-        return { name, description, services };
+        const { name, description, services, secretKey } = this;
+        return { name, description, services, secretKey };
     }
 }
 exports.BotConfigModel = BotConfigModel;
