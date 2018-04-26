@@ -31,9 +31,11 @@ export interface LuisRecognizerSettings {
 export interface LuisRecognizerResult {
     /** Utterance sent to LUIS */
     text: string;
-    /** Intents recognized for the utterance. A map of intent names to score is returned. */
+    /** Intents recognized for the utterance. A map of intent names to an object with score is returned. */
     intents: {
-        [name: string]: number;
+        [name: string]: {
+            score: number;
+        };
     };
     /** Entities  */
     entities: any;
@@ -78,6 +80,7 @@ export declare class LuisRecognizer implements Middleware {
      */
     static topIntent(results: LuisRecognizerResult | undefined, defaultIntent?: string, minScore?: number): string;
     private emitTraceInfo(context, luisResult, recognizerResult);
+    private normalizeName(name);
     private getIntents(luisResult);
     private getEntitiesAndMetadata(entities, compositeEntities, verbose);
     private getEntityValue(entity);

@@ -77,7 +77,7 @@ class LuisRecognizer {
         let topScore = -1;
         if (results && results.intents) {
             for (const name in results.intents) {
-                const score = results.intents[name];
+                const score = results.intents[name].score;
                 if (typeof score === 'number' && score > topScore && score >= minScore) {
                     topIntent = name;
                     topScore = score;
@@ -105,17 +105,20 @@ class LuisRecognizer {
             value: traceInfo
         });
     }
+    normalizeName(name) {
+        return name.replace(/\./g, "_");
+    }
     getIntents(luisResult) {
         const intents = {};
         if (luisResult.intents) {
             luisResult.intents.reduce((prev, curr) => {
-                prev[curr.intent] = curr.score;
+                prev[this.normalizeName(curr.intent)] = { score: curr.score };
                 return prev;
             }, intents);
         }
         else {
             const topScoringIntent = luisResult.topScoringIntent;
-            intents[(topScoringIntent).intent] = topScoringIntent.score;
+            intents[this.normalizeName((topScoringIntent).intent)] = { score: topScoringIntent.score };
         }
         return intents;
     }

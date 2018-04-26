@@ -56,8 +56,8 @@ export interface LuisRecognizerResult {
     /** Utterance sent to LUIS */
     text: string;
 
-    /** Intents recognized for the utterance. A map of intent names to score is returned. */
-    intents: { [name: string]: number; };
+    /** Intents recognized for the utterance. A map of intent names to an object with score is returned. */
+    intents: { [name: string]: {score:number}; };
 
     /** Entities  */
     entities: any;
@@ -147,7 +147,7 @@ export class LuisRecognizer implements Middleware {
         let topScore = -1;
         if (results && results.intents) {
             for (const name in results.intents) {
-                const score = results.intents[name];
+                const score = results.intents[name].score;
                 if (typeof score === 'number' && score > topScore && score >= minScore) {
                     topIntent = name;
                     topScore = score;
@@ -177,16 +177,20 @@ export class LuisRecognizer implements Middleware {
         });
     }
 
+    private normalizeName(name: string): string {
+        return name.replace(/\./g, "_");
+    }
+
     private getIntents(luisResult: LuisResult): any {
-        const intents: { [name: string]: number; } = {}
+        const intents: { [name: string]: {score:number}; } = {}
         if (luisResult.intents) {
             luisResult.intents.reduce((prev: any, curr: Intent) => {
-                prev[curr.intent] = curr.score;
+                prev[this.normalizeName(curr.intent)] = { score: curr.score};
                 return prev;
             }, intents);
         } else {
             const topScoringIntent = luisResult.topScoringIntent;
-            intents[(topScoringIntent).intent] = topScoringIntent.score;
+            intents[this.normalizeName((topScoringIntent).intent)] = { score: topScoringIntent.score};
         }
         return intents;
     }

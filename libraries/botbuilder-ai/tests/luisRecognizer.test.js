@@ -38,7 +38,7 @@ describe('LuisRecognizer', function () {
                 assert(res.text == 'My name is Emad');
                 assert(Object.keys(res.intents).length == 1);
                 assert(res.intents.SpecifyName);
-                assert(res.intents.SpecifyName > 0 && res.intents.SpecifyName <= 1);
+                assert(res.intents.SpecifyName.score > 0 && res.intents.SpecifyName.score <= 1);
                 assert(res.entities);
                 assert(res.entities.Name);
                 assert(res.entities.Name[0] === 'emad');
@@ -59,7 +59,7 @@ describe('LuisRecognizer', function () {
                 assert(res.text == 'Please deliver February 2nd 2001');
                 assert(res.intents);
                 assert(res.intents.Delivery);
-                assert(res.intents.Delivery > 0 && res.intents.Delivery <= 1);
+                assert(res.intents.Delivery.score > 0 && res.intents.Delivery.score <= 1);
                 assert(LuisRecognizer.topIntent(res) === 'Delivery');
                 assert(res.entities);
                 assert(res.entities.builtin_number);
@@ -89,7 +89,7 @@ describe('LuisRecognizer', function () {
                 assert(res.text == 'Please deliver February 2nd 2001 in room 201');
                 assert(res.intents);
                 assert(res.intents.Delivery);
-                assert(res.intents.Delivery > 0 && res.intents.Delivery <= 1);
+                assert(res.intents.Delivery.score > 0 && res.intents.Delivery.score <= 1);
                 assert(res.entities);
                 assert(res.entities.builtin_number);
                 assert(res.entities.builtin_number.length == 2);
@@ -110,7 +110,7 @@ describe('LuisRecognizer', function () {
                 assert(res.text == 'I want to travel on united');
                 assert(res.intents);
                 assert(res.intents.Travel);
-                assert(res.intents.Travel > 0 && res.intents.Travel <= 1);
+                assert(res.intents.Travel.score > 0 && res.intents.Travel.score <= 1);
                 assert(res.entities);
                 assert(res.entities.Airline);
                 assert(res.entities.Airline[0][0] === 'United');
@@ -134,7 +134,7 @@ describe('LuisRecognizer', function () {
                 assert(res.text == 'I want to travel on DL');
                 assert(res.intents);
                 assert(res.intents.Travel);
-                assert(res.intents.Travel > 0 && res.intents.Travel <= 1);
+                assert(res.intents.Travel.score > 0 && res.intents.Travel.score <= 1);
                 assert(res.entities);
                 assert(res.entities.Airline[0]);
                 assert(res.entities.Airline[0].length == 2);
@@ -160,7 +160,7 @@ describe('LuisRecognizer', function () {
                 assert(res.text == 'Please deliver it to 98033 WA');
                 assert(res.intents);
                 assert(res.intents.Delivery);
-                assert(res.intents.Delivery > 0 && res.intents.Delivery <= 1);
+                assert(res.intents.Delivery.score > 0 && res.intents.Delivery.score <= 1);
                 assert(res.entities);
                 assert(res.entities.builtin_number === undefined);
                 assert(res.entities.State === undefined);
