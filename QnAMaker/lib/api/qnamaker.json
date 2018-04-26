@@ -1,7 +1,7 @@
 {
   "alterations": {
     "className": "Alterations",
-    "url": "/alterations",
+    "url": "/qnamaker/v4.0/alterations",
     "operations": {
       "replaceAlterations": {
         "name": "replaceAlterations",
@@ -31,7 +31,7 @@
   },
   "endpointkeys": {
     "className": "Endpointkeys",
-    "url": "/endpointkeys",
+    "url": "/qnamaker/v4.0/endpointkeys",
     "operations": {
       "getEndpointKeys": {
         "name": "getEndpointKeys",
@@ -69,23 +69,25 @@
   },
   "knowledgebases": {
     "className": "Knowledgebases",
-    "url": "/knowledgebases",
+    "url": "/qnamaker/v4.0/knowledgebases",
     "operations": {
       "getKnowledgebasesForUser": {
         "name": "getKnowledgebasesForUser",
         "method": "get",
-        "methodAlias": "get",
+        "methodAlias": "list",
         "target": [
-          "knowledgebase"
+          "kbs",
+          "knowledgebases",
+          "kb"
         ],
-        "command": "qnamaker get knowledgebase",
+        "command": "qnamaker list kbs",
         "pathFragment": "",
         "description": ""
       },
       "replaceKnowledgebase": {
         "name": "replaceKnowledgebase",
         "method": "put",
-        "methodAlias": "get",
+        "methodAlias": "replace",
         "target": [
           "kb",
           "knowledgebase"
@@ -109,12 +111,12 @@
       "publishKnowledgebase": {
         "name": "publishKnowledgebase",
         "method": "post",
-        "methodAlias": "create",
+        "methodAlias": "publish",
         "target": [
           "kb",
           "knowledgebase"
         ],
-        "command": "qnamaker create kb --kbId <string>",
+        "command": "qnamaker publish kb --kbId <string>",
         "pathFragment": "",
         "params": [
           {
@@ -168,6 +170,15 @@
             "required": true,
             "x-nullable": false,
             "description": "Knowledgebase id."
+          },
+          {
+            "type": "string",
+            "name": "environment",
+            "in": "path",
+            "required": false,
+            "x-nullable": false,
+            "default": "prod",
+            "description": "The environment [prod or test] default is prod"
           }
         ],
         "description": ""
@@ -176,7 +187,7 @@
   },
   "createasync": {
     "className": "Createasync",
-    "url": "/knowledgebases/createasync",
+    "url": "/qnamaker/v4.0/knowledgebases/createasync",
     "operations": {
       "createKnowledgebase": {
         "name": "createKnowledgebase",
@@ -196,7 +207,7 @@
   },
   "UpdateAsync": {
     "className": "UpdateAsync",
-    "url": "/knowledgebases/{kbId}/UpdateAsync",
+    "url": "/qnamaker/v4.0/knowledgebases/{kbId}/UpdateAsync",
     "operations": {
       "updateKnowledgebase": {
         "name": "updateKnowledgebase",
@@ -224,19 +235,60 @@
       }
     }
   },
+  "generateAnswer": {
+    "className": "GenerateAnswer",
+    "url": "/qnamaker/knowledgebases/{kbId}/generateAnswer",
+    "operations": {
+      "generateAnswer": {
+        "name": "generateAnswer",
+        "method": "post",
+        "methodAlias": "query",
+        "target": [],
+        "command": "qnamaker query --question \"how do I turn it on\" --top 5",
+        "pathFragment": "",
+        "params": [
+          {
+            "name": "question",
+            "in": "question",
+            "description": "question you want to ask",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "top",
+            "in": "top",
+            "description": "number of answers you would like",
+            "required": false,
+            "type": "number"
+          },
+          {
+            "name": "knowledgeBaseID",
+            "alias": "kbid",
+            "in": "path",
+            "description": "kbI, this should be get from QnAMaker portal",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "description": "Returns the list of answers for the given question sorted in descending order of ranking score.",
+        "entityName": "generateAnswer",
+        "entityType": "GenerateAnswer"
+      }
+    }
+  },
   "qna": {
     "className": "Qna",
-    "url": "/knowledgebases/{kbId}/{environment}/qna",
+    "url": "/qnamaker/v4.0/knowledgebases/{kbId}/{environment}/qna",
     "operations": {
       "downloadKnowledgebase": {
         "name": "downloadKnowledgebase",
         "method": "get",
-        "methodAlias": "download",
+        "methodAlias": "export",
         "target": [
           "kb",
           "knowledgebase"
         ],
-        "command": "qnamaker download kb --kbId <string> --environment <string>",
+        "command": "qnamaker export kb --kbId <string> --environment <string>",
         "pathFragment": "",
         "params": [
           {
@@ -269,7 +321,7 @@
   },
   "operations": {
     "className": "Operations",
-    "url": "/operations/{operationId}",
+    "url": "/qnamaker/v4.0/operations/{operationId}",
     "operations": {
       "getOperationDetails": {
         "name": "getOperationDetails",

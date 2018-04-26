@@ -1,5 +1,5 @@
 {
-  "knowledgeBaseID": "",
-  "subscriptionKey": "5f9574efe74340948ca1b76aa241369a",
-  "endpointBasePath": "https://westus.api.cognitive.microsoft.com/qnamaker/v2.0"
+  "kbId": "d31e049e-2557-463f-a0cc-8d86b88fe80d",
+  "subscriptionKey": "16cdca0b-3826-4a0f-a112-91b3cc106c01",
+  "endpoint": "https://pc-qna-test-old.azurewebsites.net/qnamaker"
 }

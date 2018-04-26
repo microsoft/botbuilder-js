@@ -101,7 +101,7 @@ const propertyDocBlockTpl = (type, name) => `
  * @returns {string} The hydrated template string
  */
 const assignmentTpl = (rawType, name) => `
-    source.${name} = ${rawType}.fromJSON(source.${name}) || undefined;
+    src.${name} = ${rawType}.fromJSON(src.${name}) || undefined;
 `;
 
 /**

@@ -64,6 +64,6 @@ describe('The LUIS cli --init argument', () => {
         const rc = await fs.readJson(rcPath);
         assert(rc.subscriptionKey === '' + subscriptionKey);
         assert(rc.knowledgeBaseID === '' + knowledgeBaseId);
-        assert(rc.endpointBasePath === `https://${location}.api.cognitive.microsoft.com/qnamaker/v2.0`);
+        assert(rc.endpoint === `https://${location}.api.cognitive.microsoft.com/qnamaker/v2.0`);
     });
 });

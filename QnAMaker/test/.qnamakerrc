@@ -1,5 +1,5 @@
 {
   "knowledgeBaseID": "100168",
   "subscriptionKey": "9925418",
-  "endpointBasePath": "https://westus.api.cognitive.microsoft.com/qnamaker/v2.0"
+  "endpoint": "https://westus.api.cognitive.microsoft.com/qnamaker/v2.0"
 }

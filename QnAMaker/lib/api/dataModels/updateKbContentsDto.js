@@ -27,7 +27,7 @@ UpdateKbContentsDTO.fromJSON = function(src) {
         return src.map(UpdateKbContentsDTO.fromJSON);
     }
     
-    source.qnaList = UpdateQnaDTO.fromJSON(source.qnaList) || undefined;
+    src.qnaList = UpdateQnaDTO.fromJSON(src.qnaList) || undefined;
 
     const {name /* string */,qnaList /* UpdateQnaDTO[] */,urls /* string[] */} = src;
     return new UpdateKbContentsDTO({name /* string */,qnaList /* UpdateQnaDTO[] */,urls /* string[] */});

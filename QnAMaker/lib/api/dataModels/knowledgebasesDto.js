@@ -19,7 +19,7 @@ KnowledgebasesDTO.fromJSON = function(src) {
         return src.map(KnowledgebasesDTO.fromJSON);
     }
     
-    source.knowledgebases = KnowledgebaseDTO.fromJSON(source.knowledgebases) || undefined;
+    src.knowledgebases = KnowledgebaseDTO.fromJSON(src.knowledgebases) || undefined;
 
     const {knowledgebases /* KnowledgebaseDTO[] */} = src;
     return new KnowledgebasesDTO({knowledgebases /* KnowledgebaseDTO[] */});

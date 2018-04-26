@@ -19,7 +19,7 @@ WordAlterationsDTO.fromJSON = function(src) {
         return src.map(WordAlterationsDTO.fromJSON);
     }
     
-    source.wordAlterations = AlterationsDTO.fromJSON(source.wordAlterations) || undefined;
+    src.wordAlterations = AlterationsDTO.fromJSON(src.wordAlterations) || undefined;
 
     const {wordAlterations /* AlterationsDTO[] */} = src;
     return new WordAlterationsDTO({wordAlterations /* AlterationsDTO[] */});

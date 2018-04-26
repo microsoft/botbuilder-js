@@ -99,6 +99,8 @@ async function getHelpContents(args) {
 
     return getGeneralHelpContents();
 }
+
+
 let configSection = {
     head: 'Configuration and Overrides:',
     table: [
@@ -163,7 +165,6 @@ function getGeneralHelpContents() {
  */
 function getVerbHelp(verb) {
     let operation;
-    let apiGroups = ['apps', 'examples', 'features', 'models', 'permissions', 'train', 'user', 'versions']
     let targets = [];
     let options = {
         head: `Available resources for ${chalk.bold(verb)}:`,
@@ -174,21 +175,18 @@ function getVerbHelp(verb) {
     let sections = [];
     switch (verb) {
         case "query":
-            process.stdout.write(chalk.cyan.bold("luis query -q <querytext> --region <region>\n\n"))
-            options.table.push([chalk.cyan.bold("-q <query>"), "query to get a LUIS prediction for"]);
-            options.table.push([chalk.cyan.bold("--subscriptionKey"), "Specifies the LUIS subscriptionKey. Overrides the .luisrc value and the LUIS_SUBSCRIPTION_KEY environment variable."]);
-            options.table.push([chalk.cyan.bold("--region <region>"), "region to call"]);
+            process.stdout.write(chalk.cyan.bold("qnamaker query --question <querytext>\n\n"))
+            options.table.push([chalk.cyan.bold("--question <query>"), "query to get prediction for"]);
             sections.push(options);
             sections.push(configSection);
             sections.push(globalArgs);
             return sections;
 
         case "set":
-            process.stdout.write(chalk.cyan.bold("luis set <.luisrcSetting> <value>\n\n"))
-            options.table.push([chalk.cyan.bold("application <appIdOrName>"), "change the active application id "]);
-            options.table.push([chalk.cyan.bold("version <version>"), "change the active version id "]);
-            options.table.push([chalk.cyan.bold("authoringKey <authoringKey>"), "change the active authoringKey◘"]);
-            options.table.push([chalk.cyan.bold("endpoint <endpointUrl>"), "change the active endpointBasePath url"]);
+            process.stdout.write(chalk.cyan.bold("qnamaker set <.qnamakerrcSetting> <value>\n\n"))
+            options.table.push([chalk.cyan.bold("kbid <kbid>"), "change the active kb id "]);
+            options.table.push([chalk.cyan.bold("subscriptionkey <subscriptionkey>"), "change the active subscriptionkey"]);
+            options.table.push([chalk.cyan.bold("endpoint <endpointUrl>"), "change the active endpoint url"]);
             sections.push(options);
             sections.push(configSection);
             sections.push(globalArgs);
@@ -197,7 +195,7 @@ function getVerbHelp(verb) {
 
     for (let iGroup in apiGroups) {
         let apiGroupName = apiGroups[iGroup];
-        const apiGroup = getCategoryManifest(apiGroupName);
+        const apiGroup = manifest[apiGroupName];
 
         for (let iCategory in apiGroup) {
             let category = apiGroup[iCategory];

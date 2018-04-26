@@ -19,7 +19,7 @@ QnADocumentsDTO.fromJSON = function(src) {
         return src.map(QnADocumentsDTO.fromJSON);
     }
     
-    source.qnaDocuments = QnADTO.fromJSON(source.qnaDocuments) || undefined;
+    src.qnaDocuments = QnADTO.fromJSON(src.qnaDocuments) || undefined;
 
     const {qnaDocuments /* QnADTO[] */} = src;
     return new QnADocumentsDTO({qnaDocuments /* QnADTO[] */});

@@ -27,9 +27,9 @@ CreateKbInputDTO.fromJSON = function(src) {
         return src.map(CreateKbInputDTO.fromJSON);
     }
     
-    source.qnaList = QnADTO.fromJSON(source.qnaList) || undefined;
+    src.qnaList = QnADTO.fromJSON(src.qnaList) || undefined;
 
-    source.files = FileDTO.fromJSON(source.files) || undefined;
+    src.files = FileDTO.fromJSON(src.files) || undefined;
 
     const {qnaList /* QnADTO[] */,urls /* string[] */,files /* FileDTO[] */} = src;
     return new CreateKbInputDTO({qnaList /* QnADTO[] */,urls /* string[] */,files /* FileDTO[] */});

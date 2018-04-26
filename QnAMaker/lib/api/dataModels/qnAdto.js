@@ -1,4 +1,4 @@
-
+const MetadataDTO = require('./metadataDto');
 
 class QnADTO {
     
@@ -35,7 +35,7 @@ QnADTO.fromJSON = function(src) {
         return src.map(QnADTO.fromJSON);
     }
     
-    source.metadata = MetadataDTO.fromJSON(source.metadata) || undefined;
+    src.metadata = MetadataDTO.fromJSON(src.metadata) || undefined;
 
     const {id /* integer */,answer /* string */,source /* string */,questions /* string[] */,metadata /* MetadataDTO[] */} = src;
     return new QnADTO({id /* integer */,answer /* string */,source /* string */,questions /* string[] */,metadata /* MetadataDTO[] */});

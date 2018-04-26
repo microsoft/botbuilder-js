@@ -19,7 +19,7 @@ const chalk = require('chalk');
 const help = require('../lib/help');
 const qnamaker = require('../lib');
 const manifest = require('../lib/api/qnamaker');
-const cc = require('camelcase');
+const { getServiceManifest } = require('../lib/utils/argsUtil');
 
 let args;
 
@@ -34,9 +34,6 @@ async function runProgram() {
         argvFragment = ['-h'];
     }
     args = minimist(argvFragment);
-    if (args.version || args.v) {
-        return process.stdout.write(require(path.join(__dirname, '../package.json')).version);
-    }
 
     if (args.init) {
         const result = await initializeConfig();
@@ -45,18 +42,29 @@ async function runProgram() {
         }
         return;
     }
-    
-    if (args.kbid) {
-        args.knowledgeBaseID = args.kbid;
-        delete args.kbid;
+
+    if (args.kbId) {
+        args.knowledgeBaseID = args.kbId;
+        delete args.kbId;
     }
 
-    const config = await composeConfig();
+    if (args.help ||
+        args.h ||
+        args['!'] ||
+        args._.includes('help')) {
+        return help(args);
+    }
+
+    if (args.version || args.v) {
+        return process.stdout.write(require(path.join(__dirname, '../package.json')).version);
+    }
+
+    const config = await composeConfig(args);
+
+    if (args._[0] == "set")
+        return await handleSetCommand(args, config);
+
     const serviceManifest = getServiceManifest(args);
-
-    if (args.help || args.h) {
-        return help(args, serviceManifest);
-    }
 
     requestBody = await validateArguments(serviceManifest);
 
@@ -83,16 +91,16 @@ async function runProgram() {
                 process.stdout.write(JSON.stringify({
                     type: "qna",
                     name: `QnA KB`,
-                    id : result.kbId,
-                    kbid: result.kbId,
+                    id: result.kbId,
+                    kbId: result.kbId,
                     subscriptionKey: config.subscriptionKey
                 }, null, 2));
             } else {
                 process.stdout.write(JSON.stringify(result, null, 2));
             }
             if (!(args.q || args.quiet) && !args.msbot) {
-                let answer = readlineSync.question(`\nWould you like to save ${result.kbId} in your .qnamakerrc so that future commands will be with this KB? [yes]`, { defaultInput: 'yes'});
-                if (answer[0] == 'y'){
+                let answer = readlineSync.question(`\nWould you like to save ${result.kbId} in your .qnamakerrc so that future commands will be with this KB? [yes]`, { defaultInput: 'yes' });
+                if (answer[0] == 'y') {
                     config.knowledgeBaseID = result.kbId;
                     await fs.writeJson(path.join(process.cwd(), '.qnamakerrc'), config, { spaces: 2 });
                     process.stdout.write('.qnamakerrc updated');
@@ -124,9 +132,9 @@ async function initializeConfig() {
     process.stdout.write(chalk.cyan.bold('\nThis util will walk you through creating a .qnamakerrc file\n\nPress ^C at any time to quit.\n\n'));
     const validRegions = 'westus westus2 eastus eastus2 westcentralus southcentralus westeurope northeurope southeastasia eastasia australiaeast brazilsouth'.split(' ');
     const questions = [
-        'What is your QnA Maker Knowledge Base ID (from qnamaker.ai portal My services page)? ',
-        'What is your QnA Maker Subscription key (from qnamaker.ai portal My services page)? ',
-        `What region [${validRegions.join(', ')}]? `,
+        'What is your QnA Maker Ocp-Apim-Subscription-Key (from qnamaker.ai portal My services page)? ',
+        `What QnA Maker API endpoint? (or simply region for legacy QnA service) [${validRegions.join(', ')}]? `,
+        'What is your QnA Maker Knowledge Base ID (from qnamaker.ai portal My services page)? '
     ];
 
     const prompt = readline.createInterface({
@@ -141,11 +149,7 @@ async function initializeConfig() {
 
             function doPrompt(promptMessage) {
                 prompt.question(promptMessage, response => {
-                    if (i === 2 && (!response || !validRegions.includes(response))) {
-                        doPrompt(chalk.red.bold(`${response} is not a valid region`) + '\n' + question);
-                    } else {
-                        resolve(response);
-                    }
+                    resolve(response);
                 });
             }
 
@@ -154,11 +158,14 @@ async function initializeConfig() {
         answers.push(answer);
     }
 
-    const [knowledgeBaseID, subscriptionKey, location] = answers;
+    let [subscriptionKey, endpoint, kbId] = answers;
+    if (validRegions.indexOf(endpoint.trim()) >= 0)
+        endpoint = `https://${endpoint}.api.cognitive.microsoft.com/qnamaker/v2.0`;
+
     const config = Object.assign({}, {
-        knowledgeBaseID,
+        kbId,
         subscriptionKey,
-        endpointBasePath: `https://${location}.api.cognitive.microsoft.com/qnamaker/v2.0`,
+        endpoint: endpoint,
     });
     try {
         await new Promise((resolve, reject) => {
@@ -196,13 +203,8 @@ async function getFileInput(args) {
  * @returns {Promise<*>}
  */
 async function composeConfig() {
-    const { QNA_MAKER_KBID, QNA_MAKER_SUBSCRIPTION_KEY, QNA_MAKER_ENDPOINT_BASE_PATH } = process.env;
-
-    const {
-        knowledgeBaseID: args_knowledgeBaseID,
-        subscriptionKey: args_subscriptionKey,
-        endpointBasePath: args_endpointBasePath
-    } = args;
+    const { QNA_MAKER_KBID, QNA_MAKER_SUBSCRIPTION_KEY, QNAMAKER_ENDPOINT } = process.env;
+    const { kbId, subscriptionKey, endpoint } = args;
 
     let qnamakerrcJson = {};
     let config;
@@ -213,9 +215,9 @@ async function composeConfig() {
         // Do nothing
     } finally {
         config = {
-            knowledgeBaseID: (args_knowledgeBaseID || qnamakerrcJson.knowledgeBaseID || QNA_MAKER_KBID),
-            subscriptionKey: (args_subscriptionKey || qnamakerrcJson.subscriptionKey || QNA_MAKER_SUBSCRIPTION_KEY),
-            endpointBasePath: (args_endpointBasePath || qnamakerrcJson.endpointBasePath || QNA_MAKER_ENDPOINT_BASE_PATH)
+            kbId: (kbId || qnamakerrcJson.kbId || QNA_MAKER_KBID),
+            subscriptionKey: (subscriptionKey || qnamakerrcJson.subscriptionKey || QNA_MAKER_SUBSCRIPTION_KEY),
+            endpoint: (endpoint || qnamakerrcJson.endpoint || QNAMAKER_ENDPOINT)
         };
         validateConfig(config);
     }
@@ -233,10 +235,10 @@ function validateConfig(config) {
     // not all operations require these to be present.
     // Validation of specific params are done in the
     // ServiceBase.js
-    const { subscriptionKey, knowledgeBaseID, endpointBasePath } = config;
+    const { subscriptionKey, knowledgeBaseID, endpoint } = config;
     const messageTail = `is missing from the configuration.\n\nDid you run ${chalk.cyan.bold('qnamaker --init')} yet?`;
     assert(typeof subscriptionKey === 'string', `The subscriptionKey ${messageTail}`);
-    assert(typeof endpointBasePath === 'string', `The endpointBasePath ${messageTail}`);
+    assert(typeof endpoint === 'string', `The endpoint ${messageTail}`);
 }
 
 /**
@@ -274,8 +276,8 @@ async function validateArguments(serviceManifest) {
             body = await getFileInput(args);
         }
         else {
-            switch (serviceManifest.operation.methodAlias) {
-                case "ask":
+            switch (serviceManifest.operation.name) {
+                case "generateAnswer":
                     body = {
                         question: args.question,
                         top: args.top
@@ -288,41 +290,19 @@ async function validateArguments(serviceManifest) {
         }
     }
 
+    for(let param of serviceManifest.operation.params) {
+        if (param.required) {
+            if (!args[param.name] && !args[param.alias || param.name]) {
+                error.message = `The --${param.name} argument is missing and required`;
+                throw error;
+            }
+        }
+    }
+
     // Note that the ServiceBase will validate params that may be required.
     return body;
 }
 
-function getServiceManifest(args) {
-    if (args._.length < 1)
-        return null; //bail show help
-    let verb = args._[0];
-    let target = (args._.length >= 2) ? args._[1] : undefined;
-    let arguments = (args._.length > 2) ? args._.slice(2) : [];
-
-    let payload = getOperation(verb, target);
-    return payload;
-}
-
-
-function getOperation(verb, target) {
-    let operation;
-    for (let apiGroupName in manifest) {
-        let apiGroup = manifest[apiGroupName];
-        for (let iOperation in apiGroup.operations) {
-            let operation = apiGroup.operations[iOperation];
-
-            if ((operation.methodAlias == verb) &&
-                ((operation.target.length == 0 && !target) ||
-                    (target && operation.target.indexOf(target.toLowerCase()) >= 0))) {
-                return Object.assign({
-                    operation: operation,
-                    identifier: cc(apiGroup.className),
-                }, apiGroup);
-            }
-        }
-    }
-    return null;
-}
 
 /**
  * Exits with a non-zero status and prints
@@ -331,11 +311,45 @@ function getOperation(verb, target) {
  * @param error
  */
 async function handleError(error) {
-    process.stdout.write('\n' + chalk.red.bold(error + '\n'));
-//    if (error.name === 'ArgumentError') {
-        await help(args);
-//    }
+    process.stdout.write('\n' + chalk.red.bold(error + '\n\n'));
+    //    if (error.name === 'ArgumentError') {
+    await help(args);
+    //    }
     return 1;
+}
+
+async function handleSetCommand(args, config) {
+    let target = args._.length >= 2 ? args._[1].toLowerCase() : undefined;
+    if (!target || (target != 'kbid' && target != 'subscriptionkey' && target != 'endpoint')) {
+        process.stdout.write(chalk.red.bold(`missing .qnamakerrc property name: [kbid|subscriptionkey|endpoint]\n`));
+        return help(args);
+    }
+
+    let targetName = (args._.length >= 3) ? args._.slice(2).join(' ').toLowerCase().trim() : undefined;
+    if (!targetName) {
+        process.stdout.write(chalk.red.bold(`missing the value\n`));
+        return help(args);
+    }
+
+    switch (target) {
+        case 'endpoint':
+            config.endpoint  = targetName;
+            break;
+            
+        case 'subscriptionkey':
+            config.subscriptionKey = targetName;
+            break;
+
+        case 'kbid':
+            config.kbId = targetName;
+            break;
+
+        default:
+            return help(args);
+    }
+    await fs.writeJson(path.join(process.cwd(), '.qnamakerrc'), config, { spaces: 2 });
+    process.stdout.write(JSON.stringify(config, null, 4));
+    return true;
 }
 
 runProgram()

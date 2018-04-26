@@ -1,4 +1,5 @@
-
+const QnADTO = require('./qnAdto');
+const FileDTO = require('./fileDto');
 
 class CreateKbDTO {
     
@@ -31,9 +32,9 @@ CreateKbDTO.fromJSON = function(src) {
         return src.map(CreateKbDTO.fromJSON);
     }
     
-    source.qnaList = QnADTO.fromJSON(source.qnaList) || undefined;
+    src.qnaList = QnADTO.fromJSON(src.qnaList) || undefined;
 
-    source.files = FileDTO.fromJSON(source.files) || undefined;
+    src.files = FileDTO.fromJSON(src.files) || undefined;
 
     const {name /* string */,qnaList /* QnADTO[] */,urls /* string[] */,files /* FileDTO[] */} = src;
     return new CreateKbDTO({name /* string */,qnaList /* QnADTO[] */,urls /* string[] */,files /* FileDTO[] */});

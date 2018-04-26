@@ -1,4 +1,4 @@
-const {insertParametersFromObject} = require('../utils/insertParametersFromObject');
+const { insertParametersFromObject } = require('../utils/insertParametersFromObject');
 const deriveParamsFromPath = require('../utils/deriveParamsFromPath');
 
 /**
@@ -7,15 +7,15 @@ const deriveParamsFromPath = require('../utils/deriveParamsFromPath');
 class ServiceBase {
 
     /**
-     * @property {string} endpoint The endpoint for this service
+     * @property {string} relativeEndpoint The endpoint for this service
      */
 
     /**
      *
-     * @param {String} endpoint the endpoint for this service
+     * @param {String} relativeEndpoint the endpoint for this service
      */
-    constructor(endpoint) {
-        this.endpoint = endpoint;
+    constructor(relativeEndpoint) {
+        this.relativeEndpoint = relativeEndpoint;
     }
 
     /**
@@ -29,17 +29,17 @@ class ServiceBase {
      * @returns {Promise<Response>} The promise representing the request
      */
     createRequest(pathFragment, params, method, dataModel = null) {
-        const {commonHeaders: headers, endpoint} = this;
-        const {endpointBasePath, knowledgeBaseID} = ServiceBase.config;
-        const tokenizedUrl = endpointBasePath + endpoint + pathFragment;
+        const { commonHeaders: headers, relativeEndpoint } = this;
+        const { endpoint, kbId } = ServiceBase.config;
+        const tokenizedUrl = endpoint + relativeEndpoint + pathFragment;
         // Order is important since we want to allow the user to
         // override their config with the data in the params object.
-        params = Object.assign({}, (dataModel || {}), {knowledgeBaseID}, params);
+        params = Object.assign({}, (dataModel || {}), { kbId }, params);
         ServiceBase.validateParams(tokenizedUrl, params);
 
         let URL = insertParametersFromObject(tokenizedUrl, params);
         if (method === 'get' && ('skip' in params || 'take' in params)) {
-            const {skip, take} = params;
+            const { skip, take } = params;
             URL += '?';
             if (!isNaN(+skip)) {
                 URL += `skip=${~~skip}`;
@@ -49,15 +49,21 @@ class ServiceBase {
             }
         }
         const body = dataModel ? JSON.stringify(dataModel) : undefined;
-
-        return fetch(URL, {headers, method, body});
+        if (params.debug) {
+            console.log(`${method.toUpperCase()} ${URL}`);
+            if (headers)
+                console.log(`HEADERS:${JSON.stringify(headers)}`);
+            if (body)
+                console.log(body);
+        }
+        return fetch(URL, { headers, method, body });
     }
 
     /**
      * Headers that are common to all requests
      *
-     * @returns {{'Content-Type': string, 'Ocp-Apim-Subscription-Key': string}}
-     */
+         * @returns {{'Content-Type': string, 'Ocp-Apim-Subscription-Key': string}}
+         */
     get commonHeaders() {
         return {
             'Content-Type': 'application/json',
@@ -80,13 +86,14 @@ ServiceBase.validateParams = function (tokenizedUrl, params) {
         if (!(param in params)) {
             const error = new Error(`The required param "${param}" is missing.`);
             error.name = 'ArgumentError';
+            throw error;
         }
     });
 };
 /**
  * @type {*} The configuration object containing
- * the endpointBasePath, appId, versionId and authoringKey properties.
+ * the endpoint, appId, versionId and authoringKey properties.
  */
-ServiceBase.config = {endpointBasePath: '', appId: '', versionId: '', authoringKey: ''};
+ServiceBase.config = { endpoint: '', appId: '', versionId: '', authoringKey: '' };
 
-module.exports = {ServiceBase};
+module.exports = { ServiceBase };

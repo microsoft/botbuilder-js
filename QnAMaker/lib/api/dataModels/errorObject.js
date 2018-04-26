@@ -35,7 +35,7 @@ ErrorObject.fromJSON = function(src) {
         return src.map(ErrorObject.fromJSON);
     }
     
-    source.details = ErrorObject.fromJSON(source.details) || undefined;
+    src.details = ErrorObject.fromJSON(src.details) || undefined;
 
     const {code /* undefined */,message /* string */,target /* string */,details /* ErrorObject[] */,innerError /* undefined */} = src;
     return new ErrorObject({code /* undefined */,message /* string */,target /* string */,details /* ErrorObject[] */,innerError /* undefined */});

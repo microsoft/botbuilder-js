@@ -19,7 +19,7 @@ ReplaceKbDTO.fromJSON = function(src) {
         return src.map(ReplaceKbDTO.fromJSON);
     }
     
-    source.qnAList = QnADTO.fromJSON(source.qnAList) || undefined;
+    src.qnAList = QnADTO.fromJSON(src.qnAList) || undefined;
 
     const {qnAList /* QnADTO[] */} = src;
     return new ReplaceKbDTO({qnAList /* QnADTO[] */});
