@@ -14,7 +14,6 @@ interface internalBotConfig {
 }
 
 export class BotConfig extends BotConfigModel {
-    public secretKey: string = '';
     // internal is not serialized
     private internal: internalBotConfig = {
         secretValidated: false
@@ -57,7 +56,7 @@ export class BotConfig extends BotConfigModel {
     }
 
     // save the config file
-    public async Save(botpath?: string): Promise<void> {
+    public async save(botpath?: string): Promise<void> {
         let hasSecret = ( this.secretKey && this.secretKey.length > 0 );
 
         // make sure that all dispatch serviceIds still match services that are in the bot

@@ -50,7 +50,7 @@ async function processConnectAzureArgs(config: BotConfig): Promise<BotConfig> {
 
     let removedService = config.disconnectServiceByNameOrId(args.idOrName);
     if (removedService != null) {
-        await config.Save();
+        await config.save();
         process.stdout.write(`Disconnected ${removedService.type}:${removedService.name} ${removedService.id}`);
     }
 

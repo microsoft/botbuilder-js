@@ -96,7 +96,7 @@ else {
         bot.validateSecretKey();
 
     let filename = bot.name + '.bot';
-    bot.Save(filename);
+    bot.save(filename);
     console.log(`${filename} created`);
 
 }

@@ -104,7 +104,7 @@ async function processConnectDispatch(config: BotConfig): Promise<BotConfig> {
     }
     // add the service
     config.connectService(newService);
-    await config.Save();
+    await config.save();
     process.stdout.write(`Connected ${newService.type}:${newService.name} v${newService.version}`);
     return config;
 }

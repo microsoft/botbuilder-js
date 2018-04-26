@@ -11,6 +11,7 @@ export class BotConfigModel implements Partial<IBotConfig> {
     public name: string = '';
     public description: string = '';
     public services: IConnectedService[] = new ServicesCollection<ConnectedService>();
+    public secretKey = '';
 
     public static serviceFromJSON(service:Partial<IConnectedService>): ConnectedService {
         switch (service.type) {
@@ -38,16 +39,16 @@ export class BotConfigModel implements Partial<IBotConfig> {
     }
 
     public static fromJSON(source: Partial<IBotConfig> = {}): BotConfigModel {
-        let { name = '', description = '', services = [] } = source;
+        let { name = '', description = '', secretKey = '', services = [] } = source;
         services = services.slice().map(BotConfigModel.serviceFromJSON);
         const botConfig = new BotConfigModel();
-        Object.assign(botConfig, { services: new ServicesCollection(services), description, name });
+        Object.assign(botConfig, { services: new ServicesCollection(services), description, name, secretKey });
         return botConfig;
     }
 
     public toJSON(): Partial<IBotConfig> {
-        const { name, description, services } = this;
-        return { name, description, services };
+        const { name, description, services, secretKey } = this;
+        return { name, description, services, secretKey };
     }
 }
 
