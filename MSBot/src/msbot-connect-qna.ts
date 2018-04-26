@@ -81,7 +81,7 @@ async function processConnectQnaArgs(config: BotConfig): Promise<BotConfig> {
     let newService = new QnaMakerService(args);
     config.connectService(newService);
 
-    await config.Save();
+    await config.save();
     process.stdout.write(`Connected ${newService.type}:${newService.name} ${newService.kbid}`);
     return config;
 }

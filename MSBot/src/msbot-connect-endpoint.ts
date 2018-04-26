@@ -109,7 +109,7 @@ async function processConnectEndpointArgs(config: BotConfig): Promise<BotConfig>
     });
     config.connectService(newService);
 
-    await config.Save();
+    await config.save();
     process.stdout.write(`Connected ${newService.type}:${newService.name} ${newService.endpoint}`);
     return config;
 }

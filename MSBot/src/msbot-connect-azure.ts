@@ -78,7 +78,7 @@ async function processConnectAzureArgs(config: BotConfig): Promise<BotConfig> {
     });
     config.connectService(service);
 
-    await config.Save();
+    await config.save();
 
     process.stdout.write(`Connected ${service.type}:${service.name} ${service.id}`);
     return config;

@@ -60,7 +60,7 @@ async function processConnectFile(config: BotConfig): Promise<BotConfig> {
         filePath: args.filePath
     });
     config.connectService(newService);
-    await config.Save();
+    await config.save();
     process.stdout.write(`Connected ${newService.type}:${newService.name} ${newService.filePath}`);
     return config;
 }

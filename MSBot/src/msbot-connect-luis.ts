@@ -86,7 +86,7 @@ async function processConnectLuisArgs(config: BotConfig): Promise<BotConfig> {
     // add the service
     let newService = new LuisService(args);
     config.connectService(newService);
-    await config.Save();
+    await config.save();
     process.stdout.write(`Connected ${newService.type}:${newService.name} v${newService.version}`);
     return config;
 }

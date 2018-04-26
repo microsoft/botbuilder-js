@@ -53,6 +53,6 @@ async function processSecret(config: BotConfig): Promise<BotConfig> {
 
 
     let filename = config.name + '.bot';
-    config.Save(filename);
+    config.save(filename);
     return config;
 }
