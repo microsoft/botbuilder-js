@@ -143,7 +143,7 @@ export class Waterfall<C extends TurnContext> extends Dialog<C> {
     }
 
     public dialogBegin(dc: DialogContext<C>, args?: any): Promiseable<any> {
-        const instance = dc.instance as WaterfallInstance<any>;
+        const instance = dc.currentDialog as WaterfallInstance<any>;
         instance.step = 0;
         return this.runStep(dc, args);
     }
@@ -151,7 +151,7 @@ export class Waterfall<C extends TurnContext> extends Dialog<C> {
     public dialogContinue(dc: DialogContext<C>): Promise<any> {
         // Don't do anything for non-message activities
         if (dc.context.activity.type === ActivityTypes.Message) {
-            const instance = dc.instance as WaterfallInstance<any>;
+            const instance = dc.currentDialog as WaterfallInstance<any>;
             instance.step += 1
             return this.runStep(dc, dc.context.activity.text);
         } else {
@@ -160,14 +160,14 @@ export class Waterfall<C extends TurnContext> extends Dialog<C> {
     }
 
     public dialogResume(dc: DialogContext<C>, result?: any): Promiseable<any> {
-        const instance = dc.instance as WaterfallInstance<any>;
+        const instance = dc.currentDialog as WaterfallInstance<any>;
         instance.step += 1
         return this.runStep(dc, result);
     }
 
     private runStep(dc: DialogContext<C>, result?: any): Promise<any> {
         try {
-            const instance = dc.instance as WaterfallInstance<any>;
+            const instance = dc.currentDialog as WaterfallInstance<any>;
             const step = instance.step;
             if (step >= 0 && step < this.steps.length) {
                 // Execute step

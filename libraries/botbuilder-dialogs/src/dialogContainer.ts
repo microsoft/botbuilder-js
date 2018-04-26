@@ -137,7 +137,7 @@ export class DialogContainer<R = any, O = {}, C extends TurnContext = TurnContex
 
     public dialogBegin(dc: DialogContext<C>, dialogArgs?: any): Promise<any> {
         // Start the controls entry point dialog. 
-        const cdc = this.dialogs.createContext(dc.context, dc.instance.state);
+        const cdc = this.dialogs.createContext(dc.context, dc.currentDialog.state);
         return cdc.begin(this.dialogId, Object.assign({}, dialogArgs)).then(() => {
             // End if the controls dialog ends.
             if (!cdc.dialogResult.active) {
@@ -148,7 +148,7 @@ export class DialogContainer<R = any, O = {}, C extends TurnContext = TurnContex
 
     public dialogContinue(dc: DialogContext<C>): Promise<any> {
         // Continue controls dialog stack.
-        const cdc = this.dialogs.createContext(dc.context, dc.instance.state);
+        const cdc = this.dialogs.createContext(dc.context, dc.currentDialog.state);
         return cdc.continue().then(() => {
             // End if the controls dialog ends.
             if (!cdc.dialogResult.active) {

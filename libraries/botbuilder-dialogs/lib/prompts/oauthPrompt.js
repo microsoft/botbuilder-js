@@ -122,7 +122,7 @@ class OAuthPrompt extends dialog_1.Dialog {
     dialogBegin(dc, options) {
         // Persist options and state
         const timeout = typeof this.settings.timeout === 'number' ? this.settings.timeout : 54000000;
-        const instance = dc.instance;
+        const instance = dc.currentDialog;
         instance.state = Object.assign({
             expires: new Date().getTime() + timeout
         }, options);
@@ -147,7 +147,7 @@ class OAuthPrompt extends dialog_1.Dialog {
         // Recognize token
         return this.prompt.recognize(dc.context).then((output) => {
             // Check for timeout
-            const state = dc.instance.state;
+            const state = dc.currentDialog.state;
             const isMessage = dc.context.activity.type === botbuilder_1.ActivityTypes.Message;
             const hasTimedOut = isMessage && (new Date().getTime() > state.expires);
             // Process output

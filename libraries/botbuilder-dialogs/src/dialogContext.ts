@@ -51,7 +51,7 @@ export class DialogContext<C extends TurnContext> {
     constructor(public readonly dialogs: DialogSet<C>, public readonly context: C, public readonly stack: DialogInstance[]) { }
 
     /** Returns the cached instance of the active dialog on the top of the stack or `undefined` if the stack is empty. */
-    public get instance(): DialogInstance|undefined {
+    public get currentDialog(): DialogInstance|undefined {
         return this.stack.length > 0 ? this.stack[this.stack.length - 1] : undefined;
     }
 
@@ -138,7 +138,7 @@ export class DialogContext<C extends TurnContext> {
     public continue(): Promise<any> {
         try {
             // Check for a dialog on the stack
-            const instance = this.instance;
+            const instance = this.currentDialog;
             if (instance) {
 
                 // Lookup dialog
@@ -191,7 +191,7 @@ export class DialogContext<C extends TurnContext> {
             if (this.stack.length > 0) { this.stack.pop() }
 
             // Resume previous dialog
-            const instance = this.instance;
+            const instance = this.currentDialog;
             if (instance) {
 
                 // Lookup dialog

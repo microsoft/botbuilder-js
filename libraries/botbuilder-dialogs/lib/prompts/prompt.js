@@ -22,7 +22,7 @@ class Prompt extends dialog_1.Dialog {
     }
     dialogBegin(dc, options) {
         // Persist options
-        const instance = dc.instance;
+        const instance = dc.currentDialog;
         instance.state = options || {};
         // Send initial prompt
         return this.onPrompt(dc, instance.state, false);
@@ -33,7 +33,7 @@ class Prompt extends dialog_1.Dialog {
             return Promise.resolve();
         }
         // Recognize value
-        const instance = dc.instance;
+        const instance = dc.currentDialog;
         return this.onRecognize(dc, instance.state)
             .then((recognized) => {
             if (this.validator) {

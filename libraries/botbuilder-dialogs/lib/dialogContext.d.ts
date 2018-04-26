@@ -49,7 +49,7 @@ export declare class DialogContext<C extends TurnContext> {
      */
     constructor(dialogs: DialogSet<C>, context: C, stack: DialogInstance[]);
     /** Returns the cached instance of the active dialog on the top of the stack or `undefined` if the stack is empty. */
-    readonly instance: DialogInstance | undefined;
+    readonly currentDialog: DialogInstance | undefined;
     /**
      * Returns a structure that indicates whether there is still an active dialog on the stack
      * along with the result returned by a dialog that just ended.

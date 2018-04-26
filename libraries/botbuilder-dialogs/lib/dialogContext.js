@@ -20,7 +20,7 @@ class DialogContext {
         this.finalResult = undefined;
     }
     /** Returns the cached instance of the active dialog on the top of the stack or `undefined` if the stack is empty. */
-    get instance() {
+    get currentDialog() {
         return this.stack.length > 0 ? this.stack[this.stack.length - 1] : undefined;
     }
     /**
@@ -106,7 +106,7 @@ class DialogContext {
     continue() {
         try {
             // Check for a dialog on the stack
-            const instance = this.instance;
+            const instance = this.currentDialog;
             if (instance) {
                 // Lookup dialog
                 const dialog = this.dialogs.find(instance.id);
@@ -162,7 +162,7 @@ class DialogContext {
                 this.stack.pop();
             }
             // Resume previous dialog
-            const instance = this.instance;
+            const instance = this.currentDialog;
             if (instance) {
                 // Lookup dialog
                 const dialog = this.dialogs.find(instance.id);
