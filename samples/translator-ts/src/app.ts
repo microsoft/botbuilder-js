@@ -26,7 +26,6 @@ adapter.use(conversationState);
 // Add language translator middleware
 const languageTranslator = new LanguageTranslator({
     translatorKey: "xxxxxx",
-    noTranslatePatterns: new Set<string>(),
     nativeLanguages: ['fr', 'de'] 
 });
 adapter.use(languageTranslator);
