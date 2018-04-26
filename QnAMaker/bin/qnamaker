@@ -15,12 +15,13 @@ const readline = require('readline');
 const readlineSync = require('readline-sync');
 const minimist = require('minimist');
 const chalk = require('chalk');
-
 const help = require('../lib/help');
 const qnamaker = require('../lib');
 const manifest = require('../lib/api/qnamaker');
 const { getServiceManifest } = require('../lib/utils/argsUtil');
 const request = require('request-promise-native');
+const Knowledgebase = require('../lib/api/knowledgebase');
+const Endpointkeys = require('../lib/api/endpointkeys');
 
 let args;
 
@@ -58,8 +59,8 @@ async function runProgram() {
     const config = await composeConfig(args);
     if (!args.kbId)
         args.kbId = config.kbId;
-    if (!args.endpoint)
-        args.endpoint = config.endpoint;
+    if (!args.hostname)
+        args.hostname = config.hostname;
 
     if (args._[0] == "set")
         return await handleSetCommand(args, config);
@@ -147,10 +148,8 @@ async function runProgram() {
 async function initializeConfig() {
     process.stdout.write(chalk.cyan.bold('\nThis util will walk you through creating a .qnamakerrc file\n\nPress ^C at any time to quit.\n\n'));
     const questions = [
-        'What is your QnA Maker Acccess Key? ',
-        `What is your QnA Maker private endpoint? [Example: https://myqna.azurewebsites.net] `,
-        'What is your private endpoint key? ',
-        'What would you like as your active knowledgebase ID? [skip] '
+        'What is your QnAMaker access/subscription key? (from Cognitive Services Azure portal page) ',
+        'What would you like to use as your active knowledgebase ID? [none] '
     ];
 
     const prompt = readline.createInterface({
@@ -171,15 +170,20 @@ async function initializeConfig() {
 
             doPrompt(question);
         });
-        answers.push(answer);
+        answers.push(answer.trim());
     }
 
-    let [subscriptionKey, endpoint, endpointKey, kbId] = answers;
+    let [subscriptionKey, kbId] = answers;
 
-    const config = Object.assign({}, { subscriptionKey, endpoint, endpointKey, kbId });
+    const config = Object.assign({}, { subscriptionKey, kbId });
+
+    if (subscriptionKey && kbId) {
+        await updateKbId(config);
+    }
+
     try {
         await new Promise((resolve, reject) => {
-            const confirmation = `\n\nDoes this look ok?\n${JSON.stringify(config, null, 2)}\nYes/No: `;
+            const confirmation = `\n\nDoes this look ok?\n${JSON.stringify(config, null, 2)}\n[Yes]/No: `;
             prompt.question(confirmation, response => {
                 /^(y|yes)$/.test((response || 'yes').toLowerCase()) ? resolve(response) : reject();
             });
@@ -189,6 +193,14 @@ async function initializeConfig() {
     }
     await fs.writeJson(path.join(process.cwd(), '.qnamakerrc'), config, { spaces: 2 });
     return true;
+}
+
+async function updateKbId(config) {
+    let response = await new Endpointkeys().getEndpointKeys(config);
+    config.endpointKey = JSON.parse(await response.text()).primaryEndpointKey;
+
+    response = await new Knowledgebase().getKnowledgebaseDetails(config);
+    config.hostname = JSON.parse(await response.text()).hostName;
 }
 
 /**
@@ -213,8 +225,8 @@ async function getFileInput(args) {
  * @returns {Promise<*>}
  */
 async function composeConfig() {
-    const { QNA_MAKER_SUBSCRIPTION_KEY, QNAMAKER_ENDPOINT, QNAMAKER_ENDPOINTKEY, QNA_MAKER_KBID } = process.env;
-    const { subscriptionKey, endpoint, endpointKey, kbId } = args;
+    const { QNA_MAKER_SUBSCRIPTION_KEY, QNAMAKER_HOSTNAME, QNAMAKER_ENDPOINTKEY, QNA_MAKER_KBID } = process.env;
+    const { subscriptionKey, hostname, endpointKey, kbId } = args;
 
     let qnamakerrcJson = {};
     let config;
@@ -226,7 +238,7 @@ async function composeConfig() {
     } finally {
         config = {
             subscriptionKey: (subscriptionKey || qnamakerrcJson.subscriptionKey || QNA_MAKER_SUBSCRIPTION_KEY),
-            endpoint: (endpoint || qnamakerrcJson.endpoint || QNAMAKER_ENDPOINT),
+            hostname: (hostname || qnamakerrcJson.hostname || QNAMAKER_HOSTNAME),
             endpointKey: (endpointKey || qnamakerrcJson.endpointKey || QNAMAKER_ENDPOINTKEY),
             kbId: (kbId || qnamakerrcJson.kbId || QNA_MAKER_KBID)
         };
@@ -333,7 +345,7 @@ async function handleError(error) {
 async function handleSetCommand(args, config) {
     let target = args._.length >= 2 ? args._[1].toLowerCase() : undefined;
     if (!target) {
-        process.stdout.write(chalk.red.bold(`missing .qnamakerrc property name: [kbid|subscriptionkey|endpoint|endpointKey]\n`));
+        process.stdout.write(chalk.red.bold(`missing .qnamakerrc property name: [kbid|subscriptionkey]\n`));
         return help(args);
     }
 
@@ -348,8 +360,8 @@ async function handleSetCommand(args, config) {
             config.endpointKey = targetName;
             break;
 
-        case 'endpoint':
-            config.endpoint = targetName;
+        case 'hostname':
+            config.hostname = targetName;
             break;
 
         case 'subscriptionkey':
@@ -358,10 +370,11 @@ async function handleSetCommand(args, config) {
 
         case 'kbid':
             config.kbId = targetName;
+            await updateKbId(config);
             break;
 
         default:
-            process.stdout.write(chalk.red.bold(`unknown .qnamakerrc property ${target}. Valid values are: [kbid|subscriptionkey|endpoint|endpointKey]\n`));
+            process.stdout.write(chalk.red.bold(`unknown .qnamakerrc property ${target}. Valid values are: [kbid|subscriptionkey]\n`));
             return help(args);
     }
     await fs.writeJson(path.join(process.cwd(), '.qnamakerrc'), config, { spaces: 2 });

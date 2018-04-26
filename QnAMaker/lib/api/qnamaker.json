@@ -276,18 +276,10 @@
             "type": "string"
           },
           {
-            "name": "endpoint",
-            "alias": "endpoint",
+            "name": "hostname",
+            "alias": "hostname",
             "in": "path",
             "description": "the url of your private qnamaker service",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "endpointKey",
-            "alias": "endpointKey",
-            "in": "path",
-            "description": "the endpoint key for of your private qnamaker service",
             "required": true,
             "type": "string"
           }

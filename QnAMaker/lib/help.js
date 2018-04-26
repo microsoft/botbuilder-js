@@ -106,7 +106,7 @@ let configSection = {
     head: 'Configuration and Overrides:',
     table: [
         [chalk.cyan.bold('--subscriptionKey <key>'), 'Specifies the qnamaker ocp-apim-subscription key (from qnamaker.ai portal user settings page). Overrides the .qnamakerrc value and the QNAMAKER_SUBSCRIPTION_KEY environment variable.'],
-        [chalk.cyan.bold('--endpoint <url>'), 'Specifies the url for your private QnA service. Overrides the .qnamakerrc value and the QNAMAKER_ENDPOINT environment variable.'],
+        [chalk.cyan.bold('--hostname <url>'), 'Specifies the url for your private QnA service. Overrides the .qnamakerrc value and the QNAMAKER_HOSTNAME environment variable.'],
         [chalk.cyan.bold('--endpointKey <key>'), 'Specifies the endpoint key for your private QnA service. Overrides the .qnamakerrc value and the QNAMAKER_ENDPOINTKEY environment variable.'],
         [chalk.cyan.bold('--kbId <kbId>'), 'Specifies the active qnamaker knowledgebase id. Overrides the .qnamakerrc value and the QNAMAKER_KBID environment variable.'],
     ]
@@ -181,8 +181,9 @@ function getVerbHelp(verb) {
             process.stdout.write(chalk.cyan.bold("qnamaker set <.qnamakerrcSetting> <value>\n\n"));
             options.table.push([chalk.cyan.bold("kbid <kbid>"), "change the active knowledgebase id "]);
             options.table.push([chalk.cyan.bold("subscriptionkey <subscriptionkey>"), "change the active subscriptionkey"]);
-            options.table.push([chalk.cyan.bold("endpoint <endpointUrl>"), "change the active endpoint url"]);
-            options.table.push([chalk.cyan.bold("endpointKey <endpointKey>"), `change the active endpointKey (You can view via ${chalk.cyan.bold("qnamaker list endpointkeys")})`]);
+            // these are now computed...
+            // options.table.push([chalk.cyan.bold("hostname <url>"), "change the active hostname url"]);
+            // options.table.push([chalk.cyan.bold("endpointKey <endpointKey>"), `change the active endpointKey (You can view via ${chalk.cyan.bold("qnamaker list endpointkeys")})`]);
             sections.push(options);
             //sections.push(configSection);
             sections.push(globalArgs);

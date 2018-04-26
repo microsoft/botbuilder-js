@@ -32,10 +32,16 @@ class ServiceBase {
      */
     createRequest(pathFragment, params, method, dataModel = null) {
         const { commonHeaders: headers, relativeEndpoint } = this;
-        const { endpoint, kbId } = ServiceBase.config;
+        const { hostname, kbId } = ServiceBase.config;
+
+        if (this.useEndpoint)
+            headers.Authorization = "EndpointKey " + ServiceBase.config.endpointKey || params.endpointKey;
+        else
+            headers['Ocp-Apim-Subscription-Key'] = ServiceBase.config.subscriptionKey || params.subscriptionKey;
+
         let requestEndpoint;
         if (this.useEndpoint)
-            requestEndpoint = params.endpoint;
+            requestEndpoint = params.hostname;
         else
             requestEndpoint = params.legacy ? "https://westus.api.cognitive.microsoft.com/qnamaker/v3.0" : "https://westus.api.cognitive.microsoft.com/qnamaker/v4.0";
 
@@ -73,16 +79,9 @@ class ServiceBase {
      * @returns {{'Content-Type': string, 'Ocp-Apim-Subscription-Key': string, 'Authorization':string }}
      */
     get commonHeaders() {
-        if (this.useEndpoint)
-            return {
-                'Content-Type': 'application/json',
-                'Authorization': "EndpointKey " + ServiceBase.config.endpointKey
-            };
-        else
-            return {
-                'Content-Type': 'application/json',
-                'Ocp-Apim-Subscription-Key': ServiceBase.config.subscriptionKey
-            };
+        return {
+            'Content-Type': 'application/json',
+        };
     }
 }
 
@@ -108,6 +107,6 @@ ServiceBase.validateParams = function (tokenizedUrl, params) {
  * @type {*} The configuration object containing
  * the endpoint, appId, versionId and authoringKey properties.
  */
-ServiceBase.config = { endpoint: '', appId: '', versionId: '', authoringKey: '' };
+ServiceBase.config = { hostname: '', kbId: '', endpointKey: '', subscriptionKey: '' };
 
 module.exports = { ServiceBase };
