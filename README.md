@@ -2,7 +2,7 @@
 This repository contains code for Bot Builder tools. Bot Builder tools are designed to cover end-to-end bot development workflow and include the following tools - 
 - [![npm version](https://badge.fury.io/js/chatdown.svg)](https://badge.fury.io/js/chatdown) [Chatdown](https://github.com/Microsoft/botbuilder-tools/tree/master/Chatdown): Create mockups of bot conversations
 - [![npm version](https://badge.fury.io/js/msbot.svg)](https://badge.fury.io/js/msbot) [MSBot](https://github.com/Microsoft/botbuilder-tools/tree/master/MSBot): Create and manage your bot configuration file
-- [![npm version](https://badge.fury.io/js/ludown.svg)](https://badge.fury.io/js/ludown) [LUDown](https://github.com/Microsoft/botbuilder-tools/tree/master/ludown): Bootstrap language understanding for your bot
+- [![npm version](https://badge.fury.io/js/ludown.svg)](https://badge.fury.io/js/ludown) [LUDown](https://github.com/Microsoft/botbuilder-tools/tree/master/Ludown): Bootstrap language understanding for your bot
 - [![npm version](https://badge.fury.io/js/luis-apis.svg)](https://badge.fury.io/js/luis-apis) [LUIS](https://github.com/Microsoft/botbuilder-tools/tree/master/LUIS): Create and manage your [LUIS.ai](http://luis.ai) application
 - [![npm version](https://badge.fury.io/js/qnamaker.svg)](https://badge.fury.io/js/qnamaker) [QnAMaker](https://github.com/Microsoft/botbuilder-tools/tree/master/QnAMaker): Create and manage [QnAMaker.ai](http://qnamaker.ai) Knowledge Base.
 - [![npm version](https://badge.fury.io/js/botdispatch.svg)](https://badge.fury.io/js/botdispatch) [Dispatch](https://github.com/Microsoft/botbuilder-tools/tree/master/Dispatch): Bring disparate language understanding models to work together for your bot
@@ -12,8 +12,8 @@ To install all CLI tools,
 ```
 npm install -g chatdown msbot ludown luis-apis qnamaker botdispatch
 ```
-
-Please see [here](https://docs.microsoft.com/en-us/azure/bot-service/) for an example end to end development workflow using Bot Builder tools.
+Please see [here](https://aka.ms/BotBuilderOverview) for an overview of the end-to-end development workflow. 
+Please see [here](https://aka.ms/BotBuilderLocalDev) for an example end to end development workflow using Bot Builder tools.
 
 Before writing code, review the [bot design guidelines](https://docs.microsoft.com/en-us/azure/bot-service/bot-service-design-principles) for best practices and identify the needs for your bot: will a basic bot be enough or more sophisticated capabilities, such as speech, language understanding, QnA, or the ability to extract knowledge from different sources, and provide intelligent answers. This is also the phase where you might want to create mockup of conversations between the user and bot for the specific scenarios your bot will support. [Chatdown](https://github.com/Microsoft/botbuilder-tools/tree/master/Chatdown) is the tool custom built for this purpose. You can simply author .chat files that mockup conversations and use chatdown CLI to convert them into rich transcripts. 
 

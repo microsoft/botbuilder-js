@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const program = require("commander");
 const chalk = require("chalk");
+const program = require("commander");
 const pkg = require('../package.json');
 const semver = require('semver');
 let requiredVersion = pkg.engines.node;
@@ -31,10 +31,10 @@ program
     .command('disconnect <service>', 'disconnect from a resource used by the bot');
 program
     .command('list', 'list all connected services');
-var args = program.parse(process.argv);
+const args = program.parse(process.argv);
 // args should be undefined is subcommand is executed
 if (args) {
-    var a = process.argv.slice(2);
+    const a = process.argv.slice(2);
     console.error(chalk.default.redBright(`Unknown arguments: ${a.join(' ')}`));
     program.help();
 }

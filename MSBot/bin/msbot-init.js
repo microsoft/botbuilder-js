@@ -1,15 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const program = require("commander");
 const chalk = require("chalk");
-const BotConfig_1 = require("./BotConfig");
+const program = require("commander");
 const readline = require("readline-sync");
+const BotConfig_1 = require("./BotConfig");
+const schema_1 = require("./schema");
 program.Command.prototype.unknownOption = function (flag) {
     console.error(chalk.default.redBright(`Unknown arguments: ${flag}`));
     program.help();
 };
 program
-    .name("msbot init")
+    .name('msbot init')
     .option('--secret <secret>', 'secret used to encrypt service keys')
     .option('-n, --name <botname>', 'name of the bot')
     .option('-d, --description <description>', 'description of the bot')
@@ -22,7 +23,7 @@ program
 });
 let args = program.parse(process.argv);
 if (!args.quiet) {
-    while (!args.hasOwnProperty("name") || args.name.length == 0) {
+    while (!args.hasOwnProperty('name') || args.name.length == 0) {
         args.name = readline.question(`What name would you like for your bot? `);
     }
     if (!args.secret || args.secret.length == 0) {
@@ -39,7 +40,7 @@ if (!args.quiet) {
         });
     }
     if (!args.appId || args.appId.length == 0) {
-        var answer = readline.question(`Do you have an Application Id for this bot? [no] `, {
+        const answer = readline.question(`Do you have an Application Id for this bot? [no] `, {
             defaultInput: 'no'
         });
         if (answer == 'y' || answer == 'yes') {
@@ -58,11 +59,11 @@ if (!args.name) {
     console.error('missing --name argument');
 }
 else {
-    let bot = new BotConfig_1.BotConfig(args.secret);
+    const bot = new BotConfig_1.BotConfig(args.secret);
     bot.name = args.name;
     bot.description = args.description;
     bot.connectService({
-        type: BotConfig_1.ServiceType.Endpoint,
+        type: schema_1.ServiceType.Endpoint,
         name: args.name,
         endpoint: args.endpoint,
         description: args.description,
@@ -73,7 +74,7 @@ else {
     if (args.secret && args.secret.length > 0)
         bot.validateSecretKey();
     let filename = bot.name + '.bot';
-    bot.Save(filename);
+    bot.save(filename);
     console.log(`${filename} created`);
 }
 //# sourceMappingURL=msbot-init.js.map

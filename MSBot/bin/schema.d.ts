@@ -1,5 +1,13 @@
+export declare enum ServiceType {
+    Endpoint = "endpoint",
+    AzureBotService = "abs",
+    Luis = "luis",
+    QnA = "qna",
+    Dispatch = "dispatch",
+    File = "file",
+}
 export interface IConnectedService {
-    type: string;
+    readonly type: ServiceType;
     name: string;
     id?: string;
 }

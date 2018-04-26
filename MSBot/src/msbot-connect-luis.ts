@@ -1,11 +1,11 @@
-import * as program from 'commander';
 import * as chalk from 'chalk';
+import * as program from 'commander';
 import * as fs from 'fs-extra';
 import * as getStdin from 'get-stdin';
-import { BotConfig, ServiceType } from './BotConfig';
-import { Enumerable, List, Dictionary } from 'linq-collections';
+import { BotConfig } from './BotConfig';
+import { LuisService } from './models';
+import { ILuisService, ServiceType } from './schema';
 import { uuidValidate } from './utils';
-import { IConnectedService, ILuisService, IDispatchService, IAzureBotService, IBotConfig, IEndpointService, IQnAService } from './schema';
 
 program.Command.prototype.unknownOption = function (flag: any) {
     console.error(chalk.default.redBright(`Unknown arguments: ${flag}`));
@@ -20,7 +20,7 @@ interface ConnectLuisArgs extends ILuisService {
 }
 
 program
-    .name("msbot connect luis")
+    .name('msbot connect luis')
     .description('Connect the bot to a LUIS application')
     .option('-n, --name <name>', 'name for the LUIS app')
     .option('-a, --appId <appid>', 'AppId for the LUIS App')
@@ -28,10 +28,10 @@ program
     .option('--authoringKey <authoringkey>', 'authoring key for using manipulating LUIS apps via the authoring API (See http://aka.ms/luiskeys for help)')
     .option('--subscriptionKey <subscriptionKey>', '(OPTIONAL) subscription key used for querying a LUIS model\n')
 
-    .option('-b, --bot <path>', "path to bot file.  If omitted, local folder will look for a .bot file")
-    .option('--input <jsonfile>', "path to arguments in JSON format { id:'',name:'', ... }")
+    .option('-b, --bot <path>', 'path to bot file.  If omitted, local folder will look for a .bot file')
+    .option('--input <jsonfile>', 'path to arguments in JSON format { id:\'\',name:\'\', ... }')
     .option('--secret <secret>', 'bot file secret password for encrypting service secrets')
-    .option('--stdin', "arguments are passed in as JSON object via stdin")
+    .option('--stdin', 'arguments are passed in as JSON object via stdin')
     .action((cmd, actions) => {
 
     });
@@ -45,14 +45,14 @@ if (process.argv.length < 3) {
         BotConfig.LoadBotFromFolder(process.cwd(), args.secret)
             .then(processConnectLuisArgs)
             .catch((reason) => {
-                console.error(chalk.default.redBright(reason.toString().split("\n")[0]));
+                console.error(chalk.default.redBright(reason.toString().split('\n')[0]));
                 program.help();
             });
     } else {
         BotConfig.Load(args.bot, args.secret)
             .then(processConnectLuisArgs)
             .catch((reason) => {
-                console.error(chalk.default.redBright(reason.toString().split("\n")[0]));
+                console.error(chalk.default.redBright(reason.toString().split('\n')[0]));
                 program.help();
             });
     }
@@ -69,32 +69,24 @@ async function processConnectLuisArgs(config: BotConfig): Promise<BotConfig> {
     }
 
     if (!args.hasOwnProperty('name'))
-        throw new Error("Bad or missing --name");
+        throw new Error('Bad or missing --name');
 
     if (!args.appId || !uuidValidate(args.appId))
-        throw new Error("bad or missing --appId");
+        throw new Error('bad or missing --appId');
 
     if (!args.version || parseFloat(args.version) == 0)
-        throw new Error("bad or missing --version");
+        throw new Error('bad or missing --version');
 
     if (!args.authoringKey || !uuidValidate(args.authoringKey))
-        throw new Error("bad or missing --authoringKey");
+        throw new Error('bad or missing --authoringKey');
 
     //if (!args.subscriptionKey || !uuidValidate(args.subscriptionKey))
     //    throw new Error("bad or missing --subscriptionKey");
 
     // add the service
-    let newService = <ILuisService>{
-        type: ServiceType.Luis,
-        name: args.name,
-        id: args.appId,
-        appId: args.appId,
-        version: args.version,
-        subscriptionKey: args.subscriptionKey,
-        authoringKey: args.authoringKey
-    };
+    let newService = new LuisService(args);
     config.connectService(newService);
-    await config.Save();
+    await config.save();
     process.stdout.write(`Connected ${newService.type}:${newService.name} v${newService.version}`);
     return config;
 }

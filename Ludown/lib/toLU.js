@@ -65,7 +65,7 @@ module.exports = {
                 }
             }
             if(fs.existsSync(outFolder + '\\' + program.lu_File)) {
-                console.error(chalk.default.redBright('Output file: ' + program.lu_File + 'exists! Use -n <lu file name> to specify an output file name.\n'));
+                console.error(chalk.default.redBright('Output file: ' + program.lu_File + ' exists! Use -n <lu file name> to specify an output file name.\n'));
                 process.exit(1);
             }
 

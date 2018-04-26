@@ -1,11 +1,8 @@
-import * as os from 'os';
-import * as path from 'path';
-import * as fs from 'fs-extra';
-import * as program from 'commander';
 import * as chalk from 'chalk';
-import { BotConfig, ServiceType } from './BotConfig';
+import * as program from 'commander';
 import * as readline from 'readline-sync';
-import { IConnectedService, ILuisService, IDispatchService, IAzureBotService, IBotConfig, IEndpointService, IQnAService } from './schema';
+import { BotConfig } from './BotConfig';
+import { IEndpointService, ServiceType } from './schema';
 
 program.Command.prototype.unknownOption = function (flag: any) {
     console.error(chalk.default.redBright(`Unknown arguments: ${flag}`));
@@ -23,7 +20,7 @@ interface InitArgs {
 }
 
 program
-    .name("msbot init")
+    .name('msbot init')
     .option('--secret <secret>', 'secret used to encrypt service keys')
     .option('-n, --name <botname>', 'name of the bot')
     .option('-d, --description <description>', 'description of the bot')
@@ -39,7 +36,7 @@ let args: InitArgs = <InitArgs><any>program.parse(process.argv);
 
 if (!args.quiet) {
 
-    while (!args.hasOwnProperty("name") || args.name.length == 0) {
+    while (!args.hasOwnProperty('name') || args.name.length == 0) {
         args.name = readline.question(`What name would you like for your bot? `);
     }
 
@@ -60,9 +57,9 @@ if (!args.quiet) {
     }
 
     if (!args.appId || args.appId.length == 0) {
-        var answer = readline.question(`Do you have an Application Id for this bot? [no] `, {
+        const answer = readline.question(`Do you have an Application Id for this bot? [no] `, {
             defaultInput: 'no'
-        })
+        });
         if (answer == 'y' || answer == 'yes') {
             args.appId = readline.question(`What is your Application Id? [none] `, {
                 defaultInput: ''
@@ -70,7 +67,7 @@ if (!args.quiet) {
         }
     }
 
-    while (args.appId && args.appId.length > 0 && (!args.appPassword || args.appPassword.length == 0)) {
+    while (args.appId && args.appId.length > 0 && ( !args.appPassword || args.appPassword.length == 0 )) {
         args.appPassword = readline.question(`What is your Msa Application password for ${args.appId}? `, {
             defaultInput: ''
         });
@@ -81,7 +78,7 @@ if (!args.name) {
     console.error('missing --name argument');
 }
 else {
-    let bot = new BotConfig(args.secret);
+    const bot = new BotConfig(args.secret);
     bot.name = args.name;
     bot.description = args.description;
 
@@ -99,7 +96,7 @@ else {
         bot.validateSecretKey();
 
     let filename = bot.name + '.bot';
-    bot.Save(filename);
+    bot.save(filename);
     console.log(`${filename} created`);
 
 }
