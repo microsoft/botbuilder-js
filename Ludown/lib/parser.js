@@ -9,6 +9,7 @@ const LUISObjNameEnum = require('./enums/luisobjenum');
 const PARSERCONSTS = require('./enums/parserconsts');
 const builtInTypes = require('./enums/luisbuiltintypes');
 const parseFileContents = require('./parseFileContents');
+const prebuiltTypes = require('./enums/luisbuiltintypes');
 
 module.exports = {
     /**
@@ -104,7 +105,7 @@ module.exports = {
             var finalLUISJSON = collateLUISFiles(allParsedLUISContent);
             var finalQnAJSON = collateQnAFiles(allParsedQnAContent);
             if(!program.luis_versionId) program.luis_versionId = "0.1";
-            if(!program.luis_schema_version) program.luis_schema_version = "2.1.0";
+            if(!program.luis_schema_version) program.luis_schema_version = "2.2.0";
             if(!program.luis_name) program.luis_name = path.basename(rootFile, path.extname(rootFile));
             if(!program.luis_desc) program.luis_desc = "";
             if(!program.luis_culture) program.luis_culture = "en-us";   
@@ -232,6 +233,44 @@ module.exports = {
  * @returns {Boolean} True if validation succeeds.
  */
 var validateLUISBlob = function(LUISJSONBlob) {
+    // patterns can have references to any other entity types. So if there is a pattern.any entity that is also defined as another type, remove the pattern.any entity
+    var spliceList = [];
+    if(LUISJSONBlob.patternAnyEntities.length > 0) {
+        for(var i in LUISJSONBlob.patternAnyEntities) {
+            var patternAnyEntity = LUISJSONBlob.patternAnyEntities[i];
+            if(LUISJSONBlob.entities.filter(function(item){
+                return item.name == patternAnyEntity.name
+            }).length > 0) {
+                spliceList.push(patternAnyEntity.name);
+            }
+            if(LUISJSONBlob.bing_entities.filter(function(item) {
+                return item == patternAnyEntity.name;
+            }).length > 0) {
+                spliceList.push(patternAnyEntity.name);
+            }
+            if(LUISJSONBlob.closedLists.filter(function(item) {
+                return item.name == patternAnyEntity.name;
+            }).length > 0) {
+                spliceList.push(patternAnyEntity.name);
+            }
+            if(LUISJSONBlob.model_features.filter(function(item) {
+                return item.name == patternAnyEntity.name;
+            }).length > 0) {
+                spliceList.push(patternAnyEntity.name);
+            }
+        }
+    }
+    if(spliceList.length > 0) {
+        spliceList.forEach(function(item) {
+            for(var i in LUISJSONBlob.patternAnyEntities) {
+                if(LUISJSONBlob.patternAnyEntities[i].name === item) {
+                    LUISJSONBlob.patternAnyEntities.splice(i, 1);
+                    break;
+                }
+            }
+        })
+    }
+    
     // look for entity name collisions - list, simple, patternAny, phraselist
     // look for list entities labelled
     // look for prebuilt entity labels in utterances
@@ -255,7 +294,7 @@ var validateLUISBlob = function(LUISJSONBlob) {
                     "type": ["simple"]
                 });
             } else {
-                entityFound.type.push("list");
+                entityFound[0].type.push("list");
             }
         });
     }
@@ -285,7 +324,7 @@ var validateLUISBlob = function(LUISJSONBlob) {
                     "type": ["phraseList"]
                 });
             } else {
-                entityFound.type.push("phraseList");
+                entityFound[0].type.push("phraseList");
             }
         });
     }
@@ -297,7 +336,28 @@ var validateLUISBlob = function(LUISJSONBlob) {
             process.stdout.write(chalk.default.redBright('\n  Stopping further processing \n'));
             process.exit(1);
         }
-    })
+    });
+
+    // do we have utterances with labelled list entities ? 
+    if(LUISJSONBlob.utterances.length > 0) {
+        LUISJSONBlob.utterances.forEach(function(utterance) {
+            if(utterance.entities.length > 0) {
+                utterance.entities.forEach(function(entity) {
+                    var entityInList = entitiesList.filter(function(item) {
+                        return item.name == entity.entity;
+                    });
+                    if(entityInList.length > 0) {
+                        if(entityInList[0].type.includes("list")) {
+                            process.stdout.write(chalk.default.redBright('  Entity "' + entity.name + '" has duplicate definitions. \n\n'));
+                            process.stdout.write(chalk.default.redBright('  ' + JSON.stringify(entity.type, 2, null) + '  \n'));
+                            process.stdout.write(chalk.default.redBright('\n  Stopping further processing \n'));
+                            process.exit(1);
+                        }
+                    }
+                });
+            }
+        });
+    }
     return true;
 }
 
