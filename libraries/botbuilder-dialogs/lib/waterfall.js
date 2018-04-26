@@ -9,6 +9,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const botbuilder_1 = require("botbuilder");
 /**
+ * :package: **botbuilder-dialogs**
+ *
  * Dialog optimized for prompting a user with a series of questions. Waterfalls accept a stack of
  * functions which will be executed in sequence. Each waterfall step can ask a question of the user
  * and the users response will be passed as an argument to the next waterfall step.

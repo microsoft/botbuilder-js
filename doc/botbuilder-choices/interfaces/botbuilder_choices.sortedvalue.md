@@ -5,7 +5,9 @@
 # Interface: SortedValue
 
 
-A value that can be sorted and still refer to its original position with a source array.
+:package: **botbuilder-choices**
+
+INTERNAL: A value that can be sorted and still refer to its original position within a source array. The `findChoices()` function expands the passed in choices to individual `SortedValue` instances and passes them to `findValues()`. Each individual `Choice` can result in multiple synonyms that should be searched for so this data structure lets us pass each synonym as a value to search while maintaining the index of the choice that value came from.
 
 
 ## Properties
@@ -15,7 +17,7 @@ A value that can be sorted and still refer to its original position with a sourc
 
 **●  index**:  *`number`* 
 
-*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:52](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/findValues.d.ts#L52)*
+*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:70](https://github.com/Microsoft/botbuilder-js/blob/fbf16f5/libraries/botbuilder-choices/lib/findValues.d.ts#L70)*
 
 
 
@@ -32,7 +34,7 @@ ___
 
 **●  value**:  *`string`* 
 
-*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:50](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/findValues.d.ts#L50)*
+*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:68](https://github.com/Microsoft/botbuilder-js/blob/fbf16f5/libraries/botbuilder-choices/lib/findValues.d.ts#L68)*
 
 
 
