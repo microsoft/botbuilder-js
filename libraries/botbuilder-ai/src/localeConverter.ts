@@ -152,7 +152,7 @@ class MicrosoftLocaleConverter implements ILocaleConverter {
                 momentTime.setMinutes(parseInt(String(resolutionValues['value']).substr(3, 2)));
                 type = 'time';
             }
-            let curDateTimeText = new TextAndDateTime(result.text, momentTime, type);
+            let curDateTimeText = new TextAndDateTime(new RegExp(`\\b${result.text}\\b`, "gi"), momentTime, type);
             foundDates.push(curDateTimeText);
         });
         return foundDates;
@@ -216,11 +216,11 @@ class DateAndTimeLocaleFormat {
 }
 
 class TextAndDateTime { 
-    public text: string;
+    public text: RegExp;
     public dateTimeObj: Date;
     public type: string;
 
-    constructor(text: string, dateTimeObj: Date, type: string) {
+    constructor(text: RegExp, dateTimeObj: Date, type: string) {
         this.text = text;
         this.dateTimeObj = dateTimeObj;
         this.type = type;

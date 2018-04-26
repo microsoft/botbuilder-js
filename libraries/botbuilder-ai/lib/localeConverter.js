@@ -137,7 +137,7 @@ class MicrosoftLocaleConverter {
                 momentTime.setMinutes(parseInt(String(resolutionValues['value']).substr(3, 2)));
                 type = 'time';
             }
-            let curDateTimeText = new TextAndDateTime(result.text, momentTime, type);
+            let curDateTimeText = new TextAndDateTime(new RegExp(`\\b${result.text}\\b`, "gi"), momentTime, type);
             foundDates.push(curDateTimeText);
         });
         return foundDates;
