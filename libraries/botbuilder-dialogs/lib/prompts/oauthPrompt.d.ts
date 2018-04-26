@@ -8,7 +8,7 @@
 import { TurnContext } from 'botbuilder';
 import * as prompts from 'botbuilder-prompts';
 import { DialogContext } from '../dialogContext';
-import { Control } from '../control';
+import { Dialog } from '../dialog';
 import { PromptOptions } from './prompt';
 /**
  * :package: **botbuilder-dialogs**
@@ -121,7 +121,7 @@ export interface OAuthPromptSettingsWithTimeout extends prompts.OAuthPromptSetti
  * ```
  * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
  */
-export declare class OAuthPrompt<C extends TurnContext> extends Control<C> {
+export declare class OAuthPrompt<C extends TurnContext> extends Dialog<C> {
     private settings;
     private prompt;
     /**

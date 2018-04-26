@@ -8,8 +8,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 /** Licensed under the MIT License. */
 __export(require("./prompts/index"));
-__export(require("./compositeControl"));
-__export(require("./control"));
+__export(require("./dialog"));
+__export(require("./dialogContainer"));
 __export(require("./dialogContext"));
 __export(require("./dialogSet"));
 __export(require("./waterfall"));

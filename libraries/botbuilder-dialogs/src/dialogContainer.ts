@@ -14,14 +14,14 @@ import { DialogSet } from './dialogSet';
 /**
  * :package: **botbuilder-dialogs**
  * 
- * A `CompositeControl` makes it easy to take an existing set of dialogs and package them up as a 
+ * A `DialogContainer` makes it easy to take an existing set of dialogs and package them up as a 
  * control that can be used within another bot. The control can be used either as a dialog added
  * to the other bots `DialogSet` or on its own for bots that are using some other conversation
  * management system.
  * 
  * ### Control Packaging
  * 
- * You'll typically want to package your control as a new class derived from `CompositeControl`.
+ * You'll typically want to package your control as a new class derived from `DialogContainer`.
  * Within your controls constructor you'll pass the `DialogSet` containing your controls dialogs
  * and the `ID` of the initial dialog that should be started anytime a caller calls the dialog.  
  * 
@@ -30,15 +30,13 @@ import { DialogSet } from './dialogSet';
  * they call `begin()`. These will then be passed as arguments to the initial dialog that gets 
  * started.
  * 
- * Here's a fairly simple example of a `ProfileControl` that's designed to prompt the user to 
+ * Here's a fairly simple example of a `ProfileDialog` that's designed to prompt the user to 
  * enter their name and phone number which it will return as a JSON object to the caller:
  * 
  * ```JavaScript
- * const { CompositeControl, DialogSet, TextPrompt } = require('botbuilder-dialogs');
+ * const { DialogContainer, TextPrompt } = require('botbuilder-dialogs');
  * 
- * const dialogs = new DialogSet();
- * 
- * class ProfileControl extends CompositeControl {
+ * class ProfileDialog extends DialogContainer {
  *     constructor() {
  *         super('fillProfile');
  *         
@@ -62,7 +60,7 @@ import { DialogSet } from './dialogSet';
  *        this.dialogs.add('textPrompt', new TextPrompt());
  *     }
  * }
- * module.exports.ProfileControl = ProfileControl;
+ * module.exports.ProfileDialog = ProfileDialog;
  * ```
  * 
  * ### Consume as Dialog
@@ -74,11 +72,11 @@ import { DialogSet } from './dialogSet';
  * 
  * ```JavaScript
  * const { DialogSet } = require('botbuilder-dialogs');
- * const { ProfileControl } = require('./profileControl');
+ * const { ProfileDialog } = require('./profileControl');
  * 
  * const dialogs = new DialogSet();
  * 
- * dialogs.add('getProfile', new ProfileControl());
+ * dialogs.add('getProfile', new ProfileDialog());
  * 
  * dialogs.add('firstrun', [
  *      async function (dc) {
@@ -100,7 +98,7 @@ import { DialogSet } from './dialogSet';
  * 
  * ```JavaScript
  * const state = {};
- * const control = new ProfileControl();
+ * const control = new ProfileDialog();
  * await prompt.begin(context, state);
  * ```
  * 
@@ -109,7 +107,7 @@ import { DialogSet } from './dialogSet';
  * passed into the controls `continue()` method on the next turn of conversation with the user:
  * 
  * ```JavaScript
- * const control = new ProfileControl();
+ * const control = new ProfileDialog();
  * const result = await control.continue(context, state);
  * if (!result.active) {
  *     const profile = result.result;
@@ -123,63 +121,18 @@ import { DialogSet } from './dialogSet';
  * @param O (Optional) options that can be passed into the begin() method.
  * @param C (Optional) type of `TurnContext` being passed to dialogs in the set.
  */
-export class CompositeControl<R = any, O = {}, C extends TurnContext = TurnContext> implements Dialog<C> {
+export class DialogContainer<R = any, O = {}, C extends TurnContext = TurnContext> extends Dialog<C> {
     /** The controls dialog set. */
     protected dialogs: DialogSet<C>;
 
     /**
-     * Creates a new `CompositeControl` instance.
+     * Creates a new `DialogContainer` instance.
      * @param dialogId ID of the root dialog that should be started anytime the control is started.
      * @param dialogs (Optional) set of existing dialogs the control should use. If omitted an empty set will be created. 
      */
     constructor(protected dialogId: string, dialogs?: DialogSet<C>) { 
+        super();
         this.dialogs = dialogs || new DialogSet<C>();
-    }
-
-    /**
-     * Starts the control. Depending on the control, its possible for the control to finish 
-     * immediately so it's advised to check the result object returned by `begin()` and ensure that
-     * the control is still active before continuing.
-     * 
-     * **Usage Example:**
-     *
-     * ```JavaScript
-     * const state = {};
-     * const result = await control.begin(context, state);
-     * if (!result.active) {
-     *     const value = result.result;
-     * }
-     * ```
-     * @param context Context for the current turn of the conversation with the user.
-     * @param state A state object that the control will use to persist its current state. This should be an empty object which the control will populate. The bot should persist this with its other conversation state for as long as the control is still active.
-     * @param options (Optional) additional options supported by the control.
-     */
-    public begin(context: C, state: object, options?: O): Promise<DialogResult<R>> {
-        const cdc = this.dialogs.createContext(context, state);
-        return cdc.begin(this.dialogId, options)
-                  .then(() => cdc.dialogResult);
-    }
-
-    /**
-     * Passes a users reply to the control for further processing. The bot should keep calling 
-     * `continue()` for future turns until the control returns a result with `Active == false`.
-     * To cancel or interrupt the prompt simply delete the `state` object being persisted.  
-     * 
-     * **Usage Example:**
-     *
-     * ```JavaScript
-     * const result = await control.continue(context, state);
-     * if (!result.active) {
-     *     const value = result.result;
-     * }
-     * ```
-     * @param context Context for the current turn of the conversation with the user.
-     * @param state A state object that was previously initialized by a call to [begin()](#begin).
-     */
-    public continue(context: C, state: object): Promise<DialogResult<R>> {
-        const cdc = this.dialogs.createContext(context, state);
-        return cdc.continue()
-                  .then(() => cdc.dialogResult);         
     }
 
     public dialogBegin(dc: DialogContext<C>, dialogArgs?: any): Promise<any> {

@@ -8,6 +8,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Licensed under the MIT License.
  */
 const botbuilder_1 = require("botbuilder");
+const dialog_1 = require("./dialog");
 /**
  * :package: **botbuilder-dialogs**
  *
@@ -78,12 +79,13 @@ const botbuilder_1 = require("botbuilder");
  * to do that the dialog will be automatically ended for you on the users next reply.  The users
  * response will be passed to the calling dialogs next waterfall step if there is one.
  */
-class Waterfall {
+class Waterfall extends dialog_1.Dialog {
     /**
      * Creates a new waterfall dialog containing the given array of steps.
      * @param steps Array of waterfall steps.
      */
     constructor(steps) {
+        super();
         this.steps = steps.slice(0);
     }
     dialogBegin(dc, args) {

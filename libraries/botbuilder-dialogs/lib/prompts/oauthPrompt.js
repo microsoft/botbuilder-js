@@ -9,7 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const botbuilder_1 = require("botbuilder");
 const prompts = require("botbuilder-prompts");
-const control_1 = require("../control");
+const dialog_1 = require("../dialog");
 /**
  * :package: **botbuilder-dialogs**
  *
@@ -108,7 +108,7 @@ const control_1 = require("../control");
  * ```
  * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
  */
-class OAuthPrompt extends control_1.Control {
+class OAuthPrompt extends dialog_1.Dialog {
     /**
      * Creates a new `OAuthPrompt` instance.
      * @param settings Settings used to configure the prompt.

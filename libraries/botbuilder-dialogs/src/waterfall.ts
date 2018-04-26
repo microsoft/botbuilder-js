@@ -130,7 +130,7 @@ export type SkipStepFunction = (args?: any) => Promise<any>;
  * to do that the dialog will be automatically ended for you on the users next reply.  The users 
  * response will be passed to the calling dialogs next waterfall step if there is one.
  */
-export class Waterfall<C extends TurnContext> implements Dialog<C> {
+export class Waterfall<C extends TurnContext> extends Dialog<C> {
     private readonly steps: WaterfallStep<C>[];
 
     /**
@@ -138,6 +138,7 @@ export class Waterfall<C extends TurnContext> implements Dialog<C> {
      * @param steps Array of waterfall steps. 
      */
     constructor(steps: WaterfallStep<C>[]) {
+        super();
         this.steps = steps.slice(0);
     }
 
