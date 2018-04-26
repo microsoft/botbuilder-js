@@ -443,6 +443,40 @@ export class PostProcessTranslator {
                 
             });
         }
+        
+        if (toBeReplacedByDictionary.length > 0) {
+            toBeReplacedByDictionary.forEach(word => {
+                let regExp = new RegExp(word, "i");
+                let match = regExp.exec(sourceMessage);
+                
+                let noTranslateStartChrIndex = match.index;
+                
+                let noTranslateMatchLength = match[0].length;
+                
+                let wrdIndx = 0;
+                let chrIndx = 0;
+                let newChrLengthFromMatch = 0;
+                let srcIndx = -1;
+                let newNoTranslateArrayLength = 1;
+
+                srcWords.forEach(wrd => {
+                    chrIndx += wrd.length + 1;
+                    wrdIndx++;
+                    if (chrIndx == noTranslateStartChrIndex) {
+                        srcIndx = wrdIndx;
+                        return;
+                    }
+                });
+                
+                let wrdNoTranslate = srcWords.slice(srcIndx, srcIndx + 1)
+                
+                wrdNoTranslate.forEach(srcWrds => {
+                    trgWords = this.replaceWordInDictionary(alignMap, srcWords, trgWords, srcIndx);
+                    srcIndx++;
+                });
+                
+            });
+        }
 
         console.log(toBeReplacedByDictionary);
         

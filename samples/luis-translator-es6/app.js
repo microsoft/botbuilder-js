@@ -59,6 +59,14 @@ async function setUserLocale(context) {
     }
 }
 
+// Add locale converter middleware
+const localeConverter = new LocaleConverter({
+    toLocale: 'en-us',
+    setUserLocale: setUserLocale,
+    getUserLocale: getUserLocale
+});
+adapter.use(localeConverter);
+
 // Add language translator middleware
 const languageTranslator = new LanguageTranslator({
     translatorKey: "xxxxxx",
@@ -67,14 +75,6 @@ const languageTranslator = new LanguageTranslator({
     getUserLanguage: getUserLanguage 
 });
 adapter.use(languageTranslator);
-
-// Add locale converter middleware
-const localeConverter = new LocaleConverter({
-    toLocale: 'en-us',
-    setUserLocale: setUserLocale,
-    getUserLocale: getUserLocale
-});
-adapter.use(localeConverter);
 
 // Add Luis recognizer middleware
 const luisRecognizer = new LuisRecognizer({

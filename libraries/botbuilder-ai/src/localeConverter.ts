@@ -7,6 +7,7 @@
  */
 import { Middleware, TurnContext, ActivityTypes } from 'botbuilder';
 import * as DateTimeRecognizers from '@microsoft/recognizers-text-date-time';
+import * as moment from 'moment';
 
 export interface LocaleConverterSettings {
     toLocale: string,
@@ -130,24 +131,84 @@ class MicrosoftLocaleConverter implements ILocaleConverter {
 
         let model = new DateTimeRecognizers.DateTimeRecognizer(culture).getDateTimeModel();
         let results = model.parse(message);
-        let moment: Date;
+        
         let foundDates: TextAndDateTime[] = [];
         results.forEach(result => {
+            let curDateTimeText: TextAndDateTime;
+            let momentTime: Date;
+            let momentTimeEnd: Date;
+            let foundType: string;
             let resolutionValues = result.resolution["values"][0];
             let type = result.typeName.replace('datetimeV2.', '');
-            if (type.includes('date') && !type.includes('range')) {
-                moment = new Date(new Date(resolutionValues["value"]).getTime() + new Date().getTimezoneOffset() * 60 * 1000);
-            } else if (type.includes('date') && type.includes('range')) {
-                moment = new Date(new Date(resolutionValues["start"]).getTime() + new Date().getTimezoneOffset() * 60 * 1000);
-            } else { // Must be a time-only result with no date
-                moment = new Date();
-                moment.setHours(parseInt(String(resolutionValues['value']).substr(0, 2)));
-                moment.setMinutes(parseInt(String(resolutionValues['value']).substr(3, 2)));
+            if (type.includes('range')) {
+                if (type.includes('date') && type.includes('time')) {
+                    momentTime = moment(resolutionValues["start"]).toDate();
+                    momentTimeEnd = moment(resolutionValues["end"]).toDate();
+                    foundType = 'datetime';
+                } else if (type.includes('date')) {
+                    momentTime = moment(resolutionValues["start"]).toDate();
+                    momentTimeEnd = moment(resolutionValues["end"]).toDate();
+                    foundType = 'date';
+                } else { // Must be a time-only result with no date
+                    momentTime = new Date();
+                    momentTime.setHours(parseInt(String(resolutionValues['start']).substr(0, 2)));
+                    momentTime.setMinutes(parseInt(String(resolutionValues['start']).substr(3, 2)));
+                    
+                    momentTimeEnd = new Date();
+                    momentTimeEnd.setHours(parseInt(String(resolutionValues['end']).substr(0, 2)));
+                    momentTimeEnd.setMinutes(parseInt(String(resolutionValues['end']).substr(3, 2)));
+                    foundType = 'time';
+                }
+
+                curDateTimeText = {
+                    text: new RegExp(`\\b${result.text}\\b`, "gi"),
+                    dateTimeObj: momentTime,
+                    endDateTimeObj: momentTimeEnd,
+                    type: foundType,
+                    range: true
+                }
+            } else {
+                if (type.includes('date') && type.includes('time')) {
+                    momentTime = moment(resolutionValues["value"]).toDate();
+                    foundType = 'datetime';
+                } else if (type.includes('date')) {
+                    momentTime = moment(resolutionValues["value"]).toDate();
+                    foundType = 'date';
+                } else { // Must be a time-only result with no date
+                    momentTime = new Date();
+                    momentTime.setHours(parseInt(String(resolutionValues['value']).substr(0, 2)));
+                    momentTime.setMinutes(parseInt(String(resolutionValues['value']).substr(3, 2)));
+                    foundType = 'time';
+                }
+
+                curDateTimeText = {
+                    text: new RegExp(`\\b${result.text}\\b`, "gi"),
+                    dateTimeObj: momentTime,
+                    type: foundType,
+                    range: false
+                }
             }
-            let curDateTimeText = new TextAndDateTime(result.text, moment);
+            
             foundDates.push(curDateTimeText);
         });
         return foundDates;
+    }
+
+    private formatDate(date: Date, toLocale: string): string {
+        return this.mapLocaleToFunction[toLocale].dateFormat
+                .replace('yyyy', (date.getFullYear()).toLocaleString(undefined, {minimumIntegerDigits: 4}).replace(',', ''))
+                .replace('MM', (date.getMonth() + 1).toLocaleString(undefined, {minimumIntegerDigits: 2}))
+                .replace('dd', (date.getDate()).toLocaleString(undefined, {minimumIntegerDigits: 2}));
+    }
+
+    private formatTime(date: Date, toLocale: string): string {
+        return this.mapLocaleToFunction[toLocale].timeFormat
+                .replace('hh', (date.getHours()).toLocaleString(undefined, {minimumIntegerDigits: 2}))
+                .replace('mm', (date.getMinutes()).toLocaleString(undefined, {minimumIntegerDigits: 2}));
+    }
+
+    private formatDateAndTime(date: Date, toLocale: string): string {
+        return `${this.formatDate(date, toLocale)} ${this.formatTime(date, toLocale)}`
     }
 
     convert(message: string, fromLocale: string, toLocale: string): Promise<string> {
@@ -161,20 +222,33 @@ class MicrosoftLocaleConverter implements ILocaleConverter {
             let dates: TextAndDateTime[] = this.extractDates(message, fromLocale);
             let processedMessage = message;
             dates.forEach(date => {
-                if (date.dateTimeObj.toDateString() == (new Date()).toDateString()) {
-                    let convertedDate = this.mapLocaleToFunction[toLocale].timeFormat
-                        .replace('hh', (date.dateTimeObj.getHours()).toLocaleString(undefined, {minimumIntegerDigits: 2}))
-                        .replace('mm', (date.dateTimeObj.getMinutes()).toLocaleString(undefined, {minimumIntegerDigits: 2}));
-                    
-                    processedMessage = processedMessage.replace(date.text, convertedDate)
+                if (date.range) {
+                    if (date.type == 'time') {
+                        let convertedStartDate = this.formatTime(date.dateTimeObj, toLocale);
+                        let convertedEndDate = this.formatTime(date.endDateTimeObj, toLocale);
+                        processedMessage = processedMessage.replace(date.text, `${convertedStartDate} - ${convertedEndDate}`);
+                    } else if (date.type == 'date') { 
+                        let convertedStartDate = this.formatDate(date.dateTimeObj, toLocale);
+                        let convertedEndDate = this.formatDate(date.endDateTimeObj, toLocale);
+                        processedMessage = processedMessage.replace(date.text, `${convertedStartDate} - ${convertedEndDate}`);
+                    } else {
+                        let convertedStartDate = this.formatDateAndTime(date.dateTimeObj, toLocale);
+                        let convertedEndDate = this.formatDateAndTime(date.endDateTimeObj, toLocale);
+                        processedMessage = processedMessage.replace(date.text, `${convertedStartDate} - ${convertedEndDate}`);
+                    }
                 } else {
-                    let convertedDate = this.mapLocaleToFunction[toLocale].dateFormat
-                        .replace('yyyy', (date.dateTimeObj.getFullYear()).toLocaleString(undefined, {minimumIntegerDigits: 4}).replace(',', ''))
-                        .replace('MM', (date.dateTimeObj.getMonth() + 1).toLocaleString(undefined, {minimumIntegerDigits: 2}))
-                        .replace('dd', (date.dateTimeObj.getDate()).toLocaleString(undefined, {minimumIntegerDigits: 2}));
-                        
-                    processedMessage = processedMessage.replace(date.text, convertedDate);
+                    if (date.type == 'time') {
+                        let convertedDate = this.formatTime(date.dateTimeObj, toLocale);
+                        processedMessage = processedMessage.replace(date.text, convertedDate);
+                    } else if (date.type == 'date') { 
+                        let convertedDate = this.formatDate(date.dateTimeObj, toLocale);
+                        processedMessage = processedMessage.replace(date.text, convertedDate);
+                    } else {
+                        let convertedDateTime = this.formatDateAndTime(date.dateTimeObj, toLocale);
+                        processedMessage = processedMessage.replace(date.text, convertedDateTime);
+                    }
                 }
+                
             });
             return Promise.resolve(processedMessage);
         }
@@ -200,11 +274,9 @@ class DateAndTimeLocaleFormat {
 }
 
 class TextAndDateTime { 
-    public text: string;
+    public text: RegExp;
     public dateTimeObj: Date;
-
-    constructor(text: string, dateTimeObj: Date) {
-        this.text = text;
-        this.dateTimeObj = dateTimeObj;
-    }
+    public type: string;
+    public endDateTimeObj?: Date;
+    public range: boolean
 }

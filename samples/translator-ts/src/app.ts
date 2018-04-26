@@ -1,4 +1,4 @@
-import { BotFrameworkAdapter, MemoryStorage, ConversationState } from 'botbuilder';
+import { BotFrameworkAdapter, MemoryStorage, ConversationState, TurnContext } from 'botbuilder';
 import { LanguageTranslator, LocaleConverter } from 'botbuilder-ai';
 import * as restify from 'restify';
 
@@ -15,27 +15,74 @@ const adapter = new BotFrameworkAdapter( {
 });
 
 // Define conversation state shape
-interface EchoState {
-    count: number;
+interface LanguageState {
+    language: string,
+    locale: string,
+    count: number
 }
 
 // Add conversation state middleware
-const conversationState = new ConversationState<EchoState>(new MemoryStorage());
+const conversationState = new ConversationState<LanguageState>(new MemoryStorage());
 adapter.use(conversationState);
+
+// Delegates for getting and setting user language
+function getUserLanguage(context: TurnContext): string {
+    const state = conversationState.get(context)
+    if (state.language == undefined) {
+        return 'en';
+    } else {
+        return state.language;
+    }
+}
+
+async function setUserLanguage(context: TurnContext): Promise<boolean> {
+    let state = conversationState.get(context)
+    if (context.activity.text.toLowerCase().startsWith('set my language to')) {
+        state.language = context.activity.text.toLowerCase().replace('set my language to', '').trim();
+        await context.sendActivity(`Setting your language to ${state.language}`);
+        return Promise.resolve(true);
+    } else {
+        return Promise.resolve(false);
+    }
+}
+
+// Delegates for getting and setting user locale
+function getUserLocale(context: TurnContext): string {
+    const state = conversationState.get(context)
+    if (state.locale == undefined) {
+        return 'en-us';
+    } else {
+        return state.locale;
+    }
+}
+
+async function setUserLocale(context: TurnContext): Promise<boolean> {
+    let state = conversationState.get(context)
+    if (context.activity.text.toLowerCase().startsWith('set my locale to')) {        
+        state.locale = context.activity.text.toLowerCase().replace('set my locale to', '').trim();
+        await context.sendActivity(`Setting your locale to ${state.locale}`);
+        return Promise.resolve(true);
+    } else {
+        return Promise.resolve(false);
+    }
+}
+
+// Add locale converter middleware
+const localeConverter = new LocaleConverter({
+    toLocale: 'en-us',
+    setUserLocale: setUserLocale,
+    getUserLocale: getUserLocale
+});
+adapter.use(localeConverter);
 
 // Add language translator middleware
 const languageTranslator = new LanguageTranslator({
     translatorKey: "xxxxxx",
-    nativeLanguages: ['fr', 'de'] 
+    nativeLanguages: ['en'],
+    setUserLanguage: setUserLanguage,
+    getUserLanguage: getUserLanguage 
 });
 adapter.use(languageTranslator);
-
-// Add locale converter middleware
-const localeConverter = new LocaleConverter({
-    toLocale: 'fr-fr',
-    fromLocale: 'en-us'
-})
-adapter.use(localeConverter);
 
 // Listen for incoming requests 
 server.post('/api/messages', (req, res) => {
