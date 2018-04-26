@@ -1,7 +1,7 @@
 {
   "alterations": {
     "className": "Alterations",
-    "url": "/qnamaker/v4.0/alterations",
+    "url": "/alterations",
     "operations": {
       "replaceAlterations": {
         "name": "replaceAlterations",
@@ -31,7 +31,7 @@
   },
   "endpointkeys": {
     "className": "Endpointkeys",
-    "url": "/qnamaker/v4.0/endpointkeys",
+    "url": "/endpointkeys",
     "operations": {
       "getEndpointKeys": {
         "name": "getEndpointKeys",
@@ -69,7 +69,7 @@
   },
   "knowledgebases": {
     "className": "Knowledgebases",
-    "url": "/qnamaker/v4.0/knowledgebases",
+    "url": "/knowledgebases",
     "operations": {
       "getKnowledgebasesForUser": {
         "name": "getKnowledgebasesForUser",
@@ -187,7 +187,7 @@
   },
   "createasync": {
     "className": "Createasync",
-    "url": "/qnamaker/v4.0/knowledgebases/createasync",
+    "url": "/knowledgebases/createasync",
     "operations": {
       "createKnowledgebase": {
         "name": "createKnowledgebase",
@@ -207,7 +207,7 @@
   },
   "UpdateAsync": {
     "className": "UpdateAsync",
-    "url": "/qnamaker/v4.0/knowledgebases/{kbId}/UpdateAsync",
+    "url": "/knowledgebases/{kbId}/UpdateAsync",
     "operations": {
       "updateKnowledgebase": {
         "name": "updateKnowledgebase",
@@ -278,7 +278,7 @@
   },
   "qna": {
     "className": "Qna",
-    "url": "/qnamaker/v4.0/knowledgebases/{kbId}/{environment}/qna",
+    "url": "/knowledgebases/{kbId}/{environment}/qna",
     "operations": {
       "downloadKnowledgebase": {
         "name": "downloadKnowledgebase",
@@ -319,19 +319,48 @@
       }
     }
   },
+  "qnalegacy": {
+    "className": "QnaLegacy",
+    "url": "/knowledgebases/{kbId}",
+    "operations": {
+      "downloadLegacyKnowledgebase": {
+        "name": "downloadLegacyKnowledgebase",
+        "method": "get",
+        "methodAlias": "export",
+        "target": [
+          "legacykb",
+          "legacyknowledgebase"
+        ],
+        "command": "qnamaker export legacykb --kbId <legacyKB>",
+        "pathFragment": "",
+        "legacy": true, 
+        "params": [
+          {
+            "type": "string",
+            "name": "kbId",
+            "in": "path",
+            "required": true,
+            "x-nullable": false,
+            "description": "Knowledgebase id"
+          }
+        ],
+        "description": "Download legacy KB (requires legacy kbid and legacy subscriptionKey)"
+      }
+    }
+  },
   "operations": {
     "className": "Operations",
-    "url": "/qnamaker/v4.0/operations/{operationId}",
+    "url": "/operations/{operationId}",
     "operations": {
       "getOperationDetails": {
         "name": "getOperationDetails",
         "method": "get",
         "methodAlias": "get",
         "target": [
-          "OperationDetails",
-          "operationdetails"
+          "operationdetails",
+          "OperationDetails"
         ],
-        "command": "qnamaker get OperationDetails --operationId <string>",
+        "command": "qnamaker get operationdetails --operationId <string>",
         "pathFragment": "",
         "params": [
           {

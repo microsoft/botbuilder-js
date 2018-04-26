@@ -31,7 +31,8 @@ class ServiceBase {
     createRequest(pathFragment, params, method, dataModel = null) {
         const { commonHeaders: headers, relativeEndpoint } = this;
         const { endpoint, kbId } = ServiceBase.config;
-        const tokenizedUrl = endpoint + relativeEndpoint + pathFragment;
+        const adminEndpoint = (params.legacy) ? "https://westus.api.cognitive.microsoft.com/qnamaker/v3.0" : "https://westus.api.cognitive.microsoft.com/qnamaker/v4.0";
+        const tokenizedUrl = adminEndpoint  + relativeEndpoint + pathFragment;
         // Order is important since we want to allow the user to
         // override their config with the data in the params object.
         params = Object.assign({}, (dataModel || {}), { kbId }, params);

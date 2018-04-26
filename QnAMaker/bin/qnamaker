@@ -20,6 +20,7 @@ const help = require('../lib/help');
 const qnamaker = require('../lib');
 const manifest = require('../lib/api/qnamaker');
 const { getServiceManifest } = require('../lib/utils/argsUtil');
+const request = require('request-promise-native');
 
 let args;
 
@@ -43,14 +44,11 @@ async function runProgram() {
         return;
     }
 
-    if (args.kbId) {
-        args.knowledgeBaseID = args.kbId;
-        delete args.kbId;
+    if (args['!']) {
+        return getAll
     }
-
     if (args.help ||
         args.h ||
-        args['!'] ||
         args._.includes('help')) {
         return help(args);
     }
@@ -60,7 +58,11 @@ async function runProgram() {
     }
 
     const config = await composeConfig(args);
-
+    if (!args.kbId)
+        args.kbId = config.kbId;
+    if (!args.endpoint)
+        args.endpoint = config.endpoint;
+        
     if (args._[0] == "set")
         return await handleSetCommand(args, config);
 
@@ -81,7 +83,7 @@ async function runProgram() {
 
     const result = await qnamaker(config, serviceManifest, args, requestBody);
     if (result.error) {
-        throw new Error(result.error.message);
+        throw new Error(JSON.stringify(result.error, null, 4));
     }
 
     // special case response
@@ -130,11 +132,10 @@ async function runProgram() {
  */
 async function initializeConfig() {
     process.stdout.write(chalk.cyan.bold('\nThis util will walk you through creating a .qnamakerrc file\n\nPress ^C at any time to quit.\n\n'));
-    const validRegions = 'westus westus2 eastus eastus2 westcentralus southcentralus westeurope northeurope southeastasia eastasia australiaeast brazilsouth'.split(' ');
     const questions = [
-        'What is your QnA Maker Ocp-Apim-Subscription-Key (from qnamaker.ai portal My services page)? ',
-        `What QnA Maker API endpoint? (or simply region for legacy QnA service) [${validRegions.join(', ')}]? `,
-        'What is your QnA Maker Knowledge Base ID (from qnamaker.ai portal My services page)? '
+        'What is your QnA Maker Acccess Key? ',
+        `What is your QnA Maker deployment endpoint? `,
+        'What is your QnA Maker Knowledge Base ID (from qnamaker.ai portal My services page)? [skip] '
     ];
 
     const prompt = readline.createInterface({
@@ -159,13 +160,11 @@ async function initializeConfig() {
     }
 
     let [subscriptionKey, endpoint, kbId] = answers;
-    if (validRegions.indexOf(endpoint.trim()) >= 0)
-        endpoint = `https://${endpoint}.api.cognitive.microsoft.com/qnamaker/v2.0`;
 
     const config = Object.assign({}, {
         kbId,
         subscriptionKey,
-        endpoint: endpoint,
+        endpoint: endpoint
     });
     try {
         await new Promise((resolve, reject) => {
@@ -290,11 +289,13 @@ async function validateArguments(serviceManifest) {
         }
     }
 
-    for(let param of serviceManifest.operation.params) {
-        if (param.required) {
-            if (!args[param.name] && !args[param.alias || param.name]) {
-                error.message = `The --${param.name} argument is missing and required`;
-                throw error;
+    if (serviceManifest.operation.params) {
+        for (let param of serviceManifest.operation.params) {
+            if (param.required) {
+                if (!args[param.name] && !args[param.alias || param.name]) {
+                    error.message = `The --${param.name} argument is missing and required`;
+                    throw error;
+                }
             }
         }
     }
@@ -333,9 +334,9 @@ async function handleSetCommand(args, config) {
 
     switch (target) {
         case 'endpoint':
-            config.endpoint  = targetName;
+            config.endpoint = targetName;
             break;
-            
+
         case 'subscriptionkey':
             config.subscriptionKey = targetName;
             break;
