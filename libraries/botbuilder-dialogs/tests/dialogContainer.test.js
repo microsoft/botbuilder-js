@@ -1,5 +1,5 @@
 const { TestAdapter, TurnContext } = require('botbuilder');
-const { DialogSet, CompositeControl } =  require('../');
+const { DialogSet, DialogContainer } =  require('../');
 const assert = require('assert');
 
 const beginMessage = { text: `begin`, type: 'message' };
@@ -16,7 +16,7 @@ class TestContext extends TurnContext {
     }
 }
 
-describe('CompositeControl', function() {
+describe('DialogContainer', function() {
     this.timeout(5000);
 
     it('should call composite control from another dialog set.', function (done) {
@@ -29,7 +29,7 @@ describe('CompositeControl', function() {
                 done();
             }
         ]);
-        const control = new CompositeControl('start', cDialogs);
+        const control = new DialogContainer('start', cDialogs);
 
         const dialogs = new DialogSet();
         dialogs.add('control', control);
@@ -47,7 +47,7 @@ describe('CompositeControl', function() {
                 return dc.end(120);
             }
         ]);
-        const control = new CompositeControl('start', cDialogs);
+        const control = new DialogContainer('start', cDialogs);
 
         const dialogs = new DialogSet();
         dialogs.add('control', control);
@@ -76,7 +76,7 @@ describe('CompositeControl', function() {
                 return dc.end(120);
             }
         ]);
-        const control = new CompositeControl('start', cDialogs);
+        const control = new DialogContainer('start', cDialogs);
 
         const dialogs = new DialogSet();
         dialogs.add('control', control);
@@ -110,7 +110,7 @@ describe('CompositeControl', function() {
                 done();
             }
         ]);
-        const control = new CompositeControl('start', cDialogs);
+        const control = new DialogContainer('start', cDialogs);
 
         const state = {};
         const context = new TestContext(beginMessage);
@@ -130,7 +130,7 @@ describe('CompositeControl', function() {
                 return dc.end(120);
             }
         ]);
-        const control = new CompositeControl('start', cDialogs);
+        const control = new DialogContainer('start', cDialogs);
 
         const state = {};
         const context = new TestContext(beginMessage);

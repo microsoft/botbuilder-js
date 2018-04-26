@@ -5,9 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext, BotState, StoreItem, Activity } from 'botbuilder';
-import { Dialog, DialogInstance } from './dialog';
-import { Waterfall, WaterfallStep } from './waterfall';
+import { TurnContext, BotState, StoreItem, Activity, Promiseable } from 'botbuilder';
+import { Dialog, Waterfall, WaterfallStep } from './dialog';
 import { DialogContext } from './dialogContext';
 
 /**
