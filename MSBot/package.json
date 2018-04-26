@@ -8,7 +8,8 @@
   },
   "types": "bin/index.d.ts",
   "files": [
-    "bin/*.js",
+    "bin/**/*.js",
+    "bin/models/*.*",
     "bin/BotConfig.*",
     "bin/schema.*",
     "bin/index.d.ts"
