@@ -1,149 +1,263 @@
 {
-  "create": {
-    "className": "Create",
-    "url": "/knowledgebases/create",
+  "alterations": {
+    "className": "Alterations",
+    "url": "/alterations",
     "operations": {
-      "createKnowledgeBase": {
-        "name": "createKnowledgeBase",
-        "method": "post",
-        "methodAlias": "create",
-        "target": [],
-        "command": "qnamaker create --in createKnowledgeBase.json",
+      "replaceAlterations": {
+        "name": "replaceAlterations",
+        "method": "put",
+        "methodAlias": "replace",
+        "target": [
+          "alterations"
+        ],
+        "command": "qnamaker replace alterations --in wordAlterations.json",
         "pathFragment": "",
-        "description": "Creates a new knowledge base.",
-        "entityName": "createKnowledgeBase",
-        "entityType": "CreateKnowledgeBase"
+        "description": "Replaces word alterations (synonyms) for the KB with the give records.",
+        "entityName": "wordAlterations",
+        "entityType": "WordAlterationsDTO"
+      },
+      "downloadAlterations": {
+        "name": "download alterations",
+        "method": "get",
+        "methodAlias": "list",
+        "target": [
+          "alterations"
+        ],
+        "command": "qnamaker list alterations",
+        "pathFragment": "",
+        "description": "Downloads all word alterations (synonyms) that have been automatically mined or added by the user."
+      }
+    }
+  },
+  "endpointkeys": {
+    "className": "Endpointkeys",
+    "url": "/endpointkeys",
+    "operations": {
+      "getEndpointKeys": {
+        "name": "getEndpointKeys",
+        "method": "get",
+        "methodAlias": "list",
+        "target": [
+          "endpointkeys"
+        ],
+        "command": "qnamaker list endpointkeys",
+        "pathFragment": "",
+        "description": "list all the currently valid endpointKeys for querying your private endpoint"
+      },
+      "refreshEndpointKeys": {
+        "name": "refreshEndpointKeys",
+        "method": "patch",
+        "methodAlias": "refresh",
+        "target": [
+          "endpointkeys"
+        ],
+        "command": "qnamaker refresh endpointkeys --keyType <string>",
+        "pathFragment": "",
+        "params": [
+          {
+            "type": "string",
+            "name": "keyType",
+            "in": "path",
+            "required": true,
+            "x-nullable": false,
+            "description": "type of Key"
+          }
+        ],
+        "description": "Re-generates an endpoint key, in case you suspect your keys have been compromised"
       }
     }
   },
   "knowledgebases": {
     "className": "Knowledgebases",
-    "url": "/knowledgebases/{knowledgeBaseID}",
+    "url": "/knowledgebases",
     "operations": {
-      "publishKnowledgeBase": {
-        "name": "publishKnowledgeBase",
+      "getKnowledgebasesForUser": {
+        "name": "getKnowledgebasesForUser",
+        "method": "get",
+        "methodAlias": "list",
+        "target": [
+          "kbs",
+          "knowledgebases",
+          "kb"
+        ],
+        "command": "qnamaker list kbs",
+        "pathFragment": "",
+        "description": "List all of your knowledgebases"
+      }
+    }
+  },
+  "knowledgebase": {
+    "className": "Knowledgebase",
+    "url": "/knowledgebase/{kbId}",
+    "operations": {
+      "replaceKnowledgebase": {
+        "name": "replaceKnowledgebase",
         "method": "put",
-        "methodAlias": "publish",
-        "target": [],
-        "command": "qnamaker publish ",
+        "methodAlias": "replace",
+        "target": [
+          "kb",
+          "knowledgebase"
+        ],
+        "command": "qnamaker replace kb --in replaceKb.json --kbId <string>",
         "pathFragment": "",
         "params": [
           {
-            "name": "knowledgeBaseID",
-            "alias": "kbid",
+            "type": "string",
+            "name": "kbId",
             "in": "path",
-            "description": "Knowledge base identity",
             "required": true,
-            "type": "string"
+            "x-nullable": false,
+            "description": "Knowledgebase id"
+          }
+        ],
+        "description": "Replace a knowledgebase contents with new contents",
+        "entityName": "replaceKb",
+        "entityType": "ReplaceKbDTO"
+      },
+      "publishKnowledgebase": {
+        "name": "publishKnowledgebase",
+        "method": "post",
+        "methodAlias": "publish",
+        "target": [
+          "kb",
+          "knowledgebase"
+        ],
+        "command": "qnamaker publish kb --kbId <string>",
+        "pathFragment": "",
+        "params": [
+          {
+            "type": "string",
+            "name": "kbId",
+            "in": "path",
+            "required": true,
+            "x-nullable": false,
+            "description": "Knowledgebase id"
           }
         ],
         "description": "Publish all unpublished in the knowledgebase to the prod endpoint"
       },
-      "updateKnowledgeBase": {
-        "name": "updateKnowledgeBase",
-        "method": "patch",
-        "methodAlias": "update",
-        "target": [],
-        "command": "qnamaker update --in updateKnowledgeBase.json ",
-        "pathFragment": "",
-        "params": [
-          {
-            "name": "knowledgeBaseID",
-            "alias": "kbid",
-            "in": "path",
-            "description": "knowledge base identity",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "description": "Add or delete QnA Pairs and / or URLs to an existing knowledge base.",
-        "entityName": "updateKnowledgeBase",
-        "entityType": "UpdateKnowledgeBase"
-      },
-      "downloadKnowledgeBase": {
-        "name": "downloadKnowledgeBase",
-        "method": "get",
-        "methodAlias": "get",
-        "target": [],
-        "command": "qnamaker get ",
-        "pathFragment": "",
-        "params": [
-          {
-            "name": "knowledgeBaseID",
-            "alias": "kbid",
-            "in": "path",
-            "description": "knowledge base identity",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "description": "Downloads all the data associated with the specified knowledge base."
-      },
-      "deleteKnowledgeBase": {
-        "name": "deleteKnowledgeBase",
+      "deleteKnowledgebase": {
+        "name": "deleteKnowledgebase",
         "method": "delete",
         "methodAlias": "delete",
-        "target": [],
-        "command": "qnamaker delete",
+        "target": [
+          "kb",
+          "knowledgebase"
+        ],
+        "command": "qnamaker delete kb --kbId <string>",
         "pathFragment": "",
         "params": [
           {
-            "name": "knowledgeBaseID",
-            "alias": "kbid",
+            "type": "string",
+            "name": "kbId",
             "in": "path",
-            "description": "knowledge base identity",
             "required": true,
-            "type": "string"
+            "x-nullable": false,
+            "description": "Knowledgebase id."
           }
         ],
-        "description": "Deletes the specified knowledge base and all data associated with it."
-      }
-    }
-  },
-  "downloadAlterations": {
-    "className": "DownloadAlterations",
-    "url": "/knowledgebases/{knowledgeBaseID}/downloadAlterations",
-    "operations": {
-      "downloadAlterations": {
-        "name": "downloadAlterations",
+        "description": "Delete a knowledgebase by id"
+      },
+      "getKnowledgebaseDetails": {
+        "name": "getKnowledgebaseDetails",
         "method": "get",
         "methodAlias": "get",
         "target": [
-          "alterations"
+          "kb",
+          "knowledgebase"
         ],
-        "command": "qnamaker get alterations ",
+        "command": "qnamaker get kb --kbId <string>",
         "pathFragment": "",
         "params": [
           {
-            "name": "knowledgeBaseID",
-            "alias": "kbid",
+            "type": "string",
+            "name": "kbId",
             "in": "path",
-            "description": "knowledge base identity",
             "required": true,
-            "type": "string"
+            "x-nullable": false,
+            "description": "Knowledgebase id."
+          },
+          {
+            "type": "string",
+            "name": "environment",
+            "in": "path",
+            "required": false,
+            "x-nullable": false,
+            "default": "prod",
+            "description": "The environment [prod or test] default is prod"
           }
         ],
-        "description": "Downloads all word alterations (synonyms) that have been automatically mined or added by the user."
+        "description": "Get metadata about a knowledgebase"
+      }
+    }
+  },
+  "createasync": {
+    "className": "Createasync",
+    "url": "/knowledgebases/createasync",
+    "operations": {
+      "createKnowledgebase": {
+        "name": "createKnowledgebase",
+        "method": "post",
+        "methodAlias": "create",
+        "target": [
+          "kb",
+          "knowledgebase"
+        ],
+        "command": "qnamaker create kb --in createKbPayload.json",
+        "pathFragment": "",
+        "description": "Create a new knowledgebase",
+        "entityName": "createKbPayload",
+        "entityType": "CreateKbDTO"
+      }
+    }
+  },
+  "UpdateAsync": {
+    "className": "UpdateAsync",
+    "url": "/knowledgebases/{kbId}/UpdateAsync",
+    "operations": {
+      "updateKnowledgebase": {
+        "name": "updateKnowledgebase",
+        "method": "patch",
+        "methodAlias": "update",
+        "target": [
+          "kb",
+          "knowledgebase"
+        ],
+        "command": "qnamaker update kb --in updateKb.json --kbId <string>",
+        "pathFragment": "",
+        "params": [
+          {
+            "type": "string",
+            "name": "kbId",
+            "in": "path",
+            "required": true,
+            "x-nullable": false,
+            "description": "Knowledgebase id"
+          }
+        ],
+        "description": "Add or delete QnA Pairs and / or URLs to an existing knowledge base",
+        "entityName": "updateKb",
+        "entityType": "UpdateKbOperationDTO"
       }
     }
   },
   "generateAnswer": {
     "className": "GenerateAnswer",
-    "url": "/knowledgebases/{knowledgeBaseID}/generateAnswer",
+    "url": "/qnamaker/knowledgebases/{kbId}/generateAnswer",
     "operations": {
       "generateAnswer": {
         "name": "generateAnswer",
         "method": "post",
-        "methodAlias": "ask",
+        "methodAlias": "query",
         "target": [],
-        "command": "qnamaker ask --question \"how do I turn it on\" --top 5",
+        "command": "qnamaker query --question \"how do I turn it on\" --top 5",
         "pathFragment": "",
         "params": [
           {
             "name": "question",
             "in": "question",
             "description": "question you want to ask",
-            "required": false,
+            "required": true,
             "type": "string"
           },
           {
@@ -154,11 +268,19 @@
             "type": "number"
           },
           {
-            "name": "knowledgeBaseID",
-            "alias": "kbid",
+            "name": "kbId",
+            "alias": "knowledgeBaseID",
             "in": "path",
-            "description": "knowledgeBasedID, this should be get from QnAMaker portal",
-            "required": false,
+            "description": "kbId, this should be get from QnAMaker portal",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "hostname",
+            "alias": "hostname",
+            "in": "path",
+            "description": "the url of your private qnamaker service",
+            "required": true,
             "type": "string"
           }
         ],
@@ -168,59 +290,111 @@
       }
     }
   },
-  "train": {
-    "className": "Train",
-    "url": "/knowledgebases/{knowledgeBaseID}/train",
+  "qna": {
+    "className": "Qna",
+    "url": "/knowledgebases/{kbId}/{environment}/qna",
     "operations": {
-      "trainKnowledgeBase": {
-        "name": "trainKnowledgeBase",
-        "method": "patch",
-        "methodAlias": "train",
-        "target": [],
-        "command": "qnamaker train --in trainKnowledgeBase.json ",
+      "downloadKnowledgebase": {
+        "name": "downloadKnowledgebase",
+        "method": "get",
+        "methodAlias": "export",
+        "target": [
+          "kb",
+          "knowledgebase"
+        ],
+        "command": "qnamaker export kb --kbId <string> --environment <string>",
         "pathFragment": "",
         "params": [
           {
-            "name": "knowledgeBaseID",
-            "alias": "kbid",
+            "type": "string",
+            "name": "kbId",
             "in": "path",
-            "description": "knowledge base identity",
             "required": true,
-            "type": "string"
+            "x-nullable": false,
+            "description": "Knowledgebase id"
+          },
+          {
+            "type": "string",
+            "name": "environment",
+            "in": "path",
+            "required": true,
+            "x-schema": {
+              "$ref": "#/definitions/KnowledgebaseEnvironment"
+            },
+            "x-nullable": false,
+            "description": "Specifies whether environment is Test or Prod.",
+            "enum": [
+              "Prod",
+              "Test"
+            ]
           }
         ],
-        "description": "The developer of the knowledge base service can use this API to submit user feedback for tuning question-answer matching. QnA Maker uses active learning to learn from the user utterances that come on a published Knowledge base service. In this process, QnA Maker records user feedback from different users and trains the knowledge base to respond accordingly, when there are sufficient number of users sending the same feedback. Every user feedback is logged and model training is triggered when there are 50 new feedback instances. Typically, the model updates are reflected when same question-answer pair from the knowledge base is sent as feedback for a given user query by at least 20 users. Most changes are immediately reflected in both the published and the saved knowledge bases. Some new question-answer pairs are only added to the saved knowledge base and they are moved to the published version in the next knowledge base publish operation by the developer. This gives the flexibility to the developer to keep or discard the newly added question-answer pairs.",
-        "entityName": "trainKnowledgeBase",
-        "entityType": "TrainKnowledgeBase"
+        "description": ""
       }
     }
   },
-  "updateAlterations": {
-    "className": "UpdateAlterations",
-    "url": "/knowledgebases/{knowledgeBaseID}/updateAlterations",
+  "qnalegacy": {
+    "className": "QnaLegacy",
+    "url": "/knowledgebases/{kbId}",
     "operations": {
-      "updateAlterations": {
-        "name": "updateAlterations",
-        "method": "patch",
-        "methodAlias": "update",
+      "downloadLegacyKnowledgebase": {
+        "name": "downloadLegacyKnowledgebase",
+        "method": "get",
+        "methodAlias": "export",
         "target": [
-          "alterations"
+          "legacykb",
+          "legacyknowledgebase"
         ],
-        "command": "qnamaker update alterations --in updateAlterations.json ",
+        "command": "qnamaker export legacykb --kbId <legacyKB>",
+        "pathFragment": "",
+        "legacy": true,
+        "params": [
+          {
+            "type": "string",
+            "name": "kbId",
+            "in": "path",
+            "required": true,
+            "x-nullable": false,
+            "description": "legacy Knowledgebase id"
+          },
+          {
+            "type": "string",
+            "name": "name",
+            "in": "path",
+            "required": false,
+            "x-nullable": false,
+            "description": "name of the knowledgebase. (NOTE: This is used to modify the output to be compliant with V4 import, not to lookup the knowledgebase)"
+          }
+        ],
+        "description": "Export legacy knowledgebase (requires legacy --kbid and --subscriptionKey to be passed in)"
+      }
+    }
+  },
+  "operations": {
+    "className": "Operations",
+    "url": "/operations/{operationId}",
+    "operations": {
+      "getOperationDetails": {
+        "name": "getOperationDetails",
+        "method": "get",
+        "methodAlias": "get",
+        "target": [
+          "operationdetails",
+          "OperationDetails"
+        ],
+        "command": "qnamaker get operationdetails --operationId <string>",
         "pathFragment": "",
         "params": [
           {
-            "name": "knowledgeBaseID",
-            "alias": "kbid",
+            "type": "string",
+            "name": "operationId",
             "in": "path",
-            "description": "knowledge base identity",
             "required": true,
-            "type": "string"
+            "x-nullable": false,
+            "description": "Operation id."
           }
         ],
-        "description": "Replaces word alterations (synonyms) for the KB with the give records.",
-        "entityName": "updateAlterations",
-        "entityType": "UpdateAlterations"
+        "description": "Gets details of a specific long running operation."
       }
     }
   }

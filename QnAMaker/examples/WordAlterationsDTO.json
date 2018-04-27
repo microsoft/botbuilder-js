@@ -1,0 +1,22 @@
+{
+  "wordAlterations": [
+    {
+      "alterations": [
+        "qnamaker",
+        "qna maker"
+      ]
+    },
+    {
+      "alterations": [
+        "botframework",
+        "bot framework"
+      ]
+    },
+    {
+      "alterations": [
+        "webchat",
+        "web chat"
+      ]
+    }
+  ]
+}

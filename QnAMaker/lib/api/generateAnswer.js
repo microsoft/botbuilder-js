@@ -1,16 +1,14 @@
 const {ServiceBase} = require('./serviceBase');
-
 class GenerateAnswer extends ServiceBase {
     constructor() {
-        super('/knowledgebases/{knowledgeBaseID}/generateAnswer');
+        super('/qnamaker/knowledgebases/{kbId}/generateAnswer', true /* useEndpoint */);
     }
 
     /**
-     * Returns the list of answers for the given question sorted in descending order of ranking score.
-     */
-    generateAnswer(params, generateAnswer/* GenerateAnswer */) {
-        return this.createRequest('', params, 'post', generateAnswer);
+    * 
+    */
+    generateAnswer(params , generateAnswerBody) {
+        return this.createRequest('', params, 'post', generateAnswerBody);
     }
 }
-
 module.exports = GenerateAnswer;

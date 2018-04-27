@@ -1,25 +1,29 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const program = require("commander");
 const chalk = require("chalk");
+const program = require("commander");
 const fs = require("fs-extra");
 const getStdin = require("get-stdin");
 const BotConfig_1 = require("./BotConfig");
+const models_1 = require("./models");
 const utils_1 = require("./utils");
+const validurl = require("valid-url");
 program.Command.prototype.unknownOption = function (flag) {
     console.error(chalk.default.redBright(`Unknown arguments: ${flag}`));
     program.help();
 };
 program
-    .name("msbot connect qna")
+    .name('msbot connect qna')
     .description('Connect the bot to a QnA knowledgebase')
-    .option('-n, --name <name>', 'name for the QNA database')
-    .option('-k, --kbid <kbid>', 'QnA Knowledgebase Id ')
-    .option('--subscriptionKey <subscriptionKey>', 'subscriptionKey for calling the QnA service\n')
-    .option('-b, --bot <path>', "path to bot file.  If omitted, local folder will look for a .bot file")
-    .option('--input <jsonfile>', "path to arguments in JSON format { id:'',name:'', ... }")
+    .option('-n, --name <name>', 'name for the QNA knowledgebase')
+    .option('-k, --kbId <kbId>', 'QnA Knowledgebase Id ')
+    .option('--subscriptionKey <subscriptionKey>', 'Azure Cognitive Service subscriptionKey/accessKey for calling the QnA management API (from azure portal)')
+    .option('--endpointKey <endpointKey>', 'endpointKey for calling the QnA service (from https://qnamaker.ai portal or qnamaker list endpointkeys command)')
+    .option('--hostname <url>', 'url for private QnA service (example: https://myqna.azurewebsites.net)')
+    .option('-b, --bot <path>', 'path to bot file.  If omitted, local folder will look for a .bot file')
+    .option('--input <jsonfile>', 'path to arguments in JSON format { id:\'\',name:\'\', ... }')
     .option('--secret <secret>', 'bot file secret password for encrypting service secrets')
-    .option('--stdin', "arguments are passed in as JSON object via stdin")
+    .option('--stdin', 'arguments are passed in as JSON object via stdin')
     .action((cmd, actions) => {
 });
 program.parse(process.argv);
@@ -32,7 +36,7 @@ else {
         BotConfig_1.BotConfig.LoadBotFromFolder(process.cwd(), args.secret)
             .then(processConnectQnaArgs)
             .catch((reason) => {
-            console.error(chalk.default.redBright(reason.toString().split("\n")[0]));
+            console.error(chalk.default.redBright(reason.toString().split('\n')[0]));
             program.help();
         });
     }
@@ -40,7 +44,7 @@ else {
         BotConfig_1.BotConfig.Load(args.bot, args.secret)
             .then(processConnectQnaArgs)
             .catch((reason) => {
-            console.error(chalk.default.redBright(reason.toString().split("\n")[0]));
+            console.error(chalk.default.redBright(reason.toString().split('\n')[0]));
             program.help();
         });
     }
@@ -53,23 +57,21 @@ async function processConnectQnaArgs(config) {
     else if (args.input != null) {
         Object.assign(args, JSON.parse(fs.readFileSync(args.input, 'utf8')));
     }
-    if (!args.kbid || !utils_1.uuidValidate(args.kbid))
-        throw new Error("bad or missing --kbid");
+    if (!args.kbId || !utils_1.uuidValidate(args.kbId))
+        throw new Error('bad or missing --kbId');
     if (!args.hasOwnProperty('name'))
-        throw new Error("missing --name");
+        throw new Error('missing --name');
     if (!args.subscriptionKey || !utils_1.uuidValidate(args.subscriptionKey))
-        throw new Error("bad or missing --subscriptionKey");
+        throw new Error('bad or missing --subscriptionKey');
+    if (!args.endpointKey || !utils_1.uuidValidate(args.endpointKey))
+        throw new Error('bad or missing --endpointKey');
+    if (!args.hostname || !validurl.isWebUri(args.hostname))
+        throw new Error('bad or missing --hostname');
     // add the service
-    let newService = {
-        type: BotConfig_1.ServiceType.QnA,
-        name: args.name,
-        id: args.kbid,
-        kbid: args.kbid,
-        subscriptionKey: args.subscriptionKey
-    };
+    let newService = new models_1.QnaMakerService(args);
     config.connectService(newService);
-    await config.Save();
-    process.stdout.write(`Connected ${newService.type}:${newService.name} ${newService.kbid}`);
+    await config.save();
+    process.stdout.write(`Connected ${newService.type}:${newService.name} ${newService.kbId}`);
     return config;
 }
 //# sourceMappingURL=msbot-connect-qna.js.map

@@ -4,21 +4,23 @@ import { ConnectedService } from './connectedService';
 export class QnaMakerService extends ConnectedService implements IQnAService {
     public readonly type = ServiceType.QnA;
     public id = '';
-    public kbid = '';
     public name = '';
+    public kbId = '';
     public subscriptionKey = '';
+    public hostname = '';
+    public endpointKey = '';
 
     constructor(source: Partial<IQnAService> = {}) {
         super(source);
-        const { kbid = '', name = '', subscriptionKey = '' } = source;
-        Object.assign(this, { kbid, name, subscriptionKey });
+        const { kbId = '', name = '', subscriptionKey = '', endpointKey = '', hostname = '' } = source;
+        Object.assign(this, { kbId, name, subscriptionKey, endpointKey, hostname });
     }
 
     public toJSON(): Partial<IQnAService> {
-        let { kbid, id, name, subscriptionKey } = this;
+        let { kbId, id, name, subscriptionKey, endpointKey, hostname } = this;
         if (!id) {
-            id = kbid;
+            id = kbId;
         }
-        return { kbid, name, type: ServiceType.QnA, subscriptionKey, id };
+        return { kbId, name, type: ServiceType.QnA, subscriptionKey, id, endpointKey, hostname };
     }
 }

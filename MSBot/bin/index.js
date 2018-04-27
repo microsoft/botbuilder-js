@@ -4,4 +4,6 @@ function __export(m) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./BotConfig"));
+__export(require("./schema"));
+__export(require("./models"));
 //# sourceMappingURL=index.js.map

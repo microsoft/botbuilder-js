@@ -1,39 +1,38 @@
 const {ServiceBase} = require('./serviceBase');
-
 class Knowledgebases extends ServiceBase {
     constructor() {
-        super('/knowledgebases/{knowledgeBaseID}');
+        super('/knowledgebases');
     }
 
     /**
-     * Publish all unpublished in the knowledgebase to the prod endpoint
-     */
-    publishKnowledgeBase(params) {
-        return this.createRequest('', params, 'put');
+    * 
+    */
+    getKnowledgebasesForUser(params) {
+        return this.createRequest('', params, 'get');
     }
-
     /**
-     * Add or delete QnA Pairs and / or URLs to an existing knowledge base.
-     */
-    updateKnowledgeBase(params, updateKnowledgeBase/* UpdateKnowledgeBase */) {
-        return this.createRequest('', params, 'patch', updateKnowledgeBase);
+    * 
+    */
+    replaceKnowledgebase(params , replaceKb/* ReplaceKbDTO */) {
+        return this.createRequest('', params, 'put', replaceKb);
     }
-
     /**
-     * Downloads all the data associated with the specified knowledge base.
-     */
-    async downloadKnowledgeBase(params) {
-        const response = await this.createRequest('', params, 'get');
-        const url = await response.json();
-        return fetch(url, {method: 'get'});
+    * 
+    */
+    publishKnowledgebase(params) {
+        return this.createRequest('', params, 'post');
     }
-
     /**
-     * Deletes the specified knowledge base and all data associated with it.
-     */
-    deleteKnowledgeBase(params) {
+    * 
+    */
+    deleteKnowledgebase(params) {
         return this.createRequest('', params, 'delete');
     }
+    /**
+    * 
+    */
+    getKnowledgebaseDetails(params) {
+        return this.createRequest('', params, 'get');
+    }
 }
-
 module.exports = Knowledgebases;

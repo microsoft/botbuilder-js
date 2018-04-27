@@ -1,5 +1,13 @@
+export declare enum ServiceType {
+    Endpoint = "endpoint",
+    AzureBotService = "abs",
+    Luis = "luis",
+    QnA = "qna",
+    Dispatch = "dispatch",
+    File = "file",
+}
 export interface IConnectedService {
-    type: string;
+    readonly type: ServiceType;
     name: string;
     id?: string;
 }
@@ -25,8 +33,10 @@ export interface IDispatchService extends IConnectedService {
     serviceIds: string[];
 }
 export interface IQnAService extends IConnectedService {
-    kbid: string;
     subscriptionKey: string;
+    kbId: string;
+    hostname: string;
+    endpointKey: string;
 }
 export interface IFileService extends IConnectedService {
     filePath: string;

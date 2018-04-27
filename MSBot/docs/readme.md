@@ -174,14 +174,14 @@ With the following options
 | -b, --bot <path>              | (Optional) path to bot file.  If omitted, local folder will look for a .bot file |
 | --secret <secret>             | (Required) bot file secret password for encrypting service secrets |
 | -n, --name <name>             | name of the QnA knowledgebase                                 |
-| -k, --kbid <kbid>                    |QnA Knowledgebase Id|
+| -k, --kbId <kbId>                    |QnA Knowledgebase Id|
 | --subscriptionKey <subscriptionKey> | SubscriptionKey for accessing the qna service|
 | -h, --help                    | output usage information                                     |
 
 Here is an example invocation:
 
 ```shell
-msbot connect qna --secret EncryptItPlease --name "QnA Sauce" --kbid "cfbc14a3-9f69-4fb1-8882-e6f333691a2a" --subscriptionKey "cfbc14a3-9f69-4fb1-8882-e6f333691a2a"
+msbot connect qna --secret EncryptItPlease --name "QnA Sauce" --kbId "cfbc14a3-9f69-4fb1-8882-e6f333691a2a" --subscriptionKey "cfbc14a3-9f69-4fb1-8882-e6f333691a2a"
 ```
 
 ### Connecting to Bot Dispatch

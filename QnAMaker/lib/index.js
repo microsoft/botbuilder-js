@@ -32,7 +32,7 @@ module.exports = async function qnamaker(config, serviceManifest, args, requestB
     const {identifier, operation} = serviceManifest;
     let requestBodyDataModel;
     // Allow untyped request bodies to seep through unchanged
-    if (requestBody && operation.entityType) {
+    if (requestBody && operation.entityType && dataModels[operation.entityType]) {
         requestBodyDataModel = dataModels[operation.entityType].fromJSON(requestBody);
     }
     // Create the target service and kick off the request.

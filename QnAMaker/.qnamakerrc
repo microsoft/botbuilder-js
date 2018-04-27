@@ -1,5 +1,6 @@
 {
-  "knowledgeBaseID": "346ae022-875d-40f1-b1f6-573b95088992",
-  "subscriptionKey": "5f9574efe74340948ca1b76aa241369a",
-  "endpointBasePath": "https://westus.api.cognitive.microsoft.com/qnamaker/v2.0"
+  "subscriptionKey": "38d6b3e086634afe9dee8fe45eac6b08",
+  "hostname": "https://qnatomlm.azurewebsites.net",
+  "endpointKey": "7f85d2ea-de8f-4671-866f-e607935cafb4",
+  "kbId": "bcf5d761-dd74-460a-851f-cc37312e22d3"
 }

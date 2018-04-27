@@ -65,15 +65,15 @@ class ${modelCfg.className} {
         Object.assign(this, {${modelCfg.props}});
     }
 }
-${modelCfg.className}.fromJSON = function(source) {
-    if (!source) {
+${modelCfg.className}.fromJSON = function(src) {
+    if (!src) {
         return null;
     }
-    if (Array.isArray(source)) {
-        return source.map(${modelCfg.className}.fromJSON);
+    if (Array.isArray(src)) {
+        return src.map(${modelCfg.className}.fromJSON);
     }
     ${modelCfg.assignments.toString().replace(/[,]/g, '')}
-    const {${modelCfg.props}} = source;
+    const {${modelCfg.props}} = src;
     return new ${modelCfg.className}({${modelCfg.props}});
 };
 
@@ -101,7 +101,7 @@ const propertyDocBlockTpl = (type, name) => `
  * @returns {string} The hydrated template string
  */
 const assignmentTpl = (rawType, name) => `
-    source.${name} = ${rawType}.fromJSON(source.${name}) || undefined;
+    src.${name} = ${rawType}.fromJSON(src.${name}) || undefined;
 `;
 
 /**
@@ -151,7 +151,7 @@ function addDefinitionFromExample(json, className) {
     className = pascalCase(className);
     const type = typeof json;
     const isArray = Array.isArray(json);
-    const definition = {type: isArray ? 'array' : type};
+    const definition = { type: isArray ? 'array' : type };
 
     if (!isArray && type === 'object') {
         const keys = Object.keys(json);
@@ -180,22 +180,22 @@ function addDefinitionFromExample(json, className) {
 // Builds the Service classes and luis.json
 const configsMap = {};
 Object.keys(swagger.paths).sort().forEach(pathName => {
-    const {root, node} = findRootAndNodeFromPath(pathName);
+    const { root, node } = findRootAndNodeFromPath(pathName);
     const fileName = root || node;
     const pathFragment = pathName.substr(pathName.indexOf(fileName) + fileName.length);
-    const {[pathName]: path} = swagger.paths;
+    const { [pathName]: path } = swagger.paths;
     const keys = Object.keys(path);
 
     let i = keys.length;
     while (i--) {
         const method = keys[i];
-        const {[method]: swaggerOperation} = path;
+        const { [method]: swaggerOperation } = path;
         // bail, we're deprecated - uncomment to include deprecated APIs
-        if (swaggerOperation.description.toLowerCase().includes('deprecated')) {
+        if (swaggerOperation.description && swaggerOperation.description.toLowerCase().includes('deprecated')) {
             continue;
         }
         const className = fileName.replace(/[\w]/, match => match.toUpperCase());
-        const cfg = configsMap[fileName] || {className, url: pathName, operations: {}};
+        const cfg = configsMap[fileName] || { className, url: pathName, operations: {} };
         const params = (swaggerOperation.parameters || []).filter(param => (!/(body)/.test(param.in)));
         // Pull out the operation name - this is used in the operationTpl
         // as the name for the method
@@ -208,12 +208,12 @@ Object.keys(swagger.paths).sort().forEach(pathName => {
             .replace(/( \w)/g, (...args) => args[2] ? args[0]
                 .trim()
                 .toUpperCase() : args[0]
-                .trim()
-                .toLowerCase());
+                    .trim()
+                    .toLowerCase());
 
         // Find the entity to send in the request. If a schema does not exist,
         // attempt to create one using the example.
-        const entityToConsume = findEntity(swaggerOperation) || {name: '', schema: {$ref: ''}};
+        const entityToConsume = findEntity(swaggerOperation) || { name: '', schema: { $ref: '' } };
         if (!entityToConsume.schema.$ref && entityToConsume.schema.example) {
             const entity = JSON.parse(entityToConsume.schema.example);
             entityToConsume.name = operationName;
@@ -236,7 +236,7 @@ Object.keys(swagger.paths).sort().forEach(pathName => {
             command: command.trim(),
             pathFragment: pathName.includes(pathFragment) ? '' : pathFragment,
             params,
-            description: swaggerOperation.description.replace(/[\r]/g, ''),
+            description: (swaggerOperation.description || '').replace(/[\r]/g, ''),
         };
 
         if (!operation.params.length) {
@@ -258,13 +258,13 @@ Object.keys(swagger.paths).sort().forEach(pathName => {
 const modelTypesByName = {};
 Object.keys((swagger.definitions || {})).forEach(key => {
     const def = swagger.definitions[key];
-    const {properties, items} = def;
+    const { properties, items } = def;
     if (items) {
         console.log(def);
     }
     if (properties) {
         const importsMap = {};
-        const model = {className: key, imports: [], props: [], assignments: [], docBlocks: []};
+        const model = { className: key, imports: [], props: [], assignments: [], docBlocks: [] };
         Object.keys(properties).forEach(propName => {
             const propDetails = properties[propName];
             const name = cc(propName);
@@ -275,13 +275,15 @@ Object.keys((swagger.definitions || {})).forEach(key => {
             // in the fromJSON() static
             if (propDetails.type === 'object') {
                 type = propDetails.$ref.split('/').pop();
-                model.imports.push(`const ${type} = require('./${name}');`);
+                if (type.toLowerCase() != name.toLowerCase())
+                    model.imports.push(`const ${type} = require('./${name}');`);
                 model.assignments.push(assignmentTpl(type, name));
             } else if (propDetails.type === 'array') {
                 const $ref = (propDetails.items.$ref || '').split('/').pop() || propDetails.items.type;
                 type = `${$ref}[]`;
                 if (!/^(string|integer|number|boolean)$/.test($ref) && !importsMap[$ref]) {
-                    model.imports.push(`const ${$ref} = require('./${cc($ref)}');\n`);
+                    if ($ref.toLowerCase() != cc($ref).toLowerCase())
+                        model.imports.push(`const ${$ref} = require('./${cc($ref)}');\n`);
                     model.assignments.push(assignmentTpl($ref, name));
                     importsMap[$ref] = true;
                 }
@@ -302,8 +304,8 @@ Object.keys(configsMap).forEach(fileName => {
     const cfg = configsMap[fileName];
     const clazz = classTpl(cfg);
     const path = `${fileName}`;
-    fs.outputFileSync(`generated/${path}.js`, clazz);
-    (classNames[fileName] || (classNames[fileName] = [])).push({path, name: cfg.className});
+    fs.outputFileSync(`lib/api/${path}.js`, clazz);
+    (classNames[fileName] || (classNames[fileName] = [])).push({ path, name: cfg.className });
 });
 
 // Writes the index.js files for each
@@ -312,7 +314,7 @@ let apiIndexJs = '';
 Object.keys(classNames).forEach(fileName => {
     apiIndexJs += `module.exports.${fileName} = require('./${fileName}');\n`;
 });
-fs.outputFileSync('generated/index.js', apiIndexJs);
+fs.outputFileSync('lib/api/index.js', apiIndexJs);
 
 // Hydrates the data model templates an
 // writes them to disk
@@ -320,12 +322,12 @@ let modelNames = [];
 Object.keys(modelTypesByName).forEach(key => {
     const modelCfg = modelTypesByName[key];
     const model = modelTpl(modelCfg);
-    fs.outputFileSync(`generated/dataModels/${cc(modelCfg.className)}.js`, model);
+    fs.outputFileSync(`lib/api/dataModels/${cc(modelCfg.className)}.js`, model);
     modelNames.push(modelCfg.className);
 });
 // Creates and writes the index.js for the data models
 const modelIndexJS = modelNames.sort().map(clazz => `module.exports.${clazz} = require('./${cc(clazz)}');`).join('\n');
 
-fs.outputFileSync('generated/dataModels/index.js', modelIndexJS);
+fs.outputFileSync('lib/api/dataModels/index.js', modelIndexJS);
 // Write the qnamaker.json
-fs.writeJsonSync('generated/qnamaker.json', configsMap);
+fs.writeJsonSync('lib/api/qnamaker.json', configsMap);

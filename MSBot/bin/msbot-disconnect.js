@@ -1,17 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const program = require("commander");
 const chalk = require("chalk");
+const program = require("commander");
 const BotConfig_1 = require("./BotConfig");
 program.Command.prototype.unknownOption = function (flag) {
     console.error(chalk.default.redBright(`Unknown arguments: ${flag}`));
     program.help();
 };
 program
-    .name("msbot disconnect")
-    .arguments("<service_id_or_Name>")
-    .description("disconnect a connected service by id or name")
-    .option('-b, --bot <path>', "path to bot file.  If omitted, local folder will look for a .bot file")
+    .name('msbot disconnect')
+    .arguments('<service_id_or_Name>')
+    .description('disconnect a connected service by id or name')
+    .option('-b, --bot <path>', 'path to bot file.  If omitted, local folder will look for a .bot file')
     .action((idOrName, actions) => {
     actions.idOrName = idOrName;
 });
@@ -24,7 +24,7 @@ else {
         BotConfig_1.BotConfig.LoadBotFromFolder(process.cwd())
             .then(processConnectAzureArgs)
             .catch((reason) => {
-            console.error(chalk.default.redBright(reason.toString().split("\n")[0]));
+            console.error(chalk.default.redBright(reason.toString().split('\n')[0]));
             program.help();
         });
     }
@@ -32,18 +32,18 @@ else {
         BotConfig_1.BotConfig.Load(args.bot)
             .then(processConnectAzureArgs)
             .catch((reason) => {
-            console.error(chalk.default.redBright(reason.toString().split("\n")[0]));
+            console.error(chalk.default.redBright(reason.toString().split('\n')[0]));
             program.help();
         });
     }
 }
 async function processConnectAzureArgs(config) {
     if (!args.idOrName) {
-        throw new Error("missing id or name of service to disconnect");
+        throw new Error('missing id or name of service to disconnect');
     }
     let removedService = config.disconnectServiceByNameOrId(args.idOrName);
     if (removedService != null) {
-        await config.Save();
+        await config.save();
         process.stdout.write(`Disconnected ${removedService.type}:${removedService.name} ${removedService.id}`);
     }
     return config;

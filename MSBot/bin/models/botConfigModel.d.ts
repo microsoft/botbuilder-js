@@ -4,6 +4,7 @@ export declare class BotConfigModel implements Partial<IBotConfig> {
     name: string;
     description: string;
     services: IConnectedService[];
+    secretKey: string;
     static serviceFromJSON(service: Partial<IConnectedService>): ConnectedService;
     static fromJSON(source?: Partial<IBotConfig>): BotConfigModel;
     toJSON(): Partial<IBotConfig>;

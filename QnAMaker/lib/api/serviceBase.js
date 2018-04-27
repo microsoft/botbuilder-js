@@ -1,4 +1,4 @@
-const {insertParametersFromObject} = require('../utils/insertParametersFromObject');
+const { insertParametersFromObject } = require('../utils/insertParametersFromObject');
 const deriveParamsFromPath = require('../utils/deriveParamsFromPath');
 
 /**
@@ -7,15 +7,17 @@ const deriveParamsFromPath = require('../utils/deriveParamsFromPath');
 class ServiceBase {
 
     /**
-     * @property {string} endpoint The endpoint for this service
+     * @property {string} relativeEndpoint The endpoint for this service
      */
 
     /**
      *
-     * @param {String} endpoint the endpoint for this service
+     * @param {String} relativeEndpoint the endpoint for this service
+     * @param {bool} useEndpoint (default is false) if true, use the endpoint service url, not the admin service url 
      */
-    constructor(endpoint) {
-        this.endpoint = endpoint;
+    constructor(relativeEndpoint, useEndpoint) {
+        this.relativeEndpoint = relativeEndpoint;
+        this.useEndpoint = (useEndpoint === true);
     }
 
     /**
@@ -29,17 +31,29 @@ class ServiceBase {
      * @returns {Promise<Response>} The promise representing the request
      */
     createRequest(pathFragment, params, method, dataModel = null) {
-        const {commonHeaders: headers, endpoint} = this;
-        const {endpointBasePath, knowledgeBaseID} = ServiceBase.config;
-        const tokenizedUrl = endpointBasePath + endpoint + pathFragment;
+        const { commonHeaders: headers, relativeEndpoint } = this;
+        const { hostname, kbId } = ServiceBase.config;
+
+        if (this.useEndpoint)
+            headers.Authorization = "EndpointKey " + ServiceBase.config.endpointKey || params.endpointKey;
+        else
+            headers['Ocp-Apim-Subscription-Key'] = ServiceBase.config.subscriptionKey || params.subscriptionKey;
+
+        let requestEndpoint;
+        if (this.useEndpoint)
+            requestEndpoint = params.hostname;
+        else
+            requestEndpoint = params.legacy ? "https://westus.api.cognitive.microsoft.com/qnamaker/v3.0" : "https://westus.api.cognitive.microsoft.com/qnamaker/v4.0";
+
+        const tokenizedUrl = requestEndpoint + relativeEndpoint + pathFragment;
         // Order is important since we want to allow the user to
         // override their config with the data in the params object.
-        params = Object.assign({}, (dataModel || {}), {knowledgeBaseID}, params);
+        params = Object.assign({}, (dataModel || {}), { kbId }, params);
         ServiceBase.validateParams(tokenizedUrl, params);
 
         let URL = insertParametersFromObject(tokenizedUrl, params);
         if (method === 'get' && ('skip' in params || 'take' in params)) {
-            const {skip, take} = params;
+            const { skip, take } = params;
             URL += '?';
             if (!isNaN(+skip)) {
                 URL += `skip=${~~skip}`;
@@ -49,19 +63,24 @@ class ServiceBase {
             }
         }
         const body = dataModel ? JSON.stringify(dataModel) : undefined;
-
-        return fetch(URL, {headers, method, body});
+        if (params.debug) {
+            console.log(`${method.toUpperCase()} ${URL}`);
+            if (headers)
+                console.log(`HEADERS:${JSON.stringify(headers)}`);
+            if (body)
+                console.log(body);
+        }
+        return fetch(URL, { headers, method, body });
     }
 
     /**
      * Headers that are common to all requests
      *
-     * @returns {{'Content-Type': string, 'Ocp-Apim-Subscription-Key': string}}
+     * @returns {{'Content-Type': string, 'Ocp-Apim-Subscription-Key': string, 'Authorization':string }}
      */
     get commonHeaders() {
         return {
             'Content-Type': 'application/json',
-            'Ocp-Apim-Subscription-Key': ServiceBase.config.subscriptionKey
         };
     }
 }
@@ -80,13 +99,14 @@ ServiceBase.validateParams = function (tokenizedUrl, params) {
         if (!(param in params)) {
             const error = new Error(`The required param "${param}" is missing.`);
             error.name = 'ArgumentError';
+            throw error;
         }
     });
 };
 /**
  * @type {*} The configuration object containing
- * the endpointBasePath, appId, versionId and authoringKey properties.
+ * the endpoint, appId, versionId and authoringKey properties.
  */
-ServiceBase.config = {endpointBasePath: '', appId: '', versionId: '', authoringKey: ''};
+ServiceBase.config = { hostname: '', kbId: '', endpointKey: '', subscriptionKey: '' };
 
-module.exports = {ServiceBase};
+module.exports = { ServiceBase };
