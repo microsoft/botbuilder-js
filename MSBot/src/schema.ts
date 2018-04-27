@@ -82,11 +82,17 @@ export interface IQnAService extends IConnectedService {
     // type=Servicestypes.QnA
     // id = appid for the QnA service
 
-    // kb id
-    kbid: string;
-
-    // subscriptionkey for calling api
+    // subscriptionkey for calling admin api
     subscriptionKey: string;
+
+    // kb id
+    kbId: string;
+
+    // hostname for private service endpoint Example: https://myqna.azurewebsites.net
+    hostname: string;
+
+    // endpointKey for querying the kb 
+    endpointKey: string;
 }
 
 export interface IFileService extends IConnectedService {

@@ -33,8 +33,10 @@ export interface IDispatchService extends IConnectedService {
     serviceIds: string[];
 }
 export interface IQnAService extends IConnectedService {
-    kbid: string;
     subscriptionKey: string;
+    kbId: string;
+    hostname: string;
+    endpointKey: string;
 }
 export interface IFileService extends IConnectedService {
     filePath: string;

@@ -22,6 +22,8 @@ const { getServiceManifest } = require('../lib/utils/argsUtil');
 const request = require('request-promise-native');
 const Knowledgebase = require('../lib/api/knowledgebase');
 const Endpointkeys = require('../lib/api/endpointkeys');
+const Operations = require('../lib/api/operations');
+const Delay = require('await-delay');
 
 let args;
 
@@ -72,37 +74,66 @@ async function runProgram() {
     // special case operations
     switch (serviceManifest.operation.methodAlias) {
         case "delete":
-            let answer = readlineSync.question(`Are you sure you would like to delete this knowledgebase? [no] `, { defaultInput: 'no' });
-            if (answer.trim()[0] == 'n') {
-                process.stdout.write('operation canceled');
-                return;
+            if (!args.f && !args.force) {
+                let kbResult = await new Knowledgebase().getKnowledgebaseDetails(config);
+                let kb = JSON.parse(await kbResult.text());
+                let answer = readlineSync.question(`Are you sure you would like to delete ${kb.name} [${kb.id}]? [no] `, { defaultInput: 'no' });
+                if (answer.trim()[0] == 'n') {
+                    process.stdout.write('operation canceled');
+                    return;
+                }
             }
             break;
     }
 
-    const result = await qnamaker(config, serviceManifest, args, requestBody);
+    let result = await qnamaker(config, serviceManifest, args, requestBody);
     if (result.error) {
         throw new Error(JSON.stringify(result.error, null, 4));
     }
 
     // special case response
     switch (serviceManifest.operation.name) {
-        case "createKnowledgeBase": {
+        case "getKnowledgebaseDetails": {
+            config.kbId = result.id;
+            let kb = await updateKbId(config);
             if (args.msbot) {
                 process.stdout.write(JSON.stringify({
                     type: "qna",
-                    name: `QnA KB`,
-                    id: result.kbId,
-                    kbId: result.kbId,
-                    subscriptionKey: config.subscriptionKey
+                    name: kb.name,
+                    id: kb.id,
+                    kbId: kb.id,
+                    subscriptionKey: config.subscriptionKey,
+                    endpointKey: config.endpointKey,
+                    hostname: kb.hostName
                 }, null, 2));
             } else {
                 process.stdout.write(JSON.stringify(result, null, 2));
             }
+        }
+            break;
+
+        case "createKnowledgebase": {
+            result = await waitForOperationSucceeded(config, result);
+            let kbId = result.resourceLocation.split('/')[2];
+            config.kbId = kbId;
+            let kb = await updateKbId(config);
+            if (args.msbot) {
+                process.stdout.write(JSON.stringify({
+                    type: "qna",
+                    name: kb.name,
+                    id: kb.id,
+                    kbId: kb.id,
+                    subscriptionKey: config.subscriptionKey,
+                    endpointKey: config.endpointKey,
+                    hostname: config.hostname
+                }, null, 2));
+
+            } else {
+                process.stdout.write(JSON.stringify(result, null, 2));
+            }
             if (!(args.q || args.quiet) && !args.msbot) {
-                let answer = readlineSync.question(`\nWould you like to save ${result.kbId} in your .qnamakerrc so that future commands will be with this KB? [yes]`, { defaultInput: 'yes' });
+                let answer = readlineSync.question(`\nWould you like to save ${kb.name} ${kb.id} in your .qnamakerrc so that future commands will be with this KB? [yes]`, { defaultInput: 'yes' });
                 if (answer[0] == 'y') {
-                    config.knowledgeBaseID = result.kbId;
                     await fs.writeJson(path.join(process.cwd(), '.qnamakerrc'), config, { spaces: 2 });
                     process.stdout.write('.qnamakerrc updated');
                 }
@@ -140,7 +171,7 @@ async function runProgram() {
 /**
  * Walks the user though the creation of the .qnamakerrc
  * file and writes it to disk. The knowledge base ID and subscription key
- * are optional but if omitted, --knowledgeBaseID and --subscriptionKey
+ * are optional but if omitted, --\knowledgeBaseID and --subscriptionKey
  * flags may be required for some commands.
  *
  * @returns {Promise<*>}
@@ -200,7 +231,10 @@ async function updateKbId(config) {
     config.endpointKey = JSON.parse(await response.text()).primaryEndpointKey;
 
     response = await new Knowledgebase().getKnowledgebaseDetails(config);
-    config.hostname = JSON.parse(await response.text()).hostName;
+    let kb = JSON.parse(await response.text());
+    config.hostname = kb.hostName;
+
+    return kb;
 }
 
 /**
@@ -380,6 +414,18 @@ async function handleSetCommand(args, config) {
     await fs.writeJson(path.join(process.cwd(), '.qnamakerrc'), config, { spaces: 2 });
     process.stdout.write(JSON.stringify(config, null, 4));
     return true;
+}
+
+async function waitForOperationSucceeded(config, result) {
+    while (result.operationState != "Succeeded") {
+        let opResult = await new Operations().getOperationDetails({ subscriptionKey: config.subscriptionKey, operationId: result.operationId });
+        result = JSON.parse(await opResult.text());
+
+        if (result.operationState == "Succeeded")
+            break;
+        await Delay(1000);
+    }
+    return result;
 }
 
 runProgram()

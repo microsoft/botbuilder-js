@@ -6,6 +6,7 @@ import { BotConfig } from './BotConfig';
 import { QnaMakerService } from './models';
 import { IQnAService, ServiceType } from './schema';
 import { uuidValidate } from './utils';
+import * as validurl from 'valid-url';
 
 program.Command.prototype.unknownOption = function (flag: any) {
     console.error(chalk.default.redBright(`Unknown arguments: ${flag}`));
@@ -22,9 +23,11 @@ interface ConnectQnaArgs extends IQnAService {
 program
     .name('msbot connect qna')
     .description('Connect the bot to a QnA knowledgebase')
-    .option('-n, --name <name>', 'name for the QNA database')
-    .option('-k, --kbid <kbid>', 'QnA Knowledgebase Id ')
-    .option('--subscriptionKey <subscriptionKey>', 'subscriptionKey for calling the QnA service\n')
+    .option('-n, --name <name>', 'name for the QNA knowledgebase')
+    .option('-k, --kbId <kbId>', 'QnA Knowledgebase Id ')
+    .option('--subscriptionKey <subscriptionKey>', 'Azure Cognitive Service subscriptionKey/accessKey for calling the QnA management API (from azure portal)')
+    .option('--endpointKey <endpointKey>', 'endpointKey for calling the QnA service (from https://qnamaker.ai portal or qnamaker list endpointkeys command)')
+    .option('--hostname <url>', 'url for private QnA service (example: https://myqna.azurewebsites.net)')
 
     .option('-b, --bot <path>', 'path to bot file.  If omitted, local folder will look for a .bot file')
     .option('--input <jsonfile>', 'path to arguments in JSON format { id:\'\',name:\'\', ... }')
@@ -68,8 +71,8 @@ async function processConnectQnaArgs(config: BotConfig): Promise<BotConfig> {
         Object.assign(args, JSON.parse(fs.readFileSync(<string>args.input, 'utf8')));
     }
 
-    if (!args.kbid || !uuidValidate(args.kbid))
-        throw new Error('bad or missing --kbid');
+    if (!args.kbId || !uuidValidate(args.kbId))
+        throw new Error('bad or missing --kbId');
 
     if (!args.hasOwnProperty('name'))
         throw new Error('missing --name');
@@ -77,11 +80,17 @@ async function processConnectQnaArgs(config: BotConfig): Promise<BotConfig> {
     if (!args.subscriptionKey || !uuidValidate(args.subscriptionKey))
         throw new Error('bad or missing --subscriptionKey');
 
+    if (!args.endpointKey || !uuidValidate(args.endpointKey))
+        throw new Error('bad or missing --endpointKey');
+
+    if (!args.hostname || !validurl.isWebUri(args.hostname))
+        throw new Error('bad or missing --hostname');
+
     // add the service
     let newService = new QnaMakerService(args);
     config.connectService(newService);
 
     await config.save();
-    process.stdout.write(`Connected ${newService.type}:${newService.name} ${newService.kbid}`);
+    process.stdout.write(`Connected ${newService.type}:${newService.name} ${newService.kbId}`);
     return config;
 }

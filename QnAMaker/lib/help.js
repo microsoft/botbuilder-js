@@ -244,7 +244,7 @@ function getAllCommands() {
 
     let sections = [];
     for (resourceType of resourceTypes) {
-        tables[resourceType].sort((a,b) => a[0].localeCompare(b[0]));
+        tables[resourceType].sort((a, b) => a[0].localeCompare(b[0]));
         sections.push({
             head: chalk.white.bold(resourceType),
             table: tables[resourceType]
@@ -292,8 +292,7 @@ function getHelpContentsForService(serviceManifest) {
                 ]
             };
         }
-        if (operation.name == 'createKnowledgeBase') {
-            //            paramsHelp.table.push([chalk.cyan.bold(`-q, --quiet`), `(OPTIONAL) disable prompt for saving to .qnamakerrc file`]);
+        if (operation.name == 'createKnowledgeBase' || operation.name == 'getKnowledgebaseDetails') {
             paramsHelp.table.push([chalk.cyan.bold(`--msbot`), `(OPTIONAL) Format the output as json for piping into msbot connect qna command`]);
         }
         if (paramsHelp.table.length > 0)
