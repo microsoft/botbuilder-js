@@ -12,12 +12,12 @@ Language Understanding ([LUIS.ai](https://luis.ai/)) allows your application to 
 ### As a cli
 Make sure you have node >=8.5 and npm installed on your machine. then use:
 
-`npm i -g luis-apis`
+`npm install -g luis-apis`
 
 ### As a library
 The LUIS apis can be installed and used as a library in any Node or UI JavaScript projects for the browser.
 
-`npm i -s luis-apis`
+`npm install -s luis-apis`
 
 You can then import and use service classes specific to the endpoint and operation you wish to call.
 For example, to get the first 5 apps, do the following:
@@ -81,111 +81,297 @@ ServiceBase.config = {
 ## Cli Usage
 Basic usage: `luis <action> <resource> <args...>`
 
-To get available actions you can simply do
-```
->luis -h
-LUIS Command Line Interface - © 2018 Microsoft Corporation
-
-Available actions are:
- add                                     add a resource
- clone                                   clone a resource
- delete                                  delete a resource
- export                                  export resources
- get                                     get a resource
- import                                  import resources
- list                                    list resources
- publish                                 publish resource
- suggest                                 suggest resources
- train                                   train resource
- update                                  update resources
-
-Configuration and Overrides:
- --appId                                 Specifies the public LUIS application id. Overrides the .luisrc value and the LUIS_APP_ID environment variable.
- --authoringKey                          Specifies the LUIS authoring  key (from luis.ai portal user settings page). Overrides the .luisrc value and the LUIS_AUTHORING_KEY environment variable.
- --versionId                             Specifies the version id. Overrides the .luisrc value and the LUIS_VERSION_ID environment variable.
- --endpointBasePath                      Specifies the base URI for all requests. Overrides the .luisrc value and the LUIS_ENDPOINT_BASE_PATH environment variable.
-
-Global Arguments:
- --help,    -h                           Prints this help file.
- --!                                     Dumps absolutely all documented commands to the console with descriptions
- --init,    -i                           Initializes the .luisrc file with settings specific to your LUIS instance
- --version, -v                           Prints the version of this cli tool
-```
 
 
+### Application
+| command | Description |
+|---------|-------------|
+|`luis add application --in applicationCreateObject.json`     | Creates a new LUIS app.|
+|`luis delete application --appId <string>`     |Deletes an application.|
+|`luis get application --appId <string>`     |Gets the application info.|
+|`luis import application --in jSONApp.json --appName <string>`     | Imports an application to LUIS, the application's JSON should be included in the request body. Returns new application ID.|
+|`luis update application --in applicationUpdateObject.json --appId <string>`     |  Updates the name or description of the application.|
 
-To get the resources that an action can perform on you add the resource like this:
+### Applications
+| command | Description |
+|---------|-------------|
+|`luis list applications  --skip <integer> --take <integer>`     | Lists all of the user applications.|
 
-```
->luis add --help
-C:\source\github\botbuilder-tools\LUIS>luis list --help
-LUIS Command Line Interface - © 2018 Microsoft Corporation
+### Assistants
+| command | Description |
+|---------|-------------|
+|`luis list assistants`     |  Gets the endpoint URLs for the prebuilt Cortana applications.|
 
-Available resources for list:
- applications
- assistants
- closedLists
- compositeEntities
- cultures
- customPrebuiltDomainEntities
- customPrebuiltDomains
- customPrebuiltModels
- domains
- endpoints
- entities
- examples
- externalKeys
- features
- hierarchicalEntities
- intents
- patterns
- permissions
- phraselists
- prebuiltEntities
- querylogs
- usageScenarios
- versions
+### ClosedListEntity
+| command | Description |
+|---------|-------------|
+|`luis add closedlistentity --in closedListModelCreateObject.json`     | Adds a list entity to the LUIS app.|
+|`luis delete closedlistentity --clEntityId <string>`     |  Deletes a closed list model from the application.|
+|`luis get closedlistentity --clEntityId <string>`     |  Gets information of a closed list model.|
+|`luis update closedlistentity --in closedListModelPatchObject.json --clEntityId <string>`     | Adds a batch of sublists to an existing closedlist.|
+|`luis update closedlistentity --in closedListModelUpdateObject.json --clEntityId <string>`     |Updates the closed list model.|
 
-Configuration and Overrides:
- --appId                                 Specifies the public LUIS application id. Overrides the .luisrc value and the LUIS_APP_ID environment variable.
- --authoringKey                          Specifies the LUIS authoring  key (from luis.ai portal user settings page). Overrides the .luisrc value and the LUIS_AUTHORING_KEY environment variable.
- --versionId                             Specifies the version id. Overrides the .luisrc value and the LUIS_VERSION_ID environment variable.
- --endpointBasePath                      Specifies the base URI for all requests. Overrides the .luisrc value and the LUIS_ENDPOINT_BASE_PATH environment variable.
+### ClosedLists
+| command | Description |
+|---------|-------------|
+|`luis list closedlists --skip <integer> --take <integer>`     |Gets information about the closedlist models.|
 
-Global Arguments:
- --help,    -h                           Prints this help file.
- --!                                     Dumps absolutely all documented commands to the console with descriptions
- --init,    -i                           Initializes the .luisrc file with settings specific to your LUIS instance
- --version, -v                           Prints the version of this cli tool
-```
+### ClosedListsSublist
+| command | Description |
+|---------|-------------|
+|`luis add closedListsSublist --in wordListCreateObject.json --clEntityId <string>`     |  Adds a list to an existing closed list|
+|`luis update closedListsSublist --in wordListBaseUpdateObject.json --clEntityId <string> --subListId <string>`     | Updates one of the closed list's sublists|
 
-To get help for an individual operation, add the resource with -h like this:
+### CompositeChildEntity
+| command | Description |
+|---------|-------------|
+|`luis add compositeChildEntity children  --in body.json --cEntityId <string>`     | Creates a single child in an existing composite entity model.|
+|`luis delete compositeChildEntity  --cEntityId <string> --cChildId <string>`     |  Deletes a composite entity extractor child from the application.|
 
-```
->luis list applications -h
-LUIS Command Line Interface - © 2018 Microsoft Corporation
+### CompositeEntities
+| command | Description |
+|---------|-------------|
+|`luis list compositeEntities --skip <integer> --take <integer>`     |Gets information about the composite entity models.|
 
-Lists all of the user applications.
+### CompositeEntity
+| command | Description |
+|---------|-------------|
+|`luis add compositeEntity --in hierarchicalModelCreateObject.json`     |Adds a composite entity extractor to the application.|
+|`luis delete compositeEntity --cEntityId <string>`     | Deletes a composite entity extractor from the application.|
+|`luis get compositeEntity --cEntityId <string>`     | Gets information about the composite entity model.|
+|`luis update compositeEntity --in hierarchicalModelUpdateObject.json --cEntityId <string>`     |Updates the composite entity extractor.|
 
-Usage:
-luis list applications  --skip <integer> --take <integer>
+### Cultures
+| command | Description |
+|---------|-------------|
+|`luis list cultures`     | Gets the supported LUIS application cultures.|
 
-Command arguments are:
- --skip <integer>                        The number of entries to skip. Default value is 0.
- --take <integer>                        The number of entries to return. Maximum page size is 500. Default is 100.
+### CustomPrebuiltDomain
+| command | Description |
+|---------|-------------|
+|`luis add customPrebuiltDomain --in prebuiltDomainCreateBaseObject.json`     |Adds a customizable prebuilt domain along with all of its models to this application.|
+|`luis add customprebuiltdomain --in prebuiltDomainCreateObject.json`     | Adds a prebuilt domain along with its models as a new application. Returns new application ID.|
+|`luis delete customPrebuiltDomain --domainName <string>`     | Deletes a prebuilt domain's models from the application.|
+|`luis get customprebuiltdomain --culture <string>`     | Gets all the available custom prebuilt domains for a specific culture|
 
-Configuration and Overrides:
- --appId                                 Specifies the public LUIS application id. Overrides the .luisrc value and the LUIS_APP_ID environment variable.
- --authoringKey                          Specifies the LUIS authoring  key (from luis.ai portal user settings page). Overrides the .luisrc value and the LUIS_AUTHORING_KEY environment variable.
- --versionId                             Specifies the version id. Overrides the .luisrc value and the LUIS_VERSION_ID environment variable.
- --endpointBasePath                      Specifies the base URI for all requests. Overrides the .luisrc value and the LUIS_ENDPOINT_BASE_PATH environment variable.
+### CustomPrebuiltDomainEntities
+| command | Description |
+|---------|-------------|
+|`luis list customPrebuiltDomainEntities`     |  Gets all custom prebuilt entities information of this application|
 
-Global Arguments:
- --help,    -h                           Prints this help file.
- --!                                     Dumps absolutely all documented commands to the console with descriptions
- --init,    -i                           Initializes the .luisrc file with settings specific to your LUIS instance
- --version, -v                           Prints the version of this cli tool
-```
+### CustomPrebuiltDomainEntity
+| command | Description |
+|---------|-------------|
+|`luis add customPrebuiltDomainEntity --in prebuiltDomainModelCreateObject.json`     |  Adds a custom prebuilt entity model to the application|
 
+### CustomPrebuiltDomains
+| command | Description |
+|---------|-------------|
+|`luis list customprebuiltdomains`     |Gets all the available custom prebuilt domains for all cultures|
 
+### CustomPrebuiltIntent
+| command | Description |
+|---------|-------------|
+|`luis add customPrebuiltIntent --in prebuiltDomainModelCreateObject.json`     |  Adds a custom prebuilt intent model to the application|
+
+### CustomPrebuiltIntents
+| command | Description |
+|---------|-------------|
+|`luis get customPrebuiltIntents`     | Gets custom prebuilt intents information of this application|
+
+### CustomPrebuiltModels
+| command | Description |
+|---------|-------------|
+|`luis list customPrebuiltModels`     | Gets all custom prebuilt models information of this application|
+
+### Domains
+| command | Description |
+|---------|-------------|
+|`luis list domains`     |  Gets the available application domains.|
+
+### Endpoints
+| command | Description |
+|---------|-------------|
+|`luis list endpoints --appId <string>`     | Returns the available endpoint deployment regions and urls|
+
+### Entities
+| command | Description |
+|---------|-------------|
+|`luis add entity --in modelCreateObject.json`     |Adds an entity extractor to the application.|
+|`luis list entities --skip <integer> --take <integer>`     |Gets information about the entity models.|
+|`luis suggest entities  --entityId <string> --take <integer>`     |  Suggests examples that would improve the accuracy of the entity model.|
+
+### Entity
+| command | Description |
+|---------|-------------|
+|`luis delete entity --entityId <string>`     |  Deletes an entity extractor from the application.|
+|`luis get entity --entityId <string>`     |  Gets information about the entity model.|
+|`luis update entity --in modelUpdateObject.json --entityId <string>`     | Updates the name of an entity extractor.|
+
+### Example
+| command | Description |
+|---------|-------------|
+|`luis add example --in exampleLabelObject.json`     | Adds a labeled example to the application.|
+|`luis delete example --exampleId <integer>`     |  Deletes the label with the specified ID.|
+
+### Examples
+| command | Description |
+|---------|-------------|
+|`luis add examples --in exampleLabelObjectArray.json`     |  The maximum batch size is 100 items. If the item has the ExampleId and a value between 0 - 99, the returned result will also include the ExampleId. This is helpful if items have errors. Some items can pass while others fail. The returned result will indicate each item's status.|
+|`luis list examples --skip <integer> --take <integer>`     |Returns examples to be reviewed.|
+
+### ExternalKey
+| command | Description |
+|---------|-------------|
+|`luis update externalKeys --in externalKeyUpdateObject.json --appId <string> --versionId <string>`     | Assigns an external API key to the given application according to the specified key type.|
+
+### ExternalKeys
+| command | Description |
+|---------|-------------|
+|`luis list externalKeys --appId <string> --versionId <string>`     | Gets the given application versions's external keys.|
+
+### Features
+| command | Description |
+|---------|-------------|
+|`luis list features --skip <integer> --take <integer>`     |Gets all application version features.|
+
+### HierarchicalChildEntity
+| command | Description |
+|---------|-------------|
+|`luis add hierarchicalChildEntity  --in body.json --hEntityId <string>`     | Creates a single child in an existing hierarchical entity model.|
+|`luis delete hierarchicalChildEntity  --hEntityId <string> --hChildId <string>`     |  Deletes a hierarchical entity extractor child from the application.|
+|`luis get hierarchicalChildEntity --hEntityId <string> --hChildId <string>`     |Gets information about the hierarchical entity child model.|
+|`luis update hierarchicalChildEntity --in body.json --hEntityId <string> --hChildId <string>`     |Renames a single child in an existing hierarchical entity model.|
+
+### HierarchicalEntities
+| command | Description |
+|---------|-------------|
+|`luis list hierarchicalEntities --skip <integer> --take <integer>`     |Gets information about the hierarchical entity models.|
+
+### HierarchicalEntity
+| command | Description |
+|---------|-------------|
+|`luis add hierarchicalEntity --in hierarchicalModelCreateObject.json`     |Adds a hierarchical entity extractor to the application version.|
+|`luis delete hierarchicalEntity --hEntityId <string>`     | Deletes a hierarchical entity extractor from the application version.|
+|`luis get hierarchicalEntity --hEntityId <string>`     | Gets information about the hierarchical entity model.|
+|`luis update hierarchicalEntity --in hierarchicalModelUpdateObject.json --hEntityId <string>`     |Updates the name and children of a hierarchical entity model.|
+
+### Intent
+| command | Description |
+|---------|-------------|
+|`luis add intent --in modelCreateObject.json`     |Adds an intent classifier to the application.|
+|`luis delete intent --intentId <string>`     |  Deletes an intent classifier from the application.|
+|`luis get intent --intentId <string>`     |  Gets information about the intent model.|
+|`luis update intent --in modelUpdateObject.json --intentId <string>`     | Updates the name of an intent classifier.|
+
+### Intents
+| command | Description |
+|---------|-------------|
+|`luis list intents --skip <integer> --take <integer>`     | Gets information about the intent models.|
+|`luis suggest intents --intentId <string> --take <integer>`     | Suggests examples that would improve the accuracy of the intent model.|
+
+### Pattern
+| command | Description |
+|---------|-------------|
+|`luis add pattern --in patternCreateObject.json`     |Creates a new pattern feature.|
+|`luis delete pattern --patternId <integer>`     |  Deletes a pattern feature from an application version.|
+|`luis get pattern --patternId <integer>`     |  Gets pattern feature info.|
+|`luis update pattern --in patternUpdateObject.json --patternId <integer>`     |  Updates the pattern, the name and the state of the pattern feature.|
+
+### Patterns
+| command | Description |
+|---------|-------------|
+|`luis list patterns --skip <integer> --take <integer>`     |Gets all application version pattern features.|
+
+### Permissions
+| command | Description |
+|---------|-------------|
+|`luis add permissions --in body.json`     |Users are added using their email address.|
+|`luis delete permissions --in body.json`     |Users are removed using their email address.|
+|`luis list permissions`     | Gets the list of user emails that have permissions to access your application.|
+|`luis update permissions  --in body.json`     | If an empty list is sent, all access to other users will be removed.|
+
+### Phraselist
+| command | Description |
+|---------|-------------|
+|`luis add phraselist --in phraselistCreateObject.json`     |Creates a new phraselist feature.|
+|`luis delete phraselist --phraselistId <integer>`     |  Deletes a phraselist feature from an application.|
+|`luis get phraselist --phraselistId <integer>`     |  Gets phraselist feature info.|
+|`luis update phraselist --in phraselistUpdateObject.json --phraselistId <integer>`     |  Updates the phrases, the state and the name of the phraselist feature.|
+
+### Phraselists
+| command | Description |
+|---------|-------------|
+|`luis list phraselists --skip <integer> --take <integer>`     |Gets all application phraselist features.|
+
+### PrebuiltEntities
+| command | Description |
+|---------|-------------|
+|`luis list prebuiltEntities`     |  Gets all the available prebuilt entities for the application based on the application's culture.|
+|`luis list prebuiltEntities --skip <integer> --take <integer>`     | Gets information about the prebuilt entity models.|
+
+### PrebuiltEntity
+| command | Description |
+|---------|-------------|
+|`luis delete prebuiltEntity --prebuiltId <string>`     | Deletes a prebuilt entity extractor from the application.|
+|`luis get prebuiltEntity --prebuiltId <string>`     | Gets information about the prebuilt entity model.|
+
+### PrebuiltEntityList
+| command | Description |
+|---------|-------------|
+|`luis add prebuiltEntityList --in prebuiltExtractorNames.json`     | Adds a list of prebuilt entity extractors to the application.|
+
+### Querylogs
+| command | Description |
+|---------|-------------|
+|`luis list querylogs --appId <string>`     | Gets the query logs of the past month for the application.|
+
+### Settings
+| command | Description |
+|---------|-------------|
+|`luis get settings --appId <string>`     |Get the application settings|
+|`luis update settings --in applicationSettingUpdateObject.json --appId <string>`     | Updates the application settings|
+
+### SublistEntity
+| command | Description |
+|---------|-------------|
+|`luis delete sublistEntity  --clEntityId <string> --subListId <integer>`     |Deletes a sublist of a specified list entity.|
+
+### TrainingStatus
+| command | Description |
+|---------|-------------|
+|`luis get trainingStatus`     |  training status.|
+
+### UnlabeledUtterance
+| command | Description |
+|---------|-------------|
+|`luis delete unlabeledutterance --in body.json --appId <string> --versionId <string>`     |  Deleted an unlabelled utterance.|
+
+### UsageScenarios
+| command | Description |
+|---------|-------------|
+|`luis list usagescenarios`     | Gets the application available usage scenarios.|
+
+### Version
+| command | Description |
+|---------|-------------|
+|`luis clone version --in taskUpdateObject.json --appId <string> --versionId <string>`     |  Creates a new version equivalent to the current snapshot of the selected application version.|
+|`luis delete versions --appId <string> --versionId <string>`     |Deletes an application version.|
+|`luis export version --appId <string> --versionId <string>`     | Exports a LUIS application to JSON format.|
+|`luis get version --appId <string> --versionId <string>`     | Gets the task info.|
+|`luis import version  --in jSONApp.json --appId <string> --versionId <string>`     |Imports a new version into a LUIS application, the version's JSON should be included in in the request body.|
+|`luis publish version --in applicationPublishObject.json --appId <string> --versionId <version> --region <region>`     |Publishes a specific version of the application.|
+|`--staging`     |--staging|
+|`luis train version`     | This request initiates a request asynchronously. To determine whether the training request is successful, use command: LUIS get status **Note**: The application version is not fully trained unless all the models (intents and entities) are trained successfully or are up to date. To verify training success, get the training status at least once after training is complete.|
+|`luis update version --in taskUpdateObject.json --appId <string> --versionId <string>`     | Updates the name or description of the application version.|
+
+### VersionModels
+| command | Description |
+|---------|-------------|
+|`luis list versionModels --skip <integer> --take <integer>`     | Gets information about the application version models.|
+
+### Versions
+| command | Description |
+|---------|-------------|
+|`luis list versions --appId <string> --skip <integer> --take <integer>`     | Gets the application versions info.|
 
