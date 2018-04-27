@@ -105,9 +105,9 @@ async function getHelpContents(args) {
 let configSection = {
     head: 'Configuration and Overrides:',
     table: [
-        [chalk.cyan.bold('--subscriptionKey <key>'), 'Specifies the qnamaker ocp-apim-subscription key (from qnamaker.ai portal user settings page). Overrides the .qnamakerrc value and the QNAMAKER_SUBSCRIPTION_KEY environment variable.'],
+        [chalk.cyan.bold('--subscriptionKey <key>'), 'Specifies the qnamaker subscription key/access keys (found on the Cognitive Services Azure portal page under "access keys"). Overrides the .qnamakerrc value and the QNAMAKER_SUBSCRIPTION_KEY environment variable.'],
         [chalk.cyan.bold('--hostname <url>'), 'Specifies the url for your private QnA service. Overrides the .qnamakerrc value and the QNAMAKER_HOSTNAME environment variable.'],
-        [chalk.cyan.bold('--endpointKey <key>'), 'Specifies the endpoint key for your private QnA service. Overrides the .qnamakerrc value and the QNAMAKER_ENDPOINTKEY environment variable.'],
+        [chalk.cyan.bold('--endpointKey <key>'), 'Specifies the endpoint key for your private QnA service.(from qnamaker.ai portal user settings page). Overrides the .qnamakerrc value and the QNAMAKER_ENDPOINTKEY environment variable.'],
         [chalk.cyan.bold('--kbId <kbId>'), 'Specifies the active qnamaker knowledgebase id. Overrides the .qnamakerrc value and the QNAMAKER_KBID environment variable.'],
     ]
 };
