@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const fsx = require("fs-extra");
 const chalk = require("chalk");
 const program = require("commander");
 const readline = require("readline-sync");
@@ -23,8 +24,12 @@ program
 });
 let args = program.parse(process.argv);
 if (!args.quiet) {
-    while (!args.hasOwnProperty('name') || args.name.length == 0) {
+    let exists = true;
+    while (((!args.hasOwnProperty('name') || args.name.length == 0)) || exists) {
         args.name = readline.question(`What name would you like for your bot? `);
+        exists = fsx.existsSync(`${args.name}.bot`);
+        if (exists)
+            console.log(`${args.name}.bot already exists`);
     }
     if (!args.secret || args.secret.length == 0) {
         let answer = readline.question(`Would you to secure your bot keys with a secret? [no]`);

@@ -39,7 +39,7 @@ export class BotConfig extends BotConfigModel {
         if (files.any()) {
             return await BotConfig.Load(<string>files.first(), secret);
         }
-        throw new Error(`no bot file found in ${folder}`);
+        throw new Error(`Error: no bot file found in ${folder}. Choose a different location or use msbot init to create a .bot file."`);
     }
 
     // load the config file

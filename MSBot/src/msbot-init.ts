@@ -1,3 +1,4 @@
+import * as fsx from 'fs-extra';
 import * as chalk from 'chalk';
 import * as program from 'commander';
 import * as readline from 'readline-sync';
@@ -36,8 +37,12 @@ let args: InitArgs = <InitArgs><any>program.parse(process.argv);
 
 if (!args.quiet) {
 
-    while (!args.hasOwnProperty('name') || args.name.length == 0) {
+    let exists = true;
+    while (((!args.hasOwnProperty('name') || args.name.length == 0)) || exists) {
         args.name = readline.question(`What name would you like for your bot? `);
+        exists = fsx.existsSync(`${args.name}.bot`);
+        if (exists)
+            console.log(`${args.name}.bot already exists`);
     }
 
     if (!args.secret || args.secret.length == 0) {
@@ -67,7 +72,7 @@ if (!args.quiet) {
         }
     }
 
-    while (args.appId && args.appId.length > 0 && ( !args.appPassword || args.appPassword.length == 0 )) {
+    while (args.appId && args.appId.length > 0 && (!args.appPassword || args.appPassword.length == 0)) {
         args.appPassword = readline.question(`What is your Msa Application password for ${args.appId}? `, {
             defaultInput: ''
         });
