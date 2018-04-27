@@ -26,31 +26,31 @@ You can then import and use service classes specific to the endpoint and operati
 
 QnA Maker cli for interacting with the QnA Maker api - © 2018 Microsoft Corporation
 
-| Command | Description |
-|---------|-------------|
-| **Alterations** | |
-|`qnamaker list alterations`     |  Downloads all word alterations (synonyms) that have been automatically mined or added by the user.|
-|`qnamaker replace alterations --in wordAlterations.json`     |Replaces word alterations (synonyms) for the KB with the give records.|
-| **Endpointkeys** | |
-|`qnamaker list endpointkeys`     | list all the currently valid endpointKeys for querying your private endpoint|
-|`qnamaker refresh endpointkeys --keyType <string>`     |Re-generates an endpoint key, in case you suspect your keys have been compromised|
-| **Kb** | |
-|`qnamaker create kb --in createKbPayload.json`     | Create a new knowledgebase|
-|`qnamaker delete kb --kbId <string>`     |  Delete a knowledgebase by id|
-|`qnamaker export kb --kbId <string> --environment`     |qnamaker export kb --kbId <string> --environment|
-|`<string>`     |<string>|
-|`qnamaker get kb --kbId <string>`     |  Get metadata about a knowledgebase|
-|`qnamaker publish kb --kbId <string>`     | Publish all unpublished in the knowledgebase to the prod endpoint|
-|`qnamaker replace kb --in replaceKb.json --kbId <string>  Replace a knowledgebase contents with new contents`     |qnamaker replace kb --in replaceKb.json --kbId <string>  Replace a knowledgebase contents with new contents|
-|`qnamaker update kb --in updateKb.json --kbId <string>`     | Add or delete QnA Pairs and / or URLs to an existing knowledge base|
-| **Kbs** | |
-|`qnamaker list kbs`     | List all of your knowledgebases|
-| **Legacykb** | |
-|`qnamaker export legacykb --kbId <legacyKB>`     |Export legacy knowledgebase (requires legacy --kbid and --subscriptionKey to be passed in)|
-| **Operationdetails** | |
-|`qnamaker get operationdetails --operationId <string>`     |  Gets details of a specific long running operation.|
-| **Query** | |
-|`qnamaker query --question "how do I turn it on" --top 5` | Returns the list of answers for the given question sorted in descending order of ranking score.|
+| Command                                                  | Description                                                                                         |
+|----------------------------------------------------------|-----------------------------------------------------------------------------------------------------|
+| **Alterations**                                          |                                                                                                     |
+| `qnamaker list alterations`                              | Downloads all word alterations (synonyms) that have been automatically mined or added by the user.  |
+| `qnamaker replace alterations --in wordAlterations.json` | Replaces word alterations (synonyms) for the KB with the give records.                              |
+| **Endpointkeys**                                         |                                                                                                     |
+| `qnamaker list endpointkeys`                             | list all the currently valid endpointKeys for querying your private endpoint                        |
+| `qnamaker refresh endpointkeys --keyType <string>`       | Re-generates an endpoint key, in case you suspect your keys have been compromised                   |
+| **Kb**                                                   |                                                                                                     |
+| `qnamaker create kb --in createKbPayload.json`           | Create a new knowledgebase                                                                          |
+| `qnamaker delete kb --kbId <string>`                     | Delete a knowledgebase by id                                                                        |
+| `qnamaker export kb --kbId <string> --environment`       | qnamaker export kb --kbId <string> --environment                                                    |
+| `<string>`                                               | <string>                                                                                            |
+| `qnamaker get kb --kbId <string>`                        | Get metadata about a knowledgebase                                                                  |
+| `qnamaker publish kb --kbId <string>`                    | Publish all unpublished in the knowledgebase to the prod endpoint                                   |
+| `qnamaker replace kb --in replaceKb.json --kbId <string>`| Replace a knowledgebase contents with new contents                                                  |
+| `qnamaker update kb --in updateKb.json --kbId <string>`  | Add or delete QnA Pairs and / or URLs to an existing knowledge base                                 |
+| **Kbs**                                                  |                                                                                                     |
+| `qnamaker list kbs`                                      | List all of your knowledgebases                                                                     |
+| **Legacykb**                                             |                                                                                                     |
+| `qnamaker export legacykb --kbId <legacyKB>`             | Export legacy knowledgebase (requires legacy --kbid and --subscriptionKey to be passed in)          |
+| **Operationdetails**                                     |                                                                                                     |
+| `qnamaker get operationdetails --operationId <string>`   | Gets details of a specific long running operation.                                                  |
+| **Query**                                                |                                                                                                     |
+| `qnamaker query --question "how do I turn it on" --top 5`| Returns the list of answers for the given question sorted in descending order of ranking score.     |
 
 
 ## Configuration
