@@ -11,6 +11,8 @@ import { sendPrompt } from './internal';
 import * as Recognizers from '@microsoft/recognizers-text-date-time';
 
 /**
+ * :package: **botbuilder-prompts**
+ * 
  * Datetime result returned by `DatetimePrompt`. For more details see the LUIS docs for
  * [builtin.datetimev2](https://docs.microsoft.com/en-us/azure/cognitive-services/luis/luis-reference-prebuilt-entities#builtindatetimev2).
  */
@@ -33,10 +35,30 @@ export interface FoundDatetime {
     value: string;
 }
 
-/** Prompts the user to reply with a date or time. */
+/** 
+ * :package: **botbuilder-prompts**
+ * 
+ * Prompts the user to reply with a date and/or time. The user can use natural language utterances 
+ * like "tomorrow at 9am". 
+ *
+ * **Usage Example:**
+ *
+ * ```JavaScript
+ * const { createDatetimePrompt } = require('botbuilder-prompts');
+ * 
+ * const timePrompt = createDatetimePrompt();
+ * ```
+ * @param O (Optional) type of result returned by the [recognize()](#recognize) method. This defaults to an instance of `FoundDateTime[]` but can be changed by the prompts custom validator.
+ */
 export interface DatetimePrompt<O = FoundDatetime[]> {
     /**
      * Sends a formated prompt to the user. 
+     *
+     * **Usage Example:**
+     *
+     * ```JavaScript
+     * await timePrompt.prompt(context, `What time should I set your alarm for?`);
+     * ```
      * @param context Context for the current turn of conversation.
      * @param prompt Text or activity to send as the prompt.
      * @param speak (Optional) SSML that should be spoken for prompt. The prompts `inputHint` will be automatically set to `expectingInput`.
@@ -44,14 +66,56 @@ export interface DatetimePrompt<O = FoundDatetime[]> {
     prompt(context: TurnContext, prompt: string|Partial<Activity>, speak?: string): Promise<void>;
 
     /**
-     * Recognizes and validates the users reply.
+     * Recognizes and validates the users reply. The result of the call will either be the 
+     * recognized value or `undefined`. 
+     * 
+     * The recognize() method will not automatically re-prompt the user so either the caller or the
+     * prompts custom validator will need to implement re-prompting logic.
+     *
+     * **Usage Example:**
+     *
+     * ```JavaScript
+     * const values = await timePrompt.recognize(context);
+     * if (values && values.length > 0) {
+     *    const time = values[0];
+     *    switch (time.type) {
+     *       case 'date':
+     *       case 'time':
+     *       case 'datetime':
+     *          const date = new Date(time.value);
+     *          break;
+     *    } 
+     * }
+     * ```
      * @param context Context for the current turn of conversation.
      */
     recognize(context: TurnContext): Promise<O|undefined>;
 }
 
 /**
+ * :package: **botbuilder-prompts**
+ * 
  * Creates a new prompt that asks the user to reply with a date or time.
+ *
+ * **Usage Example:**
+ *
+ * ```JavaScript
+ * const { createDatetimePrompt } = require('botbuilder-prompts');
+ * 
+ * const timePrompt = createDatetimePrompt(async (context, values) => {
+ *    try {
+ *       if (!Array.isArray(values) || values.length < 0) { throw new Error('missing time') }
+ *       if (values[0].type !== 'datetime') { throw new Error('unsupported type') }
+ *       const value = new Date(values[0].value);
+ *       if (value.getTime() < new Date().getTime()) { throw new Error('in the past') }
+ *       return value;
+ *    } catch (err) {
+ *       await timePrompt.prompt(context, `Answer with a time in the future like "tomorrow at 9am" or say "cancel".`);
+ *       return undefined;
+ *    }
+ * });
+ * ```
+ * @param O (Optional) type of result returned by the `recognize()` method. This defaults to an instance of `FoundDateTime` but can be changed by the prompts custom validator.
  * @param validator (Optional) validator for providing additional validation logic or customizing the prompt sent to the user when invalid.
  * @param defaultLocale (Optional) locale to use if `context.activity.locale` not specified. Defaults to a value of `en-us`.
  */

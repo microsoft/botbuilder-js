@@ -123,6 +123,19 @@ describe('LocaleConverter', function () {
         })
     });
 
+    it('should support converting time and dates', function (done) {
+        
+        let timeSettings = {
+            fromLocale: 'en-us',
+            toLocale: 'fr-fr',
+        }
+
+        const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
+        .use(new LocaleConverter(timeSettings))
+        .test('half past 9 am 02/03/2010', '03/02/2010 09:30', 'should have converted the time and the date')
+        .then(() => done());
+    });
+
     it('should support converting time only', function (done) {
         
         let timeSettings = {
@@ -136,7 +149,7 @@ describe('LocaleConverter', function () {
         .then(() => done());
     });
 
-    it('should support converting ranges', function (done) {
+    it('should support converting date ranges', function (done) {
         
         let rangeSettings = {
             fromLocale: 'en-us',
@@ -145,7 +158,33 @@ describe('LocaleConverter', function () {
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(new LocaleConverter(rangeSettings))
-        .test('from 10/21/2018 to 10/23/2018', '21/10/2018', 'should have converted the range')
+        .test('from 10/21/2018 to 10/23/2018', '21/10/2018 - 23/10/2018', 'should have converted the range')
+        .then(() => done());
+    });
+
+    it('should support converting date and time ranges', function (done) {
+        
+        let rangeSettings = {
+            fromLocale: 'en-us',
+            toLocale: 'fr-fr',
+        }
+
+        const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
+        .use(new LocaleConverter(rangeSettings))
+        .test('from 10/21/2018 9 am to 10/23/2018 1 pm', '21/10/2018 09:00 - 23/10/2018 13:00', 'should have converted the range')
+        .then(() => done());
+    });
+
+    it('should support converting time ranges', function (done) {
+        
+        let rangeSettings = {
+            fromLocale: 'en-us',
+            toLocale: 'fr-fr',
+        }
+
+        const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
+        .use(new LocaleConverter(rangeSettings))
+        .test('from 9 am to 1 pm', '09:00 - 13:00', 'should have converted the range')
         .then(() => done());
     });
 

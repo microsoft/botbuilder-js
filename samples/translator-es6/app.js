@@ -18,20 +18,65 @@ const adapter = new BotFrameworkAdapter({
 const conversationState = new ConversationState(new MemoryStorage());
 adapter.use(conversationState);
 
-// Add language translator middleware
-const languageTranslator = new LanguageTranslator({
-    translatorKey: "xxxxxx",
-    noTranslatePatterns: new Set(),
-    nativeLanguages: ['fr', 'de'] 
-});
-adapter.use(languageTranslator);
+// Delegates for getting and setting user language
+function getUserLanguage(context) {
+    const state = conversationState.get(context)
+    if (state.language == undefined) {
+        return 'en';
+    } else {
+        return state.language;
+    }
+}
+
+async function setUserLanguage(context) {
+    let state = conversationState.get(context)
+    if (context.activity.text.toLowerCase().startsWith('set my language to')) {
+        state.language = context.activity.text.toLowerCase().replace('set my language to', '').trim();
+        await context.sendActivity(`Setting your language to ${state.language}`);
+        return Promise.resolve(true);
+    } else {
+        return Promise.resolve(false);
+    }
+}
+
+// Delegates for getting and setting user locale
+function getUserLocale(context) {
+    const state = conversationState.get(context)
+    if (state.locale == undefined) {
+        return 'en-us';
+    } else {
+        return state.locale;
+    }
+}
+
+async function setUserLocale(context) {
+    let state = conversationState.get(context)
+    if (context.activity.text.toLowerCase().startsWith('set my locale to')) {        
+        state.locale = context.activity.text.toLowerCase().replace('set my locale to', '').trim();
+        await context.sendActivity(`Setting your locale to ${state.locale}`);
+        return Promise.resolve(true);
+    } else {
+        return Promise.resolve(false);
+    }
+}
 
 // Add locale converter middleware
 const localeConverter = new LocaleConverter({
-    toLocale: 'fr-fr',
-    fromLocale: 'en-us'
-})
+    toLocale: 'en-us',
+    setUserLocale: setUserLocale,
+    getUserLocale: getUserLocale,
+});
 adapter.use(localeConverter);
+
+// Add language translator middleware
+const languageTranslator = new LanguageTranslator({
+    translatorKey: "xxxxxx",
+    nativeLanguages: ['en'],
+    setUserLanguage: setUserLanguage,
+    getUserLanguage: getUserLanguage,
+    translateBackToUserLanguage: true
+});
+adapter.use(languageTranslator);
 
 // Listen for incoming requests 
 server.post('/api/messages', (req, res) => {

@@ -10,10 +10,29 @@ import { PromptValidator } from './textPrompt';
 import { sendPrompt } from './internal';
 import * as Recognizers from '@microsoft/recognizers-text-number';
 
-/** Prompts the user to reply with a number. */
+/** 
+ * :package: **botbuilder-prompts**
+ * 
+ * Prompts the user to reply with a number. 
+ *
+ * **Usage Example:**
+ *
+ * ```JavaScript
+ * const { createNumberPrompt } = require('botbuilder-prompts');
+ * 
+ * const agePrompt = createNumberPrompt();
+ * ```
+ * @param O (Optional) type of result returned by the [recognize()](#recognize) method. This defaults to `number` but can be changed by the prompts custom validator.
+ */
 export interface NumberPrompt<O = number> {
     /**
-     * Sends a formated prompt to the user. 
+     * Sends a formated prompt to the user.
+     *
+     * **Usage Example:**
+     *
+     * ```JavaScript
+     * await agePrompt.prompt(context, `How old are you?`);
+     * ```
      * @param context Context for the current turn of conversation.
      * @param prompt Text or activity to send as the prompt.
      * @param speak (Optional) SSML that should be spoken for prompt. The prompts `inputHint` will be automatically set to `expectingInput`.
@@ -21,14 +40,47 @@ export interface NumberPrompt<O = number> {
     prompt(context: TurnContext, prompt: string|Partial<Activity>, speak?: string): Promise<void>;
 
     /**
-     * Recognizes and validates the users reply.
+     * Recognizes and validates the users reply. The result of the call will either be the 
+     * recognized value or `undefined`. 
+     * 
+     * The recognize() method will not automatically re-prompt the user so either the caller or the
+     * prompts custom validator will need to implement re-prompting logic.
+     * 
+     * **Usage Example:**
+     *
+     * ```JavaScript
+     * const age = await agePrompt.recognize(context);
+     * if (typeof age == 'number') {
+     *    // Save age and continue
+     * }
+     * ```
      * @param context Context for the current turn of conversation.
      */
     recognize(context: TurnContext): Promise<O|undefined>;
 }
 
 /**
+ * :package: **botbuilder-prompts**
+ * 
  * Creates a new prompt that asks the user to reply with a number.
+ *
+ * **Usage Example:**
+ *
+ * ```JavaScript
+ * const { createNumberPrompt } = require('botbuilder-prompts');
+ * 
+ * const agePrompt = createNumberPrompt(async (context, value) => {
+ *    if (typeof value == 'number') {
+ *       if (value >= 1 && value < 111) {
+ *          // Return age rounded down to nearest whole number.
+ *          return Math.floor(value);
+ *       }
+ *    }
+ *    await agePrompt.prompt(context, `Please enter a number between 1 and 110 or say "cancel".`);
+ *    return undefined;
+ * });
+ * ```
+ * @param O (Optional) type of result returned by the `recognize()` method. This defaults to `number` but can be changed by the prompts custom validator.
  * @param validator (Optional) validator for providing additional validation logic or customizing the prompt sent to the user when invalid.
  * @param defaultLocale (Optional) locale to use if `context.activity.locale` not specified. Defaults to a value of `en-us`.
  */

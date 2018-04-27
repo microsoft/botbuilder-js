@@ -3,10 +3,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const prompt_1 = require("./prompt");
 const prompts = require("botbuilder-prompts");
 /**
+ * :package: **botbuilder-dialogs**
+ *
  * Prompts a user to upload attachments like images. By default the prompt will return to the
  * calling dialog a `Attachment[]` but this can be overridden using a custom `PromptValidator`.
  *
- * **Example usage:**
+ * The prompt can be used either as a dialog added to your bots `DialogSet` or on its own as a
+ * control if your bot is using some other conversation management system.
+ *
+ * ### Dialog Usage
+ *
+ * When used with your bots `DialogSet` you can simply add a new instance of the prompt as a named
+ * dialog using `DialogSet.add()`. You can then start the prompt from a waterfall step using either
+ * `DialogContext.begin()` or `DialogContext.prompt()`. The user will be prompted to upload one or
+ * more attachments which will be passed as an argument to the callers next waterfall step:
  *
  * ```JavaScript
  * const { DialogSet, AttachmentPrompt } = require('botbuilder-dialogs');
@@ -17,31 +27,78 @@ const prompts = require("botbuilder-prompts");
  *
  * dialogs.add('uploadImage', [
  *      async function (dc) {
- *          return dc.prompt('attachmentPrompt', `Send me image(s)`);
+ *          await dc.prompt('attachmentPrompt', `Send me image(s)`);
  *      },
  *      async function (dc, attachments) {
  *          await dc.context.sendActivity(`Processing ${attachments.length} images.`);
- *          return dc.end();
+ *          await dc.end();
  *      }
  * ]);
  * ```
+ *
+ * If the users response to the prompt fails to be recognized they will be automatically re-prompted
+ * to try again. By default the original prompt is re-sent to the user but you can provide an
+ * alternate prompt to send by passing in additional options:
+ *
+ * ```JavaScript
+ * await dc.prompt('attachmentPrompt', `Send me image(s)`, { retryPrompt: `I didn't get anything. Send me an image.` });
+ * ```
+ *
+ * The prompts retry logic can also be completely customized by passing the prompts constructor a
+ * custom validator:
+ *
+ * ```JavaScript
+ * dialogs.add('imagePrompt', new AttachmentPrompt(async (context, values) => {
+ *    if (values && values.length > 0) {
+ *       for (let i = 0; i < values.length; i++) {
+ *          if (!values[i].contentType.startsWith('image')) {
+ *             await context.sendActivity(`Only images are accepted.`);
+ *             return undefined;
+ *          }
+ *       }
+ *    } else {
+ *       await context.sendActivity(`Please upload at least one image.`);
+ *    }
+ *    return values;
+ * }));
+ * ```
+ *
+ * ### Control Usage
+ *
+ * If your bot isn't dialog based you can still use the prompt on its own as a control. You will
+ * just need start the prompt from somewhere within your bots logic by calling the prompts
+ * `begin()` method:
+ *
+ * ```JavaScript
+ * const state = {};
+ * const prompt = new AttachmentPrompt();
+ * await prompt.begin(context, state, {
+ *     prompt: `Send me image(s)`,
+ *     retryPrompt: `I didn't get anything. Send me an image.`
+ * });
+ * ```
+ *
+ * The prompt will populate the `state` object you passed in with information it needs to process
+ * the users response. You should save this off to your bots conversation state as you'll need to
+ * pass it to the prompts `continue()` method on the next turn of conversation with the user:
+ *
+ * ```JavaScript
+ * const prompt = new AttachmentPrompt();
+ * const result = await prompt.continue(context, state);
+ * if (!result.active) {
+ *     const attachments = result.result;
+ * }
+ * ```
+ *
+ * The `continue()` method returns a `DialogResult` object which can be used to determine when
+ * the prompt is finished and then to access the results of the prompt.  To interrupt or cancel
+ * the prompt simply delete the `state` object your bot is persisting.
+ * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
+ * @param O (Optional) output type returned by prompt. This defaults to an `Attachment[]` but can be changed by a custom validator passed to the prompt.
  */
 class AttachmentPrompt extends prompt_1.Prompt {
     /**
-     * Creates a new instance of the prompt.
-     *
-     * **Example usage:**
-     *
-     * ```JavaScript
-     * dialogs.add('imagePrompt', new AttachmentPrompt(async (context, values) => {
-     *      if (!Array.isArray(values) || values.length < 1) {
-     *          await context.sendActivity(`Send me an image or say "cancel".`);
-     *          return undefined;
-     *      } else {
-     *          return values;
-     *      }
-     * }));
-     * ```
+     * Creates a new `AttachmentPrompt` instance.
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
      */
     constructor(validator) {

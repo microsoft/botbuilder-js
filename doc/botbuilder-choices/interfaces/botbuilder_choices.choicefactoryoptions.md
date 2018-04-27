@@ -5,6 +5,11 @@
 # Interface: ChoiceFactoryOptions
 
 
+:package: **botbuilder-choices**
+
+Additional options used to tweak the formatting of choice lists.
+
+
 ## Properties
 <a id="includenumbers"></a>
 
@@ -12,7 +17,7 @@
 
 **●  includeNumbers**:  *`boolean`* 
 
-*Defined in [libraries/botbuilder-choices/lib/choiceFactory.d.ts:30](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/choiceFactory.d.ts#L30)*
+*Defined in [libraries/botbuilder-choices/lib/choiceFactory.d.ts:36](https://github.com/Microsoft/botbuilder-js/blob/fbf16f5/libraries/botbuilder-choices/lib/choiceFactory.d.ts#L36)*
 
 
 
@@ -29,7 +34,7 @@ ___
 
 **●  inlineOr**:  *`string`* 
 
-*Defined in [libraries/botbuilder-choices/lib/choiceFactory.d.ts:20](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/choiceFactory.d.ts#L20)*
+*Defined in [libraries/botbuilder-choices/lib/choiceFactory.d.ts:25](https://github.com/Microsoft/botbuilder-js/blob/fbf16f5/libraries/botbuilder-choices/lib/choiceFactory.d.ts#L25)*
 
 
 
@@ -46,7 +51,7 @@ ___
 
 **●  inlineOrMore**:  *`string`* 
 
-*Defined in [libraries/botbuilder-choices/lib/choiceFactory.d.ts:25](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/choiceFactory.d.ts#L25)*
+*Defined in [libraries/botbuilder-choices/lib/choiceFactory.d.ts:30](https://github.com/Microsoft/botbuilder-js/blob/fbf16f5/libraries/botbuilder-choices/lib/choiceFactory.d.ts#L30)*
 
 
 
@@ -63,7 +68,7 @@ ___
 
 **●  inlineSeparator**:  *`string`* 
 
-*Defined in [libraries/botbuilder-choices/lib/choiceFactory.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/choiceFactory.d.ts#L15)*
+*Defined in [libraries/botbuilder-choices/lib/choiceFactory.d.ts:20](https://github.com/Microsoft/botbuilder-js/blob/fbf16f5/libraries/botbuilder-choices/lib/choiceFactory.d.ts#L20)*
 
 
 

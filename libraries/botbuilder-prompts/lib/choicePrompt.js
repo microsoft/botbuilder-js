@@ -3,6 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const botbuilder_choices_1 = require("botbuilder-choices");
 const internal_1 = require("./internal");
 /**
+ * :package: **botbuilder-prompts**
+ *
  * Controls the way that choices for a `ChoicePrompt` or yes/no options for a `ConfirmPrompt` are
  * presented to a user.
  */
@@ -20,7 +22,23 @@ var ListStyle;
     ListStyle[ListStyle["suggestedAction"] = 4] = "suggestedAction";
 })(ListStyle = exports.ListStyle || (exports.ListStyle = {}));
 /**
+ * :package: **botbuilder-prompts**
+ *
  * Creates a new prompt that asks the user to select from a list of choices.
+ *
+ * **Usage Example:**
+ *
+ * ```JavaScript
+ * const { createChoicePrompt } = require('botbuilder-prompts');
+ *
+ * const colorPrompt = createChoicePrompt(async (context, found) => {
+ *    if (!found) {
+ *       await colorPrompt.prompt(context, ['red', 'green', 'blue'], `Please choose a color from the list or say "cancel".`);
+ *    }
+ *    return found;
+ * });
+ * ```
+ * @param O (Optional) type of result returned by the `recognize()` method. This defaults to an instance of `FoundChoice` but can be changed by the prompts custom validator.
  * @param validator (Optional) validator for providing additional validation logic or customizing the prompt sent to the user when invalid.
  * @param defaultLocale (Optional) locale to use if `context.activity.locale` not specified. Defaults to a value of `en-us`.
  */
@@ -44,7 +62,7 @@ function createChoicePrompt(validator, defaultLocale) {
                         msg = botbuilder_choices_1.ChoiceFactory.list(choices, prompt, speak, this.choiceOptions);
                         break;
                     case ListStyle.suggestedAction:
-                        msg = botbuilder_choices_1.ChoiceFactory.suggestedAction(choices, prompt, speak, this.choiceOptions);
+                        msg = botbuilder_choices_1.ChoiceFactory.suggestedAction(choices, prompt, speak);
                         break;
                     case ListStyle.none:
                         msg = { type: 'message', text: prompt };

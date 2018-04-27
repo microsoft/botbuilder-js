@@ -60,29 +60,29 @@ async function setUserLocale(context) {
     }
 }
 
-// Add language translator middleware
-const languageTranslator = new LanguageTranslator({
-    translatorKey: "xxxxxx ",
-    noTranslatePatterns: new Set(),
-    nativeLanguages: ['en'],
-    setUserLanguage: setUserLanguage,
-    getUserLanguage: getUserLanguage 
-});
-adapter.use(languageTranslator);
-
 // Add locale converter middleware
 const localeConverter = new LocaleConverter({
     toLocale: 'en-us',
     setUserLocale: setUserLocale,
-    getUserLocale: getUserLocale
+    getUserLocale: getUserLocale,
 });
 adapter.use(localeConverter);
+
+// Add language translator middleware
+const languageTranslator = new LanguageTranslator({
+    translatorKey: "xxxxxx",
+    nativeLanguages: ['en'],
+    setUserLanguage: setUserLanguage,
+    getUserLanguage: getUserLanguage,
+    translateBackToUserLanguage: true
+});
+adapter.use(languageTranslator);
 
 // Add Qna Maker middleware
 const qnaMaker = new QnAMaker({
     knowledgeBaseId: "xxxxxx",
     subscriptionKey: "xxxxxx",
-    answerBeforeNext: true
+    answerBeforeNext: true,
 });
 adapter.use(qnaMaker);
 

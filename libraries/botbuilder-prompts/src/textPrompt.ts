@@ -8,10 +8,29 @@
 import { Promiseable, Activity, TurnContext } from 'botbuilder';
 import { sendPrompt } from './internal';
 
-/** Prompts the user to reply with some text. */
+/** 
+ * :package: **botbuilder-prompts**
+ * 
+ * Prompts the user to reply with some text.
+ *
+ * **Usage Example:**
+ *
+ * ```JavaScript
+ * const { createTextPrompt } = require('botbuilder-prompts');
+ * 
+ * const agePrompt = createTextPrompt();
+ * ```
+ * @param O (Optional) type of result returned by the [recognize()](#recognize) method. This defaults to return a `string` but can be changed by the prompts custom validator.
+ */
 export interface TextPrompt<O = string> {
     /**
      * Sends a formated prompt to the user. 
+     *
+     * **Usage Example:**
+     *
+     * ```JavaScript
+     * await namePrompt.prompt(context, `What's your name?`);
+     * ```
      * @param context Context for the current turn of conversation.
      * @param prompt Text or activity to send as the prompt.
      * @param speak (Optional) SSML that should be spoken for prompt. The prompts `inputHint` will be automatically set to `expectingInput`.
@@ -19,13 +38,28 @@ export interface TextPrompt<O = string> {
     prompt(context: TurnContext, prompt: string|Partial<Activity>, speak?: string): Promise<void>;
 
     /**
-     * Recognizes and validates the users reply.
+     * Recognizes and validates the users reply. The result of the call will either be the 
+     * recognized value or `undefined`. 
+     * 
+     * The recognize() method will not automatically re-prompt the user so either the caller or the
+     * prompts custom validator will need to implement re-prompting logic.
+     * 
+     * **Usage Example:**
+     *
+     * ```JavaScript
+     * const name = await namePrompt.recognize(context);
+     * if (name) {
+     *    // Save name and continue
+     * }
+     * ```
      * @param context Context for the current turn of conversation.
      */
     recognize(context: TurnContext): Promise<O|undefined>;
 }
 
 /**
+ * :package: **botbuilder-prompts**
+ * 
  * Signature of a handler that can be passed to a prompt to provide additional validation logic
  * or to customize the reply sent to the user when their response is invalid.
  * @param R Type of value that will recognized and passed to the validator as input.
@@ -36,7 +70,24 @@ export interface TextPrompt<O = string> {
 export type PromptValidator<R, O = R> = (context: TurnContext, value: R|undefined) => Promiseable<O|undefined>;
 
 /**
+ * :package: **botbuilder-prompts**
+ * 
  * Creates a new prompt that asks the user to enter some text.
+ *
+ * **Usage Example:**
+ *
+ * ```JavaScript
+ * const { createTextPrompt } = require('botbuilder-prompts');
+ * 
+ * const namePrompt = createTextPrompt(async (context, value) => {
+ *    if (value && value.length >= 3) {
+ *       return value;
+ *    }
+ *    await namePrompt.prompt(context, `Your entry must be at least 3 characters in length.`);
+ *    return undefined;
+ * });
+ * ```
+ * @param O (Optional) type of result returned by the `recognize()` method. This defaults to return a `string` but can be changed by the prompts custom validator.
  * @param validator (Optional) validator for providing additional validation logic or customizing the prompt sent to the user when invalid.
  */
 export function createTextPrompt<O = string>(validator?: PromptValidator<string, O>): TextPrompt<O> {

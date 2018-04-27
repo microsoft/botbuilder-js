@@ -9,7 +9,47 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const botbuilder_1 = require("botbuilder");
 const channel = require("./channel");
+/**
+ * :package: **botbuilder-choices**
+ *
+ * A set of utility functions to assist with the formatting a 'message' activity containing a list
+ * of choices.
+ *
+ * **Usage Example**
+ *
+ * ```JavaScript
+ * const { ChoiceFactory } = require('botbuilder-choices');
+ *
+ * const message = ChoiceFactory.forChannel(context, ['red', 'green', 'blue'], `Pick a color.`);
+ * await context.sendActivity(message);
+ * ```
+ */
 class ChoiceFactory {
+    /**
+     * Returns a 'message' activity containing a list of choices that has been automatically
+     * formatted based on the capabilities of a given channel. The algorithm prefers to format
+     * the supplied list of choices as suggested actions but can decide to use a text based list
+     * if suggested actions aren't natively supported by the channel, there are too many choices
+     * for the channel to display, or the title of any choice is too long.
+     *
+     * If the algorithm decides to use a list it will use an inline list if there are 3 or less
+     * choices and all have short titles. Otherwise, a numbered list is used.
+     *
+     * **Usage Example**
+     *
+     * ```JavaScript
+     * const message = ChoiceFactory.forChannel(context, [
+     *    { value: 'red', action: { type: 'imBack', title: 'The Red Pill', value: 'red pill' } },
+     *    { value: 'blue', action: { type: 'imBack', title: 'The Blue Pill', value: 'blue pill' } },
+     * ], `Which do you choose?`);
+     * await context.sendActivity(message);
+     * ```
+     * @param channelOrContext Channel ID or context object for the current turn of conversation.
+     * @param choices List of choices to render.
+     * @param text (Optional) text of the message.
+     * @param speak (Optional) SSML to speak for the message.
+     * @param options (Optional) formatting options to use when rendering as a list.
+     */
     static forChannel(channelOrContext, choices, text, speak, options) {
         const channelId = typeof channelOrContext === 'string' ? channelOrContext : channel.getChannelId(channelOrContext);
         // Normalize choices
@@ -31,7 +71,7 @@ class ChoiceFactory {
         if (!longTitles && (supportsSuggestedActions || (!hasMessageFeed && supportsCardActions))) {
             // We always prefer showing choices using suggested actions. If the titles are too long, however,
             // we'll have to show them as a text list.
-            return ChoiceFactory.suggestedAction(list, text, speak, options);
+            return ChoiceFactory.suggestedAction(list, text, speak);
         }
         else if (!longTitles && choices.length <= 3) {
             // If the titles are short and there are 3 or less choices we'll use an inline list.
@@ -42,6 +82,22 @@ class ChoiceFactory {
             return ChoiceFactory.list(list, text, speak, options);
         }
     }
+    /**
+     * Returns a 'message' activity containing a list of choices that has been formatted as an
+     * inline list.
+     *
+     * **Usage Example**
+     *
+     * ```JavaScript
+     * // Generates a message text of `Pick a color: (1. red, 2. green, or 3. blue)`
+     * const message = ChoiceFactory.inline(['red', 'green', 'blue'], `Pick a color:`);
+     * await context.sendActivity(message);
+     * ```
+     * @param choices List of choices to render.
+     * @param text (Optional) text of the message.
+     * @param speak (Optional) SSML to speak for the message.
+     * @param options (Optional) formatting options to tweak rendering of list.
+     */
     static inline(choices, text, speak, options) {
         const opt = Object.assign({
             inlineSeparator: ', ',
@@ -67,6 +123,21 @@ class ChoiceFactory {
         // Return activity with choices as an inline list.
         return botbuilder_1.MessageFactory.text(txt, speak, botbuilder_1.InputHints.ExpectingInput);
     }
+    /**
+     * Returns a 'message' activity containing a list of choices that has been formatted as an
+     * numbered or bulleted list.
+     *
+     * **Usage Example**
+     *
+     * ```JavaScript
+     * const message = ChoiceFactory.list(['red', 'green', 'blue'], `Pick a color:`);
+     * await context.sendActivity(message);
+     * ```
+     * @param choices List of choices to render.
+     * @param text (Optional) text of the message.
+     * @param speak (Optional) SSML to speak for the message.
+     * @param options (Optional) formatting options to tweak rendering of list.
+     */
     static list(choices, text, speak, options) {
         const opt = Object.assign({
             includeNumbers: true
@@ -83,7 +154,21 @@ class ChoiceFactory {
         // Return activity with choices as a numbered list.
         return botbuilder_1.MessageFactory.text(txt, speak, botbuilder_1.InputHints.ExpectingInput);
     }
-    static suggestedAction(choices, text, speak, options) {
+    /**
+     * Returns a 'message' activity containing a list of choices that have been added as suggested
+     * actions.
+     *
+     * **Usage Example**
+     *
+     * ```JavaScript
+     * const message = ChoiceFactory.suggestedAction(['red', 'green', 'blue'], `Pick a color:`);
+     * await context.sendActivity(message);
+     * ```
+     * @param choices List of choices to add.
+     * @param text (Optional) text of the message.
+     * @param speak (Optional) SSML to speak for the message.
+     */
+    static suggestedAction(choices, text, speak) {
         // Map choices to actions
         const actions = ChoiceFactory.toChoices(choices).map((choice) => {
             if (choice.action) {
@@ -96,6 +181,16 @@ class ChoiceFactory {
         // Return activity with choices as suggested actions
         return botbuilder_1.MessageFactory.suggestedActions(actions, text, speak, botbuilder_1.InputHints.ExpectingInput);
     }
+    /**
+     * Takes a mixed list of `string` and `Choice` based choices and returns them as a `Choice[]`.
+     *
+     * **Usage Example**
+     *
+     * ```JavaScript
+     * const choices = ChoiceFactory.toChoices(['red', 'green', 'blue']);
+     * ```
+     * @param choices List of choices to add.
+     */
     static toChoices(choices) {
         return (choices || []).map((choice) => typeof choice === 'string' ? { value: choice } : choice).filter((choice) => choice);
     }

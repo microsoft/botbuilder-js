@@ -2,7 +2,24 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const internal_1 = require("./internal");
 /**
+ * :package: **botbuilder-prompts**
+ *
  * Creates a new prompt that asks the user to enter some text.
+ *
+ * **Usage Example:**
+ *
+ * ```JavaScript
+ * const { createTextPrompt } = require('botbuilder-prompts');
+ *
+ * const namePrompt = createTextPrompt(async (context, value) => {
+ *    if (value && value.length >= 3) {
+ *       return value;
+ *    }
+ *    await namePrompt.prompt(context, `Your entry must be at least 3 characters in length.`);
+ *    return undefined;
+ * });
+ * ```
+ * @param O (Optional) type of result returned by the `recognize()` method. This defaults to return a `string` but can be changed by the prompts custom validator.
  * @param validator (Optional) validator for providing additional validation logic or customizing the prompt sent to the user when invalid.
  */
 function createTextPrompt(validator) {
