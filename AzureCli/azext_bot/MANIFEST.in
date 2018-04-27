@@ -1,0 +1,2 @@
+include azext_bot\functionapp.template.json
+include azext_bot\webapp.template.json
