@@ -1,5 +1,5 @@
 {
-  "name": "dialogs-controls-ts",
+  "name": "dialogs-component-ts",
   "version": "1.0.0",
   "description": "Bot Builder example showing how to build a reusable control using dialogs.",
   "main": "./lib/app.js",

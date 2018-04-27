@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const waterfall_1 = require("./waterfall");
+const dialog_1 = require("./dialog");
 const dialogContext_1 = require("./dialogContext");
 /**
  * :package: **botbuilder-dialogs**
@@ -101,13 +101,10 @@ class DialogSet {
         if (this.dialogs.hasOwnProperty(dialogId)) {
             throw new Error(`DialogSet.add(): A dialog with an id of '${dialogId}' already added.`);
         }
-        return this.dialogs[dialogId] = Array.isArray(dialogOrSteps) ? new waterfall_1.Waterfall(dialogOrSteps) : dialogOrSteps;
+        return this.dialogs[dialogId] = Array.isArray(dialogOrSteps) ? new dialog_1.Waterfall(dialogOrSteps) : dialogOrSteps;
     }
     createContext(context, state) {
-        if (!Array.isArray(state['dialogStack'])) {
-            state['dialogStack'] = [];
-        }
-        return new dialogContext_1.DialogContext(this, context, state['dialogStack']);
+        return new dialogContext_1.DialogContext(this, context, state);
     }
     /**
      * Finds a dialog that was previously added to the set using [add()](#add).

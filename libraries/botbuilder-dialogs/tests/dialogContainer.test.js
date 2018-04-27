@@ -1,5 +1,5 @@
 const { TestAdapter, TurnContext } = require('botbuilder');
-const { DialogSet, CompositeControl } =  require('../');
+const { DialogSet, DialogContainer } =  require('../');
 const assert = require('assert');
 
 const beginMessage = { text: `begin`, type: 'message' };
@@ -16,10 +16,10 @@ class TestContext extends TurnContext {
     }
 }
 
-describe('CompositeControl', function() {
+describe('DialogContainer', function() {
     this.timeout(5000);
 
-    it('should call composite control from another dialog set.', function (done) {
+    it('should call composite dialog from another dialog set.', function (done) {
         const cDialogs = new DialogSet();
         cDialogs.add('start', [
             function (dc, args) {
@@ -29,41 +29,46 @@ describe('CompositeControl', function() {
                 done();
             }
         ]);
-        const control = new CompositeControl('start', cDialogs);
+        const composite = new DialogContainer('start', cDialogs);
 
         const dialogs = new DialogSet();
-        dialogs.add('control', control);
+        dialogs.add('composite', composite);
 
         const state = {};
         const context = new TestContext(beginMessage);
         const dc = dialogs.createContext(context, state);
-        dc.begin('control', { foo: 'bar' });
+        dc.begin('composite', { foo: 'bar' });
     });
 
-    it('should return result from DialogContext.begin() when control ends immediately.', function (done) {
+    it('should return result from DialogContext.begin() when composite ends immediately.', function (done) {
         const cDialogs = new DialogSet();
         cDialogs.add('start', [
             function (dc) {
                 return dc.end(120);
             }
         ]);
-        const control = new CompositeControl('start', cDialogs);
+        const composite = new DialogContainer('start', cDialogs);
 
         const dialogs = new DialogSet();
-        dialogs.add('control', control);
+        dialogs.add('composite', composite);
+        dialogs.add('test', [
+            function (dc) {
+                return dc.begin('composite');
+            },
+            function (dc, result) {
+                assert(result === 120);
+                done();
+            }
+        ])
 
         const state = {};
         const context = new TestContext(beginMessage);
         const dc = dialogs.createContext(context, state);
-        dc.begin('control').then(() => {
-            const result = dc.dialogResult;
-            assert(result && !result.active);
-            assert(result.result === 120);
-            done();
-        });
+        dc.begin('test');
     });
 
-    it('should DialogContext.continue() execution of a multi-turn control.', function (done) {
+    it('should DialogContext.continue() execution of a multi-turn composite.', function (done) {
+        let finished = false;
         const cDialogs = new DialogSet();
         cDialogs.add('start', [
             function (dc) {
@@ -73,34 +78,32 @@ describe('CompositeControl', function() {
                 return dc.context.sendActivity('bar');
             },
             function (dc) {
-                return dc.end(120);
+                finished = true;
+                return dc.end();
             }
         ]);
-        const control = new CompositeControl('start', cDialogs);
+        const composite = new DialogContainer('start', cDialogs);
 
         const dialogs = new DialogSet();
-        dialogs.add('control', control);
+        dialogs.add('composite', composite);
 
         const state = {};
         const context = new TestContext(beginMessage);
         const dc = dialogs.createContext(context, state);
-        dc.begin('control').then(() => {
-            const result = dc.dialogResult;
-            assert(result && result.active);
+        dc.begin('composite').then(() => {
+            assert(dc.activeDialog);
             dc.continue().then(() => {
-                const result = dc.dialogResult;
-                assert(result && result.active);
+                assert(dc.activeDialog);
                 dc.continue().then(() => {
-                    const result = dc.dialogResult;
-                    assert(result && !result.active);
-                    assert(result.result === 120);
+                    assert(dc.activeDialog === undefined);
+                    assert(finished);
                     done();
                 });
             });
         });
     });
 
-    it('should call composite control using begin().', function (done) {
+    it('should call composite composite using begin().', function (done) {
         const cDialogs = new DialogSet();
         cDialogs.add('start', [
             function (dc, args) {
@@ -110,14 +113,14 @@ describe('CompositeControl', function() {
                 done();
             }
         ]);
-        const control = new CompositeControl('start', cDialogs);
+        const composite = new DialogContainer('start', cDialogs);
 
         const state = {};
         const context = new TestContext(beginMessage);
-        control.begin(context, state, { foo: 'bar' });
+        composite.begin(context, state, { foo: 'bar' });
     });
 
-    it('should continue() execution of a multi-turn control.', function (done) {
+    it('should continue() execution of a multi-turn composite.', function (done) {
         const cDialogs = new DialogSet();
         cDialogs.add('start', [
             function (dc) {
@@ -130,17 +133,17 @@ describe('CompositeControl', function() {
                 return dc.end(120);
             }
         ]);
-        const control = new CompositeControl('start', cDialogs);
+        const composite = new DialogContainer('start', cDialogs);
 
         const state = {};
         const context = new TestContext(beginMessage);
-        control.begin(context, state).then((result) => {
-            assert(result && result.active);
-            control.continue(context, state).then((result) => {
-                assert(result && result.active);
-                control.continue(context, state).then((result) => {
-                    assert(result && !result.active);
-                    assert(result.result === 120);
+        composite.begin(context, state).then((completion) => {
+            assert(completion && completion.isActive);
+            composite.continue(context, state).then((completion) => {
+                assert(completion && completion.isActive);
+                composite.continue(context, state).then((completion) => {
+                    assert(completion && !completion.isActive && completion.isCompleted);
+                    assert(completion.result === 120);
                     done();
                 });
             });

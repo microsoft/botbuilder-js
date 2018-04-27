@@ -8,21 +8,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Licensed under the MIT License.
  */
 const botbuilder_1 = require("botbuilder");
-const control_1 = require("../control");
+const dialog_1 = require("../dialog");
 /**
  * :package: **botbuilder-dialogs**
  *
  * Base class for all prompts.
  * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
  */
-class Prompt extends control_1.Control {
+class Prompt extends dialog_1.Dialog {
     constructor(validator) {
         super();
         this.validator = validator;
     }
     dialogBegin(dc, options) {
         // Persist options
-        const instance = dc.instance;
+        const instance = dc.activeDialog;
         instance.state = options || {};
         // Send initial prompt
         return this.onPrompt(dc, instance.state, false);
@@ -33,7 +33,7 @@ class Prompt extends control_1.Control {
             return Promise.resolve();
         }
         // Recognize value
-        const instance = dc.instance;
+        const instance = dc.activeDialog;
         return this.onRecognize(dc, instance.state)
             .then((recognized) => {
             if (this.validator) {

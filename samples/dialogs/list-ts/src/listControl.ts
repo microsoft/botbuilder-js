@@ -1,4 +1,4 @@
-import { Control, DialogContext } from 'botbuilder-dialogs';
+import { Dialog, DialogContext } from 'botbuilder-dialogs';
 import { Choice, findChoices } from 'botbuilder-choices';
 import { TurnContext, Promiseable, Activity, CardAction, MessageFactory } from 'botbuilder';
 
@@ -20,7 +20,7 @@ export interface ListControlResult {
     continueToken?: any;
 }
 
-export class ListControl<C extends TurnContext> extends Control<ListControlResult, ListControlOptions, C> {
+export class ListControl<C extends TurnContext> extends Dialog<C, ListControlResult, ListControlOptions> {
     private readonly actions: (string|CardAction)[];
 
     constructor(protected pager: ListPager<C>, actions?: (string|CardAction)[]) { 
@@ -29,7 +29,7 @@ export class ListControl<C extends TurnContext> extends Control<ListControlResul
     }
 
     public dialogBegin(dc: DialogContext<C>, args?: ListControlOptions): Promise<any> {
-        dc.instance.state = Object.assign({}, args);
+        dc.activeDialog.state = Object.assign({}, args);
         return this.showMore(dc);
     }
 
@@ -46,14 +46,14 @@ export class ListControl<C extends TurnContext> extends Control<ListControlResul
         if (action === 'more') {
             return this.showMore(dc);
         } else {
-            const state = dc.instance.state as ListControlOptions;
+            const state = dc.activeDialog.state as ListControlOptions;
             return dc.end({ action: action, continueToken: state.continueToken });
         }
     }
 
     private showMore(dc: DialogContext<C>): Promise<any> {
         try {
-            const state = dc.instance.state as ListControlOptions;
+            const state = dc.activeDialog.state as ListControlOptions;
             return Promise.resolve(this.pager(dc, state.filter, state.continueToken)).then((result) => {
                 if (result.continueToken) {
                     // Save continuation token
