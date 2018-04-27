@@ -29,7 +29,7 @@ export class ListControl<C extends TurnContext> extends Dialog<C, ListControlRes
     }
 
     public dialogBegin(dc: DialogContext<C>, args?: ListControlOptions): Promise<any> {
-        dc.currentDialog.state = Object.assign({}, args);
+        dc.activeDialog.state = Object.assign({}, args);
         return this.showMore(dc);
     }
 
@@ -46,14 +46,14 @@ export class ListControl<C extends TurnContext> extends Dialog<C, ListControlRes
         if (action === 'more') {
             return this.showMore(dc);
         } else {
-            const state = dc.currentDialog.state as ListControlOptions;
+            const state = dc.activeDialog.state as ListControlOptions;
             return dc.end({ action: action, continueToken: state.continueToken });
         }
     }
 
     private showMore(dc: DialogContext<C>): Promise<any> {
         try {
-            const state = dc.currentDialog.state as ListControlOptions;
+            const state = dc.activeDialog.state as ListControlOptions;
             return Promise.resolve(this.pager(dc, state.filter, state.continueToken)).then((result) => {
                 if (result.continueToken) {
                     // Save continuation token

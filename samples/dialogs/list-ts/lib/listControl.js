@@ -10,7 +10,7 @@ class ListControl extends botbuilder_dialogs_1.Dialog {
         this.actions = actions || [{ type: 'imBack', title: 'Show More', value: 'more' }];
     }
     dialogBegin(dc, args) {
-        dc.currentDialog.state = Object.assign({}, args);
+        dc.activeDialog.state = Object.assign({}, args);
         return this.showMore(dc);
     }
     dialogContinue(dc) {
@@ -26,13 +26,13 @@ class ListControl extends botbuilder_dialogs_1.Dialog {
             return this.showMore(dc);
         }
         else {
-            const state = dc.currentDialog.state;
+            const state = dc.activeDialog.state;
             return dc.end({ action: action, continueToken: state.continueToken });
         }
     }
     showMore(dc) {
         try {
-            const state = dc.currentDialog.state;
+            const state = dc.activeDialog.state;
             return Promise.resolve(this.pager(dc, state.filter, state.continueToken)).then((result) => {
                 if (result.continueToken) {
                     // Save continuation token

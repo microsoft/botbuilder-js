@@ -51,7 +51,7 @@ server.post('/api/messages', (req, res) => {
 
             // Check for cancel
             } else if (utterance === 'cancel') {
-                if (dc.currentDialog) {
+                if (dc.activeDialog) {
                     await dc.context.sendActivity(`Ok... Cancelled.`);
                     await dc.endAll();
                 } else {

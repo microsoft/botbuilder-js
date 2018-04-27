@@ -95,11 +95,11 @@ dialogs.add('mainMenu', [
 
 dialogs.add('loop', [
     async function(dc, args: { dialogId: string; }) {
-        dc.currentDialog.state = args;
+        dc.activeDialog.state = args;
         await dc.begin(args.dialogId);
     },
     async function(dc) {
-        const args = dc.currentDialog.state;
+        const args = dc.activeDialog.state;
         await dc.replace('loop', args);
     }
 ]);

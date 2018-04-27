@@ -127,8 +127,7 @@ export class DialogSet<C extends TurnContext = TurnContext> {
     }
 
     public createContext(context: C, state: object): DialogContext<C> {
-        if (!Array.isArray(state['dialogStack'])) { state['dialogStack'] = [] } 
-        return new DialogContext(this, context, state['dialogStack']);
+        return new DialogContext(this, context, state);
     }
 
     /**

@@ -10,18 +10,18 @@ export class AddAlarmDialog extends DialogContainer {
         this.dialogs.add('addAlarm', [
             async function (dc) {
                 // Initialize temp alarm and prompt for title
-                dc.currentDialog.state = {} as Alarm;
+                dc.activeDialog.state = {} as Alarm;
                 await dc.prompt('titlePrompt', `What would you like to call your alarm?`);
             },
             async function (dc, title: string) {
                 // Save alarm title and prompt for time
-                const alarm = dc.currentDialog.state as Alarm;
+                const alarm = dc.activeDialog.state as Alarm;
                 alarm.title = title;
                 await dc.prompt('timePrompt', `What time would you like to set the "${alarm.title}" alarm for?`);
             },
             async function (dc, time: Date) {
                 // Save alarm time
-                const alarm = dc.currentDialog.state as Alarm;
+                const alarm = dc.activeDialog.state as Alarm;
                 alarm.time = time.toISOString();
         
                 // Alarm completed so set alarm.

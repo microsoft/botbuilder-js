@@ -1,4 +1,4 @@
-import { DialogSet, DialogContainer, ChoicePrompt, DialogResult, FoundChoice } from 'botbuilder-dialogs';
+import { DialogSet, DialogContainer, ChoicePrompt, FoundChoice } from 'botbuilder-dialogs';
 import { TurnContext } from 'botbuilder';
 
 export interface LanguagePickerSettings {

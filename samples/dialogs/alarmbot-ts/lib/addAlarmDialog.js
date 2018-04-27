@@ -17,14 +17,14 @@ class AddAlarmDialog extends botbuilder_dialogs_1.DialogContainer {
             function (dc) {
                 return __awaiter(this, void 0, void 0, function* () {
                     // Initialize temp alarm and prompt for title
-                    dc.currentDialog.state = {};
+                    dc.activeDialog.state = {};
                     yield dc.prompt('titlePrompt', `What would you like to call your alarm?`);
                 });
             },
             function (dc, title) {
                 return __awaiter(this, void 0, void 0, function* () {
                     // Save alarm title and prompt for time
-                    const alarm = dc.currentDialog.state;
+                    const alarm = dc.activeDialog.state;
                     alarm.title = title;
                     yield dc.prompt('timePrompt', `What time would you like to set the "${alarm.title}" alarm for?`);
                 });
@@ -32,7 +32,7 @@ class AddAlarmDialog extends botbuilder_dialogs_1.DialogContainer {
             function (dc, time) {
                 return __awaiter(this, void 0, void 0, function* () {
                     // Save alarm time
-                    const alarm = dc.currentDialog.state;
+                    const alarm = dc.activeDialog.state;
                     alarm.time = time.toISOString();
                     // Alarm completed so set alarm.
                     const user = userState.get(dc.context);
