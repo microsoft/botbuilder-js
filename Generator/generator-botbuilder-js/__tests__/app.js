@@ -11,6 +11,10 @@ describe('generator-botbuilder-js:app', () => {
   });
 
   it('creates files', () => {
-    assert.file(['dummyfile.txt']);
+    assert.file(['app.*']);
+    assert.file(['package.json']);
+    assert.file(['.gitignore']);
+    assert.file(['.env']);
+    assert.file(['README.md']);
   });
 });
