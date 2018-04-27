@@ -49,6 +49,13 @@ class ServiceBase {
             }
         }
         const body = dataModel ? JSON.stringify(dataModel) : undefined;
+        if (params.debug) {
+            console.log(`${method.toUpperCase()} ${URL}`);
+            if (headers)
+                console.log(`HEADERS:${JSON.stringify(headers)}`);
+            if (body)
+                console.log(body);
+        }
 
         return fetch(URL, {headers, method, body});
     }

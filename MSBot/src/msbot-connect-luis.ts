@@ -59,12 +59,13 @@ if (process.argv.length < 3) {
 }
 
 async function processConnectLuisArgs(config: BotConfig): Promise<BotConfig> {
+
     args.name = args.hasOwnProperty('name') ? args.name : config.name;
 
     if (args.stdin) {
         Object.assign(args, JSON.parse(await getStdin()));
     }
-    else if (args.input != null) {
+    else if (args.input) {
         Object.assign(args, JSON.parse(fs.readFileSync(<string>args.input, 'utf8')));
     }
 
@@ -87,6 +88,6 @@ async function processConnectLuisArgs(config: BotConfig): Promise<BotConfig> {
     let newService = new LuisService(args);
     config.connectService(newService);
     await config.save();
-    process.stdout.write(`Connected ${newService.type}:${newService.name} v${newService.version}`);
+    process.stdout.write(`Connected ${newService.type}:${newService.name}`);
     return config;
 }

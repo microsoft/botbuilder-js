@@ -142,7 +142,7 @@ async function initializeConfig() {
         });
         if (i == 2 && answer.trim().length == 0)
             break;
-        answers.push(answer);
+        answers.push(answer.trim());
     }
 
     const [authoringKey, location, appId, versionId] = answers;
@@ -290,7 +290,7 @@ async function validateArguments(serviceManifest) {
  * @param error
  */
 async function handleError(error) {
-    process.stdout.write('\n' + chalk.red.bold(error + '\n'));
+    process.stdout.write('\n' + chalk.red.bold(error + '\n\n'));
 //    if (error.name === 'ArgumentError') {
         await help(args);
 //    }

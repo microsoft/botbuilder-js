@@ -171,22 +171,27 @@ function getVerbHelp(verb) {
         table: []
     };
 
-    // special verbs
+      // special verbs
+
     let sections = [];
+
     switch (verb) {
         case "query":
-            process.stdout.write(chalk.cyan.bold("qnamaker query --question <querytext>\n\n"))
-            options.table.push([chalk.cyan.bold("--question <query>"), "query to get prediction for"]);
+            process.stdout.write(chalk.cyan.bold("luis query -q <querytext> --region <region>\n\n"))
+            options.table.push([chalk.cyan.bold("-q <query>"), "query to get a LUIS prediction for"]);
+            options.table.push([chalk.cyan.bold("--subscriptionKey"), "Specifies the LUIS subscriptionKey. Overrides the .luisrc value and the LUIS_SUBSCRIPTION_KEY environment variable."]);
+            options.table.push([chalk.cyan.bold("--region <region>"), "region to call"]);
             sections.push(options);
             sections.push(configSection);
             sections.push(globalArgs);
             return sections;
 
         case "set":
-            process.stdout.write(chalk.cyan.bold("qnamaker set <.qnamakerrcSetting> <value>\n\n"))
-            options.table.push([chalk.cyan.bold("kbid <kbid>"), "change the active kb id "]);
-            options.table.push([chalk.cyan.bold("subscriptionkey <subscriptionkey>"), "change the active subscriptionkey"]);
-            options.table.push([chalk.cyan.bold("endpoint <endpointUrl>"), "change the active endpoint url"]);
+            process.stdout.write(chalk.cyan.bold("luis set <.luisrcSetting> <value>\n\n"))
+            options.table.push([chalk.cyan.bold("application <appIdOrName>"), "change the active application id "]);
+            options.table.push([chalk.cyan.bold("version <version>"), "change the active version id "]);
+            options.table.push([chalk.cyan.bold("authoringKey <authoringKey>"), "change the active authoringKey◘"]);
+            options.table.push([chalk.cyan.bold("endpoint <endpointUrl>"), "change the active endpointBasePath url"]);
             sections.push(options);
             sections.push(configSection);
             sections.push(globalArgs);

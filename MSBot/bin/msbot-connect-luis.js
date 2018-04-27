@@ -52,7 +52,7 @@ async function processConnectLuisArgs(config) {
     if (args.stdin) {
         Object.assign(args, JSON.parse(await getStdin()));
     }
-    else if (args.input != null) {
+    else if (args.input) {
         Object.assign(args, JSON.parse(fs.readFileSync(args.input, 'utf8')));
     }
     if (!args.hasOwnProperty('name'))
@@ -69,7 +69,7 @@ async function processConnectLuisArgs(config) {
     let newService = new models_1.LuisService(args);
     config.connectService(newService);
     await config.save();
-    process.stdout.write(`Connected ${newService.type}:${newService.name} v${newService.version}`);
+    process.stdout.write(`Connected ${newService.type}:${newService.name}`);
     return config;
 }
 //# sourceMappingURL=msbot-connect-luis.js.map

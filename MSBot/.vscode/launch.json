@@ -9,7 +9,7 @@
             "request": "launch",
             "name": "Launch Program", 
             "program": "${workspaceFolder}/bin/msbot-connect-luis.js",
-            "args": ["--in","c:\\scratch\\foo.dispatch"]
+            "args": ["--input","c:\\scratch\\luis.json"]
         }
     ]
 }
