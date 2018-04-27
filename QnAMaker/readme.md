@@ -6,19 +6,19 @@ QnAMaker is command line tool and library for interacting with QnAMaker service 
 
 ## Pre-requisite
 
-- [Node.js](https://nodejs.org/) version 8.5 or higher
+- [Node.js](https://nodejs.org/) version 8.x or higher
 
 ## Installation
 
 ### As a cli
 Make sure you have node >=8.5 and npm installed on your machine. then use:
 
-`npm i -g qnamaker`
+`npm install -g qnamaker`
 
 ### As a library
 The QnAMaker apis can be installed and used as a library in any Node or UI JavaScript projects for the browser.
 
-`npm i -s qnamaker`
+`npm install -s qnamaker`
 
 You can then import and use service classes specific to the endpoint and operation you wish to call.
 
@@ -26,29 +26,44 @@ You can then import and use service classes specific to the endpoint and operati
 
 QnA Maker cli for interacting with the QnA Maker api - © 2018 Microsoft Corporation
 
-|Commands|  |
-|----|----|
-| qnamaker create --in createKnowledgeBase.json            |Creates a new knowledge base.|
-| qnamaker publish                                         |Publish all unpublished in the knowledgebase to the prod endpoint|
-| qnamaker update --in updateKnowledgeBase.json            |Add or delete QnA Pairs and / or URLs to an existing knowledge base.|
-| qnamaker get                                             |Downloads all the data associated with the specified knowledge base.|
-| qnamaker delete                                          |Deletes the specified knowledge base and all data associated with it.|
-| qnamaker query --question "how do I turn it on" --top 5  |Returns the list of answers for the given question sorted in descending order of ranking score.|
-| qnamaker train --in trainKnowledgeBase.json              |train the model |
-| qnamaker get alterations                                 |Downloads all word alterations (synonyms) that have been automatically mined or added by the user.|
-| qnamaker update alterations --in updateAlterations.json |Replaces word alterations (synonyms) for the KB with the give records.|
+### Alterations
+| Command | Description |
+| ------- | ----------- |
+| `qnamaker list alterations` |  Downloads all word alterations (synonyms) that have been automatically mined or added by the user.| 
+| `qnamaker replace alterations --in wordAlterations.json` |  Replaces word alterations (synonyms) for the KB with the give records.| 
 
+### Endpointkeys
+| Command | Description |
+| ------- | ----------- |
+| `qnamaker list endpointkeys`| list all the currently valid endpointKeys for querying your private endpoint| 
+| `qnamaker refresh endpointkeys --keyType <string>` | Re-generates an endpoint key, in case you suspect your keys have been compromised| 
 
-|Configuration and Overrides|description|
-|---|---|
-| --kbId <kbId>                                                                             |Specifies the public qnamaker knowledgebase id. Overrides the .qnamakerrc value and the QNAMAKER_KBID environment variable.|
-| --subscriptionKey <key>                                                                   |Specifies the qnamaker subscription key (from qnamaker.ai portal user settings page). Overrides the .qnamakerrc value and the QNAMAKER_SUBSCRIPTION_KEY environment variable.|
-| --endpoint <path>                                                                 |Specifies the base URI for all requests. Overrides the .qnamakerrc value and the QNAMAKER_ENDPOINT environment variable.|
+### Knowledgebase
+| Command | Description |
+| ------- | ----------- |
+| `qnamaker create kb --in createKbPayload.json` |Create a new knowledgebase| 
+| `qnamaker delete kb --kbId <string>` | Delete a knowledgebase by id| 
+| `qnamaker export kb --kbId <string> --environment <string> ` | Export a knowledgebase for text or Prod |
+| `qnamaker get kb --kbId <string> ` | Get metadata about a knowledgebase| 
+| `qnamaker publish kb --kbId <string> ` |Publish all unpublished in the knowledgebase to the prod endpoint| 
+| `qnamaker replace kb --in replaceKb.json --kbId <string>` | Replace a knowledgebase contents with new contents| 
+| `qnamaker update kb --in updateKb.json --kbId <string> ` | Add or delete QnA Pairs and / or URLs to an existing knowledge base| 
+| `qnamaker export legacykb --kbId <legacyKB> ` | Export legacy knowledgebase (requires legacy --kbid and --subscriptionKey to be passed in)| 
 
-|Global Arguments | description |
-| ---- | --- |
-| --help,    -h |  this help file.|
-| --version, -v | the version of this cli tool|
+### Knowledgebases
+| Command | Description |
+| ------- | ----------- |
+| `qnamaker list kbs` | List all of your knowledgebases| 
+
+### Operation Details
+| Command | Description |
+| ------- | ----------- |
+| `qnamaker get operationdetails --operationId <string>`| Gets details of a specific long running operation.| 
+
+### Query
+| Command | Description |
+| ------- | ----------- |
+| `qnamaker query --question "how do I turn it on" --top 5`| Returns the list of answers for the given question sorted in descending order of ranking score.| 
 
 ## Configuration
 A configuration object is required to provide the endpoint base path, app ID, version ID and the 
@@ -58,17 +73,18 @@ authoring key to each outbound call. There are 3 ways to provide this informatio
 The json format for the `.qnamakerrc` file is:
 ```json
 {
-  "knowledgeBaseID": "xxxxxxx-xxxxx-xxxx-xxxx-xxxxxxxx",
   "subscriptionKey": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-  "endpoint": "https://westus.api.cognitive.microsoft.com/qnamaker/v2.0"
+  "kbId": "xxxxxxx-xxxxx-xxxx-xxxx-xxxxxxxx",
+  "hostname": "https://xxxxxx.azurewebsites.net",
+  "endpointKey": "xxxxxxx-xxxxx-xxxx-xxxx-xxxxxxxx"
 }
-```
+`
 
 > NOTE: Simply run `qnamaker --init` to answer simple questions to create your .qnamakerrc file
 
-2. As arguments to the cli. `--kbId <string> --subscriptionKey <string> --endpoint <string>`
+2. As arguments to the cli. `--kbId <string> --subscriptionKey <string> `
 
-3. As environment variables. `QNAMAKER_KBID, QNAMAKER_SUBSCRIPTION_KEY, QNAMAKER_ENDPOINT`
+3. As environment variables. `QNAMAKER_KBID, QNAMAKER_SUBSCRIPTION_KEY, QNAMAKER_ENDPOINTKEY, QNAMAKER_HOSTNAME`
 
 The cli will first look for these named configuration variables in the arguments list, then inside the `.qnamakerrc` file, then fallback to environment variables. 
 
