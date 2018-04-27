@@ -78,7 +78,7 @@ The json format for the `.qnamakerrc` file is:
   "hostname": "https://xxxxxx.azurewebsites.net",
   "endpointKey": "xxxxxxx-xxxxx-xxxx-xxxx-xxxxxxxx"
 }
-`
+```
 
 > NOTE: Simply run `qnamaker --init` to answer simple questions to create your .qnamakerrc file
 
