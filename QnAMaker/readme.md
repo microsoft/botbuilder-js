@@ -50,7 +50,7 @@ QnA Maker cli for interacting with the QnA Maker api - © 2018 Microsoft Corpora
 | **Operationdetails** | |
 |`qnamaker get operationdetails --operationId <string>`     |  Gets details of a specific long running operation.|
 | **Query** | |
-|`qnamaker query --question "how do I turn it on" --top 5    |qnamaker query --question "how do I turn it on" --top 5  Returns the list of answers for the given question sorted in descending order of ranking score.|
+|`qnamaker query --question "how do I turn it on" --top 5` | Returns the list of answers for the given question sorted in descending order of ranking score.|
 
 
 ## Configuration
