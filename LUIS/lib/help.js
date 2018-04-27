@@ -17,6 +17,7 @@ module.exports = async function help(args) {
     process.stdout.write('LUIS Command Line Interface - © 2018 Microsoft Corporation\n\n');
     const helpContents = await getHelpContents(args);
 
+    let width = windowSize ? windowSize.width : 250;
     let leftColWidth = 0;
     for (let hc of helpContents) {
         if (hc.table && hc.table[0].length > 0) {
@@ -24,7 +25,7 @@ module.exports = async function help(args) {
             for (let row in hc.table) {
                 let len = hc.table[row][0].length;
                 if (len > leftColWidth) {
-                    leftColWidth = Math.min(len, Math.floor(windowSize.width / 3));
+                    leftColWidth = Math.min(len, Math.floor(width / 3));
                 }
             }
             let i = rows - 1;
@@ -37,7 +38,7 @@ module.exports = async function help(args) {
             const rows = helpContent.table[0].length;
             let i = rows - 1;
 
-            const colWidthsFor2On = ((windowSize.width * .85) - leftColWidth) / i;
+            const colWidthsFor2On = ((width * .85) - leftColWidth) / i;
             const colWidths = [leftColWidth];
 
             while (i--) {

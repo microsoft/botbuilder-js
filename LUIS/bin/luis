@@ -20,6 +20,7 @@ const request = require('request-promise');
 const help = require('../lib/help');
 const luis = require('../lib');
 const { getServiceManifest } = require('../lib/utils/argsUtil');
+const Apps = require('../lib/api/apps/apps');
 
 let args;
 
@@ -76,26 +77,37 @@ async function runProgram() {
             }
         }
 
-        const result = await luis(config, serviceManifest, args, requestBody);
+        let result = await luis(config, serviceManifest, args, requestBody);
         if (result.error) {
             throw new Error(result.error.message);
         }
 
-        if (args.msbot &&
-            ((serviceManifest.operation.name == "addApplication") ||
-                (serviceManifest.operation.name == "getApplicationInfo") ||
-                (serviceManifest.operation.name == "importApplication"))) {
-            process.stdout.write(JSON.stringify({
-                type: "luis",
-                name: result.name,
-                id: result.id || result,
-                appId: result.id || result,
-                authoringKey: config.authoringKey,
-                subscriptionKey: config.authoringKey,
-                version: result.activeVersion || requestBody.initialVersionId
-            }, null, 2));
-        } else {
-            process.stdout.write(JSON.stringify(result, null, 2));
+        // custom output
+        switch (serviceManifest.operation.name) {
+            case "importApplication":
+            case "addApplication":
+                let response  = await new Apps().getApplicationInfo({ authoringKey: config.authoringKey, appId: result });
+                result = JSON.parse(await response.text());
+
+            case "getApplicationInfo":
+                if (args.msbot) {
+                    process.stdout.write(JSON.stringify({
+                        type: "luis",
+                        name: result.name,
+                        id: result.id || result,
+                        appId: result.id || result,
+                        authoringKey: config.authoringKey,
+                        subscriptionKey: config.subscriptionKey || config.authoringKey,
+                        version: result.activeVersion || requestBody.initialVersionId
+                    }, null, 2));
+                } else {
+                    process.stdout.write(JSON.stringify(result, null, 2));
+                }
+                break;
+
+            default:
+                process.stdout.write(JSON.stringify(result, null, 2));
+                break;
         }
     }
 }
@@ -291,9 +303,9 @@ async function validateArguments(serviceManifest) {
  */
 async function handleError(error) {
     process.stdout.write('\n' + chalk.red.bold(error + '\n\n'));
-//    if (error.name === 'ArgumentError') {
-        await help(args);
-//    }
+    //    if (error.name === 'ArgumentError') {
+    await help(args);
+    //    }
     return 1;
 }
 
@@ -358,7 +370,7 @@ async function handleSetCommand(args, config) {
         case 'endpointbasepath':
             config.endpointBasePath = targetName;
             break;
-            
+
         case 'authoringkey':
             config.authoringKey = targetName;
             break;
