@@ -8,6 +8,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Licensed under the MIT License.
  */
 const botbuilder_1 = require("botbuilder");
+const dialogContext_1 = require("./dialogContext");
 const dialogSet_1 = require("./dialogSet");
 /**
  * :package: **botbuilder-dialogs**
@@ -15,66 +16,74 @@ const dialogSet_1 = require("./dialogSet");
  * Base class for all dialogs.
  *
  * The `Control` and `CompositeControl` classes are very similar in that they both add `begin()`
- * and `continue()` methods which simplify consuming the control from a non-dialog based bot. The
+ * and `continue()` methods which simplify consuming the dialog from a non-dialog based bot. The
  * primary difference between the two classes is that the `CompositeControl` class is designed to
  * bridge one `DialogSet` to another where the `Control` class assumes that the derived dialog can
  * be used in complete isolation without the need for any other supporting dialogs.
  * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
- * @param R (Optional) type of result that's expected to be returned by the control.
+ * @param R (Optional) type of result that's expected to be returned by the dialog.
  * @param O (Optional) options that can be passed into the [begin()](#begin) method.
  */
 class Dialog {
     /**
-     * Starts the control. Depending on the control, its possible for the control to finish
-     * immediately so it's advised to check the result object returned by `begin()` and ensure that
-     * the control is still active before continuing.
+     * Starts the dialog. Depending on the dialog, its possible for the dialog to finish
+     * immediately so it's advised to check the completion object returned by `begin()` and ensure
+     * that the dialog is still active before continuing.
      *
      * **Usage Example:**
      *
      * ```JavaScript
      * const state = {};
-     * const result = await control.begin(context, state);
-     * if (!result.active) {
-     *     const value = result.result;
+     * const completion = await dialog.begin(context, state);
+     * if (completion.isCompleted) {
+     *     const value = completion.result;
      * }
      * ```
      * @param context Context for the current turn of the conversation with the user.
-     * @param state A state object that the control will use to persist its current state. This should be an empty object which the control will populate. The bot should persist this with its other conversation state for as long as the control is still active.
-     * @param options (Optional) additional options supported by the control.
+     * @param state A state object that the dialog will use to persist its current state. This should be an empty object which the dialog will populate. The bot should persist this with its other conversation state for as long as the dialog is still active.
+     * @param options (Optional) additional options supported by the dialog.
      */
     begin(context, state, options) {
-        // Create empty dialog set and ourselves to it
+        // Create empty dialog set and add ourselves to it
         const dialogs = new dialogSet_1.DialogSet();
         dialogs.add('dialog', this);
-        // Start the control
-        const cdc = dialogs.createContext(context, state);
-        return cdc.begin('dialog', options)
-            .then(() => cdc.dialogResult);
+        // Start the dialog
+        let result;
+        const dc = new dialogContext_1.DialogContext(dialogs, context, state, (r) => { result = r; });
+        return dc.begin('dialog', options)
+            .then(() => dc.activeDialog ? { isActive: true, isCompleted: false } : { isActive: false, isCompleted: true, result: result });
     }
     /**
-     * Passes a users reply to the control for further processing. The bot should keep calling
-     * `continue()` for future turns until the control returns a result with `Active == false`.
-     * To cancel or interrupt the prompt simply delete the `state` object being persisted.
+     * Passes a users reply to the dialog for further processing. The bot should keep calling
+     * `continue()` for future turns until the dialog returns a completion object with
+     * `isCompleted == true`. To cancel or interrupt the prompt simply delete the `state` object
+     * being persisted.
      *
      * **Usage Example:**
      *
      * ```JavaScript
-     * const result = await control.continue(context, state);
-     * if (!result.active) {
-     *     const value = result.result;
+     * const completion = await dialog.continue(context, state);
+     * if (completion.isCompleted) {
+     *     const value = completion.result;
      * }
      * ```
      * @param context Context for the current turn of the conversation with the user.
      * @param state A state object that was previously initialized by a call to [begin()](#begin).
      */
     continue(context, state) {
-        // Create empty dialog set and ourselves to it
+        // Create empty dialog set and add ourselves to it
         const dialogs = new dialogSet_1.DialogSet();
         dialogs.add('dialog', this);
-        // Continue the control
-        const cdc = dialogs.createContext(context, state);
-        return cdc.continue()
-            .then(() => cdc.dialogResult);
+        // Continue the dialog
+        let result;
+        const dc = new dialogContext_1.DialogContext(dialogs, context, state, (r) => { result = r; });
+        if (dc.activeDialog) {
+            return dc.continue()
+                .then(() => dc.activeDialog ? { isActive: true, isCompleted: false } : { isActive: false, isCompleted: true, result: result });
+        }
+        else {
+            return Promise.resolve({ isActive: false, isCompleted: false });
+        }
     }
 }
 exports.Dialog = Dialog;
@@ -158,14 +167,14 @@ class Waterfall extends Dialog {
         this.steps = steps.slice(0);
     }
     dialogBegin(dc, args) {
-        const instance = dc.currentDialog;
+        const instance = dc.activeDialog;
         instance.step = 0;
         return this.runStep(dc, args);
     }
     dialogContinue(dc) {
         // Don't do anything for non-message activities
         if (dc.context.activity.type === botbuilder_1.ActivityTypes.Message) {
-            const instance = dc.currentDialog;
+            const instance = dc.activeDialog;
             instance.step += 1;
             return this.runStep(dc, dc.context.activity.text);
         }
@@ -174,13 +183,13 @@ class Waterfall extends Dialog {
         }
     }
     dialogResume(dc, result) {
-        const instance = dc.currentDialog;
+        const instance = dc.activeDialog;
         instance.step += 1;
         return this.runStep(dc, result);
     }
     runStep(dc, result) {
         try {
-            const instance = dc.currentDialog;
+            const instance = dc.activeDialog;
             const step = instance.step;
             if (step >= 0 && step < this.steps.length) {
                 // Execute step

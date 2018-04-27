@@ -12,21 +12,19 @@ import { DialogSet } from './dialogSet';
 /**
  * :package: **botbuilder-dialogs**
  *
- * A `DialogContainer` makes it easy to take an existing set of dialogs and package them up as a
- * control that can be used within another bot. The control can be used either as a dialog added
- * to the other bots `DialogSet` or on its own for bots that are using some other conversation
- * management system.
+ * The `DialogContainer` class lets you break your bots logic up into components that can be added
+ * as a dialog to other dialog sets within your bots project. They can even be exported and used
+ * in other bot projects, allowing for the creation of libraries of reusable dialog components.
  *
- * ### Control Packaging
+ * ### Component Creation
  *
- * You'll typically want to package your control as a new class derived from `DialogContainer`.
- * Within your controls constructor you'll pass the `DialogSet` containing your controls dialogs
- * and the `ID` of the initial dialog that should be started anytime a caller calls the dialog.
+ * To create a reusable dialog component you'll want to define a new class derived from
+ * `DialogContainer`. Your component has its own `DialogSet` which you can add dialogs to from
+ * within your classes constructor.  You can add as many dialogs as you like and the dialogs can
+ * be waterfalls, prompts, or even other component dialogs.
  *
- * If your control needs to be configured then you can pass through the configuration settings as
- * a set of `defaultOptions` which will be merged with any options passed in by the caller when
- * they call `begin()`. These will then be passed as arguments to the initial dialog that gets
- * started.
+ * Since developers will add instances of your component to their bots as other named dialogs, the
+ * DialogContainer needs to know the ID of the initial dialog it should start anytime it's started.
  *
  * Here's a fairly simple example of a `ProfileDialog` that's designed to prompt the user to
  * enter their name and phone number which it will return as a JSON object to the caller:
@@ -61,12 +59,18 @@ import { DialogSet } from './dialogSet';
  * module.exports.ProfileDialog = ProfileDialog;
  * ```
  *
- * ### Consume as Dialog
+ * We've added two dialogs to our component, a waterfall and a prompt. And we've told the
+ * DialogContainer that it should start the 'fillProfile' dialog anytime an instance of the
+ * `ProfileDialog` is started. The DialogContainer will manager persisting the controls dialog
+ * stack to the callers dialog stack.
  *
- * On the consumption side the control we created can be used by a bot in much the same way they
- * would use any other prompt. They can add a new instance of the control as a named dialog to
- * their bots `DialogSet` and then start it using a call to `DialogContext.begin()`.  If the
- * control accepts options these can be passed in to the `begin()` call as well.
+ * ### Component Usage
+ *
+ * On the consumption side the dialog we created can be used by a bot in much the same way they
+ * would use any other prompt. They can add a new instance of the component as a named dialog to
+ * their bots `DialogSet` and then start it using a call to `DialogContext.begin()`. If the
+ * dialog accepts options these can be passed in to the `begin()` call and the `DialogContainer`
+ * will pass them through as args to the initial dialog it starts.
  *
  * ```JavaScript
  * const { DialogSet } = require('botbuilder-dialogs');
@@ -87,48 +91,20 @@ import { DialogSet } from './dialogSet';
  *      }
  * ]);
  * ```
- *
- * ### Consume as Control
- *
- * If the consuming bot isn't dialog based they can still use your control. They will just need
- * start the control from somewhere within their bots logic by calling the controls `begin()`
- * method:
- *
- * ```JavaScript
- * const state = {};
- * const control = new ProfileDialog();
- * await prompt.begin(context, state);
- * ```
- *
- * The control will populate the `state` object passed in with information it needs to process
- * the users response. This should be saved off with the bots conversation state as it needs to be
- * passed into the controls `continue()` method on the next turn of conversation with the user:
- *
- * ```JavaScript
- * const control = new ProfileDialog();
- * const result = await control.continue(context, state);
- * if (!result.active) {
- *     const profile = result.result;
- * }
- * ```
- *
- * The `continue()` method returns a `DialogResult` object which can be used to determine when
- * the control is finished and then to access any results it might have returned. To interrupt or
- * cancel the control simply delete the `state` object the bot has been persisting.
- * @param R (Optional) type of result that's expected to be returned by the control.
+ * @param R (Optional) type of result that's expected to be returned by the dialog.
  * @param O (Optional) options that can be passed into the begin() method.
  * @param C (Optional) type of `TurnContext` being passed to dialogs in the set.
  */
 export declare class DialogContainer<R = any, O = {}, C extends TurnContext = TurnContext> extends Dialog<C> {
-    protected dialogId: string;
-    /** The controls dialog set. */
+    protected initialDialogId: string;
+    /** The containers dialog set. */
     protected dialogs: DialogSet<C>;
     /**
      * Creates a new `DialogContainer` instance.
-     * @param dialogId ID of the root dialog that should be started anytime the control is started.
-     * @param dialogs (Optional) set of existing dialogs the control should use. If omitted an empty set will be created.
+     * @param initialDialogId ID of the dialog, within the containers dialog set, that should be started anytime an instance of the `DialogContainer` is started.
+     * @param dialogs (Optional) set of existing dialogs the container should use. If omitted an empty set will be created.
      */
-    constructor(dialogId: string, dialogs?: DialogSet<C>);
+    constructor(initialDialogId: string, dialogs?: DialogSet<C>);
     dialogBegin(dc: DialogContext<C>, dialogArgs?: any): Promise<any>;
     dialogContinue(dc: DialogContext<C>): Promise<any>;
 }

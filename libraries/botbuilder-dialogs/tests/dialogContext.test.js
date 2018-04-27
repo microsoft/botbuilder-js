@@ -144,8 +144,8 @@ describe('DialogContext', function() {
         const context = new TestContext(beginMessage);
         const dc = dialogs.createContext(context, state);
         dc.begin('a').then(() => {
-            assert(state.dialogStack && state.dialogStack[0] && state.dialogStack[0].id === 'a');
-            state.dialogStack[0].id = 'b';
+            assert(dc.activeDialog && dc.activeDialog.id === 'a');
+            dc.activeDialog.id = 'b';
             const dc2 = dialogs.createContext(context, state);
             return dc2.continue().catch((err) => {
                 assert(err);
@@ -168,8 +168,7 @@ describe('DialogContext', function() {
         dc.begin('a').then(() => {
             const dc2 = dialogs.createContext(context, state);
             return dc2.continue().then(() => {
-                const result = dc2.dialogResult;
-                assert(result && !result.active);
+                assert(dc2.activeDialog === undefined);
                 done();
             });
         });
@@ -221,25 +220,6 @@ describe('DialogContext', function() {
         const dc = dialogs.createContext(context, state);
         dc.begin('a');
     });
-
-    it('should return a value from begin() when end() called with a value on root dialog.', function (done) {
-        const dialogs = new DialogSet();
-        dialogs.add('a', [
-            function (dc) {
-                return dc.end(120);
-            }
-        ]);
-
-        const state = {};
-        const context = new TestContext(beginMessage);
-        const dc = dialogs.createContext(context, state);
-        dc.begin('a').then(() => {
-            const result = dc.dialogResult;
-            assert(result && !result.active);
-            assert(result.result === 120);
-            done();
-        });
-    });
     
     it(`should return to parents parent when end() called and parent doesn't support Dialog.dialogResume().`, function (done) {
         const dialogs = new DialogSet();
@@ -259,8 +239,7 @@ describe('DialogContext', function() {
         const context = new TestContext(beginMessage);
         const dc = dialogs.createContext(context, state);
         dc.begin('a').then(() => {
-            const result = dc.dialogResult;
-            assert(result && !result.active);
+            assert(dc.activeDialog === undefined);
             done();
         });
     });
@@ -289,9 +268,8 @@ describe('DialogContext', function() {
         const context = new TestContext(beginMessage);
         const dc = dialogs.createContext(context, state);
         dc.begin('a').then(() => {
-            const result = dc.dialogResult;
-            assert(state.dialogStack && state.dialogStack[0] && state.dialogStack[0].id === 'a');
-            state.dialogStack[0].id = 'c';
+            assert(dc.activeDialog && dc.activeDialog.id === 'b');
+            dc.activeDialog.id = 'c';
             const dc2 = dialogs.createContext(context, state);
             return dc2.continue().catch((err) => {
                 assert(err);
@@ -306,8 +284,7 @@ describe('DialogContext', function() {
         const context = new TestContext(beginMessage);
         const dc = dialogs.createContext(context, state);
         dc.end().then(() => {
-            const result = dc.dialogResult;
-            assert(result && !result.active);
+            assert(dc.activeDialog === undefined);
             done();
         });
     });

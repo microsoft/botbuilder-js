@@ -46,7 +46,7 @@ export abstract class Prompt<C extends TurnContext> extends Dialog<C> {
 
     public dialogBegin(dc: DialogContext<C>, options: PromptOptions): Promise<any> {
         // Persist options
-        const instance = dc.currentDialog;
+        const instance = dc.activeDialog;
         instance.state = options || {};
 
         // Send initial prompt
@@ -60,7 +60,7 @@ export abstract class Prompt<C extends TurnContext> extends Dialog<C> {
         }
 
         // Recognize value
-        const instance = dc.currentDialog;
+        const instance = dc.activeDialog;
         return this.onRecognize(dc, instance.state)
             .then((recognized) => {
                 if (this.validator) {

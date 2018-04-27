@@ -49,8 +49,6 @@ describe('Dialog', function() {
         const context = new TestContext(beginMessage);
         const dc = dialogs.createContext(context, state);
         dc.begin('dialog', { foo: 'bar' }).then(() => {
-            const result = dc.dialogResult;
-            assert(result && result.active);
             assert(dialog.beginCalled);
             assert(dialog.beginArgs && dialog.beginArgs.foo === 'bar');
             done();
@@ -62,8 +60,8 @@ describe('Dialog', function() {
 
         const state = {};
         const context = new TestContext(beginMessage);
-        dialog.begin(context, state, { foo: 'bar' }).then((result) => {
-            assert(result && result.active);
+        dialog.begin(context, state, { foo: 'bar' }).then((completion) => {
+            assert(completion && completion.isActive);
             assert(dialog.beginCalled);
             assert(dialog.beginArgs && dialog.beginArgs.foo === 'bar');
             done();
@@ -75,12 +73,12 @@ describe('Dialog', function() {
 
         const state = {};
         const context = new TestContext(beginMessage);
-        dialog.begin(context, state, { foo: 'bar' }).then((result) => {
-            assert(result && result.active);
-            dialog.continue(context, state).then((result) => {
+        dialog.begin(context, state, { foo: 'bar' }).then((completion) => {
+            assert(completion && completion.isActive);
+            dialog.continue(context, state).then((completion) => {
                 assert(dialog.continueCalled);
-                assert(result && !result.active);
-                assert(result.result === 120);
+                assert(completion && !completion.isActive && completion.isCompleted);
+                assert(completion.result === 120);
                 done();
             });
         });
@@ -114,6 +112,7 @@ describe('Waterfall', function() {
     });
 
     it('should support calling next() to move to next steps.', function (done) {
+        let calledNext = false;
         const dialogs = new DialogSet();
         dialogs.add('a', [
             function (dc, args, next) {
@@ -124,7 +123,8 @@ describe('Waterfall', function() {
             function (dc, args) {
                 assert(dc);
                 assert(args === 'z');
-                return dc.end(args);
+                calledNext = true;
+                return dc.end();
             }
         ]);
 
@@ -132,9 +132,7 @@ describe('Waterfall', function() {
         const context = new TestContext(beginMessage);
         const dc = dialogs.createContext(context, state);
         dc.begin('a', 'z').then(() => {
-            const result = dc.dialogResult;
-            assert(result && !result.active);
-            assert(result.result === 'z');
+            assert(calledNext);
             done();
         });
     });
