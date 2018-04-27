@@ -193,9 +193,8 @@ function getVerbHelp(verb) {
             return sections;
     }
 
-    for (let iGroup in apiGroups) {
-        let apiGroupName = apiGroups[iGroup];
-        const apiGroup = manifest[apiGroupName];
+    for (let iGroup in manifest) {
+        const apiGroup = manifest[iGroup];
 
         for (let iCategory in apiGroup) {
             let category = apiGroup[iCategory];

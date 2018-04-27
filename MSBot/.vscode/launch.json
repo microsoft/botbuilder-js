@@ -8,8 +8,8 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program", 
-            "program": "${workspaceFolder}/bin/msbot-connect-file.js",
-            "args": ["c:\\scratch\\foo.dispatch"]
+            "program": "${workspaceFolder}/bin/msbot-connect-luis.js",
+            "args": ["--in","c:\\scratch\\foo.dispatch"]
         }
     ]
 }
