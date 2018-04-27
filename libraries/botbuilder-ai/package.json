@@ -31,7 +31,8 @@
     "request": "2.83.0",
     "request-promise-native": "1.0.5",
     "xmldom": "^0.1.27",
-    "@microsoft/recognizers-text-date-time": "^1.0.0"
+    "@microsoft/recognizers-text-date-time": "^1.0.0",
+    "moment": "^2.20.1"
   },
   "devDependencies": {
     "@types/mocha": "^2.2.47",

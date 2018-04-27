@@ -5,6 +5,11 @@
 # Interface: FoundChoice
 
 
+:package: **botbuilder-choices**
+
+Result returned by `findChoices()`.
+
+
 ## Properties
 <a id="index"></a>
 
@@ -12,7 +17,7 @@
 
 **●  index**:  *`number`* 
 
-*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:33](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/findChoices.d.ts#L33)*
+*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:82](https://github.com/Microsoft/botbuilder-js/blob/fbf16f5/libraries/botbuilder-choices/lib/findChoices.d.ts#L82)*
 
 
 
@@ -29,7 +34,7 @@ ___
 
 **●  score**:  *`number`* 
 
-*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:38](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/findChoices.d.ts#L38)*
+*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:87](https://github.com/Microsoft/botbuilder-js/blob/fbf16f5/libraries/botbuilder-choices/lib/findChoices.d.ts#L87)*
 
 
 
@@ -46,7 +51,7 @@ ___
 
 **●  synonym**:  *`string`* 
 
-*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:40](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/findChoices.d.ts#L40)*
+*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:89](https://github.com/Microsoft/botbuilder-js/blob/fbf16f5/libraries/botbuilder-choices/lib/findChoices.d.ts#L89)*
 
 
 
@@ -63,7 +68,7 @@ ___
 
 **●  value**:  *`string`* 
 
-*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/findChoices.d.ts#L31)*
+*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:80](https://github.com/Microsoft/botbuilder-js/blob/fbf16f5/libraries/botbuilder-choices/lib/findChoices.d.ts#L80)*
 
 
 

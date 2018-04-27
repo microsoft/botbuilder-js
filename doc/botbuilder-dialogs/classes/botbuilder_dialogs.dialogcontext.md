@@ -4,8 +4,14 @@
 
 # Class: DialogContext
 
+
+:package: **botbuilder-dialogs**
+
 ## Type parameters
-#### C :  `BotContext`
+#### C :  `TurnContext`
+
+The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
+
 ## Index
 
 ### Constructors
@@ -15,8 +21,8 @@
 
 ### Properties
 
-* [batch](botbuilder_dialogs.dialogcontext.md#batch)
 * [context](botbuilder_dialogs.dialogcontext.md#context)
+* [dialogResult](botbuilder_dialogs.dialogcontext.md#dialogresult)
 * [dialogs](botbuilder_dialogs.dialogcontext.md#dialogs)
 * [instance](botbuilder_dialogs.dialogcontext.md#instance)
 * [stack](botbuilder_dialogs.dialogcontext.md#stack)
@@ -41,7 +47,7 @@
 ### ⊕ **new DialogContext**(dialogs: *[DialogSet](botbuilder_dialogs.dialogset.md)`C`*, context: *`C`*, stack: *[DialogInstance](../interfaces/botbuilder_dialogs.dialoginstance.md)[]*): [DialogContext](botbuilder_dialogs.dialogcontext.md)
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:40](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L40)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:43](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L43)*
 
 
 
@@ -66,31 +72,31 @@ Creates a new DialogContext instance.
 
 
 ## Properties
-<a id="batch"></a>
-
-###  batch
-
-**●  batch**:  *`BatchOutput`* 
-
-*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:40](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L40)*
-
-
-
-Allows for batch based responses from the bot. Optional to use but you should add `BatchOutput` to your adapters middleware stack if you do, otherwise you'll need to manually call `dc.batch.flush()` somewhere within your bots logic.
-
-
-
-
-___
-
 <a id="context"></a>
 
 ###  context
 
 **●  context**:  *`C`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:33](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L33)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:41](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L41)*
 
+
+
+
+
+___
+
+<a id="dialogresult"></a>
+
+###  dialogResult
+
+**●  dialogResult**:  *[DialogResult](../interfaces/botbuilder_dialogs.dialogresult.md)`any`* 
+
+*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:57](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L57)*
+
+
+
+Returns a structure that indicates whether there is still an active dialog on the stack along with the result returned by a dialog that just ended.
 
 
 
@@ -103,7 +109,7 @@ ___
 
 **●  dialogs**:  *[DialogSet](botbuilder_dialogs.dialogset.md)`C`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:32](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L32)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:40](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L40)*
 
 
 
@@ -117,7 +123,7 @@ ___
 
 **●  instance**:  *[DialogInstance](../interfaces/botbuilder_dialogs.dialoginstance.md)⎮`undefined`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:49](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L49)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:52](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L52)*
 
 
 
@@ -134,7 +140,7 @@ ___
 
 **●  stack**:  *[DialogInstance](../interfaces/botbuilder_dialogs.dialoginstance.md)[]* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:34](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L34)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:42](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L42)*
 
 
 
@@ -148,11 +154,11 @@ ___
 
 ###  begin
 
-► **begin**(dialogId: *`string`*, dialogArgs?: *`any`*): `Promise`.<[DialogResult](../interfaces/botbuilder_dialogs.dialogresult.md)>
+► **begin**(dialogId: *`string`*, dialogArgs?: *`any`*): `Promise`.<`any`>
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:62](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L62)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:70](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L70)*
 
 
 
@@ -161,7 +167,7 @@ Pushes a new dialog onto the dialog stack.
 **Example usage:**
 
     const dc = dialogs.createContext(context, stack);
-    return dc.begin('greeting', user);
+    await dc.begin('greeting', user);
 
 
 **Parameters:**
@@ -175,7 +181,7 @@ Pushes a new dialog onto the dialog stack.
 
 
 
-**Returns:** `Promise`.<[DialogResult](../interfaces/botbuilder_dialogs.dialogresult.md)>
+**Returns:** `Promise`.<`any`>
 
 
 
@@ -187,11 +193,11 @@ ___
 
 ###  continue
 
-► **continue**(): `Promise`.<[DialogResult](../interfaces/botbuilder_dialogs.dialogresult.md)>
+► **continue**(): `Promise`.<`any`>
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:94](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L94)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:103](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L103)*
 
 
 
@@ -202,14 +208,14 @@ Continues execution of the active dialog, if there is one, by passing the contex
     const dc = dialogs.createContext(context, dialogStack);
     return dc.continue().then(() => {
          if (!context.responded) {
-             return dc.begin('fallback');
+             await dc.begin('fallback');
          }
     });
 
 
 
 
-**Returns:** `Promise`.<[DialogResult](../interfaces/botbuilder_dialogs.dialogresult.md)>
+**Returns:** `Promise`.<`any`>
 
 
 
@@ -221,11 +227,11 @@ ___
 
 ###  end
 
-► **end**(result?: *`any`*): `Promise`.<[DialogResult](../interfaces/botbuilder_dialogs.dialogresult.md)>
+► **end**(result?: *`any`*): `Promise`.<`any`>
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:119](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L119)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:128](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L128)*
 
 
 
@@ -239,7 +245,7 @@ The parent dialog will have its `Dialog.resume()` method invoked with any return
          function (dc) {
              const elapsed = new Date().getTime() - started;
              dc.batch.reply(`I've been running for ${elapsed / 1000} seconds.`);
-             return dc.end(elapsed);
+             await dc.end(elapsed);
          }
     ]);
     const started = new Date().getTime();
@@ -255,7 +261,7 @@ The parent dialog will have its `Dialog.resume()` method invoked with any return
 
 
 
-**Returns:** `Promise`.<[DialogResult](../interfaces/botbuilder_dialogs.dialogresult.md)>
+**Returns:** `Promise`.<`any`>
 
 
 
@@ -271,7 +277,7 @@ ___
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:129](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L129)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:138](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L138)*
 
 
 
@@ -296,11 +302,11 @@ ___
 
 ###  prompt
 
-► **prompt**O(dialogId: *`string`*, prompt: *`string`⎮`Partial`.<`Activity`>*, choicesOrOptions?: *`O`⎮`any`[]*, options?: *`O`*): `Promise`.<[DialogResult](../interfaces/botbuilder_dialogs.dialogresult.md)>
+► **prompt**O(dialogId: *`string`*, prompt: *`string`⎮`Partial`.<`Activity`>*, choicesOrOptions?: *`O`⎮`any`[]*, options?: *`O`*): `Promise`.<`any`>
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:77](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L77)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:86](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L86)*
 
 
 
@@ -308,7 +314,7 @@ Helper function to simplify formatting the options for calling a prompt dialog. 
 
 **Example usage:**
 
-    return dc.prompt('confirmPrompt', `Are you sure you'd like to quit?`);
+    await dc.prompt('confirmPrompt', `Are you sure you'd like to quit?`);
 
 
 **Type parameters:**
@@ -324,13 +330,13 @@ Helper function to simplify formatting the options for calling a prompt dialog. 
 | dialogId | `string`   |  ID of the prompt to start. |
 | prompt | `string`⎮`Partial`.<`Activity`>   |  Initial prompt to send the user. |
 | choicesOrOptions | `O`⎮`any`[]   |  (Optional) array of choices to prompt the user for or additional prompt options. |
-| options | `O`   |  - |
+| options | `O`   |  (Optional) additional prompt options. |
 
 
 
 
 
-**Returns:** `Promise`.<[DialogResult](../interfaces/botbuilder_dialogs.dialogresult.md)>
+**Returns:** `Promise`.<`any`>
 
 
 
@@ -342,11 +348,11 @@ ___
 
 ###  replace
 
-► **replace**(dialogId: *`string`*, dialogArgs?: *`any`*): `Promise`.<[DialogResult](../interfaces/botbuilder_dialogs.dialogresult.md)>
+► **replace**(dialogId: *`string`*, dialogArgs?: *`any`*): `Promise`.<`any`>
 
 
 
-*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:151](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L151)*
+*Defined in [libraries/botbuilder-dialogs/lib/dialogContext.d.ts:160](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/dialogContext.d.ts#L160)*
 
 
 
@@ -357,7 +363,7 @@ Ends the active dialog and starts a new dialog in its place. This is particularl
     dialogs.add('loop', [
          function (dc, args) {
              dc.instance.state = args;
-             return dc.begin(args.dialogId);
+             await dc.begin(args.dialogId);
          },
          function (dc) {
              const args = dc.instance.state;
@@ -377,7 +383,7 @@ Ends the active dialog and starts a new dialog in its place. This is particularl
 
 
 
-**Returns:** `Promise`.<[DialogResult](../interfaces/botbuilder_dialogs.dialogresult.md)>
+**Returns:** `Promise`.<`any`>
 
 
 

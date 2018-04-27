@@ -9,6 +9,8 @@ import { Activity, TurnContext } from 'botbuilder';
 import { FoundChoice, Choice, ChoiceFactoryOptions, FindChoicesOptions } from 'botbuilder-choices';
 import { PromptValidator } from './textPrompt';
 /**
+ * :package: **botbuilder-prompts**
+ *
  * Controls the way that choices for a `ChoicePrompt` or yes/no options for a `ConfirmPrompt` are
  * presented to a user.
  */
@@ -24,7 +26,20 @@ export declare enum ListStyle {
     /** Add choices to prompt as suggested actions. */
     suggestedAction = 4,
 }
-/** Prompts the user to select from a list of choices. */
+/**
+ * :package: **botbuilder-prompts**
+ *
+ * Prompts the user to select from a list of choices.
+ *
+ * **Usage Example:**
+ *
+ * ```JavaScript
+ * const { createChoicePrompt } = require('botbuilder-prompts');
+ *
+ * const choicePrompt = createChoicePrompt();
+ * ```
+ * @param O (Optional) type of result returned by the [recognize()](#recognize) method. This defaults to an instance of `FoundChoice` but can be changed by the prompts custom validator.
+ */
 export interface ChoicePrompt<O = FoundChoice> {
     /**
      * Style of choices sent to user when [prompt()](#prompt) is called. Defaults
@@ -37,21 +52,67 @@ export interface ChoicePrompt<O = FoundChoice> {
     recognizerOptions: FindChoicesOptions;
     /**
      * Sends a formated prompt to the user.
+     *
+     * By default, this will attempt to send the provided list of choices as buttons using
+     * `ChoiceFactory.forChannel()`. It may fallback to sending the choices as a text based list
+     * for any number of reasons. You can set the prompts [style](#style) property to force the use
+     * of a particular rendering style.
+     *
+     * Further tweaks can be made to the rendering of choices using the
+     * [choiceOptions](#choiceoptions) property.
+     *
+     * **Usage Example:**
+     *
+     * ```JavaScript
+     * await colorPrompt.prompt(context, ['red', 'green', 'blue'], `Pick a color.`);
+     * ```
      * @param context Context for the current turn of conversation.
-     * @param choices Array of choices that should be prompted for.
+     * @param choices Array of choices that should be prompted for. This may be different then the choices passed to [recognize()](#recognize).
      * @param prompt (Optional) Text or activity to send as the prompt.
      * @param speak (Optional) SSML that should be spoken for prompt. The prompts `inputHint` will be automatically set to `expectingInput`.
      */
     prompt(context: TurnContext, choices: (string | Choice)[], prompt?: string | Partial<Activity>, speak?: string): Promise<void>;
     /**
-     * Recognizes and validates the users reply.
+     * Recognizes and validates the users reply. The result of the call will either be the
+     * recognized value or `undefined`.
+     *
+     * The recognize() method will not automatically re-prompt the user so either the caller or the
+     * prompts custom validator will need to implement re-prompting logic.
+     *
+     * The search options for the underlying choice recognizer can be tweaked using the prompts
+     * [recognizerOptions](#recognizeroptions) property.
+     *
+     * **Usage Example:**
+     *
+     * ```JavaScript
+     * const choice = await colorPrompt.recognize(context, ['red', 'green', 'blue']);
+     * if (choice) {
+     *    const color = choice.value;
+     * }
+     * ```
      * @param context Context for the current turn of conversation.
-     * @param choices Array of choices that should be recognized against.
+     * @param choices Array of choices that should be recognized against. This may be different then the choices passed to [prompt()](#prompt).
      */
     recognize(context: TurnContext, choices: (string | Choice)[]): Promise<O | undefined>;
 }
 /**
+ * :package: **botbuilder-prompts**
+ *
  * Creates a new prompt that asks the user to select from a list of choices.
+ *
+ * **Usage Example:**
+ *
+ * ```JavaScript
+ * const { createChoicePrompt } = require('botbuilder-prompts');
+ *
+ * const colorPrompt = createChoicePrompt(async (context, found) => {
+ *    if (!found) {
+ *       await colorPrompt.prompt(context, ['red', 'green', 'blue'], `Please choose a color from the list or say "cancel".`);
+ *    }
+ *    return found;
+ * });
+ * ```
+ * @param O (Optional) type of result returned by the `recognize()` method. This defaults to an instance of `FoundChoice` but can be changed by the prompts custom validator.
  * @param validator (Optional) validator for providing additional validation logic or customizing the prompt sent to the user when invalid.
  * @param defaultLocale (Optional) locale to use if `context.activity.locale` not specified. Defaults to a value of `en-us`.
  */

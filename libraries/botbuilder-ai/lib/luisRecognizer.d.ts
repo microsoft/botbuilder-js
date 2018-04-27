@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Middleware, TurnContext } from 'botbuilder';
+import { Middleware, TurnContext, RecognizerResult } from 'botbuilder';
 import LuisClient = require('botframework-luis');
 export interface LuisRecognizerSettings {
     /** Your models AppId */
@@ -28,16 +28,6 @@ export interface LuisRecognizerSettings {
         staging?: boolean;
     };
 }
-export interface LuisRecognizerResult {
-    /** Utterance sent to LUIS */
-    text: string;
-    /** Intents recognized for the utterance. A map of intent names to score is returned. */
-    intents: {
-        [name: string]: number;
-    };
-    /** Entities  */
-    entities: any;
-}
 export declare class LuisRecognizer implements Middleware {
     private settings;
     private luisClient;
@@ -54,7 +44,7 @@ export declare class LuisRecognizer implements Middleware {
      * current turn.
      * @param context Context for the current turn of conversation with the use.
      */
-    get(context: TurnContext): LuisRecognizerResult | undefined;
+    get(context: TurnContext): RecognizerResult | undefined;
     /**
      * Calls LUIS to recognize intents and entities in a users utterance. The results of the call
      * will be cached to the context object for the turn and future calls to recognize() for the
@@ -63,7 +53,7 @@ export declare class LuisRecognizer implements Middleware {
      * @param context Context for the current turn of conversation with the use.
      * @param force (Optional) flag that if `true` will force the call to LUIS even if a cached result exists. Defaults to a value of `false`.
      */
-    recognize(context: TurnContext, force?: boolean): Promise<LuisRecognizerResult>;
+    recognize(context: TurnContext, force?: boolean): Promise<RecognizerResult>;
     /**
      * Called internally to create a LuisClient instance. This is exposed to enable better unit
      * testing of teh recognizer.
@@ -76,8 +66,9 @@ export declare class LuisRecognizer implements Middleware {
      * @param defaultIntent (Optional) intent name to return should a top intent be found. Defaults to a value of `None`.
      * @param minScore (Optional) minimum score needed for an intent to be considered as a top intent. If all intents in the set are below this threshold then the `defaultIntent` will be returned.  Defaults to a value of `0.0`.
      */
-    static topIntent(results: LuisRecognizerResult | undefined, defaultIntent?: string, minScore?: number): string;
+    static topIntent(results: RecognizerResult | undefined, defaultIntent?: string, minScore?: number): string;
     private emitTraceInfo(context, luisResult, recognizerResult);
+    private normalizeName(name);
     private getIntents(luisResult);
     private getEntitiesAndMetadata(entities, compositeEntities, verbose);
     private getEntityValue(entity);

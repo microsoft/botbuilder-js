@@ -5,6 +5,8 @@
 # Interface: PromptOptions
 
 
+:package: **botbuilder-dialogs**
+
 Basic configuration options supported by all prompts.
 
 ## Hierarchy
@@ -28,7 +30,7 @@ Basic configuration options supported by all prompts.
 
 **●  prompt**:  *`string`⎮`Partial`.<`Activity`>* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:14](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L14)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L19)*
 
 
 
@@ -45,7 +47,7 @@ ___
 
 **●  retryPrompt**:  *`string`⎮`Partial`.<`Activity`>* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:18](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L18)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:23](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L23)*
 
 
 
@@ -62,7 +64,7 @@ ___
 
 **●  retrySpeak**:  *`string`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:20](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L20)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:25](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L25)*
 
 
 
@@ -79,7 +81,7 @@ ___
 
 **●  speak**:  *`string`* 
 
-*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:16](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L16)*
+*Defined in [libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/ad875d1/libraries/botbuilder-dialogs/lib/prompts/prompt.d.ts#L21)*
 
 
 

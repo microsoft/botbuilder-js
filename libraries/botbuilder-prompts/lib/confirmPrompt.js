@@ -5,9 +5,25 @@ const internal_1 = require("./internal");
 const choicePrompt_1 = require("./choicePrompt");
 const Recognizers = require("@microsoft/recognizers-text-choice");
 /**
+ * :package: **botbuilder-prompts**
+ *
  * Creates a new prompt that asks the user to answer a yes/no question.
+ *
+ * **Usage Example:**
+ *
+ * ```JavaScript
+ * const { createConfirmPrompt } = require('botbuilder-prompts');
+ *
+ * const confirmPrompt = createConfirmPrompt(async (context, confirmed) => {
+ *    if (typeof confirmed != 'boolean') {
+ *       await confirmPrompt.prompt(context, `Please answer "yes" or "no".`);
+ *    }
+ *    return confirmed;
+ * });
+ * ```
+ * @param O (Optional) type of result returned by the `recognize()` method. This defaults to a boolean `true` or `false` but can be changed by the prompts custom validator.
  * @param validator (Optional) validator for providing additional validation logic or customizing the prompt sent to the user when invalid.
- * @param defaultLocale (Optional) locale to use if `context.activity.locale` not specified. Defaults to a value of `en-us`.
+ * @param defaultLocale (Optional) locale to use if `context.activity.locale` is not specified. Defaults to a value of `en-us`.
  */
 function createConfirmPrompt(validator, defaultLocale) {
     return {
@@ -35,7 +51,7 @@ function createConfirmPrompt(validator, defaultLocale) {
                         msg = botbuilder_choices_1.ChoiceFactory.list(choices, prompt, speak, this.choiceOptions);
                         break;
                     case choicePrompt_1.ListStyle.suggestedAction:
-                        msg = botbuilder_choices_1.ChoiceFactory.suggestedAction(choices, prompt, speak, this.choiceOptions);
+                        msg = botbuilder_choices_1.ChoiceFactory.suggestedAction(choices, prompt, speak);
                         break;
                     case choicePrompt_1.ListStyle.none:
                         msg = { type: 'message', text: prompt };

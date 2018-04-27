@@ -5,10 +5,13 @@
 # Interface: ModelResult
 
 
-Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT License.
+Outer result returned by an entity recognizer like `recognizeChoices()`. This structure is wrapped around the recognized result and contains [start](#start) and [end](#end) position information to identify the span of text in the users utterance that was recognized. The actual result can be accessed through the [resolution](#resolution) property.
 
 ## Type parameters
 #### T :  `Object`
+
+The type of entity/resolution being returned.
+
 
 ## Properties
 <a id="end"></a>
@@ -17,8 +20,11 @@ Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT
 
 **●  end**:  *`number`* 
 
-*Defined in [libraries/botbuilder-choices/lib/modelResult.d.ts:11](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/modelResult.d.ts#L11)*
+*Defined in [libraries/botbuilder-choices/lib/modelResult.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/fbf16f5/libraries/botbuilder-choices/lib/modelResult.d.ts#L21)*
 
+
+
+End character position of the recognized substring.
 
 
 
@@ -31,8 +37,11 @@ ___
 
 **●  resolution**:  *`T`* 
 
-*Defined in [libraries/botbuilder-choices/lib/modelResult.d.ts:13](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/modelResult.d.ts#L13)*
+*Defined in [libraries/botbuilder-choices/lib/modelResult.d.ts:25](https://github.com/Microsoft/botbuilder-js/blob/fbf16f5/libraries/botbuilder-choices/lib/modelResult.d.ts#L25)*
 
+
+
+The recognized entity.
 
 
 
@@ -45,8 +54,11 @@ ___
 
 **●  start**:  *`number`* 
 
-*Defined in [libraries/botbuilder-choices/lib/modelResult.d.ts:10](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/modelResult.d.ts#L10)*
+*Defined in [libraries/botbuilder-choices/lib/modelResult.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/fbf16f5/libraries/botbuilder-choices/lib/modelResult.d.ts#L19)*
 
+
+
+Start character position of the recognized substring.
 
 
 
@@ -59,8 +71,11 @@ ___
 
 **●  text**:  *`string`* 
 
-*Defined in [libraries/botbuilder-choices/lib/modelResult.d.ts:9](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/modelResult.d.ts#L9)*
+*Defined in [libraries/botbuilder-choices/lib/modelResult.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/fbf16f5/libraries/botbuilder-choices/lib/modelResult.d.ts#L17)*
 
+
+
+Substring of the utterance that was recognized.
 
 
 
@@ -73,8 +88,11 @@ ___
 
 **●  typeName**:  *`string`* 
 
-*Defined in [libraries/botbuilder-choices/lib/modelResult.d.ts:12](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/modelResult.d.ts#L12)*
+*Defined in [libraries/botbuilder-choices/lib/modelResult.d.ts:23](https://github.com/Microsoft/botbuilder-js/blob/fbf16f5/libraries/botbuilder-choices/lib/modelResult.d.ts#L23)*
 
+
+
+Type of entity that was recognized.
 
 
 

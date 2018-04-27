@@ -1,6 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
+ * @module botbuilder-dialogs
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+const botbuilder_1 = require("botbuilder");
+/**
+ * :package: **botbuilder-dialogs**
+ *
  * Dialog optimized for prompting a user with a series of questions. Waterfalls accept a stack of
  * functions which will be executed in sequence. Each waterfall step can ask a question of the user
  * and the users response will be passed as an argument to the next waterfall step.
@@ -82,9 +92,15 @@ class Waterfall {
         return this.runStep(dc, args);
     }
     dialogContinue(dc) {
-        const instance = dc.instance;
-        instance.step += 1;
-        return this.runStep(dc, dc.context.activity.text);
+        // Don't do anything for non-message activities
+        if (dc.context.activity.type === botbuilder_1.ActivityTypes.Message) {
+            const instance = dc.instance;
+            instance.step += 1;
+            return this.runStep(dc, dc.context.activity.text);
+        }
+        else {
+            return Promise.resolve();
+        }
     }
     dialogResume(dc, result) {
         const instance = dc.instance;

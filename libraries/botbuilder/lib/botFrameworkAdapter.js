@@ -9,6 +9,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const botbuilder_core_1 = require("botbuilder-core");
 const botframework_connector_1 = require("botframework-connector");
+const pjson = require('../package.json');
+const USER_AGENT = "Microsoft-BotFramework/3.1 (BotBuilder JS/" + pjson.version + ")";
 const INVOKE_RESPONSE_KEY = Symbol('invokeResponse');
 /**
  * :package: **botbuilder**
@@ -149,6 +151,88 @@ class BotFrameworkAdapter extends botbuilder_core_1.BotAdapter {
         catch (err) {
             return Promise.reject(err);
         }
+    }
+    /**
+     * Deletes a member from the current conversation.
+     * @param context Context for the current turn of conversation with the user.
+     * @param memberId ID of the member to delete from the conversation.
+     */
+    deleteConversationMember(context, memberId) {
+        try {
+            if (!context.activity.serviceUrl) {
+                throw new Error(`BotFrameworkAdapter.deleteConversationMember(): missing serviceUrl`);
+            }
+            if (!context.activity.conversation || !context.activity.conversation.id) {
+                throw new Error(`BotFrameworkAdapter.deleteConversationMember(): missing conversation or conversation.id`);
+            }
+            const serviceUrl = context.activity.serviceUrl;
+            const conversationId = context.activity.conversation.id;
+            const client = this.createConnectorClient(serviceUrl);
+            return client.conversations.deleteConversationMember(conversationId, memberId);
+        }
+        catch (err) {
+            return Promise.reject(err);
+        }
+    }
+    /**
+     * Lists the members of a given activity.
+     * @param context Context for the current turn of conversation with the user.
+     * @param activityId (Optional) activity ID to enumerate. If not specified the current activities ID will be used.
+     */
+    getActivityMembers(context, activityId) {
+        try {
+            if (!activityId) {
+                activityId = context.activity.id;
+            }
+            if (!context.activity.serviceUrl) {
+                throw new Error(`BotFrameworkAdapter.getActivityMembers(): missing serviceUrl`);
+            }
+            if (!context.activity.conversation || !context.activity.conversation.id) {
+                throw new Error(`BotFrameworkAdapter.getActivityMembers(): missing conversation or conversation.id`);
+            }
+            if (!activityId) {
+                throw new Error(`BotFrameworkAdapter.getActivityMembers(): missing both activityId and context.activity.id`);
+            }
+            const serviceUrl = context.activity.serviceUrl;
+            const conversationId = context.activity.conversation.id;
+            const client = this.createConnectorClient(serviceUrl);
+            return client.conversations.getActivityMembers(conversationId, activityId);
+        }
+        catch (err) {
+            return Promise.reject(err);
+        }
+    }
+    /**
+     * Lists the members of the current conversation.
+     * @param context Context for the current turn of conversation with the user.
+     */
+    getConversationMembers(context) {
+        try {
+            if (!context.activity.serviceUrl) {
+                throw new Error(`BotFrameworkAdapter.getConversationMembers(): missing serviceUrl`);
+            }
+            if (!context.activity.conversation || !context.activity.conversation.id) {
+                throw new Error(`BotFrameworkAdapter.getConversationMembers(): missing conversation or conversation.id`);
+            }
+            const serviceUrl = context.activity.serviceUrl;
+            const conversationId = context.activity.conversation.id;
+            const client = this.createConnectorClient(serviceUrl);
+            return client.conversations.getConversationMembers(conversationId);
+        }
+        catch (err) {
+            return Promise.reject(err);
+        }
+    }
+    /**
+     * Lists the Conversations in which this bot has participated for a given channel server. The
+     * channel server returns results in pages and each page will include a `continuationToken`
+     * that can be used to fetch the next page of results from the server.
+     * @param serviceUrl The URL of the channel server to query.  This can be retrieved from `context.activity.serviceUrl`.
+     * @param continuationToken (Optional) token used to fetch the next page of results from the channel server. This should be left as `undefined` to retrieve the first page of results.
+     */
+    getConversations(serviceUrl, continuationToken) {
+        const client = this.createConnectorClient(serviceUrl);
+        return client.conversations.getConversations(continuationToken ? { continuationToken: continuationToken } : undefined);
     }
     /**
      * Attempts to retrieve the token for a user that's in a logging flow.
@@ -395,7 +479,9 @@ class BotFrameworkAdapter extends botbuilder_core_1.BotAdapter {
      * @param serviceUrl Clients service url.
      */
     createConnectorClient(serviceUrl) {
-        return new botframework_connector_1.ConnectorClient(this.credentials, serviceUrl);
+        const client = new botframework_connector_1.ConnectorClient(this.credentials, serviceUrl);
+        client.addUserAgentInfo(USER_AGENT);
+        return client;
     }
     /**
      * Allows for mocking of the OAuth API Client in unit tests.

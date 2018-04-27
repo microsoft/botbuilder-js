@@ -9,7 +9,12 @@ import { Middleware, TurnContext } from 'botbuilder';
 export interface TranslatorSettings {
     translatorKey: string;
     nativeLanguages: string[];
-    noTranslatePatterns: Set<string>;
+    noTranslatePatterns?: {
+        [id: string]: string[];
+    };
+    wordDictionary?: {
+        [id: string]: string;
+    };
     getUserLanguage?: (context: TurnContext) => string;
     setUserLanguage?: (context: TurnContext) => Promise<boolean>;
     translateBackToUserLanguage?: boolean;
@@ -25,16 +30,24 @@ export declare class LanguageTranslator implements Middleware {
     private setUserLanguage;
     private nativeLanguages;
     private translateBackToUserLanguage;
+    private noTranslatePatterns;
+    private wordDictionary;
     constructor(settings: TranslatorSettings);
     onTurn(context: TurnContext, next: () => Promise<void>): Promise<void>;
     private translateMessageAsync(context, message, sourceLanguage, targetLanguage);
 }
 export declare class PostProcessTranslator {
-    noTranslatePatterns: Set<string>;
-    constructor(noTranslatePatterns: Set<string>);
+    noTranslatePatterns: string[];
+    wordDictionary: {
+        [id: string]: string;
+    };
+    constructor(noTranslatePatterns?: string[], wordDictionary?: {
+        [id: string]: string;
+    });
     private join(delimiter, words);
     private splitSentence(sentence, alignments, isSrcSentence?);
     private wordAlignmentParse(alignments, srcWords, trgWords);
     private keepSrcWrdInTranslation(alignment, sourceWords, targetWords, srcWrdIndex);
+    private replaceWordInDictionary(alignment, sourceWords, targetWords, srcWrdIndex);
     fixTranslation(sourceMessage: string, alignment: string, targetMessage: string): string;
 }

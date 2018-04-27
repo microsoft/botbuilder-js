@@ -4,6 +4,11 @@
 
 # Interface: FindValuesOptions
 
+
+:package: **botbuilder-choices**
+
+Basic search options used to control how choices are recognized in a users utterance.
+
 ## Hierarchy
 
 **FindValuesOptions**
@@ -25,7 +30,7 @@
 
 **●  allowPartialMatches**:  *`boolean`* 
 
-*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/findValues.d.ts#L15)*
+*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:20](https://github.com/Microsoft/botbuilder-js/blob/fbf16f5/libraries/botbuilder-choices/lib/findValues.d.ts#L20)*
 
 
 
@@ -42,7 +47,7 @@ ___
 
 **●  locale**:  *`string`* 
 
-*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/findValues.d.ts#L19)*
+*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:24](https://github.com/Microsoft/botbuilder-js/blob/fbf16f5/libraries/botbuilder-choices/lib/findValues.d.ts#L24)*
 
 
 
@@ -59,7 +64,7 @@ ___
 
 **●  maxTokenDistance**:  *`number`* 
 
-*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:26](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/findValues.d.ts#L26)*
+*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/fbf16f5/libraries/botbuilder-choices/lib/findValues.d.ts#L31)*
 
 
 
@@ -76,7 +81,7 @@ ___
 
 **●  tokenizer**:  *[TokenizerFunction](../#tokenizerfunction)* 
 
-*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:30](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/findValues.d.ts#L30)*
+*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:35](https://github.com/Microsoft/botbuilder-js/blob/fbf16f5/libraries/botbuilder-choices/lib/findValues.d.ts#L35)*
 
 
 

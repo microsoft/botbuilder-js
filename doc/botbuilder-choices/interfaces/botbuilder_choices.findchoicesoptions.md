@@ -4,6 +4,11 @@
 
 # Interface: FindChoicesOptions
 
+
+:package: **botbuilder-choices**
+
+Options to control the recognition performed by `findChoices()`.
+
 ## Hierarchy
 
 
@@ -27,7 +32,7 @@
 
 *Inherited from [FindValuesOptions](botbuilder_choices.findvaluesoptions.md).[allowPartialMatches](botbuilder_choices.findvaluesoptions.md#allowpartialmatches)*
 
-*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/findValues.d.ts#L15)*
+*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:20](https://github.com/Microsoft/botbuilder-js/blob/fbf16f5/libraries/botbuilder-choices/lib/findValues.d.ts#L20)*
 
 
 
@@ -46,7 +51,7 @@ ___
 
 *Inherited from [FindValuesOptions](botbuilder_choices.findvaluesoptions.md).[locale](botbuilder_choices.findvaluesoptions.md#locale)*
 
-*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/findValues.d.ts#L19)*
+*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:24](https://github.com/Microsoft/botbuilder-js/blob/fbf16f5/libraries/botbuilder-choices/lib/findValues.d.ts#L24)*
 
 
 
@@ -65,7 +70,7 @@ ___
 
 *Inherited from [FindValuesOptions](botbuilder_choices.findvaluesoptions.md).[maxTokenDistance](botbuilder_choices.findvaluesoptions.md#maxtokendistance)*
 
-*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:26](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/findValues.d.ts#L26)*
+*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:31](https://github.com/Microsoft/botbuilder-js/blob/fbf16f5/libraries/botbuilder-choices/lib/findValues.d.ts#L31)*
 
 
 
@@ -82,11 +87,11 @@ ___
 
 **●  noAction**:  *`boolean`* 
 
-*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:27](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/findChoices.d.ts#L27)*
+*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:71](https://github.com/Microsoft/botbuilder-js/blob/fbf16f5/libraries/botbuilder-choices/lib/findChoices.d.ts#L71)*
 
 
 
-(Optional) If `true`, the title of the choices action will NOT be searched over. The default is `false`.
+(Optional) If `true`, the the choices `action.title` field will NOT be searched over. Defaults to `false`.
 
 
 
@@ -99,11 +104,11 @@ ___
 
 **●  noValue**:  *`boolean`* 
 
-*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:23](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/findChoices.d.ts#L23)*
+*Defined in [libraries/botbuilder-choices/lib/findChoices.d.ts:66](https://github.com/Microsoft/botbuilder-js/blob/fbf16f5/libraries/botbuilder-choices/lib/findChoices.d.ts#L66)*
 
 
 
-(Optional) If `true`, the choices value will NOT be search over. The default is `false`.
+(Optional) If `true`, the choices `value` field will NOT be search over. Defaults to `false`.
 
 
 
@@ -118,7 +123,7 @@ ___
 
 *Inherited from [FindValuesOptions](botbuilder_choices.findvaluesoptions.md).[tokenizer](botbuilder_choices.findvaluesoptions.md#tokenizer)*
 
-*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:30](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/findValues.d.ts#L30)*
+*Defined in [libraries/botbuilder-choices/lib/findValues.d.ts:35](https://github.com/Microsoft/botbuilder-js/blob/fbf16f5/libraries/botbuilder-choices/lib/findValues.d.ts#L35)*
 
 
 

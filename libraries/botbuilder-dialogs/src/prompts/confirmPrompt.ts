@@ -12,10 +12,21 @@ import { Prompt, PromptOptions } from './prompt';
 import * as prompts from 'botbuilder-prompts';
 
 /**
+ * :package: **botbuilder-dialogs**
+ * 
  * Prompts a user to confirm something with a yes/no response. By default the prompt will return 
  * to the calling dialog a `boolean` representing the users selection.
  * 
- * **Example usage:**
+ * The prompt can be used either as a dialog added to your bots `DialogSet` or on its own as a
+ * control if your bot is using some other conversation management system.
+ * 
+ * ### Dialog Usage
+ * 
+ * When used with your bots `DialogSet` you can simply add a new instance of the prompt as a named
+ * dialog using `DialogSet.add()`. You can then start the prompt from a waterfall step using either
+ * `DialogContext.begin()` or `DialogContext.prompt()`. The user will be prompted to answer a 
+ * `yes/no` or `true/false` question and the users response will be passed as an argument to the 
+ * callers next waterfall step: 
  * 
  * ```JavaScript
  * const { DialogSet, ConfirmPrompt } = require('botbuilder-dialogs');
@@ -24,16 +35,71 @@ import * as prompts from 'botbuilder-prompts';
  * 
  * dialogs.add('confirmPrompt', new ConfirmPrompt());
  * 
- * dialogs.add('confirmDemo', [
+ * dialogs.add('confirmCancel', [
  *      async function (dc) {
- *          return dc.prompt('confirmPrompt', `confirm: answer "yes" or "no"`);
+ *          await dc.prompt('confirmPrompt', `This will cancel your order. Are you sure?`);
  *      },
- *      async function (dc, value) {
- *          await dc.context.sendActivity(`Recognized value: ${value}`);
- *          return dc.end();
+ *      async function (dc, cancel) {
+ *          if (cancel) {
+ *              await dc.context.sendActivity(`Order cancelled.`);
+ *          }
+ *          await dc.end();
  *      }
  * ]);
  * ```
+ * 
+ * If the users response to the prompt fails to be recognized they will be automatically re-prompted
+ * to try again. By default the original prompt is re-sent to the user but you can provide an 
+ * alternate prompt to send by passing in additional options:
+ * 
+ * ```JavaScript
+ * await dc.prompt('confirmPrompt', `This will cancel your order. Are you sure?`, { retryPrompt: `Please answer "yes" or "no".` });
+ * ```
+ * 
+ * The prompts retry logic can also be completely customized by passing the prompts constructor a 
+ * custom validator:
+ * 
+ * ```JavaScript
+ * dialogs.add('confirmPrompt', new ConfirmPrompt(async (context, value) => {
+ *    if (typeof confirmed != 'boolean') {
+ *       await context.sendActivity(`Please answer "yes" or "no".`);
+ *    }
+ *    return confirmed; 
+ * }));
+ * ```
+ * 
+ * ### Control Usage
+ * 
+ * If your bot isn't dialog based you can still use the prompt on its own as a control. You will 
+ * just need start the prompt from somewhere within your bots logic by calling the prompts 
+ * `begin()` method:
+ * 
+ * ```JavaScript
+ * const state = {};
+ * const prompt = new ConfirmPrompt();
+ * await prompt.begin(context, state, {
+ *     prompt: `This will cancel your order. Are you sure?`,
+ *     retryPrompt: `Please answer "yes" or "no".`
+ * });
+ * ```
+ * 
+ * The prompt will populate the `state` object you passed in with information it needs to process
+ * the users response. You should save this off to your bots conversation state as you'll need to
+ * pass it to the prompts `continue()` method on the next turn of conversation with the user:
+ * 
+ * ```JavaScript
+ * const prompt = new ConfirmPrompt();
+ * const result = await prompt.continue(context, state);
+ * if (!result.active) {
+ *     const cancelOrder = result.result;
+ * }
+ * ```
+ * 
+ * The `continue()` method returns a `DialogResult` object which can be used to determine when 
+ * the prompt is finished and then to access the results of the prompt.  To interrupt or cancel
+ * the prompt simply delete the `state` object your bot is persisting.
+ * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
+ * @param O (Optional) output type returned by prompt. This defaults to a boolean `true` or `false` but can be changed by a custom validator passed to the prompt.
  */
 export class ConfirmPrompt<C extends TurnContext, O = boolean> extends Prompt<C> {
     private prompt: prompts.ConfirmPrompt<O>;
@@ -46,29 +112,21 @@ export class ConfirmPrompt<C extends TurnContext, O = boolean> extends Prompt<C>
      * **Example usage:**
      * 
      * ```JavaScript
+     * const confirmPrompt = new ConfirmPrompt();
+     * 
      * // Configure yes/no choices for english and spanish (default)
-     * ConfirmPrompt.choices['*'] = ['sí', 'no'];
-     * ConfirmPrompt.choices['es'] = ['sí', 'no'];
-     * ConfirmPrompt.choices['en-us'] = ['yes', 'no'];
+     * confirmPrompt.choices['*'] = ['sí', 'no'];
+     * confirmPrompt.choices['es'] = ['sí', 'no'];
+     * confirmPrompt.choices['en-us'] = ['yes', 'no'];
+     * 
+     * // Add to dialogs
+     * dialogs.add('confirmPrompt', confirmPrompt);
      * ```
      */
     static choices: prompts.ConfirmChoices = { '*': ['yes', 'no'] };
 
     /**
-     * Creates a new instance of the prompt.
-     * 
-     * **Example usage:**
-     * 
-     * ```JavaScript
-     * dialogs.add('confirmPrompt', new ConfirmPrompt(async (context, value) => {
-     *      if (value === undefined) {
-     *          await context.sendActivity(`Invalid answer. Answer with "yes" or "no".`);
-     *          return undefined;
-     *      } else {
-     *          return value;
-     *      }
-     * }));
-     * ```
+     * Creates a new `ConfirmPrompt` instance.
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.  
      * @param defaultLocale (Optional) locale to use if `dc.context.activity.locale` not specified. Defaults to a value of `en-us`.
      */
@@ -80,8 +138,8 @@ export class ConfirmPrompt<C extends TurnContext, O = boolean> extends Prompt<C>
 
     /**
      * Sets additional options passed to the `ChoiceFactory` and used to tweak the style of choices 
-     * rendered to the user.
-     * @param options Additional options to set.
+     * rendered to the user. 
+     * @param options Additional options to set. Defaults to `{ includeNumbers: false }`
      */
     public choiceOptions(options: prompts.ChoiceFactoryOptions): this {
         Object.assign(this.prompt.choiceOptions, options);

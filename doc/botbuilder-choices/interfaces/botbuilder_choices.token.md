@@ -5,7 +5,9 @@
 # Interface: Token
 
 
-Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT License.
+:package: **botbuilder-choices**
+
+Individual token returned by a `TokenizerFunction`.
 
 
 ## Properties
@@ -15,8 +17,11 @@ Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT
 
 **●  end**:  *`number`* 
 
-*Defined in [libraries/botbuilder-choices/lib/tokenizer.d.ts:10](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/tokenizer.d.ts#L10)*
+*Defined in [libraries/botbuilder-choices/lib/tokenizer.d.ts:17](https://github.com/Microsoft/botbuilder-js/blob/fbf16f5/libraries/botbuilder-choices/lib/tokenizer.d.ts#L17)*
 
+
+
+End character position of the token within the outer string.
 
 
 
@@ -29,8 +34,11 @@ ___
 
 **●  normalized**:  *`string`* 
 
-*Defined in [libraries/botbuilder-choices/lib/tokenizer.d.ts:12](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/tokenizer.d.ts#L12)*
+*Defined in [libraries/botbuilder-choices/lib/tokenizer.d.ts:21](https://github.com/Microsoft/botbuilder-js/blob/fbf16f5/libraries/botbuilder-choices/lib/tokenizer.d.ts#L21)*
 
+
+
+Normalized form of the token. This can include things like lower casing or stemming.
 
 
 
@@ -43,8 +51,11 @@ ___
 
 **●  start**:  *`number`* 
 
-*Defined in [libraries/botbuilder-choices/lib/tokenizer.d.ts:9](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/tokenizer.d.ts#L9)*
+*Defined in [libraries/botbuilder-choices/lib/tokenizer.d.ts:15](https://github.com/Microsoft/botbuilder-js/blob/fbf16f5/libraries/botbuilder-choices/lib/tokenizer.d.ts#L15)*
 
+
+
+Start character position of the token within the outer string.
 
 
 
@@ -57,8 +68,11 @@ ___
 
 **●  text**:  *`string`* 
 
-*Defined in [libraries/botbuilder-choices/lib/tokenizer.d.ts:11](https://github.com/Microsoft/botbuilder-js/blob/f596b7c/libraries/botbuilder-choices/lib/tokenizer.d.ts#L11)*
+*Defined in [libraries/botbuilder-choices/lib/tokenizer.d.ts:19](https://github.com/Microsoft/botbuilder-js/blob/fbf16f5/libraries/botbuilder-choices/lib/tokenizer.d.ts#L19)*
 
+
+
+Original text of the token.
 
 
 

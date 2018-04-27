@@ -3,7 +3,27 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const internal_1 = require("./internal");
 const Recognizers = require("@microsoft/recognizers-text-number");
 /**
+ * :package: **botbuilder-prompts**
+ *
  * Creates a new prompt that asks the user to reply with a number.
+ *
+ * **Usage Example:**
+ *
+ * ```JavaScript
+ * const { createNumberPrompt } = require('botbuilder-prompts');
+ *
+ * const agePrompt = createNumberPrompt(async (context, value) => {
+ *    if (typeof value == 'number') {
+ *       if (value >= 1 && value < 111) {
+ *          // Return age rounded down to nearest whole number.
+ *          return Math.floor(value);
+ *       }
+ *    }
+ *    await agePrompt.prompt(context, `Please enter a number between 1 and 110 or say "cancel".`);
+ *    return undefined;
+ * });
+ * ```
+ * @param O (Optional) type of result returned by the `recognize()` method. This defaults to `number` but can be changed by the prompts custom validator.
  * @param validator (Optional) validator for providing additional validation logic or customizing the prompt sent to the user when invalid.
  * @param defaultLocale (Optional) locale to use if `context.activity.locale` not specified. Defaults to a value of `en-us`.
  */

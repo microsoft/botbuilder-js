@@ -8,9 +8,12 @@
 import { TurnContext, Promiseable } from 'botbuilder';
 import { DialogContext } from './dialogContext';
 /**
+ * :package: **botbuilder-dialogs**
+ *
  * Interface of Dialog objects that can be added to a `DialogSet`. The dialog should generally
  * be a singleton and added to a dialog set using `DialogSet.add()` at which point it will be
  * assigned a unique ID.
+ * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
  */
 export interface Dialog<C extends TurnContext> {
     /**
@@ -43,6 +46,7 @@ export interface Dialog<C extends TurnContext> {
 }
 /**
  * Tracking information for a dialog on the stack.
+ * @param T (Optional) type of state being persisted for dialog.
  */
 export interface DialogInstance<T extends any = any> {
     /** ID of the dialog this instance is for. */
