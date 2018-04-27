@@ -46,8 +46,10 @@ class LuisRecognizer {
                 // Map results
                 const recognizerResult = {
                     text: luisResult.query,
+                    alteredText: luisResult.alteredQuery,
                     intents: this.getIntents(luisResult),
-                    entities: this.getEntitiesAndMetadata(luisResult.entities, luisResult.compositeEntities, this.settings.verbose)
+                    entities: this.getEntitiesAndMetadata(luisResult.entities, luisResult.compositeEntities, this.settings.verbose),
+                    luisResult: luisResult
                 };
                 // Write to cache
                 context.services.set(this.cacheKey, recognizerResult);
@@ -165,7 +167,7 @@ class LuisRecognizer {
                     {
                         var svalue = res.value;
                         if (svalue.endsWith("%")) {
-                            svalue = svalue.substring(0, svalue.Length - 1);
+                            svalue = svalue.substring(0, svalue.length - 1);
                         }
                         return Number(svalue);
                     }
@@ -175,10 +177,11 @@ class LuisRecognizer {
                 case "builtin.temperature":
                     {
                         var val = res.value;
-                        var obj = { units: res.unit };
+                        var obj = {};
                         if (val) {
                             obj["number"] = Number(val);
                         }
+                        obj["units"] = res.unit;
                         return obj;
                     }
                 default:
@@ -224,7 +227,6 @@ class LuisRecognizer {
         let filteredEntities = [];
         if (verbose) {
             childrenEntitiesMetadata = this.getEntityMetadata(compositeEntityMetadata);
-            childrenEntitiesMetadata.$instance = {};
         }
         // This is now implemented as O(n*k) search and can be reduced to O(n + k) using a map as an optimization if n or k grow
         let coveredSet = new Set();

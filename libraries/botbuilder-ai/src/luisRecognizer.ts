@@ -54,13 +54,19 @@ export interface LuisRecognizerSettings {
 
 export interface LuisRecognizerResult {
     /** Utterance sent to LUIS */
-    text: string;
+    readonly text: string;
+
+    /** If original text is changed by things like spelling, the altered version. */
+    readonly alteredText?: string;
 
     /** Intents recognized for the utterance. A map of intent names to an object with score is returned. */
-    intents: { [name: string]: {score:number}; };
+    readonly intents: { [name: string]: {score:number}; };
 
     /** Entities  */
-    entities: any;
+    readonly entities?: any;
+
+    /** Other properties */
+    [propName: string]: any;
 }
 
 export class LuisRecognizer implements Middleware {
@@ -112,8 +118,10 @@ export class LuisRecognizer implements Middleware {
                     // Map results
                     const recognizerResult: LuisRecognizerResult = {
                         text: luisResult.query,
+                        alteredText: luisResult.alteredQuery,
                         intents: this.getIntents(luisResult),
-                        entities: this.getEntitiesAndMetadata(luisResult.entities, luisResult.compositeEntities, this.settings.verbose)
+                        entities: this.getEntitiesAndMetadata(luisResult.entities, luisResult.compositeEntities, this.settings.verbose),
+                        luisResult: luisResult
                     };
                     // Write to cache
                     context.services.set(this.cacheKey, recognizerResult);
@@ -245,7 +253,7 @@ export class LuisRecognizer implements Middleware {
                     {
                         var svalue = res.value;
                         if (svalue.endsWith("%")) {
-                            svalue = svalue.substring(0, svalue.Length - 1);
+                            svalue = svalue.substring(0, svalue.length - 1);
                         }
                         return Number(svalue);
                     }
@@ -255,10 +263,11 @@ export class LuisRecognizer implements Middleware {
                 case "builtin.temperature":
                     {
                         var val = res.value;
-                        var obj = { units: res.unit };
+                        var obj = { };
                         if (val) {
                             obj["number"] = Number(val);
                         }
+                        obj["units"] = res.unit;
                         return obj;
                     }
                 default:
@@ -309,7 +318,6 @@ export class LuisRecognizer implements Middleware {
         let filteredEntities: Entity[] = [];
         if (verbose) {
             childrenEntitiesMetadata = this.getEntityMetadata(compositeEntityMetadata);
-            childrenEntitiesMetadata.$instance = {};
         }
 
         // This is now implemented as O(n*k) search and can be reduced to O(n + k) using a map as an optimization if n or k grow

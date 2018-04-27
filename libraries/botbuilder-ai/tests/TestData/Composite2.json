@@ -1,0 +1,198 @@
+{
+  "text": "http://foo.com is where you can fly from seattle to dallas via denver",
+  "intents": {
+    "EntityTests": {
+      "score": 0.9109604
+    },
+    "Weather_GetForecast": {
+      "score": 0.121306971
+    },
+    "Travel": {
+      "score": 0.0273477212
+    },
+    "None": {
+      "score": 0.01634177
+    },
+    "SpecifyName": {
+      "score": 0.00471411133
+    },
+    "Delivery": {
+      "score": 0.0045661875
+    },
+    "Help": {
+      "score": 0.0020663538
+    },
+    "Cancel": {
+      "score": 0.0009918148
+    },
+    "Greeting": {
+      "score": 0.000153730318
+    }
+  },
+  "entities": {
+    "$instance": {
+      "Composite2": [
+        {
+          "startIndex": 0,
+          "endIndex": 69,
+          "text": "http : / / foo . com is where you can fly from seattle to dallas via denver",
+          "score": 0.928562
+        }
+      ]
+    },
+    "Composite2": [
+      {
+        "$instance": {
+          "City": [
+            {
+              "startIndex": 63,
+              "endIndex": 69,
+              "text": "denver",
+              "score": 0.81954056
+            }
+          ],
+          "builtin_url": [
+            {
+              "startIndex": 0,
+              "endIndex": 14,
+              "text": "http://foo.com"
+            }
+          ],
+          "From": [
+            {
+              "startIndex": 41,
+              "endIndex": 48,
+              "text": "seattle",
+              "score": 0.975187838
+            }
+          ],
+          "To": [
+            {
+              "startIndex": 52,
+              "endIndex": 58,
+              "text": "dallas",
+              "score": 0.984576344
+            }
+          ]
+        },
+        "City": [
+          "denver"
+        ],
+        "builtin_url": [
+          "http://foo.com"
+        ],
+        "From": [
+          "seattle"
+        ],
+        "To": [
+          "dallas"
+        ]
+      }
+    ]
+  },
+  "luisResult": {
+    "query": "http://foo.com is where you can fly from seattle to dallas via denver",
+    "topScoringIntent": {
+      "intent": "EntityTests",
+      "score": 0.9109604
+    },
+    "intents": [
+      {
+        "intent": "EntityTests",
+        "score": 0.9109604
+      },
+      {
+        "intent": "Weather.GetForecast",
+        "score": 0.121306971
+      },
+      {
+        "intent": "Travel",
+        "score": 0.0273477212
+      },
+      {
+        "intent": "None",
+        "score": 0.01634177
+      },
+      {
+        "intent": "SpecifyName",
+        "score": 0.00471411133
+      },
+      {
+        "intent": "Delivery",
+        "score": 0.0045661875
+      },
+      {
+        "intent": "Help",
+        "score": 0.0020663538
+      },
+      {
+        "intent": "Cancel",
+        "score": 0.0009918148
+      },
+      {
+        "intent": "Greeting",
+        "score": 0.000153730318
+      }
+    ],
+    "entities": [
+      {
+        "entity": "dallas",
+        "type": "City::To",
+        "startIndex": 52,
+        "endIndex": 57,
+        "score": 0.984576344
+      },
+      {
+        "entity": "seattle",
+        "type": "City::From",
+        "startIndex": 41,
+        "endIndex": 47,
+        "score": 0.975187838
+      },
+      {
+        "entity": "denver",
+        "type": "City",
+        "startIndex": 63,
+        "endIndex": 68,
+        "score": 0.81954056
+      },
+      {
+        "entity": "http : / / foo . com is where you can fly from seattle to dallas via denver",
+        "type": "Composite2",
+        "startIndex": 0,
+        "endIndex": 68,
+        "score": 0.928562
+      },
+      {
+        "entity": "http://foo.com",
+        "type": "builtin.url",
+        "startIndex": 0,
+        "endIndex": 13
+      }
+    ],
+    "compositeEntities": [
+      {
+        "parentType": "Composite2",
+        "value": "http : / / foo . com is where you can fly from seattle to dallas via denver",
+        "children": [
+          {
+            "type": "City",
+            "value": "denver"
+          },
+          {
+            "type": "builtin.url",
+            "value": "http://foo.com"
+          },
+          {
+            "type": "City::From",
+            "value": "seattle"
+          },
+          {
+            "type": "City::To",
+            "value": "dallas"
+          }
+        ]
+      }
+    ]
+  }
+}

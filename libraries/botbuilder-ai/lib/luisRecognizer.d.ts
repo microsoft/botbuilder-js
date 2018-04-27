@@ -30,15 +30,19 @@ export interface LuisRecognizerSettings {
 }
 export interface LuisRecognizerResult {
     /** Utterance sent to LUIS */
-    text: string;
+    readonly text: string;
+    /** If original text is changed by things like spelling, the altered version. */
+    readonly alteredText?: string;
     /** Intents recognized for the utterance. A map of intent names to an object with score is returned. */
-    intents: {
+    readonly intents: {
         [name: string]: {
             score: number;
         };
     };
     /** Entities  */
-    entities: any;
+    readonly entities?: any;
+    /** Other properties */
+    [propName: string]: any;
 }
 export declare class LuisRecognizer implements Middleware {
     private settings;
