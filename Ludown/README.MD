@@ -319,7 +319,7 @@ Here's an example of question and answer definitions. The LUDown tool will autom
 
 You can add multiple questions to the same answer by simply additing variations to questions. Here's an example
 
-```
+```markdown
 ### ? Who is your ceo?
 - get me your ceo info
 	```markdown
@@ -339,7 +339,36 @@ Here's an example of those references:
 
 [none intent definition](./none.lu)
 ```
+### Filters
+Filters in QnA Maker are simple key value pairs that can be used to narrow search results, boost answers and store context. You can add filters using the following notation: 
+```markdown
+***Filters:***
+- name = value
+- name = value 
+```
 
+Here's an example usage: 
+```markdown
+### ? Where can I get coffee? 
+- I need coffee
+
+**Filters:**
+- location = seattle
+
+    ```markdown
+    You can get coffee in our Seattle store at 1 pike place, Seattle, WA
+    ```
+
+### ? Where can I get coffee? 
+- I need coffee
+
+**Filters:**
+- location = portland
+
+    ```markdown
+    You can get coffee in our Portland store at 52 marine drive, Portland, OR
+    ```
+```
 ### Adding comments
 You can add comments to your .lu document by prefixing the comment with >. Here's an example: 
 
