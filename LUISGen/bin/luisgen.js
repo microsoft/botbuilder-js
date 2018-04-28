@@ -5,4 +5,8 @@ process.argv.forEach((val, index) => {
     args = args + ' ' + val;
   }
 });
-require('child_process').execSync('dotnet ' + __dirname + '/netcoreapp2.0/LUISGen.dll ' + args, {stdio:[0,1,2]});
+try {
+  require('child_process').execSync('dotnet ' + __dirname + '/netcoreapp2.0/LUISGen.dll ' + args, { stdio: [0, 1, 2] });
+}
+catch (err) {
+}
