@@ -52,7 +52,7 @@ module.exports = {
                 QnAJSON.sourceFile = program.QNA_FILE;
             }
             // construct the markdown file content
-            var outFileContent = constructMdFile(LUISJSON, QnAJSONFromTSV, program.LUIS_File, program.QNA_File);
+            var outFileContent = constructMdFile(LUISJSON, QnAJSON, program.LUIS_File, program.QNA_FILE);
 
             if(!outFileContent) {
                 console.error(chalk.default.redBright('\nSorry, Unable to generate .lu file content!\n'));
@@ -142,7 +142,7 @@ var parseQnAJSONFile = function(file){
         console.error(chalk.default.redBright('Sorry, error parsing file as QnA JSON: ' + file + '\n'));    
         process.exit(1);
     }
-    return LUISJSON;
+    return QnAJSON;
 }
 /**
  * helper function to parse QnAMaker TSV file into a JSON object
@@ -336,27 +336,34 @@ var constructMdFile = function(LUISJSON, QnAJSONFromTSV, luisFile, QnAFile) {
     
     if(QnAJSONFromTSV.sourceFile) {
         // go through anything in QnAJSONFromTSV .. 
-
-        if(QnAJSONFromTSV.model.length !== 0) {
-            fileContent += '> # QnA pairs' + NEWLINE + NEWLINE;
-            QnAJSONFromTSV.model[0].forEach(function(qnaPair) {
-                fileContent += '> Source: ' + qnaPair.source + NEWLINE;
-                fileContent += '## ? ' + qnaPair.questions[0] + NEWLINE;
-                qnaPair.questions.splice(0,1);
-                qnaPair.questions.forEach(function(question) {
+        fileContent += '> # QnA pairs' + NEWLINE + NEWLINE;
+        
+        if(QnAJSONFromTSV.model.qnaList.length > 0) {
+            QnAJSONFromTSV.model.qnaList.forEach(function(qnaItem) {
+                fileContent += '> Source: ' + qnaItem.source + NEWLINE;
+                fileContent += '## ? ' + qnaItem.questions[0] + NEWLINE;
+                qnaItem.questions.splice(0,1);
+                qnaItem.questions.forEach(function(question) {
                     fileContent += '- ' + question + NEWLINE;
-                });
+                })
                 fileContent += NEWLINE;
-                if(qnaPair.metadata.length > 0) {
-                    fileContent += '**Filters:**' + NEWLINE;
-                    qnaPair.metadata.forEach(function(metaData) {
-                        fileContent += "- " + metaData.name + ' = ' + metaData.value + NEWLINE;
+                if(qnaItem.metadata.length > 0) {
+                    fileContent += NEWLINE + '**Filters:**' + NEWLINE;
+                    qnaItem.metadata.forEach(function(filter) {
+                        fileContent += '- ' + filter.name + ' = ' + filter.value + NEWLINE;    
                     });
-                    fileContent += NEWLINE + NEWLINE;
+                    fileContent += NEWLINE;
                 }
-                fileContent += '```markdown' + NEWLINE + qnaPair.answer + NEWLINE + '```' + NEWLINE + NEWLINE;
-            })
+                fileContent += '```markdown' + NEWLINE;
+                fileContent += qnaItem.answer + NEWLINE;
+                fileContent += '```' + NEWLINE + NEWLINE;
+            });
+
         }
+
+        
+        
+
     }
     
     if(fileContent) {

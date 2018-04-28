@@ -26,7 +26,7 @@ program
     if (process.argv.length < 3) {
         program.help();
     } else {
-        if (!program.LUIS_File && !program.QNA_File && !program.QNA_TSV_File) {
+        if (!program.LUIS_File && !program.QNA_FILE) {
             console.error(chalk.default.redBright(`\n  No LUIS input file or QnA Maker JSON or TSV specified.`));
             program.help();
         } 

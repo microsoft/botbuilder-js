@@ -153,7 +153,8 @@ module.exports.parseFile = function(fileContent, log)
                     "id": 0,
                     "answer": p.substring(0, p.lastIndexOf('```')),
                     "questions": questions,
-                    "metadata": metadata
+                    "metadata": metadata, 
+                    "source": "custom editorial"
                 });
             } else {
                 // insert only if the intent is not already present.
@@ -433,7 +434,8 @@ module.exports.parseFile = function(fileContent, log)
                 "id": 0,
                 "answer": chunkSplitByLine[1],
                 "questions": [chunkSplitByLine[0].replace(PARSERCONSTS.QNA, '').trim()],
-                "metadata": []
+                "metadata": [],
+                "source": "custom editorial"
             };
             qnaJsonStruct.qnaList.push(qnaObj);
         } 

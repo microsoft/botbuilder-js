@@ -10,6 +10,7 @@ const PARSERCONSTS = require('./enums/parserconsts');
 const builtInTypes = require('./enums/luisbuiltintypes');
 const parseFileContents = require('./parseFileContents');
 const prebuiltTypes = require('./enums/luisbuiltintypes');
+const deepEqual = require('deep-equal');
 
 module.exports = {
     /**
@@ -407,8 +408,11 @@ var findLUFiles = function(inputFolder, getSubFolders) {
  * @returns {FinalQnAJSON} Final qna json contents
  */
 var collateQnAFiles = function(parsedBlobs) {
-    var FinalQnAJSON = parsedBlobs[0];
-    parsedBlobs.splice(0,1);
+    var FinalQnAJSON = {
+        "urls": [],
+        "qnaList": []
+    };
+    
     parsedBlobs.forEach(function(blob) {
         // does this blob have URLs?
         if(blob.urls.length > 0) {
@@ -421,20 +425,24 @@ var collateQnAFiles = function(parsedBlobs) {
         }
 
         // does this blob have qnapairs?
-        if(blob.qnaPairs.length > 0) {
-            // walk through each qnaPair and add it if the question does not exist
-            blob.qnaPairs.forEach(function(qnaPair) {
-                var qnaExists = false;
-                var fIndex = 0;
-                for(fIndex in FinalQnAJSON.qnaPairs) {
-                    if(qnaPair.question === FinalQnAJSON.qnaPairs[fIndex].question) {
-                        qnaExists = true;
-                        break;
+        if(blob.qnaList.length > 0) {
+            // walk through each qnaPair and add it if it does not exist
+            blob.qnaList.forEach(function(newQnAItem) {
+                if(FinalQnAJSON.qnaList.length == 0) {
+                    FinalQnAJSON.qnaList.push(newQnAItem);
+                } else {
+                    var qnaExists = false;
+                    var fIndex = 0;
+                    for(fIndex in FinalQnAJSON.qnaList) {
+                        var oldQnAItem = FinalQnAJSON.qnaList[fIndex];
+                        if(deepEqual(oldQnAItem, newQnAItem)) {
+                            qnaExists = true;
+                            break;
+                        }
                     }
+                    if(!qnaExists) FinalQnAJSON.qnaList.push(newQnAItem);
                 }
-                if(!qnaExists) {
-                    FinalQnAJSON.qnaPairs.push(qnaPair);
-                }
+                
             });
         }
     });
