@@ -337,9 +337,14 @@ var constructMdFile = function(LUISJSON, QnAJSONFromTSV, luisFile, QnAFile) {
     if(QnAJSONFromTSV.sourceFile) {
         // go through anything in QnAJSONFromTSV .. 
         fileContent += '> # QnA pairs' + NEWLINE + NEWLINE;
-        
-        if(QnAJSONFromTSV.model.qnaList.length > 0) {
-            QnAJSONFromTSV.model.qnaList.forEach(function(qnaItem) {
+        var root = null;
+        if(QnAJSONFromTSV.model.qnaDocuments) {
+            root = QnAJSONFromTSV.model.qnaDocuments;
+        } else {
+            root = QnAJSONFromTSV.model.qnaList;
+        }
+        if(root.length > 0) {
+            root.forEach(function(qnaItem) {
                 fileContent += '> Source: ' + qnaItem.source + NEWLINE;
                 fileContent += '## ? ' + qnaItem.questions[0] + NEWLINE;
                 qnaItem.questions.splice(0,1);
@@ -360,10 +365,6 @@ var constructMdFile = function(LUISJSON, QnAJSONFromTSV, luisFile, QnAFile) {
             });
 
         }
-
-        
-        
-
     }
     
     if(fileContent) {
