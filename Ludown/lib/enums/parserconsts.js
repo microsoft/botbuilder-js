@@ -11,5 +11,6 @@ module.exports = {
     COMMENT: ">",
     URLORFILEREF: "[",
     QNATABLE: "|",
-    ANSWER: "```"
+    ANSWER: "```",
+    FILTER: "**"
 };

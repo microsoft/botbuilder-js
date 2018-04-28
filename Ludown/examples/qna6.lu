@@ -44,3 +44,11 @@ You can get coffee in our Seattle store at 1 pike place, Seattle, WA
 You can get coffee in our Portland store at 52 marine drive, Portland, OR
 ```
 
+
+
+> You can include LUIS intent and entity definitions in the same .lu file
+# Greeting
+- Hi
+- Hello
+- Good morning
+- Good evening

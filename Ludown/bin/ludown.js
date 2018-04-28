@@ -13,8 +13,8 @@ program.Command.prototype.unknownOption = function (flag) {
 program
     .version(pjson.version, '-V, --Version')
     .description(`Ludown is a command line tool to bootstrap language understanding models from .lu files`)
-    .command('parse', 'Convert .lu file(s) into LUIS JSON OR QnA Maker JSON/ TSV files.')
+    .command('parse', 'Convert .lu file(s) into LUIS JSON OR QnA Maker JSON files.')
     .alias('p')
-    .command('refresh', 'Convert LUIS JSON and QnAMaker TSV files into .lu file')
+    .command('refresh', 'Convert LUIS JSON and/ or QnAMaker JSON file into .lu file')
     .alias('d')
     .parse(process.argv);
