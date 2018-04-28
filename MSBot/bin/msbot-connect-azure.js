@@ -20,10 +20,10 @@ program
     .option('-a, --appId  <appid>', 'Microsoft AppId for the Azure Bot Service\n')
     .option('-p, --appPassword  <appPassword>', 'Microsoft AppPassword for the Azure Bot Service\n')
     .option('-e, --endpoint <endpoint>', 'Registered endpoint url for the Azure Bot Service')
-    .option('-n, --name <name>', '(OPTIONAL) name of the azure bot service')
-    .option('-t, --tenantId <tenantId>', 'id of the tenant for the Azure Bot Service Registrartion')
-    .option('-s, --subscriptionId <subscriptionId>', 'id of the subscription for the Azure Bot Service Registrartion')
-    .option('-r, --resourceGroup <resourceGroup>', 'name of the resourceGroup for the Azure Bot Service Registrartion')
+    .option('-n, --name <name>', 'Name of the azure bot service')
+    .option('-t, --tenantId <tenantId>', 'id of the tenant for the Azure Bot Service Registrartion (either GUID or xxx.onmicrosoft.com)')
+    .option('-s, --subscriptionId <subscriptionId>', 'GUID of the subscription for the Azure Bot Service')
+    .option('-r, --resourceGroup <resourceGroup>', 'name of the resourceGroup for the Azure Bot Service')
     .option('-b, --bot <path>', 'path to bot file.  If omitted, local folder will look for a .bot file')
     .option('--input <jsonfile>', 'path to arguments in JSON format { id:\'\',name:\'\', ... }')
     .option('--secret <secret>', 'bot file secret password for encrypting service secrets')
@@ -94,7 +94,7 @@ async function processConnectAzureArgs(config) {
     config.connectService(endpointService);
     await config.save();
     process.stdout.write(`Connected ${service.type}:${service.name} ${service.id}\n`);
-    process.stdout.write(`Connected ${endpointService.type}:${endpointService.name} ${endpointService.id}\n`);
+    process.stdout.write(`Connected ${endpointService.type}:${endpointService.endpoint}\n`);
     return config;
 }
 //# sourceMappingURL=msbot-connect-azure.js.map
