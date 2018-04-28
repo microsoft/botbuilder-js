@@ -295,7 +295,7 @@ var constructMdFile = function(LUISJSON, QnAJSONFromTSV, luisFile, QnAFile) {
             });
         }
         
-        if(LUISJSON.model.entities.length >= 0) {
+        if(LUISJSON.model.entities && LUISJSON.model.entities.length >= 0) {
             fileContent += '> # Entity definitions' + NEWLINE + NEWLINE;
             LUISJSON.model.entities.forEach(function(entity) {
                 fileContent += '$' + entity.name + ':simple' + NEWLINE + NEWLINE;
@@ -303,15 +303,23 @@ var constructMdFile = function(LUISJSON, QnAJSONFromTSV, luisFile, QnAFile) {
             fileContent += NEWLINE;
         }
     
-        if(LUISJSON.model.bing_entities.length >= 0){
+        if(LUISJSON.model.bing_entities && LUISJSON.model.bing_entities.length >= 0){
             fileContent += '> # PREBUILT Entity definitions' + NEWLINE + NEWLINE;
             LUISJSON.model.bing_entities.forEach(function(entity) {
                 fileContent += '$PREBUILT:' + entity + NEWLINE + NEWLINE;
             });
             fileContent += NEWLINE;
         }
-    
-        if(LUISJSON.model.model_features.length >= 0) {
+
+        if(LUISJSON.model.prebuiltEntities && LUISJSON.model.prebuiltEntities.length >= 0){
+            fileContent += '> # PREBUILT Entity definitions' + NEWLINE + NEWLINE;
+            LUISJSON.model.prebuiltEntities.forEach(function(entity) {
+                fileContent += '$PREBUILT:' + entity.name + NEWLINE + NEWLINE;
+            });
+            fileContent += NEWLINE;
+        }
+        
+        if(LUISJSON.model.model_features && LUISJSON.model.model_features.length >= 0) {
             fileContent += '> # Phrase list definitions' + NEWLINE + NEWLINE;
             LUISJSON.model.model_features.forEach(function(entity) {
                 fileContent += '$' + entity.name + ':phraseList' + NEWLINE;
@@ -319,7 +327,7 @@ var constructMdFile = function(LUISJSON, QnAJSONFromTSV, luisFile, QnAFile) {
             });
             fileContent += NEWLINE;
         }
-        if(LUISJSON.model.closedLists.length >= 0){
+        if(LUISJSON.model.closedLists && LUISJSON.model.closedLists.length >= 0){
             fileContent += '> # List entities' + NEWLINE + NEWLINE;
             LUISJSON.model.closedLists.forEach(function(ListItem) {
                 ListItem.subLists.forEach(function(list) {
