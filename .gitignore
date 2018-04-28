@@ -288,7 +288,7 @@ __pycache__/
 *.xsd.cs
 
 #bot stuff
-.luisrc
-.qnamakerrc
+**/.luisrc
+**/.qnamakerrc
 *.bot
 /MSBot/bin/Microsoft.NodejsTools.WebRole.dll
