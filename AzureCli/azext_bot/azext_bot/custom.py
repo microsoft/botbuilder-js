@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 from knack.prompting import prompt_y_n
 from knack.util import CLIError
 from knack.log import get_logger

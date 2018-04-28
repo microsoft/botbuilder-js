@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 from knack.util import CLIError
 
 def bot_exception_handler(ex):

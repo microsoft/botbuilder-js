@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 from knack.arguments import CLIArgumentType
 
 from azure.cli.core.commands.parameters import (

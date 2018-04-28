@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 from azure.cli.core import AzCommandsLoader
 from azext_bot._help import helps #pylint: disable=unused-import
 import pdb

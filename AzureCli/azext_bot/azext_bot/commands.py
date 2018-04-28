@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 from azure.cli.core.commands import CliCommandType
 from azext_bot._client_factory import (
     get_botservice_management_client, 
