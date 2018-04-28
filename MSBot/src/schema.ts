@@ -39,6 +39,15 @@ export interface IAzureBotService extends IConnectedService {
 
     // MSA Appid
     appId: string;
+
+    // tenantId for ABS registration
+    tenantId: string;
+
+    // subscriptionId for ABS registration
+    subscriptionId : string;
+
+    // resourceGroup for ABS registration
+    resourceGroup: string;
 }
 
 export interface ILuisService extends IConnectedService {
