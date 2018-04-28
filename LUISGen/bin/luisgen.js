@@ -2,7 +2,7 @@
 let args = '';
 process.argv.forEach((val, index) => {
   if (index > 1) {
-    args = args + ' ' + val;
+    args = args + ' "' + val + '"';
   }
 });
 try {

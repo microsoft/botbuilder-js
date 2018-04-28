@@ -292,3 +292,4 @@ __pycache__/
 **/.qnamakerrc
 *.bot
 /MSBot/bin/Microsoft.NodejsTools.WebRole.dll
+/LUISGen/.vscode/launch.json
