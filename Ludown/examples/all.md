@@ -87,6 +87,10 @@ You can use our REST apis to manage your KB. See here for details: https://westu
 
 ### ? Who is your ceo?
 - get me your ceo info
+
+**Filters:**
+- key=value
+
 ```markdown
 Vishwac Sena Kannan
 ```

@@ -117,7 +117,7 @@ module.exports = {
             finalLUISJSON.culture = program.luis_culture;
             finalQnAJSON.name = program.qna_name;
             
-            var writeQnAFile = (finalQnAJSON.qnaPairs.length > 0) || 
+            var writeQnAFile = (finalQnAJSON.qnaList.length > 0) || 
                             (finalQnAJSON.urls.length > 0);
 
             var  writeLUISFile = (finalLUISJSON[LUISObjNameEnum.INTENT].length > 0) ||
@@ -182,18 +182,30 @@ module.exports = {
                 });
                 console.log(chalk.green('Successfully wrote QnA KB to ' + outFolder + '\\' + program.qOutFile + '\n'));
 
-                // write tsv file for QnA maker
-                var QnAFileContent = "";
-                finalQnAJSON.qnaPairs.forEach(function(QnAPair) {
-                    QnAFileContent += QnAPair.question + '\t' + QnAPair.answer + '\t Editorial \r\n';
-                });
-                fs.writeFileSync(outFolder + '\\' + program.qTSVFile, QnAFileContent, function(error) {
-                    if(error) {
-                        process.stdout.write(chalk.default.redBright('Unable to write QnA TSV file - ' + outFolder + '\\' + program.qTSVFile + '\n'));
-                        process.exit(1);
-                    } 
-                });
-                console.log(chalk.green('Successfully wrote QnA TSV to ' + outFolder + '\\' + program.qTSVFile + '\n'));
+                if(program.write_qna_tsv) {
+                    // write tsv file for QnA maker
+                    var QnAFileContent = "Question\tAnswer\tSource\tMetadata\r\n";
+                    finalQnAJSON.qnaList.forEach(function(QnAPair) {
+                        var filters = "";
+                        if(QnAPair.metadata.length > 0) {
+                            QnAPair.metadata.forEach(function(filter) {
+                                filters += filter.name + ':' + filter.value + '|';
+                            });
+                            filters = filters.substring(0,filters.lastIndexOf('|'));
+                        }
+                        QnAPair.questions.forEach(function(question) {
+                            QnAPair.answer = QnAPair.answer.replace('\r\n', '\\n\\n');
+                            QnAFileContent += question + '\t' + QnAPair.answer + '\t Editorial \t' + filters + '\r\n' ;
+                        })
+                    });
+                    fs.writeFileSync(outFolder + '\\' + program.qTSVFile, QnAFileContent, function(error) {
+                        if(error) {
+                            process.stdout.write(chalk.default.redBright('Unable to write QnA TSV file - ' + outFolder + '\\' + program.qTSVFile + '\n'));
+                            process.exit(1);
+                        } 
+                    });
+                    console.log(chalk.green('Successfully wrote QnA TSV to ' + outFolder + '\\' + program.qTSVFile + '\n'));
+                }
             }
 
             // write luis batch test file if requested

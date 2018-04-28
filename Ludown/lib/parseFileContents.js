@@ -36,7 +36,7 @@ module.exports.parseFile = function(fileContent, log)
         "prebuiltEntities": new Array()
     };
     var qnaJsonStruct = {
-        "qnaPairs": new Array(),
+        "qnaList": new Array(),
         "urls": new Array()
     };
     
@@ -88,16 +88,22 @@ module.exports.parseFile = function(fileContent, log)
                 var questions = new Array();
                 var answer = "";
                 var InanswerSection = false;
+                var InFiltersSection = false;
+                var metadata = new Array();
                 questions.push(intentName.replace('?', '').trim());
                 chunkSplitByLine.splice(0,1);
                 chunkSplitByLine.forEach(function(utterance) {
-                    // are we already in an answer section? 
-                    if(InanswerSection) {
+                    // do we have a filter section? 
+                    if(utterance.toLowerCase().indexOf('**filters:**') === 0) {
+                        InFiltersSection = true;
+                    } else if(InanswerSection) {
+                        // are we already in an answer section? 
                         answer += utterance + '\r\n';
                     } else {
                         // we need either another question here or a start of answer section
                         if(utterance.trim().indexOf(PARSERCONSTS.ANSWER) === 0)
                         {
+                            InFiltersSection = false;
                             if(InanswerSection) {
                                 answer += utterance + '\r\n';
                             } else {
@@ -106,27 +112,48 @@ module.exports.parseFile = function(fileContent, log)
                                 InanswerSection = true;
                             }
                         } else {
-                            // do we have another question? 
-                            if((utterance.indexOf('-') !== 0) &&
+                            // do we have another question or Filter? 
+                            if(InFiltersSection) {
+                                if((utterance.indexOf('-') !== 0) &&
+                                (utterance.indexOf('*') !== 0) && 
+                                (utterance.indexOf('+') !== 0)) {
+                                    process.stdout.write(chalk.default.redBright('Filter: "' + utterance + '" does not have list decoration. Use either - or * \n'));
+                                    process.stdout.write(chalk.default.redBright('Stopping further processing.\n'));
+                                    process.exit(1);
+                                }
+                                utterance = utterance.slice(2);
+                                var kp = utterance.split('=');
+                                if(kp.length !== 2) {
+                                    process.stdout.write(chalk.default.redBright('Filter: "' + utterance + '" does not have a name = value pair. \n'));
+                                    process.stdout.write(chalk.default.redBright('Stopping further processing.\n'));
+                                    process.exit(1);
+                                }
+                                metadata.push({
+                                    "name": kp[0].trim(),
+                                    "value": kp[1].trim()
+                                });
+                            } else {
+                                // we have a question
+                                if((utterance.indexOf('-') !== 0) &&
                                 (utterance.indexOf('*') !== 0) && 
                                 (utterance.indexOf('+') !== 0)) {
                                     process.stdout.write(chalk.default.redBright('Utterance: "' + utterance + '" does not have list decoration. Use either - or * \n'));
                                     process.stdout.write(chalk.default.redBright('Stopping further processing.\n'));
                                     process.exit(1);
                                 }
-                            utterance = utterance.slice(2);
-                            questions.push(utterance.trim());
+                                utterance = utterance.slice(2);
+                                questions.push(utterance.trim());
+                            }
+                            
                         }
                     }
                 });
-
-                questions.forEach(function(question) {
-                    var p = answer.substring(0, answer.lastIndexOf('\r\n'));
-                    var qnaObj = {
-                        "answer": p.substring(0, p.lastIndexOf('```')),
-                        "question": question
-                    };
-                    qnaJsonStruct.qnaPairs.push(qnaObj);
+                var p = answer.substring(0, answer.lastIndexOf('\r\n'));
+                qnaJsonStruct.qnaList.push({
+                    "id": 0,
+                    "answer": p.substring(0, p.lastIndexOf('```')),
+                    "questions": questions,
+                    "metadata": metadata
                 });
             } else {
                 // insert only if the intent is not already present.
@@ -403,10 +430,12 @@ module.exports.parseFile = function(fileContent, log)
             // split contents in this chunk by newline
             var chunkSplitByLine = chunk.split(/\r\n|\r|\n/g);
             var qnaObj = {
+                "id": 0,
                 "answer": chunkSplitByLine[1],
-                "question": chunkSplitByLine[0].replace(PARSERCONSTS.QNA, '').trim()
+                "questions": [chunkSplitByLine[0].replace(PARSERCONSTS.QNA, '').trim()],
+                "metadata": []
             };
-            qnaJsonStruct.qnaPairs.push(qnaObj);
+            qnaJsonStruct.qnaList.push(qnaObj);
         } 
     });
 

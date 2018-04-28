@@ -12,10 +12,10 @@ program.Command.prototype.unknownOption = function (flag) {
 };
 program
     .name("ludown parse")
-    .description(`Convert .lu file(s) into LUIS JSON, QnA Maker JSON/ TSV files.`)
+    .description(`Convert .lu file(s) into LUIS JSON, QnA Maker JSON files.`)
     .command('ToLuis', 'Convert .lu file(s) into LUIS JSON file.')
     .alias('toluis')
-    .command('ToQna', 'Convert .lu file(s) into QnA Maker JSON and TSV files.')
+    .command('ToQna', 'Convert .lu file(s) into QnA Maker JSON files.')
     .alias('toqna')
     .parse(process.argv);
    
