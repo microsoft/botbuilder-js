@@ -1,0 +1,24 @@
+{
+  "name": "luisgen",
+  "version": "1.0.0",
+  "description": "LUISGen is a tool for generating a strongly typed C# class to make consuming LUIS output easier.",
+  "scripts": {
+    "start": "dotnet bin/netcoreapp2.0/luisgen.dll"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Microsoft/botbuilder-tools.git"
+  },
+  "author": "Microsoft",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Microsoft/botbuilder-tools/issues"
+  },
+  "homepage": "https://github.com/Microsoft/botbuilder-tools#readme",
+  "bin": {
+    "luisgen": "bin/luisgen.js"
+  },
+  "dependencies": {
+    "dotnet-2.0.0": "^1.4.4"
+  }
+}
