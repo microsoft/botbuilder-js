@@ -130,8 +130,8 @@ def create_bot_json(cmd, client, resource_group_name, resource_name, app_passwor
     profile = Profile(cli_ctx = cmd.cli_ctx)
     return {
         'type' : 'abs',
-        'id' : raw_bot_properties.id,
-        'name' : raw_bot_properties.name,
+        'id' : raw_bot_properties.name,
+        'name' : raw_bot_properties.properties.display_name,
         'appId' : raw_bot_properties.properties.msa_app_id,
         'appPassword' : app_password,
         'endpoint' : raw_bot_properties.properties.endpoint,
