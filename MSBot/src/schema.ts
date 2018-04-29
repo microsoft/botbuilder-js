@@ -37,9 +37,6 @@ export interface IAzureBotService extends IConnectedService {
     // type = ServiceTypes.AzureBotService
     // id = bot id
 
-    // MSA Appid
-    appId: string;
-
     // tenantId for ABS registration
     tenantId: string;
 
