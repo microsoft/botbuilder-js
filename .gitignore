@@ -295,6 +295,6 @@ __pycache__/
 /LUISGen/.vscode/launch.json
 
 #Azure Cli
-/dist
+AzureCli/azext_bot/dist/
 /build
 

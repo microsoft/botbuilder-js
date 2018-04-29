@@ -27,11 +27,11 @@ def load_arguments(self, _):
         c.argument('password', options_list=['-p','--password'], help='the msa password for the bot from developer portal.')
         c.argument('storageAccountName', options_list=['-s','--storage'], help='Storage Account Name to be used with the bot.If one is not provided, a new account will be created.')
         c.argument('tags', help='set of tags to add to the bot.')
-        c.argument('bot_json', help='show the output as json compatible with a .bot file', arg_type=get_three_state_flag())
+        c.argument('bot_json', options_list=['--msbot'], help='show the output as json compatible with a .bot file', arg_type=get_three_state_flag())
         c.argument('language', help='The language to be used to create the bot.', options_list=['--lang'], arg_type=get_enum_type(['Csharp','Node']))
 
     with self.argument_context('bot show') as c:
-        c.argument('bot_json', help='show the output as json compatible with a .bot file', arg_type=get_three_state_flag())
+        c.argument('bot_json', options_list=['--msbot'], help='show the output as json compatible with a .bot file', arg_type=get_three_state_flag())
 
     with self.argument_context('bot facebook create') as c:
         c.argument('is_disabled', options_list=['--add-disabled'], arg_type=get_three_state_flag(), help='add the channel in a disabled state')

@@ -10,7 +10,8 @@
             "type": "string"
         },
         "description": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": ""
         },
         "location": {
             "type": "string"

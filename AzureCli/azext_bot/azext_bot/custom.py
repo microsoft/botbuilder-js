@@ -8,6 +8,7 @@ from azext_bot.botservice import AzureBotService
 from azext_bot.botservice.models import Bot, BotProperties,sku, BotChannel
 from azure.cli.command_modules.appservice.custom import enable_zip_deploy, config_source_control, get_app_settings, _get_site_credential, _get_scm_url
 from azure.cli.command_modules.resource.custom import deploy_arm_template
+from azure.cli.core._profile import Profile
 import json
 import adal
 
@@ -51,7 +52,7 @@ def provisionConvergedApp(bot_name):
 
     return msa_app_id, password
 
-def create(cmd, client, resource_group_name, resource_name, kind, description, display_name=None,
+def create(cmd, client, resource_group_name, resource_name, kind, description=None, display_name=None,
            endpoint=None, msa_app_id=None,password=None, tags=None, storageAccountName = None, 
            location = 'Central US', sku_name = 'F0', appInsightsLocation = 'South Central US', bot_json = None, language='Csharp'):
     display_name = display_name or resource_name
@@ -124,13 +125,20 @@ def get_bot(cmd, client, resource_group_name, resource_name, bot_json = None):
             resource_group_name = resource_group_name,
             name = resource_name
         )
+
+        profile = Profile(cli_ctx = cmd.cli_ctx)
+        a = profile.get_subscription(subscription=client.config.subscription_id)
+
         return {
             'type' : 'abs',
             'id' : raw_bot_properties.id,
             'name' : raw_bot_properties.name,
             'appId' : raw_bot_properties.properties.msa_app_id,
             'appPassword' : [item['value'] for item in app_settings if item['name'] == 'MicrosoftAppPassword'][0],
-            'endpoint' : raw_bot_properties.properties.endpoint
+            'endpoint' : raw_bot_properties.properties.endpoint,
+            'resourceGroup' : resource_group_name,
+            'tenantId' : profile.get_subscription(subscription=client.config.subscription_id)['tenantId'],
+            'subscriptionId' : client.config.subscription_id
         }
 
     return raw_bot_properties
@@ -275,6 +283,8 @@ def download_app(cmd, client, resource_group_name, resource_name, file_save_path
     zip_ref.extractall(folder_path)
     zip_ref.close()
     os.remove(download_path)
+
+    return { 'downloadPath' : folder_path}
 
 def publish_app1(cmd, client, enable_stdin=False):
     if enable_stdin:
