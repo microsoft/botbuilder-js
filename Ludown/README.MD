@@ -2,7 +2,7 @@
 
 [![npm version](https://badge.fury.io/js/ludown.svg)](https://badge.fury.io/js/ludown)
 
-.lu files help describe language understanding components for your bot. LUDown is a command line tool that helps convert .lu file(s) into JSON and TSV files that you can then use to create your [LUIS](http://luis.ai) app or [QnAMaker](http://qnamaker.ai) Knowledge base. 
+.lu files help describe language understanding components for your bot. LUDown is a command line tool that helps convert .lu file(s) into JSON files that you can then use to create your [LUIS](http://luis.ai) app or [QnAMaker](http://qnamaker.ai) Knowledge base. 
 
 Language Understanding ([LUIS.ai](https://luis.ai/)) allows your application to understand what a person wants in their own words. LUIS uses machine learning to allow developers to build applications that can receive user input in natural language and extract meaning from it.
 
@@ -28,7 +28,7 @@ npm i -g ludown
 ## Commands
 
 ```bash
->ludown -h
+>ludown
 
   Usage: ludown [options] [command]
 
@@ -41,21 +41,21 @@ npm i -g ludown
 
   Commands:
 
-    parse|p        Convert .lu file(s) into LUIS JSON OR QnA Maker JSON/ TSV files.
-    refresh|d      Convert LUIS JSON and QnAMaker TSV files into .lu file
+    parse|p        Convert .lu file(s) into LUIS JSON OR QnA Maker JSON files.
+    refresh|d      Convert LUIS JSON and/ or QnAMaker JSON file into .lu file
     help [cmd]     display help for [cmd]
 ```
 
 ### Parse command
 
-Convert .lu file(s) into LUIS JSON OR QnA Maker JSON/ TSV files.
+Convert .lu file(s) into LUIS JSON OR QnA Maker JSON files.
 
 ```bash
->ludown parse -h
+>ludown parse
 
   Usage: ludown parse [options] [command]
 
-  Convert .lu file(s) into LUIS JSON, QnA Maker JSON/ TSV files.
+  Convert .lu file(s) into LUIS JSON, QnA Maker JSON files.
 
   Options:
 
@@ -64,7 +64,7 @@ Convert .lu file(s) into LUIS JSON OR QnA Maker JSON/ TSV files.
   Commands:
 
     ToLuis|toluis  Convert .lu file(s) into LUIS JSON file.
-    ToQna|toqna    Convert .lu file(s) into QnA Maker JSON and TSV files.
+    ToQna|toqna    Convert .lu file(s) into QnA Maker JSON files.
     help [cmd]     display help for [cmd]
 ```
 
@@ -73,7 +73,7 @@ Convert .lu file(s) into LUIS JSON OR QnA Maker JSON/ TSV files.
 Convert .lu file(s) into LUIS JSON file. Optionally you can also generate a LUIS Batch test JSON file. 
 
 ```bash
->ludown parse toluis -h
+>ludown parse toluis
 
   Usage: ludown parse ToLuis --in <luFile> | --lu_folder <inputFolder> [-s]
 
@@ -81,63 +81,61 @@ Convert .lu file(s) into LUIS JSON file. Optionally you can also generate a LUIS
 
   Options:
 
-    --in <luFile>                                               .lu file to parse
-    -l, --lu_folder <inputFolder> [optional]                    Folder that has the .lu file. By default ludown will only look at the current folder. To look at all subfolders, include -s
-    -o, --out_folder <outputFolder> [optional]                  Output folder for all files the tool will generate
-    -s, --subfolder [optional]                                  Include sub-folders as well when looking for .lu files
-    --verbose [optional]                                        Get verbose messages from parser
-    -r, --luis_schema_version <luis_schema_version> [optional]  LUIS Schema version
-    -v, --luis_versionId <luis_versionId> [optional]            LUIS app version
-    -n, --luis_name <luis_appName> [optional]                   LUIS app name
-    -d, --luis_desc <luis_appDesc> [optional]                   LUIS app description
-    -c, --luis_culture <luis_appCulture> [optional]             LUIS app culture
-    -t, --write_luis_batch_tests [optional]                     Write out LUIS batch test json file
-    -h, --help                                                  output usage information
+    --in <luFile>                                    .lu file to parse
+    -l, --lu_folder <inputFolder>                    [Optional] Folder that has the .lu file. By default ludown will only look at the current folder. To look at all subfolders, include -s
+    -o, --out_folder <outputFolder>                  [Optional] Output folder for all files the tool will generate
+    -s, --subfolder                                  [Optional] Include sub-folders as well when looking for .lu files
+    -n, --luis_name <luis_appName>                   [Optional] LUIS app name
+    -d, --luis_desc <luis_appDesc>                   [Optional] LUIS app description
+    -v, --luis_versionId <luis_versionId>            [Optional] LUIS app version (default: 0.1)
+    -c, --luis_culture <luis_appCulture>             [Optional] LUIS app culture (default: en-us)
+    -r, --luis_schema_version <luis_schema_version>  [Optional] LUIS Schema version (default: 2.2.0)
+    -t, --write_luis_batch_tests                     [Optional] Write out LUIS batch test json file
+    --verbose                                        [Optional] Get verbose messages from parser
+    -h, --help                                       output usage information
 ```
 
 #### Parse ToQna command
 
-Convert .lu file(s) into QnA Maker JSON and TSV files.
+Convert .lu file(s) into QnA Maker JSON file.
 
 ```bash
->ludown parse toqna -h
+>ludown parse toqna
 
-   Usage: ludown parse ToQna --in <luFile> | --lu_folder <inputFolder> [-s]
+  Usage: ludown parse ToQna --in <luFile> | --lu_folder <inputFolder> [-s]
 
-  Convert .lu file(s) into QnA Maker JSON and TSV files.
+  Convert .lu file(s) into QnA Maker JSON file
 
   Options:
 
-    --in <luFile>                               .lu file to parse
-    -l, --lu_folder <inputFolder> [optional]    Folder with .lu file(s). By default ludown will only look at the current folder. -s to include subfolders
-    -o, --out_folder <outputFolder> [optional]  Output folder for all files the tool will generate
-    -s, --subfolder [optional]                  Include sub-folders as well when looking for .lu files
-    --verbose [optional]                        Get verbose messages from parser
-    -m, --qna_name <QnA_KB_Name> [optional]     QnA KB name
-    -h, --help                                  output usage information
+    --in <luFile>                    .lu file to parse
+    -l, --lu_folder <inputFolder>    [Optional] Folder with .lu file(s). By default ludown will only look at the current folder. -s to include subfolders
+    -o, --out_folder <outputFolder>  [Optional] Output folder for all files the tool will generate
+    -s, --subfolder                  [Optional] Include sub-folders as well when looking for .lu files
+    -m, --qna_name <QnA_KB_Name>     [Optional] QnA KB name
+    --verbose                        [Optional] Get verbose messages from parser
+    -h, --help                       output usage information
 ```
 
 ### Refresh command
-After you have bootstrapped and created your LUIS model and/ or QnAMaker knowledge base, you might make subsequent refinements to your models directly from [luis.ai](https://luis.ai/) or [qnamaker.ai](https://qnamaker.ai). You can use the refresh command to re-genrate .lu files from your LUIS JSON and/ or QnAMaker TSV files.  
+After you have bootstrapped and created your LUIS model and/ or QnAMaker knowledge base, you might make subsequent refinements to your models directly from [luis.ai](https://luis.ai/) or [qnamaker.ai](https://qnamaker.ai). You can use the refresh command to re-genrate .lu files from your LUIS JSON and/ or QnAMaker JSON files.  
 
 ```bash
 >ludown refresh -h
 
-  Usage: ludown refresh -i <LUISJsonFile> | -l <QnATSVFile>
+  Usage: ludown refresh -i <LUISJsonFile> | -q <QnAJSONFile>
 
-  Convert LUIS JSON and QnAMaker TSV files into .lu file
+  Convert LUIS JSON and/ or QnAMaker JSON file into .lu file
 
   Options:
 
-    -i, --LUIS_File <LUIS_JSON_File> [Optional]  LUIS JSON input file name
-    -l, --QNA_File <QNA_TSV_File> [Optional]     QnA Maker JSON output file name
-    -o, --out_folder <outputFolder> [optional]   Output folder for all files the tool will generate
-    --verbose [optional]                         Get verbose messages from parser
-    -n, --lu_File <LU_File> [optional]           Output .lu file name
-    -h, --help                                   output usage information
-
+    -i, --LUIS_File <LUIS_JSON_File>            [Optional] LUIS JSON input file name
+    -q, --QNA_FILE <QNA_FILE>                   [Optional] QnA Maker JSON input file name
+    -o, --out_folder <outputFolder> [optional]  [Optional] Output folder for all files the tool will generate
+    -n, --lu_File <LU_File>                     [Optional] Output .lu file name
+    --verbose                                   [Optional] Get verbose messages from parser
+    -h, --help                                  output usage information
 ```
-
 
 ## .lu File Format
 .lu files contain markdown-like, simple text based definitions for [LUIS](http://luis.ai) or [QnAmaker.ai](http://qnamaker.ai) concepts. 
@@ -321,7 +319,7 @@ Here's an example of question and answer definitions. The LUDown tool will autom
 
 You can add multiple questions to the same answer by simply additing variations to questions. Here's an example
 
-```
+```markdown
 ### ? Who is your ceo?
 - get me your ceo info
 	```markdown
@@ -341,7 +339,36 @@ Here's an example of those references:
 
 [none intent definition](./none.lu)
 ```
+### Filters
+Filters in QnA Maker are simple key value pairs that can be used to narrow search results, boost answers and store context. You can add filters using the following notation: 
+```markdown
+***Filters:***
+- name = value
+- name = value 
+```
 
+Here's an example usage: 
+```markdown
+### ? Where can I get coffee? 
+- I need coffee
+
+**Filters:**
+- location = seattle
+
+    ```markdown
+    You can get coffee in our Seattle store at 1 pike place, Seattle, WA
+    ```
+
+### ? Where can I get coffee? 
+- I need coffee
+
+**Filters:**
+- location = portland
+
+    ```markdown
+    You can get coffee in our Portland store at 52 marine drive, Portland, OR
+    ```
+```
 ### Adding comments
 You can add comments to your .lu document by prefixing the comment with >. Here's an example: 
 
@@ -404,7 +431,7 @@ qnamaker create --in _qnaKB.json
 - Sign in
 - Create a new service with just the name and no other attributes
 - Once the service is created, click on 'Replace Knowledge Base'
-- Select _qnaTSV.tsv that was generated by LUDown
+- Select _qnaJSON.json that was generated by LUDown
 
 ### Exporting LUIS model (for ludown refresh command)
 #### Using CLI

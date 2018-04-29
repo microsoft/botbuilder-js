@@ -71,7 +71,7 @@ async function processConnectEndpointArgs(config: BotConfig): Promise<BotConfig>
     if (!args.endpoint)
         throw new Error('missing --endpoint');
 
-    if (!validurl.isWebUri(args.endpoint)) {
+    if (!validurl.isHttpUri(args.endpoint) && !validurl.isHttpsUri(args.endpoint)) {
         throw new Error(`--endpoint ${args.endpoint} is not a valid url`);
     }
 

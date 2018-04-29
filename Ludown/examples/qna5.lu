@@ -2,7 +2,7 @@
 > This is a QnA definition. Follows # ? Question: \<list of questions\> \```markdown \<Answer> ``` format
 
 > You can add URLs for QnA maker to ingest using the #URL reference scheme
-### ? who is the ceo?
+### ? How do I change the default message
 ```markdown
 You can change the default message if you use the QnAMakerDialog. 
 See [this link](https://docs.botframework.com/en-us/azure-bot-service/templates/qnamaker/#navtitle) for details. 
@@ -25,12 +25,22 @@ You can use our REST apis to manage your KB.
 Vishwac
 ```
 
+> You can define filters for QnA using the \**Filters:** \<list of name=value pairs\> format
+### ? Where can I get coffee? 
+- I need coffee
 
+**Filters:**
+- location = seattle
+```markdown
+You can get coffee in our Seattle store at 1 pike place, Seattle, WA
+```
 
+### ? Where can I get coffee? 
+- I need coffee
 
-> You can include LUIS intent and entity definitions in the same .lu file
-# Greeting
-- Hi
-- Hello
-- Good morning
-- Good evening
+**Filters:**
+- location = portland
+```markdown
+You can get coffee in our Portland store at 52 marine drive, Portland, OR
+```
+

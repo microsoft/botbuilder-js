@@ -6,16 +6,17 @@ class AzureBotService extends connectedService_1.ConnectedService {
     constructor(source = {}) {
         super(source);
         this.type = schema_1.ServiceType.AzureBotService;
-        this.appId = '';
-        const { appId = '' } = source;
-        this.appId = appId;
+        this.tenantId = '';
+        this.subscriptionId = '';
+        this.resourceGroup = '';
+        const { tenantId = '', subscriptionId = '', resourceGroup = '' } = source;
+        this.tenantId = tenantId;
+        this.subscriptionId = subscriptionId;
+        this.resourceGroup = resourceGroup;
     }
     toJSON() {
-        let { name, appId, id } = this;
-        if (!id) {
-            id = appId;
-        }
-        return { type: schema_1.ServiceType.AzureBotService, name, appId, id };
+        let { name, id, tenantId, subscriptionId, resourceGroup } = this;
+        return { type: schema_1.ServiceType.AzureBotService, name, id, tenantId, subscriptionId, resourceGroup };
     }
 }
 exports.AzureBotService = AzureBotService;

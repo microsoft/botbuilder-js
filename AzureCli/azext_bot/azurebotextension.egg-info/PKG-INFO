@@ -1,0 +1,34 @@
+Metadata-Version: 1.1
+Name: azurebotextension
+Version: 0.0.1
+Summary: Microsoft Azure Command-Line Tools Bot Services Extension
+Home-page: https://github.com/azure/azure-cli
+Author: Microsoft Corporation
+Author-email: azpycli@microsoft.com
+License: MIT
+Description: Microsoft Azure CLI 'bot service' Command Module
+        =======================================================
+        
+        This package is for the 'bot service' module.
+        i.e. 'az botservice'
+        
+        
+        
+        
+        Release History
+        ===============
+        
+        0.1.0 (2018-02-16)
+        ------------------
+        * inital bot service CLI
+Platform: UNKNOWN
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Developers
+Classifier: Intended Audience :: System Administrators
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 2
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.4
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
