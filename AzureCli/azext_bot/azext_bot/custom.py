@@ -113,6 +113,33 @@ def delete_bot(client, resource_group_name, resource_name):
         resource_name = resource_name
     )
 
+def create_bot_json(cmd, client, resource_group_name, resource_name, app_password=None, raw_bot_properties=None):
+    if not raw_bot_properties:
+        raw_bot_properties = client.bots.get(
+            resource_group_name = resource_group_name,
+            resource_name = resource_name
+        )
+    if not app_password:
+        app_settings = get_app_settings(
+            cmd = cmd,
+            resource_group_name = resource_group_name,
+            name = resource_name
+        )
+        app_password = [item['value'] for item in app_settings if item['name'] == 'MicrosoftAppPassword'][0] 
+    
+    profile = Profile(cli_ctx = cmd.cli_ctx)
+    return {
+        'type' : 'abs',
+        'id' : raw_bot_properties.id,
+        'name' : raw_bot_properties.name,
+        'appId' : raw_bot_properties.properties.msa_app_id,
+        'appPassword' : app_password,
+        'endpoint' : raw_bot_properties.properties.endpoint,
+        'resourceGroup' : str(resource_group_name),
+        'tenantId' : profile.get_subscription(subscription=client.config.subscription_id)['tenantId'],
+        'subscriptionId' : client.config.subscription_id
+    }
+
 def get_bot(cmd, client, resource_group_name, resource_name, bot_json = None):
     raw_bot_properties = client.bots.get(
         resource_group_name = resource_group_name,
@@ -120,26 +147,7 @@ def get_bot(cmd, client, resource_group_name, resource_name, bot_json = None):
     )
 
     if bot_json:
-        app_settings = get_app_settings(
-            cmd = cmd,
-            resource_group_name = resource_group_name,
-            name = resource_name
-        )
-
-        profile = Profile(cli_ctx = cmd.cli_ctx)
-        a = profile.get_subscription(subscription=client.config.subscription_id)
-
-        return {
-            'type' : 'abs',
-            'id' : raw_bot_properties.id,
-            'name' : raw_bot_properties.name,
-            'appId' : raw_bot_properties.properties.msa_app_id,
-            'appPassword' : [item['value'] for item in app_settings if item['name'] == 'MicrosoftAppPassword'][0],
-            'endpoint' : raw_bot_properties.properties.endpoint,
-            'resourceGroup' : resource_group_name,
-            'tenantId' : profile.get_subscription(subscription=client.config.subscription_id)['tenantId'],
-            'subscriptionId' : client.config.subscription_id
-        }
+        return create_bot_json(cmd, client, resource_group_name, resource_name, raw_bot_properties=raw_bot_properties)
 
     return raw_bot_properties
 
@@ -204,18 +212,10 @@ def create_app(cmd, client,resource_group_name, resource_name, description, kind
 
     deploy_result.wait()
     if bot_json:
-        return {
-            'type' : 'abs',
-            'name' : resource_name,
-            'endpoint' : 'https://{0}.azurewebsites.net/api/messages'.format(resource_name),
-            'appid' : appid,
-            'appPassword': password,
-            'id' : resource_name
-        }
+        return create_bot_json(cmd, client, resource_group_name, resource_name, app_password=password)
 
 def publish_app(cmd, client, resource_group_name, resource_name, giturl = None, git_token = None, git_branch = 'master', code_dir = None):
     #if given msbot json, use that to update environment settings like luis settings
-    #optional consider zipping folder for the user instead of asking them to zip it
 
     if giturl:
         return config_source_control(
