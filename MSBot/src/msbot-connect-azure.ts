@@ -2,8 +2,9 @@ import * as chalk from 'chalk';
 import * as program from 'commander';
 import * as fs from 'fs-extra';
 import * as getStdin from 'get-stdin';
+import * as validurl from 'valid-url';
 import { BotConfig } from './BotConfig';
-import { AzureBotService } from './models';
+import { AzureBotService, EndpointService } from './models';
 import { IAzureBotService, ServiceType } from './schema';
 import { uuidValidate } from './utils';
 
@@ -17,15 +18,23 @@ interface ConnectAzureArgs extends IAzureBotService {
     secret: string;
     stdin: boolean;
     input?: string;
+    appId?: string;
+    endpoint?: string;
+    appPassword?: string;
 }
 
 program
     .name('msbot connect azure')
     .description('Connect the bot to Azure Bot Service')
     .option('-i, --id <id>', 'Azure Bot Service bot id')
-    .option('-a, --appId  <appid>', 'Microsoft AppId for the Azure Bot Service\n')
-    .option('-n, --name <name>', '(OPTIONAL) name of the azure bot service')
-
+    .option('-n, --name <name>', 'Name of the azure bot service')
+    .option('-t, --tenantId <tenantId>', 'id of the tenant for the Azure Bot Service Registrartion (either GUID or xxx.onmicrosoft.com)')
+    .option('-s, --subscriptionId <subscriptionId>', 'GUID of the subscription for the Azure Bot Service')
+    .option('-r, --resourceGroup <resourceGroup>', 'name of the resourceGroup for the Azure Bot Service')
+    .option('-e, --endpoint <endpoint>', '(OPTIONAL) Registered endpoint url for the Azure Bot Service')
+    .option('-a, --appId  <appid>', '(OPTIONAL) Microsoft AppId for the Azure Bot Service\n')
+    .option('-p, --appPassword  <appPassword>', '(OPTIONAL) Microsoft AppPassword for the Azure Bot Service\n')
+  
     .option('-b, --bot <path>', 'path to bot file.  If omitted, local folder will look for a .bot file')
     .option('--input <jsonfile>', 'path to arguments in JSON format { id:\'\',name:\'\', ... }')
     .option('--secret <secret>', 'bot file secret password for encrypting service secrets')
@@ -64,22 +73,52 @@ async function processConnectAzureArgs(config: BotConfig): Promise<BotConfig> {
         Object.assign(args, JSON.parse(fs.readFileSync(<string>args.input, 'utf8')));
     }
 
-    if (!args.id)
+    if (!args.id || args.id.length == 0)
         throw new Error('Bad or missing --id for registered bot');
 
-    if (!args.appId || !uuidValidate(args.appId))
-        throw new Error('Bad or missing --appId');
+    if (!args.tenantId || args.tenantId.length == 0)
+        throw new Error('Bad or missing --tenantId');
+
+    if (!args.subscriptionId || !uuidValidate(args.subscriptionId))
+        throw new Error('Bad or missing --subscriptionId');
+
+    if (!args.resourceGroup || args.resourceGroup.length == 0)
+        throw new Error('Bad or missing --resourceGroup for registered bot');
 
     let service = new AzureBotService({
         type: ServiceType.AzureBotService,
         id: args.id, // bot id
         name: args.hasOwnProperty('name') ? args.name : args.id,
-        appId: args.appId
+        tenantId: args.tenantId,
+        subscriptionId: args.subscriptionId,
+        resourceGroup: args.resourceGroup
     });
     config.connectService(service);
 
-    await config.save();
+    if (args.endpoint) {
+        if (!args.endpoint || !validurl.isHttpsUri(args.endpoint))
+            throw new Error('Bad or missing --endpoint');
 
-    process.stdout.write(`Connected ${service.type}:${service.name} ${service.id}`);
+        if (!args.appId || !uuidValidate(args.appId))
+            throw new Error('Bad or missing --appId');
+
+        if (!args.appPassword || args.appPassword.length == 0)
+            throw new Error('Bad or missing --appPassword');
+
+
+        let endpointService = new EndpointService({
+            type: ServiceType.Endpoint,
+            id: args.endpoint,
+            name: args.endpoint,
+            appId: args.appId,
+            appPassword: args.appPassword,
+            endpoint: args.endpoint
+        })
+        config.connectService(endpointService);
+        process.stdout.write(`Connected ${endpointService.type}:${endpointService.endpoint}\n`);
+    }
+    await config.save();
+    process.stdout.write(`Connected ${service.type}:${service.name} ${service.id}\n`);
+
     return config;
 }

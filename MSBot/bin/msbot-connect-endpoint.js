@@ -58,7 +58,7 @@ async function processConnectEndpointArgs(config) {
     }
     if (!args.endpoint)
         throw new Error('missing --endpoint');
-    if (!validurl.isWebUri(args.endpoint)) {
+    if (!validurl.isHttpUri(args.endpoint) && !validurl.isHttpsUri(args.endpoint)) {
         throw new Error(`--endpoint ${args.endpoint} is not a valid url`);
     }
     if (args.appId && !utils_1.uuidValidate(args.appId))

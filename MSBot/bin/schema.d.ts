@@ -17,7 +17,9 @@ export interface IEndpointService extends IConnectedService {
     endpoint: string;
 }
 export interface IAzureBotService extends IConnectedService {
-    appId: string;
+    tenantId: string;
+    subscriptionId: string;
+    resourceGroup: string;
 }
 export interface ILuisService extends IConnectedService {
     appId: string;
