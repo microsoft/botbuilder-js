@@ -296,5 +296,5 @@ __pycache__/
 
 #Azure Cli
 AzureCli/azext_bot/dist/
-/build
+AzureCli/azext_bot/build/
 
