@@ -3,14 +3,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const botbuilder_dialogs_1 = require("botbuilder-dialogs");
 const botbuilder_choices_1 = require("botbuilder-choices");
 const botbuilder_1 = require("botbuilder");
-class ListControl extends botbuilder_dialogs_1.Control {
+class ListControl extends botbuilder_dialogs_1.Dialog {
     constructor(pager, actions) {
         super();
         this.pager = pager;
         this.actions = actions || [{ type: 'imBack', title: 'Show More', value: 'more' }];
     }
     dialogBegin(dc, args) {
-        dc.instance.state = Object.assign({}, args);
+        dc.activeDialog.state = Object.assign({}, args);
         return this.showMore(dc);
     }
     dialogContinue(dc) {
@@ -26,13 +26,13 @@ class ListControl extends botbuilder_dialogs_1.Control {
             return this.showMore(dc);
         }
         else {
-            const state = dc.instance.state;
+            const state = dc.activeDialog.state;
             return dc.end({ action: action, continueToken: state.continueToken });
         }
     }
     showMore(dc) {
         try {
-            const state = dc.instance.state;
+            const state = dc.activeDialog.state;
             return Promise.resolve(this.pager(dc, state.filter, state.continueToken)).then((result) => {
                 if (result.continueToken) {
                     // Save continuation token

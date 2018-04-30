@@ -39,8 +39,6 @@ describe('prompts/ChoicePrompt', function() {
         const context = new TestContext(beginMessage);
         const dc = dialogs.createContext(context, state);
         dc.begin('a').then(() => {
-            const result = dc.dialogResult;
-            assert(result && result.active);
             const dc2 = dialogs.createContext(new TestContext(answerMessage), state);
             return dc2.continue();
         });
@@ -55,6 +53,10 @@ describe('prompts/ChoicePrompt', function() {
         dialogs.add('a', [
             function (dc) {
                 return dc.prompt('prompt', 'foo', choices);
+            },
+            function (dc, result) {
+                assert(result && result.value === 'red');
+                done();
             }
         ]);
 
@@ -62,21 +64,12 @@ describe('prompts/ChoicePrompt', function() {
         const context = new TestContext(beginMessage);
         const dc = dialogs.createContext(context, state);
         dc.begin('a').then(() => {
-            const result = dc.dialogResult;
-            assert(result && result.active);
             const context2 = new TestContext(invalidMessage);
             const dc2 = dialogs.createContext(context2, state);
             return dc2.continue().then(() => {
-                const result = dc2.dialogResult;
-                assert(result && result.active);
                 assert(context2.sent && context2.sent[0].text === 'foo');
                 const dc3 = dialogs.createContext(new TestContext(answerMessage), state);
-                return dc3.continue().then(() => {
-                    const result = dc3.dialogResult;
-                    assert(result && !result.active);
-                    assert(result.result && result.result.value === 'red');
-                    done();
-                });
+                return dc3.continue();
             });
         });
     });
@@ -90,6 +83,10 @@ describe('prompts/ChoicePrompt', function() {
         dialogs.add('a', [
             function (dc) {
                 return dc.prompt('prompt', 'foo', { retryPrompt: 'bar', choices: choices });
+            },
+            function (dc, result) {
+                assert(result && result.value === 'red');
+                done();
             }
         ]);
 
@@ -97,21 +94,12 @@ describe('prompts/ChoicePrompt', function() {
         const context = new TestContext(beginMessage);
         const dc = dialogs.createContext(context, state);
         dc.begin('a').then(() => {
-            const result = dc.dialogResult;
-            assert(result && result.active);
             const context2 = new TestContext(invalidMessage);
             const dc2 = dialogs.createContext(context2, state);
             return dc2.continue().then(() => {
-                const result = dc2.dialogResult;
-                assert(result && result.active);
                 assert(context2.sent && context2.sent[0].text === 'bar');
                 const dc3 = dialogs.createContext(new TestContext(answerMessage), state);
-                return dc3.continue().then(() => {
-                    const result = dc3.dialogResult;
-                    assert(result && !result.active);
-                    assert(result.result && result.result.value === 'red');
-                    done();
-                });
+                return dc3.continue();
             });
         });
     });
@@ -128,6 +116,10 @@ describe('prompts/ChoicePrompt', function() {
         dialogs.add('a', [
             function (dc) {
                 return dc.prompt('prompt', 'foo', { retryPrompt: 'bar', choices: choices });
+            },
+            function (dc, result) {
+                assert(result && result.value === 'red');
+                done();
             }
         ]);
 
@@ -135,21 +127,12 @@ describe('prompts/ChoicePrompt', function() {
         const context = new TestContext(beginMessage);
         const dc = dialogs.createContext(context, state);
         dc.begin('a').then(() => {
-            const result = dc.dialogResult;
-            assert(result && result.active);
             const context2 = new TestContext(invalidMessage);
             const dc2 = dialogs.createContext(context2, state);
             return dc2.continue().then(() => {
-                const result = dc2.dialogResult;
-                assert(result && result.active);
                 assert(context2.sent && context2.sent[0].text === 'bad input');
                 const dc3 = dialogs.createContext(new TestContext(answerMessage), state);
-                return dc3.continue().then(() => {
-                    const result = dc3.dialogResult;
-                    assert(result && !result.active);
-                    assert(result.result && result.result.value === 'red');
-                    done();
-                });
+                return dc3.continue();
             });
         });
     });

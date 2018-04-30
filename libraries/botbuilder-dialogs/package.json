@@ -2,7 +2,7 @@
   "name": "botbuilder-dialogs",
   "author": "Microsoft Corp.",
   "description": "A dialog stack based conversation manager for Microsoft Bot Builder.",
-  "version": "4.0.0-m3.0",
+  "version": "4.0.0-m4.1",
   "license": "MIT",
   "keywords": [
     "botbuilder",
@@ -21,8 +21,8 @@
   "typings": "./lib/index.d.ts",
   "dependencies": {
     "@types/node": "^9.3.0",
-    "botbuilder": "4.0.0-m3.0",
-    "botbuilder-prompts": "4.0.0-m3.0",
+    "botbuilder": "4.0.0-m4.1",
+    "botbuilder-prompts": "4.0.0-m4.1",
     "@microsoft/recognizers-text-suite": "^1.0.0"
   },
   "devDependencies": {

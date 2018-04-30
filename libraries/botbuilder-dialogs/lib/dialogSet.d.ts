@@ -6,8 +6,7 @@
  * Licensed under the MIT License.
  */
 import { TurnContext } from 'botbuilder';
-import { Dialog } from './dialog';
-import { Waterfall, WaterfallStep } from './waterfall';
+import { Dialog, Waterfall, WaterfallStep } from './dialog';
 import { DialogContext } from './dialogContext';
 /**
  * :package: **botbuilder-dialogs**

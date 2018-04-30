@@ -9,7 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const botbuilder_1 = require("botbuilder");
 const prompts = require("botbuilder-prompts");
-const control_1 = require("../control");
+const dialog_1 = require("../dialog");
 /**
  * :package: **botbuilder-dialogs**
  *
@@ -28,11 +28,7 @@ const control_1 = require("../control");
  * careful of is that you don't block the `event` and `invoke` activities that the prompt might
  * be waiting on.
  *
- * Like other prompts, the `OAuthPrompt` can be used either as a dialog added to your bots
- * `DialogSet` or on its own as a control if your bot is using some other conversation management
- * system.
- *
- * ### Dialog Usage
+ * ### Prompt Usage
  *
  * When used with your bots `DialogSet` you can simply add a new instance of the prompt as a named
  * dialog using `DialogSet.add()`. You can then start the prompt from a waterfall step using either
@@ -64,51 +60,9 @@ const control_1 = require("../control");
  *      }
  * ]);
  * ```
- *
- * ### Control Usage
- *
- * If your bot isn't dialog based you can still use the prompt on its own as a control. You will
- * just need start the prompt from somewhere within your bots logic by calling the prompts
- * `begin()` method:
- *
- * ```JavaScript
- * const state = {};
- * const prompt = new OAuthPrompt({
- *    connectionName: 'GitConnection',
- *    title: 'Login To GitHub'
- * });
- * const result = await prompt.begin(context, state);
- * if (!result.active) {
- *     const token = result.result;
- * }
- * ```
- *
- * If the user is already signed into the service we will get a token back immediately. We
- * therefore need to check to see if the prompt is still active after the call to `begin()`.
- *
- * If the prompt is still active that means the user was sent an `OAuthCard` prompting the user to
- * signin and we need to pass any additional activities we receive to the `continue()` method. We
- * can't be certain which auth flow is being used so it's best to route *all* activities, regardless
- * of type, to the `continue()` method for processing.
- *
- * ```JavaScript
- * const prompt = new OAuthPrompt({
- *    connectionName: 'GitConnection',
- *    title: 'Login To GitHub'
- * });
- * const result = await prompt.continue(context, state);
- * if (!result.active) {
- *     const token = result.result;
- *     if (token) {
- *         // User has successfully signed in
- *     } else {
- *         // The signin has timed out
- *     }
- * }
- * ```
  * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
  */
-class OAuthPrompt extends control_1.Control {
+class OAuthPrompt extends dialog_1.Dialog {
     /**
      * Creates a new `OAuthPrompt` instance.
      * @param settings Settings used to configure the prompt.
@@ -122,7 +76,7 @@ class OAuthPrompt extends control_1.Control {
     dialogBegin(dc, options) {
         // Persist options and state
         const timeout = typeof this.settings.timeout === 'number' ? this.settings.timeout : 54000000;
-        const instance = dc.instance;
+        const instance = dc.activeDialog;
         instance.state = Object.assign({
             expires: new Date().getTime() + timeout
         }, options);
@@ -147,7 +101,7 @@ class OAuthPrompt extends control_1.Control {
         // Recognize token
         return this.prompt.recognize(dc.context).then((output) => {
             // Check for timeout
-            const state = dc.instance.state;
+            const state = dc.activeDialog.state;
             const isMessage = dc.context.activity.type === botbuilder_1.ActivityTypes.Message;
             const hasTimedOut = isMessage && (new Date().getTime() > state.expires);
             // Process output

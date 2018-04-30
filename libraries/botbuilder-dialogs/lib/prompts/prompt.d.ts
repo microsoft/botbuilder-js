@@ -8,7 +8,7 @@
 import { TurnContext, Activity } from 'botbuilder';
 import { PromptValidator } from 'botbuilder-prompts';
 import { DialogContext } from '../dialogContext';
-import { Control } from '../control';
+import { Dialog } from '../dialog';
 /**
  * :package: **botbuilder-dialogs**
  *
@@ -30,7 +30,7 @@ export interface PromptOptions {
  * Base class for all prompts.
  * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
  */
-export declare abstract class Prompt<C extends TurnContext> extends Control<C> {
+export declare abstract class Prompt<C extends TurnContext> extends Dialog<C> {
     private validator;
     constructor(validator?: PromptValidator<any, any>);
     protected abstract onPrompt(dc: DialogContext<C>, options: PromptOptions, isRetry: boolean): Promise<any>;

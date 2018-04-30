@@ -14,56 +14,29 @@ import { Choice } from 'botbuilder-prompts';
 /**
  * :package: **botbuilder-dialogs**
  * 
- * Result returned to the caller of one of the various stack manipulation methods and used to 
- * return the result from a final call to `DialogContext.end()` to the bots logic.
- */
-export interface DialogResult<T> {
-    /** This will be `true` if there is still an active dialog on the stack. */
-    active: boolean;
-
-    /** 
-     * Result returned by a dialog that was just ended.  This will only be populated in certain
-     * cases: 
-     * 
-     * - The bot calls `dc.begin()` to start a new dialog and the dialog ends immediately.
-     * - The bot calls `dc.continue()` and a dialog that was active ends.
-     * 
-     * In all cases where it's populated, [active](#active) will be `false`. 
-     */
-    result: T|undefined;
-}
-
-/**
- * :package: **botbuilder-dialogs**
- * 
  * 
  * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
  */
 export class DialogContext<C extends TurnContext> {
-    private finalResult: any = undefined;
-    
+    /** Current dialog stack. */
+    public readonly stack: DialogInstance[];
+
      /**
       * Creates a new DialogContext instance.
       * @param dialogs Parent dialog set.
       * @param context Context for the current turn of conversation with the user.
-      * @param stack Current dialog stack.
+      * @param state State object being used to persist the dialog stack.
+      * @param onCompleted (Optional) handler to call when the the last dialog on the stack completes.
+      * @param onCompleted.result The result returned by the dialog that just completed.
       */
-    constructor(public readonly dialogs: DialogSet<C>, public readonly context: C, public readonly stack: DialogInstance[]) { }
-
-    /** Returns the cached instance of the active dialog on the top of the stack or `undefined` if the stack is empty. */
-    public get instance(): DialogInstance|undefined {
-        return this.stack.length > 0 ? this.stack[this.stack.length - 1] : undefined;
+    constructor(public readonly dialogs: DialogSet<C>, public readonly context: C, state: object, private onCompleted?: (result: any) => void) { 
+        if (!Array.isArray(state['dialogStack'])) { state['dialogStack'] = [] } 
+        this.stack = state['dialogStack'];
     }
 
-    /** 
-     * Returns a structure that indicates whether there is still an active dialog on the stack 
-     * along with the result returned by a dialog that just ended.
-     */
-    public get dialogResult(): DialogResult<any> {
-        return {
-            active: this.stack.length > 0,
-            result: this.finalResult
-        };
+    /** Returns the cached instance of the active dialog on the top of the stack or `undefined` if the stack is empty. */
+    public get activeDialog(): DialogInstance|undefined {
+        return this.stack.length > 0 ? this.stack[this.stack.length - 1] : undefined;
     }
 
     /**
@@ -138,7 +111,7 @@ export class DialogContext<C extends TurnContext> {
     public continue(): Promise<any> {
         try {
             // Check for a dialog on the stack
-            const instance = this.instance;
+            const instance = this.activeDialog;
             if (instance) {
 
                 // Lookup dialog
@@ -191,7 +164,7 @@ export class DialogContext<C extends TurnContext> {
             if (this.stack.length > 0) { this.stack.pop() }
 
             // Resume previous dialog
-            const instance = this.instance;
+            const instance = this.activeDialog;
             if (instance) {
 
                 // Lookup dialog
@@ -207,8 +180,10 @@ export class DialogContext<C extends TurnContext> {
                     return this.end(result);
                 }
             } else {
-                // Remember final result
-                this.finalResult = result;
+                // Signal completion
+                if (this.onCompleted) {
+                    this.onCompleted(result);
+                }
                 return Promise.resolve();
             }
         } catch(err) {
