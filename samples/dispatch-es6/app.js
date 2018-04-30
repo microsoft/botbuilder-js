@@ -45,9 +45,10 @@ const weather = new LuisRecognizer({
 });
 
 // The QnAMaker knowledge base used in this sample is `sampleKnowledgeBase.tsv`
+// To create a new service, upload this knowledge base by going to QnA Maker at https://qnamaker.ai/Create
 const faq = new QnAMaker({
-    knowledgeBaseId: '71df79a5-31ef-448e-91c5-4e04532e9fc8',
-    subscriptionKey: 'cd630cc7238a43a286d6e6de1c5682af',
+    knowledgeBaseId: '',
+    subscriptionKey: '',
     serviceEndpoint: 'https://westus.api.cognitive.microsoft.com/'
 });
 
