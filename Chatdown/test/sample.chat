@@ -12,9 +12,10 @@ Lulabot: # cheese choices
 2. cheese 2
 3. cheese 3
 
+bot:
+[Typing]
 [Delay = 5000]
-
-bot: web page attachment
+web page attachment
 [Attachment=https://github.com/Microsoft/Botbuilder-DotNet]
 
 LulaBot: Here's card1
