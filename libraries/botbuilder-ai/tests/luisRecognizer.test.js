@@ -56,19 +56,19 @@ function TestJson(file, done) {
 
     var expectedPath = __dirname + "/TestData/" + file;
     var expected = fs.readJSONSync(expectedPath);
-           var newPath = expectedPath + ".new";
+    var newPath = expectedPath + ".new";
     var context = new TestContext({ text: expected.text });
-    var recognizer = new LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey, verbose: true, options: {verbose: true} });
+    var recognizer = new LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey, verbose: true, options: { verbose: true } });
     recognizer.recognize(context).then(res => {
         if (!WithinDelta(expected, res, 0.01, false)) {
-              fs.outputJSONSync(newPath, res, {spaces: 2});
+            fs.outputJSONSync(newPath, res, { spaces: 2 });
             assert(false, "\nReturned JSON\n  " + newPath + "\n!= expected JSON\n  " + expectedPath);
         }
         else if (fs.existsSync(newPath)) {
             fs.unlinkSync(newPath);
         }
+        done();
     });
-    done();
 }
 
 describe('LuisRecognizer', function () {
@@ -94,7 +94,7 @@ describe('LuisRecognizer', function () {
     it('test built-ins prebuilt', function (done) {
         TestJson("Prebuilt.json", done);
     });
-    
+
     it('should return multiple intents and a simple entity', function (done) {
         var recognizer = new LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey, verbose: true });
         var context = new TestContext({ text: 'My name is Emad' });
