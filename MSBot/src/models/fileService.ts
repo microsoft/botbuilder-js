@@ -9,6 +9,18 @@ export class FileService extends ConnectedService implements IFileService {
         super(source);
         const { filePath = '' } = source;
         this.filePath = filePath;
+
+        let { id } = this;
+        Object.defineProperty(this, 'id', {
+            get: function () {
+                return id || filePath;
+            },
+            set: function (value) {
+                id = value;
+            },
+            enumerable: true
+        });
+
     }
 
     public toJSON(): Partial<IFileService> {

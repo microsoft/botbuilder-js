@@ -3,8 +3,6 @@ import { ConnectedService } from './connectedService';
 
 export class QnaMakerService extends ConnectedService implements IQnAService {
     public readonly type = ServiceType.QnA;
-    public id = '';
-    public name = '';
     public kbId = '';
     public subscriptionKey = '';
     public hostname = '';
