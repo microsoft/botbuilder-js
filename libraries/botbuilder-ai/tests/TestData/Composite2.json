@@ -1,32 +1,32 @@
 {
-  "text": "http://foo.com is where you can fly from seattle to dallas via denver",
+  "text": "http://foo.com is where you can fly from seattle to dallas via denver on delta",
   "intents": {
     "EntityTests": {
-      "score": 0.9109604
+      "score": 0.926227331
     },
     "Weather_GetForecast": {
-      "score": 0.121306971
+      "score": 0.1408156
     },
     "Travel": {
-      "score": 0.0273477212
+      "score": 0.02833348
     },
     "None": {
-      "score": 0.01634177
-    },
-    "SpecifyName": {
-      "score": 0.00471411133
+      "score": 0.0232552961
     },
     "Delivery": {
-      "score": 0.0045661875
+      "score": 0.004638636
+    },
+    "SpecifyName": {
+      "score": 0.004528465
     },
     "Help": {
-      "score": 0.0020663538
+      "score": 0.00172583084
     },
     "Cancel": {
-      "score": 0.0009918148
+      "score": 0.0008147075
     },
     "Greeting": {
-      "score": 0.000153730318
+      "score": 0.000110537359
     }
   },
   "entities": {
@@ -36,7 +36,14 @@
           "startIndex": 0,
           "endIndex": 69,
           "text": "http : / / foo . com is where you can fly from seattle to dallas via denver",
-          "score": 0.928562
+          "score": 0.388890356
+        }
+      ],
+      "Airline": [
+        {
+          "startIndex": 73,
+          "endIndex": 78,
+          "text": "delta"
         }
       ]
     },
@@ -48,7 +55,7 @@
               "startIndex": 63,
               "endIndex": 69,
               "text": "denver",
-              "score": 0.81954056
+              "score": 0.817590535
             }
           ],
           "builtin_url": [
@@ -71,7 +78,7 @@
               "startIndex": 52,
               "endIndex": 58,
               "text": "dallas",
-              "score": 0.984576344
+              "score": 0.9845761
             }
           ]
         },
@@ -88,59 +95,75 @@
           "dallas"
         ]
       }
+    ],
+    "Airline": [
+      [
+        "Delta"
+      ]
     ]
   },
   "luisResult": {
-    "query": "http://foo.com is where you can fly from seattle to dallas via denver",
+    "query": "http://foo.com is where you can fly from seattle to dallas via denver on delta",
     "topScoringIntent": {
       "intent": "EntityTests",
-      "score": 0.9109604
+      "score": 0.926227331
     },
     "intents": [
       {
         "intent": "EntityTests",
-        "score": 0.9109604
+        "score": 0.926227331
       },
       {
         "intent": "Weather.GetForecast",
-        "score": 0.121306971
+        "score": 0.1408156
       },
       {
         "intent": "Travel",
-        "score": 0.0273477212
+        "score": 0.02833348
       },
       {
         "intent": "None",
-        "score": 0.01634177
-      },
-      {
-        "intent": "SpecifyName",
-        "score": 0.00471411133
+        "score": 0.0232552961
       },
       {
         "intent": "Delivery",
-        "score": 0.0045661875
+        "score": 0.004638636
+      },
+      {
+        "intent": "SpecifyName",
+        "score": 0.004528465
       },
       {
         "intent": "Help",
-        "score": 0.0020663538
+        "score": 0.00172583084
       },
       {
         "intent": "Cancel",
-        "score": 0.0009918148
+        "score": 0.0008147075
       },
       {
         "intent": "Greeting",
-        "score": 0.000153730318
+        "score": 0.000110537359
       }
     ],
     "entities": [
+      {
+        "entity": "delta",
+        "type": "Airline",
+        "startIndex": 73,
+        "endIndex": 77,
+        "resolution": {
+          "values": [
+            "Delta"
+          ]
+        }
+      },
       {
         "entity": "dallas",
         "type": "City::To",
         "startIndex": 52,
         "endIndex": 57,
-        "score": 0.984576344
+        "score": 0.9845761
       },
       {
         "entity": "seattle",
@@ -154,14 +177,14 @@
         "type": "City",
         "startIndex": 63,
         "endIndex": 68,
-        "score": 0.81954056
+        "score": 0.817590535
       },
       {
         "entity": "http : / / foo . com is where you can fly from seattle to dallas via denver",
         "type": "Composite2",
         "startIndex": 0,
         "endIndex": 68,
-        "score": 0.928562
+        "score": 0.388890356
       },
       {
         "entity": "http://foo.com",
