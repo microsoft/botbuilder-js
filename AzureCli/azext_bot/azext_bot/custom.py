@@ -145,7 +145,6 @@ def get_bot(cmd, client, resource_group_name, resource_name, bot_json = None):
         resource_group_name = resource_group_name,
         resource_name = resource_name
     )
-
     if bot_json:
         return create_bot_json(cmd, client, resource_group_name, resource_name, raw_bot_properties=raw_bot_properties)
 
@@ -204,7 +203,7 @@ def create_app(cmd, client,resource_group_name, resource_name, description, kind
     deploy_result = deploy_arm_template(
         cmd = cmd,
         resource_group_name = resource_group_name,
-        template_file = f'{dir_path}\\{template_name}',
+        template_file = '{0}\\{1}'.format(dir_path, template_name),
         parameters = [[json.dumps(params)]],
         deployment_name = resource_name,
         mode = 'Incremental'
@@ -216,7 +215,6 @@ def create_app(cmd, client,resource_group_name, resource_name, description, kind
 
 def publish_app(cmd, client, resource_group_name, resource_name, giturl = None, git_token = None, git_branch = 'master', code_dir = None):
     #if given msbot json, use that to update environment settings like luis settings
-
     if giturl:
         return config_source_control(
             cmd = cmd,
@@ -235,7 +233,7 @@ def publish_app(cmd, client, resource_group_name, resource_name, giturl = None, 
     if code_dir:
         import os
         if not os.path.isdir(code_dir):
-            raise CLIError('plesae supply a valid directory path containing your source code')
+            raise CLIError('please supply a valid directory path containing your source code')
         #ensure that the directory contains appropriate post deploy scripts folder
         if 'PostDeployScripts' not in os.listdir(code_dir):
             raise CLIError('not a valid azure publish directory. missing post deploy scripts')
@@ -246,10 +244,22 @@ def publish_app(cmd, client, resource_group_name, resource_name, giturl = None, 
         return output
 
 def download_app(cmd, client, resource_group_name, resource_name, file_save_path=None):
+    #get the bot and ensure it's not a registration only bot
+    raw_bot_properties = client.bots.get(
+        resource_group_name = resource_group_name,
+        resource_name = resource_name
+    )
+    if(raw_bot_properties.properties.kind == 'bot'):
+        raise CLIError('source download is not supported for registration only bots')
     import os
     file_save_path = file_save_path or os.getcwd()
     if not os.path.isdir(file_save_path):
         raise CLIError('path name not valid')
+    folder_path = os.path.join(file_save_path,resource_name)
+    if os.path.exists(folder_path):
+        raise CLIError('the path {0} already exists. Please delete it or specify an alternate path'.format(folder_path))
+    os.mkdir(folder_path)
+    
     user_name, password = _get_site_credential(cmd.cli_ctx, resource_group_name, resource_name, None)
     scm_url = _get_scm_url(cmd, resource_group_name, resource_name, None)
     
@@ -273,8 +283,6 @@ def download_app(cmd, client, resource_group_name, resource_name, file_save_path
     if response.status_code != 200:
         raise CLIError('Zip Download failed with status code {} and reason {}'.format(
             response.status_code, response.text))
-    folder_path = os.path.join(file_save_path,resource_name)
-    os.mkdir(folder_path)
     download_path = os.path.join(file_save_path, 'download.zip')
     with open(os.path.join(file_save_path ,'download.zip'), 'wb') as f:
         f.write(response.content)
