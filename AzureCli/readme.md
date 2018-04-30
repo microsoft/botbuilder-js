@@ -72,6 +72,12 @@ If you used az configure to set botname and resourcegroup, you can simply do
 `az bot webchat show`  
 To remove a channel from a bot,  
 `az bot directline delete`
+
+# Known Issues and Limitations
+These are the known issues and limitations that the CLI has right now.  
+1) Creation of msa app id and password is not supported for hotmail.com accounts.
+2) `az bot publish` fails for a c# solution , when the project is open in visual studio. To work around this for now, please close the solution before doing a publish.
+
  
 
 
