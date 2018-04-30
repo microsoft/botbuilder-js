@@ -291,14 +291,7 @@ def download_app(cmd, client, resource_group_name, resource_name, file_save_path
     zip_ref.extractall(folder_path)
     zip_ref.close()
     os.remove(download_path)
-
     return { 'downloadPath' : folder_path}
-
-def publish_app1(cmd, client, enable_stdin=False):
-    if enable_stdin:
-        import sys
-        for item in sys.stdin:
-            print(item)
 
 def create_channel(client, channel, channel_name, resource_group_name, resource_name):
     botChannel = BotChannel(

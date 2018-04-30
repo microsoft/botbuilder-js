@@ -21,15 +21,16 @@ Ensure that you are using the right subscription for creating your bot -
 Change your subscription , if needed  
 `az account set --subscription <Your-subscription-name>`  
 
-You need an existing resource group to create your bot and related assets. Either use an existing one or create one.
+You need a resource group (existing or new) to create your bot and related assets.  
 on the CLI you can create a new resource group as -  
 `az group create -l <resource-group-location> -n <resource-group-name>`
 
 Now create your bot -  
 `az bot create -k webapp -g myResourceGroup -n myBot`  
 If you did not specify a microsoft app credentials during creation, you will be asked to login again so that we can create those credentials on your behalf.
+Tip : To avoid specifying the resource group use `az configure --defaults group=myResourceGroup`  
 
-you can access your bot credentials and information using   
+you can get your bot credentials and information using the --msbot option
 `az bot show --msbot -n myBot -g myResourceGroup`
 
 Pro-Tips - 
@@ -42,7 +43,7 @@ Eg - `az bot create -h`
 The following workflow assumes that you have your bot name and resource group name configured by default using 
 az configure.  
 A typical bot workflow would be connecting your bot to msbot, downloading the source code and then publishing back to azure with changes.
-First connect your bot to msbot  
+First connect your bot to msbot (Get teh MsBot CLI from [here](https://github.com/Microsoft/botbuilder-tools/tree/master/MSBot)
 `az bot show --msbot | msbot connect Azure --stdin`  
 This will update your .bot file with all the information needed by other botbuilder tools to access it.  
 Now download the source code  
