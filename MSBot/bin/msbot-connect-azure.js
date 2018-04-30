@@ -86,7 +86,7 @@ async function processConnectAzureArgs(config) {
         let endpointService = new models_1.EndpointService({
             type: schema_1.ServiceType.Endpoint,
             id: args.endpoint,
-            name: args.endpoint,
+            name: args.name || args.endpoint,
             appId: args.appId,
             appPassword: args.appPassword,
             endpoint: args.endpoint

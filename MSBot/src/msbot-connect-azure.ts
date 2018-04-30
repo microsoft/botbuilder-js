@@ -109,7 +109,7 @@ async function processConnectAzureArgs(config: BotConfig): Promise<BotConfig> {
         let endpointService = new EndpointService({
             type: ServiceType.Endpoint,
             id: args.endpoint,
-            name: args.endpoint,
+            name: args.name || args.endpoint,
             appId: args.appId,
             appPassword: args.appPassword,
             endpoint: args.endpoint
