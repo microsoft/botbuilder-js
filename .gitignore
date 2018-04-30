@@ -293,3 +293,8 @@ __pycache__/
 *.bot
 /MSBot/bin/Microsoft.NodejsTools.WebRole.dll
 /LUISGen/.vscode/launch.json
+
+#Azure Cli
+AzureCli/azext_bot/dist/
+AzureCli/azext_bot/build/
+

@@ -8,6 +8,7 @@ from azext_bot.botservice import AzureBotService
 from azext_bot.botservice.models import Bot, BotProperties,sku, BotChannel
 from azure.cli.command_modules.appservice.custom import enable_zip_deploy, config_source_control, get_app_settings, _get_site_credential, _get_scm_url
 from azure.cli.command_modules.resource.custom import deploy_arm_template
+from azure.cli.core._profile import Profile
 import json
 import adal
 
@@ -51,7 +52,7 @@ def provisionConvergedApp(bot_name):
 
     return msa_app_id, password
 
-def create(cmd, client, resource_group_name, resource_name, kind, description, display_name=None,
+def create(cmd, client, resource_group_name, resource_name, kind, description=None, display_name=None,
            endpoint=None, msa_app_id=None,password=None, tags=None, storageAccountName = None, 
            location = 'Central US', sku_name = 'F0', appInsightsLocation = 'South Central US', bot_json = None, language='Csharp'):
     display_name = display_name or resource_name
@@ -112,26 +113,40 @@ def delete_bot(client, resource_group_name, resource_name):
         resource_name = resource_name
     )
 
-def get_bot(cmd, client, resource_group_name, resource_name, bot_json = None):
-    raw_bot_properties = client.bots.get(
-        resource_group_name = resource_group_name,
-        resource_name = resource_name
-    )
-
-    if bot_json:
+def create_bot_json(cmd, client, resource_group_name, resource_name, app_password=None, raw_bot_properties=None):
+    if not raw_bot_properties:
+        raw_bot_properties = client.bots.get(
+            resource_group_name = resource_group_name,
+            resource_name = resource_name
+        )
+    if not app_password:
         app_settings = get_app_settings(
             cmd = cmd,
             resource_group_name = resource_group_name,
             name = resource_name
         )
-        return {
-            'type' : 'abs',
-            'id' : raw_bot_properties.id,
-            'name' : raw_bot_properties.name,
-            'appId' : raw_bot_properties.properties.msa_app_id,
-            'appPassword' : [item['value'] for item in app_settings if item['name'] == 'MicrosoftAppPassword'][0],
-            'endpoint' : raw_bot_properties.properties.endpoint
-        }
+        app_password = [item['value'] for item in app_settings if item['name'] == 'MicrosoftAppPassword'][0] 
+    
+    profile = Profile(cli_ctx = cmd.cli_ctx)
+    return {
+        'type' : 'abs',
+        'id' : raw_bot_properties.name,
+        'name' : raw_bot_properties.properties.display_name,
+        'appId' : raw_bot_properties.properties.msa_app_id,
+        'appPassword' : app_password,
+        'endpoint' : raw_bot_properties.properties.endpoint,
+        'resourceGroup' : str(resource_group_name),
+        'tenantId' : profile.get_subscription(subscription=client.config.subscription_id)['tenantId'],
+        'subscriptionId' : client.config.subscription_id
+    }
+
+def get_bot(cmd, client, resource_group_name, resource_name, bot_json = None):
+    raw_bot_properties = client.bots.get(
+        resource_group_name = resource_group_name,
+        resource_name = resource_name
+    )
+    if bot_json:
+        return create_bot_json(cmd, client, resource_group_name, resource_name, raw_bot_properties=raw_bot_properties)
 
     return raw_bot_properties
 
@@ -188,7 +203,7 @@ def create_app(cmd, client,resource_group_name, resource_name, description, kind
     deploy_result = deploy_arm_template(
         cmd = cmd,
         resource_group_name = resource_group_name,
-        template_file = f'{dir_path}\\{template_name}',
+        template_file = '{0}\\{1}'.format(dir_path, template_name),
         parameters = [[json.dumps(params)]],
         deployment_name = resource_name,
         mode = 'Incremental'
@@ -196,19 +211,10 @@ def create_app(cmd, client,resource_group_name, resource_name, description, kind
 
     deploy_result.wait()
     if bot_json:
-        return {
-            'type' : 'abs',
-            'name' : resource_name,
-            'endpoint' : 'https://{0}.azurewebsites.net/api/messages'.format(resource_name),
-            'appid' : appid,
-            'appPassword': password,
-            'id' : resource_name
-        }
+        return create_bot_json(cmd, client, resource_group_name, resource_name, app_password=password)
 
 def publish_app(cmd, client, resource_group_name, resource_name, giturl = None, git_token = None, git_branch = 'master', code_dir = None):
     #if given msbot json, use that to update environment settings like luis settings
-    #optional consider zipping folder for the user instead of asking them to zip it
-
     if giturl:
         return config_source_control(
             cmd = cmd,
@@ -227,7 +233,7 @@ def publish_app(cmd, client, resource_group_name, resource_name, giturl = None, 
     if code_dir:
         import os
         if not os.path.isdir(code_dir):
-            raise CLIError('plesae supply a valid directory path containing your source code')
+            raise CLIError('please supply a valid directory path containing your source code')
         #ensure that the directory contains appropriate post deploy scripts folder
         if 'PostDeployScripts' not in os.listdir(code_dir):
             raise CLIError('not a valid azure publish directory. missing post deploy scripts')
@@ -238,10 +244,22 @@ def publish_app(cmd, client, resource_group_name, resource_name, giturl = None, 
         return output
 
 def download_app(cmd, client, resource_group_name, resource_name, file_save_path=None):
+    #get the bot and ensure it's not a registration only bot
+    raw_bot_properties = client.bots.get(
+        resource_group_name = resource_group_name,
+        resource_name = resource_name
+    )
+    if(raw_bot_properties.properties.kind == 'bot'):
+        raise CLIError('source download is not supported for registration only bots')
     import os
     file_save_path = file_save_path or os.getcwd()
     if not os.path.isdir(file_save_path):
         raise CLIError('path name not valid')
+    folder_path = os.path.join(file_save_path,resource_name)
+    if os.path.exists(folder_path):
+        raise CLIError('the path {0} already exists. Please delete it or specify an alternate path'.format(folder_path))
+    os.mkdir(folder_path)
+    
     user_name, password = _get_site_credential(cmd.cli_ctx, resource_group_name, resource_name, None)
     scm_url = _get_scm_url(cmd, resource_group_name, resource_name, None)
     
@@ -265,8 +283,6 @@ def download_app(cmd, client, resource_group_name, resource_name, file_save_path
     if response.status_code != 200:
         raise CLIError('Zip Download failed with status code {} and reason {}'.format(
             response.status_code, response.text))
-    folder_path = os.path.join(file_save_path,resource_name)
-    os.mkdir(folder_path)
     download_path = os.path.join(file_save_path, 'download.zip')
     with open(os.path.join(file_save_path ,'download.zip'), 'wb') as f:
         f.write(response.content)
@@ -275,12 +291,7 @@ def download_app(cmd, client, resource_group_name, resource_name, file_save_path
     zip_ref.extractall(folder_path)
     zip_ref.close()
     os.remove(download_path)
-
-def publish_app1(cmd, client, enable_stdin=False):
-    if enable_stdin:
-        import sys
-        for item in sys.stdin:
-            print(item)
+    return { 'downloadPath' : folder_path}
 
 def create_channel(client, channel, channel_name, resource_group_name, resource_name):
     botChannel = BotChannel(
