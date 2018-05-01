@@ -8,6 +8,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Licensed under the MIT License.
  */
 const botbuilder_1 = require("botbuilder");
+const dialog_1 = require("./dialog");
 /**
  * :package: **botbuilder-dialogs**
  *
@@ -78,23 +79,24 @@ const botbuilder_1 = require("botbuilder");
  * to do that the dialog will be automatically ended for you on the users next reply.  The users
  * response will be passed to the calling dialogs next waterfall step if there is one.
  */
-class Waterfall {
+class Waterfall extends dialog_1.Dialog {
     /**
      * Creates a new waterfall dialog containing the given array of steps.
      * @param steps Array of waterfall steps.
      */
     constructor(steps) {
+        super();
         this.steps = steps.slice(0);
     }
     dialogBegin(dc, args) {
-        const instance = dc.instance;
+        const instance = dc.currentDialog;
         instance.step = 0;
         return this.runStep(dc, args);
     }
     dialogContinue(dc) {
         // Don't do anything for non-message activities
         if (dc.context.activity.type === botbuilder_1.ActivityTypes.Message) {
-            const instance = dc.instance;
+            const instance = dc.currentDialog;
             instance.step += 1;
             return this.runStep(dc, dc.context.activity.text);
         }
@@ -103,13 +105,13 @@ class Waterfall {
         }
     }
     dialogResume(dc, result) {
-        const instance = dc.instance;
+        const instance = dc.currentDialog;
         instance.step += 1;
         return this.runStep(dc, result);
     }
     runStep(dc, result) {
         try {
-            const instance = dc.instance;
+            const instance = dc.currentDialog;
             const step = instance.step;
             if (step >= 0 && step < this.steps.length) {
                 // Execute step

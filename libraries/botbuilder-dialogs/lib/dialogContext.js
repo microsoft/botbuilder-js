@@ -11,27 +11,22 @@ class DialogContext {
      * Creates a new DialogContext instance.
      * @param dialogs Parent dialog set.
      * @param context Context for the current turn of conversation with the user.
-     * @param stack Current dialog stack.
+     * @param state State object being used to persist the dialog stack.
+     * @param onCompleted (Optional) handler to call when the the last dialog on the stack completes.
+     * @param onCompleted.result The result returned by the dialog that just completed.
      */
-    constructor(dialogs, context, stack) {
+    constructor(dialogs, context, state, onCompleted) {
         this.dialogs = dialogs;
         this.context = context;
-        this.stack = stack;
-        this.finalResult = undefined;
+        this.onCompleted = onCompleted;
+        if (!Array.isArray(state['dialogStack'])) {
+            state['dialogStack'] = [];
+        }
+        this.stack = state['dialogStack'];
     }
     /** Returns the cached instance of the active dialog on the top of the stack or `undefined` if the stack is empty. */
-    get instance() {
+    get activeDialog() {
         return this.stack.length > 0 ? this.stack[this.stack.length - 1] : undefined;
-    }
-    /**
-     * Returns a structure that indicates whether there is still an active dialog on the stack
-     * along with the result returned by a dialog that just ended.
-     */
-    get dialogResult() {
-        return {
-            active: this.stack.length > 0,
-            result: this.finalResult
-        };
     }
     /**
      * Pushes a new dialog onto the dialog stack.
@@ -106,7 +101,7 @@ class DialogContext {
     continue() {
         try {
             // Check for a dialog on the stack
-            const instance = this.instance;
+            const instance = this.activeDialog;
             if (instance) {
                 // Lookup dialog
                 const dialog = this.dialogs.find(instance.id);
@@ -162,7 +157,7 @@ class DialogContext {
                 this.stack.pop();
             }
             // Resume previous dialog
-            const instance = this.instance;
+            const instance = this.activeDialog;
             if (instance) {
                 // Lookup dialog
                 const dialog = this.dialogs.find(instance.id);
@@ -180,8 +175,10 @@ class DialogContext {
                 }
             }
             else {
-                // Remember final result
-                this.finalResult = result;
+                // Signal completion
+                if (this.onCompleted) {
+                    this.onCompleted(result);
+                }
                 return Promise.resolve();
             }
         }

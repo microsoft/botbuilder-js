@@ -5,9 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext, BotState, StoreItem, Activity } from 'botbuilder';
-import { Dialog, DialogInstance } from './dialog';
-import { Waterfall, WaterfallStep } from './waterfall';
+import { TurnContext, BotState, StoreItem, Activity, Promiseable } from 'botbuilder';
+import { Dialog, Waterfall, WaterfallStep } from './dialog';
 import { DialogContext } from './dialogContext';
 
 /**
@@ -128,8 +127,7 @@ export class DialogSet<C extends TurnContext = TurnContext> {
     }
 
     public createContext(context: C, state: object): DialogContext<C> {
-        if (!Array.isArray(state['dialogStack'])) { state['dialogStack'] = [] } 
-        return new DialogContext(this, context, state['dialogStack']);
+        return new DialogContext(this, context, state);
     }
 
     /**

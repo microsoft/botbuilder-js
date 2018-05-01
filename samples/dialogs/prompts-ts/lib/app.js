@@ -92,13 +92,13 @@ dialogs.add('mainMenu', [
 dialogs.add('loop', [
     function (dc, args) {
         return __awaiter(this, void 0, void 0, function* () {
-            dc.instance.state = args;
+            dc.activeDialog.state = args;
             yield dc.begin(args.dialogId);
         });
     },
     function (dc) {
         return __awaiter(this, void 0, void 0, function* () {
-            const args = dc.instance.state;
+            const args = dc.activeDialog.state;
             yield dc.replace('loop', args);
         });
     }

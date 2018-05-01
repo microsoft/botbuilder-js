@@ -8,7 +8,7 @@
 import { TurnContext, Activity, Promiseable, ActivityTypes } from 'botbuilder';
 import { PromptValidator } from 'botbuilder-prompts';
 import { DialogContext } from '../dialogContext';
-import { Control } from '../control';
+import { Dialog } from '../dialog';
 
 /** 
  * :package: **botbuilder-dialogs**
@@ -35,7 +35,7 @@ export interface PromptOptions {
  * Base class for all prompts.
  * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
  */
-export abstract class Prompt<C extends TurnContext> extends Control<C> {
+export abstract class Prompt<C extends TurnContext> extends Dialog<C> {
     constructor(private validator?: PromptValidator<any, any>) { 
         super();
     }
@@ -46,7 +46,7 @@ export abstract class Prompt<C extends TurnContext> extends Control<C> {
 
     public dialogBegin(dc: DialogContext<C>, options: PromptOptions): Promise<any> {
         // Persist options
-        const instance = dc.instance;
+        const instance = dc.activeDialog;
         instance.state = options || {};
 
         // Send initial prompt
@@ -60,7 +60,7 @@ export abstract class Prompt<C extends TurnContext> extends Control<C> {
         }
 
         // Recognize value
-        const instance = dc.instance;
+        const instance = dc.activeDialog;
         return this.onRecognize(dc, instance.state)
             .then((recognized) => {
                 if (this.validator) {
