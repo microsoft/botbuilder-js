@@ -164,7 +164,7 @@ export declare class BotFrameworkAdapter extends BotAdapter {
      */
     getConversations(serviceUrl: string, continuationToken?: string): Promise<ConversationsResult>;
     /**
-     * Attempts to retrieve the token for a user that's in a logging flow.
+     * Attempts to retrieve the token for a user that's in a signin flow.
      * @param context Context for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.
      * @param magicCode (Optional) Optional user entered code to validate.
@@ -174,9 +174,20 @@ export declare class BotFrameworkAdapter extends BotAdapter {
      * Signs the user out with the token server.
      * @param context Context for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.
-     * @param magicCode (Optional) Optional user entered code to validate.
      */
     signOutUser(context: TurnContext, connectionName: string): Promise<void>;
+    /**
+     * Gets a signin link from the token server that can be sent as part of a SigninCard.
+     * @param context Context for the current turn of conversation with the user.
+     * @param connectionName Name of the auth connection to use.
+     */
+    getSignInLink(context: TurnContext, connectionName: string): Promise<string>;
+    /**
+     * Tells the token service to emulate the sending of OAuthCards for a channel.
+     * @param serviceUrl The URL of the channel server to query.  This can be retrieved from `context.activity.serviceUrl`.
+     * @param emulate If `true` the token service will emulate the sending of OAuthCards.
+     */
+    emulateOAuthCards(serviceUrl: string, emulate: boolean): Promise<void>;
     /**
      * Processes an activity received by the bots web server. This includes any messages sent from a
      * user and is the method that drives what's often referred to as the bots "Reactive Messaging"
