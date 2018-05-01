@@ -369,7 +369,7 @@ async function validateArguments(serviceManifest) {
  * @param error
  */
 async function handleError(error) {
-    process.stdout.write('\n' + chalk.red.bold(error + '\n\n'));
+    process.stderr.write('\n' + chalk.red.bold(error + '\n\n'));
     //    if (error.name === 'ArgumentError') {
     await help(args);
     //    }
