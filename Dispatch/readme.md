@@ -84,11 +84,11 @@ Arguments
 
 Supported file types:
 
-| File type       | Description |
+| File extension       | Description |
 | -----------  | ----------- |
-| tsv | Tab delimited lines of intents and utterances |
-| txt | Lines of utterances |
-| json | Exported LUIS/QnA maker json file | 
+| .tsv | Tab delimited lines of intents and utterances |
+| .txt | Lines of utterances |
+| .json | Exported LUIS/QnA maker json file | 
 
 ## Creating your dispatch model  
 
