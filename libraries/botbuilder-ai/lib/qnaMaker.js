@@ -57,7 +57,7 @@ class QnAMaker {
             this.endpoint = {
                 knowledgeBaseId: matched[1],
                 host: matched[2],
-                subscriptionKey: matched[3]
+                endpointKey: matched[3]
             };
         }
         else {
@@ -127,10 +127,10 @@ class QnAMaker {
         const url = `${endpoint.host}/knowledgebases/${endpoint.knowledgeBaseId}/generateanswer`;
         const headers = {};
         if (endpoint.host.endsWith('v2.0') || endpoint.host.endsWith('v3.0')) {
-            headers['Ocp-Apim-Subscription-Key'] = endpoint.subscriptionKey;
+            headers['Ocp-Apim-Subscription-Key'] = endpoint.endpointKey;
         }
         else {
-            headers['Authorization'] = `EndpointKey ${endpoint.subscriptionKey}`;
+            headers['Authorization'] = `EndpointKey ${endpoint.endpointKey}`;
         }
         return request({
             url: url,
