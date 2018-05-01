@@ -12,6 +12,7 @@ const request = require("request-promise-native");
 const entities = require("html-entities");
 var htmlentities = new entities.AllHtmlEntities();
 const ENDPOINT_REGEXP = /\/knowledgebases\/(.*)\/generateAnswer\r\nHost:\s(.*)\r\n.*(?:EndpointKey|Ocp-Apim-Subscription-Key:)\s(.*)\r\n/i;
+const UNIX_ENDPOINT_REGEXP = /\/knowledgebases\/(.*)\/generateAnswer\nHost:\s(.*)\n.*(?:EndpointKey|Ocp-Apim-Subscription-Key:)\s(.*)\n/i;
 /**
  * Manages querying an individual QnA Maker knowledge base for answers. Can be added as middleware
  * to automatically query the knowledge base anytime a messaged is received from the user. When
@@ -50,7 +51,10 @@ class QnAMaker {
         // Initialize endpoint
         if (typeof endpoint === 'string') {
             // Parse endpoint
-            const matched = ENDPOINT_REGEXP.exec(endpoint);
+            let matched = ENDPOINT_REGEXP.exec(endpoint);
+            if (!matched) {
+                matched = UNIX_ENDPOINT_REGEXP.exec(endpoint);
+            }
             if (!matched) {
                 throw new Error(`QnAMaker: invalid endpoint of "${endpoint}" passed to constructor.`);
             }

@@ -71,6 +71,7 @@ export interface QnAMakerOptions {
 }
 
 const ENDPOINT_REGEXP = /\/knowledgebases\/(.*)\/generateAnswer\r\nHost:\s(.*)\r\n.*(?:EndpointKey|Ocp-Apim-Subscription-Key:)\s(.*)\r\n/i;
+const UNIX_ENDPOINT_REGEXP = /\/knowledgebases\/(.*)\/generateAnswer\nHost:\s(.*)\n.*(?:EndpointKey|Ocp-Apim-Subscription-Key:)\s(.*)\n/i;
 
 /**
  * Manages querying an individual QnA Maker knowledge base for answers. Can be added as middleware 
@@ -113,7 +114,8 @@ export class QnAMaker implements Middleware {
         // Initialize endpoint
         if (typeof endpoint === 'string') {
             // Parse endpoint
-            const matched = ENDPOINT_REGEXP.exec(endpoint);
+            let matched = ENDPOINT_REGEXP.exec(endpoint);
+            if (!matched) { matched = UNIX_ENDPOINT_REGEXP.exec(endpoint) }
             if (!matched) { throw new Error(`QnAMaker: invalid endpoint of "${endpoint}" passed to constructor.`) }
             this.endpoint = {
                 knowledgeBaseId: matched[1],

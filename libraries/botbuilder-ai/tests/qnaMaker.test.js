@@ -40,6 +40,7 @@ describe('QnAMaker', function () {
         host: hostname
     }
     const endpointString = `POST /knowledgebases/${knowlegeBaseId}/generateAnswer\r\nHost: ${hostname}\r\nAuthorization: EndpointKey ${endpointKey}\r\nContent-Type: application/json\r\n{"question":"hi"}`;
+    const unixEndpointString = `POST /knowledgebases/${knowlegeBaseId}/generateAnswer\nHost: ${hostname}\nAuthorization: EndpointKey ${endpointKey}\nContent-Type: application/json\n{"question":"hi"}`;
 
     it('should work free standing', function () {
         const qna = new ai.QnAMaker(endpoint, { top: 1 });
@@ -58,8 +59,25 @@ describe('QnAMaker', function () {
             });
     });
 
-    it('should work with a string based endpoint configuration', function () {
+    it('should work with a string based endpoint', function () {
         const qna = new ai.QnAMaker(endpointString, { top: 1 });
+
+        return qna.generateAnswer(`how do I clean the stove?`)
+            .then(res => {
+                assert(res);
+                assert(res.length == 1);
+                assert(res[0].answer.startsWith("BaseCamp: You can use a damp rag to clean around the Power Pack"));
+            })
+            .then(() => qna.generateAnswer("is the stove hard to clean?"))
+            .then(res => {
+                assert(res);
+                assert(res.length == 1);
+                assert(res[0].answer.startsWith("BaseCamp: You can use a damp rag to clean around the Power Pack"));
+            });
+    });
+
+    it('should work with a string based endpoint containing UNIX style line breaks', function () {
+        const qna = new ai.QnAMaker(unixEndpointString, { top: 1 });
 
         return qna.generateAnswer(`how do I clean the stove?`)
             .then(res => {
