@@ -109,8 +109,8 @@
             },
             {
               "startIndex": 156,
-              "endIndex": 161,
-              "text": "$4.25"
+              "endIndex": 168,
+              "text": "$4.25 and 32"
             }
           ],
           "builtin_number": [
@@ -300,7 +300,7 @@
             "units": "Dollar"
           },
           {
-            "number": 4.25,
+            "number": 4.57,
             "units": "Dollar"
           }
         ],
@@ -536,13 +536,13 @@
         }
       },
       {
-        "entity": "$4.25",
+        "entity": "$4.25 and 32",
         "type": "builtin.currency",
         "startIndex": 156,
-        "endIndex": 160,
+        "endIndex": 167,
         "resolution": {
           "unit": "Dollar",
-          "value": "4.25"
+          "value": "4.57"
         }
       },
       {
@@ -806,7 +806,7 @@
           },
           {
             "type": "builtin.currency",
-            "value": "$4.25"
+            "value": "$4.25 and 32"
           },
           {
             "type": "builtin.number",
