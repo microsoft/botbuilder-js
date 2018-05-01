@@ -5,10 +5,10 @@ export abstract class ConnectedService implements IConnectedService {
     public name = '';
     public abstract readonly type: ServiceType;
 
-    protected constructor(source: Partial<IConnectedService> = {}) {
+    protected constructor(source: IConnectedService = {} as IConnectedService) {
         const { id = '', name = '' } = source;
         Object.assign(this, { id, name });
     }
 
-    public abstract toJSON(): Partial<IConnectedService>;
+    public abstract toJSON(): IConnectedService;
 }

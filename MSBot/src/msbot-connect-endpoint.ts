@@ -106,7 +106,7 @@ async function processConnectEndpointArgs(config: BotConfig): Promise<BotConfig>
         appId: ( args.appId && args.appId.length > 0 ) ? args.appId : '',
         appPassword: ( args.appPassword && args.appPassword.length > 0 ) ? args.appPassword : '',
         endpoint: args.endpoint
-    });
+    } as IEndpointService);
     config.connectService(newService);
 
     await config.save();
