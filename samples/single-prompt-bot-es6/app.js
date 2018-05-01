@@ -36,9 +36,7 @@ server.post('/api/messages', (req, res) => {
         if (context.activity.type === 'conversationUpdate' && context.activity.membersAdded[0].name !== 'Bot') {
             state.prompt = 'name';
             await namePrompt.prompt(context, "Hello, I'm the demo bot. What is your name?");
-        }
-
-        if (context.activity.type === 'message') {
+        } else if (context.activity.type === 'message') {
             // If the user isn't in a prompt, ask for their name
             if (!('prompt' in state)) {
                 state.prompt = 'name';

@@ -18,7 +18,7 @@ const adapter = new BotFrameworkAdapter({
 const conversationState = new ConversationState(new MemoryStorage());
 adapter.use(conversationState);
 
-var dialogs = new DialogSet();
+const dialogs = new DialogSet();
 
 // Create prompt for name with string length validation
 dialogs.add('namePrompt', new TextPrompt(async (context, value) => {

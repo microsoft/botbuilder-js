@@ -24,9 +24,9 @@ server.post('/api/messages', (req, res) => {
         if (context.activity.type === 'message') {
             const state = conversationState.get(context);
             const count = state.count === undefined ? state.count = 0 : ++state.count;
-            return context.sendActivity(`${count}: You said "${context.activity.text}"`);
+            await context.sendActivity(`${count}: You said "${context.activity.text}"`);
         } else {
-            return context.sendActivity(`[${context.activity.type} event detected]`);
+            await context.sendActivity(`[${context.activity.type} event detected]`);
         }
     });
 });

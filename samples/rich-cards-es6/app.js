@@ -18,7 +18,7 @@ const adapter = new BotFrameworkAdapter({
 const conversationState = new ConversationState(new MemoryStorage());
 adapter.use(conversationState);
 
-var dialogs = new DialogSet();
+const dialogs = new DialogSet();
 
 // Create a choice prompt and change the list style
 const cardPrompt = new ChoicePrompt().style(ListStyle.list);

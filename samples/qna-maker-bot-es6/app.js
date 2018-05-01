@@ -30,10 +30,9 @@ server.post('/api/messages', (req, res) => {
         // If `!context.responded`, that means an answer wasn't found for the user's utterance.
         // In this case, we send the user info about the bot, as well as an example question to retrieve an answer from QnA Maker.
         if (context.activity.type === 'message' && !context.responded) {
-            return await context.sendActivity('No QnA Maker answers were found. This example uses a QnA Maker Knowledge Base that focuses on smart light bulbs. To see QnA Maker in action, ask the bot questions like "Why won\'t it turn on?" or say something like "I need help."');
-        }
-        if (context.activity.type !== 'message') {
-            return await context.sendActivity(`[${context.activity.type} event detected]`);
+            await context.sendActivity('No QnA Maker answers were found. This example uses a QnA Maker Knowledge Base that focuses on smart light bulbs. To see QnA Maker in action, ask the bot questions like "Why won\'t it turn on?" or say something like "I need help."');
+        } else if (context.activity.type !== 'message') {
+            await context.sendActivity(`[${context.activity.type} event detected]`);
         }
     });
 });
