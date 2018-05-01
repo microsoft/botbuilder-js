@@ -10,7 +10,7 @@ import { QnaMakerService } from './qnaMakerService';
 export class BotConfigModel implements Partial<IBotConfig> {
     public name: string = '';
     public description: string = '';
-    public services: IConnectedService[] = new ServicesCollection<ConnectedService>();
+    public services: IConnectedService[] = [];
     public secretKey = '';
 
     public static serviceFromJSON(service:Partial<IConnectedService>): ConnectedService {
@@ -42,7 +42,7 @@ export class BotConfigModel implements Partial<IBotConfig> {
         let { name = '', description = '', secretKey = '', services = [] } = source;
         services = services.slice().map(BotConfigModel.serviceFromJSON);
         const botConfig = new BotConfigModel();
-        Object.assign(botConfig, { services: new ServicesCollection(services), description, name, secretKey });
+        Object.assign(botConfig, { services, description, name, secretKey });
         return botConfig;
     }
 
@@ -52,27 +52,3 @@ export class BotConfigModel implements Partial<IBotConfig> {
     }
 }
 
-/**
- * Typed collection implementation in JS woot!
- */
-export class ServicesCollection<T extends ConnectedService> extends Array {
-
-    static get [Symbol.species]() {
-        return Array;
-    }
-
-    constructor(source?: IConnectedService[]) {
-        super();
-        if (source) {
-            this.push(...source);
-        }
-        return new Proxy(this, this as any);
-    }
-
-    protected set(target: any, prop: PropertyKey, value: any, receiver: any): Function[] | Function | any {
-        if (prop !== 'length' && !( value instanceof ConnectedService )) {
-            throw new TypeError(`${Object.prototype.toString.call(value)} does not extend ConnectedService`);
-        }
-        return target[prop] = value;
-    }
-}

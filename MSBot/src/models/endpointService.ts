@@ -12,24 +12,10 @@ export class EndpointService extends ConnectedService implements IEndpointServic
         super(source);
         const { appId = '', appPassword = '', endpoint = '' } = source;
         Object.assign(this, { appId, appPassword, endpoint });
-
-        let { id } = this;
-        Object.defineProperty(this, 'id', {
-            get: function () {
-                return id || appId;
-            },
-            set: function (value) {
-                id = value;
-            },
-            enumerable: true
-        });
     }
 
     public toJSON(): Partial<IEndpointService> {
-        let { appId = '', id = '', appPassword = '', endpoint = '', name = '' } = this;
-        if (!id) {
-            id = appId;
-        }
+        const { appId = '', id = '', appPassword = '', endpoint = '', name = '' } = this;
         return { appId, id, type: ServiceType.Endpoint, appPassword, endpoint, name };
     }
 }

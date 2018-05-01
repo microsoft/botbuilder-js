@@ -15,10 +15,7 @@ export class QnaMakerService extends ConnectedService implements IQnAService {
     }
 
     public toJSON(): Partial<IQnAService> {
-        let { kbId, id, name, subscriptionKey, endpointKey, hostname } = this;
-        if (!id) {
-            id = kbId;
-        }
+        const { kbId, id, name, subscriptionKey, endpointKey, hostname } = this;
         return { kbId, name, type: ServiceType.QnA, subscriptionKey, id, endpointKey, hostname };
     }
 }
