@@ -275,7 +275,7 @@ async function validateArguments(args, serviceManifest) {
         throw error;
     }
     const { operation } = serviceManifest;
-   
+
     const entitySpecified = typeof args.in === 'string';
     const entityRequired = !!operation.entityName;
 
@@ -285,10 +285,10 @@ async function validateArguments(args, serviceManifest) {
         }
         else {
             // make up a request body from command line args
-            switch (serviceManifest.operation.methodAlias) {
-                case "publish":
-                    switch (serviceManifest.operation.target[0]) {
-                        case "application":
+            switch (serviceManifest.operation.target[0]) {
+                case "version":
+                    switch (serviceManifest.operation.methodAlias) {
+                        case "publish":
                             body = {
                                 versionId: args.versionId,
                                 isStaging: args.staging === true,
