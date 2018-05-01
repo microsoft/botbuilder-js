@@ -285,7 +285,7 @@ export class LuisRecognizer implements Middleware {
         if (entity.role != null) {
             type = entity.role;
         }
-        return type.replace(/\./g, "_");
+        return type.replace(/\.|\s/g, "_");
     }
 
     private populateCompositeEntity(compositeEntity: CompositeEntity, entities: Entity[], entitiesAndMetadata: any, verbose: boolean): Entity[] {
