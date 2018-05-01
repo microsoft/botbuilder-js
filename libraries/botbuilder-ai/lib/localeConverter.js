@@ -132,7 +132,7 @@ class MicrosoftLocaleConverter {
                     momentTimeEnd = moment(resolutionValues["end"]).toDate();
                     foundType = 'date';
                 }
-                else { // Must be a time-only result with no date
+                else {
                     momentTime = new Date();
                     momentTime.setHours(parseInt(String(resolutionValues['start']).substr(0, 2)));
                     momentTime.setMinutes(parseInt(String(resolutionValues['start']).substr(3, 2)));
@@ -158,7 +158,7 @@ class MicrosoftLocaleConverter {
                     momentTime = moment(resolutionValues["value"]).toDate();
                     foundType = 'date';
                 }
-                else { // Must be a time-only result with no date
+                else {
                     momentTime = new Date();
                     momentTime.setHours(parseInt(String(resolutionValues['value']).substr(0, 2)));
                     momentTime.setMinutes(parseInt(String(resolutionValues['value']).substr(3, 2)));

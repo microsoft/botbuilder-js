@@ -6,19 +6,32 @@
  * Licensed under the MIT License.
  */
 import { TurnContext, Middleware } from 'botbuilder';
+/**
+ * An individual answer returned by `QnAMaker.generateAnswer()`.
+ */
 export interface QnAMakerResult {
+    /** Answer from the knowledge base.  */
     answer: string;
+    /** Confidence on a scale from 0.0 to 1.0 that the answer matches the users intent. */
     score: number;
 }
-export interface QnAMakerSettings {
-    /** ID of your knowledge base. */
+/**
+ * Defines an endpoint used to connect to a QnA Maker Knowledge base.
+ */
+export interface QnAMakerEndpoint {
+    /** ID of your knowledge base. For example: `98185f59-3b6f-4d23-8ebb-XXXXXXXXXXXX` */
     knowledgeBaseId: string;
-    /** Your subscription keys. */
+    /** Your subscription keys. For example: `4cb65a02697745eca369XXXXXXXXXXXX` */
     subscriptionKey: string;
+    /** The host path. For example: `https://westus.api.cognitive.microsoft.com/qnamaker/v2.0` */
+    host: string;
+}
+/**
+ * Additional settings used to configure a `QnAMaker` instance.
+ */
+export interface QnAMakerOptions {
     /** (Optional) minimum score accepted. Defaults to "0.3". */
     scoreThreshold?: number;
-    /** (Optional) service endpoint. Defaults to "https://westus.api.cognitive.microsoft.com/" */
-    serviceEndpoint?: string;
     /** (Optional) number of results to return. Defaults to "1". */
     top?: number;
     /**
@@ -36,9 +49,43 @@ export interface QnAMakerSettings {
      */
     answerBeforeNext?: boolean;
 }
+/**
+ * Manages querying an individual QnA Maker knowledge base for answers. Can be added as middleware
+ * to automatically query the knowledge base anytime a messaged is received from the user. When
+ * used as middleware the component can be configured to either query the knowledge base before the
+ * bots logic runs or after the bots logic is run, as a fallback in the event the bot doesn't answer
+ * the user.
+ */
 export declare class QnAMaker implements Middleware {
-    private readonly settings;
-    constructor(settings: QnAMakerSettings);
+    private readonly endpoint;
+    private readonly options;
+    /**
+     * Creates a new QnAMaker instance.  You can initialize the endpoint for the instance by
+     * passing in the publishing endpoint provided in the QnA Maker portal.
+     *
+     * For version 2 this looks like:
+     *
+     * ```JS
+     * POST /knowledgebases/98185f59-3b6f-4d23-8ebb-XXXXXXXXXXXX/generateAnswer
+     * Host: https://westus.api.cognitive.microsoft.com/qnamaker/v2.0
+     * Ocp-Apim-Subscription-Key: 4cb65a02697745eca369XXXXXXXXXXXX
+     * Content-Type: application/json
+     * {"question":"hi"}
+     * ```
+     *
+     * And for the new version 4 this looks like:
+     *
+     * ```JS
+     * POST /knowledgebases/d31e049e-2557-463f-a0cc-XXXXXXXXXXXX/generateAnswer
+     * Host: https://test-knowledgebase.azurewebsites.net/qnamaker
+     * Authorization: EndpointKey 16cdca0b-3826-4a0f-a112-XXXXXXXXXXXX
+     * Content-Type: application/json
+     * {"question":"<Your question>"}
+     * ```
+     * @param endpoint The endpoint of the knowledge base to query.
+     * @param options (Optional) additional settings used to configure the instance.
+     */
+    constructor(endpoint: QnAMakerEndpoint | string, options?: QnAMakerOptions);
     onTurn(context: TurnContext, next: () => Promise<void>): Promise<void>;
     /**
      * Calls [generateAnswer()](#generateanswer) and sends the answer as a message ot the user.
@@ -55,5 +102,5 @@ export declare class QnAMaker implements Middleware {
      * @param scoreThreshold (Optional) minimum answer score needed to be considered a match to questions. Defaults to a value of `0.001`.
      */
     generateAnswer(question: string | undefined, top?: number, scoreThreshold?: number): Promise<QnAMakerResult[]>;
-    protected callService(serviceEndpoint: string, question: string, top: number): Promise<QnAMakerResult[]>;
+    protected callService(endpoint: QnAMakerEndpoint, question: string, top: number): Promise<QnAMakerResult[]>;
 }
