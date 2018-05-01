@@ -10,11 +10,7 @@
             "name": "Launch Program",
             "program": "${workspaceFolder}\\bin\\luis",
             "args": [
-                "add",
-                "application",
-                "--in",
-                "examples\\ApplicationCreateObject.json",
-                "--msbot"
+                "publish","version"
             ]
         }
     ]

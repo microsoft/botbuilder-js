@@ -1,16 +1,11 @@
 {
-  "text": "Book me a flight from Cairo to Redmond next Thursday",
-  "intentName": "BookFlight",
+  "text": "whats the weather in buenos aires?",
+  "intentName": "WeatherInPlace",
   "entityLabels": [
     {
-      "entityName": "Location::From",
-      "startCharIndex": 22,
-      "endCharIndex": 26
-    },
-    {
-      "entityName": "Location::To",
-      "startCharIndex": 31,
-      "endCharIndex": 37
+      "entityName": "Place",
+      "startCharIndex": 21,
+      "endCharIndex": 34
     }
   ]
 }

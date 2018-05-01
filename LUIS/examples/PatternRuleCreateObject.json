@@ -1,0 +1,4 @@
+{
+  "pattern": "this is a [sample] pattern",
+  "intent": "SampleIntent"
+}

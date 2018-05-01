@@ -131,7 +131,6 @@ let globalArgs =
  */
 function getGeneralHelpContents() {
     let operation;
-    let apiGroups = ['apps', 'examples', 'features', 'models', 'permissions', 'train', 'user', 'versions']
     let verbs = [];
     let options = {
         head: chalk.bold(`Available actions are:`),
@@ -172,7 +171,7 @@ function getVerbHelp(verb) {
         table: []
     };
 
-      // special verbs
+    // special verbs
 
     let sections = [];
 
@@ -261,7 +260,7 @@ function getAllCommands() {
 
     let sections = [];
     for (resourceType of resourceTypes) {
-        tables[resourceType].sort((a,b) => a[0].localeCompare(b[0]));
+        tables[resourceType].sort((a, b) => a[0].localeCompare(b[0]));
         sections.push({
             head: chalk.white.bold(resourceType),
             table: tables[resourceType]
@@ -309,11 +308,15 @@ function getHelpContentsForService(serviceManifest) {
                 ]
             };
         }
-        switch (operation.name) {
-            case 'addApplication':
-            case 'importApplication':
-            case "getApplicationInfo":
-                paramsHelp.table.push([chalk.cyan.bold(`--msbot`), `(OPTIONAL) Format the output as json for piping into msbot connect luis command`]);
+        switch (operation.target[0]) {
+            case 'application':
+                switch (operation.methodAlias) {
+                    case 'add':
+                    case 'import':
+                    case "get":
+                        paramsHelp.table.push([chalk.cyan.bold(`--msbot`), `(OPTIONAL) Format the output as json for piping into msbot connect luis command`]);
+                        break;
+                }
                 break;
         }
         sections.push(paramsHelp);
