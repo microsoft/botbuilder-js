@@ -296,14 +296,14 @@ function getHelpContentsForService(serviceManifest) {
                 table: params.map(param => [chalk.cyan.bold(`--${param.name} <${param.type}>${param.required ? ' (required)' : ''}`), param.description])
             };
             if (operation.entityName) {
-                paramsHelp.table.unshift([chalk.cyan.bold('--in (required)'), `The ${operation.entityType} object to send in the body of the request`],
+                paramsHelp.table.unshift([chalk.cyan.bold('--in (required)'), `The object to send in the body of the request`],
                     ['', chalk.dim(getEntityTypeExample(operation.entityType))]);
             }
         } else if (operation.entityName) {
             paramsHelp = {
                 head: `Command arguments are:`,
                 table: [
-                    [chalk.cyan.bold('--in (required)'), `The ${operation.entityType} object to send in the body of the request`],
+                    [chalk.cyan.bold('--in (required)'), `The object to send in the body of the request`],
                     ['', chalk.dim(getEntityTypeExample(operation.entityType))]
                 ]
             };
