@@ -27,7 +27,7 @@ npm i -g ludown
 ```
 ## Commands
 
-```bash
+```
 >ludown
 
   Usage: ludown [options] [command]
@@ -50,7 +50,7 @@ npm i -g ludown
 
 Convert .lu file(s) into LUIS JSON OR QnA Maker JSON files.
 
-```bash
+```
 >ludown parse
 
   Usage: ludown parse [options] [command]
@@ -72,7 +72,7 @@ Convert .lu file(s) into LUIS JSON OR QnA Maker JSON files.
 
 Convert .lu file(s) into LUIS JSON file. Optionally you can also generate a LUIS Batch test JSON file. 
 
-```bash
+```
 >ludown parse toluis
 
   Usage: ludown parse ToLuis --in <luFile> | --lu_folder <inputFolder> [-s]
@@ -89,7 +89,6 @@ Convert .lu file(s) into LUIS JSON file. Optionally you can also generate a LUIS
     -d, --luis_desc <luis_appDesc>                   [Optional] LUIS app description
     -v, --luis_versionId <luis_versionId>            [Optional] LUIS app version (default: 0.1)
     -c, --luis_culture <luis_appCulture>             [Optional] LUIS app culture (default: en-us)
-    -r, --luis_schema_version <luis_schema_version>  [Optional] LUIS Schema version (default: 2.2.0)
     -t, --write_luis_batch_tests                     [Optional] Write out LUIS batch test json file
     --verbose                                        [Optional] Get verbose messages from parser
     -h, --help                                       output usage information
@@ -99,7 +98,7 @@ Convert .lu file(s) into LUIS JSON file. Optionally you can also generate a LUIS
 
 Convert .lu file(s) into QnA Maker JSON file.
 
-```bash
+```
 >ludown parse toqna
 
   Usage: ludown parse ToQna --in <luFile> | --lu_folder <inputFolder> [-s]
@@ -120,7 +119,7 @@ Convert .lu file(s) into QnA Maker JSON file.
 ### Refresh command
 After you have bootstrapped and created your LUIS model and/ or QnAMaker knowledge base, you might make subsequent refinements to your models directly from [luis.ai](https://luis.ai/) or [qnamaker.ai](https://qnamaker.ai). You can use the refresh command to re-genrate .lu files from your LUIS JSON and/ or QnAMaker JSON files.  
 
-```bash
+```
 >ludown refresh -h
 
   Usage: ludown refresh -i <LUISJsonFile> | -q <QnAJSONFile>
@@ -192,7 +191,6 @@ LUDown tool supports the following [LUIS entity types](https://docs.microsoft.co
 - Prebuilt ("datetimeV2", "age", "dimension", "email", "money", "number", "ordinal", "percentage", "phoneNumber","temperature", "url")
 - List
 - Simple
-- Phrase List features
 
 LUDown tool **does not** support the following LUIS entity types:
 - Regular expression
@@ -219,7 +217,7 @@ Pre-built entities only need to be defined once and are applicable to your entir
 # Add
 - 1 + 1
 
-// 1's in the "1 + 1" utterance will automatically be picked up as numbers by LUIS
+> 1's in the "1 + 1" utterance will automatically be picked up as numbers by LUIS
 $PREBUILT:number 
 
 # BookTable
@@ -227,7 +225,7 @@ $PREBUILT:number
 - book a table for 3pm
 - book a table for next thursday 4pm
 
-// all date or time or date and time in utterances will automatically be picked by LUIS as datetime values
+> all date or time or date and time in utterances will automatically be picked by LUIS as datetime values
 $PREBUILT:datetimeV2
 ```
 
@@ -253,26 +251,35 @@ $commPreference:text=
 	- text message
 ```
 
+### Phrase List features
+
 You can also enhance LUIS understanding of your model using [PhraseLists](https://docs.microsoft.com/en-us/azure/cognitive-services/LUIS/luis-tutorial-interchangeable-phrase-list)
 
 You can describe Phrase List entities using the following notation:
-$\<entityName\>:PhraseList
+$\<entityName\>:PhraseList[!interchangeable]
     - \<synonym1\>
     - \<synonym2\>
 
 Here's an example of a phrase list definition:
 
 ```markdown
-$ChocolateType:phraseList
-    - m&m,mars,mints,spearmings,payday
+$Want:PhraseList
+    - require, need, desire, know
 
 > You can also break up the phrase list values into an actual list
 
-$ChocolateType:phraseList
-    - jelly
-	- kit kat
-	- kitkat
-	- twix
+$Want:PhraseList
+    - require
+	- need
+	- desire
+	- know
+```
+By default synonyms are set to be **not interchangeable** (matches with the portal experience). You can optionally set the synonyms to be **interchangeable** as part of the definition. Here's an example
+
+```markdown
+$question:PhraseList interchangeable
+    - are you
+    - you are
 ```
 
 ### Patterns

@@ -6,5 +6,6 @@ module.exports = {
     INTENT: "intents",
     ENTITIES: "entities",
     PATTERNANYENTITY: "patternAnyEntities",
-    CLOSEDLISTS: "closedLists"
+    CLOSEDLISTS: "closedLists",
+    PREBUILT: "prebuiltEntities"
 };

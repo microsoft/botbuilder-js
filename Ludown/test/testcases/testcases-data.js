@@ -11,18 +11,27 @@ module.exports.tests = {
         - m&m,mars,mints,spearmings,payday,jelly,kit kat,kitkat,twix
         
         
+        $question:PhraseList interchangeable
+        - are you
+        - you are
         `,
         "luisJSON": {
           "intents": [],
           "entities": [],
           "composites": [],
           "closedLists": [],
-          "bing_entities": [],
+          "regex_entities": [],
           "model_features": [
             {
               "name": "ChocolateType",
               "mode": false,
               "words": "m&m,mars,mints,spearmings,payday,jelly,kit kat,kitkat,twix",
+              "activated": true
+            },
+            {
+              "name": "question",
+              "mode": true,
+              "words": "are you,you are",
               "activated": true
             }
           ],
@@ -58,7 +67,8 @@ module.exports.tests = {
           "intents": [],
           "entities": [
             {
-              "name": "userName"
+              "name": "userName",
+              "roles": []
             }
           ],
           "composites": [],
@@ -81,25 +91,58 @@ module.exports.tests = {
               "roles": []
             }
           ],
-          "bing_entities": [
-            "datetimeV2",
-            "age",
-            "dimension",
-            "email",
-            "money",
-            "number",
-            "ordinal",
-            "percentage",
-            "phoneNumber",
-            "temperature",
-            "url"
-          ],
+          "regex_entities": [],
           "model_features": [],
           "regex_features": [],
           "utterances": [],
           "patterns": [],
           "patternAnyEntities": [],
-          "prebuiltEntities": [],
+          "prebuiltEntities": [
+            {
+              "name": "datetimeV2",
+              "roles": []
+            },
+            {
+              "name": "age",
+              "roles": []
+            },
+            {
+              "name": "dimension",
+              "roles": []
+            },
+            {
+              "name": "email",
+              "roles": []
+            },
+            {
+              "name": "money",
+              "roles": []
+            },
+            {
+              "name": "number",
+              "roles": []
+            },
+            {
+              "name": "ordinal",
+              "roles": []
+            },
+            {
+              "name": "percentage",
+              "roles": []
+            },
+            {
+              "name": "phoneNumber",
+              "roles": []
+            },
+            {
+              "name": "temperature",
+              "roles": []
+            },
+            {
+              "name": "url",
+              "roles": []
+            }
+          ],
         }
     },
     "3-intents-patterns":{
@@ -188,7 +231,7 @@ module.exports.tests = {
           "entities": [],
           "composites": [],
           "closedLists": [],
-          "bing_entities": [],
+          "regex_entities": [],
           "model_features": [],
           "regex_features": [],
           "utterances": [
@@ -306,7 +349,7 @@ module.exports.tests = {
                   "roles": []
                 }
               ],
-              "bing_entities": [],
+              "regex_entities": [],
               "model_features": [],
               "regex_features": [],
               "utterances": [
@@ -346,7 +389,7 @@ module.exports.tests = {
           "entities": [],
           "composites": [],
           "closedLists": [],
-          "bing_entities": [],
+          "regex_entities": [],
           "model_features": [],
           "regex_features": [],
           "utterances": [
@@ -392,9 +435,7 @@ module.exports.tests = {
           "entities": [],
           "composites": [],
           "closedLists": [],
-          "bing_entities": [
-            "datetimeV2"
-          ],
+          "regex_entities": [],
           "model_features": [],
           "regex_features": [],
           "utterances": [
@@ -416,52 +457,56 @@ module.exports.tests = {
           ],
           "patterns": [],
           "patternAnyEntities": [],
-          "prebuiltEntities": [],
+          "prebuiltEntities": [
+            {
+              "name": "datetimeV2",
+              "roles": []
+            }
+          ],
         }
     },
     "1-intent-patern-prebuilt":{
-        "lufile":`// add these as patterns
-        #DeleteAlarm
-        ~delete alarm
-        ~(delete|remove) the {alarmTime} alarm
+        "lufile":`> add these as patterns
+        # DeleteAlarm
+        - delete alarm
+        - (delete|remove) the {alarmTime} alarm
         
-        // alarmTime is a role for prebuilt datetimev2 entity
+        > alarmTime is a role for prebuilt datetimev2 entity
         $alarmTime:datetimeV2`,
         "luisJSON":{
-            "intents": [
-              {
-                "name": "DeleteAlarm"
-              }
-            ],
-            "entities": [],
-            "composites": [],
-            "closedLists": [],
-            "bing_entities": [
-              "datetimeV2"
-            ],
-            "model_features": [],
-            "regex_features": [],
-            "utterances": [],
-            "patterns": [
-              {
-                "text": "delete alarm",
-                "intent": "DeleteAlarm"
-              },
-              {
-                "text": "(delete|remove) the {alarmTime} alarm",
-                "intent": "DeleteAlarm"
-              }
-            ],
-            "patternAnyEntities": [],
-            "prebuiltEntities": [
-              {
-                "type": "datetimeV2",
-                "roles": [
-                  "alarmTime"
-                ]
-              }
-            ],
-          }
+          "intents": [
+            {
+              "name": "DeleteAlarm"
+            }
+          ],
+          "entities": [],
+          "composites": [],
+          "closedLists": [],
+          "regex_entities": [],
+          "model_features": [],
+          "regex_features": [],
+          "utterances": [
+            {
+              "text": "delete alarm",
+              "intent": "DeleteAlarm",
+              "entities": []
+            }
+          ],
+          "patterns": [],
+          "patternAnyEntities": [],
+          "prebuiltEntities": [
+            {
+              "name": "datetimeV2",
+              "roles": []
+            },
+            {
+              "type": "datetimeV2",
+              "roles": [
+                "alarmTime"
+              ]
+            }
+          ],
+        }
     },
     "1-intent-pattern-patternAny": {
         "lufile":`> These are defined as patterns with commPreference as pattern.any entity type
@@ -587,12 +632,13 @@ module.exports.tests = {
           ],
           "entities": [
             {
-              "name": "userName"
+              "name": "userName",
+              "roles": []
             }
           ],
           "composites": [],
           "closedLists": [],
-          "bing_entities": [],
+          "regex_entities": [],
           "model_features": [],
           "regex_features": [],
           "utterances": [
@@ -686,12 +732,13 @@ module.exports.tests = {
           ],
           "entities": [
             {
-              "name": "userName"
+              "name": "userName",
+              "roles": []
             }
           ],
           "composites": [],
           "closedLists": [],
-          "bing_entities": [],
+          "regex_entities": [],
           "model_features": [],
           "regex_features": [],
           "utterances": [

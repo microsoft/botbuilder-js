@@ -27,7 +27,7 @@ module.exports.parseFile = function(fileContent, log)
         "entities": new Array(),
         "composites": new Array(),
         "closedLists": new Array(),
-        "bing_entities": new Array(),
+        "regex_entities": new Array(),
         "model_features": new Array(),
         "regex_features": new Array(),
         "utterances": new Array(),
@@ -180,14 +180,21 @@ module.exports.parseFile = function(fileContent, log)
                             "text": utterance.slice(1),
                             "intent": intentName
                         }
-                        LUISJsonStruct.patterns.push(patternObject);
+                        
+                        // TODO: add this when patterns are supported
+                        process.stdout.write(chalk.default.redBright('  "' + utterance + '" is a pattern. Patterns are not yet supported in LUIS. Coming soon. \n'));
+                        //LUISJsonStruct.patterns.push(patternObject);
+
+
                         if(utterance.includes("{")) {
                             // handle entities
                             var entityRegex = new RegExp(/\{(.*?)\}/g);
                             var entitiesFound = utterance.match(entityRegex);
                             entitiesFound.forEach(function(entity) {
                                 entity = entity.replace("{", "").replace("}", "");
-                                addItemIfNotPresent(LUISJsonStruct, LUISObjNameEnum.PATTERNANYENTITY, entity);
+                                
+                                // TODO: add this when patterns are supported
+                                //addItemIfNotPresent(LUISJsonStruct, LUISObjNameEnum.PATTERNANYENTITY, entity);
                             });
                         }
                     } else {
@@ -245,15 +252,20 @@ module.exports.parseFile = function(fileContent, log)
                                         }
                                         LUISJsonStruct.utterances.push(utteranceObject);
                                     }
-                                        
-                                    LUISJsonStruct.patterns.push(patternObject);
+                                    
+                                    // TODO: add this when patterns are supported
+                                    process.stdout.write(chalk.default.redBright('  "' + utterance + '" is a pattern. Patterns are not yet supported in LUIS. Coming soon. \n'));    
+                                    // LUISJsonStruct.patterns.push(patternObject);
+                                    
                                     if(utterance.includes("{")) {
                                         // handle entities
                                         var entityRegex = new RegExp(/\{(.*?)\}/g);
                                         var entitiesFound = utterance.match(entityRegex);
                                         entitiesFound.forEach(function(entity) {
                                             entity = entity.replace("{", "").replace("}", "");
-                                            addItemIfNotPresent(LUISJsonStruct, LUISObjNameEnum.PATTERNANYENTITY, entity);
+                                            
+                                            // TODO: add this when patterns are supported
+                                            //addItemIfNotPresent(LUISJsonStruct, LUISObjNameEnum.PATTERNANYENTITY, entity);
                                         });
                                     }
                                     //if(!log)  process.stdout.write(chalk.yellow('[WARN]: Entity ' + entity + ' in utterance: "' + utterance + '" is missing labelled value \n'));
@@ -289,8 +301,8 @@ module.exports.parseFile = function(fileContent, log)
             // add this entity to appropriate place
             // is this a builtin type? 
             if(builtInTypes.includes(entityType)) {
-                // add to bing_entities if it does not exist there.
-                if(!LUISJsonStruct.bing_entities.includes(entityType)) LUISJsonStruct.bing_entities.push(entityType);
+                // add to prebuiltEntities if it does not exist there.
+                addItemIfNotPresent(LUISJsonStruct, LUISObjNameEnum.PREBUILT, entityType);
                 if(entityName !== "PREBUILT") {
                     // add to prebuilt entities if this does not already exist there and if this is not PREBUILT
                     var lMatch = true;
@@ -322,7 +334,7 @@ module.exports.parseFile = function(fileContent, log)
                 var normalizedValue = entityType.substring(0, entityType.length - 1);
 
                 // list entity cannot be duplicated under a simple entity type
-                var entityInSimpleCollection = LUISJsonStruct.entities.filter(function(item){
+                /*var entityInSimpleCollection = LUISJsonStruct.entities.filter(function(item){
                     return item.name == entityName
                 }); 
 
@@ -331,7 +343,7 @@ module.exports.parseFile = function(fileContent, log)
                     process.stdout.write(chalk.default.redBright('\n List entities cannot have labelled value in example utterances.\n'));
                     process.stdout.write(chalk.default.redBright('\n Stopping further processing.\n'));
                     process.exit(1);
-                }
+                }*/
                 
                 // remove the first entity declaration line
                 chunkSplitByLine.splice(0,1);
@@ -380,7 +392,10 @@ module.exports.parseFile = function(fileContent, log)
             } else if(entityType.toLowerCase() === 'simple') {
                 // add this to entities if it doesnt exist
                 addItemIfNotPresent(LUISJsonStruct, LUISObjNameEnum.ENTITIES, entityName);
-            } else if(entityType.toLowerCase() === 'phraselist') {
+            } else if(entityType.toLowerCase().trim().indexOf('phraselist') === 0) {
+                // is this interchangeable? 
+                var intc = false;
+                if(entityType.toLowerCase().includes('interchangeable')) intc = true;
                 // add this to phraseList if it doesnt exist
                 chunkSplitByLine.splice(0,1);
                 var pLValues = "";
@@ -411,7 +426,7 @@ module.exports.parseFile = function(fileContent, log)
                     } else {
                         var modelObj = {
                             "name": entityName,
-                            "mode": false,
+                            "mode": intc,
                             "words": pLValues,
                             "activated": true
                         };
@@ -420,7 +435,7 @@ module.exports.parseFile = function(fileContent, log)
                 } else {
                     var modelObj = {
                         "name": entityName,
-                        "mode": false,
+                        "mode": intc,
                         "words": pLValues,
                         "activated": true
                     };
@@ -468,7 +483,7 @@ var addItemIfNotPresent = function(collection, type, value) {
     if(!hasValue) {
         var itemObj = {};
         itemObj.name = value;
-        if(type !== LUISObjNameEnum.INTENT && type !== LUISObjNameEnum.ENTITIES) {
+        if(type !== LUISObjNameEnum.INTENT) {
             itemObj.roles = new Array();
         }
         collection[type].push(itemObj);

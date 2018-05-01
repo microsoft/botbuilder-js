@@ -8,7 +8,7 @@ const parseFileContents = require('../lib/parseFileContents');
 const testcases = require('./testcases/testcases-data');
 
 describe('LUIS patterns concepts in .lu files', function() {
-    it('should be parsed correctly when 1 intent 1 list entity is specified', function() {
+    /*it('should be parsed correctly when 1 intent 1 list entity is specified', function() {
         assert.deepEqual(
             parseFileContents.parseFile(testcases.tests["1-intent-pattern-list"].lufile,false).LUISBlob, 
             testcases.tests["1-intent-pattern-list"].luisJSON);
@@ -23,6 +23,6 @@ describe('LUIS patterns concepts in .lu files', function() {
         assert.deepEqual(
             parseFileContents.parseFile(testcases.tests["3-intents-patterns"].lufile,false).LUISBlob, 
             testcases.tests["3-intents-patterns"].luisJSON);
-    });
+    });*/
     
 });

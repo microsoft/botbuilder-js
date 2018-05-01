@@ -104,9 +104,10 @@ module.exports = {
                 }
             }
             var finalLUISJSON = collateLUISFiles(allParsedLUISContent);
+            var validLUIS = validateLUISBlob(finalLUISJSON);
             var finalQnAJSON = collateQnAFiles(allParsedQnAContent);
             if(!program.luis_versionId) program.luis_versionId = "0.1";
-            if(!program.luis_schema_version) program.luis_schema_version = "2.2.0";
+            if(!program.luis_schema_version) program.luis_schema_version = "3.0.0";
             if(!program.luis_name) program.luis_name = path.basename(rootFile, path.extname(rootFile));
             if(!program.luis_desc) program.luis_desc = "";
             if(!program.luis_culture) program.luis_culture = "en-us";   
@@ -127,9 +128,16 @@ module.exports = {
                                 (finalLUISJSON[LUISObjNameEnum.CLOSEDLISTS].length > 0) ||
                                 (finalLUISJSON.patterns.length > 0) ||
                                 (finalLUISJSON.utterances.length > 0) ||
-                                (finalLUISJSON.bing_entities.length > 0) ||
                                 (finalLUISJSON.prebuiltEntities.length > 0) ||
                                 (finalLUISJSON.model_features.length > 0);
+
+            if(!writeLUISFile) {
+                process.stdout.write(chalk.default.yellowBright('No LUIS content found in .lu file(s)! \n'));
+            }
+
+            if(!writeQnAFile) {
+                process.stdout.write(chalk.default.yellowBright('No QnA Maker content found in .lu file(s)! \n'));
+            }
 
             if(program.verbose) {
                 if((cmd == 'luis') && writeLUISFile) {
@@ -140,26 +148,25 @@ module.exports = {
                 }
             }
             
-
             if(!program.lOutFile) {
                 if(!program.luis_name) {
                     program.lOutFile = path.basename(rootFile, path.extname(rootFile)) + "_LUISApp.json";  
                 } else {
-                    program.lOutFile = program.luis_name + "_LUISApp.json";
+                    program.lOutFile = program.luis_name + ".json";
                 }
             }
             if(!program.qOutFile) {
                 if(!program.qna_name) {
                     program.qOutFile = path.basename(rootFile, path.extname(rootFile)) + "_qnaKB.json";
                 } else {
-                    program.qOutFile = program.qna_name + "_qnaKB.json";
+                    program.qOutFile = program.qna_name + ".json";
                 }
             }
             if(!program.qTSVFile) {
                 if(!program.qna_name) {
                     program.qTSVFile = path.basename(rootFile, path.extname(rootFile)) + "_qnaTSV.tsv";
                 } else {
-                    program.qTSVFile = program.qna_name + "_qnaTSV.tsv";
+                    program.qTSVFile = program.qna_name + ".tsv";
                 }
             }
             if((cmd == 'luis') && writeLUISFile) {
@@ -243,6 +250,7 @@ module.exports = {
 /**
  * Helper function to validate parsed LUISJsonblob
  * @param {Object} LUISJSONBlob input LUIS Json blob
+ * @param {Object} entitiesList list of entities in collated models
  * @returns {Boolean} True if validation succeeds.
  */
 var validateLUISBlob = function(LUISJSONBlob) {
@@ -253,11 +261,6 @@ var validateLUISBlob = function(LUISJSONBlob) {
             var patternAnyEntity = LUISJSONBlob.patternAnyEntities[i];
             if(LUISJSONBlob.entities.filter(function(item){
                 return item.name == patternAnyEntity.name
-            }).length > 0) {
-                spliceList.push(patternAnyEntity.name);
-            }
-            if(LUISJSONBlob.bing_entities.filter(function(item) {
-                return item == patternAnyEntity.name;
             }).length > 0) {
                 spliceList.push(patternAnyEntity.name);
             }
@@ -342,16 +345,16 @@ var validateLUISBlob = function(LUISJSONBlob) {
         });
     }
     // for each entityFound, see if there are duplicate definitions
-    entitiesList.forEach(function(entity) {
+    /*entitiesList.forEach(function(entity) {
         if(entity.type.length > 1) {
             process.stdout.write(chalk.default.redBright('  Entity "' + entity.name + '" has duplicate definitions. \n\n'));
             process.stdout.write(chalk.default.redBright('  ' + JSON.stringify(entity.type, 2, null) + '  \n'));
             process.stdout.write(chalk.default.redBright('\n  Stopping further processing \n'));
             process.exit(1);
         }
-    });
+    });*/
 
-    // do we have utterances with labelled list entities ? 
+    // do we have utterances with labelled list entities or phraselist entities? 
     if(LUISJSONBlob.utterances.length > 0) {
         LUISJSONBlob.utterances.forEach(function(utterance) {
             if(utterance.entities.length > 0) {
@@ -361,8 +364,15 @@ var validateLUISBlob = function(LUISJSONBlob) {
                     });
                     if(entityInList.length > 0) {
                         if(entityInList[0].type.includes("list")) {
-                            process.stdout.write(chalk.default.redBright('  Entity "' + entity.name + '" has duplicate definitions. \n\n'));
-                            process.stdout.write(chalk.default.redBright('  ' + JSON.stringify(entity.type, 2, null) + '  \n'));
+                            
+                            process.stdout.write(chalk.default.redBright('\n  Utterance "' + utterance.text + '", has reference to List entity type. \n\n'));
+                            process.stdout.write(chalk.default.redBright('  You cannot have utterances with phraselist references in them\n'));
+                            process.stdout.write(chalk.default.redBright('\n  Stopping further processing \n'));
+                            process.exit(1);
+                        }
+                        if(entityInList[0].type.includes("phraseList")) {
+                            process.stdout.write(chalk.default.redBright('\n  Utterance "' + utterance.text + '", has reference to PhraseList. \n\n'));
+                            process.stdout.write(chalk.default.redBright('  You cannot have utterances with phraselist references in them\n'));
                             process.stdout.write(chalk.default.redBright('\n  Stopping further processing \n'));
                             process.exit(1);
                         }
@@ -371,6 +381,7 @@ var validateLUISBlob = function(LUISJSONBlob) {
             }
         });
     }
+
     return true;
 }
 
@@ -477,11 +488,11 @@ var collateLUISFiles = function(parsedBlobs) {
             });
         }
         // do we have bing_entities here? 
-        if(blob.bing_entities.length > 0) {
+        /*if(blob.bing_entities.length > 0) {
             blob.bing_entities.forEach(function(bingEntity) {
                 if(!FinalLUISJSON.bing_entities.includes(bingEntity)) FinalLUISJSON.bing_entities.push(bingEntity);
             });
-        }
+        }*/
         // do we have prebuiltEntities here?
         if(blob.prebuiltEntities.length > 0) {
             blob.prebuiltEntities.forEach(function(prebuiltEntity){
