@@ -303,14 +303,6 @@ var constructMdFile = function(LUISJSON, QnAJSONFromTSV, luisFile, QnAFile) {
             fileContent += NEWLINE;
         }
     
-        if(LUISJSON.model.bing_entities && LUISJSON.model.bing_entities.length >= 0){
-            fileContent += '> # PREBUILT Entity definitions' + NEWLINE + NEWLINE;
-            LUISJSON.model.bing_entities.forEach(function(entity) {
-                fileContent += '$PREBUILT:' + entity + NEWLINE + NEWLINE;
-            });
-            fileContent += NEWLINE;
-        }
-
         if(LUISJSON.model.prebuiltEntities && LUISJSON.model.prebuiltEntities.length >= 0){
             fileContent += '> # PREBUILT Entity definitions' + NEWLINE + NEWLINE;
             LUISJSON.model.prebuiltEntities.forEach(function(entity) {

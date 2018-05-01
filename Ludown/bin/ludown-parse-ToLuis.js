@@ -22,7 +22,6 @@ program
     .option('-d, --luis_desc <luis_appDesc>', '[Optional] LUIS app description')
     .option('-v, --luis_versionId <luis_versionId>', '[Optional] LUIS app version', '0.1')
     .option('-c, --luis_culture <luis_appCulture>', '[Optional] LUIS app culture', 'en-us')
-    .option('-r, --luis_schema_version <luis_schema_version>', '[Optional] LUIS Schema version', '2.2.0')
     .option('-t, --write_luis_batch_tests', '[Optional] Write out LUIS batch test json file')
     .option('--verbose', '[Optional] Get verbose messages from parser')
     .parse(process.argv);

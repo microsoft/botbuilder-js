@@ -18,8 +18,7 @@ program
     .option('-l, --lu_folder <inputFolder>', '[Optional] Folder with .lu file(s). By default ludown will only look at the current folder. -s to include subfolders')
     .option('-o, --out_folder <outputFolder>', '[Optional] Output folder for all files the tool will generate')
     .option('-s, --subfolder', '[Optional] Include sub-folders as well when looking for .lu files')
-    .option('-m, --qna_name <QnA_KB_Name>', '[Optional] QnA KB name')
-    //.option('-t, --write_qna_tsv', '[Optional] Write out QnA Maker TSV file')
+    .option('-n, --qna_name <QnA_KB_Name>', '[Optional] QnA KB name')
     .option('--verbose', '[Optional] Get verbose messages from parser')
     .parse(process.argv);
     
