@@ -7,6 +7,6 @@ export declare class DispatchService extends ConnectedService implements IDispat
     serviceIds: string[];
     subscriptionKey: string;
     version: string;
-    constructor(source?: Partial<IDispatchService>);
-    toJSON(): Partial<IDispatchService>;
+    constructor(source?: IDispatchService);
+    toJSON(): IDispatchService;
 }

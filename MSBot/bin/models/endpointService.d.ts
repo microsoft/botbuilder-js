@@ -5,6 +5,6 @@ export declare class EndpointService extends ConnectedService implements IEndpoi
     appId: string;
     appPassword: string;
     endpoint: string;
-    constructor(source: Partial<IEndpointService>);
-    toJSON(): Partial<IEndpointService>;
+    constructor(source: IEndpointService);
+    toJSON(): IEndpointService;
 }

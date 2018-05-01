@@ -5,6 +5,6 @@ export declare class AzureBotService extends ConnectedService implements IAzureB
     tenantId: string;
     subscriptionId: string;
     resourceGroup: string;
-    constructor(source?: Partial<IAzureBotService>);
-    toJSON(): Partial<IAzureBotService>;
+    constructor(source?: IAzureBotService);
+    toJSON(): IAzureBotService;
 }

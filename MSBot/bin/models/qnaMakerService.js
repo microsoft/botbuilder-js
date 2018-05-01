@@ -6,8 +6,6 @@ class QnaMakerService extends connectedService_1.ConnectedService {
     constructor(source = {}) {
         super(source);
         this.type = schema_1.ServiceType.QnA;
-        this.id = '';
-        this.name = '';
         this.kbId = '';
         this.subscriptionKey = '';
         this.hostname = '';
@@ -16,10 +14,7 @@ class QnaMakerService extends connectedService_1.ConnectedService {
         Object.assign(this, { kbId, name, subscriptionKey, endpointKey, hostname });
     }
     toJSON() {
-        let { kbId, id, name, subscriptionKey, endpointKey, hostname } = this;
-        if (!id) {
-            id = kbId;
-        }
+        const { kbId, id, name, subscriptionKey, endpointKey, hostname } = this;
         return { kbId, name, type: schema_1.ServiceType.QnA, subscriptionKey, id, endpointKey, hostname };
     }
 }

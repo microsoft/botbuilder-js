@@ -10,9 +10,7 @@ class AzureBotService extends connectedService_1.ConnectedService {
         this.subscriptionId = '';
         this.resourceGroup = '';
         const { tenantId = '', subscriptionId = '', resourceGroup = '' } = source;
-        this.tenantId = tenantId;
-        this.subscriptionId = subscriptionId;
-        this.resourceGroup = resourceGroup;
+        Object.assign(this, { tenantId, subscriptionId, resourceGroup });
     }
     toJSON() {
         let { name, id, tenantId, subscriptionId, resourceGroup } = this;

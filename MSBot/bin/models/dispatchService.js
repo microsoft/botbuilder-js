@@ -15,10 +15,7 @@ class DispatchService extends connectedService_1.ConnectedService {
         Object.assign(this, { appId, authoringKey, serviceIds, subscriptionKey, version });
     }
     toJSON() {
-        let { appId, id, authoringKey, name, serviceIds, subscriptionKey, version } = this;
-        if (!id) {
-            id = appId;
-        }
+        const { appId, id, authoringKey, name, serviceIds, subscriptionKey, version } = this;
         return { appId, id, authoringKey, name, serviceIds, subscriptionKey, type: schema_1.ServiceType.Dispatch, version };
     }
 }

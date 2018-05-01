@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const schema_1 = require("../schema");
 const azureBotService_1 = require("./azureBotService");
-const connectedService_1 = require("./connectedService");
 const dispatchService_1 = require("./dispatchService");
 const endpointService_1 = require("./endpointService");
 const fileService_1 = require("./fileService");
@@ -12,7 +11,7 @@ class BotConfigModel {
     constructor() {
         this.name = '';
         this.description = '';
-        this.services = new ServicesCollection();
+        this.services = [];
         this.secretKey = '';
     }
     static serviceFromJSON(service) {
@@ -37,7 +36,7 @@ class BotConfigModel {
         let { name = '', description = '', secretKey = '', services = [] } = source;
         services = services.slice().map(BotConfigModel.serviceFromJSON);
         const botConfig = new BotConfigModel();
-        Object.assign(botConfig, { services: new ServicesCollection(services), description, name, secretKey });
+        Object.assign(botConfig, { services, description, name, secretKey });
         return botConfig;
     }
     toJSON() {
@@ -46,26 +45,4 @@ class BotConfigModel {
     }
 }
 exports.BotConfigModel = BotConfigModel;
-/**
- * Typed collection implementation in JS woot!
- */
-class ServicesCollection extends Array {
-    constructor(source) {
-        super();
-        if (source) {
-            this.push(...source);
-        }
-        return new Proxy(this, this);
-    }
-    static get [Symbol.species]() {
-        return Array;
-    }
-    set(target, prop, value, receiver) {
-        if (prop !== 'length' && !(value instanceof connectedService_1.ConnectedService)) {
-            throw new TypeError(`${Object.prototype.toString.call(value)} does not extend ConnectedService`);
-        }
-        return target[prop] = value;
-    }
-}
-exports.ServicesCollection = ServicesCollection;
 //# sourceMappingURL=botConfigModel.js.map

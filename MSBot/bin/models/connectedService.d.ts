@@ -3,6 +3,6 @@ export declare abstract class ConnectedService implements IConnectedService {
     id: string;
     name: string;
     readonly abstract type: ServiceType;
-    protected constructor(source?: Partial<IConnectedService>);
-    abstract toJSON(): Partial<IConnectedService>;
+    protected constructor(source?: IConnectedService);
+    abstract toJSON(): IConnectedService;
 }
