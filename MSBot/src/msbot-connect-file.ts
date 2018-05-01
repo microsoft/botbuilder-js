@@ -58,7 +58,7 @@ async function processConnectFile(config: BotConfig): Promise<BotConfig> {
         id: args.filePath,
         name: path.basename(args.filePath),
         filePath: args.filePath
-    });
+    } as IFileService);
     config.connectService(newService);
     await config.save();
     process.stdout.write(`Connected ${newService.type}:${newService.name} ${newService.filePath}`);

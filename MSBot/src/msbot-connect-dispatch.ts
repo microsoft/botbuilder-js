@@ -84,7 +84,7 @@ async function processConnectDispatch(config: BotConfig): Promise<BotConfig> {
     if (args.subscriptionKey && !uuidValidate(args.subscriptionKey))
         throw new Error('bad --subscriptionKey');
 
-    const newService = new DispatchService(args as Partial<IDispatchService>);
+    const newService = new DispatchService(<IDispatchService><any>args);
 
     const dispatchServices = <IConnectedService[]>( <any>args ).services;
 
