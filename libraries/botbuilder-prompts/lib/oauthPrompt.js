@@ -72,7 +72,32 @@ function createOAuthPrompt(settings, validator) {
                     }
                 }
                 // Send prompt
-                return internal_1.sendPrompt(context, prompt);
+                return Promise.resolve(prompt)
+                    .then((p) => {
+                    switch (context.activity.channelId) {
+                        case "msteams":
+                        case "cortana":
+                        case "skype":
+                        case "skypeforbusiness":
+                            return context.adapter.getSignInLink(context, settings.connectionName).then((link) => {
+                                p.attachments.forEach(a => {
+                                    if (a.contentType === botbuilder_1.CardFactory.contentTypes.oauthCard) {
+                                        const card = a.content;
+                                        const title = card.buttons[0].title;
+                                        a.contentType = botbuilder_1.CardFactory.contentTypes.signinCard;
+                                        a.content = {
+                                            text: card.text,
+                                            buttons: [{ type: botbuilder_1.ActionTypes.Signin, title: title, value: link }]
+                                        };
+                                    }
+                                });
+                                return p;
+                            });
+                        default:
+                            return p;
+                    }
+                })
+                    .then((p) => internal_1.sendPrompt(context, p));
             }
             catch (err) {
                 return Promise.reject(err);
