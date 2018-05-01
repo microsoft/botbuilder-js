@@ -267,9 +267,9 @@ async function validateArguments(args, serviceManifest) {
     if (!serviceManifest) {
         let verbs = ["add", "clone", "delete", "export", "get", "import", "list", "publish", "query", "set", "suggest", "train", "update"];
         if (verbs.indexOf(args._[0]) < 0)
-            error.message = `${args._[0]} is not a valid action\n`;
+            error.message = `'${args._[0]}' is not a valid action\n`;
         else if (args._.length >= 2)
-            error.message = `${args._[1]} is not a valid resource\n`;
+            error.message = `'${args._[1]}' is not a valid resource\n`;
         else
             error.message = `missing resource\n`;
         throw error;
