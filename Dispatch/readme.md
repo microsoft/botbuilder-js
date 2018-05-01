@@ -199,7 +199,7 @@ dispatch test -testFilePath <text_file>
 
 The output, Summary.html, contains all the evaluation results. The file is located in the location of the test file.
 
-# Sample Code and documentation
+# Sample Code and Tutorial
 C# Sample: https://github.com/Microsoft/botbuilder-dotnet/tree/master/samples/Microsoft.Bot.Samples.Ai.Luis.Dispatch 
 JS Sample: https://github.com/Microsoft/botbuilder-js/tree/master/samples/dispatch-es6 
-
+Tutorial: https://aka.ms/Sas1mu
