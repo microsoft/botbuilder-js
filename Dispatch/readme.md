@@ -82,6 +82,13 @@ Arguments
 | -dataFolder  | (optional) Working directory for tool |
 | -h           | Output usage information |
 
+Supported file types:
+
+| File type       | Description |
+| -----------  | ----------- |
+| tsv | Tab delimited lines of intents and utterances |
+| txt | Lines of utterances |
+| json | Exported LUIS/QnA maker json file | 
 
 ## Creating your dispatch model  
 
