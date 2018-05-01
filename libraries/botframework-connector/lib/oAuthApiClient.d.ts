@@ -77,7 +77,7 @@ export declare class OAuthApiClient {
      *
      * Tells the token service to emulate the sending of OAuthCards.
      *
-     * @param {boolean} emulate if `true` the token service will emulate the sending of OAuthCards.
+     * @param {boolean} emulate If `true` the token service will emulate the sending of OAuthCards.
      *
      * @param {RequestOptionsBase} [options] Optional Parameters.
      *

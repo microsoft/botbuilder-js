@@ -314,7 +314,7 @@ export class OAuthApiClient {
    *
    * Tells the token service to emulate the sending of OAuthCards.
    *
-   * @param {boolean} emulate if `true` the token service will emulate the sending of OAuthCards.
+   * @param {boolean} emulate If `true` the token service will emulate the sending of OAuthCards.
    *
    * @param {RequestOptionsBase} [options] Optional Parameters.
    *
@@ -329,7 +329,7 @@ export class OAuthApiClient {
 
     // Construct URL
     let baseUrl = this.client.baseUri;
-    let requestUrl = baseUrl + (baseUrl.endsWith('/') ? '' : '/') + `api/usertoken/emulateOAuthCards?`;
+    let requestUrl = baseUrl + (baseUrl.endsWith('/') ? '' : '/') + `api/usertoken/emulateOAuthCards`;
     let queryParamsArray: Array<any> = [];
     queryParamsArray.push('emulate=' + (!!emulate).toString());
     requestUrl += '?' + queryParamsArray.join('&');
