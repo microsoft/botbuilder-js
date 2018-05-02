@@ -13,7 +13,7 @@ import { uuidValidate } from './utils';
 
 program.Command.prototype.unknownOption = function (flag: any) {
     console.error(chalk.default.redBright(`Unknown arguments: ${flag}`));
-    program.help();
+    showErrorHelp();
 };
 
 interface ConnectLuisArgs extends ILuisService {
@@ -50,14 +50,14 @@ if (process.argv.length < 3) {
             .then(processConnectLuisArgs)
             .catch((reason) => {
                 console.error(chalk.default.redBright(reason.toString().split('\n')[0]));
-                program.help();
+                showErrorHelp();
             });
     } else {
         BotConfig.Load(args.bot, args.secret)
             .then(processConnectLuisArgs)
             .catch((reason) => {
                 console.error(chalk.default.redBright(reason.toString().split('\n')[0]));
-                program.help();
+                showErrorHelp();
             });
     }
 }
@@ -94,4 +94,13 @@ async function processConnectLuisArgs(config: BotConfig): Promise<BotConfig> {
     await config.save();
     process.stdout.write(`Connected ${newService.type}:${newService.name}`);
     return config;
+}
+
+function showErrorHelp()
+{
+    program.outputHelp((str) => {
+        console.error(str);
+        return '';
+    });
+    process.exit(1);
 }

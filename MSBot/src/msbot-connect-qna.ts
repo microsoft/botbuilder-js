@@ -14,7 +14,7 @@ import * as validurl from 'valid-url';
 
 program.Command.prototype.unknownOption = function (flag: any) {
     console.error(chalk.default.redBright(`Unknown arguments: ${flag}`));
-    program.help();
+    showErrorHelp();
 };
 
 interface ConnectQnaArgs extends IQnAService {
@@ -53,14 +53,14 @@ if (process.argv.length < 3) {
             .then(processConnectQnaArgs)
             .catch((reason) => {
                 console.error(chalk.default.redBright(reason.toString().split('\n')[0]));
-                program.help();
+                showErrorHelp();
             });
     } else {
         BotConfig.Load(args.bot, args.secret)
             .then(processConnectQnaArgs)
             .catch((reason) => {
                 console.error(chalk.default.redBright(reason.toString().split('\n')[0]));
-                program.help();
+                showErrorHelp();
             });
     }
 }
@@ -97,4 +97,13 @@ async function processConnectQnaArgs(config: BotConfig): Promise<BotConfig> {
     await config.save();
     process.stdout.write(`Connected ${newService.type}:${newService.name} ${newService.kbId}`);
     return config;
+}
+
+function showErrorHelp()
+{
+    program.outputHelp((str) => {
+        console.error(str);
+        return '';
+    });
+    process.exit(1);
 }

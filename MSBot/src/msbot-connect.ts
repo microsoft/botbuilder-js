@@ -7,7 +7,7 @@ import * as program from 'commander';
 
 program.Command.prototype.unknownOption = function (flag: any) {
     console.error(chalk.default.redBright(`Unknown arguments: ${process.argv.slice(2).join(' ')}`));
-    program.help();
+    showErrorHelp();
 };
 
 program
@@ -25,5 +25,14 @@ const args = program.parse(process.argv);
 if (args) {
     const a = process.argv.slice(2);
     console.error(chalk.default.redBright(`Unknown arguments: ${a.join(' ')}`));
-    program.help();
+    showErrorHelp();
+}
+
+function showErrorHelp()
+{
+    program.outputHelp((str) => {
+        console.error(str);
+        return '';
+    });
+    process.exit(1);
 }

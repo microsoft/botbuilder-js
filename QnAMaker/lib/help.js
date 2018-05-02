@@ -16,9 +16,11 @@ const { getServiceManifest } = require('../lib/utils/argsUtil');
  * @param args The arguments input by the user
  * @returns {Promise<void>}
  */
-module.exports = async function help(args) {
+module.exports = async function help(args, output) {
+    if (!output)
+        output = process.stderr;
 
-    process.stdout.write('QnA Maker Command line interface - © 2018 Microsoft Corporation\n\n');
+    output.write('QnA Maker Command line interface - © 2018 Microsoft Corporation\n\n');
     const helpContents = await getHelpContents(args);
     let width = windowSize ? windowSize.width : 250;
 
@@ -37,7 +39,7 @@ module.exports = async function help(args) {
     }
 
     helpContents.forEach(helpContent => {
-        process.stdout.write(chalk.white.bold(helpContent.head + '\n'));
+        output.write(chalk.white.bold(helpContent.head + '\n'));
         if (helpContent.table && helpContent.table[0].length > 0) {
             const rows = helpContent.table[0].length;
             let i = rows - 1;
@@ -62,9 +64,9 @@ module.exports = async function help(args) {
                 wordWrap: true
             });
             table.push(...helpContent.table);
-            process.stdout.write(table.toString());
+            output.write(table.toString());
         }
-        process.stdout.write('\n\n');
+        output.write('\n\n');
     });
 }
 
@@ -75,7 +77,7 @@ module.exports = async function help(args) {
 * @param args The arguments input by the user
 * @returns {Promise<*>}
 */
-async function getHelpContents(args) {
+async function getHelpContents(args, output) {
     if ('!' in args) {
         return getAllCommands();
     }
@@ -90,8 +92,8 @@ async function getHelpContents(args) {
         if (serviceManifest) {
             const { operation } = serviceManifest;
 
-            process.stdout.write(`${operation.description}\n\n`);
-            process.stdout.write(`Usage:\n${chalk.cyan.bold(operation.command)}\n\n`);
+            output.write(`${operation.description}\n\n`);
+            output.write(`Usage:\n${chalk.cyan.bold(operation.command)}\n\n`);
         } else {
             return getVerbHelp(args._[0]);
         }
@@ -131,7 +133,7 @@ let globalArgs = {
  *
  * @returns {*[]}
  */
-function getGeneralHelpContents() {
+function getGeneralHelpContents(output) {
     let operation;
     let verbs = [];
     let options = {
@@ -162,7 +164,7 @@ function getGeneralHelpContents() {
  *
  * @returns {*[]}
  */
-function getVerbHelp(verb) {
+function getVerbHelp(verb, output) {
     let operation;
     let targets = [];
     let options = {
@@ -174,7 +176,7 @@ function getVerbHelp(verb) {
     let sections = [];
     switch (verb) {
         case "query":
-            process.stdout.write(chalk.cyan.bold("qnamaker query --question <querytext>\n\n"));
+            output.write(chalk.cyan.bold("qnamaker query --question <querytext>\n\n"));
             options.table.push([chalk.cyan.bold("--question <query>"), "query to get a prediction for"]);
             sections.push(options);
             sections.push(configSection);
@@ -182,7 +184,7 @@ function getVerbHelp(verb) {
             return sections;
 
         case "set":
-            process.stdout.write(chalk.cyan.bold("qnamaker set <.qnamakerrcSetting> <value>\n\n"));
+            output.write(chalk.cyan.bold("qnamaker set <.qnamakerrcSetting> <value>\n\n"));
             options.table.push([chalk.cyan.bold("kbid <kbid>"), "change the active knowledgebase id "]);
             options.table.push([chalk.cyan.bold("subscriptionkey <subscriptionkey>"), "change the active subscriptionkey"]);
             // these are now computed...
@@ -209,7 +211,7 @@ function getVerbHelp(verb) {
     }
 
     if (targets.length == 0)
-        return getGeneralHelpContents();
+        return getGeneralHelpContents(output);
 
     targets.sort();
     for (let verb of targets) {
@@ -268,7 +270,7 @@ function getAllCommands() {
  *
  * @returns {Array}
  */
-function getHelpContentsForService(serviceManifest) {
+function getHelpContentsForService(serviceManifest, output) {
     const { operation } = serviceManifest;
     const operations = serviceManifest.operation ? [operation] : serviceManifest.operations;
 
