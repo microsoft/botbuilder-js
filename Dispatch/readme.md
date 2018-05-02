@@ -165,8 +165,8 @@ With the following options.  If not given, the tool will prompt for the required
 
 |Option | Description|
 | ------ | ----------- |
-| -luisPredictingKey    | (optional, will be prompted) LUIS predicting key     |
-| -luisPredictingRegion | (optional, will be prompted) LUIS predicting region  |
+| -luisSubscriptionKey    | (optional, will be prompted) Cognitive Service LUIS key from portal.azure.com  |
+| -luisSubscriptionRegion | (optional, will be prompted) Cognitive Service LUIS region from portal.azure.com  |
 | -dispatch            | (optional) .dispatch file path    |
 | -dataFolder           | (optional) Output folder for tool |
 | -h, --help            | Output usage information|
@@ -184,8 +184,8 @@ With the following options
 | Option               | Description                                                  |
 | ----------------     | ------------------------------------------------------------ |
 | -testFilePath        | Path to a tsv file with three (or two) fields: expected intent, weight and utterance in that order; the first line (header) will be skipped; the weight column is optional     |
-| -luisPredictingKey   | (optional) LUIS predicting key     |
-| -luisPredictingRegion| (optional) LUIS predicting region  |
+| -luisSubscriptionKey   | (optional) Cognitive Service LUIS key from portal.azure.com     |
+| -luisSubscriptionRegion| (optional) Cognitive Service LUIS region from portal.azure.com  |
 | -dispatch            | (optional) .dispatch file path    |
 | -dataFolder          | (optional) Output folder for tool |
 | -h                   | Output usage information |
@@ -203,8 +203,8 @@ With the following options
 
 | Option               | Description                                                  |
 | ----------------     | ------------------------------------------------------------ |
-| -luisPredictingKey   | (optional) LUIS predicting key     |
-| -luisPredictingRegion| (optional) LUIS predicting region  |
+| -luisSubscriptionKey   | (optional) Cognitive Service LUIS key from portal.azure.com    |
+| -luisSubscriptionRegion| (optional) Cognitive Service LUIS region from portal.azure.com  |
 | -dispatch            | (optional) .dispatch file path    |
 | -dataFolder          | (optional) Output folder for tool |
 | -h                   | Output usage information |
@@ -239,7 +239,7 @@ dispatch init -name mybot_dispatch -luisAuthoringKey <luis_authoring_key> -luisA
 dispatch add -name LuisChitChat -type luis -id <luis_app_id> -name <luis_app_name> -version <luis_app_version> -key <luis_app_authoring_key>
 dispatch add -name MyKnowledgeBase -type qna -id <qna_kb_id> -name <kb_name> -key <qna_maker_key>
 dispatch create
-dispatch eval -luisPredictingKey <azure_luis_key> -luisPredictingRegion <azure_luis_region>
+dispatch eval -luisSubscriptionKey <azure_luis_key> -luisSubscriptionRegion <azure_luis_region>
 ```
 
 The output is Summary.html file located in local file system directory where the commands were issued. It includes all the evaluation results and suggestions for improving the bot components.
@@ -252,7 +252,7 @@ Evaluate a LUIS model performing cross validation:
 dispatch init -name mybot_dispatch -luisAuthoringKey <luis_authoring_key> -luisAuthoringRegion <region>
 dispatch add -name LuisChitChat -type luis -id <luis_app_id> -name <luis_app_name> -version <luis_app_version> -key <luis_app_authoring_key>
 dispatch create -hierarchical false
-dispatch eval -luisPredictingKey <azure_luis_key> -luisPredictingRegion <azure_luis_region>
+dispatch eval -luisSubscriptionKey <azure_luis_key> -luisSubscriptionRegion <azure_luis_region>
 ```
 
 The output, Summary.html, contains all the evaluation results. The file is located in local file system directory where the commands were issued.
