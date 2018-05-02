@@ -1,3 +1,7 @@
+/**
+ * Copyright(c) Microsoft Corporation.All rights reserved.
+ * Licensed under the MIT License.
+ */
 module.exports.Apps = require('./Apps');
 module.exports.Permissions = require('./Permissions');
 module.exports.Versions = require('./Versions');

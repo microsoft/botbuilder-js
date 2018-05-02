@@ -1,3 +1,7 @@
+/**
+ * Copyright(c) Microsoft Corporation.All rights reserved.
+ * Licensed under the MIT License.
+ */
 module.exports.ApplicationCreateObject = require('./applicationCreateObject');
 module.exports.ApplicationInfoResponse = require('./applicationInfoResponse');
 module.exports.ApplicationPublishObject = require('./applicationPublishObject');

@@ -1,3 +1,7 @@
+/**
+ * Copyright(c) Microsoft Corporation.All rights reserved.
+ * Licensed under the MIT License.
+ */
 const manifest = require('../api/luis');
 const { OperationCommandMap } = require('../enums/operationCommandMap');
 

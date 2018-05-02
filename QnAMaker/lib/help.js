@@ -1,3 +1,7 @@
+/**
+ * Copyright(c) Microsoft Corporation.All rights reserved.
+ * Licensed under the MIT License.
+ */
 const Table = require('cli-table2');
 const chalk = require('chalk');
 const path = require('path');

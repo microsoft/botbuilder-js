@@ -1,3 +1,7 @@
+/**
+ * Copyright(c) Microsoft Corporation.All rights reserved.
+ * Licensed under the MIT License.
+ */
 const {insertParametersFromObject} = require('../utils/insertParametersFromObject');
 const deriveParamsFromPath = require('../utils/deriveParamsFromPath');
 
