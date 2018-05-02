@@ -1,7 +1,7 @@
 {
   "name": "luisgen",
   "version": "1.0.0",
-  "description": "LUISGen is a tool for generating a strongly typed C# class to make consuming LUIS output easier.",
+  "description": "LUISGen is a tool for generating C# class or Typescript interface for a LUIS app to make consuming LUIS output easier.",
   "scripts": {
     "start": "dotnet bin/netcoreapp2.0/luisgen.dll"
   },
