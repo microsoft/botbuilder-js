@@ -8,7 +8,7 @@ This repository contains code for Bot Builder tools. Bot Builder tools are desig
 - [![npm version](https://badge.fury.io/js/botdispatch.svg)](https://badge.fury.io/js/botdispatch) [Dispatch](https://github.com/Microsoft/botbuilder-tools/tree/master/Dispatch): Bring disparate language understanding models to work together for your bot
 - [![npm version](https://badge.fury.io/js/luisgen.svg)](https://badge.fury.io/js/botdispatch) [LUISGen](https://github.xom/Microsoft/botbuilder-tools/tree/master/LUISGen): Generate C# class or Typescript interface over a LUIS model.
 
-To install all CLI tools, 
+To install all CLI tools:
 
 ```
 npm install -g chatdown msbot ludown luis-apis qnamaker botdispatch luisgen
@@ -16,9 +16,14 @@ npm install -g chatdown msbot ludown luis-apis qnamaker botdispatch luisgen
 Please see [here](https://aka.ms/BotBuilderOverview) for an overview of the end-to-end development workflow. 
 Please see [here](https://aka.ms/BotBuilderLocalDev) for an example end to end development workflow using Bot Builder tools.
 
-Before writing code, review the [bot design guidelines](https://docs.microsoft.com/en-us/azure/bot-service/bot-service-design-principles) for best practices and identify the needs for your bot: will a basic bot be enough or more sophisticated capabilities, such as speech, language understanding, QnA, or the ability to extract knowledge from different sources, and provide intelligent answers. This is also the phase where you might want to create mockup of conversations between the user and bot for the specific scenarios your bot will support. [Chatdown](https://github.com/Microsoft/botbuilder-tools/tree/master/Chatdown) is the tool custom built for this purpose. You can simply author .chat files that mockup conversations and use chatdown CLI to convert them into rich transcripts. 
+Before writing code, review the [bot design guidelines](https://docs.microsoft.com/en-us/azure/bot-service/bot-service-design-principles) for best practices and identify the needs for your bot: will a basic bot be enough or whether it should have more sophisticated capabilities, such as speech, language understanding, QnA, or the ability to extract knowledge from different sources and provide intelligent answers. This is also the phase where you might want to create mockup of conversations between the user and the bot for the specific scenarios your bot will support. [Chatdown](https://github.com/Microsoft/botbuilder-tools/tree/master/Chatdown) is the tool built for this purpose. You can author .chat files that mockup the conversations and then use chatdown CLI to convert them into rich transcripts. 
 
-As you are building your bot, you also need to build and integrate AI services like [LUIS.ai](http://luis.ai) for language understanding, [QnAMaker.ai](http://qnamaker.ai) for your bot to respond to simple question-answers and more. You can start bootstrapping language understanding for your bot using [LUDown](https://github.com/Microsoft/botbuilder-tools/tree/master/ludown). The tools are designed to work together; you can then use [LUIS](https://github.com/Microsoft/botbuilder-tools/tree/master/LUIS) CLI and/ or the [QnAMaker](https://github.com/Microsoft/botbuilder-tools/tree/master/QnAMaker) CLI tools to create your LUIS.ai model(s) and QnAMaker knowledge base. As your bot grows in sophistication, [Dispatch](https://github.com/Microsoft/botbuilder-tools/tree/master/Dispatch) CLI can help create and evaluate LUIS model used to dispatch intent across multiple bot modules such as LUIS model(s), QnA knowledge base(s) and others (added to dispatch as a file type).
+As you build your bot, you may also need to integrate AI services like [LUIS.ai](http://luis.ai) for language understanding, [QnAMaker.ai](http://qnamaker.ai) for your bot to respond to simple questions in a Q&A format, and more. You can bootstrap language understanding for your bot using [LUDown](https://github.com/Microsoft/botbuilder-tools/tree/master/ludown). 
+
+The tools are designed to work together. You can then use [LUIS](https://github.com/Microsoft/botbuilder-tools/tree/master/LUIS) CLI and / or the [QnAMaker](https://github.com/Microsoft/botbuilder-tools/tree/master/QnAMaker) CLI tools to create your LUIS.ai models and QnAMaker knowledge base. 
+
+As your bot grows in sophistication, [Dispatch](https://github.com/Microsoft/botbuilder-tools/tree/master/Dispatch) CLI can help create and evaluate LUIS models used to dispatch intent across multiple bot modules such as LUIS models, QnA knowledge bases and others (added to dispatch as a file type).
+
 Throughout your Build phase, you can use [MSBot](https://github.com/Microsoft/botbuilder-tools/tree/master/MSBot) CLI to create and keep your bot configuration file updated with all relevant service references.
 
 ## Contributing
