@@ -9,35 +9,27 @@ function getServiceManifest(args, includeAllOperations) {
     let arguments = (args._.length > 2) ? args._.slice(2) : [];
 
     let payload = getOperation(verb, target);
-
-    // if (includeAllOperations) {
-    //     payload.operations = operations;
-    // }
-
-    // if (!operation) {
-    //     payload.closestMatches = operationCandidates || operations; // used to produce error details.
-    // }
     return payload;
 }
 
 
-function getOperation(verb, target ) {
+function getOperation(verb, target) {
     let operation;
-    let apiGroups = ['apps', 'examples', 'features', 'models', 'permissions', 'train', 'user', 'versions']
-    for (let iGroup in apiGroups) {
-        let apiGroupName = apiGroups[iGroup];
-        const apiGroup = getCategoryManifest(apiGroupName);
+    let verbFound = false;
+    for (let iGroup in manifest) {
+        const apiGroup = manifest[iGroup];
 
         for (let iCategory in apiGroup) {
             let category = apiGroup[iCategory];
 
             for (let iOperation in category.operations) {
                 let operation = category.operations[iOperation];
-                
-                if ((operation.methodAlias == verb) && 
-                    (operation.target.indexOf(target.toLowerCase()) >=0 ))
-                    {
-                        const {operations, entityType, className: identifier, category: identifierPath} = category;
+
+                if (operation.methodAlias == verb) {
+                    verbFound = true;
+
+                    if (operation.target.indexOf(target.toLowerCase()) >= 0) {
+                        const { operations, entityType, className: identifier, category: identifierPath } = category;
                         const payload = {
                             key: (category || apiGroup),
                             entityType,
@@ -47,6 +39,7 @@ function getOperation(verb, target ) {
                         };
                         return payload;
                     }
+                }
             }
         }
     }

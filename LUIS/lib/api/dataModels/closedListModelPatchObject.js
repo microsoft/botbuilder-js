@@ -1,29 +1,29 @@
-const WordListCreateObject = require('./wordListCreateObject');
+
+const WordListObject = require('./wordListObject');
 
 class ClosedListModelPatchObject {
-
+    
     /**
-     * @property {WordListCreateObject[]} subLists
-     */
+    * @property {WordListObject[]} subLists
+    */
 
-
-    constructor({subLists /* WordListCreateObject[] */} = {}) {
-        Object.assign(this, {subLists /* WordListCreateObject[] */});
+    
+    constructor({subLists /* WordListObject[] */} = {}) {
+        Object.assign(this, {subLists /* WordListObject[] */});
     }
 }
-
-ClosedListModelPatchObject.fromJSON = function (source) {
+ClosedListModelPatchObject.fromJSON = function(source) {
     if (!source) {
         return null;
     }
     if (Array.isArray(source)) {
         return source.map(ClosedListModelPatchObject.fromJSON);
     }
+    
+    source.subLists = WordListObject.fromJSON(source.subLists) || undefined;
 
-    source.subLists = WordListCreateObject.fromJSON(source.subLists) || undefined;
-
-    const {subLists /* WordListCreateObject[] */} = source;
-    return new ClosedListModelPatchObject({subLists /* WordListCreateObject[] */});
+    const {subLists /* WordListObject[] */} = source;
+    return new ClosedListModelPatchObject({subLists /* WordListObject[] */});
 };
 
 module.exports = ClosedListModelPatchObject;

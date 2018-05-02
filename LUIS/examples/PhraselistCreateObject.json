@@ -1,5 +1,5 @@
 {
   "name": "DaysOfWeek",
   "phrases": "monday,tuesday,wednesday,thursday,friday,saturday,sunday",
-  "isExchangeable": true
+  "isExchangeable": false
 }

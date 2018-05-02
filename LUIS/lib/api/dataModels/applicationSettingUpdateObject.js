@@ -1,25 +1,26 @@
+
+
 class ApplicationSettingUpdateObject {
-
+    
     /**
-     * @property {boolean} public
-     */
+    * @property {boolean} public
+    */
 
-
-    constructor({value /* boolean */} = {}) {
-        Object.assign(this, {'public': value /* boolean */});
+    
+    constructor(args = {} ) {
+        Object.assign(this, args);
     }
 }
-
-ApplicationSettingUpdateObject.fromJSON = function (source) {
+ApplicationSettingUpdateObject.fromJSON = function(source) {
     if (!source) {
         return null;
     }
     if (Array.isArray(source)) {
         return source.map(ApplicationSettingUpdateObject.fromJSON);
     }
-
-    const {'public': value /* boolean */} = source;
-    return new ApplicationSettingUpdateObject({'public': value /* boolean */});
+    
+    const {public /* boolean */} = source;
+    return new ApplicationSettingUpdateObject({public /* boolean */});
 };
 
 module.exports = ApplicationSettingUpdateObject;
