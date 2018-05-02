@@ -213,7 +213,7 @@ class LuisRecognizer {
         if (entity.role != null) {
             type = entity.role;
         }
-        return type.replace(/\./g, "_");
+        return type.replace(/\.|\s/g, "_");
     }
     populateCompositeEntity(compositeEntity, entities, entitiesAndMetadata, verbose) {
         let childrenEntites = verbose ? { $instance: {} } : {};

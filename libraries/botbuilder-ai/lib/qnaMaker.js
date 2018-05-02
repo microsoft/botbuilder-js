@@ -11,20 +11,68 @@ const botbuilder_1 = require("botbuilder");
 const request = require("request-promise-native");
 const entities = require("html-entities");
 var htmlentities = new entities.AllHtmlEntities();
-const BASEAPI_PATH = 'qnamaker/v3.0/knowledgebases/';
+const ENDPOINT_REGEXP = /\/knowledgebases\/(.*)\/generateAnswer\r\nHost:\s(.*)\r\n.*(?:EndpointKey|Ocp-Apim-Subscription-Key:)\s(.*)\r\n/i;
+const UNIX_ENDPOINT_REGEXP = /\/knowledgebases\/(.*)\/generateAnswer\nHost:\s(.*)\n.*(?:EndpointKey|Ocp-Apim-Subscription-Key:)\s(.*)\n/i;
+/**
+ * Manages querying an individual QnA Maker knowledge base for answers. Can be added as middleware
+ * to automatically query the knowledge base anytime a messaged is received from the user. When
+ * used as middleware the component can be configured to either query the knowledge base before the
+ * bots logic runs or after the bots logic is run, as a fallback in the event the bot doesn't answer
+ * the user.
+ */
 class QnAMaker {
-    constructor(settings) {
-        this.settings = Object.assign({
+    /**
+     * Creates a new QnAMaker instance.  You can initialize the endpoint for the instance by
+     * passing in the publishing endpoint provided in the QnA Maker portal.
+     *
+     * For version 2 this looks like:
+     *
+     * ```JS
+     * POST /knowledgebases/98185f59-3b6f-4d23-8ebb-XXXXXXXXXXXX/generateAnswer
+     * Host: https://westus.api.cognitive.microsoft.com/qnamaker/v2.0
+     * Ocp-Apim-Subscription-Key: 4cb65a02697745eca369XXXXXXXXXXXX
+     * Content-Type: application/json
+     * {"question":"hi"}
+     * ```
+     *
+     * And for the new version 4 this looks like:
+     *
+     * ```JS
+     * POST /knowledgebases/d31e049e-2557-463f-a0cc-XXXXXXXXXXXX/generateAnswer
+     * Host: https://test-knowledgebase.azurewebsites.net/qnamaker
+     * Authorization: EndpointKey 16cdca0b-3826-4a0f-a112-XXXXXXXXXXXX
+     * Content-Type: application/json
+     * {"question":"<Your question>"}
+     * ```
+     * @param endpoint The endpoint of the knowledge base to query.
+     * @param options (Optional) additional settings used to configure the instance.
+     */
+    constructor(endpoint, options) {
+        // Initialize endpoint
+        if (typeof endpoint === 'string') {
+            // Parse endpoint
+            let matched = ENDPOINT_REGEXP.exec(endpoint);
+            if (!matched) {
+                matched = UNIX_ENDPOINT_REGEXP.exec(endpoint);
+            }
+            if (!matched) {
+                throw new Error(`QnAMaker: invalid endpoint of "${endpoint}" passed to constructor.`);
+            }
+            this.endpoint = {
+                knowledgeBaseId: matched[1],
+                host: matched[2],
+                endpointKey: matched[3]
+            };
+        }
+        else {
+            this.endpoint = endpoint;
+        }
+        // Initialize options
+        this.options = Object.assign({
             scoreThreshold: 0.3,
             top: 1,
             answerBeforeNext: false
-        }, settings);
-        if (!this.settings.serviceEndpoint) {
-            this.settings.serviceEndpoint = 'https://westus.api.cognitive.microsoft.com/';
-        }
-        else if (!this.settings.serviceEndpoint.endsWith('/')) {
-            this.settings.serviceEndpoint += '/';
-        }
+        }, options);
     }
     onTurn(context, next) {
         // Filter out non-message activities
@@ -32,7 +80,7 @@ class QnAMaker {
             return next();
         }
         // Route request
-        if (this.settings.answerBeforeNext) {
+        if (this.options.answerBeforeNext) {
             // Attempt to answer user and only call next() if not answered
             return this.answer(context).then((answered) => {
                 return !answered ? next() : Promise.resolve();
@@ -52,7 +100,7 @@ class QnAMaker {
      * @param context Context for the current turn of conversation with the use.
      */
     answer(context) {
-        const { top, scoreThreshold } = this.settings;
+        const { top, scoreThreshold } = this.options;
         return this.generateAnswer(context.activity.text, top, scoreThreshold).then((answers) => {
             if (answers.length > 0) {
                 return context.sendActivity({ text: answers[0].answer, type: 'message' }).then(() => true);
@@ -70,24 +118,28 @@ class QnAMaker {
      * @param scoreThreshold (Optional) minimum answer score needed to be considered a match to questions. Defaults to a value of `0.001`.
      */
     generateAnswer(question, top, scoreThreshold) {
-        const { serviceEndpoint } = this.settings;
         const q = question ? question.trim() : '';
         if (q.length > 0) {
-            return this.callService(serviceEndpoint, question, typeof top === 'number' ? top : 1).then((answers) => {
+            return this.callService(this.endpoint, question, typeof top === 'number' ? top : 1).then((answers) => {
                 const minScore = typeof scoreThreshold === 'number' ? scoreThreshold : 0.001;
                 return answers.filter((ans) => ans.score >= minScore).sort((a, b) => b.score - a.score);
             });
         }
         return Promise.resolve([]);
     }
-    callService(serviceEndpoint, question, top) {
-        const url = `${serviceEndpoint}${BASEAPI_PATH}${this.settings.knowledgeBaseId}/generateanswer`;
+    callService(endpoint, question, top) {
+        const url = `${endpoint.host}/knowledgebases/${endpoint.knowledgeBaseId}/generateanswer`;
+        const headers = {};
+        if (endpoint.host.endsWith('v2.0') || endpoint.host.endsWith('v3.0')) {
+            headers['Ocp-Apim-Subscription-Key'] = endpoint.endpointKey;
+        }
+        else {
+            headers['Authorization'] = `EndpointKey ${endpoint.endpointKey}`;
+        }
         return request({
             url: url,
             method: 'POST',
-            headers: {
-                'Ocp-Apim-Subscription-Key': this.settings.subscriptionKey
-            },
+            headers: headers,
             json: {
                 question: question,
                 top: top

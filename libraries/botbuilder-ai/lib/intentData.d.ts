@@ -8,4 +8,6 @@
 export interface IntentData {
     /** Confidence in intent classification. */
     score: number;
+    /** Any extra properties */
+    [propName: string]: any;
 }

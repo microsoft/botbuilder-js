@@ -14,4 +14,6 @@ export interface InstanceData {
     text: string;
     /** Optional confidence in the recognition. */
     score?: number;
+    /** Any extra properties */
+    [propName: string]: any;
 }

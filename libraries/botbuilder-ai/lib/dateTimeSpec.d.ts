@@ -22,5 +22,5 @@ export interface DateTimeSpec {
      */
     type: string;
     /** Timex expressions. */
-    timex: [string];
+    timex: string[];
 }
