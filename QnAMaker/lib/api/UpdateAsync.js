@@ -5,7 +5,7 @@
 const {ServiceBase} = require('./serviceBase');
 class UpdateAsync extends ServiceBase {
     constructor() {
-        super('/knowledgebases/{kbId}/UpdateAsync');
+        super('/knowledgebases/{kbId}');
     }
 
     /**

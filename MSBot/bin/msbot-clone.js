@@ -1,5 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * Copyright(c) Microsoft Corporation.All rights reserved.
+ * Licensed under the MIT License.
+ */
 const chalk = require("chalk");
 const program = require("commander");
 program.Command.prototype.unknownOption = function (flag) {

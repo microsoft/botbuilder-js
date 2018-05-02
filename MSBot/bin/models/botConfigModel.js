@@ -1,5 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * Copyright(c) Microsoft Corporation.All rights reserved.
+ * Licensed under the MIT License.
+ */
 const schema_1 = require("../schema");
 const azureBotService_1 = require("./azureBotService");
 const dispatchService_1 = require("./dispatchService");

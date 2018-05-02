@@ -14,7 +14,7 @@ import { uuidValidate } from './utils';
 
 program.Command.prototype.unknownOption = function (flag: any) {
     console.error(chalk.default.redBright(`Unknown arguments: ${flag}`));
-    program.help();
+    showErrorHelp();
 };
 
 interface ConnectLuisArgs extends ILuisService {
@@ -51,14 +51,14 @@ if (process.argv.length < 3) {
             .then(processConnectDispatch)
             .catch((reason) => {
                 console.error(chalk.default.redBright(reason.toString().split('\n')[0]));
-                program.help();
+                showErrorHelp();
             });
     } else {
         BotConfig.Load(args.bot, args.secret)
             .then(processConnectDispatch)
             .catch((reason) => {
                 console.error(chalk.default.redBright(reason.toString().split('\n')[0]));
-                program.help();
+                showErrorHelp();
             });
     }
 }
@@ -90,7 +90,7 @@ async function processConnectDispatch(config: BotConfig): Promise<BotConfig> {
 
     const newService = new DispatchService(<IDispatchService><any>args);
 
-    const dispatchServices = <IConnectedService[]>( <any>args ).services;
+    const dispatchServices = <IConnectedService[]>(<any>args).services;
 
     if (<IConnectedService[]>dispatchServices) {
         for (let service of dispatchServices) {
@@ -111,4 +111,13 @@ async function processConnectDispatch(config: BotConfig): Promise<BotConfig> {
     await config.save();
     process.stdout.write(`Connected ${newService.type}:${newService.name} v${newService.version}`);
     return config;
+}
+
+function showErrorHelp()
+{
+    program.outputHelp((str) => {
+        console.error(str);
+        return '';
+    });
+    process.exit(1);
 }

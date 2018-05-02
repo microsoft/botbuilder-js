@@ -16,10 +16,12 @@ const { getServiceManifest, getCategoryManifest, getNamedArgsMap } = require('./
  * @param args The arguments input by the user
  * @returns {Promise<void>}
  */
-module.exports = async function help(args) {
+module.exports = async function help(args, output) {
+    if (!output)
+        output = process.stderr;
 
-    process.stdout.write('LUIS Command Line Interface - © 2018 Microsoft Corporation\n\n');
-    const helpContents = await getHelpContents(args);
+    output.write('LUIS Command Line Interface - © 2018 Microsoft Corporation\n\n');
+    const helpContents = await getHelpContents(args, output);
 
     let width = windowSize ? windowSize.width : 250;
     let leftColWidth = 0;
@@ -37,7 +39,7 @@ module.exports = async function help(args) {
     }
 
     helpContents.forEach(helpContent => {
-        process.stdout.write(chalk.white.bold(helpContent.head + '\n'));
+        output.write(chalk.white.bold(helpContent.head + '\n'));
         if (helpContent.table && helpContent.table[0].length > 0) {
             const rows = helpContent.table[0].length;
             let i = rows - 1;
@@ -62,9 +64,9 @@ module.exports = async function help(args) {
                 wordWrap: true
             });
             table.push(...helpContent.table);
-            process.stdout.write(table.toString());
+            output.write(table.toString());
         }
-        process.stdout.write('\n\n');
+        output.write('\n\n');
     });
 }
 
@@ -75,34 +77,34 @@ module.exports = async function help(args) {
 * @param args The arguments input by the user
 * @returns {Promise<*>}
 */
-async function getHelpContents(args) {
+async function getHelpContents(args, output) {
     if ('!' in args) {
-        return getAllCommands();
+        return getAllCommands(process.stdout);
     }
 
     if (args._.length == 0) {
-        return getGeneralHelpContents();
+        return getGeneralHelpContents(output);
     }
     else if (args._.length == 1) {
-        return getVerbHelp(args._[0]);
+        return getVerbHelp(args._[0], output);
     } else if (args._.length >= 2) {
         const serviceManifest = getServiceManifest(args);
         if (serviceManifest) {
             const { operation } = serviceManifest;
 
-            process.stdout.write(`${operation.description}\n\n`);
-            process.stdout.write(`Usage:\n${chalk.cyan.bold(operation.command)}\n\n`);
+            output.write(`${operation.description}\n\n`);
+            output.write(`Usage:\n${chalk.cyan.bold(operation.command)}\n\n`);
         } else {
-            return getVerbHelp(args._[0]);
+            return getVerbHelp(args._[0], output);
         }
     }
 
     const serviceManifest = getServiceManifest(args);
     if (serviceManifest) {
-        return getHelpContentsForService(serviceManifest);
+        return getHelpContentsForService(serviceManifest, output);
     }
 
-    return getGeneralHelpContents();
+    return getGeneralHelpContents(output);
 }
 
 
@@ -133,7 +135,7 @@ let globalArgs =
  *
  * @returns {*[]}
  */
-function getGeneralHelpContents() {
+function getGeneralHelpContents(output) {
     let operation;
     let verbs = [];
     let options = {
@@ -167,7 +169,7 @@ function getGeneralHelpContents() {
  *
  * @returns {*[]}
  */
-function getVerbHelp(verb) {
+function getVerbHelp(verb, output) {
     let operation;
     let targets = [];
     let options = {
@@ -181,7 +183,7 @@ function getVerbHelp(verb) {
 
     switch (verb) {
         case "query":
-            process.stdout.write(chalk.cyan.bold("luis query -q <querytext> --region <region>\n\n"))
+            output.write(chalk.cyan.bold("luis query -q <querytext> --region <region>\n\n"))
             options.table.push([chalk.cyan.bold("-q <query>"), "query to get a LUIS prediction for"]);
             options.table.push([chalk.cyan.bold("--subscriptionKey"), "Specifies the LUIS subscriptionKey. Overrides the .luisrc value and the LUIS_SUBSCRIPTION_KEY environment variable."]);
             options.table.push([chalk.cyan.bold("--region <region>"), "region to call"]);
@@ -191,7 +193,7 @@ function getVerbHelp(verb) {
             return sections;
 
         case "set":
-            process.stdout.write(chalk.cyan.bold("luis set <.luisrcSetting> <value>\n\n"))
+            output.write(chalk.cyan.bold("luis set <.luisrcSetting> <value>\n\n"))
             options.table.push([chalk.cyan.bold("application <appIdOrName>"), "change the active application id "]);
             options.table.push([chalk.cyan.bold("version <version>"), "change the active version id "]);
             options.table.push([chalk.cyan.bold("authoringKey <authoringKey>"), "change the active authoringKey◘"]);
@@ -222,7 +224,7 @@ function getVerbHelp(verb) {
 
 
     if (targets.length == 0)
-        return getGeneralHelpContents();
+        return getGeneralHelpContents(output);
 
     targets.sort();
     for (let verb of targets) {
@@ -241,7 +243,7 @@ function getVerbHelp(verb) {
  *
  * @returns {*[]}
  */
-function getAllCommands() {
+function getAllCommands(output) {
     const table = [];
     let resourceTypes = [];
     let tables = {};
@@ -284,7 +286,7 @@ function getAllCommands() {
  *
  * @returns {Array}
  */
-function getHelpContentsForService(serviceManifest) {
+function getHelpContentsForService(serviceManifest, output) {
     const { operation } = serviceManifest;
     const operations = serviceManifest.operation ? [operation] : serviceManifest.operations;
 

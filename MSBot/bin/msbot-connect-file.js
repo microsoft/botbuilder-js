@@ -1,5 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * Copyright(c) Microsoft Corporation.All rights reserved.
+ * Licensed under the MIT License.
+ */
 const chalk = require("chalk");
 const program = require("commander");
 const path = require("path");
@@ -7,7 +11,7 @@ const BotConfig_1 = require("./BotConfig");
 const fileService_1 = require("./models/fileService");
 program.Command.prototype.unknownOption = function (flag) {
     console.error(chalk.default.redBright(`Unknown arguments: ${flag}`));
-    program.help();
+    showErrorHelp();
 };
 program
     .name('msbot connect file <path>')
@@ -28,7 +32,7 @@ else {
             .then(processConnectFile)
             .catch((reason) => {
             console.error(chalk.default.redBright(reason.toString().split('\n')[0]));
-            program.help();
+            showErrorHelp();
         });
     }
     else {
@@ -36,7 +40,7 @@ else {
             .then(processConnectFile)
             .catch((reason) => {
             console.error(chalk.default.redBright(reason.toString().split('\n')[0]));
-            program.help();
+            showErrorHelp();
         });
     }
 }
@@ -54,5 +58,12 @@ async function processConnectFile(config) {
     await config.save();
     process.stdout.write(`Connected ${newService.type}:${newService.name} ${newService.filePath}`);
     return config;
+}
+function showErrorHelp() {
+    program.outputHelp((str) => {
+        console.error(str);
+        return '';
+    });
+    process.exit(1);
 }
 //# sourceMappingURL=msbot-connect-file.js.map

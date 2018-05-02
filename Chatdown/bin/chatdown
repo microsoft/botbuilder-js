@@ -91,6 +91,11 @@ async function runProgram() {
         return process.stdout.write(require(path.join(__dirname, '../package.json')).version);
     }
 
+    if (args.h || args.help) {
+        help(process.stdout);
+        return 0;
+    }
+
     const fileContents = await getInput(args);
     if (fileContents) {
         const activities = await chatdown(fileContents, args);
@@ -99,9 +104,12 @@ async function runProgram() {
         if (typeof writeConfirmation === 'string') {
             process.stdout.write(chalk`{green Successfully wrote file:} {blue ${writeConfirmation}}\n`);
         }
+        return 0;
     }
-    else
+    else {
         help();
+        return -1;
+    }
 }
 
 /**
@@ -114,7 +122,7 @@ async function runProgram() {
  */
 function exitWithError(error) {
     if (error instanceof Error) {
-        process.stdout.write(chalk.red(error));
+        process.stderr.write(chalk.red(error));
     } else {
         help();
     }

@@ -2,17 +2,22 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const chalk = require("chalk");
+const process = require("process");
 const program = require("commander");
 const pkg = require('../package.json');
 const semver = require('semver');
 let requiredVersion = pkg.engines.node;
 if (!semver.satisfies(process.version, requiredVersion)) {
-    console.log(`Required node version ${requiredVersion} not satisfied with current version ${process.version}.`);
+    console.error(`Required node version ${requiredVersion} not satisfied with current version ${process.version}.`);
     process.exit(1);
 }
 program.Command.prototype.unknownOption = function (flag) {
     console.error(chalk.default.redBright(`Unknown arguments: ${process.argv.slice(2).join(' ')}`));
-    program.help();
+    program.outputHelp((str) => {
+        console.error(str);
+        return '';
+    });
+    process.exit(1);
 };
 program
     .version(pkg.version, '-V, --Version')
@@ -36,6 +41,10 @@ const args = program.parse(process.argv);
 if (args) {
     const a = process.argv.slice(2);
     console.error(chalk.default.redBright(`Unknown arguments: ${a.join(' ')}`));
-    program.help();
+    program.outputHelp((str) => {
+        console.error(str);
+        return '';
+    });
+    process.exit(1);
 }
 //# sourceMappingURL=msbot.js.map

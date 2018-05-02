@@ -1,10 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * Copyright(c) Microsoft Corporation.All rights reserved.
+ * Licensed under the MIT License.
+ */
 const chalk = require("chalk");
 const program = require("commander");
 program.Command.prototype.unknownOption = function (flag) {
     console.error(chalk.default.redBright(`Unknown arguments: ${process.argv.slice(2).join(' ')}`));
-    program.help();
+    showErrorHelp();
 };
 program
     .name('msbot connect')
@@ -19,6 +23,13 @@ const args = program.parse(process.argv);
 if (args) {
     const a = process.argv.slice(2);
     console.error(chalk.default.redBright(`Unknown arguments: ${a.join(' ')}`));
-    program.help();
+    showErrorHelp();
+}
+function showErrorHelp() {
+    program.outputHelp((str) => {
+        console.error(str);
+        return '';
+    });
+    process.exit(1);
 }
 //# sourceMappingURL=msbot-connect.js.map

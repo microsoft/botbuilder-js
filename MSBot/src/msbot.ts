@@ -4,20 +4,24 @@
  * Licensed under the MIT License.
  */
 import * as chalk from 'chalk';
-
+import * as process from 'process';
 import * as program from 'commander';
 
 const pkg = require('../package.json');
 const semver = require('semver');
 let requiredVersion = pkg.engines.node;
 if (!semver.satisfies(process.version, requiredVersion)) {
-    console.log(`Required node version ${requiredVersion} not satisfied with current version ${process.version}.`);
+    console.error(`Required node version ${requiredVersion} not satisfied with current version ${process.version}.`);
     process.exit(1);
 }
 
 program.Command.prototype.unknownOption = function (flag: any) {
     console.error(chalk.default.redBright(`Unknown arguments: ${process.argv.slice(2).join(' ')}`));
-    program.help();
+    program.outputHelp((str) => {
+        console.error(str);
+        return '';
+    });
+    process.exit(1);
 };
 
 
@@ -52,5 +56,9 @@ const args = program.parse(process.argv);
 if (args) {
     const a = process.argv.slice(2);
     console.error(chalk.default.redBright(`Unknown arguments: ${a.join(' ')}`));
-    program.help();
+    program.outputHelp((str) => {
+        console.error(str);
+        return '';
+    });
+    process.exit(1);
 }

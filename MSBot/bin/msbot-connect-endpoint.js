@@ -1,5 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * Copyright(c) Microsoft Corporation.All rights reserved.
+ * Licensed under the MIT License.
+ */
 const chalk = require("chalk");
 const program = require("commander");
 const fs = require("fs-extra");
@@ -12,7 +16,7 @@ const schema_1 = require("./schema");
 const utils_1 = require("./utils");
 program.Command.prototype.unknownOption = function (flag) {
     console.error(chalk.default.redBright(`Unknown arguments: ${flag}`));
-    program.help();
+    showErrorHelp();
 };
 program
     .name('msbot connect endpoint')
@@ -29,7 +33,7 @@ program
 });
 let args = program.parse(process.argv);
 if (process.argv.length < 3) {
-    program.help();
+    showErrorHelp();
 }
 else {
     if (!args.bot) {
@@ -37,7 +41,7 @@ else {
             .then(processConnectEndpointArgs)
             .catch((reason) => {
             console.error(chalk.default.redBright(reason.toString().split('\n')[0]));
-            program.help();
+            showErrorHelp();
         });
     }
     else {
@@ -45,7 +49,7 @@ else {
             .then(processConnectEndpointArgs)
             .catch((reason) => {
             console.error(chalk.default.redBright(reason.toString().split('\n')[0]));
-            program.help();
+            showErrorHelp();
         });
     }
 }
@@ -92,5 +96,12 @@ async function processConnectEndpointArgs(config) {
     await config.save();
     process.stdout.write(`Connected ${newService.type}:${newService.name} ${newService.endpoint}`);
     return config;
+}
+function showErrorHelp() {
+    program.outputHelp((str) => {
+        console.error(str);
+        return '';
+    });
+    process.exit(1);
 }
 //# sourceMappingURL=msbot-connect-endpoint.js.map
