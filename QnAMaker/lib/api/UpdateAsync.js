@@ -8,7 +8,7 @@ class UpdateAsync extends ServiceBase {
     * 
     */
     updateKnowledgebase(params , updateKb/* UpdateKbOperationDTO */) {
-        return this.createRequest('', params, 'patch', updateKb);
+        return this.createRequest('', params, 'PATCH', updateKb);
     }
 }
 module.exports = UpdateAsync;
