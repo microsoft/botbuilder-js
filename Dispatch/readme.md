@@ -90,6 +90,30 @@ Supported file types:
 | .txt | Lines of utterances with f |
 | .json | Exported LUIS or QnA Maker json file | 
 
+
+## Removing dispatch source
+
+To remove one of the services from .dispatch file, run
+
+```shell
+dispatch remove -type luis -id 1090A345-2D89-4BED-99EF-1CE3E08B690E 
+dispatch remove -type qna -id 09DF8311-9MSA-L2I9-DJEE-4MT434481212 
+dispatch remove -type file -filePath c:\src\testmodule.json
+
+```
+
+Arguments
+
+| Option       | Description |
+| -----------  | ----------- |
+| -type        | luis, qna, file|
+| -id          | (required only if type is luis/qna) LUIS app id or QnA kb id - from application settings page)|
+| -name        | LUIS app name or QnA name (from application settings page) or module/file name for file type |
+| -filePath    | (Required only if type is file) Path to tsv file containing tab delimited intent and utterance fields or .txt file with an utterance on each line |
+| -dispatch    | (optional) Path to .dispatch file |
+| -dataFolder  | (optional) Working directory for tool |
+| -h           | Output usage information |
+
 ## Creating your dispatch model  
 
 To create, train and publish your new dispatch model, run
@@ -160,8 +184,45 @@ With the following options
 | Option               | Description                                                  |
 | ----------------     | ------------------------------------------------------------ |
 | -testFilePath        | Path to a tsv file with three (or two) fields: expected intent, weight and utterance in that order; the first line (header) will be skipped; the weight column is optional     |
-| -luisPredictingKey   | (optional, will be prompted) LUIS predicting key     |
-| -luisPredictingRegion| (optional, will be prompted) LUIS predicting region  |
+| -luisPredictingKey   | (optional) LUIS predicting key     |
+| -luisPredictingRegion| (optional) LUIS predicting region  |
+| -dispatch            | (optional) .dispatch file path    |
+| -dataFolder          | (optional) Output folder for tool |
+| -h                   | Output usage information |
+
+
+## Run prediction using your dispatch model  
+
+To run prediction againsts your new dispatch model, run
+
+```shell
+dispatch predict [options]
+```
+
+With the following options
+
+| Option               | Description                                                  |
+| ----------------     | ------------------------------------------------------------ |
+| -luisPredictingKey   | (optional) LUIS predicting key     |
+| -luisPredictingRegion| (optional) LUIS predicting region  |
+| -dispatch            | (optional) .dispatch file path    |
+| -dataFolder          | (optional) Output folder for tool |
+| -h                   | Output usage information |
+
+You'll then be prompted to enter the utterance you'd like to run prediction on.
+
+## Print dispatch configuration to console 
+
+To print your current dispatch configuration, run
+
+```shell
+dispatch list [options]
+```
+
+With the following options
+
+| Option               | Description                                                  |
+| ----------------     | ------------------------------------------------------------ |
 | -dispatch            | (optional) .dispatch file path    |
 | -dataFolder          | (optional) Output folder for tool |
 | -h                   | Output usage information |
