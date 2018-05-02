@@ -18,7 +18,7 @@ class Endpointkeys extends ServiceBase {
     * 
     */
     refreshEndpointKeys(params) {
-        return this.createRequest('', params, 'patch');
+        return this.createRequest('', params, 'PATCH');
     }
 }
 module.exports = Endpointkeys;

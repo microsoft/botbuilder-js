@@ -30,7 +30,7 @@ class Closedlists extends ServiceBase {
     * Adds a batch of sublists to an existing closedlist.
     */
     PatchClosedList(params , closedListModelPatchObject/* ClosedListModelPatchObject */) {
-        return this.createRequest('/{clEntityId}', params, 'patch', closedListModelPatchObject);
+        return this.createRequest('/{clEntityId}', params, 'PATCH', closedListModelPatchObject);
     }
     /**
     * Updates the closed list model.
