@@ -43,15 +43,15 @@ export class MessageFactory {
      *
      * @param text Text to include in the message.
      * @param speak (Optional) SSML to include in the message.
-     * @param inputHint (Optional) input hint for the message.
+     * @param inputHint (Optional) input hint for the message. Defaults to `acceptingInput`.
      */
     static text(text: string, speak?: string, inputHint?: InputHints|string): Partial<Activity> {
         const msg: Partial<Activity> = {
             type: ActivityTypes.Message,
-            text: text
+            text: text,
+            inputHint: inputHint || InputHints.AcceptingInput
         };
         if (speak) { msg.speak = speak }
-        if (inputHint) { msg.inputHint = inputHint }
         return msg;
     }
 
@@ -65,18 +65,18 @@ export class MessageFactory {
      * @param actions Array of card actions or strings to include. Strings will be converted to `messageBack` actions.
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
-     * @param inputHint (Optional) input hint for the message.
+     * @param inputHint (Optional) input hint for the message. Defaults to `acceptingInput`.
      */
     static suggestedActions(actions: (CardAction|string)[], text?: string, speak?: string, inputHint?: InputHints|string): Partial<Activity> {
         const msg: Partial<Activity> = {
             type: ActivityTypes.Message,
+            inputHint: inputHint || InputHints.AcceptingInput,
             suggestedActions: <SuggestedActions>{
                 actions: CardFactory.actions(actions)
             }
         };
         if (text) { msg.text = text; }
         if (speak) { msg.speak = speak }
-        if (inputHint) { msg.inputHint = inputHint }
         return msg;
     }
 
@@ -99,7 +99,7 @@ export class MessageFactory {
      * @param attachment Adaptive card to include in the message.
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
-     * @param inputHint (Optional) input hint for the message.
+     * @param inputHint (Optional) input hint for the message. Defaults to `acceptingInput`.
      */
     static attachment(attachment: Attachment, text?: string, speak?: string, inputHint?: InputHints|string): Partial<Activity> {
         return attachmentActivity(AttachmentLayoutTypes.List, [attachment], text, speak, inputHint);
@@ -179,10 +179,10 @@ function attachmentActivity(attachmentLayout: AttachmentLayoutTypes, attachments
     const msg: Partial<Activity> = {
         type: ActivityTypes.Message,
         attachmentLayout: attachmentLayout,
-        attachments: attachments
+        attachments: attachments,
+        inputHint: inputHint || InputHints.AcceptingInput
     };
     if (text) { msg.text = text }
     if (speak) { msg.speak = speak }
-    if (inputHint) { msg.inputHint = inputHint }
     return msg;
 }

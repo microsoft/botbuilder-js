@@ -178,14 +178,13 @@ export class TurnContext {
      * ```
      * @param activityOrText Activity or text of a message to send the user.
      * @param speak (Optional) SSML that should be spoken to the user for the message.
-     * @param inputHint (Optional) `InputHint` for the message sent to the user.
+     * @param inputHint (Optional) `InputHint` for the message sent to the user. Defaults to `acceptingInput`.
      */
     public sendActivity(activityOrText: string|Partial<Activity>, speak?: string, inputHint?: string): Promise<ResourceResponse|undefined> {
         let a: Partial<Activity>;
         if (typeof activityOrText === 'string') {
-            a = { text: activityOrText };
+            a = { text: activityOrText, inputHint: inputHint || InputHints.AcceptingInput };
             if (speak) { a.speak = speak }
-            if (inputHint) { a.inputHint = inputHint }
         } else {
             a = activityOrText;
         }

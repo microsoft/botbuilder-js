@@ -41,18 +41,16 @@ class MessageFactory {
      *
      * @param text Text to include in the message.
      * @param speak (Optional) SSML to include in the message.
-     * @param inputHint (Optional) input hint for the message.
+     * @param inputHint (Optional) input hint for the message. Defaults to `acceptingInput`.
      */
     static text(text, speak, inputHint) {
         const msg = {
             type: botbuilder_core_1.ActivityTypes.Message,
-            text: text
+            text: text,
+            inputHint: inputHint || botbuilder_core_1.InputHints.AcceptingInput
         };
         if (speak) {
             msg.speak = speak;
-        }
-        if (inputHint) {
-            msg.inputHint = inputHint;
         }
         return msg;
     }
@@ -66,11 +64,12 @@ class MessageFactory {
      * @param actions Array of card actions or strings to include. Strings will be converted to `messageBack` actions.
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
-     * @param inputHint (Optional) input hint for the message.
+     * @param inputHint (Optional) input hint for the message. Defaults to `acceptingInput`.
      */
     static suggestedActions(actions, text, speak, inputHint) {
         const msg = {
             type: botbuilder_core_1.ActivityTypes.Message,
+            inputHint: inputHint || botbuilder_core_1.InputHints.AcceptingInput,
             suggestedActions: {
                 actions: cardFactory_1.CardFactory.actions(actions)
             }
@@ -80,9 +79,6 @@ class MessageFactory {
         }
         if (speak) {
             msg.speak = speak;
-        }
-        if (inputHint) {
-            msg.inputHint = inputHint;
         }
         return msg;
     }
@@ -105,7 +101,7 @@ class MessageFactory {
      * @param attachment Adaptive card to include in the message.
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
-     * @param inputHint (Optional) input hint for the message.
+     * @param inputHint (Optional) input hint for the message. Defaults to `acceptingInput`.
      */
     static attachment(attachment, text, speak, inputHint) {
         return attachmentActivity(botbuilder_core_1.AttachmentLayoutTypes.List, [attachment], text, speak, inputHint);
@@ -183,16 +179,14 @@ function attachmentActivity(attachmentLayout, attachments, text, speak, inputHin
     const msg = {
         type: botbuilder_core_1.ActivityTypes.Message,
         attachmentLayout: attachmentLayout,
-        attachments: attachments
+        attachments: attachments,
+        inputHint: inputHint || botbuilder_core_1.InputHints.AcceptingInput
     };
     if (text) {
         msg.text = text;
     }
     if (speak) {
         msg.speak = speak;
-    }
-    if (inputHint) {
-        msg.inputHint = inputHint;
     }
     return msg;
 }

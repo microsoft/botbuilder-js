@@ -142,17 +142,14 @@ class TurnContext {
      * ```
      * @param activityOrText Activity or text of a message to send the user.
      * @param speak (Optional) SSML that should be spoken to the user for the message.
-     * @param inputHint (Optional) `InputHint` for the message sent to the user.
+     * @param inputHint (Optional) `InputHint` for the message sent to the user. Defaults to `acceptingInput`.
      */
     sendActivity(activityOrText, speak, inputHint) {
         let a;
         if (typeof activityOrText === 'string') {
-            a = { text: activityOrText };
+            a = { text: activityOrText, inputHint: inputHint || botframework_schema_1.InputHints.AcceptingInput };
             if (speak) {
                 a.speak = speak;
-            }
-            if (inputHint) {
-                a.inputHint = inputHint;
             }
         }
         else {
