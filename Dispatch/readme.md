@@ -10,7 +10,7 @@ Use the Dispatch model in cases when:
 ## Pre-requisite
 
 - [Node.js](https://nodejs.org/) version 8.5 or higher
-
+- For installation on Linux Ubuntu, please pre-install .NET Core runtime by following instructions on this page: https://www.microsoft.com/net/download/linux-package-manager/ubuntu16-04/sdk-current.
 
 ## Installation
 To install simply invoke npm 
@@ -82,6 +82,37 @@ Arguments
 | -dataFolder  | (optional) Working directory for tool |
 | -h           | Output usage information |
 
+Supported file types:
+
+| File extension       | Description |
+| -----------  | ----------- |
+| .tsv | Lines of tab delimited fields of intent and utterance (in that order) |
+| .txt | Lines of utterances with intent as file name |
+| .json | Exported LUIS or QnA Maker json file | 
+
+
+## Removing dispatch source
+
+To remove one of the services from .dispatch file, run
+
+```shell
+dispatch remove -type luis -id 1090A345-2D89-4BED-99EF-1CE3E08B690E 
+dispatch remove -type qna -id 09DF8311-9MSA-L2I9-DJEE-4MT434481212 
+dispatch remove -type file -filePath c:\src\testmodule.json
+
+```
+
+Arguments
+
+| Option       | Description |
+| -----------  | ----------- |
+| -type        | luis, qna, file|
+| -id          | (required only if type is luis/qna) LUIS app id or QnA kb id - from application settings page)|
+| -name        | LUIS app name or QnA name (from application settings page) or module/file name for file type |
+| -filePath    | (Required only if type is file) Path to tsv file containing tab delimited intent and utterance fields or .txt file with an utterance on each line |
+| -dispatch    | (optional) Path to .dispatch file |
+| -dataFolder  | (optional) Working directory for tool |
+| -h           | Output usage information |
 
 ## Creating your dispatch model  
 
@@ -134,8 +165,8 @@ With the following options.  If not given, the tool will prompt for the required
 
 |Option | Description|
 | ------ | ----------- |
-| -luisPredictingKey    | (optional, will be prompted) LUIS predicting key     |
-| -luisPredictingRegion | (optional, will be prompted) LUIS predicting region  |
+| -luisSubscriptionKey    | (optional, will be prompted) Cognitive Service LUIS key from portal.azure.com  |
+| -luisSubscriptionRegion | (optional, will be prompted) Cognitive Service LUIS region from portal.azure.com  |
 | -dispatch            | (optional) .dispatch file path    |
 | -dataFolder           | (optional) Output folder for tool |
 | -h, --help            | Output usage information|
@@ -153,8 +184,45 @@ With the following options
 | Option               | Description                                                  |
 | ----------------     | ------------------------------------------------------------ |
 | -testFilePath        | Path to a tsv file with three (or two) fields: expected intent, weight and utterance in that order; the first line (header) will be skipped; the weight column is optional     |
-| -luisPredictingKey   | (optional, will be prompted) LUIS predicting key     |
-| -luisPredictingRegion| (optional, will be prompted) LUIS predicting region  |
+| -luisSubscriptionKey   | (optional) Cognitive Service LUIS key from portal.azure.com     |
+| -luisSubscriptionRegion| (optional) Cognitive Service LUIS region from portal.azure.com  |
+| -dispatch            | (optional) .dispatch file path    |
+| -dataFolder          | (optional) Output folder for tool |
+| -h                   | Output usage information |
+
+
+## Run prediction using your dispatch model  
+
+To run prediction againsts your new dispatch model, run
+
+```shell
+dispatch predict [options]
+```
+
+With the following options
+
+| Option               | Description                                                  |
+| ----------------     | ------------------------------------------------------------ |
+| -luisSubscriptionKey   | (optional) Cognitive Service LUIS key from portal.azure.com    |
+| -luisSubscriptionRegion| (optional) Cognitive Service LUIS region from portal.azure.com  |
+| -dispatch            | (optional) .dispatch file path    |
+| -dataFolder          | (optional) Output folder for tool |
+| -h                   | Output usage information |
+
+You'll then be prompted to enter the utterance you'd like to run prediction on.
+
+## Print dispatch configuration to console 
+
+To print your current dispatch configuration, run
+
+```shell
+dispatch list [options]
+```
+
+With the following options
+
+| Option               | Description                                                  |
+| ----------------     | ------------------------------------------------------------ |
 | -dispatch            | (optional) .dispatch file path    |
 | -dataFolder          | (optional) Output folder for tool |
 | -h                   | Output usage information |
@@ -171,7 +239,7 @@ dispatch init -name mybot_dispatch -luisAuthoringKey <luis_authoring_key> -luisA
 dispatch add -name LuisChitChat -type luis -id <luis_app_id> -name <luis_app_name> -version <luis_app_version> -key <luis_app_authoring_key>
 dispatch add -name MyKnowledgeBase -type qna -id <qna_kb_id> -name <kb_name> -key <qna_maker_key>
 dispatch create
-dispatch eval -luisPredictingKey <azure_luis_key> -luisPredictingRegion <azure_luis_region>
+dispatch eval -luisSubscriptionKey <azure_luis_key> -luisSubscriptionRegion <azure_luis_region>
 ```
 
 The output is Summary.html file located in local file system directory where the commands were issued. It includes all the evaluation results and suggestions for improving the bot components.
@@ -184,7 +252,7 @@ Evaluate a LUIS model performing cross validation:
 dispatch init -name mybot_dispatch -luisAuthoringKey <luis_authoring_key> -luisAuthoringRegion <region>
 dispatch add -name LuisChitChat -type luis -id <luis_app_id> -name <luis_app_name> -version <luis_app_version> -key <luis_app_authoring_key>
 dispatch create -hierarchical false
-dispatch eval -luisPredictingKey <azure_luis_key> -luisPredictingRegion <azure_luis_region>
+dispatch eval -luisSubscriptionKey <azure_luis_key> -luisSubscriptionRegion <azure_luis_region>
 ```
 
 The output, Summary.html, contains all the evaluation results. The file is located in local file system directory where the commands were issued.
