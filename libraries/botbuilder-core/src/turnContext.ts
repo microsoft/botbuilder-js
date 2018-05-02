@@ -212,17 +212,19 @@ export class TurnContext {
      * @param activities One or more activities to send to the user.
      */
     public sendActivities(activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
+        let sentNonTraceActivity = false;
         const ref = TurnContext.getConversationReference(this.activity);
         const output = activities.map((a) => {
             const o = TurnContext.applyConversationReference(Object.assign({}, a), ref);
             if (!o.type) { o.type = ActivityTypes.Message }
+            if (o.type !== ActivityTypes.Trace) { sentNonTraceActivity = true }
             return o;
         });
         return this.emit(this._onSendActivities, output, () => {
             return this.adapter.sendActivities(this, output)
                 .then((responses) => {
                     // Set responded flag
-                    this.responded = true;
+                    if (sentNonTraceActivity) { this.responded = true }
                     return responses;
                 });
         });

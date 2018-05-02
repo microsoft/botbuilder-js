@@ -180,11 +180,15 @@ class TurnContext {
      * @param activities One or more activities to send to the user.
      */
     sendActivities(activities) {
+        let sentNonTraceActivity = false;
         const ref = TurnContext.getConversationReference(this.activity);
         const output = activities.map((a) => {
             const o = TurnContext.applyConversationReference(Object.assign({}, a), ref);
             if (!o.type) {
                 o.type = botframework_schema_1.ActivityTypes.Message;
+            }
+            if (o.type !== botframework_schema_1.ActivityTypes.Trace) {
+                sentNonTraceActivity = true;
             }
             return o;
         });
@@ -192,7 +196,9 @@ class TurnContext {
             return this.adapter.sendActivities(this, output)
                 .then((responses) => {
                 // Set responded flag
-                this.responded = true;
+                if (sentNonTraceActivity) {
+                    this.responded = true;
+                }
                 return responses;
             });
         });
