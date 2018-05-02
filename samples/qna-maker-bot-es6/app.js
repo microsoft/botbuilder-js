@@ -17,8 +17,8 @@ const adapter = new BotFrameworkAdapter({
 // Add QnA Maker middleware
 // The exported Knowledge Base can be found under `smartLightFAQ.tsv`.
 const qnaMaker = new QnAMaker({
-    knowledgeBaseId: "11b09dd1-687a-4784-9c8a-d6532e65535d",
-    subscriptionKey: "6f24c2ab835645c38e2b28b7c24e08fa",
+    knowledgeBaseId: '',
+    subscriptionKey: '',
     answerBeforeNext: true
 });
 adapter.use(qnaMaker);

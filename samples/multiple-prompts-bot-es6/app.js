@@ -1,4 +1,4 @@
-const { BotFrameworkAdapter, MemoryStorage, ConversationState, UserState } = require('botbuilder');
+const { BotFrameworkAdapter, BotStateSet, MemoryStorage, ConversationState, UserState } = require('botbuilder');
 const { DialogSet, TextPrompt, NumberPrompt } = require('botbuilder-dialogs');
 const restify = require('restify');
 
@@ -14,9 +14,11 @@ const adapter = new BotFrameworkAdapter({
     appPassword: process.env.MICROSOFT_APP_PASSWORD 
 });
 
-// Add conversation state middleware
-const conversationState = new ConversationState(new MemoryStorage());
-adapter.use(conversationState);
+// Add state middleware
+const storage = new MemoryStorage();
+const convoState = new ConversationState(storage);
+const userState = new UserState(storage);
+adapter.use(new BotStateSet(convoState, userState));
 
 const dialogs = new DialogSet();
 
@@ -44,12 +46,12 @@ dialogs.add('gatherInfo', [
         await dialogContext.prompt('namePrompt', 'What is your name?');
     },
     async (dialogContext, value) => {
-        const state = conversationState.get(dialogContext.context);
+        const state = convoState.get(dialogContext.context);
         state.name = value;
         await dialogContext.prompt('agePrompt', 'What is your age?');
     },
     async (dialogContext, value) => {
-        const state = conversationState.get(dialogContext.context);
+        const state = convoState.get(dialogContext.context);
         state.age = value;
         await dialogContext.context.sendActivity(`Your name is ${state.name} and your age is ${state.age}`);
         await dialogContext.end();
@@ -61,12 +63,12 @@ dialogs.add('gatherInfo', [
 server.post('/api/messages', (req, res) => {
     // Route received request to adapter for processing
     adapter.processActivity(req, res, async (context) => {
-        const state = conversationState.get(context);
+        const state = convoState.get(context);
         const dc = dialogs.createContext(context, state);
-
-        if (context.activity.type === 'message') {
+        const isMessage = context.activity.type === 'message';
+        if (!context.responded) {
             await dc.continue();
-            if (!context.responded) {
+            if (!context.responded && isMessage) {
                 await dc.begin('gatherInfo');
             }
         }

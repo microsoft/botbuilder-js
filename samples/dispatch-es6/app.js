@@ -1,4 +1,4 @@
-const { BotFrameworkAdapter, ConversationState, MemoryStorage, TurnContext } = require('botbuilder');
+const { BotFrameworkAdapter, BotStateSet, ConversationState, MemoryStorage, TurnContext, UserState } = require('botbuilder');
 const { LuisRecognizer, QnAMaker } = require('botbuilder-ai');
 const { DialogSet } = require('botbuilder-dialogs');
 const restify = require('restify');
@@ -52,13 +52,16 @@ const faq = new QnAMaker({
     serviceEndpoint: 'https://westus.api.cognitive.microsoft.com/'
 });
 
-// create conversation state
-const conversationState = new ConversationState(new MemoryStorage());
-adapter.use(conversationState);
+// Add state middleware
+const storage = new MemoryStorage();
+const convoState = new ConversationState(storage);
+const userState = new UserState(storage);
+adapter.use(new BotStateSet(convoState, userState));
 
-// register some dialogs for usage with the LUIS apps that are being dispatched to
+// Register some dialogs for usage with the LUIS apps that are being dispatched to
 const dialogs = new DialogSet();
 
+// Helper function to retrieve specific entities from LUIS results
 function findEntities(entityName, entityResults) {
     let entities = []
     if (entityName in entityResults) {
@@ -69,14 +72,15 @@ function findEntities(entityName, entityResults) {
     return entities.length > 0 ? entities : undefined;
 }
 
-dialogs.add('HomeAutomation.TurnOff', [
+// Setup dialogs
+dialogs.add('HomeAutomation_TurnOff', [
     async (dialogContext, args) => {
         const devices = findEntities('HomeAutomation_Device', args.entities);
         const operations = findEntities('HomeAutomation_Operation', args.entities);
 
-        const state = conversationState.get(dialogContext.context);
+        const state = convoState.get(dialogContext.context);
         state.homeAutomationTurnOff = state.homeAutomationTurnOff ? state.homeAutomationTurnOff + 1 : 1;
-        await dialogContext.context.sendActivity(`${state.homeAutomationTurnOff}: You reached the "HomeAutomation.TurnOff" dialog.`);
+        await dialogContext.context.sendActivity(`${state.homeAutomationTurnOff}: You reached the "HomeAutomation_TurnOff" dialog.`);
         if (devices) {
             await dialogContext.context.sendActivity(`Found these "HomeAutomation_Device" entities:\n${devices.join(', ')}`);
         }
@@ -87,14 +91,14 @@ dialogs.add('HomeAutomation.TurnOff', [
     }
 ]);
 
-dialogs.add('HomeAutomation.TurnOn', [
+dialogs.add('HomeAutomation_TurnOn', [
     async (dialogContext, args) => {
         const devices = findEntities('HomeAutomation_Device', args.entities);
         const operations = findEntities('HomeAutomation_Operation', args.entities);
 
-        const state = conversationState.get(dialogContext.context);
+        const state = convoState.get(dialogContext.context);
         state.homeAutomationTurnOn = state.homeAutomationTurnOn ? state.homeAutomationTurnOn + 1 : 1;
-        await dialogContext.context.sendActivity(`${state.homeAutomationTurnOn}: You reached the "HomeAutomation.TurnOn" dialog.`);
+        await dialogContext.context.sendActivity(`${state.homeAutomationTurnOn}: You reached the "HomeAutomation_TurnOn" dialog.`);
         if (devices) {
             await dialogContext.context.sendActivity(`Found these "HomeAutomation_Device" entities:\n${devices.join(', ')}`);
         }
@@ -105,13 +109,13 @@ dialogs.add('HomeAutomation.TurnOn', [
     }
 ]);
 
-dialogs.add('Weather.GetForecast', [
+dialogs.add('Weather_GetForecast', [
     async (dialogContext, args) => {
         const locations = findEntities('Weather_Location', args.entities);
 
-        const state = conversationState.get(dialogContext.context);
+        const state = convoState.get(dialogContext.context);
         state.weatherGetForecast = state.weatherGetForecast ? state.weatherGetForecast + 1 : 1;
-        await dialogContext.context.sendActivity(`${state.weatherGetForecast}: You reached the "Weather.GetForecast" dialog.`);
+        await dialogContext.context.sendActivity(`${state.weatherGetForecast}: You reached the "Weather_GetForecast" dialog.`);
         if (locations) {
             await dialogContext.context.sendActivity(`Found these "Weather_Location" entities:\n${locations.join(', ')}`);
         }
@@ -119,13 +123,13 @@ dialogs.add('Weather.GetForecast', [
     }
 ]);
 
-dialogs.add('Weather.GetCondition', [
+dialogs.add('Weather_GetCondition', [
     async (dialogContext, args) => {
         const locations = findEntities('Weather_Location', args.entities);
 
-        const state = conversationState.get(dialogContext.context);
+        const state = convoState.get(dialogContext.context);
         state.weatherGetCondition = state.weatherGetCondition ? state.weatherGetCondition + 1 : 1;
-        await dialogContext.context.sendActivity(`${state.weatherGetCondition}: You reached the "Weather.GetCondition" dialog.`);
+        await dialogContext.context.sendActivity(`${state.weatherGetCondition}: You reached the "Weather_GetCondition" dialog.`);
         if (locations) {
             await dialogContext.context.sendActivity(`Found these "Weather_Location" entities:\n${locations.join(', ')}`);
         }
@@ -135,7 +139,7 @@ dialogs.add('Weather.GetCondition', [
 
 dialogs.add('None', [
     async (dialogContext) => {
-        const state = conversationState.get(dialogContext.context);
+        const state = convoState.get(dialogContext.context);
         state.noneIntent = state.noneIntent ? state.noneIntent + 1 : 1;
         await dialogContext.context.sendActivity(`${state.noneIntent}: You reached the "None" dialog.`);
         await dialogContext.end();
@@ -148,7 +152,7 @@ adapter.use(dispatcher);
 server.post('/api/messages', (req, res) => {
     adapter.processActivity(req, res, async (context) => {
         if (context.activity.type === 'message') {
-            const state = conversationState.get(context);
+            const state = convoState.get(context);
             const dc = dialogs.createContext(context, state);
 
             // Retrieve the LUIS results from our dispatcher LUIS application
@@ -157,24 +161,32 @@ server.post('/api/messages', (req, res) => {
             // Extract the top intent from LUIS and use it to select which LUIS application to dispatch to
             const topIntent = LuisRecognizer.topIntent(luisResults);
 
-            await dc.continue();
+            const isMessage = context.activity.type === 'message';
+            if (isMessage) {
+                switch (topIntent) {
+                    case 'l_homeautomation':
+                        const homeAutoResults = await homeAutomation.recognize(context);
+                        const topHomeAutoIntent = LuisRecognizer.topIntent(homeAutoResults);
+                        await dc.begin(topHomeAutoIntent, homeAutoResults);
+                        break;
+                    case 'l_weather':
+                        const weatherResults = await weather.recognize(context);
+                        const topWeatherIntent = LuisRecognizer.topIntent(weatherResults);
+                        await dc.begin(topWeatherIntent, weatherResults);
+                        break;
+                    case 'q_faq':
+                        await faq.answer(context);
+                        break;
+                    default:
+                        await dc.begin('None');
+                }
+            }
 
-            switch (topIntent) {
-                case 'l_homeautomation':
-                    const homeAutoResults = await homeAutomation.recognize(context);
-                    const topHomeAutoIntent = LuisRecognizer.topIntent(homeAutoResults);
-                    await dc.begin(topHomeAutoIntent, homeAutoResults);
-                    break;
-                case 'l_weather':
-                    const weatherResults = await weather.recognize(context);
-                    const topWeatherIntent = LuisRecognizer.topIntent(weatherResults);
-                    await dc.begin(topWeatherIntent, weatherResults);
-                    break;
-                case 'q_faq':
-                    await faq.answer(context);
-                    break;
-                default:
-                    await dc.begin('None');
+            if (!context.responded) {
+                await dc.continue();
+                if (!context.responded && isMessage) {
+                    await dc.context.sendActivity(`Hi! I'm the LUIS dispatch bot. Say something and LUIS will decide how the message should be routed.`);
+                }
             }
         }
     });

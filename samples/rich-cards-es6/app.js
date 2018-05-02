@@ -1,4 +1,4 @@
-const { BotFrameworkAdapter, MemoryStorage, ConversationState, CardFactory } = require('botbuilder');
+const { BotFrameworkAdapter, BotStateSet, ConversationState, CardFactory, MemoryStorage, UserState } = require('botbuilder');
 const { DialogSet, ChoicePrompt, ListStyle } = require('botbuilder-dialogs');
 const restify = require('restify');
 
@@ -14,9 +14,11 @@ const adapter = new BotFrameworkAdapter({
     appPassword: process.env.MICROSOFT_APP_PASSWORD
 });
 
-// Add conversation state middleware
-const conversationState = new ConversationState(new MemoryStorage());
-adapter.use(conversationState);
+// Add state middleware
+const storage = new MemoryStorage();
+const convoState = new ConversationState(storage);
+const userState = new UserState(storage);
+adapter.use(new BotStateSet(convoState, userState));
 
 const dialogs = new DialogSet();
 
@@ -120,7 +122,7 @@ dialogs.add('cardSelector', [
 // Listen for incoming requests 
 server.post('/api/messages', (req, res) => {
     adapter.processActivity(req, res, async (context) => {
-        const state = conversationState.get(context);
+        const state = convoState.get(context);
         const dc = dialogs.createContext(context, state);
 
         if (context.activity.type === 'message') {

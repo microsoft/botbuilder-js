@@ -4,13 +4,13 @@
   "description": "Bot Builder v4 example showing various Rich and Adaptive cards",
   "main": "app.js",
   "scripts": {
-    "start":"node app.js"
+    "start": "node app.js"
   },
   "author": "Microsoft",
   "license": "MIT",
   "dependencies": {
-    "botbuilder": "^4.0.0-m4.1",
-    "botbuilder-dialogs": "^4.0.0-m4.1",
+    "botbuilder": "^4.0.0-m4.2",
+    "botbuilder-dialogs": "^4.0.0-m4.2",
     "restify": "^6.3.4"
   }
 }

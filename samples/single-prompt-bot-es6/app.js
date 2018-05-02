@@ -1,4 +1,4 @@
-const { BotFrameworkAdapter, MemoryStorage, ConversationState } = require('botbuilder');
+const { BotFrameworkAdapter, BotStateSet, ConversationState, MemoryStorage, UserState } = require('botbuilder');
 const { createTextPrompt } = require('botbuilder-prompts');
 const restify = require('restify');
 
@@ -14,9 +14,11 @@ const adapter = new BotFrameworkAdapter({
     appPassword: process.env.MICROSOFT_APP_PASSWORD 
 });
 
-// Add conversation state middleware
-const conversationState = new ConversationState(new MemoryStorage());
-adapter.use(conversationState);
+// Add state middleware
+const storage = new MemoryStorage();
+const convoState = new ConversationState(storage);
+const userState = new UserState(storage);
+adapter.use(new BotStateSet(convoState, userState));
 
 // Create a validator for our namePrompt
 function nameValidator(context, value) {
@@ -32,7 +34,7 @@ const namePrompt = createTextPrompt(nameValidator);
 // Listen for incoming requests 
 server.post('/api/messages', (req, res) => {
     adapter.processActivity(req, res, async (context) => {
-        const state = conversationState.get(context);
+        const state = convoState.get(context);
         if (context.activity.type === 'conversationUpdate' && context.activity.membersAdded[0].name !== 'Bot') {
             state.prompt = 'name';
             await namePrompt.prompt(context, "Hello, I'm the demo bot. What is your name?");

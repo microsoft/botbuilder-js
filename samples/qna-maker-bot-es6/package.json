@@ -9,8 +9,8 @@
   "author": "Microsoft",
   "license": "MIT",
   "dependencies": {
-    "botbuilder": "^4.0.0-m4.1",
-    "botbuilder-ai": "^4.0.0-m4.1",
+    "botbuilder": "^4.0.0-m4.2",
+    "botbuilder-ai": "^4.0.0-m4.2",
     "restify": "^6.3.4"
   }
 }
