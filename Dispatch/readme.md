@@ -87,7 +87,7 @@ Supported file types:
 | File extension       | Description |
 | -----------  | ----------- |
 | .tsv | Lines of tab delimited fields of intent and utterance (in that order) |
-| .txt | Lines of utterances with f |
+| .txt | Lines of utterances with intent as file name |
 | .json | Exported LUIS or QnA Maker json file | 
 
 
