@@ -256,9 +256,9 @@ async function addAttachment(activity, arg) {
         // if it is not a card
         if (!isCard(contentType) && charset !== 'UTF-8') {
             // send as base64
-            content = new Buffer(content).toString('base64');
+            contentUrl = `data:${contentType};base64,${new Buffer(content).toString('base64')}`;
         }
-        return (activity.attachments || (activity.attachments = [])).push(new Attachment({ contentType, content }));
+        return (activity.attachments || (activity.attachments = [])).push(new Attachment({ contentType, contentUrl }));
     }
     // send as contentUrl
     return (activity.attachments || (activity.attachments = [])).push(new Attachment({ contentType, contentUrl }));

@@ -1,6 +1,6 @@
 {
   "name": "chatdown",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "description": "Tool for parsing chat files and outputting replayable activities",
   "main": "lib/index.js",
   "directories": {

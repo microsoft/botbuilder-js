@@ -19,7 +19,7 @@ web page attachment
 [Attachment=https://github.com/Microsoft/Botbuilder-DotNet]
 
 LulaBot: Here's card1
-[Attachment=test/image.png]
+[Attachment=test/bot-framework.png]
 
 LulaBot: Here's card2
 [Attachment=https://raw.githubusercontent.com/Microsoft/botbuilder-tools/master/Chatdown/test/samplecard.json adaptivecard]
