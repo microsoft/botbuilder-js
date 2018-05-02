@@ -223,12 +223,16 @@ export function createOAuthPrompt<O = TokenResponse>(settings: OAuthPromptSettin
             // Attempt to get the token
             return Promise.resolve()
                 .then(() => {
+                    const adapter = context.adapter as BotFrameworkAdapter;
                     if (isTokenResponseEvent(context)) {
                         return Promise.resolve(context.activity.value as TokenResponse);
+                    } else if (isTeamsVerificationInvoke(context)) {
+                        const code = context.activity.value.state;
+                        return context.sendActivity({ type: 'invokeResponse', value: { status: 200 }})
+                            .then(() => adapter.getUserToken(context, settings.connectionName, code));
                     } else if (context.activity.type === ActivityTypes.Message) {
                         const matched = /(\d{6})/.exec(context.activity.text);
                         if (matched && matched.length > 1) {
-                            const adapter = context.adapter as BotFrameworkAdapter;
                             return adapter.getUserToken(context, settings.connectionName, matched[1]);
                         } else {
                             return Promise.resolve(undefined);
@@ -262,5 +266,11 @@ export function createOAuthPrompt<O = TokenResponse>(settings: OAuthPromptSettin
 function isTokenResponseEvent(context: TurnContext): boolean {
     const a = context.activity;
     return (a.type === ActivityTypes.Event && a.name === 'tokens/response')
+
+}
+
+function isTeamsVerificationInvoke(context: TurnContext): boolean {
+    const a = context.activity;
+    return (a.type === ActivityTypes.Invoke && a.name === 'signin/verifyState')
 
 }
