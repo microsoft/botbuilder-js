@@ -5,7 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.  
  * Licensed under the MIT License.
  */
-import { Promiseable, Activity, TurnContext, Attachment, TokenResponse, BotFrameworkAdapter, CardFactory, MessageFactory, ActivityTypes } from 'botbuilder';
+import { 
+    Promiseable, Activity, TurnContext, Attachment, TokenResponse, BotFrameworkAdapter, CardFactory, 
+    MessageFactory, ActivityTypes, OAuthCard, SigninCard, ActionTypes
+} from 'botbuilder';
 import { PromptValidator } from './textPrompt';
 import { sendPrompt } from './internal';
 
@@ -183,7 +186,32 @@ export function createOAuthPrompt<O = TokenResponse>(settings: OAuthPromptSettin
                 }
 
                 // Send prompt
-                return sendPrompt(context, prompt);
+                return Promise.resolve(prompt)
+                    .then((p) => {
+                        switch (context.activity.channelId) {
+                            case "msteams":
+                            case "cortana":
+                            case "skype":
+                            case "skypeforbusiness":
+                                return (context.adapter as BotFrameworkAdapter).getSignInLink(context, settings.connectionName).then((link) => {
+                                    (p.attachments as Attachment[]).forEach(a => {
+                                        if (a.contentType === CardFactory.contentTypes.oauthCard) {
+                                            const card: OAuthCard = a.content;
+                                            const title = card.buttons[0].title;
+                                            a.contentType = CardFactory.contentTypes.signinCard;
+                                            a.content = {
+                                                text: card.text,
+                                                buttons: [{ type: ActionTypes.Signin, title: title, value: link }]
+                                            } as SigninCard;
+                                        }
+                                    });                     
+                                    return p;
+                                });
+                            default:
+                                return p;
+                        }
+                    })
+                    .then((p) => sendPrompt(context, p));
             } catch(err) {
                 return Promise.reject(err);
             }
@@ -195,12 +223,16 @@ export function createOAuthPrompt<O = TokenResponse>(settings: OAuthPromptSettin
             // Attempt to get the token
             return Promise.resolve()
                 .then(() => {
+                    const adapter = context.adapter as BotFrameworkAdapter;
                     if (isTokenResponseEvent(context)) {
                         return Promise.resolve(context.activity.value as TokenResponse);
+                    } else if (isTeamsVerificationInvoke(context)) {
+                        const code = context.activity.value.state;
+                        return context.sendActivity({ type: 'invokeResponse', value: { status: 200 }})
+                            .then(() => adapter.getUserToken(context, settings.connectionName, code));
                     } else if (context.activity.type === ActivityTypes.Message) {
                         const matched = /(\d{6})/.exec(context.activity.text);
                         if (matched && matched.length > 1) {
-                            const adapter = context.adapter as BotFrameworkAdapter;
                             return adapter.getUserToken(context, settings.connectionName, matched[1]);
                         } else {
                             return Promise.resolve(undefined);
@@ -234,5 +266,11 @@ export function createOAuthPrompt<O = TokenResponse>(settings: OAuthPromptSettin
 function isTokenResponseEvent(context: TurnContext): boolean {
     const a = context.activity;
     return (a.type === ActivityTypes.Event && a.name === 'tokens/response')
+
+}
+
+function isTeamsVerificationInvoke(context: TurnContext): boolean {
+    const a = context.activity;
+    return (a.type === ActivityTypes.Invoke && a.name === 'signin/verifyState')
 
 }

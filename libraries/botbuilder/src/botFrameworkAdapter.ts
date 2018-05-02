@@ -265,7 +265,7 @@ export class BotFrameworkAdapter extends BotAdapter {
     }
 
     /**
-     * Attempts to retrieve the token for a user that's in a logging flow.
+     * Attempts to retrieve the token for a user that's in a signin flow.
      * @param context Context for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.
      * @param magicCode (Optional) Optional user entered code to validate.
@@ -287,7 +287,6 @@ export class BotFrameworkAdapter extends BotAdapter {
      * Signs the user out with the token server.
      * @param context Context for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.
-     * @param magicCode (Optional) Optional user entered code to validate.
      */
     public signOutUser(context: TurnContext, connectionName: string): Promise<void> {
         try {
@@ -297,6 +296,38 @@ export class BotFrameworkAdapter extends BotAdapter {
             const userId = context.activity.from.id;
             const client = this.createOAuthApiClient(serviceUrl);
             return client.signOutUser(userId, connectionName);
+        } catch (err) {
+            return Promise.reject(err);
+        }
+    }
+
+    /**
+     * Gets a signin link from the token server that can be sent as part of a SigninCard.
+     * @param context Context for the current turn of conversation with the user.
+     * @param connectionName Name of the auth connection to use.
+     */
+    public getSignInLink(context: TurnContext, connectionName: string): Promise<string> {
+        try {
+            if (!context.activity.serviceUrl) { throw new Error(`BotFrameworkAdapter.getSignInLink(): missing serviceUrl`) }
+            const conversation = TurnContext.getConversationReference(context.activity);
+            const serviceUrl = context.activity.serviceUrl;
+            const client = this.createOAuthApiClient(serviceUrl);
+            return client.getSignInLink(conversation as ConversationReference, connectionName);
+        } catch (err) {
+            return Promise.reject(err);
+        }
+    }
+
+
+    /**
+     * Tells the token service to emulate the sending of OAuthCards for a channel.
+     * @param serviceUrl The URL of the channel server to query.  This can be retrieved from `context.activity.serviceUrl`. 
+     * @param emulate If `true` the token service will emulate the sending of OAuthCards.
+     */
+    public emulateOAuthCards(serviceUrl: string, emulate: boolean): Promise<void> {
+        try {
+            const client = this.createOAuthApiClient(serviceUrl);
+            return client.emulateOAuthCards(emulate);
         } catch (err) {
             return Promise.reject(err);
         }

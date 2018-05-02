@@ -19,7 +19,7 @@ export declare class OAuthApiClient {
     /**
      * @summary GetUserToken
      *
-     * Attempts to retrieve the token for a user that's in a logging flow.
+     * Attempts to retrieve the token for a user that's in a signin flow.
      *
      * @param {string} userId Id of the user being authenticated.
      *
@@ -37,23 +37,57 @@ export declare class OAuthApiClient {
      */
     getUserTokenWithHttpOperationResponse(userId: string, connectionName: string, magicCode?: string, options?: msRest.RequestOptionsBase): Promise<msRest.HttpOperationResponse>;
     /**
-   * @summary SignOutUser
-   *
-   * Signs the user out with the token server.
-   *
-   * @param {string} userId Id of the user to sign out.
-   *
-   * @param {string} connectionName Name of the auth connection to use.
-   *
-   * @param {RequestOptionsBase} [options] Optional Parameters.
-   *
-   * @returns {Promise} A promise is returned
-   *
-   * @resolve {HttpOperationResponse} - The deserialized result object.
-   *
-   * @reject {Error|ServiceError} - The error object.
-   */
+     * @summary SignOutUser
+     *
+     * Signs the user out with the token server.
+     *
+     * @param {string} userId Id of the user to sign out.
+     *
+     * @param {string} connectionName Name of the auth connection to use.
+     *
+     * @param {RequestOptionsBase} [options] Optional Parameters.
+     *
+     * @returns {Promise} A promise is returned
+     *
+     * @resolve {HttpOperationResponse} - The deserialized result object.
+     *
+     * @reject {Error|ServiceError} - The error object.
+     */
     signOutUserWithHttpOperationResponse(userId: string, connectionName: string, options?: msRest.RequestOptionsBase): Promise<msRest.HttpOperationResponse>;
+    /**
+     * @summary GetSignInLink
+     *
+     * Gets a signin link from the token server that can be sent as part of a SigninCard.
+     *
+     * @param {Models.ConversationReference} conversation conversation reference for the user signing in.
+     *
+     * @param {string} connectionName Name of the auth connection to use.
+     *
+     * @param {RequestOptionsBase} [options] Optional Parameters.
+     *
+     * @returns {Promise} A promise is returned
+     *
+     * @resolve {HttpOperationResponse} - The deserialized result object.
+     *
+     * @reject {Error|ServiceError} - The error object.
+     */
+    getSignInLinkWithHttpOperationResponse(conversation: Models.ConversationReference, connectionName: string, options?: msRest.RequestOptionsBase): Promise<msRest.HttpOperationResponse>;
+    /**
+     * @summary EmulateOAuthCards
+     *
+     * Tells the token service to emulate the sending of OAuthCards.
+     *
+     * @param {boolean} emulate If `true` the token service will emulate the sending of OAuthCards.
+     *
+     * @param {RequestOptionsBase} [options] Optional Parameters.
+     *
+     * @returns {Promise} A promise is returned
+     *
+     * @resolve {HttpOperationResponse} - The deserialized result object.
+     *
+     * @reject {Error|ServiceError} - The error object.
+     */
+    emulateOAuthCardsWithHttpOperationResponse(emulate: boolean, options?: msRest.RequestOptionsBase): Promise<msRest.HttpOperationResponse>;
     /**
      * @summary GetUserToken
      *
@@ -69,17 +103,43 @@ export declare class OAuthApiClient {
      */
     getUserToken(userId: string, connectionName: string, magicCode?: string, options?: msRest.RequestOptionsBase): Promise<Models.TokenResponse>;
     /**
-   * @summary SignOutUser
-   *
-   * Signs the user out with the token server.
-   *
-   * @param {string} userId Id of the user to sign out.
-   *
-   * @param {string} connectionName Name of the auth connection to use.
-   *
-   * @param {RequestOptionsBase} [options] Optional Parameters.
-   *
-   * @returns {Promise} A promise is returned
-   */
+     * @summary SignOutUser
+     *
+     * Signs the user out with the token server.
+     *
+     * @param {string} userId Id of the user to sign out.
+     *
+     * @param {string} connectionName Name of the auth connection to use.
+     *
+     * @param {RequestOptionsBase} [options] Optional Parameters.
+     *
+     * @returns {Promise} A promise is returned
+     */
     signOutUser(userId: string, connectionName: string, options?: msRest.RequestOptionsBase): Promise<void>;
+    /**
+     * @summary GetSignInLink
+     *
+     * Gets a signin link from the token server that can be sent as part of a SigninCard.
+     *
+     * @param { Models.ConversationReference} conversation conversation reference for the user signing in.
+     *
+     * @param {string} connectionName Name of the auth connection to use.
+     *
+     * @param {RequestOptionsBase} [options] Optional Parameters.
+     *
+     * @returns {Promise} A promise is returned
+     */
+    getSignInLink(conversation: Models.ConversationReference, connectionName: string, options?: msRest.RequestOptionsBase): Promise<string>;
+    /**
+     * @summary EmulateOAuthCards
+     *
+     * Tells the token service to emulate the sending of OAuthCards for a channel.
+     *
+     * @param {boolean} emulate If `true` the token service will emulate the sending of OAuthCards.
+     *
+     * @param {RequestOptionsBase} [options] Optional Parameters.
+     *
+     * @returns {Promise} A promise is returned
+     */
+    emulateOAuthCards(emulate: boolean, options?: msRest.RequestOptionsBase): Promise<void>;
 }
