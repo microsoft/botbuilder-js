@@ -86,9 +86,9 @@ Supported file types:
 
 | File extension       | Description |
 | -----------  | ----------- |
-| .tsv | Tab delimited lines of intents and utterances |
-| .txt | Lines of utterances |
-| .json | Exported LUIS/QnA maker json file | 
+| .tsv | Lines of tab delimited fields of intent and utterance (in that order) |
+| .txt | Lines of utterances with f |
+| .json | Exported LUIS or QnA Maker json file | 
 
 ## Creating your dispatch model  
 
