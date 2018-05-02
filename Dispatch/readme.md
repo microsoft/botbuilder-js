@@ -10,7 +10,7 @@ Use the Dispatch model in cases when:
 ## Pre-requisite
 
 - [Node.js](https://nodejs.org/) version 8.5 or higher
-- For installation on Linux Ubuntu, please pre-install .NET Core runtime by following instructions on this page: https://www.microsoft.com/net/download/linux-package-manager/ubuntu16-04/sdk-current.
+- For installation on Linux, please pre-install .NET Core runtime by following instructions on this page: https://docs.microsoft.com/en-us/dotnet/core/linux-prerequisites?tabs=netcore2x.
 
 ## Installation
 To install simply invoke npm 
