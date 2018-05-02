@@ -1,3 +1,7 @@
+/**
+ * Copyright(c) Microsoft Corporation.All rights reserved.
+ * Licensed under the MIT License.
+ */
 export enum ServiceType {
     Endpoint = 'endpoint',
     AzureBotService = 'abs',

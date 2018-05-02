@@ -1,37 +1,30 @@
+/**
+ * Copyright(c) Microsoft Corporation.All rights reserved.
+ * Licensed under the MIT License.
+ */
 const {ServiceBase} = require('../serviceBase');
-
 class Examples extends ServiceBase {
     constructor() {
         super('/apps/{appId}/versions/{versionId}/examples');
     }
 
     /**
-     * Returns examples to be reviewed.
-     */
-    reviewLabeledExamples(params) {
+    * Returns examples to be reviewed.
+    */
+    List(params) {
         return this.createRequest('', params, 'get');
     }
-
     /**
-     * Adds a batch of labeled examples to the specified application.
-
-     The maximum batch size is 100 items.
-
-     If the item has the ExampleId and a value between 0 - 99, the returned result will also include the ExampleId. This is helpful if items have errors.
-
-     Some items can pass while others fail. The returned result will indicate each item's status.
-
-     */
-    batchAddLabels(params, exampleLabelObjectArray/* ExampleLabelObjectArray */) {
+    * Adds a batch of labeled examples to the application.
+    */
+    Batch(params , exampleLabelObjectArray/* ExampleLabelObjectArray */) {
         return this.createRequest('', params, 'post', exampleLabelObjectArray);
     }
-
     /**
-     * Deletes the label with the specified ID.
-     */
-    deleteExampleLabels(params) {
+    * Deletes the labeled example with the specified ID.
+    */
+    Delete(params) {
         return this.createRequest('/{exampleId}', params, 'delete');
     }
 }
-
 module.exports = Examples;

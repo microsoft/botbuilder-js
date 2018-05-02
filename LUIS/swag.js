@@ -9,7 +9,7 @@
 const swagger = require('./swagger');
 const fs = require('fs-extra');
 const cc = require('camelcase');
-const {OperationCommandMap} = require('./lib/enums/operationCommandMap');
+const { OperationCommandMap } = require('./lib/enums/operationCommandMap');
 
 /**
  * Services template extends ServiceBase
@@ -122,7 +122,7 @@ function findEntity(swaggerOperation) {
  * @returns {string} The method alias to use as the <action> within the command
  */
 function getMethodAlias(swaggerOperation, method) {
-    const {parameters = []} = swaggerOperation;
+    const { parameters = [] } = swaggerOperation;
     if (method !== 'get') {
         return OperationCommandMap[method];
     }
@@ -164,13 +164,13 @@ function findRootAndNodeFromPath(path) {
 const modelTypesByName = {};
 Object.keys(swagger.definitions).forEach(key => {
     const def = swagger.definitions[key];
-    const {properties, items} = def;
+    const { properties, items } = def;
     if (items) {
         console.log(def);
     }
     if (properties) {
         const importsMap = {};
-        const model = {className: key, imports: [], props: [], assignments: [], docBlocks: []};
+        const model = { className: key, imports: [], props: [], assignments: [], docBlocks: [] };
         Object.keys(properties).forEach(propName => {
             const propDetails = properties[propName];
             const name = cc(propName);
@@ -180,9 +180,11 @@ Object.keys(swagger.definitions).forEach(key => {
             // import the dependency and hold for use
             // in the fromJSON() static
             if (propDetails.type === 'object') {
-                type = propDetails.$ref.split('/').pop();
-                model.imports.push(`const ${type} = require('./${name}');`);
-                model.assignments.push(assignmentTpl(type, name));
+                if (propDetails.$ref) {
+                    type = propDetails.$ref.split('/').pop();
+                    model.imports.push(`const ${type} = require('./${name}');`);
+                    model.assignments.push(assignmentTpl(type, name));
+                }
             } else if (propDetails.type === 'array') {
                 const $ref = (propDetails.items.$ref || '').split('/').pop() || propDetails.items.type;
                 type = `${$ref}[]`;
@@ -204,39 +206,40 @@ Object.keys(swagger.definitions).forEach(key => {
 // Builds the Service classes and luis.json
 const configsMap = {};
 Object.keys(swagger.paths).sort().forEach(pathName => {
-    const {root, node} = findRootAndNodeFromPath(pathName);
+    const { root, node } = findRootAndNodeFromPath(pathName);
     const fileName = root || node;
     const pathFragment = pathName.substr(pathName.indexOf(fileName) + fileName.length);
-    const {[pathName]: path} = swagger.paths;
+    const { [pathName]: path } = swagger.paths;
     const keys = Object.keys(path);
 
     let i = keys.length;
     while (i--) {
         const method = keys[i];
-        const {[method]: swaggerOperation} = path;
+        const { [method]: swaggerOperation } = path;
         // bail, we're deprecated - uncomment to include deprecated APIs
-        if (swaggerOperation.description.toLowerCase().includes('deprecated')) {
+        if (swaggerOperation.description && swaggerOperation.description.toLowerCase().includes('deprecated')) {
             continue;
         }
         // Get the category from the operationId.
         // e.g. pull out "apps" from "apps - Get applications list"
-        const category = swaggerOperation.operationId.replace(/(')/g, '').split('-')[0].trim();
+        const category = swaggerOperation.operationId.replace(/(')/g, '').split('_')[0].trim();
         const className = fileName.replace(/[\w]/, match => match.toUpperCase());
         // The category becomes the map key for
         // all APIs that match.
         if (!configsMap[category]) {
             configsMap[category] = {};
         }
-        const cfg = configsMap[category][fileName] || {className, category, url: pathName, operations: []};
+        const cfg = configsMap[category][fileName] || { className, category, url: pathName, operations: [] };
         const methodAlias = getMethodAlias(swaggerOperation, method);
         // Params that are contained in the .luisrc are excluded
         // unless the category is "apps" pr "versions" since these
         // will require the user to specify --appId or --versionId respectively.
         const params = (swaggerOperation.parameters || []).filter(param => (!/(body)/.test(param.in)));
-        const entityToConsume = findEntity(swaggerOperation) || {name: '', schema: {$ref: ''}};
+        const entityToConsume = findEntity(swaggerOperation) || { name: '', schema: { $ref: '' } };
 
         // Build the command example for the help output: luis <api group> <action> <target> <subtarget> --<args>
-        let command = `luis ${category}${(methodAlias ? ' ' + methodAlias : '')}`;
+        let command = `luis`;
+        command += `${(methodAlias ? ' ' + methodAlias : '')}`;
         if (fileName !== category) {
             command += ` ${fileName}`;
         }
@@ -248,14 +251,17 @@ Object.keys(swagger.paths).sort().forEach(pathName => {
             .slice()
             .filter(p => (/(apps|versions)/.test(category) || !/(appId|versionId)/.test(p.name)))
             .reduce((agg, param) => (agg += ` --${param.name} <${param.type}>`), '');
+        let description = (swaggerOperation.description) ? swaggerOperation.description.replace(/[\r]/g, '') : swaggerOperation.summary;
+
         // Build the operation entry for the manifest
         const operation = {
             method,
             methodAlias,
+            targets: [category.toLowerCase(), category],
             command: command.trim(),
             pathFragment,
             params,
-            description: swaggerOperation.description.replace(/[\r]/g, ''),
+            description: description,
         };
 
         if (!operation.params.length) {
@@ -276,13 +282,13 @@ Object.keys(swagger.paths).sort().forEach(pathName => {
         // e.g. transforms "apps - Get applications list" to "getApplicationsList"
         operation.name = swaggerOperation.operationId
             .replace(/(')/g, '') // single quotes exist somewhere in the manifest
-            .split('-')
+            .split('_')
             .pop()
             .replace(/( \w)/g, (...args) => args[2] ? args[0]
                 .trim()
                 .toUpperCase() : args[0]
-                .trim()
-                .toLowerCase());
+                    .trim()
+                    .toLowerCase());
 
         // If a body is expected in the request, keep
         // information about this in the luis.json
@@ -304,7 +310,7 @@ Object.keys(configsMap).forEach(category => {
         const clazz = classTpl(cfg[fileName]);
         const path = `${category}/${fileName}`;
         fs.outputFileSync(`generated/${path}.js`, clazz);
-        (classNames[category] || (classNames[category] = [])).push({path, name: cfg[fileName].className});
+        (classNames[category] || (classNames[category] = [])).push({ path, name: cfg[fileName].className });
     });
 });
 

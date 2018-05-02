@@ -1,13 +1,17 @@
+/**
+ * Copyright(c) Microsoft Corporation.All rights reserved.
+ * Licensed under the MIT License.
+ */
 const fs = require('fs-extra');
 const path = require('path');
 const uuid = require('uuid');
 const uuidv3 = require('uuid/v3');
 const mime = require('mime-types');
-const { AttachmentLayoutTypes } = require('botframework-schema');
+const { ActivityTypes, AttachmentLayoutTypes } = require('botframework-schema');
 const Activity = require('./serializable/activity');
-const ActivityField = require('./enums/activityField');
-const Instructions = require('./enums/instructions');
-const ActivityTypes = require('./enums/activityType');
+const activityfield = require('./enums/activityField');
+const instructions = require('./enums/instructions');
+const activitytypes = require('./enums/activityType');
 const { cardContentTypes, isCard } = require('./enums/cardContentTypes');
 const ChannelAccount = require('./serializable/channelAccount');
 const ConversationAccount = require('./serializable/conversationAccount');
@@ -144,9 +148,9 @@ async function readActivitiesFromAggregate(aggregate, currentActivity, recipient
         let split = match.indexOf('=');
         let typeOrField = split > 0 ? match.substring(0, split).trim() : match.trim();
         let rest = (split > 0) ? match.substring(split + 1).trim() : undefined;
-        const type = ActivityTypes[typeOrField.toLowerCase()];
-        const field = ActivityField[typeOrField.toLowerCase()];
-        const instruction = Instructions[typeOrField.toLowerCase()];
+        const type = activitytypes[typeOrField.toLowerCase()];
+        const field = activityfield[typeOrField.toLowerCase()];
+        const instruction = instructions[typeOrField.toLowerCase()];
         // This isn't an activity - bail
         if (!type && !field && !instruction) {
             // skip unknown tag
@@ -173,7 +177,7 @@ async function readActivitiesFromAggregate(aggregate, currentActivity, recipient
 
         if (instruction) {
             switch (instruction) {
-                case Instructions.delay:
+                case instructions.delay:
                     delay = parseInt(rest);
                     break;
             }
@@ -184,10 +188,10 @@ async function readActivitiesFromAggregate(aggregate, currentActivity, recipient
             // As more activity fields are supported,
             // this should become a util or helper class.
             switch (field) {
-                case ActivityField.attachment:
+                case activityfield.attachment:
                     await addAttachment(currentActivity, rest);
                     break;
-                case ActivityField.attachmentlayout:
+                case activityfield.attachmentlayout:
                     addAttachmentLayout(currentActivity, rest);
                     break;
             }
@@ -252,9 +256,12 @@ async function addAttachment(activity, arg) {
         // if it is not a card
         if (!isCard(contentType) && charset !== 'UTF-8') {
             // send as base64
-            content = new Buffer(content).toString('base64');
+            contentUrl = `data:${contentType};base64,${new Buffer(content).toString('base64')}`;
+            content = undefined;
+        } else {
+            contentUrl = undefined;
         }
-        return (activity.attachments || (activity.attachments = [])).push(new Attachment({ contentType, content }));
+        return (activity.attachments || (activity.attachments = [])).push(new Attachment({ contentType, contentUrl, content }));
     }
     // send as contentUrl
     return (activity.attachments || (activity.attachments = [])).push(new Attachment({ contentType, contentUrl }));

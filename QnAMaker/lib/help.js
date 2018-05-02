@@ -1,3 +1,7 @@
+/**
+ * Copyright(c) Microsoft Corporation.All rights reserved.
+ * Licensed under the MIT License.
+ */
 const Table = require('cli-table2');
 const chalk = require('chalk');
 const path = require('path');
@@ -292,7 +296,7 @@ function getHelpContentsForService(serviceManifest) {
                 ]
             };
         }
-        if (operation.name == 'createKnowledgeBase' || operation.name == 'getKnowledgebaseDetails') {
+        if (operation.name == 'createKnowledgebase' || operation.name == 'getKnowledgebaseDetails') {
             paramsHelp.table.push([chalk.cyan.bold(`--msbot`), `(OPTIONAL) Format the output as json for piping into msbot connect qna command`]);
         }
         if (paramsHelp.table.length > 0)

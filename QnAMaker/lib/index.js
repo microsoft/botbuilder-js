@@ -1,3 +1,7 @@
+/**
+ * Copyright(c) Microsoft Corporation.All rights reserved.
+ * Licensed under the MIT License.
+ */
 const {ServiceBase} = require('./api/serviceBase');
 const api = require('./api');
 const dataModels = require('./api/dataModels');

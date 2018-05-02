@@ -1,3 +1,7 @@
+/**
+ * Copyright(c) Microsoft Corporation.All rights reserved.
+ * Licensed under the MIT License.
+ */
 import { IAzureBotService, IBotConfig, IConnectedService, IDispatchService, IEndpointService, IFileService, ILuisService, IQnAService, ServiceType } from '../schema';
 import { AzureBotService } from './azureBotService';
 import { ConnectedService } from './connectedService';

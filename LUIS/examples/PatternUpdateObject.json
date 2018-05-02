@@ -1,6 +1,4 @@
 {
-  "id": 507628,
-  "name": "testPattern",
-  "pattern": "\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}\b",
-  "isActive": true
+  "name": "ModifiedEmailPattern",
+  "pattern": "\\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}\\b"
 }

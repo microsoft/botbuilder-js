@@ -1,29 +1,34 @@
+/**
+ * Copyright(c) Microsoft Corporation.All rights reserved.
+ * Licensed under the MIT License.
+ */
+
+
 class PrebuiltDomainModelCreateObject {
+    
+    /**
+    * @property {string} domainName
+    */
 
     /**
-     * @property {string} domainName
-     */
+    * @property {string} modelName
+    */
 
-    /**
-     * @property {string} modelName
-     */
-
-
-    constructor({domainName /* string */, modelName /* string */} = {}) {
-        Object.assign(this, {domainName /* string */, modelName /* string */});
+    
+    constructor({domainName /* string */,modelName /* string */} = {}) {
+        Object.assign(this, {domainName /* string */,modelName /* string */});
     }
 }
-
-PrebuiltDomainModelCreateObject.fromJSON = function (source) {
+PrebuiltDomainModelCreateObject.fromJSON = function(source) {
     if (!source) {
         return null;
     }
     if (Array.isArray(source)) {
         return source.map(PrebuiltDomainModelCreateObject.fromJSON);
     }
-
-    const {domainName /* string */, modelName /* string */} = source;
-    return new PrebuiltDomainModelCreateObject({domainName /* string */, modelName /* string */});
+    
+    const {domainName /* string */,modelName /* string */} = source;
+    return new PrebuiltDomainModelCreateObject({domainName /* string */,modelName /* string */});
 };
 
 module.exports = PrebuiltDomainModelCreateObject;

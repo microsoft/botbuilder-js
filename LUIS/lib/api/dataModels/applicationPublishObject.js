@@ -1,29 +1,38 @@
+/**
+ * Copyright(c) Microsoft Corporation.All rights reserved.
+ * Licensed under the MIT License.
+ */
+
+
 class ApplicationPublishObject {
+    
+    /**
+    * @property {string} versionId
+    */
 
     /**
-     * @property {string} versionId
-     */
+    * @property {boolean} isStaging
+    */
 
     /**
-     * @property {boolean} isStaging
-     */
+    * @property {string} region
+    */
 
-
-    constructor({versionId /* string */, isStaging /* boolean */} = {}) {
-        Object.assign(this, {versionId /* string */, isStaging /* boolean */});
+    
+    constructor({versionId /* string */,isStaging /* boolean */,region /* string */} = {}) {
+        Object.assign(this, {versionId /* string */,isStaging /* boolean */,region /* string */});
     }
 }
-
-ApplicationPublishObject.fromJSON = function (source) {
+ApplicationPublishObject.fromJSON = function(source) {
     if (!source) {
         return null;
     }
     if (Array.isArray(source)) {
         return source.map(ApplicationPublishObject.fromJSON);
     }
-
-    const {versionId /* string */, isStaging /* boolean */} = source;
-    return new ApplicationPublishObject({versionId /* string */, isStaging /* boolean */});
+    
+    const {versionId /* string */,isStaging /* boolean */,region /* string */} = source;
+    return new ApplicationPublishObject({versionId /* string */,isStaging /* boolean */,region /* string */});
 };
 
 module.exports = ApplicationPublishObject;

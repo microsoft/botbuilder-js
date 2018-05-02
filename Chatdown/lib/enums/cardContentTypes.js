@@ -1,3 +1,7 @@
+/**
+ * Copyright(c) Microsoft Corporation.All rights reserved.
+ * Licensed under the MIT License.
+ */
 const base = 'application/vnd.microsoft.card.';
 module.exports.cardContentTypes = {
     animation: `${base}animation`,

@@ -1,4 +1,8 @@
 #!/usr/bin/env node
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 const pkg = require('../package.json');
 const semver = require('semver');
 let requiredVersion = pkg.engines.node;
@@ -369,7 +373,7 @@ async function validateArguments(serviceManifest) {
  * @param error
  */
 async function handleError(error) {
-    process.stdout.write('\n' + chalk.red.bold(error + '\n\n'));
+    process.stderr.write('\n' + chalk.red.bold(error + '\n\n'));
     //    if (error.name === 'ArgumentError') {
     await help(args);
     //    }

@@ -1,16 +1,18 @@
+/**
+ * Copyright(c) Microsoft Corporation.All rights reserved.
+ * Licensed under the MIT License.
+ */
 const {ServiceBase} = require('../serviceBase');
-
 class Example extends ServiceBase {
     constructor() {
         super('/apps/{appId}/versions/{versionId}/example');
     }
 
     /**
-     * Adds a labeled example to the application.
-     */
-    addLabel(params, exampleLabelObject/* ExampleLabelObject */) {
+    * Adds a labeled example to the application.
+    */
+    Add(params , exampleLabelObject/* ExampleLabelObject */) {
         return this.createRequest('', params, 'post', exampleLabelObject);
     }
 }
-
 module.exports = Example;

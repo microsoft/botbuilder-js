@@ -1,0 +1,10 @@
+[
+  {
+    "pattern": "this is a [sample] pattern",
+    "intent": "SampleIntent"
+  },
+  {
+    "pattern": "this is another [sample] pattern",
+    "intent": "SampleIntent"
+  }
+]

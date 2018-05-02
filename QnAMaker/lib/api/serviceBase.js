@@ -1,3 +1,7 @@
+/**
+ * Copyright(c) Microsoft Corporation.All rights reserved.
+ * Licensed under the MIT License.
+ */
 const { insertParametersFromObject } = require('../utils/insertParametersFromObject');
 const deriveParamsFromPath = require('../utils/deriveParamsFromPath');
 
@@ -26,7 +30,7 @@ class ServiceBase {
      *
      * @param {string} pathFragment An additional fragment to append to the endpoint
      * @param {*} params An object containing the named params to be used to hydrate the tokenized url
-     * @param {'get'|'post'|'put'|'patch'|'delete'} method The method for the request
+     * @param {'get'|'post'|'put'|'PATCH'|'delete'} method The method for the request
      * @param {*} dataModel The data model to pass in as the request body
      * @returns {Promise<Response>} The promise representing the request
      */

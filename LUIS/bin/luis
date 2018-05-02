@@ -1,4 +1,8 @@
 #!/usr/bin/env node
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 const pkg = require('../package.json');
 const semver = require('semver');
 let requiredVersion = pkg.engines.node;
@@ -60,9 +64,9 @@ async function runProgram() {
         return await handleSetCommand(args, config);
     } else {
         const serviceManifest = getServiceManifest(args);
-        const requestBody = await validateArguments(serviceManifest);
+        const requestBody = await validateArguments(args, serviceManifest);
 
-        if (serviceManifest.operation.name == "deleteApplication") {
+        if (serviceManifest.operation.methodAlias == "delete" && serviceManifest.operation.target[0] == 'application') {
             if (!args.q) {
                 let getArgs = { _: ['get', 'application'] };
                 const getApplication = getServiceManifest(getArgs);
@@ -83,25 +87,33 @@ async function runProgram() {
         }
 
         // custom output
-        switch (serviceManifest.operation.name) {
-            case "importApplication":
-            case "addApplication":
-                let response  = await new Apps().getApplicationInfo({ authoringKey: config.authoringKey, appId: result });
-                result = JSON.parse(await response.text());
+        switch (serviceManifest.operation.target[0]) {
+            case "application":
+                switch (serviceManifest.operation.methodAlias) {
+                    case "add":
+                    case "import":
+                        let response = await new Apps().Get({ authoringKey: config.authoringKey, appId: result });
+                        result = JSON.parse(await response.text());
 
-            case "getApplicationInfo":
-                if (args.msbot) {
-                    process.stdout.write(JSON.stringify({
-                        type: "luis",
-                        name: result.name,
-                        id: result.id || result,
-                        appId: result.id || result,
-                        authoringKey: config.authoringKey,
-                        subscriptionKey: config.subscriptionKey || config.authoringKey,
-                        version: result.activeVersion || requestBody.initialVersionId
-                    }, null, 2));
-                } else {
-                    process.stdout.write(JSON.stringify(result, null, 2));
+                    case "get":
+                        if (args.msbot) {
+                            process.stdout.write(JSON.stringify({
+                                type: "luis",
+                                name: result.name,
+                                id: result.id || result,
+                                appId: result.id || result,
+                                authoringKey: config.authoringKey,
+                                subscriptionKey: config.subscriptionKey || config.authoringKey,
+                                version: result.activeVersion || requestBody.initialVersionId
+                            }, null, 2));
+                        } else {
+                            process.stdout.write(JSON.stringify(result, null, 2));
+                        }
+                        break;
+
+                    default:
+                        process.stdout.write(JSON.stringify(result, null, 2));
+                        break;
                 }
                 break;
 
@@ -251,22 +263,22 @@ function validateConfig(config) {
  *
  * @param serviceManifest
  */
-async function validateArguments(serviceManifest) {
+async function validateArguments(args, serviceManifest) {
     let error = new Error();
     let body = undefined;
 
     error.name = 'ArgumentError';
     if (!serviceManifest) {
-        error.message = 'Bad or missing arguments\n';
+        let verbs = ["add", "clone", "delete", "export", "get", "import", "list", "publish", "query", "set", "suggest", "train", "update"];
+        if (verbs.indexOf(args._[0]) < 0)
+            error.message = `'${args._[0]}' is not a valid action`;
+        else if (args._.length >= 2)
+            error.message = `'${args._[1]}' is not a valid resource`;
+        else
+            error.message = `missing resource\n`;
         throw error;
     }
-
     const { operation } = serviceManifest;
-    if (!operation) {
-        error.message = 'The operation does not exist\n';
-
-        throw error;
-    }
 
     const entitySpecified = typeof args.in === 'string';
     const entityRequired = !!operation.entityName;
@@ -277,16 +289,20 @@ async function validateArguments(serviceManifest) {
         }
         else {
             // make up a request body from command line args
-            switch (serviceManifest.operation.name) {
-                case "publishApplication":
-                    body = {
-                        versionId: args.versionId,
-                        isStaging: args.staging === true,
-                        region: args.region
-                    };
+            switch (serviceManifest.operation.target[0]) {
+                case "version":
+                    switch (serviceManifest.operation.methodAlias) {
+                        case "publish":
+                            body = {
+                                versionId: args.versionId,
+                                isStaging: args.staging === true,
+                                region: args.region
+                            };
+                            break;
+                    }
                     break;
                 default:
-                    error.message = `The ${operation.name} requires an input of type: ${operation.entityType}`;
+                    error.message = `The --in requires an input of type: ${operation.entityType}`;
                     throw error;
             }
         }
@@ -302,7 +318,7 @@ async function validateArguments(serviceManifest) {
  * @param error
  */
 async function handleError(error) {
-    process.stdout.write('\n' + chalk.red.bold(error + '\n\n'));
+    process.stderr.write('\n' + chalk.red.bold(error + '\n\n'));
     //    if (error.name === 'ArgumentError') {
     await help(args);
     //    }

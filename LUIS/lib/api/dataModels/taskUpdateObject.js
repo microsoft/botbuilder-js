@@ -1,23 +1,28 @@
+/**
+ * Copyright(c) Microsoft Corporation.All rights reserved.
+ * Licensed under the MIT License.
+ */
+
+
 class TaskUpdateObject {
-
+    
     /**
-     * @property {string} version
-     */
+    * @property {string} version
+    */
 
-
+    
     constructor({version /* string */} = {}) {
         Object.assign(this, {version /* string */});
     }
 }
-
-TaskUpdateObject.fromJSON = function (source) {
+TaskUpdateObject.fromJSON = function(source) {
     if (!source) {
         return null;
     }
     if (Array.isArray(source)) {
         return source.map(TaskUpdateObject.fromJSON);
     }
-
+    
     const {version /* string */} = source;
     return new TaskUpdateObject({version /* string */});
 };

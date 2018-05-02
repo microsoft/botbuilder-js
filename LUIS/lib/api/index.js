@@ -1,7 +1,12 @@
-module.exports.apps = require('./apps');
-module.exports.permissions = require('./permissions');
-module.exports.versions = require('./versions');
-module.exports.models = require('./models');
-module.exports.examples = require('./examples');
-module.exports.features = require('./features');
-module.exports.train = require('./train');
+/**
+ * Copyright(c) Microsoft Corporation.All rights reserved.
+ * Licensed under the MIT License.
+ */
+module.exports.Apps = require('./Apps');
+module.exports.Permissions = require('./Permissions');
+module.exports.Versions = require('./Versions');
+module.exports.Model = require('./Model');
+module.exports.Examples = require('./Examples');
+module.exports.Features = require('./Features');
+module.exports.Pattern = require('./Pattern');
+module.exports.Train = require('./Train');

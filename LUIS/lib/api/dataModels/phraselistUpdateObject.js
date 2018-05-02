@@ -1,47 +1,42 @@
+/**
+ * Copyright(c) Microsoft Corporation.All rights reserved.
+ * Licensed under the MIT License.
+ */
+
+
 class PhraselistUpdateObject {
+    
+    /**
+    * @property {string} phrases
+    */
 
     /**
-     * @property {string} phrases
-     */
+    * @property {string} name
+    */
 
     /**
-     * @property {string} name
-     */
+    * @property {boolean} isActive
+    */
 
     /**
-     * @property {boolean} isActive
-     */
+    * @property {boolean} isExchangeable
+    */
 
-    /**
-     * @property {boolean} isExchangeable
-     */
-
-
-    constructor({phrases /* string */, name /* string */, isActive /* boolean */, isExchangeable /* boolean */} = {}) {
-        Object.assign(this, {
-            phrases /* string */,
-            name /* string */,
-            isActive /* boolean */,
-            isExchangeable /* boolean */
-        });
+    
+    constructor({phrases /* string */,name /* string */,isActive /* boolean */,isExchangeable /* boolean */} = {}) {
+        Object.assign(this, {phrases /* string */,name /* string */,isActive /* boolean */,isExchangeable /* boolean */});
     }
 }
-
-PhraselistUpdateObject.fromJSON = function (source) {
+PhraselistUpdateObject.fromJSON = function(source) {
     if (!source) {
         return null;
     }
     if (Array.isArray(source)) {
         return source.map(PhraselistUpdateObject.fromJSON);
     }
-
-    const {phrases /* string */, name /* string */, isActive /* boolean */, isExchangeable /* boolean */} = source;
-    return new PhraselistUpdateObject({
-        phrases /* string */,
-        name /* string */,
-        isActive /* boolean */,
-        isExchangeable /* boolean */
-    });
+    
+    const {phrases /* string */,name /* string */,isActive /* boolean */,isExchangeable /* boolean */} = source;
+    return new PhraselistUpdateObject({phrases /* string */,name /* string */,isActive /* boolean */,isExchangeable /* boolean */});
 };
 
 module.exports = PhraselistUpdateObject;
