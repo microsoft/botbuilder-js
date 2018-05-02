@@ -159,10 +159,10 @@ export declare class BotFrameworkAdapter extends BotAdapter {
      * Lists the Conversations in which this bot has participated for a given channel server. The
      * channel server returns results in pages and each page will include a `continuationToken`
      * that can be used to fetch the next page of results from the server.
-     * @param serviceUrl The URL of the channel server to query.  This can be retrieved from `context.activity.serviceUrl`.
+     * @param contextOrServiceUrl The URL of the channel server to query or a TurnContext.  This can be retrieved from `context.activity.serviceUrl`.
      * @param continuationToken (Optional) token used to fetch the next page of results from the channel server. This should be left as `undefined` to retrieve the first page of results.
      */
-    getConversations(serviceUrl: string, continuationToken?: string): Promise<ConversationsResult>;
+    getConversations(contextOrServiceUrl: TurnContext | string, continuationToken?: string): Promise<ConversationsResult>;
     /**
      * Attempts to retrieve the token for a user that's in a signin flow.
      * @param context Context for the current turn of conversation with the user.
@@ -184,10 +184,10 @@ export declare class BotFrameworkAdapter extends BotAdapter {
     getSignInLink(context: TurnContext, connectionName: string): Promise<string>;
     /**
      * Tells the token service to emulate the sending of OAuthCards for a channel.
-     * @param serviceUrl The URL of the channel server to query.  This can be retrieved from `context.activity.serviceUrl`.
+     * @param contextOrServiceUrl The URL of the channel server to query or a TurnContext.  This can be retrieved from `context.activity.serviceUrl`.
      * @param emulate If `true` the token service will emulate the sending of OAuthCards.
      */
-    emulateOAuthCards(serviceUrl: string, emulate: boolean): Promise<void>;
+    emulateOAuthCards(contextOrServiceUrl: TurnContext | string, emulate: boolean): Promise<void>;
     /**
      * Processes an activity received by the bots web server. This includes any messages sent from a
      * user and is the method that drives what's often referred to as the bots "Reactive Messaging"

@@ -256,11 +256,12 @@ export class BotFrameworkAdapter extends BotAdapter {
      * Lists the Conversations in which this bot has participated for a given channel server. The 
      * channel server returns results in pages and each page will include a `continuationToken`
      * that can be used to fetch the next page of results from the server.
-     * @param serviceUrl The URL of the channel server to query.  This can be retrieved from `context.activity.serviceUrl`. 
+     * @param contextOrServiceUrl The URL of the channel server to query or a TurnContext.  This can be retrieved from `context.activity.serviceUrl`. 
      * @param continuationToken (Optional) token used to fetch the next page of results from the channel server. This should be left as `undefined` to retrieve the first page of results.
      */
-    public getConversations(serviceUrl: string, continuationToken?: string): Promise<ConversationsResult> {
-        const client = this.createConnectorClient(serviceUrl);
+    public getConversations(contextOrServiceUrl: TurnContext|string, continuationToken?: string): Promise<ConversationsResult> {
+        const url = typeof contextOrServiceUrl === 'object' ? contextOrServiceUrl.activity.serviceUrl : contextOrServiceUrl;
+        const client = this.createConnectorClient(url);
         return client.conversations.getConversations(continuationToken ? { continuationToken: continuationToken } : undefined);
     }
 
@@ -321,16 +322,13 @@ export class BotFrameworkAdapter extends BotAdapter {
 
     /**
      * Tells the token service to emulate the sending of OAuthCards for a channel.
-     * @param serviceUrl The URL of the channel server to query.  This can be retrieved from `context.activity.serviceUrl`. 
+     * @param contextOrServiceUrl The URL of the channel server to query or a TurnContext.  This can be retrieved from `context.activity.serviceUrl`. 
      * @param emulate If `true` the token service will emulate the sending of OAuthCards.
      */
-    public emulateOAuthCards(serviceUrl: string, emulate: boolean): Promise<void> {
-        try {
-            const client = this.createOAuthApiClient(serviceUrl);
-            return client.emulateOAuthCards(emulate);
-        } catch (err) {
-            return Promise.reject(err);
-        }
+    public emulateOAuthCards(contextOrServiceUrl: TurnContext|string, emulate: boolean): Promise<void> {
+        const url = typeof contextOrServiceUrl === 'object' ? contextOrServiceUrl.activity.serviceUrl : contextOrServiceUrl;
+        const client = this.createOAuthApiClient(url);
+        return client.emulateOAuthCards(emulate);
     }
     
     /**

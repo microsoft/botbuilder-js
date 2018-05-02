@@ -227,11 +227,12 @@ class BotFrameworkAdapter extends botbuilder_core_1.BotAdapter {
      * Lists the Conversations in which this bot has participated for a given channel server. The
      * channel server returns results in pages and each page will include a `continuationToken`
      * that can be used to fetch the next page of results from the server.
-     * @param serviceUrl The URL of the channel server to query.  This can be retrieved from `context.activity.serviceUrl`.
+     * @param contextOrServiceUrl The URL of the channel server to query or a TurnContext.  This can be retrieved from `context.activity.serviceUrl`.
      * @param continuationToken (Optional) token used to fetch the next page of results from the channel server. This should be left as `undefined` to retrieve the first page of results.
      */
-    getConversations(serviceUrl, continuationToken) {
-        const client = this.createConnectorClient(serviceUrl);
+    getConversations(contextOrServiceUrl, continuationToken) {
+        const url = typeof contextOrServiceUrl === 'object' ? contextOrServiceUrl.activity.serviceUrl : contextOrServiceUrl;
+        const client = this.createConnectorClient(url);
         return client.conversations.getConversations(continuationToken ? { continuationToken: continuationToken } : undefined);
     }
     /**
@@ -300,17 +301,13 @@ class BotFrameworkAdapter extends botbuilder_core_1.BotAdapter {
     }
     /**
      * Tells the token service to emulate the sending of OAuthCards for a channel.
-     * @param serviceUrl The URL of the channel server to query.  This can be retrieved from `context.activity.serviceUrl`.
+     * @param contextOrServiceUrl The URL of the channel server to query or a TurnContext.  This can be retrieved from `context.activity.serviceUrl`.
      * @param emulate If `true` the token service will emulate the sending of OAuthCards.
      */
-    emulateOAuthCards(serviceUrl, emulate) {
-        try {
-            const client = this.createOAuthApiClient(serviceUrl);
-            return client.emulateOAuthCards(emulate);
-        }
-        catch (err) {
-            return Promise.reject(err);
-        }
+    emulateOAuthCards(contextOrServiceUrl, emulate) {
+        const url = typeof contextOrServiceUrl === 'object' ? contextOrServiceUrl.activity.serviceUrl : contextOrServiceUrl;
+        const client = this.createOAuthApiClient(url);
+        return client.emulateOAuthCards(emulate);
     }
     /**
      * Processes an activity received by the bots web server. This includes any messages sent from a
