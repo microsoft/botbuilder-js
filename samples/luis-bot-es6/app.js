@@ -50,7 +50,7 @@ server.post('/api/messages', (req, res) => {
     adapter.processActivity(req, res, async context => {
         if (context.activity.type === 'conversationUpdate' && context.activity.membersAdded[0].name === 'Bot') {
             // Welcome message here, bot will message you first
-            return context.sendActivity(`Hi! I'm a simple reminder bot. I can help add reminders, delete and show them.`);
+            await context.sendActivity(`Hi! I'm a simple reminder bot. I can help add reminders, delete and show them.`);
         } else if (context.activity.type === 'message') {
             const utterance = (context.activity.text || '').trim().toLowerCase();
 
@@ -108,11 +108,11 @@ server.post('/api/messages', (req, res) => {
                         // Check for cancel
                     } else if (utterance === 'cancel') {
                         if (dc.instance) {
-                            return context.sendActivity(`Ok... Cancelled.`).then(res => {
+                            await context.sendActivity(`Ok... Cancelled.`).then(res => {
                                 dc.endAll();
                             });
                         } else {
-                            return context.sendActivity(`Nothing to cancel.`);
+                            await context.sendActivity(`Nothing to cancel.`);
                         }
 
                         // Continue current dialog
@@ -120,7 +120,7 @@ server.post('/api/messages', (req, res) => {
                         return dc.continue().then(res => {
                             // Return default message if nothing replied.
                             if (!context.responded) {
-                                return context.sendActivity(
+                                await context.sendActivity(
                                     `Hi! I'm a simple reminder bot. I can help add reminders, delete and show them.`
                                 );
                             }

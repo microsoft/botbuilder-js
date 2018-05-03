@@ -1,7 +1,7 @@
 {
-  "name": "echobot-es6",
+  "name": "conversation-update-es6",
   "version": "1.0.0",
-  "description": "Bot Builder v4 example showing a simple bot that echos anything you say.",
+  "description": "Bot Builder v4 example showing a simple bot that responds to conversationUpdate activities",
   "main": "app.js",
   "scripts": {
     "start": "node app.js"
@@ -9,7 +9,7 @@
   "author": "Microsoft",
   "license": "MIT",
   "dependencies": {
-    "botbuilder": "^4.0.0-m4.2",
+    "botbuilder": "^4.0.0-m4.1",
     "restify": "^6.3.4"
   }
 }
