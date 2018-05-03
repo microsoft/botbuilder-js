@@ -26,6 +26,8 @@ As your bot grows in sophistication, [Dispatch](https://github.com/Microsoft/bot
 
 Throughout the Build phase, you can use [MSBot](https://github.com/Microsoft/botbuilder-tools/tree/master/MSBot) CLI to create and keep your bot configuration file updated with all relevant service references.
 
+To test and refine your bot, you can use the new [V4 Bot Framework Emulator](https://github.com/Microsoft/BotFramework-Emulator/releases). The Bot Framework Emulator is a cross-platform electron application that enables you to test and debug your bots on  local machine or in the cloud. The new emulator includes features like faster load times, an improved dynamic layout model, support for multiple bot configurations, simple bot components management, and the ability to inspect responses from connected services such as LUIS and QnA. The Bot Framework Emulator also deep links to different parts used by the bot. The Bot Framework Emulator new functionality enables you to debug bots based on transcript logs and to view previous chat in presentation mode. The Bot Framework Emulator is available as open source on [Github](https://github.com/Microsoft/BotFramework-Emulator). 
+
 ## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
