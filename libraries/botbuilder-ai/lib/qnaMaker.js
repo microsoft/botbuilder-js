@@ -154,9 +154,14 @@ class QnAMaker {
                 top: top
             }
         }).then(result => {
-            const answers = [];
             return result.answers.map((ans) => {
-                return { score: ans.score / 100, answer: htmlentities.decode(ans.answer) };
+                ans.score = ans.score / 100;
+                ans.answer = htmlentities.decode(ans.answer);
+                if (ans.qnaId) {
+                    ans.id = ans.qnaId;
+                    delete ans['qnaId'];
+                }
+                return ans;
             });
         });
     }

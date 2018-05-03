@@ -18,11 +18,23 @@ const htmlentities = new entities.AllHtmlEntities();
  * An individual answer returned by `QnAMaker.generateAnswer()`.
  */
 export interface QnAMakerResult {
+    /** The list of questions indexed in the QnA Service for the given answer. */
+    questions?: string[];
+
     /** Answer from the knowledge base.  */
     answer: string;
 
     /** Confidence on a scale from 0.0 to 1.0 that the answer matches the users intent. */
     score: number;
+
+    /** Metadata associated with the answer */
+    metadata?: any;
+
+    /** The source from which the QnA was extracted */
+    source?: string;
+
+    /** The index of the answer in the knowledge base. V3 uses 'qnaId', V4 uses 'id'.*/
+    id?: number;
 }
 
 /**
@@ -179,7 +191,6 @@ export class QnAMaker implements Middleware {
                 return Promise.resolve(false);
             }
         });
-
     }
 
     /**
@@ -217,9 +228,14 @@ export class QnAMaker implements Middleware {
                 top: top
             }
         }).then(result => {
-            const answers: QnAMakerResult[] = [];
-            return (result.answers as QnAMakerResult[]).map((ans) => { 
-                return { score: ans.score / 100, answer: htmlentities.decode(ans.answer) }  as QnAMakerResult;
+            return result.answers.map((ans) => {
+                ans.score = ans.score / 100;
+                ans.answer = htmlentities.decode(ans.answer);
+                if (ans.qnaId) {
+                    ans.id = ans.qnaId;
+                    delete ans['qnaId'];
+                }
+                return ans as QnAMakerResult;
             });
         });
     }
