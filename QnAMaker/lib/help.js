@@ -21,7 +21,7 @@ module.exports = async function help(args, output) {
         output = process.stderr;
 
     output.write('QnA Maker Command line interface - © 2018 Microsoft Corporation\n\n');
-    const helpContents = await getHelpContents(args);
+    const helpContents = await getHelpContents(args, output);
     let width = windowSize ? windowSize.width : 250;
 
     let leftColWidth = 0;
