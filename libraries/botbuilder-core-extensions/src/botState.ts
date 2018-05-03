@@ -66,9 +66,11 @@ export class BotState<T extends StoreItem = StoreItem> implements Middleware {
     }
 
     /**
-     * Reads in and caches the current state object for a turn. Subsequent reads will return the
-     * cached object unless the `force` flag is passed in which will force the state object to
-     * be re-read.
+     * Reads in and caches the current state object for a turn. 
+     * 
+     * @remarks
+     * Subsequent reads will return the cached object unless the `force` flag is passed in which 
+     * will force the state object to be re-read.
      *
      * ```JavaScript
      * const state = await botState.read(context);
@@ -92,9 +94,12 @@ export class BotState<T extends StoreItem = StoreItem> implements Middleware {
     }
 
     /**
-     * Save the cached state object if it's been changed. If the `force` flag is passed in the 
-     * cached state object will be saved regardless of whether its been changed and if no object
-     * has been a cached an empty object will created and saved.
+     * Saves the cached state object if it's been changed. 
+     * 
+     * @remarks
+     * If the `force` flag is passed in the cached state object will be saved regardless of 
+     * whether its been changed or not and if no object has been cached, an empty object will be 
+     * created and then saved.
      * 
      * ```JavaScript
      * await botState.write(context);
@@ -123,6 +128,9 @@ export class BotState<T extends StoreItem = StoreItem> implements Middleware {
     /**
      * Clears the current state object for a turn.
      * 
+     * @remarks
+     * This example shows how to clear a state object:
+     * 
      * ```JavaScript
      * botState.clear(context);
      * ``` 
@@ -140,7 +148,8 @@ export class BotState<T extends StoreItem = StoreItem> implements Middleware {
     /**
      * Returns a cached state object or undefined if not cached.
      * 
-     * **Usage Example**
+     * @remarks
+     * This example shows how to synchronously get an already loaded and cached state object:
      *
      * ```JavaScript
      * const state botState.get(context);

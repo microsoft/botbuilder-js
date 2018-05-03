@@ -13,19 +13,17 @@ const NOT_CACHED = `ConversationState: state not found. Ensure ConversationState
 const NO_KEY = `ConversationState: channelId and/or conversation missing from context.request.`;
 
 /** 
- * :package: **botbuilder-core-extensions**
+ * Reads and writes conversation state for your bot to storage. 
  * 
- * Reads and writes conversation state for your bot to storage. Each conversation your bot has 
- * with a user or group will have its own isolated storage object that can be used to persist 
- * conversation tracking information between turns of the conversation.  This state information
- * can be reset at any point by calling [clear()](#clear).
+ * @remarks
+ * Each conversation your bot has with a user or group will have its own isolated storage object 
+ * that can be used to persist conversation tracking information between turns of the conversation.  
+ * This state information can be reset at any point by calling [clear()](#clear).
  * 
  * Since the `ConversationState` class derives from `BotState` it can be used as middleware to
  * automatically read and write the bots conversation state for each turn. And it also means it
  * can be passed to a `BotStateSet` middleware instance to be managed in parallel with other state
  * providers.
- *
- * **Usage Example**
  *
  * ```JavaScript
  * const { ConversationState, MemoryStorage } = require('botbuilder');

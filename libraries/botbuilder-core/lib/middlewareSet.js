@@ -1,15 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
- * :package: **botbuilder-core**
+ * A set of `Middleware` plugins.
  *
- * A set of `Middleware` plugins. The set itself is middleware so you can easily package up a set
- * of middleware that can be composed into an adapter with a single `adapter.use(mySet)` call or
- * even into another middleware set using `set.use(mySet)`.
+ * @remarks
+ * The set itself is middleware so you can easily package up a set of middleware that can be composed
+ * into an adapter with a single `adapter.use(mySet)` call or even into another middleware set using
+ * `set.use(mySet)`.
  *
- * **Usage Example**
- *
- * ```javascript
+ * ```JavaScript
  * const { MiddlewareSet } = require('botbuilder');
  *
  * const set = new MiddlewareSet();
@@ -35,9 +34,10 @@ class MiddlewareSet {
     /**
      * Registers middleware handlers(s) with the set.
      *
-     * **Usage Example**
+     * @remarks
+     * This example adds a new piece of middleware to a set:
      *
-     * ```javascript
+     * ```JavaScript
      * set.use(async (context, next) => {
      *    console.log(`Leading Edge`);
      *    await next();
@@ -62,14 +62,6 @@ class MiddlewareSet {
     }
     /**
      * Executes a set of middleware in series.
-     *
-     * **Usage Example**
-     *
-     * ```javascript
-     * await set.run(context, async (context) => {
-     *    console.log(`Bot Logic`);
-     * });
-     * ```
      * @param context Context for the current turn of conversation with the user.
      * @param next Function to invoke at the end of the middleware chain.
      */

@@ -112,6 +112,10 @@ export class FileStorage implements Storage {
     }
 }
 
+/**
+ * @private
+ * @param filePath 
+ */
 function parseFile(filePath: string): Promise<Object|undefined> {
     return fs.exists(filePath)
         .then((exists) => exists ? fs.readTextFile(filePath) : Promise.resolve(undefined))

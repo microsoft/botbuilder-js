@@ -8,23 +8,20 @@
 import { TurnContext, Promiseable } from 'botbuilder-core';
 
 /** 
- * :package: **botbuilder-core-extensions**
- * 
  * Callback to calculate a storage key.
  * @param StorageKeyFactory.context Context for the current turn of conversation with a user. 
  */
 export type StorageKeyFactory = (context: TurnContext) => Promiseable<string>; 
 
 /** 
- * :package: **botbuilder-core-extensions**
- * 
  * Interface for a storage provider that stores and retrieves plain old JSON objects. 
  */
 export interface Storage {
     /** 
      * Loads store items from storage
      *
-     * **Usage Example**
+     * @remarks
+     * This example reads in a single object from storage:
      *
      * ```JavaScript
      * const items = await storage.read(['botState']);
@@ -37,7 +34,8 @@ export interface Storage {
     /** 
      * Saves store items to storage.
      *
-     * **Usage Example**
+     * @remarks
+     * This example writes an object to storage after its been modified:
      *
      * ```JavaScript
      * state.topic = 'someTopic';
@@ -50,7 +48,8 @@ export interface Storage {
     /** 
      * Removes store items from storage
      *
-     * **Usage Example**
+     * @remarks
+     * This example deletes an object from storage:
      *
      * ```JavaScript
      * await storage.delete(['botState']);
@@ -61,8 +60,6 @@ export interface Storage {
 }
 
 /** 
- * :package: **botbuilder-core-extensions**
- *
  * Object which is stored in Storage with an optional eTag.
  */
 export interface StoreItem {
@@ -74,20 +71,19 @@ export interface StoreItem {
 }
 
 /** 
- * :package: **botbuilder-core-extensions**
- * 
  * Map of named `StoreItem` objects. 
  */
 export interface StoreItems {
+    /** List of store items indexed by key. */
     [key: string]: StoreItem;
 }
 
 /**
- * :package: **botbuilder-core-extensions**
- * 
  * Utility function to calculate a change hash for a `StoreItem`.
  *
- * **Usage Example**
+ * @remarks
+ * This example calculates a change hash for an object that's been read in and then only writes it
+ * back out if it's been modified:
  *
  * ```JavaScript
  * // Calculate state objects initial hash

@@ -184,19 +184,40 @@ export class FileTranscriptStore implements TranscriptStore {
     }
 }
 
-const epochTicks = 621355968000000000;  // the number of .net ticks at the unix epoch
-const ticksPerMillisecond = 10000;      // there are 10000 .net ticks per millisecond
+/**
+ * @private
+ * The number of .net ticks at the unix epoch.
+ */
+const epochTicks = 621355968000000000;
 
+/**
+ * @private
+ * There are 10000 .net ticks per millisecond.
+ */
+const ticksPerMillisecond = 10000;
+
+/**
+ * @private
+ * @param timestamp 
+ */
 const getTicks = (timestamp: Date): string => {
     let ticks = epochTicks + (timestamp.getTime() * ticksPerMillisecond);
     return ticks.toString(16);
 }
 
+/**
+ * @private
+ * @param ticks 
+ */
 const readDate = (ticks) => {
     let t = Math.round((parseInt(ticks, 16) - epochTicks) / ticksPerMillisecond);
     return new Date(t);
 }
 
+/**
+ * @private
+ * @param date 
+ */
 const withDateFilter = (date: Date) => {
     if (!date) return () => true;
     return (filename) => {
@@ -205,6 +226,10 @@ const withDateFilter = (date: Date) => {
     }
 }
 
+/**
+ * @private
+ * @param continuationToken 
+ */
 const withContinuationToken = (continuationToken: string) => {
     if (!continuationToken) return () => true;
 
@@ -214,6 +239,10 @@ const withContinuationToken = (continuationToken: string) => {
     });
 }
 
+/**
+ * @private
+ * @param expression 
+ */
 const skipWhileExpression = (expression) => {
     let skipping = true;
     return (item) => {
@@ -225,6 +254,10 @@ const skipWhileExpression = (expression) => {
     };
 }
 
+/**
+ * @private
+ * @param json 
+ */
 const parseActivity = (json: string): Activity => {
     let activity: Activity = JSON.parse(json);
     activity.timestamp = new Date(activity.timestamp);

@@ -527,6 +527,10 @@ class BotFrameworkAdapter extends botbuilder_core_1.BotAdapter {
     }
 }
 exports.BotFrameworkAdapter = BotFrameworkAdapter;
+/**
+ * @private
+ * @param req
+ */
 function parseRequest(req) {
     return new Promise((resolve, reject) => {
         function returnActivity(activity) {

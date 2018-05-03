@@ -26,14 +26,26 @@ export interface WebResponse {
  * Bot Framework Adapter Settings.
  */
 export interface BotFrameworkAdapterSettings {
+    /**
+     * ID assigned to your bot in the [Bot Framework Portal](https://dev.botframework.com/).
+     */
     appId: string;
+    /**
+     * Password assigned to your bot in the [Bot Framework Portal](https://dev.botframework.com/).
+     */
     appPassword: string;
 }
 /**
  * Response object expected to be sent in response to an `invoke` activity.
  */
 export interface InvokeResponse {
+    /**
+     * Status code to return for response.
+     */
     status: number;
+    /**
+     * (Optional) body to return for response.
+     */
     body?: any;
 }
 /**

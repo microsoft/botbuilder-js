@@ -7,13 +7,12 @@
  */
 import { Attachment, MediaUrl, CardAction, AnimationCard, CardImage, HeroCard, ReceiptCard, ThumbnailCard } from "botbuilder-core";
 /**
- * :package: **botbuilder-core-extensions**
- *
  * A set of utility functions designed to assist with the formatting of the various card types a
- * bot can return. All of these functions return an `Attachment` which can be added to an `Activity`
- * directly or passed as input to a `MessageFactory` method.
+ * bot can return.
  *
- * **Usage Example**
+ * @remarks
+ * All of these functions return an `Attachment` which can be added to an `Activity` directly or
+ * passed as input to a `MessageFactory` method.
  *
  * ```javascript
  * const card = CardFactory.heroCard(
@@ -40,6 +39,7 @@ export declare class CardFactory {
      * Returns an attachment for an adaptive card. The attachment will contain the card and the
      * appropriate `contentType`.
      *
+     * @remarks
      * Adaptive Cards are a new way for bots to send interactive and immersive card content to
      * users. For channels that don't yet support Adaptive Cards natively, the Bot Framework will
      * down render the card to an image that's been styled to look good on the target channel. For
@@ -90,10 +90,11 @@ export declare class CardFactory {
      */
     static audioCard(title: string, media: (MediaUrl | string)[], buttons?: (CardAction | string)[], other?: Partial<AnimationCard>): Attachment;
     /**
-     * Returns an attachment for a hero card. Hero cards tend to have one dominant full width image
-     * and the cards text & buttons can usually be found below the image.
+     * Returns an attachment for a hero card.
      *
-     * **Usage Example**
+     * @remarks
+     * Hero cards tend to have one dominant full width image and the cards text & buttons can
+     * usually be found below the image.
      *
      * ```javascript
      * const card = CardFactory.heroCard(

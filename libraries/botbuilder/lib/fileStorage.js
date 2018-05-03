@@ -98,6 +98,10 @@ class FileStorage {
 }
 FileStorage.nextTag = 0;
 exports.FileStorage = FileStorage;
+/**
+ * @private
+ * @param filePath
+ */
 function parseFile(filePath) {
     return fs.exists(filePath)
         .then((exists) => exists ? fs.readTextFile(filePath) : Promise.resolve(undefined))

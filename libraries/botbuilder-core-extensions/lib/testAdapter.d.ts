@@ -7,19 +7,16 @@
  */
 import { BotAdapter, Activity, ConversationReference, Promiseable, TurnContext, ResourceResponse } from 'botbuilder-core';
 /**
- * :package: **botbuilder-core-extensions**
- *
  * Signature for a function that can be used to inspect individual activities returned by a bot
  * that's being tested using the `TestAdapter`.
  */
 export declare type TestActivityInspector = (activity: Partial<Activity>, description: string) => void;
 /**
- * :package: **botbuilder-core-extensions**
- *
  * Test adapter used for unit tests. This adapter can be used to simulate sending messages from the
  * user to the bot.
  *
- * **Usage Example**
+ * @remarks
+ * The following example sets up the test adapter and then executes a simple test:
  *
  * ```JavaScript
  * const { TestAdapter } = require('botbuilder');
@@ -35,7 +32,10 @@ export declare type TestActivityInspector = (activity: Partial<Activity>, descri
 export declare class TestAdapter extends BotAdapter {
     private logic;
     private nextId;
-    /** INTERNAL: used to drive the promise chain forward when running tests. */
+    /**
+     * @private
+     * INTERNAL: used to drive the promise chain forward when running tests.
+     */
     readonly activityBuffer: Partial<Activity>[];
     /**
      * `ConversationReference` template that will be merged with all activities sent to the logic
@@ -46,7 +46,8 @@ export declare class TestAdapter extends BotAdapter {
      * List of updated activities passed to the adapter which can be inspected after the current
      * turn completes.
      *
-     * **Usage Example**
+     * @remarks
+     * This example shows how to test that expected updates have been preformed:
      *
      * ```JavaScript
      * adapter.test('update', '1 updated').then(() => {
@@ -61,7 +62,8 @@ export declare class TestAdapter extends BotAdapter {
      * List of deleted activities passed to the adapter which can be inspected after the current
      * turn completes.
      *
-     * **Usage Example**
+     * @remarks
+     * This example shows how to test that expected deletes have been preformed:
      *
      * ```JavaScript
      * adapter.test('delete', '1 deleted').then(() => {
@@ -79,6 +81,7 @@ export declare class TestAdapter extends BotAdapter {
      */
     constructor(logic: (context: TurnContext) => Promiseable<void>, template?: ConversationReference);
     /**
+     * @private
      * INTERNAL: called by the logic under test to send a set of activities. These will be buffered
      * to the current `TestFlow` instance for comparison against the expected results.
      * @param context Context object for the current turn of conversation with the user.
@@ -86,6 +89,7 @@ export declare class TestAdapter extends BotAdapter {
      */
     sendActivities(context: TurnContext, activities: Partial<Activity>[]): Promise<ResourceResponse[]>;
     /**
+     * @private
      * INTERNAL: called by the logic under test to replace an existing activity. These are simply
      * pushed onto an [updatedActivities](#updatedactivities) array for inspection after the turn
      * completes.
@@ -94,6 +98,7 @@ export declare class TestAdapter extends BotAdapter {
      */
     updateActivity(context: TurnContext, activity: Partial<Activity>): Promise<void>;
     /**
+     * @private
      * INTERNAL: called by the logic under test to delete an existing activity. These are simply
      * pushed onto a [deletedActivities](#deletedactivities) array for inspection after the turn
      * completes.
@@ -107,6 +112,7 @@ export declare class TestAdapter extends BotAdapter {
      */
     continueConversation(reference: Partial<ConversationReference>, logic: (revocableContext: TurnContext) => Promiseable<void>): Promise<void>;
     /**
+     * @private
      * INTERNAL: called by a `TestFlow` instance to simulate a user sending a message to the bot.
      * This will cause the adapters middleware pipe to be run and it's logic to be called.
      * @param activity Text or activity from user. The current conversation reference [template](#template) will be merged the passed in activity to properly address the activity. Fields specified in the activity override fields in the template.
@@ -116,7 +122,8 @@ export declare class TestAdapter extends BotAdapter {
      * Sends something to the bot. This returns a new `TestFlow` instance which can be used to add
      * additional steps for inspecting the bots reply and then sending additional activities.
      *
-     * **Usage Example**
+     * @remarks
+     * This example shows how to send a message and then verify that the response was as expected:
      *
      * ```JavaScript
      * adapter.send('hi')
@@ -127,11 +134,11 @@ export declare class TestAdapter extends BotAdapter {
      */
     send(userSays: string | Partial<Activity>): TestFlow;
     /**
-     * Send something to the bot and expects the bot to return with a given reply. This is simply a
-     * wrapper around calls to `send()` and `assertReply()`. This is such a common pattern that a
-     * helper is provided.
+     * Send something to the bot and expects the bot to return with a given reply.
      *
-     * **Usage Example**
+     * @remarks
+     * This is simply a wrapper around calls to `send()` and `assertReply()`. This is such a
+     * common pattern that a helper is provided.
      *
      * ```JavaScript
      * adapter.test('hi', 'Hello World')
@@ -145,14 +152,11 @@ export declare class TestAdapter extends BotAdapter {
     test(userSays: string | Partial<Activity>, expected: string | Partial<Activity> | ((activity: Partial<Activity>, description?: string) => void), description?: string, timeout?: number): TestFlow;
 }
 /**
- * :package: **botbuilder-core-extensions**
- *
  * Support class for `TestAdapter` that allows for the simple construction of a sequence of tests.
+ *
+ * @remarks
  * Calling `adapter.send()` or `adapter.test()` will create a new test flow which you can chain
  * together additional tests using a fluent syntax.
- *
- *
- * **Usage Example**
  *
  * ```JavaScript
  * const { TestAdapter } = require('botbuilder');
@@ -174,6 +178,7 @@ export declare class TestFlow {
     previous: Promise<void>;
     private adapter;
     /**
+     * @private
      * INTERNAL: creates a new TestFlow instance.
      * @param previous Promise chain for the current test sequence.
      * @param adapter Adapter under tested.

@@ -8,8 +8,6 @@
 import { TurnContext, Middleware } from 'botbuilder-core';
 import { Storage, StoreItem, StorageKeyFactory } from './storage';
 /**
- * :package: **botbuilder-core-extensions**
- *
  * State information cached off the context object by a `BotState` instance.
  */
 export interface CachedBotState<T extends StoreItem> {
@@ -17,17 +15,15 @@ export interface CachedBotState<T extends StoreItem> {
     hash: string;
 }
 /**
- * :package: **botbuilder-core-extensions**
+ * Reads and writes state for your bot to storage.
  *
- * Reads and writes state for your bot to storage. The state object will be automatically cached on
- * the context object for the lifetime of the turn and will only be written to storage if they have
- * been modified.
+ * @remarks
+ * The state object will be automatically cached on the context object for the lifetime of the turn
+ * and will only be written to storage if it has been modified.
  *
  * When a `BotState` instance is used as middleware its state object will be automatically read in
  * before your bots logic runs and then intelligently written back out upon completion of your bots
  * logic. Multiple instances can be read and written in parallel using the `BotStateSet` middleware.
- *
- * **Usage Example**
  *
  * ```JavaScript
  * const { BotState, MemoryStorage } = require('botbuilder');
@@ -61,11 +57,11 @@ export declare class BotState<T extends StoreItem = StoreItem> implements Middle
     constructor(storage: Storage, storageKey: StorageKeyFactory);
     onTurn(context: TurnContext, next: () => Promise<void>): Promise<void>;
     /**
-     * Reads in and caches the current state object for a turn. Subsequent reads will return the
-     * cached object unless the `force` flag is passed in which will force the state object to
-     * be re-read.
+     * Reads in and caches the current state object for a turn.
      *
-     * **Usage Example**
+     * @remarks
+     * Subsequent reads will return the cached object unless the `force` flag is passed in which
+     * will force the state object to be re-read.
      *
      * ```JavaScript
      * const state = await botState.read(context);
@@ -75,11 +71,12 @@ export declare class BotState<T extends StoreItem = StoreItem> implements Middle
      */
     read(context: TurnContext, force?: boolean): Promise<T>;
     /**
-     * Save the cached state object if it's been changed. If the `force` flag is passed in the
-     * cached state object will be saved regardless of whether its been changed and if no object
-     * has been a cached an empty object will created and saved.
+     * Saves the cached state object if it's been changed.
      *
-     * **Usage Example**
+     * @remarks
+     * If the `force` flag is passed in the cached state object will be saved regardless of
+     * whether its been changed or not and if no object has been cached, an empty object will be
+     * created and then saved.
      *
      * ```JavaScript
      * await botState.write(context);
@@ -91,7 +88,8 @@ export declare class BotState<T extends StoreItem = StoreItem> implements Middle
     /**
      * Clears the current state object for a turn.
      *
-     * **Usage Example**
+     * @remarks
+     * This example shows how to clear a state object:
      *
      * ```JavaScript
      * botState.clear(context);
@@ -102,7 +100,8 @@ export declare class BotState<T extends StoreItem = StoreItem> implements Middle
     /**
      * Returns a cached state object or undefined if not cached.
      *
-     * **Usage Example**
+     * @remarks
+     * This example shows how to synchronously get an already loaded and cached state object:
      *
      * ```JavaScript
      * const state botState.get(context);

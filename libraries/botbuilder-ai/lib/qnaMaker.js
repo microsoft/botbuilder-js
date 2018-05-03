@@ -10,8 +10,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const botbuilder_1 = require("botbuilder");
 const request = require("request-promise-native");
 const entities = require("html-entities");
-var htmlentities = new entities.AllHtmlEntities();
+/**
+ * @private
+ */
+const htmlentities = new entities.AllHtmlEntities();
+/**
+ * @private
+ */
 const ENDPOINT_REGEXP = /\/knowledgebases\/(.*)\/generateAnswer\r\nHost:\s(.*)\r\n.*(?:EndpointKey|Ocp-Apim-Subscription-Key:)\s(.*)\r\n/i;
+/**
+ * @private
+ */
 const UNIX_ENDPOINT_REGEXP = /\/knowledgebases\/(.*)\/generateAnswer\nHost:\s(.*)\n.*(?:EndpointKey|Ocp-Apim-Subscription-Key:)\s(.*)\n/i;
 /**
  * Manages querying an individual QnA Maker knowledge base for answers. Can be added as middleware

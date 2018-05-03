@@ -137,8 +137,22 @@ class MemoryTranscriptStore {
 }
 MemoryTranscriptStore.PageSize = 20;
 exports.MemoryTranscriptStore = MemoryTranscriptStore;
+/**
+ * @private
+ * @param a
+ * @param b
+ */
 const createdSorter = (a, b) => a.created.getTime() - b.created.getTime();
+/**
+ * @private
+ * @param a
+ * @param b
+ */
 const timestampSorter = (a, b) => a.timestamp.getTime() - b.timestamp.getTime();
+/**
+ * @private
+ * @param expression
+ */
 const skipWhileExpression = (expression) => {
     let skipping = true;
     return (item) => {
@@ -150,6 +164,10 @@ const skipWhileExpression = (expression) => {
         return !skipping;
     };
 };
+/**
+ * @private
+ * @param activities
+ */
 const getDate = (activities) => {
     if (activities && activities.length > 0) {
         return activities[0].timestamp || new Date(0);

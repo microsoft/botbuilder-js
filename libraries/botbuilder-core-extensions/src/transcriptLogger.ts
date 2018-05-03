@@ -9,7 +9,7 @@
 import { Middleware, TurnContext, Activity, ActivityTypes } from "botbuilder-core";
 
 /**
- * When added, this middleware will log incoming and outgoing activitites to a ITranscriptStore.
+ * When added, this middleware will log incoming and outgoing activities to a ITranscriptStore.
  */
 export class TranscriptLoggerMiddleware implements Middleware {
     private logger: TranscriptLogger;
@@ -115,7 +115,7 @@ export class TranscriptLoggerMiddleware implements Middleware {
 }
 
 /**
- * ConsoleTranscriptLogger , writes activites to Console output
+ * ConsoleTranscriptLogger , writes activities to Console output.
  */
 export class ConsoleTranscriptLogger implements TranscriptLogger {
     /**
@@ -131,7 +131,7 @@ export class ConsoleTranscriptLogger implements TranscriptLogger {
 }
 
 /**
- * Transcript logger stores activities for conversations for recall
+ * Transcript logger stores activities for conversations for recall.
  */
 export interface TranscriptLogger {
     /**
@@ -170,6 +170,9 @@ export interface TranscriptStore extends TranscriptLogger {
     deleteTranscript(channelId: string, conversationId: string): Promise<void>
 }
 
+/**
+ * Metadata for a stored transcript.
+ */
 export class Transcript {
     /**
      * ChannelId that the transcript was taken from.
@@ -189,6 +192,7 @@ export class Transcript {
 
 /**
  * Page of results.
+ * @param T type of items being paged in.
  */
 export class PagedResult<T> {
 

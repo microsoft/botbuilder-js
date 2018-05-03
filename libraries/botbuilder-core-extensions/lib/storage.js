@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
- * :package: **botbuilder-core-extensions**
- *
  * Utility function to calculate a change hash for a `StoreItem`.
  *
- * **Usage Example**
+ * @remarks
+ * This example calculates a change hash for an object that's been read in and then only writes it
+ * back out if it's been modified:
  *
  * ```JavaScript
  * // Calculate state objects initial hash

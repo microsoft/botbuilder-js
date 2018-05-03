@@ -9,7 +9,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const botbuilder_core_1 = require("botbuilder-core");
 /**
- * When added, this middleware will log incoming and outgoing activitites to a ITranscriptStore.
+ * When added, this middleware will log incoming and outgoing activities to a ITranscriptStore.
  */
 class TranscriptLoggerMiddleware {
     /**
@@ -99,7 +99,7 @@ class TranscriptLoggerMiddleware {
 }
 exports.TranscriptLoggerMiddleware = TranscriptLoggerMiddleware;
 /**
- * ConsoleTranscriptLogger , writes activites to Console output
+ * ConsoleTranscriptLogger , writes activities to Console output.
  */
 class ConsoleTranscriptLogger {
     /**
@@ -113,11 +113,15 @@ class ConsoleTranscriptLogger {
     }
 }
 exports.ConsoleTranscriptLogger = ConsoleTranscriptLogger;
+/**
+ * Metadata for a stored transcript.
+ */
 class Transcript {
 }
 exports.Transcript = Transcript;
 /**
  * Page of results.
+ * @param T type of items being paged in.
  */
 class PagedResult {
     constructor() {

@@ -9,7 +9,10 @@ import { TurnContext, Middleware, ActivityTypes } from 'botbuilder';
 import * as request from 'request-promise-native';
 import * as entities from 'html-entities';
 
-var htmlentities = new entities.AllHtmlEntities();
+/**
+ * @private
+ */
+const htmlentities = new entities.AllHtmlEntities();
 
 /**
  * An individual answer returned by `QnAMaker.generateAnswer()`.
@@ -70,7 +73,14 @@ export interface QnAMakerOptions {
     answerBeforeNext?: boolean;
 }
 
+/**
+ * @private
+ */
 const ENDPOINT_REGEXP = /\/knowledgebases\/(.*)\/generateAnswer\r\nHost:\s(.*)\r\n.*(?:EndpointKey|Ocp-Apim-Subscription-Key:)\s(.*)\r\n/i;
+
+/**
+ * @private
+ */
 const UNIX_ENDPOINT_REGEXP = /\/knowledgebases\/(.*)\/generateAnswer\nHost:\s(.*)\n.*(?:EndpointKey|Ocp-Apim-Subscription-Key:)\s(.*)\n/i;
 
 /**
