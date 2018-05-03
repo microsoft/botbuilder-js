@@ -3,8 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const botbuilder_choices_1 = require("botbuilder-choices");
 const internal_1 = require("./internal");
 /**
- * :package: **botbuilder-prompts**
- *
  * Controls the way that choices for a `ChoicePrompt` or yes/no options for a `ConfirmPrompt` are
  * presented to a user.
  */
@@ -22,11 +20,11 @@ var ListStyle;
     ListStyle[ListStyle["suggestedAction"] = 4] = "suggestedAction";
 })(ListStyle = exports.ListStyle || (exports.ListStyle = {}));
 /**
- * :package: **botbuilder-prompts**
- *
  * Creates a new prompt that asks the user to select from a list of choices.
  *
- * **Usage Example:**
+ * @remarks
+ * This example shows creating a choice prompt with a custom validator that re-prompts using
+ * different prompt text if the users utterance doesn't match a choice:
  *
  * ```JavaScript
  * const { createChoicePrompt } = require('botbuilder-prompts');

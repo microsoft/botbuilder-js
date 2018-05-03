@@ -5,6 +5,12 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 const botbuilder_1 = require("botbuilder");
+/**
+ * @private
+ * @param context
+ * @param prompt
+ * @param speak
+ */
 function sendPrompt(context, prompt, speak) {
     // Compose activity
     const msg = typeof prompt === 'string' ? { text: prompt } : Object.assign({}, prompt);

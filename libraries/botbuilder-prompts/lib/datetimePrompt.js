@@ -3,11 +3,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const internal_1 = require("./internal");
 const Recognizers = require("@microsoft/recognizers-text-date-time");
 /**
- * :package: **botbuilder-prompts**
- *
  * Creates a new prompt that asks the user to reply with a date or time.
  *
- * **Usage Example:**
+ * @remarks
+ * This example shows creating a datetime prompt with a custom validator that constrains the users
+ * answer to a time thats in the future:
  *
  * ```JavaScript
  * const { createDatetimePrompt } = require('botbuilder-prompts');

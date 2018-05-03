@@ -10,24 +10,19 @@ import { ChoiceFactoryOptions, Choice } from 'botbuilder-choices';
 import { PromptValidator } from './textPrompt';
 import { ListStyle } from './choicePrompt';
 /**
- * :package: **botbuilder-prompts**
- *
  * Map of `ConfirmPrompt` choices for each locale the bot supports.
  */
 export interface ConfirmChoices {
     [locale: string]: (string | Choice)[];
 }
 /**
- * :package: **botbuilder-prompts**
- *
  * Prompts the user to answer a yes/no question.
  *
+ * @remarks
  * The [prompt()](#prompt) method will attempt to send a set of buttons yes/no buttons for the
  * user to click. By default, the text of the titles for these buttons will always be in English
  * but you can easily add support for other languages using the prompts [choices](#choices)
  * property.
- *
- * **Usage Example:**
  *
  * ```JavaScript
  * const { createConfirmPrompt } = require('botbuilder-prompts');
@@ -39,12 +34,12 @@ export interface ConfirmChoices {
 export interface ConfirmPrompt<O = boolean> {
     /**
      * Allows for the localization of the confirm prompts yes/no choices to other locales besides
-     * english. The key of each entry is the languages locale code and should be lower cased. A
-     * default fallback set of choices can be specified using a key of '*'.
+     * english.
      *
-     * The default choices are configured to be `{ '*': ['yes', 'no'] }`.
-     *
-     * **Example usage:**
+     * @remarks
+     * This starts with a value of `{ '*': ['yes', 'no'] }` but can be customized to support
+     * additional languages. The key of each entry is the languages locale code and should be
+     * lower cased. A default fallback set of choices can be specified using a key of '*'.
      *
      * ```JavaScript
      * const confirmPrompt = createConfirmPrompt();
@@ -57,18 +52,23 @@ export interface ConfirmPrompt<O = boolean> {
      */
     choices: ConfirmChoices;
     /**
-     * Style of choices sent to user when [prompt()](#prompt) is called. Defaults to
-     * `ListStyle.auto`.
+     * Style of choices sent to user when [prompt()](#prompt) is called.
+     *
+     * @remarks
+     * This starts with a value of `ListStyle.auto`.
      */
     style: ListStyle;
     /**
-     * Additional options used to configure the output of the `ChoiceFactory`. Defaults to
-     * `{ includeNumbers: false }`.
+     * Additional options used to configure the output of the `ChoiceFactory`.
+     *
+     * @remarks
+     * This starts with a value of `{ includeNumbers: false }`.
      */
     choiceOptions: ChoiceFactoryOptions;
     /**
      * Sends a formated prompt to the user.
      *
+     * @remarks
      * By default, this will attempt to send the user yes & no choices as buttons using
      * `ChoiceFactory.forChannel()`. If the channel doesn't support buttons it will fallback to
      * appending ` (yes or no)` to the prompt. You can override this behavior using the prompts
@@ -76,8 +76,6 @@ export interface ConfirmPrompt<O = boolean> {
      *
      * Further tweaks can be made to the rendering of the yes/no choices using the
      * [choiceOptions](#choiceoptions) property.
-     *
-     * **Usage Example:**
      *
      * ```JavaScript
      * await confirmPrompt.prompt(context, `This will cancel your order. Are you sure?`);
@@ -88,13 +86,13 @@ export interface ConfirmPrompt<O = boolean> {
      */
     prompt(context: TurnContext, prompt: string | Partial<Activity>, speak?: string): Promise<void>;
     /**
-     * Recognizes and validates the users reply. The result of the call will either be the
-     * recognized value or `undefined`.
+     * Recognizes and validates the users reply.
+     *
+     * @remarks
+     * The result of the call will either be the recognized value or `undefined`.
      *
      * The recognize() method will not automatically re-prompt the user so either the caller or the
      * prompts custom validator will need to implement re-prompting logic.
-     *
-     * **Usage Example:**
      *
      * ```JavaScript
      * const confirmed = await confirmPrompt.recognize(context);
@@ -111,11 +109,11 @@ export interface ConfirmPrompt<O = boolean> {
     recognize(context: TurnContext): Promise<O | undefined>;
 }
 /**
- * :package: **botbuilder-prompts**
- *
  * Creates a new prompt that asks the user to answer a yes/no question.
  *
- * **Usage Example:**
+ * @remarks
+ * This example shows creating a confirm prompt with a custom validator that will re-prompt with
+ * alternate prompt text should the utterance not be recognized:
  *
  * ```JavaScript
  * const { createConfirmPrompt } = require('botbuilder-prompts');

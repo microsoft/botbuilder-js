@@ -11,11 +11,10 @@ import { sendPrompt } from './internal';
 import * as Recognizers from '@microsoft/recognizers-text-number';
 
 /** 
- * :package: **botbuilder-prompts**
- * 
  * Prompts the user to reply with a number. 
  *
- * **Usage Example:**
+ * @remarks
+ * This example shows creating a number prompt:
  *
  * ```JavaScript
  * const { createNumberPrompt } = require('botbuilder-prompts');
@@ -28,7 +27,8 @@ export interface NumberPrompt<O = number> {
     /**
      * Sends a formated prompt to the user.
      *
-     * **Usage Example:**
+     * @remarks
+     * This example shows prompting the user for their age:
      *
      * ```JavaScript
      * await agePrompt.prompt(context, `How old are you?`);
@@ -40,13 +40,13 @@ export interface NumberPrompt<O = number> {
     prompt(context: TurnContext, prompt: string|Partial<Activity>, speak?: string): Promise<void>;
 
     /**
-     * Recognizes and validates the users reply. The result of the call will either be the 
-     * recognized value or `undefined`. 
+     * Recognizes and validates the users reply. 
+     * 
+     * @remarks
+     * The result of the call will either be the recognized value or `undefined`. 
      * 
      * The recognize() method will not automatically re-prompt the user so either the caller or the
      * prompts custom validator will need to implement re-prompting logic.
-     * 
-     * **Usage Example:**
      *
      * ```JavaScript
      * const age = await agePrompt.recognize(context);
@@ -60,11 +60,11 @@ export interface NumberPrompt<O = number> {
 }
 
 /**
- * :package: **botbuilder-prompts**
- * 
  * Creates a new prompt that asks the user to reply with a number.
  *
- * **Usage Example:**
+ * @remarks
+ * This example creates a number prompt with a custom validator that constrains the users answer to
+ * a range of numbers and then rounds off any fractional replies: 
  *
  * ```JavaScript
  * const { createNumberPrompt } = require('botbuilder-prompts');
