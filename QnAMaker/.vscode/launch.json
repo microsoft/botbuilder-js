@@ -16,8 +16,9 @@
             "name": "Launch Program",
             "program": "${workspaceFolder}\\bin\\qnamaker",
             "args": [
-                "init",
-                "-h"
+                "set",
+                "--endpointKey",
+                "38d6b3e086634afe9dee8fe45eac6b08"
             ]
         }
     ]

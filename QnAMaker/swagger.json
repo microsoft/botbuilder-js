@@ -1655,7 +1655,7 @@
         }
       }
     },
-    "/knowledgebases/{kbId}/UpdateAsync": {
+    "/knowledgebases/{kbId}": {
       "patch": {
         "tags": [
           "Knowledgebases"

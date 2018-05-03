@@ -55,13 +55,13 @@ async function runProgram() {
     if (args._.length == 1 && args._[0] == "init") {
         const result = await initializeConfig();
         if (result) {
-            process.stdout.write(`Successfully wrote ${process.cwd()}/.qnamakerrc`);
+            process.stdout.write(`Successfully wrote ${process.cwd()}/.qnamakerrc\n`);
         }
         return;
     }
 
     if (args.version || args.v) {
-        return process.stdout.write(require(path.join(__dirname, '../package.json')).version);
+        return process.stdout.write(require(path.join(__dirname, '../package.json')).version + "\n");
     }
 
 
@@ -127,9 +127,9 @@ async function runProgram() {
                     subscriptionKey: config.subscriptionKey,
                     endpointKey: config.endpointKey,
                     hostname: kb.hostName
-                }, null, 2));
+                }, null, 2) + "\n");
             } else {
-                process.stdout.write(JSON.stringify(result, null, 2));
+                process.stdout.write(JSON.stringify(result, null, 2) + "\n");
             }
         }
             break;
@@ -148,7 +148,7 @@ async function runProgram() {
                     subscriptionKey: config.subscriptionKey,
                     endpointKey: config.endpointKey,
                     hostname: config.hostname
-                }, null, 2));
+                }, null, 2) + "\n");
 
             } else {
                 process.stdout.write(JSON.stringify(result, null, 2));
@@ -157,7 +157,7 @@ async function runProgram() {
                 let answer = readlineSync.question(`\nWould you like to save ${kb.name} ${kb.id} in your .qnamakerrc so that future commands will be with this KB? [yes]`, { defaultInput: 'yes' });
                 if (answer[0] == 'y') {
                     await fs.writeJson(path.join(process.cwd(), '.qnamakerrc'), config, { spaces: 2 });
-                    process.stdout.write('.qnamakerrc updated');
+                    process.stdout.write('.qnamakerrc updated' + "\n");
                 }
             }
             break;
@@ -166,9 +166,9 @@ async function runProgram() {
         default: {
             // dump json as json stringified
             if (typeof result == 'string')
-                process.stdout.write(result);
+                process.stdout.write(result + "\n");
             else
-                process.stdout.write(JSON.stringify(result, null, 2));
+                process.stdout.write(JSON.stringify(result, null, 2) + "\n");
             break;
         }
     }
@@ -411,8 +411,8 @@ async function handleSetCommand(args, config) {
                 throw new Error(`Did not find an application with id or name of '${targetKbName}'`);
         }
     }
-    await fs.writeJson(path.join(process.cwd(), '.luisrc'), config, { spaces: 2 });
-    process.stdout.write(JSON.stringify(config, null, 4));
+    await fs.writeJson(path.join(process.cwd(), '.qnamakerrc'), config, { spaces: 2 });
+    process.stdout.write(JSON.stringify(config, null, 4) + "\n");
     return true;
 }
 
