@@ -1,5 +1,5 @@
 # LUISGen Command Line Tool
-[![npm version](https://badge.fury.io/js/botdispatch.svg)](https://badge.fury.io/js/botdispatch)
+[![npm version](https://badge.fury.io/js/luisgen.svg)](https://badge.fury.io/js/luisgen)
 
 LUISGen is a tool for generating a strongly typed C# class to make consuming LUIS output easier.
 
