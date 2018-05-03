@@ -1,7 +1,7 @@
 {
-  "name": "echobot-es6",
+  "name": "echobot-console-es6",
   "version": "1.0.0",
-  "description": "Bot Builder v4 example showing a simple bot that echos anything you say.",
+  "description": "Bot Builder v4 example showing a console echo bot",
   "main": "app.js",
   "scripts": {
     "start": "node app.js"
