@@ -21,31 +21,31 @@ class Prebuilts extends ServiceBase {
         return this.createRequest('', params, 'post', prebuiltExtractorNames);
     }
     /**
-    * undefined
+    * Create an entity role for an entity in the application.
     */
     CreatePrebuiltEntityRole(params , entityRoleCreateObject/* EntityRoleCreateObject */) {
         return this.createRequest('/{entityId}/roles', params, 'post', entityRoleCreateObject);
     }
     /**
-    * undefined
+    * Get All Entity Roles for a given entity
     */
     GetPrebuiltEntityRoles(params) {
         return this.createRequest('/{entityId}/roles', params, 'get');
     }
     /**
-    * undefined
+    * Delete an entity role.
     */
     DeletePrebuiltEntityRole(params) {
         return this.createRequest('/{entityId}/roles/{roleId}', params, 'delete');
     }
     /**
-    * undefined
+    * Update an entity role for a given entity
     */
     UpdatePrebuiltEntityRole(params , entityRoleUpdateObject/* EntityRoleUpdateObject */) {
         return this.createRequest('/{entityId}/roles/{roleId}', params, 'put', entityRoleUpdateObject);
     }
     /**
-    * undefined
+    * Get one entity role for a given entity
     */
     GetPrebuiltEntityRole(params) {
         return this.createRequest('/{entityId}/roles/{roleId}', params, 'get');

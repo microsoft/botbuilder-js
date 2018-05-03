@@ -15,7 +15,11 @@ const { OperationCommandMap } = require('./lib/enums/operationCommandMap');
  * Services template extends ServiceBase
  */
 const classTpl = (cfg) => {
-    return `const {ServiceBase} = require('../serviceBase');
+return `/**
+ * Copyright(c) Microsoft Corporation.All rights reserved.
+ * Licensed under the MIT License.
+ */
+const {ServiceBase} = require('../serviceBase');
 class ${cfg.className} extends ServiceBase {
     constructor() {
         super('${cfg.url}');
@@ -54,7 +58,11 @@ const operationTpl = (operations) => {
  * Either way, only the properties that are
  * passed to the body of the request are extracted
  */
-const modelTpl = (modelCfg) => `
+const modelTpl = (modelCfg) => `/**
+ * Copyright(c) Microsoft Corporation.All rights reserved.
+ * Licensed under the MIT License.
+ */
+
 ${modelCfg.imports.toString().replace(/[,]/g, '')}
 class ${modelCfg.className} {
     ${modelCfg.docBlocks.toString().replace(/[,]/g, '')}
@@ -173,7 +181,7 @@ Object.keys(swagger.definitions).forEach(key => {
         const model = { className: key, imports: [], props: [], assignments: [], docBlocks: [] };
         Object.keys(properties).forEach(propName => {
             const propDetails = properties[propName];
-            const name = cc(propName);
+            const name = propName;
             let type;
             // This is a complex data type containing a property
             // which is itself another typed object.
@@ -257,7 +265,7 @@ Object.keys(swagger.paths).sort().forEach(pathName => {
         const operation = {
             method,
             methodAlias,
-            targets: [category.toLowerCase(), category],
+            target: [category, category.toLowerCase()],
             command: command.trim(),
             pathFragment,
             params,
@@ -319,7 +327,11 @@ Object.keys(configsMap).forEach(category => {
 let apiIndexJs = '';
 Object.keys(classNames).forEach(category => {
     const names = classNames[category];
-    const serviceIndexJS = names.map(info => `module.exports.${info.name} = require('./${info.name.toLowerCase()}');`).join('\n');
+    const serviceIndexJS = `/**
+  * Copyright(c) Microsoft Corporation.All rights reserved.
+  * Licensed under the MIT License.
+  */
+`+names.map(info => `module.exports.${info.name} = require('./${info.name.toLowerCase()}');`).join('\n');
     apiIndexJs += `module.exports.${category} = require('./${category}');\n`;
     fs.outputFileSync(`generated/${category}/index.js`, serviceIndexJS);
 });
@@ -335,7 +347,11 @@ Object.keys(modelTypesByName).forEach(key => {
     modelNames.push(modelCfg.className);
 });
 // Creates and writes the index.js for the data models
-const modelIndexJS = modelNames.sort().map(clazz => `module.exports.${clazz} = require('./${cc(clazz)}');`).join('\n');
+const modelIndexJS = `/**
+  * Copyright(c) Microsoft Corporation.All rights reserved.
+  * Licensed under the MIT License.
+  */
+`+modelNames.sort().map(clazz => `module.exports.${clazz} = require('./${cc(clazz)}');`).join('\n');
 
 fs.outputFileSync('generated/dataModels/index.js', modelIndexJS);
 // Write the luis.json

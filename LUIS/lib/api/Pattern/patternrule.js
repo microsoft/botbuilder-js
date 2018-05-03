@@ -9,7 +9,7 @@ class Patternrule extends ServiceBase {
     }
 
     /**
-    * undefined
+    * Adds one pattern to the specified application.
     */
     AddPattern(params , pattern/* PatternRuleCreateObject */) {
         return this.createRequest('', params, 'post', pattern);

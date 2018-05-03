@@ -30,7 +30,7 @@ class Closedlists extends ServiceBase {
     * Adds a batch of sublists to an existing closedlist.
     */
     PatchClosedList(params , closedListModelPatchObject/* ClosedListModelPatchObject */) {
-        return this.createRequest('/{clEntityId}', params, 'PATCH', closedListModelPatchObject);
+        return this.createRequest('/{clEntityId}', params, 'patch', closedListModelPatchObject);
     }
     /**
     * Updates the closed list model.
@@ -63,31 +63,31 @@ class Closedlists extends ServiceBase {
         return this.createRequest('/{clEntityId}/sublists/{subListId}', params, 'delete');
     }
     /**
-    * undefined
+    * Create an entity role for an entity in the application.
     */
     CreateClosedListEntityRole(params , entityRoleCreateObject/* EntityRoleCreateObject */) {
         return this.createRequest('/{entityId}/roles', params, 'post', entityRoleCreateObject);
     }
     /**
-    * undefined
+    * Get All Entity Roles for a given entity
     */
     GetClosedListEntityRoles(params) {
         return this.createRequest('/{entityId}/roles', params, 'get');
     }
     /**
-    * undefined
+    * Delete an entity role.
     */
     DeleteClosedListEntityRole(params) {
         return this.createRequest('/{entityId}/roles/{roleId}', params, 'delete');
     }
     /**
-    * undefined
+    * Update an entity role for a given entity
     */
     UpdateClosedListEntityRole(params , entityRoleUpdateObject/* EntityRoleUpdateObject */) {
         return this.createRequest('/{entityId}/roles/{roleId}', params, 'put', entityRoleUpdateObject);
     }
     /**
-    * undefined
+    * Get one entity role for a given entity
     */
     GetClosedListEntityRole(params) {
         return this.createRequest('/{entityId}/roles/{roleId}', params, 'get');

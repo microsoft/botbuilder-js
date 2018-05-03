@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  */
 
-
+const PrebuiltDomainObject = require('./prebuiltDomainObject');
 class HierarchicalModel {
     
     /**
@@ -14,9 +14,17 @@ class HierarchicalModel {
     * @property {string[]} children
     */
 
+    /**
+    * @property {PrebuiltDomainObject} inherits
+    */
+
+    /**
+    * @property {string[]} roles
+    */
+
     
-    constructor({name /* string */,children /* string[] */} = {}) {
-        Object.assign(this, {name /* string */,children /* string[] */});
+    constructor({name /* string */,children /* string[] */,inherits /* PrebuiltDomainObject */,roles /* string[] */} = {}) {
+        Object.assign(this, {name /* string */,children /* string[] */,inherits /* PrebuiltDomainObject */,roles /* string[] */});
     }
 }
 HierarchicalModel.fromJSON = function(source) {
@@ -27,8 +35,10 @@ HierarchicalModel.fromJSON = function(source) {
         return source.map(HierarchicalModel.fromJSON);
     }
     
-    const {name /* string */,children /* string[] */} = source;
-    return new HierarchicalModel({name /* string */,children /* string[] */});
+    source.inherits = PrebuiltDomainObject.fromJSON(source.inherits) || undefined;
+
+    const {name /* string */,children /* string[] */,inherits /* PrebuiltDomainObject */,roles /* string[] */} = source;
+    return new HierarchicalModel({name /* string */,children /* string[] */,inherits /* PrebuiltDomainObject */,roles /* string[] */});
 };
 
 module.exports = HierarchicalModel;

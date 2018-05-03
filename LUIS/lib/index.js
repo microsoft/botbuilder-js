@@ -35,9 +35,9 @@ module.exports = async function luis(config, serviceManifest, args, requestBody)
     const {identifier, identifierPath, operation} = serviceManifest;
     let requestBodyDataModel;
     // Allow untyped request bodies to seep through unchanged
-    // if (requestBody && operation.entityType) {
-    //     requestBodyDataModel = dataModels[operation.entityType].fromJSON(requestBody);
-    // }
+    if (requestBody && operation.entityType) {
+        requestBodyDataModel = dataModels[operation.entityType].fromJSON(requestBody);
+    }
     
     // Create the target service and kick off the request.
     const service = new api[identifierPath][identifier]();

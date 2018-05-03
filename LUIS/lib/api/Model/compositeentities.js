@@ -51,31 +51,31 @@ class Compositeentities extends ServiceBase {
         return this.createRequest('/{cEntityId}/children/{cChildId}', params, 'delete');
     }
     /**
-    * undefined
+    * Create an entity role for an entity in the application.
     */
     CreateCompositeEntityRole(params , entityRoleCreateObject/* EntityRoleCreateObject */) {
         return this.createRequest('/{cEntityId}/roles', params, 'post', entityRoleCreateObject);
     }
     /**
-    * undefined
+    * Get All Entity Roles for a given entity
     */
     GetCompositeEntityRoles(params) {
         return this.createRequest('/{cEntityId}/roles', params, 'get');
     }
     /**
-    * undefined
+    * Delete an entity role.
     */
     DeleteCompositeEntityRole(params) {
         return this.createRequest('/{cEntityId}/roles/{roleId}', params, 'delete');
     }
     /**
-    * undefined
+    * Update an entity role for a given entity
     */
     UpdateCompositeEntityRole(params , entityRoleUpdateObject/* EntityRoleUpdateObject */) {
         return this.createRequest('/{cEntityId}/roles/{roleId}', params, 'put', entityRoleUpdateObject);
     }
     /**
-    * undefined
+    * Get one entity role for a given entity
     */
     GetCompositeEntityRole(params) {
         return this.createRequest('/{cEntityId}/roles/{roleId}', params, 'get');

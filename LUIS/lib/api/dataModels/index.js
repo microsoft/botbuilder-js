@@ -1,7 +1,7 @@
 /**
- * Copyright(c) Microsoft Corporation.All rights reserved.
- * Licensed under the MIT License.
- */
+  * Copyright(c) Microsoft Corporation.All rights reserved.
+  * Licensed under the MIT License.
+  */
 module.exports.ApplicationCreateObject = require('./applicationCreateObject');
 module.exports.ApplicationInfoResponse = require('./applicationInfoResponse');
 module.exports.ApplicationPublishObject = require('./applicationPublishObject');
@@ -60,6 +60,8 @@ module.exports.ModelTrainingInfo = require('./modelTrainingInfo');
 module.exports.ModelUpdateObject = require('./modelUpdateObject');
 module.exports.OperationError = require('./operationError');
 module.exports.OperationStatus = require('./operationStatus');
+module.exports.Pattern = require('./pattern');
+module.exports.PatternAny = require('./patternAny');
 module.exports.PatternAnyEntityExtractor = require('./patternAnyEntityExtractor');
 module.exports.PatternAnyModelCreateObject = require('./patternAnyModelCreateObject');
 module.exports.PatternAnyModelUpdateObject = require('./patternAnyModelUpdateObject');
@@ -78,6 +80,9 @@ module.exports.PrebuiltDomainCreateBaseObject = require('./prebuiltDomainCreateB
 module.exports.PrebuiltDomainCreateObject = require('./prebuiltDomainCreateObject');
 module.exports.PrebuiltDomainItem = require('./prebuiltDomainItem');
 module.exports.PrebuiltDomainModelCreateObject = require('./prebuiltDomainModelCreateObject');
+module.exports.PrebuiltDomainObject = require('./prebuiltDomainObject');
+module.exports.PrebuiltEntity = require('./prebuiltEntity');
+module.exports.RegexEntity = require('./regexEntity');
 module.exports.RegexEntityExtractor = require('./regexEntityExtractor');
 module.exports.RegexModelCreateObject = require('./regexModelCreateObject');
 module.exports.RegexModelUpdateObject = require('./regexModelUpdateObject');

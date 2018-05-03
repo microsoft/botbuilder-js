@@ -9,37 +9,37 @@ class Patternrules extends ServiceBase {
     }
 
     /**
-    * undefined
+    * Deletes the patterns with the specified IDs.
     */
     DeletePatterns(params , patternIds) {
         return this.createRequest('', params, 'delete', patternIds);
     }
     /**
-    * undefined
+    * Adds a batch of patterns to the specified application.
     */
     BatchAddPatterns(params , patterns) {
         return this.createRequest('', params, 'post', patterns);
     }
     /**
-    * undefined
+    * Updates patterns
     */
     UpdatePatterns(params , patterns) {
         return this.createRequest('', params, 'put', patterns);
     }
     /**
-    * undefined
+    * Returns an application version's patterns.
     */
     GetPatterns(params) {
         return this.createRequest('', params, 'get');
     }
     /**
-    * undefined
+    * Deletes the pattern with the specified ID.
     */
     DeletePattern(params) {
         return this.createRequest('/{patternId}', params, 'delete');
     }
     /**
-    * undefined
+    * Updates a pattern
     */
     UpdatePattern(params , pattern/* PatternRuleUpdateObject */) {
         return this.createRequest('/{patternId}', params, 'put', pattern);

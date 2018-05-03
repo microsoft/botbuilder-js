@@ -21,7 +21,7 @@ const OperationCommandMap = {
 
     train: 'train',
     
-    patch: 'patch',
+    patch: 'PATCH',
 
     update: 'update',
 
