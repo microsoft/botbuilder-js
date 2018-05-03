@@ -1,6 +1,9 @@
 const { BotFrameworkAdapter, MemoryStorage, ConversationState } = require('botbuilder');
 const restify = require('restify');
 
+const supportedLanguages = ['en', 'fr', 'de', 'tr'];
+const supportedLocales = ['en-us', 'fr-fr', 'zn-ch'];
+
 // Create server
 let server = restify.createServer();
 server.listen(process.env.port || process.env.PORT || 3978, function () {
@@ -8,7 +11,7 @@ server.listen(process.env.port || process.env.PORT || 3978, function () {
 });
 
 // Create adapter
-const adapter = new BotFrameworkAdapter({ 
+const adapter = new BotFrameworkAdapter( { 
     appId: process.env.MICROSOFT_APP_ID, 
     appPassword: process.env.MICROSOFT_APP_PASSWORD 
 });
@@ -28,10 +31,15 @@ function getUserLanguage(context) {
 }
 
 async function setUserLanguage(context) {
-    let state = conversationState.get(context)
+    let state = conversationState.get(context);
     if (context.activity.text.toLowerCase().startsWith('set my language to')) {
-        state.language = context.activity.text.toLowerCase().replace('set my language to', '').trim();
-        await context.sendActivity(`Setting your language to ${state.language}`);
+        let newLanguage = context.activity.text.toLowerCase().replace('set my language to', '').trim();
+        if (supportedLanguages.indexOf(newLanguage) != -1) {
+            state.language = newLanguage;
+            await context.sendActivity(`Setting your language to ${state.language}`);
+        } else {
+            await context.sendActivity('Language not supported');
+        }
         return Promise.resolve(true);
     } else {
         return Promise.resolve(false);
@@ -50,9 +58,14 @@ function getUserLocale(context) {
 
 async function setUserLocale(context) {
     let state = conversationState.get(context)
-    if (context.activity.text.toLowerCase().startsWith('set my locale to')) {        
-        state.locale = context.activity.text.toLowerCase().replace('set my locale to', '').trim();
-        await context.sendActivity(`Setting your locale to ${state.locale}`);
+    if (context.activity.text.toLowerCase().startsWith('set my locale to')) {
+        let newLocale = context.activity.text.toLowerCase().replace('set my locale to', '').trim();
+        if (supportedLocales.indexOf(newLocale) != -1) {
+            state.locale = newLocale;
+            await context.sendActivity(`Setting your locale to ${state.locale}`);
+        } else {
+            await context.sendActivity('Locale not supported');
+        }
         return Promise.resolve(true);
     } else {
         return Promise.resolve(false);

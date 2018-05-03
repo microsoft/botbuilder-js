@@ -11,6 +11,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const botbuilder_1 = require("botbuilder");
 const botbuilder_ai_1 = require("botbuilder-ai");
 const restify = require("restify");
+const supportedLanguages = ['en', 'fr', 'de', 'tr'];
+const supportedLocales = ['en-us', 'fr-fr', 'zn-ch'];
 // Create server
 let server = restify.createServer();
 server.listen(process.env.port || process.env.PORT || 3978, function () {
@@ -38,8 +40,14 @@ function setUserLanguage(context) {
     return __awaiter(this, void 0, void 0, function* () {
         let state = conversationState.get(context);
         if (context.activity.text.toLowerCase().startsWith('set my language to')) {
-            state.language = context.activity.text.toLowerCase().replace('set my language to', '').trim();
-            yield context.sendActivity(`Setting your language to ${state.language}`);
+            let newLanguage = context.activity.text.toLowerCase().replace('set my language to', '').trim();
+            if (supportedLanguages.indexOf(newLanguage) != -1) {
+                state.language = newLanguage;
+                yield context.sendActivity(`Setting your language to ${state.language}`);
+            }
+            else {
+                yield context.sendActivity('Language not supported');
+            }
             return Promise.resolve(true);
         }
         else {
@@ -61,8 +69,14 @@ function setUserLocale(context) {
     return __awaiter(this, void 0, void 0, function* () {
         let state = conversationState.get(context);
         if (context.activity.text.toLowerCase().startsWith('set my locale to')) {
-            state.locale = context.activity.text.toLowerCase().replace('set my locale to', '').trim();
-            yield context.sendActivity(`Setting your locale to ${state.locale}`);
+            let newLocale = context.activity.text.toLowerCase().replace('set my locale to', '').trim();
+            if (supportedLocales.indexOf(newLocale) != -1) {
+                state.locale = newLocale;
+                yield context.sendActivity(`Setting your locale to ${state.locale}`);
+            }
+            else {
+                yield context.sendActivity('Locale not supported');
+            }
             return Promise.resolve(true);
         }
         else {
@@ -70,15 +84,6 @@ function setUserLocale(context) {
         }
     });
 }
-// Add language translator middleware
-const languageTranslator = new botbuilder_ai_1.LanguageTranslator({
-    translatorKey: "xxxxxx",
-    noTranslatePatterns: new Set(),
-    nativeLanguages: ['en'],
-    setUserLanguage: setUserLanguage,
-    getUserLanguage: getUserLanguage
-});
-adapter.use(languageTranslator);
 // Add locale converter middleware
 const localeConverter = new botbuilder_ai_1.LocaleConverter({
     toLocale: 'en-us',
@@ -86,10 +91,22 @@ const localeConverter = new botbuilder_ai_1.LocaleConverter({
     getUserLocale: getUserLocale
 });
 adapter.use(localeConverter);
+// Add language translator middleware
+const languageTranslator = new botbuilder_ai_1.LanguageTranslator({
+    translatorKey: "xxxxxx",
+    nativeLanguages: ['en'],
+    setUserLanguage: setUserLanguage,
+    getUserLanguage: getUserLanguage,
+    translateBackToUserLanguage: true
+});
+adapter.use(languageTranslator);
 // Add Qna Maker middleware
 const qnaMaker = new botbuilder_ai_1.QnAMaker({
     knowledgeBaseId: "xxxxxx",
-    subscriptionKey: "xxxxxx"
+    endpointKey: "xxxxxx",
+    host: "xxxxxx"
+}, {
+    answerBeforeNext: true
 });
 adapter.use(qnaMaker);
 // Listen for incoming requests 
