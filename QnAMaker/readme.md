@@ -77,7 +77,7 @@ The CLI will first look for these named configuration variables in the arguments
 To better secure your access key, it is recommended to omit the key from the `.qnamakerrc` 
 file and instead pass it in to the `--subscriptionKey` argument or store it as the `QNAMAKER_SUBSCRIPTION_KEY` 
 environment variable. If security is not a concern for your particular case, all configuration items 
-can be stored in the `.qnamaker` for convenience.
+can be stored in the `.qnamakerrc` for convenience.
 
 ### Overriding Configurations
 Since configuration items can be passed as arguments to the CLI, using arguments to specify 
