@@ -65,7 +65,7 @@ The JSON format for the `.qnamakerrc` file:
 }
 ```
 
-> NOTE: Simply run `qnamaker --init` to answer simple questions to create your .qnamakerrc file
+> NOTE: Simply run `qnamaker init` to answer simple questions to create your .qnamakerrc file
 
 2. As arguments to the CLI: `--kbId <string> --subscriptionKey <string>`
 

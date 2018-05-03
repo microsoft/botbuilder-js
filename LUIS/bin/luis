@@ -438,7 +438,7 @@ async function handleSetCommand(args, config) {
             for (let app of results) {
                 if (app.name.toLowerCase() == targetAppName || app.id.toLowerCase() == targetAppName) {
                     config.appId = app.id;
-                    config.versionId = app.activeVersion
+                    config.versionId = app.activeVersion;
                     found = true;
                     break;
                 }

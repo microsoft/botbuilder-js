@@ -79,14 +79,14 @@ module.exports = async function help(args, output) {
 */
 async function getHelpContents(args, output) {
     if ('!' in args) {
-        return getAllCommands();
+        return getAllCommands(output);
     }
 
     if (args._.length == 0) {
-        return getGeneralHelpContents();
+        return getGeneralHelpContents(output);
     }
     else if (args._.length == 1) {
-        return getVerbHelp(args._[0]);
+        return getVerbHelp(args._[0], output);
     } else if (args._.length >= 2) {
         const serviceManifest = getServiceManifest(args);
         if (serviceManifest) {
@@ -95,16 +95,16 @@ async function getHelpContents(args, output) {
             output.write(`${operation.description}\n\n`);
             output.write(`Usage:\n${chalk.cyan.bold(operation.command)}\n\n`);
         } else {
-            return getVerbHelp(args._[0]);
+            return getVerbHelp(args._[0], output);
         }
     }
 
     const serviceManifest = getServiceManifest(args);
     if (serviceManifest) {
-        return getHelpContentsForService(serviceManifest);
+        return getHelpContentsForService(serviceManifest, output);
     }
 
-    return getGeneralHelpContents();
+    return getGeneralHelpContents(output);
 }
 
 
@@ -122,7 +122,6 @@ let globalArgs = {
     head: 'Global Arguments:',
     table: [
         [chalk.cyan.bold('--help,    -h'), 'Prints this help file.'],
-        [chalk.cyan.bold('--init,    -i'), 'Initializes the .qnamakerrc file with settings'],
         [chalk.cyan.bold('--version, -v'), 'Prints the version of this cli tool'],
         [chalk.cyan.bold('--!          '), 'Dumps all documented commands to the console with descriptions']
     ]
@@ -143,6 +142,7 @@ function getGeneralHelpContents(output) {
             [chalk.cyan.bold("delete"), "delete a resource"],
             [chalk.cyan.bold("export"), "export resources"],
             [chalk.cyan.bold("get"), "get a resource"],
+            [chalk.cyan.bold('init'), 'Initializes the .qnamakerrc file with settings'],
             [chalk.cyan.bold("list"), "list resources"],
             [chalk.cyan.bold("publish"), "publish resource"],
             [chalk.cyan.bold("query"), "query model for prediction"],
@@ -187,11 +187,11 @@ function getVerbHelp(verb, output) {
             output.write(chalk.cyan.bold("qnamaker set <.qnamakerrcSetting> <value>\n\n"));
             options.table.push([chalk.cyan.bold("kbid <kbid>"), "change the active knowledgebase id "]);
             options.table.push([chalk.cyan.bold("subscriptionkey <subscriptionkey>"), "change the active subscriptionkey"]);
-            // these are now computed...
-            // options.table.push([chalk.cyan.bold("hostname <url>"), "change the active hostname url"]);
-            // options.table.push([chalk.cyan.bold("endpointKey <endpointKey>"), `change the active endpointKey (You can view via ${chalk.cyan.bold("qnamaker list endpointkeys")})`]);
             sections.push(options);
-            //sections.push(configSection);
+            sections.push(globalArgs);
+            return sections;
+        case "init":
+            output.write(chalk.cyan.bold("qnamaker init\n\n"));
             sections.push(globalArgs);
             return sections;
     }

@@ -122,7 +122,6 @@ let globalArgs =
     {
         head: 'Global Arguments:',
         table: [
-            [chalk.cyan.bold('init'), 'Initializes the .luisrc file with settings specific to your LUIS instance'],
             [chalk.cyan.bold('--help,    -h'), `Prints this help file. `],
             [chalk.cyan.bold('--version, -v'), 'Prints the version of this cli tool'],
             [chalk.cyan.bold('--!          '), 'Dumps all documented commands to the console with descriptions']
@@ -147,6 +146,7 @@ function getGeneralHelpContents(output) {
             [chalk.cyan.bold("export"), "export resources"],
             [chalk.cyan.bold("get"), "get a resource"],
             [chalk.cyan.bold("import"), "import resources"],
+            [chalk.cyan.bold('init'), 'Initializes the .luisrc file with settings specific to your LUIS instance'],
             [chalk.cyan.bold("list"), "list resources"],
             [chalk.cyan.bold("publish"), "publish resource"],
             [chalk.cyan.bold("query"), "query model for prediction"],

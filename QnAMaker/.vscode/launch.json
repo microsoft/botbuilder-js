@@ -16,9 +16,8 @@
             "name": "Launch Program",
             "program": "${workspaceFolder}\\bin\\qnamaker",
             "args": [
-                "get",
-                "kb",
-                "--msbot"
+                "init",
+                "-h"
             ]
         }
     ]

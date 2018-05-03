@@ -25,10 +25,11 @@ const manifest = require('../lib/api/qnamaker');
 const { getServiceManifest } = require('../lib/utils/argsUtil');
 const request = require('request-promise-native');
 const Knowledgebase = require('../lib/api/knowledgebase');
+const Knowledgebases = require('../lib/api/knowledgebases');
 const Endpointkeys = require('../lib/api/endpointkeys');
 const Operations = require('../lib/api/operations');
 const Delay = require('await-delay');
-
+const { ServiceBase } = require('../lib/api/serviceBase');
 let args;
 
 /**
@@ -43,14 +44,6 @@ async function runProgram() {
     }
     args = minimist(argvFragment);
 
-    if (args.init) {
-        const result = await initializeConfig();
-        if (result) {
-            process.stdout.write(`Successfully wrote ${process.cwd()}/.qnamakerrc`);
-        }
-        return;
-    }
-
     if (args['!'] ||
         args.help ||
         args.h ||
@@ -58,15 +51,27 @@ async function runProgram() {
         return help(args, process.stdout);
     }
 
+
+    if (args._.length == 1 && args._[0] == "init") {
+        const result = await initializeConfig();
+        if (result) {
+            process.stdout.write(`Successfully wrote ${process.cwd()}/.qnamakerrc`);
+        }
+        return;
+    }
+
     if (args.version || args.v) {
         return process.stdout.write(require(path.join(__dirname, '../package.json')).version);
     }
+
 
     const config = await composeConfig(args);
     if (!args.kbId)
         args.kbId = config.kbId;
     if (!args.hostname)
         args.hostname = config.hostname;
+
+    ServiceBase.config = config;
 
     if (args._[0] == "set")
         return await handleSetCommand(args, config);
@@ -85,6 +90,19 @@ async function runProgram() {
                 if (answer.trim()[0] == 'n') {
                     process.stderr.write('operation canceled');
                     return;
+                }
+            }
+            break;
+
+        case "create":
+            if (args.name)
+                requestBody.name = args.name;
+
+            if (!requestBody.name) {
+                if (!(args.q || args.quiet)) {
+                    let answer = readlineSync.question(`\nWhat would you like to name your new knowledgebase? `);
+                    if (answer && answer.length > 0)
+                        requestBody.name = answer.trim();
                 }
             }
             break;
@@ -144,22 +162,6 @@ async function runProgram() {
             }
             break;
         }
-        case "downloadLegacyKnowledgebase":
-            if (!result.name) {
-                result.name = "unknown";
-                if (args.name) {
-                    result.name = args.name;
-                }
-                else {
-                    if (!(args.q || args.quiet)) {
-                        let answer = readlineSync.question(`\nWhat is the name of your knowledgebase? `);
-                        if (answer && answer.length > 0)
-                            result.name = answer;
-                    }
-                }
-            }
-            process.stdout.write(JSON.stringify(result, null, 2));
-            break;
 
         default: {
             // dump json as json stringified
@@ -297,7 +299,7 @@ function validateConfig(config) {
     // Validation of specific params are done in the
     // ServiceBase.js
     const { subscriptionKey, knowledgeBaseID, endpoint, endpointKey } = config;
-    const messageTail = `is missing from the configuration.\n\nDid you run ${chalk.cyan.bold('qnamaker --init')} yet?`;
+    const messageTail = `is missing from the configuration.\n\nDid you run ${chalk.cyan.bold('qnamaker init')} yet?`;
     assert(typeof subscriptionKey === 'string', `The subscriptionKey ${messageTail}`);
 }
 
@@ -374,54 +376,49 @@ async function validateArguments(serviceManifest) {
  */
 async function handleError(error) {
     process.stderr.write('\n' + chalk.red.bold(error + '\n\n'));
-    //    if (error.name === 'ArgumentError') {
     await help(args);
-    //    }
     return 1;
 }
 
 async function handleSetCommand(args, config) {
-    let target = args._.length >= 2 ? args._[1].toLowerCase() : undefined;
-    if (!target) {
-        process.stdout.write(chalk.red.bold(`missing .qnamakerrc property name: [kbid|subscriptionkey]\n`));
+    if (args.length == 1 && !(args.s || args.subscriptionKey || args.h || args.hostname || args.endpointKey || args.kbId || args.k)) {
+        process.stderr.write(chalk.red.bold(`missing .qnamakerrc argument name: [--subscriptionKey|--hostname|--endpointKey|--kbId]\n`));
         return help(args);
     }
+    config.subscriptionKey = args.subscriptionKey || args.s || config.subscriptionKey;
+    config.hostname = args.hostname || args.h || config.hostname;
+    config.kbId = args.kbId || args.k || config.kbId;
+    config.endpointKey = args.endpointKey || config.endpointKey;
+    if (args._.length > 1) {
+        let targetKbName = args._[1].toLowerCase();
+        if (targetKbName) {
+            let query = await new Knowledgebases().getKnowledgebasesForUser({ authoringKey: args.authoringKey || config.authoringKey });
+            let results = await query.json();
 
-    let targetName = (args._.length >= 3) ? args._.slice(2).join(' ').toLowerCase().trim() : undefined;
-    if (!targetName) {
-        process.stdout.write(chalk.red.bold(`missing the value\n`));
-        return help(args);
+            if (results.error) {
+                throw new Error(result.error);
+            }
+            let found = false;
+            for (let kb of results.knowledgebases) {
+                if (kb.name.toLowerCase() == targetKbName || kb.id.toLowerCase() == targetKbName) {
+                    config.kbId = kb.id;
+                    config.hostname = kb.hostName;
+                    found = true;
+                    break;
+                }
+            }
+            if (!found)
+                throw new Error(`Did not find an application with id or name of '${targetKbName}'`);
+        }
     }
-
-    switch (target) {
-        case 'endpointkey':
-            config.endpointKey = targetName;
-            break;
-
-        case 'hostname':
-            config.hostname = targetName;
-            break;
-
-        case 'subscriptionkey':
-            config.subscriptionKey = targetName;
-            break;
-
-        case 'kbid':
-            config.kbId = targetName;
-            await updateKbId(config);
-            break;
-
-        default:
-            process.stdout.write(chalk.red.bold(`unknown .qnamakerrc property ${target}. Valid values are: [kbid|subscriptionkey]\n`));
-            return help(args);
-    }
-    await fs.writeJson(path.join(process.cwd(), '.qnamakerrc'), config, { spaces: 2 });
+    await fs.writeJson(path.join(process.cwd(), '.luisrc'), config, { spaces: 2 });
     process.stdout.write(JSON.stringify(config, null, 4));
     return true;
 }
 
 async function waitForOperationSucceeded(config, result) {
     while (result.operationState != "Succeeded") {
+        process.stderr.write('.');
         let opResult = await new Operations().getOperationDetails({ subscriptionKey: config.subscriptionKey, operationId: result.operationId });
         result = JSON.parse(await opResult.text());
 
@@ -429,6 +426,7 @@ async function waitForOperationSucceeded(config, result) {
             break;
         await Delay(1000);
     }
+    process.stderr.write('done\n');
     return result;
 }
 

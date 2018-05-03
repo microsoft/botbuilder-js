@@ -203,7 +203,17 @@
           "kb",
           "knowledgebase"
         ],
-        "command": "qnamaker create kb --in createKbPayload.json",
+        "params": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "path",
+            "required": false,
+            "x-nullable": false,
+            "description": "name of the kb you want to create"
+          }
+        ],
+        "command": "qnamaker create kb --in createKbPayload.json --name <kbname>",
         "pathFragment": "",
         "description": "Create a new knowledgebase",
         "entityName": "createKbPayload",
