@@ -90,19 +90,13 @@ async function runProgram() {
 
     // INVOKE operation
     let result = {};
-    switch (serviceManifest.operation.methodAlias) {
-        case "train":
-            result = await luis(config, serviceManifest, args, requestBody);
-            if (args.wait)
-                result = await waitForTrainingToComplete(config, serviceManifest, args, requestBody);
-            break;
-
-        default:
-            result = await luis(config, serviceManifest, args, requestBody);
-            break;
-    }
+    result = await luis(config, serviceManifest, args, requestBody);
     if (result.error) {
         throw new Error(result.error.message);
+    }
+
+    if (args.wait && (serviceManifest.operation.name == "GetStatus" || serviceManifest.operation.name == "TrainVersion")) {
+        result = await waitForTrainingToComplete(config, serviceManifest, args, requestBody);
     }
 
     // custom output

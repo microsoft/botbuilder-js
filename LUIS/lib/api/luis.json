@@ -6206,7 +6206,7 @@
                     "target": [
                         "status"
                     ],
-                    "command": "luis get status",
+                    "command": "luis get status --applicationId <appId> --versionId <versionId> [--wait]",
                     "pathFragment": "",
                     "params": [
                         {
@@ -6224,6 +6224,14 @@
                             "description": "The version ID.",
                             "required": true,
                             "type": "string",
+                            "x-ms-parameter-location": "method"
+                        },
+                        {
+                            "name": "wait",
+                            "in": "path",
+                            "description": "Wait for the training to complete",
+                            "required": false,
+                            "type": "boolean",
                             "x-ms-parameter-location": "method"
                         }
                     ],
