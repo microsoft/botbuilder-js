@@ -13,11 +13,10 @@ import * as os from 'os';
 import * as filenamify from 'filenamify';
 
 /**
- * :package: **botbuilder**
- * 
  * A file based storage provider. Items will be persisted to a folder on disk.
  *
- * **Usage Example**
+ * @remarks
+ * The following example shows how to construct a configured instance of the provider:
  *
  * ```JavaScript
  * const { FileStorage } = require('botbuilder');

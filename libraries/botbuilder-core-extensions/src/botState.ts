@@ -10,8 +10,6 @@ import { Storage, StoreItem, StoreItems, calculateChangeHash, StorageKeyFactory 
 
 
 /** 
- * :package: **botbuilder-core-extensions**
- * 
  * State information cached off the context object by a `BotState` instance.
  */
 export interface CachedBotState<T extends StoreItem> {
@@ -20,17 +18,15 @@ export interface CachedBotState<T extends StoreItem> {
 }
 
 /** 
- * :package: **botbuilder-core-extensions**
+ * Reads and writes state for your bot to storage. 
  * 
- * Reads and writes state for your bot to storage. The state object will be automatically cached on
- * the context object for the lifetime of the turn and will only be written to storage if they have 
- * been modified. 
+ * @remarks
+ * The state object will be automatically cached on the context object for the lifetime of the turn 
+ * and will only be written to storage if it has been modified.
  * 
  * When a `BotState` instance is used as middleware its state object will be automatically read in 
  * before your bots logic runs and then intelligently written back out upon completion of your bots 
  * logic. Multiple instances can be read and written in parallel using the `BotStateSet` middleware. 
- *
- * **Usage Example**
  *
  * ```JavaScript
  * const { BotState, MemoryStorage } = require('botbuilder');
@@ -73,8 +69,6 @@ export class BotState<T extends StoreItem = StoreItem> implements Middleware {
      * Reads in and caches the current state object for a turn. Subsequent reads will return the
      * cached object unless the `force` flag is passed in which will force the state object to
      * be re-read.
-     * 
-     * **Usage Example**
      *
      * ```JavaScript
      * const state = await botState.read(context);
@@ -102,8 +96,6 @@ export class BotState<T extends StoreItem = StoreItem> implements Middleware {
      * cached state object will be saved regardless of whether its been changed and if no object
      * has been a cached an empty object will created and saved.
      * 
-     * **Usage Example**
-     *
      * ```JavaScript
      * await botState.write(context);
      * ``` 
@@ -131,8 +123,6 @@ export class BotState<T extends StoreItem = StoreItem> implements Middleware {
     /**
      * Clears the current state object for a turn.
      * 
-     * **Usage Example**
-     *
      * ```JavaScript
      * botState.clear(context);
      * ``` 

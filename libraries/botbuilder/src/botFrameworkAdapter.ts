@@ -13,8 +13,6 @@ import {
 import { ConnectorClient, SimpleCredentialProvider, MicrosoftAppCredentials, JwtTokenValidation, OAuthApiClient } from 'botframework-connector';
 
 /** 
- * :package: **botbuilder**
- * 
  * Express or Restify Request object. 
  */
 export interface WebRequest {
@@ -24,8 +22,6 @@ export interface WebRequest {
 }
 
 /** 
- * :package: **botbuilder**
- * 
  * Express or Restify Response object. 
  */
 export interface WebResponse {
@@ -34,8 +30,6 @@ export interface WebResponse {
 }
 
 /** 
- * :package: **botbuilder**
- * 
  * Bot Framework Adapter Settings. 
  */
 export interface BotFrameworkAdapterSettings {
@@ -44,8 +38,6 @@ export interface BotFrameworkAdapterSettings {
 }
 
 /** 
- * :package: **botbuilder**
- * 
  * Response object expected to be sent in response to an `invoke` activity. 
  */
 export interface InvokeResponse {
@@ -60,11 +52,10 @@ const INVOKE_RESPONSE_KEY = Symbol('invokeResponse');
 
 
 /**
- * :package: **botbuilder**
- * 
  * ActivityAdapter class needed to communicate with a Bot Framework channel or the Emulator.
- *
- * **Usage Example**
+ * 
+ * @remarks
+ * The following example shows the typical adapter setup:
  *
  * ```JavaScript
  * const { BotFrameworkAdapter } = require('botbuilder');
@@ -97,14 +88,13 @@ export class BotFrameworkAdapter extends BotAdapter {
      * communicated with. Scenarios like sending notifications or coupons to a user are enabled by this 
      * method.
      * 
+     * @remarks
      * The processing steps for this method are very similar to [processActivity()](#processactivity)
      * in that a `TurnContext` will be created which is then routed through the adapters middleware 
      * before calling the passed in logic handler. The key difference being that since an activity 
      * wasn't actually received it has to be created.  The created activity will have its address 
      * related fields populated but will have a `context.activity.type === undefined`.
      *        
-     * **Usage Example**
-     *
      * ```JavaScript
      * server.post('/api/notifyUser', async (req, res) => {
      *    // Lookup previously saved conversation reference
@@ -132,16 +122,15 @@ export class BotFrameworkAdapter extends BotAdapter {
 
     /**
      * Starts a new conversation with a user. This is typically used to Direct Message (DM) a member
-     * of a group. 
-     * 
+     * of a group.
+     *  
+     * @remarks 
      * The processing steps for this method are very similar to [processActivity()](#processactivity)
      * in that a `TurnContext` will be created which is then routed through the adapters middleware 
      * before calling the passed in logic handler. The key difference being that since an activity 
      * wasn't actually received it has to be created.  The created activity will have its address 
      * related fields populated but will have a `context.activity.type === undefined`.
      *         
-     * **Usage Example**
-     *
      * ```JavaScript
      * // Get group members conversation reference
      * const reference = TurnContext.getConversationReference(context.activity);
@@ -180,6 +169,7 @@ export class BotFrameworkAdapter extends BotAdapter {
      * Deletes an activity that was previously sent to a channel. It should be noted that not all
      * channels support this feature.
      * 
+     * @remarks
      * Calling `TurnContext.deleteActivity()` is the preferred way of deleting activities as that 
      * will ensure that any interested middleware has been notified. 
      * @param context Context for the current turn of conversation with the user.
@@ -336,6 +326,7 @@ export class BotFrameworkAdapter extends BotAdapter {
      * user and is the method that drives what's often referred to as the bots "Reactive Messaging"
      * flow.
      * 
+     * @remarks
      * The following steps will be taken to process the activity:
      * 
      * - The identity of the sender will be verified to be either the Emulator or a valid Microsoft 
@@ -360,8 +351,6 @@ export class BotFrameworkAdapter extends BotAdapter {
      *   `revoked()` and any future calls to the context will result in a `TypeError: Cannot perform 
      *   'set' on a proxy that has been revoked` being thrown. 
      *        
-     * **Usage Example**
-     *
      * ```JavaScript
      * server.post('/api/messages', (req, res) => {
      *    // Route received request to adapter for processing
@@ -420,6 +409,7 @@ export class BotFrameworkAdapter extends BotAdapter {
      * another in the order in which they're received.  A response object will be returned for each
      * sent activity. For `message` activities this will contain the ID of the delivered message.
      * 
+     * @remarks
      * Calling `TurnContext.sendActivities()` or `TurnContext.sendActivity()` is the preferred way of
      * sending activities as that will ensure that outgoing activities have been properly addressed 
      * and that any interested middleware has been notified. 
@@ -493,6 +483,7 @@ export class BotFrameworkAdapter extends BotAdapter {
      * Replaces an activity that was previously sent to a channel. It should be noted that not all
      * channels support this feature.
      * 
+     * @remarks
      * Calling `TurnContext.updateActivity()` is the preferred way of updating activities as that 
      * will ensure that any interested middleware has been notified. 
      * @param context Context for the current turn of conversation with the user.
@@ -581,6 +572,3 @@ function parseRequest(req: WebRequest): Promise<Activity> {
         }
     });
 } 
-
-
-
