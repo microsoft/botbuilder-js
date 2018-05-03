@@ -24,7 +24,9 @@ const request = require('request-promise');
 const help = require('../lib/help');
 const luis = require('../lib');
 const { getServiceManifest } = require('../lib/utils/argsUtil');
-const Apps = require('../lib/api/apps/apps');
+const Apps = require('../lib/api/Apps/apps');
+const Delay = require('await-delay');
+const Train = require('../lib/api/Train/train');
 
 let args;
 
@@ -38,7 +40,10 @@ async function runProgram() {
     if (argvFragment.length === 0) {
         argvFragment = ['-h'];
     }
-    args = minimist(argvFragment);
+    args = minimist(argvFragment, { string: ['versionId'] });
+    if (args._[0] == "luis")
+        args._ = args._.slice(1);
+
     if (args.init || args.i) {
         const result = await initializeConfig();
         if (result) {
@@ -57,72 +62,83 @@ async function runProgram() {
     }
     const config = await composeConfig();
 
-    // special command
+    // special non-operation commands
     if (args._[0] == "query") {
         return await handleQueryCommand(args, config);
     } if (args._[0] == "set") {
         return await handleSetCommand(args, config);
-    } else {
-        const serviceManifest = getServiceManifest(args);
-        const requestBody = await validateArguments(args, serviceManifest);
+    }
+    const serviceManifest = getServiceManifest(args);
+    const requestBody = await validateArguments(args, serviceManifest);
 
-        if (serviceManifest.operation.methodAlias == "delete" && serviceManifest.operation.target[0] == 'application') {
-            if (!args.q) {
-                let getArgs = { _: ['get', 'application'] };
-                const getApplication = getServiceManifest(getArgs);
-                const result = await luis(config, getApplication, getArgs, {});
-                if (result.error) {
-                    throw new Error(result.error.message);
-                }
-                let answer = readlineSync.question(`Are you sure you want to delete the application ${result.name} (${result.id})? [no] `, { defaultResponse: 'no' });
-                if (answer.length == 0 || answer[0] != 'y') {
-                    process.stderr.write('delete operation canceled');
-                    process.exit(1);
-                    return;
-                }
+    if (serviceManifest.operation.methodAlias == "delete" && serviceManifest.operation.target[0] == 'application') {
+        if (!args.q) {
+            let getArgs = { _: ['get', 'application'] };
+            const getApplication = getServiceManifest(getArgs);
+            const result = await luis(config, getApplication, getArgs, {});
+            if (result.error) {
+                throw new Error(result.error.message);
+            }
+            let answer = readlineSync.question(`Are you sure you want to delete the application ${result.name} (${result.id})? [no] `, { defaultResponse: 'no' });
+            if (answer.length == 0 || answer[0] != 'y') {
+                process.stderr.write('delete operation canceled');
+                process.exit(1);
+                return;
             }
         }
+    }
 
-        let result = await luis(config, serviceManifest, args, requestBody);
-        if (result.error) {
-            throw new Error(result.error.message);
-        }
+    // INVOKE operation
+    let result = {};
+    switch (serviceManifest.operation.methodAlias) {
+        case "train":
+            result = await luis(config, serviceManifest, args, requestBody);
+            if (args.wait)
+                result = await waitForTrainingToComplete(config, serviceManifest, args, requestBody);
+            break;
 
-        // custom output
-        switch (serviceManifest.operation.target[0]) {
-            case "application":
-                switch (serviceManifest.operation.methodAlias) {
-                    case "add":
-                    case "import":
-                        let response = await new Apps().Get({ authoringKey: config.authoringKey, appId: result });
-                        result = JSON.parse(await response.text());
+        default:
+            result = await luis(config, serviceManifest, args, requestBody);
+            break;
+    }
+    if (result.error) {
+        throw new Error(result.error.message);
+    }
 
-                    case "get":
-                        if (args.msbot) {
-                            process.stdout.write(JSON.stringify({
-                                type: "luis",
-                                name: result.name,
-                                id: result.id || result,
-                                appId: result.id || result,
-                                authoringKey: config.authoringKey,
-                                subscriptionKey: config.subscriptionKey || config.authoringKey,
-                                version: result.activeVersion || requestBody.initialVersionId
-                            }, null, 2));
-                        } else {
-                            process.stdout.write(JSON.stringify(result, null, 2));
-                        }
-                        break;
+    // custom output
+    switch (serviceManifest.operation.target[0]) {
+        case "application":
+            switch (serviceManifest.operation.methodAlias) {
+                case "add":
+                case "import":
+                    let response = await new Apps().Get({ authoringKey: config.authoringKey, appId: result });
+                    result = JSON.parse(await response.text());
 
-                    default:
+                case "get":
+                    if (args.msbot) {
+                        process.stdout.write(JSON.stringify({
+                            type: "luis",
+                            name: result.name,
+                            id: result.id || result,
+                            appId: result.id || result,
+                            authoringKey: config.authoringKey,
+                            subscriptionKey: config.subscriptionKey || config.authoringKey,
+                            version: result.activeVersion || requestBody.initialVersionId
+                        }, null, 2));
+                    } else {
                         process.stdout.write(JSON.stringify(result, null, 2));
-                        break;
-                }
-                break;
+                    }
+                    break;
 
-            default:
-                process.stdout.write(JSON.stringify(result, null, 2));
-                break;
-        }
+                default:
+                    process.stdout.write(JSON.stringify(result, null, 2));
+                    break;
+            }
+            break;
+
+        default:
+            process.stdout.write(JSON.stringify(result, null, 2));
+            break;
     }
 }
 
@@ -190,6 +206,37 @@ async function initializeConfig() {
     }
     await fs.writeJson(path.join(process.cwd(), '.luisrc'), config, { spaces: 2 });
     return true;
+}
+
+async function waitForTrainingToComplete(config, serviceManifest, args, requestBody) {
+    do {
+        let total = 0;
+        let trained = 0;
+        let response = await new Train().GetStatus({ applicationId: args.applicationId || config.applicationId, versionId: args.versionId || config.versionId });
+        if (response.Error)
+            throw new Error(response.error);
+        result = JSON.parse(await response.text());
+        isTrained = true;
+        for (let model of result) {
+            total++;
+            let status = model.details.status;
+            if (status == "Fail") {
+                throw new Error(`Training failed for ${model.modelId}: ${model.details.failureReason}`);
+            }
+            else if (status == "InProgress" || status == "Queued") {
+                isTrained = false;
+                break;
+            } else if (status == "Success" || status == "UpToDate") {
+                trained++;
+            }
+        }
+        if (isTrained == true) {
+            process.stderr.write(`${trained}/${total} ${trained / total * 100}%\n`);
+            return result;
+        }
+        await Delay(1000);
+        process.stderr.write(`${trained}/${total} ${trained / total}%\r`);
+    } while (!isTrained);
 }
 
 /**
@@ -397,7 +444,7 @@ async function handleSetCommand(args, config) {
             const listApplication = getServiceManifest(listAppsArgs);
             let results = await luis(config, listApplication, listAppsArgs, {});
             if (results.error) {
-                throw new Error(result.error.message);
+                throw new Error(result.error);
             }
             let found = false;
             for (let app of results) {

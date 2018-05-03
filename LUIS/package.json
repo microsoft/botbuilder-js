@@ -1,6 +1,6 @@
 {
   "name": "luis-apis",
-  "version": "1.0.29",
+  "version": "1.0.30",
   "description": "Tooling for connectivity with LUIS APIs",
   "main": "lib/api/index.js",
   "bin": {
@@ -29,6 +29,7 @@
   },
   "homepage": "https://github.com/Microsoft/botbuilder-tools#readme",
   "dependencies": {
+    "await-delay": "^1.0.0",
     "camelcase": "^4.1.0",
     "chalk": "^2.3.2",
     "cli-table2": "^0.2.0",

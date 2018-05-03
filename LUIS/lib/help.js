@@ -227,8 +227,8 @@ function getVerbHelp(verb, output) {
         return getGeneralHelpContents(output);
 
     targets.sort();
-    for (let verb of targets) {
-        options.table.push([chalk.cyan.bold(verb), '']);
+    for (let target of targets) {
+        options.table.push([chalk.cyan.bold(target), '']);
     }
     sections.push(options);
     sections.push(configSection);
