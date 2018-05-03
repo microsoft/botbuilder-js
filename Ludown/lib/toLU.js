@@ -5,23 +5,14 @@
 const chalk = require('chalk');
 const fs = require('fs');
 const path = require('path');
+const retCode = require('./enums/CLI-errors');
 module.exports = {
     generateMarkdown(program) {
         try {
-            // is there an output folder?
             var outFolder = process.cwd();
-            var LUISJSON = {
-                "sourceFile": "",
-                "model": {}
-            };
-            var QnAJSONFromTSV = {
-                "sourceFile": "",
-                "model": []
-            };
-            var QnAJSON = {
-                "sourceFile": "",
-                "model": {}
-            }
+            var LUISJSON = {"sourceFile": "", "model": {}};
+            var QnAJSONFromTSV = {"sourceFile": "", "model": []};
+            var QnAJSON = {"sourceFile": "", "model": {}}
             if(program.out_folder) {
                 if(path.isAbsolute(program.out_folder)) {
                     outFolder = program.out_folder;
@@ -29,8 +20,8 @@ module.exports = {
                     outFolder = path.resolve('', program.out_folder);
                 }
                 if(!fs.existsSync(outFolder)) {
-                    console.error(chalk.default.redBright('\nOutput folder ' + outFolder + ' does not exist\n'));
-                    process.exit(1);
+                    process.stderr.write(chalk.default.redBright('\nOutput folder ' + outFolder + ' does not exist\n'));
+                    process.exit(retCode.OUTPUT_FOLDER_INVALID);
                 }
             }
             
@@ -40,12 +31,6 @@ module.exports = {
                 LUISJSON.sourceFile = program.LUIS_File;
             }
 
-            // Do we have a QnA file? if so, get that and load into memory
-            if(program.QNA_TSV_File) {
-                QnAJSONFromTSV.model.push(parseQnAFile(program.QNA_TSV_File));
-                QnAJSONFromTSV.sourceFile = program.QNA_TSV_File;
-            }
-
             //do we have a QnA JSON file? If so, get that and load into memory
             if(program.QNA_FILE) {
                 QnAJSON.model = parseQnAJSONFile(program.QNA_FILE);
@@ -53,10 +38,9 @@ module.exports = {
             }
             // construct the markdown file content
             var outFileContent = constructMdFile(LUISJSON, QnAJSON, program.LUIS_File, program.QNA_FILE);
-
             if(!outFileContent) {
-                console.error(chalk.default.redBright('\nSorry, Unable to generate .lu file content!\n'));
-                process.exit(1);
+                process.stderr.write(chalk.default.redBright('\nSorry, Unable to generate .lu file content!\n'));
+                process.exit(retCode.UNKNOWN_ERROR);
             }
 
             // write out the file
@@ -75,18 +59,18 @@ module.exports = {
                 }
             }
             if(fs.existsSync(outFolder + '\\' + program.lu_File)) {
-                console.error(chalk.default.redBright('Output file: ' + program.lu_File + ' exists! Use -n <lu file name> to specify an output file name.\n'));
-                process.exit(1);
+                process.stderr.write(chalk.default.redBright('Output file: ' + program.lu_File + ' exists! Use -n <lu file name> to specify an output file name.\n'));
+                process.exit(retCode.OUTPUT_FILE_EXISTS);
             }
 
             fs.writeFile(outFolder + '\\' + program.lu_File, outFileContent, function (err) {
-                if (err) return console.log(err);
-                if(!program.quiet) console.log(chalk.white('Successfully wrote to ' + outFolder + '\\' + program.lu_File));
+                if (err) return process.stdout.log(err);
+                if(program.verbose) process.stdout.write(chalk.white('Successfully wrote to ' + outFolder + '\\' + program.lu_File));
               });
         } catch (err) {
-            console.error(chalk.default.redBright('Oops! Something went wrong.\n'));
-            console.error(chalk.yellow(err));
-            process.exit(1);
+            process.stderr.write(chalk.default.redBright('Oops! Something went wrong.\n'));
+            process.stderr.write(chalk.yellow(err));
+            process.exit(retCode.UNKNOWN_ERROR);
         }
     }
 };
@@ -98,26 +82,26 @@ module.exports = {
  */
 var parseLUISFile = function(file) {
     if(!fs.existsSync(path.resolve(file))) {
-        console.error(chalk.default.redBright('Sorry unable to open [' + file + ']\n'));        
-        process.exit(1);
+        process.stderr.write(chalk.default.redBright('Sorry unable to open [' + file + ']\n'));        
+        process.exit(retCode.FILE_OPEN_ERROR);
     }
     var LUISFileContent = fs.readFileSync(file,'utf8');
     if (!LUISFileContent) {
-        console.error(chalk.default.redBright('Sorry, error reading file: ' + file + '\n'));    
-        process.exit(1);
+        process.stderr.write(chalk.default.redBright('Sorry, error reading file: ' + file + '\n'));    
+        process.exit(retCode.FILE_OPEN_ERROR);
     }
     LUISJSON = JSON.parse(LUISFileContent);
     if(LUISJSON.composites && LUISJSON.composites.length !== 0) {
-        console.error(chalk.default.redBright('Sorry, input LUIS JSON file has references to composite entities. Cannot convert to .lu file.\n'));    
-        process.exit(1);
+        process.stderr.write(chalk.default.redBright('Sorry, input LUIS JSON file has references to composite entities. Cannot convert to .lu file.\n'));    
+        process.exit(retCode.INVALID_INPUT_FILE);
     }
     if(LUISJSON.regex_entities && LUISJSON.regex_entities.length !== 0) {
-        console.error(chalk.default.redBright('Sorry, input LUIS JSON file has references to regular expression entities. Cannot convert to .lu file.\n'));    
-        process.exit(1);
+        process.stderr.write(chalk.default.redBright('Sorry, input LUIS JSON file has references to regular expression entities. Cannot convert to .lu file.\n'));    
+        process.exit(retCode.INVALID_INPUT_FILE);
     }
     if(LUISJSON.regex_features && LUISJSON.regex_features.length !== 0) {
-        console.error(chalk.default.redBright('Sorry, input LUIS JSON file has references to regex_features. Cannot convert to .lu file.\n'));    
-        process.exit(1);
+        process.stderr.write(chalk.default.redBright('Sorry, input LUIS JSON file has references to regex_features. Cannot convert to .lu file.\n'));    
+        process.exit(retCode.INVALID_INPUT_FILE);
     }
     return LUISJSON;
 };
@@ -129,92 +113,21 @@ var parseLUISFile = function(file) {
  */
 var parseQnAJSONFile = function(file){
     if(!fs.existsSync(path.resolve(file))) {
-        console.error(chalk.default.redBright('Sorry unable to open [' + file + ']\n'));        
-        process.exit(1);
+        process.stderr.write(chalk.default.redBright('Sorry unable to open [' + file + ']\n'));        
+        process.exit(retCode.FILE_OPEN_ERROR);
     }
     var QNAFileContent = fs.readFileSync(file,'utf8');
     if (!QNAFileContent) {
-        console.error(chalk.default.redBright('Sorry, error reading file: ' + file + '\n'));    
-        process.exit(1);
+        process.stderr.write(chalk.default.redBright('Sorry, error reading file: ' + file + '\n'));    
+        process.exit(retCode.FILE_OPEN_ERROR);
     }
     QnAJSON = JSON.parse(QNAFileContent);
     if (!QnAJSON) {
-        console.error(chalk.default.redBright('Sorry, error parsing file as QnA JSON: ' + file + '\n'));    
-        process.exit(1);
+        process.stderr.write(chalk.default.redBright('Sorry, error parsing file as QnA JSON: ' + file + '\n'));    
+        process.exit(retCode.INVALID_INPUT_FILE);
     }
     return QnAJSON;
 }
-/**
- * helper function to parse QnAMaker TSV file into a JSON object
- *
- * @param {String} file input QnA TSV file name
- * @returns {object} QnA JSON object
- */
-var parseQnAFile = function (file) {
-    var QnAJSONFromTSV = [];
-    if(!fs.existsSync(path.resolve(file))) {
-        console.error(chalk.default.redBright('Sorry unable to open [' + file + ']\n'));        
-        process.exit(1);
-    }
-    var QnAFileContent = fs.readFileSync(file,'utf8');
-    if (!QnAFileContent) {
-        console.error(chalk.default.redBright('Sorry, error reading file:' + file + '\n'));    
-        process.exit(1);
-    }
-    QnAFileContentByLine = QnAFileContent.split(/\r\n|\r|\n/g);
-    //skip the first line
-    QnAFileContentByLine.splice(0,1);
-    QnAFileContentByLine.forEach(function(line){
-        qnaPair = line.split(/\t/g);
-        if(qnaPair[0]) {
-            var answerObject;
-            var sourceValidation;
-            var metaDataValidation;
-            // do we already have this answer? 
-            if(qnaPair[1]) {
-                answerObject = QnAJSONFromTSV.filter(function(item) {
-                    return item.answer == qnaPair[1];
-                });
-            }
-            // is the source the same? 
-            if(qnaPair[2]) {
-                answerObject = answerObject.filter(function(item) {
-                    return item.source == qnaPair[2];
-                });
-            }
-            
-            // is the meta-data the same? 
-            if(qnaPair[3]) {
-                answerObject = answerObject.filter(function(item) {
-                    return item.metadata == qnaPair[3];
-                })
-            }
-
-            if(answerObject.length === 0) {
-                var metaData = [];
-                if(qnaPair[3]) {
-                    var splitMetaData = qnaPair[3].split('|');
-                    splitMetaData.forEach(function(item) {
-                        var kp = item.trim().split(':');
-                        metaData.push({
-                            "name": kp[0],
-                            "value": kp[1]
-                        });
-                    });
-                }
-                QnAJSONFromTSV.push({
-                    "questions": [qnaPair[0]],
-                    "answer": qnaPair[1],
-                    "source": qnaPair[2],
-                    "metadata": metaData
-                });
-            } else {
-                answerObject[0].questions.push(qnaPair[0]);
-            }
-        }
-    });
-    return QnAJSONFromTSV;
-};
 /**
  * helper function to construct the file content based on parsed luis and qna objects
  *
@@ -228,11 +141,7 @@ var constructMdFile = function(LUISJSON, QnAJSONFromTSV, luisFile, QnAFile) {
     var fileContent = "";
     var NEWLINE = '\r\n';
     if(LUISJSON.sourceFile) {
-        var luisObj = {
-            "intents" : [],
-            "patterns" : {}
-        };
-        //fileContent = JSON.stringify(LUISJSON) + '\r\n-------\r\n' + JSON.stringify(QnAJSONFromTSV);
+        var luisObj = {"intents" : [], "patterns" : {}};
         // go through LUIS stuff
         if(LUISJSON.model.intents.length >= 0) {
             LUISJSON.model.intents.forEach(function(intent) {
@@ -374,4 +283,4 @@ var constructMdFile = function(LUISJSON, QnAJSONFromTSV, luisFile, QnAFile) {
                       '> ! Source QnA TSV file:' + QnAJSONFromTSV.sourceFile + NEWLINE + NEWLINE + fileContent;
     }
     return fileContent;
-}
+};
