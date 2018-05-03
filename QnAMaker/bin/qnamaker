@@ -55,7 +55,7 @@ async function runProgram() {
         args.help ||
         args.h ||
         args._.includes('help')) {
-        return help(args);
+        return help(args, process.stdout);
     }
 
     if (args.version || args.v) {
@@ -83,7 +83,7 @@ async function runProgram() {
                 let kb = JSON.parse(await kbResult.text());
                 let answer = readlineSync.question(`Are you sure you would like to delete ${kb.name} [${kb.id}]? [no] `, { defaultInput: 'no' });
                 if (answer.trim()[0] == 'n') {
-                    process.stdout.write('operation canceled');
+                    process.stderr.write('operation canceled');
                     return;
                 }
             }

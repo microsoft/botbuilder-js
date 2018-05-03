@@ -2,29 +2,31 @@
 
 [![npm version](https://badge.fury.io/js/ludown.svg)](https://badge.fury.io/js/ludown)
 
-.lu files help describe language understanding components for your bot. LUDown is a command line tool that helps convert .lu file(s) into JSON files that you can then use to create your [LUIS](http://luis.ai) app or [QnAMaker](http://qnamaker.ai) Knowledge base. 
+.lu files help describe language understanding components for your bot. LUDown is a command line tool that helps convert .lu file(s) into JSON files that you can then use to create your [LUIS](http://luis.ai) app or [QnAMaker](http://qnamaker.ai) knowledge base. 
 
 Language Understanding ([LUIS.ai](https://luis.ai/)) allows your application to understand what a person wants in their own words. LUIS uses machine learning to allow developers to build applications that can receive user input in natural language and extract meaning from it.
 
-[QnA Maker](http://qnamaker.ai) enables you to go from FAQ to Bot in minutes. With QnA Maker you can build, train and publish a simple question and answer bot based on FAQ URLs, structured documents or editorial content in minutes.
+[QnA Maker](http://qnamaker.ai) enables you to go from FAQ to bot in minutes. With QnA Maker you can build, train and publish a simple question and answer bot based on FAQ URLs, structured documents or editorial content in minutes.
 
-The .lu file and the LUDown tool was born to serve few use cases:
-- Quick, simple and easy way to bootstrap language understanding for your bot
-- Describe intents, entities, utterances and patterns for your bot in simple markdown documents
-- The langauge understanding definition for your bot lives with the rest of your code. You can use other CLI tools like luis to create a new LUIS app using the .lu files
+The .lu file and the LUDown tool serve several use cases:
+- Quick, simple and easy way to bootstrap language understanding for your bot.
+- Describe intents, entities, utterances and patterns for your bot in simple markdown documents.
+- The langauge understanding definition for your bot lives with the rest of your code. You can use other CLI tools like luis to create a new LUIS app using the .lu files.
 - Group language understanding documents by langauge x locale for easier to manage localization purposes.
 - Define question and answer pairs for your bot.
-- Works in conjunction with other Microsoft Bot Builder tools like [luis CLI](https://github.com/Microsoft/botbuilder-tools/tree/master/LUIS), [QnAMaker CLI](https://github.com/Microsoft/botbuilder-tools/tree/master/QnAMaker)
+- Works in conjunction with other Microsoft Bot Builder tools, like [LUIS CLI](https://github.com/Microsoft/botbuilder-tools/tree/master/LUIS) and [QnAMaker CLI](https://github.com/Microsoft/botbuilder-tools/tree/master/QnAMaker).
 
-## Pre-requisite
+## Prerequisite
 
 - [Node.js](https://nodejs.org/) version 8.5 or higher
+
 ## Installation
 
-
+To install:
 ```bash
 npm i -g ludown
 ```
+
 ## Commands
 
 ```
@@ -117,7 +119,7 @@ Convert .lu file(s) into QnA Maker JSON file.
 ```
 
 ### Refresh command
-After you have bootstrapped and created your LUIS model and/ or QnAMaker knowledge base, you might make subsequent refinements to your models directly from [luis.ai](https://luis.ai/) or [qnamaker.ai](https://qnamaker.ai). You can use the refresh command to re-genrate .lu files from your LUIS JSON and/ or QnAMaker JSON files.  
+After you have bootstrapped and created your LUIS model and / or QnAMaker knowledge base, you might make subsequent refinements to your models directly from [luis.ai](https://luis.ai/) or [qnamaker.ai](https://qnamaker.ai). You can use the refresh command to re-genrate .lu files from your LUIS JSON and / or QnAMaker JSON files.  
 
 ```
 >ludown refresh -h
@@ -140,7 +142,7 @@ After you have bootstrapped and created your LUIS model and/ or QnAMaker knowled
 .lu files contain markdown-like, simple text based definitions for [LUIS](http://luis.ai) or [QnAmaker.ai](http://qnamaker.ai) concepts. 
 
 ### Intent
-An intent represents actions the user wants to perform. The intent is a purpose or goal expressed in a user's input, such as booking a flight, paying a bill, or finding a news article. You define and name intents that correspond to these actions. A travel app may define an intent named "BookFlight."
+An intent represents an action the user wants to perform. The intent is a purpose or goal expressed in a user's input, such as booking a flight, paying a bill, or finding a news article. You define and name intents that correspond to these actions. A travel app may define an intent named "BookFlight."
 
 Here's a simple .lu file that captures a simple 'Greeting' intent with a list of example utterances that capture ways users can express this intent. You can use - or + or * to denote lists. Numbered lists are not supported.
 
@@ -253,7 +255,7 @@ $commPreference:text=
 
 ### Phrase List features
 
-You can also enhance LUIS understanding of your model using [PhraseLists](https://docs.microsoft.com/en-us/azure/cognitive-services/LUIS/luis-tutorial-interchangeable-phrase-list)
+You can enhance LUIS understanding of your model using [PhraseLists](https://docs.microsoft.com/en-us/azure/cognitive-services/LUIS/luis-tutorial-interchangeable-phrase-list).
 
 You can describe Phrase List entities using the following notation:
 $\<entityName\>:PhraseList[!interchangeable]
@@ -274,7 +276,7 @@ $Want:PhraseList
 	- desire
 	- know
 ```
-By default synonyms are set to be **not interchangeable** (matches with the portal experience). You can optionally set the synonyms to be **interchangeable** as part of the definition. Here's an example
+By default synonyms are set to be **not interchangeable** (matches with the portal experience). You can optionally set the synonyms to be **interchangeable** as part of the definition. Here's an example:
 
 ```markdown
 $question:PhraseList interchangeable
@@ -285,12 +287,12 @@ $question:PhraseList interchangeable
 ### Patterns
 Patterns are a new feature in LUIS that allows you to define a set of rules that augment the machine learned model. You can define patterns in the .lu file simply by defining an entity in an utterance without a labelled value. 
 
-As an example, this would be treated as a pattern with alarmTime set as a Pattern.Any entity type
+As an example, this would be treated as a pattern with alarmTime set as a Pattern.Any entity type:
 ```markdown
 # DeleteAlarm
 - delete the {alarmTime} alarm
 ``` 
-This example would be treated as an utterance since it has a labelled value with 7AM being the labelled value for entity alarmTime
+This example would be treated as an utterance since it has a labelled value with 7AM being the labelled value for entity alarmTime:
 ```markdown
 # DeleteAlarm
 - delete the {alarmTime=7AM} alarm
@@ -299,7 +301,8 @@ This example would be treated as an utterance since it has a labelled value with
 Note: By default any entity that is left undescribed in a pattern will be mapped to Pattern.Any entity type.
 
 ### Question and Answer pairs
-.lu file (and the parser) supports question and answer definitions as well. You can this notation to describe them
+.lu file (and the parser) supports question and answer definitions as well. You can this notation to describe them:
+
 \# ? Question
 \[list of question variations]
 ```markdown
@@ -324,7 +327,7 @@ Here's an example of question and answer definitions. The LUDown tool will autom
 	```
 ```
 
-You can add multiple questions to the same answer by simply additing variations to questions. Here's an example
+You can add multiple questions to the same answer by simply additing variations to questions:
 
 ```markdown
 ### ? Who is your ceo?
@@ -336,8 +339,8 @@ You can add multiple questions to the same answer by simply additing variations 
 
 ### External references
 Two different references are supported in the .lu file. These follow Markdown link syntax.
-- Reference to another .lu file via \[link name](\<.lu file name\>). Ref can be an absolute path or <b>relative path from the containing .lu file</b>
-- Reference to URL for QnAMaker to ingest during KB creation via \[link name](\<URL\>)
+- Reference to another .lu file via `\[link name](\<.lu file name\>)`. Reference can be an absolute path or a relative path from the containing .lu file.
+- Reference to URL for QnAMaker to ingest during KB creation via `\[link name](\<URL\>)`
 
 Here's an example of those references: 
 
@@ -389,12 +392,12 @@ You can add comments to your .lu document by prefixing the comment with >. Here'
 
 Checkout the [examples](https://github.com/Microsoft/botbuilder-tools/tree/master/ludown/Examples) folder for additional example .lu files.
 
-## Consuming output of LUDown tool
+## Consuming Output of LUDown Tool
 Once you have run LUDown, you can use the resulting JSON files in several ways: 
 - Using command line tools like luis.exe, qna.exe
 - Using the LUIS and QnA maker portals
 
-### Creating a new LUIS app
+### Creating a New LUIS App
 #### using command line 
 ```bash
 luis import application --in _LUISApp.json --authoringKey ""

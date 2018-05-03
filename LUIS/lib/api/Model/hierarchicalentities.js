@@ -63,31 +63,31 @@ class Hierarchicalentities extends ServiceBase {
         return this.createRequest('/{hEntityId}/children/{hChildId}', params, 'get');
     }
     /**
-    * undefined
+    * Create an entity role for an entity in the application.
     */
     CreateHierarchicalEntityRole(params , entityRoleCreateObject/* EntityRoleCreateObject */) {
         return this.createRequest('/{hEntityId}/roles', params, 'post', entityRoleCreateObject);
     }
     /**
-    * undefined
+    * Get All Entity Roles for a given entity
     */
     GetHierarchicalEntityRoles(params) {
         return this.createRequest('/{hEntityId}/roles', params, 'get');
     }
     /**
-    * undefined
+    * Delete an entity role.
     */
     DeleteHierarchicalEntityRole(params) {
         return this.createRequest('/{hEntityId}/roles/{roleId}', params, 'delete');
     }
     /**
-    * undefined
+    * Update an entity role for a given entity
     */
     UpdateHierarchicalEntityRole(params , entityRoleUpdateObject/* EntityRoleUpdateObject */) {
         return this.createRequest('/{hEntityId}/roles/{roleId}', params, 'put', entityRoleUpdateObject);
     }
     /**
-    * undefined
+    * Get one entity role for a given entity
     */
     GetHierarchicalEntityRole(params) {
         return this.createRequest('/{hEntityId}/roles/{roleId}', params, 'get');

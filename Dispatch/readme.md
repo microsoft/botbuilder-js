@@ -1,19 +1,20 @@
 # Dispatch Command Line tool
 [![npm version](https://badge.fury.io/js/botdispatch.svg)](https://badge.fury.io/js/botdispatch) 
-Dispatch is a tool to create and evaluate LUIS model used to dispatch intent across multiple bot modules such as LUIS model(s), QnA knowledge base(s) and others (added to dispatch as a file type).
+
+Dispatch is a tool to create and evaluate LUIS models used to dispatch intent across multiple bot modules such as LUIS models, QnA knowledge bases and others (added to dispatch as a file type).
 
 Use the Dispatch model in cases when:
 1. Your bot consists of multiple modules and you need assistance in routing user's utterances to these modules and evaluate the bot integration.
 2. Evaluate quality of intents classification of a single LUIS model.
-3. Create a text classification model from text file(s).
+3. Create a text classification model from text files.
 
-## Pre-requisite
+## Prerequisite
 
 - [Node.js](https://nodejs.org/) version 8.5 or higher
 - For installation on Linux, please pre-install .NET Core runtime by following instructions on this page: https://docs.microsoft.com/en-us/dotnet/core/linux-prerequisites?tabs=netcore2x.
 
 ## Installation
-To install simply invoke npm 
+To install:
 
 ```shell
 npm install -g botdispatch
@@ -25,16 +26,16 @@ This will install dispatch into your global path.
 
 ## Initializing dispatch
 
-To initialize dispatch you run 
+To initialize dispatch:
 
 ```shell
 dispatch init [options]
 ```
 
-It will ask you the name of the dispatch, LUIS authoring key and region needed to create a LUIS application.  This commands then creates {dispatchName}.dispatch file.
+It will ask for the name of the dispatch, LUIS authoring key and region needed to create a LUIS application.  This commands then creates {dispatchName}.dispatch file.
 To bypass the prompts, values could be passed in via arguments below.
 
-Arguments
+Arguments:
 
 | Option               | Description                       |
 | -------------------- | --------------------------------- |
@@ -56,7 +57,7 @@ dispatch init -bot c:\src\bot\testbot.bot
 
 ## Adding source to dispatch
 
-This step is not needed if you have a .bot file already connected with services (ie LUIS/QnA). Dispatch will take the services in .bot file
+This step is not needed if you have a .bot file already connected with services (i.e., LUIS/QnA). Dispatch will take the services in .bot file
 and add each of the services it can dispatch to .dispatch file.
 
 ```shell
@@ -73,7 +74,7 @@ Arguments
 | Option       | Description |
 | -----------  | ----------- |
 | -type        | luis, qna, file|
-| -id          | (required only if type is luis/qna) LUIS app id or QnA kb id - from application settings page)|
+| -id          | (required only if type is luis/qna) LUIS app id or QnA kb id from application settings page|
 | -name        | LUIS app name or QnA name (from application settings page) or module/file name for file type |
 | -key         | (required only if type is luis/qna) LUIS authoring key (from https://www.luis.ai/user/settings) or QnA maker key (from https://qnamaker.ai/UserSettings) |
 | -version     | (Required only if type is luis) LUIS app version |
@@ -116,13 +117,13 @@ Arguments
 
 ## Creating your dispatch model  
 
-To create, train and publish your new dispatch model, run
+To create, train and publish your new dispatch model:
 
 ```shell
 dispatch create [options]
 ```
 
-With the following options
+Options:
 
 | Option               | Description                                                  |
 | ----------------     | ------------------------------------------------------------ |
@@ -136,7 +137,7 @@ This command creates a brand new LUIS application.
 
 ## Refreshing your dispatch model  
 
-To train and publish your existing dispatch model after modification, run
+To train and publish your existing dispatch model after modification:
 
 ```shell
 dispatch refresh [options]
@@ -155,13 +156,13 @@ This command updates existing LUIS application in .dispatch file.
 
 ## Evaluating your dispatch model  
 
-This command will run cross validation evaluation on the dispatch model and generate a summary of the evaluation.    
+This command will run cross validation evaluation on the dispatch model and generate a summary of the evaluation:  
 
 ```shell
 dispatch eval [options]
 ```
 
-With the following options.  If not given, the tool will prompt for the required information it needs to run model evaluation.
+Options:
 
 |Option | Description|
 | ------ | ----------- |
@@ -171,15 +172,17 @@ With the following options.  If not given, the tool will prompt for the required
 | -dataFolder           | (optional) Output folder for tool |
 | -h, --help            | Output usage information|
 
+If no options are supplied, the tool will prompt for the required information it needs to run model evaluation.
+
 ## Testing your dispatch model  
 
-To test your dispatch model againsts test set, run
+To test your dispatch model againsts test set:
 
 ```shell
 dispatch test [options]
 ```
 
-With the following options
+Options:
 
 | Option               | Description                                                  |
 | ----------------     | ------------------------------------------------------------ |

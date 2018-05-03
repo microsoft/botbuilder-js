@@ -1,7 +1,7 @@
 /**
- * Copyright(c) Microsoft Corporation.All rights reserved.
- * Licensed under the MIT License.
- */
+  * Copyright(c) Microsoft Corporation.All rights reserved.
+  * Licensed under the MIT License.
+  */
 module.exports.Apps = require('./apps');
 module.exports.Assistants = require('./assistants');
 module.exports.Cultures = require('./cultures');

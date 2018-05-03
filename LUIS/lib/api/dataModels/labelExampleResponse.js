@@ -7,16 +7,16 @@
 class LabelExampleResponse {
     
     /**
-    * @property {string} utteranceText
+    * @property {string} UtteranceText
     */
 
     /**
-    * @property {integer} exampleId
+    * @property {integer} ExampleId
     */
 
     
-    constructor({utteranceText /* string */,exampleId /* integer */} = {}) {
-        Object.assign(this, {utteranceText /* string */,exampleId /* integer */});
+    constructor({UtteranceText /* string */,ExampleId /* integer */} = {}) {
+        Object.assign(this, {UtteranceText /* string */,ExampleId /* integer */});
     }
 }
 LabelExampleResponse.fromJSON = function(source) {
@@ -27,8 +27,8 @@ LabelExampleResponse.fromJSON = function(source) {
         return source.map(LabelExampleResponse.fromJSON);
     }
     
-    const {utteranceText /* string */,exampleId /* integer */} = source;
-    return new LabelExampleResponse({utteranceText /* string */,exampleId /* integer */});
+    const {UtteranceText /* string */,ExampleId /* integer */} = source;
+    return new LabelExampleResponse({UtteranceText /* string */,ExampleId /* integer */});
 };
 
 module.exports = LabelExampleResponse;

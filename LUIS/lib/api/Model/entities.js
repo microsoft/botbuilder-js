@@ -39,31 +39,31 @@ class Entities extends ServiceBase {
         return this.createRequest('/{entityId}', params, 'get');
     }
     /**
-    * undefined
+    * Create an entity role for an entity in the application.
     */
     CreateEntityRole(params , entityRoleCreateObject/* EntityRoleCreateObject */) {
         return this.createRequest('/{entityId}/roles', params, 'post', entityRoleCreateObject);
     }
     /**
-    * undefined
+    * Get All Entity Roles for a given entity
     */
     GetEntityRoles(params) {
         return this.createRequest('/{entityId}/roles', params, 'get');
     }
     /**
-    * undefined
+    * Delete an entity role.
     */
     DeleteEntityRole(params) {
         return this.createRequest('/{entityId}/roles/{roleId}', params, 'delete');
     }
     /**
-    * undefined
+    * Update an entity role for a given entity
     */
     UpdateEntityRole(params , entityRoleUpdateObject/* EntityRoleUpdateObject */) {
         return this.createRequest('/{entityId}/roles/{roleId}', params, 'put', entityRoleUpdateObject);
     }
     /**
-    * undefined
+    * Get one entity role for a given entity
     */
     GetEntityRole(params) {
         return this.createRequest('/{entityId}/roles/{roleId}', params, 'get');

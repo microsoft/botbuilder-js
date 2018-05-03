@@ -1,5 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * Copyright(c) Microsoft Corporation.All rights reserved.
+ * Licensed under the MIT License.
+ */
 const schema_1 = require("../schema");
 const connectedService_1 = require("./connectedService");
 class DispatchService extends connectedService_1.ConnectedService {

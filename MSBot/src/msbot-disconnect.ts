@@ -8,7 +8,7 @@ import { BotConfig } from './BotConfig';
 
 program.Command.prototype.unknownOption = function (flag: any) {
     console.error(chalk.default.redBright(`Unknown arguments: ${flag}`));
-    program.help();
+    showErrorHelp();
 };
 
 interface DisconnectServiceArgs {
@@ -35,14 +35,14 @@ if (process.argv.length < 3) {
             .then(processConnectAzureArgs)
             .catch((reason) => {
                 console.error(chalk.default.redBright(reason.toString().split('\n')[0]));
-                program.help();
+                showErrorHelp();
             });
     } else {
         BotConfig.Load(args.bot)
             .then(processConnectAzureArgs)
             .catch((reason) => {
                 console.error(chalk.default.redBright(reason.toString().split('\n')[0]));
-                program.help();
+                showErrorHelp();
             });
     }
 }
@@ -59,4 +59,14 @@ async function processConnectAzureArgs(config: BotConfig): Promise<BotConfig> {
     }
 
     return config;
+}
+
+
+function showErrorHelp()
+{
+    program.outputHelp((str) => {
+        console.error(str);
+        return '';
+    });
+    process.exit(1);
 }

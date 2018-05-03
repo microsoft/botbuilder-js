@@ -8,7 +8,7 @@ import { BotConfig } from './BotConfig';
 
 program.Command.prototype.unknownOption = function (flag: any) {
     console.error(chalk.default.redBright(`Unknown arguments: ${process.argv.slice(2).join(' ')}`));
-    program.help();
+    showErrorHelp();
 };
 
 interface SecretArgs {
@@ -30,21 +30,21 @@ program
 let args: SecretArgs = <SecretArgs><any>program.parse(process.argv);
 
 if (process.argv.length < 3) {
-    program.help();
+    showErrorHelp();
 } else {
     if (!args.bot) {
         BotConfig.LoadBotFromFolder(process.cwd(), args.secret)
             .then(processSecret)
             .catch((reason) => {
                 console.error(chalk.default.redBright(reason.toString().split('\n')[0]));
-                program.help();
+                showErrorHelp();
             });
     } else {
         BotConfig.Load(args.bot, args.secret)
             .then(processSecret)
             .catch((reason) => {
                 console.error(chalk.default.redBright(reason.toString().split('\n')[0]));
-                program.help();
+                showErrorHelp();
             });
     }
 }
@@ -59,4 +59,13 @@ async function processSecret(config: BotConfig): Promise<BotConfig> {
     let filename = config.name + '.bot';
     config.save(filename);
     return config;
+}
+
+function showErrorHelp()
+{
+    program.outputHelp((str) => {
+        console.error(str);
+        return '';
+    });
+    process.exit(1);
 }

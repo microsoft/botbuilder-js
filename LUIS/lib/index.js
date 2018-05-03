@@ -38,6 +38,7 @@ module.exports = async function luis(config, serviceManifest, args, requestBody)
     if (requestBody && operation.entityType) {
         requestBodyDataModel = dataModels[operation.entityType].fromJSON(requestBody);
     }
+    
     // Create the target service and kick off the request.
     const service = new api[identifierPath][identifier]();
     const response = await service[operation.name](args, (requestBodyDataModel || requestBody));

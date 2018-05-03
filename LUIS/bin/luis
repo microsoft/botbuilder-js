@@ -50,7 +50,7 @@ async function runProgram() {
         args.h ||
         args['!'] ||
         args._.includes('help')) {
-        return help(args);
+        return help(args, process.stdout);
     }
     if (args.version || args.v) {
         return process.stdout.write(require(path.join(__dirname, '../package.json')).version);
@@ -76,7 +76,9 @@ async function runProgram() {
                 }
                 let answer = readlineSync.question(`Are you sure you want to delete the application ${result.name} (${result.id})? [no] `, { defaultResponse: 'no' });
                 if (answer.length == 0 || answer[0] != 'y') {
-                    return process.stdout.write('delete operation canceled');
+                    process.stderr.write('delete operation canceled');
+                    process.exit(1);
+                    return;
                 }
             }
         }
@@ -319,32 +321,30 @@ async function validateArguments(args, serviceManifest) {
  */
 async function handleError(error) {
     process.stderr.write('\n' + chalk.red.bold(error + '\n\n'));
-    //    if (error.name === 'ArgumentError') {
     await help(args);
-    //    }
     return 1;
 }
 
 async function handleQueryCommand(args, config) {
     let query = args.q || args.question;
     if (!query) {
-        process.stdout.write(chalk.red.bold(`missing -q\n`));
+        process.stderr.write(chalk.red.bold(`missing -q\n`));
         return help(args);
     }
     let appId = args.appId || config.appId;
     if (!appId) {
-        process.stdout.write(chalk.red.bold(`missing --appid\n`));
+        process.stderr.write(chalk.red.bold(`missing --appid\n`));
         return help(args);
     }
 
     let subscriptionKey = args.subscriptionKey || config.authoringKey;
     if (!subscriptionKey) {
-        process.stdout.write(chalk.red.bold(`missing --subscriptionKey\n`));
+        process.stderr.write(chalk.red.bold(`missing --subscriptionKey\n`));
         return help(args);
     }
     let region = args.region || config.region;
     if (!region) {
-        process.stdout.write(chalk.red.bold(`missing --region\n`));
+        process.stderr.write(chalk.red.bold(`missing --region\n`));
         return help(args);
     }
 
@@ -371,13 +371,13 @@ async function handleQueryCommand(args, config) {
 async function handleSetCommand(args, config) {
     let target = args._.length >= 2 ? args._[1].toLowerCase() : undefined;
     if (!target || (target != 'application' && target != 'version' && target != 'app')) {
-        process.stdout.write(chalk.red.bold(`missing .luisrc property name: [application|version|authoringKey|endpoint]\n`));
+        process.stderr.write(chalk.red.bold(`missing .luisrc property name: [application|version|authoringKey|endpoint]\n`));
         return help(args);
     }
 
     let targetName = (args._.length >= 3) ? args._.slice(2).join(' ').toLowerCase().trim() : undefined;
     if (!targetName) {
-        process.stdout.write(chalk.red.bold(`missing the value\n`));
+        process.stderr.write(chalk.red.bold(`missing the value\n`));
         return help(args);
     }
 

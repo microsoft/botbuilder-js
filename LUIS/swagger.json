@@ -9706,6 +9706,12 @@
             "$ref": "#/definitions/SubClosedList"
           },
           "type": "array"
+        },
+        "roles": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
         }
       }
     },
@@ -10048,7 +10054,10 @@
         },
         "assignedEndpointKey": {
           "description": "The endpoint key.",
-          "type": "string"
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
         },
         "externalApiKeys": {
           "description": "External keys.",
@@ -10121,6 +10130,17 @@
         "phrases": "monday,tuesday,wednesday,thursday,friday,saturday,sunday"
       }
     },
+    "PrebuiltDomainObject": {
+      "type": "object",
+      "properties": {
+        "domain_name": {
+          "type": "string"
+        },
+        "model_name": {
+          "type": "string"
+        }
+      }
+    },
     "HierarchicalModel": {
       "type": "object",
       "properties": {
@@ -10132,6 +10152,16 @@
             "type": "string"
           },
           "type": "array"
+        },
+        "inherits": {
+          "type": "object",
+          "$ref": "#/definitions/PrebuiltDomainObject"
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -10196,13 +10226,6 @@
           },
           "type": "array"
         },
-        "bing_entities": {
-          "description": "List of prebuilt intents.",
-          "items": {
-            "type": "string"
-          },
-          "type": "array"
-        },
         "closedLists": {
           "description": "List of closed lists.",
           "items": {
@@ -10219,6 +10242,30 @@
           },
           "type": "array"
         },
+        "patternAnyEntities": {
+          "description": "List of Pattern.Any entities.",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/PatternAny"
+          },
+          "type": "array"
+        },
+        "regex_entities": {
+          "description": "List of regular expression entities.",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/RegexEntity"
+          },
+          "type": "array"
+        },
+        "prebuiltEntities": {
+          "description": "List of prebuilt entities.",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/PrebuiltEntity"
+          },
+          "type": "array"
+        },
         "regex_features": {
           "description": "List of pattern features.",
           "items": {
@@ -10232,6 +10279,14 @@
           "items": {
             "type": "object",
             "$ref": "#/definitions/JSONModelFeature"
+          },
+          "type": "array"
+        },
+        "patterns": {
+          "description": "List of patterns.",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/Pattern"
           },
           "type": "array"
         },
@@ -11905,6 +11960,78 @@
       "type": "array",
       "items": {
         "$ref": "#/definitions/PatternRule"
+      }
+    },
+    "PatternAny": {
+      "description": "Pattern.Any Entity Extractor.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "explicitList": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "roles": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      }
+    },
+    "RegexEntity": {
+      "description": "Regular Expression Entity Extractor.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "regexPattern": {
+          "type": "string"
+        },
+        "roles": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      }
+    },
+    "PrebuiltEntity": {
+      "description": "Prebuilt Entity Extractor.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "roles": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      }
+    },
+    "Pattern": {
+      "description": "Pattern",
+      "type": "object",
+      "properties": {
+        "pattern": {
+          "description": "The pattern text.",
+          "type": "string"
+        },
+        "intent": {
+          "description": "The intent's name where the pattern belongs to.",
+          "type": "string"
+        }
+      },
+      "example": {
+        "pattern": "this is a [sample] pattern",
+        "intent": "SampleIntent"
       }
     }
   },

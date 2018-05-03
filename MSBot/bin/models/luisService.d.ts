@@ -1,3 +1,7 @@
+/**
+ * Copyright(c) Microsoft Corporation.All rights reserved.
+ * Licensed under the MIT License.
+ */
 import { ILuisService, ServiceType } from '../schema';
 import { ConnectedService } from './connectedService';
 export declare class LuisService extends ConnectedService implements ILuisService {

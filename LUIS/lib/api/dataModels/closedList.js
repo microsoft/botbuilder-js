@@ -15,9 +15,13 @@ class ClosedList {
     * @property {SubClosedList[]} subLists
     */
 
+    /**
+    * @property {string[]} roles
+    */
+
     
-    constructor({name /* string */,subLists /* SubClosedList[] */} = {}) {
-        Object.assign(this, {name /* string */,subLists /* SubClosedList[] */});
+    constructor({name /* string */,subLists /* SubClosedList[] */,roles /* string[] */} = {}) {
+        Object.assign(this, {name /* string */,subLists /* SubClosedList[] */,roles /* string[] */});
     }
 }
 ClosedList.fromJSON = function(source) {
@@ -30,8 +34,8 @@ ClosedList.fromJSON = function(source) {
     
     source.subLists = SubClosedList.fromJSON(source.subLists) || undefined;
 
-    const {name /* string */,subLists /* SubClosedList[] */} = source;
-    return new ClosedList({name /* string */,subLists /* SubClosedList[] */});
+    const {name /* string */,subLists /* SubClosedList[] */,roles /* string[] */} = source;
+    return new ClosedList({name /* string */,subLists /* SubClosedList[] */,roles /* string[] */});
 };
 
 module.exports = ClosedList;

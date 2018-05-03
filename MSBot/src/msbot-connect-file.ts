@@ -11,7 +11,7 @@ import { IFileService, ServiceType } from './schema';
 
 program.Command.prototype.unknownOption = function (flag: any) {
     console.error(chalk.default.redBright(`Unknown arguments: ${flag}`));
-    program.help();
+    showErrorHelp();
 };
 
 interface ConnectFileArgs extends IFileService {
@@ -39,14 +39,14 @@ if (process.argv.length < 3) {
             .then(processConnectFile)
             .catch((reason) => {
                 console.error(chalk.default.redBright(reason.toString().split('\n')[0]));
-                program.help();
+                showErrorHelp();
             });
     } else {
         BotConfig.Load(args.bot, args.secret)
             .then(processConnectFile)
             .catch((reason) => {
                 console.error(chalk.default.redBright(reason.toString().split('\n')[0]));
-                program.help();
+                showErrorHelp();
             });
     }
 }
@@ -67,4 +67,13 @@ async function processConnectFile(config: BotConfig): Promise<BotConfig> {
     await config.save();
     process.stdout.write(`Connected ${newService.type}:${newService.name} ${newService.filePath}`);
     return config;
+}
+
+function showErrorHelp()
+{
+    program.outputHelp((str) => {
+        console.error(str);
+        return '';
+    });
+    process.exit(1);
 }

@@ -10,7 +10,7 @@ import { IBotConfig } from './schema';
 
 program.Command.prototype.unknownOption = function (flag: any) {
     console.error(chalk.default.redBright(`Unknown arguments: ${flag}`));
-    program.help();
+    showErrorHelp();
 };
 
 interface ListArgs {
@@ -32,14 +32,14 @@ if (!parsed.bot) {
         .then(processListArgs)
         .catch((reason) => {
             console.error(chalk.default.redBright(reason.toString().split('\n')[0]));
-            program.help();
+            showErrorHelp();
         });
 } else {
     BotConfig.Load(parsed.bot, parsed.secret)
         .then(processListArgs)
         .catch((reason) => {
             console.error(chalk.default.redBright(reason.toString().split('\n')[0]));
-            program.help();
+            showErrorHelp();
         });
 }
 
@@ -53,4 +53,13 @@ async function processListArgs(config: BotConfig): Promise<BotConfig> {
         services: config.services
     }, null, 4));
     return config;
+}
+
+function showErrorHelp()
+{
+    program.outputHelp((str) => {
+        console.error(str);
+        return '';
+    });
+    process.exit(1);
 }
