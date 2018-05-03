@@ -9,18 +9,23 @@ server.listen(process.env.port || process.env.PORT || 3978, function () {
 });
 
 // Create adapter
-const adapter = new BotFrameworkAdapter({ 
-    appId: process.env.MICROSOFT_APP_ID, 
-    appPassword: process.env.MICROSOFT_APP_PASSWORD 
+const adapter = new BotFrameworkAdapter({
+    appId: process.env.MICROSOFT_APP_ID,
+    appPassword: process.env.MICROSOFT_APP_PASSWORD
 });
 
 // Add QnA Maker middleware
 // The exported Knowledge Base can be found under `smartLightFAQ.tsv`.
-const qnaMaker = new QnAMaker({
-    knowledgeBaseId: '',
-    subscriptionKey: '',
-    answerBeforeNext: true
-});
+const qnaMaker = new QnAMaker(
+    {
+        knowledgeBaseId: '',
+        endpointKey: '',
+        host: ''
+    },
+    {
+        answerBeforeNext: true
+    }
+);
 adapter.use(qnaMaker);
 
 // Listen for incoming requests 
