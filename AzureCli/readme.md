@@ -8,17 +8,11 @@ Get a [valid Azure subscription](https://azure.microsoft.com/en-us/free/).
 Install the [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest).
 
 ## Installation
-<<<<<<< HEAD
-Install the bot service extension:
-
-`az extension add --source https://icscratch.blob.core.windows.net/bot-packages/azurebotextension-0.0.1-py2.py3-none-any.whl`
-=======
 Remove the azure bot extension if it's already installed.  
 `az extension list`  
 `az extension remove -n <extensionname>`  
 Install the bot service extension as follows -  
 `az extension add --source https://icscratch.blob.core.windows.net/bot-packages/botservice-0.0.1-py2.py3-none-any.whl`
->>>>>>> delete az source code from tools. update readme.md
 
 # Managing a Bot
 
