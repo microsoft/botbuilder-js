@@ -113,7 +113,7 @@ async function runProgram() {
                 case "add":
                 case "import":
                     let response = await new Apps().Get({ authoringKey: config.authoringKey, appId: result });
-                    result = JSON.parse(await response.text());
+                    result = await response.json();
 
                 case "get":
                     if (args.msbot) {
@@ -216,7 +216,7 @@ async function waitForTrainingToComplete(config, serviceManifest, args, requestB
         let response = await new Train().GetStatus({ applicationId: args.applicationId || config.applicationId, versionId: args.versionId || config.versionId });
         if (response.Error)
             throw new Error(response.error);
-        result = JSON.parse(await response.text());
+        result = await response.json();
         isTrained = true;
         for (let model of result) {
             total++;
@@ -429,7 +429,7 @@ async function handleSetCommand(args, config) {
         let targetAppName = args._[1].toLowerCase();
         if (targetAppName) {
             let query = await new Apps().List({ authoringKey: args.authoringKey || config.authoringKey });
-            let results = JSON.parse(await query.text());
+            let results = await query.json();
 
             if (results.error) {
                 throw new Error(result.error);
@@ -438,6 +438,7 @@ async function handleSetCommand(args, config) {
             for (let app of results) {
                 if (app.name.toLowerCase() == targetAppName || app.id.toLowerCase() == targetAppName) {
                     config.appId = app.id;
+                    config.versionId = app.activeVersion
                     found = true;
                     break;
                 }
