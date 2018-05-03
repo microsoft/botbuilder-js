@@ -4,6 +4,7 @@
  */
 const PARSERCONSTS = require('./enums/parserconsts');
 const chalk = require('chalk');
+const retCode = require('./enums/CLI-errors');
 /**
  * Helper function to split current file content by sections. Each section needs a parser delimiter
  *
@@ -17,17 +18,16 @@ module.exports.splitFileBySections = function(fileContent) {
     var middleOfSection = false;
     var sectionsInFile = [];
     var currentSectionType = null; //PARSERCONSTS
-    var inQnATable = false;
     var inQnAAnswer = false;
     var ticksAList = new Array();
     var ticksBList = new Array();
     for(lineIndex in linesInFile) {
         var currentLine = linesInFile[lineIndex].trim();
-
+        // QnA answer can be multi-line markdown. So (re)set the in answer flag
         if(currentLine.indexOf(PARSERCONSTS.ANSWER) === 0) {
             inQnAAnswer = !inQnAAnswer;
         }
-
+        // if in QnA answer, just add the new line.
         if(inQnAAnswer) {
             currentSection += currentLine + '\r\n';
             continue;
@@ -46,7 +46,6 @@ module.exports.splitFileBySections = function(fileContent) {
             if(currentSection !== null) {
                 var previousSection = currentSection.substring(0, currentSection.lastIndexOf("\r\n"));
                 sectionsInFile = validateAndPushCurrentBuffer(previousSection, sectionsInFile, currentSectionType, lineIndex);
-                inQnATable = false;
             }
             currentSection = null;
             sectionsInFile.push(currentLine);
@@ -54,15 +53,14 @@ module.exports.splitFileBySections = function(fileContent) {
         } else if((currentLine.indexOf(PARSERCONSTS.INTENT) === 0)) {
             if(currentLine.indexOf(' ') === -1) {
                 ++lineIndex;
-                process.stdout.write(chalk.red('Error: Line #' + lineIndex + '. "' + currentLine + '" does not have valid intent definition \n'));
-                process.stdout.write(chalk.red('Stopping further processing.\n'));
-                process.exit(1);
+                process.stderr.write(chalk.red('Error: Line #' + lineIndex + '. "' + currentLine + '" does not have valid intent definition \n'));
+                process.stderr.write(chalk.red('Stopping further processing.\n'));
+                process.exit(retCode.INVALID_INTENT);
             }
             // handle anything in currentSection buffer
             if(currentSection !== null) {
                 var previousSection = currentSection.substring(0, currentSection.lastIndexOf("\r\n"));
                 sectionsInFile = validateAndPushCurrentBuffer(previousSection, sectionsInFile, currentSectionType, lineIndex);
-                inQnATable = false;
             }
             middleOfSection = true;
             currentSectionType = PARSERCONSTS.INTENT;
@@ -72,11 +70,9 @@ module.exports.splitFileBySections = function(fileContent) {
             if(currentSection !== null) {
                 var previousSection = currentSection.substring(0, currentSection.lastIndexOf("\r\n"));
                 sectionsInFile = validateAndPushCurrentBuffer(previousSection, sectionsInFile, currentSectionType, lineIndex);
-                inQnATable = false;
             } 
             // only list entity types can have multi-line definition
             var isListEntity = (currentLine.indexOf('=', currentLine.length - 1) >= 0)?true:false;
-
             if(isListEntity || currentLine.toLowerCase().includes(':phraselist')){
                 middleOfSection = true;
                 currentSectionType = PARSERCONSTS.ENTITY;
@@ -86,33 +82,14 @@ module.exports.splitFileBySections = function(fileContent) {
                 middleOfSection = false;
                 currentSection = null;
             }
-        } else if((currentLine.indexOf(PARSERCONSTS.QNATABLE) === 0)) {
-            // if we are already reading a QnA table, this is just a new row there.
-            if(inQnATable) {
-                // add this as question, answer pair
-                var sections = currentLine.split('|');
-                // is this a line separator? 
-                var lineRegEx = new RegExp(/[-]+/);
-                var lineBreak = sections[1].trim().match(lineRegEx);
-                if (!lineBreak) {
-                    // add this as QnA pair
-                    currentSection = PARSERCONSTS.QNA + ' ' + sections[1].trim() + '\r\n' + sections[2].trim();
-                    sectionsInFile = validateAndPushCurrentBuffer(currentSection, sectionsInFile, currentSectionType, lineIndex);
-                    currentSection = null;
-                }
-                
-            } else {
-                currentSectionType = PARSERCONSTS.QNA;
-                inQnATable = true;
-            }
         } else {
             if(middleOfSection) {
                 currentSection += currentLine + "\r\n";
             } else {
                 ++lineIndex;
-                process.stdout.write(chalk.red('Error: Line #' + lineIndex + ' is not part of a Intent/ Entity/ QnA \n'));
-                process.stdout.write(chalk.red('Stopping further processing.\n'));
-                process.exit(1);
+                process.stderr.write(chalk.red('Error: Line #' + lineIndex + ' is not part of a Intent/ Entity/ QnA \n'));
+                process.stderr.write(chalk.red('Stopping further processing.\n'));
+                process.exit(retCode.INVALID_LINE);
             }
         }
     }
