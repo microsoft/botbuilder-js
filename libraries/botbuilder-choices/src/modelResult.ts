@@ -7,10 +7,12 @@
  */
 
 /**
- * Outer result returned by an entity recognizer like `recognizeChoices()`. This structure is 
- * wrapped around the recognized result and contains [start](#start) and [end](#end) position 
- * information to identify the span of text in the users utterance that was recognized. The actual 
- * result can be accessed through the [resolution](#resolution) property. 
+ * Outer result returned by an entity recognizer like `recognizeChoices()`. 
+ * 
+ * @remarks
+ * This structure is wrapped around the recognized result and contains [start](#start) and 
+ * [end](#end) position information to identify the span of text in the users utterance that was 
+ * recognized. The actual result can be accessed through the [resolution](#resolution) property. 
  * @param T The type of entity/resolution being returned. 
  */
 export interface ModelResult<T extends Object = {}> {

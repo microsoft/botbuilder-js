@@ -9,11 +9,10 @@ import { CardAction } from 'botbuilder';
 import { ModelResult } from './modelResult';
 import { FindValuesOptions } from './findValues';
 /**
- * :package: **botbuilder-choices**
- *
  * An instance of a choice that can be used to render a choice to a user or recognize something a
  * user picked.
  *
+ * @remarks
  * The [value](#value) will be rendered to a user unless an [action](#action) is provided in which
  * case the actions `title` will be rendered to the user.
  *
@@ -21,8 +20,6 @@ import { FindValuesOptions } from './findValues';
  * `recognizeChoices()`. By default, the users utterance will be compared against all of the
  * strings provided in the choice. You can disable using the `value` and/or `action.title` during
  * recognition using the `FindChoicesOptions` structure.
- *
- * **Usage Example**
  *
  * ```JavaScript
  * const choice = {
@@ -55,8 +52,6 @@ export interface Choice {
     synonyms?: string[];
 }
 /**
- * :package: **botbuilder-choices**
- *
  * Options to control the recognition performed by `findChoices()`.
  */
 export interface FindChoicesOptions extends FindValuesOptions {
@@ -71,8 +66,6 @@ export interface FindChoicesOptions extends FindValuesOptions {
     noAction?: boolean;
 }
 /**
- * :package: **botbuilder-choices**
- *
  * Result returned by `findChoices()`.
  */
 export interface FoundChoice {
@@ -89,16 +82,14 @@ export interface FoundChoice {
     synonym?: string;
 }
 /**
- * :package: **botbuilder-choices**
+ * Mid-level search function for recognizing a choice in an utterance.
  *
- * Mid-level search function for recognizing a choice in an utterance. This function is layered
- * above `findValues()` and simply determines all of the synonyms that should be searched for
- * before calling `findValues()` to perform the actual search. The `recognizeChoices()` function is
- * layered above this function and adds the ability to select a choice by index or ordinal position
- * in the list. Calling this particular function is useful when you don't want the index and ordinal
- * position recognition done by `recognizeChoices()`.
- *
- * **Usage Example**
+ * @remarks
+ * This function is layered above `findValues()` and simply determines all of the synonyms that
+ * should be searched for before calling `findValues()` to perform the actual search. The
+ * `recognizeChoices()` function is layered above this function and adds the ability to select a
+ * choice by index or ordinal position in the list. Calling this particular function is useful
+ * when you don't want the index and ordinal position recognition done by `recognizeChoices()`.
  *
  * ```JavaScript
  * const { findChoices } = require('botbuilder-choices');

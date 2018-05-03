@@ -8,8 +8,6 @@
 import { TurnContext, Activity } from 'botbuilder';
 import { Choice } from './findChoices';
 /**
- * :package: **botbuilder-choices**
- *
  * Additional options used to tweak the formatting of choice lists.
  */
 export interface ChoiceFactoryOptions {
@@ -36,12 +34,12 @@ export interface ChoiceFactoryOptions {
     includeNumbers?: boolean;
 }
 /**
- * :package: **botbuilder-choices**
- *
  * A set of utility functions to assist with the formatting a 'message' activity containing a list
  * of choices.
  *
- * **Usage Example**
+ * @remarks
+ * This example shows creating a message containing a list of choices that has been conditionally
+ * formatted based on the capabilities of the underlying channel:
  *
  * ```JavaScript
  * const { ChoiceFactory } = require('botbuilder-choices');
@@ -53,15 +51,16 @@ export interface ChoiceFactoryOptions {
 export declare class ChoiceFactory {
     /**
      * Returns a 'message' activity containing a list of choices that has been automatically
-     * formatted based on the capabilities of a given channel. The algorithm prefers to format
-     * the supplied list of choices as suggested actions but can decide to use a text based list
-     * if suggested actions aren't natively supported by the channel, there are too many choices
-     * for the channel to display, or the title of any choice is too long.
+     * formatted based on the capabilities of a given channel.
+     *
+     * @remarks
+     * The algorithm prefers to format the supplied list of choices as suggested actions but can
+     * decide to use a text based list if suggested actions aren't natively supported by the
+     * channel, there are too many choices for the channel to display, or the title of any choice
+     * is too long.
      *
      * If the algorithm decides to use a list it will use an inline list if there are 3 or less
      * choices and all have short titles. Otherwise, a numbered list is used.
-     *
-     * **Usage Example**
      *
      * ```JavaScript
      * const message = ChoiceFactory.forChannel(context, [
@@ -81,10 +80,10 @@ export declare class ChoiceFactory {
      * Returns a 'message' activity containing a list of choices that has been formatted as an
      * inline list.
      *
-     * **Usage Example**
+     * @remarks
+     * This example generates a message text of "Pick a color: (1. red, 2. green, or 3. blue)":
      *
      * ```JavaScript
-     * // Generates a message text of `Pick a color: (1. red, 2. green, or 3. blue)`
      * const message = ChoiceFactory.inline(['red', 'green', 'blue'], `Pick a color:`);
      * await context.sendActivity(message);
      * ```
@@ -98,7 +97,8 @@ export declare class ChoiceFactory {
      * Returns a 'message' activity containing a list of choices that has been formatted as an
      * numbered or bulleted list.
      *
-     * **Usage Example**
+     * @remarks
+     * This example generates a message with the choices presented as a numbered list:
      *
      * ```JavaScript
      * const message = ChoiceFactory.list(['red', 'green', 'blue'], `Pick a color:`);
@@ -114,7 +114,8 @@ export declare class ChoiceFactory {
      * Returns a 'message' activity containing a list of choices that have been added as suggested
      * actions.
      *
-     * **Usage Example**
+     * @remarks
+     * This example generates a message with the choices presented as suggested action buttons:
      *
      * ```JavaScript
      * const message = ChoiceFactory.suggestedAction(['red', 'green', 'blue'], `Pick a color:`);
@@ -128,7 +129,8 @@ export declare class ChoiceFactory {
     /**
      * Takes a mixed list of `string` and `Choice` based choices and returns them as a `Choice[]`.
      *
-     * **Usage Example**
+     * @remarks
+     * This example converts a simple array of string based choices to a properly formated `Choice[]`.
      *
      * ```JavaScript
      * const choices = ChoiceFactory.toChoices(['red', 'green', 'blue']);
