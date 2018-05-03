@@ -31,7 +31,7 @@ class VersionInfo {
     */
 
     /**
-    * @property {string} assignedEndpointKey
+    * @property {undefined} assignedEndpointKey
     */
 
     /**
@@ -55,8 +55,8 @@ class VersionInfo {
     */
 
     
-    constructor({version /* string */,createdDateTime /* string */,lastModifiedDateTime /* string */,lastTrainedDateTime /* string */,lastPublishedDateTime /* string */,endpointUrl /* string */,assignedEndpointKey /* string */,externalApiKeys /* undefined */,intentsCount /* integer */,entitiesCount /* integer */,endpointHitsCount /* integer */,trainingStatus /* string */} = {}) {
-        Object.assign(this, {version /* string */,createdDateTime /* string */,lastModifiedDateTime /* string */,lastTrainedDateTime /* string */,lastPublishedDateTime /* string */,endpointUrl /* string */,assignedEndpointKey /* string */,externalApiKeys /* undefined */,intentsCount /* integer */,entitiesCount /* integer */,endpointHitsCount /* integer */,trainingStatus /* string */});
+    constructor({version /* string */,createdDateTime /* string */,lastModifiedDateTime /* string */,lastTrainedDateTime /* string */,lastPublishedDateTime /* string */,endpointUrl /* string */,assignedEndpointKey /* undefined */,externalApiKeys /* undefined */,intentsCount /* integer */,entitiesCount /* integer */,endpointHitsCount /* integer */,trainingStatus /* string */} = {}) {
+        Object.assign(this, {version /* string */,createdDateTime /* string */,lastModifiedDateTime /* string */,lastTrainedDateTime /* string */,lastPublishedDateTime /* string */,endpointUrl /* string */,assignedEndpointKey /* undefined */,externalApiKeys /* undefined */,intentsCount /* integer */,entitiesCount /* integer */,endpointHitsCount /* integer */,trainingStatus /* string */});
     }
 }
 VersionInfo.fromJSON = function(source) {
@@ -67,8 +67,8 @@ VersionInfo.fromJSON = function(source) {
         return source.map(VersionInfo.fromJSON);
     }
     
-    const {version /* string */,createdDateTime /* string */,lastModifiedDateTime /* string */,lastTrainedDateTime /* string */,lastPublishedDateTime /* string */,endpointUrl /* string */,assignedEndpointKey /* string */,externalApiKeys /* undefined */,intentsCount /* integer */,entitiesCount /* integer */,endpointHitsCount /* integer */,trainingStatus /* string */} = source;
-    return new VersionInfo({version /* string */,createdDateTime /* string */,lastModifiedDateTime /* string */,lastTrainedDateTime /* string */,lastPublishedDateTime /* string */,endpointUrl /* string */,assignedEndpointKey /* string */,externalApiKeys /* undefined */,intentsCount /* integer */,entitiesCount /* integer */,endpointHitsCount /* integer */,trainingStatus /* string */});
+    const {version /* string */,createdDateTime /* string */,lastModifiedDateTime /* string */,lastTrainedDateTime /* string */,lastPublishedDateTime /* string */,endpointUrl /* string */,assignedEndpointKey /* undefined */,externalApiKeys /* undefined */,intentsCount /* integer */,entitiesCount /* integer */,endpointHitsCount /* integer */,trainingStatus /* string */} = source;
+    return new VersionInfo({version /* string */,createdDateTime /* string */,lastModifiedDateTime /* string */,lastTrainedDateTime /* string */,lastPublishedDateTime /* string */,endpointUrl /* string */,assignedEndpointKey /* undefined */,externalApiKeys /* undefined */,intentsCount /* integer */,entitiesCount /* integer */,endpointHitsCount /* integer */,trainingStatus /* string */});
 };
 
 module.exports = VersionInfo;

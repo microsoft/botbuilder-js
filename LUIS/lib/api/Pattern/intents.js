@@ -9,7 +9,7 @@ class Intents extends ServiceBase {
     }
 
     /**
-    * undefined
+    * Returns patterns to be retrieved for the specific intent.
     */
     GetIntentPatterns(params) {
         return this.createRequest('/{intentId}/patternrules', params, 'get');

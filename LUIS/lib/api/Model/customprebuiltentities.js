@@ -21,31 +21,31 @@ class Customprebuiltentities extends ServiceBase {
         return this.createRequest('', params, 'post', prebuiltDomainModelCreateObject);
     }
     /**
-    * undefined
+    * Create an entity role for an entity in the application.
     */
     CreateCustomPrebuiltEntityRole(params , entityRoleCreateObject/* EntityRoleCreateObject */) {
         return this.createRequest('/{entityId}/roles', params, 'post', entityRoleCreateObject);
     }
     /**
-    * undefined
+    * Get All Entity Roles for a given entity
     */
     GetCustomPrebuiltEntityRoles(params) {
         return this.createRequest('/{entityId}/roles', params, 'get');
     }
     /**
-    * undefined
+    * Delete an entity role.
     */
     DeleteCustomEntityRole(params) {
         return this.createRequest('/{entityId}/roles/{roleId}', params, 'delete');
     }
     /**
-    * undefined
+    * Update an entity role for a given entity
     */
     UpdateCustomPrebuiltEntityRole(params , entityRoleUpdateObject/* EntityRoleUpdateObject */) {
         return this.createRequest('/{entityId}/roles/{roleId}', params, 'put', entityRoleUpdateObject);
     }
     /**
-    * undefined
+    * Get one entity role for a given entity
     */
     GetCustomEntityRole(params) {
         return this.createRequest('/{entityId}/roles/{roleId}', params, 'get');

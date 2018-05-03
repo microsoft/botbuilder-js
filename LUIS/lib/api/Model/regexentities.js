@@ -9,61 +9,61 @@ class Regexentities extends ServiceBase {
     }
 
     /**
-    * undefined
+    * Adds a regex entity model to the application version.
     */
     CreateRegexEntityModel(params , regexEntityExtractorCreateObj/* RegexModelCreateObject */) {
         return this.createRequest('', params, 'post', regexEntityExtractorCreateObj);
     }
     /**
-    * undefined
+    * Gets information about the regex entity models.
     */
     GetRegexEntityInfos(params) {
         return this.createRequest('', params, 'get');
     }
     /**
-    * undefined
+    * Create an entity role for an entity in the application.
     */
     CreateRegexEntityRole(params , entityRoleCreateObject/* EntityRoleCreateObject */) {
         return this.createRequest('/{entityId}/roles', params, 'post', entityRoleCreateObject);
     }
     /**
-    * undefined
+    * Get All Entity Roles for a given entity
     */
     GetRegexEntityRoles(params) {
         return this.createRequest('/{entityId}/roles', params, 'get');
     }
     /**
-    * undefined
+    * Delete an entity role.
     */
     DeleteRegexEntityRole(params) {
         return this.createRequest('/{entityId}/roles/{roleId}', params, 'delete');
     }
     /**
-    * undefined
+    * Update an entity role for a given entity
     */
     UpdateRegexEntityRole(params , entityRoleUpdateObject/* EntityRoleUpdateObject */) {
         return this.createRequest('/{entityId}/roles/{roleId}', params, 'put', entityRoleUpdateObject);
     }
     /**
-    * undefined
+    * Get one entity role for a given entity
     */
     GetRegexEntityRole(params) {
         return this.createRequest('/{entityId}/roles/{roleId}', params, 'get');
     }
     /**
-    * undefined
+    * Deletes a regex entity model from the application.
     */
     DeleteRegexEntityModel(params) {
         return this.createRequest('/{regexEntityId}', params, 'delete');
     }
     /**
-    * undefined
+    * Updates the regex entity model .
     */
     UpdateRegexEntityModel(params , regexEntityUpdateObject/* RegexModelUpdateObject */) {
         return this.createRequest('/{regexEntityId}', params, 'put', regexEntityUpdateObject);
     }
     /**
-    * undefined
+    * Gets information of a regex entity model.
     */
     GetRegexEntityEntityInfo(params) {
         return this.createRequest('/{regexEntityId}', params, 'get');

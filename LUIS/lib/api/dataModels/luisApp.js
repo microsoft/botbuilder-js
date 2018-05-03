@@ -5,8 +5,12 @@
 
 const HierarchicalModel = require('./hierarchicalModel');
 const ClosedList = require('./closedList');
+const PatternAny = require('./patternAny');
+const RegexEntity = require('./regexEntity');
+const PrebuiltEntity = require('./prebuiltEntity');
 const JSONRegexFeature = require('./jsonRegexFeature');
 const JSONModelFeature = require('./jsonModelFeature');
+const Pattern = require('./pattern');
 const JSONUtterance = require('./jsonUtterance');
 
 class LuisApp {
@@ -36,10 +40,6 @@ class LuisApp {
     */
 
     /**
-    * @property {string[]} bingEntities
-    */
-
-    /**
     * @property {ClosedList[]} closedLists
     */
 
@@ -48,11 +48,27 @@ class LuisApp {
     */
 
     /**
-    * @property {JSONRegexFeature[]} regexFeatures
+    * @property {PatternAny[]} patternAnyEntities
     */
 
     /**
-    * @property {JSONModelFeature[]} modelFeatures
+    * @property {RegexEntity[]} regex_entities
+    */
+
+    /**
+    * @property {PrebuiltEntity[]} prebuiltEntities
+    */
+
+    /**
+    * @property {JSONRegexFeature[]} regex_features
+    */
+
+    /**
+    * @property {JSONModelFeature[]} model_features
+    */
+
+    /**
+    * @property {Pattern[]} patterns
     */
 
     /**
@@ -60,8 +76,8 @@ class LuisApp {
     */
 
     
-    constructor({name /* string */,versionId /* string */,desc /* string */,culture /* string */,intents /* HierarchicalModel[] */,entities /* HierarchicalModel[] */,bingEntities /* string[] */,closedLists /* ClosedList[] */,composites /* HierarchicalModel[] */,regexFeatures /* JSONRegexFeature[] */,modelFeatures /* JSONModelFeature[] */,utterances /* JSONUtterance[] */} = {}) {
-        Object.assign(this, {name /* string */,versionId /* string */,desc /* string */,culture /* string */,intents /* HierarchicalModel[] */,entities /* HierarchicalModel[] */,bingEntities /* string[] */,closedLists /* ClosedList[] */,composites /* HierarchicalModel[] */,regexFeatures /* JSONRegexFeature[] */,modelFeatures /* JSONModelFeature[] */,utterances /* JSONUtterance[] */});
+    constructor({name /* string */,versionId /* string */,desc /* string */,culture /* string */,intents /* HierarchicalModel[] */,entities /* HierarchicalModel[] */,closedLists /* ClosedList[] */,composites /* HierarchicalModel[] */,patternAnyEntities /* PatternAny[] */,regex_entities /* RegexEntity[] */,prebuiltEntities /* PrebuiltEntity[] */,regex_features /* JSONRegexFeature[] */,model_features /* JSONModelFeature[] */,patterns /* Pattern[] */,utterances /* JSONUtterance[] */} = {}) {
+        Object.assign(this, {name /* string */,versionId /* string */,desc /* string */,culture /* string */,intents /* HierarchicalModel[] */,entities /* HierarchicalModel[] */,closedLists /* ClosedList[] */,composites /* HierarchicalModel[] */,patternAnyEntities /* PatternAny[] */,regex_entities /* RegexEntity[] */,prebuiltEntities /* PrebuiltEntity[] */,regex_features /* JSONRegexFeature[] */,model_features /* JSONModelFeature[] */,patterns /* Pattern[] */,utterances /* JSONUtterance[] */});
     }
 }
 LuisApp.fromJSON = function(source) {
@@ -76,14 +92,22 @@ LuisApp.fromJSON = function(source) {
 
     source.closedLists = ClosedList.fromJSON(source.closedLists) || undefined;
 
-    source.regexFeatures = JSONRegexFeature.fromJSON(source.regexFeatures) || undefined;
+    source.patternAnyEntities = PatternAny.fromJSON(source.patternAnyEntities) || undefined;
 
-    source.modelFeatures = JSONModelFeature.fromJSON(source.modelFeatures) || undefined;
+    source.regex_entities = RegexEntity.fromJSON(source.regex_entities) || undefined;
+
+    source.prebuiltEntities = PrebuiltEntity.fromJSON(source.prebuiltEntities) || undefined;
+
+    source.regex_features = JSONRegexFeature.fromJSON(source.regex_features) || undefined;
+
+    source.model_features = JSONModelFeature.fromJSON(source.model_features) || undefined;
+
+    source.patterns = Pattern.fromJSON(source.patterns) || undefined;
 
     source.utterances = JSONUtterance.fromJSON(source.utterances) || undefined;
 
-    const {name /* string */,versionId /* string */,desc /* string */,culture /* string */,intents /* HierarchicalModel[] */,entities /* HierarchicalModel[] */,bingEntities /* string[] */,closedLists /* ClosedList[] */,composites /* HierarchicalModel[] */,regexFeatures /* JSONRegexFeature[] */,modelFeatures /* JSONModelFeature[] */,utterances /* JSONUtterance[] */} = source;
-    return new LuisApp({name /* string */,versionId /* string */,desc /* string */,culture /* string */,intents /* HierarchicalModel[] */,entities /* HierarchicalModel[] */,bingEntities /* string[] */,closedLists /* ClosedList[] */,composites /* HierarchicalModel[] */,regexFeatures /* JSONRegexFeature[] */,modelFeatures /* JSONModelFeature[] */,utterances /* JSONUtterance[] */});
+    const {name /* string */,versionId /* string */,desc /* string */,culture /* string */,intents /* HierarchicalModel[] */,entities /* HierarchicalModel[] */,closedLists /* ClosedList[] */,composites /* HierarchicalModel[] */,patternAnyEntities /* PatternAny[] */,regex_entities /* RegexEntity[] */,prebuiltEntities /* PrebuiltEntity[] */,regex_features /* JSONRegexFeature[] */,model_features /* JSONModelFeature[] */,patterns /* Pattern[] */,utterances /* JSONUtterance[] */} = source;
+    return new LuisApp({name /* string */,versionId /* string */,desc /* string */,culture /* string */,intents /* HierarchicalModel[] */,entities /* HierarchicalModel[] */,closedLists /* ClosedList[] */,composites /* HierarchicalModel[] */,patternAnyEntities /* PatternAny[] */,regex_entities /* RegexEntity[] */,prebuiltEntities /* PrebuiltEntity[] */,regex_features /* JSONRegexFeature[] */,model_features /* JSONModelFeature[] */,patterns /* Pattern[] */,utterances /* JSONUtterance[] */});
 };
 
 module.exports = LuisApp;

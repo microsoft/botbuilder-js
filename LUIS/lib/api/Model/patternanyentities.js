@@ -9,91 +9,91 @@ class Patternanyentities extends ServiceBase {
     }
 
     /**
-    * undefined
+    * Adds a pattern.any entity extractor to the application.
     */
     CreatePatteryAnyEntityModel(params , extractorCreateObject/* PatternAnyModelCreateObject */) {
         return this.createRequest('', params, 'post', extractorCreateObject);
     }
     /**
-    * undefined
+    * Get information about the Pattern.Any entity models.
     */
     GetPatternAnyEntityInfos(params) {
         return this.createRequest('', params, 'get');
     }
     /**
-    * undefined
+    * Deletes a Pattern.Any entity extractor from the application.
     */
     DeletePatternAnyEntityModel(params) {
         return this.createRequest('/{entityId}', params, 'delete');
     }
     /**
-    * undefined
+    * Updates the name and explicit list of a Pattern.Any entity model.
     */
     UpdatePatternAnyEntityModel(params , patternAnyUpdateObject/* PatternAnyModelUpdateObject */) {
         return this.createRequest('/{entityId}', params, 'put', patternAnyUpdateObject);
     }
     /**
-    * undefined
+    * Gets information about the application version's Pattern.Any model.
     */
     GetPatternAnyEntityInfo(params) {
         return this.createRequest('/{entityId}', params, 'get');
     }
     /**
-    * undefined
+    * Add a new item to the explicit list for the Pattern.Any entity.
     */
     AddExplicitListItem(params , item/* ExplicitListItemCreateObject */) {
         return this.createRequest('/{entityId}/explicitlist', params, 'post', item);
     }
     /**
-    * undefined
+    * Get the explicit list of the pattern.any entity.
     */
     GetExplicitList(params) {
         return this.createRequest('/{entityId}/explicitlist', params, 'get');
     }
     /**
-    * undefined
+    * Delete the explicit list item from the Pattern.any explicit list.
     */
     DeleteExplicitListItem(params) {
         return this.createRequest('/{entityId}/explicitlist/{itemId}', params, 'delete');
     }
     /**
-    * undefined
+    * Updates an explicit list item for a Pattern.Any entity.
     */
     UpdateExplicitListItem(params , item/* ExplicitListItemUpdateObject */) {
         return this.createRequest('/{entityId}/explicitlist/{itemId}', params, 'put', item);
     }
     /**
-    * undefined
+    * Get the explicit list of the pattern.any entity.
     */
     GetExplicitListItem(params) {
         return this.createRequest('/{entityId}/explicitlist/{itemId}', params, 'get');
     }
     /**
-    * undefined
+    * Create an entity role for an entity in the application.
     */
     CreatePatternAnyEntityRole(params , entityRoleCreateObject/* EntityRoleCreateObject */) {
         return this.createRequest('/{entityId}/roles', params, 'post', entityRoleCreateObject);
     }
     /**
-    * undefined
+    * Get All Entity Roles for a given entity
     */
     GetPatternAnyEntityRoles(params) {
         return this.createRequest('/{entityId}/roles', params, 'get');
     }
     /**
-    * undefined
+    * Delete an entity role.
     */
     DeletePatternAnyEntityRole(params) {
         return this.createRequest('/{entityId}/roles/{roleId}', params, 'delete');
     }
     /**
-    * undefined
+    * Update an entity role for a given entity
     */
     UpdatePatternAnyEntityRole(params , entityRoleUpdateObject/* EntityRoleUpdateObject */) {
         return this.createRequest('/{entityId}/roles/{roleId}', params, 'put', entityRoleUpdateObject);
     }
     /**
-    * undefined
+    * Get one entity role for a given entity
     */
     GetPatternAnyEntityRole(params) {
         return this.createRequest('/{entityId}/roles/{roleId}', params, 'get');
