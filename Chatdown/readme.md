@@ -4,14 +4,14 @@
 
 Chatdown is a transcript generator which consumes a .chat file to generate mock transcripts. Generated mock transcript files are output to stdout.
 
-A good bot just like any successful application or website out there starts with clarity on supported scenarios. Creating mockups of conversations between bot and user is useful for: 
-- Framing the scenarios supported by the bot
-- Business deicion makaers to review, provide feedback.
-- Flushing out happy path (as well as others) through conversational flows between user and bot
+A good bot, just like any successful application or a website, starts with clarity on supported scenarios. Creating mockups of conversations between bot and user is useful for: 
+- Framing the scenarios supported by the bot.
+- Business decision makers to review, provide feedback.
+- Defining a "happy path" (as well as other paths) through conversational flows between a user and a bot
 
-.Chat file format helps you create mockups of conversations between user and bot. Chatdown CLI tool convert .chat files into conversation transcripts (.transcript file) that can be viewed in the Bot Framework Emulator.
+`.chat` file format helps you create mockups of conversations between a user and a bot. Chatdown CLI tool converts `.chat` files into conversation transcripts (`.transcript` files) that can be viewed in the Bot Framework Emulator.
 
-## Pre-requisite
+## Prerequisite
 
 - [Node.js](https://nodejs.org/) version 8.5 or higher
 
@@ -28,13 +28,13 @@ chatdown <chat> --help
 
 | Argument| Description|
 |-------------| ------------------------- |
-| `<chatfile>` | The path of the chat file to be parsed. If omitted, stdin will be used |
+| `<chatfile>` | The path of the chat file to be parsed. If omitted, stdin will be used. |
 | `-v, --version` | show version |
 | `--help`    | Output the help to the console|
 
 ## .chat File Format
 
-Here's an example .chat file:
+Here's an example `.chat` file:
 
 ```markdown
 user=Joe
@@ -64,41 +64,41 @@ Here's a form for you
 
 ```
 
-Checkout the [Examples](https://github.com/Microsoft/botbuilder-tools/tree/master/Chatdown/Examples) folder for more samples.
+> See the [Examples](https://github.com/Microsoft/botbuilder-tools/tree/master/Chatdown/Examples) folder for more samples.
 
 
 Chat files are markdown files that contain 2 parts:
 - Header that defines who the participants are in the conversation
-- Back and forth conversation between user and bot
+- Back and forth conversation between a user and a bot
 
 ### Header
-The header defines who the participants are in the conversation and other options.
+The header defines who the participants are in the conversation and defines other options.
 
 |Option               |Description|
 |---------------------|------------------------------|
-|`user=<user>` |This option tells chatdown that a user message will begin with `<user>` followed by a colon. for example: `user=Joe` instructs chatdown that lines beginning with `Joe:` or `user:` are the start of a message from the user Joe|
-|`bot=<bot>` | This options tells chatdown that a bot message will begin with `<bot>` followed by a colon.  For example: `bot=LulaBot` instructs chadown that lines beginning with `LulaBot:` or `bot:` are the start of a message from the bot Lulabot |
-| `channelId=<channelid>`| This option tells chatdown to use the specified `channelid` for each activity.|
+|`user=<user>` |This option tells chatdown that a user message will begin with `<user>` followed by a colon. For example, `user=Joe` instructs chatdown that lines beginning with `Joe:` or `user:` are the start of a message from the user Joe. |
+|`bot=<bot>` | This options tells chatdown that a bot message will begin with `<bot>` followed by a colon.  For example, `bot=LulaBot` instructs chadown that lines beginning with `LulaBot:` or `bot:` are the start of a message from the bot Lulabot. |
+| `channelId=<channelID>`| This option tells chatdown to use the specified `channelID` for each activity.|
 
 Once the configuration options for `user` and `bot` are defined, the rest of the conversation can use the alias prefixes `user:` and `bot:` or the names directly.  Chatdown will correctly make the associations to the specified names for you.
 
 ### Conversation
-The conversation between the user and the bot with markdown support for bot's responses. Every time a `user:` or `bot:`  is found at the beginning of the line a new activity will be inserted into the transcript.  Inside of the markdown you can insert commands generate richer transcripts.
+The conversation between the user and the bot with markdown support for bot's responses. Every time a `user:` or `bot:`  is found at the beginning of the line, a new activity will be inserted into the transcript.  Inside the markdown, you can insert commands to generate richer transcripts:
 
 | Command        | Description                                                |
 | --------------- | ------------------------------------------------------------ |
 |`[Typing]` | Inserts a typing activity into the transcript to signify that a user or a bot is typing. |
-|`[Delay=<milliseconds>]` | Delays the transcript by `<milliseconds>` |
+|`[Delay=<milliseconds>]` | Delays the transcript by `<milliseconds>`. |
 |`[AttachmentLayout=LayoutType]`| Specify how multiple attachments would be dislpayed. Layout types are `carousel` or `list`|
 
 ### Attachments
-To add an attachment you use `[Attachment=path contentPath]`.  The path can be a url or a local path (either absolute or relative to .chat file).  The content type is optional and if not passed will be inferred from the file extension, or you can pass it using shortcut or full mime type.
+To add an attachment, you use `[Attachment=path contentPath]`.  The path can be a URL or a local path (either absolute or relative to `.chat` file).  The content type is optional and if not passed, will be inferred from the file extension. You can also pass it using a shortcut or full mime type.
 
 ```markdown
 [Attachment:path contentType]
 ```
 
-Here is an example sending a carousel of photos
+The following examples illustrates sending a carousel of photos:
 ```markdown
 Enjoy these pictures!
 [AttachmentLayout=carousel]
@@ -109,13 +109,13 @@ Enjoy these pictures!
 [Attachment=image.png]
 ```
 
-Here is an exaple sending a local adaptive card using a content type shortcut:
+This example sends a local adaptive card using a content type shortcut:
 ```markdown
 [Attachment=folder/sample.json "adaptivecard"]
 ```
 
 #### Attachment content type shortcuts
-Some content types have shortcuts
+Some of the content types have shortcuts:
 
 | ContentType Shortcuts | Description                                |
 | ----------------------|--------------------------------------------|
@@ -133,12 +133,12 @@ Some content types have shortcuts
 
 ## CLI Examples
 
-### Basic use
+### Basic usage
 In the simplest form, a chatdown command looks like the following:
 ```bash
 chatdown sample.chat > sample.transcript
 ```
-This will consume `sample.chat` and output `sample.transcript`
+This will consume `sample.chat` and output `sample.transcript`.
 
 ### Using stdin
 stdin can be used as an alternative to specifying an input file.
@@ -155,15 +155,15 @@ or
 ```bash
 chatdown sameple.chat > joe.transcript
 ```
-The transcript will be piped to stdout
+The transcript will be piped to stdout.
 
 ### As a library
-Chatdown can be used within a Node application as an imported library:
+Chatdown can be used within a Node.js application as an imported library. 
 Install locally:
 ```bash
 npm i -s chatdown
 ```
-Then in your node project:
+In your node project:
 ```js
 const chatdown = require('chatdown');
 const conversation = `
@@ -191,10 +191,10 @@ To install:
 npm install -g chokidar-cli
 ```
 
-To run as a watcher
+To run as a watcher:
 ```bash
 chokidar "**/*.chat" -c "chatdown {path} > {path}.transcript"
 ```
 
-Now, any time a .chat file is created or saved chatdown will automatically create the transcript file beside it.
+Now, any time a .chat file is created or saved, chatdown will automatically create the transcript file beside it.
 
