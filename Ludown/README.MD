@@ -203,7 +203,6 @@ You can define:
 - [Simple](https://docs.microsoft.com/en-us/azure/cognitive-services/luis/luis-quickstart-primary-and-secondary-data) entities by using $\<entityName\>:simple notation. Note that the parser defaults to simple entity type.
 - [PREBUILT](https://docs.microsoft.com/en-us/azure/cognitive-services/luis/pre-builtentities) entities by using $PREBUILT:\<entityType\> notation. 
 - [List](https://docs.microsoft.com/en-us/azure/cognitive-services/luis/luis-quickstart-intent-and-list-entity) entities by using $\<entityName\>:\<CanonicalValue\>**=**<List of values> notation.
-- [Phrase List](https://docs.microsoft.com/en-us/azure/cognitive-services/luis/luis-tutorial-interchangeable-phrase-list) entities by using $\<entityName\>:PhraseList <List of synonyms> notation.
 
 Here's an example: 
 

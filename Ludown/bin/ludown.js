@@ -6,12 +6,14 @@
 const program = require('commander');
 const chalk = require('chalk');
 var pjson = require('../package.json');
+var retCode = require('../lib/enums/CLI-errors');
 program.Command.prototype.unknownOption = function (flag) {
-    console.error(chalk.default.redBright(`\n  Unknown arguments: ${process.argv.slice(2).join(' ')}`));
+    process.stderr.write(chalk.default.redBright(`\n  Unknown arguments: ${process.argv.slice(2).join(' ')}\n`));
     program.help();
+    process.exit(retCode.UNKNOWN_OPTIONS);
 };
 program
-    .version(pjson.version, '-V, --Version')
+    .version(pjson.version, '-v, --Version')
     .description(`Ludown is a command line tool to bootstrap language understanding models from .lu files`)
     .command('parse', 'Convert .lu file(s) into LUIS JSON OR QnA Maker JSON files.')
     .alias('p')
