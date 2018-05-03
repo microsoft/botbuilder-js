@@ -6206,7 +6206,7 @@
                     "target": [
                         "status"
                     ],
-                    "command": "luis get status --applicationId <appId> --versionId <versionId> [--wait]",
+                    "command": "luis get status --appId <appId> --versionId <versionId> [--wait]",
                     "pathFragment": "",
                     "params": [
                         {
@@ -6244,7 +6244,7 @@
                     "target": [
                         "version"
                     ],
-                    "command": "luis train version --applicationId <appId> --versionId <versionId> [--wait]",
+                    "command": "luis train version --appId <appId> --versionId <versionId> [--wait]",
                     "pathFragment": "",
                     "params": [
                         {

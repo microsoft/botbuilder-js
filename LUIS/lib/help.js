@@ -122,8 +122,8 @@ let globalArgs =
     {
         head: 'Global Arguments:',
         table: [
+            [chalk.cyan.bold('init'), 'Initializes the .luisrc file with settings specific to your LUIS instance'],
             [chalk.cyan.bold('--help,    -h'), `Prints this help file. `],
-            [chalk.cyan.bold('--init,    -i'), 'Initializes the .luisrc file with settings specific to your LUIS instance'],
             [chalk.cyan.bold('--version, -v'), 'Prints the version of this cli tool'],
             [chalk.cyan.bold('--!          '), 'Dumps all documented commands to the console with descriptions']
         ]
@@ -193,11 +193,12 @@ function getVerbHelp(verb, output) {
             return sections;
 
         case "set":
-            output.write(chalk.cyan.bold("luis set <.luisrcSetting> <value>\n\n"))
-            options.table.push([chalk.cyan.bold("application <appIdOrName>"), "change the active application id "]);
-            options.table.push([chalk.cyan.bold("version <version>"), "change the active version id "]);
-            options.table.push([chalk.cyan.bold("authoringKey <authoringKey>"), "change the active authoringKey◘"]);
-            options.table.push([chalk.cyan.bold("endpoint <endpointUrl>"), "change the active endpointBasePath url"]);
+            output.write(chalk.cyan.bold("luis set <appIdOrName> [--appId|--versionId|--authoringKey|--endpoint] <value>\n\n"))
+            options.table.push([chalk.cyan.bold("<appIdOrName>"), "change the active application by looking it up by name or id"]);
+            options.table.push([chalk.cyan.bold("--appId <appId>"), "change the active application id "]);
+            options.table.push([chalk.cyan.bold("--versionId <version>"), "change the active version id "]);
+            options.table.push([chalk.cyan.bold("--authoringKey <authoringKey>"), "change the active authoringKey◘"]);
+            options.table.push([chalk.cyan.bold("--endpoint <endpointUrl>"), "change the active endpointBasePath url"]);
             sections.push(options);
             sections.push(configSection);
             sections.push(globalArgs);

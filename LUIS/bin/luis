@@ -27,6 +27,7 @@ const { getServiceManifest } = require('../lib/utils/argsUtil');
 const Apps = require('../lib/api/Apps/apps');
 const Delay = require('await-delay');
 const Train = require('../lib/api/Train/train');
+const { ServiceBase } = require('../lib/api/serviceBase');
 
 let args;
 
@@ -44,13 +45,6 @@ async function runProgram() {
     if (args._[0] == "luis")
         args._ = args._.slice(1);
 
-    if (args.init || args.i) {
-        const result = await initializeConfig();
-        if (result) {
-            process.stdout.write(`Successfully wrote ${process.cwd()}/.luisrc`);
-        }
-        return;
-    }
     if (args.help ||
         args.h ||
         args['!'] ||
@@ -60,14 +54,27 @@ async function runProgram() {
     if (args.version || args.v) {
         return process.stdout.write(require(path.join(__dirname, '../package.json')).version);
     }
+
+    // we have to run init before we attempt tload
+    if (args._[0] == "init") {
+        const result = await initializeConfig();
+        if (result) {
+            process.stdout.write(`Successfully wrote ${process.cwd()}/.luisrc`);
+        }
+        return;
+    }
+
     const config = await composeConfig();
+    ServiceBase.config = config;
 
     // special non-operation commands
-    if (args._[0] == "query") {
-        return await handleQueryCommand(args, config);
-    } if (args._[0] == "set") {
-        return await handleSetCommand(args, config);
+    switch (args._[0]) {
+        case "query":
+            return await handleQueryCommand(args, config);
+        case "set":
+            return await handleSetCommand(args, config);
     }
+
     const serviceManifest = getServiceManifest(args);
     const requestBody = await validateArguments(args, serviceManifest);
 
@@ -295,7 +302,7 @@ function validateConfig(config) {
     // Validation of specific params are done in the
     // ServiceBase.js
     const { authoringKey, endpointBasePath } = config;
-    const messageTail = `is missing from the configuration.\n\nDid you run ${chalk.cyan.bold('luis --init')} yet?`;
+    const messageTail = `is missing from the configuration.\n\nDid you run ${chalk.cyan.bold('luis init')} yet?`;
 
     assert(typeof authoringKey === 'string', `The authoringKey  ${messageTail}`);
     assert(typeof endpointBasePath === 'string', `The endpointBasePath ${messageTail}`);
@@ -410,57 +417,37 @@ async function handleQueryCommand(args, config) {
 }
 
 async function handleSetCommand(args, config) {
-    let target = args._.length >= 2 ? args._[1].toLowerCase() : undefined;
-    if (!target || (target != 'application' && target != 'version' && target != 'app')) {
-        process.stderr.write(chalk.red.bold(`missing .luisrc property name: [application|version|authoringKey|endpoint]\n`));
+    if (args.length == 1 && !(args.a || args.e || args.appId || args.applicationId || args.versionId || args.authoringKey || args.endpoint || args.endpointBasePath || args.versionId)) {
+        process.stderr.write(chalk.red.bold(`missing .luisrc argument name: [-appId|--applicationId|--versionId|--endpoint|--authoringKey]\n`));
         return help(args);
     }
+    config.endpointBasePath = args.e || args.endpoint || args.endpointBasePath || config.endpointBasePath;
+    config.authoringKey = args.authoringKey || config.authoringKey;
+    config.versionId = args.versionId || config.versionId;
+    config.appId = args.appId || args.applicationId || config.appId;
+    if (args._.length > 1) {
+        let targetAppName = args._[1].toLowerCase();
+        if (targetAppName) {
+            let query = await new Apps().List({ authoringKey: args.authoringKey || config.authoringKey });
+            let results = JSON.parse(await query.text());
 
-    let targetName = (args._.length >= 3) ? args._.slice(2).join(' ').toLowerCase().trim() : undefined;
-    if (!targetName) {
-        process.stderr.write(chalk.red.bold(`missing the value\n`));
-        return help(args);
-    }
-
-    switch (target) {
-        case 'endpoint':
-        case 'endpointbasepath':
-            config.endpointBasePath = targetName;
-            break;
-
-        case 'authoringkey':
-            config.authoringKey = targetName;
-            break;
-
-        case 'app':
-        case 'application':
-            let listAppsArgs = { _: ['list', 'applications'] };
-            const listApplication = getServiceManifest(listAppsArgs);
-            let results = await luis(config, listApplication, listAppsArgs, {});
             if (results.error) {
                 throw new Error(result.error);
             }
             let found = false;
             for (let app of results) {
-                if (app.name.toLowerCase() == targetName || app.id.toLowerCase() == targetName) {
+                if (app.name.toLowerCase() == targetAppName || app.id.toLowerCase() == targetAppName) {
                     config.appId = app.id;
                     found = true;
                     break;
                 }
             }
             if (!found)
-                throw new Error(`Did not find an application with id or name of '${targetName}'`);
-            break;
-
-        case 'versionid':
-        case 'version':
-            config.versionId = args._[2].toString();
-            break;
-
-        default:
-            return help(args);
+                throw new Error(`Did not find an application with id or name of '${targetAppName}'`);
+        }
     }
     await fs.writeJson(path.join(process.cwd(), '.luisrc'), config, { spaces: 2 });
+    process.stdout.write(JSON.stringify(config, null, 4));
     return true;
 }
 

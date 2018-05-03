@@ -44,10 +44,10 @@ The json format for the `.luisrc` file is:
 }
 ```
 The CLI has a utility command that walks through the creation of this file:
-`luis --init`,
+`luis init`,
 or it can be created manually.
 
-2. As arguments to the CLI: `luis --appId <string> --versionId <string> --authoringKey <string> --endpointBasePath <string>`
+2. As arguments to the CLI: `luis <verb> <resource> --appId <string> --versionId <string> --authoringKey <string> --endpointBasePath <string>`
 
 3. As environment variables: `LUIS_APP_ID`, `LUIS_VERSION_ID`, `LUIS_AUTHORING_KEY`, `LUIS_ENDPOINT_BASE_PATH`
 
@@ -67,18 +67,6 @@ can be stored in the `.luisrc` for convenience.
 ### Overriding Configurations
 Since configuration items can be passed as arguments to the cli, using arguments to specify 
 the configuration will override the `.luisrc` and any environment variables that may have been specified.
-
-### Configuring the Library for Node.js and the Browser
-This configuration object is provided as a static property on the `ServiceBase` class for node and browser projects:
-```js
-import {ServiceBase} from 'luis/lib/serviceBase';
-ServiceBase.config = {
-  "appId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-  "authoringKey": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-  "versionId": "x.x.xx",
-  "endpointBasePath": "https://xxxxxx.api.cognitive.microsoft.com/luis/api/v2.0"
-};
-```
 
 ## CLI Usage
 Basic usage: `luis <action> <resource> <args...>`

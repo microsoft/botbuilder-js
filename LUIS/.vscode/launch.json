@@ -10,7 +10,7 @@
             "name": "Launch Program",
             "program": "${workspaceFolder}\\bin\\luis",
             "args": [
-                "import","application", "--in", "c:\\scratch\\weather.json"
+                "init"
             ]
         }
     ]
