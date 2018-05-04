@@ -109,7 +109,7 @@ async function processConnectDispatch(config: BotConfig): Promise<BotConfig> {
     // add the service
     config.connectService(newService);
     await config.save();
-    process.stdout.write(`Connected ${newService.type}:${newService.name} v${newService.version}`);
+    process.stdout.write(JSON.stringify(newService, null, 2));
     return config;
 }
 

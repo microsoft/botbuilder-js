@@ -75,7 +75,7 @@ async function processConnectQnaArgs(config) {
     let newService = new models_1.QnaMakerService(args);
     config.connectService(newService);
     await config.save();
-    process.stdout.write(`Connected ${newService.type}:${newService.name} ${newService.kbId}`);
+    process.stdout.write(JSON.stringify(newService, null, 2));
     return config;
 }
 function showErrorHelp() {

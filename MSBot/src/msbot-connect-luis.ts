@@ -92,7 +92,7 @@ async function processConnectLuisArgs(config: BotConfig): Promise<BotConfig> {
     let newService = new LuisService(args);
     config.connectService(newService);
     await config.save();
-    process.stdout.write(`Connected ${newService.type}:${newService.name}`);
+    process.stdout.write(JSON.stringify(newService, null, 2));
     return config;
 }
 

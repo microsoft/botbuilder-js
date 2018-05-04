@@ -88,7 +88,7 @@ async function processConnectAzureArgs(config: BotConfig): Promise<BotConfig> {
 
     if (!args.resourceGroup || args.resourceGroup.length == 0)
         throw new Error('Bad or missing --resourceGroup for registered bot');
-
+    let services=[];
     let service = new AzureBotService({
         type: ServiceType.AzureBotService,
         id: args.id, // bot id
@@ -98,7 +98,7 @@ async function processConnectAzureArgs(config: BotConfig): Promise<BotConfig> {
         resourceGroup: args.resourceGroup
     });
     config.connectService(service);
-
+    services.push(service);
     if (args.endpoint) {
         if (!args.endpoint || !validurl.isHttpsUri(args.endpoint))
             throw new Error('Bad or missing --endpoint');
@@ -119,11 +119,10 @@ async function processConnectAzureArgs(config: BotConfig): Promise<BotConfig> {
             endpoint: args.endpoint
         })
         config.connectService(endpointService);
-        process.stdout.write(`Connected ${endpointService.type}:${endpointService.endpoint}\n`);
+        services.push(endpointService);
     }
     await config.save();
-    process.stdout.write(`Connected ${service.type}:${service.name} ${service.id}\n`);
-
+    process.stdout.write(JSON.stringify(services, null, 2));
     return config;
 }
 

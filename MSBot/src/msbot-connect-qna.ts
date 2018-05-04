@@ -95,7 +95,7 @@ async function processConnectQnaArgs(config: BotConfig): Promise<BotConfig> {
     config.connectService(newService);
 
     await config.save();
-    process.stdout.write(`Connected ${newService.type}:${newService.name} ${newService.kbId}`);
+    process.stdout.write(JSON.stringify(newService, null, 2));
     return config;
 }
 
