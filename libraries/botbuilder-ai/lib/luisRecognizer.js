@@ -121,7 +121,7 @@ class LuisRecognizer {
         });
     }
     normalizeName(name) {
-        return name.replace(/\./g, "_");
+        return name.replace(/\.| /g, "_");
     }
     getIntents(luisResult) {
         const intents = {};
@@ -152,9 +152,9 @@ class LuisRecognizer {
             if (compositeEntityTypes.indexOf(entity.type) > -1) {
                 return;
             }
-            this.addProperty(entitiesAndMetadata, this.getNormalizedEntityType(entity), this.getEntityValue(entity));
+            this.addProperty(entitiesAndMetadata, this.getNormalizedEntityName(entity), this.getEntityValue(entity));
             if (verbose) {
-                this.addProperty(entitiesAndMetadata.$instance, this.getNormalizedEntityType(entity), this.getEntityMetadata(entity));
+                this.addProperty(entitiesAndMetadata.$instance, this.getNormalizedEntityName(entity), this.getEntityMetadata(entity));
             }
         });
         return entitiesAndMetadata;
@@ -214,14 +214,17 @@ class LuisRecognizer {
             score: entity.score
         };
     }
-    getNormalizedEntityType(entity) {
+    getNormalizedEntityName(entity) {
         // Type::Role -> Role
         var type = entity.type.split(':').pop();
         if (type.startsWith("builtin.datetimeV2.")) {
-            type = "builtin_datetime";
+            type = "datetime";
         }
         if (type.startsWith("builtin.currency")) {
-            type = "builtin_money";
+            type = "money";
+        }
+        if (type.startsWith('builtin.')) {
+            type = type.substring(8);
         }
         if (entity.role != null) {
             type = entity.role;
@@ -253,9 +256,9 @@ class LuisRecognizer {
                     entity.endIndex != undefined && compositeEntityMetadata.endIndex != undefined && entity.endIndex <= compositeEntityMetadata.endIndex) {
                     // Add to the set to ensure that we don't consider the same child entity more than once per composite
                     coveredSet.add(i);
-                    this.addProperty(childrenEntites, this.getNormalizedEntityType(entity), this.getEntityValue(entity));
+                    this.addProperty(childrenEntites, this.getNormalizedEntityName(entity), this.getEntityValue(entity));
                     if (verbose)
-                        this.addProperty(childrenEntites.$instance, this.getNormalizedEntityType(entity), this.getEntityMetadata(entity));
+                        this.addProperty(childrenEntites.$instance, this.getNormalizedEntityName(entity), this.getEntityMetadata(entity));
                 }
             }
             ;

@@ -89,7 +89,7 @@ export declare class LuisRecognizer implements Middleware {
     private getEntitiesAndMetadata(entities, compositeEntities, verbose);
     private getEntityValue(entity);
     private getEntityMetadata(entity);
-    private getNormalizedEntityType(entity);
+    private getNormalizedEntityName(entity);
     private populateCompositeEntity(compositeEntity, entities, entitiesAndMetadata, verbose);
     /**
      * If a property doesn't exist add it to a new array, otherwise append it to the existing array
