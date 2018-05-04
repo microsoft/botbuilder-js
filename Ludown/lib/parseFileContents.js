@@ -10,6 +10,9 @@ const chalk = require('chalk');
 const fs = require('fs');
 const path = require('path');
 const url = require('url');
+const deepEqual = require('deep-equal');
+const retCode = require('./enums/CLI-errors');
+
 /**
  * Main parser code to parse current file contents into LUIS and QNA sections.
  *
