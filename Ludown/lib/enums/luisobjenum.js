@@ -7,5 +7,7 @@ module.exports = {
     ENTITIES: "entities",
     PATTERNANYENTITY: "patternAnyEntities",
     CLOSEDLISTS: "closedLists",
-    PREBUILT: "prebuiltEntities"
+    PREBUILT: "prebuiltEntities",
+    UTTERANCE: "utterances",
+    PATTERNS: "patterns"
 };

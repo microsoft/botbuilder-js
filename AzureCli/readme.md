@@ -8,9 +8,11 @@ Get a [valid Azure subscription](https://azure.microsoft.com/en-us/free/).
 Install the [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest).
 
 ## Installation
-Install the bot service extension:
-
-`az extension add --source https://icscratch.blob.core.windows.net/bot-packages/azurebotextension-0.0.1-py2.py3-none-any.whl`
+Remove the azure bot extension if it's already installed.  
+`az extension list`  
+`az extension remove -n <extensionname>`  
+Install the bot service extension as follows -  
+`az extension add --source https://icscratch.blob.core.windows.net/bot-packages/botservice-0.0.1-py2.py3-none-any.whl`
 
 # Managing a Bot
 
@@ -82,13 +84,6 @@ The CLI supports various commands for each channel.  Type `az bot <ChannelName> 
 To remove a channel from a bot, use `az bot directline delete`.
 
 # Known Issues and Limitations
-These are the known issues and limitations that the CLI has right now:
-1) Creation of MSA app ID and password is not supported for hotmail.com accounts.
-2) `az bot publish` fails for a C# solution when the project is open in Visual Studio. To work around this, please close the solution before doing a publish.
-
- 
-
-
-
-
-
+These are the known issues and limitations that the CLI has right now.  
+1) Creation of msa app id and password is not supported for hotmail.com accounts.
+2) `az bot publish` fails for a c# solution , when the project is open in visual studio. To work around this for now, please close the solution before doing a publish.

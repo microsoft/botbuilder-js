@@ -39,19 +39,19 @@ Arguments:
 
 | Option               | Description                       |
 | -------------------- | --------------------------------- |
-| -name                | (optional) Name of the dispatch   |
-| -luisAuthoringKey    | (optional) LUIS authoring key     |
-| -luisAuthoringRegion | (optional) LUIS authoring region  |
-| -bot                 | (optional) .bot file path         |
-| -hierarchical        | (optional) Default to false.  If false, existing intents from source LUIS model(s) will be available as the dispatch intents. |
-| -dataFolder          | (optional) Working directory for tool |
-| -h                   | Output usage information |
+| -n, --name           | (optional) Name of the dispatch   |
+| --luisAuthoringKey    | (optional) LUIS authoring key     |
+| --luisAuthoringRegion | (optional) LUIS authoring region  |
+| -b, --bot             | (optional) .bot file path         |
+| --hierarchical    | (optional) Default to false.  If false, existing intents from source LUIS model(s) will be available as the dispatch intents. |
+| --dataFolder          | (optional) Working directory for tool |
+| -h, --help            | Output usage information |
 
 Example:
 
 ```shell
-dispatch init -name TestDispatch -luisAuthoringKey F57AEEEBE67349C282E1DC51F6BA66D9 -luisAuthoringRegion westus 
-dispatch init -bot c:\src\bot\testbot.bot
+dispatch init -n TestDispatch --luisAuthoringKey F57AEEEBE67349C282E1DC51F6BA66D9 --luisAuthoringRegion westus 
+dispatch init --bot c:\src\bot\testbot.bot
 ```
 
 
@@ -61,11 +61,11 @@ This step is not needed if you have a .bot file already connected with services 
 and add each of the services it can dispatch to .dispatch file.
 
 ```shell
-dispatch add -type luis -id 1090A345-2D89-4BED-99EF-1CE3E08B690E -name TestLuisApp -version 0.1 -key F57AEEEBE67349C282E1DC51F6BA66D9
-dispatch add -type qna -id 09DF8311-9MSA-L2I9-DJEE-4MT434481212 -name Faq -key L2340T8NM78OSFDWAS23B4TAASMPO1N1
-dispatch add -type file -name TestModule -filePath c:\src\testmodule.tsv
-dispatch add -type file -name TestModule2 -filePath c:\src\testmodule2.txt
-dispatch add -type file -name TestModule3 -filePath c:\src\testmodule3.json
+dispatch add -t luis -i 1090A345-2D89-4BED-99EF-1CE3E08B690E -n TestLuisApp -v 0.1 -k F57AEEEBE67349C282E1DC51F6BA66D9
+dispatch add -t qna -i 09DF8311-9MSA-L2I9-DJEE-4MT434481212 -n Faq -k L2340T8NM78OSFDWAS23B4TAASMPO1N1
+dispatch add -t file -n TestModule -f c:\src\testmodule.tsv
+dispatch add -t file -n TestModule2 -f c:\src\testmodule2.txt
+dispatch add -t file -n TestModule3 -f c:\src\testmodule3.json
 
 ```
 
@@ -73,15 +73,15 @@ Arguments
 
 | Option       | Description |
 | -----------  | ----------- |
-| -type        | luis, qna, file|
-| -id          | (required only if type is luis/qna) LUIS app id or QnA kb id from application settings page|
-| -name        | LUIS app name or QnA name (from application settings page) or module/file name for file type |
-| -key         | (required only if type is luis/qna) LUIS authoring key (from https://www.luis.ai/user/settings) or QnA maker key (from https://qnamaker.ai/UserSettings) |
-| -version     | (Required only if type is luis) LUIS app version |
-| -filePath    | (Required only if type is file) Path to tsv file containing tab delimited intent and utterance fields or .txt file with an utterance on each line |
-| -dispatch    | (optional) Path to .dispatch file |
-| -dataFolder  | (optional) Working directory for tool |
-| -h           | Output usage information |
+| -t, --type   | luis, qna, file|
+| -i, --id     | (required only if type is luis/qna) LUIS app id or QnA kb id from application settings page|
+| -n, --name   | LUIS app name or QnA name (from application settings page) or module/file name for file type |
+| -k, --key    | (required only if type is luis/qna) LUIS authoring key (from https://www.luis.ai/user/settings) or QnA maker key (from https://qnamaker.ai/UserSettings) |
+| -v, --version| (Required only if type is luis) LUIS app version |
+| -f, --filePath| (Required only if type is file) Path to tsv file containing tab delimited intent and utterance fields or .txt file with an utterance on each line |
+| --dispatch    | (optional) Path to .dispatch file |
+| --dataFolder  | (optional) Working directory for tool |
+| -h, --help    | Output usage information |
 
 Supported file types:
 
@@ -97,9 +97,9 @@ Supported file types:
 To remove one of the services from .dispatch file, run
 
 ```shell
-dispatch remove -type luis -id 1090A345-2D89-4BED-99EF-1CE3E08B690E 
-dispatch remove -type qna -id 09DF8311-9MSA-L2I9-DJEE-4MT434481212 
-dispatch remove -type file -filePath c:\src\testmodule.json
+dispatch remove -t luis -i 1090A345-2D89-4BED-99EF-1CE3E08B690E 
+dispatch remove -t qna -i 09DF8311-9MSA-L2I9-DJEE-4MT434481212 
+dispatch remove -t file -f c:\src\testmodule.json
 
 ```
 
@@ -107,13 +107,13 @@ Arguments
 
 | Option       | Description |
 | -----------  | ----------- |
-| -type        | luis, qna, file|
-| -id          | (required only if type is luis/qna) LUIS app id or QnA kb id - from application settings page)|
-| -name        | LUIS app name or QnA name (from application settings page) or module/file name for file type |
-| -filePath    | (Required only if type is file) Path to tsv file containing tab delimited intent and utterance fields or .txt file with an utterance on each line |
-| -dispatch    | (optional) Path to .dispatch file |
-| -dataFolder  | (optional) Working directory for tool |
-| -h           | Output usage information |
+| -t, --type   | luis, qna, file|
+| -i, --id     | (required only if type is luis/qna) LUIS app id or QnA kb id - from application settings page)|
+| -n, --name   | LUIS app name or QnA name (from application settings page) or module/file name for file type |
+| -f, --filePath | (Required only if type is file) Path to tsv file containing tab delimited intent and utterance fields or .txt file with an utterance on each line |
+| --dispatch    | (optional) Path to .dispatch file |
+| --dataFolder  | (optional) Working directory for tool |
+| -h, --help    | Output usage information |
 
 ## Creating your dispatch model  
 
@@ -127,11 +127,11 @@ Options:
 
 | Option               | Description                                                  |
 | ----------------     | ------------------------------------------------------------ |
-| -bot                 | (optional) .bot file path         |
-| -dispatch            | (optional) .dispatch file path    |
-| -dataFolder          | (optional) Working directory for tool |
-| -hierarchical        | (optional) Set to true (default) for all tasks except for single LUIS model evaluation when this should be set to false |
-| -h                   | Output usage information |
+| -b, --bot            | (optional) .bot file path         |
+| --dispatch           | (optional) .dispatch file path    |
+| --dataFolder         | (optional) Working directory for tool |
+| --hierarchical       | (optional) Set to true (default) for all tasks except for single LUIS model evaluation when this should be set to false |
+| -h, --help           | Output usage information |
 
 This command creates a brand new LUIS application.
 
@@ -147,10 +147,10 @@ With the following options
 
 | Option               | Description                                                  |
 | ----------------     | ------------------------------------------------------------ |
-| -bot                 | (optional) .bot file path         |
-| -dispatch            | (optional) .dispatch file path    |
-| -dataFolder          | (optional) Working directory for tool |
-| -h                   | Output usage information |
+| -b, --bot            | (optional) .bot file path         |
+| --dispatch           | (optional) .dispatch file path    |
+| --dataFolder         | (optional) Working directory for tool |
+| -h, --help           | Output usage information |
 
 This command updates existing LUIS application in .dispatch file.
 
@@ -166,11 +166,11 @@ Options:
 
 |Option | Description|
 | ------ | ----------- |
-| -luisSubscriptionKey    | (optional, will be prompted) Cognitive Service LUIS key from portal.azure.com  |
-| -luisSubscriptionRegion | (optional, will be prompted) Cognitive Service LUIS region from portal.azure.com  |
-| -dispatch            | (optional) .dispatch file path    |
-| -dataFolder           | (optional) Output folder for tool |
-| -h, --help            | Output usage information|
+| --luisSubscriptionKey    | (optional, will be prompted) Cognitive Service LUIS key from portal.azure.com  |
+| --luisSubscriptionRegion | (optional, will be prompted) Cognitive Service LUIS region from portal.azure.com  |
+| --dispatch               | (optional) .dispatch file path    |
+| --dataFolder             | (optional) Output folder for tool |
+| -h, --help               | Output usage information|
 
 If no options are supplied, the tool will prompt for the required information it needs to run model evaluation.
 
@@ -184,14 +184,14 @@ dispatch test [options]
 
 Options:
 
-| Option               | Description                                                  |
-| ----------------     | ------------------------------------------------------------ |
-| -testFilePath        | Path to a tsv file with three (or two) fields: expected intent, weight and utterance in that order; the first line (header) will be skipped; the weight column is optional     |
-| -luisSubscriptionKey   | (optional) Cognitive Service LUIS key from portal.azure.com     |
-| -luisSubscriptionRegion| (optional) Cognitive Service LUIS region from portal.azure.com  |
-| -dispatch            | (optional) .dispatch file path    |
-| -dataFolder          | (optional) Output folder for tool |
-| -h                   | Output usage information |
+| Option                  | Description                                                  |
+| --------------------    | ------------------------------------------------------------ |
+| --testFilePath          | Path to a tsv file with three (or two) fields: expected intent, weight and utterance in that order; the first line (header) will be skipped; the weight column is optional     |
+| --luisSubscriptionKey   | (optional) Cognitive Service LUIS key from portal.azure.com     |
+| --luisSubscriptionRegion| (optional) Cognitive Service LUIS region from portal.azure.com  |
+| --dispatch              | (optional) .dispatch file path    |
+| --dataFolder            | (optional) Output folder for tool |
+| -h, --help              | Output usage information |
 
 
 ## Run prediction using your dispatch model  
@@ -204,13 +204,13 @@ dispatch predict [options]
 
 With the following options
 
-| Option               | Description                                                  |
-| ----------------     | ------------------------------------------------------------ |
-| -luisSubscriptionKey   | (optional) Cognitive Service LUIS key from portal.azure.com    |
-| -luisSubscriptionRegion| (optional) Cognitive Service LUIS region from portal.azure.com  |
-| -dispatch            | (optional) .dispatch file path    |
-| -dataFolder          | (optional) Output folder for tool |
-| -h                   | Output usage information |
+| Option                  | Description                                                  |
+| ----------------------- | ------------------------------------------------------------ |
+| --luisSubscriptionKey   | (optional) Cognitive Service LUIS key from portal.azure.com    |
+| --luisSubscriptionRegion| (optional) Cognitive Service LUIS region from portal.azure.com  |
+| --dispatch              | (optional) .dispatch file path    |
+| --dataFolder            | (optional) Output folder for tool |
+| -h, --help              | Output usage information |
 
 You'll then be prompted to enter the utterance you'd like to run prediction on.
 
@@ -226,9 +226,9 @@ With the following options
 
 | Option               | Description                                                  |
 | ----------------     | ------------------------------------------------------------ |
-| -dispatch            | (optional) .dispatch file path    |
-| -dataFolder          | (optional) Output folder for tool |
-| -h                   | Output usage information |
+| --dispatch           | (optional) .dispatch file path    |
+| --dataFolder         | (optional) Output folder for tool |
+| -h, --help           | Output usage information |
 
 
 # Common Tasks
@@ -238,11 +238,11 @@ With the following options
 End-to-end example of a bot consisting of a LUIS module and a QnA Maker knowledge base module:
 
 ```shell
-dispatch init -name mybot_dispatch -luisAuthoringKey <luis_authoring_key> -luisAuthoringRegion <region>
-dispatch add -name LuisChitChat -type luis -id <luis_app_id> -name <luis_app_name> -version <luis_app_version> -key <luis_app_authoring_key>
-dispatch add -name MyKnowledgeBase -type qna -id <qna_kb_id> -name <kb_name> -key <qna_maker_key>
+dispatch init -n mybot_dispatch --luisAuthoringKey <luis_authoring_key> --luisAuthoringRegion <region>
+dispatch add -t luis -i <luis_app_id> -n <luis_app_name> -v <luis_app_version> -k <luis_app_authoring_key>
+dispatch add -t qna -i <qna_kb_id> -n <kb_name> -k <qna_maker_key>
 dispatch create
-dispatch eval -luisSubscriptionKey <azure_luis_key> -luisSubscriptionRegion <azure_luis_region>
+dispatch eval --luisSubscriptionKey <azure_luis_key> --luisSubscriptionRegion <azure_luis_region>
 ```
 
 The output is Summary.html file located in local file system directory where the commands were issued. It includes all the evaluation results and suggestions for improving the bot components.
@@ -252,10 +252,10 @@ The output is Summary.html file located in local file system directory where the
 Evaluate a LUIS model performing cross validation:
 
 ```shell
-dispatch init -name mybot_dispatch -luisAuthoringKey <luis_authoring_key> -luisAuthoringRegion <region>
-dispatch add -name LuisChitChat -type luis -id <luis_app_id> -name <luis_app_name> -version <luis_app_version> -key <luis_app_authoring_key>
-dispatch create -hierarchical false
-dispatch eval -luisSubscriptionKey <azure_luis_key> -luisSubscriptionRegion <azure_luis_region>
+dispatch init -n mybot_dispatch --luisAuthoringKey <luis_authoring_key> --luisAuthoringRegion <region>
+dispatch add -t luis -i <luis_app_id> -n <luis_app_name> -v <luis_app_version> -k <luis_app_authoring_key>
+dispatch create --hierarchical false
+dispatch eval --luisSubscriptionKey <azure_luis_key> --luisSubscriptionRegion <azure_luis_region>
 ```
 
 The output, Summary.html, contains all the evaluation results. The file is located in local file system directory where the commands were issued.
@@ -265,7 +265,7 @@ The output, Summary.html, contains all the evaluation results. The file is locat
 Suppose the dispatcher model was already created following the steps of one of the above tasks. To test this model with a tab-delimitted text file run these commands:
 
 ```shell
-dispatch test -testFilePath <text_file>
+dispatch test --testFilePath <text_file>
 ```
 
 The output, Summary.html, contains all the evaluation results. The file is located in the location of the test file.
