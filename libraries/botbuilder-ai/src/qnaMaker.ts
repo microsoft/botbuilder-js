@@ -62,16 +62,28 @@ export interface QnAMakerEndpoint {
  * Additional settings used to configure a `QnAMaker` instance.
  */
 export interface QnAMakerOptions {
-
-    /** (Optional) minimum score accepted. Defaults to "0.3". */
+    /** 
+     * (Optional) minimum score accepted. 
+     * 
+     * @remarks
+     * Defaults to "0.3". 
+     */
     scoreThreshold?: number;
 
-    /** (Optional) number of results to return. Defaults to "1". */
+    /** 
+     * (Optional) number of results to return. 
+     * 
+     * @remarks
+     * Defaults to "1". 
+     */
     top?: number;
 
     /** 
      * (Optional) and only applied when a QnAMaker instance has been added to ths adapter as 
-     * middleware. Defaults to a value of `false`.
+     * middleware. 
+     * 
+     * @remarks
+     * Defaults to a value of `false`.
      * 
      * Setting this to `true` will cause the QnA Maker service to be called BEFORE any other 
      * middleware or the bots logic is run. Should the service return an answer the user will be 
@@ -86,16 +98,6 @@ export interface QnAMakerOptions {
 }
 
 /**
- * @private
- */
-const ENDPOINT_REGEXP = /\/knowledgebases\/(.*)\/generateAnswer\r\nHost:\s(.*)\r\n.*(?:EndpointKey|Ocp-Apim-Subscription-Key:)\s(.*)\r\n/i;
-
-/**
- * @private
- */
-const UNIX_ENDPOINT_REGEXP = /\/knowledgebases\/(.*)\/generateAnswer\nHost:\s(.*)\n.*(?:EndpointKey|Ocp-Apim-Subscription-Key:)\s(.*)\n/i;
-
-/**
  * Manages querying an individual QnA Maker knowledge base for answers. Can be added as middleware 
  * to automatically query the knowledge base anytime a messaged is received from the user. When 
  * used as middleware the component can be configured to either query the knowledge base before the
@@ -103,51 +105,14 @@ const UNIX_ENDPOINT_REGEXP = /\/knowledgebases\/(.*)\/generateAnswer\nHost:\s(.*
  * the user.   
  */
 export class QnAMaker implements Middleware {
-    private readonly endpoint: QnAMakerEndpoint;
     private readonly options: QnAMakerOptions; 
 
     /**
-     * Creates a new QnAMaker instance.  You can initialize the endpoint for the instance by 
-     * passing in the publishing endpoint provided in the QnA Maker portal.
-     * 
-     * For version 2 this looks like:
-     * 
-     * ```JS
-     * POST /knowledgebases/98185f59-3b6f-4d23-8ebb-XXXXXXXXXXXX/generateAnswer
-     * Host: https://westus.api.cognitive.microsoft.com/qnamaker/v2.0
-     * Ocp-Apim-Subscription-Key: 4cb65a02697745eca369XXXXXXXXXXXX
-     * Content-Type: application/json
-     * {"question":"hi"}
-     * ```
-     * 
-     * And for the new version 4 this looks like:
-     * 
-     * ```JS
-     * POST /knowledgebases/d31e049e-2557-463f-a0cc-XXXXXXXXXXXX/generateAnswer
-     * Host: https://test-knowledgebase.azurewebsites.net/qnamaker
-     * Authorization: EndpointKey 16cdca0b-3826-4a0f-a112-XXXXXXXXXXXX
-     * Content-Type: application/json
-     * {"question":"<Your question>"}
-     * ```
+     * Creates a new QnAMaker instance.  
      * @param endpoint The endpoint of the knowledge base to query.
      * @param options (Optional) additional settings used to configure the instance.
      */
-    constructor(endpoint: QnAMakerEndpoint|string, options?: QnAMakerOptions) {
-        // Initialize endpoint
-        if (typeof endpoint === 'string') {
-            // Parse endpoint
-            let matched = ENDPOINT_REGEXP.exec(endpoint);
-            if (!matched) { matched = UNIX_ENDPOINT_REGEXP.exec(endpoint) }
-            if (!matched) { throw new Error(`QnAMaker: invalid endpoint of "${endpoint}" passed to constructor.`) }
-            this.endpoint = {
-                knowledgeBaseId: matched[1],
-                host: matched[2],
-                endpointKey: matched[3]
-            };
-        } else {
-            this.endpoint = endpoint;
-        }
-
+    constructor(private readonly endpoint: QnAMakerEndpoint, options?: QnAMakerOptions) {
         // Initialize options
         this.options = Object.assign({
             scoreThreshold: 0.3,
@@ -178,6 +143,8 @@ export class QnAMaker implements Middleware {
 
     /**
      * Calls [generateAnswer()](#generateanswer) and sends the answer as a message ot the user. 
+     * 
+     * @remarks
      * Returns a value of `true` if an answer was found and sent. If multiple answers are 
      * returned the first one will be delivered.
      * @param context Context for the current turn of conversation with the use.
@@ -194,8 +161,10 @@ export class QnAMaker implements Middleware {
     }
 
     /**
-     * Calls the QnA Maker service to generate answer(s) for a question. The returned answers will
-     * be sorted by score with the top scoring answer returned first.
+     * Calls the QnA Maker service to generate answer(s) for a question. 
+     * 
+     * @remarks
+     * The returned answers will be sorted by score with the top scoring answer returned first.
      * @param question The question to answer.
      * @param top (Optional) number of answers to return. Defaults to a value of `1`.
      * @param scoreThreshold (Optional) minimum answer score needed to be considered a match to questions. Defaults to a value of `0.001`.
@@ -211,6 +180,12 @@ export class QnAMaker implements Middleware {
         return Promise.resolve([]);
     }
 
+    /**
+     * Called internally to query the QnA Maker service. 
+     * 
+     * @remarks
+     * This is exposed to enable better unit testing of the service.
+     */
     protected callService(endpoint: QnAMakerEndpoint, question: string, top: number): Promise<QnAMakerResult[]> {
         const url = `${endpoint.host}/knowledgebases/${endpoint.knowledgeBaseId}/generateanswer`;
         const headers: any = {};

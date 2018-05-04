@@ -19,11 +19,21 @@ const botbuilder_1 = require("botbuilder");
 const request = require("request-promise-native");
 const xmldom_1 = require("xmldom");
 /**
- * The LanguageTranslator will use the Text Translator Cognitive service to translate text from a source language
- * to one of the native languages that the bot speaks.  By adding it to the middleware pipeline you will automatically
- * get a translated experience, and also a LUIS model allowing the user to ask to speak a language.
+ * Middleware that uses the Text Translator Cognitive service to translate text from a source
+ * language to one of the native languages that the bot speaks.
+ *
+ * @remarks
+ * When added to your bot adapters middleware pipeline it will automatically translate incoming
+ * message activities.
+ *
+ * The middleware component can also be optionally configured to automatically translate outgoing
+ * message activities into the users preferred language.
  */
 class LanguageTranslator {
+    /**
+     * Creates a new LanguageTranslator instance.
+     * @param settings Settings required to configure the component.
+     */
     constructor(settings) {
         this.translator = new MicrosoftTranslator(settings.translatorKey);
         this.nativeLanguages = settings.nativeLanguages;
@@ -103,6 +113,9 @@ class LanguageTranslator {
     }
 }
 exports.LanguageTranslator = LanguageTranslator;
+/**
+ * @private
+ */
 class MicrosoftTranslator {
     constructor(apiKey) {
         this.entityMap = {
@@ -199,6 +212,9 @@ class MicrosoftTranslator {
         });
     }
 }
+/**
+ * @private
+ */
 class PostProcessTranslator {
     constructor(noTranslatePatterns, wordDictionary) {
         this.noTranslatePatterns = [];

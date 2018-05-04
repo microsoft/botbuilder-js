@@ -9,20 +9,54 @@ import { Middleware, TurnContext, ActivityTypes, Activity } from 'botbuilder';
 import * as request from 'request-promise-native';
 import { DOMParser } from "xmldom";
 
+/**
+ * Settings used to configure an instance of `LanguageTranslator`.
+ */
 export interface TranslatorSettings {
-    translatorKey: string,
-    nativeLanguages: string[],
-    noTranslatePatterns?: { [id: string] : string[] },
-    wordDictionary?: { [id: string]: string},
-    getUserLanguage?: (context: TurnContext) => string,
-    setUserLanguage?: (context: TurnContext) => Promise<boolean>,
-    translateBackToUserLanguage?: boolean,
+    /** The API key assigned by the Text Translator Cognitive Service. */
+    translatorKey: string;
+
+    /** Native languages the bot understands. */
+    nativeLanguages: string[];
+
+    /** (Optional) list of patterns that should NOT be translated. */
+    noTranslatePatterns?: { [id: string] : string[] };
+
+    /** (Optional) list of replacement words. */
+    wordDictionary?: { [id: string]: string};
+
+    /** 
+     * (Optional) handler that will be called to get the users preferred language for the current 
+     * turn. 
+     */
+    getUserLanguage?: (context: TurnContext) => string;
+
+
+    /** 
+     * (Optional) handler that will be called to determine if the user would like to change their 
+     * preferred language. 
+     */
+    setUserLanguage?: (context: TurnContext) => Promise<boolean>;
+
+    /**
+     * (Optional) if `true` outgoing activities will be translated into the users preferred language.
+     * 
+     * @remarks
+     * Defaults to `false`. 
+     */
+    translateBackToUserLanguage?: boolean;
 }
 
 /**
- * The LanguageTranslator will use the Text Translator Cognitive service to translate text from a source language
- * to one of the native languages that the bot speaks.  By adding it to the middleware pipeline you will automatically
- * get a translated experience, and also a LUIS model allowing the user to ask to speak a language.
+ * Middleware that uses the Text Translator Cognitive service to translate text from a source 
+ * language to one of the native languages that the bot speaks.  
+ * 
+ * @remarks
+ * When added to your bot adapters middleware pipeline it will automatically translate incoming 
+ * message activities.
+ * 
+ * The middleware component can also be optionally configured to automatically translate outgoing 
+ * message activities into the users preferred language.
  */
 export class LanguageTranslator implements Middleware {
     private translator: Translator;
@@ -33,7 +67,11 @@ export class LanguageTranslator implements Middleware {
     private noTranslatePatterns: { [id: string] : string[] };
     private wordDictionary: { [id:string]: string }
 
-    public constructor(settings: TranslatorSettings) {
+    /**
+     * Creates a new LanguageTranslator instance.
+     * @param settings Settings required to configure the component.
+     */
+    constructor(settings: TranslatorSettings) {
         this.translator = new MicrosoftTranslator(settings.translatorKey);
         this.nativeLanguages = settings.nativeLanguages;
         this.getUserLanguage = settings.getUserLanguage;
@@ -117,6 +155,9 @@ export class LanguageTranslator implements Middleware {
     }
 }
 
+/**
+ * @private
+ */
 declare interface TranslateArrayOptions {
     texts: string[];
     from: string;
@@ -125,10 +166,16 @@ declare interface TranslateArrayOptions {
     category?: string;
 }
 
+/**
+ * @private
+ */
 interface TranslationResult {
     translatedText: string;
 }
 
+/**
+ * @private
+ */
 interface Translator {
     translateArrayAsync(options: TranslateArrayOptions): Promise<TranslationResult[]>;
 
@@ -137,6 +184,9 @@ interface Translator {
     setPostProcessorTemplate(noTranslatePatterns: string[], wordDictionary?: { [id: string]: string});
 }
 
+/**
+ * @private
+ */
 class MicrosoftTranslator implements Translator {
     
     apiKey: string;
@@ -248,6 +298,9 @@ class MicrosoftTranslator implements Translator {
     }
 }
 
+/**
+ * @private
+ */
 export class PostProcessTranslator {
     noTranslatePatterns: string[];
     wordDictionary: { [id: string]: string};

@@ -58,40 +58,6 @@ describe('QnAMaker', function () {
                 assert(res[0].answer.startsWith("BaseCamp: You can use a damp rag to clean around the Power Pack"));
             });
     });
-
-    it('should work with a string based endpoint', function () {
-        const qna = new ai.QnAMaker(endpointString, { top: 1 });
-
-        return qna.generateAnswer(`how do I clean the stove?`)
-            .then(res => {
-                assert(res);
-                assert(res.length == 1);
-                assert(res[0].answer.startsWith("BaseCamp: You can use a damp rag to clean around the Power Pack"));
-            })
-            .then(() => qna.generateAnswer("is the stove hard to clean?"))
-            .then(res => {
-                assert(res);
-                assert(res.length == 1);
-                assert(res[0].answer.startsWith("BaseCamp: You can use a damp rag to clean around the Power Pack"));
-            });
-    });
-
-    it('should work with a string based endpoint containing UNIX style line breaks', function () {
-        const qna = new ai.QnAMaker(unixEndpointString, { top: 1 });
-
-        return qna.generateAnswer(`how do I clean the stove?`)
-            .then(res => {
-                assert(res);
-                assert(res.length == 1);
-                assert(res[0].answer.startsWith("BaseCamp: You can use a damp rag to clean around the Power Pack"));
-            })
-            .then(() => qna.generateAnswer("is the stove hard to clean?"))
-            .then(res => {
-                assert(res);
-                assert(res.length == 1);
-                assert(res[0].answer.startsWith("BaseCamp: You can use a damp rag to clean around the Power Pack"));
-            });
-    });
     
     it('should run as middleware in fallback mode', function (done) {
         const context = new TestContext({ text: `how do I clean the stove?`, type: 'message' });

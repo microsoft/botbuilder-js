@@ -4,6 +4,13 @@ const LuisClient = require("botframework-luis");
 const LUIS_TRACE_TYPE = 'https://www.luis.ai/schemas/trace';
 const LUIS_TRACE_NAME = 'LuisRecognizerMiddleware';
 const LUIS_TRACE_LABEL = 'Luis Trace';
+/**
+ * Component used to recognize intents in a user utterance using a configured LUIS model.
+ *
+ * @remarks
+ * This component can be used within your bots logic by calling [recognize()](#recognize) or added
+ * to your bot adapters middleware stack to automatically recognize the users intent.
+ */
 class LuisRecognizer {
     /**
      * Creates a new LuisRecognizer instance.
@@ -22,18 +29,22 @@ class LuisRecognizer {
     }
     /**
      * Returns the results cached from a previous call to [recognize()](#recognize) for the current
-     * turn with the user.  This will return `undefined` if recognize() hasn't been called for the
-     * current turn.
+     * turn with the user.
+     *
+     * @remarks
+     * This will return `undefined` if recognize() hasn't been called for the current turn.
      * @param context Context for the current turn of conversation with the use.
      */
     get(context) {
         return context.services.get(this.cacheKey);
     }
     /**
-     * Calls LUIS to recognize intents and entities in a users utterance. The results of the call
-     * will be cached to the context object for the turn and future calls to recognize() for the
-     * same context object will result in the cached value being returned. This behavior can be
-     * overridden using the `force` parameter.
+     * Calls LUIS to recognize intents and entities in a users utterance.
+     *
+     * @remarks
+     * The results of the call will be cached to the context object for the turn and future calls
+     * to recognize() for the same context object will result in the cached value being returned.
+     * This behavior can be overridden using the `force` parameter.
      * @param context Context for the current turn of conversation with the use.
      * @param force (Optional) flag that if `true` will force the call to LUIS even if a cached result exists. Defaults to a value of `false`.
      */
@@ -61,8 +72,10 @@ class LuisRecognizer {
         return Promise.resolve(cached);
     }
     /**
-     * Called internally to create a LuisClient instance. This is exposed to enable better unit
-     * testing of teh recognizer.
+     * Called internally to create a LuisClient instance.
+     *
+     * @remarks
+     * This is exposed to enable better unit testing of the recognizer.
      * @param baseUri Service endpoint being called.
      */
     createClient(baseUri) {
