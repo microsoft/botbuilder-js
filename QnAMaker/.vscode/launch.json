@@ -16,9 +16,14 @@
             "name": "Launch Program",
             "program": "${workspaceFolder}\\bin\\qnamaker",
             "args": [
-                "set",
-                "--endpointKey",
-                "38d6b3e086634afe9dee8fe45eac6b08"
+                // "get",
+                // "operationdetails",
+                // "--operationId",
+                // "2b9cab2b-2fc9-4612-b678-76832f2e8a29",
+                // "--wait"
+                "delete",
+                "kb",
+                "-f"
             ]
         }
     ]

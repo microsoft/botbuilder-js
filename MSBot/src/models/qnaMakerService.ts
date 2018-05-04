@@ -4,6 +4,7 @@
  */
 import { IQnAService, ServiceType } from '../schema';
 import { ConnectedService } from './connectedService';
+import * as url from 'url';
 
 export class QnaMakerService extends ConnectedService implements IQnAService {
     public readonly type = ServiceType.QnA;
@@ -14,7 +15,8 @@ export class QnaMakerService extends ConnectedService implements IQnAService {
 
     constructor(source: IQnAService = {} as IQnAService) {
         super(source);
-        const { kbId = '', name = '', subscriptionKey = '', endpointKey = '', hostname = '' } = source;
+        let { kbId = '', name = '', subscriptionKey = '', endpointKey = '', hostname = '' } = source;
+        hostname = url.resolve(source.hostname, '/qnamaker');
         Object.assign(this, { kbId, name, subscriptionKey, endpointKey, hostname });
     }
 

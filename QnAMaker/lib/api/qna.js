@@ -1,7 +1,7 @@
 /**
- * Copyright(c) Microsoft Corporation.All rights reserved.
- * Licensed under the MIT License.
- */
+  * Copyright (c) Microsoft Corporation. All rights reserved.
+  * Licensed under the MIT License.
+  */
 const {ServiceBase} = require('./serviceBase');
 class Qna extends ServiceBase {
     constructor() {
@@ -9,10 +9,10 @@ class Qna extends ServiceBase {
     }
 
     /**
-    * 
+    * Download the knowledgebase.
     */
     downloadKnowledgebase(params) {
-        return this.createRequest('', params, 'get');
+        return this.createRequest('', params, 'GET');
     }
 }
 module.exports = Qna;
