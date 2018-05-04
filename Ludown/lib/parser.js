@@ -101,7 +101,7 @@ module.exports = {
                 }
             }
             var finalLUISJSON = collateLUISFiles(allParsedLUISContent);
-            var validLUIS = validateLUISBlob(finalLUISJSON);
+            if(haveLUISContent(parsedContent.LUISBlob)) validateLUISBlob(finalLUISJSON);
             var finalQnAJSON = collateQnAFiles(allParsedQnAContent);
             if(!program.luis_versionId) program.luis_versionId = "0.1";
             if(!program.luis_schema_version) program.luis_schema_version = "3.0.0";
@@ -109,17 +109,19 @@ module.exports = {
             if(!program.luis_desc) program.luis_desc = "";
             if(!program.luis_culture) program.luis_culture = "en-us";   
             if(!program.qna_name) program.qna_name = path.basename(rootFile, path.extname(rootFile));
-            finalLUISJSON.luis_schema_version = program.luis_schema_version;
-            finalLUISJSON.versionId = program.luis_versionId;
-            finalLUISJSON.name = program.luis_name,
-            finalLUISJSON.desc = program.luis_desc;
-            finalLUISJSON.culture = program.luis_culture;
-            finalQnAJSON.name = program.qna_name;
+            if(finalLUISJSON) {
+                finalLUISJSON.luis_schema_version = program.luis_schema_version;
+                finalLUISJSON.versionId = program.luis_versionId;
+                finalLUISJSON.name = program.luis_name,
+                finalLUISJSON.desc = program.luis_desc;
+                finalLUISJSON.culture = program.luis_culture;
+                finalQnAJSON.name = program.qna_name;
+            }
             
             var writeQnAFile = (finalQnAJSON.qnaList.length > 0) || 
                                (finalQnAJSON.urls.length > 0);
 
-            var  writeLUISFile = haveLUISContent(finalLUISJSON);
+            var  writeLUISFile = finalLUISJSON?true:false;
 
             if(!writeLUISFile && program.verbose) {
                 process.stdout.write(chalk.default.yellowBright('No LUIS content found in .lu file(s)! \n'));
