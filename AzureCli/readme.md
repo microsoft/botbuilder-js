@@ -12,7 +12,7 @@ Remove the azure bot extension if it's already installed.
 `az extension list`  
 `az extension remove -n <extensionname>`  
 Install the bot service extension as follows -  
-`az extension add --source https://icscratch.blob.core.windows.net/bot-packages/botservice-0.0.1-py2.py3-none-any.whl`
+`az extension add -n botservice`  
 
 # Managing a Bot
 
