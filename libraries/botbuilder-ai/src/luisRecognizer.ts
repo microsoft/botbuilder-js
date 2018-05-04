@@ -309,7 +309,7 @@ export class LuisRecognizer implements Middleware {
         if (type.startsWith('builtin.')) {
             type = type.substring(8);
         }
-        if (entity.role != null) {
+        if (entity.role != null && entity.role != "") {
             type = entity.role;
         }
         return type.replace(/\.|\s/g, "_");

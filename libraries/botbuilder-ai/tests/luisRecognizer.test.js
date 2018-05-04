@@ -95,7 +95,11 @@ describe('LuisRecognizer', function () {
         TestJson("Prebuilt.json", done);
     });
 
-    it('should return multiple intents and a simple entity', function (done) {
+    it('test patterns', function (done) {
+        TestJson("Patterns.json", done);
+    });
+
+   it('should return multiple intents and a simple entity', function (done) {
         var recognizer = new LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey, verbose: true });
         var context = new TestContext({ text: 'My name is Emad' });
         recognizer.recognize(context).then(res => {
