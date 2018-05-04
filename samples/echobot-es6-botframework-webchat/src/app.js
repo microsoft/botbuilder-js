@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 import './css/app.css';
 import { BotStateSet, ConversationState, MemoryStorage, UserState } from 'botbuilder';
 import { BlobStorage, CosmosDbStorage, TableStorage } from 'botbuilder-azure';

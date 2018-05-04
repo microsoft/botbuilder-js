@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 const { BotFrameworkAdapter, MemoryStorage, TurnContext, ConversationState } = require('botbuilder');
 const {
     DialogSet,

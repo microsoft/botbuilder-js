@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 const { BotFrameworkAdapter, BotStateSet, MemoryStorage, ConversationState, UserState } = require('botbuilder');
 const { DialogSet, TextPrompt, NumberPrompt } = require('botbuilder-dialogs');
 const restify = require('restify');
