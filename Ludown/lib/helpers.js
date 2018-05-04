@@ -118,7 +118,9 @@ var validateAndPushCurrentBuffer = function(previousSection, sectionsInFile, cur
             if(previousSection.split(/\r\n/).length === 1)  {
                 ++lineIndex;
                 if(previousSection.split(/\r\n/)[0].includes('?')) {
-                    process.stdout.write(chalk.yellow('Line #' + lineIndex + ': [WARN] No answer found for question: ' + previousSection.split(/\r\n/)[0] + '\n'));
+                    process.stdout.write(chalk.red('Line #' + lineIndex + ': [WARN] No answer found for question: ' + previousSection.split(/\r\n/)[0] + '\n'));
+                    process.stderr.write(chalk.red('Stopping further processing.\n'));
+                    process.exit(retCode.INVALID_LINE);
                 } else {
                     process.stdout.write(chalk.yellow('Line #' + lineIndex + ': [WARN] No utterances found for intent: ' + previousSection.split(/\r\n/)[0] + '\n'));
                 }
@@ -130,7 +132,9 @@ var validateAndPushCurrentBuffer = function(previousSection, sectionsInFile, cur
             // warn if there isnt at least one utterance in an intent
             if(previousSection.split(/\r\n/).length === 1)  {
                 ++lineIndex;
-                process.stdout.write(chalk.yellow('Line #' + lineIndex + ': [WARN] No answer found for question' + previousSection.split(/\r\n/)[0] + '\n'));
+                process.stdout.write(chalk.red('Line #' + lineIndex + ': [WARN] No answer found for question' + previousSection.split(/\r\n/)[0] + '\n'));
+                process.stderr.write(chalk.red('Stopping further processing.\n'));
+                process.exit(retCode.INVALID_LINE);
                 --lineIndex;
             }
             sectionsInFile.push(previousSection);
