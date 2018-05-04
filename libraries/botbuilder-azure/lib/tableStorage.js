@@ -4,31 +4,29 @@ const azure = require("azure-storage");
 const flat_1 = require("flat");
 const EntityGenerator = azure.TableUtilities.entityGenerator;
 /**
+ * @private
  * Map of already initialized tables. Key = tableName, Value = Promise with TableResult creation.
  */
-let checkedTables = {};
+const checkedTables = {};
 /**
  * Middleware that implements an Azure Table based storage provider for a bot.
  *
- * **Usage Example**
+ * @remarks
+ * This example shows the typical creation and configuration pattern:
  *
- * ```javascript
- * const BotBuilderAzure = require('botbuilder-azure');
- * const storage = new BotBuilderAzure.TableStorage({
+ * ```JavaScript
+ * const { TableStorage } = require('botbuilder-azure');
+ *
+ * const storage = new TableStorage({
  *     storageAccountOrConnectionString: 'UseDevelopmentStorage=true',
  *     tableName: 'mybotstate'
- *   });
- *
- * // Add state middleware
- * const state = new BotStateManager(storage);
- * adapter.use(state);
+ * });
  * ```
 */
 class TableStorage {
     /**
-     * Creates a new instance of the storage provider.
-     *
-     * @param settings (Optional) Setting to configure the provider.
+     * Creates a new TableStorage instance.
+     * @param settings Setting required to configure the provider.
      */
     constructor(settings) {
         if (!settings) {
@@ -53,11 +51,6 @@ class TableStorage {
             delete checkedTables[this.settings.tableName];
         return this.tableService.deleteTableIfExistsAsync(this.settings.tableName);
     }
-    /**
-     * Loads store items from storage
-     *
-     * @param keys Array of item keys to read from the store.
-     **/
     read(keys) {
         if (!keys || !keys.length) {
             throw new Error('Please provide at least one key to read from storage.');
@@ -81,11 +74,6 @@ class TableStorage {
         });
     }
     ;
-    /**
-     * Saves store items to storage.
-     *
-     * @param changes Map of items to write to storage.
-     **/
     write(changes) {
         if (!changes) {
             throw new Error('Please provide a StoreItems with changes to persist.');
@@ -123,11 +111,6 @@ class TableStorage {
         });
     }
     ;
-    /**
-     * Removes store items from storage
-     *
-     * @param keys Array of item keys to remove from the store.
-     **/
     delete(keys) {
         if (!keys || !keys.length)
             return Promise.resolve();
@@ -190,7 +173,10 @@ class TableStorage {
     }
 }
 exports.TableStorage = TableStorage;
-// Handle service 404 and 204 responses as null returns, throw any other error
+/**
+ * @private
+ * Handle service 404 and 204 responses as null returns, throw any other error
+ */
 const handleNotFoundWith = (defaultValue) => (error) => {
     // return defaultValue when not found or no content
     if (error.statusCode === 404 || error.statusCode === 204)
@@ -198,7 +184,10 @@ const handleNotFoundWith = (defaultValue) => (error) => {
     else
         throw error;
 };
-// Convert an object into EDM types
+/**
+ * @private
+ * Convert an object into EDM types
+ */
 const asEntityDescriptor = (obj) => {
     return Object.keys(obj)
         .map(key => ({
@@ -206,6 +195,9 @@ const asEntityDescriptor = (obj) => {
         value: asEntityProperty(obj[key])
     })).reduce(propsReducer, {});
 };
+/**
+ * @private
+ */
 const asEntityProperty = (value) => {
     switch (getTypeOf(value)) {
         case 'date': return EntityGenerator.DateTime(value);
@@ -222,25 +214,43 @@ const asEntityProperty = (value) => {
             return EntityGenerator.String(value);
     }
 };
+/**
+ * @private
+ */
 const getTypeOf = (obj) => ({}).toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
+/**
+ * @private
+ */
 const isFloat = (n) => Number(n) === n && n % 1 !== 0;
-// Convert EDM types back to an JS object
+/**
+ * @private
+ * Convert EDM types back to an JS object
+ */
 const entityResolver = (entity) => {
     return Object.keys(entity)
         .map(key => ({ key, value: getEdmValue(entity[key]) }))
         .reduce(propsReducer, {});
 };
+/**
+ * @private
+ */
 const getEdmValue = (entityValue) => {
     return entityValue.$ === azure.TableUtilities.EdmType.INT64
         ? Number(entityValue._)
         : entityValue._;
 };
-// Reduces pairs for key/value into an object (e.g.: StoreItems)
+/**
+ * @private
+ * Reduces pairs for key/value into an object (e.g.: StoreItems)
+ */
 const propsReducer = (resolved, propValue) => {
     resolved[propValue.key] = propValue.value;
     return resolved;
 };
-// flat/flatten options to use '_' as delimiter (same as C#'s TableEntity.Flatten default delimiter)
+/**
+ * @private
+ * flat/flatten options to use '_' as delimiter (same as C#'s TableEntity.Flatten default delimiter)
+ */
 const flattenOptions = {
     delimiter: '_'
 };

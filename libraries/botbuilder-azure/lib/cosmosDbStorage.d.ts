@@ -7,7 +7,9 @@
  */
 import { Storage, StoreItems } from 'botbuilder';
 import { DocumentBase } from 'documentdb';
-/** Additional settings for configuring an instance of [CosmosDbStorage](../classes/botbuilder_azure_v4.cosmosdbstorage.html). */
+/**
+ * Additional settings for configuring an instance of `CosmosDbStorage`.
+ */
 export interface CosmosDbStorageSettings {
     /** The endpoint Uri for the service endpoint from the Azure Cosmos DB service. */
     serviceEndpoint: string;
@@ -20,37 +22,25 @@ export interface CosmosDbStorageSettings {
 }
 /**
  * Middleware that implements a CosmosDB based storage provider for a bot.
- * The ConnectionPolicy delegate can be used to further customize the connection to CosmosDB (Connection mode, retry options, timeouts).
- * More information at http://azure.github.io/azure-documentdb-node/global.html#ConnectionPolicy
+ *
+ * @remarks
+ * The `connectionPolicyConfigurator` handler can be used to further customize the connection to
+ * CosmosDB (Connection mode, retry options, timeouts). More information at
+ * http://azure.github.io/azure-documentdb-node/global.html#ConnectionPolicy
  */
 export declare class CosmosDbStorage implements Storage {
     private settings;
     private client;
     private collectionExists;
     /**
-     * Creates a new instance of the storage provider.
+     * Creates a new ConsmosDbStorage instance.
      *
      * @param settings Setting to configure the provider.
      * @param connectionPolicyConfigurator (Optional) An optional delegate that accepts a ConnectionPolicy for customizing policies. More information at http://azure.github.io/azure-documentdb-node/global.html#ConnectionPolicy
      */
     constructor(settings: CosmosDbStorageSettings, connectionPolicyConfigurator?: (policy: DocumentBase.ConnectionPolicy) => void);
-    /**
-     * Loads store items from storage
-     *
-     * @param keys Array of item keys to read from the store.
-     */
     read(keys: string[]): Promise<StoreItems>;
-    /**
-     * Saves store items to storage.
-     *
-     * @param changes Map of items to write to storage.
-     **/
     write(changes: StoreItems): Promise<void>;
-    /**
-     * Removes store items from storage
-     *
-     * @param keys Array of item keys to remove from the store.
-     **/
     delete(keys: string[]): Promise<void>;
     /**
      * Delayed Database and Collection creation if they do not exist.

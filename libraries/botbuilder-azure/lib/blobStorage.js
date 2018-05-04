@@ -9,25 +9,34 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const querystring_1 = require("querystring");
 const azure = require("azure-storage");
+/**
+ * @private
+ */
 const ContainerNameCheck = new RegExp('^[a-z0-9](?!.*--)[a-z0-9-]{1,61}[a-z0-9]$');
+/**
+ * @private
+ */
 const ResolvePromisesSerial = (values, promise) => values.map(value => () => promise(value)).reduce((promise, func) => promise.then(result => func().then(Array.prototype.concat.bind(result))), Promise.resolve([]));
+/**
+ * @private
+ */
 const ResolvePromisesParallel = (values, promise) => Promise.all(values.map(promise));
 /**
+ * @private
  * Internal dictionary with the containers where entities will be stored.
  */
-let checkedCollections = {};
+const checkedCollections = {};
 /**
  * Middleware that implements a BlobStorage based storage provider for a bot.
  *
- * The BlobStorage implements State's Storage using a single Azure Storage Blob Container.
- * Each entity or StoreItem is serialized into a JSON string and stored in an individual text blob.
- * Each blob is named after the StoreItem key which is encoded and ensure it conforms a valid blob name.
+ * @remarks
+ * The BlobStorage implements its storage using a single Azure Storage Blob Container. Each entity
+ * or StoreItem is serialized into a JSON string and stored in an individual text blob. Each blob
+ * is named after the StoreItem key which is encoded and ensure it conforms a valid blob name.
  */
 class BlobStorage {
     /**
-     * Loads store items from storage.
-     * Returns the values for the specified keys that were found in the container.
-     *
+     * Creates a new BlobStorage instance.
      * @param settings Settings for configuring an instance of BlobStorage.
      */
     constructor(settings) {
@@ -44,12 +53,6 @@ class BlobStorage {
         this.client = this.createBlobService(this.settings.storageAccountOrConnectionString, this.settings.storageAccessKey, this.settings.host);
         this.useEmulator = settings.storageAccountOrConnectionString == 'UseDevelopmentStorage=true;';
     }
-    /**
-     * Loads store items from storage.
-     * Returns the values for the specified keys that were found in the container.
-     *
-     * @param keys Array of item keys to read from the store.
-     */
     read(keys) {
         if (!keys) {
             throw new Error('Please provide at least one key to read from storage.');
@@ -79,11 +82,6 @@ class BlobStorage {
             });
         });
     }
-    /**
-     * Saves store items to storage.
-     *
-     * @param changes Map of items to write to storage.
-     **/
     write(changes) {
         if (!changes) {
             throw new Error('Please provide a StoreItems with changes to persist.');
@@ -115,11 +113,6 @@ class BlobStorage {
             return results.then(() => { }); //void
         });
     }
-    /**
-     * Removes store items from storage.
-     *
-     * @param keys Array of item keys to remove from the store.
-     **/
     delete(keys) {
         if (!keys) {
             throw new Error('Please provide at least one key to delete from storage.');
@@ -133,7 +126,6 @@ class BlobStorage {
     }
     /**
      * Get a blob name validated representation of an entity to be used as a key.
-     *
      * @param key The key used to identify the entity
      */
     sanitizeKey(key) {

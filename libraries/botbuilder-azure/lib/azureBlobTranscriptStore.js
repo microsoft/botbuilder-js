@@ -12,17 +12,21 @@ const azure = require("azure-storage");
 const querystring_1 = require("querystring");
 const ContainerNameCheck = new RegExp('^[a-z0-9](?!.*--)[a-z0-9-]{1,61}[a-z0-9]$');
 /**
+ * @private
  * Internal dictionary with the containers where entities will be stored.
  */
-let checkedCollections = {};
+const checkedCollections = {};
 /**
- * The blob transcript store stores transcripts in an Azure Blob container where each activity is stored as json blob in structure of
- * container/{channelId]/{conversationId}/{Timestamp.ticks}-{activity.id}.json
+ * Stores transcripts in an Azure Blob container.
+ *
+ * @remarks
+ * Each activity is stored as JSON blob with a structure of
+ * `container/{channelId]/{conversationId}/{Timestamp.ticks}-{activity.id}.json`.
  */
 class AzureBlobTranscriptStore {
     /**
-     * Creates an instance of AzureBlobTranscriptStore
-     * @param settings Settings for configuring an instance of BlobStorage
+     * Creates a new AzureBlobTranscriptStore instance.
+     * @param settings Settings required for configuring an instance of BlobStorage
      */
     constructor(settings) {
         this.pageSize = 20;

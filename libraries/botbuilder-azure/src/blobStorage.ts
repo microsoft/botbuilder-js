@@ -10,25 +10,34 @@ import { Storage, StoreItems, StoreItem } from 'botbuilder';
 import { escape } from 'querystring';
 import * as azure from 'azure-storage';
 
-/** The host address. */
+/** A host address. */
 export interface Host {
+    /** Primary host address. */
     primaryHost: string;
+
+    /** Secondary host address. */
     secondaryHost: string;
 }
 
-/** Settings for configuring an instance of [BlobStorage](../classes/botbuilder_azure_v4.blobstorage.html). */
+/** 
+ * Settings for configuring an instance of `BlobStorage`. 
+ */
 export interface BlobStorageSettings {
+    /** Root container name to use. */
+    containerName: string;
+
     /** The storage account or the connection string. */
     storageAccountOrConnectionString: string;
+
     /** The storage access key. */
     storageAccessKey: string;
-    /** The host address. */
-    host: string | Host;
-    /** The container name. */
-    containerName: string;
+
+    /** (Optional) azure storage host. */
+    host?: string | Host;
 }
 
 /**
+ * @private
  * Internal data structure for storing items in BlobStorage.
  */
 interface DocumentStoreItem {
@@ -40,25 +49,37 @@ interface DocumentStoreItem {
     document: any;
 }
 
+/**
+ * @private
+ */
 const ContainerNameCheck = new RegExp('^[a-z0-9](?!.*--)[a-z0-9-]{1,61}[a-z0-9]$');
 
+/**
+ * @private
+ */
 const ResolvePromisesSerial = (values, promise) => values.map(value => () => promise(value)).reduce((promise, func) => promise.then(result => func().then(Array.prototype.concat.bind(result))), Promise.resolve([]));
+
+/**
+ * @private
+ */
 const ResolvePromisesParallel = (values, promise) => Promise.all(values.map(promise));
 
 
 /**
+ * @private
  * Internal dictionary with the containers where entities will be stored.
  */
-let checkedCollections: { [key: string]: Promise<azure.BlobService.ContainerResult>; } = {};
+const checkedCollections: { [key: string]: Promise<azure.BlobService.ContainerResult>; } = {};
 
 
 
 /**
  * Middleware that implements a BlobStorage based storage provider for a bot.
  * 
- * The BlobStorage implements State's Storage using a single Azure Storage Blob Container.
- * Each entity or StoreItem is serialized into a JSON string and stored in an individual text blob.
- * Each blob is named after the StoreItem key which is encoded and ensure it conforms a valid blob name.
+ * @remarks
+ * The BlobStorage implements its storage using a single Azure Storage Blob Container. Each entity 
+ * or StoreItem is serialized into a JSON string and stored in an individual text blob. Each blob 
+ * is named after the StoreItem key which is encoded and ensure it conforms a valid blob name.
  */
 export class BlobStorage implements Storage {
     private settings: BlobStorageSettings
@@ -66,9 +87,7 @@ export class BlobStorage implements Storage {
     private useEmulator: boolean
 
     /**
-     * Loads store items from storage.
-     * Returns the values for the specified keys that were found in the container.
-     *
+     * Creates a new BlobStorage instance.
      * @param settings Settings for configuring an instance of BlobStorage.
      */
     public constructor(settings: BlobStorageSettings) {
@@ -89,12 +108,6 @@ export class BlobStorage implements Storage {
         this.useEmulator = settings.storageAccountOrConnectionString == 'UseDevelopmentStorage=true;';
     }
 
-    /**
-     * Loads store items from storage.
-     * Returns the values for the specified keys that were found in the container.
-     *
-     * @param keys Array of item keys to read from the store.
-     */
     read(keys: string[]): Promise<StoreItems> {
         if (!keys) {
             throw new Error('Please provide at least one key to read from storage.');
@@ -126,11 +139,6 @@ export class BlobStorage implements Storage {
         });
     }
 
-    /**
-     * Saves store items to storage.
-     *
-     * @param changes Map of items to write to storage.
-     **/
     write(changes: StoreItems): Promise<void> {
         if (!changes) {
             throw new Error('Please provide a StoreItems with changes to persist.');
@@ -169,11 +177,6 @@ export class BlobStorage implements Storage {
         });
     }
 
-    /**
-     * Removes store items from storage.
-     *
-     * @param keys Array of item keys to remove from the store.
-     **/
     delete(keys: string[]): Promise<void> {
         if (!keys) {
             throw new Error('Please provide at least one key to delete from storage.');
@@ -189,7 +192,6 @@ export class BlobStorage implements Storage {
 
     /**
      * Get a blob name validated representation of an entity to be used as a key.
-     * 
      * @param key The key used to identify the entity
      */
     private sanitizeKey(key: string): string {
@@ -217,7 +219,7 @@ export class BlobStorage implements Storage {
         return checkedCollections[key];
     }
 
-    protected createBlobService(storageAccountOrConnectionString: string, storageAccessKey: string, host: any): BlobServiceAsync {
+    private createBlobService(storageAccountOrConnectionString: string, storageAccessKey: string, host: any): BlobServiceAsync {
         if (!storageAccountOrConnectionString) {
             throw new Error('The storageAccountOrConnectionString parameter is required.');
         }
@@ -247,8 +249,11 @@ export class BlobStorage implements Storage {
     }
 }
 
-// Promise based methods created using denodeify function
-export interface BlobServiceAsync extends azure.BlobService {
+/**
+ * @private
+ * Promise based methods created using denodeify function
+ */
+interface BlobServiceAsync extends azure.BlobService {
     createContainerIfNotExistsAsync(container: string): Promise<azure.BlobService.ContainerResult>;
     deleteContainerIfExistsAsync(container: string): Promise<boolean>;
 
