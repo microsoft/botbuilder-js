@@ -17,6 +17,12 @@ export interface DialogInstance<T = any> {
     /** The instances persisted state. */
     state: T;
 }
+/**
+ * Returned by `Dialog.begin()` and `Dialog.continue()` to indicate whether the dialog is still
+ * active after the turn has been processed by the dialog.  This can also be used to access the
+ * result of a dialog that just completed.
+ * @param T (Optional) type of result returned by the dialog when it calls `dc.end()`.
+ */
 export interface DialogCompletion<T = any> {
     /** If `true` the dialog is still active. */
     isActive: boolean;
@@ -26,26 +32,24 @@ export interface DialogCompletion<T = any> {
     result?: T;
 }
 /**
- * :package: **botbuilder-dialogs**
- *
  * Base class for all dialogs.
- *
- * The `Control` and `CompositeControl` classes are very similar in that they both add `begin()`
- * and `continue()` methods which simplify consuming the dialog from a non-dialog based bot. The
- * primary difference between the two classes is that the `CompositeControl` class is designed to
- * bridge one `DialogSet` to another where the `Control` class assumes that the derived dialog can
- * be used in complete isolation without the need for any other supporting dialogs.
  * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
  * @param R (Optional) type of result that's expected to be returned by the dialog.
  * @param O (Optional) options that can be passed into the [begin()](#begin) method.
  */
 export declare abstract class Dialog<C extends TurnContext, R = any, O = {}> {
     /**
-     * Starts the dialog. Depending on the dialog, its possible for the dialog to finish
-     * immediately so it's advised to check the completion object returned by `begin()` and ensure
-     * that the dialog is still active before continuing.
+     * Starts the dialog when its called in isolation from a bot that isn't dialog based.
      *
-     * **Usage Example:**
+     * @remarks
+     * The bot is responsible for maintaining the sticky-ness of the dialog. To do that it should
+     * persist the state object it passed into the dialog as part of its overall state when the
+     * turn completes. When the user replies it then needs to pass the persisted state object into
+     * a call to the dialogs [continue()](#continue) method.
+     *
+     * Depending on the dialog, its possible for the dialog to finish immediately so it's advised
+     * to check the completion object returned by `begin()` and ensure that the dialog is still
+     * active before continuing.
      *
      * ```JavaScript
      * const state = {};
@@ -60,12 +64,12 @@ export declare abstract class Dialog<C extends TurnContext, R = any, O = {}> {
      */
     begin(context: C, state: object, options?: O): Promise<DialogCompletion<R>>;
     /**
-     * Passes a users reply to the dialog for further processing. The bot should keep calling
-     * `continue()` for future turns until the dialog returns a completion object with
-     * `isCompleted == true`. To cancel or interrupt the prompt simply delete the `state` object
-     * being persisted.
+     * Passes a users reply to a dialog thats being used in isolation.
      *
-     * **Usage Example:**
+     * @remarks
+     * The bot should keep calling `continue()` for future turns until the dialog returns a
+     * completion object with `isCompleted == true`. To cancel or interrupt the prompt simply
+     * delete the `state` object being persisted.
      *
      * ```JavaScript
      * const completion = await dialog.continue(context, state);
@@ -107,39 +111,38 @@ export declare abstract class Dialog<C extends TurnContext, R = any, O = {}> {
     dialogResume?(dc: DialogContext<C>, result?: any): Promiseable<any>;
 }
 /**
- * :package: **botbuilder-dialogs**
- *
  * Function signature of a waterfall step.
  *
- * **Example usage:**
+ * @remarks
+ * This example shows a simple waterfall that prompts a user to enter the fields needed to set an alarm:
  *
  * ```JavaScript
  * dialogs.add('addAlarm', [
- *      function (context, alarm, next) {
- *          dialogs.getInstance(context).state = Object.assign({}, alarm);
+ *      async function (dc, alarm, next) {
+ *          dc.activeDialog.state.alarm = alarm || {};
  *          if (!alarm.title) {
- *              return dialogs.prompt(context, 'titlePrompt', `What would you like to call your alarm?`);
+ *              await dc.prompt('titlePrompt', `What would you like to call your alarm?`);
  *          } else {
- *              return next(alarm.title);
+ *              await next(alarm.title);
  *          }
  *      },
- *      function (context, title, next) {
- *          const alarm = dialogs.getInstance(context).state;
+ *      async function (dc, title, next) {
+ *          const alarm = dc.activeDialog.state.alarm;
  *          alarm.title = title;
  *          if (!alarm.time) {
- *              return dialogs.prompt(context, 'timePrompt', `What time would you like to set it for?`);
+ *              await dc.prompt('timePrompt', `What time would you like to set it for?`);
  *          } else {
- *              return next(alarm.time);
+ *              await next(alarm.time);
  *          }
  *      },
- *      function (context, time) {
- *          const alarm = dialogs.getInstance(context).state;
+ *      async function (dc, time) {
+ *          const alarm = dc.activeDialog.state.alarm;
  *          alarm.time = time;
  *
  *          // ... set alarm ...
  *
- *          context.reply(`Alarm set.`);
- *          return dialogs.end(context);
+ *          await dc.context.sendActivity(`Alarm set.`);
+ *          await dc.end();
  *      }
  * ]);
  * ```
@@ -149,37 +152,36 @@ export declare abstract class Dialog<C extends TurnContext, R = any, O = {}> {
  */
 export declare type WaterfallStep<C extends TurnContext> = (dc: DialogContext<C>, args?: any, next?: SkipStepFunction) => Promiseable<any>;
 /**
- * :package: **botbuilder-dialogs**
- *
- * When called, dialog will skip to the next waterfall step.
+ * When called within a waterfall step the dialog will skip to the next waterfall step.
  * @param SkipStepFunction.args (Optional) additional argument(s) to pass into the next step.
  */
 export declare type SkipStepFunction = (args?: any) => Promise<any>;
 /**
- * :package: **botbuilder-dialogs**
+ * Dialog optimized for prompting a user with a series of questions.
  *
- * Dialog optimized for prompting a user with a series of questions. Waterfalls accept a stack of
- * functions which will be executed in sequence. Each waterfall step can ask a question of the user
- * and the users response will be passed as an argument to the next waterfall step.
+ * @remarks
+ * Waterfalls accept a stack of functions which will be executed in sequence. Each waterfall step
+ * can ask a question of the user and the users response will be passed as an argument to the next
+ * waterfall step.
  *
  * For simple text questions you can send the user a message and then process their answer in the
  * next step:
  *
- * ```JS
+ * ```JavaScript
  *  dialogs.add('namePrompt', [
  *      async function (dc) {
- *          dc.instance.state = { first: '', last: '', full: '' };
+ *          dc.activeDialog.state.profile = { first: '', last: '', full: '' };
  *          await dc.context.sendActivity(`What's your first name?`);
  *      },
  *      async function (dc, firstName) {
- *          dc.instance.state.first = firstName;
+ *          dc.activeDialog.state.profile.first = firstName;
  *          await dc.context.sendActivity(`Great ${firstName}! What's your last name?`);
  *      },
  *      async function (dc, lastName) {
- *          const name = dc.instance.state;
- *          name.last = lastName;
- *          name.full = name.first + ' ' + name.last;
- *          await dc.end(name);
+ *          const profile = dc.activeDialog.state.profile;
+ *          profile.last = lastName;
+ *          profile.full = profile.first + ' ' + profile.last;
+ *          await dc.end(profile);
  *      }
  *  ]);
  * ```
@@ -187,24 +189,24 @@ export declare type SkipStepFunction = (args?: any) => Promise<any>;
  * For more complex sequences you can call other dialogs from within a step and the result returned
  * by the dialog will be passed to the next step:
  *
- * ```JS
+ * ```JavaScript
  *  dialogs.add('survey', [
  *      async function (dc) {
- *          dc.instance.state = { name: undefined, languages: '', years: 0 };
+ *          dc.activeDialog.state.survey = { name: undefined, languages: '', years: 0 };
  *          await dc.begin('namePrompt');
  *      },
  *      async function (dc, name) {
- *          dc.instance.state.name = name;
+ *          dc.activeDialog.state.survey.name = name;
  *          await dc.context.sendActivity(`Ok ${name.full}... What programming languages do you know?`);
  *      },
  *      async function (dc, languages) {
- *          dc.instance.state.languages = languages;
+ *          dc.activeDialog.state.survey.languages = languages;
  *          await dc.prompt('yearsPrompt', `Great. So how many years have you been programming?`);
  *      },
  *      async function (dc, years) {
- *          dc.instance.state.years = years;
+ *          dc.activeDialog.state.survey.years = years;
  *          await dc.context.sendActivity(`Thank you for taking our survey.`);
- *          await dc.end(dc.instance.state);
+ *          await dc.end(dc.activeDialog.survey);
  *      }
  *  ]);
  *

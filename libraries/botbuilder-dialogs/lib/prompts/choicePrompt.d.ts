@@ -11,8 +11,6 @@ import { DialogContext } from '../dialogContext';
 import { Prompt, PromptOptions } from './prompt';
 import * as prompts from 'botbuilder-prompts';
 /**
- * :package: **botbuilder-dialogs**
- *
  * Additional options that can be used to configure a `ChoicePrompt`.
  */
 export interface ChoicePromptOptions extends PromptOptions {
@@ -20,12 +18,13 @@ export interface ChoicePromptOptions extends PromptOptions {
     choices?: (string | prompts.Choice)[];
 }
 /**
- * :package: **botbuilder-dialogs**
+ * Prompts a user to confirm something with a yes/no response.
  *
- * Prompts a user to confirm something with a yes/no response. By default the prompt will return
- * to the calling dialog a `boolean` representing the users selection.
+ * @remarks
+ * By default the prompt will return to the calling dialog a `boolean` representing the users
+ * selection.
  *
- * ### Prompt Usage
+ * #### Prompt Usage
  *
  * When used with your bots `DialogSet` you can simply add a new instance of the prompt as a named
  * dialog using `DialogSet.add()`. You can then start the prompt from a waterfall step using either

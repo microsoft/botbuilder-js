@@ -10,13 +10,14 @@ import { Dialog } from './dialog';
 import { DialogContext } from './dialogContext';
 import { DialogSet } from './dialogSet';
 /**
- * :package: **botbuilder-dialogs**
- *
  * The `DialogContainer` class lets you break your bots logic up into components that can be added
- * as a dialog to other dialog sets within your bots project. They can even be exported and used
- * in other bot projects, allowing for the creation of libraries of reusable dialog components.
+ * as a dialog to other dialog sets within your bots project or exported and used in other bot
+ * projects.
  *
- * ### Component Creation
+ * @remarks
+ * `DialogContainers` allow for the creation of libraries of reusable dialog components.
+ *
+ * #### Component Creation
  *
  * To create a reusable dialog component you'll want to define a new class derived from
  * `DialogContainer`. Your component has its own `DialogSet` which you can add dialogs to from
@@ -64,7 +65,7 @@ import { DialogSet } from './dialogSet';
  * `ProfileDialog` is started. The DialogContainer will manager persisting the controls dialog
  * stack to the callers dialog stack.
  *
- * ### Component Usage
+ * #### Component Usage
  *
  * On the consumption side the dialog we created can be used by a bot in much the same way they
  * would use any other prompt. They can add a new instance of the component as a named dialog to

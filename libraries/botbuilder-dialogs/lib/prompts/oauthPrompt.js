@@ -11,12 +11,13 @@ const botbuilder_1 = require("botbuilder");
 const prompts = require("botbuilder-prompts");
 const dialog_1 = require("../dialog");
 /**
- * :package: **botbuilder-dialogs**
- *
  * Creates a new prompt that asks the user to sign in using the Bot Frameworks Single Sign On (SSO)
- * service. The prompt will attempt to retrieve the users current token and if the user isn't
- * signed in, it will send them an `OAuthCard` containing a button they can press to signin.
- * Depending on the channel, the user will be sent through one of two possible signin flows:
+ * service.
+ *
+ * @remarks
+ * The prompt will attempt to retrieve the users current token and if the user isn't signed in, it
+ * will send them an `OAuthCard` containing a button they can press to signin. Depending on the
+ * channel, the user will be sent through one of two possible signin flows:
  *
  * - The automatic signin flow where once the user signs in and the SSO service will forward the bot
  * the users access token using either an `event` or `invoke` activity.
@@ -28,7 +29,15 @@ const dialog_1 = require("../dialog");
  * careful of is that you don't block the `event` and `invoke` activities that the prompt might
  * be waiting on.
  *
- * ### Prompt Usage
+ * > [!NOTE]
+ * > You should avoid persisting the access token with your bots other state. The Bot Frameworks
+ * > SSO service will securely store the token on your behalf. If you store it in your bots state
+ * > it could expire or be revoked in between turns.
+ * >
+ * > When calling the prompt from within a waterfall step you should use the token within the step
+ * > following the prompt and then let the token go out of scope at the end of your function.
+ *
+ * #### Prompt Usage
  *
  * When used with your bots `DialogSet` you can simply add a new instance of the prompt as a named
  * dialog using `DialogSet.add()`. You can then start the prompt from a waterfall step using either
@@ -118,7 +127,8 @@ class OAuthPrompt extends dialog_1.Dialog {
     /**
      * Signs the user out of the service.
      *
-     * **Usage Example:**
+     * @remarks
+     * This example shows creating an instance of the prompt and then signing out the user.
      *
      * ```JavaScript
      * const prompt = new OAuthPrompt({

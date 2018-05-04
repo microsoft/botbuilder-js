@@ -3,12 +3,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const prompt_1 = require("./prompt");
 const prompts = require("botbuilder-prompts");
 /**
- * :package: **botbuilder-dialogs**
+ * Prompts a user to enter a number.
  *
- * Prompts a user to enter a number. By default the prompt will return to the calling dialog
- * a `number` representing the users input.
+ * @remarks
+ * By default the prompt will return to the calling dialog a `number` representing the users input.
  *
- * ### Prompt Usage
+ * #### Prompt Usage
  *
  * When used with your bots `DialogSet` you can simply add a new instance of the prompt as a named
  * dialog using `DialogSet.add()`. You can then start the prompt from a waterfall step using either

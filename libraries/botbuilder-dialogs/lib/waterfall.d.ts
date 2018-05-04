@@ -67,7 +67,7 @@ export declare type SkipStepFunction = (args?: any) => Promise<any>;
  * For simple text questions you can send the user a message and then process their answer in the
  * next step:
  *
- * ```JS
+ * ```JavaScript
  *  dialogs.add('namePrompt', [
  *      async function (dc) {
  *          dc.instance.state = { first: '', last: '', full: '' };
@@ -89,7 +89,7 @@ export declare type SkipStepFunction = (args?: any) => Promise<any>;
  * For more complex sequences you can call other dialogs from within a step and the result returned
  * by the dialog will be passed to the next step:
  *
- * ```JS
+ * ```JavaScript
  *  dialogs.add('survey', [
  *      async function (dc) {
  *          dc.instance.state = { name: undefined, languages: '', years: 0 };

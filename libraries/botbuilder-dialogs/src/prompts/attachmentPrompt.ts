@@ -12,12 +12,13 @@ import { Prompt, PromptOptions } from './prompt';
 import * as prompts from 'botbuilder-prompts';
 
 /**
- * :package: **botbuilder-dialogs**
+ * Prompts a user to upload attachments like images. 
  * 
- * Prompts a user to upload attachments like images. By default the prompt will return to the 
- * calling dialog a `Attachment[]` but this can be overridden using a custom `PromptValidator`.
+ * @remarks
+ * By default the prompt will return to the calling dialog a `Attachment[]` but this can be 
+ * overridden using a custom `PromptValidator`.
  * 
- * ### Prompt Usage
+ * #### Prompt Usage
  * 
  * When used with your bots `DialogSet` you can simply add a new instance of the prompt as a named
  * dialog using `DialogSet.add()`. You can then start the prompt from a waterfall step using either

@@ -11,8 +11,6 @@ import { DialogContext } from '../dialogContext';
 import { Dialog } from '../dialog';
 
 /** 
- * :package: **botbuilder-dialogs**
- * 
  * Basic configuration options supported by all prompts. 
  */
 export interface PromptOptions {
@@ -30,8 +28,6 @@ export interface PromptOptions {
 }
 
 /**
- * :package: **botbuilder-dialogs**
- * 
  * Base class for all prompts.
  * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
  */

@@ -10,8 +10,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const botbuilder_1 = require("botbuilder");
 const dialog_1 = require("../dialog");
 /**
- * :package: **botbuilder-dialogs**
- *
  * Base class for all prompts.
  * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
  */

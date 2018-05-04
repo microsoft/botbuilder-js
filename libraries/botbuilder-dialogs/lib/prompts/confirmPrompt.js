@@ -3,12 +3,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const prompt_1 = require("./prompt");
 const prompts = require("botbuilder-prompts");
 /**
- * :package: **botbuilder-dialogs**
+ * Prompts a user to confirm something with a yes/no response.
  *
- * Prompts a user to confirm something with a yes/no response. By default the prompt will return
- * to the calling dialog a `boolean` representing the users selection.
+ * @remarks
+ * By default the prompt will return to the calling dialog a `boolean` representing the users
+ * selection.
  *
- * ### Prompt Usage
+ * #### Prompt Usage
  *
  * When used with your bots `DialogSet` you can simply add a new instance of the prompt as a named
  * dialog using `DialogSet.add()`. You can then start the prompt from a waterfall step using either
@@ -101,10 +102,11 @@ class ConfirmPrompt extends prompt_1.Prompt {
 }
 /**
  * Allows for the localization of the confirm prompts yes/no choices to other locales besides
- * english. The key of each entry is the languages locale code and should be lower cased. A
- * default fallback set of choices can be specified using a key of '*'.
+ * english.
  *
- * **Example usage:**
+ * @remarks
+ * The key of each entry is the languages locale code and should be lower cased. A default
+ * fallback set of choices can be specified using a key of '*'.
  *
  * ```JavaScript
  * const confirmPrompt = new ConfirmPrompt();

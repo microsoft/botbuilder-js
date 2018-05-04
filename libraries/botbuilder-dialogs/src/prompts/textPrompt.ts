@@ -12,12 +12,12 @@ import { Prompt, PromptOptions } from './prompt';
 import * as prompts from 'botbuilder-prompts';
 
 /**
- * :package: **botbuilder-dialogs**
+ * Prompts a user to enter some text. 
  * 
- * Prompts a user to enter some text. By default the prompt will return to the calling 
- * dialog a `string` representing the users reply.
+ * @remarks
+ * By default the prompt will return to the calling dialog a `string` representing the users reply.
  * 
- * ### Prompt Usage
+ * #### Prompt Usage
  * 
  * When used with your bots `DialogSet` you can simply add a new instance of the prompt as a named
  * dialog using `DialogSet.add()`. You can then start the prompt from a waterfall step using either
