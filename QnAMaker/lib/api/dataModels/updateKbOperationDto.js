@@ -1,7 +1,7 @@
 /**
- * Copyright(c) Microsoft Corporation.All rights reserved.
- * Licensed under the MIT License.
- */
+  * Copyright (c) Microsoft Corporation. All rights reserved.
+  * Licensed under the MIT License.
+  */
 
 
 class UpdateKbOperationDTO {
@@ -19,9 +19,8 @@ class UpdateKbOperationDTO {
     */
 
 
-    constructor({ add /* undefined */, del /* undefined */, update /* undefined */ } = {}) {
-        Object.assign(this, { add /* undefined */, update /* undefined */ });
-        this.delete = del;
+    constructor(src = {}) {
+        Object.assign(this, src);
     }
 }
 UpdateKbOperationDTO.fromJSON = function (src) {

@@ -1039,6 +1039,139 @@
             }
           }
         }
+      },
+      "patch": {
+        "tags": [
+          "Knowledgebases"
+        ],
+        "summary": "Asynchronous operation to modify a knowledgebase.",
+        "operationId": "Update Knowledgebase",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "kbId",
+            "in": "path",
+            "required": true,
+            "x-nullable": false,
+            "description": "Knowledgebase id"
+          },
+          {
+            "name": "updateKb",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UpdateKbOperationDTO"
+            },
+            "x-nullable": true,
+            "description": "Post body of the request."
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Details of the asynchronous operation.",
+            "schema": {
+              "$ref": "#/definitions/Operation"
+            },
+            "x-nullable": true,
+            "headers": {
+              "Location": {
+                "type": "string",
+                "description": "Relative URI to the target location of the asynchronous operation. Client should poll this resource to get status of the operation."
+              }
+            },
+            "examples": {
+              "application/json": {
+                "operationState": "NotStarted",
+                "createdTimestamp": "2018-03-19T02:08:46Z",
+                "lastActionTimestamp": "2018-03-19T02:09:29Z",
+                "userId": "86bb8390-56c0-42c2-9f81-3de161981191",
+                "operationId": "03a4f4ce-30a6-4ec6-b436-02bcdf6153e1"
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            },
+            "x-nullable": true,
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "BadArgument",
+                  "message": "Invalid input. See details.",
+                  "details": [
+                    {
+                      "code": "ValidationFailure",
+                      "message": "'Name' should not be empty.",
+                      "target": "Name"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            },
+            "x-nullable": true,
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "Unauthorized",
+                  "message": "Access denied due to invalid subscription key. Make sure you are subscribed to an API you are trying to call and provide the right key."
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            },
+            "x-nullable": true,
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "Forbidden",
+                  "message": "You do not have permissions to view the requested resource."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            },
+            "x-nullable": true,
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "NotFound",
+                  "message": "The requested knowledge base is not found."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            },
+            "x-nullable": true,
+            "examples": {
+              "application/json": {
+                "error": {
+                  "code": "Unspecified",
+                  "message": "Something happened. Please retry after some time."
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/knowledgebases/createasync": {
@@ -1567,141 +1700,6 @@
                     "metadata": []
                   }
                 ]
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            },
-            "x-nullable": true,
-            "examples": {
-              "application/json": {
-                "error": {
-                  "code": "BadArgument",
-                  "message": "Invalid input. See details.",
-                  "details": [
-                    {
-                      "code": "ValidationFailure",
-                      "message": "'Name' should not be empty.",
-                      "target": "Name"
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            },
-            "x-nullable": true,
-            "examples": {
-              "application/json": {
-                "error": {
-                  "code": "Unauthorized",
-                  "message": "Access denied due to invalid subscription key. Make sure you are subscribed to an API you are trying to call and provide the right key."
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            },
-            "x-nullable": true,
-            "examples": {
-              "application/json": {
-                "error": {
-                  "code": "Forbidden",
-                  "message": "You do not have permissions to view the requested resource."
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            },
-            "x-nullable": true,
-            "examples": {
-              "application/json": {
-                "error": {
-                  "code": "NotFound",
-                  "message": "The requested knowledge base is not found."
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            },
-            "x-nullable": true,
-            "examples": {
-              "application/json": {
-                "error": {
-                  "code": "Unspecified",
-                  "message": "Something happened. Please retry after some time."
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/knowledgebases/{kbId}": {
-      "patch": {
-        "tags": [
-          "Knowledgebases"
-        ],
-        "summary": "Asynchronous operation to modify a knowledgebase.",
-        "operationId": "Update Knowledgebase",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "kbId",
-            "in": "path",
-            "required": true,
-            "x-nullable": false,
-            "description": "Knowledgebase id"
-          },
-          {
-            "name": "updateKb",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/UpdateKbOperationDTO"
-            },
-            "x-nullable": true,
-            "description": "Post body of the request."
-          }
-        ],
-        "responses": {
-          "202": {
-            "description": "Details of the asynchronous operation.",
-            "schema": {
-              "$ref": "#/definitions/Operation"
-            },
-            "x-nullable": true,
-            "headers": {
-              "Location": {
-                "type": "string",
-                "description": "Relative URI to the target location of the asynchronous operation. Client should poll this resource to get status of the operation."
-              }
-            },
-            "examples": {
-              "application/json": {
-                "operationState": "NotStarted",
-                "createdTimestamp": "2018-03-19T02:08:46Z",
-                "lastActionTimestamp": "2018-03-19T02:09:29Z",
-                "userId": "86bb8390-56c0-42c2-9f81-3de161981191",
-                "operationId": "03a4f4ce-30a6-4ec6-b436-02bcdf6153e1"
               }
             }
           },

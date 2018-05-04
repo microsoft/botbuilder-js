@@ -1,11 +1,11 @@
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
-const QnADTO = require('./qnAdto');
-const FileDTO = require('./fileDto');
+  * Copyright (c) Microsoft Corporation. All rights reserved.
+  * Licensed under the MIT License.
+  */
+ const QnADTO = require('./qnAdto');
+ const FileDTO = require('./fileDto');
 
-class CreateKbDTO {
+ class CreateKbDTO {
     
     /**
     * @property {string} name

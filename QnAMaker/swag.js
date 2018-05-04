@@ -16,7 +16,11 @@ const md5 = require('md5');
  * Services template extends ServiceBase
  */
 const classTpl = (cfg) => {
-    return `const {ServiceBase} = require('./serviceBase');
+    return `/**
+  * Copyright (c) Microsoft Corporation. All rights reserved.
+  * Licensed under the MIT License.
+  */
+const {ServiceBase} = require('./serviceBase');
 class ${cfg.className} extends ServiceBase {
     constructor() {
         super('${cfg.url}');
@@ -37,7 +41,7 @@ const operationTpl = (operations) => {
         const operation = operations[key];
         tpl += `
     /**
-    * ${operation.description}
+    * ${operation.description || operation.summary}
     */
     ${operation.name}(params${operation.entityName ? ` , ${operation.entityName}` : ''}${(operation.entityType ? `/* ${operation.entityType} */` : '')}) {
         return this.createRequest('${operation.pathFragment}', params, '${operation.method}'${operation.entityName ? ', ' + operation.entityName : ''});
@@ -56,7 +60,11 @@ const operationTpl = (operations) => {
  * Either way, only the properties that are
  * passed to the body of the request are extracted
  */
-const modelTpl = (modelCfg) => `
+const modelTpl = (modelCfg) => `/**
+  * Copyright (c) Microsoft Corporation. All rights reserved.
+  * Licensed under the MIT License.
+  */
+
 ${modelCfg.imports.toString().replace(/[,]/g, '')}
 class ${modelCfg.className} {
     ${modelCfg.docBlocks.toString().replace(/[,]/g, '')}
@@ -232,11 +240,11 @@ Object.keys(swagger.paths).sort().forEach(pathName => {
         // Build the operation entry for the manifest
         const operation = {
             name: operationName,
-            method,
+            method: method.toUpperCase(),
             command: command.trim(),
             pathFragment: pathName.includes(pathFragment) ? '' : pathFragment,
             params,
-            description: (swaggerOperation.description || '').replace(/[\r]/g, ''),
+            description: (swaggerOperation.description || swaggerOperation.summary || '').replace(/[\r]/g, ''),
         };
 
         if (!operation.params.length) {
@@ -310,7 +318,11 @@ Object.keys(configsMap).forEach(fileName => {
 
 // Writes the index.js files for each
 // directory of service classes.
-let apiIndexJs = '';
+let apiIndexJs = `/**
+  * Copyright (c) Microsoft Corporation. All rights reserved.
+  * Licensed under the MIT License.
+  */
+`;
 Object.keys(classNames).forEach(fileName => {
     apiIndexJs += `module.exports.${fileName} = require('./${fileName}');\n`;
 });

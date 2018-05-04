@@ -1,7 +1,7 @@
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
+  * Copyright (c) Microsoft Corporation. All rights reserved.
+  * Licensed under the MIT License.
+  */
 
 
 class UpdateMetadataDTO {
@@ -15,9 +15,8 @@ class UpdateMetadataDTO {
     */
 
     
-    constructor({del /* MetadataDTO[] */,add /* MetadataDTO[] */} = {}) {
-        Object.assign(this, {add /* MetadataDTO[] */});
-        this.delete = del;
+    constructor(src = {}) {
+        Object.assign(this, src);
     }
 }
 UpdateMetadataDTO.fromJSON = function(src) {

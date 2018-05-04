@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const schema_1 = require("../schema");
 const connectedService_1 = require("./connectedService");
+const url = require("url");
 class QnaMakerService extends connectedService_1.ConnectedService {
     constructor(source = {}) {
         super(source);
@@ -14,7 +15,8 @@ class QnaMakerService extends connectedService_1.ConnectedService {
         this.subscriptionKey = '';
         this.hostname = '';
         this.endpointKey = '';
-        const { kbId = '', name = '', subscriptionKey = '', endpointKey = '', hostname = '' } = source;
+        let { kbId = '', name = '', subscriptionKey = '', endpointKey = '', hostname = '' } = source;
+        hostname = url.resolve(source.hostname, '/qnamaker');
         Object.assign(this, { kbId, name, subscriptionKey, endpointKey, hostname });
     }
     toJSON() {

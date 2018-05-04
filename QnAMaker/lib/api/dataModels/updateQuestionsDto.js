@@ -1,11 +1,11 @@
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
+  * Copyright (c) Microsoft Corporation. All rights reserved.
+  * Licensed under the MIT License.
+  */
 
 
 class UpdateQuestionsDTO {
-    
+
     /**
     * @property {string[]} add
     */
@@ -14,20 +14,19 @@ class UpdateQuestionsDTO {
     * @property {string[]} delete
     */
 
-    
-    constructor({add /* string[] */,del /* string[] */} = {}) {
-        Object.assign(this, {add /* string[] */});
-        this.delete = del;
+
+    constructor(src = {}) {
+        Object.assign(this, src);
     }
 }
-UpdateQuestionsDTO.fromJSON = function(src) {
+UpdateQuestionsDTO.fromJSON = function (src) {
     if (!src) {
         return null;
     }
     if (Array.isArray(src)) {
         return src.map(UpdateQuestionsDTO.fromJSON);
     }
-    
+
     return new UpdateQuestionsDTO(src);
 };
 
