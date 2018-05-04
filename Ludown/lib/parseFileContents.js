@@ -182,8 +182,8 @@ module.exports.parseFile = function(fileContent, log)
                         }
                         
                         // TODO: add this when patterns are supported
-                        process.stdout.write(chalk.default.redBright('  "' + utterance + '" is a pattern. Patterns are not yet supported in LUIS. Coming soon. \n'));
-                        //LUISJsonStruct.patterns.push(patternObject);
+                        //process.stdout.write(chalk.default.redBright('  "' + utterance + '" is a pattern. Patterns are not yet supported in LUIS. Coming soon. \n'));
+                        LUISJsonStruct.patterns.push(patternObject);
 
 
                         if(utterance.includes("{")) {
@@ -194,7 +194,7 @@ module.exports.parseFile = function(fileContent, log)
                                 entity = entity.replace("{", "").replace("}", "");
                                 
                                 // TODO: add this when patterns are supported
-                                //addItemIfNotPresent(LUISJsonStruct, LUISObjNameEnum.PATTERNANYENTITY, entity);
+                                addItemIfNotPresent(LUISJsonStruct, LUISObjNameEnum.PATTERNANYENTITY, entity);
                             });
                         }
                     } else {
@@ -254,8 +254,8 @@ module.exports.parseFile = function(fileContent, log)
                                     }
                                     
                                     // TODO: add this when patterns are supported
-                                    process.stdout.write(chalk.default.redBright('  "' + utterance + '" is a pattern. Patterns are not yet supported in LUIS. Coming soon. \n'));    
-                                    // LUISJsonStruct.patterns.push(patternObject);
+                                    //process.stdout.write(chalk.default.redBright('  "' + utterance + '" is a pattern. Patterns are not yet supported in LUIS. Coming soon. \n'));    
+                                    LUISJsonStruct.patterns.push(patternObject);
                                     
                                     if(utterance.includes("{")) {
                                         // handle entities
@@ -265,7 +265,7 @@ module.exports.parseFile = function(fileContent, log)
                                             entity = entity.replace("{", "").replace("}", "");
                                             
                                             // TODO: add this when patterns are supported
-                                            //addItemIfNotPresent(LUISJsonStruct, LUISObjNameEnum.PATTERNANYENTITY, entity);
+                                            addItemIfNotPresent(LUISJsonStruct, LUISObjNameEnum.PATTERNANYENTITY, entity);
                                         });
                                     }
                                     //if(!log)  process.stdout.write(chalk.yellow('[WARN]: Entity ' + entity + ' in utterance: "' + utterance + '" is missing labelled value \n'));

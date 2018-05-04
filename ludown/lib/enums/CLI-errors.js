@@ -13,5 +13,7 @@ module.exports = {
     INVALID_INPUT_FILE:      7,
     NO_LU_FILES_FOUND:       8,
     UNABLE_TO_WRITE_FILE:    9,
+    DUPLICATE_ENTITIES:     10,
+    INVALID_INPUT:          11,
     UNKNOWN_ERROR:          99   
 };

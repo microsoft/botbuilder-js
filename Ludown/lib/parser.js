@@ -33,7 +33,7 @@ module.exports = {
             if(program.lu_folder) {
                 // is this a folder? 
                 if(!fs.statSync(program.lu_folder).isDirectory()) {
-                    process.stderr.write(chalkdefault.redBright('Sorry, ' + program.lu_folder + ' is not a folder or does not exist'));
+                    process.stderr.write(chalk.default.redBright('Sorry, ' + program.lu_folder + ' is not a folder or does not exist'));
                     process.exit(retCode.OUTPUT_FOLDER_INVALID);
                 }
                 if(program.subfolder) {
@@ -43,7 +43,7 @@ module.exports = {
                 }
 
                 if(filesToParse.length === 0) {
-                    process.stderr.write(chalkdefault.redBright('Sorry, no .lu files found in the specified folder.'));
+                    process.stderr.write(chalk.default.redBright('Sorry, no .lu files found in the specified folder.'));
                     process.exit(retCode.NO_LU_FILES_FOUND);
                 }
                 if(!rootFile) rootFile = filesToParse[0]
@@ -83,7 +83,7 @@ module.exports = {
                     process.stderr.write(chalk.default.redBright('Sorry, file ' + file + 'had invalid content\n'));
                     process.exit(retCode.INVALID_INPUT_FILE);
                 } else {
-                    if(validateLUISBlob(parsedContent.LUISBlob)) allParsedLUISContent.push(parsedContent.LUISBlob);
+                    if(haveLUISContent(parsedContent.LUISBlob) && validateLUISBlob(parsedContent.LUISBlob)) allParsedLUISContent.push(parsedContent.LUISBlob);
                     allParsedQnAContent.push(parsedContent.QnABlob);
                 }
                 // remove this file from the list
@@ -119,20 +119,13 @@ module.exports = {
             var writeQnAFile = (finalQnAJSON.qnaList.length > 0) || 
                                (finalQnAJSON.urls.length > 0);
 
-            var  writeLUISFile = (finalLUISJSON[LUISObjNameEnum.INTENT].length > 0) ||
-                                 (finalLUISJSON[LUISObjNameEnum.ENTITIES].length > 0) || 
-                                 (finalLUISJSON[LUISObjNameEnum.PATTERNANYENTITY].length > 0) ||
-                                 (finalLUISJSON[LUISObjNameEnum.CLOSEDLISTS].length > 0) ||
-                                 (finalLUISJSON.patterns.length > 0) ||
-                                 (finalLUISJSON.utterances.length > 0) ||
-                                 (finalLUISJSON.prebuiltEntities.length > 0) ||
-                                 (finalLUISJSON.model_features.length > 0);
+            var  writeLUISFile = haveLUISContent(finalLUISJSON);
 
-            if(!writeLUISFile && process.verbose) {
+            if(!writeLUISFile && program.verbose) {
                 process.stdout.write(chalk.default.yellowBright('No LUIS content found in .lu file(s)! \n'));
             }
 
-            if(!writeQnAFile && process.verbose) {
+            if(!writeQnAFile && program.verbose) {
                 process.stdout.write(chalk.default.yellowBright('No QnA Maker content found in .lu file(s)! \n'));
             }
 
@@ -167,7 +160,7 @@ module.exports = {
                         process.exit(retCode.UNABLE_TO_WRITE_FILE);
                     } 
                 });
-                if(process.verbose) process.stdout.write(chalk.green('Successfully wrote LUIS model to ' + outFolder + '\\' + program.lOutFile + '\n'));
+                if(program.verbose) process.stdout.write(chalk.green('Successfully wrote LUIS model to ' + outFolder + '\\' + program.lOutFile + '\n'));
             }
             if((cmd == 'qna') && writeQnAFile) {
                 // write out the final LUIS Json
@@ -177,7 +170,7 @@ module.exports = {
                         process.exit(retCode.UNABLE_TO_WRITE_FILE);
                     } 
                 });
-                if(process.verbose) process.stdout.write(chalk.green('Successfully wrote QnA KB to ' + outFolder + '\\' + program.qOutFile + '\n'));
+                if(program.verbose) process.stdout.write(chalk.green('Successfully wrote QnA KB to ' + outFolder + '\\' + program.qOutFile + '\n'));
             }
             // write luis batch test file if requested
             if((cmd == 'luis') && program.write_luis_batch_tests) {
@@ -189,7 +182,7 @@ module.exports = {
                         process.exit(retCode.UNABLE_TO_WRITE_FILE);
                     } 
                 });
-                if(process.verbose) console.log(chalk.green('Successfully wrote LUIS batch test JSON file to ' + outFolder + '\\' +  LUISBatchFileName + '\n'));
+                if(program.verbose) console.log(chalk.green('Successfully wrote LUIS batch test JSON file to ' + outFolder + '\\' +  LUISBatchFileName + '\n'));
             }
             process.exit(retCode.SUCCESS);
         } catch (err) {
@@ -246,6 +239,11 @@ var validateLUISBlob = function(LUISJSONBlob) {
                 spliceList.push(patternAnyEntity.name);
             }
             if(LUISJSONBlob.model_features.filter(function(item) {
+                return item.name == patternAnyEntity.name;
+            }).length > 0) {
+                spliceList.push(patternAnyEntity.name);
+            }
+            if(LUISJSONBlob.prebuiltEntities.filter(function(item) {
                 return item.name == patternAnyEntity.name;
             }).length > 0) {
                 spliceList.push(patternAnyEntity.name);
@@ -321,14 +319,14 @@ var validateLUISBlob = function(LUISJSONBlob) {
         });
     }
     // for each entityFound, see if there are duplicate definitions
-    /*entitiesList.forEach(function(entity) {
+    entitiesList.forEach(function(entity) {
         if(entity.type.length > 1) {
-            process.stdout.write(chalk.default.redBright('  Entity "' + entity.name + '" has duplicate definitions. \n\n'));
-            process.stdout.write(chalk.default.redBright('  ' + JSON.stringify(entity.type, 2, null) + '  \n'));
-            process.stdout.write(chalk.default.redBright('\n  Stopping further processing \n'));
-            process.exit(1);
+            process.stderr.write(chalk.default.redBright('  Entity "' + entity.name + '" has duplicate definitions. \n\n'));
+            process.stderr.write(chalk.default.redBright('  ' + JSON.stringify(entity.type, 2, null) + '  \n'));
+            process.stderr.write(chalk.default.redBright('\n  Stopping further processing \n'));
+            process.exit(retCode.DUPLICATE_ENTITIES);
         }
-    });*/
+    });
 
     // do we have utterances with labelled list entities or phraselist entities? 
     if(LUISJSONBlob.utterances.length > 0) {
@@ -341,23 +339,22 @@ var validateLUISBlob = function(LUISJSONBlob) {
                     if(entityInList.length > 0) {
                         if(entityInList[0].type.includes("list")) {
                             
-                            process.stdout.write(chalk.default.redBright('\n  Utterance "' + utterance.text + '", has reference to List entity type. \n\n'));
-                            process.stdout.write(chalk.default.redBright('  You cannot have utterances with phraselist references in them\n'));
-                            process.stdout.write(chalk.default.redBright('\n  Stopping further processing \n'));
-                            process.exit(1);
+                            process.stderr.write(chalk.default.redBright('\n  Utterance "' + utterance.text + '", has reference to List entity type. \n\n'));
+                            process.stderr.write(chalk.default.redBright('  You cannot have utterances with phraselist references in them\n'));
+                            process.stderr.write(chalk.default.redBright('\n  Stopping further processing \n'));
+                            process.exit(retCode.INVALID_INPUT);
                         }
                         if(entityInList[0].type.includes("phraseList")) {
-                            process.stdout.write(chalk.default.redBright('\n  Utterance "' + utterance.text + '", has reference to PhraseList. \n\n'));
-                            process.stdout.write(chalk.default.redBright('  You cannot have utterances with phraselist references in them\n'));
-                            process.stdout.write(chalk.default.redBright('\n  Stopping further processing \n'));
-                            process.exit(1);
+                            process.stderr.write(chalk.default.redBright('\n  Utterance "' + utterance.text + '", has reference to PhraseList. \n\n'));
+                            process.stderr.write(chalk.default.redBright('  You cannot have utterances with phraselist references in them\n'));
+                            process.stderr.write(chalk.default.redBright('\n  Stopping further processing \n'));
+                            process.exit(retCode.INVALID_INPUT);
                         }
                     }
                 });
             }
         });
     }
-
     return true;
 }
 
@@ -396,15 +393,13 @@ var collateQnAFiles = function(parsedBlobs) {
                     var qnaExists = false;
                     var fIndex = 0;
                     for(fIndex in FinalQnAJSON.qnaList) {
-                        var oldQnAItem = FinalQnAJSON.qnaList[fIndex];
-                        if(deepEqual(oldQnAItem, newQnAItem)) {
+                        if(deepEqual(FinalQnAJSON.qnaList[fIndex], newQnAItem)) {
                             qnaExists = true;
                             break;
                         }
                     }
                     if(!qnaExists) FinalQnAJSON.qnaList.push(newQnAItem);
                 }
-                
             });
         }
     });
@@ -422,28 +417,13 @@ var collateLUISFiles = function(parsedBlobs) {
     var FinalLUISJSON = parsedBlobs[0];
     parsedBlobs.splice(0,1);
     parsedBlobs.forEach(function(blob) {
-        mergeResults(blob, FinalLUISJSON, LUISObjNameEnum.INTENT);
-        mergeResults(blob, FinalLUISJSON, LUISObjNameEnum.ENTITIES);
-        mergeResults(blob, FinalLUISJSON, LUISObjNameEnum.PATTERNANYENTITY);
-        mergeResults(blob, FinalLUISJSON, LUISObjNameEnum.CLOSEDLISTS);
-        // do we have patterns here?
-        if(blob.patterns.length > 0) {
-            blob.patterns.forEach(function(pattern) {
-                FinalLUISJSON.patterns.push(pattern);
-            });
-        }
-        // do we have utterances here?
-        if(blob.utterances.length > 0) {
-            blob.utterances.forEach(function(utteranceItem) {
-                FinalLUISJSON.utterances.push(utteranceItem);
-            });
-        }
-        // do we have bing_entities here? 
-        /*if(blob.bing_entities.length > 0) {
-            blob.bing_entities.forEach(function(bingEntity) {
-                if(!FinalLUISJSON.bing_entities.includes(bingEntity)) FinalLUISJSON.bing_entities.push(bingEntity);
-            });
-        }*/
+        mergeResults2(blob, FinalLUISJSON, LUISObjNameEnum.INTENT);
+        mergeResults2(blob, FinalLUISJSON, LUISObjNameEnum.ENTITIES);
+        mergeResults2(blob, FinalLUISJSON, LUISObjNameEnum.CLOSEDLISTS);
+        mergeResults2(blob, FinalLUISJSON, LUISObjNameEnum.UTTERANCE);
+        mergeResults2(blob, FinalLUISJSON, LUISObjNameEnum.PATTERNS);
+        mergeResults2(blob, FinalLUISJSON, LUISObjNameEnum.PATTERNANYENTITY);
+        
         // do we have prebuiltEntities here?
         if(blob.prebuiltEntities.length > 0) {
             blob.prebuiltEntities.forEach(function(prebuiltEntity){
@@ -494,13 +474,17 @@ var collateLUISFiles = function(parsedBlobs) {
  * @param {LUISObjNameEnum} type enum type of possible LUIS object types
  * 
  */
-var mergeResults = function(blob, finalCollection, type) {
+var mergeResults2 = function(blob, finalCollection, type) {
     if(blob[type].length > 0) {
-        blob[type].forEach(function(blobItem){
+        blob[type].forEach(function(blobItem) {
+            if(finalCollection[type].length === 0) {
+                finalCollection[type].push(blobItem);
+                return;
+            }
             // add if this item if it does not already exist in final collection
             var itemExists = false;
             for(fIndex in finalCollection[type]) {
-                if(blobItem.name === finalCollection[type][fIndex].name){
+                if(deepEqual(finalCollection[type][fIndex],blobItem)){
                     itemExists = true;
                     break;
                 }
@@ -512,5 +496,23 @@ var mergeResults = function(blob, finalCollection, type) {
     }
 };
 
+
+/**
+ * Helper function to see if we have any luis content in the blob
+ *
+ * @param {object} blob Contents of parsed luis blob
+ * @returns {boolean} true if there is any luis content in the blob
+ * 
+ */
+var haveLUISContent = function(blob) {
+    return ((blob[LUISObjNameEnum.INTENT].length > 0) ||
+    (blob[LUISObjNameEnum.ENTITIES].length > 0) || 
+    (blob[LUISObjNameEnum.CLOSEDLISTS].length > 0) ||
+    (blob[LUISObjNameEnum.PATTERNANYENTITY].length > 0) ||
+    (blob.patterns.length > 0) ||
+    (blob[LUISObjNameEnum.UTTERANCE].length > 0) ||
+    (blob.prebuiltEntities.length > 0) ||
+    (blob.model_features.length > 0));
+}
 
 
