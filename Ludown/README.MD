@@ -11,8 +11,8 @@ Language Understanding ([LUIS.ai](https://luis.ai/)) allows your application to 
 The .lu file and the LUDown tool serve several use cases:
 - Quick, simple and easy way to bootstrap language understanding for your bot.
 - Describe intents, entities, utterances and patterns for your bot in simple markdown documents.
-- The langauge understanding definition for your bot lives with the rest of your code. You can use other CLI tools like luis to create a new LUIS app using the .lu files.
-- Group language understanding documents by langauge x locale for easier to manage localization purposes.
+- The language understanding definition for your bot lives with the rest of your code. You can use other CLI tools like luis to create a new LUIS app using the .lu files.
+- Group language understanding documents by language and locale to easily manage localization.
 - Define question and answer pairs for your bot.
 - Works in conjunction with other Microsoft Bot Builder tools, like [LUIS CLI](https://github.com/Microsoft/botbuilder-tools/tree/master/LUIS) and [QnAMaker CLI](https://github.com/Microsoft/botbuilder-tools/tree/master/QnAMaker).
 
