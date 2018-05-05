@@ -79,7 +79,7 @@ async function processConnectDispatch(config: BotConfig): Promise<BotConfig> {
     if (!args.appId || !uuidValidate(args.appId))
         throw new Error('bad or missing --appId');
 
-    if (!args.version || parseInt(args.version) == 0)
+    if (!args.version)
         throw new Error('bad or missing --version');
 
     if (!args.authoringKey || !uuidValidate(args.authoringKey))
@@ -88,6 +88,9 @@ async function processConnectDispatch(config: BotConfig): Promise<BotConfig> {
     if (args.subscriptionKey && !uuidValidate(args.subscriptionKey))
         throw new Error('bad --subscriptionKey');
 
+    if (!args.id)
+        args.id = args.appId;
+        
     const newService = new DispatchService(<IDispatchService><any>args);
 
     const dispatchServices = <IConnectedService[]>(<any>args).services;
