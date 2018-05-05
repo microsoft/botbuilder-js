@@ -79,11 +79,14 @@ async function processConnectLuisArgs(config: BotConfig): Promise<BotConfig> {
     if (!args.appId || !uuidValidate(args.appId))
         throw new Error('bad or missing --appId');
 
-    if (!args.version || parseFloat(args.version) == 0)
+    if (!args.version)
         throw new Error('bad or missing --version');
 
     if (!args.authoringKey || !uuidValidate(args.authoringKey))
         throw new Error('bad or missing --authoringKey');
+
+    if (!args.id)
+        args.id = args.appId;
 
     //if (!args.subscriptionKey || !uuidValidate(args.subscriptionKey))
     //    throw new Error("bad or missing --subscriptionKey");
