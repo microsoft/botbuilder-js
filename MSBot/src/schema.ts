@@ -65,7 +65,7 @@ export interface ILuisService extends IConnectedService {
     subscriptionKey: string;
 
     // version of the application
-    versionId: string;
+    version: string;
 }
 
 export interface IDispatchService extends IConnectedService {
