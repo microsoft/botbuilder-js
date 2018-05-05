@@ -61,7 +61,7 @@ export interface InvokeResponse {
 
 const pjson: any = require('../package.json');
 const USER_AGENT = "Microsoft-BotFramework/3.1 (BotBuilder JS/" + pjson.version + ")";
-
+const OAUTH_ENDPOINT = 'https://api.botframework.com';
 const INVOKE_RESPONSE_KEY = Symbol('invokeResponse');
 
 
@@ -277,11 +277,9 @@ export class BotFrameworkAdapter extends BotAdapter {
      */
     public getUserToken(context: TurnContext, connectionName: string, magicCode?: string): Promise<TokenResponse> {
         try {
-            if (!context.activity.serviceUrl) { throw new Error(`BotFrameworkAdapter.getUserToken(): missing serviceUrl`) }
             if (!context.activity.from || !context.activity.from.id) { throw new Error(`BotFrameworkAdapter.getUserToken(): missing from or from.id`) }
-            const serviceUrl = context.activity.serviceUrl;
             const userId = context.activity.from.id;
-            const client = this.createOAuthApiClient(serviceUrl);
+            const client = this.createOAuthApiClient(OAUTH_ENDPOINT);
             return client.getUserToken(userId, connectionName, magicCode);
         } catch (err) {
             return Promise.reject(err);
@@ -295,11 +293,9 @@ export class BotFrameworkAdapter extends BotAdapter {
      */
     public signOutUser(context: TurnContext, connectionName: string): Promise<void> {
         try {
-            if (!context.activity.serviceUrl) { throw new Error(`BotFrameworkAdapter.signOutUser(): missing serviceUrl`) }
             if (!context.activity.from || !context.activity.from.id) { throw new Error(`BotFrameworkAdapter.signOutUser(): missing from or from.id`) }
-            const serviceUrl = context.activity.serviceUrl;
             const userId = context.activity.from.id;
-            const client = this.createOAuthApiClient(serviceUrl);
+            const client = this.createOAuthApiClient(OAUTH_ENDPOINT);
             return client.signOutUser(userId, connectionName);
         } catch (err) {
             return Promise.reject(err);
@@ -312,15 +308,9 @@ export class BotFrameworkAdapter extends BotAdapter {
      * @param connectionName Name of the auth connection to use.
      */
     public getSignInLink(context: TurnContext, connectionName: string): Promise<string> {
-        try {
-            if (!context.activity.serviceUrl) { throw new Error(`BotFrameworkAdapter.getSignInLink(): missing serviceUrl`) }
-            const conversation = TurnContext.getConversationReference(context.activity);
-            const serviceUrl = context.activity.serviceUrl;
-            const client = this.createOAuthApiClient(serviceUrl);
-            return client.getSignInLink(conversation as ConversationReference, connectionName);
-        } catch (err) {
-            return Promise.reject(err);
-        }
+        const conversation = TurnContext.getConversationReference(context.activity);
+        const client = this.createOAuthApiClient(OAUTH_ENDPOINT);
+        return client.getSignInLink(conversation as ConversationReference, connectionName);
     }
 
 

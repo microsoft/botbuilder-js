@@ -11,6 +11,7 @@ const botbuilder_core_1 = require("botbuilder-core");
 const botframework_connector_1 = require("botframework-connector");
 const pjson = require('../package.json');
 const USER_AGENT = "Microsoft-BotFramework/3.1 (BotBuilder JS/" + pjson.version + ")";
+const OAUTH_ENDPOINT = 'https://api.botframework.com';
 const INVOKE_RESPONSE_KEY = Symbol('invokeResponse');
 /**
  * ActivityAdapter class needed to communicate with a Bot Framework channel or the Emulator.
@@ -241,15 +242,11 @@ class BotFrameworkAdapter extends botbuilder_core_1.BotAdapter {
      */
     getUserToken(context, connectionName, magicCode) {
         try {
-            if (!context.activity.serviceUrl) {
-                throw new Error(`BotFrameworkAdapter.getUserToken(): missing serviceUrl`);
-            }
             if (!context.activity.from || !context.activity.from.id) {
                 throw new Error(`BotFrameworkAdapter.getUserToken(): missing from or from.id`);
             }
-            const serviceUrl = context.activity.serviceUrl;
             const userId = context.activity.from.id;
-            const client = this.createOAuthApiClient(serviceUrl);
+            const client = this.createOAuthApiClient(OAUTH_ENDPOINT);
             return client.getUserToken(userId, connectionName, magicCode);
         }
         catch (err) {
@@ -263,15 +260,11 @@ class BotFrameworkAdapter extends botbuilder_core_1.BotAdapter {
      */
     signOutUser(context, connectionName) {
         try {
-            if (!context.activity.serviceUrl) {
-                throw new Error(`BotFrameworkAdapter.signOutUser(): missing serviceUrl`);
-            }
             if (!context.activity.from || !context.activity.from.id) {
                 throw new Error(`BotFrameworkAdapter.signOutUser(): missing from or from.id`);
             }
-            const serviceUrl = context.activity.serviceUrl;
             const userId = context.activity.from.id;
-            const client = this.createOAuthApiClient(serviceUrl);
+            const client = this.createOAuthApiClient(OAUTH_ENDPOINT);
             return client.signOutUser(userId, connectionName);
         }
         catch (err) {
@@ -284,18 +277,9 @@ class BotFrameworkAdapter extends botbuilder_core_1.BotAdapter {
      * @param connectionName Name of the auth connection to use.
      */
     getSignInLink(context, connectionName) {
-        try {
-            if (!context.activity.serviceUrl) {
-                throw new Error(`BotFrameworkAdapter.getSignInLink(): missing serviceUrl`);
-            }
-            const conversation = botbuilder_core_1.TurnContext.getConversationReference(context.activity);
-            const serviceUrl = context.activity.serviceUrl;
-            const client = this.createOAuthApiClient(serviceUrl);
-            return client.getSignInLink(conversation, connectionName);
-        }
-        catch (err) {
-            return Promise.reject(err);
-        }
+        const conversation = botbuilder_core_1.TurnContext.getConversationReference(context.activity);
+        const client = this.createOAuthApiClient(OAUTH_ENDPOINT);
+        return client.getSignInLink(conversation, connectionName);
     }
     /**
      * Tells the token service to emulate the sending of OAuthCards for a channel.
