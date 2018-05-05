@@ -198,7 +198,7 @@ var constructMdFile = function(LUISJSON, QnAJSONFromTSV, luisFile, QnAFile) {
                             text = startText + entityWithLabel + endText;
                         })
                     }
-                    fileContent += '- ' + text + NEWLINE;
+                    if(text) fileContent += '- ' + text + NEWLINE;
                 });
                 fileContent += NEWLINE + NEWLINE;
             });

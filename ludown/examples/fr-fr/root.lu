@@ -1,0 +1,7 @@
+> Ceci est juste un exemple qui montre comment vous pouvez regrouper des fichiers locaux lu x par langue avec un fichier racine qui les lie ensemble.
+
+[aucune intention] (./None.lu)
+
+[paires QnA] (./qna4.lu)
+
+[changement d'alarme] (./changeAlarm.lu)

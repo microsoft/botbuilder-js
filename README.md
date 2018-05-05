@@ -13,8 +13,13 @@ To install all CLI tools:
 ```
 npm install -g chatdown msbot ludown luis-apis qnamaker botdispatch luisgen
 ```
-Please see [here](https://aka.ms/BotBuilderOverview) for an overview of the end-to-end development workflow. 
-Please see [here](https://aka.ms/BotBuilderLocalDev) for an example end to end development workflow using Bot Builder tools.
+
+- Please see [here](https://aka.ms/BotBuilderOverview) for an overview of the end-to-end bot development workflow. 
+- Please see [here](https://aka.ms/BotBuilderLocalDev) for an example end to end bot development workflow using Bot Builder tools.
+
+Bot Builder tools are designed to work with
+- [Bot Builder V3 SDK](https://github.com/microsoft/botbuilder)
+- Bot Builder V4 SDK PREVIEW - [dotnet](https://github.com/microsoft/botbuilder-dotnet), [JS](https://github.com/microsoft/botbuilder-js), [Java](https://github.com/microsoft/botbuilder-java) and [Python](https://github.com/microsoft/botbuilder-python)
 
 Before writing code, review the [bot design guidelines](https://docs.microsoft.com/en-us/azure/bot-service/bot-service-design-principles) for best practices and identify the needs for your bot: will a basic bot be enough or whether it should have more sophisticated capabilities, such as speech, language understanding, QnA, or the ability to extract knowledge from different sources and provide intelligent answers. This is also the phase where you might want to create mockup of conversations between the user and the bot for the specific scenarios your bot will support. [Chatdown](https://github.com/Microsoft/botbuilder-tools/tree/master/Chatdown) is the tool built for this purpose. You can author .chat files that mockup the conversations and then use chatdown CLI to convert them into rich transcripts. 
 
