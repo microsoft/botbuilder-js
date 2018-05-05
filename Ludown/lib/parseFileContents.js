@@ -47,16 +47,13 @@ module.exports.parseFile = function(fileContent, log)
 
     // loop through every chunk of information
     splitOnBlankLines.forEach(function(chunk) {
-        // is this an intent or entity?
         chunk = chunk.trim();
-        // ignore if this line is a comment.
-
         if(chunk.indexOf(PARSERCONSTS.URLREF) === 0) {
             var chunkSplitByLine = chunk.split(/\r\n|\r|\n/g);
             var urlRef_regex = chunkSplitByLine[0].trim().replace(PARSERCONSTS.URLREF, '').split(/\(['"](.*?)['"]\)/g);
             if(urlRef_regex.length !== 3 || urlRef_regex[1].trim() === '') {
-                process.stdout.write(chalk.default.redBright('[ERROR]: ' + 'Invalid URL Ref: ' + chunkSplitByLine[0]));
-                process.exit(1);
+                process.stderr.write(chalk.default.redBright('[ERROR]: ' + 'Invalid URL Ref: ' + chunkSplitByLine[0]));
+                process.exit(retCode.INVALID_URL_REF);
             } else {
                 qnaJsonStruct.urls.push(urlRef_regex[1]);
             }
@@ -64,8 +61,8 @@ module.exports.parseFile = function(fileContent, log)
             var chunkSplitByLine = chunk.split(/\r\n|\r|\n/g);
             var urlRef_regex = chunkSplitByLine[0].trim().replace(PARSERCONSTS.FILEREF, '').split(/\(['"](.*?)['"]\)/g);
             if(urlRef_regex.length !== 3 || urlRef_regex[1].trim() === '') {
-                process.stdout.write(chalk.default.redBright('[ERROR]: ' + 'Invalid LU File Ref: ' + chunkSplitByLine[0]));
-                process.exit(1);
+                process.stderr.write(chalk.default.redBright('[ERROR]: ' + 'Invalid LU File Ref: ' + chunkSplitByLine[0]));
+                process.exit(retCode.INVALID_LU_FILE_REF);
             } else {
                 additionalFilesToParse.push(urlRef_regex[1]);
             }
@@ -120,16 +117,16 @@ module.exports.parseFile = function(fileContent, log)
                                 if((utterance.indexOf('-') !== 0) &&
                                 (utterance.indexOf('*') !== 0) && 
                                 (utterance.indexOf('+') !== 0)) {
-                                    process.stdout.write(chalk.default.redBright('Filter: "' + utterance + '" does not have list decoration. Use either - or * \n'));
-                                    process.stdout.write(chalk.default.redBright('Stopping further processing.\n'));
-                                    process.exit(1);
+                                    process.stderr.write(chalk.default.redBright('Filter: "' + utterance + '" does not have list decoration. Use either - or * \n'));
+                                    process.stderr.write(chalk.default.redBright('Stopping further processing.\n'));
+                                    process.exit(retCode.INVALID_QNA_FILTER_DEF);
                                 }
                                 utterance = utterance.slice(2);
                                 var kp = utterance.split('=');
                                 if(kp.length !== 2) {
-                                    process.stdout.write(chalk.default.redBright('Filter: "' + utterance + '" does not have a name = value pair. \n'));
-                                    process.stdout.write(chalk.default.redBright('Stopping further processing.\n'));
-                                    process.exit(1);
+                                    process.stderr.write(chalk.default.redBright('Filter: "' + utterance + '" does not have a name = value pair. \n'));
+                                    process.stderr.write(chalk.default.redBright('Stopping further processing.\n'));
+                                    process.exit(retCode.INVALID_QNA_FILTER_DEF);
                                 }
                                 metadata.push({
                                     "name": kp[0].trim(),
@@ -140,9 +137,9 @@ module.exports.parseFile = function(fileContent, log)
                                 if((utterance.indexOf('-') !== 0) &&
                                 (utterance.indexOf('*') !== 0) && 
                                 (utterance.indexOf('+') !== 0)) {
-                                    process.stdout.write(chalk.default.redBright('Utterance: "' + utterance + '" does not have list decoration. Use either - or * \n'));
-                                    process.stdout.write(chalk.default.redBright('Stopping further processing.\n'));
-                                    process.exit(1);
+                                    process.stderr.write(chalk.default.redBright('Question: "' + utterance + '" does not have list decoration. Use either - or * \n'));
+                                    process.stderr.write(chalk.default.redBright('Stopping further processing.\n'));
+                                    process.exit(retCode.INVALID_QNA_QUESTION_DEF);
                                 }
                                 utterance = utterance.slice(2);
                                 questions.push(utterance.trim());
@@ -170,119 +167,89 @@ module.exports.parseFile = function(fileContent, log)
                     if((utterance.indexOf('-') !== 0) &&
                         (utterance.indexOf('*') !== 0) && 
                         (utterance.indexOf('+') !== 0)) {
-                        process.stdout.write(chalk.default.redBright('Utterance: "' + utterance + '" does not have list decoration. Use either - or * \n'));
-                        process.stdout.write(chalk.default.redBright('Stopping further processing.\n'));
-                        process.exit(1);
+                        process.stderr.write(chalk.default.redBright('Utterance: "' + utterance + '" does not have list decoration. Use either - or * \n'));
+                        process.stderr.write(chalk.default.redBright('Stopping further processing.\n'));
+                        process.exit(retCode.INVALID_UTTERANCE_DEF);
                         }
                     utterance = utterance.slice(2);
-
-                    // is this a pattern? 
-                    if(utterance.trim().indexOf("~") === 0) {
-                        // push this utterance to patterns
-                        var patternObject = {
-                            "text": utterance.slice(1),
-                            "intent": intentName
-                        }
-                        
-                        // TODO: add this when patterns are supported
-                        //process.stdout.write(chalk.default.redBright('  "' + utterance + '" is a pattern. Patterns are not yet supported in LUIS. Coming soon. \n'));
-                        LUISJsonStruct.patterns.push(patternObject);
-
-
-                        if(utterance.includes("{")) {
-                            // handle entities
-                            var entityRegex = new RegExp(/\{(.*?)\}/g);
-                            var entitiesFound = utterance.match(entityRegex);
-                            entitiesFound.forEach(function(entity) {
-                                entity = entity.replace("{", "").replace("}", "");
-                                
-                                // TODO: add this when patterns are supported
-                                addItemIfNotPresent(LUISJsonStruct, LUISObjNameEnum.PATTERNANYENTITY, entity);
-                            });
-                        }
-                    } else {
-                        if(utterance.includes("{")) {
-                            var entityRegex = new RegExp(/\{(.*?)\}/g);
-                            var entitiesFound = utterance.match(entityRegex);
-                        
-                            // treat this as labelled utterance
-                            entitiesFound.forEach(function(entity) {
-                                var labelledValue = "";
-                                entity = entity.replace("{", "").replace("}", "");
-                                // see if this is a trained simple entity of format {entityName:labelled value}
-                                if(entity.includes("=")) {
-                                    var entitySplit = entity.split("=");
-                                    entity = entitySplit[0];
-                                    labelledValue = entitySplit[1];
-                                    if(labelledValue !== "") {
-                                        // add this to entities collection unless it already exists
-                                        addItemIfNotPresent(LUISJsonStruct, LUISObjNameEnum.ENTITIES, entity);
-                                        // clean up uttearnce to only include labelledentityValue and add to utterances collection
-                                        var updatedUtterance = utterance.replace("{" + entity + "=" + labelledValue + "}", labelledValue);
-                                        var startPos = updatedUtterance.search(labelledValue);
-                                        var endPos = startPos + labelledValue.length - 1;
-                                        var utteranceObject = {
-                                            "text": updatedUtterance,
-                                            "intent":intentName,
-                                            "entities": [
-                                                {
-                                                    "entity": entity,
-                                                    "startPos":startPos,
-                                                    "endPos":endPos
-                                                }
-                                            ]
-                                        }
-                                        LUISJsonStruct.utterances.push(utteranceObject);
-                                    } else {
-                                        console.log(chalk.yellow('[WARN]: No labelled value found for entity: ' + entity + ' in utterance: ' + utterance + '\n'));
+                   
+                    // handle entities in the utterance
+                    if(utterance.includes("{")) {
+                        var entityRegex = new RegExp(/\{(.*?)\}/g);
+                        var entitiesFound = utterance.match(entityRegex);
+                        // treat this as labelled utterance
+                        entitiesFound.forEach(function(entity) {
+                            var labelledValue = "";
+                            entity = entity.replace("{", "").replace("}", "");
+                            // see if this is a trained simple entity of format {entityName=labelled value}
+                            if(entity.includes("=")) {
+                                var entitySplit = entity.split("=");
+                                entity = entitySplit[0].trim();
+                                labelledValue = entitySplit[1].trim();
+                                if(labelledValue !== "") {
+                                    // add this to entities collection unless it already exists
+                                    addItemIfNotPresent(LUISJsonStruct, LUISObjNameEnum.ENTITIES, entity);
+                                    // clean up uttearnce to only include labelledentityValue and add to utterances collection
+                                    var updatedUtterance = utterance.replace("{" + entity + "=" + labelledValue + "}", labelledValue);
+                                    var startPos = updatedUtterance.search(labelledValue);
+                                    var endPos = startPos + labelledValue.length - 1;
+                                    var utteranceObject = {
+                                        "text": updatedUtterance,
+                                        "intent":intentName,
+                                        "entities": [
+                                            {
+                                                "entity": entity,
+                                                "startPos":startPos,
+                                                "endPos":endPos
+                                            }
+                                        ]
                                     }
+                                    LUISJsonStruct.utterances.push(utteranceObject);
                                 } else {
-                                    // push this utterance to patterns
-                                    var patternObject = {
-                                        "text": utterance,
-                                        "intent": intentName
-                                    }
-                                    // if this intent does not have any utterances, push this pattern as an utterance as well. 
-                                    var intentInUtterance = LUISJsonStruct.utterances.filter(function(item) {
-                                        return item.intent == intentName;
-                                        });
-                                    
-                                    if(intentInUtterance.length === 0) {
-                                        var utteranceObject = {
-                                            "text": utterance,
-                                            "intent":intentName,
-                                            "entities": []
-                                        }
-                                        LUISJsonStruct.utterances.push(utteranceObject);
-                                    }
-                                    
-                                    // TODO: add this when patterns are supported
-                                    //process.stdout.write(chalk.default.redBright('  "' + utterance + '" is a pattern. Patterns are not yet supported in LUIS. Coming soon. \n'));    
-                                    LUISJsonStruct.patterns.push(patternObject);
-                                    
-                                    if(utterance.includes("{")) {
-                                        // handle entities
-                                        var entityRegex = new RegExp(/\{(.*?)\}/g);
-                                        var entitiesFound = utterance.match(entityRegex);
-                                        entitiesFound.forEach(function(entity) {
-                                            entity = entity.replace("{", "").replace("}", "");
-                                            
-                                            // TODO: add this when patterns are supported
-                                            addItemIfNotPresent(LUISJsonStruct, LUISObjNameEnum.PATTERNANYENTITY, entity);
-                                        });
-                                    }
-                                    //if(!log)  process.stdout.write(chalk.yellow('[WARN]: Entity ' + entity + ' in utterance: "' + utterance + '" is missing labelled value \n'));
+                                    process.stderr.write(chalk.default.redBright('[WARN]: No labelled value found for entity: ' + entity + ' in utterance: ' + utterance + '\n'));
+                                    process.exit(retCode.MISSING_LABELLED_VALUE);
                                 }
-                            });
-                        } else {
-                            // push this to utterances
-                            var utteranceObject = {
-                                "text": utterance,
-                                "intent": intentName,
-                                "entities": new Array()
+                            } else {
+                                // push this utterance to patterns
+                                var patternObject = {
+                                    "text": utterance,
+                                    "intent": intentName
+                                }
+                                // if this intent does not have any utterances, push this pattern as an utterance as well. 
+                                var intentInUtterance = LUISJsonStruct.utterances.filter(function(item) {
+                                    return item.intent == intentName;
+                                    });
+                                
+                                if(intentInUtterance.length === 0) {
+                                    var utteranceObject = {
+                                        "text": utterance,
+                                        "intent":intentName,
+                                        "entities": []
+                                    }
+                                    LUISJsonStruct.utterances.push(utteranceObject);
+                                }
+                                
+                                LUISJsonStruct.patterns.push(patternObject);
+                                
+                                if(utterance.includes("{")) {
+                                    // handle entities
+                                    var entityRegex = new RegExp(/\{(.*?)\}/g);
+                                    var entitiesFound = utterance.match(entityRegex);
+                                    entitiesFound.forEach(function(entity) {
+                                        entity = entity.replace("{", "").replace("}", "");
+                                        addItemIfNotPresent(LUISJsonStruct, LUISObjNameEnum.PATTERNANYENTITY, entity);
+                                    });
+                                }
                             }
-                            LUISJsonStruct.utterances.push(utteranceObject);
+                        });
+                    } else {
+                        // push this to utterances
+                        var utteranceObject = {
+                            "text": utterance,
+                            "intent": intentName,
+                            "entities": new Array()
                         }
+                        LUISJsonStruct.utterances.push(utteranceObject);
                     }
                 });
             }
@@ -327,27 +294,13 @@ module.exports.parseFile = function(fileContent, log)
                         LUISJsonStruct.prebuiltEntities.push(prebuiltEntitesObj);
                     } 
                 }
-            }
-
-            // is this a list type?
-            else if(entityType.indexOf('=', entityType.length - 1) >= 0) {
-                
-            //else if(entityType.toLowerCase() === 'list') {
+            } else if(entityType.indexOf('=', entityType.length - 1) >= 0) 
+            {
+                // is this a list type?  
+              
                 // get normalized value
                 var normalizedValue = entityType.substring(0, entityType.length - 1);
 
-                // list entity cannot be duplicated under a simple entity type
-                /*var entityInSimpleCollection = LUISJsonStruct.entities.filter(function(item){
-                    return item.name == entityName
-                }); 
-
-                if(entityInSimpleCollection.length > 0) {
-                    process.stdout.write(chalk.default.redBright('\n List entity "' + entityName + '" is also defined as a simple entity type. Duplicate names are not allowed.\n'));
-                    process.stdout.write(chalk.default.redBright('\n List entities cannot have labelled value in example utterances.\n'));
-                    process.stdout.write(chalk.default.redBright('\n Stopping further processing.\n'));
-                    process.exit(1);
-                }*/
-                
                 // remove the first entity declaration line
                 chunkSplitByLine.splice(0,1);
                 var closedListObj = {};
@@ -377,9 +330,9 @@ module.exports.parseFile = function(fileContent, log)
                     if((listLine.indexOf('-') !== 0) &&
                     (listLine.indexOf('*') !== 0) && 
                     (listLine.indexOf('+') !== 0)) {
-                        process.stdout.write(chalk.default.redBright('[ERROR]: Synonyms list value: "' + listLine + '" does not have list decoration. Use either - or * \n'));
-                        process.stdout.write(chalk.default.redBright('Stopping further processing.\n'));
-                        process.exit(1);
+                        process.stderr.write(chalk.default.redBright('[ERROR]: Synonyms list value: "' + listLine + '" does not have list decoration. Use either - or * \n'));
+                        process.stderr.write(chalk.default.redBright('Stopping further processing.\n'));
+                        process.exit(retCode.SYNONYMS_NOT_A_LIST);
                     }
                     listLine = listLine.slice(2);       
                     synonymsList.push(listLine.trim());
@@ -406,9 +359,9 @@ module.exports.parseFile = function(fileContent, log)
                     if((phraseListValues.indexOf('-') !== 0) &&
                     (phraseListValues.indexOf('*') !== 0) && 
                     (phraseListValues.indexOf('+') !== 0)) {
-                        process.stdout.write(chalk.default.redBright('[ERROR]: Phrase list value: "' + phraseListValues + '" does not have list decoration. Use either - or * \n'));
-                        process.stdout.write(chalk.default.redBright('Stopping further processing.\n'));
-                        process.exit(1);
+                        process.stderr.write(chalk.default.redBright('[ERROR]: Phrase list value: "' + phraseListValues + '" does not have list decoration. Use either - or * \n'));
+                        process.stderr.write(chalk.default.redBright('Stopping further processing.\n'));
+                        process.exit(retCode.PHRASELIST_NOT_A_LIST);
                     }
                     phraseListValues = phraseListValues.slice(2);
                     pLValues = pLValues + phraseListValues + ',';
@@ -492,3 +445,4 @@ var addItemIfNotPresent = function(collection, type, value) {
         collection[type].push(itemObj);
     }  
 };
+

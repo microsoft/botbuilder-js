@@ -163,7 +163,7 @@ module.exports.tests = {
           "entities": [],
           "composites": [],
           "closedLists": [],
-          "bing_entities": [],
+          "regex_entities": [],
           "model_features": [],
           "regex_features": [],
           "utterances": [
@@ -522,7 +522,7 @@ module.exports.tests = {
           "entities": [],
           "composites": [],
           "closedLists": [],
-          "bing_entities": [],
+          "regex_entities": [],
           "model_features": [],
           "regex_features": [],
           "utterances": [
@@ -592,7 +592,7 @@ module.exports.tests = {
               "roles": []
             }
           ],
-          "bing_entities": [],
+          "regex_entities": [],
           "model_features": [],
           "regex_features": [],
           "utterances": [
