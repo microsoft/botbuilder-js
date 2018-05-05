@@ -250,6 +250,7 @@ var validateLUISBlob = function(LUISJSONBlob) {
             }).length > 0) {
                 spliceList.push(patternAnyEntity.name);
             }
+            
         }
     }
     if(spliceList.length > 0) {
@@ -357,6 +358,9 @@ var validateLUISBlob = function(LUISJSONBlob) {
             }
         });
     }
+
+    
+
     return true;
 }
 
@@ -421,7 +425,7 @@ var collateLUISFiles = function(parsedBlobs) {
     parsedBlobs.forEach(function(blob) {
         mergeResults2(blob, FinalLUISJSON, LUISObjNameEnum.INTENT);
         mergeResults2(blob, FinalLUISJSON, LUISObjNameEnum.ENTITIES);
-        mergeResults2(blob, FinalLUISJSON, LUISObjNameEnum.CLOSEDLISTS);
+        mergeResults_closedlists(blob, FinalLUISJSON, LUISObjNameEnum.CLOSEDLISTS);
         mergeResults2(blob, FinalLUISJSON, LUISObjNameEnum.UTTERANCE);
         mergeResults2(blob, FinalLUISJSON, LUISObjNameEnum.PATTERNS);
         mergeResults2(blob, FinalLUISJSON, LUISObjNameEnum.PATTERNANYENTITY);
@@ -450,17 +454,23 @@ var collateLUISFiles = function(parsedBlobs) {
         // do we have model_features?
         if(blob.model_features.length > 0) {
             blob.model_features.forEach(function(modelFeature) {
-                var modelFeatureExists = false;
-                for(fIndex in FinalLUISJSON.model_features) {
-                    if(modelFeature.name === FinalLUISJSON.model_features[fIndex].name) {
-                        // add values to the existing model feature
-                        FinalLUISJSON.model_features[fIndex].words += "," + modelFeature.words;
-                        modelFeatureExists = true;
-                        break;
-                    }
-                }
-                if(!modelFeatureExists) {
+                var modelFeatureInMaster = FinalLUISJSON.model_features.filter(function(item){
+                    return item.name == modelFeature.name;
+                });
+
+                if(modelFeatureInMaster.length === 0){
                     FinalLUISJSON.model_features.push(modelFeature);
+                } else {
+                    if(modelFeatureInMaster[0].mode !== modelFeature.mode) {
+                        // error.
+                        process.stderr.write(chalk.default.redBright('[ERROR]: Phrase list : "' + modelFeature.name + '" has conflicting definitions. One marked interchangeable and another not interchangeable \n'));
+                        process.stderr.write(chalk.default.redBright('Stopping further processing.\n'));
+                        process.exit(retCode.INVALID_INPUT);
+                    } else {
+                        modelFeature.words.split(',').forEach(function(word) {
+                            if(!modelFeatureInMaster[0].words.includes(word)) modelFeatureInMaster[0].words += "," + word;
+                        })
+                    }
                 }
             });
         }
@@ -498,6 +508,43 @@ var mergeResults2 = function(blob, finalCollection, type) {
     }
 };
 
+/**
+ * Helper function to merge closed list item if it does not already exist
+ *
+ * @param {object} blob Contents of all parsed file blobs
+ * @param {object} finalCollection reference to the final collection of items
+ * @param {LUISObjNameEnum} type enum type of possible LUIS object types
+ * 
+ */
+var mergeResults_closedlists = function(blob, finalCollection, type) {
+    if(blob[type].length > 0) {
+        blob[type].forEach(function(blobItem) {
+            var listInFinal = finalCollection[type].filter(function(item) {
+                return item.name == blobItem.name;
+            });
+            if(listInFinal.length === 0) {
+                finalCollection[type].push(blobItem);
+            } else {
+                blobItem.subLists.forEach(function(blobSLItem) {
+                    // see if there is a sublist match in listInFinal
+                    var slInFinal = listInFinal[0].subLists.filter(function(item) {
+                        return item.canonicalForm == blobSLItem.canonicalForm
+                    })
+                    if(slInFinal.length === 0) {
+                        listInFinal[0].subLists.push(blobSLItem);
+                    } else {
+                        // there is a canonical form match. See if the values all exist
+                        blobSLItem.list.forEach(function(listItem) {
+                            if(!slInFinal[0].list.includes(listItem)) slInFinal[0].list.push(listItem);
+                        })
+                    }
+                });
+            }
+
+            
+        });
+    }
+}
 
 /**
  * Helper function to see if we have any luis content in the blob

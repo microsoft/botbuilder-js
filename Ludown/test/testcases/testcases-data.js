@@ -163,7 +163,7 @@ module.exports.tests = {
           "entities": [],
           "composites": [],
           "closedLists": [],
-          "bing_entities": [],
+          "regex_entities": [],
           "model_features": [],
           "regex_features": [],
           "utterances": [
@@ -175,33 +175,34 @@ module.exports.tests = {
           ],
           "patterns": [
             {
-              "text": "{userName}",
+              "pattern": "{userName}",
               "intent": "AskForUserName"
             },
             {
-              "text": "I'm {userName}",
+              "pattern": "I'm {userName}",
               "intent": "AskForUserName"
             },
             {
-              "text": "call me {userName}",
+              "pattern": "call me {userName}",
               "intent": "AskForUserName"
             },
             {
-              "text": "my name is {userName}",
+              "pattern": "my name is {userName}",
               "intent": "AskForUserName"
             },
             {
-              "text": "{userName} is my name",
+              "pattern": "{userName} is my name",
               "intent": "AskForUserName"
             },
             {
-              "text": "you can call me {userName}",
+              "pattern": "you can call me {userName}",
               "intent": "AskForUserName"
             }
           ],
           "patternAnyEntities": [
             {
               "name": "userName",
+              "explicitList": [],
               "roles": []
             }
           ],
@@ -522,7 +523,7 @@ module.exports.tests = {
           "entities": [],
           "composites": [],
           "closedLists": [],
-          "bing_entities": [],
+          "regex_entities": [],
           "model_features": [],
           "regex_features": [],
           "utterances": [
@@ -534,17 +535,18 @@ module.exports.tests = {
           ],
           "patterns": [
             {
-              "text": "set {commPreference} as my communication preference",
+              "pattern": "set {commPreference} as my communication preference",
               "intent": "CommunicationPreference"
             },
             {
-              "text": "I prefer to receive {commPreference}",
+              "pattern": "I prefer to receive {commPreference}",
               "intent": "CommunicationPreference"
             }
           ],
           "patternAnyEntities": [
             {
               "name": "commPreference",
+              "explicitList": [],
               "roles": []
             }
           ],
@@ -592,7 +594,7 @@ module.exports.tests = {
               "roles": []
             }
           ],
-          "bing_entities": [],
+          "regex_entities": [],
           "model_features": [],
           "regex_features": [],
           "utterances": [
@@ -604,11 +606,11 @@ module.exports.tests = {
           ],
           "patterns": [
             {
-              "text": "set {commPreference} as my communication preference",
+              "pattern": "set {commPreference} as my communication preference",
               "intent": "CommunicationPreference"
             },
             {
-              "text": "I prefer to receive {commPreference}",
+              "pattern": "I prefer to receive {commPreference}",
               "intent": "CommunicationPreference"
             }
           ],

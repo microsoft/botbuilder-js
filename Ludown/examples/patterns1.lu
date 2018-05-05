@@ -10,12 +10,8 @@ $PREBUILT:datetimeV2
 - I want {foodType=sandwich}
 - can you get me some {foodType}
 - please get me a {drinkType}
-- get me some {drinkTypePL}
+- get me some {drinkType}
 
 $drinkType:soda=
 - pop
 - fountain drink
-
-$drinkTypePL:phraseList
-- pop
-- soda
