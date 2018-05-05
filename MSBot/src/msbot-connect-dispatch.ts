@@ -79,7 +79,7 @@ async function processConnectDispatch(config: BotConfig): Promise<BotConfig> {
     if (!args.appId || !uuidValidate(args.appId))
         throw new Error('bad or missing --appId');
 
-    if (!args.version || parseInt(args.version) == 0)
+    if (!args.versionId)
         throw new Error('bad or missing --version');
 
     if (!args.authoringKey || !uuidValidate(args.authoringKey))

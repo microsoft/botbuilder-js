@@ -28,7 +28,7 @@ program
     .description('Connect the bot to a LUIS application')
     .option('-n, --name <name>', 'name for the LUIS app')
     .option('-a, --appId <appid>', 'AppId for the LUIS App')
-    .option('-v, --version <version>', 'version for the LUIS App, (example: v0.1)')
+    .option('-v, --versionId <version>', 'version for the LUIS App, (example: v0.1)')
     .option('--authoringKey <authoringkey>', 'authoring key for using manipulating LUIS apps via the authoring API (See http://aka.ms/luiskeys for help)')
     .option('--subscriptionKey <subscriptionKey>', '(OPTIONAL) subscription key used for querying a LUIS model\n')
 
@@ -79,12 +79,15 @@ async function processConnectLuisArgs(config: BotConfig): Promise<BotConfig> {
     if (!args.appId || !uuidValidate(args.appId))
         throw new Error('bad or missing --appId');
 
-    if (!args.version || parseFloat(args.version) == 0)
+    if (!args.versionId)
         throw new Error('bad or missing --version');
 
     if (!args.authoringKey || !uuidValidate(args.authoringKey))
         throw new Error('bad or missing --authoringKey');
 
+    if (!args.id)
+        args.id = args.appId;
+        
     //if (!args.subscriptionKey || !uuidValidate(args.subscriptionKey))
     //    throw new Error("bad or missing --subscriptionKey");
 
