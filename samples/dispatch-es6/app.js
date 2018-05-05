@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 const { BotFrameworkAdapter, BotStateSet, ConversationState, MemoryStorage, TurnContext, UserState } = require('botbuilder');
 const { LuisRecognizer, QnAMaker } = require('botbuilder-ai');
 const { DialogSet } = require('botbuilder-dialogs');
@@ -46,11 +49,16 @@ const weather = new LuisRecognizer({
 
 // The QnAMaker knowledge base used in this sample is `sampleKnowledgeBase.tsv`
 // To create a new service, upload this knowledge base by going to QnA Maker at https://qnamaker.ai/Create
-const faq = new QnAMaker({
-    knowledgeBaseId: '',
-    subscriptionKey: '',
-    serviceEndpoint: 'https://westus.api.cognitive.microsoft.com/'
-});
+const faq = new QnAMaker(
+    {
+        knowledgeBaseId: '',
+        endpointKey: '',
+        host: ''
+    },
+    {
+        answerBeforeNext: true
+    }
+);
 
 // Add state middleware
 const storage = new MemoryStorage();

@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 const { BotFrameworkAdapter } = require('botbuilder');
 const { QnAMaker } = require('botbuilder-ai');
 const restify = require('restify');
