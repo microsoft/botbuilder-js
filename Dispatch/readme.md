@@ -43,7 +43,7 @@ Arguments:
 | --luisAuthoringKey    | (optional) LUIS authoring key     |
 | --luisAuthoringRegion | (optional) LUIS authoring region  |
 | -b, --bot             | (optional) .bot file path         |
-| --hierarchical    | (optional) Default to false.  If false, existing intents from source LUIS model(s) will be available as the dispatch intents. |
+| --hierarchical    | (optional) Default to true.  If false, existing intents from source LUIS model(s) will be available as the dispatch intents. |
 | --dataFolder          | (optional) Working directory for tool |
 | -h, --help            | Output usage information |
 
@@ -130,7 +130,7 @@ Options:
 | -b, --bot            | (optional) .bot file path         |
 | --dispatch           | (optional) .dispatch file path    |
 | --dataFolder         | (optional) Working directory for tool |
-| --hierarchical       | (optional) Set to true (default) for all tasks except for single LUIS model evaluation when this should be set to false |
+| --hierarchical       | (optional) Default to true, set to false when evaluating a single LUIS model |
 | -h, --help           | Output usage information |
 
 This command creates a brand new LUIS application.
