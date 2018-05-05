@@ -12,16 +12,28 @@ import { Promiseable } from './middlewareSet';
 
 /** 
  * Signature implemented by functions registered with `context.onSendActivity()`. 
+ * 
+ * ```TypeScript
+ * type SendActivitiesHandler = (context: TurnContext, activities: Partial<Activity>[], next: () => Promise<ResourceResponse[]>) => Promiseable<ResourceResponse[]>;
+ * ``` 
  */
 export type SendActivitiesHandler = (context: TurnContext, activities: Partial<Activity>[], next: () => Promise<ResourceResponse[]>) => Promiseable<ResourceResponse[]>;
 
 /** 
  * Signature implemented by functions registered with `context.onUpdateActivity()`. 
+ * 
+ * ```TypeScript
+ * type UpdateActivityHandler = (context: TurnContext, activity: Partial<Activity>, next: () => Promise<void>) => Promiseable<void>;
+ * ``` 
  */
 export type UpdateActivityHandler = (context: TurnContext, activity: Partial<Activity>, next: () => Promise<void>) => Promiseable<void>;
 
 /** 
  * Signature implemented by functions registered with `context.onDeleteActivity()`. 
+ * 
+ * ```TypeScript
+ * type DeleteActivityHandler = (context: TurnContext, reference: Partial<ConversationReference>, next: () => Promise<void>) => Promiseable<void>;
+ * ``` 
  */
 export type DeleteActivityHandler = (context: TurnContext, reference: Partial<ConversationReference>, next: () => Promise<void>) => Promiseable<void>;
 

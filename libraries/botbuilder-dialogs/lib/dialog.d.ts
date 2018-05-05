@@ -113,6 +113,10 @@ export declare abstract class Dialog<C extends TurnContext, R = any, O = {}> {
 /**
  * Function signature of a waterfall step.
  *
+ * ```TypeScript
+ * type WaterfallStep<C extends TurnContext> = (dc: DialogContext<C>, args?: any, next?: SkipStepFunction) => Promiseable<any>;
+ * ```
+ *
  * @remarks
  * This example shows a simple waterfall that prompts a user to enter the fields needed to set an alarm:
  *
@@ -153,6 +157,10 @@ export declare abstract class Dialog<C extends TurnContext, R = any, O = {}> {
 export declare type WaterfallStep<C extends TurnContext> = (dc: DialogContext<C>, args?: any, next?: SkipStepFunction) => Promiseable<any>;
 /**
  * When called within a waterfall step the dialog will skip to the next waterfall step.
+ *
+ * ```TypeScript
+ * type SkipStepFunction = (args?: any) => Promise<any>;
+ * ```
  * @param SkipStepFunction.args (Optional) additional argument(s) to pass into the next step.
  */
 export declare type SkipStepFunction = (args?: any) => Promise<any>;

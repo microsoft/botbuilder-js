@@ -14,6 +14,10 @@ import assert = require('assert');
 /** 
  * Signature for a function that can be used to inspect individual activities returned by a bot
  * that's being tested using the `TestAdapter`.
+ * 
+ * ```TypeScript
+ * type TestActivityInspector = (activity: Partial<Activity>, description: string) => void;
+ * ``` 
  */
 export type TestActivityInspector = (activity: Partial<Activity>, description: string) => void;
 

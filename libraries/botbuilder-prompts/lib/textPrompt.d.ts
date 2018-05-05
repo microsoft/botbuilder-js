@@ -56,6 +56,10 @@ export interface TextPrompt<O = string> {
 /**
  * Signature of a handler that can be passed to a prompt to provide additional validation logic
  * or to customize the reply sent to the user when their response is invalid.
+ *
+ * ```TypeScript
+ * type PromptValidator<R, O = R> = (context: TurnContext, value: R|undefined) => Promiseable<O|undefined>;
+ * ```
  * @param R Type of value that will recognized and passed to the validator as input.
  * @param O Type of output that will be returned by the validator. This can be changed from the input type by the validator.
  * @param PromptValidator.context Context for the current turn of conversation.

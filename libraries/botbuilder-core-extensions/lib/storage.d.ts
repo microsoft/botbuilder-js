@@ -8,6 +8,10 @@
 import { TurnContext, Promiseable } from 'botbuilder-core';
 /**
  * Callback to calculate a storage key.
+ *
+ * ```TypeScript
+ * type StorageKeyFactory = (context: TurnContext) => Promiseable<string>;
+ * ```
  * @param StorageKeyFactory.context Context for the current turn of conversation with a user.
  */
 export declare type StorageKeyFactory = (context: TurnContext) => Promiseable<string>;

@@ -22,6 +22,10 @@ export interface Token {
  * Signature for an alternate word breaker that can be passed to `recognizeChoices()`,
  * `findChoices()`, or `findValues()`.
  *
+ * ```TypeScript
+ * type TokenizerFunction = (text: string, locale?: string) => Token[];
+ * ```
+ *
  * @remarks
  * The `defaultTokenizer()` is fairly simple and only breaks on spaces and punctuation.
  * @param TokenizerFunction.text The text to be tokenized.
