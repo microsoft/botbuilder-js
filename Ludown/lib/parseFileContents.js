@@ -117,7 +117,7 @@ module.exports.parseFile = function(fileContent, log)
                                 if((utterance.indexOf('-') !== 0) &&
                                 (utterance.indexOf('*') !== 0) && 
                                 (utterance.indexOf('+') !== 0)) {
-                                    process.stderr.write(chalk.default.redBright('Filter: "' + utterance + '" does not have list decoration. Use either - or * \n'));
+                                    process.stderr.write(chalk.default.redBright('Filter: "' + utterance + '" does not have list decoration. Prefix line with "-" or "+" or "*"\n'));
                                     process.stderr.write(chalk.default.redBright('Stopping further processing.\n'));
                                     process.exit(retCode.INVALID_QNA_FILTER_DEF);
                                 }
@@ -137,7 +137,7 @@ module.exports.parseFile = function(fileContent, log)
                                 if((utterance.indexOf('-') !== 0) &&
                                 (utterance.indexOf('*') !== 0) && 
                                 (utterance.indexOf('+') !== 0)) {
-                                    process.stderr.write(chalk.default.redBright('Question: "' + utterance + '" does not have list decoration. Use either - or * \n'));
+                                    process.stderr.write(chalk.default.redBright('Question: "' + utterance + '" does not have list decoration. Prefix line with "-" or "+" or "*"\n'));
                                     process.stderr.write(chalk.default.redBright('Stopping further processing.\n'));
                                     process.exit(retCode.INVALID_QNA_QUESTION_DEF);
                                 }
@@ -167,7 +167,7 @@ module.exports.parseFile = function(fileContent, log)
                     if((utterance.indexOf('-') !== 0) &&
                         (utterance.indexOf('*') !== 0) && 
                         (utterance.indexOf('+') !== 0)) {
-                        process.stderr.write(chalk.default.redBright('Utterance: "' + utterance + '" does not have list decoration. Use either - or * \n'));
+                        process.stderr.write(chalk.default.redBright('Utterance: "' + utterance + '" does not have list decoration. Prefix line with "-" or "+" or "*"\n'));
                         process.stderr.write(chalk.default.redBright('Stopping further processing.\n'));
                         process.exit(retCode.INVALID_UTTERANCE_DEF);
                         }
@@ -318,7 +318,7 @@ module.exports.parseFile = function(fileContent, log)
                     if((listLine.indexOf('-') !== 0) &&
                     (listLine.indexOf('*') !== 0) && 
                     (listLine.indexOf('+') !== 0)) {
-                        process.stderr.write(chalk.default.redBright('[ERROR]: Synonyms list value: "' + listLine + '" does not have list decoration. Use either - or * \n'));
+                        process.stderr.write(chalk.default.redBright('[ERROR]: Synonyms list value: "' + listLine + '" does not have list decoration. Prefix line with "-" or "+" or "*"\n'));
                         process.stderr.write(chalk.default.redBright('Stopping further processing.\n'));
                         process.exit(retCode.SYNONYMS_NOT_A_LIST);
                     }
@@ -375,7 +375,7 @@ module.exports.parseFile = function(fileContent, log)
                     if((phraseListValues.indexOf('-') !== 0) &&
                     (phraseListValues.indexOf('*') !== 0) && 
                     (phraseListValues.indexOf('+') !== 0)) {
-                        process.stderr.write(chalk.default.redBright('[ERROR]: Phrase list value: "' + phraseListValues + '" does not have list decoration. Use either - or * \n'));
+                        process.stderr.write(chalk.default.redBright('[ERROR]: Phrase list value: "' + phraseListValues + '" does not have list decoration. Prefix line with "-" or "+" or "*"\n'));
                         process.stderr.write(chalk.default.redBright('Stopping further processing.\n'));
                         process.exit(retCode.PHRASELIST_NOT_A_LIST);
                     }
