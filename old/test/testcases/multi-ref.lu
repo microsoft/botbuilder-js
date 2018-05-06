@@ -1,8 +1,0 @@
-#ref('./comment.lu')
-
-#ref('./1-intent.lu')
-
-#ref('./1-intent-pattern-prebuilt.lu')
-
-#ref('./buyChocolate.lu')
-

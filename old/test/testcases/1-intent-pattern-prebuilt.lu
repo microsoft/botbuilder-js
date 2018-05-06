@@ -1,7 +1,0 @@
-// add these as patterns
-#DeleteAlarm
-~delete alarm
-~(delete|remove) the {alarmTime} alarm
-
-// alarmTime is a role for prebuilt datetimev2 entity
-$alarmTime:datetimeV2

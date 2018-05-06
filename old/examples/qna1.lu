@@ -1,8 +1,0 @@
-> # QnA Definitions
-> This is a QnA definition. Follows # ? Question: \<list of questions\> \```markdown \<Answer> ``` format
-
-### ? How do I change the default message
-```markdown
-You can change the default message if you use the QnAMakerDialog. 
-See [this link](https://docs.botframework.com/en-us/azure-bot-service/templates/qnamaker/#navtitle) for details. 
-```
