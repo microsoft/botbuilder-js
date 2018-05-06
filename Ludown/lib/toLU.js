@@ -63,11 +63,14 @@ module.exports = {
                 process.stderr.write(chalk.default.redBright('Output file: ' + path.join(outFolder, program.lu_File) + ' exists! You can use -n <lu file name> or -o <output_folder>\n'));
                 process.exit(retCode.OUTPUT_FILE_EXISTS);
             }
-
-            fs.writeFile(path.join(outFolder, program.lu_File), outFileContent, function (err) {
-                if (err) return process.stderr.write(err);
-                if(program.verbose) process.stdout.write(chalk.default.italic('Successfully wrote to ' + path.join(outFolder, program.lu_File)));
-              });
+            var outFileName = path.join(outFolder, program.lu_File);
+            try {
+                fs.writeFileSync(outFileName, outFileContent, 'utf-8');
+            } catch (err) {
+                process.stderr.write(chalk.default.redBright('Unable to write LU file - ' + outFileName + '\n'));
+                process.exit(retCode.UNABLE_TO_WRITE_FILE);
+            }
+            if(program.verbose) process.stdout.write(chalk.default.italic('Successfully wrote to ' + path.join(outFolder, program.lu_File)));
         } catch (err) {
             process.stderr.write(chalk.default.redBright('Oops! Something went wrong.\n'));
             process.stderr.write(chalk.yellow(err));
