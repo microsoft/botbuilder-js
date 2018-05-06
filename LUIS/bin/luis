@@ -52,14 +52,14 @@ async function runProgram() {
         return help(args, process.stdout);
     }
     if (args.version || args.v) {
-        return process.stdout.write(require(path.join(__dirname, '../package.json')).version);
+        return process.stdout.write(require(path.join(__dirname, '../package.json')).version + "\n");
     }
 
     // we have to run init before we attempt tload
     if (args._[0] == "init") {
         const result = await initializeConfig();
         if (result) {
-            process.stdout.write(`Successfully wrote ${process.cwd()}/.luisrc`);
+            process.stdout.write(`Successfully wrote ${process.cwd()}/.luisrc\n`);
         }
         return;
     }
@@ -88,7 +88,7 @@ async function runProgram() {
             }
             let answer = readlineSync.question(`Are you sure you want to delete the application ${result.name} (${result.id})? [no] `, { defaultResponse: 'no' });
             if (answer.length == 0 || answer[0] != 'y') {
-                process.stderr.write('delete operation canceled');
+                process.stderr.write('delete operation canceled\n');
                 process.exit(1);
                 return;
             }
@@ -125,20 +125,20 @@ async function runProgram() {
                             authoringKey: config.authoringKey,
                             subscriptionKey: config.subscriptionKey || config.authoringKey,
                             version: result.activeVersion || requestBody.initialVersionId
-                        }, null, 2));
+                        }, null, 2) + "\n");
                     } else {
-                        process.stdout.write(JSON.stringify(result, null, 2));
+                        process.stdout.write(JSON.stringify(result, null, 2) + "\n");
                     }
                     break;
 
                 default:
-                    process.stdout.write(JSON.stringify(result, null, 2));
+                    process.stdout.write(JSON.stringify(result, null, 2) + "\n");
                     break;
             }
             break;
 
         default:
-            process.stdout.write(JSON.stringify(result, null, 2));
+            process.stdout.write(JSON.stringify(result, null, 2) + "\n");
             break;
     }
 }
@@ -153,7 +153,8 @@ async function runProgram() {
  */
 async function initializeConfig() {
     process.stdout.write(chalk.cyan.bold('\nThis util will walk you through creating a .luisrc file\n\nPress ^C at any time to quit.\n\n'));
-    const validRegions = 'westus westus2 eastus eastus2 westcentralus southcentralus westeurope northeurope southeastasia eastasia australiaeast brazilsouth'.split(' ');
+    //const validRegions = 'westus westus2 eastus eastus2 westcentralus southcentralus westeurope northeurope southeastasia eastasia australiaeast brazilsouth'.split(' ');
+    const validRegions = 'westus westeurope australiaeast'.split(' ');
     const questions = [
         'What is your LUIS Authoring key (from luis.ai portal User Settings page)? ',
         `What is your region? [${validRegions.join(', ')}] `,
@@ -410,7 +411,7 @@ async function handleQueryCommand(args, config) {
         }
 
         let result = await request(options);
-        process.stdout.write(JSON.stringify(result, null, 2));
+        process.stdout.write(JSON.stringify(result, null, 2) + "\n");
         return;
     }
     return help(args);
@@ -448,7 +449,7 @@ async function handleSetCommand(args, config) {
         }
     }
     await fs.writeJson(path.join(process.cwd(), '.luisrc'), config, { spaces: 2 });
-    process.stdout.write(JSON.stringify(config, null, 4));
+    process.stdout.write(JSON.stringify(config, null, 4) + "\n");
     return true;
 }
 
