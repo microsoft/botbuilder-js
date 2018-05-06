@@ -60,7 +60,7 @@ function TestJson(file, done) {
     var context = new TestContext({ text: expected.text });
     var recognizer = new LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey, verbose: true, options: { verbose: true } });
     recognizer.recognize(context).then(res => {
-        if (!WithinDelta(expected, res, 0.01, false)) {
+        if (!WithinDelta(expected, res, 0.1, false)) {
             fs.outputJSONSync(newPath, res, { spaces: 2 });
             assert(false, "\nReturned JSON\n  " + newPath + "\n!= expected JSON\n  " + expectedPath);
         }
