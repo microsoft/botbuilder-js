@@ -1,0 +1,115 @@
+> # Intents
+
+## Greeting
+- Hi
+- Hello
+- Good morning
+- Good evening
+
+## Help
+- help
+- I need help
+- please help
+
+## AskForUserName
+- {userName=vishwac}
+- I'm {userName=vishwac}
+- call me {userName=vishwac}
+- my name is {userName=vishwac}
+- {userName=vishwac} is my name
+- you can call me {userName=vishwac}
+
+## CreateAlarm
+- create an alarm
+- create an alarm for 7AM
+- set an alarm for 7AM next thursday
+
+## DeleteAlarm
+- delete alarm
+- delete the {alarmTime} alarm
+
+
+
+## CommunicationPreference
+- set call as my communication preference
+- I prefer to receive text messages
+
+## Help
+- can you help
+
+
+
+> # Entity Types
+$userName:simple
+
+$PREBUILT:datetimeV2
+
+> # SYNONYMS
+
+> **NOTE:** your synonym definitions can be defined anywhere chunks, interleaved within a .lu file or even spread across .lu files.
+
+> This defines that **$comPreference** should map synonyms -> canonical **list** value
+
+$commPreference:call=
+- phone call
+- give me a ring
+- ring
+- call
+- cell phone
+- phone
+
+> This defines that **$comPreference** should map synonyms -> canonical **text** value
+
+$commPreference:text=
+- message
+- text
+- sms
+- text message
+
+> This defines that **$comPreference** should map synonyms -> canonical **fax** value
+
+$commPreference:fax=
+- fax
+- fascimile
+
+> This is a phrase list
+
+$ChocolateType:phraseList
+- m&m
+- mars
+- mints
+- spearmings
+- payday
+- jelly
+- kit kat
+- kitkat
+- twix
+
+> # QnA Definitions
+> This is a QnA definition. Follows # ? Question: \<list of questions\> \```markdown \<Answer> ``` format
+
+### ? How can I change the default message from QnA Maker?
+```markdown
+You can change the default message if you use the QnAMakerDialog. 
+See [this link](https://docs.botframework.com/en-us/azure-bot-service/templates/qnamaker/#navtitle) for details. 
+```
+
+### ?How do I programmatically update my KB?
+```markdown
+You can use our REST apis to manage your KB. 
+\#1. See here for details: https://westus.dev.cognitive.microsoft.com/docs/services/58994a073d9e04097c7ba6fe/operations/58994a073d9e041ad42d9baa
+```
+
+### ? Who is your ceo?
+- get me your ceo info
+```markdown
+Vishwac
+```
+
+> # QnA URLs 
+
+[External URL link for QnAMaker](https://docs.microsoft.com/en-in/azure/cognitive-services/qnamaker/faqs)
+
+> # File ref urls
+
+[None Intent definition](./none.lu)

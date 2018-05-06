@@ -1,0 +1,6 @@
+> This will fail because of missing list decoration. 
+> List decoration is required for utterances (Intent), synonyms (List entity, Phrase lists), Question variations in QnA pairs
+
+# Greeting
+Hi
+Hello
