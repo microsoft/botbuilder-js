@@ -1,0 +1,23 @@
+> # QnA Definitions
+> This is a QnA definition. Follows # ? Question: \<list of questions\> \```markdown \<Answer> ``` format
+
+### ? How do I change the default message
+```markdown
+You can change the default message if you use the QnAMakerDialog. 
+See [this link](https://docs.botframework.com/en-us/azure-bot-service/templates/qnamaker/#navtitle) for details. 
+```
+
+### ? What is Ludown? 
+- ludown cli
+- where can i get more information about ludown cli?
+
+**Filters:**
+- ludown = awesome
+
+```markdown
+You can find all about ludown cli [here](https://github.com/Microsoft/botbuilder-tools/tree/master/Ludown)
+```
+
+
+> You can add URLs for QnA maker to ingest using the #URL reference scheme
+[QnA URL - faqs](https://docs.microsoft.com/en-in/azure/cognitive-services/qnamaker/faqs)
