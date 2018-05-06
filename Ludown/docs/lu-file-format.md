@@ -196,7 +196,7 @@ You can add multiple questions to the same answer by simply additing variations 
 	```
 ```
 
-### External references
+## External references
 Two different references are supported in the .lu file. These follow Markdown link syntax.
 - Reference to another .lu file via `\[link name](\<.lu file name\>)`. Reference can be an absolute path or a relative path from the containing .lu file.
 - Reference to URL for QnAMaker to ingest during KB creation via `\[link name](\<URL\>)`
