@@ -77,7 +77,7 @@ module.exports = {
                     process.stderr.write(chalk.default.redBright('Sorry, error reading file:' + file + '\n'));    
                     process.exit(retCode.FILE_OPEN_ERROR);
                 }
-                if(program.verbose) process.stdout.write(chalk.cyan('Parsing file: ' + file + '\n'));
+                if(program.verbose) process.stdout.write(chalk.default.whiteBright('Parsing file: ' + file + '\n'));
                 var parsedContent = parseFileContents.parseFile(fileContent, program.verbose);
                 if (!parsedContent) {
                     process.stderr.write(chalk.default.redBright('Sorry, file ' + file + 'had invalid content\n'));
@@ -155,36 +155,42 @@ module.exports = {
                 }
             }
             if((cmd == 'luis') && writeLUISFile) {
+                var fLuisJson = JSON.stringify(finalLUISJSON, null, 2);
+                var luisFilePath = path.join(outFolder, program.lOutFile);
                 // write out the final LUIS Json
-                fs.writeFileSync(outFolder + '\\' + program.lOutFile, JSON.stringify(finalLUISJSON, null, 2), function(error) {
-                    if(error) {
-                        process.stderr.write(chalk.default.redBright('Unable to write LUIS JSON file - ' + outFolder + '\\' + program.lOutFile + '\n'));
-                        process.exit(retCode.UNABLE_TO_WRITE_FILE);
-                    } 
-                });
-                if(program.verbose) process.stdout.write(chalk.green('Successfully wrote LUIS model to ' + outFolder + '\\' + program.lOutFile + '\n'));
+                try {
+                    fs.writeFileSync(luisFilePath, fLuisJson, 'utf-8');
+                } catch (err) {
+                    process.stderr.write(chalk.default.redBright('Unable to write LUIS JSON file - ' + path.join(outFolder, program.lOutFile) + '\n'));
+                    process.exit(retCode.UNABLE_TO_WRITE_FILE);
+                }
+                if(program.verbose) process.stdout.write(chalk.default.italic('Successfully wrote LUIS model to ' + path.join(outFolder, program.lOutFile) + '\n'));
             }
             if((cmd == 'qna') && writeQnAFile) {
+                var qnaJson = JSON.stringify(finalQnAJSON, null, 2);
+                var qnaFilePath = path.join(outFolder, program.qOutFile);
                 // write out the final LUIS Json
-                fs.writeFileSync(outFolder + '\\' + program.qOutFile, JSON.stringify(finalQnAJSON, null, 2), function(error) {
-                    if(error) {
-                        process.stderr.write(chalk.default.redBright('Unable to write QnA JSON file - ' + outFolder + '\\' + program.qOutFile + '\n'));
-                        process.exit(retCode.UNABLE_TO_WRITE_FILE);
-                    } 
-                });
-                if(program.verbose) process.stdout.write(chalk.green('Successfully wrote QnA KB to ' + outFolder + '\\' + program.qOutFile + '\n'));
+                try {
+                    fs.writeFileSync(qnaFilePath, qnaJson, 'utf-8');
+                } catch (err) {
+                    process.stderr.write(chalk.default.redBright('Unable to write QnA JSON file - ' + path.join(outFolder, program.qOutFile) + '\n'));
+                    process.exit(retCode.UNABLE_TO_WRITE_FILE);
+                }
+                if(program.verbose) process.stdout.write(chalk.default.italic('Successfully wrote QnA KB to ' + path.join(outFolder, program.qOutFile) + '\n'));
             }
             // write luis batch test file if requested
             if((cmd == 'luis') && program.write_luis_batch_tests) {
-                var LUISBatchFileName = program.lOutFile.replace("_LUISApp.json","_LUISBatchTest.json");
+                var lBatchFile = JSON.stringify(finalLUISJSON.utterances, null, 2);
+                var LUISBatchFileName = program.lOutFile.replace(".json","_LUISBatchTest.json");
+                var lBFileName = path.join(outFolder, LUISBatchFileName);
                 // write out the final LUIS Json
-                fs.writeFileSync(outFolder + '\\' + LUISBatchFileName, JSON.stringify(finalLUISJSON.utterances, null, 2), function(error) {
-                    if(error) {
-                        process.stderr.write(chalk.default.redBright('Unable to write LUIS batch test JSON file - ' + outFolder + '\\' + LUISBatchFileName + '\n'));
-                        process.exit(retCode.UNABLE_TO_WRITE_FILE);
-                    } 
-                });
-                if(program.verbose) console.log(chalk.green('Successfully wrote LUIS batch test JSON file to ' + outFolder + '\\' +  LUISBatchFileName + '\n'));
+                try {
+                    fs.writeFileSync(lBFileName, lBatchFile, 'utf-8');
+                } catch (err) {
+                    process.stderr.write(chalk.default.redBright('Unable to write LUIS batch test JSON file - ' + path.join(outFolder, LUISBatchFileName) + '\n'));
+                    process.exit(retCode.UNABLE_TO_WRITE_FILE);
+                }
+                if(program.verbose) console.log(chalk.default.italic('Successfully wrote LUIS batch test JSON file to ' + path.join(outFolder, LUISBatchFileName) + '\n'));
             }
             process.exit(retCode.SUCCESS);
         } catch (err) {

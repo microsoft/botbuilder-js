@@ -29,7 +29,7 @@ program
         process.exit(retCode.UNKNOWN_OPTIONS);
     } else {
         if (!program.in && !program.lu_folder) {
-            process.stderr.write(chalk.default.redBright(`\n  No .lu file or folder specified.`));
+            process.stderr.write(chalk.default.redBright(`\n  No .lu file or folder specified.\n`));
             program.help();
             process.exit(retCode.UNKNOWN_OPTIONS);
         } 
