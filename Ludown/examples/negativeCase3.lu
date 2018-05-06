@@ -1,8 +1,0 @@
-# Menu
-- I want {foodType=pizza} for {meal=dinner}
-
-$foodType:list
-
-$foodType:pizza=
-- pizza
-- cheese pizza
