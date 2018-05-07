@@ -2,7 +2,7 @@
   "name": "botbuilder-choices",
   "author": "Microsoft Corp.",
   "description": "Microsoft BotBuilder tools for working with choices.",
-  "version": "4.0.0-preview1.1",
+  "version": "4.0.0-preview1.2",
   "license": "MIT",
   "keywords": [
     "botbuilder",
@@ -21,7 +21,7 @@
   "typings": "./lib/index.d.ts",
   "dependencies": {
     "@types/node": "^9.3.0",
-    "botbuilder": "4.0.0-preview1.1",
+    "botbuilder": "4.0.0-preview1.2",
     "@microsoft/recognizers-text-suite": "^1.0.0"
   },
   "devDependencies": {

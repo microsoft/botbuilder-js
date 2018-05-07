@@ -1,8 +1,8 @@
 {
   "name": "botbuilder-core",
   "author": "Microsoft Corp.",
-  "description": "Bot Builder core library. Bot Builder is a toolkit for building rich bots on virtually any platform.",
-  "version": "4.0.0-preview1.1",
+  "description": "Bot Builder core library. Minimal interfaces and types needed by all components.",
+  "version": "4.0.0-preview1.2",
   "license": "MIT",
   "keywords": [
     "botbuilder",
@@ -21,7 +21,7 @@
   "typings": "./lib/index.d.ts",
   "dependencies": {
     "@types/node": "^9.3.0",
-    "botframework-schema": "4.0.0-preview1.1",
+    "botframework-schema": "4.0.0-preview1.2",
     "assert": "^1.4.1"
   },
   "devDependencies": {

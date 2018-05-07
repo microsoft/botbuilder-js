@@ -1,8 +1,8 @@
 {
   "name": "botbuilder",
   "author": "Microsoft Corp.",
-  "description": "Services for Microsoft BotBuilder.",
-  "version": "4.0.0-preview1.1",
+  "description": "Bot Builder is a framework for building rich bots on virtually any platform.",
+  "version": "4.0.0-preview1.2",
   "license": "MIT",
   "keywords": [
     "botbuilder",
@@ -23,9 +23,9 @@
     "@types/node": "^9.3.0",
     "@types/filenamify": "^2.0.1",
     "async-file": "^2.0.2",
-    "botbuilder-core": "4.0.0-preview1.1",
-    "botbuilder-core-extensions": "4.0.0-preview1.1",
-    "botframework-connector": "4.0.0-preview1.1",
+    "botbuilder-core": "4.0.0-preview1.2",
+    "botbuilder-core-extensions": "4.0.0-preview1.2",
+    "botframework-connector": "4.0.0-preview1.2",
     "filenamify": "^2.0.0",
     "readline": "^1.3.0"
   },
