@@ -5,6 +5,7 @@
 const fs = require('fs');
 const path = require('path');
 const chalk = require('chalk');
+const txtfile = require('read-text-file');
 const LUISObjNameEnum = require('./enums/luisobjenum');
 const PARSERCONSTS = require('./enums/parserconsts');
 const builtInTypes = require('./enums/luisbuiltintypes');
@@ -12,7 +13,6 @@ const parseFileContents = require('./parseFileContents');
 const prebuiltTypes = require('./enums/luisbuiltintypes');
 const deepEqual = require('deep-equal');
 const retCode = require('./enums/CLI-errors');
-const readFile = require('read-text-file');
 
 module.exports = {
     /**
@@ -73,7 +73,7 @@ module.exports = {
                     process.stderr.write(chalk.default.redBright('Sorry unable to open [' + file + ']\n'));        
                     process.exit(retCode.FILE_OPEN_ERROR);
                 }
-                var fileContent = readFile(file);
+                var fileContent = txtfile.readFileSync(file);
                 if (!fileContent) {
                     process.stderr.write(chalk.default.redBright('Sorry, error reading file:' + file + '\n'));    
                     process.exit(retCode.FILE_OPEN_ERROR);

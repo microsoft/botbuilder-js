@@ -3,6 +3,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const {spawn} = require('child_process');
 const qnamaker = path.resolve('../bin/qnamaker');
+const txtfile = require('read-text-file');
 
 describe('The LUIS cli --init argument', () => {
     const rcPath = path.resolve('.qnamakerrc');
@@ -61,7 +62,7 @@ describe('The LUIS cli --init argument', () => {
             });
         });
 
-        const rc = await fs.readJson(rcPath);
+        const rc = JSON.parse(await txtfile.read(rcPath));
         assert(rc.subscriptionKey === '' + subscriptionKey);
         assert(rc.knowledgeBaseID === '' + knowledgeBaseId);
         assert(rc.endpoint === `https://${location}.api.cognitive.microsoft.com/qnamaker/v2.0`);

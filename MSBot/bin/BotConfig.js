@@ -10,6 +10,7 @@ const linq_collections_1 = require("linq-collections");
 const path = require("path");
 const process = require("process");
 const uuid = require("uuid");
+const txtfile = require("read-text-file");
 const models_1 = require("./models");
 const schema_1 = require("./schema");
 class BotConfig extends models_1.BotConfigModel {
@@ -39,7 +40,7 @@ class BotConfig extends models_1.BotConfigModel {
     // load the config file
     static async Load(botpath, secret) {
         let bot = new BotConfig(secret);
-        Object.assign(bot, await fsx.readJson(botpath));
+        Object.assign(bot, JSON.parse(await txtfile.read(botpath)));
         bot.internal.location = botpath;
         let hasSecret = (secret && bot.secretKey && bot.secretKey.length > 0);
         if (hasSecret)

@@ -6,7 +6,7 @@ const chalk = require('chalk');
 const fs = require('fs');
 const path = require('path');
 const retCode = require('./enums/CLI-errors');
-const readFile = require('read-text-file');
+const txtfile = require('read-text-file');
 
 module.exports = {
     generateMarkdown(program) {
@@ -91,7 +91,7 @@ var parseLUISFile = function(file) {
         process.stderr.write(chalk.default.redBright('Sorry unable to open [' + file + ']\n'));        
         process.exit(retCode.FILE_OPEN_ERROR);
     }
-    var LUISFileContent = readFile.readSync(file);
+    var LUISFileContent = txtfile.readSync(file);
     if (!LUISFileContent) {
         process.stderr.write(chalk.default.redBright('Sorry, error reading file: ' + file + '\n'));    
         process.exit(retCode.FILE_OPEN_ERROR);
@@ -122,7 +122,7 @@ var parseQnAJSONFile = function(file){
         process.stderr.write(chalk.default.redBright('Sorry unable to open [' + file + ']\n'));        
         process.exit(retCode.FILE_OPEN_ERROR);
     }
-    var QNAFileContent = readFile.readSync(file);
+    var QNAFileContent = txtfile.readSync(file);
     if (!QNAFileContent) {
         process.stderr.write(chalk.default.redBright('Sorry, error reading file: ' + file + '\n'));    
         process.exit(retCode.FILE_OPEN_ERROR);

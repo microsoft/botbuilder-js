@@ -22,6 +22,7 @@ const chalk = require('chalk');
 const help = require('../lib/help');
 const qnamaker = require('../lib');
 const manifest = require('../lib/api/qnamaker');
+const txtfile = require('read-text-file');
 const { getServiceManifest } = require('../lib/utils/argsUtil');
 const request = require('request-promise-native');
 const Knowledgebase = require('../lib/api/knowledgebase');
@@ -265,7 +266,7 @@ async function getFileInput(args) {
         return null;
     }
     // Let any errors fall through to the runProgram() promise
-    return await fs.readJson(path.resolve(args.in));
+    return JSON.parse(await txtfile.read(path.resolve(args.in)));
 }
 
 /**
@@ -282,7 +283,7 @@ async function composeConfig() {
     let config;
     try {
         await fs.access(path.join(process.cwd(), '.qnamakerrc'), fs.R_OK);
-        qnamakerrcJson = await fs.readJson(path.join(process.cwd(), '.qnamakerrc'));
+        qnamakerrcJson = JSON.parse(await txtfile.read(path.join(process.cwd(), '.qnamakerrc')));
     } catch (e) {
         // Do nothing
     } finally {

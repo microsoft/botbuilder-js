@@ -6,9 +6,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const chalk = require("chalk");
 const program = require("commander");
-const fs = require("fs-extra");
 const getStdin = require("get-stdin");
 const validurl = require("valid-url");
+const txtfile = require("read-text-file");
 const BotConfig_1 = require("./BotConfig");
 const models_1 = require("./models");
 const schema_1 = require("./schema");
@@ -61,7 +61,7 @@ async function processConnectAzureArgs(config) {
         Object.assign(args, JSON.parse(await getStdin()));
     }
     else if (args.input != null) {
-        Object.assign(args, JSON.parse(fs.readFileSync(args.input, 'utf8')));
+        Object.assign(args, JSON.parse(await txtfile.read(args.input)));
     }
     if (!args.id || args.id.length == 0)
         throw new Error('Bad or missing --id for registered bot');
@@ -98,7 +98,6 @@ async function processConnectAzureArgs(config) {
             endpoint: args.endpoint
         });
         config.connectService(endpointService);
-        process.stdout.write(`Connected ${endpointService.type}:${endpointService.endpoint}\n`);
         services.push(endpointService);
     }
     await config.save();
