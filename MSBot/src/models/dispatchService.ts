@@ -16,11 +16,12 @@ export class DispatchService extends ConnectedService implements IDispatchServic
     constructor(source: IDispatchService = {} as IDispatchService) {
         super(source);
         const { appId = '', authoringKey = '', serviceIds = [], subscriptionKey = '', version = '' } = source;
+        this.id = appId;
         Object.assign(this, { appId, authoringKey, serviceIds, subscriptionKey, version });
     }
 
     public toJSON(): IDispatchService {
-        const { appId, id, authoringKey, name, serviceIds, subscriptionKey, version } = this;
-        return { appId, id, authoringKey, name, serviceIds, subscriptionKey, type: ServiceType.Dispatch, version };
+        const { appId, authoringKey, name, serviceIds, subscriptionKey, version } = this;
+        return {  type: ServiceType.Dispatch, id: appId, name, appId, authoringKey, serviceIds, subscriptionKey, version };
     }
 }

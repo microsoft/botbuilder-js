@@ -15,13 +15,14 @@ export class QnaMakerService extends ConnectedService implements IQnAService {
 
     constructor(source: IQnAService = {} as IQnAService) {
         super(source);
-        let { kbId = '', name = '', subscriptionKey = '', endpointKey = '', hostname = '' } = source;
+        let { id = '', name = '', kbId = '', subscriptionKey = '', endpointKey = '', hostname = '' } = source;
+        this.id = kbId;
         hostname = url.resolve(source.hostname, '/qnamaker');
-        Object.assign(this, { kbId, name, subscriptionKey, endpointKey, hostname });
+        Object.assign(this, { id, name, kbId, subscriptionKey, endpointKey, hostname });
     }
 
     public toJSON(): IQnAService {
-        const { kbId, id, name, subscriptionKey, endpointKey, hostname } = this;
-        return { kbId, name, type: ServiceType.QnA, subscriptionKey, id, endpointKey, hostname };
+        const { id, name, kbId, subscriptionKey, endpointKey, hostname } = this;
+        return { type: ServiceType.QnA, id: kbId, name, kbId, subscriptionKey, endpointKey, hostname };
     }
 }

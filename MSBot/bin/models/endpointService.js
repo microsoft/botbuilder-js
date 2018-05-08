@@ -14,11 +14,12 @@ class EndpointService extends connectedService_1.ConnectedService {
         this.appPassword = '';
         this.endpoint = '';
         const { appId = '', appPassword = '', endpoint = '' } = source;
+        this.id = endpoint;
         Object.assign(this, { appId, appPassword, endpoint });
     }
     toJSON() {
         const { appId = '', id = '', appPassword = '', endpoint = '', name = '' } = this;
-        return { appId, id, type: schema_1.ServiceType.Endpoint, appPassword, endpoint, name };
+        return { type: schema_1.ServiceType.Endpoint, name, id: endpoint, appId, appPassword, endpoint };
     }
 }
 exports.EndpointService = EndpointService;

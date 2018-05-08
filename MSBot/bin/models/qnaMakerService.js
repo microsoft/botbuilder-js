@@ -15,13 +15,14 @@ class QnaMakerService extends connectedService_1.ConnectedService {
         this.subscriptionKey = '';
         this.hostname = '';
         this.endpointKey = '';
-        let { kbId = '', name = '', subscriptionKey = '', endpointKey = '', hostname = '' } = source;
+        let { id = '', name = '', kbId = '', subscriptionKey = '', endpointKey = '', hostname = '' } = source;
+        this.id = kbId;
         hostname = url.resolve(source.hostname, '/qnamaker');
-        Object.assign(this, { kbId, name, subscriptionKey, endpointKey, hostname });
+        Object.assign(this, { id, name, kbId, subscriptionKey, endpointKey, hostname });
     }
     toJSON() {
-        const { kbId, id, name, subscriptionKey, endpointKey, hostname } = this;
-        return { kbId, name, type: schema_1.ServiceType.QnA, subscriptionKey, id, endpointKey, hostname };
+        const { id, name, kbId, subscriptionKey, endpointKey, hostname } = this;
+        return { type: schema_1.ServiceType.QnA, id: kbId, name, kbId, subscriptionKey, endpointKey, hostname };
     }
 }
 exports.QnaMakerService = QnaMakerService;

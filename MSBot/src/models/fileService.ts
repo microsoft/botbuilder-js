@@ -12,11 +12,12 @@ export class FileService extends ConnectedService implements IFileService {
     constructor(source: IFileService = {} as IFileService) {
         super(source);
         const { filePath = '' } = source;
+        this.id = filePath;
         this.filePath = filePath;
     }
 
     public toJSON(): IFileService {
         const { name = '', id = '', filePath = '' } = this;
-        return { name, id, filePath, type: ServiceType.File };
+        return { type: ServiceType.File, id: filePath, name, filePath, };
     }
 }

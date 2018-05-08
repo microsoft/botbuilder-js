@@ -15,11 +15,12 @@ class LuisService extends connectedService_1.ConnectedService {
         this.subscriptionKey = '';
         this.version = '';
         const { appId = '', authoringKey = '', subscriptionKey = '', version = '' } = source;
+        this.id = appId;
         Object.assign(this, { appId, authoringKey, subscriptionKey, version });
     }
     toJSON() {
         const { appId, authoringKey, id, name, subscriptionKey, type, version } = this;
-        return { id, type, name, version, appId, authoringKey, subscriptionKey };
+        return { type: schema_1.ServiceType.Luis, id: appId, name, version, appId, authoringKey, subscriptionKey };
     }
 }
 exports.LuisService = LuisService;

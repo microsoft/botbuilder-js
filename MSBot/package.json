@@ -1,6 +1,6 @@
 {
   "name": "msbot",
-  "version": "1.0.49",
+  "version": "1.0.50",
   "description": "MSBot command line tool for manipulating Microsoft Bot Framework .bot files",
   "main": "bin/BotConfig.js",
   "bin": {
