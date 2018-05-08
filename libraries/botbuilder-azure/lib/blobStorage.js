@@ -95,7 +95,7 @@ class BlobStorage {
                 };
                 let payload = JSON.stringify(documentChange);
                 let options = {
-                    accessConditions: changes[key].eTag === "*" ? azure.AccessCondition.generateEmptyCondition() : azure.AccessCondition.generateIfMatchCondition(changes[key].eTag),
+                    accessConditions: changes[key].eTag === '*' ? azure.AccessCondition.generateEmptyCondition() : azure.AccessCondition.generateIfMatchCondition(changes[key].eTag),
                     parallelOperationThreadCount: 4
                 };
                 return {
