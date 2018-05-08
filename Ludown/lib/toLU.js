@@ -91,7 +91,7 @@ var parseLUISFile = function(file) {
         process.stderr.write(chalk.default.redBright('Sorry unable to open [' + file + ']\n'));        
         process.exit(retCode.FILE_OPEN_ERROR);
     }
-    var LUISFileContent = txtfile.readFileSync(file);
+    var LUISFileContent = txtfile.readSync(file);
     if (!LUISFileContent) {
         process.stderr.write(chalk.default.redBright('Sorry, error reading file: ' + file + '\n'));    
         process.exit(retCode.FILE_OPEN_ERROR);
@@ -166,7 +166,6 @@ var constructMdFile = function(LUISJSON, QnAJSONFromTSV, luisFile, QnAFile) {
             });
         }
     
-        // TODO: fix duplicate utterances due to patterns.
         if(LUISJSON.model.patterns.length >= 0) {
             LUISJSON.model.patterns.forEach(function(patternObj) {
                 var intentInObj = luisObj.intents.filter(function(item) {
