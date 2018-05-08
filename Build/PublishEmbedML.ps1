@@ -30,7 +30,7 @@ $result = git status
 Write-Host "git status result: [$result]"
 
 if ($result.StartsWith('nothing to commit')) {
-    throw ("No changes to push. Was this EmbedML version already uploaded?");
+    throw ("Push aborted: No changes found to push. Were these files previously merged?");
 }
 git commit -m "Push signed EmbedML files."
 git push origin $newBranchName
