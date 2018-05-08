@@ -17,8 +17,7 @@ Set-PSDebug -Trace 1
 git checkout master
 git pull origin master
 git checkout -b $newBranchName master
-$result = git status
-Write-Host "git status result: [$result]"
+#git status
 Set-PSDebug -Trace 0
 
 Remove-Item -Force -Verbose '.\Dispatch\bin\netcoreapp2.0\*.*'
@@ -27,7 +26,8 @@ Copy-item -Force -Verbose ($artifactsPath + '\EmbedML*\**') -Destination '.\Disp
 Set-PSDebug -Trace 1
 git add .
 git add -u
-git status
+$result = git status
+Write-Host "git status result: [$result]"
 git commit -m "Push signed EmbedML files."
 git push origin $newBranchName
 #git status
