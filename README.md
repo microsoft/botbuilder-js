@@ -6,7 +6,7 @@ Bot Builder tools are designed to cover end-to-end bot development workflow and 
 - [![npm version](https://badge.fury.io/js/luis-apis.svg)](https://badge.fury.io/js/luis-apis) [LUIS](https://github.com/Microsoft/botbuilder-tools/tree/master/LUIS): Create and manage your [LUIS.ai](http://luis.ai) application
 - [![npm version](https://badge.fury.io/js/qnamaker.svg)](https://badge.fury.io/js/qnamaker) [QnAMaker](https://github.com/Microsoft/botbuilder-tools/tree/master/QnAMaker): Create and manage [QnAMaker.ai](http://qnamaker.ai) Knowledge Base.
 - [![npm version](https://badge.fury.io/js/botdispatch.svg)](https://badge.fury.io/js/botdispatch) [Dispatch](https://github.com/Microsoft/botbuilder-tools/tree/master/Dispatch): Bring disparate language understanding models to work together for your bot
-- [![npm version](https://badge.fury.io/js/luisgen.svg)](https://badge.fury.io/js/botdispatch) [LUISGen](https://github.xom/Microsoft/botbuilder-tools/tree/master/LUISGen): Generate C# class or Typescript interface over a LUIS model.
+- [![npm version](https://badge.fury.io/js/luisgen.svg)](https://badge.fury.io/js/botdispatch) [LUISGen](https://github.com/Microsoft/botbuilder-tools/tree/master/LUISGen): Generate C# class or Typescript interface over a LUIS model.
 
 To install all CLI tools:
 
