@@ -154,7 +154,7 @@ export class BlobStorage implements Storage {
 
                 let payload = JSON.stringify(documentChange);
                 let options: azure.BlobService.CreateBlobRequestOptions = {
-                    accessConditions: azure.AccessCondition.generateIfMatchCondition(changes[key].eTag),
+                    accessConditions: changes[key].eTag === "*" ? azure.AccessCondition.generateEmptyCondition() : azure.AccessCondition.generateIfMatchCondition(changes[key].eTag),
                     parallelOperationThreadCount: 4
                 };
 
