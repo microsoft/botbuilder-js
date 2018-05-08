@@ -154,7 +154,7 @@ export class BlobStorage implements Storage {
 
                 let payload = JSON.stringify(documentChange);
                 let options: azure.BlobService.CreateBlobRequestOptions = {
-                    accessConditions: azure.AccessCondition.generateIfMatchCondition(changes[key].eTag),
+                    accessConditions: changes[key].eTag === '*' ? azure.AccessCondition.generateEmptyCondition() : azure.AccessCondition.generateIfMatchCondition(changes[key].eTag),
                     parallelOperationThreadCount: 4
                 };
 
@@ -199,8 +199,8 @@ export class BlobStorage implements Storage {
             throw new Error('Please provide a not empty key.');
         }
 
-        let segments = key.split('/');
-        let base = segments.splice(0)[0];
+        let segments = key.split('/').filter(x => x);
+        let base = segments.splice(0, 1)[0];
         // The number of path segments comprising the blob name cannot exceed 254
         let validKey = segments.reduce((acc, curr, index) => [acc, curr].join(index < 255 ? '/' : ''), base);
         // Reserved URL characters must be escaped.
