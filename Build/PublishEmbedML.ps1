@@ -13,26 +13,22 @@ Write-Host "Copying files from" ($artifactsPath + '\EmbedML*\**')
 git config --global user.email "v-brhale@micrsoft.com"
 git config --global user.name "BruceHaley"
 
-Set-PSDebug -Trace 1
 git checkout master
 git pull origin master
 git checkout -b $newBranchName master
-#git status
-Set-PSDebug -Trace 0
 
+Write-Host 'Deleting the old files'
 Remove-Item -Force -Verbose '.\Dispatch\bin\netcoreapp2.0\*.*'
+Write-Host 'Copying the new files'
 Copy-item -Force -Verbose ($artifactsPath + '\EmbedML*\**') -Destination '.\Dispatch\bin\netcoreapp2.0'
 
-Set-PSDebug -Trace 1
 git add .
 git add -u
 $result = git status
 Write-Host "git status result: [$result]"
 
 if ($result.StartsWith('nothing to commit')) {
-    throw ("Push aborted: No changes found to push. Were these files previously merged?");
+    throw ("Push aborted: No changes found to push. Were these same files already merged previously?");
 }
 git commit -m "Push signed EmbedML files."
 git push origin $newBranchName
-#git status
-Set-PSDebug -Trace 0
