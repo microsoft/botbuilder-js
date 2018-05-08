@@ -122,7 +122,7 @@ var parseQnAJSONFile = function(file){
         process.stderr.write(chalk.default.redBright('Sorry unable to open [' + file + ']\n'));        
         process.exit(retCode.FILE_OPEN_ERROR);
     }
-    var QNAFileContent = txtfile.readFileSync(file);
+    var QNAFileContent = txtfile.readSync(file);
     if (!QNAFileContent) {
         process.stderr.write(chalk.default.redBright('Sorry, error reading file: ' + file + '\n'));    
         process.exit(retCode.FILE_OPEN_ERROR);
