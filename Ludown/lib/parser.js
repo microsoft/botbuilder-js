@@ -12,6 +12,7 @@ const parseFileContents = require('./parseFileContents');
 const prebuiltTypes = require('./enums/luisbuiltintypes');
 const deepEqual = require('deep-equal');
 const retCode = require('./enums/CLI-errors');
+const readFile = require('read-text-file');
 
 module.exports = {
     /**
@@ -72,7 +73,7 @@ module.exports = {
                     process.stderr.write(chalk.default.redBright('Sorry unable to open [' + file + ']\n'));        
                     process.exit(retCode.FILE_OPEN_ERROR);
                 }
-                var fileContent = fs.readFileSync(file,'utf8');
+                var fileContent = readFile(file);
                 if (!fileContent) {
                     process.stderr.write(chalk.default.redBright('Sorry, error reading file:' + file + '\n'));    
                     process.exit(retCode.FILE_OPEN_ERROR);
