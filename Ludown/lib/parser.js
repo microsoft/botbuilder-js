@@ -13,7 +13,6 @@ const parseFileContents = require('./parseFileContents');
 const prebuiltTypes = require('./enums/luisbuiltintypes');
 const deepEqual = require('deep-equal');
 const retCode = require('./enums/CLI-errors');
-const txtfile = require('read-text-file');
 
 module.exports = {
     /**
