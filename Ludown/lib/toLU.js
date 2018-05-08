@@ -6,6 +6,8 @@ const chalk = require('chalk');
 const fs = require('fs');
 const path = require('path');
 const retCode = require('./enums/CLI-errors');
+const readFile = require('read-text-file');
+
 module.exports = {
     generateMarkdown(program) {
         try {
@@ -89,7 +91,7 @@ var parseLUISFile = function(file) {
         process.stderr.write(chalk.default.redBright('Sorry unable to open [' + file + ']\n'));        
         process.exit(retCode.FILE_OPEN_ERROR);
     }
-    var LUISFileContent = fs.readFileSync(file,'utf8');
+    var LUISFileContent = readFile.readSync(file);
     if (!LUISFileContent) {
         process.stderr.write(chalk.default.redBright('Sorry, error reading file: ' + file + '\n'));    
         process.exit(retCode.FILE_OPEN_ERROR);
@@ -120,7 +122,7 @@ var parseQnAJSONFile = function(file){
         process.stderr.write(chalk.default.redBright('Sorry unable to open [' + file + ']\n'));        
         process.exit(retCode.FILE_OPEN_ERROR);
     }
-    var QNAFileContent = fs.readFileSync(file,'utf8');
+    var QNAFileContent = readFile.readSync(file);
     if (!QNAFileContent) {
         process.stderr.write(chalk.default.redBright('Sorry, error reading file: ' + file + '\n'));    
         process.exit(retCode.FILE_OPEN_ERROR);
@@ -164,7 +166,6 @@ var constructMdFile = function(LUISJSON, QnAJSONFromTSV, luisFile, QnAFile) {
             });
         }
     
-        // TODO: fix duplicate utterances due to patterns.
         if(LUISJSON.model.patterns.length >= 0) {
             LUISJSON.model.patterns.forEach(function(patternObj) {
                 var intentInObj = luisObj.intents.filter(function(item) {
