@@ -17,6 +17,7 @@ const chalk = require('chalk');
 const minimist = require('minimist');
 const help = require('../lib/help');
 const chatdown = require('../lib/index');
+const txtfile = require('read-text-file');
 
 /**
  * Retrieves the content to be parsed from a file if
@@ -31,7 +32,7 @@ const chatdown = require('../lib/index');
 function getInput(args) {
     if (args._.length > 0) {
         args.in = args._[0];
-        return fs.readFile(path.resolve(args.in), 'utf-8');
+        return txtfile.readSync(path.resolve(args.in));
     }
     else {
         return new Promise((resolve, reject) => {
