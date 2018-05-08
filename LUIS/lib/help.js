@@ -6,6 +6,7 @@ const Table = require('cli-table2');
 const chalk = require('chalk');
 const fs = require('fs');
 const path = require('path');
+const txtfile = require('read-text-file');
 const manifest = require('./api/luis');
 const windowSize = require('window-size');
 const { getServiceManifest, getCategoryManifest, getNamedArgsMap } = require('./utils/argsUtil');
@@ -335,7 +336,7 @@ function getHelpContentsForService(serviceManifest, output) {
 
 function getEntityTypeExample(entityType) {
     var examplePath = path.join(__dirname, `../examples/${entityType}.json`);
-    let json = fs.readFileSync(examplePath, { encoding: 'utf8' }).replace(/[\r\f]+/g, '\n');
+    let json = txtfile.readSync(examplePath).replace(/[\r\f]+/g, '\n');
     return json;
 }
 

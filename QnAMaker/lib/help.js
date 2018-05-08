@@ -6,6 +6,7 @@ const Table = require('cli-table2');
 const chalk = require('chalk');
 const path = require('path');
 const fs = require('fs');
+const txtfile = require('read-text-file');
 const manifest = require('./api/qnamaker');
 const windowSize = require('window-size');
 const { getServiceManifest } = require('../lib/utils/argsUtil');
@@ -313,7 +314,7 @@ function getHelpContentsForService(serviceManifest, output) {
 function getEntityTypeExample(entityType) {
     try {
         var examplePath = path.join(__dirname, `../examples/${entityType}.json`);
-        let json = fs.readFileSync(examplePath, { encoding: 'utf8' }).replace(/[\r\f]+/g, '\n');
+        let json = txtfile.readSync(examplePath).replace(/[\r\f]+/g, '\n');
         return json;
     } catch (error) {
         return `{/*example for ${entityType} missing*/}`;

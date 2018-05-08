@@ -28,6 +28,7 @@
     "chalk": "^2.3.2",
     "commander": "^2.15.1",
     "deep-equal": "^1.0.1",
+    "read-text-file": "^1.1.0",
     "semver": "^5.5.0"
   }
 }

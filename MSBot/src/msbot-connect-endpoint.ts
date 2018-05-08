@@ -6,6 +6,7 @@ import * as chalk from 'chalk';
 import * as program from 'commander';
 import * as fs from 'fs-extra';
 import * as getStdin from 'get-stdin';
+import * as txtfile from 'read-text-file';
 import { Enumerable } from 'linq-collections';
 import * as validurl from 'valid-url';
 import { BotConfig } from './BotConfig';
@@ -69,7 +70,7 @@ async function processConnectEndpointArgs(config: BotConfig): Promise<BotConfig>
         Object.assign(args, JSON.parse(await getStdin()));
     }
     else if (args.input != null) {
-        Object.assign(args, JSON.parse(fs.readFileSync(<string>args.input, 'utf8')));
+        Object.assign(args, JSON.parse(await txtfile.read(<string>args.input)));
     }
 
     if (!args.endpoint)

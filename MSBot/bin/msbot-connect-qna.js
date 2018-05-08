@@ -6,8 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const chalk = require("chalk");
 const program = require("commander");
-const fs = require("fs-extra");
 const getStdin = require("get-stdin");
+const txtfile = require("read-text-file");
 const BotConfig_1 = require("./BotConfig");
 const models_1 = require("./models");
 const utils_1 = require("./utils");
@@ -59,7 +59,7 @@ async function processConnectQnaArgs(config) {
         Object.assign(args, JSON.parse(await getStdin()));
     }
     else if (args.input != null) {
-        Object.assign(args, JSON.parse(fs.readFileSync(args.input, 'utf8')));
+        Object.assign(args, JSON.parse(await txtfile.read(args.input)));
     }
     if (!args.kbId || !utils_1.uuidValidate(args.kbId))
         throw new Error('bad or missing --kbId');

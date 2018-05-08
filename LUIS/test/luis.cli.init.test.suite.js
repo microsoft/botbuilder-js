@@ -1,7 +1,8 @@
 const assert = require('assert');
 const fs = require('fs-extra');
 const path = require('path');
-const {spawn} = require('child_process');
+const txtfile = require('read-text-file');
+const { spawn } = require('child_process');
 const luis = path.resolve('../bin/luis');
 
 describe('The LUIS cli --init argument', () => {
@@ -18,7 +19,7 @@ describe('The LUIS cli --init argument', () => {
     });
 
     it('should prompt the user though the creation of the .luisrc and write the file', async () => {
-        const luisProcess = spawn('node', [luis, '--init'], {stdio: ['pipe', 'pipe', process.stderr]});
+        const luisProcess = spawn('node', [luis, '--init'], { stdio: ['pipe', 'pipe', process.stderr] });
         let msgCt = 0;
         const appId = Math.floor(Math.random() * 9999999);
         const versionId = Math.floor(Math.random() * 111111);
@@ -26,7 +27,7 @@ describe('The LUIS cli --init argument', () => {
 
         await new Promise(resolve => {
             luisProcess.stdout.on('data', data => {
-                const message = (msgCt++, data.toString().toLowerCase());
+                const message = (msgCt++ , data.toString().toLowerCase());
 
                 switch (msgCt) {
                     case 1:
@@ -37,7 +38,7 @@ describe('The LUIS cli --init argument', () => {
                         assert(message.includes('app'));
                         luisProcess.stdin.write(`${appId}\r`);
                         break;
-                    
+
                     case 3:
                         assert(message.includes('key'));
                         luisProcess.stdin.write('abc123\r');
@@ -66,7 +67,7 @@ describe('The LUIS cli --init argument', () => {
             });
         });
 
-        const rc = await fs.readJson(rcPath);
+        const rc = JSON.parse(await txtfile.read(rcPath));
         assert(rc.appId === '' + appId);
         assert(rc.versionId === '' + versionId);
         assert(rc.endpointBasePath === `https://${location}.api.cognitive.microsoft.com/luis/api/v2.0`);

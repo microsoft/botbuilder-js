@@ -6,8 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const chalk = require("chalk");
 const program = require("commander");
-const fs = require("fs-extra");
 const getStdin = require("get-stdin");
+const txtfile = require("read-text-file");
 const linq_collections_1 = require("linq-collections");
 const validurl = require("valid-url");
 const BotConfig_1 = require("./BotConfig");
@@ -58,7 +58,7 @@ async function processConnectEndpointArgs(config) {
         Object.assign(args, JSON.parse(await getStdin()));
     }
     else if (args.input != null) {
-        Object.assign(args, JSON.parse(fs.readFileSync(args.input, 'utf8')));
+        Object.assign(args, JSON.parse(await txtfile.read(args.input)));
     }
     if (!args.endpoint)
         throw new Error('missing --endpoint');

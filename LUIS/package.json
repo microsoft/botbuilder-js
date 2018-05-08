@@ -1,6 +1,6 @@
 {
   "name": "luis-apis",
-  "version": "1.0.34",
+  "version": "1.0.35",
   "description": "Tooling for connectivity with LUIS APIs",
   "main": "lib/api/index.js",
   "bin": {
@@ -36,6 +36,7 @@
     "fs-extra": "^5.0.0",
     "minimist": "^1.2.0",
     "node-fetch": "^2.0.0",
+    "read-text-file": "^1.1.0",
     "readline-sync": "^1.4.9",
     "request": "^2.85.0",
     "request-promise": "^4.2.2",

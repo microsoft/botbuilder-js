@@ -6,8 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const chalk = require("chalk");
 const program = require("commander");
-const fs = require("fs-extra");
 const getStdin = require("get-stdin");
+const txtfile = require("read-text-file");
 const linq_collections_1 = require("linq-collections");
 const BotConfig_1 = require("./BotConfig");
 const models_1 = require("./models");
@@ -59,18 +59,20 @@ async function processConnectDispatch(config) {
         Object.assign(args, JSON.parse(await getStdin()));
     }
     else if (args.input != null) {
-        Object.assign(args, JSON.parse(fs.readFileSync(args.input, 'utf8')));
+        Object.assign(args, JSON.parse(await txtfile.read(args.input)));
     }
     if (!args.hasOwnProperty('name'))
         throw new Error('Bad or missing --name');
     if (!args.appId || !utils_1.uuidValidate(args.appId))
         throw new Error('bad or missing --appId');
-    if (!args.version || parseInt(args.version) == 0)
+    if (!args.version)
         throw new Error('bad or missing --version');
     if (!args.authoringKey || !utils_1.uuidValidate(args.authoringKey))
         throw new Error('bad or missing --authoringKey');
     if (args.subscriptionKey && !utils_1.uuidValidate(args.subscriptionKey))
         throw new Error('bad --subscriptionKey');
+    if (!args.id)
+        args.id = args.appId;
     const newService = new models_1.DispatchService(args);
     const dispatchServices = args.services;
     if (dispatchServices) {

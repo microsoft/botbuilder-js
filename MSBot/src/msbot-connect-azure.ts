@@ -7,6 +7,7 @@ import * as program from 'commander';
 import * as fs from 'fs-extra';
 import * as getStdin from 'get-stdin';
 import * as validurl from 'valid-url';
+import * as txtfile from 'read-text-file';
 import { BotConfig } from './BotConfig';
 import { AzureBotService, EndpointService } from './models';
 import { IAzureBotService, ServiceType } from './schema';
@@ -74,7 +75,7 @@ async function processConnectAzureArgs(config: BotConfig): Promise<BotConfig> {
         Object.assign(args, JSON.parse(await getStdin()));
     }
     else if (args.input != null) {
-        Object.assign(args, JSON.parse(fs.readFileSync(<string>args.input, 'utf8')));
+        Object.assign(args, JSON.parse(await txtfile.read(<string>args.input)));
     }
 
     if (!args.id || args.id.length == 0)

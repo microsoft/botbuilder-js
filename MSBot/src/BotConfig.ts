@@ -8,6 +8,7 @@ import { Enumerable, List } from 'linq-collections';
 import * as path from 'path';
 import * as process from 'process';
 import * as uuid from 'uuid';
+import * as txtfile from 'read-text-file';
 import { BotConfigModel } from './models';
 import { IBotConfig, IConnectedService, IDispatchService, ServiceType } from './schema';
 
@@ -49,7 +50,7 @@ export class BotConfig extends BotConfigModel {
     // load the config file
     public static async Load(botpath: string, secret?: string): Promise<BotConfig> {
         let bot = new BotConfig(secret);
-        Object.assign(bot, await fsx.readJson(botpath));
+        Object.assign(bot, JSON.parse(await txtfile.read(botpath)));
         bot.internal.location = botpath;
 
         let hasSecret = ( secret && bot.secretKey && bot.secretKey.length > 0 );
