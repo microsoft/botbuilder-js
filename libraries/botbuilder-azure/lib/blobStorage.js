@@ -132,8 +132,8 @@ class BlobStorage {
         if (!key || key.length < 1) {
             throw new Error('Please provide a not empty key.');
         }
-        let segments = key.split('/');
-        let base = segments.splice(0)[0];
+        let segments = key.split('/').filter(x => x);
+        let base = segments.splice(0, 1)[0];
         // The number of path segments comprising the blob name cannot exceed 254
         let validKey = segments.reduce((acc, curr, index) => [acc, curr].join(index < 255 ? '/' : ''), base);
         // Reserved URL characters must be escaped.
