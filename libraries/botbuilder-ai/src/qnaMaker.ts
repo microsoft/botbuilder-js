@@ -5,9 +5,14 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.  
  * Licensed under the MIT License.
  */
-import { TurnContext, Middleware, ActivityTypes } from 'botbuilder';
+import { TurnContext, Middleware, ActivityTypes, Activity } from 'botbuilder';
 import * as request from 'request-promise-native';
 import * as entities from 'html-entities';
+import { isContext } from 'vm';
+
+const QNAMAKER_TRACE_TYPE = 'https://www.qnamaker.ai/schemas/trace';
+const QNAMAKER_TRACE_NAME = 'QnAMakerMiddleware';
+const QNAMAKER_TRACE_LABEL = 'QnAMaker Trace';
 
 /**
  * @private
@@ -98,6 +103,26 @@ export interface QnAMakerOptions {
 }
 
 /**
+ * Trace info that we collect and emit from a QnA Maker query
+ */
+export interface QnAMakerTraceInfo {
+    /** Message which instigated the query to QnA Maker */
+    message: Activity;
+    /** Results that QnA Maker returned */
+    queryResults: QnAMakerResult[];
+    /** ID of the knowledge base that is being queried */
+    knowledgeBaseId: string;
+    /** The minimum score threshold, used to filter returned results */
+    scoreThreshold: number;
+    /** Number of ranked results that are asked to be returned */
+    top: number;
+    /** Filters used on query. Not used in JavaScript SDK v4 yet */
+    strictFilters: any[];
+    /** Metadata related to query. Not used in JavaScript SDK v4 yet */
+    metadataBoost: any[];
+}
+
+/**
  * Manages querying an individual QnA Maker knowledge base for answers. Can be added as middleware 
  * to automatically query the knowledge base anytime a messaged is received from the user. When 
  * used as middleware the component can be configured to either query the knowledge base before the
@@ -147,16 +172,18 @@ export class QnAMaker implements Middleware {
      * @remarks
      * Returns a value of `true` if an answer was found and sent. If multiple answers are 
      * returned the first one will be delivered.
-     * @param context Context for the current turn of conversation with the use.
+     * @param context Context for the current turn of conversation with the user.
      */
     public answer(context: TurnContext): Promise<boolean> {
         const { top, scoreThreshold } = this.options;
         return this.generateAnswer(context.activity.text, top, scoreThreshold).then((answers) => {
-            if (answers.length > 0) {
-                return context.sendActivity({ text: answers[0].answer, type: 'message' }).then(() => true);
-            } else {
-                return Promise.resolve(false);
-            }
+            return this.emitTraceInfo(context, answers).then(() => {
+                if (answers.length > 0) {
+                    return context.sendActivity({ text: answers[0].answer, type: 'message' }).then(() => true);
+                } else {
+                    return Promise.resolve(false);
+                }
+            });
         });
     }
 
@@ -212,6 +239,31 @@ export class QnAMaker implements Middleware {
                 }
                 return ans as QnAMakerResult;
             });
+        });
+    }
+
+    /**
+     * Emits a trace event detailing a QnA Maker call and its results.
+     * 
+     * @param context Context for the current turn of conversation with the user.
+     * @param answers Answers returned by QnA Maker.
+     */
+    private emitTraceInfo(context: TurnContext, answers: QnAMakerResult[]): Promise<any> {
+        let traceInfo: QnAMakerTraceInfo = {
+            message: context.activity,
+            queryResults: answers,
+            knowledgeBaseId: this.endpoint.knowledgeBaseId,
+            scoreThreshold: this.options.scoreThreshold,
+            top: this.options.top,
+            strictFilters: [{}],
+            metadataBoost: [{}],
+        };
+        return context.sendActivity({
+            type: 'trace',
+            valueType: QNAMAKER_TRACE_TYPE,
+            name: QNAMAKER_TRACE_NAME,
+            label: QNAMAKER_TRACE_LABEL,
+            value: traceInfo
         });
     }
 }
