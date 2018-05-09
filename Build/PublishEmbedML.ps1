@@ -1,5 +1,5 @@
 #
-# Pushes EmbedML files to a new branch in Github.
+# Pushes EmbedML files to a new branch in Github. Used in the build Push-to-botbuilder-tools.
 #
 param
 ( 
@@ -18,9 +18,9 @@ git pull origin master
 git checkout -b $newBranchName master
 
 Write-Host 'Deleting the old files'
-Remove-Item -Force -Verbose '.\Dispatch\bin\netcoreapp2.0\*.*'
+Remove-Item -Force '.\Dispatch\bin\netcoreapp2.0\*.*'
 Write-Host 'Copying the new files'
-Copy-item -Force -Verbose ($artifactsPath + '\EmbedML*\**') -Destination '.\Dispatch\bin\netcoreapp2.0'
+Copy-item -Force ($artifactsPath + '\EmbedML*\**') -Destination '.\Dispatch\bin\netcoreapp2.0'
 
 git add .
 git add -u
@@ -28,7 +28,7 @@ $result = git status
 Write-Host "git status result: [$result]"
 
 if ($result.StartsWith('nothing to commit')) {
-    throw ("Push aborted: No changes found to push. Were these same files already merged previously?");
+    throw ("Push aborted: No changes found to commit. Were these same bits merged previously?");
 }
-git commit -m "Push signed EmbedML files."
+git commit -m "Automated commit: new release of dispatch tool"
 git push origin $newBranchName
