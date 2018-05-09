@@ -275,4 +275,4 @@ C# Sample: https://github.com/Microsoft/botbuilder-dotnet/tree/master/samples/Mi
 
 JS Sample: https://github.com/Microsoft/botbuilder-js/tree/master/samples/dispatch-es6 
 
-Tutorial: https://aka.ms/Sas1mu
+Tutorial: https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-tutorial-dispatch
