@@ -8,12 +8,12 @@
     ".NETCoreApp,Version=v2.0": {
       "Dispatch/1.0.0": {
         "dependencies": {
-          "AugmentLuisModelNetStandard": "1.0.0",
-          "ClassificationEvaluatorNetStandard": "1.0.0",
-          "ClassificationSummaryNetStandard": "1.0.0",
+          "AugmentLuisModel": "1.0.0",
+          "ClassificationEvaluator": "1.0.0",
+          "ClassificationSummary": "1.0.0",
           "Fuse.Core": "1.0.0",
           "Newtonsoft.Json": "11.0.2",
-          "PrepareDataNetStandard": "1.0.0"
+          "PrepareData": "1.0.0"
         },
         "runtime": {
           "Dispatch.dll": {}
@@ -322,44 +322,43 @@
           "System.Runtime": "4.3.0"
         }
       },
-      "AugmentLuisModelNetStandard/1.0.0": {
+      "AugmentLuisModel/1.0.0": {
         "dependencies": {
-          "ClassificationEvaluatorNetStandard": "1.0.0",
-          "ClassificationSummaryNetStandard": "1.0.0",
-          "DescriptiveStatisticsComputerNetStandard": "1.0.0",
+          "ClassificationEvaluator": "1.0.0",
+          "ClassificationSummary": "1.0.0",
+          "DescriptiveStatisticsComputer": "1.0.0",
           "Fuse.Core": "1.0.0",
           "Newtonsoft.Json": "11.0.2",
-          "ReservoirSamplerNetStandard": "1.0.0",
-          "SamplerNetStandard": "1.0.0",
-          "UtilityNetStandard": "1.0.0"
+          "ReservoirSampler": "1.0.0",
+          "Sampler": "1.0.0"
         },
         "runtime": {
-          "AugmentLuisModelNetStandard.dll": {}
+          "AugmentLuisModel.dll": {}
         }
       },
-      "ClassificationEvaluatorNetStandard/1.0.0": {
+      "ClassificationEvaluator/1.0.0": {
         "dependencies": {
-          "DescriptiveStatisticsComputerNetStandard": "1.0.0",
+          "DescriptiveStatisticsComputer": "1.0.0",
           "UtilityNetStandard": "1.0.0"
         },
         "runtime": {
-          "ClassificationEvaluatorNetStandard.dll": {}
+          "ClassificationEvaluator.dll": {}
         }
       },
-      "ClassificationSummaryNetStandard/1.0.0": {
-        "dependencies": {
-          "UtilityNetStandard": "1.0.0"
-        },
-        "runtime": {
-          "ClassificationSummaryNetStandard.dll": {}
-        }
-      },
-      "DescriptiveStatisticsComputerNetStandard/1.0.0": {
+      "ClassificationSummary/1.0.0": {
         "dependencies": {
           "UtilityNetStandard": "1.0.0"
         },
         "runtime": {
-          "DescriptiveStatisticsComputerNetStandard.dll": {}
+          "ClassificationSummary.dll": {}
+        }
+      },
+      "DescriptiveStatisticsComputer/1.0.0": {
+        "dependencies": {
+          "UtilityNetStandard": "1.0.0"
+        },
+        "runtime": {
+          "DescriptiveStatisticsComputer.dll": {}
         }
       },
       "Fuse.Core/1.0.0": {
@@ -375,27 +374,27 @@
           "Fuse.Core.dll": {}
         }
       },
-      "PrepareDataNetStandard/1.0.0": {
+      "PrepareData/1.0.0": {
         "dependencies": {
-          "ClassificationSummaryNetStandard": "1.0.0",
+          "ClassificationSummary": "1.0.0",
           "Fuse.Core": "1.0.0"
         },
         "runtime": {
-          "PrepareDataNetStandard.dll": {}
+          "PrepareData.dll": {}
         }
       },
-      "ReservoirSamplerNetStandard/1.0.0": {
+      "ReservoirSampler/1.0.0": {
         "dependencies": {
-          "SamplerNetStandard": "1.0.0",
+          "Sampler": "1.0.0",
           "UtilityNetStandard": "1.0.0"
         },
         "runtime": {
-          "ReservoirSamplerNetStandard.dll": {}
+          "ReservoirSampler.dll": {}
         }
       },
-      "SamplerNetStandard/1.0.0": {
+      "Sampler/1.0.0": {
         "runtime": {
-          "SamplerNetStandard.dll": {}
+          "Sampler.dll": {}
         }
       },
       "UtilityNetStandard/1.0.0": {
@@ -701,22 +700,22 @@
       "path": "system.threading.tasks/4.3.0",
       "hashPath": "system.threading.tasks.4.3.0.nupkg.sha512"
     },
-    "AugmentLuisModelNetStandard/1.0.0": {
+    "AugmentLuisModel/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
     },
-    "ClassificationEvaluatorNetStandard/1.0.0": {
+    "ClassificationEvaluator/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
     },
-    "ClassificationSummaryNetStandard/1.0.0": {
+    "ClassificationSummary/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
     },
-    "DescriptiveStatisticsComputerNetStandard/1.0.0": {
+    "DescriptiveStatisticsComputer/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
@@ -726,17 +725,17 @@
       "serviceable": false,
       "sha512": ""
     },
-    "PrepareDataNetStandard/1.0.0": {
+    "PrepareData/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
     },
-    "ReservoirSamplerNetStandard/1.0.0": {
+    "ReservoirSampler/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
     },
-    "SamplerNetStandard/1.0.0": {
+    "Sampler/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
