@@ -27,13 +27,12 @@ git add -u
 $result = git status
 Write-Host "git status result: [$result]"
 
-Add-Content ("$artifactsPath\Result") ("Dispatch tool Published to GitHub at https://github.com/Microsoft/botbuilder-tools/tree/$newBranchName/Dispatch/bin/netcoreapp2.0")
-Write-Host "##vso[task.uploadsummary] $artifactsPath\Result"
-#Write-Host "##vso[task.logissue type=warning;] 2)Dispatch tool Published to GitHub at https://github.com/Microsoft/botbuilder-tools/tree/$newBranchName/Dispatch/bin/netcoreapp2.0"
+Add-Content ("$artifactsPath\build\Result") ("Dispatch tool Published to GitHub at https://github.com/Microsoft/botbuilder-tools/tree/$newBranchName/Dispatch/bin/netcoreapp2.0")
+Write-Host "##vso[task.uploadsummary] $artifactsPath\build\Result"
 
 if ($result.StartsWith('nothing to commit') -eq $true) {
     Write-Host "##vso[task.logissue type=error;] Quit without publishing: Everything up-to-date. Looks like these bits are already in GitHub."
-    #throw ("Push aborted: No changes found to commit. Were these same bits merged previously?");
+    throw ('');
 }
 #git commit -m "Automated commit: new release of dispatch tool"
 #git push origin $newBranchName
