@@ -28,8 +28,9 @@ $result = git status
 Write-Host "git status result: [$result]"
 
 if ($result.StartsWith('nothing to commit') -eq $true) {
-    Write-Host "##vso[task.logissue type=error;]Upload aborted: Looks like these bits have previously been uploaded to GitHub. No updates pushed to GitHub."
+    Write-Host "##vso[task.complete result=Skipped;]Everything up-to-date: Looks like these bits are already in GitHub. Quitting without publishing to GitHub."
     throw ("Push aborted: No changes found to commit. Were these same bits merged previously?");
 }
-git commit -m "Automated commit: new release of dispatch tool"
-git push origin $newBranchName
+#git commit -m "Automated commit: new release of dispatch tool"
+#git push origin $newBranchName
+Write-Host "##vso[task.complete]Published to GitHub at https://github.com/Microsoft/botbuilder-tools/tree/$newBranchName/Dispatch/bin/netcoreapp2.0"
