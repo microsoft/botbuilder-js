@@ -27,8 +27,8 @@ git add -u
 $result = git status
 Write-Host "git status result: [$result]"
 
-Add-Content ("$artifactsPath\build\Result") ("Dispatch tool published to: <https://github.com/Microsoft/botbuilder-tools/tree/$newBranchName/Dispatch/bin/netcoreapp2.0>")
-Write-Host "##vso[task.uploadsummary] $artifactsPath\build\Result"
+Add-Content -Path ("$artifactsPath\Results") -Value ("Dispatch tool published to: <https://github.com/Microsoft/botbuilder-tools/tree/$newBranchName/Dispatch/bin/netcoreapp2.0>")
+Write-Host "##vso[task.uploadsummary] $artifactsPath\Results"
 
 if ($result.StartsWith('nothing to commit') -eq $true) {
     Write-Host "##vso[task.logissue type=error;] Quit without publishing: Everything up-to-date. Looks like these bits are already in GitHub."
