@@ -27,13 +27,13 @@ git add -u
 $result = git status
 Write-Host "git status result: [$result]"
 
-Add-Content '..\buildsummary.md' "1)Published to GitHub at https://github.com/Microsoft/botbuilder-tools/tree/$newBranchName/Dispatch/bin/netcoreapp2.0"
-Write-Host "##vso[task.uploadsummary]..\buildsummary.md"
-Write-Host "##vso[task.logdetail] 2)Published to GitHub at https://github.com/Microsoft/botbuilder-tools/tree/$newBranchName/Dispatch/bin/netcoreapp2.0"
+Add-Content 'buildsummary.md' "1)Published to GitHub at https://github.com/Microsoft/botbuilder-tools/tree/$newBranchName/Dispatch/bin/netcoreapp2.0"
+Write-Host "##vso[task.uploadsummary]buildsummary.md"
+Write-Host "##vso[task.logissue type=warning;] 2)Published to GitHub at https://github.com/Microsoft/botbuilder-tools/tree/$newBranchName/Dispatch/bin/netcoreapp2.0"
 
 if ($result.StartsWith('nothing to commit') -eq $true) {
-    Write-Host "##vso[task.logissue type=error;] Everything up-to-date: Looks like these bits are already in GitHub. Quitting without publishing to GitHub."
-    throw ("Push aborted: No changes found to commit. Were these same bits merged previously?");
+    Write-Host "##vso[task.logissue type=error;] Quitting without publishing: Everything up-to-date. Looks like these bits are already in GitHub."
+    #throw ("Push aborted: No changes found to commit. Were these same bits merged previously?");
 }
 #git commit -m "Automated commit: new release of dispatch tool"
 #git push origin $newBranchName
