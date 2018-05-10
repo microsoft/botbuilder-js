@@ -3,7 +3,7 @@ Bot Builder tools are designed to cover end-to-end bot development workflow and 
 
 |   | Tool | Description |
 |---|------|--------------|
-| [![npm version](https://badge.fury.io/js/chatdown.svg)](https://badge.fury.io/js/chatdown) | [Chatdown](https://github.com/Microsoft/botbuilder-tools/tree/master/Chatdown) | Author mockup conversations in markdown and use chatdown to convert the markdown to transcripts you can load and view in the new V4 Bot Framework Emulator |
+| [![npm version](https://badge.fury.io/js/chatdown.svg)](https://badge.fury.io/js/chatdown) | [Chatdown](https://github.com/Microsoft/botbuilder-tools/tree/master/Chatdown) | Prototype mock conversations in markdown and convert the markdown to transcripts you can load and view in the new V4 Bot Framework Emulator |
 | [![npm version](https://badge.fury.io/js/msbot.svg)](https://badge.fury.io/js/msbot) |[MSBot](https://github.com/Microsoft/botbuilder-tools/tree/master/MSBot)| Create and manage connected services in your bot configuration file|
 | [![npm version](https://badge.fury.io/js/ludown.svg)](https://badge.fury.io/js/ludown) |[LUDown](https://github.com/Microsoft/botbuilder-tools/tree/master/Ludown)| Build LUIS language understanding models using markdown files|
 | [![npm version](https://badge.fury.io/js/luis-apis.svg)](https://badge.fury.io/js/luis-apis) |[LUIS](https://github.com/Microsoft/botbuilder-tools/tree/master/LUIS)| Create and manage your [LUIS.ai](http://luis.ai) applications |
