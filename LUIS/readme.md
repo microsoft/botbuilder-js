@@ -2,33 +2,17 @@
 
 [![npm version](https://badge.fury.io/js/luis-apis.svg)](https://badge.fury.io/js/luis-apis)
 
-The LUIS APIs tool allows communication with the LUIS endpoints via command line, Node.js or browser project. 
+The LUIS APIs tool allows communication with the LUIS endpoints via command line. 
+
 Any endpoint listed in the [documentation for the LUIS Programmatic APIs v2.0](https://westus.dev.cognitive.microsoft.com/docs/services/5890b47c39e2bb17b84a55ff/operations/5890b47c39e2bb052c5b9c2f)
-is also available using the CLI or the library (for Node.js and browser projects). 
+is available using the CLI. 
 
 Language Understanding ([LUIS.ai](https://luis.ai/)) allows your application to understand what a person wants in their own words. LUIS uses machine learning to allow developers to build applications that can receive user input in natural language and extract meaning from it.
 
 ## Installation
-### As a CLI
 Make sure you have Node.js >=8.5 and npm installed on your machine, then use:
 
 `npm install -g luis-apis`
-
-### As a library
-The LUIS APIs can be installed and used as a library in any Node.js or JavaScript UI projects for the browser.
-
-`npm install -s luis-apis`
-
-You can then import and use service classes specific to the endpoint and the operation you wish to call.
-For example, to get the first 5 apps, do the following:
-```js
-import {apps} from 'luis-apis';
-
-const appsService = new apps.Apps();
-appsService.getApplicationsList({take: 5}).then(apps => {
-    // handle apps
-});
-```
 
 ## Configuration
 A configuration object is required to provide the endpoint base path, app ID, version ID and the 
