@@ -1,12 +1,15 @@
 # Bot Builder tools (PREVIEW)
 Bot Builder tools are designed to cover end-to-end bot development workflow and include the following tools - 
-- [![npm version](https://badge.fury.io/js/chatdown.svg)](https://badge.fury.io/js/chatdown) [Chatdown](https://github.com/Microsoft/botbuilder-tools/tree/master/Chatdown): Create mockups of bot conversation transcripts
-- [![npm version](https://badge.fury.io/js/msbot.svg)](https://badge.fury.io/js/msbot) [MSBot](https://github.com/Microsoft/botbuilder-tools/tree/master/MSBot): Create and manage your bot configuration file
-- [![npm version](https://badge.fury.io/js/ludown.svg)](https://badge.fury.io/js/ludown) [LUDown](https://github.com/Microsoft/botbuilder-tools/tree/master/Ludown): Bootstrap language understanding using markdown files
-- [![npm version](https://badge.fury.io/js/luis-apis.svg)](https://badge.fury.io/js/luis-apis) [LUIS](https://github.com/Microsoft/botbuilder-tools/tree/master/LUIS): Create and manage your [LUIS.ai](http://luis.ai) application
-- [![npm version](https://badge.fury.io/js/qnamaker.svg)](https://badge.fury.io/js/qnamaker) [QnAMaker](https://github.com/Microsoft/botbuilder-tools/tree/master/QnAMaker): Create and manage [QnAMaker.ai](http://qnamaker.ai) Knowledge Base.
-- [![npm version](https://badge.fury.io/js/botdispatch.svg)](https://badge.fury.io/js/botdispatch) [Dispatch](https://github.com/Microsoft/botbuilder-tools/tree/master/Dispatch): Bring disparate language understanding models to work together for your bot
-- [![npm version](https://badge.fury.io/js/luisgen.svg)](https://badge.fury.io/js/botdispatch) [LUISGen](https://github.xom/Microsoft/botbuilder-tools/tree/master/LUISGen): Generate C# class or Typescript interface over a LUIS model.
+
+|   | Tool | Description |
+|---|------|--------------|
+| [![npm version](https://badge.fury.io/js/chatdown.svg)](https://badge.fury.io/js/chatdown) | [Chatdown](https://github.com/Microsoft/botbuilder-tools/tree/master/Chatdown) | Prototype mock conversations in markdown and convert the markdown to transcripts you can load and view in the new V4 Bot Framework Emulator |
+| [![npm version](https://badge.fury.io/js/msbot.svg)](https://badge.fury.io/js/msbot) |[MSBot](https://github.com/Microsoft/botbuilder-tools/tree/master/MSBot)| Create and manage connected services in your bot configuration file|
+| [![npm version](https://badge.fury.io/js/ludown.svg)](https://badge.fury.io/js/ludown) |[LUDown](https://github.com/Microsoft/botbuilder-tools/tree/master/Ludown)| Build LUIS language understanding models using markdown files|
+| [![npm version](https://badge.fury.io/js/luis-apis.svg)](https://badge.fury.io/js/luis-apis) |[LUIS](https://github.com/Microsoft/botbuilder-tools/tree/master/LUIS)| Create and manage your [LUIS.ai](http://luis.ai) applications |
+| [![npm version](https://badge.fury.io/js/qnamaker.svg)](https://badge.fury.io/js/qnamaker) |[QnAMaker](https://github.com/Microsoft/botbuilder-tools/tree/master/QnAMaker) | Create and manage [QnAMaker.ai](http://qnamaker.ai) Knowledge Bases. |
+| [![npm version](https://badge.fury.io/js/botdispatch.svg)](https://badge.fury.io/js/botdispatch) | [Dispatch](https://github.com/Microsoft/botbuilder-tools/tree/master/Dispatch) | Build language models allowing you to dispatch between disparate components (such as QnA, LUIS and custom code)|
+| [![npm version](https://badge.fury.io/js/luisgen.svg)](https://badge.fury.io/js/luisgen)| [LUISGen](https://github.com/Microsoft/botbuilder-tools/tree/master/LUISGen) | Autogenerate backing C#/Typescript classesfor your LUIS intents and entities.|
 
 To install all CLI tools:
 

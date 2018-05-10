@@ -73,7 +73,7 @@ module.exports = {
                     process.stderr.write(chalk.default.redBright('Sorry unable to open [' + file + ']\n'));        
                     process.exit(retCode.FILE_OPEN_ERROR);
                 }
-                var fileContent = txtfile.readFileSync(file);
+                var fileContent = txtfile.readSync(file);
                 if (!fileContent) {
                     process.stderr.write(chalk.default.redBright('Sorry, error reading file:' + file + '\n'));    
                     process.exit(retCode.FILE_OPEN_ERROR);
