@@ -27,8 +27,8 @@ git add -u
 $result = git status
 Write-Host "git status result: [$result]"
 
-Add-Content "$PSScriptRoot\buildsummary.md" "1)Published to GitHub at https://github.com/Microsoft/botbuilder-tools/tree/$newBranchName/Dispatch/bin/netcoreapp2.0"
-Write-Host "##vso[task.uploadsummary]$PSScriptRoot\buildsummary.md"
+Add-Content ("$artifactsPath\buildsummary.md") ("1)Published to GitHub at https://github.com/Microsoft/botbuilder-tools/tree/$newBranchName/Dispatch/bin/netcoreapp2.0")
+Write-Host "##vso[task.uploadsummary]$artifactsPath\buildsummary.md"
 Write-Host "##vso[task.logissue type=warning;] 2)Published to GitHub at https://github.com/Microsoft/botbuilder-tools/tree/$newBranchName/Dispatch/bin/netcoreapp2.0"
 
 if ($result.StartsWith('nothing to commit') -eq $true) {
