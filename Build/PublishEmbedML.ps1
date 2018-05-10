@@ -27,7 +27,7 @@ git add -u
 $result = git status
 Write-Host "git status result: [$result]"
 
-Add-Content ("$artifactsPath\build\Result") ("Dispatch tool Published to GitHub at https://github.com/Microsoft/botbuilder-tools/tree/$newBranchName/Dispatch/bin/netcoreapp2.0")
+Add-Content ("$artifactsPath\build\Result") ("Dispatch tool published to: <https://github.com/Microsoft/botbuilder-tools/tree/$newBranchName/Dispatch/bin/netcoreapp2.0>")
 Write-Host "##vso[task.uploadsummary] $artifactsPath\build\Result"
 
 if ($result.StartsWith('nothing to commit') -eq $true) {
