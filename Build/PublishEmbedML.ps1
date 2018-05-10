@@ -27,7 +27,8 @@ git add -u
 $result = git status
 Write-Host "git status result: [$result]"
 
-if ($result.StartsWith('nothing to commit')) {
+if ($result.StartsWith('nothing to commit') -eq $true) {
+    Write-Host "##vso[task.logissue type=error;]Upload aborted: Looks like these bits have previously been uploaded to GitHub. No updates pushed to GitHub."
     throw ("Push aborted: No changes found to commit. Were these same bits merged previously?");
 }
 git commit -m "Automated commit: new release of dispatch tool"
