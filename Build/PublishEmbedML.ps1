@@ -3,7 +3,7 @@
 #
 param
 ( 
-    [string]$artifactsPath = '',
+    [string]$artifactsPath,
     [string]$newBranchName
 )
 
@@ -27,8 +27,8 @@ git add -u
 $result = git status
 Write-Host "git status result: [$result]"
 
-Add-Content (".\Result") ("Dispatch tool Published to GitHub at https://github.com/Microsoft/botbuilder-tools/tree/$newBranchName/Dispatch/bin/netcoreapp2.0")
-Write-Host "##vso[task.uploadsummary] .\Result"
+Add-Content ("$artifactsPath\Result") ("Dispatch tool Published to GitHub at https://github.com/Microsoft/botbuilder-tools/tree/$newBranchName/Dispatch/bin/netcoreapp2.0")
+Write-Host "##vso[task.uploadsummary] $artifactsPath\Result"
 #Write-Host "##vso[task.logissue type=warning;] 2)Dispatch tool Published to GitHub at https://github.com/Microsoft/botbuilder-tools/tree/$newBranchName/Dispatch/bin/netcoreapp2.0"
 
 if ($result.StartsWith('nothing to commit') -eq $true) {
