@@ -1,0 +1,16 @@
+{
+    "subtitle":  "What do you think of these?",
+    "buttons": [
+      {
+        "type": "openUrl",
+        "title": "Not what I'm looking for",
+        "value": "http://contosocafe.com/specials"
+      },
+      {
+        "type": "imback",
+        "title": "These look great",
+        "value": "these look good"
+      }
+    ]
+  }
+  
