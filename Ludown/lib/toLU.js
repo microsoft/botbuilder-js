@@ -173,11 +173,11 @@ var constructMdFile = function(LUISJSON, QnAJSONFromTSV, luisFile, QnAFile) {
                 });
                 // only push this utterance if it does not already exist
                 var utteranceExists = intentInObj[0].utterances.filter(function(utterance) {
-                    return utterance.text == patternObj.text;
+                    return utterance.text == patternObj.pattern;
                 });
                 if(utteranceExists.length === 0) {
                     intentInObj[0].utterances.push({
-                        "text": patternObj.text,
+                        "text": patternObj.pattern,
                         "intent": patternObj.intent,
                         "entities": []
                     });
@@ -195,15 +195,14 @@ var constructMdFile = function(LUISJSON, QnAJSONFromTSV, luisFile, QnAFile) {
                     if(utterance.entities.length >= 0) {
                         // update utterance for each entity
                         var text = utterance.text;
+                        var updatedText = utterance.text;
                         utterance.entities.forEach(function(entity) {
                             var label = text.substring(entity.startPos, entity.endPos + 1);
                             var entityWithLabel = '{' + entity.entity + '=' + label + '}';
-                            var startText = text.substring(0,entity.startPos);
-                            var endText = text.substring(entity.endPos + 1);
-                            text = startText + entityWithLabel + endText;
+                            updatedText = updatedText.replace(label, entityWithLabel);
                         })
                     }
-                    if(text) fileContent += '- ' + text + NEWLINE;
+                    if(updatedText) fileContent += '- ' + updatedText + NEWLINE;
                 });
                 fileContent += NEWLINE + NEWLINE;
             });
