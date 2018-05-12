@@ -179,7 +179,7 @@ module.exports.parseFile = function(fileContent, log)
                         var entitiesFound = utterance.match(entityRegex);
                         var updatedUtterance = utterance;
                         var entitiesInUtterance = new Array();
-                        var patternAnyEntitiesInUtterance = false;
+                        var havePatternAnyEntitiesInUtterance = false;
                         // treat this as labelled utterance
                         entitiesFound.forEach(function(entity) {
                             var labelledValue = "";
@@ -200,8 +200,8 @@ module.exports.parseFile = function(fileContent, log)
                                         "type": "simple",
                                         "value": {
                                             "entity": entity,
-                                            "startPos":startPos,
-                                            "endPos":endPos
+                                            "startPos": startPos,
+                                            "endPos": endPos
                                         }
                                     });
                                 } else {
@@ -232,7 +232,7 @@ module.exports.parseFile = function(fileContent, log)
                                     var entitiesFound = utterance.match(entityRegex);
                                     entitiesFound.forEach(function(entity) {
                                         entity = entity.replace("{", "").replace("}", "");
-                                        patternAnyEntitiesInUtterance = true;
+                                        havePatternAnyEntitiesInUtterance = true;
                                         addItemIfNotPresent(LUISJsonStruct, LUISObjNameEnum.PATTERNANYENTITY, entity);
                                     });
                                 }
@@ -242,7 +242,7 @@ module.exports.parseFile = function(fileContent, log)
                             // examine entities and push
                             var utteranceObject = {
                                 "text": updatedUtterance,
-                                "intent":intentName,
+                                "intent": intentName,
                                 "entities": new Array()
                             }
                             entitiesInUtterance.forEach(function(lEntity){
@@ -251,7 +251,7 @@ module.exports.parseFile = function(fileContent, log)
                             LUISJsonStruct.utterances.push(utteranceObject);
                         }
 
-                        if(patternAnyEntitiesInUtterance) {
+                        if(havePatternAnyEntitiesInUtterance) {
                             var patternObject = {
                                 "pattern": utterance,
                                 "intent": intentName
