@@ -172,11 +172,14 @@ module.exports.parseFile = function(fileContent, log)
                         process.exit(retCode.INVALID_UTTERANCE_DEF);
                         }
                     utterance = utterance.slice(1).trim();
-                   
+                    
                     // handle entities in the utterance
                     if(utterance.includes("{")) {
                         var entityRegex = new RegExp(/\{(.*?)\}/g);
                         var entitiesFound = utterance.match(entityRegex);
+                        var updatedUtterance = utterance;
+                        var entitiesInUtterance = new Array();
+                        var havePatternAnyEntitiesInUtterance = false;
                         // treat this as labelled utterance
                         entitiesFound.forEach(function(entity) {
                             var labelledValue = "";
@@ -190,31 +193,24 @@ module.exports.parseFile = function(fileContent, log)
                                     // add this to entities collection unless it already exists
                                     addItemIfNotPresent(LUISJsonStruct, LUISObjNameEnum.ENTITIES, entity);
                                     // clean up uttearnce to only include labelledentityValue and add to utterances collection
-                                    var updatedUtterance = utterance.replace("{" + entity + "=" + labelledValue + "}", labelledValue);
+                                    updatedUtterance = updatedUtterance.replace("{" + entity + "=" + labelledValue + "}", labelledValue);
                                     var startPos = updatedUtterance.search(labelledValue);
                                     var endPos = startPos + labelledValue.length - 1;
-                                    var utteranceObject = {
-                                        "text": updatedUtterance,
-                                        "intent":intentName,
-                                        "entities": [
-                                            {
-                                                "entity": entity,
-                                                "startPos":startPos,
-                                                "endPos":endPos
-                                            }
-                                        ]
-                                    }
-                                    LUISJsonStruct.utterances.push(utteranceObject);
+                                    entitiesInUtterance.push({
+                                        "type": "simple",
+                                        "value": {
+                                            "entity": entity,
+                                            "startPos": startPos,
+                                            "endPos": endPos
+                                        }
+                                    });
                                 } else {
                                     process.stderr.write(chalk.default.redBright('[WARN]: No labelled value found for entity: ' + entity + ' in utterance: ' + utterance + '\n'));
                                     process.exit(retCode.MISSING_LABELLED_VALUE);
                                 }
                             } else {
                                 // push this utterance to patterns
-                                var patternObject = {
-                                    "pattern": utterance,
-                                    "intent": intentName
-                                }
+                                
                                 // if this intent does not have any utterances, push this pattern as an utterance as well. 
                                 var intentInUtterance = LUISJsonStruct.utterances.filter(function(item) {
                                     return item.intent == intentName;
@@ -229,7 +225,6 @@ module.exports.parseFile = function(fileContent, log)
                                     LUISJsonStruct.utterances.push(utteranceObject);
                                 }
                                 
-                                LUISJsonStruct.patterns.push(patternObject);
                                 
                                 if(utterance.includes("{")) {
                                     // handle entities
@@ -237,11 +232,33 @@ module.exports.parseFile = function(fileContent, log)
                                     var entitiesFound = utterance.match(entityRegex);
                                     entitiesFound.forEach(function(entity) {
                                         entity = entity.replace("{", "").replace("}", "");
+                                        havePatternAnyEntitiesInUtterance = true;
                                         addItemIfNotPresent(LUISJsonStruct, LUISObjNameEnum.PATTERNANYENTITY, entity);
                                     });
                                 }
                             }
                         });
+                        if(entitiesInUtterance.length !== 0) {
+                            // examine entities and push
+                            var utteranceObject = {
+                                "text": updatedUtterance,
+                                "intent": intentName,
+                                "entities": new Array()
+                            }
+                            entitiesInUtterance.forEach(function(lEntity){
+                                utteranceObject.entities.push(lEntity.value);
+                            });
+                            LUISJsonStruct.utterances.push(utteranceObject);
+                        }
+
+                        if(havePatternAnyEntitiesInUtterance) {
+                            var patternObject = {
+                                "pattern": utterance,
+                                "intent": intentName
+                            }
+                            LUISJsonStruct.patterns.push(patternObject);
+                        }
+                        
                     } else {
                         // push this to utterances
                         var utteranceObject = {
