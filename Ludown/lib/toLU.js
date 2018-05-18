@@ -196,10 +196,15 @@ var constructMdFile = function(LUISJSON, QnAJSONFromTSV, luisFile, QnAFile) {
                         // update utterance for each entity
                         var text = utterance.text;
                         var updatedText = utterance.text;
+                        var offSet = 0;
                         utterance.entities.forEach(function(entity) {
                             var label = text.substring(entity.startPos, entity.endPos + 1);
                             var entityWithLabel = '{' + entity.entity + '=' + label + '}';
-                            updatedText = updatedText.replace(label, entityWithLabel);
+                            var leftText = updatedText.substring(0, entity.startPos + offSet);
+                            var rightText = updatedText.substring(entity.endPos + 1 + offSet);
+                            //updatedText = updatedText.replace(label, entityWithLabel);
+                            updatedText = leftText + entityWithLabel + rightText;
+                            offSet += entityWithLabel.length - label.length;
                         })
                     }
                     if(updatedText) fileContent += '- ' + updatedText + NEWLINE;

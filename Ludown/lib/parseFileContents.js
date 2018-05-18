@@ -183,19 +183,25 @@ module.exports.parseFile = function(fileContent, log)
                         // treat this as labelled utterance
                         entitiesFound.forEach(function(entity) {
                             var labelledValue = "";
+                            var srcEntityStructure = entity;
                             entity = entity.replace("{", "").replace("}", "");
                             // see if this is a trained simple entity of format {entityName=labelled value}
                             if(entity.includes("=")) {
                                 var entitySplit = entity.split("=");
+                                if(entitySplit.length > 2) {
+                                    process.stderr.write(chalk.default.redBright('[ERROR]: Nested entity references are not supported in utterance: ' + utterance + '\n'));
+                                    process.stderr.write(chalk.default.redBright('Stopping further processing.\n'));
+                                    process.exit(retCode.INVALID_INPUT);
+                                }
                                 entity = entitySplit[0].trim();
                                 labelledValue = entitySplit[1].trim();
                                 if(labelledValue !== "") {
                                     // add this to entities collection unless it already exists
                                     addItemIfNotPresent(LUISJsonStruct, LUISObjNameEnum.ENTITIES, entity);
                                     // clean up uttearnce to only include labelledentityValue and add to utterances collection
-                                    updatedUtterance = updatedUtterance.replace("{" + entity + "=" + labelledValue + "}", labelledValue);
-                                    var startPos = updatedUtterance.search(labelledValue);
+                                    var startPos = updatedUtterance.search(srcEntityStructure);
                                     var endPos = startPos + labelledValue.length - 1;
+                                    updatedUtterance = updatedUtterance.replace("{" + entity + "=" + labelledValue + "}", labelledValue);
                                     entitiesInUtterance.push({
                                         "type": "simple",
                                         "value": {
