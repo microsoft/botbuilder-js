@@ -1,0 +1,14 @@
+{
+    "name": "multiple-prompts-bot-es6",
+    "secretKey": "",
+    "services": [
+        {
+            "type": "endpoint",
+            "name": "multiple-prompts-bot-es6",
+            "id": "http://localhost:3978/api/messages",
+            "appId": "",
+            "appPassword": "",
+            "endpoint": "http://localhost:3978/api/messages"
+        }
+    ]
+}
