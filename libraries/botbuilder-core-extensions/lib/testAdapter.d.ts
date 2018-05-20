@@ -154,6 +154,18 @@ export declare class TestAdapter extends BotAdapter {
      * @param timeout (Optional) number of milliseconds to wait for a response from bot. Defaults to a value of `3000`.
      */
     test(userSays: string | Partial<Activity>, expected: string | Partial<Activity> | ((activity: Partial<Activity>, description?: string) => void), description?: string, timeout?: number): TestFlow;
+    /**
+     *
+     * @param activities Array of activities.
+     * @param description (Optional) Description of the test case. If not provided one will be generated.
+     * @param timeout (Optional) number of milliseconds to wait for a response from bot. Defaults to a value of `3000`.
+     */
+    testActivities(activities: Array<Partial<Activity>>, description?: string, timeout?: number): TestFlow;
+    /**
+     * Indicates if the activity is a reply from the bot (role == 'bot')
+     * @param activity Activity to check.
+     */
+    private isReply(activity);
 }
 /**
  * Support class for `TestAdapter` that allows for the simple construction of a sequence of tests.
