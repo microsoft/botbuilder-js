@@ -4,7 +4,7 @@
   "description": "Bot Builder v4 example showing a simple bot that echos anything you say.",
   "main": "app.js",
   "scripts": {
-    "test": "mocha *.test.js",
+    "test": "mocha tests/*.test.js",
     "start": "node app.js"
   },
   "author": "Microsoft",

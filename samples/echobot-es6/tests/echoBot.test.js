@@ -1,8 +1,8 @@
 const assert = require('assert');
 
 const { BotState, UserState, MemoryStorage, TestAdapter, ConversationState } = require('botbuilder-core-extensions');
-const CreateEchoBot = require('./echoBot');
-const TranscriptUtilities = require('../../libraries/botbuilder-core-extensions/tests/transcriptUtilities');
+const CreateEchoBot = require('../echoBot');
+const TranscriptUtilities = require('../../../libraries/botbuilder-core-extensions/tests/transcriptUtilities');
 
 describe(`EchoBot`, function () {
     this.timeout(5000);
@@ -15,10 +15,11 @@ describe(`EchoBot`, function () {
         return adapter;
     };
 
-    it('test using transcript', function (done) {
-        TranscriptUtilities.getActivitiesFromTranscript('./echoBot.transcript').then(activities => {
+    it('test using .chat', function (done) {
+        console.log("dirname:", __dirname)
+        TranscriptUtilities.getActivitiesFromChat('./tests/echoBot.chat').then(activities => {
             var adapter = getAdapter();
-            return adapter.testActivities(activities, 'echobot.transcript')
+            return adapter.testActivities(activities, 'echobot.chat')
                 .then(done)
                 .catch(done);
         });

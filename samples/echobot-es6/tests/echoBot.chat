@@ -1,0 +1,11 @@
+user=User
+bot=bot
+
+user: Hi!
+bot: 0: You said "Hi!"
+
+user: Hello!
+bot: 1: You said "Hello!"
+
+user: Good Bye!
+bot: 2: You said "Good Bye!"
