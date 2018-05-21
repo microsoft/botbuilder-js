@@ -36,7 +36,7 @@ Write-Host "git push origin $newBranchName"
 git push origin $newBranchName
 
 if ($LASTEXITCODE -eq 0) {
-    Write-Host 'Writing Results section to the build summary page'
-    Add-Content -Path "$sourcePath\Results" -Value "Bits pushed to GitHub here: [https://github.com/Microsoft/botbuilder-tools/tree/$newBranchName/$repoDestinationPath](https://github.com/Microsoft/botbuilder-tools/tree/$newBranchName/$repoDestinationPath)"
-    Write-Host "##vso[task.uploadsummary] $sourcePath\Results"
+    Write-Host 'Writing Push Location section to the build summary page'
+    Add-Content -Path "$sourcePath\PushLocation.md" -Value "Bits pushed to GitHub here: [https://github.com/Microsoft/botbuilder-tools/tree/$newBranchName/$repoDestinationPath](https://github.com/Microsoft/botbuilder-tools/tree/$newBranchName/$repoDestinationPath)"
+    Write-Host "##vso[task.addattachment type=Distributedtask.Core.Summary;name=Push Location;] $sourcePath\PushLocation.md"
 }
