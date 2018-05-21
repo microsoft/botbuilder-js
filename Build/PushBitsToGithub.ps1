@@ -17,9 +17,9 @@ git pull origin master
 git checkout -b $newBranchName master
 
 Write-Host "Deleting the old files from ./$repoDestinationPath"
-Remove-Item -Force ./$repoDestinationPath/*.*
+Remove-Item -Force ("./$repoDestinationPath/*.*")
 Write-Host "Copying the new files from $sourcePath/*/** to ./$repoDestinationPath"
-Copy-item -Force $sourcePath/*/** -Destination ./$repoDestinationPath -Verbose
+Copy-item -Force $sourcePath/*/** -Destination ("./$repoDestinationPath") -Verbose
 
 git add .
 git add -u
