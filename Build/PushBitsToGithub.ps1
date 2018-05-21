@@ -30,11 +30,13 @@ if ($result.StartsWith('nothing to commit') -eq $true) {
     Write-Host "##vso[task.logissue type=error;] Quit without publishing: Everything up-to-date. Looks like these bits are already in GitHub."
     throw;
 }
-Write-Host 'Committing'
+Write-Host 'git commit -m...'
 git commit -m "Automated push from build $Env:Build_BuildNumber"
-Write-Host 'Pushing'
+Write-Host "git push origin $newBranchName"
 git push origin $newBranchName
 
-Write-Host 'Writing Results section to the build summary page'
-Add-Content -Path "$sourcePath\Results" -Value "Bits pushed to GitHub here: [https://github.com/Microsoft/botbuilder-tools/tree/$newBranchName/$repoDestinationPath](https://github.com/Microsoft/botbuilder-tools/tree/$newBranchName/$repoDestinationPath)"
-Write-Host "##vso[task.uploadsummary] $sourcePath\Results"
+if ($LASTEXITCODE -eq 0) {
+    Write-Host 'Writing Results section to the build summary page'
+    Add-Content -Path "$sourcePath\Results" -Value "Bits pushed to GitHub here: [https://github.com/Microsoft/botbuilder-tools/tree/$newBranchName/$repoDestinationPath](https://github.com/Microsoft/botbuilder-tools/tree/$newBranchName/$repoDestinationPath)"
+    Write-Host "##vso[task.uploadsummary] $sourcePath\Results"
+}
