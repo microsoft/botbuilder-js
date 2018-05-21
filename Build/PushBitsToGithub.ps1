@@ -1,5 +1,5 @@
 #
-# Pushes files to a new branch in Github. Used in the build Push-to-botbuilder-tools.
+# Pushes files to a new branch in Github. Used in the build Push-to-github-botbuilder-tools.
 #
 param
 ( 
@@ -18,8 +18,8 @@ git checkout -b $newBranchName master
 
 Write-Host "Deleting the old files from ./$repoDestinationPath"
 Remove-Item -Force ("./$repoDestinationPath/*.*")
-Write-Host "Copying the new files from $sourcePath/*/** to ./$repoDestinationPath"
-Copy-item -Force ("$sourcePath/*/**") -Destination ("./$repoDestinationPath")
+Write-Host "Copying the new files from $sourcePath\*\** to ./$repoDestinationPath"
+Copy-item -Force ("$sourcePath\*\**") -Destination ("./$repoDestinationPath")
 
 git add .
 git add -u
