@@ -30,7 +30,7 @@ if ($result.StartsWith('nothing to commit') -eq $true) {
     Write-Host "##vso[task.logissue type=error;] Quit without publishing: Everything up-to-date. Looks like these bits are already in GitHub."
     throw;
 }
-git commit -m "Automated push by build $Env:Build_BuildNumber"
+git commit -m "Automated push from build $Env:Build_BuildNumber"
 git push origin $newBranchName
 
 Write-Host 'Writing Results section to the build summary page'
