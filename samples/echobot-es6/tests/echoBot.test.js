@@ -16,7 +16,6 @@ describe(`EchoBot`, function () {
     };
 
     it('test using .chat', function (done) {
-        console.log("dirname:", __dirname)
         TranscriptUtilities.getActivitiesFromChat('./tests/echoBot.chat').then(activities => {
             var adapter = getAdapter();
             return adapter.testActivities(activities, 'echobot.chat')
