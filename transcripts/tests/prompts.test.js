@@ -27,15 +27,16 @@ describe(`Prompts using transcripts`, function () {
     this.timeout(5000);
 
     it('AttchmentPrompt', TestBotWithTranscript('../DialogsTests/AttachmentPrompt.transcript', AttachmentPromptLogic));
-    
-    it('ConfirmPrompt', TestBotWithTranscript('../DialogsTests/ConfirmPrompt.chat', ConfirmPromptLogic));
-    it('ConfirmPrompt - Retry', TestBotWithTranscript('../DialogsTests/ConfirmPromptRetry.chat', ConfirmPromptLogic));
-
-    it('ConfirmPrompt', TestBotWithTranscript('../DialogsTests/ConfirmPrompt.chat', ConfirmPromptLogic));
-    it('ConfirmPrompt - Retry', TestBotWithTranscript('../DialogsTests/ConfirmPromptRetry.chat', ConfirmPromptLogic));
 
     it('ChoicePrompt', TestBotWithTranscript('../DialogsTests/ChoicePrompt.chat', ChoicePromptLogic));
     it('ChoicePrompt - Retry', TestBotWithTranscript('../DialogsTests/ChoicePromptRetry.chat', ChoicePromptLogic));
+    
+    it('DateTime', TestBotWithTranscript('../DialogsTests/DateTimePrompt.chat', DateTimePromptLogic));
+    it('DateTime - Retry', TestBotWithTranscript('../DialogsTests/DateTimePromptRetry.chat', DateTimePromptLogic));
+
+    it('ConfirmPrompt', TestBotWithTranscript('../DialogsTests/ConfirmPrompt.chat', ConfirmPromptLogic));
+    it('ConfirmPrompt - Retry', TestBotWithTranscript('../DialogsTests/ConfirmPromptRetry.chat', ConfirmPromptLogic));
+
 
 });
 
@@ -50,34 +51,6 @@ function AttachmentPromptLogic(state) {
         },
         async function (dc, attachment) {
             await dc.context.sendActivity(attachment[0].content);
-            await dc.end();
-        }
-    ]);
-
-    return async (context) => {
-        const dc = dialogs.createContext(context, state);
-        await dc.continue();
-
-        // Check to see if anyone replied. If not then start echo dialog
-        if (!context.responded) {
-            await dc.begin('start');
-        }
-    }
-};
-
-function ConfirmPromptLogic(state) {
-
-    const dialogs = new DialogSet();
-    const confirmPrompt = new ConfirmPrompt().style(ListStyle.none);
-    dialogs.add('confirmPrompt', confirmPrompt);
-    dialogs.add('start', [
-        async function (dc) {
-            await dc.prompt('confirmPrompt', 'Please confirm.', {
-                retryPrompt: `Please confirm, say 'yes' or 'no' or something like that.`
-            });
-        },
-        async function (dc, confirmed) {
-            await dc.context.sendActivity(confirmed ? 'Confirmed.' : 'Not confirmed.');
             await dc.end();
         }
     ]);
@@ -108,6 +81,61 @@ function ChoicePromptLogic(state) {
         async function (dc, choice) {
             const color = choice.value;
             await dc.context.sendActivity(`Bot received the choice '${color}'.`);
+            await dc.end();
+        }
+    ]);
+
+    return async (context) => {
+        const dc = dialogs.createContext(context, state);
+        await dc.continue();
+
+        // Check to see if anyone replied. If not then start echo dialog
+        if (!context.responded) {
+            await dc.begin('start');
+        }
+    }
+};
+
+function DateTimePromptLogic(state) {
+
+    const dialogs = new DialogSet();
+    const prompt = new DatetimePrompt();
+    dialogs.add('prompt', prompt);
+    dialogs.add('start', [
+        async function (dc) {
+            await dc.prompt('prompt', 'What date would you like?', { retryPrompt: `Sorry, but that is not a date. What date would you like?` });
+        },
+        async function (dc, dateTimeResult) {
+            var resolution = dateTimeResult[0];
+            await dc.context.sendActivity(`Timex:'${resolution.timex}' Value:'${resolution.value}'`);
+            await dc.end();
+        }
+    ]);
+
+    return async (context) => {
+        const dc = dialogs.createContext(context, state);
+        await dc.continue();
+
+        // Check to see if anyone replied. If not then start echo dialog
+        if (!context.responded) {
+            await dc.begin('start');
+        }
+    }
+}
+
+function ConfirmPromptLogic(state) {
+
+    const dialogs = new DialogSet();
+    const confirmPrompt = new ConfirmPrompt().style(ListStyle.none);
+    dialogs.add('confirmPrompt', confirmPrompt);
+    dialogs.add('start', [
+        async function (dc) {
+            await dc.prompt('confirmPrompt', 'Please confirm.', {
+                retryPrompt: `Please confirm, say 'yes' or 'no' or something like that.`
+            });
+        },
+        async function (dc, confirmed) {
+            await dc.context.sendActivity(confirmed ? 'Confirmed.' : 'Not confirmed.');
             await dc.end();
         }
     ]);
