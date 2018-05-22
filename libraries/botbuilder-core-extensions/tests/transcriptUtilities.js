@@ -26,7 +26,7 @@ function getActivitiesFromTranscript(transcriptFilePath) {
  */
 function getActivitiesFromChat(chatFilePath) {
     return readFileAsync(chatFilePath, { encoding: 'utf8' })
-        .then(chat => chatdown(chat, {}))
+        .then(chat => chatdown(chat, { in: chatFilePath }))
         .then(activities => {
             // Clean the last EOL from the last activity.text
             // TODO: Remove once issue is resolved: https://github.com/Microsoft/botbuilder-tools/issues/200
