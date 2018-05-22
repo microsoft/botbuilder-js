@@ -30,9 +30,13 @@ describe(`Prompts using transcripts`, function () {
 
     it('ChoicePrompt', TestBotWithTranscript('../DialogsTests/ChoicePrompt.chat', ChoicePromptLogic));
     it('ChoicePrompt - Retry', TestBotWithTranscript('../DialogsTests/ChoicePromptRetry.chat', ChoicePromptLogic));
-    
+
     it('DateTime', TestBotWithTranscript('../DialogsTests/DateTimePrompt.chat', DateTimePromptLogic));
     it('DateTime - Retry', TestBotWithTranscript('../DialogsTests/DateTimePromptRetry.chat', DateTimePromptLogic));
+
+    it('Number', TestBotWithTranscript('../DialogsTests/NumberPrompt.chat', NumberPromptLogic));
+    it('Number - Retry', TestBotWithTranscript('../DialogsTests/NumberPromptRetry.chat', NumberPromptLogic));
+    it('Number - Custom Validator', TestBotWithTranscript('../DialogsTests/NumberPromptValidator.chat', NumberPromptCustomValidatorLogic));
 
     it('ConfirmPrompt', TestBotWithTranscript('../DialogsTests/ConfirmPrompt.chat', ConfirmPromptLogic));
     it('ConfirmPrompt - Retry', TestBotWithTranscript('../DialogsTests/ConfirmPromptRetry.chat', ConfirmPromptLogic));
@@ -108,6 +112,67 @@ function DateTimePromptLogic(state) {
         async function (dc, dateTimeResult) {
             var resolution = dateTimeResult[0];
             await dc.context.sendActivity(`Timex:'${resolution.timex}' Value:'${resolution.value}'`);
+            await dc.end();
+        }
+    ]);
+
+    return async (context) => {
+        const dc = dialogs.createContext(context, state);
+        await dc.continue();
+
+        // Check to see if anyone replied. If not then start echo dialog
+        if (!context.responded) {
+            await dc.begin('start');
+        }
+    }
+}
+
+function NumberPromptLogic(state) {
+
+    const dialogs = new DialogSet();
+    const prompt = new NumberPrompt();
+    dialogs.add('prompt', prompt);
+    dialogs.add('start', [
+        async function (dc) {
+            await dc.prompt('prompt', 'Enter a number.', { retryPrompt: `You must enter a number.` });
+        },
+        async function (dc, numberResult
+        ) {
+            await dc.context.sendActivity(`Bot received the number '${numberResult}'.`);
+            await dc.end();
+        }
+    ]);
+
+    return async (context) => {
+        const dc = dialogs.createContext(context, state);
+        await dc.continue();
+
+        // Check to see if anyone replied. If not then start echo dialog
+        if (!context.responded) {
+            await dc.begin('start');
+        }
+    }
+}
+
+function NumberPromptCustomValidatorLogic(state) {
+
+    const dialogs = new DialogSet();
+    const prompt = new NumberPrompt((context, result) => {
+        if (result < 0)
+            return undefined;
+        if (result > 100)
+            return undefined;
+
+        return result;
+    });
+    dialogs.add('prompt', prompt);
+    dialogs.add('start', [
+        async function (dc) {
+            await dc.prompt('prompt', 'Enter a number.', { retryPrompt: `You must enter a positive number less than 100.` });
+        },
+        async function (dc, numberResult
+        ) {
+            await dc.context.sendActivity(`Bot received the number '${numberResult}'.`);
             await dc.end();
         }
     ]);
