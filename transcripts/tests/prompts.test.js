@@ -38,6 +38,10 @@ describe(`Prompts using transcripts`, function () {
     it('Number - Retry', TestBotWithTranscript('../DialogsTests/NumberPromptRetry.chat', NumberPromptLogic));
     it('Number - Custom Validator', TestBotWithTranscript('../DialogsTests/NumberPromptValidator.chat', NumberPromptCustomValidatorLogic));
 
+    it('Text', TestBotWithTranscript('../DialogsTests/TextPrompt.chat', TextPromptLogic));
+    it('Text - Custom Validator', TestBotWithTranscript('../DialogsTests/TextPromptValidator.chat', TextPromptCustomValidatorLogic));
+
+
     it('ConfirmPrompt', TestBotWithTranscript('../DialogsTests/ConfirmPrompt.chat', ConfirmPromptLogic));
     it('ConfirmPrompt - Retry', TestBotWithTranscript('../DialogsTests/ConfirmPromptRetry.chat', ConfirmPromptLogic));
 
@@ -173,6 +177,66 @@ function NumberPromptCustomValidatorLogic(state) {
         async function (dc, numberResult
         ) {
             await dc.context.sendActivity(`Bot received the number '${numberResult}'.`);
+            await dc.end();
+        }
+    ]);
+
+    return async (context) => {
+        const dc = dialogs.createContext(context, state);
+        await dc.continue();
+
+        // Check to see if anyone replied. If not then start echo dialog
+        if (!context.responded) {
+            await dc.begin('start');
+        }
+    }
+}
+
+function TextPromptLogic(state) {
+
+    const dialogs = new DialogSet();
+    const prompt = new TextPrompt();
+    dialogs.add('prompt', prompt);
+    dialogs.add('start', [
+        async function (dc) {
+            await dc.prompt('prompt', 'Enter some text.');
+        },
+        async function (dc, text
+        ) {
+            await dc.context.sendActivity(`Bot received the text '${text}'.`);
+            await dc.end();
+        }
+    ]);
+
+    return async (context) => {
+        const dc = dialogs.createContext(context, state);
+        await dc.continue();
+
+        // Check to see if anyone replied. If not then start echo dialog
+        if (!context.responded) {
+            await dc.begin('start');
+        }
+    }
+}
+
+function TextPromptCustomValidatorLogic(state) {
+
+    const dialogs = new DialogSet();
+    const prompt = new TextPrompt((context, text) => {
+        if(text.length <= 3) {
+            return undefined;
+        }
+
+        return text;
+    });
+    dialogs.add('prompt', prompt);
+    dialogs.add('start', [
+        async function (dc) {
+            await dc.prompt('prompt', 'Enter some text.', { retryPrompt: `Make sure the text is greater than three characters.` });
+        },
+        async function (dc, text
+        ) {
+            await dc.context.sendActivity(`Bot received the text '${text}'.`);
             await dc.end();
         }
     ]);
