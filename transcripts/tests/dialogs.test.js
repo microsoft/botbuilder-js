@@ -41,11 +41,8 @@ describe(`Prompts using transcripts`, function () {
     it('Text', TestBotWithTranscript('../DialogsTests/TextPrompt.chat', TextPromptLogic));
     it('Text - Custom Validator', TestBotWithTranscript('../DialogsTests/TextPromptValidator.chat', TextPromptCustomValidatorLogic));
 
-
     it('ConfirmPrompt', TestBotWithTranscript('../DialogsTests/ConfirmPrompt.chat', ConfirmPromptLogic));
     it('ConfirmPrompt - Retry', TestBotWithTranscript('../DialogsTests/ConfirmPromptRetry.chat', ConfirmPromptLogic));
-
-
 });
 
 function AttachmentPromptLogic(state) {
