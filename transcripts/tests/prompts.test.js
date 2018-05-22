@@ -25,10 +25,41 @@ function TestBotWithTranscript(transcriptPath, botLogicFactoryFun) {
 describe(`Prompts using transcripts`, function () {
     this.timeout(5000);
 
+    it('ConfirmPrompt', TestBotWithTranscript('../DialogsTests/ConfirmPrompt.chat', ConfirmPromptLogic));
+    it('ConfirmPrompt - Retry', TestBotWithTranscript('../DialogsTests/ConfirmPromptRetry.chat', ConfirmPromptLogic));
+
     it('ChoicePrompt', TestBotWithTranscript('../DialogsTests/ChoicePrompt.chat', ChoicePromptLogic));
     it('ChoicePrompt - Retry', TestBotWithTranscript('../DialogsTests/ChoicePromptRetry.chat', ChoicePromptLogic));
 
 });
+
+function ConfirmPromptLogic(state) {
+
+    const dialogs = new DialogSet();
+    const confirmPrompt = new ConfirmPrompt().style(ListStyle.none);
+    dialogs.add('confirmPrompt', confirmPrompt);
+    dialogs.add('start', [
+        async function (dc) {
+            await dc.prompt('confirmPrompt', 'Please confirm.', {
+                retryPrompt: `Please confirm, say 'yes' or 'no' or something like that.`
+            });
+        },
+        async function (dc, confirmed) {
+            await dc.context.sendActivity(confirmed ? 'Confirmed.' : 'Not confirmed.');
+            await dc.end();
+        }
+    ]);
+
+    return async (context) => {
+        const dc = dialogs.createContext(context, state);
+        await dc.continue();
+
+        // Check to see if anyone replied. If not then start echo dialog
+        if (!context.responded) {
+            await dc.begin('start');
+        }
+    }
+};
 
 function ChoicePromptLogic(state) {
 
