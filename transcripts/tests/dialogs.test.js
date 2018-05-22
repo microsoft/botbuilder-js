@@ -26,23 +26,18 @@ function TestBotWithTranscript(transcriptPath, botLogicFactoryFun) {
 describe(`Prompts using transcripts`, function () {
     this.timeout(5000);
 
-    it('AttchmentPrompt', TestBotWithTranscript('../DialogsTests/AttachmentPrompt.transcript', AttachmentPromptLogic));
+    it('AttachmentPrompt', TestBotWithTranscript('../DialogsTests/AttachmentPrompt.chat', AttachmentPromptLogic));
 
     it('ChoicePrompt', TestBotWithTranscript('../DialogsTests/ChoicePrompt.chat', ChoicePromptLogic));
-    it('ChoicePrompt - Retry', TestBotWithTranscript('../DialogsTests/ChoicePromptRetry.chat', ChoicePromptLogic));
-
-    it('DateTime', TestBotWithTranscript('../DialogsTests/DateTimePrompt.chat', DateTimePromptLogic));
-    it('DateTime - Retry', TestBotWithTranscript('../DialogsTests/DateTimePromptRetry.chat', DateTimePromptLogic));
-
-    it('Number', TestBotWithTranscript('../DialogsTests/NumberPrompt.chat', NumberPromptLogic));
-    it('Number - Retry', TestBotWithTranscript('../DialogsTests/NumberPromptRetry.chat', NumberPromptLogic));
-    it('Number - Custom Validator', TestBotWithTranscript('../DialogsTests/NumberPromptValidator.chat', NumberPromptCustomValidatorLogic));
-
-    it('Text', TestBotWithTranscript('../DialogsTests/TextPrompt.chat', TextPromptLogic));
-    it('Text - Custom Validator', TestBotWithTranscript('../DialogsTests/TextPromptValidator.chat', TextPromptCustomValidatorLogic));
 
     it('ConfirmPrompt', TestBotWithTranscript('../DialogsTests/ConfirmPrompt.chat', ConfirmPromptLogic));
     it('ConfirmPrompt - Retry', TestBotWithTranscript('../DialogsTests/ConfirmPromptRetry.chat', ConfirmPromptLogic));
+
+    it('DateTime', TestBotWithTranscript('../DialogsTests/DateTimePrompt.chat', DateTimePromptLogic));
+
+    it('Number', TestBotWithTranscript('../DialogsTests/NumberPrompt.chat', NumberPromptCustomValidatorLogic));
+
+    it('Text', TestBotWithTranscript('../DialogsTests/TextPrompt.chat', TextPromptCustomValidatorLogic));
 });
 
 function AttachmentPromptLogic(state) {
@@ -128,33 +123,6 @@ function DateTimePromptLogic(state) {
     }
 }
 
-function NumberPromptLogic(state) {
-
-    const dialogs = new DialogSet();
-    const prompt = new NumberPrompt();
-    dialogs.add('prompt', prompt);
-    dialogs.add('start', [
-        async function (dc) {
-            await dc.prompt('prompt', 'Enter a number.', { retryPrompt: `You must enter a number.` });
-        },
-        async function (dc, numberResult
-        ) {
-            await dc.context.sendActivity(`Bot received the number '${numberResult}'.`);
-            await dc.end();
-        }
-    ]);
-
-    return async (context) => {
-        const dc = dialogs.createContext(context, state);
-        await dc.continue();
-
-        // Check to see if anyone replied. If not then start echo dialog
-        if (!context.responded) {
-            await dc.begin('start');
-        }
-    }
-}
-
 function NumberPromptCustomValidatorLogic(state) {
 
     const dialogs = new DialogSet();
@@ -169,38 +137,11 @@ function NumberPromptCustomValidatorLogic(state) {
     dialogs.add('prompt', prompt);
     dialogs.add('start', [
         async function (dc) {
-            await dc.prompt('prompt', 'Enter a number.', { retryPrompt: `You must enter a positive number less than 100.` });
+            await dc.prompt('prompt', 'Enter a number.', { retryPrompt: `You must enter a valid positive number less than 100.` });
         },
         async function (dc, numberResult
         ) {
             await dc.context.sendActivity(`Bot received the number '${numberResult}'.`);
-            await dc.end();
-        }
-    ]);
-
-    return async (context) => {
-        const dc = dialogs.createContext(context, state);
-        await dc.continue();
-
-        // Check to see if anyone replied. If not then start echo dialog
-        if (!context.responded) {
-            await dc.begin('start');
-        }
-    }
-}
-
-function TextPromptLogic(state) {
-
-    const dialogs = new DialogSet();
-    const prompt = new TextPrompt();
-    dialogs.add('prompt', prompt);
-    dialogs.add('start', [
-        async function (dc) {
-            await dc.prompt('prompt', 'Enter some text.');
-        },
-        async function (dc, text
-        ) {
-            await dc.context.sendActivity(`Bot received the text '${text}'.`);
             await dc.end();
         }
     ]);
