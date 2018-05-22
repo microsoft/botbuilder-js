@@ -10,8 +10,9 @@ const {
 const TranscriptUtilities = require('../../libraries/botbuilder-core-extensions/tests/transcriptUtilities');
 
 function TestBotWithTranscript(transcriptPath, botLogicFactoryFun) {
+    var loadFun = transcriptPath.endsWith('.chat') ? TranscriptUtilities.getActivitiesFromChat : TranscriptUtilities.getActivitiesFromTranscript;
     return function (done) {
-        TranscriptUtilities.getActivitiesFromChat(transcriptPath).then(activities => {
+        loadFun(transcriptPath).then(activities => {
             const convoState = new ConversationState(new MemoryStorage());
             var adapter = new TestAdapter(botLogicFactoryFun(convoState));
             adapter.use(convoState);
@@ -25,6 +26,11 @@ function TestBotWithTranscript(transcriptPath, botLogicFactoryFun) {
 describe(`Prompts using transcripts`, function () {
     this.timeout(5000);
 
+    it('AttchmentPrompt', TestBotWithTranscript('../DialogsTests/AttachmentPrompt.transcript', AttachmentPromptLogic));
+    
+    it('ConfirmPrompt', TestBotWithTranscript('../DialogsTests/ConfirmPrompt.chat', ConfirmPromptLogic));
+    it('ConfirmPrompt - Retry', TestBotWithTranscript('../DialogsTests/ConfirmPromptRetry.chat', ConfirmPromptLogic));
+
     it('ConfirmPrompt', TestBotWithTranscript('../DialogsTests/ConfirmPrompt.chat', ConfirmPromptLogic));
     it('ConfirmPrompt - Retry', TestBotWithTranscript('../DialogsTests/ConfirmPromptRetry.chat', ConfirmPromptLogic));
 
@@ -32,6 +38,32 @@ describe(`Prompts using transcripts`, function () {
     it('ChoicePrompt - Retry', TestBotWithTranscript('../DialogsTests/ChoicePromptRetry.chat', ChoicePromptLogic));
 
 });
+
+function AttachmentPromptLogic(state) {
+
+    const dialogs = new DialogSet();
+    const prompt = new AttachmentPrompt();
+    dialogs.add('prompt', prompt);
+    dialogs.add('start', [
+        async function (dc) {
+            await dc.prompt('prompt', 'please add an attachment.');
+        },
+        async function (dc, attachment) {
+            await dc.context.sendActivity(attachment[0].content);
+            await dc.end();
+        }
+    ]);
+
+    return async (context) => {
+        const dc = dialogs.createContext(context, state);
+        await dc.continue();
+
+        // Check to see if anyone replied. If not then start echo dialog
+        if (!context.responded) {
+            await dc.begin('start');
+        }
+    }
+};
 
 function ConfirmPromptLogic(state) {
 
