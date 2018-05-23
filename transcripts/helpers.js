@@ -12,6 +12,6 @@ module.exports.testBotWithTranscript = function testBotWithTranscript(transcript
             return adapter.testActivities(activities)
                 .then(done)
                 .catch(done);
-        });
+        }).catch(done)
     }
 }
