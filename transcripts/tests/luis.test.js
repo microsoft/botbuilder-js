@@ -21,7 +21,7 @@ describe(`LUIS Tests using transcripts`, function () {
 
     this.timeout(15000)
 
-    it('LuisMiddleware', testBotWithTranscript('LuisTests/LuisMiddleware.chat', LuisTestLogic, (adapter) => adapter.use(recognizer)));
+    it('LuisRecognizer Middleware', testBotWithTranscript('LuisTests/LuisMiddleware.chat', LuisTestLogic, (adapter) => adapter.use(recognizer)));
 });
 
 function LuisTestLogic(conversationState, userState) {
