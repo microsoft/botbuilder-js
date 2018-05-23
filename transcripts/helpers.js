@@ -11,7 +11,7 @@ module.exports.testBotWithTranscript = function testBotWithTranscript(transcript
             const userState = new UserState(storage);
             const state = new BotStateSet(conversationState, userState);
 
-            var adapter = new TestAdapter(botLogicFactoryFun(state));
+            var adapter = new TestAdapter(botLogicFactoryFun(conversationState, userState));
             adapter.use(state);
 
             if(typeof middlewareRegistrationFun === 'function') {
