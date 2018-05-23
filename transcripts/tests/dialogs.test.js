@@ -1,47 +1,29 @@
 const assert = require('assert');
-
-const { BotState, UserState, MemoryStorage, TestAdapter, ConversationState } = require('botbuilder-core-extensions');
 const { createChoicePrompt, ListStyle } = require('botbuilder-prompts');
 const {
     DialogSet, TextPrompt, ConfirmPrompt, ChoicePrompt, DatetimePrompt, NumberPrompt,
     AttachmentPrompt, FoundChoice, Choice, FoundDatetime
 } = require('botbuilder-dialogs');
-
-const TranscriptUtilities = require('../../libraries/botbuilder-core-extensions/tests/transcriptUtilities');
-
-function TestBotWithTranscript(transcriptPath, botLogicFactoryFun) {
-    var loadFun = transcriptPath.endsWith('.chat') ? TranscriptUtilities.getActivitiesFromChat : TranscriptUtilities.getActivitiesFromTranscript;
-    return function (done) {
-        loadFun(transcriptPath).then(activities => {
-            const convoState = new ConversationState(new MemoryStorage());
-            var adapter = new TestAdapter(botLogicFactoryFun(convoState));
-            adapter.use(convoState);
-            return adapter.testActivities(activities)
-                .then(done)
-                .catch(done);
-        });
-    }
-}
+const { testBotWithTranscript } = require('./helpers');
 
 describe(`Prompts using transcripts`, function () {
     this.timeout(5000);
 
-    it('AttachmentPrompt', TestBotWithTranscript('../DialogsTests/AttachmentPrompt.chat', AttachmentPromptLogic));
+    it('AttachmentPrompt', testBotWithTranscript('DialogsTests/AttachmentPrompt.chat', AttachmentPromptLogic));
 
-    it('ChoicePrompt', TestBotWithTranscript('../DialogsTests/ChoicePrompt.chat', ChoicePromptLogic));
+    it('ChoicePrompt', testBotWithTranscript('DialogsTests/ChoicePrompt.chat', ChoicePromptLogic));
 
-    it('ConfirmPrompt', TestBotWithTranscript('../DialogsTests/ConfirmPrompt.chat', ConfirmPromptLogic));
-    it('ConfirmPrompt - Retry', TestBotWithTranscript('../DialogsTests/ConfirmPromptRetry.chat', ConfirmPromptLogic));
+    it('ConfirmPrompt', testBotWithTranscript('DialogsTests/ConfirmPrompt.chat', ConfirmPromptLogic));
 
-    it('DateTime', TestBotWithTranscript('../DialogsTests/DateTimePrompt.chat', DateTimePromptLogic));
+    it('DateTime', testBotWithTranscript('DialogsTests/DateTimePrompt.chat', DateTimePromptLogic));
 
-    it('Number', TestBotWithTranscript('../DialogsTests/NumberPrompt.chat', NumberPromptCustomValidatorLogic));
+    it('Number', testBotWithTranscript('DialogsTests/NumberPrompt.chat', NumberPromptCustomValidatorLogic));
 
-    it('Text', TestBotWithTranscript('../DialogsTests/TextPrompt.chat', TextPromptCustomValidatorLogic));
+    it('Text', testBotWithTranscript('DialogsTests/TextPrompt.chat', TextPromptCustomValidatorLogic));
 
-    it('Waterfall', TestBotWithTranscript('../DialogsTests/Waterfall.chat', WaterfallLogic))
-    it('WaterfallPrompt', TestBotWithTranscript('../DialogsTests/WaterfallPrompt.chat', WaterfallPromptLogic))
-    it('WaterfallNested', TestBotWithTranscript('../DialogsTests/WaterfallNested.chat', WaterfallNestedLogic))
+    it('Waterfall', testBotWithTranscript('DialogsTests/Waterfall.chat', WaterfallLogic))
+    it('WaterfallPrompt', testBotWithTranscript('DialogsTests/WaterfallPrompt.chat', WaterfallPromptLogic))
+    it('WaterfallNested', testBotWithTranscript('DialogsTests/WaterfallNested.chat', WaterfallNestedLogic))
 });
 
 function AttachmentPromptLogic(state) {
