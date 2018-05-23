@@ -6,7 +6,7 @@ const {
 } = require('botbuilder-dialogs');
 const { testBotWithTranscript } = require('../helpers');
 
-describe(`Prompts using transcripts`, function () {
+describe(`Prompt Tests using transcripts`, function () {
     this.timeout(5000);
 
     it('AttachmentPrompt', testBotWithTranscript('DialogsTests/AttachmentPrompt.chat', AttachmentPromptLogic));
