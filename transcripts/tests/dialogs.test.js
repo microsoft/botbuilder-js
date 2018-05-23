@@ -38,6 +38,10 @@ describe(`Prompts using transcripts`, function () {
     it('Number', TestBotWithTranscript('../DialogsTests/NumberPrompt.chat', NumberPromptCustomValidatorLogic));
 
     it('Text', TestBotWithTranscript('../DialogsTests/TextPrompt.chat', TextPromptCustomValidatorLogic));
+
+    it('Waterfall', TestBotWithTranscript('../DialogsTests/Waterfall.chat', WaterfallLogic))
+    it('WaterfallPrompt', TestBotWithTranscript('../DialogsTests/WaterfallPrompt.chat', WaterfallPromptLogic))
+    it('WaterfallNested', TestBotWithTranscript('../DialogsTests/WaterfallNested.chat', WaterfallNestedLogic))
 });
 
 function AttachmentPromptLogic(state) {
@@ -161,7 +165,7 @@ function TextPromptCustomValidatorLogic(state) {
 
     const dialogs = new DialogSet();
     const prompt = new TextPrompt((context, text) => {
-        if(text.length <= 3) {
+        if (text.length <= 3) {
             return undefined;
         }
 
@@ -217,3 +221,100 @@ function ConfirmPromptLogic(state) {
         }
     }
 };
+
+function WaterfallLogic(state) {
+    const dialogs = new DialogSet();
+    dialogs.add('start', [
+        (dc) => dc.context.sendActivity('step1'),
+        (dc) => dc.context.sendActivity('step2'),
+        (dc) => dc.context.sendActivity('step3')
+    ]);
+
+    return async (context) => {
+        const dc = dialogs.createContext(context, state);
+        await dc.continue();
+
+        // Check to see if anyone replied. If not then start echo dialog
+        if (!context.responded) {
+            await dc.begin('start');
+        }
+    }
+}
+
+function WaterfallPromptLogic(state) {
+    const dialogs = new DialogSet();
+    dialogs.add('number', new NumberPrompt());
+    dialogs.add('test-waterfall', [
+        async (dc) => {
+            await dc.context.sendActivity('step1');
+            await dc.prompt('number', 'Enter a number.', { retryPrompt: 'It must be a number' })
+        },
+        async (dc, args) => {
+            if (args != null) {
+                var numberResult = args;
+                await dc.context.sendActivity(`Thanks for '${numberResult}'`);
+            }
+
+            await dc.context.sendActivity('step2');
+            await dc.prompt('number', 'Enter a number.', { retryPrompt: 'It must be a number' });
+        },
+        async (dc, args) => {
+            if (args != null) {
+                var numberResult = args;
+                await dc.context.sendActivity(`Thanks for '${numberResult}'`);
+            }
+
+            await dc.context.sendActivity('step3');
+            await dc.end({ value: 'All Done!' });
+        }
+
+    ]);
+
+    return async (context) => {
+        const dc = dialogs.createContext(context, state);
+        await dc.continue();
+
+        // Check to see if anyone replied. If not then start echo dialog
+        if (!context.responded) {
+            await dc.begin('test-waterfall');
+        }
+    }
+}
+
+function WaterfallNestedLogic(state) {
+    const dialogs = new DialogSet();
+    dialogs.add('test-waterfall-a', WaterfallNestedA);
+    dialogs.add('test-waterfall-b', WaterfallNestedB);
+    dialogs.add('test-waterfall-c', WaterfallNestedC);
+
+    return async (context) => {
+        const dc = dialogs.createContext(context, state);
+        await dc.continue();
+
+        // Check to see if anyone replied. If not then start echo dialog
+        if (!context.responded) {
+            await dc.begin('test-waterfall-a');
+        }
+    }
+}
+
+const WaterfallNestedA = [
+    async (dc) => {
+        dc.context.sendActivity('step1');
+        await dc.begin('test-waterfall-b');
+    },
+    async (dc) => {
+        await dc.context.sendActivity("step2");
+        await dc.begin("test-waterfall-c");
+    }
+];
+
+const WaterfallNestedB = [
+    async (dc) => dc.context.sendActivity('step1.1'),
+    async (dc) => dc.context.sendActivity('step1.2')
+];
+
+const WaterfallNestedC = [
+    async (dc) => dc.context.sendActivity('step2.1'),
+    async (dc) => dc.context.sendActivity('step2.2')
+];
