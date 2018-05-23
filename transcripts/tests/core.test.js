@@ -1,10 +1,4 @@
 const assert = require('assert');
-const { createChoicePrompt, ListStyle } = require('botbuilder-prompts');
-const { Middleware, MiddlewareSet } = require('botbuilder-core');
-const {
-    DialogSet, TextPrompt, ConfirmPrompt, ChoicePrompt, DatetimePrompt, NumberPrompt,
-    AttachmentPrompt, FoundChoice, Choice, FoundDatetime
-} = require('botbuilder-dialogs');
 const { testBotWithTranscript } = require('../helpers');
 
 describe(`Core Tests using transcripts`, function () {
