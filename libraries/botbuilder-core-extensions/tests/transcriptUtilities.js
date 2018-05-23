@@ -28,7 +28,7 @@ function getActivitiesFromChat(chatFilePath) {
     return readFileAsync(chatFilePath, { encoding: 'utf8' })
         .then(chat => chatdown(chat, { in: chatFilePath }))
         .then(activities => {
-            // Clean the last EOL from the last activity.text
+            // Clean the last line break (\n) from the last activity.text
             // TODO: Remove once issue is resolved: https://github.com/Microsoft/botbuilder-tools/issues/200
             var last = activities[activities.length - 1];
             if (last) {
