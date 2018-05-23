@@ -1,9 +1,8 @@
 const path = require('path');
 const { MemoryStorage, TestAdapter, ConversationState } = require('botbuilder-core-extensions');
-const TranscriptUtilities = require('../../libraries/botbuilder-core-extensions/tests/transcriptUtilities');
+const TranscriptUtilities = require('../libraries/botbuilder-core-extensions/tests/transcriptUtilities');
 
 module.exports.testBotWithTranscript = function testBotWithTranscript(transcriptPath, botLogicFactoryFun) {
-    transcriptPath = path.join('../', transcriptPath);
     var loadFun = transcriptPath.endsWith('.chat') ? TranscriptUtilities.getActivitiesFromChat : TranscriptUtilities.getActivitiesFromTranscript;
     return function (done) {
         loadFun(transcriptPath).then(activities => {
