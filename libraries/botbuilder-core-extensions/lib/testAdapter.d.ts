@@ -35,6 +35,7 @@ export declare type TestActivityInspector = (activity: Partial<Activity>, descri
  */
 export declare class TestAdapter extends BotAdapter {
     private logic;
+    private sendTraceActivities;
     private nextId;
     /**
      * @private
@@ -83,7 +84,7 @@ export declare class TestAdapter extends BotAdapter {
      * @param logic The bots logic that's under test.
      * @param template (Optional) activity containing default values to assign to all test messages received.
      */
-    constructor(logic: (context: TurnContext) => Promiseable<void>, template?: ConversationReference);
+    constructor(logic: (context: TurnContext) => Promiseable<void>, template?: ConversationReference, sendTraceActivities?: boolean);
     /**
      * @private
      * INTERNAL: called by the logic under test to send a set of activities. These will be buffered
