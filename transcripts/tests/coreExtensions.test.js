@@ -1,12 +1,12 @@
 const assert = require('assert');
-const { testBotWithTranscript } = require('../helpers');
+const { assertBotLogicWithTranscript } = require('../../libraries/botbuilder-core-extensions/tests/transcriptUtilities');
 
 describe(`Core Extensions Tests using transcripts`, function () {
     this.timeout(5000);
 
-    it('UserStateTest', testBotWithTranscript('CoreExtensionsTests/UserStateTest.chat', (conversationState, userState) => TestLogic(userState)));
+    it('UserStateTest', assertBotLogicWithTranscript('CoreExtensionsTests/UserStateTest.chat', (conversationState, userState) => TestLogic(userState)));
 
-    it('ConversationStateTest', testBotWithTranscript('CoreExtensionsTests/ConversationStateTest.chat', (conversationState, userState) => TestLogic(conversationState)));
+    it('ConversationStateTest', assertBotLogicWithTranscript('CoreExtensionsTests/ConversationStateTest.chat', (conversationState, userState) => TestLogic(conversationState)));
 });
 
 function TestLogic(botState) {

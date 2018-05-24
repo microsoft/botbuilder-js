@@ -4,26 +4,26 @@ const {
     DialogSet, TextPrompt, ConfirmPrompt, ChoicePrompt, DatetimePrompt, NumberPrompt,
     AttachmentPrompt, FoundChoice, Choice, FoundDatetime
 } = require('botbuilder-dialogs');
-const { testBotWithTranscript } = require('../helpers');
+const { assertBotLogicWithTranscript } = require('../../libraries/botbuilder-core-extensions/tests/transcriptUtilities');
 
 describe(`Prompt Tests using transcripts`, function () {
     this.timeout(5000);
 
-    it('AttachmentPrompt', testBotWithTranscript('DialogsTests/AttachmentPrompt.chat', AttachmentPromptLogic));
+    it('AttachmentPrompt', assertBotLogicWithTranscript('DialogsTests/AttachmentPrompt.chat', AttachmentPromptLogic));
 
-    it('ChoicePrompt', testBotWithTranscript('DialogsTests/ChoicePrompt.chat', ChoicePromptLogic));
+    it('ChoicePrompt', assertBotLogicWithTranscript('DialogsTests/ChoicePrompt.chat', ChoicePromptLogic));
 
-    it('ConfirmPrompt', testBotWithTranscript('DialogsTests/ConfirmPrompt.chat', ConfirmPromptLogic));
+    it('ConfirmPrompt', assertBotLogicWithTranscript('DialogsTests/ConfirmPrompt.chat', ConfirmPromptLogic));
 
-    it('DateTime', testBotWithTranscript('DialogsTests/DateTimePrompt.chat', DateTimePromptLogic));
+    it('DateTime', assertBotLogicWithTranscript('DialogsTests/DateTimePrompt.chat', DateTimePromptLogic));
 
-    it('Number', testBotWithTranscript('DialogsTests/NumberPrompt.chat', NumberPromptCustomValidatorLogic));
+    it('Number', assertBotLogicWithTranscript('DialogsTests/NumberPrompt.chat', NumberPromptCustomValidatorLogic));
 
-    it('Text', testBotWithTranscript('DialogsTests/TextPrompt.chat', TextPromptCustomValidatorLogic));
+    it('Text', assertBotLogicWithTranscript('DialogsTests/TextPrompt.chat', TextPromptCustomValidatorLogic));
 
-    it('Waterfall', testBotWithTranscript('DialogsTests/Waterfall.chat', WaterfallLogic))
-    it('WaterfallPrompt', testBotWithTranscript('DialogsTests/WaterfallPrompt.chat', WaterfallPromptLogic))
-    it('WaterfallNested', testBotWithTranscript('DialogsTests/WaterfallNested.chat', WaterfallNestedLogic))
+    it('Waterfall', assertBotLogicWithTranscript('DialogsTests/Waterfall.chat', WaterfallLogic))
+    it('WaterfallPrompt', assertBotLogicWithTranscript('DialogsTests/WaterfallPrompt.chat', WaterfallPromptLogic))
+    it('WaterfallNested', assertBotLogicWithTranscript('DialogsTests/WaterfallNested.chat', WaterfallNestedLogic))
 });
 
 function AttachmentPromptLogic(state) {

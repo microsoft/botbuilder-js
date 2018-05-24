@@ -1,6 +1,6 @@
 const assert = require('assert');
 const { QnAMaker } = require('botbuilder-ai');
-const { testBotWithTranscript } = require('../helpers');
+const { assertBotLogicWithTranscript } = require('../../libraries/botbuilder-core-extensions/tests/transcriptUtilities');
 
 var qnaKnowledgeBaseId = process.env['QNAKNOWLEDGEBASEID'];
 var qnaEndpointKey = process.env['QNAENDPOINTKEY'];
@@ -21,7 +21,7 @@ describe(`LUIS Tests using transcripts`, function () {
 
     this.timeout(15000)
 
-    it('QnAMaker Middleware', testBotWithTranscript('QnATests/QnAMiddleware.chat', QnATestLogic, (adapter) => adapter.use(qna)));
+    it('QnAMaker Middleware', assertBotLogicWithTranscript('QnATests/QnAMiddleware.chat', QnATestLogic, (adapter) => adapter.use(qna)));
 });
 
 function QnATestLogic(conversationState, userState) {

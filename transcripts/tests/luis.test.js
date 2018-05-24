@@ -1,6 +1,6 @@
 const assert = require('assert');
 const { LuisRecognizer } = require('botbuilder-ai');
-const { testBotWithTranscript } = require('../helpers');
+const { assertBotLogicWithTranscript } = require('../../libraries/botbuilder-core-extensions/tests/transcriptUtilities');
 
 var luisAppId = process.env['LUISAPPID'];
 var luisSubscriptionKey = process.env['LUISAPPKEY'];
@@ -19,9 +19,9 @@ describe(`LUIS Tests using transcripts`, function () {
         serviceEndpoint: luisUriBase
     });
 
-    this.timeout(15000)
+    this.timeout(15000);
 
-    it('LuisRecognizer Middleware', testBotWithTranscript('LuisTests/LuisMiddleware.chat', LuisTestLogic, (adapter) => adapter.use(recognizer)));
+    it('LuisRecognizer Middleware', assertBotLogicWithTranscript('LuisTests/LuisMiddleware.chat', LuisTestLogic, (adapter) => adapter.use(recognizer)));
 });
 
 function LuisTestLogic(conversationState, userState) {
