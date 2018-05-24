@@ -4,7 +4,7 @@ const {
     DialogSet, TextPrompt, ConfirmPrompt, ChoicePrompt, DatetimePrompt, NumberPrompt,
     AttachmentPrompt, FoundChoice, Choice, FoundDatetime
 } = require('botbuilder-dialogs');
-const { assertBotLogicWithTranscript } = require('../../libraries/botbuilder-core-extensions/tests/transcriptUtilities');
+const assertBotLogicWithTranscript = require('../../libraries/botbuilder-core-extensions/tests/transcriptUtilities').assertBotLogicWithBotBuilderTranscript;
 
 describe(`Prompt Tests using transcripts`, function () {
     this.timeout(5000);
