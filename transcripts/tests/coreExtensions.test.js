@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { assertBotLogicWithTranscript } = require('../../libraries/botbuilder-core-extensions/tests/transcriptUtilities');
+const assertBotLogicWithTranscript = require('../../libraries/botbuilder-core-extensions/tests/transcriptUtilities').assertBotLogicWithBotBuilderTranscript;
 
 describe(`Core Extensions Tests using transcripts`, function () {
     this.timeout(5000);
