@@ -1,6 +1,6 @@
 const assert = require('assert');
 const { LanguageTranslator, LocaleConverter } = require('botbuilder-ai');
-const { testBotWithTranscript } = require('../helpers');
+const { assertBotLogicWithTranscript } = require('../../libraries/botbuilder-core-extensions/tests/transcriptUtilities');
 
 var translatorKey = process.env['TRANSLATORKEY'];
 describe(`Translation Tests using transcripts`, function () {
@@ -11,11 +11,11 @@ describe(`Translation Tests using transcripts`, function () {
 
     this.timeout(15000);
 
-    it('TranslateToEnglish', testBotWithTranscript('TranslationTests/TranslateToEnglish.chat', TestLogic, TranslateToEnglishMiddleware));
+    it('TranslateToEnglish', assertBotLogicWithTranscript('TranslationTests/TranslateToEnglish.chat', TestLogic, TranslateToEnglishMiddleware));
 
-    it('TranslateToUserLanguage', testBotWithTranscript('TranslationTests/TranslateToUserLanguage.chat', TestLogic, TranslateToUserLanguageMiddleware));
+    it('TranslateToUserLanguage', assertBotLogicWithTranscript('TranslationTests/TranslateToUserLanguage.chat', TestLogic, TranslateToUserLanguageMiddleware));
 
-    it('LocaleConvertToEnglish', testBotWithTranscript('TranslationTests/LocaleConvertToEnglish.chat', TestLogic, LocaleConvertToEnglishMiddleware));
+    it('LocaleConvertToEnglish', assertBotLogicWithTranscript('TranslationTests/LocaleConvertToEnglish.chat', TestLogic, LocaleConvertToEnglishMiddleware));
 });
 
 function TestLogic(conversationState, userState) {
