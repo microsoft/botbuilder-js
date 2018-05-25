@@ -208,6 +208,40 @@ export class TestAdapter extends BotAdapter {
         return this.send(userSays)
             .assertReply(expected, description);
     }
+
+    /**
+     * Test a list of activities.
+     * Each activity with the "bot" role will be processed with assertReply()
+     * Every other activity will be processed as a user message with send()
+     * @param activities Array of activities.
+     * @param description (Optional) Description of the test case. If not provided one will be generated.
+     * @param timeout (Optional) number of milliseconds to wait for a response from bot. Defaults to a value of `3000`.
+     */
+    public testActivities(activities: Array<Partial<Activity>>, description?: string, timeout?: number): TestFlow {
+        if (!activities) {
+            throw new Error('Missing array of activities');
+        }
+
+        const activityInspector = (expected: Partial<Activity>): TestActivityInspector =>
+            (actual: Partial<Activity>, description: string) =>
+                validateTranscriptActivity(actual, expected, description);
+
+        // Chain all activities in a TestFlow, check if its a user message (send) or a bot reply (assert)
+        return activities.reduce((flow, activity) => {
+            var assertDescription = 'reply' + (description ? ' from ' + description : '');
+            return this.isReply(activity)
+                ? flow.assertReply(activityInspector(activity), assertDescription, timeout)
+                : flow.send(activity);
+        }, new TestFlow(Promise.resolve(), this));
+    }
+
+    /**
+     * Indicates if the activity is a reply from the bot (role == 'bot')
+     * @param activity Activity to check.
+     */
+    private isReply(activity: Partial<Activity>): boolean {
+        return activity.from.role && activity.from.role.toLocaleLowerCase() === 'bot';
+    }
 }
 
 /**
@@ -374,4 +408,23 @@ function validateActivity(activity: Partial<Activity>, expected: Partial<Activit
     for (const prop in expected) {
         assert.equal((<any>activity)[prop], (<any>expected)[prop]);
     }
+}
+
+/**
+ * @private
+ * Does a shallow comparison of:
+ * - type
+ * - text
+ * - speak
+ * - suggestedActions
+ *
+ * @param activity
+ * @param expected
+ * @param description
+ */
+function validateTranscriptActivity(activity: Partial<Activity>, expected: Partial<Activity>, description: string): void {
+    assert.equal(activity.type, expected.type, 'failed "type" assert on ' + description);
+    assert.equal(activity.text, expected.text, 'failed "text" assert on ' + description);
+    assert.equal(activity.speak, expected.speak, 'failed "speak" assert on ' + description);
+    assert.deepEqual(activity.suggestedActions, expected.suggestedActions, 'failed "suggestedActions" assert on ' + description);
 }
