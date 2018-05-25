@@ -16,7 +16,8 @@ import { Constants } from './constants';
 export class MicrosoftAppCredentials implements msrest.ServiceClientCredentials {
 
     private static readonly trustedHostNames: Map<string, Date> = new Map<string, Date>([
-        ['state.botframework.com', new Date(8640000000000000)]              // Date.MAX_VALUE
+        ['state.botframework.com', new Date(8640000000000000)],              // Date.MAX_VALUE,
+        ['api.botframework.com', new Date(8640000000000000)]                 // Date.MAX_VALUE,
     ]);
 
     private static readonly cache: Map<string, OAuthResponse> = new Map<string, OAuthResponse>();

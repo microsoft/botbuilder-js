@@ -25,7 +25,6 @@ module.exports = {
     getActivitiesFromChat: getActivitiesFromChat
 };
 
-
 /**
  * Loads a list of activities from a .transcript file.
  * @param {string} transcriptFilePath Relative or absolute path to .transcript file.
