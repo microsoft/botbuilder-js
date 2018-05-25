@@ -84,6 +84,7 @@ export class BotFrameworkAdapter extends BotAdapter {
     protected readonly credentials: MicrosoftAppCredentials;
     protected readonly credentialsProvider: SimpleCredentialProvider;
     protected readonly settings: BotFrameworkAdapterSettings;
+    private isEmulatingOAuthCards: boolean;
 
     /**
      * Creates a new BotFrameworkAdapter instance.
@@ -94,6 +95,7 @@ export class BotFrameworkAdapter extends BotAdapter {
         this.settings = Object.assign({ appId: '', appPassword: '' }, settings);
         this.credentials = new MicrosoftAppCredentials(this.settings.appId, this.settings.appPassword || '');
         this.credentialsProvider = new SimpleCredentialProvider(this.credentials.appId, this.credentials.appPassword);
+        this.isEmulatingOAuthCards = false;
     }
 
     /**
@@ -278,8 +280,10 @@ export class BotFrameworkAdapter extends BotAdapter {
     public getUserToken(context: TurnContext, connectionName: string, magicCode?: string): Promise<TokenResponse> {
         try {
             if (!context.activity.from || !context.activity.from.id) { throw new Error(`BotFrameworkAdapter.getUserToken(): missing from or from.id`) }
+            this.checkEmulatingOAuthCards(context);
             const userId = context.activity.from.id;
-            const client = this.createOAuthApiClient(OAUTH_ENDPOINT);
+            const url = this.oauthApiUrl(context);
+            const client = this.createOAuthApiClient(url);
             return client.getUserToken(userId, connectionName, magicCode);
         } catch (err) {
             return Promise.reject(err);
@@ -294,8 +298,10 @@ export class BotFrameworkAdapter extends BotAdapter {
     public signOutUser(context: TurnContext, connectionName: string): Promise<void> {
         try {
             if (!context.activity.from || !context.activity.from.id) { throw new Error(`BotFrameworkAdapter.signOutUser(): missing from or from.id`) }
+            this.checkEmulatingOAuthCards(context);
             const userId = context.activity.from.id;
-            const client = this.createOAuthApiClient(OAUTH_ENDPOINT);
+            const url = this.oauthApiUrl(context);
+            const client = this.createOAuthApiClient(url);
             return client.signOutUser(userId, connectionName);
         } catch (err) {
             return Promise.reject(err);
@@ -308,8 +314,10 @@ export class BotFrameworkAdapter extends BotAdapter {
      * @param connectionName Name of the auth connection to use.
      */
     public getSignInLink(context: TurnContext, connectionName: string): Promise<string> {
+        this.checkEmulatingOAuthCards(context);
         const conversation = TurnContext.getConversationReference(context.activity);
-        const client = this.createOAuthApiClient(OAUTH_ENDPOINT);
+        const url = this.oauthApiUrl(context);
+        const client = this.createOAuthApiClient(url);
         return client.getSignInLink(conversation as ConversationReference, connectionName);
     }
 
@@ -320,7 +328,8 @@ export class BotFrameworkAdapter extends BotAdapter {
      * @param emulate If `true` the token service will emulate the sending of OAuthCards.
      */
     public emulateOAuthCards(contextOrServiceUrl: TurnContext|string, emulate: boolean): Promise<void> {
-        const url = typeof contextOrServiceUrl === 'object' ? contextOrServiceUrl.activity.serviceUrl : contextOrServiceUrl;
+        this.isEmulatingOAuthCards = emulate;
+        const url = this.oauthApiUrl(contextOrServiceUrl);
         const client = this.createOAuthApiClient(url);
         return client.emulateOAuthCards(emulate);
     }
@@ -534,6 +543,29 @@ export class BotFrameworkAdapter extends BotAdapter {
      */
     protected createOAuthApiClient(serviceUrl: string): OAuthApiClient {
         return new OAuthApiClient(this.createConnectorClient(serviceUrl));
+    }
+
+    /**
+     * Allows for mocking of the OAuth Api URL in unit tests.
+     * @param contextOrServiceUrl The URL of the channel server to query or a TurnContext.  This can be retrieved from `context.activity.serviceUrl`. 
+     */
+    protected oauthApiUrl(contextOrServiceUrl: TurnContext|string): string {
+        return this.isEmulatingOAuthCards ?
+            (typeof contextOrServiceUrl === 'object' ? contextOrServiceUrl.activity.serviceUrl : contextOrServiceUrl) :
+            OAUTH_ENDPOINT;
+    }
+
+    /**
+     * Allows for mocking of toggling the emulating OAuthCards in unit tests.
+     * @param context The TurnContext 
+     */
+    protected checkEmulatingOAuthCards(context: TurnContext) {
+        if (!this.isEmulatingOAuthCards && 
+            context.activity.channelId === 'emulator' &&
+            (!this.credentials.appId || !this.credentials.appPassword))
+        {
+            this.isEmulatingOAuthCards = true;
+        }
     }
     
     /**

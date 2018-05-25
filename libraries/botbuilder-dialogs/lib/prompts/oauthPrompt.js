@@ -95,14 +95,14 @@ class OAuthPrompt extends dialog_1.Dialog {
                 // Return token
                 return dc.end(output);
             }
-            else if (typeof options.prompt === 'string') {
+            else if (options && typeof options.prompt === 'string') {
                 // Send supplied prompt then OAuthCard
                 return dc.context.sendActivity(options.prompt, options.speak)
                     .then(() => this.prompt.prompt(dc.context));
             }
             else {
                 // Send OAuthCard
-                return this.prompt.prompt(dc.context, options.prompt);
+                return this.prompt.prompt(dc.context, options ? options.prompt : undefined);
             }
         });
     }

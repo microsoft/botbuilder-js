@@ -91,7 +91,7 @@ export declare class OAuthPrompt<C extends TurnContext> extends Dialog<C> {
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
      */
     constructor(settings: OAuthPromptSettingsWithTimeout, validator?: prompts.PromptValidator<any, any>);
-    dialogBegin(dc: DialogContext<C>, options: PromptOptions): Promise<any>;
+    dialogBegin(dc: DialogContext<C>, options?: PromptOptions): Promise<any>;
     dialogContinue(dc: DialogContext<C>): Promise<any>;
     /**
      * Signs the user out of the service.

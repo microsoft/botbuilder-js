@@ -67,6 +67,7 @@ export declare class BotFrameworkAdapter extends BotAdapter {
     protected readonly credentials: MicrosoftAppCredentials;
     protected readonly credentialsProvider: SimpleCredentialProvider;
     protected readonly settings: BotFrameworkAdapterSettings;
+    private isEmulatingOAuthCards;
     /**
      * Creates a new BotFrameworkAdapter instance.
      * @param settings (optional) configuration settings for the adapter.
@@ -281,6 +282,16 @@ export declare class BotFrameworkAdapter extends BotAdapter {
      * @param serviceUrl Clients service url.
      */
     protected createOAuthApiClient(serviceUrl: string): OAuthApiClient;
+    /**
+     * Allows for mocking of the OAuth Api URL in unit tests.
+     * @param contextOrServiceUrl The URL of the channel server to query or a TurnContext.  This can be retrieved from `context.activity.serviceUrl`.
+     */
+    protected oauthApiUrl(contextOrServiceUrl: TurnContext | string): string;
+    /**
+     * Allows for mocking of toggling the emulating OAuthCards in unit tests.
+     * @param context The TurnContext
+     */
+    protected checkEmulatingOAuthCards(context: TurnContext): void;
     /**
      * Allows for the overriding of the context object in unit tests and derived adapters.
      * @param request Received request.

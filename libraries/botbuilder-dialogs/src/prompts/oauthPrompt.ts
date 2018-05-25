@@ -97,7 +97,7 @@ export class OAuthPrompt<C extends TurnContext> extends Dialog<C> {
         this.prompt = prompts.createOAuthPrompt(settings, validator);
     }
 
-    public dialogBegin(dc: DialogContext<C>, options: PromptOptions): Promise<any> {
+    public dialogBegin(dc: DialogContext<C>, options?: PromptOptions): Promise<any> {
         // Persist options and state
         const timeout = typeof this.settings.timeout === 'number' ? this.settings.timeout : 54000000; 
         const instance = dc.activeDialog;
@@ -110,13 +110,13 @@ export class OAuthPrompt<C extends TurnContext> extends Dialog<C> {
             if (output !== undefined) {
                 // Return token
                 return dc.end(output);
-            } else if (typeof options.prompt === 'string') {
+            } else if (options && typeof options.prompt === 'string') {
                 // Send supplied prompt then OAuthCard
                 return dc.context.sendActivity(options.prompt, options.speak)
                     .then(() => this.prompt.prompt(dc.context));
             } else {
                 // Send OAuthCard
-                return this.prompt.prompt(dc.context, options.prompt);
+                return this.prompt.prompt(dc.context, options ? <Partial<Activity>>options.prompt : undefined);
             }
         });
     }

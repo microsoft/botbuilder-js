@@ -79,7 +79,10 @@ class OAuthApiClient {
                 operationRes = yield client.pipeline(httpRequest);
                 let response = operationRes.response;
                 let statusCode = response.status;
-                if (statusCode !== 200) {
+                if (statusCode === 404) {
+                    operationRes.bodyAsJson = undefined;
+                }
+                else if (statusCode !== 200) {
                     let error = new msRest.RestError(operationRes.bodyAsText);
                     error.statusCode = response.status;
                     error.request = msRest.stripRequest(httpRequest);
@@ -104,22 +107,6 @@ class OAuthApiClient {
                         return Promise.reject(error);
                     }
                     return Promise.reject(error);
-                }
-                // Deserialize Response
-                if (statusCode === 200) {
-                    let parsedResponse = operationRes.bodyAsJson;
-                    try {
-                        if (parsedResponse !== null && parsedResponse !== undefined) {
-                            let resultMapper = Mappers.ConversationsResult;
-                            operationRes.bodyAsJson = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.bodyAsJson');
-                        }
-                    }
-                    catch (error) {
-                        let deserializationError = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
-                        deserializationError.request = msRest.stripRequest(httpRequest);
-                        deserializationError.response = msRest.stripResponse(response);
-                        return Promise.reject(deserializationError);
-                    }
                 }
             }
             catch (err) {
@@ -201,22 +188,6 @@ class OAuthApiClient {
                     }
                     return Promise.reject(error);
                 }
-                // Deserialize Response
-                if (statusCode === 200) {
-                    let parsedResponse = operationRes.bodyAsJson;
-                    try {
-                        if (parsedResponse !== null && parsedResponse !== undefined) {
-                            let resultMapper = Mappers.ConversationsResult;
-                            operationRes.bodyAsJson = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.bodyAsJson');
-                        }
-                    }
-                    catch (error) {
-                        let deserializationError = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
-                        deserializationError.request = msRest.stripRequest(httpRequest);
-                        deserializationError.response = msRest.stripResponse(response);
-                        return Promise.reject(deserializationError);
-                    }
-                }
             }
             catch (err) {
                 return Promise.reject(err);
@@ -262,6 +233,7 @@ class OAuthApiClient {
             httpRequest.method = 'GET';
             httpRequest.url = requestUrl;
             httpRequest.headers = {};
+            httpRequest.headers["Content-Type"] = "text/plain";
             // Set Headers
             if (options && options.customHeaders) {
                 for (let headerName in options.customHeaders) {
@@ -270,6 +242,7 @@ class OAuthApiClient {
                     }
                 }
             }
+            httpRequest.rawResponse = true;
             // Send Request
             let operationRes;
             try {
@@ -301,6 +274,10 @@ class OAuthApiClient {
                         return Promise.reject(error);
                     }
                     return Promise.reject(error);
+                }
+                else {
+                    // read the repsonse text
+                    operationRes.bodyAsText = yield response.text();
                 }
             }
             catch (err) {
