@@ -2,14 +2,14 @@ const assert = require('assert');
 const { LuisRecognizer } = require('botbuilder-ai');
 const { assertBotLogicWithTranscript } = require('../../libraries/botbuilder-core-extensions/tests/transcriptUtilities');
 
-var luisAppId = process.env['LUISAPPID'];
-var luisSubscriptionKey = process.env['LUISAPPKEY'];
-var luisUriBase = process.env['LUISURIBASE'];
+var luisAppId = process.env['LUISAPPID_TRANSCRIPT'];
+var luisSubscriptionKey = process.env['LUISAPPKEY_TRANSCRIPT'];
+var luisUriBase = process.env['LUISURIBASE_TRANSCRIPT'];
 var recognizer;
 
 describe(`LUIS Tests using transcripts`, function () {
     if (!luisAppId || !luisSubscriptionKey) {
-        console.warn('* Missing LUIS Environment variables (LUISAPPID, LUISAPPKEY) - Skipping LUIS Tests');
+        console.warn('* Missing LUIS Environment variables (LUISAPPID_TRANSCRIPT, LUISAPPKEY_TRANSCRIPT) - Skipping LUIS Tests');
         return;
     }
 

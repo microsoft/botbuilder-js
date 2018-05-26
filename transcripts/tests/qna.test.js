@@ -2,14 +2,14 @@ const assert = require('assert');
 const { QnAMaker } = require('botbuilder-ai');
 const { assertBotLogicWithTranscript } = require('../../libraries/botbuilder-core-extensions/tests/transcriptUtilities');
 
-var qnaKnowledgeBaseId = process.env['QNAKNOWLEDGEBASEID'];
-var qnaEndpointKey = process.env['QNAENDPOINTKEY'];
-var qnaHostname = process.env['QNAHOSTNAME'];
+var qnaKnowledgeBaseId = process.env['QNAKNOWLEDGEBASEID_TRANSCRIPT'];
+var qnaEndpointKey = process.env['QNAENDPOINTKEY_TRANSCRIPT'];
+var qnaHostname = process.env['QNAHOSTNAME_TRANSCRIPT'];
 var qna;
 
 describe(`LUIS Tests using transcripts`, function () {
     if (!qnaKnowledgeBaseId || !qnaEndpointKey) {
-        console.warn('* Missing QnAMaker Environment variables (QNAKNOWLEDGEBASEID, QNAENDPOINTKEY) - Skipping QnAMaker Tests');
+        console.warn('* Missing QnAMaker Environment variables (QNAKNOWLEDGEBASEID_TRANSCRIPT, QNAENDPOINTKEY_TRANSCRIPT) - Skipping QnAMaker Tests');
         return;
     }
 
