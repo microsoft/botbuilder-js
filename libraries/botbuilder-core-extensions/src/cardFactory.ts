@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { 
-    Attachment, MediaUrl, CardAction, AnimationCard, CardImage, HeroCard, 
+    Attachment, MediaUrl, CardAction, AnimationCard, CardImage, HeroCard, AudioCard, 
     ReceiptCard, SigninCard, ThumbnailCard, VideoCard, ActionTypes, OAuthCard 
 } from "botbuilder-core";
 
@@ -107,7 +107,7 @@ export class CardFactory {
     static audioCard(title: string,
                      media: (MediaUrl|string)[],
                      buttons?: (CardAction|string)[],
-                     other?: Partial<AnimationCard>): Attachment
+                     other?: Partial<AudioCard>): Attachment
     {
         return mediaCard(CardFactory.contentTypes.audioCard, title, media, buttons, other);
     }
@@ -218,7 +218,7 @@ export class CardFactory {
     static videoCard(title: string,
                      media: (MediaUrl|string)[],
                      buttons?: (CardAction|string)[],
-                     other?: Partial<AnimationCard>): Attachment
+                     other?: Partial<VideoCard>): Attachment
     {
         return mediaCard(CardFactory.contentTypes.videoCard, title, media, buttons, other);
     }
