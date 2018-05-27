@@ -38,6 +38,7 @@ class BotFrameworkAdapter extends botbuilder_core_1.BotAdapter {
         this.settings = Object.assign({ appId: '', appPassword: '' }, settings);
         this.credentials = new botframework_connector_1.MicrosoftAppCredentials(this.settings.appId, this.settings.appPassword || '');
         this.credentialsProvider = new botframework_connector_1.SimpleCredentialProvider(this.credentials.appId, this.credentials.appPassword);
+        this.isEmulatingOAuthCards = false;
     }
     /**
      * Continues a conversation with a user. This is often referred to as the bots "Proactive Messaging"
@@ -245,8 +246,10 @@ class BotFrameworkAdapter extends botbuilder_core_1.BotAdapter {
             if (!context.activity.from || !context.activity.from.id) {
                 throw new Error(`BotFrameworkAdapter.getUserToken(): missing from or from.id`);
             }
+            this.checkEmulatingOAuthCards(context);
             const userId = context.activity.from.id;
-            const client = this.createOAuthApiClient(OAUTH_ENDPOINT);
+            const url = this.oauthApiUrl(context);
+            const client = this.createOAuthApiClient(url);
             return client.getUserToken(userId, connectionName, magicCode);
         }
         catch (err) {
@@ -263,8 +266,10 @@ class BotFrameworkAdapter extends botbuilder_core_1.BotAdapter {
             if (!context.activity.from || !context.activity.from.id) {
                 throw new Error(`BotFrameworkAdapter.signOutUser(): missing from or from.id`);
             }
+            this.checkEmulatingOAuthCards(context);
             const userId = context.activity.from.id;
-            const client = this.createOAuthApiClient(OAUTH_ENDPOINT);
+            const url = this.oauthApiUrl(context);
+            const client = this.createOAuthApiClient(url);
             return client.signOutUser(userId, connectionName);
         }
         catch (err) {
@@ -277,8 +282,10 @@ class BotFrameworkAdapter extends botbuilder_core_1.BotAdapter {
      * @param connectionName Name of the auth connection to use.
      */
     getSignInLink(context, connectionName) {
+        this.checkEmulatingOAuthCards(context);
         const conversation = botbuilder_core_1.TurnContext.getConversationReference(context.activity);
-        const client = this.createOAuthApiClient(OAUTH_ENDPOINT);
+        const url = this.oauthApiUrl(context);
+        const client = this.createOAuthApiClient(url);
         return client.getSignInLink(conversation, connectionName);
     }
     /**
@@ -287,7 +294,8 @@ class BotFrameworkAdapter extends botbuilder_core_1.BotAdapter {
      * @param emulate If `true` the token service will emulate the sending of OAuthCards.
      */
     emulateOAuthCards(contextOrServiceUrl, emulate) {
-        const url = typeof contextOrServiceUrl === 'object' ? contextOrServiceUrl.activity.serviceUrl : contextOrServiceUrl;
+        this.isEmulatingOAuthCards = emulate;
+        const url = this.oauthApiUrl(contextOrServiceUrl);
         const client = this.createOAuthApiClient(url);
         return client.emulateOAuthCards(emulate);
     }
@@ -501,6 +509,26 @@ class BotFrameworkAdapter extends botbuilder_core_1.BotAdapter {
      */
     createOAuthApiClient(serviceUrl) {
         return new botframework_connector_1.OAuthApiClient(this.createConnectorClient(serviceUrl));
+    }
+    /**
+     * Allows for mocking of the OAuth Api URL in unit tests.
+     * @param contextOrServiceUrl The URL of the channel server to query or a TurnContext.  This can be retrieved from `context.activity.serviceUrl`.
+     */
+    oauthApiUrl(contextOrServiceUrl) {
+        return this.isEmulatingOAuthCards ?
+            (typeof contextOrServiceUrl === 'object' ? contextOrServiceUrl.activity.serviceUrl : contextOrServiceUrl) :
+            OAUTH_ENDPOINT;
+    }
+    /**
+     * Allows for mocking of toggling the emulating OAuthCards in unit tests.
+     * @param context The TurnContext
+     */
+    checkEmulatingOAuthCards(context) {
+        if (!this.isEmulatingOAuthCards &&
+            context.activity.channelId === 'emulator' &&
+            (!this.credentials.appId || !this.credentials.appPassword)) {
+            this.isEmulatingOAuthCards = true;
+        }
     }
     /**
      * Allows for the overriding of the context object in unit tests and derived adapters.
