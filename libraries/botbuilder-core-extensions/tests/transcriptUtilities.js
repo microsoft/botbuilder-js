@@ -117,13 +117,14 @@ function assertBotLogicWithTranscript(transcriptPath, botLogicFactoryFun, middle
 // **** PRIVATE **** //
 
 function checkTranscriptResourcesExist() {
-    var transcriptsLocation = process.env['BOTBUILDER_TRANSCRIPTS_LOCATION'] || './';
+    var transcriptsLocation = process.env['BOTBUILDER_TRANSCRIPTS_LOCATION'] || 'https://github.com/southworkscom/BotBuilder/archive/botbuilder-v4-transcripts.zip';
     return isUrl(transcriptsLocation)
         ? downloadAndExtractOnce(transcriptsLocation)               // Download and extract transcript from repo, fulfill Promise with extraction path
         : Promise.resolve(transcriptsLocation);                     // FS, return the environment variable (or default to current directory)
 }
 
 const resourcePromises = {};
+const transcriptsRelativePath = "/Common/Transcripts";
 function downloadAndExtractOnce(url) {
     if (!resourcePromises[url]) {
         resourcePromises[url] = new Promise((resolve, reject) => {
@@ -157,6 +158,8 @@ function downloadAndExtractOnce(url) {
                             if (!firstDirectory) {
                                 return reject('Downloaded ZIP did not contain a branch folder.');
                             }
+
+                            firstDirectory = path.join(firstDirectory, transcriptsRelativePath);
 
                             console.log(`\tTranscripts extracted at ${firstDirectory}`);
                             return resolve(firstDirectory);
