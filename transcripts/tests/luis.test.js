@@ -19,7 +19,7 @@ describe(`LUIS Tests using transcripts`, function () {
         serviceEndpoint: luisUriBase
     });
 
-    this.timeout(15000);
+    this.timeout(20000);
 
     it('LuisRecognizer Middleware', assertBotLogicWithTranscript('LuisTests/LuisMiddleware.chat', LuisTestLogic, (adapter) => adapter.use(recognizer)));
 });

@@ -19,7 +19,7 @@ describe(`LUIS Tests using transcripts`, function () {
         host: qnaHostname
     }, { answerBeforeNext: true });
 
-    this.timeout(15000)
+    this.timeout(20000);
 
     it('QnAMaker Middleware', assertBotLogicWithTranscript('QnATests/QnAMiddleware.chat', QnATestLogic, (adapter) => adapter.use(qna)));
 });

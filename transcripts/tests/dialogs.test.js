@@ -7,7 +7,7 @@ const {
 const assertBotLogicWithTranscript = require('../../libraries/botbuilder-core-extensions/tests/transcriptUtilities').assertBotLogicWithBotBuilderTranscript;
 
 describe(`Prompt Tests using transcripts`, function () {
-    this.timeout(5000);
+    this.timeout(10000);
 
     it('AttachmentPrompt', assertBotLogicWithTranscript('DialogsTests/AttachmentPrompt.chat', AttachmentPromptLogic));
 

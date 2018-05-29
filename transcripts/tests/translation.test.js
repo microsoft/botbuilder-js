@@ -9,7 +9,7 @@ describe(`Translation Tests using transcripts`, function () {
         return;
     }
 
-    this.timeout(15000);
+    this.timeout(20000);
 
     it('TranslateToEnglish', assertBotLogicWithTranscript('TranslationTests/TranslateToEnglish.chat', TestLogic, TranslateToEnglishMiddleware));
 

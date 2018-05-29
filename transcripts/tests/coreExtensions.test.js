@@ -2,7 +2,7 @@ const assert = require('assert');
 const assertBotLogicWithTranscript = require('../../libraries/botbuilder-core-extensions/tests/transcriptUtilities').assertBotLogicWithBotBuilderTranscript;
 
 describe(`Core Extensions Tests using transcripts`, function () {
-    this.timeout(5000);
+    this.timeout(10000);
 
     it('UserStateTest', assertBotLogicWithTranscript('CoreExtensionsTests/UserStateTest.chat', (conversationState, userState) => TestLogic(userState)));
 

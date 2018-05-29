@@ -2,7 +2,7 @@ const assert = require('assert');
 const assertBotLogicWithTranscript = require('../../libraries/botbuilder-core-extensions/tests/transcriptUtilities').assertBotLogicWithBotBuilderTranscript;
 
 describe(`Core Tests using transcripts`, function () {
-    this.timeout(5000);
+    this.timeout(10000);
 
     it('BotAdapted_Bracketing', assertBotLogicWithTranscript('CoreTests/BotAdapted_Bracketing.chat', BotAdapted_Bracketing_Logic, (adapter) => {
         adapter.use(new BeforeAfterMiddleware());
