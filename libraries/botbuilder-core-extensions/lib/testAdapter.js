@@ -199,6 +199,9 @@ class TestAdapter extends botbuilder_core_1.BotAdapter {
         if (!activities) {
             throw new Error('Missing array of activities');
         }
+        if (!Array.isArray(activities)) {
+            throw new Error('activities must be an array containing activities');
+        }
         const activityInspector = (expected) => (actual, description) => validateTranscriptActivity(actual, expected, description);
         // Chain all activities in a TestFlow, check if its a user message (send) or a bot reply (assert)
         return activities.reduce((flow, activity) => {
