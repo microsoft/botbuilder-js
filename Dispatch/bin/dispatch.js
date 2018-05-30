@@ -15,7 +15,7 @@ if (args == '-v' || args == '--version') {
     return process.stdout.write(pkg.version);
 }
 try {
-    require('child_process').execSync('dotnet ' + __dirname + '/netcoreapp2.0/Dispatch.dll ' + args, { stdio: [0, 1, 2] });
+    require('child_process').execSync('dotnet "' + __dirname + '/netcoreapp2.0/Dispatch.dll" ' + args, { stdio: [0, 1, 2] });
 }
 catch (err) {
 }
