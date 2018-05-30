@@ -124,7 +124,7 @@ function checkTranscriptResourcesExist() {
 }
 
 const resourcePromises = {};
-const transcriptsRelativePath = "/Common/Transcripts";
+const zipTranscriptsRelativePath = "/Common/Transcripts";
 function downloadAndExtractOnce(url) {
     if (!resourcePromises[url]) {
         resourcePromises[url] = new Promise((resolve, reject) => {
@@ -159,7 +159,7 @@ function downloadAndExtractOnce(url) {
                                 return reject('Downloaded ZIP did not contain a branch folder.');
                             }
 
-                            firstDirectory = path.join(firstDirectory, transcriptsRelativePath);
+                            firstDirectory = path.join(firstDirectory, zipTranscriptsRelativePath);
 
                             console.log(`\tTranscripts extracted at ${firstDirectory}`);
                             return resolve(firstDirectory);
@@ -183,12 +183,32 @@ const isUrl = (possibleUrl) => {
     }
 }
 
-const decompressZip = (inputPath, outputPath, callback) =>
+const decompressZip = (inputPath, outputPath, callback) => {
+    // Extract only the files contained in the "zipTranscriptsRelativePath" path
     fs.createReadStream(inputPath)
-        .pipe(unzip.Extract({ path: outputPath }))
+        .pipe(unzip.Parse())
+        .on('entry', (entry) => {
+            if (entry.type === 'File' && entry.path.includes(zipTranscriptsRelativePath)) {
+                var fileExtractPath = path.join(outputPath, entry.path);
+                ensureDirectoryExists(fileExtractPath)
+                entry.pipe(fs.createWriteStream(fileExtractPath))
+                    .on('error', console.log)
+            } else {
+                entry.autodrain();
+            }
+        })
         .on('close', callback)
-        .on('error', callback)
+        .on('error', callback);
+}
 
 const isDirectory = source => fs.lstatSync(source).isDirectory();
 const getDirectories = source =>
     fs.readdirSync(source).map(name => path.join(source, name)).filter(isDirectory)
+
+const ensureDirectoryExists = (filePath) => {
+    var dirname = path.dirname(filePath);
+    if (fs.existsSync(dirname)) return;
+
+    ensureDirectoryExists(dirname);
+    fs.mkdirSync(dirname);
+}
