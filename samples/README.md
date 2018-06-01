@@ -14,6 +14,9 @@ Here you can find samples that implement different concepts that are core to dev
 8. [luis-bot-es6](#luis-bot-es6)
 9. [dispatch-es6](#dispatch-es6)
 10. [echobot-es6-botframework-webchat](#echobot-es6-botframework-webchat)
+11. [simple-prompt-bot-es6](#simple-prompt-bot-es6)
+12. [card-actions-es6](#card-actions-es6)
+13. [helpandcancel-es6](#helpandcancel-es6)
 
 
 ___
@@ -80,3 +83,19 @@ Demonstrates how to create a bot that lives in the browser using a custom adapte
 
 - Introduces creating a [custom adapter](https://github.com/Microsoft/botbuilder-js/blob/master/samples/echobot-es6-botframework-webchat/src/webChatAdapter.js) using [BotFramework-WebChat](https://github.com/Microsoft/BotFramework-WebChat/).
 - Introduces [`CosmosDbStorage`](https://github.com/Microsoft/botbuilder-js/blob/master/doc/botbuilder-azure/classes/botbuilder_azure.cosmosdbstorage.md), [`BlobStorage`](https://github.com/Microsoft/botbuilder-js/blob/master/doc/botbuilder-azure/classes/botbuilder_azure.blobstorage.md) and [`TableStorage`](https://github.com/Microsoft/botbuilder-js/blob/master/doc/botbuilder-azure/classes/botbuilder_azure.tablestorage.md) which are found in the [`botbuilder-azure`](https://github.com/Microsoft/botbuilder-js/tree/master/libraries/botbuilder-azure) library.
+
+### [simple-prompt-bot-es6](./simple-prompt-bot-es6)
+
+Demonstrates how to use prompts to get (and validate) information.
+
+- Introduces [prompts](https://github.com/Microsoft/botbuilder-js/tree/master/doc/botbuilder-prompts) via the [`botbuilder-prompts`](https://github.com/Microsoft/botbuilder-js/tree/master/libraries/botbuilder-prompts) library
+
+### [card-actions-es6](./card-actions-es6)
+
+Demonstrates how to use CardActions to enhance the user experience.
+
+- Introduces to [CardActions](https://github.com/Microsoft/botbuilder-js/blob/master/doc/botbuilder/interfaces/botbuilder.cardaction.md) and [SuggestedActions](https://github.com/Microsoft/botbuilder-js/blob/master/doc/botbuilder/interfaces/botbuilder.suggestedactions.md).
+
+### [helpandcancel-es6](./helpandcancel-es6)
+
+Demonstrates how to route messages through your bot code.
