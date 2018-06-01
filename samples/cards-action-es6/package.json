@@ -1,0 +1,15 @@
+{
+  "name": "cards-action-es6",
+  "version": "1.0.0",
+  "description": "Bot Builder v4 example showing the usage of suggested actions.",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "author": "Microsoft",
+  "license": "MIT",
+  "dependencies": {
+    "botbuilder": "^4.0.0-m4.1",
+    "restify": "^6.3.4"
+  }
+}
