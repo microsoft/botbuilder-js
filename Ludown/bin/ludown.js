@@ -20,3 +20,10 @@ program
     .command('refresh', 'Convert LUIS JSON and/ or QnAMaker JSON file into .lu file')
     .alias('d')
     .parse(process.argv);
+
+    var commands = ['parse', 'p', 'refresh', 'd']
+    if (!commands.includes(process.argv[2].toLowerCase())) {
+        process.stderr.write(chalk.default.redBright(`\n  Unknown command: ${process.argv.slice(2).join(' ')}\n`));
+        program.help();
+        process.exit(retCode.UNKNOWN_OPTIONS);
+    }

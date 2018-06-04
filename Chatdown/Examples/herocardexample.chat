@@ -1,0 +1,23 @@
+user=vishwac
+bot=cafebot
+
+user: I want a new watch
+
+bot: I can help you with that! Let me see what I can find.
+bot: Here's what I found.
+bot:
+[AttachmentLayout=carousel]
+[Attachment=https://build2018demostorage.blob.core.windows.net/vktest/shutterstock_267798710.jpg]
+[Attachment=https://build2018demostorage.blob.core.windows.net/vktest/shutterstock_352316924.jpg]
+[Attachment=https://build2018demostorage.blob.core.windows.net/vktest/shutterstock_370222298.jpg]
+[Attachment=https://build2018demostorage.blob.core.windows.net/vktest/shutterstock_462355030.jpg]
+bot: [Attachment=cards\herocard.json hero]
+
+user: I like the first one.
+
+bot: Sure, pulling up more information .. 
+bot: [Attachment=cards\watchProfileCard.json adaptivecard]
+
+user: That's nice! Thank you.
+
+bot: Sure, you are most welcome! 

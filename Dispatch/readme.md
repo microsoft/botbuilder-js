@@ -76,7 +76,7 @@ Arguments
 | -t, --type   | luis, qna, file|
 | -i, --id     | (required only if type is luis/qna) LUIS app id or QnA kb id from application settings page|
 | -n, --name   | LUIS app name or QnA name (from application settings page) or module/file name for file type |
-| -k, --key    | (required only if type is luis/qna) LUIS authoring key (from https://www.luis.ai/user/settings) or QnA maker key (from https://qnamaker.ai/UserSettings) |
+| -k, --key    | (required only if type is luis/qna) LUIS authoring key (from https://www.luis.ai/user/settings) or QnA maker key (from QnA Maker Cognitive Service resource page on https://ms.portal.azure.com) |
 | -v, --version| (Required only if type is luis) LUIS app version |
 | -f, --filePath| (Required only if type is file) Path to tsv file containing tab delimited intent and utterance fields or .txt file with an utterance on each line |
 | --dispatch    | (optional) Path to .dispatch file |
@@ -275,4 +275,4 @@ C# Sample: https://github.com/Microsoft/botbuilder-dotnet/tree/master/samples/Mi
 
 JS Sample: https://github.com/Microsoft/botbuilder-js/tree/master/samples/dispatch-es6 
 
-Tutorial: https://aka.ms/Sas1mu
+Tutorial: https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-tutorial-dispatch

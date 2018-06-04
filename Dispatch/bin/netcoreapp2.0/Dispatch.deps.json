@@ -8,12 +8,12 @@
     ".NETCoreApp,Version=v2.0": {
       "Dispatch/1.0.0": {
         "dependencies": {
-          "AugmentLuisModelNetStandard": "1.0.0",
-          "ClassificationEvaluatorNetStandard": "1.0.0",
-          "ClassificationSummaryNetStandard": "1.0.0",
+          "AugmentLuisModel": "1.0.0",
+          "ClassificationEvaluator": "1.0.0",
+          "ClassificationSummary": "1.0.0",
           "Fuse.Core": "1.0.0",
           "Newtonsoft.Json": "11.0.2",
-          "PrepareDataNetStandard": "1.0.0"
+          "PrepareData": "1.0.0"
         },
         "runtime": {
           "Dispatch.dll": {}
@@ -25,7 +25,10 @@
           "System.Text.Encodings.Web": "4.4.0"
         },
         "runtime": {
-          "lib/netstandard2.0/Microsoft.AspNetCore.Http.Abstractions.dll": {}
+          "lib/netstandard2.0/Microsoft.AspNetCore.Http.Abstractions.dll": {
+            "assemblyVersion": "2.0.2.0",
+            "fileVersion": "2.0.2.18051"
+          }
         }
       },
       "Microsoft.AspNetCore.Http.Extensions/2.0.2": {
@@ -36,7 +39,10 @@
           "System.Buffers": "4.4.0"
         },
         "runtime": {
-          "lib/netstandard2.0/Microsoft.AspNetCore.Http.Extensions.dll": {}
+          "lib/netstandard2.0/Microsoft.AspNetCore.Http.Extensions.dll": {
+            "assemblyVersion": "2.0.2.0",
+            "fileVersion": "2.0.2.18051"
+          }
         }
       },
       "Microsoft.AspNetCore.Http.Features/2.0.2": {
@@ -44,12 +50,18 @@
           "Microsoft.Extensions.Primitives": "2.0.0"
         },
         "runtime": {
-          "lib/netstandard2.0/Microsoft.AspNetCore.Http.Features.dll": {}
+          "lib/netstandard2.0/Microsoft.AspNetCore.Http.Features.dll": {
+            "assemblyVersion": "2.0.2.0",
+            "fileVersion": "2.0.2.18051"
+          }
         }
       },
       "Microsoft.Extensions.DependencyInjection.Abstractions/2.0.0": {
         "runtime": {
-          "lib/netstandard2.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {}
+          "lib/netstandard2.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {
+            "assemblyVersion": "2.0.0.0",
+            "fileVersion": "2.0.0.17205"
+          }
         }
       },
       "Microsoft.Extensions.FileProviders.Abstractions/2.0.1": {
@@ -57,7 +69,10 @@
           "Microsoft.Extensions.Primitives": "2.0.0"
         },
         "runtime": {
-          "lib/netstandard2.0/Microsoft.Extensions.FileProviders.Abstractions.dll": {}
+          "lib/netstandard2.0/Microsoft.Extensions.FileProviders.Abstractions.dll": {
+            "assemblyVersion": "2.0.1.0",
+            "fileVersion": "2.0.1.18051"
+          }
         }
       },
       "Microsoft.Extensions.Logging/2.0.1": {
@@ -67,12 +82,18 @@
           "Microsoft.Extensions.Options": "2.0.1"
         },
         "runtime": {
-          "lib/netstandard2.0/Microsoft.Extensions.Logging.dll": {}
+          "lib/netstandard2.0/Microsoft.Extensions.Logging.dll": {
+            "assemblyVersion": "2.0.1.0",
+            "fileVersion": "2.0.1.18051"
+          }
         }
       },
       "Microsoft.Extensions.Logging.Abstractions/2.0.1": {
         "runtime": {
-          "lib/netstandard2.0/Microsoft.Extensions.Logging.Abstractions.dll": {}
+          "lib/netstandard2.0/Microsoft.Extensions.Logging.Abstractions.dll": {
+            "assemblyVersion": "2.0.1.0",
+            "fileVersion": "2.0.1.18051"
+          }
         }
       },
       "Microsoft.Extensions.Options/2.0.1": {
@@ -81,7 +102,10 @@
           "Microsoft.Extensions.Primitives": "2.0.0"
         },
         "runtime": {
-          "lib/netstandard2.0/Microsoft.Extensions.Options.dll": {}
+          "lib/netstandard2.0/Microsoft.Extensions.Options.dll": {
+            "assemblyVersion": "2.0.1.0",
+            "fileVersion": "2.0.1.18051"
+          }
         }
       },
       "Microsoft.Extensions.Primitives/2.0.0": {
@@ -89,7 +113,10 @@
           "System.Runtime.CompilerServices.Unsafe": "4.4.0"
         },
         "runtime": {
-          "lib/netstandard2.0/Microsoft.Extensions.Primitives.dll": {}
+          "lib/netstandard2.0/Microsoft.Extensions.Primitives.dll": {
+            "assemblyVersion": "2.0.0.0",
+            "fileVersion": "2.0.0.17205"
+          }
         }
       },
       "Microsoft.Net.Http.Headers/2.0.2": {
@@ -98,13 +125,19 @@
           "System.Buffers": "4.4.0"
         },
         "runtime": {
-          "lib/netstandard2.0/Microsoft.Net.Http.Headers.dll": {}
+          "lib/netstandard2.0/Microsoft.Net.Http.Headers.dll": {
+            "assemblyVersion": "2.0.2.0",
+            "fileVersion": "2.0.2.18051"
+          }
         }
       },
       "Microsoft.NETCore.Targets/1.1.0": {},
       "Newtonsoft.Json/11.0.2": {
         "runtime": {
-          "lib/netstandard2.0/Newtonsoft.Json.dll": {}
+          "lib/netstandard2.0/Newtonsoft.Json.dll": {
+            "assemblyVersion": "11.0.0.0",
+            "fileVersion": "11.0.2.21924"
+          }
         }
       },
       "runtime.native.System/4.3.0": {
@@ -120,7 +153,10 @@
       "System.Buffers/4.4.0": {},
       "System.CodeDom/4.4.0": {
         "runtime": {
-          "lib/netstandard2.0/System.CodeDom.dll": {}
+          "lib/netstandard2.0/System.CodeDom.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.6.25519.3"
+          }
         }
       },
       "System.Collections/4.3.0": {
@@ -208,7 +244,10 @@
       },
       "System.IO.Packaging/4.4.1": {
         "runtime": {
-          "lib/netstandard1.3/System.IO.Packaging.dll": {}
+          "lib/netstandard1.3/System.IO.Packaging.dll": {
+            "assemblyVersion": "4.0.2.0",
+            "fileVersion": "4.6.25921.2"
+          }
         }
       },
       "System.Reflection/4.3.0": {
@@ -240,7 +279,10 @@
       },
       "System.Runtime.CompilerServices.Unsafe/4.4.0": {
         "runtime": {
-          "lib/netstandard2.0/System.Runtime.CompilerServices.Unsafe.dll": {}
+          "lib/netstandard2.0/System.Runtime.CompilerServices.Unsafe.dll": {
+            "assemblyVersion": "4.0.3.0",
+            "fileVersion": "0.0.0.0"
+          }
         }
       },
       "System.Runtime.Extensions/4.3.0": {
@@ -284,7 +326,10 @@
           "System.Security.AccessControl": "4.4.0"
         },
         "runtime": {
-          "lib/netstandard2.0/System.Security.Permissions.dll": {}
+          "lib/netstandard2.0/System.Security.Permissions.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.6.25921.2"
+          }
         }
       },
       "System.Security.Principal.Windows/4.4.0": {
@@ -307,7 +352,10 @@
       },
       "System.Text.Encodings.Web/4.4.0": {
         "runtime": {
-          "lib/netstandard2.0/System.Text.Encodings.Web.dll": {}
+          "lib/netstandard2.0/System.Text.Encodings.Web.dll": {
+            "assemblyVersion": "4.0.2.0",
+            "fileVersion": "4.6.25519.3"
+          }
         }
       },
       "System.Threading/4.3.0": {
@@ -322,44 +370,43 @@
           "System.Runtime": "4.3.0"
         }
       },
-      "AugmentLuisModelNetStandard/1.0.0": {
+      "AugmentLuisModel/1.0.0": {
         "dependencies": {
-          "ClassificationEvaluatorNetStandard": "1.0.0",
-          "ClassificationSummaryNetStandard": "1.0.0",
-          "DescriptiveStatisticsComputerNetStandard": "1.0.0",
+          "ClassificationEvaluator": "1.0.0",
+          "ClassificationSummary": "1.0.0",
+          "DescriptiveStatisticsComputer": "1.0.0",
           "Fuse.Core": "1.0.0",
           "Newtonsoft.Json": "11.0.2",
-          "ReservoirSamplerNetStandard": "1.0.0",
-          "SamplerNetStandard": "1.0.0",
-          "UtilityNetStandard": "1.0.0"
+          "ReservoirSampler": "1.0.0",
+          "Sampler": "1.0.0"
         },
         "runtime": {
-          "AugmentLuisModelNetStandard.dll": {}
+          "AugmentLuisModel.dll": {}
         }
       },
-      "ClassificationEvaluatorNetStandard/1.0.0": {
+      "ClassificationEvaluator/1.0.0": {
         "dependencies": {
-          "DescriptiveStatisticsComputerNetStandard": "1.0.0",
+          "DescriptiveStatisticsComputer": "1.0.0",
           "UtilityNetStandard": "1.0.0"
         },
         "runtime": {
-          "ClassificationEvaluatorNetStandard.dll": {}
+          "ClassificationEvaluator.dll": {}
         }
       },
-      "ClassificationSummaryNetStandard/1.0.0": {
-        "dependencies": {
-          "UtilityNetStandard": "1.0.0"
-        },
-        "runtime": {
-          "ClassificationSummaryNetStandard.dll": {}
-        }
-      },
-      "DescriptiveStatisticsComputerNetStandard/1.0.0": {
+      "ClassificationSummary/1.0.0": {
         "dependencies": {
           "UtilityNetStandard": "1.0.0"
         },
         "runtime": {
-          "DescriptiveStatisticsComputerNetStandard.dll": {}
+          "ClassificationSummary.dll": {}
+        }
+      },
+      "DescriptiveStatisticsComputer/1.0.0": {
+        "dependencies": {
+          "UtilityNetStandard": "1.0.0"
+        },
+        "runtime": {
+          "DescriptiveStatisticsComputer.dll": {}
         }
       },
       "Fuse.Core/1.0.0": {
@@ -375,27 +422,27 @@
           "Fuse.Core.dll": {}
         }
       },
-      "PrepareDataNetStandard/1.0.0": {
+      "PrepareData/1.0.0": {
         "dependencies": {
-          "ClassificationSummaryNetStandard": "1.0.0",
+          "ClassificationSummary": "1.0.0",
           "Fuse.Core": "1.0.0"
         },
         "runtime": {
-          "PrepareDataNetStandard.dll": {}
+          "PrepareData.dll": {}
         }
       },
-      "ReservoirSamplerNetStandard/1.0.0": {
+      "ReservoirSampler/1.0.0": {
         "dependencies": {
-          "SamplerNetStandard": "1.0.0",
+          "Sampler": "1.0.0",
           "UtilityNetStandard": "1.0.0"
         },
         "runtime": {
-          "ReservoirSamplerNetStandard.dll": {}
+          "ReservoirSampler.dll": {}
         }
       },
-      "SamplerNetStandard/1.0.0": {
+      "Sampler/1.0.0": {
         "runtime": {
-          "SamplerNetStandard.dll": {}
+          "Sampler.dll": {}
         }
       },
       "UtilityNetStandard/1.0.0": {
@@ -701,22 +748,22 @@
       "path": "system.threading.tasks/4.3.0",
       "hashPath": "system.threading.tasks.4.3.0.nupkg.sha512"
     },
-    "AugmentLuisModelNetStandard/1.0.0": {
+    "AugmentLuisModel/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
     },
-    "ClassificationEvaluatorNetStandard/1.0.0": {
+    "ClassificationEvaluator/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
     },
-    "ClassificationSummaryNetStandard/1.0.0": {
+    "ClassificationSummary/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
     },
-    "DescriptiveStatisticsComputerNetStandard/1.0.0": {
+    "DescriptiveStatisticsComputer/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
@@ -726,17 +773,17 @@
       "serviceable": false,
       "sha512": ""
     },
-    "PrepareDataNetStandard/1.0.0": {
+    "PrepareData/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
     },
-    "ReservoirSamplerNetStandard/1.0.0": {
+    "ReservoirSampler/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
     },
-    "SamplerNetStandard/1.0.0": {
+    "Sampler/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

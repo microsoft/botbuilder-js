@@ -1,6 +1,6 @@
 {
   "name": "ludown",
-  "version": "1.0.23",
+  "version": "1.0.26",
   "description": "Command line tool to convert .lu files to LUIS JSON and QnA maker JSON files",
   "main": "index.js",
   "scripts": {
