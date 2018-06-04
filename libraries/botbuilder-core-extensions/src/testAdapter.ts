@@ -5,61 +5,62 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { 
+import {
     BotAdapter, ActivityTypes, Activity, ConversationReference, ChannelAccount,
-    Promiseable, TurnContext, ResourceResponse 
+    Promiseable, TurnContext, ResourceResponse
 } from 'botbuilder-core';
 import assert = require('assert');
 
-/** 
+/**
  * Signature for a function that can be used to inspect individual activities returned by a bot
  * that's being tested using the `TestAdapter`.
- * 
+ *
  * ```TypeScript
  * type TestActivityInspector = (activity: Partial<Activity>, description: string) => void;
- * ``` 
+ * ```
  */
 export type TestActivityInspector = (activity: Partial<Activity>, description: string) => void;
 
 /**
  * Test adapter used for unit tests. This adapter can be used to simulate sending messages from the
  * user to the bot.
- * 
+ *
  * @remarks
  * The following example sets up the test adapter and then executes a simple test:
  *
  * ```JavaScript
  * const { TestAdapter } = require('botbuilder');
- * 
+ *
  * const adapter = new TestAdapter(async (context) => {
  *      await context.sendActivity(`Hello World`);
  * });
- * 
+ *
  * adapter.test(`hi`, `Hello World`)
  *        .then(() => done());
- * ``` 
+ * ```
  */
 export class TestAdapter extends BotAdapter {
+    private sendTraceActivities: boolean = false;
     private nextId = 0;
 
     /**
-     * @private 
-     * INTERNAL: used to drive the promise chain forward when running tests. 
+     * @private
+     * INTERNAL: used to drive the promise chain forward when running tests.
      */
     public readonly activityBuffer: Partial<Activity>[] = [];
-   
-    /** 
-     * `ConversationReference` template that will be merged with all activities sent to the logic 
-     * under test.  
+
+    /**
+     * `ConversationReference` template that will be merged with all activities sent to the logic
+     * under test.
      */
     public readonly template: Partial<Activity>;
 
     /**
-     * List of updated activities passed to the adapter which can be inspected after the current 
+     * List of updated activities passed to the adapter which can be inspected after the current
      * turn completes.
-     * 
+     *
      * @remarks
-     * This example shows how to test that expected updates have been preformed: 
+     * This example shows how to test that expected updates have been preformed:
      *
      * ```JavaScript
      * adapter.test('update', '1 updated').then(() => {
@@ -67,16 +68,16 @@ export class TestAdapter extends BotAdapter {
      *    assert(adapter.updatedActivities[0].id === '12345');
      *    done();
      * });
-     * ``` 
+     * ```
      */
     public readonly updatedActivities: Partial<Activity>[] = [];
 
     /**
-     * List of deleted activities passed to the adapter which can be inspected after the current 
+     * List of deleted activities passed to the adapter which can be inspected after the current
      * turn completes.
-     * 
+     *
      * @remarks
-     * This example shows how to test that expected deletes have been preformed: 
+     * This example shows how to test that expected deletes have been preformed:
      *
      * ```JavaScript
      * adapter.test('delete', '1 deleted').then(() => {
@@ -84,7 +85,7 @@ export class TestAdapter extends BotAdapter {
      *    assert(adapter.deletedActivities[0].activityId === '12345');
      *    done();
      * });
-     * ``` 
+     * ```
      */
     public readonly deletedActivities: Partial<ConversationReference>[] = [];
 
@@ -93,8 +94,9 @@ export class TestAdapter extends BotAdapter {
      * @param logic The bots logic that's under test.
      * @param template (Optional) activity containing default values to assign to all test messages received.
      */
-    constructor(private logic: (context: TurnContext) => Promiseable<void>, template?: ConversationReference) {
+    constructor(private logic: (context: TurnContext) => Promiseable<void>, template?: ConversationReference, sendTraceActivities?: boolean) {
         super();
+        this.sendTraceActivities = sendTraceActivities || false;
         this.template = Object.assign({
             channelId: 'test',
             serviceUrl: 'https://test.com',
@@ -106,22 +108,24 @@ export class TestAdapter extends BotAdapter {
 
     /**
      * @private
-     * INTERNAL: called by the logic under test to send a set of activities. These will be buffered 
-     * to the current `TestFlow` instance for comparison against the expected results. 
+     * INTERNAL: called by the logic under test to send a set of activities. These will be buffered
+     * to the current `TestFlow` instance for comparison against the expected results.
      * @param context Context object for the current turn of conversation with the user.
      * @param activities Set of activities sent by logic under test.
      */
     public sendActivities(context: TurnContext, activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
-        const responses = activities.map((activity) => {  
-            this.activityBuffer.push(activity);
-            return { id: (this.nextId++).toString() };
-        });
+        const responses = activities
+            .filter(a => this.sendTraceActivities || a.type !== 'trace')
+            .map((activity) => {
+                this.activityBuffer.push(activity);
+                return { id: (this.nextId++).toString() };
+            });
         return Promise.resolve(responses);
     }
 
     /**
      * @private
-     * INTERNAL: called by the logic under test to replace an existing activity. These are simply 
+     * INTERNAL: called by the logic under test to replace an existing activity. These are simply
      * pushed onto an [updatedActivities](#updatedactivities) array for inspection after the turn
      * completes.
      * @param context Context object for the current turn of conversation with the user.
@@ -134,7 +138,7 @@ export class TestAdapter extends BotAdapter {
 
     /**
      * @private
-     * INTERNAL: called by the logic under test to delete an existing activity. These are simply 
+     * INTERNAL: called by the logic under test to delete an existing activity. These are simply
      * pushed onto a [deletedActivities](#deletedactivities) array for inspection after the turn
      * completes.
      * @param context Context object for the current turn of conversation with the user.
@@ -146,7 +150,7 @@ export class TestAdapter extends BotAdapter {
     }
 
     /**
-     * The `TestAdapter` doesn't implement `continueConversation()` and will return an error if it's 
+     * The `TestAdapter` doesn't implement `continueConversation()` and will return an error if it's
      * called.
      */
     public continueConversation(reference: Partial<ConversationReference>, logic: (revocableContext: TurnContext) => Promiseable<void>): Promise<void> {
@@ -155,9 +159,9 @@ export class TestAdapter extends BotAdapter {
 
     /**
      * @private
-     * INTERNAL: called by a `TestFlow` instance to simulate a user sending a message to the bot. 
+     * INTERNAL: called by a `TestFlow` instance to simulate a user sending a message to the bot.
      * This will cause the adapters middleware pipe to be run and it's logic to be called.
-     * @param activity Text or activity from user. The current conversation reference [template](#template) will be merged the passed in activity to properly address the activity. Fields specified in the activity override fields in the template. 
+     * @param activity Text or activity from user. The current conversation reference [template](#template) will be merged the passed in activity to properly address the activity. Fields specified in the activity override fields in the template.
      */
     public receiveActivity(activity: string|Partial<Activity>): Promise<void> {
         // Initialize request
@@ -171,9 +175,9 @@ export class TestAdapter extends BotAdapter {
     }
 
     /**
-     * Sends something to the bot. This returns a new `TestFlow` instance which can be used to add 
-     * additional steps for inspecting the bots reply and then sending additional activities.  
-     * 
+     * Sends something to the bot. This returns a new `TestFlow` instance which can be used to add
+     * additional steps for inspecting the bots reply and then sending additional activities.
+     *
      * @remarks
      * This example shows how to send a message and then verify that the response was as expected:
      *
@@ -181,24 +185,24 @@ export class TestAdapter extends BotAdapter {
      * adapter.send('hi')
      *        .assertReply('Hello World')
      *        .then(() => done());
-     * ``` 
-     * @param userSays Text or activity simulating user input. 
+     * ```
+     * @param userSays Text or activity simulating user input.
      */
     public send(userSays: string|Partial<Activity>): TestFlow {
         return new TestFlow(this.receiveActivity(userSays), this);
     }
 
     /**
-     * Send something to the bot and expects the bot to return with a given reply. 
-     * 
+     * Send something to the bot and expects the bot to return with a given reply.
+     *
      * @remarks
-     * This is simply a wrapper around calls to `send()` and `assertReply()`. This is such a 
+     * This is simply a wrapper around calls to `send()` and `assertReply()`. This is such a
      * common pattern that a helper is provided.
-     * 
+     *
      * ```JavaScript
      * adapter.test('hi', 'Hello World')
      *        .then(() => done());
-     * ``` 
+     * ```
      * @param userSays Text or activity simulating user input.
      * @param expected Expected text or activity of the reply sent by the bot.
      * @param description (Optional) Description of the test case. If not provided one will be generated.
@@ -220,6 +224,10 @@ export class TestAdapter extends BotAdapter {
     public testActivities(activities: Array<Partial<Activity>>, description?: string, timeout?: number): TestFlow {
         if (!activities) {
             throw new Error('Missing array of activities');
+        }
+
+        if (!Array.isArray(activities)) {
+            throw new Error('activities must be an array containing activities');
         }
 
         const activityInspector = (expected: Partial<Activity>): TestActivityInspector =>
@@ -246,39 +254,39 @@ export class TestAdapter extends BotAdapter {
 
 /**
  * Support class for `TestAdapter` that allows for the simple construction of a sequence of tests.
- * 
+ *
  * @remarks
- * Calling `adapter.send()` or `adapter.test()` will create a new test flow which you can chain 
+ * Calling `adapter.send()` or `adapter.test()` will create a new test flow which you can chain
  * together additional tests using a fluent syntax.
  *
  * ```JavaScript
  * const { TestAdapter } = require('botbuilder');
- * 
+ *
  * const adapter = new TestAdapter(async (context) => {
  *    if (context.text === 'hi') {
  *       await context.sendActivity(`Hello World`);
  *    } else if (context.text === 'bye') {
  *       await context.sendActivity(`Goodbye`);
- *    } 
+ *    }
  * });
- * 
+ *
  * adapter.test(`hi`, `Hello World`)
  *        .test(`bye`, `Goodbye`)
  *        .then(() => done());
- * ``` 
+ * ```
  */
 export class TestFlow {
 
     /**
      * @private
-     * INTERNAL: creates a new TestFlow instance. 
+     * INTERNAL: creates a new TestFlow instance.
      * @param previous Promise chain for the current test sequence.
      * @param adapter Adapter under tested.
      */
     constructor(public previous: Promise<void>, private adapter: TestAdapter) { }
 
     /**
-     * Send something to the bot and expects the bot to return with a given reply. This is simply a 
+     * Send something to the bot and expects the bot to return with a given reply. This is simply a
      * wrapper around calls to `send()` and `assertReply()`. This is such a common pattern that a
      * helper is provided.
      * @param userSays Text or activity simulating user input.
@@ -401,8 +409,8 @@ export class TestFlow {
 
 /**
  * @private
- * @param activity 
- * @param expected 
+ * @param activity
+ * @param expected
  */
 function validateActivity(activity: Partial<Activity>, expected: Partial<Activity>): void {
     for (const prop in expected) {

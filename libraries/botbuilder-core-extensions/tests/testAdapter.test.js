@@ -5,6 +5,7 @@ const { TestAdapter } = require('../');
 const receivedMessage = { text: 'received', type: 'message' };
 const updatedActivity = { text: 'update', type: 'message' };
 const deletedActivityId = '1234';
+const testActivitiesTranscript = require('./testAdapter.testActivities.json');
 
 describe(`TestAdapter`, function () {
     this.timeout(5000);
@@ -54,7 +55,7 @@ describe(`TestAdapter`, function () {
         adapter.receiveActivity({ text: 'test', type: ActivityTypes.Message, id: 'myId' });
     });
 
-    
+
     it(`should call bot logic when send() is called.`, function (done) {
         const adapter = new TestAdapter((context) => {
             done();
@@ -161,11 +162,11 @@ describe(`TestAdapter`, function () {
                 called = true;
             })
             .then(() => {
-                assert(called, `inspector not called.`); 
+                assert(called, `inspector not called.`);
                 done();
             });
     });
-    
+
     it(`should timeout waiting for assertReply() when a string is expected.`, function (done) {
         const start = new Date().getTime();
         const adapter = new TestAdapter((context) => {
@@ -238,5 +239,35 @@ describe(`TestAdapter`, function () {
             assert(err, `Error not returned.`);
             done();
         });
+    });
+
+    it(`should throw when calling testActivites() without an array.`, function (done) {
+        try {
+            new TestAdapter((context) => { }).testActivities({});
+            assert(false, `should have thrown error.`)
+        } catch (err) {
+            done();
+        }
+    })
+
+    it(`should send, recieve and assert when testActivities() is called.`, function(done) {
+        var replyCount = 0;
+        var repliesOnly = testActivitiesTranscript.filter(o => o.type === 'message' && o.from.id === 'default-user');
+        const adapter = new TestAdapter((context) => {
+            // Echo Bot
+            if (context.activity.type === 'message') {
+                const count = replyCount++;
+                return context.sendActivity(`${count}: You said "${context.activity.text}"`);
+            } else {
+                return context.sendActivity(`[${context.activity.type} event detected]`);
+            }
+        });
+
+        adapter.testActivities(testActivitiesTranscript)
+            .then(() => {
+                assert.equal(replyCount, repliesOnly.length, `should have processed all incomming messages.`);
+                done();
+            })
+            .catch((err) => done(err));
     });
 });

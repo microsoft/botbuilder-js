@@ -33,9 +33,10 @@ class TestAdapter extends botbuilder_core_1.BotAdapter {
      * @param logic The bots logic that's under test.
      * @param template (Optional) activity containing default values to assign to all test messages received.
      */
-    constructor(logic, template) {
+    constructor(logic, template, sendTraceActivities) {
         super();
         this.logic = logic;
+        this.sendTraceActivities = false;
         this.nextId = 0;
         /**
          * @private
@@ -74,6 +75,7 @@ class TestAdapter extends botbuilder_core_1.BotAdapter {
          * ```
          */
         this.deletedActivities = [];
+        this.sendTraceActivities = sendTraceActivities || false;
         this.template = Object.assign({
             channelId: 'test',
             serviceUrl: 'https://test.com',
@@ -90,7 +92,9 @@ class TestAdapter extends botbuilder_core_1.BotAdapter {
      * @param activities Set of activities sent by logic under test.
      */
     sendActivities(context, activities) {
-        const responses = activities.map((activity) => {
+        const responses = activities
+            .filter(a => this.sendTraceActivities || a.type !== 'trace')
+            .map((activity) => {
             this.activityBuffer.push(activity);
             return { id: (this.nextId++).toString() };
         });
@@ -194,6 +198,9 @@ class TestAdapter extends botbuilder_core_1.BotAdapter {
     testActivities(activities, description, timeout) {
         if (!activities) {
             throw new Error('Missing array of activities');
+        }
+        if (!Array.isArray(activities)) {
+            throw new Error('activities must be an array containing activities');
         }
         const activityInspector = (expected) => (actual, description) => validateTranscriptActivity(actual, expected, description);
         // Chain all activities in a TestFlow, check if its a user message (send) or a bot reply (assert)
