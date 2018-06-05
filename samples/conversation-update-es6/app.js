@@ -18,7 +18,7 @@ const adapter = new BotFrameworkAdapter({
 
 // Listen for incoming requests 
 server.post('/api/messages/', (req, res) => {
-    adapter.processActivity(req, res, (context) => {
+    adapter.processActivity(req, res, async (context) => {
         // On "conversationUpdate"-type activities this bot will send a greeting message to users joining the conversation.
         if (context.activity.type === 'conversationUpdate' && context.activity.membersAdded[0].name !== 'Bot') {
             await context.sendActivity(`Hello "${context.activity.membersAdded[0].name}"!`);
