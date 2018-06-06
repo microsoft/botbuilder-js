@@ -105,6 +105,27 @@ export interface ChoicePrompt<O = FoundChoice> {
     recognize(context: TurnContext, choices: (string|Choice)[]): Promise<O|undefined>;
 }
 
+function inlineChoiceOptions(culture?: string): ChoiceFactoryOptions
+{
+    const defaultChoiceOption:{ [index:string]: ChoiceFactoryOptions } =
+    {
+        'es-es': { inlineSeparator: ', ', inlineOr: ' o ', inlineOrMore: ', o ', includeNumbers: true},
+        'nl-nl': { inlineSeparator: ', ', inlineOr: ' of ', inlineOrMore: ', of ', includeNumbers: true},
+        'en-us': { inlineSeparator: ', ', inlineOr: ' or ', inlineOrMore: ', or ', includeNumbers: true},
+        'fr-fr': { inlineSeparator: ', ', inlineOr: ' ou ', inlineOrMore: ', ou ', includeNumbers: true},
+        'de-de': { inlineSeparator: ', ', inlineOr: ' oder ', inlineOrMore: ', oder ', includeNumbers: true},
+        'ja-jp': { inlineSeparator: '、 ', inlineOr: ' または ', inlineOrMore: '、 または ', includeNumbers: true},
+        'pt-br': { inlineSeparator: ', ', inlineOr: ' ou ', inlineOrMore: ', ou ', includeNumbers: true},
+        'zh-cn': { inlineSeparator: '， ', inlineOr: ' 要么 ', inlineOrMore: '， 要么 ', includeNumbers: true}
+    };
+
+    if (culture === undefined || !(culture in defaultChoiceOption))
+    {
+        culture = 'en-us';
+    }
+    return defaultChoiceOption[culture];
+}
+
 /**
  * Creates a new prompt that asks the user to select from a list of choices.
  *
@@ -117,7 +138,7 @@ export interface ChoicePrompt<O = FoundChoice> {
  * 
  * const colorPrompt = createChoicePrompt(async (context, found) => {
  *    if (!found) {
- *       await colorPrompt.prompt(context, ['red', 'green', 'blue'], `Please choose a color from the list or say "cancel".`);
+ *       await colorPrompt.prompt(context, ['red', 'green', 'blue'], `Please choose a color from the list or say 'cancel'.`);
  *    }
  *    return found;
  * });
@@ -129,7 +150,7 @@ export interface ChoicePrompt<O = FoundChoice> {
 export function createChoicePrompt<O = FoundChoice>(validator?: PromptValidator<FoundChoice, O>, defaultLocale?: string): ChoicePrompt<O> {
     return {
         style: ListStyle.auto,
-        choiceOptions: {},
+        choiceOptions: inlineChoiceOptions(defaultLocale),
         recognizerOptions: {},
         prompt: function prompt(context, choices, prompt, speak) {
             let msg: Partial<Activity>;
