@@ -105,7 +105,7 @@ export interface ChoicePrompt<O = FoundChoice> {
  *
  * const colorPrompt = createChoicePrompt(async (context, found) => {
  *    if (!found) {
- *       await colorPrompt.prompt(context, ['red', 'green', 'blue'], `Please choose a color from the list or say "cancel".`);
+ *       await colorPrompt.prompt(context, ['red', 'green', 'blue'], `Please choose a color from the list or say 'cancel'.`);
  *    }
  *    return found;
  * });
