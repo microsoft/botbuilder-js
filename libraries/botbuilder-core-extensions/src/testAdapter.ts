@@ -40,6 +40,7 @@ export type TestActivityInspector = (activity: Partial<Activity>, description: s
  * ``` 
  */
 export class TestAdapter extends BotAdapter {
+    private sendTraceActivities: boolean = false;
     private nextId = 0;
 
     /**
@@ -93,8 +94,9 @@ export class TestAdapter extends BotAdapter {
      * @param logic The bots logic that's under test.
      * @param template (Optional) activity containing default values to assign to all test messages received.
      */
-    constructor(private logic: (context: TurnContext) => Promiseable<void>, template?: ConversationReference) {
+    constructor(private logic: (context: TurnContext) => Promiseable<void>, template?: ConversationReference, sendTraceActivities?: boolean) {
         super();
+        this.sendTraceActivities = sendTraceActivities || false;
         this.template = Object.assign({
             channelId: 'test',
             serviceUrl: 'https://test.com',
@@ -112,10 +114,12 @@ export class TestAdapter extends BotAdapter {
      * @param activities Set of activities sent by logic under test.
      */
     public sendActivities(context: TurnContext, activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
-        const responses = activities.map((activity) => {  
-            this.activityBuffer.push(activity);
-            return { id: (this.nextId++).toString() };
-        });
+        const responses = activities
+            .filter(a => this.sendTraceActivities || a.type !== 'trace')
+            .map((activity) => {  
+                this.activityBuffer.push(activity);
+                return { id: (this.nextId++).toString() };
+            });
         return Promise.resolve(responses);
     }
 
