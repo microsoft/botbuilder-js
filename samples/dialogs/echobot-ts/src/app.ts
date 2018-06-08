@@ -14,8 +14,6 @@ const adapter = new BotFrameworkAdapter( {
     appPassword: process.env.MICROSOFT_APP_PASSWORD 
 });
 
-const connectionName = 'MyBuildConnection'; // process.env.CONNECTION_NAME;
-
 // Add conversation state middleware
 interface EchoState {
     dialogStack: any[];
