@@ -30,7 +30,7 @@ export interface WebResponse {
 }
 
 /** 
- * Bot Framework Adapter Settings. 
+ * Settings used to configure a `BotFrameworkAdapter` instance. 
  */
 export interface BotFrameworkAdapterSettings {
     /** 
@@ -66,7 +66,7 @@ const INVOKE_RESPONSE_KEY = Symbol('invokeResponse');
 
 
 /**
- * ActivityAdapter class needed to communicate with a Bot Framework channel or the Emulator.
+ * BotAdapter class needed to communicate with a Bot Framework channel or the Emulator.
  * 
  * @remarks
  * The following example shows the typical adapter setup:

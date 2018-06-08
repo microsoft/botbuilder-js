@@ -14,7 +14,7 @@ const USER_AGENT = "Microsoft-BotFramework/3.1 (BotBuilder JS/" + pjson.version 
 const OAUTH_ENDPOINT = 'https://api.botframework.com';
 const INVOKE_RESPONSE_KEY = Symbol('invokeResponse');
 /**
- * ActivityAdapter class needed to communicate with a Bot Framework channel or the Emulator.
+ * BotAdapter class needed to communicate with a Bot Framework channel or the Emulator.
  *
  * @remarks
  * The following example shows the typical adapter setup:

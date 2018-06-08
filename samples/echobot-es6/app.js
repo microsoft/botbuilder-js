@@ -3,6 +3,7 @@
 
 const { BotStateSet, BotFrameworkAdapter, MemoryStorage, ConversationState, UserState } = require('botbuilder');
 const restify = require('restify');
+const createEchoBot = require('./echoBot');
 
 // Create server
 let server = restify.createServer();
@@ -22,16 +23,10 @@ const convoState = new ConversationState(storage);
 const userState = new UserState(storage);
 adapter.use(new BotStateSet(convoState, userState));
 
+const echoBot = createEchoBot(convoState);
+
 // Listen for incoming requests 
 server.post('/api/messages', (req, res) => {
     // Route received request to adapter for processing
-    adapter.processActivity(req, res, async (context) => {
-        if (context.activity.type === 'message') {
-            const state = convoState.get(context);
-            const count = state.count === undefined ? state.count = 0 : ++state.count;
-            await context.sendActivity(`${count}: You said "${context.activity.text}"`);
-        } else {
-            await context.sendActivity(`[${context.activity.type} event detected]`);
-        }
-    });
+    adapter.processActivity(req, res, echoBot);
 });
