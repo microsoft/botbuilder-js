@@ -6,9 +6,9 @@ Production bots should continue to be developed using the [v3 SDK](https://githu
 In addition to the JavaScript SDK, Bot Builder supports creating bots in other popular programming languages like [.NET](https://github.com/Microsoft/botbuilder-dotnet), [Python](https://github.com/Microsoft/botbuilder-python), and [Java](https://github.com/Microsoft/botbuilder-java).
 
 
-- [Getting Started](https://github.com/Microsoft/botbuilder-js/wiki#getting-started)
+- [Getting Started](https://docs.microsoft.com/en-us/azure/bot-service/javascript/bot-builder-javascript-quickstart?view=azure-bot-service-4.0)
+- [Preview Documentation](https://docs.microsoft.com/en-us/azure/bot-service/?view=azure-bot-service-4.0)
 - [Building the SDK](https://github.com/Microsoft/botbuilder-js/wiki/Building-the-SDK)
-- [Bot Building Basics](https://github.com/Microsoft/botbuilder-js/wiki/Overview)
 - [Contribution Guidlines](https://github.com/Microsoft/botbuilder-js/wiki/Contribution-Guidelines)
 - [Extension Directory](https://github.com/Microsoft/botbuilder-js/wiki/Extension-Directory)
 - [Roadmap](https://github.com/Microsoft/botbuilder-js/wiki/Roadmap)
