@@ -130,8 +130,11 @@ export class OAuthPrompt<C extends TurnContext> extends Dialog<C> {
             const hasTimedOut = isMessage && (new Date().getTime() > state.expires);
 
             // Process output
-            if (output || hasTimedOut) {
-                // Return token or undefined on timeout
+            if (hasTimedOut) {
+                return dc.end(undefined);
+            }
+            else if (output) {
+                // Return token if it's not timed out (as checked for in the preceding if)
                 return dc.end(output);
             } else if (isMessage && state.retryPrompt) {
                 // Send retry prompt
