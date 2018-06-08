@@ -79,7 +79,9 @@ export class OAuthApiClient {
       operationRes = await client.pipeline(httpRequest);
       let response = operationRes.response;
       let statusCode = response.status;
-      if (statusCode !== 200) {
+      if (statusCode === 404) {
+        operationRes.bodyAsJson = undefined;
+      } else if (statusCode !== 200) {
         let error = new msRest.RestError(operationRes.bodyAsText as string);
         error.statusCode = response.status;
         error.request = msRest.stripRequest(httpRequest);
@@ -103,22 +105,6 @@ export class OAuthApiClient {
         }
         return Promise.reject(error);
       }
-      // Deserialize Response
-      if (statusCode === 200) {
-        let parsedResponse = operationRes.bodyAsJson as { [key: string]: any };
-        try {
-          if (parsedResponse !== null && parsedResponse !== undefined) {
-            let resultMapper = Mappers.ConversationsResult;
-            operationRes.bodyAsJson = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.bodyAsJson');
-          }
-        } catch (error) {
-          let deserializationError = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
-          deserializationError.request = msRest.stripRequest(httpRequest);
-          deserializationError.response = msRest.stripResponse(response);
-          return Promise.reject(deserializationError);
-        }
-      }
-
     } catch(err) {
       return Promise.reject(err);
     }
@@ -199,21 +185,6 @@ export class OAuthApiClient {
         }
         return Promise.reject(error);
       }
-      // Deserialize Response
-      if (statusCode === 200) {
-        let parsedResponse = operationRes.bodyAsJson as { [key: string]: any };
-        try {
-          if (parsedResponse !== null && parsedResponse !== undefined) {
-            let resultMapper = Mappers.ConversationsResult;
-            operationRes.bodyAsJson = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.bodyAsJson');
-          }
-        } catch (error) {
-          let deserializationError = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
-          deserializationError.request = msRest.stripRequest(httpRequest);
-          deserializationError.response = msRest.stripResponse(response);
-          return Promise.reject(deserializationError);
-        }
-      }
 
     } catch(err) {
       return Promise.reject(err);
@@ -262,14 +233,17 @@ export class OAuthApiClient {
     httpRequest.method = 'GET';
     httpRequest.url = requestUrl;
     httpRequest.headers = {};
+    httpRequest.headers["Content-Type"] = "text/plain";
     // Set Headers
     if(options && options.customHeaders) {
-        for(let headerName in options.customHeaders) {
-          if (options.customHeaders.hasOwnProperty(headerName)) {
-            httpRequest.headers[headerName] = options.customHeaders[headerName];
-          }
+      for(let headerName in options.customHeaders) {
+        if (options.customHeaders.hasOwnProperty(headerName)) {
+          httpRequest.headers[headerName] = options.customHeaders[headerName];
         }
       }
+    }
+
+    httpRequest.rawResponse = true;
   
     // Send Request
     let operationRes: msRest.HttpOperationResponse;
@@ -300,8 +274,10 @@ export class OAuthApiClient {
           return Promise.reject(error);
         }
         return Promise.reject(error);
+      } else {
+        // read the repsonse text
+        operationRes.bodyAsText = await response.text();
       }
-
     } catch(err) {
       return Promise.reject(err);
     }

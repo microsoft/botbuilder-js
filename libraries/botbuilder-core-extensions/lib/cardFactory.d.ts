@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Attachment, MediaUrl, CardAction, AnimationCard, CardImage, HeroCard, ReceiptCard, ThumbnailCard } from "botbuilder-core";
+import { Attachment, MediaUrl, CardAction, AnimationCard, CardImage, HeroCard, AudioCard, ReceiptCard, ThumbnailCard, VideoCard } from "botbuilder-core";
 /**
  * A set of utility functions designed to assist with the formatting of the various card types a
  * bot can return.
@@ -88,7 +88,7 @@ export declare class CardFactory {
      * @param buttons (Optional) set of buttons to include on the card.
      * @param other (Optional) additional properties to include on the card.
      */
-    static audioCard(title: string, media: (MediaUrl | string)[], buttons?: (CardAction | string)[], other?: Partial<AnimationCard>): Attachment;
+    static audioCard(title: string, media: (MediaUrl | string)[], buttons?: (CardAction | string)[], other?: Partial<AudioCard>): Attachment;
     /**
      * Returns an attachment for a hero card.
      *
@@ -157,7 +157,7 @@ export declare class CardFactory {
      * @param buttons (Optional) set of buttons to include on the card.
      * @param other (Optional) additional properties to include on the card.
      */
-    static videoCard(title: string, media: (MediaUrl | string)[], buttons?: (CardAction | string)[], other?: Partial<AnimationCard>): Attachment;
+    static videoCard(title: string, media: (MediaUrl | string)[], buttons?: (CardAction | string)[], other?: Partial<VideoCard>): Attachment;
     /**
      * Returns a properly formatted array of actions. Supports converting strings to `messageBack`
      * actions (note: using 'imBack' for now as 'messageBack' doesn't work properly in emulator.)
