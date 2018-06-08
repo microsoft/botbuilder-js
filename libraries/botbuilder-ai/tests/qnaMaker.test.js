@@ -3,16 +3,16 @@ const { TestAdapter, TurnContext } = require('botbuilder');
 const ai = require('../');
 
 // Save test keys
-const knowlegeBaseId = process.env.QNAKNOWLEDGEBASEID;
+const knowledgeBaseId = process.env.QNAKNOWLEDGEBASEID;
 const endpointKey = process.env.QNAENDPOINTKEY;
 const hostname = process.env.QNAHOSTNAME;
 
 class TestContext extends TurnContext {
     constructor(request) {
         super(new TestAdapter(), request);
-        this.sent = undefined;
+        this.sent = [];
         this.onSendActivities((context, activities, next) => {
-            this.sent = activities;
+            this.sent = this.sent.concat(activities);
             context.responded = true;
         });
     }
@@ -20,7 +20,7 @@ class TestContext extends TurnContext {
 
 describe('QnAMaker', function () {
     this.timeout(10000);
-    if (!knowlegeBaseId) {
+    if (!knowledgeBaseId) {
         console.warn('WARNING: skipping QnAMaker test suite because QNAKNOWLEDGEBASEID environment variable is not defined');
         return;
     }
@@ -35,12 +35,12 @@ describe('QnAMaker', function () {
 
     // Generate endpoints
     const endpoint = {
-        knowledgeBaseId: knowlegeBaseId,
+        knowledgeBaseId: knowledgeBaseId,
         endpointKey: endpointKey,
         host: hostname
     }
-    const endpointString = `POST /knowledgebases/${knowlegeBaseId}/generateAnswer\r\nHost: ${hostname}\r\nAuthorization: EndpointKey ${endpointKey}\r\nContent-Type: application/json\r\n{"question":"hi"}`;
-    const unixEndpointString = `POST /knowledgebases/${knowlegeBaseId}/generateAnswer\nHost: ${hostname}\nAuthorization: EndpointKey ${endpointKey}\nContent-Type: application/json\n{"question":"hi"}`;
+    const endpointString = `POST /knowledgebases/${knowledgeBaseId}/generateAnswer\r\nHost: ${hostname}\r\nAuthorization: EndpointKey ${endpointKey}\r\nContent-Type: application/json\r\n{"question":"hi"}`;
+    const unixEndpointString = `POST /knowledgebases/${knowledgeBaseId}/generateAnswer\nHost: ${hostname}\nAuthorization: EndpointKey ${endpointKey}\nContent-Type: application/json\n{"question":"hi"}`;
 
     it('should work free standing', function () {
         const qna = new ai.QnAMaker(endpoint, { top: 1 });
@@ -64,7 +64,7 @@ describe('QnAMaker', function () {
         const qna = new ai.QnAMaker(endpoint, { top: 1 });
 
         qna.onTurn(context, () => Promise.resolve()).then(() => {
-            assert(Array.isArray(context.sent) && context.sent.length === 1, `reply not sent.`);
+            assert(Array.isArray(context.sent) && context.sent.length === 2, `reply not sent.`);
             done();
         });
     });
@@ -88,8 +88,8 @@ describe('QnAMaker', function () {
             intercepted = false;
             return  Promise.resolve();
         }).then(() => {
-            assert(intercepted, `not intercepted.`)
-            assert(Array.isArray(context.sent) && context.sent.length === 1, `reply not sent.`);
+            assert(intercepted, `not intercepted.`);
+            assert(Array.isArray(context.sent) && context.sent.length === 2, `reply not sent.`);
             done();
         });
     });
@@ -158,5 +158,28 @@ describe('QnAMaker', function () {
             assert(!found);
             done();
         });
+    });
+
+    it('should emit trace info once per call to Answer', function (done) {
+        const context = new TestContext({ text: `how do I clean the stove?`, type: 'message'});
+        const qna = new ai.QnAMaker(endpoint, { top: 1 });
+
+        qna.answer(context)
+            .then((found) => {
+                assert(found);
+                let qnaMakerTraceActivies = context.sent.filter(s => s.type === 'trace' && s.name === 'QnAMakerMiddleware');
+                assert(qnaMakerTraceActivies.length === 1);
+                traceActivity = qnaMakerTraceActivies[0];
+                assert(traceActivity.type === 'trace');
+                assert(traceActivity.name === 'QnAMakerMiddleware');
+                assert(traceActivity.label === 'QnAMaker Trace');
+                assert(traceActivity.valueType === 'https://www.qnamaker.ai/schemas/trace');
+                assert(traceActivity.value);
+                assert(traceActivity.value.message);
+                assert(traceActivity.value.queryResults);
+                assert(traceActivity.value.knowledgeBaseId === knowledgeBaseId);
+                assert(traceActivity.value.scoreThreshold);
+                done();
+            });
     });
 });

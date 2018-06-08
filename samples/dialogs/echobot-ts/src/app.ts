@@ -10,11 +10,9 @@ server.listen(process.env.port || process.env.PORT || 3978, function () {
 
 // Create adapter
 const adapter = new BotFrameworkAdapter( { 
-    appId: '558e9c44-900b-42e2-a20a-1c5ebdcd97e6', // process.env.MICROSOFT_APP_ID, 
-    appPassword: 'zlkq$7$dP%20!u{a' // process.env.MICROSOFT_APP_PASSWORD 
+    appId: process.env.MICROSOFT_APP_ID, 
+    appPassword: process.env.MICROSOFT_APP_PASSWORD 
 });
-
-const connectionName = 'MyBuildConnection'; // process.env.CONNECTION_NAME;
 
 // Add conversation state middleware
 interface EchoState {
