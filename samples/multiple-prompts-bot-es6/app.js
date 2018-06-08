@@ -2,8 +2,9 @@
 // Licensed under the MIT License.
 
 const { BotFrameworkAdapter, BotStateSet, MemoryStorage, ConversationState, UserState } = require('botbuilder');
-const { DialogSet, TextPrompt, NumberPrompt } = require('botbuilder-dialogs');
 const restify = require('restify');
+
+const createBotLogic = require('./bot');
 
 // Create server
 let server = restify.createServer();
@@ -12,9 +13,9 @@ server.listen(process.env.port || process.env.PORT || 3978, function () {
 });
 
 // Create adapter
-const adapter = new BotFrameworkAdapter({ 
-    appId: process.env.MICROSOFT_APP_ID, 
-    appPassword: process.env.MICROSOFT_APP_PASSWORD 
+const adapter = new BotFrameworkAdapter({
+    appId: process.env.MICROSOFT_APP_ID,
+    appPassword: process.env.MICROSOFT_APP_PASSWORD
 });
 
 // Add state middleware
@@ -23,57 +24,10 @@ const convoState = new ConversationState(storage);
 const userState = new UserState(storage);
 adapter.use(new BotStateSet(convoState, userState));
 
-const dialogs = new DialogSet();
+const botLogic = createBotLogic(convoState);
 
-// Create prompt for name with string length validation
-dialogs.add('namePrompt', new TextPrompt(async (context, value) => {
-    if (value && value.length < 2) {
-        await context.sendActivity('Your name should be at least 2 characters long.');
-        return undefined;
-    }
-    return value.trim();
-}));
-
-// Create prompt for age with number value validation
-dialogs.add('agePrompt', new NumberPrompt(async (context, value) => {
-    if (0 > value || value > 122) {
-        await context.sendActivity('Your age should be between 0 and 122.');
-        return undefined;
-    }
-    return value;
-}));
-
-// Add a dialog that uses both prompts to gather information from the user
-dialogs.add('gatherInfo', [
-    async (dialogContext) => {
-        await dialogContext.prompt('namePrompt', 'What is your name?');
-    },
-    async (dialogContext, value) => {
-        const state = convoState.get(dialogContext.context);
-        state.name = value;
-        await dialogContext.prompt('agePrompt', 'What is your age?');
-    },
-    async (dialogContext, value) => {
-        const state = convoState.get(dialogContext.context);
-        state.age = value;
-        await dialogContext.context.sendActivity(`Your name is ${state.name} and your age is ${state.age}`);
-        await dialogContext.end();
-    }
-]);
-
-
-// Listen for incoming requests 
+// Listen for incoming requests
 server.post('/api/messages', (req, res) => {
     // Route received request to adapter for processing
-    adapter.processActivity(req, res, async (context) => {
-        const state = convoState.get(context);
-        const dc = dialogs.createContext(context, state);
-        const isMessage = context.activity.type === 'message';
-        if (!context.responded) {
-            await dc.continue();
-            if (!context.responded && isMessage) {
-                await dc.begin('gatherInfo');
-            }
-        }
-    });
+    adapter.processActivity(req, res, botLogic);
 });
