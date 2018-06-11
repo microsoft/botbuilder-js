@@ -19,6 +19,8 @@ program
     .alias('p')
     .command('refresh', 'Convert LUIS JSON and/ or QnAMaker JSON file into .lu file')
     .alias('d')
+    .command('translate', 'Translate .lu files')
+    .alias('t')
     .parse(process.argv);
 
     var commands = ['parse', 'p', 'refresh', 'd']
