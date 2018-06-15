@@ -3,7 +3,7 @@
   * Licensed under the MIT License.
   */
 
-
+const QnADTO = require('./qnAdto');
 class ReplaceKbDTO {
     
     /**
@@ -23,7 +23,7 @@ ReplaceKbDTO.fromJSON = function(src) {
         return src.map(ReplaceKbDTO.fromJSON);
     }
     
-    src.qnAList = QnADTO.fromJSON(src.qnAList) || undefined;
+    src.qnAList = QnADTO.fromJSON(src.qnAList) || QnADTO.fromJSON(src.qnaList) || undefined;
 
     const {qnAList /* QnADTO[] */} = src;
     return new ReplaceKbDTO({qnAList /* QnADTO[] */});

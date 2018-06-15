@@ -1,0 +1,18 @@
+{
+  "qnAList": [
+    {
+      "id": 0,
+      "answer": "string",
+      "source": "string",
+      "questions": [
+        "string"
+      ],
+      "metadata": [
+        {
+          "name": "string",
+          "value": "string"
+        }
+      ]
+    }
+  ]
+}
