@@ -1,5 +1,5 @@
 # Chit Chat
-Small talk/chit-chat helps to make chatbots more conversational and personable. Here are a collection of chit-chat style conversational abilities categories by personality type/ personas for your bot - professional, friendly, humorous. Choose the persona that most closely resembles your chatbot's voice. 
+Small talk/chit-chat helps to make chatbots more conversational and personable. Here are a collection of chit-chat style conversational abilities categories by personality type/ personas for your bot - [professional](Professional), [friendly](Friendly), [humorous](Humorous). Choose the persona that most closely resembles your chatbot's voice. 
 
 You can use the ludown tool to parse these into QnA Maker KBs (one or more as you see fit) to easily add small talk/ chit-chat capabilities to your bot. See [here](../docs/create-qna-json.md) about parsing these to a QnA Maker KB. 
 
