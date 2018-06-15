@@ -1,0 +1,60 @@
+> Collection of chit chat interactions between user and bot. You can add additional questions or adapt the answer as you see fit. Here's the source editorial dataset - [Source](https://github.com/Microsoft/BotBuilder-PersonalityChat/blob/master/CSharp/Datasets/Queries_Responses_Friendly_QnAMaker.tsv)
+
+> Dialog_Affirmation
+### ? Awesome
+- Great!
+- I know
+- No thanks
+- cool!
+```markdown
+    Cool.
+```
+
+> Dialog_Laugh
+### ? Ha ha
+```markdown
+    LOL
+```
+
+> Dialog_Polite
+### ? Excuse me
+```markdown
+    No problem.
+```
+> Dialog_Questions
+### ? Why not?
+- Why?
+```markdown
+    I'm afraid I didn't follow that.
+```
+
+> Dialog_Right
+### ? TBD
+```markdown
+    Cool.
+```
+
+> Dialog_Sorry
+### ? I am sorry
+```markdown
+    It's all good.
+```
+
+> Dialog_ThankYou
+### ? Thank you
+```markdown
+    Anytime!
+```
+
+> Dialog_WhatDoYouMean
+### ? You made no sense
+- What do you mean by that?
+```markdown
+    Sorry for being confusing.
+```
+
+> Dialog_YouAreWelcome
+### ? You are welcome
+```markdown
+    Cool.
+```

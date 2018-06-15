@@ -1,0 +1,96 @@
+> Collection of chit chat interactions between user and bot. You can add additional questions or adapt the answer as you see fit. Here's the source editorial dataset - [Source](https://github.com/Microsoft/BotBuilder-PersonalityChat/blob/master/CSharp/Datasets/Queries_Responses_Friendly_QnAMaker.tsv)
+
+> User Angry
+### ? I am annoyed
+- I am angry
+```markdown
+    Ugh, sorry to hear that.
+```
+
+> User BeBack
+### ? I will be back
+```markdown
+    See you later!
+```
+
+> User Bored
+### ? I am bored
+```markdown
+    I'm chairman of the bored.
+```
+
+> User Happy
+### ? I am happy
+```markdown
+    I'm happy you're happy.
+```
+
+> User Here
+### ? I am here
+```markdown
+    Hey there!
+```
+
+> User Hungry
+### ? I am hungry
+```markdown
+    Sounds like it's time for a snack.
+```
+
+> User Kidding
+### ? Just kidding
+```markdown
+    Roger that.
+```
+
+> User Lonely
+### ? I am lonely
+- I am so lonely
+```markdown
+    I can keep you company if you want.
+```
+
+> User Loves
+### ? I love my family
+- I love music
+- I am in love 
+```markdown
+    That's nice.
+```
+
+> User Sad
+### ? I am sad
+- I am sad today
+- I feel sad 
+```markdown
+    I'm giving you a virtual hug right now.
+```
+
+> User Statement
+### ? I am going on a run
+- I want to go shopping 
+- I am just kidding
+```markdown
+    I see.
+```
+
+> User Testing
+### ? can you hear me?  
+- Testing
+```markdown
+    Roger that.
+```
+
+> User Tired
+### ? I am sleepy
+- I am tired
+```markdown
+    I've heard really good things about naps.
+```
+
+
+
+
+
+
+
