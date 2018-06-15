@@ -37,6 +37,6 @@ program
             program.help();
             process.exit(retCode.UNKNOWN_OPTIONS);
         } 
-        toLU.generateMarkdown(program);
+        translate.translateContent(program);
     }
    
