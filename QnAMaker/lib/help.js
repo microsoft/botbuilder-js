@@ -149,7 +149,9 @@ function getGeneralHelpContents(output) {
             [chalk.cyan.bold("query"), "query model for prediction"],
             [chalk.cyan.bold("refresh"), "refresh resources"],
             [chalk.cyan.bold("set"), "change the .qnamakerrc settings"],
-            [chalk.cyan.bold("update"), "update resources"]
+            [chalk.cyan.bold("update"), "update resources"],
+            [chalk.cyan.bold("replace"), "replace a resource"]
+            
         ]
     };
 
