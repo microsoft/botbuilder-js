@@ -4,5 +4,6 @@
  */
 module.exports = {
     attachment: 'attachment',
-    attachmentlayout: 'attachmentlayout'
+    attachmentlayout: 'attachmentlayout',
+    suggestions: 'suggestions'
 };

@@ -89,7 +89,9 @@ The conversation between the user and the bot with markdown support for bot's re
 | --------------- | ------------------------------------------------------------ |
 |`[Typing]` | Inserts a typing activity into the transcript to signify that a user or a bot is typing. |
 |`[Delay=<milliseconds>]` | Delays the transcript by `<milliseconds>`. |
+|`[Suggestions=<Option 1>|<Option 2>|<Option 3>]` | Add suggested action buttons, delimited by `|` |
 |`[AttachmentLayout=LayoutType]`| Specify how multiple attachments would be dislpayed. Layout types are `carousel` or `list`|
+
 
 ### Attachments
 To add an attachment, you use `[Attachment=path contentPath]`.  The path can be a URL or a local path (either absolute or relative to `.chat` file).  The content type is optional and if not passed, will be inferred from the file extension. You can also pass it using a shortcut or full mime type.

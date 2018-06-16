@@ -194,6 +194,9 @@ async function readActivitiesFromAggregate(aggregate, currentActivity, recipient
                 case activityfield.attachmentlayout:
                     addAttachmentLayout(currentActivity, rest);
                     break;
+                case activityfield.suggestions:
+                    addSuggestions(currentActivity, rest);
+                    break;
             }
         }
         // Trim off this activity or activity field and continue.
@@ -215,6 +218,20 @@ function addAttachmentLayout(currentActivity, rest) {
         currentActivity.attachmentLayout = AttachmentLayoutTypes.List;
     else
         console.error(`AttachmentLayout of ${rest[0]} is not List or Carousel`);
+}
+
+/**
+ * Add suggested actions support
+ * Example: [suggestions=Option 1|Option 2|Option 3]
+ * @param {*} currentActivity 
+ * @param {*} rest 
+ */
+function addSuggestions(currentActivity, rest) {
+    currentActivity.suggestedActions = {actions: [] };
+    let actions = rest.split('|');
+    for (action of actions) {
+        currentActivity.suggestedActions.actions.push({ title:action.trim(),type:"imBack", value:action.trim() });
+    }
 }
 
 /**
