@@ -1,129 +1,623 @@
 [
   {
     "conversation": {
-      "id": "1"
+      "id": "bd86d6c7-1f23-31d6-88e6-673b2e7abbab"
     },
-    "id": "57d5ef84-4f83-461d-9972-4e643127e9c3",
+    "id": "9f0899f8-90e9-4865-98e9-4320b805c5ee",
     "recipient": {
-      "id": "85f5848f-e644-3403-81b2-a71e0b7e8d9d",
-      "name": "Joe",
-      "role": "user"
-    },
-    "from": {
-      "id": "69495507-d381-36b8-a32b-5e065104a192",
+      "id": "d0aaa931-6a08-3675-92ae-a24902caa461",
       "name": "LulaBot",
       "role": "bot"
+    },
+    "from": {
+      "id": "bd19385c-ea42-3d76-8a39-9d71f1671a64",
+      "name": "Joe",
+      "role": "user"
     },
     "text": "Hi!",
-    "timestamp": "2018-03-30T21:30:45.000Z",
+    "timestamp": "2018-06-17T15:15:18.000Z",
     "type": "message",
     "channelId": "chatdown"
   },
   {
     "conversation": {
-      "id": "1"
+      "id": "bd86d6c7-1f23-31d6-88e6-673b2e7abbab"
     },
-    "id": "b7a961af-ab9e-4fc6-86f2-5f17993ca7a4",
+    "id": "4534634b-cf9f-4f66-b762-733c8fdfbffd",
     "recipient": {
-      "id": "69495507-d381-36b8-a32b-5e065104a192",
-      "name": "LulaBot",
-      "role": "bot"
-    },
-    "from": {
-      "id": "85f5848f-e644-3403-81b2-a71e0b7e8d9d",
-      "name": "Joe",
-      "role": "user"
-    },
-    "text": "yo!",
-    "timestamp": "2018-03-30T21:30:47.000Z",
-    "type": "message",
-    "channelId": "chatdown"
-  },
-  {
-    "conversation": {
-      "id": "1"
-    },
-    "id": "e1518aea-2a2c-4d10-a5e9-b89d049a01c6",
-    "recipient": {
-      "id": "85f5848f-e644-3403-81b2-a71e0b7e8d9d",
+      "id": "bd19385c-ea42-3d76-8a39-9d71f1671a64",
       "name": "Joe",
       "role": "user"
     },
     "from": {
-      "id": "69495507-d381-36b8-a32b-5e065104a192",
+      "id": "d0aaa931-6a08-3675-92ae-a24902caa461",
       "name": "LulaBot",
       "role": "bot"
     },
-    "text": "",
-    "timestamp": "2018-03-30T21:30:52.000Z",
-    "type": "typing",
-    "channelId": "chatdown"
-  },
-  {
-    "conversation": {
-      "id": "1"
-    },
-    "id": "e82b92d5-7f22-43e7-ace4-489aa270bab1",
-    "recipient": {
-      "id": "85f5848f-e644-3403-81b2-a71e0b7e8d9d",
-      "name": "Joe",
-      "role": "user"
-    },
-    "from": {
-      "id": "69495507-d381-36b8-a32b-5e065104a192",
-      "name": "LulaBot",
-      "role": "bot"
-    },
-    "text": "Greetings!\nWhat would you like to do?\n* update - You can update your account\n* List - You can list your data\n* help - you can get help",
-    "timestamp": "2018-03-30T21:31:02.000Z",
-    "type": "message",
-    "channelId": "chatdown"
-  },
-  {
-    "conversation": {
-      "id": "1"
-    },
-    "id": "22574587-d20b-4472-97bf-b61a6491b46d",
-    "recipient": {
-      "id": "69495507-d381-36b8-a32b-5e065104a192",
-      "name": "LulaBot",
-      "role": "bot"
-    },
-    "from": {
-      "id": "85f5848f-e644-3403-81b2-a71e0b7e8d9d",
-      "name": "Joe",
-      "role": "user"
-    },
-    "text": "I need help",
-    "timestamp": "2018-03-30T21:31:04.000Z",
+    "text": "Hello there!",
+    "timestamp": "2018-06-17T15:15:20.000Z",
     "type": "message",
     "channelId": "chatdown"
   },
   {
     "attachments": [
       {
-        "contentType": "image/png",
-        "contentUrl": "",
-        "content": "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"
+        "contentType": "application/vnd.microsoft.card.hero",
+        "content": {
+          "buttons": [
+            {
+              "title": "option 1",
+              "type": "imBack",
+              "value": "option 1"
+            },
+            {
+              "title": "option 2",
+              "type": "imBack",
+              "value": "option 2"
+            },
+            {
+              "title": "option 3",
+              "type": "imBack",
+              "value": "option 3"
+            }
+          ],
+          "images": [
+            {
+              "url": "https://memegenerator.net/img/instances/500x/73055378/cheese-gromit.jpg"
+            }
+          ],
+          "title": "cheese gromit!",
+          "subtitle": "hero card",
+          "text": "this is some text describing the card, it's cool because it's cool"
+        }
+      },
+      {
+        "contentType": "application/vnd.microsoft.card.thumbnail",
+        "content": {
+          "buttons": [
+            {
+              "title": "option 1",
+              "type": "imBack",
+              "value": "option 1"
+            },
+            {
+              "title": "option 2",
+              "type": "imBack",
+              "value": "option 2"
+            },
+            {
+              "title": "option 3",
+              "type": "imBack",
+              "value": "option 3"
+            }
+          ],
+          "images": [
+            {
+              "url": "https://memegenerator.net/img/instances/500x/73055378/cheese-gromit.jpg"
+            }
+          ],
+          "title": "cheese gromit!",
+          "subtitle": "thumbnail card",
+          "text": "this is some text describing the card, it's cool because it's cool"
+        }
       }
     ],
     "conversation": {
-      "id": "1"
+      "id": "bd86d6c7-1f23-31d6-88e6-673b2e7abbab"
     },
-    "id": "77e4c6b4-880c-4f89-b46a-52b2a4d394ab",
+    "id": "2a22e4cb-35b5-4250-b9cd-ea94c0900c8a",
     "recipient": {
-      "id": "85f5848f-e644-3403-81b2-a71e0b7e8d9d",
+      "id": "bd19385c-ea42-3d76-8a39-9d71f1671a64",
       "name": "Joe",
       "role": "user"
     },
     "from": {
-      "id": "69495507-d381-36b8-a32b-5e065104a192",
+      "id": "d0aaa931-6a08-3675-92ae-a24902caa461",
       "name": "LulaBot",
       "role": "bot"
     },
-    "text": "\nHere you go.\n",
-    "timestamp": "2018-03-30T21:31:10.000Z",
+    "text": "",
+    "timestamp": "2018-06-17T15:15:24.000Z",
     "type": "message",
     "channelId": "chatdown"
+  },
+  {
+    "conversation": {
+      "id": "bd86d6c7-1f23-31d6-88e6-673b2e7abbab"
+    },
+    "id": "26f07e5a-f887-4e9c-8acc-243ce83768bd",
+    "recipient": {
+      "id": "bd19385c-ea42-3d76-8a39-9d71f1671a64",
+      "name": "Joe",
+      "role": "user"
+    },
+    "from": {
+      "id": "d0aaa931-6a08-3675-92ae-a24902caa461",
+      "name": "LulaBot",
+      "role": "bot"
+    },
+    "text": "",
+    "type": "typing",
+    "channelId": "chatdown"
+  },
+  {
+    "attachments": [
+      {
+        "contentType": "text/html",
+        "contentUrl": "https://github.com/Microsoft/Botbuilder-DotNet"
+      }
+    ],
+    "conversation": {
+      "id": "bd86d6c7-1f23-31d6-88e6-673b2e7abbab"
+    },
+    "id": "68d96edd-a19c-4e23-82cb-36cc12695121",
+    "recipient": {
+      "id": "bd19385c-ea42-3d76-8a39-9d71f1671a64",
+      "name": "Joe",
+      "role": "user"
+    },
+    "from": {
+      "id": "d0aaa931-6a08-3675-92ae-a24902caa461",
+      "name": "LulaBot",
+      "role": "bot"
+    },
+    "text": "web page attachment",
+    "timestamp": "2018-06-17T15:15:31.000Z",
+    "type": "message",
+    "channelId": "chatdown"
+  },
+  {
+    "attachments": [
+      {
+        "contentType": "image/jpeg",
+        "contentUrl": "http://4.bp.blogspot.com/--cFa6t-x4qY/UAqEgUvPd2I/AAAAAAAANIg/pMLE080Zjh4/s1600/turtle.jpg"
+      },
+      {
+        "contentType": "image/jpeg",
+        "contentUrl": "http://viagemempauta.com.br/wp-content/uploads/2015/09/2_All-Angle-By-Andreza-dos-Santos_FTS_2914-344-620x415.jpg"
+      },
+      {
+        "contentType": "image/jpeg",
+        "contentUrl": "http://images.fineartamerica.com/images-medium-large/good-morning-turtles-freund-gloria.jpg"
+      },
+      {
+        "contentType": "image/jpeg",
+        "contentUrl": "http://4.bp.blogspot.com/--cFa6t-x4qY/UAqEgUvPd2I/AAAAAAAANIg/pMLE080Zjh4/s1600/turtle.jpg"
+      }
+    ],
+    "conversation": {
+      "id": "bd86d6c7-1f23-31d6-88e6-673b2e7abbab"
+    },
+    "id": "2c905f8c-a74e-4b4c-989f-fd50208c7f6a",
+    "recipient": {
+      "id": "bd19385c-ea42-3d76-8a39-9d71f1671a64",
+      "name": "Joe",
+      "role": "user"
+    },
+    "from": {
+      "id": "d0aaa931-6a08-3675-92ae-a24902caa461",
+      "name": "LulaBot",
+      "role": "bot"
+    },
+    "text": "Here are some pictures",
+    "timestamp": "2018-06-17T15:15:35.000Z",
+    "type": "message",
+    "channelId": "chatdown",
+    "attachmentLayout": "carousel"
+  },
+  {
+    "attachments": [
+      {
+        "contentType": "image/png",
+        "contentUrl": "data:image/png;base64,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"
+      }
+    ],
+    "conversation": {
+      "id": "bd86d6c7-1f23-31d6-88e6-673b2e7abbab"
+    },
+    "id": "206e5860-9b8d-4d93-8337-7d8ba20bd6f5",
+    "recipient": {
+      "id": "bd19385c-ea42-3d76-8a39-9d71f1671a64",
+      "name": "Joe",
+      "role": "user"
+    },
+    "from": {
+      "id": "d0aaa931-6a08-3675-92ae-a24902caa461",
+      "name": "LulaBot",
+      "role": "bot"
+    },
+    "text": "Here's card1",
+    "timestamp": "2018-06-17T15:15:39.000Z",
+    "type": "message",
+    "channelId": "chatdown"
+  },
+  {
+    "attachments": [
+      {
+        "contentType": "application/vnd.microsoft.card.adaptive",
+        "contentUrl": "https://raw.githubusercontent.com/Microsoft/botbuilder-tools/master/Chatdown/test/samplecard.json"
+      }
+    ],
+    "conversation": {
+      "id": "bd86d6c7-1f23-31d6-88e6-673b2e7abbab"
+    },
+    "id": "caa42a51-0db2-4369-b45c-4e0167b96840",
+    "recipient": {
+      "id": "bd19385c-ea42-3d76-8a39-9d71f1671a64",
+      "name": "Joe",
+      "role": "user"
+    },
+    "from": {
+      "id": "d0aaa931-6a08-3675-92ae-a24902caa461",
+      "name": "LulaBot",
+      "role": "bot"
+    },
+    "text": "Here's card2",
+    "timestamp": "2018-06-17T15:15:43.000Z",
+    "type": "message",
+    "channelId": "chatdown"
+  },
+  {
+    "attachments": [
+      {
+        "contentType": "application/vnd.microsoft.card.adaptive",
+        "content": {
+          "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+          "type": "AdaptiveCard",
+          "version": "1.0",
+          "body": [
+            {
+              "type": "Container",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "text": "Publish Adaptive Card schema",
+                  "weight": "bolder",
+                  "size": "medium"
+                },
+                {
+                  "type": "ColumnSet",
+                  "columns": [
+                    {
+                      "type": "Column",
+                      "width": "auto",
+                      "items": [
+                        {
+                          "type": "Image",
+                          "url": "https://pbs.twimg.com/profile_images/3647943215/d7f12830b3c17a5a9e4afcc370e3a37e_400x400.jpeg",
+                          "size": "small",
+                          "style": "person"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Column",
+                      "width": "stretch",
+                      "items": [
+                        {
+                          "type": "TextBlock",
+                          "text": "Matt Hidinger",
+                          "weight": "bolder",
+                          "wrap": true
+                        },
+                        {
+                          "type": "TextBlock",
+                          "spacing": "none",
+                          "text": "Created {{DATE(2017-02-14T06:08:39Z, SHORT)}}",
+                          "isSubtle": true,
+                          "wrap": true
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "Container",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "text": "Now that we have defined the main rules and features of the format, we need to produce a schema and publish it to GitHub. The schema will be the starting point of our reference documentation.",
+                  "wrap": true
+                },
+                {
+                  "type": "FactSet",
+                  "facts": [
+                    {
+                      "title": "Board:",
+                      "value": "Adaptive Card"
+                    },
+                    {
+                      "title": "List:",
+                      "value": "Backlog"
+                    },
+                    {
+                      "title": "Assigned to:",
+                      "value": "Matt Hidinger"
+                    },
+                    {
+                      "title": "Due date:",
+                      "value": "Not set"
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": "Action.ShowCard",
+              "title": "Set due date",
+              "card": {
+                "type": "AdaptiveCard",
+                "body": [
+                  {
+                    "type": "Input.Date",
+                    "id": "dueDate"
+                  }
+                ],
+                "actions": [
+                  {
+                    "type": "Action.Submit",
+                    "title": "OK"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "Action.ShowCard",
+              "title": "Comment",
+              "card": {
+                "type": "AdaptiveCard",
+                "body": [
+                  {
+                    "type": "Input.Text",
+                    "id": "comment",
+                    "isMultiline": true,
+                    "placeholder": "Enter your comment"
+                  }
+                ],
+                "actions": [
+                  {
+                    "type": "Action.Submit",
+                    "title": "OK"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "conversation": {
+      "id": "bd86d6c7-1f23-31d6-88e6-673b2e7abbab"
+    },
+    "id": "003051f8-b58b-47d2-9fb9-c6a2d7912b9b",
+    "recipient": {
+      "id": "bd19385c-ea42-3d76-8a39-9d71f1671a64",
+      "name": "Joe",
+      "role": "user"
+    },
+    "from": {
+      "id": "d0aaa931-6a08-3675-92ae-a24902caa461",
+      "name": "LulaBot",
+      "role": "bot"
+    },
+    "text": "Here's adaptive card from disk",
+    "timestamp": "2018-06-17T15:15:47.000Z",
+    "type": "message",
+    "channelId": "chatdown"
+  },
+  {
+    "attachments": [
+      {
+        "contentType": "application/json",
+        "content": {
+          "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+          "type": "AdaptiveCard",
+          "version": "1.0",
+          "body": [
+            {
+              "type": "Container",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "text": "Publish Adaptive Card schema",
+                  "weight": "bolder",
+                  "size": "medium"
+                },
+                {
+                  "type": "ColumnSet",
+                  "columns": [
+                    {
+                      "type": "Column",
+                      "width": "auto",
+                      "items": [
+                        {
+                          "type": "Image",
+                          "url": "https://pbs.twimg.com/profile_images/3647943215/d7f12830b3c17a5a9e4afcc370e3a37e_400x400.jpeg",
+                          "size": "small",
+                          "style": "person"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Column",
+                      "width": "stretch",
+                      "items": [
+                        {
+                          "type": "TextBlock",
+                          "text": "Matt Hidinger",
+                          "weight": "bolder",
+                          "wrap": true
+                        },
+                        {
+                          "type": "TextBlock",
+                          "spacing": "none",
+                          "text": "Created {{DATE(2017-02-14T06:08:39Z, SHORT)}}",
+                          "isSubtle": true,
+                          "wrap": true
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "Container",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "text": "Now that we have defined the main rules and features of the format, we need to produce a schema and publish it to GitHub. The schema will be the starting point of our reference documentation.",
+                  "wrap": true
+                },
+                {
+                  "type": "FactSet",
+                  "facts": [
+                    {
+                      "title": "Board:",
+                      "value": "Adaptive Card"
+                    },
+                    {
+                      "title": "List:",
+                      "value": "Backlog"
+                    },
+                    {
+                      "title": "Assigned to:",
+                      "value": "Matt Hidinger"
+                    },
+                    {
+                      "title": "Due date:",
+                      "value": "Not set"
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": "Action.ShowCard",
+              "title": "Set due date",
+              "card": {
+                "type": "AdaptiveCard",
+                "body": [
+                  {
+                    "type": "Input.Date",
+                    "id": "dueDate"
+                  }
+                ],
+                "actions": [
+                  {
+                    "type": "Action.Submit",
+                    "title": "OK"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "Action.ShowCard",
+              "title": "Comment",
+              "card": {
+                "type": "AdaptiveCard",
+                "body": [
+                  {
+                    "type": "Input.Text",
+                    "id": "comment",
+                    "isMultiline": true,
+                    "placeholder": "Enter your comment"
+                  }
+                ],
+                "actions": [
+                  {
+                    "type": "Action.Submit",
+                    "title": "OK"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "conversation": {
+      "id": "bd86d6c7-1f23-31d6-88e6-673b2e7abbab"
+    },
+    "id": "ad1659a8-edb5-4ccd-9abf-f8de56e4a983",
+    "recipient": {
+      "id": "bd19385c-ea42-3d76-8a39-9d71f1671a64",
+      "name": "Joe",
+      "role": "user"
+    },
+    "from": {
+      "id": "d0aaa931-6a08-3675-92ae-a24902caa461",
+      "name": "LulaBot",
+      "role": "bot"
+    },
+    "text": "Here's json attachment from disk",
+    "timestamp": "2018-06-17T15:15:51.000Z",
+    "type": "message",
+    "channelId": "chatdown"
+  },
+  {
+    "conversation": {
+      "id": "bd86d6c7-1f23-31d6-88e6-673b2e7abbab"
+    },
+    "id": "1e8f4d36-38e4-4eb5-a818-5dd03982ff99",
+    "recipient": {
+      "id": "d0aaa931-6a08-3675-92ae-a24902caa461",
+      "name": "LulaBot",
+      "role": "bot"
+    },
+    "from": {
+      "id": "bd19385c-ea42-3d76-8a39-9d71f1671a64",
+      "name": "Joe",
+      "role": "user"
+    },
+    "text": "I would like some cheese.",
+    "timestamp": "2018-06-17T15:15:53.000Z",
+    "type": "message",
+    "channelId": "chatdown"
+  },
+  {
+    "conversation": {
+      "id": "bd86d6c7-1f23-31d6-88e6-673b2e7abbab"
+    },
+    "id": "880929d3-4934-42fd-8e10-96704754bd55",
+    "recipient": {
+      "id": "bd19385c-ea42-3d76-8a39-9d71f1671a64",
+      "name": "Joe",
+      "role": "user"
+    },
+    "from": {
+      "id": "d0aaa931-6a08-3675-92ae-a24902caa461",
+      "name": "LulaBot",
+      "role": "bot"
+    },
+    "text": "# cheese choices\n1. cheese 1 \n2. cheese 2\n3. cheese 3",
+    "timestamp": "2018-06-17T15:15:57.000Z",
+    "type": "message",
+    "channelId": "chatdown",
+    "suggestedActions": {
+      "actions": [
+        {
+          "title": "option 1",
+          "type": "imBack",
+          "value": "option 1"
+        },
+        {
+          "title": "option 2",
+          "type": "imBack",
+          "value": "option 2"
+        },
+        {
+          "title": "option 3",
+          "type": "imBack",
+          "value": "option 3"
+        }
+      ]
+    }
   }
 ]

@@ -5,5 +5,8 @@
 module.exports = {
     attachment: 'attachment',
     attachmentlayout: 'attachmentlayout',
-    suggestions: 'suggestions'
+    suggestions: 'suggestions',
+    herocard: 'herocard',
+    thumbnailcard: 'thumbnailcard',
+    adaptivecard: 'adpativecard'
 };

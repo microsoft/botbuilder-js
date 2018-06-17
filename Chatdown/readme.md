@@ -93,6 +93,38 @@ The conversation between the user and the bot with markdown support for bot's re
 |`[AttachmentLayout=LayoutType]`| Specify how multiple attachments would be dislpayed. Layout types are `carousel` or `list`|
 
 
+### Cards
+You can add cards using simple commands as well.  Currently we support *Herocard* and *ThumbnailCard* 
+
+* To add a herocard you use `[Herocard]` command.
+* To add a herocard you use `[Thumbnailcard]` command.
+
+```markdown
+Bot: [Herocard   
+    title=Cheese gromit!
+    subtitle=Hero Card
+    text=This is some text describing the card, it's cool because it's cool
+    image=https://memegenerator.net/img/instances/500x/73055378/cheese-gromit.jpg
+    buttons=Option 1| Option 2| Option 3]
+
+Bot: [ThumbnailCard
+    title=Cheese gromit!
+    subtitle=Thumbnail Card
+    text=This is some text describing the card, it's cool because it's cool
+    image=https://memegenerator.net/img/instances/500x/73055378/cheese-gromit.jpg
+    buttons=Option 1| Option 2| Option 3]
+```
+The properties that are supported are
+
+| property | description |
+|----|----|
+| title | The title of the card|
+| subtitle| a subtitle for the card with less emphasis|
+| text | a generic text property which can contain longer text describing the card|
+| image | image url to use for the card |
+| buttons | a set of button labels seperated by `|`| 
+
+
 ### Attachments
 To add an attachment, you use `[Attachment=path contentPath]`.  The path can be a URL or a local path (either absolute or relative to `.chat` file).  The content type is optional and if not passed, will be inferred from the file extension. You can also pass it using a shortcut or full mime type.
 
