@@ -15,6 +15,8 @@ One thing to note is it's not possible to completely generate a bot or dialog, a
 ### Dialogs
 
 This generator provides the following dialogs:
+- LUIS Dialog, for use with [LUIS](https://luis.ai)
+- QnA Maker Dialog, for use with [QnA Maker](https://qnamaker.ai)
 - Echo Dialog, for simple bots
 
 Each class has three properties to help simplify addition to an existing bot:
@@ -47,6 +49,8 @@ By using this structure, it would be possible to dynamically load all of the dia
 
 Update `.env` with the appropriate keys:
 
+- KBID and SUBSCRIPTION_KEY for QnA Maker
+- LUIS_MODEL_URL for LUIS
 - App ID and Key for registered bots.
 
 In the case of LUIS, you will need to update the dialog in `dialogs.<%= extension %>` to work with the appropriate intent and entities.
