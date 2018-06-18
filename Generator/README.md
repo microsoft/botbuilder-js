@@ -17,11 +17,10 @@ Scaffolds a bot using [Microsoft Bot Framework](https://dev.botframework.com), a
 
 First, install [Yeoman](http://yeoman.io) and generator-botbuilder using [npm](https://www.npmjs.com/) (we assume you have pre-installed [node.js](https://nodejs.org/)).
 
-Since we are developing the generator locally, it’s not yet available as a global npm module. A global module may be created and symlinked to a local one, using npm. 
-In order to do that, we need to navigate to the generator-botbuilder folder and type:
+We can install the generator by typing the next in our console:
 
 ```bash
-npm link
+npm i -g generator-botbuilder@preview
 ```
 
 That will install the project dependencies and symlink a global module to your local file. After npm is done, we need to type:
@@ -56,7 +55,3 @@ MIT © Microsoft
 
 [npm-image]: https://badge.fury.io/js/generator-botbuilder.svg
 [npm-url]: https://npmjs.org/package/generator-botbuilder
-[travis-image]: https://travis-ci.org/geektrainer/generator-botbuilder.svg?branch=master
-[travis-url]: https://travis-ci.org/geektrainer/generator-botbuilder
-[daviddm-image]: https://david-dm.org/geektrainer/generator-botbuilder.svg?theme=shields.io
-[daviddm-url]: https://david-dm.org/geektrainer/generator-botbuilder
