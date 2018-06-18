@@ -7,6 +7,9 @@
  */
 import { TurnContext } from 'botbuilder';
 
+/**
+ * @private
+ */
 export const channels = {
     facebook: 'facebook',
     skype: 'skype',
@@ -24,6 +27,11 @@ export const channels = {
     cortana: 'cortana'
 };
 
+/**
+ * @private
+ * @param channelId 
+ * @param buttonCnt 
+ */
 export function supportsSuggestedActions(channelId: string, buttonCnt = 100) {
     switch (channelId) {
         case channels.facebook:
@@ -40,6 +48,11 @@ export function supportsSuggestedActions(channelId: string, buttonCnt = 100) {
     }
 }
 
+/**
+ * @private
+ * @param channelId 
+ * @param buttonCnt 
+ */
 export function supportsCardActions(channelId: string, buttonCnt = 100) {
     switch (channelId) {
         case channels.facebook:
@@ -57,6 +70,10 @@ export function supportsCardActions(channelId: string, buttonCnt = 100) {
     }
 }
 
+/**
+ * @private
+ * @param channelId 
+ */
 export function hasMessageFeed(channelId: string) {
     switch (channelId) {
         case channels.cortana:
@@ -66,10 +83,18 @@ export function hasMessageFeed(channelId: string) {
     }
 }
 
+/**
+ * @private
+ * @param channelId 
+ */
 export function maxActionTitleLength(channelId: string) {
     return 20;
 }
 
+/**
+ * @private
+ * @param context 
+ */
 export function getChannelId(context: TurnContext): string {
     return context.activity.channelId || '';
 }

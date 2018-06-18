@@ -13,6 +13,7 @@ export * from './cardFactory';
 export * from './conversationState';
 export * from './memoryStorage';
 export * from './messageFactory';
+export * from './recognizerResult';
 export * from './storage';
 export * from './testAdapter';
 export * from './userState';

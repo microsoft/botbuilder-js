@@ -5,15 +5,14 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Attachment, MediaUrl, CardAction, AnimationCard, CardImage, HeroCard, ReceiptCard, ThumbnailCard } from "botbuilder-core";
+import { Attachment, MediaUrl, CardAction, AnimationCard, CardImage, HeroCard, AudioCard, ReceiptCard, ThumbnailCard, VideoCard } from "botbuilder-core";
 /**
- * :package: **botbuilder-core-extensions**
- *
  * A set of utility functions designed to assist with the formatting of the various card types a
- * bot can return. All of these functions return an `Attachment` which can be added to an `Activity`
- * directly or passed as input to a `MessageFactory` method.
+ * bot can return.
  *
- * **Usage Example**
+ * @remarks
+ * All of these functions return an `Attachment` which can be added to an `Activity` directly or
+ * passed as input to a `MessageFactory` method.
  *
  * ```javascript
  * const card = CardFactory.heroCard(
@@ -40,6 +39,7 @@ export declare class CardFactory {
      * Returns an attachment for an adaptive card. The attachment will contain the card and the
      * appropriate `contentType`.
      *
+     * @remarks
      * Adaptive Cards are a new way for bots to send interactive and immersive card content to
      * users. For channels that don't yet support Adaptive Cards natively, the Bot Framework will
      * down render the card to an image that's been styled to look good on the target channel. For
@@ -88,12 +88,13 @@ export declare class CardFactory {
      * @param buttons (Optional) set of buttons to include on the card.
      * @param other (Optional) additional properties to include on the card.
      */
-    static audioCard(title: string, media: (MediaUrl | string)[], buttons?: (CardAction | string)[], other?: Partial<AnimationCard>): Attachment;
+    static audioCard(title: string, media: (MediaUrl | string)[], buttons?: (CardAction | string)[], other?: Partial<AudioCard>): Attachment;
     /**
-     * Returns an attachment for a hero card. Hero cards tend to have one dominant full width image
-     * and the cards text & buttons can usually be found below the image.
+     * Returns an attachment for a hero card.
      *
-     * **Usage Example**
+     * @remarks
+     * Hero cards tend to have one dominant full width image and the cards text & buttons can
+     * usually be found below the image.
      *
      * ```javascript
      * const card = CardFactory.heroCard(
@@ -156,7 +157,7 @@ export declare class CardFactory {
      * @param buttons (Optional) set of buttons to include on the card.
      * @param other (Optional) additional properties to include on the card.
      */
-    static videoCard(title: string, media: (MediaUrl | string)[], buttons?: (CardAction | string)[], other?: Partial<AnimationCard>): Attachment;
+    static videoCard(title: string, media: (MediaUrl | string)[], buttons?: (CardAction | string)[], other?: Partial<VideoCard>): Attachment;
     /**
      * Returns a properly formatted array of actions. Supports converting strings to `messageBack`
      * actions (note: using 'imBack' for now as 'messageBack' doesn't work properly in emulator.)

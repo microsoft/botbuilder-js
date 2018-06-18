@@ -4,6 +4,13 @@ const LuisClient = require("botframework-luis");
 const LUIS_TRACE_TYPE = 'https://www.luis.ai/schemas/trace';
 const LUIS_TRACE_NAME = 'LuisRecognizerMiddleware';
 const LUIS_TRACE_LABEL = 'Luis Trace';
+/**
+ * Component used to recognize intents in a user utterance using a configured LUIS model.
+ *
+ * @remarks
+ * This component can be used within your bots logic by calling [recognize()](#recognize) or added
+ * to your bot adapters middleware stack to automatically recognize the users intent.
+ */
 class LuisRecognizer {
     /**
      * Creates a new LuisRecognizer instance.
@@ -22,18 +29,22 @@ class LuisRecognizer {
     }
     /**
      * Returns the results cached from a previous call to [recognize()](#recognize) for the current
-     * turn with the user.  This will return `undefined` if recognize() hasn't been called for the
-     * current turn.
+     * turn with the user.
+     *
+     * @remarks
+     * This will return `undefined` if recognize() hasn't been called for the current turn.
      * @param context Context for the current turn of conversation with the use.
      */
     get(context) {
         return context.services.get(this.cacheKey);
     }
     /**
-     * Calls LUIS to recognize intents and entities in a users utterance. The results of the call
-     * will be cached to the context object for the turn and future calls to recognize() for the
-     * same context object will result in the cached value being returned. This behavior can be
-     * overridden using the `force` parameter.
+     * Calls LUIS to recognize intents and entities in a users utterance.
+     *
+     * @remarks
+     * The results of the call will be cached to the context object for the turn and future calls
+     * to recognize() for the same context object will result in the cached value being returned.
+     * This behavior can be overridden using the `force` parameter.
      * @param context Context for the current turn of conversation with the use.
      * @param force (Optional) flag that if `true` will force the call to LUIS even if a cached result exists. Defaults to a value of `false`.
      */
@@ -46,8 +57,10 @@ class LuisRecognizer {
                 // Map results
                 const recognizerResult = {
                     text: luisResult.query,
+                    alteredText: luisResult.alteredQuery,
                     intents: this.getIntents(luisResult),
-                    entities: this.getEntitiesAndMetadata(luisResult.entities, luisResult.compositeEntities, this.settings.verbose)
+                    entities: this.getEntitiesAndMetadata(luisResult.entities, luisResult.compositeEntities, this.settings.verbose),
+                    luisResult: luisResult
                 };
                 // Write to cache
                 context.services.set(this.cacheKey, recognizerResult);
@@ -59,8 +72,10 @@ class LuisRecognizer {
         return Promise.resolve(cached);
     }
     /**
-     * Called internally to create a LuisClient instance. This is exposed to enable better unit
-     * testing of teh recognizer.
+     * Called internally to create a LuisClient instance.
+     *
+     * @remarks
+     * This is exposed to enable better unit testing of the recognizer.
      * @param baseUri Service endpoint being called.
      */
     createClient(baseUri) {
@@ -77,7 +92,7 @@ class LuisRecognizer {
         let topScore = -1;
         if (results && results.intents) {
             for (const name in results.intents) {
-                const score = results.intents[name];
+                const score = results.intents[name].score;
                 if (typeof score === 'number' && score > topScore && score >= minScore) {
                     topIntent = name;
                     topScore = score;
@@ -105,17 +120,20 @@ class LuisRecognizer {
             value: traceInfo
         });
     }
+    normalizeName(name) {
+        return name.replace(/\.| /g, "_");
+    }
     getIntents(luisResult) {
         const intents = {};
         if (luisResult.intents) {
             luisResult.intents.reduce((prev, curr) => {
-                prev[curr.intent] = curr.score;
+                prev[this.normalizeName(curr.intent)] = { score: curr.score };
                 return prev;
             }, intents);
         }
         else {
             const topScoringIntent = luisResult.topScoringIntent;
-            intents[(topScoringIntent).intent] = topScoringIntent.score;
+            intents[this.normalizeName((topScoringIntent).intent)] = { score: topScoringIntent.score };
         }
         return intents;
     }
@@ -134,43 +152,84 @@ class LuisRecognizer {
             if (compositeEntityTypes.indexOf(entity.type) > -1) {
                 return;
             }
-            this.addProperty(entitiesAndMetadata, this.getNormalizedEntityType(entity), this.getEntityValue(entity));
+            this.addProperty(entitiesAndMetadata, this.getNormalizedEntityName(entity), this.getEntityValue(entity));
             if (verbose) {
-                this.addProperty(entitiesAndMetadata.$instance, this.getNormalizedEntityType(entity), this.getEntityMetadata(entity));
+                this.addProperty(entitiesAndMetadata.$instance, this.getNormalizedEntityName(entity), this.getEntityMetadata(entity));
             }
         });
         return entitiesAndMetadata;
     }
     getEntityValue(entity) {
-        if (entity.type.startsWith("builtin.datetimeV2.") && entity.resolution && entity.resolution.values && entity.resolution.values.length) {
-            return entity.resolution.values[0].timex;
-        }
-        else if (entity.resolution) {
-            if (entity.type.startsWith("builtin.number")) {
-                return Number(entity.resolution.value);
-            }
-            else {
-                return Object.keys(entity.resolution).length > 1 ?
-                    entity.resolution :
-                    entity.resolution.value ?
-                        entity.resolution.value :
-                        entity.resolution.values;
-            }
+        if (!entity.resolution)
+            return entity.entity;
+        if (entity.type.startsWith("builtin.datetimeV2.")) {
+            if (!entity.resolution.values || !entity.resolution.values.length)
+                return entity.resolution;
+            var vals = entity.resolution.values;
+            var type = vals[0].type;
+            var timexes = vals.map(t => t.timex);
+            var distinct = timexes.filter((v, i, a) => a.indexOf(v) === i);
+            return { type: type, timex: distinct };
         }
         else {
-            return entity.entity;
+            var res = entity.resolution;
+            switch (entity.type) {
+                case "builtin.number":
+                case "builtin.ordinal": return Number(res.value);
+                case "builtin.percentage":
+                    {
+                        var svalue = res.value;
+                        if (svalue.endsWith("%")) {
+                            svalue = svalue.substring(0, svalue.length - 1);
+                        }
+                        return Number(svalue);
+                    }
+                case "builtin.age":
+                case "builtin.dimension":
+                case "builtin.currency":
+                case "builtin.temperature":
+                    {
+                        var val = res.value;
+                        var obj = {};
+                        if (val) {
+                            obj["number"] = Number(val);
+                        }
+                        obj["units"] = res.unit;
+                        return obj;
+                    }
+                default:
+                    return Object.keys(entity.resolution).length > 1 ?
+                        entity.resolution :
+                        entity.resolution.value ?
+                            entity.resolution.value :
+                            entity.resolution.values;
+            }
         }
     }
     getEntityMetadata(entity) {
         return {
             startIndex: entity.startIndex,
-            endIndex: entity.endIndex,
+            endIndex: entity.endIndex + 1,
             text: entity.entity,
             score: entity.score
         };
     }
-    getNormalizedEntityType(entity) {
-        return entity.type.replace(/\./g, "_");
+    getNormalizedEntityName(entity) {
+        // Type::Role -> Role
+        var type = entity.type.split(':').pop();
+        if (type.startsWith("builtin.datetimeV2.")) {
+            type = "datetime";
+        }
+        if (type.startsWith("builtin.currency")) {
+            type = "money";
+        }
+        if (type.startsWith('builtin.')) {
+            type = type.substring(8);
+        }
+        if (entity.role != null && entity.role != "") {
+            type = entity.role;
+        }
+        return type.replace(/\.|\s/g, "_");
     }
     populateCompositeEntity(compositeEntity, entities, entitiesAndMetadata, verbose) {
         let childrenEntites = verbose ? { $instance: {} } : {};
@@ -184,7 +243,6 @@ class LuisRecognizer {
         let filteredEntities = [];
         if (verbose) {
             childrenEntitiesMetadata = this.getEntityMetadata(compositeEntityMetadata);
-            childrenEntitiesMetadata.$instance = {};
         }
         // This is now implemented as O(n*k) search and can be reduced to O(n + k) using a map as an optimization if n or k grow
         let coveredSet = new Set();
@@ -198,9 +256,9 @@ class LuisRecognizer {
                     entity.endIndex != undefined && compositeEntityMetadata.endIndex != undefined && entity.endIndex <= compositeEntityMetadata.endIndex) {
                     // Add to the set to ensure that we don't consider the same child entity more than once per composite
                     coveredSet.add(i);
-                    this.addProperty(childrenEntites, this.getNormalizedEntityType(entity), this.getEntityValue(entity));
+                    this.addProperty(childrenEntites, this.getNormalizedEntityName(entity), this.getEntityValue(entity));
                     if (verbose)
-                        this.addProperty(childrenEntites.$instance, this.getNormalizedEntityType(entity), this.getEntityMetadata(entity));
+                        this.addProperty(childrenEntites.$instance, this.getNormalizedEntityName(entity), this.getEntityMetadata(entity));
                 }
             }
             ;

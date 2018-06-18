@@ -153,12 +153,26 @@ export class MemoryTranscriptStore implements TranscriptStore {
     }
 }
 
+/**
+ * @private
+ * @param a 
+ * @param b 
+ */
 const createdSorter = (a: Transcript, b: Transcript): number =>
     a.created.getTime() - b.created.getTime();
 
+/**
+ * @private
+ * @param a 
+ * @param b 
+ */
 const timestampSorter = (a: Activity, b: Activity): number =>
     a.timestamp.getTime() - b.timestamp.getTime();
 
+/**
+ * @private
+ * @param expression 
+ */
 const skipWhileExpression = (expression) => {
     let skipping = true;
     return (item) => {
@@ -170,6 +184,10 @@ const skipWhileExpression = (expression) => {
     };
 }
 
+/**
+ * @private
+ * @param activities 
+ */
 const getDate = (activities: Activity[]): Date => {
     if (activities && activities.length > 0) {
         return activities[0].timestamp || new Date(0);

@@ -8,11 +8,10 @@
 import { Activity, Attachment, TurnContext } from 'botbuilder';
 import { PromptValidator } from './textPrompt';
 /**
- * :package: **botbuilder-prompts**
- *
  * Prompts the user to upload one or more attachments.
  *
- * **Usage Example:**
+ * @remarks
+ * This example shows how to create a new attachment prompt:
  *
  * ```JavaScript
  * const { createAttachmentPrompt } = require('botbuilder-prompts');
@@ -25,7 +24,8 @@ export interface AttachmentPrompt<O = Attachment[]> {
     /**
      * Sends a formated prompt to the user.
      *
-     * **Usage Example:**
+     * @remarks
+     * This example shows how to send a prompt to the user:
      *
      * ```JavaScript
      * await imagePrompt.prompt(context, `Upload an image(s).`);
@@ -36,13 +36,13 @@ export interface AttachmentPrompt<O = Attachment[]> {
      */
     prompt(context: TurnContext, prompt: string | Partial<Activity>, speak?: string): Promise<void>;
     /**
-     * Recognizes and validates the users reply. The result of the call will either be the
-     * recognized value or `undefined`.
+     * Recognizes and validates the users reply.
+     *
+     * @remarks
+     * The result of the call will either be the recognized value or `undefined`.
      *
      * The recognize() method will not automatically re-prompt the user so either the caller or the
      * prompts custom validator will need to implement re-prompting logic.
-     *
-     * **Usage Example:**
      *
      * ```JavaScript
      * const images = await imagePrompt.recognize(context);
@@ -55,11 +55,11 @@ export interface AttachmentPrompt<O = Attachment[]> {
     recognize(context: TurnContext): Promise<O | undefined>;
 }
 /**
- * :package: **botbuilder-prompts**
- *
  * Creates a new prompt that asks the user to upload one or more attachments.
  *
- * **Usage Example:**
+ * @remarks
+ * This example shows creating a prompt with a custom validator that ensures an image attachment has
+ * been uploaded by the user:
  *
  * ```JavaScript
  * const { createAttachmentPrompt } = require('botbuilder-prompts');

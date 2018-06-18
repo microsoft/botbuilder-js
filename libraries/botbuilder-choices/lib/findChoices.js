@@ -9,16 +9,14 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const findValues_1 = require("./findValues");
 /**
- * :package: **botbuilder-choices**
+ * Mid-level search function for recognizing a choice in an utterance.
  *
- * Mid-level search function for recognizing a choice in an utterance. This function is layered
- * above `findValues()` and simply determines all of the synonyms that should be searched for
- * before calling `findValues()` to perform the actual search. The `recognizeChoices()` function is
- * layered above this function and adds the ability to select a choice by index or ordinal position
- * in the list. Calling this particular function is useful when you don't want the index and ordinal
- * position recognition done by `recognizeChoices()`.
- *
- * **Usage Example**
+ * @remarks
+ * This function is layered above `findValues()` and simply determines all of the synonyms that
+ * should be searched for before calling `findValues()` to perform the actual search. The
+ * `recognizeChoices()` function is layered above this function and adds the ability to select a
+ * choice by index or ordinal position in the list. Calling this particular function is useful
+ * when you don't want the index and ordinal position recognition done by `recognizeChoices()`.
  *
  * ```JavaScript
  * const { findChoices } = require('botbuilder-choices');

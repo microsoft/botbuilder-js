@@ -1,8 +1,8 @@
 {
   "name": "botbuilder-prompts",
   "author": "stevenic@microsoft.com",
-  "description": "Lightweight prompt system for Bot Builder v4.",
-  "version": "4.0.0-m3.0",
+  "description": "Lightweight prompt system for Microsoft BotBuilder.",
+  "version": "4.0.0-preview1.2",
   "license": "MIT",
   "keywords": [
     "botbuilder",
@@ -18,8 +18,8 @@
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "dependencies": {
-    "botbuilder": "4.0.0-m3.0",
-    "botbuilder-choices": "4.0.0-m3.0",
+    "botbuilder": "4.0.0-preview1.2",
+    "botbuilder-choices": "4.0.0-preview1.2",
     "@microsoft/recognizers-text-suite": "^1.0.0"
   },
   "devDependencies": {

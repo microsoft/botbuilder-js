@@ -9,12 +9,12 @@ import { BotAdapter, TurnContext, Activity, ActivityTypes, ResourceResponse, Pro
 import * as readline from 'readline';
 
 /**
- * :package: **botbuilder**
- * 
  * Lets a user communicate with a bot from a console window.
  *
- * **Usage Example**
- *
+ * @remarks
+ * The following example shows the typical adapter setup:
+ * 
+ * 
  * ```JavaScript
  * const { ConsoleAdapter } = require('botbuilder');
  * 
@@ -47,6 +47,7 @@ export class ConsoleAdapter extends BotAdapter {
      * Begins listening to console input. A function will be returned that can be used to stop the
      * bot listening and therefore end the process.
      * 
+     * @remarks
      * Upon receiving input from the console the flow is as follows:
      * 
      * - An 'message' activity will be created containing the users input text.
@@ -57,8 +58,6 @@ export class ConsoleAdapter extends BotAdapter {
      * - The context object will be revoked and any future calls to its members will result in a
      *   `TypeError` being thrown.
      * 
-     * **Usage Example**
-     *
      * ```JavaScript
      * const closeFn = adapter.listen(async (context) => {
      *    const utterance = context.activity.text.toLowerCase();
@@ -96,14 +95,13 @@ export class ConsoleAdapter extends BotAdapter {
     /**
      * Lets a bot proactively message the user.
      * 
+     * @remarks
      * The processing steps for this method are very similar to [listen()](#listen)
      * in that a `TurnContext` will be created which is then routed through the adapters middleware 
      * before calling the passed in logic handler. The key difference being that since an activity 
      * wasn't actually received it has to be created.  The created activity will have its address 
      * related fields populated but will have a `context.activity.type === undefined`.
      * 
-     * **Usage Example**
-     *
      * ```JavaScript
      * function delayedNotify(context, message, delay) {
      *    const reference = TurnContext.getConversationReference(context.activity);
@@ -128,6 +126,7 @@ export class ConsoleAdapter extends BotAdapter {
     /**
      * Logs a set of activities to the console.
      * 
+     * @remarks
      * Calling `TurnContext.sendActivities()` or `TurnContext.sendActivity()` is the preferred way of
      * sending activities as that will ensure that outgoing activities have been properly addressed 
      * and that any interested middleware has been notified. 

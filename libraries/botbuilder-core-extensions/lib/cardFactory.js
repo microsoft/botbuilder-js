@@ -9,13 +9,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const botbuilder_core_1 = require("botbuilder-core");
 /**
- * :package: **botbuilder-core-extensions**
- *
  * A set of utility functions designed to assist with the formatting of the various card types a
- * bot can return. All of these functions return an `Attachment` which can be added to an `Activity`
- * directly or passed as input to a `MessageFactory` method.
+ * bot can return.
  *
- * **Usage Example**
+ * @remarks
+ * All of these functions return an `Attachment` which can be added to an `Activity` directly or
+ * passed as input to a `MessageFactory` method.
  *
  * ```javascript
  * const card = CardFactory.heroCard(
@@ -30,6 +29,7 @@ class CardFactory {
      * Returns an attachment for an adaptive card. The attachment will contain the card and the
      * appropriate `contentType`.
      *
+     * @remarks
      * Adaptive Cards are a new way for bots to send interactive and immersive card content to
      * users. For channels that don't yet support Adaptive Cards natively, the Bot Framework will
      * down render the card to an image that's been styled to look good on the target channel. For
@@ -227,6 +227,9 @@ CardFactory.contentTypes = {
     videoCard: 'application/vnd.microsoft.card.video'
 };
 exports.CardFactory = CardFactory;
+/**
+ * @private
+ */
 function mediaCard(contentType, title, media, buttons, other) {
     const card = Object.assign({}, other);
     if (title) {

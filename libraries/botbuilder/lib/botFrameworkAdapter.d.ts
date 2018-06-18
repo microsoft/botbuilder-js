@@ -8,8 +8,6 @@
 import { BotAdapter, TurnContext, Promiseable, Activity, ConversationReference, ResourceResponse, TokenResponse, ConversationsResult, ChannelAccount } from 'botbuilder-core';
 import { ConnectorClient, SimpleCredentialProvider, MicrosoftAppCredentials, OAuthApiClient } from 'botframework-connector';
 /**
- * :package: **botbuilder**
- *
  * Express or Restify Request object.
  */
 export interface WebRequest {
@@ -18,8 +16,6 @@ export interface WebRequest {
     on(event: string, ...args: any[]): any;
 }
 /**
- * :package: **botbuilder**
- *
  * Express or Restify Response object.
  */
 export interface WebResponse {
@@ -27,29 +23,36 @@ export interface WebResponse {
     send(status: number, body?: any): any;
 }
 /**
- * :package: **botbuilder**
- *
- * Bot Framework Adapter Settings.
+ * Settings used to configure a `BotFrameworkAdapter` instance.
  */
 export interface BotFrameworkAdapterSettings {
+    /**
+     * ID assigned to your bot in the [Bot Framework Portal](https://dev.botframework.com/).
+     */
     appId: string;
+    /**
+     * Password assigned to your bot in the [Bot Framework Portal](https://dev.botframework.com/).
+     */
     appPassword: string;
 }
 /**
- * :package: **botbuilder**
- *
  * Response object expected to be sent in response to an `invoke` activity.
  */
 export interface InvokeResponse {
+    /**
+     * Status code to return for response.
+     */
     status: number;
+    /**
+     * (Optional) body to return for response.
+     */
     body?: any;
 }
 /**
- * :package: **botbuilder**
+ * BotAdapter class needed to communicate with a Bot Framework channel or the Emulator.
  *
- * ActivityAdapter class needed to communicate with a Bot Framework channel or the Emulator.
- *
- * **Usage Example**
+ * @remarks
+ * The following example shows the typical adapter setup:
  *
  * ```JavaScript
  * const { BotFrameworkAdapter } = require('botbuilder');
@@ -64,6 +67,7 @@ export declare class BotFrameworkAdapter extends BotAdapter {
     protected readonly credentials: MicrosoftAppCredentials;
     protected readonly credentialsProvider: SimpleCredentialProvider;
     protected readonly settings: BotFrameworkAdapterSettings;
+    private isEmulatingOAuthCards;
     /**
      * Creates a new BotFrameworkAdapter instance.
      * @param settings (optional) configuration settings for the adapter.
@@ -75,13 +79,12 @@ export declare class BotFrameworkAdapter extends BotAdapter {
      * communicated with. Scenarios like sending notifications or coupons to a user are enabled by this
      * method.
      *
+     * @remarks
      * The processing steps for this method are very similar to [processActivity()](#processactivity)
      * in that a `TurnContext` will be created which is then routed through the adapters middleware
      * before calling the passed in logic handler. The key difference being that since an activity
      * wasn't actually received it has to be created.  The created activity will have its address
      * related fields populated but will have a `context.activity.type === undefined`.
-     *
-     * **Usage Example**
      *
      * ```JavaScript
      * server.post('/api/notifyUser', async (req, res) => {
@@ -107,13 +110,12 @@ export declare class BotFrameworkAdapter extends BotAdapter {
      * Starts a new conversation with a user. This is typically used to Direct Message (DM) a member
      * of a group.
      *
+     * @remarks
      * The processing steps for this method are very similar to [processActivity()](#processactivity)
      * in that a `TurnContext` will be created which is then routed through the adapters middleware
      * before calling the passed in logic handler. The key difference being that since an activity
      * wasn't actually received it has to be created.  The created activity will have its address
      * related fields populated but will have a `context.activity.type === undefined`.
-     *
-     * **Usage Example**
      *
      * ```JavaScript
      * // Get group members conversation reference
@@ -132,6 +134,7 @@ export declare class BotFrameworkAdapter extends BotAdapter {
      * Deletes an activity that was previously sent to a channel. It should be noted that not all
      * channels support this feature.
      *
+     * @remarks
      * Calling `TurnContext.deleteActivity()` is the preferred way of deleting activities as that
      * will ensure that any interested middleware has been notified.
      * @param context Context for the current turn of conversation with the user.
@@ -159,12 +162,12 @@ export declare class BotFrameworkAdapter extends BotAdapter {
      * Lists the Conversations in which this bot has participated for a given channel server. The
      * channel server returns results in pages and each page will include a `continuationToken`
      * that can be used to fetch the next page of results from the server.
-     * @param serviceUrl The URL of the channel server to query.  This can be retrieved from `context.activity.serviceUrl`.
+     * @param contextOrServiceUrl The URL of the channel server to query or a TurnContext.  This can be retrieved from `context.activity.serviceUrl`.
      * @param continuationToken (Optional) token used to fetch the next page of results from the channel server. This should be left as `undefined` to retrieve the first page of results.
      */
-    getConversations(serviceUrl: string, continuationToken?: string): Promise<ConversationsResult>;
+    getConversations(contextOrServiceUrl: TurnContext | string, continuationToken?: string): Promise<ConversationsResult>;
     /**
-     * Attempts to retrieve the token for a user that's in a logging flow.
+     * Attempts to retrieve the token for a user that's in a signin flow.
      * @param context Context for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.
      * @param magicCode (Optional) Optional user entered code to validate.
@@ -174,14 +177,26 @@ export declare class BotFrameworkAdapter extends BotAdapter {
      * Signs the user out with the token server.
      * @param context Context for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.
-     * @param magicCode (Optional) Optional user entered code to validate.
      */
     signOutUser(context: TurnContext, connectionName: string): Promise<void>;
+    /**
+     * Gets a signin link from the token server that can be sent as part of a SigninCard.
+     * @param context Context for the current turn of conversation with the user.
+     * @param connectionName Name of the auth connection to use.
+     */
+    getSignInLink(context: TurnContext, connectionName: string): Promise<string>;
+    /**
+     * Tells the token service to emulate the sending of OAuthCards for a channel.
+     * @param contextOrServiceUrl The URL of the channel server to query or a TurnContext.  This can be retrieved from `context.activity.serviceUrl`.
+     * @param emulate If `true` the token service will emulate the sending of OAuthCards.
+     */
+    emulateOAuthCards(contextOrServiceUrl: TurnContext | string, emulate: boolean): Promise<void>;
     /**
      * Processes an activity received by the bots web server. This includes any messages sent from a
      * user and is the method that drives what's often referred to as the bots "Reactive Messaging"
      * flow.
      *
+     * @remarks
      * The following steps will be taken to process the activity:
      *
      * - The identity of the sender will be verified to be either the Emulator or a valid Microsoft
@@ -206,8 +221,6 @@ export declare class BotFrameworkAdapter extends BotAdapter {
      *   `revoked()` and any future calls to the context will result in a `TypeError: Cannot perform
      *   'set' on a proxy that has been revoked` being thrown.
      *
-     * **Usage Example**
-     *
      * ```JavaScript
      * server.post('/api/messages', (req, res) => {
      *    // Route received request to adapter for processing
@@ -229,6 +242,7 @@ export declare class BotFrameworkAdapter extends BotAdapter {
      * another in the order in which they're received.  A response object will be returned for each
      * sent activity. For `message` activities this will contain the ID of the delivered message.
      *
+     * @remarks
      * Calling `TurnContext.sendActivities()` or `TurnContext.sendActivity()` is the preferred way of
      * sending activities as that will ensure that outgoing activities have been properly addressed
      * and that any interested middleware has been notified.
@@ -245,6 +259,7 @@ export declare class BotFrameworkAdapter extends BotAdapter {
      * Replaces an activity that was previously sent to a channel. It should be noted that not all
      * channels support this feature.
      *
+     * @remarks
      * Calling `TurnContext.updateActivity()` is the preferred way of updating activities as that
      * will ensure that any interested middleware has been notified.
      * @param context Context for the current turn of conversation with the user.
@@ -267,6 +282,16 @@ export declare class BotFrameworkAdapter extends BotAdapter {
      * @param serviceUrl Clients service url.
      */
     protected createOAuthApiClient(serviceUrl: string): OAuthApiClient;
+    /**
+     * Allows for mocking of the OAuth Api URL in unit tests.
+     * @param contextOrServiceUrl The URL of the channel server to query or a TurnContext.  This can be retrieved from `context.activity.serviceUrl`.
+     */
+    protected oauthApiUrl(contextOrServiceUrl: TurnContext | string): string;
+    /**
+     * Allows for mocking of toggling the emulating OAuthCards in unit tests.
+     * @param context The TurnContext
+     */
+    protected checkEmulatingOAuthCards(context: TurnContext): void;
     /**
      * Allows for the overriding of the context object in unit tests and derived adapters.
      * @param request Received request.

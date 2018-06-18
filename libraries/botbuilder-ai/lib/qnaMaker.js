@@ -10,21 +10,34 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const botbuilder_1 = require("botbuilder");
 const request = require("request-promise-native");
 const entities = require("html-entities");
-var htmlentities = new entities.AllHtmlEntities();
-const BASEAPI_PATH = 'qnamaker/v3.0/knowledgebases/';
+const QNAMAKER_TRACE_TYPE = 'https://www.qnamaker.ai/schemas/trace';
+const QNAMAKER_TRACE_NAME = 'QnAMakerMiddleware';
+const QNAMAKER_TRACE_LABEL = 'QnAMaker Trace';
+/**
+ * @private
+ */
+const htmlentities = new entities.AllHtmlEntities();
+/**
+ * Manages querying an individual QnA Maker knowledge base for answers. Can be added as middleware
+ * to automatically query the knowledge base anytime a messaged is received from the user. When
+ * used as middleware the component can be configured to either query the knowledge base before the
+ * bots logic runs or after the bots logic is run, as a fallback in the event the bot doesn't answer
+ * the user.
+ */
 class QnAMaker {
-    constructor(settings) {
-        this.settings = Object.assign({
+    /**
+     * Creates a new QnAMaker instance.
+     * @param endpoint The endpoint of the knowledge base to query.
+     * @param options (Optional) additional settings used to configure the instance.
+     */
+    constructor(endpoint, options) {
+        this.endpoint = endpoint;
+        // Initialize options
+        this.options = Object.assign({
             scoreThreshold: 0.3,
             top: 1,
             answerBeforeNext: false
-        }, settings);
-        if (!this.settings.serviceEndpoint) {
-            this.settings.serviceEndpoint = 'https://westus.api.cognitive.microsoft.com/';
-        }
-        else if (!this.settings.serviceEndpoint.endsWith('/')) {
-            this.settings.serviceEndpoint += '/';
-        }
+        }, options);
     }
     onTurn(context, next) {
         // Filter out non-message activities
@@ -32,7 +45,7 @@ class QnAMaker {
             return next();
         }
         // Route request
-        if (this.settings.answerBeforeNext) {
+        if (this.options.answerBeforeNext) {
             // Attempt to answer user and only call next() if not answered
             return this.answer(context).then((answered) => {
                 return !answered ? next() : Promise.resolve();
@@ -47,56 +60,101 @@ class QnAMaker {
     }
     /**
      * Calls [generateAnswer()](#generateanswer) and sends the answer as a message ot the user.
+     *
+     * @remarks
      * Returns a value of `true` if an answer was found and sent. If multiple answers are
      * returned the first one will be delivered.
-     * @param context Context for the current turn of conversation with the use.
+     * @param context Context for the current turn of conversation with the user.
      */
     answer(context) {
-        const { top, scoreThreshold } = this.settings;
+        const { top, scoreThreshold } = this.options;
         return this.generateAnswer(context.activity.text, top, scoreThreshold).then((answers) => {
-            if (answers.length > 0) {
-                return context.sendActivity({ text: answers[0].answer, type: 'message' }).then(() => true);
-            }
-            else {
-                return Promise.resolve(false);
-            }
+            return this.emitTraceInfo(context, answers).then(() => {
+                if (answers.length > 0) {
+                    return context.sendActivity({ text: answers[0].answer, type: 'message' }).then(() => true);
+                }
+                else {
+                    return Promise.resolve(false);
+                }
+            });
         });
     }
     /**
-     * Calls the QnA Maker service to generate answer(s) for a question. The returned answers will
-     * be sorted by score with the top scoring answer returned first.
+     * Calls the QnA Maker service to generate answer(s) for a question.
+     *
+     * @remarks
+     * The returned answers will be sorted by score with the top scoring answer returned first.
      * @param question The question to answer.
      * @param top (Optional) number of answers to return. Defaults to a value of `1`.
      * @param scoreThreshold (Optional) minimum answer score needed to be considered a match to questions. Defaults to a value of `0.001`.
      */
     generateAnswer(question, top, scoreThreshold) {
-        const { serviceEndpoint } = this.settings;
         const q = question ? question.trim() : '';
         if (q.length > 0) {
-            return this.callService(serviceEndpoint, question, typeof top === 'number' ? top : 1).then((answers) => {
+            return this.callService(this.endpoint, question, typeof top === 'number' ? top : 1).then((answers) => {
                 const minScore = typeof scoreThreshold === 'number' ? scoreThreshold : 0.001;
                 return answers.filter((ans) => ans.score >= minScore).sort((a, b) => b.score - a.score);
             });
         }
         return Promise.resolve([]);
     }
-    callService(serviceEndpoint, question, top) {
-        const url = `${serviceEndpoint}${BASEAPI_PATH}${this.settings.knowledgeBaseId}/generateanswer`;
+    /**
+     * Called internally to query the QnA Maker service.
+     *
+     * @remarks
+     * This is exposed to enable better unit testing of the service.
+     */
+    callService(endpoint, question, top) {
+        const url = `${endpoint.host}/knowledgebases/${endpoint.knowledgeBaseId}/generateanswer`;
+        const headers = {};
+        if (endpoint.host.endsWith('v2.0') || endpoint.host.endsWith('v3.0')) {
+            headers['Ocp-Apim-Subscription-Key'] = endpoint.endpointKey;
+        }
+        else {
+            headers['Authorization'] = `EndpointKey ${endpoint.endpointKey}`;
+        }
         return request({
             url: url,
             method: 'POST',
-            headers: {
-                'Ocp-Apim-Subscription-Key': this.settings.subscriptionKey
-            },
+            headers: headers,
             json: {
                 question: question,
                 top: top
             }
         }).then(result => {
-            const answers = [];
             return result.answers.map((ans) => {
-                return { score: ans.score / 100, answer: htmlentities.decode(ans.answer) };
+                ans.score = ans.score / 100;
+                ans.answer = htmlentities.decode(ans.answer);
+                if (ans.qnaId) {
+                    ans.id = ans.qnaId;
+                    delete ans['qnaId'];
+                }
+                return ans;
             });
+        });
+    }
+    /**
+     * Emits a trace event detailing a QnA Maker call and its results.
+     *
+     * @param context Context for the current turn of conversation with the user.
+     * @param answers Answers returned by QnA Maker.
+     */
+    emitTraceInfo(context, answers) {
+        let traceInfo = {
+            message: context.activity,
+            queryResults: answers,
+            knowledgeBaseId: this.endpoint.knowledgeBaseId,
+            scoreThreshold: this.options.scoreThreshold,
+            top: this.options.top,
+            strictFilters: [{}],
+            metadataBoost: [{}],
+        };
+        return context.sendActivity({
+            type: 'trace',
+            valueType: QNAMAKER_TRACE_TYPE,
+            name: QNAMAKER_TRACE_NAME,
+            label: QNAMAKER_TRACE_LABEL,
+            value: traceInfo
         });
     }
 }

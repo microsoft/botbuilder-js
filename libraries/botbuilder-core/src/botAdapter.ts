@@ -11,8 +11,6 @@ import { TurnContext } from './turnContext';
 import { makeRevocable } from './internal';
 
 /**
- * :package: **botbuilder-core**
- * 
  * Abstract base class for all adapter plugins. Adapters manage the communication between the bot 
  * and a user over a specific channel, or set of channels.
  */

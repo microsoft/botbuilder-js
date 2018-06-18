@@ -67,7 +67,7 @@ export declare type SkipStepFunction = (args?: any) => Promise<any>;
  * For simple text questions you can send the user a message and then process their answer in the
  * next step:
  *
- * ```JS
+ * ```JavaScript
  *  dialogs.add('namePrompt', [
  *      async function (dc) {
  *          dc.instance.state = { first: '', last: '', full: '' };
@@ -89,7 +89,7 @@ export declare type SkipStepFunction = (args?: any) => Promise<any>;
  * For more complex sequences you can call other dialogs from within a step and the result returned
  * by the dialog will be passed to the next step:
  *
- * ```JS
+ * ```JavaScript
  *  dialogs.add('survey', [
  *      async function (dc) {
  *          dc.instance.state = { name: undefined, languages: '', years: 0 };
@@ -127,7 +127,7 @@ export declare type SkipStepFunction = (args?: any) => Promise<any>;
  * to do that the dialog will be automatically ended for you on the users next reply.  The users
  * response will be passed to the calling dialogs next waterfall step if there is one.
  */
-export declare class Waterfall<C extends TurnContext> implements Dialog<C> {
+export declare class Waterfall<C extends TurnContext> extends Dialog<C> {
     private readonly steps;
     /**
      * Creates a new waterfall dialog containing the given array of steps.

@@ -6,8 +6,6 @@
  * Licensed under the MIT License.
  */
 /**
-* :package: **botbuilder-choices**
-*
 * Individual token returned by a `TokenizerFunction`.
 */
 export interface Token {
@@ -21,23 +19,25 @@ export interface Token {
     normalized: string;
 }
 /**
- * :package: **botbuilder-choices**
- *
  * Signature for an alternate word breaker that can be passed to `recognizeChoices()`,
- * `findChoices()`, or `findValues()`. The `defaultTokenizer()` is fairly simple and only breaks
- * on spaces and punctuation.
+ * `findChoices()`, or `findValues()`.
+ *
+ * ```TypeScript
+ * type TokenizerFunction = (text: string, locale?: string) => Token[];
+ * ```
+ *
+ * @remarks
+ * The `defaultTokenizer()` is fairly simple and only breaks on spaces and punctuation.
  * @param TokenizerFunction.text The text to be tokenized.
  * @param TokenizerFunction.locale (Optional) locale of the text if known.
  */
 export declare type TokenizerFunction = (text: string, locale?: string) => Token[];
 /**
- * :package: **botbuilder-choices**
+ * Simple tokenizer that breaks on spaces and punctuation.
  *
- * Simple tokenizer that breaks on spaces and punctuation. The only normalization done is to
- * lowercase the tokens. Developers can wrap this tokenizer with their own function to perform
- * additional normalization like [stemming](https://github.com/words/stemmer).
- *
- * **Usage Example**
+ * @remarks
+ * The only normalization done is to lowercase the tokens. Developers can wrap this tokenizer with
+ * their own function to perform additional normalization like [stemming](https://github.com/words/stemmer).
  *
  * ```JavaScript
  * const { recognizeChoices, defaultTokenizer } = require('botbuilder-choices');

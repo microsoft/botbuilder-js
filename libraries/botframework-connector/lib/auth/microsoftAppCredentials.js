@@ -144,7 +144,8 @@ class MicrosoftAppCredentials {
     }
 }
 MicrosoftAppCredentials.trustedHostNames = new Map([
-    ['state.botframework.com', new Date(8640000000000000)] // Date.MAX_VALUE
+    ['state.botframework.com', new Date(8640000000000000)],
+    ['api.botframework.com', new Date(8640000000000000)] // Date.MAX_VALUE,
 ]);
 MicrosoftAppCredentials.cache = new Map();
 exports.MicrosoftAppCredentials = MicrosoftAppCredentials;

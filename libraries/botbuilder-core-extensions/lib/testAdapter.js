@@ -10,12 +10,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const botbuilder_core_1 = require("botbuilder-core");
 const assert = require("assert");
 /**
- * :package: **botbuilder-core-extensions**
- *
  * Test adapter used for unit tests. This adapter can be used to simulate sending messages from the
  * user to the bot.
  *
- * **Usage Example**
+ * @remarks
+ * The following example sets up the test adapter and then executes a simple test:
  *
  * ```JavaScript
  * const { TestAdapter } = require('botbuilder');
@@ -34,17 +33,22 @@ class TestAdapter extends botbuilder_core_1.BotAdapter {
      * @param logic The bots logic that's under test.
      * @param template (Optional) activity containing default values to assign to all test messages received.
      */
-    constructor(logic, template) {
+    constructor(logic, template, sendTraceActivities) {
         super();
         this.logic = logic;
+        this.sendTraceActivities = false;
         this.nextId = 0;
-        /** INTERNAL: used to drive the promise chain forward when running tests. */
+        /**
+         * @private
+         * INTERNAL: used to drive the promise chain forward when running tests.
+         */
         this.activityBuffer = [];
         /**
          * List of updated activities passed to the adapter which can be inspected after the current
          * turn completes.
          *
-         * **Usage Example**
+         * @remarks
+         * This example shows how to test that expected updates have been preformed:
          *
          * ```JavaScript
          * adapter.test('update', '1 updated').then(() => {
@@ -59,7 +63,8 @@ class TestAdapter extends botbuilder_core_1.BotAdapter {
          * List of deleted activities passed to the adapter which can be inspected after the current
          * turn completes.
          *
-         * **Usage Example**
+         * @remarks
+         * This example shows how to test that expected deletes have been preformed:
          *
          * ```JavaScript
          * adapter.test('delete', '1 deleted').then(() => {
@@ -70,6 +75,7 @@ class TestAdapter extends botbuilder_core_1.BotAdapter {
          * ```
          */
         this.deletedActivities = [];
+        this.sendTraceActivities = sendTraceActivities || false;
         this.template = Object.assign({
             channelId: 'test',
             serviceUrl: 'https://test.com',
@@ -79,19 +85,23 @@ class TestAdapter extends botbuilder_core_1.BotAdapter {
         }, template);
     }
     /**
+     * @private
      * INTERNAL: called by the logic under test to send a set of activities. These will be buffered
      * to the current `TestFlow` instance for comparison against the expected results.
      * @param context Context object for the current turn of conversation with the user.
      * @param activities Set of activities sent by logic under test.
      */
     sendActivities(context, activities) {
-        const responses = activities.map((activity) => {
+        const responses = activities
+            .filter(a => this.sendTraceActivities || a.type !== 'trace')
+            .map((activity) => {
             this.activityBuffer.push(activity);
             return { id: (this.nextId++).toString() };
         });
         return Promise.resolve(responses);
     }
     /**
+     * @private
      * INTERNAL: called by the logic under test to replace an existing activity. These are simply
      * pushed onto an [updatedActivities](#updatedactivities) array for inspection after the turn
      * completes.
@@ -103,6 +113,7 @@ class TestAdapter extends botbuilder_core_1.BotAdapter {
         return Promise.resolve();
     }
     /**
+     * @private
      * INTERNAL: called by the logic under test to delete an existing activity. These are simply
      * pushed onto a [deletedActivities](#deletedactivities) array for inspection after the turn
      * completes.
@@ -121,6 +132,7 @@ class TestAdapter extends botbuilder_core_1.BotAdapter {
         return Promise.reject(new Error(`not implemented`));
     }
     /**
+     * @private
      * INTERNAL: called by a `TestFlow` instance to simulate a user sending a message to the bot.
      * This will cause the adapters middleware pipe to be run and it's logic to be called.
      * @param activity Text or activity from user. The current conversation reference [template](#template) will be merged the passed in activity to properly address the activity. Fields specified in the activity override fields in the template.
@@ -142,7 +154,8 @@ class TestAdapter extends botbuilder_core_1.BotAdapter {
      * Sends something to the bot. This returns a new `TestFlow` instance which can be used to add
      * additional steps for inspecting the bots reply and then sending additional activities.
      *
-     * **Usage Example**
+     * @remarks
+     * This example shows how to send a message and then verify that the response was as expected:
      *
      * ```JavaScript
      * adapter.send('hi')
@@ -155,11 +168,11 @@ class TestAdapter extends botbuilder_core_1.BotAdapter {
         return new TestFlow(this.receiveActivity(userSays), this);
     }
     /**
-     * Send something to the bot and expects the bot to return with a given reply. This is simply a
-     * wrapper around calls to `send()` and `assertReply()`. This is such a common pattern that a
-     * helper is provided.
+     * Send something to the bot and expects the bot to return with a given reply.
      *
-     * **Usage Example**
+     * @remarks
+     * This is simply a wrapper around calls to `send()` and `assertReply()`. This is such a
+     * common pattern that a helper is provided.
      *
      * ```JavaScript
      * adapter.test('hi', 'Hello World')
@@ -174,17 +187,42 @@ class TestAdapter extends botbuilder_core_1.BotAdapter {
         return this.send(userSays)
             .assertReply(expected, description);
     }
+    /**
+     * Test a list of activities.
+     * Each activity with the "bot" role will be processed with assertReply()
+     * Every other activity will be processed as a user message with send()
+     * @param activities Array of activities.
+     * @param description (Optional) Description of the test case. If not provided one will be generated.
+     * @param timeout (Optional) number of milliseconds to wait for a response from bot. Defaults to a value of `3000`.
+     */
+    testActivities(activities, description, timeout) {
+        if (!activities) {
+            throw new Error('Missing array of activities');
+        }
+        const activityInspector = (expected) => (actual, description) => validateTranscriptActivity(actual, expected, description);
+        // Chain all activities in a TestFlow, check if its a user message (send) or a bot reply (assert)
+        return activities.reduce((flow, activity) => {
+            var assertDescription = 'reply' + (description ? ' from ' + description : '');
+            return this.isReply(activity)
+                ? flow.assertReply(activityInspector(activity), assertDescription, timeout)
+                : flow.send(activity);
+        }, new TestFlow(Promise.resolve(), this));
+    }
+    /**
+     * Indicates if the activity is a reply from the bot (role == 'bot')
+     * @param activity Activity to check.
+     */
+    isReply(activity) {
+        return activity.from.role && activity.from.role.toLocaleLowerCase() === 'bot';
+    }
 }
 exports.TestAdapter = TestAdapter;
 /**
- * :package: **botbuilder-core-extensions**
- *
  * Support class for `TestAdapter` that allows for the simple construction of a sequence of tests.
+ *
+ * @remarks
  * Calling `adapter.send()` or `adapter.test()` will create a new test flow which you can chain
  * together additional tests using a fluent syntax.
- *
- *
- * **Usage Example**
  *
  * ```JavaScript
  * const { TestAdapter } = require('botbuilder');
@@ -204,6 +242,7 @@ exports.TestAdapter = TestAdapter;
  */
 class TestFlow {
     /**
+     * @private
      * INTERNAL: creates a new TestFlow instance.
      * @param previous Promise chain for the current test sequence.
      * @param adapter Adapter under tested.
@@ -333,9 +372,32 @@ class TestFlow {
     }
 }
 exports.TestFlow = TestFlow;
+/**
+ * @private
+ * @param activity
+ * @param expected
+ */
 function validateActivity(activity, expected) {
     for (const prop in expected) {
         assert.equal(activity[prop], expected[prop]);
     }
+}
+/**
+ * @private
+ * Does a shallow comparison of:
+ * - type
+ * - text
+ * - speak
+ * - suggestedActions
+ *
+ * @param activity
+ * @param expected
+ * @param description
+ */
+function validateTranscriptActivity(activity, expected, description) {
+    assert.equal(activity.type, expected.type, 'failed "type" assert on ' + description);
+    assert.equal(activity.text, expected.text, 'failed "text" assert on ' + description);
+    assert.equal(activity.speak, expected.speak, 'failed "speak" assert on ' + description);
+    assert.deepEqual(activity.suggestedActions, expected.suggestedActions, 'failed "suggestedActions" assert on ' + description);
 }
 //# sourceMappingURL=testAdapter.js.map

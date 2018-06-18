@@ -3,11 +3,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const internal_1 = require("./internal");
 const Recognizers = require("@microsoft/recognizers-text-number");
 /**
- * :package: **botbuilder-prompts**
- *
  * Creates a new prompt that asks the user to reply with a number.
  *
- * **Usage Example:**
+ * @remarks
+ * This example creates a number prompt with a custom validator that constrains the users answer to
+ * a range of numbers and then rounds off any fractional replies:
  *
  * ```JavaScript
  * const { createNumberPrompt } = require('botbuilder-prompts');

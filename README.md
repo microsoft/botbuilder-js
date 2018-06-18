@@ -1,9 +1,14 @@
-# Bot Builder SDK v4 [![Build Status](https://travis-ci.org/Microsoft/botbuilder-js.svg?branch=master)](https://travis-ci.org/Microsoft/botbuilder-js) [![Coverage Status](https://coveralls.io/repos/github/Microsoft/botbuilder-js/badge.svg?branch=master)](https://coveralls.io/github/Microsoft/botbuilder-js?branch=master)
-This repository contains code for the JavaScript version of the [Microsoft Bot Builder SDK](https://github.com/Microsoft/BotBuilder). The 4.x version of the SDK is being actively developed and should therefore be used for **EXPERIMENTATION PURPOSES ONLY**. Production bots should continue to be developed using the [v3 SDK](https://github.com/Microsoft/BotBuilder/tree/master/Node). In addition to the JavaScript SDK, Bot Builder supports creating bots in other popular programming languages like [.Net](https://github.com/Microsoft/botbuilder-dotnet), [Python](https://github.com/Microsoft/botbuilder-python), and [Java](https://github.com/Microsoft/botbuilder-java).
+# Bot Builder SDK v4 (Preview) [![Build Status](https://travis-ci.org/Microsoft/botbuilder-js.svg?branch=master)](https://travis-ci.org/Microsoft/botbuilder-js) [![Coverage Status](https://coveralls.io/repos/github/Microsoft/botbuilder-js/badge.svg?branch=master)](https://coveralls.io/github/Microsoft/botbuilder-js?branch=master)
 
-- [Getting Started](https://github.com/Microsoft/botbuilder-js/wiki#getting-started)
+This repository contains code for the JavaScript version of the [Microsoft Bot Builder SDK](https://github.com/Microsoft/botbuilder). The Bot Builder SDK v4 is the latest SDK for building bot applications. It is in **Preview** state and is being actively developed. 
+Production bots should continue to be developed using the [v3 SDK](https://github.com/Microsoft/BotBuilder/tree/master/Node). 
+
+In addition to the JavaScript SDK, Bot Builder supports creating bots in other popular programming languages like [.NET](https://github.com/Microsoft/botbuilder-dotnet), [Python](https://github.com/Microsoft/botbuilder-python), and [Java](https://github.com/Microsoft/botbuilder-java).
+
+
+- [Getting Started](https://docs.microsoft.com/en-us/azure/bot-service/javascript/bot-builder-javascript-quickstart?view=azure-bot-service-4.0)
+- [Preview Documentation](https://docs.microsoft.com/en-us/azure/bot-service/?view=azure-bot-service-4.0)
 - [Building the SDK](https://github.com/Microsoft/botbuilder-js/wiki/Building-the-SDK)
-- [Bot Building Basics](https://github.com/Microsoft/botbuilder-js/wiki/Overview)
 - [Contribution Guidlines](https://github.com/Microsoft/botbuilder-js/wiki/Contribution-Guidelines)
 - [Extension Directory](https://github.com/Microsoft/botbuilder-js/wiki/Extension-Directory)
 - [Roadmap](https://github.com/Microsoft/botbuilder-js/wiki/Roadmap)

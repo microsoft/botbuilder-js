@@ -5,11 +5,11 @@ const internal_1 = require("./internal");
 const choicePrompt_1 = require("./choicePrompt");
 const Recognizers = require("@microsoft/recognizers-text-choice");
 /**
- * :package: **botbuilder-prompts**
- *
  * Creates a new prompt that asks the user to answer a yes/no question.
  *
- * **Usage Example:**
+ * @remarks
+ * This example shows creating a confirm prompt with a custom validator that will re-prompt with
+ * alternate prompt text should the utterance not be recognized:
  *
  * ```JavaScript
  * const { createConfirmPrompt } = require('botbuilder-prompts');

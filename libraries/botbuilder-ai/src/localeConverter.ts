@@ -9,15 +9,35 @@ import { Middleware, TurnContext, ActivityTypes } from 'botbuilder';
 import * as DateTimeRecognizers from '@microsoft/recognizers-text-date-time';
 import * as moment from 'moment';
 
+/**
+ * Settings used to configure an instance of `LocaleConverter`.
+ */
 export interface LocaleConverterSettings {
-    toLocale: string,
-    fromLocale?: string,
-    getUserLocale?: (context: TurnContext) => string,
-    setUserLocale?: (context: TurnContext) => Promise<boolean>
+    /** Target locale to convert to. */
+    toLocale: string;
+
+    /** (Optional) locale to convert from. */
+    fromLocale?: string;
+
+    /** 
+     * (Optional) handler that will be called to get the locale for the current turn. 
+     */
+    getUserLocale?: (context: TurnContext) => string;
+
+    /** 
+     * (Optional) handler that will be called to determine if the locale has changed for the 
+     * current turn. 
+     */
+    setUserLocale?: (context: TurnContext) => Promise<boolean>;
 }
 
 /**
- * The LocaleConverter converts all locales in a message to a given locale.
+ * Middleware used to convert locale specific entities, like dates and times, from one locale 
+ * to another.
+ * 
+ * @remarks
+ * When added to the bot adapters middleware pipeline it will attempt to recognize entities in
+ * incoming message activities and then automatically convert those entities to the target locale.
  */
 export class LocaleConverter implements Middleware {
     private localeConverter: ILocaleConverter;
@@ -26,7 +46,11 @@ export class LocaleConverter implements Middleware {
     private getUserLocale: ((context: TurnContext) => string) | undefined;
     private setUserLocale: ((context: TurnContext) => Promise<boolean>) | undefined;
 
-    public constructor(settings: LocaleConverterSettings) {
+    /**
+     * Creates a new LocaleConverter instance.
+     * @param settings 
+     */
+    constructor(settings: LocaleConverterSettings) {
         this.localeConverter = new MicrosoftLocaleConverter();
         this.toLocale = settings.toLocale;
         this.fromLocale = settings.fromLocale;
@@ -75,6 +99,9 @@ export class LocaleConverter implements Middleware {
     }
 }
 
+/**
+ * @private
+ */
 interface ILocaleConverter {
     
     isLocaleAvailable(locale: string): boolean;
@@ -84,6 +111,9 @@ interface ILocaleConverter {
     getAvailableLocales(): Promise<string[]>;
 }
 
+/**
+ * @private
+ */
 class MicrosoftLocaleConverter implements ILocaleConverter {
 
     mapLocaleToFunction: { [id: string] : DateAndTimeLocaleFormat } = {};
@@ -263,6 +293,9 @@ class MicrosoftLocaleConverter implements ILocaleConverter {
     }
 }
 
+/**
+ * @private
+ */
 class DateAndTimeLocaleFormat { 
     public timeFormat: string;
     public dateFormat: string;
@@ -273,6 +306,9 @@ class DateAndTimeLocaleFormat {
     }
 }
 
+/**
+ * @private
+ */
 class TextAndDateTime { 
     public text: RegExp;
     public dateTimeObj: Date;

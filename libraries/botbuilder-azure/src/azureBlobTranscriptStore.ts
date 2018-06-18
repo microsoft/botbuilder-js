@@ -14,13 +14,17 @@ import { escape } from 'querystring';
 const ContainerNameCheck = new RegExp('^[a-z0-9](?!.*--)[a-z0-9-]{1,61}[a-z0-9]$');
 
 /**
+ * @private
  * Internal dictionary with the containers where entities will be stored.
  */
-let checkedCollections: { [key: string]: Promise<azure.BlobService.ContainerResult>; } = {};
+const checkedCollections: { [key: string]: Promise<azure.BlobService.ContainerResult>; } = {};
 
 /**
- * The blob transcript store stores transcripts in an Azure Blob container where each activity is stored as json blob in structure of
- * container/{channelId]/{conversationId}/{Timestamp.ticks}-{activity.id}.json
+ * Stores transcripts in an Azure Blob container.
+ * 
+ * @remarks 
+ * Each activity is stored as JSON blob with a structure of
+ * `container/{channelId]/{conversationId}/{Timestamp.ticks}-{activity.id}.json`.
  */
 export class AzureBlobTranscriptStore implements TranscriptStore {
     private settings: BlobStorageSettings
@@ -28,8 +32,8 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
     private pageSize = 20;
 
     /**
-     * Creates an instance of AzureBlobTranscriptStore
-     * @param settings Settings for configuring an instance of BlobStorage
+     * Creates a new AzureBlobTranscriptStore instance.
+     * @param settings Settings required for configuring an instance of BlobStorage
      */
     public constructor(settings: BlobStorageSettings) {
         if (!settings) {
@@ -318,7 +322,10 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
     }
 }
 
-// Promise based methods created using denodeify function
+/**
+ * @private
+ * Promise based methods created using denodeify function
+ */
 interface BlobServiceAsync extends azure.BlobService {
     createContainerIfNotExistsAsync(container: string): Promise<azure.BlobService.ContainerResult>;
     deleteContainerIfExistsAsync(container: string): Promise<boolean>;

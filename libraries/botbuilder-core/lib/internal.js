@@ -4,6 +4,9 @@
  * Licensed under the MIT License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @private
+ */
 function shallowCopy(value) {
     if (Array.isArray(value)) {
         return value.slice(0);
@@ -14,6 +17,11 @@ function shallowCopy(value) {
     return value;
 }
 exports.shallowCopy = shallowCopy;
+/**
+ * @private
+ * @param target
+ * @param handler
+ */
 function makeRevocable(target, handler) {
     // Ensure proxy supported (some browsers don't)
     if (Proxy && Proxy.revocable) {

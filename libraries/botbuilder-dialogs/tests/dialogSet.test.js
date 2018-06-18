@@ -19,35 +19,6 @@ class TestContext extends TurnContext {
 describe('DialogSet', function() {
     this.timeout(5000);
 
-    it('should call Dialog.begin() and Dialog.continue().', function (done) {
-        const dialogs = new DialogSet();
-        dialogs.add('a', {
-            dialogBegin: (dc, args) => {
-                assert(dc, 'Missing dialog context in begin()');
-                assert(args === 'z', 'Args not passed');
-                return dc.context.sendActivity(beginMessage);
-            },
-            dialogContinue: (dc) => {
-                assert(dc, 'Missing dialog context in continue()');
-                return dc.context.sendActivity(continueMessage);
-            }
-        });
-
-        const state = {};
-        const context = new TestContext(beginMessage);
-        const dc = dialogs.createContext(context, state);
-        dc.continue().then(() => {
-            if (!context.responded) {
-                return dc.begin('a', 'z');
-            }
-        }).then(() => {
-            assert(context.responded, `no reply sent`);
-            assert(Array.isArray(state.dialogStack), `no dialog stack persisted.`);
-            assert(state.dialogStack.length === 1, `invalid number of entries on stack.`)
-            done();
-        });
-    });
-
     it('should throw an exception when trying to add the same dialog twice.', function (done) {
         const dialogs = new DialogSet();
         dialogs.add('a', [

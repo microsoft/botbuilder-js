@@ -8,13 +8,11 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
- * :package: **botbuilder-choices**
+ * Simple tokenizer that breaks on spaces and punctuation.
  *
- * Simple tokenizer that breaks on spaces and punctuation. The only normalization done is to
- * lowercase the tokens. Developers can wrap this tokenizer with their own function to perform
- * additional normalization like [stemming](https://github.com/words/stemmer).
- *
- * **Usage Example**
+ * @remarks
+ * The only normalization done is to lowercase the tokens. Developers can wrap this tokenizer with
+ * their own function to perform additional normalization like [stemming](https://github.com/words/stemmer).
  *
  * ```JavaScript
  * const { recognizeChoices, defaultTokenizer } = require('botbuilder-choices');
@@ -82,6 +80,10 @@ function defaultTokenizer(text, locale) {
     return tokens;
 }
 exports.defaultTokenizer = defaultTokenizer;
+/**
+ * @private
+ * @param codePoint
+ */
 function isBreakingChar(codePoint) {
     return (isBetween(codePoint, 0x0000, 0x002F) ||
         isBetween(codePoint, 0x003A, 0x0040) ||
@@ -91,6 +93,12 @@ function isBreakingChar(codePoint) {
         isBetween(codePoint, 0x2000, 0x2BFF) ||
         isBetween(codePoint, 0x2E00, 0x2E7F));
 }
+/**
+ * @private
+ * @param value
+ * @param from
+ * @param to
+ */
 function isBetween(value, from, to) {
     return (value >= from && value <= to);
 }

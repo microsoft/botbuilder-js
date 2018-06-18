@@ -38,8 +38,6 @@ describe('prompts/TextPrompt', function() {
         const context = new TestContext(beginMessage);
         const dc = dialogs.createContext(context, state);
         dc.begin('a').then(() => {
-            const result = dc.dialogResult;
-            assert(result && result.active);
             const dc2 = dialogs.createContext(new TestContext(continueMessage), state);
             return dc2.continue();
         });
@@ -54,6 +52,10 @@ describe('prompts/TextPrompt', function() {
         dialogs.add('a', [
             function (dc) {
                 return dc.prompt('prompt', 'foo');
+            },
+            function (dc, result) {
+                assert(result === 'abcdefg');
+                done();
             }
         ]);
 
@@ -61,21 +63,12 @@ describe('prompts/TextPrompt', function() {
         const context = new TestContext(beginMessage);
         const dc = dialogs.createContext(context, state);
         dc.begin('a').then(() => {
-            const result = dc.dialogResult;
-            assert(result && result.active);
             const context2 = new TestContext(shortMessage);
             const dc2 = dialogs.createContext(context2, state);
             return dc2.continue().then(() => {
-                const result = dc2.dialogResult;
-                assert(result && result.active);
                 assert(context2.sent && context2.sent[0].text === 'foo');
                 const dc3 = dialogs.createContext(new TestContext(longMessage), state);
-                return dc3.continue().then(() => {
-                    const result = dc3.dialogResult;
-                    assert(result && !result.active);
-                    assert(result.result === longMessage.text);
-                    done();
-                });
+                return dc3.continue();
             });
         });
     });
@@ -89,6 +82,10 @@ describe('prompts/TextPrompt', function() {
         dialogs.add('a', [
             function (dc) {
                 return dc.prompt('prompt', 'foo', { retryPrompt: 'bar' });
+            },
+            function (dc, result) {
+                assert(result === 'abcdefg');
+                done();
             }
         ]);
 
@@ -96,21 +93,12 @@ describe('prompts/TextPrompt', function() {
         const context = new TestContext(beginMessage);
         const dc = dialogs.createContext(context, state);
         dc.begin('a').then(() => {
-            const result = dc.dialogResult;
-            assert(result && result.active);
             const context2 = new TestContext(shortMessage);
             const dc2 = dialogs.createContext(context2, state);
             return dc2.continue().then(() => {
-                const result = dc2.dialogResult;
-                assert(result && result.active);
                 assert(context2.sent && context2.sent[0].text === 'bar');
                 const dc3 = dialogs.createContext(new TestContext(longMessage), state);
-                return dc3.continue().then(() => {
-                    const result = dc3.dialogResult;
-                    assert(result && !result.active);
-                    assert(result.result === longMessage.text);
-                    done();
-                });
+                return dc3.continue();
             });
         });
     });
@@ -127,6 +115,10 @@ describe('prompts/TextPrompt', function() {
         dialogs.add('a', [
             function (dc) {
                 return dc.prompt('prompt', 'foo', { retryPrompt: 'bar' });
+            },
+            function (dc, result) {
+                assert(result === 'abcdefg');
+                done();
             }
         ]);
 
@@ -134,21 +126,12 @@ describe('prompts/TextPrompt', function() {
         const context = new TestContext(beginMessage);
         const dc = dialogs.createContext(context, state);
         dc.begin('a').then(() => {
-            const result = dc.dialogResult;
-            assert(result && result.active);
             const context2 = new TestContext(shortMessage);
             const dc2 = dialogs.createContext(context2, state);
             return dc2.continue().then(() => {
-                const result = dc2.dialogResult;
-                assert(result && result.active);
                 assert(context2.sent && context2.sent[0].text === 'too short');
                 const dc3 = dialogs.createContext(new TestContext(longMessage), state);
-                return dc3.continue().then(() => {
-                    const result = dc3.dialogResult;
-                    assert(result && !result.active);
-                    assert(result.result === longMessage.text);
-                    done();
-                });
+                return dc3.continue();
             });
         });
     });
@@ -162,6 +145,10 @@ describe('prompts/TextPrompt', function() {
         dialogs.add('a', [
             function (dc) {
                 return dc.begin('prompt');
+            },
+            function (dc, result) {
+                assert(result === 'abcdefg');
+                done();
             }
         ]);
 
@@ -169,21 +156,12 @@ describe('prompts/TextPrompt', function() {
         const context = new TestContext(beginMessage);
         const dc = dialogs.createContext(context, state);
         dc.begin('a').then(() => {
-            const result = dc.dialogResult;
-            assert(result && result.active);
             const context2 = new TestContext(shortMessage);
             const dc2 = dialogs.createContext(context2, state);
             return dc2.continue().then(() => {
-                const result = dc2.dialogResult;
-                assert(result && result.active);
                 assert(!context2.sent);
                 const dc3 = dialogs.createContext(new TestContext(longMessage), state);
-                return dc3.continue().then(() => {
-                    const result = dc3.dialogResult;
-                    assert(result && !result.active);
-                    assert(result.result === longMessage.text);
-                    done();
-                });
+                return dc3.continue();
             });
         });
     });

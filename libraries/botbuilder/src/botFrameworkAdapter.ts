@@ -13,8 +13,6 @@ import {
 import { ConnectorClient, SimpleCredentialProvider, MicrosoftAppCredentials, JwtTokenValidation, OAuthApiClient } from 'botframework-connector';
 
 /** 
- * :package: **botbuilder**
- * 
  * Express or Restify Request object. 
  */
 export interface WebRequest {
@@ -24,8 +22,6 @@ export interface WebRequest {
 }
 
 /** 
- * :package: **botbuilder**
- * 
  * Express or Restify Response object. 
  */
 export interface WebResponse {
@@ -34,37 +30,46 @@ export interface WebResponse {
 }
 
 /** 
- * :package: **botbuilder**
- * 
- * Bot Framework Adapter Settings. 
+ * Settings used to configure a `BotFrameworkAdapter` instance. 
  */
 export interface BotFrameworkAdapterSettings {
+    /** 
+     * ID assigned to your bot in the [Bot Framework Portal](https://dev.botframework.com/). 
+     */
     appId: string;
+
+    /** 
+     * Password assigned to your bot in the [Bot Framework Portal](https://dev.botframework.com/). 
+     */
     appPassword: string;
 }
 
 /** 
- * :package: **botbuilder**
- * 
  * Response object expected to be sent in response to an `invoke` activity. 
  */
 export interface InvokeResponse {
+    /**
+     * Status code to return for response.
+     */
     status: number;
+
+    /**
+     * (Optional) body to return for response.
+     */
     body?: any;
 }
 
 const pjson: any = require('../package.json');
 const USER_AGENT = "Microsoft-BotFramework/3.1 (BotBuilder JS/" + pjson.version + ")";
-
+const OAUTH_ENDPOINT = 'https://api.botframework.com';
 const INVOKE_RESPONSE_KEY = Symbol('invokeResponse');
 
 
 /**
- * :package: **botbuilder**
+ * BotAdapter class needed to communicate with a Bot Framework channel or the Emulator.
  * 
- * ActivityAdapter class needed to communicate with a Bot Framework channel or the Emulator.
- *
- * **Usage Example**
+ * @remarks
+ * The following example shows the typical adapter setup:
  *
  * ```JavaScript
  * const { BotFrameworkAdapter } = require('botbuilder');
@@ -79,6 +84,7 @@ export class BotFrameworkAdapter extends BotAdapter {
     protected readonly credentials: MicrosoftAppCredentials;
     protected readonly credentialsProvider: SimpleCredentialProvider;
     protected readonly settings: BotFrameworkAdapterSettings;
+    private isEmulatingOAuthCards: boolean;
 
     /**
      * Creates a new BotFrameworkAdapter instance.
@@ -89,6 +95,7 @@ export class BotFrameworkAdapter extends BotAdapter {
         this.settings = Object.assign({ appId: '', appPassword: '' }, settings);
         this.credentials = new MicrosoftAppCredentials(this.settings.appId, this.settings.appPassword || '');
         this.credentialsProvider = new SimpleCredentialProvider(this.credentials.appId, this.credentials.appPassword);
+        this.isEmulatingOAuthCards = false;
     }
 
     /**
@@ -97,14 +104,13 @@ export class BotFrameworkAdapter extends BotAdapter {
      * communicated with. Scenarios like sending notifications or coupons to a user are enabled by this 
      * method.
      * 
+     * @remarks
      * The processing steps for this method are very similar to [processActivity()](#processactivity)
      * in that a `TurnContext` will be created which is then routed through the adapters middleware 
      * before calling the passed in logic handler. The key difference being that since an activity 
      * wasn't actually received it has to be created.  The created activity will have its address 
      * related fields populated but will have a `context.activity.type === undefined`.
      *        
-     * **Usage Example**
-     *
      * ```JavaScript
      * server.post('/api/notifyUser', async (req, res) => {
      *    // Lookup previously saved conversation reference
@@ -132,16 +138,15 @@ export class BotFrameworkAdapter extends BotAdapter {
 
     /**
      * Starts a new conversation with a user. This is typically used to Direct Message (DM) a member
-     * of a group. 
-     * 
+     * of a group.
+     *  
+     * @remarks 
      * The processing steps for this method are very similar to [processActivity()](#processactivity)
      * in that a `TurnContext` will be created which is then routed through the adapters middleware 
      * before calling the passed in logic handler. The key difference being that since an activity 
      * wasn't actually received it has to be created.  The created activity will have its address 
      * related fields populated but will have a `context.activity.type === undefined`.
      *         
-     * **Usage Example**
-     *
      * ```JavaScript
      * // Get group members conversation reference
      * const reference = TurnContext.getConversationReference(context.activity);
@@ -180,6 +185,7 @@ export class BotFrameworkAdapter extends BotAdapter {
      * Deletes an activity that was previously sent to a channel. It should be noted that not all
      * channels support this feature.
      * 
+     * @remarks
      * Calling `TurnContext.deleteActivity()` is the preferred way of deleting activities as that 
      * will ensure that any interested middleware has been notified. 
      * @param context Context for the current turn of conversation with the user.
@@ -256,27 +262,28 @@ export class BotFrameworkAdapter extends BotAdapter {
      * Lists the Conversations in which this bot has participated for a given channel server. The 
      * channel server returns results in pages and each page will include a `continuationToken`
      * that can be used to fetch the next page of results from the server.
-     * @param serviceUrl The URL of the channel server to query.  This can be retrieved from `context.activity.serviceUrl`. 
+     * @param contextOrServiceUrl The URL of the channel server to query or a TurnContext.  This can be retrieved from `context.activity.serviceUrl`. 
      * @param continuationToken (Optional) token used to fetch the next page of results from the channel server. This should be left as `undefined` to retrieve the first page of results.
      */
-    public getConversations(serviceUrl: string, continuationToken?: string): Promise<ConversationsResult> {
-        const client = this.createConnectorClient(serviceUrl);
+    public getConversations(contextOrServiceUrl: TurnContext|string, continuationToken?: string): Promise<ConversationsResult> {
+        const url = typeof contextOrServiceUrl === 'object' ? contextOrServiceUrl.activity.serviceUrl : contextOrServiceUrl;
+        const client = this.createConnectorClient(url);
         return client.conversations.getConversations(continuationToken ? { continuationToken: continuationToken } : undefined);
     }
 
     /**
-     * Attempts to retrieve the token for a user that's in a logging flow.
+     * Attempts to retrieve the token for a user that's in a signin flow.
      * @param context Context for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.
      * @param magicCode (Optional) Optional user entered code to validate.
      */
     public getUserToken(context: TurnContext, connectionName: string, magicCode?: string): Promise<TokenResponse> {
         try {
-            if (!context.activity.serviceUrl) { throw new Error(`BotFrameworkAdapter.getUserToken(): missing serviceUrl`) }
             if (!context.activity.from || !context.activity.from.id) { throw new Error(`BotFrameworkAdapter.getUserToken(): missing from or from.id`) }
-            const serviceUrl = context.activity.serviceUrl;
+            this.checkEmulatingOAuthCards(context);
             const userId = context.activity.from.id;
-            const client = this.createOAuthApiClient(serviceUrl);
+            const url = this.oauthApiUrl(context);
+            const client = this.createOAuthApiClient(url);
             return client.getUserToken(userId, connectionName, magicCode);
         } catch (err) {
             return Promise.reject(err);
@@ -287,19 +294,44 @@ export class BotFrameworkAdapter extends BotAdapter {
      * Signs the user out with the token server.
      * @param context Context for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.
-     * @param magicCode (Optional) Optional user entered code to validate.
      */
     public signOutUser(context: TurnContext, connectionName: string): Promise<void> {
         try {
-            if (!context.activity.serviceUrl) { throw new Error(`BotFrameworkAdapter.signOutUser(): missing serviceUrl`) }
             if (!context.activity.from || !context.activity.from.id) { throw new Error(`BotFrameworkAdapter.signOutUser(): missing from or from.id`) }
-            const serviceUrl = context.activity.serviceUrl;
+            this.checkEmulatingOAuthCards(context);
             const userId = context.activity.from.id;
-            const client = this.createOAuthApiClient(serviceUrl);
+            const url = this.oauthApiUrl(context);
+            const client = this.createOAuthApiClient(url);
             return client.signOutUser(userId, connectionName);
         } catch (err) {
             return Promise.reject(err);
         }
+    }
+
+    /**
+     * Gets a signin link from the token server that can be sent as part of a SigninCard.
+     * @param context Context for the current turn of conversation with the user.
+     * @param connectionName Name of the auth connection to use.
+     */
+    public getSignInLink(context: TurnContext, connectionName: string): Promise<string> {
+        this.checkEmulatingOAuthCards(context);
+        const conversation = TurnContext.getConversationReference(context.activity);
+        const url = this.oauthApiUrl(context);
+        const client = this.createOAuthApiClient(url);
+        return client.getSignInLink(conversation as ConversationReference, connectionName);
+    }
+
+
+    /**
+     * Tells the token service to emulate the sending of OAuthCards for a channel.
+     * @param contextOrServiceUrl The URL of the channel server to query or a TurnContext.  This can be retrieved from `context.activity.serviceUrl`. 
+     * @param emulate If `true` the token service will emulate the sending of OAuthCards.
+     */
+    public emulateOAuthCards(contextOrServiceUrl: TurnContext|string, emulate: boolean): Promise<void> {
+        this.isEmulatingOAuthCards = emulate;
+        const url = this.oauthApiUrl(contextOrServiceUrl);
+        const client = this.createOAuthApiClient(url);
+        return client.emulateOAuthCards(emulate);
     }
     
     /**
@@ -307,6 +339,7 @@ export class BotFrameworkAdapter extends BotAdapter {
      * user and is the method that drives what's often referred to as the bots "Reactive Messaging"
      * flow.
      * 
+     * @remarks
      * The following steps will be taken to process the activity:
      * 
      * - The identity of the sender will be verified to be either the Emulator or a valid Microsoft 
@@ -331,8 +364,6 @@ export class BotFrameworkAdapter extends BotAdapter {
      *   `revoked()` and any future calls to the context will result in a `TypeError: Cannot perform 
      *   'set' on a proxy that has been revoked` being thrown. 
      *        
-     * **Usage Example**
-     *
      * ```JavaScript
      * server.post('/api/messages', (req, res) => {
      *    // Route received request to adapter for processing
@@ -391,6 +422,7 @@ export class BotFrameworkAdapter extends BotAdapter {
      * another in the order in which they're received.  A response object will be returned for each
      * sent activity. For `message` activities this will contain the ID of the delivered message.
      * 
+     * @remarks
      * Calling `TurnContext.sendActivities()` or `TurnContext.sendActivity()` is the preferred way of
      * sending activities as that will ensure that outgoing activities have been properly addressed 
      * and that any interested middleware has been notified. 
@@ -464,6 +496,7 @@ export class BotFrameworkAdapter extends BotAdapter {
      * Replaces an activity that was previously sent to a channel. It should be noted that not all
      * channels support this feature.
      * 
+     * @remarks
      * Calling `TurnContext.updateActivity()` is the preferred way of updating activities as that 
      * will ensure that any interested middleware has been notified. 
      * @param context Context for the current turn of conversation with the user.
@@ -511,6 +544,29 @@ export class BotFrameworkAdapter extends BotAdapter {
     protected createOAuthApiClient(serviceUrl: string): OAuthApiClient {
         return new OAuthApiClient(this.createConnectorClient(serviceUrl));
     }
+
+    /**
+     * Allows for mocking of the OAuth Api URL in unit tests.
+     * @param contextOrServiceUrl The URL of the channel server to query or a TurnContext.  This can be retrieved from `context.activity.serviceUrl`. 
+     */
+    protected oauthApiUrl(contextOrServiceUrl: TurnContext|string): string {
+        return this.isEmulatingOAuthCards ?
+            (typeof contextOrServiceUrl === 'object' ? contextOrServiceUrl.activity.serviceUrl : contextOrServiceUrl) :
+            OAUTH_ENDPOINT;
+    }
+
+    /**
+     * Allows for mocking of toggling the emulating OAuthCards in unit tests.
+     * @param context The TurnContext 
+     */
+    protected checkEmulatingOAuthCards(context: TurnContext) {
+        if (!this.isEmulatingOAuthCards && 
+            context.activity.channelId === 'emulator' &&
+            (!this.credentials.appId || !this.credentials.appPassword))
+        {
+            this.isEmulatingOAuthCards = true;
+        }
+    }
     
     /**
      * Allows for the overriding of the context object in unit tests and derived adapters.
@@ -521,7 +577,10 @@ export class BotFrameworkAdapter extends BotAdapter {
     }
 }
 
-
+/**
+ * @private
+ * @param req 
+ */
 function parseRequest(req: WebRequest): Promise<Activity> {
     return new Promise((resolve, reject) => {
         function returnActivity(activity: Activity) {
@@ -552,6 +611,3 @@ function parseRequest(req: WebRequest): Promise<Activity> {
         }
     });
 } 
-
-
-

@@ -2,11 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const internal_1 = require("./internal");
 /**
- * :package: **botbuilder-prompts**
- *
  * Creates a new prompt that asks the user to upload one or more attachments.
  *
- * **Usage Example:**
+ * @remarks
+ * This example shows creating a prompt with a custom validator that ensures an image attachment has
+ * been uploaded by the user:
  *
  * ```JavaScript
  * const { createAttachmentPrompt } = require('botbuilder-prompts');

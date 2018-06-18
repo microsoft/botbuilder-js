@@ -38,11 +38,12 @@ export interface FoundDatetime {
 /** 
  * :package: **botbuilder-prompts**
  * 
- * Prompts the user to reply with a date and/or time. The user can use natural language utterances 
- * like "tomorrow at 9am". 
+ * Prompts the user to reply with a date and/or time using natural language utterances like 
+ * "tomorrow at 9am". 
  *
- * **Usage Example:**
- *
+ * @remarks
+ * This example shows creating a datetime prompt:
+ * 
  * ```JavaScript
  * const { createDatetimePrompt } = require('botbuilder-prompts');
  * 
@@ -54,7 +55,8 @@ export interface DatetimePrompt<O = FoundDatetime[]> {
     /**
      * Sends a formated prompt to the user. 
      *
-     * **Usage Example:**
+     * @remarks
+     * This example shows prompting the user for a time.
      *
      * ```JavaScript
      * await timePrompt.prompt(context, `What time should I set your alarm for?`);
@@ -66,13 +68,13 @@ export interface DatetimePrompt<O = FoundDatetime[]> {
     prompt(context: TurnContext, prompt: string|Partial<Activity>, speak?: string): Promise<void>;
 
     /**
-     * Recognizes and validates the users reply. The result of the call will either be the 
-     * recognized value or `undefined`. 
+     * Recognizes and validates the users reply. 
+     * 
+     * @remarks
+     * The result of the call will either be the recognized value or `undefined`. 
      * 
      * The recognize() method will not automatically re-prompt the user so either the caller or the
      * prompts custom validator will need to implement re-prompting logic.
-     *
-     * **Usage Example:**
      *
      * ```JavaScript
      * const values = await timePrompt.recognize(context);
@@ -93,11 +95,11 @@ export interface DatetimePrompt<O = FoundDatetime[]> {
 }
 
 /**
- * :package: **botbuilder-prompts**
- * 
  * Creates a new prompt that asks the user to reply with a date or time.
  *
- * **Usage Example:**
+ * @remarks
+ * This example shows creating a datetime prompt with a custom validator that constrains the users
+ * answer to a time thats in the future:
  *
  * ```JavaScript
  * const { createDatetimePrompt } = require('botbuilder-prompts');

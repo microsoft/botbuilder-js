@@ -9,8 +9,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const tokenizer_1 = require("./tokenizer");
 /**
- * :package: **botbuilder-choices**
- *
  * INTERNAL: Low-level function that searches for a set of values within an utterance. Higher level
  * functions like `findChoices()` and `recognizeChoices()` are layered above this function.  In most
  * cases its easier to just call one of the higher level functions instead but this function contains

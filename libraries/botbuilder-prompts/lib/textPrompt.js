@@ -2,11 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const internal_1 = require("./internal");
 /**
- * :package: **botbuilder-prompts**
- *
  * Creates a new prompt that asks the user to enter some text.
  *
- * **Usage Example:**
+ * @remarks
+ * This example shows creating a text prompt with a custom validator that ensures the length of
+ * the users answer matches some minimum length requirement:
  *
  * ```JavaScript
  * const { createTextPrompt } = require('botbuilder-prompts');

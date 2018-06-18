@@ -7,11 +7,11 @@
  */
 import { Storage, StoreItems } from './storage';
 /**
- * :package: **botbuilder-core-extensions**
+ * Memory based storage provider for a bot.
  *
- * Memory based storage provider for a bot. This provider is most useful for simulating production
- * storage when running locally against the emulator or as part of a unit test. It has the
- * following characteristics:
+ * @remarks
+ * This provider is most useful for simulating production storage when running locally against the
+ * emulator or as part of a unit test. It has the following characteristics:
  *
  * - Starts off completely empty when the bot is run.
  * - Anything written to the store will be forgotten when the process exits.
@@ -19,8 +19,6 @@ import { Storage, StoreItems } from './storage';
  *   storage providers.
  * - Cloned objects serialized using `JSON.stringify()` to catch any possible serialization related
  *   issues that might occur when using a network based storage provider.
- *
- * **Usage Example**
  *
  * ```JavaScript
  * const { MemoryStorage } = require('botbuilder');

@@ -3,7 +3,8 @@
   "packages": [
     "libraries/*",
     "samples/*",
-    "samples/dialogs/*"
+    "samples/dialogs/*",
+    "transcripts"
   ],
   "version": "independent",
   "commands": {

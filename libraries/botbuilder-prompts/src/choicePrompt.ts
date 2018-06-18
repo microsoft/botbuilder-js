@@ -11,8 +11,6 @@ import { PromptValidator } from './textPrompt';
 import { sendPrompt } from './internal';
 
 /**
- * :package: **botbuilder-prompts**
- * 
  * Controls the way that choices for a `ChoicePrompt` or yes/no options for a `ConfirmPrompt` are
  * presented to a user.
  */
@@ -34,11 +32,10 @@ export enum ListStyle {
 }
 
 /** 
- * :package: **botbuilder-prompts**
- * 
  * Prompts the user to select from a list of choices. 
  *
- * **Usage Example:**
+ * @remarks
+ * This example shows how to create a new choice prompt:
  *
  * ```JavaScript
  * const { createChoicePrompt } = require('botbuilder-prompts');
@@ -49,8 +46,10 @@ export enum ListStyle {
  */
 export interface ChoicePrompt<O = FoundChoice> {
     /** 
-     * Style of choices sent to user when [prompt()](#prompt) is called. Defaults
-     * to `ListStyle.auto`.
+     * Style of choices sent to user when [prompt()](#prompt) is called.
+     * 
+     * @remarks
+     * This starts with a value of `ListStyle.auto`.
      */
     style: ListStyle;
 
@@ -63,6 +62,7 @@ export interface ChoicePrompt<O = FoundChoice> {
     /**
      * Sends a formated prompt to the user. 
      * 
+     * @remarks
      * By default, this will attempt to send the provided list of choices as buttons using 
      * `ChoiceFactory.forChannel()`. It may fallback to sending the choices as a text based list 
      * for any number of reasons. You can set the prompts [style](#style) property to force the use
@@ -70,8 +70,6 @@ export interface ChoicePrompt<O = FoundChoice> {
      * 
      * Further tweaks can be made to the rendering of choices using the 
      * [choiceOptions](#choiceoptions) property. 
-     *
-     * **Usage Example:**
      *
      * ```JavaScript
      * await colorPrompt.prompt(context, ['red', 'green', 'blue'], `Pick a color.`);
@@ -84,16 +82,16 @@ export interface ChoicePrompt<O = FoundChoice> {
     prompt(context: TurnContext, choices: (string|Choice)[], prompt?: string|Partial<Activity>, speak?: string): Promise<void>;
 
     /**
-     * Recognizes and validates the users reply. The result of the call will either be the 
-     * recognized value or `undefined`. 
+     * Recognizes and validates the users reply. 
+     * 
+     * @remarks
+     * The result of the call will either be the recognized value or `undefined`. 
      * 
      * The recognize() method will not automatically re-prompt the user so either the caller or the
      * prompts custom validator will need to implement re-prompting logic.
      * 
      * The search options for the underlying choice recognizer can be tweaked using the prompts
      * [recognizerOptions](#recognizeroptions) property.
-     *
-     * **Usage Example:**
      *
      * ```JavaScript
      * const choice = await colorPrompt.recognize(context, ['red', 'green', 'blue']);
@@ -108,11 +106,11 @@ export interface ChoicePrompt<O = FoundChoice> {
 }
 
 /**
- * :package: **botbuilder-prompts**
- * 
  * Creates a new prompt that asks the user to select from a list of choices.
  *
- * **Usage Example:**
+ * @remarks
+ * This example shows creating a choice prompt with a custom validator that re-prompts using 
+ * different prompt text if the users utterance doesn't match a choice:
  *
  * ```JavaScript
  * const { createChoicePrompt } = require('botbuilder-prompts');

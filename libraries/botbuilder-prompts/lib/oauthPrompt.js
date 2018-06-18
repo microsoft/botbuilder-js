@@ -10,40 +10,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const botbuilder_1 = require("botbuilder");
 const internal_1 = require("./internal");
 /**
- * :package: **botbuilder-prompts**
- *
  * Creates a new prompt that asks the user to sign in using the Bot Frameworks Single Sign On (SSO)
  * service.
  *
- * **Usage Example:**
+ * @remarks
+ * This example shows creating an OAuth prompt:
  *
  * ```JavaScript
- * async function ensureLogin(context, state, botLogic) {
- *    const now = new Date().getTime();
- *    if (state.token && now < (new Date(state.token.expiration).getTime() - 60000)) {
- *       return botLogic(context);
- *    } else {
- *       const loginPrompt = createOAuthPrompt({
- *           connectionName: 'GitConnection',
- *           title: 'Login To GitHub'
- *       });
- *       const token = await state.loginActive ? loginPrompt.recognize(context) : loginPrompt.getUserToken(context);
- *       if (token) {
- *           state.loginActive = false;
- *           state.token = token;
- *           return botLogic(context);
- *       } else if (context.activity.type === 'message') {
- *           if (!state.loginActive) {
- *               state.loginActive = true;
- *               state.loginStart = now;
- *               await loginPrompt.prompt(context);
- *           } else if (now >= (state.loginStart + (5 * 60 * 1000))) {
- *               state.loginActive = false;
- *               await context.sendActivity(`We're having a problem logging you in. Please try again later.`);
- *           }
- *       }
- *    }
- * }
+ * const { createOAuthPrompt } = require('botbuilder-prompts');
+ *
+ * const loginPrompt = createOAuthPrompt({
+ *    connectionName: 'GitConnection',
+ *    title: 'Login To GitHub'
+ * });
  * ```
  * @param O (Optional) type of result returned by the `recognize()` method. This defaults to an instance of `TokenResponse` but can be changed by the prompts custom validator.
  * @param settings Configuration settings for the OAuthPrompt.
@@ -72,7 +51,32 @@ function createOAuthPrompt(settings, validator) {
                     }
                 }
                 // Send prompt
-                return internal_1.sendPrompt(context, prompt);
+                return Promise.resolve(prompt)
+                    .then((p) => {
+                    switch (context.activity.channelId) {
+                        case "msteams":
+                        case "cortana":
+                        case "skype":
+                        case "skypeforbusiness":
+                            return context.adapter.getSignInLink(context, settings.connectionName).then((link) => {
+                                p.attachments.forEach(a => {
+                                    if (a.contentType === botbuilder_1.CardFactory.contentTypes.oauthCard) {
+                                        const card = a.content;
+                                        const title = card.buttons[0].title;
+                                        a.contentType = botbuilder_1.CardFactory.contentTypes.signinCard;
+                                        a.content = {
+                                            text: card.text,
+                                            buttons: [{ type: botbuilder_1.ActionTypes.Signin, title: title, value: link }]
+                                        };
+                                    }
+                                });
+                                return p;
+                            });
+                        default:
+                            return p;
+                    }
+                })
+                    .then((p) => internal_1.sendPrompt(context, p));
             }
             catch (err) {
                 return Promise.reject(err);
@@ -86,13 +90,18 @@ function createOAuthPrompt(settings, validator) {
             // Attempt to get the token
             return Promise.resolve()
                 .then(() => {
+                const adapter = context.adapter;
                 if (isTokenResponseEvent(context)) {
                     return Promise.resolve(context.activity.value);
+                }
+                else if (isTeamsVerificationInvoke(context)) {
+                    const code = context.activity.value.state;
+                    return context.sendActivity({ type: 'invokeResponse', value: { status: 200 } })
+                        .then(() => adapter.getUserToken(context, settings.connectionName, code));
                 }
                 else if (context.activity.type === botbuilder_1.ActivityTypes.Message) {
                     const matched = /(\d{6})/.exec(context.activity.text);
                     if (matched && matched.length > 1) {
-                        const adapter = context.adapter;
                         return adapter.getUserToken(context, settings.connectionName, matched[1]);
                     }
                     else {
@@ -126,8 +135,20 @@ function createOAuthPrompt(settings, validator) {
     };
 }
 exports.createOAuthPrompt = createOAuthPrompt;
+/**
+ * @private
+ * @param context
+ */
 function isTokenResponseEvent(context) {
     const a = context.activity;
     return (a.type === botbuilder_1.ActivityTypes.Event && a.name === 'tokens/response');
+}
+/**
+ * @private
+ * @param context
+ */
+function isTeamsVerificationInvoke(context) {
+    const a = context.activity;
+    return (a.type === botbuilder_1.ActivityTypes.Invoke && a.name === 'signin/verifyState');
 }
 //# sourceMappingURL=oauthPrompt.js.map

@@ -12,67 +12,67 @@ import { PromptOptions, ChoicePromptOptions } from './prompts/index';
 import { Choice } from 'botbuilder-prompts';
 
 /**
- * :package: **botbuilder-dialogs**
+ * A context object used to manipulate a dialog stack.
  * 
- * Result returned to the caller of one of the various stack manipulation methods and used to 
- * return the result from a final call to `DialogContext.end()` to the bots logic.
- */
-export interface DialogResult<T> {
-    /** This will be `true` if there is still an active dialog on the stack. */
-    active: boolean;
-
-    /** 
-     * Result returned by a dialog that was just ended.  This will only be populated in certain
-     * cases: 
-     * 
-     * - The bot calls `dc.begin()` to start a new dialog and the dialog ends immediately.
-     * - The bot calls `dc.continue()` and a dialog that was active ends.
-     * 
-     * In all cases where it's populated, [active](#active) will be `false`. 
-     */
-    result: T|undefined;
-}
-
-/**
- * :package: **botbuilder-dialogs**
+ * @remarks
+ * This is typically created through a call to `DialogSet.createContext()` and is then passed 
+ * through to all of the bots dialogs and waterfall steps.
  * 
- * 
+ * ```JavaScript
+ * const conversation = conversationState.get(context);
+ * const dc = dialogs.createContext(context, conversation);  
+ * ```
  * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
  */
 export class DialogContext<C extends TurnContext> {
-    private finalResult: any = undefined;
-    
+    /** Current dialog stack. */
+    public readonly stack: DialogInstance[];
+
      /**
       * Creates a new DialogContext instance.
       * @param dialogs Parent dialog set.
       * @param context Context for the current turn of conversation with the user.
-      * @param stack Current dialog stack.
+      * @param state State object being used to persist the dialog stack.
+      * @param onCompleted (Optional) handler to call when the the last dialog on the stack completes.
+      * @param onCompleted.result The result returned by the dialog that just completed.
       */
-    constructor(public readonly dialogs: DialogSet<C>, public readonly context: C, public readonly stack: DialogInstance[]) { }
-
-    /** Returns the cached instance of the active dialog on the top of the stack or `undefined` if the stack is empty. */
-    public get instance(): DialogInstance|undefined {
-        return this.stack.length > 0 ? this.stack[this.stack.length - 1] : undefined;
+    constructor(public readonly dialogs: DialogSet<C>, public readonly context: C, state: object, private onCompleted?: (result: any) => void) { 
+        if (!Array.isArray(state['dialogStack'])) { state['dialogStack'] = [] } 
+        this.stack = state['dialogStack'];
     }
 
     /** 
-     * Returns a structure that indicates whether there is still an active dialog on the stack 
-     * along with the result returned by a dialog that just ended.
+     * Returns the cached instance of the active dialog on the top of the stack or `undefined` if 
+     * the stack is empty.
+     * 
+     * @remarks
+     * Within a dialog or waterfall step this can be used to access the active dialogs state object:
+     * 
+     * ```JavaScript
+     * dc.activeDialog.state.profile = {};
+     * ```
+     * 
+     * Within the bots routing logic this can be used to determine if there's an active dialog on 
+     * the stack:
+     * 
+     * ```JavaScript
+     * if (!dc.activeDialog) {
+     *     await dc.context.sendActivity(`No dialog is active`);
+     *     return;
+     * }
+     * ``` 
      */
-    public get dialogResult(): DialogResult<any> {
-        return {
-            active: this.stack.length > 0,
-            result: this.finalResult
-        };
+    public get activeDialog(): DialogInstance|undefined {
+        return this.stack.length > 0 ? this.stack[this.stack.length - 1] : undefined;
     }
 
     /**
      * Pushes a new dialog onto the dialog stack.
      * 
-     * **Example usage:**
+     * @remarks
+     * This example starts a 'greeting' dialog and passes it the current user object:
      * 
      * ```JavaScript
-     * const dc = dialogs.createContext(context, stack);
      * await dc.begin('greeting', user);
      * ```
      * @param dialogId ID of the dialog to start.
@@ -99,10 +99,11 @@ export class DialogContext<C extends TurnContext> {
     }
 
     /**
-     * Helper function to simplify formatting the options for calling a prompt dialog. This helper will
-     * construct a `PromptOptions` structure and then call [begin(context, dialogId, options)](#begin).
+     * Helper function to simplify formatting the options for calling a prompt dialog. 
      * 
-     * **Example usage:**
+     * @remarks
+     * This is a lightweight wrapper abound [begin()](#begin). It fills in a `PromptOptions` 
+     * structure and then passes it through to `dc.begin(dialogId, options)`.
      * 
      * ```JavaScript
      * await dc.prompt('confirmPrompt', `Are you sure you'd like to quit?`);
@@ -120,25 +121,30 @@ export class DialogContext<C extends TurnContext> {
     }
 
     /**
-     * Continues execution of the active dialog, if there is one, by passing the context object to 
-     * its `Dialog.continue()` method. You can check `context.responded` after the call completes
-     * to determine if a dialog was run and a reply was sent to the user.
+     * Continues execution of the active dialog, if there is one.
      * 
-     * **Example usage:**
+     * @remarks
+     * The stack will be inspected and the active dialog will be retrieved using `DialogSet.find()`. 
+     * The dialog will then have its optional `continueDialog()` method executed. You can check 
+     * `context.responded` after the call completes to determine if a dialog was run and a reply 
+     * was sent to the user.
+     * 
+     * > [!NOTE]
+     * > If the active dialog fails to implement `continueDialog()` the [end()](#end) method will 
+     * > be automatically called. This is done as a safety mechanism to avoid users getting trapped
+     * > within a dialog.
      * 
      * ```JavaScript
-     * const dc = dialogs.createContext(context, dialogStack);
-     * return dc.continue().then(() => {
-     *      if (!context.responded) {
-     *          await dc.begin('fallback');
-     *      }
-     * });
+     * await dc.continue();
+     * if (!context.responded) {
+     *     await dc.context.sendActivity(`I'm sorry. I didn't understand.`);
+     * }
      * ```
      */
     public continue(): Promise<any> {
         try {
             // Check for a dialog on the stack
-            const instance = this.instance;
+            const instance = this.activeDialog;
             if (instance) {
 
                 // Lookup dialog
@@ -163,21 +169,22 @@ export class DialogContext<C extends TurnContext> {
 
     /**
      * Ends a dialog by popping it off the stack and returns an optional result to the dialogs
-     * parent. The parent dialog is the dialog the started the on being ended via a call to 
-     * either [begin()](#begin) or [prompt()](#prompt). 
+     * parent.
      * 
-     * The parent dialog will have its `Dialog.resume()` method invoked with any returned 
-     * result. If the parent dialog hasn't implemented a `resume()` method then it will be
-     * automatically ended as well and the result passed to its parent. If there are no more
-     * parent dialogs on the stack then processing of the turn will end. 
+     * @remarks
+     * The parent dialog is the dialog the started the one being ended via a call to either 
+     * [begin()](#begin) or [prompt()](#prompt). 
+     * 
+     * The parent dialog will have its `resumeDialog()` method invoked with any returned result. 
+     * If the parent dialog hasn't implemented resumeDialog() then it will be popped off the stack
+     * as well and any result will be passed it its parent. If there are no more parent dialogs on 
+     * the stack then processing of the turn will end. 
       * 
-     * **Example usage:**
-     * 
      * ```JavaScript
      * dialogs.add('showUptime', [
-     *      function (dc) {
+     *      async function (dc) {
      *          const elapsed = new Date().getTime() - started;
-     *          dc.batch.reply(`I've been running for ${elapsed / 1000} seconds.`);
+     *          await dc.context.sendActivity(`I've been running for ${elapsed / 1000} seconds.`);
      *          await dc.end(elapsed);
      *      }
      * ]);
@@ -191,7 +198,7 @@ export class DialogContext<C extends TurnContext> {
             if (this.stack.length > 0) { this.stack.pop() }
 
             // Resume previous dialog
-            const instance = this.instance;
+            const instance = this.activeDialog;
             if (instance) {
 
                 // Lookup dialog
@@ -207,8 +214,10 @@ export class DialogContext<C extends TurnContext> {
                     return this.end(result);
                 }
             } else {
-                // Remember final result
-                this.finalResult = result;
+                // Signal completion
+                if (this.onCompleted) {
+                    this.onCompleted(result);
+                }
                 return Promise.resolve();
             }
         } catch(err) {
@@ -219,7 +228,9 @@ export class DialogContext<C extends TurnContext> {
     /**
      * Deletes any existing dialog stack thus cancelling all dialogs on the stack.
      * 
-     * **Example usage:**
+     * @remarks
+     * As a best practice you'll typically want to call endAll() from within your bots interruption
+     * logic before starting any new dialogs: 
      * 
      * ```JavaScript
      * await dc.endAll().begin('bookFlightTask');
@@ -234,20 +245,33 @@ export class DialogContext<C extends TurnContext> {
     }
 
     /**
-     * Ends the active dialog and starts a new dialog in its place. This is particularly useful 
-     * for creating loops or redirecting to another dialog.
+     * Ends the active dialog and starts a new dialog in its place. 
      * 
-     * **Example usage:**
+     * @remarks
+     * This method is particularly useful for creating conversational loops within your bot:
      * 
      * ```JavaScript
-     * dialogs.add('loop', [
-     *      function (dc, args) {
-     *          dc.instance.state = args;
-     *          await dc.begin(args.dialogId);
+     * dialogs.add('forEach', [
+     *      async function (dc, args) {
+     *          // Validate args
+     *          if (!args || !args.dialogId || !Array.isArray(args.items)) { throw new Error(`forEach: invalid args`) }
+     *          if (args.index === undefined) { args.index = 0 }
+     * 
+     *          // Persist args
+     *          dc.activeDialog.state = args;
+     * 
+     *          // Invoke dialog with next item or end
+     *          if (args.index < args.items.length) {
+     *              await dc.begin(args.dialogId, args.items[args.index]);
+     *          } else {
+     *              await dc.end();
+     *          }
      *      },
      *      function (dc) {
-     *          const args = dc.instance.state;
-     *          return dc.replace('loop', args);
+     *          // Next item
+     *          const args = dc.activeDialog.state;
+     *          args.index++;
+     *          return dc.replace('forEach', args);
      *      }
      * ]);
      * ```

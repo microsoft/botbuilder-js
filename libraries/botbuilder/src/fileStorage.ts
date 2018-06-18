@@ -13,11 +13,10 @@ import * as os from 'os';
 import * as filenamify from 'filenamify';
 
 /**
- * :package: **botbuilder**
- * 
  * A file based storage provider. Items will be persisted to a folder on disk.
  *
- * **Usage Example**
+ * @remarks
+ * The following example shows how to construct a configured instance of the provider:
  *
  * ```JavaScript
  * const { FileStorage } = require('botbuilder');
@@ -113,6 +112,10 @@ export class FileStorage implements Storage {
     }
 }
 
+/**
+ * @private
+ * @param filePath 
+ */
 function parseFile(filePath: string): Promise<Object|undefined> {
     return fs.exists(filePath)
         .then((exists) => exists ? fs.readTextFile(filePath) : Promise.resolve(undefined))

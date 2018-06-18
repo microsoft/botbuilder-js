@@ -6,7 +6,13 @@
 import { Activity, TurnContext, ActivityTypes, InputHints } from 'botbuilder';
 
 
- export function sendPrompt(context: TurnContext, prompt: string|Partial<Activity>, speak?: string): Promise<void> {
+/**
+ * @private
+ * @param context 
+ * @param prompt 
+ * @param speak 
+ */
+export function sendPrompt(context: TurnContext, prompt: string|Partial<Activity>, speak?: string): Promise<void> {
     // Compose activity
     const msg: Partial<Activity> = typeof prompt === 'string' ? { text: prompt } : Object.assign({}, prompt);
     if (speak) { msg.speak = speak }
@@ -15,4 +21,4 @@ import { Activity, TurnContext, ActivityTypes, InputHints } from 'botbuilder';
 
     // Send activity and eat response.
     return context.sendActivity(msg).then(() => { });
- }
+}

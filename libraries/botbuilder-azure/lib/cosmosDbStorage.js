@@ -10,12 +10,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const documentdb_1 = require("documentdb");
 /**
  * Middleware that implements a CosmosDB based storage provider for a bot.
- * The ConnectionPolicy delegate can be used to further customize the connection to CosmosDB (Connection mode, retry options, timeouts).
- * More information at http://azure.github.io/azure-documentdb-node/global.html#ConnectionPolicy
+ *
+ * @remarks
+ * The `connectionPolicyConfigurator` handler can be used to further customize the connection to
+ * CosmosDB (Connection mode, retry options, timeouts). More information at
+ * http://azure.github.io/azure-documentdb-node/global.html#ConnectionPolicy
  */
 class CosmosDbStorage {
     /**
-     * Creates a new instance of the storage provider.
+     * Creates a new ConsmosDbStorage instance.
      *
      * @param settings Setting to configure the provider.
      * @param connectionPolicyConfigurator (Optional) An optional delegate that accepts a ConnectionPolicy for customizing policies. More information at http://azure.github.io/azure-documentdb-node/global.html#ConnectionPolicy
@@ -32,11 +35,6 @@ class CosmosDbStorage {
         }
         this.client = new documentdb_1.DocumentClient(settings.serviceEndpoint, { masterKey: settings.authKey }, policy);
     }
-    /**
-     * Loads store items from storage
-     *
-     * @param keys Array of item keys to read from the store.
-     */
     read(keys) {
         if (!keys || keys.length === 0) {
             throw new Error('Please provide at least one key to read from storage.');
@@ -77,11 +75,6 @@ class CosmosDbStorage {
             });
         });
     }
-    /**
-     * Saves store items to storage.
-     *
-     * @param changes Map of items to write to storage.
-     **/
     write(changes) {
         if (!changes) {
             throw new Error('Please provide a StoreItems with changes to persist.');
@@ -118,11 +111,6 @@ class CosmosDbStorage {
             })).then(() => { }); // void
         });
     }
-    /**
-     * Removes store items from storage
-     *
-     * @param keys Array of item keys to remove from the store.
-     **/
     delete(keys) {
         return this.ensureCollectionExists().then(() => Promise.all(keys.map(k => new Promise((resolve, reject) => this.client.deleteDocument(documentdb_1.UriFactory.createDocumentUri(this.settings.databaseId, this.settings.collectionId, sanitizeKey(k)), (err, data) => err && err.code !== 404 ? reject(err) : resolve()))))) // handle notfound as Ok
             .then(() => { }); // void
@@ -139,7 +127,9 @@ class CosmosDbStorage {
     }
 }
 exports.CosmosDbStorage = CosmosDbStorage;
-// Helpers
+/**
+ * @private
+ */
 function getOrCreateDatabase(client, databaseId) {
     let querySpec = {
         query: 'SELECT * FROM root r WHERE r.id = @id',
@@ -160,6 +150,9 @@ function getOrCreateDatabase(client, databaseId) {
         });
     });
 }
+/**
+ * @private
+ */
 function getOrCreateCollection(client, databaseLink, collectionId) {
     let querySpec = {
         query: 'SELECT * FROM root r WHERE r.id=@id',
@@ -179,9 +172,12 @@ function getOrCreateCollection(client, databaseLink, collectionId) {
         });
     });
 }
-// Converts the key into a DocumentID that can be used safely with CosmosDB.
-// The following characters are restricted and cannot be used in the Id property: '/', '\', '?', '#'
-// More information at https://docs.microsoft.com/en-us/dotnet/api/microsoft.azure.documents.resource.id?view=azure-dotnet#remarks
+/**
+ * @private
+ * Converts the key into a DocumentID that can be used safely with CosmosDB.
+ * The following characters are restricted and cannot be used in the Id property: '/', '\', '?', '#'
+ * More information at https://docs.microsoft.com/en-us/dotnet/api/microsoft.azure.documents.resource.id?view=azure-dotnet#remarks
+ */
 function sanitizeKey(key) {
     let badChars = ['\\', '?', '/', '#', '\t', '\n', '\r'];
     let sb = '';

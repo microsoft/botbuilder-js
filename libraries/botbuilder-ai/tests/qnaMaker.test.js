@@ -3,15 +3,16 @@ const { TestAdapter, TurnContext } = require('botbuilder');
 const ai = require('../');
 
 // Save test keys
-const knowlegeBaseId = process.env.QNAKNOWLEDGEBASEID;
-const subscriptionKey = process.env.QNASUBSCRIPTIONKEY;
+const knowledgeBaseId = process.env.QNAKNOWLEDGEBASEID;
+const endpointKey = process.env.QNAENDPOINTKEY;
+const hostname = process.env.QNAHOSTNAME;
 
 class TestContext extends TurnContext {
     constructor(request) {
         super(new TestAdapter(), request);
-        this.sent = undefined;
+        this.sent = [];
         this.onSendActivities((context, activities, next) => {
-            this.sent = activities;
+            this.sent = this.sent.concat(activities);
             context.responded = true;
         });
     }
@@ -19,21 +20,30 @@ class TestContext extends TurnContext {
 
 describe('QnAMaker', function () {
     this.timeout(10000);
-    if (!knowlegeBaseId) {
+    if (!knowledgeBaseId) {
         console.warn('WARNING: skipping QnAMaker test suite because QNAKNOWLEDGEBASEID environment variable is not defined');
         return;
     }
-    if (!subscriptionKey) {
-        console.warn('WARNING: skipping QnAMaker test suite because QNASUBSCRIPTIONKEY environment variable is not defined');
+    if (!endpointKey) {
+        console.warn('WARNING: skipping QnAMaker test suite because QNAENDPOINTKEY environment variable is not defined');
+        return;
+    }
+    if (!hostname) {
+        console.warn('WARNING: skipping QnAMaker test suite because QNAHOSTNAME environment variable is not defined');
         return;
     }
 
+    // Generate endpoints
+    const endpoint = {
+        knowledgeBaseId: knowledgeBaseId,
+        endpointKey: endpointKey,
+        host: hostname
+    }
+    const endpointString = `POST /knowledgebases/${knowledgeBaseId}/generateAnswer\r\nHost: ${hostname}\r\nAuthorization: EndpointKey ${endpointKey}\r\nContent-Type: application/json\r\n{"question":"hi"}`;
+    const unixEndpointString = `POST /knowledgebases/${knowledgeBaseId}/generateAnswer\nHost: ${hostname}\nAuthorization: EndpointKey ${endpointKey}\nContent-Type: application/json\n{"question":"hi"}`;
+
     it('should work free standing', function () {
-        var qna = new ai.QnAMaker({
-            knowledgeBaseId: knowlegeBaseId,
-            subscriptionKey: subscriptionKey,
-            top: 1
-        });
+        const qna = new ai.QnAMaker(endpoint, { top: 1 });
 
         return qna.generateAnswer(`how do I clean the stove?`)
             .then(res => {
@@ -48,30 +58,22 @@ describe('QnAMaker', function () {
                 assert(res[0].answer.startsWith("BaseCamp: You can use a damp rag to clean around the Power Pack"));
             });
     });
-
+    
     it('should run as middleware in fallback mode', function (done) {
         const context = new TestContext({ text: `how do I clean the stove?`, type: 'message' });
-        const qnaMaker = new ai.QnAMaker({
-            knowledgeBaseId: knowlegeBaseId,
-            subscriptionKey: subscriptionKey,
-            top: 1
-        });
+        const qna = new ai.QnAMaker(endpoint, { top: 1 });
 
-        qnaMaker.onTurn(context, () => Promise.resolve()).then(() => {
-            assert(Array.isArray(context.sent) && context.sent.length === 1, `reply not sent.`);
+        qna.onTurn(context, () => Promise.resolve()).then(() => {
+            assert(Array.isArray(context.sent) && context.sent.length === 2, `reply not sent.`);
             done();
         });
     });
 
     it('should only call service if no other reply sent when running in fallback mode', function (done) {
         const context = new TestContext({ text: `how do I clean the stove?`, type: 'message' });
-        const qnaMaker = new ai.QnAMaker({
-            knowledgeBaseId: knowlegeBaseId,
-            subscriptionKey: subscriptionKey,
-            top: 1
-        });
+        const qna = new ai.QnAMaker(endpoint, { top: 1 });
 
-        qnaMaker.onTurn(context, () => context.sendActivity('foo')).then(() => {
+        qna.onTurn(context, () => context.sendActivity('foo')).then(() => {
             assert(Array.isArray(context.sent) && context.sent[0].text === 'foo', `service must have been called.`);
             done();
         });
@@ -80,19 +82,14 @@ describe('QnAMaker', function () {
     it('should run as middleware in intercept mode', function (done) {
         let intercepted = true;
         const context = new TestContext({ text: `how do I clean the stove?`, type: 'message' });
-        const qnaMaker = new ai.QnAMaker({
-            knowledgeBaseId: knowlegeBaseId,
-            subscriptionKey: subscriptionKey,
-            top: 1,
-            answerBeforeNext: true
-        });
+        const qna = new ai.QnAMaker(endpoint, { top: 1, answerBeforeNext: true });
 
-        qnaMaker.onTurn(context, () => {
+        qna.onTurn(context, () => {
             intercepted = false;
             return  Promise.resolve();
         }).then(() => {
-            assert(intercepted, `not intercepted.`)
-            assert(Array.isArray(context.sent) && context.sent.length === 1, `reply not sent.`);
+            assert(intercepted, `not intercepted.`);
+            assert(Array.isArray(context.sent) && context.sent.length === 2, `reply not sent.`);
             done();
         });
     });
@@ -100,14 +97,9 @@ describe('QnAMaker', function () {
     it('should bypass calling service in middleware for non-message activities.', function (done) {
         let intercepted = true;
         const context = new TestContext({ text: `how do I clean the stove?`, type: 'foo' });
-        const qnaMaker = new ai.QnAMaker({
-            knowledgeBaseId: knowlegeBaseId,
-            subscriptionKey: subscriptionKey,
-            top: 1,
-            answerBeforeNext: true
-        });
+        const qna = new ai.QnAMaker(endpoint, { top: 1, answerBeforeNext: true });
 
-        qnaMaker.onTurn(context, () => {
+        qna.onTurn(context, () => {
             intercepted = false;
             return  Promise.resolve();
         }).then(() => {
@@ -119,14 +111,9 @@ describe('QnAMaker', function () {
     it('should continue on to bot logic when run as intercept middleware and no answer found', function (done) {
         let intercepted = true;
         const context = new TestContext({ text: `foo`, type: 'message' });
-        const qnaMaker = new ai.QnAMaker({
-            knowledgeBaseId: knowlegeBaseId,
-            subscriptionKey: subscriptionKey,
-            top: 1,
-            answerBeforeNext: true
-        });
+        const qna = new ai.QnAMaker(endpoint, { top: 1, answerBeforeNext: true });
 
-        qnaMaker.onTurn(context, () => {
+        qna.onTurn(context, () => {
             intercepted = false;
             return  Promise.resolve();
         }).then(() => {
@@ -136,11 +123,7 @@ describe('QnAMaker', function () {
     });
     
     it('should return 0 answers for an empty or undefined utterance', function () {
-        var qna = new ai.QnAMaker({
-            knowledgeBaseId: knowlegeBaseId,
-            subscriptionKey: subscriptionKey,
-            top: 1
-        });
+        const qna = new ai.QnAMaker(endpoint, { top: 1 });
 
         return qna.generateAnswer(``)
             .then(res => {
@@ -154,11 +137,7 @@ describe('QnAMaker', function () {
     });
 
     it('should return 0 answers for questions without an answer.', function () {
-        var qna = new ai.QnAMaker({
-            knowledgeBaseId: knowlegeBaseId,
-            subscriptionKey: subscriptionKey,
-            top: 1
-        });
+        const qna = new ai.QnAMaker(endpoint, { top: 1 });
 
         return qna.generateAnswer(`foo`)
             .then(res => {
@@ -170,48 +149,37 @@ describe('QnAMaker', function () {
                 assert(res.length == 0);
             });
     });
-
-    it('should support changing endpoint', function () {
-        var qna = new ai.QnAMaker({
-            knowledgeBaseId: knowlegeBaseId,
-            subscriptionKey: subscriptionKey,
-            serviceEndpoint: 'https://westus.api.cognitive.microsoft.com/',
-            top: 1
-        });
-
-        return qna.generateAnswer(`how do I clean the stove?`).then(res => {
-            assert(res);
-            assert(res.length == 1);
-            assert(res[0].answer.startsWith("BaseCamp: You can use a damp rag to clean around the Power Pack"));
-        });
-    });
     
-    it('should add trailing "/" to changed endpoint', function () {
-        var qna = new ai.QnAMaker({
-            knowledgeBaseId: knowlegeBaseId,
-            subscriptionKey: subscriptionKey,
-            serviceEndpoint: 'https://westus.api.cognitive.microsoft.com',
-            top: 1
-        });
-
-        return qna.generateAnswer(`how do I clean the stove?`).then(res => {
-            assert(res);
-            assert(res.length == 1);
-            assert(res[0].answer.startsWith("BaseCamp: You can use a damp rag to clean around the Power Pack"));
-        });
-    });
-
     it('should return "false" from answer() if no good answers found', function (done) {
         const context = new TestContext({ text: `foo`, type: 'message' });
-        const qnaMaker = new ai.QnAMaker({
-            knowledgeBaseId: knowlegeBaseId,
-            subscriptionKey: subscriptionKey,
-            top: 1
-        });
+        const qna = new ai.QnAMaker(endpoint, { top: 1 });
 
-        qnaMaker.answer(context).then((found) => {
+        qna.answer(context).then((found) => {
             assert(!found);
             done();
         });
+    });
+
+    it('should emit trace info once per call to Answer', function (done) {
+        const context = new TestContext({ text: `how do I clean the stove?`, type: 'message'});
+        const qna = new ai.QnAMaker(endpoint, { top: 1 });
+
+        qna.answer(context)
+            .then((found) => {
+                assert(found);
+                let qnaMakerTraceActivies = context.sent.filter(s => s.type === 'trace' && s.name === 'QnAMakerMiddleware');
+                assert(qnaMakerTraceActivies.length === 1);
+                traceActivity = qnaMakerTraceActivies[0];
+                assert(traceActivity.type === 'trace');
+                assert(traceActivity.name === 'QnAMakerMiddleware');
+                assert(traceActivity.label === 'QnAMaker Trace');
+                assert(traceActivity.valueType === 'https://www.qnamaker.ai/schemas/trace');
+                assert(traceActivity.value);
+                assert(traceActivity.value.message);
+                assert(traceActivity.value.queryResults);
+                assert(traceActivity.value.knowledgeBaseId === knowledgeBaseId);
+                assert(traceActivity.value.scoreThreshold);
+                done();
+            });
     });
 });

@@ -8,16 +8,19 @@
 import { TranscriptStore, Activity, PagedResult, Transcript } from 'botbuilder';
 import { BlobStorageSettings } from "./blobStorage";
 /**
- * The blob transcript store stores transcripts in an Azure Blob container where each activity is stored as json blob in structure of
- * container/{channelId]/{conversationId}/{Timestamp.ticks}-{activity.id}.json
+ * Stores transcripts in an Azure Blob container.
+ *
+ * @remarks
+ * Each activity is stored as JSON blob with a structure of
+ * `container/{channelId]/{conversationId}/{Timestamp.ticks}-{activity.id}.json`.
  */
 export declare class AzureBlobTranscriptStore implements TranscriptStore {
     private settings;
     private client;
     private pageSize;
     /**
-     * Creates an instance of AzureBlobTranscriptStore
-     * @param settings Settings for configuring an instance of BlobStorage
+     * Creates a new AzureBlobTranscriptStore instance.
+     * @param settings Settings required for configuring an instance of BlobStorage
      */
     constructor(settings: BlobStorageSettings);
     /**

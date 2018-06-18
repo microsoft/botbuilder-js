@@ -1,11 +1,10 @@
 import { Activity, CardAction, Attachment, InputHints } from 'botbuilder-core';
 /**
- * :package: **botbuilder-core-extensions**
- *
  * A set of utility functions to assist with the formatting of the various message types a bot can
  * return.
  *
- * **Usage Example**
+ * @remarks
+ * The following example shows sending a message containing a single hero card:
  *
  * ```JavaScript
  * const message = MessageFactory.attachment(
@@ -22,7 +21,8 @@ export declare class MessageFactory {
     /**
      * Returns a simple text message.
      *
-     * **Usage Example**
+     * @remarks
+     * This example shows sending a simple text message:
      *
      * ```JavaScript
      * const message = MessageFactory.text('Greetings from example message');
@@ -31,11 +31,14 @@ export declare class MessageFactory {
      *
      * @param text Text to include in the message.
      * @param speak (Optional) SSML to include in the message.
-     * @param inputHint (Optional) input hint for the message.
+     * @param inputHint (Optional) input hint for the message. Defaults to `acceptingInput`.
      */
     static text(text: string, speak?: string, inputHint?: InputHints | string): Partial<Activity>;
     /**
      * Returns a message that includes a set of suggested actions and optional text.
+     *
+     * @remarks
+     * This example shows sending a message with suggested actions:
      *
      * ```JavaScript
      * const message = MessageFactory.suggestedActions(['red', 'green', 'blue'], `Choose a color`);
@@ -44,13 +47,14 @@ export declare class MessageFactory {
      * @param actions Array of card actions or strings to include. Strings will be converted to `messageBack` actions.
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
-     * @param inputHint (Optional) input hint for the message.
+     * @param inputHint (Optional) input hint for the message. Defaults to `acceptingInput`.
      */
     static suggestedActions(actions: (CardAction | string)[], text?: string, speak?: string, inputHint?: InputHints | string): Partial<Activity>;
     /**
      * Returns a single message activity containing an attachment.
      *
-     * **Usage Example**
+     * @remarks
+     * This example shows sending a message with a hero card attachment:
      *
      * ```JavaScript
      * const message = MessageFactory.attachment(
@@ -66,13 +70,14 @@ export declare class MessageFactory {
      * @param attachment Adaptive card to include in the message.
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
-     * @param inputHint (Optional) input hint for the message.
+     * @param inputHint (Optional) input hint for the message. Defaults to `acceptingInput`.
      */
     static attachment(attachment: Attachment, text?: string, speak?: string, inputHint?: InputHints | string): Partial<Activity>;
     /**
      * Returns a message that will display a set of attachments in list form.
      *
-     * **Usage Example**
+     * @remarks
+     * This example shows sending a message with a list of hero cards:
      *
      * ```JavaScript
      * const message = MessageFactory.list([
@@ -91,7 +96,8 @@ export declare class MessageFactory {
     /**
      * Returns a message that will display a set of attachments using a carousel layout.
      *
-     * **Usage Example**
+     * @remarks
+     * This example shows sending a message with a carousel of hero cards:
      *
      * ```JavaScript
      * const message = MessageFactory.carousel([
@@ -111,7 +117,8 @@ export declare class MessageFactory {
     /**
      * Returns a message that will display a single image or video to a user.
      *
-     * **Usage Example**
+     * @remarks
+     * This example shows sending an image to the user:
      *
      * ```JavaScript
      * const message = MessageFactory.contentUrl('https://example.com/hawaii.jpg', 'image/jpeg', 'Hawaii Trip', 'A photo from our family vacation.');

@@ -9,13 +9,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const memoryStorage_1 = require("./memoryStorage");
 /**
- * :package: **botbuilder-core-extensions**
+ * Storage provider that uses browser local storage.
  *
- * Storage provider that uses browser local storage. This means that anything written to the store
- * will remain persisted until the user manually flushes their browsers cookies and other site
- * data.
- *
- * **Usage Example**
+ * @remarks
+ * Anything written to the store will remain persisted until the user manually flushes their
+ * browsers cookies and other site data.
  *
  * ```JavaScript
  * const { BrowserLocalStorage, UserState } = require('botbuilder');
@@ -31,14 +29,13 @@ class BrowserLocalStorage extends memoryStorage_1.MemoryStorage {
 }
 exports.BrowserLocalStorage = BrowserLocalStorage;
 /**
- * :package: **botbuilder-core-extensions**
+ * Storage provider that uses browser session storage.
  *
- * Storage provider that uses browser session storage. This means that anything written to the
- * store will only be persisted for the lifetime of a single page within a browser tab. The storage
- * will survive page reloads but closing the tab will delete anything persisted by the store and
- * opening a new browser tab will create a new persistance store for the page.
- *
- * **Usage Example**
+ * @remarks
+ * Anything written to the store will only be persisted for the lifetime of a single page within a
+ * browser tab. The storage will survive page reloads but closing the tab will delete anything
+ * persisted by the store and opening a new browser tab will create a new persistance store for the
+ * page.
  *
  * ```JavaScript
  * const { BrowserSessionStorage, ConversationState } = require('botbuilder');

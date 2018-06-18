@@ -9,12 +9,12 @@ import { TurnContext, Middleware } from 'botbuilder-core';
 import { BotState } from './botState';
 import { StoreItem } from './storage';
 /**
- * :package: **botbuilder-core-extensions**
- *
  * Middleware that will call `read()` and `write()` in parallel on multiple `BotState`
  * instances.
  *
- * **Usage Example**
+ * @remarks
+ * This example shows boilerplate code for reading and writing conversation and user state within
+ * a bot:
  *
  * ```JavaScript
  * const { BotStateSet, ConversationState, UserState, MemoryStorage } = require('botbuilder');
@@ -46,31 +46,14 @@ export declare class BotStateSet implements Middleware {
     onTurn(context: TurnContext, next: () => Promise<void>): Promise<void>;
     /**
      * Registers `BotState` middleware plugins with the set.
-     *
-     * **Usage Example**
-     *
-     * ```JavaScript
-     * const stateSet = new BotStateSet();
-     *
-     * // Add conversation state
-     * const conversationState = new ConversationState();
-     * stateSet.use(conversationState);
-     *
-     * // Add user state
-     * const userState = new UserState();
-     * stateSet.use(userState);
-     *
-     * // Register middleware
-     * adapter.use(stateSet);
-     * ```
      * @param middleware One or more BotState plugins to register.
      */
     use(...middleware: BotState[]): this;
     /**
-     * Calls `BotState.read()` on all of the BotState plugins in the set. This will trigger all of
-     * the plugins to read in their state in parallel.
+     * Calls `BotState.read()` on all of the BotState plugins in the set.
      *
-     * **Usage Example**
+     * @remarks
+     * This will trigger all of the plugins to read in their state in parallel.
      *
      * ```JavaScript
      * await stateSet.readAll(context);
@@ -80,10 +63,10 @@ export declare class BotStateSet implements Middleware {
      */
     readAll(context: TurnContext, force?: boolean): Promise<StoreItem[]>;
     /**
-     * Calls `BotState.write()` on all of the BotState plugins in the set. This will trigger all of
-     * the plugins to write out their state in parallel.
+     * Calls `BotState.write()` on all of the BotState plugins in the set.
      *
-     * **Usage Example**
+     * @remarks
+     * This will trigger all of the plugins to write out their state in parallel.
      *
      * ```JavaScript
      * await stateSet.writeAll(context);

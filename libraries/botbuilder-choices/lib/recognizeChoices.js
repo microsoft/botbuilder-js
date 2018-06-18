@@ -10,18 +10,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const findChoices_1 = require("./findChoices");
 const Recognizers = require("@microsoft/recognizers-text-number");
 /**
- * :package: **botbuilder-choices**
+ * High level function for recognizing a choice in a users utterance.
  *
- * High level function for recognizing a choice in a users utterance. This is layered above the
- * `findChoices()` function and adds logic to let the user specify their choice by index (they can
- * say "one" to pick `choice[0]`) or ordinal position (they can say "the second one" to pick
- * `choice[1]`.) The users utterance is recognized in the following order:
+ * @remarks
+ * This is layered above the `findChoices()` function and adds logic to let the user specify their
+ * choice by index (they can say "one" to pick `choice[0]`) or ordinal position (they can say "the
+ * second one" to pick `choice[1]`.) The users utterance is recognized in the following order:
  *
  * - By name using `findChoices()`.
  * - By 1's based ordinal position.
  * - By 1's based index position.
- *
- * **Usage Example**
  *
  * ```JavaScript
  * const { recognizeChoices } = require('botbuilder-choices');

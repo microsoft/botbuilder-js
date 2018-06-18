@@ -9,3 +9,7 @@ export * from './luisRecognizer';
 export * from './qnaMaker';
 export * from './languageTranslator';
 export * from './localeConverter';
+export * from './dateTimeSpec';
+export * from './instanceData';
+export * from './intentData';
+export * from './numberWithUnits';

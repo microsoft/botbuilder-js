@@ -1,5 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @private
+ */
 exports.channels = {
     facebook: 'facebook',
     skype: 'skype',
@@ -16,6 +19,11 @@ exports.channels = {
     console: 'console',
     cortana: 'cortana'
 };
+/**
+ * @private
+ * @param channelId
+ * @param buttonCnt
+ */
 function supportsSuggestedActions(channelId, buttonCnt = 100) {
     switch (channelId) {
         case exports.channels.facebook:
@@ -32,6 +40,11 @@ function supportsSuggestedActions(channelId, buttonCnt = 100) {
     }
 }
 exports.supportsSuggestedActions = supportsSuggestedActions;
+/**
+ * @private
+ * @param channelId
+ * @param buttonCnt
+ */
 function supportsCardActions(channelId, buttonCnt = 100) {
     switch (channelId) {
         case exports.channels.facebook:
@@ -49,6 +62,10 @@ function supportsCardActions(channelId, buttonCnt = 100) {
     }
 }
 exports.supportsCardActions = supportsCardActions;
+/**
+ * @private
+ * @param channelId
+ */
 function hasMessageFeed(channelId) {
     switch (channelId) {
         case exports.channels.cortana:
@@ -58,10 +75,18 @@ function hasMessageFeed(channelId) {
     }
 }
 exports.hasMessageFeed = hasMessageFeed;
+/**
+ * @private
+ * @param channelId
+ */
 function maxActionTitleLength(channelId) {
     return 20;
 }
 exports.maxActionTitleLength = maxActionTitleLength;
+/**
+ * @private
+ * @param context
+ */
 function getChannelId(context) {
     return context.activity.channelId || '';
 }

@@ -19,9 +19,18 @@ const botbuilder_1 = require("botbuilder");
 const DateTimeRecognizers = require("@microsoft/recognizers-text-date-time");
 const moment = require("moment");
 /**
- * The LocaleConverter converts all locales in a message to a given locale.
+ * Middleware used to convert locale specific entities, like dates and times, from one locale
+ * to another.
+ *
+ * @remarks
+ * When added to the bot adapters middleware pipeline it will attempt to recognize entities in
+ * incoming message activities and then automatically convert those entities to the target locale.
  */
 class LocaleConverter {
+    /**
+     * Creates a new LocaleConverter instance.
+     * @param settings
+     */
     constructor(settings) {
         this.localeConverter = new MicrosoftLocaleConverter();
         this.toLocale = settings.toLocale;
@@ -71,6 +80,9 @@ class LocaleConverter {
     }
 }
 exports.LocaleConverter = LocaleConverter;
+/**
+ * @private
+ */
 class MicrosoftLocaleConverter {
     constructor() {
         this.mapLocaleToFunction = {};
@@ -132,7 +144,7 @@ class MicrosoftLocaleConverter {
                     momentTimeEnd = moment(resolutionValues["end"]).toDate();
                     foundType = 'date';
                 }
-                else { // Must be a time-only result with no date
+                else {
                     momentTime = new Date();
                     momentTime.setHours(parseInt(String(resolutionValues['start']).substr(0, 2)));
                     momentTime.setMinutes(parseInt(String(resolutionValues['start']).substr(3, 2)));
@@ -158,7 +170,7 @@ class MicrosoftLocaleConverter {
                     momentTime = moment(resolutionValues["value"]).toDate();
                     foundType = 'date';
                 }
-                else { // Must be a time-only result with no date
+                else {
                     momentTime = new Date();
                     momentTime.setHours(parseInt(String(resolutionValues['value']).substr(0, 2)));
                     momentTime.setMinutes(parseInt(String(resolutionValues['value']).substr(3, 2)));
@@ -239,12 +251,18 @@ class MicrosoftLocaleConverter {
         return Promise.resolve(Object.keys(this.mapLocaleToFunction));
     }
 }
+/**
+ * @private
+ */
 class DateAndTimeLocaleFormat {
     constructor(timeFormat, dateFormat) {
         this.timeFormat = timeFormat;
         this.dateFormat = dateFormat;
     }
 }
+/**
+ * @private
+ */
 class TextAndDateTime {
 }
 //# sourceMappingURL=localeConverter.js.map

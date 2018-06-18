@@ -7,8 +7,6 @@
  */
 
  /**
- * :package: **botbuilder-choices**
- * 
  * Individual token returned by a `TokenizerFunction`.
  */
 export interface Token {
@@ -26,25 +24,27 @@ export interface Token {
 }
 
 /**
- * :package: **botbuilder-choices**
- * 
  * Signature for an alternate word breaker that can be passed to `recognizeChoices()`, 
- * `findChoices()`, or `findValues()`. The `defaultTokenizer()` is fairly simple and only breaks
- * on spaces and punctuation.
+ * `findChoices()`, or `findValues()`. 
+ * 
+ * ```TypeScript
+ * type TokenizerFunction = (text: string, locale?: string) => Token[];
+ * ``` 
+ *
+ * @remarks
+ * The `defaultTokenizer()` is fairly simple and only breaks on spaces and punctuation.
  * @param TokenizerFunction.text The text to be tokenized.
  * @param TokenizerFunction.locale (Optional) locale of the text if known.  
  */
 export type TokenizerFunction = (text: string, locale?: string) => Token[];
 
 /** 
- * :package: **botbuilder-choices**
+ * Simple tokenizer that breaks on spaces and punctuation.
  * 
- * Simple tokenizer that breaks on spaces and punctuation. The only normalization done is to 
- * lowercase the tokens. Developers can wrap this tokenizer with their own function to perform
- * additional normalization like [stemming](https://github.com/words/stemmer).
+ * @remarks
+ * The only normalization done is to lowercase the tokens. Developers can wrap this tokenizer with 
+ * their own function to perform additional normalization like [stemming](https://github.com/words/stemmer).
  * 
- * **Usage Example**
- *
  * ```JavaScript
  * const { recognizeChoices, defaultTokenizer } = require('botbuilder-choices');
  * const stemmer = require('stemmer');
@@ -110,6 +110,10 @@ export function defaultTokenizer(text: string, locale?: string): Token[] {
     return tokens;
 }
 
+/**
+ * @private
+ * @param codePoint 
+ */
 function isBreakingChar(codePoint: number): boolean {
     return (isBetween(codePoint, 0x0000, 0x002F) || 
             isBetween(codePoint, 0x003A, 0x0040) ||
@@ -120,6 +124,12 @@ function isBreakingChar(codePoint: number): boolean {
             isBetween(codePoint, 0x2E00, 0x2E7F)); 
 }
 
+/**
+ * @private
+ * @param value 
+ * @param from 
+ * @param to 
+ */
 function isBetween(value: number, from: number, to: number): boolean {
     return (value >= from && value <= to);
 }

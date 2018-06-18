@@ -9,17 +9,15 @@ import { TurnContext } from 'botbuilder-core';
 import { BotState } from './botState';
 import { Storage, StoreItem } from './storage';
 /**
- * :package: **botbuilder-core-extensions**
+ * Reads and writes user state for your bot to storage.
  *
- * Reads and writes user state for your bot to storage. Each user your bot communicates with will
- * have its own isolated storage object that can be used to persist information about the user
- * across all of the conversation you have with that user.
+ * @remarks
+ * Each user your bot communicates with will have its own isolated storage object that can be used
+ * to persist information about the user across all of the conversation you have with that user.
  *
  * Since the `UserState` class derives from `BotState` it can be used as middleware to automatically
  * read and write the bots user state for each turn. And it also means it can be passed to a
  * `BotStateSet` middleware instance to be managed in parallel with other state providers.
- *
- * **Usage Example**
  *
  * ```JavaScript
  * const { UserState, MemoryStorage } = require('botbuilder');

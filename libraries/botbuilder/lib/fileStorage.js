@@ -5,11 +5,10 @@ const fs = require("async-file");
 const file = require("fs");
 const filenamify = require("filenamify");
 /**
- * :package: **botbuilder**
- *
  * A file based storage provider. Items will be persisted to a folder on disk.
  *
- * **Usage Example**
+ * @remarks
+ * The following example shows how to construct a configured instance of the provider:
  *
  * ```JavaScript
  * const { FileStorage } = require('botbuilder');
@@ -99,6 +98,10 @@ class FileStorage {
 }
 FileStorage.nextTag = 0;
 exports.FileStorage = FileStorage;
+/**
+ * @private
+ * @param filePath
+ */
 function parseFile(filePath) {
     return fs.exists(filePath)
         .then((exists) => exists ? fs.readTextFile(filePath) : Promise.resolve(undefined))

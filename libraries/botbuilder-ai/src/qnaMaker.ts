@@ -5,38 +5,90 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.  
  * Licensed under the MIT License.
  */
-import { TurnContext, Middleware, ActivityTypes } from 'botbuilder';
+import { TurnContext, Middleware, ActivityTypes, Activity } from 'botbuilder';
 import * as request from 'request-promise-native';
 import * as entities from 'html-entities';
+import { isContext } from 'vm';
 
-var htmlentities = new entities.AllHtmlEntities();
+const QNAMAKER_TRACE_TYPE = 'https://www.qnamaker.ai/schemas/trace';
+const QNAMAKER_TRACE_NAME = 'QnAMakerMiddleware';
+const QNAMAKER_TRACE_LABEL = 'QnAMaker Trace';
 
+/**
+ * @private
+ */
+const htmlentities = new entities.AllHtmlEntities();
+
+/**
+ * An individual answer returned by `QnAMaker.generateAnswer()`.
+ */
 export interface QnAMakerResult {
+    /** The list of questions indexed in the QnA Service for the given answer. */
+    questions?: string[];
+
+    /** Answer from the knowledge base.  */
     answer: string;
+
+    /** Confidence on a scale from 0.0 to 1.0 that the answer matches the users intent. */
     score: number;
+
+    /** Metadata associated with the answer */
+    metadata?: any;
+
+    /** The source from which the QnA was extracted */
+    source?: string;
+
+    /** The index of the answer in the knowledge base. V3 uses 'qnaId', V4 uses 'id'.*/
+    id?: number;
 }
 
-const BASEAPI_PATH = 'qnamaker/v3.0/knowledgebases/';
-
-export interface QnAMakerSettings {
-    /** ID of your knowledge base. */
+/**
+ * Defines an endpoint used to connect to a QnA Maker Knowledge base.
+ */
+export interface QnAMakerEndpoint {
+    /** 
+     * ID of your knowledge base. For example: `98185f59-3b6f-4d23-8ebb-XXXXXXXXXXXX` 
+     */
     knowledgeBaseId: string;
 
-    /** Your subscription keys. */
-    subscriptionKey: string;
+    /** 
+     * Your endpoint key. For `v2` or `v3` knowledge bases this is your subscription key. 
+     * For example: `4cb65a02697745eca369XXXXXXXXXXXX` 
+     */
+    endpointKey: string;
 
-    /** (Optional) minimum score accepted. Defaults to "0.3". */
+    /** 
+     * The host path. For example: `https://westus.api.cognitive.microsoft.com/qnamaker/v2.0` 
+     */
+    host: string;    
+}
+
+/**
+ * Additional settings used to configure a `QnAMaker` instance.
+ */
+export interface QnAMakerOptions {
+    /** 
+     * (Optional) minimum score accepted. 
+     * 
+     * @remarks
+     * Defaults to "0.3". 
+     */
     scoreThreshold?: number;
 
-    /** (Optional) service endpoint. Defaults to "https://westus.api.cognitive.microsoft.com/" */
-    serviceEndpoint?: string;
-
-    /** (Optional) number of results to return. Defaults to "1". */
+    /** 
+     * (Optional) number of results to return. 
+     * 
+     * @remarks
+     * Defaults to "1". 
+     */
     top?: number;
 
     /** 
      * (Optional) and only applied when a QnAMaker instance has been added to ths adapter as 
-     * middleware. Defaults to a value of `false`.
+     * middleware. 
+     * 
+     * @remarks
+     * Defaults to a value of `false`.
      * 
      * Setting this to `true` will cause the QnA Maker service to be called BEFORE any other 
      * middleware or the bots logic is run. Should the service return an answer the user will be 
@@ -50,20 +102,48 @@ export interface QnAMakerSettings {
     answerBeforeNext?: boolean;
 }
 
-export class QnAMaker implements Middleware {
-    private readonly settings: QnAMakerSettings; 
+/**
+ * Trace info that we collect and emit from a QnA Maker query
+ */
+export interface QnAMakerTraceInfo {
+    /** Message which instigated the query to QnA Maker */
+    message: Activity;
+    /** Results that QnA Maker returned */
+    queryResults: QnAMakerResult[];
+    /** ID of the knowledge base that is being queried */
+    knowledgeBaseId: string;
+    /** The minimum score threshold, used to filter returned results */
+    scoreThreshold: number;
+    /** Number of ranked results that are asked to be returned */
+    top: number;
+    /** Filters used on query. Not used in JavaScript SDK v4 yet */
+    strictFilters: any[];
+    /** Metadata related to query. Not used in JavaScript SDK v4 yet */
+    metadataBoost: any[];
+}
 
-    constructor(settings: QnAMakerSettings) {
-        this.settings = Object.assign({
+/**
+ * Manages querying an individual QnA Maker knowledge base for answers. Can be added as middleware 
+ * to automatically query the knowledge base anytime a messaged is received from the user. When 
+ * used as middleware the component can be configured to either query the knowledge base before the
+ * bots logic runs or after the bots logic is run, as a fallback in the event the bot doesn't answer 
+ * the user.   
+ */
+export class QnAMaker implements Middleware {
+    private readonly options: QnAMakerOptions; 
+
+    /**
+     * Creates a new QnAMaker instance.  
+     * @param endpoint The endpoint of the knowledge base to query.
+     * @param options (Optional) additional settings used to configure the instance.
+     */
+    constructor(private readonly endpoint: QnAMakerEndpoint, options?: QnAMakerOptions) {
+        // Initialize options
+        this.options = Object.assign({
             scoreThreshold: 0.3,
             top: 1,
             answerBeforeNext: false
-        } as QnAMakerSettings, settings);
-        if (!this.settings.serviceEndpoint) {
-            this.settings.serviceEndpoint =  'https://westus.api.cognitive.microsoft.com/';
-        } else if (!this.settings.serviceEndpoint.endsWith('/')) {
-            this.settings.serviceEndpoint += '/';
-        }
+        } as QnAMakerOptions, options);
     }
 
     public onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
@@ -73,7 +153,7 @@ export class QnAMaker implements Middleware {
         }
 
         // Route request
-        if (this.settings.answerBeforeNext) {
+        if (this.options.answerBeforeNext) {
             // Attempt to answer user and only call next() if not answered
             return this.answer(context).then((answered) => {
                 return !answered ? next() : Promise.resolve()
@@ -88,34 +168,38 @@ export class QnAMaker implements Middleware {
 
     /**
      * Calls [generateAnswer()](#generateanswer) and sends the answer as a message ot the user. 
+     * 
+     * @remarks
      * Returns a value of `true` if an answer was found and sent. If multiple answers are 
      * returned the first one will be delivered.
-     * @param context Context for the current turn of conversation with the use.
+     * @param context Context for the current turn of conversation with the user.
      */
     public answer(context: TurnContext): Promise<boolean> {
-        const { top, scoreThreshold } = this.settings;
+        const { top, scoreThreshold } = this.options;
         return this.generateAnswer(context.activity.text, top, scoreThreshold).then((answers) => {
-            if (answers.length > 0) {
-                return context.sendActivity({ text: answers[0].answer, type: 'message' }).then(() => true);
-            } else {
-                return Promise.resolve(false);
-            }
+            return this.emitTraceInfo(context, answers).then(() => {
+                if (answers.length > 0) {
+                    return context.sendActivity({ text: answers[0].answer, type: 'message' }).then(() => true);
+                } else {
+                    return Promise.resolve(false);
+                }
+            });
         });
-
     }
 
     /**
-     * Calls the QnA Maker service to generate answer(s) for a question. The returned answers will
-     * be sorted by score with the top scoring answer returned first.
+     * Calls the QnA Maker service to generate answer(s) for a question. 
+     * 
+     * @remarks
+     * The returned answers will be sorted by score with the top scoring answer returned first.
      * @param question The question to answer.
      * @param top (Optional) number of answers to return. Defaults to a value of `1`.
      * @param scoreThreshold (Optional) minimum answer score needed to be considered a match to questions. Defaults to a value of `0.001`.
      */
     public generateAnswer(question: string|undefined, top?: number, scoreThreshold?: number): Promise<QnAMakerResult[]> {
-        const { serviceEndpoint } = this.settings;
         const q = question ? question.trim() : ''; 
         if (q.length > 0) {
-            return this.callService(serviceEndpoint as string, question, typeof top === 'number' ? top : 1).then((answers) => {
+            return this.callService(this.endpoint, question, typeof top === 'number' ? top : 1).then((answers) => {
                 const minScore = typeof scoreThreshold === 'number' ? scoreThreshold : 0.001;
                 return answers.filter((ans) => ans.score >= minScore).sort((a, b) => b.score - a.score);
             });
@@ -123,23 +207,63 @@ export class QnAMaker implements Middleware {
         return Promise.resolve([]);
     }
 
-    protected callService(serviceEndpoint: string, question: string, top: number): Promise<QnAMakerResult[]> {
-        const url = `${serviceEndpoint}${BASEAPI_PATH}${this.settings.knowledgeBaseId}/generateanswer`;
+    /**
+     * Called internally to query the QnA Maker service. 
+     * 
+     * @remarks
+     * This is exposed to enable better unit testing of the service.
+     */
+    protected callService(endpoint: QnAMakerEndpoint, question: string, top: number): Promise<QnAMakerResult[]> {
+        const url = `${endpoint.host}/knowledgebases/${endpoint.knowledgeBaseId}/generateanswer`;
+        const headers: any = {};
+        if (endpoint.host.endsWith('v2.0') || endpoint.host.endsWith('v3.0')) {
+            headers['Ocp-Apim-Subscription-Key'] = endpoint.endpointKey;
+        } else {
+            headers['Authorization'] = `EndpointKey ${endpoint.endpointKey}`;
+        }
         return request({
             url: url,
             method: 'POST',
-            headers: {
-                'Ocp-Apim-Subscription-Key': this.settings.subscriptionKey
-            },
+            headers: headers,
             json: {
                 question: question,
                 top: top
             }
         }).then(result => {
-            const answers: QnAMakerResult[] = [];
-            return (result.answers as QnAMakerResult[]).map((ans) => { 
-                return { score: ans.score / 100, answer: htmlentities.decode(ans.answer) }  as QnAMakerResult;
+            return result.answers.map((ans) => {
+                ans.score = ans.score / 100;
+                ans.answer = htmlentities.decode(ans.answer);
+                if (ans.qnaId) {
+                    ans.id = ans.qnaId;
+                    delete ans['qnaId'];
+                }
+                return ans as QnAMakerResult;
             });
+        });
+    }
+
+    /**
+     * Emits a trace event detailing a QnA Maker call and its results.
+     * 
+     * @param context Context for the current turn of conversation with the user.
+     * @param answers Answers returned by QnA Maker.
+     */
+    private emitTraceInfo(context: TurnContext, answers: QnAMakerResult[]): Promise<any> {
+        let traceInfo: QnAMakerTraceInfo = {
+            message: context.activity,
+            queryResults: answers,
+            knowledgeBaseId: this.endpoint.knowledgeBaseId,
+            scoreThreshold: this.options.scoreThreshold,
+            top: this.options.top,
+            strictFilters: [{}],
+            metadataBoost: [{}],
+        };
+        return context.sendActivity({
+            type: 'trace',
+            valueType: QNAMAKER_TRACE_TYPE,
+            name: QNAMAKER_TRACE_NAME,
+            label: QNAMAKER_TRACE_LABEL,
+            value: traceInfo
         });
     }
 }
