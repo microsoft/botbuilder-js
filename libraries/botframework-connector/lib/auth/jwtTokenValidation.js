@@ -11,38 +11,45 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const emulatorValidation_1 = require("./emulatorValidation");
 const channelValidation_1 = require("./channelValidation");
 const microsoftAppCredentials_1 = require("./microsoftAppCredentials");
+const claimsIdentity_1 = require("./claimsIdentity");
 var JwtTokenValidation;
 (function (JwtTokenValidation) {
     /**
-     * Validates the security tokens required by the Bot Framework Protocol. Throws on any exceptions.
+     * Authenticates the request and sets the service url in the set of trusted urls.
      * @param  {Activity} activity The incoming Activity from the Bot Framework or the Emulator
      * @param  {string} authHeader The Bearer token included as part of the request
      * @param  {ICredentialProvider} credentials The set of valid credentials, such as the Bot Application ID
-     * @returns {Promise} Promise acception when authorized correctly, Promise rejection when not authorized.
+     * @returns {Promise<ClaimsIdentity>} Promise with ClaimsIdentity for the request.
      */
-    function assertValidActivity(activity, authHeader, credentials) {
+    function authenticateRequest(activity, authHeader, credentials) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!authHeader) {
-                // No auth header was sent. We might be on the anonymous code path.
+            if (!authHeader.trim()) {
                 let isAuthDisabled = yield credentials.isAuthenticationDisabled();
                 if (isAuthDisabled) {
-                    // We are on the anonymous code path.
-                    return;
+                    return new claimsIdentity_1.ClaimsIdentity([], true);
                 }
-                // No Auth Header. Auth is required. Request is not authorized.
                 throw new Error('Unauthorized Access. Request is not authorized');
             }
-            let usingEmulator = emulatorValidation_1.EmulatorValidation.isTokenFromEmulator(authHeader);
-            if (usingEmulator) {
-                yield emulatorValidation_1.EmulatorValidation.authenticateEmulatorToken(authHeader, credentials);
-            }
-            else {
-                yield channelValidation_1.ChannelValidation.authenticateChannelTokenWithServiceUrl(authHeader, credentials, activity.serviceUrl);
-            }
-            // On the standard Auth path, we need to trust the URL that was incoming.
+            let claimsIdentity = yield this.validateAuthHeader(authHeader, credentials, activity.channelId, activity.serviceUrl);
             microsoftAppCredentials_1.MicrosoftAppCredentials.trustServiceUrl(activity.serviceUrl);
+            return claimsIdentity;
         });
     }
-    JwtTokenValidation.assertValidActivity = assertValidActivity;
+    JwtTokenValidation.authenticateRequest = authenticateRequest;
+    function validateAuthHeader(authHeader, credentials, channelId, serviceUrl = '') {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!authHeader.trim())
+                throw new Error('\'authHeader\' required.');
+            let usingEmulator = emulatorValidation_1.EmulatorValidation.isTokenFromEmulator(authHeader);
+            if (usingEmulator) {
+                return yield emulatorValidation_1.EmulatorValidation.authenticateEmulatorToken(authHeader, credentials, channelId); //, channelId)
+            }
+            if (serviceUrl.trim()) {
+                return yield channelValidation_1.ChannelValidation.authenticateChannelTokenWithServiceUrl(authHeader, credentials, serviceUrl, channelId); //, channelId)
+            }
+            return yield channelValidation_1.ChannelValidation.authenticateChannelToken(authHeader, credentials, channelId); //, channelId)
+        });
+    }
+    JwtTokenValidation.validateAuthHeader = validateAuthHeader;
 })(JwtTokenValidation = exports.JwtTokenValidation || (exports.JwtTokenValidation = {}));
 //# sourceMappingURL=jwtTokenValidation.js.map

@@ -21,7 +21,7 @@ export declare module ChannelValidation {
      * @param  {string} serviceUrl The ServiceUrl Claim value that must match in the identity.
      * @returns {Promise<ClaimsIdentity>} A valid ClaimsIdentity.
      */
-    function authenticateChannelTokenWithServiceUrl(authHeader: string, credentials: ICredentialProvider, serviceUrl: string): Promise<ClaimsIdentity>;
+    function authenticateChannelTokenWithServiceUrl(authHeader: string, credentials: ICredentialProvider, serviceUrl: string, channelId: string): Promise<ClaimsIdentity>;
     /**
      * Validate the incoming Auth Header as a token sent from the Bot Framework Service.
      * A token issued by the Bot Framework emulator will FAIL this check.
@@ -29,5 +29,5 @@ export declare module ChannelValidation {
      * @param  {ICredentialProvider} credentials The user defined set of valid credentials, such as the AppId.
      * @returns {Promise<ClaimsIdentity>} A valid ClaimsIdentity.
      */
-    function authenticateChannelToken(authHeader: string, credentials: ICredentialProvider): Promise<ClaimsIdentity>;
+    function authenticateChannelToken(authHeader: string, credentials: ICredentialProvider, channelId: string): Promise<ClaimsIdentity>;
 }

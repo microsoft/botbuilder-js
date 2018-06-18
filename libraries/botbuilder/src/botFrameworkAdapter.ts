@@ -524,7 +524,9 @@ export class BotFrameworkAdapter extends BotAdapter {
      * @param authHeader Received authentication header.
      */
     protected authenticateRequest(request: Partial<Activity>, authHeader: string): Promise<void> {
-        return JwtTokenValidation.assertValidActivity(request as Activity, authHeader, this.credentialsProvider);
+        return JwtTokenValidation.authenticateRequest(request as Activity, authHeader, this.credentialsProvider).then(claims => {
+            if (!claims.isAuthenticated) throw new Error('Unauthorized Access. Request is not authorized');
+        });
     }
 
     /**

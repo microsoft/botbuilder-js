@@ -7,13 +7,15 @@
  */
 import { Activity } from 'botframework-schema';
 import { ICredentialProvider } from './credentialProvider';
+import { ClaimsIdentity } from './claimsIdentity';
 export declare module JwtTokenValidation {
     /**
-     * Validates the security tokens required by the Bot Framework Protocol. Throws on any exceptions.
+     * Authenticates the request and sets the service url in the set of trusted urls.
      * @param  {Activity} activity The incoming Activity from the Bot Framework or the Emulator
      * @param  {string} authHeader The Bearer token included as part of the request
      * @param  {ICredentialProvider} credentials The set of valid credentials, such as the Bot Application ID
-     * @returns {Promise} Promise acception when authorized correctly, Promise rejection when not authorized.
+     * @returns {Promise<ClaimsIdentity>} Promise with ClaimsIdentity for the request.
      */
-    function assertValidActivity(activity: Activity, authHeader: string, credentials: ICredentialProvider): Promise<void>;
+    function authenticateRequest(activity: Activity, authHeader: string, credentials: ICredentialProvider): Promise<ClaimsIdentity>;
+    function validateAuthHeader(authHeader: string, credentials: ICredentialProvider, channelId: string, serviceUrl?: string): Promise<ClaimsIdentity>;
 }

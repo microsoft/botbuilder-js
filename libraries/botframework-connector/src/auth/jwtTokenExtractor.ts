@@ -9,6 +9,7 @@ import * as jwt from 'jsonwebtoken';
 import { Constants } from './constants';
 import { ClaimsIdentity, Claim } from "./claimsIdentity";
 import { OpenIdMetadata } from './openIdMetadata';
+import { EndorsementsValidator } from './endorsementsValidator';
 
 export class JwtTokenExtractor {
 
@@ -21,30 +22,26 @@ export class JwtTokenExtractor {
     // OpenIdMetadata for this instance
     readonly openIdMetadata: OpenIdMetadata;
 
-    // Delegate for validating endorsements extracted from JwtToken
-    readonly validator: EndorsementsValidator;
-
-    constructor(tokenValidationParameters: jwt.VerifyOptions, metadataUrl: string, allowedSigningAlgorithms: string[], validator: EndorsementsValidator = (endorments) => true) {
+    constructor(tokenValidationParameters: jwt.VerifyOptions, metadataUrl: string, allowedSigningAlgorithms: string[]) {
         this.tokenValidationParameters = { ...tokenValidationParameters };
         this.tokenValidationParameters.algorithms = allowedSigningAlgorithms;
         this.openIdMetadata = JwtTokenExtractor.getOrAddOpenIdMetadata(metadataUrl);
-        this.validator = validator;
     }
 
-    public async getIdentityFromAuthHeader(authorizationHeader: string): Promise<ClaimsIdentity | null> {
+    public async getIdentityFromAuthHeader(authorizationHeader: string, channelId: string): Promise<ClaimsIdentity | null> {
         if (!authorizationHeader) {
             return null;
         }
 
         let parts = authorizationHeader.split(' ');
         if (parts.length == 2) {
-            return await this.getIdentity(parts[0], parts[1]);
+            return await this.getIdentity(parts[0], parts[1], channelId);
         }
 
         return null;
     }
 
-    public async getIdentity(scheme: string, parameter: string): Promise<ClaimsIdentity | null> {
+    public async getIdentity(scheme: string, parameter: string, channelId: string): Promise<ClaimsIdentity | null> {
         // No header in correct scheme or no token
         if (scheme !== "Bearer" || !parameter) {
             return null;
@@ -56,7 +53,7 @@ export class JwtTokenExtractor {
         }
 
         try {
-            return await this.validateToken(parameter);
+            return await this.validateToken(parameter, channelId);
         }
         catch (err) {
             console.log('JwtTokenExtractor.getIdentity:err!', err);
@@ -79,7 +76,7 @@ export class JwtTokenExtractor {
         return false;
     }
 
-    private async validateToken(jwtToken: string): Promise<ClaimsIdentity> {
+    private async validateToken(jwtToken: string, channelId: string): Promise<ClaimsIdentity> {
 
         let decodedToken = <any>jwt.decode(jwtToken, { complete: true });
 
@@ -94,9 +91,13 @@ export class JwtTokenExtractor {
             let decodedPayload = <any>jwt.verify(jwtToken, metadata.key, this.tokenValidationParameters);
 
             // enforce endorsements in openIdMetadadata if there is any endorsements associated with the key
-            let endorments = metadata.endorsements;
-            if (Array.isArray(metadata.endorsements) && !this.validator(metadata.endorsements)) {
-                throw new Error(`Could not validate endorsement for key: ${keyId} with endorsements: ${metadata.endorsements.join(',')}`);
+            let endorsements = metadata.endorsements;
+            
+            if (Array.isArray(endorsements) && endorsements.length !== 0) {
+                let isEndorsed = EndorsementsValidator.validate(channelId, endorsements);
+                if (!isEndorsed) {
+                    throw new Error(`Could not validate endorsement for key: ${keyId} with endorsements: ${endorsements.join(',')}`);
+                }
             }
 
             if (this.tokenValidationParameters.algorithms) {
@@ -128,10 +129,3 @@ export class JwtTokenExtractor {
         return metadata;
     }
 }
-
-/**
- * The endorsements validator delegate.
- * @param  {string[]} endorments The endorsements used for validation.
- * @returns {boolean} true if validation passes; false otherwise.
- */
-export type EndorsementsValidator = (endorments: string[]) => boolean;
