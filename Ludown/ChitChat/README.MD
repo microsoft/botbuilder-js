@@ -20,3 +20,4 @@ To use these -
 > ludown parse toqna -l ChitChat\\DataSet\\Professional -n chitchat-professional
 ```
 
+Also see [here](https://github.com/Microsoft/BotBuilder-PersonalityChat) to learn more about PersonalityChat service.
