@@ -21,6 +21,7 @@ program
     .option('-o, --out_folder <outputFolder> [optional]', '[Optional] Output folder for all files the tool will generate')
     .option('-n, --lu_File <LU_File>', '[Optional] Output .lu file name')
     .option('--verbose', '[Optional] Get verbose messages from parser')
+    .option('-s, --skip_header', '[Optional] Generate .lu file without the header comment')
     .parse(process.argv);
 
     if (process.argv.length < 4) {
