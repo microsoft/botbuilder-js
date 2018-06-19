@@ -15,6 +15,7 @@ After you have bootstrapped and created your LUIS model and / or QnAMaker knowle
     -o, --out_folder <outputFolder> [optional]  [Optional] Output folder for all files the tool will generate
     -n, --lu_File <LU_File>                     [Optional] Output .lu file name
     --verbose                                   [Optional] Get verbose messages from parser
+    -s, --skip_header                           [Optional] Generate .lu file without the header comment
     -h, --help                                  output usage information
 ```
 
