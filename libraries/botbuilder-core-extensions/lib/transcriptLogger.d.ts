@@ -27,12 +27,12 @@ export declare class TranscriptLoggerMiddleware implements Middleware {
      * Logs the Activity.
      * @param activity Activity to log.
      */
-    private logActivity(activity);
+    private logActivity;
     /**
      * Clones the Activity entity.
      * @param activity Activity to clone.
      */
-    private cloneActivity(activity);
+    private cloneActivity;
 }
 /**
  * ConsoleTranscriptLogger , writes activities to Console output.

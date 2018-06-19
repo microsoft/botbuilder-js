@@ -43,8 +43,7 @@ export declare class TestAdapter extends BotAdapter {
      */
     readonly activityBuffer: Partial<Activity>[];
     /**
-     * `ConversationReference` template that will be merged with all activities sent to the logic
-     * under test.
+     * `Activity` template that will be merged with all activities sent to the logic under test.
      */
     readonly template: Partial<Activity>;
     /**
@@ -84,7 +83,7 @@ export declare class TestAdapter extends BotAdapter {
      * @param logic The bots logic that's under test.
      * @param template (Optional) activity containing default values to assign to all test messages received.
      */
-    constructor(logic: (context: TurnContext) => Promiseable<void>, template?: ConversationReference, sendTraceActivities?: boolean);
+    constructor(logic: (context: TurnContext) => Promiseable<void>, template?: Partial<Activity>, sendTraceActivities?: boolean);
     /**
      * @private
      * INTERNAL: called by the logic under test to send a set of activities. These will be buffered
@@ -168,7 +167,7 @@ export declare class TestAdapter extends BotAdapter {
      * Indicates if the activity is a reply from the bot (role == 'bot')
      * @param activity Activity to check.
      */
-    private isReply(activity);
+    private isReply;
 }
 /**
  * Support class for `TestAdapter` that allows for the simple construction of a sequence of tests.
