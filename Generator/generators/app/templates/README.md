@@ -49,8 +49,6 @@ Update `.env` with the appropriate keys:
 
 - App ID and Key for registered bots.
 
-In the case of LUIS, you will need to update the dialog in `dialogs.<%= extension %>` to work with the appropriate intent and entities.
-
 ### Running the bot
 
 ```
