@@ -35,7 +35,7 @@ let workingDirectory;
  * @param args The k/v pair representing the configuration options
  * @returns {Promise<Array>} Resolves with an array of Activity objects.
  */
-module.exports = async function readContents(fileContents, args) {
+module.exports = async function readContents(fileContents, args = {}) {
     // Resolve file paths based on the input file with a fallback to the cwd
     workingDirectory = args.in ? path.dirname(path.resolve(args.in)) : __dirname;
     const activities = [];
