@@ -127,8 +127,9 @@ module.exports = async function readContents(fileContents, args) {
             if (newActivities) {
                 activities.push(...newActivities);
             }
+        } else {
+            currentActivity.text = aggregate ? aggregate.trim() : null;
         }
-        currentActivity.text = currentActivity.text ? currentActivity.text.trim() : null;
         activities.push(currentActivity);
     }
     return activities;
@@ -272,6 +273,7 @@ function addCard(contentType, currentActivity, rest) {
             case 'text':
                 card[property] = value;
                 break;
+            case 'images':
             case 'image':
                 card.images.push({ url: value });
                 break;
@@ -279,6 +281,9 @@ function addCard(contentType, currentActivity, rest) {
                 for (button of value.split('|')) {
                     card.buttons.push({ title: button.trim(), type: "imBack", value: button.trim() });
                 }
+                break;
+            default:
+                console.warn(chalk.red.bold(`Skipping unknown card property ${property}\n${line}`));
                 break;
         }
     }
