@@ -98,14 +98,14 @@ You can add cards using simple commands as well.  Currently we support a number 
 
 | description | card name                                                    |
 | ----------- | ------------------------------------------------------------ |
-| Herocard    | A simple card with single large image, title, subtitle, text and buttons |
-| Thumbnailcard | Same as herocard, but image is much smaller |
-| Audiocard | send audio card for playing back an audio url |
-| Videocard | send an video player card for playing back a video file |
-| Animationcard | send a animated gif card |
-| Mediacard | send arbitrary media with transport control |
-| Signincard | send a signin card |
-| Oauthcard | send an oauth card which uses azure bot service oauth flow 
+| HeroCard    | A simple card with single large image, title, subtitle, text and buttons |
+| ThumbnailCard | Same as herocard, but image is much smaller |
+| AudioCard | send audio card for playing back an audio url |
+| VideoCard | send an video player card for playing back a video file |
+| AnimationCard | send a animated gif card |
+| MediaCard | send arbitrary media with transport control |
+| SigninCard | send a signin card |
+| OauthCard | send an oauth card which uses azure bot service oauth flow 
 
 ```markdown
 Bot: 
