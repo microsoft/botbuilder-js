@@ -94,20 +94,30 @@ The conversation between the user and the bot with markdown support for bot's re
 
 
 ### Cards
-You can add cards using simple commands as well.  Currently we support *Herocard* and *ThumbnailCard* 
+You can add cards using simple commands as well.  Currently we support a number of cards:
 
-* To add a herocard you use `[Herocard]` command.
-* To add a herocard you use `[Thumbnailcard]` command.
+| description | card name                                                    |
+| ----------- | ------------------------------------------------------------ |
+| Herocard    | A simple card with single large image, title, subtitle, text and buttons |
+| Thumbnailcard | Same as herocard, but image is much smaller |
+| Audiocard | send audio card for playing back an audio url |
+| Videocard | send an video player card for playing back a video file |
+| Animationcard | send a animated gif card |
+| Mediacard | send arbitrary media with transport control |
+| Signincard | send a signin card |
+| Oauthcard | send an oauth card which uses azure bot service oauth flow 
 
 ```markdown
-Bot: [Herocard   
+Bot: 
+[Herocard   
     title=Cheese gromit!
     subtitle=Hero Card
     text=This is some text describing the card, it's cool because it's cool
     image=https://memegenerator.net/img/instances/500x/73055378/cheese-gromit.jpg
     buttons=Option 1| Option 2| Option 3]
 
-Bot: [ThumbnailCard
+Bot: 
+[ThumbnailCard
     title=Cheese gromit!
     subtitle=Thumbnail Card
     text=This is some text describing the card, it's cool because it's cool
@@ -122,7 +132,7 @@ The properties that are supported are
 | subtitle| a subtitle for the card with less emphasis|
 | text | a generic text property which can contain longer text describing the card|
 | image | image url to use for the card |
-| buttons | a set of button labels seperated by `|`| 
+| buttons | a set of button labels seperated by `|`|
 
 
 ### Attachments

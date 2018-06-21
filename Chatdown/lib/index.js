@@ -204,11 +204,33 @@ async function readCommandsFromAggregate(aggregate, currentActivity, recipient, 
                 case activityfield.suggestions:
                     addSuggestions(currentActivity, rest);
                     break;
+                case activityfield.basiccard:
                 case activityfield.herocard:
                     addCard(cardContentTypes.hero, currentActivity, rest);
                     break;
                 case activityfield.thumbnailcard:
                     addCard(cardContentTypes.thumbnail, currentActivity, rest);
+                    break;
+                case activityfield.animationcard:
+                    addCard(cardContentTypes.animation, currentActivity, rest);
+                    break;
+                case activityfield.mediacard:
+                    addCard(cardContentTypes.media, currentActivity, rest);
+                    break;
+                case activityfield.audiocard:
+                    addCard(cardContentTypes.audio, currentActivity, rest);
+                    break;
+                case activityfield.videocard:
+                    addCard(cardContentTypes.video, currentActivity, rest);
+                    break;
+                // case activityfield.receiptcard:
+                //     addCard(cardContentTypes.receipt, currentActivity, rest);
+                //     break;
+                case activityfield.signincard:
+                    addCard(cardContentTypes.signin, currentActivity, rest);
+                    break;
+                case activityfield.oauthcard:
+                    addCard(cardContentTypes.oauth, currentActivity, rest);
                     break;
             }
         }
@@ -261,7 +283,7 @@ function addSuggestions(currentActivity, rest) {
  * @param {*} rest 
  */
 function addCard(contentType, currentActivity, rest) {
-    let card = { buttons: [], images: [] };
+    let card = { buttons: [] };
     let lines = rest.split('\n');
     for (line of lines) {
         let start = line.indexOf('=');;
@@ -271,16 +293,36 @@ function addCard(contentType, currentActivity, rest) {
             case 'title':
             case 'subtitle':
             case 'text':
+            case 'aspect':
+            case 'value':
+            case 'connectioname':
                 card[property] = value;
                 break;
-            case 'images':
             case 'image':
+                card.image = { url: value };
+                break;
+            case 'images':
+                if (!card.images) {
+                    card.images = [];
+                }
                 card.images.push({ url: value });
+                break;
+            case 'media':
+                if (!card.media)
+                    card.media = [];
+                card.media.push({ url: value });
                 break;
             case 'buttons':
                 for (button of value.split('|')) {
                     card.buttons.push({ title: button.trim(), type: "imBack", value: button.trim() });
                 }
+                break;
+            case 'autostart':
+            case 'sharable':
+            case 'autoloop':
+                card[property] = value.toLowerCase() == 'true';
+                break;
+            case '':
                 break;
             default:
                 console.warn(chalk.red.bold(`Skipping unknown card property ${property}\n${line}`));
