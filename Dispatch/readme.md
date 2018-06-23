@@ -151,6 +151,7 @@ With the following options
 
 | Option               | Description                                                  |
 | ----------------     | ------------------------------------------------------------ |
+| -v, --version        | (optional) Dispatch LUIS app version. A new version will be created if param value is different than previously created version.  |
 | -b, --bot            | (optional) .bot file path         |
 | --dispatch           | (optional) .dispatch file path    |
 | --dataFolder         | (optional) Dispatch working directory |
