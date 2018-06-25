@@ -32,8 +32,10 @@ bot: The Animation card is a card that's capable of playing animated GIFs or sho
 [Animationcard=
   Title=Animation Card
   Subtitle=look at it animate
+  autostart=true
+  autoloop=true
   Image=https://docs.microsoft.com/en-us/bot-framework/media/how-it-works/architecture-resize.png
-  Media=http://i.giphy.com/Ki55RUbOV5njy.gif
+  Media=http://oi42.tinypic.com/1rchlx.jpg
 ]
 
 bot: The Audio card is a card that is capable of playing an audio file
@@ -51,9 +53,10 @@ bot:The Video card is a card that is capable of playing videos.
   Title=Video card
   Subtitle=Big Buck Bunny by the Blender Institute
   Text=Big Buck Bunny (code-named Peach) is a short computer-animated comedy film by the Blender Institute part of the Blender Foundation. Like the foundation's previous film Elephants Dream the film was made using Blender a free software application for animation made by the same foundation. It was released as an open-source film under Creative Commons License Attribution 3.0.
-  Image=https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Big_buck_bunny_poster_big.jpg/220px-Big_buck_bunny_poster_big.jpg
-  Media=http://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4  
+  Image=http://adaptivecards.io/content/cats/1.png
+  Media=https://adaptivecardsblob.blob.core.windows.net/assets/AdaptiveCardsOverviewVideo.mp4
   Buttons=Learn More
+  autostart=true
 ]
 
 bot: An adaptive card is a flexible json layout that lets you build up your own card. See http://adaptivecards.io  
