@@ -15,4 +15,5 @@ __export(require("./microsoftAppCredentials"));
 __export(require("./jwtTokenValidation"));
 __export(require("./channelValidation"));
 __export(require("./emulatorValidation"));
+__export(require("./endorsementsValidator"));
 //# sourceMappingURL=index.js.map

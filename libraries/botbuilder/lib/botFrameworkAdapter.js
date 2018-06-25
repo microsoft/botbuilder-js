@@ -492,7 +492,10 @@ class BotFrameworkAdapter extends botbuilder_core_1.BotAdapter {
      * @param authHeader Received authentication header.
      */
     authenticateRequest(request, authHeader) {
-        return botframework_connector_1.JwtTokenValidation.assertValidActivity(request, authHeader, this.credentialsProvider);
+        return botframework_connector_1.JwtTokenValidation.authenticateRequest(request, authHeader, this.credentialsProvider).then(claims => {
+            if (!claims.isAuthenticated)
+                throw new Error('Unauthorized Access. Request is not authorized');
+        });
     }
     /**
      * Allows for mocking of the connector client in unit tests.

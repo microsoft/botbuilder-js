@@ -10,3 +10,4 @@ export * from "./microsoftAppCredentials";
 export * from "./jwtTokenValidation";
 export * from "./channelValidation";
 export * from "./emulatorValidation";
+export * from "./endorsementsValidator";
