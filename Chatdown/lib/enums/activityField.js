@@ -8,5 +8,11 @@ module.exports = {
     suggestions: 'suggestions',
     herocard: 'herocard',
     thumbnailcard: 'thumbnailcard',
-    adaptivecard: 'adpativecard'
+    mediacard: 'mediacard',
+    animationcard: 'animationcard',
+    audiocard: 'audiocard',
+    videocard: 'videocard',
+    oauthcard: 'oauthcard',
+    signincard: 'signincard',
+    receiptcard: 'receiptcard',
 };
