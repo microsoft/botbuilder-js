@@ -37,14 +37,15 @@ To bypass the prompts, values could be passed in via arguments below.
 
 Arguments:
 
-| Option               | Description                       |
-| -------------------- | --------------------------------- |
-| -n, --name           | (optional) Name of the dispatch   |
+| Option                | Description                       |
+| --------------------- | --------------------------------- |
+| -n, --name            | (optional) Name of the dispatch   |
 | --luisAuthoringKey    | (optional) LUIS authoring key     |
 | --luisAuthoringRegion | (optional) LUIS authoring region  |
 | -b, --bot             | (optional) .bot file path         |
-| --hierarchical    | (optional) Default to true.  If false, existing intents from source LUIS model(s) will be available as the dispatch intents. |
-| --dataFolder          | (optional) Working directory for tool |
+| -c, --culture         | (optional) Used to set LUIS app culture for dispatch. Required if none of dispatch source(s) is LUIS app. |
+| --hierarchical        | (optional) Default to true.  If false, existing intents from source LUIS model(s) will be available as the dispatch intents. |
+| --dataFolder          | (optional) Dispatch working directory |
 | -h, --help            | Output usage information |
 
 Example:
@@ -58,10 +59,11 @@ dispatch init --bot c:\src\bot\testbot.bot
 ## Adding source to dispatch
 
 This step is not needed if you have a .bot file already connected with services (i.e., LUIS/QnA). Dispatch will take the services in .bot file
-and add each of the services it can dispatch to .dispatch file.
+and add each of the services it can dispatch to .dispatch file.  Currently, a maximum of 500 dispatch sources could be added to a Dispatch model.
 
 ```shell
 dispatch add -t luis -i 1090A345-2D89-4BED-99EF-1CE3E08B690E -n TestLuisApp -v 0.1 -k F57AEEEBE67349C282E1DC51F6BA66D9
+dispatch add -t luis -i 1090A345-2D89-4BED-99EF-1CE3E08B690E -n TestLuisApp --intentName foo -v 0.1 -k F57AEEEBE67349C282E1DC51F6BA66D9
 dispatch add -t qna -i 09DF8311-9MSA-L2I9-DJEE-4MT434481212 -n Faq -k L2340T8NM78OSFDWAS23B4TAASMPO1N1
 dispatch add -t file -n TestModule -f c:\src\testmodule.tsv
 dispatch add -t file -n TestModule2 -f c:\src\testmodule2.txt
@@ -79,8 +81,9 @@ Arguments
 | -k, --key    | (required only if type is luis/qna) LUIS authoring key (from https://www.luis.ai/user/settings) or QnA maker key (from QnA Maker Cognitive Service resource page on https://ms.portal.azure.com) |
 | -v, --version| (Required only if type is luis) LUIS app version |
 | -f, --filePath| (Required only if type is file) Path to tsv file containing tab delimited intent and utterance fields or .txt file with an utterance on each line |
+| --intentName  | (optional) Dispatch intent name for this source, name param value will be used otherwise |
 | --dispatch    | (optional) Path to .dispatch file |
-| --dataFolder  | (optional) Working directory for tool |
+| --dataFolder  | (optional) Dispatch working directory |
 | -h, --help    | Output usage information |
 
 Supported file types:
@@ -112,7 +115,7 @@ Arguments
 | -n, --name   | LUIS app name or QnA name (from application settings page) or module/file name for file type |
 | -f, --filePath | (Required only if type is file) Path to tsv file containing tab delimited intent and utterance fields or .txt file with an utterance on each line |
 | --dispatch    | (optional) Path to .dispatch file |
-| --dataFolder  | (optional) Working directory for tool |
+| --dataFolder  | (optional) Dispatch working directory |
 | -h, --help    | Output usage information |
 
 ## Creating your dispatch model  
@@ -128,8 +131,9 @@ Options:
 | Option               | Description                                                  |
 | ----------------     | ------------------------------------------------------------ |
 | -b, --bot            | (optional) .bot file path         |
+| -c, --culture        | (optional) Used to set LUIS app culture for dispatch. Required if none of dispatch source(s) is LUIS app. |
 | --dispatch           | (optional) .dispatch file path    |
-| --dataFolder         | (optional) Working directory for tool |
+| --dataFolder         | (optional) Dispatch working directory |
 | --hierarchical       | (optional) Default to true, set to false when evaluating a single LUIS model |
 | -h, --help           | Output usage information |
 
@@ -147,9 +151,10 @@ With the following options
 
 | Option               | Description                                                  |
 | ----------------     | ------------------------------------------------------------ |
+| -v, --version        | (optional) Dispatch LUIS app version. A new version will be created if param value is different than previously created version.  |
 | -b, --bot            | (optional) .bot file path         |
 | --dispatch           | (optional) .dispatch file path    |
-| --dataFolder         | (optional) Working directory for tool |
+| --dataFolder         | (optional) Dispatch working directory |
 | -h, --help           | Output usage information |
 
 This command updates existing LUIS application in .dispatch file.
@@ -169,7 +174,7 @@ Options:
 | --luisSubscriptionKey    | (optional, will be prompted) Cognitive Service LUIS key from portal.azure.com  |
 | --luisSubscriptionRegion | (optional, will be prompted) Cognitive Service LUIS region from portal.azure.com  |
 | --dispatch               | (optional) .dispatch file path    |
-| --dataFolder             | (optional) Output folder for tool |
+| --dataFolder             | (optional) Dispatch working directory |
 | -h, --help               | Output usage information|
 
 If no options are supplied, the tool will prompt for the required information it needs to run model evaluation.
@@ -190,7 +195,7 @@ Options:
 | --luisSubscriptionKey   | (optional) Cognitive Service LUIS key from portal.azure.com     |
 | --luisSubscriptionRegion| (optional) Cognitive Service LUIS region from portal.azure.com  |
 | --dispatch              | (optional) .dispatch file path    |
-| --dataFolder            | (optional) Output folder for tool |
+| --dataFolder            | (optional) Dispatch working directory |
 | -h, --help              | Output usage information |
 
 
@@ -209,7 +214,7 @@ With the following options
 | --luisSubscriptionKey   | (optional) Cognitive Service LUIS key from portal.azure.com    |
 | --luisSubscriptionRegion| (optional) Cognitive Service LUIS region from portal.azure.com  |
 | --dispatch              | (optional) .dispatch file path    |
-| --dataFolder            | (optional) Output folder for tool |
+| --dataFolder            | (optional) Dispatch working directory |
 | -h, --help              | Output usage information |
 
 You'll then be prompted to enter the utterance you'd like to run prediction on.
@@ -227,7 +232,7 @@ With the following options
 | Option               | Description                                                  |
 | ----------------     | ------------------------------------------------------------ |
 | --dispatch           | (optional) .dispatch file path    |
-| --dataFolder         | (optional) Output folder for tool |
+| --dataFolder         | (optional) Dispatch working directory |
 | -h, --help           | Output usage information |
 
 
