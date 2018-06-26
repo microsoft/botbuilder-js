@@ -1,5 +1,6 @@
 #
 # Pushes files to a new branch in Github. Used in the build Push-to-github-botbuilder-tools.
+# Note: git logs normal progress to stderr. Therefore, keep "Fail on standard error" disabled.
 #
 param
 ( 
