@@ -5,9 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { 
+import {
     BotAdapter, ActivityTypes, Activity, ConversationReference, ChannelAccount,
-    Promiseable, TurnContext, ResourceResponse 
+    Promiseable, TurnContext, ResourceResponse
 } from 'botbuilder-core';
 import assert = require('assert');
 
@@ -48,15 +48,14 @@ export class TestAdapter extends BotAdapter {
      * INTERNAL: used to drive the promise chain forward when running tests. 
      */
     public readonly activityBuffer: Partial<Activity>[] = [];
-   
+
     /** 
-     * `ConversationReference` template that will be merged with all activities sent to the logic 
-     * under test.  
+     * `Activity` template that will be merged with all activities sent to the logic under test.
      */
     public readonly template: Partial<Activity>;
 
     /**
-     * List of updated activities passed to the adapter which can be inspected after the current 
+     * List of updated activities passed to the adapter which can be inspected after the current
      * turn completes.
      * 
      * @remarks
@@ -94,7 +93,7 @@ export class TestAdapter extends BotAdapter {
      * @param logic The bots logic that's under test.
      * @param template (Optional) activity containing default values to assign to all test messages received.
      */
-    constructor(private logic: (context: TurnContext) => Promiseable<void>, template?: ConversationReference, sendTraceActivities?: boolean) {
+    constructor(private logic: (context: TurnContext) => Promiseable<void>, template?: Partial<Activity>, sendTraceActivities?: boolean) {
         super();
         this.sendTraceActivities = sendTraceActivities || false;
         this.template = Object.assign({
@@ -102,8 +101,8 @@ export class TestAdapter extends BotAdapter {
             serviceUrl: 'https://test.com',
             from: { id: 'user', name: 'User1' },
             recipient: { id: 'bot', name: 'Bot' },
-            conversation: { id: 'Convo1' }
-        } as Activity, template);
+            conversation: { id: 'Convo1' },
+        } as Partial<Activity>, template);
     }
 
     /**
@@ -116,7 +115,7 @@ export class TestAdapter extends BotAdapter {
     public sendActivities(context: TurnContext, activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
         const responses = activities
             .filter(a => this.sendTraceActivities || a.type !== 'trace')
-            .map((activity) => {  
+            .map((activity) => {
                 this.activityBuffer.push(activity);
                 return { id: (this.nextId++).toString() };
             });
@@ -163,7 +162,7 @@ export class TestAdapter extends BotAdapter {
      * This will cause the adapters middleware pipe to be run and it's logic to be called.
      * @param activity Text or activity from user. The current conversation reference [template](#template) will be merged the passed in activity to properly address the activity. Fields specified in the activity override fields in the template. 
      */
-    public receiveActivity(activity: string|Partial<Activity>): Promise<void> {
+    public receiveActivity(activity: string | Partial<Activity>): Promise<void> {
         // Initialize request
         const request = Object.assign({}, this.template, typeof activity === 'string' ? { type: ActivityTypes.Message, text: activity } : activity);
         if (!request.type) { request.type = ActivityTypes.Message }
@@ -188,7 +187,7 @@ export class TestAdapter extends BotAdapter {
      * ``` 
      * @param userSays Text or activity simulating user input. 
      */
-    public send(userSays: string|Partial<Activity>): TestFlow {
+    public send(userSays: string | Partial<Activity>): TestFlow {
         return new TestFlow(this.receiveActivity(userSays), this);
     }
 
@@ -290,7 +289,7 @@ export class TestFlow {
      * @param description (Optional) Description of the test case. If not provided one will be generated.
      * @param timeout (Optional) number of milliseconds to wait for a response from bot. Defaults to a value of `3000`.
      */
-    public test(userSays: string|Partial<Activity>, expected: string | Partial<Activity> | ((activity: Partial<Activity>, description?: string) => void), description?: string, timeout?: number): TestFlow {
+    public test(userSays: string | Partial<Activity>, expected: string | Partial<Activity> | ((activity: Partial<Activity>, description?: string) => void), description?: string, timeout?: number): TestFlow {
         return this.send(userSays)
             .assertReply(expected, description || `test("${userSays}", "${expected}")`, timeout);
     }
@@ -309,12 +308,12 @@ export class TestFlow {
      * @param description (Optional) Description of the test case. If not provided one will be generated.
      * @param timeout (Optional) number of milliseconds to wait for a response from bot. Defaults to a value of `3000`.
      */
-    public assertReply(expected: string|Partial<Activity>|TestActivityInspector, description?: string, timeout?: number): TestFlow {
+    public assertReply(expected: string | Partial<Activity> | TestActivityInspector, description?: string, timeout?: number): TestFlow {
         function defaultInspector(reply: Partial<Activity>, description?: string) {
             if (typeof expected === 'object') {
                 validateActivity(reply, expected);
             } else {
-                assert.equal(reply.type, ActivityTypes.Message,  description + ` type === '${reply.type}'. `);
+                assert.equal(reply.type, ActivityTypes.Message, description + ` type === '${reply.type}'. `);
                 assert.equal(reply.text, expected, description + ` text === "${reply.text}"`);
             }
         }

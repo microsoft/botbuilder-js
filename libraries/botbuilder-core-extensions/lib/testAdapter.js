@@ -81,7 +81,7 @@ class TestAdapter extends botbuilder_core_1.BotAdapter {
             serviceUrl: 'https://test.com',
             from: { id: 'user', name: 'User1' },
             recipient: { id: 'bot', name: 'Bot' },
-            conversation: { id: 'Convo1' }
+            conversation: { id: 'Convo1' },
         }, template);
     }
     /**
