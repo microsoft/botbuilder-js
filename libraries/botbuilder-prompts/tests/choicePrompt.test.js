@@ -161,4 +161,26 @@ describe('ChoicePrompt', function() {
             done();
         });
     });
+
+    it('should default culture to en-us', function (done) {
+        const context = new TestContext({ text: 'test', type: 'message' });
+        const prompt = createChoicePrompt();
+        prompt.style = ListStyle.inline;
+        prompt.prompt(context, colorChoices, `favorite color?`).then(() => {
+            assert(Array.isArray(context.sent) && context.sent.length > 0, `prompt not sent.`);
+            assert(`favorite color? (1) red, (2) green, or (3) blue`, `invalid prompt sent.`);
+            done();
+        });
+    })
+
+    it('should use specfied culture', function (done) {
+        const context = new TestContext({ text: 'test', type: 'message' });
+        const prompt = createChoicePrompt(undefined, 'fr-fr');
+        prompt.style = ListStyle.inline;
+        prompt.prompt(context, colorChoices, `favorite color?`).then(() => {
+            assert(Array.isArray(context.sent) && context.sent.length > 0, `prompt not sent.`);
+            assert(`favorite color? (1) red, (2) green, ou (3) blue`, `invalid prompt sent.`);
+            done();
+        });
+    })
 });
