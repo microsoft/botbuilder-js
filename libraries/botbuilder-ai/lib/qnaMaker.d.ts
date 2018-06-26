@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext, Middleware } from 'botbuilder';
+import { TurnContext, Middleware, Activity } from 'botbuilder';
 /**
  * An individual answer returned by `QnAMaker.generateAnswer()`.
  */
@@ -78,6 +78,25 @@ export interface QnAMakerOptions {
     answerBeforeNext?: boolean;
 }
 /**
+ * Trace info that we collect and emit from a QnA Maker query
+ */
+export interface QnAMakerTraceInfo {
+    /** Message which instigated the query to QnA Maker */
+    message: Activity;
+    /** Results that QnA Maker returned */
+    queryResults: QnAMakerResult[];
+    /** ID of the knowledge base that is being queried */
+    knowledgeBaseId: string;
+    /** The minimum score threshold, used to filter returned results */
+    scoreThreshold: number;
+    /** Number of ranked results that are asked to be returned */
+    top: number;
+    /** Filters used on query. Not used in JavaScript SDK v4 yet */
+    strictFilters: any[];
+    /** Metadata related to query. Not used in JavaScript SDK v4 yet */
+    metadataBoost: any[];
+}
+/**
  * Manages querying an individual QnA Maker knowledge base for answers. Can be added as middleware
  * to automatically query the knowledge base anytime a messaged is received from the user. When
  * used as middleware the component can be configured to either query the knowledge base before the
@@ -100,7 +119,7 @@ export declare class QnAMaker implements Middleware {
      * @remarks
      * Returns a value of `true` if an answer was found and sent. If multiple answers are
      * returned the first one will be delivered.
-     * @param context Context for the current turn of conversation with the use.
+     * @param context Context for the current turn of conversation with the user.
      */
     answer(context: TurnContext): Promise<boolean>;
     /**
@@ -120,4 +139,11 @@ export declare class QnAMaker implements Middleware {
      * This is exposed to enable better unit testing of the service.
      */
     protected callService(endpoint: QnAMakerEndpoint, question: string, top: number): Promise<QnAMakerResult[]>;
+    /**
+     * Emits a trace event detailing a QnA Maker call and its results.
+     *
+     * @param context Context for the current turn of conversation with the user.
+     * @param answers Answers returned by QnA Maker.
+     */
+    private emitTraceInfo(context, answers);
 }

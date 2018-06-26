@@ -18,26 +18,26 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const jwt = require("jsonwebtoken");
 const claimsIdentity_1 = require("./claimsIdentity");
 const openIdMetadata_1 = require("./openIdMetadata");
+const endorsementsValidator_1 = require("./endorsementsValidator");
 class JwtTokenExtractor {
-    constructor(tokenValidationParameters, metadataUrl, allowedSigningAlgorithms, validator = (endorments) => true) {
+    constructor(tokenValidationParameters, metadataUrl, allowedSigningAlgorithms) {
         this.tokenValidationParameters = Object.assign({}, tokenValidationParameters);
         this.tokenValidationParameters.algorithms = allowedSigningAlgorithms;
         this.openIdMetadata = JwtTokenExtractor.getOrAddOpenIdMetadata(metadataUrl);
-        this.validator = validator;
     }
-    getIdentityFromAuthHeader(authorizationHeader) {
+    getIdentityFromAuthHeader(authorizationHeader, channelId) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!authorizationHeader) {
                 return null;
             }
             let parts = authorizationHeader.split(' ');
             if (parts.length == 2) {
-                return yield this.getIdentity(parts[0], parts[1]);
+                return yield this.getIdentity(parts[0], parts[1], channelId);
             }
             return null;
         });
     }
-    getIdentity(scheme, parameter) {
+    getIdentity(scheme, parameter, channelId) {
         return __awaiter(this, void 0, void 0, function* () {
             // No header in correct scheme or no token
             if (scheme !== "Bearer" || !parameter) {
@@ -48,7 +48,7 @@ class JwtTokenExtractor {
                 return null;
             }
             try {
-                return yield this.validateToken(parameter);
+                return yield this.validateToken(parameter, channelId);
             }
             catch (err) {
                 console.log('JwtTokenExtractor.getIdentity:err!', err);
@@ -67,7 +67,7 @@ class JwtTokenExtractor {
         }
         return false;
     }
-    validateToken(jwtToken) {
+    validateToken(jwtToken, channelId) {
         return __awaiter(this, void 0, void 0, function* () {
             let decodedToken = jwt.decode(jwtToken, { complete: true });
             // Update the signing tokens from the last refresh
@@ -79,9 +79,12 @@ class JwtTokenExtractor {
             try {
                 let decodedPayload = jwt.verify(jwtToken, metadata.key, this.tokenValidationParameters);
                 // enforce endorsements in openIdMetadadata if there is any endorsements associated with the key
-                let endorments = metadata.endorsements;
-                if (Array.isArray(metadata.endorsements) && !this.validator(metadata.endorsements)) {
-                    throw new Error(`Could not validate endorsement for key: ${keyId} with endorsements: ${metadata.endorsements.join(',')}`);
+                let endorsements = metadata.endorsements;
+                if (Array.isArray(endorsements) && endorsements.length !== 0) {
+                    let isEndorsed = endorsementsValidator_1.EndorsementsValidator.validate(channelId, endorsements);
+                    if (!isEndorsed) {
+                        throw new Error(`Could not validate endorsement for key: ${keyId} with endorsements: ${endorsements.join(',')}`);
+                    }
                 }
                 if (this.tokenValidationParameters.algorithms) {
                     if (this.tokenValidationParameters.algorithms.indexOf(decodedToken.header.alg) === -1) {

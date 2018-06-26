@@ -10,42 +10,48 @@ import { ICredentialProvider } from './credentialProvider';
 import { EmulatorValidation } from './emulatorValidation';
 import { ChannelValidation } from './channelValidation';
 import { MicrosoftAppCredentials } from './microsoftAppCredentials';
-
+import { ClaimsIdentity } from './claimsIdentity';
 
 export module JwtTokenValidation {
 
     /**
-     * Validates the security tokens required by the Bot Framework Protocol. Throws on any exceptions.
+     * Authenticates the request and sets the service url in the set of trusted urls.
      * @param  {Activity} activity The incoming Activity from the Bot Framework or the Emulator
      * @param  {string} authHeader The Bearer token included as part of the request
      * @param  {ICredentialProvider} credentials The set of valid credentials, such as the Bot Application ID
-     * @returns {Promise} Promise acception when authorized correctly, Promise rejection when not authorized.
+     * @returns {Promise<ClaimsIdentity>} Promise with ClaimsIdentity for the request.
      */
-    export async function assertValidActivity(activity: Activity, authHeader: string, credentials: ICredentialProvider): Promise<void> {
-        if(!authHeader) {
-            // No auth header was sent. We might be on the anonymous code path.
+    export async function authenticateRequest(activity: Activity, authHeader: string, credentials: ICredentialProvider): Promise<ClaimsIdentity> {
+        if (!authHeader.trim()) {
             let isAuthDisabled = await credentials.isAuthenticationDisabled();
-            if(isAuthDisabled) {
-                // We are on the anonymous code path.
-                return;
+
+            if (isAuthDisabled) {
+                return new ClaimsIdentity([], true);
             }
 
-
-            // No Auth Header. Auth is required. Request is not authorized.
             throw new Error('Unauthorized Access. Request is not authorized');
         }
 
-        let usingEmulator = EmulatorValidation.isTokenFromEmulator(authHeader);
-        if (usingEmulator)
-        {
-            await EmulatorValidation.authenticateEmulatorToken(authHeader, credentials);
-        }
-        else
-        {
-            await ChannelValidation.authenticateChannelTokenWithServiceUrl(authHeader, credentials, <string>activity.serviceUrl);
-        }
+        let claimsIdentity = await this.validateAuthHeader(authHeader, credentials, activity.channelId, activity.serviceUrl);
 
-        // On the standard Auth path, we need to trust the URL that was incoming.
-        MicrosoftAppCredentials.trustServiceUrl(<string>activity.serviceUrl);
+        MicrosoftAppCredentials.trustServiceUrl(activity.serviceUrl);
+
+        return claimsIdentity;
+    }
+
+    export async function validateAuthHeader(authHeader: string, credentials: ICredentialProvider, channelId: string, serviceUrl: string = ''): Promise<ClaimsIdentity> {
+        if (!authHeader.trim()) throw new Error('\'authHeader\' required.');
+
+        let usingEmulator = EmulatorValidation.isTokenFromEmulator(authHeader);
+
+        if (usingEmulator) {
+            return await EmulatorValidation.authenticateEmulatorToken(authHeader, credentials, channelId);//, channelId)
+        }
+        
+        if (serviceUrl.trim()) {
+            return await ChannelValidation.authenticateChannelTokenWithServiceUrl(authHeader, credentials, serviceUrl, channelId)//, channelId)
+        }
+        
+        return await ChannelValidation.authenticateChannelToken(authHeader, credentials, channelId)//, channelId)
     }
 }

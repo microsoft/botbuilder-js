@@ -57,14 +57,14 @@ describe(`MessageFactory`, function () {
     it(`should return suggestedActions().`, function () {
         const activity = MessageFactory.suggestedActions(['a', 'b', 'c']);
         assertMessage(activity);
-        assert(activity.suggestedActions && activity.suggestedActions, `actions not returned`);
+        assert(activity.suggestedActions && activity.suggestedActions.actions, `actions not returned`);
         assertActions(activity.suggestedActions.actions, 3, ['a', 'b', 'c']);
     });
 
     it(`should return suggestedActions() with text.`, function () {
         const activity = MessageFactory.suggestedActions(['a', 'b', 'c'], 'foo');
         assertMessage(activity);
-        assert(activity.suggestedActions && activity.suggestedActions, `actions not returned`);
+        assert(activity.suggestedActions && activity.suggestedActions.actions, `actions not returned`);
         assertActions(activity.suggestedActions.actions, 3, ['a', 'b', 'c']);
         assert(activity.text === 'foo', `invalid text field.`);
     });
@@ -72,7 +72,7 @@ describe(`MessageFactory`, function () {
     it(`should return suggestedActions() with text and speak.`, function () {
         const activity = MessageFactory.suggestedActions(['a', 'b', 'c'], 'foo', 'bar');
         assertMessage(activity);
-        assert(activity.suggestedActions && activity.suggestedActions, `actions not returned`);
+        assert(activity.suggestedActions && activity.suggestedActions.actions, `actions not returned`);
         assertActions(activity.suggestedActions.actions, 3, ['a', 'b', 'c']);
         assert(activity.text === 'foo', `invalid text field.`);
         assert(activity.speak === 'bar', `invalid speak field.`);
@@ -81,7 +81,7 @@ describe(`MessageFactory`, function () {
     it(`should return suggestedActions() with text, speak, and inputHint.`, function () {
         const activity = MessageFactory.suggestedActions(['a', 'b', 'c'], 'foo', 'bar', InputHints.IgnoringInput);
         assertMessage(activity);
-        assert(activity.suggestedActions && activity.suggestedActions, `actions not returned`);
+        assert(activity.suggestedActions && activity.suggestedActions.actions, `actions not returned`);
         assertActions(activity.suggestedActions.actions, 3, ['a', 'b', 'c']);
         assert(activity.text === 'foo', `invalid text field.`);
         assert(activity.speak === 'bar', `invalid speak field.`);

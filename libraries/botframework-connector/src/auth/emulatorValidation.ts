@@ -92,14 +92,14 @@ export module EmulatorValidation {
      * @param  {ICredentialProvider} credentials The user defined set of valid credentials, such as the AppId.
      * @returns {Promise<ClaimsIdentity>} A valid ClaimsIdentity.
      */
-    export async function authenticateEmulatorToken(authHeader: string, credentials: ICredentialProvider): Promise<ClaimsIdentity> {
+    export async function authenticateEmulatorToken(authHeader: string, credentials: ICredentialProvider, channelId: string): Promise<ClaimsIdentity> {
 
         let tokenExtractor = new JwtTokenExtractor(
             ToBotFromEmulatorTokenValidationParameters,
             Constants.ToBotFromEmulatorOpenIdMetadataUrl,
             Constants.AllowedSigningAlgorithms);
 
-        let identity = await tokenExtractor.getIdentityFromAuthHeader(authHeader);
+        let identity = await tokenExtractor.getIdentityFromAuthHeader(authHeader, channelId);
         if (!identity) {
             // No valid identity. Not Authorized.
             throw new Error('Unauthorized. No valid identity.');

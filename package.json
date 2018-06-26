@@ -5,7 +5,7 @@
 		"postinstall": "lerna bootstrap --hoist",
 		"build": "lerna run build",
 		"clean": "lerna run clean",
-		"test:travis": "lerna run build && nyc mocha \"libraries/botbuilder*/tests/*.test.js\" && nyc report --reporter=text-lcov | coveralls",
+		"test:travis": "lerna run build && nyc mocha \"libraries/bot*/tests/*.test.js\" && nyc report --reporter=text-lcov | coveralls",
 		"test": "lerna run build && nyc mocha \"libraries/bot*/tests/*.test.js\"",
 		"build-docs": "lerna run build-docs"
 	},
@@ -24,8 +24,10 @@
 	},
 	"nyc": {
 		"exclude": [
-			"**/botframework*/**",
+			"**/botframework*/**/generated/**",
+			"**/botframework-luis/**",
 			"**/tests/**",
+			"**/tools/**",
 			"**/internal.*"
 		]
 	}

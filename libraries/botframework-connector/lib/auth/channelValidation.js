@@ -29,9 +29,9 @@ var ChannelValidation;
      * @param  {string} serviceUrl The ServiceUrl Claim value that must match in the identity.
      * @returns {Promise<ClaimsIdentity>} A valid ClaimsIdentity.
      */
-    function authenticateChannelTokenWithServiceUrl(authHeader, credentials, serviceUrl) {
+    function authenticateChannelTokenWithServiceUrl(authHeader, credentials, serviceUrl, channelId) {
         return __awaiter(this, void 0, void 0, function* () {
-            let identity = yield authenticateChannelToken(authHeader, credentials);
+            let identity = yield authenticateChannelToken(authHeader, credentials, channelId);
             let serviceUrlClaim = identity.getClaimValue(constants_1.Constants.ServiceUrlClaim);
             if (serviceUrlClaim !== serviceUrl) {
                 // Claim must match. Not Authorized.
@@ -48,10 +48,10 @@ var ChannelValidation;
      * @param  {ICredentialProvider} credentials The user defined set of valid credentials, such as the AppId.
      * @returns {Promise<ClaimsIdentity>} A valid ClaimsIdentity.
      */
-    function authenticateChannelToken(authHeader, credentials) {
+    function authenticateChannelToken(authHeader, credentials, channelId) {
         return __awaiter(this, void 0, void 0, function* () {
             let tokenExtractor = new jwtTokenExtractor_1.JwtTokenExtractor(ChannelValidation.ToBotFromChannelTokenValidationParameters, constants_1.Constants.ToBotFromChannelOpenIdMetadataUrl, constants_1.Constants.AllowedSigningAlgorithms);
-            let identity = yield tokenExtractor.getIdentityFromAuthHeader(authHeader);
+            let identity = yield tokenExtractor.getIdentityFromAuthHeader(authHeader, channelId);
             if (!identity) {
                 // No valid identity. Not Authorized.
                 throw new Error('Unauthorized. No valid identity.');

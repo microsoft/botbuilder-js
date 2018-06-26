@@ -54,7 +54,7 @@ describe(`TestAdapter`, function () {
         adapter.receiveActivity({ text: 'test', type: ActivityTypes.Message, id: 'myId' });
     });
 
-    
+
     it(`should call bot logic when send() is called.`, function (done) {
         const adapter = new TestAdapter((context) => {
             done();
@@ -66,8 +66,8 @@ describe(`TestAdapter`, function () {
             return context.sendActivity(receivedMessage);
         });
         adapter.send('test')
-        .assertReply('received')
-        .then(() => done());
+            .assertReply('received')
+            .then(() => done());
     });
 
     it(`should send and receive when test() is called.`, function (done) {
@@ -75,7 +75,7 @@ describe(`TestAdapter`, function () {
             return context.sendActivity(receivedMessage);
         });
         adapter.test('test', 'received')
-        .then(() => done());
+            .then(() => done());
     });
 
     it(`should support multiple calls to test().`, function (done) {
@@ -85,14 +85,14 @@ describe(`TestAdapter`, function () {
             return context.sendActivity(receivedMessage);
         });
         adapter.test('test', 'received')
-        .test('test', 'received')
-        .test('test', 'received')
-        .test('test', 'received')
-        .test('test', 'received')
-        .then(() => {
-            assert(count == 5, `incorrect count of "${count}".`);
-            done();
-        });
+            .test('test', 'received')
+            .test('test', 'received')
+            .test('test', 'received')
+            .test('test', 'received')
+            .then(() => {
+                assert(count == 5, `incorrect count of "${count}".`);
+                done();
+            });
     });
 
     it(`should support context.updateActivity() calls.`, function (done) {
@@ -101,11 +101,11 @@ describe(`TestAdapter`, function () {
                 .then(() => context.sendActivity(receivedMessage));
         });
         adapter.test('test', 'received')
-        .then(() => {
-            assert(adapter.updatedActivities.length === 1, `no activities updated.`);
-            assert(adapter.updatedActivities[0].text === updatedActivity.text, `invalid update activity.`);
-            done();
-        });
+            .then(() => {
+                assert(adapter.updatedActivities.length === 1, `no activities updated.`);
+                assert(adapter.updatedActivities[0].text === updatedActivity.text, `invalid update activity.`);
+                done();
+            });
     });
 
     it(`should support context.deleteActivity() calls.`, function (done) {
@@ -114,11 +114,11 @@ describe(`TestAdapter`, function () {
                 .then(() => context.sendActivity(receivedMessage));
         });
         adapter.test('test', 'received')
-        .then(() => {
-            assert(adapter.deletedActivities.length === 1, `no activities deleted.`);
-            assert(adapter.deletedActivities[0].activityId === deletedActivityId, `invalid deleted activity id.`);
-            done();
-        });
+            .then(() => {
+                assert(adapter.deletedActivities.length === 1, `no activities deleted.`);
+                assert(adapter.deletedActivities[0].activityId === deletedActivityId, `invalid deleted activity id.`);
+                done();
+            });
     });
 
     it(`should delay() before running another test.`, function (done) {
@@ -161,11 +161,11 @@ describe(`TestAdapter`, function () {
                 called = true;
             })
             .then(() => {
-                assert(called, `inspector not called.`); 
+                assert(called, `inspector not called.`);
                 done();
             });
     });
-    
+
     it(`should timeout waiting for assertReply() when a string is expected.`, function (done) {
         const start = new Date().getTime();
         const adapter = new TestAdapter((context) => {
@@ -224,8 +224,8 @@ describe(`TestAdapter`, function () {
         adapter
             .send('test')
             .assertReplyOneOf(['foo', 'bar'])
-            .then(() =>{
-                assert(false, `shouldn't pass tets.`);
+            .then(() => {
+                assert(false, `shouldn't pass test.`);
             })
             .catch(() => done());
     });
@@ -238,5 +238,19 @@ describe(`TestAdapter`, function () {
             assert(err, `Error not returned.`);
             done();
         });
+    });
+
+    it('should apply the user-defined Activity template', (done) => {
+        const template = {
+            channelId: 'foo',
+            from: { id: 'foo', name: 'Foo' },
+        };
+        new TestAdapter((context) => {
+            assert(context.activity.channelId === template.channelId, 'activity channelId does not match template');
+            assert(context.activity.from.id === template.from.id, 'activity from.id does not match template');
+            assert(context.activity.from.name === template.from.name, 'activity from.name does not match template');
+            assert(context.activity.serviceUrl, 'missing serviceUrl');
+            done();
+        }, template).send('test');
     });
 });

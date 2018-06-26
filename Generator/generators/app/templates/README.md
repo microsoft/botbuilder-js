@@ -49,13 +49,6 @@ Update `.env` with the appropriate keys:
 
 - App ID and Key for registered bots.
 
-In the case of LUIS, you will need to update the dialog in `dialogs.<%= extension %>` to work with the appropriate intent and entities.
-
-### The dialogs
-
-- Echo dialog is designed for simple Hello, World demos and to get you started.
-- LUIS dialog has the basic code to retrieve an entity
-
 ### Running the bot
 
 ```

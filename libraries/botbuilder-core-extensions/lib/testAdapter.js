@@ -33,9 +33,10 @@ class TestAdapter extends botbuilder_core_1.BotAdapter {
      * @param logic The bots logic that's under test.
      * @param template (Optional) activity containing default values to assign to all test messages received.
      */
-    constructor(logic, template) {
+    constructor(logic, template, sendTraceActivities) {
         super();
         this.logic = logic;
+        this.sendTraceActivities = false;
         this.nextId = 0;
         /**
          * @private
@@ -74,12 +75,13 @@ class TestAdapter extends botbuilder_core_1.BotAdapter {
          * ```
          */
         this.deletedActivities = [];
+        this.sendTraceActivities = sendTraceActivities || false;
         this.template = Object.assign({
             channelId: 'test',
             serviceUrl: 'https://test.com',
             from: { id: 'user', name: 'User1' },
             recipient: { id: 'bot', name: 'Bot' },
-            conversation: { id: 'Convo1' }
+            conversation: { id: 'Convo1' },
         }, template);
     }
     /**
@@ -90,7 +92,9 @@ class TestAdapter extends botbuilder_core_1.BotAdapter {
      * @param activities Set of activities sent by logic under test.
      */
     sendActivities(context, activities) {
-        const responses = activities.map((activity) => {
+        const responses = activities
+            .filter(a => this.sendTraceActivities || a.type !== 'trace')
+            .map((activity) => {
             this.activityBuffer.push(activity);
             return { id: (this.nextId++).toString() };
         });

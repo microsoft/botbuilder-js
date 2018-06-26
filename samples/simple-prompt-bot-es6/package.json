@@ -10,6 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "botbuilder": "^4.0.0-m4.1",
+    "botbuilder-prompts": "^4.0.0-m4.1",
     "restify": "^6.3.4"
   }
 }

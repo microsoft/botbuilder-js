@@ -1,8 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-const { BotFrameworkAdapter, MessageFactory } = require('botbuilder');
-const { ActionTypes } = require("botbuilder-core");
+const { BotFrameworkAdapter, MessageFactory, ActionTypes } = require('botbuilder');
 
 const restify = require('restify');
 

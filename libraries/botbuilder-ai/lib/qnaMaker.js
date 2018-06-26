@@ -10,6 +10,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const botbuilder_1 = require("botbuilder");
 const request = require("request-promise-native");
 const entities = require("html-entities");
+const QNAMAKER_TRACE_TYPE = 'https://www.qnamaker.ai/schemas/trace';
+const QNAMAKER_TRACE_NAME = 'QnAMakerMiddleware';
+const QNAMAKER_TRACE_LABEL = 'QnAMaker Trace';
 /**
  * @private
  */
@@ -61,17 +64,19 @@ class QnAMaker {
      * @remarks
      * Returns a value of `true` if an answer was found and sent. If multiple answers are
      * returned the first one will be delivered.
-     * @param context Context for the current turn of conversation with the use.
+     * @param context Context for the current turn of conversation with the user.
      */
     answer(context) {
         const { top, scoreThreshold } = this.options;
         return this.generateAnswer(context.activity.text, top, scoreThreshold).then((answers) => {
-            if (answers.length > 0) {
-                return context.sendActivity({ text: answers[0].answer, type: 'message' }).then(() => true);
-            }
-            else {
-                return Promise.resolve(false);
-            }
+            return this.emitTraceInfo(context, answers).then(() => {
+                if (answers.length > 0) {
+                    return context.sendActivity({ text: answers[0].answer, type: 'message' }).then(() => true);
+                }
+                else {
+                    return Promise.resolve(false);
+                }
+            });
         });
     }
     /**
@@ -126,6 +131,30 @@ class QnAMaker {
                 }
                 return ans;
             });
+        });
+    }
+    /**
+     * Emits a trace event detailing a QnA Maker call and its results.
+     *
+     * @param context Context for the current turn of conversation with the user.
+     * @param answers Answers returned by QnA Maker.
+     */
+    emitTraceInfo(context, answers) {
+        let traceInfo = {
+            message: context.activity,
+            queryResults: answers,
+            knowledgeBaseId: this.endpoint.knowledgeBaseId,
+            scoreThreshold: this.options.scoreThreshold,
+            top: this.options.top,
+            strictFilters: [{}],
+            metadataBoost: [{}],
+        };
+        return context.sendActivity({
+            type: 'trace',
+            valueType: QNAMAKER_TRACE_TYPE,
+            name: QNAMAKER_TRACE_NAME,
+            label: QNAMAKER_TRACE_LABEL,
+            value: traceInfo
         });
     }
 }

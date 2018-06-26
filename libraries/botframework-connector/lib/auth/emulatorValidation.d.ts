@@ -29,5 +29,5 @@ export declare module EmulatorValidation {
      * @param  {ICredentialProvider} credentials The user defined set of valid credentials, such as the AppId.
      * @returns {Promise<ClaimsIdentity>} A valid ClaimsIdentity.
      */
-    function authenticateEmulatorToken(authHeader: string, credentials: ICredentialProvider): Promise<ClaimsIdentity>;
+    function authenticateEmulatorToken(authHeader: string, credentials: ICredentialProvider, channelId: string): Promise<ClaimsIdentity>;
 }
