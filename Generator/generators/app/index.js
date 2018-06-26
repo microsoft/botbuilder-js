@@ -1,54 +1,13 @@
 'use strict';
-const Generator = require('yeoman-generator');
-const chalk = require('chalk');
-const yosay = require('yosay');
+
 const path = require('path');
+const Generator = require('yeoman-generator');
 const _ = require('lodash');
 const extend = require('deep-extend');
 const mkdirp = require('mkdirp');
 
 module.exports = class extends Generator {
   prompting() {
-    // Have Yeoman greet the user.
-    this.log(
-      yosay(`Welcome to the astonishing ${chalk.red('generator-botbuilder-js')} generator!`)
-    );
-    this.log(`    ::::::::::::::::::::::::::::::::::::::::::::
-    ::::::::::::::::::::::::::::::::::::::::::::
-    ::::::::::::::::::::::::::::::::::::::::::::
-    ::::::::::::::::::::::::::::::::::::::::::::
-    ::::::::::::::::::::::::::::::::::::::::::::
-    ::::::::::::::::::::::::::::::::::::::::::::
-    ::::::::::::::::: ::::::::: ::::::::::::::::
-    ::::::::::::::::   :::::::   :::::::::::::::
-    :::::::::::::::    :::::::    ::::::::::::::
-    :::::::::::::;    ::::::::;    :::::::::::::
-    :::::::::::::    ::::::::::;    ::::::::::::
-    ::::::::::::    ::::::::::::;    :::::::::::
-    :::::::::::    ::::::::::::::;   .::::::::::
-    ::::::::::    ::::::::::::::::;    :::::::::
-    :::::::::    ::::::::::::::::::;    ::::::::
-    :::::::;    ::::::,,::::;.;:::::;    :::::::
-    :::::::    ::::::.  .:::   ::::::;   ,::::::
-    :::::::   .::::::    :::   :::::::    ::::::
-    :::::::;   .::::::  ::::: :::::::    :::::::
-    ::::::::;   .:::::::::::::::::::    ::::::::
-    :::::::::;   .:::::::::::::::::    :::::::::
-    ::::::::::;   .:::::::::::::::    ::::::::::
-    :::::::::::;   .:::::::::::::    :::::::::::
-    ::::::::::::;   .:::::::::::    ::::::::::::
-    :::::::::::::;   .:::::::::    :::::::::::::
-    ::::::::::::::;   .:::::::    ::::::::::::::
-    :::::::::::::::;   ::::::    :::::::::::::::
-    ::::::::::::::::; ;:::::::. ::::::::::::::::
-    ::::::::::::::::::::::::::::::::::::::::::::
-    ::::::::::::::::::::::::::::::::::::::::::::
-    ::::::::::::::::::::::::::::::::::::::::::::
-    ::::::::::::::::::::::::::::::::::::::::::::
-    ::::::::::::::::::::::::::::::::::::::::::::
-    ::::::::::::::::::::::::::::::::::::::::::::
-    `);
-
     const prompts = [
       { name: 'botName', message: `What 's the name of your bot?`, default: 'sample' },
       { name: 'description', message: 'What will your bot do?', default: 'sample' },
@@ -56,14 +15,13 @@ module.exports = class extends Generator {
       { name: 'dialog', type: 'list', message: 'What default dialog do you want?', choices: ['Echo'] },
     ];
 
-    return this.prompt(prompts).then(props => {
-      // To access props later use this.props.someAnswer;
+    return this.prompt(prompts).then((props) => {
       this.props = props;
     });
   }
-
   writing() {
     const directoryName = _.kebabCase(this.props.botName);
+    const botName = this.props.botName;
     const extension = this.props.language === 'JavaScript' ? 'js' : 'ts';
     const launchSteps = extension === 'js' ? `node app.js` : `tsc\nnode app.js`;
     const defaultDialog = this.props.dialog.split(' ')[0].toLowerCase();
@@ -77,6 +35,12 @@ module.exports = class extends Generator {
     this.fs.copyTpl(this.templatePath('package.json'), this.destinationPath('package.json'), { botName: directoryName });
     this.fs.copy(this.templatePath('_gitignore'), this.destinationPath('.gitignore'));
     this.fs.copy(this.templatePath('_env'), this.destinationPath('.env'));
+    this.fs.copy(this.templatePath(`botName.bot`), this.destinationPath(`${this.props.botName}.bot`), {
+      process: function(content) {
+        var pattern = new RegExp('<%= botName %>','g');
+        return content.toString().replace(pattern, botName.toString()); 
+    }});
+
     this.fs.copy(this.templatePath(`app.${extension}`), this.destinationPath(`app.${extension}`));
   
     if(extension === 'ts') {
@@ -91,4 +55,4 @@ module.exports = class extends Generator {
   install() {
     this.installDependencies({bower: false});
   }
-};
+}
