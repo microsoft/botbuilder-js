@@ -18,7 +18,7 @@
   "typings": "./lib/luisClient.d.ts",
   "dependencies": {
     "@types/node": "^9.3.0",
-    "ms-rest": "^2.2.2"
+    "ms-rest": "^2.3.3"
   },
   "devDependencies": {
     "@types/mocha": "^2.2.47",
