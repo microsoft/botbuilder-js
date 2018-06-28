@@ -33,7 +33,14 @@ module.exports = {
             
             if(program.lu_folder) {
                 // is this a folder? 
-                if(!fs.statSync(program.lu_folder).isDirectory()) {
+                try
+                {
+                    var folderStat = fs.statSync(program.lu_folder);
+                } catch (err) {
+                    process.stderr.write(chalk.default.redBright('Sorry, ' + program.lu_folder + ' is not a folder or does not exist'));
+                    process.exit(retCode.OUTPUT_FOLDER_INVALID);
+                }
+                if(!folderStat.isDirectory()) {
                     process.stderr.write(chalk.default.redBright('Sorry, ' + program.lu_folder + ' is not a folder or does not exist'));
                     process.exit(retCode.OUTPUT_FOLDER_INVALID);
                 }

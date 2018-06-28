@@ -23,7 +23,7 @@ program
     .alias('t')
     .parse(process.argv);
 
-    var commands = ['parse', 'p', 'refresh', 'd']
+    var commands = ['parse', 'p', 'refresh', 'd', 'translate', 't'];
     if (!commands.includes(process.argv[2].toLowerCase())) {
         process.stderr.write(chalk.default.redBright(`\n  Unknown command: ${process.argv.slice(2).join(' ')}\n`));
         program.help();

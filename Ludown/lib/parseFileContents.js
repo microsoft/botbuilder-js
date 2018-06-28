@@ -201,7 +201,11 @@ module.exports.parseFile = function(fileContent, log)
                                     // clean up uttearnce to only include labelledentityValue and add to utterances collection
                                     var startPos = updatedUtterance.indexOf(srcEntityStructure);
                                     var endPos = startPos + labelledValue.length - 1;
-                                    updatedUtterance = updatedUtterance.replace("{" + entity + "=" + labelledValue + "}", labelledValue);
+                                    var utteranceLeft = updatedUtterance.substring(0, updatedUtterance.indexOf("{" + entity));
+                                    var utteranceRight = updatedUtterance.substring(updatedUtterance.indexOf(labelledValue + "}") + labelledValue.length + 1);
+                                    updatedUtterance = utteranceLeft + labelledValue + utteranceRight;
+
+                                    //updatedUtterance = updatedUtterance.replace("{" + entity + "=" + labelledValue + "}", labelledValue);
                                     entitiesInUtterance.push({
                                         "type": "simple",
                                         "value": {
