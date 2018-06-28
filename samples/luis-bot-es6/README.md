@@ -10,7 +10,7 @@ git clone https://github.com/Microsoft/botbuilder-js.git
 - Sign in
 - Click on My apps
 - "Import new App"
-- Choose file -> select [LUIS-Reminders.json](LUIS-Reminders.json)
+- Choose file -> select [Reminders.json](Reminders.json)
 - Update [appsettings.json](appsettings.json) with your Luis-ModelId, Luis-SubscriptionId and Luis-Url. You can find this information under "Publish" tab for your LUIS application at [luis.ai](https://luis.ai). E.g. For https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/XXXXXXXXXXXXX?subscription-key=YYYYYYYYYYYY&verbose=true&timezoneOffset=0&q= 
     - Luis-ModelId = XXXXXXXXXXXXX
     - Luis-SubscriptionId = YYYYYYYYYYYY
