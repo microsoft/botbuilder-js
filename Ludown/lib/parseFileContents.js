@@ -308,7 +308,7 @@ module.exports.parseFile = function(fileContent, log, locale)
                 if(prebuiltCheck === null) {
                     process.stderr.write(chalk.default.yellowBright('[WARN]: Requested PREBUILT entity "' + entityType + ' is not available for the requested locale: ' + locale + '\n'));
                     process.stderr.write(chalk.default.yellowBright('  Skipping this prebuilt entity..\n'));
-                } else if (prebuiltCheck.includes('datetime')) {
+                } else if (prebuiltCheck && prebuiltCheck.includes('datetime')) {
                     process.stderr.write(chalk.default.yellowBright('[WARN]: PREBUILT entity "' + entityType + ' is not available for the requested locale: ' + locale + '\n'));
                     process.stderr.write(chalk.default.yellowBright('  Switching to ' + builtInTypes.perLocaleAvailability[locale][entityType] + ' instead.\n'));
                     entityType = builtInTypes.perLocaleAvailability[locale][entityType];
