@@ -10,6 +10,8 @@ module.exports.cardContentTypes = {
     receipt: `${base}receipt`,
     thumbnail: `${base}thumbnail`,
     signin: `${base}signin`,
+    oauth: `${base}oauth`,
+    media: `${base}media`,
     video: `${base}video`,
     adaptivecard: `${base}adaptive`
 };

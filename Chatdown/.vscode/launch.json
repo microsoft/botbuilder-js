@@ -9,7 +9,7 @@
             "request": "launch",
             "name": "Launch Program",
             "program": "${workspaceFolder}\\bin\\chatdown",
-            "args": ["test/sample.chat"]
+            "args": ["examples/cardexamples.chat"]
         }
     ]
 }

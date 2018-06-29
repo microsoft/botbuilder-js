@@ -28,7 +28,7 @@ program
     .option('--verbose', '[Optional] Get verbose messages from parser')
     .parse(process.argv);
 
-    if (process.argv.length < 5) {
+    if (process.argv.length < 4) {
         program.help();
         process.exit(retCode.UNKNOWN_OPTIONS);
     } else {
