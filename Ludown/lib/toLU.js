@@ -197,7 +197,8 @@ var constructMdFile = function(LUISJSON, QnAJSONFromTSV, luisFile, QnAFile, skip
                         var text = utterance.text;
                         var updatedText = utterance.text;
                         var offSet = 0;
-                        utterance.entities.forEach(function(entity) {
+                        var sortedEntitiesList = objectSortByStartPos(utterance.entities);
+                        sortedEntitiesList.forEach(function(entity) {
                             var label = text.substring(entity.startPos, entity.endPos + 1);
                             var entityWithLabel = '{' + entity.entity + '=' + label + '}';
                             var leftText = updatedText.substring(0, entity.startPos + offSet);
@@ -294,3 +295,15 @@ var constructMdFile = function(LUISJSON, QnAJSONFromTSV, luisFile, QnAFile, skip
     }
     return fileContent;
 };
+/**
+ * helper function sort entities list by starting position
+ * @param {object} objectArray array of entity objects
+ * @returns {object} sorted entities array by start position
+ */
+var objectSortByStartPos = function (objectArray) {
+    var ObjectByStartPos = objectArray.slice(0);
+    ObjectByStartPos.sort(function(a,b) {
+        return a.startPos - b.startPos;
+    });
+    return ObjectByStartPos;
+}
