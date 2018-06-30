@@ -52,3 +52,5 @@ You can follow instructions [here](https://aka.ms/translate-langs) to create LUI
 ```
 >ludown parse toluis -c de-DE --in c:\test\de\1.lu -o c:\test -n myLUISApp_de-DE
 ```
+
+**Note**: ludown translate command does not verify validity of the lu file. You might want to try to parse the .lu file(s) before translating to address validity issues in the source language before translating. 
