@@ -154,7 +154,7 @@ async function parseAndTranslate (fileContent, program) {
         // is current line a comment? 
         if(currentLine.indexOf(PARSERCONSTS.COMMENT) === 0) {
             if(program.transate_comments) {
-                data = await translateContent(currentLine, program.translate_key, program.to_lang);
+                data = await translateContent(currentLine, program.translate_key, program.to_lang, program.src_lang);
                 localizedContent += data[0].translations[0].text + NEWLINE;
                 if(program.verbose) process.stdout.write(chalk.default.gray(data[0].translations[0].text + NL));
             } else {
@@ -167,7 +167,7 @@ async function parseAndTranslate (fileContent, program) {
             if(intentName.indexOf(PARSERCONSTS.QNA) === 0) {
                 var beforeQuestion = currentLine.substring(0, currentLine.indexOf(' ') + 1);
                 var question = intentName.slice(1).trim();
-                data = await translateContent(question, program.translate_key, program.to_lang);
+                data = await translateContent(question, program.translate_key, program.to_lang, program.src_lang);
                 var lText = data[0].translations[0].text;
                 localizedContent += beforeQuestion + '? ' + lText + NEWLINE;
                 if(program.verbose) process.stdout.write(chalk.default.gray(beforeQuestion + '? ' + lText + NL));
@@ -235,7 +235,7 @@ async function parseAndTranslate (fileContent, program) {
                             
                         });
                     }
-                    data = await translateContent(content, program.translate_key, program.to_lang);
+                    data = await translateContent(content, program.translate_key, program.to_lang, program.src_lang);
                     if(entitiesList.length === 0) {
                         localizedContent += listSeparator + ' ' + data[0].translations[0].text + NEWLINE;
                         if(program.verbose) process.stdout.write(chalk.default.gray(listSeparator + ' ' + data[0].translations[0].text + NL));
@@ -264,7 +264,7 @@ async function parseAndTranslate (fileContent, program) {
                                 }
                             });
                         } else {
-                            data = await translateContent(content, program.translate_key, program.to_lang);
+                            data = await translateContent(content, program.translate_key, program.to_lang, program.src_lang);
                             lText = data[0].translations[0].text;
                         }
                         
@@ -279,7 +279,7 @@ async function parseAndTranslate (fileContent, program) {
                     // strip line of the list separator
                     var listSeparator = currentLine.charAt(0);
                     var content = currentLine.slice(1).trim();
-                    data = await translateContent(content, program.translate_key, program.to_lang);
+                    data = await translateContent(content, program.translate_key, program.to_lang, program.src_lang);
                     var lText = data[0].translations[0].text;
                     localizedContent += listSeparator + ' ' + lText + NEWLINE;
                     if(program.verbose) process.stdout.write(chalk.default.gray(listSeparator + ' ' + lText + NL));
@@ -288,7 +288,7 @@ async function parseAndTranslate (fileContent, program) {
                     // strip line of the list separator
                     var listSeparator = currentLine.charAt(0);
                     var content = currentLine.slice(1).trim();
-                    data = await translateContent(content, program.translate_key, program.to_lang);
+                    data = await translateContent(content, program.translate_key, program.to_lang, program.src_lang);
                     var lText = data[0].translations[0].text;
                     localizedContent += listSeparator + ' ' + lText + NEWLINE;
                     if(program.verbose) process.stdout.write(chalk.default.gray(listSeparator + ' ' + lText + NL));
@@ -315,7 +315,7 @@ async function parseAndTranslate (fileContent, program) {
                 var linkTextRegEx = new RegExp(/\[.*\]/g);
                 var linkTextList = currentLine.trim().match(linkTextRegEx);
                 var linkTextValue = linkTextList[0].replace('[','').replace(']','');
-                data = await translateContent(linkTextValue, program.translate_key, program.to_lang);
+                data = await translateContent(linkTextValue, program.translate_key, program.to_lang, program.src_lang);
                 var lText = data[0].translations[0].text;
                 localizedContent += '[' + lText + ']' + '(' + linkValue + ')' + NEWLINE;
                 if(program.verbose) process.stdout.write(chalk.default.gray('[' + lText + ']' + '(' + linkValue + ')' + NL));
@@ -328,7 +328,7 @@ async function parseAndTranslate (fileContent, program) {
             if(program.verbose) process.stdout.write(chalk.default.gray(NL));
         } else {
             if(currentSectionType === PARSERCONSTS.ANSWER) {
-                data = await translateContent(currentLine, program.translate_key, program.to_lang);
+                data = await translateContent(currentLine, program.translate_key, program.to_lang, program.src_lang);
                 var lText = data[0].translations[0].text;
                 localizedContent += lText + NEWLINE;
                 if(program.verbose) process.stdout.write(chalk.default.gray(lText + NL));
@@ -349,8 +349,9 @@ async function parseAndTranslate (fileContent, program) {
  * @param {string} to_lang target language to localize to
  * @returns {object} response from MT rest call.
  */
-async function translateContent(currentLine, subscriptionKey, to_lang) {
-    const tUri = 'https://api.cognitive.microsofttranslator.com/translate?api-version=3.0&to=' + to_lang + '&includeAlignment=true';
+async function translateContent(currentLine, subscriptionKey, to_lang, from_lang) {
+    let tUri = 'https://api.cognitive.microsofttranslator.com/translate?api-version=3.0&to=' + to_lang + '&includeAlignment=true';
+    if(from_lang) tUri += '&from=' + from_lang;
     const options = {
         method: 'POST',
         body: JSON.stringify ([{'Text' : currentLine}]),
