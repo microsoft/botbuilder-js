@@ -8,24 +8,12 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
-            "program": "${workspaceFolder}/bin/msbot-connect-azure.js",
+            "program": "${workspaceFolder}/bin/msbot-init.js",
             "args": [
-                "--bot qqq.bot",
-                "--appId",
-                "76a09a21-e91c-4396-bef6-b3a785c78cad",
-                "-n",
-                "TomDemoBot",
-                "-t",
-                "microsoft.onmicrosoft.com",
-                "--resourceGroup",
-                "TomDemoBot",
-                "-i",
-                "TomDemoBot",
-                "--appPassword",
-                "\"M1tW7XhYe6.O0&-O\"",
+                "--name",
+                "xxx",
                 "--endpoint",
-                "https://tomdemobot.azurewebsites.net/api/messages",
-                "--subscriptionId 9ad09adf-c85f-43a0-96fe-18b146d1f90e"
+                "https://tomdemobot.azurewebsites.net/api/messages"
             ]
         }
     ]
