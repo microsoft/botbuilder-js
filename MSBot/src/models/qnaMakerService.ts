@@ -2,9 +2,9 @@
  * Copyright(c) Microsoft Corporation.All rights reserved.
  * Licensed under the MIT License.
  */
+import * as url from 'url';
 import { IQnAService, ServiceType } from '../schema';
 import { ConnectedService } from './connectedService';
-import * as url from 'url';
 
 export class QnaMakerService extends ConnectedService implements IQnAService {
     public readonly type = ServiceType.QnA;
@@ -17,7 +17,9 @@ export class QnaMakerService extends ConnectedService implements IQnAService {
         super(source);
         let { id = '', name = '', kbId = '', subscriptionKey = '', endpointKey = '', hostname = '' } = source;
         this.id = kbId;
-        hostname = url.resolve(source.hostname, '/qnamaker');
+        if (hostname) {
+            hostname = url.resolve(hostname, '/qnamaker');
+        }
         Object.assign(this, { id, name, kbId, subscriptionKey, endpointKey, hostname });
     }
 
