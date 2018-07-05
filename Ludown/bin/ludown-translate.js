@@ -21,7 +21,7 @@ program
     .option('-k, --translate_key <trKey>', 'Your translation key. See https://aka.ms/translate-key to get your key')
     .option('-l, --lu_folder <inputFolder>', '[Optional] Folder that has the .lu file. By default ludown will only look at the current folder. To look at all subfolders, include -s')
     .option('-o, --out_folder <outputFolder>', '[Optional] Output folder for all files the tool will generate')
-    .option('-f, --src_lang', '[Optional] Source language. When omitted, source language is automatically detected. See https://aka.ms/translate-langs for list of supported languages and codes')
+    .option('-f, --src_lang <srcLang>', '[Optional] Source language. When omitted, source language is automatically detected. See https://aka.ms/translate-langs for list of supported languages and codes')
     .option('-s, --subfolder', '[Optional] Include sub-folders as well when looking for .lu files')
     .option('-n, --lu_File <LU_File>', '[Optional] Output .lu file name')
     .option('-c, --transate_comments', '[Optional] Translate comments in .lu files')
