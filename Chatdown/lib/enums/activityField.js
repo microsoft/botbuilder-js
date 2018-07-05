@@ -4,5 +4,15 @@
  */
 module.exports = {
     attachment: 'attachment',
-    attachmentlayout: 'attachmentlayout'
+    attachmentlayout: 'attachmentlayout',
+    suggestions: 'suggestions',
+    herocard: 'herocard',
+    thumbnailcard: 'thumbnailcard',
+    mediacard: 'mediacard',
+    animationcard: 'animationcard',
+    audiocard: 'audiocard',
+    videocard: 'videocard',
+    oauthcard: 'oauthcard',
+    signincard: 'signincard',
+    receiptcard: 'receiptcard',
 };

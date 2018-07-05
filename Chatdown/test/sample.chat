@@ -5,18 +5,32 @@ Joe: Hi!
 
 LulaBot: Hello there!
 
-Joe: I would like some cheese.
-
-Lulabot: # cheese choices
-1. cheese 1 
-2. cheese 2
-3. cheese 3
+LulaBot: [Herocard   
+    title=Cheese gromit!
+    subtitle=Hero Card
+    text=This is some text describing the card, it's cool because it's cool
+    image=https://memegenerator.net/img/instances/500x/73055378/cheese-gromit.jpg
+    buttons=Option 1| Option 2| Option 3]
+[ThumbnailCard
+    title=Cheese gromit!
+    subtitle=Thumbnail Card
+    text=This is some text describing the card, it's cool because it's cool
+    image=https://memegenerator.net/img/instances/500x/73055378/cheese-gromit.jpg
+    buttons=Option 1| Option 2| Option 3]
 
 bot:
 [Typing]
 [Delay = 5000]
 web page attachment
 [Attachment=https://github.com/Microsoft/Botbuilder-DotNet]
+
+LulaBot: Here are some pictures
+[AttachmentLayout=carousel]
+[Attachment=http://4.bp.blogspot.com/--cFa6t-x4qY/UAqEgUvPd2I/AAAAAAAANIg/pMLE080Zjh4/s1600/turtle.jpg]
+[Attachment=http://viagemempauta.com.br/wp-content/uploads/2015/09/2_All-Angle-By-Andreza-dos-Santos_FTS_2914-344-620x415.jpg]
+[Attachment=http://images.fineartamerica.com/images-medium-large/good-morning-turtles-freund-gloria.jpg]
+[Attachment=http://4.bp.blogspot.com/--cFa6t-x4qY/UAqEgUvPd2I/AAAAAAAANIg/pMLE080Zjh4/s1600/turtle.jpg]
+
 
 LulaBot: Here's card1
 [Attachment=test/bot-framework.png]
@@ -28,5 +42,14 @@ LulaBot: Here's adaptive card from disk
 [Attachment=folder/samplecard.json adaptivecard]
 
 LulaBot: Here's json attachment from disk
-[Attachment=folder/samplecard.json adaptivecard]
+[Attachment=folder/samplecard.json]
+
+
+Joe: I would like some cheese.
+
+Lulabot: # cheese choices
+1. cheese 1 
+2. cheese 2
+3. cheese 3
+[Suggestions=option 1|option 2|option 3]
 

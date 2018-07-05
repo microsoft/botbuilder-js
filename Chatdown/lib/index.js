@@ -21,7 +21,7 @@ const request = require('request-promise-native');
 
 const NS = uuid();
 // Matches [someActivityOrInstruction=value]
-const commandRegExp = /(?:\[)(.*?)(?:])/i;
+const commandRegExp = /(?:\[)([\s\S]*?)(?:])/i;
 const configurationRegExp = /^(bot|user|channelId)(?:=)/;
 const messageTimeGap = 2000;
 let now = Date.now();
@@ -35,19 +35,21 @@ let workingDirectory;
  * @param args The k/v pair representing the configuration options
  * @returns {Promise<Array>} Resolves with an array of Activity objects.
  */
-module.exports = async function readContents(fileContents, args) {
+module.exports = async function readContents(fileContents, args = {}) {
     // Resolve file paths based on the input file with a fallback to the cwd
     workingDirectory = args.in ? path.dirname(path.resolve(args.in)) : __dirname;
     const activities = [];
     const lines = fileLineIterator(fileContents.trim() + '\n');
     // Aggregate the contents of each line until
     // we reach a new activity.
-    let aggregate = null;
+    let aggregate = '';
     let currentActivity;
     // Read each line, derive activities with messages, then
     // return them as the payload
     let from;
     let recipient;
+    let conversationId = uuidv3("conversationid", NS);
+
     for (let line of lines) {
         // signature for a new message
         if (configurationRegExp.test(line)) {
@@ -56,7 +58,6 @@ module.exports = async function readContents(fileContents, args) {
                 throw new Error('Malformed configurations options detected. Options must be in the format optionName=optionValue');
             }
             args[optionName.trim()] = value.trim();
-
             if (args.bot && args.user) {
                 const botId = uuidv3(args.bot, NS);
                 const userId = uuidv3(args.user, NS);
@@ -74,14 +75,25 @@ module.exports = async function readContents(fileContents, args) {
         }
         // If we've gotten to this point, we've defined
         // user, bot and other config options
-        const { channelId = '1', user, bot } = args;
+        const { user, bot } = args;
         const newMessageRegEx = new RegExp(`^(${user}|${bot}|bot|user):`, 'i');
         if (newMessageRegEx.test(line)) {
             // Complete the previous activity
             if (currentActivity) {
-                currentActivity.text = currentActivity.text ? currentActivity.text.trim() : null;
+                // signature for an activity that contains a type other than
+                // message with or without arguments. e.g. [delay:3000]
+                if (commandRegExp.test(aggregate)) {
+                    const newActivities = await readCommandsFromAggregate(aggregate, currentActivity, recipient, from, conversationId);
+                    if (newActivities) {
+                        activities.push(...newActivities);
+                    }
+                } else {
+                    currentActivity.text = aggregate ? aggregate.trim() : null;
+                }
                 activities.push(currentActivity);
+                aggregate = '';
             }
+            // create new activity 
             const fromId = args[newMessageRegEx.exec(line)[1].toLowerCase()];
             const fromChannelAccountId = fromId.toLowerCase() === args.bot.toLowerCase() ? args.botId : args.userId;
             const recipientChannelAccountId = fromId.toLowerCase() === args.bot.toLowerCase() ? args.userId : args.botId;
@@ -90,36 +102,33 @@ module.exports = async function readContents(fileContents, args) {
             recipient = args[recipientChannelAccountId];
 
             // Start the new activity
-            currentActivity = createActivity({ recipient, from, channelId });
+            currentActivity = createActivity({ recipient, from, conversationId });
             currentActivity.timestamp = getIncrementedDate();
 
             // Trim off the user or bot and continue since
             // this line may still have a message or other
             // activities to parse.
             // e.g. Joe: Hello! [delay:1000] becomes Hello! [delay:1000]
-            aggregate = line.trim().replace(newMessageRegEx, '');
+            aggregate += line.trim().replace(newMessageRegEx, '') + "\n";
         } else {
             // Not a new message but could contain
             // an activity on the line by itself.
-            aggregate = line;
-        }
-
-        // signature for an activity that contains a type other than
-        // message with or without arguments. e.g. [delay:3000]
-        if (commandRegExp.test(aggregate)) {
-            const newActivities = await readActivitiesFromAggregate(aggregate, currentActivity, recipient, from, channelId);
-            if (newActivities) {
-                activities.push(...newActivities);
-                aggregate = null;
-            }
-        }
-        else {
-            currentActivity.text += (aggregate !== null ? aggregate : line).trim() + '\n';
+            aggregate += line + "\n";
         }
     }
     // We've run out of lines but may still have
     // an activity waiting.
     if (currentActivity) {
+        // signature for an activity that contains a type other than
+        // message with or without arguments. e.g. [delay:3000]
+        if (commandRegExp.test(aggregate)) {
+            const newActivities = await readCommandsFromAggregate(aggregate, currentActivity, recipient, from, conversationId);
+            if (newActivities) {
+                activities.push(...newActivities);
+            }
+        } else {
+            currentActivity.text = aggregate ? aggregate.trim() : null;
+        }
         activities.push(currentActivity);
     }
     return activities;
@@ -134,20 +143,24 @@ module.exports = async function readContents(fileContents, args) {
  * @param {Activity} currentActivity The Activity currently in context
  * @param {string} recipient The recipient of the Activity
  * @param {string} from The sender of the Activity
- * @param {string} channelId The id of the channel
+ * @param {string} conversationId The id of the channel
  *
  * @returns {Promise<*>} Resolves to the number of new activities encountered or null if no new activities resulted
  */
-async function readActivitiesFromAggregate(aggregate, currentActivity, recipient, from, channelId) {
+async function readCommandsFromAggregate(aggregate, currentActivity, recipient, from, conversationId) {
     const newActivities = [];
     commandRegExp.lastIndex = 0;
     let result;
+    let delay = messageTimeGap;
     while ((result = commandRegExp.exec(aggregate))) {
         // typeOrField should always be listed first
         let match = result[1]; // result[] doesn't have [] on it
-        let split = match.indexOf('=');
-        let typeOrField = split > 0 ? match.substring(0, split).trim() : match.trim();
-        let rest = (split > 0) ? match.substring(split + 1).trim() : undefined;
+        let lines = match.split('\n');
+        let split = lines[0].indexOf('=');
+        let typeOrField = split > 0 ? lines[0].substring(0, split).trim() : lines[0].trim();
+        let rest = (split > 0) ? lines[0].substring(split + 1).trim() : undefined;
+        if (lines.length > 1)
+            rest = match.substr(match.indexOf('\n') + 1);
         const type = activitytypes[typeOrField.toLowerCase()];
         const field = activityfield[typeOrField.toLowerCase()];
         const instruction = instructions[typeOrField.toLowerCase()];
@@ -158,33 +171,26 @@ async function readActivitiesFromAggregate(aggregate, currentActivity, recipient
             aggregate = aggregate.replace(`${result[0]}`, '');
             continue;
         }
+
         // Indicates a new activity -
         // As more activity types are supported, this should
         // become a util or helper class.
         if (type) {
-            // We have encountered a new activity but
-            // may have a fragment of a message to append
-            // e.g. aggregate = "oh sure, I think I found something...[Typing][Delay:3000]"
-            // we hit on [Typing] but need to append "oh sure, I think I found something..."
-            // to the message.
-            const index = aggregate.indexOf(`[${result[1]}]`);
-            (currentActivity.text || (currentActivity.text = '')).concat(`\n${aggregate.substr(0, index).trim()}`);
-            currentActivity = createActivity({ type, recipient, from, channelId });
-            newActivities.push(currentActivity);
+            switch (type) {
+                case activitytypes.typing:
+                    let newActivity = createActivity({ type, recipient, from, conversationId });
+                    newActivities.push(newActivity);
+                    break;
+            }
         }
-
-        let delay = messageTimeGap;
-
-        if (instruction) {
+        else if (instruction) {
             switch (instruction) {
                 case instructions.delay:
                     delay = parseInt(rest);
                     break;
             }
         }
-        currentActivity.timestamp = getIncrementedDate(delay);
-
-        if (field) {
+        else if (field) {
             // As more activity fields are supported,
             // this should become a util or helper class.
             switch (field) {
@@ -193,6 +199,37 @@ async function readActivitiesFromAggregate(aggregate, currentActivity, recipient
                     break;
                 case activityfield.attachmentlayout:
                     addAttachmentLayout(currentActivity, rest);
+                    break;
+                case activityfield.suggestions:
+                    addSuggestions(currentActivity, rest);
+                    break;
+                case activityfield.basiccard:
+                case activityfield.herocard:
+                    addCard(cardContentTypes.hero, currentActivity, rest);
+                    break;
+                case activityfield.thumbnailcard:
+                    addCard(cardContentTypes.thumbnail, currentActivity, rest);
+                    break;
+                case activityfield.animationcard:
+                    addCard(cardContentTypes.animation, currentActivity, rest);
+                    break;
+                case activityfield.mediacard:
+                    addCard(cardContentTypes.media, currentActivity, rest);
+                    break;
+                case activityfield.audiocard:
+                    addCard(cardContentTypes.audio, currentActivity, rest);
+                    break;
+                case activityfield.videocard:
+                    addCard(cardContentTypes.video, currentActivity, rest);
+                    break;
+                // case activityfield.receiptcard:
+                //     addCard(cardContentTypes.receipt, currentActivity, rest);
+                //     break;
+                case activityfield.signincard:
+                    addCard(cardContentTypes.signin, currentActivity, rest);
+                    break;
+                case activityfield.oauthcard:
+                    addCard(cardContentTypes.oauth, currentActivity, rest);
                     break;
             }
         }
@@ -205,6 +242,8 @@ async function readActivitiesFromAggregate(aggregate, currentActivity, recipient
     if (aggregate) {
         currentActivity.text += aggregate.trim();
     }
+    currentActivity.timestamp = getIncrementedDate(delay);
+
     return newActivities.length ? newActivities : null;
 }
 
@@ -215,6 +254,82 @@ function addAttachmentLayout(currentActivity, rest) {
         currentActivity.attachmentLayout = AttachmentLayoutTypes.List;
     else
         console.error(`AttachmentLayout of ${rest[0]} is not List or Carousel`);
+}
+
+/**
+ * Add suggested actions support
+ * Example: [suggestions=Option 1|Option 2|Option 3]
+ * @param {*} currentActivity 
+ * @param {*} rest 
+ */
+function addSuggestions(currentActivity, rest) {
+    currentActivity.suggestedActions = { actions: [] };
+    let actions = rest.split('|');
+    for (action of actions) {
+        currentActivity.suggestedActions.actions.push({ title: action.trim(), type: "imBack", value: action.trim() });
+    }
+}
+
+/**
+ * Add card
+ * Example: [herocard=
+ *     Title:xxx
+ *     subtitle: xxx
+ *     Text: xxxx
+ *     image: url
+ *     Buttons: Option 1|Option 2|Option 3]
+ * @param {*} currentActivity 
+ * @param {*} rest 
+ */
+function addCard(contentType, currentActivity, rest) {
+    let card = { buttons: [] };
+    let lines = rest.split('\n');
+    for (line of lines) {
+        let start = line.indexOf('=');;
+        let property = line.substr(0, start).trim().toLowerCase();
+        let value = line.substr(start + 1).trim().toLowerCase();
+        switch (property) {
+            case 'title':
+            case 'subtitle':
+            case 'text':
+            case 'aspect':
+            case 'value':
+            case 'connectioname':
+                card[property] = value;
+                break;
+            case 'image':
+                card.image = { url: value };
+                break;
+            case 'images':
+                if (!card.images) {
+                    card.images = [];
+                }
+                card.images.push({ url: value });
+                break;
+            case 'media':
+                if (!card.media)
+                    card.media = [];
+                card.media.push({ url: value });
+                break;
+            case 'buttons':
+                for (button of value.split('|')) {
+                    card.buttons.push({ title: button.trim(), type: "imBack", value: button.trim() });
+                }
+                break;
+            case 'autostart':
+            case 'sharable':
+            case 'autoloop':
+                card[property] = value.toLowerCase() == 'true';
+                break;
+            case '':
+                break;
+            default:
+                console.warn(chalk.red.bold(`Skipping unknown card property ${property}\n${line}`));
+                break;
+        }
+    }
+    let attachment = { contentType: contentType, content: card };
+    (currentActivity.attachments || (currentActivity.attachments = [])).push(attachment);
 }
 
 /**
@@ -296,12 +411,12 @@ async function readAttachmentFile(fileLocation, contentType) {
  * @param {ActivityTypes} type The Activity type
  * @param {string} to The recipient of the Activity
  * @param {string} from The sender of the Activity
- * @param {string} channelId The id of the channel
+ * @param {string} conversationId The id of the conversation
  * @returns {Activity} The newly created activity
  */
-function createActivity({ type = ActivityTypes.Message, recipient, from, channelId }) {
+function createActivity({ type = ActivityTypes.Message, recipient, from, conversationId }) {
     const activity = new Activity({ from, recipient, type, text: '', id: uuid() });
-    activity.conversation = new ConversationAccount({ id: channelId });
+    activity.conversation = new ConversationAccount({ id: conversationId });
     return activity;
 }
 
@@ -316,9 +431,8 @@ function getIncrementedDate(byThisAmount = messageTimeGap) {
  * @param {string} fileContents The contents containing the lines to iterate.
  */
 function* fileLineIterator(fileContents) {
-    const reg = /(.+)*(?:\s)+/g; // take the whole line except the delimiter
-    let parts;
-    while ((parts = reg.exec(fileContents))) {
-        yield parts[1];
+    var parts = fileContents.split(/\r?\n/);
+    for (part of parts) {
+        yield part;
     }
 }

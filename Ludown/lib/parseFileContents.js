@@ -21,7 +21,7 @@ const retCode = require('./enums/CLI-errors');
  *  
  * @returns {additionalFilesToParse,LUISJsonStruct,qnaJsonStruct} Object that contains list of additional files to parse, parsed LUIS object and parsed QnA object
  */
-module.exports.parseFile = function(fileContent, log) 
+module.exports.parseFile = function(fileContent, log, locale) 
 {
     var additionalFilesToParse = new Array();
     var otherTypes = ['list'];
@@ -201,7 +201,11 @@ module.exports.parseFile = function(fileContent, log)
                                     // clean up uttearnce to only include labelledentityValue and add to utterances collection
                                     var startPos = updatedUtterance.indexOf(srcEntityStructure);
                                     var endPos = startPos + labelledValue.length - 1;
-                                    updatedUtterance = updatedUtterance.replace("{" + entity + "=" + labelledValue + "}", labelledValue);
+                                    var utteranceLeft = updatedUtterance.substring(0, updatedUtterance.indexOf("{" + entity));
+                                    var utteranceRight = updatedUtterance.substring(updatedUtterance.indexOf(labelledValue + "}") + labelledValue.length + 1);
+                                    updatedUtterance = utteranceLeft + labelledValue + utteranceRight;
+
+                                    //updatedUtterance = updatedUtterance.replace("{" + entity + "=" + labelledValue + "}", labelledValue);
                                     entitiesInUtterance.push({
                                         "type": "simple",
                                         "value": {
@@ -298,9 +302,21 @@ module.exports.parseFile = function(fileContent, log)
             }
             // add this entity to appropriate place
             // is this a builtin type? 
-            if(builtInTypes.includes(entityType)) {
-                // add to prebuiltEntities if it does not exist there.
-                addItemIfNotPresent(LUISJsonStruct, LUISObjNameEnum.PREBUILT, entityType);
+            if(builtInTypes.consolidatedList.includes(entityType)) {
+                // verify if the requested entityType is available in the requested locale
+                var prebuiltCheck = builtInTypes.perLocaleAvailability[locale][entityType];
+                if(prebuiltCheck === null) {
+                    process.stderr.write(chalk.default.yellowBright('[WARN]: Requested PREBUILT entity "' + entityType + ' is not available for the requested locale: ' + locale + '\n'));
+                    process.stderr.write(chalk.default.yellowBright('  Skipping this prebuilt entity..\n'));
+                } else if (prebuiltCheck && prebuiltCheck.includes('datetime')) {
+                    process.stderr.write(chalk.default.yellowBright('[WARN]: PREBUILT entity "' + entityType + ' is not available for the requested locale: ' + locale + '\n'));
+                    process.stderr.write(chalk.default.yellowBright('  Switching to ' + builtInTypes.perLocaleAvailability[locale][entityType] + ' instead.\n'));
+                    entityType = builtInTypes.perLocaleAvailability[locale][entityType];
+                    addItemIfNotPresent(LUISJsonStruct, LUISObjNameEnum.PREBUILT, entityType);
+                } else {
+                    // add to prebuiltEntities if it does not exist there.
+                    addItemIfNotPresent(LUISJsonStruct, LUISObjNameEnum.PREBUILT, entityType);
+                }
                 if(entityName !== "PREBUILT") {
                     // add to prebuilt entities if this does not already exist there and if this is not PREBUILT
                     var lMatch = true;
@@ -322,6 +338,8 @@ module.exports.parseFile = function(fileContent, log)
                         LUISJsonStruct.prebuiltEntities.push(prebuiltEntitesObj);
                     } 
                 }
+                
+                
             } else if(entityType.indexOf('=', entityType.length - 1) >= 0) 
             {
                 // is this a list type?  

@@ -23,5 +23,6 @@ module.exports = {
     MISSING_LABELLED_VALUE:     17,
     SYNONYMS_NOT_A_LIST:        18,
     PHRASELIST_NOT_A_LIST:      19,
+    TRANSLATE_SERVICE_FAIL:     20,
     UNKNOWN_ERROR:              99   
 };
