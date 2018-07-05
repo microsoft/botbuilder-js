@@ -32,7 +32,7 @@
     "await-delay": "^1.0.0",
     "camelcase": "^4.1.0",
     "chalk": "^2.3.2",
-    "cli-table2": "^0.2.0",
+    "cli-table3": "^0.5.0",
     "fs-extra": "^5.0.0",
     "minimist": "^1.2.0",
     "node-fetch": "^2.0.0",
