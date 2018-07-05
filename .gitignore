@@ -298,3 +298,5 @@ __pycache__/
 AzureCli/azext_bot/dist/
 AzureCli/azext_bot/build/
 
+# macOS stuff
+.DS_Store

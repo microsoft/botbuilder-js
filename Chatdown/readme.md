@@ -139,7 +139,7 @@ The properties that are supported are
 To add an attachment, you use `[Attachment=path contentPath]`.  The path can be a URL or a local path (either absolute or relative to `.chat` file).  The content type is optional and if not passed, will be inferred from the file extension. You can also pass it using a shortcut or full mime type.
 
 ```markdown
-[Attachment:path contentType]
+[Attachment=path contentType]
 ```
 
 The following examples illustrates sending a carousel of photos:
@@ -187,7 +187,7 @@ This will consume `sample.chat` and output `sample.transcript`.
 ### Using stdin
 stdin can be used as an alternative to specifying an input file.
 ```bash
-(echo user=Joe && echo bot=LulaBot && echo Joe: Hi! && echo LulaBot: Hi there!) | chatdown > sample.transcript
+(echo user=Joe && echo bot=LulaBot && echo Joe: 'Hi!' && echo LulaBot: 'Hi there!') | chatdown > sample.transcript
 ```
 
 ### Using stdout
