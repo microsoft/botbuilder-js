@@ -58,7 +58,6 @@ module.exports = async function readContents(fileContents, args = {}) {
                 throw new Error('Malformed configurations options detected. Options must be in the format optionName=optionValue');
             }
             args[optionName.trim()] = value.trim();
-
             if (args.bot && args.user) {
                 const botId = uuidv3(args.bot, NS);
                 const userId = uuidv3(args.user, NS);
@@ -432,7 +431,7 @@ function getIncrementedDate(byThisAmount = messageTimeGap) {
  * @param {string} fileContents The contents containing the lines to iterate.
  */
 function* fileLineIterator(fileContents) {
-    var parts = fileContents.split('\r\n');
+    var parts = fileContents.split(/\r?\n/);
     for (part of parts) {
         yield part;
     }
