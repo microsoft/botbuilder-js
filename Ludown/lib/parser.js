@@ -33,7 +33,14 @@ module.exports = {
             
             if(program.lu_folder) {
                 // is this a folder? 
-                if(!fs.statSync(program.lu_folder).isDirectory()) {
+                try
+                {
+                    var folderStat = fs.statSync(program.lu_folder);
+                } catch (err) {
+                    process.stderr.write(chalk.default.redBright('Sorry, ' + program.lu_folder + ' is not a folder or does not exist'));
+                    process.exit(retCode.OUTPUT_FOLDER_INVALID);
+                }
+                if(!folderStat.isDirectory()) {
                     process.stderr.write(chalk.default.redBright('Sorry, ' + program.lu_folder + ' is not a folder or does not exist'));
                     process.exit(retCode.OUTPUT_FOLDER_INVALID);
                 }
@@ -67,6 +74,15 @@ module.exports = {
                     process.exit(retCode.OUTPUT_FOLDER_INVALID);
                 }
             }
+            
+            if(!program.luis_versionId) program.luis_versionId = "0.1";
+            if(!program.luis_schema_version) program.luis_schema_version = "3.0.0";
+            if(!program.luis_name) program.luis_name = path.basename(rootFile, path.extname(rootFile));
+            if(!program.luis_desc) program.luis_desc = "";
+            if(!program.luis_culture) program.luis_culture = "en-us";   
+            if(!program.qna_name) program.qna_name = path.basename(rootFile, path.extname(rootFile));
+            if(program.luis_culture) program.luis_culture = program.luis_culture.toLowerCase();
+
             while(filesToParse.length > 0) {
                 var file = filesToParse[0];
                 if(!fs.existsSync(path.resolve(file))) {
@@ -79,7 +95,7 @@ module.exports = {
                     process.exit(retCode.FILE_OPEN_ERROR);
                 }
                 if(program.verbose) process.stdout.write(chalk.default.whiteBright('Parsing file: ' + file + '\n'));
-                var parsedContent = parseFileContents.parseFile(fileContent, program.verbose);
+                var parsedContent = parseFileContents.parseFile(fileContent, program.verbose, program.luis_culture);
                 if (!parsedContent) {
                     process.stderr.write(chalk.default.redBright('Sorry, file ' + file + 'had invalid content\n'));
                     process.exit(retCode.INVALID_INPUT_FILE);
@@ -104,12 +120,7 @@ module.exports = {
             var finalLUISJSON = collateLUISFiles(allParsedLUISContent);
             if(haveLUISContent(parsedContent.LUISBlob)) validateLUISBlob(finalLUISJSON);
             var finalQnAJSON = collateQnAFiles(allParsedQnAContent);
-            if(!program.luis_versionId) program.luis_versionId = "0.1";
-            if(!program.luis_schema_version) program.luis_schema_version = "3.0.0";
-            if(!program.luis_name) program.luis_name = path.basename(rootFile, path.extname(rootFile));
-            if(!program.luis_desc) program.luis_desc = "";
-            if(!program.luis_culture) program.luis_culture = "en-us";   
-            if(!program.qna_name) program.qna_name = path.basename(rootFile, path.extname(rootFile));
+            
             if(finalLUISJSON) {
                 finalLUISJSON.luis_schema_version = program.luis_schema_version;
                 finalLUISJSON.versionId = program.luis_versionId;

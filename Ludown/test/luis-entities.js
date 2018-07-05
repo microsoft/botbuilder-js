@@ -13,13 +13,13 @@ const ludown = path.resolve('../bin/ludown');
 describe('LUIS entity types in .lu files', function() {
     it('should be parsed correctly when all entity types is specified', function() {
         assert.deepEqual(
-            parseFileContents.parseFile(testcases.tests["all-entity-types"].lufile,false).LUISBlob, 
+            parseFileContents.parseFile(testcases.tests["all-entity-types"].lufile,false,'en-us').LUISBlob, 
             testcases.tests["all-entity-types"].luisJSON);
     });
     
     it('should be parsed correctly when phraselists is specified', function() {
         assert.deepEqual(
-            parseFileContents.parseFile(testcases.tests.phraselist.lufile,false).LUISBlob, 
+            parseFileContents.parseFile(testcases.tests.phraselist.lufile,false,'en-us').LUISBlob, 
             testcases.tests.phraselist.luisJSON);
     });
 
