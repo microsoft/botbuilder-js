@@ -4,9 +4,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Copyright(c) Microsoft Corporation.All rights reserved.
  * Licensed under the MIT License.
  */
+const url = require("url");
 const schema_1 = require("../schema");
 const connectedService_1 = require("./connectedService");
-const url = require("url");
 class QnaMakerService extends connectedService_1.ConnectedService {
     constructor(source = {}) {
         super(source);
@@ -17,7 +17,9 @@ class QnaMakerService extends connectedService_1.ConnectedService {
         this.endpointKey = '';
         let { id = '', name = '', kbId = '', subscriptionKey = '', endpointKey = '', hostname = '' } = source;
         this.id = kbId;
-        hostname = url.resolve(source.hostname, '/qnamaker');
+        if (hostname) {
+            hostname = url.resolve(hostname, '/qnamaker');
+        }
         Object.assign(this, { id, name, kbId, subscriptionKey, endpointKey, hostname });
     }
     toJSON() {
