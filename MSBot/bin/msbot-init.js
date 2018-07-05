@@ -4,9 +4,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Copyright(c) Microsoft Corporation.All rights reserved.
  * Licensed under the MIT License.
  */
-const fsx = require("fs-extra");
 const chalk = require("chalk");
 const program = require("commander");
+const fsx = require("fs-extra");
 const readline = require("readline-sync");
 const BotConfig_1 = require("./BotConfig");
 const schema_1 = require("./schema");
@@ -17,7 +17,7 @@ program.Command.prototype.unknownOption = function (flag) {
 program
     .name('msbot init')
     .option('--secret <secret>', 'secret used to encrypt service keys')
-    .option('-n, --name <botname>', 'name of the bot')
+    .option('-n, --name <name>', 'name of the bot')
     .option('-d, --description <description>', 'description of the bot')
     .option('-a, --appId  <appid>', 'Microsoft AppId used for auth with the endpoint')
     .option('-p, --appPassword <password>', 'Microsoft app password used for auth with the endpoint')
@@ -28,12 +28,12 @@ program
 });
 let args = program.parse(process.argv);
 if (!args.quiet) {
-    let exists = true;
+    let exists = fsx.existsSync(`${args.name}.bot`);
     while (((!args.hasOwnProperty('name') || args.name.length == 0)) || exists) {
-        args.name = readline.question(`What name would you like for your bot? `);
-        exists = fsx.existsSync(`${args.name}.bot`);
         if (exists)
             console.log(`${args.name}.bot already exists`);
+        args.name = readline.question(`What name would you like for your bot? `);
+        exists = fsx.existsSync(`${args.name}.bot`);
     }
     if (!args.secret || args.secret.length == 0) {
         let answer = readline.question(`Would you to secure your bot keys with a secret? [no]`);
