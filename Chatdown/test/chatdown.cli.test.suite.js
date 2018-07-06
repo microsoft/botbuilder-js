@@ -12,13 +12,6 @@ describe('The Chatdown cli tool', () => {
         });
     });
 
-    it('should throw and output a message when user or bot is omitted from the input file', done => {
-        exec(`echo bot: hello! user:can I get some help? | node ${chatdown} `, (error, stdout, stderr) => {
-            assert(stderr.trim() === 'ReferenceError: Cannot reference "bot" or "user"');
-            done();
-        });
-    });
-
     it('should accept data as a pipe and output the results', done => {
         exec(`(echo user=Joe && echo bot=LuliBot && echo LuliBot: hello! && echo joe:can I get some help?) | node ${chatdown} --bot bot --user user`, (error, stdout, stderr) => {
             assert.doesNotThrow(() => JSON.parse(stdout));

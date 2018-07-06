@@ -114,7 +114,7 @@ module.exports = async function readContents(fileContents, args = {}) {
                 }
             }
             // aggregate starts new with this line
-            aggregate = line.substr(matches[0].length).trim();
+            aggregate = line.substr(matches[0].length).trim() + "\n";
         } else {
             // Not a new message but could contain
             // an activity on the line by itself.
@@ -201,7 +201,7 @@ async function readCommandsFromAggregate(args, aggregate) {
     let result;
     let delay = messageTimeGap;
     let currentActivity = createActivity({ type: activitytypes.Message, from: args.from, recipient: args.recipient, conversationId: args.conversation.id });
-
+    currentActivity.text = '';
     while ((result = commandRegExp.exec(aggregate))) {
         // typeOrField should always be listed first
         let match = result[1]; // result[] doesn't have [] on it
@@ -217,8 +217,9 @@ async function readCommandsFromAggregate(args, aggregate) {
         // This isn't an activity - bail
         if (!type && !field && !instruction) {
             // skip unknown tag
-            console.error(chalk.red.bold(`skipping unknown tag ${result[0]}`));
-            aggregate = aggregate.replace(`${result[0]}`, '');
+            let value = aggregate.substr(0, result.index + result[0].length);
+            currentActivity.text += value;
+            aggregate = aggregate.substring(value.length);
             continue;
         }
 
@@ -240,6 +241,7 @@ async function readCommandsFromAggregate(args, aggregate) {
             switch (type) {
                 case activitytypes.typing:
                     let newActivity = createActivity({ type, recipient: args.recipient, from: args.from, conversationId: args.conversation.id });
+                    newActivity.timestamp = getIncrementedDate(100);
                     newActivities.push(newActivity);
                     break;
                 case activitytypes.conversationupdate:
@@ -301,7 +303,7 @@ async function readCommandsFromAggregate(args, aggregate) {
         aggregate = aggregate.replace(`[${result[1]}]`, '');
         commandRegExp.lastIndex = 0;
     }
-    currentActivity.text = aggregate.trim();
+    currentActivity.text += aggregate.trim();
     currentActivity.timestamp = getIncrementedDate(delay);
 
     // if we have content, then add it
@@ -320,6 +322,7 @@ function processConversationUpdate(args, activities, rest) {
         ],
         /* membersRemoved*/[
         ])
+    conversationUpdate.timestamp = getIncrementedDate(100);
 
     let lines = rest.split('\n');
     for (line of lines) {
@@ -347,10 +350,11 @@ function processConversationUpdate(args, activities, rest) {
                 throw new Error(`Unknown ConversationUpdate Property ${property}`);
                 break;
         }
-        activities.push(conversationUpdate);
     }
-
+    activities.push(conversationUpdate);
 }
+
+
 
 function addAttachmentLayout(currentActivity, rest) {
     if (rest && rest.toLowerCase() == AttachmentLayoutTypes.Carousel)
