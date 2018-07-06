@@ -77,23 +77,50 @@ The header defines who the participants are in the conversation and defines othe
 |Option               |Description|
 |---------------------|------------------------------|
 |`user=<user>` |This option tells chatdown that a user message will begin with `<user>` followed by a colon. For example, `user=Joe` instructs chatdown that lines beginning with `Joe:` or `user:` are the start of a message from the user Joe. |
+|`users=<user1>,<user2>,<user3>` |This option tells chatdown that there are multiple users in the conversation. |
 |`bot=<bot>` | This options tells chatdown that a bot message will begin with `<bot>` followed by a colon.  For example, `bot=LulaBot` instructs chadown that lines beginning with `LulaBot:` or `bot:` are the start of a message from the bot Lulabot. |
 | `channelId=<channelID>`| This option tells chatdown to use the specified `channelID` for each activity.|
 
-Once the configuration options for `user` and `bot` are defined, the rest of the conversation can use the alias prefixes `user:` and `bot:` or the names directly.  Chatdown will correctly make the associations to the specified names for you.
+Once the configuration options for `users` and `bot` are defined, the rest of the conversation can use the alias prefixes `user:` and `bot:` or the names directly.  Chatdown will correctly make the associations to the specified names for you.
+
+> The Bot will default to sending to the first user in the users list or  the last user it received a message from, unless you directly specify a target user by using the bot->user: syntax.
+
+For example:
+```markdown
+users=Joe,Fred
+
+bot: This will go to Joe, because he's first in the list
+Fred: What about me?
+bot: This will go to Fred, because he's the latest user to talk to the bot
+bot->Joe: This will always go to Joe
+bot->Fred: This will always go to Fred
+```
 
 ### Conversation
 The conversation between the user and the bot with markdown support for bot's responses. Every time a `user:` or `bot:`  is found at the beginning of the line, a new activity will be inserted into the transcript.  Inside the markdown, you can insert commands to generate richer transcripts:
 
+### Activity commands
 | Command        | Description                                                |
 | --------------- | ------------------------------------------------------------ |
 |`[Typing]` | Inserts a typing activity into the transcript to signify that a user or a bot is typing. |
 |`[Delay=<milliseconds>]` | Delays the transcript by `<milliseconds>`. |
+|`[ConversationUpdate=]` | Sends a conversationUpdate, with membersAdded= and membersRemoved= values|
+
+Example ConversationUpdate message
+```markdown
+[ConversationUpdate=
+    MembersAdded=Joe,Susan]
+bot->Joe: Hi Joe!
+bot->Susan: Hi Susan!
+```
+
+### Message commands
+When sending a message there are number
 |`[Suggestions=<Option 1>|<Option 2>|<Option 3>]` | Add suggested action buttons, delimited by `|` |
 |`[AttachmentLayout=LayoutType]`| Specify how multiple attachments would be dislpayed. Layout types are `carousel` or `list`|
 
 
-### Cards
+#### Message Cards 
 You can add cards using simple commands as well.  Currently we support a number of cards:
 
 | description | card name                                                    |
@@ -135,7 +162,7 @@ The properties that are supported are
 | buttons | a set of button labels seperated by `|`|
 
 
-### Attachments
+####  Message Attachments
 To add an attachment, you use `[Attachment=path contentPath]`.  The path can be a URL or a local path (either absolute or relative to `.chat` file).  The content type is optional and if not passed, will be inferred from the file extension. You can also pass it using a shortcut or full mime type.
 
 ```markdown

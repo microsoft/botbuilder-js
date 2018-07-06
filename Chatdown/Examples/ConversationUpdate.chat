@@ -1,0 +1,19 @@
+users=Tom,Bob,Sam,Susan
+bot=YoBot
+
+Tom: hi!
+bot: Hi Tom!
+Tom: Do you know sam and susan? 
+[ConversationUpdate=
+  Added=Sam,Susan]
+bot->Sam: Hi Sam!
+bot->Susan: Hi Susan!
+Sam: Hi!
+Susan: goodbye
+[ConversationUpdate=
+  Removed=Susan]
+bot->Susan: Goodbye Susan!
+Sam:[Typing][Delay=5000]Goodbye!
+[ConversationUpdate=
+  Removed=Sam]
+bot->Sam: Goodbye Sam!
