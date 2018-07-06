@@ -50,31 +50,47 @@ module.exports = async function readContents(fileContents, args = {}) {
     let recipient;
     let conversationId = uuidv3("conversationid", NS);
 
+    args.bot = 'bot';
+    args.user = 'user';
+
     for (let line of lines) {
-        // signature for a new message
+        // pick up settings from the first lines
         if (configurationRegExp.test(line)) {
             const [optionName, value, ...rest] = line.trim().split('=');
             if (rest.length) {
                 throw new Error('Malformed configurations options detected. Options must be in the format optionName=optionValue');
             }
             args[optionName.trim()] = value.trim();
-            if (args.bot && args.user) {
-                const botId = uuidv3(args.bot, NS);
-                const userId = uuidv3(args.user, NS);
-                args[args.bot.toLowerCase()] = args.bot;
-                args[args.user.toLowerCase()] = args.user;
-                args.botId = botId;
-                args.userId = userId;
-                args[botId] = new ChannelAccount({ id: botId, name: args.bot, role: 'bot' });
-                args[userId] = new ChannelAccount({ id: userId, name: args.user, role: 'user' });
-            }
             continue;
         }
-        if (!args.bot || !args.user) {
-            throw new ReferenceError('Cannot reference "bot" or "user"');
+
+        if (activities.length == 0) {
+            // starting the transcript, initialize the bot/user data accounts
+            const botId = uuidv3(args.bot, NS);
+            const userId = uuidv3(args.user, NS);
+            args[args.bot.toLowerCase()] = args.bot;
+            args[args.user.toLowerCase()] = args.user;
+            args.botId = botId;
+            args.userId = userId;
+            args[botId] = new ChannelAccount({ id: botId, name: args.bot, role: 'bot' });
+            args[userId] = new ChannelAccount({ id: userId, name: args.user, role: 'user' });
+
+            // first activity should be a ConversationUpdate, create and add it
+            let conversationUpdateActivity = createActivity({
+                type: activitytypes.conversationupdate,
+                recipient: args[botId],
+                conversationId: conversationId
+            });
+            conversationUpdateActivity.membersAdded= [
+                args[botId],
+                args[userId]
+            ];
+            conversationUpdateActivity.timestamp = getIncrementedDate();
+            delete conversationUpdateActivity.text;
+            activities.push(conversationUpdateActivity);
         }
-        // If we've gotten to this point, we've defined
-        // user, bot and other config options
+
+        // process transcript lines
         const { user, bot } = args;
         const newMessageRegEx = new RegExp(`^(${user}|${bot}|bot|user):`, 'i');
         if (newMessageRegEx.test(line)) {
