@@ -1,8 +1,8 @@
-users=Tom,Bob
+users=Tom,Bob,Sam,Susan
 bot=YoBot
 
 Tom: hi!
-bot: Hi!
+bot: Hi Tom!
 Tom: Do you know sam and susan? 
 [ConversationUpdate=
   Added=Sam,Susan]
