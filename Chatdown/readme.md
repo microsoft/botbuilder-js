@@ -37,7 +37,7 @@ chatdown <chat> --help
 Here's an example `.chat` file:
 
 ```markdown
-user=Joe
+users=Joe
 bot=LulaBot
 
 bot: Hi!

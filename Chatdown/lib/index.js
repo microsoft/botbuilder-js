@@ -4,8 +4,7 @@
  */
 const fs = require('fs-extra');
 const path = require('path');
-const uuid = require('uuid');
-const uuidv3 = require('uuid/v3');
+const crypto = require('crypto');
 const mime = require('mime-types');
 const { ActivityTypes, AttachmentLayoutTypes } = require('botframework-schema');
 const Activity = require('./serializable/activity');
@@ -18,11 +17,11 @@ const ConversationAccount = require('./serializable/conversationAccount');
 const Attachment = require('./serializable/attachment');
 const chalk = require('chalk');
 const request = require('request-promise-native');
+let activityId = 1;
 
-const NS = uuid();
 // Matches [someActivityOrInstruction=value]
 const commandRegExp = /(?:\[)([\s\S]*?)(?:])/i;
-const configurationRegExp = /^(bot|user|channelId)(?:=)/;
+const configurationRegExp = /^(bot|user|users|channelId)(?:=)/;
 const messageTimeGap = 2000;
 let now = Date.now();
 now -= now % 1000; // nearest second
@@ -46,13 +45,13 @@ module.exports = async function readContents(fileContents, args = {}) {
     let currentActivity;
     // Read each line, derive activities with messages, then
     // return them as the payload
-    let from;
-    let recipient;
-    let conversationId = uuidv3("conversationid", NS);
+    let conversationId = getHashCode(fileContents);
 
     args.bot = 'bot';
-    args.user = 'user';
-
+    users = [];
+    let newMessageRegEx = null;
+    let from = null;
+    let recipient = null;
     for (let line of lines) {
         // pick up settings from the first lines
         if (configurationRegExp.test(line)) {
@@ -60,46 +59,84 @@ module.exports = async function readContents(fileContents, args = {}) {
             if (rest.length) {
                 throw new Error('Malformed configurations options detected. Options must be in the format optionName=optionValue');
             }
-            args[optionName.trim()] = value.trim();
+            switch (optionName.trim()) {
+                case 'user':
+                case 'users':
+                    users = value.split(',');
+                    break;
+                case 'bot':
+                    args.bot = value.trim();
+                    break;
+            }
             continue;
         }
 
         if (activities.length == 0) {
             // starting the transcript, initialize the bot/user data accounts
-            const botId = uuidv3(args.bot, NS);
-            const userId = uuidv3(args.user, NS);
-            args[args.bot.toLowerCase()] = args.bot;
-            args[args.user.toLowerCase()] = args.user;
-            args.botId = botId;
-            args.userId = userId;
-            args[botId] = new ChannelAccount({ id: botId, name: args.bot, role: 'bot' });
-            args[userId] = new ChannelAccount({ id: userId, name: args.user, role: 'user' });
+            args.conversation = new ConversationAccount({ id: conversationId });
+            args.accounts = {};
+            args.accounts.bot = new ChannelAccount({ id: getHashCode(args.bot), name: args.bot, role: 'bot' });
+            args.accounts[args.bot.toLowerCase()] = args.accounts.bot;
+
+            if (users.length == 0)
+                users.push('user');
 
             // first activity should be a ConversationUpdate, create and add it
-            let conversationUpdateActivity = createActivity({
-                type: activitytypes.conversationupdate,
-                recipient: args[botId],
-                conversationId: conversationId
-            });
-            conversationUpdateActivity.membersAdded= [
-                args[botId],
-                args[userId]
-            ];
-            conversationUpdateActivity.timestamp = getIncrementedDate();
-            delete conversationUpdateActivity.text;
-            activities.push(conversationUpdateActivity);
+            let conversationUpdate = createConversationUpdate(args,
+                /* from */ null,
+                /* membersAdded */[
+                    args.accounts.bot
+                ]);
+
+            for (let user of users) {
+                user = user.trim();
+                args.accounts[user.toLowerCase()] = new ChannelAccount({ id: getHashCode(user), name: user, role: 'user' });
+                conversationUpdate.membersAdded.push(args.accounts[user.toLowerCase()]);
+                if (!args.user) {
+                    // first user is default user
+                    args.user = user;
+                }
+            }
+            // define matching statements regex for users
+            newMessageRegEx = new RegExp(`^(${users.join('|')}|${args.bot}|bot|user)(->(${users.join('|')}))??:`, 'i');
+
+            activities.push(conversationUpdate);
         }
 
         // process transcript lines
         const { user, bot } = args;
-        const newMessageRegEx = new RegExp(`^(${user}|${bot}|bot|user):`, 'i');
         if (newMessageRegEx.test(line)) {
+            let matches = newMessageRegEx.exec(line);
+            let speaker = matches[1];
+            let customRecipient = matches[3];
+
+            from = args.accounts[speaker.toLowerCase()];
+
+            if (customRecipient) {
+                recipient = args.accounts[customRecipient.toLowerCase()];
+                if (!recipient)
+                    throw new Error(`unknown custom recipient: ${customRecipient}\n${line}`);
+            }
+            else {
+                // pick recipient based on role
+                if (from.role == 'bot') {
+                    // default for bot is last user
+                    recipient = args.accounts[args.user.toLowerCase()];
+                } else {
+                    // default recipient for a user is the bot
+                    recipient = args.accounts[args.bot.toLowerCase()];
+                    // remember this user as last user to speak
+                    args.user = from.name;
+                }
+            }
+            line = line.substr(matches[0].length).trim();
+
             // Complete the previous activity
             if (currentActivity) {
                 // signature for an activity that contains a type other than
                 // message with or without arguments. e.g. [delay:3000]
                 if (commandRegExp.test(aggregate)) {
-                    const newActivities = await readCommandsFromAggregate(aggregate, currentActivity, recipient, from, conversationId);
+                    const newActivities = await readCommandsFromAggregate(args, aggregate, currentActivity, recipient, from, conversationId);
                     if (newActivities) {
                         activities.push(...newActivities);
                     }
@@ -110,35 +147,24 @@ module.exports = async function readContents(fileContents, args = {}) {
                 aggregate = '';
             }
             // create new activity 
-            const fromId = args[newMessageRegEx.exec(line)[1].toLowerCase()];
-            const fromChannelAccountId = fromId.toLowerCase() === args.bot.toLowerCase() ? args.botId : args.userId;
-            const recipientChannelAccountId = fromId.toLowerCase() === args.bot.toLowerCase() ? args.userId : args.botId;
-
-            from = args[fromChannelAccountId];
-            recipient = args[recipientChannelAccountId];
-
-            // Start the new activity
-            currentActivity = createActivity({ recipient, from, conversationId });
+            currentActivity = createActivity({ recipient, from, conversationId: args.conversation.id });
             currentActivity.timestamp = getIncrementedDate();
 
-            // Trim off the user or bot and continue since
-            // this line may still have a message or other
-            // activities to parse.
-            // e.g. Joe: Hello! [delay:1000] becomes Hello! [delay:1000]
-            aggregate += line.trim().replace(newMessageRegEx, '') + "\n";
+            aggregate += line.trim() + "\n";
         } else {
             // Not a new message but could contain
             // an activity on the line by itself.
             aggregate += line + "\n";
         }
     }
+
     // We've run out of lines but may still have
     // an activity waiting.
     if (currentActivity) {
         // signature for an activity that contains a type other than
         // message with or without arguments. e.g. [delay:3000]
         if (commandRegExp.test(aggregate)) {
-            const newActivities = await readCommandsFromAggregate(aggregate, currentActivity, recipient, from, conversationId);
+            const newActivities = await readCommandsFromAggregate(args, aggregate, currentActivity, recipient, from, conversationId);
             if (newActivities) {
                 activities.push(...newActivities);
             }
@@ -149,6 +175,27 @@ module.exports = async function readContents(fileContents, args = {}) {
     }
     return activities;
 };
+
+/**
+ * create ConversationUpdate Activity 
+ * @param {*} args 
+ * @param {ChannelAccount} from 
+ * @param {ChannelAccount[]} membersAdded 
+ * @param {ChannelAccount[]} membersRemoved 
+ */
+function createConversationUpdate(args, from, membersAdded, membersRemoved) {
+    let conversationUpdateActivity = createActivity({
+        type: activitytypes.conversationupdate,
+        recipient: args[args.botId],
+        conversationId: args.conversation.id
+    });
+    if (from)
+        conversationUpdateActivity.from = from;
+    conversationUpdateActivity.membersAdded = membersAdded || [];
+    conversationUpdateActivity.membersRemoved = membersRemoved || [];
+    conversationUpdateActivity.timestamp = getIncrementedDate();
+    return conversationUpdateActivity;
+}
 
 /**
  * Reads activities from a text aggregate. Aggregates
@@ -163,7 +210,7 @@ module.exports = async function readContents(fileContents, args = {}) {
  *
  * @returns {Promise<*>} Resolves to the number of new activities encountered or null if no new activities resulted
  */
-async function readCommandsFromAggregate(aggregate, currentActivity, recipient, from, conversationId) {
+async function readCommandsFromAggregate(args, aggregate, currentActivity, recipient, from, conversationId) {
     const newActivities = [];
     commandRegExp.lastIndex = 0;
     let result;
@@ -196,6 +243,9 @@ async function readCommandsFromAggregate(aggregate, currentActivity, recipient, 
                 case activitytypes.typing:
                     let newActivity = createActivity({ type, recipient, from, conversationId });
                     newActivities.push(newActivity);
+                    break;
+                case activitytypes.conversationupdate:
+                    processConversationUpdate(args, newActivities, rest);
                     break;
             }
         }
@@ -256,11 +306,54 @@ async function readCommandsFromAggregate(aggregate, currentActivity, recipient, 
     // If we have text left on this line after extracting
     // all instructions or activities, treat it like a message fragment.
     if (aggregate) {
-        currentActivity.text += aggregate.trim();
+        currentActivity.text = aggregate.trim();
     }
     currentActivity.timestamp = getIncrementedDate(delay);
 
     return newActivities.length ? newActivities : null;
+}
+
+function processConversationUpdate(args, activities, rest) {
+    let conversationUpdate = createConversationUpdate(args,
+        /*from*/ null,
+        /* membersAdded*/[
+        ],
+        /* membersRemoved*/[
+        ])
+
+    let lines = rest.split('\n');
+    for (line of lines) {
+        let start = line.indexOf('=');;
+        let property = line.substr(0, start).trim().toLowerCase();
+        let value = line.substr(start + 1).trim();
+        switch (property) {
+            case 'added':
+            case 'membersadded':
+                let membersAdded = value.split(',');
+                for (memberAdded of membersAdded) {
+                    memberAdded = memberAdded.trim();
+                    args[memberAdded] = new ChannelAccount({ id: getHashCode(memberAdded), name: memberAdded, role: 'user' });
+                    conversationUpdate.membersAdded.push(args[memberAdded]);
+                }
+                break;
+            case 'removed':
+            case 'membersremoved':
+                let membersRemoved = value.split(',');
+                for (memberRemoved of membersRemoved) {
+                    memberRemoved = memberRemoved.trim();
+                    if (!args[memberRemoved])
+                        args[memberRemoved] = new ChannelAccount({ id: getHashCode(memberRemoved), name: memberRemoved, role: 'user' });
+
+                    conversationUpdate.membersRemoved.push(args[memberRemoved]);
+                }
+                break;
+            default:
+                throw new Error(`Unknown ConversationUpdate Property ${property}`);
+                break;
+        }
+        activities.push(conversationUpdate);
+    }
+
 }
 
 function addAttachmentLayout(currentActivity, rest) {
@@ -431,7 +524,7 @@ async function readAttachmentFile(fileLocation, contentType) {
  * @returns {Activity} The newly created activity
  */
 function createActivity({ type = ActivityTypes.Message, recipient, from, conversationId }) {
-    const activity = new Activity({ from, recipient, type, text: '', id: uuid() });
+    const activity = new Activity({ from, recipient, type, id: '' + activityId++ });
     activity.conversation = new ConversationAccount({ id: conversationId });
     return activity;
 }
@@ -451,4 +544,8 @@ function* fileLineIterator(fileContents) {
     for (part of parts) {
         yield part;
     }
+}
+
+function getHashCode(contents) {
+    return crypto.createHash('sha1').update(contents).digest('base64')
 }
