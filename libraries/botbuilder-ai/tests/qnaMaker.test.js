@@ -104,11 +104,11 @@ describe('QnAMaker', function () {
         qna.answer(context)
             .then((found) => {
                 assert(found);
-                let qnaMakerTraceActivies = context.sent.filter(s => s.type === 'trace' && s.name === 'QnAMakerMiddleware');
+                let qnaMakerTraceActivies = context.sent.filter(s => s.type === 'trace' && s.name === 'QnAMaker');
                 assert(qnaMakerTraceActivies.length === 1);
                 traceActivity = qnaMakerTraceActivies[0];
                 assert(traceActivity.type === 'trace');
-                assert(traceActivity.name === 'QnAMakerMiddleware');
+                assert(traceActivity.name === 'QnAMaker');
                 assert(traceActivity.label === 'QnAMaker Trace');
                 assert(traceActivity.valueType === 'https://www.qnamaker.ai/schemas/trace');
                 assert(traceActivity.value);
