@@ -59,69 +59,6 @@ describe('QnAMaker', function () {
             });
     });
     
-    it('should run as middleware in fallback mode', function (done) {
-        const context = new TestContext({ text: `how do I clean the stove?`, type: 'message' });
-        const qna = new ai.QnAMaker(endpoint, { top: 1 });
-
-        qna.onTurn(context, () => Promise.resolve()).then(() => {
-            assert(Array.isArray(context.sent) && context.sent.length === 2, `reply not sent.`);
-            done();
-        });
-    });
-
-    it('should only call service if no other reply sent when running in fallback mode', function (done) {
-        const context = new TestContext({ text: `how do I clean the stove?`, type: 'message' });
-        const qna = new ai.QnAMaker(endpoint, { top: 1 });
-
-        qna.onTurn(context, () => context.sendActivity('foo')).then(() => {
-            assert(Array.isArray(context.sent) && context.sent[0].text === 'foo', `service must have been called.`);
-            done();
-        });
-    });
-
-    it('should run as middleware in intercept mode', function (done) {
-        let intercepted = true;
-        const context = new TestContext({ text: `how do I clean the stove?`, type: 'message' });
-        const qna = new ai.QnAMaker(endpoint, { top: 1, answerBeforeNext: true });
-
-        qna.onTurn(context, () => {
-            intercepted = false;
-            return  Promise.resolve();
-        }).then(() => {
-            assert(intercepted, `not intercepted.`);
-            assert(Array.isArray(context.sent) && context.sent.length === 2, `reply not sent.`);
-            done();
-        });
-    });
-
-    it('should bypass calling service in middleware for non-message activities.', function (done) {
-        let intercepted = true;
-        const context = new TestContext({ text: `how do I clean the stove?`, type: 'foo' });
-        const qna = new ai.QnAMaker(endpoint, { top: 1, answerBeforeNext: true });
-
-        qna.onTurn(context, () => {
-            intercepted = false;
-            return  Promise.resolve();
-        }).then(() => {
-            assert(!intercepted, `intercepted.`)
-            done();
-        });
-    });
-    
-    it('should continue on to bot logic when run as intercept middleware and no answer found', function (done) {
-        let intercepted = true;
-        const context = new TestContext({ text: `foo`, type: 'message' });
-        const qna = new ai.QnAMaker(endpoint, { top: 1, answerBeforeNext: true });
-
-        qna.onTurn(context, () => {
-            intercepted = false;
-            return  Promise.resolve();
-        }).then(() => {
-            assert(!intercepted, `intercepted.`)
-            done();
-        });
-    });
-    
     it('should return 0 answers for an empty or undefined utterance', function () {
         const qna = new ai.QnAMaker(endpoint, { top: 1 });
 

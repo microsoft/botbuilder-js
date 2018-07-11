@@ -5,13 +5,13 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.  
  * Licensed under the MIT License.
  */
-import { TurnContext, Middleware, ActivityTypes, Activity } from 'botbuilder';
+import { TurnContext, ActivityTypes, Activity } from 'botbuilder';
 import * as request from 'request-promise-native';
 import * as entities from 'html-entities';
 import { isContext } from 'vm';
 
 const QNAMAKER_TRACE_TYPE = 'https://www.qnamaker.ai/schemas/trace';
-const QNAMAKER_TRACE_NAME = 'QnAMakerMiddleware';
+const QNAMAKER_TRACE_NAME = 'QnAMaker';
 const QNAMAKER_TRACE_LABEL = 'QnAMaker Trace';
 
 /**
@@ -82,24 +82,6 @@ export interface QnAMakerOptions {
      * Defaults to "1". 
      */
     top?: number;
-
-    /** 
-     * (Optional) and only applied when a QnAMaker instance has been added to ths adapter as 
-     * middleware. 
-     * 
-     * @remarks
-     * Defaults to a value of `false`.
-     * 
-     * Setting this to `true` will cause the QnA Maker service to be called BEFORE any other 
-     * middleware or the bots logic is run. Should the service return an answer the user will be 
-     * automatically sent the answer and the turn completed such that no other middleware or the 
-     * bots logic will be run.
-     * 
-     * The default behavior is to only call the service AFTER all other middleware and the bots logic 
-     * has run, and only under the condition that no other replies have been sent by the bot yet 
-     * for this turn.
-     */
-    answerBeforeNext?: boolean;
 }
 
 /**
@@ -123,13 +105,9 @@ export interface QnAMakerTraceInfo {
 }
 
 /**
- * Manages querying an individual QnA Maker knowledge base for answers. Can be added as middleware 
- * to automatically query the knowledge base anytime a messaged is received from the user. When 
- * used as middleware the component can be configured to either query the knowledge base before the
- * bots logic runs or after the bots logic is run, as a fallback in the event the bot doesn't answer 
- * the user.   
+ * Manages querying an individual QnA Maker knowledge base for answers.
  */
-export class QnAMaker implements Middleware {
+export class QnAMaker {
     private readonly options: QnAMakerOptions; 
 
     /**
@@ -141,33 +119,12 @@ export class QnAMaker implements Middleware {
         // Initialize options
         this.options = Object.assign({
             scoreThreshold: 0.3,
-            top: 1,
-            answerBeforeNext: false
+            top: 1
         } as QnAMakerOptions, options);
     }
 
-    public onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
-        // Filter out non-message activities
-        if (context.activity.type !== ActivityTypes.Message) {
-            return next();
-        }
-
-        // Route request
-        if (this.options.answerBeforeNext) {
-            // Attempt to answer user and only call next() if not answered
-            return this.answer(context).then((answered) => {
-                return !answered ? next() : Promise.resolve()
-            });
-        } else {
-            // Call next() and then attempt to answer only if nothing else responded
-            return next().then(() => {
-                return !context.responded ? this.answer(context).then(() => {}) : Promise.resolve()
-            });
-        }
-    }
-
     /**
-     * Calls [generateAnswer()](#generateanswer) and sends the answer as a message ot the user. 
+     * Calls [generateAnswer()](#generateanswer) and sends the answer as a message to the user. 
      * 
      * @remarks
      * Returns a value of `true` if an answer was found and sent. If multiple answers are 
