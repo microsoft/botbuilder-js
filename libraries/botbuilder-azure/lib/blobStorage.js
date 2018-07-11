@@ -104,6 +104,9 @@ class BlobStorage {
                     options: options
                 };
             });
+            // A block blob can be uploaded using a single PUT operation or divided into multiple PUT block operations
+            // depending on the payload's size. The default maximum size for a single blob upload is 128MB.
+            // An 'InvalidBlockList' error is commonly caused due to concurrently uploading an object larger than 128MB in size.
             let promise = (blob) => this.client.createBlockBlobFromTextAsync(container.name, blob.id, blob.data, blob.options);
             // if the blob service client is using the storage emulator, all write operations must be performed in a sequential mode
             // because of the storage emulator internal implementation, that includes a SQL LocalDb

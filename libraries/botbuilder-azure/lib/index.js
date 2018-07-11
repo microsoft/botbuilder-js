@@ -10,7 +10,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-__export(require("./tableStorage"));
 __export(require("./cosmosDbStorage"));
 __export(require("./blobStorage"));
 __export(require("./azureBlobTranscriptStore"));
