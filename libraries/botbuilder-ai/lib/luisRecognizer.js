@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const LuisClient = require("botframework-luis");
 const LUIS_TRACE_TYPE = 'https://www.luis.ai/schemas/trace';
-const LUIS_TRACE_NAME = 'LuisRecognizerMiddleware';
+const LUIS_TRACE_NAME = 'LuisRecognizer';
 const LUIS_TRACE_LABEL = 'Luis Trace';
 /**
  * Component used to recognize intents in a user utterance using a configured LUIS model.
@@ -17,26 +17,10 @@ class LuisRecognizer {
      * @param settings Settings used to configure the instance.
      */
     constructor(settings) {
-        this.cacheKey = Symbol('results');
         this.settings = Object.assign({}, settings);
         // Create client and override callbacks
         const baseUri = (this.settings.serviceEndpoint || 'https://westus.api.cognitive.microsoft.com');
         this.luisClient = this.createClient(baseUri + '/luis/');
-    }
-    onTurn(context, next) {
-        return this.recognize(context, true)
-            .then(() => next());
-    }
-    /**
-     * Returns the results cached from a previous call to [recognize()](#recognize) for the current
-     * turn with the user.
-     *
-     * @remarks
-     * This will return `undefined` if recognize() hasn't been called for the current turn.
-     * @param context Context for the current turn of conversation with the use.
-     */
-    get(context) {
-        return context.services.get(this.cacheKey);
     }
     /**
      * Calls LUIS to recognize intents and entities in a users utterance.
@@ -48,28 +32,22 @@ class LuisRecognizer {
      * @param context Context for the current turn of conversation with the use.
      * @param force (Optional) flag that if `true` will force the call to LUIS even if a cached result exists. Defaults to a value of `false`.
      */
-    recognize(context, force) {
-        const cached = context.services.get(this.cacheKey);
-        if (force || !cached) {
-            const utterance = context.activity.text || '';
-            return this.luisClient.getIntentsAndEntitiesV2(this.settings.appId, this.settings.subscriptionKey, utterance, this.settings.options)
-                .then((luisResult) => {
-                // Map results
-                const recognizerResult = {
-                    text: luisResult.query,
-                    alteredText: luisResult.alteredQuery,
-                    intents: this.getIntents(luisResult),
-                    entities: this.getEntitiesAndMetadata(luisResult.entities, luisResult.compositeEntities, this.settings.verbose),
-                    luisResult: luisResult
-                };
-                // Write to cache
-                context.services.set(this.cacheKey, recognizerResult);
-                return this.emitTraceInfo(context, luisResult, recognizerResult).then(() => {
-                    return recognizerResult;
-                });
+    recognize(context) {
+        const utterance = context.activity.text || '';
+        return this.luisClient.getIntentsAndEntitiesV2(this.settings.appId, this.settings.subscriptionKey, utterance, this.settings.options)
+            .then((luisResult) => {
+            // Map results
+            const recognizerResult = {
+                text: luisResult.query,
+                alteredText: luisResult.alteredQuery,
+                intents: this.getIntents(luisResult),
+                entities: this.getEntitiesAndMetadata(luisResult.entities, luisResult.compositeEntities, this.settings.verbose),
+                luisResult: luisResult
+            };
+            return this.emitTraceInfo(context, luisResult, recognizerResult).then(() => {
+                return recognizerResult;
             });
-        }
-        return Promise.resolve(cached);
+        });
     }
     /**
      * Called internally to create a LuisClient instance.
