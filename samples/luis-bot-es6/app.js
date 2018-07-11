@@ -49,90 +49,91 @@ adapter.use(state);
 
 // Listen for incoming requests
 server.post('/api/messages', (req, res) => {
+
     // Route received request to adapter for processing
     adapter.processActivity(req, res, async context => {
         if (context.activity.type === 'conversationUpdate' && context.activity.membersAdded[0].name === 'Bot') {
             // Welcome message here, bot will message you first
-            await context.sendActivity(`Hi! I'm a simple reminder bot. I can help add reminders, delete and show them.`);
+            return await context.sendActivity(`Hi! I'm a simple reminder bot. I can help add reminders, delete and show them.`);
         } else if (context.activity.type === 'message') {
+
+            // Handle a message from the user
             const utterance = (context.activity.text || '').trim().toLowerCase();
 
             // Create dialog context
             const dc = dialogs.createContext(context, state);
 
             // Call LUIS model
-            await model
-                .recognize(context)
-                .then(res => {
-                    // Resolve intents returned from LUIS
-                    let topIntent = LuisRecognizer.topIntent(res);
-                    state.intent = topIntent;
+            try {
+                const res = await model.recognize(context)
+                // Resolve intents returned from LUIS
+                let topIntent = LuisRecognizer.topIntent(res);
+                state.intent = topIntent;
 
-                    // Start addReminder dialog
-                    if (topIntent === 'Calendar.Add') {
-                        // Resolve entities returned from LUIS, and save these to state
-                        let title = state.title = res.entities['Calendar.Subject'];
-                        let date = res.entities.builtin_datetimeV2_date;
-                        let time = res.entities.builtin_datetimeV2_time;
-                        let datetime = res.entities.builtin_datetimeV2_datetime;
-                        // TODO: The datetime parsing below should be 
-                        // updated to use TIMEX parsing instead of moment parsing
-                        if (datetime) {
-                            let dtvalue = datetime[0];
-                            state.date = moment(dtvalue).format('DD-MM-YYYY');
-                            state.time = moment(dtvalue).format('hh:mm a');
-                        } else if (date) {
-                            let datevalue = date[0];
-                            state.date = moment(datevalue).format('DD-MM-YYYY');
-                        } else if (time) {
-                            let timevalue = time[0];
-                            // Assume user is talking about today
-                            let datetime = moment(timevalue, 'hh:mm a');
-                            state.date = datetime.format('DD-MM-YYYY');
-                            state.time = datetime.format('hh:mm a');
-                        }
-
-                        let reminder = (state.reminder = {
-                            title: title ? title.entity : null,
-                            date: state.date ? state.date : null,
-                            time: state.time ? state.time : null
-                        });
-
-                        return dc.begin('addReminder');
-
-                        // Start deleteReminder dialog
-                    } else if (topIntent === 'Calendar.Delete') {
-                        return dc.begin('deleteReminder');
-
-                        // Start showReminders
-                    } else if (topIntent === 'Calendar.Find') {
-                        return dc.begin('showReminders');
-
-                        // Check for cancel
-                    } else if (utterance === 'cancel') {
-                        if (dc.instance) {
-                            await context.sendActivity(`Ok... Cancelled.`).then(res => {
-                                dc.endAll();
-                            });
-                        } else {
-                            await context.sendActivity(`Nothing to cancel.`);
-                        }
-
-                        // Continue current dialog
-                    } else {
-                        return dc.continue().then(res => {
-                            // Return default message if nothing replied.
-                            if (!context.responded) {
-                                await context.sendActivity(
-                                    `Hi! I'm a simple reminder bot. I can help add reminders, delete and show them.`
-                                );
-                            }
-                        });
+                // Start addReminder dialog
+                if (topIntent === 'Calendar_Add') {
+                    // Resolve entities returned from LUIS, and save these to state
+                    let title = state.title = res.entities['Calendar.Subject'];
+                    let date = res.entities.builtin_datetimeV2_date;
+                    let time = res.entities.builtin_datetimeV2_time;
+                    let datetime = res.entities.builtin_datetimeV2_datetime;
+                    // TODO: The datetime parsing below should be
+                    // updated to use TIMEX parsing instead of moment parsing
+                    if (datetime) {
+                        let dtvalue = datetime[0];
+                        state.date = moment(dtvalue).format('DD-MM-YYYY');
+                        state.time = moment(dtvalue).format('hh:mm a');
+                    } else if (date) {
+                        let datevalue = date[0];
+                        state.date = moment(datevalue).format('DD-MM-YYYY');
+                    } else if (time) {
+                        let timevalue = time[0];
+                        // Assume user is talking about today
+                        let datetime = moment(timevalue, 'hh:mm a');
+                        state.date = datetime.format('DD-MM-YYYY');
+                        state.time = datetime.format('hh:mm a');
                     }
-                })
-                .catch(err => {
-                    console.log(err);
-                });
+
+                    let reminder = (state.reminder = {
+                        title: title ? title.entity : null,
+                        date: state.date ? state.date : null,
+                        time: state.time ? state.time : null
+                    });
+
+                    return dc.begin('addReminder');
+
+                    // Start deleteReminder dialog
+                } else if (topIntent === 'Calendar_Delete') {
+                    return dc.begin('deleteReminder');
+
+                    // Start showReminders
+                } else if (topIntent === 'Calendar_Find') {
+                    return dc.begin('showReminders');
+
+                    // Check for cancel
+                } else if (utterance === 'cancel') {
+                    if (dc.activeDialog) {
+                        const res = await context.sendActivity(`Ok... Cancelled.`)
+                        dc.endAll();
+                    } else {
+                        await context.sendActivity(`Nothing to cancel.`);
+                    }
+
+                    // Continue current dialog
+                } else {
+                    const res = await dc.continue()
+                    // Return default message if nothing replied.
+
+                    if (!context.responded) {
+                        await context.sendActivity(
+                            `Hi! I'm a simple reminder bot. I can help add reminders, delete and show them.`
+                        );
+                    }
+                }
+            }
+            catch (err) {
+                console.log(err);
+            }
         }
     });
 });
@@ -146,12 +147,12 @@ const dialogs = new DialogSet();
 dialogs.add('addReminder', [
     async function(dc) {
         // Initialize temp reminder and prompt for title
-        dc.instance.state = {
+        dc.activeDialog.state = {
             title: state.title ? state.title.entity : null,
             date: state.date,
             time: state.time
         };
-        if (dc.instance.state.title) {
+        if (dc.activeDialog.state.title) {
             await dc.continue();
         } else {
             await dc.prompt('titlePrompt', `What would you like to call your reminder?`);
@@ -159,11 +160,11 @@ dialogs.add('addReminder', [
     },
     async function(dc, title) {
         // Save reminder title and prompt for time
-        const reminder = dc.instance.state;
+        const reminder = dc.activeDialog.state;
         if (!reminder.title) {
             reminder.title = title;
         }
-        
+
         if (reminder.time) {
             await dc.continue();
         } else {
@@ -172,7 +173,7 @@ dialogs.add('addReminder', [
     },
     async function(dc, time) {
         // Save reminder time
-        const reminder = dc.instance.state;
+        const reminder = dc.activeDialog.state;
         if (!reminder.time) {
             reminder.time = moment(time, 'hh:mm a').format('hh:mm a');
         }
@@ -185,7 +186,7 @@ dialogs.add('addReminder', [
         user.reminders.push(reminder);
 
         // Confirm to user
-        await dc.context.sendActivity(`Your reminder named "${reminder.title}" is set for ${reminder.date} on ${reminder.time}.`);
+        await dc.sendActivity(`Your reminder named "${reminder.title}" is set for ${reminder.date} on ${reminder.time}.`);
         state.date = null;
         state.time = null;
         state.title = null;
@@ -197,7 +198,7 @@ dialogs.add(
     'titlePrompt',
     new TextPrompt(async (dc, value) => {
         if (!value || value.length < 3) {
-            await dc.context.sendActivity(`Title should be at least 3 characters long.`);
+            await dc.sendActivity(`Title should be at least 3 characters long.`);
             return undefined;
         } else {
             return value.trim();
@@ -219,7 +220,7 @@ dialogs.add(
             }
             return value;
         } catch (err) {
-            await dc.context.sendActivity(`Please enter a valid time in the future like "tomorrow at 9am" or say "cancel".`);
+            await dc.sendActivity(`Please enter a valid time in the future like "tomorrow at 9am" or say "cancel".`);
             return undefined;
         }
     })
@@ -238,7 +239,7 @@ dialogs.add('deleteReminder', [
         } else if (user.reminders.length === 1) {
             await dc.begin('deleteReminderSingle');
         } else {
-            await dc.context.sendActivity(`No reminders set to delete.`);
+            await dc.sendActivity(`No reminders set to delete.`);
             await dc.end();
         }
     }
@@ -262,7 +263,7 @@ dialogs.add('deleteReminderMulti', [
         }
 
         // Notify user of delete
-        await dc.context.sendActivity(`Deleted "${choice.value}" reminder.`);
+        await dc.sendActivity(`Deleted "${choice.value}" reminder.`);
         await dc.end();
     }
 ]);
@@ -277,9 +278,9 @@ dialogs.add('deleteReminderSingle', [
         if (confirm) {
             const user = state.user(dc.context);
             user.reminders = [];
-            await dc.context.sendActivity(`reminder deleted...`);
+            await dc.sendActivity(`reminder deleted...`);
         } else {
-            await dc.context.sendActivity(`ok...`);
+            await dc.sendActivity(`ok...`);
         }
     }
 ]);
@@ -303,7 +304,7 @@ dialogs.add('showReminders', [
                 connector = '\n';
             });
         }
-        await dc.context.sendActivity(msg);
+        await dc.sendActivity(msg);
         await dc.end();
     }
 ]);
