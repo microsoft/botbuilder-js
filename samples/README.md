@@ -78,11 +78,11 @@ Demonstrates how to use the Dispatch tool from [BotBuilder-Tools](https://github
 
 ### [echobot-es6-botframework-webchat](./echobot-es6-botframework-webchat)
 
-Demonstrates how to create a bot that lives in the browser using a custom adapter. Also introduces the alternative storage middleware that can be used to store state, such as `CosmosDbStorage`, `BlobStorage` and `TableStorage`.
+Demonstrates how to create a bot that lives in the browser using a custom adapter. Also introduces the alternative storage middleware that can be used to store state, such as `CosmosDbStorage`, and `BlobStorage`.
 
 
 - Introduces creating a [custom adapter](https://github.com/Microsoft/botbuilder-js/blob/master/samples/echobot-es6-botframework-webchat/src/webChatAdapter.js) using [BotFramework-WebChat](https://github.com/Microsoft/BotFramework-WebChat/).
-- Introduces [`CosmosDbStorage`](https://github.com/Microsoft/botbuilder-js/blob/master/doc/botbuilder-azure/classes/botbuilder_azure.cosmosdbstorage.md), [`BlobStorage`](https://github.com/Microsoft/botbuilder-js/blob/master/doc/botbuilder-azure/classes/botbuilder_azure.blobstorage.md) and [`TableStorage`](https://github.com/Microsoft/botbuilder-js/blob/master/doc/botbuilder-azure/classes/botbuilder_azure.tablestorage.md) which are found in the [`botbuilder-azure`](https://github.com/Microsoft/botbuilder-js/tree/master/libraries/botbuilder-azure) library.
+- Introduces [`CosmosDbStorage`](https://github.com/Microsoft/botbuilder-js/blob/master/doc/botbuilder-azure/classes/botbuilder_azure.cosmosdbstorage.md), and [`BlobStorage`](https://github.com/Microsoft/botbuilder-js/blob/master/doc/botbuilder-azure/classes/botbuilder_azure.blobstorage.md) which are found in the [`botbuilder-azure`](https://github.com/Microsoft/botbuilder-js/tree/master/libraries/botbuilder-azure) library.
 
 ### [simple-prompt-bot-es6](./simple-prompt-bot-es6)
 
