@@ -7,6 +7,7 @@
  */
 import { TurnContext, Middleware } from 'botbuilder-core';
 import { Storage, StoreItem, StorageKeyFactory } from './storage';
+import { PropertyAccessor } from './botStatePropertyAccessor';
 /**
  * State information cached off the context object by a `BotState` instance.
  */
@@ -55,6 +56,11 @@ export declare class BotState<T extends StoreItem = StoreItem> implements Middle
      * @param storageKey Function called anytime the storage key for a given turn needs to be calculated.
      */
     constructor(storage: Storage, storageKey: StorageKeyFactory);
+    /** NEW */
+    readonly properties: Map<any, any>;
+    /** NEW */
+    createProperty<T = any>(name: string, defaultValue?: T): PropertyAccessor<T>;
+    /** @private */
     onTurn(context: TurnContext, next: () => Promise<void>): Promise<void>;
     /**
      * Reads in and caches the current state object for a turn.

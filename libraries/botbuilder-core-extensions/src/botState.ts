@@ -7,7 +7,7 @@
  */
 import { TurnContext, Middleware } from 'botbuilder-core';
 import { Storage, StoreItem, StoreItems, calculateChangeHash, StorageKeyFactory } from './storage';
-
+import { PropertyAccessor, BotStatePropertyAccessor } from './botStatePropertyAccessor';
 
 /** 
  * State information cached off the context object by a `BotState` instance.
@@ -57,7 +57,19 @@ export class BotState<T extends StoreItem = StoreItem> implements Middleware {
      * @param storageKey Function called anytime the storage key for a given turn needs to be calculated.
      */
     constructor(protected storage: Storage, protected storageKey: StorageKeyFactory) { }
+
+    /** NEW */
+    public readonly properties = new Map();
+
+    /** NEW */
+    public createProperty<T = any>(name: string, defaultValue?: T): PropertyAccessor<T> {
+        if (this.properties.has(name)) { throw new Error(`BotState.createProperty(): a property named '${name}' already exists.`) }
+        const prop = new BotStatePropertyAccessor<T>(this, name, defaultValue);
+        this.properties.set(name, prop);
+        return prop;
+    }
     
+    /** @private */
     public onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
         // Read in state, continue execution, and then flush changes on completion of turn.
         return this.read(context, true)

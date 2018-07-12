@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const storage_1 = require("./storage");
+const botStatePropertyAccessor_1 = require("./botStatePropertyAccessor");
 /**
  * Reads and writes state for your bot to storage.
  *
@@ -42,7 +43,19 @@ class BotState {
         this.storage = storage;
         this.storageKey = storageKey;
         this.stateKey = Symbol('state');
+        /** NEW */
+        this.properties = new Map();
     }
+    /** NEW */
+    createProperty(name, defaultValue) {
+        if (this.properties.has(name)) {
+            throw new Error(`BotState.createProperty(): a property named '${name}' already exists.`);
+        }
+        const prop = new botStatePropertyAccessor_1.BotStatePropertyAccessor(this, name, defaultValue);
+        this.properties.set(name, prop);
+        return prop;
+    }
+    /** @private */
     onTurn(context, next) {
         // Read in state, continue execution, and then flush changes on completion of turn.
         return this.read(context, true)
