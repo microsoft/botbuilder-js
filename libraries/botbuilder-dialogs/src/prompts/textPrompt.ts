@@ -10,31 +10,6 @@ import { PromptValidator } from 'botbuilder-prompts';
 import { DialogContext } from '../dialogContext';
 import { Prompt, PromptOptions } from './prompt';
 import * as prompts from 'botbuilder-prompts';
-import { SequenceStep, SequenceStepContext } from '../sequence';
-
-export class PromptForText implements SequenceStep {
-    constructor (private field: string, private prompt: string, private validator?: PromptValidator<string, O>) {
-        
-    }
-
-    public get id(): string {
-        return this.field + '-prompt';
-    }
-    
-    public async onStep(dc: DialogContext<TurnContext>, step: SequenceStepContext): Promise<void> {
-        const state = step.stepState as PromptState;
-        if (state.turns === undefined) {
-
-        } else {
-
-        }
-    }
-    
-}
-
-interface PromptState {
-    turns: number;
-}
 
 /**
  * Prompts a user to enter some text. 

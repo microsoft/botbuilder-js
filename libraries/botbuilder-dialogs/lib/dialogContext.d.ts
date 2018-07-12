@@ -23,7 +23,7 @@ import { Choice } from 'botbuilder-prompts';
  * ```
  * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
  */
-export declare class DialogContext<C extends TurnContext> {
+export declare class DialogContext<C extends TurnContext = TurnContext> {
     readonly dialogs: DialogSet<C>;
     readonly context: C;
     private onCompleted;

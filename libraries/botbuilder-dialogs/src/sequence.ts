@@ -2,9 +2,9 @@ import { TurnContext, Promiseable, ActivityTypes } from 'botbuilder';
 import { Dialog } from './dialog';
 import { DialogContext } from './dialogContext';
 
-export interface SequenceStep<C extends TurnContext> {
+export interface SequenceStep {
     readonly id: string|undefined;
-    onStep(dc: DialogContext<C>, step: SequenceStepContext): Promise<void>;
+    onStep(dc: DialogContext, step: SequenceStepContext): Promise<void>;
 }
 
 export interface SequenceStepContext {
@@ -14,20 +14,25 @@ export interface SequenceStepContext {
     next(): Promise<void>;
 }
 
-export class Sequence<C extends TurnContext> extends Dialog<C> {
-    private readonly steps: SequenceStepInfo<C>[] = [];
+export class Sequence extends Dialog {
+    private readonly steps: SequenceStepInfo[];
 
-
-    public add(step: SequenceStep<C>): this {
-        this.steps.push({ id: step.id || this.steps.length.toString(), step: step });
-        return this;
+    constructor (steps: SequenceStep[]) {
+        super();
+        let nextId = 1; 
+        this.steps = steps.map((s) => {
+            return {
+                id: s.id || (nextId++).toString(),
+                step: s 
+            } as SequenceStepInfo;
+        });
     }
 
-    public async dialogBegin(dc: DialogContext<C>, args?: any): Promise<void> {
+    public async dialogBegin(dc: DialogContext, args?: any): Promise<void> {
         await this.runNextStep(dc, Object.assign({}, args));
     }
 
-    public async dialogContinue(dc: DialogContext<C>): Promise<void> {
+    public async dialogContinue(dc: DialogContext): Promise<void> {
         // Don't do anything for non-message activities
         if (dc.context.activity.type === ActivityTypes.Message) {
             const state = dc.activeDialog.state as SequenceState;
@@ -35,12 +40,12 @@ export class Sequence<C extends TurnContext> extends Dialog<C> {
         }
     }
 
-    public async dialogResume(dc: DialogContext<C>, result?: any): Promise<void> {
+    public async dialogResume(dc: DialogContext, result?: any): Promise<void> {
         const state = dc.activeDialog.state as SequenceState;
         await this.runStep(dc, state, result);
     }
 
-    private async runNextStep(dc: DialogContext<C>, form: object, afterId?: string): Promise<void> {
+    private async runNextStep(dc: DialogContext, form: object, afterId?: string): Promise<void> {
         // Find next step id
         let index = 0; 
         if (afterId) {
@@ -65,7 +70,7 @@ export class Sequence<C extends TurnContext> extends Dialog<C> {
         }
     }
 
-    private async runStep(dc: DialogContext<C>, state: SequenceState, result?: any): Promise<void> {
+    private async runStep(dc: DialogContext, state: SequenceState, result?: any): Promise<void> {
         const steps = this.steps.filter((s) => s.id === state.stepId);
         const sc: SequenceStepContext = {
             result: result,
@@ -77,9 +82,9 @@ export class Sequence<C extends TurnContext> extends Dialog<C> {
     }
 }
 
-interface SequenceStepInfo<C extends TurnContext> {
+interface SequenceStepInfo {
     id: string;
-    step: SequenceStep<C>;
+    step: SequenceStep;
 }
 
 export interface SequenceState {

@@ -11,13 +11,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const botbuilder_1 = require("botbuilder");
 const dialog_1 = require("./dialog");
 class Sequence extends dialog_1.Dialog {
-    constructor() {
-        super(...arguments);
-        this.steps = [];
-    }
-    add(step) {
-        this.steps.push({ id: step.id || this.steps.length.toString(), step: step });
-        return this;
+    constructor(steps) {
+        super();
+        let nextId = 1;
+        this.steps = steps.map((s) => {
+            return {
+                id: s.id || (nextId++).toString(),
+                step: s
+            };
+        });
     }
     dialogBegin(dc, args) {
         return __awaiter(this, void 0, void 0, function* () {

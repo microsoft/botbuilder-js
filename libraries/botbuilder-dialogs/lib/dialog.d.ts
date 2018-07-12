@@ -37,7 +37,7 @@ export interface DialogCompletion<T = any> {
  * @param R (Optional) type of result that's expected to be returned by the dialog.
  * @param O (Optional) options that can be passed into the [begin()](#begin) method.
  */
-export declare abstract class Dialog<C extends TurnContext, R = any, O = {}> {
+export declare abstract class Dialog<C extends TurnContext = TurnContext, R = any, O = {}> {
     /**
      * Starts the dialog when its called in isolation from a bot that isn't dialog based.
      *
