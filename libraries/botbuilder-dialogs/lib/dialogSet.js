@@ -1,4 +1,12 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const dialog_1 = require("./dialog");
 const dialogContext_1 = require("./dialogContext");
@@ -153,7 +161,8 @@ const dialogContext_1 = require("./dialogContext");
  * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
  */
 class DialogSet {
-    constructor() {
+    constructor(stateProperty) {
+        this.stateProperty = stateProperty;
         this.dialogs = {};
     }
     add(dialogId, dialogOrSteps) {
@@ -162,14 +171,42 @@ class DialogSet {
         }
         return this.dialogs[dialogId] = Array.isArray(dialogOrSteps) ? new dialog_1.Waterfall(dialogOrSteps) : dialogOrSteps;
     }
+    /**
+     * Creates a dialog context which can be used to work with the dialogs in the set.
+     *
+     * @remarks
+     * This example loads in the bots conversation state and then creates a DialogContext bound to
+     * that state.
+     *
+     * ```JavaScript
+     * const conversation = conversationState.get(context);
+     * const dc = dialogs.createContext(context, conversation);
+     * ```
+     * @param context Context for the current turn of conversation with the user.
+     * @param state State object being used to persist the dialog stack.
+     */
     createContext(context, state) {
         return new dialogContext_1.DialogContext(this, context, state);
+    }
+    /** NEW */
+    createContextAsync(context) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.stateProperty) {
+                throw new Error(`DialogSet.createContextAsync(): the dialog set was not bound to a stateProperty when constructed.`);
+            }
+            let state = yield this.stateProperty.get(context);
+            if (typeof state !== 'object') {
+                state = {};
+                yield this.stateProperty.set(context, state);
+            }
+            return new dialogContext_1.DialogContext(this, context, state);
+        });
     }
     /**
      * Finds a dialog that was previously added to the set using [add()](#add).
      *
      * @remarks
-     * This example finds a a dialog named "greeting":
+     * This example finds a dialog named "greeting":
      *
      * ```JavaScript
      * const dialog = dialogs.find('greeting');
