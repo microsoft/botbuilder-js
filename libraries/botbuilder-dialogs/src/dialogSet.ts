@@ -162,7 +162,8 @@ import { DialogContext } from './dialogContext';
 export class DialogSet<C extends TurnContext = TurnContext> {
     private readonly dialogs: { [id:string]: Dialog<C>; } = {};
 
-    constructor(private readonly stateProperty?: PropertyAccessor<object>) { }
+    /** NEW */
+    constructor(private readonly dialogStateProperty?: PropertyAccessor<object>) { }
 
     /**
      * Adds a new dialog to the set and returns the added dialog.
@@ -209,11 +210,11 @@ export class DialogSet<C extends TurnContext = TurnContext> {
 
     /** NEW */
     public async createContextAsync(context: C): Promise<DialogContext<C>> {
-        if (!this.stateProperty) { throw new Error(`DialogSet.createContextAsync(): the dialog set was not bound to a stateProperty when constructed.`) }
-        let state = await this.stateProperty.get(context);
+        if (!this.dialogStateProperty) { throw new Error(`DialogSet.createContextAsync(): the dialog set was not bound to a stateProperty when constructed.`) }
+        let state = await this.dialogStateProperty.get(context);
         if (typeof state !== 'object') {
             state = {};
-            await this.stateProperty.set(context, state);
+            await this.dialogStateProperty.set(context, state);
         }
         return new DialogContext(this, context, state);
     }
