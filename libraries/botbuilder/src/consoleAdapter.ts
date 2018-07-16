@@ -13,11 +13,11 @@ import * as readline from 'readline';
  *
  * @remarks
  * The following example shows the typical adapter setup:
- * 
- * 
+ *
+ *
  * ```JavaScript
  * const { ConsoleAdapter } = require('botbuilder');
- * 
+ *
  * const adapter = new ConsoleAdapter();
  * const closeFn = adapter.listen(async (context) => {
  *    await context.sendActivity(`Hello World`);
@@ -38,7 +38,7 @@ export class ConsoleAdapter extends BotAdapter {
             channelId: 'console',
             user: { id: 'user', name: 'User1' },
             bot: { id: 'bot', name: 'Bot' },
-            conversation:  { id: 'convo1', name:'', isGroup: false },
+            conversation:  { id: 'convo1', name: '', isGroup: false },
             serviceUrl: ''
         } as ConversationReference, reference);
     }
@@ -46,10 +46,10 @@ export class ConsoleAdapter extends BotAdapter {
     /**
      * Begins listening to console input. A function will be returned that can be used to stop the
      * bot listening and therefore end the process.
-     * 
+     *
      * @remarks
      * Upon receiving input from the console the flow is as follows:
-     * 
+     *
      * - An 'message' activity will be created containing the users input text.
      * - A revokable `TurnContext` will be created for the activity.
      * - The context will be routed through any middleware registered with [use()](#use).
@@ -57,7 +57,7 @@ export class ConsoleAdapter extends BotAdapter {
      * - The promise chain setup by the middleware stack will be resolved.
      * - The context object will be revoked and any future calls to its members will result in a
      *   `TypeError` being thrown.
-     * 
+     *
      * ```JavaScript
      * const closeFn = adapter.listen(async (context) => {
      *    const utterance = context.activity.text.toLowerCase();
@@ -85,23 +85,23 @@ export class ConsoleAdapter extends BotAdapter {
             // Create context and run middleware pipe
             const context = new TurnContext(this, activity);
             this.runMiddleware(context, logic)
-                .catch((err) => { this.printError(err.toString()) });
+                .catch((err) => { this.printError(err.toString()); });
         });
         return function close() {
             rl.close();
-        }
+        };
     }
 
     /**
      * Lets a bot proactively message the user.
-     * 
+     *
      * @remarks
      * The processing steps for this method are very similar to [listen()](#listen)
-     * in that a `TurnContext` will be created which is then routed through the adapters middleware 
-     * before calling the passed in logic handler. The key difference being that since an activity 
-     * wasn't actually received it has to be created.  The created activity will have its address 
+     * in that a `TurnContext` will be created which is then routed through the adapters middleware
+     * before calling the passed in logic handler. The key difference being that since an activity
+     * wasn't actually received it has to be created.  The created activity will have its address
      * related fields populated but will have a `context.activity.type === undefined`.
-     * 
+     *
      * ```JavaScript
      * function delayedNotify(context, message, delay) {
      *    const reference = TurnContext.getConversationReference(context.activity);
@@ -120,16 +120,16 @@ export class ConsoleAdapter extends BotAdapter {
             const activity = TurnContext.applyConversationReference({}, reference, true);
             const context = new TurnContext(this, activity);
             return this.runMiddleware(context, logic)
-                       .catch((err) => { this.printError(err.toString()) });
+                       .catch((err) => { this.printError(err.toString()); });
     }
 
     /**
      * Logs a set of activities to the console.
-     * 
+     *
      * @remarks
      * Calling `TurnContext.sendActivities()` or `TurnContext.sendActivity()` is the preferred way of
-     * sending activities as that will ensure that outgoing activities have been properly addressed 
-     * and that any interested middleware has been notified. 
+     * sending activities as that will ensure that outgoing activities have been properly addressed
+     * and that any interested middleware has been notified.
      * @param context Context for the current turn of conversation with the user.
      * @param activities List of activities to send.
      */
@@ -147,7 +147,7 @@ export class ConsoleAdapter extends BotAdapter {
                             break;
                         case ActivityTypes.Message:
                             if (a.attachments && a.attachments.length > 0) {
-                                const append = a.attachments.length == 1 ? `(1 attachment)` : `(${a.attachments.length} attachments)`;
+                                const append = a.attachments.length === 1 ? `(1 attachment)` : `(${a.attachments.length} attachments)`;
                                 that.print(`${a.text} ${append}`);
                             } else {
                                 that.print(a.text);

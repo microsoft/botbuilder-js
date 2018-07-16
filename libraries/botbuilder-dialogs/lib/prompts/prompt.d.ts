@@ -29,8 +29,8 @@ export interface PromptOptions {
 export declare abstract class Prompt<C extends TurnContext> extends Dialog<C> {
     private validator;
     constructor(validator?: PromptValidator<any, any>);
-    protected abstract onPrompt(dc: DialogContext<C>, options: PromptOptions, isRetry: boolean): Promise<any>;
-    protected abstract onRecognize(dc: DialogContext<C>, options: PromptOptions): Promise<any | undefined>;
     dialogBegin(dc: DialogContext<C>, options: PromptOptions): Promise<any>;
     dialogContinue(dc: DialogContext<C>): Promise<any>;
+    protected abstract onPrompt(dc: DialogContext<C>, options: PromptOptions, isRetry: boolean): Promise<any>;
+    protected abstract onRecognize(dc: DialogContext<C>, options: PromptOptions): Promise<any | undefined>;
 }

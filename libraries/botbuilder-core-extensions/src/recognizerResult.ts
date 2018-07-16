@@ -15,7 +15,7 @@ export interface RecognizerResult {
     readonly alteredText?: string;
 
     /** Intents recognized for the utterance. A map of intent names to an object with score is returned. */
-    readonly intents: { [name: string]: {score:number}; };
+    readonly intents: { [name: string]: {score: number}; };
 
     /** Entities  */
     readonly entities?: any;

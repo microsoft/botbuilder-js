@@ -2,21 +2,21 @@
  * @module botbuilder
  */
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 import { MemoryStorage } from './memoryStorage';
 
 /**
- * Storage provider that uses browser local storage. 
- * 
+ * Storage provider that uses browser local storage.
+ *
  * @remarks
- * Anything written to the store will remain persisted until the user manually flushes their 
+ * Anything written to the store will remain persisted until the user manually flushes their
  * browsers cookies and other site data.
  *
  * ```JavaScript
  * const { BrowserLocalStorage, UserState } = require('botbuilder');
- * 
+ *
  * const userState = new UserState(new BrowserLocalStorage());
  * ```
  */
@@ -28,17 +28,17 @@ export class BrowserLocalStorage extends MemoryStorage {
 }
 
 /**
- * Storage provider that uses browser session storage. 
- * 
+ * Storage provider that uses browser session storage.
+ *
  * @remarks
- * Anything written to the store will only be persisted for the lifetime of a single page within a 
- * browser tab. The storage will survive page reloads but closing the tab will delete anything 
- * persisted by the store and opening a new browser tab will create a new persistance store for the 
- * page.  
+ * Anything written to the store will only be persisted for the lifetime of a single page within a
+ * browser tab. The storage will survive page reloads but closing the tab will delete anything
+ * persisted by the store and opening a new browser tab will create a new persistance store for the
+ * page.
  *
  * ```JavaScript
  * const { BrowserSessionStorage, ConversationState } = require('botbuilder');
- * 
+ *
  * const conversationState = new ConversationState(new BrowserSessionStorage());
  * ```
  */

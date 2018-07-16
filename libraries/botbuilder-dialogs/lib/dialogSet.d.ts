@@ -179,12 +179,26 @@ export declare class DialogSet<C extends TurnContext = TurnContext> {
      */
     add(dialogId: string, dialogOrSteps: Dialog<C>): Dialog<C>;
     add(dialogId: string, dialogOrSteps: WaterfallStep<C>[]): Waterfall<C>;
+    /**
+     * Creates a dialog context which can be used to work with the dialogs in the set.
+     *
+     * @remarks
+     * This example loads in the bots conversation state and then creates a DialogContext bound to
+     * that state.
+     *
+     * ```JavaScript
+     * const conversation = conversationState.get(context);
+     * const dc = dialogs.createContext(context, conversation);
+     * ```
+     * @param context Context for the current turn of conversation with the user.
+     * @param state State object being used to persist the dialog stack.
+     */
     createContext(context: C, state: object): DialogContext<C>;
     /**
      * Finds a dialog that was previously added to the set using [add()](#add).
      *
      * @remarks
-     * This example finds a a dialog named "greeting":
+     * This example finds a dialog named "greeting":
      *
      * ```JavaScript
      * const dialog = dialogs.find('greeting');

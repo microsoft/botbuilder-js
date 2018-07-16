@@ -35,8 +35,6 @@ export declare type TestActivityInspector = (activity: Partial<Activity>, descri
  */
 export declare class TestAdapter extends BotAdapter {
     private logic;
-    private sendTraceActivities;
-    private nextId;
     /**
      * @private
      * INTERNAL: used to drive the promise chain forward when running tests.
@@ -78,6 +76,8 @@ export declare class TestAdapter extends BotAdapter {
      * ```
      */
     readonly deletedActivities: Partial<ConversationReference>[];
+    private sendTraceActivities;
+    private nextId;
     /**
      * Creates a new TestAdapter instance.
      * @param logic The bots logic that's under test.
@@ -167,7 +167,7 @@ export declare class TestAdapter extends BotAdapter {
      * Indicates if the activity is a reply from the bot (role == 'bot')
      * @param activity Activity to check.
      */
-    private isReply;
+    private isReply(activity);
 }
 /**
  * Support class for `TestAdapter` that allows for the simple construction of a sequence of tests.

@@ -142,7 +142,7 @@ class ConsoleAdapter extends botbuilder_core_1.BotAdapter {
                             break;
                         case botbuilder_core_1.ActivityTypes.Message:
                             if (a.attachments && a.attachments.length > 0) {
-                                const append = a.attachments.length == 1 ? `(1 attachment)` : `(${a.attachments.length} attachments)`;
+                                const append = a.attachments.length === 1 ? `(1 attachment)` : `(${a.attachments.length} attachments)`;
                                 that.print(`${a.text} ${append}`);
                             }
                             else {

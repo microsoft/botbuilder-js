@@ -10,8 +10,8 @@ import { PromptValidator } from 'botbuilder-prompts';
 import { DialogContext } from '../dialogContext';
 import { Dialog } from '../dialog';
 
-/** 
- * Basic configuration options supported by all prompts. 
+/**
+ * Basic configuration options supported by all prompts.
  */
 export interface PromptOptions {
     /** (Optional) Initial prompt to send the user. */
@@ -32,13 +32,9 @@ export interface PromptOptions {
  * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
  */
 export abstract class Prompt<C extends TurnContext> extends Dialog<C> {
-    constructor(private validator?: PromptValidator<any, any>) { 
+    constructor(private validator?: PromptValidator<any, any>) {
         super();
     }
-
-    protected abstract onPrompt(dc: DialogContext<C>, options: PromptOptions, isRetry: boolean): Promise<any>;
-
-    protected abstract onRecognize(dc: DialogContext<C>, options: PromptOptions): Promise<any|undefined>;
 
     public dialogBegin(dc: DialogContext<C>, options: PromptOptions): Promise<any> {
         // Persist options
@@ -76,4 +72,8 @@ export abstract class Prompt<C extends TurnContext> extends Dialog<C> {
                 }
             });
     }
+
+    protected abstract onPrompt(dc: DialogContext<C>, options: PromptOptions, isRetry: boolean): Promise<any>;
+
+    protected abstract onRecognize(dc: DialogContext<C>, options: PromptOptions): Promise<any|undefined>;
 }

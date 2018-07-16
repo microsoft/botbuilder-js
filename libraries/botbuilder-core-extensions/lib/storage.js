@@ -26,7 +26,6 @@ function calculateChangeHash(item) {
     if (cpy.eTag) {
         delete cpy.eTag;
     }
-    ;
     return JSON.stringify(cpy);
 }
 exports.calculateChangeHash = calculateChangeHash;

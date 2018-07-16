@@ -41,7 +41,6 @@ class MemoryStorage {
             resolve(data);
         });
     }
-    ;
     write(changes) {
         const that = this;
         function saveItem(key, item) {
@@ -50,6 +49,7 @@ class MemoryStorage {
             that.memory[key] = JSON.stringify(clone);
         }
         return new Promise((resolve, reject) => {
+            // tslint:disable-next-line:forin
             for (const key in changes) {
                 const newItem = changes[key];
                 const old = this.memory[key];
@@ -69,7 +69,6 @@ class MemoryStorage {
             resolve();
         });
     }
-    ;
     delete(keys) {
         return new Promise((resolve, reject) => {
             keys.forEach((key) => this.memory[key] = undefined);

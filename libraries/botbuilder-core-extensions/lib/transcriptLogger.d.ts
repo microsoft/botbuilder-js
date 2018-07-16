@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Middleware, TurnContext, Activity } from "botbuilder-core";
+import { Middleware, TurnContext, Activity } from 'botbuilder-core';
 /**
  * When added, this middleware will log incoming and outgoing activities to a ITranscriptStore.
  */
@@ -27,17 +27,17 @@ export declare class TranscriptLoggerMiddleware implements Middleware {
      * Logs the Activity.
      * @param activity Activity to log.
      */
-    private logActivity;
+    private logActivity(activity);
     /**
      * Clones the Activity entity.
      * @param activity Activity to clone.
      */
-    private cloneActivity;
+    private cloneActivity(activity);
 }
 /**
- * ConsoleTranscriptLogger , writes activities to Console output.
+ * Transcript logger stores activities for conversations for recall.
  */
-export declare class ConsoleTranscriptLogger implements TranscriptLogger {
+export interface TranscriptLogger {
     /**
      * Log an activity to the transcript.
      * @param activity Activity being logged.
@@ -45,9 +45,9 @@ export declare class ConsoleTranscriptLogger implements TranscriptLogger {
     logActivity(activity: Activity): void | Promise<void>;
 }
 /**
- * Transcript logger stores activities for conversations for recall.
+ * ConsoleTranscriptLogger , writes activities to Console output.
  */
-export interface TranscriptLogger {
+export declare class ConsoleTranscriptLogger implements TranscriptLogger {
     /**
      * Log an activity to the transcript.
      * @param activity Activity being logged.

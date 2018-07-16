@@ -37,6 +37,7 @@ class TranscriptLoggerMiddleware {
             this.logActivity(this.cloneActivity(context.activity));
         }
         // hook up onSend pipeline
+        // tslint:disable:no-shadowed-variable
         context.onSendActivities((ctx, activities, next) => {
             // run full pipeline
             let responses = next();
@@ -70,7 +71,7 @@ class TranscriptLoggerMiddleware {
             // flush transcript at end of turn
             while (this.transcript.length > 0) {
                 try {
-                    var activity = this.transcript.shift();
+                    let activity = this.transcript.shift();
                     this.logger.logActivity(activity);
                 }
                 catch (err) {
@@ -107,8 +108,9 @@ class ConsoleTranscriptLogger {
      * @param activity Activity being logged.
      */
     logActivity(activity) {
-        if (!activity)
+        if (!activity) {
             throw new Error('Activity is required.');
+        }
         console.log('Activity Log:', activity);
     }
 }

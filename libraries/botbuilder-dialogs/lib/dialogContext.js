@@ -74,7 +74,7 @@ class DialogContext {
             if (!dialog) {
                 throw new Error(`DialogContext.begin(): A dialog with an id of '${dialogId}' wasn't found.`);
             }
-            // Push new instance onto stack. 
+            // Push new instance onto stack.
             const instance = {
                 id: dialogId,
                 state: {}

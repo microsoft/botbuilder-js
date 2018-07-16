@@ -68,7 +68,6 @@ import * as prompts from 'botbuilder-prompts';
  * @param O (Optional) output type returned by prompt. This defaults to a boolean `true` or `false` but can be changed by a custom validator passed to the prompt.
  */
 export declare class ConfirmPrompt<C extends TurnContext, O = boolean> extends Prompt<C> {
-    private prompt;
     /**
      * Allows for the localization of the confirm prompts yes/no choices to other locales besides
      * english.
@@ -90,6 +89,7 @@ export declare class ConfirmPrompt<C extends TurnContext, O = boolean> extends P
      * ```
      */
     static choices: prompts.ConfirmChoices;
+    private prompt;
     /**
      * Creates a new `ConfirmPrompt` instance.
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.

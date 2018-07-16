@@ -5,8 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TranscriptStore, PagedResult, Transcript } from "./transcriptLogger";
-import { Activity } from "botbuilder-core";
+import { TranscriptStore, PagedResult, Transcript } from './transcriptLogger';
+import { Activity } from 'botbuilder-core';
 /**
  * The memory transcript store stores transcripts in volatile memory in a Map.
  * Because this uses an unbounded volitile dictionary this should only be used for unit tests or non-production environments.

@@ -32,7 +32,7 @@ class FileTranscriptStore {
      */
     logActivity(activity) {
         if (!activity) {
-            throw new Error("activity cannot be null for logActivity()");
+            throw new Error('activity cannot be null for logActivity()');
         }
         let conversationFolder = this.getTranscriptFolder(activity.channelId, activity.conversation.id);
         let activityFileName = this.getActivityFilename(activity);
@@ -46,19 +46,23 @@ class FileTranscriptStore {
      * @param startDate Earliest time to include.
      */
     getTranscriptActivities(channelId, conversationId, continuationToken, startDate) {
-        if (!channelId)
+        if (!channelId) {
             throw new Error('Missing channelId');
-        if (!conversationId)
+        }
+        if (!conversationId) {
             throw new Error('Missing conversationId');
+        }
         let pagedResult = new transcriptLogger_1.PagedResult();
         let transcriptFolder = this.getTranscriptFolder(channelId, conversationId);
         return fs.exists(transcriptFolder).then(exists => {
-            if (!exists)
+            if (!exists) {
                 return pagedResult;
+            }
             return fs.readdir(transcriptFolder)
                 .then(files => files
                 .filter(f => f.endsWith('.json')) // .json only
                 .sort() // sorted
+                // tslint:disable:no-use-before-declare
                 .filter(withDateFilter(startDate))) // >= startDate
                 .then(files => {
                 // get proper page
@@ -89,19 +93,21 @@ class FileTranscriptStore {
      * @param continuationToken Continuatuation token to page through results.
      */
     listTranscripts(channelId, continuationToken) {
-        if (!channelId)
+        if (!channelId) {
             throw new Error('Missing channelId');
+        }
         let pagedResult = new transcriptLogger_1.PagedResult();
         let channelFolder = this.getChannelFolder(channelId);
         return fs.exists(channelFolder).then(exists => {
-            if (!exists)
+            if (!exists) {
                 return pagedResult;
+            }
             return fs.readdir(channelFolder)
                 .then(dirs => {
                 let items = [];
                 if (continuationToken) {
                     items = dirs
-                        .filter(skipWhileExpression(di => di != continuationToken))
+                        .filter(skipWhileExpression(di => di !== continuationToken))
                         .slice(1, FileTranscriptStore.PageSize + 1);
                 }
                 else {
@@ -125,10 +131,12 @@ class FileTranscriptStore {
      * @param conversationId Id of the conversation to delete.
      */
     deleteTranscript(channelId, conversationId) {
-        if (!channelId)
+        if (!channelId) {
             throw new Error('Missing channelId');
-        if (!conversationId)
+        }
+        if (!conversationId) {
             throw new Error('Missing conversationId');
+        }
         let transcriptFolder = this.getTranscriptFolder(channelId, conversationId);
         return new Promise((resolve) => rimraf(transcriptFolder, () => resolve()));
     }
@@ -138,10 +146,12 @@ class FileTranscriptStore {
             return fs.writeFile(path.join(transcriptPath, activityFilename), json, 'utf8');
         });
     }
+    // tslint:disable-next-line:no-shadowed-variable
     ensureFolder(path) {
         return fs.exists(path).then(exists => {
-            if (!exists)
+            if (!exists) {
                 return fs.mkdirp(path);
+            }
         });
     }
     getActivityFilename(activity) {
@@ -190,8 +200,9 @@ const readDate = (ticks) => {
  * @param date
  */
 const withDateFilter = (date) => {
-    if (!date)
+    if (!date) {
         return () => true;
+    }
     return (filename) => {
         let ticks = filename.split('-')[0];
         return readDate(ticks) >= date;
@@ -202,10 +213,11 @@ const withDateFilter = (date) => {
  * @param continuationToken
  */
 const withContinuationToken = (continuationToken) => {
-    if (!continuationToken)
+    if (!continuationToken) {
         return () => true;
+    }
     return skipWhileExpression(fileName => {
-        var id = fileName.substring(fileName.indexOf('-') + 1, fileName.indexOf('.'));
+        let id = fileName.substring(fileName.indexOf('-') + 1, fileName.indexOf('.'));
         return id !== continuationToken;
     });
 };
@@ -216,8 +228,9 @@ const withContinuationToken = (continuationToken) => {
 const skipWhileExpression = (expression) => {
     let skipping = true;
     return (item) => {
-        if (!skipping)
+        if (!skipping) {
             return true;
+        }
         if (!expression(item)) {
             skipping = false;
         }

@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { Middleware, TurnContext, Activity, ActivityTypes } from "botbuilder-core";
+import { Middleware, TurnContext, Activity, ActivityTypes } from 'botbuilder-core';
 
 /**
  * When added, this middleware will log incoming and outgoing activities to a ITranscriptStore.
@@ -21,7 +21,7 @@ export class TranscriptLoggerMiddleware implements Middleware {
      */
     constructor(logger: TranscriptLogger) {
         if (!logger) {
-            throw new Error('TranscriptLoggerMiddleware requires a TranscriptLogger instance.')
+            throw new Error('TranscriptLoggerMiddleware requires a TranscriptLogger instance.');
         }
 
         this.logger = logger;
@@ -43,6 +43,7 @@ export class TranscriptLoggerMiddleware implements Middleware {
         }
 
         // hook up onSend pipeline
+        // tslint:disable:no-shadowed-variable
         context.onSendActivities((ctx, activities, next) => {
             // run full pipeline
             let responses = next();
@@ -83,10 +84,9 @@ export class TranscriptLoggerMiddleware implements Middleware {
             // flush transcript at end of turn
             while (this.transcript.length > 0) {
                 try {
-                    var activity = this.transcript.shift();
+                    let activity = this.transcript.shift();
                     this.logger.logActivity(activity);
-                }
-                catch (err) {
+                } catch (err) {
                     console.error('Transcript logActivity failed', err);
                 }
             }
@@ -115,6 +115,17 @@ export class TranscriptLoggerMiddleware implements Middleware {
 }
 
 /**
+ * Transcript logger stores activities for conversations for recall.
+ */
+export interface TranscriptLogger {
+    /**
+     * Log an activity to the transcript.
+     * @param activity Activity being logged.
+     */
+    logActivity(activity: Activity): void | Promise<void>;
+}
+
+/**
  * ConsoleTranscriptLogger , writes activities to Console output.
  */
 export class ConsoleTranscriptLogger implements TranscriptLogger {
@@ -123,22 +134,12 @@ export class ConsoleTranscriptLogger implements TranscriptLogger {
      * @param activity Activity being logged.
      */
     logActivity(activity: Activity): void | Promise<void> {
-        if (!activity)
+        if (!activity) {
             throw new Error('Activity is required.');
+        }
 
         console.log('Activity Log:', activity);
     }
-}
-
-/**
- * Transcript logger stores activities for conversations for recall.
- */
-export interface TranscriptLogger {
-    /**
-     * Log an activity to the transcript.
-     * @param activity Activity being logged.
-     */
-    logActivity(activity: Activity): void | Promise<void>
 }
 
 /**
@@ -153,21 +154,21 @@ export interface TranscriptStore extends TranscriptLogger {
      * @param continuationToken Continuatuation token to page through results.
      * @param startDate Earliest time to include.
      */
-    getTranscriptActivities(channelId: string, conversationId: string, continuationToken?: string, startDate?: Date): Promise<PagedResult<Activity>>
+    getTranscriptActivities(channelId: string, conversationId: string, continuationToken?: string, startDate?: Date): Promise<PagedResult<Activity>>;
 
     /**
      * List conversations in the channelId.
      * @param channelId Channel Id.
      * @param continuationToken Continuatuation token to page through results.
      */
-    listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<Transcript>>
+    listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<Transcript>>;
 
     /**
      * Delete a specific conversation and all of it's activities.
      * @param channelId Channel Id where conversation took place.
      * @param conversationId Id of the conversation to delete.
      */
-    deleteTranscript(channelId: string, conversationId: string): Promise<void>
+    deleteTranscript(channelId: string, conversationId: string): Promise<void>;
 }
 
 /**
