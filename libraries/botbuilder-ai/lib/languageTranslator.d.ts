@@ -41,6 +41,24 @@ export interface TranslatorSettings {
     translateBackToUserLanguage?: boolean;
 }
 /**
+ * @private
+ */
+export declare class PostProcessTranslator {
+    noTranslatePatterns: string[];
+    wordDictionary: {
+        [id: string]: string;
+    };
+    constructor(noTranslatePatterns?: string[], wordDictionary?: {
+        [id: string]: string;
+    });
+    fixTranslation(sourceMessage: string, alignment: string, targetMessage: string): string;
+    private join(delimiter, words);
+    private splitSentence(sentence, alignments, isSrcSentence?);
+    private wordAlignmentParse(alignments, srcWords, trgWords);
+    private keepSrcWrdInTranslation(alignment, sourceWords, targetWords, srcWrdIndex);
+    private replaceWordInDictionary(alignment, sourceWords, targetWords, srcWrdIndex);
+}
+/**
  * Middleware that uses the Text Translator Cognitive service to translate text from a source
  * language to one of the native languages that the bot speaks.
  *
@@ -66,22 +84,4 @@ export declare class LanguageTranslator implements Middleware {
     constructor(settings: TranslatorSettings);
     onTurn(context: TurnContext, next: () => Promise<void>): Promise<void>;
     private translateMessageAsync(context, message, sourceLanguage, targetLanguage);
-}
-/**
- * @private
- */
-export declare class PostProcessTranslator {
-    noTranslatePatterns: string[];
-    wordDictionary: {
-        [id: string]: string;
-    };
-    constructor(noTranslatePatterns?: string[], wordDictionary?: {
-        [id: string]: string;
-    });
-    private join(delimiter, words);
-    private splitSentence(sentence, alignments, isSrcSentence?);
-    private wordAlignmentParse(alignments, srcWords, trgWords);
-    private keepSrcWrdInTranslation(alignment, sourceWords, targetWords, srcWrdIndex);
-    private replaceWordInDictionary(alignment, sourceWords, targetWords, srcWrdIndex);
-    fixTranslation(sourceMessage: string, alignment: string, targetMessage: string): string;
 }

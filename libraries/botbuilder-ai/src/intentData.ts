@@ -7,16 +7,16 @@
 */
 
 /**
- * Strongly typed information corresponding to a LUIS intent. 
+ * Strongly typed information corresponding to a LUIS intent.
  */
 export interface IntentData {
-    /** 
-     * Confidence in intent classification on a scale from 0.0 - 1.0. 
+    /**
+     * Confidence in intent classification on a scale from 0.0 - 1.0.
      */
     score: number;
 
-    /** 
-     * Any extra properties. 
+    /**
+     * Any extra properties.
      */
     [propName: string]: any;
 }

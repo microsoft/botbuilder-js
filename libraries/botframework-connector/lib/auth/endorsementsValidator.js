@@ -12,27 +12,27 @@ class EndorsementsValidator {
      * @returns {boolean} True is the channelId is found in the Endorsement set. False if the channelId is not found.
      */
     static validate(channelId, endorsements) {
-        // If the Activity came in and doesn't have a Channel ID then it's making no 
-        // assertions as to who endorses it. This means it should pass. 
+        // If the Activity came in and doesn't have a Channel ID then it's making no
+        // assertions as to who endorses it. This means it should pass.
         if (channelId === null || channelId.trim() === '') {
             return true;
         }
         if (endorsements === null) {
             throw new Error('endorsements required');
         }
-        // The Call path to get here is: 
+        // The Call path to get here is:
         // JwtTokenValidation.AuthenticateRequest
         //  ->
         //   JwtTokenValidation.ValidateAuthHeader
-        //    ->                                         
+        //    ->
         //      ChannelValidation.AuthenticateChannelToken
-        //       -> 
+        //       ->
         //          JWTTokenExtractor
-        // Does the set of endorsements match the channelId that was passed in? 
+        // Does the set of endorsements match the channelId that was passed in?
         // ToDo: Consider moving this to a HashSet instead of a string
-        // array, to make lookups O(1) instead of O(N). To give a sense 
-        // of scope, tokens from WebChat have about 10 endorsements, and 
-        // tokens coming from Teams have about 20. 
+        // array, to make lookups O(1) instead of O(N). To give a sense
+        // of scope, tokens from WebChat have about 10 endorsements, and
+        // tokens coming from Teams have about 20.
         let endorsementPresent = endorsements.some(value => value === channelId);
         return endorsementPresent;
     }

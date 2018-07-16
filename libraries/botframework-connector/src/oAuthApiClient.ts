@@ -2,15 +2,15 @@
  * @module botbuilder
  */
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 
-import * as msRest from "ms-rest-js";
-import * as Models from "botframework-schema";
-import * as Mappers from "./generated/models/mappers";
-import { ConnectorClient } from "./generated/connectorClient";
-import { MicrosoftAppCredentials } from "./auth/microsoftAppCredentials";
+import * as msRest from 'ms-rest-js';
+import * as Models from 'botframework-schema';
+import * as Mappers from './generated/models/mappers';
+import { ConnectorClient } from './generated/connectorClient';
+import { MicrosoftAppCredentials } from './auth/microsoftAppCredentials';
 
 const WebResource = msRest.WebResource;
 
@@ -29,7 +29,7 @@ export class OAuthApiClient {
    * @summary GetUserToken
    *
    * Attempts to retrieve the token for a user that's in a signin flow.
-   * 
+   *
    * @param {string} userId Id of the user being authenticated.
    *
    * @param {string} connectionName Name of the auth connection to use.
@@ -65,14 +65,14 @@ export class OAuthApiClient {
     httpRequest.headers = {};
     // Set Headers
     httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
-    if(options && options.customHeaders) {
-        for(let headerName in options.customHeaders) {
+    if (options && options.customHeaders) {
+        for (let headerName in options.customHeaders) {
           if (options.customHeaders.hasOwnProperty(headerName)) {
             httpRequest.headers[headerName] = options.customHeaders[headerName];
           }
         }
       }
-  
+
     // Send Request
     let operationRes: msRest.HttpOperationResponse;
     try {
@@ -90,7 +90,7 @@ export class OAuthApiClient {
         try {
           if (parsedErrorResponse) {
             let internalError = null;
-            if (parsedErrorResponse.error) internalError = parsedErrorResponse.error;
+            if (parsedErrorResponse.error) { internalError = parsedErrorResponse.error; }
             error.code = internalError ? internalError.code : parsedErrorResponse.code;
             error.message = internalError ? internalError.message : parsedErrorResponse.message;
           }
@@ -105,7 +105,7 @@ export class OAuthApiClient {
         }
         return Promise.reject(error);
       }
-    } catch(err) {
+    } catch (err) {
       return Promise.reject(err);
     }
 
@@ -147,14 +147,14 @@ export class OAuthApiClient {
     httpRequest.headers = {};
     // Set Headers
     httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
-    if(options && options.customHeaders) {
-        for(let headerName in options.customHeaders) {
+    if (options && options.customHeaders) {
+        for (let headerName in options.customHeaders) {
           if (options.customHeaders.hasOwnProperty(headerName)) {
             httpRequest.headers[headerName] = options.customHeaders[headerName];
           }
         }
       }
-  
+
     // Send Request
     let operationRes: msRest.HttpOperationResponse;
     try {
@@ -170,7 +170,7 @@ export class OAuthApiClient {
         try {
           if (parsedErrorResponse) {
             let internalError = null;
-            if (parsedErrorResponse.error) internalError = parsedErrorResponse.error;
+            if (parsedErrorResponse.error) { internalError = parsedErrorResponse.error; }
             error.code = internalError ? internalError.code : parsedErrorResponse.code;
             error.message = internalError ? internalError.message : parsedErrorResponse.message;
           }
@@ -186,7 +186,7 @@ export class OAuthApiClient {
         return Promise.reject(error);
       }
 
-    } catch(err) {
+    } catch (err) {
       return Promise.reject(err);
     }
 
@@ -196,7 +196,7 @@ export class OAuthApiClient {
   /**
    * @summary GetSignInLink
    *
-   * Gets a signin link from the token server that can be sent as part of a SigninCard. 
+   * Gets a signin link from the token server that can be sent as part of a SigninCard.
    *
    * @param {Models.ConversationReference} conversation conversation reference for the user signing in.
    *
@@ -233,10 +233,10 @@ export class OAuthApiClient {
     httpRequest.method = 'GET';
     httpRequest.url = requestUrl;
     httpRequest.headers = {};
-    httpRequest.headers["Content-Type"] = "text/plain";
+    httpRequest.headers['Content-Type'] = 'text/plain';
     // Set Headers
-    if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+    if (options && options.customHeaders) {
+      for (let headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
           httpRequest.headers[headerName] = options.customHeaders[headerName];
         }
@@ -244,7 +244,7 @@ export class OAuthApiClient {
     }
 
     httpRequest.rawResponse = true;
-  
+
     // Send Request
     let operationRes: msRest.HttpOperationResponse;
     try {
@@ -260,7 +260,7 @@ export class OAuthApiClient {
         try {
           if (parsedErrorResponse) {
             let internalError = null;
-            if (parsedErrorResponse.error) internalError = parsedErrorResponse.error;
+            if (parsedErrorResponse.error) { internalError = parsedErrorResponse.error; }
             error.code = internalError ? internalError.code : parsedErrorResponse.code;
             error.message = internalError ? internalError.message : parsedErrorResponse.message;
           }
@@ -278,7 +278,7 @@ export class OAuthApiClient {
         // read the repsonse text
         operationRes.bodyAsText = await response.text();
       }
-    } catch(err) {
+    } catch (err) {
       return Promise.reject(err);
     }
 
@@ -316,14 +316,14 @@ export class OAuthApiClient {
     httpRequest.url = requestUrl;
     httpRequest.headers = {};
     // Set Headers
-    if(options && options.customHeaders) {
-        for(let headerName in options.customHeaders) {
+    if (options && options.customHeaders) {
+        for (let headerName in options.customHeaders) {
           if (options.customHeaders.hasOwnProperty(headerName)) {
             httpRequest.headers[headerName] = options.customHeaders[headerName];
           }
         }
       }
-  
+
     // Send Request
     let operationRes: msRest.HttpOperationResponse;
     try {
@@ -339,7 +339,7 @@ export class OAuthApiClient {
         try {
           if (parsedErrorResponse) {
             let internalError = null;
-            if (parsedErrorResponse.error) internalError = parsedErrorResponse.error;
+            if (parsedErrorResponse.error) { internalError = parsedErrorResponse.error; }
             error.code = internalError ? internalError.code : parsedErrorResponse.code;
             error.message = internalError ? internalError.message : parsedErrorResponse.message;
           }
@@ -355,18 +355,18 @@ export class OAuthApiClient {
         return Promise.reject(error);
       }
 
-    } catch(err) {
+    } catch (err) {
       return Promise.reject(err);
     }
 
     return Promise.resolve(operationRes);
   }
-  
+
   /**
    * @summary GetUserToken
    *
    * Attempts to retrieve the token for a user that's in a logging flow.
-   * 
+   *
    * @param {string} userId Id of the user being authenticated.
    *
    * @param {string} connectionName Name of the auth connection to use.
@@ -407,7 +407,7 @@ export class OAuthApiClient {
   /**
    * @summary GetSignInLink
    *
-   * Gets a signin link from the token server that can be sent as part of a SigninCard. 
+   * Gets a signin link from the token server that can be sent as part of a SigninCard.
    *
    * @param { Models.ConversationReference} conversation conversation reference for the user signing in.
    *

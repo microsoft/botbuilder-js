@@ -2,7 +2,7 @@
  * @module botbuilder-choices
  */
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 
@@ -11,20 +11,20 @@ import { ModelResult } from './modelResult';
 import * as Recognizers from '@microsoft/recognizers-text-number';
 
 /**
- * High level function for recognizing a choice in a users utterance. 
+ * High level function for recognizing a choice in a users utterance.
  *
- * @remarks 
- * This is layered above the `findChoices()` function and adds logic to let the user specify their 
- * choice by index (they can say "one" to pick `choice[0]`) or ordinal position (they can say "the 
+ * @remarks
+ * This is layered above the `findChoices()` function and adds logic to let the user specify their
+ * choice by index (they can say "one" to pick `choice[0]`) or ordinal position (they can say "the
  * second one" to pick `choice[1]`.) The users utterance is recognized in the following order:
- * 
+ *
  * - By name using `findChoices()`.
  * - By 1's based ordinal position.
  * - By 1's based index position.
- * 
+ *
  * ```JavaScript
  * const { recognizeChoices } = require('botbuilder-choices');
- * 
+ *
  * const choices = ['red', 'green', 'blue'];
  * const utterance = context.activity.text;
  * const results = recognizeChoices(utterance, choices);
@@ -39,12 +39,22 @@ import * as Recognizers from '@microsoft/recognizers-text-number';
  * ```
  * @param utterance The text or user utterance to search over. For an incoming 'message' activity you can simply use `context.activity.text`.
  * @param choices List of choices to search over.
- * @param options (Optional) options used to tweak the search that's performed. 
+ * @param options (Optional) options used to tweak the search that's performed.
  */
 export function recognizeChoices(utterance: string, choices: (string|Choice)[], options?: FindChoicesOptions): ModelResult<FoundChoice>[] {
+    // Normalize choices
+    const list: Choice[] = (choices || []).map((choice, index) => typeof choice === 'string' ? { value: choice } : choice).filter((choice) => choice);
+
+    // Try finding choices by text search first
+    // - We only want to use a single strategy for returning results to avoid issues where utterances
+    //   like the "the third one" or "the red one" or "the first division book" would miss-recognize as
+    //   a numerical index or ordinal as well.
+    const locale = options && options.locale ? options.locale : 'en-us';
+    let matched = findChoices(utterance, list, options);
+
     function matchChoiceByIndex(match: ModelResult<any>) {
         try {
-            const index = parseInt(match.resolution.value) - 1;
+            const index = parseInt(match.resolution.value, 10) - 1;
             if (index >= 0 && index < list.length) {
                 const choice = list[index];
                 matched.push({
@@ -58,19 +68,10 @@ export function recognizeChoices(utterance: string, choices: (string|Choice)[], 
                         score: 1.0
                     }
                 });
-            }                
+            }
         } catch (e) { }
     }
 
-    // Normalize choices
-    const list: Choice[] = (choices || []).map((choice, index) => typeof choice === 'string' ? { value: choice } : choice).filter((choice) => choice);
-    
-    // Try finding choices by text search first
-    // - We only want to use a single strategy for returning results to avoid issues where utterances 
-    //   like the "the third one" or "the red one" or "the first division book" would miss-recognize as 
-    //   a numerical index or ordinal as well.
-    const locale = options && options.locale ? options.locale : 'en-us';
-    let matched = findChoices(utterance, list, options);
     if (matched.length === 0) {
         // Next try finding by ordinal
         const ordinals = Recognizers.recognizeOrdinal(utterance, locale);
@@ -84,7 +85,7 @@ export function recognizeChoices(utterance: string, choices: (string|Choice)[], 
         // Sort any found matches by their position within the utterance.
         // - The results from findChoices() are already properly sorted so we just need this
         //   for ordinal & numerical lookups.
-        matched = matched.sort((a,b) => a.start - b.start);
+        matched = matched.sort((a, b) => a.start - b.start);
     }
     return matched;
 }

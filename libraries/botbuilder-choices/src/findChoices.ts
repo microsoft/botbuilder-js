@@ -13,14 +13,14 @@ import { findValues, FindValuesOptions, SortedValue } from './findValues';
 /**
  * An instance of a choice that can be used to render a choice to a user or recognize something a
  * user picked.
- * 
+ *
  * @remarks
- * The [value](#value) will be rendered to a user unless an [action](#action) is provided in which 
+ * The [value](#value) will be rendered to a user unless an [action](#action) is provided in which
  * case the actions `title` will be rendered to the user.
- * 
+ *
  * At recognition time the `value` will always be what gets returned by `findChoices()` and
- * `recognizeChoices()`. By default, the users utterance will be compared against all of the 
- * strings provided in the choice. You can disable using the `value` and/or `action.title` during 
+ * `recognizeChoices()`. By default, the users utterance will be compared against all of the
+ * strings provided in the choice. You can disable using the `value` and/or `action.title` during
  * recognition using the `FindChoicesOptions` structure.
  *
  * ```JavaScript
@@ -36,28 +36,28 @@ import { findValues, FindValuesOptions, SortedValue } from './findValues';
  * ```
  */
 export interface Choice {
-    /** 
+    /**
      * Value to return when recognized by `findChoices()`. Will also be used to render choices
-     * to the user if no [action](#action) is provided. 
+     * to the user if no [action](#action) is provided.
      */
     value: string;
 
-    /** 
+    /**
      * (Optional) action to use when rendering the choice as a suggested action. This **MUST**
      * be a complete action containing `type`, `title`, and `value` fields. If not specified an
-     * `imBack` action will be generated based on the choices [value](#value) field. 
+     * `imBack` action will be generated based on the choices [value](#value) field.
      */
     action?: CardAction;
 
-    /** 
-     * (Optional) list of synonyms to recognize in addition to the [value](#value) and 
-     * [action](#action) fields. 
+    /**
+     * (Optional) list of synonyms to recognize in addition to the [value](#value) and
+     * [action](#action) fields.
      */
     synonyms?: string[];
 }
 
 /**
- * Options to control the recognition performed by `findChoices()`. 
+ * Options to control the recognition performed by `findChoices()`.
  */
 export interface FindChoicesOptions extends FindValuesOptions {
     /**
@@ -66,14 +66,14 @@ export interface FindChoicesOptions extends FindValuesOptions {
     noValue?: boolean;
 
     /**
-     * (Optional) If `true`, the the choices `action.title` field will NOT be searched over. 
+     * (Optional) If `true`, the the choices `action.title` field will NOT be searched over.
      * Defaults to `false`.
      */
     noAction?: boolean;
 }
 
 /**
- * Result returned by `findChoices()`. 
+ * Result returned by `findChoices()`.
  */
 export interface FoundChoice {
     /** The value of the choice that was matched. */
@@ -93,18 +93,18 @@ export interface FoundChoice {
 }
 
 /**
- * Mid-level search function for recognizing a choice in an utterance. 
- * 
+ * Mid-level search function for recognizing a choice in an utterance.
+ *
  * @remarks
- * This function is layered above `findValues()` and simply determines all of the synonyms that 
- * should be searched for before calling `findValues()` to perform the actual search. The 
- * `recognizeChoices()` function is layered above this function and adds the ability to select a 
- * choice by index or ordinal position in the list. Calling this particular function is useful 
+ * This function is layered above `findValues()` and simply determines all of the synonyms that
+ * should be searched for before calling `findValues()` to perform the actual search. The
+ * `recognizeChoices()` function is layered above this function and adds the ability to select a
+ * choice by index or ordinal position in the list. Calling this particular function is useful
  * when you don't want the index and ordinal position recognition done by `recognizeChoices()`.
- * 
+ *
  * ```JavaScript
  * const { findChoices } = require('botbuilder-choices');
- * 
+ *
  * const choices = ['red', 'green', 'blue'];
  * const utterance = context.activity.text;
  * const results = findChoices(utterance, choices);
@@ -119,7 +119,7 @@ export interface FoundChoice {
  * ```
  * @param utterance The text or user utterance to search over. For an incoming 'message' activity you can simply use `context.activity.text`.
  * @param choices List of choices to search over.
- * @param options (Optional) options used to tweak the search that's performed. 
+ * @param options (Optional) options used to tweak the search that's performed.
  */
 export function findChoices(utterance: string, choices: (string|Choice)[], options?: FindChoicesOptions): ModelResult<FoundChoice>[] {
     const opt = options || {};
@@ -132,8 +132,8 @@ export function findChoices(utterance: string, choices: (string|Choice)[], optio
     //   used to map the search results back to their choice.
     const synonyms: SortedValue[] = [];
     list.forEach((choice, index) => {
-        if (!opt.noValue) { synonyms.push({ value: choice.value, index: index }) }
-        if (choice.action && choice.action.title && !opt.noAction) { synonyms.push({ value: choice.action.title, index: index }) }
+        if (!opt.noValue) { synonyms.push({ value: choice.value, index: index }); }
+        if (choice.action && choice.action.title && !opt.noAction) { synonyms.push({ value: choice.action.title, index: index }); }
         (choice.synonyms || []).forEach((synonym) => synonyms.push({ value: synonym, index: index }));
     });
 

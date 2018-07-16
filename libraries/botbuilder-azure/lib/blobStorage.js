@@ -16,6 +16,7 @@ const ContainerNameCheck = new RegExp('^[a-z0-9](?!.*--)[a-z0-9-]{1,61}[a-z0-9]$
 /**
  * @private
  */
+// tslint:disable-next-line:no-shadowed-variable
 const ResolvePromisesSerial = (values, promise) => values.map(value => () => promise(value)).reduce((promise, func) => promise.then(result => func().then(Array.prototype.concat.bind(result))), Promise.resolve([]));
 /**
  * @private
@@ -51,7 +52,7 @@ class BlobStorage {
         }
         this.settings = Object.assign({}, settings);
         this.client = this.createBlobService(this.settings.storageAccountOrConnectionString, this.settings.storageAccessKey, this.settings.host);
-        this.useEmulator = settings.storageAccountOrConnectionString == 'UseDevelopmentStorage=true;';
+        this.useEmulator = settings.storageAccountOrConnectionString === 'UseDevelopmentStorage=true;';
     }
     read(keys) {
         if (!keys) {
@@ -61,6 +62,7 @@ class BlobStorage {
         return this.ensureContainerExists().then((container) => {
             return new Promise((resolve, reject) => {
                 Promise.all(sanitizedKeys.map((key) => {
+                    // tslint:disable-next-line:no-shadowed-variable
                     return new Promise((resolve, reject) => {
                         this.client.getBlobMetadataAsync(container.name, key).then((blobMetadata) => {
                             this.client.getBlobToTextAsync(blobMetadata.container, blobMetadata.name).then((result) => {
@@ -104,13 +106,16 @@ class BlobStorage {
                     options: options
                 };
             });
+            // A block blob can be uploaded using a single PUT operation or divided into multiple PUT block operations
+            // depending on the payload's size. The default maximum size for a single blob upload is 128MB.
+            // An 'InvalidBlockList' error is commonly caused due to concurrently uploading an object larger than 128MB in size.
             let promise = (blob) => this.client.createBlockBlobFromTextAsync(container.name, blob.id, blob.data, blob.options);
             // if the blob service client is using the storage emulator, all write operations must be performed in a sequential mode
             // because of the storage emulator internal implementation, that includes a SQL LocalDb
             // that crash with a deadlock when performing parallel uploads.
             // This behavior does not occur when using an Azure Blob Storage account.
             let results = this.useEmulator ? ResolvePromisesSerial(blobs, promise) : ResolvePromisesParallel(blobs, promise);
-            return results.then(() => { }); //void
+            return results.then(() => { }); // void
         });
     }
     delete(keys) {
@@ -122,7 +127,7 @@ class BlobStorage {
             return Promise.all(sanitizedKeys.map(key => {
                 return this.client.deleteBlobIfExistsAsync(container.name, key);
             }));
-        }).then(() => { }); //void
+        }).then(() => { }); // void
     }
     /**
      * Get a blob name validated representation of an entity to be used as a key.

@@ -41,9 +41,17 @@ const Recognizers = require("@microsoft/recognizers-text-number");
  * @param options (Optional) options used to tweak the search that's performed.
  */
 function recognizeChoices(utterance, choices, options) {
+    // Normalize choices
+    const list = (choices || []).map((choice, index) => typeof choice === 'string' ? { value: choice } : choice).filter((choice) => choice);
+    // Try finding choices by text search first
+    // - We only want to use a single strategy for returning results to avoid issues where utterances
+    //   like the "the third one" or "the red one" or "the first division book" would miss-recognize as
+    //   a numerical index or ordinal as well.
+    const locale = options && options.locale ? options.locale : 'en-us';
+    let matched = findChoices_1.findChoices(utterance, list, options);
     function matchChoiceByIndex(match) {
         try {
-            const index = parseInt(match.resolution.value) - 1;
+            const index = parseInt(match.resolution.value, 10) - 1;
             if (index >= 0 && index < list.length) {
                 const choice = list[index];
                 matched.push({
@@ -61,14 +69,6 @@ function recognizeChoices(utterance, choices, options) {
         }
         catch (e) { }
     }
-    // Normalize choices
-    const list = (choices || []).map((choice, index) => typeof choice === 'string' ? { value: choice } : choice).filter((choice) => choice);
-    // Try finding choices by text search first
-    // - We only want to use a single strategy for returning results to avoid issues where utterances 
-    //   like the "the third one" or "the red one" or "the first division book" would miss-recognize as 
-    //   a numerical index or ordinal as well.
-    const locale = options && options.locale ? options.locale : 'en-us';
-    let matched = findChoices_1.findChoices(utterance, list, options);
     if (matched.length === 0) {
         // Next try finding by ordinal
         const ordinals = Recognizers.recognizeOrdinal(utterance, locale);

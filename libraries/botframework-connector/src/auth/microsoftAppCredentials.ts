@@ -45,9 +45,10 @@ export class MicrosoftAppCredentials implements msrest.ServiceClientCredentials 
         return webResource;
     }
 
-    async getToken(forceRefresh: boolean = false): Promise<string> {
+    async getToken(forceRefresh = false): Promise<string> {
         if (!forceRefresh) {
             // check the global cache for the token. If we have it, and it's valid, we're done.
+            // tslint:disable-next-line:no-shadowed-variable
             let oAuthToken = MicrosoftAppCredentials.cache.get(this.tokenCacheKey);
             if (oAuthToken) {
                 // we have the token. Is it valid?
@@ -70,7 +71,7 @@ export class MicrosoftAppCredentials implements msrest.ServiceClientCredentials 
         if (!this.refreshingToken) {
             this.refreshingToken = new Promise<OAuthResponse>((resolve, reject) => {
                 // Refresh access token
-                var opt: request.Options = {
+                let opt: request.Options = {
                     method: 'POST',
                     url: this.oAuthEndpoint,
                     form: {
@@ -87,7 +88,7 @@ export class MicrosoftAppCredentials implements msrest.ServiceClientCredentials 
                         if (body && response.statusCode && response.statusCode < 300) {
                             // Subtract 5 minutes from expires_in so they'll we'll get a
                             // new token before it expires.
-                            var oauthResponse = <OAuthResponse>JSON.parse(body);
+                            let oauthResponse = <OAuthResponse>JSON.parse(body);
                             oauthResponse.expiration_time = new Date(Date.now() + (oauthResponse.expires_in * 1000) - 300000);
                             resolve(oauthResponse);
                         } else {
@@ -117,7 +118,7 @@ export class MicrosoftAppCredentials implements msrest.ServiceClientCredentials 
             expiration = new Date(Date.now() + 86400000);  // 1 day
         }
 
-        var uri = url.parse(serviceUrl);
+        let uri = url.parse(serviceUrl);
         if (uri.host) {
             MicrosoftAppCredentials.trustedHostNames.set(uri.host, expiration);
         }
@@ -130,11 +131,11 @@ export class MicrosoftAppCredentials implements msrest.ServiceClientCredentials 
      */
     static isTrustedServiceUrl(serviceUrl: string): boolean {
         try {
-            var uri = url.parse(serviceUrl);
+            let uri = url.parse(serviceUrl);
             if (uri.host) {
                 return MicrosoftAppCredentials.isTrustedUrl(uri.host);
             }
-        } catch(e) {
+        } catch (e) {
         }
 
         return false;
@@ -144,11 +145,12 @@ export class MicrosoftAppCredentials implements msrest.ServiceClientCredentials 
         return MicrosoftAppCredentials.isTrustedServiceUrl(webResource.url);
     }
 
+    // tslint:disable-next-line:no-shadowed-variable
     private static isTrustedUrl(url: string): boolean {
-        let expiration = MicrosoftAppCredentials.trustedHostNames.get(url)
+        let expiration = MicrosoftAppCredentials.trustedHostNames.get(url);
         if (expiration) {
             // check if the trusted service url is still valid
-            return expiration.getTime() > (Date.now() - 300000)  // 5 Minutes
+            return expiration.getTime() > (Date.now() - 300000);  // 5 Minutes
         }
 
         return false;

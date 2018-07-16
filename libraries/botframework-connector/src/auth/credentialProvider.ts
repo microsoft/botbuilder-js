@@ -24,7 +24,7 @@ export interface ICredentialProvider {
      * @param  {string} appId bot appid
      * @returns {Promise<boolean>} true if it is a valid AppId
      */
-    isValidAppId(appId: string): Promise<boolean>
+    isValidAppId(appId: string): Promise<boolean>;
 
     /**
      * Get the app password for a given bot appId, if it is not a valid appId, return Null
@@ -34,7 +34,7 @@ export interface ICredentialProvider {
      * @param  {string} appId bot appid
      * @returns {Promise<string|null>} password or null for invalid appid
      */
-    getAppPassword(appId: string): Promise<string|null>
+    getAppPassword(appId: string): Promise<string|null>;
 
     /**
      * Checks if bot authentication is disabled.
@@ -44,7 +44,7 @@ export interface ICredentialProvider {
      * that may need to call out to serviced to validate the appId / password pair.
      * @returns {Promise<boolean>} true if bot authentication is disabled.
      */
-    isAuthenticationDisabled(): Promise<boolean>
+    isAuthenticationDisabled(): Promise<boolean>;
 }
 
 export class SimpleCredentialProvider implements ICredentialProvider {

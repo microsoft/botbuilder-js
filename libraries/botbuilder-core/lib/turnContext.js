@@ -53,16 +53,6 @@ class TurnContext {
         }
     }
     /**
-     * Called when this TurnContext instance is passed into the constructor of a new TurnContext
-     * instance. Can be overridden in derived classes.
-     * @param context The context object to copy private members to. Everything should be copied by reference.
-     */
-    copyTo(context) {
-        // Copy private member to other instance.
-        ['_adapter', '_activity', '_respondedRef', '_services',
-            '_onSendActivities', '_onUpdateActivity', '_onDeleteActivity'].forEach((prop) => context[prop] = this[prop]);
-    }
-    /**
      * The adapter for this context.
      *
      * @remarks
@@ -313,6 +303,16 @@ class TurnContext {
     onDeleteActivity(handler) {
         this._onDeleteActivity.push(handler);
         return this;
+    }
+    /**
+     * Called when this TurnContext instance is passed into the constructor of a new TurnContext
+     * instance. Can be overridden in derived classes.
+     * @param context The context object to copy private members to. Everything should be copied by reference.
+     */
+    copyTo(context) {
+        // Copy private member to other instance.
+        ['_adapter', '_activity', '_respondedRef', '_services',
+            '_onSendActivities', '_onUpdateActivity', '_onDeleteActivity'].forEach((prop) => context[prop] = this[prop]);
     }
     emit(handlers, arg, next) {
         const list = handlers.slice();

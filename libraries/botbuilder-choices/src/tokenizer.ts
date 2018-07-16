@@ -2,7 +2,7 @@
  * @module botbuilder-choices
  */
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 
@@ -24,31 +24,31 @@ export interface Token {
 }
 
 /**
- * Signature for an alternate word breaker that can be passed to `recognizeChoices()`, 
- * `findChoices()`, or `findValues()`. 
- * 
+ * Signature for an alternate word breaker that can be passed to `recognizeChoices()`,
+ * `findChoices()`, or `findValues()`.
+ *
  * ```TypeScript
  * type TokenizerFunction = (text: string, locale?: string) => Token[];
- * ``` 
+ * ```
  *
  * @remarks
  * The `defaultTokenizer()` is fairly simple and only breaks on spaces and punctuation.
  * @param TokenizerFunction.text The text to be tokenized.
- * @param TokenizerFunction.locale (Optional) locale of the text if known.  
+ * @param TokenizerFunction.locale (Optional) locale of the text if known.
  */
 export type TokenizerFunction = (text: string, locale?: string) => Token[];
 
-/** 
+/**
  * Simple tokenizer that breaks on spaces and punctuation.
- * 
+ *
  * @remarks
- * The only normalization done is to lowercase the tokens. Developers can wrap this tokenizer with 
+ * The only normalization done is to lowercase the tokens. Developers can wrap this tokenizer with
  * their own function to perform additional normalization like [stemming](https://github.com/words/stemmer).
- * 
+ *
  * ```JavaScript
  * const { recognizeChoices, defaultTokenizer } = require('botbuilder-choices');
  * const stemmer = require('stemmer');
- * 
+ *
  * function customTokenizer(text, locale) {
  *     const tokens = defaultTokenizer(text, locale);
  *     tokens.forEach((t) => {
@@ -56,7 +56,7 @@ export type TokenizerFunction = (text: string, locale?: string) => Token[];
  *     });
  *     return tokens;
  * }
- * 
+ *
  * const choices = ['red', 'green', 'blue'];
  * const utterance = context.activity.text;
  * const results = recognizeChoices(utterance, choices, { tokenizer: customTokenizer });
@@ -96,7 +96,7 @@ export function defaultTokenizer(text: string, locale?: string): Token[] {
                 end: i + (chr.length - 1),
                 text: chr,
                 normalized: chr
-            }); 
+            });
         } else if (!token) {
             // Start a new token
             token = { start: i, text: chr } as Token;
@@ -112,23 +112,23 @@ export function defaultTokenizer(text: string, locale?: string): Token[] {
 
 /**
  * @private
- * @param codePoint 
+ * @param codePoint
  */
 function isBreakingChar(codePoint: number): boolean {
-    return (isBetween(codePoint, 0x0000, 0x002F) || 
+    return (isBetween(codePoint, 0x0000, 0x002F) ||
             isBetween(codePoint, 0x003A, 0x0040) ||
             isBetween(codePoint, 0x005B, 0x0060) ||
             isBetween(codePoint, 0x007B, 0x00BF) ||
             isBetween(codePoint, 0x02B9, 0x036F) ||
             isBetween(codePoint, 0x2000, 0x2BFF) ||
-            isBetween(codePoint, 0x2E00, 0x2E7F)); 
+            isBetween(codePoint, 0x2E00, 0x2E7F));
 }
 
 /**
  * @private
- * @param value 
- * @param from 
- * @param to 
+ * @param value
+ * @param from
+ * @param to
  */
 function isBetween(value: number, from: number, to: number): boolean {
     return (value >= from && value <= to);

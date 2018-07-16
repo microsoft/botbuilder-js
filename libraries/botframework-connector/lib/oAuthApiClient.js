@@ -91,8 +91,9 @@ class OAuthApiClient {
                     try {
                         if (parsedErrorResponse) {
                             let internalError = null;
-                            if (parsedErrorResponse.error)
+                            if (parsedErrorResponse.error) {
                                 internalError = parsedErrorResponse.error;
+                            }
                             error.code = internalError ? internalError.code : parsedErrorResponse.code;
                             error.message = internalError ? internalError.message : parsedErrorResponse.message;
                         }
@@ -171,8 +172,9 @@ class OAuthApiClient {
                     try {
                         if (parsedErrorResponse) {
                             let internalError = null;
-                            if (parsedErrorResponse.error)
+                            if (parsedErrorResponse.error) {
                                 internalError = parsedErrorResponse.error;
+                            }
                             error.code = internalError ? internalError.code : parsedErrorResponse.code;
                             error.message = internalError ? internalError.message : parsedErrorResponse.message;
                         }
@@ -233,7 +235,7 @@ class OAuthApiClient {
             httpRequest.method = 'GET';
             httpRequest.url = requestUrl;
             httpRequest.headers = {};
-            httpRequest.headers["Content-Type"] = "text/plain";
+            httpRequest.headers['Content-Type'] = 'text/plain';
             // Set Headers
             if (options && options.customHeaders) {
                 for (let headerName in options.customHeaders) {
@@ -258,8 +260,9 @@ class OAuthApiClient {
                     try {
                         if (parsedErrorResponse) {
                             let internalError = null;
-                            if (parsedErrorResponse.error)
+                            if (parsedErrorResponse.error) {
                                 internalError = parsedErrorResponse.error;
+                            }
                             error.code = internalError ? internalError.code : parsedErrorResponse.code;
                             error.message = internalError ? internalError.message : parsedErrorResponse.message;
                         }
@@ -338,8 +341,9 @@ class OAuthApiClient {
                     try {
                         if (parsedErrorResponse) {
                             let internalError = null;
-                            if (parsedErrorResponse.error)
+                            if (parsedErrorResponse.error) {
                                 internalError = parsedErrorResponse.error;
+                            }
                             error.code = internalError ? internalError.code : parsedErrorResponse.code;
                             error.message = internalError ? internalError.message : parsedErrorResponse.message;
                         }

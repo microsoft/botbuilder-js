@@ -31,7 +31,7 @@ class JwtTokenExtractor {
                 return null;
             }
             let parts = authorizationHeader.split(' ');
-            if (parts.length == 2) {
+            if (parts.length === 2) {
                 return yield this.getIdentity(parts[0], parts[1], channelId);
             }
             return null;
@@ -40,7 +40,7 @@ class JwtTokenExtractor {
     getIdentity(scheme, parameter, channelId) {
         return __awaiter(this, void 0, void 0, function* () {
             // No header in correct scheme or no token
-            if (scheme !== "Bearer" || !parameter) {
+            if (scheme !== 'Bearer' || !parameter) {
                 return null;
             }
             // Issuer isn't allowed? No need to check signature
@@ -60,9 +60,9 @@ class JwtTokenExtractor {
         let decoded = jwt.decode(jwtToken, { complete: true });
         let issuer = decoded.payload.iss;
         if (Array.isArray(this.tokenValidationParameters.issuer)) {
-            return this.tokenValidationParameters.issuer.indexOf(issuer) != -1;
+            return this.tokenValidationParameters.issuer.indexOf(issuer) !== -1;
         }
-        if (typeof this.tokenValidationParameters.issuer === "string") {
+        if (typeof this.tokenValidationParameters.issuer === 'string') {
             return this.tokenValidationParameters.issuer === issuer;
         }
         return false;
@@ -98,7 +98,7 @@ class JwtTokenExtractor {
                 return new claimsIdentity_1.ClaimsIdentity(claims, true);
             }
             catch (err) {
-                console.log("Error finding key for token. Available keys: " + metadata.key);
+                console.log('Error finding key for token. Available keys: ' + metadata.key);
                 throw err;
             }
         });

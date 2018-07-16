@@ -44,6 +44,6 @@ export declare class LocaleConverter implements Middleware {
      */
     constructor(settings: LocaleConverterSettings);
     onTurn(context: TurnContext, next: () => Promise<void>): Promise<void>;
-    private convertLocalesAsync(context);
     getAvailableLocales(): Promise<string[]>;
+    private convertLocalesAsync(context);
 }

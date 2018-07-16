@@ -19,8 +19,8 @@ export interface Host {
     secondaryHost: string;
 }
 
-/** 
- * Settings for configuring an instance of `BlobStorage`. 
+/**
+ * Settings for configuring an instance of `BlobStorage`.
  */
 export interface BlobStorageSettings {
     /** Root container name to use. */
@@ -57,6 +57,7 @@ const ContainerNameCheck = new RegExp('^[a-z0-9](?!.*--)[a-z0-9-]{1,61}[a-z0-9]$
 /**
  * @private
  */
+// tslint:disable-next-line:no-shadowed-variable
 const ResolvePromisesSerial = (values, promise) => values.map(value => () => promise(value)).reduce((promise, func) => promise.then(result => func().then(Array.prototype.concat.bind(result))), Promise.resolve([]));
 
 /**
@@ -75,16 +76,16 @@ const checkedCollections: { [key: string]: Promise<azure.BlobService.ContainerRe
 
 /**
  * Middleware that implements a BlobStorage based storage provider for a bot.
- * 
+ *
  * @remarks
- * The BlobStorage implements its storage using a single Azure Storage Blob Container. Each entity 
- * or StoreItem is serialized into a JSON string and stored in an individual text blob. Each blob 
+ * The BlobStorage implements its storage using a single Azure Storage Blob Container. Each entity
+ * or StoreItem is serialized into a JSON string and stored in an individual text blob. Each blob
  * is named after the StoreItem key which is encoded and ensure it conforms a valid blob name.
  */
 export class BlobStorage implements Storage {
-    private settings: BlobStorageSettings
-    private client: BlobServiceAsync
-    private useEmulator: boolean
+    private settings: BlobStorageSettings;
+    private client: BlobServiceAsync;
+    private useEmulator: boolean;
 
     /**
      * Creates a new BlobStorage instance.
@@ -103,9 +104,9 @@ export class BlobStorage implements Storage {
             throw new Error('Invalid container name.');
         }
 
-        this.settings = Object.assign({}, settings)
+        this.settings = Object.assign({}, settings);
         this.client = this.createBlobService(this.settings.storageAccountOrConnectionString, this.settings.storageAccessKey, this.settings.host);
-        this.useEmulator = settings.storageAccountOrConnectionString == 'UseDevelopmentStorage=true;';
+        this.useEmulator = settings.storageAccountOrConnectionString === 'UseDevelopmentStorage=true;';
     }
 
     read(keys: string[]): Promise<StoreItems> {
@@ -113,10 +114,11 @@ export class BlobStorage implements Storage {
             throw new Error('Please provide at least one key to read from storage.');
         }
 
-        let sanitizedKeys = keys.filter(k => k).map((key) => this.sanitizeKey(key))
+        let sanitizedKeys = keys.filter(k => k).map((key) => this.sanitizeKey(key));
         return this.ensureContainerExists().then((container) => {
             return new Promise<StoreItems>((resolve, reject) => {
                 Promise.all<DocumentStoreItem>(sanitizedKeys.map((key) => {
+                    // tslint:disable-next-line:no-shadowed-variable
                     return new Promise((resolve, reject) => {
                         this.client.getBlobMetadataAsync(container.name, key).then((blobMetadata) => {
                             this.client.getBlobToTextAsync(blobMetadata.container, blobMetadata.name).then((result) => {
@@ -176,7 +178,7 @@ export class BlobStorage implements Storage {
             // This behavior does not occur when using an Azure Blob Storage account.
             let results = this.useEmulator ? ResolvePromisesSerial(blobs, promise) : ResolvePromisesParallel(blobs, promise);
 
-            return results.then(() => { }); //void
+            return results.then(() => { }); // void
         });
     }
 
@@ -185,12 +187,12 @@ export class BlobStorage implements Storage {
             throw new Error('Please provide at least one key to delete from storage.');
         }
 
-        let sanitizedKeys = keys.filter(k => k).map((key) => this.sanitizeKey(key))
+        let sanitizedKeys = keys.filter(k => k).map((key) => this.sanitizeKey(key));
         return this.ensureContainerExists().then((container) => {
             return Promise.all(sanitizedKeys.map(key => {
                 return this.client.deleteBlobIfExistsAsync(container.name, key);
             }));
-        }).then(() => { }); //void
+        }).then(() => { }); // void
     }
 
     /**
@@ -233,7 +235,7 @@ export class BlobStorage implements Storage {
         return {
             createContainerIfNotExistsAsync: this.denodeify(blobService, blobService.createContainerIfNotExists),
             deleteContainerIfExistsAsync: this.denodeify(blobService, blobService.deleteContainerIfExists),
-            
+
             createBlockBlobFromTextAsync : this.denodeify(blobService, blobService.createBlockBlobFromText),
             getBlobMetadataAsync: this.denodeify(blobService, blobService.getBlobMetadata),
             getBlobToTextAsync: this.denodeify(blobService, blobService.getBlobToText),

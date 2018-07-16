@@ -91,6 +91,7 @@ class LuisRecognizer {
         let topIntent = undefined;
         let topScore = -1;
         if (results && results.intents) {
+            // tslint:disable-next-line:forin
             for (const name in results.intents) {
                 const score = results.intents[name].score;
                 if (typeof score === 'number' && score > topScore && score >= minScore) {
@@ -121,7 +122,7 @@ class LuisRecognizer {
         });
     }
     normalizeName(name) {
-        return name.replace(/\.| /g, "_");
+        return name.replace(/\.| /g, '_');
     }
     getIntents(luisResult) {
         const intents = {};
@@ -160,41 +161,43 @@ class LuisRecognizer {
         return entitiesAndMetadata;
     }
     getEntityValue(entity) {
-        if (!entity.resolution)
+        if (!entity.resolution) {
             return entity.entity;
-        if (entity.type.startsWith("builtin.datetimeV2.")) {
-            if (!entity.resolution.values || !entity.resolution.values.length)
+        }
+        if (entity.type.startsWith('builtin.datetimeV2.')) {
+            if (!entity.resolution.values || !entity.resolution.values.length) {
                 return entity.resolution;
-            var vals = entity.resolution.values;
-            var type = vals[0].type;
-            var timexes = vals.map(t => t.timex);
-            var distinct = timexes.filter((v, i, a) => a.indexOf(v) === i);
+            }
+            let vals = entity.resolution.values;
+            let type = vals[0].type;
+            let timexes = vals.map(t => t.timex);
+            let distinct = timexes.filter((v, i, a) => a.indexOf(v) === i);
             return { type: type, timex: distinct };
         }
         else {
-            var res = entity.resolution;
+            let res = entity.resolution;
             switch (entity.type) {
-                case "builtin.number":
-                case "builtin.ordinal": return Number(res.value);
-                case "builtin.percentage":
+                case 'builtin.number':
+                case 'builtin.ordinal': return Number(res.value);
+                case 'builtin.percentage':
                     {
-                        var svalue = res.value;
-                        if (svalue.endsWith("%")) {
+                        let svalue = res.value;
+                        if (svalue.endsWith('%')) {
                             svalue = svalue.substring(0, svalue.length - 1);
                         }
                         return Number(svalue);
                     }
-                case "builtin.age":
-                case "builtin.dimension":
-                case "builtin.currency":
-                case "builtin.temperature":
+                case 'builtin.age':
+                case 'builtin.dimension':
+                case 'builtin.currency':
+                case 'builtin.temperature':
                     {
-                        var val = res.value;
-                        var obj = {};
+                        let val = res.value;
+                        let obj = {};
                         if (val) {
-                            obj["number"] = Number(val);
+                            obj['number'] = Number(val);
                         }
-                        obj["units"] = res.unit;
+                        obj['units'] = res.unit;
                         return obj;
                     }
                 default:
@@ -216,27 +219,27 @@ class LuisRecognizer {
     }
     getNormalizedEntityName(entity) {
         // Type::Role -> Role
-        var type = entity.type.split(':').pop();
-        if (type.startsWith("builtin.datetimeV2.")) {
-            type = "datetime";
+        let type = entity.type.split(':').pop();
+        if (type.startsWith('builtin.datetimeV2.')) {
+            type = 'datetime';
         }
-        if (type.startsWith("builtin.currency")) {
-            type = "money";
+        if (type.startsWith('builtin.currency')) {
+            type = 'money';
         }
         if (type.startsWith('builtin.')) {
             type = type.substring(8);
         }
-        if (entity.role != null && entity.role != "") {
+        if (entity.role !== null && entity.role !== '') {
             type = entity.role;
         }
-        return type.replace(/\.|\s/g, "_");
+        return type.replace(/\.|\s/g, '_');
     }
     populateCompositeEntity(compositeEntity, entities, entitiesAndMetadata, verbose) {
         let childrenEntites = verbose ? { $instance: {} } : {};
         let childrenEntitiesMetadata = {};
         // This is now implemented as O(n^2) search and can be reduced to O(2n) using a map as an optimization if n grows
         let compositeEntityMetadata = entities.find(entity => {
-            // For now we are matching by value, which can be ambiguous if the same composite entity shows up with the same text 
+            // For now we are matching by value, which can be ambiguous if the same composite entity shows up with the same text
             // multiple times within an utterance, but this is just a stop gap solution till the indices are included in composite entities
             return entity.type === compositeEntity.parentType && entity.entity === compositeEntity.value;
         });
@@ -252,21 +255,22 @@ class LuisRecognizer {
                 if (!coveredSet.has(i) &&
                     childEntity.type === entity.type &&
                     compositeEntityMetadata &&
-                    entity.startIndex != undefined && compositeEntityMetadata.startIndex != undefined && entity.startIndex >= compositeEntityMetadata.startIndex &&
-                    entity.endIndex != undefined && compositeEntityMetadata.endIndex != undefined && entity.endIndex <= compositeEntityMetadata.endIndex) {
+                    entity.startIndex !== undefined && compositeEntityMetadata.startIndex !== undefined && entity.startIndex >= compositeEntityMetadata.startIndex &&
+                    entity.endIndex !== undefined && compositeEntityMetadata.endIndex !== undefined && entity.endIndex <= compositeEntityMetadata.endIndex) {
                     // Add to the set to ensure that we don't consider the same child entity more than once per composite
                     coveredSet.add(i);
                     this.addProperty(childrenEntites, this.getNormalizedEntityName(entity), this.getEntityValue(entity));
-                    if (verbose)
+                    if (verbose) {
                         this.addProperty(childrenEntites.$instance, this.getNormalizedEntityName(entity), this.getEntityMetadata(entity));
+                    }
                 }
             }
-            ;
         });
         // filter entities that were covered by this composite entity
         for (let i = 0; i < entities.length; i++) {
-            if (!coveredSet.has(i))
+            if (!coveredSet.has(i)) {
                 filteredEntities.push(entities[i]);
+            }
         }
         this.addProperty(entitiesAndMetadata, compositeEntity.parentType, childrenEntites);
         if (verbose) {
@@ -281,10 +285,12 @@ class LuisRecognizer {
      * @param value Property Value
      */
     addProperty(obj, key, value) {
-        if (key in obj)
+        if (key in obj) {
             obj[key] = obj[key].concat(value);
-        else
+        }
+        else {
             obj[key] = [value];
+        }
     }
 }
 exports.LuisRecognizer = LuisRecognizer;

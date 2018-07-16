@@ -2,7 +2,7 @@
  * @module botbuilder-ai
  */
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 import { TurnContext, Middleware, ActivityTypes, Activity } from 'botbuilder';
@@ -46,57 +46,57 @@ export interface QnAMakerResult {
  * Defines an endpoint used to connect to a QnA Maker Knowledge base.
  */
 export interface QnAMakerEndpoint {
-    /** 
-     * ID of your knowledge base. For example: `98185f59-3b6f-4d23-8ebb-XXXXXXXXXXXX` 
+    /**
+     * ID of your knowledge base. For example: `98185f59-3b6f-4d23-8ebb-XXXXXXXXXXXX`
      */
     knowledgeBaseId: string;
 
-    /** 
-     * Your endpoint key. For `v2` or `v3` knowledge bases this is your subscription key. 
-     * For example: `4cb65a02697745eca369XXXXXXXXXXXX` 
+    /**
+     * Your endpoint key. For `v2` or `v3` knowledge bases this is your subscription key.
+     * For example: `4cb65a02697745eca369XXXXXXXXXXXX`
      */
     endpointKey: string;
 
-    /** 
-     * The host path. For example: `https://westus.api.cognitive.microsoft.com/qnamaker/v2.0` 
+    /**
+     * The host path. For example: `https://westus.api.cognitive.microsoft.com/qnamaker/v2.0`
      */
-    host: string;    
+    host: string;
 }
 
 /**
  * Additional settings used to configure a `QnAMaker` instance.
  */
 export interface QnAMakerOptions {
-    /** 
-     * (Optional) minimum score accepted. 
-     * 
+    /**
+     * (Optional) minimum score accepted.
+     *
      * @remarks
-     * Defaults to "0.3". 
+     * Defaults to "0.3".
      */
     scoreThreshold?: number;
 
-    /** 
-     * (Optional) number of results to return. 
-     * 
+    /**
+     * (Optional) number of results to return.
+     *
      * @remarks
-     * Defaults to "1". 
+     * Defaults to "1".
      */
     top?: number;
 
-    /** 
-     * (Optional) and only applied when a QnAMaker instance has been added to ths adapter as 
-     * middleware. 
-     * 
+    /**
+     * (Optional) and only applied when a QnAMaker instance has been added to ths adapter as
+     * middleware.
+     *
      * @remarks
      * Defaults to a value of `false`.
-     * 
-     * Setting this to `true` will cause the QnA Maker service to be called BEFORE any other 
-     * middleware or the bots logic is run. Should the service return an answer the user will be 
-     * automatically sent the answer and the turn completed such that no other middleware or the 
+     *
+     * Setting this to `true` will cause the QnA Maker service to be called BEFORE any other
+     * middleware or the bots logic is run. Should the service return an answer the user will be
+     * automatically sent the answer and the turn completed such that no other middleware or the
      * bots logic will be run.
-     * 
-     * The default behavior is to only call the service AFTER all other middleware and the bots logic 
-     * has run, and only under the condition that no other replies have been sent by the bot yet 
+     *
+     * The default behavior is to only call the service AFTER all other middleware and the bots logic
+     * has run, and only under the condition that no other replies have been sent by the bot yet
      * for this turn.
      */
     answerBeforeNext?: boolean;
@@ -123,17 +123,17 @@ export interface QnAMakerTraceInfo {
 }
 
 /**
- * Manages querying an individual QnA Maker knowledge base for answers. Can be added as middleware 
- * to automatically query the knowledge base anytime a messaged is received from the user. When 
+ * Manages querying an individual QnA Maker knowledge base for answers. Can be added as middleware
+ * to automatically query the knowledge base anytime a messaged is received from the user. When
  * used as middleware the component can be configured to either query the knowledge base before the
- * bots logic runs or after the bots logic is run, as a fallback in the event the bot doesn't answer 
- * the user.   
+ * bots logic runs or after the bots logic is run, as a fallback in the event the bot doesn't answer
+ * the user.
  */
 export class QnAMaker implements Middleware {
-    private readonly options: QnAMakerOptions; 
+    private readonly options: QnAMakerOptions;
 
     /**
-     * Creates a new QnAMaker instance.  
+     * Creates a new QnAMaker instance.
      * @param endpoint The endpoint of the knowledge base to query.
      * @param options (Optional) additional settings used to configure the instance.
      */
@@ -156,21 +156,21 @@ export class QnAMaker implements Middleware {
         if (this.options.answerBeforeNext) {
             // Attempt to answer user and only call next() if not answered
             return this.answer(context).then((answered) => {
-                return !answered ? next() : Promise.resolve()
+                return !answered ? next() : Promise.resolve();
             });
         } else {
             // Call next() and then attempt to answer only if nothing else responded
             return next().then(() => {
-                return !context.responded ? this.answer(context).then(() => {}) : Promise.resolve()
+                return !context.responded ? this.answer(context).then(() => {}) : Promise.resolve();
             });
         }
     }
 
     /**
-     * Calls [generateAnswer()](#generateanswer) and sends the answer as a message ot the user. 
-     * 
+     * Calls [generateAnswer()](#generateanswer) and sends the answer as a message ot the user.
+     *
      * @remarks
-     * Returns a value of `true` if an answer was found and sent. If multiple answers are 
+     * Returns a value of `true` if an answer was found and sent. If multiple answers are
      * returned the first one will be delivered.
      * @param context Context for the current turn of conversation with the user.
      */
@@ -188,8 +188,8 @@ export class QnAMaker implements Middleware {
     }
 
     /**
-     * Calls the QnA Maker service to generate answer(s) for a question. 
-     * 
+     * Calls the QnA Maker service to generate answer(s) for a question.
+     *
      * @remarks
      * The returned answers will be sorted by score with the top scoring answer returned first.
      * @param question The question to answer.
@@ -197,7 +197,7 @@ export class QnAMaker implements Middleware {
      * @param scoreThreshold (Optional) minimum answer score needed to be considered a match to questions. Defaults to a value of `0.001`.
      */
     public generateAnswer(question: string|undefined, top?: number, scoreThreshold?: number): Promise<QnAMakerResult[]> {
-        const q = question ? question.trim() : ''; 
+        const q = question ? question.trim() : '';
         if (q.length > 0) {
             return this.callService(this.endpoint, question, typeof top === 'number' ? top : 1).then((answers) => {
                 const minScore = typeof scoreThreshold === 'number' ? scoreThreshold : 0.001;
@@ -208,8 +208,8 @@ export class QnAMaker implements Middleware {
     }
 
     /**
-     * Called internally to query the QnA Maker service. 
-     * 
+     * Called internally to query the QnA Maker service.
+     *
      * @remarks
      * This is exposed to enable better unit testing of the service.
      */
@@ -244,7 +244,7 @@ export class QnAMaker implements Middleware {
 
     /**
      * Emits a trace event detailing a QnA Maker call and its results.
-     * 
+     *
      * @param context Context for the current turn of conversation with the user.
      * @param answers Answers returned by QnA Maker.
      */
