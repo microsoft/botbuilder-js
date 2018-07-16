@@ -2,29 +2,29 @@
  * @module botbuilder-prompts
  */
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 import { Promiseable, Activity, Attachment, TurnContext } from 'botbuilder';
 import { PromptValidator } from './textPrompt';
 import { sendPrompt } from './internal';
 
-/** 
- * Prompts the user to upload one or more attachments. 
+/**
+ * Prompts the user to upload one or more attachments.
  *
  * @remarks
  * This example shows how to create a new attachment prompt:
  *
  * ```JavaScript
  * const { createAttachmentPrompt } = require('botbuilder-prompts');
- * 
+ *
  * const imagePrompt = createAttachmentPrompt();
  * ```
  * @param O (Optional) type of result returned by the [recognize()](#recognize) method. This defaults to an `attachment[]` but can be changed by the prompts custom validator.
  */
 export interface AttachmentPrompt<O = Attachment[]> {
     /**
-     * Sends a formated prompt to the user. 
+     * Sends a formated prompt to the user.
      *
      * @remarks
      * This example shows how to send a prompt to the user:
@@ -39,14 +39,14 @@ export interface AttachmentPrompt<O = Attachment[]> {
     prompt(context: TurnContext, prompt: string|Partial<Activity>, speak?: string): Promise<void>;
 
     /**
-     * Recognizes and validates the users reply. 
-     * 
+     * Recognizes and validates the users reply.
+     *
      * @remarks
-     * The result of the call will either be the recognized value or `undefined`. 
-     * 
+     * The result of the call will either be the recognized value or `undefined`.
+     *
      * The recognize() method will not automatically re-prompt the user so either the caller or the
      * prompts custom validator will need to implement re-prompting logic.
-     * 
+     *
      * ```JavaScript
      * const images = await imagePrompt.recognize(context);
      * if (images) {
@@ -67,7 +67,7 @@ export interface AttachmentPrompt<O = Attachment[]> {
  *
  * ```JavaScript
  * const { createAttachmentPrompt } = require('botbuilder-prompts');
- * 
+ *
  * const imagePrompt = createAttachmentPrompt(async (context, values) => {
  *    if (values && values.length > 0) {
  *       for (let i = 0; i < values.length; i++) {
@@ -87,6 +87,7 @@ export interface AttachmentPrompt<O = Attachment[]> {
  */
 export function createAttachmentPrompt<O = Attachment[]>(validator?: PromptValidator<Attachment[], O>): AttachmentPrompt<O> {
     return {
+        // tslint:disable-next-line:no-shadowed-variable
         prompt: function prompt(context, prompt, speak) {
             return sendPrompt(context, prompt, speak);
         },

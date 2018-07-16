@@ -2,13 +2,13 @@
  * @module botbuilder-prompts
  */
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 import { Promiseable, Activity, TurnContext } from 'botbuilder';
 import { sendPrompt } from './internal';
 
-/** 
+/**
  * Prompts the user to reply with some text.
  *
  * @remarks
@@ -16,14 +16,14 @@ import { sendPrompt } from './internal';
  *
  * ```JavaScript
  * const { createTextPrompt } = require('botbuilder-prompts');
- * 
+ *
  * const agePrompt = createTextPrompt();
  * ```
  * @param O (Optional) type of result returned by the [recognize()](#recognize) method. This defaults to return a `string` but can be changed by the prompts custom validator.
  */
 export interface TextPrompt<O = string> {
     /**
-     * Sends a formated prompt to the user. 
+     * Sends a formated prompt to the user.
      *
      * @remarks
      * This example shows prompting the user for their name:
@@ -38,14 +38,14 @@ export interface TextPrompt<O = string> {
     prompt(context: TurnContext, prompt: string|Partial<Activity>, speak?: string): Promise<void>;
 
     /**
-     * Recognizes and validates the users reply. 
-     * 
+     * Recognizes and validates the users reply.
+     *
      * @remarks
-     * The result of the call will either be the recognized value or `undefined`. 
-     * 
+     * The result of the call will either be the recognized value or `undefined`.
+     *
      * The recognize() method will not automatically re-prompt the user so either the caller or the
      * prompts custom validator will need to implement re-prompting logic.
-     * 
+     *
      * ```JavaScript
      * const name = await namePrompt.recognize(context);
      * if (name) {
@@ -60,10 +60,10 @@ export interface TextPrompt<O = string> {
 /**
  * Signature of a handler that can be passed to a prompt to provide additional validation logic
  * or to customize the reply sent to the user when their response is invalid.
- * 
+ *
  * ```TypeScript
  * type PromptValidator<R, O = R> = (context: TurnContext, value: R|undefined) => Promiseable<O|undefined>;
- * ``` 
+ * ```
  * @param R Type of value that will recognized and passed to the validator as input.
  * @param O Type of output that will be returned by the validator. This can be changed from the input type by the validator.
  * @param PromptValidator.context Context for the current turn of conversation.
@@ -75,12 +75,12 @@ export type PromptValidator<R, O = R> = (context: TurnContext, value: R|undefine
  * Creates a new prompt that asks the user to enter some text.
  *
  * @remarks
- * This example shows creating a text prompt with a custom validator that ensures the length of 
- * the users answer matches some minimum length requirement: 
+ * This example shows creating a text prompt with a custom validator that ensures the length of
+ * the users answer matches some minimum length requirement:
  *
  * ```JavaScript
  * const { createTextPrompt } = require('botbuilder-prompts');
- * 
+ *
  * const namePrompt = createTextPrompt(async (context, value) => {
  *    if (value && value.length >= 3) {
  *       return value;
@@ -94,6 +94,7 @@ export type PromptValidator<R, O = R> = (context: TurnContext, value: R|undefine
  */
 export function createTextPrompt<O = string>(validator?: PromptValidator<string, O>): TextPrompt<O> {
     return {
+        // tslint:disable-next-line:no-shadowed-variable
         prompt: function prompt(context, prompt, speak) {
             return sendPrompt(context, prompt, speak);
         },

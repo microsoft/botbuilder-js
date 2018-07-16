@@ -2,7 +2,7 @@
  * @module botbuilder-prompts
  */
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 import { Promiseable, Activity, TurnContext } from 'botbuilder';
@@ -10,15 +10,15 @@ import { PromptValidator } from './textPrompt';
 import { sendPrompt } from './internal';
 import * as Recognizers from '@microsoft/recognizers-text-number';
 
-/** 
- * Prompts the user to reply with a number. 
+/**
+ * Prompts the user to reply with a number.
  *
  * @remarks
  * This example shows creating a number prompt:
  *
  * ```JavaScript
  * const { createNumberPrompt } = require('botbuilder-prompts');
- * 
+ *
  * const agePrompt = createNumberPrompt();
  * ```
  * @param O (Optional) type of result returned by the [recognize()](#recognize) method. This defaults to `number` but can be changed by the prompts custom validator.
@@ -40,11 +40,11 @@ export interface NumberPrompt<O = number> {
     prompt(context: TurnContext, prompt: string|Partial<Activity>, speak?: string): Promise<void>;
 
     /**
-     * Recognizes and validates the users reply. 
-     * 
+     * Recognizes and validates the users reply.
+     *
      * @remarks
-     * The result of the call will either be the recognized value or `undefined`. 
-     * 
+     * The result of the call will either be the recognized value or `undefined`.
+     *
      * The recognize() method will not automatically re-prompt the user so either the caller or the
      * prompts custom validator will need to implement re-prompting logic.
      *
@@ -64,11 +64,11 @@ export interface NumberPrompt<O = number> {
  *
  * @remarks
  * This example creates a number prompt with a custom validator that constrains the users answer to
- * a range of numbers and then rounds off any fractional replies: 
+ * a range of numbers and then rounds off any fractional replies:
  *
  * ```JavaScript
  * const { createNumberPrompt } = require('botbuilder-prompts');
- * 
+ *
  * const agePrompt = createNumberPrompt(async (context, value) => {
  *    if (typeof value == 'number') {
  *       if (value >= 1 && value < 111) {
@@ -86,6 +86,7 @@ export interface NumberPrompt<O = number> {
  */
 export function createNumberPrompt<O = number>(validator?: PromptValidator<number, O>, defaultLocale?: string): NumberPrompt<O> {
     return {
+        // tslint:disable-next-line:no-shadowed-variable
         prompt: function prompt(context, prompt, speak) {
             return sendPrompt(context, prompt, speak);
         },

@@ -31,6 +31,7 @@ const Recognizers = require("@microsoft/recognizers-text-date-time");
  */
 function createDatetimePrompt(validator, defaultLocale) {
     return {
+        // tslint:disable-next-line:no-shadowed-variable
         prompt: function prompt(context, prompt, speak) {
             return internal_1.sendPrompt(context, prompt, speak);
         },

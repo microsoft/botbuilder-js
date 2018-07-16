@@ -2,7 +2,7 @@
  * @module botbuilder-prompts
  */
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 import { Promiseable, Activity, TurnContext } from 'botbuilder';
@@ -12,42 +12,42 @@ import { sendPrompt } from './internal';
 import { ListStyle } from './choicePrompt';
 import * as Recognizers from '@microsoft/recognizers-text-choice';
 
-/** 
- * Map of `ConfirmPrompt` choices for each locale the bot supports. 
+/**
+ * Map of `ConfirmPrompt` choices for each locale the bot supports.
  */
 export interface ConfirmChoices {
-    [locale:string]: (string|Choice)[];
+    [locale: string]: (string|Choice)[];
 }
 
-/** 
- * Prompts the user to answer a yes/no question. 
- * 
+/**
+ * Prompts the user to answer a yes/no question.
+ *
  * @remarks
- * The [prompt()](#prompt) method will attempt to send a set of buttons yes/no buttons for the 
- * user to click. By default, the text of the titles for these buttons will always be in English 
- * but you can easily add support for other languages using the prompts [choices](#choices) 
- * property.   
+ * The [prompt()](#prompt) method will attempt to send a set of buttons yes/no buttons for the
+ * user to click. By default, the text of the titles for these buttons will always be in English
+ * but you can easily add support for other languages using the prompts [choices](#choices)
+ * property.
  *
  * ```JavaScript
  * const { createConfirmPrompt } = require('botbuilder-prompts');
- * 
+ *
  * const confirmPrompt = createConfirmPrompt();
  * ```
  * @param O (Optional) type of result returned by the [recognize()](#recognize) method. This defaults to a boolean `true` or `false` but can be changed by the prompts custom validator.
  */
 export interface ConfirmPrompt<O = boolean> {
-    /** 
-     * Allows for the localization of the confirm prompts yes/no choices to other locales besides 
-     * english. 
-     * 
+    /**
+     * Allows for the localization of the confirm prompts yes/no choices to other locales besides
+     * english.
+     *
      * @remarks
-     * This starts with a value of `{ '*': ['yes', 'no'] }` but can be customized to support 
-     * additional languages. The key of each entry is the languages locale code and should be 
-     * lower cased. A default fallback set of choices can be specified using a key of '*'. 
+     * This starts with a value of `{ '*': ['yes', 'no'] }` but can be customized to support
+     * additional languages. The key of each entry is the languages locale code and should be
+     * lower cased. A default fallback set of choices can be specified using a key of '*'.
      *
      * ```JavaScript
      * const confirmPrompt = createConfirmPrompt();
-     * 
+     *
      * // Configure yes/no choices for english and spanish (default)
      * confirmPrompt.choices['*'] = ['sí', 'no'];
      * confirmPrompt.choices['es'] = ['sí', 'no'];
@@ -56,33 +56,33 @@ export interface ConfirmPrompt<O = boolean> {
      */
     choices: ConfirmChoices;
 
-    /** 
-     * Style of choices sent to user when [prompt()](#prompt) is called. 
-     * 
+    /**
+     * Style of choices sent to user when [prompt()](#prompt) is called.
+     *
      * @remarks
      * This starts with a value of `ListStyle.auto`.
      */
     style: ListStyle;
 
-    /** 
-     * Additional options used to configure the output of the `ChoiceFactory`. 
-     * 
+    /**
+     * Additional options used to configure the output of the `ChoiceFactory`.
+     *
      * @remarks
-     * This starts with a value of `{ includeNumbers: false }`. 
+     * This starts with a value of `{ includeNumbers: false }`.
      */
     choiceOptions: ChoiceFactoryOptions;
 
     /**
      * Sends a formated prompt to the user.
-     * 
+     *
      * @remarks
-     * By default, this will attempt to send the user yes & no choices as buttons using 
+     * By default, this will attempt to send the user yes & no choices as buttons using
      * `ChoiceFactory.forChannel()`. If the channel doesn't support buttons it will fallback to
      * appending ` (yes or no)` to the prompt. You can override this behavior using the prompts
      * [style](#style) property.
-     * 
-     * Further tweaks can be made to the rendering of the yes/no choices using the 
-     * [choiceOptions](#choiceoptions) property. 
+     *
+     * Further tweaks can be made to the rendering of the yes/no choices using the
+     * [choiceOptions](#choiceoptions) property.
      *
      * ```JavaScript
      * await confirmPrompt.prompt(context, `This will cancel your order. Are you sure?`);
@@ -94,11 +94,11 @@ export interface ConfirmPrompt<O = boolean> {
     prompt(context: TurnContext, prompt: string|Partial<Activity>, speak?: string): Promise<void>;
 
     /**
-     * Recognizes and validates the users reply. 
-     * 
+     * Recognizes and validates the users reply.
+     *
      * @remarks
-     * The result of the call will either be the recognized value or `undefined`. 
-     * 
+     * The result of the call will either be the recognized value or `undefined`.
+     *
      * The recognize() method will not automatically re-prompt the user so either the caller or the
      * prompts custom validator will need to implement re-prompting logic.
      *
@@ -126,12 +126,12 @@ export interface ConfirmPrompt<O = boolean> {
  *
  * ```JavaScript
  * const { createConfirmPrompt } = require('botbuilder-prompts');
- * 
+ *
  * const confirmPrompt = createConfirmPrompt(async (context, confirmed) => {
  *    if (typeof confirmed != 'boolean') {
  *       await confirmPrompt.prompt(context, `Please answer "yes" or "no".`);
  *    }
- *    return confirmed; 
+ *    return confirmed;
  * });
  * ```
  * @param O (Optional) type of result returned by the `recognize()` method. This defaults to a boolean `true` or `false` but can be changed by the prompts custom validator.
@@ -140,13 +140,14 @@ export interface ConfirmPrompt<O = boolean> {
  */
 export function createConfirmPrompt<O = boolean>(validator?: PromptValidator<O>, defaultLocale?: string): ConfirmPrompt<O> {
     return {
-        choices: { '*': ['yes', 'no'] },        
+        choices: { '*': ['yes', 'no'] },
         style: ListStyle.auto,
         choiceOptions: { includeNumbers: false },
+        // tslint:disable-next-line:no-shadowed-variable
         prompt: function prompt(context, prompt, speak) {
             // Get locale specific choices
             let locale = context.activity && context.activity.locale ? context.activity.locale.toLowerCase() : '*';
-            if (!this.choices.hasOwnProperty(locale)) { locale = '*' }
+            if (!this.choices.hasOwnProperty(locale)) { locale = '*'; }
             const choices = this.choices[locale];
 
             let msg: Partial<Activity>;
@@ -167,14 +168,14 @@ export function createConfirmPrompt<O = boolean>(validator?: PromptValidator<O>,
                         break;
                     case ListStyle.none:
                         msg = { type: 'message', text: prompt };
-                        if (speak) { msg.speak = speak }
+                        if (speak) { msg.speak = speak; }
                         break;
                 }
             } else {
                 msg = Object.assign({}, prompt);
-                if (speak) { msg.speak = speak }
+                if (speak) { msg.speak = speak; }
             }
-            return sendPrompt(context, msg)
+            return sendPrompt(context, msg);
         },
         recognize: function recognize(context) {
             const request = context.activity || {};

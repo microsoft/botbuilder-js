@@ -24,6 +24,7 @@ const internal_1 = require("./internal");
  */
 function createTextPrompt(validator) {
     return {
+        // tslint:disable-next-line:no-shadowed-variable
         prompt: function prompt(context, prompt, speak) {
             return internal_1.sendPrompt(context, prompt, speak);
         },

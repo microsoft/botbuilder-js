@@ -30,6 +30,7 @@ const internal_1 = require("./internal");
  */
 function createOAuthPrompt(settings, validator) {
     return {
+        // tslint:disable-next-line:no-shadowed-variable
         prompt: function prompt(context, prompt) {
             try {
                 // Validate adapter type
@@ -46,7 +47,7 @@ function createOAuthPrompt(settings, validator) {
                         throw new Error(`OAuthPrompt.prompt(): supplied prompt missing attachments.`);
                     }
                     const found = prompt.attachments.filter(a => a.contentType === botbuilder_1.CardFactory.contentTypes.oauthCard);
-                    if (found.length == 0) {
+                    if (found.length === 0) {
                         throw new Error(`OAuthPrompt.prompt(): supplied prompt missing OAuthCard.`);
                     }
                 }
@@ -54,10 +55,10 @@ function createOAuthPrompt(settings, validator) {
                 return Promise.resolve(prompt)
                     .then((p) => {
                     switch (context.activity.channelId) {
-                        case "msteams":
-                        case "cortana":
-                        case "skype":
-                        case "skypeforbusiness":
+                        case 'msteams':
+                        case 'cortana':
+                        case 'skype':
+                        case 'skypeforbusiness':
                             return context.adapter.getSignInLink(context, settings.connectionName).then((link) => {
                                 p.attachments.forEach(a => {
                                     if (a.contentType === botbuilder_1.CardFactory.contentTypes.oauthCard) {
