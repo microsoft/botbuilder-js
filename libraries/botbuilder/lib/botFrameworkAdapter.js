@@ -10,7 +10,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const botbuilder_core_1 = require("botbuilder-core");
 const botframework_connector_1 = require("botframework-connector");
 const pjson = require('../package.json');
-const USER_AGENT = "Microsoft-BotFramework/3.1 (BotBuilder JS/" + pjson.version + ")";
+const USER_AGENT = 'Microsoft-BotFramework/3.1 (BotBuilder JS/' + pjson.version + ')';
 const OAUTH_ENDPOINT = 'https://api.botframework.com';
 const INVOKE_RESPONSE_KEY = Symbol('invokeResponse');
 /**
@@ -350,7 +350,7 @@ class BotFrameworkAdapter extends botbuilder_core_1.BotAdapter {
         return parseRequest(req).then((request) => {
             // Authenticate the incoming request
             errorCode = 401;
-            const authHeader = req.headers["authorization"] || '';
+            const authHeader = req.headers['authorization'] || '';
             return this.authenticateRequest(request, authHeader).then(() => {
                 // Process received activity
                 errorCode = 500;
@@ -493,8 +493,9 @@ class BotFrameworkAdapter extends botbuilder_core_1.BotAdapter {
      */
     authenticateRequest(request, authHeader) {
         return botframework_connector_1.JwtTokenValidation.authenticateRequest(request, authHeader, this.credentialsProvider).then(claims => {
-            if (!claims.isAuthenticated)
+            if (!claims.isAuthenticated) {
                 throw new Error('Unauthorized Access. Request is not authorized');
+            }
         });
     }
     /**

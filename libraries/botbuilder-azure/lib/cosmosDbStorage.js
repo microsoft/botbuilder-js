@@ -54,6 +54,7 @@ class CosmosDbStorage {
             return new Promise((resolve, reject) => {
                 let storeItems = {};
                 let query = this.client.queryDocuments(collectionLink, querySpec);
+                // tslint:disable-next-line:no-shadowed-variable
                 let getNext = function (query) {
                     query.nextItem(function (err, resource) {
                         if (err) {
@@ -137,14 +138,18 @@ function getOrCreateDatabase(client, databaseId) {
     };
     return new Promise((resolve, reject) => {
         client.queryDatabases(querySpec).toArray((err, results) => {
-            if (err)
+            if (err) {
                 return reject(err);
-            if (results.length === 1)
+            }
+            if (results.length === 1) {
                 return resolve(results[0]._self);
+            }
             // create db
+            // tslint:disable-next-line:no-shadowed-variable
             client.createDatabase({ id: databaseId }, (err, databaseLink) => {
-                if (err)
+                if (err) {
                     return reject(err);
+                }
                 resolve(databaseLink._self);
             });
         });
@@ -160,13 +165,17 @@ function getOrCreateCollection(client, databaseLink, collectionId) {
     };
     return new Promise((resolve, reject) => {
         client.queryCollections(databaseLink, querySpec).toArray((err, results) => {
-            if (err)
+            if (err) {
                 return reject(err);
-            if (results.length === 1)
+            }
+            if (results.length === 1) {
                 return resolve(results[0]._self);
+            }
+            // tslint:disable-next-line:no-shadowed-variable
             client.createCollection(databaseLink, { id: collectionId }, (err, collectionLink) => {
-                if (err)
+                if (err) {
                     return reject(err);
+                }
                 resolve(collectionLink._self);
             });
         });
@@ -184,6 +193,7 @@ function sanitizeKey(key) {
     for (let iCh = 0; iCh < key.length; iCh++) {
         let ch = key[iCh];
         let isBad = false;
+        // tslint:disable-next-line:forin
         for (let iBad in badChars) {
             let badChar = badChars[iBad];
             if (ch === badChar) {
@@ -193,8 +203,9 @@ function sanitizeKey(key) {
                 break;
             }
         }
-        if (!isBad)
+        if (!isBad) {
             sb += ch;
+        }
     }
     return sb;
 }

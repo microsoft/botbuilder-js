@@ -76,12 +76,6 @@ export declare class TurnContext {
     constructor(adapterOrContext: BotAdapter, request: Partial<Activity>);
     constructor(adapterOrContext: TurnContext);
     /**
-     * Called when this TurnContext instance is passed into the constructor of a new TurnContext
-     * instance. Can be overridden in derived classes.
-     * @param context The context object to copy private members to. Everything should be copied by reference.
-     */
-    protected copyTo(context: TurnContext): void;
-    /**
      * The adapter for this context.
      *
      * @remarks
@@ -263,6 +257,12 @@ export declare class TurnContext {
      * @param handler A function that will be called anytime [deleteActivity()](#deleteactivity) is called. The handler should call `next()` to continue deletion of the activity.
      */
     onDeleteActivity(handler: DeleteActivityHandler): this;
+    /**
+     * Called when this TurnContext instance is passed into the constructor of a new TurnContext
+     * instance. Can be overridden in derived classes.
+     * @param context The context object to copy private members to. Everything should be copied by reference.
+     */
+    protected copyTo(context: TurnContext): void;
     private emit<T>(handlers, arg, next);
     /**
      * Returns the conversation reference for an activity.

@@ -7,15 +7,15 @@
  * @private
  */
  export function shallowCopy<T>(value: T): T {
-    if (Array.isArray(value)) { return value.slice(0) as any }
-    if (typeof value === 'object') { return Object.assign({}, value) }
+    if (Array.isArray(value)) { return value.slice(0) as any; }
+    if (typeof value === 'object') { return Object.assign({}, value); }
     return value;
 }
 
 /**
  * @private
- * @param target 
- * @param handler 
+ * @param target
+ * @param handler
  */
 export function makeRevocable<T extends Object>(target: T, handler?: ProxyHandler<T>): { proxy: T; revoke: () => void; } {
     // Ensure proxy supported (some browsers don't)

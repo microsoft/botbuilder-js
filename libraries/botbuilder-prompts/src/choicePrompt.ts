@@ -2,7 +2,7 @@
  * @module botbuilder-prompts
  */
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 import { Promiseable, Activity, TurnContext } from 'botbuilder';
@@ -31,23 +31,23 @@ export enum ListStyle {
     suggestedAction
 }
 
-/** 
- * Prompts the user to select from a list of choices. 
+/**
+ * Prompts the user to select from a list of choices.
  *
  * @remarks
  * This example shows how to create a new choice prompt:
  *
  * ```JavaScript
  * const { createChoicePrompt } = require('botbuilder-prompts');
- * 
+ *
  * const choicePrompt = createChoicePrompt();
  * ```
  * @param O (Optional) type of result returned by the [recognize()](#recognize) method. This defaults to an instance of `FoundChoice` but can be changed by the prompts custom validator.
  */
 export interface ChoicePrompt<O = FoundChoice> {
-    /** 
+    /**
      * Style of choices sent to user when [prompt()](#prompt) is called.
-     * 
+     *
      * @remarks
      * This starts with a value of `ListStyle.auto`.
      */
@@ -60,16 +60,16 @@ export interface ChoicePrompt<O = FoundChoice> {
     recognizerOptions: FindChoicesOptions;
 
     /**
-     * Sends a formated prompt to the user. 
-     * 
+     * Sends a formated prompt to the user.
+     *
      * @remarks
-     * By default, this will attempt to send the provided list of choices as buttons using 
-     * `ChoiceFactory.forChannel()`. It may fallback to sending the choices as a text based list 
+     * By default, this will attempt to send the provided list of choices as buttons using
+     * `ChoiceFactory.forChannel()`. It may fallback to sending the choices as a text based list
      * for any number of reasons. You can set the prompts [style](#style) property to force the use
-     * of a particular rendering style. 
-     * 
-     * Further tweaks can be made to the rendering of choices using the 
-     * [choiceOptions](#choiceoptions) property. 
+     * of a particular rendering style.
+     *
+     * Further tweaks can be made to the rendering of choices using the
+     * [choiceOptions](#choiceoptions) property.
      *
      * ```JavaScript
      * await colorPrompt.prompt(context, ['red', 'green', 'blue'], `Pick a color.`);
@@ -82,14 +82,14 @@ export interface ChoicePrompt<O = FoundChoice> {
     prompt(context: TurnContext, choices: (string|Choice)[], prompt?: string|Partial<Activity>, speak?: string): Promise<void>;
 
     /**
-     * Recognizes and validates the users reply. 
-     * 
+     * Recognizes and validates the users reply.
+     *
      * @remarks
-     * The result of the call will either be the recognized value or `undefined`. 
-     * 
+     * The result of the call will either be the recognized value or `undefined`.
+     *
      * The recognize() method will not automatically re-prompt the user so either the caller or the
      * prompts custom validator will need to implement re-prompting logic.
-     * 
+     *
      * The search options for the underlying choice recognizer can be tweaked using the prompts
      * [recognizerOptions](#recognizeroptions) property.
      *
@@ -105,10 +105,8 @@ export interface ChoicePrompt<O = FoundChoice> {
     recognize(context: TurnContext, choices: (string|Choice)[]): Promise<O|undefined>;
 }
 
-function inlineChoiceOptions(culture?: string): ChoiceFactoryOptions
-{
-    const defaultChoiceOption:{ [index:string]: ChoiceFactoryOptions } =
-    {
+function inlineChoiceOptions(culture?: string): ChoiceFactoryOptions {
+    const defaultChoiceOption: { [index: string]: ChoiceFactoryOptions } = {
         'es-es': { inlineSeparator: ', ', inlineOr: ' o ', inlineOrMore: ', o ', includeNumbers: true},
         'nl-nl': { inlineSeparator: ', ', inlineOr: ' of ', inlineOrMore: ', of ', includeNumbers: true},
         'en-us': { inlineSeparator: ', ', inlineOr: ' or ', inlineOrMore: ', or ', includeNumbers: true},
@@ -119,8 +117,7 @@ function inlineChoiceOptions(culture?: string): ChoiceFactoryOptions
         'zh-cn': { inlineSeparator: '， ', inlineOr: ' 要么 ', inlineOrMore: '， 要么 ', includeNumbers: true}
     };
 
-    if (culture === undefined || !(culture in defaultChoiceOption))
-    {
+    if (culture === undefined || !(culture in defaultChoiceOption)) {
         culture = 'en-us';
     }
     return defaultChoiceOption[culture];
@@ -130,12 +127,12 @@ function inlineChoiceOptions(culture?: string): ChoiceFactoryOptions
  * Creates a new prompt that asks the user to select from a list of choices.
  *
  * @remarks
- * This example shows creating a choice prompt with a custom validator that re-prompts using 
+ * This example shows creating a choice prompt with a custom validator that re-prompts using
  * different prompt text if the users utterance doesn't match a choice:
  *
  * ```JavaScript
  * const { createChoicePrompt } = require('botbuilder-prompts');
- * 
+ *
  * const colorPrompt = createChoicePrompt(async (context, found) => {
  *    if (!found) {
  *       await colorPrompt.prompt(context, ['red', 'green', 'blue'], `Please choose a color from the list or say 'cancel'.`);
@@ -152,6 +149,7 @@ export function createChoicePrompt<O = FoundChoice>(validator?: PromptValidator<
         style: ListStyle.auto,
         choiceOptions: inlineChoiceOptions(defaultLocale),
         recognizerOptions: {},
+        // tslint:disable-next-line:no-shadowed-variable
         prompt: function prompt(context, choices, prompt, speak) {
             let msg: Partial<Activity>;
             if (typeof prompt !== 'object') {
@@ -171,12 +169,12 @@ export function createChoicePrompt<O = FoundChoice>(validator?: PromptValidator<
                         break;
                     case ListStyle.none:
                         msg = { type: 'message', text: prompt };
-                        if (speak) { msg.speak = speak }
+                        if (speak) { msg.speak = speak; }
                         break;
                 }
             } else {
                 msg = Object.assign({}, prompt);
-                if (speak) { msg.speak = speak }
+                if (speak) { msg.speak = speak; }
             }
             return sendPrompt(context, msg);
         },

@@ -38,16 +38,17 @@ var JwtTokenValidation;
     JwtTokenValidation.authenticateRequest = authenticateRequest;
     function validateAuthHeader(authHeader, credentials, channelId, serviceUrl = '') {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!authHeader.trim())
+            if (!authHeader.trim()) {
                 throw new Error('\'authHeader\' required.');
+            }
             let usingEmulator = emulatorValidation_1.EmulatorValidation.isTokenFromEmulator(authHeader);
             if (usingEmulator) {
-                return yield emulatorValidation_1.EmulatorValidation.authenticateEmulatorToken(authHeader, credentials, channelId); //, channelId)
+                return yield emulatorValidation_1.EmulatorValidation.authenticateEmulatorToken(authHeader, credentials, channelId); // , channelId)
             }
             if (serviceUrl.trim()) {
-                return yield channelValidation_1.ChannelValidation.authenticateChannelTokenWithServiceUrl(authHeader, credentials, serviceUrl, channelId); //, channelId)
+                return yield channelValidation_1.ChannelValidation.authenticateChannelTokenWithServiceUrl(authHeader, credentials, serviceUrl, channelId); // , channelId)
             }
-            return yield channelValidation_1.ChannelValidation.authenticateChannelToken(authHeader, credentials, channelId); //, channelId)
+            return yield channelValidation_1.ChannelValidation.authenticateChannelToken(authHeader, credentials, channelId); // , channelId)
         });
     }
     JwtTokenValidation.validateAuthHeader = validateAuthHeader;

@@ -61,6 +61,7 @@ function createChoicePrompt(validator, defaultLocale) {
         style: ListStyle.auto,
         choiceOptions: inlineChoiceOptions(defaultLocale),
         recognizerOptions: {},
+        // tslint:disable-next-line:no-shadowed-variable
         prompt: function prompt(context, choices, prompt, speak) {
             let msg;
             if (typeof prompt !== 'object') {

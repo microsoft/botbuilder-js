@@ -5,8 +5,8 @@
 		"postinstall": "lerna bootstrap --hoist",
 		"build": "lerna run build",
 		"clean": "lerna run clean",
-		"test:travis": "lerna run build && nyc mocha \"libraries/bot*/tests/*.test.js\" && nyc report --reporter=text-lcov | coveralls",
-		"test": "lerna run build && nyc mocha \"libraries/bot*/tests/*.test.js\"",
+		"test:travis": "lerna run build && nyc mocha \"libraries/bot*/tests/*.test.js\" && nyc report --reporter=text-lcov | coveralls && tslint -p ./tslint.json",
+		"test": "lerna run build && nyc mocha \"libraries/bot*/tests/*.test.js\" && tslint -p ./tslint.json",
 		"build-docs": "lerna run build-docs"
 	},
 	"dependencies": {

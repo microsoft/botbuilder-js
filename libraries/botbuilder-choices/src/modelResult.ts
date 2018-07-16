@@ -2,32 +2,32 @@
  * @module botbuilder-choices
  */
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 
 /**
- * Outer result returned by an entity recognizer like `recognizeChoices()`. 
- * 
+ * Outer result returned by an entity recognizer like `recognizeChoices()`.
+ *
  * @remarks
- * This structure is wrapped around the recognized result and contains [start](#start) and 
- * [end](#end) position information to identify the span of text in the users utterance that was 
- * recognized. The actual result can be accessed through the [resolution](#resolution) property. 
- * @param T The type of entity/resolution being returned. 
+ * This structure is wrapped around the recognized result and contains [start](#start) and
+ * [end](#end) position information to identify the span of text in the users utterance that was
+ * recognized. The actual result can be accessed through the [resolution](#resolution) property.
+ * @param T The type of entity/resolution being returned.
  */
 export interface ModelResult<T extends Object = {}> {
     /** Substring of the utterance that was recognized. */
-    text: string
+    text: string;
 
     /** Start character position of the recognized substring. */
-    start: number
+    start: number;
 
     /** End character position of the recognized substring. */
-    end: number
+    end: number;
 
     /** Type of entity that was recognized. */
-    typeName: string
+    typeName: string;
 
     /** The recognized entity. */
-    resolution: T
+    resolution: T;
 }

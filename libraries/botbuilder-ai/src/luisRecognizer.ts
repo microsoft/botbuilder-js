@@ -2,7 +2,7 @@
  * @module botbuilder-ai
  */
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 import { Middleware, TurnContext, RecognizerResult } from 'botbuilder';
@@ -17,14 +17,14 @@ const LUIS_TRACE_LABEL = 'Luis Trace';
  * @private
  */
 interface LuisOptions {
-    Staging?: boolean
+    Staging?: boolean;
 }
 
 /**
  * @private
  */
 interface LuisModel {
-    ModelID: string,
+    ModelID: string;
 }
 
 /**
@@ -66,13 +66,13 @@ export interface LuisRecognizerSettings {
 
 /**
  * Component used to recognize intents in a user utterance using a configured LUIS model.
- * 
+ *
  * @remarks
  * This component can be used within your bots logic by calling [recognize()](#recognize) or added
- * to your bot adapters middleware stack to automatically recognize the users intent.   
+ * to your bot adapters middleware stack to automatically recognize the users intent.
  */
 export class LuisRecognizer implements Middleware {
-    private settings: LuisRecognizerSettings
+    private settings: LuisRecognizerSettings;
     private luisClient: LuisClient;
     private cacheKey = Symbol('results');
 
@@ -95,8 +95,8 @@ export class LuisRecognizer implements Middleware {
 
     /**
      * Returns the results cached from a previous call to [recognize()](#recognize) for the current
-     * turn with the user.  
-     * 
+     * turn with the user.
+     *
      * @remarks
      * This will return `undefined` if recognize() hasn't been called for the current turn.
      * @param context Context for the current turn of conversation with the use.
@@ -106,14 +106,14 @@ export class LuisRecognizer implements Middleware {
     }
 
     /**
-     * Calls LUIS to recognize intents and entities in a users utterance. 
-     * 
+     * Calls LUIS to recognize intents and entities in a users utterance.
+     *
      * @remarks
-     * The results of the call will be cached to the context object for the turn and future calls 
-     * to recognize() for the same context object will result in the cached value being returned. 
-     * This behavior can be overridden using the `force` parameter.   
+     * The results of the call will be cached to the context object for the turn and future calls
+     * to recognize() for the same context object will result in the cached value being returned.
+     * This behavior can be overridden using the `force` parameter.
      * @param context Context for the current turn of conversation with the use.
-     * @param force (Optional) flag that if `true` will force the call to LUIS even if a cached result exists. Defaults to a value of `false`. 
+     * @param force (Optional) flag that if `true` will force the call to LUIS even if a cached result exists. Defaults to a value of `false`.
      */
     public recognize(context: TurnContext, force?: boolean): Promise<RecognizerResult> {
         const cached = context.services.get(this.cacheKey);
@@ -142,8 +142,8 @@ export class LuisRecognizer implements Middleware {
     }
 
     /**
-     * Called internally to create a LuisClient instance. 
-     * 
+     * Called internally to create a LuisClient instance.
+     *
      * @remarks
      * This is exposed to enable better unit testing of the recognizer.
      * @param baseUri Service endpoint being called.
@@ -156,12 +156,13 @@ export class LuisRecognizer implements Middleware {
      * Returns the name of the top scoring intent from a set of LUIS results.
      * @param results Result set to be searched.
      * @param defaultIntent (Optional) intent name to return should a top intent be found. Defaults to a value of `None`.
-     * @param minScore (Optional) minimum score needed for an intent to be considered as a top intent. If all intents in the set are below this threshold then the `defaultIntent` will be returned.  Defaults to a value of `0.0`.  
+     * @param minScore (Optional) minimum score needed for an intent to be considered as a top intent. If all intents in the set are below this threshold then the `defaultIntent` will be returned.  Defaults to a value of `0.0`.
      */
     static topIntent(results: RecognizerResult | undefined, defaultIntent = 'None', minScore = 0.0): string {
         let topIntent: string | undefined = undefined;
         let topScore = -1;
         if (results && results.intents) {
+            // tslint:disable-next-line:forin
             for (const name in results.intents) {
                 const score = results.intents[name].score;
                 if (typeof score === 'number' && score > topScore && score >= minScore) {
@@ -183,7 +184,7 @@ export class LuisRecognizer implements Middleware {
             luisModel: {
                 ModelID: this.settings.appId
             }
-        }
+        };
         return context.sendActivity({
             type: 'trace',
             valueType: LUIS_TRACE_TYPE,
@@ -194,11 +195,11 @@ export class LuisRecognizer implements Middleware {
     }
 
     private normalizeName(name: string): string {
-        return name.replace(/\.| /g, "_");
+        return name.replace(/\.| /g, '_');
     }
 
     private getIntents(luisResult: LuisResult): any {
-        const intents: { [name: string]: {score:number}; } = {}
+        const intents: { [name: string]: {score: number}; } = {};
         if (luisResult.intents) {
             luisResult.intents.reduce((prev: any, curr: Intent) => {
                 prev[this.normalizeName(curr.intent)] = { score: curr.score};
@@ -239,43 +240,44 @@ export class LuisRecognizer implements Middleware {
     }
 
     private getEntityValue(entity: Entity): any {
-        if (!entity.resolution)
+        if (!entity.resolution) {
             return entity.entity;
-
-        if (entity.type.startsWith("builtin.datetimeV2.")) {
-            if (!entity.resolution.values || !entity.resolution.values.length)
-                return entity.resolution;
-
-            var vals = entity.resolution.values;
-            var type = vals[0].type;
-            var timexes = vals.map(t => t.timex);
-            var distinct = timexes.filter((v, i, a) => a.indexOf(v) === i);
-            return {type: type, timex: distinct};
         }
-        else {
-            var res = entity.resolution;
+
+        if (entity.type.startsWith('builtin.datetimeV2.')) {
+            if (!entity.resolution.values || !entity.resolution.values.length) {
+                return entity.resolution;
+            }
+
+            let vals = entity.resolution.values;
+            let type = vals[0].type;
+            let timexes = vals.map(t => t.timex);
+            let distinct = timexes.filter((v, i, a) => a.indexOf(v) === i);
+            return {type: type, timex: distinct};
+        } else {
+            let res = entity.resolution;
             switch (entity.type) {
-                case "builtin.number":
-                case "builtin.ordinal": return Number(res.value);
-                case "builtin.percentage":
+                case 'builtin.number':
+                case 'builtin.ordinal': return Number(res.value);
+                case 'builtin.percentage':
                     {
-                        var svalue = res.value;
-                        if (svalue.endsWith("%")) {
+                        let svalue = res.value;
+                        if (svalue.endsWith('%')) {
                             svalue = svalue.substring(0, svalue.length - 1);
                         }
                         return Number(svalue);
                     }
-                case "builtin.age":
-                case "builtin.dimension":
-                case "builtin.currency":
-                case "builtin.temperature":
+                case 'builtin.age':
+                case 'builtin.dimension':
+                case 'builtin.currency':
+                case 'builtin.temperature':
                     {
-                        var val = res.value;
-                        var obj = { };
+                        let val = res.value;
+                        let obj = { };
                         if (val) {
-                            obj["number"] = Number(val);
+                            obj['number'] = Number(val);
                         }
-                        obj["units"] = res.unit;
+                        obj['units'] = res.unit;
                         return obj;
                     }
                 default:
@@ -299,20 +301,20 @@ export class LuisRecognizer implements Middleware {
 
     private getNormalizedEntityName(entity: Entity): string {
         // Type::Role -> Role
-        var type = entity.type.split(':').pop();
-        if (type.startsWith("builtin.datetimeV2.")) {
-            type = "datetime";
+        let type = entity.type.split(':').pop();
+        if (type.startsWith('builtin.datetimeV2.')) {
+            type = 'datetime';
         }
-        if (type.startsWith("builtin.currency")) {
-            type = "money";
+        if (type.startsWith('builtin.currency')) {
+            type = 'money';
         }
         if (type.startsWith('builtin.')) {
             type = type.substring(8);
         }
-        if (entity.role != null && entity.role != "") {
+        if (entity.role !== null && entity.role !== '') {
             type = entity.role;
         }
-        return type.replace(/\.|\s/g, "_");
+        return type.replace(/\.|\s/g, '_');
     }
 
     private populateCompositeEntity(compositeEntity: CompositeEntity, entities: Entity[], entitiesAndMetadata: any, verbose: boolean): Entity[] {
@@ -321,9 +323,9 @@ export class LuisRecognizer implements Middleware {
 
         // This is now implemented as O(n^2) search and can be reduced to O(2n) using a map as an optimization if n grows
         let compositeEntityMetadata: Entity | undefined = entities.find(entity => {
-            // For now we are matching by value, which can be ambiguous if the same composite entity shows up with the same text 
+            // For now we are matching by value, which can be ambiguous if the same composite entity shows up with the same text
             // multiple times within an utterance, but this is just a stop gap solution till the indices are included in composite entities
-            return entity.type === compositeEntity.parentType && entity.entity === compositeEntity.value
+            return entity.type === compositeEntity.parentType && entity.entity === compositeEntity.value;
         });
 
         let filteredEntities: Entity[] = [];
@@ -339,23 +341,25 @@ export class LuisRecognizer implements Middleware {
                 if (!coveredSet.has(i) &&
                     childEntity.type === entity.type &&
                     compositeEntityMetadata &&
-                    entity.startIndex != undefined && compositeEntityMetadata.startIndex != undefined && entity.startIndex >= compositeEntityMetadata.startIndex &&
-                    entity.endIndex != undefined && compositeEntityMetadata.endIndex != undefined && entity.endIndex <= compositeEntityMetadata.endIndex) {
+                    entity.startIndex !== undefined && compositeEntityMetadata.startIndex !== undefined && entity.startIndex >= compositeEntityMetadata.startIndex &&
+                    entity.endIndex !== undefined && compositeEntityMetadata.endIndex !== undefined && entity.endIndex <= compositeEntityMetadata.endIndex) {
 
                     // Add to the set to ensure that we don't consider the same child entity more than once per composite
                     coveredSet.add(i);
                     this.addProperty(childrenEntites, this.getNormalizedEntityName(entity), this.getEntityValue(entity));
 
-                    if (verbose)
+                    if (verbose) {
                         this.addProperty(childrenEntites.$instance, this.getNormalizedEntityName (entity), this.getEntityMetadata(entity));
+                    }
                 }
-            };
+            }
         });
 
         // filter entities that were covered by this composite entity
         for (let i = 0; i < entities.length; i++) {
-            if (!coveredSet.has(i))
+            if (!coveredSet.has(i)) {
                 filteredEntities.push(entities[i]);
+            }
         }
 
         this.addProperty(entitiesAndMetadata, compositeEntity.parentType, childrenEntites);
@@ -373,9 +377,10 @@ export class LuisRecognizer implements Middleware {
      * @param value Property Value
      */
     private addProperty(obj: any, key: string, value: any) {
-        if (key in obj)
+        if (key in obj) {
             obj[key] = obj[key].concat(value);
-        else
+        } else {
             obj[key] = [value];
+        }
     }
 }

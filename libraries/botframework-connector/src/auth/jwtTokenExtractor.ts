@@ -7,7 +7,7 @@
  */
 import * as jwt from 'jsonwebtoken';
 import { Constants } from './constants';
-import { ClaimsIdentity, Claim } from "./claimsIdentity";
+import { ClaimsIdentity, Claim } from './claimsIdentity';
 import { OpenIdMetadata } from './openIdMetadata';
 import { EndorsementsValidator } from './endorsementsValidator';
 
@@ -34,7 +34,7 @@ export class JwtTokenExtractor {
         }
 
         let parts = authorizationHeader.split(' ');
-        if (parts.length == 2) {
+        if (parts.length === 2) {
             return await this.getIdentity(parts[0], parts[1], channelId);
         }
 
@@ -43,7 +43,7 @@ export class JwtTokenExtractor {
 
     public async getIdentity(scheme: string, parameter: string, channelId: string): Promise<ClaimsIdentity | null> {
         // No header in correct scheme or no token
-        if (scheme !== "Bearer" || !parameter) {
+        if (scheme !== 'Bearer' || !parameter) {
             return null;
         }
 
@@ -54,8 +54,7 @@ export class JwtTokenExtractor {
 
         try {
             return await this.validateToken(parameter, channelId);
-        }
-        catch (err) {
+        } catch (err) {
             console.log('JwtTokenExtractor.getIdentity:err!', err);
             throw err;
         }
@@ -66,10 +65,10 @@ export class JwtTokenExtractor {
         let issuer: string = decoded.payload.iss;
 
         if (Array.isArray(this.tokenValidationParameters.issuer)) {
-            return this.tokenValidationParameters.issuer.indexOf(issuer) != -1;
+            return this.tokenValidationParameters.issuer.indexOf(issuer) !== -1;
         }
 
-        if (typeof this.tokenValidationParameters.issuer === "string") {
+        if (typeof this.tokenValidationParameters.issuer === 'string') {
             return this.tokenValidationParameters.issuer === issuer;
         }
 
@@ -92,7 +91,7 @@ export class JwtTokenExtractor {
 
             // enforce endorsements in openIdMetadadata if there is any endorsements associated with the key
             let endorsements = metadata.endorsements;
-            
+
             if (Array.isArray(endorsements) && endorsements.length !== 0) {
                 let isEndorsed = EndorsementsValidator.validate(channelId, endorsements);
                 if (!isEndorsed) {
@@ -114,7 +113,7 @@ export class JwtTokenExtractor {
             return new ClaimsIdentity(claims, true);
 
         } catch (err) {
-            console.log("Error finding key for token. Available keys: " + metadata.key);
+            console.log('Error finding key for token. Available keys: ' + metadata.key);
             throw err;
         }
     }

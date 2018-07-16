@@ -9,8 +9,8 @@
 import { Storage, StoreItems, StoreItem } from 'botbuilder';
 import { DocumentClient, DocumentBase, UriFactory } from 'documentdb';
 
-/** 
- * Additional settings for configuring an instance of `CosmosDbStorage`. 
+/**
+ * Additional settings for configuring an instance of `CosmosDbStorage`.
  */
 export interface CosmosDbStorageSettings {
     /** The endpoint Uri for the service endpoint from the Azure Cosmos DB service. */
@@ -38,10 +38,10 @@ interface DocumentStoreItem {
 
 /**
  * Middleware that implements a CosmosDB based storage provider for a bot.
- * 
+ *
  * @remarks
- * The `connectionPolicyConfigurator` handler can be used to further customize the connection to 
- * CosmosDB (Connection mode, retry options, timeouts). More information at 
+ * The `connectionPolicyConfigurator` handler can be used to further customize the connection to
+ * CosmosDB (Connection mode, retry options, timeouts). More information at
  * http://azure.github.io/azure-documentdb-node/global.html#ConnectionPolicy
  */
 export class CosmosDbStorage implements Storage {
@@ -94,6 +94,7 @@ export class CosmosDbStorage implements Storage {
             return new Promise<StoreItems>((resolve, reject) => {
                 let storeItems: StoreItems = {};
                 let query = this.client.queryDocuments(collectionLink, querySpec);
+                // tslint:disable-next-line:no-shadowed-variable
                 let getNext = function (query) {
                     query.nextItem(function (err, resource) {
                         if (err) {
@@ -111,8 +112,8 @@ export class CosmosDbStorage implements Storage {
 
                         // visit the remaining results recursively
                         getNext(query);
-                    })
-                }
+                    });
+                };
                 // invoke the function
                 getNext(query);
             });
@@ -153,7 +154,7 @@ export class CosmosDbStorage implements Storage {
                     } else {
                         reject(new Error('etag empty'));
                     }
-                })
+                });
             })).then(() => { }); // void
         });
     }
@@ -174,7 +175,7 @@ export class CosmosDbStorage implements Storage {
     private ensureCollectionExists(): Promise<string> {
         if (!this.collectionExists) {
             this.collectionExists = getOrCreateDatabase(this.client, this.settings.databaseId)
-                .then(databaseLink => getOrCreateCollection(this.client, databaseLink, this.settings.collectionId))
+                .then(databaseLink => getOrCreateCollection(this.client, databaseLink, this.settings.collectionId));
         }
 
         return this.collectionExists;
@@ -192,12 +193,13 @@ function getOrCreateDatabase(client: DocumentClient, databaseId: string): Promis
 
     return new Promise((resolve, reject) => {
         client.queryDatabases(querySpec).toArray((err, results) => {
-            if (err) return reject(err);
-            if (results.length === 1) return resolve(results[0]._self);
+            if (err) { return reject(err); }
+            if (results.length === 1) { return resolve(results[0]._self); }
 
             // create db
+            // tslint:disable-next-line:no-shadowed-variable
             client.createDatabase({ id: databaseId }, (err, databaseLink) => {
-                if (err) return reject(err);
+                if (err) { return reject(err); }
                 resolve(databaseLink._self);
             });
         });
@@ -215,11 +217,12 @@ function getOrCreateCollection(client: DocumentClient, databaseLink: string, col
 
     return new Promise((resolve, reject) => {
         client.queryCollections(databaseLink, querySpec).toArray((err, results) => {
-            if (err) return reject(err);
-            if (results.length === 1) return resolve(results[0]._self);
+            if (err) { return reject(err); }
+            if (results.length === 1) { return resolve(results[0]._self); }
 
+            // tslint:disable-next-line:no-shadowed-variable
             client.createCollection(databaseLink, { id: collectionId }, (err, collectionLink) => {
-                if (err) return reject(err);
+                if (err) { return reject(err); }
                 resolve(collectionLink._self);
             });
         });
@@ -237,7 +240,8 @@ function sanitizeKey(key: string): string {
     let sb = '';
     for (let iCh = 0; iCh < key.length; iCh++) {
         let ch = key[iCh];
-        let isBad: boolean = false;
+        let isBad = false;
+        // tslint:disable-next-line:forin
         for (let iBad in badChars) {
             let badChar = badChars[iBad];
             if (ch === badChar) {
@@ -247,8 +251,9 @@ function sanitizeKey(key: string): string {
                 break;
             }
         }
-        if (!isBad)
+        if (!isBad) {
             sb += ch;
+        }
     }
     return sb;
 }

@@ -2,7 +2,7 @@
  * @module botbuilder-prompts
  */
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 import { Promiseable, Activity, TurnContext } from 'botbuilder';
@@ -12,48 +12,48 @@ import * as Recognizers from '@microsoft/recognizers-text-date-time';
 
 /**
  * :package: **botbuilder-prompts**
- * 
+ *
  * Datetime result returned by `DatetimePrompt`. For more details see the LUIS docs for
  * [builtin.datetimev2](https://docs.microsoft.com/en-us/azure/cognitive-services/luis/luis-reference-prebuilt-entities#builtindatetimev2).
  */
 export interface FoundDatetime {
-    /** 
-     * TIMEX expression representing ambiguity of the recognized time. 
+    /**
+     * TIMEX expression representing ambiguity of the recognized time.
      */
     timex: string;
 
-    /** 
-     * Type of time recognized. Possible values are 'date', 'time', 'datetime', 'daterange', 
+    /**
+     * Type of time recognized. Possible values are 'date', 'time', 'datetime', 'daterange',
      * 'timerange', 'datetimerange', 'duration', or 'set'.
      */
     type: string;
 
-    /** 
+    /**
      * Value of the specified [type](#type) that's a reasonable approximation given the ambiguity
      * of the [timex](#timex).
      */
     value: string;
 }
 
-/** 
+/**
  * :package: **botbuilder-prompts**
- * 
- * Prompts the user to reply with a date and/or time using natural language utterances like 
- * "tomorrow at 9am". 
+ *
+ * Prompts the user to reply with a date and/or time using natural language utterances like
+ * "tomorrow at 9am".
  *
  * @remarks
  * This example shows creating a datetime prompt:
- * 
+ *
  * ```JavaScript
  * const { createDatetimePrompt } = require('botbuilder-prompts');
- * 
+ *
  * const timePrompt = createDatetimePrompt();
  * ```
  * @param O (Optional) type of result returned by the [recognize()](#recognize) method. This defaults to an instance of `FoundDateTime[]` but can be changed by the prompts custom validator.
  */
 export interface DatetimePrompt<O = FoundDatetime[]> {
     /**
-     * Sends a formated prompt to the user. 
+     * Sends a formated prompt to the user.
      *
      * @remarks
      * This example shows prompting the user for a time.
@@ -68,11 +68,11 @@ export interface DatetimePrompt<O = FoundDatetime[]> {
     prompt(context: TurnContext, prompt: string|Partial<Activity>, speak?: string): Promise<void>;
 
     /**
-     * Recognizes and validates the users reply. 
-     * 
+     * Recognizes and validates the users reply.
+     *
      * @remarks
-     * The result of the call will either be the recognized value or `undefined`. 
-     * 
+     * The result of the call will either be the recognized value or `undefined`.
+     *
      * The recognize() method will not automatically re-prompt the user so either the caller or the
      * prompts custom validator will need to implement re-prompting logic.
      *
@@ -86,7 +86,7 @@ export interface DatetimePrompt<O = FoundDatetime[]> {
      *       case 'datetime':
      *          const date = new Date(time.value);
      *          break;
-     *    } 
+     *    }
      * }
      * ```
      * @param context Context for the current turn of conversation.
@@ -103,7 +103,7 @@ export interface DatetimePrompt<O = FoundDatetime[]> {
  *
  * ```JavaScript
  * const { createDatetimePrompt } = require('botbuilder-prompts');
- * 
+ *
  * const timePrompt = createDatetimePrompt(async (context, values) => {
  *    try {
  *       if (!Array.isArray(values) || values.length < 0) { throw new Error('missing time') }
@@ -123,6 +123,7 @@ export interface DatetimePrompt<O = FoundDatetime[]> {
  */
 export function createDatetimePrompt<O = FoundDatetime[]>(validator?: PromptValidator<FoundDatetime[], O>, defaultLocale?: string): DatetimePrompt<O> {
     return {
+        // tslint:disable-next-line:no-shadowed-variable
         prompt: function prompt(context, prompt, speak) {
             return sendPrompt(context, prompt, speak);
         },

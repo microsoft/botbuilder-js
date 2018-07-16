@@ -2,26 +2,26 @@
  * @module botbuilder
  */
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 import { TurnContext, Promiseable } from 'botbuilder-core';
 
-/** 
+/**
  * Callback to calculate a storage key.
- * 
+ *
  * ```TypeScript
- * type StorageKeyFactory = (context: TurnContext) => Promiseable<string>; 
- * ``` 
- * @param StorageKeyFactory.context Context for the current turn of conversation with a user. 
+ * type StorageKeyFactory = (context: TurnContext) => Promiseable<string>;
+ * ```
+ * @param StorageKeyFactory.context Context for the current turn of conversation with a user.
  */
-export type StorageKeyFactory = (context: TurnContext) => Promiseable<string>; 
+export type StorageKeyFactory = (context: TurnContext) => Promiseable<string>;
 
-/** 
- * Interface for a storage provider that stores and retrieves plain old JSON objects. 
+/**
+ * Interface for a storage provider that stores and retrieves plain old JSON objects.
  */
 export interface Storage {
-    /** 
+    /**
      * Loads store items from storage
      *
      * @remarks
@@ -31,11 +31,11 @@ export interface Storage {
      * const items = await storage.read(['botState']);
      * const state = 'botState' in items ? items['botState'] : {};
      * ```
-     * @param keys Array of item keys to read from the store. 
+     * @param keys Array of item keys to read from the store.
      **/
     read(keys: string[]): Promise<StoreItems>;
 
-    /** 
+    /**
      * Saves store items to storage.
      *
      * @remarks
@@ -45,11 +45,11 @@ export interface Storage {
      * state.topic = 'someTopic';
      * await storage.write({ 'botState': state });
      * ```
-     * @param changes Map of items to write to storage.  
+     * @param changes Map of items to write to storage.
      **/
     write(changes: StoreItems): Promise<void>;
 
-    /** 
+    /**
      * Removes store items from storage
      *
      * @remarks
@@ -58,12 +58,12 @@ export interface Storage {
      * ```JavaScript
      * await storage.delete(['botState']);
      * ```
-     * @param keys Array of item keys to remove from the store. 
+     * @param keys Array of item keys to remove from the store.
      **/
     delete(keys: string[]): Promise<void>;
 }
 
-/** 
+/**
  * Object which is stored in Storage with an optional eTag.
  */
 export interface StoreItem {
@@ -74,8 +74,8 @@ export interface StoreItem {
     eTag?: string;
 }
 
-/** 
- * Map of named `StoreItem` objects. 
+/**
+ * Map of named `StoreItem` objects.
  */
 export interface StoreItems {
     /** List of store items indexed by key. */
@@ -92,10 +92,10 @@ export interface StoreItems {
  * ```JavaScript
  * // Calculate state objects initial hash
  * const hash = calculateChangeHash(state);
- * 
- * // Process the received activity 
+ *
+ * // Process the received activity
  * await processActivity(context, state);
- * 
+ *
  * // Save state if changed
  * if (calculateChangeHash(state) !== hash) {
  *    await storage.write({ 'botState': state });
@@ -105,6 +105,6 @@ export interface StoreItems {
  */
 export function calculateChangeHash(item: StoreItem): string {
     const cpy = Object.assign({}, item);
-    if (cpy.eTag) { delete cpy.eTag };
+    if (cpy.eTag) { delete cpy.eTag; }
     return JSON.stringify(cpy);
 }

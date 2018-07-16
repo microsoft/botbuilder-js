@@ -6,8 +6,8 @@
  * Licensed under the MIT License.
  */
 
-import { TranscriptStore, PagedResult, Transcript } from "./transcriptLogger";
-import { Activity } from "botbuilder-core";
+import { TranscriptStore, PagedResult, Transcript } from './transcriptLogger';
+import { Activity } from 'botbuilder-core';
 
 /**
  * The memory transcript store stores transcripts in volatile memory in a Map.
@@ -25,7 +25,7 @@ export class MemoryTranscriptStore implements TranscriptStore {
      */
     logActivity(activity: Activity): void | Promise<void> {
         if (!activity) {
-            throw new Error("activity cannot be null for logActivity()");
+            throw new Error('activity cannot be null for logActivity()');
         }
 
         // get channel
@@ -40,7 +40,7 @@ export class MemoryTranscriptStore implements TranscriptStore {
         // get conversation transcript
         let transcript: Array<Activity>;
         if (!channel.has(activity.conversation.id)) {
-            transcript = []
+            transcript = [];
             channel.set(activity.conversation.id, transcript);
         } else {
             transcript = channel.get(activity.conversation.id);
@@ -59,11 +59,13 @@ export class MemoryTranscriptStore implements TranscriptStore {
      * @param startDate Earliest time to include.
      */
     getTranscriptActivities(channelId: string, conversationId: string, continuationToken?: string, startDate?: Date): Promise<PagedResult<Activity>> {
-        if (!channelId)
+        if (!channelId) {
             throw new Error('Missing channelId');
+        }
 
-        if (!conversationId)
+        if (!conversationId) {
             throw new Error('Missing conversationId');
+        }
 
         let pagedResult = new PagedResult<Activity>();
         if (this.channels.has(channelId)) {
@@ -72,6 +74,7 @@ export class MemoryTranscriptStore implements TranscriptStore {
                 let transcript = channel.get(conversationId);
                 if (continuationToken) {
                     pagedResult.items = transcript
+                    // tslint:disable:no-use-before-declare
                         .sort(timestampSorter)
                         .filter(a => !startDate || a.timestamp >= startDate)
                         .filter(skipWhileExpression(a => a.id !== continuationToken))
@@ -83,7 +86,7 @@ export class MemoryTranscriptStore implements TranscriptStore {
                         .slice(0, MemoryTranscriptStore.PageSize);
                 }
 
-                if (pagedResult.items.length == MemoryTranscriptStore.PageSize) {
+                if (pagedResult.items.length === MemoryTranscriptStore.PageSize) {
                     pagedResult.continuationToken = pagedResult.items[pagedResult.items.length - 1].id;
                 }
             }
@@ -98,8 +101,9 @@ export class MemoryTranscriptStore implements TranscriptStore {
      * @param continuationToken Continuatuation token to page through results.
      */
     listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<Transcript>> {
-        if (!channelId)
+        if (!channelId) {
             throw new Error('Missing channelId');
+        }
 
         let pagedResult = new PagedResult<Transcript>();
         if (this.channels.has(channelId)) {
@@ -122,7 +126,7 @@ export class MemoryTranscriptStore implements TranscriptStore {
                     .slice(0, MemoryTranscriptStore.PageSize);
             }
 
-            if (pagedResult.items.length == MemoryTranscriptStore.PageSize) {
+            if (pagedResult.items.length === MemoryTranscriptStore.PageSize) {
                 pagedResult.continuationToken = pagedResult.items[pagedResult.items.length - 1].id;
             }
         }
@@ -136,14 +140,16 @@ export class MemoryTranscriptStore implements TranscriptStore {
      * @param conversationId Id of the conversation to delete.
      */
     deleteTranscript(channelId: string, conversationId: string): Promise<void> {
-        if (!channelId)
+        if (!channelId) {
             throw new Error('Missing channelId');
+        }
 
-        if (!conversationId)
+        if (!conversationId) {
             throw new Error('Missing conversationId');
+        }
 
         if (this.channels.has(channelId)) {
-            var channel = this.channels.get(channelId);
+            let channel = this.channels.get(channelId);
             if (channel.has(conversationId)) {
                 channel.delete(conversationId);
             }
@@ -155,38 +161,38 @@ export class MemoryTranscriptStore implements TranscriptStore {
 
 /**
  * @private
- * @param a 
- * @param b 
+ * @param a
+ * @param b
  */
 const createdSorter = (a: Transcript, b: Transcript): number =>
     a.created.getTime() - b.created.getTime();
 
 /**
  * @private
- * @param a 
- * @param b 
+ * @param a
+ * @param b
  */
 const timestampSorter = (a: Activity, b: Activity): number =>
     a.timestamp.getTime() - b.timestamp.getTime();
 
 /**
  * @private
- * @param expression 
+ * @param expression
  */
 const skipWhileExpression = (expression) => {
     let skipping = true;
     return (item) => {
-        if (!skipping) return true;
+        if (!skipping) { return true; }
         if (!expression(item)) {
             skipping = false;
         }
         return !skipping;
     };
-}
+};
 
 /**
  * @private
- * @param activities 
+ * @param activities
  */
 const getDate = (activities: Activity[]): Date => {
     if (activities && activities.length > 0) {
@@ -194,4 +200,4 @@ const getDate = (activities: Activity[]): Date => {
     }
 
     return new Date(0);
-}
+};

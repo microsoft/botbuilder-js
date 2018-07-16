@@ -113,8 +113,8 @@ class ChoiceFactory {
         ChoiceFactory.toChoices(choices).forEach((choice, index) => {
             const title = choice.action && choice.action.title ? choice.action.title : choice.value;
             txt += `${connector}${opt.includeNumbers ? '(' + (index + 1).toString() + ') ' : ''}${title}`;
-            if (index == (choices.length - 2)) {
-                connector = (index == 0 ? opt.inlineOr : opt.inlineOrMore) || '';
+            if (index === (choices.length - 2)) {
+                connector = (index === 0 ? opt.inlineOr : opt.inlineOrMore) || '';
             }
             else {
                 connector = opt.inlineSeparator || '';

@@ -69,10 +69,10 @@ var ChannelValidation;
                 // The relevant Audiance Claim MUST be present. Not Authorized.
                 throw new Error('Unauthorized. Audiance Claim MUST be present.');
             }
-            // The AppId from the claim in the token must match the AppId specified by the developer. 
+            // The AppId from the claim in the token must match the AppId specified by the developer.
             // In this case, the token is destined for the app, so we find the app ID in the audience claim.
             let audClaim = identity.getClaimValue(constants_1.Constants.AudienceClaim);
-            if (!(yield credentials.isValidAppId(audClaim || ""))) {
+            if (!(yield credentials.isValidAppId(audClaim || ''))) {
                 // The AppId is not valid or not present. Not Authorized.
                 throw new Error(`Unauthorized. Invalid AppId passed on token: ${audClaim}`);
             }

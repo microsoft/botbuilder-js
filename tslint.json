@@ -1,10 +1,18 @@
 {
+  "linterOptions": {
+    "exclude": [
+      "./libraries/botframework-connector/src/generated/**",
+      "./libraries/botframework-schema/**",
+      "./libraries/botframework-luis/**"
+    ]
+  },
   "rules": {
     "variable-name": [
       true,
       "ban-keywords",
       "check-format",
-      "allow-leading-underscore"
+      "allow-leading-underscore",
+      "allow-pascal-case"
     ],
     "class-name": true,
     "comment-format": [

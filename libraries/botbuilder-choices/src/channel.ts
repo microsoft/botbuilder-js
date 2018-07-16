@@ -2,7 +2,7 @@
  * @module botbuilder-choices
  */
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 import { TurnContext } from 'botbuilder';
@@ -29,8 +29,8 @@ export const channels = {
 
 /**
  * @private
- * @param channelId 
- * @param buttonCnt 
+ * @param channelId
+ * @param buttonCnt
  */
 export function supportsSuggestedActions(channelId: string, buttonCnt = 100) {
     switch (channelId) {
@@ -50,8 +50,8 @@ export function supportsSuggestedActions(channelId: string, buttonCnt = 100) {
 
 /**
  * @private
- * @param channelId 
- * @param buttonCnt 
+ * @param channelId
+ * @param buttonCnt
  */
 export function supportsCardActions(channelId: string, buttonCnt = 100) {
     switch (channelId) {
@@ -72,7 +72,7 @@ export function supportsCardActions(channelId: string, buttonCnt = 100) {
 
 /**
  * @private
- * @param channelId 
+ * @param channelId
  */
 export function hasMessageFeed(channelId: string) {
     switch (channelId) {
@@ -85,7 +85,7 @@ export function hasMessageFeed(channelId: string) {
 
 /**
  * @private
- * @param channelId 
+ * @param channelId
  */
 export function maxActionTitleLength(channelId: string) {
     return 20;
@@ -93,7 +93,7 @@ export function maxActionTitleLength(channelId: string) {
 
 /**
  * @private
- * @param context 
+ * @param context
  */
 export function getChannelId(context: TurnContext): string {
     return context.activity.channelId || '';

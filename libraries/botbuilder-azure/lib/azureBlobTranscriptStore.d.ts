@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { TranscriptStore, Activity, PagedResult, Transcript } from 'botbuilder';
-import { BlobStorageSettings } from "./blobStorage";
+import { BlobStorageSettings } from './blobStorage';
 /**
  * Stores transcripts in an Azure Blob container.
  *
@@ -36,21 +36,21 @@ export declare class AzureBlobTranscriptStore implements TranscriptStore {
      * @param startDate Earliest time to include.
      */
     getTranscriptActivities(channelId: string, conversationId: string, continuationToken?: string, startDate?: Date): Promise<PagedResult<Activity>>;
-    private blobToActivity(blob);
-    private getActivityBlobs(blobs, container, prefix, continuationToken, startDate, token);
     /**
      * List conversations in the channelId.
      * @param channelId Channel Id.
      * @param continuationToken Continuatuation token to page through results.
      */
     listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<Transcript>>;
-    private getTranscriptsFolders(transcripts, container, prefix, continuationToken, channelId, token);
     /**
      * Delete a specific conversation and all of it's activities.
      * @param channelId Channel Id where conversation took place.
      * @param conversationId Id of the conversation to delete.
      */
     deleteTranscript(channelId: string, conversationId: string): Promise<void>;
+    private blobToActivity(blob);
+    private getActivityBlobs(blobs, container, prefix, continuationToken, startDate, token);
+    private getTranscriptsFolders(transcripts, container, prefix, continuationToken, channelId, token);
     private getConversationsBlobs(blobs, container, prefix, token);
     private checkContainerName(container);
     private getBlobName(activity);

@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import * as jwt from 'jsonwebtoken';
-import { ClaimsIdentity } from "./claimsIdentity";
+import { ClaimsIdentity } from './claimsIdentity';
 import { OpenIdMetadata } from './openIdMetadata';
 export declare class JwtTokenExtractor {
     private static openIdMetadataCache;

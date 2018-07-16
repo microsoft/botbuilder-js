@@ -8,9 +8,9 @@ server.listen(process.env.port || process.env.PORT || 3978, function () {
 });
 
 // Create adapter
-const adapter = new BotFrameworkAdapter({ 
-    appId: process.env.MICROSOFT_APP_ID, 
-    appPassword: process.env.MICROSOFT_APP_PASSWORD 
+const adapter = new BotFrameworkAdapter({
+    appId: process.env.MICROSOFT_APP_ID,
+    appPassword: process.env.MICROSOFT_APP_PASSWORD
 });
 
 // Define conversation state shape
@@ -22,7 +22,7 @@ interface EchoState {
 const conversationState = new ConversationState<EchoState>(new MemoryStorage());
 adapter.use(conversationState);
 
-// Listen for incoming requests 
+// Listen for incoming requests
 server.post('/api/messages', (req, res) => {
     // Route received request to adapter for processing
     adapter.processActivity(req, res, async (context) => {

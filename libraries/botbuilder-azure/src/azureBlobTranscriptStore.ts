@@ -7,7 +7,7 @@
  */
 
 import { TranscriptStore, Activity, PagedResult, Transcript } from 'botbuilder';
-import { BlobStorageSettings } from "./blobStorage";
+import { BlobStorageSettings } from './blobStorage';
 import * as azure from 'azure-storage';
 import { escape } from 'querystring';
 
@@ -21,14 +21,14 @@ const checkedCollections: { [key: string]: Promise<azure.BlobService.ContainerRe
 
 /**
  * Stores transcripts in an Azure Blob container.
- * 
- * @remarks 
+ *
+ * @remarks
  * Each activity is stored as JSON blob with a structure of
  * `container/{channelId]/{conversationId}/{Timestamp.ticks}-{activity.id}.json`.
  */
 export class AzureBlobTranscriptStore implements TranscriptStore {
-    private settings: BlobStorageSettings
-    private client: BlobServiceAsync
+    private settings: BlobStorageSettings;
+    private client: BlobServiceAsync;
     private pageSize = 20;
 
     /**
@@ -48,7 +48,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
             throw new Error('Invalid container name.');
         }
 
-        this.settings = Object.assign({}, settings)
+        this.settings = Object.assign({}, settings);
         this.client = this.createBlobService(this.settings.storageAccountOrConnectionString, this.settings.storageAccessKey, this.settings.host);
     }
 
@@ -91,11 +91,11 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
      */
     getTranscriptActivities(channelId: string, conversationId: string, continuationToken?: string, startDate?: Date): Promise<PagedResult<Activity>> {
         if (!channelId) {
-            throw new Error("Missing channelId");
+            throw new Error('Missing channelId');
         }
 
         if (!conversationId) {
-            throw new Error("Missing conversationId");
+            throw new Error('Missing conversationId');
         }
 
         if (!startDate) {
@@ -112,12 +112,60 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
             .then((activities) => {
                 let pagedResult = new PagedResult<Activity>();
                 pagedResult.items = activities;
-                if (pagedResult.items.length == this.pageSize) {
+                if (pagedResult.items.length === this.pageSize) {
                     pagedResult.continuationToken = blobs.slice(-1).pop().name;
                 }
                 return pagedResult;
             });
         });
+    }
+
+    /**
+     * List conversations in the channelId.
+     * @param channelId Channel Id.
+     * @param continuationToken Continuatuation token to page through results.
+     */
+    listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<Transcript>> {
+        if (!channelId) {
+            throw new Error('Missing channelId');
+        }
+
+        let prefix = this.getDirName(channelId) + '/';
+        let token = null;
+
+        return this.ensureContainerExists()
+        .then(container => this.getTranscriptsFolders([], container.name, prefix, continuationToken, channelId, token))
+        .then(transcripts => {
+            let pagedResult = new PagedResult<Transcript>();
+                pagedResult.items = transcripts;
+                if (pagedResult.items.length === this.pageSize) {
+                    pagedResult.continuationToken = transcripts.slice(-1).pop().id;
+                }
+                return pagedResult;
+        });
+    }
+
+    /**
+     * Delete a specific conversation and all of it's activities.
+     * @param channelId Channel Id where conversation took place.
+     * @param conversationId Id of the conversation to delete.
+     */
+    deleteTranscript(channelId: string, conversationId: string): Promise<void> {
+        if (!channelId) {
+            throw new Error('Missing channelId');
+        }
+
+        if (!conversationId) {
+            throw new Error('Missing conversationId');
+        }
+
+        let prefix = this.getDirName(channelId, conversationId) + '/';
+        let token = null;
+
+        return this.ensureContainerExists()
+        .then(container => this.getConversationsBlobs([], container.name, prefix, token))
+        .then(blobs => Promise.all(blobs.map(blob => this.client.deleteBlobIfExistsAsync(blob.container, blob.name))))
+        .then(results => { });
     }
 
     private blobToActivity(blob: azure.BlobService.BlobResult): Promise<Activity> {
@@ -136,7 +184,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
                 result.entries.some((blob) => {
                     let timestamp = Number.parseInt(blob.metadata['timestamp'], 10);
                     if (timestamp >= startDate.getTime()) {
-                        if (continuationToken){
+                        if (continuationToken) {
                             if (blob.name === continuationToken) {
                                 continuationToken = null;
                             }
@@ -157,31 +205,6 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
         });
     }
 
-    /**
-     * List conversations in the channelId.
-     * @param channelId Channel Id.
-     * @param continuationToken Continuatuation token to page through results.
-     */
-    listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<Transcript>> {
-        if (!channelId) {
-            throw new Error("Missing channelId");
-        }
-
-        let prefix = this.getDirName(channelId) + '/';
-        let token = null;
-        
-        return this.ensureContainerExists()
-        .then(container => this.getTranscriptsFolders([], container.name, prefix, continuationToken, channelId, token))
-        .then(transcripts => {
-            let pagedResult = new PagedResult<Transcript>();
-                pagedResult.items = transcripts;
-                if (pagedResult.items.length == this.pageSize) {
-                    pagedResult.continuationToken = transcripts.slice(-1).pop().id;
-                }
-                return pagedResult;
-        });
-    }
-
     private getTranscriptsFolders(transcripts: Transcript[], container: string, prefix: string, continuationToken: string, channelId: string, token: azure.common.ContinuationToken): Promise<Transcript[]> {
         return new Promise((resolve, reject) => {
             this.client.listBlobDirectoriesSegmentedWithPrefixAsync(container, prefix, token).then((result) => {
@@ -197,38 +220,15 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
                         transcripts.push(conversation);
                         return (transcripts.length === this.pageSize);
                     }
-                    return false
+                    return false;
                 });
                 if (result.continuationToken && transcripts.length < this.pageSize) {
-                    resolve(this.getTranscriptsFolders(transcripts, container, prefix, continuationToken, channelId, result.continuationToken))
+                    resolve(this.getTranscriptsFolders(transcripts, container, prefix, continuationToken, channelId, result.continuationToken));
                 }
                 resolve(transcripts);
             })
             .catch(error => reject(error));
         });
-    }
-
-    /**
-     * Delete a specific conversation and all of it's activities.
-     * @param channelId Channel Id where conversation took place.
-     * @param conversationId Id of the conversation to delete.
-     */
-    deleteTranscript(channelId: string, conversationId: string): Promise<void> {
-        if (!channelId) {
-            throw new Error("Missing channelId");
-        }
-
-        if (!conversationId) {
-            throw new Error("Missing conversationId");
-        }
-
-        let prefix = this.getDirName(channelId, conversationId) + '/';
-        let token = null;
-
-        return this.ensureContainerExists()
-        .then(container => this.getConversationsBlobs([], container.name, prefix, token))
-        .then(blobs => Promise.all(blobs.map(blob => this.client.deleteBlobIfExistsAsync(blob.container, blob.name))))
-        .then(results => { });
     }
 
     private getConversationsBlobs(blobs: azure.BlobService.BlobResult[], container: string, prefix: string, token: azure.common.ContinuationToken): Promise<azure.BlobService.BlobResult[]> {
@@ -238,9 +238,9 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
                 blobs = blobs.concat(result.entries.map(blob => {
                     blob.container = container;
                     return blob;
-                }))
+                }));
                 if (result.continuationToken) {
-                    resolve(this.getConversationsBlobs(blobs, container, prefix, result.continuationToken))
+                    resolve(this.getConversationsBlobs(blobs, container, prefix, result.continuationToken));
                 }
                 resolve(blobs);
             })
@@ -272,8 +272,8 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
     }
 
     private getTicks(timestamp: Date): string {
-        var epochTicks = 621355968000000000; // the number of .net ticks at the unix epoch
-        var ticksPerMillisecond = 10000; // there are 10000 .net ticks per millisecond
+        let epochTicks = 621355968000000000; // the number of .net ticks at the unix epoch
+        let ticksPerMillisecond = 10000; // there are 10000 .net ticks per millisecond
 
         let ticks = epochTicks + (timestamp.getTime() * ticksPerMillisecond);
         return ticks.toString(16);
@@ -332,11 +332,11 @@ interface BlobServiceAsync extends azure.BlobService {
 
     createBlockBlobFromTextAsync(container: string, blob: string, text: string | Buffer, options: azure.BlobService.CreateBlobRequestOptions): Promise<azure.BlobService.BlobResult>;
     getBlobMetadataAsync(container: string, blob: string): Promise<azure.BlobService.BlobResult>;
-    setBlobMetadataAsync(container: string, blob: string, metadata: { [index: string] : string }): Promise<azure.BlobService.BlobResult>;
+    setBlobMetadataAsync(container: string, blob: string, metadata: { [index: string]: string }): Promise<azure.BlobService.BlobResult>;
     getBlobPropertiesAsync(container: string, blob: string): Promise<azure.BlobService.BlobResult>;
     setBlobPropertiesAsync(container: string, blob: string, propertiesAndOptions: azure.BlobService.SetBlobPropertiesRequestOptions): Promise<azure.BlobService.BlobResult>;
     getBlobToTextAsync(container: string, blob: string): Promise<azure.BlobService.BlobToText>;
     deleteBlobIfExistsAsync(container: string, blob: string): Promise<boolean>;
-    listBlobsSegmentedWithPrefixAsync(container: string, prefix: string, currentToken: azure.common.ContinuationToken, options: azure.BlobService.ListBlobsSegmentedRequestOptions,): Promise<azure.BlobService.ListBlobsResult>;
+    listBlobsSegmentedWithPrefixAsync(container: string, prefix: string, currentToken: azure.common.ContinuationToken, options: azure.BlobService.ListBlobsSegmentedRequestOptions, ): Promise<azure.BlobService.ListBlobsResult>;
     listBlobDirectoriesSegmentedWithPrefixAsync(container: string, prefix: string, currentToken: azure.common.ContinuationToken): Promise<azure.BlobService.ListBlobsResult>;
 }

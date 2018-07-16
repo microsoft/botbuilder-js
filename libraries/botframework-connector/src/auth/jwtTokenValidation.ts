@@ -39,19 +39,19 @@ export module JwtTokenValidation {
         return claimsIdentity;
     }
 
-    export async function validateAuthHeader(authHeader: string, credentials: ICredentialProvider, channelId: string, serviceUrl: string = ''): Promise<ClaimsIdentity> {
-        if (!authHeader.trim()) throw new Error('\'authHeader\' required.');
+    export async function validateAuthHeader(authHeader: string, credentials: ICredentialProvider, channelId: string, serviceUrl = ''): Promise<ClaimsIdentity> {
+        if (!authHeader.trim()) { throw new Error('\'authHeader\' required.'); }
 
         let usingEmulator = EmulatorValidation.isTokenFromEmulator(authHeader);
 
         if (usingEmulator) {
-            return await EmulatorValidation.authenticateEmulatorToken(authHeader, credentials, channelId);//, channelId)
+            return await EmulatorValidation.authenticateEmulatorToken(authHeader, credentials, channelId); // , channelId)
         }
-        
+
         if (serviceUrl.trim()) {
-            return await ChannelValidation.authenticateChannelTokenWithServiceUrl(authHeader, credentials, serviceUrl, channelId)//, channelId)
+            return await ChannelValidation.authenticateChannelTokenWithServiceUrl(authHeader, credentials, serviceUrl, channelId); // , channelId)
         }
-        
-        return await ChannelValidation.authenticateChannelToken(authHeader, credentials, channelId)//, channelId)
+
+        return await ChannelValidation.authenticateChannelToken(authHeader, credentials, channelId); // , channelId)
     }
 }

@@ -6,9 +6,9 @@
  * Licensed under the MIT License.
  */
 import { CardFactory } from './cardFactory';
-import { 
-    ActivityTypes, AttachmentLayoutTypes, Activity, CardAction, 
-    SuggestedActions, Attachment, InputHints 
+import {
+    ActivityTypes, AttachmentLayoutTypes, Activity, CardAction,
+    SuggestedActions, Attachment, InputHints
 } from 'botbuilder-core';
 
 /**
@@ -32,7 +32,7 @@ import {
 export class MessageFactory {
     /**
      * Returns a simple text message.
-     * 
+     *
      * @remarks
      * This example shows sending a simple text message:
      *
@@ -51,7 +51,7 @@ export class MessageFactory {
             text: text,
             inputHint: inputHint || InputHints.AcceptingInput
         };
-        if (speak) { msg.speak = speak }
+        if (speak) { msg.speak = speak; }
         return msg;
     }
 
@@ -79,7 +79,7 @@ export class MessageFactory {
             }
         };
         if (text) { msg.text = text; }
-        if (speak) { msg.speak = speak }
+        if (speak) { msg.speak = speak; }
         return msg;
     }
 
@@ -184,11 +184,11 @@ export class MessageFactory {
 
 /**
  * @private
- * @param attachmentLayout 
- * @param attachments 
- * @param text 
- * @param speak 
- * @param inputHint 
+ * @param attachmentLayout
+ * @param attachments
+ * @param text
+ * @param speak
+ * @param inputHint
  */
 function attachmentActivity(attachmentLayout: AttachmentLayoutTypes, attachments: Attachment[], text?: string, speak?: string, inputHint?: InputHints|string): Partial<Activity> {
     const msg: Partial<Activity> = {
@@ -197,7 +197,7 @@ function attachmentActivity(attachmentLayout: AttachmentLayoutTypes, attachments
         attachments: attachments,
         inputHint: inputHint || InputHints.AcceptingInput
     };
-    if (text) { msg.text = text }
-    if (speak) { msg.speak = speak }
+    if (text) { msg.text = text; }
+    if (speak) { msg.speak = speak; }
     return msg;
 }

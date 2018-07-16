@@ -36,8 +36,6 @@ class TestAdapter extends botbuilder_core_1.BotAdapter {
     constructor(logic, template, sendTraceActivities) {
         super();
         this.logic = logic;
-        this.sendTraceActivities = false;
-        this.nextId = 0;
         /**
          * @private
          * INTERNAL: used to drive the promise chain forward when running tests.
@@ -75,6 +73,8 @@ class TestAdapter extends botbuilder_core_1.BotAdapter {
          * ```
          */
         this.deletedActivities = [];
+        this.sendTraceActivities = false;
+        this.nextId = 0;
         this.sendTraceActivities = sendTraceActivities || false;
         this.template = Object.assign({
             channelId: 'test',
@@ -164,6 +164,7 @@ class TestAdapter extends botbuilder_core_1.BotAdapter {
      * ```
      * @param userSays Text or activity simulating user input.
      */
+    // tslint:disable:no-use-before-declare
     send(userSays) {
         return new TestFlow(this.receiveActivity(userSays), this);
     }
@@ -199,10 +200,12 @@ class TestAdapter extends botbuilder_core_1.BotAdapter {
         if (!activities) {
             throw new Error('Missing array of activities');
         }
-        const activityInspector = (expected) => (actual, description) => validateTranscriptActivity(actual, expected, description);
+        const activityInspector = (expected) => 
+        // tslint:disable-next-line:no-shadowed-variable
+        (actual, description) => validateTranscriptActivity(actual, expected, description);
         // Chain all activities in a TestFlow, check if its a user message (send) or a bot reply (assert)
         return activities.reduce((flow, activity) => {
-            var assertDescription = 'reply' + (description ? ' from ' + description : '');
+            let assertDescription = 'reply' + (description ? ' from ' + description : '');
             return this.isReply(activity)
                 ? flow.assertReply(activityInspector(activity), assertDescription, timeout)
                 : flow.send(activity);
@@ -278,6 +281,7 @@ class TestFlow {
      * @param timeout (Optional) number of milliseconds to wait for a response from bot. Defaults to a value of `3000`.
      */
     assertReply(expected, description, timeout) {
+        // tslint:disable-next-line:no-shadowed-variable
         function defaultInspector(reply, description) {
             if (typeof expected === 'object') {
                 validateActivity(reply, expected);
@@ -338,9 +342,10 @@ class TestFlow {
      * @param timeout (Optional) number of milliseconds to wait for a response from bot. Defaults to a value of `3000`.
      */
     assertReplyOneOf(candidates, description, timeout) {
+        // tslint:disable-next-line:no-shadowed-variable
         return this.assertReply((activity, description) => {
             for (const candidate of candidates) {
-                if (activity.text == candidate) {
+                if (activity.text === candidate) {
                     return;
                 }
             }
@@ -378,6 +383,7 @@ exports.TestFlow = TestFlow;
  * @param expected
  */
 function validateActivity(activity, expected) {
+    // tslint:disable-next-line:forin
     for (const prop in expected) {
         assert.equal(activity[prop], expected[prop]);
     }

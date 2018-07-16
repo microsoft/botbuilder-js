@@ -9,23 +9,23 @@ export declare module Constants {
     /**
      * TO CHANNEL FROM BOT: Login URL
      */
-    const ToChannelFromBotLoginUrl: string;
+    const ToChannelFromBotLoginUrl = "https://login.microsoftonline.com/botframework.com/oauth2/v2.0/token";
     /**
      * TO CHANNEL FROM BOT: OAuth scope to request
      */
-    const ToChannelFromBotOAuthScope: string;
+    const ToChannelFromBotOAuthScope = "https://api.botframework.com/.default";
     /**
      * TO BOT FROM CHANNEL: Token issuer
      */
-    const ToBotFromChannelTokenIssuer: string;
+    const ToBotFromChannelTokenIssuer = "https://api.botframework.com";
     /**
      * TO BOT FROM CHANNEL: OpenID metadata document for tokens coming from MSA
      */
-    const ToBotFromChannelOpenIdMetadataUrl: string;
+    const ToBotFromChannelOpenIdMetadataUrl = "https://login.botframework.com/v1/.well-known/openidconfiguration";
     /**
      * TO BOT FROM EMULATOR: OpenID metadata document for tokens coming from MSA
      */
-    const ToBotFromEmulatorOpenIdMetadataUrl: string;
+    const ToBotFromEmulatorOpenIdMetadataUrl = "https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration";
     /**
      * Allowed token signing algorithms. Tokens come from channels to the bot. The code
      * that uses this also supports tokens coming from the emulator.
@@ -37,7 +37,7 @@ export declare module Constants {
      * This claim follows the general format set forth in the OpenID Spec.
      *     http://openid.net/specs/openid-connect-core-1_0.html#IDToken
      */
-    const AuthorizedParty: string;
+    const AuthorizedParty = "azp";
     /**
      * Audience Claim. From RFC 7519.
      *     https://tools.ietf.org/html/rfc7519#section-4.1.3
@@ -53,7 +53,7 @@ export declare module Constants {
      * interpretation of audience values is generally application specific.
      * Use of this claim is OPTIONAL.
      */
-    const AudienceClaim: string;
+    const AudienceClaim = "aud";
     /**
      * Issuer Claim. From RFC 7519.
      *     https://tools.ietf.org/html/rfc7519#section-4.1.1
@@ -62,7 +62,7 @@ export declare module Constants {
      * The "iss" value is a case-sensitive string containing a StringOrURI
      * value.  Use of this claim is OPTIONAL.
      */
-    const IssuerClaim: string;
+    const IssuerClaim = "iss";
     /**
      * From RFC 7515
      *     https://tools.ietf.org/html/rfc7515#section-4.1.4
@@ -74,17 +74,17 @@ export declare module Constants {
      * When used with a JWK, the "kid" value is used to match a JWK "kid"
      * parameter value.
      */
-    const KeyIdHeader: string;
+    const KeyIdHeader = "kid";
     /**
      * Token version claim name. As used in Microsoft AAD tokens.
      */
-    const VersionClaim: string;
+    const VersionClaim = "ver";
     /**
      * App ID claim name. As used in Microsoft AAD 1.0 tokens.
      */
-    const AppIdClaim: string;
+    const AppIdClaim = "appid";
     /**
      * Service URL claim name. As used in Microsoft Bot Framework v3.1 auth.
      */
-    const ServiceUrlClaim: string;
+    const ServiceUrlClaim = "serviceurl";
 }

@@ -30,6 +30,7 @@ function createConfirmPrompt(validator, defaultLocale) {
         choices: { '*': ['yes', 'no'] },
         style: choicePrompt_1.ListStyle.auto,
         choiceOptions: { includeNumbers: false },
+        // tslint:disable-next-line:no-shadowed-variable
         prompt: function prompt(context, prompt, speak) {
             // Get locale specific choices
             let locale = context.activity && context.activity.locale ? context.activity.locale.toLowerCase() : '*';

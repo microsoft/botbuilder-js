@@ -119,7 +119,7 @@ export module EmulatorValidation {
             throw new Error('Unauthorized. "ver" claim is required on Emulator Tokens.');
         }
 
-        let appId: string = '';
+        let appId = '';
 
         // The Emulator, depending on Version, sends the AppId via either the
         // appid claim (Version 1) or the Authorized Party claim (Version 2).

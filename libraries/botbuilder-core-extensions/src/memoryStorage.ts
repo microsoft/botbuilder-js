@@ -2,28 +2,28 @@
  * @module botbuilder
  */
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 import { Storage, StoreItem, StoreItems } from './storage';
 
 /**
- * Memory based storage provider for a bot. 
- * 
+ * Memory based storage provider for a bot.
+ *
  * @remarks
- * This provider is most useful for simulating production storage when running locally against the 
+ * This provider is most useful for simulating production storage when running locally against the
  * emulator or as part of a unit test. It has the following characteristics:
- * 
+ *
  * - Starts off completely empty when the bot is run.
  * - Anything written to the store will be forgotten when the process exits.
- * - Object that are read and written to the store are cloned to properly simulate network based 
+ * - Object that are read and written to the store are cloned to properly simulate network based
  *   storage providers.
  * - Cloned objects serialized using `JSON.stringify()` to catch any possible serialization related
- *   issues that might occur when using a network based storage provider. 
+ *   issues that might occur when using a network based storage provider.
  *
  * ```JavaScript
  * const { MemoryStorage } = require('botbuilder');
- * 
+ *
  * const storage = new MemoryStorage();
  * ```
  */
@@ -50,7 +50,7 @@ export class MemoryStorage  implements Storage {
             });
             resolve(data);
         });
-    };
+    }
 
     public write(changes: StoreItems): Promise<void> {
         const that = this;
@@ -61,6 +61,7 @@ export class MemoryStorage  implements Storage {
         }
 
         return new Promise<void>((resolve, reject) => {
+            // tslint:disable-next-line:forin
             for (const key in changes) {
                 const newItem = changes[key];
                 const old = this.memory[key];
@@ -77,7 +78,7 @@ export class MemoryStorage  implements Storage {
             }
             resolve();
         });
-    };
+    }
 
     public delete(keys: string[]) {
         return new Promise<void>((resolve, reject) => {

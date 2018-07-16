@@ -2,18 +2,18 @@
  * @module botbuilder-prompts
  */
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { 
-    Promiseable, Activity, TurnContext, Attachment, TokenResponse, BotFrameworkAdapter, CardFactory, 
+import {
+    Promiseable, Activity, TurnContext, Attachment, TokenResponse, BotFrameworkAdapter, CardFactory,
     MessageFactory, ActivityTypes, OAuthCard, SigninCard, ActionTypes
 } from 'botbuilder';
 import { PromptValidator } from './textPrompt';
 import { sendPrompt } from './internal';
 
-/** 
- * Defines settings for an `OAuthPrompt`. 
+/**
+ * Defines settings for an `OAuthPrompt`.
  */
 export interface OAuthPromptSettings {
     /** Name of the OAuth connection being used. */
@@ -26,15 +26,15 @@ export interface OAuthPromptSettings {
     text?: string;
 }
 
-/** 
- * Prompts the user to sign in using the Bot Frameworks Single Sign On (SSO) service. 
+/**
+ * Prompts the user to sign in using the Bot Frameworks Single Sign On (SSO) service.
  *
  * @remarks
  * This example shows creating an OAuth prompt:
  *
  * ```JavaScript
  * const { createOAuthPrompt } = require('botbuilder-prompts');
- * 
+ *
  * const loginPrompt = createOAuthPrompt({
  *    connectionName: 'GitConnection',
  *    title: 'Login To GitHub'
@@ -44,12 +44,12 @@ export interface OAuthPromptSettings {
  */
 export interface OAuthPrompt<O = TokenResponse> {
     /**
-     * Sends a formated prompt to the user. 
+     * Sends a formated prompt to the user.
      *
      * @remarks
-     * An `OAuthCard` will be automatically created and sent to the user requesting them to 
+     * An `OAuthCard` will be automatically created and sent to the user requesting them to
      * signin. If you need to localize the card or customize the message sent to the user for any
-     * reason you can pass in the `Activity` to send. This should just be an activity of type 
+     * reason you can pass in the `Activity` to send. This should just be an activity of type
      * `message` and contain at least one attachment that's an `OAuthCard`.
      *
      * ```JavaScript
@@ -61,23 +61,23 @@ export interface OAuthPrompt<O = TokenResponse> {
     prompt(context: TurnContext, prompt?: Partial<Activity>): Promise<void>;
 
     /**
-     * Attempts to resolve the token after [prompt()](#prompt) has been called. 
-     * 
+     * Attempts to resolve the token after [prompt()](#prompt) has been called.
+     *
      * @remarks
      * There are two core flows that need to be supported to complete a users signin:
-     * 
-     * - The automatic signin flow where the SSO service will forward the bot the users access 
+     *
+     * - The automatic signin flow where the SSO service will forward the bot the users access
      * token using either an `event` or `invoke` activity.
      * - The "magic code" flow where a user is prompted by the SSO service to send the bot a six
      * digit code confirming their identity. This code will be sent as a standard `message` activity.
-     * 
-     * The `recognize()` method automatically handles both flows for the bot but you should ensure 
-     * that you don't accidentally filter out the `event` and `invoke` activities before calling 
+     *
+     * The `recognize()` method automatically handles both flows for the bot but you should ensure
+     * that you don't accidentally filter out the `event` and `invoke` activities before calling
      * recognize().  Because of this we generally recommend you put the call to recognize() towards
      * the beginning of your bot logic.
-     * 
-     * You should also be prepared for the case where the user fails to enter the correct 
-     * "magic code" or simply decides they don't want to click the signin button.   
+     *
+     * You should also be prepared for the case where the user fails to enter the correct
+     * "magic code" or simply decides they don't want to click the signin button.
      *
      * ```JavaScript
      * const token = await loginPrompt.recognize(context);
@@ -91,12 +91,12 @@ export interface OAuthPrompt<O = TokenResponse> {
     recognize(context: TurnContext): Promise<O|undefined>;
 
     /**
-     * Attempts to retrieve the cached token for a signed in user. 
-     * 
+     * Attempts to retrieve the cached token for a signed in user.
+     *
      * @remarks
-     * You will generally want to call this before calling [prompt()](#prompt) to send the user a 
+     * You will generally want to call this before calling [prompt()](#prompt) to send the user a
      * signin card.
-     *  
+     *
      * ```JavaScript
      * const token = await loginPrompt.getUserToken(context);
      * if (!token) {
@@ -109,7 +109,7 @@ export interface OAuthPrompt<O = TokenResponse> {
 
     /**
      * Signs the user out of the service.
-     *  
+     *
      * @remarks
      * This example signs the user out if they've already been signed in:
      *
@@ -123,15 +123,15 @@ export interface OAuthPrompt<O = TokenResponse> {
 
 
 /**
- * Creates a new prompt that asks the user to sign in using the Bot Frameworks Single Sign On (SSO) 
- * service. 
+ * Creates a new prompt that asks the user to sign in using the Bot Frameworks Single Sign On (SSO)
+ * service.
  *
  * @remarks
  * This example shows creating an OAuth prompt:
  *
  * ```JavaScript
  * const { createOAuthPrompt } = require('botbuilder-prompts');
- * 
+ *
  * const loginPrompt = createOAuthPrompt({
  *    connectionName: 'GitConnection',
  *    title: 'Login To GitHub'
@@ -143,10 +143,11 @@ export interface OAuthPrompt<O = TokenResponse> {
  */
 export function createOAuthPrompt<O = TokenResponse>(settings: OAuthPromptSettings, validator?: PromptValidator<TokenResponse, O>): OAuthPrompt<O> {
     return {
+        // tslint:disable-next-line:no-shadowed-variable
         prompt: function prompt(context, prompt) {
             try {
                 // Validate adapter type
-                if (!('getUserToken' in context.adapter)) { throw new Error(`OAuthPrompt.prompt(): not supported for the current adapter.`) }
+                if (!('getUserToken' in context.adapter)) { throw new Error(`OAuthPrompt.prompt(): not supported for the current adapter.`); }
 
                 // Format prompt
                 if (typeof prompt !== 'object') {
@@ -157,19 +158,19 @@ export function createOAuthPrompt<O = TokenResponse>(settings: OAuthPromptSettin
                     ));
                 } else {
                     // Validate prompt
-                    if (!Array.isArray(prompt.attachments)) { throw new Error(`OAuthPrompt.prompt(): supplied prompt missing attachments.`) }
+                    if (!Array.isArray(prompt.attachments)) { throw new Error(`OAuthPrompt.prompt(): supplied prompt missing attachments.`); }
                     const found = prompt.attachments.filter(a => a.contentType === CardFactory.contentTypes.oauthCard);
-                    if (found.length == 0) { throw new Error(`OAuthPrompt.prompt(): supplied prompt missing OAuthCard.`) }
+                    if (found.length === 0) { throw new Error(`OAuthPrompt.prompt(): supplied prompt missing OAuthCard.`); }
                 }
 
                 // Send prompt
                 return Promise.resolve(prompt)
                     .then((p) => {
                         switch (context.activity.channelId) {
-                            case "msteams":
-                            case "cortana":
-                            case "skype":
-                            case "skypeforbusiness":
+                            case 'msteams':
+                            case 'cortana':
+                            case 'skype':
+                            case 'skypeforbusiness':
                                 return (context.adapter as BotFrameworkAdapter).getSignInLink(context, settings.connectionName).then((link) => {
                                     (p.attachments as Attachment[]).forEach(a => {
                                         if (a.contentType === CardFactory.contentTypes.oauthCard) {
@@ -181,7 +182,7 @@ export function createOAuthPrompt<O = TokenResponse>(settings: OAuthPromptSettin
                                                 buttons: [{ type: ActionTypes.Signin, title: title, value: link }]
                                             } as SigninCard;
                                         }
-                                    });                     
+                                    });
                                     return p;
                                 });
                             default:
@@ -189,13 +190,13 @@ export function createOAuthPrompt<O = TokenResponse>(settings: OAuthPromptSettin
                         }
                     })
                     .then((p) => sendPrompt(context, p));
-            } catch(err) {
+            } catch (err) {
                 return Promise.reject(err);
             }
         },
         recognize: function recognize(context) {
             // Validate adapter type
-            if (!('getUserToken' in context.adapter)) { throw new Error(`OAuthPrompt.recognize(): not supported for the current adapter.`) }
+            if (!('getUserToken' in context.adapter)) { throw new Error(`OAuthPrompt.recognize(): not supported for the current adapter.`); }
 
             // Attempt to get the token
             return Promise.resolve()
@@ -220,8 +221,8 @@ export function createOAuthPrompt<O = TokenResponse>(settings: OAuthPromptSettin
         },
         getUserToken: function getUserToken(context) {
             // Validate adapter type
-            if (!('getUserToken' in context.adapter)) { throw new Error(`OAuthPrompt.getUserToken(): not supported for the current adapter.`) }
-            
+            if (!('getUserToken' in context.adapter)) { throw new Error(`OAuthPrompt.getUserToken(): not supported for the current adapter.`); }
+
             // Get the token and call validator
             const adapter = context.adapter as BotFrameworkAdapter;
             return adapter.getUserToken(context, settings.connectionName)
@@ -231,7 +232,7 @@ export function createOAuthPrompt<O = TokenResponse>(settings: OAuthPromptSettin
         },
         signOutUser: function signOutUser(context) {
             // Validate adapter type
-            if (!('signOutUser' in context.adapter)) { throw new Error(`OAuthPrompt.signOutUser(): not supported for the current adapter.`) }
+            if (!('signOutUser' in context.adapter)) { throw new Error(`OAuthPrompt.signOutUser(): not supported for the current adapter.`); }
 
             // Sign out user
             const adapter = context.adapter as BotFrameworkAdapter;
@@ -242,20 +243,20 @@ export function createOAuthPrompt<O = TokenResponse>(settings: OAuthPromptSettin
 
 /**
  * @private
- * @param context 
+ * @param context
  */
 function isTokenResponseEvent(context: TurnContext): boolean {
     const a = context.activity;
-    return (a.type === ActivityTypes.Event && a.name === 'tokens/response')
+    return (a.type === ActivityTypes.Event && a.name === 'tokens/response');
 
 }
 
 /**
  * @private
- * @param context 
+ * @param context
  */
 function isTeamsVerificationInvoke(context: TurnContext): boolean {
     const a = context.activity;
-    return (a.type === ActivityTypes.Invoke && a.name === 'signin/verifyState')
+    return (a.type === ActivityTypes.Invoke && a.name === 'signin/verifyState');
 
 }

@@ -5,17 +5,17 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { 
-    Attachment, MediaUrl, CardAction, AnimationCard, CardImage, HeroCard, AudioCard, 
-    ReceiptCard, SigninCard, ThumbnailCard, VideoCard, ActionTypes, OAuthCard 
-} from "botbuilder-core";
+import {
+    Attachment, MediaUrl, CardAction, AnimationCard, CardImage, HeroCard, AudioCard,
+    ReceiptCard, SigninCard, ThumbnailCard, VideoCard, ActionTypes, OAuthCard
+} from 'botbuilder-core';
 
 /**
  * A set of utility functions designed to assist with the formatting of the various card types a
- * bot can return. 
- * 
+ * bot can return.
+ *
  * @remarks
- * All of these functions return an `Attachment` which can be added to an `Activity` directly or 
+ * All of these functions return an `Attachment` which can be added to an `Activity` directly or
  * passed as input to a `MessageFactory` method.
  *
  * ```javascript
@@ -60,9 +60,9 @@ export class CardFactory {
      *   "type": "AdaptiveCard",
      *   "version": "1.0",
      *   "body": [
-     *       { 
-     *          "type": "TextBlock", 
-     *          "text": "Default text input" 
+     *       {
+     *          "type": "TextBlock",
+     *          "text": "Default text input"
      *       }
      *   ],
      *   "actions": [
@@ -75,8 +75,7 @@ export class CardFactory {
      * ```
      * @param card The adaptive card to return as an attachment.
      */
-    static adaptiveCard(card: any): Attachment
-    {
+    static adaptiveCard(card: any): Attachment {
         return { contentType: CardFactory.contentTypes.adaptiveCard, content: card };
     }
 
@@ -91,8 +90,7 @@ export class CardFactory {
     static animationCard(title: string,
                          media: (MediaUrl|string)[],
                          buttons?: (CardAction|string)[],
-                         other?: Partial<AnimationCard>): Attachment
-    {
+                         other?: Partial<AnimationCard>): Attachment {
         return mediaCard(CardFactory.contentTypes.animationCard, title, media, buttons, other);
     }
 
@@ -107,16 +105,15 @@ export class CardFactory {
     static audioCard(title: string,
                      media: (MediaUrl|string)[],
                      buttons?: (CardAction|string)[],
-                     other?: Partial<AudioCard>): Attachment
-    {
+                     other?: Partial<AudioCard>): Attachment {
         return mediaCard(CardFactory.contentTypes.audioCard, title, media, buttons, other);
     }
 
     /**
-     * Returns an attachment for a hero card. 
-     * 
+     * Returns an attachment for a hero card.
+     *
      * @remarks
-     * Hero cards tend to have one dominant full width image and the cards text & buttons can 
+     * Hero cards tend to have one dominant full width image and the cards text & buttons can
      * usually be found below the image.
      *
      * ```javascript
@@ -159,8 +156,7 @@ export class CardFactory {
      *
      * @param card The adaptive card to return as an attachment.
      */
-    static receiptCard(card: ReceiptCard): Attachment
-    {
+    static receiptCard(card: ReceiptCard): Attachment {
         return { contentType: CardFactory.contentTypes.receiptCard, content: card };
     }
 
@@ -218,8 +214,7 @@ export class CardFactory {
     static videoCard(title: string,
                      media: (MediaUrl|string)[],
                      buttons?: (CardAction|string)[],
-                     other?: Partial<VideoCard>): Attachment
-    {
+                     other?: Partial<VideoCard>): Attachment {
         return mediaCard(CardFactory.contentTypes.videoCard, title, media, buttons, other);
     }
 
@@ -276,15 +271,14 @@ export class CardFactory {
     }
 }
 
-/** 
- * @private 
+/**
+ * @private
  */
 function mediaCard(contentType: string,
                    title: string,
                    media: (MediaUrl|string)[],
                    buttons?: (CardAction|string)[],
-                   other?: any): Attachment
-{
+                   other?: any): Attachment {
     const card: VideoCard = Object.assign({}, other);
     if (title) { card.title = title; }
     card.media = CardFactory.media(media);

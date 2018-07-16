@@ -18,6 +18,14 @@ const tokenizer_1 = require("./tokenizer");
  * @param options (Optional) options used to tweak the search that's performed.
  */
 function findValues(utterance, values, options) {
+    // Sort values in descending order by length so that the longest value is searched over first.
+    const list = values.sort((a, b) => b.value.length - a.value.length);
+    // Search for each value within the utterance.
+    let matches = [];
+    const opt = options || {};
+    const tokenizer = (opt.tokenizer || tokenizer_1.defaultTokenizer);
+    const tokens = tokenizer(utterance, opt.locale);
+    const maxDistance = opt.maxTokenDistance !== undefined ? opt.maxTokenDistance : 2;
     function indexOfToken(token, startPos) {
         for (let i = startPos; i < tokens.length; i++) {
             if (tokens[i].normalized === token.normalized) {
@@ -28,11 +36,11 @@ function findValues(utterance, values, options) {
     }
     function matchValue(index, value, vTokens, startPos) {
         // Match value to utterance and calculate total deviation.
-        // - The tokens are matched in order so "second last" will match in 
+        // - The tokens are matched in order so "second last" will match in
         //   "the second from last one" but not in "the last from the second one".
-        // - The total deviation is a count of the number of tokens skipped in the 
+        // - The total deviation is a count of the number of tokens skipped in the
         //   match so for the example above the number of tokens matched would be
-        //   2 and the total deviation would be 1. 
+        //   2 and the total deviation would be 1.
         let matched = 0;
         let totalDeviation = 0;
         let start = -1;
@@ -60,15 +68,15 @@ function findValues(utterance, values, options) {
         // Calculate score and format result
         // - The start & end positions and the results text field will be corrected by the caller.
         let result;
-        if (matched > 0 && (matched == vTokens.length || opt.allowPartialMatches)) {
-            // Percentage of tokens matched. If matching "second last" in 
+        if (matched > 0 && (matched === vTokens.length || opt.allowPartialMatches)) {
+            // Percentage of tokens matched. If matching "second last" in
             // "the second from last one" the completeness would be 1.0 since
             // all tokens were found.
             const completeness = matched / vTokens.length;
             // Accuracy of the match. The accuracy is reduced by additional tokens
             // occurring in the value that weren't in the utterance. So an utterance
             // of "second last" matched against a value of "second from last" would
-            // result in an accuracy of 0.5. 
+            // result in an accuracy of 0.5.
             const accuracy = (matched / (matched + totalDeviation));
             // The final score is simply the completeness multiplied by the accuracy.
             const score = completeness * accuracy;
@@ -86,17 +94,9 @@ function findValues(utterance, values, options) {
         }
         return result;
     }
-    // Sort values in descending order by length so that the longest value is searched over first.
-    const list = values.sort((a, b) => b.value.length - a.value.length);
-    // Search for each value within the utterance.
-    let matches = [];
-    const opt = options || {};
-    const tokenizer = (opt.tokenizer || tokenizer_1.defaultTokenizer);
-    const tokens = tokenizer(utterance, opt.locale);
-    const maxDistance = opt.maxTokenDistance !== undefined ? opt.maxTokenDistance : 2;
     list.forEach((entry, index) => {
         // Find all matches for a value
-        // - To match "last one" in "the last time I chose the last one" we need 
+        // - To match "last one" in "the last time I chose the last one" we need
         //   to re-search the string starting from the end of the previous match.
         // - The start & end position returned for the match are token positions.
         let startPos = 0;
@@ -115,9 +115,9 @@ function findValues(utterance, values, options) {
     // Sort matches by score descending
     matches = matches.sort((a, b) => b.resolution.score - a.resolution.score);
     // Filter out duplicate matching indexes and overlapping characters.
-    // - The start & end positions are token positions and need to be translated to 
+    // - The start & end positions are token positions and need to be translated to
     //   character positions before returning. We also need to populate the "text"
-    //   field as well. 
+    //   field as well.
     const results = [];
     const foundIndexes = {};
     const usedTokens = {};

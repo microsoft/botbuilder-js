@@ -12,25 +12,25 @@ import { Prompt, PromptOptions } from './prompt';
 import * as prompts from 'botbuilder-prompts';
 
 /**
- * Prompts a user to enter a number. 
- * 
+ * Prompts a user to enter a number.
+ *
  * @remarks
  * By default the prompt will return to the calling dialog a `number` representing the users input.
- * 
+ *
  * #### Prompt Usage
- * 
+ *
  * When used with your bots `DialogSet` you can simply add a new instance of the prompt as a named
  * dialog using `DialogSet.add()`. You can then start the prompt from a waterfall step using either
- * `DialogContext.begin()` or `DialogContext.prompt()`. The user will be prompted to reply with a 
- * number which will be passed as an argument to the callers next waterfall step: 
- * 
+ * `DialogContext.begin()` or `DialogContext.prompt()`. The user will be prompted to reply with a
+ * number which will be passed as an argument to the callers next waterfall step:
+ *
  * ```JavaScript
  * const { DialogSet, NumberPrompt } = require('botbuilder-dialogs');
- * 
+ *
  * const dialogs = new DialogSet();
- * 
+ *
  * dialogs.add('agePrompt', new NumberPrompt());
- * 
+ *
  * dialogs.add('askAge', [
  *      async function (dc) {
  *          await dc.prompt('agePrompt', `How old are you?`);
@@ -45,10 +45,10 @@ import * as prompts from 'botbuilder-prompts';
  *      }
  * ]);
  * ```
- * 
+ *
  * The prompt can be configured with a custom validator to perform additional checks like ensuring
  * that the user responds with a valid age and that only whole numbers are returned:
- * 
+ *
  * ```JavaScript
  * dialogs.add('agePrompt', new NumberPrompt(async (context, value) => {
  *    if (typeof value == 'number') {
@@ -69,12 +69,12 @@ export class NumberPrompt<C extends TurnContext, O = number> extends Prompt<C> {
 
     /**
      * Creates a new `NumberPrompt` instance.
-     * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.  
+     * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
      * @param defaultLocale (Optional) locale to use if `dc.context.activity.locale` not specified. Defaults to a value of `en-us`.
      */
     constructor(validator?: PromptValidator<number, O>, defaultLocale?: string) {
         super(validator);
-        this.prompt = prompts.createNumberPrompt(undefined, defaultLocale); 
+        this.prompt = prompts.createNumberPrompt(undefined, defaultLocale);
     }
 
     protected onPrompt(dc: DialogContext<C>, options: PromptOptions, isRetry: boolean): Promise<void> {

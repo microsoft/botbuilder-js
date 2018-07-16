@@ -44,6 +44,7 @@ class MicrosoftAppCredentials {
         return __awaiter(this, void 0, void 0, function* () {
             if (!forceRefresh) {
                 // check the global cache for the token. If we have it, and it's valid, we're done.
+                // tslint:disable-next-line:no-shadowed-variable
                 let oAuthToken = MicrosoftAppCredentials.cache.get(this.tokenCacheKey);
                 if (oAuthToken) {
                     // we have the token. Is it valid?
@@ -65,7 +66,7 @@ class MicrosoftAppCredentials {
         if (!this.refreshingToken) {
             this.refreshingToken = new Promise((resolve, reject) => {
                 // Refresh access token
-                var opt = {
+                let opt = {
                     method: 'POST',
                     url: this.oAuthEndpoint,
                     form: {
@@ -81,7 +82,7 @@ class MicrosoftAppCredentials {
                         if (body && response.statusCode && response.statusCode < 300) {
                             // Subtract 5 minutes from expires_in so they'll we'll get a
                             // new token before it expires.
-                            var oauthResponse = JSON.parse(body);
+                            let oauthResponse = JSON.parse(body);
                             oauthResponse.expiration_time = new Date(Date.now() + (oauthResponse.expires_in * 1000) - 300000);
                             resolve(oauthResponse);
                         }
@@ -110,7 +111,7 @@ class MicrosoftAppCredentials {
         if (!expiration) {
             expiration = new Date(Date.now() + 86400000); // 1 day
         }
-        var uri = url.parse(serviceUrl);
+        let uri = url.parse(serviceUrl);
         if (uri.host) {
             MicrosoftAppCredentials.trustedHostNames.set(uri.host, expiration);
         }
@@ -122,7 +123,7 @@ class MicrosoftAppCredentials {
      */
     static isTrustedServiceUrl(serviceUrl) {
         try {
-            var uri = url.parse(serviceUrl);
+            let uri = url.parse(serviceUrl);
             if (uri.host) {
                 return MicrosoftAppCredentials.isTrustedUrl(uri.host);
             }
@@ -134,6 +135,7 @@ class MicrosoftAppCredentials {
     shouldSetToken(webResource) {
         return MicrosoftAppCredentials.isTrustedServiceUrl(webResource.url);
     }
+    // tslint:disable-next-line:no-shadowed-variable
     static isTrustedUrl(url) {
         let expiration = MicrosoftAppCredentials.trustedHostNames.get(url);
         if (expiration) {

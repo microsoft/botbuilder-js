@@ -5,9 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import * as msRest from "ms-rest-js";
-import * as Models from "botframework-schema";
-import { ConnectorClient } from "./generated/connectorClient";
+import * as msRest from 'ms-rest-js';
+import * as Models from 'botframework-schema';
+import { ConnectorClient } from './generated/connectorClient';
 /** Exposes methods for calling the channels OAuth Methods. */
 export declare class OAuthApiClient {
     private readonly client;

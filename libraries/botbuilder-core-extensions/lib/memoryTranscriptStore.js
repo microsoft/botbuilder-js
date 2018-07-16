@@ -22,7 +22,7 @@ class MemoryTranscriptStore {
      */
     logActivity(activity) {
         if (!activity) {
-            throw new Error("activity cannot be null for logActivity()");
+            throw new Error('activity cannot be null for logActivity()');
         }
         // get channel
         let channel;
@@ -53,10 +53,12 @@ class MemoryTranscriptStore {
      * @param startDate Earliest time to include.
      */
     getTranscriptActivities(channelId, conversationId, continuationToken, startDate) {
-        if (!channelId)
+        if (!channelId) {
             throw new Error('Missing channelId');
-        if (!conversationId)
+        }
+        if (!conversationId) {
             throw new Error('Missing conversationId');
+        }
         let pagedResult = new transcriptLogger_1.PagedResult();
         if (this.channels.has(channelId)) {
             let channel = this.channels.get(channelId);
@@ -64,6 +66,7 @@ class MemoryTranscriptStore {
                 let transcript = channel.get(conversationId);
                 if (continuationToken) {
                     pagedResult.items = transcript
+                        // tslint:disable:no-use-before-declare
                         .sort(timestampSorter)
                         .filter(a => !startDate || a.timestamp >= startDate)
                         .filter(skipWhileExpression(a => a.id !== continuationToken))
@@ -75,7 +78,7 @@ class MemoryTranscriptStore {
                         .filter(a => !startDate || a.timestamp >= startDate)
                         .slice(0, MemoryTranscriptStore.PageSize);
                 }
-                if (pagedResult.items.length == MemoryTranscriptStore.PageSize) {
+                if (pagedResult.items.length === MemoryTranscriptStore.PageSize) {
                     pagedResult.continuationToken = pagedResult.items[pagedResult.items.length - 1].id;
                 }
             }
@@ -88,8 +91,9 @@ class MemoryTranscriptStore {
      * @param continuationToken Continuatuation token to page through results.
      */
     listTranscripts(channelId, continuationToken) {
-        if (!channelId)
+        if (!channelId) {
             throw new Error('Missing channelId');
+        }
         let pagedResult = new transcriptLogger_1.PagedResult();
         if (this.channels.has(channelId)) {
             let channel = this.channels.get(channelId);
@@ -110,7 +114,7 @@ class MemoryTranscriptStore {
                 })).sort(createdSorter)
                     .slice(0, MemoryTranscriptStore.PageSize);
             }
-            if (pagedResult.items.length == MemoryTranscriptStore.PageSize) {
+            if (pagedResult.items.length === MemoryTranscriptStore.PageSize) {
                 pagedResult.continuationToken = pagedResult.items[pagedResult.items.length - 1].id;
             }
         }
@@ -122,12 +126,14 @@ class MemoryTranscriptStore {
      * @param conversationId Id of the conversation to delete.
      */
     deleteTranscript(channelId, conversationId) {
-        if (!channelId)
+        if (!channelId) {
             throw new Error('Missing channelId');
-        if (!conversationId)
+        }
+        if (!conversationId) {
             throw new Error('Missing conversationId');
+        }
         if (this.channels.has(channelId)) {
-            var channel = this.channels.get(channelId);
+            let channel = this.channels.get(channelId);
             if (channel.has(conversationId)) {
                 channel.delete(conversationId);
             }
@@ -156,8 +162,9 @@ const timestampSorter = (a, b) => a.timestamp.getTime() - b.timestamp.getTime();
 const skipWhileExpression = (expression) => {
     let skipping = true;
     return (item) => {
-        if (!skipping)
+        if (!skipping) {
             return true;
+        }
         if (!expression(item)) {
             skipping = false;
         }

@@ -74,10 +74,10 @@ class AzureBlobTranscriptStore {
      */
     getTranscriptActivities(channelId, conversationId, continuationToken, startDate) {
         if (!channelId) {
-            throw new Error("Missing channelId");
+            throw new Error('Missing channelId');
         }
         if (!conversationId) {
-            throw new Error("Missing conversationId");
+            throw new Error('Missing conversationId');
         }
         if (!startDate) {
             startDate = new Date(0);
@@ -91,12 +91,53 @@ class AzureBlobTranscriptStore {
                 .then((activities) => {
                 let pagedResult = new botbuilder_1.PagedResult();
                 pagedResult.items = activities;
-                if (pagedResult.items.length == this.pageSize) {
+                if (pagedResult.items.length === this.pageSize) {
                     pagedResult.continuationToken = blobs.slice(-1).pop().name;
                 }
                 return pagedResult;
             });
         });
+    }
+    /**
+     * List conversations in the channelId.
+     * @param channelId Channel Id.
+     * @param continuationToken Continuatuation token to page through results.
+     */
+    listTranscripts(channelId, continuationToken) {
+        if (!channelId) {
+            throw new Error('Missing channelId');
+        }
+        let prefix = this.getDirName(channelId) + '/';
+        let token = null;
+        return this.ensureContainerExists()
+            .then(container => this.getTranscriptsFolders([], container.name, prefix, continuationToken, channelId, token))
+            .then(transcripts => {
+            let pagedResult = new botbuilder_1.PagedResult();
+            pagedResult.items = transcripts;
+            if (pagedResult.items.length === this.pageSize) {
+                pagedResult.continuationToken = transcripts.slice(-1).pop().id;
+            }
+            return pagedResult;
+        });
+    }
+    /**
+     * Delete a specific conversation and all of it's activities.
+     * @param channelId Channel Id where conversation took place.
+     * @param conversationId Id of the conversation to delete.
+     */
+    deleteTranscript(channelId, conversationId) {
+        if (!channelId) {
+            throw new Error('Missing channelId');
+        }
+        if (!conversationId) {
+            throw new Error('Missing conversationId');
+        }
+        let prefix = this.getDirName(channelId, conversationId) + '/';
+        let token = null;
+        return this.ensureContainerExists()
+            .then(container => this.getConversationsBlobs([], container.name, prefix, token))
+            .then(blobs => Promise.all(blobs.map(blob => this.client.deleteBlobIfExistsAsync(blob.container, blob.name))))
+            .then(results => { });
     }
     blobToActivity(blob) {
         return this.client.getBlobToTextAsync(blob.container, blob.name)
@@ -134,28 +175,6 @@ class AzureBlobTranscriptStore {
                 .catch(error => reject(error));
         });
     }
-    /**
-     * List conversations in the channelId.
-     * @param channelId Channel Id.
-     * @param continuationToken Continuatuation token to page through results.
-     */
-    listTranscripts(channelId, continuationToken) {
-        if (!channelId) {
-            throw new Error("Missing channelId");
-        }
-        let prefix = this.getDirName(channelId) + '/';
-        let token = null;
-        return this.ensureContainerExists()
-            .then(container => this.getTranscriptsFolders([], container.name, prefix, continuationToken, channelId, token))
-            .then(transcripts => {
-            let pagedResult = new botbuilder_1.PagedResult();
-            pagedResult.items = transcripts;
-            if (pagedResult.items.length == this.pageSize) {
-                pagedResult.continuationToken = transcripts.slice(-1).pop().id;
-            }
-            return pagedResult;
-        });
-    }
     getTranscriptsFolders(transcripts, container, prefix, continuationToken, channelId, token) {
         return new Promise((resolve, reject) => {
             this.client.listBlobDirectoriesSegmentedWithPrefixAsync(container, prefix, token).then((result) => {
@@ -181,25 +200,6 @@ class AzureBlobTranscriptStore {
             })
                 .catch(error => reject(error));
         });
-    }
-    /**
-     * Delete a specific conversation and all of it's activities.
-     * @param channelId Channel Id where conversation took place.
-     * @param conversationId Id of the conversation to delete.
-     */
-    deleteTranscript(channelId, conversationId) {
-        if (!channelId) {
-            throw new Error("Missing channelId");
-        }
-        if (!conversationId) {
-            throw new Error("Missing conversationId");
-        }
-        let prefix = this.getDirName(channelId, conversationId) + '/';
-        let token = null;
-        return this.ensureContainerExists()
-            .then(container => this.getConversationsBlobs([], container.name, prefix, token))
-            .then(blobs => Promise.all(blobs.map(blob => this.client.deleteBlobIfExistsAsync(blob.container, blob.name))))
-            .then(results => { });
     }
     getConversationsBlobs(blobs, container, prefix, token) {
         return new Promise((resolve, reject) => {
@@ -237,8 +237,8 @@ class AzureBlobTranscriptStore {
         return querystring_1.escape(key);
     }
     getTicks(timestamp) {
-        var epochTicks = 621355968000000000; // the number of .net ticks at the unix epoch
-        var ticksPerMillisecond = 10000; // there are 10000 .net ticks per millisecond
+        let epochTicks = 621355968000000000; // the number of .net ticks at the unix epoch
+        let ticksPerMillisecond = 10000; // there are 10000 .net ticks per millisecond
         let ticks = epochTicks + (timestamp.getTime() * ticksPerMillisecond);
         return ticks.toString(16);
     }
