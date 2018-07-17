@@ -80,13 +80,13 @@ export class OAuthApiClient {
       let response = operationRes.response;
       let statusCode = response.status;
       if (statusCode === 404) {
-        operationRes.bodyAsJson = undefined;
+        operationRes.parsedBody = undefined;
       } else if (statusCode !== 200) {
         let error = new msRest.RestError(operationRes.bodyAsText as string);
         error.statusCode = response.status;
         error.request = msRest.stripRequest(httpRequest);
         error.response = msRest.stripResponse(response);
-        let parsedErrorResponse = operationRes.bodyAsJson as { [key: string]: any };
+        let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
         try {
           if (parsedErrorResponse) {
             let internalError = null;
@@ -166,7 +166,7 @@ export class OAuthApiClient {
         error.statusCode = response.status;
         error.request = msRest.stripRequest(httpRequest);
         error.response = msRest.stripResponse(response);
-        let parsedErrorResponse = operationRes.bodyAsJson as { [key: string]: any };
+        let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
         try {
           if (parsedErrorResponse) {
             let internalError = null;
@@ -256,7 +256,7 @@ export class OAuthApiClient {
         error.statusCode = response.status;
         error.request = msRest.stripRequest(httpRequest);
         error.response = msRest.stripResponse(response);
-        let parsedErrorResponse = operationRes.bodyAsJson as { [key: string]: any };
+        let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
         try {
           if (parsedErrorResponse) {
             let internalError = null;
@@ -335,7 +335,7 @@ export class OAuthApiClient {
         error.statusCode = response.status;
         error.request = msRest.stripRequest(httpRequest);
         error.response = msRest.stripResponse(response);
-        let parsedErrorResponse = operationRes.bodyAsJson as { [key: string]: any };
+        let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
         try {
           if (parsedErrorResponse) {
             let internalError = null;
@@ -377,7 +377,7 @@ export class OAuthApiClient {
    */
   getUserToken(userId: string, connectionName: string, magicCode?: string, options?: msRest.RequestOptionsBase): Promise<Models.TokenResponse> {
     return this.getUserTokenWithHttpOperationResponse(userId, connectionName, magicCode, options).then((operationRes: msRest.HttpOperationResponse) => {
-      return Promise.resolve(operationRes.bodyAsJson as Models.TokenResponse);
+      return Promise.resolve(operationRes.parsedBody as Models.TokenResponse);
     }).catch((err: Error) => {
       return Promise.reject(err);
     });

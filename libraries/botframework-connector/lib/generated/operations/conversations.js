@@ -99,7 +99,7 @@ class Conversations {
                     error.statusCode = response.status;
                     error.request = msRest.stripRequest(httpRequest);
                     error.response = msRest.stripResponse(response);
-                    let parsedErrorResponse = operationRes.bodyAsJson;
+                    let parsedErrorResponse = operationRes.parsedBody;
                     try {
                         if (parsedErrorResponse) {
                             let internalError = null;
@@ -122,11 +122,11 @@ class Conversations {
                 }
                 // Deserialize Response
                 if (statusCode === 200) {
-                    let parsedResponse = operationRes.bodyAsJson;
+                    let parsedResponse = operationRes.parsedBody;
                     try {
                         if (parsedResponse !== null && parsedResponse !== undefined) {
                             let resultMapper = Mappers.ConversationsResult;
-                            operationRes.bodyAsJson = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.bodyAsJson');
+                            operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
                         }
                     }
                     catch (error) {
@@ -237,7 +237,7 @@ class Conversations {
                     error.statusCode = response.status;
                     error.request = msRest.stripRequest(httpRequest);
                     error.response = msRest.stripResponse(response);
-                    let parsedErrorResponse = operationRes.bodyAsJson;
+                    let parsedErrorResponse = operationRes.parsedBody;
                     try {
                         if (parsedErrorResponse) {
                             let internalError = null;
@@ -260,11 +260,11 @@ class Conversations {
                 }
                 // Deserialize Response
                 if (statusCode === 200) {
-                    let parsedResponse = operationRes.bodyAsJson;
+                    let parsedResponse = operationRes.parsedBody;
                     try {
                         if (parsedResponse !== null && parsedResponse !== undefined) {
                             let resultMapper = Mappers.ConversationResourceResponse;
-                            operationRes.bodyAsJson = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.bodyAsJson');
+                            operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
                         }
                     }
                     catch (error) {
@@ -276,11 +276,11 @@ class Conversations {
                 }
                 // Deserialize Response
                 if (statusCode === 201) {
-                    let parsedResponse = operationRes.bodyAsJson;
+                    let parsedResponse = operationRes.parsedBody;
                     try {
                         if (parsedResponse !== null && parsedResponse !== undefined) {
                             let resultMapper = Mappers.ConversationResourceResponse;
-                            operationRes.bodyAsJson = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.bodyAsJson');
+                            operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
                         }
                     }
                     catch (error) {
@@ -292,11 +292,11 @@ class Conversations {
                 }
                 // Deserialize Response
                 if (statusCode === 202) {
-                    let parsedResponse = operationRes.bodyAsJson;
+                    let parsedResponse = operationRes.parsedBody;
                     try {
                         if (parsedResponse !== null && parsedResponse !== undefined) {
                             let resultMapper = Mappers.ConversationResourceResponse;
-                            operationRes.bodyAsJson = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.bodyAsJson');
+                            operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
                         }
                     }
                     catch (error) {
@@ -402,7 +402,7 @@ class Conversations {
                     error.statusCode = response.status;
                     error.request = msRest.stripRequest(httpRequest);
                     error.response = msRest.stripResponse(response);
-                    let parsedErrorResponse = operationRes.bodyAsJson;
+                    let parsedErrorResponse = operationRes.parsedBody;
                     try {
                         if (parsedErrorResponse) {
                             let internalError = null;
@@ -425,11 +425,11 @@ class Conversations {
                 }
                 // Deserialize Response
                 if (statusCode === 200) {
-                    let parsedResponse = operationRes.bodyAsJson;
+                    let parsedResponse = operationRes.parsedBody;
                     try {
                         if (parsedResponse !== null && parsedResponse !== undefined) {
                             let resultMapper = Mappers.ResourceResponse;
-                            operationRes.bodyAsJson = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.bodyAsJson');
+                            operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
                         }
                     }
                     catch (error) {
@@ -441,11 +441,11 @@ class Conversations {
                 }
                 // Deserialize Response
                 if (statusCode === 201) {
-                    let parsedResponse = operationRes.bodyAsJson;
+                    let parsedResponse = operationRes.parsedBody;
                     try {
                         if (parsedResponse !== null && parsedResponse !== undefined) {
                             let resultMapper = Mappers.ResourceResponse;
-                            operationRes.bodyAsJson = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.bodyAsJson');
+                            operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
                         }
                     }
                     catch (error) {
@@ -457,11 +457,11 @@ class Conversations {
                 }
                 // Deserialize Response
                 if (statusCode === 202) {
-                    let parsedResponse = operationRes.bodyAsJson;
+                    let parsedResponse = operationRes.parsedBody;
                     try {
                         if (parsedResponse !== null && parsedResponse !== undefined) {
                             let resultMapper = Mappers.ResourceResponse;
-                            operationRes.bodyAsJson = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.bodyAsJson');
+                            operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
                         }
                     }
                     catch (error) {
@@ -567,7 +567,7 @@ class Conversations {
                     error.statusCode = response.status;
                     error.request = msRest.stripRequest(httpRequest);
                     error.response = msRest.stripResponse(response);
-                    let parsedErrorResponse = operationRes.bodyAsJson;
+                    let parsedErrorResponse = operationRes.parsedBody;
                     try {
                         if (parsedErrorResponse) {
                             let internalError = null;
@@ -590,11 +590,11 @@ class Conversations {
                 }
                 // Deserialize Response
                 if (statusCode === 200) {
-                    let parsedResponse = operationRes.bodyAsJson;
+                    let parsedResponse = operationRes.parsedBody;
                     try {
                         if (parsedResponse !== null && parsedResponse !== undefined) {
                             let resultMapper = Mappers.ResourceResponse;
-                            operationRes.bodyAsJson = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.bodyAsJson');
+                            operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
                         }
                     }
                     catch (error) {
@@ -606,11 +606,11 @@ class Conversations {
                 }
                 // Deserialize Response
                 if (statusCode === 201) {
-                    let parsedResponse = operationRes.bodyAsJson;
+                    let parsedResponse = operationRes.parsedBody;
                     try {
                         if (parsedResponse !== null && parsedResponse !== undefined) {
                             let resultMapper = Mappers.ResourceResponse;
-                            operationRes.bodyAsJson = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.bodyAsJson');
+                            operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
                         }
                     }
                     catch (error) {
@@ -622,11 +622,11 @@ class Conversations {
                 }
                 // Deserialize Response
                 if (statusCode === 202) {
-                    let parsedResponse = operationRes.bodyAsJson;
+                    let parsedResponse = operationRes.parsedBody;
                     try {
                         if (parsedResponse !== null && parsedResponse !== undefined) {
                             let resultMapper = Mappers.ResourceResponse;
-                            operationRes.bodyAsJson = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.bodyAsJson');
+                            operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
                         }
                     }
                     catch (error) {
@@ -738,7 +738,7 @@ class Conversations {
                     error.statusCode = response.status;
                     error.request = msRest.stripRequest(httpRequest);
                     error.response = msRest.stripResponse(response);
-                    let parsedErrorResponse = operationRes.bodyAsJson;
+                    let parsedErrorResponse = operationRes.parsedBody;
                     try {
                         if (parsedErrorResponse) {
                             let internalError = null;
@@ -761,11 +761,11 @@ class Conversations {
                 }
                 // Deserialize Response
                 if (statusCode === 200) {
-                    let parsedResponse = operationRes.bodyAsJson;
+                    let parsedResponse = operationRes.parsedBody;
                     try {
                         if (parsedResponse !== null && parsedResponse !== undefined) {
                             let resultMapper = Mappers.ResourceResponse;
-                            operationRes.bodyAsJson = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.bodyAsJson');
+                            operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
                         }
                     }
                     catch (error) {
@@ -777,11 +777,11 @@ class Conversations {
                 }
                 // Deserialize Response
                 if (statusCode === 201) {
-                    let parsedResponse = operationRes.bodyAsJson;
+                    let parsedResponse = operationRes.parsedBody;
                     try {
                         if (parsedResponse !== null && parsedResponse !== undefined) {
                             let resultMapper = Mappers.ResourceResponse;
-                            operationRes.bodyAsJson = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.bodyAsJson');
+                            operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
                         }
                     }
                     catch (error) {
@@ -793,11 +793,11 @@ class Conversations {
                 }
                 // Deserialize Response
                 if (statusCode === 202) {
-                    let parsedResponse = operationRes.bodyAsJson;
+                    let parsedResponse = operationRes.parsedBody;
                     try {
                         if (parsedResponse !== null && parsedResponse !== undefined) {
                             let resultMapper = Mappers.ResourceResponse;
-                            operationRes.bodyAsJson = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.bodyAsJson');
+                            operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
                         }
                     }
                     catch (error) {
@@ -879,7 +879,7 @@ class Conversations {
                     error.statusCode = response.status;
                     error.request = msRest.stripRequest(httpRequest);
                     error.response = msRest.stripResponse(response);
-                    let parsedErrorResponse = operationRes.bodyAsJson;
+                    let parsedErrorResponse = operationRes.parsedBody;
                     try {
                         if (parsedErrorResponse) {
                             let internalError = null;
@@ -966,7 +966,7 @@ class Conversations {
                     error.statusCode = response.status;
                     error.request = msRest.stripRequest(httpRequest);
                     error.response = msRest.stripResponse(response);
-                    let parsedErrorResponse = operationRes.bodyAsJson;
+                    let parsedErrorResponse = operationRes.parsedBody;
                     try {
                         if (parsedErrorResponse) {
                             let internalError = null;
@@ -989,7 +989,7 @@ class Conversations {
                 }
                 // Deserialize Response
                 if (statusCode === 200) {
-                    let parsedResponse = operationRes.bodyAsJson;
+                    let parsedResponse = operationRes.parsedBody;
                     try {
                         if (parsedResponse !== null && parsedResponse !== undefined) {
                             let resultMapper = {
@@ -1007,7 +1007,7 @@ class Conversations {
                                     }
                                 }
                             };
-                            operationRes.bodyAsJson = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.bodyAsJson');
+                            operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
                         }
                     }
                     catch (error) {
@@ -1091,7 +1091,7 @@ class Conversations {
                     error.statusCode = response.status;
                     error.request = msRest.stripRequest(httpRequest);
                     error.response = msRest.stripResponse(response);
-                    let parsedErrorResponse = operationRes.bodyAsJson;
+                    let parsedErrorResponse = operationRes.parsedBody;
                     try {
                         if (parsedErrorResponse) {
                             let internalError = null;
@@ -1185,7 +1185,7 @@ class Conversations {
                     error.statusCode = response.status;
                     error.request = msRest.stripRequest(httpRequest);
                     error.response = msRest.stripResponse(response);
-                    let parsedErrorResponse = operationRes.bodyAsJson;
+                    let parsedErrorResponse = operationRes.parsedBody;
                     try {
                         if (parsedErrorResponse) {
                             let internalError = null;
@@ -1208,7 +1208,7 @@ class Conversations {
                 }
                 // Deserialize Response
                 if (statusCode === 200) {
-                    let parsedResponse = operationRes.bodyAsJson;
+                    let parsedResponse = operationRes.parsedBody;
                     try {
                         if (parsedResponse !== null && parsedResponse !== undefined) {
                             let resultMapper = {
@@ -1226,7 +1226,7 @@ class Conversations {
                                     }
                                 }
                             };
-                            operationRes.bodyAsJson = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.bodyAsJson');
+                            operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
                         }
                     }
                     catch (error) {
@@ -1326,7 +1326,7 @@ class Conversations {
                     error.statusCode = response.status;
                     error.request = msRest.stripRequest(httpRequest);
                     error.response = msRest.stripResponse(response);
-                    let parsedErrorResponse = operationRes.bodyAsJson;
+                    let parsedErrorResponse = operationRes.parsedBody;
                     try {
                         if (parsedErrorResponse) {
                             let internalError = null;
@@ -1349,11 +1349,11 @@ class Conversations {
                 }
                 // Deserialize Response
                 if (statusCode === 200) {
-                    let parsedResponse = operationRes.bodyAsJson;
+                    let parsedResponse = operationRes.parsedBody;
                     try {
                         if (parsedResponse !== null && parsedResponse !== undefined) {
                             let resultMapper = Mappers.ResourceResponse;
-                            operationRes.bodyAsJson = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.bodyAsJson');
+                            operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
                         }
                     }
                     catch (error) {
@@ -1365,11 +1365,11 @@ class Conversations {
                 }
                 // Deserialize Response
                 if (statusCode === 201) {
-                    let parsedResponse = operationRes.bodyAsJson;
+                    let parsedResponse = operationRes.parsedBody;
                     try {
                         if (parsedResponse !== null && parsedResponse !== undefined) {
                             let resultMapper = Mappers.ResourceResponse;
-                            operationRes.bodyAsJson = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.bodyAsJson');
+                            operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
                         }
                     }
                     catch (error) {
@@ -1381,11 +1381,11 @@ class Conversations {
                 }
                 // Deserialize Response
                 if (statusCode === 202) {
-                    let parsedResponse = operationRes.bodyAsJson;
+                    let parsedResponse = operationRes.parsedBody;
                     try {
                         if (parsedResponse !== null && parsedResponse !== undefined) {
                             let resultMapper = Mappers.ResourceResponse;
-                            operationRes.bodyAsJson = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.bodyAsJson');
+                            operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
                         }
                     }
                     catch (error) {
@@ -1410,7 +1410,7 @@ class Conversations {
         let cb = callback;
         if (!callback) {
             return this.getConversationsWithHttpOperationResponse(options).then((operationRes) => {
-                return Promise.resolve(operationRes.bodyAsJson);
+                return Promise.resolve(operationRes.parsedBody);
             }).catch((err) => {
                 return Promise.reject(err);
             });
@@ -1420,7 +1420,7 @@ class Conversations {
                 if (err) {
                     return cb(err);
                 }
-                let result = data.bodyAsJson;
+                let result = data.parsedBody;
                 return cb(err, result, data.request, data.response);
             });
         }
@@ -1433,7 +1433,7 @@ class Conversations {
         let cb = callback;
         if (!callback) {
             return this.createConversationWithHttpOperationResponse(parameters, options).then((operationRes) => {
-                return Promise.resolve(operationRes.bodyAsJson);
+                return Promise.resolve(operationRes.parsedBody);
             }).catch((err) => {
                 return Promise.reject(err);
             });
@@ -1443,7 +1443,7 @@ class Conversations {
                 if (err) {
                     return cb(err);
                 }
-                let result = data.bodyAsJson;
+                let result = data.parsedBody;
                 return cb(err, result, data.request, data.response);
             });
         }
@@ -1456,7 +1456,7 @@ class Conversations {
         let cb = callback;
         if (!callback) {
             return this.sendToConversationWithHttpOperationResponse(conversationId, activity, options).then((operationRes) => {
-                return Promise.resolve(operationRes.bodyAsJson);
+                return Promise.resolve(operationRes.parsedBody);
             }).catch((err) => {
                 return Promise.reject(err);
             });
@@ -1466,7 +1466,7 @@ class Conversations {
                 if (err) {
                     return cb(err);
                 }
-                let result = data.bodyAsJson;
+                let result = data.parsedBody;
                 return cb(err, result, data.request, data.response);
             });
         }
@@ -1479,7 +1479,7 @@ class Conversations {
         let cb = callback;
         if (!callback) {
             return this.updateActivityWithHttpOperationResponse(conversationId, activityId, activity, options).then((operationRes) => {
-                return Promise.resolve(operationRes.bodyAsJson);
+                return Promise.resolve(operationRes.parsedBody);
             }).catch((err) => {
                 return Promise.reject(err);
             });
@@ -1489,7 +1489,7 @@ class Conversations {
                 if (err) {
                     return cb(err);
                 }
-                let result = data.bodyAsJson;
+                let result = data.parsedBody;
                 return cb(err, result, data.request, data.response);
             });
         }
@@ -1502,7 +1502,7 @@ class Conversations {
         let cb = callback;
         if (!callback) {
             return this.replyToActivityWithHttpOperationResponse(conversationId, activityId, activity, options).then((operationRes) => {
-                return Promise.resolve(operationRes.bodyAsJson);
+                return Promise.resolve(operationRes.parsedBody);
             }).catch((err) => {
                 return Promise.reject(err);
             });
@@ -1512,7 +1512,7 @@ class Conversations {
                 if (err) {
                     return cb(err);
                 }
-                let result = data.bodyAsJson;
+                let result = data.parsedBody;
                 return cb(err, result, data.request, data.response);
             });
         }
@@ -1525,7 +1525,7 @@ class Conversations {
         let cb = callback;
         if (!callback) {
             return this.deleteActivityWithHttpOperationResponse(conversationId, activityId, options).then((operationRes) => {
-                return Promise.resolve(operationRes.bodyAsJson);
+                return Promise.resolve(operationRes.parsedBody);
             }).catch((err) => {
                 return Promise.reject(err);
             });
@@ -1535,7 +1535,7 @@ class Conversations {
                 if (err) {
                     return cb(err);
                 }
-                let result = data.bodyAsJson;
+                let result = data.parsedBody;
                 return cb(err, result, data.request, data.response);
             });
         }
@@ -1548,7 +1548,7 @@ class Conversations {
         let cb = callback;
         if (!callback) {
             return this.getConversationMembersWithHttpOperationResponse(conversationId, options).then((operationRes) => {
-                return Promise.resolve(operationRes.bodyAsJson);
+                return Promise.resolve(operationRes.parsedBody);
             }).catch((err) => {
                 return Promise.reject(err);
             });
@@ -1558,7 +1558,7 @@ class Conversations {
                 if (err) {
                     return cb(err);
                 }
-                let result = data.bodyAsJson;
+                let result = data.parsedBody;
                 return cb(err, result, data.request, data.response);
             });
         }
@@ -1571,7 +1571,7 @@ class Conversations {
         let cb = callback;
         if (!callback) {
             return this.deleteConversationMemberWithHttpOperationResponse(conversationId, memberId, options).then((operationRes) => {
-                return Promise.resolve(operationRes.bodyAsJson);
+                return Promise.resolve(operationRes.parsedBody);
             }).catch((err) => {
                 return Promise.reject(err);
             });
@@ -1581,7 +1581,7 @@ class Conversations {
                 if (err) {
                     return cb(err);
                 }
-                let result = data.bodyAsJson;
+                let result = data.parsedBody;
                 return cb(err, result, data.request, data.response);
             });
         }
@@ -1594,7 +1594,7 @@ class Conversations {
         let cb = callback;
         if (!callback) {
             return this.getActivityMembersWithHttpOperationResponse(conversationId, activityId, options).then((operationRes) => {
-                return Promise.resolve(operationRes.bodyAsJson);
+                return Promise.resolve(operationRes.parsedBody);
             }).catch((err) => {
                 return Promise.reject(err);
             });
@@ -1604,7 +1604,7 @@ class Conversations {
                 if (err) {
                     return cb(err);
                 }
-                let result = data.bodyAsJson;
+                let result = data.parsedBody;
                 return cb(err, result, data.request, data.response);
             });
         }
@@ -1617,7 +1617,7 @@ class Conversations {
         let cb = callback;
         if (!callback) {
             return this.uploadAttachmentWithHttpOperationResponse(conversationId, attachmentUpload, options).then((operationRes) => {
-                return Promise.resolve(operationRes.bodyAsJson);
+                return Promise.resolve(operationRes.parsedBody);
             }).catch((err) => {
                 return Promise.reject(err);
             });
@@ -1627,7 +1627,7 @@ class Conversations {
                 if (err) {
                     return cb(err);
                 }
-                let result = data.bodyAsJson;
+                let result = data.parsedBody;
                 return cb(err, result, data.request, data.response);
             });
         }

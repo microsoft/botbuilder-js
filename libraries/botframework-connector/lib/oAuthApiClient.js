@@ -80,14 +80,14 @@ class OAuthApiClient {
                 let response = operationRes.response;
                 let statusCode = response.status;
                 if (statusCode === 404) {
-                    operationRes.bodyAsJson = undefined;
+                    operationRes.parsedBody = undefined;
                 }
                 else if (statusCode !== 200) {
                     let error = new msRest.RestError(operationRes.bodyAsText);
                     error.statusCode = response.status;
                     error.request = msRest.stripRequest(httpRequest);
                     error.response = msRest.stripResponse(response);
-                    let parsedErrorResponse = operationRes.bodyAsJson;
+                    let parsedErrorResponse = operationRes.parsedBody;
                     try {
                         if (parsedErrorResponse) {
                             let internalError = null;
@@ -167,7 +167,7 @@ class OAuthApiClient {
                     error.statusCode = response.status;
                     error.request = msRest.stripRequest(httpRequest);
                     error.response = msRest.stripResponse(response);
-                    let parsedErrorResponse = operationRes.bodyAsJson;
+                    let parsedErrorResponse = operationRes.parsedBody;
                     try {
                         if (parsedErrorResponse) {
                             let internalError = null;
@@ -254,7 +254,7 @@ class OAuthApiClient {
                     error.statusCode = response.status;
                     error.request = msRest.stripRequest(httpRequest);
                     error.response = msRest.stripResponse(response);
-                    let parsedErrorResponse = operationRes.bodyAsJson;
+                    let parsedErrorResponse = operationRes.parsedBody;
                     try {
                         if (parsedErrorResponse) {
                             let internalError = null;
@@ -334,7 +334,7 @@ class OAuthApiClient {
                     error.statusCode = response.status;
                     error.request = msRest.stripRequest(httpRequest);
                     error.response = msRest.stripResponse(response);
-                    let parsedErrorResponse = operationRes.bodyAsJson;
+                    let parsedErrorResponse = operationRes.parsedBody;
                     try {
                         if (parsedErrorResponse) {
                             let internalError = null;
@@ -377,7 +377,7 @@ class OAuthApiClient {
      */
     getUserToken(userId, connectionName, magicCode, options) {
         return this.getUserTokenWithHttpOperationResponse(userId, connectionName, magicCode, options).then((operationRes) => {
-            return Promise.resolve(operationRes.bodyAsJson);
+            return Promise.resolve(operationRes.parsedBody);
         }).catch((err) => {
             return Promise.reject(err);
         });

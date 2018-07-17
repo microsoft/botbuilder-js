@@ -96,7 +96,7 @@ export class Conversations {
         error.statusCode = response.status;
         error.request = msRest.stripRequest(httpRequest);
         error.response = msRest.stripResponse(response);
-        let parsedErrorResponse = operationRes.bodyAsJson as { [key: string]: any };
+        let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
         try {
           if (parsedErrorResponse) {
             let internalError = null;
@@ -117,11 +117,11 @@ export class Conversations {
       }
       // Deserialize Response
       if (statusCode === 200) {
-        let parsedResponse = operationRes.bodyAsJson as { [key: string]: any };
+        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
         try {
           if (parsedResponse !== null && parsedResponse !== undefined) {
             let resultMapper = Mappers.ConversationsResult;
-            operationRes.bodyAsJson = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.bodyAsJson');
+            operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
           }
         } catch (error) {
           let deserializationError = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
@@ -231,7 +231,7 @@ export class Conversations {
         error.statusCode = response.status;
         error.request = msRest.stripRequest(httpRequest);
         error.response = msRest.stripResponse(response);
-        let parsedErrorResponse = operationRes.bodyAsJson as { [key: string]: any };
+        let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
         try {
           if (parsedErrorResponse) {
             let internalError = null;
@@ -252,11 +252,11 @@ export class Conversations {
       }
       // Deserialize Response
       if (statusCode === 200) {
-        let parsedResponse = operationRes.bodyAsJson as { [key: string]: any };
+        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
         try {
           if (parsedResponse !== null && parsedResponse !== undefined) {
             let resultMapper = Mappers.ConversationResourceResponse;
-            operationRes.bodyAsJson = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.bodyAsJson');
+            operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
           }
         } catch (error) {
           let deserializationError = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
@@ -267,11 +267,11 @@ export class Conversations {
       }
       // Deserialize Response
       if (statusCode === 201) {
-        let parsedResponse = operationRes.bodyAsJson as { [key: string]: any };
+        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
         try {
           if (parsedResponse !== null && parsedResponse !== undefined) {
             let resultMapper = Mappers.ConversationResourceResponse;
-            operationRes.bodyAsJson = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.bodyAsJson');
+            operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
           }
         } catch (error) {
           let deserializationError1 = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
@@ -282,11 +282,11 @@ export class Conversations {
       }
       // Deserialize Response
       if (statusCode === 202) {
-        let parsedResponse = operationRes.bodyAsJson as { [key: string]: any };
+        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
         try {
           if (parsedResponse !== null && parsedResponse !== undefined) {
             let resultMapper = Mappers.ConversationResourceResponse;
-            operationRes.bodyAsJson = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.bodyAsJson');
+            operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
           }
         } catch (error) {
           let deserializationError2 = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
@@ -391,7 +391,7 @@ export class Conversations {
         error.statusCode = response.status;
         error.request = msRest.stripRequest(httpRequest);
         error.response = msRest.stripResponse(response);
-        let parsedErrorResponse = operationRes.bodyAsJson as { [key: string]: any };
+        let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
         try {
           if (parsedErrorResponse) {
             let internalError = null;
@@ -412,11 +412,11 @@ export class Conversations {
       }
       // Deserialize Response
       if (statusCode === 200) {
-        let parsedResponse = operationRes.bodyAsJson as { [key: string]: any };
+        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
         try {
           if (parsedResponse !== null && parsedResponse !== undefined) {
             let resultMapper = Mappers.ResourceResponse;
-            operationRes.bodyAsJson = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.bodyAsJson');
+            operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
           }
         } catch (error) {
           let deserializationError = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
@@ -427,11 +427,11 @@ export class Conversations {
       }
       // Deserialize Response
       if (statusCode === 201) {
-        let parsedResponse = operationRes.bodyAsJson as { [key: string]: any };
+        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
         try {
           if (parsedResponse !== null && parsedResponse !== undefined) {
             let resultMapper = Mappers.ResourceResponse;
-            operationRes.bodyAsJson = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.bodyAsJson');
+            operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
           }
         } catch (error) {
           let deserializationError1 = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
@@ -442,11 +442,11 @@ export class Conversations {
       }
       // Deserialize Response
       if (statusCode === 202) {
-        let parsedResponse = operationRes.bodyAsJson as { [key: string]: any };
+        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
         try {
           if (parsedResponse !== null && parsedResponse !== undefined) {
             let resultMapper = Mappers.ResourceResponse;
-            operationRes.bodyAsJson = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.bodyAsJson');
+            operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
           }
         } catch (error) {
           let deserializationError2 = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
@@ -551,7 +551,7 @@ export class Conversations {
         error.statusCode = response.status;
         error.request = msRest.stripRequest(httpRequest);
         error.response = msRest.stripResponse(response);
-        let parsedErrorResponse = operationRes.bodyAsJson as { [key: string]: any };
+        let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
         try {
           if (parsedErrorResponse) {
             let internalError = null;
@@ -572,11 +572,11 @@ export class Conversations {
       }
       // Deserialize Response
       if (statusCode === 200) {
-        let parsedResponse = operationRes.bodyAsJson as { [key: string]: any };
+        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
         try {
           if (parsedResponse !== null && parsedResponse !== undefined) {
             let resultMapper = Mappers.ResourceResponse;
-            operationRes.bodyAsJson = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.bodyAsJson');
+            operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
           }
         } catch (error) {
           let deserializationError = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
@@ -587,11 +587,11 @@ export class Conversations {
       }
       // Deserialize Response
       if (statusCode === 201) {
-        let parsedResponse = operationRes.bodyAsJson as { [key: string]: any };
+        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
         try {
           if (parsedResponse !== null && parsedResponse !== undefined) {
             let resultMapper = Mappers.ResourceResponse;
-            operationRes.bodyAsJson = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.bodyAsJson');
+            operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
           }
         } catch (error) {
           let deserializationError1 = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
@@ -602,11 +602,11 @@ export class Conversations {
       }
       // Deserialize Response
       if (statusCode === 202) {
-        let parsedResponse = operationRes.bodyAsJson as { [key: string]: any };
+        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
         try {
           if (parsedResponse !== null && parsedResponse !== undefined) {
             let resultMapper = Mappers.ResourceResponse;
-            operationRes.bodyAsJson = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.bodyAsJson');
+            operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
           }
         } catch (error) {
           let deserializationError2 = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
@@ -717,7 +717,7 @@ export class Conversations {
         error.statusCode = response.status;
         error.request = msRest.stripRequest(httpRequest);
         error.response = msRest.stripResponse(response);
-        let parsedErrorResponse = operationRes.bodyAsJson as { [key: string]: any };
+        let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
         try {
           if (parsedErrorResponse) {
             let internalError = null;
@@ -738,11 +738,11 @@ export class Conversations {
       }
       // Deserialize Response
       if (statusCode === 200) {
-        let parsedResponse = operationRes.bodyAsJson as { [key: string]: any };
+        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
         try {
           if (parsedResponse !== null && parsedResponse !== undefined) {
             let resultMapper = Mappers.ResourceResponse;
-            operationRes.bodyAsJson = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.bodyAsJson');
+            operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
           }
         } catch (error) {
           let deserializationError = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
@@ -753,11 +753,11 @@ export class Conversations {
       }
       // Deserialize Response
       if (statusCode === 201) {
-        let parsedResponse = operationRes.bodyAsJson as { [key: string]: any };
+        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
         try {
           if (parsedResponse !== null && parsedResponse !== undefined) {
             let resultMapper = Mappers.ResourceResponse;
-            operationRes.bodyAsJson = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.bodyAsJson');
+            operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
           }
         } catch (error) {
           let deserializationError1 = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
@@ -768,11 +768,11 @@ export class Conversations {
       }
       // Deserialize Response
       if (statusCode === 202) {
-        let parsedResponse = operationRes.bodyAsJson as { [key: string]: any };
+        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
         try {
           if (parsedResponse !== null && parsedResponse !== undefined) {
             let resultMapper = Mappers.ResourceResponse;
-            operationRes.bodyAsJson = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.bodyAsJson');
+            operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
           }
         } catch (error) {
           let deserializationError2 = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
@@ -854,7 +854,7 @@ export class Conversations {
         error.statusCode = response.status;
         error.request = msRest.stripRequest(httpRequest);
         error.response = msRest.stripResponse(response);
-        let parsedErrorResponse = operationRes.bodyAsJson as { [key: string]: any };
+        let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
         try {
           if (parsedErrorResponse) {
             let internalError = null;
@@ -940,7 +940,7 @@ export class Conversations {
         error.statusCode = response.status;
         error.request = msRest.stripRequest(httpRequest);
         error.response = msRest.stripResponse(response);
-        let parsedErrorResponse = operationRes.bodyAsJson as { [key: string]: any };
+        let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
         try {
           if (parsedErrorResponse) {
             let internalError = null;
@@ -961,7 +961,7 @@ export class Conversations {
       }
       // Deserialize Response
       if (statusCode === 200) {
-        let parsedResponse = operationRes.bodyAsJson as { [key: string]: any };
+        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
         try {
           if (parsedResponse !== null && parsedResponse !== undefined) {
             let resultMapper = {
@@ -979,7 +979,7 @@ export class Conversations {
                 }
               }
             };
-            operationRes.bodyAsJson = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.bodyAsJson');
+            operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
           }
         } catch (error) {
           let deserializationError = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
@@ -1063,7 +1063,7 @@ export class Conversations {
         error.statusCode = response.status;
         error.request = msRest.stripRequest(httpRequest);
         error.response = msRest.stripResponse(response);
-        let parsedErrorResponse = operationRes.bodyAsJson as { [key: string]: any };
+        let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
         try {
           if (parsedErrorResponse) {
             let internalError = null;
@@ -1156,7 +1156,7 @@ export class Conversations {
         error.statusCode = response.status;
         error.request = msRest.stripRequest(httpRequest);
         error.response = msRest.stripResponse(response);
-        let parsedErrorResponse = operationRes.bodyAsJson as { [key: string]: any };
+        let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
         try {
           if (parsedErrorResponse) {
             let internalError = null;
@@ -1177,7 +1177,7 @@ export class Conversations {
       }
       // Deserialize Response
       if (statusCode === 200) {
-        let parsedResponse = operationRes.bodyAsJson as { [key: string]: any };
+        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
         try {
           if (parsedResponse !== null && parsedResponse !== undefined) {
             let resultMapper = {
@@ -1195,7 +1195,7 @@ export class Conversations {
                 }
               }
             };
-            operationRes.bodyAsJson = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.bodyAsJson');
+            operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
           }
         } catch (error) {
           let deserializationError = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
@@ -1294,7 +1294,7 @@ export class Conversations {
         error.statusCode = response.status;
         error.request = msRest.stripRequest(httpRequest);
         error.response = msRest.stripResponse(response);
-        let parsedErrorResponse = operationRes.bodyAsJson as { [key: string]: any };
+        let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
         try {
           if (parsedErrorResponse) {
             let internalError = null;
@@ -1315,11 +1315,11 @@ export class Conversations {
       }
       // Deserialize Response
       if (statusCode === 200) {
-        let parsedResponse = operationRes.bodyAsJson as { [key: string]: any };
+        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
         try {
           if (parsedResponse !== null && parsedResponse !== undefined) {
             let resultMapper = Mappers.ResourceResponse;
-            operationRes.bodyAsJson = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.bodyAsJson');
+            operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
           }
         } catch (error) {
           let deserializationError = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
@@ -1330,11 +1330,11 @@ export class Conversations {
       }
       // Deserialize Response
       if (statusCode === 201) {
-        let parsedResponse = operationRes.bodyAsJson as { [key: string]: any };
+        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
         try {
           if (parsedResponse !== null && parsedResponse !== undefined) {
             let resultMapper = Mappers.ResourceResponse;
-            operationRes.bodyAsJson = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.bodyAsJson');
+            operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
           }
         } catch (error) {
           let deserializationError1 = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
@@ -1345,11 +1345,11 @@ export class Conversations {
       }
       // Deserialize Response
       if (statusCode === 202) {
-        let parsedResponse = operationRes.bodyAsJson as { [key: string]: any };
+        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
         try {
           if (parsedResponse !== null && parsedResponse !== undefined) {
             let resultMapper = Mappers.ResourceResponse;
-            operationRes.bodyAsJson = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.bodyAsJson');
+            operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
           }
         } catch (error) {
           let deserializationError2 = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
@@ -1410,7 +1410,7 @@ export class Conversations {
     let cb = callback as msRest.ServiceCallback<Models.ConversationsResult>;
     if (!callback) {
       return this.getConversationsWithHttpOperationResponse(options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.bodyAsJson as Models.ConversationsResult);
+        return Promise.resolve(operationRes.parsedBody as Models.ConversationsResult);
       }).catch((err: Error) => {
         return Promise.reject(err);
       });
@@ -1419,7 +1419,7 @@ export class Conversations {
         if (err) {
           return cb(err);
         }
-        let result = data.bodyAsJson as Models.ConversationsResult;
+        let result = data.parsedBody as Models.ConversationsResult;
         return cb(err, result, data.request, data.response);
       });
     }
@@ -1483,7 +1483,7 @@ export class Conversations {
     let cb = callback as msRest.ServiceCallback<Models.ConversationResourceResponse>;
     if (!callback) {
       return this.createConversationWithHttpOperationResponse(parameters, options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.bodyAsJson as Models.ConversationResourceResponse);
+        return Promise.resolve(operationRes.parsedBody as Models.ConversationResourceResponse);
       }).catch((err: Error) => {
         return Promise.reject(err);
       });
@@ -1492,7 +1492,7 @@ export class Conversations {
         if (err) {
           return cb(err);
         }
-        let result = data.bodyAsJson as Models.ConversationResourceResponse;
+        let result = data.parsedBody as Models.ConversationResourceResponse;
         return cb(err, result, data.request, data.response);
       });
     }
@@ -1547,7 +1547,7 @@ export class Conversations {
     let cb = callback as msRest.ServiceCallback<Models.ResourceResponse>;
     if (!callback) {
       return this.sendToConversationWithHttpOperationResponse(conversationId, activity, options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.bodyAsJson as Models.ResourceResponse);
+        return Promise.resolve(operationRes.parsedBody as Models.ResourceResponse);
       }).catch((err: Error) => {
         return Promise.reject(err);
       });
@@ -1556,7 +1556,7 @@ export class Conversations {
         if (err) {
           return cb(err);
         }
-        let result = data.bodyAsJson as Models.ResourceResponse;
+        let result = data.parsedBody as Models.ResourceResponse;
         return cb(err, result, data.request, data.response);
       });
     }
@@ -1607,7 +1607,7 @@ export class Conversations {
     let cb = callback as msRest.ServiceCallback<Models.ResourceResponse>;
     if (!callback) {
       return this.updateActivityWithHttpOperationResponse(conversationId, activityId, activity, options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.bodyAsJson as Models.ResourceResponse);
+        return Promise.resolve(operationRes.parsedBody as Models.ResourceResponse);
       }).catch((err: Error) => {
         return Promise.reject(err);
       });
@@ -1616,7 +1616,7 @@ export class Conversations {
         if (err) {
           return cb(err);
         }
-        let result = data.bodyAsJson as Models.ResourceResponse;
+        let result = data.parsedBody as Models.ResourceResponse;
         return cb(err, result, data.request, data.response);
       });
     }
@@ -1673,7 +1673,7 @@ export class Conversations {
     let cb = callback as msRest.ServiceCallback<Models.ResourceResponse>;
     if (!callback) {
       return this.replyToActivityWithHttpOperationResponse(conversationId, activityId, activity, options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.bodyAsJson as Models.ResourceResponse);
+        return Promise.resolve(operationRes.parsedBody as Models.ResourceResponse);
       }).catch((err: Error) => {
         return Promise.reject(err);
       });
@@ -1682,7 +1682,7 @@ export class Conversations {
         if (err) {
           return cb(err);
         }
-        let result = data.bodyAsJson as Models.ResourceResponse;
+        let result = data.parsedBody as Models.ResourceResponse;
         return cb(err, result, data.request, data.response);
       });
     }
@@ -1726,7 +1726,7 @@ export class Conversations {
     let cb = callback as msRest.ServiceCallback<void>;
     if (!callback) {
       return this.deleteActivityWithHttpOperationResponse(conversationId, activityId, options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.bodyAsJson as void);
+        return Promise.resolve(operationRes.parsedBody as void);
       }).catch((err: Error) => {
         return Promise.reject(err);
       });
@@ -1735,7 +1735,7 @@ export class Conversations {
         if (err) {
           return cb(err);
         }
-        let result = data.bodyAsJson as void;
+        let result = data.parsedBody as void;
         return cb(err, result, data.request, data.response);
       });
     }
@@ -1777,7 +1777,7 @@ export class Conversations {
     let cb = callback as msRest.ServiceCallback<Models.ChannelAccount[]>;
     if (!callback) {
       return this.getConversationMembersWithHttpOperationResponse(conversationId, options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.bodyAsJson as Models.ChannelAccount[]);
+        return Promise.resolve(operationRes.parsedBody as Models.ChannelAccount[]);
       }).catch((err: Error) => {
         return Promise.reject(err);
       });
@@ -1786,7 +1786,7 @@ export class Conversations {
         if (err) {
           return cb(err);
         }
-        let result = data.bodyAsJson as Models.ChannelAccount[];
+        let result = data.parsedBody as Models.ChannelAccount[];
         return cb(err, result, data.request, data.response);
       });
     }
@@ -1832,7 +1832,7 @@ export class Conversations {
     let cb = callback as msRest.ServiceCallback<void>;
     if (!callback) {
       return this.deleteConversationMemberWithHttpOperationResponse(conversationId, memberId, options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.bodyAsJson as void);
+        return Promise.resolve(operationRes.parsedBody as void);
       }).catch((err: Error) => {
         return Promise.reject(err);
       });
@@ -1841,7 +1841,7 @@ export class Conversations {
         if (err) {
           return cb(err);
         }
-        let result = data.bodyAsJson as void;
+        let result = data.parsedBody as void;
         return cb(err, result, data.request, data.response);
       });
     }
@@ -1886,7 +1886,7 @@ export class Conversations {
     let cb = callback as msRest.ServiceCallback<Models.ChannelAccount[]>;
     if (!callback) {
       return this.getActivityMembersWithHttpOperationResponse(conversationId, activityId, options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.bodyAsJson as Models.ChannelAccount[]);
+        return Promise.resolve(operationRes.parsedBody as Models.ChannelAccount[]);
       }).catch((err: Error) => {
         return Promise.reject(err);
       });
@@ -1895,7 +1895,7 @@ export class Conversations {
         if (err) {
           return cb(err);
         }
-        let result = data.bodyAsJson as Models.ChannelAccount[];
+        let result = data.parsedBody as Models.ChannelAccount[];
         return cb(err, result, data.request, data.response);
       });
     }
@@ -1944,7 +1944,7 @@ export class Conversations {
     let cb = callback as msRest.ServiceCallback<Models.ResourceResponse>;
     if (!callback) {
       return this.uploadAttachmentWithHttpOperationResponse(conversationId, attachmentUpload, options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.bodyAsJson as Models.ResourceResponse);
+        return Promise.resolve(operationRes.parsedBody as Models.ResourceResponse);
       }).catch((err: Error) => {
         return Promise.reject(err);
       });
@@ -1953,7 +1953,7 @@ export class Conversations {
         if (err) {
           return cb(err);
         }
-        let result = data.bodyAsJson as Models.ResourceResponse;
+        let result = data.parsedBody as Models.ResourceResponse;
         return cb(err, result, data.request, data.response);
       });
     }
