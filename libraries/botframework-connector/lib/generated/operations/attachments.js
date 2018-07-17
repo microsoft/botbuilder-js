@@ -83,7 +83,7 @@ class Attachments {
                     error.statusCode = response.status;
                     error.request = msRest.stripRequest(httpRequest);
                     error.response = msRest.stripResponse(response);
-                    let parsedErrorResponse = operationRes.bodyAsJson;
+                    let parsedErrorResponse = operationRes.parsedBody;
                     try {
                         if (parsedErrorResponse) {
                             let internalError = null;
@@ -106,11 +106,11 @@ class Attachments {
                 }
                 // Deserialize Response
                 if (statusCode === 200) {
-                    let parsedResponse = operationRes.bodyAsJson;
+                    let parsedResponse = operationRes.parsedBody;
                     try {
                         if (parsedResponse !== null && parsedResponse !== undefined) {
                             let resultMapper = Mappers.AttachmentInfo;
-                            operationRes.bodyAsJson = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.bodyAsJson');
+                            operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
                         }
                     }
                     catch (error) {
@@ -190,7 +190,7 @@ class Attachments {
                     error.statusCode = response.status;
                     error.request = msRest.stripRequest(httpRequest);
                     error.response = msRest.stripResponse(response);
-                    let parsedErrorResponse = operationRes.bodyAsJson;
+                    let parsedErrorResponse = operationRes.parsedBody;
                     try {
                         if (parsedErrorResponse) {
                             let internalError = null;
@@ -226,7 +226,7 @@ class Attachments {
         let cb = callback;
         if (!callback) {
             return this.getAttachmentInfoWithHttpOperationResponse(attachmentId, options).then((operationRes) => {
-                return Promise.resolve(operationRes.bodyAsJson);
+                return Promise.resolve(operationRes.parsedBody);
             }).catch((err) => {
                 return Promise.reject(err);
             });
@@ -236,7 +236,7 @@ class Attachments {
                 if (err) {
                     return cb(err);
                 }
-                let result = data.bodyAsJson;
+                let result = data.parsedBody;
                 return cb(err, result, data.request, data.response);
             });
         }

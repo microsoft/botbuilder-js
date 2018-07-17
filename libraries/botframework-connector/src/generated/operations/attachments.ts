@@ -80,7 +80,7 @@ export class Attachments {
         error.statusCode = response.status;
         error.request = msRest.stripRequest(httpRequest);
         error.response = msRest.stripResponse(response);
-        let parsedErrorResponse = operationRes.bodyAsJson as { [key: string]: any };
+        let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
         try {
           if (parsedErrorResponse) {
             let internalError = null;
@@ -101,11 +101,11 @@ export class Attachments {
       }
       // Deserialize Response
       if (statusCode === 200) {
-        let parsedResponse = operationRes.bodyAsJson as { [key: string]: any };
+        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
         try {
           if (parsedResponse !== null && parsedResponse !== undefined) {
             let resultMapper = Mappers.AttachmentInfo;
-            operationRes.bodyAsJson = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.bodyAsJson');
+            operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
           }
         } catch (error) {
           let deserializationError = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
@@ -186,7 +186,7 @@ export class Attachments {
         error.statusCode = response.status;
         error.request = msRest.stripRequest(httpRequest);
         error.response = msRest.stripResponse(response);
-        let parsedErrorResponse = operationRes.bodyAsJson as { [key: string]: any };
+        let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
         try {
           if (parsedErrorResponse) {
             let internalError = null;
@@ -248,7 +248,7 @@ export class Attachments {
     let cb = callback as msRest.ServiceCallback<Models.AttachmentInfo>;
     if (!callback) {
       return this.getAttachmentInfoWithHttpOperationResponse(attachmentId, options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.bodyAsJson as Models.AttachmentInfo);
+        return Promise.resolve(operationRes.parsedBody as Models.AttachmentInfo);
       }).catch((err: Error) => {
         return Promise.reject(err);
       });
@@ -257,7 +257,7 @@ export class Attachments {
         if (err) {
           return cb(err);
         }
-        let result = data.bodyAsJson as Models.AttachmentInfo;
+        let result = data.parsedBody as Models.AttachmentInfo;
         return cb(err, result, data.request, data.response);
       });
     }
