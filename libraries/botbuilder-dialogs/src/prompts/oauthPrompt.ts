@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext, Activity, Promiseable, ActivityTypes, InputHints } from 'botbuilder';
+import { TurnContext, Activity, ActivityTypes, InputHints } from 'botbuilder';
 import * as prompts from 'botbuilder-prompts';
 import { DialogContext } from '../dialogContext';
 import { Dialog } from '../dialog';
@@ -84,7 +84,7 @@ export interface OAuthPromptSettingsWithTimeout extends prompts.OAuthPromptSetti
  * ```
  * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
  */
-export class OAuthPrompt<C extends TurnContext> extends Dialog<C> {
+export class OAuthPrompt extends Dialog {
     private prompt: prompts.OAuthPrompt;
 
     /**
@@ -97,7 +97,7 @@ export class OAuthPrompt<C extends TurnContext> extends Dialog<C> {
         this.prompt = prompts.createOAuthPrompt(settings, validator);
     }
 
-    public dialogBegin(dc: DialogContext<C>, options?: PromptOptions): Promise<any> {
+    public dialogBegin(dc: DialogContext, options?: PromptOptions): Promise<any> {
         // Persist options and state
         const timeout = typeof this.settings.timeout === 'number' ? this.settings.timeout : 54000000; 
         const instance = dc.activeDialog;
@@ -121,7 +121,7 @@ export class OAuthPrompt<C extends TurnContext> extends Dialog<C> {
         });
     }
 
-    public dialogContinue(dc: DialogContext<C>): Promise<any> {
+    public dialogContinue(dc: DialogContext): Promise<any> {
         // Recognize token
         return this.prompt.recognize(dc.context).then((output) => {
             // Check for timeout

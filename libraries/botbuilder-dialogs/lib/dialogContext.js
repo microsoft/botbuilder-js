@@ -11,7 +11,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * const conversation = conversationState.get(context);
  * const dc = dialogs.createContext(context, conversation);
  * ```
- * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
  */
 class DialogContext {
     /**

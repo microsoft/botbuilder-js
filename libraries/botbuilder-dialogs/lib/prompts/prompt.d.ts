@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext, Activity } from 'botbuilder';
+import { Activity } from 'botbuilder';
 import { PromptValidator } from 'botbuilder-prompts';
 import { DialogContext } from '../dialogContext';
 import { Dialog } from '../dialog';
@@ -24,13 +24,12 @@ export interface PromptOptions {
 }
 /**
  * Base class for all prompts.
- * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
  */
-export declare abstract class Prompt<C extends TurnContext> extends Dialog<C> {
+export declare abstract class Prompt extends Dialog {
     private validator;
     constructor(validator?: PromptValidator<any, any>);
-    protected abstract onPrompt(dc: DialogContext<C>, options: PromptOptions, isRetry: boolean): Promise<any>;
-    protected abstract onRecognize(dc: DialogContext<C>, options: PromptOptions): Promise<any | undefined>;
-    dialogBegin(dc: DialogContext<C>, options: PromptOptions): Promise<any>;
-    dialogContinue(dc: DialogContext<C>): Promise<any>;
+    protected abstract onPrompt(dc: DialogContext, options: PromptOptions, isRetry: boolean): Promise<any>;
+    protected abstract onRecognize(dc: DialogContext, options: PromptOptions): Promise<any | undefined>;
+    dialogBegin(dc: DialogContext, options: PromptOptions): Promise<any>;
+    dialogContinue(dc: DialogContext): Promise<any>;
 }

@@ -47,7 +47,6 @@ const prompts = require("botbuilder-prompts");
  *     }
  * }
  * ```
- * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
  * @param O (Optional) output type returned by prompt. This defaults to a `FoundDatetime[]` but can be changed by a custom validator passed to the prompt.
  */
 class DatetimePrompt extends prompt_1.Prompt {

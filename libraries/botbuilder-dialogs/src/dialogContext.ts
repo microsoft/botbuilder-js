@@ -22,9 +22,8 @@ import { Choice } from 'botbuilder-prompts';
  * const conversation = conversationState.get(context);
  * const dc = dialogs.createContext(context, conversation);  
  * ```
- * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
  */
-export class DialogContext<C extends TurnContext = TurnContext> {
+export class DialogContext {
     /** Current dialog stack. */
     public readonly stack: DialogInstance[];
 
@@ -36,7 +35,7 @@ export class DialogContext<C extends TurnContext = TurnContext> {
       * @param onCompleted (Optional) handler to call when the the last dialog on the stack completes.
       * @param onCompleted.result The result returned by the dialog that just completed.
       */
-    constructor(public readonly dialogs: DialogSet<C>, public readonly context: C, state: object, private onCompleted?: (result: any) => void) { 
+    constructor(public readonly dialogs: DialogSet, public readonly context: TurnContext, state: object, private onCompleted?: (result: any) => void) { 
         if (!Array.isArray(state['dialogStack'])) { state['dialogStack'] = [] } 
         this.stack = state['dialogStack'];
     }

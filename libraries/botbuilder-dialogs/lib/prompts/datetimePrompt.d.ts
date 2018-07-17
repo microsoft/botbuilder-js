@@ -5,7 +5,6 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext } from 'botbuilder';
 import { PromptValidator } from 'botbuilder-prompts';
 import { DialogContext } from '../dialogContext';
 import { Prompt, PromptOptions } from './prompt';
@@ -55,10 +54,9 @@ import * as prompts from 'botbuilder-prompts';
  *     }
  * }
  * ```
- * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
  * @param O (Optional) output type returned by prompt. This defaults to a `FoundDatetime[]` but can be changed by a custom validator passed to the prompt.
  */
-export declare class DatetimePrompt<C extends TurnContext, O = prompts.FoundDatetime[]> extends Prompt<C> {
+export declare class DatetimePrompt<O = prompts.FoundDatetime[]> extends Prompt {
     private prompt;
     /**
      * Creates a new `DatetimePrompt` instance.
@@ -66,6 +64,6 @@ export declare class DatetimePrompt<C extends TurnContext, O = prompts.FoundDate
      * @param defaultLocale (Optional) locale to use if `dc.context.activity.locale` not specified. Defaults to a value of `en-us`.
      */
     constructor(validator?: PromptValidator<prompts.FoundDatetime[], O>, defaultLocale?: string);
-    protected onPrompt(dc: DialogContext<C>, options: PromptOptions, isRetry: boolean): Promise<void>;
-    protected onRecognize(dc: DialogContext<C>, options: PromptOptions): Promise<O | undefined>;
+    protected onPrompt(dc: DialogContext, options: PromptOptions, isRetry: boolean): Promise<void>;
+    protected onRecognize(dc: DialogContext, options: PromptOptions): Promise<O | undefined>;
 }

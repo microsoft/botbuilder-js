@@ -11,7 +11,6 @@ const botbuilder_1 = require("botbuilder");
 const dialog_1 = require("../dialog");
 /**
  * Base class for all prompts.
- * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
  */
 class Prompt extends dialog_1.Dialog {
     constructor(validator) {

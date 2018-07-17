@@ -14,6 +14,7 @@ __export(require("./dialogContainer"));
 __export(require("./dialogContext"));
 __export(require("./dialogSet"));
 __export(require("./sequence"));
+__export(require("./waterfall"));
 // Re-exporting choice related interfaces used just to avoid TS developers from needing to 
 // import interfaces from two libraries when working with dialogs.
 var botbuilder_prompts_1 = require("botbuilder-prompts");

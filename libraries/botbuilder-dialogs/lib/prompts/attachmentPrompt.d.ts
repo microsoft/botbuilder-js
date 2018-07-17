@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext, Attachment } from 'botbuilder';
+import { Attachment } from 'botbuilder';
 import { PromptValidator } from 'botbuilder-prompts';
 import { DialogContext } from '../dialogContext';
 import { Prompt, PromptOptions } from './prompt';
@@ -67,16 +67,15 @@ import { Prompt, PromptOptions } from './prompt';
  *    return values;
  * }));
  * ```
- * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
  * @param O (Optional) output type returned by prompt. This defaults to an `Attachment[]` but can be changed by a custom validator passed to the prompt.
  */
-export declare class AttachmentPrompt<C extends TurnContext, O = Attachment[]> extends Prompt<C> {
+export declare class AttachmentPrompt<O = Attachment[]> extends Prompt {
     private prompt;
     /**
      * Creates a new `AttachmentPrompt` instance.
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
      */
     constructor(validator?: PromptValidator<Attachment[], O>);
-    protected onPrompt(dc: DialogContext<C>, options: PromptOptions, isRetry: boolean): Promise<void>;
-    protected onRecognize(dc: DialogContext<C>, options: PromptOptions): Promise<O | undefined>;
+    protected onPrompt(dc: DialogContext, options: PromptOptions, isRetry: boolean): Promise<void>;
+    protected onRecognize(dc: DialogContext, options: PromptOptions): Promise<O | undefined>;
 }

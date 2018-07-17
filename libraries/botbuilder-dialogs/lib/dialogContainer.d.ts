@@ -1,11 +1,3 @@
-/**
- * @module botbuilder-dialogs
- */
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
-import { TurnContext } from 'botbuilder';
 import { Dialog } from './dialog';
 import { DialogContext } from './dialogContext';
 import { DialogSet } from './dialogSet';
@@ -94,18 +86,16 @@ import { DialogSet } from './dialogSet';
  * ```
  * @param R (Optional) type of result that's expected to be returned by the dialog.
  * @param O (Optional) options that can be passed into the begin() method.
- * @param C (Optional) type of `TurnContext` being passed to dialogs in the set.
  */
-export declare class DialogContainer<R = any, O = {}, C extends TurnContext = TurnContext> extends Dialog<C> {
+export declare class DialogContainer<R = any, O = {}> extends Dialog {
     protected initialDialogId: string;
     /** The containers dialog set. */
-    protected dialogs: DialogSet<C>;
+    protected dialogs: DialogSet;
     /**
      * Creates a new `DialogContainer` instance.
      * @param initialDialogId ID of the dialog, within the containers dialog set, that should be started anytime an instance of the `DialogContainer` is started.
-     * @param dialogs (Optional) set of existing dialogs the container should use. If omitted an empty set will be created.
      */
-    constructor(initialDialogId: string, dialogs?: DialogSet<C>);
-    dialogBegin(dc: DialogContext<C>, dialogArgs?: any): Promise<any>;
-    dialogContinue(dc: DialogContext<C>): Promise<any>;
+    constructor(initialDialogId: string);
+    dialogBegin(dc: DialogContext, dialogArgs?: any): Promise<any>;
+    dialogContinue(dc: DialogContext): Promise<any>;
 }

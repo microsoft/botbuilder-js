@@ -44,7 +44,6 @@ const prompts = require("botbuilder-prompts");
  *    return undefined;
  * }));
  * ```
- * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
  * @param O (Optional) output type returned by prompt. This defaults to a `string` but can be changed by a custom validator passed to the prompt.
  */
 class TextPrompt extends prompt_1.Prompt {

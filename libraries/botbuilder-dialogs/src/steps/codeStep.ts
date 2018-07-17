@@ -1,4 +1,3 @@
-import { TurnContext } from 'botbuilder';
 import { DialogContext } from '../dialogContext';
 import { SequenceStep, SequenceStepContext } from '../sequence';
 
@@ -18,7 +17,7 @@ export class CodeStep implements SequenceStep {
 
     public readonly id: string|undefined;
 
-    public async onStep(dc: DialogContext<TurnContext>, step: SequenceStepContext): Promise<void> {
+    public async onStep(dc: DialogContext, step: SequenceStepContext): Promise<void> {
         await this.handler(dc, step);
     }
 }

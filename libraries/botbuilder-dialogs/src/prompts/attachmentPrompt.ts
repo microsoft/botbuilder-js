@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext, Attachment } from 'botbuilder';
+import { Attachment } from 'botbuilder';
 import { PromptValidator } from 'botbuilder-prompts';
 import { DialogContext } from '../dialogContext';
 import { Prompt, PromptOptions } from './prompt';
@@ -69,10 +69,9 @@ import * as prompts from 'botbuilder-prompts';
  *    return values;
  * }));
  * ```
- * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
  * @param O (Optional) output type returned by prompt. This defaults to an `Attachment[]` but can be changed by a custom validator passed to the prompt.
  */
-export class AttachmentPrompt<C extends TurnContext, O = Attachment[]> extends Prompt<C> {
+export class AttachmentPrompt<O = Attachment[]> extends Prompt {
     private prompt: prompts.AttachmentPrompt<O>;
 
     /**
@@ -84,7 +83,7 @@ export class AttachmentPrompt<C extends TurnContext, O = Attachment[]> extends P
         this.prompt = prompts.createAttachmentPrompt(); 
     }
 
-    protected onPrompt(dc: DialogContext<C>, options: PromptOptions, isRetry: boolean): Promise<void> {
+    protected onPrompt(dc: DialogContext, options: PromptOptions, isRetry: boolean): Promise<void> {
         if (isRetry && options.retryPrompt) {
             return this.prompt.prompt(dc.context, options.retryPrompt, options.retrySpeak);
         } else if (options.prompt) {
@@ -93,7 +92,7 @@ export class AttachmentPrompt<C extends TurnContext, O = Attachment[]> extends P
         return Promise.resolve();
     }
 
-    protected onRecognize(dc: DialogContext<C>, options: PromptOptions): Promise<O|undefined> {
+    protected onRecognize(dc: DialogContext, options: PromptOptions): Promise<O|undefined> {
         return this.prompt.recognize(dc.context);
     }
 }

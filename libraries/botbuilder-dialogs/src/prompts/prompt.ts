@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext, Activity, Promiseable, ActivityTypes } from 'botbuilder';
+import { Activity, ActivityTypes } from 'botbuilder';
 import { PromptValidator } from 'botbuilder-prompts';
 import { DialogContext } from '../dialogContext';
 import { Dialog } from '../dialog';
@@ -29,18 +29,17 @@ export interface PromptOptions {
 
 /**
  * Base class for all prompts.
- * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
  */
-export abstract class Prompt<C extends TurnContext> extends Dialog<C> {
+export abstract class Prompt extends Dialog {
     constructor(private validator?: PromptValidator<any, any>) { 
         super();
     }
 
-    protected abstract onPrompt(dc: DialogContext<C>, options: PromptOptions, isRetry: boolean): Promise<any>;
+    protected abstract onPrompt(dc: DialogContext, options: PromptOptions, isRetry: boolean): Promise<any>;
 
-    protected abstract onRecognize(dc: DialogContext<C>, options: PromptOptions): Promise<any|undefined>;
+    protected abstract onRecognize(dc: DialogContext, options: PromptOptions): Promise<any|undefined>;
 
-    public dialogBegin(dc: DialogContext<C>, options: PromptOptions): Promise<any> {
+    public dialogBegin(dc: DialogContext, options: PromptOptions): Promise<any> {
         // Persist options
         const instance = dc.activeDialog;
         instance.state = options || {};
@@ -49,7 +48,7 @@ export abstract class Prompt<C extends TurnContext> extends Dialog<C> {
         return this.onPrompt(dc, instance.state, false);
     }
 
-    public dialogContinue(dc: DialogContext<C>): Promise<any> {
+    public dialogContinue(dc: DialogContext): Promise<any> {
         // Don't do anything for non-message activities
         if (dc.context.activity.type !== ActivityTypes.Message) {
             return Promise.resolve();

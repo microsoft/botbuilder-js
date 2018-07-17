@@ -1,4 +1,12 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @module botbuilder-dialogs
@@ -10,11 +18,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const botbuilder_1 = require("botbuilder");
 const dialog_1 = require("./dialog");
 /**
- * :package: **botbuilder-dialogs**
+ * Dialog optimized for prompting a user with a series of questions.
  *
- * Dialog optimized for prompting a user with a series of questions. Waterfalls accept a stack of
- * functions which will be executed in sequence. Each waterfall step can ask a question of the user
- * and the users response will be passed as an argument to the next waterfall step.
+ * @remarks
+ * Waterfalls accept a stack of functions which will be executed in sequence. Each waterfall step
+ * can ask a question of the user and the users response will be passed as an argument to the next
+ * waterfall step.
  *
  * For simple text questions you can send the user a message and then process their answer in the
  * next step:
@@ -22,18 +31,18 @@ const dialog_1 = require("./dialog");
  * ```JavaScript
  *  dialogs.add('namePrompt', [
  *      async function (dc) {
- *          dc.instance.state = { first: '', last: '', full: '' };
+ *          dc.activeDialog.state.profile = { first: '', last: '', full: '' };
  *          await dc.context.sendActivity(`What's your first name?`);
  *      },
  *      async function (dc, firstName) {
- *          dc.instance.state.first = firstName;
+ *          dc.activeDialog.state.profile.first = firstName;
  *          await dc.context.sendActivity(`Great ${firstName}! What's your last name?`);
  *      },
  *      async function (dc, lastName) {
- *          const name = dc.instance.state;
- *          name.last = lastName;
- *          name.full = name.first + ' ' + name.last;
- *          await dc.end(name);
+ *          const profile = dc.activeDialog.state.profile;
+ *          profile.last = lastName;
+ *          profile.full = profile.first + ' ' + profile.last;
+ *          await dc.end(profile);
  *      }
  *  ]);
  * ```
@@ -44,21 +53,21 @@ const dialog_1 = require("./dialog");
  * ```JavaScript
  *  dialogs.add('survey', [
  *      async function (dc) {
- *          dc.instance.state = { name: undefined, languages: '', years: 0 };
+ *          dc.activeDialog.state.survey = { name: undefined, languages: '', years: 0 };
  *          await dc.begin('namePrompt');
  *      },
  *      async function (dc, name) {
- *          dc.instance.state.name = name;
+ *          dc.activeDialog.state.survey.name = name;
  *          await dc.context.sendActivity(`Ok ${name.full}... What programming languages do you know?`);
  *      },
  *      async function (dc, languages) {
- *          dc.instance.state.languages = languages;
+ *          dc.activeDialog.state.survey.languages = languages;
  *          await dc.prompt('yearsPrompt', `Great. So how many years have you been programming?`);
  *      },
  *      async function (dc, years) {
- *          dc.instance.state.years = years;
+ *          dc.activeDialog.state.survey.years = years;
  *          await dc.context.sendActivity(`Thank you for taking our survey.`);
- *          await dc.end(dc.instance.state);
+ *          await dc.end(dc.activeDialog.survey);
  *      }
  *  ]);
  *
@@ -89,46 +98,46 @@ class Waterfall extends dialog_1.Dialog {
         this.steps = steps.slice(0);
     }
     dialogBegin(dc, args) {
-        const instance = dc.currentDialog;
-        instance.step = 0;
-        return this.runStep(dc, args);
+        return __awaiter(this, void 0, void 0, function* () {
+            const instance = dc.activeDialog;
+            instance.step = 0;
+            return yield this.runStep(dc, args);
+        });
     }
     dialogContinue(dc) {
-        // Don't do anything for non-message activities
-        if (dc.context.activity.type === botbuilder_1.ActivityTypes.Message) {
-            const instance = dc.currentDialog;
-            instance.step += 1;
-            return this.runStep(dc, dc.context.activity.text);
-        }
-        else {
-            return Promise.resolve();
-        }
+        return __awaiter(this, void 0, void 0, function* () {
+            // Don't do anything for non-message activities
+            if (dc.context.activity.type === botbuilder_1.ActivityTypes.Message) {
+                const instance = dc.activeDialog;
+                instance.step += 1;
+                return yield this.runStep(dc, dc.context.activity.text);
+            }
+        });
     }
     dialogResume(dc, result) {
-        const instance = dc.currentDialog;
-        instance.step += 1;
-        return this.runStep(dc, result);
+        return __awaiter(this, void 0, void 0, function* () {
+            const instance = dc.activeDialog;
+            instance.step += 1;
+            return yield this.runStep(dc, result);
+        });
     }
     runStep(dc, result) {
-        try {
-            const instance = dc.currentDialog;
+        return __awaiter(this, void 0, void 0, function* () {
+            const instance = dc.activeDialog;
             const step = instance.step;
             if (step >= 0 && step < this.steps.length) {
                 // Execute step
-                return Promise.resolve(this.steps[step](dc, result, (r) => {
+                return yield this.steps[step](dc, result, (r) => __awaiter(this, void 0, void 0, function* () {
                     // Skip to next step
                     instance.step += 1;
-                    return this.runStep(dc, r);
+                    return yield this.runStep(dc, r);
                 }));
             }
             else {
                 // End of waterfall so just return to parent
-                return dc.end(result);
+                return yield dc.end(result);
             }
-        }
-        catch (err) {
-            return Promise.reject(err);
-        }
+        });
     }
 }
 exports.Waterfall = Waterfall;

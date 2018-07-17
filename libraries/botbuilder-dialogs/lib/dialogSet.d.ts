@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { TurnContext } from 'botbuilder';
-import { Dialog, Waterfall, WaterfallStep } from './dialog';
+import { Dialog } from './dialog';
 import { DialogContext } from './dialogContext';
 /**
  * A related set of dialogs that can all call each other.
@@ -156,9 +156,8 @@ import { DialogContext } from './dialogContext';
  * their profile info or "cancel" to abort whatever task they're in the middle of. We've also
  * changed our fallback logic to only start the 'fillProfile' dialog once when a user first
  * messages our bot.
- * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
  */
-export declare class DialogSet<C extends TurnContext = TurnContext> {
+export declare class DialogSet {
     private readonly dialogs;
     /**
      * Adds a new dialog to the set and returns the added dialog.
@@ -167,18 +166,17 @@ export declare class DialogSet<C extends TurnContext = TurnContext> {
      * This example adds a waterfall dialog the greets the user with "Hello World!":
      *
      * ```JavaScript
-     * dialogs.add('greeting', [
+     * dialogs.add('greeting', new Waterfall([
      *      async function (dc) {
      *          await dc.context.sendActivity(`Hello world!`);
      *          await dc.end();
      *      }
-     * ]);
+     * ]));
      * ```
      * @param dialogId Unique ID of the dialog within the set.
-     * @param dialogOrSteps Either a new dialog or an array of waterfall steps to execute. If waterfall steps are passed in they will automatically be passed into an new instance of a `Waterfall` class.
+     * @param dialog The dialog instance to add to the set.
      */
-    add(dialogId: string, dialogOrSteps: Dialog<C>): Dialog<C>;
-    add(dialogId: string, dialogOrSteps: WaterfallStep<C>[]): Waterfall<C>;
+    add<T extends Dialog>(dialogId: string, dialog: T): T;
     /**
      * Creates a dialog context which can be used to work with the dialogs in the set.
      *
@@ -188,12 +186,12 @@ export declare class DialogSet<C extends TurnContext = TurnContext> {
      *
      * ```JavaScript
      * const conversation = conversationState.get(context);
-     * const dc = dialogs.createContext(context, conversation);
+     * const dc = await dialogs.createContext(context, conversation);
      * ```
      * @param context Context for the current turn of conversation with the user.
      * @param state State object being used to persist the dialog stack.
      */
-    createContext(context: C, state: object): DialogContext<C>;
+    createContext(context: TurnContext, state: object): Promise<DialogContext>;
     /**
      * Finds a dialog that was previously added to the set using [add()](#add).
      *
@@ -206,5 +204,5 @@ export declare class DialogSet<C extends TurnContext = TurnContext> {
      * @param T (Optional) type of dialog returned.
      * @param dialogId ID of the dialog/prompt to lookup.
      */
-    find<T extends Dialog<C> = Dialog<C>>(dialogId: string): T | undefined;
+    find<T extends Dialog<TurnContext> = Dialog<TurnContext>>(dialogId: string): T | undefined;
 }

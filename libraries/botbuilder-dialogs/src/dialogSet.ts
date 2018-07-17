@@ -5,8 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext, BotState, StoreItem, Activity, Promiseable } from 'botbuilder';
-import { Dialog, Waterfall, WaterfallStep } from './dialog';
+import { TurnContext } from 'botbuilder';
+import { Dialog } from './dialog';
 import { DialogContext } from './dialogContext';
 
 /**
@@ -157,10 +157,9 @@ import { DialogContext } from './dialogContext';
  * their profile info or "cancel" to abort whatever task they're in the middle of. We've also 
  * changed our fallback logic to only start the 'fillProfile' dialog once when a user first 
  * messages our bot.
- * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
  */
-export class DialogSet<C extends TurnContext = TurnContext> {
-    private readonly dialogs: { [id:string]: Dialog<C>; } = {};
+export class DialogSet {
+    private readonly dialogs: { [id:string]: Dialog; } = {};
 
     /**
      * Adds a new dialog to the set and returns the added dialog.
@@ -169,21 +168,19 @@ export class DialogSet<C extends TurnContext = TurnContext> {
      * This example adds a waterfall dialog the greets the user with "Hello World!":
      * 
      * ```JavaScript
-     * dialogs.add('greeting', [
+     * dialogs.add('greeting', new Waterfall([
      *      async function (dc) {
      *          await dc.context.sendActivity(`Hello world!`);
      *          await dc.end();
      *      } 
-     * ]);
+     * ]));
      * ```
      * @param dialogId Unique ID of the dialog within the set.
-     * @param dialogOrSteps Either a new dialog or an array of waterfall steps to execute. If waterfall steps are passed in they will automatically be passed into an new instance of a `Waterfall` class.
+     * @param dialog The dialog instance to add to the set.
      */
-    public add(dialogId: string, dialogOrSteps: Dialog<C>): Dialog<C>;
-    public add(dialogId: string, dialogOrSteps: WaterfallStep<C>[]): Waterfall<C>;
-    public add(dialogId: string, dialogOrSteps: Dialog<C>|WaterfallStep<C>[]): Dialog<C> {
+    public add<T extends Dialog>(dialogId: string, dialog: T): T {
         if (this.dialogs.hasOwnProperty(dialogId)) { throw new Error(`DialogSet.add(): A dialog with an id of '${dialogId}' already added.`) }
-        return this.dialogs[dialogId] = Array.isArray(dialogOrSteps) ? new Waterfall(dialogOrSteps as any) : dialogOrSteps;
+        return this.dialogs[dialogId] = dialog;
     }
 
 
@@ -196,12 +193,12 @@ export class DialogSet<C extends TurnContext = TurnContext> {
      * 
      * ```JavaScript
      * const conversation = conversationState.get(context);
-     * const dc = dialogs.createContext(context, conversation);  
+     * const dc = await dialogs.createContext(context, conversation);  
      * ```
      * @param context Context for the current turn of conversation with the user.
      * @param state State object being used to persist the dialog stack.
      */
-    public createContext(context: C, state: object): DialogContext<C> {
+    public async createContext(context: TurnContext, state: object): Promise<DialogContext> {
         return new DialogContext(this, context, state);
     }
 
@@ -217,7 +214,7 @@ export class DialogSet<C extends TurnContext = TurnContext> {
      * @param T (Optional) type of dialog returned.
      * @param dialogId ID of the dialog/prompt to lookup.
      */
-    public find<T extends Dialog<C> = Dialog<C>>(dialogId: string): T|undefined {
+    public find<T extends Dialog<TurnContext> = Dialog<TurnContext>>(dialogId: string): T|undefined {
         return this.dialogs.hasOwnProperty(dialogId) ? this.dialogs[dialogId] as T : undefined;
     }
 }

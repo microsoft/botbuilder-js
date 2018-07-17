@@ -82,7 +82,7 @@ export interface OAuthPromptSettingsWithTimeout extends prompts.OAuthPromptSetti
  * ```
  * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
  */
-export declare class OAuthPrompt<C extends TurnContext> extends Dialog<C> {
+export declare class OAuthPrompt extends Dialog {
     private settings;
     private prompt;
     /**
@@ -91,8 +91,8 @@ export declare class OAuthPrompt<C extends TurnContext> extends Dialog<C> {
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
      */
     constructor(settings: OAuthPromptSettingsWithTimeout, validator?: prompts.PromptValidator<any, any>);
-    dialogBegin(dc: DialogContext<C>, options?: PromptOptions): Promise<any>;
-    dialogContinue(dc: DialogContext<C>): Promise<any>;
+    dialogBegin(dc: DialogContext, options?: PromptOptions): Promise<any>;
+    dialogContinue(dc: DialogContext): Promise<any>;
     /**
      * Signs the user out of the service.
      *

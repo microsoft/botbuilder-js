@@ -1,4 +1,12 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const dialog_1 = require("./dialog");
 const dialogContext_1 = require("./dialogContext");
@@ -88,38 +96,39 @@ const dialogSet_1 = require("./dialogSet");
  * ```
  * @param R (Optional) type of result that's expected to be returned by the dialog.
  * @param O (Optional) options that can be passed into the begin() method.
- * @param C (Optional) type of `TurnContext` being passed to dialogs in the set.
  */
 class DialogContainer extends dialog_1.Dialog {
     /**
      * Creates a new `DialogContainer` instance.
      * @param initialDialogId ID of the dialog, within the containers dialog set, that should be started anytime an instance of the `DialogContainer` is started.
-     * @param dialogs (Optional) set of existing dialogs the container should use. If omitted an empty set will be created.
      */
-    constructor(initialDialogId, dialogs) {
+    constructor(initialDialogId) {
         super();
         this.initialDialogId = initialDialogId;
-        this.dialogs = dialogs || new dialogSet_1.DialogSet();
+        /** The containers dialog set. */
+        this.dialogs = new dialogSet_1.DialogSet();
     }
     dialogBegin(dc, dialogArgs) {
-        // Start the dialogs entry point dialog.
-        let result;
-        const cdc = new dialogContext_1.DialogContext(this.dialogs, dc.context, dc.activeDialog.state, (r) => { result = r; });
-        return cdc.begin(this.initialDialogId, dialogArgs).then(() => {
+        return __awaiter(this, void 0, void 0, function* () {
+            // Start the dialogs entry point dialog.
+            let result;
+            const cdc = new dialogContext_1.DialogContext(this.dialogs, dc.context, dc.activeDialog.state, (r) => { result = r; });
+            yield cdc.begin(this.initialDialogId, dialogArgs);
             // End if the dialogs dialog ends.
             if (!cdc.activeDialog) {
-                return dc.end(result);
+                return yield dc.end(result);
             }
         });
     }
     dialogContinue(dc) {
-        // Continue dialogs dialog stack.
-        let result;
-        const cdc = new dialogContext_1.DialogContext(this.dialogs, dc.context, dc.activeDialog.state, (r) => { result = r; });
-        return cdc.continue().then(() => {
+        return __awaiter(this, void 0, void 0, function* () {
+            // Continue dialogs dialog stack.
+            let result;
+            const cdc = new dialogContext_1.DialogContext(this.dialogs, dc.context, dc.activeDialog.state, (r) => { result = r; });
+            yield cdc.continue();
             // End if the dialogs dialog ends.
             if (!cdc.activeDialog) {
-                return dc.end(result);
+                return yield dc.end(result);
             }
         });
     }

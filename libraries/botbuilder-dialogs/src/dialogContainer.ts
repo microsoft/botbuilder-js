@@ -5,8 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Promiseable, TurnContext } from 'botbuilder';
-import { Dialog, DialogInstance } from './dialog';
+import { TurnContext } from 'botbuilder';
+import { Dialog } from './dialog';
 import { DialogContext } from './dialogContext';
 import { DialogSet } from './dialogSet';
 
@@ -96,43 +96,40 @@ import { DialogSet } from './dialogSet';
  * ```
  * @param R (Optional) type of result that's expected to be returned by the dialog.
  * @param O (Optional) options that can be passed into the begin() method.
- * @param C (Optional) type of `TurnContext` being passed to dialogs in the set.
  */
-export class DialogContainer<R = any, O = {}, C extends TurnContext = TurnContext> extends Dialog<C> {
+export class DialogContainer<R = any, O = {}> extends Dialog {
     /** The containers dialog set. */
-    protected dialogs: DialogSet<C>;
+    protected dialogs = new DialogSet();
 
     /**
      * Creates a new `DialogContainer` instance.
      * @param initialDialogId ID of the dialog, within the containers dialog set, that should be started anytime an instance of the `DialogContainer` is started.
-     * @param dialogs (Optional) set of existing dialogs the container should use. If omitted an empty set will be created. 
      */
-    constructor(protected initialDialogId: string, dialogs?: DialogSet<C>) { 
+    constructor(protected initialDialogId: string) { 
         super();
-        this.dialogs = dialogs || new DialogSet<C>();
     }
 
-    public dialogBegin(dc: DialogContext<C>, dialogArgs?: any): Promise<any> {
+    public async dialogBegin(dc: DialogContext, dialogArgs?: any): Promise<any> {
         // Start the dialogs entry point dialog.
         let result: any; 
         const cdc = new DialogContext(this.dialogs, dc.context, dc.activeDialog.state, (r) => { result = r });
-        return cdc.begin(this.initialDialogId, dialogArgs).then(() => {
-            // End if the dialogs dialog ends.
-            if (!cdc.activeDialog) {
-                return dc.end(result);
-            }
-        });
+        await cdc.begin(this.initialDialogId, dialogArgs)
+
+        // End if the dialogs dialog ends.
+        if (!cdc.activeDialog) {
+            return await dc.end(result);
+        }
     }
 
-    public dialogContinue(dc: DialogContext<C>): Promise<any> {
+    public async dialogContinue(dc: DialogContext): Promise<any> {
         // Continue dialogs dialog stack.
         let result: any; 
         const cdc = new DialogContext(this.dialogs, dc.context, dc.activeDialog.state, (r) => { result = r });
-        return cdc.continue().then(() => {
-            // End if the dialogs dialog ends.
-            if (!cdc.activeDialog) {
-                return dc.end(result);
-            }
-        });
+        await cdc.continue();
+
+        // End if the dialogs dialog ends.
+        if (!cdc.activeDialog) {
+            return await dc.end(result);
+        }
     }
 }

@@ -1,6 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const dialog_1 = require("./dialog");
 const dialogContext_1 = require("./dialogContext");
 /**
  * A related set of dialogs that can all call each other.
@@ -150,17 +157,33 @@ const dialogContext_1 = require("./dialogContext");
  * their profile info or "cancel" to abort whatever task they're in the middle of. We've also
  * changed our fallback logic to only start the 'fillProfile' dialog once when a user first
  * messages our bot.
- * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
  */
 class DialogSet {
     constructor() {
         this.dialogs = {};
     }
-    add(dialogId, dialogOrSteps) {
+    /**
+     * Adds a new dialog to the set and returns the added dialog.
+     *
+     * @remarks
+     * This example adds a waterfall dialog the greets the user with "Hello World!":
+     *
+     * ```JavaScript
+     * dialogs.add('greeting', new Waterfall([
+     *      async function (dc) {
+     *          await dc.context.sendActivity(`Hello world!`);
+     *          await dc.end();
+     *      }
+     * ]));
+     * ```
+     * @param dialogId Unique ID of the dialog within the set.
+     * @param dialog The dialog instance to add to the set.
+     */
+    add(dialogId, dialog) {
         if (this.dialogs.hasOwnProperty(dialogId)) {
             throw new Error(`DialogSet.add(): A dialog with an id of '${dialogId}' already added.`);
         }
-        return this.dialogs[dialogId] = Array.isArray(dialogOrSteps) ? new dialog_1.Waterfall(dialogOrSteps) : dialogOrSteps;
+        return this.dialogs[dialogId] = dialog;
     }
     /**
      * Creates a dialog context which can be used to work with the dialogs in the set.
@@ -171,13 +194,15 @@ class DialogSet {
      *
      * ```JavaScript
      * const conversation = conversationState.get(context);
-     * const dc = dialogs.createContext(context, conversation);
+     * const dc = await dialogs.createContext(context, conversation);
      * ```
      * @param context Context for the current turn of conversation with the user.
      * @param state State object being used to persist the dialog stack.
      */
     createContext(context, state) {
-        return new dialogContext_1.DialogContext(this, context, state);
+        return __awaiter(this, void 0, void 0, function* () {
+            return new dialogContext_1.DialogContext(this, context, state);
+        });
     }
     /**
      * Finds a dialog that was previously added to the set using [add()](#add).
