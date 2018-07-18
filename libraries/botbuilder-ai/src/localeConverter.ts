@@ -8,7 +8,6 @@
 import { Middleware, TurnContext, ActivityTypes } from 'botbuilder';
 import * as DateTimeRecognizers from '@microsoft/recognizers-text-date-time';
 import * as moment from 'moment';
-// import * as Globalize from 'globalize';
 /**
  * Settings used to configure an instance of `LocaleConverter`.
  */
