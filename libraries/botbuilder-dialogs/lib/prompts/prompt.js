@@ -27,11 +27,12 @@ class Prompt extends dialog_1.Dialog {
     }
     dialogBegin(dc, options) {
         return __awaiter(this, void 0, void 0, function* () {
-            // Persist options
-            const instance = dc.activeDialog;
-            instance.state = options || {};
+            // Initialize prompt state
+            const state = dc.activeDialog.state;
+            state.state = {};
+            state.options = Object.assign({}, options);
             // Send initial prompt
-            return yield this.onPrompt(dc, instance.state, false);
+            return yield this.onPrompt(dc, state.options, false);
         });
     }
     dialogContinue(dc) {
@@ -39,18 +40,32 @@ class Prompt extends dialog_1.Dialog {
             // Don't do anything for non-message activities
             if (dc.context.activity.type === botbuilder_1.ActivityTypes.Message) {
                 // Perform base recognition
-                const options = dc.activeDialog.state;
-                let recognized = yield this.onRecognize(dc, options);
-                // Optionally call the configured validator
+                const state = dc.activeDialog.state;
+                const recognized = yield this.onRecognize(dc, state.options);
+                // Validate the return value
+                let end = false;
+                let endResult;
                 if (this.validator) {
-                    recognized = yield this.validator(dc.context, recognized);
+                    yield this.validator(dc.context, {
+                        result: recognized,
+                        state: state.state,
+                        options: state.options,
+                        end: (output) => {
+                            end = true;
+                            endResult = output;
+                        }
+                    });
+                }
+                else if (recognized !== undefined) {
+                    end = true;
+                    endResult = recognized;
                 }
                 // Return recognized value or re-prompt
-                if (recognized !== undefined) {
-                    return yield dc.end(recognized);
+                if (end) {
+                    return yield dc.end(endResult);
                 }
                 else if (!dc.context.responded) {
-                    return yield this.onPrompt(dc, options, true);
+                    return yield this.onPrompt(dc, state.options, true);
                 }
                 else {
                     return dialog_1.Dialog.EndOfTurn;

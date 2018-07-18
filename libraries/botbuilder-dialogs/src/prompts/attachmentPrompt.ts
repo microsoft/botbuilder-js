@@ -8,7 +8,7 @@
 import { Attachment } from 'botbuilder';
 import { Dialog, DialogTurnResult } from '../dialog';
 import { DialogContext } from '../dialogContext';
-import { Prompt, PromptOptions } from './prompt';
+import { Prompt, PromptOptions, PromptValidator } from './prompt';
 import * as prompts from 'botbuilder-prompts';
 
 /**
@@ -78,7 +78,7 @@ export class AttachmentPrompt<O = Attachment[]> extends Prompt {
      * Creates a new `AttachmentPrompt` instance.
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.  
      */
-    constructor(validator?: prompts.PromptValidator<Attachment[], O>) {
+    constructor(validator?: PromptValidator<Attachment[], O>) {
         super(validator);
         this.prompt = prompts.createAttachmentPrompt(); 
     }

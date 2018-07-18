@@ -7,7 +7,7 @@
  */
 import { DialogTurnResult } from '../dialog';
 import { DialogContext } from '../dialogContext';
-import { Prompt, PromptOptions } from './prompt';
+import { Prompt, PromptOptions, PromptValidator } from './prompt';
 import * as prompts from 'botbuilder-prompts';
 /**
  * Prompts a user to enter a datetime expression.
@@ -63,7 +63,7 @@ export declare class DatetimePrompt<O = prompts.FoundDatetime[]> extends Prompt 
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
      * @param defaultLocale (Optional) locale to use if `dc.context.activity.locale` not specified. Defaults to a value of `en-us`.
      */
-    constructor(validator?: prompts.PromptValidator<prompts.FoundDatetime[], O>, defaultLocale?: string);
+    constructor(validator?: PromptValidator<prompts.FoundDatetime[], O>, defaultLocale?: string);
     protected onPrompt(dc: DialogContext, options: PromptOptions, isRetry: boolean): Promise<DialogTurnResult>;
     protected onRecognize(dc: DialogContext, options: PromptOptions): Promise<O | undefined>;
 }

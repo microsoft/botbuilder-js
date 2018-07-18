@@ -88,16 +88,17 @@ class OAuthPrompt extends dialog_1.Dialog {
     constructor(settings, validator) {
         super();
         this.settings = settings;
-        this.prompt = prompts.createOAuthPrompt(settings, validator);
+        this.validator = validator;
+        this.prompt = prompts.createOAuthPrompt(settings);
     }
     dialogBegin(dc, options) {
         return __awaiter(this, void 0, void 0, function* () {
-            // Persist options and state
+            // Initialize prompt state
             const timeout = typeof this.settings.timeout === 'number' ? this.settings.timeout : 54000000;
-            const instance = dc.activeDialog;
-            instance.state = Object.assign({
-                expires: new Date().getTime() + timeout
-            }, options);
+            const state = dc.activeDialog.state;
+            state.state = {};
+            state.options = Object.assign({}, options);
+            state.expires = new Date().getTime() + timeout;
             // Attempt to get the users token
             const output = yield this.prompt.getUserToken(dc.context);
             if (output !== undefined) {
@@ -105,14 +106,14 @@ class OAuthPrompt extends dialog_1.Dialog {
                 return yield dc.end(output);
             }
             else {
-                if (options && typeof options.prompt === 'string') {
+                if (typeof state.options.prompt === 'string') {
                     // Send supplied prompt then OAuthCard
-                    yield dc.context.sendActivity(options.prompt, options.speak);
+                    yield dc.context.sendActivity(state.options.prompt, state.options.speak);
                     yield this.prompt.prompt(dc.context);
                 }
                 else {
                     // Send OAuthCard
-                    yield this.prompt.prompt(dc.context, options ? options.prompt : undefined);
+                    yield this.prompt.prompt(dc.context, state.options.prompt);
                 }
                 return dialog_1.Dialog.EndOfTurn;
             }
@@ -121,23 +122,44 @@ class OAuthPrompt extends dialog_1.Dialog {
     dialogContinue(dc) {
         return __awaiter(this, void 0, void 0, function* () {
             // Recognize token
-            const output = yield this.prompt.recognize(dc.context);
+            const recognized = yield this.prompt.recognize(dc.context);
             // Check for timeout
             const state = dc.activeDialog.state;
             const isMessage = dc.context.activity.type === botbuilder_1.ActivityTypes.Message;
             const hasTimedOut = isMessage && (new Date().getTime() > state.expires);
-            // Process output
             if (hasTimedOut) {
                 return yield dc.end(undefined);
             }
-            else if (output !== undefined) {
-                // Return token if it's not timed out (as checked for in the preceding if)
-                return yield dc.end(output);
-            }
-            else if (isMessage && state.retryPrompt) {
-                // Send retry prompt
-                yield dc.context.sendActivity(state.retryPrompt, state.retrySpeak, botbuilder_1.InputHints.ExpectingInput);
-                return dialog_1.Dialog.EndOfTurn;
+            else {
+                // Validate the return value
+                let end = false;
+                let endResult;
+                if (this.validator) {
+                    yield this.validator(dc.context, {
+                        result: recognized,
+                        state: state.state,
+                        options: state.options,
+                        end: (output) => {
+                            end = true;
+                            endResult = output;
+                        }
+                    });
+                }
+                else if (recognized !== undefined) {
+                    end = true;
+                    endResult = recognized;
+                }
+                // Return recognized value or re-prompt
+                if (end) {
+                    return yield dc.end(endResult);
+                }
+                else {
+                    // Send retry prompt
+                    if (!dc.context.responded && isMessage && state.options.retryPrompt) {
+                        yield dc.context.sendActivity(state.options.retryPrompt, state.options.retrySpeak, botbuilder_1.InputHints.ExpectingInput);
+                    }
+                    return dialog_1.Dialog.EndOfTurn;
+                }
             }
         });
     }

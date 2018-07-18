@@ -7,7 +7,7 @@
  */
 import { Dialog, DialogTurnResult } from '../dialog';
 import { DialogContext } from '../dialogContext';
-import { Prompt, PromptOptions } from './prompt';
+import { Prompt, PromptOptions, PromptValidator } from './prompt';
 import * as prompts from 'botbuilder-prompts';
 
 /**
@@ -96,7 +96,7 @@ export class ConfirmPrompt<O = boolean> extends Prompt {
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.  
      * @param defaultLocale (Optional) locale to use if `dc.context.activity.locale` not specified. Defaults to a value of `en-us`.
      */
-    constructor(validator?: prompts.PromptValidator<boolean, O>, defaultLocale?: string) {
+    constructor(validator?: PromptValidator<boolean, O>, defaultLocale?: string) {
         super(validator);
         this.prompt = prompts.createConfirmPrompt(undefined, defaultLocale);
         this.prompt.choices = ConfirmPrompt.choices;
