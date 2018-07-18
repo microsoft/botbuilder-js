@@ -38,7 +38,7 @@ describe('LocaleConverter', function () {
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(new LocaleConverter(toChineseSettings))
-        .test('10/21/2018', '2018-10-21', 'should have received date in chinese locale')
+        .test('10/21/2018', '2018/10/21', 'should have received date in chinese locale')
         .then(() => done());
     });
 
@@ -72,7 +72,7 @@ describe('LocaleConverter', function () {
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(new LocaleConverter(noFromLocaleSettings))
-        .test('10/21/2018', '2018-10-21', 'should have received date in chinese locale')
+        .test('10/21/2018', '2018/10/21', 'should have received date in chinese locale')
         .then(() => done());
     });
     
@@ -83,7 +83,7 @@ describe('LocaleConverter', function () {
         }
 
         fromLocales = ['fr', 'pt', 'zh', 'es', 'en'];
-        fromDates = ['21/10/2018', '21/10/2018', '2018-10-21', '21/10/2018', '10/21/2018'];
+        fromDates = ['21/10/2018', '21/10/2018', '2018/10/21', '21/10/2018', '10/21/2018'];
 
         let testAdapter;
 
@@ -102,7 +102,7 @@ describe('LocaleConverter', function () {
         let localeConverter = new LocaleConverter({ toLocale: 'en-us' });
         localeConverter.getAvailableLocales()
         .then(result => {
-            assert.equal(result.length, 22, 'should support 22 locales');
+            assert.equal(result.length, 23, 'should support 23 locales');
             return done();
         })
     });
