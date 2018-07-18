@@ -8,6 +8,7 @@ export * from './dialog';
 export * from './dialogContainer';
 export * from './dialogContext';
 export * from './dialogSet';
+export * from './rootDialogContainer';
 export * from './sequence';
 export * from './waterfall';
 export { FoundChoice, Choice, ChoiceFactoryOptions, FoundDatetime, FindChoicesOptions, ListStyle, PromptValidator } from '../../botbuilder-prompts/lib';

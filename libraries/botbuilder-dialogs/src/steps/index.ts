@@ -7,4 +7,5 @@
  */
 export * from './codeStep';
 export * from './promptStep';
+export * from './returnValuesStep';
 export * from './sendActivityStep';

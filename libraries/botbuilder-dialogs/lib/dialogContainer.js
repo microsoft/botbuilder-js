@@ -8,6 +8,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @module botbuilder-dialogs
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 const dialog_1 = require("./dialog");
 const dialogContext_1 = require("./dialogContext");
 const dialogSet_1 = require("./dialogSet");

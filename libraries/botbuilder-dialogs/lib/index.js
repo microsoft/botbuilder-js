@@ -13,6 +13,7 @@ __export(require("./dialog"));
 __export(require("./dialogContainer"));
 __export(require("./dialogContext"));
 __export(require("./dialogSet"));
+__export(require("./rootDialogContainer"));
 __export(require("./sequence"));
 __export(require("./waterfall"));
 // Re-exporting choice related interfaces used just to avoid TS developers from needing to 
