@@ -104,10 +104,12 @@ export declare class DialogContainer<R = any, O = {}> extends Dialog {
      */
     constructor(initialDialogId: string);
     dialogBegin(dc: DialogContext, dialogArgs?: any): Promise<DialogTurnResult<R>>;
-    dialogContinue(dc: DialogContext): Promise<any>;
+    dialogCancel(dc: DialogContext): Promise<DialogTurnResult<R>>;
+    dialogContinue(dc: DialogContext): Promise<DialogTurnResult<R>>;
     dialogReprompt(dc: DialogContext): Promise<DialogTurnResult>;
     dialogResume(dc: DialogContext, result?: any): Promise<DialogTurnResult>;
     protected onDialogBegin(dc: DialogContext, dialogArgs?: any): Promise<DialogTurnResult>;
+    protected onDialogCancel(dc: DialogContext): Promise<DialogTurnResult>;
     protected onDialogContinue(dc: DialogContext): Promise<DialogTurnResult>;
     protected onDialogReprompt(dc: DialogContext): Promise<DialogTurnResult>;
 }

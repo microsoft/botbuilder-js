@@ -123,7 +123,13 @@ export class DialogContainer<R = any, O = {}> extends Dialog {
         }
     }
 
-    public async dialogContinue(dc: DialogContext): Promise<any> {
+    public async dialogCancel(dc: DialogContext): Promise<DialogTurnResult<R>> {
+        // Delegate to inner dialog stack.
+        const cdc = new DialogContext(this.dialogs, dc.context, dc.activeDialog.state);
+        return await this.onDialogCancel(dc);
+    }
+
+    public async dialogContinue(dc: DialogContext): Promise<DialogTurnResult<R>> {
         // Continue execution of inner dialog.
         const cdc = new DialogContext(this.dialogs, dc.context, dc.activeDialog.state);
         const turnResult = await this.onDialogContinue(dc);
@@ -155,6 +161,10 @@ export class DialogContainer<R = any, O = {}> extends Dialog {
 
     protected onDialogBegin(dc: DialogContext, dialogArgs?: any): Promise<DialogTurnResult> {
         return dc.begin(this.initialDialogId, dialogArgs);
+    }
+
+    protected onDialogCancel(dc: DialogContext): Promise<DialogTurnResult> {
+        return dc.cancel();
     }
 
     protected onDialogContinue(dc: DialogContext): Promise<DialogTurnResult> {

@@ -131,6 +131,13 @@ class DialogContainer extends dialog_1.Dialog {
             }
         });
     }
+    dialogCancel(dc) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // Delegate to inner dialog stack.
+            const cdc = new dialogContext_1.DialogContext(this.dialogs, dc.context, dc.activeDialog.state);
+            return yield this.onDialogCancel(dc);
+        });
+    }
     dialogContinue(dc) {
         return __awaiter(this, void 0, void 0, function* () {
             // Continue execution of inner dialog.
@@ -164,6 +171,9 @@ class DialogContainer extends dialog_1.Dialog {
     }
     onDialogBegin(dc, dialogArgs) {
         return dc.begin(this.initialDialogId, dialogArgs);
+    }
+    onDialogCancel(dc) {
+        return dc.cancel();
     }
     onDialogContinue(dc) {
         return dc.continue();

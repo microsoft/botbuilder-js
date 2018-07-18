@@ -89,6 +89,24 @@ class DialogContext {
             return this.verifyTurnResult(result);
         });
     }
+    /**
+     * Cancels all dialogs on the stack resulting in an empty stack.
+     */
+    cancel() {
+        return __awaiter(this, void 0, void 0, function* () {
+            while (this.stack.length > 0) {
+                // Find dialog and notify it of cancellation
+                const instance = this.activeDialog;
+                const dialog = this.dialogs.find(instance.id);
+                if (dialog && dialog.dialogCancel) {
+                    yield dialog.dialogCancel(this);
+                }
+                // Pop dialog off stack.
+                this.stack.pop();
+            }
+            return { hasActive: false, hasResult: false };
+        });
+    }
     prompt(dialogId, promptOrOptions, choices) {
         return __awaiter(this, void 0, void 0, function* () {
             let args;
@@ -205,24 +223,6 @@ class DialogContext {
                 return { hasActive: false, hasResult: true, result: result };
             }
         });
-    }
-    /**
-     * Deletes any existing dialog stack thus cancelling all dialogs on the stack.
-     *
-     * @remarks
-     * As a best practice you'll typically want to call endAll() from within your bots interruption
-     * logic before starting any new dialogs:
-     *
-     * ```JavaScript
-     * await dc.endAll().begin('bookFlightTask');
-     * ```
-     */
-    endAll() {
-        // Cancel any active dialogs
-        if (this.stack.length > 0) {
-            this.stack.splice(0, this.stack.length);
-        }
-        return this;
     }
     /**
      * Ends the active dialog and starts a new dialog in its place.

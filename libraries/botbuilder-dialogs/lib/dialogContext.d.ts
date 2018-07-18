@@ -70,6 +70,10 @@ export declare class DialogContext {
      */
     begin(dialogId: string, dialogArgs?: any): Promise<DialogTurnResult>;
     /**
+     * Cancels all dialogs on the stack resulting in an empty stack.
+     */
+    cancel(): Promise<DialogTurnResult>;
+    /**
      * Helper function to simplify formatting the options for calling a prompt dialog.
      *
      * @remarks
@@ -133,18 +137,6 @@ export declare class DialogContext {
      * @param result (Optional) result to pass to the parent dialogs `Dialog.resume()` method.
      */
     end(result?: any): Promise<DialogTurnResult>;
-    /**
-     * Deletes any existing dialog stack thus cancelling all dialogs on the stack.
-     *
-     * @remarks
-     * As a best practice you'll typically want to call endAll() from within your bots interruption
-     * logic before starting any new dialogs:
-     *
-     * ```JavaScript
-     * await dc.endAll().begin('bookFlightTask');
-     * ```
-     */
-    endAll(): this;
     /**
      * Ends the active dialog and starts a new dialog in its place.
      *

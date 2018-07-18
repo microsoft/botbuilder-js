@@ -145,4 +145,10 @@ export abstract class Dialog<R = any, O = {}> {
      * @param dc The dialog context for the current turn of conversation.
      */
     dialogReprompt?(dc: DialogContext): Promise<DialogTurnResult<R>>;
+
+    /**
+     * (Optional) method called when the dialog is being cancelled through a call to `dc.cancel()`.
+     * @param dc The dialog context for the current turn of conversation.
+     */
+    dialogCancel?(dc: DialogContext): Promise<DialogTurnResult<R>>;
 }
