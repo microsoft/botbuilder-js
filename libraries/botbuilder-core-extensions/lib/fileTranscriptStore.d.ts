@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { TranscriptStore, PagedResult, Transcript } from "./transcriptLogger";
-import { Activity } from "botbuilder-core";
+import { Activity } from "../../botbuilder-core/lib";
 /**
  * The file transcript store stores transcripts in file system with each activity as a file.
  */

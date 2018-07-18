@@ -8,7 +8,7 @@
 import { TurnContext, Activity, ActivityTypes, InputHints } from 'botbuilder';
 import * as prompts from 'botbuilder-prompts';
 import { DialogContext } from '../dialogContext';
-import { Dialog } from '../dialog';
+import { Dialog, DialogTurnResult } from '../dialog';
 import { PromptOptions } from './prompt';
 
 /**
@@ -97,7 +97,7 @@ export class OAuthPrompt extends Dialog {
         this.prompt = prompts.createOAuthPrompt(settings, validator);
     }
 
-    public dialogBegin(dc: DialogContext, options?: PromptOptions): Promise<any> {
+    public async dialogBegin(dc: DialogContext, options?: PromptOptions): Promise<DialogTurnResult> {
         // Persist options and state
         const timeout = typeof this.settings.timeout === 'number' ? this.settings.timeout : 54000000; 
         const instance = dc.activeDialog;
@@ -106,41 +106,43 @@ export class OAuthPrompt extends Dialog {
         } as OAuthPromptState, options);
 
         // Attempt to get the users token
-        return this.prompt.getUserToken(dc.context).then((output) => {
-            if (output !== undefined) {
-                // Return token
-                return dc.end(output);
-            } else if (options && typeof options.prompt === 'string') {
+        const output = await this.prompt.getUserToken(dc.context);
+        if (output !== undefined) {
+            // Return token
+            return await dc.end(output);
+        } else {
+            if (options && typeof options.prompt === 'string') {
                 // Send supplied prompt then OAuthCard
-                return dc.context.sendActivity(options.prompt, options.speak)
-                    .then(() => this.prompt.prompt(dc.context));
+                await dc.context.sendActivity(options.prompt, options.speak);
+                await this.prompt.prompt(dc.context);
             } else {
                 // Send OAuthCard
-                return this.prompt.prompt(dc.context, options ? <Partial<Activity>>options.prompt : undefined);
+                await this.prompt.prompt(dc.context, options ? <Partial<Activity>>options.prompt : undefined);
             }
-        });
+            return Dialog.EndOfTurn;
+        }
     }
 
-    public dialogContinue(dc: DialogContext): Promise<any> {
+    public async dialogContinue(dc: DialogContext): Promise<DialogTurnResult> {
         // Recognize token
-        return this.prompt.recognize(dc.context).then((output) => {
-            // Check for timeout
-            const state = dc.activeDialog.state as OAuthPromptState;
-            const isMessage = dc.context.activity.type === ActivityTypes.Message;
-            const hasTimedOut = isMessage && (new Date().getTime() > state.expires);
+        const output = await this.prompt.recognize(dc.context);
 
-            // Process output
-            if (hasTimedOut) {
-                return dc.end(undefined);
-            }
-            else if (output) {
-                // Return token if it's not timed out (as checked for in the preceding if)
-                return dc.end(output);
-            } else if (isMessage && state.retryPrompt) {
-                // Send retry prompt
-                return dc.context.sendActivity(state.retryPrompt, state.retrySpeak, InputHints.ExpectingInput);
-            }
-        });
+        // Check for timeout
+        const state = dc.activeDialog.state as OAuthPromptState;
+        const isMessage = dc.context.activity.type === ActivityTypes.Message;
+        const hasTimedOut = isMessage && (new Date().getTime() > state.expires);
+
+        // Process output
+        if (hasTimedOut) {
+            return await dc.end(undefined);
+        } else if (output !== undefined) {
+            // Return token if it's not timed out (as checked for in the preceding if)
+            return await dc.end(output);
+        } else if (isMessage && state.retryPrompt) {
+            // Send retry prompt
+            await dc.context.sendActivity(state.retryPrompt, state.retrySpeak, InputHints.ExpectingInput);
+            return Dialog.EndOfTurn;
+        }
     }
 
     /**

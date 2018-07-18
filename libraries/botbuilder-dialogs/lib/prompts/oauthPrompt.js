@@ -1,4 +1,12 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @module botbuilder-dialogs
@@ -83,47 +91,53 @@ class OAuthPrompt extends dialog_1.Dialog {
         this.prompt = prompts.createOAuthPrompt(settings, validator);
     }
     dialogBegin(dc, options) {
-        // Persist options and state
-        const timeout = typeof this.settings.timeout === 'number' ? this.settings.timeout : 54000000;
-        const instance = dc.activeDialog;
-        instance.state = Object.assign({
-            expires: new Date().getTime() + timeout
-        }, options);
-        // Attempt to get the users token
-        return this.prompt.getUserToken(dc.context).then((output) => {
+        return __awaiter(this, void 0, void 0, function* () {
+            // Persist options and state
+            const timeout = typeof this.settings.timeout === 'number' ? this.settings.timeout : 54000000;
+            const instance = dc.activeDialog;
+            instance.state = Object.assign({
+                expires: new Date().getTime() + timeout
+            }, options);
+            // Attempt to get the users token
+            const output = yield this.prompt.getUserToken(dc.context);
             if (output !== undefined) {
                 // Return token
-                return dc.end(output);
-            }
-            else if (options && typeof options.prompt === 'string') {
-                // Send supplied prompt then OAuthCard
-                return dc.context.sendActivity(options.prompt, options.speak)
-                    .then(() => this.prompt.prompt(dc.context));
+                return yield dc.end(output);
             }
             else {
-                // Send OAuthCard
-                return this.prompt.prompt(dc.context, options ? options.prompt : undefined);
+                if (options && typeof options.prompt === 'string') {
+                    // Send supplied prompt then OAuthCard
+                    yield dc.context.sendActivity(options.prompt, options.speak);
+                    yield this.prompt.prompt(dc.context);
+                }
+                else {
+                    // Send OAuthCard
+                    yield this.prompt.prompt(dc.context, options ? options.prompt : undefined);
+                }
+                return dialog_1.Dialog.EndOfTurn;
             }
         });
     }
     dialogContinue(dc) {
-        // Recognize token
-        return this.prompt.recognize(dc.context).then((output) => {
+        return __awaiter(this, void 0, void 0, function* () {
+            // Recognize token
+            const output = yield this.prompt.recognize(dc.context);
             // Check for timeout
             const state = dc.activeDialog.state;
             const isMessage = dc.context.activity.type === botbuilder_1.ActivityTypes.Message;
             const hasTimedOut = isMessage && (new Date().getTime() > state.expires);
             // Process output
             if (hasTimedOut) {
-                return dc.end(undefined);
+                return yield dc.end(undefined);
             }
-            else if (output) {
+            else if (output !== undefined) {
                 // Return token if it's not timed out (as checked for in the preceding if)
-                return dc.end(output);
+                return yield dc.end(output);
             }
             else if (isMessage && state.retryPrompt) {
                 // Send retry prompt
-                return dc.context.sendActivity(state.retryPrompt, state.retrySpeak, botbuilder_1.InputHints.ExpectingInput);
+                yield dc.context.sendActivity(state.retryPrompt, state.retrySpeak, botbuilder_1.InputHints.ExpectingInput);
+                return dialog_1.Dialog.EndOfTurn;
             }
         });
     }

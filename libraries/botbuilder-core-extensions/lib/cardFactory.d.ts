@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Attachment, MediaUrl, CardAction, AnimationCard, CardImage, HeroCard, AudioCard, ReceiptCard, ThumbnailCard, VideoCard } from "botbuilder-core";
+import { Attachment, MediaUrl, CardAction, AnimationCard, CardImage, HeroCard, AudioCard, ReceiptCard, ThumbnailCard, VideoCard } from "../../botbuilder-core/lib";
 /**
  * A set of utility functions designed to assist with the formatting of the various card types a
  * bot can return.

@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-const botbuilder_1 = require("botbuilder");
+const lib_1 = require("../../botbuilder/lib");
 const dialog_1 = require("./dialog");
 /**
  * Dialog optimized for prompting a user with a series of questions.
@@ -29,55 +29,61 @@ const dialog_1 = require("./dialog");
  * next step:
  *
  * ```JavaScript
- *  dialogs.add('namePrompt', [
+ * const { Waterfall, Dialog } = require('botbuilder-dialogs');
+ *
+ * dialogs.add('namePrompt', new Waterfall([
  *      async function (dc) {
  *          dc.activeDialog.state.profile = { first: '', last: '', full: '' };
  *          await dc.context.sendActivity(`What's your first name?`);
+ *          return Dialog.EndOfTurn;
  *      },
  *      async function (dc, firstName) {
  *          dc.activeDialog.state.profile.first = firstName;
  *          await dc.context.sendActivity(`Great ${firstName}! What's your last name?`);
+ *          return Dialog.EndOfTurn;
  *      },
  *      async function (dc, lastName) {
  *          const profile = dc.activeDialog.state.profile;
  *          profile.last = lastName;
  *          profile.full = profile.first + ' ' + profile.last;
- *          await dc.end(profile);
+ *          return await dc.end(profile);
  *      }
- *  ]);
+ * ]));
  * ```
  *
  * For more complex sequences you can call other dialogs from within a step and the result returned
  * by the dialog will be passed to the next step:
  *
  * ```JavaScript
- *  dialogs.add('survey', [
+ * const { Waterfall, Dialog } = require('botbuilder-dialogs');
+ *
+ * dialogs.add('survey', [
  *      async function (dc) {
  *          dc.activeDialog.state.survey = { name: undefined, languages: '', years: 0 };
- *          await dc.begin('namePrompt');
+ *          return await dc.begin('namePrompt');
  *      },
  *      async function (dc, name) {
  *          dc.activeDialog.state.survey.name = name;
- *          await dc.context.sendActivity(`Ok ${name.full}... What programming languages do you know?`);
+ *          return await dc.context.sendActivity(`Ok ${name.full}... What programming languages do you know?`);
  *      },
  *      async function (dc, languages) {
  *          dc.activeDialog.state.survey.languages = languages;
- *          await dc.prompt('yearsPrompt', `Great. So how many years have you been programming?`);
+ *          return await dc.prompt('yearsPrompt', `Great. So how many years have you been programming?`);
  *      },
  *      async function (dc, years) {
  *          dc.activeDialog.state.survey.years = years;
  *          await dc.context.sendActivity(`Thank you for taking our survey.`);
- *          await dc.end(dc.activeDialog.survey);
+ *          return await dc.end(dc.activeDialog.survey);
  *      }
- *  ]);
+ * ]);
  *
- *  dialogs.add('yearsPrompt', new NumberPrompt(async (dc, value) => {
+ * dialogs.add('yearsPrompt', new NumberPrompt(async (dc, value) => {
  *      if (value === undefined || value < 0 || value > 110) {
  *          await dc.context.sendActivity(`Enter a number from 0 to 110.`);
  *      } else {
  *          return value;
  *      }
- *  }));
+ * }));
  * ```
  *
  * The example builds on the previous `namePrompt` sample and shows how you can call another dialog
@@ -107,7 +113,7 @@ class Waterfall extends dialog_1.Dialog {
     dialogContinue(dc) {
         return __awaiter(this, void 0, void 0, function* () {
             // Don't do anything for non-message activities
-            if (dc.context.activity.type === botbuilder_1.ActivityTypes.Message) {
+            if (dc.context.activity.type === lib_1.ActivityTypes.Message) {
                 const instance = dc.activeDialog;
                 instance.step += 1;
                 return yield this.runStep(dc, dc.context.activity.text);

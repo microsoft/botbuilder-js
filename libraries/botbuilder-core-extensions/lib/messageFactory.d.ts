@@ -1,4 +1,4 @@
-import { Activity, CardAction, Attachment, InputHints } from 'botbuilder-core';
+import { Activity, CardAction, Attachment, InputHints } from '../../botbuilder-core/lib';
 /**
  * A set of utility functions to assist with the formatting of the various message types a bot can
  * return.

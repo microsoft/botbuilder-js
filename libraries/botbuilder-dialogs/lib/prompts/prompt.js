@@ -1,4 +1,12 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @module botbuilder-dialogs
@@ -18,37 +26,35 @@ class Prompt extends dialog_1.Dialog {
         this.validator = validator;
     }
     dialogBegin(dc, options) {
-        // Persist options
-        const instance = dc.activeDialog;
-        instance.state = options || {};
-        // Send initial prompt
-        return this.onPrompt(dc, instance.state, false);
+        return __awaiter(this, void 0, void 0, function* () {
+            // Persist options
+            const instance = dc.activeDialog;
+            instance.state = options || {};
+            // Send initial prompt
+            return yield this.onPrompt(dc, instance.state, false);
+        });
     }
     dialogContinue(dc) {
-        // Don't do anything for non-message activities
-        if (dc.context.activity.type !== botbuilder_1.ActivityTypes.Message) {
-            return Promise.resolve();
-        }
-        // Recognize value
-        const instance = dc.activeDialog;
-        return this.onRecognize(dc, instance.state)
-            .then((recognized) => {
-            if (this.validator) {
-                // Call validator
-                return Promise.resolve(this.validator(dc.context, recognized));
-            }
-            else {
-                // Pass through recognized value
-                return recognized;
-            }
-        }).then((output) => {
-            if (output !== undefined) {
-                // Return recognized value
-                return dc.end(output);
-            }
-            else if (!dc.context.responded) {
-                // Send retry prompt
-                return this.onPrompt(dc, instance.state, true);
+        return __awaiter(this, void 0, void 0, function* () {
+            // Don't do anything for non-message activities
+            if (dc.context.activity.type === botbuilder_1.ActivityTypes.Message) {
+                // Perform base recognition
+                const options = dc.activeDialog.state;
+                let recognized = yield this.onRecognize(dc, options);
+                // Optionally call the configured validator
+                if (this.validator) {
+                    recognized = yield this.validator(dc.context, recognized);
+                }
+                // Return recognized value or re-prompt
+                if (recognized !== undefined) {
+                    return yield dc.end(recognized);
+                }
+                else if (!dc.context.responded) {
+                    return yield this.onPrompt(dc, options, true);
+                }
+                else {
+                    return dialog_1.Dialog.EndOfTurn;
+                }
             }
         });
     }

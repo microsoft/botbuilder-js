@@ -1,5 +1,21 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @module botbuilder-dialogs
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+const dialog_1 = require("../dialog");
 const prompt_1 = require("./prompt");
 const prompts = require("botbuilder-prompts");
 /**
@@ -56,16 +72,20 @@ class TextPrompt extends prompt_1.Prompt {
         this.prompt = prompts.createTextPrompt();
     }
     onPrompt(dc, options, isRetry) {
-        if (isRetry && options.retryPrompt) {
-            return this.prompt.prompt(dc.context, options.retryPrompt, options.retrySpeak);
-        }
-        else if (options.prompt) {
-            return this.prompt.prompt(dc.context, options.prompt, options.speak);
-        }
-        return Promise.resolve();
+        return __awaiter(this, void 0, void 0, function* () {
+            if (isRetry && options.retryPrompt) {
+                yield this.prompt.prompt(dc.context, options.retryPrompt, options.retrySpeak);
+            }
+            else if (options.prompt) {
+                yield this.prompt.prompt(dc.context, options.prompt, options.speak);
+            }
+            return dialog_1.Dialog.EndOfTurn;
+        });
     }
     onRecognize(dc, options) {
-        return this.prompt.recognize(dc.context);
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.prompt.recognize(dc.context);
+        });
     }
 }
 exports.TextPrompt = TextPrompt;

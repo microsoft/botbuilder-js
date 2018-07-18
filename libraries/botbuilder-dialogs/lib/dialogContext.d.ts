@@ -5,11 +5,11 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext, Activity } from 'botbuilder';
-import { DialogInstance } from './dialog';
+import { TurnContext, Activity } from '../../botbuilder/lib';
+import { DialogInstance, DialogTurnResult } from './dialog';
 import { DialogSet } from './dialogSet';
-import { PromptOptions } from './prompts/index';
-import { Choice } from 'botbuilder-prompts';
+import { PromptOptions } from './prompts';
+import { Choice } from '../../botbuilder-prompts/lib';
 /**
  * A context object used to manipulate a dialog stack.
  *
@@ -25,7 +25,6 @@ import { Choice } from 'botbuilder-prompts';
 export declare class DialogContext {
     readonly dialogs: DialogSet;
     readonly context: TurnContext;
-    private onCompleted;
     /** Current dialog stack. */
     readonly stack: DialogInstance[];
     /**
@@ -33,10 +32,8 @@ export declare class DialogContext {
      * @param dialogs Parent dialog set.
      * @param context Context for the current turn of conversation with the user.
      * @param state State object being used to persist the dialog stack.
-     * @param onCompleted (Optional) handler to call when the the last dialog on the stack completes.
-     * @param onCompleted.result The result returned by the dialog that just completed.
      */
-    constructor(dialogs: DialogSet, context: TurnContext, state: object, onCompleted?: (result: any) => void);
+    constructor(dialogs: DialogSet, context: TurnContext, state: object);
     /**
      * Returns the cached instance of the active dialog on the top of the stack or `undefined` if
      * the stack is empty.
@@ -71,7 +68,7 @@ export declare class DialogContext {
      * @param dialogId ID of the dialog to start.
      * @param dialogArgs (Optional) additional argument(s) to pass to the dialog being started.
      */
-    begin(dialogId: string, dialogArgs?: any): Promise<any>;
+    begin(dialogId: string, dialogArgs?: any): Promise<DialogTurnResult>;
     /**
      * Helper function to simplify formatting the options for calling a prompt dialog.
      *
@@ -82,13 +79,12 @@ export declare class DialogContext {
      * ```JavaScript
      * await dc.prompt('confirmPrompt', `Are you sure you'd like to quit?`);
      * ```
-     * @param O (Optional) type of options expected by the prompt.
      * @param dialogId ID of the prompt to start.
-     * @param prompt Initial prompt to send the user.
-     * @param choicesOrOptions (Optional) array of choices to prompt the user for or additional prompt options.
-     * @param options (Optional) additional prompt options.
+     * @param promptOrOptions Initial prompt to send the user or a set of options to configure the prompt with..
+     * @param choicesOrOptions (Optional) array of choices associated with the prompt.
      */
-    prompt<O extends PromptOptions = PromptOptions>(dialogId: string, prompt: string | Partial<Activity>, choicesOrOptions?: O | (string | Choice)[], options?: O): Promise<any>;
+    prompt(dialogId: string, promptOrOptions: string | Partial<Activity>, choices?: (string | Choice)[]): Promise<DialogTurnResult>;
+    prompt(dialogId: string, promptOrOptions: PromptOptions): Promise<DialogTurnResult>;
     /**
      * Continues execution of the active dialog, if there is one.
      *
@@ -110,7 +106,7 @@ export declare class DialogContext {
      * }
      * ```
      */
-    continue(): Promise<any>;
+    continue(): Promise<DialogTurnResult>;
     /**
      * Ends a dialog by popping it off the stack and returns an optional result to the dialogs
      * parent.
@@ -136,7 +132,7 @@ export declare class DialogContext {
      * ```
      * @param result (Optional) result to pass to the parent dialogs `Dialog.resume()` method.
      */
-    end(result?: any): Promise<any>;
+    end(result?: any): Promise<DialogTurnResult>;
     /**
      * Deletes any existing dialog stack thus cancelling all dialogs on the stack.
      *
@@ -183,5 +179,7 @@ export declare class DialogContext {
      * @param dialogId ID of the new dialog to start.
      * @param dialogArgs (Optional) additional argument(s) to pass to the new dialog.
      */
-    replace(dialogId: string, dialogArgs?: any): Promise<any>;
+    replace(dialogId: string, dialogArgs?: any): Promise<DialogTurnResult>;
+    /** @private helper to ensure the turn result from a dialog looks correct. */
+    private verifyTurnResult(result);
 }

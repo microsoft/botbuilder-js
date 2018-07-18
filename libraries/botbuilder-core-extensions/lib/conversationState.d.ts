@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext } from 'botbuilder-core';
+import { TurnContext } from '../../botbuilder-core/lib';
 import { BotState } from './botState';
 import { Storage, StoreItem } from './storage';
 /**

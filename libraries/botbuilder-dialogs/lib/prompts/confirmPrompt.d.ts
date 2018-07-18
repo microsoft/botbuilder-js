@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { PromptValidator } from 'botbuilder-prompts';
+import { DialogTurnResult } from '../dialog';
 import { DialogContext } from '../dialogContext';
 import { Prompt, PromptOptions } from './prompt';
 import * as prompts from 'botbuilder-prompts';
@@ -93,7 +93,7 @@ export declare class ConfirmPrompt<O = boolean> extends Prompt {
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
      * @param defaultLocale (Optional) locale to use if `dc.context.activity.locale` not specified. Defaults to a value of `en-us`.
      */
-    constructor(validator?: PromptValidator<boolean, O>, defaultLocale?: string);
+    constructor(validator?: prompts.PromptValidator<boolean, O>, defaultLocale?: string);
     /**
      * Sets additional options passed to the `ChoiceFactory` and used to tweak the style of choices
      * rendered to the user.
@@ -105,6 +105,6 @@ export declare class ConfirmPrompt<O = boolean> extends Prompt {
      * @param listStyle Type of list to render to to user. Defaults to `ListStyle.auto`.
      */
     style(listStyle: prompts.ListStyle): this;
-    protected onPrompt(dc: DialogContext, options: PromptOptions, isRetry: boolean): Promise<void>;
+    protected onPrompt(dc: DialogContext, options: PromptOptions, isRetry: boolean): Promise<DialogTurnResult>;
     protected onRecognize(dc: DialogContext, options: PromptOptions): Promise<O | undefined>;
 }

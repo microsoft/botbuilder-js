@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Middleware, TurnContext, Activity } from "botbuilder-core";
+import { Middleware, TurnContext, Activity } from "../../botbuilder-core/lib";
 /**
  * When added, this middleware will log incoming and outgoing activities to a ITranscriptStore.
  */

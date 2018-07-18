@@ -1,17 +1,17 @@
-import { TurnContext, Promiseable, ActivityTypes } from 'botbuilder';
-import { Dialog } from './dialog';
+import { ActivityTypes } from '../../botbuilder/lib';
+import { Dialog, DialogTurnResult } from './dialog';
 import { DialogContext } from './dialogContext';
 
 export interface SequenceStep {
-    readonly id: string|undefined;
-    onStep(dc: DialogContext, step: SequenceStepContext): Promise<void>;
+    getId(stepIndex: number): string;
+    onStep(dc: DialogContext, step: SequenceStepContext): Promise<DialogTurnResult>;
 }
 
 export interface SequenceStepContext {
     result?: any;
-    form: object;
-    stepState: object;
-    next(): Promise<void>;
+    values: object;
+    state: object;
+    next(): Promise<DialogTurnResult>;
 }
 
 export class Sequence extends Dialog {
@@ -19,33 +19,30 @@ export class Sequence extends Dialog {
 
     constructor (steps: SequenceStep[]) {
         super();
-        let nextId = 1; 
+        let index = 0; 
         this.steps = steps.map((s) => {
             return {
-                id: s.id || (nextId++).toString(),
+                id: s.getId(index++),
                 step: s 
             } as SequenceStepInfo;
         });
     }
 
-    public async dialogBegin(dc: DialogContext, args?: any): Promise<void> {
-        await this.runNextStep(dc, Object.assign({}, args));
+    public async dialogBegin(dc: DialogContext, args?: any): Promise<DialogTurnResult> {
+        return await this.runNextStep(dc, Object.assign({}, args));
     }
 
-    public async dialogContinue(dc: DialogContext): Promise<void> {
-        // Don't do anything for non-message activities
-        if (dc.context.activity.type === ActivityTypes.Message) {
-            const state = dc.activeDialog.state as SequenceState;
-            await this.runStep(dc, state);
-        }
-    }
-
-    public async dialogResume(dc: DialogContext, result?: any): Promise<void> {
+    public async dialogContinue(dc: DialogContext): Promise<DialogTurnResult> {
         const state = dc.activeDialog.state as SequenceState;
-        await this.runStep(dc, state, result);
+        return await this.runStep(dc, state);
     }
 
-    private async runNextStep(dc: DialogContext, form: object, afterId?: string): Promise<void> {
+    public async dialogResume(dc: DialogContext, result?: any): Promise<DialogTurnResult> {
+        const state = dc.activeDialog.state as SequenceState;
+        return await this.runStep(dc, state, result);
+    }
+
+    private async runNextStep(dc: DialogContext, form: object, afterId?: string): Promise<DialogTurnResult> {
         // Find next step id
         let index = 0; 
         if (afterId) {
@@ -59,26 +56,26 @@ export class Sequence extends Dialog {
         if (index < this.steps.length) {
             // Update state
             const state: SequenceState = {
-                form: form,
+                values: form,
                 stepId: this.steps[0].id,
                 stepState: {}
             };
             dc.activeDialog.state = state;
-            await this.runStep(dc, state);
+            return await this.runStep(dc, state);
         } else {
-            await dc.end();
+            return await dc.end();
         }
     }
 
-    private async runStep(dc: DialogContext, state: SequenceState, result?: any): Promise<void> {
+    private async runStep(dc: DialogContext, state: SequenceState, result?: any): Promise<DialogTurnResult> {
         const steps = this.steps.filter((s) => s.id === state.stepId);
         const sc: SequenceStepContext = {
             result: result,
-            form: state.form,
-            stepState: state.stepState,
-            next: () => this.runNextStep(dc, state.form, state.stepId)
+            values: state.values,
+            state: state.stepState,
+            next: () => this.runNextStep(dc, state.values, state.stepId)
         }
-        await steps[0].step.onStep(dc, sc);
+        return await steps[0].step.onStep(dc, sc);
     }
 }
 
@@ -88,7 +85,7 @@ interface SequenceStepInfo {
 }
 
 export interface SequenceState {
-    form: object;
+    values: object;
     stepId: string;
     stepState: object;
 }

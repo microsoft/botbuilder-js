@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, TurnContext } from 'botbuilder';
+import { Activity, TurnContext } from '../../botbuilder/lib';
 import { PromptValidator } from './textPrompt';
 /**
  * Prompts the user to reply with a number.

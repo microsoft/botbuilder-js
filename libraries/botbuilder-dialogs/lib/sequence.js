@@ -8,37 +8,33 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const botbuilder_1 = require("botbuilder");
 const dialog_1 = require("./dialog");
 class Sequence extends dialog_1.Dialog {
     constructor(steps) {
         super();
-        let nextId = 1;
+        let index = 0;
         this.steps = steps.map((s) => {
             return {
-                id: s.id || (nextId++).toString(),
+                id: s.getId(index++),
                 step: s
             };
         });
     }
     dialogBegin(dc, args) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.runNextStep(dc, Object.assign({}, args));
+            return yield this.runNextStep(dc, Object.assign({}, args));
         });
     }
     dialogContinue(dc) {
         return __awaiter(this, void 0, void 0, function* () {
-            // Don't do anything for non-message activities
-            if (dc.context.activity.type === botbuilder_1.ActivityTypes.Message) {
-                const state = dc.activeDialog.state;
-                yield this.runStep(dc, state);
-            }
+            const state = dc.activeDialog.state;
+            return yield this.runStep(dc, state);
         });
     }
     dialogResume(dc, result) {
         return __awaiter(this, void 0, void 0, function* () {
             const state = dc.activeDialog.state;
-            yield this.runStep(dc, state, result);
+            return yield this.runStep(dc, state, result);
         });
     }
     runNextStep(dc, form, afterId) {
@@ -56,15 +52,15 @@ class Sequence extends dialog_1.Dialog {
             if (index < this.steps.length) {
                 // Update state
                 const state = {
-                    form: form,
+                    values: form,
                     stepId: this.steps[0].id,
                     stepState: {}
                 };
                 dc.activeDialog.state = state;
-                yield this.runStep(dc, state);
+                return yield this.runStep(dc, state);
             }
             else {
-                yield dc.end();
+                return yield dc.end();
             }
         });
     }
@@ -73,11 +69,11 @@ class Sequence extends dialog_1.Dialog {
             const steps = this.steps.filter((s) => s.id === state.stepId);
             const sc = {
                 result: result,
-                form: state.form,
-                stepState: state.stepState,
-                next: () => this.runNextStep(dc, state.form, state.stepId)
+                values: state.values,
+                state: state.stepState,
+                next: () => this.runNextStep(dc, state.values, state.stepId)
             };
-            yield steps[0].step.onStep(dc, sc);
+            return yield steps[0].step.onStep(dc, sc);
         });
     }
 }

@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Storage, StoreItems } from 'botbuilder-core-extensions';
+import { Storage, StoreItems } from '../../botbuilder-core-extensions/lib';
 /**
  * A file based storage provider. Items will be persisted to a folder on disk.
  *

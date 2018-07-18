@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Promiseable, Activity, TurnContext } from 'botbuilder';
+import { Promiseable, Activity, TurnContext } from '../../botbuilder/lib';
 /**
  * Prompts the user to reply with some text.
  *

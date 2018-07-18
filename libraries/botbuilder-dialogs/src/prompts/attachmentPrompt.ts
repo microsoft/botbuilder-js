@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Attachment } from 'botbuilder';
-import { PromptValidator } from 'botbuilder-prompts';
+import { Dialog, DialogTurnResult } from '../dialog';
 import { DialogContext } from '../dialogContext';
 import { Prompt, PromptOptions } from './prompt';
 import * as prompts from 'botbuilder-prompts';
@@ -78,21 +78,21 @@ export class AttachmentPrompt<O = Attachment[]> extends Prompt {
      * Creates a new `AttachmentPrompt` instance.
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.  
      */
-    constructor(validator?: PromptValidator<Attachment[], O>) {
+    constructor(validator?: prompts.PromptValidator<Attachment[], O>) {
         super(validator);
         this.prompt = prompts.createAttachmentPrompt(); 
     }
 
-    protected onPrompt(dc: DialogContext, options: PromptOptions, isRetry: boolean): Promise<void> {
+    protected async onPrompt(dc: DialogContext, options: PromptOptions, isRetry: boolean): Promise<DialogTurnResult> {
         if (isRetry && options.retryPrompt) {
-            return this.prompt.prompt(dc.context, options.retryPrompt, options.retrySpeak);
+            await this.prompt.prompt(dc.context, options.retryPrompt, options.retrySpeak);
         } else if (options.prompt) {
-            return this.prompt.prompt(dc.context, options.prompt, options.speak);
+            await this.prompt.prompt(dc.context, options.prompt, options.speak);
         }
-        return Promise.resolve();
+        return Dialog.EndOfTurn;
     }
 
-    protected onRecognize(dc: DialogContext, options: PromptOptions): Promise<O|undefined> {
-        return this.prompt.recognize(dc.context);
+    protected async onRecognize(dc: DialogContext, options: PromptOptions): Promise<O|undefined> {
+        return await this.prompt.recognize(dc.context);
     }
 }

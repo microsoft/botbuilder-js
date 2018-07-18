@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext, Promiseable } from 'botbuilder-core';
+import { TurnContext, Promiseable } from '../../botbuilder-core/lib';
 /**
  * Callback to calculate a storage key.
  *

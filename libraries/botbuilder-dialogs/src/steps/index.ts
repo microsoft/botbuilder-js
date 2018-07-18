@@ -6,4 +6,5 @@
  * Licensed under the MIT License.
  */
 export * from './codeStep';
-export * from './fillFieldStep';
+export * from './promptStep';
+export * from './sendActivityStep';

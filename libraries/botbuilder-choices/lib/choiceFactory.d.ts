@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext, Activity } from 'botbuilder';
+import { TurnContext, Activity } from '../../botbuilder/lib';
 import { Choice } from './findChoices';
 /**
  * Additional options used to tweak the formatting of choice lists.

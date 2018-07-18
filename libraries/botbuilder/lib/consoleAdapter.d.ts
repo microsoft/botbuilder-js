@@ -6,7 +6,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotAdapter, TurnContext, Activity, ResourceResponse, Promiseable, ConversationReference } from 'botbuilder-core';
+import { BotAdapter, TurnContext, Activity, ResourceResponse, Promiseable, ConversationReference } from '../../botbuilder-core/lib';
 import * as readline from 'readline';
 /**
  * Lets a user communicate with a bot from a console window.

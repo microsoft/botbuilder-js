@@ -110,25 +110,33 @@ class DialogContainer extends dialog_1.Dialog {
     }
     dialogBegin(dc, dialogArgs) {
         return __awaiter(this, void 0, void 0, function* () {
-            // Start the dialogs entry point dialog.
-            let result;
-            const cdc = new dialogContext_1.DialogContext(this.dialogs, dc.context, dc.activeDialog.state, (r) => { result = r; });
-            yield cdc.begin(this.initialDialogId, dialogArgs);
-            // End if the dialogs dialog ends.
-            if (!cdc.activeDialog) {
-                return yield dc.end(result);
+            // Start the inner dialog.
+            const cdc = new dialogContext_1.DialogContext(this.dialogs, dc.context, dc.activeDialog.state);
+            const turnResult = yield cdc.begin(this.initialDialogId, dialogArgs);
+            // Check for end of inner dialog 
+            if (turnResult.hasResult) {
+                // Return result to calling dialog
+                return yield dc.end(turnResult.result);
+            }
+            else {
+                // Just signal end of turn
+                return dialog_1.Dialog.EndOfTurn;
             }
         });
     }
     dialogContinue(dc) {
         return __awaiter(this, void 0, void 0, function* () {
-            // Continue dialogs dialog stack.
-            let result;
-            const cdc = new dialogContext_1.DialogContext(this.dialogs, dc.context, dc.activeDialog.state, (r) => { result = r; });
-            yield cdc.continue();
-            // End if the dialogs dialog ends.
-            if (!cdc.activeDialog) {
-                return yield dc.end(result);
+            // Continue execution of inner dialog.
+            const cdc = new dialogContext_1.DialogContext(this.dialogs, dc.context, dc.activeDialog.state);
+            const turnResult = yield cdc.continue();
+            // Check for end of inner dialog 
+            if (turnResult.hasResult) {
+                // Return result to calling dialog
+                return yield dc.end(turnResult.result);
+            }
+            else {
+                // Just signal end of turn
+                return dialog_1.Dialog.EndOfTurn;
             }
         });
     }

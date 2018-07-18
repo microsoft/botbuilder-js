@@ -11,5 +11,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Licensed under the MIT License.
  */
 __export(require("./codeStep"));
-__export(require("./fillFieldStep"));
+__export(require("./promptStep"));
+__export(require("./sendActivityStep"));
 //# sourceMappingURL=index.js.map

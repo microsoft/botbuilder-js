@@ -1,4 +1,12 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const dialogContext_1 = require("./dialogContext");
 const dialogSet_1 = require("./dialogSet");
@@ -33,14 +41,14 @@ class Dialog {
      * @param options (Optional) additional options supported by the dialog.
      */
     begin(context, state, options) {
-        // Create empty dialog set and add ourselves to it
-        const dialogs = new dialogSet_1.DialogSet();
-        dialogs.add('dialog', this);
-        // Start the dialog
-        let result;
-        const dc = new dialogContext_1.DialogContext(dialogs, context, state, (r) => { result = r; });
-        return dc.begin('dialog', options)
-            .then(() => dc.activeDialog ? { isActive: true, isCompleted: false } : { isActive: false, isCompleted: true, result: result });
+        return __awaiter(this, void 0, void 0, function* () {
+            // Create empty dialog set and add ourselves to it
+            const dialogs = new dialogSet_1.DialogSet();
+            dialogs.add('dialog', this);
+            // Start the dialog
+            const dc = new dialogContext_1.DialogContext(dialogs, context, state);
+            return yield dc.begin('dialog', options);
+        });
     }
     /**
      * Passes a users reply to a dialog thats being used in isolation.
@@ -60,20 +68,17 @@ class Dialog {
      * @param state A state object that was previously initialized by a call to [begin()](#begin).
      */
     continue(context, state) {
-        // Create empty dialog set and add ourselves to it
-        const dialogs = new dialogSet_1.DialogSet();
-        dialogs.add('dialog', this);
-        // Continue the dialog
-        let result;
-        const dc = new dialogContext_1.DialogContext(dialogs, context, state, (r) => { result = r; });
-        if (dc.activeDialog) {
-            return dc.continue()
-                .then(() => dc.activeDialog ? { isActive: true, isCompleted: false } : { isActive: false, isCompleted: true, result: result });
-        }
-        else {
-            return Promise.resolve({ isActive: false, isCompleted: false });
-        }
+        return __awaiter(this, void 0, void 0, function* () {
+            // Create empty dialog set and add ourselves to it
+            const dialogs = new dialogSet_1.DialogSet();
+            dialogs.add('dialog', this);
+            // Continue the dialog
+            const dc = new dialogContext_1.DialogContext(dialogs, context, state);
+            return yield dc.continue();
+        });
     }
 }
+/** Signals the end of a turn by a dialog method or waterfall/sequence step.  */
+Dialog.EndOfTurn = { hasActive: true, hasResult: false };
 exports.Dialog = Dialog;
 //# sourceMappingURL=dialog.js.map

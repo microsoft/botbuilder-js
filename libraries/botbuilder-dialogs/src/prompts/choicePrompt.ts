@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { PromptValidator } from 'botbuilder-prompts';
+import { Dialog, DialogTurnResult } from '../dialog';
 import { DialogContext } from '../dialogContext';
 import { Prompt, PromptOptions } from './prompt';
 import * as prompts from 'botbuilder-prompts';
@@ -68,7 +68,7 @@ export class ChoicePrompt<O = prompts.FoundChoice> extends Prompt {
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.  
      * @param defaultLocale (Optional) locale to use if `dc.context.activity.locale` not specified. Defaults to a value of `en-us`.
      */
-    constructor(validator?: PromptValidator<prompts.FoundChoice, O>, defaultLocale?: string) {
+    constructor(validator?: prompts.PromptValidator<prompts.FoundChoice, O>, defaultLocale?: string) {
         super(validator);
         this.prompt = prompts.createChoicePrompt(undefined, defaultLocale);
     }
@@ -101,15 +101,17 @@ export class ChoicePrompt<O = prompts.FoundChoice> extends Prompt {
         return this;
     }
     
-    protected onPrompt(dc: DialogContext, options: ChoicePromptOptions, isRetry: boolean): Promise<void> {
+    protected async onPrompt(dc: DialogContext, options: ChoicePromptOptions, isRetry: boolean): Promise<DialogTurnResult> {
         const choices = options.choices;
         if (isRetry && options.retryPrompt) {
-            return this.prompt.prompt(dc.context, choices, options.retryPrompt, options.retrySpeak);
+            await this.prompt.prompt(dc.context, choices, options.retryPrompt, options.retrySpeak);
+        } else {
+            await this.prompt.prompt(dc.context, choices, options.prompt, options.speak);
         }
-        return this.prompt.prompt(dc.context, choices, options.prompt, options.speak);
+        return Dialog.EndOfTurn;
     }
 
-    protected onRecognize(dc: DialogContext, options: ChoicePromptOptions): Promise<O|undefined> {
-        return this.prompt.recognize(dc.context, options.choices);
+    protected async onRecognize(dc: DialogContext, options: ChoicePromptOptions): Promise<O|undefined> {
+        return await this.prompt.recognize(dc.context, options.choices);
     }
 }

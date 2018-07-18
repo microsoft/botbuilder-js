@@ -5,8 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotAdapter, TurnContext, Promiseable, Activity, ConversationReference, ResourceResponse, TokenResponse, ConversationsResult, ChannelAccount } from 'botbuilder-core';
-import { ConnectorClient, SimpleCredentialProvider, MicrosoftAppCredentials, OAuthApiClient } from 'botframework-connector';
+import { BotAdapter, TurnContext, Promiseable, Activity, ConversationReference, ResourceResponse, TokenResponse, ConversationsResult, ChannelAccount } from '../../botbuilder-core/lib';
+import { ConnectorClient, SimpleCredentialProvider, MicrosoftAppCredentials, OAuthApiClient } from '../../botframework-connector/lib';
 /**
  * Express or Restify Request object.
  */

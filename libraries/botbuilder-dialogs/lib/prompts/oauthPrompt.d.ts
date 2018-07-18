@@ -8,7 +8,7 @@
 import { TurnContext } from 'botbuilder';
 import * as prompts from 'botbuilder-prompts';
 import { DialogContext } from '../dialogContext';
-import { Dialog } from '../dialog';
+import { Dialog, DialogTurnResult } from '../dialog';
 import { PromptOptions } from './prompt';
 /**
  * Settings used to configure an `OAuthPrompt` instance. Includes the ability to adjust the prompts
@@ -91,8 +91,8 @@ export declare class OAuthPrompt extends Dialog {
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
      */
     constructor(settings: OAuthPromptSettingsWithTimeout, validator?: prompts.PromptValidator<any, any>);
-    dialogBegin(dc: DialogContext, options?: PromptOptions): Promise<any>;
-    dialogContinue(dc: DialogContext): Promise<any>;
+    dialogBegin(dc: DialogContext, options?: PromptOptions): Promise<DialogTurnResult>;
+    dialogContinue(dc: DialogContext): Promise<DialogTurnResult>;
     /**
      * Signs the user out of the service.
      *

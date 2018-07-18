@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext } from 'botbuilder';
+import { TurnContext } from '../../botbuilder/lib';
 import { DialogContext } from './dialogContext';
 /**
  * Tracking information for a dialog on the stack.
@@ -23,12 +23,12 @@ export interface DialogInstance<T = any> {
  * result of a dialog that just completed.
  * @param T (Optional) type of result returned by the dialog when it calls `dc.end()`.
  */
-export interface DialogCompletion<T = any> {
-    /** If `true` the dialog is still active. */
-    isActive: boolean;
-    /** If `true` the dialog just completed and the final [result](#result) can be retrieved. */
-    isCompleted: boolean;
-    /** Final result returned by a dialog that just completed. */
+export interface DialogTurnResult<T = any> {
+    /** If `true` a dialog is still active on the dialog stack. */
+    hasActive: boolean;
+    /** If `true` the dialog that was on the stack just completed and the final [result](#result) is available. */
+    hasResult: boolean;
+    /** Final result returned by a dialog that just completed. Can be `undefined` even when [hasResult](#hasResult) is true. */
     result?: T;
 }
 /**
@@ -37,6 +37,8 @@ export interface DialogCompletion<T = any> {
  * @param O (Optional) options that can be passed into the [begin()](#begin) method.
  */
 export declare abstract class Dialog<R = any, O = {}> {
+    /** Signals the end of a turn by a dialog method or waterfall/sequence step.  */
+    static EndOfTurn: DialogTurnResult;
     /**
      * Starts the dialog when its called in isolation from a bot that isn't dialog based.
      *
@@ -61,7 +63,7 @@ export declare abstract class Dialog<R = any, O = {}> {
      * @param state A state object that the dialog will use to persist its current state. This should be an empty object which the dialog will populate. The bot should persist this with its other conversation state for as long as the dialog is still active.
      * @param options (Optional) additional options supported by the dialog.
      */
-    begin(context: TurnContext, state: object, options?: O): Promise<DialogCompletion<R>>;
+    begin(context: TurnContext, state: object, options?: O): Promise<DialogTurnResult<R>>;
     /**
      * Passes a users reply to a dialog thats being used in isolation.
      *
@@ -79,13 +81,13 @@ export declare abstract class Dialog<R = any, O = {}> {
      * @param context Context for the current turn of the conversation with the user.
      * @param state A state object that was previously initialized by a call to [begin()](#begin).
      */
-    continue(context: TurnContext, state: object): Promise<DialogCompletion<R>>;
+    continue(context: TurnContext, state: object): Promise<DialogTurnResult<R>>;
     /**
      * Method called when a new dialog has been pushed onto the stack and is being activated.
      * @param dc The dialog context for the current turn of conversation.
      * @param dialogArgs (Optional) arguments that were passed to the dialog during `begin()` call that started the instance.
      */
-    abstract dialogBegin(dc: DialogContext, dialogArgs?: any): Promise<any>;
+    abstract dialogBegin(dc: DialogContext, dialogArgs?: any): Promise<DialogTurnResult<R>>;
     /**
      * (Optional) method called when an instance of the dialog is the active dialog and the user
      * replies with a new activity. The dialog will generally continue to receive the users replies
@@ -95,7 +97,7 @@ export declare abstract class Dialog<R = any, O = {}> {
      * replies.
      * @param dc The dialog context for the current turn of conversation.
      */
-    dialogContinue?(dc: DialogContext): Promise<any>;
+    dialogContinue?(dc: DialogContext): Promise<DialogTurnResult<R>>;
     /**
      * (Optional) method called when an instance of the dialog is being returned to from another
      * dialog that was started by the current instance using `DialogContext.begin()` or
@@ -107,5 +109,5 @@ export declare abstract class Dialog<R = any, O = {}> {
      * @param dc The dialog context for the current turn of conversation.
      * @param result (Optional) value returned from the dialog that was called. The type of the value returned is dependant on the dialog that was called.
      */
-    dialogResume?(dc: DialogContext, result?: any): Promise<any>;
+    dialogResume?(dc: DialogContext, result?: any): Promise<DialogTurnResult<R>>;
 }

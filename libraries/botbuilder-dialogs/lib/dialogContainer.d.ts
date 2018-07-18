@@ -1,4 +1,4 @@
-import { Dialog } from './dialog';
+import { Dialog, DialogTurnResult } from './dialog';
 import { DialogContext } from './dialogContext';
 import { DialogSet } from './dialogSet';
 /**
@@ -96,6 +96,6 @@ export declare class DialogContainer<R = any, O = {}> extends Dialog {
      * @param initialDialogId ID of the dialog, within the containers dialog set, that should be started anytime an instance of the `DialogContainer` is started.
      */
     constructor(initialDialogId: string);
-    dialogBegin(dc: DialogContext, dialogArgs?: any): Promise<any>;
+    dialogBegin(dc: DialogContext, dialogArgs?: any): Promise<DialogTurnResult<R>>;
     dialogContinue(dc: DialogContext): Promise<any>;
 }

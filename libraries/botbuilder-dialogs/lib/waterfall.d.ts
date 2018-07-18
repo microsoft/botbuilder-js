@@ -1,10 +1,14 @@
 import { DialogContext } from './dialogContext';
-import { Dialog } from './dialog';
+import { Dialog, DialogTurnResult } from './dialog';
 /**
  * Function signature of a waterfall step.
  *
  * @remarks
  * This example shows a simple waterfall that prompts a user to enter the fields needed to set an alarm:
+ *
+ * ```TypeScript
+ * type WaterfallStep = (dc: DialogContext, args?: any, next?: SkipStepFunction) => Promise<DialogTurnResult>;
+ * ```
  *
  * ```JavaScript
  * const { Waterfall } = require('botbuilder-dialogs');
@@ -13,18 +17,18 @@ import { Dialog } from './dialog';
  *      async function (dc, alarm, next) {
  *          dc.activeDialog.state.alarm = alarm || {};
  *          if (!alarm.title) {
- *              await dc.prompt('titlePrompt', `What would you like to call your alarm?`);
+ *              return await dc.prompt('titlePrompt', `What would you like to call your alarm?`);
  *          } else {
- *              await next(alarm.title);
+ *              return await next(alarm.title);
  *          }
  *      },
  *      async function (dc, title, next) {
  *          const alarm = dc.activeDialog.state.alarm;
  *          alarm.title = title;
  *          if (!alarm.time) {
- *              await dc.prompt('timePrompt', `What time would you like to set it for?`);
+ *              return await dc.prompt('timePrompt', `What time would you like to set it for?`);
  *          } else {
- *              await next(alarm.time);
+ *              return await next(alarm.time);
  *          }
  *      },
  *      async function (dc, time) {
@@ -34,7 +38,7 @@ import { Dialog } from './dialog';
  *          // ... set alarm ...
  *
  *          await dc.context.sendActivity(`Alarm set.`);
- *          await dc.end();
+ *          return await dc.end();
  *      }
  * ]));
  * ```
@@ -42,16 +46,16 @@ import { Dialog } from './dialog';
  * @param WaterfallStep.args Argument(s) passed into the dialog for the first step and then the results from calling a prompt or other dialog for subsequent steps.
  * @param WaterfallStep.next Function passed into the step to let you manually skip to the next step in the waterfall.
  */
-export declare type WaterfallStep = (dc: DialogContext, args?: any, next?: SkipStepFunction) => Promise<any>;
+export declare type WaterfallStep = (dc: DialogContext, args?: any, next?: SkipStepFunction) => Promise<DialogTurnResult>;
 /**
  * When called within a waterfall step the dialog will skip to the next waterfall step.
  *
  * ```TypeScript
- * type SkipStepFunction = (args?: any) => Promise<any>;
+ * type SkipStepFunction = (args?: any) => Promise<DialogTurnResult>;
  * ```
  * @param SkipStepFunction.args (Optional) additional argument(s) to pass into the next step.
  */
-export declare type SkipStepFunction = (args?: any) => Promise<any>;
+export declare type SkipStepFunction = (args?: any) => Promise<DialogTurnResult>;
 /**
  * Dialog optimized for prompting a user with a series of questions.
  *
@@ -64,55 +68,61 @@ export declare type SkipStepFunction = (args?: any) => Promise<any>;
  * next step:
  *
  * ```JavaScript
- *  dialogs.add('namePrompt', [
+ * const { Waterfall, Dialog } = require('botbuilder-dialogs');
+ *
+ * dialogs.add('namePrompt', new Waterfall([
  *      async function (dc) {
  *          dc.activeDialog.state.profile = { first: '', last: '', full: '' };
  *          await dc.context.sendActivity(`What's your first name?`);
+ *          return Dialog.EndOfTurn;
  *      },
  *      async function (dc, firstName) {
  *          dc.activeDialog.state.profile.first = firstName;
  *          await dc.context.sendActivity(`Great ${firstName}! What's your last name?`);
+ *          return Dialog.EndOfTurn;
  *      },
  *      async function (dc, lastName) {
  *          const profile = dc.activeDialog.state.profile;
  *          profile.last = lastName;
  *          profile.full = profile.first + ' ' + profile.last;
- *          await dc.end(profile);
+ *          return await dc.end(profile);
  *      }
- *  ]);
+ * ]));
  * ```
  *
  * For more complex sequences you can call other dialogs from within a step and the result returned
  * by the dialog will be passed to the next step:
  *
  * ```JavaScript
- *  dialogs.add('survey', [
+ * const { Waterfall, Dialog } = require('botbuilder-dialogs');
+ *
+ * dialogs.add('survey', [
  *      async function (dc) {
  *          dc.activeDialog.state.survey = { name: undefined, languages: '', years: 0 };
- *          await dc.begin('namePrompt');
+ *          return await dc.begin('namePrompt');
  *      },
  *      async function (dc, name) {
  *          dc.activeDialog.state.survey.name = name;
- *          await dc.context.sendActivity(`Ok ${name.full}... What programming languages do you know?`);
+ *          return await dc.context.sendActivity(`Ok ${name.full}... What programming languages do you know?`);
  *      },
  *      async function (dc, languages) {
  *          dc.activeDialog.state.survey.languages = languages;
- *          await dc.prompt('yearsPrompt', `Great. So how many years have you been programming?`);
+ *          return await dc.prompt('yearsPrompt', `Great. So how many years have you been programming?`);
  *      },
  *      async function (dc, years) {
  *          dc.activeDialog.state.survey.years = years;
  *          await dc.context.sendActivity(`Thank you for taking our survey.`);
- *          await dc.end(dc.activeDialog.survey);
+ *          return await dc.end(dc.activeDialog.survey);
  *      }
- *  ]);
+ * ]);
  *
- *  dialogs.add('yearsPrompt', new NumberPrompt(async (dc, value) => {
+ * dialogs.add('yearsPrompt', new NumberPrompt(async (dc, value) => {
  *      if (value === undefined || value < 0 || value > 110) {
  *          await dc.context.sendActivity(`Enter a number from 0 to 110.`);
  *      } else {
  *          return value;
  *      }
- *  }));
+ * }));
  * ```
  *
  * The example builds on the previous `namePrompt` sample and shows how you can call another dialog
@@ -130,8 +140,8 @@ export declare class Waterfall extends Dialog {
      * @param steps Array of waterfall steps.
      */
     constructor(steps: WaterfallStep[]);
-    dialogBegin(dc: DialogContext, args?: any): Promise<any>;
-    dialogContinue(dc: DialogContext): Promise<any>;
-    dialogResume(dc: DialogContext, result?: any): Promise<any>;
+    dialogBegin(dc: DialogContext, args?: any): Promise<DialogTurnResult>;
+    dialogContinue(dc: DialogContext): Promise<DialogTurnResult>;
+    dialogResume(dc: DialogContext, result?: any): Promise<DialogTurnResult>;
     private runStep(dc, result?);
 }

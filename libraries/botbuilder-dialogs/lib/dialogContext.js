@@ -1,4 +1,12 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * A context object used to manipulate a dialog stack.
@@ -18,13 +26,10 @@ class DialogContext {
      * @param dialogs Parent dialog set.
      * @param context Context for the current turn of conversation with the user.
      * @param state State object being used to persist the dialog stack.
-     * @param onCompleted (Optional) handler to call when the the last dialog on the stack completes.
-     * @param onCompleted.result The result returned by the dialog that just completed.
      */
-    constructor(dialogs, context, state, onCompleted) {
+    constructor(dialogs, context, state) {
         this.dialogs = dialogs;
         this.context = context;
-        this.onCompleted = onCompleted;
         if (!Array.isArray(state['dialogStack'])) {
             state['dialogStack'] = [];
         }
@@ -67,7 +72,7 @@ class DialogContext {
      * @param dialogArgs (Optional) additional argument(s) to pass to the dialog being started.
      */
     begin(dialogId, dialogArgs) {
-        try {
+        return __awaiter(this, void 0, void 0, function* () {
             // Lookup dialog
             const dialog = this.dialogs.find(dialogId);
             if (!dialog) {
@@ -80,34 +85,21 @@ class DialogContext {
             };
             this.stack.push(instance);
             // Call dialogs begin() method.
-            return Promise.resolve(dialog.dialogBegin(this, dialogArgs));
-        }
-        catch (err) {
-            return Promise.reject(err);
-        }
+            const result = yield dialog.dialogBegin(this, dialogArgs);
+            return this.verifyTurnResult(result);
+        });
     }
-    /**
-     * Helper function to simplify formatting the options for calling a prompt dialog.
-     *
-     * @remarks
-     * This is a lightweight wrapper abound [begin()](#begin). It fills in a `PromptOptions`
-     * structure and then passes it through to `dc.begin(dialogId, options)`.
-     *
-     * ```JavaScript
-     * await dc.prompt('confirmPrompt', `Are you sure you'd like to quit?`);
-     * ```
-     * @param O (Optional) type of options expected by the prompt.
-     * @param dialogId ID of the prompt to start.
-     * @param prompt Initial prompt to send the user.
-     * @param choicesOrOptions (Optional) array of choices to prompt the user for or additional prompt options.
-     * @param options (Optional) additional prompt options.
-     */
-    prompt(dialogId, prompt, choicesOrOptions, options) {
-        const args = Object.assign({}, Array.isArray(choicesOrOptions) ? { choices: choicesOrOptions } : choicesOrOptions, options);
-        if (prompt) {
-            args.prompt = prompt;
-        }
-        return this.begin(dialogId, args);
+    prompt(dialogId, promptOrOptions, choices) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let args;
+            if (typeof promptOrOptions === 'object' && promptOrOptions.prompt !== undefined) {
+                args = Object.assign({}, promptOrOptions);
+            }
+            else {
+                args = { prompt: promptOrOptions, choices: choices };
+            }
+            return this.begin(dialogId, args);
+        });
     }
     /**
      * Continues execution of the active dialog, if there is one.
@@ -131,7 +123,7 @@ class DialogContext {
      * ```
      */
     continue() {
-        try {
+        return __awaiter(this, void 0, void 0, function* () {
             // Check for a dialog on the stack
             const instance = this.activeDialog;
             if (instance) {
@@ -141,22 +133,21 @@ class DialogContext {
                     throw new Error(`DialogSet.continue(): Can't continue dialog. A dialog with an id of '${instance.id}' wasn't found.`);
                 }
                 // Check for existence of a continue() method
+                let turnResult;
                 if (dialog.dialogContinue) {
                     // Continue execution of dialog
-                    return Promise.resolve(dialog.dialogContinue(this));
+                    turnResult = yield dialog.dialogContinue(this);
                 }
                 else {
                     // Just end the dialog
-                    return this.end();
+                    turnResult = yield this.end();
                 }
+                return this.verifyTurnResult(turnResult);
             }
             else {
-                return Promise.resolve();
+                return { hasActive: false, hasResult: false };
             }
-        }
-        catch (err) {
-            return Promise.reject(err);
-        }
+        });
     }
     /**
      * Ends a dialog by popping it off the stack and returns an optional result to the dialogs
@@ -184,7 +175,7 @@ class DialogContext {
      * @param result (Optional) result to pass to the parent dialogs `Dialog.resume()` method.
      */
     end(result) {
-        try {
+        return __awaiter(this, void 0, void 0, function* () {
             // Pop active dialog off the stack
             if (this.stack.length > 0) {
                 this.stack.pop();
@@ -198,26 +189,22 @@ class DialogContext {
                     throw new Error(`DialogContext.end(): Can't resume previous dialog. A dialog with an id of '${instance.id}' wasn't found.`);
                 }
                 // Check for existence of a resumeDialog() method
+                let turnResult;
                 if (dialog.dialogResume) {
                     // Return result to previous dialog
-                    return Promise.resolve(dialog.dialogResume(this, result));
+                    turnResult = yield dialog.dialogResume(this, result);
                 }
                 else {
                     // Just end the dialog and pass result to parent dialog
-                    return this.end(result);
+                    turnResult = yield this.end(result);
                 }
+                return this.verifyTurnResult(turnResult);
             }
             else {
                 // Signal completion
-                if (this.onCompleted) {
-                    this.onCompleted(result);
-                }
-                return Promise.resolve();
+                return { hasActive: false, hasResult: true, result: result };
             }
-        }
-        catch (err) {
-            return Promise.reject(err);
-        }
+        });
     }
     /**
      * Deletes any existing dialog stack thus cancelling all dialogs on the stack.
@@ -272,12 +259,23 @@ class DialogContext {
      * @param dialogArgs (Optional) additional argument(s) to pass to the new dialog.
      */
     replace(dialogId, dialogArgs) {
-        // Pop stack
-        if (this.stack.length > 0) {
-            this.stack.pop();
+        return __awaiter(this, void 0, void 0, function* () {
+            // Pop stack
+            if (this.stack.length > 0) {
+                this.stack.pop();
+            }
+            // Start replacement dialog
+            return yield this.begin(dialogId, dialogArgs);
+        });
+    }
+    /** @private helper to ensure the turn result from a dialog looks correct. */
+    verifyTurnResult(result) {
+        result.hasActive = this.stack.length > 0;
+        if (result.hasActive) {
+            result.hasResult = false;
+            result.result = undefined;
         }
-        // Start replacement dialog
-        return this.begin(dialogId, dialogArgs);
+        return result;
     }
 }
 exports.DialogContext = DialogContext;

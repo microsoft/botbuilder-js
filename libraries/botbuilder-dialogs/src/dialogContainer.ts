@@ -5,8 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext } from 'botbuilder';
-import { Dialog } from './dialog';
+import { TurnContext } from '../../botbuilder/lib';
+import { Dialog, DialogTurnResult } from './dialog';
 import { DialogContext } from './dialogContext';
 import { DialogSet } from './dialogSet';
 
@@ -109,27 +109,33 @@ export class DialogContainer<R = any, O = {}> extends Dialog {
         super();
     }
 
-    public async dialogBegin(dc: DialogContext, dialogArgs?: any): Promise<any> {
-        // Start the dialogs entry point dialog.
-        let result: any; 
-        const cdc = new DialogContext(this.dialogs, dc.context, dc.activeDialog.state, (r) => { result = r });
-        await cdc.begin(this.initialDialogId, dialogArgs)
-
-        // End if the dialogs dialog ends.
-        if (!cdc.activeDialog) {
-            return await dc.end(result);
+    public async dialogBegin(dc: DialogContext, dialogArgs?: any): Promise<DialogTurnResult<R>> {
+        // Start the inner dialog.
+        const cdc = new DialogContext(this.dialogs, dc.context, dc.activeDialog.state);
+        const turnResult = await cdc.begin(this.initialDialogId, dialogArgs);
+        
+        // Check for end of inner dialog 
+        if (turnResult.hasResult) {
+            // Return result to calling dialog
+            return await dc.end(turnResult.result);
+        } else {
+            // Just signal end of turn
+            return Dialog.EndOfTurn;
         }
     }
 
     public async dialogContinue(dc: DialogContext): Promise<any> {
-        // Continue dialogs dialog stack.
-        let result: any; 
-        const cdc = new DialogContext(this.dialogs, dc.context, dc.activeDialog.state, (r) => { result = r });
-        await cdc.continue();
-
-        // End if the dialogs dialog ends.
-        if (!cdc.activeDialog) {
-            return await dc.end(result);
+        // Continue execution of inner dialog.
+        const cdc = new DialogContext(this.dialogs, dc.context, dc.activeDialog.state);
+        const turnResult = await cdc.continue();
+        
+        // Check for end of inner dialog 
+        if (turnResult.hasResult) {
+            // Return result to calling dialog
+            return await dc.end(turnResult.result);
+        } else {
+            // Just signal end of turn
+            return Dialog.EndOfTurn;
         }
     }
 }
