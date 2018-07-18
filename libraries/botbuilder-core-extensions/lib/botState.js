@@ -42,9 +42,9 @@ class BotState {
     constructor(storage, storageKey) {
         this.storage = storage;
         this.storageKey = storageKey;
-        this.stateKey = Symbol('state');
         /** NEW */
         this.properties = new Map();
+        this.stateKey = Symbol('state');
     }
     /** NEW */
     createProperty(name, defaultValue) {

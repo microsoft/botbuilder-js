@@ -27,7 +27,7 @@ class BotStatePropertyAccessor {
         return __awaiter(this, void 0, void 0, function* () {
             const obj = yield this.state.read(context);
             if (!obj.hasOwnProperty(this.name) && this.defaultValue !== undefined) {
-                const clone = typeof this.defaultValue == 'object' || Array.isArray(this.defaultValue) ? JSON.parse(JSON.stringify(this.defaultValue)) : this.defaultValue;
+                const clone = typeof this.defaultValue === 'object' || Array.isArray(this.defaultValue) ? JSON.parse(JSON.stringify(this.defaultValue)) : this.defaultValue;
                 obj[this.name] = clone;
             }
             return obj[this.name];

@@ -49,6 +49,8 @@ export interface CachedBotState<T extends StoreItem> {
 export declare class BotState<T extends StoreItem = StoreItem> implements Middleware {
     protected storage: Storage;
     protected storageKey: StorageKeyFactory;
+    /** NEW */
+    readonly properties: Map<string, PropertyAccessor>;
     private stateKey;
     /**
      * Creates a new BotState instance.
@@ -56,8 +58,6 @@ export declare class BotState<T extends StoreItem = StoreItem> implements Middle
      * @param storageKey Function called anytime the storage key for a given turn needs to be calculated.
      */
     constructor(storage: Storage, storageKey: StorageKeyFactory);
-    /** NEW */
-    readonly properties: Map<any, any>;
     /** NEW */
     createProperty<T = any>(name: string, defaultValue?: T): PropertyAccessor<T>;
     /** @private */

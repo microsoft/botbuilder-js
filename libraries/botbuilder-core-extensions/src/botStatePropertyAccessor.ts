@@ -24,13 +24,13 @@ export class BotStatePropertyAccessor<T = any> implements PropertyAccessor<T> {
         const obj = await this.state.read(context);
         if (obj.hasOwnProperty(this.name)) {
             delete obj[this.name];
-        }        
+        }
     }
 
     public async get(context: TurnContext): Promise<T|undefined> {
         const obj = await this.state.read(context);
         if (!obj.hasOwnProperty(this.name) && this.defaultValue !== undefined) {
-            const clone = typeof this.defaultValue == 'object' || Array.isArray(this.defaultValue) ? JSON.parse(JSON.stringify(this.defaultValue)) : this.defaultValue;
+            const clone = typeof this.defaultValue === 'object' || Array.isArray(this.defaultValue) ? JSON.parse(JSON.stringify(this.defaultValue)) : this.defaultValue;
             obj[this.name] = clone;
         }
         return obj[this.name];
