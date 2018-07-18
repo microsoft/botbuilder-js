@@ -111,7 +111,7 @@ export class DialogContainer<R = any, O = {}> extends Dialog {
     public async dialogBegin(dc: DialogContext, dialogArgs?: any): Promise<DialogTurnResult<R>> {
         // Start the inner dialog.
         const cdc = new DialogContext(this.dialogs, dc.context, dc.activeDialog.state);
-        const turnResult = await cdc.begin(this.initialDialogId, dialogArgs);
+        const turnResult = await this.onDialogBegin(dc, dialogArgs);
         
         // Check for end of inner dialog 
         if (turnResult.hasResult) {
@@ -126,7 +126,7 @@ export class DialogContainer<R = any, O = {}> extends Dialog {
     public async dialogContinue(dc: DialogContext): Promise<any> {
         // Continue execution of inner dialog.
         const cdc = new DialogContext(this.dialogs, dc.context, dc.activeDialog.state);
-        const turnResult = await cdc.continue();
+        const turnResult = await this.onDialogContinue(dc);
         
         // Check for end of inner dialog 
         if (turnResult.hasResult) {
@@ -136,5 +136,13 @@ export class DialogContainer<R = any, O = {}> extends Dialog {
             // Just signal end of turn
             return Dialog.EndOfTurn;
         }
+    }
+
+    protected onDialogBegin(dc: DialogContext, dialogArgs?: any): Promise<DialogTurnResult> {
+        return dc.begin(this.initialDialogId, dialogArgs);
+    }
+
+    protected onDialogContinue(dc: DialogContext): Promise<DialogTurnResult> {
+        return dc.continue();
     }
 }

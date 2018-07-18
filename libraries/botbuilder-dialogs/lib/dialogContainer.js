@@ -119,7 +119,7 @@ class DialogContainer extends dialog_1.Dialog {
         return __awaiter(this, void 0, void 0, function* () {
             // Start the inner dialog.
             const cdc = new dialogContext_1.DialogContext(this.dialogs, dc.context, dc.activeDialog.state);
-            const turnResult = yield cdc.begin(this.initialDialogId, dialogArgs);
+            const turnResult = yield this.onDialogBegin(dc, dialogArgs);
             // Check for end of inner dialog 
             if (turnResult.hasResult) {
                 // Return result to calling dialog
@@ -135,7 +135,7 @@ class DialogContainer extends dialog_1.Dialog {
         return __awaiter(this, void 0, void 0, function* () {
             // Continue execution of inner dialog.
             const cdc = new dialogContext_1.DialogContext(this.dialogs, dc.context, dc.activeDialog.state);
-            const turnResult = yield cdc.continue();
+            const turnResult = yield this.onDialogContinue(dc);
             // Check for end of inner dialog 
             if (turnResult.hasResult) {
                 // Return result to calling dialog
@@ -146,6 +146,12 @@ class DialogContainer extends dialog_1.Dialog {
                 return dialog_1.Dialog.EndOfTurn;
             }
         });
+    }
+    onDialogBegin(dc, dialogArgs) {
+        return dc.begin(this.initialDialogId, dialogArgs);
+    }
+    onDialogContinue(dc) {
+        return dc.continue();
     }
 }
 exports.DialogContainer = DialogContainer;

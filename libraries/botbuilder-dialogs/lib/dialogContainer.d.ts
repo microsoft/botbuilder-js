@@ -105,4 +105,6 @@ export declare class DialogContainer<R = any, O = {}> extends Dialog {
     constructor(initialDialogId: string);
     dialogBegin(dc: DialogContext, dialogArgs?: any): Promise<DialogTurnResult<R>>;
     dialogContinue(dc: DialogContext): Promise<any>;
+    protected onDialogBegin(dc: DialogContext, dialogArgs?: any): Promise<DialogTurnResult>;
+    protected onDialogContinue(dc: DialogContext): Promise<DialogTurnResult>;
 }
