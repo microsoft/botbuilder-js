@@ -276,6 +276,35 @@ export class DialogContext {
         return await this.begin(dialogId, dialogArgs);
     }
 
+    /**
+     * Requests the [activeDialog](#activeDialog) to re-prompt the user for input.
+     * 
+     * @remarks
+     * The `Dialog.dialogReprompt()` method is optional for dialogs so if there's no active dialog
+     * or the active dialog doesn't support re-prompting, this method will effectively be a no-op. 
+     */
+    public async reprompt(): Promise<DialogTurnResult> {
+        // Check for a dialog on the stack
+        const instance = this.activeDialog;
+        if (instance) {
+            // Lookup dialog
+            const dialog = this.dialogs.find(instance.id);
+            if (!dialog) { throw new Error(`DialogSet.reprompt(): Can't find A dialog with an id of '${instance.id}'.`) }
+
+            // Check for existence of a dialogReprompt() method
+            let turnResult: DialogTurnResult;
+            if (dialog.dialogReprompt) {
+                // Ask dialog to re-prompt
+                turnResult = await dialog.dialogReprompt(this);
+            } else {
+                turnResult = { hasActive: true, hasResult: false };
+            }
+            return this.verifyTurnResult(turnResult);
+        } else {
+            return { hasActive: false, hasResult: false };
+        }
+    }
+
 
     /** @private helper to ensure the turn result from a dialog looks correct. */
     private verifyTurnResult(result: DialogTurnResult): DialogTurnResult {

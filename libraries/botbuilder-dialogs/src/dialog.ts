@@ -139,4 +139,10 @@ export abstract class Dialog<R = any, O = {}> {
      * @param result (Optional) value returned from the dialog that was called. The type of the value returned is dependant on the dialog that was called. 
      */
     dialogResume?(dc: DialogContext, result?: any): Promise<DialogTurnResult<R>>;
+
+    /**
+     * (Optional) method called when the dialog has been requested to re-prompt the user for input.
+     * @param dc The dialog context for the current turn of conversation.
+     */
+    dialogReprompt?(dc: DialogContext): Promise<DialogTurnResult<R>>;
 }

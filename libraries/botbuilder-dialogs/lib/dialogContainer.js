@@ -147,11 +147,29 @@ class DialogContainer extends dialog_1.Dialog {
             }
         });
     }
+    dialogReprompt(dc) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // Delegate to inner dialog.
+            const cdc = new dialogContext_1.DialogContext(this.dialogs, dc.context, dc.activeDialog.state);
+            return yield this.onDialogReprompt(dc);
+        });
+    }
+    dialogResume(dc, result) {
+        // Containers are typically leaf nodes on the stack but the dev is free to push other dialogs
+        // on top of the stack which will result in the container receiving an unexpected call to
+        // dialogResume() when the pushed on dialog ends. 
+        // To avoid the container prematurely ending we need to implement this method and simply 
+        // ask our inner dialog stack to re-prompt.
+        return this.dialogReprompt(dc);
+    }
     onDialogBegin(dc, dialogArgs) {
         return dc.begin(this.initialDialogId, dialogArgs);
     }
     onDialogContinue(dc) {
         return dc.continue();
+    }
+    onDialogReprompt(dc) {
+        return dc.reprompt();
     }
 }
 exports.DialogContainer = DialogContainer;

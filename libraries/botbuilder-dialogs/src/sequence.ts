@@ -8,6 +8,7 @@ export interface SequenceStep {
 }
 
 export interface SequenceStepContext {
+    readonly id: string;
     result?: any;
     values: object;
     state: object;
@@ -28,8 +29,8 @@ export class Sequence extends Dialog {
         });
     }
 
-    public async dialogBegin(dc: DialogContext, args?: any): Promise<DialogTurnResult> {
-        return await this.runNextStep(dc, Object.assign({}, args));
+    public async dialogBegin(dc: DialogContext, dialogArgs?: any): Promise<DialogTurnResult> {
+        return await this.runNextStep(dc, Object.assign({}, dialogArgs));
     }
 
     public async dialogContinue(dc: DialogContext): Promise<DialogTurnResult> {
@@ -42,7 +43,7 @@ export class Sequence extends Dialog {
         return await this.runStep(dc, state, result);
     }
 
-    private async runNextStep(dc: DialogContext, form: object, afterId?: string): Promise<DialogTurnResult> {
+    private async runNextStep(dc: DialogContext, values: object, afterId?: string): Promise<DialogTurnResult> {
         // Find next step id
         let index = 0; 
         if (afterId) {
@@ -56,7 +57,7 @@ export class Sequence extends Dialog {
         if (index < this.steps.length) {
             // Update state
             const state: SequenceState = {
-                values: form,
+                values: values,
                 stepId: this.steps[0].id,
                 stepState: {}
             };
@@ -68,14 +69,19 @@ export class Sequence extends Dialog {
     }
 
     private async runStep(dc: DialogContext, state: SequenceState, result?: any): Promise<DialogTurnResult> {
-        const steps = this.steps.filter((s) => s.id === state.stepId);
-        const sc: SequenceStepContext = {
+        const step: SequenceStepContext = {
+            id: state.stepId,
             result: result,
             values: state.values,
             state: state.stepState,
             next: () => this.runNextStep(dc, state.values, state.stepId)
         }
-        return await steps[0].step.onStep(dc, sc);
+        return await this.onRunStep(dc, step);
+    }
+
+    protected async onRunStep(dc: DialogContext, step: SequenceStepContext): Promise<DialogTurnResult> {
+        const steps = this.steps.filter((s) => s.id === step.id);
+        return await steps[0].step.onStep(dc, step);
     }
 }
 

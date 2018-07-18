@@ -20,9 +20,9 @@ class Sequence extends dialog_1.Dialog {
             };
         });
     }
-    dialogBegin(dc, args) {
+    dialogBegin(dc, dialogArgs) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.runNextStep(dc, Object.assign({}, args));
+            return yield this.runNextStep(dc, Object.assign({}, dialogArgs));
         });
     }
     dialogContinue(dc) {
@@ -37,7 +37,7 @@ class Sequence extends dialog_1.Dialog {
             return yield this.runStep(dc, state, result);
         });
     }
-    runNextStep(dc, form, afterId) {
+    runNextStep(dc, values, afterId) {
         return __awaiter(this, void 0, void 0, function* () {
             // Find next step id
             let index = 0;
@@ -52,7 +52,7 @@ class Sequence extends dialog_1.Dialog {
             if (index < this.steps.length) {
                 // Update state
                 const state = {
-                    values: form,
+                    values: values,
                     stepId: this.steps[0].id,
                     stepState: {}
                 };
@@ -66,14 +66,20 @@ class Sequence extends dialog_1.Dialog {
     }
     runStep(dc, state, result) {
         return __awaiter(this, void 0, void 0, function* () {
-            const steps = this.steps.filter((s) => s.id === state.stepId);
-            const sc = {
+            const step = {
+                id: state.stepId,
                 result: result,
                 values: state.values,
                 state: state.stepState,
                 next: () => this.runNextStep(dc, state.values, state.stepId)
             };
-            return yield steps[0].step.onStep(dc, sc);
+            return yield this.onRunStep(dc, step);
+        });
+    }
+    onRunStep(dc, step) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const steps = this.steps.filter((s) => s.id === step.id);
+            return yield steps[0].step.onStep(dc, step);
         });
     }
 }

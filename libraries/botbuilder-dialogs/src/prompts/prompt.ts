@@ -100,6 +100,20 @@ export abstract class Prompt extends Dialog {
             }
         }
     }
+
+    public async dialogReprompt(dc: DialogContext): Promise<DialogTurnResult> {
+        const state = dc.activeDialog.state as PromptState;
+        return await this.onPrompt(dc, state.options, true);
+    }
+
+    public dialogResume(dc: DialogContext, result?: any): Promise<DialogTurnResult> {
+        // Prompts are typically leaf nodes on the stack but the dev is free to push other dialogs
+        // on top of the stack which will result in the prompt receiving an unexpected call to
+        // dialogResume() when the pushed on dialog ends. 
+        // To avoid the prompt prematurely ending we need to implement this method and 
+        // simply re-prompt the user.
+        return this.dialogReprompt(dc);
+    }
 }
 
 interface PromptState {

@@ -73,6 +73,20 @@ class Prompt extends dialog_1.Dialog {
             }
         });
     }
+    dialogReprompt(dc) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const state = dc.activeDialog.state;
+            return yield this.onPrompt(dc, state.options, true);
+        });
+    }
+    dialogResume(dc, result) {
+        // Prompts are typically leaf nodes on the stack but the dev is free to push other dialogs
+        // on top of the stack which will result in the prompt receiving an unexpected call to
+        // dialogResume() when the pushed on dialog ends. 
+        // To avoid the prompt prematurely ending we need to implement this method and 
+        // simply re-prompt the user.
+        return this.dialogReprompt(dc);
+    }
 }
 exports.Prompt = Prompt;
 //# sourceMappingURL=prompt.js.map

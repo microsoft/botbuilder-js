@@ -180,6 +180,14 @@ export declare class DialogContext {
      * @param dialogArgs (Optional) additional argument(s) to pass to the new dialog.
      */
     replace(dialogId: string, dialogArgs?: any): Promise<DialogTurnResult>;
+    /**
+     * Requests the [activeDialog](#activeDialog) to re-prompt the user for input.
+     *
+     * @remarks
+     * The `Dialog.dialogReprompt()` method is optional for dialogs so if there's no active dialog
+     * or the active dialog doesn't support re-prompting, this method will effectively be a no-op.
+     */
+    reprompt(): Promise<DialogTurnResult>;
     /** @private helper to ensure the turn result from a dialog looks correct. */
     private verifyTurnResult(result);
 }

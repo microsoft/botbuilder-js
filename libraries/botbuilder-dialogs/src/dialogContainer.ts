@@ -138,11 +138,30 @@ export class DialogContainer<R = any, O = {}> extends Dialog {
         }
     }
 
+    public async dialogReprompt(dc: DialogContext): Promise<DialogTurnResult> {
+        // Delegate to inner dialog.
+        const cdc = new DialogContext(this.dialogs, dc.context, dc.activeDialog.state);
+        return await this.onDialogReprompt(dc);
+    }
+
+    public dialogResume(dc: DialogContext, result?: any): Promise<DialogTurnResult> {
+        // Containers are typically leaf nodes on the stack but the dev is free to push other dialogs
+        // on top of the stack which will result in the container receiving an unexpected call to
+        // dialogResume() when the pushed on dialog ends. 
+        // To avoid the container prematurely ending we need to implement this method and simply 
+        // ask our inner dialog stack to re-prompt.
+        return this.dialogReprompt(dc);
+    }
+
     protected onDialogBegin(dc: DialogContext, dialogArgs?: any): Promise<DialogTurnResult> {
         return dc.begin(this.initialDialogId, dialogArgs);
     }
 
     protected onDialogContinue(dc: DialogContext): Promise<DialogTurnResult> {
         return dc.continue();
+    }
+
+    protected onDialogReprompt(dc: DialogContext): Promise<DialogTurnResult> {
+        return dc.reprompt();
     }
 }

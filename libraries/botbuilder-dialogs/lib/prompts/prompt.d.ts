@@ -43,4 +43,6 @@ export declare abstract class Prompt extends Dialog {
     protected abstract onRecognize(dc: DialogContext, options: PromptOptions): Promise<any | undefined>;
     dialogBegin(dc: DialogContext, options: PromptOptions): Promise<DialogTurnResult>;
     dialogContinue(dc: DialogContext): Promise<DialogTurnResult>;
+    dialogReprompt(dc: DialogContext): Promise<DialogTurnResult>;
+    dialogResume(dc: DialogContext, result?: any): Promise<DialogTurnResult>;
 }
