@@ -10,12 +10,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./prompts"));
 __export(require("./steps"));
 __export(require("./dialog"));
-__export(require("./dialogContainer"));
+__export(require("./dialogControl"));
 __export(require("./dialogContext"));
-__export(require("./dialogSet"));
-__export(require("./rootDialogContainer"));
-__export(require("./sequence"));
-__export(require("./waterfall"));
+__export(require("./rootDialog"));
+__export(require("./sequenceDialog"));
+__export(require("./waterfallDialog"));
 // Re-exporting choice related interfaces used just to avoid TS developers from needing to 
 // import interfaces from two libraries when working with dialogs.
 var lib_1 = require("../../botbuilder-prompts/lib");

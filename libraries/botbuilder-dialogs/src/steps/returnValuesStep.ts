@@ -7,7 +7,7 @@
  */
 import { DialogTurnResult } from '../dialog';
 import { DialogContext } from '../dialogContext';
-import { SequenceStep, SequenceStepContext } from '../sequence';
+import { SequenceStep, SequenceStepContext } from '../sequenceDialog';
 
 /**
  * Ends the current `Sequence` and returns any accumulated values to the dialog that started the

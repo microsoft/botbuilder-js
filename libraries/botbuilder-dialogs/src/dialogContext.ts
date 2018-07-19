@@ -6,8 +6,7 @@
  * Licensed under the MIT License.
  */
 import { TurnContext, Activity } from '../../botbuilder/lib';
-import { DialogInstance, DialogTurnResult } from './dialog';
-import { DialogSet } from './dialogSet';
+import { DialogInstance, DialogTurnResult, DialogContainer } from './dialog';
 import { PromptOptions } from './prompts';
 import { Choice } from '../../botbuilder-prompts/lib';
 
@@ -29,11 +28,11 @@ export class DialogContext {
 
      /**
       * Creates a new DialogContext instance.
-      * @param dialogs Parent dialog set.
+      * @param container Parent dialog set.
       * @param context Context for the current turn of conversation with the user.
       * @param state State object being used to persist the dialog stack.
       */
-    constructor(public readonly dialogs: DialogSet, public readonly context: TurnContext, state: object) { 
+    constructor(public readonly container: DialogContainer, public readonly context: TurnContext, state: object) { 
         if (!Array.isArray(state['dialogStack'])) { state['dialogStack'] = [] } 
         this.stack = state['dialogStack'];
     }
@@ -77,7 +76,7 @@ export class DialogContext {
      */
     public async begin(dialogId: string, dialogArgs?: any): Promise<DialogTurnResult> {
         // Lookup dialog
-        const dialog = this.dialogs.find(dialogId);
+        const dialog = this.container.find(dialogId);
         if (!dialog) { throw new Error(`DialogContext.begin(): A dialog with an id of '${dialogId}' wasn't found.`) }
         
         // Push new instance onto stack. 
@@ -99,7 +98,7 @@ export class DialogContext {
         while (this.stack.length > 0) {
             // Find dialog and notify it of cancellation
             const instance = this.activeDialog;
-            const dialog = this.dialogs.find(instance.id);
+            const dialog = this.container.find(instance.id);
             if (dialog && dialog.dialogCancel) {
                 await dialog.dialogCancel(this);
             }
@@ -162,7 +161,7 @@ export class DialogContext {
         const instance = this.activeDialog;
         if (instance) {
             // Lookup dialog
-            const dialog = this.dialogs.find(instance.id);
+            const dialog = this.container.find(instance.id);
             if (!dialog) { throw new Error(`DialogSet.continue(): Can't continue dialog. A dialog with an id of '${instance.id}' wasn't found.`) }
 
             // Check for existence of a continue() method
@@ -214,7 +213,7 @@ export class DialogContext {
         if (instance) {
 
             // Lookup dialog
-            const dialog = this.dialogs.find(instance.id);
+            const dialog = this.container.find(instance.id);
             if (!dialog) { throw new Error(`DialogContext.end(): Can't resume previous dialog. A dialog with an id of '${instance.id}' wasn't found.`) }
             
             // Check for existence of a resumeDialog() method
@@ -287,7 +286,7 @@ export class DialogContext {
         const instance = this.activeDialog;
         if (instance) {
             // Lookup dialog
-            const dialog = this.dialogs.find(instance.id);
+            const dialog = this.container.find(instance.id);
             if (!dialog) { throw new Error(`DialogSet.reprompt(): Can't find A dialog with an id of '${instance.id}'.`) }
 
             // Check for existence of a dialogReprompt() method

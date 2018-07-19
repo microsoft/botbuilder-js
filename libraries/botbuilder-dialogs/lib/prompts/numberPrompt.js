@@ -17,7 +17,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const dialog_1 = require("../dialog");
 const prompt_1 = require("./prompt");
-const prompts = require("botbuilder-prompts");
+const prompts = require("../../../botbuilder-prompts/lib");
 /**
  * Prompts a user to enter a number.
  *
@@ -76,8 +76,8 @@ class NumberPrompt extends prompt_1.Prompt {
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
      * @param defaultLocale (Optional) locale to use if `dc.context.activity.locale` not specified. Defaults to a value of `en-us`.
      */
-    constructor(validator, defaultLocale) {
-        super(validator);
+    constructor(dialogId, validator, defaultLocale) {
+        super(dialogId, validator);
         this.prompt = prompts.createNumberPrompt(undefined, defaultLocale);
     }
     onPrompt(dc, options, isRetry) {

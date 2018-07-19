@@ -9,7 +9,7 @@ import { Activity } from '../../../botbuilder/lib';
 import { Choice } from '../../../botbuilder-prompts/lib';
 import { DialogTurnResult } from '../dialog';
 import { DialogContext } from '../dialogContext';
-import { SequenceStep, SequenceStepContext } from '../sequence';
+import { SequenceStep, SequenceStepContext } from '../sequenceDialog';
 import { PromptOptions } from '../prompts/prompt';
 
 /**

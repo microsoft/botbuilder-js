@@ -5,9 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog, DialogTurnResult } from './dialog';
+import { TurnContext } from 'botbuilder';
+import { Dialog, DialogTurnResult, DialogContainer } from './dialog';
 import { DialogContext } from './dialogContext';
-import { DialogSet } from './dialogSet';
 
 
 /**
@@ -96,21 +96,28 @@ import { DialogSet } from './dialogSet';
  * @param R (Optional) type of result that's expected to be returned by the dialog.
  * @param O (Optional) options that can be passed into the begin() method.
  */
-export class DialogContainer<R = any, O = {}> extends Dialog {
-    /** The containers dialog set. */
-    protected dialogs = new DialogSet();
+export class DialogControl<R = any, O = {}> extends Dialog implements DialogContainer {
+    private dialogs: { [id:string]: Dialog; } = {};
+    protected initialDialogId: string;
 
-    /**
-     * Creates a new `DialogContainer` instance.
-     * @param initialDialogId ID of the dialog, within the containers dialog set, that should be started anytime an instance of the `DialogContainer` is started.
-     */
-    constructor(protected initialDialogId: string) { 
-        super();
+    public add<T extends Dialog>(dialog: T): T {
+        if (!(dialog instanceof Dialog)) { throw new Error(`${this.id}.add(): the added dialog is not an instance of the Dialog class.`) }
+        if (this.dialogs.hasOwnProperty(dialog.id)) { throw new Error(`${this.id}.add(): a dialog with an id of '${dialog.id}' has already been added.`) }
+        this.dialogs[dialog.id] = dialog;
+        return dialog;
+    }
+    
+    public async createContext(context: TurnContext, state: object): Promise<DialogContext> {
+        return new DialogContext(this, context, state);
+    }
+
+    public find<T extends Dialog = Dialog>(dialogId: string): T|undefined {
+        return this.dialogs[dialogId] as T;
     }
 
     public async dialogBegin(dc: DialogContext, dialogArgs?: any): Promise<DialogTurnResult<R>> {
         // Start the inner dialog.
-        const cdc = new DialogContext(this.dialogs, dc.context, dc.activeDialog.state);
+        const cdc = new DialogContext(this, dc.context, dc.activeDialog.state);
         const turnResult = await this.onDialogBegin(dc, dialogArgs);
         
         // Check for end of inner dialog 
@@ -125,13 +132,13 @@ export class DialogContainer<R = any, O = {}> extends Dialog {
 
     public async dialogCancel(dc: DialogContext): Promise<DialogTurnResult<R>> {
         // Delegate to inner dialog stack.
-        const cdc = new DialogContext(this.dialogs, dc.context, dc.activeDialog.state);
+        const cdc = new DialogContext(this, dc.context, dc.activeDialog.state);
         return await this.onDialogCancel(dc);
     }
 
     public async dialogContinue(dc: DialogContext): Promise<DialogTurnResult<R>> {
         // Continue execution of inner dialog.
-        const cdc = new DialogContext(this.dialogs, dc.context, dc.activeDialog.state);
+        const cdc = new DialogContext(this, dc.context, dc.activeDialog.state);
         const turnResult = await this.onDialogContinue(dc);
         
         // Check for end of inner dialog 
@@ -146,7 +153,7 @@ export class DialogContainer<R = any, O = {}> extends Dialog {
 
     public async dialogReprompt(dc: DialogContext): Promise<DialogTurnResult> {
         // Delegate to inner dialog.
-        const cdc = new DialogContext(this.dialogs, dc.context, dc.activeDialog.state);
+        const cdc = new DialogContext(this, dc.context, dc.activeDialog.state);
         return await this.onDialogReprompt(dc);
     }
 

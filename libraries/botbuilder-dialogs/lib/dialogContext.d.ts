@@ -6,8 +6,7 @@
  * Licensed under the MIT License.
  */
 import { TurnContext, Activity } from '../../botbuilder/lib';
-import { DialogInstance, DialogTurnResult } from './dialog';
-import { DialogSet } from './dialogSet';
+import { DialogInstance, DialogTurnResult, DialogContainer } from './dialog';
 import { PromptOptions } from './prompts';
 import { Choice } from '../../botbuilder-prompts/lib';
 /**
@@ -23,17 +22,17 @@ import { Choice } from '../../botbuilder-prompts/lib';
  * ```
  */
 export declare class DialogContext {
-    readonly dialogs: DialogSet;
+    readonly container: DialogContainer;
     readonly context: TurnContext;
     /** Current dialog stack. */
     readonly stack: DialogInstance[];
     /**
      * Creates a new DialogContext instance.
-     * @param dialogs Parent dialog set.
+     * @param container Parent dialog set.
      * @param context Context for the current turn of conversation with the user.
      * @param state State object being used to persist the dialog stack.
      */
-    constructor(dialogs: DialogSet, context: TurnContext, state: object);
+    constructor(container: DialogContainer, context: TurnContext, state: object);
     /**
      * Returns the cached instance of the active dialog on the top of the stack or `undefined` if
      * the stack is empty.

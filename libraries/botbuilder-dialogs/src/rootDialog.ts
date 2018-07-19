@@ -5,17 +5,34 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext, ActivityTypes } from 'botbuilder';
-import { DialogTurnResult } from './dialog';
+import { TurnContext, ActivityTypes } from '../../botbuilder/lib';
+import { Dialog, DialogTurnResult, DialogContainer } from './dialog';
 import { DialogContext } from './dialogContext';
-import { DialogSet } from './dialogSet';
 
 
-export abstract class RootDialogContainer {
-    /** The containers dialog set. */
-    protected readonly dialogs = new DialogSet();
+export abstract class RootDialog implements DialogContainer {
+    private dialogs: { [id:string]: Dialog; } = {};
 
-    public async continue(context: TurnContext, state: object): Promise<void> {
+    constructor(public readonly id = '') { }
+
+    public readonly parent = undefined;
+
+    public add<T extends Dialog>(dialog: T): T {
+        if (!(dialog instanceof Dialog)) { throw new Error(`RootDialog.add(): the added dialog is not an instance of the Dialog class.`) }
+        if (this.dialogs.hasOwnProperty(dialog.id)) { throw new Error(`RootDialog.add(): a dialog with an id of '${dialog.id}' has already been added.`) }
+        this.dialogs[dialog.id] = dialog;
+        return dialog;
+    }
+    
+    public async createContext(context: TurnContext, state: object): Promise<DialogContext> {
+        return new DialogContext(this, context, state);
+    }
+
+    public find<T extends Dialog = Dialog>(dialogId: string): T|undefined {
+        return this.dialogs[dialogId] as T;
+    }
+
+    public async dispatch(context: TurnContext, state: object): Promise<void> {
         // Listen for endOfConversation sent
         let conversationEnded = context.activity.type === ActivityTypes.EndOfConversation;
         context.onSendActivities(async (ctx, activities, next) => {
@@ -34,7 +51,7 @@ export abstract class RootDialogContainer {
         }
 
         // Create dialog context
-        const dc = await this.dialogs.createContext(context, rootState.dialogState);
+        const dc = await this.createContext(context, rootState.dialogState);
         const wasActive = !!dc.activeDialog; 
 
         // Signal start of conversation

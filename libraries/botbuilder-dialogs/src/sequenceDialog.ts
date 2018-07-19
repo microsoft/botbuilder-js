@@ -15,11 +15,11 @@ export interface SequenceStepContext {
     next(): Promise<DialogTurnResult>;
 }
 
-export class Sequence extends Dialog {
+export class SequenceDialog extends Dialog {
     private readonly steps: SequenceStepInfo[];
 
-    constructor (steps: SequenceStep[]) {
-        super();
+    constructor (dialogId: string, steps: SequenceStep[]) {
+        super(dialogId);
         let index = 0; 
         this.steps = steps.map((s) => {
             return {

@@ -8,7 +8,7 @@
 import { Dialog, DialogTurnResult } from '../dialog';
 import { DialogContext } from '../dialogContext';
 import { Prompt, PromptOptions, PromptValidator } from './prompt';
-import * as prompts from 'botbuilder-prompts';
+import * as prompts from '../../../botbuilder-prompts/lib';
 
 /**
  * Prompts a user to enter some text. 
@@ -61,8 +61,8 @@ export class TextPrompt<O = string> extends Prompt {
      * Creates a new `TextPrompt` instance.
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.  
      */
-    constructor(validator?: PromptValidator<string, O>) {
-        super(validator);
+    constructor(dialogId: string, validator?: PromptValidator<string, O>) {
+        super(dialogId, validator);
         this.prompt = prompts.createTextPrompt(); 
     }
 

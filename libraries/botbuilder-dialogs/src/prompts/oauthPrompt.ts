@@ -5,8 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext, Activity, ActivityTypes, InputHints, TokenResponse } from 'botbuilder';
-import * as prompts from 'botbuilder-prompts';
+import { TurnContext, Activity, ActivityTypes, InputHints, TokenResponse } from '../../../botbuilder/lib';
+import * as prompts from '../../../botbuilder-prompts/lib';
 import { DialogContext } from '../dialogContext';
 import { Dialog, DialogTurnResult } from '../dialog';
 import { PromptOptions, PromptValidator } from './prompt';
@@ -92,8 +92,8 @@ export class OAuthPrompt extends Dialog {
      * @param settings Settings used to configure the prompt. 
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.  
      */
-    constructor(private settings: OAuthPromptSettingsWithTimeout, private validator?: PromptValidator<TokenResponse>) { 
-        super();
+    constructor(dialogId: string, private settings: OAuthPromptSettingsWithTimeout, private validator?: PromptValidator<TokenResponse>) { 
+        super(dialogId);
         this.prompt = prompts.createOAuthPrompt(settings);
     }
 

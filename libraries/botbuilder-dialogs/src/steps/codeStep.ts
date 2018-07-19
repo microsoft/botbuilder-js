@@ -7,7 +7,7 @@
  */
 import { DialogTurnResult } from '../dialog';
 import { DialogContext } from '../dialogContext';
-import { SequenceStep, SequenceStepContext } from '../sequence';
+import { SequenceStep, SequenceStepContext } from '../sequenceDialog';
 
 export type CodeStepHandler = (dc: DialogContext, step: SequenceStepContext) => Promise<DialogTurnResult>;
 

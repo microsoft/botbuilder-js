@@ -5,8 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext, Activity, ActivityTypes } from 'botbuilder';
-import { Choice } from 'botbuilder-prompts';
+import { TurnContext, Activity, ActivityTypes } from '../../../botbuilder/lib';
+import { Choice } from '../../../botbuilder-prompts/lib';
 import { DialogContext } from '../dialogContext';
 import { Dialog, DialogTurnResult } from '../dialog';
 
@@ -47,8 +47,8 @@ export interface PromptValidatorContext<R, O> {
  * Base class for all prompts.
  */
 export abstract class Prompt extends Dialog {
-    constructor(private validator?: PromptValidator<any, any>) { 
-        super();
+    constructor(dialogId: string, private validator?: PromptValidator<any, any>) { 
+        super(dialogId);
     }
 
     protected abstract onPrompt(dc: DialogContext, options: PromptOptions, isRetry: boolean): Promise<DialogTurnResult>;

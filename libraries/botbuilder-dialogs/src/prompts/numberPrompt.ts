@@ -8,7 +8,7 @@
 import { Dialog, DialogTurnResult } from '../dialog';
 import { DialogContext } from '../dialogContext';
 import { Prompt, PromptOptions, PromptValidator } from './prompt';
-import * as prompts from 'botbuilder-prompts';
+import * as prompts from '../../../botbuilder-prompts/lib';
 
 /**
  * Prompts a user to enter a number. 
@@ -70,8 +70,8 @@ export class NumberPrompt<O = number> extends Prompt {
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.  
      * @param defaultLocale (Optional) locale to use if `dc.context.activity.locale` not specified. Defaults to a value of `en-us`.
      */
-    constructor(validator?: PromptValidator<number, O>, defaultLocale?: string) {
-        super(validator);
+    constructor(dialogId: string, validator?: PromptValidator<number, O>, defaultLocale?: string) {
+        super(dialogId, validator);
         this.prompt = prompts.createNumberPrompt(undefined, defaultLocale); 
     }
 

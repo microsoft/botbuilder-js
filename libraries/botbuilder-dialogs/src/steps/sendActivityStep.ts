@@ -8,7 +8,7 @@
 import { Activity } from '../../../botbuilder/lib';
 import { DialogTurnResult } from '../dialog';
 import { DialogContext } from '../dialogContext';
-import { SequenceStep, SequenceStepContext } from '../sequence';
+import { SequenceStep, SequenceStepContext } from '../sequenceDialog';
 
 /**
  * Sends an activity or message to a user and then moves immediately to the next step within a

@@ -23,12 +23,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class DialogContext {
     /**
      * Creates a new DialogContext instance.
-     * @param dialogs Parent dialog set.
+     * @param container Parent dialog set.
      * @param context Context for the current turn of conversation with the user.
      * @param state State object being used to persist the dialog stack.
      */
-    constructor(dialogs, context, state) {
-        this.dialogs = dialogs;
+    constructor(container, context, state) {
+        this.container = container;
         this.context = context;
         if (!Array.isArray(state['dialogStack'])) {
             state['dialogStack'] = [];
@@ -74,7 +74,7 @@ class DialogContext {
     begin(dialogId, dialogArgs) {
         return __awaiter(this, void 0, void 0, function* () {
             // Lookup dialog
-            const dialog = this.dialogs.find(dialogId);
+            const dialog = this.container.find(dialogId);
             if (!dialog) {
                 throw new Error(`DialogContext.begin(): A dialog with an id of '${dialogId}' wasn't found.`);
             }
@@ -97,7 +97,7 @@ class DialogContext {
             while (this.stack.length > 0) {
                 // Find dialog and notify it of cancellation
                 const instance = this.activeDialog;
-                const dialog = this.dialogs.find(instance.id);
+                const dialog = this.container.find(instance.id);
                 if (dialog && dialog.dialogCancel) {
                     yield dialog.dialogCancel(this);
                 }
@@ -146,7 +146,7 @@ class DialogContext {
             const instance = this.activeDialog;
             if (instance) {
                 // Lookup dialog
-                const dialog = this.dialogs.find(instance.id);
+                const dialog = this.container.find(instance.id);
                 if (!dialog) {
                     throw new Error(`DialogSet.continue(): Can't continue dialog. A dialog with an id of '${instance.id}' wasn't found.`);
                 }
@@ -202,7 +202,7 @@ class DialogContext {
             const instance = this.activeDialog;
             if (instance) {
                 // Lookup dialog
-                const dialog = this.dialogs.find(instance.id);
+                const dialog = this.container.find(instance.id);
                 if (!dialog) {
                     throw new Error(`DialogContext.end(): Can't resume previous dialog. A dialog with an id of '${instance.id}' wasn't found.`);
                 }
@@ -281,7 +281,7 @@ class DialogContext {
             const instance = this.activeDialog;
             if (instance) {
                 // Lookup dialog
-                const dialog = this.dialogs.find(instance.id);
+                const dialog = this.container.find(instance.id);
                 if (!dialog) {
                     throw new Error(`DialogSet.reprompt(): Can't find A dialog with an id of '${instance.id}'.`);
                 }

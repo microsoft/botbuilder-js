@@ -17,7 +17,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const dialog_1 = require("../dialog");
 const prompt_1 = require("./prompt");
-const prompts = require("botbuilder-prompts");
+const prompts = require("../../../botbuilder-prompts/lib");
 /**
  * Prompts a user to enter some text.
  *
@@ -67,8 +67,8 @@ class TextPrompt extends prompt_1.Prompt {
      * Creates a new `TextPrompt` instance.
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
      */
-    constructor(validator) {
-        super(validator);
+    constructor(dialogId, validator) {
+        super(dialogId, validator);
         this.prompt = prompts.createTextPrompt();
     }
     onPrompt(dc, options, isRetry) {

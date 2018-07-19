@@ -7,6 +7,13 @@
  */
 import { TurnContext } from '../../botbuilder/lib';
 import { DialogContext } from './dialogContext';
+export interface DialogContainer {
+    readonly id: string;
+    readonly parent: DialogContainer | undefined;
+    add<T extends Dialog>(dialog: T): T;
+    createContext(context: TurnContext, state: object): Promise<DialogContext>;
+    find<T extends Dialog = Dialog>(dialogId: string): T | undefined;
+}
 /**
  * Tracking information for a dialog on the stack.
  * @param T (Optional) type of state being persisted for dialog.
@@ -37,51 +44,12 @@ export interface DialogTurnResult<T = any> {
  * @param O (Optional) options that can be passed into the [begin()](#begin) method.
  */
 export declare abstract class Dialog<R = any, O = {}> {
+    readonly id: string;
+    private _parent;
     /** Signals the end of a turn by a dialog method or waterfall/sequence step.  */
     static EndOfTurn: DialogTurnResult;
-    /**
-     * Starts the dialog when its called in isolation from a bot that isn't dialog based.
-     *
-     * @remarks
-     * The bot is responsible for maintaining the sticky-ness of the dialog. To do that it should
-     * persist the state object it passed into the dialog as part of its overall state when the
-     * turn completes. When the user replies it then needs to pass the persisted state object into
-     * a call to the dialogs [continue()](#continue) method.
-     *
-     * Depending on the dialog, its possible for the dialog to finish immediately so it's advised
-     * to check the completion object returned by `begin()` and ensure that the dialog is still
-     * active before continuing.
-     *
-     * ```JavaScript
-     * const state = {};
-     * const completion = await dialog.begin(context, state);
-     * if (completion.isCompleted) {
-     *     const value = completion.result;
-     * }
-     * ```
-     * @param context Context for the current turn of the conversation with the user.
-     * @param state A state object that the dialog will use to persist its current state. This should be an empty object which the dialog will populate. The bot should persist this with its other conversation state for as long as the dialog is still active.
-     * @param options (Optional) additional options supported by the dialog.
-     */
-    begin(context: TurnContext, state: object, options?: O): Promise<DialogTurnResult<R>>;
-    /**
-     * Passes a users reply to a dialog thats being used in isolation.
-     *
-     * @remarks
-     * The bot should keep calling `continue()` for future turns until the dialog returns a
-     * completion object with `isCompleted == true`. To cancel or interrupt the prompt simply
-     * delete the `state` object being persisted.
-     *
-     * ```JavaScript
-     * const completion = await dialog.continue(context, state);
-     * if (completion.isCompleted) {
-     *     const value = completion.result;
-     * }
-     * ```
-     * @param context Context for the current turn of the conversation with the user.
-     * @param state A state object that was previously initialized by a call to [begin()](#begin).
-     */
-    continue(context: TurnContext, state: object): Promise<DialogTurnResult<R>>;
+    constructor(id: string);
+    parent: DialogContainer | undefined;
     /**
      * Method called when a new dialog has been pushed onto the stack and is being activated.
      * @param dc The dialog context for the current turn of conversation.

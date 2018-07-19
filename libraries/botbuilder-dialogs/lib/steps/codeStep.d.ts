@@ -7,7 +7,7 @@
  */
 import { DialogTurnResult } from '../dialog';
 import { DialogContext } from '../dialogContext';
-import { SequenceStep, SequenceStepContext } from '../sequence';
+import { SequenceStep, SequenceStepContext } from '../sequenceDialog';
 export declare type CodeStepHandler = (dc: DialogContext, step: SequenceStepContext) => Promise<DialogTurnResult>;
 /**
  * Allows for the execution of a custom block of code within a `Sequence`.

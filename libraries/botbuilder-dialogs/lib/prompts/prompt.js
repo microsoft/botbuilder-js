@@ -15,14 +15,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-const botbuilder_1 = require("botbuilder");
+const lib_1 = require("../../../botbuilder/lib");
 const dialog_1 = require("../dialog");
 /**
  * Base class for all prompts.
  */
 class Prompt extends dialog_1.Dialog {
-    constructor(validator) {
-        super();
+    constructor(dialogId, validator) {
+        super(dialogId);
         this.validator = validator;
     }
     dialogBegin(dc, options) {
@@ -38,7 +38,7 @@ class Prompt extends dialog_1.Dialog {
     dialogContinue(dc) {
         return __awaiter(this, void 0, void 0, function* () {
             // Don't do anything for non-message activities
-            if (dc.context.activity.type === botbuilder_1.ActivityTypes.Message) {
+            if (dc.context.activity.type === lib_1.ActivityTypes.Message) {
                 // Perform base recognition
                 const state = dc.activeDialog.state;
                 const recognized = yield this.onRecognize(dc, state.options);
