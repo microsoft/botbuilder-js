@@ -3,7 +3,7 @@
 
 import './css/app.css';
 import { BotStateSet, ConversationState, MemoryStorage, UserState } from 'botbuilder';
-import { BlobStorage, CosmosDbStorage, TableStorage } from 'botbuilder-azure';
+import { BlobStorage, CosmosDbStorage } from 'botbuilder-azure';
 import 'botframework-webchat/botchat.css';
 import { App } from 'botframework-webchat/built/App';
 import { WebChatAdapter } from './webChatAdapter';
@@ -32,15 +32,6 @@ const memory = new MemoryStorage();
 //     databaseId: '',
 //     collectionId: ''
 // });
-
-// To use Azure Table Storage to store memory, you can the TableStorage class from `botbuilder-azure`
-// const memory = new TableStorage({
-//     tablename: '',                                                                             
-//     storageAccessKey: '', // optional
-//     storageAccountOrConnectionString: '', // optional
-//     host: '' // optional
-// });
-
 
 // Create the custom WebChatAdapter and add the ConversationState middleware
 const webChatAdapter = new WebChatAdapter()

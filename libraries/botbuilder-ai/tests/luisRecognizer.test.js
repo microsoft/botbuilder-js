@@ -265,17 +265,6 @@ describe('LuisRecognizer', function () {
         });
     });
 
-    it('should run as a piece of middleware', function (done) {
-        var recognizer = new LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey, verbose: true });
-        var context = new TestContext({ text: 'My name is Emad' });
-        recognizer.onTurn(context, () => {
-            const res = recognizer.get(context);
-            assert(res);
-            assert(res.text == 'My name is Emad');
-            done();
-        });
-    });
-
     it('should cache multiple calls to recognize()', function (done) {
         var recognizer = new LuisRecognizer({ appId: luisAppId, subscriptionKey: subscriptionKey, verbose: true });
         var context = new TestContext({ text: 'My name is Emad' });
@@ -345,11 +334,11 @@ describe('LuisRecognizer', function () {
             assert(res);
             assert(res.text == 'My name is Emad');
         }).then(() => {
-            let luisTraceActivities = context.sent.filter(s => s.type === 'trace' && s.name === 'LuisRecognizerMiddleware');
+            let luisTraceActivities = context.sent.filter(s => s.type === 'trace' && s.name === 'LuisRecognizer');
             assert(luisTraceActivities.length === 1);
             let traceActivity = luisTraceActivities[0];
             assert(traceActivity.type === 'trace');
-            assert(traceActivity.name === 'LuisRecognizerMiddleware');
+            assert(traceActivity.name === 'LuisRecognizer');
             assert(traceActivity.label === 'Luis Trace');
             assert(traceActivity.valueType === 'https://www.luis.ai/schemas/trace');
             assert(traceActivity.value);

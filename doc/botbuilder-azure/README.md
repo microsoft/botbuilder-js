@@ -10,7 +10,6 @@
 
 * [BlobStorage](classes/botbuilder_azure.blobstorage.md)
 * [CosmosDbStorage](classes/botbuilder_azure.cosmosdbstorage.md)
-* [TableStorage](classes/botbuilder_azure.tablestorage.md)
 
 
 ### Interfaces
@@ -20,7 +19,6 @@
 * [CosmosDbStorageSettings](interfaces/botbuilder_azure.cosmosdbstoragesettings.md)
 * [Host](interfaces/botbuilder_azure.host.md)
 * [TableServiceAsync](interfaces/botbuilder_azure.tableserviceasync.md)
-* [TableStorageSettings](interfaces/botbuilder_azure.tablestoragesettings.md)
 
 
 
