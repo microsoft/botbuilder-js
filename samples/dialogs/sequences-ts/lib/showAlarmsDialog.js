@@ -10,10 +10,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const botbuilder_dialogs_1 = require("botbuilder-dialogs");
 const moment = require("moment");
-class ShowAlarmsDialog extends botbuilder_dialogs_1.DialogContainer {
-    constructor(userState) {
-        super('showAlarms');
-        this.dialogs.add('showAlarms', new botbuilder_dialogs_1.Sequence([
+const SHOW_ALARMS_DLG = 'showAlarms';
+class ShowAlarmsDialog extends botbuilder_dialogs_1.ComponentDialog {
+    constructor(dialogId, userState) {
+        super(dialogId);
+        // Add control flow dialogs (first added is initial dialog)
+        this.add(new botbuilder_dialogs_1.SequenceDialog(SHOW_ALARMS_DLG, [
             new botbuilder_dialogs_1.CodeStep((dc, step) => __awaiter(this, void 0, void 0, function* () {
                 let msg = `No alarms found.`;
                 const user = userState.get(dc.context);

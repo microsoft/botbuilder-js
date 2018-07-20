@@ -1,13 +1,16 @@
-import { DialogContainer, Sequence, CodeStep } from 'botbuilder-dialogs';
+import { ComponentDialog, SequenceDialog, CodeStep } from 'botbuilder-dialogs';
 import { UserState } from 'botbuilder';
 import { AlarmUser } from './models';
 import * as moment from 'moment';
 
-export class ShowAlarmsDialog extends DialogContainer {
-    constructor(userState: UserState) {
-        super('showAlarms');
+const SHOW_ALARMS_DLG = 'showAlarms';
 
-        this.dialogs.add('showAlarms', new Sequence([
+export class ShowAlarmsDialog extends ComponentDialog {
+    constructor(dialogId: string, userState: UserState) {
+        super(dialogId);
+
+        // Add control flow dialogs (first added is initial dialog)
+        this.add(new SequenceDialog(SHOW_ALARMS_DLG, [
             new CodeStep(async (dc, step) => {
                 let msg = `No alarms found.`;
                 const user = userState.get(dc.context) as AlarmUser;

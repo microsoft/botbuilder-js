@@ -8,35 +8,52 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const botbuilder_1 = require("botbuilder");
 const botbuilder_dialogs_1 = require("botbuilder-dialogs");
 const addAlarmDialog_1 = require("./addAlarmDialog");
 const deleteAlarmDialog_1 = require("./deleteAlarmDialog");
 const showAlarmsDialog_1 = require("./showAlarmsDialog");
-class AlarmBot extends botbuilder_dialogs_1.RootDialogContainer {
-    constructor(userState) {
+const ADD_ALARM_DLG = 'addAlarm';
+const DELETE_ALARM_DLG = 'deleteAlarm';
+const SHOW_ALARMS_DLG = 'slowAlarms';
+class AlarmBot extends botbuilder_dialogs_1.DialogDispatcher {
+    constructor(storage) {
         super();
-        // Add dialogs
-        this.dialogs.add('addAlarm', new addAlarmDialog_1.AddAlarmDialog(userState));
-        this.dialogs.add('deleteAlarm', new deleteAlarmDialog_1.DeleteAlarmDialog(userState));
-        this.dialogs.add('showAlarms', new showAlarmsDialog_1.ShowAlarmsDialog(userState));
+        // Initialize state
+        this.userState = new botbuilder_1.UserState(storage);
+        this.convoState = new botbuilder_1.ConversationState(storage);
+        // Add dialogs for top level tasks
+        this.add(new addAlarmDialog_1.AddAlarmDialog(ADD_ALARM_DLG, this.userState));
+        this.add(new deleteAlarmDialog_1.DeleteAlarmDialog(DELETE_ALARM_DLG, this.userState));
+        this.add(new showAlarmsDialog_1.ShowAlarmsDialog(SHOW_ALARMS_DLG, this.userState));
     }
-    onInterruption(dc) {
+    dispatch(context) {
+        // Ensure user properly initialized
+        const user = this.userState.get(context);
+        if (!user.alarms) {
+            user.alarms = [];
+        }
+        // Dispatch activity
+        const state = this.convoState.get(context);
+        return super.dispatch(context, state);
+    }
+    onMessage(dc) {
         return __awaiter(this, void 0, void 0, function* () {
             const utterance = (dc.context.activity.text || '').trim().toLowerCase();
             // Start addAlarm dialog
             if (utterance.includes('add alarm')) {
                 yield dc.cancel();
-                yield dc.begin('addAlarm');
+                yield dc.begin(ADD_ALARM_DLG);
                 // Start deleteAlarm dialog
             }
             else if (utterance.includes('delete alarm')) {
                 yield dc.cancel();
-                yield dc.begin('deleteAlarm');
+                yield dc.begin(DELETE_ALARM_DLG);
                 // Start showAlarms
             }
             else if (utterance.includes('show alarms')) {
                 yield dc.cancel();
-                yield dc.begin('showAlarms');
+                yield dc.begin(SHOW_ALARMS_DLG);
                 // Check for cancel
             }
             else if (utterance === 'cancel') {
@@ -50,7 +67,7 @@ class AlarmBot extends botbuilder_dialogs_1.RootDialogContainer {
             }
         });
     }
-    onFallback(dc) {
+    onNoResponse(dc) {
         return __awaiter(this, void 0, void 0, function* () {
             yield dc.context.sendActivity(`Hi! I'm a simple alarm bot. Say "add alarm", "delete alarm", or "show alarms".`);
         });

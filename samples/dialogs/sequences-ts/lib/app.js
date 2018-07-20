@@ -21,25 +21,17 @@ const adapter = new botbuilder_1.BotFrameworkAdapter({
     appId: process.env.MICROSOFT_APP_ID,
     appPassword: process.env.MICROSOFT_APP_PASSWORD
 });
-// Add state middleware
+// Create bots dispatcher
 const storage = new botbuilder_1.MemoryStorage();
-const convoState = new botbuilder_1.ConversationState(storage);
-const userState = new botbuilder_1.UserState(storage);
-adapter.use(new botbuilder_1.BotStateSet(convoState, userState));
-// Create root bot
-const bot = new alarmBot_1.AlarmBot(userState);
+const bot = new alarmBot_1.AlarmBot(storage);
+// Add state middleware
+adapter.use(new botbuilder_1.BotStateSet(bot.convoState, bot.userState));
 // Listen for incoming requests 
 server.post('/api/messages', (req, res) => {
     // Route received request to adapter for processing
     adapter.processActivity(req, res, (context) => __awaiter(this, void 0, void 0, function* () {
-        // Ensure user properly initialized
-        const user = userState.get(context);
-        if (!user.alarms) {
-            user.alarms = [];
-        }
         // Dispatch activity to bot
-        const state = convoState.get(context);
-        yield bot.continue(context, state);
+        yield bot.dispatch(context);
     }));
 });
 //# sourceMappingURL=app.js.map

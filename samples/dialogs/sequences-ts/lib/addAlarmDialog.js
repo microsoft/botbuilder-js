@@ -9,13 +9,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const botbuilder_dialogs_1 = require("botbuilder-dialogs");
+const titlePrompt_1 = require("./prompts/titlePrompt");
+const timePrompt_1 = require("./prompts/timePrompt");
 const moment = require("moment");
-class AddAlarmDialog extends botbuilder_dialogs_1.DialogContainer {
-    constructor(userState) {
-        super('addAlarm');
-        this.dialogs.add('addAlarm', new botbuilder_dialogs_1.Sequence([
-            new botbuilder_dialogs_1.PromptStep('title', 'titlePrompt', `What would you like to call your alarm?`),
-            new botbuilder_dialogs_1.PromptStep('time', 'timePrompt', `What time would you like to set the alarm for?`),
+const ADD_ALARM_DLG = 'addAlarm';
+const TITLE_PROMPT_DLG = 'titlePrompt';
+const TIME_PROMPT_DLG = 'timePrompt';
+class AddAlarmDialog extends botbuilder_dialogs_1.ComponentDialog {
+    constructor(dialogId, userState) {
+        super(dialogId);
+        // Add control flow dialogs (first added is initial dialog)
+        this.add(new botbuilder_dialogs_1.SequenceDialog(ADD_ALARM_DLG, [
+            new botbuilder_dialogs_1.PromptStep('title', TITLE_PROMPT_DLG, `What would you like to call your alarm?`),
+            new botbuilder_dialogs_1.PromptStep('time', TIME_PROMPT_DLG, `What time would you like to set the alarm for?`),
             new botbuilder_dialogs_1.CodeStep((dc, step) => __awaiter(this, void 0, void 0, function* () {
                 // Convert to Alarm
                 const alarm = {
@@ -30,34 +36,9 @@ class AddAlarmDialog extends botbuilder_dialogs_1.DialogContainer {
                 return yield dc.end();
             }))
         ]));
-        this.dialogs.add('titlePrompt', new botbuilder_dialogs_1.TextPrompt((context, prompt) => __awaiter(this, void 0, void 0, function* () {
-            const result = (prompt.result || '').trim();
-            if (result.length < 3) {
-                yield context.sendActivity(`Title should be at least 3 characters long.`);
-            }
-            else {
-                prompt.end(result);
-            }
-        })));
-        this.dialogs.add('timePrompt', new botbuilder_dialogs_1.DatetimePrompt((context, prompt) => __awaiter(this, void 0, void 0, function* () {
-            try {
-                const result = prompt.result || [];
-                if (result.length < 0) {
-                    throw new Error('missing time');
-                }
-                if (result[0].type !== 'datetime') {
-                    throw new Error('unsupported type');
-                }
-                const value = new Date(result[0].value);
-                if (value.getTime() < new Date().getTime()) {
-                    throw new Error('in the past');
-                }
-                prompt.end(result);
-            }
-            catch (err) {
-                yield context.sendActivity(`Please enter a valid time in the future like "tomorrow at 9am" or say "cancel".`);
-            }
-        })));
+        // Add prompts
+        this.add(new titlePrompt_1.TitlePrompt(TITLE_PROMPT_DLG));
+        this.add(new timePrompt_1.TimePrompt(TIME_PROMPT_DLG));
     }
 }
 exports.AddAlarmDialog = AddAlarmDialog;

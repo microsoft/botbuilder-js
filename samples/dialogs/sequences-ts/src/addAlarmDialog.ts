@@ -1,15 +1,22 @@
-import { DialogContainer, TextPrompt, DatetimePrompt, Sequence, PromptStep, CodeStep } from 'botbuilder-dialogs';
+import { ComponentDialog, SequenceDialog, PromptStep, CodeStep } from 'botbuilder-dialogs';
 import { UserState } from 'botbuilder';
 import { Alarm, AlarmUser } from './models';
+import { TitlePrompt } from './prompts/titlePrompt';
+import { TimePrompt } from './prompts/timePrompt';
 import * as moment from 'moment';
 
-export class AddAlarmDialog extends DialogContainer {
-    constructor(userState: UserState) {
-        super('addAlarm');
+const ADD_ALARM_DLG = 'addAlarm';
+const TITLE_PROMPT_DLG = 'titlePrompt';
+const TIME_PROMPT_DLG = 'timePrompt';
 
-        this.dialogs.add('addAlarm', new Sequence([
-            new PromptStep('title', 'titlePrompt', `What would you like to call your alarm?`),
-            new PromptStep('time', 'timePrompt', `What time would you like to set the alarm for?`),
+export class AddAlarmDialog extends ComponentDialog {
+    constructor(dialogId: string, userState: UserState) {
+        super(dialogId);
+
+        // Add control flow dialogs (first added is initial dialog)
+        this.add(new SequenceDialog(ADD_ALARM_DLG, [
+            new PromptStep('title', TITLE_PROMPT_DLG, `What would you like to call your alarm?`),
+            new PromptStep('time', TIME_PROMPT_DLG, `What time would you like to set the alarm for?`),
             new CodeStep(async (dc, step) => {
                 // Convert to Alarm
                 const alarm: Alarm = {
@@ -27,26 +34,8 @@ export class AddAlarmDialog extends DialogContainer {
             })
         ]));
         
-        this.dialogs.add('titlePrompt', new TextPrompt(async (context, prompt) => {
-            const result = (prompt.result || '').trim();
-            if (result.length < 3) {
-                await context.sendActivity(`Title should be at least 3 characters long.`);
-            } else {
-                prompt.end(result)
-            }
-        }));
-        
-        this.dialogs.add('timePrompt', new DatetimePrompt(async (context, prompt) => {
-            try {
-                const result = prompt.result || [];
-                if (result.length < 0) { throw new Error('missing time') }
-                if (result[0].type !== 'datetime') { throw new Error('unsupported type') }
-                const value = new Date(result[0].value);
-                if (value.getTime() < new Date().getTime()) { throw new Error('in the past') }
-                prompt.end(result);
-            } catch (err) {
-                await context.sendActivity(`Please enter a valid time in the future like "tomorrow at 9am" or say "cancel".`);
-            }
-        }));
+        // Add prompts
+        this.add(new TitlePrompt(TITLE_PROMPT_DLG));
+        this.add(new TimePrompt(TIME_PROMPT_DLG));
     }
 }

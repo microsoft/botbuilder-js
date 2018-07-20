@@ -1,5 +1,4 @@
-import { BotFrameworkAdapter, ConversationState, UserState, BotStateSet, MemoryStorage,TurnContext } from 'botbuilder';
-import { DialogSet } from 'botbuilder-dialogs';
+import { BotFrameworkAdapter, BotStateSet, MemoryStorage } from 'botbuilder';
 import * as restify from 'restify';
 import { AlarmBot } from './alarmBot';
 
@@ -15,25 +14,18 @@ const adapter = new BotFrameworkAdapter( {
     appPassword: process.env.MICROSOFT_APP_PASSWORD 
 });
 
-// Add state middleware
+// Create bots dispatcher
 const storage = new MemoryStorage();
-const convoState = new ConversationState(storage);
-const userState = new UserState(storage);
-adapter.use(new BotStateSet(convoState, userState));
+const bot = new AlarmBot(storage);
 
-// Create root bot
-const bot = new AlarmBot(userState);
+// Add state middleware
+adapter.use(new BotStateSet(bot.convoState, bot.userState));
 
 // Listen for incoming requests 
 server.post('/api/messages', (req, res) => {
     // Route received request to adapter for processing
     adapter.processActivity(req, res, async (context) => {
-        // Ensure user properly initialized
-        const user = userState.get(context);
-        if (!user.alarms) { user.alarms = [] }
-
         // Dispatch activity to bot
-        const state = convoState.get(context);
-        await bot.continue(context, state);
+        await bot.dispatch(context);
     });
 });
