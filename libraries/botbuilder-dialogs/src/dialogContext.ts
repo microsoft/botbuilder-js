@@ -94,7 +94,7 @@ export class DialogContext {
     /**
      * Cancels all dialogs on the stack resulting in an empty stack.
      */
-    public async cancel(): Promise<DialogTurnResult> {
+    public async cancelAll(): Promise<DialogTurnResult> {
         while (this.stack.length > 0) {
             // Find dialog and notify it of cancellation
             const instance = this.activeDialog;

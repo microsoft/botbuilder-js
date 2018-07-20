@@ -181,7 +181,7 @@ class ComponentDialog extends dialog_1.Dialog {
         return dc.begin(this.initialDialogId, dialogArgs);
     }
     onDialogCancel(dc) {
-        return dc.cancel();
+        return dc.cancelAll();
     }
     onDialogContinue(dc) {
         return dc.continue();

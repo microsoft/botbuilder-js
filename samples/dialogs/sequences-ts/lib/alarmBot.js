@@ -42,24 +42,24 @@ class AlarmBot extends botbuilder_dialogs_1.DialogDispatcher {
             const utterance = (dc.context.activity.text || '').trim().toLowerCase();
             // Start addAlarm dialog
             if (utterance.includes('add alarm')) {
-                yield dc.cancel();
+                yield dc.cancelAll();
                 yield dc.begin(ADD_ALARM_DLG);
                 // Start deleteAlarm dialog
             }
             else if (utterance.includes('delete alarm')) {
-                yield dc.cancel();
+                yield dc.cancelAll();
                 yield dc.begin(DELETE_ALARM_DLG);
                 // Start showAlarms
             }
             else if (utterance.includes('show alarms')) {
-                yield dc.cancel();
+                yield dc.cancelAll();
                 yield dc.begin(SHOW_ALARMS_DLG);
                 // Check for cancel
             }
             else if (utterance === 'cancel') {
                 if (dc.activeDialog) {
                     yield dc.context.sendActivity(`Ok... Cancelled.`);
-                    yield dc.cancel();
+                    yield dc.cancelAll();
                 }
                 else {
                     yield dc.context.sendActivity(`Nothing to cancel.`);

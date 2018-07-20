@@ -92,7 +92,7 @@ class DialogContext {
     /**
      * Cancels all dialogs on the stack resulting in an empty stack.
      */
-    cancel() {
+    cancelAll() {
         return __awaiter(this, void 0, void 0, function* () {
             while (this.stack.length > 0) {
                 // Find dialog and notify it of cancellation

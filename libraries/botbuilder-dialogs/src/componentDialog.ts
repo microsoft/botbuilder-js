@@ -173,7 +173,7 @@ export class ComponentDialog<R = any, O = {}> extends Dialog implements DialogCo
     }
 
     protected onDialogCancel(dc: DialogContext): Promise<DialogTurnResult> {
-        return dc.cancel();
+        return dc.cancelAll();
     }
 
     protected onDialogContinue(dc: DialogContext): Promise<DialogTurnResult> {

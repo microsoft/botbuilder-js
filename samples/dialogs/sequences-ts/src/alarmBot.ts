@@ -40,24 +40,24 @@ export class AlarmBot extends DialogDispatcher {
 
         // Start addAlarm dialog
         if (utterance.includes('add alarm')) {
-            await dc.cancel();
+            await dc.cancelAll();
             await dc.begin(ADD_ALARM_DLG);
 
         // Start deleteAlarm dialog
         } else if (utterance.includes('delete alarm')) {
-            await dc.cancel();
+            await dc.cancelAll();
             await dc.begin(DELETE_ALARM_DLG);
 
         // Start showAlarms
         } else if (utterance.includes('show alarms')) {
-            await dc.cancel();
+            await dc.cancelAll();
             await dc.begin(SHOW_ALARMS_DLG);
 
         // Check for cancel
         } else if (utterance === 'cancel') {
             if (dc.activeDialog) {
                 await dc.context.sendActivity(`Ok... Cancelled.`);
-                await dc.cancel();
+                await dc.cancelAll();
             } else {
                 await dc.context.sendActivity(`Nothing to cancel.`);
             }

@@ -71,7 +71,7 @@ export declare class DialogContext {
     /**
      * Cancels all dialogs on the stack resulting in an empty stack.
      */
-    cancel(): Promise<DialogTurnResult>;
+    cancelAll(): Promise<DialogTurnResult>;
     /**
      * Helper function to simplify formatting the options for calling a prompt dialog.
      *
