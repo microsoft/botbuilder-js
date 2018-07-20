@@ -5,9 +5,9 @@
 export * from './prompts';
 export * from './steps';
 export * from './dialog';
-export * from './dialogControl';
+export * from './componentDialog';
 export * from './dialogContext';
-export * from './rootDialog';
+export * from './dialogDispatcher';
 export * from './sequenceDialog';
 export * from './waterfallDialog';
-export { FoundChoice, Choice, ChoiceFactoryOptions, FoundDatetime, FindChoicesOptions, ListStyle, PromptValidator } from '../../botbuilder-prompts/lib';
+export { FoundChoice, Choice, ChoiceFactoryOptions, FoundDatetime, FindChoicesOptions, ListStyle, PromptValidator } from 'botbuilder-prompts';

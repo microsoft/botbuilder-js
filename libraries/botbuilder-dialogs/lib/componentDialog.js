@@ -96,7 +96,7 @@ const dialogContext_1 = require("./dialogContext");
  * @param R (Optional) type of result that's expected to be returned by the dialog.
  * @param O (Optional) options that can be passed into the begin() method.
  */
-class DialogControl extends dialog_1.Dialog {
+class ComponentDialog extends dialog_1.Dialog {
     constructor() {
         super(...arguments);
         this.dialogs = {};
@@ -107,6 +107,10 @@ class DialogControl extends dialog_1.Dialog {
         }
         if (this.dialogs.hasOwnProperty(dialog.id)) {
             throw new Error(`${this.id}.add(): a dialog with an id of '${dialog.id}' has already been added.`);
+        }
+        dialog.parent = this;
+        if (this.initialDialogId === undefined) {
+            this.initialDialogId = dialog.id;
         }
         this.dialogs[dialog.id] = dialog;
         return dialog;
@@ -186,5 +190,5 @@ class DialogControl extends dialog_1.Dialog {
         return dc.reprompt();
     }
 }
-exports.DialogControl = DialogControl;
-//# sourceMappingURL=dialogControl.js.map
+exports.ComponentDialog = ComponentDialog;
+//# sourceMappingURL=componentDialog.js.map

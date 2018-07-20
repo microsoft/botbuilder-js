@@ -5,12 +5,12 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext, ActivityTypes } from '../../botbuilder/lib';
+import { TurnContext, ActivityTypes } from 'botbuilder';
 import { Dialog, DialogTurnResult, DialogContainer } from './dialog';
 import { DialogContext } from './dialogContext';
 
 
-export abstract class RootDialog implements DialogContainer {
+export abstract class DialogDispatcher implements DialogContainer {
     private dialogs: { [id:string]: Dialog; } = {};
 
     constructor(public readonly id = '') { }
@@ -20,6 +20,7 @@ export abstract class RootDialog implements DialogContainer {
     public add<T extends Dialog>(dialog: T): T {
         if (!(dialog instanceof Dialog)) { throw new Error(`RootDialog.add(): the added dialog is not an instance of the Dialog class.`) }
         if (this.dialogs.hasOwnProperty(dialog.id)) { throw new Error(`RootDialog.add(): a dialog with an id of '${dialog.id}' has already been added.`) }
+        dialog.parent = this;
         this.dialogs[dialog.id] = dialog;
         return dialog;
     }
@@ -44,15 +45,14 @@ export abstract class RootDialog implements DialogContainer {
 
         // Initialize state object
         let newConversation = false;
-        const rootState = state as RootDialogContainerState;
-        if (!rootState.dialogState) {
+        const dState = state as DispatcherState;
+        if (!dState.dialogState) {
             newConversation = true;
-            rootState.dialogState = {};
+            dState.dialogState = {};
         }
 
         // Create dialog context
-        const dc = await this.createContext(context, rootState.dialogState);
-        const wasActive = !!dc.activeDialog; 
+        const dc = await this.createContext(context, dState.dialogState);
 
         // Signal start of conversation
         if (!context.responded) {
@@ -63,48 +63,76 @@ export abstract class RootDialog implements DialogContainer {
             console.warn(`RootDialogContainer.continue(): the root dialog was called and 'context.responded' is already true.`);
         }
 
-        // Check for interruptions
-        let result: DialogTurnResult;
-        const isMessage = context.activity.type === ActivityTypes.Message;
-        if (!context.responded && !conversationEnded && isMessage) {
-            await this.onInterruption(dc);
-        }
-
-        // Continue existing dialog
-        if (!context.responded && !conversationEnded) {
-            await dc.continue();
-        }
-
-        // Run fallback logic
-        if (!context.responded && !conversationEnded && isMessage) {
-            await this.onFallback(dc);
+        // Dispatch activity
+        if (!conversationEnded && !context.responded) {
+            // Check for interruptions and handle non-message activities
+            await this.onActivity(dc);
+            if (!conversationEnded && !context.responded) {
+                // Continue existing dialog
+                await dc.continue();
+                if (!conversationEnded && !context.responded && context.activity.type === ActivityTypes.Message) {
+                    // Run fallback logic
+                    await this.onNoResponse(dc);
+                }
+            }
         }
 
         // Signal end of conversation
         if (conversationEnded) {
-            delete rootState.dialogState;
+            delete dState.dialogState;
             await this.onConversationEnd(dc);
         }
+    }
+
+    protected onActivity(dc: DialogContext): Promise<void> {
+        switch (dc.context.activity.type) {
+            case ActivityTypes.ContactRelationUpdate:
+                return this.onContactRelationUpdate(dc);
+            case ActivityTypes.ConversationUpdate:
+                return this.onConversationUpdate(dc);
+            case ActivityTypes.Event:
+                return this.onEvent(dc);
+            case ActivityTypes.Invoke:
+                return this.onInvoke(dc);
+            case ActivityTypes.Message:
+                return this.onMessage(dc);
+        }
+    }
+
+    protected onContactRelationUpdate(dc: DialogContext): Promise<void> {
+        return Promise.resolve();
     }
 
     protected onConversationBegin(dc: DialogContext): Promise<void> {
         return Promise.resolve();
     }
 
-    protected onInterruption(dc: DialogContext): Promise<void> {
-        return Promise.resolve();
-    }
-
-    protected onFallback(dc: DialogContext): Promise<void> {
-        return Promise.resolve();
-    }
-
     protected onConversationEnd(dc: DialogContext): Promise<void> {
+        return Promise.resolve();
+    }
+
+    protected onConversationUpdate(dc: DialogContext): Promise<void> {
+        return Promise.resolve();
+    }
+
+    protected onEvent(dc: DialogContext): Promise<void> {
+        return Promise.resolve();
+    }
+
+    protected onInvoke(dc: DialogContext): Promise<void> {
+        return Promise.resolve();
+    }
+
+    protected onMessage(dc: DialogContext): Promise<void> {
+        return Promise.resolve();
+    }
+
+    protected onNoResponse(dc: DialogContext): Promise<void> {
         return Promise.resolve();
     }
 }
 
-interface RootDialogContainerState {
+interface DispatcherState {
     dialogState?: object;
 }
 

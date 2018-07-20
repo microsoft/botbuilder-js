@@ -94,7 +94,7 @@ import { DialogContext } from './dialogContext';
  * @param R (Optional) type of result that's expected to be returned by the dialog.
  * @param O (Optional) options that can be passed into the begin() method.
  */
-export declare class DialogControl<R = any, O = {}> extends Dialog implements DialogContainer {
+export declare class ComponentDialog<R = any, O = {}> extends Dialog implements DialogContainer {
     private dialogs;
     protected initialDialogId: string;
     add<T extends Dialog>(dialog: T): T;
