@@ -11,7 +11,6 @@ import { BotState } from './botState';
 export interface PropertyAccessor<T = any> {
     delete(context: TurnContext): Promise<void>;
     get(context: TurnContext): Promise<T | undefined>;
-    has(context: TurnContext): Promise<boolean>;
     set(context: TurnContext, value: T): Promise<void>;
 }
 /** NEW */
@@ -22,6 +21,5 @@ export declare class BotStatePropertyAccessor<T = any> implements PropertyAccess
     constructor(state: BotState, name: string, defaultValue?: T);
     delete(context: TurnContext): Promise<void>;
     get(context: TurnContext): Promise<T | undefined>;
-    has(context: TurnContext): Promise<boolean>;
     set(context: TurnContext, value: T): Promise<void>;
 }

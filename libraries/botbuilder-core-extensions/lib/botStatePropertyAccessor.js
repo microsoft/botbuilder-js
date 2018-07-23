@@ -33,12 +33,6 @@ class BotStatePropertyAccessor {
             return obj[this.name];
         });
     }
-    has(context) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const obj = yield this.state.read(context);
-            return obj.hasOwnProperty(this.name);
-        });
-    }
     set(context, value) {
         return __awaiter(this, void 0, void 0, function* () {
             const obj = yield this.state.read(context);

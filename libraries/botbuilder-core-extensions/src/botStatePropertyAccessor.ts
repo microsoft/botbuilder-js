@@ -12,7 +12,6 @@ import { BotState } from './botState';
 export interface PropertyAccessor<T = any> {
     delete(context: TurnContext): Promise<void>;
     get(context: TurnContext): Promise<T|undefined>;
-    has(context: TurnContext): Promise<boolean>;
     set(context: TurnContext, value: T): Promise<void>;
 }
 
@@ -34,11 +33,6 @@ export class BotStatePropertyAccessor<T = any> implements PropertyAccessor<T> {
             obj[this.name] = clone;
         }
         return obj[this.name];
-    }
-
-    public async has(context: TurnContext): Promise<boolean> {
-        const obj = await this.state.read(context);
-        return obj.hasOwnProperty(this.name);
     }
 
     public async set(context: TurnContext, value: T): Promise<void> {
