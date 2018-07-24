@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Middleware, TurnContext, RecognizerResult } from 'botbuilder';
+import { TurnContext, RecognizerResult } from 'botbuilder';
 import LuisClient = require('botframework-luis');
 /**
  * Settings used to configure an instance of `LuisRecognizer`.
@@ -35,39 +35,25 @@ export interface LuisRecognizerSettings {
  * Component used to recognize intents in a user utterance using a configured LUIS model.
  *
  * @remarks
- * This component can be used within your bots logic by calling [recognize()](#recognize) or added
- * to your bot adapters middleware stack to automatically recognize the users intent.
+ * This component can be used within your bots logic by calling [recognize()](#recognize).
  */
-export declare class LuisRecognizer implements Middleware {
+export declare class LuisRecognizer {
     private settings;
     private luisClient;
-    private cacheKey;
     /**
      * Creates a new LuisRecognizer instance.
      * @param settings Settings used to configure the instance.
      */
     constructor(settings: LuisRecognizerSettings);
-    onTurn(context: TurnContext, next: () => Promise<void>): Promise<void>;
-    /**
-     * Returns the results cached from a previous call to [recognize()](#recognize) for the current
-     * turn with the user.
-     *
-     * @remarks
-     * This will return `undefined` if recognize() hasn't been called for the current turn.
-     * @param context Context for the current turn of conversation with the use.
-     */
-    get(context: TurnContext): RecognizerResult | undefined;
     /**
      * Calls LUIS to recognize intents and entities in a users utterance.
      *
      * @remarks
-     * The results of the call will be cached to the context object for the turn and future calls
-     * to recognize() for the same context object will result in the cached value being returned.
-     * This behavior can be overridden using the `force` parameter.
+     * In addition to returning the results from LUIS, [recognize()](#recognize) will also
+     * emit a trace activity that contains the LUIS results.
      * @param context Context for the current turn of conversation with the use.
-     * @param force (Optional) flag that if `true` will force the call to LUIS even if a cached result exists. Defaults to a value of `false`.
      */
-    recognize(context: TurnContext, force?: boolean): Promise<RecognizerResult>;
+    recognize(context: TurnContext): Promise<RecognizerResult>;
     /**
      * Called internally to create a LuisClient instance.
      *

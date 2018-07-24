@@ -14,5 +14,4 @@ __export(require("botbuilder-core"));
 __export(require("botbuilder-core-extensions"));
 __export(require("./botFrameworkAdapter"));
 __export(require("./consoleAdapter"));
-__export(require("./fileStorage"));
 //# sourceMappingURL=index.js.map

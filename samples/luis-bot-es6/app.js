@@ -63,13 +63,13 @@ server.post('/api/messages', (req, res) => {
             // Call LUIS model
             await model
                 .recognize(context)
-                .then(res => {
+                .then(async res => {
                     // Resolve intents returned from LUIS
                     let topIntent = LuisRecognizer.topIntent(res);
                     state.intent = topIntent;
 
                     // Start addReminder dialog
-                    if (topIntent === 'Calendar.Add') {
+                    if (topIntent === 'Calendar_Add') {
                         // Resolve entities returned from LUIS, and save these to state
                         let title = state.title = res.entities['Calendar.Subject'];
                         let date = res.entities.builtin_datetimeV2_date;
@@ -101,11 +101,11 @@ server.post('/api/messages', (req, res) => {
                         return dc.begin('addReminder');
 
                         // Start deleteReminder dialog
-                    } else if (topIntent === 'Calendar.Delete') {
+                    } else if (topIntent === 'Calendar_Delete') {
                         return dc.begin('deleteReminder');
 
                         // Start showReminders
-                    } else if (topIntent === 'Calendar.Find') {
+                    } else if (topIntent === 'Calendar_Find') {
                         return dc.begin('showReminders');
 
                         // Check for cancel
@@ -120,7 +120,7 @@ server.post('/api/messages', (req, res) => {
 
                         // Continue current dialog
                     } else {
-                        return dc.continue().then(res => {
+                        return dc.continue().then(async res => {
                             // Return default message if nothing replied.
                             if (!context.responded) {
                                 await context.sendActivity(
