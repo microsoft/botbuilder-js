@@ -7,7 +7,7 @@
  */
 import { TurnContext } from 'botbuilder-core';
 import { BotState } from './botState';
-import { Storage, StoreItem } from './storage';
+import { Storage } from './storage';
 /**
  * Reads and writes conversation state for your bot to storage.
  *
@@ -38,7 +38,7 @@ import { Storage, StoreItem } from './storage';
  * });
  * ```
  */
-export declare class ConversationState<T extends StoreItem = StoreItem> extends BotState<T> {
+export declare class ConversationState extends BotState {
     private namespace;
     /**
      * Creates a new ConversationState instance.
