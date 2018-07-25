@@ -6,12 +6,15 @@
  * Licensed under the MIT License.
  */
 import { TurnContext, Middleware } from 'botbuilder-core';
-import { Storage, StoreItem, StorageKeyFactory } from './storage';
+import { Storage, StorageKeyFactory } from './storage';
+import { PropertyAccessor } from './botStatePropertyAccessor';
 /**
  * State information cached off the context object by a `BotState` instance.
  */
-export interface CachedBotState<T extends StoreItem> {
-    state: T;
+export interface CachedBotState {
+    state: {
+        [id: string]: any;
+    };
     hash: string;
 }
 /**
@@ -45,9 +48,11 @@ export interface CachedBotState<T extends StoreItem> {
  * });
  * ```
  */
-export declare class BotState<T extends StoreItem = StoreItem> implements Middleware {
+export declare class BotState implements Middleware {
     protected storage: Storage;
     protected storageKey: StorageKeyFactory;
+    /** NEW */
+    readonly properties: Map<string, PropertyAccessor>;
     private stateKey;
     /**
      * Creates a new BotState instance.
@@ -55,6 +60,9 @@ export declare class BotState<T extends StoreItem = StoreItem> implements Middle
      * @param storageKey Function called anytime the storage key for a given turn needs to be calculated.
      */
     constructor(storage: Storage, storageKey: StorageKeyFactory);
+    /** NEW */
+    createProperty<T = any>(name: string, defaultValue?: T): PropertyAccessor<T>;
+    /** @private */
     onTurn(context: TurnContext, next: () => Promise<void>): Promise<void>;
     /**
      * Reads in and caches the current state object for a turn.
@@ -69,7 +77,7 @@ export declare class BotState<T extends StoreItem = StoreItem> implements Middle
      * @param context Context for current turn of conversation with the user.
      * @param force (Optional) If `true` the cache will be bypassed and the state will always be read in directly from storage. Defaults to `false`.
      */
-    read(context: TurnContext, force?: boolean): Promise<T>;
+    read(context: TurnContext, force?: boolean): Promise<any>;
     /**
      * Saves the cached state object if it's been changed.
      *
@@ -108,5 +116,5 @@ export declare class BotState<T extends StoreItem = StoreItem> implements Middle
      * ```
      * @param context Context for current turn of conversation with the user.
      */
-    get(context: TurnContext): T | undefined;
+    get(context: TurnContext): any;
 }

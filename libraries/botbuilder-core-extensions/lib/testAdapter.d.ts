@@ -167,7 +167,7 @@ export declare class TestAdapter extends BotAdapter {
      * Indicates if the activity is a reply from the bot (role == 'bot')
      * @param activity Activity to check.
      */
-    private isReply;
+    private isReply(activity);
 }
 /**
  * Support class for `TestAdapter` that allows for the simple construction of a sequence of tests.

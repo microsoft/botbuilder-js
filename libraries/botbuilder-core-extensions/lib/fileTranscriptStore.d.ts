@@ -1,10 +1,3 @@
-/**
- * @module botbuilder
- */
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
 import { TranscriptStore, PagedResult, Transcript } from "./transcriptLogger";
 import { Activity } from "botbuilder-core";
 /**
@@ -43,10 +36,10 @@ export declare class FileTranscriptStore implements TranscriptStore {
      * @param conversationId Id of the conversation to delete.
      */
     deleteTranscript(channelId: string, conversationId: string): Promise<void>;
-    private saveActivity;
-    private ensureFolder;
-    private getActivityFilename;
-    private getChannelFolder;
-    private getTranscriptFolder;
-    private sanitizeKey;
+    private saveActivity(activity, transcriptPath, activityFilename);
+    private ensureFolder(path);
+    private getActivityFilename(activity);
+    private getChannelFolder(channelId);
+    private getTranscriptFolder(channelId, conversationId);
+    private sanitizeKey(key);
 }

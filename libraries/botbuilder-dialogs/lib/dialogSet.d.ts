@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext } from 'botbuilder';
+import { TurnContext, PropertyAccessor } from 'botbuilder';
 import { Dialog, Waterfall, WaterfallStep } from './dialog';
 import { DialogContext } from './dialogContext';
 /**
@@ -159,7 +159,9 @@ import { DialogContext } from './dialogContext';
  * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
  */
 export declare class DialogSet<C extends TurnContext = TurnContext> {
+    private readonly stateProperty;
     private readonly dialogs;
+    constructor(stateProperty?: PropertyAccessor<object>);
     /**
      * Adds a new dialog to the set and returns the added dialog.
      *
@@ -179,12 +181,28 @@ export declare class DialogSet<C extends TurnContext = TurnContext> {
      */
     add(dialogId: string, dialogOrSteps: Dialog<C>): Dialog<C>;
     add(dialogId: string, dialogOrSteps: WaterfallStep<C>[]): Waterfall<C>;
+    /**
+     * Creates a dialog context which can be used to work with the dialogs in the set.
+     *
+     * @remarks
+     * This example loads in the bots conversation state and then creates a DialogContext bound to
+     * that state.
+     *
+     * ```JavaScript
+     * const conversation = conversationState.get(context);
+     * const dc = dialogs.createContext(context, conversation);
+     * ```
+     * @param context Context for the current turn of conversation with the user.
+     * @param state State object being used to persist the dialog stack.
+     */
     createContext(context: C, state: object): DialogContext<C>;
+    /** NEW */
+    createContextAsync(context: C): Promise<DialogContext<C>>;
     /**
      * Finds a dialog that was previously added to the set using [add()](#add).
      *
      * @remarks
-     * This example finds a a dialog named "greeting":
+     * This example finds a dialog named "greeting":
      *
      * ```JavaScript
      * const dialog = dialogs.find('greeting');

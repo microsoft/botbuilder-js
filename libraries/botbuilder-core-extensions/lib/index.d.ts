@@ -6,6 +6,7 @@
  * Licensed under the MIT License.
  */
 export * from './botState';
+export * from './botStatePropertyAccessor';
 export * from './botStateSet';
 export * from './browserStorage';
 export * from './cardFactory';
