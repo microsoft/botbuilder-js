@@ -1,7 +1,7 @@
 const assert = require('assert');
 const { AzureBlobTranscriptStore } = require('../');
 const azure = require('azure-storage');
-const base = require('../../botbuilder-core-extensions/tests/transcriptStoreBaseTest');
+const base = require('../../botbuilder/tests/transcriptStoreBaseTest');
 
 const getSettings = (container = null) => ({
     storageAccountOrConnectionString: 'UseDevelopmentStorage=true;',
