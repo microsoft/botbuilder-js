@@ -12,6 +12,13 @@ const testMessage = {
     serviceUrl: 'https://example.org'
 };
 
+const testTraceMessage = {
+    type: 'trace', 
+    name: 'TestTrace',
+    valueType: 'https://example.org/test/trace',
+    label: 'Test Trace'
+};
+
 class SimpleAdapter extends BotAdapter {
     sendActivities(context, activities) {
         const responses = [];
@@ -298,5 +305,33 @@ describe(`TurnContext`, function () {
         const activity4 = TurnContext.applyConversationReference({ text: 'foo', type: 'message' }, reference, true);
         assert(!activity4.hasOwnProperty('id'), `activity4 has id`);
         done();
+    });
+
+    it(`should not set TurnContext.responded to true if Trace activity is sent.`, function (done) {
+        const context = new TurnContext(new SimpleAdapter(), testMessage);
+        context.sendActivities([testTraceMessage]).then((responses) => {
+            assert(context.responded === false, `responded was set to true.`);
+            done();
+        });
+    });
+
+    it(`should not set TurnContext.responded to true if multiple Trace activities are sent.`, function (done) {
+        const context = new TurnContext(new SimpleAdapter(), testMessage);
+        context.sendActivities([testTraceMessage, testTraceMessage]).then((responses) => {
+            assert(context.responded === false, `responded was set to true.`);
+            done();
+        });
+    });
+
+    it(`should set TurnContext.responded to true if Trace and message activities are sent.`, function (done) {
+        const context = new TurnContext(new SimpleAdapter(), testMessage);
+        context.sendActivities([testTraceMessage, testTraceMessage]).then((responses) => {
+            assert(context.responded === false, `responded was set to true.`);
+        }).then(() => {
+            context.sendActivities([testMessage]).then((responses) => {
+                assert(context.responded, `responded was not set to true.`);
+                done();
+            });
+        });
     });
 });
