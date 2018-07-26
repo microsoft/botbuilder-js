@@ -114,8 +114,11 @@ class OAuthPrompt extends dialog_1.Dialog {
             const isMessage = dc.context.activity.type === botbuilder_1.ActivityTypes.Message;
             const hasTimedOut = isMessage && (new Date().getTime() > state.expires);
             // Process output
-            if (output || hasTimedOut) {
-                // Return token or undefined on timeout
+            if (hasTimedOut) {
+                return dc.end(undefined);
+            }
+            else if (output) {
+                // Return token if it's not timed out (as checked for in the preceding if)
                 return dc.end(output);
             }
             else if (isMessage && state.retryPrompt) {
