@@ -7,7 +7,6 @@ notifications:
 before_install:
   - npm install --global lerna nyc mocha typescript@2.7.2
   - cd tools/ && npm install && cd ..
-  - rm -rf node_modules/@types/react/
 
 install:
   - lerna bootstrap --hoist
