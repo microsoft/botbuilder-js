@@ -159,9 +159,10 @@ import { DialogContext } from './dialogContext';
  * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
  */
 export declare class DialogSet<C extends TurnContext = TurnContext> {
-    private readonly stateProperty;
+    private readonly dialogStateProperty;
     private readonly dialogs;
-    constructor(stateProperty?: PropertyAccessor<object>);
+    /** NEW */
+    constructor(dialogStateProperty?: PropertyAccessor<object>);
     /**
      * Adds a new dialog to the set and returns the added dialog.
      *

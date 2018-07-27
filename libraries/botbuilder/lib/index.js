@@ -10,8 +10,24 @@ function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-__export(require("botbuilder-core"));
-__export(require("botbuilder-core-extensions"));
 __export(require("./botFrameworkAdapter"));
 __export(require("./consoleAdapter"));
+__export(require("./botState"));
+__export(require("./botStatePropertyAccessor"));
+__export(require("./botStateSet"));
+__export(require("./browserStorage"));
+__export(require("./cardFactory"));
+__export(require("./conversationState"));
+__export(require("./memoryStorage"));
+__export(require("./messageFactory"));
+__export(require("./storage"));
+__export(require("./testAdapter"));
+__export(require("./userState"));
+__export(require("./transcriptLogger"));
+__export(require("./memoryTranscriptStore"));
+__export(require("./fileTranscriptStore"));
+__export(require("./botAdapter"));
+__export(require("./middlewareSet"));
+__export(require("./turnContext"));
+__export(require("botframework-schema"));
 //# sourceMappingURL=index.js.map
