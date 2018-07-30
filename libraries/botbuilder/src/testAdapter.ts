@@ -243,6 +243,9 @@ export class TestAdapter extends BotAdapter {
      * @param activity Activity to check.
      */
     private isReply(activity: Partial<Activity>): boolean {
+        if (activity.type !== ActivityTypes.Message) {
+            return false;
+        }
         return activity.from.role && activity.from.role.toLocaleLowerCase() === 'bot';
     }
 }

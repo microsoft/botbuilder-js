@@ -215,6 +215,9 @@ class TestAdapter extends botAdapter_1.BotAdapter {
      * @param activity Activity to check.
      */
     isReply(activity) {
+        if (activity.type !== botframework_schema_1.ActivityTypes.Message) {
+            return false;
+        }
         return activity.from.role && activity.from.role.toLocaleLowerCase() === 'bot';
     }
 }
