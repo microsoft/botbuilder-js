@@ -212,13 +212,19 @@ class TestAdapter extends botAdapter_1.BotAdapter {
     }
     /**
      * Indicates if the activity is a reply from the bot (role == 'bot')
+     *
+     * @remarks
+     * Checks to see if the from property and if from.role exists on the Activity before
+     * checking to see who the activity is from. Otherwise returns false by default.
      * @param activity Activity to check.
      */
     isReply(activity) {
-        if (activity.type !== botframework_schema_1.ActivityTypes.Message) {
+        if (activity.from && activity.from.role) {
+            return activity.from.role && activity.from.role.toLocaleLowerCase() === 'bot';
+        }
+        else {
             return false;
         }
-        return activity.from.role && activity.from.role.toLocaleLowerCase() === 'bot';
     }
 }
 exports.TestAdapter = TestAdapter;
@@ -383,6 +389,7 @@ exports.TestFlow = TestFlow;
  * @param expected
  */
 function validateActivity(activity, expected) {
+    // tslint:disable-next-line:forin
     for (const prop in expected) {
         assert.equal(activity[prop], expected[prop]);
     }
