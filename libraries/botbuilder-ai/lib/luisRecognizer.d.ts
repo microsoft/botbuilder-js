@@ -40,6 +40,7 @@ export interface LuisRecognizerSettings {
 export declare class LuisRecognizer {
     private settings;
     private luisClient;
+    private cacheKey;
     /**
      * Creates a new LuisRecognizer instance.
      * @param settings Settings used to configure the instance.

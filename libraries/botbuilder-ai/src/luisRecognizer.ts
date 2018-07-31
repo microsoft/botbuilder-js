@@ -2,7 +2,7 @@
  * @module botbuilder-ai
  */
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 import { TurnContext, RecognizerResult } from 'botbuilder';
@@ -17,7 +17,7 @@ const LUIS_TRACE_LABEL = 'Luis Trace';
  * @private
  */
 interface LuisOptions {
-    Staging?: boolean
+    Staging?: boolean;
 }
 
 /**
@@ -66,13 +66,14 @@ export interface LuisRecognizerSettings {
 
 /**
  * Component used to recognize intents in a user utterance using a configured LUIS model.
- * 
+ *
  * @remarks
  * This component can be used within your bots logic by calling [recognize()](#recognize).
  */
 export class LuisRecognizer {
-    private settings: LuisRecognizerSettings
+    private settings: LuisRecognizerSettings;
     private luisClient: LuisClient;
+    private cacheKey = Symbol('results');
 
     /**
      * Creates a new LuisRecognizer instance.
@@ -87,35 +88,42 @@ export class LuisRecognizer {
     }
 
     /**
-     * Calls LUIS to recognize intents and entities in a users utterance. 
-     * 
+     * Calls LUIS to recognize intents and entities in a users utterance.
+     *
      * @remarks
-     * In addition to returning the results from LUIS, [recognize()](#recognize) will also 
-     * emit a trace activity that contains the LUIS results. 
+     * In addition to returning the results from LUIS, [recognize()](#recognize) will also
+     * emit a trace activity that contains the LUIS results.
      * @param context Context for the current turn of conversation with the use.
      */
     public recognize(context: TurnContext): Promise<RecognizerResult> {
-        const utterance = context.activity.text || '';
-        return this.luisClient.getIntentsAndEntitiesV2(this.settings.appId, this.settings.subscriptionKey, utterance, this.settings.options)
-            .then((luisResult: LuisResult) => {
-                // Map results
-                const recognizerResult: RecognizerResult = {
-                    text: luisResult.query,
-                    alteredText: luisResult.alteredQuery,
-                    intents: this.getIntents(luisResult),
-                    entities: this.getEntitiesAndMetadata(luisResult.entities, luisResult.compositeEntities, this.settings.verbose),
-                    luisResult: luisResult
-                };
+        const cached = context.services.get(this.cacheKey);
+        if (!cached) {
+            const utterance = context.activity.text || '';
+            return this.luisClient.getIntentsAndEntitiesV2(this.settings.appId, this.settings.subscriptionKey, utterance, this.settings.options)
+                .then((luisResult: LuisResult) => {
+                    // Map results
+                    const recognizerResult: RecognizerResult = {
+                        text: luisResult.query,
+                        alteredText: luisResult.alteredQuery,
+                        intents: this.getIntents(luisResult),
+                        entities: this.getEntitiesAndMetadata(luisResult.entities, luisResult.compositeEntities, this.settings.verbose),
+                        luisResult: luisResult
+                    };
 
-                return this.emitTraceInfo(context, luisResult, recognizerResult).then(() => {
-                    return recognizerResult;
+                    // Write to cache
+                    context.services.set(this.cacheKey, recognizerResult);
+
+                    return this.emitTraceInfo(context, luisResult, recognizerResult).then(() => {
+                        return recognizerResult;
+                    });
                 });
-            });
+        }
+        return Promise.resolve(cached);
     }
 
     /**
      * Called internally to create a LuisClient instance. 
-     * 
+     *
      * @remarks
      * This is exposed to enable better unit testing of the recognizer.
      * @param baseUri Service endpoint being called.
@@ -166,11 +174,11 @@ export class LuisRecognizer {
     }
 
     private normalizeName(name: string): string {
-        return name.replace(/\.| /g, "_");
+        return name.replace(/\.| /g, '_');
     }
 
     private getIntents(luisResult: LuisResult): any {
-        const intents: { [name: string]: {score:number}; } = {}
+        const intents: { [name: string]: {score: number}; } = {};
         if (luisResult.intents) {
             luisResult.intents.reduce((prev: any, curr: Intent) => {
                 prev[this.normalizeName(curr.intent)] = { score: curr.score};
@@ -211,12 +219,14 @@ export class LuisRecognizer {
     }
 
     private getEntityValue(entity: Entity): any {
-        if (!entity.resolution)
+        if (!entity.resolution) {
             return entity.entity;
+        }
 
-        if (entity.type.startsWith("builtin.datetimeV2.")) {
-            if (!entity.resolution.values || !entity.resolution.values.length)
+        if (entity.type.startsWith('builtin.datetimeV2.')) {
+            if (!entity.resolution.values || !entity.resolution.values.length) {
                 return entity.resolution;
+            }
 
             var vals = entity.resolution.values;
             var type = vals[0].type;

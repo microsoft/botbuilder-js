@@ -16,6 +16,7 @@ class LuisRecognizer {
      * @param settings Settings used to configure the instance.
      */
     constructor(settings) {
+        this.cacheKey = Symbol('results');
         this.settings = Object.assign({}, settings);
         // Create client and override callbacks
         const baseUri = (this.settings.serviceEndpoint || 'https://westus.api.cognitive.microsoft.com');
@@ -30,21 +31,27 @@ class LuisRecognizer {
      * @param context Context for the current turn of conversation with the use.
      */
     recognize(context) {
-        const utterance = context.activity.text || '';
-        return this.luisClient.getIntentsAndEntitiesV2(this.settings.appId, this.settings.subscriptionKey, utterance, this.settings.options)
-            .then((luisResult) => {
-            // Map results
-            const recognizerResult = {
-                text: luisResult.query,
-                alteredText: luisResult.alteredQuery,
-                intents: this.getIntents(luisResult),
-                entities: this.getEntitiesAndMetadata(luisResult.entities, luisResult.compositeEntities, this.settings.verbose),
-                luisResult: luisResult
-            };
-            return this.emitTraceInfo(context, luisResult, recognizerResult).then(() => {
-                return recognizerResult;
+        const cached = context.services.get(this.cacheKey);
+        if (!cached) {
+            const utterance = context.activity.text || '';
+            return this.luisClient.getIntentsAndEntitiesV2(this.settings.appId, this.settings.subscriptionKey, utterance, this.settings.options)
+                .then((luisResult) => {
+                // Map results
+                const recognizerResult = {
+                    text: luisResult.query,
+                    alteredText: luisResult.alteredQuery,
+                    intents: this.getIntents(luisResult),
+                    entities: this.getEntitiesAndMetadata(luisResult.entities, luisResult.compositeEntities, this.settings.verbose),
+                    luisResult: luisResult
+                };
+                // Write to cache
+                context.services.set(this.cacheKey, recognizerResult);
+                return this.emitTraceInfo(context, luisResult, recognizerResult).then(() => {
+                    return recognizerResult;
+                });
             });
-        });
+        }
+        return Promise.resolve(cached);
     }
     /**
      * Called internally to create a LuisClient instance.
@@ -96,7 +103,7 @@ class LuisRecognizer {
         });
     }
     normalizeName(name) {
-        return name.replace(/\.| /g, "_");
+        return name.replace(/\.| /g, '_');
     }
     getIntents(luisResult) {
         const intents = {};
@@ -135,11 +142,13 @@ class LuisRecognizer {
         return entitiesAndMetadata;
     }
     getEntityValue(entity) {
-        if (!entity.resolution)
+        if (!entity.resolution) {
             return entity.entity;
-        if (entity.type.startsWith("builtin.datetimeV2.")) {
-            if (!entity.resolution.values || !entity.resolution.values.length)
+        }
+        if (entity.type.startsWith('builtin.datetimeV2.')) {
+            if (!entity.resolution.values || !entity.resolution.values.length) {
                 return entity.resolution;
+            }
             var vals = entity.resolution.values;
             var type = vals[0].type;
             var timexes = vals.map(t => t.timex);
