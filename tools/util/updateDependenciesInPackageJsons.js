@@ -6,7 +6,6 @@
 console.log('Started ' + (new Date()));
 var myArgs = process.argv.slice(2);
 var rootPath = myArgs[0];
-//rootPath = 'C:\\Github\\Microsoft\\botbuilder-js\\libraries';
 var newVersion = myArgs[1];
 var dependencies = myArgs.slice(2);
 console.log('newVersion =', newVersion);
