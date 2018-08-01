@@ -168,6 +168,10 @@ export declare class TestAdapter extends BotAdapter {
     testActivities(activities: Array<Partial<Activity>>, description?: string, timeout?: number): TestFlow;
     /**
      * Indicates if the activity is a reply from the bot (role == 'bot')
+     *
+     * @remarks
+     * Checks to see if the from property and if from.role exists on the Activity before
+     * checking to see who the activity is from. Otherwise returns false by default.
      * @param activity Activity to check.
      */
     private isReply(activity);
