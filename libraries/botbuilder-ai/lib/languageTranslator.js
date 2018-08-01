@@ -93,21 +93,23 @@ class LanguageTranslator {
             else if (this.wordDictionary) {
                 this.translator.setPostProcessorTemplate([], this.wordDictionary);
             }
-            return this.translator.translateArrayAsync({
+            let translateOptions = {
                 from: sourceLanguage,
                 to: targetLanguage,
-                texts: lines,
+                texts: lines.slice(),
                 contentType: 'text/plain'
-            })
+            };
+            return this.translator.translateArrayAsync(translateOptions)
                 .then((translateResult) => {
+                let postProcessResult = this.translator.postProcessTranslation(translateResult, lines);
                 text = '';
-                translateResult.forEach(translatedSentence => {
+                postProcessResult.forEach(translatedSentence => {
                     if (text.length > 0)
                         text += '\n';
                     text += translatedSentence.translatedText;
                 });
                 message.text = text;
-                return Promise.resolve(translateResult);
+                return Promise.resolve(postProcessResult);
             });
         });
     }
@@ -196,20 +198,21 @@ class MicrosoftTranslator {
                 body: body,
             });
         })
-            .then(response => {
-            let results = [];
-            let parser = new xmldom_1.DOMParser();
-            let responseObj = parser.parseFromString(response);
-            let elements = responseObj.getElementsByTagName("TranslateArray2Response");
-            Array.from(elements).forEach((element, index, array) => {
-                let translation = element.getElementsByTagName('TranslatedText')[0].textContent;
-                let alignment = element.getElementsByTagName('Alignment')[0].textContent;
-                translation = this.postProcessor.fixTranslation(orgTexts[index], alignment, translation);
-                let result = { translatedText: translation };
-                results.push(result);
-            });
-            return Promise.resolve(results);
+            .then(response => Promise.resolve(response));
+    }
+    postProcessTranslation(response, orgTexts) {
+        let results = [];
+        let parser = new xmldom_1.DOMParser();
+        let responseObj = parser.parseFromString(response);
+        let elements = responseObj.getElementsByTagName("TranslateArray2Response");
+        Array.from(elements).forEach((element, index, array) => {
+            let translation = element.getElementsByTagName('TranslatedText')[0].textContent;
+            let alignment = element.getElementsByTagName('Alignment')[0].textContent;
+            translation = this.postProcessor.fixTranslation(orgTexts[index], alignment, translation);
+            let result = { translatedText: translation };
+            results.push(result);
         });
+        return results;
     }
 }
 /**
@@ -404,7 +407,6 @@ class PostProcessTranslator {
                 });
             });
         }
-        console.log(toBeReplacedByDictionary);
         if (toBeReplacedByDictionary.length > 0) {
             toBeReplacedByDictionary.forEach(word => {
                 let regExp = new RegExp(word, "i");

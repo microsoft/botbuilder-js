@@ -8,7 +8,6 @@
 import { Middleware, TurnContext, ActivityTypes } from 'botbuilder';
 import * as DateTimeRecognizers from '@microsoft/recognizers-text-date-time';
 import * as moment from 'moment';
-
 /**
  * Settings used to configure an instance of `LocaleConverter`.
  */
@@ -123,25 +122,23 @@ class MicrosoftLocaleConverter implements ILocaleConverter {
     }
 
     private initLocales() {
-        let yearMonthDay = new DateAndTimeLocaleFormat('hh:mm', 'yyyy-MM-dd');
-        let dayMonthYear = new DateAndTimeLocaleFormat('hh:mm', 'dd/MM/yyyy');
-        let monthDayYEar = new DateAndTimeLocaleFormat('hh:mm', 'MM/dd/yyyy');
 
-        let yearMonthDayLocales = [ "en-za", "en-ie", "en-gb", "en-ca", "fr-ca", "zh-cn", "zh-sg", "zh-hk", "zh-mo", "zh-tw" ];
-        yearMonthDayLocales.forEach(locale => {
-            this.mapLocaleToFunction[locale] = yearMonthDay;
+        let supportedLocales:string[] = [
+            "en-us", "en-za", "en-ie", "en-gb", "en-ca", "en-au",
+            "fr-fr", "fr-ca",  "fr-be", "fr-ch", "fr-lu", "fr-mc",
+            "zh-cn", "zh-tw", "zh-sg", "zh-hk", "zh-mo",
+            "de-de", "de-at", "de-ch", "de-lu", "de-li",
+            "es-es"
+        ];
+    
+        supportedLocales.forEach( locale => {
+            var localeData = moment.localeData(locale);
+            this.mapLocaleToFunction[locale] = new DateAndTimeLocaleFormat(localeData.longDateFormat('LT'), localeData.longDateFormat('L'));
         });
-
-        let dayMonthYearLocales = [ "en-au", "fr-be", "fr-ch", "fr-fr", "fr-lu", "fr-mc", "de-at", "de-ch", "de-de", "de-lu", "de-li" ];
-        dayMonthYearLocales.forEach(locale => {
-            this.mapLocaleToFunction[locale] = dayMonthYear;
-        });
-
-        this.mapLocaleToFunction["en-us"] = monthDayYEar;
     }
 
     isLocaleAvailable(locale: string): boolean {
-        return !(typeof this.mapLocaleToFunction[locale] === "undefined")
+        return this.mapLocaleToFunction[locale] != undefined;
     }
 
     private extractDates(message: string, fromLocale:string): TextAndDateTime[] {
@@ -225,16 +222,11 @@ class MicrosoftLocaleConverter implements ILocaleConverter {
     }
 
     private formatDate(date: Date, toLocale: string): string {
-        return this.mapLocaleToFunction[toLocale].dateFormat
-                .replace('yyyy', (date.getFullYear()).toLocaleString(undefined, {minimumIntegerDigits: 4}).replace(',', ''))
-                .replace('MM', (date.getMonth() + 1).toLocaleString(undefined, {minimumIntegerDigits: 2}))
-                .replace('dd', (date.getDate()).toLocaleString(undefined, {minimumIntegerDigits: 2}));
+        return moment(date).format(this.mapLocaleToFunction[toLocale].dateFormat); 
     }
 
     private formatTime(date: Date, toLocale: string): string {
-        return this.mapLocaleToFunction[toLocale].timeFormat
-                .replace('hh', (date.getHours()).toLocaleString(undefined, {minimumIntegerDigits: 2}))
-                .replace('mm', (date.getMinutes()).toLocaleString(undefined, {minimumIntegerDigits: 2}));
+        return moment(date).format(this.mapLocaleToFunction[toLocale].timeFormat);
     }
 
     private formatDateAndTime(date: Date, toLocale: string): string {

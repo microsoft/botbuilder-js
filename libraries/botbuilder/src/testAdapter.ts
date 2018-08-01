@@ -240,10 +240,18 @@ export class TestAdapter extends BotAdapter {
 
     /**
      * Indicates if the activity is a reply from the bot (role == 'bot')
+     *
+     * @remarks
+     * Checks to see if the from property and if from.role exists on the Activity before
+     * checking to see who the activity is from. Otherwise returns false by default.
      * @param activity Activity to check.
      */
     private isReply(activity: Partial<Activity>): boolean {
-        return activity.from.role && activity.from.role.toLocaleLowerCase() === 'bot';
+        if (activity.from && activity.from.role) {
+            return activity.from.role && activity.from.role.toLocaleLowerCase() === 'bot';
+        } else {
+            return false;
+        }
     }
 }
 
@@ -408,6 +416,7 @@ export class TestFlow {
  * @param expected
  */
 function validateActivity(activity: Partial<Activity>, expected: Partial<Activity>): void {
+    // tslint:disable-next-line:forin
     for (const prop in expected) {
         assert.equal((<any>activity)[prop], (<any>expected)[prop]);
     }

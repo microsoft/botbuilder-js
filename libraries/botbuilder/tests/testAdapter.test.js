@@ -240,17 +240,103 @@ describe(`TestAdapter`, function () {
         });
     });
 
-    it('should apply the user-defined Activity template', (done) => {
+    it(`should apply the user-defined Activity template.`, function (done) {
         const template = {
             channelId: 'foo',
             from: { id: 'foo', name: 'Foo' },
         };
         new TestAdapter((context) => {
-            assert(context.activity.channelId === template.channelId, 'activity channelId does not match template');
-            assert(context.activity.from.id === template.from.id, 'activity from.id does not match template');
-            assert(context.activity.from.name === template.from.name, 'activity from.name does not match template');
-            assert(context.activity.serviceUrl, 'missing serviceUrl');
+            assert(context.activity.channelId === template.channelId, `activity channelId does not match template.`);
+            assert(context.activity.from.id === template.from.id, `activity from.id does not match template.`);
+            assert(context.activity.from.name === template.from.name, `activity from.name does not match template.`);
+            assert(context.activity.serviceUrl, `missing serviceUrl.`);
             done();
         }, template).send('test');
+    });
+
+    it(`should test activities that have a from.role normalized value of 'bot' via testActivities().`, function (done) {
+        // Counter to keep track of how many times the bot logic is run.
+        let counter = 0;
+        const adapter = new TestAdapter((context) => {
+            counter++;
+            return context.sendActivity('Greetings User!');
+        });
+
+        // We create two activities, one which is a message from the user to the bot.
+        // The other is the bot's response.
+        // The bot's logic should only run once, when it receives the 'Hello' from the user.
+        const activities = [
+            {
+                from: {
+                    role: 'User',
+                    name: 'User',
+                    id: 'user'
+                },
+                type: 'message',
+                text: 'Hello'
+            },
+            {
+                from: {
+                    role: 'Bot',
+                    name: 'Bot',
+                    id: 'bot'
+                },
+                type: 'message',
+                text: 'Greetings User!'
+            }
+        ];
+
+        adapter.testActivities(activities).then(() => {
+            assert(counter === 1, `should have only run bot logic once.`);
+            done();
+        });
+    });
+
+    it(`should run the bot's logic to activities without a from property via testActivities().`, function (done) {
+        let counter = 0;
+        const adapter = new TestAdapter((context) => {
+            counter++;
+        });
+
+        // These conversationUpdate activities should trigger the bot's logic to run.
+        const activities = [
+            {
+                type: 'conversationUpdate',
+                membersAdded: [
+                    { name: 'Bot', id: 'bot' }
+                ]
+            },
+            {
+                type: 'conversationUpdate',
+                membersAdded: [
+                    { name: 'User', id: 'user' }
+                ]
+            },
+            {
+                type: 'conversationUpdate',
+                membersRemoved: [
+                    { name: 'Bot', id: 'bot' },
+                    { name: 'User', id: 'user' }
+                ]
+            }
+        ];
+
+        adapter.testActivities(activities).then(() => {
+            assert(counter === 3, `should have run bot logic for activities without the from property.`);
+            done();
+        });
+    });
+
+    it(`should throw error if activities is not passed to testActivities().`, function (done) {
+        const adapter = new TestAdapter((context) => {
+            return context.sendActivity(context.activity.text);
+        });
+        try {
+            adapter.testActivities()
+        } catch (e) {
+            assert(e.message === 'Missing array of activities', `wrong error thrown.`);
+            done();
+        }
+        throw new Error(`TestAdapter.testActivities() should not have succeeded without activities argument.`);
     });
 });
