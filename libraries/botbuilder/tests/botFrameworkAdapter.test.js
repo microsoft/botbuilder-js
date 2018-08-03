@@ -1,6 +1,7 @@
 const assert = require('assert');
 const { TurnContext } = require('botbuilder-core');
 const { BotFrameworkAdapter } = require('../');
+const os = require('os');
 
 const reference = { 
     activityId: '1234', 
@@ -509,5 +510,16 @@ describe(`BotFrameworkAdapter`, function () {
             assert(err, `error not returned.`);
             done();
         });
+    });
+
+    it(`should create a User-Agent header with the same info as the host machine.`, function (done) {
+        const adapter = new BotFrameworkAdapter();
+        const client = adapter.createConnectorClient('https://example.com');
+        const userAgentHeader = client.userAgentInfo.value;
+        const pjson = require('../package.json');
+        const userAgent = 'Microsoft-BotFramework/3.1 (BotBuilder JS/' + pjson.version + ') (Node.js,Version=' + process.version + '; ' + os.type() + ' ' + os.release() + '; ' + os.arch() + ')';
+
+        assert(userAgentHeader.includes(userAgent), `ConnectorClient doesn't have user-agent header created by BotFrameworkAdapter or header is incorrect.`);
+        done();
     });
 });
