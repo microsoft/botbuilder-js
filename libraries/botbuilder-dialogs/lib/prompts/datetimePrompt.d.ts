@@ -5,10 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult } from '../dialog';
-import { DialogContext } from '../dialogContext';
+import { TurnContext } from 'botbuilder';
 import { Prompt, PromptOptions, PromptValidator } from './prompt';
-import * as prompts from '../../../botbuilder-prompts/lib';
+import * as prompts from 'botbuilder-prompts';
 /**
  * Prompts a user to enter a datetime expression.
  *
@@ -64,6 +63,6 @@ export declare class DatetimePrompt<O = prompts.FoundDatetime[]> extends Prompt 
      * @param defaultLocale (Optional) locale to use if `dc.context.activity.locale` not specified. Defaults to a value of `en-us`.
      */
     constructor(dialogId: string, validator?: PromptValidator<prompts.FoundDatetime[], O>, defaultLocale?: string);
-    protected onPrompt(dc: DialogContext, options: PromptOptions, isRetry: boolean): Promise<DialogTurnResult>;
-    protected onRecognize(dc: DialogContext, options: PromptOptions): Promise<O | undefined>;
+    protected onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void>;
+    protected onRecognize(context: TurnContext, state: any, options: PromptOptions): Promise<O | undefined>;
 }

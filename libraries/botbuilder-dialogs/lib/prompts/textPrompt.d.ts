@@ -5,8 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult } from '../dialog';
-import { DialogContext } from '../dialogContext';
+import { TurnContext } from 'botbuilder';
 import { Prompt, PromptOptions, PromptValidator } from './prompt';
 /**
  * Prompts a user to enter some text.
@@ -59,6 +58,6 @@ export declare class TextPrompt<O = string> extends Prompt {
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
      */
     constructor(dialogId: string, validator?: PromptValidator<string, O>);
-    protected onPrompt(dc: DialogContext, options: PromptOptions, isRetry: boolean): Promise<DialogTurnResult>;
-    protected onRecognize(dc: DialogContext, options: PromptOptions): Promise<O | undefined>;
+    protected onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void>;
+    protected onRecognize(context: TurnContext, state: any, options: PromptOptions): Promise<O | undefined>;
 }

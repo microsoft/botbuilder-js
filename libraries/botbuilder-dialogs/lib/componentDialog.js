@@ -10,123 +10,30 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const dialog_1 = require("./dialog");
 const dialogContext_1 = require("./dialogContext");
+const dialogSet_1 = require("./dialogSet");
 /**
- * The `DialogContainer` class lets you break your bots logic up into components that can be added
+ * The `ComponentDialog` class lets you break your bots logic up into components that can be added
  * as a dialog to other dialog sets within your bots project or exported and used in other bot
  * projects.
- *
- * @remarks
- * `DialogContainers` allow for the creation of libraries of reusable dialog components.
- *
- * #### Component Creation
- *
- * To create a reusable dialog component you'll want to define a new class derived from
- * `DialogContainer`. Your component has its own `DialogSet` which you can add dialogs to from
- * within your classes constructor.  You can add as many dialogs as you like and the dialogs can
- * be waterfalls, prompts, or even other component dialogs.
- *
- * Since developers will add instances of your component to their bots as other named dialogs, the
- * DialogContainer needs to know the ID of the initial dialog it should start anytime it's started.
- *
- * Here's a fairly simple example of a `ProfileDialog` that's designed to prompt the user to
- * enter their name and phone number which it will return as a JSON object to the caller:
- *
- * ```JavaScript
- * const { DialogContainer, TextPrompt } = require('botbuilder-dialogs');
- *
- * class ProfileDialog extends DialogContainer {
- *     constructor() {
- *         super('fillProfile');
- *
- *         this.dialogs.add('fillProfile', [
- *             async function (dc, options) {
- *                 dc.instance.state = {};
- *                 await dc.prompt('textPrompt', `What's your name?`);
- *             },
- *             async function (dc, name) {
- *                 dc.instance.state.name = name;
- *                 await dc.prompt('textPrompt', `What's your phone number?`);
- *             },
- *             async function (dc, phone) {
- *                 dc.instance.state.phone = phone;
- *
- *                 // Return completed profile
- *                 await dc.end(dc.instance.state);
- *            }
- *        ]);
- *
- *        this.dialogs.add('textPrompt', new TextPrompt());
- *     }
- * }
- * module.exports.ProfileDialog = ProfileDialog;
- * ```
- *
- * We've added two dialogs to our component, a waterfall and a prompt. And we've told the
- * DialogContainer that it should start the 'fillProfile' dialog anytime an instance of the
- * `ProfileDialog` is started. The DialogContainer will manager persisting the controls dialog
- * stack to the callers dialog stack.
- *
- * #### Component Usage
- *
- * On the consumption side the dialog we created can be used by a bot in much the same way they
- * would use any other prompt. They can add a new instance of the component as a named dialog to
- * their bots `DialogSet` and then start it using a call to `DialogContext.begin()`. If the
- * dialog accepts options these can be passed in to the `begin()` call and the `DialogContainer`
- * will pass them through as args to the initial dialog it starts.
- *
- * ```JavaScript
- * const { DialogSet } = require('botbuilder-dialogs');
- * const { ProfileDialog } = require('./profileControl');
- *
- * const dialogs = new DialogSet();
- *
- * dialogs.add('getProfile', new ProfileDialog());
- *
- * dialogs.add('firstrun', [
- *      async function (dc) {
- *          await dc.context.sendActivity(`Welcome! We need to ask a few questions to get started.`);
- *          await dc.begin('getProfile');
- *      },
- *      async function (dc, profile) {
- *          await dc.context.sendActivity(`Thanks ${profile.name}!`);
- *          await dc.end();
- *      }
- * ]);
- * ```
  * @param R (Optional) type of result that's expected to be returned by the dialog.
  * @param O (Optional) options that can be passed into the begin() method.
  */
 class ComponentDialog extends dialog_1.Dialog {
     constructor() {
         super(...arguments);
-        this.dialogs = {};
+        this.dialogs = new dialogSet_1.DialogSet();
     }
-    add(dialog) {
-        if (!(dialog instanceof dialog_1.Dialog)) {
-            throw new Error(`${this.id}.add(): the added dialog is not an instance of the Dialog class.`);
-        }
-        if (this.dialogs.hasOwnProperty(dialog.id)) {
-            throw new Error(`${this.id}.add(): a dialog with an id of '${dialog.id}' has already been added.`);
-        }
-        dialog.parent = this;
+    addDialog(dialog) {
+        this.dialogs.add(dialog);
         if (this.initialDialogId === undefined) {
             this.initialDialogId = dialog.id;
         }
-        this.dialogs[dialog.id] = dialog;
         return dialog;
-    }
-    createContext(context, state) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return new dialogContext_1.DialogContext(this, context, state);
-        });
-    }
-    find(dialogId) {
-        return this.dialogs[dialogId];
     }
     dialogBegin(dc, dialogArgs) {
         return __awaiter(this, void 0, void 0, function* () {
             // Start the inner dialog.
-            const cdc = new dialogContext_1.DialogContext(this, dc.context, dc.activeDialog.state);
+            const cdc = new dialogContext_1.DialogContext(this.dialogs, dc.context, dc.activeDialog.state);
             const turnResult = yield this.onDialogBegin(dc, dialogArgs);
             // Check for end of inner dialog 
             if (turnResult.hasResult) {
@@ -139,17 +46,17 @@ class ComponentDialog extends dialog_1.Dialog {
             }
         });
     }
-    dialogCancel(dc) {
+    dialogEnd(context, instance, reason) {
         return __awaiter(this, void 0, void 0, function* () {
-            // Delegate to inner dialog stack.
-            const cdc = new dialogContext_1.DialogContext(this, dc.context, dc.activeDialog.state);
-            return yield this.onDialogCancel(dc);
+            // Notify inner dialog
+            const cdc = new dialogContext_1.DialogContext(this.dialogs, context, instance.state);
+            yield this.onDialogEnd(cdc, reason);
         });
     }
     dialogContinue(dc) {
         return __awaiter(this, void 0, void 0, function* () {
             // Continue execution of inner dialog.
-            const cdc = new dialogContext_1.DialogContext(this, dc.context, dc.activeDialog.state);
+            const cdc = new dialogContext_1.DialogContext(this.dialogs, dc.context, dc.activeDialog.state);
             const turnResult = yield this.onDialogContinue(dc);
             // Check for end of inner dialog 
             if (turnResult.hasResult) {
@@ -162,26 +69,33 @@ class ComponentDialog extends dialog_1.Dialog {
             }
         });
     }
-    dialogReprompt(dc) {
+    dialogReprompt(context, instance) {
         return __awaiter(this, void 0, void 0, function* () {
             // Delegate to inner dialog.
-            const cdc = new dialogContext_1.DialogContext(this, dc.context, dc.activeDialog.state);
-            return yield this.onDialogReprompt(dc);
+            const cdc = new dialogContext_1.DialogContext(this.dialogs, context, instance.state);
+            yield this.onDialogReprompt(cdc);
         });
     }
     dialogResume(dc, result) {
-        // Containers are typically leaf nodes on the stack but the dev is free to push other dialogs
-        // on top of the stack which will result in the container receiving an unexpected call to
-        // dialogResume() when the pushed on dialog ends. 
-        // To avoid the container prematurely ending we need to implement this method and simply 
-        // ask our inner dialog stack to re-prompt.
-        return this.dialogReprompt(dc);
+        return __awaiter(this, void 0, void 0, function* () {
+            // Containers are typically leaf nodes on the stack but the dev is free to push other dialogs
+            // on top of the stack which will result in the container receiving an unexpected call to
+            // dialogResume() when the pushed on dialog ends. 
+            // To avoid the container prematurely ending we need to implement this method and simply 
+            // ask our inner dialog stack to re-prompt.
+            yield this.dialogReprompt(dc.context, dc.activeDialog);
+            return dialog_1.Dialog.EndOfTurn;
+        });
     }
     onDialogBegin(dc, dialogArgs) {
         return dc.begin(this.initialDialogId, dialogArgs);
     }
-    onDialogCancel(dc) {
-        return dc.cancelAll();
+    onDialogEnd(dc, reason) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (reason === dialog_1.DialogEndReason.cancelled) {
+                yield dc.cancelAll();
+            }
+        });
     }
     onDialogContinue(dc) {
         return dc.continue();

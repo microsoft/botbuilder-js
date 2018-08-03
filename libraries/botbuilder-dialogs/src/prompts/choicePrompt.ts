@@ -5,10 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog, DialogTurnResult } from '../dialog';
-import { DialogContext } from '../dialogContext';
+import { TurnContext } from 'botbuilder';
 import { Prompt, PromptOptions, PromptValidator } from './prompt';
-import * as prompts from '../../../botbuilder-prompts/lib';
+import * as prompts from 'botbuilder-prompts';
 
 /** 
  * Additional options that can be used to configure a `ChoicePrompt`. 
@@ -101,17 +100,16 @@ export class ChoicePrompt<O = prompts.FoundChoice> extends Prompt {
         return this;
     }
     
-    protected async onPrompt(dc: DialogContext, options: ChoicePromptOptions, isRetry: boolean): Promise<DialogTurnResult> {
+    protected async onPrompt(context: TurnContext, state: any, options: ChoicePromptOptions, isRetry: boolean): Promise<void> {
         const choices = options.choices;
         if (isRetry && options.retryPrompt) {
-            await this.prompt.prompt(dc.context, choices, options.retryPrompt, options.retrySpeak);
+            await this.prompt.prompt(context, choices, options.retryPrompt, options.retrySpeak);
         } else {
-            await this.prompt.prompt(dc.context, choices, options.prompt, options.speak);
+            await this.prompt.prompt(context, choices, options.prompt, options.speak);
         }
-        return Dialog.EndOfTurn;
     }
 
-    protected async onRecognize(dc: DialogContext, options: ChoicePromptOptions): Promise<O|undefined> {
-        return await this.prompt.recognize(dc.context, options.choices);
+    protected async onRecognize(context: TurnContext, state: any, options: ChoicePromptOptions): Promise<O|undefined> {
+        return await this.prompt.recognize(context, options.choices);
     }
 }

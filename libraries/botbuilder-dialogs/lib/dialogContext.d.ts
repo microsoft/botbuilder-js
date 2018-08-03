@@ -5,10 +5,11 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext, Activity } from '../../botbuilder/lib';
-import { DialogInstance, DialogTurnResult, DialogContainer } from './dialog';
+import { TurnContext, Activity } from 'botbuilder';
+import { DialogInstance, DialogTurnResult } from './dialog';
+import { DialogSet } from './dialogSet';
 import { PromptOptions } from './prompts';
-import { Choice } from '../../botbuilder-prompts/lib';
+import { Choice } from 'botbuilder-prompts';
 /**
  * A context object used to manipulate a dialog stack.
  *
@@ -22,17 +23,17 @@ import { Choice } from '../../botbuilder-prompts/lib';
  * ```
  */
 export declare class DialogContext {
-    readonly container: DialogContainer;
+    readonly dialogs: DialogSet;
     readonly context: TurnContext;
     /** Current dialog stack. */
     readonly stack: DialogInstance[];
     /**
      * Creates a new DialogContext instance.
-     * @param container Parent dialog set.
+     * @param dialogs Parent dialog set.
      * @param context Context for the current turn of conversation with the user.
      * @param state State object being used to persist the dialog stack.
      */
-    constructor(container: DialogContainer, context: TurnContext, state: object);
+    constructor(dialogs: DialogSet, context: TurnContext, state: object);
     /**
      * Returns the cached instance of the active dialog on the top of the stack or `undefined` if
      * the stack is empty.
@@ -71,7 +72,7 @@ export declare class DialogContext {
     /**
      * Cancels all dialogs on the stack resulting in an empty stack.
      */
-    cancelAll(): Promise<DialogTurnResult>;
+    cancelAll(): Promise<void>;
     /**
      * Helper function to simplify formatting the options for calling a prompt dialog.
      *
@@ -178,7 +179,7 @@ export declare class DialogContext {
      * The `Dialog.dialogReprompt()` method is optional for dialogs so if there's no active dialog
      * or the active dialog doesn't support re-prompting, this method will effectively be a no-op.
      */
-    reprompt(): Promise<DialogTurnResult>;
+    reprompt(): Promise<void>;
     /** @private helper to ensure the turn result from a dialog looks correct. */
     private verifyTurnResult(result);
 }

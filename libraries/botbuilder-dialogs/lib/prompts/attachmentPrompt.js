@@ -8,9 +8,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const dialog_1 = require("../dialog");
 const prompt_1 = require("./prompt");
-const prompts = require("../../../botbuilder-prompts/lib");
+const prompts = require("botbuilder-prompts");
 /**
  * Prompts a user to upload attachments like images.
  *
@@ -80,20 +79,19 @@ class AttachmentPrompt extends prompt_1.Prompt {
         super(dialogId, validator);
         this.prompt = prompts.createAttachmentPrompt();
     }
-    onPrompt(dc, options, isRetry) {
+    onPrompt(context, state, options, isRetry) {
         return __awaiter(this, void 0, void 0, function* () {
             if (isRetry && options.retryPrompt) {
-                yield this.prompt.prompt(dc.context, options.retryPrompt, options.retrySpeak);
+                yield this.prompt.prompt(context, options.retryPrompt, options.retrySpeak);
             }
             else if (options.prompt) {
-                yield this.prompt.prompt(dc.context, options.prompt, options.speak);
+                yield this.prompt.prompt(context, options.prompt, options.speak);
             }
-            return dialog_1.Dialog.EndOfTurn;
         });
     }
-    onRecognize(dc, options) {
+    onRecognize(context, state, options) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.prompt.recognize(dc.context);
+            return yield this.prompt.recognize(context);
         });
     }
 }

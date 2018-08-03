@@ -5,10 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog, DialogTurnResult } from '../dialog';
-import { DialogContext } from '../dialogContext';
+import { TurnContext } from 'botbuilder';
 import { Prompt, PromptOptions, PromptValidator } from './prompt';
-import * as prompts from '../../../botbuilder-prompts/lib';
+import * as prompts from 'botbuilder-prompts';
 
 /**
  * Prompts a user to confirm something with a yes/no response. 
@@ -121,16 +120,15 @@ export class ConfirmPrompt<O = boolean> extends Prompt {
         return this;
     }
     
-    protected async onPrompt(dc: DialogContext, options: PromptOptions, isRetry: boolean): Promise<DialogTurnResult> {
+    protected async onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void> {
         if (isRetry && options.retryPrompt) {
-            await this.prompt.prompt(dc.context, options.retryPrompt, options.retrySpeak);
+            await this.prompt.prompt(context, options.retryPrompt, options.retrySpeak);
         } else if (options.prompt) {
-            await this.prompt.prompt(dc.context, options.prompt, options.speak);
+            await this.prompt.prompt(context, options.prompt, options.speak);
         }
-        return Dialog.EndOfTurn;
     }
 
-    protected async onRecognize(dc: DialogContext, options: PromptOptions): Promise<O|undefined> {
-        return await this.prompt.recognize(dc.context);
+    protected async onRecognize(context: TurnContext, state: any, options: PromptOptions): Promise<O|undefined> {
+        return await this.prompt.recognize(context);
     }
 }

@@ -5,9 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Attachment } from '../../../botbuilder/lib';
-import { DialogTurnResult } from '../dialog';
-import { DialogContext } from '../dialogContext';
+import { Attachment, TurnContext } from 'botbuilder';
 import { Prompt, PromptOptions, PromptValidator } from './prompt';
 /**
  * Prompts a user to upload attachments like images.
@@ -76,6 +74,6 @@ export declare class AttachmentPrompt<O = Attachment[]> extends Prompt {
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
      */
     constructor(dialogId: string, validator?: PromptValidator<Attachment[], O>);
-    protected onPrompt(dc: DialogContext, options: PromptOptions, isRetry: boolean): Promise<DialogTurnResult>;
-    protected onRecognize(dc: DialogContext, options: PromptOptions): Promise<O | undefined>;
+    protected onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void>;
+    protected onRecognize(context: TurnContext, state: any, options: PromptOptions): Promise<O | undefined>;
 }

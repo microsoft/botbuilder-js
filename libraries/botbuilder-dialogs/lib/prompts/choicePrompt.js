@@ -8,16 +8,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @module botbuilder-dialogs
- */
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
-const dialog_1 = require("../dialog");
 const prompt_1 = require("./prompt");
-const prompts = require("../../../botbuilder-prompts/lib");
+const prompts = require("botbuilder-prompts");
 /**
  * Prompts a user to confirm something with a yes/no response.
  *
@@ -95,21 +87,20 @@ class ChoicePrompt extends prompt_1.Prompt {
         this.prompt.style = listStyle;
         return this;
     }
-    onPrompt(dc, options, isRetry) {
+    onPrompt(context, state, options, isRetry) {
         return __awaiter(this, void 0, void 0, function* () {
             const choices = options.choices;
             if (isRetry && options.retryPrompt) {
-                yield this.prompt.prompt(dc.context, choices, options.retryPrompt, options.retrySpeak);
+                yield this.prompt.prompt(context, choices, options.retryPrompt, options.retrySpeak);
             }
             else {
-                yield this.prompt.prompt(dc.context, choices, options.prompt, options.speak);
+                yield this.prompt.prompt(context, choices, options.prompt, options.speak);
             }
-            return dialog_1.Dialog.EndOfTurn;
         });
     }
-    onRecognize(dc, options) {
+    onRecognize(context, state, options) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.prompt.recognize(dc.context, options.choices);
+            return yield this.prompt.recognize(context, options.choices);
         });
     }
 }

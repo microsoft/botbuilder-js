@@ -1,5 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var DialogEndReason;
+(function (DialogEndReason) {
+    /** The dialog ended normally through a call to `DialogContext.end()`. */
+    DialogEndReason[DialogEndReason["completed"] = 0] = "completed";
+    /** The dialog was cancelled as part of a call to `DialogContext.cancelAll()`. */
+    DialogEndReason[DialogEndReason["cancelled"] = 1] = "cancelled";
+})(DialogEndReason = exports.DialogEndReason || (exports.DialogEndReason = {}));
 /**
  * Base class for all dialogs.
  * @param R (Optional) type of result that's expected to be returned by the dialog.
@@ -8,16 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class Dialog {
     constructor(id) {
         this.id = id;
-        this._parent = undefined;
-    }
-    get parent() {
-        return this._parent;
-    }
-    set parent(value) {
-        if (this._parent != undefined) {
-            throw new Error(`${this.id}.parent: a parent dialog container has already been assigned.`);
-        }
-        this._parent = value;
     }
 }
 /** Signals the end of a turn by a dialog method or waterfall/sequence step.  */

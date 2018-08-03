@@ -5,10 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext, Activity, ActivityTypes } from '../../../botbuilder/lib';
-import { Choice } from '../../../botbuilder-prompts/lib';
+import { TurnContext, Activity, ActivityTypes } from 'botbuilder';
+import { Choice } from 'botbuilder-prompts';
 import { DialogContext } from '../dialogContext';
-import { Dialog, DialogTurnResult } from '../dialog';
+import { Dialog, DialogTurnResult, DialogInstance } from '../dialog';
 
 /** 
  * Basic configuration options supported by all prompts. 
@@ -51,9 +51,9 @@ export abstract class Prompt extends Dialog {
         super(dialogId);
     }
 
-    protected abstract onPrompt(dc: DialogContext, options: PromptOptions, isRetry: boolean): Promise<DialogTurnResult>;
+    protected abstract onPrompt(context: TurnContext, state: object, options: PromptOptions, isRetry: boolean): Promise<void>;
 
-    protected abstract onRecognize(dc: DialogContext, options: PromptOptions): Promise<any|undefined>;
+    protected abstract onRecognize(context: TurnContext, state: object, options: PromptOptions): Promise<any|undefined>;
 
     public async dialogBegin(dc: DialogContext, options: PromptOptions): Promise<DialogTurnResult> {
         // Initialize prompt state
@@ -62,7 +62,8 @@ export abstract class Prompt extends Dialog {
         state.options = Object.assign({}, options);
 
         // Send initial prompt
-        return await this.onPrompt(dc, state.options, false);
+        await this.onPrompt(dc.context, state.state, state.options, false);
+        return Dialog.EndOfTurn;
     }
 
     public async dialogContinue(dc: DialogContext): Promise<DialogTurnResult> {
@@ -70,7 +71,7 @@ export abstract class Prompt extends Dialog {
         if (dc.context.activity.type === ActivityTypes.Message) {
             // Perform base recognition
             const state = dc.activeDialog.state as PromptState;
-            const recognized = await this.onRecognize(dc, state.options);
+            const recognized = await this.onRecognize(dc.context, state.state, state.options);
             
             // Validate the return value
             let end = false;
@@ -93,26 +94,28 @@ export abstract class Prompt extends Dialog {
             // Return recognized value or re-prompt
             if (end) {
                 return await dc.end(endResult);
-            } else if (!dc.context.responded) {
-                return await this.onPrompt(dc, state.options, true);
             } else {
+                if (!dc.context.responded) {
+                    await this.onPrompt(dc.context, state.state, state.options, true);
+                }  
                 return Dialog.EndOfTurn;
             }
         }
     }
 
-    public async dialogReprompt(dc: DialogContext): Promise<DialogTurnResult> {
-        const state = dc.activeDialog.state as PromptState;
-        return await this.onPrompt(dc, state.options, true);
+    public async dialogReprompt(context: TurnContext, instance: DialogInstance): Promise<void> {
+        const state = instance.state as PromptState;
+        await this.onPrompt(context, state.state, state.options, true);
     }
 
-    public dialogResume(dc: DialogContext, result?: any): Promise<DialogTurnResult> {
+    public async dialogResume(dc: DialogContext, result?: any): Promise<DialogTurnResult> {
         // Prompts are typically leaf nodes on the stack but the dev is free to push other dialogs
         // on top of the stack which will result in the prompt receiving an unexpected call to
         // dialogResume() when the pushed on dialog ends. 
         // To avoid the prompt prematurely ending we need to implement this method and 
         // simply re-prompt the user.
-        return this.dialogReprompt(dc);
+        await this.dialogReprompt(dc.context, dc.activeDialog);
+        return Dialog.EndOfTurn;
     }
 }
 

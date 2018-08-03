@@ -5,10 +5,11 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext, Activity } from '../../botbuilder/lib';
-import { DialogInstance, DialogTurnResult, DialogContainer } from './dialog';
+import { TurnContext, Activity } from 'botbuilder';
+import { DialogInstance, DialogTurnResult, DialogEndReason } from './dialog';
+import { DialogSet } from './dialogSet';
 import { PromptOptions } from './prompts';
-import { Choice } from '../../botbuilder-prompts/lib';
+import { Choice } from 'botbuilder-prompts';
 
 /**
  * A context object used to manipulate a dialog stack.
@@ -28,11 +29,11 @@ export class DialogContext {
 
      /**
       * Creates a new DialogContext instance.
-      * @param container Parent dialog set.
+      * @param dialogs Parent dialog set.
       * @param context Context for the current turn of conversation with the user.
       * @param state State object being used to persist the dialog stack.
       */
-    constructor(public readonly container: DialogContainer, public readonly context: TurnContext, state: object) { 
+    constructor(public readonly dialogs: DialogSet, public readonly context: TurnContext, state: object) { 
         if (!Array.isArray(state['dialogStack'])) { state['dialogStack'] = [] } 
         this.stack = state['dialogStack'];
     }
@@ -76,7 +77,7 @@ export class DialogContext {
      */
     public async begin(dialogId: string, dialogArgs?: any): Promise<DialogTurnResult> {
         // Lookup dialog
-        const dialog = this.container.find(dialogId);
+        const dialog = this.dialogs.find(dialogId);
         if (!dialog) { throw new Error(`DialogContext.begin(): A dialog with an id of '${dialogId}' wasn't found.`) }
         
         // Push new instance onto stack. 
@@ -94,19 +95,18 @@ export class DialogContext {
     /**
      * Cancels all dialogs on the stack resulting in an empty stack.
      */
-    public async cancelAll(): Promise<DialogTurnResult> {
+    public async cancelAll(): Promise<void> {
         while (this.stack.length > 0) {
             // Find dialog and notify it of cancellation
             const instance = this.activeDialog;
-            const dialog = this.container.find(instance.id);
-            if (dialog && dialog.dialogCancel) {
-                await dialog.dialogCancel(this);
+            const dialog = this.dialogs.find(instance.id);
+            if (dialog && dialog.dialogEnd) {
+                await dialog.dialogEnd(this.context, instance, DialogEndReason.cancelled);
             }
 
             // Pop dialog off stack.
             this.stack.pop();
         }
-        return { hasActive: false, hasResult: false };
     }
 
     /**
@@ -161,7 +161,7 @@ export class DialogContext {
         const instance = this.activeDialog;
         if (instance) {
             // Lookup dialog
-            const dialog = this.container.find(instance.id);
+            const dialog = this.dialogs.find(instance.id);
             if (!dialog) { throw new Error(`DialogSet.continue(): Can't continue dialog. A dialog with an id of '${instance.id}' wasn't found.`) }
 
             // Check for existence of a continue() method
@@ -205,15 +205,27 @@ export class DialogContext {
      * @param result (Optional) result to pass to the parent dialogs `Dialog.resume()` method.
      */
     public async end(result?: any): Promise<DialogTurnResult> {
-        // Pop active dialog off the stack
-        if (this.stack.length > 0) { this.stack.pop() }
-
-        // Resume previous dialog
-        const instance = this.activeDialog;
+        // End the active dialog
+        let instance = this.activeDialog;
         if (instance) {
-
             // Lookup dialog
-            const dialog = this.container.find(instance.id);
+            const dialog = this.dialogs.find(instance.id);
+            if (!dialog) { throw new Error(`DialogContext.end(): Can't end current dialog. A dialog with an id of '${instance.id}' wasn't found.`) }
+
+            // Notify dialog of end
+            if (dialog.dialogEnd) {
+                await dialog.dialogEnd(this.context, instance, DialogEndReason.completed);
+            }
+
+            // Pop dialog off stack
+            this.stack.pop() 
+        }
+
+        // Resume parent dialog
+        instance = this.activeDialog;
+        if (instance) {
+            // Lookup dialog
+            const dialog = this.dialogs.find(instance.id);
             if (!dialog) { throw new Error(`DialogContext.end(): Can't resume previous dialog. A dialog with an id of '${instance.id}' wasn't found.`) }
             
             // Check for existence of a resumeDialog() method
@@ -281,25 +293,18 @@ export class DialogContext {
      * The `Dialog.dialogReprompt()` method is optional for dialogs so if there's no active dialog
      * or the active dialog doesn't support re-prompting, this method will effectively be a no-op. 
      */
-    public async reprompt(): Promise<DialogTurnResult> {
+    public async reprompt(): Promise<void> {
         // Check for a dialog on the stack
         const instance = this.activeDialog;
         if (instance) {
             // Lookup dialog
-            const dialog = this.container.find(instance.id);
+            const dialog = this.dialogs.find(instance.id);
             if (!dialog) { throw new Error(`DialogSet.reprompt(): Can't find A dialog with an id of '${instance.id}'.`) }
 
-            // Check for existence of a dialogReprompt() method
-            let turnResult: DialogTurnResult;
+            // Ask dialog to re-prompt if supported
             if (dialog.dialogReprompt) {
-                // Ask dialog to re-prompt
-                turnResult = await dialog.dialogReprompt(this);
-            } else {
-                turnResult = { hasActive: true, hasResult: false };
+                await dialog.dialogReprompt(this.context, instance);
             }
-            return this.verifyTurnResult(turnResult);
-        } else {
-            return { hasActive: false, hasResult: false };
         }
     }
 

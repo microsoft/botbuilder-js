@@ -8,12 +8,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 /** Licensed under the MIT License. */
 __export(require("./prompts"));
-__export(require("./steps"));
 __export(require("./dialog"));
 __export(require("./componentDialog"));
 __export(require("./dialogContext"));
-__export(require("./dialogDispatcher"));
-__export(require("./sequenceDialog"));
+__export(require("./dialogSet"));
 __export(require("./waterfallDialog"));
 // Re-exporting choice related interfaces used just to avoid TS developers from needing to 
 // import interfaces from two libraries when working with dialogs.

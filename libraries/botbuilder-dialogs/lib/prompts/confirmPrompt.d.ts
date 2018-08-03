@@ -5,10 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult } from '../dialog';
-import { DialogContext } from '../dialogContext';
+import { TurnContext } from 'botbuilder';
 import { Prompt, PromptOptions, PromptValidator } from './prompt';
-import * as prompts from '../../../botbuilder-prompts/lib';
+import * as prompts from 'botbuilder-prompts';
 /**
  * Prompts a user to confirm something with a yes/no response.
  *
@@ -105,6 +104,6 @@ export declare class ConfirmPrompt<O = boolean> extends Prompt {
      * @param listStyle Type of list to render to to user. Defaults to `ListStyle.auto`.
      */
     style(listStyle: prompts.ListStyle): this;
-    protected onPrompt(dc: DialogContext, options: PromptOptions, isRetry: boolean): Promise<DialogTurnResult>;
-    protected onRecognize(dc: DialogContext, options: PromptOptions): Promise<O | undefined>;
+    protected onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void>;
+    protected onRecognize(context: TurnContext, state: any, options: PromptOptions): Promise<O | undefined>;
 }

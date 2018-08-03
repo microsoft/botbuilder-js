@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-const lib_1 = require("../../../botbuilder/lib");
+const botbuilder_1 = require("botbuilder");
 const dialog_1 = require("../dialog");
 /**
  * Base class for all prompts.
@@ -32,16 +32,17 @@ class Prompt extends dialog_1.Dialog {
             state.state = {};
             state.options = Object.assign({}, options);
             // Send initial prompt
-            return yield this.onPrompt(dc, state.options, false);
+            yield this.onPrompt(dc.context, state.state, state.options, false);
+            return dialog_1.Dialog.EndOfTurn;
         });
     }
     dialogContinue(dc) {
         return __awaiter(this, void 0, void 0, function* () {
             // Don't do anything for non-message activities
-            if (dc.context.activity.type === lib_1.ActivityTypes.Message) {
+            if (dc.context.activity.type === botbuilder_1.ActivityTypes.Message) {
                 // Perform base recognition
                 const state = dc.activeDialog.state;
-                const recognized = yield this.onRecognize(dc, state.options);
+                const recognized = yield this.onRecognize(dc.context, state.state, state.options);
                 // Validate the return value
                 let end = false;
                 let endResult;
@@ -64,28 +65,31 @@ class Prompt extends dialog_1.Dialog {
                 if (end) {
                     return yield dc.end(endResult);
                 }
-                else if (!dc.context.responded) {
-                    return yield this.onPrompt(dc, state.options, true);
-                }
                 else {
+                    if (!dc.context.responded) {
+                        yield this.onPrompt(dc.context, state.state, state.options, true);
+                    }
                     return dialog_1.Dialog.EndOfTurn;
                 }
             }
         });
     }
-    dialogReprompt(dc) {
+    dialogReprompt(context, instance) {
         return __awaiter(this, void 0, void 0, function* () {
-            const state = dc.activeDialog.state;
-            return yield this.onPrompt(dc, state.options, true);
+            const state = instance.state;
+            yield this.onPrompt(context, state.state, state.options, true);
         });
     }
     dialogResume(dc, result) {
-        // Prompts are typically leaf nodes on the stack but the dev is free to push other dialogs
-        // on top of the stack which will result in the prompt receiving an unexpected call to
-        // dialogResume() when the pushed on dialog ends. 
-        // To avoid the prompt prematurely ending we need to implement this method and 
-        // simply re-prompt the user.
-        return this.dialogReprompt(dc);
+        return __awaiter(this, void 0, void 0, function* () {
+            // Prompts are typically leaf nodes on the stack but the dev is free to push other dialogs
+            // on top of the stack which will result in the prompt receiving an unexpected call to
+            // dialogResume() when the pushed on dialog ends. 
+            // To avoid the prompt prematurely ending we need to implement this method and 
+            // simply re-prompt the user.
+            yield this.dialogReprompt(dc.context, dc.activeDialog);
+            return dialog_1.Dialog.EndOfTurn;
+        });
     }
 }
 exports.Prompt = Prompt;

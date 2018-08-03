@@ -5,8 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext, Activity, ActivityTypes, InputHints, TokenResponse } from '../../../botbuilder/lib';
-import * as prompts from '../../../botbuilder-prompts/lib';
+import { TurnContext, ActivityTypes, InputHints, TokenResponse } from 'botbuilder';
+import * as prompts from 'botbuilder-prompts';
 import { DialogContext } from '../dialogContext';
 import { Dialog, DialogTurnResult } from '../dialog';
 import { PromptOptions, PromptValidator } from './prompt';

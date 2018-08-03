@@ -5,10 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult } from '../dialog';
-import { DialogContext } from '../dialogContext';
+import { TurnContext } from 'botbuilder';
 import { Prompt, PromptOptions, PromptValidator } from './prompt';
-import * as prompts from '../../../botbuilder-prompts/lib';
+import * as prompts from 'botbuilder-prompts';
 /**
  * Additional options that can be used to configure a `ChoicePrompt`.
  */
@@ -82,6 +81,6 @@ export declare class ChoicePrompt<O = prompts.FoundChoice> extends Prompt {
      * @param listStyle Type of list to render to to user. Defaults to `ListStyle.auto`.
      */
     style(listStyle: prompts.ListStyle): this;
-    protected onPrompt(dc: DialogContext, options: ChoicePromptOptions, isRetry: boolean): Promise<DialogTurnResult>;
-    protected onRecognize(dc: DialogContext, options: ChoicePromptOptions): Promise<O | undefined>;
+    protected onPrompt(context: TurnContext, state: any, options: ChoicePromptOptions, isRetry: boolean): Promise<void>;
+    protected onRecognize(context: TurnContext, state: any, options: ChoicePromptOptions): Promise<O | undefined>;
 }

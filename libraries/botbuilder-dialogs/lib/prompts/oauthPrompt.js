@@ -15,8 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-const lib_1 = require("../../../botbuilder/lib");
-const prompts = require("../../../botbuilder-prompts/lib");
+const botbuilder_1 = require("botbuilder");
+const prompts = require("botbuilder-prompts");
 const dialog_1 = require("../dialog");
 /**
  * Creates a new prompt that asks the user to sign in using the Bot Frameworks Single Sign On (SSO)
@@ -125,7 +125,7 @@ class OAuthPrompt extends dialog_1.Dialog {
             const recognized = yield this.prompt.recognize(dc.context);
             // Check for timeout
             const state = dc.activeDialog.state;
-            const isMessage = dc.context.activity.type === lib_1.ActivityTypes.Message;
+            const isMessage = dc.context.activity.type === botbuilder_1.ActivityTypes.Message;
             const hasTimedOut = isMessage && (new Date().getTime() > state.expires);
             if (hasTimedOut) {
                 return yield dc.end(undefined);
@@ -156,7 +156,7 @@ class OAuthPrompt extends dialog_1.Dialog {
                 else {
                     // Send retry prompt
                     if (!dc.context.responded && isMessage && state.options.retryPrompt) {
-                        yield dc.context.sendActivity(state.options.retryPrompt, state.options.retrySpeak, lib_1.InputHints.ExpectingInput);
+                        yield dc.context.sendActivity(state.options.retryPrompt, state.options.retrySpeak, botbuilder_1.InputHints.ExpectingInput);
                     }
                     return dialog_1.Dialog.EndOfTurn;
                 }

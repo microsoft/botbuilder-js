@@ -8,14 +8,6 @@
 import { TurnContext } from '../../botbuilder/lib';
 import { DialogContext } from './dialogContext';
 
-export interface DialogContainer {
-    readonly id: string;
-    readonly parent: DialogContainer|undefined;
-    add<T extends Dialog>(dialog: T): T;
-    createContext(context: TurnContext, state: object): Promise<DialogContext>;
-    find<T extends Dialog = Dialog>(dialogId: string): T|undefined;
-}
-
 /** 
  * Tracking information for a dialog on the stack.
  * @param T (Optional) type of state being persisted for dialog. 
@@ -26,6 +18,14 @@ export interface DialogInstance<T = any> {
 
     /** The instances persisted state. */
     state: T;
+}
+
+export enum DialogEndReason {
+    /** The dialog ended normally through a call to `DialogContext.end()`. */
+    completed,
+
+    /** The dialog was cancelled as part of a call to `DialogContext.cancelAll()`. */
+    cancelled
 }
 
 /**
@@ -52,21 +52,10 @@ export interface DialogTurnResult<T = any> {
  * @param O (Optional) options that can be passed into the [begin()](#begin) method.
  */
 export abstract class Dialog<R = any, O = {}> {
-    private _parent: DialogContainer|undefined = undefined;
-
     /** Signals the end of a turn by a dialog method or waterfall/sequence step.  */
     static EndOfTurn: DialogTurnResult = { hasActive: true, hasResult: false };
 
     constructor(public readonly id: string) { }
-
-    public get parent(): DialogContainer|undefined {
-        return this._parent;
-    }
-
-    public set parent(value: DialogContainer) {
-        if (this._parent != undefined) { throw new Error(`${this.id}.parent: a parent dialog container has already been assigned.`) }
-        this._parent = value;
-    }
 
     /**
      * Method called when a new dialog has been pushed onto the stack and is being activated.
@@ -101,13 +90,16 @@ export abstract class Dialog<R = any, O = {}> {
 
     /**
      * (Optional) method called when the dialog has been requested to re-prompt the user for input.
-     * @param dc The dialog context for the current turn of conversation.
+     * @param context Context for the current turn of conversation.
+     * @param instance The instance of the current dialog.
      */
-    dialogReprompt?(dc: DialogContext): Promise<DialogTurnResult<R>>;
+    dialogReprompt?(context: TurnContext, instance: DialogInstance): Promise<void>;
 
     /**
-     * (Optional) method called when the dialog is being cancelled through a call to `dc.cancel()`.
-     * @param dc The dialog context for the current turn of conversation.
+     * (Optional) method called when the dialog is ending.
+     * @param context Context for the current turn of conversation.
+     * @param instance The instance of the current dialog.
+     * @param reason The reason the dialog is ending.
      */
-    dialogCancel?(dc: DialogContext): Promise<DialogTurnResult<R>>;
+    dialogEnd?(context: TurnContext, instance: DialogInstance, reason: DialogEndReason): Promise<void>;
 }

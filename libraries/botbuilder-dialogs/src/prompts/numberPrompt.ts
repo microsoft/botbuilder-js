@@ -5,10 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog, DialogTurnResult } from '../dialog';
-import { DialogContext } from '../dialogContext';
+import { TurnContext } from 'botbuilder';
 import { Prompt, PromptOptions, PromptValidator } from './prompt';
-import * as prompts from '../../../botbuilder-prompts/lib';
+import * as prompts from 'botbuilder-prompts';
 
 /**
  * Prompts a user to enter a number. 
@@ -75,16 +74,15 @@ export class NumberPrompt<O = number> extends Prompt {
         this.prompt = prompts.createNumberPrompt(undefined, defaultLocale); 
     }
 
-    protected async onPrompt(dc: DialogContext, options: PromptOptions, isRetry: boolean): Promise<DialogTurnResult> {
+    protected async onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void> {
         if (isRetry && options.retryPrompt) {
-            await this.prompt.prompt(dc.context, options.retryPrompt, options.retrySpeak);
+            await this.prompt.prompt(context, options.retryPrompt, options.retrySpeak);
         } else if (options.prompt) {
-            await this.prompt.prompt(dc.context, options.prompt, options.speak);
+            await this.prompt.prompt(context, options.prompt, options.speak);
         }
-        return Dialog.EndOfTurn;
     }
 
-    protected onRecognize(dc: DialogContext, options: PromptOptions): Promise<O|undefined> {
-        return this.prompt.recognize(dc.context);
+    protected onRecognize(context: TurnContext, state: any, options: PromptOptions): Promise<O|undefined> {
+        return this.prompt.recognize(context);
     }
 }

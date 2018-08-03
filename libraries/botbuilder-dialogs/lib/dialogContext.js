@@ -8,6 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const dialog_1 = require("./dialog");
 /**
  * A context object used to manipulate a dialog stack.
  *
@@ -23,12 +24,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class DialogContext {
     /**
      * Creates a new DialogContext instance.
-     * @param container Parent dialog set.
+     * @param dialogs Parent dialog set.
      * @param context Context for the current turn of conversation with the user.
      * @param state State object being used to persist the dialog stack.
      */
-    constructor(container, context, state) {
-        this.container = container;
+    constructor(dialogs, context, state) {
+        this.dialogs = dialogs;
         this.context = context;
         if (!Array.isArray(state['dialogStack'])) {
             state['dialogStack'] = [];
@@ -74,7 +75,7 @@ class DialogContext {
     begin(dialogId, dialogArgs) {
         return __awaiter(this, void 0, void 0, function* () {
             // Lookup dialog
-            const dialog = this.container.find(dialogId);
+            const dialog = this.dialogs.find(dialogId);
             if (!dialog) {
                 throw new Error(`DialogContext.begin(): A dialog with an id of '${dialogId}' wasn't found.`);
             }
@@ -97,14 +98,13 @@ class DialogContext {
             while (this.stack.length > 0) {
                 // Find dialog and notify it of cancellation
                 const instance = this.activeDialog;
-                const dialog = this.container.find(instance.id);
-                if (dialog && dialog.dialogCancel) {
-                    yield dialog.dialogCancel(this);
+                const dialog = this.dialogs.find(instance.id);
+                if (dialog && dialog.dialogEnd) {
+                    yield dialog.dialogEnd(this.context, instance, dialog_1.DialogEndReason.cancelled);
                 }
                 // Pop dialog off stack.
                 this.stack.pop();
             }
-            return { hasActive: false, hasResult: false };
         });
     }
     prompt(dialogId, promptOrOptions, choices) {
@@ -146,7 +146,7 @@ class DialogContext {
             const instance = this.activeDialog;
             if (instance) {
                 // Lookup dialog
-                const dialog = this.container.find(instance.id);
+                const dialog = this.dialogs.find(instance.id);
                 if (!dialog) {
                     throw new Error(`DialogSet.continue(): Can't continue dialog. A dialog with an id of '${instance.id}' wasn't found.`);
                 }
@@ -194,15 +194,26 @@ class DialogContext {
      */
     end(result) {
         return __awaiter(this, void 0, void 0, function* () {
-            // Pop active dialog off the stack
-            if (this.stack.length > 0) {
-                this.stack.pop();
-            }
-            // Resume previous dialog
-            const instance = this.activeDialog;
+            // End the active dialog
+            let instance = this.activeDialog;
             if (instance) {
                 // Lookup dialog
-                const dialog = this.container.find(instance.id);
+                const dialog = this.dialogs.find(instance.id);
+                if (!dialog) {
+                    throw new Error(`DialogContext.end(): Can't end current dialog. A dialog with an id of '${instance.id}' wasn't found.`);
+                }
+                // Notify dialog of end
+                if (dialog.dialogEnd) {
+                    yield dialog.dialogEnd(this.context, instance, dialog_1.DialogEndReason.completed);
+                }
+                // Pop dialog off stack
+                this.stack.pop();
+            }
+            // Resume parent dialog
+            instance = this.activeDialog;
+            if (instance) {
+                // Lookup dialog
+                const dialog = this.dialogs.find(instance.id);
                 if (!dialog) {
                     throw new Error(`DialogContext.end(): Can't resume previous dialog. A dialog with an id of '${instance.id}' wasn't found.`);
                 }
@@ -281,23 +292,14 @@ class DialogContext {
             const instance = this.activeDialog;
             if (instance) {
                 // Lookup dialog
-                const dialog = this.container.find(instance.id);
+                const dialog = this.dialogs.find(instance.id);
                 if (!dialog) {
                     throw new Error(`DialogSet.reprompt(): Can't find A dialog with an id of '${instance.id}'.`);
                 }
-                // Check for existence of a dialogReprompt() method
-                let turnResult;
+                // Ask dialog to re-prompt if supported
                 if (dialog.dialogReprompt) {
-                    // Ask dialog to re-prompt
-                    turnResult = yield dialog.dialogReprompt(this);
+                    yield dialog.dialogReprompt(this.context, instance);
                 }
-                else {
-                    turnResult = { hasActive: true, hasResult: false };
-                }
-                return this.verifyTurnResult(turnResult);
-            }
-            else {
-                return { hasActive: false, hasResult: false };
             }
         });
     }
