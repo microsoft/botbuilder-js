@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Storage, StoreItems } from 'botbuilder';
-import { DocumentBase } from 'documentdb';
+import * as DocumentBase from 'documentdb';
 /** Additional settings for configuring an instance of [CosmosDbSqlStorage](../classes/botbuilder_azure_v4.cosmosdbsqlstorage.html). */
 export interface CosmosDbSqlStorageSettings {
     /** The endpoint Uri for the service endpoint from the Azure Cosmos DB service. */

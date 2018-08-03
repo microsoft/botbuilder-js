@@ -7,7 +7,7 @@
  */
 
 import { Storage, StoreItems, StoreItem } from 'botbuilder';
-import { DocumentClient, DocumentBase, UriFactory } from 'documentdb';
+import { DocumentClient, ConnectionPolicy, UriFactory } from 'documentdb';
 
 /** 
  * Additional settings for configuring an instance of `CosmosDbStorage`. 
@@ -56,7 +56,7 @@ export class CosmosDbStorage implements Storage {
      * @param settings Setting to configure the provider.
      * @param connectionPolicyConfigurator (Optional) An optional delegate that accepts a ConnectionPolicy for customizing policies. More information at http://azure.github.io/azure-documentdb-node/global.html#ConnectionPolicy
      */
-    public constructor(settings: CosmosDbStorageSettings, connectionPolicyConfigurator: (policy: DocumentBase.ConnectionPolicy) => void = null) {
+    public constructor(settings: CosmosDbStorageSettings, connectionPolicyConfigurator: (policy: ConnectionPolicy) => void = null) {
         if (!settings) {
             throw new Error('The settings parameter is required.');
         }
@@ -64,7 +64,7 @@ export class CosmosDbStorage implements Storage {
         this.settings = Object.assign({}, settings);
 
         // Invoke collectionPolicy delegate to further customize settings
-        let policy = new DocumentBase.ConnectionPolicy();
+        let policy = new ConnectionPolicy();
         if (connectionPolicyConfigurator && typeof connectionPolicyConfigurator === 'function') {
             connectionPolicyConfigurator(policy);
         }

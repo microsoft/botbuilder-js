@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Storage, StoreItems } from 'botbuilder';
-import { DocumentBase } from 'documentdb';
+import * as DocumentBase from 'documentdb';
 /**
  * Additional settings for configuring an instance of `CosmosDbStorage`.
  */
