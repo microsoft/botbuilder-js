@@ -62,7 +62,7 @@ export declare class BotState implements Middleware {
      */
     constructor(storage: Storage, storageKey: StorageKeyFactory);
     /** NEW */
-    createProperty<T = any>(name: string, defaultValue?: T): PropertyAccessor<T>;
+    createProperty<T = any>(name: string): PropertyAccessor<T>;
     /** @private */
     onTurn(context: TurnContext, next: () => Promise<void>): Promise<void>;
     /**

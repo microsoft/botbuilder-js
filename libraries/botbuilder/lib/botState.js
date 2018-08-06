@@ -47,11 +47,11 @@ class BotState {
         this.stateKey = Symbol('state');
     }
     /** NEW */
-    createProperty(name, defaultValue) {
+    createProperty(name) {
         if (this.properties.has(name)) {
             throw new Error(`BotState.createProperty(): a property named '${name}' already exists.`);
         }
-        const prop = new botStatePropertyAccessor_1.BotStatePropertyAccessor(this, name, defaultValue);
+        const prop = new botStatePropertyAccessor_1.BotStatePropertyAccessor(this, name);
         this.properties.set(name, prop);
         return prop;
     }

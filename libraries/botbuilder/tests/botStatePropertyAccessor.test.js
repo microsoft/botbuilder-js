@@ -17,10 +17,10 @@ describe(`BotStatePropertyAccessor`, function () {
 
     it(`should use default value when a default value is assigned.`, function (done) {
         const USER_COUNT = 'userCount';
-        const userProperty = middleware.createProperty(USER_COUNT, 100);
+        const userProperty = middleware.createProperty(USER_COUNT);
 
         const tAdapter = new TestAdapter(async (context) => {
-            let userCount = await userProperty.get(context);
+            let userCount = await userProperty.get(context, 100);
             assert(userCount === 100, `default value for PropertyAccessor was not used.`);
         });
         tAdapter.use(middleware);
@@ -45,10 +45,10 @@ describe(`BotStatePropertyAccessor`, function () {
 
     it(`should save changes to registered Property multiple times.`, function (done) {
         const MESSAGE_COUNT = 'messageCount';
-        const messageProperty = middleware.createProperty(MESSAGE_COUNT, 0);
+        const messageProperty = middleware.createProperty(MESSAGE_COUNT);
         
         const tAdapter = new TestAdapter(async (context) => {
-            let messageCount = await messageProperty.get(context);
+            let messageCount = await messageProperty.get(context, 0);
             messageCount++;
             await messageProperty.set(context, messageCount);
             await context.sendActivity(messageCount.toString());
@@ -100,10 +100,10 @@ describe(`BotStatePropertyAccessor`, function () {
 
     it(`should successfully set default value if default value is an Array.`, function (done) {
         const NUMBERS_PROPERTY = 'numbersProperty';
-        const numbersProperty = middleware.createProperty(NUMBERS_PROPERTY, [1]);
+        const numbersProperty = middleware.createProperty(NUMBERS_PROPERTY);
 
         const tAdapter = new TestAdapter(async (context) => {
-            let numbersValue = await numbersProperty.get(context);
+            let numbersValue = await numbersProperty.get(context, [1]);
             assert(Array.isArray(numbersValue), `default value for PropertyAccessor was not properly set.`);
             assert(numbersValue.length === 1, `numbersValue.length should be 1, not ${numbersValue.length}.`);
             assert(numbersValue[0] === 1, `numbersValue[0] should be 1, not ${numbersValue[0]}.`);
@@ -116,14 +116,14 @@ describe(`BotStatePropertyAccessor`, function () {
 
     it(`should successfully set default value if default value is an Object.`, function (done) {
         const ADDRESS_PROPERTY = 'addressProperty';
-        const addressProperty = middleware.createProperty(ADDRESS_PROPERTY, {
-            street: '1 Microsoft Way',
-            zipCode: 98052, 
-            state: 'WA'
-        });
+        const addressProperty = middleware.createProperty(ADDRESS_PROPERTY);
 
         const tAdapter = new TestAdapter(async (context) => {
-            let addressValue = await addressProperty.get(context);
+            let addressValue = await addressProperty.get(context, {
+                street: '1 Microsoft Way',
+                zipCode: 98052, 
+                state: 'WA'
+            });
             assert(typeof addressValue === 'object', `default value for PropertyAccessor was not properly set.`);
             assert(addressValue.street === '1 Microsoft Way', `default value for PropertyAccessor was not properly set.`);
             assert(addressValue.zipCode === 98052, `default value for PropertyAccessor was not properly set.`);
