@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { TurnContext } from 'botbuilder';
-import { Prompt, PromptOptions, PromptValidator } from './prompt';
+import { Prompt, PromptOptions, PromptValidator, PromptRecognizerResult } from './prompt';
 import * as prompts from 'botbuilder-prompts';
 /**
  * Prompts a user to confirm something with a yes/no response.
@@ -64,7 +64,7 @@ import * as prompts from 'botbuilder-prompts';
  * ```
  * @param O (Optional) output type returned by prompt. This defaults to a boolean `true` or `false` but can be changed by a custom validator passed to the prompt.
  */
-export declare class ConfirmPrompt<O = boolean> extends Prompt {
+export declare class ConfirmPrompt extends Prompt<boolean> {
     private prompt;
     /**
      * Allows for the localization of the confirm prompts yes/no choices to other locales besides
@@ -92,7 +92,7 @@ export declare class ConfirmPrompt<O = boolean> extends Prompt {
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
      * @param defaultLocale (Optional) locale to use if `dc.context.activity.locale` not specified. Defaults to a value of `en-us`.
      */
-    constructor(dialogId: string, validator?: PromptValidator<boolean, O>, defaultLocale?: string);
+    constructor(dialogId: string, validator?: PromptValidator<boolean>, defaultLocale?: string);
     /**
      * Sets additional options passed to the `ChoiceFactory` and used to tweak the style of choices
      * rendered to the user.
@@ -105,5 +105,5 @@ export declare class ConfirmPrompt<O = boolean> extends Prompt {
      */
     style(listStyle: prompts.ListStyle): this;
     protected onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void>;
-    protected onRecognize(context: TurnContext, state: any, options: PromptOptions): Promise<O | undefined>;
+    protected onRecognize(context: TurnContext, state: any, options: PromptOptions): Promise<PromptRecognizerResult<boolean>>;
 }

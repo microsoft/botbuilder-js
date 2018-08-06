@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { TurnContext, Activity } from 'botbuilder';
-import { DialogInstance, DialogTurnResult, DialogEndReason } from './dialog';
+import { DialogInstance, DialogTurnResult, DialogReason } from './dialog';
 import { DialogSet } from './dialogSet';
 import { PromptOptions } from './prompts';
 import { Choice } from 'botbuilder-prompts';
@@ -24,8 +24,16 @@ import { Choice } from 'botbuilder-prompts';
  * ```
  */
 export class DialogContext {
+    /** Set of dialogs that can be called from this context. */
+    public readonly dialogs: DialogSet;
+
+    /** Context for the current turn of conversation. */
+    public readonly context: TurnContext;
+
     /** Current dialog stack. */
     public readonly stack: DialogInstance[];
+
+
 
      /**
       * Creates a new DialogContext instance.
@@ -33,8 +41,10 @@ export class DialogContext {
       * @param context Context for the current turn of conversation with the user.
       * @param state State object being used to persist the dialog stack.
       */
-    constructor(public readonly dialogs: DialogSet, public readonly context: TurnContext, state: object) { 
+    constructor(dialogs: DialogSet, context: TurnContext, state: object) { 
         if (!Array.isArray(state['dialogStack'])) { state['dialogStack'] = [] } 
+        this.dialogs = dialogs;
+        this.context = context;
         this.stack = state['dialogStack'];
     }
 
@@ -88,8 +98,8 @@ export class DialogContext {
         this.stack.push(instance);
             
         // Call dialogs begin() method.
-        const result = await dialog.dialogBegin(this, dialogArgs);
-        return this.verifyTurnResult(result);
+        const turnResult = await dialog.dialogBegin(this, dialogArgs);
+        return this.verifyTurnResult(turnResult);
     }
 
     /**
@@ -97,15 +107,7 @@ export class DialogContext {
      */
     public async cancelAll(): Promise<void> {
         while (this.stack.length > 0) {
-            // Find dialog and notify it of cancellation
-            const instance = this.activeDialog;
-            const dialog = this.dialogs.find(instance.id);
-            if (dialog && dialog.dialogEnd) {
-                await dialog.dialogEnd(this.context, instance, DialogEndReason.cancelled);
-            }
-
-            // Pop dialog off stack.
-            this.stack.pop();
+            await this.endActiveDialog(DialogReason.cancelCalled);
         }
     }
 
@@ -126,13 +128,13 @@ export class DialogContext {
     public async prompt(dialogId: string, promptOrOptions: string|Partial<Activity>, choices?: (string|Choice)[]): Promise<DialogTurnResult>;
     public async prompt(dialogId: string, promptOrOptions: PromptOptions): Promise<DialogTurnResult>;
     public async prompt(dialogId: string, promptOrOptions: string|Partial<Activity>|PromptOptions, choices?: (string|Choice)[]): Promise<DialogTurnResult> {
-        let args: PromptOptions;
+        let options: PromptOptions;
         if (typeof promptOrOptions === 'object' && (promptOrOptions as PromptOptions).prompt !== undefined) {
-            args = Object.assign({}, promptOrOptions as PromptOptions);
+            options = Object.assign({}, promptOrOptions as PromptOptions);
         } else {
-            args = { prompt: promptOrOptions, choices: choices };
+            options = { prompt: promptOrOptions as string|Partial<Activity>, choices: choices };
         }
-        return this.begin(dialogId, args);
+        return this.begin(dialogId, options);
     }
 
     /**
@@ -162,17 +164,10 @@ export class DialogContext {
         if (instance) {
             // Lookup dialog
             const dialog = this.dialogs.find(instance.id);
-            if (!dialog) { throw new Error(`DialogSet.continue(): Can't continue dialog. A dialog with an id of '${instance.id}' wasn't found.`) }
+            if (!dialog) { throw new Error(`DialogContext.continue(): Can't continue dialog. A dialog with an id of '${instance.id}' wasn't found.`) }
 
-            // Check for existence of a continue() method
-            let turnResult: DialogTurnResult;
-            if (dialog.dialogContinue) {
-                // Continue execution of dialog
-                turnResult = await dialog.dialogContinue(this);
-            } else {
-                // Just end the dialog
-                turnResult = await this.end();
-            }
+            // Continue execution of dialog
+            const turnResult = await dialog.dialogContinue(this);
             return this.verifyTurnResult(turnResult);
         } else {
             return { hasActive: false, hasResult: false };
@@ -191,52 +186,21 @@ export class DialogContext {
      * If the parent dialog hasn't implemented resumeDialog() then it will be popped off the stack
      * as well and any result will be passed it its parent. If there are no more parent dialogs on 
      * the stack then processing of the turn will end. 
-      * 
-     * ```JavaScript
-     * dialogs.add('showUptime', [
-     *      async function (dc) {
-     *          const elapsed = new Date().getTime() - started;
-     *          await dc.context.sendActivity(`I've been running for ${elapsed / 1000} seconds.`);
-     *          await dc.end(elapsed);
-     *      }
-     * ]);
-     * const started = new Date().getTime();
-     * ```
      * @param result (Optional) result to pass to the parent dialogs `Dialog.resume()` method.
      */
     public async end(result?: any): Promise<DialogTurnResult> {
         // End the active dialog
-        let instance = this.activeDialog;
-        if (instance) {
-            // Lookup dialog
-            const dialog = this.dialogs.find(instance.id);
-            if (!dialog) { throw new Error(`DialogContext.end(): Can't end current dialog. A dialog with an id of '${instance.id}' wasn't found.`) }
-
-            // Notify dialog of end
-            if (dialog.dialogEnd) {
-                await dialog.dialogEnd(this.context, instance, DialogEndReason.completed);
-            }
-
-            // Pop dialog off stack
-            this.stack.pop() 
-        }
+        await this.endActiveDialog(DialogReason.endCalled);
 
         // Resume parent dialog
-        instance = this.activeDialog;
+        const instance = this.activeDialog;
         if (instance) {
             // Lookup dialog
             const dialog = this.dialogs.find(instance.id);
             if (!dialog) { throw new Error(`DialogContext.end(): Can't resume previous dialog. A dialog with an id of '${instance.id}' wasn't found.`) }
             
-            // Check for existence of a resumeDialog() method
-            let turnResult: DialogTurnResult;
-            if (dialog.dialogResume) {
-                // Return result to previous dialog
-                turnResult = await dialog.dialogResume(this, result);
-            } else {
-                // Just end the dialog and pass result to parent dialog
-                turnResult = await this.end(result);
-            }
+            // Return result to previous dialog
+            const turnResult = await dialog.dialogResume(this, DialogReason.endCalled, result);
             return this.verifyTurnResult(turnResult);
         } else {
             // Signal completion
@@ -249,41 +213,15 @@ export class DialogContext {
      * 
      * @remarks
      * This method is particularly useful for creating conversational loops within your bot:
-     * 
-     * ```JavaScript
-     * dialogs.add('forEach', [
-     *      async function (dc, args) {
-     *          // Validate args
-     *          if (!args || !args.dialogId || !Array.isArray(args.items)) { throw new Error(`forEach: invalid args`) }
-     *          if (args.index === undefined) { args.index = 0 }
-     * 
-     *          // Persist args
-     *          dc.activeDialog.state = args;
-     * 
-     *          // Invoke dialog with next item or end
-     *          if (args.index < args.items.length) {
-     *              await dc.begin(args.dialogId, args.items[args.index]);
-     *          } else {
-     *              await dc.end();
-     *          }
-     *      },
-     *      function (dc) {
-     *          // Next item
-     *          const args = dc.activeDialog.state;
-     *          args.index++;
-     *          return dc.replace('forEach', args);
-     *      }
-     * ]);
-     * ```
      * @param dialogId ID of the new dialog to start.
-     * @param dialogArgs (Optional) additional argument(s) to pass to the new dialog.  
+     * @param options (Optional) additional argument(s) to pass to the new dialog.  
      */
-    public async replace(dialogId: string, dialogArgs?: any): Promise<DialogTurnResult> {
-        // Pop stack
-        if (this.stack.length > 0) { this.stack.pop() }
+    public async replace(dialogId: string, options?: object): Promise<DialogTurnResult> {
+        // End the active dialog
+        await this.endActiveDialog(DialogReason.replaceCalled);
 
         // Start replacement dialog
-        return await this.begin(dialogId, dialogArgs);
+        return await this.begin(dialogId, options);
     }
 
     /**
@@ -302,9 +240,22 @@ export class DialogContext {
             if (!dialog) { throw new Error(`DialogSet.reprompt(): Can't find A dialog with an id of '${instance.id}'.`) }
 
             // Ask dialog to re-prompt if supported
-            if (dialog.dialogReprompt) {
-                await dialog.dialogReprompt(this.context, instance);
+            await dialog.dialogReprompt(this.context, instance);
+        }
+    }
+
+    private async endActiveDialog(reason: DialogReason): Promise<void> {
+        let instance = this.activeDialog;
+        if (instance) {
+            // Lookup dialog
+            const dialog = this.dialogs.find(instance.id);
+            if (dialog) {
+                // Notify dialog of end
+                await dialog.dialogEnd(this.context, instance, reason);
             }
+
+            // Pop dialog off stack
+            this.stack.pop() 
         }
     }
 

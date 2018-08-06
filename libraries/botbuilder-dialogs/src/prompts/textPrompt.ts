@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { TurnContext } from 'botbuilder';
-import { Prompt, PromptOptions, PromptValidator } from './prompt';
+import { Prompt, PromptOptions, PromptValidator, PromptRecognizerResult } from './prompt';
 import * as prompts from 'botbuilder-prompts';
 
 /**
@@ -51,29 +51,29 @@ import * as prompts from 'botbuilder-prompts';
  *    return undefined;
  * }));
  * ```
- * @param O (Optional) output type returned by prompt. This defaults to a `string` but can be changed by a custom validator passed to the prompt.
  */
-export class TextPrompt<O = string> extends Prompt {
-    private prompt: prompts.TextPrompt<O>;
+export class TextPrompt extends Prompt<string> {
+    private prompt: prompts.TextPrompt<string>;
 
     /**
      * Creates a new `TextPrompt` instance.
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.  
      */
-    constructor(dialogId: string, validator?: PromptValidator<string, O>) {
+    constructor(dialogId: string, validator?: PromptValidator<string>) {
         super(dialogId, validator);
         this.prompt = prompts.createTextPrompt(); 
     }
 
     protected async onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void> {
         if (isRetry && options.retryPrompt) {
-            await this.prompt.prompt(context, options.retryPrompt, options.retrySpeak);
+            await this.prompt.prompt(context, options.retryPrompt);
         } else if (options.prompt) {
-            await this.prompt.prompt(context, options.prompt, options.speak);
+            await this.prompt.prompt(context, options.prompt);
         }
     }
 
-    protected async onRecognize(context: TurnContext, state: any, options: PromptOptions): Promise<O|undefined> {
-        return await this.prompt.recognize(context);
+    protected async onRecognize(context: TurnContext, state: any, options: PromptOptions): Promise<PromptRecognizerResult<string>> {
+        const value = await this.prompt.recognize(context);
+        return value !== undefined ? { succeeded: true, value: value } : { succeeded: false };
     }
 }

@@ -7,55 +7,43 @@
  */
 import { ActivityTypes } from '../../botbuilder/lib';
 import { DialogContext } from './dialogContext';
-import { Dialog, DialogInstance, DialogTurnResult } from './dialog';
+import { Dialog, DialogTurnResult, DialogReason } from './dialog';
 
 /**
  * Function signature of a waterfall step.
  * 
  * @remarks
- * This example shows a simple waterfall that prompts a user to enter the fields needed to set an alarm:
  * 
  * ```TypeScript
  * type WaterfallStep = (dc: DialogContext, args?: any, next?: SkipStepFunction) => Promise<DialogTurnResult>;
  * ``` 
- * 
- * ```JavaScript
- * const { Waterfall } = require('botbuilder-dialogs');
- * 
- * dialogs.add('addAlarm', new Waterfall([
- *      async function (dc, alarm, next) {
- *          dc.activeDialog.state.alarm = alarm || {};
- *          if (!alarm.title) {
- *              return await dc.prompt('titlePrompt', `What would you like to call your alarm?`);
- *          } else {
- *              return await next(alarm.title);
- *          }
- *      },
- *      async function (dc, title, next) {
- *          const alarm = dc.activeDialog.state.alarm;
- *          alarm.title = title;
- *          if (!alarm.time) {
- *              return await dc.prompt('timePrompt', `What time would you like to set it for?`);
- *          } else {
- *              return await next(alarm.time);
- *          }
- *      },
- *      async function (dc, time) {
- *          const alarm = dc.activeDialog.state.alarm;
- *          alarm.time = time;
- *          
- *          // ... set alarm ...
- * 
- *          await dc.context.sendActivity(`Alarm set.`);
- *          return await dc.end();
- *      }
- * ]));
- * ```
  * @param WaterfallStep.context The dialog context for the current turn of conversation.
- * @param WaterfallStep.args Argument(s) passed into the dialog for the first step and then the results from calling a prompt or other dialog for subsequent steps.
- * @param WaterfallStep.next Function passed into the step to let you manually skip to the next step in the waterfall.  
+ * @param WaterfallStep.step Contextual information for the current step being executed.
  */
-export type WaterfallStep = (dc: DialogContext, args?: any, next?: SkipStepFunction) => Promise<DialogTurnResult>;
+export type WaterfallStep = (dc: DialogContext, step: WaterfallStepContext) => Promise<DialogTurnResult>;
+
+export interface WaterfallStepContext {
+    /** The index of the current waterfall step being executed. */
+    readonly index: number;
+    
+    /** Any options the waterfall dialog was called with. */
+    readonly options: object;
+
+    /** The reason the waterfall step is being executed. */
+    readonly reason: DialogReason;
+
+    /** Results returned by a dialog called in the previous waterfall step. */
+    readonly result: any;
+
+    /** A dictionary of values which will be persisted across all waterfall steps. */
+    readonly values: object;
+
+    /**
+     * Used to skip to the next waterfall step.
+     * @param result (Optional) result to pass to the next step.
+     */
+    next(result?: any): Promise<DialogTurnResult>;
+}
 
 /**
  * When called within a waterfall step the dialog will skip to the next waterfall step.
@@ -74,78 +62,9 @@ export type SkipStepFunction = (args?: any) => Promise<DialogTurnResult>;
  * Waterfalls accept a stack of functions which will be executed in sequence. Each waterfall step 
  * can ask a question of the user and the users response will be passed as an argument to the next 
  * waterfall step.
- * 
- * For simple text questions you can send the user a message and then process their answer in the 
- * next step:
- * 
- * ```JavaScript
- * const { Waterfall, Dialog } = require('botbuilder-dialogs');
- * 
- * dialogs.add('namePrompt', new Waterfall([
- *      async function (dc) {
- *          dc.activeDialog.state.profile = { first: '', last: '', full: '' };
- *          await dc.context.sendActivity(`What's your first name?`);
- *          return Dialog.EndOfTurn;
- *      },
- *      async function (dc, firstName) {
- *          dc.activeDialog.state.profile.first = firstName;
- *          await dc.context.sendActivity(`Great ${firstName}! What's your last name?`);
- *          return Dialog.EndOfTurn;
- *      },
- *      async function (dc, lastName) {
- *          const profile = dc.activeDialog.state.profile;
- *          profile.last = lastName;
- *          profile.full = profile.first + ' ' + profile.last;
- *          return await dc.end(profile);
- *      }
- * ]));
- * ```
- * 
- * For more complex sequences you can call other dialogs from within a step and the result returned 
- * by the dialog will be passed to the next step:
- * 
- * ```JavaScript
- * const { Waterfall, Dialog } = require('botbuilder-dialogs');
- * 
- * dialogs.add('survey', [
- *      async function (dc) {
- *          dc.activeDialog.state.survey = { name: undefined, languages: '', years: 0 };
- *          return await dc.begin('namePrompt');
- *      },
- *      async function (dc, name) {
- *          dc.activeDialog.state.survey.name = name;
- *          return await dc.context.sendActivity(`Ok ${name.full}... What programming languages do you know?`);
- *      },
- *      async function (dc, languages) {
- *          dc.activeDialog.state.survey.languages = languages;
- *          return await dc.prompt('yearsPrompt', `Great. So how many years have you been programming?`);
- *      },
- *      async function (dc, years) {
- *          dc.activeDialog.state.survey.years = years;
- *          await dc.context.sendActivity(`Thank you for taking our survey.`);
- *          return await dc.end(dc.activeDialog.survey);
- *      }
- * ]);
- * 
- * dialogs.add('yearsPrompt', new NumberPrompt(async (dc, value) => {
- *      if (value === undefined || value < 0 || value > 110) {
- *          await dc.context.sendActivity(`Enter a number from 0 to 110.`); 
- *      } else {
- *          return value;
- *      }
- * }));
- * ```
- * 
- * The example builds on the previous `namePrompt` sample and shows how you can call another dialog
- * which will ask its own sequence of questions. The dialogs library provides a built-in set of 
- * prompt classes which can be used to recognize things like dates and numbers in the users response.
- * 
- * You should generally call `dc.end()` or `dc.replace()` from your last waterfall step but if you fail 
- * to do that the dialog will be automatically ended for you on the users next reply.  The users 
- * response will be passed to the calling dialogs next waterfall step if there is one.
  */
-export class WaterfallDialog extends Dialog {
-    private readonly steps:WaterfallStep[];
+export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
+    private readonly steps: WaterfallStep[];
 
     /**
      * Creates a new waterfall dialog containing the given array of steps. 
@@ -156,37 +75,58 @@ export class WaterfallDialog extends Dialog {
         this.steps = steps.slice(0);
     }
 
-    public async dialogBegin(dc: DialogContext, args?: any): Promise<DialogTurnResult> {
-        const instance = dc.activeDialog as WaterfallInstance<any>;
-        instance.step = 0;
-        return await this.runStep(dc, args);
+    public async dialogBegin(dc: DialogContext, options?: any): Promise<DialogTurnResult> {
+        // Initialize waterfall state
+        const state = dc.activeDialog.state as WaterfallDialogState;
+        state.options = options || {};
+        state.values = {};
+
+        // Run the first step
+        return await this.runStep(dc, 0, DialogReason.beginCalled);
     }
 
     public async dialogContinue(dc: DialogContext): Promise<DialogTurnResult> {
         // Don't do anything for non-message activities
-        if (dc.context.activity.type === ActivityTypes.Message) {
-            const instance = dc.activeDialog as WaterfallInstance<any>;
-            instance.step += 1
-            return await this.runStep(dc, dc.context.activity.text);
+        if (dc.context.activity.type !== ActivityTypes.Message) {
+            return Dialog.EndOfTurn;
         }
+
+        // Run next step with the message text as the result.
+        return await this.dialogResume(dc, DialogReason.continueCalled, dc.context.activity.text);
     }
 
-    public async dialogResume(dc: DialogContext, result?: any): Promise<DialogTurnResult> {
-        const instance = dc.activeDialog as WaterfallInstance<any>;
-        instance.step += 1
-        return await this.runStep(dc, result);
+    public async dialogResume(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
+        // Increment step index and run step
+        var state = dc.activeDialog.state as WaterfallDialogState;
+        return await this.runStep(dc, state.stepIndex + 1, reason, result);
     }
 
-    private async runStep(dc: DialogContext, result?: any): Promise<DialogTurnResult> {
-        const instance = dc.activeDialog as WaterfallInstance<any>;
-        const step = instance.step;
-        if (step >= 0 && step < this.steps.length) {
+    protected async onStep(dc: DialogContext, step: WaterfallStepContext): Promise<DialogTurnResult> {
+        return await this.steps[step.index](dc, step);
+    }
+
+    private async runStep(dc: DialogContext, index: number, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
+        if (index < this.steps.length) {
+            // Update persisted step index
+            const state = dc.activeDialog.state as WaterfallDialogState;
+            state.stepIndex = index;
+
+            // Create step context
+            let nextCalled = false;
+            const step: WaterfallStepContext = {
+                index: index,
+                options: state.options,
+                reason: reason,
+                result: result,
+                values: state.values,
+                next: async (result?: any) => {
+                    if (nextCalled) { throw new Error(`WaterfallStepContext.next(): method already called for dialog and step '${this.id}[${index}]'.`) }
+                    return await this.dialogResume(dc, DialogReason.nextCalled, result);
+                }
+            };
+
             // Execute step
-            return await this.steps[step](dc, result, async (r?: any) => {
-                // Skip to next step
-                instance.step += 1;
-                return await this.runStep(dc, r);
-            });
+            return await this.onStep(dc, step);
         } else {
             // End of waterfall so just return to parent
             return await dc.end(result);
@@ -197,6 +137,8 @@ export class WaterfallDialog extends Dialog {
 /**
  * @private
  */
-interface WaterfallInstance<T extends Object> extends DialogInstance<T> {
-    step: number;
+interface WaterfallDialogState {
+    options: object;
+    stepIndex: number;
+    values: object;
 }

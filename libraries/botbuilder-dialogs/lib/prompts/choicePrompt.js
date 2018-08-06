@@ -89,18 +89,19 @@ class ChoicePrompt extends prompt_1.Prompt {
     }
     onPrompt(context, state, options, isRetry) {
         return __awaiter(this, void 0, void 0, function* () {
-            const choices = options.choices;
+            const choices = options.choices || [];
             if (isRetry && options.retryPrompt) {
-                yield this.prompt.prompt(context, choices, options.retryPrompt, options.retrySpeak);
+                yield this.prompt.prompt(context, choices, options.retryPrompt);
             }
             else {
-                yield this.prompt.prompt(context, choices, options.prompt, options.speak);
+                yield this.prompt.prompt(context, choices, options.prompt);
             }
         });
     }
     onRecognize(context, state, options) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.prompt.recognize(context, options.choices);
+            const value = yield this.prompt.recognize(context, options.choices || []);
+            return value !== undefined ? { succeeded: true, value: value } : { succeeded: false };
         });
     }
 }

@@ -93,11 +93,19 @@ class OAuthPrompt extends dialog_1.Dialog {
     }
     dialogBegin(dc, options) {
         return __awaiter(this, void 0, void 0, function* () {
+            // Ensure prompts have input hint set
+            const o = Object.assign({}, options);
+            if (o.prompt && typeof o.prompt === 'object' && typeof o.prompt.inputHint !== 'string') {
+                o.prompt.inputHint = botbuilder_1.InputHints.ExpectingInput;
+            }
+            if (o.retryPrompt && typeof o.retryPrompt === 'object' && typeof o.retryPrompt.inputHint !== 'string') {
+                o.retryPrompt.inputHint = botbuilder_1.InputHints.ExpectingInput;
+            }
             // Initialize prompt state
             const timeout = typeof this.settings.timeout === 'number' ? this.settings.timeout : 54000000;
             const state = dc.activeDialog.state;
             state.state = {};
-            state.options = Object.assign({}, options);
+            state.options = o;
             state.expires = new Date().getTime() + timeout;
             // Attempt to get the users token
             const output = yield this.prompt.getUserToken(dc.context);
@@ -108,7 +116,7 @@ class OAuthPrompt extends dialog_1.Dialog {
             else {
                 if (typeof state.options.prompt === 'string') {
                     // Send supplied prompt then OAuthCard
-                    yield dc.context.sendActivity(state.options.prompt, state.options.speak);
+                    yield dc.context.sendActivity(state.options.prompt);
                     yield this.prompt.prompt(dc.context);
                 }
                 else {
@@ -122,7 +130,8 @@ class OAuthPrompt extends dialog_1.Dialog {
     dialogContinue(dc) {
         return __awaiter(this, void 0, void 0, function* () {
             // Recognize token
-            const recognized = yield this.prompt.recognize(dc.context);
+            const output = yield this.prompt.recognize(dc.context);
+            const recognized = output ? { succeeded: true, value: output } : { succeeded: false };
             // Check for timeout
             const state = dc.activeDialog.state;
             const isMessage = dc.context.activity.type === botbuilder_1.ActivityTypes.Message;
@@ -136,7 +145,7 @@ class OAuthPrompt extends dialog_1.Dialog {
                 let endResult;
                 if (this.validator) {
                     yield this.validator(dc.context, {
-                        result: recognized,
+                        recognized: recognized,
                         state: state.state,
                         options: state.options,
                         end: (output) => {
@@ -145,9 +154,9 @@ class OAuthPrompt extends dialog_1.Dialog {
                         }
                     });
                 }
-                else if (recognized !== undefined) {
+                else if (recognized.succeeded) {
                     end = true;
-                    endResult = recognized;
+                    endResult = recognized.value;
                 }
                 // Return recognized value or re-prompt
                 if (end) {
@@ -156,7 +165,7 @@ class OAuthPrompt extends dialog_1.Dialog {
                 else {
                     // Send retry prompt
                     if (!dc.context.responded && isMessage && state.options.retryPrompt) {
-                        yield dc.context.sendActivity(state.options.retryPrompt, state.options.retrySpeak, botbuilder_1.InputHints.ExpectingInput);
+                        yield dc.context.sendActivity(state.options.retryPrompt);
                     }
                     return dialog_1.Dialog.EndOfTurn;
                 }

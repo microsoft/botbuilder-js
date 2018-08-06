@@ -8,41 +8,49 @@
 import { TurnContext, Activity } from 'botbuilder';
 import { Choice } from 'botbuilder-prompts';
 import { DialogContext } from '../dialogContext';
-import { Dialog, DialogTurnResult, DialogInstance } from '../dialog';
+import { Dialog, DialogTurnResult, DialogInstance, DialogReason } from '../dialog';
 /**
  * Basic configuration options supported by all prompts.
  */
 export interface PromptOptions {
-    /** Initial prompt to send the user. */
-    prompt: string | Partial<Activity>;
-    /** (Optional) Initial SSML to send the user. */
-    speak?: string;
-    /** (Optional) Retry prompt to send the user. */
+    /**
+     * (Optional) Initial prompt to send the user.
+     */
+    prompt?: string | Partial<Activity>;
+    /**
+     * (Optional) Retry prompt to send the user.
+     */
     retryPrompt?: string | Partial<Activity>;
-    /** (Optional) Retry SSML to send the user. */
-    retrySpeak?: string;
-    /** (Optional) List of choices associated with the prompt. */
+    /**
+     * (Optional) List of choices associated with the prompt.
+     */
     choices?: (string | Choice)[];
-    /** (Optional) Additional validation rules to pass the prompts validator routine. */
-    validations?: any;
+    /**
+     * (Optional) Additional validation rules to pass the prompts validator routine.
+     s*/
+    validations?: object;
 }
-export declare type PromptValidator<R, O = R> = (context: TurnContext, prompt: PromptValidatorContext<R, O>) => Promise<void>;
-export interface PromptValidatorContext<R, O> {
-    result?: R;
+export interface PromptRecognizerResult<T> {
+    succeeded: boolean;
+    value?: T;
+}
+export declare type PromptValidator<T> = (context: TurnContext, prompt: PromptValidatorContext<T>) => Promise<void>;
+export interface PromptValidatorContext<T> {
+    recognized?: PromptRecognizerResult<T>;
     state: object;
     options: PromptOptions;
-    end(result: O): void;
+    end(result: any): void;
 }
 /**
  * Base class for all prompts.
  */
-export declare abstract class Prompt extends Dialog {
+export declare abstract class Prompt<T> extends Dialog {
     private validator;
-    constructor(dialogId: string, validator?: PromptValidator<any, any>);
+    constructor(dialogId: string, validator?: PromptValidator<T>);
     protected abstract onPrompt(context: TurnContext, state: object, options: PromptOptions, isRetry: boolean): Promise<void>;
-    protected abstract onRecognize(context: TurnContext, state: object, options: PromptOptions): Promise<any | undefined>;
+    protected abstract onRecognize(context: TurnContext, state: object, options: PromptOptions): Promise<PromptRecognizerResult<T>>;
     dialogBegin(dc: DialogContext, options: PromptOptions): Promise<DialogTurnResult>;
     dialogContinue(dc: DialogContext): Promise<DialogTurnResult>;
+    dialogResume(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult>;
     dialogReprompt(context: TurnContext, instance: DialogInstance): Promise<void>;
-    dialogResume(dc: DialogContext, result?: any): Promise<DialogTurnResult>;
 }

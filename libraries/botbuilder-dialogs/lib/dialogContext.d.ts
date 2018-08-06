@@ -23,7 +23,9 @@ import { Choice } from 'botbuilder-prompts';
  * ```
  */
 export declare class DialogContext {
+    /** Set of dialogs that can be called from this context. */
     readonly dialogs: DialogSet;
+    /** Context for the current turn of conversation. */
     readonly context: TurnContext;
     /** Current dialog stack. */
     readonly stack: DialogInstance[];
@@ -123,17 +125,6 @@ export declare class DialogContext {
      * If the parent dialog hasn't implemented resumeDialog() then it will be popped off the stack
      * as well and any result will be passed it its parent. If there are no more parent dialogs on
      * the stack then processing of the turn will end.
-      *
-     * ```JavaScript
-     * dialogs.add('showUptime', [
-     *      async function (dc) {
-     *          const elapsed = new Date().getTime() - started;
-     *          await dc.context.sendActivity(`I've been running for ${elapsed / 1000} seconds.`);
-     *          await dc.end(elapsed);
-     *      }
-     * ]);
-     * const started = new Date().getTime();
-     * ```
      * @param result (Optional) result to pass to the parent dialogs `Dialog.resume()` method.
      */
     end(result?: any): Promise<DialogTurnResult>;
@@ -142,36 +133,10 @@ export declare class DialogContext {
      *
      * @remarks
      * This method is particularly useful for creating conversational loops within your bot:
-     *
-     * ```JavaScript
-     * dialogs.add('forEach', [
-     *      async function (dc, args) {
-     *          // Validate args
-     *          if (!args || !args.dialogId || !Array.isArray(args.items)) { throw new Error(`forEach: invalid args`) }
-     *          if (args.index === undefined) { args.index = 0 }
-     *
-     *          // Persist args
-     *          dc.activeDialog.state = args;
-     *
-     *          // Invoke dialog with next item or end
-     *          if (args.index < args.items.length) {
-     *              await dc.begin(args.dialogId, args.items[args.index]);
-     *          } else {
-     *              await dc.end();
-     *          }
-     *      },
-     *      function (dc) {
-     *          // Next item
-     *          const args = dc.activeDialog.state;
-     *          args.index++;
-     *          return dc.replace('forEach', args);
-     *      }
-     * ]);
-     * ```
      * @param dialogId ID of the new dialog to start.
-     * @param dialogArgs (Optional) additional argument(s) to pass to the new dialog.
+     * @param options (Optional) additional argument(s) to pass to the new dialog.
      */
-    replace(dialogId: string, dialogArgs?: any): Promise<DialogTurnResult>;
+    replace(dialogId: string, options?: object): Promise<DialogTurnResult>;
     /**
      * Requests the [activeDialog](#activeDialog) to re-prompt the user for input.
      *
@@ -180,6 +145,7 @@ export declare class DialogContext {
      * or the active dialog doesn't support re-prompting, this method will effectively be a no-op.
      */
     reprompt(): Promise<void>;
+    private endActiveDialog(reason);
     /** @private helper to ensure the turn result from a dialog looks correct. */
     private verifyTurnResult(result);
 }

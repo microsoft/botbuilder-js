@@ -27,10 +27,18 @@ class Prompt extends dialog_1.Dialog {
     }
     dialogBegin(dc, options) {
         return __awaiter(this, void 0, void 0, function* () {
+            // Ensure prompts have input hint set
+            const opt = Object.assign({}, options);
+            if (opt.prompt && typeof opt.prompt === 'object' && typeof opt.prompt.inputHint !== 'string') {
+                opt.prompt.inputHint = botbuilder_1.InputHints.ExpectingInput;
+            }
+            if (opt.retryPrompt && typeof opt.retryPrompt === 'object' && typeof opt.retryPrompt.inputHint !== 'string') {
+                opt.retryPrompt.inputHint = botbuilder_1.InputHints.ExpectingInput;
+            }
             // Initialize prompt state
             const state = dc.activeDialog.state;
+            state.options = opt;
             state.state = {};
-            state.options = Object.assign({}, options);
             // Send initial prompt
             yield this.onPrompt(dc.context, state.state, state.options, false);
             return dialog_1.Dialog.EndOfTurn;
@@ -39,48 +47,46 @@ class Prompt extends dialog_1.Dialog {
     dialogContinue(dc) {
         return __awaiter(this, void 0, void 0, function* () {
             // Don't do anything for non-message activities
-            if (dc.context.activity.type === botbuilder_1.ActivityTypes.Message) {
-                // Perform base recognition
-                const state = dc.activeDialog.state;
-                const recognized = yield this.onRecognize(dc.context, state.state, state.options);
-                // Validate the return value
-                let end = false;
-                let endResult;
-                if (this.validator) {
-                    yield this.validator(dc.context, {
-                        result: recognized,
-                        state: state.state,
-                        options: state.options,
-                        end: (output) => {
-                            end = true;
-                            endResult = output;
+            if (dc.context.activity.type !== botbuilder_1.ActivityTypes.Message) {
+                return dialog_1.Dialog.EndOfTurn;
+            }
+            // Perform base recognition
+            const state = dc.activeDialog.state;
+            const recognized = yield this.onRecognize(dc.context, state.state, state.options);
+            // Validate the return value
+            let end = false;
+            let endResult;
+            if (this.validator) {
+                yield this.validator(dc.context, {
+                    recognized: recognized,
+                    state: state.state,
+                    options: state.options,
+                    end: (output) => {
+                        if (end) {
+                            throw new Error(`PromptValidatorContext.end(): method already called for the turn.`);
                         }
-                    });
-                }
-                else if (recognized !== undefined) {
-                    end = true;
-                    endResult = recognized;
-                }
-                // Return recognized value or re-prompt
-                if (end) {
-                    return yield dc.end(endResult);
-                }
-                else {
-                    if (!dc.context.responded) {
-                        yield this.onPrompt(dc.context, state.state, state.options, true);
+                        end = true;
+                        endResult = output;
                     }
-                    return dialog_1.Dialog.EndOfTurn;
+                });
+            }
+            else if (recognized.succeeded) {
+                end = true;
+                endResult = recognized.value;
+            }
+            // Return recognized value or re-prompt
+            if (end) {
+                return yield dc.end(endResult);
+            }
+            else {
+                if (!dc.context.responded) {
+                    yield this.onPrompt(dc.context, state.state, state.options, true);
                 }
+                return dialog_1.Dialog.EndOfTurn;
             }
         });
     }
-    dialogReprompt(context, instance) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const state = instance.state;
-            yield this.onPrompt(context, state.state, state.options, true);
-        });
-    }
-    dialogResume(dc, result) {
+    dialogResume(dc, reason, result) {
         return __awaiter(this, void 0, void 0, function* () {
             // Prompts are typically leaf nodes on the stack but the dev is free to push other dialogs
             // on top of the stack which will result in the prompt receiving an unexpected call to
@@ -89,6 +95,12 @@ class Prompt extends dialog_1.Dialog {
             // simply re-prompt the user.
             yield this.dialogReprompt(dc.context, dc.activeDialog);
             return dialog_1.Dialog.EndOfTurn;
+        });
+    }
+    dialogReprompt(context, instance) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const state = instance.state;
+            yield this.onPrompt(context, state.state, state.options, true);
         });
     }
 }

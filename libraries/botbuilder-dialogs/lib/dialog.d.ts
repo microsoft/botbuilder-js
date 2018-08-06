@@ -17,11 +17,19 @@ export interface DialogInstance<T = any> {
     /** The instances persisted state. */
     state: T;
 }
-export declare enum DialogEndReason {
-    /** The dialog ended normally through a call to `DialogContext.end()`. */
-    completed = 0,
-    /** The dialog was cancelled as part of a call to `DialogContext.cancelAll()`. */
-    cancelled = 1,
+export declare enum DialogReason {
+    /** A dialog is being started through a call to `DialogContext.begin()`. */
+    beginCalled = 0,
+    /** A dialog is being continued through a call to `DialogContext.continue()`. */
+    continueCalled = 1,
+    /** A dialog ended normally through a call to `DialogContext.end()`. */
+    endCalled = 2,
+    /** A dialog is ending because its being replaced through a call to `DialogContext.replace()`. */
+    replaceCalled = 3,
+    /** A dialog was cancelled as part of a call to `DialogContext.cancelAll()`. */
+    cancelCalled = 4,
+    /** A step was advanced through a call to `WaterfallStepContext.next()`. */
+    nextCalled = 5,
 }
 /**
  * Returned by `Dialog.begin()` and `Dialog.continue()` to indicate whether the dialog is still
@@ -39,20 +47,18 @@ export interface DialogTurnResult<T = any> {
 }
 /**
  * Base class for all dialogs.
- * @param R (Optional) type of result that's expected to be returned by the dialog.
- * @param O (Optional) options that can be passed into the [begin()](#begin) method.
  */
-export declare abstract class Dialog<R = any, O = {}> {
-    readonly id: string;
+export declare abstract class Dialog<O extends object = {}> {
     /** Signals the end of a turn by a dialog method or waterfall/sequence step.  */
     static EndOfTurn: DialogTurnResult;
-    constructor(id: string);
+    constructor(dialogId: string);
+    readonly id: string;
     /**
      * Method called when a new dialog has been pushed onto the stack and is being activated.
      * @param dc The dialog context for the current turn of conversation.
-     * @param dialogArgs (Optional) arguments that were passed to the dialog during `begin()` call that started the instance.
+     * @param options (Optional) arguments that were passed to the dialog during `begin()` call that started the instance.
      */
-    abstract dialogBegin(dc: DialogContext, dialogArgs?: any): Promise<DialogTurnResult<R>>;
+    abstract dialogBegin(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
     /**
      * (Optional) method called when an instance of the dialog is the active dialog and the user
      * replies with a new activity. The dialog will generally continue to receive the users replies
@@ -62,7 +68,7 @@ export declare abstract class Dialog<R = any, O = {}> {
      * replies.
      * @param dc The dialog context for the current turn of conversation.
      */
-    dialogContinue?(dc: DialogContext): Promise<DialogTurnResult<R>>;
+    dialogContinue(dc: DialogContext): Promise<DialogTurnResult>;
     /**
      * (Optional) method called when an instance of the dialog is being returned to from another
      * dialog that was started by the current instance using `DialogContext.begin()` or
@@ -72,20 +78,21 @@ export declare abstract class Dialog<R = any, O = {}> {
      * to `DialogContext.end()`. Any result passed from the called dialog will be passed to the
      * active dialogs parent.
      * @param dc The dialog context for the current turn of conversation.
+     * @param reason The reason the dialog is being resumed. This will typically be a value of `DialogReason.endCalled`.
      * @param result (Optional) value returned from the dialog that was called. The type of the value returned is dependant on the dialog that was called.
      */
-    dialogResume?(dc: DialogContext, result?: any): Promise<DialogTurnResult<R>>;
+    dialogResume(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult>;
     /**
      * (Optional) method called when the dialog has been requested to re-prompt the user for input.
      * @param context Context for the current turn of conversation.
      * @param instance The instance of the current dialog.
      */
-    dialogReprompt?(context: TurnContext, instance: DialogInstance): Promise<void>;
+    dialogReprompt(context: TurnContext, instance: DialogInstance): Promise<void>;
     /**
      * (Optional) method called when the dialog is ending.
      * @param context Context for the current turn of conversation.
      * @param instance The instance of the current dialog.
      * @param reason The reason the dialog is ending.
      */
-    dialogEnd?(context: TurnContext, instance: DialogInstance, reason: DialogEndReason): Promise<void>;
+    dialogEnd(context: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void>;
 }

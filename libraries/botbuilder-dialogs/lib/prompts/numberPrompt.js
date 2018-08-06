@@ -60,7 +60,6 @@ const prompts = require("botbuilder-prompts");
  *    return undefined;
  * }));
  * ```
- * @param O (Optional) output type returned by prompt. This defaults to a `number` but can be changed by a custom validator passed to the prompt.
  */
 class NumberPrompt extends prompt_1.Prompt {
     /**
@@ -75,15 +74,18 @@ class NumberPrompt extends prompt_1.Prompt {
     onPrompt(context, state, options, isRetry) {
         return __awaiter(this, void 0, void 0, function* () {
             if (isRetry && options.retryPrompt) {
-                yield this.prompt.prompt(context, options.retryPrompt, options.retrySpeak);
+                yield this.prompt.prompt(context, options.retryPrompt);
             }
             else if (options.prompt) {
-                yield this.prompt.prompt(context, options.prompt, options.speak);
+                yield this.prompt.prompt(context, options.prompt);
             }
         });
     }
     onRecognize(context, state, options) {
-        return this.prompt.recognize(context);
+        return __awaiter(this, void 0, void 0, function* () {
+            const value = yield this.prompt.recognize(context);
+            return value !== undefined ? { succeeded: true, value: value } : { succeeded: false };
+        });
     }
 }
 exports.NumberPrompt = NumberPrompt;

@@ -9,7 +9,7 @@ import { TurnContext, ActivityTypes, InputHints, TokenResponse } from 'botbuilde
 import * as prompts from 'botbuilder-prompts';
 import { DialogContext } from '../dialogContext';
 import { Dialog, DialogTurnResult } from '../dialog';
-import { PromptOptions, PromptValidator } from './prompt';
+import { PromptOptions, PromptValidator, PromptRecognizerResult } from './prompt';
 
 /**
  * Settings used to configure an `OAuthPrompt` instance. Includes the ability to adjust the prompts
@@ -98,11 +98,20 @@ export class OAuthPrompt extends Dialog {
     }
 
     public async dialogBegin(dc: DialogContext, options?: PromptOptions): Promise<DialogTurnResult> {
+        // Ensure prompts have input hint set
+        const o = Object.assign({}, options);
+        if (o.prompt && typeof o.prompt === 'object' && typeof o.prompt.inputHint !== 'string') {
+            o.prompt.inputHint = InputHints.ExpectingInput;
+        }
+        if (o.retryPrompt && typeof o.retryPrompt === 'object' && typeof o.retryPrompt.inputHint !== 'string') {
+            o.retryPrompt.inputHint = InputHints.ExpectingInput;
+        }
+
         // Initialize prompt state
         const timeout = typeof this.settings.timeout === 'number' ? this.settings.timeout : 54000000; 
         const state = dc.activeDialog.state as OAuthPromptState;
         state.state = {};
-        state.options = Object.assign({}, options);
+        state.options = o;
         state.expires = new Date().getTime() + timeout;
 
         // Attempt to get the users token
@@ -113,7 +122,7 @@ export class OAuthPrompt extends Dialog {
         } else {
             if (typeof state.options.prompt === 'string') {
                 // Send supplied prompt then OAuthCard
-                await dc.context.sendActivity(state.options.prompt, state.options.speak);
+                await dc.context.sendActivity(state.options.prompt);
                 await this.prompt.prompt(dc.context);
             } else {
                 // Send OAuthCard
@@ -125,7 +134,8 @@ export class OAuthPrompt extends Dialog {
 
     public async dialogContinue(dc: DialogContext): Promise<DialogTurnResult> {
         // Recognize token
-        const recognized = await this.prompt.recognize(dc.context);
+        const output = await this.prompt.recognize(dc.context);
+        const recognized: PromptRecognizerResult<TokenResponse> = output ? { succeeded: true, value: output } : { succeeded: false };
 
         // Check for timeout
         const state = dc.activeDialog.state as OAuthPromptState;
@@ -139,7 +149,7 @@ export class OAuthPrompt extends Dialog {
             let endResult: any;
             if (this.validator) {
                 await this.validator(dc.context, {
-                    result: recognized,
+                    recognized: recognized,
                     state: state.state,
                     options: state.options,
                     end: (output: any) => {
@@ -147,9 +157,9 @@ export class OAuthPrompt extends Dialog {
                         endResult = output;
                     }
                 });
-            } else if (recognized !== undefined) {
+            } else if (recognized.succeeded) {
                 end = true;
-                endResult = recognized;
+                endResult = recognized.value;
             }
 
             // Return recognized value or re-prompt
@@ -158,7 +168,7 @@ export class OAuthPrompt extends Dialog {
             } else {
                 // Send retry prompt
                 if (!dc.context.responded && isMessage && state.options.retryPrompt) {
-                    await dc.context.sendActivity(state.options.retryPrompt, state.options.retrySpeak, InputHints.ExpectingInput);
+                    await dc.context.sendActivity(state.options.retryPrompt);
                 }
                 return Dialog.EndOfTurn;
             }

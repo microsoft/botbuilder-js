@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { TurnContext } from 'botbuilder';
-import { Prompt, PromptOptions, PromptValidator } from './prompt';
+import { Prompt, PromptOptions, PromptValidator, PromptRecognizerResult } from './prompt';
 /**
  * Prompts a user to enter a number.
  *
@@ -57,16 +57,15 @@ import { Prompt, PromptOptions, PromptValidator } from './prompt';
  *    return undefined;
  * }));
  * ```
- * @param O (Optional) output type returned by prompt. This defaults to a `number` but can be changed by a custom validator passed to the prompt.
  */
-export declare class NumberPrompt<O = number> extends Prompt {
+export declare class NumberPrompt extends Prompt<number> {
     private prompt;
     /**
      * Creates a new `NumberPrompt` instance.
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
      * @param defaultLocale (Optional) locale to use if `dc.context.activity.locale` not specified. Defaults to a value of `en-us`.
      */
-    constructor(dialogId: string, validator?: PromptValidator<number, O>, defaultLocale?: string);
+    constructor(dialogId: string, validator?: PromptValidator<number>, defaultLocale?: string);
     protected onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void>;
-    protected onRecognize(context: TurnContext, state: any, options: PromptOptions): Promise<O | undefined>;
+    protected onRecognize(context: TurnContext, state: any, options: PromptOptions): Promise<PromptRecognizerResult<number>>;
 }

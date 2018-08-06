@@ -23,18 +23,11 @@ class ComponentDialog extends dialog_1.Dialog {
         super(...arguments);
         this.dialogs = new dialogSet_1.DialogSet();
     }
-    addDialog(dialog) {
-        this.dialogs.add(dialog);
-        if (this.initialDialogId === undefined) {
-            this.initialDialogId = dialog.id;
-        }
-        return dialog;
-    }
-    dialogBegin(dc, dialogArgs) {
+    dialogBegin(dc, options) {
         return __awaiter(this, void 0, void 0, function* () {
             // Start the inner dialog.
             const cdc = new dialogContext_1.DialogContext(this.dialogs, dc.context, dc.activeDialog.state);
-            const turnResult = yield this.onDialogBegin(dc, dialogArgs);
+            const turnResult = yield this.onDialogBegin(cdc, options);
             // Check for end of inner dialog 
             if (turnResult.hasResult) {
                 // Return result to calling dialog
@@ -44,20 +37,13 @@ class ComponentDialog extends dialog_1.Dialog {
                 // Just signal end of turn
                 return dialog_1.Dialog.EndOfTurn;
             }
-        });
-    }
-    dialogEnd(context, instance, reason) {
-        return __awaiter(this, void 0, void 0, function* () {
-            // Notify inner dialog
-            const cdc = new dialogContext_1.DialogContext(this.dialogs, context, instance.state);
-            yield this.onDialogEnd(cdc, reason);
         });
     }
     dialogContinue(dc) {
         return __awaiter(this, void 0, void 0, function* () {
             // Continue execution of inner dialog.
             const cdc = new dialogContext_1.DialogContext(this.dialogs, dc.context, dc.activeDialog.state);
-            const turnResult = yield this.onDialogContinue(dc);
+            const turnResult = yield this.onDialogContinue(cdc);
             // Check for end of inner dialog 
             if (turnResult.hasResult) {
                 // Return result to calling dialog
@@ -69,14 +55,7 @@ class ComponentDialog extends dialog_1.Dialog {
             }
         });
     }
-    dialogReprompt(context, instance) {
-        return __awaiter(this, void 0, void 0, function* () {
-            // Delegate to inner dialog.
-            const cdc = new dialogContext_1.DialogContext(this.dialogs, context, instance.state);
-            yield this.onDialogReprompt(cdc);
-        });
-    }
-    dialogResume(dc, result) {
+    dialogResume(dc, reason, result) {
         return __awaiter(this, void 0, void 0, function* () {
             // Containers are typically leaf nodes on the stack but the dev is free to push other dialogs
             // on top of the stack which will result in the container receiving an unexpected call to
@@ -87,12 +66,33 @@ class ComponentDialog extends dialog_1.Dialog {
             return dialog_1.Dialog.EndOfTurn;
         });
     }
-    onDialogBegin(dc, dialogArgs) {
-        return dc.begin(this.initialDialogId, dialogArgs);
+    dialogReprompt(context, instance) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // Delegate to inner dialog.
+            const cdc = new dialogContext_1.DialogContext(this.dialogs, context, instance.state);
+            yield this.onDialogReprompt(cdc);
+        });
+    }
+    dialogEnd(context, instance, reason) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // Notify inner dialog
+            const cdc = new dialogContext_1.DialogContext(this.dialogs, context, instance.state);
+            yield this.onDialogEnd(cdc, reason);
+        });
+    }
+    addDialog(dialog) {
+        this.dialogs.add(dialog);
+        if (this.initialDialogId === undefined) {
+            this.initialDialogId = dialog.id;
+        }
+        return dialog;
+    }
+    onDialogBegin(dc, options) {
+        return dc.begin(this.initialDialogId, options);
     }
     onDialogEnd(dc, reason) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (reason === dialog_1.DialogEndReason.cancelled) {
+            if (reason === dialog_1.DialogReason.cancelCalled) {
                 yield dc.cancelAll();
             }
         });
