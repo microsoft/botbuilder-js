@@ -18,7 +18,7 @@ const TYPE = os.type();
 const RELEASE = os.release();
 const NODE_VERSION = process.version;
 const pjson = require('../package.json');
-const USER_AGENT = 'Microsoft-BotFramework/3.1 (BotBuilder JS/' + pjson.version + ') (Node.js,Version=' + NODE_VERSION + '; ' + TYPE + ' ' + RELEASE + '; ' + ARCHITECTURE + ')';
+const USER_AGENT = 'Microsoft-BotFramework/3.1 BotBuilder/' + pjson.version + ' (Node.js,Version=' + NODE_VERSION + '; ' + TYPE + ' ' + RELEASE + '; ' + ARCHITECTURE + ')';
 const OAUTH_ENDPOINT = 'https://api.botframework.com';
 const INVOKE_RESPONSE_KEY = Symbol('invokeResponse');
 /**

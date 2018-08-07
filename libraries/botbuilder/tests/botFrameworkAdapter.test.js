@@ -517,8 +517,7 @@ describe(`BotFrameworkAdapter`, function () {
         const client = adapter.createConnectorClient('https://example.com');
         const userAgentHeader = client.userAgentInfo.value;
         const pjson = require('../package.json');
-        const userAgent = 'Microsoft-BotFramework/3.1 (BotBuilder JS/' + pjson.version + ') (Node.js,Version=' + process.version + '; ' + os.type() + ' ' + os.release() + '; ' + os.arch() + ')';
-
+        const userAgent = 'Microsoft-BotFramework/3.1 BotBuilder/' + pjson.version + ' (Node.js,Version=' + process.version + '; ' + os.type() + ' ' + os.release() + '; ' + os.arch() + ')';
         assert(userAgentHeader.includes(userAgent), `ConnectorClient doesn't have user-agent header created by BotFrameworkAdapter or header is incorrect.`);
         done();
     });
