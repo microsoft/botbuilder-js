@@ -5,15 +5,12 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotAdapter } from './botAdapter';
-import { Promiseable } from './middlewareSet';
-import { TurnContext } from './turnContext';
 import { ConnectorClient, SimpleCredentialProvider, MicrosoftAppCredentials, JwtTokenValidation, OAuthApiClient } from 'botframework-connector';
 import {
-    ActivityTypes, Activity, ConversationReference, ConversationResourceResponse,
+    BotAdapter, Promiseable, TurnContext, ActivityTypes, Activity, ConversationReference,
     ResourceResponse, ConversationParameters, ConversationAccount,
     TokenResponse, ConversationsResult, ChannelAccount
-} from 'botframework-schema';
+} from 'botbuilder-core';
 
 /**
  * Express or Restify Request object.
