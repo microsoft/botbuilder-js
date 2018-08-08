@@ -5,8 +5,13 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+<<<<<<< HEAD
 import { TurnContext } from 'botbuilder';
 import { Dialog } from './dialog';
+=======
+import { TurnContext, PropertyAccessor } from 'botbuilder';
+import { Dialog, Waterfall, WaterfallStep } from './dialog';
+>>>>>>> master
 import { DialogContext } from './dialogContext';
 /**
  * A related set of dialogs that can all call each other.
@@ -158,8 +163,15 @@ import { DialogContext } from './dialogContext';
  * messages our bot.
  * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
  */
+<<<<<<< HEAD
 export declare class DialogSet {
+=======
+export declare class DialogSet<C extends TurnContext = TurnContext> {
+    private readonly dialogStateProperty;
+>>>>>>> master
     private readonly dialogs;
+    /** NEW */
+    constructor(dialogStateProperty?: PropertyAccessor<object>);
     /**
      * Adds a new dialog to the set and returns the added dialog.
      *
@@ -176,7 +188,12 @@ export declare class DialogSet {
      * ```
      * @param dialog The dialog being added.
      */
+<<<<<<< HEAD
     add<T extends Dialog>(dialog: T): T;
+=======
+    add(dialogId: string, dialogOrSteps: Dialog<C>): Dialog<C>;
+    add(dialogId: string, dialogOrSteps: WaterfallStep<C>[]): Waterfall<C>;
+>>>>>>> master
     /**
      * Creates a dialog context which can be used to work with the dialogs in the set.
      *
@@ -191,7 +208,13 @@ export declare class DialogSet {
      * @param context Context for the current turn of conversation with the user.
      * @param state State object being used to persist the dialog stack.
      */
+<<<<<<< HEAD
     createContext(context: TurnContext, state: object): Promise<DialogContext>;
+=======
+    createContext(context: C, state: object): DialogContext<C>;
+    /** NEW */
+    createContextAsync(context: C): Promise<DialogContext<C>>;
+>>>>>>> master
     /**
      * Finds a dialog that was previously added to the set using [add()](#add).
      *

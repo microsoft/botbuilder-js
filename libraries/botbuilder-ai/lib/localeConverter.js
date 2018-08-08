@@ -89,21 +89,20 @@ class MicrosoftLocaleConverter {
         this.initLocales();
     }
     initLocales() {
-        let yearMonthDay = new DateAndTimeLocaleFormat('hh:mm', 'yyyy-MM-dd');
-        let dayMonthYear = new DateAndTimeLocaleFormat('hh:mm', 'dd/MM/yyyy');
-        let monthDayYEar = new DateAndTimeLocaleFormat('hh:mm', 'MM/dd/yyyy');
-        let yearMonthDayLocales = ["en-za", "en-ie", "en-gb", "en-ca", "fr-ca", "zh-cn", "zh-sg", "zh-hk", "zh-mo", "zh-tw"];
-        yearMonthDayLocales.forEach(locale => {
-            this.mapLocaleToFunction[locale] = yearMonthDay;
+        let supportedLocales = [
+            "en-us", "en-za", "en-ie", "en-gb", "en-ca", "en-au",
+            "fr-fr", "fr-ca", "fr-be", "fr-ch", "fr-lu", "fr-mc",
+            "zh-cn", "zh-tw", "zh-sg", "zh-hk", "zh-mo",
+            "de-de", "de-at", "de-ch", "de-lu", "de-li",
+            "es-es"
+        ];
+        supportedLocales.forEach(locale => {
+            var localeData = moment.localeData(locale);
+            this.mapLocaleToFunction[locale] = new DateAndTimeLocaleFormat(localeData.longDateFormat('LT'), localeData.longDateFormat('L'));
         });
-        let dayMonthYearLocales = ["en-au", "fr-be", "fr-ch", "fr-fr", "fr-lu", "fr-mc", "de-at", "de-ch", "de-de", "de-lu", "de-li"];
-        dayMonthYearLocales.forEach(locale => {
-            this.mapLocaleToFunction[locale] = dayMonthYear;
-        });
-        this.mapLocaleToFunction["en-us"] = monthDayYEar;
     }
     isLocaleAvailable(locale) {
-        return !(typeof this.mapLocaleToFunction[locale] === "undefined");
+        return this.mapLocaleToFunction[locale] != undefined;
     }
     extractDates(message, fromLocale) {
         let fndDates;
@@ -144,7 +143,7 @@ class MicrosoftLocaleConverter {
                     momentTimeEnd = moment(resolutionValues["end"]).toDate();
                     foundType = 'date';
                 }
-                else {
+                else { // Must be a time-only result with no date
                     momentTime = new Date();
                     momentTime.setHours(parseInt(String(resolutionValues['start']).substr(0, 2)));
                     momentTime.setMinutes(parseInt(String(resolutionValues['start']).substr(3, 2)));
@@ -170,7 +169,7 @@ class MicrosoftLocaleConverter {
                     momentTime = moment(resolutionValues["value"]).toDate();
                     foundType = 'date';
                 }
-                else {
+                else { // Must be a time-only result with no date
                     momentTime = new Date();
                     momentTime.setHours(parseInt(String(resolutionValues['value']).substr(0, 2)));
                     momentTime.setMinutes(parseInt(String(resolutionValues['value']).substr(3, 2)));
@@ -188,15 +187,10 @@ class MicrosoftLocaleConverter {
         return foundDates;
     }
     formatDate(date, toLocale) {
-        return this.mapLocaleToFunction[toLocale].dateFormat
-            .replace('yyyy', (date.getFullYear()).toLocaleString(undefined, { minimumIntegerDigits: 4 }).replace(',', ''))
-            .replace('MM', (date.getMonth() + 1).toLocaleString(undefined, { minimumIntegerDigits: 2 }))
-            .replace('dd', (date.getDate()).toLocaleString(undefined, { minimumIntegerDigits: 2 }));
+        return moment(date).format(this.mapLocaleToFunction[toLocale].dateFormat);
     }
     formatTime(date, toLocale) {
-        return this.mapLocaleToFunction[toLocale].timeFormat
-            .replace('hh', (date.getHours()).toLocaleString(undefined, { minimumIntegerDigits: 2 }))
-            .replace('mm', (date.getMinutes()).toLocaleString(undefined, { minimumIntegerDigits: 2 }));
+        return moment(date).format(this.mapLocaleToFunction[toLocale].timeFormat);
     }
     formatDateAndTime(date, toLocale) {
         return `${this.formatDate(date, toLocale)} ${this.formatTime(date, toLocale)}`;

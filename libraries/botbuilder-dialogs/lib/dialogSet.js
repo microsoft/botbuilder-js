@@ -161,7 +161,9 @@ const dialogContext_1 = require("./dialogContext");
  * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
  */
 class DialogSet {
-    constructor() {
+    /** NEW */
+    constructor(dialogStateProperty) {
+        this.dialogStateProperty = dialogStateProperty;
         this.dialogs = {};
     }
     /**
@@ -208,6 +210,20 @@ class DialogSet {
      */
     createContext(context, state) {
         return __awaiter(this, void 0, void 0, function* () {
+            return new dialogContext_1.DialogContext(this, context, state);
+        });
+    }
+    /** NEW */
+    createContextAsync(context) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.dialogStateProperty) {
+                throw new Error(`DialogSet.createContextAsync(): the dialog set was not bound to a stateProperty when constructed.`);
+            }
+            let state = yield this.dialogStateProperty.get(context);
+            if (typeof state !== 'object') {
+                state = {};
+                yield this.dialogStateProperty.set(context, state);
+            }
             return new dialogContext_1.DialogContext(this, context, state);
         });
     }

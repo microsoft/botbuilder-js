@@ -2,14 +2,13 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const LuisClient = require("botframework-luis");
 const LUIS_TRACE_TYPE = 'https://www.luis.ai/schemas/trace';
-const LUIS_TRACE_NAME = 'LuisRecognizerMiddleware';
+const LUIS_TRACE_NAME = 'LuisRecognizer';
 const LUIS_TRACE_LABEL = 'Luis Trace';
 /**
  * Component used to recognize intents in a user utterance using a configured LUIS model.
  *
  * @remarks
- * This component can be used within your bots logic by calling [recognize()](#recognize) or added
- * to your bot adapters middleware stack to automatically recognize the users intent.
+ * This component can be used within your bots logic by calling [recognize()](#recognize).
  */
 class LuisRecognizer {
     /**
@@ -23,34 +22,17 @@ class LuisRecognizer {
         const baseUri = (this.settings.serviceEndpoint || 'https://westus.api.cognitive.microsoft.com');
         this.luisClient = this.createClient(baseUri + '/luis/');
     }
-    onTurn(context, next) {
-        return this.recognize(context, true)
-            .then(() => next());
-    }
-    /**
-     * Returns the results cached from a previous call to [recognize()](#recognize) for the current
-     * turn with the user.
-     *
-     * @remarks
-     * This will return `undefined` if recognize() hasn't been called for the current turn.
-     * @param context Context for the current turn of conversation with the use.
-     */
-    get(context) {
-        return context.services.get(this.cacheKey);
-    }
     /**
      * Calls LUIS to recognize intents and entities in a users utterance.
      *
      * @remarks
-     * The results of the call will be cached to the context object for the turn and future calls
-     * to recognize() for the same context object will result in the cached value being returned.
-     * This behavior can be overridden using the `force` parameter.
+     * In addition to returning the results from LUIS, [recognize()](#recognize) will also
+     * emit a trace activity that contains the LUIS results.
      * @param context Context for the current turn of conversation with the use.
-     * @param force (Optional) flag that if `true` will force the call to LUIS even if a cached result exists. Defaults to a value of `false`.
      */
-    recognize(context, force) {
+    recognize(context) {
         const cached = context.services.get(this.cacheKey);
-        if (force || !cached) {
+        if (!cached) {
             const utterance = context.activity.text || '';
             return this.luisClient.getIntentsAndEntitiesV2(this.settings.appId, this.settings.subscriptionKey, utterance, this.settings.options)
                 .then((luisResult) => {
@@ -121,7 +103,7 @@ class LuisRecognizer {
         });
     }
     normalizeName(name) {
-        return name.replace(/\.| /g, "_");
+        return name.replace(/\.| /g, '_');
     }
     getIntents(luisResult) {
         const intents = {};
@@ -160,11 +142,13 @@ class LuisRecognizer {
         return entitiesAndMetadata;
     }
     getEntityValue(entity) {
-        if (!entity.resolution)
+        if (!entity.resolution) {
             return entity.entity;
-        if (entity.type.startsWith("builtin.datetimeV2.")) {
-            if (!entity.resolution.values || !entity.resolution.values.length)
+        }
+        if (entity.type.startsWith('builtin.datetimeV2.')) {
+            if (!entity.resolution.values || !entity.resolution.values.length) {
                 return entity.resolution;
+            }
             var vals = entity.resolution.values;
             var type = vals[0].type;
             var timexes = vals.map(t => t.timex);

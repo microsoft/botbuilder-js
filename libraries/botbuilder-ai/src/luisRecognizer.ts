@@ -2,22 +2,22 @@
  * @module botbuilder-ai
  */
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Middleware, TurnContext, RecognizerResult } from 'botbuilder';
+import { TurnContext, RecognizerResult } from 'botbuilder';
 import { LuisResult, Intent, Entity, CompositeEntity } from 'botframework-luis/lib/models';
 import LuisClient = require('botframework-luis');
 
 const LUIS_TRACE_TYPE = 'https://www.luis.ai/schemas/trace';
-const LUIS_TRACE_NAME = 'LuisRecognizerMiddleware';
+const LUIS_TRACE_NAME = 'LuisRecognizer';
 const LUIS_TRACE_LABEL = 'Luis Trace';
 
 /**
  * @private
  */
 interface LuisOptions {
-    Staging?: boolean
+    Staging?: boolean;
 }
 
 /**
@@ -66,13 +66,12 @@ export interface LuisRecognizerSettings {
 
 /**
  * Component used to recognize intents in a user utterance using a configured LUIS model.
- * 
+ *
  * @remarks
- * This component can be used within your bots logic by calling [recognize()](#recognize) or added
- * to your bot adapters middleware stack to automatically recognize the users intent.   
+ * This component can be used within your bots logic by calling [recognize()](#recognize).
  */
-export class LuisRecognizer implements Middleware {
-    private settings: LuisRecognizerSettings
+export class LuisRecognizer {
+    private settings: LuisRecognizerSettings;
     private luisClient: LuisClient;
     private cacheKey = Symbol('results');
 
@@ -88,36 +87,17 @@ export class LuisRecognizer implements Middleware {
         this.luisClient = this.createClient(baseUri + '/luis/');
     }
 
-    public onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
-        return this.recognize(context, true)
-            .then(() => next());
-    }
-
     /**
-     * Returns the results cached from a previous call to [recognize()](#recognize) for the current
-     * turn with the user.  
-     * 
+     * Calls LUIS to recognize intents and entities in a users utterance.
+     *
      * @remarks
-     * This will return `undefined` if recognize() hasn't been called for the current turn.
+     * In addition to returning the results from LUIS, [recognize()](#recognize) will also
+     * emit a trace activity that contains the LUIS results.
      * @param context Context for the current turn of conversation with the use.
      */
-    public get(context: TurnContext): RecognizerResult | undefined {
-        return context.services.get(this.cacheKey);
-    }
-
-    /**
-     * Calls LUIS to recognize intents and entities in a users utterance. 
-     * 
-     * @remarks
-     * The results of the call will be cached to the context object for the turn and future calls 
-     * to recognize() for the same context object will result in the cached value being returned. 
-     * This behavior can be overridden using the `force` parameter.   
-     * @param context Context for the current turn of conversation with the use.
-     * @param force (Optional) flag that if `true` will force the call to LUIS even if a cached result exists. Defaults to a value of `false`. 
-     */
-    public recognize(context: TurnContext, force?: boolean): Promise<RecognizerResult> {
+    public recognize(context: TurnContext): Promise<RecognizerResult> {
         const cached = context.services.get(this.cacheKey);
-        if (force || !cached) {
+        if (!cached) {
             const utterance = context.activity.text || '';
             return this.luisClient.getIntentsAndEntitiesV2(this.settings.appId, this.settings.subscriptionKey, utterance, this.settings.options)
                 .then((luisResult: LuisResult) => {
@@ -129,6 +109,7 @@ export class LuisRecognizer implements Middleware {
                         entities: this.getEntitiesAndMetadata(luisResult.entities, luisResult.compositeEntities, this.settings.verbose),
                         luisResult: luisResult
                     };
+
                     // Write to cache
                     context.services.set(this.cacheKey, recognizerResult);
 
@@ -136,14 +117,13 @@ export class LuisRecognizer implements Middleware {
                         return recognizerResult;
                     });
                 });
-
         }
         return Promise.resolve(cached);
     }
 
     /**
      * Called internally to create a LuisClient instance. 
-     * 
+     *
      * @remarks
      * This is exposed to enable better unit testing of the recognizer.
      * @param baseUri Service endpoint being called.
@@ -194,11 +174,11 @@ export class LuisRecognizer implements Middleware {
     }
 
     private normalizeName(name: string): string {
-        return name.replace(/\.| /g, "_");
+        return name.replace(/\.| /g, '_');
     }
 
     private getIntents(luisResult: LuisResult): any {
-        const intents: { [name: string]: {score:number}; } = {}
+        const intents: { [name: string]: {score: number}; } = {};
         if (luisResult.intents) {
             luisResult.intents.reduce((prev: any, curr: Intent) => {
                 prev[this.normalizeName(curr.intent)] = { score: curr.score};
@@ -239,12 +219,14 @@ export class LuisRecognizer implements Middleware {
     }
 
     private getEntityValue(entity: Entity): any {
-        if (!entity.resolution)
+        if (!entity.resolution) {
             return entity.entity;
+        }
 
-        if (entity.type.startsWith("builtin.datetimeV2.")) {
-            if (!entity.resolution.values || !entity.resolution.values.length)
+        if (entity.type.startsWith('builtin.datetimeV2.')) {
+            if (!entity.resolution.values || !entity.resolution.values.length) {
                 return entity.resolution;
+            }
 
             var vals = entity.resolution.values;
             var type = vals[0].type;

@@ -250,7 +250,7 @@ describe(`BotFrameworkAdapter`, function () {
         adapter.continueConversation(reference, (context) => {
             assert(context, `context not passed.`);
             assert(context.activity, `context has no request.`);
-            assert(context.activity.type === undefined, `request has invalid type.`);
+            assert(context.activity.type === 'event', `request has invalid type.`);
             assert(context.activity.from && context.activity.from.id === reference.user.id, `request has invalid from.id.`);
             assert(context.activity.recipient && context.activity.recipient.id === reference.bot.id, `request has invalid recipient.id.`);
             called = true;

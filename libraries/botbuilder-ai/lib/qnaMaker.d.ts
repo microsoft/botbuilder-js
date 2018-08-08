@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext, Middleware, Activity } from 'botbuilder';
+import { TurnContext, Activity } from 'botbuilder';
 /**
  * An individual answer returned by `QnAMaker.generateAnswer()`.
  */
@@ -59,23 +59,6 @@ export interface QnAMakerOptions {
      * Defaults to "1".
      */
     top?: number;
-    /**
-     * (Optional) and only applied when a QnAMaker instance has been added to ths adapter as
-     * middleware.
-     *
-     * @remarks
-     * Defaults to a value of `false`.
-     *
-     * Setting this to `true` will cause the QnA Maker service to be called BEFORE any other
-     * middleware or the bots logic is run. Should the service return an answer the user will be
-     * automatically sent the answer and the turn completed such that no other middleware or the
-     * bots logic will be run.
-     *
-     * The default behavior is to only call the service AFTER all other middleware and the bots logic
-     * has run, and only under the condition that no other replies have been sent by the bot yet
-     * for this turn.
-     */
-    answerBeforeNext?: boolean;
 }
 /**
  * Trace info that we collect and emit from a QnA Maker query
@@ -97,13 +80,9 @@ export interface QnAMakerTraceInfo {
     metadataBoost: any[];
 }
 /**
- * Manages querying an individual QnA Maker knowledge base for answers. Can be added as middleware
- * to automatically query the knowledge base anytime a messaged is received from the user. When
- * used as middleware the component can be configured to either query the knowledge base before the
- * bots logic runs or after the bots logic is run, as a fallback in the event the bot doesn't answer
- * the user.
+ * Manages querying an individual QnA Maker knowledge base for answers.
  */
-export declare class QnAMaker implements Middleware {
+export declare class QnAMaker {
     private readonly endpoint;
     private readonly options;
     /**
@@ -112,9 +91,8 @@ export declare class QnAMaker implements Middleware {
      * @param options (Optional) additional settings used to configure the instance.
      */
     constructor(endpoint: QnAMakerEndpoint, options?: QnAMakerOptions);
-    onTurn(context: TurnContext, next: () => Promise<void>): Promise<void>;
     /**
-     * Calls [generateAnswer()](#generateanswer) and sends the answer as a message ot the user.
+     * Calls [generateAnswer()](#generateanswer) and sends the answer as a message to the user.
      *
      * @remarks
      * Returns a value of `true` if an answer was found and sent. If multiple answers are
