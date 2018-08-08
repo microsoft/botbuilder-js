@@ -134,7 +134,7 @@ export abstract class Prompt<T> extends Dialog {
 
     public async dialogReprompt(context: TurnContext, instance: DialogInstance): Promise<void> {
         const state = instance.state as PromptState;
-        await this.onPrompt(context, state.state, state.options, true);
+        await this.onPrompt(context, state.state, state.options, false);
     }
 }
 

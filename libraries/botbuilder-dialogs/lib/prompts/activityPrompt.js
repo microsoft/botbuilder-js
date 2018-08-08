@@ -20,10 +20,22 @@ const dialog_1 = require("../dialog");
 /**
  * Base class for all prompts.
  */
-class Prompt extends dialog_1.Dialog {
+class ActivityPrompt extends dialog_1.Dialog {
     constructor(dialogId, validator) {
         super(dialogId);
         this.validator = validator;
+    }
+    onPrompt(context, state, options) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (options.prompt) {
+                yield context.sendActivity(options.prompt, undefined, botbuilder_1.InputHints.ExpectingInput);
+            }
+        });
+    }
+    onRecognize(context, state, options) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return { succeeded: true, value: context.activity };
+        });
     }
     dialogBegin(dc, options) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -40,48 +52,35 @@ class Prompt extends dialog_1.Dialog {
             state.options = opt;
             state.state = {};
             // Send initial prompt
-            yield this.onPrompt(dc.context, state.state, state.options, false);
+            yield this.onPrompt(dc.context, state.state, state.options);
             return dialog_1.Dialog.EndOfTurn;
         });
     }
     dialogContinue(dc) {
         return __awaiter(this, void 0, void 0, function* () {
-            // Don't do anything for non-message activities
-            if (dc.context.activity.type !== botbuilder_1.ActivityTypes.Message) {
-                return dialog_1.Dialog.EndOfTurn;
-            }
             // Perform base recognition
             const state = dc.activeDialog.state;
             const recognized = yield this.onRecognize(dc.context, state.state, state.options);
             // Validate the return value
             let end = false;
             let endResult;
-            if (this.validator) {
-                yield this.validator(dc.context, {
-                    recognized: recognized,
-                    state: state.state,
-                    options: state.options,
-                    end: (output) => {
-                        if (end) {
-                            throw new Error(`PromptValidatorContext.end(): method already called for the turn.`);
-                        }
-                        end = true;
-                        endResult = output;
+            yield this.validator(dc.context, {
+                recognized: recognized,
+                state: state.state,
+                options: state.options,
+                end: (output) => {
+                    if (end) {
+                        throw new Error(`PromptValidatorContext.end(): method already called for the turn.`);
                     }
-                });
-            }
-            else if (recognized.succeeded) {
-                end = true;
-                endResult = recognized.value;
-            }
+                    end = true;
+                    endResult = output;
+                }
+            });
             // Return recognized value or re-prompt
             if (end) {
                 return yield dc.end(endResult);
             }
             else {
-                if (!dc.context.responded) {
-                    yield this.onPrompt(dc.context, state.state, state.options, true);
-                }
                 return dialog_1.Dialog.EndOfTurn;
             }
         });
@@ -100,9 +99,9 @@ class Prompt extends dialog_1.Dialog {
     dialogReprompt(context, instance) {
         return __awaiter(this, void 0, void 0, function* () {
             const state = instance.state;
-            yield this.onPrompt(context, state.state, state.options, false);
+            yield this.onPrompt(context, state.state, state.options);
         });
     }
 }
-exports.Prompt = Prompt;
-//# sourceMappingURL=prompt.js.map
+exports.ActivityPrompt = ActivityPrompt;
+//# sourceMappingURL=activityPrompt.js.map
