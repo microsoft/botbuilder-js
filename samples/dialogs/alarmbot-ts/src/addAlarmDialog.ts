@@ -1,4 +1,4 @@
-import { DialogContainer, TextPrompt, DatetimePrompt } from 'botbuilder-dialogs';
+import { DialogContainer, TextPrompt, DatetimePrompt, Sequence, FillFieldStep, CodeStep } from 'botbuilder-dialogs';
 import { UserState } from 'botbuilder';
 import { Alarm, AlarmUser } from './models';
 import * as moment from 'moment';
@@ -33,6 +33,26 @@ export class AddAlarmDialog extends DialogContainer {
                 await dc.end();
             }
         ]);
+
+        this.dialogs.add('addAlarm', new Sequence([
+            new FillFieldStep('title', 'titlePrompt', `What would you like to call your alarm?`),
+            new FillFieldStep('time', 'timePrompt', `What time would you like to set the alarm for?`),
+            new CodeStep(async (dc, step) => {
+                // Convert to Alarm
+                const alarm: Alarm = {
+                    title: step.form['title'],
+                    time: step.form['time'].toISOString()
+                };
+
+                // Set alarm.
+                const user = userState.get(dc.context) as AlarmUser;
+                user.alarms.push(alarm);
+
+                // Confirm to user
+                await dc.context.sendActivity(`Your alarm named "${alarm.title}" is set for "${moment(alarm.time).format("ddd, MMM Do, h:mm a")}".`);
+                await dc.end();
+            })
+        ]));
         
         this.dialogs.add('titlePrompt', new TextPrompt(async (context, value) => {
             if (!value || value.length < 3) {

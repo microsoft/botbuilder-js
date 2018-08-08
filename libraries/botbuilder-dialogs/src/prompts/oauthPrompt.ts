@@ -5,11 +5,11 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext, Activity, Promiseable, ActivityTypes, InputHints } from 'botbuilder';
+import { TurnContext, ActivityTypes, InputHints, TokenResponse } from 'botbuilder';
 import * as prompts from 'botbuilder-prompts';
 import { DialogContext } from '../dialogContext';
-import { Dialog } from '../dialog';
-import { PromptOptions } from './prompt';
+import { Dialog, DialogTurnResult } from '../dialog';
+import { PromptOptions, PromptValidator, PromptRecognizerResult } from './prompt';
 
 /**
  * Settings used to configure an `OAuthPrompt` instance. Includes the ability to adjust the prompts
@@ -84,7 +84,7 @@ export interface OAuthPromptSettingsWithTimeout extends prompts.OAuthPromptSetti
  * ```
  * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
  */
-export class OAuthPrompt<C extends TurnContext> extends Dialog<C> {
+export class OAuthPrompt extends Dialog {
     private prompt: prompts.OAuthPrompt;
 
     /**
@@ -92,55 +92,87 @@ export class OAuthPrompt<C extends TurnContext> extends Dialog<C> {
      * @param settings Settings used to configure the prompt. 
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.  
      */
-    constructor(private settings: OAuthPromptSettingsWithTimeout, validator?: prompts.PromptValidator<any, any>) { 
-        super();
-        this.prompt = prompts.createOAuthPrompt(settings, validator);
+    constructor(dialogId: string, private settings: OAuthPromptSettingsWithTimeout, private validator?: PromptValidator<TokenResponse>) { 
+        super(dialogId);
+        this.prompt = prompts.createOAuthPrompt(settings);
     }
 
-    public dialogBegin(dc: DialogContext<C>, options?: PromptOptions): Promise<any> {
-        // Persist options and state
+    public async dialogBegin(dc: DialogContext, options?: PromptOptions): Promise<DialogTurnResult> {
+        // Ensure prompts have input hint set
+        const o = Object.assign({}, options);
+        if (o.prompt && typeof o.prompt === 'object' && typeof o.prompt.inputHint !== 'string') {
+            o.prompt.inputHint = InputHints.ExpectingInput;
+        }
+        if (o.retryPrompt && typeof o.retryPrompt === 'object' && typeof o.retryPrompt.inputHint !== 'string') {
+            o.retryPrompt.inputHint = InputHints.ExpectingInput;
+        }
+
+        // Initialize prompt state
         const timeout = typeof this.settings.timeout === 'number' ? this.settings.timeout : 54000000; 
-        const instance = dc.activeDialog;
-        instance.state = Object.assign({
-            expires: new Date().getTime() + timeout
-        } as OAuthPromptState, options);
+        const state = dc.activeDialog.state as OAuthPromptState;
+        state.state = {};
+        state.options = o;
+        state.expires = new Date().getTime() + timeout;
 
         // Attempt to get the users token
-        return this.prompt.getUserToken(dc.context).then((output) => {
-            if (output !== undefined) {
-                // Return token
-                return dc.end(output);
-            } else if (options && typeof options.prompt === 'string') {
+        const output = await this.prompt.getUserToken(dc.context);
+        if (output !== undefined) {
+            // Return token
+            return await dc.end(output);
+        } else {
+            if (typeof state.options.prompt === 'string') {
                 // Send supplied prompt then OAuthCard
-                return dc.context.sendActivity(options.prompt, options.speak)
-                    .then(() => this.prompt.prompt(dc.context));
+                await dc.context.sendActivity(state.options.prompt);
+                await this.prompt.prompt(dc.context);
             } else {
                 // Send OAuthCard
-                return this.prompt.prompt(dc.context, options ? <Partial<Activity>>options.prompt : undefined);
+                await this.prompt.prompt(dc.context, state.options.prompt);
             }
-        });
+            return Dialog.EndOfTurn;
+        }
     }
 
-    public dialogContinue(dc: DialogContext<C>): Promise<any> {
+    public async dialogContinue(dc: DialogContext): Promise<DialogTurnResult> {
         // Recognize token
-        return this.prompt.recognize(dc.context).then((output) => {
-            // Check for timeout
-            const state = dc.activeDialog.state as OAuthPromptState;
-            const isMessage = dc.context.activity.type === ActivityTypes.Message;
-            const hasTimedOut = isMessage && (new Date().getTime() > state.expires);
+        const output = await this.prompt.recognize(dc.context);
+        const recognized: PromptRecognizerResult<TokenResponse> = output ? { succeeded: true, value: output } : { succeeded: false };
 
-            // Process output
-            if (hasTimedOut) {
-                return dc.end(undefined);
+        // Check for timeout
+        const state = dc.activeDialog.state as OAuthPromptState;
+        const isMessage = dc.context.activity.type === ActivityTypes.Message;
+        const hasTimedOut = isMessage && (new Date().getTime() > state.expires);
+        if (hasTimedOut) {
+            return await dc.end(undefined);
+        } else {
+            // Validate the return value
+            let end = false;
+            let endResult: any;
+            if (this.validator) {
+                await this.validator(dc.context, {
+                    recognized: recognized,
+                    state: state.state,
+                    options: state.options,
+                    end: (output: any) => {
+                        end = true;
+                        endResult = output;
+                    }
+                });
+            } else if (recognized.succeeded) {
+                end = true;
+                endResult = recognized.value;
             }
-            else if (output) {
-                // Return token if it's not timed out (as checked for in the preceding if)
-                return dc.end(output);
-            } else if (isMessage && state.retryPrompt) {
+
+            // Return recognized value or re-prompt
+            if (end) {
+                return await dc.end(endResult);
+            } else {
                 // Send retry prompt
-                return dc.context.sendActivity(state.retryPrompt, state.retrySpeak, InputHints.ExpectingInput);
+                if (!dc.context.responded && isMessage && state.options.retryPrompt) {
+                    await dc.context.sendActivity(state.options.retryPrompt);
+                }
+                return Dialog.EndOfTurn;
             }
-        });
+        }
     }
 
     /**
@@ -163,7 +195,8 @@ export class OAuthPrompt<C extends TurnContext> extends Dialog<C> {
     }
 }
 
-interface OAuthPromptState extends PromptOptions {
-    /** Timestamp of when the prompt will timeout. */
-    expires: number;
+interface OAuthPromptState  {
+    state: object;
+    options: PromptOptions;
+    expires: number;        // Timestamp of when the prompt will timeout. 
 }

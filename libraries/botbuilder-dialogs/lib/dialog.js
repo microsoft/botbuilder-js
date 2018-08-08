@@ -1,212 +1,91 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @module botbuilder-dialogs
- */
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
-const botbuilder_1 = require("botbuilder");
-const dialogContext_1 = require("./dialogContext");
-const dialogSet_1 = require("./dialogSet");
+var DialogReason;
+(function (DialogReason) {
+    /** A dialog is being started through a call to `DialogContext.begin()`. */
+    DialogReason[DialogReason["beginCalled"] = 0] = "beginCalled";
+    /** A dialog is being continued through a call to `DialogContext.continue()`. */
+    DialogReason[DialogReason["continueCalled"] = 1] = "continueCalled";
+    /** A dialog ended normally through a call to `DialogContext.end()`. */
+    DialogReason[DialogReason["endCalled"] = 2] = "endCalled";
+    /** A dialog is ending because its being replaced through a call to `DialogContext.replace()`. */
+    DialogReason[DialogReason["replaceCalled"] = 3] = "replaceCalled";
+    /** A dialog was cancelled as part of a call to `DialogContext.cancelAll()`. */
+    DialogReason[DialogReason["cancelCalled"] = 4] = "cancelCalled";
+    /** A step was advanced through a call to `WaterfallStepContext.next()`. */
+    DialogReason[DialogReason["nextCalled"] = 5] = "nextCalled";
+})(DialogReason = exports.DialogReason || (exports.DialogReason = {}));
 /**
  * Base class for all dialogs.
- * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
- * @param R (Optional) type of result that's expected to be returned by the dialog.
- * @param O (Optional) options that can be passed into the [begin()](#begin) method.
  */
 class Dialog {
-    /**
-     * Starts the dialog when its called in isolation from a bot that isn't dialog based.
-     *
-     * @remarks
-     * The bot is responsible for maintaining the sticky-ness of the dialog. To do that it should
-     * persist the state object it passed into the dialog as part of its overall state when the
-     * turn completes. When the user replies it then needs to pass the persisted state object into
-     * a call to the dialogs [continue()](#continue) method.
-     *
-     * Depending on the dialog, its possible for the dialog to finish immediately so it's advised
-     * to check the completion object returned by `begin()` and ensure that the dialog is still
-     * active before continuing.
-     *
-     * ```JavaScript
-     * const state = {};
-     * const completion = await dialog.begin(context, state);
-     * if (completion.isCompleted) {
-     *     const value = completion.result;
-     * }
-     * ```
-     * @param context Context for the current turn of the conversation with the user.
-     * @param state A state object that the dialog will use to persist its current state. This should be an empty object which the dialog will populate. The bot should persist this with its other conversation state for as long as the dialog is still active.
-     * @param options (Optional) additional options supported by the dialog.
-     */
-    begin(context, state, options) {
-        // Create empty dialog set and add ourselves to it
-        const dialogs = new dialogSet_1.DialogSet();
-        dialogs.add('dialog', this);
-        // Start the dialog
-        let result;
-        const dc = new dialogContext_1.DialogContext(dialogs, context, state, (r) => { result = r; });
-        return dc.begin('dialog', options)
-            .then(() => dc.activeDialog ? { isActive: true, isCompleted: false } : { isActive: false, isCompleted: true, result: result });
+    constructor(dialogId) {
+        this.id = dialogId;
     }
     /**
-     * Passes a users reply to a dialog thats being used in isolation.
+     * (Optional) method called when an instance of the dialog is the active dialog and the user
+     * replies with a new activity. The dialog will generally continue to receive the users replies
+     * until it calls `DialogContext.end()`, `DialogContext.begin()`, or `DialogContext.prompt()`.
      *
-     * @remarks
-     * The bot should keep calling `continue()` for future turns until the dialog returns a
-     * completion object with `isCompleted == true`. To cancel or interrupt the prompt simply
-     * delete the `state` object being persisted.
-     *
-     * ```JavaScript
-     * const completion = await dialog.continue(context, state);
-     * if (completion.isCompleted) {
-     *     const value = completion.result;
-     * }
-     * ```
-     * @param context Context for the current turn of the conversation with the user.
-     * @param state A state object that was previously initialized by a call to [begin()](#begin).
+     * If this method is NOT implemented then the dialog will be automatically ended when the user
+     * replies.
+     * @param dc The dialog context for the current turn of conversation.
      */
-    continue(context, state) {
-        // Create empty dialog set and add ourselves to it
-        const dialogs = new dialogSet_1.DialogSet();
-        dialogs.add('dialog', this);
-        // Continue the dialog
-        let result;
-        const dc = new dialogContext_1.DialogContext(dialogs, context, state, (r) => { result = r; });
-        if (dc.activeDialog) {
-            return dc.continue()
-                .then(() => dc.activeDialog ? { isActive: true, isCompleted: false } : { isActive: false, isCompleted: true, result: result });
-        }
-        else {
-            return Promise.resolve({ isActive: false, isCompleted: false });
-        }
-    }
-}
-exports.Dialog = Dialog;
-/**
- * Dialog optimized for prompting a user with a series of questions.
- *
- * @remarks
- * Waterfalls accept a stack of functions which will be executed in sequence. Each waterfall step
- * can ask a question of the user and the users response will be passed as an argument to the next
- * waterfall step.
- *
- * For simple text questions you can send the user a message and then process their answer in the
- * next step:
- *
- * ```JavaScript
- *  dialogs.add('namePrompt', [
- *      async function (dc) {
- *          dc.activeDialog.state.profile = { first: '', last: '', full: '' };
- *          await dc.context.sendActivity(`What's your first name?`);
- *      },
- *      async function (dc, firstName) {
- *          dc.activeDialog.state.profile.first = firstName;
- *          await dc.context.sendActivity(`Great ${firstName}! What's your last name?`);
- *      },
- *      async function (dc, lastName) {
- *          const profile = dc.activeDialog.state.profile;
- *          profile.last = lastName;
- *          profile.full = profile.first + ' ' + profile.last;
- *          await dc.end(profile);
- *      }
- *  ]);
- * ```
- *
- * For more complex sequences you can call other dialogs from within a step and the result returned
- * by the dialog will be passed to the next step:
- *
- * ```JavaScript
- *  dialogs.add('survey', [
- *      async function (dc) {
- *          dc.activeDialog.state.survey = { name: undefined, languages: '', years: 0 };
- *          await dc.begin('namePrompt');
- *      },
- *      async function (dc, name) {
- *          dc.activeDialog.state.survey.name = name;
- *          await dc.context.sendActivity(`Ok ${name.full}... What programming languages do you know?`);
- *      },
- *      async function (dc, languages) {
- *          dc.activeDialog.state.survey.languages = languages;
- *          await dc.prompt('yearsPrompt', `Great. So how many years have you been programming?`);
- *      },
- *      async function (dc, years) {
- *          dc.activeDialog.state.survey.years = years;
- *          await dc.context.sendActivity(`Thank you for taking our survey.`);
- *          await dc.end(dc.activeDialog.survey);
- *      }
- *  ]);
- *
- *  dialogs.add('yearsPrompt', new NumberPrompt(async (dc, value) => {
- *      if (value === undefined || value < 0 || value > 110) {
- *          await dc.context.sendActivity(`Enter a number from 0 to 110.`);
- *      } else {
- *          return value;
- *      }
- *  }));
- * ```
- *
- * The example builds on the previous `namePrompt` sample and shows how you can call another dialog
- * which will ask its own sequence of questions. The dialogs library provides a built-in set of
- * prompt classes which can be used to recognize things like dates and numbers in the users response.
- *
- * You should generally call `dc.end()` or `dc.replace()` from your last waterfall step but if you fail
- * to do that the dialog will be automatically ended for you on the users next reply.  The users
- * response will be passed to the calling dialogs next waterfall step if there is one.
- */
-class Waterfall extends Dialog {
-    /**
-     * Creates a new waterfall dialog containing the given array of steps.
-     * @param steps Array of waterfall steps.
-     */
-    constructor(steps) {
-        super();
-        this.steps = steps.slice(0);
-    }
-    dialogBegin(dc, args) {
-        const instance = dc.activeDialog;
-        instance.step = 0;
-        return this.runStep(dc, args);
-    }
     dialogContinue(dc) {
-        // Don't do anything for non-message activities
-        if (dc.context.activity.type === botbuilder_1.ActivityTypes.Message) {
-            const instance = dc.activeDialog;
-            instance.step += 1;
-            return this.runStep(dc, dc.context.activity.text);
-        }
-        else {
-            return Promise.resolve();
-        }
+        return __awaiter(this, void 0, void 0, function* () {
+            // By default just end the current dialog.
+            return dc.end();
+        });
     }
-    dialogResume(dc, result) {
-        const instance = dc.activeDialog;
-        instance.step += 1;
-        return this.runStep(dc, result);
+    /**
+     * (Optional) method called when an instance of the dialog is being returned to from another
+     * dialog that was started by the current instance using `DialogContext.begin()` or
+     * `DialogContext.prompt()`.
+     *
+     * If this method is NOT implemented then the dialog will be automatically ended with a call
+     * to `DialogContext.end()`. Any result passed from the called dialog will be passed to the
+     * active dialogs parent.
+     * @param dc The dialog context for the current turn of conversation.
+     * @param reason The reason the dialog is being resumed. This will typically be a value of `DialogReason.endCalled`.
+     * @param result (Optional) value returned from the dialog that was called. The type of the value returned is dependant on the dialog that was called.
+     */
+    dialogResume(dc, reason, result) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // By default just end the current dialog and return result to parent.
+            return dc.end(result);
+        });
     }
-    runStep(dc, result) {
-        try {
-            const instance = dc.activeDialog;
-            const step = instance.step;
-            if (step >= 0 && step < this.steps.length) {
-                // Execute step
-                return Promise.resolve(this.steps[step](dc, result, (r) => {
-                    // Skip to next step
-                    instance.step += 1;
-                    return this.runStep(dc, r);
-                }));
-            }
-            else {
-                // End of waterfall so just return to parent
-                return dc.end(result);
-            }
-        }
-        catch (err) {
-            return Promise.reject(err);
-        }
+    /**
+     * (Optional) method called when the dialog has been requested to re-prompt the user for input.
+     * @param context Context for the current turn of conversation.
+     * @param instance The instance of the current dialog.
+     */
+    dialogReprompt(context, instance) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // No-op by default
+        });
+    }
+    /**
+     * (Optional) method called when the dialog is ending.
+     * @param context Context for the current turn of conversation.
+     * @param instance The instance of the current dialog.
+     * @param reason The reason the dialog is ending.
+     */
+    dialogEnd(context, instance, reason) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // No-op by default
+        });
     }
 }
-exports.Waterfall = Waterfall;
+/** Signals the end of a turn by a dialog method or waterfall/sequence step.  */
+Dialog.EndOfTurn = { hasActive: true, hasResult: false };
+exports.Dialog = Dialog;
 //# sourceMappingURL=dialog.js.map

@@ -6,9 +6,7 @@
  * Licensed under the MIT License.
  */
 import { TurnContext } from 'botbuilder';
-import { PromptValidator } from 'botbuilder-prompts';
-import { DialogContext } from '../dialogContext';
-import { Prompt, PromptOptions } from './prompt';
+import { Prompt, PromptOptions, PromptValidator, PromptRecognizerResult } from './prompt';
 /**
  * Prompts a user to enter some text.
  *
@@ -51,16 +49,14 @@ import { Prompt, PromptOptions } from './prompt';
  *    return undefined;
  * }));
  * ```
- * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
- * @param O (Optional) output type returned by prompt. This defaults to a `string` but can be changed by a custom validator passed to the prompt.
  */
-export declare class TextPrompt<C extends TurnContext, O = string> extends Prompt<C> {
+export declare class TextPrompt extends Prompt<string> {
     private prompt;
     /**
      * Creates a new `TextPrompt` instance.
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
      */
-    constructor(validator?: PromptValidator<string, O>);
-    protected onPrompt(dc: DialogContext<C>, options: PromptOptions, isRetry: boolean): Promise<void>;
-    protected onRecognize(dc: DialogContext<C>, options: PromptOptions): Promise<O | undefined>;
+    constructor(dialogId: string, validator?: PromptValidator<string>);
+    protected onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void>;
+    protected onRecognize(context: TurnContext, state: any, options: PromptOptions): Promise<PromptRecognizerResult<string>>;
 }

@@ -6,9 +6,7 @@
  * Licensed under the MIT License.
  */
 import { TurnContext } from 'botbuilder';
-import { PromptValidator } from 'botbuilder-prompts';
-import { DialogContext } from '../dialogContext';
-import { Prompt, PromptOptions } from './prompt';
+import { Prompt, PromptOptions, PromptValidator, PromptRecognizerResult } from './prompt';
 import * as prompts from 'botbuilder-prompts';
 /**
  * Additional options that can be used to configure a `ChoicePrompt`.
@@ -57,17 +55,16 @@ export interface ChoicePromptOptions extends PromptOptions {
  * ```JavaScript
  * await dc.prompt('choicePrompt', `Select a color`, ['red', 'green', 'blue'], { retryPrompt: `I didn't catch that. Select a color from the list.` });
  * ```
- * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
  * @param O (Optional) output type returned by prompt. This defaults to an instance of `FoundChoice` but can be changed by a custom validator passed to the prompt.
  */
-export declare class ChoicePrompt<C extends TurnContext, O = prompts.FoundChoice> extends Prompt<C> {
+export declare class ChoicePrompt extends Prompt<prompts.FoundChoice> {
     private prompt;
     /**
      * Creates a new `ChoicePrompt` instance.
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
      * @param defaultLocale (Optional) locale to use if `dc.context.activity.locale` not specified. Defaults to a value of `en-us`.
      */
-    constructor(validator?: PromptValidator<prompts.FoundChoice, O>, defaultLocale?: string);
+    constructor(dialogId: string, validator?: PromptValidator<prompts.FoundChoice>, defaultLocale?: string);
     /**
      * Sets additional options passed to the `ChoiceFactory` and used to tweak the style of choices
      * rendered to the user.
@@ -84,6 +81,6 @@ export declare class ChoicePrompt<C extends TurnContext, O = prompts.FoundChoice
      * @param listStyle Type of list to render to to user. Defaults to `ListStyle.auto`.
      */
     style(listStyle: prompts.ListStyle): this;
-    protected onPrompt(dc: DialogContext<C>, options: ChoicePromptOptions, isRetry: boolean): Promise<void>;
-    protected onRecognize(dc: DialogContext<C>, options: ChoicePromptOptions): Promise<O | undefined>;
+    protected onPrompt(context: TurnContext, state: any, options: ChoicePromptOptions, isRetry: boolean): Promise<void>;
+    protected onRecognize(context: TurnContext, state: any, options: ChoicePromptOptions): Promise<PromptRecognizerResult<prompts.FoundChoice>>;
 }
