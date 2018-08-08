@@ -17,9 +17,8 @@ export interface PropertyAccessor<T = any> {
 export declare class BotStatePropertyAccessor<T = any> implements PropertyAccessor<T> {
     protected readonly state: BotState;
     readonly name: string;
-    readonly defaultValue: T;
-    constructor(state: BotState, name: string, defaultValue?: T);
+    constructor(state: BotState, name: string);
     delete(context: TurnContext): Promise<void>;
-    get(context: TurnContext): Promise<T | undefined>;
+    get(context: TurnContext, defaultValue?: T): Promise<T | undefined>;
     set(context: TurnContext, value: T): Promise<void>;
 }

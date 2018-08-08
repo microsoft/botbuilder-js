@@ -63,9 +63,9 @@ export class BotState implements Middleware {
     constructor(protected storage: Storage, protected storageKey: StorageKeyFactory) { }
 
     /** NEW */
-    public createProperty<T = any>(name: string, defaultValue?: T): PropertyAccessor<T> {
+    public createProperty<T = any>(name: string): PropertyAccessor<T> {
         if (this.properties.has(name)) { throw new Error(`BotState.createProperty(): a property named '${name}' already exists.`); }
-        const prop = new BotStatePropertyAccessor<T>(this, name, defaultValue);
+        const prop = new BotStatePropertyAccessor<T>(this, name);
         this.properties.set(name, prop);
         return prop;
     }

@@ -10,10 +10,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 /** NEW */
 class BotStatePropertyAccessor {
-    constructor(state, name, defaultValue) {
+    constructor(state, name) {
         this.state = state;
         this.name = name;
-        this.defaultValue = defaultValue;
     }
     delete(context) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -23,11 +22,11 @@ class BotStatePropertyAccessor {
             }
         });
     }
-    get(context) {
+    get(context, defaultValue) {
         return __awaiter(this, void 0, void 0, function* () {
             const obj = yield this.state.read(context);
-            if (!obj.hasOwnProperty(this.name) && this.defaultValue !== undefined) {
-                const clone = typeof this.defaultValue === 'object' || Array.isArray(this.defaultValue) ? JSON.parse(JSON.stringify(this.defaultValue)) : this.defaultValue;
+            if (!obj.hasOwnProperty(this.name) && defaultValue !== undefined) {
+                const clone = typeof defaultValue === 'object' || Array.isArray(defaultValue) ? JSON.parse(JSON.stringify(defaultValue)) : defaultValue;
                 obj[this.name] = clone;
             }
             return obj[this.name];
