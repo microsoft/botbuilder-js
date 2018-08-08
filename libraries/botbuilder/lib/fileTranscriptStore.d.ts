@@ -1,17 +1,5 @@
-<<<<<<< HEAD:libraries/botbuilder-core-extensions/lib/fileTranscriptStore.d.ts
-/**
- * @module botbuilder
- */
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
-import { TranscriptStore, PagedResult, Transcript } from "./transcriptLogger";
-import { Activity } from "../../botbuilder-core/lib";
-=======
 import { TranscriptStore, PagedResult, Transcript } from './transcriptLogger';
 import { Activity } from 'botframework-schema';
->>>>>>> master:libraries/botbuilder/lib/fileTranscriptStore.d.ts
 /**
  * The file transcript store stores transcripts in file system with each activity as a file.
  */

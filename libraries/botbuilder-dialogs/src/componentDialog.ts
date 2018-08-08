@@ -7,9 +7,10 @@
  */
 import { TurnContext } from 'botbuilder';
 import { Dialog, DialogTurnResult, DialogReason, DialogInstance } from './dialog';
-import { DialogContext } from './dialogContext';
+import { DialogContext, DialogState } from './dialogContext';
 import { DialogSet } from './dialogSet';
 
+const PERSISTED_DIALOG_STATE = 'dialogs';
 
 /**
  * The `ComponentDialog` class lets you break your bots logic up into components that can be added
@@ -19,11 +20,13 @@ import { DialogSet } from './dialogSet';
  * @param O (Optional) options that can be passed into the begin() method.
  */
 export class ComponentDialog<R = any, O = {}> extends Dialog {
-    private dialogs = new DialogSet();
+    private dialogs = new DialogSet(null);
 
     public async dialogBegin(dc: DialogContext, options?: any): Promise<DialogTurnResult<R>> {
         // Start the inner dialog.
-        const cdc = new DialogContext(this.dialogs, dc.context, dc.activeDialog.state);
+        const dialogState: DialogState = { dialogStack: [] };
+        dc.activeDialog.state[PERSISTED_DIALOG_STATE] = dialogState;
+        const cdc = new DialogContext(this.dialogs, dc.context, dialogState);
         const turnResult = await this.onDialogBegin(cdc, options);
         
         // Check for end of inner dialog 
@@ -38,7 +41,8 @@ export class ComponentDialog<R = any, O = {}> extends Dialog {
 
     public async dialogContinue(dc: DialogContext): Promise<DialogTurnResult<R>> {
         // Continue execution of inner dialog.
-        const cdc = new DialogContext(this.dialogs, dc.context, dc.activeDialog.state);
+        const dialogState = dc.activeDialog.state[PERSISTED_DIALOG_STATE];
+        const cdc = new DialogContext(this.dialogs, dc.context, dialogState);
         const turnResult = await this.onDialogContinue(cdc);
         
         // Check for end of inner dialog 
@@ -63,13 +67,15 @@ export class ComponentDialog<R = any, O = {}> extends Dialog {
 
     public async dialogReprompt(context: TurnContext, instance: DialogInstance): Promise<void> {
         // Delegate to inner dialog.
-        const cdc = new DialogContext(this.dialogs, context, instance.state);
+        const dialogState = instance.state[PERSISTED_DIALOG_STATE];
+        const cdc = new DialogContext(this.dialogs, context, dialogState);
         await this.onDialogReprompt(cdc);
     }
 
     public async dialogEnd(context: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void> {
         // Notify inner dialog
-        const cdc = new DialogContext(this.dialogs, context, instance.state);
+        const dialogState = instance.state[PERSISTED_DIALOG_STATE];
+        const cdc = new DialogContext(this.dialogs, context, dialogState);
         await this.onDialogEnd(cdc, reason);
     }
     

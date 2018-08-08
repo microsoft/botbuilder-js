@@ -10,6 +10,9 @@ import { DialogInstance, DialogTurnResult } from './dialog';
 import { DialogSet } from './dialogSet';
 import { PromptOptions } from './prompts';
 import { Choice } from 'botbuilder-prompts';
+export interface DialogState {
+    dialogStack: DialogInstance[];
+}
 /**
  * A context object used to manipulate a dialog stack.
  *
@@ -35,7 +38,7 @@ export declare class DialogContext {
      * @param context Context for the current turn of conversation with the user.
      * @param state State object being used to persist the dialog stack.
      */
-    constructor(dialogs: DialogSet, context: TurnContext, state: object);
+    constructor(dialogs: DialogSet, context: TurnContext, state: DialogState);
     /**
      * Returns the cached instance of the active dialog on the top of the stack or `undefined` if
      * the stack is empty.

@@ -1,8 +1,4 @@
-<<<<<<< HEAD:libraries/botbuilder-core-extensions/lib/messageFactory.d.ts
-import { Activity, CardAction, Attachment, InputHints } from '../../botbuilder-core/lib';
-=======
 import { Activity, CardAction, Attachment, InputHints } from 'botframework-schema';
->>>>>>> master:libraries/botbuilder/lib/messageFactory.d.ts
 /**
  * A set of utility functions to assist with the formatting of the various message types a bot can
  * return.

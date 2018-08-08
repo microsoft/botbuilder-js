@@ -5,11 +5,6 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-<<<<<<< HEAD
-export * from '../../botbuilder-core/lib';
-export * from '../../botbuilder-core-extensions/lib';
-=======
->>>>>>> master
 export * from './botFrameworkAdapter';
 export * from './consoleAdapter';
 export * from './botState';

@@ -29,12 +29,12 @@ class DialogContext {
      * @param state State object being used to persist the dialog stack.
      */
     constructor(dialogs, context, state) {
-        if (!Array.isArray(state['dialogStack'])) {
-            state['dialogStack'] = [];
+        if (!Array.isArray(state.dialogStack)) {
+            state.dialogStack = [];
         }
         this.dialogs = dialogs;
         this.context = context;
-        this.stack = state['dialogStack'];
+        this.stack = state.dialogStack;
     }
     /**
      * Returns the cached instance of the active dialog on the top of the stack or `undefined` if

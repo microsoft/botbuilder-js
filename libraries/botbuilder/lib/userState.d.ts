@@ -5,11 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-<<<<<<< HEAD:libraries/botbuilder-core-extensions/lib/userState.d.ts
-import { TurnContext } from '../../botbuilder-core/lib';
-=======
 import { TurnContext } from './turnContext';
->>>>>>> master:libraries/botbuilder/lib/userState.d.ts
 import { BotState } from './botState';
 import { Storage } from './storage';
 /**

@@ -5,14 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-<<<<<<< HEAD:libraries/botbuilder-core-extensions/lib/testAdapter.d.ts
-import { BotAdapter, Activity, ConversationReference, Promiseable, TurnContext, ResourceResponse } from '../../botbuilder-core/lib';
-=======
 import { BotAdapter } from './botAdapter';
 import { Promiseable } from './middlewareSet';
 import { TurnContext } from './turnContext';
 import { Activity, ConversationReference, ResourceResponse } from 'botframework-schema';
->>>>>>> master:libraries/botbuilder/lib/testAdapter.d.ts
 /**
  * Signature for a function that can be used to inspect individual activities returned by a bot
  * that's being tested using the `TestAdapter`.

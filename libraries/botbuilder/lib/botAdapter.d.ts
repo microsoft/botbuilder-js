@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { MiddlewareHandler, Middleware, Promiseable } from './middlewareSet';
-import { Activity, ResourceResponse, ConversationReference } from '../../botframework-schema/lib';
+import { Activity, ResourceResponse, ConversationReference } from 'botframework-schema';
 import { TurnContext } from './turnContext';
 /**
  * Abstract base class for all adapter plugins. Adapters manage the communication between the bot

@@ -5,15 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-<<<<<<< HEAD:libraries/botbuilder-core-extensions/lib/botState.d.ts
-import { TurnContext, Middleware } from '../../botbuilder-core/lib';
-import { Storage, StoreItem, StorageKeyFactory } from './storage';
-=======
 import { TurnContext } from './turnContext';
 import { Middleware } from './middlewareSet';
 import { Storage, StorageKeyFactory } from './storage';
 import { PropertyAccessor } from './botStatePropertyAccessor';
->>>>>>> master:libraries/botbuilder/lib/botState.d.ts
 /**
  * State information cached off the context object by a `BotState` instance.
  */

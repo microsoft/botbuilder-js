@@ -5,12 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-<<<<<<< HEAD:libraries/botbuilder-core-extensions/lib/storage.d.ts
-import { TurnContext, Promiseable } from '../../botbuilder-core/lib';
-=======
 import { TurnContext } from './turnContext';
 import { Promiseable } from './middlewareSet';
->>>>>>> master:libraries/botbuilder/lib/storage.d.ts
 /**
  * Callback to calculate a storage key.
  *

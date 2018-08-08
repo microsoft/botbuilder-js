@@ -5,13 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-<<<<<<< HEAD:libraries/botbuilder-core-extensions/lib/memoryTranscriptStore.d.ts
-import { TranscriptStore, PagedResult, Transcript } from "./transcriptLogger";
-import { Activity } from "../../botbuilder-core/lib";
-=======
 import { TranscriptStore, PagedResult, Transcript } from './transcriptLogger';
 import { Activity } from 'botframework-schema';
->>>>>>> master:libraries/botbuilder/lib/memoryTranscriptStore.d.ts
 /**
  * The memory transcript store stores transcripts in volatile memory in a Map.
  * Because this uses an unbounded volitile dictionary this should only be used for unit tests or non-production environments.

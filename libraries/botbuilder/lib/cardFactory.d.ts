@@ -5,11 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-<<<<<<< HEAD:libraries/botbuilder-core-extensions/lib/cardFactory.d.ts
-import { Attachment, MediaUrl, CardAction, AnimationCard, CardImage, HeroCard, AudioCard, ReceiptCard, ThumbnailCard, VideoCard } from "../../botbuilder-core/lib";
-=======
 import { Attachment, MediaUrl, CardAction, AnimationCard, CardImage, HeroCard, AudioCard, ReceiptCard, ThumbnailCard, VideoCard } from 'botframework-schema';
->>>>>>> master:libraries/botbuilder/lib/cardFactory.d.ts
 /**
  * A set of utility functions designed to assist with the formatting of the various card types a
  * bot can return.

@@ -5,13 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-<<<<<<< HEAD:libraries/botbuilder-core-extensions/lib/transcriptLogger.d.ts
-import { Middleware, TurnContext, Activity } from "../../botbuilder-core/lib";
-=======
 import { Middleware } from './middlewareSet';
 import { TurnContext } from './turnContext';
 import { Activity } from 'botframework-schema';
->>>>>>> master:libraries/botbuilder/lib/transcriptLogger.d.ts
 /**
  * When added, this middleware will log incoming and outgoing activities to a ITranscriptStore.
  */

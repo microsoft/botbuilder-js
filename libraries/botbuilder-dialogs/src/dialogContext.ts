@@ -11,6 +11,11 @@ import { DialogSet } from './dialogSet';
 import { PromptOptions } from './prompts';
 import { Choice } from 'botbuilder-prompts';
 
+export interface DialogState
+{
+    dialogStack: DialogInstance[];
+}
+
 /**
  * A context object used to manipulate a dialog stack.
  * 
@@ -41,11 +46,11 @@ export class DialogContext {
       * @param context Context for the current turn of conversation with the user.
       * @param state State object being used to persist the dialog stack.
       */
-    constructor(dialogs: DialogSet, context: TurnContext, state: object) { 
-        if (!Array.isArray(state['dialogStack'])) { state['dialogStack'] = [] } 
+    constructor(dialogs: DialogSet, context: TurnContext, state: DialogState) { 
+        if (!Array.isArray(state.dialogStack)) { state.dialogStack = [] } 
         this.dialogs = dialogs;
         this.context = context;
-        this.stack = state['dialogStack'];
+        this.stack = state.dialogStack;
     }
 
     /** 

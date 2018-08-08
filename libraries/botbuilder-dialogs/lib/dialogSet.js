@@ -162,8 +162,8 @@ const dialogContext_1 = require("./dialogContext");
  */
 class DialogSet {
     /** NEW */
-    constructor(dialogStateProperty) {
-        this.dialogStateProperty = dialogStateProperty;
+    constructor(dialogState) {
+        this.dialogState = dialogState;
         this.dialogs = {};
     }
     /**
@@ -206,23 +206,16 @@ class DialogSet {
      * const dc = dialogs.createContext(context, conversation);
      * ```
      * @param context Context for the current turn of conversation with the user.
-     * @param state State object being used to persist the dialog stack.
      */
-    createContext(context, state) {
+    createContext(context) {
         return __awaiter(this, void 0, void 0, function* () {
-            return new dialogContext_1.DialogContext(this, context, state);
-        });
-    }
-    /** NEW */
-    createContextAsync(context) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!this.dialogStateProperty) {
+            if (!this.dialogState) {
                 throw new Error(`DialogSet.createContextAsync(): the dialog set was not bound to a stateProperty when constructed.`);
             }
-            let state = yield this.dialogStateProperty.get(context);
+            let state = yield this.dialogState.get(context);
             if (typeof state !== 'object') {
-                state = {};
-                yield this.dialogStateProperty.set(context, state);
+                state = { dialogStack: [] };
+                yield this.dialogState.set(context, state);
             }
             return new dialogContext_1.DialogContext(this, context, state);
         });

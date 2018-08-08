@@ -11,6 +11,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const dialog_1 = require("./dialog");
 const dialogContext_1 = require("./dialogContext");
 const dialogSet_1 = require("./dialogSet");
+const PERSISTED_DIALOG_STATE = 'dialogs';
 /**
  * The `ComponentDialog` class lets you break your bots logic up into components that can be added
  * as a dialog to other dialog sets within your bots project or exported and used in other bot
@@ -21,12 +22,14 @@ const dialogSet_1 = require("./dialogSet");
 class ComponentDialog extends dialog_1.Dialog {
     constructor() {
         super(...arguments);
-        this.dialogs = new dialogSet_1.DialogSet();
+        this.dialogs = new dialogSet_1.DialogSet(null);
     }
     dialogBegin(dc, options) {
         return __awaiter(this, void 0, void 0, function* () {
             // Start the inner dialog.
-            const cdc = new dialogContext_1.DialogContext(this.dialogs, dc.context, dc.activeDialog.state);
+            const dialogState = { dialogStack: [] };
+            dc.activeDialog.state[PERSISTED_DIALOG_STATE] = dialogState;
+            const cdc = new dialogContext_1.DialogContext(this.dialogs, dc.context, dialogState);
             const turnResult = yield this.onDialogBegin(cdc, options);
             // Check for end of inner dialog 
             if (turnResult.hasResult) {
@@ -42,7 +45,8 @@ class ComponentDialog extends dialog_1.Dialog {
     dialogContinue(dc) {
         return __awaiter(this, void 0, void 0, function* () {
             // Continue execution of inner dialog.
-            const cdc = new dialogContext_1.DialogContext(this.dialogs, dc.context, dc.activeDialog.state);
+            const dialogState = dc.activeDialog.state[PERSISTED_DIALOG_STATE];
+            const cdc = new dialogContext_1.DialogContext(this.dialogs, dc.context, dialogState);
             const turnResult = yield this.onDialogContinue(cdc);
             // Check for end of inner dialog 
             if (turnResult.hasResult) {
@@ -69,14 +73,16 @@ class ComponentDialog extends dialog_1.Dialog {
     dialogReprompt(context, instance) {
         return __awaiter(this, void 0, void 0, function* () {
             // Delegate to inner dialog.
-            const cdc = new dialogContext_1.DialogContext(this.dialogs, context, instance.state);
+            const dialogState = instance.state[PERSISTED_DIALOG_STATE];
+            const cdc = new dialogContext_1.DialogContext(this.dialogs, context, dialogState);
             yield this.onDialogReprompt(cdc);
         });
     }
     dialogEnd(context, instance, reason) {
         return __awaiter(this, void 0, void 0, function* () {
             // Notify inner dialog
-            const cdc = new dialogContext_1.DialogContext(this.dialogs, context, instance.state);
+            const dialogState = instance.state[PERSISTED_DIALOG_STATE];
+            const cdc = new dialogContext_1.DialogContext(this.dialogs, context, dialogState);
             yield this.onDialogEnd(cdc, reason);
         });
     }

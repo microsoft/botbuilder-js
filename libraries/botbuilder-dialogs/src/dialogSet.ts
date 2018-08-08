@@ -7,7 +7,7 @@
  */
 import { TurnContext, PropertyAccessor } from 'botbuilder';
 import { Dialog } from './dialog';
-import { DialogContext } from './dialogContext';
+import { DialogContext, DialogState } from './dialogContext';
 
 /**
  * A related set of dialogs that can all call each other.
@@ -163,7 +163,7 @@ export class DialogSet {
     private readonly dialogs: { [id:string]: Dialog; } = {};
 
     /** NEW */
-    constructor(private readonly dialogStateProperty?: PropertyAccessor<object>) { }
+    constructor(private readonly dialogState: PropertyAccessor<DialogState>) { }
 
     /**
      * Adds a new dialog to the set and returns the added dialog.
@@ -201,19 +201,13 @@ export class DialogSet {
      * const dc = dialogs.createContext(context, conversation);  
      * ```
      * @param context Context for the current turn of conversation with the user.
-     * @param state State object being used to persist the dialog stack.
      */
-    public async createContext(context: TurnContext, state: object): Promise<DialogContext> {
-        return new DialogContext(this, context, state);
-    }
-
-    /** NEW */
-    public async createContextAsync(context: C): Promise<DialogContext<C>> {
-        if (!this.dialogStateProperty) { throw new Error(`DialogSet.createContextAsync(): the dialog set was not bound to a stateProperty when constructed.`) }
-        let state = await this.dialogStateProperty.get(context);
+    public async createContext(context: TurnContext): Promise<DialogContext> {
+        if (!this.dialogState) { throw new Error(`DialogSet.createContextAsync(): the dialog set was not bound to a stateProperty when constructed.`) }
+        let state = await this.dialogState.get(context);
         if (typeof state !== 'object') {
-            state = {};
-            await this.dialogStateProperty.set(context, state);
+            state = { dialogStack: [] };
+            await this.dialogState.set(context, state);
         }
         return new DialogContext(this, context, state);
     }
