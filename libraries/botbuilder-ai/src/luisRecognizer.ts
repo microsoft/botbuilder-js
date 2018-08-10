@@ -271,12 +271,18 @@ export class LuisRecognizer {
     }
 
     private getEntityMetadata(entity: Entity): any {
-        return {
+        var res = {
             startIndex: entity.startIndex,
             endIndex: entity.endIndex + 1,
+            score: entity.score,
             text: entity.entity,
-            score: entity.score
+            type: entity.type,
         };
+        if (entity.resolution && entity.resolution.subtype)
+        {
+            res["subtype"] = entity.resolution.subtype;
+        }
+        return res;
     }
 
     private getNormalizedEntityName(entity: Entity): string {
