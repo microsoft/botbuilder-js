@@ -38,9 +38,8 @@
         {
           "startIndex": 0,
           "endIndex": 257,
-          "score": 0.7697042,
           "text": "12 years old and 3 days old and monday july 3rd and every monday and between 3am and 5 : 30am and 4 acres and 4 pico meters and chrimc @ hotmail . com and $ 4 and $ 4 . 25 and 32 and 210 . 4 and first and 10 % and 10 . 5 % and 425 - 555 - 1234 and 3 degrees and - 27 . 5 degrees c",
-          "type": "Composite1"
+          "score": 0.7697042
         }
       ]
     },
@@ -51,246 +50,195 @@
             {
               "startIndex": 0,
               "endIndex": 12,
-              "text": "12 years old",
-              "type": "builtin.age"
+              "text": "12 years old"
             },
             {
               "startIndex": 17,
               "endIndex": 27,
-              "text": "3 days old",
-              "type": "builtin.age"
+              "text": "3 days old"
             }
           ],
           "datetime": [
             {
               "startIndex": 0,
               "endIndex": 8,
-              "text": "12 years",
-              "type": "builtin.datetimeV2.duration"
+              "text": "12 years"
             },
             {
               "startIndex": 17,
               "endIndex": 23,
-              "text": "3 days",
-              "type": "builtin.datetimeV2.duration"
+              "text": "3 days"
             },
             {
               "startIndex": 32,
               "endIndex": 47,
-              "text": "monday july 3rd",
-              "type": "builtin.datetimeV2.date"
+              "text": "monday july 3rd"
             },
             {
               "startIndex": 52,
               "endIndex": 64,
-              "text": "every monday",
-              "type": "builtin.datetimeV2.set"
+              "text": "every monday"
             },
             {
               "startIndex": 69,
               "endIndex": 91,
-              "text": "between 3am and 5:30am",
-              "type": "builtin.datetimeV2.timerange"
+              "text": "between 3am and 5:30am"
             }
           ],
           "dimension": [
             {
               "startIndex": 96,
               "endIndex": 103,
-              "text": "4 acres",
-              "type": "builtin.dimension"
+              "text": "4 acres"
             },
             {
               "startIndex": 108,
               "endIndex": 121,
-              "text": "4 pico meters",
-              "type": "builtin.dimension"
+              "text": "4 pico meters"
             }
           ],
           "email": [
             {
               "startIndex": 126,
               "endIndex": 144,
-              "text": "chrimc@hotmail.com",
-              "type": "builtin.email"
+              "text": "chrimc@hotmail.com"
             }
           ],
           "money": [
             {
               "startIndex": 149,
               "endIndex": 151,
-              "text": "$4",
-              "type": "builtin.currency"
+              "text": "$4"
             },
             {
               "startIndex": 156,
-              "endIndex": 161,
-              "text": "$4.25",
-              "type": "builtin.currency"
+              "endIndex": 168,
+              "text": "$4.25 and 32"
             }
           ],
           "number": [
             {
               "startIndex": 0,
               "endIndex": 2,
-              "text": "12",
-              "type": "builtin.number",
-              "subtype": "integer"
+              "text": "12"
             },
             {
               "startIndex": 17,
               "endIndex": 18,
-              "text": "3",
-              "type": "builtin.number",
-              "subtype": "integer"
+              "text": "3"
             },
             {
               "startIndex": 85,
               "endIndex": 86,
-              "text": "5",
-              "type": "builtin.number",
-              "subtype": "integer"
+              "text": "5"
             },
             {
               "startIndex": 96,
               "endIndex": 97,
-              "text": "4",
-              "type": "builtin.number",
-              "subtype": "integer"
+              "text": "4"
             },
             {
               "startIndex": 108,
               "endIndex": 109,
-              "text": "4",
-              "type": "builtin.number",
-              "subtype": "integer"
+              "text": "4"
             },
             {
               "startIndex": 150,
               "endIndex": 151,
-              "text": "4",
-              "type": "builtin.number",
-              "subtype": "integer"
+              "text": "4"
             },
             {
               "startIndex": 157,
               "endIndex": 161,
-              "text": "4.25",
-              "type": "builtin.number",
-              "subtype": "decimal"
+              "text": "4.25"
             },
             {
               "startIndex": 166,
               "endIndex": 168,
-              "text": "32",
-              "type": "builtin.number",
-              "subtype": "integer"
+              "text": "32"
             },
             {
               "startIndex": 173,
               "endIndex": 178,
-              "text": "210.4",
-              "type": "builtin.number",
-              "subtype": "decimal"
+              "text": "210.4"
             },
             {
               "startIndex": 193,
               "endIndex": 195,
-              "text": "10",
-              "type": "builtin.number",
-              "subtype": "integer"
+              "text": "10"
             },
             {
               "startIndex": 201,
               "endIndex": 205,
-              "text": "10.5",
-              "type": "builtin.number",
-              "subtype": "decimal"
+              "text": "10.5"
             },
             {
               "startIndex": 211,
               "endIndex": 214,
-              "text": "425",
-              "type": "builtin.number",
-              "subtype": "integer"
+              "text": "425"
             },
             {
               "startIndex": 215,
               "endIndex": 218,
-              "text": "555",
-              "type": "builtin.number",
-              "subtype": "integer"
+              "text": "555"
             },
             {
               "startIndex": 219,
               "endIndex": 223,
-              "text": "1234",
-              "type": "builtin.number",
-              "subtype": "integer"
+              "text": "1234"
             },
             {
               "startIndex": 228,
               "endIndex": 229,
-              "text": "3",
-              "type": "builtin.number",
-              "subtype": "integer"
+              "text": "3"
             },
             {
               "startIndex": 242,
               "endIndex": 247,
-              "text": "-27.5",
-              "type": "builtin.number",
-              "subtype": "decimal"
+              "text": "-27.5"
             }
           ],
           "ordinal": [
             {
               "startIndex": 44,
               "endIndex": 47,
-              "text": "3rd",
-              "type": "builtin.ordinal"
+              "text": "3rd"
             },
             {
               "startIndex": 183,
               "endIndex": 188,
-              "text": "first",
-              "type": "builtin.ordinal"
+              "text": "first"
             }
           ],
           "percentage": [
             {
               "startIndex": 193,
               "endIndex": 196,
-              "text": "10%",
-              "type": "builtin.percentage"
+              "text": "10%"
             },
             {
               "startIndex": 201,
               "endIndex": 206,
-              "text": "10.5%",
-              "type": "builtin.percentage"
+              "text": "10.5%"
             }
           ],
           "phonenumber": [
             {
               "startIndex": 211,
               "endIndex": 223,
-              "text": "425-555-1234",
-              "type": "builtin.phonenumber"
+              "text": "425-555-1234"
             }
           ],
           "temperature": [
             {
               "startIndex": 228,
               "endIndex": 237,
-              "text": "3 degrees",
-              "type": "builtin.temperature"
+              "text": "3 degrees"
             },
             {
               "startIndex": 242,
               "endIndex": 257,
-              "text": "-27.5 degrees c",
-              "type": "builtin.temperature"
+              "text": "-27.5 degrees c"
             }
           ]
         },
@@ -355,7 +303,7 @@
             "units": "Dollar"
           },
           {
-            "number": 4.25,
+            "number": 4.57,
             "units": "Dollar"
           }
         ],
@@ -517,12 +465,12 @@
             {
               "timex": "XXXX-07-03",
               "type": "date",
-              "value": "2018-07-03"
+              "value": "2017-07-03"
             },
             {
               "timex": "XXXX-07-03",
               "type": "date",
-              "value": "2019-07-03"
+              "value": "2018-07-03"
             }
           ]
         }
@@ -595,13 +543,13 @@
         }
       },
       {
-        "entity": "$4.25",
+        "entity": "$4.25 and 32",
         "type": "builtin.currency",
         "startIndex": 156,
-        "endIndex": 160,
+        "endIndex": 167,
         "resolution": {
           "unit": "Dollar",
-          "value": "4.25"
+          "value": "4.57"
         }
       },
       {
@@ -610,7 +558,6 @@
         "startIndex": 0,
         "endIndex": 1,
         "resolution": {
-          "subtype": "integer",
           "value": "12"
         }
       },
@@ -620,7 +567,6 @@
         "startIndex": 17,
         "endIndex": 17,
         "resolution": {
-          "subtype": "integer",
           "value": "3"
         }
       },
@@ -630,7 +576,6 @@
         "startIndex": 85,
         "endIndex": 85,
         "resolution": {
-          "subtype": "integer",
           "value": "5"
         }
       },
@@ -640,7 +585,6 @@
         "startIndex": 96,
         "endIndex": 96,
         "resolution": {
-          "subtype": "integer",
           "value": "4"
         }
       },
@@ -650,7 +594,6 @@
         "startIndex": 108,
         "endIndex": 108,
         "resolution": {
-          "subtype": "integer",
           "value": "4"
         }
       },
@@ -660,7 +603,6 @@
         "startIndex": 150,
         "endIndex": 150,
         "resolution": {
-          "subtype": "integer",
           "value": "4"
         }
       },
@@ -670,7 +612,6 @@
         "startIndex": 157,
         "endIndex": 160,
         "resolution": {
-          "subtype": "decimal",
           "value": "4.25"
         }
       },
@@ -680,7 +621,6 @@
         "startIndex": 166,
         "endIndex": 167,
         "resolution": {
-          "subtype": "integer",
           "value": "32"
         }
       },
@@ -690,7 +630,6 @@
         "startIndex": 173,
         "endIndex": 177,
         "resolution": {
-          "subtype": "decimal",
           "value": "210.4"
         }
       },
@@ -700,7 +639,6 @@
         "startIndex": 193,
         "endIndex": 194,
         "resolution": {
-          "subtype": "integer",
           "value": "10"
         }
       },
@@ -710,7 +648,6 @@
         "startIndex": 201,
         "endIndex": 204,
         "resolution": {
-          "subtype": "decimal",
           "value": "10.5"
         }
       },
@@ -720,7 +657,6 @@
         "startIndex": 211,
         "endIndex": 213,
         "resolution": {
-          "subtype": "integer",
           "value": "425"
         }
       },
@@ -730,7 +666,6 @@
         "startIndex": 215,
         "endIndex": 217,
         "resolution": {
-          "subtype": "integer",
           "value": "555"
         }
       },
@@ -740,7 +675,6 @@
         "startIndex": 219,
         "endIndex": 222,
         "resolution": {
-          "subtype": "integer",
           "value": "1234"
         }
       },
@@ -750,7 +684,6 @@
         "startIndex": 228,
         "endIndex": 228,
         "resolution": {
-          "subtype": "integer",
           "value": "3"
         }
       },
@@ -760,7 +693,6 @@
         "startIndex": 242,
         "endIndex": 246,
         "resolution": {
-          "subtype": "decimal",
           "value": "-27.5"
         }
       },
@@ -881,7 +813,7 @@
           },
           {
             "type": "builtin.currency",
-            "value": "$4.25"
+            "value": "$4.25 and 32"
           },
           {
             "type": "builtin.number",

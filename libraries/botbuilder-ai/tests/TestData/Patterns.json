@@ -38,32 +38,28 @@
         {
           "startIndex": 71,
           "endIndex": 76,
-          "text": "kb435",
-          "type": "Part"
+          "text": "kb435"
         }
       ],
       "subject": [
         {
           "startIndex": 12,
           "endIndex": 43,
-          "text": "something wicked this way comes",
-          "type": "subject"
+          "text": "something wicked this way comes"
         }
       ],
       "person": [
         {
           "startIndex": 49,
           "endIndex": 61,
-          "text": "bart simpson",
-          "type": "person"
+          "text": "bart simpson"
         }
       ],
       "extra": [
         {
           "startIndex": 71,
           "endIndex": 76,
-          "text": "kb435",
-          "type": "subject"
+          "text": "kb435"
         }
       ]
     },

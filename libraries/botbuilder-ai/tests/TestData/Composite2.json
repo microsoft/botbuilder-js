@@ -38,17 +38,15 @@
         {
           "startIndex": 0,
           "endIndex": 69,
-          "score": 0.8912925,
           "text": "http : / / foo . com is where you can fly from seattle to dallas via denver",
-          "type": "Composite2"
+          "score": 0.871912837
         }
       ],
       "Airline": [
         {
           "startIndex": 73,
           "endIndex": 78,
-          "text": "delta",
-          "type": "Airline"
+          "text": "delta"
         }
       ]
     },
@@ -59,35 +57,31 @@
             {
               "startIndex": 63,
               "endIndex": 69,
-              "score": 0.925004363,
               "text": "denver",
-              "type": "City"
+              "score": 0.925004363
             }
           ],
           "url": [
             {
               "startIndex": 0,
               "endIndex": 14,
-              "text": "http://foo.com",
-              "type": "builtin.url"
+              "text": "http://foo.com"
             }
           ],
           "From": [
             {
               "startIndex": 41,
               "endIndex": 48,
-              "score": 0.995215535,
               "text": "seattle",
-              "type": "City::From"
+              "score": 0.995215535
             }
           ],
           "To": [
             {
               "startIndex": 52,
               "endIndex": 58,
-              "score": 0.9925885,
               "text": "dallas",
-              "type": "City::To"
+              "score": 0.9925885
             }
           ]
         },
@@ -197,7 +191,7 @@
         "type": "Composite2",
         "startIndex": 0,
         "endIndex": 68,
-        "score": 0.8912925
+        "score": 0.871912837
       },
       {
         "entity": "http://foo.com",
