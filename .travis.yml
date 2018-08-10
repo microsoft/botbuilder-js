@@ -18,6 +18,8 @@ script:
 
 after_success:
   - echo 'Begin deploy'
+  - npm publish libraries/botbuilder --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/:_authToken=5a457834-5e65-4b89-912a-fb7f289910a1
+  - echo 'End deploy'
 
 cache:
   directories:
