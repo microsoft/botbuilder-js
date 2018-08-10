@@ -17,7 +17,7 @@ script:
   - echo 'End build'
 
 after_success:
-- echo 'Begin deploy'
+  - echo 'Begin deploy'
 
 cache:
   directories:
