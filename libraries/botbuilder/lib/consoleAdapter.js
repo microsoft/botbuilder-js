@@ -7,9 +7,7 @@
  * Licensed under the MIT License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-const botAdapter_1 = require("./botAdapter");
-const turnContext_1 = require("./turnContext");
-const botframework_schema_1 = require("botframework-schema");
+const botbuilder_core_1 = require("botbuilder-core");
 const readline = require("readline");
 /**
  * Lets a user communicate with a bot from a console window.
@@ -27,7 +25,7 @@ const readline = require("readline");
  * });
  * ```
  */
-class ConsoleAdapter extends botAdapter_1.BotAdapter {
+class ConsoleAdapter extends botbuilder_core_1.BotAdapter {
     /**
      * Creates a new ConsoleAdapter instance.
      * @param reference (Optional) reference used to customize the address information of activites sent from the adapter.
@@ -75,14 +73,14 @@ class ConsoleAdapter extends botAdapter_1.BotAdapter {
         const rl = this.createInterface({ input: process.stdin, output: process.stdout, terminal: false });
         rl.on('line', (line) => {
             // Initialize activity
-            const activity = turnContext_1.TurnContext.applyConversationReference({
-                type: botframework_schema_1.ActivityTypes.Message,
+            const activity = botbuilder_core_1.TurnContext.applyConversationReference({
+                type: botbuilder_core_1.ActivityTypes.Message,
                 id: (this.nextId++).toString(),
                 timestamp: new Date(),
                 text: line
             }, this.reference, true);
             // Create context and run middleware pipe
-            const context = new turnContext_1.TurnContext(this, activity);
+            const context = new botbuilder_core_1.TurnContext(this, activity);
             this.runMiddleware(context, logic)
                 .catch((err) => { this.printError(err.toString()); });
         });
@@ -115,8 +113,8 @@ class ConsoleAdapter extends botAdapter_1.BotAdapter {
      */
     continueConversation(reference, logic) {
         // Create context and run middleware pipe
-        const activity = turnContext_1.TurnContext.applyConversationReference({}, reference, true);
-        const context = new turnContext_1.TurnContext(this, activity);
+        const activity = botbuilder_core_1.TurnContext.applyConversationReference({}, reference, true);
+        const context = new botbuilder_core_1.TurnContext(this, activity);
         return this.runMiddleware(context, logic)
             .catch((err) => { this.printError(err.toString()); });
     }
@@ -142,7 +140,7 @@ class ConsoleAdapter extends botAdapter_1.BotAdapter {
                         case 'delay':
                             setTimeout(() => next(i + 1), a.value);
                             break;
-                        case botframework_schema_1.ActivityTypes.Message:
+                        case botbuilder_core_1.ActivityTypes.Message:
                             if (a.attachments && a.attachments.length > 0) {
                                 const append = a.attachments.length === 1 ? `(1 attachment)` : `(${a.attachments.length} attachments)`;
                                 that.print(`${a.text} ${append}`);

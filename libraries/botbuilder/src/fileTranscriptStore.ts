@@ -8,11 +8,9 @@
 
 import * as path from 'path';
 import * as fs from 'async-file';
-import * as file from 'fs';
 import * as filenamify from 'filenamify';
 import * as rimraf from 'rimraf';
-import { TranscriptStore, PagedResult, Transcript } from './transcriptLogger';
-import { Activity } from 'botframework-schema';
+import { Activity, TranscriptStore, PagedResult, Transcript } from 'botbuilder-core';
 
 /**
  * The file transcript store stores transcripts in file system with each activity as a file.

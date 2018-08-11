@@ -7,10 +7,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-const botAdapter_1 = require("./botAdapter");
-const turnContext_1 = require("./turnContext");
 const botframework_connector_1 = require("botframework-connector");
-const botframework_schema_1 = require("botframework-schema");
+const botbuilder_core_1 = require("botbuilder-core");
 const pjson = require('../package.json');
 const USER_AGENT = 'Microsoft-BotFramework/3.1 (BotBuilder JS/' + pjson.version + ')';
 const OAUTH_ENDPOINT = 'https://api.botframework.com';
@@ -30,7 +28,7 @@ const INVOKE_RESPONSE_KEY = Symbol('invokeResponse');
  * });
  * ```
  */
-class BotFrameworkAdapter extends botAdapter_1.BotAdapter {
+class BotFrameworkAdapter extends botbuilder_core_1.BotAdapter {
     /**
      * Creates a new BotFrameworkAdapter instance.
      * @param settings (optional) configuration settings for the adapter.
@@ -75,7 +73,7 @@ class BotFrameworkAdapter extends botAdapter_1.BotAdapter {
      * @param logic A function handler that will be called to perform the bots logic after the the adapters middleware has been run.
      */
     continueConversation(reference, logic) {
-        const request = turnContext_1.TurnContext.applyConversationReference({ type: 'event' }, reference, true);
+        const request = botbuilder_core_1.TurnContext.applyConversationReference({ type: 'event' }, reference, true);
         const context = this.createContext(request);
         return this.runMiddleware(context, logic);
     }
@@ -112,7 +110,7 @@ class BotFrameworkAdapter extends botAdapter_1.BotAdapter {
             const client = this.createConnectorClient(reference.serviceUrl);
             return client.conversations.createConversation(parameters).then((response) => {
                 // Initialize request and copy over new conversation ID and updated serviceUrl.
-                const request = turnContext_1.TurnContext.applyConversationReference({ type: 'event' }, reference, true);
+                const request = botbuilder_core_1.TurnContext.applyConversationReference({ type: 'event' }, reference, true);
                 request.conversation = { id: response.id };
                 if (response.serviceUrl) {
                     request.serviceUrl = response.serviceUrl;
@@ -285,7 +283,7 @@ class BotFrameworkAdapter extends botAdapter_1.BotAdapter {
      */
     getSignInLink(context, connectionName) {
         this.checkEmulatingOAuthCards(context);
-        const conversation = turnContext_1.TurnContext.getConversationReference(context.activity);
+        const conversation = botbuilder_core_1.TurnContext.getConversationReference(context.activity);
         const url = this.oauthApiUrl(context);
         const client = this.createOAuthApiClient(url);
         return client.getSignInLink(conversation, connectionName);
@@ -359,7 +357,7 @@ class BotFrameworkAdapter extends botAdapter_1.BotAdapter {
                 const context = this.createContext(request);
                 return this.runMiddleware(context, logic)
                     .then(() => {
-                    if (request.type === botframework_schema_1.ActivityTypes.Invoke) {
+                    if (request.type === botbuilder_core_1.ActivityTypes.Invoke) {
                         // Retrieve cached invoke response.
                         const invokeResponse = context.services.get(INVOKE_RESPONSE_KEY);
                         if (invokeResponse && invokeResponse.value) {
@@ -541,7 +539,7 @@ class BotFrameworkAdapter extends botAdapter_1.BotAdapter {
      * @param request Received request.
      */
     createContext(request) {
-        return new turnContext_1.TurnContext(this, request);
+        return new botbuilder_core_1.TurnContext(this, request);
     }
 }
 exports.BotFrameworkAdapter = BotFrameworkAdapter;
