@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { MessageFactory, TurnContext, ActionTypes, InputHints, Activity, CardAction } from 'botbuilder';
+import { MessageFactory, TurnContext, ActionTypes, InputHints, Activity, CardAction } from 'botbuilder-core';
 import { Choice } from './findChoices';
 import * as channel from './channel';
 

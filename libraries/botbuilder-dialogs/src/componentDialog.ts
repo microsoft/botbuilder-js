@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext } from 'botbuilder';
+import { TurnContext } from 'botbuilder-core';
 import { Dialog, DialogTurnResult, DialogReason, DialogInstance } from './dialog';
 import { DialogContext, DialogState } from './dialogContext';
 import { DialogSet } from './dialogSet';
