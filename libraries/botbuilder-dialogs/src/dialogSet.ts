@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext, PropertyAccessor } from 'botbuilder-core';
+import { TurnContext, StatePropertyAccessor } from 'botbuilder-core';
 import { Dialog } from './dialog';
 import { DialogContext, DialogState } from './dialogContext';
 
@@ -163,7 +163,7 @@ export class DialogSet {
     private readonly dialogs: { [id:string]: Dialog; } = {};
 
     /** NEW */
-    constructor(private readonly dialogState: PropertyAccessor<DialogState>) { }
+    constructor(private readonly dialogState: StatePropertyAccessor<DialogState>) { }
 
     /**
      * Adds a new dialog to the set and returns the added dialog.
@@ -204,11 +204,7 @@ export class DialogSet {
      */
     public async createContext(context: TurnContext): Promise<DialogContext> {
         if (!this.dialogState) { throw new Error(`DialogSet.createContextAsync(): the dialog set was not bound to a stateProperty when constructed.`) }
-        let state = await this.dialogState.get(context);
-        if (typeof state !== 'object') {
-            state = { dialogStack: [] };
-            await this.dialogState.set(context, state);
-        }
+        let state = await this.dialogState.get(context, { dialogStack: [] });
         return new DialogContext(this, context, state);
     }
 

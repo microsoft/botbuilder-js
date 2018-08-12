@@ -212,11 +212,7 @@ class DialogSet {
             if (!this.dialogState) {
                 throw new Error(`DialogSet.createContextAsync(): the dialog set was not bound to a stateProperty when constructed.`);
             }
-            let state = yield this.dialogState.get(context);
-            if (typeof state !== 'object') {
-                state = { dialogStack: [] };
-                yield this.dialogState.set(context, state);
-            }
+            let state = yield this.dialogState.get(context, { dialogStack: [] });
             return new dialogContext_1.DialogContext(this, context, state);
         });
     }

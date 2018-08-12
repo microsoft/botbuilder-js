@@ -9,14 +9,14 @@ import { TurnContext } from './turnContext';
 import { BotState } from './botState';
 
 /** NEW */
-export interface PropertyAccessor<T = any> {
+export interface StatePropertyAccessor<T = any> {
     delete(context: TurnContext): Promise<void>;
-    get(context: TurnContext): Promise<T|undefined>;
+    get(context: TurnContext, defaultValue?: T): Promise<T|undefined>;
     set(context: TurnContext, value: T): Promise<void>;
 }
 
 /** NEW */
-export class BotStatePropertyAccessor<T = any> implements PropertyAccessor<T> {
+export class BotStatePropertyAccessor<T = any> implements StatePropertyAccessor<T> {
     constructor(protected readonly state: BotState, public readonly name: string) { }
 
     public async delete(context: TurnContext): Promise<void> {
