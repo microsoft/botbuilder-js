@@ -5,9 +5,10 @@
     "postinstall": "lerna bootstrap --hoist",
     "build": "lerna run build",
     "clean": "lerna run clean",
-    "test:travis": "lerna run set-version && lerna run build && nyc mocha \"libraries/bot*/tests/*.test.js\" && nyc report --reporter=text-lcov | coveralls",
+    "test:travis": "lerna run set-version && npm run set-dependency-versions && lerna run build && nyc mocha \"libraries/bot*/tests/*.test.js\" && nyc report --reporter=text-lcov | coveralls",
     "test": "lerna run build && nyc mocha \"libraries/bot*/tests/*.test.js\"",
-    "build-docs": "lerna run build-docs"
+    "build-docs": "lerna run build-docs",
+    "set-dependency-versions": "node ../../tools/util/updateDependenciesInPackageJsons.js ./libraries ${Version} botbuilder botbuilder-choices botbuilder-core botbuilder-core-extensions botbuilder-prompts botframework-connector botframework-luis botframework-schema"
   },
 	"dependencies": {
 		"replace-in-file": "^3.1.1",
