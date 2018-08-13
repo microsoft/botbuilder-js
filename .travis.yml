@@ -1,27 +1,25 @@
 language: node_js
 node_js:
-  - "lts/*"
+- lts/*
 notifications:
   email: false
-
 before_install:
-  - npm install --global lerna nyc mocha typescript@2.7.2
-  - cd tools/ && npm install && cd ..
-
+- npm install --global lerna nyc mocha typescript@2.7.2
+- cd tools/ && npm install && cd ..
 install:
-  - lerna bootstrap --hoist
-
+- lerna bootstrap --hoist
 script:
-  - echo 'Begin build'
-  - npm run test:travis
-  - echo 'End build'
-
+- echo 'Begin build'
+- npm run test:travis
+- echo 'End build'
 after_success:
-  - echo 'Begin deploy'
-  - npm publish libraries/botbuilder --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
-  - echo 'End deploy'
-
+- echo 'Begin deploy'
+- npm publish libraries/botbuilder --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
+- echo 'End deploy'
 cache:
   directories:
-    - "node_modules"
-    - "tools/node_modules"
+  - node_modules
+  - tools/node_modules
+env:
+  global:
+    secure: FXa1cBxx5Q4Ou+PDI7nb4EZv9EAkT8ozARdI7c3V9a94E1hOKnraT7GV3CAHU1k9TkFXSaIviwL6heBl5+Ftnj1l2uPi7gn+jlbH7gOn4xiRU7ueeU83sRGlLbp4F2IqBlKZbzMMsaI6ObntvuXK8U4br8bDruk3qYHLcsjcINHSeIYkfX68kIX1XFxf/CVaCRJ2ZKogE0Kfyg0ixlWwPtuQTAUTKs9mOAJFHvNGFID7zCDd0je1EOssRJm+EoAAKsJXd/7XvuoLv4tmuk/UX7XUXaQ+BQLVc9eJEhapp5NkYJtp8XfdOg6w1abSBcT/UG+3WJ3TrZHCnwnXclUQv9fIKgUNc2aDW8mnX8OTEy5yhszHEaXb7ya8EPySuCPnleEdEncOKVCqeEDA9GXTEcoj5r7O8j9l+PxbQS24KH1jYBEuWm0ipBrSJDP+lVk6oZhw74Ug0ta37XjgC0y1+DrrUFoLQra5bYIDARSZQ+orKsdKV8/wbmahAiFMVZg97OQT3/KX3xkbdtFzDsihBVymaCjmdogp3pkwTFyaL3nbSQSr1LEAoZn6GIqnlylnvz6FgYKKHlJfpPFxj7mMk6jRh99f6Hle1jd/stYTezkiUdTSyabw5A/qO8MNuFamBDSmhM8riFZnwGZztb4Xn8WFHG3TSIU26JTEFpfP7u8=
