@@ -38,30 +38,43 @@ interface LuisTraceInfo {
 }
 
 /**
- * Settings used to configure an instance of `LuisRecognizer`.
+ * Description of a LUIS application used for initializing a LuisRecognizer.
  */
-export interface LuisRecognizerSettings {
-    /** Your models AppId */
-    appId: string;
+export interface LuisApplication {
+    /** Your models application Id from LUIS */
+    applicationId: string;
 
-    /** Your subscription key. */
-    subscriptionKey: string;
+    /** (Optional) Azure region */
+    azureRegion?: string;
 
-    /** (Optional) service endpoint to call. Defaults to "https://westus.api.cognitive.microsoft.com". */
-    serviceEndpoint?: string;
+    /** Endpoint key for talking to LUIS */
+    endpointKey: string;
+}
 
-    /** (Optional) if set to true, we return the metadata of the returned intents/entities. Defaults to true */
-    verbose?: boolean;
+/**
+ * Options per LUIS prediction.
+ */
+export interface LuisPredictionOptions {
+    /** (Optional) Bing Spell Check subscription key. */
+    bingSpellCheckSubscriptionKey?: string;
 
-    /** (Optional) request options passed to service call.  */
-    options?: {
-        timezoneOffset?: number;
-        verbose?: boolean;
-        forceSet?: string;
-        allowSampling?: string;
-        customHeaders?: { [headerName: string]: string; };
-        staging?: boolean;
-    };
+    /** (Optional) Determine if all intents come back or only the top one. */
+    includeAllIntents?: boolean;
+
+    /** (Optional) A value indicating whether or not instance data should be included in response. */
+    includeInstanceData?: boolean;
+
+    /** (Optional) If queries should be logged in LUIS. */
+    log?: boolean;
+
+    /** (Optional) Whether to spell check query. */
+    spellCheck?: boolean;
+
+    /** (Optional) Whether to use the staging endpoint. */
+    staging?: boolean;
+
+    /** (Optional) The time zone offset for resolving datetimes. */
+    timezoneOffset?: number;
 }
 
 /**
@@ -71,19 +84,26 @@ export interface LuisRecognizerSettings {
  * This component can be used within your bots logic by calling [recognize()](#recognize).
  */
 export class LuisRecognizer {
-    private settings: LuisRecognizerSettings;
+    private application: LuisApplication;
+    private options: LuisPredictionOptions;
+    private includeApiResults: boolean;
+
     private luisClient: LuisClient;
     private cacheKey = Symbol('results');
 
     /**
      * Creates a new LuisRecognizer instance.
-     * @param settings Settings used to configure the instance.
+     * @param application LUIS application to use.
+     * @param options Options used to control predictions.
      */
-    constructor(settings: LuisRecognizerSettings) {
-        this.settings = Object.assign({}, settings);
+    constructor(application: LuisApplication, options?: LuisPredictionOptions, includeApiResults?: boolean) {
+        this.application = application;
+        this.options = Object.assign({}, options);
+        this.includeApiResults = includeApiResults;
 
         // Create client and override callbacks
-        const baseUri = (this.settings.serviceEndpoint || 'https://westus.api.cognitive.microsoft.com');
+        // TODO: Update this to the official SDK once available
+        const baseUri = 'https://' + (this.application.azureRegion || 'westus') + '.api.cognitive.microsoft.com';
         this.luisClient = this.createClient(baseUri + '/luis/');
     }
 
@@ -99,15 +119,22 @@ export class LuisRecognizer {
         const cached = context.services.get(this.cacheKey);
         if (!cached) {
             const utterance = context.activity.text || '';
-            return this.luisClient.getIntentsAndEntitiesV2(this.settings.appId, this.settings.subscriptionKey, utterance, this.settings.options)
+            return this.luisClient.getIntentsAndEntitiesV2(
+                this.application.applicationId, this.application.endpointKey, utterance,
+                {
+                    timezoneOffset: this.options.timezoneOffset,
+                    verbose: this.options.includeAllIntents,
+                    allowSampling: this.options.log && this.options.log.toString()
+                }
+            )
                 .then((luisResult: LuisResult) => {
                     // Map results
                     const recognizerResult: RecognizerResult = {
                         text: luisResult.query,
                         alteredText: luisResult.alteredQuery,
                         intents: this.getIntents(luisResult),
-                        entities: this.getEntitiesAndMetadata(luisResult.entities, luisResult.compositeEntities, this.settings.verbose),
-                        luisResult: luisResult
+                        entities: this.getEntitiesAndMetadata(luisResult.entities, luisResult.compositeEntities, this.options.includeInstanceData === undefined || this.options.includeInstanceData),
+                        luisResult: this.includeApiResults ? luisResult : null
                     };
 
                     // Write to cache
@@ -158,10 +185,10 @@ export class LuisRecognizer {
             recognizerResult: recognizerResult,
             luisResult: luisResult,
             luisOptions: {
-                Staging: this.settings.options && this.settings.options.staging
+                Staging: this.options && this.options.staging
             },
             luisModel: {
-                ModelID: this.settings.appId
+                ModelID: this.application.applicationId
             }
         }
         return context.sendActivity({
@@ -178,15 +205,15 @@ export class LuisRecognizer {
     }
 
     private getIntents(luisResult: LuisResult): any {
-        const intents: { [name: string]: {score: number}; } = {};
+        const intents: { [name: string]: { score: number }; } = {};
         if (luisResult.intents) {
             luisResult.intents.reduce((prev: any, curr: Intent) => {
-                prev[this.normalizeName(curr.intent)] = { score: curr.score};
+                prev[this.normalizeName(curr.intent)] = { score: curr.score };
                 return prev;
             }, intents);
         } else {
             const topScoringIntent = luisResult.topScoringIntent;
-            intents[this.normalizeName((topScoringIntent).intent)] = { score: topScoringIntent.score};
+            intents[this.normalizeName((topScoringIntent).intent)] = { score: topScoringIntent.score };
         }
         return intents;
     }
@@ -232,7 +259,7 @@ export class LuisRecognizer {
             var type = vals[0].type;
             var timexes = vals.map(t => t.timex);
             var distinct = timexes.filter((v, i, a) => a.indexOf(v) === i);
-            return {type: type, timex: distinct};
+            return { type: type, timex: distinct };
         }
         else {
             var res = entity.resolution;
@@ -253,7 +280,7 @@ export class LuisRecognizer {
                 case "builtin.temperature":
                     {
                         var val = res.value;
-                        var obj = { };
+                        var obj = {};
                         if (val) {
                             obj["number"] = Number(val);
                         }
@@ -278,8 +305,7 @@ export class LuisRecognizer {
             text: entity.entity,
             type: entity.type,
         };
-        if (entity.resolution && entity.resolution.subtype)
-        {
+        if (entity.resolution && entity.resolution.subtype) {
             res["subtype"] = entity.resolution.subtype;
         }
         return res;
@@ -335,7 +361,7 @@ export class LuisRecognizer {
                     this.addProperty(childrenEntites, this.getNormalizedEntityName(entity), this.getEntityValue(entity));
 
                     if (verbose)
-                        this.addProperty(childrenEntites.$instance, this.getNormalizedEntityName (entity), this.getEntityMetadata(entity));
+                        this.addProperty(childrenEntites.$instance, this.getNormalizedEntityName(entity), this.getEntityMetadata(entity));
                 }
             };
         });
