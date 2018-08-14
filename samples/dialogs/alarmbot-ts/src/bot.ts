@@ -17,11 +17,12 @@ export class Bot {
     private readonly dialogs: DialogSet;
 
     constructor(convoState: ConversationState, userState: UserState) {
+        // Define state properties
         this.alarms = userState.createProperty(ALARMS_PROPERTY);
         this.dialogState = convoState.createProperty(DIALOG_STATE_PROPERTY);
-        this.dialogs = new DialogSet(this.dialogState);
 
-        // Add top level dialogs
+        // Create top level dialogs
+        this.dialogs = new DialogSet(this.dialogState);
         this.dialogs.add(new AddAlarmDialog(ADD_ALARM_DIALOG, this.alarms));
         this.dialogs.add(new DeleteAlarmDialog(DELETE_ALARM_DIALOG, this.alarms));
         this.dialogs.add(new ShowAlarmsDialog(SHOW_ALARMS_DIALOG, this.alarms));
