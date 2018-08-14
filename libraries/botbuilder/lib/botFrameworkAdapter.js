@@ -10,7 +10,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const botframework_connector_1 = require("botframework-connector");
 const botbuilder_core_1 = require("botbuilder-core");
 const os = require("os");
-
 // Retrieve additional information, i.e., host operating system, host OS release, architecture, Node.js version
 const ARCHITECTURE = os.arch();
 const TYPE = os.type();
