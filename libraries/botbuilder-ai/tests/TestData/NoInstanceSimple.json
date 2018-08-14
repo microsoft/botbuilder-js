@@ -1,0 +1,17 @@
+{
+  "text": "My nanme is Emad",
+  "intents": {
+    "SpecifyName": {
+      "score": 0.442533255
+    }
+  },
+  "entities": {},
+  "luisResult": {
+    "query": "My nanme is Emad",
+    "topScoringIntent": {
+      "intent": "SpecifyName",
+      "score": 0.442533255
+    },
+    "entities": []
+  }
+}
