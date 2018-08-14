@@ -1,0 +1,10 @@
+{
+  "intents": {},
+  "entities": {
+    "$instance": {}
+  },
+  "luisResult": {
+    "intents": [],
+    "entities": []
+  }
+}

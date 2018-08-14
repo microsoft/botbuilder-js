@@ -20,17 +20,19 @@
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "dependencies": {
+    "@microsoft/recognizers-text-date-time": "^1.0.0",
     "@types/html-entities": "^1.2.16",
     "@types/node": "^9.3.0",
     "@types/request-promise-native": "^1.0.10",
     "botbuilder": "4.0.0-preview1.2",
+    "botbuilder-core": "^4.0.0-preview1.2",
     "botframework-luis": "4.0.0-preview1.2",
     "html-entities": "^1.2.1",
+    "moment": "^2.20.1",
     "mstranslator": "^3.0.0",
+    "nock": "^9.6.1",
     "request": "2.83.0",
-    "request-promise-native": "1.0.5",
-    "@microsoft/recognizers-text-date-time": "^1.0.0",
-    "moment": "^2.20.1"
+    "request-promise-native": "1.0.5"
   },
   "devDependencies": {
     "@types/mocha": "^2.2.47",
