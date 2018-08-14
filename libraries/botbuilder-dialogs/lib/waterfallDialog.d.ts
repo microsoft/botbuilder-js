@@ -11,12 +11,12 @@ import { Dialog, DialogTurnResult, DialogReason } from './dialog';
  * @param WaterfallStep.context The dialog context for the current turn of conversation.
  * @param WaterfallStep.step Contextual information for the current step being executed.
  */
-export declare type WaterfallStep = (dc: DialogContext, step: WaterfallStepContext) => Promise<DialogTurnResult>;
-export interface WaterfallStepContext {
+export declare type WaterfallStep<O extends object = {}> = (dc: DialogContext, step: WaterfallStepContext<O>) => Promise<DialogTurnResult>;
+export interface WaterfallStepContext<O extends object = {}> {
     /** The index of the current waterfall step being executed. */
     readonly index: number;
     /** Any options the waterfall dialog was called with. */
-    readonly options: object;
+    readonly options: O;
     /** The reason the waterfall step is being executed. */
     readonly reason: DialogReason;
     /** Results returned by a dialog called in the previous waterfall step. */
@@ -52,10 +52,10 @@ export declare class WaterfallDialog<O extends object = {}> extends Dialog<O> {
      * Creates a new waterfall dialog containing the given array of steps.
      * @param steps Array of waterfall steps.
      */
-    constructor(dialogId: string, steps: WaterfallStep[]);
-    dialogBegin(dc: DialogContext, options?: any): Promise<DialogTurnResult>;
+    constructor(dialogId: string, steps: WaterfallStep<O>[]);
+    dialogBegin(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
     dialogContinue(dc: DialogContext): Promise<DialogTurnResult>;
     dialogResume(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult>;
-    protected onStep(dc: DialogContext, step: WaterfallStepContext): Promise<DialogTurnResult>;
+    protected onStep(dc: DialogContext, step: WaterfallStepContext<O>): Promise<DialogTurnResult>;
     private runStep(dc, index, reason, result?);
 }

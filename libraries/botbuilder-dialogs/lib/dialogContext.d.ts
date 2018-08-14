@@ -71,9 +71,9 @@ export declare class DialogContext {
      * await dc.begin('greeting', user);
      * ```
      * @param dialogId ID of the dialog to start.
-     * @param dialogArgs (Optional) additional argument(s) to pass to the dialog being started.
+     * @param options (Optional) additional argument(s) to pass to the dialog being started.
      */
-    begin(dialogId: string, dialogArgs?: any): Promise<DialogTurnResult>;
+    begin(dialogId: string, options?: object): Promise<DialogTurnResult>;
     /**
      * Cancels all dialogs on the stack resulting in an empty stack.
      */

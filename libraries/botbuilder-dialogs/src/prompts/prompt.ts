@@ -65,7 +65,7 @@ export interface PromptRecognizerResult<T> {
 export type PromptValidator<T> = (context: TurnContext, prompt: PromptValidatorContext<T>) => Promise<void>;
 
 export interface PromptValidatorContext<T> {
-    recognized?: PromptRecognizerResult<T>;
+    recognized: PromptRecognizerResult<T>;
     state: object;
     options: PromptOptions;
     end(result: any): void;

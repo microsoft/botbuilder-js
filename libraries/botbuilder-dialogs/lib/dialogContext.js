@@ -70,9 +70,9 @@ class DialogContext {
      * await dc.begin('greeting', user);
      * ```
      * @param dialogId ID of the dialog to start.
-     * @param dialogArgs (Optional) additional argument(s) to pass to the dialog being started.
+     * @param options (Optional) additional argument(s) to pass to the dialog being started.
      */
-    begin(dialogId, dialogArgs) {
+    begin(dialogId, options) {
         return __awaiter(this, void 0, void 0, function* () {
             // Lookup dialog
             const dialog = this.dialogs.find(dialogId);
@@ -86,7 +86,7 @@ class DialogContext {
             };
             this.stack.push(instance);
             // Call dialogs begin() method.
-            const turnResult = yield dialog.dialogBegin(this, dialogArgs);
+            const turnResult = yield dialog.dialogBegin(this, options);
             return this.verifyTurnResult(turnResult);
         });
     }
