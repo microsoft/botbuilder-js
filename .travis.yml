@@ -15,8 +15,7 @@ script:
 - echo 'End build'
 after_success:
 - echo 'Begin deploy'
-- test $TRAVIS_BRANCH = "v-brhale-publish2" &&
-  npm publish libraries/botbuilder --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/ 
+- test $TRAVIS_BRANCH = "v-brhale-publish2" && npm publish libraries/botbuilder --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
 - echo 'End deploy'
 cache:
   directories:
@@ -24,5 +23,5 @@ cache:
   - tools/node_modules
 env:
   global:
-    - secure: FXa1cBxx5Q4Ou+PDI7nb4EZv9EAkT8ozARdI7c3V9a94E1hOKnraT7GV3CAHU1k9TkFXSaIviwL6heBl5+Ftnj1l2uPi7gn+jlbH7gOn4xiRU7ueeU83sRGlLbp4F2IqBlKZbzMMsaI6ObntvuXK8U4br8bDruk3qYHLcsjcINHSeIYkfX68kIX1XFxf/CVaCRJ2ZKogE0Kfyg0ixlWwPtuQTAUTKs9mOAJFHvNGFID7zCDd0je1EOssRJm+EoAAKsJXd/7XvuoLv4tmuk/UX7XUXaQ+BQLVc9eJEhapp5NkYJtp8XfdOg6w1abSBcT/UG+3WJ3TrZHCnwnXclUQv9fIKgUNc2aDW8mnX8OTEy5yhszHEaXb7ya8EPySuCPnleEdEncOKVCqeEDA9GXTEcoj5r7O8j9l+PxbQS24KH1jYBEuWm0ipBrSJDP+lVk6oZhw74Ug0ta37XjgC0y1+DrrUFoLQra5bYIDARSZQ+orKsdKV8/wbmahAiFMVZg97OQT3/KX3xkbdtFzDsihBVymaCjmdogp3pkwTFyaL3nbSQSr1LEAoZn6GIqnlylnvz6FgYKKHlJfpPFxj7mMk6jRh99f6Hle1jd/stYTezkiUdTSyabw5A/qO8MNuFamBDSmhM8riFZnwGZztb4Xn8WFHG3TSIU26JTEFpfP7u8=
-    - Version=4.0.0-preview0.${TRAVIS_BUILD_NUMBER}
+  - Version=4.0.0-preview0.${TRAVIS_BUILD_NUMBER}
+  - secure: PQemyKrBXbCBw8fjmxw0xFmmg9j4zazgVpYbopKxkx3ME1msQWoRLQlatbUDhC2daj2DQQ8b3AM54p/Gvl0i9wXPvoHcO7cJaOFai2RrHzcAvYNVEXXaFtmxTHmuu/4UwXB2jxXhKyfUOHuh0KCIs9X55PNWnuxRtn5smNd14wFjDq69rYgHU6Nv17lK8VUzOOCK5Lx1w8OZnqQfhxoqxuq77ecrs53JCfM4Zpy80p3KZDQXsEbYvZCvGiDAIJdj/PmpLSKkLyP4FuLEJNU4v1OQEl/+mmgL3/lpbnhosMKh3FT+nkV69R1GT6MgM3t2pC1S4h5UK2xJezP1cSGDmSVWDNr4PG5/8OPjD/YdfvWM+kIHUUzJE9kLTZdx963xUQNi+orAOwt+W8zQFvR17ugLurcs5ujk05/KJYz0jxKRAmAEHtDC/60IYVDsAZoJ/ZcrpY6LXH9oxE4X/+PaM6O6vdROBnVmqr4L5RGqpOaJG3CkwHvgfbHCezt+XDpwsd59zYIEUZXRyrWRw3x+A8IY95PZVeS5xeeeQbZNF7+h0iA6Bc7xHnWggAc13g2Sn4tKw2pCSN5dS/cmoXMmALcelV09iMmapKcoieG5J4u3KlmeUTCB23Wdhg9yshLdWiItN7pUTjAO0btsCUUETDM6YPRpeFNUjctIrliI2yE=
