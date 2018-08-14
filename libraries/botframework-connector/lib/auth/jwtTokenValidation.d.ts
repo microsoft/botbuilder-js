@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity } from '../../../botframework-schema/lib';
+import { Activity } from 'botframework-schema';
 import { ICredentialProvider } from './credentialProvider';
 import { ClaimsIdentity } from './claimsIdentity';
 export declare module JwtTokenValidation {

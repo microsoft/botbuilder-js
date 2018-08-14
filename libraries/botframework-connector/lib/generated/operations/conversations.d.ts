@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import * as msRest from "ms-rest-js";
-import * as Models from "../../../../botframework-schema/lib";
+import * as Models from "botframework-schema";
 import { ConnectorClient } from "../connectorClient";
 /** Class representing a Conversations. */
 export declare class Conversations {
