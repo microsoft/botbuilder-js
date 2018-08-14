@@ -6,9 +6,7 @@
  * Licensed under the MIT License.
  */
 import { TurnContext } from 'botbuilder';
-import { PromptValidator } from 'botbuilder-prompts';
-import { DialogContext } from '../dialogContext';
-import { Prompt, PromptOptions } from './prompt';
+import { Prompt, PromptOptions, PromptValidator, PromptRecognizerResult } from './prompt';
 import * as prompts from 'botbuilder-prompts';
 
 /**
@@ -56,32 +54,30 @@ import * as prompts from 'botbuilder-prompts';
  *     }
  * }
  * ```
- * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
- * @param O (Optional) output type returned by prompt. This defaults to a `FoundDatetime[]` but can be changed by a custom validator passed to the prompt.
  */
-export class DatetimePrompt<C extends TurnContext, O = prompts.FoundDatetime[]> extends Prompt<C> {
-    private prompt: prompts.DatetimePrompt<O>;
+export class DatetimePrompt extends Prompt<prompts.FoundDatetime[]> {
+    private prompt: prompts.DatetimePrompt;
 
     /**
      * Creates a new `DatetimePrompt` instance.
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.  
      * @param defaultLocale (Optional) locale to use if `dc.context.activity.locale` not specified. Defaults to a value of `en-us`.
      */
-    constructor(validator?: PromptValidator<prompts.FoundDatetime[], O>, defaultLocale?: string) {
-        super(validator);
+    constructor(dialogId: string, validator?: PromptValidator<prompts.FoundDatetime[]>, defaultLocale?: string) {
+        super(dialogId, validator);
         this.prompt = prompts.createDatetimePrompt(undefined, defaultLocale); 
     }
 
-    protected onPrompt(dc: DialogContext<C>, options: PromptOptions, isRetry: boolean): Promise<void> {
+    protected async onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void> {
         if (isRetry && options.retryPrompt) {
-            return this.prompt.prompt(dc.context, options.retryPrompt, options.retrySpeak);
+            await this.prompt.prompt(context, options.retryPrompt);
         } else if (options.prompt) {
-            return this.prompt.prompt(dc.context, options.prompt, options.speak);
+            await this.prompt.prompt(context, options.prompt);
         }
-        return Promise.resolve();
     }
 
-    protected onRecognize(dc: DialogContext<C>, options: PromptOptions): Promise<O|undefined> {
-        return this.prompt.recognize(dc.context);
+    protected async onRecognize(context: TurnContext, state: any, options: PromptOptions): Promise<PromptRecognizerResult<prompts.FoundDatetime[]>> {
+        const value = await this.prompt.recognize(context);
+        return value !== undefined ? { succeeded: true, value: value } : { succeeded: false };
     }
 }

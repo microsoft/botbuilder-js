@@ -1,5 +1,4 @@
-import { TranscriptStore, PagedResult, Transcript } from './transcriptLogger';
-import { Activity } from 'botframework-schema';
+import { Activity, TranscriptStore, PagedResult, Transcript } from 'botbuilder-core';
 /**
  * The file transcript store stores transcripts in file system with each activity as a file.
  */

@@ -6,9 +6,7 @@
  * Licensed under the MIT License.
  */
 import { TurnContext } from 'botbuilder';
-import { PromptValidator } from 'botbuilder-prompts';
-import { DialogContext } from '../dialogContext';
-import { Prompt, PromptOptions } from './prompt';
+import { Prompt, PromptOptions, PromptValidator, PromptRecognizerResult } from './prompt';
 import * as prompts from 'botbuilder-prompts';
 
 /** 
@@ -59,19 +57,18 @@ export interface ChoicePromptOptions extends PromptOptions {
  * ```JavaScript
  * await dc.prompt('choicePrompt', `Select a color`, ['red', 'green', 'blue'], { retryPrompt: `I didn't catch that. Select a color from the list.` });
  * ```
- * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
  * @param O (Optional) output type returned by prompt. This defaults to an instance of `FoundChoice` but can be changed by a custom validator passed to the prompt.
  */
-export class ChoicePrompt<C extends TurnContext, O = prompts.FoundChoice> extends Prompt<C> {
-    private prompt: prompts.ChoicePrompt<O>;
+export class ChoicePrompt extends Prompt<prompts.FoundChoice> {
+    private prompt: prompts.ChoicePrompt;
 
     /**
      * Creates a new `ChoicePrompt` instance.
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.  
      * @param defaultLocale (Optional) locale to use if `dc.context.activity.locale` not specified. Defaults to a value of `en-us`.
      */
-    constructor(validator?: PromptValidator<prompts.FoundChoice, O>, defaultLocale?: string) {
-        super(validator);
+    constructor(dialogId: string, validator?: PromptValidator<prompts.FoundChoice>, defaultLocale?: string) {
+        super(dialogId, validator);
         this.prompt = prompts.createChoicePrompt(undefined, defaultLocale);
     }
 
@@ -103,15 +100,17 @@ export class ChoicePrompt<C extends TurnContext, O = prompts.FoundChoice> extend
         return this;
     }
     
-    protected onPrompt(dc: DialogContext<C>, options: ChoicePromptOptions, isRetry: boolean): Promise<void> {
-        const choices = options.choices;
+    protected async onPrompt(context: TurnContext, state: any, options: ChoicePromptOptions, isRetry: boolean): Promise<void> {
+        const choices = options.choices || [];
         if (isRetry && options.retryPrompt) {
-            return this.prompt.prompt(dc.context, choices, options.retryPrompt, options.retrySpeak);
+            await this.prompt.prompt(context, choices, options.retryPrompt);
+        } else {
+            await this.prompt.prompt(context, choices, options.prompt);
         }
-        return this.prompt.prompt(dc.context, choices, options.prompt, options.speak);
     }
 
-    protected onRecognize(dc: DialogContext<C>, options: ChoicePromptOptions): Promise<O|undefined> {
-        return this.prompt.recognize(dc.context, options.choices);
+    protected async onRecognize(context: TurnContext, state: any, options: ChoicePromptOptions): Promise<PromptRecognizerResult<prompts.FoundChoice>> {
+        const value = await this.prompt.recognize(context, options.choices || []);
+        return value !== undefined ? { succeeded: true, value: value } : { succeeded: false };
     }
 }

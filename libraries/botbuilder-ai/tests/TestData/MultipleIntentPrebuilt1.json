@@ -1,0 +1,163 @@
+{
+  "text": "Please deliver February 2nd 2001",
+  "intents": {
+    "Delivery": {
+      "score": 0.8691677
+    },
+    "Cancel": {
+      "score": 0.0196183324
+    },
+    "None": {
+      "score": 0.0182017758
+    },
+    "Weather_GetForecast": {
+      "score": 0.0149270641
+    },
+    "Help": {
+      "score": 0.0112546626
+    },
+    "search": {
+      "score": 0.008801405
+    },
+    "SpecifyName": {
+      "score": 0.00688433927
+    },
+    "Travel": {
+      "score": 0.005962202
+    },
+    "Greeting": {
+      "score": 0.004354401
+    },
+    "EntityTests": {
+      "score": 0.00258486951
+    }
+  },
+  "entities": {
+    "$instance": {
+      "datetime": [
+        {
+          "startIndex": 15,
+          "endIndex": 32,
+          "text": "february 2nd 2001",
+          "type": "builtin.datetimeV2.date"
+        }
+      ],
+      "number": [
+        {
+          "startIndex": 28,
+          "endIndex": 32,
+          "text": "2001",
+          "type": "builtin.number",
+          "subtype": "integer"
+        }
+      ],
+      "ordinal": [
+        {
+          "startIndex": 24,
+          "endIndex": 27,
+          "text": "2nd",
+          "type": "builtin.ordinal"
+        }
+      ]
+    },
+    "datetime": [
+      {
+        "type": "date",
+        "timex": [
+          "2001-02-02"
+        ]
+      }
+    ],
+    "number": [
+      2001
+    ],
+    "ordinal": [
+      2
+    ]
+  },
+  "luisResult": {
+    "query": "Please deliver February 2nd 2001",
+    "topScoringIntent": {
+      "intent": "Delivery",
+      "score": 0.8691677
+    },
+    "intents": [
+      {
+        "intent": "Delivery",
+        "score": 0.8691677
+      },
+      {
+        "intent": "Cancel",
+        "score": 0.0196183324
+      },
+      {
+        "intent": "None",
+        "score": 0.0182017758
+      },
+      {
+        "intent": "Weather.GetForecast",
+        "score": 0.0149270641
+      },
+      {
+        "intent": "Help",
+        "score": 0.0112546626
+      },
+      {
+        "intent": "search",
+        "score": 0.008801405
+      },
+      {
+        "intent": "SpecifyName",
+        "score": 0.00688433927
+      },
+      {
+        "intent": "Travel",
+        "score": 0.005962202
+      },
+      {
+        "intent": "Greeting",
+        "score": 0.004354401
+      },
+      {
+        "intent": "EntityTests",
+        "score": 0.00258486951
+      }
+    ],
+    "entities": [
+      {
+        "entity": "february 2nd 2001",
+        "type": "builtin.datetimeV2.date",
+        "startIndex": 15,
+        "endIndex": 31,
+        "resolution": {
+          "values": [
+            {
+              "timex": "2001-02-02",
+              "type": "date",
+              "value": "2001-02-02"
+            }
+          ]
+        }
+      },
+      {
+        "entity": "2001",
+        "type": "builtin.number",
+        "startIndex": 28,
+        "endIndex": 31,
+        "resolution": {
+          "subtype": "integer",
+          "value": "2001"
+        }
+      },
+      {
+        "entity": "2nd",
+        "type": "builtin.ordinal",
+        "startIndex": 24,
+        "endIndex": 26,
+        "resolution": {
+          "value": "2"
+        }
+      }
+    ]
+  }
+}

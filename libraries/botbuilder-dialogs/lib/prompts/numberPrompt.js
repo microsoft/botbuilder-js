@@ -1,4 +1,12 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const prompt_1 = require("./prompt");
 const prompts = require("botbuilder-prompts");
@@ -52,8 +60,6 @@ const prompts = require("botbuilder-prompts");
  *    return undefined;
  * }));
  * ```
- * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
- * @param O (Optional) output type returned by prompt. This defaults to a `number` but can be changed by a custom validator passed to the prompt.
  */
 class NumberPrompt extends prompt_1.Prompt {
     /**
@@ -61,21 +67,25 @@ class NumberPrompt extends prompt_1.Prompt {
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
      * @param defaultLocale (Optional) locale to use if `dc.context.activity.locale` not specified. Defaults to a value of `en-us`.
      */
-    constructor(validator, defaultLocale) {
-        super(validator);
+    constructor(dialogId, validator, defaultLocale) {
+        super(dialogId, validator);
         this.prompt = prompts.createNumberPrompt(undefined, defaultLocale);
     }
-    onPrompt(dc, options, isRetry) {
-        if (isRetry && options.retryPrompt) {
-            return this.prompt.prompt(dc.context, options.retryPrompt, options.retrySpeak);
-        }
-        else if (options.prompt) {
-            return this.prompt.prompt(dc.context, options.prompt, options.speak);
-        }
-        return Promise.resolve();
+    onPrompt(context, state, options, isRetry) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (isRetry && options.retryPrompt) {
+                yield this.prompt.prompt(context, options.retryPrompt);
+            }
+            else if (options.prompt) {
+                yield this.prompt.prompt(context, options.prompt);
+            }
+        });
     }
-    onRecognize(dc, options) {
-        return this.prompt.recognize(dc.context);
+    onRecognize(context, state, options) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const value = yield this.prompt.recognize(context);
+            return value !== undefined ? { succeeded: true, value: value } : { succeeded: false };
+        });
     }
 }
 exports.NumberPrompt = NumberPrompt;

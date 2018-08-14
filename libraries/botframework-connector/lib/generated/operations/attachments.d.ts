@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import * as msRest from "ms-rest-js";
-import * as Models from "botframework-schema";
+import * as Models from "../../../../botframework-schema/lib";
 import { ConnectorClient } from "../connectorClient";
 /** Class representing a Attachments. */
 export declare class Attachments {

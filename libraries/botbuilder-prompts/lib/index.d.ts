@@ -12,4 +12,4 @@ export * from './datetimePrompt';
 export * from './numberPrompt';
 export * from './oauthPrompt';
 export * from './textPrompt';
-export { FoundChoice, Choice, ChoiceFactoryOptions, FindChoicesOptions } from 'botbuilder-choices';
+export { FoundChoice, Choice, ChoiceFactoryOptions, FindChoicesOptions } from '../../botbuilder-choices/lib';
