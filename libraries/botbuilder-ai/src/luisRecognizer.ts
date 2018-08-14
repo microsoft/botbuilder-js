@@ -99,8 +99,14 @@ export class LuisRecognizer {
      */
     constructor(application: LuisApplication, options?: LuisPredictionOptions, includeApiResults?: boolean) {
         this.application = application;
-        this.options = Object.assign({}, options);
-        this.includeApiResults = includeApiResults;
+        this.options = Object.assign({
+            includeAllIntents: false,
+            includeInstanceData: true,
+            log: true,
+            spellCheck: false,
+            staging: false
+        }, options);
+        this.includeApiResults = !!includeApiResults;
 
         // Create client and override callbacks
         // TODO: Update this to the official SDK once available
@@ -125,7 +131,7 @@ export class LuisRecognizer {
                 {
                     timezoneOffset: this.options.timezoneOffset,
                     verbose: this.options.includeAllIntents,
-                    allowSampling: this.options.log && this.options.log.toString()
+                    allowSampling: this.options.log ? "true" : "false"
                 }
             )
                 .then((luisResult: LuisResult) => {
@@ -186,7 +192,7 @@ export class LuisRecognizer {
             recognizerResult: recognizerResult,
             luisResult: luisResult,
             luisOptions: {
-                Staging: this.options && this.options.staging
+                Staging: this.options.staging
             },
             luisModel: {
                 ModelID: this.application.applicationId
