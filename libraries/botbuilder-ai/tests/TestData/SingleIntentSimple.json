@@ -1,0 +1,40 @@
+{
+  "text": "My name is Emad",
+  "intents": {
+    "SpecifyName": {
+      "score": 0.8063269
+    }
+  },
+  "entities": {
+    "$instance": {
+      "Name": [
+        {
+          "startIndex": 11,
+          "endIndex": 15,
+          "score": 0.898449957,
+          "text": "emad",
+          "type": "Name"
+        }
+      ]
+    },
+    "Name": [
+      "emad"
+    ]
+  },
+  "luisResult": {
+    "query": "My name is Emad",
+    "topScoringIntent": {
+      "intent": "SpecifyName",
+      "score": 0.8063269
+    },
+    "entities": [
+      {
+        "entity": "emad",
+        "type": "Name",
+        "startIndex": 11,
+        "endIndex": 14,
+        "score": 0.898449957
+      }
+    ]
+  }
+}

@@ -1,0 +1,205 @@
+{
+  "text": "Please deliver February 2nd 2001 in room 201",
+  "intents": {
+    "Delivery": {
+      "score": 0.6995931
+    },
+    "None": {
+      "score": 0.0637846
+    },
+    "Weather_GetForecast": {
+      "score": 0.0187540948
+    },
+    "search": {
+      "score": 0.0157310218
+    },
+    "EntityTests": {
+      "score": 0.008850135
+    },
+    "Travel": {
+      "score": 0.007951286
+    },
+    "Cancel": {
+      "score": 0.00709740771
+    },
+    "SpecifyName": {
+      "score": 0.0060519157
+    },
+    "Help": {
+      "score": 0.005001736
+    },
+    "Greeting": {
+      "score": 0.001166465
+    }
+  },
+  "entities": {
+    "$instance": {
+      "datetime": [
+        {
+          "startIndex": 15,
+          "endIndex": 32,
+          "text": "february 2nd 2001",
+          "type": "builtin.datetimeV2.date"
+        }
+      ],
+      "dimension": [
+        {
+          "startIndex": 28,
+          "endIndex": 35,
+          "text": "2001 in",
+          "type": "builtin.dimension"
+        }
+      ],
+      "number": [
+        {
+          "startIndex": 28,
+          "endIndex": 32,
+          "text": "2001",
+          "type": "builtin.number",
+          "subtype": "integer"
+        },
+        {
+          "startIndex": 41,
+          "endIndex": 44,
+          "text": "201",
+          "type": "builtin.number",
+          "subtype": "integer"
+        }
+      ],
+      "ordinal": [
+        {
+          "startIndex": 24,
+          "endIndex": 27,
+          "text": "2nd",
+          "type": "builtin.ordinal"
+        }
+      ]
+    },
+    "datetime": [
+      {
+        "type": "date",
+        "timex": [
+          "2001-02-02"
+        ]
+      }
+    ],
+    "dimension": [
+      {
+        "number": 2001,
+        "units": "Inch"
+      }
+    ],
+    "number": [
+      2001,
+      201
+    ],
+    "ordinal": [
+      2
+    ]
+  },
+  "luisResult": {
+    "query": "Please deliver February 2nd 2001 in room 201",
+    "topScoringIntent": {
+      "intent": "Delivery",
+      "score": 0.6995931
+    },
+    "intents": [
+      {
+        "intent": "Delivery",
+        "score": 0.6995931
+      },
+      {
+        "intent": "None",
+        "score": 0.0637846
+      },
+      {
+        "intent": "Weather.GetForecast",
+        "score": 0.0187540948
+      },
+      {
+        "intent": "search",
+        "score": 0.0157310218
+      },
+      {
+        "intent": "EntityTests",
+        "score": 0.008850135
+      },
+      {
+        "intent": "Travel",
+        "score": 0.007951286
+      },
+      {
+        "intent": "Cancel",
+        "score": 0.00709740771
+      },
+      {
+        "intent": "SpecifyName",
+        "score": 0.0060519157
+      },
+      {
+        "intent": "Help",
+        "score": 0.005001736
+      },
+      {
+        "intent": "Greeting",
+        "score": 0.001166465
+      }
+    ],
+    "entities": [
+      {
+        "entity": "february 2nd 2001",
+        "type": "builtin.datetimeV2.date",
+        "startIndex": 15,
+        "endIndex": 31,
+        "resolution": {
+          "values": [
+            {
+              "timex": "2001-02-02",
+              "type": "date",
+              "value": "2001-02-02"
+            }
+          ]
+        }
+      },
+      {
+        "entity": "2001 in",
+        "type": "builtin.dimension",
+        "startIndex": 28,
+        "endIndex": 34,
+        "resolution": {
+          "unit": "Inch",
+          "value": "2001"
+        }
+      },
+      {
+        "entity": "2001",
+        "type": "builtin.number",
+        "startIndex": 28,
+        "endIndex": 31,
+        "resolution": {
+          "subtype": "integer",
+          "value": "2001"
+        }
+      },
+      {
+        "entity": "201",
+        "type": "builtin.number",
+        "startIndex": 41,
+        "endIndex": 43,
+        "resolution": {
+          "subtype": "integer",
+          "value": "201"
+        }
+      },
+      {
+        "entity": "2nd",
+        "type": "builtin.ordinal",
+        "startIndex": 24,
+        "endIndex": 26,
+        "resolution": {
+          "value": "2"
+        }
+      }
+    ]
+  }
+}
