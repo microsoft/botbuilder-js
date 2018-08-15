@@ -9,7 +9,7 @@ export * from './activityPrompt';
 export * from './attachmentPrompt';
 export * from './choicePrompt';
 export * from './confirmPrompt';
-export * from './dateTimePrompt';
+export * from './datetimePrompt';
 export * from './numberPrompt';
 export * from './oauthPrompt';
 export * from './prompt';

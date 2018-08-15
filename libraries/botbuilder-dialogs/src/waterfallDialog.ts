@@ -115,7 +115,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
             let nextCalled = false;
             const step: WaterfallStepContext<O> = {
                 index: index,
-                options: state.options,
+                options: <O>state.options,
                 reason: reason,
                 result: result,
                 values: state.values,
