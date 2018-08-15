@@ -8,83 +8,55 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @module botbuilder-dialogs
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+const botbuilder_core_1 = require("botbuilder-core");
 const prompt_1 = require("./prompt");
-const prompts = require("botbuilder-prompts");
+const Recognizers = require("@microsoft/recognizers-text-number");
 /**
  * Prompts a user to enter a number.
  *
  * @remarks
  * By default the prompt will return to the calling dialog a `number` representing the users input.
- *
- * #### Prompt Usage
- *
- * When used with your bots `DialogSet` you can simply add a new instance of the prompt as a named
- * dialog using `DialogSet.add()`. You can then start the prompt from a waterfall step using either
- * `DialogContext.begin()` or `DialogContext.prompt()`. The user will be prompted to reply with a
- * number which will be passed as an argument to the callers next waterfall step:
- *
- * ```JavaScript
- * const { DialogSet, NumberPrompt } = require('botbuilder-dialogs');
- *
- * const dialogs = new DialogSet();
- *
- * dialogs.add('agePrompt', new NumberPrompt());
- *
- * dialogs.add('askAge', [
- *      async function (dc) {
- *          await dc.prompt('agePrompt', `How old are you?`);
- *      },
- *      async function (dc, age) {
- *          if (age < 40) {
- *              await dc.context.sendActivity(`So young :)`);
- *          } else {
- *              await dc.context.sendActivity(`I hear ${age} is the new ${age - 10} :)`);
- *          }
- *          await dc.end();
- *      }
- * ]);
- * ```
- *
- * The prompt can be configured with a custom validator to perform additional checks like ensuring
- * that the user responds with a valid age and that only whole numbers are returned:
- *
- * ```JavaScript
- * dialogs.add('agePrompt', new NumberPrompt(async (context, value) => {
- *    if (typeof value == 'number') {
- *       if (value >= 1 && value < 111) {
- *          // Return age rounded down to nearest whole number.
- *          return Math.floor(value);
- *       }
- *    }
- *    await context.sendActivity(`Please enter a number between 1 and 110 or say "cancel".`);
- *    return undefined;
- * }));
- * ```
  */
 class NumberPrompt extends prompt_1.Prompt {
     /**
      * Creates a new `NumberPrompt` instance.
+     * @param dialogId Unique ID of the dialog within its parent `DialogSet`.
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
      * @param defaultLocale (Optional) locale to use if `dc.context.activity.locale` not specified. Defaults to a value of `en-us`.
      */
     constructor(dialogId, validator, defaultLocale) {
         super(dialogId, validator);
-        this.prompt = prompts.createNumberPrompt(undefined, defaultLocale);
+        this.defaultLocale = defaultLocale;
     }
     onPrompt(context, state, options, isRetry) {
         return __awaiter(this, void 0, void 0, function* () {
             if (isRetry && options.retryPrompt) {
-                yield this.prompt.prompt(context, options.retryPrompt);
+                yield context.sendActivity(options.retryPrompt, undefined, botbuilder_core_1.InputHints.ExpectingInput);
             }
             else if (options.prompt) {
-                yield this.prompt.prompt(context, options.prompt);
+                yield context.sendActivity(options.prompt, undefined, botbuilder_core_1.InputHints.ExpectingInput);
             }
         });
     }
     onRecognize(context, state, options) {
         return __awaiter(this, void 0, void 0, function* () {
-            const value = yield this.prompt.recognize(context);
-            return value !== undefined ? { succeeded: true, value: value } : { succeeded: false };
+            const result = { succeeded: false };
+            const activity = context.activity;
+            const utterance = activity.text;
+            const locale = activity.locale || this.defaultLocale || 'en-us';
+            const results = Recognizers.recognizeNumber(utterance, locale);
+            if (results.length > 0 && results[0].resolution) {
+                result.succeeded = true;
+                result.value = parseFloat(results[0].resolution.value);
+            }
+            return result;
         });
     }
 }

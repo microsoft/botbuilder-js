@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext, Activity } from 'botbuilder';
+import { TurnContext, Activity } from 'botbuilder-core';
 import { DialogInstance, DialogTurnResult } from './dialog';
 import { DialogSet } from './dialogSet';
 import { PromptOptions } from './prompts';
@@ -71,9 +71,9 @@ export declare class DialogContext {
      * await dc.begin('greeting', user);
      * ```
      * @param dialogId ID of the dialog to start.
-     * @param dialogArgs (Optional) additional argument(s) to pass to the dialog being started.
+     * @param options (Optional) additional argument(s) to pass to the dialog being started.
      */
-    begin(dialogId: string, dialogArgs?: any): Promise<DialogTurnResult>;
+    begin(dialogId: string, options?: object): Promise<DialogTurnResult>;
     /**
      * Cancels all dialogs on the stack resulting in an empty stack.
      */

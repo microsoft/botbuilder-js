@@ -5,10 +5,32 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext, Activity, ActivityTypes, InputHints } from 'botbuilder';
-import { Choice } from 'botbuilder-prompts';
+import { TurnContext, Activity, ActivityTypes, InputHints, MessageFactory } from 'botbuilder-core';
+import { Choice, ChoiceFactory, ChoiceFactoryOptions } from '../choices';
 import { DialogContext } from '../dialogContext';
 import { Dialog, DialogTurnResult, DialogInstance, DialogReason } from '../dialog';
+
+
+/**
+ * Controls the way that choices for a `ChoicePrompt` or yes/no options for a `ConfirmPrompt` are
+ * presented to a user.
+ */
+export enum ListStyle {
+    /** Don't include any choices for prompt. */
+    none,
+
+    /** Automatically select the appropriate style for the current channel. */
+    auto,
+
+    /** Add choices to prompt as an inline list. */
+    inline,
+
+    /** Add choices to prompt as a numbered list. */
+    list,
+
+    /** Add choices to prompt as suggested actions. */
+    suggestedAction
+}
 
 /** 
  * Basic configuration options supported by all prompts. 
@@ -43,7 +65,7 @@ export interface PromptRecognizerResult<T> {
 export type PromptValidator<T> = (context: TurnContext, prompt: PromptValidatorContext<T>) => Promise<void>;
 
 export interface PromptValidatorContext<T> {
-    recognized?: PromptRecognizerResult<T>;
+    recognized: PromptRecognizerResult<T>;
     state: object;
     options: PromptOptions;
     end(result: any): void;
@@ -135,6 +157,55 @@ export abstract class Prompt<T> extends Dialog {
     public async dialogReprompt(context: TurnContext, instance: DialogInstance): Promise<void> {
         const state = instance.state as PromptState;
         await this.onPrompt(context, state.state, state.options, false);
+    }
+
+    protected appendChoices(prompt: string|Partial<Activity>, channelId: string, choices: (string|Choice)[], style: ListStyle, options?: ChoiceFactoryOptions): Partial<Activity> {
+        // Get base prompt text (if any)
+        let text = '';
+        if (typeof prompt === 'string') {
+            text = prompt;
+        } else if (prompt && prompt.text) {
+            text = prompt.text;
+        }
+
+        // Create temporary msg
+        let msg: Partial<Activity>;
+        switch (style)
+        {
+            case ListStyle.inline:
+                msg = ChoiceFactory.inline(choices, text, null, options);
+                break;
+
+            case ListStyle.list:
+                msg = ChoiceFactory.list(choices, text, null, options);
+                break;
+
+            case ListStyle.suggestedAction:
+                msg = ChoiceFactory.suggestedAction(choices, text);
+                break;
+
+            case ListStyle.none:
+                msg = MessageFactory.text(text);
+                break;
+
+            default:
+                msg = ChoiceFactory.forChannel(channelId, choices, text, null, options);
+                break;
+        }
+
+        // Update prompt with text and actions
+        if (typeof prompt === 'object') {
+            prompt.text = msg.text;
+            if (msg.suggestedActions && Array.isArray(msg.suggestedActions.actions) && msg.suggestedActions.actions.length > 0)
+            {
+                prompt.suggestedActions = msg.suggestedActions;
+            }
+
+            return prompt;
+        } else {
+            msg.inputHint = InputHints.ExpectingInput;
+            return msg;
+        }
     }
 }
 

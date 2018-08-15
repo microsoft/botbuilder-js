@@ -5,8 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, TurnContext } from '../../botbuilder/lib';
-import { ChoiceFactoryOptions, Choice } from '../../botbuilder-choices/lib';
+import { Activity, TurnContext } from 'botbuilder';
+import { ChoiceFactoryOptions, Choice } from 'botbuilder-choices';
 import { PromptValidator } from './textPrompt';
 import { ListStyle } from './choicePrompt';
 /**

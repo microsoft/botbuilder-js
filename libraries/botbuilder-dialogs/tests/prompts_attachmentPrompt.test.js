@@ -17,7 +17,7 @@ class TestContext extends TurnContext {
     }
 }
 
-describe('prompts/AttachmentPrompt', function() {
+describe.skip('prompts/AttachmentPrompt', function() {
     this.timeout(5000);
 
     it('should call AttachmentPrompt using dc.prompt().', function (done) {

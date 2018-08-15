@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, TurnContext, TokenResponse } from '../../botbuilder/lib';
+import { Activity, TurnContext, TokenResponse } from 'botbuilder';
 import { PromptValidator } from './textPrompt';
 /**
  * Defines settings for an `OAuthPrompt`.

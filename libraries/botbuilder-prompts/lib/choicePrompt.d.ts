@@ -5,8 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, TurnContext } from '../../botbuilder/lib';
-import { FoundChoice, Choice, ChoiceFactoryOptions, FindChoicesOptions } from '../../botbuilder-choices/lib';
+import { Activity, TurnContext } from 'botbuilder';
+import { FoundChoice, Choice, ChoiceFactoryOptions, FindChoicesOptions } from 'botbuilder-choices';
 import { PromptValidator } from './textPrompt';
 /**
  * Controls the way that choices for a `ChoicePrompt` or yes/no options for a `ConfirmPrompt` are

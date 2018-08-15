@@ -5,10 +5,26 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext, Activity } from 'botbuilder';
-import { Choice } from 'botbuilder-prompts';
+import { TurnContext, Activity } from 'botbuilder-core';
+import { Choice, ChoiceFactoryOptions } from '../choices';
 import { DialogContext } from '../dialogContext';
 import { Dialog, DialogTurnResult, DialogInstance, DialogReason } from '../dialog';
+/**
+ * Controls the way that choices for a `ChoicePrompt` or yes/no options for a `ConfirmPrompt` are
+ * presented to a user.
+ */
+export declare enum ListStyle {
+    /** Don't include any choices for prompt. */
+    none = 0,
+    /** Automatically select the appropriate style for the current channel. */
+    auto = 1,
+    /** Add choices to prompt as an inline list. */
+    inline = 2,
+    /** Add choices to prompt as a numbered list. */
+    list = 3,
+    /** Add choices to prompt as suggested actions. */
+    suggestedAction = 4,
+}
 /**
  * Basic configuration options supported by all prompts.
  */
@@ -36,7 +52,7 @@ export interface PromptRecognizerResult<T> {
 }
 export declare type PromptValidator<T> = (context: TurnContext, prompt: PromptValidatorContext<T>) => Promise<void>;
 export interface PromptValidatorContext<T> {
-    recognized?: PromptRecognizerResult<T>;
+    recognized: PromptRecognizerResult<T>;
     state: object;
     options: PromptOptions;
     end(result: any): void;
@@ -53,4 +69,5 @@ export declare abstract class Prompt<T> extends Dialog {
     dialogContinue(dc: DialogContext): Promise<DialogTurnResult>;
     dialogResume(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult>;
     dialogReprompt(context: TurnContext, instance: DialogInstance): Promise<void>;
+    protected appendChoices(prompt: string | Partial<Activity>, channelId: string, choices: (string | Choice)[], style: ListStyle, options?: ChoiceFactoryOptions): Partial<Activity>;
 }

@@ -9,101 +9,74 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const prompt_1 = require("./prompt");
-const prompts = require("botbuilder-prompts");
+const choices_1 = require("../choices");
 /**
  * Prompts a user to confirm something with a yes/no response.
  *
  * @remarks
  * By default the prompt will return to the calling dialog a `boolean` representing the users
  * selection.
- *
- * #### Prompt Usage
- *
- * When used with your bots `DialogSet` you can simply add a new instance of the prompt as a named
- * dialog using `DialogSet.add()`. You can then start the prompt from a waterfall step using either
- * `DialogContext.begin()` or `DialogContext.prompt()`. The user will be prompted to select a choice
- * from a list and their choice will be passed as an argument to the callers next waterfall step:
- *
- * ```JavaScript
- * const { DialogSet, ChoicePrompt } = require('botbuilder-dialogs');
- *
- * const dialogs = new DialogSet();
- *
- * dialogs.add('choicePrompt', new ChoicePrompt());
- *
- * dialogs.add('colorPrompt', [
- *      async function (dc) {
- *          await dc.prompt('choicePrompt', `Select a color`, ['red', 'green', 'blue']);
- *      },
- *      async function (dc, choice) {
- *          const color = choice.value;
- *          await dc.context.sendActivity(`I like ${color} too!`);
- *          await dc.end();
- *      }
- * ]);
- * ```
- *
- * If the users response to the prompt fails to be recognized they will be automatically re-prompted
- * to try again. By default the original prompt is re-sent to the user but you can provide an
- * alternate prompt to send by passing in additional options:
- *
- * ```JavaScript
- * await dc.prompt('choicePrompt', `Select a color`, ['red', 'green', 'blue'], { retryPrompt: `I didn't catch that. Select a color from the list.` });
- * ```
- * @param O (Optional) output type returned by prompt. This defaults to an instance of `FoundChoice` but can be changed by a custom validator passed to the prompt.
  */
 class ChoicePrompt extends prompt_1.Prompt {
     /**
      * Creates a new `ChoicePrompt` instance.
+     * @param dialogId Unique ID of the dialog within its parent `DialogSet`.
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
      * @param defaultLocale (Optional) locale to use if `dc.context.activity.locale` not specified. Defaults to a value of `en-us`.
      */
     constructor(dialogId, validator, defaultLocale) {
         super(dialogId, validator);
-        this.prompt = prompts.createChoicePrompt(undefined, defaultLocale);
-    }
-    /**
-     * Sets additional options passed to the `ChoiceFactory` and used to tweak the style of choices
-     * rendered to the user.
-     * @param options Additional options to set.
-     */
-    choiceOptions(options) {
-        Object.assign(this.prompt.choiceOptions, options);
-        return this;
-    }
-    /**
-     * Sets additional options passed to the `recognizeChoices()` function.
-     * @param options Additional options to set.
-     */
-    recognizerOptions(options) {
-        Object.assign(this.prompt.recognizerOptions, options);
-        return this;
-    }
-    /**
-     * Sets the style of the choice list rendered to the user when prompting.
-     * @param listStyle Type of list to render to to user. Defaults to `ListStyle.auto`.
-     */
-    style(listStyle) {
-        this.prompt.style = listStyle;
-        return this;
+        this.style = prompt_1.ListStyle.auto;
+        this.defaultLocale = defaultLocale;
     }
     onPrompt(context, state, options, isRetry) {
         return __awaiter(this, void 0, void 0, function* () {
+            // Determine locale
+            let locale = context.activity.locale || this.defaultLocale;
+            if (locale || !ChoicePrompt.defaultChoiceOptions.hasOwnProperty(locale)) {
+                locale = 'en-us';
+            }
+            // Format prompt to send
+            let prompt;
             const choices = options.choices || [];
+            const channelId = context.activity.channelId;
+            const choiceOptions = this.choiceOptions || ChoicePrompt.defaultChoiceOptions[locale];
             if (isRetry && options.retryPrompt) {
-                yield this.prompt.prompt(context, choices, options.retryPrompt);
+                prompt = this.appendChoices(options.retryPrompt, channelId, choices, this.style, choiceOptions);
             }
             else {
-                yield this.prompt.prompt(context, choices, options.prompt);
+                prompt = this.appendChoices(options.prompt, channelId, choices, this.style, choiceOptions);
             }
+            // Send prompt
+            yield context.sendActivity(prompt);
         });
     }
     onRecognize(context, state, options) {
         return __awaiter(this, void 0, void 0, function* () {
-            const value = yield this.prompt.recognize(context, options.choices || []);
-            return value !== undefined ? { succeeded: true, value: value } : { succeeded: false };
+            const result = { succeeded: false };
+            const activity = context.activity;
+            const utterance = activity.text;
+            const choices = options.choices || [];
+            const opt = this.recognizerOptions || {};
+            opt.locale = activity.locale || opt.locale || this.defaultLocale || 'en-us';
+            const results = choices_1.recognizeChoices(utterance, choices, opt);
+            if (Array.isArray(results) && results.length > 0) {
+                result.succeeded = true;
+                result.value = results[0].resolution;
+            }
+            return result;
         });
     }
 }
+ChoicePrompt.defaultChoiceOptions = {
+    'es-es': { inlineSeparator: ", ", inlineOr: " o ", inlineOrMore: ", o ", includeNumbers: true },
+    'nl-nl': { inlineSeparator: ", ", inlineOr: " of ", inlineOrMore: ", of ", includeNumbers: true },
+    'en-us': { inlineSeparator: ", ", inlineOr: " or ", inlineOrMore: ", or ", includeNumbers: true },
+    'fr-fr': { inlineSeparator: ", ", inlineOr: " ou ", inlineOrMore: ", ou ", includeNumbers: true },
+    'de-de': { inlineSeparator: ", ", inlineOr: " oder ", inlineOrMore: ", oder ", includeNumbers: true },
+    'ja-jp': { inlineSeparator: "、 ", inlineOr: " または ", inlineOrMore: "、 または ", includeNumbers: true },
+    'pt-br': { inlineSeparator: ", ", inlineOr: " ou ", inlineOrMore: ", ou ", includeNumbers: true },
+    'zh-cn': { inlineSeparator: "， ", inlineOr: " 要么 ", inlineOrMore: "， 要么 ", includeNumbers: true },
+};
 exports.ChoicePrompt = ChoicePrompt;
 //# sourceMappingURL=choicePrompt.js.map

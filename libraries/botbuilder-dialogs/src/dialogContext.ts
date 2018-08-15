@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext, Activity } from 'botbuilder';
+import { TurnContext, Activity } from 'botbuilder-core';
 import { DialogInstance, DialogTurnResult, DialogReason } from './dialog';
 import { DialogSet } from './dialogSet';
 import { PromptOptions } from './prompts';
@@ -88,9 +88,9 @@ export class DialogContext {
      * await dc.begin('greeting', user);
      * ```
      * @param dialogId ID of the dialog to start.
-     * @param dialogArgs (Optional) additional argument(s) to pass to the dialog being started.
+     * @param options (Optional) additional argument(s) to pass to the dialog being started.
      */
-    public async begin(dialogId: string, dialogArgs?: any): Promise<DialogTurnResult> {
+    public async begin(dialogId: string, options?: object): Promise<DialogTurnResult> {
         // Lookup dialog
         const dialog = this.dialogs.find(dialogId);
         if (!dialog) { throw new Error(`DialogContext.begin(): A dialog with an id of '${dialogId}' wasn't found.`) }
@@ -103,7 +103,7 @@ export class DialogContext {
         this.stack.push(instance);
             
         // Call dialogs begin() method.
-        const turnResult = await dialog.dialogBegin(this, dialogArgs);
+        const turnResult = await dialog.dialogBegin(this, options);
         return this.verifyTurnResult(turnResult);
     }
 

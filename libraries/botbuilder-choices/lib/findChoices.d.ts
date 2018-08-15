@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { CardAction } from '../../botbuilder/lib';
+import { CardAction } from 'botbuilder';
 import { ModelResult } from './modelResult';
 import { FindValuesOptions } from './findValues';
 /**

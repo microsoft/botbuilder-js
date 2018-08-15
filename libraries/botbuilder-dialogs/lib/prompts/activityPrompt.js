@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-const botbuilder_1 = require("botbuilder");
+const botbuilder_core_1 = require("botbuilder-core");
 const dialog_1 = require("../dialog");
 /**
  * Base class for all prompts.
@@ -28,7 +28,7 @@ class ActivityPrompt extends dialog_1.Dialog {
     onPrompt(context, state, options) {
         return __awaiter(this, void 0, void 0, function* () {
             if (options.prompt) {
-                yield context.sendActivity(options.prompt, undefined, botbuilder_1.InputHints.ExpectingInput);
+                yield context.sendActivity(options.prompt, undefined, botbuilder_core_1.InputHints.ExpectingInput);
             }
         });
     }
@@ -42,10 +42,10 @@ class ActivityPrompt extends dialog_1.Dialog {
             // Ensure prompts have input hint set
             const opt = Object.assign({}, options);
             if (opt.prompt && typeof opt.prompt === 'object' && typeof opt.prompt.inputHint !== 'string') {
-                opt.prompt.inputHint = botbuilder_1.InputHints.ExpectingInput;
+                opt.prompt.inputHint = botbuilder_core_1.InputHints.ExpectingInput;
             }
             if (opt.retryPrompt && typeof opt.retryPrompt === 'object' && typeof opt.retryPrompt.inputHint !== 'string') {
-                opt.retryPrompt.inputHint = botbuilder_1.InputHints.ExpectingInput;
+                opt.retryPrompt.inputHint = botbuilder_core_1.InputHints.ExpectingInput;
             }
             // Initialize prompt state
             const state = dc.activeDialog.state;

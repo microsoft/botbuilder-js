@@ -16,7 +16,7 @@ class TestContext extends TurnContext {
     }
 }
 
-describe('DialogContainer', function() {
+describe.skip('DialogContainer', function() {
     this.timeout(5000);
 
     it('should call composite dialog from another dialog set.', function (done) {

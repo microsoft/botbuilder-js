@@ -8,7 +8,7 @@
 import { TurnContext } from './turnContext';
 import { Middleware } from './middlewareSet';
 import { Storage, StorageKeyFactory } from './storage';
-import { PropertyAccessor } from './botStatePropertyAccessor';
+import { StatePropertyAccessor } from './botStatePropertyAccessor';
 /**
  * State information cached off the context object by a `BotState` instance.
  */
@@ -53,7 +53,7 @@ export declare class BotState implements Middleware {
     protected storage: Storage;
     protected storageKey: StorageKeyFactory;
     /** NEW */
-    readonly properties: Map<string, PropertyAccessor>;
+    readonly properties: Map<string, StatePropertyAccessor>;
     private stateKey;
     /**
      * Creates a new BotState instance.
@@ -62,7 +62,7 @@ export declare class BotState implements Middleware {
      */
     constructor(storage: Storage, storageKey: StorageKeyFactory);
     /** NEW */
-    createProperty<T = any>(name: string): PropertyAccessor<T>;
+    createProperty<T = any>(name: string): StatePropertyAccessor<T>;
     /** @private */
     onTurn(context: TurnContext, next: () => Promise<void>): Promise<void>;
     /**

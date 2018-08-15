@@ -14,7 +14,7 @@ __export(require("./activityPrompt"));
 __export(require("./attachmentPrompt"));
 __export(require("./choicePrompt"));
 __export(require("./confirmPrompt"));
-__export(require("./datetimePrompt"));
+__export(require("./dateTimePrompt"));
 __export(require("./numberPrompt"));
 __export(require("./oauthPrompt"));
 __export(require("./prompt"));

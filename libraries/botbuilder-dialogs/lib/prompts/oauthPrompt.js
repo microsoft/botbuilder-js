@@ -15,8 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-const botbuilder_1 = require("botbuilder");
-const prompts = require("botbuilder-prompts");
+const botbuilder_core_1 = require("botbuilder-core");
 const dialog_1 = require("../dialog");
 /**
  * Creates a new prompt that asks the user to sign in using the Bot Frameworks Single Sign On (SSO)
@@ -77,11 +76,11 @@ const dialog_1 = require("../dialog");
  *      }
  * ]);
  * ```
- * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
  */
 class OAuthPrompt extends dialog_1.Dialog {
     /**
      * Creates a new `OAuthPrompt` instance.
+     * @param dialogId Unique ID of the dialog within its parent `DialogSet`.
      * @param settings Settings used to configure the prompt.
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
      */
@@ -89,17 +88,16 @@ class OAuthPrompt extends dialog_1.Dialog {
         super(dialogId);
         this.settings = settings;
         this.validator = validator;
-        this.prompt = prompts.createOAuthPrompt(settings);
     }
     dialogBegin(dc, options) {
         return __awaiter(this, void 0, void 0, function* () {
             // Ensure prompts have input hint set
             const o = Object.assign({}, options);
             if (o.prompt && typeof o.prompt === 'object' && typeof o.prompt.inputHint !== 'string') {
-                o.prompt.inputHint = botbuilder_1.InputHints.ExpectingInput;
+                o.prompt.inputHint = botbuilder_core_1.InputHints.ExpectingInput;
             }
             if (o.retryPrompt && typeof o.retryPrompt === 'object' && typeof o.retryPrompt.inputHint !== 'string') {
-                o.retryPrompt.inputHint = botbuilder_1.InputHints.ExpectingInput;
+                o.retryPrompt.inputHint = botbuilder_core_1.InputHints.ExpectingInput;
             }
             // Initialize prompt state
             const timeout = typeof this.settings.timeout === 'number' ? this.settings.timeout : 54000000;
@@ -108,21 +106,14 @@ class OAuthPrompt extends dialog_1.Dialog {
             state.options = o;
             state.expires = new Date().getTime() + timeout;
             // Attempt to get the users token
-            const output = yield this.prompt.getUserToken(dc.context);
+            const output = yield this.getUserToken(dc.context);
             if (output !== undefined) {
                 // Return token
                 return yield dc.end(output);
             }
             else {
-                if (typeof state.options.prompt === 'string') {
-                    // Send supplied prompt then OAuthCard
-                    yield dc.context.sendActivity(state.options.prompt);
-                    yield this.prompt.prompt(dc.context);
-                }
-                else {
-                    // Send OAuthCard
-                    yield this.prompt.prompt(dc.context, state.options.prompt);
-                }
+                // Prompt user to login
+                yield this.sendOAuthCardAsync(dc.context, state.options.prompt);
                 return dialog_1.Dialog.EndOfTurn;
             }
         });
@@ -130,11 +121,10 @@ class OAuthPrompt extends dialog_1.Dialog {
     dialogContinue(dc) {
         return __awaiter(this, void 0, void 0, function* () {
             // Recognize token
-            const output = yield this.prompt.recognize(dc.context);
-            const recognized = output ? { succeeded: true, value: output } : { succeeded: false };
+            const recognized = yield this.recognizeToken(dc.context);
             // Check for timeout
             const state = dc.activeDialog.state;
-            const isMessage = dc.context.activity.type === botbuilder_1.ActivityTypes.Message;
+            const isMessage = dc.context.activity.type === botbuilder_core_1.ActivityTypes.Message;
             const hasTimedOut = isMessage && (new Date().getTime() > state.expires);
             if (hasTimedOut) {
                 return yield dc.end(undefined);
@@ -172,6 +162,17 @@ class OAuthPrompt extends dialog_1.Dialog {
             }
         });
     }
+    getUserToken(context, code) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // Validate adapter type
+            if (!('getUserToken' in context.adapter)) {
+                throw new Error(`OAuthPrompt.getUserToken(): not supported for the current adapter.`);
+            }
+            // Get the token and call validator
+            const adapter = context.adapter; // cast to BotFrameworkAdapter
+            return yield adapter.getUserToken(context, this.settings.connectionName, code);
+        });
+    }
     /**
      * Signs the user out of the service.
      *
@@ -188,7 +189,84 @@ class OAuthPrompt extends dialog_1.Dialog {
      * @param context
      */
     signOutUser(context) {
-        return this.prompt.signOutUser(context);
+        return __awaiter(this, void 0, void 0, function* () {
+            // Validate adapter type
+            if (!('signOutUser' in context.adapter)) {
+                throw new Error(`OAuthPrompt.signOutUser(): not supported for the current adapter.`);
+            }
+            // Sign out user
+            const adapter = context.adapter; // cast to BotFrameworkAdapter
+            return adapter.signOutUser(context, this.settings.connectionName);
+        });
+    }
+    sendOAuthCardAsync(context, prompt) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // Validate adapter type
+            if (!('getUserToken' in context.adapter)) {
+                throw new Error(`OAuthPrompt.prompt(): not supported for the current adapter.`);
+            }
+            // Initialize outgoing message
+            const msg = typeof prompt === 'object' ? Object.assign({}, prompt) : botbuilder_core_1.MessageFactory.text(prompt, undefined, botbuilder_core_1.InputHints.ExpectingInput);
+            if (!Array.isArray(msg.attachments)) {
+                msg.attachments = [];
+            }
+            // Add login card as needed
+            if (this.channelSupportsOAuthCard(context.activity.channelId)) {
+                const cards = msg.attachments.filter((a) => a.contentType === botbuilder_core_1.CardFactory.contentTypes.oauthCard);
+                if (cards.length == 0) {
+                    // Append oauth card
+                    msg.attachments.push(botbuilder_core_1.CardFactory.oauthCard(this.settings.connectionName, this.settings.title, this.settings.text));
+                }
+            }
+            else {
+                const cards = msg.attachments.filter((a) => a.contentType === botbuilder_core_1.CardFactory.contentTypes.signinCard);
+                if (cards.length == 0) {
+                    // Append signin card
+                    const link = yield context.adapter.getSignInLink(context, this.settings.connectionName);
+                    msg.attachments.push(botbuilder_core_1.CardFactory.signinCard(this.settings.title, link, this.settings.text));
+                }
+            }
+            // Send prompt
+            yield context.sendActivity(msg);
+        });
+    }
+    recognizeToken(context) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let token;
+            if (this.isTokenResponseEvent(context)) {
+                token = context.activity.value;
+            }
+            else if (this.isTeamsVerificationInvoke(context)) {
+                const code = context.activity.value.state;
+                yield context.sendActivity({ type: 'invokeResponse', value: { status: 200 } });
+                token = yield this.getUserToken(context, code);
+            }
+            else if (context.activity.type === botbuilder_core_1.ActivityTypes.Message) {
+                const matched = /(\d{6})/.exec(context.activity.text);
+                if (matched && matched.length > 1) {
+                    token = yield this.getUserToken(context, matched[1]);
+                }
+            }
+            return token !== undefined ? { succeeded: true, value: token } : { succeeded: false };
+        });
+    }
+    isTokenResponseEvent(context) {
+        const activity = context.activity;
+        return activity.type === botbuilder_core_1.ActivityTypes.Event && activity.name == "tokens/response";
+    }
+    isTeamsVerificationInvoke(context) {
+        const activity = context.activity;
+        return activity.type === botbuilder_core_1.ActivityTypes.Invoke && activity.name == "signin/verifyState";
+    }
+    channelSupportsOAuthCard(channelId) {
+        switch (channelId) {
+            case "msteams":
+            case "cortana":
+            case "skype":
+            case "skypeforbusiness":
+                return false;
+        }
+        return true;
     }
 }
 exports.OAuthPrompt = OAuthPrompt;

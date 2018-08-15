@@ -5,9 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext } from 'botbuilder';
-import { Prompt, PromptOptions, PromptValidator, PromptRecognizerResult } from './prompt';
-import * as prompts from 'botbuilder-prompts';
+import { TurnContext, Activity } from 'botbuilder-core';
+import { Prompt, PromptOptions, PromptValidator, PromptRecognizerResult, ListStyle } from './prompt';
+import { Choice, ChoiceFactoryOptions } from '../choices';
+import * as Recognizers from '@microsoft/recognizers-text-choice';
 
 /**
  * Prompts a user to confirm something with a yes/no response. 
@@ -15,121 +16,93 @@ import * as prompts from 'botbuilder-prompts';
  * @remarks
  * By default the prompt will return to the calling dialog a `boolean` representing the users 
  * selection.
- * 
- * #### Prompt Usage
- * 
- * When used with your bots `DialogSet` you can simply add a new instance of the prompt as a named
- * dialog using `DialogSet.add()`. You can then start the prompt from a waterfall step using either
- * `DialogContext.begin()` or `DialogContext.prompt()`. The user will be prompted to answer a 
- * `yes/no` or `true/false` question and the users response will be passed as an argument to the 
- * callers next waterfall step: 
- * 
- * ```JavaScript
- * const { DialogSet, ConfirmPrompt } = require('botbuilder-dialogs');
- * 
- * const dialogs = new DialogSet();
- * 
- * dialogs.add('confirmPrompt', new ConfirmPrompt());
- * 
- * dialogs.add('confirmCancel', [
- *      async function (dc) {
- *          await dc.prompt('confirmPrompt', `This will cancel your order. Are you sure?`);
- *      },
- *      async function (dc, cancel) {
- *          if (cancel) {
- *              await dc.context.sendActivity(`Order cancelled.`);
- *          }
- *          await dc.end();
- *      }
- * ]);
- * ```
- * 
- * If the users response to the prompt fails to be recognized they will be automatically re-prompted
- * to try again. By default the original prompt is re-sent to the user but you can provide an 
- * alternate prompt to send by passing in additional options:
- * 
- * ```JavaScript
- * await dc.prompt('confirmPrompt', `This will cancel your order. Are you sure?`, { retryPrompt: `Please answer "yes" or "no".` });
- * ```
- * 
- * The prompts retry logic can also be completely customized by passing the prompts constructor a 
- * custom validator:
- * 
- * ```JavaScript
- * dialogs.add('confirmPrompt', new ConfirmPrompt(async (context, value) => {
- *    if (typeof confirmed != 'boolean') {
- *       await context.sendActivity(`Please answer "yes" or "no".`);
- *    }
- *    return confirmed; 
- * }));
- * ```
- * @param O (Optional) output type returned by prompt. This defaults to a boolean `true` or `false` but can be changed by a custom validator passed to the prompt.
  */
 export class ConfirmPrompt extends Prompt<boolean> {
-    private prompt: prompts.ConfirmPrompt;
 
-    /** 
-     * Allows for the localization of the confirm prompts yes/no choices to other locales besides 
-     * english. 
-     * 
-     * @remarks
-     * The key of each entry is the languages locale code and should be lower cased. A default 
-     * fallback set of choices can be specified using a key of '*'. 
-     * 
-     * ```JavaScript
-     * const confirmPrompt = new ConfirmPrompt();
-     * 
-     * // Configure yes/no choices for english and spanish (default)
-     * confirmPrompt.choices['*'] = ['sí', 'no'];
-     * confirmPrompt.choices['es'] = ['sí', 'no'];
-     * confirmPrompt.choices['en-us'] = ['yes', 'no'];
-     * 
-     * // Add to dialogs
-     * dialogs.add('confirmPrompt', confirmPrompt);
-     * ```
-     */
-    static choices: prompts.ConfirmChoices = { '*': ['yes', 'no'] };
+    static defaultConfirmChoices: { [locale: string]: (string|Choice)[]; } = {
+        'es-es': ['Sí', 'No'],
+        'nl-nl': ['Ja', 'Niet'],
+        'en-us': ['Yes', 'No'],
+        'fr-fr': ['Oui', 'Non'],
+        'de-de': ['Ja', 'Nein'],
+        'ja-jp': ['はい', 'いいえ'],
+        'pt-br': ['Sim', 'Não'],
+        'zh-cn': ['是的', '不']
+    };
+
+    static defaultChoiceOptions: { [locale: string]: ChoiceFactoryOptions; } = {
+        'es-es': { inlineSeparator: ", ", inlineOr: " o ", inlineOrMore: ", o ", includeNumbers: true },
+        'nl-nl': { inlineSeparator: ", ", inlineOr: " of ", inlineOrMore: ", of ", includeNumbers: true },
+        'en-us': { inlineSeparator: ", ", inlineOr: " or ", inlineOrMore: ", or ", includeNumbers: true },
+        'fr-fr': { inlineSeparator: ", ", inlineOr: " ou ", inlineOrMore: ", ou ", includeNumbers: true },
+        'de-de': { inlineSeparator: ", ", inlineOr: " oder ", inlineOrMore: ", oder ", includeNumbers: true },
+        'ja-jp': { inlineSeparator: "、 ", inlineOr: " または ", inlineOrMore: "、 または ", includeNumbers: true },
+        'pt-br': { inlineSeparator: ", ", inlineOr: " ou ", inlineOrMore: ", ou ", includeNumbers: true },
+        'zh-cn': { inlineSeparator: "， ", inlineOr: " 要么 ", inlineOrMore: "， 要么 ", includeNumbers: true },
+    };
 
     /**
      * Creates a new `ConfirmPrompt` instance.
+     * @param dialogId Unique ID of the dialog within its parent `DialogSet`.
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.  
      * @param defaultLocale (Optional) locale to use if `dc.context.activity.locale` not specified. Defaults to a value of `en-us`.
      */
     constructor(dialogId: string, validator?: PromptValidator<boolean>, defaultLocale?: string) {
         super(dialogId, validator);
-        this.prompt = prompts.createConfirmPrompt(undefined, defaultLocale);
-        this.prompt.choices = ConfirmPrompt.choices;
+        this.style = ListStyle.auto;
+        this.defaultLocale = defaultLocale;
     }
 
-    /**
-     * Sets additional options passed to the `ChoiceFactory` and used to tweak the style of choices 
-     * rendered to the user. 
-     * @param options Additional options to set. Defaults to `{ includeNumbers: false }`
-     */
-    public choiceOptions(options: prompts.ChoiceFactoryOptions): this {
-        Object.assign(this.prompt.choiceOptions, options);
-        return this;
-    }
+    public defaultLocale: string|undefined;
 
     /**
-     * Sets the style of the yes/no choices rendered to the user when prompting.
-     * @param listStyle Type of list to render to to user. Defaults to `ListStyle.auto`.
+     * Gets or sets the style of the yes/no choices rendered to the user when prompting.
+     * 
+     * @remarks
+     * Defaults to `ListStyle.auto`.
      */
-    public style(listStyle: prompts.ListStyle): this {
-        this.prompt.style = listStyle;
-        return this;
-    }
-    
+    public style: ListStyle;
+
+    /**
+     * Gets or sets additional options passed to the `ChoiceFactory` and used to tweak the style of 
+     * choices rendered to the user.
+     */
+    public choiceOptions: ChoiceFactoryOptions|undefined;
+
+    public confirmChoices: (string|Choice)[]|undefined;
+
     protected async onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void> {
-        if (isRetry && options.retryPrompt) {
-            await this.prompt.prompt(context, options.retryPrompt);
-        } else if (options.prompt) {
-            await this.prompt.prompt(context, options.prompt);
+        // Determine locale
+        let locale = context.activity.locale || this.defaultLocale;
+        if (locale || !ConfirmPrompt.defaultChoiceOptions.hasOwnProperty(locale)) {
+            locale = 'en-us';
         }
+
+        // Format prompt to send
+        let prompt: Partial<Activity>;
+        const channelId = context.activity.channelId;
+        const choiceOptions = this.choiceOptions || ConfirmPrompt.defaultChoiceOptions[locale];
+        const choices = this.confirmChoices || ConfirmPrompt.defaultConfirmChoices[locale];
+        if (isRetry && options.retryPrompt) {
+            prompt = this.appendChoices(options.retryPrompt, channelId, choices, this.style, choiceOptions);
+        } else {
+            prompt = this.appendChoices(options.prompt, channelId, choices, this.style, choiceOptions);
+        }
+
+        // Send prompt
+        await context.sendActivity(prompt);
     }
 
     protected async onRecognize(context: TurnContext, state: any, options: PromptOptions): Promise<PromptRecognizerResult<boolean>> {
-        const value = await this.prompt.recognize(context);
-        return value !== undefined ? { succeeded: true, value: value } : { succeeded: false };
+        const result: PromptRecognizerResult<boolean> = { succeeded: false };
+        const activity = context.activity;
+        const utterance = activity.text;
+        const locale = activity.locale || this.defaultLocale || 'en-us';
+        const results = Recognizers.recognizeBoolean(utterance, locale);
+        if (results.length > 0 && results[0].resolution) {
+            result.succeeded = true;
+            result.value = results[0].resolution.value; 
+        }
+        return result;
     }
 }

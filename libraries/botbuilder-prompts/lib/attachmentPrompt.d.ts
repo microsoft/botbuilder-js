@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, Attachment, TurnContext } from '../../botbuilder/lib';
+import { Activity, Attachment, TurnContext } from 'botbuilder';
 import { PromptValidator } from './textPrompt';
 /**
  * Prompts the user to upload one or more attachments.
