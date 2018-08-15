@@ -1,0 +1,58 @@
+{
+    "name": "test",
+    "description": "test description",
+    "services": [
+        {
+            "type": "luis",
+            "id": "testtest-test-test-test-testtesttest",
+            "name": "one",
+            "version": "test",
+            "appId": "testtest-test-test-test-testtesttest",
+            "authoringKey": "testtesttesttesttesttesttesttest",
+            "subscriptionKey": "testtesttesttesttesttesttesttest"
+        },
+        {
+            "type": "abs",
+            "id": "2",
+            "name": "two",
+            "tenantId": "test.test.com",
+            "subscriptionId": "testtest-test-test-test-testtesttest",
+            "resourceGroup": "TomDemoBot"
+        },
+        {
+            "type": "endpoint",
+            "name": "three",
+            "id": "https://testtesttest.azurewebsites.net/api/messages",
+            "appId": "testtest-test-test-test-testtesttest",
+            "appPassword": "testpassword",
+            "endpoint": "https://testtesttest.azurewebsites.net/api/messages"
+        },
+        {
+            "type": "qna",
+            "id": "testtest-test-test-test-testtesttest",
+            "name": "four",
+            "kbId": "testtest-test-test-test-testtesttest",
+            "subscriptionKey": "testtesttesttesttesttesttesttest",
+            "endpointKey": "testtest-test-test-test-testtesttest",
+            "hostname": "https://qnatomlm.azurewebsites.net/qnamaker"
+        },
+        {
+            "type": "endpoint",
+            "name": "five",
+            "id": "https://testtesttest.azurewebsites.net",
+            "appId": "testtest-test-test-test-testtesttest",
+            "appPassword": "testpassword",
+            "endpoint": "https://testtesttest.azurewebsites.net"
+        },
+        {
+            "type": "qna",
+            "id": "testtest-test-test-test-testtesttest",
+            "name": "six",
+            "kbId": "testtest-test-test-test-testtesttest",
+            "subscriptionKey": "testtesttesttesttesttesttesttest",
+            "endpointKey": "testtest-test-test-test-testtesttest",
+            "hostname": "https://testtesttest.azurewebsites.net/qnamaker"
+        }
+    ],
+    "secretKey": ""
+}
