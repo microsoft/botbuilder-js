@@ -16,14 +16,15 @@ script:
 after_success:
 - echo 'Begin deploy'
 - test $TRAVIS_BRANCH = "v-brhale-publish2" 
-  && npm publish libraries/botbuilder --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
-  && npm publish libraries/botbuilder-ai --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
-  && npm publish libraries/botbuilder-azure --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
-  && npm publish libraries/botbuilder-core --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
-  && npm publish libraries/botbuilder-dialogs --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
-  && npm publish libraries/botframework-connector --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
-  && npm publish libraries/botframework-luis --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
-  && npm publish libraries/botframework-schema --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
+  && npm config set registry https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
+  && npm publish libraries/botbuilder
+  && npm publish libraries/botbuilder-ai
+  && npm publish libraries/botbuilder-azure
+  && npm publish libraries/botbuilder-core
+  && npm publish libraries/botbuilder-dialogs
+  && npm publish libraries/botframework-connector
+  && npm publish libraries/botframework-luis
+  && npm publish libraries/botframework-schema
 - echo 'End deploy'
 cache:
   directories:
