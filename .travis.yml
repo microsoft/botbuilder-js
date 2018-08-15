@@ -15,7 +15,16 @@ script:
 - echo 'End build'
 after_success:
 - echo 'Begin deploy'
-- test $TRAVIS_BRANCH = "v-brhale-publish2" && npm publish libraries/botbuilder --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
+- test $TRAVIS_BRANCH = "v-brhale-publish2" 
+  && npm publish libraries/botbuilder --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
+  && npm publish libraries/botbuilder-ai --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
+  && npm publish libraries/botbuilder-azure --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
+  && npm publish libraries/botbuilder-choices --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
+  && npm publish libraries/botbuilder-dialogs --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
+  && npm publish libraries/botbuilder-prompts --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
+  && npm publish libraries/botframework-connector --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
+  && npm publish libraries/botframework-luis --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
+  && npm publish libraries/botframework-schema --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
 - echo 'End deploy'
 cache:
   directories:
