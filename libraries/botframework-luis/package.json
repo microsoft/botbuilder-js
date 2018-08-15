@@ -29,6 +29,7 @@
     "ts-node": "^4.1.0"
   },
   "scripts": {
-    "test": "nyc mocha tests/"
+    "test": "nyc mocha tests/",
+    "set-version": "npm version --allow-same-version ${Version}"
   }
 }

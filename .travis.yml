@@ -20,6 +20,7 @@ after_success:
   && npm publish libraries/botbuilder-ai --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
   && npm publish libraries/botbuilder-azure --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
   && npm publish libraries/botbuilder-choices --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
+  && npm publish libraries/botbuilder-core --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
   && npm publish libraries/botbuilder-dialogs --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
   && npm publish libraries/botbuilder-prompts --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
   && npm publish libraries/botframework-connector --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/

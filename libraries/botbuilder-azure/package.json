@@ -39,6 +39,7 @@
     "test": "tsc && nyc mocha tests/",
     "build": "tsc",
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder-azure --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-azure .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Azure\" --readme none",
-    "clean": "erase /q lib\\*.*"
+    "clean": "erase /q lib\\*.*",
+    "set-version": "npm version --allow-same-version ${Version}"
   }
 }
