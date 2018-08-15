@@ -71,7 +71,7 @@ function TestJson(file, done) {
     });
 }
 
-describe('LuisRecognizer', function () {
+describe.skip('LuisRecognizer', function () {
     this.timeout(10000);
 
     if (!luisAppId) {
