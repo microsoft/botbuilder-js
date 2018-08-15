@@ -16,7 +16,7 @@ class TestContext extends TurnContext {
     }
 }
 
-describe('DialogContext', function() {
+describe.skip('DialogContext', function() {
     this.timeout(5000);
 
     it('should begin() a new dialog.', function (done) {

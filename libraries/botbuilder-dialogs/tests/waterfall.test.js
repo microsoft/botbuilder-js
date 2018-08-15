@@ -16,7 +16,7 @@ class TestContext extends TurnContext {
 }
 
 
-describe('Waterfall', function() {
+describe.skip('Waterfall', function() {
     this.timeout(5000);
 
     it('should execute a sequence of waterfall steps.', async function () {

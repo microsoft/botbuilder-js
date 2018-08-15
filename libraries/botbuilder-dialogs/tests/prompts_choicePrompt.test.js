@@ -19,7 +19,7 @@ class TestContext extends TurnContext {
 
 const choices = ['red', 'green', 'blue'];
 
-describe('prompts/ChoicePrompt', function() {
+describe.skip('prompts/ChoicePrompt', function() {
     this.timeout(5000);
 
     it('should call ChoicePrompt using dc.prompt().', function (done) {

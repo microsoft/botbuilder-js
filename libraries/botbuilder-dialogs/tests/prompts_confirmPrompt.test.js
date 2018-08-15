@@ -17,7 +17,7 @@ class TestContext extends TurnContext {
     }
 }
 
-describe('prompts/ConfirmPrompt', function() {
+describe.skip('prompts/ConfirmPrompt', function() {
     this.timeout(5000);
 
     it('should call ConfirmPrompt using dc.prompt().', function (done) {
