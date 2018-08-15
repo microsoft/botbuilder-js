@@ -5,15 +5,14 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotAdapter } from './botAdapter';
-import { Promiseable } from './middlewareSet';
-import { TurnContext } from './turnContext';
 import { ConnectorClient, SimpleCredentialProvider, MicrosoftAppCredentials, JwtTokenValidation, OAuthApiClient } from 'botframework-connector';
 import {
-    ActivityTypes, Activity, ConversationReference, ConversationResourceResponse,
+    BotAdapter, Promiseable, TurnContext, ActivityTypes, Activity, ConversationReference,
     ResourceResponse, ConversationParameters, ConversationAccount,
     TokenResponse, ConversationsResult, ChannelAccount
-} from 'botframework-schema';
+} from 'botbuilder-core';
+import * as os from 'os';
+
 
 /**
  * Express or Restify Request object.
@@ -62,8 +61,14 @@ export interface InvokeResponse {
     body?: any;
 }
 
+// Retrieve additional information, i.e., host operating system, host OS release, architecture, Node.js version
+const ARCHITECTURE = os.arch();
+const TYPE = os.type();
+const RELEASE = os.release();
+const NODE_VERSION = process.version;
+
 const pjson: any = require('../package.json');
-const USER_AGENT = 'Microsoft-BotFramework/3.1 (BotBuilder JS/' + pjson.version + ')';
+const USER_AGENT = 'Microsoft-BotFramework/3.1 BotBuilder/' + pjson.version + ' (Node.js,Version=' + NODE_VERSION + '; ' + TYPE + ' ' + RELEASE + '; ' + ARCHITECTURE + ')';
 const OAUTH_ENDPOINT = 'https://api.botframework.com';
 const INVOKE_RESPONSE_KEY = Symbol('invokeResponse');
 

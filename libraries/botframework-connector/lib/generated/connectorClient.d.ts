@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import * as msRest from "ms-rest-js";
-import * as Models from "botframework-schema";
+import * as Models from "../../../botframework-schema/lib";
 import * as Mappers from "./models/mappers";
 import * as operations from "./operations";
 declare class ConnectorClient extends msRest.ServiceClient {

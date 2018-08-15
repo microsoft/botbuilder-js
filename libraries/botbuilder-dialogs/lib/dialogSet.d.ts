@@ -5,9 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext, PropertyAccessor } from 'botbuilder';
-import { Dialog, Waterfall, WaterfallStep } from './dialog';
-import { DialogContext } from './dialogContext';
+import { TurnContext, StatePropertyAccessor } from 'botbuilder-core';
+import { Dialog } from './dialog';
+import { DialogContext, DialogState } from './dialogContext';
 /**
  * A related set of dialogs that can all call each other.
  *
@@ -158,11 +158,11 @@ import { DialogContext } from './dialogContext';
  * messages our bot.
  * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
  */
-export declare class DialogSet<C extends TurnContext = TurnContext> {
-    private readonly dialogStateProperty;
+export declare class DialogSet {
+    private readonly dialogState;
     private readonly dialogs;
     /** NEW */
-    constructor(dialogStateProperty?: PropertyAccessor<object>);
+    constructor(dialogState: StatePropertyAccessor<DialogState>);
     /**
      * Adds a new dialog to the set and returns the added dialog.
      *
@@ -170,18 +170,16 @@ export declare class DialogSet<C extends TurnContext = TurnContext> {
      * This example adds a waterfall dialog the greets the user with "Hello World!":
      *
      * ```JavaScript
-     * dialogs.add('greeting', [
+     * dialogs.add(new Waterfall('greeting', [
      *      async function (dc) {
      *          await dc.context.sendActivity(`Hello world!`);
      *          await dc.end();
      *      }
-     * ]);
+     * ]));
      * ```
-     * @param dialogId Unique ID of the dialog within the set.
-     * @param dialogOrSteps Either a new dialog or an array of waterfall steps to execute. If waterfall steps are passed in they will automatically be passed into an new instance of a `Waterfall` class.
+     * @param dialog The dialog being added.
      */
-    add(dialogId: string, dialogOrSteps: Dialog<C>): Dialog<C>;
-    add(dialogId: string, dialogOrSteps: WaterfallStep<C>[]): Waterfall<C>;
+    add<T extends Dialog>(dialog: T): T;
     /**
      * Creates a dialog context which can be used to work with the dialogs in the set.
      *
@@ -194,11 +192,8 @@ export declare class DialogSet<C extends TurnContext = TurnContext> {
      * const dc = dialogs.createContext(context, conversation);
      * ```
      * @param context Context for the current turn of conversation with the user.
-     * @param state State object being used to persist the dialog stack.
      */
-    createContext(context: C, state: object): DialogContext<C>;
-    /** NEW */
-    createContextAsync(context: C): Promise<DialogContext<C>>;
+    createContext(context: TurnContext): Promise<DialogContext>;
     /**
      * Finds a dialog that was previously added to the set using [add()](#add).
      *
@@ -208,8 +203,7 @@ export declare class DialogSet<C extends TurnContext = TurnContext> {
      * ```JavaScript
      * const dialog = dialogs.find('greeting');
      * ```
-     * @param T (Optional) type of dialog returned.
      * @param dialogId ID of the dialog/prompt to lookup.
      */
-    find<T extends Dialog<C> = Dialog<C>>(dialogId: string): T | undefined;
+    find(dialogId: string): Dialog | undefined;
 }

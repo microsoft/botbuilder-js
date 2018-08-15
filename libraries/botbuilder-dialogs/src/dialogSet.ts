@@ -5,9 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext, PropertyAccessor } from 'botbuilder';
-import { Dialog, Waterfall, WaterfallStep } from './dialog';
-import { DialogContext } from './dialogContext';
+import { TurnContext, StatePropertyAccessor } from 'botbuilder-core';
+import { Dialog } from './dialog';
+import { DialogContext, DialogState } from './dialogContext';
 
 /**
  * A related set of dialogs that can all call each other.
@@ -159,11 +159,11 @@ import { DialogContext } from './dialogContext';
  * messages our bot.
  * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
  */
-export class DialogSet<C extends TurnContext = TurnContext> {
-    private readonly dialogs: { [id:string]: Dialog<C>; } = {};
+export class DialogSet {
+    private readonly dialogs: { [id:string]: Dialog; } = {};
 
     /** NEW */
-    constructor(private readonly dialogStateProperty?: PropertyAccessor<object>) { }
+    constructor(private readonly dialogState: StatePropertyAccessor<DialogState>) { }
 
     /**
      * Adds a new dialog to the set and returns the added dialog.
@@ -172,21 +172,20 @@ export class DialogSet<C extends TurnContext = TurnContext> {
      * This example adds a waterfall dialog the greets the user with "Hello World!":
      * 
      * ```JavaScript
-     * dialogs.add('greeting', [
+     * dialogs.add(new Waterfall('greeting', [
      *      async function (dc) {
      *          await dc.context.sendActivity(`Hello world!`);
      *          await dc.end();
      *      } 
-     * ]);
+     * ]));
      * ```
-     * @param dialogId Unique ID of the dialog within the set.
-     * @param dialogOrSteps Either a new dialog or an array of waterfall steps to execute. If waterfall steps are passed in they will automatically be passed into an new instance of a `Waterfall` class.
+     * @param dialog The dialog being added.
      */
-    public add(dialogId: string, dialogOrSteps: Dialog<C>): Dialog<C>;
-    public add(dialogId: string, dialogOrSteps: WaterfallStep<C>[]): Waterfall<C>;
-    public add(dialogId: string, dialogOrSteps: Dialog<C>|WaterfallStep<C>[]): Dialog<C> {
-        if (this.dialogs.hasOwnProperty(dialogId)) { throw new Error(`DialogSet.add(): A dialog with an id of '${dialogId}' already added.`) }
-        return this.dialogs[dialogId] = Array.isArray(dialogOrSteps) ? new Waterfall(dialogOrSteps as any) : dialogOrSteps;
+    public add<T extends Dialog>(dialog: T): T {
+        if (!(dialog instanceof Dialog)) { throw new Error(`DialogSet.add(): Invalid dialog being added.`) }
+        if (typeof dialog.id !== 'string' || dialog.id.length == 0) { throw new Error(`DialogSet.add(): Dialog being added is missing its 'id'.`) }
+        if (this.dialogs.hasOwnProperty(dialog.id)) { throw new Error(`DialogSet.add(): A dialog with an id of '${dialog.id}' already added.`) }
+        return this.dialogs[dialog.id] = dialog;
     }
 
 
@@ -202,20 +201,10 @@ export class DialogSet<C extends TurnContext = TurnContext> {
      * const dc = dialogs.createContext(context, conversation);  
      * ```
      * @param context Context for the current turn of conversation with the user.
-     * @param state State object being used to persist the dialog stack.
      */
-    public createContext(context: C, state: object): DialogContext<C> {
-        return new DialogContext(this, context, state);
-    }
-
-    /** NEW */
-    public async createContextAsync(context: C): Promise<DialogContext<C>> {
-        if (!this.dialogStateProperty) { throw new Error(`DialogSet.createContextAsync(): the dialog set was not bound to a stateProperty when constructed.`) }
-        let state = await this.dialogStateProperty.get(context);
-        if (typeof state !== 'object') {
-            state = {};
-            await this.dialogStateProperty.set(context, state);
-        }
+    public async createContext(context: TurnContext): Promise<DialogContext> {
+        if (!this.dialogState) { throw new Error(`DialogSet.createContextAsync(): the dialog set was not bound to a stateProperty when constructed.`) }
+        let state = await this.dialogState.get(context, { dialogStack: [] });
         return new DialogContext(this, context, state);
     }
 
@@ -228,10 +217,9 @@ export class DialogSet<C extends TurnContext = TurnContext> {
      * ```JavaScript
      * const dialog = dialogs.find('greeting');
      * ```
-     * @param T (Optional) type of dialog returned.
      * @param dialogId ID of the dialog/prompt to lookup.
      */
-    public find<T extends Dialog<C> = Dialog<C>>(dialogId: string): T|undefined {
-        return this.dialogs.hasOwnProperty(dialogId) ? this.dialogs[dialogId] as T : undefined;
+    public find(dialogId: string): Dialog|undefined {
+        return this.dialogs.hasOwnProperty(dialogId) ? this.dialogs[dialogId] : undefined;
     }
 }

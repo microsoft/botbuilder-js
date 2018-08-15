@@ -5,16 +5,20 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext } from 'botbuilder';
-import * as prompts from 'botbuilder-prompts';
+import { TurnContext, TokenResponse } from 'botbuilder-core';
 import { DialogContext } from '../dialogContext';
-import { Dialog } from '../dialog';
-import { PromptOptions } from './prompt';
+import { Dialog, DialogTurnResult } from '../dialog';
+import { PromptOptions, PromptValidator } from './prompt';
 /**
- * Settings used to configure an `OAuthPrompt` instance. Includes the ability to adjust the prompts
- * timeout settings.
+ * Settings used to configure an `OAuthPrompt` instance.
  */
-export interface OAuthPromptSettingsWithTimeout extends prompts.OAuthPromptSettings {
+export interface OAuthPromptSettings {
+    /** Name of the OAuth connection being used. */
+    connectionName: string;
+    /** Title of the cards signin button. */
+    title: string;
+    /** (Optional) additional text to include on the signin card. */
+    text?: string;
     /**
      * (Optional) number of milliseconds the prompt will wait for the user to authenticate.
      * Defaults to a value `54,000,000` (15 minutes.)
@@ -80,19 +84,20 @@ export interface OAuthPromptSettingsWithTimeout extends prompts.OAuthPromptSetti
  *      }
  * ]);
  * ```
- * @param C The type of `TurnContext` being passed around. This simply lets the typing information for any context extensions flow through to dialogs and waterfall steps.
  */
-export declare class OAuthPrompt<C extends TurnContext> extends Dialog<C> {
+export declare class OAuthPrompt extends Dialog {
     private settings;
-    private prompt;
+    private validator;
     /**
      * Creates a new `OAuthPrompt` instance.
+     * @param dialogId Unique ID of the dialog within its parent `DialogSet`.
      * @param settings Settings used to configure the prompt.
      * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
      */
-    constructor(settings: OAuthPromptSettingsWithTimeout, validator?: prompts.PromptValidator<any, any>);
-    dialogBegin(dc: DialogContext<C>, options?: PromptOptions): Promise<any>;
-    dialogContinue(dc: DialogContext<C>): Promise<any>;
+    constructor(dialogId: string, settings: OAuthPromptSettings, validator?: PromptValidator<TokenResponse>);
+    dialogBegin(dc: DialogContext, options?: PromptOptions): Promise<DialogTurnResult>;
+    dialogContinue(dc: DialogContext): Promise<DialogTurnResult>;
+    getUserToken(context: TurnContext, code?: string): Promise<TokenResponse | undefined>;
     /**
      * Signs the user out of the service.
      *
@@ -109,4 +114,9 @@ export declare class OAuthPrompt<C extends TurnContext> extends Dialog<C> {
      * @param context
      */
     signOutUser(context: TurnContext): Promise<void>;
+    private sendOAuthCardAsync(context, prompt?);
+    private recognizeToken(context);
+    private isTokenResponseEvent(context);
+    private isTeamsVerificationInvoke(context);
+    private channelSupportsOAuthCard(channelId);
 }

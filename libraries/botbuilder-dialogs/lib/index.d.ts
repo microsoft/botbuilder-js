@@ -2,9 +2,10 @@
  * @module botbuilder-dialogs
  */
 /** Licensed under the MIT License. */
-export * from './prompts/index';
+export * from './choices';
+export * from './prompts';
 export * from './dialog';
-export * from './dialogContainer';
+export * from './componentDialog';
 export * from './dialogContext';
 export * from './dialogSet';
-export { FoundChoice, Choice, ChoiceFactoryOptions, FoundDatetime, FindChoicesOptions, ListStyle, PromptValidator } from 'botbuilder-prompts';
+export * from './waterfallDialog';

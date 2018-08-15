@@ -6,10 +6,10 @@
  * Licensed under the MIT License.
  */
 
-import { BotAdapter } from './botAdapter';
-import { TurnContext } from './turnContext';
-import { Promiseable } from './middlewareSet';
-import { Activity, ActivityTypes, ResourceResponse, ConversationReference } from 'botframework-schema';
+import { 
+    Activity, ActivityTypes, ResourceResponse, ConversationReference,
+    BotAdapter, TurnContext, Promiseable
+ } from 'botbuilder-core';
 import * as readline from 'readline';
 
 /**

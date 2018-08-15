@@ -18,7 +18,7 @@ class TestContext extends TurnContext {
     }
 }
 
-describe('prompts/TextPrompt', function() {
+describe.skip('prompts/TextPrompt', function() {
     this.timeout(5000);
 
     it('should call TextPrompt using dc.prompt().', function (done) {

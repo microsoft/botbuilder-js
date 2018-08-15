@@ -3,7 +3,6 @@ const { DialogSet, Dialog } =  require('../');
 const assert = require('assert');
 
 const beginMessage = { text: `begin`, type: 'message' };
-const continueMessage = { text: `continue`, type: 'message' };
 
 class TestContext extends TurnContext {
     constructor(request) {
@@ -36,10 +35,10 @@ class TestDialog extends Dialog {
     }
 }
 
-describe('Dialog', function() {
+describe.skip('Dialog', function() {
     this.timeout(5000);
 
-    it('should call dialog from a dialog set.', function (done) {
+    it('should call dialog from a dialog set.', async function () {
         const dialog = new TestDialog();
 
         const dialogs = new DialogSet();
@@ -47,93 +46,35 @@ describe('Dialog', function() {
 
         const state = {};
         const context = new TestContext(beginMessage);
-        const dc = dialogs.createContext(context, state);
-        dc.begin('dialog', { foo: 'bar' }).then(() => {
-            assert(dialog.beginCalled);
-            assert(dialog.beginArgs && dialog.beginArgs.foo === 'bar');
-            done();
-        });
+        const dc = await dialogs.createContext(context, state);
+        await dc.begin('dialog', { foo: 'bar' })
+        assert(dialog.beginCalled);
+        assert(dialog.beginArgs && dialog.beginArgs.foo === 'bar');
     });
 
-    it('should call dialog using begin().', function (done) {
+    it('should call dialog using begin().', async function () {
         const dialog = new TestDialog();
 
         const state = {};
         const context = new TestContext(beginMessage);
-        dialog.begin(context, state, { foo: 'bar' }).then((completion) => {
-            assert(completion && completion.isActive);
-            assert(dialog.beginCalled);
-            assert(dialog.beginArgs && dialog.beginArgs.foo === 'bar');
-            done();
-        });
+        let completion = await dialog.begin(context, state, { foo: 'bar' });
+
+        assert(completion && completion.isActive);
+        assert(dialog.beginCalled);
+        assert(dialog.beginArgs && dialog.beginArgs.foo === 'bar');
     });
 
-    it('should continue() a multi-turn dialog.', function (done) {
+    it('should continue() a multi-turn dialog.', async function () {
         const dialog = new TestDialog();
 
         const state = {};
         const context = new TestContext(beginMessage);
-        dialog.begin(context, state, { foo: 'bar' }).then((completion) => {
-            assert(completion && completion.isActive);
-            dialog.continue(context, state).then((completion) => {
-                assert(dialog.continueCalled);
-                assert(completion && !completion.isActive && completion.isCompleted);
-                assert(completion.result === 120);
-                done();
-            });
-        });
-    });
-});
+        let completion = await dialog.begin(context, state, { foo: 'bar' });
+        assert(completion && completion.isActive);
 
-
-describe('Waterfall', function() {
-    this.timeout(5000);
-
-    it('should execute a sequence of waterfall steps.', function (done) {
-        const dialogs = new DialogSet();
-        dialogs.add('a', [
-            function (dc) {
-                assert(dc);
-                return dc.context.sendActivity(`foo`);
-            },
-            function (dc) {
-                assert(dc);
-                done();
-            }
-        ]);
-
-        const state = {};
-        const context = new TestContext(beginMessage);
-        const dc = dialogs.createContext(context, state);
-        dc.begin('a').then(() => {
-            const dc2 = dialogs.createContext(context, state);
-            return dc2.continue();
-        });
-    });
-
-    it('should support calling next() to move to next steps.', function (done) {
-        let calledNext = false;
-        const dialogs = new DialogSet();
-        dialogs.add('a', [
-            function (dc, args, next) {
-                assert(dc);
-                assert(args === 'z');
-                return next(args);
-            },
-            function (dc, args) {
-                assert(dc);
-                assert(args === 'z');
-                calledNext = true;
-                return dc.end();
-            }
-        ]);
-
-        const state = {};
-        const context = new TestContext(beginMessage);
-        const dc = dialogs.createContext(context, state);
-        dc.begin('a', 'z').then(() => {
-            assert(calledNext);
-            done();
-        });
+        completion = await dialog.continue(context, state);
+        assert(dialog.continueCalled);
+        assert(completion && !completion.isActive && completion.isCompleted);
+        assert(completion.result === 120);
     });
 });

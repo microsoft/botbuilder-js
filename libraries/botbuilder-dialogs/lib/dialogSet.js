@@ -162,15 +162,37 @@ const dialogContext_1 = require("./dialogContext");
  */
 class DialogSet {
     /** NEW */
-    constructor(dialogStateProperty) {
-        this.dialogStateProperty = dialogStateProperty;
+    constructor(dialogState) {
+        this.dialogState = dialogState;
         this.dialogs = {};
     }
-    add(dialogId, dialogOrSteps) {
-        if (this.dialogs.hasOwnProperty(dialogId)) {
-            throw new Error(`DialogSet.add(): A dialog with an id of '${dialogId}' already added.`);
+    /**
+     * Adds a new dialog to the set and returns the added dialog.
+     *
+     * @remarks
+     * This example adds a waterfall dialog the greets the user with "Hello World!":
+     *
+     * ```JavaScript
+     * dialogs.add(new Waterfall('greeting', [
+     *      async function (dc) {
+     *          await dc.context.sendActivity(`Hello world!`);
+     *          await dc.end();
+     *      }
+     * ]));
+     * ```
+     * @param dialog The dialog being added.
+     */
+    add(dialog) {
+        if (!(dialog instanceof dialog_1.Dialog)) {
+            throw new Error(`DialogSet.add(): Invalid dialog being added.`);
         }
-        return this.dialogs[dialogId] = Array.isArray(dialogOrSteps) ? new dialog_1.Waterfall(dialogOrSteps) : dialogOrSteps;
+        if (typeof dialog.id !== 'string' || dialog.id.length == 0) {
+            throw new Error(`DialogSet.add(): Dialog being added is missing its 'id'.`);
+        }
+        if (this.dialogs.hasOwnProperty(dialog.id)) {
+            throw new Error(`DialogSet.add(): A dialog with an id of '${dialog.id}' already added.`);
+        }
+        return this.dialogs[dialog.id] = dialog;
     }
     /**
      * Creates a dialog context which can be used to work with the dialogs in the set.
@@ -184,22 +206,13 @@ class DialogSet {
      * const dc = dialogs.createContext(context, conversation);
      * ```
      * @param context Context for the current turn of conversation with the user.
-     * @param state State object being used to persist the dialog stack.
      */
-    createContext(context, state) {
-        return new dialogContext_1.DialogContext(this, context, state);
-    }
-    /** NEW */
-    createContextAsync(context) {
+    createContext(context) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!this.dialogStateProperty) {
+            if (!this.dialogState) {
                 throw new Error(`DialogSet.createContextAsync(): the dialog set was not bound to a stateProperty when constructed.`);
             }
-            let state = yield this.dialogStateProperty.get(context);
-            if (typeof state !== 'object') {
-                state = {};
-                yield this.dialogStateProperty.set(context, state);
-            }
+            let state = yield this.dialogState.get(context, { dialogStack: [] });
             return new dialogContext_1.DialogContext(this, context, state);
         });
     }
@@ -212,7 +225,6 @@ class DialogSet {
      * ```JavaScript
      * const dialog = dialogs.find('greeting');
      * ```
-     * @param T (Optional) type of dialog returned.
      * @param dialogId ID of the dialog/prompt to lookup.
      */
     find(dialogId) {

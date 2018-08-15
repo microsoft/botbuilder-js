@@ -11,7 +11,7 @@ const path = require("path");
 const fs = require("async-file");
 const filenamify = require("filenamify");
 const rimraf = require("rimraf");
-const transcriptLogger_1 = require("./transcriptLogger");
+const botbuilder_core_1 = require("botbuilder-core");
 /**
  * The file transcript store stores transcripts in file system with each activity as a file.
  */
@@ -52,7 +52,7 @@ class FileTranscriptStore {
         if (!conversationId) {
             throw new Error('Missing conversationId');
         }
-        let pagedResult = new transcriptLogger_1.PagedResult();
+        let pagedResult = new botbuilder_core_1.PagedResult();
         let transcriptFolder = this.getTranscriptFolder(channelId, conversationId);
         return fs.exists(transcriptFolder).then(exists => {
             if (!exists) {
@@ -95,7 +95,7 @@ class FileTranscriptStore {
         if (!channelId) {
             throw new Error('Missing channelId');
         }
-        let pagedResult = new transcriptLogger_1.PagedResult();
+        let pagedResult = new botbuilder_core_1.PagedResult();
         let channelFolder = this.getChannelFolder(channelId);
         return fs.exists(channelFolder).then(exists => {
             if (!exists) {
