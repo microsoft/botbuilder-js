@@ -8,7 +8,7 @@
 import { TurnContext } from './turnContext';
 import { Middleware } from './middlewareSet';
 import { Storage, StoreItems, calculateChangeHash, StorageKeyFactory } from './storage';
-import { PropertyAccessor, BotStatePropertyAccessor } from './botStatePropertyAccessor';
+import { StatePropertyAccessor, BotStatePropertyAccessor } from './botStatePropertyAccessor';
 
 /**
  * State information cached off the context object by a `BotState` instance.
@@ -51,7 +51,7 @@ export interface CachedBotState {
  */
 export class BotState implements Middleware {
     /** NEW */
-    public readonly properties: Map<string, PropertyAccessor> = new Map();
+    public readonly properties: Map<string, StatePropertyAccessor> = new Map();
 
     private stateKey = Symbol('state');
 
@@ -63,7 +63,7 @@ export class BotState implements Middleware {
     constructor(protected storage: Storage, protected storageKey: StorageKeyFactory) { }
 
     /** NEW */
-    public createProperty<T = any>(name: string): PropertyAccessor<T> {
+    public createProperty<T = any>(name: string): StatePropertyAccessor<T> {
         if (this.properties.has(name)) { throw new Error(`BotState.createProperty(): a property named '${name}' already exists.`); }
         const prop = new BotStatePropertyAccessor<T>(this, name);
         this.properties.set(name, prop);

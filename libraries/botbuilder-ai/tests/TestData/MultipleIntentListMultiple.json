@@ -1,0 +1,139 @@
+{
+  "text": "I want to travel on DL",
+  "intents": {
+    "Travel": {
+      "score": 0.646017
+    },
+    "Weather_GetForecast": {
+      "score": 0.01369915
+    },
+    "None": {
+      "score": 0.0121540092
+    },
+    "search": {
+      "score": 0.0115603227
+    },
+    "Delivery": {
+      "score": 0.01030324
+    },
+    "Help": {
+      "score": 0.009497096
+    },
+    "SpecifyName": {
+      "score": 0.009376918
+    },
+    "Cancel": {
+      "score": 0.008986873
+    },
+    "Greeting": {
+      "score": 0.00274561835
+    },
+    "EntityTests": {
+      "score": 0.002676612
+    }
+  },
+  "entities": {
+    "$instance": {
+      "Airline": [
+        {
+          "startIndex": 20,
+          "endIndex": 22,
+          "text": "dl",
+          "type": "Airline"
+        }
+      ],
+      "dimension": [
+        {
+          "startIndex": 20,
+          "endIndex": 22,
+          "text": "dl",
+          "type": "builtin.dimension"
+        }
+      ]
+    },
+    "Airline": [
+      [
+        "Delta",
+        "Virgin"
+      ]
+    ],
+    "dimension": [
+      {
+        "units": "Deciliter"
+      }
+    ]
+  },
+  "luisResult": {
+    "query": "I want to travel on DL",
+    "topScoringIntent": {
+      "intent": "Travel",
+      "score": 0.646017
+    },
+    "intents": [
+      {
+        "intent": "Travel",
+        "score": 0.646017
+      },
+      {
+        "intent": "Weather.GetForecast",
+        "score": 0.01369915
+      },
+      {
+        "intent": "None",
+        "score": 0.0121540092
+      },
+      {
+        "intent": "search",
+        "score": 0.0115603227
+      },
+      {
+        "intent": "Delivery",
+        "score": 0.01030324
+      },
+      {
+        "intent": "Help",
+        "score": 0.009497096
+      },
+      {
+        "intent": "SpecifyName",
+        "score": 0.009376918
+      },
+      {
+        "intent": "Cancel",
+        "score": 0.008986873
+      },
+      {
+        "intent": "Greeting",
+        "score": 0.00274561835
+      },
+      {
+        "intent": "EntityTests",
+        "score": 0.002676612
+      }
+    ],
+    "entities": [
+      {
+        "entity": "dl",
+        "type": "Airline",
+        "startIndex": 20,
+        "endIndex": 21,
+        "resolution": {
+          "values": [
+            "Delta",
+            "Virgin"
+          ]
+        }
+      },
+      {
+        "entity": "dl",
+        "type": "builtin.dimension",
+        "startIndex": 20,
+        "endIndex": 21,
+        "resolution": {
+          "unit": "Deciliter",
+          "value": null
+        }
+      }
+    ]
+  }
+}

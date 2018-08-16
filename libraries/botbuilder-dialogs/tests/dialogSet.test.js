@@ -16,7 +16,7 @@ class TestContext extends TurnContext {
     }
 }
 
-describe('DialogSet', function() {
+describe.skip('DialogSet', function() {
     this.timeout(5000);
 
     it('should throw an exception when trying to add the same dialog twice.', function (done) {

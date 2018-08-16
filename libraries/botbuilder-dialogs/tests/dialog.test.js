@@ -35,7 +35,7 @@ class TestDialog extends Dialog {
     }
 }
 
-describe('Dialog', function() {
+describe.skip('Dialog', function() {
     this.timeout(5000);
 
     it('should call dialog from a dialog set.', async function () {
