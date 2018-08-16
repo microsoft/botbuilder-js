@@ -12,6 +12,7 @@ script:
 - echo 'Begin build'
 - echo Version = ${Version}
 - npm run test:travis
+- npm run tslint
 - echo 'End build'
 after_success:
 - echo 'Begin deploy'
