@@ -131,9 +131,32 @@ class BotConfiguration {
     }
     // decrypt all values in the config
     decrypt(secret) {
-        this.validateSecretKey(secret);
-        for (let service of this.services) {
-            service.decrypt(secret);
+        try {
+            this.validateSecretKey(secret);
+            for (let service of this.services) {
+                service.decrypt(secret);
+            }
+        }
+        catch (_a) {
+            // legacy decryption
+            this.secretKey = this.legacyDecrypt(this.secretKey, secret);
+            this.secretKey = encrypt_1.encryptString(this.secretKey, secret);
+            let encryptedProperties = {
+                abs: [],
+                endpoint: ['appPassword'],
+                luis: ['authoringKey', 'subscriptionKey'],
+                dispatch: ['authoringKey', 'subscriptionKey'],
+                file: [],
+                qna: ['subscriptionKey']
+            };
+            for (var service of this.services) {
+                for (let i = 0; i < encryptedProperties[service.type].length; i++) {
+                    let prop = encryptedProperties[service.type][i];
+                    let val = service[prop];
+                    service[prop] = this.legacyDecrypt(val, secret);
+                }
+            }
+            return service;
         }
     }
     // remove service by name or id

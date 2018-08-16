@@ -15,7 +15,7 @@ export declare class BotConfiguration implements Partial<IBotConfiguration> {
     clearSecret(): void;
     connectService(newService: IConnectedService): void;
     encrypt(secret: string): void;
-    decrypt(secret?: string): void;
+    decrypt(secret?: string): IConnectedService;
     disconnectServiceByNameOrId(nameOrId: string): IConnectedService;
     disconnectService(type: string, id: string): void;
     validateSecretKey(secret: string): void;

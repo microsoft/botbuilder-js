@@ -5,6 +5,7 @@ let fs = require('fs');
 // do not save over testbot
 const testBotPath = "tests/test.bot";
 const saveBotPath = "tests/save.bot";
+const legacyBotPath = "tests/legacy.bot";
 
 describe("LoadAndSaveTests", () => {
     it("SerializeBotFile", async () => {
@@ -145,5 +146,16 @@ describe("LoadAndSaveTests", () => {
             }
         }
     });
+
+    it("LegacyEncryption", async () => {
+
+        var config = await bf.BotConfiguration.load(legacyBotPath, "password");
+        assert.equal(config.services[0].appPassword, "xyzpdq", "value should be unencrypted");
+    
+        await config.save(saveBotPath, "password");
+        var config = await bf.BotConfiguration.load(saveBotPath, "password");
+        fs.unlinkSync(saveBotPath);
+    });
+
 });
 
