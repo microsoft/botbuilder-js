@@ -1,8 +1,8 @@
 const assert = require('assert');
 
-const { TestAdapter } = require('botbuilder-core-extensions');
+const { TestAdapter } = require('botbuilder');
 const botLogic = require('./bot');
-const TranscriptUtilities = require('../../libraries/botbuilder-core-extensions/tests/transcriptUtilities');
+const TranscriptUtilities = require('../../libraries/botbuilder-core/tests/transcriptUtilities');
 
 describe(`ConversationUpdate`, function () {
     this.timeout(5000);

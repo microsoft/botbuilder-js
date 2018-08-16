@@ -1,5 +1,5 @@
 /**
- * @module botbuilder-choices
+ * @module botbuilder-dialogs
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.  

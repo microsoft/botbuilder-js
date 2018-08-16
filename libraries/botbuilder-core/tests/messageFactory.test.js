@@ -1,6 +1,5 @@
 const assert = require('assert');
-const { BotContext, InputHints, AttachmentLayoutTypes } = require('botbuilder-core');
-const { MessageFactory } = require('../');
+const { MessageFactory, InputHints, AttachmentLayoutTypes } = require('../');
 
 function assertMessage(activity) {
     assert(typeof activity === 'object', `invalid activity returned.`);

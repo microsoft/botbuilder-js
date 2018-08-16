@@ -1,4 +1,4 @@
-const { TestAdapter, TurnContext } = require('botbuilder');
+const { TestAdapter, TurnContext } = require('botbuilder-core');
 const { DialogSet, DialogContainer } =  require('../');
 const assert = require('assert');
 

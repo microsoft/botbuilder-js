@@ -1,6 +1,5 @@
 const assert = require('assert');
-const { TurnContext } = require('botbuilder-core');
-const { UserState, MemoryStorage, TestAdapter } = require('../');
+const { TurnContext, UserState, MemoryStorage, TestAdapter } = require('../');
 
 const receivedMessage = { text: 'received', type: 'message', channelId: 'test', from: { id: 'user' } };
 const missingChannelId = { text: 'received', type: 'message', from: { id: 'user' } };

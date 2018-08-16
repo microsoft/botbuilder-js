@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { ActivityTypes } = require('botbuilder-core');
+const { ActivityTypes } = require('../');
 
 function uuid() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {

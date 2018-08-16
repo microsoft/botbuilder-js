@@ -4,15 +4,13 @@
   "description": "Bot Builder v4 example showing a simple bot that echos anything you say.",
   "main": "app.js",
   "scripts": {
-    "test": "mocha tests/*.test.js",
+    "test-sample": "mocha tests/*.test.js",
     "start": "node app.js"
   },
   "author": "Microsoft",
   "license": "MIT",
   "dependencies": {
-    "botbuilder": "^4.0.0-m4.2",
-    "botbuilder-core": "^4.0.0-m4.2",
-    "botbuilder-core-extensions": "^4.0.0-m4.2",
+    "botbuilder": "^4.0.0-preview1.2",
     "restify": "^6.3.4"
   },
   "devDependencies": {

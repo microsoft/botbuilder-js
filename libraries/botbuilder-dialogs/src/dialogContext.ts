@@ -9,7 +9,7 @@ import { TurnContext, Activity } from 'botbuilder-core';
 import { DialogInstance, DialogTurnResult, DialogReason } from './dialog';
 import { DialogSet } from './dialogSet';
 import { PromptOptions } from './prompts';
-import { Choice } from 'botbuilder-prompts';
+import { Choice } from './choices';
 
 export interface DialogState
 {

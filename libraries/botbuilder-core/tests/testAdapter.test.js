@@ -1,6 +1,5 @@
 const assert = require('assert');
-const { ActivityTypes } = require('botbuilder-core');
-const { TestAdapter } = require('../');
+const { TestAdapter, ActivityTypes } = require('../');
 
 const receivedMessage = { text: 'received', type: 'message' };
 const updatedActivity = { text: 'update', type: 'message' };

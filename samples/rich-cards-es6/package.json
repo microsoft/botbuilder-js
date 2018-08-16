@@ -5,17 +5,16 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "test": "mocha *.test.js"
+    "test-sample": "mocha *.test.js"
   },
   "author": "Microsoft",
   "license": "MIT",
   "dependencies": {
-    "botbuilder": "^4.0.0-m4.2",
-    "botbuilder-dialogs": "^4.0.0-m4.2",
+    "botbuilder": "^4.0.0-preview1.2",
+    "botbuilder-dialogs": "^4.0.0-preview1.2",
     "restify": "^6.3.4"
   },
   "devDependencies": {
-    "botbuilder-core-extensions": "^4.0.0-m4.2",
     "mocha": "^5.0.0"
   }
 }
