@@ -2,10 +2,6 @@ const { ActivityTypes, BotState, BotStatePropertyAccessor, ConversationState, Me
 const { DialogSet, DialogState, NumberPrompt, WaterfallDialog } =  require('../');
 const assert = require('assert');
 
-const beginMessage = { text: `begin`, type: 'message' };
-const answerMessage = { text: `I am 35'`, type: 'message' };
-const invalidMessage = { text: `I am 230`, type: 'message' };
-
 describe('NumberPrompt', function() {
     this.timeout(5000);
     it('should call NumberPrompt using dc.prompt().', function (done) {
