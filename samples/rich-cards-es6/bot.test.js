@@ -1,6 +1,6 @@
 const assert = require('assert');
 
-const { BotState, UserState, MemoryStorage, TestAdapter, ConversationState } = require('botbuilder-core-extensions');
+const { MemoryStorage, TestAdapter, ConversationState } = require('botbuilder');
 const TranscriptUtilities = require('../../libraries/botbuilder-core-extensions/tests/transcriptUtilities');
 const createBotLogic = require('./bot');
 
