@@ -18,7 +18,7 @@ class TestContext extends TurnContext {
     }
 }
 
-describe('QnAMaker', function () {
+xdescribe('QnAMaker', function () {
     this.timeout(10000);
     if (!knowledgeBaseId) {
         console.warn('WARNING: skipping QnAMaker test suite because QNAKNOWLEDGEBASEID environment variable is not defined');
