@@ -94,7 +94,7 @@ function TestJson(file, done, includeAllIntents, includeInstance) {
     });
 }
 
-describe.skip('LuisRecognizer', function () {
+describe('LuisRecognizer', function () {
     this.timeout(10000);
 
     if (!mockLuis && !subscriptionKey) {
