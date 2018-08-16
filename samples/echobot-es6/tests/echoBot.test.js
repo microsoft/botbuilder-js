@@ -2,7 +2,7 @@ const assert = require('assert');
 
 const { MemoryStorage, TestAdapter, ConversationState } = require('botbuilder');
 const CreateEchoBot = require('../echoBot');
-const TranscriptUtilities = require('../../../libraries/botbuilder-core-extensions/tests/transcriptUtilities');
+const TranscriptUtilities = require('../../../libraries/botbuilder-core/tests/transcriptUtilities');
 
 describe(`EchoBot`, function () {
     this.timeout(5000);

@@ -37,7 +37,7 @@ Simple bot that handles conversation updates.
 Simple echo bot that echoes a user's message back across _different channels_. 
 
 - Discusses the concept of BotState, speficically UserState and ConversationState 
-- These classes are exposed in [`botbuilder`](https://github.com/Microsoft/botbuilder-js/tree/master/libraries/botbuilder), but the source code can be found in [`botbuilder-core-extensions`](https://github.com/Microsoft/botbuilder-js/tree/master/libraries/botbuilder-core-extensions)
+- These classes are exposed in [`botbuilder`](https://github.com/Microsoft/botbuilder-js/tree/master/libraries/botbuilder), but the source code can be found in [`botbuilder-core`](https://github.com/Microsoft/botbuilder-js/tree/master/libraries/botbuilder-core)
 
 ### [single-prompt-bot-es6](./single-prompt-bot-es6)
 
@@ -56,7 +56,7 @@ Shows how to gather user information using multiple prompts with a dialog.
 
 Displays how to create and use Rich Cards using `CardFactory`.
 
-- Introduces Rich Cards and its factory which can be found in [`botbuilder-core-extensions`](https://github.com/Microsoft/botbuilder-js/tree/master/libraries/botbuilder-core-extensions) and is available in `botbuilder`
+- Introduces Rich Cards and its factory which can be found in [`botbuilder-cores`](https://github.com/Microsoft/botbuilder-js/tree/master/libraries/botbuilder-core) and is available in `botbuilder`
 
 ### [qna-maker-bot-es6](./qna-maker-bot-es6)
 

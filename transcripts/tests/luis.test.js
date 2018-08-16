@@ -1,6 +1,6 @@
 const assert = require('assert');
 const { LuisRecognizer } = require('botbuilder-ai');
-const assertBotLogicWithTranscript = require('../../libraries/botbuilder-core-extensions/tests/transcriptUtilities').assertBotLogicWithBotBuilderTranscript;
+const assertBotLogicWithTranscript = require('../../libraries/botbuilder-core/tests/transcriptUtilities').assertBotLogicWithBotBuilderTranscript;
 
 var luisAppId = process.env['LUISAPPID_TRANSCRIPT'];
 var luisSubscriptionKey = process.env['LUISAPPKEY_TRANSCRIPT'];

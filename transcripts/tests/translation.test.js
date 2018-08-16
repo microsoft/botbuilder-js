@@ -1,6 +1,6 @@
 const assert = require('assert');
 const { LanguageTranslator, LocaleConverter } = require('botbuilder-ai');
-const assertBotLogicWithTranscript = require('../../libraries/botbuilder-core-extensions/tests/transcriptUtilities').assertBotLogicWithBotBuilderTranscript;
+const assertBotLogicWithTranscript = require('../../libraries/botbuilder-core/tests/transcriptUtilities').assertBotLogicWithBotBuilderTranscript;
 
 var translatorKey = process.env['TRANSLATORKEY_TRANSCRIPT'];
 describe(`Translation Tests using transcripts`, function () {
