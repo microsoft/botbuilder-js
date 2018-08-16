@@ -9,10 +9,7 @@ before_install:
 install:
 - lerna bootstrap --hoist
 script:
-- echo 'Begin build'
-- echo Version = ${Version}
 - npm run test:travis
-- echo 'End build'
 after_success:
 - echo 'Begin deploy'
 - test $TRAVIS_BRANCH = "v-brhale-publish2" 
