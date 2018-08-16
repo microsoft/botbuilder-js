@@ -7,7 +7,7 @@ var luisSubscriptionKey = process.env['LUISAPPKEY_TRANSCRIPT'];
 var luisUriBase = process.env['LUISURIBASE_TRANSCRIPT'];
 var recognizer;
 
-describe(`LUIS Tests using transcripts`, function () {
+xdescribe(`LUIS Tests using transcripts`, function () {
     if (!luisAppId || !luisSubscriptionKey) {
         console.warn('* Missing LUIS Environment variables (LUISAPPID_TRANSCRIPT, LUISAPPKEY_TRANSCRIPT) - Skipping LUIS Tests');
         return;

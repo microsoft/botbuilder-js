@@ -1,6 +1,6 @@
 const assert = require('assert');
 const { QnAMaker } = require('botbuilder-ai');
-const assertBotLogicWithTranscript = require('../../libraries/botbuilder-core-extensions/tests/transcriptUtilities').assertBotLogicWithBotBuilderTranscript;
+const assertBotLogicWithTranscript = require('../../libraries/botbuilder-core/tests/transcriptUtilities').assertBotLogicWithBotBuilderTranscript;
 
 var qnaKnowledgeBaseId = process.env['QNAKNOWLEDGEBASEID_TRANSCRIPT'];
 var qnaEndpointKey = process.env['QNAENDPOINTKEY_TRANSCRIPT'];

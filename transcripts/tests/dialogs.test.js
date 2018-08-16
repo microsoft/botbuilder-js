@@ -1,12 +1,12 @@
 const assert = require('assert');
-const { createChoicePrompt, ListStyle } = require('botbuilder-prompts');
+//const { createChoicePrompt, ListStyle } = require('botbuilder-prompts');
 const {
     DialogSet, TextPrompt, ConfirmPrompt, ChoicePrompt, DatetimePrompt, NumberPrompt,
     AttachmentPrompt, FoundChoice, Choice, FoundDatetime
 } = require('botbuilder-dialogs');
-const assertBotLogicWithTranscript = require('../../libraries/-extensions/tests/transcriptUtilities').assertBotLogicWithBotBuilderTranscript;
+const assertBotLogicWithTranscript = require('../../libraries/botbuilder-core/tests/transcriptUtilities').assertBotLogicWithBotBuilderTranscript;
 
-describe(`Prompt Tests using transcripts`, function () {
+xdescribe(`Prompt Tests using transcripts`, function () {
     this.timeout(10000);
 
     it('AttachmentPrompt', assertBotLogicWithTranscript('DialogsTests/AttachmentPrompt.chat', AttachmentPromptLogic));
