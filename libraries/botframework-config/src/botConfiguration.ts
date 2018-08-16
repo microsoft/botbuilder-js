@@ -153,27 +153,31 @@ export class BotConfiguration implements Partial<IBotConfiguration> {
                 (<ConnectedService>service).decrypt(secret);
             }
         }
-        catch 
-        {
-            // legacy decryption
-            this.secretKey = this.legacyDecrypt(this.secretKey, secret);
-            this.secretKey = encryptString(this.secretKey, secret);
+        catch (err) {
+            try {
 
-            let encryptedProperties: { [key: string]: string[]; } = {
-                abs: [],
-                endpoint: ['appPassword'],
-                luis: ['authoringKey', 'subscriptionKey'],
-                dispatch: ['authoringKey', 'subscriptionKey'],
-                file: [],
-                qna: ['subscriptionKey']
-            };
+                // legacy decryption
+                this.secretKey = this.legacyDecrypt(this.secretKey, secret);
+                this.secretKey = encryptString(this.secretKey, secret);
 
-            for (var service of this.services) {
-                for (let i = 0; i < encryptedProperties[service.type].length; i++) {
-                    let prop = encryptedProperties[service.type][i];
-                    let val = <string>(<any>service)[prop];
-                    (<any>service)[prop] = this.legacyDecrypt(val, secret);
+                let encryptedProperties: { [key: string]: string[]; } = {
+                    abs: [],
+                    endpoint: ['appPassword'],
+                    luis: ['authoringKey', 'subscriptionKey'],
+                    dispatch: ['authoringKey', 'subscriptionKey'],
+                    file: [],
+                    qna: ['subscriptionKey']
+                };
+
+                for (var service of this.services) {
+                    for (let i = 0; i < encryptedProperties[service.type].length; i++) {
+                        let prop = encryptedProperties[service.type][i];
+                        let val = <string>(<any>service)[prop];
+                        (<any>service)[prop] = this.legacyDecrypt(val, secret);
+                    }
                 }
+            } catch (err2) {
+                throw err;
             }
 
             return service;

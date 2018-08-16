@@ -137,24 +137,29 @@ class BotConfiguration {
                 service.decrypt(secret);
             }
         }
-        catch (_a) {
-            // legacy decryption
-            this.secretKey = this.legacyDecrypt(this.secretKey, secret);
-            this.secretKey = encrypt_1.encryptString(this.secretKey, secret);
-            let encryptedProperties = {
-                abs: [],
-                endpoint: ['appPassword'],
-                luis: ['authoringKey', 'subscriptionKey'],
-                dispatch: ['authoringKey', 'subscriptionKey'],
-                file: [],
-                qna: ['subscriptionKey']
-            };
-            for (var service of this.services) {
-                for (let i = 0; i < encryptedProperties[service.type].length; i++) {
-                    let prop = encryptedProperties[service.type][i];
-                    let val = service[prop];
-                    service[prop] = this.legacyDecrypt(val, secret);
+        catch (err) {
+            try {
+                // legacy decryption
+                this.secretKey = this.legacyDecrypt(this.secretKey, secret);
+                this.secretKey = encrypt_1.encryptString(this.secretKey, secret);
+                let encryptedProperties = {
+                    abs: [],
+                    endpoint: ['appPassword'],
+                    luis: ['authoringKey', 'subscriptionKey'],
+                    dispatch: ['authoringKey', 'subscriptionKey'],
+                    file: [],
+                    qna: ['subscriptionKey']
+                };
+                for (var service of this.services) {
+                    for (let i = 0; i < encryptedProperties[service.type].length; i++) {
+                        let prop = encryptedProperties[service.type][i];
+                        let val = service[prop];
+                        service[prop] = this.legacyDecrypt(val, secret);
+                    }
                 }
+            }
+            catch (err2) {
+                throw err;
             }
             return service;
         }
