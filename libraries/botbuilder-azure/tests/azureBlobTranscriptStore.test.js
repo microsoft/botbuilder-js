@@ -84,7 +84,7 @@ testStorage = function () {
     })
 }
 
-describe('AzureBlobTranscriptStore', function () {
+xdescribe('AzureBlobTranscriptStore', function () {
     this.timeout(20000);
     before('cleanup', reset);
     testStorage();

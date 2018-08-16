@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext, Activity, InputHints } from 'botbuilder';
+import { TurnContext, Activity, InputHints } from 'botbuilder-core';
 import { DialogContext } from '../dialogContext';
 import { Dialog, DialogTurnResult, DialogInstance, DialogReason } from '../dialog';
 import { PromptValidator, PromptOptions, PromptRecognizerResult } from './prompt';

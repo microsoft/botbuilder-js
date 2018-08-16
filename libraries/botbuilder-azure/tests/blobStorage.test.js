@@ -220,7 +220,7 @@ testStorage = function () {
     })
 }
 
-describe('BlobStorage', function () {
+xdescribe('BlobStorage', function () {
     this.timeout(20000);
     before('cleanup', reset);
     testStorage();

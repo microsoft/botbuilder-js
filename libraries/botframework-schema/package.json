@@ -15,7 +15,8 @@
   "devDependencies": {},
   "scripts": {
     "build": "tsc",
-    "clean": "erase /q lib\\*.*"
+    "clean": "erase /q lib\\*.*",
+    "set-version": "npm version --allow-same-version ${Version}"
   },
   "homepage": "http://github.com/Microsoft/botbuilder-js",
   "bugs": {

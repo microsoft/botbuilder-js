@@ -1,6 +1,5 @@
 const assert = require('assert');
-const { ActivityTypes } = require('botbuilder-core');
-const { TestAdapter, TranscriptLoggerMiddleware, MemoryTranscriptStore } = require('../');
+const { TestAdapter, TranscriptLoggerMiddleware, MemoryTranscriptStore, ActivityTypes } = require('../');
 
 describe(`TranscriptLoggerMiddleware`, function () {
     this.timeout(5000);

@@ -1,6 +1,5 @@
 const assert = require('assert');
-const { TurnContext } = require('botbuilder-core');
-const { BotStateSet, TestAdapter } = require('../');
+const { TurnContext, BotStateSet, TestAdapter } = require('../');
 
 const receivedMessage = { text: 'received', type: 'message' };
 

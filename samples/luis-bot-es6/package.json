@@ -9,9 +9,9 @@
   "author": "Microsoft",
   "license": "ISC",
   "dependencies": {
-    "botbuilder": "^4.0.0-m4.1",
-    "botbuilder-ai": "^4.0.0-m4.1",
-    "botbuilder-dialogs": "^4.0.0-m4.1",
+    "botbuilder": "^4.0.0-preview1.2",
+    "botbuilder-ai": "^4.0.0-preview1.2",
+    "botbuilder-dialogs": "^4.0.0-preview1.2",
     "lodash": "^4.17.5",
     "restify": "^6.3.4"
   }
