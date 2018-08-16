@@ -25,7 +25,7 @@ describe("EncryptionTests", () => {
     it("EncryptWithNullSecretThrows", () => {
         let value = "1234567890";
         try {
-            config.encryptString(value, null);
+            config.encryptString(value);
             assert.fail("did not throw error or exception");
         }
         catch (Error) {

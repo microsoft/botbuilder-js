@@ -31,14 +31,20 @@ export class QnaMakerService extends ConnectedService implements IQnAService {
 
     // encrypt keys in service
     public encrypt(secret: string, iv?: string): void {
-        this.endpointKey = encryptString(this.endpointKey, secret, iv);
-        this.subscriptionKey = encryptString(this.subscriptionKey, secret, iv);
+        if (this.endpointKey && this.endpointKey.length > 0)
+            this.endpointKey = encryptString(this.endpointKey, secret, iv);
+
+        if (this.subscriptionKey && this.subscriptionKey.length > 0)
+            this.subscriptionKey = encryptString(this.subscriptionKey, secret, iv);
     }
 
     // decrypt keys in service
     public decrypt(secret: string, iv?: string): void {
-        this.endpointKey = decryptString(this.endpointKey, secret, iv);
-        this.subscriptionKey = decryptString(this.subscriptionKey, secret, iv);
+        if (this.endpointKey && this.endpointKey.length > 0)
+            this.endpointKey = decryptString(this.endpointKey, secret, iv);
+
+        if (this.subscriptionKey && this.subscriptionKey.length > 0)
+            this.subscriptionKey = decryptString(this.subscriptionKey, secret, iv);
     }
 
 }

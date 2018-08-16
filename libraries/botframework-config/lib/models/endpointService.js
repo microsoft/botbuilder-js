@@ -24,11 +24,13 @@ class EndpointService extends connectedService_1.ConnectedService {
     }
     // encrypt keys in service
     encrypt(secret, iv) {
-        this.appPassword = encrypt_1.encryptString(this.appPassword, secret, iv);
+        if (this.appPassword && this.appPassword.length > 0)
+            this.appPassword = encrypt_1.encryptString(this.appPassword, secret, iv);
     }
     // decrypt keys in service
     decrypt(secret, iv) {
-        this.appPassword = encrypt_1.decryptString(this.appPassword, secret, iv);
+        if (this.appPassword && this.appPassword.length > 0)
+            this.appPassword = encrypt_1.decryptString(this.appPassword, secret, iv);
     }
 }
 exports.EndpointService = EndpointService;

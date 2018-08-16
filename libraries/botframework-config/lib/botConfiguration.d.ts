@@ -19,6 +19,6 @@ export declare class BotConfiguration implements Partial<IBotConfiguration> {
     disconnectServiceByNameOrId(nameOrId: string): IConnectedService;
     disconnectService(type: string, id: string): void;
     validateSecretKey(secret: string): void;
-    private legacyDecrypt(encryptedValue, secret);
+    private legacyDecrypt;
     static serviceFromJSON(service: IConnectedService): ConnectedService;
 }

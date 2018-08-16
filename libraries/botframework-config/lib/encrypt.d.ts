@@ -1,4 +1,8 @@
 /**
+ * Copyright(c) Microsoft Corporation.All rights reserved.
+ * Licensed under the MIT License.
+ */
+/**
  * Encrypt a string using standardized encyryption of AES256 with
  *      key = SHA256 hash of UTF8 secret
  *      iv = optional 16 bytes of iv string

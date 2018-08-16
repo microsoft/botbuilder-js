@@ -14,7 +14,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const crypto = require("crypto");
 const fsx = require("fs-extra");
-const linq_collections_1 = require("linq-collections");
 const path = require("path");
 const process = require("process");
 const txtfile = require("read-text-file");
@@ -44,10 +43,11 @@ class BotConfiguration {
     }
     static loadBotFromFolder(folder, secret) {
         return __awaiter(this, void 0, void 0, function* () {
-            let files = linq_collections_1.Enumerable.fromSource(yield fsx.readdir(folder || process.cwd()))
-                .where(file => path.extname(file) == '.bot');
-            if (files.any()) {
-                return yield BotConfiguration.load(files.first(), secret);
+            let files = yield fsx.readdir(folder || process.cwd());
+            for (var file in files) {
+                if (path.extname(file) == '.bot') {
+                    return yield BotConfiguration.load(file, secret);
+                }
             }
             throw new Error(`Error: no bot file found in ${folder}. Choose a different location or use msbot init to create a .bot file."`);
         });
@@ -57,7 +57,7 @@ class BotConfiguration {
         return __awaiter(this, void 0, void 0, function* () {
             let bot = BotConfiguration.fromJSON(JSON.parse(yield txtfile.read(botpath)));
             bot.internal.location = botpath;
-            let hasSecret = (bot.secretKey && bot.secretKey.length > 0);
+            let hasSecret = !!bot.secretKey;
             if (hasSecret)
                 bot.decrypt(secret);
             return bot;
@@ -69,14 +69,20 @@ class BotConfiguration {
             if (!!secret) {
                 this.validateSecretKey(secret);
             }
-            let hasSecret = (this.secretKey && this.secretKey.length > 0);
+            let hasSecret = !!this.secretKey;
             // make sure that all dispatch serviceIds still match services that are in the bot
             for (let service of this.services) {
                 if (service.type == schema_1.ServiceTypes.Dispatch) {
                     let dispatchService = service;
-                    dispatchService.serviceIds = linq_collections_1.Enumerable.fromSource(dispatchService.serviceIds)
-                        .where(serviceId => linq_collections_1.Enumerable.fromSource(this.services).any(s => s.id == serviceId))
-                        .toArray();
+                    let validServices = [];
+                    for (let dispatchServiceId of dispatchService.serviceIds) {
+                        for (let service of this.services) {
+                            if (service.id == dispatchServiceId) {
+                                validServices.push(dispatchServiceId);
+                            }
+                        }
+                    }
+                    dispatchService.serviceIds = validServices;
                 }
             }
             if (hasSecret)
@@ -91,27 +97,30 @@ class BotConfiguration {
     }
     // connect to a service
     connectService(newService) {
-        if (linq_collections_1.Enumerable.fromSource(this.services)
-            .where(s => s.type == newService.type)
-            .where(s => s.id == newService.id)
-            .any()) {
-            throw Error(`service with ${newService.id} already connected`);
+        for (let service of this.services) {
+            if (service.type == newService.type && service.id == newService.id)
+                throw Error(`service with ${newService.id} already connected`);
         }
-        else {
-            // give unique name
-            let nameCount = 1;
-            let name = newService.name;
-            while (true) {
-                if (nameCount > 1) {
-                    name = `${newService.name} (${nameCount})`;
-                }
-                if (!linq_collections_1.Enumerable.fromSource(this.services).where(s => s.name == name).any())
-                    break;
-                nameCount++;
+        // give unique name
+        let nameCount = 1;
+        let name = newService.name;
+        while (true) {
+            if (nameCount > 1) {
+                name = `${newService.name} (${nameCount})`;
             }
-            newService.name = name;
-            this.services.push(BotConfiguration.serviceFromJSON(newService));
+            let conflict = false;
+            for (let service of this.services) {
+                if (service.name == name) {
+                    conflict = true;
+                    break;
+                }
+            }
+            if (!conflict)
+                break;
+            nameCount++;
         }
+        newService.name = name;
+        this.services.push(BotConfiguration.serviceFromJSON(newService));
     }
     // encrypt all values in the config
     encrypt(secret) {
@@ -129,32 +138,31 @@ class BotConfiguration {
     }
     // remove service by name or id
     disconnectServiceByNameOrId(nameOrId) {
-        let svs = new linq_collections_1.List(this.services);
-        for (let i = 0; i < svs.count(); i++) {
-            let service = svs.elementAt(i);
+        const { services = [] } = this;
+        let i = services.length;
+        while (i--) {
+            const service = services[i];
             if (service.id == nameOrId || service.name == nameOrId) {
-                svs.removeAt(i);
-                this.services = svs.toArray();
-                return service;
+                return services.splice(i, 1)[0];
             }
         }
         throw new Error(`a service with id or name of [${nameOrId}] was not found`);
     }
     // remove a service
     disconnectService(type, id) {
-        let svs = new linq_collections_1.List(this.services);
-        for (let i = 0; i < svs.count(); i++) {
-            let service = svs.elementAt(i);
-            if (service.type == type && service.id == id) {
-                svs.removeAt(i);
-                this.services = svs.toArray();
+        const { services = [] } = this;
+        let i = services.length;
+        while (i--) {
+            const service = services[i];
+            if (service.id == id) {
+                services.splice(i, 1)[0];
                 return;
             }
         }
     }
     // make sure secret is correct by decrypting the secretKey with it
     validateSecretKey(secret) {
-        if (!secret || secret.length == 0) {
+        if (!secret) {
             throw new Error('You are attempting to perform an operation which needs access to the secret and --secret is missing');
         }
         try {

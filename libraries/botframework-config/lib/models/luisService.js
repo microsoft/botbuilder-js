@@ -25,13 +25,17 @@ class LuisService extends connectedService_1.ConnectedService {
     }
     // encrypt keys in service
     encrypt(secret, iv) {
-        this.authoringKey = encrypt_1.encryptString(this.authoringKey, secret, iv);
-        this.subscriptionKey = encrypt_1.encryptString(this.subscriptionKey, secret, iv);
+        if (this.authoringKey && this.authoringKey.length > 0)
+            this.authoringKey = encrypt_1.encryptString(this.authoringKey, secret, iv);
+        if (this.subscriptionKey && this.subscriptionKey.length > 0)
+            this.subscriptionKey = encrypt_1.encryptString(this.subscriptionKey, secret, iv);
     }
     // decrypt keys in service
     decrypt(secret, iv) {
-        this.authoringKey = encrypt_1.decryptString(this.authoringKey, secret, iv);
-        this.subscriptionKey = encrypt_1.decryptString(this.subscriptionKey, secret, iv);
+        if (this.authoringKey && this.authoringKey.length > 0)
+            this.authoringKey = encrypt_1.decryptString(this.authoringKey, secret, iv);
+        if (this.subscriptionKey && this.subscriptionKey.length > 0)
+            this.subscriptionKey = encrypt_1.decryptString(this.subscriptionKey, secret, iv);
     }
 }
 exports.LuisService = LuisService;

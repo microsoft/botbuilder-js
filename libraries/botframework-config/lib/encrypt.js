@@ -17,9 +17,9 @@ function encryptString(value, secret, iv) {
     // standardized encyryption is AES256 using
     //    key = SHA256 hash of UTF8 secret
     //    iv = optional 16 bytes of iv string
-    if (!value)
+    if (!value || value.length == 0)
         throw new Error('you must pass a value');
-    if (!secret)
+    if (!secret || value.length == 0)
         throw new Error('you must pass a secret');
     let secretKey = crypto.createHash('sha256').update(secret, "utf8").digest();
     let ivKey = Buffer.from(((iv || '').toLowerCase() + '                ').substr(0, 16), "utf8");
@@ -38,9 +38,9 @@ exports.encryptString = encryptString;
  * @param iv optional salt to value to make unique. Only needed if value could be the same
  */
 function decryptString(encryptedValue, secret, iv) {
-    if (!encryptedValue)
+    if (!encryptedValue || encryptedValue.length == 0)
         throw new Error('you must pass a encryptedValue');
-    if (!secret)
+    if (!secret || secret.length == 0)
         throw new Error('you must pass a secret');
     let secretKey = crypto.createHash('sha256').update(secret || '', "utf8").digest();
     let ivKey = Buffer.from(((iv || '').toLowerCase() + '                ').substr(0, 16), "utf8");

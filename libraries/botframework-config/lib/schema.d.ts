@@ -8,7 +8,7 @@ export declare enum ServiceTypes {
     Luis = "luis",
     QnA = "qna",
     Dispatch = "dispatch",
-    File = "file",
+    File = "file"
 }
 export interface IConnectedService {
     readonly type: ServiceTypes;

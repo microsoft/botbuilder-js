@@ -3,8 +3,8 @@ let bf = require('../lib');
 let fs = require('fs');
 
 // do not save over testbot
-const testBotPath = "test.bot";
-const saveBotPath = "save.bot";
+const testBotPath = "tests/test.bot";
+const saveBotPath = "tests/save.bot";
 
 describe("LoadAndSaveTests", () => {
     it("SerializeBotFile", async () => {
