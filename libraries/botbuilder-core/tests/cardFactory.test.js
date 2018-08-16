@@ -1,5 +1,4 @@
 const assert = require('assert');
-const { BotContext } = require('botbuilder-core');
 const { CardFactory } = require('../');
 
 function assertAttachment(attachment, contentType) {

@@ -1,6 +1,5 @@
 const assert = require('assert');
-const { TurnContext, ActivityTypes } = require('botbuilder-core');
-const { BotState, MemoryStorage, TestAdapter } = require('../');
+const { TurnContext, BotState, MemoryStorage, TestAdapter } = require('../');
 
 const receivedMessage = { text: 'received', type: 'message' };
 const storageKey = 'stateKey';
