@@ -2,10 +2,6 @@ const { ActivityTypes, BotState, BotStatePropertyAccessor, ConversationState, Me
 const { AttachmentPrompt, DialogSet, DialogState, TextPrompt, WaterfallDialog } =  require('../');
 const assert = require('assert');
 
-const beginMessage = { text: `begin`, type: 'message' };
-const continueMessage = { text: `continue`, type: 'message' };
-const shortMessage = { text: `a`, type: 'message' };
-const longMessage = { text: `abcdefg`, type: 'message' };
 const invalidMessage = { type: ActivityTypes.Message, text: '' };
 
 describe('TextPrompt', function() {

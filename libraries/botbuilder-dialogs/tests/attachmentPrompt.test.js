@@ -2,7 +2,6 @@ const { BotState, BotStatePropertyAccessor, ConversationState, MemoryStorage, Te
 const { AttachmentPrompt, DialogSet, DialogState, WaterfallDialog } =  require('../');
 const assert = require('assert');
 
-const beginMessage = { text: `begin`, type: 'message' };
 const answerMessage = { text: `here you go`, type: 'message', attachments: [{ contentType: 'test', content: 'test1' }] };
 const invalidMessage = { text: `what?`, type: 'message' };
 
