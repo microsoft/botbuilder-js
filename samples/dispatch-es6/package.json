@@ -9,9 +9,9 @@
   "author": "Microsoft",
   "license": "MIT",
   "dependencies": {
-    "botbuilder": "^4.0.0-m4.2",
-    "botbuilder-ai": "^4.0.0-m4.2",
-    "botbuilder-dialogs": "^4.0.0-m4.2",
+    "botbuilder": "^4.0.0-preview1.2",
+    "botbuilder-ai": "^4.0.0-preview1.2",
+    "botbuilder-dialogs": "^4.0.0-preview1.2",
     "botdispatch": "0.0.1",
     "restify": "^6.3.4"
   }

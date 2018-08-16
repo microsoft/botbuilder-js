@@ -5,8 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext } from 'botbuilder';
-import { RecognizerResult } from 'botbuilder-core';
+import { TurnContext, RecognizerResult } from 'botbuilder';
 import { LuisResult, Intent, Entity, CompositeEntity } from 'botframework-luis/lib/models';
 import LuisClient = require('botframework-luis');
 

@@ -23,7 +23,7 @@ import { MemoryStorage } from './memoryStorage';
 export class BrowserLocalStorage extends MemoryStorage {
     /** Creates a new BrowserLocalStorage instance. */
     public constructor() {
-        super(localStorage);
+        super(localStorage as any);
     }
 }
 
@@ -45,6 +45,6 @@ export class BrowserLocalStorage extends MemoryStorage {
 export class BrowserSessionStorage extends MemoryStorage {
     /** Creates a new BroserSessionStorage instance. */
     public constructor() {
-        super(sessionStorage);
+        super(sessionStorage as any);
     }
 }

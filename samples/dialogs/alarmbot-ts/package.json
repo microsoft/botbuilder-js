@@ -12,8 +12,8 @@
   "dependencies": {
     "@types/node": "^9.3.0",
     "@types/restify": "^5.0.7",
-    "botbuilder": "^4.0.0-m3.0",
-    "botbuilder-dialogs": "^4.0.0-m3.0",
+    "botbuilder": "^4.0.0-preview1.2",
+    "botbuilder-dialogs": "^4.0.0-preview1.2",
     "moment": "^2.20.1",
     "restify": "^6.3.4"
   }
