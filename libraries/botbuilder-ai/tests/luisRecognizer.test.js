@@ -6,7 +6,7 @@ const { LuisRecognizer } = require('../');
 const luisAppId = '6209a76f-e836-413b-ba92-a5772d1b2087';
 
 // This can be any endpoint key for calling LUIS
-const subscriptionKey = process.env.LUISAPPKEY;
+const endpointKey = process.env.LUISAPPKEY || "MockedKey";
 
 // If this is true, then LUIS responses will come from oracle files.
 // If it is false, the LUIS service will be called and if there are changes you will get a new oracle file.
@@ -81,7 +81,7 @@ function TestJson(file, done, includeAllIntents, includeInstance) {
     var expected = GetExpected(expectedPath);
     var newPath = expectedPath + ".new";
     var context = new TestContext({ text: expected.text });
-    var recognizer = new LuisRecognizer({ applicationId: luisAppId, endpointKey: subscriptionKey }, { includeAllIntents: includeAllIntents, includeInstanceData: includeInstance }, true);
+    var recognizer = new LuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, { includeAllIntents: includeAllIntents, includeInstanceData: includeInstance }, true);
     recognizer.recognize(context).then(res => {
         if (!WithinDelta(expected, res, 0.1, false)) {
             fs.outputJSONSync(newPath, res, { spaces: 2 });
@@ -97,7 +97,7 @@ function TestJson(file, done, includeAllIntents, includeInstance) {
 describe('LuisRecognizer', function () {
     this.timeout(10000);
 
-    if (!mockLuis && !subscriptionKey) {
+    if (!mockLuis && !endpointKey) {
         console.warn('WARNING: skipping LuisRecognizer test suite because LUISAPPKEY environment variable is not defined');
         return;
     }
@@ -261,7 +261,7 @@ describe('LuisRecognizer', function () {
 
     it('should cache multiple calls to recognize()', done => {
         var expected = GetExpected(ExpectedPath("SingleIntentSimple.json"));
-        var recognizer = new LuisRecognizer({ applicationId: luisAppId, endpointKey: subscriptionKey }, { includeAllIntents: true }, true);
+        var recognizer = new LuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, { includeAllIntents: true }, true);
         var context = new TestContext({ text: expected.text });
         recognizer.recognize(context)
             .then(res => {
@@ -315,7 +315,7 @@ describe('LuisRecognizer', function () {
 
     it('should emit trace info once per call to recognize', done => {
         var expected = GetExpected(ExpectedPath("SingleIntentSimple.json"));
-        var recognizer = new LuisRecognizer({ applicationId: luisAppId, endpointKey: subscriptionKey }, { includeAllIntents: true }, true);
+        var recognizer = new LuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, { includeAllIntents: true }, true);
         var context = new TestContext({ text: expected.text });
         recognizer.recognize(context).then(res => {
             return recognizer.recognize(context);
