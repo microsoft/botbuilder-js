@@ -8,34 +8,33 @@
 import { Activity, ResourceResponse, ConversationReference, ActivityTypes, InputHints } from 'botframework-schema';
 import { BotAdapter } from './botAdapter';
 import { shallowCopy } from './internal';
-import { Promiseable } from './middlewareSet';
 
 /**
  * Signature implemented by functions registered with `context.onSendActivity()`.
  *
  * ```TypeScript
- * type SendActivitiesHandler = (context: TurnContext, activities: Partial<Activity>[], next: () => Promise<ResourceResponse[]>) => Promiseable<ResourceResponse[]>;
+ * type SendActivitiesHandler = (context: TurnContext, activities: Partial<Activity>[], next: () => Promise<ResourceResponse[]>) => Promise<ResourceResponse[]>;
  * ```
  */
-export type SendActivitiesHandler = (context: TurnContext, activities: Partial<Activity>[], next: () => Promise<ResourceResponse[]>) => Promiseable<ResourceResponse[]>;
+export type SendActivitiesHandler = (context: TurnContext, activities: Partial<Activity>[], next: () => Promise<ResourceResponse[]>) => Promise<ResourceResponse[]>;
 
 /**
  * Signature implemented by functions registered with `context.onUpdateActivity()`.
  *
  * ```TypeScript
- * type UpdateActivityHandler = (context: TurnContext, activity: Partial<Activity>, next: () => Promise<void>) => Promiseable<void>;
+ * type UpdateActivityHandler = (context: TurnContext, activity: Partial<Activity>, next: () => Promise<void>) => Promise<void>;
  * ```
  */
-export type UpdateActivityHandler = (context: TurnContext, activity: Partial<Activity>, next: () => Promise<void>) => Promiseable<void>;
+export type UpdateActivityHandler = (context: TurnContext, activity: Partial<Activity>, next: () => Promise<void>) => Promise<void>;
 
 /**
  * Signature implemented by functions registered with `context.onDeleteActivity()`.
  *
  * ```TypeScript
- * type DeleteActivityHandler = (context: TurnContext, reference: Partial<ConversationReference>, next: () => Promise<void>) => Promiseable<void>;
+ * type DeleteActivityHandler = (context: TurnContext, reference: Partial<ConversationReference>, next: () => Promise<void>) => Promise<void>;
  * ```
  */
-export type DeleteActivityHandler = (context: TurnContext, reference: Partial<ConversationReference>, next: () => Promise<void>) => Promiseable<void>;
+export type DeleteActivityHandler = (context: TurnContext, reference: Partial<ConversationReference>, next: () => Promise<void>) => Promise<void>;
 
 export interface TurnContext { }
 
@@ -353,7 +352,7 @@ export class TurnContext {
         return this;
     }
 
-    private emit<T>(handlers: ((context: TurnContext, arg: T, next: () => Promise<any>) => Promiseable<any>)[], arg: T, next: () => Promise<any>): Promise<any> {
+    private emit<T>(handlers: ((context: TurnContext, arg: T, next: () => Promise<any>) => Promise<any>)[], arg: T, next: () => Promise<any>): Promise<any> {
         const list = handlers.slice();
         const context = this;
         function emitNext(i: number): Promise<void> {

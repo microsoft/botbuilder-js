@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { MiddlewareSet, MiddlewareHandler, Middleware, Promiseable } from './middlewareSet';
+import { MiddlewareSet, MiddlewareHandler, Middleware } from './middlewareSet';
 import { Activity, ResourceResponse, ConversationReference } from 'botframework-schema';
 import { TurnContext } from './turnContext';
 import { makeRevocable } from './internal';
@@ -45,7 +45,7 @@ export abstract class BotAdapter {
      * @param reference Conversation reference of the conversation being continued.
      * @param logic Function to execute for performing the bots logic.
      */
-    public abstract continueConversation(reference: Partial<ConversationReference>, logic: (revocableContext: TurnContext) => Promiseable<void>): Promise<void>;
+    public abstract continueConversation(reference: Partial<ConversationReference>, logic: (revocableContext: TurnContext) => Promise<void>): Promise<void>;
 
     public get onTurnError(): (context: TurnContext, error: Error) => Promise<void> {
         return this.turnError;
@@ -74,7 +74,7 @@ export abstract class BotAdapter {
      * @param next Function to call at the end of the middleware chain.
      * @param next.callback A revocable version of the context object.
      */
-    protected runMiddleware(context: TurnContext, next: (revocableContext: TurnContext) => Promiseable<void>): Promise<void> {
+    protected runMiddleware(context: TurnContext, next: (revocableContext: TurnContext) => Promise<void>): Promise<void> {
         // Wrap context with revocable proxy
         const pContext = makeRevocable(context);
         return new Promise((resolve, reject) => {

@@ -34,7 +34,7 @@ export class TranscriptLoggerMiddleware implements Middleware {
      * @param context Context for the current turn of conversation with the user.
      * @param next Function to call at the end of the middleware chain.
      */
-    onTurn(context: TurnContext, next: () => Promise<void>): void | Promise<void> {
+    public async onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
         // log incoming activity at beginning of turn
         if (context.activity) {
             if (!context.activity.from.role) {
@@ -45,17 +45,17 @@ export class TranscriptLoggerMiddleware implements Middleware {
         }
 
         // hook up onSend pipeline
-        context.onSendActivities((ctx, activities, next) => {
+        context.onSendActivities(async (ctx, activities, next) => {
             // run full pipeline
-            let responses = next();
+            let responses = await next();
             activities.forEach(a => this.logActivity(this.cloneActivity(a)));
             return responses;
         });
 
         // hook up update activity pipeline
-        context.onUpdateActivity((ctx, activity, next) => {
+        context.onUpdateActivity(async (ctx, activity, next) => {
             // run full pipeline
-            let response = next();
+            let response = await next();
 
             // add Message Update activity
             let updateActivity = this.cloneActivity(activity);
@@ -65,9 +65,9 @@ export class TranscriptLoggerMiddleware implements Middleware {
         });
 
         // hook up delete activity pipeline
-        context.onDeleteActivity((ctx, reference, next) => {
+        context.onDeleteActivity(async (ctx, reference, next) => {
             // run full pipeline
-            next();
+            await next();
 
             // add MessageDelete activity
             // log as MessageDelete activity
@@ -81,17 +81,17 @@ export class TranscriptLoggerMiddleware implements Middleware {
         });
 
         // process bot logic
-        next().then(() => {
-            // flush transcript at end of turn
-            while (this.transcript.length > 0) {
-                try {
-                    let activity = this.transcript.shift();
-                    this.logger.logActivity(activity);
-                } catch (err) {
-                    console.error('Transcript logActivity failed', err);
-                }
+        await next()
+
+        // flush transcript at end of turn
+        while (this.transcript.length > 0) {
+            try {
+                let activity = this.transcript.shift();
+                this.logger.logActivity(activity);
+            } catch (err) {
+                console.error('TranscriptLoggerMiddleware logActivity failed', err);
             }
-        });
+        }
     }
 
     /**
