@@ -2,7 +2,7 @@
 //
 // Usage:
 // node tools\util\updateDependenciesInPackageJsons.js root-path-for-package.json-files new-version dependency-name1 dependency-name2...
-// node tools\util\updateDependenciesInPackageJsons.js libraries 4.0.1-preview1.3456 botbuilder botbuilder-choices botbuilder-core botbuilder-core-extensions botbuilder-prompts botframework-connector botframework-luis botframework-schema
+// node tools\util\updateDependenciesInPackageJsons.js libraries 4.0.1-preview1.3456 botbuilder botbuilder-core botframework-connector botframework-luis botframework-schema
 console.log('Started ' + (new Date()));
 var myArgs = process.argv.slice(2);
 var rootPath = myArgs[0];

@@ -1,7 +1,7 @@
 const assert = require('assert');
-const assertBotLogicWithTranscript = require('../../libraries/botbuilder-core-extensions/tests/transcriptUtilities').assertBotLogicWithBotBuilderTranscript;
+const assertBotLogicWithTranscript = require('../../libraries/botbuilder-core/tests/transcriptUtilities').assertBotLogicWithBotBuilderTranscript;
 
-describe(`Core Tests using transcripts`, function () {
+xdescribe(`Core Tests using transcripts`, function () {
     this.timeout(10000);
 
     it('BotAdapted_Bracketing', assertBotLogicWithTranscript('CoreTests/BotAdapted_Bracketing.chat', BotAdapted_Bracketing_Logic, (adapter) => {
