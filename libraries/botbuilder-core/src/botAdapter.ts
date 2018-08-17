@@ -74,24 +74,24 @@ export abstract class BotAdapter {
      * @param next Function to call at the end of the middleware chain.
      * @param next.callback A revocable version of the context object.
      */
-    protected async runMiddleware(context: TurnContext, next: (revocableContext: TurnContext) => Promiseable<void>): Promise<void> {
+    protected runMiddleware(context: TurnContext, next: (revocableContext: TurnContext) => Promiseable<void>): Promise<void> {
         // Wrap context with revocable proxy
         const pContext = makeRevocable(context);
-        try {
-            // Run middleware pipe
-            this.middleware.run(pContext.proxy, async () => {
+        return new Promise((resolve, reject) => {
+            this.middleware.run(pContext.proxy, () => {
                 // Call next with revocable context
-                await next(pContext.proxy);
+                return next(pContext.proxy);
+            }).then(() => resolve(), (err) => {
+                if (this.onTurnError) {
+                    this.onTurnError(pContext.proxy, err)
+                        .then(() => resolve(), (err) => reject(err));
+                } else {
+                    reject(err);
+                }
             });
-        } catch(err) {
-            if (this.onTurnError) {
-                await this.onTurnError(pContext.proxy, err);
-            } else {
-                throw err;
-            }
-        } finally {
-            // Revoke use of context
+        }).then(() => pContext.revoke(), (err) => {
             pContext.revoke();
-        }
+            throw err;
+        });
     }
 }
