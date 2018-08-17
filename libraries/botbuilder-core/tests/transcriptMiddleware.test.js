@@ -7,15 +7,15 @@ describe(`TranscriptLoggerMiddleware`, function () {
     it(`should log activities`, function (done) {
         var conversationId = null;
         var transcriptStore = new MemoryTranscriptStore();
-        var adapter = new TestAdapter(context => {
+        var adapter = new TestAdapter(async (context) => {
             conversationId = context.activity.conversation.id;
             var typingActivity = {
                 type: ActivityTypes.Typing,
                 relatesTo: context.activity.relatesTo
             };
 
-            context.sendActivity(typingActivity);
-            context.sendActivity(`echo:${context.activity.text}`);
+            await context.sendActivity(typingActivity);
+            await context.sendActivity(`echo:${context.activity.text}`);
 
         }).use(new TranscriptLoggerMiddleware(transcriptStore));
 
@@ -47,19 +47,18 @@ describe(`TranscriptLoggerMiddleware`, function () {
         var conversationId = null;
         let activityToUpdate = null;
         var transcriptStore = new MemoryTranscriptStore();
-        var adapter = new TestAdapter(context => {
+        var adapter = new TestAdapter(async (context) => {
             conversationId = context.activity.conversation.id;
             if (context.activity.text === 'update') {
                 activityToUpdate.text = 'new response';
-                context.updateActivity(activityToUpdate);
+                await context.updateActivity(activityToUpdate);
             } else {
                 var activity = createReply(context.activity, 'response');
-                context.sendActivity(activity).then(response => {
-                    activity.id = response.id;
+                const response = await context.sendActivity(activity);
+                activity.id = response.id;
 
-                    // clone the activity, so we can use it to do an update
-                    activityToUpdate = JSON.parse(JSON.stringify(activity));
-                })
+                // clone the activity, so we can use it to do an update
+                activityToUpdate = JSON.parse(JSON.stringify(activity));
             }
 
         }).use(new TranscriptLoggerMiddleware(transcriptStore));
@@ -86,15 +85,14 @@ describe(`TranscriptLoggerMiddleware`, function () {
         var conversationId = null;
         var activityId = null;
         var transcriptStore = new MemoryTranscriptStore();
-        var adapter = new TestAdapter(context => {
+        var adapter = new TestAdapter(async (context) => {
             conversationId = context.activity.conversation.id;
             if(context.activity.text === 'deleteIt') {
-                context.deleteActivity(activityId);
+                await context.deleteActivity(activityId);
             } else {
                 var activity = createReply(context.activity, 'response');
-                var response = context.sendActivity(activity).then(response => {
-                    activityId = response.id;
-                });
+                var response = await context.sendActivity(activity);
+                activityId = response.id;
             }
         }).use(new TranscriptLoggerMiddleware(transcriptStore));
 

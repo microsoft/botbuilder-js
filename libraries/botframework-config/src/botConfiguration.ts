@@ -233,7 +233,7 @@ export class BotConfiguration implements Partial<IBotConfiguration> {
                 // validate we can decrypt the secretKey, this tells us we have the correct secret for the rest of the file.
                 encrypt.decryptString(this.secretKey, secret);
             }
-        } catch {
+        } catch (ex) {
             throw new Error('You are attempting to perform an operation which needs access to the secret and --secret is incorrect.');
         }
     }

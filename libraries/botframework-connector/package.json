@@ -26,6 +26,7 @@
     "botframework-schema": "^4.0.0-preview1.2",
     "jsonwebtoken": "8.0.1",
     "ms-rest-js": "0.2.8",
+    "ms-rest-azure": "^2.5.0",
     "request": "2.83.0",
     "rsa-pem-from-mod-exp": "^0.8.4"
   },
@@ -41,7 +42,7 @@
   "scripts": {
     "build": "tsc",
     "test": "tsc && nyc mocha tests/ --timeout 60000",
-    "clean": "erase /q lib\\*.*",
+    "clean": "erase /q /s .\\lib",
     "set-version": "npm version --allow-same-version ${Version}"
   }
 }

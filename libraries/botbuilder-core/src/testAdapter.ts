@@ -6,7 +6,6 @@
  * Licensed under the MIT License.
  */
 import { BotAdapter } from './botAdapter';
-import { Promiseable } from './middlewareSet';
 import { TurnContext } from './turnContext';
 import { ActivityTypes, Activity, ConversationReference, ResourceResponse } from 'botframework-schema';
 import assert = require('assert');
@@ -93,7 +92,7 @@ export class TestAdapter extends BotAdapter {
      * @param logic The bots logic that's under test.
      * @param template (Optional) activity containing default values to assign to all test messages received.
      */
-    constructor(private logic: (context: TurnContext) => Promiseable<void>, template?: Partial<Activity>, sendTraceActivities?: boolean) {
+    constructor(private logic: (context: TurnContext) => Promise<void>, template?: Partial<Activity>, sendTraceActivities?: boolean) {
         super();
         this.sendTraceActivities = sendTraceActivities || false;
         this.template = Object.assign({
@@ -152,7 +151,7 @@ export class TestAdapter extends BotAdapter {
      * The `TestAdapter` doesn't implement `continueConversation()` and will return an error if it's
      * called.
      */
-    public continueConversation(reference: Partial<ConversationReference>, logic: (revocableContext: TurnContext) => Promiseable<void>): Promise<void> {
+    public continueConversation(reference: Partial<ConversationReference>, logic: (revocableContext: TurnContext) => Promise<void>): Promise<void> {
         return Promise.reject(new Error(`not implemented`));
     }
 

@@ -7,7 +7,7 @@
  */
 import { ConnectorClient, SimpleCredentialProvider, MicrosoftAppCredentials, JwtTokenValidation, OAuthApiClient } from 'botframework-connector';
 import {
-    BotAdapter, Promiseable, TurnContext, ActivityTypes, Activity, ConversationReference,
+    BotAdapter, TurnContext, ActivityTypes, Activity, ConversationReference,
     ResourceResponse, ConversationParameters, ConversationAccount,
     TokenResponse, ConversationsResult, ChannelAccount
 } from 'botbuilder-core';
@@ -138,8 +138,8 @@ export class BotFrameworkAdapter extends BotAdapter {
      * @param reference A `ConversationReference` saved during a previous message from a user.  This can be calculated for any incoming activity using `TurnContext.getConversationReference(context.activity)`.
      * @param logic A function handler that will be called to perform the bots logic after the the adapters middleware has been run.
      */
-    public continueConversation(reference: Partial<ConversationReference>, logic: (context: TurnContext) => Promiseable<void>): Promise<void> {
-        const request = TurnContext.applyConversationReference({type: 'event'}, reference, true);
+    public continueConversation(reference: Partial<ConversationReference>, logic: (context: TurnContext) => Promise<void>): Promise<void> {
+        const request = TurnContext.applyConversationReference({type: 'event',  name: 'continueConversation' }, reference, true);
         const context = this.createContext(request);
         return this.runMiddleware(context, logic as any);
     }
@@ -167,7 +167,7 @@ export class BotFrameworkAdapter extends BotAdapter {
      * @param reference A `ConversationReference` of the user to start a new conversation with.  This can be calculated for any incoming activity using `TurnContext.getConversationReference(context.activity)`.
      * @param logic A function handler that will be called to perform the bots logic after the the adapters middleware has been run.
      */
-    public createConversation(reference: Partial<ConversationReference>, logic: (context: TurnContext) => Promiseable<void>): Promise<void> {
+    public createConversation(reference: Partial<ConversationReference>, logic: (context: TurnContext) => Promise<void>): Promise<void> {
         try {
             if (!reference.serviceUrl) { throw new Error(`BotFrameworkAdapter.createConversation(): missing serviceUrl.`); }
 
@@ -176,7 +176,7 @@ export class BotFrameworkAdapter extends BotAdapter {
             const client = this.createConnectorClient(reference.serviceUrl);
             return client.conversations.createConversation(parameters).then((response) => {
                 // Initialize request and copy over new conversation ID and updated serviceUrl.
-                const request = TurnContext.applyConversationReference({type: 'event'}, reference, true);
+                const request = TurnContext.applyConversationReference({type: 'event', name: 'createConversation' }, reference, true);
                 request.conversation = { id: response.id } as ConversationAccount;
                 if (response.serviceUrl) { request.serviceUrl = response.serviceUrl; }
 
@@ -387,7 +387,7 @@ export class BotFrameworkAdapter extends BotAdapter {
      * @param res An Express or Restify style Response object.
      * @param logic A function handler that will be called to perform the bots logic after the received activity has been pre-processed by the adapter and routed through any middleware for processing.
      */
-    public processActivity(req: WebRequest, res: WebResponse, logic: (context: TurnContext) => Promiseable<any>): Promise<void> {
+    public processActivity(req: WebRequest, res: WebResponse, logic: (context: TurnContext) => Promise<any>): Promise<void> {
         // Parse body of request
         let errorCode = 500;
         return parseRequest(req).then((request) => {
