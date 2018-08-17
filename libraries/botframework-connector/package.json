@@ -42,7 +42,7 @@
   "scripts": {
     "build": "tsc",
     "test": "tsc && nyc mocha tests/ --timeout 60000",
-    "clean": "erase /q lib\\*.*",
+    "clean": "erase /q /s .\\lib",
     "set-version": "npm version --allow-same-version ${Version}"
   }
 }
