@@ -1,0 +1,15 @@
+{
+    "name": "legacy",
+    "description": "",
+    "secretKey": "2ac2fe5ce979090c401f319fd9c0eb3aca023e4dbbdf3671b079abfce0db95a8cf4b48307f4bad2352f7ebbe809704f2",
+    "services": [
+        {
+            "type": "endpoint",
+            "name": "legacy",
+            "id": "http://localhost:3978/api/messages",
+            "appId": "2f510b5e-10fe-4f53-9159-b134539ac594",
+            "appPassword": "e3d812f210b1044fcb5e71d0f083c2db",
+            "endpoint": "http://localhost:3978/api/messages"
+        }
+    ]
+}
