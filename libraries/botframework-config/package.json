@@ -24,11 +24,14 @@
     "type": "git",
     "url": "git@github.com:Microsoft/botbuilder-js.git"
   },
+  "dependencies": {
+    "uuid": "^3.2.1"
+  },
   "devDependencies": {
     "@types/uuid": "^3.4.3",
     "mocha": "^5.0.5"
   },
-  "dependencies": {
-    "uuid": "^3.2.1"
+  "scripts": {
+    "set-version": "npm version --allow-same-version ${Version}"
   }
 }
