@@ -3,8 +3,10 @@
  * Licensed under the MIT License.
  */
 export declare enum ServiceTypes {
+    AppInsights = "appInsights",
+    AzureBot = "abs",
+    AzureStorage = "azureStorage",
     Endpoint = "endpoint",
-    AzureBotService = "abs",
     Luis = "luis",
     QnA = "qna",
     Dispatch = "dispatch",
@@ -25,11 +27,24 @@ export interface IAzureBotService extends IConnectedService {
     subscriptionId: string;
     resourceGroup: string;
 }
+export interface IAppInsightsService extends IConnectedService {
+    tenantId: string;
+    subscriptionId: string;
+    resourceGroup: string;
+    instrumentationKey: string;
+}
+export interface IAzureStorageService extends IConnectedService {
+    tenantId: string;
+    subscriptionId: string;
+    resourceGroup: string;
+    connectionString: string;
+}
 export interface ILuisService extends IConnectedService {
     appId: string;
     authoringKey: string;
     subscriptionKey: string;
     version: string;
+    region: string;
 }
 export interface IDispatchService extends IConnectedService {
     appId: string;
@@ -37,6 +52,7 @@ export interface IDispatchService extends IConnectedService {
     subscriptionKey: string;
     version: string;
     serviceIds: string[];
+    region: string;
 }
 export interface IQnAService extends IConnectedService {
     subscriptionKey: string;

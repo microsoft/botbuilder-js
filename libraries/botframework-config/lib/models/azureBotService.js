@@ -9,7 +9,7 @@ const connectedService_1 = require("./connectedService");
 class AzureBotService extends connectedService_1.ConnectedService {
     constructor(source = {}) {
         super(source);
-        this.type = schema_1.ServiceTypes.AzureBotService;
+        this.type = schema_1.ServiceTypes.AzureBot;
         this.tenantId = '';
         this.subscriptionId = '';
         this.resourceGroup = '';
@@ -18,7 +18,7 @@ class AzureBotService extends connectedService_1.ConnectedService {
     }
     toJSON() {
         let { id, name, tenantId, subscriptionId, resourceGroup } = this;
-        return { type: schema_1.ServiceTypes.AzureBotService, id, name, tenantId, subscriptionId, resourceGroup };
+        return { type: schema_1.ServiceTypes.AzureBot, id, name, tenantId, subscriptionId, resourceGroup };
     }
     // encrypt keys in service
     encrypt(secret, iv) {

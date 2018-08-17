@@ -9,6 +9,6 @@ export declare abstract class ConnectedService implements IConnectedService {
     abstract readonly type: ServiceTypes;
     protected constructor(source?: IConnectedService);
     abstract toJSON(): IConnectedService;
-    abstract encrypt(secret: string, iv?: string): void;
-    abstract decrypt(secret: string, iv?: string): void;
+    abstract encrypt(secret: string): void;
+    abstract decrypt(secret: string): void;
 }

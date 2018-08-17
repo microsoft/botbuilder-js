@@ -8,9 +8,11 @@ import * as path from 'path';
 import * as process from 'process';
 import * as txtfile from 'read-text-file';
 import * as uuid from 'uuid';
-import { decryptString, encryptString } from './encrypt';
+import * as encrypt from './encrypt';
 import { AzureBotService, ConnectedService, DispatchService, EndpointService, FileService, LuisService, QnaMakerService } from './models';
-import { IAzureBotService, IBotConfiguration, IConnectedService, IDispatchService, IEndpointService, IFileService, ILuisService, IQnAService, ServiceTypes } from './schema';
+import { AppInsightsService } from './models/appInsightsService';
+import { AzureStorageService } from './models/azureStorageService';
+import { IAppInsightsService, IAzureStorageService, IBotConfiguration, IConnectedService, IDispatchService, IEndpointService, IFileService, ILuisService, IQnAService, ServiceTypes } from './schema';
 
 
 interface internalBotConfig {
@@ -135,6 +137,11 @@ export class BotConfiguration implements Partial<IBotConfiguration> {
         this.services.push(BotConfiguration.serviceFromJSON(newService));
     }
 
+    // Generate a key for encryption
+    public static generateKey(): string {
+        return encrypt.generateKey();
+    }
+
     // encrypt all values in the config
     public encrypt(secret: string) {
         this.validateSecretKey(secret);
@@ -158,7 +165,7 @@ export class BotConfiguration implements Partial<IBotConfiguration> {
 
                 // legacy decryption
                 this.secretKey = this.legacyDecrypt(this.secretKey, secret);
-                this.secretKey = encryptString(this.secretKey, secret);
+                this.secretKey = "";
 
                 let encryptedProperties: { [key: string]: string[]; } = {
                     abs: [],
@@ -221,10 +228,10 @@ export class BotConfiguration implements Partial<IBotConfiguration> {
         try {
             if (!this.secretKey || this.secretKey.length == 0) {
                 // if no key, create a guid and enrypt that to use as secret validator
-                this.secretKey = encryptString(uuid(), secret);
+                this.secretKey = encrypt.encryptString(uuid(), secret);
             } else {
                 // validate we can decrypt the secretKey, this tells us we have the correct secret for the rest of the file.
-                decryptString(this.secretKey, secret);
+                encrypt.decryptString(this.secretKey, secret);
             }
         } catch {
             throw new Error('You are attempting to perform an operation which needs access to the secret and --secret is incorrect.');
@@ -251,14 +258,20 @@ export class BotConfiguration implements Partial<IBotConfiguration> {
             case ServiceTypes.Dispatch:
                 return new DispatchService(<IDispatchService>service);
 
-            case ServiceTypes.AzureBotService:
-                return new AzureBotService(<IAzureBotService>service);
+            case ServiceTypes.AzureBot:
+                return new AzureBotService(<IAppInsightsService>service);
 
             case ServiceTypes.Luis:
                 return new LuisService(<ILuisService>service);
 
             case ServiceTypes.Endpoint:
                 return new EndpointService(<IEndpointService>service);
+
+            case ServiceTypes.AppInsights:
+                return new AppInsightsService(<IAppInsightsService>service);
+
+            case ServiceTypes.AzureStorage:
+                return new AzureStorageService(<IAzureStorageService>service);
 
             default:
                 throw new TypeError(`${service.type} is not a known service implementation.`);

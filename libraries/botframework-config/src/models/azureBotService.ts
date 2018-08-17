@@ -6,7 +6,7 @@ import { IAzureBotService, ServiceTypes } from '../schema';
 import { ConnectedService } from './connectedService';
 
 export class AzureBotService extends ConnectedService implements IAzureBotService {
-    public readonly type = ServiceTypes.AzureBotService;
+    public readonly type = ServiceTypes.AzureBot;
     public tenantId = '';
     public subscriptionId = '';
     public resourceGroup = '';
@@ -19,7 +19,7 @@ export class AzureBotService extends ConnectedService implements IAzureBotServic
 
     public toJSON(): IAzureBotService {
         let { id, name, tenantId, subscriptionId, resourceGroup } = this;
-        return { type: ServiceTypes.AzureBotService, id, name, tenantId, subscriptionId, resourceGroup };
+        return { type: ServiceTypes.AzureBot, id, name, tenantId, subscriptionId, resourceGroup };
     }
 
     // encrypt keys in service

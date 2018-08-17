@@ -20,10 +20,10 @@ class FileService extends connectedService_1.ConnectedService {
         return { type: schema_1.ServiceTypes.File, id: filePath, name, filePath, };
     }
     // encrypt keys in service
-    encrypt(secret, iv) {
+    encrypt(secret) {
     }
     // decrypt keys in service
-    decrypt(secret, iv) {
+    decrypt(secret) {
     }
 }
 exports.FileService = FileService;

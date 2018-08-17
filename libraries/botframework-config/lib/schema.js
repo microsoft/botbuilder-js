@@ -6,8 +6,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 var ServiceTypes;
 (function (ServiceTypes) {
+    ServiceTypes["AppInsights"] = "appInsights";
+    ServiceTypes["AzureBot"] = "abs";
+    ServiceTypes["AzureStorage"] = "azureStorage";
     ServiceTypes["Endpoint"] = "endpoint";
-    ServiceTypes["AzureBotService"] = "abs";
     ServiceTypes["Luis"] = "luis";
     ServiceTypes["QnA"] = "qna";
     ServiceTypes["Dispatch"] = "dispatch";

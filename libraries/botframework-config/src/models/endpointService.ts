@@ -26,15 +26,15 @@ export class EndpointService extends ConnectedService implements IEndpointServic
     }
 
     // encrypt keys in service
-    public encrypt(secret: string, iv?: string): void {
+    public encrypt(secret: string): void {
         if (this.appPassword && this.appPassword.length > 0)
-            this.appPassword = encryptString(this.appPassword, secret, iv);
+            this.appPassword = encryptString(this.appPassword, secret);
     }
 
     // decrypt keys in service
-    public decrypt(secret: string, iv?: string): void {
+    public decrypt(secret: string): void {
         if (this.appPassword && this.appPassword.length > 0)
-            this.appPassword = decryptString(this.appPassword, secret, iv);
+            this.appPassword = decryptString(this.appPassword, secret);
     }
 
 }

@@ -7,6 +7,6 @@ export declare class EndpointService extends ConnectedService implements IEndpoi
     endpoint: string;
     constructor(source: IEndpointService);
     toJSON(): IEndpointService;
-    encrypt(secret: string, iv?: string): void;
-    decrypt(secret: string, iv?: string): void;
+    encrypt(secret: string): void;
+    decrypt(secret: string): void;
 }

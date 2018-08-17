@@ -15,27 +15,28 @@ class LuisService extends connectedService_1.ConnectedService {
         this.authoringKey = '';
         this.subscriptionKey = '';
         this.version = '';
-        const { appId = '', authoringKey = '', subscriptionKey = '', version = '' } = source;
+        this.region = '';
+        const { appId = '', authoringKey = '', subscriptionKey = '', version = '', region = '' } = source;
         this.id = appId;
-        Object.assign(this, { appId, authoringKey, subscriptionKey, version });
+        Object.assign(this, { appId, authoringKey, subscriptionKey, version, region });
     }
     toJSON() {
-        const { appId, authoringKey, id, name, subscriptionKey, type, version } = this;
-        return { type: schema_1.ServiceTypes.Luis, id: appId, name, version, appId, authoringKey, subscriptionKey };
+        const { appId, authoringKey, id, name, subscriptionKey, type, version, region } = this;
+        return { type: schema_1.ServiceTypes.Luis, id: appId, name, version, appId, authoringKey, subscriptionKey, region };
     }
     // encrypt keys in service
-    encrypt(secret, iv) {
+    encrypt(secret) {
         if (this.authoringKey && this.authoringKey.length > 0)
-            this.authoringKey = encrypt_1.encryptString(this.authoringKey, secret, iv);
+            this.authoringKey = encrypt_1.encryptString(this.authoringKey, secret);
         if (this.subscriptionKey && this.subscriptionKey.length > 0)
-            this.subscriptionKey = encrypt_1.encryptString(this.subscriptionKey, secret, iv);
+            this.subscriptionKey = encrypt_1.encryptString(this.subscriptionKey, secret);
     }
     // decrypt keys in service
-    decrypt(secret, iv) {
+    decrypt(secret) {
         if (this.authoringKey && this.authoringKey.length > 0)
-            this.authoringKey = encrypt_1.decryptString(this.authoringKey, secret, iv);
+            this.authoringKey = encrypt_1.decryptString(this.authoringKey, secret);
         if (this.subscriptionKey && this.subscriptionKey.length > 0)
-            this.subscriptionKey = encrypt_1.decryptString(this.subscriptionKey, secret, iv);
+            this.subscriptionKey = encrypt_1.decryptString(this.subscriptionKey, secret);
     }
 }
 exports.LuisService = LuisService;

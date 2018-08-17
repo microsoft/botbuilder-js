@@ -23,14 +23,14 @@ class EndpointService extends connectedService_1.ConnectedService {
         return { type: schema_1.ServiceTypes.Endpoint, name, id: endpoint, appId, appPassword, endpoint };
     }
     // encrypt keys in service
-    encrypt(secret, iv) {
+    encrypt(secret) {
         if (this.appPassword && this.appPassword.length > 0)
-            this.appPassword = encrypt_1.encryptString(this.appPassword, secret, iv);
+            this.appPassword = encrypt_1.encryptString(this.appPassword, secret);
     }
     // decrypt keys in service
-    decrypt(secret, iv) {
+    decrypt(secret) {
         if (this.appPassword && this.appPassword.length > 0)
-            this.appPassword = encrypt_1.decryptString(this.appPassword, secret, iv);
+            this.appPassword = encrypt_1.decryptString(this.appPassword, secret);
     }
 }
 exports.EndpointService = EndpointService;

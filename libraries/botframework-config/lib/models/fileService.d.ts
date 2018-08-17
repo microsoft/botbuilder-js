@@ -9,6 +9,6 @@ export declare class FileService extends ConnectedService implements IFileServic
     filePath: string;
     constructor(source?: IFileService);
     toJSON(): IFileService;
-    encrypt(secret: string, iv?: string): void;
-    decrypt(secret: string, iv?: string): void;
+    encrypt(secret: string): void;
+    decrypt(secret: string): void;
 }

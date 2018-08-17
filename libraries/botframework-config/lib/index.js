@@ -12,6 +12,7 @@ exports.BotConfiguration = botConfiguration_1.BotConfiguration;
 var encrypt_1 = require("./encrypt");
 exports.decryptString = encrypt_1.decryptString;
 exports.encryptString = encrypt_1.encryptString;
+exports.generateKey = encrypt_1.generateKey;
 __export(require("./models"));
 __export(require("./schema"));
 //# sourceMappingURL=index.js.map

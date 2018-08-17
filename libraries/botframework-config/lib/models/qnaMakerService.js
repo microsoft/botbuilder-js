@@ -28,18 +28,18 @@ class QnaMakerService extends connectedService_1.ConnectedService {
         return { type: schema_1.ServiceTypes.QnA, id: kbId, name, kbId, subscriptionKey, endpointKey, hostname };
     }
     // encrypt keys in service
-    encrypt(secret, iv) {
+    encrypt(secret) {
         if (this.endpointKey && this.endpointKey.length > 0)
-            this.endpointKey = encrypt_1.encryptString(this.endpointKey, secret, iv);
+            this.endpointKey = encrypt_1.encryptString(this.endpointKey, secret);
         if (this.subscriptionKey && this.subscriptionKey.length > 0)
-            this.subscriptionKey = encrypt_1.encryptString(this.subscriptionKey, secret, iv);
+            this.subscriptionKey = encrypt_1.encryptString(this.subscriptionKey, secret);
     }
     // decrypt keys in service
-    decrypt(secret, iv) {
+    decrypt(secret) {
         if (this.endpointKey && this.endpointKey.length > 0)
-            this.endpointKey = encrypt_1.decryptString(this.endpointKey, secret, iv);
+            this.endpointKey = encrypt_1.decryptString(this.endpointKey, secret);
         if (this.subscriptionKey && this.subscriptionKey.length > 0)
-            this.subscriptionKey = encrypt_1.decryptString(this.subscriptionKey, secret, iv);
+            this.subscriptionKey = encrypt_1.decryptString(this.subscriptionKey, secret);
     }
 }
 exports.QnaMakerService = QnaMakerService;

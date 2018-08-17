@@ -8,6 +8,6 @@ export declare class QnaMakerService extends ConnectedService implements IQnASer
     endpointKey: string;
     constructor(source?: IQnAService);
     toJSON(): IQnAService;
-    encrypt(secret: string, iv?: string): void;
-    decrypt(secret: string, iv?: string): void;
+    encrypt(secret: string): void;
+    decrypt(secret: string): void;
 }

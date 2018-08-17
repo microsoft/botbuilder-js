@@ -18,8 +18,10 @@ const path = require("path");
 const process = require("process");
 const txtfile = require("read-text-file");
 const uuid = require("uuid");
-const encrypt_1 = require("./encrypt");
+const encrypt = require("./encrypt");
 const models_1 = require("./models");
+const appInsightsService_1 = require("./models/appInsightsService");
+const azureStorageService_1 = require("./models/azureStorageService");
 const schema_1 = require("./schema");
 class BotConfiguration {
     constructor() {
@@ -122,6 +124,10 @@ class BotConfiguration {
         newService.name = name;
         this.services.push(BotConfiguration.serviceFromJSON(newService));
     }
+    // Generate a key for encryption
+    static generateKey() {
+        return encrypt.generateKey();
+    }
     // encrypt all values in the config
     encrypt(secret) {
         this.validateSecretKey(secret);
@@ -141,7 +147,7 @@ class BotConfiguration {
             try {
                 // legacy decryption
                 this.secretKey = this.legacyDecrypt(this.secretKey, secret);
-                this.secretKey = encrypt_1.encryptString(this.secretKey, secret);
+                this.secretKey = "";
                 let encryptedProperties = {
                     abs: [],
                     endpoint: ['appPassword'],
@@ -196,11 +202,11 @@ class BotConfiguration {
         try {
             if (!this.secretKey || this.secretKey.length == 0) {
                 // if no key, create a guid and enrypt that to use as secret validator
-                this.secretKey = encrypt_1.encryptString(uuid(), secret);
+                this.secretKey = encrypt.encryptString(uuid(), secret);
             }
             else {
                 // validate we can decrypt the secretKey, this tells us we have the correct secret for the rest of the file.
-                encrypt_1.decryptString(this.secretKey, secret);
+                encrypt.decryptString(this.secretKey, secret);
             }
         }
         catch (_a) {
@@ -222,12 +228,16 @@ class BotConfiguration {
                 return new models_1.QnaMakerService(service);
             case schema_1.ServiceTypes.Dispatch:
                 return new models_1.DispatchService(service);
-            case schema_1.ServiceTypes.AzureBotService:
+            case schema_1.ServiceTypes.AzureBot:
                 return new models_1.AzureBotService(service);
             case schema_1.ServiceTypes.Luis:
                 return new models_1.LuisService(service);
             case schema_1.ServiceTypes.Endpoint:
                 return new models_1.EndpointService(service);
+            case schema_1.ServiceTypes.AppInsights:
+                return new appInsightsService_1.AppInsightsService(service);
+            case schema_1.ServiceTypes.AzureStorage:
+                return new azureStorageService_1.AzureStorageService(service);
             default:
                 throw new TypeError(`${service.type} is not a known service implementation.`);
         }
