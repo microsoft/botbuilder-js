@@ -6,17 +6,16 @@
  * Licensed under the MIT License.
  */
 import { TurnContext } from './turnContext';
-import { Promiseable } from './middlewareSet';
 
 /**
  * Callback to calculate a storage key.
  *
  * ```TypeScript
- * type StorageKeyFactory = (context: TurnContext) => Promiseable<string>;
+ * type StorageKeyFactory = (context: TurnContext) => Promise<string>;
  * ```
  * @param StorageKeyFactory.context Context for the current turn of conversation with a user.
  */
-export type StorageKeyFactory = (context: TurnContext) => Promiseable<string>;
+export type StorageKeyFactory = (context: TurnContext) => Promise<string>;
 
 /**
  * Interface for a storage provider that stores and retrieves plain old JSON objects.
