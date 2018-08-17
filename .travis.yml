@@ -10,6 +10,7 @@ install:
 - lerna bootstrap --hoist
 script:
 - npm run test:travis
+- npm run tslint
 after_success:
 - echo 'Begin deploy'
 - test $TRAVIS_BRANCH = "v-brhale-publish2" 
