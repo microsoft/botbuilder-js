@@ -16,6 +16,7 @@ import { makeRevocable } from './internal';
  */
 export abstract class BotAdapter {
     private middleware = new MiddlewareSet();
+    private turnError: (context: TurnContext, error: Error) => Promise<void>;
 
     /**
      * Sends a set of activities to the user. An array of responses form the server will be
@@ -46,6 +47,14 @@ export abstract class BotAdapter {
      */
     public abstract continueConversation(reference: Partial<ConversationReference>, logic: (revocableContext: TurnContext) => Promiseable<void>): Promise<void>;
 
+    public get onTurnError(): (context: TurnContext, error: Error) => Promise<void> {
+        return this.turnError;
+    }
+
+    public set onTurnError(value: (context: TurnContext, error: Error) => Promise<void>) {
+        this.onTurnError = value;
+    }
+
     /**
      * Registers middleware handlers(s) with the adapter.
      * @param middleware One or more middleware handlers(s) to register.
@@ -65,15 +74,24 @@ export abstract class BotAdapter {
      * @param next Function to call at the end of the middleware chain.
      * @param next.callback A revocable version of the context object.
      */
-    protected runMiddleware(context: TurnContext, next: (revocableContext: TurnContext) => Promiseable<void>): Promise<void> {
+    protected async runMiddleware(context: TurnContext, next: (revocableContext: TurnContext) => Promiseable<void>): Promise<void> {
         // Wrap context with revocable proxy
         const pContext = makeRevocable(context);
-        return this.middleware.run(pContext.proxy, () => {
-            // Call next with revocable context
-            return next(pContext.proxy);
-        }).then(() => {
+        try {
+            // Run middleware pipe
+            this.middleware.run(pContext.proxy, async () => {
+                // Call next with revocable context
+                await next(pContext.proxy);
+            });
+        } catch(err) {
+            if (this.onTurnError) {
+                await this.onTurnError(pContext.proxy, err);
+            } else {
+                throw err;
+            }
+        } finally {
             // Revoke use of context
             pContext.revoke();
-        });
+        }
     }
 }
