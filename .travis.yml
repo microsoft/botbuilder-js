@@ -12,6 +12,7 @@ install:
 - lerna bootstrap --hoist
 script:
 - npm run test:travis
+- npm run tslint
 after_success:
 - echo TRAVIS_EVENT_TYPE = $TRAVIS_EVENT_TYPE
 - test $TRAVIS_EVENT_TYPE = "cron"
