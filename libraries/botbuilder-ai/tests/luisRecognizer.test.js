@@ -10,7 +10,7 @@ const endpointKey = process.env.LUISAPPKEY || "MockedKey";
 
 // If this is true, then LUIS responses will come from oracle files.
 // If it is false, the LUIS service will be called and if there are changes you will get a new oracle file.
-const mockLuis = true;
+const mockLuis = false;
 
 class TestContext extends TurnContext {
     constructor(request) {
@@ -97,8 +97,8 @@ function TestJson(file, done, includeAllIntents, includeInstance) {
 describe('LuisRecognizer', function () {
     this.timeout(10000);
 
-    if (!mockLuis && !endpointKey) {
-        console.warn('WARNING: skipping LuisRecognizer test suite because LUISAPPKEY environment variable is not defined');
+    if (!mockLuis && endpointKey == "MockedKey") {
+        console.warn('WARNING: skipping LuisRecognizer test suite because the LUISAPPKEY environment variable is not defined');
         return;
     }
 

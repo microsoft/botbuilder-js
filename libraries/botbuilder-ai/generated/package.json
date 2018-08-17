@@ -1,0 +1,24 @@
+{
+  "name": "luisclient",
+  "author": "Microsoft Corporation",
+  "description": "LuisClient Library with typescript type definitions for node",
+  "version": "",
+  "dependencies": {
+    "ms-rest": "^2.3.3"
+  },
+  "keywords": [
+    "node",
+    "azure"
+  ],
+  "license": "MIT",
+  "main": "./lib/luisClient.js",
+  "types": "./lib/luisClient.d.ts",
+  "homepage": "https://github.com/azure/azure-sdk-for-node",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/azure/azure-sdk-for-node.git"
+  },
+  "bugs": {
+    "url": "https://github.com/azure/azure-sdk-for-node/issues"
+  }
+}

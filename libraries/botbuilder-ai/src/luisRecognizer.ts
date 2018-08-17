@@ -6,8 +6,8 @@
  * Licensed under the MIT License.
  */
 import { TurnContext, RecognizerResult } from 'botbuilder';
-import { LuisResult, Intent, Entity, CompositeEntity } from 'botframework-luis/lib/models';
-import LuisClient = require('botframework-luis');
+import { LuisResult, Intent, Entity, CompositeEntity } from '../generated/lib/models';
+import { LuisClient } from '../generated';
 
 const LUIS_TRACE_TYPE = 'https://www.luis.ai/schemas/trace';
 const LUIS_TRACE_NAME = 'LuisRecognizer';
@@ -140,7 +140,8 @@ export class LuisRecognizer {
                         alteredText: luisResult.alteredQuery,
                         intents: this.getIntents(luisResult),
                         entities: this.getEntitiesAndMetadata(luisResult.entities, luisResult.compositeEntities, this.options.includeInstanceData === undefined || this.options.includeInstanceData),
-                        luisResult: this.includeApiResults ? luisResult : null
+                        luisResult: this.includeApiResults ? luisResult : null,
+                        sentiment: this.getSentiment(luisResult)
                     };
 
                     // Write to cache
@@ -397,5 +398,18 @@ export class LuisRecognizer {
             obj[key] = obj[key].concat(value);
         else
             obj[key] = [value];
+    }
+
+    private getSentiment(luis: LuisResult) {
+        // TODO: Update this when the new node LUIS SDK package is integrated
+        var sentiment = (luis as any).sentimentAnalysis;
+        var result;
+        if (sentiment != null) {
+            result = {
+                "label": sentiment.label,
+                "score": sentiment.score
+            };
+        }
+        return result;
     }
 }
