@@ -44,6 +44,10 @@
       }
     ]
   },
+  "sentiment": {
+    "label": "negative",
+    "score": 0.311659515
+  },
   "luisResult": {
     "query": "Please deliver it to 98033 WA",
     "topScoringIntent": {
@@ -133,6 +137,10 @@
           }
         ]
       }
-    ]
+    ],
+    "sentimentAnalysis": {
+      "label": "negative",
+      "score": 0.311659515
+    }
   }
 }

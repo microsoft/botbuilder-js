@@ -49,6 +49,10 @@
       ]
     ]
   },
+  "sentiment": {
+    "label": "negative",
+    "score": 0.143202543
+  },
   "luisResult": {
     "query": "I want to travel on united",
     "topScoringIntent": {
@@ -109,6 +113,10 @@
           ]
         }
       }
-    ]
+    ],
+    "sentimentAnalysis": {
+      "label": "negative",
+      "score": 0.143202543
+    }
   }
 }

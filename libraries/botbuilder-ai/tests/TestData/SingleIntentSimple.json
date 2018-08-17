@@ -21,6 +21,10 @@
       "emad"
     ]
   },
+  "sentiment": {
+    "label": "positive",
+    "score": 0.8283453
+  },
   "luisResult": {
     "query": "My name is Emad",
     "topScoringIntent": {
@@ -35,6 +39,10 @@
         "endIndex": 14,
         "score": 0.898449957
       }
-    ]
+    ],
+    "sentimentAnalysis": {
+      "label": "positive",
+      "score": 0.8283453
+    }
   }
 }

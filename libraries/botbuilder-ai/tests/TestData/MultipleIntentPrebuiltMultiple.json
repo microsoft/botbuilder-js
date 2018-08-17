@@ -97,6 +97,10 @@
       2
     ]
   },
+  "sentiment": {
+    "label": "neutral",
+    "score": 0.5
+  },
   "luisResult": {
     "query": "Please deliver February 2nd 2001 in room 201",
     "topScoringIntent": {
@@ -200,6 +204,10 @@
           "value": "2"
         }
       }
-    ]
+    ],
+    "sentimentAnalysis": {
+      "label": "neutral",
+      "score": 0.5
+    }
   }
 }

@@ -1,0 +1,1 @@
+This is a temporary solution until the official LUIS SDK package for node is released.

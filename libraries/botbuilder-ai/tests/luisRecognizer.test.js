@@ -64,7 +64,7 @@ function GetExpected(oracle) {
     var expected = fs.readJSONSync(oracle);
     if (mockLuis) {
         nock('https://westus.api.cognitive.microsoft.com')
-            .get(/apps/)
+            .post(/apps/)
             .reply(200, expected.luisResult);
     }
     return expected;
@@ -97,8 +97,8 @@ function TestJson(file, done, includeAllIntents, includeInstance) {
 describe('LuisRecognizer', function () {
     this.timeout(10000);
 
-    if (!mockLuis && !endpointKey) {
-        console.warn('WARNING: skipping LuisRecognizer test suite because LUISAPPKEY environment variable is not defined');
+    if (!mockLuis && endpointKey == "MockedKey") {
+        console.warn('WARNING: skipping LuisRecognizer test suite because the LUISAPPKEY environment variable is not defined');
         return;
     }
 

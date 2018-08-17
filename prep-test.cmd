@@ -4,7 +4,9 @@ setlocal
 set keys="\\fusebox\private\sdk\UnitTestKeys.cmd"
 if exist %keys% (
   echo Setting internal microsoft keys--ensure tests can run without them
+  endlocal
   call %keys%
+  setlocal
 ) 
 
 set storage="%ProgramFiles(x86)%\Microsoft SDKs\Azure\Storage Emulator\azurestorageemulator.exe"

@@ -6,12 +6,20 @@
     }
   },
   "entities": {},
+  "sentiment": {
+    "label": "neutral",
+    "score": 0.5
+  },
   "luisResult": {
     "query": "My nanme is Emad",
     "topScoringIntent": {
       "intent": "SpecifyName",
       "score": 0.442533255
     },
-    "entities": []
+    "entities": [],
+    "sentimentAnalysis": {
+      "label": "neutral",
+      "score": 0.5
+    }
   }
 }

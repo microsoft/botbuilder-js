@@ -111,6 +111,10 @@
       ]
     ]
   },
+  "sentiment": {
+    "label": "neutral",
+    "score": 0.5
+  },
   "luisResult": {
     "query": "http://foo.com is where you can fly from seattle to dallas via denver on delta",
     "topScoringIntent": {
@@ -229,6 +233,10 @@
           }
         ]
       }
-    ]
+    ],
+    "sentimentAnalysis": {
+      "label": "neutral",
+      "score": 0.5
+    }
   }
 }
