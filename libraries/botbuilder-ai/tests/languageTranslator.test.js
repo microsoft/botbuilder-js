@@ -3,7 +3,7 @@ const sinon = require('sinon');
 const { TestAdapter, TurnContext } = require('botbuilder');
 const { LanguageTranslator } = require('../');
 
-const translatorKey = "";
+const translatorKey = '';
 
 class TestContext extends TurnContext {
     constructor(request) {
@@ -18,24 +18,24 @@ class TestContext extends TurnContext {
 describe('LanguageTranslator', function () {
     this.timeout(10000);
     
-    formatResponse = function(langs, sources, translations, alignments){
-        var response = 'ArrayOfTranslateArray2Response xmlns="http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">';
-        for(var i = 0; i<sources.length; i++){
-            response += "<TranslateArray2Response>";
-            response += (alignments[i] == "") ? "<Alignment/>":"<Alignment>"+alignments[i]+"</Alignment>";
-            response += (langs[i] == "") ? "<From/>":"<From>" + langs[i] + "</From>";
-            response += '<OriginalTextSentenceLengths xmlns:a="http://schemas.microsoft.com/2003/10/Serialization/Arrays">';
-            response += "<a:int>" + sources[i].length + "</a:int>"
-            response += "</OriginalTextSentenceLengths>";
-            response += "<State/>";
-            response += (translations[i] == "") ? "<TranslatedText/>":"<TranslatedText>" +  translations[i] + "</TranslatedText>";
-            response += '<TranslatedTextSentenceLengths xmlns:a="http://schemas.microsoft.com/2003/10/Serialization/Arrays">';
-            response += "<a:int>" + translations[i].length + "</a:int>";
-            response += "</TranslatedTextSentenceLengths>";
-            response += "</TranslateArray2Response>";
-        }
-        response += "</ArrayOfTranslateArray2Response>";
-        return response;
+    formatResponse = function(text, to, alignment) {
+        return JSON.stringify([{
+            translations: [{ 
+                text: text,
+                to: to,
+                translations: { alignment:{ proj: alignment}}
+            }]
+        }]);
+    }
+
+    resolveCalls = function(langTranslator, language, mockedResponses) {
+        let detectLangStub = sinon.stub(langTranslator.translator, 'detect');
+        detectLangStub.resolves(language);
+
+        let translateStub = sinon.stub(langTranslator.translator, 'translateArrayAsync');
+        mockedResponses.forEach(function (current, index) {
+            translateStub.onCall(index).resolves(current);
+        });
     }
 
     it('should translate en to fr and support html tags in sentences', function (done) {
@@ -45,12 +45,9 @@ describe('LanguageTranslator', function () {
             nativeLanguages: ['fr', 'de'],
         }
 
+        let mockedResponses = [formatResponse(['salutations >'],['fr'])]
         let langTranslator = new LanguageTranslator(toFrenchSettings);
-        let accessTokenStub = sinon.stub(langTranslator.translator, "getAccessToken");
-        let detectLangStub  = sinon.stub(langTranslator.translator, "detect");
-        let translateStub   = sinon.stub(langTranslator.translator, "translateArrayAsync");
-        detectLangStub.resolves("en");
-        translateStub.resolves(formatResponse(["en"], ["greetings>"], ["salutations >"], [""]));
+        resolveCalls(langTranslator, 'en', mockedResponses);
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(langTranslator)
@@ -65,13 +62,9 @@ describe('LanguageTranslator', function () {
             nativeLanguages: ['fr', 'de'],
         }
 
-        let langTranslator  = new LanguageTranslator(toFrenchSettings);
-        let accessTokenStub = sinon.stub(langTranslator.translator, "getAccessToken");
-        let detectLangStub  = sinon.stub(langTranslator.translator, "detect");
-        let translateStub   = sinon.stub(langTranslator.translator, "translateArrayAsync");
-        detectLangStub.resolves("en");
-        translateStub.resolves(formatResponse(["en"], ['0: You said "hello"'], ['0 : vous avez dit " Bonjour "'], [""]));
-
+        let mockedResponses = [formatResponse(['0 : vous avez dit " Bonjour "'], ['fr'], ['0:0-0:0 1:1-1:1 3:5-3:6 3:5-8:11 7:10-13:15 12:12-16:16 13:17-17:23 18:18-24:24'])];
+        let langTranslator = new LanguageTranslator(toFrenchSettings);
+        resolveCalls(langTranslator, 'en', mockedResponses);
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(langTranslator)
@@ -104,12 +97,9 @@ describe('LanguageTranslator', function () {
             setUserLanguage: c => Promise.resolve(false)
         }
 
-        let langTranslator  = new LanguageTranslator(noTranslateSettings);
-        let accessTokenStub = sinon.stub(langTranslator.translator, "getAccessToken");
-        let detectLangStub  = sinon.stub(langTranslator.translator, "detect");
-        let translateStub   = sinon.stub(langTranslator.translator, "translateArrayAsync");
-        detectLangStub.resolves("fr");
-        translateStub.resolves(formatResponse(["fr"], ['Bonjour Jean mon ami 2018'], ['Hello Jean my friend 2018'], ["0:6-0:4 8:11-6:9 13:15-11:12 17:19-14:19 21:24-21:24"]));
+        let mockedResponses = [formatResponse(['Hello Jean mon ami 2018'],['en'],['0:6-0:4 8:11-6:9 13:15-11:12 17:19-14:19 21:24-21:24'])];
+        let langTranslator = new LanguageTranslator(noTranslateSettings);
+        resolveCalls(langTranslator, 'fr', mockedResponses);
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(langTranslator)
@@ -148,12 +138,9 @@ describe('LanguageTranslator', function () {
             noTranslatePatterns: { 'en': ['(HI)', '(BYE)'] }
         }
 
-        let langTranslator  = new LanguageTranslator(emptyMessageSettings);
-        let accessTokenStub = sinon.stub(langTranslator.translator, "getAccessToken");
-        let detectLangStub  = sinon.stub(langTranslator.translator, "detect");
-        let translateStub   = sinon.stub(langTranslator.translator, "translateArrayAsync");
-        detectLangStub.resolves("");
-        translateStub.resolves(formatResponse(["", "", ""], ["", "", ""], ["", "", ""], ["", "", ""]));
+        let mockedResponses = [formatResponse([''],[''],[''])];
+        let langTranslator = new LanguageTranslator(emptyMessageSettings);
+        resolveCalls(langTranslator, '', mockedResponses);        
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(langTranslator)
@@ -181,13 +168,9 @@ describe('LanguageTranslator', function () {
             nativeLanguages: ['fr', 'de'],
         }
 
-        
-        let langTranslator  = new LanguageTranslator(toFrenchSettings);
-        let accessTokenStub = sinon.stub(langTranslator.translator, "getAccessToken");
-        let detectLangStub  = sinon.stub(langTranslator.translator, "detect");
-        let translateStub   = sinon.stub(langTranslator.translator, "translateArrayAsync");
-        detectLangStub.resolves("en");
-        translateStub.resolves(formatResponse(["en", "en"], ["Greetings", "Hello"], ["Salutations", "Salut"], ["", ""]));
+        let mockedResponses = [formatResponse(['Salutations\nSalut'], ['fr', 'fr'])];
+        let langTranslator = new LanguageTranslator(toFrenchSettings);
+        resolveCalls(langTranslator, 'en', mockedResponses);
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(langTranslator)
@@ -224,10 +207,9 @@ describe('LanguageTranslator', function () {
             setUserLanguage: c => Promise.resolve(false)
         }
 
-        let langTranslator  = new LanguageTranslator(noTranslateSettings);
-        let accessTokenStub = sinon.stub(langTranslator.translator, "getAccessToken");
-        let translateStub   = sinon.stub(langTranslator.translator, "translateArrayAsync");
-        translateStub.resolves(formatResponse(["en"], ["Bonjour Jean mon ami"], ["Hello Jean my friend"], ["0:6-0:4 8:11-6:9 13:15-11:12 17:19-14:19"]));
+        let mockedResponses = [formatResponse(['Hello Jean mon ami'], ['fr'], ['0:6-0:4 8:11-6:9 13:15-11:12 17:19-14:19'])];
+        let langTranslator = new LanguageTranslator(noTranslateSettings);
+        resolveCalls(langTranslator, '', mockedResponses);
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(langTranslator)
@@ -245,14 +227,13 @@ describe('LanguageTranslator', function () {
             setUserLanguage: c => Promise.resolve(false)
         }
 
-        let langTranslator  = new LanguageTranslator(noTranslateSettings);
-        let accessTokenStub = sinon.stub(langTranslator.translator, "getAccessToken");
-        let translateStub   = sinon.stub(langTranslator.translator, "translateArrayAsync");
-        translateStub.resolves(formatResponse(["es"], ["mi perro se llama Enzo"], ["My dog's name is Enzo."], ["0:1-0:1 3:7-3:5 9:10-6:7 9:10-14:15 12:16-9:12 18:21-17:20"]));
+        let mockedResponses = [formatResponse(['My perro\'s name is Enzo'], ['en'], ['0:1-0:1 3:7-3:5 9:10-6:7 9:10-14:15 12:16-9:12 18:21-17:20'])];
+        let langTranslator = new LanguageTranslator(noTranslateSettings);
+        resolveCalls(langTranslator, '', mockedResponses);
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(langTranslator)
-        .test('mi perro se llama Enzo', "My perro's name is Enzo", 'should have received no translate patterns')
+        .test('mi perro se llama Enzo', 'My perro\'s name is Enzo', 'should have received no translate patterns')
         .then(() => done())
     });
 
@@ -266,14 +247,13 @@ describe('LanguageTranslator', function () {
             setUserLanguage: c => Promise.resolve(false)
         }
 
-        let langTranslator  = new LanguageTranslator(noTranslateSettings);
-        let accessTokenStub = sinon.stub(langTranslator.translator, "getAccessToken");
-        let translateStub   = sinon.stub(langTranslator.translator, "translateArrayAsync");
-        translateStub.resolves(formatResponse(["fr"], ["mon nom est l'etat"], ["My name is the state"], ["0:2-0:1 4:6-3:6 8:10-8:9 12:13-11:13 14:17-15:19"]));
+        let mockedResponses = [formatResponse(['My name is l\'etat'], ['en'], ['0:2-0:1 4:6-3:6 8:10-8:9 12:13-11:13 14:17-15:19'])];
+        let langTranslator = new LanguageTranslator(noTranslateSettings);
+        resolveCalls(langTranslator, '', mockedResponses);
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(langTranslator)
-        .test("mon nom est l'etat", "My name is l'etat", 'should have received no translate patterns')
+        .test('mon nom est l\'etat', 'My name is l\'etat', 'should have received no translate patterns')
         .then(() => done())
     });
 
@@ -286,11 +266,12 @@ describe('LanguageTranslator', function () {
             translateBackToUserLanguage: true
         }
 
-        let langTranslator  = new LanguageTranslator(translateBackSettings);
-        let accessTokenStub = sinon.stub(langTranslator.translator, "getAccessToken");
-        let translateStub   = sinon.stub(langTranslator.translator, "translateArrayAsync");
-        translateStub.onCall(0).resolves(formatResponse(["fr"], ["bonjour"], ["Hello"], [""]));
-        translateStub.onCall(1).resolves(formatResponse(["en"], ["Hello"], ["Salut"], [""]));
+        let mockedResponses = [
+            formatResponse(['bonjour'], ['en']), 
+            formatResponse(['Salut'], ['fr'])
+        ]
+        let langTranslator = new LanguageTranslator(translateBackSettings);
+        resolveCalls(langTranslator, '', mockedResponses);
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(langTranslator)
@@ -307,10 +288,9 @@ describe('LanguageTranslator', function () {
             translateBackToUserLanguage: true
         }
 
-        let langTranslator  = new LanguageTranslator(translateBackSettings);
-        let accessTokenStub = sinon.stub(langTranslator.translator, "getAccessToken");
-        let translateStub   = sinon.stub(langTranslator.translator, "translateArrayAsync");
-        translateStub.resolves(formatResponse(["fr"], ["foo"], ["Foo"], [""]));
+        let mockedResponses = [formatResponse(['Foo'], ['en'])];
+        let langTranslator = new LanguageTranslator(translateBackSettings);
+        resolveCalls(langTranslator, '', mockedResponses);
 
         const context = new TestContext({ text: 'hello', type: 'foo' });
         const testAdapter = new TestAdapter(c => c.sendActivity(context.activity))
@@ -334,20 +314,17 @@ describe('LanguageTranslator', function () {
         + 'Presenting your pass at the entrance of monuments and museums grants you '
         + 'FREE access with no waiting time at the cash register.';
         
-        let translatedMessage = "Avant votre première visite, "
-        + "de préférence à partir du matin pour profiter pleinement de votre journée, "
-        + "n'oubliez pas d'écrire votre nom, prénom et la date actuelle "
-        + "(sans écraser et de passage) sur le dos de votre laissez-passer "
-        + "afin de l'activer consécutivement pour 2 , 4 ou 6 jours. "
-        + "La présentation de votre laissez-passer à l'entrée des monuments et des musées "
-        + "vous accorde un accès gratuit sans temps d'attente à la caisse enregistreuse";
+        let translatedMessage = 'Avant votre première visite, '
+        + 'de préférence à partir du matin pour profiter pleinement de votre journée, '
+        + 'n\'oubliez pas d\'écrire votre nom, prénom et la date actuelle '
+        + '(sans écraser et de passage) sur le dos de votre laissez-passer '
+        + 'afin de l\'activer consécutivement pour 2 , 4 ou 6 jours. '
+        + 'La présentation de votre laissez-passer à l\'entrée des monuments et des musées '
+        + 'vous accorde un accès gratuit sans temps d\'attente à la caisse enregistreuse';
 
-        let langTranslator  = new LanguageTranslator(toFrenchSettings);
-        let accessTokenStub = sinon.stub(langTranslator.translator, "getAccessToken");
-        let detectLangStub  = sinon.stub(langTranslator.translator, "detect");
-        let translateStub   = sinon.stub(langTranslator.translator, "translateArrayAsync");
-        detectLangStub.resolves("en");
-        translateStub.resolves(formatResponse(["en"], [message], [translatedMessage], ["262:262-270:270 264:264-272:272 267:268-274:275 270:270-277:277 272:275-279:283 276:276-284:284"]));
+        let mockedResponses = [formatResponse([translatedMessage], ['fr'], ['262:262-270:270 264:264-272:272 267:268-274:275 270:270-277:277 272:275-279:283 276:276-284:284'])];
+        let langTranslator = new LanguageTranslator(toFrenchSettings);
+        resolveCalls(langTranslator, 'en', mockedResponses);
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(langTranslator)
@@ -365,11 +342,9 @@ describe('LanguageTranslator', function () {
             setUserLanguage: c => Promise.resolve(false)
         }
 
-        let langTranslator  = new LanguageTranslator(dictionarySettings);
-        let accessTokenStub = sinon.stub(langTranslator.translator, "getAccessToken");
-        let translateStub   = sinon.stub(langTranslator.translator, "translateArrayAsync");
-        translateStub.resolves(formatResponse(["en"], ["I am Mahmoud"], ["Je suis Mahmoud"], ["0:0-0:1 2:3-3:6 5:11-8:14"]));
-
+        let mockedResponses = [formatResponse(['Je suis John'], ['fr'], ['0:0-0:1 2:3-3:6 5:11-8:14'])];
+        let langTranslator = new LanguageTranslator(dictionarySettings);
+        resolveCalls(langTranslator, '', mockedResponses);
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(langTranslator)

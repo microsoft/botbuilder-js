@@ -7,7 +7,6 @@
  */
 import { Middleware, TurnContext, ActivityTypes, Activity } from 'botbuilder';
 import * as request from 'request-promise-native';
-import { DOMParser } from "xmldom";
 
 /**
  * Settings used to configure an instance of `LanguageTranslator`.
@@ -193,7 +192,9 @@ interface Translator {
  * @private
  */
 class MicrosoftTranslator implements Translator {
-    
+    readonly TRANSLATEURL = 'https://api.cognitive.microsofttranslator.com/translate?api-version=3.0&includeAlignment=true&includeSentenceLength=true';
+    readonly DETECTURL = 'https://api.cognitive.microsofttranslator.com/detect?api-version=3.0';
+
     apiKey: string;
     postProcessor: PostProcessTranslator;
 
@@ -206,100 +207,53 @@ class MicrosoftTranslator implements Translator {
         this.postProcessor = new PostProcessTranslator(noTranslatePatterns, wordDictionary);
     }
 
-    getAccessToken(): Promise<string> {
-        
-        return request({
-            url: `https://api.cognitive.microsoft.com/sts/v1.0/issueToken?Subscription-Key=${this.apiKey}`,
-            method: 'POST'
-        })
-        .then(result => Promise.resolve(result))
-    }
-
-    entityMap: any = {
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': '&quot;',
-        "'": '&#39;',
-        "/": '&#x2F;'
-    };
-    
-    escapeHtml(source: string) {
-        return String(source).replace(/[&<>"'\/]/g, s => this.entityMap[s]);
-    }
-
     detect(text: string): Promise<string> {
-        let uri: any = "http://api.microsofttranslator.com/v2/Http.svc/Detect";
-        let query: any = `?text=${encodeURI(text)}`;
-        return this.getAccessToken()
-        .then(accessToken => {
-            return request({
-                url: uri + query,
-                method: 'GET',
-                headers: {
-                    'Authorization': 'Bearer ' + accessToken
-                }
-            })
+        if (text.trim() === '') {
+            return Promise.resolve('');
+        }
+        return request({
+            url: this.DETECTURL,
+            method: 'POST',
+            headers: { 'Ocp-Apim-Subscription-Key': this.apiKey },
+            json: [{'text': text}]
         })
-        .then(lang => Promise.resolve(lang.replace(/<[^>]*>/g, '')))
+        .then(response => {
+            return response[0].language;
+        });
     }
 
     translateArrayAsync(options: TranslateArrayOptions): Promise<string> {
         let from = options.from;
         let to = options.to;
         let texts = options.texts;
-        let orgTexts = [];
-        texts.forEach((text, index, array) => {
-            orgTexts.push(text);
-            let escapedText = this.escapeHtml(text);
-            texts[index] = `<string xmlns="http://schemas.microsoft.com/2003/10/Serialization/Arrays">${escapedText}</string>`;
-        });
-        
-        let uri: any = "https://api.microsofttranslator.com/v2/Http.svc/TranslateArray2";
-        let body: any = "<TranslateArrayRequest>" +
-        "<AppId />" +
-            `<From>${from}</From>` +
-            "<Options>" +
-            " <Category xmlns=\"http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2\" >generalnn</Category>" +
-                "<ContentType xmlns=\"http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2\">text/plain</ContentType>" +
-                "<ReservedFlags xmlns=\"http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2\" />" +
-                "<State xmlns=\"http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2\" />" +
-                "<Uri xmlns=\"http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2\" />" +
-                "<User xmlns=\"http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2\" />" +
-            "</Options>" +
-            "<Texts>" +
-            texts.join('') +
-            "</Texts>" +
-            `<To>${to}</To>` +
-        "</TranslateArrayRequest>";
-        
-        return this.getAccessToken()
-        .then(accessToken => {
-            return request({
-                url: uri,
+        let uri = `${this.TRANSLATEURL}&from=${options.from}&to=${options.to}`;
+
+        if (texts.join('').trim() === '') {
+            return Promise.resolve('[]');
+        }
+
+        let uriOptions = {
+            uri: uri,
                 method: 'POST',
-                headers: {
-                    'Authorization': 'Bearer ' + accessToken,
-                    'Content-Type': 'text/xml'
-                },
-                body: body,
-            })
-        })
-        .then(response => Promise.resolve(response))
+                headers: { 'Ocp-Apim-Subscription-Key': this.apiKey },
+                json: texts.map(t => { return {'Text': t }; })
+        };
+
+        return request(uriOptions)
+        .then(response => Promise.resolve(JSON.stringify(response)));
     }
 
     postProcessTranslation(response: string, orgTexts: string[]): TranslationResult[] {
-        let results: TranslationResult[] = [];
-        let parser = new DOMParser();
-        let responseObj = parser.parseFromString(response);
-        let elements = responseObj.getElementsByTagName("TranslateArray2Response");
-        Array.from(elements).forEach((element, index, array) => {
-            let translation = element.getElementsByTagName('TranslatedText')[0].textContent as string;
-            let alignment = element.getElementsByTagName('Alignment')[0].textContent as string;
-            translation = this.postProcessor.fixTranslation(orgTexts[index], alignment, translation);
-            let result: TranslationResult = { translatedText: translation };
-            results.push(result);
+        let results: TranslationResult[] =
+        JSON.parse(response).map(responseElement => {
+            let translationElement = responseElement.translations[0];
+            if (translationElement.alignment != null) {
+                let alignment = translationElement.alignment.proj as string;
+                translationElement.text = this.postProcessor.fixTranslation(orgTexts[0], alignment, translationElement.text);
+            }
+            return { translatedText: translationElement.text };
         });
+
         return results;
     }
 }
@@ -381,9 +335,9 @@ export class PostProcessTranslator {
                 outWrds.push(wrd);
             }
         });
-        
+
         alignSplitWrds = outWrds;
-        
+
         if (this.join("", alignSplitWrds) == this.join("", wrds)) {
             return alignSplitWrds;
         } else {
