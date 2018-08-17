@@ -36,7 +36,7 @@
     "test": "tsc && nyc mocha tests/",
     "build": "tsc",
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder-dialogs --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-dialogs .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Dialogs\" --readme none",
-    "clean": "erase /q lib\\*.*",
+    "clean": "erase /q /s .\\lib",
     "set-version": "npm version --allow-same-version ${Version}"
   }
 }

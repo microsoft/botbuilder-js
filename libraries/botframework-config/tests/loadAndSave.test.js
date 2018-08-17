@@ -3,9 +3,10 @@ let bf = require('../lib');
 let fs = require('fs');
 
 // do not save over testbot
-const testBotPath = "tests/test.bot";
-const saveBotPath = "tests/save.bot";
-const legacyBotPath = "tests/legacy.bot";
+const testBotPath = require.resolve("./test.bot");
+const legacyBotPath = require.resolve("./legacy.bot");
+
+const saveBotPath = testBotPath.replace("test.bot", "save.bot");
 
 describe("LoadAndSaveTests", () => {
     it("SerializeBotFile", async () => {
