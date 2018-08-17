@@ -135,7 +135,8 @@ export class DialogContext {
     public async prompt(dialogId: string, promptOrOptions: string|Partial<Activity>|PromptOptions, choices?: (string|Choice)[]): Promise<DialogTurnResult> {
         let options: PromptOptions;
         if (typeof promptOrOptions === 'object' && (promptOrOptions as PromptOptions).prompt !== undefined) {
-            options = Object.assign({}, promptOrOptions as PromptOptions);
+            let opts = choices ? { choices: choices } : {};
+            options = Object.assign(opts, promptOrOptions as PromptOptions);
         } else {
             options = { prompt: promptOrOptions as string|Partial<Activity>, choices: choices };
         }
