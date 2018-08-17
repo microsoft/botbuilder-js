@@ -10,7 +10,7 @@ const endpointKey = process.env.LUISAPPKEY || "MockedKey";
 
 // If this is true, then LUIS responses will come from oracle files.
 // If it is false, the LUIS service will be called and if there are changes you will get a new oracle file.
-const mockLuis = false;
+const mockLuis = true;
 
 class TestContext extends TurnContext {
     constructor(request) {
@@ -64,7 +64,7 @@ function GetExpected(oracle) {
     var expected = fs.readJSONSync(oracle);
     if (mockLuis) {
         nock('https://westus.api.cognitive.microsoft.com')
-            .get(/apps/)
+            .post(/apps/)
             .reply(200, expected.luisResult);
     }
     return expected;

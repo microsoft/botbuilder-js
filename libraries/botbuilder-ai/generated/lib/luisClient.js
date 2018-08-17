@@ -21,24 +21,24 @@ const operations = require('./operations');
 class LuisClient extends ServiceClient {
   /**
    * Create a LuisClient.
-   * @param {azureRegions} azureRegion - Supported Azure regions for Cognitive Services endpoints. Possible values include: 'westus', 'westeurope', 'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus', 'southcentralus', 'northeurope', 'eastasia', 'australiaeast', 'brazilsouth'
+   * @param {string} endpoint - Supported Cognitive Services endpoints (protocol and hostname, for example: https://westus.api.cognitive.microsoft.com).
    * @param {object} [options] - The parameter options
    * @param {Array} [options.filters] - Filters to be added to the request pipeline
    * @param {object} [options.requestOptions] - Options for the underlying request object
    * {@link https://github.com/request/request#requestoptions-callback Options doc}
    * @param {boolean} [options.noRetryPolicy] - If set to true, turn off default retry policy
    */
-  constructor(azureRegion, options) {
-    if (azureRegion === null || azureRegion === undefined) {
-      throw new Error('\'azureRegion\' cannot be null.');
+  constructor(endpoint, options) {
+    if (endpoint === null || endpoint === undefined) {
+      throw new Error('\'endpoint\' cannot be null.');
     }
 
     if (!options) options = {};
 
     super(null, options);
 
-    this.baseUri = 'https://{AzureRegion}.api.cognitive.microsoft.com/luis/v2.0/apps';
-    this.azureRegion = azureRegion;
+    this.baseUri = '{Endpoint}/luis/v2.0';
+    this.endpoint = endpoint;
 
     let packageInfo = this.getPackageJsonInfo(__dirname);
     this.addUserAgentInfo(`${packageInfo.name}/${packageInfo.version}`);

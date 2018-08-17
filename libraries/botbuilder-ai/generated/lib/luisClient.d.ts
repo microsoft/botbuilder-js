@@ -14,7 +14,7 @@ export default class LuisClient extends ServiceClient {
    * Initializes a new instance of the LuisClient class.
    * @constructor
    *
-   * @param {azureRegions} azureRegion - Supported Azure regions for Cognitive Services endpoints. Possible values include: 'westus', 'westeurope', 'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus', 'southcentralus', 'northeurope', 'eastasia', 'australiaeast', 'brazilsouth'
+   * @param {string} endpoint - Supported Cognitive Services endpoints (protocol and hostname, for example: https://westus.api.cognitive.microsoft.com).
    *
    * @param {object} [options] - The parameter options
    *
@@ -26,9 +26,9 @@ export default class LuisClient extends ServiceClient {
    * @param {boolean} [options.noRetryPolicy] - If set to true, turn off default retry policy
    *
    */
-  constructor(azureRegion: string, options?: ServiceClientOptions);
+  constructor(endpoint: string, options?: ServiceClientOptions);
 
-  azureRegion: string;
+  endpoint: string;
 
   // Operation groups
   prediction: operations.Prediction;

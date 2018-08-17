@@ -85,7 +85,7 @@ export interface CompositeEntityModel {
  * @member {string} [label] The polarity of the sentiment, can be positive,
  * neutral or negative.
  * @member {number} [score] Score of the sentiment, ranges from 0 (most
- * negative) to 1 (most negative).
+ * negative) to 1 (most positive).
  */
 export interface Sentiment {
   label?: string;
@@ -111,11 +111,11 @@ export interface Sentiment {
  * @member {array} [entities] The entities extracted from the utterance.
  * @member {array} [compositeEntities] The composite entities extracted from
  * the utterance.
- * @member {object} [sentiment]
- * @member {string} [sentiment.label] The polarity of the sentiment, can be
- * positive, neutral or negative.
- * @member {number} [sentiment.score] Score of the sentiment, ranges from 0
- * (most negative) to 1 (most negative).
+ * @member {object} [sentimentAnalysis]
+ * @member {string} [sentimentAnalysis.label] The polarity of the sentiment,
+ * can be positive, neutral or negative.
+ * @member {number} [sentimentAnalysis.score] Score of the sentiment, ranges
+ * from 0 (most negative) to 1 (most positive).
  */
 export interface LuisResult {
   query?: string;
@@ -124,7 +124,7 @@ export interface LuisResult {
   intents?: IntentModel[];
   entities?: EntityModel[];
   compositeEntities?: CompositeEntityModel[];
-  sentiment?: Sentiment;
+  sentimentAnalysis?: Sentiment;
 }
 
 /**

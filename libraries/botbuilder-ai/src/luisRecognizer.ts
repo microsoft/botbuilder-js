@@ -109,7 +109,8 @@ export class LuisRecognizer {
 
         // Create client and override callbacks
         // TODO: Update this to the official SDK once available
-        this.luisClient = new LuisClient(this.application.azureRegion || 'westus');
+        var baseUri = "https://" + (this.application.azureRegion || 'westus') + ".api.cognitive.microsoft.com";
+        this.luisClient = new LuisClient(baseUri);
     }
 
     /**
@@ -140,8 +141,8 @@ export class LuisRecognizer {
                         alteredText: luisResult.alteredQuery,
                         intents: this.getIntents(luisResult),
                         entities: this.getEntitiesAndMetadata(luisResult.entities, luisResult.compositeEntities, this.options.includeInstanceData === undefined || this.options.includeInstanceData),
+                        sentiment: this.getSentiment(luisResult),
                         luisResult: this.includeApiResults ? luisResult : null,
-                        sentiment: this.getSentiment(luisResult)
                     };
 
                     // Write to cache
@@ -390,13 +391,11 @@ export class LuisRecognizer {
     }
 
     private getSentiment(luis: LuisResult) {
-        // TODO: Update this when the new node LUIS SDK package is integrated
-        var sentiment = (luis as any).sentimentAnalysis;
         var result;
-        if (sentiment != null) {
+        if (luis.sentimentAnalysis) {
             result = {
-                "label": sentiment.label,
-                "score": sentiment.score
+                "label": luis.sentimentAnalysis.label,
+                "score": luis.sentimentAnalysis.score
             };
         }
         return result;
