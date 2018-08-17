@@ -92,13 +92,13 @@ export class BotState implements Middleware {
      * @param force (Optional) If `true` the cache will be bypassed and the state will always be read in directly from storage. Defaults to `false`.
      */
     public read(context: TurnContext, force = false): Promise<any> {
-        const cached = context.services.get(this.stateKey) as CachedBotState;
+        const cached = context.turnState.get(this.stateKey) as CachedBotState;
         if (force || !cached || !cached.state) {
             return Promise.resolve(this.storageKey(context)).then((key) => {
                     return this.storage.read([key]).then((items) => {
                         const state = items[key] || {};
                         const hash = calculateChangeHash(state);
-                        context.services.set(this.stateKey, { state: state, hash: hash });
+                        context.turnState.set(this.stateKey, { state: state, hash: hash });
                         return state;
                     });
                 });
@@ -121,7 +121,7 @@ export class BotState implements Middleware {
      * @param force (Optional) if `true` the state will always be written out regardless of its change state. Defaults to `false`.
      */
     public write(context: TurnContext, force = false): Promise<void> {
-        let cached = context.services.get(this.stateKey) as CachedBotState;
+        let cached = context.turnState.get(this.stateKey) as CachedBotState;
         if (force || (cached && cached.hash !== calculateChangeHash(cached.state))) {
             return Promise.resolve(this.storageKey(context)).then((key) => {
                 if (!cached) { cached = { state: {}, hash: '' }; }
@@ -131,7 +131,7 @@ export class BotState implements Middleware {
                 return this.storage.write(changes).then(() => {
                         // Update change hash and cache
                         cached.hash = calculateChangeHash(cached.state);
-                        context.services.set(this.stateKey, cached);
+                        context.turnState.set(this.stateKey, cached);
                     });
             });
         }
@@ -151,10 +151,10 @@ export class BotState implements Middleware {
      */
     public clear(context: TurnContext): void {
         // We leave the change hash un-touched which will force the cleared state changes to get persisted.
-        const cached = context.services.get(this.stateKey) as CachedBotState;
+        const cached = context.turnState.get(this.stateKey) as CachedBotState;
         if (cached) {
             cached.state = {};
-            context.services.set(this.stateKey, cached);
+            context.turnState.set(this.stateKey, cached);
         }
     }
 
@@ -170,7 +170,7 @@ export class BotState implements Middleware {
      * @param context Context for current turn of conversation with the user.
      */
     public get(context: TurnContext): any|undefined {
-        const cached = context.services.get(this.stateKey) as CachedBotState;
+        const cached = context.turnState.get(this.stateKey) as CachedBotState;
         return typeof cached === 'object' && typeof cached.state === 'object' ? cached.state : undefined;
     }
 }
