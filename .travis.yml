@@ -4,15 +4,17 @@ node_js:
 notifications:
   email: false
 before_install:
+- printf "//botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/:_authToken=${API_KEY}" >> ~/.npmrc
 - npm install --global lerna nyc mocha typescript@2.7.2
 - cd tools/ && npm install && cd ..
 install:
+- npm run update-versions
 - lerna bootstrap --hoist
 script:
 - npm run test:travis
 after_success:
 - echo 'Begin deploy'
-- test $TRAVIS_BRANCH = "v-brhale-publish2" 
+- test $TRAVIS_BRANCH = "v-brhale-publish3" 
   && npm publish libraries/botbuilder --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
   && npm publish libraries/botbuilder-ai --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
   && npm publish libraries/botbuilder-azure --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
