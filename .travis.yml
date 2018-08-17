@@ -13,8 +13,9 @@ install:
 script:
 - npm run test:travis
 after_success:
-- echo 'Begin deploy'
-- test $TRAVIS_BRANCH = "v-brhale-publish3" 
+- echo TRAVIS_EVENT_TYPE = $TRAVIS_EVENT_TYPE
+- test $TRAVIS_EVENT_TYPE = "cron"
+  && echo Begin deploy
   && npm publish libraries/botbuilder --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
   && npm publish libraries/botbuilder-ai --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
   && npm publish libraries/botbuilder-azure --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
@@ -23,7 +24,7 @@ after_success:
   && npm publish libraries/botframework-connector --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
   && npm publish libraries/botframework-luis --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
   && npm publish libraries/botframework-schema --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
-- echo 'End deploy'
+  && echo End deploy
 cache:
   directories:
   - node_modules
