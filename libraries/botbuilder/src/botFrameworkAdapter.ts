@@ -402,7 +402,7 @@ export class BotFrameworkAdapter extends BotAdapter {
                     .then(() => {
                         if (request.type === ActivityTypes.Invoke) {
                             // Retrieve cached invoke response.
-                            const invokeResponse = context.services.get(INVOKE_RESPONSE_KEY);
+                            const invokeResponse = context.turnState.get(INVOKE_RESPONSE_KEY);
                             if (invokeResponse && invokeResponse.value) {
                                 const value = invokeResponse.value as InvokeResponse;
                                 res.send(value.status, value.body);
@@ -459,7 +459,7 @@ export class BotFrameworkAdapter extends BotAdapter {
                                 break;
                             case 'invokeResponse':
                                 // Cache response to context object. This will be retrieved when turn completes.
-                                context.services.set(INVOKE_RESPONSE_KEY, activity);
+                                context.turnState.set(INVOKE_RESPONSE_KEY, activity);
                                 responses.push({} as ResourceResponse);
                                 next(i + 1);
                                 break;

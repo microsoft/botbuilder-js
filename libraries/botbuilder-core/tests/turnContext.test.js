@@ -104,30 +104,30 @@ describe(`TurnContext`, function () {
 
     it(`should cache a value using services.set() and services.get().`, function (done) {
         const context = new TurnContext(new SimpleAdapter(), testMessage);
-        assert(context.services.get('foo') === undefined, `invalid initial state.`);
-        context.services.set('foo', 'bar');
-        assert(context.services.get('foo') === 'bar', `invalid value of "${context.services.get('foo')}" after set().`);
+        assert(context.turnState.get('foo') === undefined, `invalid initial state.`);
+        context.turnState.set('foo', 'bar');
+        assert(context.turnState.get('foo') === 'bar', `invalid value of "${context.turnState.get('foo')}" after set().`);
         done();
     });
 
     it(`should inspect a value using has().`, function (done) {
         const context = new TurnContext(new SimpleAdapter(), testMessage);
-        assert(!context.services.has('bar'), `invalid initial state for has().`);
-        context.services.set('bar', 'foo');
-        assert(context.services.has('bar'), `invalid initial state for has() after set().`);
-        context.services.set('bar', undefined);
-        assert(context.services.has('bar'), `invalid initial state for has() after set(undefined).`);
+        assert(!context.turnState.has('bar'), `invalid initial state for has().`);
+        context.turnState.set('bar', 'foo');
+        assert(context.turnState.has('bar'), `invalid initial state for has() after set().`);
+        context.turnState.set('bar', undefined);
+        assert(context.turnState.has('bar'), `invalid initial state for has() after set(undefined).`);
         done();
     });
 
     it(`should be able to use a Symbol with set(), get(), and has().`, function (done) {
         const key = Symbol('foo');
         const context = new TurnContext(new SimpleAdapter(), testMessage);
-        assert(!context.services.has(key), `invalid initial state for has().`);
-        context.services.set(key, 'bar');
-        assert(context.services.get(key) === 'bar', `invalid value of "${context.services.get(key)}" after set().`);
-        context.services.set(key, undefined);
-        assert(context.services.has(key), `invalid initial state for has() after set(undefined).`);
+        assert(!context.turnState.has(key), `invalid initial state for has().`);
+        context.turnState.set(key, 'bar');
+        assert(context.turnState.get(key) === 'bar', `invalid value of "${context.turnState.get(key)}" after set().`);
+        context.turnState.set(key, undefined);
+        assert(context.turnState.has(key), `invalid initial state for has() after set(undefined).`);
         done();
     });
 

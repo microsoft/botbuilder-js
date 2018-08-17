@@ -73,7 +73,7 @@ describe(`ConversationState`, function () {
     });
 
     it(`should throw install exception if get() called without a cached entry.`, function (done) {
-        context.services.set('conversationState', undefined);
+        context.turnState.set('conversationState', undefined);
         try {
             middleware.get(context);
             assert(false, `exception not thrown.`);

@@ -122,7 +122,7 @@ export class LuisRecognizer {
      * @param context Context for the current turn of conversation with the use.
      */
     public recognize(context: TurnContext): Promise<RecognizerResult> {
-        const cached = context.services.get(this.cacheKey);
+        const cached = context.turnState.get(this.cacheKey);
         if (!cached) {
             const utterance = context.activity.text || '';
             return this.luisClient.prediction.resolve(
@@ -146,7 +146,7 @@ export class LuisRecognizer {
                     };
 
                     // Write to cache
-                    context.services.set(this.cacheKey, recognizerResult);
+                    context.turnState.set(this.cacheKey, recognizerResult);
 
                     return this.emitTraceInfo(context, luisResult, recognizerResult).then(() => {
                         return recognizerResult;

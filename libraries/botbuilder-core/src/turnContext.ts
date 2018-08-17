@@ -69,7 +69,7 @@ export class TurnContext {
     private _adapter: BotAdapter|undefined =  undefined;
     private _activity: Activity| undefined = undefined;
     private _respondedRef: { responded: boolean; } = { responded: false };
-    private _services = new Map<any, any>();
+    private _turnState = new Map<any, any>();
     private _onSendActivities: SendActivitiesHandler[] = [];
     private _onUpdateActivity: UpdateActivityHandler[] = [];
     private _onDeleteActivity: DeleteActivityHandler[] = [];
@@ -167,15 +167,15 @@ export class TurnContext {
      *
      * ```JavaScript
      * const cart = await loadUsersShoppingCart(context);
-     * context.services.set('cart', cart);
+     * context.turnState.set('cart', cart);
      * ```
      *
      * > [!TIP]
      * > For middleware and third party components, consider using a `Symbol()` for your cache key
      * > to avoid potential naming collisions with the bots caching and other components.
      */
-    public get services(): Map<any, any> {
-        return this._services;
+    public get turnState(): Map<any, any> {
+        return this._turnState;
     }
 
     /**

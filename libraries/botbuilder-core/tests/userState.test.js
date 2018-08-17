@@ -58,7 +58,7 @@ describe(`UserState`, function () {
     });
 
     it(`should throw install exception if get() called without a cached entry.`, function (done) {
-        context.services.set('userState', undefined);
+        context.turnState.set('userState', undefined);
         try {
             UserState.get(context);
             assert(false, `exception not thrown.`);

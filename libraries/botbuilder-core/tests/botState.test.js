@@ -5,7 +5,7 @@ const receivedMessage = { text: 'received', type: 'message' };
 const storageKey = 'stateKey';
 
 function cachedState(context, stateKey) {
-    const cached = context.services.get(stateKey);
+    const cached = context.turnState.get(stateKey);
     return cached ? cached.state : undefined;
 }
 
@@ -77,7 +77,7 @@ describe(`BotState`, function () {
     });
 
     it(`should read() from storage if cached state missing.`, function (done) {
-        context.services.set(middleware.stateKey, undefined);
+        context.turnState.set(middleware.stateKey, undefined);
         middleware.read(context).then((state) => {
             assert(state.test === 'foo', `state not loaded.`);
             done();
@@ -85,7 +85,7 @@ describe(`BotState`, function () {
     });
 
     it(`should read() from storage if cached.state missing.`, function (done) {
-        context.services.set(middleware.stateKey, {});
+        context.turnState.set(middleware.stateKey, {});
         middleware.read(context).then((state) => {
             assert(state.test === 'foo', `state not loaded.`);
             done();
@@ -100,12 +100,12 @@ describe(`BotState`, function () {
     });
 
     it(`should force write() to storage of an empty state object.`, function (done) {
-        context.services.set(middleware.stateKey, undefined);
+        context.turnState.set(middleware.stateKey, undefined);
         middleware.write(context, true).then(() => done());
     });
 
     it(`should no-op calls to clear() when nothing cached.`, function (done) {
-        context.services.set(middleware.stateKey, undefined);
+        context.turnState.set(middleware.stateKey, undefined);
         middleware.clear(context);
         done();
     });
