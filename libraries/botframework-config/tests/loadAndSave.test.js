@@ -5,7 +5,6 @@ let fs = require('fs');
 // do not save over testbot
 const testBotPath = require.resolve("./test.bot");
 const legacyBotPath = require.resolve("./legacy.bot");
-
 const saveBotPath = testBotPath.replace("test.bot", "save.bot");
 
 describe("LoadAndSaveTests", () => {
@@ -46,7 +45,7 @@ describe("LoadAndSaveTests", () => {
     if ("CantSaveWithoutSecret", async () => {
         let secret = bf.BotConfiguration.generateKey();
         var config = await bf.BotConfiguration.load(testBotPath);
-        await config.sve(saveBotPath, secret);
+        await config.save(saveBotPath, secret);
 
         var config2 = await bf.BotConfiguration.load(saveBotPath, secret);
         try {
