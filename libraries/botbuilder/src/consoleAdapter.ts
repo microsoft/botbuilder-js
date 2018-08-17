@@ -6,10 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { 
-    Activity, ActivityTypes, ResourceResponse, ConversationReference,
-    BotAdapter, TurnContext, Promiseable
- } from 'botbuilder-core';
+import { Activity, ActivityTypes, ResourceResponse, ConversationReference, BotAdapter, TurnContext } from 'botbuilder-core';
 import * as readline from 'readline';
 
 /**
@@ -75,7 +72,7 @@ export class ConsoleAdapter extends BotAdapter {
      * ```
      * @param logic Function which will be called each time a message is input by the user.
      */
-    public listen(logic: (context: TurnContext) => Promiseable<void>): Function {
+    public listen(logic: (context: TurnContext) => Promise<void>): Function {
         const rl = this.createInterface({ input: process.stdin, output: process.stdout, terminal: false });
         rl.on('line', (line: string) => {
             // Initialize activity
@@ -119,7 +116,7 @@ export class ConsoleAdapter extends BotAdapter {
      * @param reference A `ConversationReference` saved during a previous message from a user.  This can be calculated for any incoming activity using `TurnContext.getConversationReference(context.activity)`.
      * @param logic A function handler that will be called to perform the bots logic after the the adapters middleware has been run.
      */
-    public continueConversation(reference: ConversationReference, logic: (context: TurnContext) => Promiseable<void>): Promise<void> {
+    public continueConversation(reference: ConversationReference, logic: (context: TurnContext) => Promise<void>): Promise<void> {
             // Create context and run middleware pipe
             const activity = TurnContext.applyConversationReference({}, reference, true);
             const context = new TurnContext(this, activity);
