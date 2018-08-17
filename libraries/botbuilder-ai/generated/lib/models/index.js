@@ -10,11 +10,12 @@
 
 'use strict';
 
-exports.Entity = require('./entity');
-exports.ActionParameter = require('./actionParameter');
-exports.Action = require('./action');
-exports.Intent = require('./intent');
-exports.CompositeChild = require('./compositeChild');
-exports.CompositeEntity = require('./compositeEntity');
-exports.DialogResponse = require('./dialogResponse');
+exports.IntentModel = require('./intentModel');
+exports.EntityModel = require('./entityModel');
+exports.CompositeChildModel = require('./compositeChildModel');
+exports.CompositeEntityModel = require('./compositeEntityModel');
+exports.Sentiment = require('./sentiment');
 exports.LuisResult = require('./luisResult');
+exports.EntityWithScore = require('./entityWithScore');
+exports.EntityWithResolution = require('./entityWithResolution');
+exports.APIError = require('./aPIError');

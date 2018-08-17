@@ -9,33 +9,30 @@
 const models = require('./index');
 
 /**
- * Class representing a LuisResult.
+ * Prediction, based on the input query, containing intent(s) and entities.
+ *
  */
 class LuisResult {
   /**
    * Create a LuisResult.
-   * @member {string} query The query sent to LUIS.
+   * @member {string} [query] The input utterance that was analized.
+   * @member {string} [alteredQuery] The corrected utterance (when spell
+   * checking was enabled).
    * @member {object} [topScoringIntent]
-   * @member {string} [topScoringIntent.intent] The LUIS intent detected by
-   * LUIS service in response to a query.
-   * @member {number} [topScoringIntent.score] The score for the detected
-   * intent.
-   * @member {array} [topScoringIntent.actions] The action associated with this
-   * Luis intent.
-   * @member {array} [intents] The intents found in the query text.
-   * @member {array} entities The entities found in the query text.
-   * @member {array} [compositeEntities] The composite entities found in the
-   * utterance.
-   * @member {object} [dialog]
-   * @member {string} [dialog.prompt] Prompt that should be asked.
-   * @member {string} [dialog.parameterName] Name of the parameter.
-   * @member {string} [dialog.parameterType] Type of the parameter.
-   * @member {string} [dialog.contextId] The context id for dialog.
-   * @member {string} [dialog.status] The dialog status. Possible values
-   * include: 'Question', 'Finished'
-   * @member {string} [alteredQuery] The altered query used by LUIS to extract
-   * intent and entities. For example, when Bing spell check is enabled for a
-   * model, this field will contain the spell checked utterance.
+   * @member {string} [topScoringIntent.intent] Name of the intent, as defined
+   * in LUIS.
+   * @member {number} [topScoringIntent.score] Associated prediction score for
+   * the intent (float).
+   * @member {array} [intents] All the intents (and their score) that were
+   * detected from utterance.
+   * @member {array} [entities] The entities extracted from the utterance.
+   * @member {array} [compositeEntities] The composite entities extracted from
+   * the utterance.
+   * @member {object} [sentiment]
+   * @member {string} [sentiment.label] The polarity of the sentiment, can be
+   * positive, neutral or negative.
+   * @member {number} [sentiment.score] Score of the sentiment, ranges from 0
+   * (most negative) to 1 (most negative).
    */
   constructor() {
   }
@@ -55,8 +52,15 @@ class LuisResult {
         className: 'LuisResult',
         modelProperties: {
           query: {
-            required: true,
+            required: false,
             serializedName: 'query',
+            type: {
+              name: 'String'
+            }
+          },
+          alteredQuery: {
+            required: false,
+            serializedName: 'alteredQuery',
             type: {
               name: 'String'
             }
@@ -66,7 +70,7 @@ class LuisResult {
             serializedName: 'topScoringIntent',
             type: {
               name: 'Composite',
-              className: 'Intent'
+              className: 'IntentModel'
             }
           },
           intents: {
@@ -76,25 +80,37 @@ class LuisResult {
               name: 'Sequence',
               element: {
                   required: false,
-                  serializedName: 'IntentElementType',
+                  serializedName: 'IntentModelElementType',
                   type: {
                     name: 'Composite',
-                    className: 'Intent'
+                    className: 'IntentModel'
                   }
               }
             }
           },
           entities: {
-            required: true,
+            required: false,
             serializedName: 'entities',
             type: {
               name: 'Sequence',
               element: {
                   required: false,
-                  serializedName: 'EntityElementType',
+                  serializedName: 'EntityModelElementType',
                   type: {
                     name: 'Composite',
-                    className: 'Entity'
+                    additionalProperties: {
+                      type: {
+                        name: 'Dictionary',
+                        value: {
+                            required: false,
+                            serializedName: 'ObjectElementType',
+                            type: {
+                              name: 'Object'
+                            }
+                        }
+                      }
+                    },
+                    className: 'EntityModel'
                   }
               }
             }
@@ -106,27 +122,20 @@ class LuisResult {
               name: 'Sequence',
               element: {
                   required: false,
-                  serializedName: 'CompositeEntityElementType',
+                  serializedName: 'CompositeEntityModelElementType',
                   type: {
                     name: 'Composite',
-                    className: 'CompositeEntity'
+                    className: 'CompositeEntityModel'
                   }
               }
             }
           },
-          dialog: {
+          sentiment: {
             required: false,
-            serializedName: 'dialog',
+            serializedName: 'sentiment',
             type: {
               name: 'Composite',
-              className: 'DialogResponse'
-            }
-          },
-          alteredQuery: {
-            required: false,
-            serializedName: 'alteredQuery',
-            type: {
-              name: 'String'
+              className: 'Sentiment'
             }
           }
         }

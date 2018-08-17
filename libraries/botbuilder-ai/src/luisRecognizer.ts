@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { TurnContext, RecognizerResult } from 'botbuilder';
-import { LuisResult, Intent, Entity, CompositeEntity } from '../generated/lib/models';
+import { LuisResult, IntentModel, EntityModel, CompositeEntityModel } from '../generated/lib/models';
 import { LuisClient } from '../generated';
 
 const LUIS_TRACE_TYPE = 'https://www.luis.ai/schemas/trace';
@@ -109,8 +109,7 @@ export class LuisRecognizer {
 
         // Create client and override callbacks
         // TODO: Update this to the official SDK once available
-        const baseUri = 'https://' + (this.application.azureRegion || 'westus') + '.api.cognitive.microsoft.com';
-        this.luisClient = this.createClient(baseUri + '/luis/');
+        this.luisClient = new LuisClient(this.application.azureRegion || 'westus');
     }
 
     /**
@@ -125,12 +124,13 @@ export class LuisRecognizer {
         const cached = context.services.get(this.cacheKey);
         if (!cached) {
             const utterance = context.activity.text || '';
-            return this.luisClient.getIntentsAndEntitiesV2(
-                this.application.applicationId, this.application.endpointKey, utterance,
+            return this.luisClient.prediction.resolve(
+                this.application.applicationId, utterance,
                 {
                     timezoneOffset: this.options.timezoneOffset,
                     verbose: this.options.includeAllIntents,
-                    allowSampling: this.options.log ? "true" : "false"
+                    log: this.options.log,
+                    customHeaders: { "Ocp-Apim-Subscription-Key": this.application.endpointKey}
                 }
             )
                 .then((luisResult: LuisResult) => {
@@ -153,17 +153,6 @@ export class LuisRecognizer {
                 });
         }
         return Promise.resolve(cached);
-    }
-
-    /**
-     * Called internally to create a LuisClient instance. 
-     *
-     * @remarks
-     * This is exposed to enable better unit testing of the recognizer.
-     * @param baseUri Service endpoint being called.
-     */
-    protected createClient(baseUri: string): LuisClient {
-        return new LuisClient(baseUri);
     }
 
     /**
@@ -214,7 +203,7 @@ export class LuisRecognizer {
     private getIntents(luisResult: LuisResult): any {
         const intents: { [name: string]: { score: number }; } = {};
         if (luisResult.intents) {
-            luisResult.intents.reduce((prev: any, curr: Intent) => {
+            luisResult.intents.reduce((prev: any, curr: IntentModel) => {
                 prev[this.normalizeName(curr.intent)] = { score: curr.score };
                 return prev;
             }, intents);
@@ -225,7 +214,7 @@ export class LuisRecognizer {
         return intents;
     }
 
-    private getEntitiesAndMetadata(entities: Entity[], compositeEntities: CompositeEntity[] | undefined, verbose: boolean): any {
+    private getEntitiesAndMetadata(entities: EntityModel[], compositeEntities: CompositeEntityModel[] | undefined, verbose: boolean): any {
         let entitiesAndMetadata: any = verbose ? { $instance: {} } : {};
         let compositeEntityTypes: string[] = [];
 
@@ -252,7 +241,7 @@ export class LuisRecognizer {
         return entitiesAndMetadata;
     }
 
-    private getEntityValue(entity: Entity): any {
+    private getEntityValue(entity: EntityModel): any {
         if (!entity.resolution) {
             return entity.entity;
         }
@@ -304,7 +293,7 @@ export class LuisRecognizer {
         }
     }
 
-    private getEntityMetadata(entity: Entity): any {
+    private getEntityMetadata(entity: EntityModel): any {
         var res = {
             startIndex: entity.startIndex,
             endIndex: entity.endIndex + 1,
@@ -318,7 +307,7 @@ export class LuisRecognizer {
         return res;
     }
 
-    private getNormalizedEntityName(entity: Entity): string {
+    private getNormalizedEntityName(entity: EntityModel): string {
         // Type::Role -> Role
         var type = entity.type.split(':').pop();
         if (type.startsWith("builtin.datetimeV2.")) {
@@ -336,18 +325,18 @@ export class LuisRecognizer {
         return type.replace(/\.|\s/g, "_");
     }
 
-    private populateCompositeEntity(compositeEntity: CompositeEntity, entities: Entity[], entitiesAndMetadata: any, verbose: boolean): Entity[] {
+    private populateCompositeEntity(compositeEntity: CompositeEntityModel, entities: EntityModel[], entitiesAndMetadata: any, verbose: boolean): EntityModel[] {
         let childrenEntites: any = verbose ? { $instance: {} } : {};
         let childrenEntitiesMetadata: any = {};
 
         // This is now implemented as O(n^2) search and can be reduced to O(2n) using a map as an optimization if n grows
-        let compositeEntityMetadata: Entity | undefined = entities.find(entity => {
+        let compositeEntityMetadata: EntityModel | undefined = entities.find(entity => {
             // For now we are matching by value, which can be ambiguous if the same composite entity shows up with the same text 
             // multiple times within an utterance, but this is just a stop gap solution till the indices are included in composite entities
             return entity.type === compositeEntity.parentType && entity.entity === compositeEntity.value
         });
 
-        let filteredEntities: Entity[] = [];
+        let filteredEntities: EntityModel[] = [];
         if (verbose) {
             childrenEntitiesMetadata = this.getEntityMetadata(compositeEntityMetadata);
         }

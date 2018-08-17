@@ -9,164 +9,154 @@ import * as moment from "moment";
 
 /**
  * @class
- * Initializes a new instance of the Entity class.
+ * Initializes a new instance of the IntentModel class.
  * @constructor
- * Luis entity. Look at https://www.luis.ai/Help for more information.
+ * An intent detected from the utterance.
  *
- * @member {string} [role] Role of the entity.
- * @member {string} [entity] Entity extracted by LUIS.
- * @member {string} type Type of the entity.
- * @member {number} [startIndex] Start index of the entity in the LUIS query
- * string.
- * @member {number} [endIndex] End index of the entity in the LUIS query
- * string.
- * @member {number} [score] Score assigned by LUIS to detected entity.
- * @member {object} [resolution] A machine interpretable resolution of the
- * entity.  For example the string "one thousand" would have the resolution
- * "1000".  The exact form of the resolution is defined by the entity type and
- * is documented here: https://www.luis.ai/Help#PreBuiltEntities.
+ * @member {string} [intent] Name of the intent, as defined in LUIS.
+ * @member {number} [score] Associated prediction score for the intent (float).
  */
-export interface Entity {
-  role?: string;
-  entity?: string;
-  type: string;
-  startIndex?: number;
-  endIndex?: number;
-  score?: number;
-  resolution?: { [propertyName: string]: any };
-}
-
-/**
- * @class
- * Initializes a new instance of the ActionParameter class.
- * @constructor
- * @member {string} [name] Name of the parameter.
- * @member {boolean} [required] True if the parameter is required, false
- * otherwise.
- * @member {array} [value] Value of extracted entities for this parameter.
- */
-export interface ActionParameter {
-  name?: string;
-  required?: boolean;
-  value?: Entity[];
-}
-
-/**
- * @class
- * Initializes a new instance of the Action class.
- * @constructor
- * @member {boolean} [triggered] True if the Luis action is triggered, false
- * otherwise.
- * @member {string} [name] Name of the action.
- * @member {array} [parameters] The parameters for the action.
- */
-export interface Action {
-  triggered?: boolean;
-  name?: string;
-  parameters?: ActionParameter[];
-}
-
-/**
- * @class
- * Initializes a new instance of the Intent class.
- * @constructor
- * LUIS intent. Look at https://www.luis.ai/Help for more information.
- *
- * @member {string} [intent] The LUIS intent detected by LUIS service in
- * response to a query.
- * @member {number} [score] The score for the detected intent.
- * @member {array} [actions] The action associated with this Luis intent.
- */
-export interface Intent {
+export interface IntentModel {
   intent?: string;
   score?: number;
-  actions?: Action[];
 }
 
 /**
  * @class
- * Initializes a new instance of the CompositeChild class.
+ * Initializes a new instance of the EntityModel class.
  * @constructor
- * Child entity in Luis composite entity.
+ * An entity extracted from the utterance.
+ *
+ * @member {string} entity Name of the entity, as defined in LUIS.
+ * @member {string} type Type of the entity, as defined in LUIS.
+ * @member {number} startIndex The position of the first character of the
+ * matched entity within the utterance.
+ * @member {number} endIndex The position of the last character of the matched
+ * entity within the utterance.
+ */
+export interface EntityModel {
+  entity: string;
+  type: string;
+  startIndex: number;
+  endIndex: number;
+  /**
+   * @property Describes unknown properties. The value of an unknown property
+   * can be of "any" type.
+   */
+  [property: string]: any;
+}
+
+/**
+ * @class
+ * Initializes a new instance of the CompositeChildModel class.
+ * @constructor
+ * Child entity in a LUIS Composite Entity.
  *
  * @member {string} type Type of child entity.
- * @member {string} value Value extracted by Luis.
+ * @member {string} value Value extracted by LUIS.
  */
-export interface CompositeChild {
+export interface CompositeChildModel {
   type: string;
   value: string;
 }
 
 /**
  * @class
- * Initializes a new instance of the CompositeEntity class.
+ * Initializes a new instance of the CompositeEntityModel class.
  * @constructor
- * Luis composite entity. Look at https://www.luis.ai/Help for more
- * information.
+ * LUIS Composite Entity.
  *
- * @member {string} parentType Type of parent entity.
- * @member {string} value Value for entity extracted by LUIS.
- * @member {array} children
+ * @member {string} parentType Type/name of parent entity.
+ * @member {string} value Value for composite entity extracted by LUIS.
+ * @member {array} children Child entities.
  */
-export interface CompositeEntity {
+export interface CompositeEntityModel {
   parentType: string;
   value: string;
-  children: CompositeChild[];
+  children: CompositeChildModel[];
 }
 
 /**
  * @class
- * Initializes a new instance of the DialogResponse class.
+ * Initializes a new instance of the Sentiment class.
  * @constructor
- * The dialog response.
+ * Sentiment of the input utterance.
  *
- * @member {string} [prompt] Prompt that should be asked.
- * @member {string} [parameterName] Name of the parameter.
- * @member {string} [parameterType] Type of the parameter.
- * @member {string} [contextId] The context id for dialog.
- * @member {string} [status] The dialog status. Possible values include:
- * 'Question', 'Finished'
+ * @member {string} [label] The polarity of the sentiment, can be positive,
+ * neutral or negative.
+ * @member {number} [score] Score of the sentiment, ranges from 0 (most
+ * negative) to 1 (most negative).
  */
-export interface DialogResponse {
-  prompt?: string;
-  parameterName?: string;
-  parameterType?: string;
-  contextId?: string;
-  status?: string;
+export interface Sentiment {
+  label?: string;
+  score?: number;
 }
 
 /**
  * @class
  * Initializes a new instance of the LuisResult class.
  * @constructor
- * @member {string} query The query sent to LUIS.
+ * Prediction, based on the input query, containing intent(s) and entities.
+ *
+ * @member {string} [query] The input utterance that was analized.
+ * @member {string} [alteredQuery] The corrected utterance (when spell checking
+ * was enabled).
  * @member {object} [topScoringIntent]
- * @member {string} [topScoringIntent.intent] The LUIS intent detected by LUIS
- * service in response to a query.
- * @member {number} [topScoringIntent.score] The score for the detected intent.
- * @member {array} [topScoringIntent.actions] The action associated with this
- * Luis intent.
- * @member {array} [intents] The intents found in the query text.
- * @member {array} entities The entities found in the query text.
- * @member {array} [compositeEntities] The composite entities found in the
- * utterance.
- * @member {object} [dialog]
- * @member {string} [dialog.prompt] Prompt that should be asked.
- * @member {string} [dialog.parameterName] Name of the parameter.
- * @member {string} [dialog.parameterType] Type of the parameter.
- * @member {string} [dialog.contextId] The context id for dialog.
- * @member {string} [dialog.status] The dialog status. Possible values include:
- * 'Question', 'Finished'
- * @member {string} [alteredQuery] The altered query used by LUIS to extract
- * intent and entities. For example, when Bing spell check is enabled for a
- * model, this field will contain the spell checked utterance.
+ * @member {string} [topScoringIntent.intent] Name of the intent, as defined in
+ * LUIS.
+ * @member {number} [topScoringIntent.score] Associated prediction score for
+ * the intent (float).
+ * @member {array} [intents] All the intents (and their score) that were
+ * detected from utterance.
+ * @member {array} [entities] The entities extracted from the utterance.
+ * @member {array} [compositeEntities] The composite entities extracted from
+ * the utterance.
+ * @member {object} [sentiment]
+ * @member {string} [sentiment.label] The polarity of the sentiment, can be
+ * positive, neutral or negative.
+ * @member {number} [sentiment.score] Score of the sentiment, ranges from 0
+ * (most negative) to 1 (most negative).
  */
 export interface LuisResult {
-  query: string;
-  topScoringIntent?: Intent;
-  intents?: Intent[];
-  entities: Entity[];
-  compositeEntities?: CompositeEntity[];
-  dialog?: DialogResponse;
+  query?: string;
   alteredQuery?: string;
+  topScoringIntent?: IntentModel;
+  intents?: IntentModel[];
+  entities?: EntityModel[];
+  compositeEntities?: CompositeEntityModel[];
+  sentiment?: Sentiment;
+}
+
+/**
+ * @class
+ * Initializes a new instance of the EntityWithScore class.
+ * @constructor
+ * @member {number} score Associated prediction score for the intent (float).
+ */
+export interface EntityWithScore extends EntityModel {
+  score: number;
+}
+
+/**
+ * @class
+ * Initializes a new instance of the EntityWithResolution class.
+ * @constructor
+ * @member {object} resolution Resolution values for pre-built LUIS entities.
+ */
+export interface EntityWithResolution extends EntityModel {
+  resolution: any;
+}
+
+/**
+ * @class
+ * Initializes a new instance of the APIError class.
+ * @constructor
+ * Error information returned by the API
+ *
+ * @member {string} [statusCode] HTTP Status code
+ * @member {string} [message] Cause of the error.
+ */
+export interface APIError {
+  statusCode?: string;
+  message?: string;
 }

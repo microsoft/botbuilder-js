@@ -4,8 +4,9 @@
  * regenerated.
  */
 
-import { ServiceClient, ServiceClientOptions, ServiceCallback, HttpOperationResponse } from 'ms-rest';
+import { ServiceClient, ServiceClientOptions } from 'ms-rest';
 import * as models from "./models";
+import * as operations from "./operations";
 
 export default class LuisClient extends ServiceClient {
   /**
@@ -13,7 +14,7 @@ export default class LuisClient extends ServiceClient {
    * Initializes a new instance of the LuisClient class.
    * @constructor
    *
-   * @param {string} [baseUri] - The base URI of the service.
+   * @param {azureRegions} azureRegion - Supported Azure regions for Cognitive Services endpoints. Possible values include: 'westus', 'westeurope', 'southeastasia', 'eastus2', 'westcentralus', 'westus2', 'eastus', 'southcentralus', 'northeurope', 'eastasia', 'australiaeast', 'brazilsouth'
    *
    * @param {object} [options] - The parameter options
    *
@@ -25,161 +26,12 @@ export default class LuisClient extends ServiceClient {
    * @param {boolean} [options.noRetryPolicy] - If set to true, turn off default retry policy
    *
    */
-  constructor(baseUri?: string, options?: ServiceClientOptions);
+  constructor(azureRegion: string, options?: ServiceClientOptions);
 
+  azureRegion: string;
 
-  /**
-   * Query Luis for intents and entities.
-   *
-   * @param {string} id Luis model Id.
-   *
-   * @param {string} subscriptionKey Luis subscription key.
-   *
-   * @param {string} q Query submitted to LUIS service.
-   *
-   * @param {object} [options] Optional Parameters.
-   *
-   * @param {object} [options.customHeaders] Headers that will be added to the
-   * request
-   *
-   * @returns {Promise} A promise is returned
-   *
-   * @resolve {HttpOperationResponse<LuisResult>} - The deserialized result object.
-   *
-   * @reject {Error|ServiceError} - The error object.
-   */
-  getIntentsAndEntitiesWithHttpOperationResponse(id: string, subscriptionKey: string, q: string, options?: { customHeaders? : { [headerName: string]: string; } }): Promise<HttpOperationResponse<models.LuisResult>>;
-
-  /**
-   * Query Luis for intents and entities.
-   *
-   * @param {string} id Luis model Id.
-   *
-   * @param {string} subscriptionKey Luis subscription key.
-   *
-   * @param {string} q Query submitted to LUIS service.
-   *
-   * @param {object} [options] Optional Parameters.
-   *
-   * @param {object} [options.customHeaders] Headers that will be added to the
-   * request
-   *
-   * @param {ServiceCallback} [optionalCallback] - The optional callback.
-   *
-   * @returns {ServiceCallback|Promise} If a callback was passed as the last
-   * parameter then it returns the callback else returns a Promise.
-   *
-   * {Promise} A promise is returned.
-   *
-   *                      @resolve {LuisResult} - The deserialized result object.
-   *
-   *                      @reject {Error|ServiceError} - The error object.
-   *
-   * {ServiceCallback} optionalCallback(err, result, request, response)
-   *
-   *                      {Error|ServiceError}  err        - The Error object if an error occurred, null otherwise.
-   *
-   *                      {LuisResult} [result]   - The deserialized result object if an error did not occur.
-   *                      See {@link LuisResult} for more information.
-   *
-   *                      {WebResource} [request]  - The HTTP Request object if an error did not occur.
-   *
-   *                      {http.IncomingMessage} [response] - The HTTP Response stream if an error did not occur.
-   */
-  getIntentsAndEntities(id: string, subscriptionKey: string, q: string, options?: { customHeaders? : { [headerName: string]: string; } }): Promise<models.LuisResult>;
-  getIntentsAndEntities(id: string, subscriptionKey: string, q: string, callback: ServiceCallback<models.LuisResult>): void;
-  getIntentsAndEntities(id: string, subscriptionKey: string, q: string, options: { customHeaders? : { [headerName: string]: string; } }, callback: ServiceCallback<models.LuisResult>): void;
-
-
-  /**
-   * Query Luis for intents and entities.
-   *
-   * @param {string} id Luis model Id.
-   *
-   * @param {string} subscriptionKey Luis subscription key.
-   *
-   * @param {string} q Query submitted to LUIS service.
-   *
-   * @param {object} [options] Optional Parameters.
-   *
-   * @param {number} [options.timezoneOffset] The timezone offset for the
-   * location of the request.
-   *
-   * @param {string} [options.contextId] The conversation id for dialog.
-   *
-   * @param {boolean} [options.verbose] If true will return all intents instead
-   * of just the topscoring intent.
-   *
-   * @param {string} [options.forceSet] A parameter name to override in the
-   * action parameters with a new value.
-   *
-   * @param {string} [options.allowSampling] A parameter to allow logging the
-   * data so they can be accessed.
-   *
-   * @param {object} [options.customHeaders] Headers that will be added to the
-   * request
-   *
-   * @returns {Promise} A promise is returned
-   *
-   * @resolve {HttpOperationResponse<LuisResult>} - The deserialized result object.
-   *
-   * @reject {Error|ServiceError} - The error object.
-   */
-  getIntentsAndEntitiesV2WithHttpOperationResponse(id: string, subscriptionKey: string, q: string, options?: { timezoneOffset? : number, contextId? : string, verbose? : boolean, forceSet? : string, allowSampling? : string, customHeaders? : { [headerName: string]: string; } }): Promise<HttpOperationResponse<models.LuisResult>>;
-
-  /**
-   * Query Luis for intents and entities.
-   *
-   * @param {string} id Luis model Id.
-   *
-   * @param {string} subscriptionKey Luis subscription key.
-   *
-   * @param {string} q Query submitted to LUIS service.
-   *
-   * @param {object} [options] Optional Parameters.
-   *
-   * @param {number} [options.timezoneOffset] The timezone offset for the
-   * location of the request.
-   *
-   * @param {string} [options.contextId] The conversation id for dialog.
-   *
-   * @param {boolean} [options.verbose] If true will return all intents instead
-   * of just the topscoring intent.
-   *
-   * @param {string} [options.forceSet] A parameter name to override in the
-   * action parameters with a new value.
-   *
-   * @param {string} [options.allowSampling] A parameter to allow logging the
-   * data so they can be accessed.
-   *
-   * @param {object} [options.customHeaders] Headers that will be added to the
-   * request
-   *
-   * @param {ServiceCallback} [optionalCallback] - The optional callback.
-   *
-   * @returns {ServiceCallback|Promise} If a callback was passed as the last
-   * parameter then it returns the callback else returns a Promise.
-   *
-   * {Promise} A promise is returned.
-   *
-   *                      @resolve {LuisResult} - The deserialized result object.
-   *
-   *                      @reject {Error|ServiceError} - The error object.
-   *
-   * {ServiceCallback} optionalCallback(err, result, request, response)
-   *
-   *                      {Error|ServiceError}  err        - The Error object if an error occurred, null otherwise.
-   *
-   *                      {LuisResult} [result]   - The deserialized result object if an error did not occur.
-   *                      See {@link LuisResult} for more information.
-   *
-   *                      {WebResource} [request]  - The HTTP Request object if an error did not occur.
-   *
-   *                      {http.IncomingMessage} [response] - The HTTP Response stream if an error did not occur.
-   */
-  getIntentsAndEntitiesV2(id: string, subscriptionKey: string, q: string, options?: { timezoneOffset? : number, contextId? : string, verbose? : boolean, forceSet? : string, allowSampling? : string, customHeaders? : { [headerName: string]: string; } }): Promise<models.LuisResult>;
-  getIntentsAndEntitiesV2(id: string, subscriptionKey: string, q: string, callback: ServiceCallback<models.LuisResult>): void;
-  getIntentsAndEntitiesV2(id: string, subscriptionKey: string, q: string, options: { timezoneOffset? : number, contextId? : string, verbose? : boolean, forceSet? : string, allowSampling? : string, customHeaders? : { [headerName: string]: string; } }, callback: ServiceCallback<models.LuisResult>): void;
+  // Operation groups
+  prediction: operations.Prediction;
 }
 
 export { LuisClient, models as LuisModels };
