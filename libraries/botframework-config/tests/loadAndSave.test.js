@@ -19,7 +19,7 @@ describe("LoadAndSaveTests", () => {
 
     it("LoadAndSaveUnencryptedBotFile", async () => {
         var config = await bf.BotConfiguration.load(testBotPath);
-        await config.save(saveBotPath);
+        await config.saveAs(saveBotPath);
 
         var config2 = await bf.BotConfiguration.load(saveBotPath);
         fs.unlinkSync(saveBotPath);
@@ -32,7 +32,7 @@ describe("LoadAndSaveTests", () => {
     it("CantLoadWithoutSecret", async () => {
         let secret = bf.BotConfiguration.generateKey();
         var config = await bf.BotConfiguration.load(testBotPath);
-        await config.save(saveBotPath, secret);
+        await config.saveAs(saveBotPath, secret);
 
         try {
             await bf.BotConfiguration.load(saveBotPath);
@@ -44,18 +44,18 @@ describe("LoadAndSaveTests", () => {
     if ("CantSaveWithoutSecret", async () => {
         let secret = bf.BotConfiguration.generateKey();
         var config = await bf.BotConfiguration.load(testBotPath);
-        await config.save(saveBotPath, secret);
+        await config.saveAs(saveBotPath, secret);
 
         var config2 = await bf.BotConfiguration.load(saveBotPath, secret);
         try {
-            await config2.save(saveBotPath);
+            await config2.saveAs(saveBotPath);
             assert.fail("Save() should have thrown due to no secret");
         }
         catch (Error) {
 
         }
         config2.ClearSecret();
-        await config2.save(saveBotPath, secret);
+        await config2.saveAs(saveBotPath, secret);
     });
 
     it("LoadAndSaveEncrypted", async () => {
@@ -64,7 +64,7 @@ describe("LoadAndSaveTests", () => {
         assert.ok(config.secretKey === "", "There should be no secretKey");
 
         // save with secret
-        await config.save(saveBotPath, secret);
+        await config.saveAs(saveBotPath, secret);
         assert.ok(config.secretKey.length > 0, "There should be a secretKey");
 
         // load with secret
@@ -257,7 +257,7 @@ describe("LoadAndSaveTests", () => {
         assert.equal(config.services[0].appPassword, "xyzpdq", "value should be unencrypted");
 
         let secret = bf.BotConfiguration.generateKey();
-        await config.save(saveBotPath, secret);
+        await config.saveAs(saveBotPath, secret);
         var config = await bf.BotConfiguration.load(saveBotPath, secret);
         fs.unlinkSync(saveBotPath);
     });
