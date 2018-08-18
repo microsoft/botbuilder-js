@@ -101,7 +101,7 @@ export class BotConfiguration implements Partial<IBotConfiguration> {
     }
 
     // save the config file back over original
-    public async Save(secret?:string) : Promise<void> {
+    public async save(secret?:string) : Promise<void> {
         return this.saveAs(this.internal.location, secret);
     }
 
