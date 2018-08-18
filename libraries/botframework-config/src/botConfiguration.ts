@@ -67,8 +67,8 @@ export class BotConfiguration implements Partial<IBotConfiguration> {
         return bot;
     }
 
-    // save the config file
-    public async save(botpath?: string, secret?: string): Promise<void> {
+    // save the config file to specificed botpath
+    public async saveAs(botpath: string, secret?: string): Promise<void> {
         if (!!secret) {
             this.validateSecretKey(secret);
         }
@@ -98,6 +98,11 @@ export class BotConfiguration implements Partial<IBotConfiguration> {
 
         if (hasSecret)
             this.decrypt(secret);
+    }
+
+    // save the config file back over original
+    public async Save(secret?:string) : Promise<void> {
+        return this.saveAs(this.internal.location, secret);
     }
 
     public clearSecret() {
