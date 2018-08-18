@@ -9,12 +9,14 @@ describe("ServiceManipulation", () => {
         var config = await bf.BotConfiguration.load(testBotPath);
         var config2 = new bf.BotConfiguration();
         for(let service of config.services) {
+            service.id = "1";
             config2.connectService(service);
         }
 
         let map ={};
         for(let service of config2.services) {
             assert.ok(!map.hasOwnProperty(service.id), "Duplicate Id assigned");
+            map[service.id] = service;
         }
     });
     

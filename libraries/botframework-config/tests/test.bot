@@ -29,9 +29,10 @@
             "subscriptionId": "00000000-0000-0000-0000-000000000000",
             "resourceGroup": "testGroup",
             "instrumentationKey": "00000004-0000-0000-0000-000000000000",
+            "applicationId": "00000000-0000-0000-0000-000000000007",
             "apiKeys": {
-                "key1": "testkey1",
-                "key2": "testkey2"
+                "key1": "testKey1",
+                "key2": "testKey2"
             }
         },
         {
@@ -44,8 +45,8 @@
             "subscriptionKey": "00000001-0000-0000-0000-000000000000",
             "region": "westus",
             "serviceIds": [
-                "00000002-0000-0000-0000-000000000002",
-                "00000003-0000-0000-0000-000000000001"
+                "6",
+                "7"
             ]
         },
         {

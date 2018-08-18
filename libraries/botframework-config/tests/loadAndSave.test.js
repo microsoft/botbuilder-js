@@ -8,7 +8,7 @@ const legacyBotPath = require.resolve("./legacy.bot");
 const saveBotPath = testBotPath.replace("test.bot", "save.bot");
 
 describe("LoadAndSaveTests", () => {
-    it("SerializeBotFile", async () => {
+    it("DeserializeBotFile", async () => {
         var config = await bf.BotConfiguration.load(testBotPath);
 
         assert.ok("test" == config.name);
@@ -84,6 +84,9 @@ describe("LoadAndSaveTests", () => {
                     {
                         var appInsights = config2.services[i];
                         assert.ok(appInsights.instrumentationKey.includes('0000000'), "failed to decrypt instrumentationKey");
+                        assert.equal(appInsights.applicationId, "00000000-0000-0000-0000-000000000007", "failed to decrypt applicationId");
+                        assert.equal(appInsights.apiKeys.key1, "testKey1", "failed to decrypt key1");
+                        assert.equal(appInsights.apiKeys.key2, "testKey2", "failed to decrypt key2");
                     }
                     break;
 
@@ -143,8 +146,8 @@ describe("LoadAndSaveTests", () => {
                     {
                         var generic = config2.services[i];
                         assert.equal(generic.url, 'https://bing.com', "url should not change");
-                        assert.equal(generic.configuration.key1, 'testKey1', "failed to decrtypt key1");
-                        assert.equal(generic.configuration.key2, 'testKey2', "failed to decrtypt key1");
+                        assert.equal(generic.configuration.key1, 'testKey1', "failed to decrypt key1");
+                        assert.equal(generic.configuration.key2, 'testKey2', "failed to decrypt key2");
                     }
                     break;
 
@@ -169,6 +172,9 @@ describe("LoadAndSaveTests", () => {
                     {
                         var appInsights = config2.services[i];
                         assert.ok(!appInsights.instrumentationKey.includes('0000000'), "failed to encrypt instrumentationKey");
+                        assert.equal(appInsights.applicationId, "00000000-0000-0000-0000-000000000007", "should not encrypt applicationId");
+                        assert.notEqual(appInsights.apiKeys.key1, "testKey1", "failed to encrypt key1");
+                        assert.notEqual(appInsights.apiKeys.key2, "testKey2", "failed to encrypt key2");
                     }
                     break;
 
