@@ -28,6 +28,7 @@
     "botbuilder": "^4.0.0-preview1.2",
     "html-entities": "^1.2.1",
     "moment": "^2.20.1",
+    "ms-rest": "^2.3.6",
     "mstranslator": "^3.0.0",
     "nock": "^9.6.1",
     "request": "2.83.0",

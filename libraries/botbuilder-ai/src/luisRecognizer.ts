@@ -7,8 +7,7 @@
  */
 import { TurnContext, RecognizerResult } from 'botbuilder';
 import { LUISRuntimeClient as LuisClient, LUISRuntimeModels as LuisModels } from 'azure-cognitiveservices-luis-runtime';
-// const msRest = require('../node_modules/ms-rest');
-import * as msRest from '../node_modules/ms-rest';
+import * as msRest from 'ms-rest'; 
 
 const LUIS_TRACE_TYPE = 'https://www.luis.ai/schemas/trace';
 const LUIS_TRACE_NAME = 'LuisRecognizer';
