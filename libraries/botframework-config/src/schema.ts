@@ -17,7 +17,7 @@ export enum ServiceTypes {
 
 export interface IConnectedService {
     // ServiceType of the service (LUIS, QnA, etc.)
-    readonly type: ServiceTypes;
+    readonly type?: ServiceTypes;
 
     // Friendly name for the service
     name: string;
@@ -67,10 +67,10 @@ export interface IAppInsightsService extends IAzureService {
     instrumentationKey: string;
 
     // (OPTIONAL) applicationId is used for programmatic acccess to AppInsights 
-    applicationId: string;
+    applicationId?: string;
 
     // (OPTIONAL) named apiKeys for programatic access to AppInsights
-    apiKeys: { [key: string]: string };
+    apiKeys?: { [key: string]: string };
 }
 
 export interface IBlobStorageService extends IAzureService {
@@ -153,7 +153,7 @@ export interface IFileService extends IConnectedService {
     // type = ServiceTypes.File
 
     // filePath
-    filePath: string;
+    path: string;
 }
 
 export interface IBotConfiguration {
