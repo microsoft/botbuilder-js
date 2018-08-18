@@ -14,7 +14,7 @@ describe("LoadAndSaveTests", () => {
         assert.ok("test" == config.name);
         assert.ok("test description" == config.description);
         assert.ok("" == config.secretKey);
-        assert.ok(7 == config.services.length);
+        assert.ok(9 == config.services.length);
     });
 
     it("LoadAndSaveUnencryptedBotFile", async () => {
@@ -34,8 +34,7 @@ describe("LoadAndSaveTests", () => {
         var config = await bf.BotConfiguration.load(testBotPath);
         await config.save(saveBotPath, secret);
 
-        try 
-        {
+        try {
             await bf.BotConfiguration.load(saveBotPath);
             assert.fail("Load should have thrown due to no secret");
         }
@@ -78,7 +77,7 @@ describe("LoadAndSaveTests", () => {
             assert.deepEqual(config.services[i], config2.services[i], "service definition is not the same");
 
             switch (config.services[i].type) {
-                case bf.ServiceTypes.AzureBot:
+                case bf.ServiceTypes.Bot:
                     break;
 
                 case bf.ServiceTypes.AppInsights:
@@ -88,10 +87,20 @@ describe("LoadAndSaveTests", () => {
                     }
                     break;
 
-                case bf.ServiceTypes.AzureStorage:
+                case bf.ServiceTypes.BlobStorage:
                     {
                         var storage = config2.services[i];
                         assert.ok(storage.connectionString.includes('UseDevelopmentStorage'), "failed to decrypt connectionString");
+                        assert.equal(storage.container, 'testContainer', "failed to decrypt container");
+                    }
+                    break;
+
+                case bf.ServiceTypes.CosmosDB:
+                    {
+                        var storage = config2.services[i];
+                        assert.ok(storage.connectionString.includes('UseDevelopmentStorage'), "failed to decrypt connectionString");
+                        assert.equal(storage.database, 'testDatabase', "failed to decrypt database");
+                        assert.equal(storage.collection, 'testCollection', "failed to decrypt collection");
                     }
                     break;
 
@@ -130,10 +139,16 @@ describe("LoadAndSaveTests", () => {
                     }
                     break;
 
-                case bf.ServiceTypes.AppInsights:
+                case bf.ServiceTypes.Generic:
                     {
-
+                        var generic = config2.services[i];
+                        assert.equal(generic.url, 'https://bing.com', "url should not change");
+                        assert.equal(generic.configuration.key1, 'testKey1', "failed to decrtypt key1");
+                        assert.equal(generic.configuration.key2, 'testKey2', "failed to decrtypt key1");
                     }
+                    break;
+
+                default:
                     throw new Error(`Unknown service type ${config.services[i].type}`);
             }
         }
@@ -146,7 +161,7 @@ describe("LoadAndSaveTests", () => {
         for (let i = 0; i < config.services.length; i++) {
             switch (config.services[i].type) {
 
-                case bf.ServiceTypes.AzureBot:
+                case bf.ServiceTypes.Bot:
                     assert.deepEqual(config.services[i], config2.services[i]);
                     break;
 
@@ -157,12 +172,23 @@ describe("LoadAndSaveTests", () => {
                     }
                     break;
 
-                case bf.ServiceTypes.AzureStorage:
+                case bf.ServiceTypes.BlobStorage:
                     {
                         var storage = config2.services[i];
                         assert.ok(!storage.connectionString.includes('UseDevelopmentStorage'), "failed to encrypt connectionString");
+                        assert.equal(storage.container, "testContainer", "should not have encrypted container");
                     }
                     break;
+
+                case bf.ServiceTypes.CosmosDB:
+                    {
+                        var storage = config2.services[i];
+                        assert.ok(!storage.connectionString.includes('UseDevelopmentStorage'), "failed to encrypt connectionString");
+                        assert.equal(storage.database, "testDatabase", "should not have encrypted database");
+                        assert.equal(storage.collection, "testCollection", "should not have encrypted collection");
+                    }
+                    break;
+
 
                 case bf.ServiceTypes.Dispatch:
                     {
@@ -202,6 +228,15 @@ describe("LoadAndSaveTests", () => {
                         assert.ok(qna.kbId.includes("0000"), "kbId should not be changed");
                         assert.ok(!qna.endpointKey.includes("0000"), "failed to encrypt endpointKey");
                         assert.ok(!qna.subscriptionKey.includes("0000"), "failed to encrypt SubscriptionKey");
+                    }
+                    break;
+
+                case bf.ServiceTypes.Generic:
+                    {
+                        var generic = config2.services[i];
+                        assert.equal(generic.url, 'https://bing.com', "url should not change");
+                        assert.notEqual(generic.configuration.key1, 'testKey1', "failed to encrypt key1");
+                        assert.notEqual(generic.configuration.key2, 'testKey2', "failed to encrypt key1");
                     }
                     break;
 

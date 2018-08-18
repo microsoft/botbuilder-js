@@ -7,23 +7,21 @@ import { ILuisService, ServiceTypes } from '../schema';
 import { ConnectedService } from './connectedService';
 
 export class LuisService extends ConnectedService implements ILuisService {
-    public type = ServiceTypes.Luis;
     public appId = '';
     public authoringKey = '';
     public subscriptionKey = '';
     public version = '';
     public region = '';
 
-    constructor(source: ILuisService = {} as ILuisService) {
-        super(source);
-        const { appId = '', authoringKey = '', subscriptionKey = '', version = '', region = '' } = source;
-        this.id = appId;
-        Object.assign(this, { appId, authoringKey, subscriptionKey, version, region });
+    constructor(source: ILuisService = {} as ILuisService, serviceType?: ServiceTypes) {
+        super(source, serviceType || ServiceTypes.Luis);
+        const { id, appId = '', authoringKey = '', subscriptionKey = '', version = '', region = '' } = source;
+        Object.assign(this, { id, appId, authoringKey, subscriptionKey, version, region });
     }
 
     public toJSON(): ILuisService {
         const { appId, authoringKey, id, name, subscriptionKey, type, version, region } = this;
-        return { type: ServiceTypes.Luis, id: appId, name, version, appId, authoringKey, subscriptionKey, region };
+        return { type, id, name, version, appId, authoringKey, subscriptionKey, region };
     }
 
     // encrypt keys in service

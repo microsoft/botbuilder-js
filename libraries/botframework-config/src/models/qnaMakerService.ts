@@ -8,16 +8,14 @@ import { IQnAService, ServiceTypes } from '../schema';
 import { ConnectedService } from './connectedService';
 
 export class QnaMakerService extends ConnectedService implements IQnAService {
-    public readonly type = ServiceTypes.QnA;
     public kbId = '';
     public subscriptionKey = '';
     public hostname = '';
     public endpointKey = '';
 
     constructor(source: IQnAService = {} as IQnAService) {
-        super(source);
+        super(source, ServiceTypes.QnA);
         let { id = '', name = '', kbId = '', subscriptionKey = '', endpointKey = '', hostname = '' } = source;
-        this.id = kbId;
         if (hostname) {
             hostname = url.resolve(hostname, '/qnamaker');
         }
@@ -25,8 +23,8 @@ export class QnaMakerService extends ConnectedService implements IQnAService {
     }
 
     public toJSON(): IQnAService {
-        const { id, name, kbId, subscriptionKey, endpointKey, hostname } = this;
-        return { type: ServiceTypes.QnA, id: kbId, name, kbId, subscriptionKey, endpointKey, hostname };
+        const { type, id, name, kbId, subscriptionKey, endpointKey, hostname } = this;
+        return { type, id, name, kbId, subscriptionKey, endpointKey, hostname };
     }
 
     // encrypt keys in service
