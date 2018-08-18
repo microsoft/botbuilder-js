@@ -6,8 +6,9 @@
  * Licensed under the MIT License.
  */
 import { TurnContext, RecognizerResult } from 'botbuilder';
-import { LuisResult, IntentModel, EntityModel, CompositeEntityModel } from '../generated/lib/models';
-import { LuisClient } from '../generated';
+import { LUISRuntimeClient as LuisClient, LUISRuntimeModels as LuisModels } from 'azure-cognitiveservices-luis-runtime';
+// const msRest = require('../node_modules/ms-rest');
+import * as msRest from '../node_modules/ms-rest';
 
 const LUIS_TRACE_TYPE = 'https://www.luis.ai/schemas/trace';
 const LUIS_TRACE_NAME = 'LuisRecognizer';
@@ -32,7 +33,7 @@ interface LuisModel {
  */
 interface LuisTraceInfo {
     recognizerResult: RecognizerResult;
-    luisResult: LuisResult;
+    luisResult: LuisModels.LuisResult;
     luisOptions: LuisOptions;
     luisModel: LuisModel;
 }
@@ -107,10 +108,10 @@ export class LuisRecognizer {
         }, options);
         this.includeApiResults = !!includeApiResults;
 
-        // Create client and override callbacks
-        // TODO: Update this to the official SDK once available
+        // Create client
+        var creds = new msRest.TokenCredentials(application.endpointKey);
         var baseUri = "https://" + (this.application.azureRegion || 'westus') + ".api.cognitive.microsoft.com";
-        this.luisClient = new LuisClient(baseUri);
+        this.luisClient = new LuisClient(creds, baseUri);
     }
 
     /**
@@ -134,7 +135,7 @@ export class LuisRecognizer {
                     customHeaders: { "Ocp-Apim-Subscription-Key": this.application.endpointKey}
                 }
             )
-                .then((luisResult: LuisResult) => {
+                .then((luisResult: LuisModels.LuisResult) => {
                     // Map results
                     const recognizerResult: RecognizerResult = {
                         text: luisResult.query,
@@ -177,7 +178,7 @@ export class LuisRecognizer {
         return topIntent || defaultIntent;
     }
 
-    private emitTraceInfo(context: TurnContext, luisResult: LuisResult, recognizerResult: RecognizerResult): Promise<any> {
+    private emitTraceInfo(context: TurnContext, luisResult: LuisModels.LuisResult, recognizerResult: RecognizerResult): Promise<any> {
         const traceInfo: LuisTraceInfo = {
             recognizerResult: recognizerResult,
             luisResult: luisResult,
@@ -201,10 +202,10 @@ export class LuisRecognizer {
         return name.replace(/\.| /g, '_');
     }
 
-    private getIntents(luisResult: LuisResult): any {
+    private getIntents(luisResult: LuisModels.LuisResult): any {
         const intents: { [name: string]: { score: number }; } = {};
         if (luisResult.intents) {
-            luisResult.intents.reduce((prev: any, curr: IntentModel) => {
+            luisResult.intents.reduce((prev: any, curr: LuisModels.IntentModel) => {
                 prev[this.normalizeName(curr.intent)] = { score: curr.score };
                 return prev;
             }, intents);
@@ -215,7 +216,7 @@ export class LuisRecognizer {
         return intents;
     }
 
-    private getEntitiesAndMetadata(entities: EntityModel[], compositeEntities: CompositeEntityModel[] | undefined, verbose: boolean): any {
+    private getEntitiesAndMetadata(entities: LuisModels.EntityModel[], compositeEntities: LuisModels.CompositeEntityModel[] | undefined, verbose: boolean): any {
         let entitiesAndMetadata: any = verbose ? { $instance: {} } : {};
         let compositeEntityTypes: string[] = [];
 
@@ -242,7 +243,7 @@ export class LuisRecognizer {
         return entitiesAndMetadata;
     }
 
-    private getEntityValue(entity: EntityModel): any {
+    private getEntityValue(entity: LuisModels.EntityModel): any {
         if (!entity.resolution) {
             return entity.entity;
         }
@@ -294,7 +295,7 @@ export class LuisRecognizer {
         }
     }
 
-    private getEntityMetadata(entity: EntityModel): any {
+    private getEntityMetadata(entity: LuisModels.EntityModel): any {
         var res = {
             startIndex: entity.startIndex,
             endIndex: entity.endIndex + 1,
@@ -308,7 +309,7 @@ export class LuisRecognizer {
         return res;
     }
 
-    private getNormalizedEntityName(entity: EntityModel): string {
+    private getNormalizedEntityName(entity: LuisModels.EntityModel): string {
         // Type::Role -> Role
         var type = entity.type.split(':').pop();
         if (type.startsWith("builtin.datetimeV2.")) {
@@ -326,18 +327,18 @@ export class LuisRecognizer {
         return type.replace(/\.|\s/g, "_");
     }
 
-    private populateCompositeEntity(compositeEntity: CompositeEntityModel, entities: EntityModel[], entitiesAndMetadata: any, verbose: boolean): EntityModel[] {
+    private populateCompositeEntity(compositeEntity: LuisModels.CompositeEntityModel, entities: LuisModels.EntityModel[], entitiesAndMetadata: any, verbose: boolean): LuisModels.EntityModel[] {
         let childrenEntites: any = verbose ? { $instance: {} } : {};
         let childrenEntitiesMetadata: any = {};
 
         // This is now implemented as O(n^2) search and can be reduced to O(2n) using a map as an optimization if n grows
-        let compositeEntityMetadata: EntityModel | undefined = entities.find(entity => {
+        let compositeEntityMetadata: LuisModels.EntityModel | undefined = entities.find(entity => {
             // For now we are matching by value, which can be ambiguous if the same composite entity shows up with the same text 
             // multiple times within an utterance, but this is just a stop gap solution till the indices are included in composite entities
             return entity.type === compositeEntity.parentType && entity.entity === compositeEntity.value
         });
 
-        let filteredEntities: EntityModel[] = [];
+        let filteredEntities: LuisModels.EntityModel[] = [];
         if (verbose) {
             childrenEntitiesMetadata = this.getEntityMetadata(compositeEntityMetadata);
         }
@@ -390,7 +391,7 @@ export class LuisRecognizer {
             obj[key] = [value];
     }
 
-    private getSentiment(luis: LuisResult) {
+    private getSentiment(luis: LuisModels.LuisResult) {
         var result;
         if (luis.sentimentAnalysis) {
             result = {
