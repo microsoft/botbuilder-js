@@ -109,7 +109,8 @@ export class BotConfiguration implements Partial<IBotConfiguration> {
     }
 
     // connect to a service
-    public connectService(newService: IConnectedService): void {
+    // returns assignd id for the service
+    public connectService(newService: IConnectedService): string {
         let service = BotConfiguration.serviceFromJSON(newService);
 
         // assign a unique id
@@ -126,6 +127,7 @@ export class BotConfiguration implements Partial<IBotConfiguration> {
         } while (found);
 
         this.services.push(service);
+        return service.id;
     }
 
     // Generate a key for encryption
