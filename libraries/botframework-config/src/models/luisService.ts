@@ -12,35 +12,36 @@ export class LuisService extends ConnectedService implements ILuisService {
     public authoringKey = '';
     public subscriptionKey = '';
     public version = '';
+    public region = '';
 
     constructor(source: ILuisService = {} as ILuisService) {
         super(source);
-        const { appId = '', authoringKey = '', subscriptionKey = '', version = '' } = source;
+        const { appId = '', authoringKey = '', subscriptionKey = '', version = '', region = '' } = source;
         this.id = appId;
-        Object.assign(this, { appId, authoringKey, subscriptionKey, version });
+        Object.assign(this, { appId, authoringKey, subscriptionKey, version, region });
     }
 
     public toJSON(): ILuisService {
-        const { appId, authoringKey, id, name, subscriptionKey, type, version } = this;
-        return { type: ServiceTypes.Luis, id: appId, name, version, appId, authoringKey, subscriptionKey };
+        const { appId, authoringKey, id, name, subscriptionKey, type, version, region } = this;
+        return { type: ServiceTypes.Luis, id: appId, name, version, appId, authoringKey, subscriptionKey, region };
     }
 
     // encrypt keys in service
-    public encrypt(secret: string, iv?: string): void {
+    public encrypt(secret: string): void {
         if (this.authoringKey && this.authoringKey.length > 0)
-            this.authoringKey = encryptString(this.authoringKey, secret, iv);
+            this.authoringKey = encryptString(this.authoringKey, secret);
 
         if (this.subscriptionKey && this.subscriptionKey.length > 0)
-            this.subscriptionKey = encryptString(this.subscriptionKey, secret, iv);
+            this.subscriptionKey = encryptString(this.subscriptionKey, secret);
     }
 
     // decrypt keys in service
-    public decrypt(secret: string, iv?: string): void {
+    public decrypt(secret: string): void {
         if (this.authoringKey && this.authoringKey.length > 0)
-            this.authoringKey = decryptString(this.authoringKey, secret, iv);
+            this.authoringKey = decryptString(this.authoringKey, secret);
 
         if (this.subscriptionKey && this.subscriptionKey.length > 0)
-            this.subscriptionKey = decryptString(this.subscriptionKey, secret, iv);
+            this.subscriptionKey = decryptString(this.subscriptionKey, secret);
     }
 
 }

@@ -11,13 +11,13 @@ export class DispatchService extends LuisService implements IDispatchService {
     constructor(source: IDispatchService = {} as IDispatchService) {
         super(source);
         this.type = ServiceTypes.Dispatch;
-        const { appId = '', authoringKey = '', serviceIds = [], subscriptionKey = '', version = '' } = source;
+        const { appId = '', authoringKey = '', serviceIds = [], subscriptionKey = '', version = '', region = '' } = source;
         this.id = appId;
-        Object.assign(this, { appId, authoringKey, serviceIds, subscriptionKey, version });
+        Object.assign(this, { appId, authoringKey, serviceIds, subscriptionKey, version, region });
     }
 
     public toJSON(): IDispatchService {
-        const { appId, authoringKey, name, serviceIds, subscriptionKey, version } = this;
-        return { type: ServiceTypes.Dispatch, id: appId, name, appId, authoringKey, serviceIds, subscriptionKey, version };
+        const { appId, authoringKey, name, serviceIds, subscriptionKey, version, region } = this;
+        return { type: ServiceTypes.Dispatch, id: appId, name, appId, authoringKey, serviceIds, subscriptionKey, version, region };
     }
 }

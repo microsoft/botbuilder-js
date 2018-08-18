@@ -22,10 +22,10 @@ export class FileService extends ConnectedService implements IFileService {
     }
 
     // encrypt keys in service
-    public encrypt(secret: string, iv?: string): void {
+    public encrypt(secret: string): void {
     }
 
     // decrypt keys in service
-    public decrypt(secret: string, iv?: string): void {
+    public decrypt(secret: string): void {
     }
 }
