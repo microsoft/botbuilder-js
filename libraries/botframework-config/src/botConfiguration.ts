@@ -9,11 +9,7 @@ import * as process from 'process';
 import * as txtfile from 'read-text-file';
 import * as uuid from 'uuid';
 import * as encrypt from './encrypt';
-import { BotService, ConnectedService, DispatchService, EndpointService, FileService, LuisService, QnaMakerService } from './models';
-import { AppInsightsService } from './models/appInsightsService';
-import { BlobStorageService } from './models/blobStorage';
-import { CosmosDbService } from './models/cosmosDbService';
-import { GenericService } from './models/genericService';
+import { AppInsightsService, BlobStorageService, BotService, ConnectedService, CosmosDbService, DispatchService, EndpointService, FileService, GenericService, LuisService, QnaMakerService } from './models';
 import { IAppInsightsService, IBlobStorageService, IBotConfiguration, IBotService, IConnectedService, ICosmosDBService, IDispatchService, IEndpointService, IFileService, IGenericService, ILuisService, IQnAService, ServiceTypes } from './schema';
 
 
