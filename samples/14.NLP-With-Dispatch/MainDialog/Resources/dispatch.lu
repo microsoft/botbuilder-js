@@ -1,0 +1,95 @@
+
+> # Intent definitions
+
+## l_homeautomation
+- make camera 1 off please
+- turn off ac please
+- turn off living room light
+- fish pond on please
+- living room lamps off please
+- set lights out bedroom
+- turn dimmer off
+- start master bedroom light .
+- turn on the internet in my bedroom please
+- turn on my bedroom lights .
+- turn off staircase
+- fish pond off please
+- turn on bathroom heater
+- turn off foyer lights
+- illuminate please
+- lock the doors for me please
+- set lights bright
+- silence the phone
+- set lights concentrate
+- make some coffee
+- turn on thermostat please
+- turn thermostat on 70 .
+- change temperature to seventy two degrees
+- decrease temperature for me please
+- turn on the furnace room lights
+- living room lamp on please
+- lower your volume
+- coffee bar on please
+- play dvd
+- dim kitchen lights to 25 .
+- shut down my work computer
+- turn on external speaker
+- snap switch fan fifty percent
+- turn the fan to high
+- turn off venice lamp
+- theater on please
+- breezeway on please
+
+
+## l_weather
+- what ' s the weather going to be like in hawaii ?
+- what ' s the weather like in minneapolis
+- \" i need to know the temperature at bangor , sme \
+- show average rainfall for boise
+- temperature of delhi in celsius please
+- get the daily temperature greenwood indiana
+- how much rain does chambersburg get a year
+- get florence temperature in september
+- get the forcast for me
+- show me the forecast at alabama
+- soliciting today ' s weather
+- current weather ?
+- what is the weather today at 10 day durham ?
+- get the weather at saint george utah
+- \" tell me perth weather , sclimate & temperature at australia \
+- what is the rain volume in sonoma county ?
+- i want to know the temperature at death valley
+- was last year about this time as wet as it is now in the south ?
+- provide me by toronto weather please
+- get for me the weather conditions in sonoma county
+- do fl residents usually need ice scrapers
+- forecast in celcius
+- will it be raining in ranchi
+- what will the weather be tomorrow in accord new york ?
+- what is the weather in redmond ?
+- will it rain this weekend
+- will it snow today
+- what to wear in march in california
+
+
+## q_faq
+- hi
+- what do you do?
+- what are you?
+- greetings
+- good morning
+- good evening
+- what?
+
+
+> # Entity definitions
+
+
+> # PREBUILT Entity definitions
+
+
+> # Phrase list definitions
+
+
+> # List entities
+

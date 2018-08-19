@@ -1,0 +1,13 @@
+{
+    "name": "nlp-with-dispatch",
+    "version": "1.0.0",
+    "description": "Bot Builder v4 example that demonstrates how dispatch should be used E2E.",
+    "main": "app.js",
+    "scripts": {
+      "test": "mocha tests/*.test.js",
+      "start": "node app.js"
+    },
+    "author": "Microsoft",
+    "license": "MIT"
+  }
+  
