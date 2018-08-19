@@ -118,7 +118,7 @@ export class BotConfiguration implements Partial<IBotConfiguration> {
         let found = false;
         do {
             found = false;
-            service.id = crypto.randomBytes(1).toString('hex');
+            service.id = '' + Math.floor((Math.random() * 255));
             for (let existingService of this.services) {
                 if (existingService.id == service.id) {
                     found = true;
