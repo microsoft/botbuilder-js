@@ -1,6 +1,7 @@
 let assert = require('assert');
 let bf = require('../lib');
 let fs = require('fs');
+let path =require('path');
 
 // do not save over testbot
 const testBotPath = require.resolve("./test.bot");
@@ -11,10 +12,15 @@ describe("LoadAndSaveTests", () => {
     it("DeserializeBotFile", async () => {
         var config = await bf.BotConfiguration.load(testBotPath);
 
-        assert.ok("test" == config.name);
+        assert.ok("all" == config.name);
         assert.ok("test description" == config.description);
         assert.ok("" == config.secretKey);
         assert.ok(9 == config.services.length);
+    });
+
+    it("LoadFromFolder", async () => {
+        var config = await bf.BotConfiguration.loadBotFromFolder(path.dirname(testBotPath));
+        assert.equal(config.name, "a", "loaded wrong file");
     });
 
     it("LoadAndSaveUnencryptedBotFile", async () => {

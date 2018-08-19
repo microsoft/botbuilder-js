@@ -40,16 +40,17 @@ export class BotConfiguration implements Partial<IBotConfiguration> {
     }
 
     public toJSON(): Partial<IBotConfiguration> {
-        const { name, description,  version, secretKey, services } = this;
+        const { name, description, version, secretKey, services } = this;
         return { name, description, version, secretKey, services };
     }
 
     public static async loadBotFromFolder(folder?: string, secret?: string): Promise<BotConfiguration> {
-        let files = await fsx.readdir(folder || process.cwd());
-
-        for (var file in files) {
+        folder = folder || process.cwd();
+        let files = await fsx.readdir(folder);
+        files = files.sort();
+        for (var file of files) {
             if (path.extname(<string>file) == '.bot') {
-                return await BotConfiguration.load(<string>file, secret);
+                return await BotConfiguration.load(folder + '/' + <string>file, secret);
             }
         }
         throw new Error(`Error: no bot file found in ${folder}. Choose a different location or use msbot init to create a .bot file."`);
@@ -101,7 +102,7 @@ export class BotConfiguration implements Partial<IBotConfiguration> {
     }
 
     // save the config file back over original
-    public async save(secret?:string) : Promise<void> {
+    public async save(secret?: string): Promise<void> {
         return this.saveAs(this.internal.location, secret);
     }
 
