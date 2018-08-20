@@ -37,6 +37,32 @@ describe('DatetimePrompt', function() {
         .assertReply('2018-01-01T09');
         done();
     });
+
+    it('should send a prompt if the prompt is passed in via PromptOptions.', function (done) {
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.continue();
+            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
+                await dc.prompt('prompt', { prompt: 'Please say something.' });
+            } else if (!results.hasActive && results.hasResult) {
+                const dates = results.result;
+                await turnContext.sendActivity(dates[0].timex);
+            }
+        });
+        const convoState = new ConversationState(new MemoryStorage());
+        adapter.use(convoState);
+
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        dialogs.add(new DateTimePrompt('prompt'));
+
+        adapter.send('Hello')
+        .assertReply('Please say something.')
+        .send(answerMessage)
+        .assertReply('2018-01-01T09');
+        done();
+    });
     
     it('should call DateTimePrompt with custom validator.', function (done) {
         const adapter = new TestAdapter(async (turnContext) => {

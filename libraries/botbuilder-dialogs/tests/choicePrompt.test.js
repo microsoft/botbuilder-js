@@ -42,7 +42,36 @@ describe('ChoicePrompt', function() {
         .assertReply('red');
         done();
     });
-    
+
+    it('should send a prompt and choices if they are passed in via PromptOptions.', function (done) {
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.continue();
+            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
+                await dc.prompt('prompt', { prompt: 'Please choose a color.', choices: stringChoices });
+            } else if (!results.hasActive && results.hasResult) {
+                const selectedChoice = results.result;
+                await turnContext.sendActivity(selectedChoice.value);
+            }
+        });
+        const convoState = new ConversationState(new MemoryStorage());
+        adapter.use(convoState);
+
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        const choicePrompt = new ChoicePrompt('prompt');
+        choicePrompt.style = ListStyle.none;
+
+        dialogs.add(choicePrompt);
+
+        adapter.send('Hello')
+        .assertReply('Please choose a color.')
+        .send(answerMessage)
+        .assertReply('red');
+        done();
+    });
+
     it('should call ChoicePrompt with custom validator.', function (done) {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);

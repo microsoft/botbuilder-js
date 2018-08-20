@@ -1,3 +1,4 @@
+// tslint:disable
 /**
  * @module botbuilder-dialogs
  */
@@ -130,15 +131,13 @@ export class DialogContext {
      * @param promptOrOptions Initial prompt to send the user or a set of options to configure the prompt with..
      * @param choicesOrOptions (Optional) array of choices associated with the prompt.
      */
-    public async prompt(dialogId: string, promptOrOptions: string|Partial<Activity>, choices?: (string|Choice)[]): Promise<DialogTurnResult>;
-    public async prompt(dialogId: string, promptOrOptions: PromptOptions): Promise<DialogTurnResult>;
-    public async prompt(dialogId: string, promptOrOptions: string|Partial<Activity>|PromptOptions, choices?: (string|Choice)[]): Promise<DialogTurnResult> {
+    public async prompt(dialogId: string, promptOrOptions: string|Partial<Activity>|PromptOptions): Promise<DialogTurnResult>;
+    public async prompt(dialogId: string, promptOrOptions: string|Partial<Activity>, choices?: (string|Choice)[]): Promise<DialogTurnResult> {
         let options: PromptOptions;
-        if (typeof promptOrOptions === 'object' && (promptOrOptions as PromptOptions).prompt !== undefined) {
-            let opts = choices ? { choices: choices } : {};
-            options = Object.assign(opts, promptOrOptions as PromptOptions);
-        } else {
+        if ((typeof promptOrOptions === 'object' && (promptOrOptions as Activity).type !== undefined) || typeof promptOrOptions === 'string') {
             options = { prompt: promptOrOptions as string|Partial<Activity>, choices: choices };
+        } else {
+            options = Object.assign({}, promptOrOptions as PromptOptions);
         }
         return this.begin(dialogId, options);
     }
