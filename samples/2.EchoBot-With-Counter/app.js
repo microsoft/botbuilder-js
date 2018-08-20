@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-const { BotStateSet, BotFrameworkAdapter, MemoryStorage, ConversationState, UserState } = require('botbuilder');
+const { BotFrameworkAdapter, MemoryStorage, ConversationState } = require('botbuilder');
 const restify = require('restify');
 const EchoBot = require('./MainDialog/echo-bot');
 
@@ -21,17 +21,25 @@ const adapter = new BotFrameworkAdapter({
 });
 
 // Add state middleware
-const storage = new MemoryStorage();
-const convoState = new ConversationState(storage);
-const userState = new UserState(storage);
-adapter.use(new BotStateSet(convoState, userState));
+const convoState = new ConversationState(new MemoryStorage());
+//adapter.use(new BotStateSet(convoState, userState));
+adapter.use(convoState);
 
-const echoBot = new EchoBot(convoState);
-
+//const echoBot = new EchoBot(convoState);
+let turnCounter = convoState.createProperty('count');
 // Listen for incoming requests 
 server.post('/api/messages', (req, res) => {
     // Route received request to adapter for processing
     adapter.processActivity(req, res, async (context) => {
-        await echoBot.dispatchActivity(context);
+        if (context.activity.type === 'message') {
+            let count = await turnCounter.get(context);
+            count = count === undefined ? 0 : count;
+            await context.sendActivity(`${count}: You said "${context.activity.text}"`);
+            turnCounter.set(context, ++count);
+        }
+        else {
+            await context.sendActivity(`[${context.activity.type} event detected]`);
+        }
     });
 });
+
