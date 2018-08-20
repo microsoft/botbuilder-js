@@ -12,7 +12,7 @@ describe("LoadAndSaveTests", () => {
     it("DeserializeBotFile", async () => {
         var config = await bf.BotConfiguration.load(testBotPath);
 
-        assert.ok("all" == config.name);
+        assert.ok("test" == config.name);
         assert.ok("test description" == config.description);
         assert.ok("" == config.secretKey);
         assert.ok(9 == config.services.length);
