@@ -6,51 +6,71 @@
 import * as crypto from 'crypto';
 
 export function generateKey(): string {
+    // Generates 32 byte cryptographically strong pseudo-random data as a base64 encoded string 
+    // https://nodejs.org/api/crypto.html#crypto_crypto_randombytes_size_callback
     return crypto.randomBytes(32).toString('base64');
 }
 
 /**
  * Encrypt a string using standardized encyryption of AES256 
- * @param value value to encrypt
- * @param key secret to use
+ * @param plainText value to encrypt
+ * @param secret secret to use
  */
-export function encryptString(value: string, key: string): string {
-    if (!value || value.length == 0)
+export function encryptString(plainText: string, secret: string): string {
+    if (!plainText || plainText.length == 0)
         throw new Error('you must pass a value');
 
-    if (!key || value.length == 0)
-        throw new Error('you must pass a key');
+    if (!secret || plainText.length == 0)
+        throw new Error('you must pass a secret');
 
-    let keyBytes = new Buffer(key, 'base64');
-    let ivKey = crypto.randomBytes(16);
-    let cipher = crypto.createCipheriv('aes256', keyBytes, ivKey);
-    let encryptedValue = cipher.update(value, 'utf8', 'base64');
+    let keyBytes = new Buffer(secret, 'base64');
+
+    // Generates 16 byte cryptographically strong pseudo-random data as IV
+    // https://nodejs.org/api/crypto.html#crypto_crypto_randombytes_size_callback
+    let ivBytes = crypto.randomBytes(16);
+    let ivText = ivBytes.toString('base64');
+
+    // encrypt using aes256 iv + key + plainText = encryptedText
+    let cipher = crypto.createCipheriv('aes256', keyBytes, ivBytes);
+    let encryptedValue = cipher.update(plainText, 'utf8', 'base64');
     encryptedValue += cipher.final('base64');
-    return `${ivKey.toString('base64')}!${encryptedValue}`;
+
+    // store base64(ivBytes)!base64(encryptedValue)
+    return `${ivText}!${encryptedValue}`;
 }
 
 /**
- *  Decrypt a string using standardized encyryption of AES256 with
- *      key = SHA256 hash of UTF8 secret
- *      iv = optional 16 bytes of iv string
+ *  Decrypt a string using standardized encyryption of AES256 
  * @param enryptedValue value to decrypt
- * @param key secret to use
+ * @param secret secret to use
  */
-export function decryptString(encryptedValue: string, key: string): string {
+export function decryptString(encryptedValue: string, secret: string): string {
     if (!encryptedValue || encryptedValue.length == 0)
         throw new Error('you must pass a encryptedValue');
 
-    if (!key || key.length == 0)
+    if (!secret || secret.length == 0)
         throw new Error('you must pass a secret');
 
+    // enrypted value = base64(ivBytes)!base64(encryptedValue)
     let parts = encryptedValue.split('!');
     if (parts.length != 2)
-        throw new Error("The enrypted value is not a valid format");
+        throw new Error("The encrypted value is not a valid format");
 
-    let ivBytes = new Buffer(parts[0], 'base64');
-    let keyBytes = new Buffer(key, 'base64');
+    let ivText = parts[0];
+    let encryptedText = parts[1];
+
+    let ivBytes = new Buffer(ivText, 'base64');
+    let keyBytes = new Buffer(secret, 'base64');
+
+    if (ivBytes.length != 16)
+        throw new Error("The encrypted value is not a valid format");
+
+    if (keyBytes.length != 32)
+        throw new Error("The secret is not valid format");
+
+    // decrypt using aes256 iv + key + encryptedText = decryptedText
     let decipher = crypto.createDecipheriv('aes256', keyBytes, ivBytes);
-    let value = decipher.update(parts[1], 'base64', 'utf8');
+    let value = decipher.update(encryptedText, 'base64', 'utf8');
     value += decipher.final('utf8');
     return value;
 }

@@ -9,10 +9,8 @@ import * as process from 'process';
 import * as txtfile from 'read-text-file';
 import * as uuid from 'uuid';
 import * as encrypt from './encrypt';
-import { AzureBotService, ConnectedService, DispatchService, EndpointService, FileService, LuisService, QnaMakerService } from './models';
-import { AppInsightsService } from './models/appInsightsService';
-import { AzureStorageService } from './models/azureStorageService';
-import { IAppInsightsService, IAzureStorageService, IBotConfiguration, IConnectedService, IDispatchService, IEndpointService, IFileService, ILuisService, IQnAService, ServiceTypes } from './schema';
+import { AppInsightsService, BlobStorageService, BotService, ConnectedService, CosmosDbService, DispatchService, EndpointService, FileService, GenericService, LuisService, QnaMakerService } from './models';
+import { IAppInsightsService, IBlobStorageService, IBotConfiguration, IBotService, IConnectedService, ICosmosDBService, IDispatchService, IEndpointService, IFileService, IGenericService, ILuisService, IQnAService, ServiceTypes } from './schema';
 
 
 interface internalBotConfig {
@@ -28,53 +26,110 @@ export class BotConfiguration implements Partial<IBotConfiguration> {
     public description: string = '';
     public services: IConnectedService[] = [];
     public secretKey = '';
+    public version = '2.0';
 
     constructor() {
     }
 
     public static fromJSON(source: Partial<IBotConfiguration> = {}): BotConfiguration {
-        let { name = '', description = '', secretKey = '', services = [] } = source;
+        let { name = '', description = '', version = '2.0', secretKey = '', services = [] } = source;
         services = services.slice().map(BotConfiguration.serviceFromJSON);
         const botConfig = new BotConfiguration();
-        Object.assign(botConfig, { services, description, name, secretKey });
+        Object.assign(botConfig, { services, description, name, version, secretKey });
         return botConfig;
     }
 
     public toJSON(): Partial<IBotConfiguration> {
-        const { name, description, services, secretKey } = this;
-        return { name, description, services, secretKey };
+        const { name, description, version, secretKey, services } = this;
+        return { name, description, version, secretKey, services };
     }
 
+    // load first bot in a folder
     public static async loadBotFromFolder(folder?: string, secret?: string): Promise<BotConfiguration> {
-        let files = await fsx.readdir(folder || process.cwd());
-
-        for (var file in files) {
+        folder = folder || process.cwd();
+        let files = await fsx.readdir(folder);
+        files = files.sort();
+        for (var file of files) {
             if (path.extname(<string>file) == '.bot') {
-                return await BotConfiguration.load(<string>file, secret);
+                return await BotConfiguration.load(folder + '/' + <string>file, secret);
             }
         }
         throw new Error(`Error: no bot file found in ${folder}. Choose a different location or use msbot init to create a .bot file."`);
     }
 
-    // load the config file
+    // load first bot in a folder (blocking)
+    public static loadBotFromFolderSync(folder?: string, secret?: string): BotConfiguration {
+        folder = folder || process.cwd();
+        let files = fsx.readdirSync(folder);
+        files = files.sort();
+        for (var file of files) {
+            if (path.extname(<string>file) == '.bot') {
+                return BotConfiguration.loadSync(folder + '/' + <string>file, secret);
+            }
+        }
+        throw new Error(`Error: no bot file found in ${folder}. Choose a different location or use msbot init to create a .bot file."`);
+    }
+
+    // load the config from a file 
     public static async load(botpath: string, secret?: string): Promise<BotConfiguration> {
-        let bot = BotConfiguration.fromJSON(JSON.parse(await txtfile.read(botpath)));
+        let json = await txtfile.read(botpath);
+        let bot = BotConfiguration._load(json, secret);
         bot.internal.location = botpath;
-
-        let hasSecret = !!bot.secretKey;
-        if (hasSecret)
-            bot.decrypt(secret);
-
         return bot;
     }
 
-    // save the config file
-    public async save(botpath?: string, secret?: string): Promise<void> {
+    // load the config from a file (blocking)
+    public static loadSync(botpath: string, secret?: string): BotConfiguration {
+        let json = txtfile.readSync(botpath);
+        let bot = BotConfiguration._load(json, secret);
+        bot.internal.location = botpath;
+        return bot;
+    }
+
+    // save the config file to specificed botpath
+    public async saveAs(botpath: string, secret?: string): Promise<void> {
+        this._savePrep(secret);
+
+        let hasSecret = !!this.secretKey;
+
+        if (hasSecret)
+            this.encrypt(secret);
+
+        await fsx.writeJson(botpath, this.toJSON(), { spaces: 4 });
+
+        if (hasSecret)
+            this.decrypt(secret);
+    }
+
+    // save the config file to specificed botpath
+    public saveAsSync(botpath: string, secret?: string): void {
+        this._savePrep(secret);
+
+        let hasSecret = !!this.secretKey;
+
+        if (hasSecret)
+            this.encrypt(secret);
+
+        fsx.writeJsonSync(botpath, this.toJSON(), { spaces: 4 });
+
+        if (hasSecret)
+            this.decrypt(secret);
+    }
+
+    // save the config file back over original
+    public async save(secret?: string): Promise<void> {
+        return this.saveAs(this.internal.location, secret);
+    }
+
+    // save the config file back over original (blocking)
+    public saveSync(secret?: string): void {
+        return this.saveAsSync(this.internal.location, secret);
+    }
+
+    private _savePrep(secret?: string) {
         if (!!secret) {
             this.validateSecretKey(secret);
         }
-
-        let hasSecret = !!this.secretKey;
 
         // make sure that all dispatch serviceIds still match services that are in the bot
         for (let service of this.services) {
@@ -91,14 +146,16 @@ export class BotConfiguration implements Partial<IBotConfiguration> {
                 dispatchService.serviceIds = validServices;
             }
         }
+    }
 
+    private static _load(json: string, secret?: string): BotConfiguration {
+        let bot = BotConfiguration.fromJSON(JSON.parse(json));
+
+        let hasSecret = !!bot.secretKey;
         if (hasSecret)
-            this.encrypt(secret);
+            bot.decrypt(secret);
 
-        await fsx.writeJson(botpath || <string>this.internal.location, this.toJSON(), { spaces: 4 });
-
-        if (hasSecret)
-            this.decrypt(secret);
+        return bot;
     }
 
     public clearSecret() {
@@ -106,35 +163,25 @@ export class BotConfiguration implements Partial<IBotConfiguration> {
     }
 
     // connect to a service
-    public connectService(newService: IConnectedService): void {
-        for (let service of this.services) {
-            if (service.type == newService.type && service.id == newService.id)
-                throw Error(`service with ${newService.id} already connected`);
-        }
+    // returns assignd id for the service
+    public connectService(newService: IConnectedService): string {
+        let service = BotConfiguration.serviceFromJSON(newService);
 
-        // give unique name
-        let nameCount = 1;
-        let name = newService.name;
-
-        while (true) {
-            if (nameCount > 1) {
-                name = `${newService.name} (${nameCount})`;
-            }
-
-            let conflict = false;
-            for (let service of this.services) {
-                if (service.name == name) {
-                    conflict = true;
+        // assign a unique id
+        let found = false;
+        do {
+            found = false;
+            service.id = '' + Math.floor((Math.random() * 255));
+            for (let existingService of this.services) {
+                if (existingService.id == service.id) {
+                    found = true;
                     break;
                 }
             }
-            if (!conflict)
-                break;
-            nameCount++;
-        }
-        newService.name = name;
+        } while (found);
 
-        this.services.push(BotConfiguration.serviceFromJSON(newService));
+        this.services.push(service);
+        return service.id;
     }
 
     // Generate a key for encryption
@@ -165,7 +212,8 @@ export class BotConfiguration implements Partial<IBotConfiguration> {
 
                 // legacy decryption
                 this.secretKey = this.legacyDecrypt(this.secretKey, secret);
-                this.secretKey = "";
+                this.clearSecret();
+                this.version = "2.0";
 
                 let encryptedProperties: { [key: string]: string[]; } = {
                     abs: [],
@@ -183,6 +231,30 @@ export class BotConfiguration implements Partial<IBotConfiguration> {
                         (<any>service)[prop] = this.legacyDecrypt(val, secret);
                     }
                 }
+
+                // assign new ids
+
+                // map old ids -> new Ids
+                let map = {};
+
+                let oldServices = this.services;
+                this.services = [];
+                for (let oldService of oldServices) {
+                    // connecting causes new ids to be created
+                    let newServiceId = this.connectService(oldService);
+                    map[oldService.id] = newServiceId;
+                }
+
+                // fix up dispatch serviceIds to new ids
+                for (let service of this.services) {
+                    if (service.type == ServiceTypes.Dispatch) {
+                        let dispatch = (<IDispatchService>service);
+                        for (let i = 0; i < dispatch.serviceIds.length; i++) {
+                            dispatch.serviceIds[i] = map[dispatch.serviceIds[i]];
+                        }
+                    }
+                }
+
             } catch (err2) {
                 throw err;
             }
@@ -191,6 +263,31 @@ export class BotConfiguration implements Partial<IBotConfiguration> {
         }
     }
 
+    // find a service by id
+    public findService(id: string): IConnectedService {
+        const { services = [] } = this;
+        let i = services.length;
+        while (i--) {
+            const service = services[i];
+            if (service.id == id) {
+                return service;
+            }
+        }
+        return null;
+    }
+
+    // find a service by name or id
+    public findServiceByNameOrId(nameOrId: string): IConnectedService {
+        const { services = [] } = this;
+        let i = services.length;
+        while (i--) {
+            const service = services[i];
+            if (service.id == nameOrId || service.name == nameOrId) {
+                return service;
+            }
+        }
+        return null;
+    }
 
     // remove service by name or id
     public disconnectServiceByNameOrId(nameOrId: string): IConnectedService {
@@ -206,7 +303,7 @@ export class BotConfiguration implements Partial<IBotConfiguration> {
     }
 
     // remove a service
-    public disconnectService(type: string, id: string): void {
+    public disconnectService(id: string): void {
         const { services = [] } = this;
         let i = services.length;
         while (i--) {
@@ -258,8 +355,8 @@ export class BotConfiguration implements Partial<IBotConfiguration> {
             case ServiceTypes.Dispatch:
                 return new DispatchService(<IDispatchService>service);
 
-            case ServiceTypes.AzureBot:
-                return new AzureBotService(<IAppInsightsService>service);
+            case ServiceTypes.Bot:
+                return new BotService(<IBotService>service);
 
             case ServiceTypes.Luis:
                 return new LuisService(<ILuisService>service);
@@ -270,8 +367,14 @@ export class BotConfiguration implements Partial<IBotConfiguration> {
             case ServiceTypes.AppInsights:
                 return new AppInsightsService(<IAppInsightsService>service);
 
-            case ServiceTypes.AzureStorage:
-                return new AzureStorageService(<IAzureStorageService>service);
+            case ServiceTypes.BlobStorage:
+                return new BlobStorageService(<IBlobStorageService>service);
+
+            case ServiceTypes.CosmosDB:
+                return new CosmosDbService(<ICosmosDBService>service);
+
+            case ServiceTypes.Generic:
+                return new GenericService(<IGenericService>service);
 
             default:
                 throw new TypeError(`${service.type} is not a known service implementation.`);

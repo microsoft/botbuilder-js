@@ -6,31 +6,39 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const encrypt_1 = require("../encrypt");
 const schema_1 = require("../schema");
-const connectedService_1 = require("./connectedService");
-class AppInsightsService extends connectedService_1.ConnectedService {
+const azureService_1 = require("./azureService");
+class AppInsightsService extends azureService_1.AzureService {
     constructor(source = {}) {
-        super(source);
-        this.type = schema_1.ServiceTypes.AppInsights;
-        this.tenantId = '';
-        this.subscriptionId = '';
-        this.resourceGroup = '';
+        super(source, schema_1.ServiceTypes.AppInsights);
         this.instrumentationKey = '';
-        const { tenantId = '', subscriptionId = '', resourceGroup = '', instrumentationKey = '' } = source;
-        Object.assign(this, { tenantId, subscriptionId, resourceGroup, instrumentationKey });
+        this.applicationId = '';
+        this.apiKeys = {};
+        const { instrumentationKey = '', applicationId, apiKeys } = source;
+        Object.assign(this, { instrumentationKey, applicationId, apiKeys });
     }
     toJSON() {
-        let { id, name, tenantId, subscriptionId, resourceGroup, instrumentationKey } = this;
-        return { type: schema_1.ServiceTypes.AppInsights, id, name, tenantId, subscriptionId, resourceGroup, instrumentationKey };
+        let { id, type, name, tenantId, subscriptionId, resourceGroup, serviceName, instrumentationKey, applicationId, apiKeys } = this;
+        return { type, id, name, tenantId, subscriptionId, resourceGroup, serviceName, instrumentationKey, applicationId, apiKeys };
     }
     // encrypt keys in service
     encrypt(secret) {
         if (this.instrumentationKey && this.instrumentationKey.length > 0)
             this.instrumentationKey = encrypt_1.encryptString(this.instrumentationKey, secret);
+        if (this.apiKeys) {
+            for (let prop in this.apiKeys) {
+                this.apiKeys[prop] = encrypt_1.encryptString(this.apiKeys[prop], secret);
+            }
+        }
     }
     // decrypt keys in service
     decrypt(secret) {
         if (this.instrumentationKey && this.instrumentationKey.length > 0)
             this.instrumentationKey = encrypt_1.decryptString(this.instrumentationKey, secret);
+        if (this.apiKeys) {
+            for (let prop in this.apiKeys) {
+                this.apiKeys[prop] = encrypt_1.decryptString(this.apiKeys[prop], secret);
+            }
+        }
     }
 }
 exports.AppInsightsService = AppInsightsService;
