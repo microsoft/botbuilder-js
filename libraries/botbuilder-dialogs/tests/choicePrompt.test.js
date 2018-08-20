@@ -114,7 +114,7 @@ describe('ChoicePrompt', function() {
 
             const results = await dc.continue();
             if (!turnContext.responded && !results.hasActive && !results.hasResult) {
-                await dc.prompt('prompt', { prompt: 'Please choose a color.', retryPrompt: 'Please choose red, blue, or green.' }, stringChoices);
+                await dc.prompt('prompt', { prompt: 'Please choose a color.', retryPrompt: 'Please choose red, blue, or green.', choices: stringChoices });
             } else if (!results.hasActive && results.hasResult) {
                 const selectedChoice = results.result;
                 await turnContext.sendActivity(selectedChoice.value);
@@ -144,7 +144,7 @@ describe('ChoicePrompt', function() {
 
             const results = await dc.continue();
             if (!turnContext.responded && !results.hasActive && !results.hasResult) {
-                await dc.prompt('prompt', { prompt: 'Please choose a color.', retryPrompt: 'Please choose red, blue, or green.' }, stringChoices);
+                await dc.prompt('prompt', { prompt: 'Please choose a color.', retryPrompt: 'Please choose red, blue, or green.', choices: stringChoices });
             } else if (!results.hasActive && results.hasResult) {
                 const selectedChoice = results.result;
                 await turnContext.sendActivity(selectedChoice.value);
