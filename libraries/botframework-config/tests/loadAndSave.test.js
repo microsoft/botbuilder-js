@@ -1,7 +1,7 @@
 let assert = require('assert');
 let bf = require('../lib');
 let fs = require('fs');
-let path =require('path');
+let path = require('path');
 
 // do not save over testbot
 const testBotPath = require.resolve("./test.bot");
@@ -21,6 +21,9 @@ describe("LoadAndSaveTests", () => {
     it("LoadFromFolder", async () => {
         var config = await bf.BotConfiguration.loadBotFromFolder(path.dirname(testBotPath));
         assert.equal(config.name, "a", "loaded wrong file");
+
+        var config2 = bf.BotConfiguration.loadBotFromFolderSync(path.dirname(testBotPath));
+        assert.deepEqual(config, config2, "loaded wrong file");
     });
 
     it("LoadAndSaveUnencryptedBotFile", async () => {
@@ -34,6 +37,24 @@ describe("LoadAndSaveTests", () => {
         assert.deepEqual(config, config2, "configs should be same");
     });
 
+    it("LoadAndSaveBotFileSync", () => {
+        var secret = bf.BotConfiguration.generateKey();
+        var config = bf.BotConfiguration.loadSync(testBotPath);
+
+        // saveAsSync
+        config.saveAsSync(saveBotPath, secret);
+
+        var config2 = bf.BotConfiguration.loadSync(saveBotPath, secret);
+        fs.unlinkSync(saveBotPath);
+        assert.deepEqual(config.services, config2.services, "configs should be same");
+
+        // saveSync
+        config2.name = 'saveSync';
+        config2.saveSync(secret);
+        var config3 = bf.BotConfiguration.loadSync(saveBotPath, secret);
+        fs.unlinkSync(saveBotPath);
+        assert.equal(config3.name, config2.name, "didn't save");
+    });
 
     it("CantLoadWithoutSecret", async () => {
         let secret = bf.BotConfiguration.generateKey();

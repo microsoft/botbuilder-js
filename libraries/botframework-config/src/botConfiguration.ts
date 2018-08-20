@@ -44,6 +44,7 @@ export class BotConfiguration implements Partial<IBotConfiguration> {
         return { name, description, version, secretKey, services };
     }
 
+    // load first bot in a folder
     public static async loadBotFromFolder(folder?: string, secret?: string): Promise<BotConfiguration> {
         folder = folder || process.cwd();
         let files = await fsx.readdir(folder);
@@ -56,25 +57,79 @@ export class BotConfiguration implements Partial<IBotConfiguration> {
         throw new Error(`Error: no bot file found in ${folder}. Choose a different location or use msbot init to create a .bot file."`);
     }
 
-    // load the config file
+    // load first bot in a folder (blocking)
+    public static loadBotFromFolderSync(folder?: string, secret?: string): BotConfiguration {
+        folder = folder || process.cwd();
+        let files = fsx.readdirSync(folder);
+        files = files.sort();
+        for (var file of files) {
+            if (path.extname(<string>file) == '.bot') {
+                return BotConfiguration.loadSync(folder + '/' + <string>file, secret);
+            }
+        }
+        throw new Error(`Error: no bot file found in ${folder}. Choose a different location or use msbot init to create a .bot file."`);
+    }
+
+    // load the config from a file 
     public static async load(botpath: string, secret?: string): Promise<BotConfiguration> {
-        let bot = BotConfiguration.fromJSON(JSON.parse(await txtfile.read(botpath)));
+        let json = await txtfile.read(botpath);
+        let bot = BotConfiguration._load(json, secret);
         bot.internal.location = botpath;
+        return bot;
+    }
 
-        let hasSecret = !!bot.secretKey;
-        if (hasSecret)
-            bot.decrypt(secret);
-
+    // load the config from a file (blocking)
+    public static loadSync(botpath: string, secret?: string): BotConfiguration {
+        let json = txtfile.readSync(botpath);
+        let bot = BotConfiguration._load(json, secret);
+        bot.internal.location = botpath;
         return bot;
     }
 
     // save the config file to specificed botpath
     public async saveAs(botpath: string, secret?: string): Promise<void> {
+        this._savePrep(secret);
+
+        let hasSecret = !!this.secretKey;
+
+        if (hasSecret)
+            this.encrypt(secret);
+
+        await fsx.writeJson(botpath, this.toJSON(), { spaces: 4 });
+
+        if (hasSecret)
+            this.decrypt(secret);
+    }
+
+    // save the config file to specificed botpath
+    public saveAsSync(botpath: string, secret?: string): void {
+        this._savePrep(secret);
+
+        let hasSecret = !!this.secretKey;
+
+        if (hasSecret)
+            this.encrypt(secret);
+
+        fsx.writeJsonSync(botpath, this.toJSON(), { spaces: 4 });
+
+        if (hasSecret)
+            this.decrypt(secret);
+    }
+
+    // save the config file back over original
+    public async save(secret?: string): Promise<void> {
+        return this.saveAs(this.internal.location, secret);
+    }
+
+    // save the config file back over original (blocking)
+    public saveSync(secret?: string): void {
+        return this.saveAsSync(this.internal.location, secret);
+    }
+
+    private _savePrep(secret?: string) {
         if (!!secret) {
             this.validateSecretKey(secret);
         }
-
-        let hasSecret = !!this.secretKey;
 
         // make sure that all dispatch serviceIds still match services that are in the bot
         for (let service of this.services) {
@@ -91,19 +146,16 @@ export class BotConfiguration implements Partial<IBotConfiguration> {
                 dispatchService.serviceIds = validServices;
             }
         }
-
-        if (hasSecret)
-            this.encrypt(secret);
-
-        await fsx.writeJson(botpath || <string>this.internal.location, this.toJSON(), { spaces: 4 });
-
-        if (hasSecret)
-            this.decrypt(secret);
     }
 
-    // save the config file back over original
-    public async save(secret?: string): Promise<void> {
-        return this.saveAs(this.internal.location, secret);
+    private static _load(json: string, secret?: string): BotConfiguration {
+        let bot = BotConfiguration.fromJSON(JSON.parse(json));
+
+        let hasSecret = !!bot.secretKey;
+        if (hasSecret)
+            bot.decrypt(secret);
+
+        return bot;
     }
 
     public clearSecret() {
@@ -197,7 +249,7 @@ export class BotConfiguration implements Partial<IBotConfiguration> {
                 for (let service of this.services) {
                     if (service.type == ServiceTypes.Dispatch) {
                         let dispatch = (<IDispatchService>service);
-                        for (let i=0; i < dispatch.serviceIds.length;i++ ){
+                        for (let i = 0; i < dispatch.serviceIds.length; i++) {
                             dispatch.serviceIds[i] = map[dispatch.serviceIds[i]];
                         }
                     }
