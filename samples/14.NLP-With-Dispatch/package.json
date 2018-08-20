@@ -8,6 +8,13 @@
       "start": "node app.js"
     },
     "author": "Microsoft",
-    "license": "MIT"
+    "license": "MIT",
+    "dependencies": {
+      "botbuilder": "^4.0.0-preview1.2",
+      "botframework-config": "^4.0.0-preview1.2",
+      "botbuilder-ai":"^4.0.0-preview1.2",
+      "botbuilder-dialogs": "^4.0.0-preview1.2",
+      "botbuilder-azure": "^4.0.0-preview1.2"
+    }
   }
   
