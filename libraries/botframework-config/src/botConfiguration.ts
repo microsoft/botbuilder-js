@@ -160,7 +160,8 @@ export class BotConfiguration implements Partial<IBotConfiguration> {
 
                 // legacy decryption
                 this.secretKey = this.legacyDecrypt(this.secretKey, secret);
-                this.secretKey = "";
+                this.clearSecret();
+                this.version = "2.0";
 
                 let encryptedProperties: { [key: string]: string[]; } = {
                     abs: [],
@@ -178,6 +179,30 @@ export class BotConfiguration implements Partial<IBotConfiguration> {
                         (<any>service)[prop] = this.legacyDecrypt(val, secret);
                     }
                 }
+
+                // assign new ids
+
+                // map old ids -> new Ids
+                let map = {};
+
+                let oldServices = this.services;
+                this.services = [];
+                for (let oldService of oldServices) {
+                    // connecting causes new ids to be created
+                    let newServiceId = this.connectService(oldService);
+                    map[oldService.id] = newServiceId;
+                }
+
+                // fix up dispatch serviceIds to new ids
+                for (let service of this.services) {
+                    if (service.type == ServiceTypes.Dispatch) {
+                        let dispatch = (<IDispatchService>service);
+                        for (let i=0; i < dispatch.serviceIds.length;i++ ){
+                            dispatch.serviceIds[i] = map[dispatch.serviceIds[i]];
+                        }
+                    }
+                }
+
             } catch (err2) {
                 throw err;
             }
