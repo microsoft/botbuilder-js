@@ -18,10 +18,9 @@ server.listen(process.env.port || process.env.PORT || 3978, function () {
 });
 // Create adapter
 const adapter = new botbuilder_1.BotFrameworkAdapter({
-    appId: '558e9c44-900b-42e2-a20a-1c5ebdcd97e6',
-    appPassword: 'zlkq$7$dP%20!u{a' // process.env.MICROSOFT_APP_PASSWORD 
+    appId: process.env.MICROSOFT_APP_ID,
+    appPassword: process.env.MICROSOFT_APP_PASSWORD
 });
-const connectionName = 'MyBuildConnection'; // process.env.CONNECTION_NAME;
 const conversationState = new botbuilder_1.ConversationState(new botbuilder_1.MemoryStorage());
 adapter.use(conversationState);
 // Create empty dialog set
