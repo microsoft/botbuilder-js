@@ -7,7 +7,7 @@ class TurnCounter {
      */
     constructor(state) {
         if(!state || !state.createProperty) throw('Invalid state provided. Need either converesation or user state');
-        this.count = state.createProperty(TURN_COUNTER);
+        this.countProperty = state.createProperty(TURN_COUNTER);
     }
 
     /**
@@ -16,7 +16,7 @@ class TurnCounter {
      */
     async get(context) {
         if(!context) throw ('Invalid context provided');
-        return await this.count.get(context);
+        return await this.countProperty.get(context);
     }
     /**
      * 
@@ -28,7 +28,7 @@ class TurnCounter {
         if(isNaN(value)) throw ('Can only take numbers for TurnCounter state')
         // do any validations on value before grounding
         if(!value || value < 0) throw ('Invalid value for count');
-        return this.count.set(context, value);
+        return this.countProperty.set(context, value);
     }
 }
 

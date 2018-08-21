@@ -1,4 +1,4 @@
-const mainState = require('./main-state');
+const mainState = require('./mainState');
 
 class MainDialog {
     constructor (conversationState) {
