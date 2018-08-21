@@ -41,8 +41,8 @@ export class FileTranscriptStore implements TranscriptStore {
             throw new Error('activity cannot be null for logActivity()');
         }
 
-        let conversationFolder = this.getTranscriptFolder(activity.channelId, activity.conversation.id);
-        let activityFileName = this.getActivityFilename(activity);
+        let conversationFolder: string = this.getTranscriptFolder(activity.channelId, activity.conversation.id);
+        let activityFileName: string = this.getActivityFilename(activity);
 
         return this.saveActivity(activity, conversationFolder, activityFileName);
     }
@@ -64,18 +64,18 @@ export class FileTranscriptStore implements TranscriptStore {
 
         if (!conversationId) { throw new Error('Missing conversationId'); }
 
-        let pagedResult = new PagedResult<Activity>();
-        let transcriptFolder = this.getTranscriptFolder(channelId, conversationId);
+        let pagedResult: PagedResult<Activity> = new PagedResult<Activity>();
+        let transcriptFolder: string = this.getTranscriptFolder(channelId, conversationId);
 
-        return fs.exists(transcriptFolder).then(exists => {
+        return fs.exists(transcriptFolder).then((exists: boolean) => {
             if (!exists) { return pagedResult; }
 
             return fs.readdir(transcriptFolder)
-                .then(files => files
-                    .filter(f => f.endsWith('.json'))               // .json only
+                .then((files: string[]) => files
+                    .filter((f: string) => f.endsWith('.json'))               // .json only
                     .sort()                                         // sorted
                     .filter(withDateFilter(startDate)))             // >= startDate
-                .then(files => {
+                .then((files: string[]) => {
                     // get proper page
                     if (continuationToken) {
                         return files
@@ -85,7 +85,7 @@ export class FileTranscriptStore implements TranscriptStore {
                         return files.slice(0, FileTranscriptStore.PageSize);
                     }
                 })
-                .then(files => files.map(activityFilename =>
+                .then((files: string[]) => files.map((activityFilename: string) =>
                     fs.readFile(path.join(transcriptFolder, activityFilename), 'utf8')))
                 .then(reads => Promise.all(reads))
                 .then(jsons => {
@@ -108,24 +108,24 @@ export class FileTranscriptStore implements TranscriptStore {
     listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<Transcript>> {
         if (!channelId) { throw new Error('Missing channelId'); }
 
-        let pagedResult = new PagedResult<Transcript>();
-        let channelFolder = this.getChannelFolder(channelId);
+        let pagedResult: PagedResult<Transcript> = new PagedResult<Transcript>();
+        let channelFolder: string = this.getChannelFolder(channelId);
 
-        return fs.exists(channelFolder).then(exists => {
+        return fs.exists(channelFolder).then((exists: boolean) => {
             if (!exists) { return pagedResult; }
 
             return fs.readdir(channelFolder)
-                .then(dirs => {
-                    let items = [];
+                .then((dirs: string[]) => {
+                    let items: string[] = [];
                     if (continuationToken) {
                         items = dirs
-                            .filter(skipWhileExpression(di => di !== continuationToken))
+                            .filter(skipWhileExpression((di: string) => di !== continuationToken))
                             .slice(1, FileTranscriptStore.PageSize + 1);
                     } else {
                         items = dirs.slice(0, FileTranscriptStore.PageSize);
                     }
 
-                    pagedResult.items = items.map(i => ({
+                    pagedResult.items = items.map((i: string) => ({
                         channelId: channelId,
                         id: i,
                         created: null
@@ -150,14 +150,14 @@ export class FileTranscriptStore implements TranscriptStore {
 
         if (!conversationId) { throw new Error('Missing conversationId'); }
 
-        let transcriptFolder = this.getTranscriptFolder(channelId, conversationId);
+        let transcriptFolder: string = this.getTranscriptFolder(channelId, conversationId);
 
-        return new Promise((resolve) =>
+        return new Promise((resolve): void =>
             rimraf(transcriptFolder, resolve));
     }
 
     private saveActivity(activity: Activity, transcriptPath: string, activityFilename: string): Promise<void> {
-        let json = JSON.stringify(activity, null, '\t');
+        let json: string = JSON.stringify(activity, null, '\t');
 
         return this.ensureFolder(transcriptPath).then(() => {
             return fs.writeFile(path.join(transcriptPath, activityFilename), json, 'utf8');
@@ -165,7 +165,7 @@ export class FileTranscriptStore implements TranscriptStore {
     }
 
     private ensureFolder(path: string): Promise<void> {
-        return fs.exists(path).then(exists => {
+        return fs.exists(path).then((exists: boolean) => {
             if (!exists) { return fs.mkdirp(path); }
         });
     }
@@ -182,7 +182,7 @@ export class FileTranscriptStore implements TranscriptStore {
         return path.join(this.rootFolder, this.sanitizeKey(channelId), this.sanitizeKey(conversationId));
     }
 
-    private sanitizeKey(key: string) {
+    private sanitizeKey(key: string): string {
         return filenamify(key);
     }
 }
@@ -191,20 +191,20 @@ export class FileTranscriptStore implements TranscriptStore {
  * @private
  * The number of .net ticks at the unix epoch.
  */
-const epochTicks = 621355968000000000;
+const epochTicks: number = 621355968000000000;
 
 /**
  * @private
  * There are 10000 .net ticks per millisecond.
  */
-const ticksPerMillisecond = 10000;
+const ticksPerMillisecond: number = 10000;
 
 /**
  * @private
  * @param timestamp
  */
 const getTicks = (timestamp: Date): string => {
-    let ticks = epochTicks + (timestamp.getTime() * ticksPerMillisecond);
+    let ticks: number = epochTicks + (timestamp.getTime() * ticksPerMillisecond);
 
     return ticks.toString(16);
 };
@@ -213,8 +213,8 @@ const getTicks = (timestamp: Date): string => {
  * @private
  * @param ticks
  */
-const readDate = (ticks) => {
-    let t = Math.round((parseInt(ticks, 16) - epochTicks) / ticksPerMillisecond);
+const readDate = (ticks: string): Date => {
+    let t: number = Math.round((parseInt(ticks, 16) - epochTicks) / ticksPerMillisecond);
 
     return new Date(t);
 };
@@ -226,8 +226,8 @@ const readDate = (ticks) => {
 const withDateFilter = (date: Date) => {
     if (!date) { return () => true; }
 
-    return (filename) => {
-        let ticks = filename.split('-')[0];
+    return (filename: string): boolean => {
+        let ticks: string = filename.split('-')[0];
 
         return readDate(ticks) >= date;
     };
@@ -237,11 +237,11 @@ const withDateFilter = (date: Date) => {
  * @private
  * @param continuationToken
  */
-const withContinuationToken = (continuationToken: string) => {
+const withContinuationToken = (continuationToken) => {
     if (!continuationToken) { return () => true; }
 
-    return skipWhileExpression(fileName => {
-        let id = fileName.substring(fileName.indexOf('-') + 1, fileName.indexOf('.'));
+    return skipWhileExpression((fileName: string) => {
+        let id: string = fileName.substring(fileName.indexOf('-') + 1, fileName.indexOf('.'));
 
         return id !== continuationToken;
     });
