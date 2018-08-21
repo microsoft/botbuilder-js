@@ -24,7 +24,7 @@ const ConnectorClient = BotConnector.ConnectorClient;
 const Credentials = BotConnector.MicrosoftAppCredentials;
 
 var SuiteBase = require('../../../tools/framework/suite-base');
-var should = require('../../../tools/node_modules/should');
+var should = require('should');
 
 var requiredEnvironment = [
   'USER_ID',
