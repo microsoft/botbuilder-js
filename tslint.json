@@ -5,7 +5,10 @@
         "tslint-microsoft-contrib"
     ],
     "jsRules": {},
-    "rules": {},
+    "rules": {
+        "no-any":false,
+	"interface-name":[false]
+    },
     "rulesDirectory": [
         "node_modules/tslint-microsoft-contrib"
     ]
