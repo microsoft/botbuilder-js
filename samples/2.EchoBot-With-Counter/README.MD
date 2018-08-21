@@ -13,27 +13,26 @@ This sample shows how to create a simple Echo bot with state using [`restify`](h
     ```bash
     npm i & npm start
     ```
-## Prerequisites
--	<REQUIRED TOOLS, VERSIONS>
--	<STEPS TO GET SET UP WITH THE SAMPLE. E.g. RUN AN INCLUDED SCRIPT OR MANUALLY DO SOMETHING ETC>
 
-NOTE: <ANY NOTES ABOUT THE PREREQUISITES OR ALTERNATE THINGS TO CONSIDER TO GET SET UP>
-
-## Visual studio
--	<STEPS TO RUN THIS SAMPLE FROM VISUAL STUDIO>
-
-## Visual studio code
--	<STEPS TO RUN THIS SAMPLE FROM VISUAL STUDIO CODE>
-
-## Testing the bot using Bot Framework Emulator
+# Testing the bot using Bot Framework Emulator
 [Microsoft Bot Framework Emulator](https://github.com/microsoft/botframework-emulator) is a desktop application that allows bot developers to test and debug their bots on localhost or running remotely through a tunnel.
 
-- Install the Bot Framework emulator from [here](https://github.com/Microsoft/BotFramework-Emulator/releases)
+- Install the Bot Framework emulator from [here](https://aka.ms/botframework-emulator)
 
 ## Connect to bot using Bot Framework Emulator **V4**
 - Launch Bot Framework Emulator
-- File -> Open bot and navigate to samples\8.AspNetCore-LUIS-Bot folder
-- Select AspNetCore-LUIS-Bot.bot file
+- File -> Open Bot Configuration and navigate to samples\2.echobot-with-state folder
+- Select echobot-with-state.bot file
+
+# Bot state
+A key to good bot design is to track the context of a conversation, so that your bot remembers things like the answers to previous questions. Depending on what your bot is used for, you may even need to keep track of state or store information for longer than the lifetime of the conversation. A bot's state is information it remembers in order to respond appropriately to incoming messages. The Bot Builder SDK provides classes for [storing and retrieving state data](https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-howto-v4-state?view=azure-bot-service-4.0&tabs=js) as an object associated with a user or a conversation.
+
+    - Conversation properties help your bot keep track of the current conversation the bot is having with the user. If your bot needs to complete a sequence of steps or switch between conversation topics, you can use conversation properties to manage steps in a sequence or track the current topic. Since conversation properties reflect the state of the current conversation, you typically clear them at the end of a session, when the bot receives an end of conversation activity.
+
+    - User properties can be used for many purposes, such as determining where the user's prior conversation left off or simply greeting a returning user by name. If you store a user's preferences, you can use that information to customize the conversation the next time you chat. For example, you might alert the user to a news article about a topic that interests her, or alert a user when an appointment becomes available. You should clear them if the bot receives a delete user data activity.
 
 # Further reading
--	<LINKS TO ADDITIONAL READING>
+- [Azure Bot Service Introduction](https://docs.microsoft.com/en-us/azure/bot-service/bot-service-overview-introduction?view=azure-bot-service-4.0)
+- [Bot State](https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-storage-concept?view=azure-bot-service-4.0)
+- [Write directly to storage](https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-howto-v4-storage?view=azure-bot-service-4.0&tabs=jsechoproperty%2Ccsetagoverwrite%2Ccsetag)
+- [Managing conversation and user state](https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-howto-v4-state?view=azure-bot-service-4.0&tabs=js)
