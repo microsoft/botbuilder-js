@@ -234,7 +234,7 @@ export class BotFrameworkAdapter extends BotAdapter {
     public deleteConversationMember(context: TurnContext, memberId: string): Promise<void> {
         try {
             if (!context.activity.serviceUrl) { throw new Error(`BotFrameworkAdapter.deleteConversationMember(): missing serviceUrl`); }
-            if (!context.activity.conversation || !context.activity.conversation.id) { 
+            if (!context.activity.conversation || !context.activity.conversation.id) {
                 throw new Error(`BotFrameworkAdapter.deleteConversationMember(): missing conversation or conversation.id`);
             }
             const serviceUrl = context.activity.serviceUrl;
@@ -363,7 +363,6 @@ export class BotFrameworkAdapter extends BotAdapter {
         return client.getSignInLink(conversation as ConversationReference, connectionName);
     }
 
-
     /**
      * Tells the token service to emulate the sending of OAuthCards for a channel.
      * @param contextOrServiceUrl The URL of the channel server to query or a TurnContext.  This can be retrieved from `context.activity.serviceUrl`.
@@ -429,7 +428,7 @@ export class BotFrameworkAdapter extends BotAdapter {
         return parseRequest(req).then((request) => {
             // Authenticate the incoming request
             errorCode = 401;
-            const authHeader = req.headers['authorization'] || '';
+            const authHeader = req.headers.authorization || '';
 
             return this.authenticateRequest(request, authHeader).then(() => {
                 // Process received activity
@@ -490,10 +489,13 @@ export class BotFrameworkAdapter extends BotAdapter {
                         const activity = activities[i];
                         switch (activity.type) {
                             case 'delay':
-                                setTimeout(() => {
+                                setTimeout(
+                                    () => {
                                     responses.push({} as ResourceResponse);
                                     next(i + 1);
-                                }, typeof activity.value === 'number' ? activity.value : 1000);
+                                    },
+                                    typeof activity.value === 'number' ? activity.value : 1000
+                                );
                                 break;
                             case 'invokeResponse':
                                 // Cache response to context object. This will be retrieved when turn completes.
@@ -523,10 +525,13 @@ export class BotFrameworkAdapter extends BotAdapter {
                                         activity as Activity
                                     );
                                 }
-                                p.then((response) => {
+                                p.then(
+                                    (response) => {
                                     responses.push(response);
                                     next(i + 1);
-                                }, (err) => reject(err));
+                                    },
+                                    reject
+                                );
                                 break;
                         }
                     } catch (err) {
