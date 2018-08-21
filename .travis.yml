@@ -22,8 +22,8 @@ after_success:
   && npm publish libraries/botbuilder-azure --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
   && npm publish libraries/botbuilder-core --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
   && npm publish libraries/botbuilder-dialogs --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
+  && npm publish libraries/botframework-config --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
   && npm publish libraries/botframework-connector --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
-  && npm publish libraries/botframework-luis --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
   && npm publish libraries/botframework-schema --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
   && echo End deploy
 cache:
