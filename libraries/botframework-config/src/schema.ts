@@ -3,8 +3,12 @@
  * Licensed under the MIT License.
  */
 export enum ServiceTypes {
+    AppInsights = 'appInsights',
+    Bot = 'abs',
+    BlobStorage = 'blob',
+    CosmosDB = 'cosmosdb',
+    Generic = 'generic',
     Endpoint = 'endpoint',
-    AzureBotService = 'abs',
     Luis = 'luis',
     QnA = 'qna',
     Dispatch = 'dispatch',
@@ -13,12 +17,12 @@ export enum ServiceTypes {
 
 export interface IConnectedService {
     // ServiceType of the service (LUIS, QnA, etc.)
-    readonly type: ServiceTypes;
+    readonly type?: ServiceTypes;
 
     // Friendly name for the service
     name: string;
 
-    // unique Id for the service (appid, etc)
+    // unique Id for the service 
     id?: string;
 }
 
@@ -38,18 +42,58 @@ export interface IEndpointService extends IConnectedService {
 
 }
 
-export interface IAzureBotService extends IConnectedService {
-    // type = ServiceTypes.AzureBotService
-    // id = bot id
-
-    // tenantId for ABS registration
+export interface IAzureService extends IConnectedService {
+    // tenantId for azure
     tenantId: string;
 
-    // subscriptionId for ABS registration
+    // subscriptionId for azure
     subscriptionId: string;
 
-    // resourceGroup for ABS registration
+    // resourceGroup for azure 
     resourceGroup: string;
+
+    // name of the service
+    serviceName: string;
+}
+
+export interface IBotService extends IAzureService {
+    // type = ServiceTypes.AzureBotService
+}
+
+export interface IAppInsightsService extends IAzureService {
+    // type = ServiceTypes.AppInsights
+
+    // instrumentationKey for logging data to appInsights
+    instrumentationKey: string;
+
+    // (OPTIONAL) applicationId is used for programmatic acccess to AppInsights 
+    applicationId?: string;
+
+    // (OPTIONAL) named apiKeys for programatic access to AppInsights
+    apiKeys?: { [key: string]: string };
+}
+
+export interface IBlobStorageService extends IAzureService {
+    // type = ServiceTypes.AzureStorage
+
+    // connectionstring for blob storage
+    connectionString: string;
+
+    // container name
+    container: string;
+}
+
+export interface ICosmosDBService extends IAzureService {
+    // type = ServiceTypes.CosmosDB
+
+    // connectionstring for CosmosDB
+    connectionString: string;
+
+    // database name
+    database: string;
+
+    // collection anme
+    collection: string;
 }
 
 export interface ILuisService extends IConnectedService {
@@ -67,31 +111,30 @@ export interface ILuisService extends IConnectedService {
 
     // version of the application
     version: string;
+
+    // region for luis
+    region: string;
 }
 
-export interface IDispatchService extends IConnectedService {
+export interface IDispatchService extends ILuisService {
     // type = ServiceTypes.Dispatch
-    // id = appid
-
-    // luis appid
-    appId: string;
-
-    // authoring key for using authoring api
-    authoringKey: string;
-
-    // subscription key for using calling model api for predictions
-    subscriptionKey: string;
-
-    // version of the application
-    version: string;
 
     // service Ids that the dispatch model will dispatch across
     serviceIds: string[];
 }
 
+export interface IGenericService extends IConnectedService {
+    // type = ServiceTypes.Generic
+
+    // deep link to service
+    url: string;
+
+    // named/value configuration data
+    configuration: { [key: string]: string };
+}
+
 export interface IQnAService extends IConnectedService {
     // type=Servicestypes.QnA
-    // id = appid for the QnA service
 
     // subscriptionkey for calling admin api
     subscriptionKey: string;
@@ -108,10 +151,9 @@ export interface IQnAService extends IConnectedService {
 
 export interface IFileService extends IConnectedService {
     // type = ServiceTypes.File
-    // id = filePath
 
     // filePath
-    filePath: string;
+    path: string;
 }
 
 export interface IBotConfiguration {
@@ -124,6 +166,9 @@ export interface IBotConfiguration {
     // encrypted guid used to validate password is the same,
     // you need to be able to decrypt this key with passed in secret before we will use the secret to encrypt new values
     secretKey: string;
+
+    // version of the schema of this file
+    version:string;
 
     // connected services for the bot
     services: IConnectedService[];

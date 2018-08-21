@@ -156,9 +156,12 @@ export class BotFrameworkAdapter extends BotAdapter {
      * @param logic A function handler that will be called to perform the bots logic after the the adapters middleware has been run.
      */
     public continueConversation(reference: Partial<ConversationReference>, logic: (context: TurnContext) => Promise<void>): Promise<void> {
-        const request: Partial<Activity> = TurnContext.applyConversationReference({type: 'event'}, reference, true);
+        const request: Partial<Activity> = TurnContext.applyConversationReference(
+            {type: 'event',  name: 'continueConversation' },
+            reference,
+            true
+        );
         const context: TurnContext = this.createContext(request);
-
         return this.runMiddleware(context, logic as any);
     }
 
@@ -195,7 +198,11 @@ export class BotFrameworkAdapter extends BotAdapter {
 
             return client.conversations.createConversation(parameters).then((response: ConversationResourceResponse) => {
                 // Initialize request and copy over new conversation ID and updated serviceUrl.
-                const request: Partial<Activity> = TurnContext.applyConversationReference({type: 'event'}, reference, true);
+                const request: Partial<Activity> = TurnContext.applyConversationReference(
+                    {type: 'event', name: 'createConversation' },
+                    reference,
+                    true
+                );
                 request.conversation = { id: response.id } as ConversationAccount;
                 if (response.serviceUrl) { request.serviceUrl = response.serviceUrl; }
 

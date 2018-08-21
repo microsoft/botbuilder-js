@@ -30,5 +30,10 @@
   },
   "dependencies": {
     "uuid": "^3.2.1"
+  },
+  "scripts": {
+    "test": "tsc && nyc mocha tests/",
+    "build": "tsc",
+    "clean": "erase /q /s .\\lib"
   }
 }
