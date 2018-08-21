@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { Activity, ActivityTypes, ResourceResponse, ConversationReference, BotAdapter, TurnContext } from 'botbuilder-core';
+import { Activity, ActivityTypes,  BotAdapter, ConversationReference, ResourceResponse, TurnContext } from 'botbuilder-core';
 import * as readline from 'readline';
 
 /**
@@ -26,7 +26,7 @@ import * as readline from 'readline';
  * ```
  */
 export class ConsoleAdapter extends BotAdapter {
-    private nextId = 0;
+    private nextId: number = 0;
     private readonly reference: ConversationReference;
 
     /**
@@ -86,8 +86,9 @@ export class ConsoleAdapter extends BotAdapter {
             // Create context and run middleware pipe
             const context = new TurnContext(this, activity);
             this.runMiddleware(context, logic)
-                .catch((err) => { this.printError(err.toString()) });
+                .catch((err) => { this.printError(err.toString()); });
         });
+
         return function close() {
             rl.close();
         };
@@ -120,6 +121,7 @@ export class ConsoleAdapter extends BotAdapter {
             // Create context and run middleware pipe
             const activity = TurnContext.applyConversationReference({}, reference, true);
             const context = new TurnContext(this, activity);
+
             return this.runMiddleware(context, logic)
                        .catch((err) => { this.printError(err.toString()); });
     }
@@ -136,6 +138,7 @@ export class ConsoleAdapter extends BotAdapter {
      */
     public sendActivities(context: TurnContext, activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
         const that = this;
+
         return new Promise((resolve, reject) => {
             const responses: ResourceResponse[] = [];
             function next(i: number) {
