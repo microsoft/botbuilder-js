@@ -265,10 +265,7 @@ export class BotConfiguration implements Partial<IBotConfiguration> {
 
     // find a service by id
     public findService(id: string): IConnectedService {
-        const { services = [] } = this;
-        let i = services.length;
-        while (i--) {
-            const service = services[i];
+        for (let service of this.services) {
             if (service.id == id) {
                 return service;
             }
@@ -276,13 +273,16 @@ export class BotConfiguration implements Partial<IBotConfiguration> {
         return null;
     }
 
-    // find a service by name or id
+    // find a service by name or id (checks ids first)
     public findServiceByNameOrId(nameOrId: string): IConnectedService {
-        const { services = [] } = this;
-        let i = services.length;
-        while (i--) {
-            const service = services[i];
-            if (service.id == nameOrId || service.name == nameOrId) {
+        for (let service of this.services) {
+            if (service.id == nameOrId) {
+                return service;
+            }
+        }
+
+        for (let service of this.services) {
+            if (service.name == nameOrId) {
                 return service;
             }
         }
