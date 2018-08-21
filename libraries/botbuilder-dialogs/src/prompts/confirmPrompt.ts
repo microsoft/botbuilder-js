@@ -74,7 +74,7 @@ export class ConfirmPrompt extends Prompt<boolean> {
     protected async onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void> {
         // Determine locale
         let locale = context.activity.locale || this.defaultLocale;
-        if (locale || !ConfirmPrompt.defaultChoiceOptions.hasOwnProperty(locale)) {
+        if (!locale || !ConfirmPrompt.defaultChoiceOptions.hasOwnProperty(locale)) {
             locale = 'en-us';
         }
 
