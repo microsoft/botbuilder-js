@@ -5,6 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+
 import {
     ConnectorClient,
     JwtTokenValidation,
@@ -14,11 +15,17 @@ import {
 } from 'botframework-connector';
 
 import {
-    Activity, ActivityTypes,
+    Activity,
+    ActivityTypes,
     BotAdapter,
-    ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult,
+    ChannelAccount,
+    ConversationAccount,
+    ConversationParameters,
+    ConversationReference,
+    ConversationsResult,
     ResourceResponse,
-    TokenResponse, TurnContext
+    TokenResponse,
+    TurnContext
 } from 'botbuilder-core';
 
 import * as os from 'os';

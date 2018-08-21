@@ -10,7 +10,8 @@
         "interface-name":false,
         "no-this-assignment":false,
         "switch-final-break":false,
-        "no-parameter-reassignment":false
+        "no-parameter-reassignment":false,
+        "max-line-length": [true,{"limit":140,"ignore-pattern":"^\\s+\\*"}]
     },
     "rulesDirectory": [
         "node_modules/tslint-microsoft-contrib"
