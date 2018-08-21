@@ -88,6 +88,10 @@ export class BotConfiguration implements Partial<IBotConfiguration> {
 
     // save the config file to specificed botpath
     public async saveAs(botpath: string, secret?: string): Promise<void> {
+        if (!botpath) {
+            throw new Error(`missing path`);
+        }
+
         this._savePrep(secret);
 
         let hasSecret = !!this.secretKey;
@@ -261,6 +265,11 @@ export class BotConfiguration implements Partial<IBotConfiguration> {
 
             return service;
         }
+    }
+
+    // return the path that this config was loaded from.  .save() will save to this path 
+    public getPath() : string {
+        return this.internal.location;
     }
 
     // find a service by id
