@@ -4,7 +4,7 @@
  * regenerated.
  */
 
-import { Attachments } from "./attachments";
-import { Conversations } from "./conversations";
+import { BotSignIn } from "./botSignIn";
+import { UserToken } from "./userToken";
 
-export { Attachments, Conversations };
+export { BotSignIn, UserToken };

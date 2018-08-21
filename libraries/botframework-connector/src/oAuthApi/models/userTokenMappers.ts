@@ -4,7 +4,8 @@
  * regenerated.
  */
 
-import { Attachments } from "./attachments";
-import { Conversations } from "./conversations";
+export {
+  TokenResponse,
+  ErrorResponse
+} from "../models/mappers";
 
-export { Attachments, Conversations };

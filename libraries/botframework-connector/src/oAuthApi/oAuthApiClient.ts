@@ -4,20 +4,20 @@
  * regenerated.
  */
 
-import * as Models from "botframework-schema";
 import * as msRest from "ms-rest-js";
-import { ConnectorClientContext } from "./connectorClientContext";
+import * as Models from "./models";
 import * as Mappers from "./models/mappers";
 import * as operations from "./operations";
+import { OAuthApiClientContext } from "./oAuthApiClientContext";
 
-class ConnectorClient extends ConnectorClientContext {
+class OAuthApiClient extends OAuthApiClientContext {
   // Operation groups
-  attachments: operations.Attachments;
-  conversations: operations.Conversations;
+  botSignIn: operations.BotSignIn;
+  userToken: operations.UserToken;
 
   /**
    * @class
-   * Initializes a new instance of the ConnectorClient class.
+   * Initializes a new instance of the OAuthApiClient class.
    * @constructor
    *
    * @param {string} [baseUri] - The base URI of the service.
@@ -34,11 +34,11 @@ class ConnectorClient extends ConnectorClientContext {
    */
   constructor(credentials: msRest.ServiceClientCredentials, baseUri?: string, options?: msRest.ServiceClientOptions) {
     super(credentials, baseUri, options);
-    this.attachments = new operations.Attachments(this);
-    this.conversations = new operations.Conversations(this);
+    this.botSignIn = new operations.BotSignIn(this);
+    this.userToken = new operations.UserToken(this);
   }
 }
 
 // Operation Specifications
 
-export { ConnectorClient, Models as ConnectorModels, Mappers as ConnectorMappers };
+export { OAuthApiClient, Models as OAuthApiModels, Mappers as OAuthApiMappers };

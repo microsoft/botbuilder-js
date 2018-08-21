@@ -1,0 +1,32 @@
+{
+  "name": "fuselabs-intercom",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build-less": "cd Intercom.Home && gulp less-to-css",
+    "build-devportal": "cd Intercom.DevPortal && npm run css-gen && npm run webpack-dev",
+    "build-adminportal": "cd Intercom.DevPortal && npm run webpack-admin-and-review",
+    "build-botdirectory": "cd Intercom.BotDirectory && npm run webpack",
+    "build": "npm run build-less && npm run build-devportal && npm run build-adminportal && npm run build-botdirectory",
+    "install-home": "cd Intercom.Home && npm install",
+    "install-reactui": "cd Intercom.ReactUI && npm install",
+    "install-botdirectory": "cd Intercom.BotDirectory && npm install",
+    "install-devportal": "cd Intercom.DevPortal && npm install",
+    "install-channels": "cd Intercom.Channels && npm install",
+    "install-directline": "cd Channels\\DirectLineChannel\\DirectLine && npm install",
+    "install-testbotjs": "cd Agents\\TestBotJS && npm install",
+    "install-subs": "npm run install-home && npm run install-reactui && npm run install-botdirectory && npm run install-devportal && npm run install-channels && npm run install-directline && npm run install-testbotjs",
+    "postinstall": "npm run install-subs && npm run && npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://fuselabs.visualstudio.com/DefaultCollection/_git/Intercom"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "gulp": "^3.9.1"
+  }
+}

@@ -1,0 +1,46 @@
+﻿{
+  "BrowserLink": {
+    "CssIgnorePatterns": "bootstrap*; reset.css; normalize.css; jquery*; toastr*; foundation*; animate*; inuit*; elements*; ratchet*; hint*; flat-ui*; 960*; skeleton*",
+    "EnableMenu": true,
+    "EnablePixelPushing": true,
+    "ShowMenu": true
+  },
+  "CodeGen": {
+    "AddTypeScriptReferencePath": true,
+    "CamelCaseEnumerationValues": false,
+    "CamelCasePropertyNames": true,
+    "CamelCaseTypeNames": false
+  },
+  "Css": {
+    "ShowBrowserTooltip": true,
+    "ShowInitialInherit": false,
+    "SyncBase64ImageValues": true,
+    "SyncVendorValues": true,
+    "ValidateDuplicateSelectors": true,
+    "ValidateVendorSpecifics": true,
+    "ValidationLocation": "Messages"
+  },
+  "General": {
+    "AllMessagesToOutputWindow": false,
+    "KeepImportantComments": true,
+    "ShowLogoWatermark": true,
+    "SvgPreviewPane": true
+  },
+  "Html": {
+    "AttributeQuotesRemovalMode": "KeepQuotes",
+    "CustomAngularDirectiveList": null,
+    "EnableBootstrapValidation": true,
+    "EnableEnterFormat": true,
+    "EnableFoundationValidation": true,
+    "EnableMicrodataValidation": true,
+    "MinifyAngularBindingExpressions": false,
+    "MinifyKnockoutBindingExpressions": false,
+    "PreserveCase": false,
+    "ProcessableScriptTypeList": null
+  },
+  "JavaScript": {
+    "BlockCommentCompletion": true,
+    "EvalTreatment": "MakeImmediateSafe",
+    "TermSemicolons": true
+  }
+}
