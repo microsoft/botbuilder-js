@@ -2,7 +2,7 @@
     "name": "nlp-with-dispatch",
     "description": "",
     "version": "2.0",
-    "secretKey": "",
+    "secretKey": "z6ZRkv5psks/DAgWxOsXgw==!4OHWJwr80ZATEkGrCnCqLpi8seBVCUM04hlxsnSfjFxxE2jTBwaz53xeqNZqMtTl",
     "services": [
         {
             "type": "endpoint",
@@ -18,7 +18,7 @@
             "name": "homeautomation-LUIS",
             "version": "0.1",
             "appId": "fa51efea-83d7-44be-97ef-45e31511f6d9",
-            "authoringKey": "be30825b782843dcbbe520ac5338f567",
+            "authoringKey": "jKb/THmmLxZ0cWsHZMZ17A==!VJ59L0QsmrQAJBAvZ1dgGnHKnXO1UZUAOgSnUHaC3ShLwAm78XFFnG46uoZEMfN6",
             "subscriptionKey": "",
             "region": "westus"
         },
@@ -28,7 +28,7 @@
             "name": "weather-LUIS",
             "version": "0.1",
             "appId": "83cf79de-7357-4b40-b216-d68bd521d9f1",
-            "authoringKey": "be30825b782843dcbbe520ac5338f567",
+            "authoringKey": "RYGJIuSpCVyAJyz9jFYQfA==!bLPsCVNOUT8s0LP++BKESeMTXwYapDxc0JpnvfksKs1wDTDkrdhYTa8Z9lWEZ2Lp",
             "subscriptionKey": "",
             "region": "westus"
         },
@@ -37,8 +37,8 @@
             "id": "113",
             "name": "simple-qna-dispatch",
             "kbId": "2fc7c268-0f86-4dc3-8334-d6612df2aa55",
-            "subscriptionKey": "d30ebbcc44ef4f07bae1a0e31b69f709",
-            "endpointKey": "0fa7f711-6a82-4155-9cf9-5c8168967df6",
+            "subscriptionKey": "BTu/ZzAzGzo88sxY2O6DtA==!+AWSCLoj+7IEZ39utK8TDvOybNDkxGqx6rs7fSYbKfszIJm5ZrYk1iR2P5v+ph5B",
+            "endpointKey": "DqCEwd2abLsgy1ZUaq488A==!r2OkhqZvQFjyI7liFUeaqEhJi+pT2ySsm0M3Hbo4P5krUSq1i4PeP7V88j2ydJoM",
             "hostname": "https://contosocafeqnab8.azurewebsites.net/qnamaker"
         },
         {
@@ -46,7 +46,7 @@
             "id": "215",
             "name": "nlp-with-dispatchDispatch",
             "appId": "1f0bfffd-a551-4b17-a316-3fdeaa2d1b63",
-            "authoringKey": "be30825b782843dcbbe520ac5338f567",
+            "authoringKey": "w6OEJcIPZRwk4vaOUYDpzQ==!H+Ws8ssdtK172I7WN50FXelBX5hMqhTO9wwL8l/jGUxdKEGsbOpBvcuPQPQlc+CZ",
             "serviceIds": [
                 "42",
                 "25",
