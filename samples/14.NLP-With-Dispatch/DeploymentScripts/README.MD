@@ -28,6 +28,16 @@ To create the LUIS application this bot needs and update the .bot file configura
 
 Note: Should you so desire, you can create the LUIS application in a region of your choice. See [here](https://docs.microsoft.com/en-us/azure/cognitive-services/LUIS/luis-reference-regions) to learn more about available LUIS authoring regions. You can specify a different region (westus or westeurope or australiaeast) via https://**LUIS-Authoring-Region**.api.cognitive.microsoft.com/luis/api/v2.0 in the above command.
 
+## Train and publish the LUIS models 
+You need to train and publish the LUIS models that were created for this sample to work. You can do so using the following CLI commands
+
+```bash
+> msbot get service --name "homeautomation-LUIS" | luis train version --wait --stdin
+> msbot get service --name "homeautomation-LUIS" | luis publish version --stdin
+> msbot get service --name "weather-LUIS" | luis train version --wait --stdin
+> msbot get service --name "weather-LUIS" | luis publish version --stdin
+```
+
 # Configure QnA Maker service
 To create a new QnA Maker application for the bot, 
 - Follow instructions [here](https://docs.microsoft.com/en-us/azure/cognitive-services/qnamaker/how-to/set-up-qnamaker-service-azure) to create a new QnA Maker Azure resource.
@@ -38,6 +48,12 @@ To create the QnA Maker application this bot needs and update the .bot file conf
 - Run the following command
 ```bash
 > qnamaker create kb --in cognitiveModels\sample.qna --subscriptionKey <YOUR-QNA-SUBSCRIPTION-KEY> --msbot | msbot connect qna --stdin --name simple-QnA
+```
+## Train and publish the QnA Maker KB
+You need to train and publish the QnA Maker Knowledge Bases that were created for this sample to work. You can do so using the following CLI commands
+
+```bash
+> msbot get service --name "simple-QnA" | qnamaker publish kb --stdin
 ```
 
 # Configure the Dispatch application
