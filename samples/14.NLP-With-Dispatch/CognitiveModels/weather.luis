@@ -1,81 +1,49 @@
 {
-  "luis_schema_version": "2.2.0",
-  "versionId": "0.1",
-  "name": "weather",
-  "desc": "weather",
-  "culture": "en-us",
   "intents": [
     {
       "name": "None"
     },
     {
-      "name": "Weather.GetCondition",
-      "inherits": {
-        "domain_name": "Weather",
-        "model_name": "GetCondition"
-      }
+      "name": "Get Weather Condition"
     },
     {
-      "name": "Weather.GetForecast",
-      "inherits": {
-        "domain_name": "Weather",
-        "model_name": "GetForecast"
-      }
+      "name": "Get Weather Forecast"
     }
   ],
   "entities": [
     {
-      "name": "Weather.Location",
-      "inherits": {
-        "domain_name": "Weather",
-        "model_name": "Location"
-      }
+      "name": "Location",
+      "roles": []
     }
   ],
   "composites": [],
   "closedLists": [],
   "regex_entities": [],
-  "bing_entities": [],
   "model_features": [],
   "regex_features": [],
   "utterances": [
     {
-      "text": "\" i need to know the temperature at bangor , sme \"",
-      "intent": "Weather.GetForecast",
+      "text": "current weather ?",
+      "intent": "Get Weather Condition",
       "entities": []
     },
     {
-      "text": "\" tell me perth weather , sclimate & temperature at australia \"",
-      "intent": "Weather.GetCondition",
+      "text": "do florida residents usually need ice scrapers",
+      "intent": "Get Weather Condition",
       "entities": [
         {
-          "entity": "Weather.Location",
-          "startPos": 10,
-          "endPos": 14
+          "entity": "Location",
+          "startPos": 3,
+          "endPos": 9
         }
       ]
     },
     {
-      "text": "current weather ?",
-      "intent": "Weather.GetCondition",
-      "entities": []
-    },
-    {
-      "text": "do fl residents usually need ice scrapers",
-      "intent": "Weather.GetCondition",
-      "entities": []
-    },
-    {
-      "text": "forecast in celcius",
-      "intent": "Weather.GetForecast",
-      "entities": []
-    },
-    {
       "text": "get florence temperature in september",
-      "intent": "Weather.GetCondition",
+      "intent": "Get Weather Condition",
       "entities": [
         {
-          "entity": "Weather.Location",
+          "entity": "Location",
           "startPos": 4,
           "endPos": 11
         }
@@ -83,10 +51,10 @@
     },
     {
       "text": "get for me the weather conditions in sonoma county",
-      "intent": "Weather.GetCondition",
+      "intent": "Get Weather Condition",
       "entities": [
         {
-          "entity": "Weather.Location",
+          "entity": "Location",
           "startPos": 37,
           "endPos": 49
         }
@@ -94,26 +62,21 @@
     },
     {
       "text": "get the daily temperature greenwood indiana",
-      "intent": "Weather.GetCondition",
+      "intent": "Get Weather Condition",
       "entities": [
         {
-          "entity": "Weather.Location",
+          "entity": "Location",
           "startPos": 26,
           "endPos": 42
         }
       ]
     },
     {
-      "text": "get the forcast for me",
-      "intent": "Weather.GetForecast",
-      "entities": []
-    },
-    {
       "text": "get the weather at saint george utah",
-      "intent": "Weather.GetCondition",
+      "intent": "Get Weather Condition",
       "entities": [
         {
-          "entity": "Weather.Location",
+          "entity": "Location",
           "startPos": 19,
           "endPos": 35
         }
@@ -121,70 +84,32 @@
     },
     {
       "text": "how much rain does chambersburg get a year",
-      "intent": "Weather.GetCondition",
+      "intent": "Get Weather Condition",
       "entities": [
         {
-          "entity": "Weather.Location",
+          "entity": "Location",
           "startPos": 19,
           "endPos": 30
         }
       ]
     },
     {
-      "text": "i want to know the temperature at death valley",
-      "intent": "Weather.GetForecast",
-      "entities": [
-        {
-          "entity": "Weather.Location",
-          "startPos": 34,
-          "endPos": 45
-        }
-      ]
-    },
-    {
-      "text": "provide me by toronto weather please",
-      "intent": "Weather.GetForecast",
-      "entities": [
-        {
-          "entity": "Weather.Location",
-          "startPos": 14,
-          "endPos": 20
-        }
-      ]
-    },
-    {
       "text": "show average rainfall for boise",
-      "intent": "Weather.GetCondition",
+      "intent": "Get Weather Condition",
       "entities": [
         {
-          "entity": "Weather.Location",
+          "entity": "Location",
           "startPos": 26,
           "endPos": 30
         }
       ]
     },
     {
-      "text": "show me the forecast at alabama",
-      "intent": "Weather.GetForecast",
-      "entities": [
-        {
-          "entity": "Weather.Location",
-          "startPos": 24,
-          "endPos": 30
-        }
-      ]
-    },
-    {
-      "text": "soliciting today ' s weather",
-      "intent": "Weather.GetForecast",
-      "entities": []
-    },
-    {
       "text": "temperature of delhi in celsius please",
-      "intent": "Weather.GetCondition",
+      "intent": "Get Weather Condition",
       "entities": [
         {
-          "entity": "Weather.Location",
+          "entity": "Location",
           "startPos": 15,
           "endPos": 19
         }
@@ -192,54 +117,113 @@
     },
     {
       "text": "was last year about this time as wet as it is now in the south ?",
-      "intent": "Weather.GetCondition",
+      "intent": "Get Weather Condition",
       "entities": [
         {
-          "entity": "Weather.Location",
+          "entity": "Location",
           "startPos": 57,
           "endPos": 61
         }
       ]
     },
     {
-      "text": "what ' s the weather going to be like in hawaii ?",
-      "intent": "Weather.GetForecast",
+      "text": "what's the weather like in minneapolis",
+      "intent": "Get Weather Condition",
       "entities": [
         {
-          "entity": "Weather.Location",
-          "startPos": 41,
-          "endPos": 46
-        }
-      ]
-    },
-    {
-      "text": "what ' s the weather like in minneapolis",
-      "intent": "Weather.GetCondition",
-      "entities": [
-        {
-          "entity": "Weather.Location",
-          "startPos": 29,
-          "endPos": 39
+          "entity": "Location",
+          "startPos": 27,
+          "endPos": 37
         }
       ]
     },
     {
       "text": "what is the rain volume in sonoma county ?",
-      "intent": "Weather.GetCondition",
+      "intent": "Get Weather Condition",
       "entities": [
         {
-          "entity": "Weather.Location",
+          "entity": "Location",
           "startPos": 27,
           "endPos": 39
         }
       ]
     },
     {
-      "text": "what is the weather in redmond ?",
-      "intent": "Weather.GetForecast",
+      "text": "what to wear in march in california",
+      "intent": "Get Weather Condition",
       "entities": [
         {
-          "entity": "Weather.Location",
+          "entity": "Location",
+          "startPos": 25,
+          "endPos": 34
+        }
+      ]
+    },
+    {
+      "text": "forecast in celcius",
+      "intent": "Get Weather Forecast",
+      "entities": []
+    },
+    {
+      "text": "get the forcast for me",
+      "intent": "Get Weather Forecast",
+      "entities": []
+    },
+    {
+      "text": "i want to know the temperature at death valley",
+      "intent": "Get Weather Forecast",
+      "entities": [
+        {
+          "entity": "Location",
+          "startPos": 34,
+          "endPos": 45
+        }
+      ]
+    },
+    {
+      "text": "provide me by toronto weather please",
+      "intent": "Get Weather Forecast",
+      "entities": [
+        {
+          "entity": "Location",
+          "startPos": 14,
+          "endPos": 20
+        }
+      ]
+    },
+    {
+      "text": "show me the forecast at alabama",
+      "intent": "Get Weather Forecast",
+      "entities": [
+        {
+          "entity": "Location",
+          "startPos": 24,
+          "endPos": 30
+        }
+      ]
+    },
+    {
+      "text": "soliciting today's weather",
+      "intent": "Get Weather Forecast",
+      "entities": []
+    },
+    {
+      "text": "what's the weather going to be like in hawaii ?",
+      "intent": "Get Weather Forecast",
+      "entities": [
+        {
+          "entity": "Location",
+          "startPos": 39,
+          "endPos": 44
+        }
+      ]
+    },
+    {
+      "text": "what is the weather in redmond ?",
+      "intent": "Get Weather Forecast",
+      "entities": [
+        {
+          "entity": "Location",
           "startPos": 23,
           "endPos": 29
         }
@@ -247,32 +231,21 @@
     },
     {
       "text": "what is the weather today at 10 day durham ?",
-      "intent": "Weather.GetForecast",
+      "intent": "Get Weather Forecast",
       "entities": [
         {
-          "entity": "Weather.Location",
+          "entity": "Location",
           "startPos": 36,
           "endPos": 41
         }
       ]
     },
     {
-      "text": "what to wear in march in california",
-      "intent": "Weather.GetCondition",
-      "entities": [
-        {
-          "entity": "Weather.Location",
-          "startPos": 25,
-          "endPos": 34
-        }
-      ]
-    },
-    {
       "text": "what will the weather be tomorrow in accord new york ?",
-      "intent": "Weather.GetForecast",
+      "intent": "Get Weather Forecast",
       "entities": [
         {
-          "entity": "Weather.Location",
+          "entity": "Location",
           "startPos": 37,
           "endPos": 51
         }
@@ -280,10 +253,10 @@
     },
     {
       "text": "will it be raining in ranchi",
-      "intent": "Weather.GetForecast",
+      "intent": "Get Weather Forecast",
       "entities": [
         {
-          "entity": "Weather.Location",
+          "entity": "Location",
           "startPos": 22,
           "endPos": 27
         }
@@ -291,13 +264,21 @@
     },
     {
       "text": "will it rain this weekend",
-      "intent": "Weather.GetForecast",
+      "intent": "Get Weather Forecast",
       "entities": []
     },
     {
       "text": "will it snow today",
-      "intent": "Weather.GetForecast",
+      "intent": "Get Weather Forecast",
       "entities": []
     }
-  ]
+  ],
+  "patterns": [],
+  "patternAnyEntities": [],
+  "prebuiltEntities": [],
+  "luis_schema_version": "3.0.0",
+  "versionId": "0.1",
+  "name": "weather.luis",
+  "desc": "",
+  "culture": "en-us"
 }

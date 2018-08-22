@@ -21,7 +21,7 @@ server.listen(process.env.port || process.env.PORT || 3978, function () {
 
 // read bot configuration from .bot file.
 // See https://aka.ms/about-bot-file to learn more about bot file its use.
-let botConfig = BotConfiguration.loadSync(path.join(__dirname, process.env.botFilePath), process.env.botSecret);
+let botConfig = BotConfiguration.loadSync(path.join(__dirname, process.env.botFilePath), process.env.botFileSecret);
  
 // Get bot endpoint configuration by service name
 const endpointConfig = botConfig.findServiceByNameOrId(BOT_CONFIGURATION);

@@ -1,5 +1,7 @@
 {
     "name": "nlp-with-dispatch",
+    "description": "",
+    "version": "2.0",
     "secretKey": "",
     "services": [
         {
@@ -9,6 +11,50 @@
             "appId": "",
             "appPassword": "",
             "endpoint": "http://localhost:3992/api/messages"
+        },
+        {
+            "type": "luis",
+            "id": "42",
+            "name": "homeautomation-LUIS",
+            "version": "0.1",
+            "appId": "fa51efea-83d7-44be-97ef-45e31511f6d9",
+            "authoringKey": "be30825b782843dcbbe520ac5338f567",
+            "subscriptionKey": "",
+            "region": "westus"
+        },
+        {
+            "type": "luis",
+            "id": "25",
+            "name": "weather-LUIS",
+            "version": "0.1",
+            "appId": "83cf79de-7357-4b40-b216-d68bd521d9f1",
+            "authoringKey": "be30825b782843dcbbe520ac5338f567",
+            "subscriptionKey": "",
+            "region": "westus"
+        },
+        {
+            "type": "qna",
+            "id": "113",
+            "name": "simple-qna-dispatch",
+            "kbId": "2fc7c268-0f86-4dc3-8334-d6612df2aa55",
+            "subscriptionKey": "d30ebbcc44ef4f07bae1a0e31b69f709",
+            "endpointKey": "0fa7f711-6a82-4155-9cf9-5c8168967df6",
+            "hostname": "https://contosocafeqnab8.azurewebsites.net/qnamaker"
+        },
+        {
+            "type": "dispatch",
+            "id": "215",
+            "name": "nlp-with-dispatchDispatch",
+            "appId": "1f0bfffd-a551-4b17-a316-3fdeaa2d1b63",
+            "authoringKey": "be30825b782843dcbbe520ac5338f567",
+            "serviceIds": [
+                "42",
+                "25",
+                "113"
+            ],
+            "subscriptionKey": "",
+            "version": "Dispatch",
+            "region": ""
         }
     ]
 }

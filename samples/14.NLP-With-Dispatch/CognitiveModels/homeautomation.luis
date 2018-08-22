@@ -1,23 +1,10 @@
 {
-  "luis_schema_version": "2.2.0",
-  "versionId": "0.1",
-  "name": "homeautomation",
-  "desc": "homeautomation",
-  "culture": "en-us",
   "intents": [
     {
-      "name": "HomeAutomation.TurnOff",
-      "inherits": {
-        "domain_name": "HomeAutomation",
-        "model_name": "TurnOff"
-      }
+      "name": "Turn Off Device"
     },
     {
-      "name": "HomeAutomation.TurnOn",
-      "inherits": {
-        "domain_name": "HomeAutomation",
-        "model_name": "TurnOn"
-      }
+      "name": "Turn On Device"
     },
     {
       "name": "None"
@@ -25,45 +12,223 @@
   ],
   "entities": [
     {
-      "name": "HomeAutomation.Device",
-      "inherits": {
-        "domain_name": "HomeAutomation",
-        "model_name": "Device"
-      }
+      "name": "Device",
+      "roles": []
     },
     {
-      "name": "HomeAutomation.Operation",
-      "inherits": {
-        "domain_name": "HomeAutomation",
-        "model_name": "Operation"
-      }
+      "name": "Operation",
+      "roles": []
     },
     {
-      "name": "HomeAutomation.Room",
-      "inherits": {
-        "domain_name": "HomeAutomation",
-        "model_name": "Room"
-      }
+      "name": "Room",
+      "roles": []
     }
   ],
   "composites": [],
   "closedLists": [],
   "regex_entities": [],
-  "bing_entities": [],
   "model_features": [],
   "regex_features": [],
   "utterances": [
     {
-      "text": "breezeway on please",
-      "intent": "HomeAutomation.TurnOn",
+      "text": "fish pond off please",
+      "intent": "Turn Off Device",
       "entities": [
         {
-          "entity": "HomeAutomation.Room",
+          "entity": "Device",
           "startPos": 0,
           "endPos": 8
         },
         {
-          "entity": "HomeAutomation.Operation",
+          "entity": "Operation",
+          "startPos": 10,
+          "endPos": 12
+        }
+      ]
+    },
+    {
+      "text": "living room lamps off please",
+      "intent": "Turn Off Device",
+      "entities": [
+        {
+          "entity": "Room",
+          "startPos": 0,
+          "endPos": 10
+        }
+      ]
+    },
+    {
+      "text": "lock the doors for me please",
+      "intent": "Turn Off Device",
+      "entities": [
+        {
+          "entity": "Device",
+          "startPos": 9,
+          "endPos": 13
+        }
+      ]
+    },
+    {
+      "text": "make camera 1 off please",
+      "intent": "Turn Off Device",
+      "entities": [
+        {
+          "entity": "Device",
+          "startPos": 5,
+          "endPos": 10
+        }
+      ]
+    },
+    {
+      "text": "set lights out bedroom",
+      "intent": "Turn Off Device",
+      "entities": [
+        {
+          "entity": "Device",
+          "startPos": 4,
+          "endPos": 9
+        },
+        {
+          "entity": "Room",
+          "startPos": 15,
+          "endPos": 21
+        }
+      ]
+    },
+    {
+      "text": "shut down my work computer",
+      "intent": "Turn Off Device",
+      "entities": [
+        {
+          "entity": "Device",
+          "startPos": 18,
+          "endPos": 25
+        }
+      ]
+    },
+    {
+      "text": "silence the phone",
+      "intent": "Turn Off Device",
+      "entities": [
+        {
+          "entity": "Device",
+          "startPos": 12,
+          "endPos": 16
+        }
+      ]
+    },
+    {
+      "text": "turn dimmer off",
+      "intent": "Turn Off Device",
+      "entities": [
+        {
+          "entity": "Device",
+          "startPos": 5,
+          "endPos": 10
+        },
+        {
+          "entity": "Operation",
+          "startPos": 12,
+          "endPos": 14
+        }
+      ]
+    },
+    {
+      "text": "turn off ac please",
+      "intent": "Turn Off Device",
+      "entities": [
+        {
+          "entity": "Operation",
+          "startPos": 5,
+          "endPos": 7
+        },
+        {
+          "entity": "Device",
+          "startPos": 9,
+          "endPos": 10
+        }
+      ]
+    },
+    {
+      "text": "turn off foyer lights",
+      "intent": "Turn Off Device",
+      "entities": [
+        {
+          "entity": "Operation",
+          "startPos": 5,
+          "endPos": 7
+        },
+        {
+          "entity": "Room",
+          "startPos": 9,
+          "endPos": 13
+        },
+        {
+          "entity": "Device",
+          "startPos": 15,
+          "endPos": 20
+        }
+      ]
+    },
+    {
+      "text": "turn off living room light",
+      "intent": "Turn Off Device",
+      "entities": [
+        {
+          "entity": "Room",
+          "startPos": 9,
+          "endPos": 19
+        },
+        {
+          "entity": "Device",
+          "startPos": 21,
+          "endPos": 25
+        }
+      ]
+    },
+    {
+      "text": "turn off staircase",
+      "intent": "Turn Off Device",
+      "entities": [
+        {
+          "entity": "Operation",
+          "startPos": 5,
+          "endPos": 7
+        },
+        {
+          "entity": "Device",
+          "startPos": 9,
+          "endPos": 17
+        }
+      ]
+    },
+    {
+      "text": "turn off venice lamp",
+      "intent": "Turn Off Device",
+      "entities": [
+        {
+          "entity": "Operation",
+          "startPos": 5,
+          "endPos": 7
+        },
+        {
+          "entity": "Device",
+          "startPos": 16,
+          "endPos": 19
+        }
+      ]
+    },
+    {
+      "text": "breezeway on please",
+      "intent": "Turn On Device",
+      "entities": [
+        {
+          "entity": "Room",
+          "startPos": 0,
+          "endPos": 8
+        },
+        {
+          "entity": "Operation",
           "startPos": 10,
           "endPos": 11
         }
@@ -71,10 +236,10 @@
     },
     {
       "text": "change temperature to seventy two degrees",
-      "intent": "HomeAutomation.TurnOn",
+      "intent": "Turn On Device",
       "entities": [
         {
-          "entity": "HomeAutomation.Operation",
+          "entity": "Operation",
           "startPos": 7,
           "endPos": 17
         }
@@ -82,17 +247,268 @@
     },
     {
       "text": "coffee bar on please",
-      "intent": "HomeAutomation.TurnOn",
+      "intent": "Turn On Device",
       "entities": [
         {
-          "entity": "HomeAutomation.Device",
+          "entity": "Device",
           "startPos": 0,
           "endPos": 9
         },
         {
-          "entity": "HomeAutomation.Operation",
+          "entity": "Operation",
           "startPos": 11,
           "endPos": 12
+        }
+      ]
+    },
+    {
+      "text": "fish pond on please",
+      "intent": "Turn On Device",
+      "entities": []
+    },
+    {
+      "text": "illuminate please",
+      "intent": "Turn On Device",
+      "entities": [
+        {
+          "entity": "Device",
+          "startPos": 0,
+          "endPos": 9
+        }
+      ]
+    },
+    {
+      "text": "living room lamp on please",
+      "intent": "Turn On Device",
+      "entities": [
+        {
+          "entity": "Room",
+          "startPos": 0,
+          "endPos": 10
+        },
+        {
+          "entity": "Device",
+          "startPos": 12,
+          "endPos": 15
+        },
+        {
+          "entity": "Operation",
+          "startPos": 17,
+          "endPos": 18
+        }
+      ]
+    },
+    {
+      "text": "make some coffee",
+      "intent": "Turn On Device",
+      "entities": [
+        {
+          "entity": "Device",
+          "startPos": 10,
+          "endPos": 15
+        }
+      ]
+    },
+    {
+      "text": "play dvd",
+      "intent": "Turn On Device",
+      "entities": [
+        {
+          "entity": "Device",
+          "startPos": 5,
+          "endPos": 7
+        }
+      ]
+    },
+    {
+      "text": "set lights bright",
+      "intent": "Turn On Device",
+      "entities": [
+        {
+          "entity": "Device",
+          "startPos": 4,
+          "endPos": 9
+        },
+        {
+          "entity": "Operation",
+          "startPos": 11,
+          "endPos": 16
+        }
+      ]
+    },
+    {
+      "text": "set lights concentrate",
+      "intent": "Turn On Device",
+      "entities": [
+        {
+          "entity": "Device",
+          "startPos": 4,
+          "endPos": 9
+        },
+        {
+          "entity": "Operation",
+          "startPos": 11,
+          "endPos": 21
+        }
+      ]
+    },
+    {
+      "text": "snap switch fan fifty percent",
+      "intent": "Turn On Device",
+      "entities": [
+        {
+          "entity": "Device",
+          "startPos": 12,
+          "endPos": 14
+        },
+        {
+          "entity": "Operation",
+          "startPos": 16,
+          "endPos": 28
+        }
+      ]
+    },
+    {
+      "text": "start master bedroom light .",
+      "intent": "Turn On Device",
+      "entities": [
+        {
+          "entity": "Room",
+          "startPos": 6,
+          "endPos": 19
+        },
+        {
+          "entity": "Device",
+          "startPos": 21,
+          "endPos": 25
+        }
+      ]
+    },
+    {
+      "text": "theater on please",
+      "intent": "Turn On Device",
+      "entities": [
+        {
+          "entity": "Room",
+          "startPos": 0,
+          "endPos": 6
+        },
+        {
+          "entity": "Operation",
+          "startPos": 8,
+          "endPos": 9
+        }
+      ]
+    },
+    {
+      "text": "turn on bathroom heater",
+      "intent": "Turn On Device",
+      "entities": [
+        {
+          "entity": "Operation",
+          "startPos": 5,
+          "endPos": 6
+        },
+        {
+          "entity": "Room",
+          "startPos": 8,
+          "endPos": 15
+        },
+        {
+          "entity": "Device",
+          "startPos": 17,
+          "endPos": 22
+        }
+      ]
+    },
+    {
+      "text": "turn on external speaker",
+      "intent": "Turn On Device",
+      "entities": [
+        {
+          "entity": "Operation",
+          "startPos": 5,
+          "endPos": 6
+        },
+        {
+          "entity": "Device",
+          "startPos": 8,
+          "endPos": 23
+        }
+      ]
+    },
+    {
+      "text": "turn on my bedroom lights .",
+      "intent": "Turn On Device",
+      "entities": [
+        {
+          "entity": "Operation",
+          "startPos": 5,
+          "endPos": 6
+        },
+        {
+          "entity": "Room",
+          "startPos": 11,
+          "endPos": 17
+        },
+        {
+          "entity": "Device",
+          "startPos": 19,
+          "endPos": 24
+        }
+      ]
+    },
+    {
+      "text": "turn on the furnace room lights",
+      "intent": "Turn On Device",
+      "entities": [
+        {
+          "entity": "Room",
+          "startPos": 12,
+          "endPos": 23
+        },
+        {
+          "entity": "Device",
+          "startPos": 25,
+          "endPos": 30
+        }
+      ]
+    },
+    {
+      "text": "turn on thermostat please",
+      "intent": "Turn On Device",
+      "entities": [
+        {
+          "entity": "Operation",
+          "startPos": 5,
+          "endPos": 6
+        },
+        {
+          "entity": "Device",
+          "startPos": 8,
+          "endPos": 17
+        }
+      ]
+    },
+    {
+      "text": "turn the fan to high",
+      "intent": "Turn On Device",
+      "entities": [
+        {
+          "entity": "Device",
+          "startPos": 9,
+          "endPos": 11
+        }
+      ]
+    },
+    {
+      "text": "turn thermostat on 70 .",
+      "intent": "Turn On Device",
+      "entities": [
+        {
+          "entity": "Device",
+          "startPos": 5,
+          "endPos": 14
         }
       ]
     },
@@ -101,7 +517,7 @@
       "intent": "None",
       "entities": [
         {
-          "entity": "HomeAutomation.Operation",
+          "entity": "Operation",
           "startPos": 9,
           "endPos": 19
         }
@@ -112,89 +528,14 @@
       "intent": "None",
       "entities": [
         {
-          "entity": "HomeAutomation.Room",
+          "entity": "Room",
           "startPos": 4,
           "endPos": 10
         },
         {
-          "entity": "HomeAutomation.Device",
+          "entity": "Device",
           "startPos": 12,
           "endPos": 17
-        }
-      ]
-    },
-    {
-      "text": "fish pond off please",
-      "intent": "HomeAutomation.TurnOff",
-      "entities": [
-        {
-          "entity": "HomeAutomation.Device",
-          "startPos": 0,
-          "endPos": 8
-        },
-        {
-          "entity": "HomeAutomation.Operation",
-          "startPos": 10,
-          "endPos": 12
-        }
-      ]
-    },
-    {
-      "text": "fish pond on please",
-      "intent": "HomeAutomation.TurnOn",
-      "entities": []
-    },
-    {
-      "text": "illuminate please",
-      "intent": "HomeAutomation.TurnOn",
-      "entities": [
-        {
-          "entity": "HomeAutomation.Device",
-          "startPos": 0,
-          "endPos": 9
-        }
-      ]
-    },
-    {
-      "text": "living room lamp on please",
-      "intent": "HomeAutomation.TurnOn",
-      "entities": [
-        {
-          "entity": "HomeAutomation.Room",
-          "startPos": 0,
-          "endPos": 10
-        },
-        {
-          "entity": "HomeAutomation.Device",
-          "startPos": 12,
-          "endPos": 15
-        },
-        {
-          "entity": "HomeAutomation.Operation",
-          "startPos": 17,
-          "endPos": 18
-        }
-      ]
-    },
-    {
-      "text": "living room lamps off please",
-      "intent": "HomeAutomation.TurnOff",
-      "entities": [
-        {
-          "entity": "HomeAutomation.Room",
-          "startPos": 0,
-          "endPos": 10
-        }
-      ]
-    },
-    {
-      "text": "lock the doors for me please",
-      "intent": "HomeAutomation.TurnOff",
-      "entities": [
-        {
-          "entity": "HomeAutomation.Device",
-          "startPos": 9,
-          "endPos": 13
         }
       ]
     },
@@ -203,335 +544,9 @@
       "intent": "None",
       "entities": [
         {
-          "entity": "HomeAutomation.Operation",
+          "entity": "Operation",
           "startPos": 11,
           "endPos": 16
-        }
-      ]
-    },
-    {
-      "text": "make camera 1 off please",
-      "intent": "HomeAutomation.TurnOff",
-      "entities": [
-        {
-          "entity": "HomeAutomation.Device",
-          "startPos": 5,
-          "endPos": 10
-        }
-      ]
-    },
-    {
-      "text": "make some coffee",
-      "intent": "HomeAutomation.TurnOn",
-      "entities": [
-        {
-          "entity": "HomeAutomation.Device",
-          "startPos": 10,
-          "endPos": 15
-        }
-      ]
-    },
-    {
-      "text": "play dvd",
-      "intent": "HomeAutomation.TurnOn",
-      "entities": [
-        {
-          "entity": "HomeAutomation.Device",
-          "startPos": 5,
-          "endPos": 7
-        }
-      ]
-    },
-    {
-      "text": "set lights bright",
-      "intent": "HomeAutomation.TurnOn",
-      "entities": [
-        {
-          "entity": "HomeAutomation.Device",
-          "startPos": 4,
-          "endPos": 9
-        },
-        {
-          "entity": "HomeAutomation.Operation",
-          "startPos": 11,
-          "endPos": 16
-        }
-      ]
-    },
-    {
-      "text": "set lights concentrate",
-      "intent": "HomeAutomation.TurnOn",
-      "entities": [
-        {
-          "entity": "HomeAutomation.Device",
-          "startPos": 4,
-          "endPos": 9
-        },
-        {
-          "entity": "HomeAutomation.Operation",
-          "startPos": 11,
-          "endPos": 21
-        }
-      ]
-    },
-    {
-      "text": "set lights out bedroom",
-      "intent": "HomeAutomation.TurnOff",
-      "entities": [
-        {
-          "entity": "HomeAutomation.Device",
-          "startPos": 4,
-          "endPos": 9
-        },
-        {
-          "entity": "HomeAutomation.Room",
-          "startPos": 15,
-          "endPos": 21
-        }
-      ]
-    },
-    {
-      "text": "shut down my work computer",
-      "intent": "HomeAutomation.TurnOff",
-      "entities": [
-        {
-          "entity": "HomeAutomation.Device",
-          "startPos": 18,
-          "endPos": 25
-        }
-      ]
-    },
-    {
-      "text": "silence the phone",
-      "intent": "HomeAutomation.TurnOff",
-      "entities": [
-        {
-          "entity": "HomeAutomation.Device",
-          "startPos": 12,
-          "endPos": 16
-        }
-      ]
-    },
-    {
-      "text": "snap switch fan fifty percent",
-      "intent": "HomeAutomation.TurnOn",
-      "entities": [
-        {
-          "entity": "HomeAutomation.Device",
-          "startPos": 12,
-          "endPos": 14
-        },
-        {
-          "entity": "HomeAutomation.Operation",
-          "startPos": 16,
-          "endPos": 28
-        }
-      ]
-    },
-    {
-      "text": "start master bedroom light .",
-      "intent": "HomeAutomation.TurnOn",
-      "entities": [
-        {
-          "entity": "HomeAutomation.Room",
-          "startPos": 6,
-          "endPos": 19
-        },
-        {
-          "entity": "HomeAutomation.Device",
-          "startPos": 21,
-          "endPos": 25
-        }
-      ]
-    },
-    {
-      "text": "theater on please",
-      "intent": "HomeAutomation.TurnOn",
-      "entities": [
-        {
-          "entity": "HomeAutomation.Room",
-          "startPos": 0,
-          "endPos": 6
-        },
-        {
-          "entity": "HomeAutomation.Operation",
-          "startPos": 8,
-          "endPos": 9
-        }
-      ]
-    },
-    {
-      "text": "turn dimmer off",
-      "intent": "HomeAutomation.TurnOff",
-      "entities": [
-        {
-          "entity": "HomeAutomation.Device",
-          "startPos": 5,
-          "endPos": 10
-        },
-        {
-          "entity": "HomeAutomation.Operation",
-          "startPos": 12,
-          "endPos": 14
-        }
-      ]
-    },
-    {
-      "text": "turn off ac please",
-      "intent": "HomeAutomation.TurnOff",
-      "entities": [
-        {
-          "entity": "HomeAutomation.Device",
-          "startPos": 9,
-          "endPos": 10
-        },
-        {
-          "entity": "HomeAutomation.Operation",
-          "startPos": 5,
-          "endPos": 7
-        }
-      ]
-    },
-    {
-      "text": "turn off foyer lights",
-      "intent": "HomeAutomation.TurnOff",
-      "entities": [
-        {
-          "entity": "HomeAutomation.Operation",
-          "startPos": 5,
-          "endPos": 7
-        },
-        {
-          "entity": "HomeAutomation.Room",
-          "startPos": 9,
-          "endPos": 13
-        },
-        {
-          "entity": "HomeAutomation.Device",
-          "startPos": 15,
-          "endPos": 20
-        }
-      ]
-    },
-    {
-      "text": "turn off living room light",
-      "intent": "HomeAutomation.TurnOff",
-      "entities": [
-        {
-          "entity": "HomeAutomation.Room",
-          "startPos": 9,
-          "endPos": 19
-        },
-        {
-          "entity": "HomeAutomation.Device",
-          "startPos": 21,
-          "endPos": 25
-        }
-      ]
-    },
-    {
-      "text": "turn off staircase",
-      "intent": "HomeAutomation.TurnOff",
-      "entities": [
-        {
-          "entity": "HomeAutomation.Operation",
-          "startPos": 5,
-          "endPos": 7
-        },
-        {
-          "entity": "HomeAutomation.Device",
-          "startPos": 9,
-          "endPos": 17
-        }
-      ]
-    },
-    {
-      "text": "turn off venice lamp",
-      "intent": "HomeAutomation.TurnOff",
-      "entities": [
-        {
-          "entity": "HomeAutomation.Operation",
-          "startPos": 5,
-          "endPos": 7
-        },
-        {
-          "entity": "HomeAutomation.Device",
-          "startPos": 16,
-          "endPos": 19
-        }
-      ]
-    },
-    {
-      "text": "turn on bathroom heater",
-      "intent": "HomeAutomation.TurnOn",
-      "entities": [
-        {
-          "entity": "HomeAutomation.Operation",
-          "startPos": 5,
-          "endPos": 6
-        },
-        {
-          "entity": "HomeAutomation.Room",
-          "startPos": 8,
-          "endPos": 15
-        },
-        {
-          "entity": "HomeAutomation.Device",
-          "startPos": 17,
-          "endPos": 22
-        }
-      ]
-    },
-    {
-      "text": "turn on external speaker",
-      "intent": "HomeAutomation.TurnOn",
-      "entities": [
-        {
-          "entity": "HomeAutomation.Operation",
-          "startPos": 5,
-          "endPos": 6
-        },
-        {
-          "entity": "HomeAutomation.Device",
-          "startPos": 8,
-          "endPos": 23
-        }
-      ]
-    },
-    {
-      "text": "turn on my bedroom lights .",
-      "intent": "HomeAutomation.TurnOn",
-      "entities": [
-        {
-          "entity": "HomeAutomation.Operation",
-          "startPos": 5,
-          "endPos": 6
-        },
-        {
-          "entity": "HomeAutomation.Room",
-          "startPos": 11,
-          "endPos": 17
-        },
-        {
-          "entity": "HomeAutomation.Device",
-          "startPos": 19,
-          "endPos": 24
-        }
-      ]
-    },
-    {
-      "text": "turn on the furnace room lights",
-      "intent": "HomeAutomation.TurnOn",
-      "entities": [
-        {
-          "entity": "HomeAutomation.Room",
-          "startPos": 12,
-          "endPos": 23
-        },
-        {
-          "entity": "HomeAutomation.Device",
-          "startPos": 25,
-          "endPos": 30
         }
       ]
     },
@@ -540,49 +555,19 @@
       "intent": "None",
       "entities": [
         {
-          "entity": "HomeAutomation.Room",
+          "entity": "Room",
           "startPos": 27,
           "endPos": 33
         }
       ]
-    },
-    {
-      "text": "turn on thermostat please",
-      "intent": "HomeAutomation.TurnOn",
-      "entities": [
-        {
-          "entity": "HomeAutomation.Operation",
-          "startPos": 5,
-          "endPos": 6
-        },
-        {
-          "entity": "HomeAutomation.Device",
-          "startPos": 8,
-          "endPos": 17
-        }
-      ]
-    },
-    {
-      "text": "turn the fan to high",
-      "intent": "HomeAutomation.TurnOn",
-      "entities": [
-        {
-          "entity": "HomeAutomation.Device",
-          "startPos": 9,
-          "endPos": 11
-        }
-      ]
-    },
-    {
-      "text": "turn thermostat on 70 .",
-      "intent": "HomeAutomation.TurnOn",
-      "entities": [
-        {
-          "entity": "HomeAutomation.Device",
-          "startPos": 5,
-          "endPos": 14
-        }
-      ]
     }
-  ]
+  ],
+  "patterns": [],
+  "patternAnyEntities": [],
+  "prebuiltEntities": [],
+  "luis_schema_version": "3.0.0",
+  "versionId": "0.1",
+  "name": "homeautomation.luis",
+  "desc": "",
+  "culture": "en-us"
 }

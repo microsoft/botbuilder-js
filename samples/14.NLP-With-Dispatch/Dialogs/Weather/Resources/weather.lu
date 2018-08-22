@@ -4,43 +4,41 @@
 ## None
 
 
-## Weather.GetCondition
-- " tell me {Weather.Location=perth} weather , sclimate & temperature at australia "
+## Get Weather Condition
 - current weather ?
-- do fl residents usually need ice scrapers
-- get {Weather.Location=florence} temperature in september
-- get for me the weather conditions in {Weather.Location=sonoma county}
-- get the daily temperature {Weather.Location=greenwood indiana}
-- get the weather at {Weather.Location=saint george utah}
-- how much rain does {Weather.Location=chambersburg} get a year
-- show average rainfall for {Weather.Location=boise}
-- temperature of {Weather.Location=delhi} in celsius please
-- was last year about this time as wet as it is now in the {Weather.Location=south} ?
-- what ' s the weather like in {Weather.Location=minneapolis}
-- what is the rain volume in {Weather.Location=sonoma county} ?
-- what to wear in march in {Weather.Location=california}
+- do {Location=florida} residents usually need ice scrapers
+- get {Location=florence} temperature in september
+- get for me the weather conditions in {Location=sonoma county}
+- get the daily temperature {Location=greenwood indiana}
+- get the weather at {Location=saint george utah}
+- how much rain does {Location=chambersburg} get a year
+- show average rainfall for {Location=boise}
+- temperature of {Location=delhi} in celsius please
+- was last year about this time as wet as it is now in the {Location=south} ?
+- what's the weather like in {Location=minneapolis}
+- what is the rain volume in {Location=sonoma county} ?
+- what to wear in march in {Location=california}
 
 
-## Weather.GetForecast
-- " i need to know the temperature at bangor , sme "
+## Get Weather Forecast
 - forecast in celcius
 - get the forcast for me
-- i want to know the temperature at {Weather.Location=death valley}
-- provide me by {Weather.Location=toronto} weather please
-- show me the forecast at {Weather.Location=alabama}
-- soliciting today ' s weather
-- what ' s the weather going to be like in {Weather.Location=hawaii} ?
-- what is the weather in {Weather.Location=redmond} ?
-- what is the weather today at 10 day {Weather.Location=durham} ?
-- what will the weather be tomorrow in {Weather.Location=accord new york} ?
-- will it be raining in {Weather.Location=ranchi}
+- i want to know the temperature at {Location=death valley}
+- provide me by {Location=toronto} weather please
+- show me the forecast at {Location=alabama}
+- soliciting today's weather
+- what's the weather going to be like in {Location=hawaii} ?
+- what is the weather in {Location=redmond} ?
+- what is the weather today at 10 day {Location=durham} ?
+- what will the weather be tomorrow in {Location=accord new york} ?
+- will it be raining in {Location=ranchi}
 - will it rain this weekend
 - will it snow today
 
 
 > # Entity definitions
 
-$Weather.Location:simple
+$Location:simple
 
 
 > # Phrase list definitions

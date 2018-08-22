@@ -1,59 +1,59 @@
 
 > # Intent definitions
 
-## HomeAutomation.TurnOff
-- {HomeAutomation.Device=fish pond} {HomeAutomation.Operation=off} please
-- {HomeAutomation.Room=living room} lamps off please
-- lock the {HomeAutomation.Device=doors} for me please
-- make {HomeAutomation.Device=camera} 1 off please
-- set {HomeAutomation.Device=lights} out {HomeAutomation.Room=bedroom}
-- shut down my work {HomeAutomation.Device=computer}
-- silence the {HomeAutomation.Device=phone}
-- turn {HomeAutomation.Device=dimmer} {HomeAutomation.Operation=off}
-- turn {HomeAutomation.Operation=off} {HomeAutomation.Device=ac} please
-- turn {HomeAutomation.Operation=off} {HomeAutomation.Room=foyer} {HomeAutomation.Device=lights}
-- turn off {HomeAutomation.Room=living room} {HomeAutomation.Device=light}
-- turn {HomeAutomation.Operation=off} {HomeAutomation.Device=staircase}
-- turn {HomeAutomation.Operation=off} venice {HomeAutomation.Device=lamp}
+## Turn Off Device
+- {Device=fish pond} {Operation=off} please
+- {Room=living room} lamps off please
+- lock the {Device=doors} for me please
+- make {Device=camera} 1 off please
+- set {Device=lights} out {Room=bedroom}
+- shut down my work {Device=computer}
+- silence the {Device=phone}
+- turn {Device=dimmer} {Operation=off}
+- turn {Operation=off} {Device=ac} please
+- turn {Operation=off} {Room=foyer} {Device=lights}
+- turn off {Room=living room} {Device=light}
+- turn {Operation=off} {Device=staircase}
+- turn {Operation=off} venice {Device=lamp}
 
 
-## HomeAutomation.TurnOn
-- {HomeAutomation.Room=breezeway} {HomeAutomation.Operation=on} please
-- change {HomeAutomation.Operation=temperature} to seventy two degrees
-- {HomeAutomation.Device=coffee bar} {HomeAutomation.Operation=on} please
+## Turn On Device
+- {Room=breezeway} {Operation=on} please
+- change {Operation=temperature} to seventy two degrees
+- {Device=coffee bar} {Operation=on} please
 - fish pond on please
-- {HomeAutomation.Device=illuminate} please
-- {HomeAutomation.Room=living room} {HomeAutomation.Device=lamp} {HomeAutomation.Operation=on} please
-- make some {HomeAutomation.Device=coffee}
-- play {HomeAutomation.Device=dvd}
-- set {HomeAutomation.Device=lights} {HomeAutomation.Operation=bright}
-- set {HomeAutomation.Device=lights} {HomeAutomation.Operation=concentrate}
-- snap switch {HomeAutomation.Device=fan} {HomeAutomation.Operation=fifty percent}
-- start {HomeAutomation.Room=master bedroom} {HomeAutomation.Device=light} .
-- {HomeAutomation.Room=theater} {HomeAutomation.Operation=on} please
-- turn {HomeAutomation.Operation=on} {HomeAutomation.Room=bathroom} {HomeAutomation.Device=heater}
-- turn {HomeAutomation.Operation=on} {HomeAutomation.Device=external speaker}
-- turn {HomeAutomation.Operation=on} my {HomeAutomation.Room=bedroom} {HomeAutomation.Device=lights} .
-- turn on the {HomeAutomation.Room=furnace room} {HomeAutomation.Device=lights}
-- turn {HomeAutomation.Operation=on} {HomeAutomation.Device=thermostat} please
-- turn the {HomeAutomation.Device=fan} to high
-- turn {HomeAutomation.Device=thermostat} on 70 .
+- {Device=illuminate} please
+- {Room=living room} {Device=lamp} {Operation=on} please
+- make some {Device=coffee}
+- play {Device=dvd}
+- set {Device=lights} {Operation=bright}
+- set {Device=lights} {Operation=concentrate}
+- snap switch {Device=fan} {Operation=fifty percent}
+- start {Room=master bedroom} {Device=light} .
+- {Room=theater} {Operation=on} please
+- turn {Operation=on} {Room=bathroom} {Device=heater}
+- turn {Operation=on} {Device=external speaker}
+- turn {Operation=on} my {Room=bedroom} {Device=lights} .
+- turn on the {Room=furnace room} {Device=lights}
+- turn {Operation=on} {Device=thermostat} please
+- turn the {Device=fan} to high
+- turn {Device=thermostat} on 70 .
 
 
 ## None
-- decrease {HomeAutomation.Operation=temperature} for me please
-- dim {HomeAutomation.Room=kitchen} {HomeAutomation.Device=lights} to 25 .
-- lower your {HomeAutomation.Operation=volume}
-- turn on the internet in my {HomeAutomation.Room=bedroom} please
+- decrease {Operation=temperature} for me please
+- dim {Room=kitchen} {Device=lights} to 25 .
+- lower your {Operation=volume}
+- turn on the internet in my {Room=bedroom} please
 
 
 > # Entity definitions
 
-$HomeAutomation.Device:simple
+$Device:simple
 
-$HomeAutomation.Operation:simple
+$Operation:simple
 
-$HomeAutomation.Room:simple
+$Room:simple
 
 
 > # Phrase list definitions
