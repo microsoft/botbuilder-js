@@ -1,0 +1,14 @@
+{
+  "translate":
+  [
+    {
+      "translations": [
+        {
+          "text": "Salutations\nSalut",
+          "to": "fr"
+        }
+      ]
+    }
+  ],
+  "detect": "en"
+}

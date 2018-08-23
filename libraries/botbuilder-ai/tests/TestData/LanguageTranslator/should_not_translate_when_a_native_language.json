@@ -1,0 +1,14 @@
+{
+  "translate":
+  [
+    {
+      "translations": [
+        {
+          "text": "greetings",
+          "to": "en"
+        }
+      ]
+    }
+  ],
+  "detect": "en"
+}

@@ -1,9 +1,15 @@
 const assert = require('assert');
-const sinon = require('sinon');
+const fs = require('fs-extra');
+const nock = require('nock');
 const { TestAdapter, TurnContext } = require('botbuilder');
 const { LanguageTranslator } = require('../');
 
-const translatorKey = '';
+// This can be any endpoint key for calling Language Translator
+const translatorKey = process.env.translatorKey || "MockedKey";
+
+// If this is true, then Translator responses will come from JSON files.
+// If this is false, the Translator service will be called.
+const mockTranslator = true;
 
 class TestContext extends TurnContext {
     constructor(request) {
@@ -15,39 +21,44 @@ class TestContext extends TurnContext {
     }
 }
 
+function getFilePath(testName) {
+    var filename = testName.replace(/ /g, '_');
+    filename = filename.replace(/"/g, '');
+    return `${ __dirname }/TestData/LanguageTranslator/${ filename }.json`;
+}
+
 describe('LanguageTranslator', function () {
-    this.timeout(10000);
-    
-    formatResponse = function(text, to, alignment) {
-        return JSON.stringify([{
-            translations: [{ 
-                text: text,
-                to: to,
-                translations: { alignment:{ proj: alignment}}
-            }]
-        }]);
-    }
 
-    resolveCalls = function(langTranslator, language, mockedResponses) {
-        let detectLangStub = sinon.stub(langTranslator.translator, 'detect');
-        detectLangStub.resolves(language);
+    var nockerScope = nock(`https://api.cognitive.microsofttranslator.com`);
 
-        let translateStub = sinon.stub(langTranslator.translator, 'translateArrayAsync');
-        mockedResponses.forEach(function (current, index) {
-            translateStub.onCall(index).resolves(current);
-        });
-    }
+    beforeEach(function(done){
+        var filePath = getFilePath(this.currentTest.title);
+        if (fs.existsSync(filePath) && mockTranslator) {
+            const nockedResponse = fs.readJSONSync(filePath);
+            if(nockedResponse.translate){
+                nockerScope.post(/detect/)
+                .reply(200, nockedResponse.detect);
+                nockedResponse.translate.forEach(translationElement => {
+                 nockerScope.post(/translate/)
+                 .reply(200, [translationElement]);
+                });
+            }
+        }
+        done();
+    });
+
+    afterEach(function(done){
+        nock.cleanAll();
+        done();
+    });
 
     it('should translate en to fr and support html tags in sentences', function (done) {
-        
         let toFrenchSettings = {
             translatorKey: translatorKey,
             nativeLanguages: ['fr', 'de'],
         }
 
-        let mockedResponses = [formatResponse(['salutations >'],['fr'])]
         let langTranslator = new LanguageTranslator(toFrenchSettings);
-        resolveCalls(langTranslator, 'en', mockedResponses);
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(langTranslator)
@@ -56,15 +67,12 @@ describe('LanguageTranslator', function () {
     });
 
     it('should handle punctuations', function (done) {
-        
         let toFrenchSettings = {
             translatorKey: translatorKey,
             nativeLanguages: ['fr', 'de'],
         }
 
-        let mockedResponses = [formatResponse(['0 : vous avez dit " Bonjour "'], ['fr'], ['0:0-0:0 1:1-1:1 3:5-3:6 3:5-8:11 7:10-13:15 12:12-16:16 13:17-17:23 18:18-24:24'])];
         let langTranslator = new LanguageTranslator(toFrenchSettings);
-        resolveCalls(langTranslator, 'en', mockedResponses);
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(langTranslator)
@@ -97,9 +105,7 @@ describe('LanguageTranslator', function () {
             setUserLanguage: c => Promise.resolve(false)
         }
 
-        let mockedResponses = [formatResponse(['Hello Jean mon ami 2018'],['en'],['0:6-0:4 8:11-6:9 13:15-11:12 17:19-14:19 21:24-21:24'])];
         let langTranslator = new LanguageTranslator(noTranslateSettings);
-        resolveCalls(langTranslator, 'fr', mockedResponses);
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(langTranslator)
@@ -138,9 +144,7 @@ describe('LanguageTranslator', function () {
             noTranslatePatterns: { 'en': ['(HI)', '(BYE)'] }
         }
 
-        let mockedResponses = [formatResponse([''],[''],[''])];
         let langTranslator = new LanguageTranslator(emptyMessageSettings);
-        resolveCalls(langTranslator, '', mockedResponses);        
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(langTranslator)
@@ -168,9 +172,7 @@ describe('LanguageTranslator', function () {
             nativeLanguages: ['fr', 'de'],
         }
 
-        let mockedResponses = [formatResponse(['Salutations\nSalut'], ['fr', 'fr'])];
         let langTranslator = new LanguageTranslator(toFrenchSettings);
-        resolveCalls(langTranslator, 'en', mockedResponses);
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(langTranslator)
@@ -178,7 +180,7 @@ describe('LanguageTranslator', function () {
         .then(() => done());
     });
     
-    it('should bypass calling service in middleware for non-message activities.', function (done) {
+    it('should bypass calling service in middleware for non-message activities', function (done) {
         let intercepted = true;
         let toEnglishSettings = {
             translatorKey: translatorKey,
@@ -207,9 +209,7 @@ describe('LanguageTranslator', function () {
             setUserLanguage: c => Promise.resolve(false)
         }
 
-        let mockedResponses = [formatResponse(['Hello Jean mon ami'], ['fr'], ['0:6-0:4 8:11-6:9 13:15-11:12 17:19-14:19'])];
         let langTranslator = new LanguageTranslator(noTranslateSettings);
-        resolveCalls(langTranslator, '', mockedResponses);
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(langTranslator)
@@ -227,9 +227,7 @@ describe('LanguageTranslator', function () {
             setUserLanguage: c => Promise.resolve(false)
         }
 
-        let mockedResponses = [formatResponse(['My perro\'s name is Enzo'], ['en'], ['0:1-0:1 3:7-3:5 9:10-6:7 9:10-14:15 12:16-9:12 18:21-17:20'])];
         let langTranslator = new LanguageTranslator(noTranslateSettings);
-        resolveCalls(langTranslator, '', mockedResponses);
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(langTranslator)
@@ -247,9 +245,7 @@ describe('LanguageTranslator', function () {
             setUserLanguage: c => Promise.resolve(false)
         }
 
-        let mockedResponses = [formatResponse(['My name is l\'etat'], ['en'], ['0:2-0:1 4:6-3:6 8:10-8:9 12:13-11:13 14:17-15:19'])];
         let langTranslator = new LanguageTranslator(noTranslateSettings);
-        resolveCalls(langTranslator, '', mockedResponses);
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(langTranslator)
@@ -266,12 +262,7 @@ describe('LanguageTranslator', function () {
             translateBackToUserLanguage: true
         }
 
-        let mockedResponses = [
-            formatResponse(['bonjour'], ['en']), 
-            formatResponse(['Salut'], ['fr'])
-        ]
         let langTranslator = new LanguageTranslator(translateBackSettings);
-        resolveCalls(langTranslator, '', mockedResponses);
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(langTranslator)
@@ -288,9 +279,7 @@ describe('LanguageTranslator', function () {
             translateBackToUserLanguage: true
         }
 
-        let mockedResponses = [formatResponse(['Foo'], ['en'])];
         let langTranslator = new LanguageTranslator(translateBackSettings);
-        resolveCalls(langTranslator, '', mockedResponses);
 
         const context = new TestContext({ text: 'hello', type: 'foo' });
         const testAdapter = new TestAdapter(c => c.sendActivity(context.activity))
@@ -322,9 +311,7 @@ describe('LanguageTranslator', function () {
         + 'La présentation de votre laissez-passer à l\'entrée des monuments et des musées '
         + 'vous accorde un accès gratuit sans temps d\'attente à la caisse enregistreuse';
 
-        let mockedResponses = [formatResponse([translatedMessage], ['fr'], ['262:262-270:270 264:264-272:272 267:268-274:275 270:270-277:277 272:275-279:283 276:276-284:284'])];
         let langTranslator = new LanguageTranslator(toFrenchSettings);
-        resolveCalls(langTranslator, 'en', mockedResponses);
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(langTranslator)
@@ -342,9 +329,7 @@ describe('LanguageTranslator', function () {
             setUserLanguage: c => Promise.resolve(false)
         }
 
-        let mockedResponses = [formatResponse(['Je suis John'], ['fr'], ['0:0-0:1 2:3-3:6 5:11-8:14'])];
         let langTranslator = new LanguageTranslator(dictionarySettings);
-        resolveCalls(langTranslator, '', mockedResponses);
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(langTranslator)

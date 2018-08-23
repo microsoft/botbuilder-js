@@ -1,0 +1,17 @@
+{
+  "translate":
+  [
+    {
+      "translations": [
+        {
+          "text": "Je suis John",
+          "to": "fr",
+          "alignment": {
+            "proj": "0:0-0:1 2:3-3:6 5:11-8:14"
+          }
+        }
+      ]
+    }
+  ],
+  "detect": "en"
+}

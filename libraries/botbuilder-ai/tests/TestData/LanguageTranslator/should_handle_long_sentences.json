@@ -1,0 +1,17 @@
+{
+  "translate":
+  [
+    {
+      "translations": [
+        {
+          "text": "Avant votre première visite, de préférence à partir du matin pour profiter pleinement de votre journée, n'oubliez pas d'écrire votre nom, prénom et la date actuelle (sans écraser et de passage) sur le dos de votre laissez-passer afin de l'activer consécutivement pour 2 , 4 ou 6 jours. La présentation de votre laissez-passer à l'entrée des monuments et des musées vous accorde un accès gratuit sans temps d'attente à la caisse enregistreuse",
+          "to": "fr",
+          "alignment": {
+            "proj": "262:262-270:270 264:264-272:272 267:268-274:275 270:270-277:277 272:275-279:283 276:276-284:284"
+          }
+        }
+      ]
+    }
+  ],
+  "detect": "en"
+}
