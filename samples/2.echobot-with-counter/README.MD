@@ -1,4 +1,4 @@
-This sample shows how to create a simple Echo bot with state using [`restify`](https://www.npmjs.com/package/restify). 
+This sample shows how to create a simple Echo bot with state. The bot keeps simple counter step that increased with each user message. This bot example uses [`restify`](https://www.npmjs.com/package/restify). 
 
 # To try this sample
 - Clone the repository
@@ -25,7 +25,11 @@ This sample shows how to create a simple Echo bot with state using [`restify`](h
 - Select echobot-with-state.bot file
 
 # Bot state
-A key to good bot design is to track the context of a conversation, so that your bot remembers things like the answers to previous questions. Depending on what your bot is used for, you may even need to keep track of state or store information for longer than the lifetime of the conversation. A bot's state is information it remembers in order to respond appropriately to incoming messages. The Bot Builder SDK provides classes for [storing and retrieving state data](https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-howto-v4-state?view=azure-bot-service-4.0&tabs=js) as an object associated with a user or a conversation.
+A key to good bot design is to track the context of a conversation, so that your bot remembers things like the answers to previous questions. Depending on what your bot is used for, you may even need to keep track of conversation state or store user related information for longer than the lifetime of one given conversation.
+
+In this example, the bot's state is used to track number of messages.
+
+ A bot's state is information it remembers in order to respond appropriately to incoming messages. The Bot Builder SDK provides classes for [storing and retrieving state data](https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-howto-v4-state?view=azure-bot-service-4.0&tabs=js) as an object associated with a user or a conversation.
 
     - Conversation properties help your bot keep track of the current conversation the bot is having with the user. If your bot needs to complete a sequence of steps or switch between conversation topics, you can use conversation properties to manage steps in a sequence or track the current topic. Since conversation properties reflect the state of the current conversation, you typically clear them at the end of a session, when the bot receives an end of conversation activity.
 
