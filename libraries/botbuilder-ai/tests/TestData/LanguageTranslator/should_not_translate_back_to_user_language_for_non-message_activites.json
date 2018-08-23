@@ -1,0 +1,14 @@
+{
+  "translate":
+  [
+    {
+      "translations": [
+        {
+          "text": "hello",
+          "to": "en"
+        }
+      ]
+    }
+  ],
+  "detect": ""
+}
