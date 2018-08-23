@@ -7,6 +7,7 @@
  */
 
 import {
+    ClaimsIdentity,
     ConnectorClient,
     JwtTokenValidation,
     MicrosoftAppCredentials,
@@ -84,6 +85,7 @@ const TYPE: any = os.type();
 const RELEASE: any = os.release();
 const NODE_VERSION: any = process.version;
 
+// tslint:disable-next-line:no-var-requires no-require-imports
 const pjson: any = require('../package.json');
 const USER_AGENT: string = `Microsoft-BotFramework/3.1 BotBuilder/${ pjson.version } ` +
     `(Node.js,Version=${ NODE_VERSION }; ${ TYPE } ${ RELEASE }; ${ ARCHITECTURE })`;
@@ -117,7 +119,7 @@ export class BotFrameworkAdapter extends BotAdapter {
      */
     constructor(settings?: Partial<BotFrameworkAdapterSettings>) {
         super();
-        this.settings = Object.assign({ appId: '', appPassword: '' }, settings);
+        this.settings = { appId: '', appPassword: '', ...settings};
         this.credentials = new MicrosoftAppCredentials(this.settings.appId, this.settings.appPassword || '');
         this.credentialsProvider = new SimpleCredentialProvider(this.credentials.appId, this.credentials.appPassword);
         this.isEmulatingOAuthCards = false;
@@ -162,6 +164,7 @@ export class BotFrameworkAdapter extends BotAdapter {
             true
         );
         const context: TurnContext = this.createContext(request);
+
         return this.runMiddleware(context, logic as any);
     }
 
@@ -495,7 +498,7 @@ export class BotFrameworkAdapter extends BotAdapter {
      * @param activities List of activities to send.
      */
     public sendActivities(context: TurnContext, activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
-        return new Promise((resolve, reject): void => {
+        return new Promise((resolve: any, reject: any): void => {
             const responses: ResourceResponse[] = [];
             const that: BotFrameworkAdapter = this;
             function next(i: number): void {
@@ -583,7 +586,9 @@ export class BotFrameworkAdapter extends BotAdapter {
                 activity.conversation.id,
                 activity.id,
                 activity as Activity
-            ).then(() => {});
+            ).then(() => {
+                // noop
+            });
         } catch (err) {
             return Promise.reject(err);
         }
@@ -598,7 +603,7 @@ export class BotFrameworkAdapter extends BotAdapter {
         return JwtTokenValidation.authenticateRequest(
             request as Activity, authHeader,
             this.credentialsProvider
-        ).then((claims) => {
+        ).then((claims: ClaimsIdentity) => {
             if (!claims.isAuthenticated) { throw new Error('Unauthorized Access. Request is not authorized'); }
         });
     }
@@ -654,11 +659,12 @@ export class BotFrameworkAdapter extends BotAdapter {
 }
 
 /**
+ * Handle incoming webhooks from the botframework
  * @private
- * @param req
+ * @param req incoming web request
  */
 function parseRequest(req: WebRequest): Promise<Activity> {
-    return new Promise((resolve, reject): void => {
+    return new Promise((resolve: any, reject: any): void => {
         function returnActivity(activity: Activity): void {
             if (typeof activity !== 'object') { throw new Error(`BotFrameworkAdapter.parseRequest(): invalid request body.`); }
             if (typeof activity.type !== 'string') { throw new Error(`BotFrameworkAdapter.parseRequest(): missing activity type.`); }

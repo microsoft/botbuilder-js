@@ -16,6 +16,7 @@ import * as rimraf from 'rimraf';
  */
 export class FileTranscriptStore implements TranscriptStore {
 
+    // tslint:disable-next-line:variable-name
     private static readonly PageSize: number = 20;
 
     private rootFolder: string;
@@ -36,13 +37,13 @@ export class FileTranscriptStore implements TranscriptStore {
      * Log an activity to the transcript.
      * @param activity Activity being logged.
      */
-    logActivity(activity: Activity): void | Promise<void> {
+    public logActivity(activity: Activity): void | Promise<void> {
         if (!activity) {
             throw new Error('activity cannot be null for logActivity()');
         }
 
-        let conversationFolder: string = this.getTranscriptFolder(activity.channelId, activity.conversation.id);
-        let activityFileName: string = this.getActivityFilename(activity);
+        const conversationFolder: string = this.getTranscriptFolder(activity.channelId, activity.conversation.id);
+        const activityFileName: string = this.getActivityFilename(activity);
 
         return this.saveActivity(activity, conversationFolder, activityFileName);
     }
@@ -54,7 +55,7 @@ export class FileTranscriptStore implements TranscriptStore {
      * @param continuationToken Continuatuation token to page through results.
      * @param startDate Earliest time to include.
      */
-    getTranscriptActivities(
+    public getTranscriptActivities(
         channelId: string,
         conversationId: string,
         continuationToken?: string,
@@ -64,8 +65,8 @@ export class FileTranscriptStore implements TranscriptStore {
 
         if (!conversationId) { throw new Error('Missing conversationId'); }
 
-        let pagedResult: PagedResult<Activity> = new PagedResult<Activity>();
-        let transcriptFolder: string = this.getTranscriptFolder(channelId, conversationId);
+        const pagedResult: PagedResult<Activity> = new PagedResult<Activity>();
+        const transcriptFolder: string = this.getTranscriptFolder(channelId, conversationId);
 
         return fs.exists(transcriptFolder).then((exists: boolean) => {
             if (!exists) { return pagedResult; }
@@ -87,9 +88,9 @@ export class FileTranscriptStore implements TranscriptStore {
                 })
                 .then((files: string[]) => files.map((activityFilename: string) =>
                     fs.readFile(path.join(transcriptFolder, activityFilename), 'utf8')))
-                .then(reads => Promise.all(reads))
-                .then(jsons => {
-                    let items = jsons.map(parseActivity);
+                .then((reads: any[]) => Promise.all(reads))
+                .then((jsons: string[]) => {
+                    const items: Activity[] = jsons.map(parseActivity);
                     pagedResult.items = items;
                     if (pagedResult.items.length === FileTranscriptStore.PageSize) {
                         pagedResult.continuationToken = pagedResult.items[pagedResult.items.length - 1].id;
@@ -105,11 +106,11 @@ export class FileTranscriptStore implements TranscriptStore {
      * @param channelId Channel Id.
      * @param continuationToken Continuatuation token to page through results.
      */
-    listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<Transcript>> {
+    public listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<Transcript>> {
         if (!channelId) { throw new Error('Missing channelId'); }
 
-        let pagedResult: PagedResult<Transcript> = new PagedResult<Transcript>();
-        let channelFolder: string = this.getChannelFolder(channelId);
+        const pagedResult: PagedResult<Transcript> = new PagedResult<Transcript>();
+        const channelFolder: string = this.getChannelFolder(channelId);
 
         return fs.exists(channelFolder).then((exists: boolean) => {
             if (!exists) { return pagedResult; }
@@ -145,25 +146,26 @@ export class FileTranscriptStore implements TranscriptStore {
      * @param channelId Channel Id where conversation took place.
      * @param conversationId Id of the conversation to delete.
      */
-    deleteTranscript(channelId: string, conversationId: string): Promise<void> {
+    public deleteTranscript(channelId: string, conversationId: string): Promise<void> {
         if (!channelId) { throw new Error('Missing channelId'); }
 
         if (!conversationId) { throw new Error('Missing conversationId'); }
 
-        let transcriptFolder: string = this.getTranscriptFolder(channelId, conversationId);
+        const transcriptFolder: string = this.getTranscriptFolder(channelId, conversationId);
 
-        return new Promise((resolve): void =>
+        return new Promise((resolve: any): void =>
             rimraf(transcriptFolder, resolve));
     }
 
     private saveActivity(activity: Activity, transcriptPath: string, activityFilename: string): Promise<void> {
-        let json: string = JSON.stringify(activity, null, '\t');
+        const json: string = JSON.stringify(activity, null, '\t');
 
         return this.ensureFolder(transcriptPath).then(() => {
             return fs.writeFile(path.join(transcriptPath, activityFilename), json, 'utf8');
         });
     }
 
+    // tslint:disable-next-line:no-shadowed-variable
     private ensureFolder(path: string): Promise<void> {
         return fs.exists(path).then((exists: boolean) => {
             if (!exists) { return fs.mkdirp(path); }
@@ -201,60 +203,60 @@ const ticksPerMillisecond: number = 10000;
 
 /**
  * @private
- * @param timestamp
+ * @param timestamp a date used to calculate future ticks
  */
-const getTicks = (timestamp: Date): string => {
-    let ticks: number = epochTicks + (timestamp.getTime() * ticksPerMillisecond);
+function getTicks(timestamp: Date): string {
+    const ticks: number = epochTicks + (timestamp.getTime() * ticksPerMillisecond);
 
     return ticks.toString(16);
-};
+}
 
 /**
  * @private
- * @param ticks
+ * @param ticks a string containing ticks
  */
-const readDate = (ticks: string): Date => {
-    let t: number = Math.round((parseInt(ticks, 16) - epochTicks) / ticksPerMillisecond);
+function readDate(ticks: string): Date {
+    const t: number = Math.round((parseInt(ticks, 16) - epochTicks) / ticksPerMillisecond);
 
     return new Date(t);
-};
+}
 
 /**
  * @private
- * @param date
+ * @param date a date used to create a filter
  */
-const withDateFilter = (date: Date) => {
-    if (!date) { return () => true; }
+function withDateFilter(date: Date): any {
+    if (!date) { return (): boolean => true; }
 
     return (filename: string): boolean => {
-        let ticks: string = filename.split('-')[0];
+        const ticks: string = filename.split('-')[0];
 
         return readDate(ticks) >= date;
     };
-};
+}
 
 /**
  * @private
- * @param continuationToken
+ * @param continuationToken a continuation token
  */
-const withContinuationToken = (continuationToken) => {
-    if (!continuationToken) { return () => true; }
+function withContinuationToken(continuationToken: string): any {
+    if (!continuationToken) { return (): boolean => true; }
 
-    return skipWhileExpression((fileName: string) => {
-        let id: string = fileName.substring(fileName.indexOf('-') + 1, fileName.indexOf('.'));
+    return skipWhileExpression((fileName: string): boolean => {
+        const id: string = fileName.substring(fileName.indexOf('-') + 1, fileName.indexOf('.'));
 
         return id !== continuationToken;
     });
-};
+}
 
 /**
  * @private
- * @param expression
+ * @param expression a function that will be used to test items
  */
-const skipWhileExpression = (expression) => {
-    let skipping = true;
+function skipWhileExpression(expression: any): any {
+    let skipping: boolean = true;
 
-    return (item) => {
+    return (item: any): boolean => {
         if (!skipping) { return true; }
         if (!expression(item)) {
             skipping = false;
@@ -262,15 +264,15 @@ const skipWhileExpression = (expression) => {
 
         return !skipping;
     };
-};
+}
 
 /**
  * @private
- * @param json
+ * @param json a json string to be parsed into an activity
  */
-const parseActivity = (json: string): Activity => {
-    let activity: Activity = JSON.parse(json);
+function parseActivity(json: string): Activity {
+    const activity: Activity = JSON.parse(json);
     activity.timestamp = new Date(activity.timestamp);
 
     return activity;
-};
+}

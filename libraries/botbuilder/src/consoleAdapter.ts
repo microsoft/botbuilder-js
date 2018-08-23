@@ -35,13 +35,14 @@ export class ConsoleAdapter extends BotAdapter {
      */
     constructor(reference?: ConversationReference) {
         super();
-        this.reference = Object.assign({
+        this.reference = {
             channelId: 'console',
             user: { id: 'user', name: 'User1' },
             bot: { id: 'bot', name: 'Bot' },
             conversation:  { id: 'convo1', name: '', isGroup: false },
-            serviceUrl: ''
-        } as ConversationReference, reference);
+            serviceUrl: '',
+            ...reference
+        } as ConversationReference;
     }
 
     /**
@@ -76,12 +77,16 @@ export class ConsoleAdapter extends BotAdapter {
         const rl: readline.ReadLine = this.createInterface({ input: process.stdin, output: process.stdout, terminal: false });
         rl.on('line', (line: string) => {
             // Initialize activity
-            const activity: Partial<Activity> = TurnContext.applyConversationReference({
-                type: ActivityTypes.Message,
-                id: (this.nextId++).toString(),
-                timestamp: new Date(),
-                text: line
-            }, this.reference, true);
+            const activity: Partial<Activity> = TurnContext.applyConversationReference(
+                {
+                    type: ActivityTypes.Message,
+                    id: (this.nextId++).toString(),
+                    timestamp: new Date(),
+                    text: line
+                },
+                this.reference,
+                true
+            );
 
             // Create context and run middleware pipe
             const context: TurnContext = new TurnContext(this, activity);
@@ -139,19 +144,21 @@ export class ConsoleAdapter extends BotAdapter {
     public sendActivities(context: TurnContext, activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
         const that: ConsoleAdapter = this;
 
-        return new Promise((resolve, reject): void => {
+        // tslint:disable-next-line:promise-must-complete
+        return new Promise((resolve: any, reject: any): void => {
             const responses: ResourceResponse[] = [];
             function next(i: number): void {
                 if (i < activities.length) {
                     responses.push(<ResourceResponse>{});
-                    let a = activities[i];
+                    const a: Partial<Activity> = activities[i];
                     switch (a.type) {
                         case <ActivityTypes>'delay':
                             setTimeout(() => next(i + 1), a.value);
                             break;
                         case ActivityTypes.Message:
                             if (a.attachments && a.attachments.length > 0) {
-                                const append = a.attachments.length === 1 ? `(1 attachment)` : `(${a.attachments.length} attachments)`;
+                                const append: string = a.attachments.length === 1
+                                    ? `(1 attachment)` : `(${a.attachments.length} attachments)`;
                                 that.print(`${a.text} ${append}`);
                             } else {
                                 that.print(a.text);
