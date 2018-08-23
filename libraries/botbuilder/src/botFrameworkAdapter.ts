@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ConnectorClient, SimpleCredentialProvider, MicrosoftAppCredentials, JwtTokenValidation, OAuthApiClient } from 'botframework-connector';
+import { ConnectorClient, SimpleCredentialProvider, MicrosoftAppCredentials, JwtTokenValidation, OAuthApiClient, Emulator } from 'botframework-connector';
 import {
     BotAdapter, TurnContext, ActivityTypes, Activity, ConversationReference,
     ResourceResponse, ConversationParameters, ConversationAccount,
@@ -339,7 +339,8 @@ export class BotFrameworkAdapter extends BotAdapter {
         this.isEmulatingOAuthCards = emulate;
         const url = this.oauthApiUrl(contextOrServiceUrl);
         const client = this.createOAuthApiClient(url);
-        return client.emulateOAuthCards(emulate);
+        const emulatorApi = new Emulator(client);
+        return emulatorApi.emulateOAuthCards(emulate);
     }
 
     /**
