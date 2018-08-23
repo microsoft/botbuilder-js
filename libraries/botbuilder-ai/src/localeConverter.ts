@@ -5,10 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { ModelResult } from '@microsoft/recognizers-text';
 import * as DateTimeRecognizers from '@microsoft/recognizers-text-date-time';
 import { Activity, ActivityTypes, Middleware, TurnContext } from 'botbuilder';
 import * as moment from 'moment';
-import { ModelResult } from '@microsoft/recognizers-text';
 
 /**
  * Settings used to configure an instance of `LocaleConverter`.
