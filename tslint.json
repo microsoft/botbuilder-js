@@ -15,6 +15,9 @@
     ],
     "jsRules": {},
     "rules": {
+        "prefer-type-cast": false,
+        "no-object-literal-type-assertion":false,
+        "no-increment-decrement":false,
         "no-any":false,
         "interface-name":false,
         "no-this-assignment":false,
