@@ -340,7 +340,7 @@ export class LuisRecognizer {
         if (type.startsWith('builtin.')) {
             type = type.substring(8);
         }
-        if (entity.role !== null && entity.role !== '') {
+        if (entity.role !== null && entity.role !== '' && entity.role !== undefined) {
             type = entity.role;
         }
 
