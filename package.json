@@ -8,7 +8,7 @@
     "test:travis": "lerna run build && nyc mocha \"libraries/bot*/tests/*.test.js\" && nyc report --reporter=text-lcov | coveralls",
     "test": "lerna run build && nyc mocha \"libraries/bot*/tests/*.test.js\"",
     "build-docs": "lerna run build-docs",
-    "tslint": "tslint ./libraries/*/src/**/*.ts -t verbose",
+    "tslint": "tslint ./libraries/*/src/*.ts ./libraries/*/src/**/*.ts  -t verbose",
     "set-dependency-versions": "node tools/util/updateDependenciesInPackageJsons.js ./libraries ${Version} botbuilder botbuilder-choices botbuilder-core botbuilder-prompts botframework-connector botframework-config botframework-schema",
     "update-versions": "lerna run set-version && npm run set-dependency-versions"
   },
