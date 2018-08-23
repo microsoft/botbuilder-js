@@ -80,16 +80,19 @@ export abstract class BotAdapter {
      */
     protected runMiddleware(context: TurnContext, next: (revocableContext: TurnContext) => Promise<void>): Promise<void> {
         // Wrap context with revocable proxy
-        const pContext = makeRevocable(context);
+        const pContext: {
+            proxy: TurnContext;
+            revoke(): void;
+        } = makeRevocable(context);
 
-        return new Promise((resolve, reject): void => {
+        return new Promise((resolve: any, reject: any): void => {
             this.middleware.run(pContext.proxy, () => {
                 // Call next with revocable context
                 return next(pContext.proxy);
-            }).then(() => resolve(), (err: Error) => {
+            }).then(resolve, (err: Error) => {
                 if (this.onTurnError) {
                     this.onTurnError(pContext.proxy, err)
-                        .then(() => resolve(), (err: Error) => reject(err));
+                        .then(resolve, reject);
                 } else {
                     reject(err);
                 }
