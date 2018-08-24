@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 const mainState = require('./mainState');
-
+ 
 class MainDialog {
 
     constructor (conversationState) {

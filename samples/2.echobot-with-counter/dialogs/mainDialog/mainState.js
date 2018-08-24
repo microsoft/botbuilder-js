@@ -4,7 +4,7 @@
 // This file defines data model for the bot. 
 
 const TURN_COUNTER = 'turnCounter';
-
+ 
 class TurnCounter {
     /**
      * 
