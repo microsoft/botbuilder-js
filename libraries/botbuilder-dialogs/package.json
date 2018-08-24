@@ -22,7 +22,8 @@
   "dependencies": {
     "@types/node": "^9.3.0",
     "botbuilder-core": "4.0.0-preview1.2",
-    "@microsoft/recognizers-text-suite": "^1.0.0"
+    "@microsoft/recognizers-text-suite": "^1.0.0",
+    "@microsoft/recognizers-text-choice": "^1.0.0"
   },
   "devDependencies": {
     "@types/mocha": "^2.2.47",
