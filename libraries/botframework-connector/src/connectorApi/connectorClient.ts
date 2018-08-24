@@ -4,13 +4,15 @@
  * regenerated.
  */
 
-import * as Models from "botframework-schema";
 import * as msRest from "ms-rest-js";
-import { ConnectorClientContext } from "./connectorClientContext";
+import * as Models from "botframework-schema";
 import * as Mappers from "./models/mappers";
 import * as operations from "./operations";
+import { ConnectorClientContext } from "./connectorClientContext";
 
 class ConnectorClient extends ConnectorClientContext {
+  serializer = new msRest.Serializer(Mappers);
+
   // Operation groups
   attachments: operations.Attachments;
   conversations: operations.Conversations;
@@ -38,7 +40,5 @@ class ConnectorClient extends ConnectorClientContext {
     this.conversations = new operations.Conversations(this);
   }
 }
-
-// Operation Specifications
 
 export { ConnectorClient, Models as ConnectorModels, Mappers as ConnectorMappers };

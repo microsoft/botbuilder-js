@@ -9,6 +9,8 @@ export {
   ConversationMembers,
   ChannelAccount,
   ErrorResponse,
+  ErrorModel,
+  InnerHttpError,
   ConversationParameters,
   Activity,
   ConversationAccount,
@@ -22,6 +24,7 @@ export {
   SemanticAction,
   ConversationResourceResponse,
   ResourceResponse,
+  Transcript,
   PagedMembersResult,
   AttachmentData
 } from "../models/mappers";

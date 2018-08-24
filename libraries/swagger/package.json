@@ -1,32 +1,33 @@
 {
-  "name": "fuselabs-intercom",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build-less": "cd Intercom.Home && gulp less-to-css",
-    "build-devportal": "cd Intercom.DevPortal && npm run css-gen && npm run webpack-dev",
-    "build-adminportal": "cd Intercom.DevPortal && npm run webpack-admin-and-review",
-    "build-botdirectory": "cd Intercom.BotDirectory && npm run webpack",
-    "build": "npm run build-less && npm run build-devportal && npm run build-adminportal && npm run build-botdirectory",
-    "install-home": "cd Intercom.Home && npm install",
-    "install-reactui": "cd Intercom.ReactUI && npm install",
-    "install-botdirectory": "cd Intercom.BotDirectory && npm install",
-    "install-devportal": "cd Intercom.DevPortal && npm install",
-    "install-channels": "cd Intercom.Channels && npm install",
-    "install-directline": "cd Channels\\DirectLineChannel\\DirectLine && npm install",
-    "install-testbotjs": "cd Agents\\TestBotJS && npm install",
-    "install-subs": "npm run install-home && npm run install-reactui && npm run install-botdirectory && npm run install-devportal && npm run install-channels && npm run install-directline && npm run install-testbotjs",
-    "postinstall": "npm run install-subs && npm run && npm run build"
+  "name": "botframework-connector",
+  "author": "Microsoft Corporation",
+  "description": "ConnectorClient Library with typescript type definitions and works in node.js and browser javascript.",
+  "version": "4.0.0",
+  "dependencies": {
+    "ms-rest-js": "~0.12.291"
   },
+  "keywords": [ "node", "azure", "typescript", "browser", "isomorphic"],
+  "license": "MIT",
+  "main": "./dist/lib/connectorClient.js",
+  "types": "./typings/lib/connectorClient.d.ts",
+  "devDependencies": {
+    "ts-loader": "^2.3.7",
+    "tslib": "^1.9.2",
+    "tslint": "^5.7.0",
+    "typescript": "^2.5.2",
+    "webpack": "^3.6.0",
+    "uglify-es": "^3.1.0"
+  },
+  "homepage": "http://github.com/azure/azure-sdk-for-javascript",
   "repository": {
     "type": "git",
-    "url": "https://fuselabs.visualstudio.com/DefaultCollection/_git/Intercom"
+    "url": "https://github.com/azure/azure-sdk-for-javascript.git"
   },
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "gulp": "^3.9.1"
+  "bugs": {
+    "url": "http://github.com/Azure/azure-sdk-for-javascript/issues"
+  },
+  "scripts": {
+    "tsc": "tsc -p tsconfig.json",
+    "build": "npm -s run-script tsc && webpack && node node_modules/uglify-es/bin/uglifyjs --source-map -c -m -o connectorClientBundle.min.js connectorClientBundle.js"
   }
 }

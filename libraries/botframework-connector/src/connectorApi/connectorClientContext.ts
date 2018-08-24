@@ -6,11 +6,12 @@
 
 import * as msRest from "ms-rest-js";
 
-const packageName = "";
-const packageVersion = "";
+const packageName = "botframework-connector";
+const packageVersion = "4.0.0";
 
 export class ConnectorClientContext extends msRest.ServiceClient {
   credentials: msRest.ServiceClientCredentials;
+  baseUri: string;
 
   /**
    * @class
@@ -46,7 +47,6 @@ export class ConnectorClientContext extends msRest.ServiceClient {
     if (!this.baseUri) {
       this.baseUri = "https://api.botframework.com";
     }
-    this.requestContentType = "application/json; charset=utf-8";
     this.credentials = credentials;
 
     this.addUserAgentInfo(`${packageName}/${packageVersion}`);

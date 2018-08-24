@@ -11,6 +11,8 @@ import * as operations from "./operations";
 import { OAuthApiClientContext } from "./oAuthApiClientContext";
 
 class OAuthApiClient extends OAuthApiClientContext {
+  serializer = new msRest.Serializer(Mappers);
+
   // Operation groups
   botSignIn: operations.BotSignIn;
   userToken: operations.UserToken;
@@ -38,7 +40,5 @@ class OAuthApiClient extends OAuthApiClientContext {
     this.userToken = new operations.UserToken(this);
   }
 }
-
-// Operation Specifications
 
 export { OAuthApiClient, Models as OAuthApiModels, Mappers as OAuthApiMappers };

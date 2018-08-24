@@ -4,10 +4,8 @@
  * regenerated.
  */
 
-import * as msRest from "ms-rest-js";
 
-
-export const TokenResponse: msRest.CompositeMapper = {
+export const TokenResponse = {
   serializedName: "TokenResponse",
   type: {
     name: "Composite",
@@ -35,7 +33,7 @@ export const TokenResponse: msRest.CompositeMapper = {
   }
 };
 
-export const InnerHttpError: msRest.CompositeMapper = {
+export const InnerHttpError = {
   serializedName: "InnerHttpError",
   type: {
     name: "Composite",
@@ -57,7 +55,7 @@ export const InnerHttpError: msRest.CompositeMapper = {
   }
 };
 
-export const ErrorModel: msRest.CompositeMapper = {
+export const ErrorModel = {
   serializedName: "Error",
   type: {
     name: "Composite",
@@ -86,7 +84,7 @@ export const ErrorModel: msRest.CompositeMapper = {
   }
 };
 
-export const ErrorResponse: msRest.CompositeMapper = {
+export const ErrorResponse = {
   serializedName: "ErrorResponse",
   type: {
     name: "Composite",
@@ -103,7 +101,7 @@ export const ErrorResponse: msRest.CompositeMapper = {
   }
 };
 
-export const BotSignInGetSignInUrlOptionalParams: msRest.CompositeMapper = {
+export const BotSignInGetSignInUrlOptionalParams = {
   serializedName: "GetSignInUrlOptions",
   type: {
     name: "Composite",
@@ -125,7 +123,7 @@ export const BotSignInGetSignInUrlOptionalParams: msRest.CompositeMapper = {
   }
 };
 
-export const UserTokenGetTokenOptionalParams: msRest.CompositeMapper = {
+export const UserTokenGetTokenOptionalParams = {
   serializedName: "GetTokenOptions",
   type: {
     name: "Composite",

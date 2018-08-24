@@ -4,9 +4,8 @@
  * regenerated.
  */
 
-import * as msRest from "ms-rest-js";
 
-export const emulate: msRest.OperationQueryParameter = {
+export const emulate = {
   parameterPath: "emulate",
   mapper: {
     required: true,

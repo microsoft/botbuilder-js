@@ -6,6 +6,8 @@
 
 export {
   TokenResponse,
-  ErrorResponse
+  ErrorResponse,
+  ErrorModel,
+  InnerHttpError
 } from "../models/mappers";
 

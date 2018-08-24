@@ -7,13 +7,14 @@
 import * as msRest from "ms-rest-js";
 import * as Models from "../models";
 import * as Mappers from "../models/userTokenMappers";
-import * as Parameters from "../models/parameters";
 import { OAuthApiClientContext } from "../oAuthApiClientContext";
+
+const WebResource = msRest.WebResource;
 
 /** Class representing a UserToken. */
 export class UserToken {
   private readonly client: OAuthApiClientContext;
-
+  private readonly serializer = new msRest.Serializer(Mappers);
   /**
    * Create a UserToken.
    * @param {OAuthApiClientContext} client Reference to the service client.
@@ -35,14 +36,105 @@ export class UserToken {
    *
    * @reject {Error|ServiceError} The error object.
    */
-  getTokenWithHttpOperationResponse(userId: string, connectionName: string, options?: Models.UserTokenGetTokenOptionalParams): Promise<msRest.HttpOperationResponse<Models.TokenResponse>> {
-    return this.client.sendOperationRequest(
-      {
-        userId,
-        connectionName,
-        options
-      },
-      getTokenOperationSpec);
+  async getTokenWithHttpOperationResponse(userId: string, connectionName: string, options?: Models.UserTokenGetTokenOptionalParams): Promise<msRest.HttpOperationResponse<Models.TokenResponse>> {
+    let code = (options && options.code !== undefined) ? options.code : undefined;
+
+    // Create HTTP transport objects
+    const httpRequest = new WebResource();
+    let operationRes: msRest.HttpOperationResponse;
+    try {
+      const operationArguments: msRest.OperationArguments = msRest.createOperationArguments(
+        {
+          userId,
+          connectionName,
+          code
+        },
+        options);
+      operationRes = await this.client.sendOperationRequest(
+        httpRequest,
+        operationArguments,
+        {
+          httpMethod: "GET",
+          baseUrl: this.client.baseUri,
+          path: "api/usertoken/GetToken",
+          queryParameters: [
+            {
+              parameterPath: "userId",
+              mapper: {
+                required: true,
+                serializedName: "userId",
+                type: {
+                  name: "String"
+                }
+              }
+            },
+            {
+              parameterPath: "connectionName",
+              mapper: {
+                required: true,
+                serializedName: "connectionName",
+                type: {
+                  name: "String"
+                }
+              }
+            },
+            {
+              parameterPath: "code",
+              mapper: {
+                serializedName: "code",
+                type: {
+                  name: "String"
+                }
+              }
+            }
+          ],
+          responses: {
+            200: {
+              bodyMapper: Mappers.TokenResponse
+            },
+            404: {
+              bodyMapper: Mappers.TokenResponse
+            },
+            default: {
+              bodyMapper: Mappers.ErrorResponse
+            }
+          },
+          serializer: this.serializer
+        });
+      // Deserialize Response
+      let statusCode = operationRes.status;
+      if (statusCode === 200) {
+        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
+        try {
+          if (parsedResponse != undefined) {
+            const resultMapper = Mappers.TokenResponse;
+            operationRes.parsedBody = this.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
+          }
+        } catch (error) {
+          let deserializationError = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
+          deserializationError.request = msRest.stripRequest(httpRequest);
+          deserializationError.response = msRest.stripResponse(operationRes);
+          return Promise.reject(deserializationError);
+        }
+      }
+      if (statusCode === 404) {
+        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
+        try {
+          if (parsedResponse != undefined) {
+            const resultMapper = Mappers.TokenResponse;
+            operationRes.parsedBody = this.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
+          }
+        } catch (error) {
+          let deserializationError1 = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
+          deserializationError1.request = msRest.stripRequest(httpRequest);
+          deserializationError1.response = msRest.stripResponse(operationRes);
+          return Promise.reject(deserializationError1);
+        }
+      }
+    } catch (err) {
+      return Promise.reject(err);
+    }
+    return Promise.resolve(operationRes);
   }
 
   /**
@@ -58,14 +150,86 @@ export class UserToken {
    *
    * @reject {Error|ServiceError} The error object.
    */
-  signOutWithHttpOperationResponse(userId: string, connectionName: string, options?: msRest.RequestOptionsBase): Promise<msRest.HttpOperationResponse<any>> {
-    return this.client.sendOperationRequest(
-      {
-        userId,
-        connectionName,
-        options
-      },
-      signOutOperationSpec);
+  async signOutWithHttpOperationResponse(userId: string, connectionName: string, options?: msRest.RequestOptionsBase): Promise<msRest.HttpOperationResponse<any>> {
+
+    // Create HTTP transport objects
+    const httpRequest = new WebResource();
+    let operationRes: msRest.HttpOperationResponse;
+    try {
+      const operationArguments: msRest.OperationArguments = msRest.createOperationArguments(
+        {
+          userId,
+          connectionName
+        },
+        options);
+      operationRes = await this.client.sendOperationRequest(
+        httpRequest,
+        operationArguments,
+        {
+          httpMethod: "DELETE",
+          baseUrl: this.client.baseUri,
+          path: "api/usertoken/SignOut",
+          queryParameters: [
+            {
+              parameterPath: "userId",
+              mapper: {
+                required: true,
+                serializedName: "userId",
+                type: {
+                  name: "String"
+                }
+              }
+            },
+            {
+              parameterPath: "connectionName",
+              mapper: {
+                required: true,
+                serializedName: "connectionName",
+                type: {
+                  name: "String"
+                }
+              }
+            }
+          ],
+          responses: {
+            200: {
+              bodyMapper: {
+                serializedName: "parsedResponse",
+                type: {
+                  name: "Object"
+                }
+              }
+            },
+            204: {},
+            default: {}
+          },
+          serializer: this.serializer
+        });
+      // Deserialize Response
+      let statusCode = operationRes.status;
+      if (statusCode === 200) {
+        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
+        try {
+          if (parsedResponse != undefined) {
+            const resultMapper = {
+              serializedName: "parsedResponse",
+              type: {
+                name: "Object"
+              }
+            };
+            operationRes.parsedBody = this.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
+          }
+        } catch (error) {
+          let deserializationError = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
+          deserializationError.request = msRest.stripRequest(httpRequest);
+          deserializationError.response = msRest.stripResponse(operationRes);
+          return Promise.reject(deserializationError);
+        }
+      }
+    } catch (err) {
+      return Promise.reject(err);
+    }
+    return Promise.resolve(operationRes);
   }
 
   /**
@@ -89,7 +253,26 @@ export class UserToken {
   getToken(userId: string, connectionName: string, callback: msRest.ServiceCallback<Models.TokenResponse>): void;
   getToken(userId: string, connectionName: string, options: Models.UserTokenGetTokenOptionalParams, callback: msRest.ServiceCallback<Models.TokenResponse>): void;
   getToken(userId: string, connectionName: string, options?: Models.UserTokenGetTokenOptionalParams, callback?: msRest.ServiceCallback<Models.TokenResponse>): any {
-    return msRest.responseToBody(this.getTokenWithHttpOperationResponse.bind(this), userId, connectionName, options, callback);
+    if (!callback && typeof options === 'function') {
+      callback = options;
+      options = undefined;
+    }
+    let cb = callback as msRest.ServiceCallback<Models.TokenResponse>;
+    if (!callback) {
+      return this.getTokenWithHttpOperationResponse(userId, connectionName, options).then((operationRes: msRest.HttpOperationResponse) => {
+        return Promise.resolve(operationRes.parsedBody as Models.TokenResponse);
+      }).catch((err: Error) => {
+        return Promise.reject(err);
+      });
+    } else {
+      msRest.promiseToCallback(this.getTokenWithHttpOperationResponse(userId, connectionName, options))((err: Error, data: msRest.HttpOperationResponse) => {
+        if (err) {
+          return cb(err);
+        }
+        let result = data.parsedBody as Models.TokenResponse;
+        return cb(err, result, data.request, data);
+      });
+    }
   }
 
   /**
@@ -113,55 +296,26 @@ export class UserToken {
   signOut(userId: string, connectionName: string, callback: msRest.ServiceCallback<any>): void;
   signOut(userId: string, connectionName: string, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<any>): void;
   signOut(userId: string, connectionName: string, options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<any>): any {
-    return msRest.responseToBody(this.signOutWithHttpOperationResponse.bind(this), userId, connectionName, options, callback);
+    if (!callback && typeof options === 'function') {
+      callback = options;
+      options = undefined;
+    }
+    let cb = callback as msRest.ServiceCallback<any>;
+    if (!callback) {
+      return this.signOutWithHttpOperationResponse(userId, connectionName, options).then((operationRes: msRest.HttpOperationResponse) => {
+        return Promise.resolve(operationRes.parsedBody as any);
+      }).catch((err: Error) => {
+        return Promise.reject(err);
+      });
+    } else {
+      msRest.promiseToCallback(this.signOutWithHttpOperationResponse(userId, connectionName, options))((err: Error, data: msRest.HttpOperationResponse) => {
+        if (err) {
+          return cb(err);
+        }
+        let result = data.parsedBody as any;
+        return cb(err, result, data.request, data);
+      });
+    }
   }
 
 }
-
-// Operation Specifications
-const serializer = new msRest.Serializer(Mappers);
-const getTokenOperationSpec: msRest.OperationSpec = {
-  httpMethod: "GET",
-  path: "api/usertoken/GetToken",
-  queryParameters: [
-    Parameters.userId,
-    Parameters.connectionName,
-    Parameters.code
-  ],
-  responses: {
-    200: {
-      bodyMapper: Mappers.TokenResponse
-    },
-    404: {
-      bodyMapper: Mappers.TokenResponse
-    },
-    default: {
-      bodyMapper: Mappers.ErrorResponse
-    }
-  },
-  serializer
-};
-
-const signOutOperationSpec: msRest.OperationSpec = {
-  httpMethod: "DELETE",
-  path: "api/usertoken/SignOut",
-  queryParameters: [
-    Parameters.userId,
-    Parameters.connectionName
-  ],
-  responses: {
-    200: {
-      bodyMapper: {
-        serializedName: "parsedResponse",
-        type: {
-          name: "Object"
-        }
-      }
-    },
-    204: {},
-    default: {
-      bodyMapper: Mappers.ErrorResponse
-    }
-  },
-  serializer
-};

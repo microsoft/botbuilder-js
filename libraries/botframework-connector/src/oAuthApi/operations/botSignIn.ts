@@ -7,13 +7,14 @@
 import * as msRest from "ms-rest-js";
 import * as Models from "../models";
 import * as Mappers from "../models/botSignInMappers";
-import * as Parameters from "../models/parameters";
 import { OAuthApiClientContext } from "../oAuthApiClientContext";
+
+const WebResource = msRest.WebResource;
 
 /** Class representing a BotSignIn. */
 export class BotSignIn {
   private readonly client: OAuthApiClientContext;
-
+  private readonly serializer = new msRest.Serializer(Mappers);
   /**
    * Create a BotSignIn.
    * @param {OAuthApiClientContext} client Reference to the service client.
@@ -33,13 +34,96 @@ export class BotSignIn {
    *
    * @reject {Error|ServiceError} The error object.
    */
-  getSignInUrlWithHttpOperationResponse(state: string, options?: Models.BotSignInGetSignInUrlOptionalParams): Promise<msRest.HttpOperationResponse<string>> {
-    return this.client.sendOperationRequest(
-      {
-        state,
-        options
-      },
-      getSignInUrlOperationSpec);
+  async getSignInUrlWithHttpOperationResponse(state: string, options?: Models.BotSignInGetSignInUrlOptionalParams): Promise<msRest.HttpOperationResponse<string>> {
+    let codeChallenge = (options && options.codeChallenge !== undefined) ? options.codeChallenge : undefined;
+    let emulatorUrl = (options && options.emulatorUrl !== undefined) ? options.emulatorUrl : undefined;
+
+    // Create HTTP transport objects
+    const httpRequest = new WebResource();
+    let operationRes: msRest.HttpOperationResponse;
+    try {
+      const operationArguments: msRest.OperationArguments = msRest.createOperationArguments(
+        {
+          state,
+          codeChallenge,
+          emulatorUrl
+        },
+        options);
+      operationRes = await this.client.sendOperationRequest(
+        httpRequest,
+        operationArguments,
+        {
+          httpMethod: "GET",
+          baseUrl: this.client.baseUri,
+          path: "api/botsignin/GetSignInUrl",
+          queryParameters: [
+            {
+              parameterPath: "state",
+              mapper: {
+                required: true,
+                serializedName: "state",
+                type: {
+                  name: "String"
+                }
+              }
+            },
+            {
+              parameterPath: "codeChallenge",
+              mapper: {
+                serializedName: "code_challenge",
+                type: {
+                  name: "String"
+                }
+              }
+            },
+            {
+              parameterPath: "emulatorUrl",
+              mapper: {
+                serializedName: "emulatorUrl",
+                type: {
+                  name: "String"
+                }
+              }
+            }
+          ],
+          responses: {
+            200: {
+              bodyMapper: {
+                serializedName: "parsedResponse",
+                type: {
+                  name: "String"
+                }
+              }
+            },
+            default: {}
+          },
+          serializer: this.serializer
+        });
+      // Deserialize Response
+      let statusCode = operationRes.status;
+      if (statusCode === 200) {
+        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
+        try {
+          if (parsedResponse != undefined) {
+            const resultMapper = {
+              serializedName: "parsedResponse",
+              type: {
+                name: "String"
+              }
+            };
+            operationRes.parsedBody = this.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
+          }
+        } catch (error) {
+          let deserializationError = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
+          deserializationError.request = msRest.stripRequest(httpRequest);
+          deserializationError.response = msRest.stripResponse(operationRes);
+          return Promise.reject(deserializationError);
+        }
+      }
+    } catch (err) {
+      return Promise.reject(err);
+    }
+    return Promise.resolve(operationRes);
   }
 
   /**
@@ -61,31 +145,26 @@ export class BotSignIn {
   getSignInUrl(state: string, callback: msRest.ServiceCallback<string>): void;
   getSignInUrl(state: string, options: Models.BotSignInGetSignInUrlOptionalParams, callback: msRest.ServiceCallback<string>): void;
   getSignInUrl(state: string, options?: Models.BotSignInGetSignInUrlOptionalParams, callback?: msRest.ServiceCallback<string>): any {
-    return msRest.responseToBody(this.getSignInUrlWithHttpOperationResponse.bind(this), state, options, callback);
+    if (!callback && typeof options === 'function') {
+      callback = options;
+      options = undefined;
+    }
+    let cb = callback as msRest.ServiceCallback<string>;
+    if (!callback) {
+      return this.getSignInUrlWithHttpOperationResponse(state, options).then((operationRes: msRest.HttpOperationResponse) => {
+        return Promise.resolve(operationRes.parsedBody as string);
+      }).catch((err: Error) => {
+        return Promise.reject(err);
+      });
+    } else {
+      msRest.promiseToCallback(this.getSignInUrlWithHttpOperationResponse(state, options))((err: Error, data: msRest.HttpOperationResponse) => {
+        if (err) {
+          return cb(err);
+        }
+        let result = data.parsedBody as string;
+        return cb(err, result, data.request, data);
+      });
+    }
   }
 
 }
-
-// Operation Specifications
-const serializer = new msRest.Serializer(Mappers);
-const getSignInUrlOperationSpec: msRest.OperationSpec = {
-  httpMethod: "GET",
-  path: "api/botsignin/GetSignInUrl",
-  queryParameters: [
-    Parameters.state,
-    Parameters.codeChallenge,
-    Parameters.emulatorUrl
-  ],
-  responses: {
-    200: {
-      bodyMapper: {
-        serializedName: "parsedResponse",
-        type: {
-          name: "String"
-        }
-      }
-    },
-    default: {}
-  },
-  serializer
-};

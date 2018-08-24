@@ -662,6 +662,19 @@ export interface ResourceResponse {
 
 /**
  * @interface
+ * An interface representing Transcript.
+ * Conversation Transcript
+ *
+ */
+export interface Transcript {
+  /**
+   * @member {Activity[]} [activities] Array of conversation activities.
+   */
+  activities: Activity[];
+}
+
+/**
+ * @interface
  * An interface representing PagedMembersResult.
  * Page of members.
  *

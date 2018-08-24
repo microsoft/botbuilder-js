@@ -7,6 +7,8 @@
 export {
   AttachmentInfo,
   AttachmentView,
-  ErrorResponse
+  ErrorResponse,
+  ErrorModel,
+  InnerHttpError
 } from "../models/mappers";
 
