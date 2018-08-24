@@ -29,21 +29,19 @@ import { Storage, StoreItem, StoreItems } from './storage';
  */
 export class MemoryStorage  implements Storage {
     protected etag: number;
-
-
     /**
      * Creates a new MemoryStorage instance.
      * @param memory (Optional) memory to use for storing items. By default it will create an empty JSON object `{}`.
      */
-    public constructor(protected memory: { [k: string]: string; } = {}) {
+    public constructor(protected memory: { [k: string]: string } = {}) {
         this.etag = 1;
     }
 
     public read(keys: string[]): Promise<StoreItems> {
-        return new Promise<StoreItems>((resolve, reject) => {
+        return new Promise<StoreItems>((resolve: any, reject: any): void => {
             const data: StoreItems = {};
-            keys.forEach((key) => {
-                const item = this.memory[key];
+            keys.forEach((key: string) => {
+                const item: string = this.memory[key];
                 if (item) {
                     data[key] = JSON.parse(item);
                 }
@@ -53,35 +51,35 @@ export class MemoryStorage  implements Storage {
     }
 
     public write(changes: StoreItems): Promise<void> {
-        const that = this;
-        function saveItem(key: string, item: StoreItem) {
-            const clone = Object.assign({}, item);
+        const that: MemoryStorage = this;
+        function saveItem(key: string, item: StoreItem): void {
+            const clone: any = {...item};
             clone.eTag = (that.etag++).toString();
             that.memory[key] = JSON.stringify(clone);
         }
 
-        return new Promise<void>((resolve, reject) => {
-            for (const key in changes) {
-                const newItem = changes[key];
-                const old = this.memory[key];
+        return new Promise<void>((resolve: any, reject: any): void => {
+            Object.keys(changes).forEach((key: any) => {
+                const newItem: any = changes[key];
+                const old: string = this.memory[key];
                 if (!old || newItem.eTag === '*') {
                     saveItem(key, newItem);
                 } else {
-                    const oldItem = <StoreItem>JSON.parse(old);
+                    const oldItem: StoreItem = <StoreItem>JSON.parse(old);
                     if (newItem.eTag === oldItem.eTag) {
                         saveItem(key, newItem);
                     } else {
                         reject(new Error(`Storage: error writing "${key}" due to eTag conflict.`));
                     }
                 }
-            }
+            });
             resolve();
         });
     }
 
-    public delete(keys: string[]) {
-        return new Promise<void>((resolve, reject) => {
-            keys.forEach((key) => this.memory[key] = <any>undefined);
+    public delete(keys: string[]): Promise<void> {
+        return new Promise<void>((resolve: any, reject: any): void => {
+            keys.forEach((key: string) => this.memory[key] = <any>undefined);
             resolve();
         });
     }
