@@ -15,6 +15,13 @@
     ],
     "jsRules": {},
     "rules": {
+        "variable-name": false,
+        "no-parameter-properties": false,
+        "no-reserved-keywords": false,
+        "no-unnecessary-class":false,
+        "function-name": false,
+        "no-redundant-jsdoc": false,
+        "no-return-await": false,
         "prefer-type-cast": false,
         "no-object-literal-type-assertion":false,
         "no-increment-decrement":false,

@@ -62,6 +62,7 @@ export interface DialogTurnResult<T = any> {
  */
 export abstract class Dialog<O extends object = {}> {
     // Signals the end of a turn by a dialog method or waterfall/sequence step.
+    // tslint:disable-next-line:variable-name
     public static EndOfTurn: DialogTurnResult = { hasActive: true, hasResult: false };
     public readonly id: string;
 

@@ -107,7 +107,7 @@ export class LuisRecognizer {
         this.includeApiResults = !!includeApiResults;
 
         // Create client
-        const creds = new msRest.TokenCredentials(application.endpointKey);
+        const creds: msRest.TokenCredentials = new msRest.TokenCredentials(application.endpointKey);
         const baseUri: string = `https://${ this.application.azureRegion || 'westus'}.api.cognitive.microsoft.com`;
         this.luisClient = new LuisClient(creds, baseUri);
     }
@@ -145,7 +145,7 @@ export class LuisRecognizer {
      * @param context Context for the current turn of conversation with the use.
      */
     public recognize(context: TurnContext): Promise<RecognizerResult> {
-        const cached = context.turnState.get(this.cacheKey);
+        const cached: any = context.turnState.get(this.cacheKey);
         if (!cached) {
             const utterance: string = context.activity.text || '';
 

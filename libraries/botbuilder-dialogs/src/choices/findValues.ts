@@ -82,6 +82,7 @@ export interface SortedValue {
  * @param values List of values to search over.
  * @param options (Optional) options used to tweak the search that's performed.
  */
+// tslint:disable-next-line:max-func-body-length
 export function findValues(utterance: string, values: SortedValue[], options?: FindValuesOptions): ModelResult<FoundValue>[] {
     function indexOfToken(token: Token, startPos: number): number {
         for (let i: number = startPos; i < tokens.length; i++) {
