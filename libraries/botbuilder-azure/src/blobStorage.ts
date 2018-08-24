@@ -117,7 +117,7 @@ export class BlobStorage implements Storage {
         return this.ensureContainerExists().then((container) => {
             return new Promise<StoreItems>((resolve, reject) => {
                 Promise.all<DocumentStoreItem>(sanitizedKeys.map((key) => {
-                    return this.checkForBlob(container.name, key).then((blobResult) => {
+                    return this.client.doesBlobExistAsync(container.name, key).then((blobResult) => {
                         if (blobResult.exists) {
                             return this.client.getBlobMetadataAsync(container.name, key).then((blobMetadata) => {
                                 return this.client.getBlobToTextAsync(blobMetadata.container, blobMetadata.name).then((result) => {
@@ -232,10 +232,6 @@ export class BlobStorage implements Storage {
             checkedCollections[key] = this.client.createContainerIfNotExistsAsync(key);
         }
         return checkedCollections[key];
-    }
-
-    private checkForBlob(containerName: string, blob: string): Promise<azure.BlobService.BlobResult> {
-        return this.client.doesBlobExistAsync(containerName, blob);
     }
 
     private createBlobService(storageAccountOrConnectionString: string, storageAccessKey: string, host: any): BlobServiceAsync {
