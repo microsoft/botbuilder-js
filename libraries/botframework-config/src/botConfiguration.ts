@@ -10,7 +10,7 @@ import * as uuid from 'uuid';
 import { BotConfigurationBase } from './botConfigurationBase';
 import * as encrypt from './encrypt';
 import { ConnectedService } from './models';
-import { IBotConfiguration, IDispatchService, ServiceTypes } from './schema';
+import { IBotConfiguration, IConnectedService, IDispatchService, ServiceTypes } from './schema';
 
 interface internalBotConfig {
     location?: string;
@@ -19,11 +19,11 @@ interface internalBotConfig {
 // This class adds loading and saving from disk and encryption/decryption semantics on top of BotConfigurationBase
 export class BotConfiguration extends BotConfigurationBase {
 
-    protected internal: internalBotConfig = {};
+    private internal: internalBotConfig = {};
 
     public static fromJSON(source: Partial<IBotConfiguration> = {}): BotConfiguration {
         let { name = '', description = '', version = '2.0', secretKey = '', services = [] } = source;
-        services = services.slice().map(BotConfigurationBase.serviceFromJSON);
+        services = <IConnectedService[]>services.slice().map(BotConfigurationBase.serviceFromJSON);
         const botConfig = new BotConfiguration();
         Object.assign(botConfig, { services, description, name, version, secretKey });
         return botConfig;
