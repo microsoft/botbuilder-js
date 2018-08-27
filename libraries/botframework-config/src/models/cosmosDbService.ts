@@ -7,9 +7,9 @@ import { ICosmosDBService, ServiceTypes } from '../schema';
 import { AzureService } from './azureService';
 
 export class CosmosDbService extends AzureService implements ICosmosDBService {
-    public connectionString = '';
-    public database = '';
-    public collection = '';
+    public connectionString: string = '';
+    public database: string = '';
+    public collection: string = '';
 
     constructor(source: ICosmosDBService = {} as ICosmosDBService) {
         super(source, ServiceTypes.CosmosDB);
@@ -18,19 +18,22 @@ export class CosmosDbService extends AzureService implements ICosmosDBService {
     }
 
     public toJSON(): ICosmosDBService {
-        let { type, id, name, tenantId, subscriptionId, resourceGroup, serviceName, connectionString, database, collection } = this;
+        const { type, id, name, tenantId, subscriptionId, resourceGroup, serviceName, connectionString, database, collection } = this;
+
         return { type, id, name, tenantId, subscriptionId, resourceGroup, serviceName, connectionString, database, collection };
     }
 
     // encrypt keys in service
     public encrypt(secret: string): void {
-        if (this.connectionString && this.connectionString.length > 0)
+        if (this.connectionString && this.connectionString.length > 0) {
             this.connectionString = encryptString(this.connectionString, secret);
+        }
     }
 
     // decrypt keys in service
     public decrypt(secret: string): void {
-        if (this.connectionString && this.connectionString.length > 0)
+        if (this.connectionString && this.connectionString.length > 0) {
             this.connectionString = decryptString(this.connectionString, secret);
+        }
     }
 }

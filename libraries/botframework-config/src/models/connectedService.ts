@@ -5,8 +5,8 @@
 import { IConnectedService, ServiceTypes } from '../schema';
 
 export abstract class ConnectedService implements IConnectedService {
-    public id = '';
-    public name = '';
+    public id: string = '';
+    public name: string = '';
 
     protected constructor(source: IConnectedService = {} as IConnectedService, public type: ServiceTypes) {
         const { id = '', name = '' } = source;
