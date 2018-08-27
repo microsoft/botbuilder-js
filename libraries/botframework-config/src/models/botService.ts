@@ -19,12 +19,12 @@ export class BotService extends AzureService implements IBotService {
     }
 
     // encrypt keys in service
-    public encrypt(secret: string, iv?: string): void {
+    public encrypt(secret: string, encryptString: (value: string, secret:string) => string): void {
 
     }
 
     // decrypt keys in service
-    public decrypt(secret: string, iv?: string): void {
+    public decrypt(secret: string, decryptString: (value: string, secret:string) => string): void {
 
     }
 }

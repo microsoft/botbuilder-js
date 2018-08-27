@@ -74,3 +74,12 @@ export function decryptString(encryptedValue: string, secret: string): string {
     value += decipher.final('utf8');
     return value;
 }
+
+export function legacyDecrypt(encryptedValue: string, secret: string): string {
+    // LEGACY for pre standardized SHA256 encryption, this uses some undocumented nodejs MD5 hash internally and is deprecated
+    const decipher = crypto.createDecipher('aes192', secret);
+    let value = decipher.update(encryptedValue, 'hex', 'utf8');
+    value += decipher.final('utf8');
+    return value;
+}
+
