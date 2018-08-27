@@ -16,9 +16,9 @@ export abstract class ConnectedService implements IConnectedService {
     public abstract toJSON(): IConnectedService;
 
     // encrypt keys in service
-    public abstract encrypt(secret: string): void;
+    public abstract encrypt(secret: string, encryptString: (value: string, secret:string) => string): void;
 
     // decrypt keys in service
-    public abstract decrypt(secret: string): void;
+    public abstract decrypt(secret: string, decryptString: (value: string, secret:string) => string): void;
 
 }
