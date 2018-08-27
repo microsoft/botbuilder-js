@@ -29,6 +29,8 @@
     "mocha": "^5.0.0"
   },
   "dependencies": {
+    "fs-extra": "^7.0.0",
+    "read-text-file": "^1.1.0",
     "uuid": "^3.2.1"
   },
   "scripts": {
