@@ -47,7 +47,7 @@ export class MicrosoftAppCredentials implements msrest.ServiceClientCredentials 
             expiration = new Date(Date.now() + 86400000);  // 1 day
         }
 
-        const uri: url.UrlWithStringQuery = url.parse(serviceUrl);
+        const uri: url.Url = url.parse(serviceUrl);
         if (uri.host) {
             MicrosoftAppCredentials.trustedHostNames.set(uri.host, expiration);
         }
@@ -60,7 +60,7 @@ export class MicrosoftAppCredentials implements msrest.ServiceClientCredentials 
      */
     public static isTrustedServiceUrl(serviceUrl: string): boolean {
         try {
-            const uri: url.UrlWithStringQuery = url.parse(serviceUrl);
+            const uri: url.Url = url.parse(serviceUrl);
             if (uri.host) {
                 return MicrosoftAppCredentials.isTrustedUrl(uri.host);
             }

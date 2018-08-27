@@ -6,8 +6,8 @@
  * Licensed under the MIT License.
  */
 import * as request from 'request';
-const getPem: any = import('rsa-pem-from-mod-exp');
-const base64url: any = import('base64url');
+const getPem: any = require('rsa-pem-from-mod-exp');
+const base64url: any = require('base64url');
 
 export class OpenIdMetadata {
     private url: string;
