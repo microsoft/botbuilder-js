@@ -14,17 +14,18 @@ export class BotService extends AzureService implements IBotService {
     }
 
     public toJSON(): IBotService {
-        let { type, id,  name, tenantId, subscriptionId, resourceGroup, serviceName } = this;
+        const { type, id,  name, tenantId, subscriptionId, resourceGroup, serviceName } = this;
+
         return { type, id, name, tenantId, subscriptionId, resourceGroup, serviceName };
     }
 
     // encrypt keys in service
     public encrypt(secret: string, iv?: string): void {
-
+        return;
     }
 
     // decrypt keys in service
     public decrypt(secret: string, iv?: string): void {
-
+        return;
     }
 }

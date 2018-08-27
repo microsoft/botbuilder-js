@@ -7,8 +7,8 @@ import { IBlobStorageService, ServiceTypes } from '../schema';
 import { AzureService } from './azureService';
 
 export class BlobStorageService extends AzureService implements IBlobStorageService {
-    public connectionString = '';
-    public container = '';
+    public connectionString: string = '';
+    public container: string = '';
 
     constructor(source: IBlobStorageService = {} as IBlobStorageService) {
         super(source, ServiceTypes.BlobStorage);
@@ -17,19 +17,22 @@ export class BlobStorageService extends AzureService implements IBlobStorageServ
     }
 
     public toJSON(): IBlobStorageService {
-        let { type, id, name, tenantId, subscriptionId, resourceGroup, serviceName, connectionString, container } = this;
+        const { type, id, name, tenantId, subscriptionId, resourceGroup, serviceName, connectionString, container } = this;
+
         return { type, id, name, tenantId, subscriptionId, resourceGroup, serviceName, connectionString, container };
     }
 
     // encrypt keys in service
     public encrypt(secret: string): void {
-        if (this.connectionString && this.connectionString.length > 0)
+        if (this.connectionString && this.connectionString.length > 0) {
             this.connectionString = encryptString(this.connectionString, secret);
+        }
     }
 
     // decrypt keys in service
     public decrypt(secret: string): void {
-        if (this.connectionString && this.connectionString.length > 0)
+        if (this.connectionString && this.connectionString.length > 0) {
             this.connectionString = decryptString(this.connectionString, secret);
+        }
     }
 }
