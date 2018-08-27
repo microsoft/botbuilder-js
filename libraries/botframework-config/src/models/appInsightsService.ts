@@ -7,8 +7,8 @@ import { IAppInsightsService, ServiceTypes } from '../schema';
 import { AzureService } from './azureService';
 
 export class AppInsightsService extends AzureService implements IAppInsightsService {
-    public instrumentationKey = '';
-    public applicationId = '';
+    public instrumentationKey: string = '';
+    public applicationId: string = '';
     public apiKeys: { [key: string]: string } = {};
 
     constructor(source: IAppInsightsService = {} as IAppInsightsService) {
@@ -18,29 +18,34 @@ export class AppInsightsService extends AzureService implements IAppInsightsServ
     }
 
     public toJSON(): IAppInsightsService {
-        let { id, type, name, tenantId, subscriptionId, resourceGroup, serviceName, instrumentationKey, applicationId, apiKeys } = this;
+        const { id, type, name, tenantId, subscriptionId, resourceGroup, serviceName, instrumentationKey, applicationId, apiKeys } = this;
+
         return { type, id, name, tenantId, subscriptionId, resourceGroup, serviceName, instrumentationKey, applicationId, apiKeys };
     }
 
     // encrypt keys in service
     public encrypt(secret: string): void {
-        if (this.instrumentationKey && this.instrumentationKey.length > 0)
+        const that: AppInsightsService = this;
+        if (this.instrumentationKey && this.instrumentationKey.length > 0) {
             this.instrumentationKey = encryptString(this.instrumentationKey, secret);
+        }
         if (this.apiKeys) {
-            for (let prop in this.apiKeys) {
-                this.apiKeys[prop] = encryptString(this.apiKeys[prop], secret);
-            }
+            Object.keys(this.apiKeys).forEach((prop: string) => {
+                that.apiKeys[prop] = encryptString(that.apiKeys[prop], secret);
+            });
         }
     }
 
     // decrypt keys in service
     public decrypt(secret: string): void {
-        if (this.instrumentationKey && this.instrumentationKey.length > 0)
+        const that: AppInsightsService = this;
+        if (this.instrumentationKey && this.instrumentationKey.length > 0) {
             this.instrumentationKey = decryptString(this.instrumentationKey, secret);
+        }
         if (this.apiKeys) {
-            for (let prop in this.apiKeys) {
-                this.apiKeys[prop] = decryptString(this.apiKeys[prop], secret);
-            }
+            Object.keys(this.apiKeys).forEach((prop: string) => {
+                that.apiKeys[prop] = decryptString(that.apiKeys[prop], secret);
+            });
         }
     }
 }
