@@ -6,10 +6,10 @@ import { IAzureService, ServiceTypes } from '../schema';
 import { ConnectedService } from './connectedService';
 
 export class AzureService extends ConnectedService implements IAzureService {
-    public tenantId = '';
-    public subscriptionId = '';
-    public resourceGroup = '';
-    public serviceName = '';
+    public tenantId: string = '';
+    public subscriptionId: string = '';
+    public resourceGroup: string = '';
+    public serviceName: string = '';
 
     constructor(source: IAzureService = {} as IAzureService, type: ServiceTypes) {
         super(source, type);
@@ -18,17 +18,18 @@ export class AzureService extends ConnectedService implements IAzureService {
     }
 
     public toJSON(): IAzureService {
-        let { type, id, name, tenantId, subscriptionId, resourceGroup, serviceName } = this;
+        const { type, id, name, tenantId, subscriptionId, resourceGroup, serviceName } = this;
+
         return { type, id, name, tenantId, subscriptionId, resourceGroup, serviceName };
     }
 
     // encrypt keys in service
     public encrypt(secret: string, iv?: string): void {
-
+        return;
     }
 
     // decrypt keys in service
     public decrypt(secret: string, iv?: string): void {
-
+        return;
     }
 }
