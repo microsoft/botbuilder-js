@@ -7,7 +7,7 @@ import { IGenericService, ServiceTypes } from '../schema';
 import { ConnectedService } from './connectedService';
 
 export class GenericService extends ConnectedService implements IGenericService {
-    public url = '';
+    public url: string = '';
     public configuration: { [key: string]: string } = {};
 
     constructor(source: IGenericService = {} as IGenericService) {
@@ -17,25 +17,28 @@ export class GenericService extends ConnectedService implements IGenericService 
     }
 
     public toJSON(): IGenericService {
-        let { id, type, name, url, configuration } = this;
+        const { id, type, name, url, configuration } = this;
+
         return { type, id, name, url, configuration };
     }
 
     // encrypt keys in service
     public encrypt(secret: string): void {
+        const that: GenericService = this;
         if (this.configuration) {
-            for (let prop in this.configuration) {
-                this.configuration[prop] = encryptString(this.configuration[prop], secret);
-            }
+            Object.keys(this.configuration).forEach((prop: string) => {
+                that.configuration[prop] = encryptString(that.configuration[prop], secret);
+            });
         }
     }
 
     // decrypt keys in service
     public decrypt(secret: string): void {
+        const that: GenericService = this;
         if (this.configuration) {
-            for (let prop in this.configuration) {
-                this.configuration[prop] = decryptString(this.configuration[prop], secret);
-            }
+            Object.keys(this.configuration).forEach((prop: string) => {
+                that.configuration[prop] = decryptString(that.configuration[prop], secret);
+            });
         }
     }
 }

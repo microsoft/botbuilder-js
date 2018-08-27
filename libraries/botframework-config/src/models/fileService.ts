@@ -6,7 +6,7 @@ import { IFileService, ServiceTypes } from '../schema';
 import { ConnectedService } from './connectedService';
 
 export class FileService extends ConnectedService implements IFileService {
-    public path = '';
+    public path: string = '';
 
     constructor(source: IFileService = {} as IFileService) {
         super(source, ServiceTypes.File);
@@ -16,14 +16,17 @@ export class FileService extends ConnectedService implements IFileService {
 
     public toJSON(): IFileService {
         const { type, id, name = '', path = '' } = this;
-        return { type, id, name, path, };
+
+        return { type, id, name, path };
     }
 
     // encrypt keys in service
     public encrypt(secret: string): void {
+        return;
     }
 
     // decrypt keys in service
     public decrypt(secret: string): void {
+        return;
     }
 }
