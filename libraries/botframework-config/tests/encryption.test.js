@@ -1,31 +1,31 @@
 let assert = require('assert');
-let config = require('../lib');
+let encrypt = require('../lib/encrypt');
 
 describe("EncryptionTests", () => {
     it("EncryptDecrypt", () => {
         let secret = "lgCbJPXnfOlatjbBDKMbh0ie6bc8PD/cjqA/2tPgMS0=";
         let value = "1234567890";
-        let encrypted = config.encryptString(value, secret);
+        let encrypted = encrypt.encryptString(value, secret);
         assert.ok(value != encrypted, "encryption failed");
 
-        let decrypted = config.decryptString(encrypted, secret);
+        let decrypted = encrypt.decryptString(encrypted, secret);
         assert.ok(value === decrypted, "decryption failed");
     });
 
     it("GenerateKeyWorks", () => {
-        let secret = config.generateKey();
+        let secret = encrypt.generateKey();
         let value = "1234567890";
-        let encrypted = config.encryptString(value, secret);
+        let encrypted = encrypt.encryptString(value, secret);
         assert.ok(value != encrypted, "encryption failed");
 
-        let decrypted = config.decryptString(encrypted, secret);
+        let decrypted = encrypt.decryptString(encrypted, secret);
         assert.ok(value === decrypted, "decryption failed");
     });
 
     it("EncryptWithNullSecretThrows", () => {
         let value = "1234567890";
         try {
-            config.encryptString(value);
+            encrypt.encryptString(value);
             assert.fail("did not throw error or exception");
         }
         catch (Error) {
@@ -35,11 +35,11 @@ describe("EncryptionTests", () => {
 
     it("DecryptWithNullSecretThrows", () => {
         let value = "1234567890";
-        let secret = config.generateKey();
-        let encrypted = config.encryptString(value, secret);
+        let secret = encrypt.generateKey();
+        let encrypted = encrypt.encryptString(value, secret);
 
         try {
-            let nonresult = config.decryptString(encrypted, null);
+            let nonresult = encrypt.decryptString(encrypted, null);
             assert.fail("did not throw error or exception");
         }
         catch (Error) {
@@ -50,11 +50,11 @@ describe("EncryptionTests", () => {
 
     it("DecryptWithBadSecretThrows", () => {
         let value = "1234567890";
-        let secret = config.generateKey();
-        let encrypted = config.encryptString(value, secret);
+        let secret = encrypt.generateKey();
+        let encrypted = encrypt.encryptString(value, secret);
 
         try {
-            let nonresult = config.decryptString(encrypted, "bad");
+            let nonresult = encrypt.decryptString(encrypted, "bad");
             assert.fail("did not throw error or exception");
         }
         catch (Error) {
@@ -62,7 +62,7 @@ describe("EncryptionTests", () => {
         }
 
         try {
-            let nonresult = config.decryptString(encrypted, config.generateKey());
+            let nonresult = encrypt.decryptString(encrypted, encrypt.generateKey());
             assert.fail("Decrypt with different key should throw");
         }
         catch (Error) {

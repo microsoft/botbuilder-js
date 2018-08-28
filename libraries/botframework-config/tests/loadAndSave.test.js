@@ -16,6 +16,7 @@ describe("LoadAndSaveTests", () => {
         assert.ok("test description" == config.description);
         assert.ok("" == config.secretKey);
         assert.ok(9 == config.services.length);
+        assert.equal(config.getPath(), testBotPath, "bot doesn't remember where it was loaded from");
     });
 
     it("LoadFromFolder", async () => {

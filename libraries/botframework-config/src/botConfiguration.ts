@@ -2,46 +2,31 @@
  * Copyright(c) Microsoft Corporation.All rights reserved.
  * Licensed under the MIT License.
  */
-import * as crypto from 'crypto';
 import * as fsx from 'fs-extra';
 import * as path from 'path';
 import * as process from 'process';
 import * as txtfile from 'read-text-file';
 import * as uuid from 'uuid';
+import { BotConfigurationBase } from './botConfigurationBase';
 import * as encrypt from './encrypt';
-import { AppInsightsService, BlobStorageService, BotService, ConnectedService, CosmosDbService, DispatchService, EndpointService, FileService, GenericService, LuisService, QnaMakerService } from './models';
-import { IAppInsightsService, IBlobStorageService, IBotConfiguration, IBotService, IConnectedService, ICosmosDBService, IDispatchService, IEndpointService, IFileService, IGenericService, ILuisService, IQnAService, ServiceTypes } from './schema';
-
+import { ConnectedService } from './models';
+import { IBotConfiguration, IConnectedService, IDispatchService, ServiceTypes } from './schema';
 
 interface internalBotConfig {
     location?: string;
 }
 
-export class BotConfiguration implements Partial<IBotConfiguration> {
-    // internal is not serialized
-    private internal: internalBotConfig = {
-    };
+// This class adds loading and saving from disk and encryption/decryption semantics on top of BotConfigurationBase
+export class BotConfiguration extends BotConfigurationBase {
 
-    public name: string = '';
-    public description: string = '';
-    public services: IConnectedService[] = [];
-    public secretKey = '';
-    public version = '2.0';
-
-    constructor() {
-    }
+    private internal: internalBotConfig = {};
 
     public static fromJSON(source: Partial<IBotConfiguration> = {}): BotConfiguration {
         let { name = '', description = '', version = '2.0', secretKey = '', services = [] } = source;
-        services = services.slice().map(BotConfiguration.serviceFromJSON);
+        services = <IConnectedService[]>services.slice().map(BotConfigurationBase.serviceFromJSON);
         const botConfig = new BotConfiguration();
         Object.assign(botConfig, { services, description, name, version, secretKey });
         return botConfig;
-    }
-
-    public toJSON(): Partial<IBotConfiguration> {
-        const { name, description, version, secretKey, services } = this;
-        return { name, description, version, secretKey, services };
     }
 
     // load first bot in a folder
@@ -88,6 +73,10 @@ export class BotConfiguration implements Partial<IBotConfiguration> {
 
     // save the config file to specificed botpath
     public async saveAs(botpath: string, secret?: string): Promise<void> {
+        if (!botpath) {
+            throw new Error(`missing path`);
+        }
+
         this._savePrep(secret);
 
         let hasSecret = !!this.secretKey;
@@ -162,28 +151,6 @@ export class BotConfiguration implements Partial<IBotConfiguration> {
         this.secretKey = '';
     }
 
-    // connect to a service
-    // returns assignd id for the service
-    public connectService(newService: IConnectedService): string {
-        let service = BotConfiguration.serviceFromJSON(newService);
-
-        // assign a unique id
-        let found = false;
-        do {
-            found = false;
-            service.id = '' + Math.floor((Math.random() * 255));
-            for (let existingService of this.services) {
-                if (existingService.id == service.id) {
-                    found = true;
-                    break;
-                }
-            }
-        } while (found);
-
-        this.services.push(service);
-        return service.id;
-    }
-
     // Generate a key for encryption
     public static generateKey(): string {
         return encrypt.generateKey();
@@ -194,7 +161,7 @@ export class BotConfiguration implements Partial<IBotConfiguration> {
         this.validateSecretKey(secret);
 
         for (let service of this.services) {
-            (<ConnectedService>service).encrypt(secret);
+            (<ConnectedService>service).encrypt(secret, encrypt.encryptString);
         }
     }
 
@@ -204,14 +171,14 @@ export class BotConfiguration implements Partial<IBotConfiguration> {
             this.validateSecretKey(secret);
 
             for (let service of this.services) {
-                (<ConnectedService>service).decrypt(secret);
+                (<ConnectedService>service).decrypt(secret, encrypt.decryptString);
             }
         }
         catch (err) {
             try {
 
                 // legacy decryption
-                this.secretKey = this.legacyDecrypt(this.secretKey, secret);
+                this.secretKey = encrypt.legacyDecrypt(this.secretKey, secret);
                 this.clearSecret();
                 this.version = "2.0";
 
@@ -228,7 +195,7 @@ export class BotConfiguration implements Partial<IBotConfiguration> {
                     for (let i = 0; i < encryptedProperties[service.type].length; i++) {
                         let prop = encryptedProperties[service.type][i];
                         let val = <string>(<any>service)[prop];
-                        (<any>service)[prop] = this.legacyDecrypt(val, secret);
+                        (<any>service)[prop] = encrypt.legacyDecrypt(val, secret);
                     }
                 }
 
@@ -263,56 +230,9 @@ export class BotConfiguration implements Partial<IBotConfiguration> {
         }
     }
 
-    // find a service by id
-    public findService(id: string): IConnectedService {
-        const { services = [] } = this;
-        let i = services.length;
-        while (i--) {
-            const service = services[i];
-            if (service.id == id) {
-                return service;
-            }
-        }
-        return null;
-    }
-
-    // find a service by name or id
-    public findServiceByNameOrId(nameOrId: string): IConnectedService {
-        const { services = [] } = this;
-        let i = services.length;
-        while (i--) {
-            const service = services[i];
-            if (service.id == nameOrId || service.name == nameOrId) {
-                return service;
-            }
-        }
-        return null;
-    }
-
-    // remove service by name or id
-    public disconnectServiceByNameOrId(nameOrId: string): IConnectedService {
-        const { services = [] } = this;
-        let i = services.length;
-        while (i--) {
-            const service = services[i];
-            if (service.id == nameOrId || service.name == nameOrId) {
-                return services.splice(i, 1)[0];
-            }
-        }
-        throw new Error(`a service with id or name of [${nameOrId}] was not found`);
-    }
-
-    // remove a service
-    public disconnectService(id: string): void {
-        const { services = [] } = this;
-        let i = services.length;
-        while (i--) {
-            const service = services[i];
-            if (service.id == id) {
-                services.splice(i, 1)[0];
-                return;
-            }
-        }
+    // return the path that this config was loaded from.  .save() will save to this path 
+    public getPath(): string {
+        return this.internal.location;
     }
 
 
@@ -334,52 +254,5 @@ export class BotConfiguration implements Partial<IBotConfiguration> {
             throw new Error('You are attempting to perform an operation which needs access to the secret and --secret is incorrect.');
         }
     }
-
-
-    private legacyDecrypt(encryptedValue: string, secret: string): string {
-        // LEGACY for pre standardized SHA256 encryption, this uses some undocumented nodejs MD5 hash internally and is deprecated
-        const decipher = crypto.createDecipher('aes192', secret);
-        let value = decipher.update(encryptedValue, 'hex', 'utf8');
-        value += decipher.final('utf8');
-        return value;
-    }
-
-    public static serviceFromJSON(service: IConnectedService): ConnectedService {
-        switch (service.type) {
-            case ServiceTypes.File:
-                return new FileService(<IFileService>service);
-
-            case ServiceTypes.QnA:
-                return new QnaMakerService(<IQnAService>service);
-
-            case ServiceTypes.Dispatch:
-                return new DispatchService(<IDispatchService>service);
-
-            case ServiceTypes.Bot:
-                return new BotService(<IBotService>service);
-
-            case ServiceTypes.Luis:
-                return new LuisService(<ILuisService>service);
-
-            case ServiceTypes.Endpoint:
-                return new EndpointService(<IEndpointService>service);
-
-            case ServiceTypes.AppInsights:
-                return new AppInsightsService(<IAppInsightsService>service);
-
-            case ServiceTypes.BlobStorage:
-                return new BlobStorageService(<IBlobStorageService>service);
-
-            case ServiceTypes.CosmosDB:
-                return new CosmosDbService(<ICosmosDBService>service);
-
-            case ServiceTypes.Generic:
-                return new GenericService(<IGenericService>service);
-
-            default:
-                throw new TypeError(`${service.type} is not a known service implementation.`);
-        }
-    }
-
 }
 
