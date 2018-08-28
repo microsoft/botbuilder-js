@@ -201,7 +201,7 @@ export class OAuthPrompt extends Dialog {
      * });
      * await prompt.signOutUser(context);
      * ```
-     * @param context a turn context representing latest activity
+     * @param context a TurnContext representing latest activity
      */
     public async signOutUser(context: TurnContext): Promise<void> {
         // Validate adapter type

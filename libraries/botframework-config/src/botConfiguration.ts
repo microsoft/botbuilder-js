@@ -310,8 +310,8 @@ export class BotConfiguration implements Partial<IBotConfiguration> {
                     }
                 }
 
-            } catch (err2) {
-                throw err;
+            } catch (decrypt_error) {
+                throw decrypt_error;
             }
 
             // return service;

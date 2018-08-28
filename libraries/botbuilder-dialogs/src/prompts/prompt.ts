@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import {  Activity, ActivityTypes, InputHints, MessageFactory, TurnContext } from 'botbuilder-core';
+import { Activity, ActivityTypes, InputHints, MessageFactory, TurnContext } from 'botbuilder-core';
 import { Choice, ChoiceFactory, ChoiceFactoryOptions } from '../choices';
 import { Dialog, DialogInstance, DialogReason, DialogTurnResult } from '../dialog';
 import { DialogContext } from '../dialogContext';

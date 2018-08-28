@@ -93,7 +93,7 @@ export function maxActionTitleLength(channelId: string): number {
 
 /**
  * @private
- * @param context a turncontext object representing an incoming message
+ * @param context a TurnContext object representing an incoming message
  */
 export function getChannelId(context: TurnContext): string {
     return context.activity.channelId || '';

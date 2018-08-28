@@ -8,7 +8,7 @@
 import { Activity, InputHints, TurnContext } from 'botbuilder-core';
 import { Dialog, DialogInstance, DialogReason, DialogTurnResult } from '../dialog';
 import { DialogContext } from '../dialogContext';
-import {  PromptOptions, PromptRecognizerResult, PromptValidator } from './prompt';
+import { PromptOptions, PromptRecognizerResult, PromptValidator } from './prompt';
 
 /**
  * Base class for all prompts.

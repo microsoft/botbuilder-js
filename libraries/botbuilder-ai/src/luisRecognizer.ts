@@ -118,7 +118,6 @@ export class LuisRecognizer {
      * @param defaultIntent (Optional) intent name to return should a top intent be found. Defaults to a value of `None`.
      * @param minScore (Optional) minimum score needed for an intent to be considered as a top intent. If all intents in the set are below this threshold then the `defaultIntent` will be returned.  Defaults to a value of `0.0`.
      */
-    // tslint:disable-next-line:function-name
     public static topIntent(results: RecognizerResult | undefined, defaultIntent: string = 'None', minScore: number = 0): string {
         let topIntent: string;
         let topScore: number = -1;

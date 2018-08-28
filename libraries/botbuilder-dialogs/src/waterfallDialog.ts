@@ -120,12 +120,12 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
                 reason: reason,
                 result: result,
                 values: state.values,
-                next: async (result2?: DialogTurnResult<any>): Promise<DialogTurnResult<any>> => {
+                next: async (stepResult?: any): Promise<DialogTurnResult<any>> => {
                     if (nextCalled) {
                         throw new Error(`WaterfallStepContext.next(): method already called for dialog and step '${this.id}[${index}]'.`);
                     }
 
-                    return await this.dialogResume(dc, DialogReason.nextCalled, result2);
+                    return await this.dialogResume(dc, DialogReason.nextCalled, stepResult);
                 }
             };
 

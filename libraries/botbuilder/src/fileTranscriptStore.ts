@@ -73,11 +73,10 @@ export class FileTranscriptStore implements TranscriptStore {
 
             return fs.readdir(transcriptFolder)
                 .then((files: string[]) => files
-                    .filter((f: string) => f.endsWith('.json'))               // .json only
+                    .filter((f: string) => f.endsWith('.json'))     // .json only
                     .sort()                                         // sorted
                     .filter(withDateFilter(startDate)))             // >= startDate
-                .then((files: string[]) => {
-                    // get proper page
+                .then((files: string[]) => {                        // get proper page
                     if (continuationToken) {
                         return files
                             .filter(withContinuationToken(continuationToken))

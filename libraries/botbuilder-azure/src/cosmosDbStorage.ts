@@ -225,8 +225,8 @@ function getOrCreateDatabase(client: DocumentClient, databaseId: string): Promis
             if (results.length === 1) { return resolve(results[0]._self); }
 
             // create db
-            client.createDatabase({ id: databaseId }, (err2: any, databaseLink: any) => {
-                if (err2) { return reject(err2); }
+            client.createDatabase({ id: databaseId }, (db_create_err: any, databaseLink: any) => {
+                if (db_create_err) { return reject(db_create_err); }
                 resolve(databaseLink._self);
             });
         });

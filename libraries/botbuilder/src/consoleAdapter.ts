@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-
+// tslint:disable:no-console
 import { Activity, ActivityTypes,  BotAdapter, ConversationReference, ResourceResponse, TurnContext } from 'botbuilder-core';
 import * as readline from 'readline';
 
@@ -207,7 +207,6 @@ export class ConsoleAdapter extends BotAdapter {
      * @param line Text to print.
      */
     protected print(line: string): void {
-        // tslint:disable-next-line:no-console
         console.log(line);
     }
 
@@ -216,7 +215,6 @@ export class ConsoleAdapter extends BotAdapter {
      * @param line Error text to print.
      */
     protected printError(line: string): void {
-        // tslint:disable-next-line:no-console
         console.error(line);
     }
 }

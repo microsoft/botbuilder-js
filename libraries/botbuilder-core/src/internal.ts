@@ -8,8 +8,7 @@
  */
 export function shallowCopy<T>(value: T): T {
     if (Array.isArray(value)) { return value.slice(0) as any; }
-    // tslint:disable-next-line:prefer-object-spread
-    if (typeof value === 'object') { return Object.assign({}, value); }
+    if (typeof value === 'object') { return {...value as any}; }
 
     return value;
 }

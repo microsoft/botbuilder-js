@@ -59,23 +59,23 @@ export class OpenIdMetadata {
             } else {
                 const openIdConfig: IOpenIdConfig = <IOpenIdConfig>body;
 
-                const options2: request.Options = {
+                const get_key_options: request.Options = {
                     method: 'GET',
                     url: openIdConfig.jwks_uri,
                     json: true
                 };
 
-                request(options2, (err2: Error, response2: any, body2: any) => {
-                    if (!err2 && (response2.statusCode && response2.statusCode >= 400 || !body2)) {
-                        err2 = new Error(`Failed to load Keys: ${ response2.statusCode }`);
+                request(get_key_options, (get_key_error: Error, get_key_response: any, get_key_body: any) => {
+                    if (!get_key_error && (get_key_response.statusCode && get_key_response.statusCode >= 400 || !get_key_body)) {
+                        get_key_error = new Error(`Failed to load Keys: ${ get_key_response.statusCode }`);
                     }
 
-                    if (!err2) {
+                    if (!get_key_error) {
                         this.lastUpdated = new Date().getTime();
-                        this.keys = <IKey[]>body2.keys;
+                        this.keys = <IKey[]>get_key_body.keys;
                     }
 
-                    cb(err2);
+                    cb(get_key_error);
                 });
             }
         });
