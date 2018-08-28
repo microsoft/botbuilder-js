@@ -292,7 +292,13 @@ export class BotFrameworkAdapter extends BotAdapter {
             const userId = context.activity.from.id;
             const url = this.oauthApiUrl(context);
             const client = this.createOAuthApiClient(url);
-            return client.getUserToken(userId, connectionName, magicCode);
+            return client.userToken.getToken(userId, connectionName, { code: magicCode })
+                .then(tr => { 
+                    return {
+                        connectionName: tr.connectionName,
+                        token: tr.token,
+                        expiration: tr.expiration };
+                    });
         } catch (err) {
             return Promise.reject(err);
         }
@@ -310,7 +316,7 @@ export class BotFrameworkAdapter extends BotAdapter {
             const userId = context.activity.from.id;
             const url = this.oauthApiUrl(context);
             const client = this.createOAuthApiClient(url);
-            return client.signOutUser(userId, connectionName);
+            return client.userToken.signOut(userId, connectionName);
         } catch (err) {
             return Promise.reject(err);
         }
@@ -326,7 +332,14 @@ export class BotFrameworkAdapter extends BotAdapter {
         const conversation = TurnContext.getConversationReference(context.activity);
         const url = this.oauthApiUrl(context);
         const client = this.createOAuthApiClient(url);
-        return client.getSignInLink(conversation as ConversationReference, connectionName);
+        const params = {
+            ConnectionName: connectionName,
+            Conversation: conversation,
+            MsAppId: (this.credentials as MicrosoftAppCredentials).appId
+          };
+          const state = Buffer.from(JSON.stringify(params)).toString('base64');
+
+        return client.botSignIn.getSignInUrl(state);
     }
 
 
@@ -340,7 +353,7 @@ export class BotFrameworkAdapter extends BotAdapter {
         const url = this.oauthApiUrl(contextOrServiceUrl);
         const client = this.createOAuthApiClient(url);
         const emulatorApi = new Emulator(client);
-        return emulatorApi.emulateOAuthCards(emulate);
+        return emulatorApi.emulateOAuthCards(emulate).then(r => { return; });
     }
 
     /**
@@ -553,7 +566,9 @@ export class BotFrameworkAdapter extends BotAdapter {
      * @param serviceUrl Clients service url.
      */
     protected createOAuthApiClient(serviceUrl: string): OAuthApiClient {
-        return new OAuthApiClient(this.createConnectorClient(serviceUrl));
+        const client = new OAuthApiClient(this.credentials, serviceUrl);
+        client.addUserAgentInfo(USER_AGENT);
+        return client;
     }
 
     /**
