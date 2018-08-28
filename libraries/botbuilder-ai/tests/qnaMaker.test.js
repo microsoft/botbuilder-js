@@ -8,7 +8,8 @@ const fs = require('fs');
 const knowledgeBaseId = process.env.QNAKNOWLEDGEBASEID;
 const endpointKey = process.env.QNAENDPOINTKEY;
 const hostname = process.env.QNAHOSTNAME || 'botbuilder-test-app';
-const mockQnA = true;
+const forceMockQnA = false;
+const mockQnA = forceMockQnA || (knowledgeBaseId && endpointKey && hostname !== 'botbuilder-test-app');
 
 class TestContext extends TurnContext {
     constructor(request) {
@@ -29,9 +30,6 @@ describe('QnAMaker', function () {
     }
     if (!endpointKey) {
         console.warn('WARNING: QnAMaker test suite QNAENDPOINTKEY environment variable is not defined');
-    }
-    if (!hostname) {
-        console.warn('WARNING: QnAMaker test suite QNAHOSTNAME environment variable is not defined');
     }
 
     // Generate endpoints
@@ -72,14 +70,14 @@ describe('QnAMaker', function () {
 
         return qna.generateAnswer(`how do I clean the stove?`)
             .then(res => {
-                assert.strictEqual(typeof res !== 'undefined', true, 'The response was returned as \'undefined\'.');
-                assert.strictEqual(res.length, 1, 'Should have receive just one answer on the first call.');
+                assert.notStrictEqual(res, true, `The response was returned as 'undefined'.`);
+                assert.strictEqual(res.length, 1, 'Should have received just one answer on the first call.');
                 assert.strictEqual(res[0].answer.startsWith(answer), true, `The answer should have started with '${ answer }' for the first call.`);
             })
             .then(() => qna.generateAnswer("is the stove hard to clean?"))
             .then(res => {
-                assert.strictEqual(typeof res !== 'undefined', true, 'The response was returned as \'undefined\'.');
-                assert.strictEqual(res.length, 1, 'Should have receive just one answer on the second call.');
+                assert.notStrictEqual(res, true, `The response was returned as 'undefined'.`);
+                assert.strictEqual(res.length, 1, 'Should have received just one answer on the second call.');
                 assert.strictEqual(res[0].answer.startsWith(answer), true, `The answer should have started with '${ answer }' for the second call.`);
             });
     });
@@ -90,13 +88,13 @@ describe('QnAMaker', function () {
 
         return qna.generateAnswer(`how do I clean the stove?`)
             .then(res => {
-                assert.strictEqual(typeof res !== 'undefined', true, 'The response was returned as \'undefined\'.');
-                assert.strictEqual(res.length, 1, 'Should have receive just one answer on the first call.');
+                assert.notStrictEqual(res, true, `The response was returned as 'undefined'.`);
+                assert.strictEqual(res.length, 1, 'Should have received just one answer on the first call.');
                 assert.strictEqual(res[0].answer.startsWith(answer), true, `The answer should have started with '${ answer }' for the first call.`);
             })
             .then(() => qna.generateAnswer('how is the weather?'))
             .then(res => {
-                assert.strictEqual(typeof res !== 'undefined', true, 'The response was returned as \'undefined\'.');
+                assert.notStrictEqual(res, true, `The response was returned as 'undefined'.`);
                 assert.strictEqual(res.length, 0, 'Should have not received answers for a question with no answers.');
             });
     });
@@ -106,7 +104,7 @@ describe('QnAMaker', function () {
         
         return qna.generateAnswer(``)
             .then(res => {
-                assert.strictEqual(typeof res !== 'undefined', true, 'The response was returned as \'undefined\'.');
+                assert.notStrictEqual(res, true, `The response was returned as 'undefined'.`);
                 assert.strictEqual(res.length, 0, 'Should have not received answers for an empty utterance.');
             })
             .then(() => qna.generateAnswer(undefined))
@@ -120,7 +118,7 @@ describe('QnAMaker', function () {
 
         return qna.generateAnswer(`foo`)
             .then(res => {
-                assert.strictEqual(typeof res !== 'undefined', true, 'The response was returned as \'undefined\'.');
+                assert.notStrictEqual(res, true, `The response was returned as 'undefined'.`);
                 assert.strictEqual(res.length, 0, `Should have not received answers for a question with no answer, it returned ${JSON.stringify(res)}.`);
             })
             .then(() => qna.generateAnswer(undefined))
@@ -134,7 +132,7 @@ describe('QnAMaker', function () {
         const qna = new ai.QnAMaker(endpoint, { top: 1 });
 
         qna.answer(context).then((found) => {
-            assert.strictEqual(found, false, 'Should have returned \'false\' for questions with no good answers');
+            assert.strictEqual(found, false, `Should have returned 'false' for questions with no good answers`);
             done();
         });
     });
@@ -145,19 +143,19 @@ describe('QnAMaker', function () {
 
         qna.answer(context)
             .then((found) => {
-                assert.strictEqual(found, true, 'Found answer should have returned \'true\'.');
+                assert.strictEqual(found, true, `Found answer should have returned 'true'.`);
                 let qnaMakerTraceActivies = context.sent.filter(s => s.type === 'trace' && s.name === 'QnAMaker');
                 assert.strictEqual(qnaMakerTraceActivies.length, 1, 'Should have returned just one answer');
                 traceActivity = qnaMakerTraceActivies[0];
-                assert.strictEqual(traceActivity.type, 'trace', 'Should have returned \'trace\'');
-                assert.strictEqual(traceActivity.name, 'QnAMaker', 'Should have returned \'QnAMaker\'');
-                assert.strictEqual(traceActivity.label, 'QnAMaker Trace', 'Should have returned \'QnAMaker Trace\'');
-                assert.strictEqual(traceActivity.valueType, 'https://www.qnamaker.ai/schemas/trace', 'Should have returned \'https://www.qnamaker.ai/schemas/trace\'');
-                assert.strictEqual(traceActivity.hasOwnProperty('value'), true, '\'traceActivity\' should have \'value\' property.');
-                assert.strictEqual(traceActivity.value.hasOwnProperty('message'), true, '\'traceActivity.value\' should have \'message\' property.');
-                assert.strictEqual(traceActivity.value.hasOwnProperty('queryResults'), true, '\'traceActivity.value\' should have \'queryResults\' property.');
+                assert.strictEqual(traceActivity.type, 'trace', `Should have returned 'trace'.`);
+                assert.strictEqual(traceActivity.name, 'QnAMaker', `Should have returned 'QnAMaker'.`);
+                assert.strictEqual(traceActivity.label, 'QnAMaker Trace', `Should have returned 'QnAMaker Trace'.`);
+                assert.strictEqual(traceActivity.valueType, 'https://www.qnamaker.ai/schemas/trace', `Should have returned 'https://www.qnamaker.ai/schemas/trace\'.`);
+                assert.strictEqual(traceActivity.hasOwnProperty('value'), true, `'traceActivity' should have 'value' property.`);
+                assert.strictEqual(traceActivity.value.hasOwnProperty('message'), true, `'traceActivity.value' should have 'message' property.`);
+                assert.strictEqual(traceActivity.value.hasOwnProperty('queryResults'), true, `'traceActivity.value' should have 'queryResults' property.'`);
                 assert.strictEqual(traceActivity.knowledgeBaseId, knowledgeBaseId, `Should have returned '${ knowledgeBaseId }'`);
-                assert.strictEqual(traceActivity.value.hasOwnProperty('scoreThreshold'), true, '\'traceActivity.value\' should have \'scoreThreshold\' property.');
+                assert.strictEqual(traceActivity.value.hasOwnProperty('scoreThreshold'), true, `'traceActivity.value' should have 'scoreThreshold' property.'`);
                 done();
             });
     });
