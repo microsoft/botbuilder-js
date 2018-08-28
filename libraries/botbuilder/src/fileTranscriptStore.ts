@@ -6,11 +6,11 @@
  * Licensed under the MIT License.
  */
 
-import * as path from 'path';
-import * as fs from 'async-file';
+import * as fs from 'async-file';
+import { Activity, PagedResult, TranscriptInfo, TranscriptStore } from 'botbuilder-core';
 import * as filenamify from 'filenamify';
+import * as path from 'path';
 import * as rimraf from 'rimraf';
-import { Activity, TranscriptStore, PagedResult, Transcript } from 'botbuilder-core';
 
 /**
  * The file transcript store stores transcripts in file system with each activity as a file.
@@ -99,10 +99,10 @@ export class FileTranscriptStore implements TranscriptStore {
      * @param channelId Channel Id.
      * @param continuationToken Continuatuation token to page through results.
      */
-    listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<Transcript>> {
+    listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<TranscriptInfo>> {
         if (!channelId) { throw new Error('Missing channelId'); }
 
-        let pagedResult = new PagedResult<Transcript>();
+        let pagedResult = new PagedResult<TranscriptInfo>();
         let channelFolder = this.getChannelFolder(channelId);
         return fs.exists(channelFolder).then(exists => {
             if (!exists) { return pagedResult; }
