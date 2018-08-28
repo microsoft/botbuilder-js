@@ -6,10 +6,10 @@
  * Licensed under the MIT License.
  */
 
-import { TranscriptStore, Activity, PagedResult, Transcript } from 'botbuilder';
-import { BlobStorageSettings } from "./blobStorage";
 import * as azure from 'azure-storage';
+import { Activity, PagedResult, TranscriptInfo, TranscriptStore } from 'botbuilder';
 import { escape } from 'querystring';
+import { BlobStorageSettings } from "./blobStorage";
 
 const ContainerNameCheck = new RegExp('^[a-z0-9](?!.*--)[a-z0-9-]{1,61}[a-z0-9]$');
 
@@ -162,7 +162,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
      * @param channelId Channel Id.
      * @param continuationToken Continuatuation token to page through results.
      */
-    listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<Transcript>> {
+    listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<TranscriptInfo>> {
         if (!channelId) {
             throw new Error("Missing channelId");
         }
@@ -173,7 +173,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
         return this.ensureContainerExists()
         .then(container => this.getTranscriptsFolders([], container.name, prefix, continuationToken, channelId, token))
         .then(transcripts => {
-            let pagedResult = new PagedResult<Transcript>();
+            let pagedResult = new PagedResult<TranscriptInfo>();
                 pagedResult.items = transcripts;
                 if (pagedResult.items.length == this.pageSize) {
                     pagedResult.continuationToken = transcripts.slice(-1).pop().id;
@@ -182,11 +182,11 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
         });
     }
 
-    private getTranscriptsFolders(transcripts: Transcript[], container: string, prefix: string, continuationToken: string, channelId: string, token: azure.common.ContinuationToken): Promise<Transcript[]> {
+    private getTranscriptsFolders(transcripts: TranscriptInfo[], container: string, prefix: string, continuationToken: string, channelId: string, token: azure.common.ContinuationToken): Promise<TranscriptInfo[]> {
         return new Promise((resolve, reject) => {
             this.client.listBlobDirectoriesSegmentedWithPrefixAsync(container, prefix, token).then((result) => {
                 result.entries.some((blob) => {
-                    let conversation = new Transcript();
+                    let conversation = new TranscriptInfo();
                     conversation.id = blob.name.split('/').filter(part => part).slice(-1).pop();
                     conversation.channelId = channelId;
                     if (continuationToken) {
