@@ -3,7 +3,6 @@
  * Licensed under the MIT License.
  */
 import * as url from 'url';
-import { decryptString, encryptString } from '../encrypt';
 import { IQnAService, ServiceTypes } from '../schema';
 import { ConnectedService } from './connectedService';
 
@@ -30,7 +29,7 @@ export class QnaMakerService extends ConnectedService implements IQnAService {
     }
 
     // encrypt keys in service
-    public encrypt(secret: string): void {
+    public encrypt(secret: string, encryptString: (value: string, secret: string) => string): void {
         if (this.endpointKey && this.endpointKey.length > 0) {
             this.endpointKey = encryptString(this.endpointKey, secret);
         }
@@ -41,7 +40,7 @@ export class QnaMakerService extends ConnectedService implements IQnAService {
     }
 
     // decrypt keys in service
-    public decrypt(secret: string): void {
+    public decrypt(secret: string, decryptString: (value: string, secret: string) => string): void {
         if (this.endpointKey && this.endpointKey.length > 0) {
             this.endpointKey = decryptString(this.endpointKey, secret);
         }

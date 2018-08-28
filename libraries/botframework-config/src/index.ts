@@ -3,6 +3,6 @@
  * Licensed under the MIT License.
  */
 export { BotConfiguration } from './botConfiguration';
-export { decryptString, encryptString, generateKey } from './encrypt';
+export { BotConfigurationBase } from './botConfigurationBase';
 export * from './models';
 export * from './schema';

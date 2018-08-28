@@ -2,7 +2,6 @@
  * Copyright(c) Microsoft Corporation.All rights reserved.
  * Licensed under the MIT License.
  */
-import { decryptString, encryptString } from '../encrypt';
 import { ILuisService, ServiceTypes } from '../schema';
 import { ConnectedService } from './connectedService';
 
@@ -26,7 +25,7 @@ export class LuisService extends ConnectedService implements ILuisService {
     }
 
     // encrypt keys in service
-    public encrypt(secret: string): void {
+    public encrypt(secret: string, encryptString: (value: string, secret: string) => string): void {
         if (this.authoringKey && this.authoringKey.length > 0) {
             this.authoringKey = encryptString(this.authoringKey, secret);
         }
@@ -36,7 +35,7 @@ export class LuisService extends ConnectedService implements ILuisService {
     }
 
     // decrypt keys in service
-    public decrypt(secret: string): void {
+    public decrypt(secret: string, decryptString: (value: string, secret: string) => string): void {
         if (this.authoringKey && this.authoringKey.length > 0) {
             this.authoringKey = decryptString(this.authoringKey, secret);
         }

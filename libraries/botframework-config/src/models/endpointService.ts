@@ -2,7 +2,6 @@
  * Copyright(c) Microsoft Corporation.All rights reserved.
  * Licensed under the MIT License.
  */
-import { decryptString, encryptString } from '../encrypt';
 import { IEndpointService, ServiceTypes } from '../schema';
 import { ConnectedService } from './connectedService';
 
@@ -24,14 +23,14 @@ export class EndpointService extends ConnectedService implements IEndpointServic
     }
 
     // encrypt keys in service
-    public encrypt(secret: string): void {
+    public encrypt(secret: string, encryptString: (value: string, secret: string) => string): void {
         if (this.appPassword && this.appPassword.length > 0) {
             this.appPassword = encryptString(this.appPassword, secret);
         }
     }
 
     // decrypt keys in service
-    public decrypt(secret: string): void {
+    public decrypt(secret: string, decryptString: (value: string, secret: string) => string): void {
         if (this.appPassword && this.appPassword.length > 0) {
             this.appPassword = decryptString(this.appPassword, secret);
         }

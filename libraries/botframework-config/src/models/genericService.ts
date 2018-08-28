@@ -2,7 +2,6 @@
  * Copyright(c) Microsoft Corporation.All rights reserved.
  * Licensed under the MIT License.
  */
-import { decryptString, encryptString } from '../encrypt';
 import { IGenericService, ServiceTypes } from '../schema';
 import { ConnectedService } from './connectedService';
 
@@ -23,7 +22,7 @@ export class GenericService extends ConnectedService implements IGenericService 
     }
 
     // encrypt keys in service
-    public encrypt(secret: string): void {
+    public encrypt(secret: string, encryptString: (value: string, secret: string) => string): void {
         const that: GenericService = this;
         if (this.configuration) {
             Object.keys(this.configuration).forEach((prop: string) => {
@@ -33,7 +32,7 @@ export class GenericService extends ConnectedService implements IGenericService 
     }
 
     // decrypt keys in service
-    public decrypt(secret: string): void {
+    public decrypt(secret: string, decryptString: (value: string, secret: string) => string): void {
         const that: GenericService = this;
         if (this.configuration) {
             Object.keys(this.configuration).forEach((prop: string) => {

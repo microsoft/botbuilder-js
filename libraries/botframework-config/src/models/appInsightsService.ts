@@ -2,7 +2,6 @@
  * Copyright(c) Microsoft Corporation.All rights reserved.
  * Licensed under the MIT License.
  */
-import { decryptString, encryptString } from '../encrypt';
 import { IAppInsightsService, ServiceTypes } from '../schema';
 import { AzureService } from './azureService';
 
@@ -24,7 +23,7 @@ export class AppInsightsService extends AzureService implements IAppInsightsServ
     }
 
     // encrypt keys in service
-    public encrypt(secret: string): void {
+    public encrypt(secret: string, encryptString: (value: string, secret: string) => string): void {
         const that: AppInsightsService = this;
         if (this.instrumentationKey && this.instrumentationKey.length > 0) {
             this.instrumentationKey = encryptString(this.instrumentationKey, secret);
@@ -37,7 +36,7 @@ export class AppInsightsService extends AzureService implements IAppInsightsServ
     }
 
     // decrypt keys in service
-    public decrypt(secret: string): void {
+    public decrypt(secret: string, decryptString: (value: string, secret: string) => string): void {
         const that: AppInsightsService = this;
         if (this.instrumentationKey && this.instrumentationKey.length > 0) {
             this.instrumentationKey = decryptString(this.instrumentationKey, secret);
