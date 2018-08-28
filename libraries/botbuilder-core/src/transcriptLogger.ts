@@ -6,9 +6,9 @@
  * Licensed under the MIT License.
  */
 
+import { Activity, ActivityTypes } from 'botframework-schema';
 import { Middleware } from './middlewareSet';
 import { TurnContext } from './turnContext';
-import { Activity, ActivityTypes } from 'botframework-schema';
 
 /**
  * When added, this middleware will log incoming and outgoing activities to a ITranscriptStore.
@@ -160,7 +160,7 @@ export interface TranscriptStore extends TranscriptLogger {
      * @param channelId Channel Id.
      * @param continuationToken Continuatuation token to page through results.
      */
-    listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<Transcript>>;
+    listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<TranscriptInfo>>;
 
     /**
      * Delete a specific conversation and all of it's activities.
@@ -173,7 +173,7 @@ export interface TranscriptStore extends TranscriptLogger {
 /**
  * Metadata for a stored transcript.
  */
-export class Transcript {
+export class TranscriptInfo {
     /**
      * ChannelId that the transcript was taken from.
      */
