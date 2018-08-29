@@ -378,94 +378,19 @@ describe('DialogContext', function() {
         });
     });
 
-    xit(`should return an error if end() returns to a dialog that can't be found.`, function (done) {
-        const dialogs = new DialogSet();
-        dialogs.add('a', [
-            function (dc) {
-                return dc.begin('b');
-            },
-            function (dc) {
-                assert(false, `shouldn't be called`);
-            }
-        ]);
+    xit(`should throw an error if parents dialog does not support dialog.dialogEnd().`, function (done) {
 
-        dialogs.add('b', [
-            function (dc) {
-                return dc.context.sendActivity(`foo`);
-            },
-            function (dc) {
-                return dc.end();
-            }
-        ]);
-
-        const state = {};
-        const context = new TestContext(beginMessage);
-        const dc = dialogs.createContext(context, state);
-        dc.begin('a').then(() => {
-            assert(dc.activeDialog && dc.activeDialog.id === 'b');
-            dc.activeDialog.id = 'c';
-            const dc2 = dialogs.createContext(context, state);
-            return dc2.continue().catch((err) => {
-                assert(err);
-                done();
-            });
-        });
     });
 
-    xit(`should ignore additional calls to end().`, function (done) {
-        const dialogs = new DialogSet();
-        const state = {};
-        const context = new TestContext(beginMessage);
-        const dc = dialogs.createContext(context, state);
-        dc.end().then(() => {
-            assert(dc.activeDialog === undefined);
-            done();
-        });
-    });
-
-    xit(`should endAll() dialogs.`, function (done) {
-        const dialogs = new DialogSet();
-        dialogs.add('a', [
-            function (dc) {
-                return dc.begin('b');
-            },
-            function (dc) {
-                assert(false, `shouldn't be called`);
-            }
-        ]);
-
-        dialogs.add('b', [
-            function (dc) {
-                return dc.context.sendActivity(`foo`);
-            },
-            function (dc) {
-                return dc.end();
-            }
-        ]);
-
-        const state = {};
-        const context = new TestContext(beginMessage);
-        const dc = dialogs.createContext(context, state);
-        dc.begin('a').then(() => {
-            assert(dc.stack.length > 0, `Unexpected stack length.`);
-            dc.endAll();
-            assert(dc.stack.length == 0, `Didn't clear stack.`);
-            dc.endAll();    // <- shouldn't throw exception
-            done();
-        });
-    });
-
-    xit(`should replace() dialog.`, function (done) {
+    it(`should accept calls to end when no activeDialogs or parent dialogs exist.`, function (done) {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
-        
-            const results = await dc.continue();
-            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
-                await dc.begin('a');
-            } else if (!results.hasActive && results.hasResult) {
-                assert.strictEqual(results.result, true, `received unexpected final result from dialog.`);
-                done();
-            }
+            
+            const results = await dc.end();
+            assert.strictEqual(results.hasActive, false, `received true for results.hasActive (expected true).`);
+            assert.strictEqual(results.hasResult, true, `received false for results.hasResult (expected true).`);
+            assert.strictEqual(results.result, undefined, `received unexpected value for results.result (expected undefined).`);
+            done();
         });
 
         const convoState = new ConversationState(new MemoryStorage());
@@ -475,45 +400,70 @@ describe('DialogContext', function() {
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [
             async function (dc, step) {
-                return dc.replace('b', args);
+                assert(dc, `DialogContext not passed in to WaterfallStep.`);
+                assert(step, `WaterfallStepContext not passed in to WaterfallStep.`);
+                return await dc.replace('b', { z: step.options.z });
+            }
+        ]));
+
+        adapter.send(beginMessage);
+    });
+
+    it(`should replace() dialog.`, function (done) {
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+        
+            const results = await dc.begin('a', { z: 'z' });
+            assert.strictEqual(results.result, 'z', `received unexpected final result from dialog.`);
+            done();
+        });
+
+        const convoState = new ConversationState(new MemoryStorage());
+        adapter.use(convoState);
+        const dialogState = convoState.createProperty('dialogState');
+
+        const dialogs = new DialogSet(dialogState);
+        dialogs.add(new WaterfallDialog('a', [
+            async function (dc, step) {
+                assert(dc, `DialogContext not passed in to WaterfallStep.`);
+                assert(step, `WaterfallStepContext not passed in to WaterfallStep.`);
+                return await dc.replace('b', { z: step.options.z });
             }
         ]));
 
         dialogs.add(new WaterfallDialog('b', [
             async function (dc, step) {
-                assert(args === 'z');
-                return dc.context.sendActivity(`foo`);
+                assert(dc, `DialogContext not passed in to WaterfallStep.`);
+                assert(step, `WaterfallStepContext not passed in to WaterfallStep.`);
+                assert.strictEqual(dc.stack.length, 1, `current DialogContext.stack.length should be 1.`);
+                assert.strictEqual(step.options.z, 'z', `incorrect step.options received.`);
+                return await dc.end(step.options.z);
             }
         ]));
 
-        const state = {};
-        const context = new TestContext(beginMessage);
-        const dc = dialogs.createContext(context, state);
-        dc.begin('a', 'z').then(() => {
-            assert(dc.stack.length == 1);
-            assert(dc.stack[0].id == 'b');
-            done();
-        });
+        adapter.send(beginMessage);
     });
 
-    xit(`should return error if stack empty when replace() called.`, function (done) {
+    it(`should begin dialog if stack empty when replace() called with valid dialogId.`, function (done) {
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.replace('b');
+            done();
+        });
         const convoState = new ConversationState(new MemoryStorage());
         adapter.use(convoState);
         const dialogState = convoState.createProperty('dialogState');
 
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('b', [
-            function (dc, args) {
-                assert(false, `shouldn't have started dialog`);
+            async function (dc, step) {
+                assert(dc, `DialogContext not passed in to WaterfallStep.`);
+                assert(step, `WaterfallStepContext not passed in to WaterfallStep.`);
+                return await dc.end();
             }
         ]));
 
-        const state = {};
-        const context = new TestContext(beginMessage);
-        const dc = dialogs.createContext(context, state);
-        dc.replace('b').catch((err) => {
-            assert(err);
-            done();
-        });
+        adapter.send(beginMessage);
     });
 });
