@@ -1,20 +1,9 @@
-const { ConversationState, MemoryStorage, TestAdapter, TurnContext } = require('botbuilder-core');
+const { ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
 const { Dialog, DialogSet, WaterfallDialog } =  require('../');
 const assert = require('assert');
 
 const beginMessage = { text: `begin`, type: 'message' };
 const continueMessage = { text: `continue`, type: 'message' };
-
-class TestContext extends TurnContext {
-    constructor(request) {
-        super(new TestAdapter(), request);
-        this.sent = undefined;
-        this.onSendActivities((context, activities, next) => {
-            this.sent = activities;
-            context.responded = true;
-        });
-    }
-}
 
 describe('DialogContext', function() {
     this.timeout(5000);
@@ -353,33 +342,6 @@ describe('DialogContext', function() {
         ]));
 
         adapter.send(beginMessage);
-    });
-    
-    xit(`should return to parents parent when end() called and parent doesn't support Dialog.dialogResume().`, function (done) {
-        const dialogs = new DialogSet();
-        dialogs.add('a', {
-            dialogBegin: (dc, args) => {
-                return dc.begin('b');
-            }
-        });
-
-        dialogs.add('b', [
-            function (dc) {
-                return dc.end();
-            }
-        ]);
-
-        const state = {};
-        const context = new TestContext(beginMessage);
-        const dc = dialogs.createContext(context, state);
-        dc.begin('a').then(() => {
-            assert(dc.activeDialog === undefined);
-            done();
-        });
-    });
-
-    xit(`should throw an error if parents dialog does not support dialog.dialogEnd().`, function (done) {
-
     });
 
     it(`should accept calls to end when no activeDialogs or parent dialogs exist.`, function (done) {
