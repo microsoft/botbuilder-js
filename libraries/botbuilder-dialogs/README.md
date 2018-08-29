@@ -56,7 +56,7 @@ dialogs.add(new WaterfallDialog(DIALOG_ONE, [
         var last_step_answer = step.result;
 
         // send a message to the user
-        dialog_context.context.sendActivity('Send a reply');
+        await dialog_context.context.sendActivity('Send a reply');
 
         // continue to the next step
         return await step.next();
