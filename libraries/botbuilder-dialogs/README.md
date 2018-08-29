@@ -2,7 +2,7 @@ A dialog stack based conversation manager for Microsoft BotBuilder.
 
 - [Installing](#installing)
 - [Basic Use](#use)
-- [Advanced Use](#next)
+- [Advanced Topics](#advanced-topics)
 - [Documentation](https://docs.microsoft.com/en-us/azure/bot-service/bot-service-overview-introduction?view=azure-bot-service-4.0)
 - [Class Reference](https://docs.microsoft.com/en-us/javascript/api/botbuilder-dialogs/)
 - [GitHub Repo](https://github.com/Microsoft/botbuilder-js)
@@ -92,4 +92,4 @@ adapter.processActivity(req, res, async (context) => {
 
 [Prompts](https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-prompts?view=azure-bot-service-4.0&tabs=javascript) This module contains several types of built-in prompt that can be used to create dialogs that capture and validate specific data types like dates, numbers and multiple-choice answers.
 
-[Component Dialogs]() Component Dialogs are a containers that organize multiple sub-dialogs, and can be invoked like normal dialogs. This is useful for re-usable dialogs.
+[Component Dialogs]() Component Dialogs are containers that encapsulate multiple sub-dialogs, but can be invoked like normal dialogs. This is useful for re-usable dialogs, or creating multiple dialogs with similarly named sub-dialogs that would otherwise collide.
