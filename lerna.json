@@ -1,5 +1,5 @@
 {
-  "lerna": "2.8.0",
+  "lerna": "3.2.1",
   "packages": [
     "libraries/*",
     "samples/*",
@@ -7,7 +7,7 @@
     "transcripts"
   ],
   "version": "independent",
-  "commands": {
+  "command": {
     "bootstrap": {
       "hoist": true
     }
