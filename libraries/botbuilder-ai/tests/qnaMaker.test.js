@@ -9,7 +9,7 @@ const knowledgeBaseId = process.env.QNAKNOWLEDGEBASEID;
 const endpointKey = process.env.QNAENDPOINTKEY;
 const hostname = process.env.QNAHOSTNAME || 'botbuilder-test-app';
 const forceMockQnA = false;
-const mockQnA = forceMockQnA || (knowledgeBaseId && endpointKey && hostname !== 'botbuilder-test-app');
+const mockQnA = forceMockQnA || !(knowledgeBaseId && endpointKey);
 
 class TestContext extends TurnContext {
     constructor(request) {
@@ -30,6 +30,9 @@ describe('QnAMaker', function () {
     }
     if (!endpointKey) {
         console.warn('WARNING: QnAMaker test suite QNAENDPOINTKEY environment variable is not defined');
+    }
+    if (mockQnA) {
+        console.info('INFO: QnAMaker test suite will execute using mocked responses');
     }
 
     // Generate endpoints
@@ -154,7 +157,7 @@ describe('QnAMaker', function () {
                 assert.strictEqual(traceActivity.hasOwnProperty('value'), true, `'traceActivity' should have 'value' property.`);
                 assert.strictEqual(traceActivity.value.hasOwnProperty('message'), true, `'traceActivity.value' should have 'message' property.`);
                 assert.strictEqual(traceActivity.value.hasOwnProperty('queryResults'), true, `'traceActivity.value' should have 'queryResults' property.'`);
-                assert.strictEqual(traceActivity.knowledgeBaseId, knowledgeBaseId, `Should have returned '${ knowledgeBaseId }'`);
+                assert.strictEqual(traceActivity.value.knowledgeBaseId, knowledgeBaseId, `Should have returned '${ knowledgeBaseId }'`);
                 assert.strictEqual(traceActivity.value.hasOwnProperty('scoreThreshold'), true, `'traceActivity.value' should have 'scoreThreshold' property.'`);
                 done();
             });
