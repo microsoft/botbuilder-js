@@ -162,8 +162,6 @@ export class BotConfiguration extends BotConfigurationBase {
             } catch (err2) {
                 throw err;
             }
-
-            return service;
         }
     }
 
