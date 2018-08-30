@@ -163,7 +163,7 @@ export class BotConfiguration extends BotConfigurationBase {
                 throw err;
             }
 
-            // return service;
+            return service;
         }
     }
 
