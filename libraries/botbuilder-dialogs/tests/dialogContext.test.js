@@ -66,7 +66,7 @@ describe('DialogContext', function() {
         adapter.send(beginMessage);
     });
 
-    it('should return error if begin() called with invalid dialog ID.', function (done) {
+    it('should return error if begin() called with invalid dialogId.', function (done) {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
         
@@ -75,7 +75,7 @@ describe('DialogContext', function() {
             }
             catch (err) {
                 assert(err);
-                assert.strictEqual(err.message, `DialogContext.begin(): A dialog with an id of 'b' wasn't found.`, `Thrown error was not the expected error.`);
+                assert.strictEqual(err.message, `DialogContext.begin(): A dialog with an id of 'b' wasn't found.`, `unexpected error message thrown: "${err.message}"`);
                 return done();
             }
             throw new Error('Should have thrown an error.');
@@ -255,7 +255,7 @@ describe('DialogContext', function() {
             }
             catch (err) {
                 assert(err, `Error not found.`);
-                assert.strictEqual(err.message, `DialogContext.continue(): Can't continue dialog. A dialog with an id of 'b' wasn't found.`);
+                assert.strictEqual(err.message, `DialogContext.continue(): Can't continue dialog. A dialog with an id of 'b' wasn't found.`, `unexpected error message thrown: "${err.message}"`);
                 return done();
             }
             if (!turnContext.responded && !results.hasActive && !results.hasResult) {
