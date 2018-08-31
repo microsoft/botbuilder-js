@@ -259,63 +259,74 @@ export class BotConfiguration extends BotConfigurationBase {
     }
 
     // export the services from the bot file as resource files and recipe file
-    public async export(folder: string, progress?: (description: IConnectedService, index: number, total: number) => void): Promise<BotRecipe> {
+    public async export(folder: string, progress?: (service: IConnectedService, command: string, index: number, total: number) => void): Promise<BotRecipe> {
         let recipe = new BotRecipe();
 
         await fsx.ensureDir(folder);
 
         let index = 0;
         for (let service of this.services) {
-            // provide progress
-            if (progress) {
-                index++;
-                progress(service, index, this.services.length);
-            }
+            index++;
+            try {
 
-            switch (service.type) {
-                case ServiceTypes.Dispatch:
-                case ServiceTypes.Luis:
-                    {
-                        let luisService = <ILuisService>service;
-                        let p = await exec(`luis export version --appId ${luisService.appId} --authoringKey ${luisService.authoringKey} --versionId "${luisService.version}"`);
-                        var json = p.stdout;
-                        // make sure it's json
-                        JSON.parse(json);
-                        await fsx.writeFile(folder + `/${luisService.id}.luis`, json, { encoding: 'utf8' });
+                switch (service.type) {
+                    case ServiceTypes.Dispatch:
+                    case ServiceTypes.Luis:
+                        {
+                            let luisService = <ILuisService>service;
+                            let command = `luis export version --appId ${luisService.appId} --authoringKey ${luisService.authoringKey} --versionId "${luisService.version}"`;
+                            if (progress) {
+                                progress(service, command, index, this.services.length);
+                            }
+                            let p = await exec(command);
+                            var json = p.stdout;
+                            // make sure it's json
+                            JSON.parse(json);
+                            await fsx.writeFile(folder + `/${luisService.id}.luis`, json, { encoding: 'utf8' });
+                            recipe.services.push({
+                                type: service.type,
+                                id: service.id,
+                                name: service.name,
+                                serviceName: service.name
+                            });
+                        }
+                        break;
+
+                    case ServiceTypes.QnA:
+                        {
+                            let qnaService = <IQnAService>service;
+                            let command = `qnamaker export kb --kbId ${qnaService.kbId} --environment prod --subscriptionKey ${qnaService.subscriptionKey} --hostname ${qnaService.hostname} --endpointKey ${qnaService.endpointKey}`;
+                            if (progress) {
+                                progress(service, command, index, this.services.length);
+                            }
+                            let p = await exec(command);
+                            var json = p.stdout;
+                            // make sure it's json
+                            JSON.parse(json);
+                            await fsx.writeFile(folder + `/${qnaService.id}.qna`, json, { encoding: 'utf8' });
+                            recipe.services.push({
+                                type: service.type,
+                                id: service.id,
+                                name: service.name,
+                                serviceName: service.name
+                            });
+                        }
+                        break;
+
+                    default:
+                        if (progress) {
+                            progress(service, '', index, this.services.length);
+                        }
                         recipe.services.push({
                             type: service.type,
                             id: service.id,
                             name: service.name,
                             serviceName: service.name
                         });
-                    }
-                    break;
+                        break;
+                }
+            } catch (error) {
 
-                case ServiceTypes.QnA:
-                    {
-                        let qnaService = <IQnAService>service;
-                        let p = await exec(`qnamaker export kb --kbId ${qnaService.kbId} --environment prod --subscriptionKey ${qnaService.subscriptionKey} --hostname ${qnaService.hostname} --endpointKey ${qnaService.endpointKey}`);
-                        var json = p.stdout;
-                        // make sure it's json
-                        JSON.parse(json);
-                        await fsx.writeFile(folder + `/${qnaService.id}.qna`, json, { encoding: 'utf8' });
-                        recipe.services.push({
-                            type: service.type,
-                            id: service.id,
-                            name: service.name,
-                            serviceName: service.name
-                        });
-                    }
-                    break;
-
-                default:
-                    recipe.services.push({
-                        type: service.type,
-                        id: service.id,
-                        name: service.name,
-                        serviceName: service.name
-                    });
-                    break;
             }
         }
         await fsx.writeFile(folder + `/${this.name}.bot.recipe`, JSON.stringify(recipe, null, 2), { encoding: 'utf8' });
