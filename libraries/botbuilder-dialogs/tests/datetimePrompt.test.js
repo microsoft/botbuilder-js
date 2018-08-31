@@ -1,5 +1,5 @@
-const { BotState, BotStatePropertyAccessor, ConversationState, MemoryStorage, TestAdapter, TurnContext } = require('botbuilder-core');
-const { DateTimePrompt, DialogSet, DialogState, WaterfallDialog } =  require('../');
+const { ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
+const { DateTimePrompt, DialogSet, DialogTurnStatus } =  require('../');
 const assert = require('assert');
 
 const answerMessage = { text: `January 1st, 2018 at 9am`, type: 'message' };
@@ -15,9 +15,9 @@ describe('DatetimePrompt', function() {
             const dc = await dialogs.createContext(turnContext);
 
             const results = await dc.continue();
-            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
+            if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', 'Please say something.');
-            } else if (!results.hasActive && results.hasResult) {
+            } else if (results.status === DialogTurnStatus.complete) {
                 const dates = results.result;
                 await turnContext.sendActivity(dates[0].timex);
             }
@@ -43,9 +43,9 @@ describe('DatetimePrompt', function() {
             const dc = await dialogs.createContext(turnContext);
 
             const results = await dc.continue();
-            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
+            if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please say something.' });
-            } else if (!results.hasActive && results.hasResult) {
+            } else if (results.status === DialogTurnStatus.complete) {
                 const dates = results.result;
                 await turnContext.sendActivity(dates[0].timex);
             }
@@ -69,9 +69,9 @@ describe('DatetimePrompt', function() {
             const dc = await dialogs.createContext(turnContext);
 
             const results = await dc.continue();
-            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
+            if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', 'Please say something.');
-            } else if (!results.hasActive && results.hasResult) {
+            } else if (results.status === DialogTurnStatus.complete) {
                 const dates = results.result;
                 await turnContext.sendActivity(dates[0].timex);
             }
@@ -100,9 +100,9 @@ describe('DatetimePrompt', function() {
             const dc = await dialogs.createContext(turnContext);
 
             const results = await dc.continue();
-            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
+            if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please say something.', retryPrompt: 'Please provide a valid datetime.' });
-            } else if (!results.hasActive && results.hasResult) {
+            } else if (results.status === DialogTurnStatus.complete) {
                 const dates = results.result;
                 await turnContext.sendActivity(dates[0].timex);
             }
@@ -135,9 +135,9 @@ describe('DatetimePrompt', function() {
             const dc = await dialogs.createContext(turnContext);
 
             const results = await dc.continue();
-            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
+            if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please say something.', retryPrompt: 'Please provide a valid datetime.' });
-            } else if (!results.hasActive && results.hasResult) {
+            } else if (results.status === DialogTurnStatus.complete) {
                 const dates = results.result;
                 await turnContext.sendActivity(dates[0].timex);
             }
@@ -172,9 +172,9 @@ describe('DatetimePrompt', function() {
             const dc = await dialogs.createContext(turnContext);
 
             const results = await dc.continue();
-            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
+            if (results.status === DialogTurnStatus.empty) {
                 await dc.begin('prompt');
-            } else if (!results.hasActive && results.hasResult) {
+            } else if (results.status === DialogTurnStatus.complete) {
                 const dates = results.result;
                 await turnContext.sendActivity(dates[0].timex);
             }

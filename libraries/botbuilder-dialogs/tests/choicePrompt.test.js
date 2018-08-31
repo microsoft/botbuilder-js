@@ -1,5 +1,5 @@
-const { ActivityTypes, BotState, BotStatePropertyAccessor, ConversationState, MemoryStorage, TestAdapter, TurnContext } = require('botbuilder-core');
-const { ChoicePrompt, DialogSet, DialogState, ListStyle, WaterfallDialog } =  require('../');
+const { ActivityTypes, ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
+const { ChoicePrompt, DialogSet,ListStyle, DialogTurnStatus } =  require('../');
 const assert = require('assert');
 
 const answerMessage = { text: `red`, type: 'message' };
@@ -16,9 +16,9 @@ describe('ChoicePrompt', function() {
             const dc = await dialogs.createContext(turnContext);
 
             const results = await dc.continue();
-            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
+            if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', 'Please choose a color.', stringChoices);
-            } else if (!results.hasActive && results.hasResult) {
+            } else if (results.status === DialogTurnStatus.complete) {
                 const selectedChoice = results.result;
                 await turnContext.sendActivity(selectedChoice.value);
             }
@@ -48,9 +48,9 @@ describe('ChoicePrompt', function() {
             const dc = await dialogs.createContext(turnContext);
 
             const results = await dc.continue();
-            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
+            if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please choose a color.', choices: stringChoices });
-            } else if (!results.hasActive && results.hasResult) {
+            } else if (results.status === DialogTurnStatus.complete) {
                 const selectedChoice = results.result;
                 await turnContext.sendActivity(selectedChoice.value);
             }
@@ -77,9 +77,9 @@ describe('ChoicePrompt', function() {
             const dc = await dialogs.createContext(turnContext);
 
             const results = await dc.continue();
-            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
+            if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', 'Please choose a color.', stringChoices);
-            } else if (!results.hasActive && results.hasResult) {
+            } else if (results.status === DialogTurnStatus.complete) {
                 const selectedChoice = results.result;
                 await turnContext.sendActivity(selectedChoice.value);
             }
@@ -113,9 +113,9 @@ describe('ChoicePrompt', function() {
             const dc = await dialogs.createContext(turnContext);
 
             const results = await dc.continue();
-            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
+            if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please choose a color.', retryPrompt: 'Please choose red, blue, or green.', choices: stringChoices });
-            } else if (!results.hasActive && results.hasResult) {
+            } else if (results.status === DialogTurnStatus.complete) {
                 const selectedChoice = results.result;
                 await turnContext.sendActivity(selectedChoice.value);
             }
@@ -143,9 +143,9 @@ describe('ChoicePrompt', function() {
             const dc = await dialogs.createContext(turnContext);
 
             const results = await dc.continue();
-            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
+            if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please choose a color.', retryPrompt: 'Please choose red, blue, or green.', choices: stringChoices });
-            } else if (!results.hasActive && results.hasResult) {
+            } else if (results.status === DialogTurnStatus.complete) {
                 const selectedChoice = results.result;
                 await turnContext.sendActivity(selectedChoice.value);
             }
@@ -181,9 +181,9 @@ describe('ChoicePrompt', function() {
             const dc = await dialogs.createContext(turnContext);
 
             const results = await dc.continue();
-            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
+            if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please choose a color.', choices: stringChoices });
-            } else if (!results.hasActive && results.hasResult) {
+            } else if (results.status === DialogTurnStatus.complete) {
                 const selectedChoice = results.result;
                 await turnContext.sendActivity(selectedChoice.value);
             }
@@ -218,9 +218,9 @@ describe('ChoicePrompt', function() {
             const dc = await dialogs.createContext(turnContext);
 
             const results = await dc.continue();
-            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
+            if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please choose a color.', choices: stringChoices });
-            } else if (!results.hasActive && results.hasResult) {
+            } else if (results.status === DialogTurnStatus.complete) {
                 const selectedChoice = results.result;
                 await turnContext.sendActivity(selectedChoice.value);
             }
@@ -253,9 +253,9 @@ describe('ChoicePrompt', function() {
             const dc = await dialogs.createContext(turnContext);
 
             const results = await dc.continue();
-            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
+            if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please choose a color.', choices: stringChoices });
-            } else if (!results.hasActive && results.hasResult) {
+            } else if (results.status === DialogTurnStatus.complete) {
                 const selectedChoice = results.result;
                 await turnContext.sendActivity(selectedChoice.value);
             }

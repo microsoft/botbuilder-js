@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { TurnContext } from 'botbuilder-core';
-import { Dialog, DialogInstance, DialogReason, DialogTurnResult } from './dialog';
+import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus } from './dialog';
 import { DialogContext, DialogState } from './dialogContext';
 import { DialogSet } from './dialogSet';
 
@@ -16,40 +16,39 @@ const PERSISTED_DIALOG_STATE: string = 'dialogs';
  * The `ComponentDialog` class lets you break your bots logic up into components that can be added
  * as a dialog to other dialog sets within your bots project or exported and used in other bot
  * projects.
- * @param R (Optional) type of result that's expected to be returned by the dialog.
  * @param O (Optional) options that can be passed into the begin() method.
  */
-export class ComponentDialog<R = any, O = {}> extends Dialog {
+export class ComponentDialog<O extends object = {}> extends Dialog<O> {
     protected initialDialogId: string;
     private dialogs: DialogSet = new DialogSet(null);
 
-    public async dialogBegin(dc: DialogContext, options?: any): Promise<DialogTurnResult<R>> {
+    public async dialogBegin(outerDC: DialogContext, options?: O): Promise<DialogTurnResult> {
         // Start the inner dialog.
         const dialogState: DialogState = { dialogStack: [] };
-        dc.activeDialog.state[PERSISTED_DIALOG_STATE] = dialogState;
-        const cdc: DialogContext = new DialogContext(this.dialogs, dc.context, dialogState);
-        const turnResult: DialogTurnResult<any> = await this.onDialogBegin(cdc, options);
+        outerDC.activeDialog.state[PERSISTED_DIALOG_STATE] = dialogState;
+        const innerDC: DialogContext = new DialogContext(this.dialogs, outerDC.context, dialogState);
+        const turnResult: DialogTurnResult<any> = await this.onDialogBegin(innerDC, options);
 
         // Check for end of inner dialog
-        if (turnResult.hasResult) {
+        if (turnResult.status !== DialogTurnStatus.waiting) {
             // Return result to calling dialog
-            return await dc.end(turnResult.result);
+            return await this.endComponent(outerDC, turnResult.result);
         } else {
             // Just signal end of turn
             return Dialog.EndOfTurn;
         }
     }
 
-    public async dialogContinue(dc: DialogContext): Promise<DialogTurnResult<R>> {
+    public async dialogContinue(outerDC: DialogContext): Promise<DialogTurnResult> {
         // Continue execution of inner dialog.
-        const dialogState: any = dc.activeDialog.state[PERSISTED_DIALOG_STATE];
-        const cdc: DialogContext = new DialogContext(this.dialogs, dc.context, dialogState);
-        const turnResult: DialogTurnResult<any> = await this.onDialogContinue(cdc);
+        const dialogState: any = outerDC.activeDialog.state[PERSISTED_DIALOG_STATE];
+        const innerDC: DialogContext = new DialogContext(this.dialogs, outerDC.context, dialogState);
+        const turnResult: DialogTurnResult<any> = await this.onDialogContinue(innerDC);
 
         // Check for end of inner dialog
-        if (turnResult.hasResult) {
+        if (turnResult.status !== DialogTurnStatus.waiting) {
             // Return result to calling dialog
-            return await dc.end(turnResult.result);
+            return await this.endComponent(outerDC, turnResult.result);
         } else {
             // Just signal end of turn
             return Dialog.EndOfTurn;
@@ -68,17 +67,25 @@ export class ComponentDialog<R = any, O = {}> extends Dialog {
     }
 
     public async dialogReprompt(context: TurnContext, instance: DialogInstance): Promise<void> {
-        // Delegate to inner dialog.
+        // Forward to inner dialogs
         const dialogState: any = instance.state[PERSISTED_DIALOG_STATE];
-        const cdc: DialogContext = new DialogContext(this.dialogs, context, dialogState);
-        await this.onDialogReprompt(cdc);
+        const innerDC: DialogContext = new DialogContext(this.dialogs, context, dialogState);
+        await innerDC.reprompt();
+
+        // Notify component.
+        await this.onDialogReprompt(context, instance);
     }
 
     public async dialogEnd(context: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void> {
-        // Notify inner dialog
-        const dialogState: any = instance.state[PERSISTED_DIALOG_STATE];
-        const cdc: DialogContext = new DialogContext(this.dialogs, context, dialogState);
-        await this.onDialogEnd(cdc, reason);
+        // Forward cancel to inner dialogs
+        if (reason === DialogReason.cancelCalled) {
+            const dialogState: any = instance.state[PERSISTED_DIALOG_STATE];
+            const innerDC: DialogContext = new DialogContext(this.dialogs, context, dialogState);
+            await innerDC.cancelAll();
+        } 
+
+        // Notify component
+        await this.onDialogEnd(context, instance, reason);
     }
 
     protected addDialog<T extends Dialog>(dialog: T): T {
@@ -88,21 +95,23 @@ export class ComponentDialog<R = any, O = {}> extends Dialog {
         return dialog;
     }
 
-    protected onDialogBegin(dc: DialogContext, options?: any): Promise<DialogTurnResult> {
-        return dc.begin(this.initialDialogId, options);
+    protected onDialogBegin(innerDC: DialogContext, options?: O): Promise<DialogTurnResult> {
+        return innerDC.begin(this.initialDialogId, options);
     }
 
-    protected async onDialogEnd(dc: DialogContext, reason: DialogReason): Promise<void> {
-        if (reason === DialogReason.cancelCalled) {
-            await dc.cancelAll();
-        }
+    protected onDialogContinue(innerDC: DialogContext): Promise<DialogTurnResult> {
+        return innerDC.continue();
     }
 
-    protected onDialogContinue(dc: DialogContext): Promise<DialogTurnResult> {
-        return dc.continue();
+    protected onDialogEnd(context: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void> {
+        return Promise.resolve();
     }
 
-    protected onDialogReprompt(dc: DialogContext): Promise<void> {
-        return dc.reprompt();
+    protected onDialogReprompt(context: TurnContext, instance: DialogInstance): Promise<void> {
+        return Promise.resolve();
+    }
+
+    protected endComponent(outerDC: DialogContext, result: any): Promise<DialogTurnResult> {
+        return outerDC.end(result);
     }
 }

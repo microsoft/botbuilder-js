@@ -1,5 +1,5 @@
-const { ActivityTypes, BotState, BotStatePropertyAccessor, ConversationState, MemoryStorage, TestAdapter, TurnContext } = require('botbuilder-core');
-const { ConfirmPrompt, DialogSet, DialogState, ListStyle, WaterfallDialog } =  require('../');
+const { ActivityTypes, ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
+const { ConfirmPrompt, DialogSet, DialogTurnStatus, ListStyle } =  require('../');
 const assert = require('assert');
 
 const beginMessage = { text: `begin`, type: 'message' };
@@ -15,9 +15,9 @@ describe('ConfirmPrompt', function() {
             const dc = await dialogs.createContext(turnContext);
 
             const results = await dc.continue();
-            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
+            if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please confirm.' });
-            } else if (!results.hasActive && results.hasResult) {
+            } else if (results.status === DialogTurnStatus.complete) {
                 await turnContext.sendActivity(`The result found is '${results.result}'.`);
             }
         });
@@ -43,9 +43,9 @@ describe('ConfirmPrompt', function() {
             const dc = await dialogs.createContext(turnContext);
 
             const results = await dc.continue();
-            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
+            if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please confirm. Yes or No' });
-            } else if (!results.hasActive && results.hasResult) {
+            } else if (results.status === DialogTurnStatus.complete) {
                 await turnContext.sendActivity(`The result found is '${results.result}'.`);
             }
         });
@@ -75,12 +75,12 @@ describe('ConfirmPrompt', function() {
             const dc = await dialogs.createContext(turnContext);
 
             const results = await dc.continue();
-            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
+            if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', {
                     prompt: 'Please confirm. Yes or No',
                     retryPrompt: `Please reply with 'Yes' or 'No'.`
                 });
-            } else if (!results.hasActive && results.hasResult) {
+            } else if (results.status === DialogTurnStatus.complete) {
                 await turnContext.sendActivity(`The result found is '${results.result}'.`);
             }
         });
@@ -109,12 +109,12 @@ describe('ConfirmPrompt', function() {
             const dc = await dialogs.createContext(turnContext);
 
             const results = await dc.continue();
-            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
+            if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', {
                     prompt: 'Please confirm. Yes or No',
                     retryPrompt: `Please reply with 'Yes' or 'No'.`
                 });
-            } else if (!results.hasActive && results.hasResult) {
+            } else if (results.status === DialogTurnStatus.complete) {
                 await turnContext.sendActivity(`The result found is '${results.result}'.`);
             }
         });
@@ -149,12 +149,12 @@ describe('ConfirmPrompt', function() {
             const dc = await dialogs.createContext(turnContext);
 
             const results = await dc.continue();
-            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
+            if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', {
                     prompt: 'Please confirm. Yes or No',
                     retryPrompt: `Please reply with 'Yes' or 'No'.`
                 });
-            } else if (!results.hasActive && results.hasResult) {
+            } else if (results.status === DialogTurnStatus.complete) {
                 await turnContext.sendActivity(`The result found is '${results.result}'.`);
             }
         });
@@ -191,9 +191,9 @@ describe('ConfirmPrompt', function() {
             const dc = await dialogs.createContext(turnContext);
 
             const results = await dc.continue();
-            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
+            if (results.status === DialogTurnStatus.empty) {
                 await dc.begin('prompt');
-            } else if (!results.hasActive && results.hasResult) {
+            } else if (results.status === DialogTurnStatus.complete) {
                 await turnContext.sendActivity(`The result found is '${results.result}'.`);
             }
         });
@@ -222,9 +222,9 @@ describe('ConfirmPrompt', function() {
             const dc = await dialogs.createContext(turnContext);
 
             const results = await dc.continue();
-            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
+            if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please confirm.' });
-            } else if (!results.hasActive && results.hasResult) {
+            } else if (results.status === DialogTurnStatus.complete) {
                 const confirmed = results.result;
                 if (confirmed) {
                     await turnContext.sendActivity('true');
@@ -263,9 +263,9 @@ describe('ConfirmPrompt', function() {
             const dc = await dialogs.createContext(turnContext);
 
             const results = await dc.continue();
-            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
+            if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please confirm.' });
-            } else if (!results.hasActive && results.hasResult) {
+            } else if (results.status === DialogTurnStatus.complete) {
                 const confirmed = results.result;
                 if (confirmed) {
                     await turnContext.sendActivity('true');
@@ -302,9 +302,9 @@ describe('ConfirmPrompt', function() {
             const dc = await dialogs.createContext(turnContext);
 
             const results = await dc.continue();
-            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
+            if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please confirm.' });
-            } else if (!results.hasActive && results.hasResult) {
+            } else if (results.status === DialogTurnStatus.complete) {
                 const confirmed = results.result;
                 if (confirmed) {
                     await turnContext.sendActivity('true');

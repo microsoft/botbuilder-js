@@ -1,5 +1,5 @@
-const { ConversationState, MemoryStorage, TestAdapter, TurnContext } = require('botbuilder-core');
-const { Dialog, DialogSet, WaterfallDialog } =  require('../');
+const { ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
+const { Dialog, DialogSet, WaterfallDialog, DialogTurnStatus } =  require('../');
 const assert = require('assert');
 
 const beginMessage = { text: `begin`, type: 'message' };
@@ -13,10 +13,14 @@ describe('WaterfallDialog', function() {
             const dc = await dialogs.createContext(turnContext);
         
             const results = await dc.continue();
-            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
-                await dc.begin('a');
-            } else if (!results.hasActive && results.hasResult) {
-                await turnContext.sendActivity(results.result);
+            switch (results.status) {
+                case DialogTurnStatus.empty:
+                    await dc.begin('a');
+                    break;
+
+                case DialogTurnStatus.complete:
+                    await turnContext.sendActivity(results.result);
+                    break;
             }
         });
 
@@ -53,10 +57,14 @@ describe('WaterfallDialog', function() {
             const dc = await dialogs.createContext(turnContext);
         
             const results = await dc.continue();
-            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
-                await dc.begin('a', { test: 'test' });
-            } else if (!results.hasActive && results.hasResult) {
-                await turnContext.sendActivity(`ended WaterfallDialog ["${results.result}"].`);
+            switch (results.status) {
+                case DialogTurnStatus.empty:
+                    await dc.begin('a', { test: 'test' });
+                    break;
+
+                case DialogTurnStatus.complete:
+                    await turnContext.sendActivity(`ended WaterfallDialog ["${results.result}"].`);
+                    break;
             }
         });
 

@@ -1,5 +1,5 @@
-const { BotState, BotStatePropertyAccessor, ConversationState, MemoryStorage, TestAdapter, TurnContext } = require('botbuilder-core');
-const { AttachmentPrompt, DialogSet, DialogState, WaterfallDialog } =  require('../');
+const { ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
+const { AttachmentPrompt, DialogSet, DialogTurnStatus } =  require('../');
 const assert = require('assert');
 
 const answerMessage = { text: `here you go`, type: 'message', attachments: [{ contentType: 'test', content: 'test1' }] };
@@ -14,9 +14,9 @@ describe('AttachmentPrompt', function() {
             const dc = await dialogs.createContext(turnContext);
 
             const results = await dc.continue();
-            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
+            if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please send an attachment.' });
-            } else if (!results.hasActive && results.hasResult) {
+            } else if (results.status === DialogTurnStatus.complete) {
                 assert(Array.isArray(results.result) && results.result.length > 0);
                 const attachment = results.result[0];
                 await turnContext.sendActivity(`${attachment.content}`);
@@ -44,9 +44,9 @@ describe('AttachmentPrompt', function() {
             const dc = await dialogs.createContext(turnContext);
 
             const results = await dc.continue();
-            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
+            if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please send an attachment.' });
-            } else if (!results.hasActive && results.hasResult) {
+            } else if (results.status === DialogTurnStatus.complete) {
                 assert(Array.isArray(results.result) && results.result.length > 0);
                 const attachment = results.result[0];
                 await turnContext.sendActivity(`${attachment.content}`);
@@ -76,9 +76,9 @@ describe('AttachmentPrompt', function() {
             const dc = await dialogs.createContext(turnContext);
 
             const results = await dc.continue();
-            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
+            if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please send an attachment.', retryPrompt: 'Please try again.' });
-            } else if (!results.hasActive && results.hasResult) {
+            } else if (results.status === DialogTurnStatus.complete) {
                 assert(Array.isArray(results.result) && results.result.length > 0);
                 const attachment = results.result[0];
                 await turnContext.sendActivity(`${attachment.content}`);
@@ -114,9 +114,9 @@ describe('AttachmentPrompt', function() {
             const dc = await dialogs.createContext(turnContext);
 
             const results = await dc.continue();
-            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
+            if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please send an attachment.', retryPrompt: 'Please try again.' });
-            } else if (!results.hasActive && results.hasResult) {
+            } else if (results.status === DialogTurnStatus.complete) {
                 assert(Array.isArray(results.result) && results.result.length > 0);
                 const attachment = results.result[0];
                 await turnContext.sendActivity(`${attachment.content}`);
@@ -153,9 +153,9 @@ describe('AttachmentPrompt', function() {
             const dc = await dialogs.createContext(turnContext);
 
             const results = await dc.continue();
-            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
+            if (results.status === DialogTurnStatus.empty) {
                 await dc.begin('prompt');
-            } else if (!results.hasActive && results.hasResult) {
+            } else if (results.status === DialogTurnStatus.complete) {
                 assert(Array.isArray(results.result) && results.result.length > 0);
                 const attachment = results.result[0];
                 await turnContext.sendActivity(`${attachment.content}`);

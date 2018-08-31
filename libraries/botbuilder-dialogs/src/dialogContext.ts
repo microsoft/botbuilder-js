@@ -7,7 +7,7 @@
  * Licensed under the MIT License.
  */
 import { TurnContext, Activity } from 'botbuilder-core';
-import { DialogInstance, DialogTurnResult, DialogReason } from './dialog';
+import { DialogInstance, DialogTurnResult, DialogTurnStatus, DialogReason } from './dialog';
 import { DialogSet } from './dialogSet';
 import { PromptOptions } from './prompts';
 import { Choice } from './choices';
@@ -104,16 +104,20 @@ export class DialogContext {
         this.stack.push(instance);
             
         // Call dialogs begin() method.
-        const turnResult = await dialog.dialogBegin(this, options);
-        return this.verifyTurnResult(turnResult);
+        return await dialog.dialogBegin(this, options);
     }
 
     /**
      * Cancels all dialogs on the stack resulting in an empty stack.
      */
-    public async cancelAll(): Promise<void> {
-        while (this.stack.length > 0) {
-            await this.endActiveDialog(DialogReason.cancelCalled);
+    public async cancelAll(): Promise<DialogTurnResult> {
+        if (this.stack.length > 0) {
+            while (this.stack.length > 0) {
+                await this.endActiveDialog(DialogReason.cancelCalled);
+            }
+            return { status: DialogTurnStatus.cancelled };
+        } else {
+            return { status: DialogTurnStatus.empty };
         }
     }
 
@@ -172,10 +176,9 @@ export class DialogContext {
             if (!dialog) { throw new Error(`DialogContext.continue(): Can't continue dialog. A dialog with an id of '${instance.id}' wasn't found.`) }
 
             // Continue execution of dialog
-            const turnResult = await dialog.dialogContinue(this);
-            return this.verifyTurnResult(turnResult);
+            return await dialog.dialogContinue(this);
         } else {
-            return { hasActive: false, hasResult: false };
+            return { status: DialogTurnStatus.empty };
         }
     }
 
@@ -205,11 +208,10 @@ export class DialogContext {
             if (!dialog) { throw new Error(`DialogContext.end(): Can't resume previous dialog. A dialog with an id of '${instance.id}' wasn't found.`) }
             
             // Return result to previous dialog
-            const turnResult = await dialog.dialogResume(this, DialogReason.endCalled, result);
-            return this.verifyTurnResult(turnResult);
+            return await dialog.dialogResume(this, DialogReason.endCalled, result);
         } else {
             // Signal completion
-            return { hasActive: false, hasResult: true, result: result };
+            return { status: DialogTurnStatus.complete, result: result };
         }
     }
 
@@ -262,17 +264,6 @@ export class DialogContext {
             // Pop dialog off stack
             this.stack.pop() 
         }
-    }
-
-
-    /** @private helper to ensure the turn result from a dialog looks correct. */
-    private verifyTurnResult(result: DialogTurnResult): DialogTurnResult {
-        result.hasActive = this.stack.length > 0;
-        if (result.hasActive) {
-            result.hasResult = false;
-            result.result = undefined;
-        }
-        return result; 
     }
 }
 

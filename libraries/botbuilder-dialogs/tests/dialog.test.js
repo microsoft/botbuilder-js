@@ -1,5 +1,5 @@
 const { ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
-const { DialogSet, Dialog } =  require('../');
+const { DialogSet, Dialog, DialogTurnStatus } =  require('../');
 const assert = require('assert');
 
 const beginMessage = { text: `begin`, type: 'message' };
@@ -74,11 +74,15 @@ describe('Dialog', function() {
             const dc = await dialogs.createContext(turnContext);
         
             const results = await dc.continue();
-            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
-                await dc.begin('testDialog');
-            } else if (!results.hasActive && results.hasResult) {
-                const finalResult = results.result;
-                await turnContext.sendActivity(finalResult.toString());
+            switch (results.status) {
+                case DialogTurnStatus.empty:
+                    await dc.begin('testDialog');
+                    break;
+
+                case DialogTurnStatus.complete:
+                    const finalResult = results.result;
+                    await turnContext.sendActivity(finalResult.toString());
+                    break;
             }
         });
         
