@@ -5,11 +5,12 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext } from './turnContext';
+import { Activity } from 'botframework-schema';
 import { BotState } from './botState';
 import { Storage } from './storage';
+import { TurnContext } from './turnContext';
 
-const NO_KEY = `ConversationState: channelId and/or conversation missing from context.request.`;
+const NO_KEY: string = `ConversationState: channelId and/or conversation missing from context.request.`;
 
 /**
  * Reads and writes conversation state for your bot to storage.
@@ -47,10 +48,11 @@ export class ConversationState extends BotState {
      * @param storage Storage provider to persist conversation state to.
      * @param namespace (Optional) namespace to append to storage keys. Defaults to an empty string.
      */
-    constructor(storage: Storage, private namespace = '') {
-        super(storage, (context) => {
+    constructor(storage: Storage, private namespace: string = '') {
+        super(storage, (context: TurnContext) => {
             // Calculate storage key
-            const key = this.getStorageKey(context);
+            const key: string = this.getStorageKey(context);
+
             return key ? Promise.resolve(key) :  Promise.reject(new Error(NO_KEY));
         });
     }
@@ -60,11 +62,10 @@ export class ConversationState extends BotState {
      * @param context Context for current turn of conversation with the user.
      */
     public getStorageKey(context: TurnContext): string|undefined {
-        const activity = context.activity;
-        const channelId = activity.channelId;
-        const conversationId = activity && activity.conversation && activity.conversation.id ? activity.conversation.id : undefined;
+        const activity: Activity = context.activity;
+        const channelId: string = activity.channelId;
+        const conversationId: string = activity && activity.conversation && activity.conversation.id ? activity.conversation.id : undefined;
+
         return channelId && conversationId ? `conversation/${channelId}/${conversationId}/${this.namespace}` : undefined;
     }
 }
-
-

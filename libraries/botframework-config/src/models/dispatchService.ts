@@ -17,6 +17,7 @@ export class DispatchService extends LuisService implements IDispatchService {
 
     public toJSON(): IDispatchService {
         const { type, id, appId, authoringKey, name, serviceIds, subscriptionKey, version, region } = this;
+
         return { type, id, name, appId, authoringKey, serviceIds, subscriptionKey, version, region };
     }
 }

@@ -22,10 +22,9 @@ export interface IConnectedService {
     // Friendly name for the service
     name: string;
 
-    // unique Id for the service 
+    // unique Id for the service
     id?: string;
 }
-
 
 export interface IEndpointService extends IConnectedService {
     // type = ServiceTypes.Endpoint
@@ -34,7 +33,7 @@ export interface IEndpointService extends IConnectedService {
     // MSA Appid
     appId: string;
 
-    // MSA app password for the bot 
+    // MSA app password for the bot
     appPassword: string;
 
     // endpoint of localhost service
@@ -49,7 +48,7 @@ export interface IAzureService extends IConnectedService {
     // subscriptionId for azure
     subscriptionId: string;
 
-    // resourceGroup for azure 
+    // resourceGroup for azure
     resourceGroup: string;
 
     // name of the service
@@ -66,7 +65,7 @@ export interface IAppInsightsService extends IAzureService {
     // instrumentationKey for logging data to appInsights
     instrumentationKey: string;
 
-    // (OPTIONAL) applicationId is used for programmatic acccess to AppInsights 
+    // (OPTIONAL) applicationId is used for programmatic acccess to AppInsights
     applicationId?: string;
 
     // (OPTIONAL) named apiKeys for programatic access to AppInsights
@@ -145,7 +144,7 @@ export interface IQnAService extends IConnectedService {
     // hostname for private service endpoint Example: https://myqna.azurewebsites.net
     hostname: string;
 
-    // endpointKey for querying the kb 
+    // endpointKey for querying the kb
     endpointKey: string;
 }
 
@@ -168,7 +167,7 @@ export interface IBotConfiguration {
     secretKey: string;
 
     // version of the schema of this file
-    version:string;
+    version: string;
 
     // connected services for the bot
     services: IConnectedService[];
