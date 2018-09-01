@@ -5,14 +5,32 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ConnectorClient, SimpleCredentialProvider, MicrosoftAppCredentials, JwtTokenValidation, OAuthApiClient } from 'botframework-connector';
-import {
-    BotAdapter, TurnContext, ActivityTypes, Activity, ConversationReference,
-    ResourceResponse, ConversationParameters, ConversationAccount,
-    TokenResponse, ConversationsResult, ChannelAccount
-} from 'botbuilder-core';
-import * as os from 'os';
 
+import {
+    ClaimsIdentity,
+    ConnectorClient,
+    JwtTokenValidation,
+    MicrosoftAppCredentials,
+    OAuthApiClient,
+    SimpleCredentialProvider
+} from 'botframework-connector';
+
+import {
+    Activity,
+    ActivityTypes,
+    BotAdapter,
+    ChannelAccount,
+    ConversationAccount,
+    ConversationParameters,
+    ConversationReference,
+    ConversationResourceResponse,
+    ConversationsResult,
+    ResourceResponse,
+    TokenResponse,
+    TurnContext
+} from 'botbuilder-core';
+
+import * as os from 'os';
 
 /**
  * Express or Restify Request object.
@@ -62,16 +80,17 @@ export interface InvokeResponse {
 }
 
 // Retrieve additional information, i.e., host operating system, host OS release, architecture, Node.js version
-const ARCHITECTURE = os.arch();
-const TYPE = os.type();
-const RELEASE = os.release();
-const NODE_VERSION = process.version;
+const ARCHITECTURE: any = os.arch();
+const TYPE: any = os.type();
+const RELEASE: any = os.release();
+const NODE_VERSION: any = process.version;
 
+// tslint:disable-next-line:no-var-requires no-require-imports
 const pjson: any = require('../package.json');
-const USER_AGENT = 'Microsoft-BotFramework/3.1 BotBuilder/' + pjson.version + ' (Node.js,Version=' + NODE_VERSION + '; ' + TYPE + ' ' + RELEASE + '; ' + ARCHITECTURE + ')';
-const OAUTH_ENDPOINT = 'https://api.botframework.com';
-const INVOKE_RESPONSE_KEY = Symbol('invokeResponse');
-
+const USER_AGENT: string = `Microsoft-BotFramework/3.1 BotBuilder/${ pjson.version } ` +
+    `(Node.js,Version=${ NODE_VERSION }; ${ TYPE } ${ RELEASE }; ${ ARCHITECTURE })`;
+const OAUTH_ENDPOINT: string = 'https://api.botframework.com';
+const INVOKE_RESPONSE_KEY: symbol = Symbol('invokeResponse');
 
 /**
  * BotAdapter class needed to communicate with a Bot Framework channel or the Emulator.
@@ -100,7 +119,7 @@ export class BotFrameworkAdapter extends BotAdapter {
      */
     constructor(settings?: Partial<BotFrameworkAdapterSettings>) {
         super();
-        this.settings = Object.assign({ appId: '', appPassword: '' }, settings);
+        this.settings = { appId: '', appPassword: '', ...settings};
         this.credentials = new MicrosoftAppCredentials(this.settings.appId, this.settings.appPassword || '');
         this.credentialsProvider = new SimpleCredentialProvider(this.credentials.appId, this.credentials.appPassword);
         this.isEmulatingOAuthCards = false;
@@ -139,8 +158,13 @@ export class BotFrameworkAdapter extends BotAdapter {
      * @param logic A function handler that will be called to perform the bots logic after the the adapters middleware has been run.
      */
     public continueConversation(reference: Partial<ConversationReference>, logic: (context: TurnContext) => Promise<void>): Promise<void> {
-        const request = TurnContext.applyConversationReference({type: 'event',  name: 'continueConversation' }, reference, true);
-        const context = this.createContext(request);
+        const request: Partial<Activity> = TurnContext.applyConversationReference(
+            {type: 'event',  name: 'continueConversation' },
+            reference,
+            true
+        );
+        const context: TurnContext = this.createContext(request);
+
         return this.runMiddleware(context, logic as any);
     }
 
@@ -172,16 +196,22 @@ export class BotFrameworkAdapter extends BotAdapter {
             if (!reference.serviceUrl) { throw new Error(`BotFrameworkAdapter.createConversation(): missing serviceUrl.`); }
 
             // Create conversation
-            const parameters = { bot: reference.bot } as ConversationParameters;
-            const client = this.createConnectorClient(reference.serviceUrl);
-            return client.conversations.createConversation(parameters).then((response) => {
+            const parameters: ConversationParameters = { bot: reference.bot } as ConversationParameters;
+            const client: ConnectorClient = this.createConnectorClient(reference.serviceUrl);
+
+            return client.conversations.createConversation(parameters).then((response: ConversationResourceResponse) => {
                 // Initialize request and copy over new conversation ID and updated serviceUrl.
-                const request = TurnContext.applyConversationReference({type: 'event', name: 'createConversation' }, reference, true);
+                const request: Partial<Activity> = TurnContext.applyConversationReference(
+                    {type: 'event', name: 'createConversation' },
+                    reference,
+                    true
+                );
                 request.conversation = { id: response.id } as ConversationAccount;
                 if (response.serviceUrl) { request.serviceUrl = response.serviceUrl; }
 
                 // Create context and run middleware
-                const context = this.createContext(request);
+                const context: TurnContext = this.createContext(request);
+
                 return this.runMiddleware(context, logic as any);
             });
         } catch (err) {
@@ -202,9 +232,12 @@ export class BotFrameworkAdapter extends BotAdapter {
     public deleteActivity(context: TurnContext, reference: Partial<ConversationReference>): Promise<void> {
         try {
             if (!reference.serviceUrl) { throw new Error(`BotFrameworkAdapter.deleteActivity(): missing serviceUrl`); }
-            if (!reference.conversation || !reference.conversation.id) { throw new Error(`BotFrameworkAdapter.deleteActivity(): missing conversation or conversation.id`); }
+            if (!reference.conversation || !reference.conversation.id) {
+                throw new Error(`BotFrameworkAdapter.deleteActivity(): missing conversation or conversation.id`);
+            }
             if (!reference.activityId) { throw new Error(`BotFrameworkAdapter.deleteActivity(): missing activityId`); }
-            const client = this.createConnectorClient(reference.serviceUrl);
+            const client: ConnectorClient = this.createConnectorClient(reference.serviceUrl);
+
             return client.conversations.deleteActivity(reference.conversation.id, reference.activityId);
         } catch (err) {
             return Promise.reject(err);
@@ -219,10 +252,13 @@ export class BotFrameworkAdapter extends BotAdapter {
     public deleteConversationMember(context: TurnContext, memberId: string): Promise<void> {
         try {
             if (!context.activity.serviceUrl) { throw new Error(`BotFrameworkAdapter.deleteConversationMember(): missing serviceUrl`); }
-            if (!context.activity.conversation || !context.activity.conversation.id) { throw new Error(`BotFrameworkAdapter.deleteConversationMember(): missing conversation or conversation.id`); }
-            const serviceUrl = context.activity.serviceUrl;
-            const conversationId = context.activity.conversation.id;
-            const client = this.createConnectorClient(serviceUrl);
+            if (!context.activity.conversation || !context.activity.conversation.id) {
+                throw new Error(`BotFrameworkAdapter.deleteConversationMember(): missing conversation or conversation.id`);
+            }
+            const serviceUrl: string = context.activity.serviceUrl;
+            const conversationId: string = context.activity.conversation.id;
+            const client: ConnectorClient = this.createConnectorClient(serviceUrl);
+
             return client.conversations.deleteConversationMember(conversationId, memberId);
         } catch (err) {
             return Promise.reject(err);
@@ -238,11 +274,16 @@ export class BotFrameworkAdapter extends BotAdapter {
         try {
             if (!activityId) { activityId = context.activity.id; }
             if (!context.activity.serviceUrl) { throw new Error(`BotFrameworkAdapter.getActivityMembers(): missing serviceUrl`); }
-            if (!context.activity.conversation || !context.activity.conversation.id) { throw new Error(`BotFrameworkAdapter.getActivityMembers(): missing conversation or conversation.id`); }
-            if (!activityId) { throw new Error(`BotFrameworkAdapter.getActivityMembers(): missing both activityId and context.activity.id`); }
-            const serviceUrl = context.activity.serviceUrl;
-            const conversationId = context.activity.conversation.id;
-            const client = this.createConnectorClient(serviceUrl);
+            if (!context.activity.conversation || !context.activity.conversation.id) {
+                throw new Error(`BotFrameworkAdapter.getActivityMembers(): missing conversation or conversation.id`);
+            }
+            if (!activityId) {
+                throw new Error(`BotFrameworkAdapter.getActivityMembers(): missing both activityId and context.activity.id`);
+            }
+            const serviceUrl: string = context.activity.serviceUrl;
+            const conversationId: string = context.activity.conversation.id;
+            const client: ConnectorClient = this.createConnectorClient(serviceUrl);
+
             return client.conversations.getActivityMembers(conversationId, activityId);
         } catch (err) {
             return Promise.reject(err);
@@ -256,10 +297,13 @@ export class BotFrameworkAdapter extends BotAdapter {
     public getConversationMembers(context: TurnContext): Promise<ChannelAccount[]> {
         try {
             if (!context.activity.serviceUrl) { throw new Error(`BotFrameworkAdapter.getConversationMembers(): missing serviceUrl`); }
-            if (!context.activity.conversation || !context.activity.conversation.id) { throw new Error(`BotFrameworkAdapter.getConversationMembers(): missing conversation or conversation.id`); }
-            const serviceUrl = context.activity.serviceUrl;
-            const conversationId = context.activity.conversation.id;
-            const client = this.createConnectorClient(serviceUrl);
+            if (!context.activity.conversation || !context.activity.conversation.id) {
+                throw new Error(`BotFrameworkAdapter.getConversationMembers(): missing conversation or conversation.id`);
+            }
+            const serviceUrl: string = context.activity.serviceUrl;
+            const conversationId: string = context.activity.conversation.id;
+            const client: ConnectorClient = this.createConnectorClient(serviceUrl);
+
             return client.conversations.getConversationMembers(conversationId);
         } catch (err) {
             return Promise.reject(err);
@@ -274,8 +318,9 @@ export class BotFrameworkAdapter extends BotAdapter {
      * @param continuationToken (Optional) token used to fetch the next page of results from the channel server. This should be left as `undefined` to retrieve the first page of results.
      */
     public getConversations(contextOrServiceUrl: TurnContext|string, continuationToken?: string): Promise<ConversationsResult> {
-        const url = typeof contextOrServiceUrl === 'object' ? contextOrServiceUrl.activity.serviceUrl : contextOrServiceUrl;
-        const client = this.createConnectorClient(url);
+        const url: string = typeof contextOrServiceUrl === 'object' ? contextOrServiceUrl.activity.serviceUrl : contextOrServiceUrl;
+        const client: ConnectorClient = this.createConnectorClient(url);
+
         return client.conversations.getConversations(continuationToken ? { continuationToken: continuationToken } : undefined);
     }
 
@@ -287,11 +332,14 @@ export class BotFrameworkAdapter extends BotAdapter {
      */
     public getUserToken(context: TurnContext, connectionName: string, magicCode?: string): Promise<TokenResponse> {
         try {
-            if (!context.activity.from || !context.activity.from.id) { throw new Error(`BotFrameworkAdapter.getUserToken(): missing from or from.id`); }
+            if (!context.activity.from || !context.activity.from.id) {
+                throw new Error(`BotFrameworkAdapter.getUserToken(): missing from or from.id`);
+            }
             this.checkEmulatingOAuthCards(context);
-            const userId = context.activity.from.id;
-            const url = this.oauthApiUrl(context);
-            const client = this.createOAuthApiClient(url);
+            const userId: string = context.activity.from.id;
+            const url: string = this.oauthApiUrl(context);
+            const client: OAuthApiClient = this.createOAuthApiClient(url);
+
             return client.getUserToken(userId, connectionName, magicCode);
         } catch (err) {
             return Promise.reject(err);
@@ -305,11 +353,14 @@ export class BotFrameworkAdapter extends BotAdapter {
      */
     public signOutUser(context: TurnContext, connectionName: string): Promise<void> {
         try {
-            if (!context.activity.from || !context.activity.from.id) { throw new Error(`BotFrameworkAdapter.signOutUser(): missing from or from.id`); }
+            if (!context.activity.from || !context.activity.from.id) {
+                throw new Error(`BotFrameworkAdapter.signOutUser(): missing from or from.id`);
+            }
             this.checkEmulatingOAuthCards(context);
-            const userId = context.activity.from.id;
-            const url = this.oauthApiUrl(context);
-            const client = this.createOAuthApiClient(url);
+            const userId: string = context.activity.from.id;
+            const url: string = this.oauthApiUrl(context);
+            const client: OAuthApiClient = this.createOAuthApiClient(url);
+
             return client.signOutUser(userId, connectionName);
         } catch (err) {
             return Promise.reject(err);
@@ -323,12 +374,12 @@ export class BotFrameworkAdapter extends BotAdapter {
      */
     public getSignInLink(context: TurnContext, connectionName: string): Promise<string> {
         this.checkEmulatingOAuthCards(context);
-        const conversation = TurnContext.getConversationReference(context.activity);
-        const url = this.oauthApiUrl(context);
-        const client = this.createOAuthApiClient(url);
+        const conversation: Partial<ConversationReference> = TurnContext.getConversationReference(context.activity);
+        const url: string = this.oauthApiUrl(context);
+        const client: OAuthApiClient = this.createOAuthApiClient(url);
+
         return client.getSignInLink(conversation as ConversationReference, connectionName);
     }
-
 
     /**
      * Tells the token service to emulate the sending of OAuthCards for a channel.
@@ -337,8 +388,9 @@ export class BotFrameworkAdapter extends BotAdapter {
      */
     public emulateOAuthCards(contextOrServiceUrl: TurnContext|string, emulate: boolean): Promise<void> {
         this.isEmulatingOAuthCards = emulate;
-        const url = this.oauthApiUrl(contextOrServiceUrl);
-        const client = this.createOAuthApiClient(url);
+        const url: string = this.oauthApiUrl(contextOrServiceUrl);
+        const client: OAuthApiClient = this.createOAuthApiClient(url);
+
         return client.emulateOAuthCards(emulate);
     }
 
@@ -389,22 +441,25 @@ export class BotFrameworkAdapter extends BotAdapter {
      */
     public processActivity(req: WebRequest, res: WebResponse, logic: (context: TurnContext) => Promise<any>): Promise<void> {
         // Parse body of request
-        let errorCode = 500;
-        return parseRequest(req).then((request) => {
+        let errorCode: number = 500;
+
+        return parseRequest(req).then((request: Activity) => {
             // Authenticate the incoming request
             errorCode = 401;
-            const authHeader = req.headers['authorization'] || '';
+            const authHeader: string = req.headers.authorization || '';
+
             return this.authenticateRequest(request, authHeader).then(() => {
                 // Process received activity
                 errorCode = 500;
-                const context = this.createContext(request);
+                const context: TurnContext = this.createContext(request);
+
                 return this.runMiddleware(context, logic as any)
                     .then(() => {
                         if (request.type === ActivityTypes.Invoke) {
                             // Retrieve cached invoke response.
-                            const invokeResponse = context.turnState.get(INVOKE_RESPONSE_KEY);
+                            const invokeResponse: any = context.turnState.get(INVOKE_RESPONSE_KEY);
                             if (invokeResponse && invokeResponse.value) {
-                                const value = invokeResponse.value as InvokeResponse;
+                                const value: InvokeResponse = invokeResponse.value as InvokeResponse;
                                 res.send(value.status, value.body);
                                 res.end();
                             } else {
@@ -416,7 +471,7 @@ export class BotFrameworkAdapter extends BotAdapter {
                         }
                     });
             });
-        }).catch((err) => {
+        }).catch((err: Error) => {
             // Reject response with error code
             console.warn(`BotFrameworkAdapter.processActivity(): ${errorCode} ERROR - ${err.toString()}`);
             res.send(errorCode, err.toString());
@@ -443,19 +498,22 @@ export class BotFrameworkAdapter extends BotAdapter {
      * @param activities List of activities to send.
      */
     public sendActivities(context: TurnContext, activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve: any, reject: any): void => {
             const responses: ResourceResponse[] = [];
-            const that = this;
-            function next(i: number) {
+            const that: BotFrameworkAdapter = this;
+            function next(i: number): void {
                 if (i < activities.length) {
                     try {
-                        const activity = activities[i];
+                        const activity: Partial<Activity> = activities[i];
                         switch (activity.type) {
                             case 'delay':
-                                setTimeout(() => {
+                                setTimeout(
+                                    () => {
                                     responses.push({} as ResourceResponse);
                                     next(i + 1);
-                                }, typeof activity.value === 'number' ? activity.value : 1000);
+                                    },
+                                    typeof activity.value === 'number' ? activity.value : 1000
+                                );
                                 break;
                             case 'invokeResponse':
                                 // Cache response to context object. This will be retrieved when turn completes.
@@ -465,9 +523,11 @@ export class BotFrameworkAdapter extends BotAdapter {
                                 break;
                             default:
                                 if (!activity.serviceUrl) { throw new Error(`BotFrameworkAdapter.sendActivity(): missing serviceUrl.`); }
-                                if (!activity.conversation || !activity.conversation.id) { throw new Error(`BotFrameworkAdapter.sendActivity(): missing conversation id.`); }
+                                if (!activity.conversation || !activity.conversation.id) {
+                                    throw new Error(`BotFrameworkAdapter.sendActivity(): missing conversation id.`);
+                                }
                                 let p: Promise<ResourceResponse>;
-                                const client = that.createConnectorClient(activity.serviceUrl);
+                                const client: ConnectorClient = that.createConnectorClient(activity.serviceUrl);
                                 if (activity.type === 'trace' && activity.channelId !== 'emulator') {
                                     // Just eat activity
                                     p = Promise.resolve({} as ResourceResponse);
@@ -483,10 +543,13 @@ export class BotFrameworkAdapter extends BotAdapter {
                                         activity as Activity
                                     );
                                 }
-                                p.then((response) => {
+                                p.then(
+                                    (response: ResourceResponse) => {
                                     responses.push(response);
                                     next(i + 1);
-                                }, (err) => reject(err));
+                                    },
+                                    reject
+                                );
                                 break;
                         }
                     } catch (err) {
@@ -513,14 +576,19 @@ export class BotFrameworkAdapter extends BotAdapter {
     public updateActivity(context: TurnContext, activity: Partial<Activity>): Promise<void> {
         try {
             if (!activity.serviceUrl) { throw new Error(`BotFrameworkAdapter.updateActivity(): missing serviceUrl`); }
-            if (!activity.conversation || !activity.conversation.id) { throw new Error(`BotFrameworkAdapter.updateActivity(): missing conversation or conversation.id`); }
+            if (!activity.conversation || !activity.conversation.id) {
+                throw new Error(`BotFrameworkAdapter.updateActivity(): missing conversation or conversation.id`);
+            }
             if (!activity.id) { throw new Error(`BotFrameworkAdapter.updateActivity(): missing activity.id`); }
-            const client = this.createConnectorClient(activity.serviceUrl);
+            const client: ConnectorClient = this.createConnectorClient(activity.serviceUrl);
+
             return client.conversations.updateActivity(
                 activity.conversation.id,
                 activity.id,
                 activity as Activity
-            ).then(() => {});
+            ).then(() => {
+                // noop
+            });
         } catch (err) {
             return Promise.reject(err);
         }
@@ -532,7 +600,10 @@ export class BotFrameworkAdapter extends BotAdapter {
      * @param authHeader Received authentication header.
      */
     protected authenticateRequest(request: Partial<Activity>, authHeader: string): Promise<void> {
-        return JwtTokenValidation.authenticateRequest(request as Activity, authHeader, this.credentialsProvider).then(claims => {
+        return JwtTokenValidation.authenticateRequest(
+            request as Activity, authHeader,
+            this.credentialsProvider
+        ).then((claims: ClaimsIdentity) => {
             if (!claims.isAuthenticated) { throw new Error('Unauthorized Access. Request is not authorized'); }
         });
     }
@@ -542,8 +613,9 @@ export class BotFrameworkAdapter extends BotAdapter {
      * @param serviceUrl Clients service url.
      */
     protected createConnectorClient(serviceUrl: string): ConnectorClient {
-        const client = new ConnectorClient(this.credentials, serviceUrl);
+        const client: ConnectorClient = new ConnectorClient(this.credentials, serviceUrl);
         client.addUserAgentInfo(USER_AGENT);
+
         return client;
     }
 
@@ -569,7 +641,7 @@ export class BotFrameworkAdapter extends BotAdapter {
      * Allows for mocking of toggling the emulating OAuthCards in unit tests.
      * @param context The TurnContext
      */
-    protected checkEmulatingOAuthCards(context: TurnContext) {
+    protected checkEmulatingOAuthCards(context: TurnContext): void {
         if (!this.isEmulatingOAuthCards &&
             context.activity.channelId === 'emulator' &&
             (!this.credentials.appId || !this.credentials.appPassword)) {
@@ -587,12 +659,13 @@ export class BotFrameworkAdapter extends BotAdapter {
 }
 
 /**
+ * Handle incoming webhooks from the botframework
  * @private
- * @param req
+ * @param req incoming web request
  */
 function parseRequest(req: WebRequest): Promise<Activity> {
-    return new Promise((resolve, reject) => {
-        function returnActivity(activity: Activity) {
+    return new Promise((resolve: any, reject: any): void => {
+        function returnActivity(activity: Activity): void {
             if (typeof activity !== 'object') { throw new Error(`BotFrameworkAdapter.parseRequest(): invalid request body.`); }
             if (typeof activity.type !== 'string') { throw new Error(`BotFrameworkAdapter.parseRequest(): missing activity type.`); }
             resolve(activity);
@@ -605,7 +678,7 @@ function parseRequest(req: WebRequest): Promise<Activity> {
                 reject(err);
             }
         } else {
-            let requestData = '';
+            let requestData: string = '';
             req.on('data', (chunk: string) => {
                 requestData += chunk;
             });

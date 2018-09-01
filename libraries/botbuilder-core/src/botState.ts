@@ -5,10 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext } from './turnContext';
+import { BotStatePropertyAccessor, StatePropertyAccessor } from './botStatePropertyAccessor';
 import { Middleware } from './middlewareSet';
-import { Storage, StoreItems, calculateChangeHash, StorageKeyFactory } from './storage';
-import { StatePropertyAccessor, BotStatePropertyAccessor } from './botStatePropertyAccessor';
+import { calculateChangeHash, Storage, StorageKeyFactory, StoreItems } from './storage';
+import { TurnContext } from './turnContext';
 
 /**
  * State information cached off the context object by a `BotState` instance.
@@ -50,10 +50,10 @@ export interface CachedBotState {
  * ```
  */
 export class BotState implements Middleware {
-    /** NEW */
+    // NEW
     public readonly properties: Map<string, StatePropertyAccessor> = new Map();
 
-    private stateKey = Symbol('state');
+    private stateKey: symbol = Symbol('state');
 
     /**
      * Creates a new BotState instance.
@@ -62,19 +62,22 @@ export class BotState implements Middleware {
      */
     constructor(protected storage: Storage, protected storageKey: StorageKeyFactory) { }
 
-    /** NEW */
+    // NEW
     public createProperty<T = any>(name: string): StatePropertyAccessor<T> {
         if (this.properties.has(name)) { throw new Error(`BotState.createProperty(): a property named '${name}' already exists.`); }
-        const prop = new BotStatePropertyAccessor<T>(this, name);
+        const prop: BotStatePropertyAccessor<T> = new BotStatePropertyAccessor<T>(this, name);
         this.properties.set(name, prop);
+
         return prop;
     }
 
-    /** @private */
+    /**
+     * @private
+     */
     public onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
         // Read in state, continue execution, and then flush changes on completion of turn.
         return this.read(context, true)
-            .then(() => next())
+            .then(next)
             .then(() => this.write(context));
     }
 
@@ -91,18 +94,20 @@ export class BotState implements Middleware {
      * @param context Context for current turn of conversation with the user.
      * @param force (Optional) If `true` the cache will be bypassed and the state will always be read in directly from storage. Defaults to `false`.
      */
-    public read(context: TurnContext, force = false): Promise<any> {
-        const cached = context.turnState.get(this.stateKey) as CachedBotState;
+    public read(context: TurnContext, force: boolean = false): Promise<any> {
+        const cached: any = context.turnState.get(this.stateKey) as CachedBotState;
         if (force || !cached || !cached.state) {
-            return Promise.resolve(this.storageKey(context)).then((key) => {
-                    return this.storage.read([key]).then((items) => {
-                        const state = items[key] || {};
-                        const hash = calculateChangeHash(state);
+            return Promise.resolve(this.storageKey(context)).then((key: string) => {
+                    return this.storage.read([key]).then((items: StoreItems) => {
+                        const state: any = items[key] || {};
+                        const hash: string = calculateChangeHash(state);
                         context.turnState.set(this.stateKey, { state: state, hash: hash });
+
                         return state;
                     });
                 });
         }
+
         return Promise.resolve(cached.state);
     }
 
@@ -120,14 +125,15 @@ export class BotState implements Middleware {
      * @param context Context for current turn of conversation with the user.
      * @param force (Optional) if `true` the state will always be written out regardless of its change state. Defaults to `false`.
      */
-    public write(context: TurnContext, force = false): Promise<void> {
-        let cached = context.turnState.get(this.stateKey) as CachedBotState;
+    public write(context: TurnContext, force: boolean = false): Promise<void> {
+        let cached: any = context.turnState.get(this.stateKey) as CachedBotState;
         if (force || (cached && cached.hash !== calculateChangeHash(cached.state))) {
-            return Promise.resolve(this.storageKey(context)).then((key) => {
+            return Promise.resolve(this.storageKey(context)).then((key: string) => {
                 if (!cached) { cached = { state: {}, hash: '' }; }
                 cached.state.eTag = '*';
-                const changes = {} as StoreItems;
+                const changes: StoreItems = {} as StoreItems;
                 changes[key] = cached.state;
+
                 return this.storage.write(changes).then(() => {
                         // Update change hash and cache
                         cached.hash = calculateChangeHash(cached.state);
@@ -135,6 +141,7 @@ export class BotState implements Middleware {
                     });
             });
         }
+
         return Promise.resolve();
     }
 
@@ -151,7 +158,7 @@ export class BotState implements Middleware {
      */
     public clear(context: TurnContext): void {
         // We leave the change hash un-touched which will force the cleared state changes to get persisted.
-        const cached = context.turnState.get(this.stateKey) as CachedBotState;
+        const cached: any = context.turnState.get(this.stateKey) as CachedBotState;
         if (cached) {
             cached.state = {};
             context.turnState.set(this.stateKey, cached);
@@ -170,7 +177,8 @@ export class BotState implements Middleware {
      * @param context Context for current turn of conversation with the user.
      */
     public get(context: TurnContext): any|undefined {
-        const cached = context.turnState.get(this.stateKey) as CachedBotState;
+        const cached: any = context.turnState.get(this.stateKey) as CachedBotState;
+
         return typeof cached === 'object' && typeof cached.state === 'object' ? cached.state : undefined;
     }
 }

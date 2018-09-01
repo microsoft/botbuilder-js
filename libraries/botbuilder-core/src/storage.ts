@@ -32,7 +32,7 @@ export interface Storage {
      * const state = 'botState' in items ? items['botState'] : {};
      * ```
      * @param keys Array of item keys to read from the store.
-     **/
+     */
     read(keys: string[]): Promise<StoreItems>;
 
     /**
@@ -46,7 +46,7 @@ export interface Storage {
      * await storage.write({ 'botState': state });
      * ```
      * @param changes Map of items to write to storage.
-     **/
+     */
     write(changes: StoreItems): Promise<void>;
 
     /**
@@ -59,7 +59,7 @@ export interface Storage {
      * await storage.delete(['botState']);
      * ```
      * @param keys Array of item keys to remove from the store.
-     **/
+     */
     delete(keys: string[]): Promise<void>;
 }
 
@@ -67,10 +67,10 @@ export interface Storage {
  * Object which is stored in Storage with an optional eTag.
  */
 export interface StoreItem {
-    /** Key/value pairs. */
+    // Key/value pairs.
     [key: string]: any;
 
-    /** (Optional) eTag field for stores that support optimistic concurrency. */
+    // (Optional) eTag field for stores that support optimistic concurrency.
     eTag?: string;
 }
 
@@ -78,7 +78,7 @@ export interface StoreItem {
  * Map of named `StoreItem` objects.
  */
 export interface StoreItems {
-    /** List of store items indexed by key. */
+    // List of store items indexed by key.
     [key: string]: StoreItem;
 }
 
@@ -104,7 +104,8 @@ export interface StoreItems {
  * @param item Item to calculate the change hash for.
  */
 export function calculateChangeHash(item: StoreItem): string {
-    const cpy = Object.assign({}, item);
+    const cpy: any = {...item};
     if (cpy.eTag) { delete cpy.eTag; }
+
     return JSON.stringify(cpy);
 }

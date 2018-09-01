@@ -1,7 +1,7 @@
 /**
  * @module botbuilder-dialogs
  */
-/** Licensed under the MIT License. */
+// Licensed under the MIT License.
 export * from './choices';
 export * from './prompts';
 export * from './dialog';
