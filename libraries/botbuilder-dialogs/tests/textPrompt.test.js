@@ -1,5 +1,5 @@
-const { ActivityTypes, BotState, BotStatePropertyAccessor, ConversationState, MemoryStorage, TestAdapter, TurnContext } = require('botbuilder-core');
-const { AttachmentPrompt, DialogSet, DialogState, TextPrompt, WaterfallDialog } =  require('../');
+const { ActivityTypes, ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
+const { DialogSet, TextPrompt, DialogTurnStatus } =  require('../');
 const assert = require('assert');
 
 const invalidMessage = { type: ActivityTypes.Message, text: '' };
@@ -13,9 +13,9 @@ describe('TextPrompt', function() {
             const dc = await dialogs.createContext(turnContext);
 
             const results = await dc.continue();
-            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
+            if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', 'Please say something.');
-            } else if (!results.hasActive && results.hasResult) {
+            } else if (results.status === DialogTurnStatus.complete) {
                 const reply = results.result;
                 await turnContext.sendActivity(reply);
             }
@@ -41,9 +41,9 @@ describe('TextPrompt', function() {
             const dc = await dialogs.createContext(turnContext);
 
             const results = await dc.continue();
-            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
+            if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', 'Please say something.');
-            } else if (!results.hasActive && results.hasResult) {
+            } else if (results.status === DialogTurnStatus.complete) {
                 const reply = results.result;
                 await turnContext.sendActivity(reply);
             }
@@ -76,9 +76,9 @@ describe('TextPrompt', function() {
             const dc = await dialogs.createContext(turnContext);
 
             const results = await dc.continue();
-            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
+            if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please say something.', retryPrompt: 'Text is required.' });
-            } else if (!results.hasActive && results.hasResult) {
+            } else if (results.status === DialogTurnStatus.complete) {
                 const reply = results.result;
                 await turnContext.sendActivity(reply);
             }
@@ -105,9 +105,9 @@ describe('TextPrompt', function() {
             const dc = await dialogs.createContext(turnContext);
 
             const results = await dc.continue();
-            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
+            if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please say something.', retryPrompt: 'Text is required.' });
-            } else if (!results.hasActive && results.hasResult) {
+            } else if (results.status === DialogTurnStatus.complete) {
                 const reply = results.result;
                 await turnContext.sendActivity(reply);
             }
@@ -142,9 +142,9 @@ describe('TextPrompt', function() {
             const dc = await dialogs.createContext(turnContext);
 
             const results = await dc.continue();
-            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
+            if (results.status === DialogTurnStatus.empty) {
                 await dc.begin('prompt');
-            } else if (!results.hasActive && results.hasResult) {
+            } else if (results.status === DialogTurnStatus.complete) {
                 const reply = results.result;
                 await turnContext.sendActivity(reply);
             }

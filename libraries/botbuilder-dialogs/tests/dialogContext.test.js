@@ -1,5 +1,5 @@
 const { ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
-const { Dialog, DialogSet, WaterfallDialog } =  require('../');
+const { Dialog, DialogSet, WaterfallDialog, DialogTurnStatus } =  require('../');
 const assert = require('assert');
 
 const beginMessage = { text: `begin`, type: 'message' };
@@ -14,7 +14,7 @@ describe('DialogContext', function() {
             const dc = await dialogs.createContext(turnContext);
         
             const results = await dc.begin('a');
-            if (!results.hasActive && results.hasResult) {
+            if (results.status === DialogTurnStatus.complete) {
                 assert(results.result === true, `End result from WaterfallDialog was not expected value.`);
                 done();
             }
@@ -43,7 +43,7 @@ describe('DialogContext', function() {
             const dc = await dialogs.createContext(turnContext);
         
             const results = await dc.begin('a', { z: 'z' });
-            if (!results.hasActive && results.hasResult) {
+            if (results.status === DialogTurnStatus.complete) {
                 assert(results.result === true, `End result from WaterfallDialog was not expected value.`);
                 done();
             }
@@ -214,11 +214,15 @@ describe('DialogContext', function() {
             const dc = await dialogs.createContext(turnContext);
         
             const results = await dc.continue();
-            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
-                await dc.begin('a');
-            } else if (!results.hasActive && results.hasResult) {
-                assert.strictEqual(results.result, true, `received unexpected final result from dialog.`);
-                done();
+            switch (results.status) {
+                case DialogTurnStatus.empty:
+                    await dc.begin('a');
+                    break;
+                
+                case DialogTurnStatus.complete:
+                    assert.strictEqual(results.result, true, `received unexpected final result from dialog.`);
+                    done();
+                    break;
             }
         });
 
@@ -258,7 +262,7 @@ describe('DialogContext', function() {
                 assert.strictEqual(err.message, `DialogContext.continue(): Can't continue dialog. A dialog with an id of 'b' wasn't found.`, `unexpected error message thrown: "${err.message}"`);
                 return done();
             }
-            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
+            if (results.status === DialogTurnStatus.empty) {
                 await dc.begin('a');
             }
         });
@@ -290,8 +294,7 @@ describe('DialogContext', function() {
             const dc = await dialogs.createContext(turnContext);
             const results = await dc.continue();
             assert.strictEqual(typeof results, 'object', `results is not the expected object`);
-            assert.strictEqual(results.hasActive, false, `results.hasActive is not false.`);
-            assert.strictEqual(results.hasResult, false, `results.hasResult is not false.`);
+            assert.strictEqual(results.status, DialogTurnStatus.empty, `results.status is not 'empty'.`);
             done();
         });
 
@@ -349,8 +352,7 @@ describe('DialogContext', function() {
             const dc = await dialogs.createContext(turnContext);
             
             const results = await dc.end();
-            assert.strictEqual(results.hasActive, false, `received true for results.hasActive (expected true).`);
-            assert.strictEqual(results.hasResult, true, `received false for results.hasResult (expected true).`);
+            assert.strictEqual(results.status, DialogTurnStatus.complete, `results.status not equal 'complete'.`);
             assert.strictEqual(results.result, undefined, `received unexpected value for results.result (expected undefined).`);
             done();
         });
