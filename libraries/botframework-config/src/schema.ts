@@ -79,8 +79,8 @@ export interface IBlobStorageService extends IAzureService {
     // connectionstring for blob storage
     connectionString: string;
 
-    // container name
-    container: string;
+    // (OPTIONAL) container name
+    container?: string | null;
 }
 
 export interface ICosmosDBService extends IAzureService {
@@ -168,7 +168,7 @@ export interface IBotConfiguration {
     secretKey: string;
 
     // version of the schema of this file
-    version:string;
+    version: string;
 
     // connected services for the bot
     services: IConnectedService[];

@@ -9,10 +9,10 @@ import * as txtfile from 'read-text-file';
 import * as util from 'util';
 import * as uuid from 'uuid';
 import { BotConfigurationBase } from './botConfigurationBase';
-import { BotRecipe } from './botRecipe';
+import { BotRecipe, IBlobResource, ICosmosDBResource, IDispatchResource, IFileResource, IGenericResource, IUrlResource } from './botRecipe';
 import * as encrypt from './encrypt';
 import { ConnectedService } from './models';
-import { IBotConfiguration, IConnectedService, IDispatchService, ILuisService, IQnAService, ServiceTypes } from './schema';
+import { IBlobStorageService, IBotConfiguration, IConnectedService, ICosmosDBService, IDispatchService, IEndpointService, IFileService, IGenericService, ILuisService, IQnAService, ServiceTypes } from './schema';
 let exec = util.promisify(require('child_process').exec);
 
 interface internalBotConfig {
@@ -79,11 +79,11 @@ export class BotConfiguration extends BotConfigurationBase {
         if (!botpath) {
             throw new Error(`missing path`);
         }
+        this.internal.location = botpath;
 
         this._savePrep(secret);
 
         let hasSecret = !!this.secretKey;
-
         if (hasSecret)
             this.encrypt(secret);
 
@@ -267,9 +267,28 @@ export class BotConfiguration extends BotConfigurationBase {
         let index = 0;
         for (let service of this.services) {
             index++;
-            
+
             switch (service.type) {
                 case ServiceTypes.Dispatch:
+                    {
+                        let luisService = <ILuisService>service;
+                        let command = `luis export version --appId ${luisService.appId} --authoringKey ${luisService.authoringKey} --versionId "${luisService.version}"`;
+                        if (progress) {
+                            progress(service, command, index, this.services.length);
+                        }
+                        let p = await exec(command);
+                        var json = p.stdout;
+                        // make sure it's json
+                        JSON.parse(json);
+                        await fsx.writeFile(folder + `/${luisService.id}.luis`, json, { encoding: 'utf8' });
+                        recipe.resources.push(<IDispatchResource>{
+                            type: service.type,
+                            id: service.id,
+                            name: service.name,
+                            serviceIds: (<IDispatchService>service).serviceIds
+                        });
+                    }
+                    break;
                 case ServiceTypes.Luis:
                     {
                         let luisService = <ILuisService>service;
@@ -282,11 +301,10 @@ export class BotConfiguration extends BotConfigurationBase {
                         // make sure it's json
                         JSON.parse(json);
                         await fsx.writeFile(folder + `/${luisService.id}.luis`, json, { encoding: 'utf8' });
-                        recipe.services.push({
+                        recipe.resources.push({
                             type: service.type,
                             id: service.id,
-                            name: service.name,
-                            serviceName: service.name
+                            name: service.name
                         });
                     }
                     break;
@@ -303,29 +321,104 @@ export class BotConfiguration extends BotConfigurationBase {
                         // make sure it's json
                         JSON.parse(json);
                         await fsx.writeFile(folder + `/${qnaService.id}.qna`, json, { encoding: 'utf8' });
-                        recipe.services.push({
+                        recipe.resources.push({
                             type: service.type,
                             id: service.id,
-                            name: service.name,
-                            serviceName: service.name
+                            name: service.name
                         });
                     }
                     break;
 
-                default:
+                case ServiceTypes.Endpoint:
                     if (progress) {
                         progress(service, '', index, this.services.length);
                     }
-                    recipe.services.push({
-                        type: service.type,
+                    recipe.resources.push(<IUrlResource>{
+                        type: ServiceTypes.Endpoint,
                         id: service.id,
                         name: service.name,
-                        serviceName: service.name
+                        url: (<IEndpointService>service).endpoint
                     });
                     break;
+
+                case ServiceTypes.BlobStorage:
+                    if (progress) {
+                        progress(service, '', index, this.services.length);
+                    }
+                    recipe.resources.push(<IBlobResource>{
+                        type: ServiceTypes.BlobStorage,
+                        id: service.id,
+                        name: service.name,
+                        container: (<IBlobStorageService>service).container
+                    });
+                    break;
+
+                case ServiceTypes.CosmosDB:
+                    if (progress) {
+                        progress(service, '', index, this.services.length);
+                    }
+                    recipe.resources.push(<ICosmosDBResource>{
+                        type: ServiceTypes.CosmosDB,
+                        id: service.id,
+                        name: service.name,
+                        database: (<ICosmosDBService>service).database,
+                        collection: (<ICosmosDBService>service).collection,
+                    });
+                    break;
+
+                case ServiceTypes.File:
+                    if (progress) {
+                        progress(service, '', index, this.services.length);
+                    }
+                    recipe.resources.push(<IFileResource>{
+                        type: ServiceTypes.File,
+                        id: service.id,
+                        name: service.name,
+                        path: (<IFileService>service).path,
+                    });
+                    break;
+
+                case ServiceTypes.Generic:
+                    if (progress) {
+                        progress(service, '', index, this.services.length);
+                    }
+                    console.warn(`WARNING: Generic services cannot be cloned and all configuration data will be passed unchanged and unencrypted `);
+                    recipe.resources.push(<IGenericResource>{
+                        type: ServiceTypes.File,
+                        id: service.id,
+                        name: service.name,
+                        url: (<IGenericService>service).url,
+                        configuration: (<IGenericService>service).configuration,
+                    });
+                    break;
+
+                case ServiceTypes.Bot:
+                    if (progress) {
+                        progress(service, '', index, this.services.length);
+                    }
+                    recipe.resources.push({
+                        type: ServiceTypes.Bot,
+                        id: service.id,
+                        name: service.name,
+                    });
+                    break;
+
+                case ServiceTypes.AppInsights:
+                    if (progress) {
+                        progress(service, '', index, this.services.length);
+                    }
+                    recipe.resources.push({
+                        type: ServiceTypes.AppInsights,
+                        id: service.id,
+                        name: service.name,
+                    });
+                    break;
+
+                default:
+                    throw new Error(`Unknown service type for export ${service.type}`);
             }
         }
-        await fsx.writeFile(folder + `/${this.name}.bot.recipe`, JSON.stringify(recipe, null, 2), { encoding: 'utf8' });
+        await fsx.writeFile(folder + `/bot.recipe`, JSON.stringify(recipe, null, 2), { encoding: 'utf8' });
         return recipe;
     }
 }

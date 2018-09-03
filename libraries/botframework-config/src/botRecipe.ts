@@ -13,37 +13,53 @@ export interface IResource {
 
     // Friendly name for the service
     name: string;
-
-    // Service name for the service
-    serviceName: string;
-
-    // path to resource file
-    resource?: string;
 }
 
+export interface IUrlResource extends IResource {
+    url: any;
+}
+
+export interface IDispatchResource extends IResource {
+    serviceIds: string[];
+}
+
+export interface IBlobResource extends IResource {
+    container: string;
+}
+
+export interface ICosmosDBResource extends IResource {
+    database: string;
+    collection: string;
+}
+
+export interface IFileResource extends IResource {
+    path: string;
+}
+
+export interface IGenericResource extends IUrlResource {
+    path: string;
+
+    configuration: { [key: string]: string };
+}
 
 // This is class which allows you to manipulate in memory representations of bot configuration with no nodejs depedencies
 export class BotRecipe {
     public version = '1.0';
-    public services: IResource[] = [];
+    public resources: IResource[] = [];
 
     constructor() {
     }
 
     public static fromJSON(source: Partial<BotRecipe> = {}): BotRecipe {
-        let { version = '1.0', services = [] } = source;
+        let { version = '1.0', resources = [] } = source;
         const botRecipe = new BotRecipe();
-        Object.assign(botRecipe, { services, version });
+        Object.assign(botRecipe, { resources, version });
         return botRecipe;
     }
 
     public toJSON(): Partial<BotRecipe> {
-        const { version, services } = this;
-        return { version, services };
-    }
-
-    public async clone(folder: string): Promise<void> {
-
+        const { version, resources } = this;
+        return { version, resources };
     }
 }
 
