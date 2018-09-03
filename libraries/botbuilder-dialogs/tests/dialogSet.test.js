@@ -1,5 +1,5 @@
-const { ConversationState, MemoryStorage, TestAdapter, TurnContext } = require('botbuilder-core');
-const { Dialog, DialogSet, WaterfallDialog } =  require('../');
+const { ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
+const { Dialog, DialogSet, WaterfallDialog, DialogTurnStatus } =  require('../');
 const assert = require('assert');
 
 const beginMessage = { text: `begin`, type: 'message' };
@@ -60,7 +60,7 @@ describe('DialogSet', function() {
             const dc = await dialogs.createContext(turnContext);
 
             const results = await dc.continue();
-            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
+            if (results.status === DialogTurnStatus.empty) {
                 await dc.begin('a');
             }
         });

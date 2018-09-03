@@ -5,8 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-
-import { Activity, ActivityTypes, ResourceResponse, ConversationReference, BotAdapter, TurnContext } from 'botbuilder-core';
+// tslint:disable:no-console
+import { Activity, ActivityTypes,  BotAdapter, ConversationReference, ResourceResponse, TurnContext } from 'botbuilder-core';
 import * as readline from 'readline';
 
 /**
@@ -26,7 +26,7 @@ import * as readline from 'readline';
  * ```
  */
 export class ConsoleAdapter extends BotAdapter {
-    private nextId = 0;
+    private nextId: number = 0;
     private readonly reference: ConversationReference;
 
     /**
@@ -35,13 +35,14 @@ export class ConsoleAdapter extends BotAdapter {
      */
     constructor(reference?: ConversationReference) {
         super();
-        this.reference = Object.assign({
+        this.reference = {
             channelId: 'console',
             user: { id: 'user', name: 'User1' },
             bot: { id: 'bot', name: 'Bot' },
             conversation:  { id: 'convo1', name: '', isGroup: false },
-            serviceUrl: ''
-        } as ConversationReference, reference);
+            serviceUrl: '',
+            ...reference
+        } as ConversationReference;
     }
 
     /**
@@ -73,22 +74,27 @@ export class ConsoleAdapter extends BotAdapter {
      * @param logic Function which will be called each time a message is input by the user.
      */
     public listen(logic: (context: TurnContext) => Promise<void>): Function {
-        const rl = this.createInterface({ input: process.stdin, output: process.stdout, terminal: false });
+        const rl: readline.ReadLine = this.createInterface({ input: process.stdin, output: process.stdout, terminal: false });
         rl.on('line', (line: string) => {
             // Initialize activity
-            const activity = TurnContext.applyConversationReference({
-                type: ActivityTypes.Message,
-                id: (this.nextId++).toString(),
-                timestamp: new Date(),
-                text: line
-            }, this.reference, true);
+            const activity: Partial<Activity> = TurnContext.applyConversationReference(
+                {
+                    type: ActivityTypes.Message,
+                    id: (this.nextId++).toString(),
+                    timestamp: new Date(),
+                    text: line
+                },
+                this.reference,
+                true
+            );
 
             // Create context and run middleware pipe
-            const context = new TurnContext(this, activity);
+            const context: TurnContext = new TurnContext(this, activity);
             this.runMiddleware(context, logic)
-                .catch((err) => { this.printError(err.toString()) });
+                .catch((err: Error) => { this.printError(err.toString()); });
         });
-        return function close() {
+
+        return (): void => {
             rl.close();
         };
     }
@@ -118,10 +124,11 @@ export class ConsoleAdapter extends BotAdapter {
      */
     public continueConversation(reference: ConversationReference, logic: (context: TurnContext) => Promise<void>): Promise<void> {
             // Create context and run middleware pipe
-            const activity = TurnContext.applyConversationReference({}, reference, true);
-            const context = new TurnContext(this, activity);
+            const activity: Partial<Activity> = TurnContext.applyConversationReference({}, reference, true);
+            const context: TurnContext = new TurnContext(this, activity);
+
             return this.runMiddleware(context, logic)
-                       .catch((err) => { this.printError(err.toString()); });
+                       .catch((err: Error) => { this.printError(err.toString()); });
     }
 
     /**
@@ -135,20 +142,23 @@ export class ConsoleAdapter extends BotAdapter {
      * @param activities List of activities to send.
      */
     public sendActivities(context: TurnContext, activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
-        const that = this;
-        return new Promise((resolve, reject) => {
+        const that: ConsoleAdapter = this;
+
+        // tslint:disable-next-line:promise-must-complete
+        return new Promise((resolve: any, reject: any): void => {
             const responses: ResourceResponse[] = [];
-            function next(i: number) {
+            function next(i: number): void {
                 if (i < activities.length) {
                     responses.push(<ResourceResponse>{});
-                    let a = activities[i];
+                    const a: Partial<Activity> = activities[i];
                     switch (a.type) {
                         case <ActivityTypes>'delay':
                             setTimeout(() => next(i + 1), a.value);
                             break;
                         case ActivityTypes.Message:
                             if (a.attachments && a.attachments.length > 0) {
-                                const append = a.attachments.length === 1 ? `(1 attachment)` : `(${a.attachments.length} attachments)`;
+                                const append: string = a.attachments.length === 1
+                                    ? `(1 attachment)` : `(${a.attachments.length} attachments)`;
                                 that.print(`${a.text} ${append}`);
                             } else {
                                 that.print(a.text);
@@ -196,7 +206,7 @@ export class ConsoleAdapter extends BotAdapter {
      * Logs text to the console.
      * @param line Text to print.
      */
-    protected print(line: string) {
+    protected print(line: string): void {
         console.log(line);
     }
 
@@ -204,7 +214,7 @@ export class ConsoleAdapter extends BotAdapter {
      * Logs an error to the console.
      * @param line Error text to print.
      */
-    protected printError(line: string) {
+    protected printError(line: string): void {
         console.error(line);
     }
 }

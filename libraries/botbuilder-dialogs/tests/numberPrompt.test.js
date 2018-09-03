@@ -1,5 +1,5 @@
-const { ActivityTypes, BotState, BotStatePropertyAccessor, ConversationState, MemoryStorage, TestAdapter, TurnContext } = require('botbuilder-core');
-const { DialogSet, DialogState, NumberPrompt, WaterfallDialog } =  require('../');
+const { ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
+const { DialogSet, NumberPrompt, DialogTurnStatus } =  require('../');
 const assert = require('assert');
 
 describe('NumberPrompt', function() {
@@ -10,9 +10,9 @@ describe('NumberPrompt', function() {
             const dc = await dialogs.createContext(turnContext);
 
             const results = await dc.continue();
-            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
+            if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', 'Please send a number.');
-            } else if (!results.hasActive && results.hasResult) {
+            } else if (results.status === DialogTurnStatus.complete) {
                 const reply = results.result.toString();
                 await turnContext.sendActivity(reply);
             }
@@ -38,9 +38,9 @@ describe('NumberPrompt', function() {
             const dc = await dialogs.createContext(turnContext);
 
             const results = await dc.continue();
-            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
+            if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', 'Please send a number.');
-            } else if (!results.hasActive && results.hasResult) {
+            } else if (results.status === DialogTurnStatus.complete) {
                 const reply = results.result.toString();
                 await turnContext.sendActivity(reply);
             }
@@ -75,9 +75,9 @@ describe('NumberPrompt', function() {
             const dc = await dialogs.createContext(turnContext);
 
             const results = await dc.continue();
-            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
+            if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please send a number.', retryPrompt: 'Please send a number between 1 and 100.' });
-            } else if (!results.hasActive && results.hasResult) {
+            } else if (results.status === DialogTurnStatus.complete) {
                 const reply = results.result.toString();
                 await turnContext.sendActivity(reply);
             }
@@ -112,9 +112,9 @@ describe('NumberPrompt', function() {
             const dc = await dialogs.createContext(turnContext);
 
             const results = await dc.continue();
-            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
+            if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please send a number.', retryPrompt: 'Please send a number between 1 and 100.' });
-            } else if (!results.hasActive && results.hasResult) {
+            } else if (results.status === DialogTurnStatus.complete) {
                 const reply = results.result.toString();
                 await turnContext.sendActivity(reply);
             }
@@ -151,9 +151,9 @@ describe('NumberPrompt', function() {
             const dc = await dialogs.createContext(turnContext);
 
             const results = await dc.continue();
-            if (!turnContext.responded && !results.hasActive && !results.hasResult) {
+            if (results.status === DialogTurnStatus.empty) {
                 await dc.begin('prompt');
-            } else if (!results.hasActive && results.hasResult) {
+            } else if (results.status === DialogTurnStatus.complete) {
                 const reply = results.result.toString();
                 await turnContext.sendActivity(reply);
             }

@@ -5,76 +5,77 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext, ActivityTypes, InputHints, TokenResponse, Activity, MessageFactory, CardFactory } from 'botbuilder-core';
-import { DialogContext } from '../dialogContext';
+import { Token } from '@microsoft/recognizers-text-date-time';
+import {  Activity, ActivityTypes, Attachment, CardFactory, InputHints, MessageFactory, TokenResponse, TurnContext } from 'botbuilder-core';
 import { Dialog, DialogTurnResult } from '../dialog';
-import { PromptOptions, PromptValidator, PromptRecognizerResult } from './prompt';
+import { DialogContext } from '../dialogContext';
+import { PromptOptions, PromptRecognizerResult,  PromptValidator } from './prompt';
 
 /**
  * Settings used to configure an `OAuthPrompt` instance.
  */
 export interface OAuthPromptSettings {
-    /** Name of the OAuth connection being used. */
+    // Name of the OAuth connection being used.
     connectionName: string;
 
-    /** Title of the cards signin button. */
+    // Title of the cards signin button.
     title: string;
 
-    /** (Optional) additional text to include on the signin card. */
+    // (Optional) additional text to include on the signin card.
     text?: string;
 
-    /** 
-     * (Optional) number of milliseconds the prompt will wait for the user to authenticate. 
+    /**
+     * (Optional) number of milliseconds the prompt will wait for the user to authenticate.
      * Defaults to a value `54,000,000` (15 minutes.)
      */
     timeout?: number;
 }
 
 /**
- * Creates a new prompt that asks the user to sign in using the Bot Frameworks Single Sign On (SSO) 
- * service. 
- * 
+ * Creates a new prompt that asks the user to sign in using the Bot Frameworks Single Sign On (SSO)
+ * service.
+ *
  * @remarks
- * The prompt will attempt to retrieve the users current token and if the user isn't signed in, it 
- * will send them an `OAuthCard` containing a button they can press to signin. Depending on the 
+ * The prompt will attempt to retrieve the users current token and if the user isn't signed in, it
+ * will send them an `OAuthCard` containing a button they can press to signin. Depending on the
  * channel, the user will be sent through one of two possible signin flows:
- * 
- * - The automatic signin flow where once the user signs in and the SSO service will forward the bot 
+ *
+ * - The automatic signin flow where once the user signs in and the SSO service will forward the bot
  * the users access token using either an `event` or `invoke` activity.
- * - The "magic code" flow where where once the user signs in they will be prompted by the SSO 
- * service to send the bot a six digit code confirming their identity. This code will be sent as a 
+ * - The "magic code" flow where where once the user signs in they will be prompted by the SSO
+ * service to send the bot a six digit code confirming their identity. This code will be sent as a
  * standard `message` activity.
- * 
- * Both flows are automatically supported by the `OAuthPrompt` and the only thing you need to be 
+ *
+ * Both flows are automatically supported by the `OAuthPrompt` and the only thing you need to be
  * careful of is that you don't block the `event` and `invoke` activities that the prompt might
  * be waiting on.
- * 
+ *
  * > [!NOTE]
- * > You should avoid persisting the access token with your bots other state. The Bot Frameworks 
+ * > You should avoid persisting the access token with your bots other state. The Bot Frameworks
  * > SSO service will securely store the token on your behalf. If you store it in your bots state
- * > it could expire or be revoked in between turns. 
+ * > it could expire or be revoked in between turns.
  * >
  * > When calling the prompt from within a waterfall step you should use the token within the step
  * > following the prompt and then let the token go out of scope at the end of your function.
- * 
+ *
  * #### Prompt Usage
- * 
+ *
  * When used with your bots `DialogSet` you can simply add a new instance of the prompt as a named
  * dialog using `DialogSet.add()`. You can then start the prompt from a waterfall step using either
- * `DialogContext.begin()` or `DialogContext.prompt()`. The user will be prompted to signin as 
- * needed and their access token will be passed as an argument to the callers next waterfall step: 
- * 
+ * `DialogContext.begin()` or `DialogContext.prompt()`. The user will be prompted to signin as
+ * needed and their access token will be passed as an argument to the callers next waterfall step:
+ *
  * ```JavaScript
  * const { DialogSet, OAuthPrompt } = require('botbuilder-dialogs');
- * 
+ *
  * const dialogs = new DialogSet();
- * 
+ *
  * dialogs.add('loginPrompt', new OAuthPrompt({
  *    connectionName: 'GitConnection',
  *    title: 'Login To GitHub',
  *    timeout: 300000   // User has 5 minutes to login
  * }));
- * 
+ *
  * dialogs.add('taskNeedingLogin', [
  *      async function (dc) {
  *          await dc.begin('loginPrompt');
@@ -95,16 +96,16 @@ export class OAuthPrompt extends Dialog {
     /**
      * Creates a new `OAuthPrompt` instance.
      * @param dialogId Unique ID of the dialog within its parent `DialogSet`.
-     * @param settings Settings used to configure the prompt. 
-     * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.  
+     * @param settings Settings used to configure the prompt.
+     * @param validator (Optional) validator that will be called each time the user responds to the prompt. If the validator replies with a message no additional retry prompt will be sent.
      */
-    constructor(dialogId: string, private settings: OAuthPromptSettings, private validator?: PromptValidator<TokenResponse>) { 
+    constructor(dialogId: string, private settings: OAuthPromptSettings, private validator?: PromptValidator<TokenResponse>) {
         super(dialogId);
     }
 
     public async dialogBegin(dc: DialogContext, options?: PromptOptions): Promise<DialogTurnResult> {
         // Ensure prompts have input hint set
-        const o = Object.assign({}, options);
+        const o: Partial<PromptOptions> = {...options};
         if (o.prompt && typeof o.prompt === 'object' && typeof o.prompt.inputHint !== 'string') {
             o.prompt.inputHint = InputHints.ExpectingInput;
         }
@@ -113,44 +114,45 @@ export class OAuthPrompt extends Dialog {
         }
 
         // Initialize prompt state
-        const timeout = typeof this.settings.timeout === 'number' ? this.settings.timeout : 54000000; 
-        const state = dc.activeDialog.state as OAuthPromptState;
+        const timeout: number = typeof this.settings.timeout === 'number' ? this.settings.timeout : 54000000;
+        const state: OAuthPromptState = dc.activeDialog.state as OAuthPromptState;
         state.state = {};
         state.options = o;
         state.expires = new Date().getTime() + timeout;
 
         // Attempt to get the users token
-        const output = await this.getUserToken(dc.context);
+        const output: TokenResponse = await this.getUserToken(dc.context);
         if (output !== undefined) {
             // Return token
             return await dc.end(output);
         } else {
             // Prompt user to login
             await this.sendOAuthCardAsync(dc.context, state.options.prompt);
+
             return Dialog.EndOfTurn;
         }
     }
 
     public async dialogContinue(dc: DialogContext): Promise<DialogTurnResult> {
         // Recognize token
-        const recognized = await this.recognizeToken(dc.context);
+        const recognized: PromptRecognizerResult<TokenResponse> = await this.recognizeToken(dc.context);
 
         // Check for timeout
-        const state = dc.activeDialog.state as OAuthPromptState;
-        const isMessage = dc.context.activity.type === ActivityTypes.Message;
-        const hasTimedOut = isMessage && (new Date().getTime() > state.expires);
+        const state: OAuthPromptState = dc.activeDialog.state as OAuthPromptState;
+        const isMessage: boolean = dc.context.activity.type === ActivityTypes.Message;
+        const hasTimedOut: boolean = isMessage && (new Date().getTime() > state.expires);
         if (hasTimedOut) {
             return await dc.end(undefined);
         } else {
             // Validate the return value
-            let end = false;
+            let end: boolean = false;
             let endResult: any;
             if (this.validator) {
                 await this.validator(dc.context, {
                     recognized: recognized,
                     state: state.state,
                     options: state.options,
-                    end: (output: any) => {
+                    end: (output: any): void => {
                         end = true;
                         endResult = output;
                     }
@@ -168,6 +170,7 @@ export class OAuthPrompt extends Dialog {
                 if (!dc.context.responded && isMessage && state.options.retryPrompt) {
                     await dc.context.sendActivity(state.options.retryPrompt);
                 }
+
                 return Dialog.EndOfTurn;
             }
         }
@@ -175,10 +178,13 @@ export class OAuthPrompt extends Dialog {
 
     public async getUserToken(context: TurnContext, code?: string): Promise<TokenResponse|undefined> {
         // Validate adapter type
-        if (!('getUserToken' in context.adapter)) { throw new Error(`OAuthPrompt.getUserToken(): not supported for the current adapter.`) }
-        
+        if (!('getUserToken' in context.adapter)) {
+            throw new Error(`OAuthPrompt.getUserToken(): not supported for the current adapter.`);
+        }
+
         // Get the token and call validator
-        const adapter = context.adapter as any; // cast to BotFrameworkAdapter
+        const adapter: any = context.adapter as any; // cast to BotFrameworkAdapter
+
         return await adapter.getUserToken(context, this.settings.connectionName, code);
     }
 
@@ -195,29 +201,35 @@ export class OAuthPrompt extends Dialog {
      * });
      * await prompt.signOutUser(context);
      * ```
-     * @param context 
+     * @param context a TurnContext representing latest activity
      */
     public async signOutUser(context: TurnContext): Promise<void> {
         // Validate adapter type
-        if (!('signOutUser' in context.adapter)) { throw new Error(`OAuthPrompt.signOutUser(): not supported for the current adapter.`) }
+        if (!('signOutUser' in context.adapter)) {
+            throw new Error(`OAuthPrompt.signOutUser(): not supported for the current adapter.`);
+        }
 
         // Sign out user
-        const adapter = context.adapter as any; // cast to BotFrameworkAdapter
+        const adapter: any = context.adapter as any; // cast to BotFrameworkAdapter
+
         return adapter.signOutUser(context, this.settings.connectionName);
     }
 
     private async sendOAuthCardAsync(context: TurnContext, prompt?: string|Partial<Activity>): Promise<void> {
         // Validate adapter type
-        if (!('getUserToken' in context.adapter)) { throw new Error(`OAuthPrompt.prompt(): not supported for the current adapter.`) }
+        if (!('getUserToken' in context.adapter)) {
+            throw new Error(`OAuthPrompt.prompt(): not supported for the current adapter.`);
+        }
 
         // Initialize outgoing message
-        const msg = typeof prompt === 'object' ? Object.assign({}, prompt) : MessageFactory.text(prompt, undefined, InputHints.ExpectingInput);
-        if (!Array.isArray(msg.attachments)) { msg.attachments = [] }
+        const msg: Partial<Activity> =
+            typeof prompt === 'object' ? {...prompt} : MessageFactory.text(prompt, undefined, InputHints.ExpectingInput);
+        if (!Array.isArray(msg.attachments)) { msg.attachments = []; }
 
         // Add login card as needed
         if (this.channelSupportsOAuthCard(context.activity.channelId)) {
-            const cards = msg.attachments.filter((a) => a.contentType === CardFactory.contentTypes.oauthCard);
-            if (cards.length == 0) {
+            const cards: Attachment[] = msg.attachments.filter((a: Attachment) => a.contentType === CardFactory.contentTypes.oauthCard);
+            if (cards.length === 0) {
                 // Append oauth card
                 msg.attachments.push(CardFactory.oauthCard(
                     this.settings.connectionName,
@@ -226,10 +238,10 @@ export class OAuthPrompt extends Dialog {
                 ));
             }
         } else {
-            const cards = msg.attachments.filter((a) => a.contentType === CardFactory.contentTypes.signinCard);
-            if (cards.length == 0) {
+            const cards: Attachment[] = msg.attachments.filter((a: Attachment) => a.contentType === CardFactory.contentTypes.signinCard);
+            if (cards.length === 0) {
                 // Append signin card
-                const link = await (context.adapter as any).getSignInLink(context, this.settings.connectionName);
+                const link: any = await (context.adapter as any).getSignInLink(context, this.settings.connectionName);
                 msg.attachments.push(CardFactory.signinCard(
                     this.settings.title,
                     link,
@@ -247,36 +259,41 @@ export class OAuthPrompt extends Dialog {
         if (this.isTokenResponseEvent(context)) {
             token = context.activity.value as TokenResponse;
         } else if (this.isTeamsVerificationInvoke(context)) {
-            const code = context.activity.value.state;
+            const code: any = context.activity.value.state;
             await context.sendActivity({ type: 'invokeResponse', value: { status: 200 }});
             token = await this.getUserToken(context, code);
         } else if (context.activity.type === ActivityTypes.Message) {
-            const matched = /(\d{6})/.exec(context.activity.text);
+            const matched: RegExpExecArray = /(\d{6})/.exec(context.activity.text);
             if (matched && matched.length > 1) {
                 token = await this.getUserToken(context, matched[1]);
             }
         }
+
         return token !== undefined ? { succeeded: true, value: token } : { succeeded: false };
     }
 
     private isTokenResponseEvent(context: TurnContext): boolean {
-        const activity = context.activity;
-        return activity.type === ActivityTypes.Event && activity.name == "tokens/response";
+        const activity: Activity = context.activity;
+
+        return activity.type === ActivityTypes.Event && activity.name === 'tokens/response';
     }
 
     private isTeamsVerificationInvoke(context: TurnContext): boolean {
-        const activity = context.activity;
-        return activity.type === ActivityTypes.Invoke && activity.name == "signin/verifyState";
+        const activity: Activity = context.activity;
+
+        return activity.type === ActivityTypes.Invoke && activity.name === 'signin/verifyState';
     }
 
     private channelSupportsOAuthCard(channelId: string): boolean {
         switch (channelId) {
-            case "msteams":
-            case "cortana":
-            case "skype":
-            case "skypeforbusiness":
+            case 'msteams':
+            case 'cortana':
+            case 'skype':
+            case 'skypeforbusiness':
                 return false;
+            default:
         }
+
         return true;
     }
 }
@@ -284,5 +301,5 @@ export class OAuthPrompt extends Dialog {
 interface OAuthPromptState  {
     state: object;
     options: PromptOptions;
-    expires: number;        // Timestamp of when the prompt will timeout. 
+    expires: number;        // Timestamp of when the prompt will timeout.
 }
