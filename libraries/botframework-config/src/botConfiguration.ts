@@ -83,33 +83,38 @@ export class BotConfiguration extends BotConfigurationBase {
         if (!botpath) {
             throw new Error(`missing path`);
         }
+
         this.internal.location = botpath;
 
         this._savePrep(secret);
 
-        let hasSecret = !!this.secretKey;
-        if (hasSecret)
-            this.encrypt(secret);
+        const hasSecret: boolean = !!this.secretKey;
 
+        if (hasSecret) {
+            this.encrypt(secret);
+        }
         await fsx.writeJson(botpath, this.toJSON(), { spaces: 4 });
 
-        if (hasSecret)
+        if (hasSecret) {
             this.decrypt(secret);
+        }
     }
 
     // save the config file to specificed botpath
     public saveAsSync(botpath: string, secret?: string): void {
         this._savePrep(secret);
 
-        let hasSecret = !!this.secretKey;
+        const hasSecret: boolean = !!this.secretKey;
 
-        if (hasSecret)
+        if (hasSecret) {
             this.encrypt(secret);
+        }
 
         fsx.writeJsonSync(botpath, this.toJSON(), { spaces: 4 });
 
-        if (hasSecret)
+        if (hasSecret) {
             this.decrypt(secret);
+        }
     }
 
     // save the config file back over original
@@ -122,19 +127,19 @@ export class BotConfiguration extends BotConfigurationBase {
         return this.saveAsSync(this.internal.location, secret);
     }
 
-    private _savePrep(secret?: string) {
+    private _savePrep(secret?: string): void {
         if (!!secret) {
             this.validateSecretKey(secret);
         }
 
         // make sure that all dispatch serviceIds still match services that are in the bot
-        for (let service of this.services) {
-            if (service.type == ServiceTypes.Dispatch) {
-                let dispatchService = <IDispatchService>service;
-                let validServices = [];
-                for (let dispatchServiceId of dispatchService.serviceIds) {
-                    for (let service of this.services) {
-                        if (service.id == dispatchServiceId) {
+        for (const service of this.services) {
+            if (service.type === ServiceTypes.Dispatch) {
+                const dispatchService: IDispatchService = <IDispatchService>service;
+                const validServices: string[] = [];
+                for (const dispatchServiceId of dispatchService.serviceIds) {
+                    for (const this_service of this.services) {
+                        if (this_service.id === dispatchServiceId) {
                             validServices.push(dispatchServiceId);
                         }
                     }
@@ -153,6 +158,11 @@ export class BotConfiguration extends BotConfigurationBase {
         }
 
         return bot;
+    }
+
+    // Generate a key for encryption
+    public static generateKey(): string {
+        return encrypt.generateKey();
     }
 
     public clearSecret(): void {
@@ -418,73 +428,3 @@ export class BotConfiguration extends BotConfigurationBase {
     }
 }
 
-    // save the config file to specificed botpath
-    public async saveAs(botpath: string, secret?: string): Promise<void> {
-        if (!botpath) {
-            throw new Error(`missing path`);
-        }
-
-        this._savePrep(secret);
-
-        const hasSecret: boolean = !!this.secretKey;
-
-        if (hasSecret) {
-            this.encrypt(secret);
-        }
-        await fsx.writeJson(botpath, this.toJSON(), { spaces: 4 });
-
-        if (hasSecret) {
-            this.decrypt(secret);
-        }
-    }
-
-    // save the config file to specificed botpath
-    public saveAsSync(botpath: string, secret?: string): void {
-        this._savePrep(secret);
-
-        const hasSecret: boolean = !!this.secretKey;
-
-        if (hasSecret) {
-            this.encrypt(secret);
-        }
-
-        fsx.writeJsonSync(botpath, this.toJSON(), { spaces: 4 });
-
-        if (hasSecret) {
-            this.decrypt(secret);
-        }
-    }
-
-    // save the config file back over original
-    public async save(secret?: string): Promise<void> {
-        return this.saveAs(this.internal.location, secret);
-    }
-
-    // save the config file back over original (blocking)
-    public saveSync(secret?: string): void {
-        return this.saveAsSync(this.internal.location, secret);
-    }
-
-    private _savePrep(secret?: string): void {
-        if (!!secret) {
-            this.validateSecretKey(secret);
-        }
-
-        // make sure that all dispatch serviceIds still match services that are in the bot
-        for (const service of this.services) {
-            if (service.type === ServiceTypes.Dispatch) {
-                const dispatchService: IDispatchService = <IDispatchService>service;
-                const validServices: string[] = [];
-                for (const dispatchServiceId of dispatchService.serviceIds) {
-                    for (const this_service of this.services) {
-                        if (this_service.id === dispatchServiceId) {
-                            validServices.push(dispatchServiceId);
-                        }
-                    }
-                }
-                dispatchService.serviceIds = validServices;
-            }
-        }
-    }
-
-}
