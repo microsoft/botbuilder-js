@@ -102,6 +102,8 @@ export class BotConfiguration extends BotConfigurationBase {
 
     // save the config file to specificed botpath
     public saveAsSync(botpath: string, secret?: string): void {
+        this.internal.location = botpath;
+
         this._savePrep(secret);
 
         const hasSecret: boolean = !!this.secretKey;
