@@ -64,7 +64,7 @@ export class BotConfiguration extends BotConfigurationBase {
     // load the config from a file
     public static async load(botpath: string, secret?: string): Promise<BotConfiguration> {
         const json: string = await txtfile.read(botpath);
-        const bot: BotConfiguration = BotConfiguration._load(json, secret);
+        const bot: BotConfiguration = BotConfiguration.internalLoad(json, secret);
         bot.internal.location = botpath;
 
         return bot;
@@ -73,7 +73,7 @@ export class BotConfiguration extends BotConfigurationBase {
     // load the config from a file (blocking)
     public static loadSync(botpath: string, secret?: string): BotConfiguration {
         const json: string = txtfile.readSync(botpath);
-        const bot: BotConfiguration = BotConfiguration._load(json, secret);
+        const bot: BotConfiguration = BotConfiguration.internalLoad(json, secret);
         bot.internal.location = botpath;
 
         return bot;
@@ -87,7 +87,7 @@ export class BotConfiguration extends BotConfigurationBase {
 
         this.internal.location = botpath;
 
-        this._savePrep(secret);
+        this.savePrep(secret);
 
         const hasSecret: boolean = !!this.secretKey;
 
@@ -105,7 +105,7 @@ export class BotConfiguration extends BotConfigurationBase {
     public saveAsSync(botpath: string, secret?: string): void {
         this.internal.location = botpath;
 
-        this._savePrep(secret);
+        this.savePrep(secret);
 
         const hasSecret: boolean = !!this.secretKey;
 
@@ -130,7 +130,7 @@ export class BotConfiguration extends BotConfigurationBase {
         return this.saveAsSync(this.internal.location, secret);
     }
 
-    private _savePrep(secret?: string): void {
+    private savePrep(secret?: string): void {
         if (!!secret) {
             this.validateSecretKey(secret);
         }
@@ -152,7 +152,7 @@ export class BotConfiguration extends BotConfigurationBase {
         }
     }
 
-    private static _load(json: string, secret?: string): BotConfiguration {
+    private static internalLoad(json: string, secret?: string): BotConfiguration {
         const bot: BotConfiguration = BotConfiguration.fromJSON(JSON.parse(json));
 
         const hasSecret: boolean = !!bot.secretKey;

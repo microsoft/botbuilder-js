@@ -35,9 +35,11 @@ describe("ExportTests", () => {
         fs.unlinkSync(botPath);
         fs.rmdirSync(exportFolder);
 
-        let recipe = JSON.parse(json);
+        let recipe = bf.BotRecipe.fromJSON(JSON.parse(json));
         assert.equal(config.services.length, recipe.resources.length, "service count not equal");
 
+        let json2 = recipe.toJSON();
+        assert.deepEqual(json2, JSON.parse(json), "serialization diffeent");
     });
 
 });
