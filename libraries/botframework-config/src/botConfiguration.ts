@@ -6,11 +6,15 @@ import * as fsx from 'fs-extra';
 import * as path from 'path';
 import * as process from 'process';
 import * as txtfile from 'read-text-file';
+import * as util from 'util';
 import * as uuid from 'uuid';
 import { BotConfigurationBase } from './botConfigurationBase';
+import { BotRecipe, IBlobResource, ICosmosDBResource, IDispatchResource, IFileResource, IGenericResource, IResource, IUrlResource } from './botRecipe';
 import * as encrypt from './encrypt';
+import { ExportOptions } from './exportOptions';
 import { ConnectedService } from './models';
-import { IBotConfiguration, IConnectedService, IDispatchService, ServiceTypes } from './schema';
+import { IBlobStorageService, IBotConfiguration, IConnectedService, ICosmosDBService, IDispatchService, IEndpointService, IFileService, IGenericService, ILuisService, IQnAService, ServiceTypes } from './schema';
+let exec = util.promisify(require('child_process').exec);
 
 interface InternalBotConfig {
     location?: string;
@@ -60,7 +64,7 @@ export class BotConfiguration extends BotConfigurationBase {
     // load the config from a file
     public static async load(botpath: string, secret?: string): Promise<BotConfiguration> {
         const json: string = await txtfile.read(botpath);
-        const bot: BotConfiguration = BotConfiguration._load(json, secret);
+        const bot: BotConfiguration = BotConfiguration.internalLoad(json, secret);
         bot.internal.location = botpath;
 
         return bot;
@@ -69,18 +73,89 @@ export class BotConfiguration extends BotConfigurationBase {
     // load the config from a file (blocking)
     public static loadSync(botpath: string, secret?: string): BotConfiguration {
         const json: string = txtfile.readSync(botpath);
-        const bot: BotConfiguration = BotConfiguration._load(json, secret);
+        const bot: BotConfiguration = BotConfiguration.internalLoad(json, secret);
         bot.internal.location = botpath;
 
         return bot;
     }
 
-    // Generate a key for encryption
-    public static generateKey(): string {
-        return encrypt.generateKey();
+    // save the config file to specificed botpath
+    public async saveAs(botpath: string, secret?: string): Promise<void> {
+        if (!botpath) {
+            throw new Error(`missing path`);
+        }
+
+        this.internal.location = botpath;
+
+        this.savePrep(secret);
+
+        const hasSecret: boolean = !!this.secretKey;
+
+        if (hasSecret) {
+            this.encrypt(secret);
+        }
+        await fsx.writeJson(botpath, this.toJSON(), { spaces: 4 });
+
+        if (hasSecret) {
+            this.decrypt(secret);
+        }
     }
 
-    private static _load(json: string, secret?: string): BotConfiguration {
+    // save the config file to specificed botpath
+    public saveAsSync(botpath: string, secret?: string): void {
+        if (!botpath) {
+            throw new Error(`missing path`);
+        }
+        this.internal.location = botpath;
+
+        this.savePrep(secret);
+
+        const hasSecret: boolean = !!this.secretKey;
+
+        if (hasSecret) {
+            this.encrypt(secret);
+        }
+
+        fsx.writeJsonSync(botpath, this.toJSON(), { spaces: 4 });
+
+        if (hasSecret) {
+            this.decrypt(secret);
+        }
+    }
+
+    // save the config file back over original
+    public async save(secret?: string): Promise<void> {
+        return this.saveAs(this.internal.location, secret);
+    }
+
+    // save the config file back over original (blocking)
+    public saveSync(secret?: string): void {
+        return this.saveAsSync(this.internal.location, secret);
+    }
+
+    private savePrep(secret?: string): void {
+        if (!!secret) {
+            this.validateSecretKey(secret);
+        }
+
+        // make sure that all dispatch serviceIds still match services that are in the bot
+        for (const service of this.services) {
+            if (service.type === ServiceTypes.Dispatch) {
+                const dispatchService: IDispatchService = <IDispatchService>service;
+                const validServices: string[] = [];
+                for (const dispatchServiceId of dispatchService.serviceIds) {
+                    for (const this_service of this.services) {
+                        if (this_service.id === dispatchServiceId) {
+                            validServices.push(dispatchServiceId);
+                        }
+                    }
+                }
+                dispatchService.serviceIds = validServices;
+            }
+        }
+    }
+
+    private static internalLoad(json: string, secret?: string): BotConfiguration {
         const bot: BotConfiguration = BotConfiguration.fromJSON(JSON.parse(json));
 
         const hasSecret: boolean = !!bot.secretKey;
@@ -89,6 +164,11 @@ export class BotConfiguration extends BotConfigurationBase {
         }
 
         return bot;
+    }
+
+    // Generate a key for encryption
+    public static generateKey(): string {
+        return encrypt.generateKey();
     }
 
     public clearSecret(): void {
@@ -189,73 +269,220 @@ export class BotConfiguration extends BotConfigurationBase {
         }
     }
 
-    // save the config file to specificed botpath
-    public async saveAs(botpath: string, secret?: string): Promise<void> {
-        if (!botpath) {
-            throw new Error(`missing path`);
-        }
+    // export the services from the bot file as resource files and recipe file
+    public async export(folder: string, exportOptions?: Partial<ExportOptions>): Promise<BotRecipe> {
+        let options = Object.assign({ download: true }, exportOptions);
 
-        this._savePrep(secret);
+        let recipe = new BotRecipe();
 
-        const hasSecret: boolean = !!this.secretKey;
+        await fsx.ensureDir(folder);
 
-        if (hasSecret) {
-            this.encrypt(secret);
-        }
-        await fsx.writeJson(botpath, this.toJSON(), { spaces: 4 });
+        let index = 0;
+        for (let service of this.services) {
+            index++;
 
-        if (hasSecret) {
-            this.decrypt(secret);
-        }
-    }
-
-    // save the config file to specificed botpath
-    public saveAsSync(botpath: string, secret?: string): void {
-        this._savePrep(secret);
-
-        const hasSecret: boolean = !!this.secretKey;
-
-        if (hasSecret) {
-            this.encrypt(secret);
-        }
-
-        fsx.writeJsonSync(botpath, this.toJSON(), { spaces: 4 });
-
-        if (hasSecret) {
-            this.decrypt(secret);
-        }
-    }
-
-    // save the config file back over original
-    public async save(secret?: string): Promise<void> {
-        return this.saveAs(this.internal.location, secret);
-    }
-
-    // save the config file back over original (blocking)
-    public saveSync(secret?: string): void {
-        return this.saveAsSync(this.internal.location, secret);
-    }
-
-    private _savePrep(secret?: string): void {
-        if (!!secret) {
-            this.validateSecretKey(secret);
-        }
-
-        // make sure that all dispatch serviceIds still match services that are in the bot
-        for (const service of this.services) {
-            if (service.type === ServiceTypes.Dispatch) {
-                const dispatchService: IDispatchService = <IDispatchService>service;
-                const validServices: string[] = [];
-                for (const dispatchServiceId of dispatchService.serviceIds) {
-                    for (const this_service of this.services) {
-                        if (this_service.id === dispatchServiceId) {
-                            validServices.push(dispatchServiceId);
+            switch (service.type) {
+                case ServiceTypes.Dispatch:
+                    {
+                        let luisService = <ILuisService>service;
+                        if (options.download) {
+                            let command = `luis export version --appId ${luisService.appId} --authoringKey ${luisService.authoringKey} --versionId "${luisService.version}"`;
+                            if (options.progress) {
+                                options.progress(service, command, index, this.services.length);
+                            }
+                            let p = await exec(command);
+                            var json = p.stdout;
+                            // make sure it's json
+                            JSON.parse(json);
+                            await fsx.writeFile(folder + `/${luisService.id}.luis`, json, { encoding: 'utf8' });
                         }
+                        else {
+                            if (options.progress) {
+                                options.progress(service, '', index, this.services.length);
+                            }
+                        }
+
+                        let dispatchResource: IDispatchResource = {
+                            type: service.type,
+                            id: service.id,
+                            name: service.name,
+                            serviceIds: (<IDispatchService>service).serviceIds
+                        };
+                        recipe.resources.push(dispatchResource);
                     }
-                }
-                dispatchService.serviceIds = validServices;
+                    break;
+                case ServiceTypes.Luis:
+                    {
+                        let luisService = <ILuisService>service;
+                        if (options.download) {
+                            let command = `luis export version --appId ${luisService.appId} --authoringKey ${luisService.authoringKey} --versionId "${luisService.version}"`;
+                            if (options.progress) {
+                                options.progress(service, command, index, this.services.length);
+                            }
+                            let p = await exec(command);
+                            var json = p.stdout;
+                            // make sure it's json
+                            JSON.parse(json);
+                            await fsx.writeFile(folder + `/${luisService.id}.luis`, json, { encoding: 'utf8' });
+                        }
+                        else {
+                            if (options.progress) {
+                                options.progress(service, '', index, this.services.length);
+                            }
+                        }
+
+                        let resource: IResource = {
+                            type: service.type,
+                            id: service.id,
+                            name: service.name
+                        };
+                        recipe.resources.push(resource);
+                    }
+                    break;
+
+                case ServiceTypes.QnA:
+                    {
+                        let qnaService = <IQnAService>service;
+                        if (options.download) {
+                            let command = `qnamaker export kb --kbId ${qnaService.kbId} --environment prod --subscriptionKey ${qnaService.subscriptionKey} --hostname ${qnaService.hostname} --endpointKey ${qnaService.endpointKey}`;
+                            if (options.progress) {
+                                options.progress(service, command, index, this.services.length);
+                            }
+                            let p = await exec(command);
+                            var json = p.stdout;
+                            // make sure it's json
+                            JSON.parse(json);
+                            await fsx.writeFile(folder + `/${qnaService.id}.qna`, json, { encoding: 'utf8' });
+                        }
+                        else {
+                            if (options.progress) {
+                                options.progress(service, '', index, this.services.length);
+                            }
+                        }
+
+                        let resource: IResource = {
+                            type: service.type,
+                            id: service.id,
+                            name: service.name
+                        };
+                        recipe.resources.push(resource);
+                    }
+                    break;
+
+                case ServiceTypes.Endpoint:
+                    {
+                        if (options.progress) {
+                            options.progress(service, '', index, this.services.length);
+                        }
+                        let endpointResource: IUrlResource = {
+                            type: ServiceTypes.Endpoint,
+                            id: service.id,
+                            name: service.name,
+                            url: (<IEndpointService>service).endpoint
+                        };
+                        recipe.resources.push(endpointResource);
+                    }
+                    break;
+
+                case ServiceTypes.BlobStorage:
+                    {
+                        if (options.progress) {
+                            options.progress(service, '', index, this.services.length);
+                        }
+                        let blobResource: IBlobResource = {
+                            type: ServiceTypes.BlobStorage,
+                            id: service.id,
+                            name: service.name,
+                            container: (<IBlobStorageService>service).container
+                        };
+                        recipe.resources.push(blobResource);
+                    }
+                    break;
+
+                case ServiceTypes.CosmosDB:
+                    {
+                        if (options.progress) {
+                            options.progress(service, '', index, this.services.length);
+                        }
+                        let cosmosDBResource: ICosmosDBResource = {
+                            type: ServiceTypes.CosmosDB,
+                            id: service.id,
+                            name: service.name,
+                            database: (<ICosmosDBService>service).database,
+                            collection: (<ICosmosDBService>service).collection,
+                        };
+                        recipe.resources.push(cosmosDBResource);
+                    }
+                    break;
+
+                case ServiceTypes.File:
+                    {
+                        if (options.progress) {
+                            options.progress(service, '', index, this.services.length);
+                        }
+                        let fileResource: IFileResource = {
+                            type: ServiceTypes.File,
+                            id: service.id,
+                            name: service.name,
+                            path: (<IFileService>service).path,
+                        };
+                        recipe.resources.push(fileResource);
+                    }
+                    break;
+
+                case ServiceTypes.Generic:
+                    {
+                        if (options.progress) {
+                            options.progress(service, '', index, this.services.length);
+                        }
+                        console.warn(`WARNING: Generic services cannot be cloned and all configuration data will be passed unchanged and unencrypted `);
+                        let genericService = <IGenericService>service;
+                        let genericResource: IGenericResource = {
+                            type: ServiceTypes.File,
+                            id: service.id,
+                            name: service.name,
+                            url: genericService.url,
+                            configuration: genericService.configuration,
+                        };
+                        recipe.resources.push(genericResource);
+                    }
+                    break;
+
+                case ServiceTypes.Bot:
+                    {
+                        if (options.progress) {
+                            options.progress(service, '', index, this.services.length);
+                        }
+
+                        let resource: IResource = {
+                            type: service.type,
+                            id: service.id,
+                            name: service.name
+                        };
+                        recipe.resources.push(resource);
+                    }
+                    break;
+
+                case ServiceTypes.AppInsights:
+                    {
+                        if (options.progress) {
+                            options.progress(service, '', index, this.services.length);
+                        }
+                        let resource: IResource = {
+                            type: service.type,
+                            id: service.id,
+                            name: service.name
+                        };
+                        recipe.resources.push(resource);
+                    }
+                    break;
+
+                default:
+                    throw new Error(`Unknown service type for export ${service.type}`);
             }
         }
+        await fsx.writeFile(folder + `/bot.recipe`, JSON.stringify(recipe, null, 2), { encoding: 'utf8' });
+        return recipe;
     }
-
 }
+

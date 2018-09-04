@@ -1,0 +1,63 @@
+{
+  "version": "1.0",
+  "resources": [
+    {
+      "type": "abs",
+      "id": "1",
+      "name": "testAbs"
+    },
+    {
+      "type": "blob",
+      "id": "2",
+      "name": "testBlob",
+      "container": "testContainer"
+    },
+    {
+      "type": "appInsights",
+      "id": "3",
+      "name": "testInsights"
+    },
+    {
+      "type": "dispatch",
+      "id": "4",
+      "name": "testDispatch",
+      "serviceIds": [
+        "6",
+        "7"
+      ]
+    },
+    {
+      "type": "endpoint",
+      "id": "5",
+      "name": "testEndpoint",
+      "url": "https://test.azurewebsites.net/api/messages"
+    },
+    {
+      "type": "luis",
+      "id": "6",
+      "name": "testLuis"
+    },
+    {
+      "type": "qna",
+      "id": "7",
+      "name": "testQna"
+    },
+    {
+      "type": "cosmosdb",
+      "id": "8",
+      "name": "testCosmos",
+      "database": "testDatabase",
+      "collection": "testCollection"
+    },
+    {
+      "type": "file",
+      "id": "9",
+      "name": "testGeneric",
+      "url": "https://bing.com",
+      "configuration": {
+        "key1": "testKey1",
+        "key2": "testKey2"
+      }
+    }
+  ]
+}

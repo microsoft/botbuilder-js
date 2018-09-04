@@ -38,7 +38,7 @@ describe("LoadAndSaveTests", () => {
         assert.deepEqual(config, config2, "configs should be same");
     });
 
-    it("LoadAndSaveBotFileSync", () => {
+    it("LoadAndSaveBotFileSync", async () => {
         var secret = bf.BotConfiguration.generateKey();
         var config = bf.BotConfiguration.loadSync(testBotPath);
 
@@ -55,6 +55,28 @@ describe("LoadAndSaveTests", () => {
         var config3 = bf.BotConfiguration.loadSync(saveBotPath, secret);
         fs.unlinkSync(saveBotPath);
         assert.equal(config3.name, config2.name, "didn't save");
+
+        // save
+        config2.name = 'save';
+        await config2.save(secret);
+        var config3 = bf.BotConfiguration.loadSync(saveBotPath, secret);
+        fs.unlinkSync(saveBotPath);
+        assert.equal(config3.name, config2.name, "didn't save");
+    });
+
+    it("SaveWithNullThros", async () => {
+        var secret = bf.BotConfiguration.generateKey();
+        var config = bf.BotConfiguration.loadSync(testBotPath);
+
+        try {
+            config.saveAsSync(null, secret);
+            assert.fail("SaveAsAsync with null should throw");
+        } catch (err) { }
+
+        try {
+            await config.saveAs(null, secret);
+            assert.fail("SaveAsAsync with null should throw");
+        } catch (err) { }
     });
 
     it("CantLoadWithoutSecret", async () => {
