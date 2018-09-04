@@ -16,7 +16,7 @@ export interface IResource {
 }
 
 export interface IUrlResource extends IResource {
-    url: string | null;
+    url: string;
 }
 
 export interface IDispatchResource extends IResource {

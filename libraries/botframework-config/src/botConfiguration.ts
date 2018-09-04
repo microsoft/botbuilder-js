@@ -11,6 +11,7 @@ import * as uuid from 'uuid';
 import { BotConfigurationBase } from './botConfigurationBase';
 import { BotRecipe, IBlobResource, ICosmosDBResource, IDispatchResource, IFileResource, IGenericResource, IResource, IUrlResource } from './botRecipe';
 import * as encrypt from './encrypt';
+import { ExportOptions } from './exportOptions';
 import { ConnectedService } from './models';
 import { IBlobStorageService, IBotConfiguration, IConnectedService, ICosmosDBService, IDispatchService, IEndpointService, IFileService, IGenericService, ILuisService, IQnAService, ServiceTypes } from './schema';
 let exec = util.promisify(require('child_process').exec);
@@ -266,7 +267,9 @@ export class BotConfiguration extends BotConfigurationBase {
     }
 
     // export the services from the bot file as resource files and recipe file
-    public async export(folder: string, progress?: (service: IConnectedService, command: string, index: number, total: number) => void): Promise<BotRecipe> {
+    public async export(folder: string, exportOptions?: Partial<ExportOptions>): Promise<BotRecipe> {
+        let options = Object.assign({ download: true }, exportOptions);
+
         let recipe = new BotRecipe();
 
         await fsx.ensureDir(folder);
@@ -279,15 +282,23 @@ export class BotConfiguration extends BotConfigurationBase {
                 case ServiceTypes.Dispatch:
                     {
                         let luisService = <ILuisService>service;
-                        let command = `luis export version --appId ${luisService.appId} --authoringKey ${luisService.authoringKey} --versionId "${luisService.version}"`;
-                        if (progress) {
-                            progress(service, command, index, this.services.length);
+                        if (options.download) {
+                            let command = `luis export version --appId ${luisService.appId} --authoringKey ${luisService.authoringKey} --versionId "${luisService.version}"`;
+                            if (options.progress) {
+                                options.progress(service, command, index, this.services.length);
+                            }
+                            let p = await exec(command);
+                            var json = p.stdout;
+                            // make sure it's json
+                            JSON.parse(json);
+                            await fsx.writeFile(folder + `/${luisService.id}.luis`, json, { encoding: 'utf8' });
                         }
-                        let p = await exec(command);
-                        var json = p.stdout;
-                        // make sure it's json
-                        JSON.parse(json);
-                        await fsx.writeFile(folder + `/${luisService.id}.luis`, json, { encoding: 'utf8' });
+                        else {
+                            if (options.progress) {
+                                options.progress(service, '', index, this.services.length);
+                            }
+                        }
+
                         let dispatchResource: IDispatchResource = {
                             type: service.type,
                             id: service.id,
@@ -300,15 +311,23 @@ export class BotConfiguration extends BotConfigurationBase {
                 case ServiceTypes.Luis:
                     {
                         let luisService = <ILuisService>service;
-                        let command = `luis export version --appId ${luisService.appId} --authoringKey ${luisService.authoringKey} --versionId "${luisService.version}"`;
-                        if (progress) {
-                            progress(service, command, index, this.services.length);
+                        if (options.download) {
+                            let command = `luis export version --appId ${luisService.appId} --authoringKey ${luisService.authoringKey} --versionId "${luisService.version}"`;
+                            if (options.progress) {
+                                options.progress(service, command, index, this.services.length);
+                            }
+                            let p = await exec(command);
+                            var json = p.stdout;
+                            // make sure it's json
+                            JSON.parse(json);
+                            await fsx.writeFile(folder + `/${luisService.id}.luis`, json, { encoding: 'utf8' });
                         }
-                        let p = await exec(command);
-                        var json = p.stdout;
-                        // make sure it's json
-                        JSON.parse(json);
-                        await fsx.writeFile(folder + `/${luisService.id}.luis`, json, { encoding: 'utf8' });
+                        else {
+                            if (options.progress) {
+                                options.progress(service, '', index, this.services.length);
+                            }
+                        }
+
                         let resource: IResource = {
                             type: service.type,
                             id: service.id,
@@ -321,15 +340,23 @@ export class BotConfiguration extends BotConfigurationBase {
                 case ServiceTypes.QnA:
                     {
                         let qnaService = <IQnAService>service;
-                        let command = `qnamaker export kb --kbId ${qnaService.kbId} --environment prod --subscriptionKey ${qnaService.subscriptionKey} --hostname ${qnaService.hostname} --endpointKey ${qnaService.endpointKey}`;
-                        if (progress) {
-                            progress(service, command, index, this.services.length);
+                        if (options.download) {
+                            let command = `qnamaker export kb --kbId ${qnaService.kbId} --environment prod --subscriptionKey ${qnaService.subscriptionKey} --hostname ${qnaService.hostname} --endpointKey ${qnaService.endpointKey}`;
+                            if (options.progress) {
+                                options.progress(service, command, index, this.services.length);
+                            }
+                            let p = await exec(command);
+                            var json = p.stdout;
+                            // make sure it's json
+                            JSON.parse(json);
+                            await fsx.writeFile(folder + `/${qnaService.id}.qna`, json, { encoding: 'utf8' });
                         }
-                        let p = await exec(command);
-                        var json = p.stdout;
-                        // make sure it's json
-                        JSON.parse(json);
-                        await fsx.writeFile(folder + `/${qnaService.id}.qna`, json, { encoding: 'utf8' });
+                        else {
+                            if (options.progress) {
+                                options.progress(service, '', index, this.services.length);
+                            }
+                        }
+
                         let resource: IResource = {
                             type: service.type,
                             id: service.id,
@@ -341,8 +368,8 @@ export class BotConfiguration extends BotConfigurationBase {
 
                 case ServiceTypes.Endpoint:
                     {
-                        if (progress) {
-                            progress(service, '', index, this.services.length);
+                        if (options.progress) {
+                            options.progress(service, '', index, this.services.length);
                         }
                         let endpointResource: IUrlResource = {
                             type: ServiceTypes.Endpoint,
@@ -356,8 +383,8 @@ export class BotConfiguration extends BotConfigurationBase {
 
                 case ServiceTypes.BlobStorage:
                     {
-                        if (progress) {
-                            progress(service, '', index, this.services.length);
+                        if (options.progress) {
+                            options.progress(service, '', index, this.services.length);
                         }
                         let blobResource: IBlobResource = {
                             type: ServiceTypes.BlobStorage,
@@ -371,8 +398,8 @@ export class BotConfiguration extends BotConfigurationBase {
 
                 case ServiceTypes.CosmosDB:
                     {
-                        if (progress) {
-                            progress(service, '', index, this.services.length);
+                        if (options.progress) {
+                            options.progress(service, '', index, this.services.length);
                         }
                         let cosmosDBResource: ICosmosDBResource = {
                             type: ServiceTypes.CosmosDB,
@@ -387,8 +414,8 @@ export class BotConfiguration extends BotConfigurationBase {
 
                 case ServiceTypes.File:
                     {
-                        if (progress) {
-                            progress(service, '', index, this.services.length);
+                        if (options.progress) {
+                            options.progress(service, '', index, this.services.length);
                         }
                         let fileResource: IFileResource = {
                             type: ServiceTypes.File,
@@ -402,8 +429,8 @@ export class BotConfiguration extends BotConfigurationBase {
 
                 case ServiceTypes.Generic:
                     {
-                        if (progress) {
-                            progress(service, '', index, this.services.length);
+                        if (options.progress) {
+                            options.progress(service, '', index, this.services.length);
                         }
                         console.warn(`WARNING: Generic services cannot be cloned and all configuration data will be passed unchanged and unencrypted `);
                         let genericService = <IGenericService>service;
@@ -420,8 +447,8 @@ export class BotConfiguration extends BotConfigurationBase {
 
                 case ServiceTypes.Bot:
                     {
-                        if (progress) {
-                            progress(service, '', index, this.services.length);
+                        if (options.progress) {
+                            options.progress(service, '', index, this.services.length);
                         }
 
                         let resource: IResource = {
@@ -435,8 +462,8 @@ export class BotConfiguration extends BotConfigurationBase {
 
                 case ServiceTypes.AppInsights:
                     {
-                        if (progress) {
-                            progress(service, '', index, this.services.length);
+                        if (options.progress) {
+                            options.progress(service, '', index, this.services.length);
                         }
                         let resource: IResource = {
                             type: service.type,
