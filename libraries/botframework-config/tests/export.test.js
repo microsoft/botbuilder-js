@@ -13,7 +13,9 @@ describe("ExportTests", () => {
     it("ExportBot", async () => {
         var config = await bf.BotConfiguration.load(testBotPath);
         let messages = [];
-        await config.export('exporttest', {
+        let exportFolder = path.join(path.dirname(__filename),'exportfolder');
+
+        await config.export(exportFolder, {
             download: false, // disable download
             progress: (service, command, index, total) => messages.push(service.name)
         });
@@ -28,11 +30,11 @@ describe("ExportTests", () => {
             }
             assert.ok(found, `${service.name} not sent as status`);
         }
-        let botPath = require.resolve(`../exporttest/bot.recipe`);
-        let exportFolder  = path.dirname(botPath);
-        let json = txtfile.readSync(botPath);
 
-        fs.unlinkSync(botPath);
+        let recipePath = path.join(exportFolder, 'bot.recipe');
+        let json = txtfile.readSync(recipePath);
+        
+        fs.unlinkSync(recipePath);
         fs.rmdirSync(exportFolder);
 
         let recipe = bf.BotRecipe.fromJSON(JSON.parse(json));
