@@ -12,10 +12,10 @@ describe("LoadAndSaveTests", () => {
     it("DeserializeBotFile", async () => {
         var config = await bf.BotConfiguration.load(testBotPath);
 
-        assert.ok("test" == config.name);
-        assert.ok("test description" == config.description);
-        assert.ok("" == config.secretKey);
-        assert.ok(9 == config.services.length);
+        assert.equal(config.name, "test", 'config name should be set');
+        assert.equal(config.description, "test description", 'test description is not set');
+        assert.equal(config.secretKey,'', 'secretkey should not be set');
+        assert.equal(config.services.length, 10, 'service count is wrong');
         assert.equal(config.getPath(), testBotPath, "bot doesn't remember where it was loaded from");
     });
 
