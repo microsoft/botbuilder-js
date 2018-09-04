@@ -16,7 +16,7 @@ export interface IResource {
 }
 
 export interface IUrlResource extends IResource {
-    url: any;
+    url: string | null;
 }
 
 export interface IDispatchResource extends IResource {
@@ -37,8 +37,6 @@ export interface IFileResource extends IResource {
 }
 
 export interface IGenericResource extends IUrlResource {
-    path: string;
-
     configuration: { [key: string]: string };
 }
 

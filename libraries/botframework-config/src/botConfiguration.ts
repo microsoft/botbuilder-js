@@ -9,7 +9,7 @@ import * as txtfile from 'read-text-file';
 import * as util from 'util';
 import * as uuid from 'uuid';
 import { BotConfigurationBase } from './botConfigurationBase';
-import { BotRecipe, IBlobResource, ICosmosDBResource, IDispatchResource, IFileResource, IGenericResource, IUrlResource } from './botRecipe';
+import { BotRecipe, IBlobResource, ICosmosDBResource, IDispatchResource, IFileResource, IGenericResource, IResource, IUrlResource } from './botRecipe';
 import * as encrypt from './encrypt';
 import { ConnectedService } from './models';
 import { IBlobStorageService, IBotConfiguration, IConnectedService, ICosmosDBService, IDispatchService, IEndpointService, IFileService, IGenericService, ILuisService, IQnAService, ServiceTypes } from './schema';
@@ -288,12 +288,13 @@ export class BotConfiguration extends BotConfigurationBase {
                         // make sure it's json
                         JSON.parse(json);
                         await fsx.writeFile(folder + `/${luisService.id}.luis`, json, { encoding: 'utf8' });
-                        recipe.resources.push(<IDispatchResource>{
+                        let dispatchResource: IDispatchResource = {
                             type: service.type,
                             id: service.id,
                             name: service.name,
                             serviceIds: (<IDispatchService>service).serviceIds
-                        });
+                        };
+                        recipe.resources.push(dispatchResource);
                     }
                     break;
                 case ServiceTypes.Luis:
@@ -308,11 +309,12 @@ export class BotConfiguration extends BotConfigurationBase {
                         // make sure it's json
                         JSON.parse(json);
                         await fsx.writeFile(folder + `/${luisService.id}.luis`, json, { encoding: 'utf8' });
-                        recipe.resources.push({
+                        let resource: IResource = {
                             type: service.type,
                             id: service.id,
                             name: service.name
-                        });
+                        };
+                        recipe.resources.push(resource);
                     }
                     break;
 
@@ -328,97 +330,121 @@ export class BotConfiguration extends BotConfigurationBase {
                         // make sure it's json
                         JSON.parse(json);
                         await fsx.writeFile(folder + `/${qnaService.id}.qna`, json, { encoding: 'utf8' });
-                        recipe.resources.push({
+                        let resource: IResource = {
                             type: service.type,
                             id: service.id,
                             name: service.name
-                        });
+                        };
+                        recipe.resources.push(resource);
                     }
                     break;
 
                 case ServiceTypes.Endpoint:
-                    if (progress) {
-                        progress(service, '', index, this.services.length);
+                    {
+                        if (progress) {
+                            progress(service, '', index, this.services.length);
+                        }
+                        let endpointResource: IUrlResource = {
+                            type: ServiceTypes.Endpoint,
+                            id: service.id,
+                            name: service.name,
+                            url: (<IEndpointService>service).endpoint
+                        };
+                        recipe.resources.push(endpointResource);
                     }
-                    recipe.resources.push(<IUrlResource>{
-                        type: ServiceTypes.Endpoint,
-                        id: service.id,
-                        name: service.name,
-                        url: (<IEndpointService>service).endpoint
-                    });
                     break;
 
                 case ServiceTypes.BlobStorage:
-                    if (progress) {
-                        progress(service, '', index, this.services.length);
+                    {
+                        if (progress) {
+                            progress(service, '', index, this.services.length);
+                        }
+                        let blobResource: IBlobResource = {
+                            type: ServiceTypes.BlobStorage,
+                            id: service.id,
+                            name: service.name,
+                            container: (<IBlobStorageService>service).container
+                        };
+                        recipe.resources.push(blobResource);
                     }
-                    recipe.resources.push(<IBlobResource>{
-                        type: ServiceTypes.BlobStorage,
-                        id: service.id,
-                        name: service.name,
-                        container: (<IBlobStorageService>service).container
-                    });
                     break;
 
                 case ServiceTypes.CosmosDB:
-                    if (progress) {
-                        progress(service, '', index, this.services.length);
+                    {
+                        if (progress) {
+                            progress(service, '', index, this.services.length);
+                        }
+                        let cosmosDBResource: ICosmosDBResource = {
+                            type: ServiceTypes.CosmosDB,
+                            id: service.id,
+                            name: service.name,
+                            database: (<ICosmosDBService>service).database,
+                            collection: (<ICosmosDBService>service).collection,
+                        };
+                        recipe.resources.push(cosmosDBResource);
                     }
-                    recipe.resources.push(<ICosmosDBResource>{
-                        type: ServiceTypes.CosmosDB,
-                        id: service.id,
-                        name: service.name,
-                        database: (<ICosmosDBService>service).database,
-                        collection: (<ICosmosDBService>service).collection,
-                    });
                     break;
 
                 case ServiceTypes.File:
-                    if (progress) {
-                        progress(service, '', index, this.services.length);
+                    {
+                        if (progress) {
+                            progress(service, '', index, this.services.length);
+                        }
+                        let fileResource: IFileResource = {
+                            type: ServiceTypes.File,
+                            id: service.id,
+                            name: service.name,
+                            path: (<IFileService>service).path,
+                        };
+                        recipe.resources.push(fileResource);
                     }
-                    recipe.resources.push(<IFileResource>{
-                        type: ServiceTypes.File,
-                        id: service.id,
-                        name: service.name,
-                        path: (<IFileService>service).path,
-                    });
                     break;
 
                 case ServiceTypes.Generic:
-                    if (progress) {
-                        progress(service, '', index, this.services.length);
+                    {
+                        if (progress) {
+                            progress(service, '', index, this.services.length);
+                        }
+                        console.warn(`WARNING: Generic services cannot be cloned and all configuration data will be passed unchanged and unencrypted `);
+                        let genericService = <IGenericService>service;
+                        let genericResource: IGenericResource = {
+                            type: ServiceTypes.File,
+                            id: service.id,
+                            name: service.name,
+                            url: genericService.url,
+                            configuration: genericService.configuration,
+                        };
+                        recipe.resources.push(genericResource);
                     }
-                    console.warn(`WARNING: Generic services cannot be cloned and all configuration data will be passed unchanged and unencrypted `);
-                    recipe.resources.push(<IGenericResource>{
-                        type: ServiceTypes.File,
-                        id: service.id,
-                        name: service.name,
-                        url: (<IGenericService>service).url,
-                        configuration: (<IGenericService>service).configuration,
-                    });
                     break;
 
                 case ServiceTypes.Bot:
-                    if (progress) {
-                        progress(service, '', index, this.services.length);
+                    {
+                        if (progress) {
+                            progress(service, '', index, this.services.length);
+                        }
+
+                        let resource: IResource = {
+                            type: service.type,
+                            id: service.id,
+                            name: service.name
+                        };
+                        recipe.resources.push(resource);
                     }
-                    recipe.resources.push({
-                        type: ServiceTypes.Bot,
-                        id: service.id,
-                        name: service.name,
-                    });
                     break;
 
                 case ServiceTypes.AppInsights:
-                    if (progress) {
-                        progress(service, '', index, this.services.length);
+                    {
+                        if (progress) {
+                            progress(service, '', index, this.services.length);
+                        }
+                        let resource: IResource = {
+                            type: service.type,
+                            id: service.id,
+                            name: service.name
+                        };
+                        recipe.resources.push(resource);
                     }
-                    recipe.resources.push({
-                        type: ServiceTypes.AppInsights,
-                        id: service.id,
-                        name: service.name,
-                    });
                     break;
 
                 default:
