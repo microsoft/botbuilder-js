@@ -438,7 +438,7 @@ export class BotConfiguration extends BotConfigurationBase {
                         console.warn(`WARNING: Generic services cannot be cloned and all configuration data will be passed unchanged and unencrypted `);
                         let genericService = <IGenericService>service;
                         let genericResource: IGenericResource = {
-                            type: ServiceTypes.File,
+                            type: ServiceTypes.Generic,
                             id: service.id,
                             name: service.name,
                             url: genericService.url,
