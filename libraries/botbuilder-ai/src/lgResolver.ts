@@ -45,22 +45,16 @@ export class LanguageGenerationResolver {
 
   public async resolve(
     activity: Activity,
-    entities: Map<string, PrimitiveType>,
+    entities?: Map<string, PrimitiveType>,
   ): Promise<void> {
     if (isNil(activity)) {
       throw new Error("Activity can't be null or undefined");
     }
 
-    if (isNil(entities)) {
-      throw new Error("Entities can't be null or undefined");
-    }
-
-    const slotsBuilder = new SlotsBuilder(activity);
+    const slotsBuilder = new SlotsBuilder(activity, entities);
     const activityInjector = new ActivityInjector(activity);
 
-    const [templateReferencesSlots, entitiesSlots] = slotsBuilder.build(
-      entities,
-    );
+    const [templateReferencesSlots, entitiesSlots] = slotsBuilder.build();
 
     const requestsPromises = templateReferencesSlots
       .map(templateReferenceSlot =>
@@ -151,22 +145,25 @@ const suggestedActionsInspector: IActivityInspector = (
  * @private
  */
 export class ActivityInspector {
+  private readonly inspectors = [
+    textInspector,
+    speakInspector,
+    suggestedActionsInspector,
+  ];
+
   constructor(private readonly activity: Activity) {}
 
   // Searches for template references inside the activity and constructs slots
   public extractTemplateReferencesSlots(): Slot[] {
     // Utilize activity inspectors to extract the template references
-    // @todo: mAoove inpectors out same as injectorz
-    const inspectors = [
-      ...textInspector(this.activity),
-      ...speakInspector(this.activity),
-      ...suggestedActionsInspector(this.activity),
-    ];
+    const stateNames = this.inspectors
+      .map(inspector => inspector(this.activity))
+      .reduce((acc, current) => [...acc, ...current], []);
 
-    const stateNames = new Set(inspectors);
+    const uniqueStateNames = new Set(stateNames);
     const slots: Slot[] = [];
 
-    stateNames.forEach(stateName => {
+    uniqueStateNames.forEach(stateName => {
       slots.push(new Slot(Slot.STATE_NAME_KEY, stateName));
     });
 
@@ -233,18 +230,19 @@ const suggestedActionsInjector: IActivityInjector = (
  * @private
  */
 export class ActivityInjector {
+  private readonly injectors: IActivityInjector[] = [
+    textInjector,
+    speakInjector,
+    suggestedActionsInjector,
+  ];
   constructor(private readonly activity: Activity) {}
   // Searches for template references inside the activity and replaces them with the actual text coming from the LG backend
   public injectTemplateReferences(
     templateReferences: Map<string, string>,
   ): void {
-    const injectors: IActivityInjector[] = [
-      textInjector,
-      speakInjector,
-      suggestedActionsInjector,
-    ];
-
-    injectors.forEach(injector => injector(this.activity, templateReferences));
+    this.injectors.forEach(injector =>
+      injector(this.activity, templateReferences),
+    );
   }
 }
 
@@ -294,14 +292,19 @@ export class PatternRecognizer {
  * @private
  */
 export class SlotsBuilder {
-  constructor(private readonly activity: Activity) {}
+  constructor(
+    private readonly activity: Activity,
+    private readonly entities?: Map<string, PrimitiveType>,
+  ) {}
 
-  public build(entities: Map<string, PrimitiveType>): [Slot[], Slot[]] {
+  public build(): [Slot[], Slot[]] {
     const activityInspector = new ActivityInspector(this.activity);
 
     const templateReferencesSlots = activityInspector.extractTemplateReferencesSlots();
 
-    const entitiesSlots = this.convertEntitiesToSlots(entities);
+    const entitiesSlots = !isNil(this.entities)
+      ? this.convertEntitiesToSlots(this.entities)
+      : [];
 
     return [templateReferencesSlots, entitiesSlots];
   }
@@ -403,12 +406,13 @@ export class Utilities {
 
     responses
       .map(Utilities.extractTemplateReferenceAndResolution)
-      //@todo :filter
-      .forEach(([templateReference, templateResolution]) => {
-        if (!isNil(templateReference) && !isNil(templateResolution)) {
-          templateResolutions.set(templateReference, templateResolution);
-        }
-      });
+      .filter(
+        ([templateReference, templateResolution]) =>
+          !isNil(templateReference) && !isNil(templateResolution),
+      )
+      .forEach(([templateReference, templateResolution]) =>
+        templateResolutions.set(templateReference, templateResolution),
+      );
 
     return templateResolutions;
   }
