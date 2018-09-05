@@ -1,0 +1,15 @@
+{
+  "text": "[sayWelcome:{user}]",
+  "resolutions": [["sayWelcome:{user}", "welcome John"]],
+  "resolvedText": "welcome John",
+  "apiResponses": {
+    "sayWelcome:{user}": {
+      "outputs": {
+        "sayWelcome:{user}": {
+          "valueType": 0,
+          "stringValues": ["welcome John"]
+        }
+      }
+    }
+  }
+}
