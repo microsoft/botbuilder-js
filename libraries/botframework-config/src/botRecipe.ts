@@ -49,8 +49,8 @@ export class BotRecipe {
     }
 
     public static fromJSON(source: Partial<BotRecipe> = {}): BotRecipe {
-        let { version = '1.0', resources = [] } = source;
         const botRecipe = new BotRecipe();
+        let { version, resources  } = source;
         Object.assign(botRecipe, { resources, version });
         return botRecipe;
     }

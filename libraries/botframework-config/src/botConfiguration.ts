@@ -27,11 +27,11 @@ export class BotConfiguration extends BotConfigurationBase {
 
     public static fromJSON(source: Partial<IBotConfiguration> = {}): BotConfiguration {
         // tslint:disable-next-line:prefer-const
-        let { name = '', description = '', version = '2.0', secretKey = '', services = [] } = source;
-        services = <IConnectedService[]>services.slice().map(BotConfigurationBase.serviceFromJSON);
+        const services: IConnectedService[] = (source.services) ? source.services.slice().map(BotConfigurationBase.serviceFromJSON) : [];
         const botConfig: BotConfiguration = new BotConfiguration();
-        Object.assign(botConfig, { services, description, name, version, secretKey });
-
+        Object.assign(botConfig, source);
+        botConfig.services = services;
+        botConfig.migrateData();
         return botConfig;
     }
 
@@ -478,7 +478,11 @@ export class BotConfiguration extends BotConfigurationBase {
                     break;
 
                 default:
-                    throw new Error(`Unknown service type for export ${service.type}`);
+                    if (options.progress) {
+                        options.progress(service, '', index, this.services.length);
+                    }
+                    console.warn(`WARNING: Unknown service type [${service.type}].  This service will not be exported.`);
+                    break;
             }
         }
         await fsx.writeFile(folder + `/bot.recipe`, JSON.stringify(recipe, null, 2), { encoding: 'utf8' });

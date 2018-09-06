@@ -24,6 +24,8 @@ export interface IConnectedService {
 
     // unique Id for the service
     id?: string;
+
+    toJSON() : IConnectedService;
 }
 
 export interface IEndpointService extends IConnectedService {
@@ -57,6 +59,9 @@ export interface IAzureService extends IConnectedService {
 
 export interface IBotService extends IAzureService {
     // type = ServiceTypes.AzureBotService
+
+    // MSA Appid for the bot
+    appId: string;
 }
 
 export interface IAppInsightsService extends IAzureService {

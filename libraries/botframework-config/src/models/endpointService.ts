@@ -6,20 +6,12 @@ import { IEndpointService, ServiceTypes } from '../schema';
 import { ConnectedService } from './connectedService';
 
 export class EndpointService extends ConnectedService implements IEndpointService {
-    public appId: string = '';
-    public appPassword: string = '';
-    public endpoint: string = '';
+    public appId: string;
+    public appPassword: string;
+    public endpoint: string;
 
     constructor(source: IEndpointService) {
         super(source, ServiceTypes.Endpoint);
-        const { id, appId = '', appPassword = '', endpoint = '' } = source;
-        Object.assign(this, { id, appId, appPassword, endpoint });
-    }
-
-    public toJSON(): IEndpointService {
-        const { type, appId = '', id = '', appPassword = '', endpoint = '', name = '' } = this;
-
-        return { type, name, id, appId, appPassword, endpoint };
     }
 
     // encrypt keys in service

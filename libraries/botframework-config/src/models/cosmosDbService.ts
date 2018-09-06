@@ -6,20 +6,12 @@ import { ICosmosDBService, ServiceTypes } from '../schema';
 import { AzureService } from './azureService';
 
 export class CosmosDbService extends AzureService implements ICosmosDBService {
-    public connectionString: string = '';
-    public database: string = '';
-    public collection: string = '';
+    public connectionString: string;
+    public database: string;
+    public collection: string;
 
     constructor(source: ICosmosDBService = {} as ICosmosDBService) {
         super(source, ServiceTypes.CosmosDB);
-        const { connectionString = '', database = '', collection = '' } = source;
-        Object.assign(this, { connectionString, database, collection });
-    }
-
-    public toJSON(): ICosmosDBService {
-        const { type, id, name, tenantId, subscriptionId, resourceGroup, serviceName, connectionString, database, collection } = this;
-
-        return { type, id, name, tenantId, subscriptionId, resourceGroup, serviceName, connectionString, database, collection };
     }
 
     // encrypt keys in service

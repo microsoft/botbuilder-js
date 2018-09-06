@@ -14,9 +14,10 @@ describe("LoadAndSaveTests", () => {
 
         assert.equal(config.name, "test", 'config name should be set');
         assert.equal(config.description, "test description", 'test description is not set');
-        assert.equal(config.secretKey,'', 'secretkey should not be set');
-        assert.equal(config.services.length, 10, 'service count is wrong');
+        assert.equal(config.secretKey, '', 'secretkey should not be set');
+        assert.equal(config.services.length, 11, 'service count is wrong');
         assert.equal(config.getPath(), testBotPath, "bot doesn't remember where it was loaded from");
+        assert.ok(config.services[0].appId, 'appId should be migrated from endpoint');
     });
 
     it("LoadFromFolder", async () => {
@@ -201,6 +202,10 @@ describe("LoadAndSaveTests", () => {
                     }
                     break;
 
+                case 'unknown':
+                    // this is known unknown for unit test
+                    break;
+
                 default:
                     throw new Error(`Unknown service type ${config.services[i].type}`);
             }
@@ -294,6 +299,10 @@ describe("LoadAndSaveTests", () => {
                         assert.notEqual(generic.configuration.key1, 'testKey1', "failed to encrypt key1");
                         assert.notEqual(generic.configuration.key2, 'testKey2', "failed to encrypt key1");
                     }
+                    break;
+
+                case 'unknown':
+                    // this is known unknown for unit test
                     break;
 
                 default:
