@@ -13,6 +13,8 @@ import { JwtTokenExtractor } from './jwtTokenExtractor';
 
 export module ChannelValidation {
 
+    export var OpenIdMetadataEndpoint : string = Constants.ToBotFromChannelOpenIdMetadataUrl;
+
     /**
      * TO BOT FROM CHANNEL: Token validation parameters when connecting to a bot
      */
@@ -64,7 +66,7 @@ export module ChannelValidation {
 
         const tokenExtractor: JwtTokenExtractor = new JwtTokenExtractor(
             ToBotFromChannelTokenValidationParameters,
-            Constants.ToBotFromChannelOpenIdMetadataUrl,
+            OpenIdMetadataEndpoint,
             Constants.AllowedSigningAlgorithms);
 
         const identity: ClaimsIdentity = await tokenExtractor.getIdentityFromAuthHeader(authHeader, channelId);
