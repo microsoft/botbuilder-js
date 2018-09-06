@@ -1,5 +1,6 @@
 const assert = require('assert');
 const { TurnContext } = require('botbuilder-core');
+const { ChannelValidation } = require('botframework-connector');
 const { BotFrameworkAdapter } = require('../');
 const os = require('os');
 
@@ -519,6 +520,21 @@ describe(`BotFrameworkAdapter`, function () {
         const pjson = require('../package.json');
         const userAgent = 'Microsoft-BotFramework/3.1 BotBuilder/' + pjson.version + ' (Node.js,Version=' + process.version + '; ' + os.type() + ' ' + os.release() + '; ' + os.arch() + ')';
         assert(userAgentHeader.includes(userAgent), `ConnectorClient doesn't have user-agent header created by BotFrameworkAdapter or header is incorrect.`);
+        done();
+    });
+
+    it(`should set openIdMetadata property on ChannelValidation`, function (done) {
+        const testEndpoint = "http://rainbows.com";
+        const adapter = new BotFrameworkAdapter({openIdMetadata: testEndpoint});
+        assert(testEndpoint === ChannelValidation.OpenIdMetadataEndpoint, `ChannelValidation.OpenIdMetadataEndpoint was not set.`);
+        done();
+    });
+
+    it(`should set oAuthEndpoint property on connector client`, function (done) {
+        const testEndpoint = "http://rainbows.com";
+        const adapter = new BotFrameworkAdapter({oAuthEndpoint: testEndpoint});
+        const url = adapter.oauthApiUrl();
+        assert(testEndpoint === url, `adapter.oauthApiUrl is incorrect.`);
         done();
     });
 });
