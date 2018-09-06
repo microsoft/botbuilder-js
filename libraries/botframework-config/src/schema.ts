@@ -24,8 +24,6 @@ export interface IConnectedService {
 
     // unique Id for the service
     id?: string;
-
-    toJSON() : IConnectedService;
 }
 
 export interface IEndpointService extends IConnectedService {

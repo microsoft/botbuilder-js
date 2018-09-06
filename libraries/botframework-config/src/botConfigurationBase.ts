@@ -69,7 +69,7 @@ export class BotConfigurationBase implements Partial<IBotConfiguration> {
         const newConfig = <IBotConfiguration>{};
         Object.assign(newConfig, this);
         delete (<any>newConfig).internal;
-        newConfig.services = this.services.slice().map((service) => service.toJSON());
+        newConfig.services = this.services.slice().map((service) => (<ConnectedService>service).toJSON());
         return newConfig;
     }
 
