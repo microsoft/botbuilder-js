@@ -90,8 +90,11 @@ export interface IBlobStorageService extends IAzureService {
 export interface ICosmosDBService extends IAzureService {
     // type = ServiceTypes.CosmosDB
 
-    // connectionstring for CosmosDB
-    connectionString: string;
+    // endpoint/uri for CosmosDB
+    endpoint: string;
+    
+    // key for accessing CosmosDB
+    key: string;
 
     // database name
     database: string;

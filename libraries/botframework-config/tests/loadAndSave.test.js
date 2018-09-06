@@ -152,7 +152,8 @@ describe("LoadAndSaveTests", () => {
                 case bf.ServiceTypes.CosmosDB:
                     {
                         var storage = config2.services[i];
-                        assert.ok(storage.connectionString.includes('UseDevelopmentStorage'), "failed to decrypt connectionString");
+                        assert.equal(storage.endpoint, 'https://localhost:8081', "failed to decrypt endpoint");
+                        assert.equal(storage.key, 'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==', "failed to decrypt key");
                         assert.equal(storage.database, 'testDatabase', "failed to decrypt database");
                         assert.equal(storage.collection, 'testCollection', "failed to decrypt collection");
                     }
@@ -244,7 +245,8 @@ describe("LoadAndSaveTests", () => {
                 case bf.ServiceTypes.CosmosDB:
                     {
                         var storage = config2.services[i];
-                        assert.ok(!storage.connectionString.includes('UseDevelopmentStorage'), "failed to encrypt connectionString");
+                        assert.equal(storage.endpoint, 'https://localhost:8081', "should not have encrypted  endpoint");
+                        assert.notEqual(storage.key, 'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==', "failed to encrypt key");
                         assert.equal(storage.database, "testDatabase", "should not have encrypted database");
                         assert.equal(storage.collection, "testCollection", "should not have encrypted collection");
                     }

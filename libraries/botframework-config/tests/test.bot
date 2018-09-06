@@ -88,7 +88,8 @@
             "subscriptionId": "00000000-0000-0000-0000-000000000000",
             "resourceGroup": "testGroup",
             "serviceName": "testCosmosService",
-            "connectionString": "UseDevelopmentStorage=true;",
+            "endpoint": "https://localhost:8081",
+            "key": "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
             "database": "testDatabase",
             "collection": "testCollection"
         },

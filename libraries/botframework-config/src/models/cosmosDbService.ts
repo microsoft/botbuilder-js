@@ -6,7 +6,8 @@ import { ICosmosDBService, ServiceTypes } from '../schema';
 import { AzureService } from './azureService';
 
 export class CosmosDbService extends AzureService implements ICosmosDBService {
-    public connectionString: string;
+    public endpoint: string;
+    public key: string;
     public database: string;
     public collection: string;
 
@@ -16,15 +17,15 @@ export class CosmosDbService extends AzureService implements ICosmosDBService {
 
     // encrypt keys in service
     public encrypt(secret: string, encryptString: (value: string, secret: string) => string): void {
-        if (this.connectionString && this.connectionString.length > 0) {
-            this.connectionString = encryptString(this.connectionString, secret);
+        if (this.key && this.key.length > 0) {
+            this.key = encryptString(this.key, secret);
         }
     }
 
     // decrypt keys in service
     public decrypt(secret: string, decryptString: (value: string, secret: string) => string): void {
-        if (this.connectionString && this.connectionString.length > 0) {
-            this.connectionString = decryptString(this.connectionString, secret);
+        if (this.key && this.key.length > 0) {
+            this.key = decryptString(this.key, secret);
         }
     }
 }
