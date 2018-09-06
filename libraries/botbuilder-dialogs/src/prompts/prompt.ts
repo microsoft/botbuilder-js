@@ -15,19 +15,29 @@ import { DialogContext } from '../dialogContext';
  * presented to a user.
  */
 export enum ListStyle {
-    // Don't include any choices for prompt.
+    /**
+     * Don't include any choices for prompt.
+     */
     none,
 
-    // Automatically select the appropriate style for the current channel.
+    /**
+     * Automatically select the appropriate style for the current channel.
+     */
     auto,
 
-    // Add choices to prompt as an inline list.
+    /**
+     * Add choices to prompt as an inline list.
+     */
     inline,
 
-    // Add choices to prompt as a numbered list.
+    /**
+     * Add choices to prompt as a numbered list.
+     */
     list,
 
-    // Add choices to prompt as suggested actions.
+    /**
+     * Add choices to prompt as suggested actions.
+     */
     suggestedAction
 }
 

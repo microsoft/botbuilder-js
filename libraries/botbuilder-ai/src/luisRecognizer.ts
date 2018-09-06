@@ -41,13 +41,19 @@ interface LuisTraceInfo {
  * Description of a LUIS application used for initializing a LuisRecognizer.
  */
 export interface LuisApplication {
-    // Your models application Id from LUIS
+    /**
+     * Your models application Id from LUIS
+     */
     applicationId: string;
 
-    // (Optional) Azure region
+    /**
+     * (Optional) Azure region
+     */
     azureRegion?: string;
 
-    // Endpoint key for talking to LUIS
+    /**
+     * Endpoint key for talking to LUIS
+     */
     endpointKey: string;
 }
 
@@ -55,25 +61,39 @@ export interface LuisApplication {
  * Options per LUIS prediction.
  */
 export interface LuisPredictionOptions {
-    // (Optional) Bing Spell Check subscription key.
+    /**
+     * (Optional) Bing Spell Check subscription key.
+     */
     bingSpellCheckSubscriptionKey?: string;
 
-    // (Optional) Determine if all intents come back or only the top one.
+    /**
+     * (Optional) Determine if all intents come back or only the top one.
+     */
     includeAllIntents?: boolean;
 
-    // (Optional) A value indicating whether or not instance data should be included in response.
+    /**
+     * (Optional) A value indicating whether or not instance data should be included in response.
+     */
     includeInstanceData?: boolean;
 
-    // (Optional) If queries should be logged in LUIS.
+    /**
+     * (Optional) If queries should be logged in LUIS.
+     */
     log?: boolean;
 
-    // (Optional) Whether to spell check query.
+    /**
+     * (Optional) Whether to spell check query.
+     */
     spellCheck?: boolean;
 
-    // (Optional) Whether to use the staging endpoint.
+    /**
+     * (Optional) Whether to use the staging endpoint.
+     */
     staging?: boolean;
 
-    // (Optional) The time zone offset for resolving datetimes.
+    /**
+     * (Optional) The time zone offset for resolving datetimes.
+     */
     timezoneOffset?: number;
 }
 

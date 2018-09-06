@@ -33,6 +33,8 @@ export interface DateTimeSpec {
      */
     type: string;
 
-    // Timex expressions
+    /**
+     * Timex expressions
+     */
     timex: string[];
 }

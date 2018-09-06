@@ -23,19 +23,29 @@ import { DialogContext } from './dialogContext';
 export type WaterfallStep<O extends object = {}> = (dc: DialogContext, step: WaterfallStepContext<O>) => Promise<DialogTurnResult>;
 
 export interface WaterfallStepContext<O extends object = {}> {
-    // The index of the current waterfall step being executed.
+    /**
+     * The index of the current waterfall step being executed.
+     */
     readonly index: number;
 
-    // Any options the waterfall dialog was called with.
+    /**
+     * Any options the waterfall dialog was called with.
+     */
     readonly options: O;
 
-    // The reason the waterfall step is being executed.
+    /**
+     * The reason the waterfall step is being executed.
+     */
     readonly reason: DialogReason;
 
-    // Results returned by a dialog called in the previous waterfall step.
+    /**
+     * Results returned by a dialog called in the previous waterfall step.
+     */
     readonly result: any;
 
-    // A dictionary of values which will be persisted across all waterfall steps.
+    /**
+     * A dictionary of values which will be persisted across all waterfall steps.
+     */
     readonly values: object;
 
     /**

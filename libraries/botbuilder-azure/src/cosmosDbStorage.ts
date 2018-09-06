@@ -13,14 +13,22 @@ import { ConnectionPolicy, DocumentClient, UriFactory } from 'documentdb';
  * Additional settings for configuring an instance of `CosmosDbStorage`.
  */
 export interface CosmosDbStorageSettings {
-    // The endpoint Uri for the service endpoint from the Azure Cosmos DB service.
-    serviceEndpoint: string;
-    // The AuthKey used by the client from the Azure Cosmos DB service.
+    /**
+     * The endpoint Uri for the service endpoint from the Azure Cosmos DB service.
+     */
+     serviceEndpoint: string;
+    /**
+     * The AuthKey used by the client from the Azure Cosmos DB service.
+     */
     authKey: string;
-    // The Database ID.
+    /**
+     * The Database ID.
+     */
     databaseId: string;
-    // The Collection ID.
-    collectionId: string;
+    /**
+     * The Collection ID.
+     */
+     collectionId: string;
 }
 
 /**
@@ -28,12 +36,18 @@ export interface CosmosDbStorageSettings {
  * Internal data structure for storing items in DocumentDB
  */
 interface DocumentStoreItem {
-    // Represents the Sanitized Key and used as PartitionKey on DocumentDB
+    /**
+     * Represents the Sanitized Key and used as PartitionKey on DocumentDB
+     */
     id: string;
-    // Represents the original Id/Key
-    realId: string;
-    // The item itself + eTag information
-    document: any;
+    /**
+     * Represents the original Id/Key
+     */
+   realId: string;
+    /**
+     * The item itself + eTag information
+     */
+   document: any;
 }
 
 /**

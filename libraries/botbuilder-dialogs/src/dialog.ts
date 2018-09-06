@@ -13,45 +13,69 @@ import { DialogContext } from './dialogContext';
  * @param T (Optional) type of state being persisted for dialog.
  */
 export interface DialogInstance<T = any> {
-    // ID of the dialog this instance is for.
-    id: string;
+    /**
+     * ID of the dialog this instance is for.
+     */
+     id: string;
 
-    // The instances persisted state.
-    state: T;
+    /**
+     * The instances persisted state.
+     */
+     state: T;
 }
 
 export enum DialogReason {
-    // A dialog is being started through a call to `DialogContext.begin()`.
-    beginCalled = 'beginCalled',
+    /**
+     * A dialog is being started through a call to `DialogContext.begin()`.
+     */
+     beginCalled = 'beginCalled',
 
-    // A dialog is being continued through a call to `DialogContext.continue()`.
-    continueCalled = 'continueCalled',
+    /**
+     * A dialog is being continued through a call to `DialogContext.continue()`.
+     */
+     continueCalled = 'continueCalled',
 
-    // A dialog ended normally through a call to `DialogContext.end()`.
+    /**
+     * A dialog ended normally through a call to `DialogContext.end()`.
+     */
     endCalled = 'endCalled',
 
-    // A dialog is ending because its being replaced through a call to `DialogContext.replace()`.
+    /**
+     * A dialog is ending because its being replaced through a call to `DialogContext.replace()`.
+     */
     replaceCalled = 'replaceCalled',
 
-    // A dialog was cancelled as part of a call to `DialogContext.cancelAll()`.
+    /**
+     * A dialog was cancelled as part of a call to `DialogContext.cancelAll()`.
+     */
     cancelCalled = 'cancelCalled',
 
-    // A step was advanced through a call to `WaterfallStepContext.next()`.
-    nextCalled = 'nextCalled'
+    /**
+     * A step was advanced through a call to `WaterfallStepContext.next()`.
+     */
+     nextCalled = 'nextCalled'
 }
 
 export enum DialogTurnStatus {
-    // Indicates that there is currently nothing on the dialog stack.
-    empty = 'empty',
+    /**
+     * Indicates that there is currently nothing on the dialog stack.
+     */
+     empty = 'empty',
 
-    // Indicates that the dialog on top is waiting for a response from the user.
-    waiting = 'waiting',
+    /**
+     * Indicates that the dialog on top is waiting for a response from the user.
+     */
+     waiting = 'waiting',
 
-    // Indicates that the dialog completed successfully, the result is available, and the stack is empty.
-    complete = 'complete',
+    /**
+     * Indicates that the dialog completed successfully, the result is available, and the stack is empty.
+     */
+     complete = 'complete',
 
-    // Indicates that the dialog was cancelled and the stack is empty.
-    cancelled = 'cancelled'
+    /**
+     * Indicates that the dialog was cancelled and the stack is empty.
+     */
+     cancelled = 'cancelled'
 }
 
 /**
@@ -61,10 +85,10 @@ export enum DialogTurnStatus {
  * @param T (Optional) type of result returned by the dialog when it calls `dc.end()`.
  */
 export interface DialogTurnResult<T = any> {
-    // Gets or sets the current status of the stack.
+    //** Gets or sets the current status of the stack.
     status: DialogTurnStatus;
 
-    // Final result returned by a dialog that just completed. Can be `undefined` even when [hasResult](#hasResult) is true.
+    //** Final result returned by a dialog that just completed. Can be `undefined` even when [hasResult](#hasResult) is true.
     result?: T;
 }
 
@@ -72,10 +96,10 @@ export interface DialogTurnResult<T = any> {
  * Base class for all dialogs.
  */
 export abstract class Dialog<O extends object = {}> {
-    // Signals the end of a turn by a dialog method or waterfall/sequence step.
+    //** Signals the end of a turn by a dialog method or waterfall/sequence step.
     public static EndOfTurn: DialogTurnResult = { status: DialogTurnStatus.waiting };
 
-    // Unique ID of the dialog.
+    //** Unique ID of the dialog.
     public readonly id: string;
 
     constructor(dialogId: string) {
