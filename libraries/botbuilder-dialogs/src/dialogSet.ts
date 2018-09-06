@@ -23,33 +23,34 @@ import { DialogContext, DialogState } from './dialogContext';
  * for their name and phone number:
  *
  * ```JavaScript
- * const { DialogSet, TextPrompt } = require('botbuilder-dialogs');
+ * const { DialogSet, TextPrompt, WaterfallDialog } = require('botbuilder-dialogs');
  *
  * const dialogs = new DialogSet();
  *
- * dialogs.add('fillProfile', [
- *     async function (dc, options) {
+ * dialogs.add(new WaterfallDialog('fillProfile', [
+ *     async (dc, step) => {
  *         dc.activeDialog.state.profile = {};
  *         await dc.prompt('textPrompt', `What's your name?`);
  *     },
- *     async function (dc, name) {
- *         dc.activeDialog.state.profile.name = name;
+ *     async (dc, step) => {
+ *         dc.activeDialog.state.profile.name = step.results;
  *         await dc.prompt('textPrompt', `What's your phone number?`);
  *     },
- *     async function (dc, phone) {
- *         dc.activeDialog.state.profile.phone = phone;
+ *     async (dc, step) => {
+ *         dc.activeDialog.state.profile.phone = step.results;
  *
  *         // Save completed profile to user state
- *         const user = userState.get(context);
+ *         const user = await userState.get(context);
  *         user.profile = dc.activeDialog.state.profile;
+ *         await userState.set(context, user);
  *
  *         // Notify user and end
  *         await dc.context.sendActivity(`Your profile was updated.`);
  *         await dc.end();
  *     }
- * ]);
+ * ]));
  *
- * dialogs.add('textPrompt', new TextPrompt());
+ * dialogs.add(new TextPrompt('textPrompt'));
  * ```
  *
  * At first glance it probably looks like we're making this simple task of asking the user two
@@ -74,11 +75,11 @@ import { DialogContext, DialogState } from './dialogContext';
  * server.post('/api/messages', (req, res) => {
  *     adapter.processActivity(req, res, async (context) => {
  *         // Get conversation state and create DialogContext object
- *         const conversation = conversationState.get(context);
- *         const dc = dialogs.createContext(context, conversation);
+ *         const dc = dialogs.createContext(context);
  *
  *         // Continue execution if there's an "active" dialog
  *         await dc.continue();
+ *
  *         if (!context.responded && context.activity.type === ActivityType.Message) {
  *             // No active dialogs so start 'fillProfile' dialog
  *             await dc.begin('fillProfile');
@@ -115,19 +116,18 @@ import { DialogContext, DialogState } from './dialogContext';
  * server.post('/api/messages', (req, res) => {
  *     adapter.processActivity(req, res, async (context) => {
  *         // Get conversation state and create DialogContext object
- *         const conversation = conversationState.get(context);
- *         const dc = dialogs.createContext(context, conversation);
+ *         const dc = dialogs.createContext(context);
  *
  *         // Check for any interruptions
  *         const isMessage = context.activity.type === ActivityType.Message;
  *         if (isMessage) {
  *             const utterance = context.activity.text.trim().toLowerCase();
  *             if (utterance.startsWith('edit profile')) {
- *                 await dc.endAll().begin('fillProfile');
+ *                 await dc.cancelAll().begin('fillProfile');
  *                 return;
  *             } else if (utterance.startsWith('cancel')) {
  *                 if (dc.activeDialog) {
- *                     dc.endAll();
+ *                     dc.cancelAll();
  *                     await context.sendActivity(`Task canceled`);
  *                 } else {
  *                     await context.sendActivity(`Nothing to cancel`);

@@ -39,7 +39,7 @@ export interface CachedBotState {
  * server.post('/api/messages', (req, res) => {
  *    adapter.processActivity(req, res, async (context) => {
  *       // Track up time
- *       const state = botState.get(context);
+ *       const state = await botState.get(context);
  *       if (!('startTime' in state)) { state.startTime = new Date().getTime() }
  *       state.upTime = new Date().getTime() - state.stateTime;
  *
@@ -172,7 +172,7 @@ export class BotState implements Middleware {
      * This example shows how to synchronously get an already loaded and cached state object:
      *
      * ```JavaScript
-     * const state botState.get(context);
+     * const state = await botState.get(context);
      * ```
      * @param context Context for current turn of conversation with the user.
      */
