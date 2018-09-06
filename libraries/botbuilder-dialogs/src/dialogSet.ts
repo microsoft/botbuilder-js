@@ -30,11 +30,11 @@ import { DialogContext, DialogState } from './dialogContext';
  * dialogs.add(new WaterfallDialog('fillProfile', [
  *     async (dc, step) => {
  *         dc.activeDialog.state.profile = {};
- *         await dc.prompt('textPrompt', `What's your name?`);
+ *         return await dc.prompt('textPrompt', `What's your name?`);
  *     },
  *     async (dc, step) => {
  *         dc.activeDialog.state.profile.name = step.results;
- *         await dc.prompt('textPrompt', `What's your phone number?`);
+ *         return await dc.prompt('textPrompt', `What's your phone number?`);
  *     },
  *     async (dc, step) => {
  *         dc.activeDialog.state.profile.phone = step.results;
@@ -46,7 +46,7 @@ import { DialogContext, DialogState } from './dialogContext';
  *
  *         // Notify user and end
  *         await dc.context.sendActivity(`Your profile was updated.`);
- *         await dc.end();
+ *         return await dc.end();
  *     }
  * ]));
  *
@@ -201,8 +201,7 @@ export class DialogSet {
      * that state.
      *
      * ```JavaScript
-     * const conversation = conversationState.get(context);
-     * const dc = dialogs.createContext(context, conversation);
+     * const dc = dialogs.createContext(context);
      * ```
      * @param context Context for the current turn of conversation with the user.
      */
