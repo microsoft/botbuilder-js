@@ -64,7 +64,7 @@ class DeleteAlarmDialog extends botbuilder_dialogs_1.ComponentDialog {
         this.addDialog(new botbuilder_dialogs_1.ChoicePrompt(CHOOSE_ALARM_PROMPT));
         this.addDialog(new botbuilder_dialogs_1.ConfirmPrompt(CONFIRM_DELETE_PROMPT));
     }
-    // NOTE: since water fall steps are passed in as a function to the waterfall dialog 
+    // NOTE: since waterfall steps are passed in as a function to the waterfall dialog 
     // it will be called from the context of the waterfall dialog.  With javascript/typescript
     // you need to write this function as using the lambda syntax so that it captures the context of the this pointer
     // if you don't do this, the this pointer will be incorrect for waterfall steps.

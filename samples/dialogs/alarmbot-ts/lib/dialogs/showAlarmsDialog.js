@@ -16,6 +16,7 @@ class ShowAlarmsDialog extends botbuilder_dialogs_1.ComponentDialog {
         super(dialogId);
         this.alarmsProperty = alarmsProperty;
     }
+    // for single turn dialog, we can do it all here.
     onDialogBegin(dc, options) {
         return __awaiter(this, void 0, void 0, function* () {
             let msg = `No alarms found.`;
