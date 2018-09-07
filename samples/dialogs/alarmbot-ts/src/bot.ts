@@ -40,18 +40,21 @@ export class Bot {
                 // normally invoke LUIS to get language understanding of input
                 // ... instead we will use simple pattern matching...
 
-                // Check for add, 
+                // Check for start commands or interruptions 
                 if (utterance.includes('add alarm')) {
+                    // cancel any running dialogs
                     await dc.cancelAll();
                     await dc.begin(ADD_ALARM_DIALOG);
 
                     // Check for delete
                 } else if (utterance.includes('delete alarm')) {
+                    // cancel any running dialogs
                     await dc.cancelAll();
                     await dc.begin(DELETE_ALARM_DIALOG);
 
                     // Check for show
                 } else if (utterance.includes('show alarms')) {
+                    // cancel any running dialogs
                     await dc.cancelAll();
                     await dc.begin(SHOW_ALARMS_DIALOG);
 
