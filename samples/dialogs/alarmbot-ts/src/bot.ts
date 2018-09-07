@@ -1,4 +1,4 @@
-import { TurnContext, ConversationState, UserState, StatePropertyAccessor } from 'botbuilder';
+import { ConversationState, StatePropertyAccessor, TurnContext, UserState } from 'botbuilder';
 import { DialogSet, DialogState } from 'botbuilder-dialogs';
 import { AddAlarmDialog } from './dialogs/addAlarmDialog';
 import { DeleteAlarmDialog } from './dialogs/deleteAlarmDialog';
@@ -12,20 +12,20 @@ const DELETE_ALARM_DIALOG = 'deleteAlarm';
 const SHOW_ALARMS_DIALOG = 'showAlarms';
 
 export class Bot {
-    private readonly alarms: StatePropertyAccessor<Alarm[]>;
+    private readonly alarmsState: StatePropertyAccessor<Alarm[]>;
     private readonly dialogState: StatePropertyAccessor<DialogState>;
     private readonly dialogs: DialogSet;
 
     constructor(convoState: ConversationState, userState: UserState) {
         // Define state properties
-        this.alarms = userState.createProperty(ALARMS_PROPERTY);
+        this.alarmsState = userState.createProperty(ALARMS_PROPERTY);
         this.dialogState = convoState.createProperty(DIALOG_STATE_PROPERTY);
 
         // Create top level dialogs
         this.dialogs = new DialogSet(this.dialogState);
-        this.dialogs.add(new AddAlarmDialog(ADD_ALARM_DIALOG, this.alarms));
-        this.dialogs.add(new DeleteAlarmDialog(DELETE_ALARM_DIALOG, this.alarms));
-        this.dialogs.add(new ShowAlarmsDialog(SHOW_ALARMS_DIALOG, this.alarms));
+        this.dialogs.add(new AddAlarmDialog(ADD_ALARM_DIALOG, this.alarmsState));
+        this.dialogs.add(new DeleteAlarmDialog(DELETE_ALARM_DIALOG, this.alarmsState));
+        this.dialogs.add(new ShowAlarmsDialog(SHOW_ALARMS_DIALOG, this.alarmsState));
     }
 
     public async dispatchActivity(context: TurnContext): Promise<void> {
