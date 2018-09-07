@@ -16,10 +16,10 @@ export class Bot {
     private readonly dialogStateProperty: StatePropertyAccessor<DialogState>;
     private readonly dialogs: DialogSet;
 
-    constructor(convoState: ConversationState, userState: UserState) {
+    constructor(conversationState: ConversationState, userState: UserState) {
         // Define state properties
         this.alarmsProperty = userState.createProperty(ALARMS_PROPERTY);
-        this.dialogStateProperty = convoState.createProperty(DIALOG_STATE_PROPERTY);
+        this.dialogStateProperty = conversationState.createProperty(DIALOG_STATE_PROPERTY);
 
         // Create top level dialogs
         this.dialogs = new DialogSet(this.dialogStateProperty);

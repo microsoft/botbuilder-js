@@ -19,10 +19,10 @@ const ADD_ALARM_DIALOG = 'addAlarm';
 const DELETE_ALARM_DIALOG = 'deleteAlarm';
 const SHOW_ALARMS_DIALOG = 'showAlarms';
 class Bot {
-    constructor(convoState, userState) {
+    constructor(conversationState, userState) {
         // Define state properties
         this.alarmsProperty = userState.createProperty(ALARMS_PROPERTY);
-        this.dialogStateProperty = convoState.createProperty(DIALOG_STATE_PROPERTY);
+        this.dialogStateProperty = conversationState.createProperty(DIALOG_STATE_PROPERTY);
         // Create top level dialogs
         this.dialogs = new botbuilder_dialogs_1.DialogSet(this.dialogStateProperty);
         this.dialogs.add(new addAlarmDialog_1.AddAlarmDialog(ADD_ALARM_DIALOG, this.alarmsProperty));
