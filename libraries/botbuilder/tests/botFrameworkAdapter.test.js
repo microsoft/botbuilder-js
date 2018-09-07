@@ -525,8 +525,10 @@ describe(`BotFrameworkAdapter`, function () {
 
     it(`should set openIdMetadata property on ChannelValidation`, function (done) {
         const testEndpoint = "http://rainbows.com";
+        const original = ChannelValidation.OpenIdMetadataEndpoint;
         const adapter = new BotFrameworkAdapter({openIdMetadata: testEndpoint});
         assert(testEndpoint === ChannelValidation.OpenIdMetadataEndpoint, `ChannelValidation.OpenIdMetadataEndpoint was not set.`);
+        ChannelValidation.OpenIdMetadataEndpoint = original;
         done();
     });
 
