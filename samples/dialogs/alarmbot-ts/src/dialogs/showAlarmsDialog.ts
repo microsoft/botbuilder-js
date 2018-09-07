@@ -10,6 +10,7 @@ export class ShowAlarmsDialog extends ComponentDialog {
         super(dialogId);
     }
 
+    // for single turn dialog, we can do it all here.
     protected async onDialogBegin(dc: DialogContext, options: object): Promise<DialogTurnResult> {
         let msg = `No alarms found.`;
         const list = await this.alarmsProperty.get(dc.context, []);
