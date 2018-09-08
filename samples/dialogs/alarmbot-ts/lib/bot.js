@@ -8,6 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const botbuilder_1 = require("botbuilder");
 const botbuilder_dialogs_1 = require("botbuilder-dialogs");
 const addAlarmDialog_1 = require("./dialogs/addAlarmDialog");
 const deleteAlarmDialog_1 = require("./dialogs/deleteAlarmDialog");
@@ -18,57 +19,64 @@ const ADD_ALARM_DIALOG = 'addAlarm';
 const DELETE_ALARM_DIALOG = 'deleteAlarm';
 const SHOW_ALARMS_DIALOG = 'showAlarms';
 class Bot {
-    constructor(convoState, userState) {
+    constructor(conversationState, userState) {
         // Define state properties
-        this.alarms = userState.createProperty(ALARMS_PROPERTY);
-        this.dialogState = convoState.createProperty(DIALOG_STATE_PROPERTY);
+        this.alarmsProperty = userState.createProperty(ALARMS_PROPERTY);
+        this.dialogStateProperty = conversationState.createProperty(DIALOG_STATE_PROPERTY);
         // Create top level dialogs
-        this.dialogs = new botbuilder_dialogs_1.DialogSet(this.dialogState);
-        this.dialogs.add(new addAlarmDialog_1.AddAlarmDialog(ADD_ALARM_DIALOG, this.alarms));
-        this.dialogs.add(new deleteAlarmDialog_1.DeleteAlarmDialog(DELETE_ALARM_DIALOG, this.alarms));
-        this.dialogs.add(new showAlarmsDialog_1.ShowAlarmsDialog(SHOW_ALARMS_DIALOG, this.alarms));
+        this.dialogs = new botbuilder_dialogs_1.DialogSet(this.dialogStateProperty);
+        this.dialogs.add(new addAlarmDialog_1.AddAlarmDialog(ADD_ALARM_DIALOG, this.alarmsProperty));
+        this.dialogs.add(new deleteAlarmDialog_1.DeleteAlarmDialog(DELETE_ALARM_DIALOG, this.alarmsProperty));
+        this.dialogs.add(new showAlarmsDialog_1.ShowAlarmsDialog(SHOW_ALARMS_DIALOG, this.alarmsProperty));
     }
-    dispatchActivity(context) {
+    onActivity(context) {
         return __awaiter(this, void 0, void 0, function* () {
             // Create dialog context
             const dc = yield this.dialogs.createContext(context);
             // Check for interruptions
-            const isMessage = context.activity.type === 'message';
-            if (isMessage) {
-                const utterance = (context.activity.text || '').trim().toLowerCase();
-                // Check for add
-                if (utterance.includes('add alarm')) {
-                    yield dc.cancelAll();
-                    yield dc.begin(ADD_ALARM_DIALOG);
-                    // Check for delete
-                }
-                else if (utterance.includes('delete alarm')) {
-                    yield dc.cancelAll();
-                    yield dc.begin(DELETE_ALARM_DIALOG);
-                    // Check for show
-                }
-                else if (utterance.includes('show alarms')) {
-                    yield dc.cancelAll();
-                    yield dc.begin(SHOW_ALARMS_DIALOG);
-                    // Check for cancel
-                }
-                else if (utterance === 'cancel') {
-                    if (dc.activeDialog) {
+            switch (context.activity.type) {
+                case botbuilder_1.ActivityTypes.Message:
+                    const utterance = (context.activity.text || '').trim().toLowerCase();
+                    // normally invoke LUIS to get language understanding of input
+                    // ... instead we will use simple pattern matching...
+                    // Check for add, 
+                    if (utterance.includes('add alarm')) {
                         yield dc.cancelAll();
-                        yield dc.context.sendActivity(`Ok... Cancelled.`);
+                        yield dc.begin(ADD_ALARM_DIALOG);
+                        // Check for delete
                     }
-                    else {
-                        yield dc.context.sendActivity(`Nothing to cancel.`);
+                    else if (utterance.includes('delete alarm')) {
+                        yield dc.cancelAll();
+                        yield dc.begin(DELETE_ALARM_DIALOG);
+                        // Check for show
                     }
-                }
-            }
-            // Route activity to current dialog if not interrupted
-            if (!context.responded) {
-                yield dc.continue();
-            }
-            // Perform fallback logic if no active dialog or interruption
-            if (!context.responded && isMessage) {
-                yield dc.context.sendActivity(`Hi! I'm a simple alarm bot. Say "add alarm", "delete alarm", or "show alarms".`);
+                    else if (utterance.includes('show alarms')) {
+                        yield dc.cancelAll();
+                        yield dc.begin(SHOW_ALARMS_DIALOG);
+                        // Check for cancel
+                    }
+                    else if (utterance === 'cancel') {
+                        if (dc.activeDialog) {
+                            yield dc.cancelAll();
+                            yield dc.context.sendActivity(`Ok... Cancelled.`);
+                        }
+                        else {
+                            yield dc.context.sendActivity(`Nothing to cancel.`);
+                        }
+                    }
+                    // Route activity to current dialog if not interrupted
+                    if (!context.responded) {
+                        yield dc.continue();
+                    }
+                    // Perform fallback logic if no active dialog or interruption
+                    if (!context.responded) {
+                        yield dc.context.sendActivity(`Hi! I'm a simple alarm bot. Say "add alarm", "delete alarm", or "show alarms".`);
+                    }
+                    break;
+                case botbuilder_1.ActivityTypes.Event:
+                    break;
+                default:
+                    break;
             }
         });
     }

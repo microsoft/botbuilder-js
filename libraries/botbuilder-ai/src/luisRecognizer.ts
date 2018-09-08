@@ -128,7 +128,7 @@ export class LuisRecognizer {
 
         // Create client
         const creds: msRest.TokenCredentials = new msRest.TokenCredentials(application.endpointKey);
-        const baseUri: string = `https://${ this.application.azureRegion || 'westus'}.api.cognitive.microsoft.com`;
+        const baseUri: string = this.application.endpoint || 'https://westus.api.cognitive.microsoft.com';
         this.luisClient = new LuisClient(creds, baseUri);
     }
 

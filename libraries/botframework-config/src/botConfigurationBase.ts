@@ -2,14 +2,8 @@
  * Copyright(c) Microsoft Corporation.All rights reserved.
  * Licensed under the MIT License.
  */
-import {
-    AppInsightsService, BlobStorageService, BotService, ConnectedService, CosmosDbService,
-    DispatchService, EndpointService, FileService, GenericService, LuisService, QnaMakerService
-} from './models';
-import {
-    IAppInsightsService, IBlobStorageService, IBotConfiguration, IBotService, IConnectedService,
-    ICosmosDBService, IDispatchService, IEndpointService, IFileService, IGenericService, ILuisService, IQnAService, ServiceTypes
-} from './schema';
+import { AppInsightsService, BlobStorageService, BotService, ConnectedService, CosmosDbService, DispatchService, EndpointService, FileService, GenericService, LuisService, QnaMakerService } from './models';
+import { IAppInsightsService, IBlobStorageService, IBotConfiguration, IBotService, IConnectedService, ICosmosDBService, IDispatchService, IEndpointService, IFileService, IGenericService, ILuisService, IQnAService, ServiceTypes } from './schema';
 
 // This is class which allows you to manipulate in memory representations of bot configuration with no nodejs depedencies
 export class BotConfigurationBase implements Partial<IBotConfiguration> {
@@ -57,24 +51,26 @@ export class BotConfigurationBase implements Partial<IBotConfiguration> {
                 return new GenericService(<IGenericService>service);
 
             default:
-                throw new TypeError(`${service.type} is not a known service implementation.`);
+                return new ConnectedService(service);
         }
     }
 
     public static fromJSON(source: Partial<IBotConfiguration> = {}): BotConfigurationBase {
         // tslint:disable-next-line:prefer-const
-        let { name = '', description = '', version = '2.0', secretKey = '', services = [] } = source;
-        services = services.slice().map(BotConfigurationBase.serviceFromJSON);
+        const services: IConnectedService[] = (source.services) ? source.services.slice().map(BotConfigurationBase.serviceFromJSON) : [];
         const botConfig: BotConfigurationBase = new BotConfigurationBase();
-        Object.assign(botConfig, { services, description, name, version, secretKey });
-
+        Object.assign(botConfig, source);
+        botConfig.services = services;
+        botConfig.migrateData();
         return botConfig;
     }
 
-    public toJSON(): Partial<IBotConfiguration> {
-        const { name, description, version, secretKey, services } = this;
-
-        return { name, description, version, secretKey, services };
+    public toJSON(): IBotConfiguration {
+        const newConfig = <IBotConfiguration>{};
+        Object.assign(newConfig, this);
+        delete (<any>newConfig).internal;
+        newConfig.services = this.services.slice().map((service) => (<ConnectedService>service).toJSON());
+        return newConfig;
     }
 
     // connect to a service
@@ -155,4 +151,37 @@ export class BotConfigurationBase implements Partial<IBotConfiguration> {
         }
     }
 
+
+    // migrate old formated data into new format
+    protected migrateData(): void {
+        for (const service of this.services) {
+            switch (service.type) {
+                case ServiceTypes.Bot:
+                    {
+                        let botService = <IBotService>service;
+
+                        // old bot service records may not have the appId on the bot, but we probably have it already on an endpoint
+                        if (!botService.appId) {
+                            for(const s of this.services){
+                                if (s.type == ServiceTypes.Endpoint) {
+                                    const endpoint = <IEndpointService>s;
+                                    if (endpoint.appId) {
+                                        botService.appId = endpoint.appId;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        // this is now a 2.0 version of the schema
+        this.version = "2.0";
+    }
 }
