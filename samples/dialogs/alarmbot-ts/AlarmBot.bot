@@ -1,0 +1,15 @@
+{
+    "name": "AlarmBot",
+    "description": "",
+    "secretKey": "",
+    "services": [
+        {
+            "appId": "",
+            "id": "44b7e7a0-b2e8-11e8-ba0a-fb19b6b1555b",
+            "type": "endpoint",
+            "appPassword": "",
+            "endpoint": "http://localhost:3978/api/messages",
+            "name": "http://localhost:3978/api/messages"
+        }
+    ]
+}
