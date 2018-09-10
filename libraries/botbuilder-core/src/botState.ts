@@ -7,6 +7,7 @@
  */
 import { BotStatePropertyAccessor, StatePropertyAccessor } from './botStatePropertyAccessor';
 import { Middleware } from './middlewareSet';
+import { PropertyManager } from './propertyManager';
 import { calculateChangeHash, Storage, StorageKeyFactory, StoreItems } from './storage';
 import { TurnContext } from './turnContext';
 
@@ -49,7 +50,7 @@ export interface CachedBotState {
  * });
  * ```
  */
-export class BotState implements Middleware {
+export class BotState implements PropertyManager, Middleware {
     // NEW
     public readonly properties: Map<string, StatePropertyAccessor> = new Map();
 
@@ -62,7 +63,10 @@ export class BotState implements Middleware {
      */
     constructor(protected storage: Storage, protected storageKey: StorageKeyFactory) { }
 
-    // NEW
+    /**
+     * Create property accessor for a property which is managed by BotState class
+     * @param name property name
+     */
     public createProperty<T = any>(name: string): StatePropertyAccessor<T> {
         if (this.properties.has(name)) { throw new Error(`BotState.createProperty(): a property named '${name}' already exists.`); }
         const prop: BotStatePropertyAccessor<T> = new BotStatePropertyAccessor<T>(this, name);
