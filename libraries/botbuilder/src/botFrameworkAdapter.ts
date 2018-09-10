@@ -71,6 +71,10 @@ export interface BotFrameworkAdapterSettings {
      * The Open ID Metadata Endpoint for your bot to use.
      */
     openIdMetadata?: string;
+    /**
+     * The optional channel service option for this bot to validate connections from Azure or other channel locations
+     */
+    channelService?: string;
 }
 
 /**
@@ -614,7 +618,8 @@ export class BotFrameworkAdapter extends BotAdapter {
     protected authenticateRequest(request: Partial<Activity>, authHeader: string): Promise<void> {
         return JwtTokenValidation.authenticateRequest(
             request as Activity, authHeader,
-            this.credentialsProvider
+            this.credentialsProvider,
+            this.settings.channelService
         ).then((claims: ClaimsIdentity) => {
             if (!claims.isAuthenticated) { throw new Error('Unauthorized Access. Request is not authorized'); }
         });

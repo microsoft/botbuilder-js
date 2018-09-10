@@ -7,18 +7,17 @@
  */
 import { VerifyOptions } from 'jsonwebtoken';
 import { ClaimsIdentity } from './claimsIdentity';
+import { ChannelValidation } from './channelValidation';
 import { Constants } from './constants';
 import { ICredentialProvider } from './credentialProvider';
 import { JwtTokenExtractor } from './jwtTokenExtractor';
 
-export module ChannelValidation {
-
-    export var OpenIdMetadataEndpoint : string = undefined;
+export module EnterpriseChannelValidation {
 
     /**
      * TO BOT FROM CHANNEL: Token validation parameters when connecting to a bot
      */
-    export const ToBotFromChannelTokenValidationParameters: VerifyOptions = {
+    export const ToBotFromEnterpriseChannelTokenValidationParameters: VerifyOptions = {
         issuer: [Constants.ToBotFromChannelTokenIssuer],
         audience: undefined,                                 // Audience validation takes place manually in code.
         clockTolerance: 5 * 60,
@@ -37,10 +36,11 @@ export module ChannelValidation {
         authHeader: string,
         credentials: ICredentialProvider,
         serviceUrl: string,
-        channelId: string
+        channelId: string,
+        channelService: string
     ): Promise<ClaimsIdentity> {
 
-        const identity: ClaimsIdentity = await authenticateChannelToken(authHeader, credentials, channelId);
+        const identity: ClaimsIdentity = await authenticateChannelToken(authHeader, credentials, channelId, channelService);
 
         const serviceUrlClaim: string = identity.getClaimValue(Constants.ServiceUrlClaim);
         if (serviceUrlClaim !== serviceUrl) {
@@ -61,16 +61,19 @@ export module ChannelValidation {
     export async function authenticateChannelToken(
         authHeader: string,
         credentials: ICredentialProvider,
-        channelId: string
+        channelId: string,
+        channelService: string
     ): Promise<ClaimsIdentity> {
 
         const tokenExtractor: JwtTokenExtractor = new JwtTokenExtractor(
-            ToBotFromChannelTokenValidationParameters,
-            OpenIdMetadataEndpoint ? OpenIdMetadataEndpoint : Constants.ToBotFromChannelOpenIdMetadataUrl,
+            ToBotFromEnterpriseChannelTokenValidationParameters,
+            ChannelValidation.OpenIdMetadataEndpoint ?
+            ChannelValidation.OpenIdMetadataEndpoint :
+                Constants.ToBotFromEnterpriseChannelOpenIdMetadataUrlFormat.replace('{channelService}', channelService),
             Constants.AllowedSigningAlgorithms);
 
         const identity: ClaimsIdentity = await tokenExtractor.getIdentityFromAuthHeader(authHeader, channelId);
-        
+
         return await validateIdentity(identity, credentials);
     }
 
@@ -84,6 +87,12 @@ export module ChannelValidation {
         identity: ClaimsIdentity,
         credentials: ICredentialProvider
     ): Promise<ClaimsIdentity> {
+
+        if (!identity) {
+            // No valid identity. Not Authorized.
+            throw new Error('Unauthorized. No valid identity.');
+        }
+
         if (!identity.isAuthenticated) {
             // The token is in some way invalid. Not Authorized.
             throw new Error('Unauthorized. Is not authenticated');
