@@ -22,6 +22,30 @@ describe('DialogSet', function () {
         done();
     });
 
+    it('should add add fluent dialogs to the dialog set.', function (done) {
+        // Create new ConversationState with MemoryStorage and instantiate DialogSet with PropertyAccessor.
+        const convoState = new ConversationState(new MemoryStorage());
+
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        dialogs
+            .add(new WaterfallDialog('A', [
+                function (dc) {
+                    assert(dc);
+                }
+            ]))
+            .add(new WaterfallDialog('B', [
+                function (dc) {
+                    assert(dc);
+                }
+            ]));
+        assert(dialogs.find('A'), `dialog A not found.`);
+        assert(dialogs.find('B'), `dialog B not found.`);
+
+        done();
+    });
+
+
     it('should throw an exception when trying to add the same dialog twice.', function (done) {
         const convoState = new ConversationState(new MemoryStorage());
 
