@@ -6,8 +6,8 @@
  * Licensed under the MIT License.
  */
 import { BotState } from './botState';
+import { BotStateSet } from './botStateSet';
 import { Middleware } from './middlewareSet';
-import { StoreItem } from './storage';
 import { TurnContext } from './turnContext';
 
 /**
@@ -39,74 +39,35 @@ import { TurnContext } from './turnContext';
  * ```
  */
 export class AutoSaveStateMiddleware implements Middleware {
-    private bostates: BotState[] = [];
-
     /**
      * Creates a new AutoSaveStateiMiddleware instance.
      * @param botStates Zero or more BotState plugins to register.
      */
     constructor(...botStates: BotState[]) {
-        AutoSaveStateMiddleware.prototype.use.apply(this, botStates);
+        this.botStateSet = new BotStateSet();
+        if (botStates) {
+            for (let botState of botStates) {
+                this.botStateSet.add(botState);
+            }
+        }
     }
 
-    public onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
-        // Read in state, continue execution, and then flush changes on completion of turn.
-        return this.readAll(context, true)
-            .then(next)
-            .then(() => this.writeAll(context));
+    public botStateSet: BotStateSet;
+
+    public async onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
+        await next();
+        await this.botStateSet.saveAllChanges(context, true);
     }
 
     /**
      * Registers `BotState` plugins with the set.
      * @param botStates One or more BotState plugins to register.
      */
-    public use(...botStates: BotState[]): this {
+    public add(...botStates: BotState[]): this {
         botStates.forEach((botstate: BotState) => {
-            if (typeof botstate.read === 'function' && typeof botstate.write === 'function') {
-                this.bostates.push(botstate);
-            } else {
-                throw new Error(`AutoSaveStateMiddleware: a  plugin was added that isn't an instance of BotState.`);
-            }
+            this.botStateSet.add(botstate);
         });
-
         return this;
     }
 
-    /**
-     * Calls `BotState.read()` on all of the BotState plugins in the set.
-     *
-     * @remarks
-     * This will trigger all of the plugins to read in their state in parallel.
-     *
-     * ```JavaScript
-     * await stateSet.readAll(context);
-     * ```
-     * @param context Context for current turn of conversation with the user.
-     * @param force (Optional) If `true` the cache will be bypassed and the state will always be read in directly from storage. Defaults to `false`.
-     */
-    public readAll(context: TurnContext, force: boolean = false): Promise<StoreItem[]> {
-        const promises: Promise<any>[] = this.bostates.map((botstate: BotState) => botstate.read(context, force));
-
-        return Promise.all(promises);
-    }
-
-    /**
-     * Calls `BotState.write()` on all of the BotState plugins in the set.
-     *
-     * @remarks
-     * This will trigger all of the plugins to write out their state in parallel.
-     *
-     * ```JavaScript
-     * await stateSet.writeAll(context);
-     * ```
-     * @param context Context for current turn of conversation with the user.
-     * @param force (Optional) if `true` the state will always be written out regardless of its change state. Defaults to `false`.
-     */
-    public writeAll(context: TurnContext, force: boolean = false): Promise<void> {
-        const promises: Promise<void>[] = this.bostates.map((botstate: BotState) => botstate.write(context, force));
-
-        return Promise.all(promises).then(() => {
-            // noop
-        });
-    }
 }

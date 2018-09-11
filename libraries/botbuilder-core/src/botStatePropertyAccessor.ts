@@ -20,14 +20,14 @@ export class BotStatePropertyAccessor<T = any> implements StatePropertyAccessor<
     constructor(protected readonly state: BotState, public readonly name: string) { }
 
     public async delete(context: TurnContext): Promise<void> {
-        const obj: any = await this.state.read(context);
+        const obj: any = await this.state.load(context);
         if (obj.hasOwnProperty(this.name)) {
             delete obj[this.name];
         }
     }
 
     public async get(context: TurnContext, defaultValue?: T): Promise<T|undefined> {
-        const obj: any = await this.state.read(context);
+        const obj: any = await this.state.load(context);
         if (!obj.hasOwnProperty(this.name) && defaultValue !== undefined) {
             const clone: any =
                 (typeof defaultValue === 'object' || Array.isArray(defaultValue)) ? JSON.parse(JSON.stringify(defaultValue)) : defaultValue;
@@ -38,7 +38,7 @@ export class BotStatePropertyAccessor<T = any> implements StatePropertyAccessor<
     }
 
     public async set(context: TurnContext, value: T): Promise<void> {
-        const obj: any = await this.state.read(context);
+        const obj: any = await this.state.load(context);
         obj[this.name] = value;
     }
 }
