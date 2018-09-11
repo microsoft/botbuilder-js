@@ -5,7 +5,7 @@ const storageKey = 'stateKey';
 
 describe(`BotStatePropertyAccessor`, function () {
     this.timeout(5000);
-    
+
     const receivedActivity = { text: 'received', type: 'message' };
     const storage = new MemoryStorage();
     const adapter = new TestAdapter();
@@ -25,8 +25,8 @@ describe(`BotStatePropertyAccessor`, function () {
         });
         tAdapter.use(middleware);
 
-        tAdapter.receiveActivity(`Hello world!`);
-        done();
+        tAdapter.receiveActivity(`Hello world!`)
+            .then(() => done());
     });
 
     it(`should return undefined when default value is not assigned.`, function (done) {
@@ -39,14 +39,15 @@ describe(`BotStatePropertyAccessor`, function () {
         });
         tAdapter.use(middleware);
 
-        tAdapter.receiveActivity(`Hello world!`);
-        done();
+        tAdapter.receiveActivity(`Hello world!`)
+            .then(() => done());
+
     });
 
     it(`should save changes to registered Property multiple times.`, function (done) {
         const MESSAGE_COUNT = 'messageCount';
         const messageProperty = middleware.createProperty(MESSAGE_COUNT);
-        
+
         const tAdapter = new TestAdapter(async (context) => {
             let messageCount = await messageProperty.get(context, 0);
             messageCount++;
@@ -56,14 +57,15 @@ describe(`BotStatePropertyAccessor`, function () {
         tAdapter.use(middleware);
 
         tAdapter.test(`Hello world!`, `1`, `messageCount was not incremented.`)
-            .test(`Hello world!`, `2`, `messageCount was not properly saved.`);
-            done();
+            .test(`Hello world!`, `2`, `messageCount was not properly saved.`)
+            .then(() => done());
+
     });
 
     it(`should delete property value on state.`, function (done) {
         const BOOLEAN_PROPERTY = 'booleanProperty';
         const booleanProperty = middleware.createProperty(BOOLEAN_PROPERTY);
-        
+
         const tAdapter = new TestAdapter(async (context) => {
             // Retrieve the property value, change it to true, then set it in state.
             let booleanValue = await booleanProperty.get(context);
@@ -81,7 +83,8 @@ describe(`BotStatePropertyAccessor`, function () {
             done();
         });
         tAdapter.use(middleware);
-        tAdapter.receiveActivity(`Hello world!`);
+        tAdapter.receiveActivity(`Hello world!`)
+            .then(() => done());
     });
 
     it(`should not delete anything if property not found in current state.`, function (done) {
@@ -95,7 +98,8 @@ describe(`BotStatePropertyAccessor`, function () {
             done();
         });
         tAdapter.use(middleware);
-        tAdapter.receiveActivity(`Hello world!`);
+        tAdapter.receiveActivity(`Hello world!`)
+            .then(() => done());
     });
 
     it(`should successfully set default value if default value is an Array.`, function (done) {
@@ -110,8 +114,8 @@ describe(`BotStatePropertyAccessor`, function () {
         });
         tAdapter.use(middleware);
 
-        tAdapter.receiveActivity(`Hello world!`);
-        done();
+        tAdapter.receiveActivity(`Hello world!`)
+            .then(() => done());
     });
 
     it(`should successfully set default value if default value is an Object.`, function (done) {
@@ -121,7 +125,7 @@ describe(`BotStatePropertyAccessor`, function () {
         const tAdapter = new TestAdapter(async (context) => {
             let addressValue = await addressProperty.get(context, {
                 street: '1 Microsoft Way',
-                zipCode: 98052, 
+                zipCode: 98052,
                 state: 'WA'
             });
             assert(typeof addressValue === 'object', `default value for PropertyAccessor was not properly set.`);
@@ -131,7 +135,7 @@ describe(`BotStatePropertyAccessor`, function () {
         });
         tAdapter.use(middleware);
 
-        tAdapter.receiveActivity(`Hello world!`);
-        done();
+        tAdapter.receiveActivity(`Hello world!`)
+            .then(() => done());
     });
 });
