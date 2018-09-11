@@ -75,7 +75,7 @@ import { DialogContext, DialogState } from './dialogContext';
  * server.post('/api/messages', (req, res) => {
  *     adapter.processActivity(req, res, async (context) => {
  *         // Get conversation state and create DialogContext object
- *         const dc = dialogs.createContext(context);
+ *         const dc = await dialogs.createContext(context);
  *
  *         // Continue execution if there's an "active" dialog
  *         await dc.continue();
@@ -116,31 +116,30 @@ import { DialogContext, DialogState } from './dialogContext';
  * server.post('/api/messages', (req, res) => {
  *     adapter.processActivity(req, res, async (context) => {
  *         // Get conversation state and create DialogContext object
- *         const dc = dialogs.createContext(context);
+ *         const dc = await dialogs.createContext(context);
  *
  *         // Check for any interruptions
  *         const isMessage = context.activity.type === ActivityType.Message;
  *         if (isMessage) {
  *             const utterance = context.activity.text.trim().toLowerCase();
  *             if (utterance.startsWith('edit profile')) {
- *                 await dc.cancelAll().begin('fillProfile');
- *                 return;
+ *                 return await dc.cancelAll().begin('fillProfile');
  *             } else if (utterance.startsWith('cancel')) {
  *                 if (dc.activeDialog) {
- *                     dc.cancelAll();
- *                     await context.sendActivity(`Task canceled`);
+ *                     await dc.cancelAll();
+ *                     return await context.sendActivity(`Task canceled`);
  *                 } else {
- *                     await context.sendActivity(`Nothing to cancel`);
+ *                     return await context.sendActivity(`Nothing to cancel`);
  *                 }
- *                 return;
  *             }
  *         }
  *
  *         // Continue execution if there's an "active" dialog
  *         await dc.continue();
+ * 
  *         if (!context.responded && isMessage) {
  *             // Greet user and fill in profile if missing
- *             const user = userState.get(context);
+ *             const user = await userState.get(context);
  *             if (!user.profile) {
  *                 await context.sendActivity(`Hello... Lets fill out your profile to get started.`);
  *                 await dc.begin('fillProfile');
@@ -201,7 +200,7 @@ export class DialogSet {
      * that state.
      *
      * ```JavaScript
-     * const dc = dialogs.createContext(context);
+     * const dc = await dialogs.createContext(context);
      * ```
      * @param context Context for the current turn of conversation with the user.
      */
