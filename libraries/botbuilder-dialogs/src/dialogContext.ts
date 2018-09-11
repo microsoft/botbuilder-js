@@ -23,7 +23,7 @@ export interface DialogState {
  * through to all of the bots dialogs and waterfall steps.
  *
  * ```JavaScript
- * const dc = dialogs.createContext(turnContext);
+ * const dc = await dialogs.createContext(turnContext);
  * ```
  */
 export class DialogContext {
