@@ -1,17 +1,17 @@
 const { ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
-const { Dialog, DialogSet, WaterfallDialog, DialogTurnStatus } =  require('../');
+const { Dialog, DialogSet, WaterfallDialog, DialogTurnStatus } = require('../');
 const assert = require('assert');
 
 const beginMessage = { text: `begin`, type: 'message' };
 const continueMessage = { text: `continue`, type: 'message' };
 
-describe('DialogSet', function() {
+describe('DialogSet', function () {
     this.timeout(5000);
 
     it('should add a waterfall to the dialog set.', function (done) {
         // Create new ConversationState with MemoryStorage and instantiate DialogSet with PropertyAccessor.
         const convoState = new ConversationState(new MemoryStorage());
-        
+
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [
@@ -24,7 +24,7 @@ describe('DialogSet', function() {
 
     it('should throw an exception when trying to add the same dialog twice.', function (done) {
         const convoState = new ConversationState(new MemoryStorage());
-        
+
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [
@@ -35,7 +35,7 @@ describe('DialogSet', function() {
             dialogs.add('a', [
                 function (dc) { }
             ]);
-        } catch(err) {
+        } catch (err) {
             return done();
         }
         throw new Error('Should have thrown an error on adding dialogs with same ID.');
@@ -43,7 +43,7 @@ describe('DialogSet', function() {
 
     it('should find() a dialog that was added.', function (done) {
         const convoState = new ConversationState(new MemoryStorage());
-        
+
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [
@@ -67,7 +67,7 @@ describe('DialogSet', function() {
 
         const convoState = new ConversationState(new MemoryStorage());
         adapter.use(convoState);
-        
+
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [
@@ -85,9 +85,9 @@ describe('DialogSet', function() {
         ]));
 
         adapter.send(beginMessage)
-        .assertReply('Greetings')
-        .send(continueMessage)
-        .assertReply('Good bye!')
-        done();
+            .assertReply('Greetings')
+            .send(continueMessage)
+            .assertReply('Good bye!')
+            .then(() => done());
     });
 });

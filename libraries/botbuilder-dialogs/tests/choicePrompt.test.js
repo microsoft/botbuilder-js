@@ -1,5 +1,5 @@
 const { ActivityTypes, ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
-const { ChoicePrompt, DialogSet,ListStyle, DialogTurnStatus } =  require('../');
+const { ChoicePrompt, DialogSet, ListStyle, DialogTurnStatus } = require('../');
 const assert = require('assert');
 
 const answerMessage = { text: `red`, type: 'message' };
@@ -7,10 +7,10 @@ const invalidMessage = { text: `purple`, type: 'message' };
 
 const stringChoices = ['red', 'green', 'blue'];
 
-describe('ChoicePrompt', function() {
+describe('ChoicePrompt', function () {
     this.timeout(5000);
 
-    it('should call ChoicePrompt using dc.prompt().', function (done) {
+    it('should call ChoicePrompt using dc.prompt().', async function () {
         // Initialize TestAdapter.
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
@@ -36,14 +36,13 @@ describe('ChoicePrompt', function() {
 
         dialogs.add(choicePrompt);
 
-        adapter.send('Hello')
-        .assertReply('Please choose a color.')
-        .send(answerMessage)
-        .assertReply('red');
-        done();
+        await adapter.send('Hello')
+            .assertReply('Please choose a color.')
+            .send(answerMessage)
+            .assertReply('red');
     });
 
-    it('should send a prompt and choices if they are passed in via PromptOptions.', function (done) {
+    it('should send a prompt and choices if they are passed in via PromptOptions.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -65,14 +64,13 @@ describe('ChoicePrompt', function() {
 
         dialogs.add(choicePrompt);
 
-        adapter.send('Hello')
-        .assertReply('Please choose a color.')
-        .send(answerMessage)
-        .assertReply('red');
-        done();
+        await adapter.send('Hello')
+            .assertReply('Please choose a color.')
+            .send(answerMessage)
+            .assertReply('red');
     });
 
-    it('should call ChoicePrompt with custom validator.', function (done) {
+    it('should call ChoicePrompt with custom validator.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -99,16 +97,15 @@ describe('ChoicePrompt', function() {
         choicePrompt.style = ListStyle.none;
         dialogs.add(choicePrompt);
 
-        adapter.send('Hello')
-        .assertReply('Please choose a color.')
-        .send(invalidMessage)
-        .assertReply('Please choose a color.')
-        .send(answerMessage)
-        .assertReply('red');
-        done();
+        await adapter.send('Hello')
+            .assertReply('Please choose a color.')
+            .send(invalidMessage)
+            .assertReply('Please choose a color.')
+            .send(answerMessage)
+            .assertReply('red');
     });
 
-    it('should send custom retryPrompt.', function (done) {
+    it('should send custom retryPrompt.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -129,16 +126,15 @@ describe('ChoicePrompt', function() {
         choicePrompt.style = ListStyle.none;
         dialogs.add(choicePrompt);
 
-        adapter.send('Hello')
-        .assertReply('Please choose a color.')
-        .send(invalidMessage)
-        .assertReply('Please choose red, blue, or green.')
-        .send(answerMessage)
-        .assertReply('red');
-        done();
+        await adapter.send('Hello')
+            .assertReply('Please choose a color.')
+            .send(invalidMessage)
+            .assertReply('Please choose red, blue, or green.')
+            .send(answerMessage)
+            .assertReply('red');
     });
 
-    it('should send ignore retryPrompt if validator replies.', function (done) {
+    it('should send ignore retryPrompt if validator replies.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -167,16 +163,15 @@ describe('ChoicePrompt', function() {
         choicePrompt.style = ListStyle.none;
         dialogs.add(choicePrompt);
 
-        adapter.send('Hello')
-        .assertReply('Please choose a color.')
-        .send(invalidMessage)
-        .assertReply('bad input.')
-        .send(answerMessage)
-        .assertReply('red');
-        done();
+        await adapter.send('Hello')
+            .assertReply('Please choose a color.')
+            .send(invalidMessage)
+            .assertReply('bad input.')
+            .send(answerMessage)
+            .assertReply('red');
     });
 
-    it('should use defaultLocale when rendering choices', function (done) {
+    it('should use defaultLocale when rendering choices', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -204,16 +199,15 @@ describe('ChoicePrompt', function() {
         }, 'es-es');
         dialogs.add(choicePrompt);
 
-        adapter.send({ text: 'Hello', type: ActivityTypes.Message })
-        .assertReply('Please choose a color. (1) red, (2) green, o (3) blue')
-        .send(invalidMessage)
-        .assertReply('bad input.')
-        .send({ text: 'red', type: ActivityTypes.Message })
-        .assertReply('red');
-        done();
+        await adapter.send({ text: 'Hello', type: ActivityTypes.Message })
+            .assertReply('Please choose a color. (1) red, (2) green, o (3) blue')
+            .send(invalidMessage)
+            .assertReply('bad input.')
+            .send({ text: 'red', type: ActivityTypes.Message })
+            .assertReply('red');
     });
 
-    it('should use context.activity.locale when rendering choices', function (done) {
+    it('should use context.activity.locale when rendering choices', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -241,14 +235,13 @@ describe('ChoicePrompt', function() {
         });
         dialogs.add(choicePrompt);
 
-        adapter.send({ text: 'Hello', type: ActivityTypes.Message, locale: 'es-es' })
-        .assertReply('Please choose a color. (1) red, (2) green, o (3) blue')
-        .send(answerMessage)
-        .assertReply('red');
-        done();
+        await adapter.send({ text: 'Hello', type: ActivityTypes.Message, locale: 'es-es' })
+            .assertReply('Please choose a color. (1) red, (2) green, o (3) blue')
+            .send(answerMessage)
+            .assertReply('red');
     });
 
-    it('should use context.activity.locale over defaultLocale when rendering choices', function (done) {
+    it('should use context.activity.locale over defaultLocale when rendering choices', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -276,10 +269,9 @@ describe('ChoicePrompt', function() {
         }, 'es-es');
         dialogs.add(choicePrompt);
 
-        adapter.send({ text: 'Hello', type: ActivityTypes.Message, locale: 'en-us' })
-        .assertReply('Please choose a color. (1) red, (2) green, or (3) blue')
-        .send(answerMessage)
-        .assertReply('red');
-        done();
+        await adapter.send({ text: 'Hello', type: ActivityTypes.Message, locale: 'en-us' })
+            .assertReply('Please choose a color. (1) red, (2) green, or (3) blue')
+            .send(answerMessage)
+            .assertReply('red');
     });
 });

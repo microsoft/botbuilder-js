@@ -388,7 +388,11 @@ export class TestFlow {
                         } else if (adapter.activityBuffer.length > 0) {
                             // Activity received
                             const reply: Partial<Activity> = adapter.activityBuffer.shift() as Activity;
-                            inspector(reply, description as string);
+                            try {
+                                inspector(reply, description as string);
+                            } catch (err) {
+                                reject(err);
+                            }
                             resolve();
                         } else {
                             setTimeout(waitForActivity, 5);

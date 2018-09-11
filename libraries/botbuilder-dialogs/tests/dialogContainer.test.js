@@ -1,5 +1,5 @@
 const { TestAdapter, TurnContext } = require('botbuilder-core');
-const { DialogSet, DialogContainer } =  require('../');
+const { DialogSet, DialogContainer } = require('../');
 const assert = require('assert');
 
 const beginMessage = { text: `begin`, type: 'message' };
@@ -16,10 +16,10 @@ class TestContext extends TurnContext {
     }
 }
 
-describe.skip('DialogContainer', function() {
+describe.skip('DialogContainer', function () {
     this.timeout(5000);
 
-    it('should call composite dialog from another dialog set.', function (done) {
+    it('should call composite dialog from another dialog set.', async function () {
         const cDialogs = new DialogSet();
         cDialogs.add('start', [
             function (dc, args) {
@@ -37,10 +37,10 @@ describe.skip('DialogContainer', function() {
         const state = {};
         const context = new TestContext(beginMessage);
         const dc = dialogs.createContext(context, state);
-        dc.begin('composite', { foo: 'bar' });
+        await dc.begin('composite', { foo: 'bar' });
     });
 
-    it('should return result from DialogContext.begin() when composite ends immediately.', function (done) {
+    it('should return result from DialogContext.begin() when composite ends immediately.', async function () {
         const cDialogs = new DialogSet();
         cDialogs.add('start', [
             function (dc) {
@@ -64,7 +64,7 @@ describe.skip('DialogContainer', function() {
         const state = {};
         const context = new TestContext(beginMessage);
         const dc = dialogs.createContext(context, state);
-        dc.begin('test');
+        await dc.begin('test');
     });
 
     it('should DialogContext.continue() execution of a multi-turn composite.', function (done) {
@@ -103,7 +103,7 @@ describe.skip('DialogContainer', function() {
         });
     });
 
-    it('should call composite composite using begin().', function (done) {
+    it('should call composite composite using begin().', async function () {
         const cDialogs = new DialogSet();
         cDialogs.add('start', [
             function (dc, args) {
@@ -117,7 +117,7 @@ describe.skip('DialogContainer', function() {
 
         const state = {};
         const context = new TestContext(beginMessage);
-        composite.begin(context, state, { foo: 'bar' });
+        await composite.begin(context, state, { foo: 'bar' });
     });
 
     it('should continue() execution of a multi-turn composite.', function (done) {

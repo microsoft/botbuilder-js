@@ -8,7 +8,7 @@ const invalidMessage = { text: `what?`, type: 'message' };
 describe('AttachmentPrompt', function() {
     this.timeout(5000);
 
-    it('should call AttachmentPrompt using dc.prompt().', function (done) {
+    it('should call AttachmentPrompt using dc.prompt().', async function () {
         // Initialize TestAdapter.
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
@@ -32,11 +32,10 @@ describe('AttachmentPrompt', function() {
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new AttachmentPrompt('prompt'));
         
-        adapter.send('Hello')
+        await adapter.send('Hello')
         .assertReply('Please send an attachment.')
         .send(answerMessage)
         .assertReply('test1');
-        done();
     });
 
     it('should call AttachmentPrompt with custom validator.', function (done) {
