@@ -70,9 +70,22 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
      * Creates a new waterfall dialog containing the given array of steps.
      * @param steps Array of waterfall steps.
      */
-    constructor(dialogId: string, steps: WaterfallStep<O>[]) {
+    constructor(dialogId: string, steps?: WaterfallStep<O>[]) {
         super(dialogId);
-        this.steps = steps.slice(0);
+        this.steps = [];
+        if (steps) {
+            this.steps = steps.slice(0);
+        }
+    }
+
+    /**
+     * add a new step to the waterfall
+     * @param step method to call
+     * @returns WaterfallDialog
+     */
+    public addStep(step: WaterfallStep<O>): WaterfallDialog<O> {
+        this.steps.push(step);
+        return this;
     }
 
     public async dialogBegin(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
@@ -103,7 +116,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
     }
 
     protected async onStep(dc: DialogContext, step: WaterfallStepContext<O>): Promise<DialogTurnResult> {
-        return await this.steps[step.index](dc, step);
+        return await this.steps[step.index].call(this, dc, step);
     }
 
     private async runStep(dc: DialogContext, index: number, reason: DialogReason, result?: any): Promise<DialogTurnResult> {

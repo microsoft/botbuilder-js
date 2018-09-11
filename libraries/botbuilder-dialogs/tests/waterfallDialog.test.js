@@ -1,14 +1,41 @@
 const { ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
-const { Dialog, DialogSet, WaterfallDialog, DialogTurnStatus } =  require('../');
+const { Dialog, DialogSet, WaterfallDialog, DialogTurnStatus } = require('../');
 
 const assert = require('assert');
 
 const beginMessage = { text: `begin`, type: 'message' };
 
+class MyWaterfall extends WaterfallDialog {
+
+    constructor(dialogId) {
+        super(dialogId);
+
+        this.addStep(this.firstStep);
+        this.addStep(this.secondStep);
+        this.value = 1;
+    }
+
+    async firstStep(dc, step) {
+        assert(dc);
+        assert(step, 'hey!');
+        assert.equal(this.value, 1, 'this pointer is bogus in firstStep');
+        await dc.context.sendActivity('bot responding.');
+        return Dialog.EndOfTurn;
+    }
+
+    async secondStep(dc, step) {
+        assert(dc);
+        assert(step);
+        assert.equal(this.value, 1, 'this pointer is bogus in secondStep');
+        return await dc.end('ending WaterfallDialog.');
+    }
+}
+
+
 describe('WaterfallDialog', function () {
     this.timeout(5000);
 
-    it('should execute a sequence of waterfall steps.', async function (done) {
+    it('should execute a sequence of waterfall steps.', async function () {
         // Initialize TestAdapter.
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
@@ -46,14 +73,97 @@ describe('WaterfallDialog', function () {
             }
         ]));
 
-        adapter.send(beginMessage)
+        await adapter.send(beginMessage)
             .assertReply('bot responding.')
             .send('continue')
-            .assertReply('ending WaterfallDialog.')
-        done();
+            .assertReply('ending WaterfallDialog.');
     });
 
-    it('should support calling next() to move to next steps.', async function (done) {
+    it('should execute a sequence of waterfall steps when using addStep().', async function () {
+        // Initialize TestAdapter.
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.continue();
+            switch (results.status) {
+                case DialogTurnStatus.empty:
+                    await dc.begin('a');
+                    break;
+
+                case DialogTurnStatus.complete:
+                    await turnContext.sendActivity(results.result);
+                    break;
+            }
+        });
+
+        // Create new ConversationState with MemoryStorage and register the state as middleware.
+        const convoState = new ConversationState(new MemoryStorage());
+        adapter.use(convoState);
+
+        // Create a DialogState property, DialogSet and register the WaterfallDialog.
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        var waterfall = new WaterfallDialog('a')
+            .addStep(async function (dc, step) {
+                assert(dc);
+                assert(step, 'hey!');
+                await dc.context.sendActivity('bot responding.');
+                return Dialog.EndOfTurn;
+            })
+            .addStep(
+                async function (dc, step) {
+                    assert(dc);
+                    assert(step);
+                    return await dc.end('ending WaterfallDialog.');
+                }
+            );
+        dialogs.add(waterfall);
+
+        await adapter.send(beginMessage)
+            .assertReply('bot responding.')
+            .send('continue')
+            .assertReply('ending WaterfallDialog.');
+    });
+
+    it('should execute a sequence of waterfall steps when using derived class.', async function () {
+        // Initialize TestAdapter.
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.continue();
+            switch (results.status) {
+                case DialogTurnStatus.empty:
+                    try {
+
+                        await dc.begin('a');
+                    } catch (err) {
+                        assert.fail(err);
+                    }
+                    break;
+
+                case DialogTurnStatus.complete:
+                    await turnContext.sendActivity(results.result);
+                    break;
+            }
+        });
+
+        // Create new ConversationState with MemoryStorage and register the state as middleware.
+        const convoState = new ConversationState(new MemoryStorage());
+        adapter.use(convoState);
+
+        // Create a DialogState property, DialogSet and register the WaterfallDialog.
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        dialogs.add(new MyWaterfall('a'));
+
+        await adapter.send(beginMessage)
+            .assertReply('bot responding.')
+            .send('continue')
+            .assertReply('ending WaterfallDialog.');
+    });
+
+
+    it('should support calling next() to move to next steps.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -88,14 +198,13 @@ describe('WaterfallDialog', function () {
             }
         ]));
 
-        adapter.send(beginMessage)
+        await adapter.send(beginMessage)
             .assertReply('bot responding.')
             .send('test-test')
-            .assertReply('ended WaterfallDialog ["test-test"].')
-        done();
+            .assertReply('ended WaterfallDialog ["test-test"].');
     });
 
-    it('should support receive options via `step.options`.', async function (done) {
+    it('should support receive options via `step.options`.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -133,14 +242,13 @@ describe('WaterfallDialog', function () {
             }
         ]));
 
-        adapter.send(beginMessage)
+        await adapter.send(beginMessage)
             .assertReply('bot responding.')
             .send('continue')
-            .assertReply('ending WaterfallDialog.')
-        done();
+            .assertReply('ending WaterfallDialog.');
     });
 
-    it('should allow changing of `step.options` and persist changes across steps.', async function (done) {
+    it('should allow changing of `step.options` and persist changes across steps.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -193,16 +301,15 @@ describe('WaterfallDialog', function () {
             }
         ]));
 
-        adapter.send(beginMessage)
+        await adapter.send(beginMessage)
             .assertReply('bot responding.')
             .send('continue')
             .assertReply('bot responding again.')
             .send('continue again')
-            .assertReply('ending WaterfallDialog.')
-        done();
+            .assertReply('ending WaterfallDialog.');
     });
 
-    it('should allow setting of step.values and persist values across steps.', async function (done) {
+    it('should allow setting of step.values and persist values across steps.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -256,16 +363,15 @@ describe('WaterfallDialog', function () {
             }
         ]));
 
-        adapter.send(beginMessage)
+        await adapter.send(beginMessage)
             .assertReply('bot responding.')
             .send('continue')
             .assertReply('bot responding again.')
             .send('continue again')
-            .assertReply('ending WaterfallDialog.')
-        done();
+            .assertReply('ending WaterfallDialog.');
     });
 
-    it('should not move step.values from one WaterfallDialog to another.', async function (done) {
+    it('should not move step.values from one WaterfallDialog to another.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -314,7 +420,7 @@ describe('WaterfallDialog', function () {
                 assert(step, `step not found.`);
                 assert.equal(typeof step.values, 'object', `new step.values for second WaterfallDialog should be an object.`);
                 assert(!step.values.hasOwnProperty('test'), `new WaterfallDialog's step.values shouldn't have values from parent dialog's step.values.`);
-                
+
                 // Add a new value to this WaterfallDialog's step.values.
                 // This value should not be available to this dialog's parent.
                 step.values.test_b = 'test_b';
@@ -328,19 +434,18 @@ describe('WaterfallDialog', function () {
                 assert.strictEqual(step.values.test_b,
                     'test_b',
                     `step.values.test_b should not be available in WaterfallDialog 'a'.`);
-                
+
                 return await dc.end();
             }
         ]))
 
-        adapter.send(beginMessage)
+        await adapter.send(beginMessage)
             .assertReply('bot responding.')
             .send('continue')
             .assertReply('ending WaterfallDialog.');
-        done();
     });
-    
-    it('should not move step.options from one WaterfallDialog to another.', async function (done) {
+
+    it('should not move step.options from one WaterfallDialog to another.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -390,7 +495,7 @@ describe('WaterfallDialog', function () {
                 assert.strictEqual(step.options.test_a,
                     undefined,
                     `step.options.test_a "${step.options.test_a}", was not expected value of "undefined".`);
-                    step.options.test_b = 'test_b';
+                step.options.test_b = 'test_b';
                 return Dialog.EndOfTurn;
             },
             async function (dc, step) {
@@ -404,10 +509,9 @@ describe('WaterfallDialog', function () {
             }
         ]))
 
-        adapter.send(beginMessage)
+        await adapter.send(beginMessage)
             .assertReply('bot responding.')
             .send('continue')
             .assertReply('ending WaterfallDialog.');
-        done();
     });
 });

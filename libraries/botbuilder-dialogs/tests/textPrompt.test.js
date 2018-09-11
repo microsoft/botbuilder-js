@@ -1,13 +1,13 @@
 const { ActivityTypes, ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
-const { DialogSet, TextPrompt, DialogTurnStatus } =  require('../');
+const { DialogSet, TextPrompt, DialogTurnStatus } = require('../');
 const assert = require('assert');
 
 const invalidMessage = { type: ActivityTypes.Message, text: '' };
 
-describe('TextPrompt', function() {
+describe('TextPrompt', function () {
     this.timeout(5000);
 
-    it('should call TextPrompt using dc.prompt().', function (done) {
+    it('should call TextPrompt using dc.prompt().', async function () {
         // Initialize TestAdapter.
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
@@ -29,14 +29,13 @@ describe('TextPrompt', function() {
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new TextPrompt('prompt'));
 
-        adapter.send('Hello')
-        .assertReply('Please say something.')
-        .send('test')
-        .assertReply('test');
-        done();
+        await adapter.send('Hello')
+            .assertReply('Please say something.')
+            .send('test')
+            .assertReply('test');
     });
-    
-    it('should call TextPrompt with custom validator.', function (done) {
+
+    it('should call TextPrompt with custom validator.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -62,16 +61,15 @@ describe('TextPrompt', function() {
             }
         }));
 
-        adapter.send('Hello')
-        .assertReply('Please say something.')
-        .send('i')
-        .assertReply('Please say something.')
-        .send('test')
-        .assertReply('test');
-        done();
+        await adapter.send('Hello')
+            .assertReply('Please say something.')
+            .send('i')
+            .assertReply('Please say something.')
+            .send('test')
+            .assertReply('test');
     });
 
-    it('should send custom retryPrompt.', function (done) {
+    it('should send custom retryPrompt.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -91,16 +89,15 @@ describe('TextPrompt', function() {
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new TextPrompt('prompt'));
 
-        adapter.send('Hello')
-        .assertReply('Please say something.')
-        .send(invalidMessage)
-        .assertReply('Text is required.')
-        .send('test')
-        .assertReply('test');
-        done();
+        await adapter.send('Hello')
+            .assertReply('Please say something.')
+            .send(invalidMessage)
+            .assertReply('Text is required.')
+            .send('test')
+            .assertReply('test');
     });
 
-    it('should send ignore retryPrompt if validator replies.', function (done) {
+    it('should send ignore retryPrompt if validator replies.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -128,16 +125,15 @@ describe('TextPrompt', function() {
             }
         }));
 
-        adapter.send('Hello')
-        .assertReply('Please say something.')
-        .send('i')
-        .assertReply('too short')
-        .send('test')
-        .assertReply('test');
-        done();
+        await adapter.send('Hello')
+            .assertReply('Please say something.')
+            .send('i')
+            .assertReply('too short')
+            .send('test')
+            .assertReply('test');
     });
 
-    it('should not send any retryPrompt no prompt specified.', function (done) {
+    it('should not send any retryPrompt no prompt specified.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -157,10 +153,9 @@ describe('TextPrompt', function() {
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new TextPrompt('prompt'));
 
-        adapter.send('Hello')
-        .send(invalidMessage)
-        .send('test')
-        .assertReply('test');
-        done();
+        await adapter.send('Hello')
+            .send(invalidMessage)
+            .send('test')
+            .assertReply('test');
     });
 });

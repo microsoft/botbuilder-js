@@ -1,15 +1,15 @@
 const { ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
-const { DateTimePrompt, DialogSet, DialogTurnStatus } =  require('../');
+const { DateTimePrompt, DialogSet, DialogTurnStatus } = require('../');
 const assert = require('assert');
 
 const answerMessage = { text: `January 1st, 2018 at 9am`, type: 'message' };
-const answerMessage2 = { text: `September 2nd, 2012`, type: 'message'};
+const answerMessage2 = { text: `September 2nd, 2012`, type: 'message' };
 const invalidMessage = { text: `I am not sure`, type: 'message' };
 
-describe('DatetimePrompt', function() {
+describe('DatetimePrompt', function () {
     this.timeout(5000);
 
-    it('should call DateTimePrompt using dc.prompt().', function (done) {
+    it('should call DateTimePrompt using dc.prompt().', async function () {
         // Initialize TestAdapter.
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
@@ -31,14 +31,13 @@ describe('DatetimePrompt', function() {
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new DateTimePrompt('prompt'));
 
-        adapter.send('Hello')
-        .assertReply('Please say something.')
-        .send(answerMessage)
-        .assertReply('2018-01-01T09');
-        done();
+        await adapter.send('Hello')
+            .assertReply('Please say something.')
+            .send(answerMessage)
+            .assertReply('2018-01-01T09');
     });
 
-    it('should send a prompt if the prompt is passed in via PromptOptions.', function (done) {
+    it('should send a prompt if the prompt is passed in via PromptOptions.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -57,14 +56,13 @@ describe('DatetimePrompt', function() {
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new DateTimePrompt('prompt'));
 
-        adapter.send('Hello')
-        .assertReply('Please say something.')
-        .send(answerMessage)
-        .assertReply('2018-01-01T09');
-        done();
+        await adapter.send('Hello')
+            .assertReply('Please say something.')
+            .send(answerMessage)
+            .assertReply('2018-01-01T09');
     });
-    
-    it('should call DateTimePrompt with custom validator.', function (done) {
+
+    it('should call DateTimePrompt with custom validator.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -76,7 +74,7 @@ describe('DatetimePrompt', function() {
                 await turnContext.sendActivity(dates[0].timex);
             }
         });
-        
+
         const convoState = new ConversationState(new MemoryStorage());
         adapter.use(convoState);
 
@@ -88,14 +86,13 @@ describe('DatetimePrompt', function() {
             prompt.end(prompt.recognized.value);
         }));
 
-        adapter.send('Hello')
-        .assertReply('Please say something.')
-        .send(answerMessage)
-        .assertReply('2018-01-01T09');
-        done();
+        await adapter.send('Hello')
+            .assertReply('Please say something.')
+            .send(answerMessage)
+            .assertReply('2018-01-01T09');
     });
 
-    it('should send custom retryPrompt.', function (done) {
+    it('should send custom retryPrompt.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -107,7 +104,7 @@ describe('DatetimePrompt', function() {
                 await turnContext.sendActivity(dates[0].timex);
             }
         });
-        
+
         const convoState = new ConversationState(new MemoryStorage());
         adapter.use(convoState);
 
@@ -121,16 +118,15 @@ describe('DatetimePrompt', function() {
             }
         }));
 
-        adapter.send('Hello')
-        .assertReply('Please say something.')
-        .send(invalidMessage)
-        .assertReply('Please provide a valid datetime.')
-        .send(answerMessage2)
-        .assertReply('2012-09-02');
-        done();
+        await adapter.send('Hello')
+            .assertReply('Please say something.')
+            .send(invalidMessage)
+            .assertReply('Please provide a valid datetime.')
+            .send(answerMessage2)
+            .assertReply('2012-09-02');
     });
 
-    it('should send ignore retryPrompt if validator replies.', function (done) {
+    it('should send ignore retryPrompt if validator replies.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -142,7 +138,7 @@ describe('DatetimePrompt', function() {
                 await turnContext.sendActivity(dates[0].timex);
             }
         });
-        
+
         const convoState = new ConversationState(new MemoryStorage());
         adapter.use(convoState);
 
@@ -158,16 +154,15 @@ describe('DatetimePrompt', function() {
             }
         }));
 
-        adapter.send('Hello')
-        .assertReply('Please say something.')
-        .send(invalidMessage)
-        .assertReply('That was a bad date.')
-        .send(answerMessage2)
-        .assertReply('2012-09-02');
-        done();
+        await adapter.send('Hello')
+            .assertReply('Please say something.')
+            .send(invalidMessage)
+            .assertReply('That was a bad date.')
+            .send(answerMessage2)
+            .assertReply('2012-09-02');
     });
 
-    it('should not send any retryPrompt no prompt specified.', function (done) {
+    it('should not send any retryPrompt no prompt specified.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -179,7 +174,7 @@ describe('DatetimePrompt', function() {
                 await turnContext.sendActivity(dates[0].timex);
             }
         });
-        
+
         const convoState = new ConversationState(new MemoryStorage());
         adapter.use(convoState);
 
@@ -193,10 +188,9 @@ describe('DatetimePrompt', function() {
             }
         }));
 
-        adapter.send('Hello')
-        .send(invalidMessage)
-        .send(answerMessage2)
-        .assertReply('2012-09-02');
-        done();
+        await adapter.send('Hello')
+            .send(invalidMessage)
+            .send(answerMessage2)
+            .assertReply('2012-09-02');
     });
 });
