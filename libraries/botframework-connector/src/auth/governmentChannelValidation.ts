@@ -102,7 +102,7 @@ export module GovernmentChannelValidation {
         // Look for the "aud" claim, but only if issued from the Bot Framework
         if (identity.getClaimValue(Constants.IssuerClaim) !== GovernmentConstants.ToBotFromChannelTokenIssuer) {
             // The relevant Audiance Claim MUST be present. Not Authorized.
-            throw new Error('Unauthorized. Audiance Claim MUST be present.');
+            throw new Error('Unauthorized. Issuer Claim MUST be present.');
         }
 
         // The AppId from the claim in the token must match the AppId specified by the developer.

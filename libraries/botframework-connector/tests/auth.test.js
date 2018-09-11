@@ -218,5 +218,230 @@ describe('Bot Framework Connector - Auth Tests', function () {
                 done();
             });
         });
+
+        describe('ChannelValidator', function () {
+            it('validateIdentity should fail if unauthenticated', function(done) {
+                Connector.ChannelValidation.validateIdentity(new Connector.ClaimsIdentity([], false), undefined)
+                    .then(claims => done(new Error('Expected validation to fail.')))
+                    .catch(err => {
+                        assert(!!err);
+                        done();
+                    });
+            });
+
+            it('validateIdentity should fail if no identity', function(done) {
+                Connector.ChannelValidation.validateIdentity(undefined, undefined)
+                    .then(claims => done(new Error('Expected validation to fail.')))
+                    .catch(err => {
+                        assert(!!err);
+                        done();
+                    });
+            });
+            
+            it('validateIdentity should fail if no issuer', function(done) {
+                var credentials = new Connector.SimpleCredentialProvider('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
+                Connector.ChannelValidation.validateIdentity(new Connector.ClaimsIdentity([{type: 'peanut', value: 'peanut'}], true), credentials)
+                    .then(claims => done(new Error('Expected validation to fail.')))
+                    .catch(err => {
+                        assert(!!err);
+                        done();
+                    });
+            });
+
+            it('validateIdentity should fail if wrong issuer', function(done) {
+                var credentials = new Connector.SimpleCredentialProvider('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
+                Connector.ChannelValidation.validateIdentity(new Connector.ClaimsIdentity([{type: 'iss', value: 'peanut'}], true), credentials)
+                    .then(claims => done(new Error('Expected validation to fail.')))
+                    .catch(err => {
+                        assert(!!err);
+                        done();
+                    });
+            });
+
+            it('validateIdentity should fail if no audience', function(done) {
+                var credentials = new Connector.SimpleCredentialProvider('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
+                Connector.ChannelValidation.validateIdentity(new Connector.ClaimsIdentity([{type: 'iss', value: 'https://api.botframework.com'}], true), credentials)
+                    .then(claims => done(new Error('Expected validation to fail.')))
+                    .catch(err => {
+                        assert(!!err);
+                        done();
+                    });
+            });
+            
+            it('validateIdentity should fail if wrong audience', function(done) {
+                var credentials = new Connector.SimpleCredentialProvider('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
+                Connector.ChannelValidation.validateIdentity(new Connector.ClaimsIdentity([
+                    {type: 'iss', value: 'https://api.botframework.com'},
+                    {type: 'aud', value: 'peanut'}
+                ], true), credentials)
+                    .then(claims => done(new Error('Expected validation to fail.')))
+                    .catch(err => {
+                        assert(!!err);
+                        done();
+                    });
+            });
+
+            it('validateIdentity should work', function(done) {
+                var credentials = new Connector.SimpleCredentialProvider('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
+                Connector.ChannelValidation.validateIdentity(new Connector.ClaimsIdentity([
+                    {type: 'iss', value: 'https://api.botframework.com'},
+                    {type: 'aud', value: credentials.appId}
+                ], true), credentials)
+                    .then(identity => done())
+                    .catch(err => {
+                        done(new Error('Should have validated successfully'));
+                    });
+            });
+        });
+
+        describe('GovernmentChannelValidator', function () {
+            it('validateIdentity should fail if unauthenticated', function(done) {
+                Connector.GovernmentChannelValidation.validateIdentity(new Connector.ClaimsIdentity([], false), undefined)
+                    .then(claims => done(new Error('Expected validation to fail.')))
+                    .catch(err => {
+                        assert(!!err);
+                        done();
+                    });
+            });
+
+            it('validateIdentity should fail if no identity', function(done) {
+                Connector.GovernmentChannelValidation.validateIdentity(undefined, undefined)
+                    .then(claims => done(new Error('Expected validation to fail.')))
+                    .catch(err => {
+                        assert(!!err);
+                        done();
+                    });
+            });
+            
+            it('validateIdentity should fail if no issuer', function(done) {
+                var credentials = new Connector.SimpleCredentialProvider('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
+                Connector.GovernmentChannelValidation.validateIdentity(new Connector.ClaimsIdentity([{type: 'peanut', value: 'peanut'}], true), credentials)
+                    .then(claims => done(new Error('Expected validation to fail.')))
+                    .catch(err => {
+                        assert(!!err);
+                        done();
+                    });
+            });
+
+            it('validateIdentity should fail if wrong issuer', function(done) {
+                var credentials = new Connector.SimpleCredentialProvider('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
+                Connector.GovernmentChannelValidation.validateIdentity(new Connector.ClaimsIdentity([{type: 'iss', value: 'peanut'}], true), credentials)
+                    .then(claims => done(new Error('Expected validation to fail.')))
+                    .catch(err => {
+                        assert(!!err);
+                        done();
+                    });
+            });
+
+            it('validateIdentity should fail if no audience', function(done) {
+                var credentials = new Connector.SimpleCredentialProvider('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
+                Connector.GovernmentChannelValidation.validateIdentity(new Connector.ClaimsIdentity([{type: 'iss', value: 'https://api.botframework.us'}], true), credentials)
+                    .then(claims => done(new Error('Expected validation to fail.')))
+                    .catch(err => {
+                        assert(!!err);
+                        done();
+                    });
+            });
+            
+            it('validateIdentity should fail if wrong audience', function(done) {
+                var credentials = new Connector.SimpleCredentialProvider('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
+                Connector.GovernmentChannelValidation.validateIdentity(new Connector.ClaimsIdentity([
+                    {type: 'iss', value: 'https://api.botframework.us'},
+                    {type: 'aud', value: 'peanut'}
+                ], true), credentials)
+                    .then(claims => done(new Error('Expected validation to fail.')))
+                    .catch(err => {
+                        assert(!!err);
+                        done();
+                    });
+            });
+
+            it('validateIdentity should work', function(done) {
+                var credentials = new Connector.SimpleCredentialProvider('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
+                Connector.GovernmentChannelValidation.validateIdentity(new Connector.ClaimsIdentity([
+                    {type: 'iss', value: 'https://api.botframework.us'},
+                    {type: 'aud', value: credentials.appId}
+                ], true), credentials)
+                    .then(identity => done())
+                    .catch(err => {
+                        done(new Error('Should have validated successfully'));
+                    });
+            });
+        });
+
+        describe('EnterpriseChannelValidator', function () {
+            it('validateIdentity should fail if unauthenticated', function(done) {
+                Connector.EnterpriseChannelValidation.validateIdentity(new Connector.ClaimsIdentity([], false), undefined)
+                    .then(claims => done(new Error('Expected validation to fail.')))
+                    .catch(err => {
+                        assert(!!err);
+                        done();
+                    });
+            });
+
+            it('validateIdentity should fail if no identity', function(done) {
+                Connector.EnterpriseChannelValidation.validateIdentity(undefined, undefined)
+                    .then(claims => done(new Error('Expected validation to fail.')))
+                    .catch(err => {
+                        assert(!!err);
+                        done();
+                    });
+            });
+            
+            it('validateIdentity should fail if no issuer', function(done) {
+                var credentials = new Connector.SimpleCredentialProvider('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
+                Connector.EnterpriseChannelValidation.validateIdentity(new Connector.ClaimsIdentity([{type: 'peanut', value: 'peanut'}], true), credentials)
+                    .then(claims => done(new Error('Expected validation to fail.')))
+                    .catch(err => {
+                        assert(!!err);
+                        done();
+                    });
+            });
+
+            it('validateIdentity should fail if wrong issuer', function(done) {
+                var credentials = new Connector.SimpleCredentialProvider('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
+                Connector.EnterpriseChannelValidation.validateIdentity(new Connector.ClaimsIdentity([{type: 'iss', value: 'peanut'}], true), credentials)
+                    .then(claims => done(new Error('Expected validation to fail.')))
+                    .catch(err => {
+                        assert(!!err);
+                        done();
+                    });
+            });
+
+            it('validateIdentity should fail if no audience', function(done) {
+                var credentials = new Connector.SimpleCredentialProvider('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
+                Connector.EnterpriseChannelValidation.validateIdentity(new Connector.ClaimsIdentity([{type: 'iss', value: 'https://api.botframework.com'}], true), credentials)
+                    .then(claims => done(new Error('Expected validation to fail.')))
+                    .catch(err => {
+                        assert(!!err);
+                        done();
+                    });
+            });
+            
+            it('validateIdentity should fail if wrong audience', function(done) {
+                var credentials = new Connector.SimpleCredentialProvider('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
+                Connector.EnterpriseChannelValidation.validateIdentity(new Connector.ClaimsIdentity([
+                    {type: 'iss', value: 'https://api.botframework.com'},
+                    {type: 'aud', value: 'peanut'}
+                ], true), credentials)
+                    .then(claims => done(new Error('Expected validation to fail.')))
+                    .catch(err => {
+                        assert(!!err);
+                        done();
+                    });
+            });
+
+            it('validateIdentity should work', function(done) {
+                var credentials = new Connector.SimpleCredentialProvider('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
+                Connector.EnterpriseChannelValidation.validateIdentity(new Connector.ClaimsIdentity([
+                    {type: 'iss', value: 'https://api.botframework.com'},
+                    {type: 'aud', value: credentials.appId}
+                ], true), credentials)
+                    .then(identity => done())
+                    .catch(err => {
+                        done(new Error('Should have validated successfully'));
+                    });
+            });
+        });
     });
 });
