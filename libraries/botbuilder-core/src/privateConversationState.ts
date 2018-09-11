@@ -52,7 +52,7 @@ export class PrivateConversationState extends BotState {
         super(storage, (context: TurnContext) => {
             // Calculate storage key
             const key: string = this.getStorageKey(context);
-            return key ? Promise.resolve(key) :  Promise.reject(new Error(NO_KEY));
+            return key ? Promise.resolve(key) : Promise.reject(new Error(NO_KEY));
         });
     }
 
@@ -60,12 +60,12 @@ export class PrivateConversationState extends BotState {
      * Returns the storage key for the current PrivateConversation state.
      * @param context Context for current turn of PrivateConversation with the user.
      */
-    public getStorageKey(context: TurnContext): string|undefined {
+    public getStorageKey(context: TurnContext): string | undefined {
         const activity: Activity = context.activity;
         const channelId: string = activity.channelId;
         const conversationId: string = activity && activity.conversation && activity.conversation.id ? activity.conversation.id : undefined;
         const userId: string = activity && activity.from && activity.from.id ? activity.from.id : undefined;
 
-        return channelId && conversationId && userId ? `PrivateConversation/${channelId}/${conversationId}/${userId}/${this.namespace}` : undefined;
+        return channelId && conversationId && userId ? `${channelId}/conversations/${conversationId}/users/${userId}/${this.namespace}` : undefined;
     }
 }

@@ -64,6 +64,6 @@ export class UserState extends BotState {
         const channelId: string = activity.channelId;
         const userId: string = activity && activity.from && activity.from.id ? activity.from.id : undefined;
 
-        return channelId && userId ? `user/${channelId}/${userId}/${this.namespace}` : undefined;
+        return channelId && userId ? `${channelId}/users/${userId}/${this.namespace}` : undefined;
     }
 }

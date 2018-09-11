@@ -66,6 +66,6 @@ export class ConversationState extends BotState {
         const channelId: string = activity.channelId;
         const conversationId: string = activity && activity.conversation && activity.conversation.id ? activity.conversation.id : undefined;
 
-        return channelId && conversationId ? `conversation/${channelId}/${conversationId}/${this.namespace}` : undefined;
+        return channelId && conversationId ? `${channelId}/conversations/${conversationId}/${this.namespace}` : undefined;
     }
 }
