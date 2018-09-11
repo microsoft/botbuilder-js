@@ -29,19 +29,19 @@ import { DialogContext, DialogState } from './dialogContext';
  *
  * dialogs.add(new WaterfallDialog('fillProfile', [
  *     async (dc, step) => {
- *         dc.activeDialog.state.profile = {};
+ *         step.values.profile = {};
  *         return await dc.prompt('textPrompt', `What's your name?`);
  *     },
  *     async (dc, step) => {
- *         dc.activeDialog.state.profile.name = step.results;
+ *         step.values.profile.name = step.result;
  *         return await dc.prompt('textPrompt', `What's your phone number?`);
  *     },
  *     async (dc, step) => {
- *         dc.activeDialog.state.profile.phone = step.results;
+ *         step.values.profile.phone = step.result;
  *
  *         // Save completed profile to user state
  *         const user = await userState.get(context);
- *         user.profile = dc.activeDialog.state.profile;
+ *         user.profile = step.values.profile;
  *         await userState.set(context, user);
  *
  *         // Notify user and end
