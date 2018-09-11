@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { TurnContext, BotStateSet, TestAdapter } = require('../');
+const { TurnContext, AutoSaveStateMiddleware, TestAdapter } = require('../lib');
 
 const receivedMessage = { text: 'received', type: 'message' };
 
@@ -29,14 +29,14 @@ class BotStateMock {
     }
 }
 
-describe(`BotStateSet`, function () {
+describe(`AutoSaveStateMiddleware`, function () {
     this.timeout(5000);
 
     const adapter = new TestAdapter();
     const context = new TurnContext(adapter, receivedMessage);
     it(`should use() and call readAll() on a single BotState plugin.`, function (done) {
         const fooState = new BotStateMock({ foo: 'bar' });
-        const set = new BotStateSet().use(fooState);
+        const set = new AutoSaveStateMiddleware().use(fooState);
         set.readAll(context).then((items) => {
             assert(Array.isArray(items), `items array not passed back.`)
             assert(items.length == 1, `wrong length of returned items array.`);
@@ -48,7 +48,7 @@ describe(`BotStateSet`, function () {
     it(`should use() and call readAll() on multiple BotState plugins.`, function (done) {
         const fooState = new BotStateMock({ foo: 'bar' });
         const barState = new BotStateMock({ bar: 'foo' })
-        const set = new BotStateSet().use(fooState, barState);
+        const set = new AutoSaveStateMiddleware().use(fooState, barState);
         set.readAll(context).then((items) => {
             assert(Array.isArray(items), `items array not passed back.`)
             assert(items.length == 2, `wrong length of returned items array.`);
@@ -60,7 +60,7 @@ describe(`BotStateSet`, function () {
 
     it(`should use() and call writeAll() on a single BotState plugin.`, function (done) {
         const fooState = new BotStateMock({ foo: 'bar' });
-        const set = new BotStateSet().use(fooState);
+        const set = new AutoSaveStateMiddleware().use(fooState);
         set.writeAll(context).then(() => {
             assert(fooState.writeCalled, `write not called for plugin.`);
             done();
@@ -70,7 +70,7 @@ describe(`BotStateSet`, function () {
     it(`should use() and call writeAll() on multiple BotState plugins.`, function (done) {
         const fooState = new BotStateMock({ foo: 'bar' });
         const barState = new BotStateMock({ bar: 'foo' })
-        const set = new BotStateSet().use(fooState, barState);
+        const set = new AutoSaveStateMiddleware().use(fooState, barState);
         set.writeAll(context).then((items) => {
             assert(fooState.writeCalled || barState.writeCalled, `write not called for either plugin.`);
             assert(fooState.writeCalled, `write not called for 'fooState' plugin.`);
@@ -82,20 +82,20 @@ describe(`BotStateSet`, function () {
     it(`should pass 'force' flag through in readAll() call.`, function (done) {
         const fooState = new BotStateMock({ foo: 'bar' });
         fooState.assertForce = true;
-        const set = new BotStateSet().use(fooState);
+        const set = new AutoSaveStateMiddleware().use(fooState);
         set.readAll(context, true).then(() => done());
     });
 
     it(`should pass 'force' flag through in writeAll() call.`, function (done) {
         const fooState = new BotStateMock({ foo: 'bar' });
         fooState.assertForce = true;
-        const set = new BotStateSet().use(fooState);
+        const set = new AutoSaveStateMiddleware().use(fooState);
         set.writeAll(context, true).then(() => done());
     });
 
     it(`should work as a middleware plugin.`, function (done) {
         const fooState = new BotStateMock({ foo: 'bar' });
-        const set = new BotStateSet().use(fooState);
+        const set = new AutoSaveStateMiddleware().use(fooState);
         set.onTurn(context, () => Promise.resolve())
            .then(() => {
                 assert(fooState.readCalled, `readAll() not called.`);
@@ -106,7 +106,7 @@ describe(`BotStateSet`, function () {
 
     it(`should support plugins passed to constructor.`, function (done) {
         const fooState = new BotStateMock({ foo: 'bar' });
-        const set = new BotStateSet(fooState);
+        const set = new AutoSaveStateMiddleware(fooState);
         set.onTurn(context, () => Promise.resolve())
            .then(() => {
                 assert(fooState.readCalled, `readAll() not called.`);
@@ -118,7 +118,7 @@ describe(`BotStateSet`, function () {
     it(`should throw exception if invalid plugin passed in.`, function (done) {
         const fooState = new BotStateMock({ foo: 'bar' });
         try {
-            const set = new BotStateSet(fooState, { read: () => {} });
+            const set = new AutoSaveStateMiddleware(fooState, { read: () => {} });
             assert(false, `bogus plugin added to set.`);
         } catch (err) {
             done();

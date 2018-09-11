@@ -19,12 +19,12 @@ import { TurnContext } from './turnContext';
  * a bot:
  *
  * ```JavaScript
- * const { BotStateSet, ConversationState, UserState, MemoryStorage } = require('botbuilder');
+ * const {AutoSaveStateMiddleware, ConversationState, UserState, MemoryStorage } = require('botbuilder');
  *
  * const storage = new MemoryStorage();
  * const conversationState = new ConversationState(storage);
  * const userState = new UserState(storage);
- * adapter.use(new BotStateSet(conversationState, userState));
+ * adapter.use(new AutoSaveStateMiddleware(conversationState, userState));
  *
  * server.post('/api/messages', (req, res) => {
  *    adapter.processActivity(req, res, async (context) => {
@@ -38,15 +38,15 @@ import { TurnContext } from './turnContext';
  * });
  * ```
  */
-export class BotStateSet implements Middleware {
-    private middleware: BotState[] = [];
+export class AutoSaveStateMiddleware implements Middleware {
+    private bostates: BotState[] = [];
 
     /**
-     * Creates a new BotStateSet instance.
-     * @param middleware Zero or more BotState plugins to register.
+     * Creates a new AutoSaveStateiMiddleware instance.
+     * @param botStates Zero or more BotState plugins to register.
      */
-    constructor(...middleware: BotState[]) {
-        BotStateSet.prototype.use.apply(this, middleware);
+    constructor(...botStates: BotState[]) {
+        AutoSaveStateMiddleware.prototype.use.apply(this, botStates);
     }
 
     public onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
@@ -57,15 +57,15 @@ export class BotStateSet implements Middleware {
     }
 
     /**
-     * Registers `BotState` middleware plugins with the set.
-     * @param middleware One or more BotState plugins to register.
+     * Registers `BotState` plugins with the set.
+     * @param botStates One or more BotState plugins to register.
      */
-    public use(...middleware: BotState[]): this {
-        middleware.forEach((plugin: BotState) => {
-            if (typeof plugin.read === 'function' && typeof plugin.write === 'function') {
-                this.middleware.push(plugin);
+    public use(...botStates: BotState[]): this {
+        botStates.forEach((botstate: BotState) => {
+            if (typeof botstate.read === 'function' && typeof botstate.write === 'function') {
+                this.bostates.push(botstate);
             } else {
-                throw new Error(`BotStateSet: a middleware plugin was added that isn't an instance of BotState middleware.`);
+                throw new Error(`AutoSaveStateMiddleware: a  plugin was added that isn't an instance of BotState.`);
             }
         });
 
@@ -85,7 +85,7 @@ export class BotStateSet implements Middleware {
      * @param force (Optional) If `true` the cache will be bypassed and the state will always be read in directly from storage. Defaults to `false`.
      */
     public readAll(context: TurnContext, force: boolean = false): Promise<StoreItem[]> {
-        const promises: Promise<any>[] = this.middleware.map((plugin: BotState) => plugin.read(context, force));
+        const promises: Promise<any>[] = this.bostates.map((botstate: BotState) => botstate.read(context, force));
 
         return Promise.all(promises);
     }
@@ -103,7 +103,7 @@ export class BotStateSet implements Middleware {
      * @param force (Optional) if `true` the state will always be written out regardless of its change state. Defaults to `false`.
      */
     public writeAll(context: TurnContext, force: boolean = false): Promise<void> {
-        const promises: Promise<void>[] = this.middleware.map((plugin: BotState) => plugin.write(context, force));
+        const promises: Promise<void>[] = this.bostates.map((botstate: BotState) => botstate.write(context, force));
 
         return Promise.all(promises).then(() => {
             // noop
