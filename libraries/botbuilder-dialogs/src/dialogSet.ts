@@ -73,9 +73,8 @@ import { DialogContext, DialogState } from './dialogContext';
  * ```JavaScript
  * server.post('/api/messages', (req, res) => {
  *     adapter.processActivity(req, res, async (context) => {
- *         // Get conversation state and create DialogContext object
- *         const conversation = conversationState.get(context);
- *         const dc = dialogs.createContext(context, conversation);
+ *         // Create DialogContext object
+ *         const dc = dialogs.createContext(context);
  *
  *         // Continue execution if there's an "active" dialog
  *         await dc.continue();
@@ -114,9 +113,8 @@ import { DialogContext, DialogState } from './dialogContext';
  * ```JavaScript
  * server.post('/api/messages', (req, res) => {
  *     adapter.processActivity(req, res, async (context) => {
- *         // Get conversation state and create DialogContext object
- *         const conversation = conversationState.get(context);
- *         const dc = dialogs.createContext(context, conversation);
+ *         // Create DialogContext object
+ *         const dc = dialogs.createContext(context);
  *
  *         // Check for any interruptions
  *         const isMessage = context.activity.type === ActivityType.Message;
@@ -201,8 +199,7 @@ export class DialogSet {
      * that state.
      *
      * ```JavaScript
-     * const conversation = conversationState.get(context);
-     * const dc = dialogs.createContext(context, conversation);
+     * const dc = dialogs.createContext(context);
      * ```
      * @param context Context for the current turn of conversation with the user.
      */

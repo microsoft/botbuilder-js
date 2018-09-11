@@ -85,10 +85,14 @@ export enum DialogTurnStatus {
  * @param T (Optional) type of result returned by the dialog when it calls `dc.end()`.
  */
 export interface DialogTurnResult<T = any> {
-    //** Gets or sets the current status of the stack.
+    /** 
+     * Gets or sets the current status of the stack.
+     */
     status: DialogTurnStatus;
 
-    //** Final result returned by a dialog that just completed. Can be `undefined` even when [hasResult](#hasResult) is true.
+    /** 
+     * Final result returned by a dialog that just completed. Can be `undefined` even when [hasResult](#hasResult) is true.
+     */
     result?: T;
 }
 
@@ -96,10 +100,14 @@ export interface DialogTurnResult<T = any> {
  * Base class for all dialogs.
  */
 export abstract class Dialog<O extends object = {}> {
-    //** Signals the end of a turn by a dialog method or waterfall/sequence step.
+    /**
+     * Signals the end of a turn by a dialog method or waterfall/sequence step.
+     */
     public static EndOfTurn: DialogTurnResult = { status: DialogTurnStatus.waiting };
 
-    //** Unique ID of the dialog.
+    /**
+     * Unique ID of the dialog.
+     */
     public readonly id: string;
 
     constructor(dialogId: string) {
