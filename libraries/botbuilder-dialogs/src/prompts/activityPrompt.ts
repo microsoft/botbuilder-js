@@ -45,22 +45,16 @@ export abstract class ActivityPrompt extends Dialog {
         const recognized: PromptRecognizerResult<Activity> = await this.onRecognize(dc.context, state.state, state.options);
 
         // Validate the return value
-        let end: boolean = false;
-        let endResult: any;
-        await this.validator(dc.context, {
+        let isValid = await this.validator({
+            context: dc.context,
             recognized: recognized,
             state: state.state,
-            options: state.options,
-            end: (output: any): void => {
-                if (end) { throw new Error(`PromptValidatorContext.end(): method already called for the turn.`); }
-                end = true;
-                endResult = output;
-            }
+            options: state.options
         });
 
         // Return recognized value or re-prompt
-        if (end) {
-            return await dc.end(endResult);
+        if (isValid) {
+            return await dc.end(recognized.value);
         } else {
             return Dialog.EndOfTurn;
         }
