@@ -8,6 +8,7 @@
 import { ActivityTypes } from 'botbuilder-core';
 import { Dialog, DialogReason, DialogTurnResult } from './dialog';
 import { DialogContext } from './dialogContext';
+import { WaterfallStepContext } from './waterfallStepContext';
 
 /**
  * Function signature of a waterfall step.
@@ -20,30 +21,7 @@ import { DialogContext } from './dialogContext';
  * @param WaterfallStep.context The dialog context for the current turn of conversation.
  * @param WaterfallStep.step Contextual information for the current step being executed.
  */
-export type WaterfallStep<O extends object = {}> = (dc: DialogContext, step: WaterfallStepContext<O>) => Promise<DialogTurnResult>;
-
-export interface WaterfallStepContext<O extends object = {}> {
-    // The index of the current waterfall step being executed.
-    readonly index: number;
-
-    // Any options the waterfall dialog was called with.
-    readonly options: O;
-
-    // The reason the waterfall step is being executed.
-    readonly reason: DialogReason;
-
-    // Results returned by a dialog called in the previous waterfall step.
-    readonly result: any;
-
-    // A dictionary of values which will be persisted across all waterfall steps.
-    readonly values: object;
-
-    /**
-     * Used to skip to the next waterfall step.
-     * @param result (Optional) result to pass to the next step.
-     */
-    next(result?: any): Promise<DialogTurnResult>;
-}
+export type WaterfallStep<O extends object = {}> = (step: WaterfallStepContext<O>) => Promise<DialogTurnResult>;
 
 /**
  * When called within a waterfall step the dialog will skip to the next waterfall step.
@@ -115,8 +93,8 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
         return await this.runStep(dc, state.stepIndex + 1, reason, result);
     }
 
-    protected async onStep(dc: DialogContext, step: WaterfallStepContext<O>): Promise<DialogTurnResult> {
-        return await this.steps[step.index].call(this, dc, step);
+    protected async onStep(step: WaterfallStepContext<O>): Promise<DialogTurnResult> {
+        return await this.steps[step.index](step);
     }
 
     private async runStep(dc: DialogContext, index: number, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
@@ -127,23 +105,23 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
 
             // Create step context
             const nextCalled: boolean = false;
-            const step: WaterfallStepContext<O> = {
+            const step = new WaterfallStepContext<O>(dc, {
                 index: index,
                 options: <O>state.options,
                 reason: reason,
                 result: result,
                 values: state.values,
-                next: async (stepResult?: any): Promise<DialogTurnResult<any>> => {
+                onNext: async (stepResult?: any): Promise<DialogTurnResult<any>> => {
                     if (nextCalled) {
                         throw new Error(`WaterfallStepContext.next(): method already called for dialog and step '${this.id}[${index}]'.`);
                     }
 
                     return await this.dialogResume(dc, DialogReason.nextCalled, stepResult);
                 }
-            };
+            });
 
             // Execute step
-            return await this.onStep(dc, step);
+            return await this.onStep(step);
         } else {
             // End of waterfall so just return to parent
             return await dc.end(result);

@@ -9,3 +9,4 @@ export * from './componentDialog';
 export * from './dialogContext';
 export * from './dialogSet';
 export * from './waterfallDialog';
+export * from './waterfallStepContext';

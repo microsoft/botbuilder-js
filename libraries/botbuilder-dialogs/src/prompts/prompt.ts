@@ -61,13 +61,13 @@ export interface PromptRecognizerResult<T> {
     value?: T;
 }
 
-export type PromptValidator<T> = (context: TurnContext, prompt: PromptValidatorContext<T>) => Promise<void>;
+export type PromptValidator<T> = (prompt: PromptValidatorContext<T>) => Promise<boolean>;
 
 export interface PromptValidatorContext<T> {
-    recognized: PromptRecognizerResult<T>;
-    state: object;
-    options: PromptOptions;
-    end(result: any): void;
+    readonly context: TurnContext;
+    readonly recognized: PromptRecognizerResult<T>;
+    readonly state: object;
+    readonly options: PromptOptions;
 }
 
 /**
@@ -110,27 +110,21 @@ export abstract class Prompt<T> extends Dialog {
         const recognized: PromptRecognizerResult<T> = await this.onRecognize(dc.context, state.state, state.options);
 
         // Validate the return value
-        let end: boolean = false;
-        let endResult: any;
+        let isValid: boolean = false;
         if (this.validator) {
-            await this.validator(dc.context, {
+            isValid = await this.validator({
+                context: dc.context,
                 recognized: recognized,
                 state: state.state,
-                options: state.options,
-                end: (output: any): void => {
-                    if (end) { throw new Error(`PromptValidatorContext.end(): method already called for the turn.`); }
-                    end = true;
-                    endResult = output;
-                }
+                options: state.options
             });
         } else if (recognized.succeeded) {
-            end = true;
-            endResult = recognized.value;
+            isValid = true;
         }
 
         // Return recognized value or re-prompt
-        if (end) {
-            return await dc.end(endResult);
+        if (isValid) {
+            return await dc.end(recognized.value);
         } else {
             if (!dc.context.responded) {
                 await this.onPrompt(dc.context, state.state, state.options, true);
