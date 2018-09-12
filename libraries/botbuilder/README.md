@@ -53,7 +53,7 @@ npm install --save restify
     
 Create a file named app.js and say hello in a few lines of code.
  
-```
+```javascript
 const restify = require('restify');
 const botbuilder = require('botbuilder');
 
