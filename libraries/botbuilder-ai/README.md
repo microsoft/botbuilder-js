@@ -35,12 +35,12 @@ This module contains interfaces for using [Microsoft LUIS](https://luis.ai) and 
 
 
 First, import the nessary functionality into your app.
-```
+```javascript
 const { LuisRecognizer, QnAMaker } = require('botbuilder-ai');
 ```
 
 Configure and instantiate a LuisRecognizer. You will need to acquire values for appId, subscriptionKey and region from the LUIS website.
-```
+```javascript
 // Map the contents to the required format for `LuisRecognizer`.
 const luisApplication = {
     applicationId: process.env.appId,
@@ -59,7 +59,7 @@ const luisRecognizer = new LuisRecognizer(luisApplication, luisPredictionOptions
 ```
 
 Now, call LUIS into action once you've got a TurnContext object:
-```
+```javascript
 // Listen for incoming requests.
 server.post('/api/messages', (req, res) => {
     adapter.processActivity(req, res, async (turnContext) => {

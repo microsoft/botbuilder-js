@@ -40,17 +40,17 @@ Also included is an interface to store and retrieve chat transcripts in blog sto
 ## Use
 
 Import the module into your app.
-```
+```javascript
 const { BlobStorage } = require('botbuilder-azure');
 ```
 
 Configure the storage driver to work with your Azure resources.
-```
+```javascript
 const blobStorage = new BlobStorage(options);
 ```
 
 Pass the storage driver into your state managers:
-```
+```javascript
 const userState = new UserState(blobStorage);
 const conversationState = new ConverationState(blobStorage);
 ```

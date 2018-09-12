@@ -38,7 +38,7 @@ of useful prompts that provide type checking and validation of input.
 
 After adding the module to your application, modify your app's code to import the multi-turn dialog management capabilities. Near your other `import` and `require` statements, add:
 
-```
+```javascript
 // Import some of the capabities from the module. 
 const { DialogSet, WaterfallDialog } = require("botbuilder-dialogs");
 ```
@@ -55,7 +55,7 @@ More sophisticated multi-dialog sets can be created using the `ComponentDialog` 
 contains a DialogSet, is itself also a dialog that can be triggered like any other. By building on top ComponentDialog,
 developer can bundle multiple dialogs into a single unit which can then be packaged, distributed and reused.
 
-```
+```javascript
 // Set up a storage system that will capture the conversation state.
 const storage = new MemoryStorage();
 const convoState = new ConversationState(storage);
@@ -94,7 +94,7 @@ dialogs.add(new WaterfallDialog(DIALOG_ONE, [
 
 Finally, from somewhere in your bot's code, invoke your dialog by name:
 
-```
+```javascript
 // Receive and process incoming events into TurnContext objects in the normal way
 adapter.processActivity(req, res, async (turnContext) => {
     // Create a DialogContext object from the incoming TurnContext
