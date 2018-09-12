@@ -23,10 +23,13 @@ import { DialogContext, DialogState } from './dialogContext';
  * for their name and phone number:
  *
  * ```JavaScript
- * const { DialogSet, TextPrompt, WaterfallDialog } = require('botbuilder-dialogs');
+ * const { DialogSet, TextPrompt, WaterfallDialog, UserState, MemoryStorage } = require('botbuilder-dialogs');
  *
+ * const memoryStorage = new MemoryStorage();
+ * const userState = new UserState(memoryStorage);
  * const dialogs = new DialogSet();
- *
+ * const userProfile = userState.createProperty('profile');
+ * 
  * dialogs.add(new WaterfallDialog('fillProfile', [
  *     async (dc, step) => {
  *         step.values.profile = {};
@@ -40,9 +43,9 @@ import { DialogContext, DialogState } from './dialogContext';
  *         step.values.profile.phone = step.result;
  *
  *         // Save completed profile to user state
- *         const user = await userState.get(context);
+ *         const user = await userProfile.get(context);
  *         user.profile = step.values.profile;
- *         await userState.set(context, user);
+ *         await userProfile.set(context, user);
  *
  *         // Notify user and end
  *         await dc.context.sendActivity(`Your profile was updated.`);
