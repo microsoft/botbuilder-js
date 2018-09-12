@@ -5,7 +5,6 @@ notifications:
   email: false
 before_install:
 - printf "//botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/:_authToken=${API_KEY}" >> ~/.npmrc
-- npm install
 - npm install --global lerna@3.2.1 nyc mocha typescript@2.7.2
 - cd tools/ && npm install && cd ..
 install:
@@ -27,11 +26,6 @@ after_success:
   && npm publish libraries/botframework-connector --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
   && npm publish libraries/botframework-schema --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
   && echo End deploy
-
-cache:
-  directories:
-  - node_modules
-  - tools/node_modules
   
 env:
   global:
