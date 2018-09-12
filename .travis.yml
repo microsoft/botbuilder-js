@@ -9,7 +9,7 @@ before_install:
 - cd tools/ && npm install && cd ..
 install:
 - npm run update-versions
-- lerna bootstrap --hoist
+- lerna bootstrap
 script:
 - npm run test:travis
 - npm run tslint
