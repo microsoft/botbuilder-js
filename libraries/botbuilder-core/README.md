@@ -1,4 +1,10 @@
-Preview of the v4 version of the Bot Builder toolkit.  
+# Bot Builder Core
+
+This library contains most of the core functionality for [Botbuilder](https://github.com/Microsoft/botbuilder-js/tree/master/libraries/botbuilder),
+but without any dependency on Node. As a result, this version can be used to build bots that run complete in a browser.
+
+Unless you are building a bot _without Node_, we recommend that you `botbuilder` your app
+instead of `botbuilder-core`. [Learn more here.](https://github.com/Microsoft/botbuilder-js/tree/master/libraries/botbuilder/README.md)
 
 - [Installing](#installing)
 - [Documentation](https://docs.microsoft.com/en-us/azure/bot-service/bot-service-overview-introduction?view=azure-bot-service-4.0)
@@ -9,7 +15,7 @@ Preview of the v4 version of the Bot Builder toolkit.
 To add the preview version of this package to your bot be sure include the @preview tag:
 
 ```bash
-npm install --save botbuilder@preview
+npm install --save botbuilder-core@preview
 ```
 
 While this package is in preview it's possible for updates to include build breaks. To avoid having any updates break your bot it's recommended that you update the dependency table of your bots `package.json` file to lock down the specific version of the package you're using:
@@ -17,7 +23,7 @@ While this package is in preview it's possible for updates to include build brea
 ```JSON
 {
     "dependencies": {
-        "botbuilder": "4.0.0-preview1.2"
+        "botbuilder-core": "4.0.0-preview1.2"
     }
 }
 ```

@@ -26,7 +26,7 @@ While this package is in preview it's possible for updates to include build brea
 }
 ```
 
-# What's included?
+## What's included?
 * Powerful dialog system with dialogs that are isolated and composable.
 * Built-in prompts for simple things like Yes/No, strings, numbers, enumerations.
 * Built-in dialogs that utilize powerful AI frameworks like [LUIS](http://luis.ai).
