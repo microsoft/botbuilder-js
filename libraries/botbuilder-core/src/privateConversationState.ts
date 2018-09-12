@@ -10,31 +10,31 @@ import { BotState } from './botState';
 import { Storage } from './storage';
 import { TurnContext } from './turnContext';
 
-const NO_KEY: string = `ConversationState: channelId and/or conversation missing from context.request.`;
+const NO_KEY: string = `PrivateConversationState: channelId and/or PrivateConversation missing from context.request.`;
 
 /**
- * Reads and writes conversation state for your bot to storage.
+ * Reads and writes PrivateConversation state for your bot to storage.
  *
  * @remarks
- * Each conversation your bot has with a user or group will have its own isolated storage object
- * that can be used to persist conversation tracking information between turns of the conversation.
+ * Each PrivateConversation your bot has with a user or group will have its own isolated storage object
+ * that can be used to persist PrivateConversation tracking information between turns of the PrivateConversation.
  * This state information can be reset at any point by calling [clear()](#clear).
  *
- * Since the `ConversationState` class derives from `BotState` it can be used as middleware to
- * automatically read and write the bots conversation state for each turn. And it also means it
+ * Since the `PrivateConversationState` class derives from `BotState` it can be used as middleware to
+ * automatically read and write the bots PrivateConversation state for each turn. And it also means it
  * can be passed to a `BotStateSet` middleware instance to be managed in parallel with other state
  * providers.
  *
  * ```JavaScript
- * const { ConversationState, MemoryStorage } = require('botbuilder');
+ * const { PrivateConversationState, MemoryStorage } = require('botbuilder');
  *
- * const conversationState = new ConversationState(new MemoryStorage());
- * adapter.use(conversationState);
+ * const PrivateConversationState = new PrivateConversationState(new MemoryStorage());
+ * adapter.use(PrivateConversationState);
  *
  * server.post('/api/messages', (req, res) => {
  *    adapter.processActivity(req, res, async (context) => {
- *       // Get loaded conversation state
- *       const convo = conversationState.get(context);
+ *       // Get loaded PrivateConversation state
+ *       const convo = PrivateConversationState.get(context);
  *
  *       // ... route activity ...
  *
@@ -42,29 +42,29 @@ const NO_KEY: string = `ConversationState: channelId and/or conversation missing
  * });
  * ```
  */
-export class ConversationState extends BotState {
+export class PrivateConversationState extends BotState {
     /**
-     * Creates a new ConversationState instance.
-     * @param storage Storage provider to persist conversation state to.
+     * Creates a new PrivateConversationState instance.
+     * @param storage Storage provider to persist PrivateConversation state to.
      * @param namespace (Optional) namespace to append to storage keys. Defaults to an empty string.
      */
     constructor(storage: Storage, private namespace: string = '') {
         super(storage, (context: TurnContext) => {
             // Calculate storage key
             const key: string = this.getStorageKey(context);
-
             return key ? Promise.resolve(key) : Promise.reject(new Error(NO_KEY));
         });
     }
 
     /**
-     * Returns the storage key for the current conversation state.
-     * @param context Context for current turn of conversation with the user.
+     * Returns the storage key for the current PrivateConversation state.
+     * @param context Context for current turn of PrivateConversation with the user.
      */
     public getStorageKey(context: TurnContext): string | undefined {
         const activity: Activity = context.activity;
         const channelId: string = activity.channelId;
         const conversationId: string = activity && activity.conversation && activity.conversation.id ? activity.conversation.id : undefined;
+        const userId: string = activity && activity.from && activity.from.id ? activity.from.id : undefined;
 
         if (!channelId) {
             throw new Error('missing activity.channelId');
@@ -74,6 +74,9 @@ export class ConversationState extends BotState {
             throw new Error('missing activity.conversation.id');
         }
 
-        return `${channelId}/conversations/${conversationId}/${this.namespace}`;
+        if (!userId) {
+            throw new Error('missing activity.from.id');
+        }
+        return `${channelId}/conversations/${conversationId}/users/${userId}/${this.namespace}`;
     }
 }
