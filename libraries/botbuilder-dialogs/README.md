@@ -102,7 +102,7 @@ adapter.processActivity(req, res, async (turnContext) => {
 });
 ```
 
-# Advanced Topics
+# Learn More
 
 [Prompts](https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-prompts?view=azure-bot-service-4.0&tabs=javascript) This module contains several types of built-in prompt that can be used to create dialogs that capture and validate specific data types like dates, numbers and multiple-choice answers.
 
