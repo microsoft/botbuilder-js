@@ -7,6 +7,9 @@
  */
 import { Activity } from 'botframework-schema';
 import { ChannelValidation } from './channelValidation';
+import { GovernmentChannelValidation } from './governmentChannelValidation';
+import { EnterpriseChannelValidation } from './enterpriseChannelValidation';
+import { GovernmentConstants } from './governmentConstants';
 import { ClaimsIdentity } from './claimsIdentity';
 import { ICredentialProvider } from './credentialProvider';
 import { EmulatorValidation } from './emulatorValidation';
@@ -24,7 +27,8 @@ export module JwtTokenValidation {
     export async function authenticateRequest(
         activity: Activity,
         authHeader: string,
-        credentials: ICredentialProvider
+        credentials: ICredentialProvider,
+        channelService: string
     ): Promise<ClaimsIdentity> {
         if (!authHeader.trim()) {
             const isAuthDisabled: boolean = await credentials.isAuthenticationDisabled();
@@ -36,7 +40,7 @@ export module JwtTokenValidation {
             throw new Error('Unauthorized Access. Request is not authorized');
         }
 
-        const claimsIdentity: ClaimsIdentity = await validateAuthHeader(authHeader, credentials, activity.channelId, activity.serviceUrl);
+        const claimsIdentity: ClaimsIdentity = await validateAuthHeader(authHeader, credentials, channelService, activity.channelId, activity.serviceUrl);
 
         MicrosoftAppCredentials.trustServiceUrl(activity.serviceUrl);
 
@@ -46,6 +50,7 @@ export module JwtTokenValidation {
     export async function validateAuthHeader(
         authHeader: string,
         credentials: ICredentialProvider,
+        channelService: string,
         channelId: string,
         serviceUrl: string = ''
     ): Promise<ClaimsIdentity> {
@@ -57,10 +62,35 @@ export module JwtTokenValidation {
             return await EmulatorValidation.authenticateEmulatorToken(authHeader, credentials, channelId);
         }
 
-        if (serviceUrl.trim()) {
-            return await ChannelValidation.authenticateChannelTokenWithServiceUrl(authHeader, credentials, serviceUrl, channelId);
+        if (isPublicAzure(channelService)) {
+            if (serviceUrl.trim()) {
+                return await ChannelValidation.authenticateChannelTokenWithServiceUrl(authHeader, credentials, serviceUrl, channelId);
+            }
+
+            return await ChannelValidation.authenticateChannelToken(authHeader, credentials, channelId);
         }
 
-        return await ChannelValidation.authenticateChannelToken(authHeader, credentials, channelId);
+        if (isGovernment(channelService)) {
+            if (serviceUrl.trim()) {
+                return await GovernmentChannelValidation.authenticateChannelTokenWithServiceUrl(authHeader, credentials, serviceUrl, channelId);
+            }
+
+            return await GovernmentChannelValidation.authenticateChannelToken(authHeader, credentials, channelId);
+        }
+
+        // Otherwise use Enterprise Channel Validation
+        if (serviceUrl.trim()) {
+            return await EnterpriseChannelValidation.authenticateChannelTokenWithServiceUrl(authHeader, credentials, serviceUrl, channelId, channelService);
+        }
+
+        return await EnterpriseChannelValidation.authenticateChannelToken(authHeader, credentials, channelId, channelService);
+    }
+
+    function isPublicAzure(channelService: string) {
+        return !channelService || channelService.length === 0;
+    }
+
+    function isGovernment(channelService: string) {
+        return channelService && channelService.toLowerCase() === GovernmentConstants.ChannelService;
     }
 }

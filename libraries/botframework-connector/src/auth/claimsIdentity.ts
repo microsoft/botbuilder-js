@@ -22,7 +22,7 @@ export class ClaimsIdentity {
 
     constructor(claims: Claim[], isAuthenticated: boolean) {
         this.claims = claims;
-        this.isAuthenticated = true;
+        this.isAuthenticated = isAuthenticated;
     }
 
     /**

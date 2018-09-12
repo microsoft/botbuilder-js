@@ -57,10 +57,9 @@ describe('AttachmentPrompt', function() {
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        dialogs.add(new AttachmentPrompt('prompt', (context, prompt) => {
-            assert(context);
+        dialogs.add(new AttachmentPrompt('prompt', async (prompt) => {
             assert(prompt);
-            prompt.end(prompt.recognized.value);
+            return prompt.recognized.succeeded;
         }));
         
         adapter.send('Hello')
@@ -89,14 +88,9 @@ describe('AttachmentPrompt', function() {
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        dialogs.add(new AttachmentPrompt('prompt', (context, prompt) => {
-            assert(context);
+        dialogs.add(new AttachmentPrompt('prompt', async (prompt) => {
             assert(prompt);
-
-            // If the base recognition logic found an attachment, end the prompt with the recognized value.
-            if (prompt.recognized.succeeded && prompt.recognized.value) {
-                prompt.end(prompt.recognized.value);
-            }
+            return prompt.recognized.succeeded;
         }));
         
         adapter.send('Hello')
@@ -127,15 +121,13 @@ describe('AttachmentPrompt', function() {
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        dialogs.add(new AttachmentPrompt('prompt', async (context, prompt) => {
-            assert(context);
+        dialogs.add(new AttachmentPrompt('prompt', async (prompt) => {
             assert(prompt);
             
-            if (!prompt.recognized.value) {
-                await context.sendActivity('Bad input.');
-            } else {
-                prompt.end(prompt.recognized.value);
+            if (!prompt.recognized.succeeded) {
+                await prompt.context.sendActivity('Bad input.');
             }
+            return prompt.recognized.succeeded;
         }));
         
         adapter.send('Hello')

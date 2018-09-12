@@ -87,12 +87,9 @@ describe('ChoicePrompt', function () {
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        const choicePrompt = new ChoicePrompt('prompt', async (context, prompt) => {
-            assert(context);
+        const choicePrompt = new ChoicePrompt('prompt', async (prompt) => {
             assert(prompt);
-            if (prompt.recognized.succeeded) {
-                prompt.end(prompt.recognized.value);
-            }
+            return prompt.recognized.succeeded;
         });
         choicePrompt.style = ListStyle.none;
         dialogs.add(choicePrompt);
@@ -151,14 +148,12 @@ describe('ChoicePrompt', function () {
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        const choicePrompt = new ChoicePrompt('prompt', async (context, prompt) => {
-            assert(context);
+        const choicePrompt = new ChoicePrompt('prompt', async (prompt) => {
             assert(prompt);
-            if (prompt.recognized.succeeded) {
-                prompt.end(prompt.recognized.value);
-            } else {
-                await context.sendActivity('bad input.');
+            if (!prompt.recognized.succeeded) {
+                await prompt.context.sendActivity('bad input.');
             }
+            return prompt.recognized.succeeded;
         });
         choicePrompt.style = ListStyle.none;
         dialogs.add(choicePrompt);
@@ -188,14 +183,12 @@ describe('ChoicePrompt', function () {
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        const choicePrompt = new ChoicePrompt('prompt', async (context, prompt) => {
-            assert(context);
+        const choicePrompt = new ChoicePrompt('prompt', async (prompt) => {
             assert(prompt);
-            if (prompt.recognized.succeeded) {
-                prompt.end(prompt.recognized.value);
-            } else {
-                await context.sendActivity('bad input.');
+            if (!prompt.recognized.succeeded) {
+                await prompt.context.sendActivity('bad input.');
             }
+            return prompt.recognized.succeeded;
         }, 'es-es');
         dialogs.add(choicePrompt);
 
@@ -224,14 +217,12 @@ describe('ChoicePrompt', function () {
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        const choicePrompt = new ChoicePrompt('prompt', async (context, prompt) => {
-            assert(context);
+        const choicePrompt = new ChoicePrompt('prompt', async (prompt) => {
             assert(prompt);
-            if (prompt.recognized.succeeded) {
-                prompt.end(prompt.recognized.value);
-            } else {
-                await context.sendActivity('bad input.');
+            if (!prompt.recognized.succeeded) {
+                await prompt.context.sendActivity('bad input.');
             }
+            return prompt.recognized.succeeded;
         });
         dialogs.add(choicePrompt);
 
@@ -258,14 +249,12 @@ describe('ChoicePrompt', function () {
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        const choicePrompt = new ChoicePrompt('prompt', async (context, prompt) => {
-            assert(context);
+        const choicePrompt = new ChoicePrompt('prompt', async (prompt) => {
             assert(prompt);
-            if (prompt.recognized.succeeded) {
-                prompt.end(prompt.recognized.value);
-            } else {
-                await context.sendActivity('bad input.');
+            if (!prompt.recognized.succeeded) {
+                await prompt.context.sendActivity('bad input.');
             }
+            return prompt.recognized.succeeded;
         }, 'es-es');
         dialogs.add(choicePrompt);
 
