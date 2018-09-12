@@ -6,16 +6,7 @@
  */
 
 import { Activity } from 'botbuilder';
-import {
-  isEmpty,
-  isNil,
-  replace,
-  isBoolean,
-  isNumber,
-  isDate,
-  isInteger,
-  isString,
-} from 'lodash';
+import { isBoolean, isDate, isEmpty, isInteger, isNil, isNumber, isString, replace } from 'lodash';
 import * as request from 'request-promise-native';
 
 //  ######################################### EXPORTED API #########################################
@@ -43,44 +34,44 @@ export class LanguageGenerationResolver {
     this.lgApi = new LGAPI(application, options);
   }
 
-  public async resolve(
-    activity: Activity,
-    entities?: Map<string, PrimitiveType>,
-  ): Promise<void> {
+  public async resolve(activity: Activity, entities?: Map<string, PrimitiveType>): Promise<void> {
     if (isNil(activity)) {
       throw new Error("Activity can't be null or undefined");
     }
 
+    await this.lgApi.authenticate();
+
     const slotsBuilder = new SlotsBuilder(activity, entities);
     const activityInjector = new ActivityInjector(activity);
 
-    const [templateReferencesSlots, entitiesSlots] = slotsBuilder.build();
+    const [templateReferences, entitiesSlots] = slotsBuilder.build();
 
-    const requestsPromises = templateReferencesSlots
-      .map(templateReferenceSlot =>
+    const requestsPromises = templateReferences
+      .map(templateReference =>
         new LGRequestBuilder()
           .setScenario(this.application.applicationId)
           .setLocale(activity.locale)
-          .setSlots([templateReferenceSlot, ...entitiesSlots])
+          .setSlots(entitiesSlots)
+          .setTemplateId(templateReference)
           .build(),
       )
       .map(this.lgApi.fetch);
 
     const responses = await Promise.all(requestsPromises);
-
+    
     const templateResolutions = Utilities.transformLGResponsestoMap(responses);
 
-    this.validateResponses(templateReferencesSlots, templateResolutions);
+    this.validateResponses(templateReferences, templateResolutions);
 
     activityInjector.injectTemplateReferences(templateResolutions);
   }
 
   private validateResponses(
-    templateReferencesSlots: Slot[],
+    templateReferences: string[],
     templateResolutions: Map<string, string>,
   ): void {
-    templateReferencesSlots.forEach(slot => {
-      if (!templateResolutions.has(slot.value.toString())) {
+    templateReferences.forEach(templateReference => {
+      if (!templateResolutions.has(templateReference)) {
         //@TODO
         throw new Error();
       }
@@ -115,23 +106,15 @@ const speakInspector: IActivityInspector = (activity: Activity): string[] => {
   return PatternRecognizer.extractPatterns(text);
 };
 
-const suggestedActionsInspector: IActivityInspector = (
-  activity: Activity,
-): string[] => {
+const suggestedActionsInspector: IActivityInspector = (activity: Activity): string[] => {
   if (activity.suggestedActions && activity.suggestedActions.actions) {
     return activity.suggestedActions.actions.reduce((acc, action) => {
       if (action.text) {
-        acc = [
-          ...acc,
-          ...acc.concat(PatternRecognizer.extractPatterns(action.text)),
-        ];
+        acc = [...acc, ...acc.concat(PatternRecognizer.extractPatterns(action.text))];
       }
 
       if (action.displayText) {
-        acc = [
-          ...acc,
-          ...acc.concat(PatternRecognizer.extractPatterns(action.displayText)),
-        ];
+        acc = [...acc, ...acc.concat(PatternRecognizer.extractPatterns(action.displayText))];
       }
 
       return acc;
@@ -145,37 +128,23 @@ const suggestedActionsInspector: IActivityInspector = (
  * @private
  */
 export class ActivityInspector {
-  private readonly inspectors = [
-    textInspector,
-    speakInspector,
-    suggestedActionsInspector,
-  ];
+  private readonly inspectors = [textInspector, speakInspector, suggestedActionsInspector];
 
   constructor(private readonly activity: Activity) {}
 
   // Searches for template references inside the activity and constructs slots
-  public extractTemplateReferencesSlots(): Slot[] {
+  public extractTemplateReferences(): string[] {
     // Utilize activity inspectors to extract the template references
     const stateNames = this.inspectors
       .map(inspector => inspector(this.activity))
       .reduce((acc, current) => [...acc, ...current], []);
 
-    const uniqueStateNames = new Set(stateNames);
-    const slots: Slot[] = [];
-
-    uniqueStateNames.forEach(stateName => {
-      slots.push(new Slot(Slot.STATE_NAME_KEY, stateName));
-    });
-
-    return slots;
+    return [...new Set(stateNames).values()];
   }
 }
 
 //  ----------------------------------------- Activity Injectors -----------------------------------------
-type IActivityInjector = (
-  activity: Activity,
-  templateResolutions: Map<string, string>,
-) => void;
+type IActivityInjector = (activity: Activity, templateResolutions: Map<string, string>) => void;
 
 const textInjector: IActivityInjector = (
   activity: Activity,
@@ -183,10 +152,7 @@ const textInjector: IActivityInjector = (
 ): void => {
   const text = activity.text;
   if (text) {
-    activity.text = PatternRecognizer.replacePatterns(
-      text,
-      templateResolutions,
-    );
+    activity.text = PatternRecognizer.replacePatterns(text, templateResolutions);
   }
 };
 
@@ -196,10 +162,7 @@ const speakInjector: IActivityInjector = (
 ): void => {
   const speak = activity.speak;
   if (speak) {
-    activity.speak = PatternRecognizer.replacePatterns(
-      speak,
-      templateResolutions,
-    );
+    activity.speak = PatternRecognizer.replacePatterns(speak, templateResolutions);
   }
 };
 
@@ -210,10 +173,7 @@ const suggestedActionsInjector: IActivityInjector = (
   if (activity.suggestedActions && activity.suggestedActions.actions) {
     activity.suggestedActions.actions.forEach(action => {
       if (action.text) {
-        action.text = PatternRecognizer.replacePatterns(
-          action.text,
-          templateResolutions,
-        );
+        action.text = PatternRecognizer.replacePatterns(action.text, templateResolutions);
       }
 
       if (action.displayText) {
@@ -237,12 +197,8 @@ export class ActivityInjector {
   ];
   constructor(private readonly activity: Activity) {}
   // Searches for template references inside the activity and replaces them with the actual text coming from the LG backend
-  public injectTemplateReferences(
-    templateReferences: Map<string, string>,
-  ): void {
-    this.injectors.forEach(injector =>
-      injector(this.activity, templateReferences),
-    );
+  public injectTemplateReferences(templateReferences: Map<string, string>): void {
+    this.injectors.forEach(injector => injector(this.activity, templateReferences));
   }
 }
 
@@ -271,14 +227,14 @@ export class PatternRecognizer {
 
   public static replacePatterns(
     originalText: string,
-    templateResolutions: Map<string, string>,
+    templateResolutions: Map<string, string>
   ): string {
     let modifiedText = originalText;
     templateResolutions.forEach((stateResolution, templateReference) => {
       modifiedText = replace(
         modifiedText,
         PatternRecognizer.constructTemplateReference(templateReference),
-        stateResolution,
+        stateResolution
       );
     });
 
@@ -294,19 +250,17 @@ export class PatternRecognizer {
 export class SlotsBuilder {
   constructor(
     private readonly activity: Activity,
-    private readonly entities?: Map<string, PrimitiveType>,
+    private readonly entities?: Map<string, PrimitiveType>
   ) {}
 
-  public build(): [Slot[], Slot[]] {
+  public build(): [string[], Slot[]] {
     const activityInspector = new ActivityInspector(this.activity);
 
-    const templateReferencesSlots = activityInspector.extractTemplateReferencesSlots();
+    const templateReferences = activityInspector.extractTemplateReferences();
 
-    const entitiesSlots = !isNil(this.entities)
-      ? this.convertEntitiesToSlots(this.entities)
-      : [];
+    const entitiesSlots = !isNil(this.entities) ? this.convertEntitiesToSlots(this.entities) : [];
 
-    return [templateReferencesSlots, entitiesSlots];
+    return [templateReferences, entitiesSlots];
   }
 
   private convertEntitiesToSlots(entities: Map<string, PrimitiveType>): Slot[] {
@@ -331,18 +285,18 @@ export class Slot {
  */
 export class Utilities {
   public static convertLGValueToString(value: LGValue): string {
-    switch (value.valueType) {
+    switch (value.ValueType) {
       case 0:
-        return value.stringValues[0];
+        return value.StringValues[0];
       // @TODO The return type should be strings only
       case 1:
-        return value.intValues[0].toString();
+        return value.IntValues[0].toString();
       case 2:
-        return value.floatValues[0].toString();
+        return value.FloatValues[0].toString();
       case 3:
-        return value.booleanValues[0].toString();
+        return value.BooleanValues[0].toString();
       case 4:
-        return value.dateTimeValues[0].toString();
+        return value.DateTimeValues[0].toString();
       default:
         //@TODO
         throw new Error('Internal Error');
@@ -354,54 +308,48 @@ export class Utilities {
 
     if (isString(value)) {
       return {
-        stringValues: [value],
-        valueType: 0,
+        StringValues: [value],
+        ValueType: 0
       };
     } else if (isNumber(value)) {
       if (isInteger(value)) {
         return {
-          intValues: [value],
-          valueType: 1,
+          IntValues: [value],
+          ValueType: 1
         };
       } else {
         return {
-          floatValues: [value],
-          valueType: 2,
+          FloatValues: [value],
+          ValueType: 2
         };
       }
     } else if (isBoolean(value)) {
       return {
-        booleanValues: [value],
-        valueType: 3,
+        BooleanValues: [value],
+        ValueType: 3
       };
     } else if (isDate(value)) {
       return {
-        dateTimeValues: [value.toISOString()],
-        valueType: 4,
+        DateTimeValues: [value.toISOString()],
+        ValueType: 4
       };
     }
   }
 
-  public static extractTemplateReferenceAndResolution(
-    res: LGResponse,
-  ): [string, string] {
-    if (isNil(res.outputs) || isNil(Object.keys(res.outputs)[0])) {
+  public static extractTemplateReferenceAndResolution(res: LGResponse): [string, string] {
+    if (isNil(res.Outputs) || isNil(Object.keys(res.Outputs)[0])) {
       return [null, null];
     }
 
-    const templateReference = Object.keys(res.outputs)[0];
-    const templateResolution = res.outputs[templateReference];
+    const templateReference = res.templateId;
+    const templateResolution = res.Outputs.DisplayText;
 
-    const templateResolutionStr = Utilities.convertLGValueToString(
-      templateResolution,
-    );
+    const templateResolutionStr = Utilities.convertLGValueToString(templateResolution);
 
     return [templateReference, templateResolutionStr];
   }
 
-  public static transformLGResponsestoMap(
-    responses: LGResponse[],
-  ): Map<string, string> {
+  public static transformLGResponsestoMap(responses: LGResponse[]): Map<string, string> {
     const templateResolutions = new Map<string, string>();
 
     responses
@@ -411,7 +359,7 @@ export class Utilities {
           !isNil(templateReference) && !isNil(templateResolution),
       )
       .forEach(([templateReference, templateResolution]) =>
-        templateResolutions.set(templateReference, templateResolution),
+        templateResolutions.set(templateReference, templateResolution)
       );
 
     return templateResolutions;
@@ -422,13 +370,13 @@ export class Utilities {
  * @private
  */
 export interface LGValue {
-  valueType: 0 | 1 | 2 | 3 | 4;
-  stringValues?: string[]; // valueType -> 0
-  intValues?: number[]; // valueType -> 1
+  ValueType: 0 | 1 | 2 | 3 | 4;
+  StringValues?: string[]; // valueType -> 0
+  IntValues?: number[]; // valueType -> 1
   // @TODO
-  floatValues?: number[]; // valueType -> 2
-  booleanValues?: boolean[]; // valueType -> 3
-  dateTimeValues?: string[]; // valueType -> 4
+  FloatValues?: number[]; // valueType -> 2
+  BooleanValues?: boolean[]; // valueType -> 3
+  DateTimeValues?: string[]; // valueType -> 4
 }
 
 /**
@@ -438,12 +386,14 @@ export interface LGRequest {
   scenario: string;
   locale: string;
   slots: { [key: string]: LGValue };
+  templateId: string;
 }
 
 class LGRequestBuilder {
   private locale: string;
   private scenario: string;
   private slots: Slot[];
+  private templateId: string;
 
   public setSlots(slots: Slot[]): LGRequestBuilder {
     this.slots = slots;
@@ -457,6 +407,12 @@ class LGRequestBuilder {
     return this;
   }
 
+  public setTemplateId(templateId: string): LGRequestBuilder {
+    this.templateId = templateId;
+
+    return this;
+  }
+
   public setScenario(scenario: string): LGRequestBuilder {
     this.scenario = scenario;
 
@@ -464,19 +420,17 @@ class LGRequestBuilder {
   }
 
   public build(): LGRequest {
-    const slotsJSON: { [key: string]: LGValue } = this.slots.reduce(
-      (acc, slot) => {
-        const lgValue = Utilities.convertSlotToLGValue(slot);
-        acc[slot.key] = lgValue;
-        return acc;
-      },
-      {},
-    );
+    const slotsJSON: { [key: string]: LGValue } = this.slots.reduce((acc, slot) => {
+      const lgValue = Utilities.convertSlotToLGValue(slot);
+      acc[slot.key] = lgValue;
+      return acc;
+    },                                                              {});
 
     return {
       locale: this.locale,
       scenario: this.scenario,
       slots: slotsJSON,
+      templateId: this.templateId
     };
   }
 }
@@ -485,32 +439,58 @@ class LGRequestBuilder {
  * @private
  */
 export interface LGResponse {
-  outputs: { [key: string]: LGValue };
+  Outputs: { DisplayText: LGValue };
+  templateId: string;
 }
 
 /**
  * @private
  */
 export class LGAPI {
-  public static readonly BASE_URL =
-    'https://lg-cris-dev.westus2.cloudapp.azure.com/';
+  public static readonly BASE_URL = 'https://platform.bing.com/speechdx/lg-dev/';
   public static readonly RESOURCE_URL = 'v1/lg';
+
+  public static readonly ISSUE_TOKEN_URL =
+    'https://wuppe.api.cognitive.microsoft.com/sts/v1.0/issueToken';
+
+  private token = null;
+
   constructor(
     private readonly application: LanguageGenerationApplication,
-    private readonly options: LanguageGenerationOptions,
+    private readonly options: LanguageGenerationOptions
   ) {}
+
+  public async authenticate(): Promise<void> {
+    try {
+      this.token = await request({
+        url: LGAPI.ISSUE_TOKEN_URL,
+        method: 'POST',
+        headers: {
+          'OCP-APIM-SUBSCRIPTION-KEY': this.application.endpointKey
+        },
+        json: true
+      });
+    } catch (e) {
+      throw new Error(e.error.message);
+    }
+  }
 
   public fetch = async (lgRequest: LGRequest): Promise<LGResponse> => {
     try {
-      return await request({
+      const response = await request({
         url: LGAPI.BASE_URL + LGAPI.RESOURCE_URL,
         method: 'POST',
         //@todo
-        headers: { Authorization: this.application.endpointKey },
-        body: lgRequest,
-        json: true,
+        headers: {
+          Authorization: `Bearer - ${this.token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(lgRequest)
       });
+
+      return { ...JSON.parse(response), templateId: lgRequest.templateId };
     } catch (e) {
+      console.log(e);
       switch (e.statusCode) {
         case 401:
         case 501:
@@ -520,5 +500,5 @@ export class LGAPI {
           throw new Error('Internal Error');
       }
     }
-  };
+  }
 }
