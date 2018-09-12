@@ -33,9 +33,9 @@ Everything you need to run a bot on almost any bot platform like the [Microsoft 
 
 Extend Bot Builder through plugins:
 
-* [botbuilder-dialogs](https://github.com/microsoft/botbuilder-js/tree/master/libraries/botbuilder-dialogs): Powerful dialog system with dialogs that are isolated and composable, and built-in prompts for simple things like Yes/No, strings, numbers, enumerations.
-* [botbuilder-ai](https://github.com/microsoft/botbuilder-js/tree/master/libraries/botbuilder-dialogs) Utilize powerful AI frameworks like [LUIS](https://luis.ai) and [QnA Maker](https://qnamaker.ai)
-* [botbuilder-azure](https://github.com/microsoft/botbuilder-js/tree/master/libraries/botbuilder-azure) Easily incorporate Azure services like Cosmos DB and Blob Storage.
+* [botbuilder-dialogs](https://github.com/microsoft/botbuilder-js/tree/master/libraries/botbuilder-dialogs/README.md): Powerful dialog system with dialogs that are isolated and composable, and built-in prompts for simple things like Yes/No, strings, numbers, enumerations.
+* [botbuilder-ai](https://github.com/microsoft/botbuilder-js/tree/master/libraries/botbuilder-dialogs/README.md) Utilize powerful AI frameworks like [LUIS](https://luis.ai) and [QnA Maker](https://qnamaker.ai)
+* [botbuilder-azure](https://github.com/microsoft/botbuilder-js/tree/master/libraries/botbuilder-azure/README.md) Easily incorporate Azure services like Cosmos DB and Blob Storage.
 
 ## Build a bot
 [Read the quickstart guide](https://docs.microsoft.com/en-us/azure/bot-service/javascript/bot-builder-javascript-quickstart?view=azure-bot-service-4.0) 
