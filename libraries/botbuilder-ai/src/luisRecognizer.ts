@@ -44,8 +44,8 @@ export interface LuisApplication {
     // Your models application Id from LUIS
     applicationId: string;
 
-    // (Optional) Azure region
-    azureRegion?: string;
+    // (Optional) LUIS endpoint with a default of https://westus.api.cognitive.microsoft.com
+    endpoint?: string;
 
     // Endpoint key for talking to LUIS
     endpointKey: string;
@@ -108,7 +108,7 @@ export class LuisRecognizer {
 
         // Create client
         const creds: msRest.TokenCredentials = new msRest.TokenCredentials(application.endpointKey);
-        const baseUri: string = `https://${ this.application.azureRegion || 'westus'}.api.cognitive.microsoft.com`;
+        const baseUri: string = this.application.endpoint || 'https://westus.api.cognitive.microsoft.com';
         this.luisClient = new LuisClient(creds, baseUri);
     }
 

@@ -11,12 +11,12 @@ describe(`UserState`, function () {
     const storage = new MemoryStorage();
     const adapter = new TestAdapter();
     const context = new TurnContext(adapter, receivedMessage);
-    const middleware = new UserState(storage);
+    const userState = new UserState(storage);
     it(`should load and save state from storage.`, function (done) {
         let key;
-        middleware.onTurn(context, () => {
-            key = middleware.getStorageKey(context);
-            const state = middleware.get(context);
+        userState.onTurn(context, () => {
+            key = userState.getStorageKey(context);
+            const state = userState.get(context);
             assert(state, `State not loaded`);
             assert(key, `Key not found`);
             state.test = 'foo';
@@ -29,32 +29,26 @@ describe(`UserState`, function () {
         });
     });
 
-    it(`should reject with error if channelId missing.`, function (done) {
+    it(`should reject with error if channelId missing.`, async function () {
         const ctx = new TurnContext(adapter, missingChannelId);
-        middleware.onTurn(ctx, () => {
-            assert(false, `shouldn't have called next.`);
-        })
-        .then(() => {
+        try {
+            await userState.onTurn(ctx, () => assert(false, `shouldn't have called next.`));
             assert(false, `shouldn't have completed.`);
-        })
-        .catch((err) => {
+        } catch (err) {
             assert(err, `error object missing.`);
-            done();
-        });
+            assert.equal(err.message, "missing activity.channelId");
+        }
     });
 
-    it(`should reject with error if from missing.`, function (done) {
+    it(`should reject with error if from missing.`, async function () {
         const ctx = new TurnContext(adapter, missingFrom);
-        middleware.onTurn(ctx, () => {
-            assert(false, `shouldn't have called next.`);
-        })
-        .then(() => {
+        try {
+            await userState.onTurn(ctx, () => assert(false, `shouldn't have called next.`));
             assert(false, `shouldn't have completed.`);
-        })
-        .catch((err) => {
+        } catch (err) {
             assert(err, `error object missing.`);
-            done();
-        });
+            assert.equal(err.message, "missing activity.from.id");
+        }
     });
 
     it(`should throw install exception if get() called without a cached entry.`, function (done) {

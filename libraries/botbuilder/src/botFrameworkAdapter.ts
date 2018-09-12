@@ -12,7 +12,8 @@ import {
     JwtTokenValidation,
     MicrosoftAppCredentials,
     OAuthApiClient,
-    SimpleCredentialProvider
+    SimpleCredentialProvider,
+    ChannelValidation
 } from 'botframework-connector';
 
 import {
@@ -62,6 +63,18 @@ export interface BotFrameworkAdapterSettings {
      * Password assigned to your bot in the [Bot Framework Portal](https://dev.botframework.com/).
      */
     appPassword: string;
+    /**
+     * The OAuth API Endpoint for your bot to use.
+     */
+    oAuthEndpoint?: string;
+    /**
+     * The Open ID Metadata Endpoint for your bot to use.
+     */
+    openIdMetadata?: string;
+    /**
+     * The optional channel service option for this bot to validate connections from Azure or other channel locations
+     */
+    channelService?: string;
 }
 
 /**
@@ -123,6 +136,9 @@ export class BotFrameworkAdapter extends BotAdapter {
         this.credentials = new MicrosoftAppCredentials(this.settings.appId, this.settings.appPassword || '');
         this.credentialsProvider = new SimpleCredentialProvider(this.credentials.appId, this.credentials.appPassword);
         this.isEmulatingOAuthCards = false;
+        if (this.settings.openIdMetadata) {
+            ChannelValidation.OpenIdMetadataEndpoint = this.settings.openIdMetadata;
+        }
     }
 
     /**
@@ -602,7 +618,8 @@ export class BotFrameworkAdapter extends BotAdapter {
     protected authenticateRequest(request: Partial<Activity>, authHeader: string): Promise<void> {
         return JwtTokenValidation.authenticateRequest(
             request as Activity, authHeader,
-            this.credentialsProvider
+            this.credentialsProvider,
+            this.settings.channelService
         ).then((claims: ClaimsIdentity) => {
             if (!claims.isAuthenticated) { throw new Error('Unauthorized Access. Request is not authorized'); }
         });
@@ -634,7 +651,7 @@ export class BotFrameworkAdapter extends BotAdapter {
     protected oauthApiUrl(contextOrServiceUrl: TurnContext|string): string {
         return this.isEmulatingOAuthCards ?
             (typeof contextOrServiceUrl === 'object' ? contextOrServiceUrl.activity.serviceUrl : contextOrServiceUrl) :
-            OAUTH_ENDPOINT;
+            (this.settings.oAuthEndpoint ? this.settings.oAuthEndpoint : OAUTH_ENDPOINT);
     }
 
     /**

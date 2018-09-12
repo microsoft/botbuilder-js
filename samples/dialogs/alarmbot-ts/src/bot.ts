@@ -1,4 +1,4 @@
-import { TurnContext, ConversationState, UserState, StatePropertyAccessor } from 'botbuilder';
+import { ActivityTypes, ConversationState, StatePropertyAccessor, TurnContext, UserState } from 'botbuilder';
 import { DialogSet, DialogState } from 'botbuilder-dialogs';
 import { AddAlarmDialog } from './dialogs/addAlarmDialog';
 import { DeleteAlarmDialog } from './dialogs/deleteAlarmDialog';
@@ -12,65 +12,79 @@ const DELETE_ALARM_DIALOG = 'deleteAlarm';
 const SHOW_ALARMS_DIALOG = 'showAlarms';
 
 export class Bot {
-    private readonly alarms: StatePropertyAccessor<Alarm[]>;
-    private readonly dialogState: StatePropertyAccessor<DialogState>;
+    private readonly alarmsProperty: StatePropertyAccessor<Alarm[]>;
+    private readonly dialogStateProperty: StatePropertyAccessor<DialogState>;
     private readonly dialogs: DialogSet;
 
-    constructor(convoState: ConversationState, userState: UserState) {
+    constructor(conversationState: ConversationState, userState: UserState) {
         // Define state properties
-        this.alarms = userState.createProperty(ALARMS_PROPERTY);
-        this.dialogState = convoState.createProperty(DIALOG_STATE_PROPERTY);
+        this.alarmsProperty = userState.createProperty(ALARMS_PROPERTY);
+        this.dialogStateProperty = conversationState.createProperty(DIALOG_STATE_PROPERTY);
 
         // Create top level dialogs
-        this.dialogs = new DialogSet(this.dialogState);
-        this.dialogs.add(new AddAlarmDialog(ADD_ALARM_DIALOG, this.alarms));
-        this.dialogs.add(new DeleteAlarmDialog(DELETE_ALARM_DIALOG, this.alarms));
-        this.dialogs.add(new ShowAlarmsDialog(SHOW_ALARMS_DIALOG, this.alarms));
+        this.dialogs = new DialogSet(this.dialogStateProperty);
+        this.dialogs.add(new AddAlarmDialog(ADD_ALARM_DIALOG, this.alarmsProperty));
+        this.dialogs.add(new DeleteAlarmDialog(DELETE_ALARM_DIALOG, this.alarmsProperty));
+        this.dialogs.add(new ShowAlarmsDialog(SHOW_ALARMS_DIALOG, this.alarmsProperty));
     }
 
-    public async dispatchActivity(context: TurnContext): Promise<void> {
+    public async onActivity(context: TurnContext): Promise<void> {
         // Create dialog context
         const dc = await this.dialogs.createContext(context);
 
         // Check for interruptions
-        const isMessage = context.activity.type === 'message';
-        if (isMessage) {
-            const utterance = (context.activity.text || '').trim().toLowerCase();
+        switch (context.activity.type) {
+            case ActivityTypes.Message:
+                const utterance = (context.activity.text || '').trim().toLowerCase();
 
-            // Check for add
-            if (utterance.includes('add alarm')) {
-                await dc.cancelAll();
-                await dc.begin(ADD_ALARM_DIALOG);
+                // normally invoke LUIS to get language understanding of input
+                // ... instead we will use simple pattern matching...
 
-            // Check for delete
-            } else if (utterance.includes('delete alarm')) {
-                await dc.cancelAll();
-                await dc.begin(DELETE_ALARM_DIALOG);
-
-            // Check for show
-            } else if (utterance.includes('show alarms')) {
-                await dc.cancelAll();
-                await dc.begin(SHOW_ALARMS_DIALOG);
-
-            // Check for cancel
-            } else if (utterance === 'cancel') {
-                if (dc.activeDialog) {
+                // Check for start commands or interruptions 
+                if (utterance.includes('add alarm')) {
+                    // cancel any running dialogs
                     await dc.cancelAll();
-                    await dc.context.sendActivity(`Ok... Cancelled.`);
-                } else {
-                    await dc.context.sendActivity(`Nothing to cancel.`);
+                    await dc.begin(ADD_ALARM_DIALOG);
+
+                    // Check for delete
+                } else if (utterance.includes('delete alarm')) {
+                    // cancel any running dialogs
+                    await dc.cancelAll();
+                    await dc.begin(DELETE_ALARM_DIALOG);
+
+                    // Check for show
+                } else if (utterance.includes('show alarms')) {
+                    // cancel any running dialogs
+                    await dc.cancelAll();
+                    await dc.begin(SHOW_ALARMS_DIALOG);
+
+                    // Check for cancel
+                } else if (utterance === 'cancel') {
+                    if (dc.activeDialog) {
+                        await dc.cancelAll();
+                        await dc.context.sendActivity(`Ok... Cancelled.`);
+                    } else {
+                        await dc.context.sendActivity(`Nothing to cancel.`);
+                    }
                 }
-            }
+
+                // Route activity to current dialog if not interrupted
+                if (!context.responded) {
+                    await dc.continue();
+                }
+
+                // Perform fallback logic if no active dialog or interruption
+                if (!context.responded) {
+                    await dc.context.sendActivity(`Hi! I'm a simple alarm bot. Say "add alarm", "delete alarm", or "show alarms".`)
+                }
+                break;
+
+            case ActivityTypes.Event:
+                break;
+
+            default:
+                break;
         }
 
-        // Route activity to current dialog if not interrupted
-        if (!context.responded) {
-            await dc.continue();
-        } 
-
-        // Perform fallback logic if no active dialog or interruption
-        if (!context.responded && isMessage) {
-            await dc.context.sendActivity(`Hi! I'm a simple alarm bot. Say "add alarm", "delete alarm", or "show alarms".`)
-        }
     }
 }

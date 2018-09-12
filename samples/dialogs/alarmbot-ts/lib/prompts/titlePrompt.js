@@ -14,7 +14,7 @@ class TitlePrompt extends botbuilder_dialogs_1.TextPrompt {
         super(dialogId, (context, prompt) => __awaiter(this, void 0, void 0, function* () {
             // Validate that the user enetered a long enough title
             const value = (prompt.recognized.value || '').trim();
-            if (value.length > 3) {
+            if (value.length >= 3) {
                 prompt.end(value);
             }
             else {

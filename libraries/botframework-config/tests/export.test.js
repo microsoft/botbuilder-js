@@ -13,7 +13,7 @@ describe("ExportTests", () => {
     it("ExportBot", async () => {
         var config = await bf.BotConfiguration.load(testBotPath);
         let services = [];
-        let exportFolder = path.join(path.dirname(__filename),'exportfolder');
+        let exportFolder = path.join(path.dirname(__filename), 'exportfolder');
 
         await config.export(exportFolder, {
             download: false, // disable download
@@ -23,8 +23,8 @@ describe("ExportTests", () => {
         for (let service of config.services) {
             let found = false;
             for (let svc of services) {
-                if ((service.id === svc.id) && 
-                    (service.type === svc.type) && 
+                if ((service.id === svc.id) &&
+                    (service.type === svc.type) &&
                     (service.name === svc.name)) {
                     found = true;
                     break;
@@ -35,23 +35,26 @@ describe("ExportTests", () => {
 
         let recipePath = path.join(exportFolder, 'bot.recipe');
         let json = txtfile.readSync(recipePath);
-        
+
         fs.unlinkSync(recipePath);
         fs.rmdirSync(exportFolder);
 
         let recipe = bf.BotRecipe.fromJSON(JSON.parse(json));
-        assert.equal(config.services.length, recipe.resources.length, "service count not equal");
+        // -1 because we don't export 'unknown' service record
+        assert.equal(config.services.length - 1, recipe.resources.length, "service count not equal");
         for (let service of config.services) {
-            let found = false;
-            for (let resource of recipe.resources) {
-                if ((service.id === resource.id) && 
-                    (service.type === resource.type) && 
-                    (service.name === resource.name)) {
-                    found = true;
-                    break;
+            if (service.type != 'unknown') {
+                let found = false;
+                for (let resource of recipe.resources) {
+                    if ((service.id === resource.id) &&
+                        (service.type === resource.type) &&
+                        (service.name === resource.name)) {
+                        found = true;
+                        break;
+                    }
                 }
+                assert.ok(found, `${service.name} not exported correctly `);
             }
-            assert.ok(found, `${service.name} not exported correctly `);
         }
 
 

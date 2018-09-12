@@ -6,19 +6,11 @@ import { IGenericService, ServiceTypes } from '../schema';
 import { ConnectedService } from './connectedService';
 
 export class GenericService extends ConnectedService implements IGenericService {
-    public url: string = '';
-    public configuration: { [key: string]: string } = {};
+    public url: string;
+    public configuration: { [key: string]: string };
 
     constructor(source: IGenericService = {} as IGenericService) {
         super(source, ServiceTypes.Generic);
-        const { url = '', configuration } = source;
-        Object.assign(this, { configuration, url });
-    }
-
-    public toJSON(): IGenericService {
-        const { id, type, name, url, configuration } = this;
-
-        return { type, id, name, url, configuration };
     }
 
     // encrypt keys in service

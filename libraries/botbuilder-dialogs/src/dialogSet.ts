@@ -182,8 +182,9 @@ export class DialogSet {
      * ]));
      * ```
      * @param dialog The dialog being added.
+     * @returns DialogSet so you can fluently add more
      */
-    public add<T extends Dialog>(dialog: T): T {
+    public add<T extends Dialog>(dialog: T): DialogSet {
         if (!(dialog instanceof Dialog)) { throw new Error(`DialogSet.add(): Invalid dialog being added.`); }
         if (typeof dialog.id !== 'string' || dialog.id.length === 0) {
             throw new Error(`DialogSet.add(): Dialog being added is missing its 'id'.`);
@@ -192,7 +193,8 @@ export class DialogSet {
             throw new Error(`DialogSet.add(): A dialog with an id of '${dialog.id}' already added.`);
         }
 
-        return this.dialogs[dialog.id] = dialog;
+         this.dialogs[dialog.id] = dialog;
+         return this;
     }
 
     /**

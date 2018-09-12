@@ -6,20 +6,13 @@ import { IAppInsightsService, ServiceTypes } from '../schema';
 import { AzureService } from './azureService';
 
 export class AppInsightsService extends AzureService implements IAppInsightsService {
-    public instrumentationKey: string = '';
-    public applicationId: string = '';
-    public apiKeys: { [key: string]: string } = {};
+    public instrumentationKey: string;
+    public applicationId: string;
+    public apiKeys: { [key: string]: string };
 
     constructor(source: IAppInsightsService = {} as IAppInsightsService) {
         super(source, ServiceTypes.AppInsights);
-        const { instrumentationKey = '', applicationId, apiKeys } = source;
-        Object.assign(this, { instrumentationKey, applicationId, apiKeys });
-    }
-
-    public toJSON(): IAppInsightsService {
-        const { id, type, name, tenantId, subscriptionId, resourceGroup, serviceName, instrumentationKey, applicationId, apiKeys } = this;
-
-        return { type, id, name, tenantId, subscriptionId, resourceGroup, serviceName, instrumentationKey, applicationId, apiKeys };
+        this.apiKeys = this.apiKeys || {};
     }
 
     // encrypt keys in service

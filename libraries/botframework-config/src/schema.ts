@@ -57,6 +57,9 @@ export interface IAzureService extends IConnectedService {
 
 export interface IBotService extends IAzureService {
     // type = ServiceTypes.AzureBotService
+
+    // MSA Appid for the bot
+    appId: string;
 }
 
 export interface IAppInsightsService extends IAzureService {
@@ -85,8 +88,11 @@ export interface IBlobStorageService extends IAzureService {
 export interface ICosmosDBService extends IAzureService {
     // type = ServiceTypes.CosmosDB
 
-    // connectionstring for CosmosDB
-    connectionString: string;
+    // endpoint/uri for CosmosDB
+    endpoint: string;
+    
+    // key for accessing CosmosDB
+    key: string;
 
     // database name
     database: string;
