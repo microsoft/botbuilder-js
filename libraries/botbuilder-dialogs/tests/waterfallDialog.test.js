@@ -72,7 +72,8 @@ describe('WaterfallDialog', function () {
         await adapter.send(beginMessage)
             .assertReply('bot responding.')
             .send('continue')
-            .assertReply('ending WaterfallDialog.');
+            .assertReply('ending WaterfallDialog.')
+            .startTest();
     });
 
     it('should execute a sequence of waterfall steps when using addStep().', async function () {
@@ -116,7 +117,8 @@ describe('WaterfallDialog', function () {
         await adapter.send(beginMessage)
             .assertReply('bot responding.')
             .send('continue')
-            .assertReply('ending WaterfallDialog.');
+            .assertReply('ending WaterfallDialog.')
+            .startTest();
     });
 
     it('should execute a sequence of waterfall steps when using derived class.', async function () {
@@ -152,7 +154,8 @@ describe('WaterfallDialog', function () {
         await adapter.send(beginMessage)
             .assertReply('bot responding.')
             .send('continue')
-            .assertReply('ending WaterfallDialog.');
+            .assertReply('ending WaterfallDialog.')
+            .startTest();
     });
 
 
@@ -192,7 +195,8 @@ describe('WaterfallDialog', function () {
         await adapter.send(beginMessage)
             .assertReply('bot responding.')
             .send('test-test')
-            .assertReply('ended WaterfallDialog ["test-test"].');
+            .assertReply('ended WaterfallDialog ["test-test"].')
+            .startTest();
     });
 
     it('should support receive options via `step.options`.', async function () {
@@ -234,7 +238,8 @@ describe('WaterfallDialog', function () {
         await adapter.send(beginMessage)
             .assertReply('bot responding.')
             .send('continue')
-            .assertReply('ending WaterfallDialog.');
+            .assertReply('ending WaterfallDialog.')
+            .startTest();
     });
 
     it('should allow changing of `step.options` and persist changes across steps.', async function () {
@@ -292,7 +297,8 @@ describe('WaterfallDialog', function () {
             .send('continue')
             .assertReply('bot responding again.')
             .send('continue again')
-            .assertReply('ending WaterfallDialog.');
+            .assertReply('ending WaterfallDialog.')
+            .startTest();
     });
 
     it('should allow setting of step.values and persist values across steps.', async function () {
@@ -351,7 +357,8 @@ describe('WaterfallDialog', function () {
             .send('continue')
             .assertReply('bot responding again.')
             .send('continue again')
-            .assertReply('ending WaterfallDialog.');
+            .assertReply('ending WaterfallDialog.')
+            .startTest();
     });
 
     it('should not move step.values from one WaterfallDialog to another.', async function () {
@@ -421,7 +428,8 @@ describe('WaterfallDialog', function () {
         await adapter.send(beginMessage)
             .assertReply('bot responding.')
             .send('continue')
-            .assertReply('ending WaterfallDialog.');
+            .assertReply('ending WaterfallDialog.')
+            .startTest();
     });
 
     it('should not move step.options from one WaterfallDialog to another.', async function () {
@@ -487,6 +495,7 @@ describe('WaterfallDialog', function () {
         await adapter.send(beginMessage)
             .assertReply('bot responding.')
             .send('continue')
-            .assertReply('ending WaterfallDialog.');
+            .assertReply('ending WaterfallDialog.')
+            .startTest();
     });
 });

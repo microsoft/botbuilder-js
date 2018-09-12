@@ -69,6 +69,16 @@ describe(`TestAdapter`, function () {
             .then(() => done());
     });
 
+    it(`async startTest().`, async function () {
+        const adapter = new TestAdapter((context) => {
+            return context.sendActivity(receivedMessage);
+        });
+
+        await adapter.send('test')
+            .assertReply('received')
+            .startTest();
+    });
+
     it(`should send and receive when test() is called.`, function (done) {
         const adapter = new TestAdapter((context) => {
             return context.sendActivity(receivedMessage);
