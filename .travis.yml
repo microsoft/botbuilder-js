@@ -8,6 +8,7 @@ before_install:
 - cd tools/ && npm install && cd ..
 install:
 - printf "//botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/:_authToken=${API_KEY}" >> ~/.npmrc
+- npm run update-versions
 - lerna bootstrap --hoist
 script:
 - npm run test:travis
