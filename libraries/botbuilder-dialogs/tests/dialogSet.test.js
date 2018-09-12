@@ -15,8 +15,8 @@ describe('DialogSet', function () {
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [
-            function (dc) {
-                assert(dc);
+            function (step) {
+                assert(step);
             }
         ]));
         done();
@@ -52,12 +52,12 @@ describe('DialogSet', function () {
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [
-            function (dc) { }
+            function (step) { }
         ]));
 
         try {
             dialogs.add('a', [
-                function (dc) { }
+                function (step) { }
             ]);
         } catch (err) {
             return done();
@@ -71,7 +71,7 @@ describe('DialogSet', function () {
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [
-            function (dc) { }
+            function (step) { }
         ]));
 
         assert(dialogs.find('a'), `dialog not found.`);
@@ -95,16 +95,14 @@ describe('DialogSet', function () {
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [
-            async function (dc, step) {
-                assert(dc);
+            async function (step) {
                 assert(step);
-                await dc.context.sendActivity(`Greetings`);
+                await step.context.sendActivity(`Greetings`);
                 return Dialog.EndOfTurn;
             },
-            async function (dc, step) {
-                assert(dc);
-                await dc.context.sendActivity('Good bye!');
-                return await dc.end();
+            async function (step) {
+                await step.context.sendActivity('Good bye!');
+                return await step.end();
             }
         ]));
 

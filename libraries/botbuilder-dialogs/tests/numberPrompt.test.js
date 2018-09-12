@@ -51,14 +51,10 @@ describe('NumberPrompt', function () {
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        dialogs.add(new NumberPrompt('prompt', async (context, prompt) => {
-            assert(context);
+        dialogs.add(new NumberPrompt('prompt', async (prompt) => {
             assert(prompt);
             let value = prompt.recognized.value;
-            const valid = value !== undefined && value >= 1 && value <= 100;
-            if (valid) {
-                prompt.end(value);
-            }
+            return value !== undefined && value >= 1 && value <= 100;
         }));
 
         await adapter.send('Hello')
@@ -88,14 +84,10 @@ describe('NumberPrompt', function () {
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        dialogs.add(new NumberPrompt('prompt', async (context, prompt) => {
-            assert(context);
+        dialogs.add(new NumberPrompt('prompt', async (prompt) => {
             assert(prompt);
             let value = prompt.recognized.value;
-            const valid = value !== undefined && value >= 1 && value <= 100;
-            if (valid) {
-                prompt.end(value);
-            }
+            return value !== undefined && value >= 1 && value <= 100;
         }));
 
         await adapter.send('Hello')
@@ -125,16 +117,14 @@ describe('NumberPrompt', function () {
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        dialogs.add(new NumberPrompt('prompt', async (context, prompt) => {
-            assert(context);
+        dialogs.add(new NumberPrompt('prompt', async (prompt) => {
             assert(prompt);
             let value = prompt.recognized.value;
             const valid = value !== undefined && value >= 1 && value <= 100;
-            if (valid) {
-                prompt.end(value);
-            } else {
-                await context.sendActivity('out of range');
+            if (!valid) {
+                await prompt.context.sendActivity('out of range');
             }
+            return valid;
         }));
 
         await adapter.send('Hello')
@@ -164,14 +154,10 @@ describe('NumberPrompt', function () {
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        dialogs.add(new NumberPrompt('prompt', async (context, prompt) => {
-            assert(context);
+        dialogs.add(new NumberPrompt('prompt', async (prompt) => {
             assert(prompt);
             let value = prompt.recognized.value;
-            const valid = value !== undefined && value >= 1 && value <= 100;
-            if (valid) {
-                prompt.end(value);
-            }
+            return value !== undefined && value >= 1 && value <= 100;
         }));
 
         await adapter.send('Hello')

@@ -53,12 +53,9 @@ describe('TextPrompt', function () {
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        dialogs.add(new TextPrompt('prompt', async (context, prompt) => {
-            assert(context);
+        dialogs.add(new TextPrompt('prompt', async (prompt) => {
             assert(prompt);
-            if (prompt.recognized.value.length >= 3) {
-                prompt.end(prompt.recognized.value);
-            }
+            return prompt.recognized.value.length >= 3;
         }));
 
         await adapter.send('Hello')
@@ -115,14 +112,13 @@ describe('TextPrompt', function () {
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        dialogs.add(new TextPrompt('prompt', async (context, prompt) => {
-            assert(context);
+        dialogs.add(new TextPrompt('prompt', async (prompt) => {
             assert(prompt);
-            if (prompt.recognized.value.length >= 3) {
-                prompt.end(prompt.recognized.value);
-            } else {
-                await context.sendActivity('too short')
+            const valid = prompt.recognized.value.length >= 3;
+            if (!valid) {
+                await prompt.context.sendActivity('too short')
             }
+            return valid;
         }));
 
         await adapter.send('Hello')
