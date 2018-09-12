@@ -45,7 +45,9 @@ export abstract class ActivityPrompt extends Dialog {
         const recognized: PromptRecognizerResult<Activity> = await this.onRecognize(dc.context, state.state, state.options);
 
         // Validate the return value
-        let isValid = await this.validator({
+        // - Unlike the other prompts a validator is required for an ActivityPrompt so we don't
+        //   need to check for its existence before calling it. 
+        const isValid = await this.validator({
             context: dc.context,
             recognized: recognized,
             state: state.state,
