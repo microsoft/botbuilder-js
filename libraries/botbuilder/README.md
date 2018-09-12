@@ -28,8 +28,12 @@ While this package is in preview it's possible for updates to include build brea
 ```
 
 ## What's included?
-* Everything you need to run a bot on almost any bot platform like the [Microsoft Bot Framework](http://botframework.com), [Skype](http://skype.com), and [Slack](http://slack.com).
-* [botbuilder-dialogs](https://github.com/microsoft/botbuilder-js/tree/master/libaries/botbuilder-dialogs) Powerful dialog system with dialogs that are isolated and composable, and built-in prompts for simple things like Yes/No, strings, numbers, enumerations.
+
+Everything you need to run a bot on almost any bot platform like the [Microsoft Bot Framework](http://botframework.com), [Skype](http://skype.com), and [Slack](http://slack.com).
+
+Extend Bot Builder through plugins:
+
+* [botbuilder-dialogs](https://github.com/microsoft/botbuilder-js/tree/master/libaries/botbuilder-dialogs): Powerful dialog system with dialogs that are isolated and composable, and built-in prompts for simple things like Yes/No, strings, numbers, enumerations.
 * [botbuilder-ai](https://github.com/microsoft/botbuilder-js/tree/master/libaries/botbuilder-dialogs) Utilize powerful AI frameworks like [LUIS](https://luis.ai) and [QnA Maker](https://qnamaker.ai)
 * [botbuilder-azure](https://github.com/microsoft/botbuilder-js/tree/master/libaries/botbuilder-azure) Easily incorporate Azure services like Cosmos DB and Blob Storage.
 
