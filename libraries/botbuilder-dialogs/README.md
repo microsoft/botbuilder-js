@@ -26,6 +26,11 @@ While this package is in preview it's possible for updates to include build brea
 }
 ```
 
+## What's included?
+
+This module includes a system for managing multi-turn conversations within a Microsoft Botbuilder app, including
+tools for creating and managing dialog systems, a means for creating custom interoperable dialog systems, and a series
+of useful prompts that provide type checking and validation of input.
 
 ## Use
 
@@ -40,7 +45,9 @@ Then, create one or more `DialogSet` objects to manage the dialogs used in your 
 A DialogSet is used to collect and execute dialogs. A bot may have more than one
 DialogSet, which can be used to group dialogs logically and avoid name collisions.
 
-More sophisticated multi-dialog sets can be created using the `ComponentDialog` class, which
+Then, create one or more dialogs and add them to the DialogSet. Use the WaterfallDialog
+class to construct dialogs defined by a series of functions for sending and receiving input
+that will be executed in order. More sophisticated multi-dialog sets can be created using the `ComponentDialog` class, which
 has many of the capabilities of a DialogSet, but behaves and can be called like a single dialog.
 
 ```
