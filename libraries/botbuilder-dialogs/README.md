@@ -37,8 +37,8 @@ of useful prompts that provide type checking and validation of input.
 After adding the module to your application, modify your app's code to import the multi-turn dialog management capabilities. Near your other `import` and `require` statements, add:
 
 ```
-// Import all capabities in the module.  
-import * from "botbuilder-dialogs";
+// Import some of the capabities from the module. 
+const { DialogSet, WaterfallDialog } = require("botbuilder-dialogs");
 ```
 
 Then, create one or more `DialogSet` objects to manage the dialogs used in your bot.
@@ -51,21 +51,21 @@ that will be executed in order. More sophisticated multi-dialog sets can be crea
 has many of the capabilities of a DialogSet, but behaves and can be called like a single dialog.
 
 ```
-// set up a storage system that will capture the conversation state.
-const DIALOG_STATE_PROPERTY = 'dialogState';
+// Set up a storage system that will capture the conversation state.
 const storage = new MemoryStorage();
 const convoState = new ConversationState(storage);
 
-// Define a property associated with the conversation
-const dialogState = convoState.createProperty(DIALOG_STATE_PROPERTY);
+// Define a property associated with the conversation state.
+const dialogState = convoState.createProperty('dialogState');
 
-// Initialize the dialogset, passing in the property used to capture state.
+// Initialize a DialogSet, passing in a property used to capture state.
 const dialogs = new DialogSet(dialogState);
+
+// Each dialog is identified by a unique name used to invoke the dialog later.
+const DIALOG_ONE = 'dialog_identifier_value';
 
 // Add a dialog. Use the included WaterfallDialog type, or build your own
 // by subclassing from the Dialog class.
-// Each dialog is identified by a unique name used to invoke the dialog later.
-const DIALOG_ONE = 'dialog_identifier_value';
 dialogs.add(new WaterfallDialog(DIALOG_ONE, [
     async (step) => {
         // access user input from previous step
@@ -90,10 +90,10 @@ dialogs.add(new WaterfallDialog(DIALOG_ONE, [
 Finally, from somewhere in your bot's code, invoke your dialog by name:
 
 ```
-// receive and process incoming events into TurnContext objects in the normal way
-adapter.processActivity(req, res, async (context) => {
-    // create a dialogContext object from the incoming TurnContext
-    const dc = await dialogs.createContext(context, state);
+// Receive and process incoming events into TurnContext objects in the normal way
+adapter.processActivity(req, res, async (turnContext) => {
+    // Create a DialogContext object from the incoming TurnContext
+    const dc = await dialogs.createContext(turnContext);
 
     // ...evaluate message and do other bot logic...
 
