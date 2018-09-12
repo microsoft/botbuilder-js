@@ -8,18 +8,18 @@
 import { VerifyOptions } from 'jsonwebtoken';
 import { ClaimsIdentity } from './claimsIdentity';
 import { Constants } from './constants';
+import { GovernmentConstants } from './governmentConstants';
+import { ChannelValidation } from './channelValidation';
 import { ICredentialProvider } from './credentialProvider';
 import { JwtTokenExtractor } from './jwtTokenExtractor';
 
-export module ChannelValidation {
-
-    export var OpenIdMetadataEndpoint : string = undefined;
+export module GovernmentChannelValidation {
 
     /**
-     * TO BOT FROM CHANNEL: Token validation parameters when connecting to a bot
+     * TO BOT FROM GOVERNMENT CHANNEL: Token validation parameters when connecting to a bot
      */
-    export const ToBotFromChannelTokenValidationParameters: VerifyOptions = {
-        issuer: [Constants.ToBotFromChannelTokenIssuer],
+    export const ToBotFromGovernmentChannelTokenValidationParameters: VerifyOptions = {
+        issuer: [GovernmentConstants.ToBotFromChannelTokenIssuer],
         audience: undefined,                                 // Audience validation takes place manually in code.
         clockTolerance: 5 * 60,
         ignoreExpiration: false
@@ -65,16 +65,16 @@ export module ChannelValidation {
     ): Promise<ClaimsIdentity> {
 
         const tokenExtractor: JwtTokenExtractor = new JwtTokenExtractor(
-            ToBotFromChannelTokenValidationParameters,
-            OpenIdMetadataEndpoint ? OpenIdMetadataEndpoint : Constants.ToBotFromChannelOpenIdMetadataUrl,
+            ToBotFromGovernmentChannelTokenValidationParameters,
+            ChannelValidation.OpenIdMetadataEndpoint ? ChannelValidation.OpenIdMetadataEndpoint : GovernmentConstants.ToBotFromChannelOpenIdMetadataUrl,
             Constants.AllowedSigningAlgorithms);
 
         const identity: ClaimsIdentity = await tokenExtractor.getIdentityFromAuthHeader(authHeader, channelId);
-        
+
         return await validateIdentity(identity, credentials);
     }
 
-    /**
+     /**
      * Validate the ClaimsIdentity to ensure it came from the channel service.
      * @param  {ClaimsIdentity} identity The identity to validate
      * @param  {ICredentialProvider} credentials The user defined set of valid credentials, such as the AppId.
@@ -82,8 +82,13 @@ export module ChannelValidation {
      */
     export async function validateIdentity(
         identity: ClaimsIdentity,
-        credentials: ICredentialProvider
+        credentials: ICredentialProvider,
     ): Promise<ClaimsIdentity> {
+        if (!identity) {
+            // No valid identity. Not Authorized.
+            throw new Error('Unauthorized. No valid identity.');
+        }
+
         if (!identity.isAuthenticated) {
             // The token is in some way invalid. Not Authorized.
             throw new Error('Unauthorized. Is not authenticated');
@@ -95,7 +100,7 @@ export module ChannelValidation {
         // Async validation.
 
         // Look for the "aud" claim, but only if issued from the Bot Framework
-        if (identity.getClaimValue(Constants.IssuerClaim) !== Constants.ToBotFromChannelTokenIssuer) {
+        if (identity.getClaimValue(Constants.IssuerClaim) !== GovernmentConstants.ToBotFromChannelTokenIssuer) {
             // The relevant Audiance Claim MUST be present. Not Authorized.
             throw new Error('Unauthorized. Issuer Claim MUST be present.');
         }
