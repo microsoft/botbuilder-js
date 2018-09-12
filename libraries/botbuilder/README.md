@@ -51,7 +51,7 @@ npm install --save botbuilder
 npm install --save restify
 ```
     
-Create a file named app.js and say hello in a few lines of code.
+Create a file named bot.js and get your bot online with a few lines of code.
  
 ```javascript
 const restify = require('restify');
