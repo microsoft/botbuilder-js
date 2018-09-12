@@ -47,8 +47,11 @@ DialogSet, which can be used to group dialogs logically and avoid name collision
 
 Then, create one or more dialogs and add them to the DialogSet. Use the WaterfallDialog
 class to construct dialogs defined by a series of functions for sending and receiving input
-that will be executed in order. More sophisticated multi-dialog sets can be created using the `ComponentDialog` class, which
-has many of the capabilities of a DialogSet, but behaves and can be called like a single dialog.
+that will be executed in order.
+
+More sophisticated multi-dialog sets can be created using the `ComponentDialog` class, which
+contains a DialogSet, is itself also a dialog that can be triggered like any other. By building on top ComponentDialog,
+developer can bundle multiple dialogs into a single unit which can then be packaged, distributed and reused.
 
 ```
 // Set up a storage system that will capture the conversation state.
