@@ -28,6 +28,11 @@ after_success:
   && npm publish libraries/botframework-schema --registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/
   && echo End deploy
 
+cache:
+  directories:
+  - node_modules
+  - tools/node_modules
+  
 env:
   global:
   - Version=4.0.0-preview1.${TRAVIS_BUILD_NUMBER}
