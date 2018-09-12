@@ -6,10 +6,10 @@
  * Licensed under the MIT License.
  */
 import * as jwt from 'jsonwebtoken';
+import { ClaimsIdentity } from './claimsIdentity';
+import { Constants } from './constants';
 import { ICredentialProvider } from './credentialProvider';
 import { JwtTokenExtractor } from './jwtTokenExtractor';
-import { Constants } from './constants';
-import { ClaimsIdentity } from './claimsIdentity';
 
 /**
  * Validates and Examines JWT tokens from the Bot Framework Emulator
@@ -27,7 +27,7 @@ export module EmulatorValidation {
             'https://login.microsoftonline.com/f8cdef31-a31e-4b4a-93e4-5f571e91255a/v2.0',      // Auth v3.2, 2.0 token
             'https://sts.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47/'                     // ???
         ],
-        audience: undefined,                                                                    // Audience validation takes place manually in code.
+        audience: undefined, // Audience validation takes place manually in code.
         clockTolerance: 5 * 60,
         ignoreExpiration: false
     };
@@ -45,14 +45,14 @@ export module EmulatorValidation {
             return false;
         }
 
-        let parts = authHeader.split(' ');
+        const parts: string[] = authHeader.split(' ');
         if (parts.length !== 2) {
             // Emulator tokens MUST have exactly 2 parts. If we don't have 2 parts, it's not an emulator token
             return false;
         }
 
-        let authScheme = parts[0];
-        let bearerToken = parts[1];
+        const authScheme: string = parts[0];
+        const bearerToken: string = parts[1];
 
         // We now have an array that should be:
         // [0] = "Bearer"
@@ -63,13 +63,13 @@ export module EmulatorValidation {
         }
 
         // Parse the Big Long String into an actual token.
-        let token = <any>jwt.decode(bearerToken, { complete: true });
+        const token: any = <any>jwt.decode(bearerToken, { complete: true });
         if (!token) {
             return false;
         }
 
         // Is there an Issuer?
-        let issuer: string = token.payload.iss;
+        const issuer: string = token.payload.iss;
         if (!issuer) {
             // No Issuer, means it's not from the Emulator.
             return false;
@@ -92,14 +92,18 @@ export module EmulatorValidation {
      * @param  {ICredentialProvider} credentials The user defined set of valid credentials, such as the AppId.
      * @returns {Promise<ClaimsIdentity>} A valid ClaimsIdentity.
      */
-    export async function authenticateEmulatorToken(authHeader: string, credentials: ICredentialProvider, channelId: string): Promise<ClaimsIdentity> {
+    export async function authenticateEmulatorToken(
+        authHeader: string,
+        credentials: ICredentialProvider,
+        channelId: string
+    ): Promise<ClaimsIdentity> {
 
-        let tokenExtractor = new JwtTokenExtractor(
+        const tokenExtractor: JwtTokenExtractor = new JwtTokenExtractor(
             ToBotFromEmulatorTokenValidationParameters,
             Constants.ToBotFromEmulatorOpenIdMetadataUrl,
             Constants.AllowedSigningAlgorithms);
 
-        let identity = await tokenExtractor.getIdentityFromAuthHeader(authHeader, channelId);
+        const identity: ClaimsIdentity = await tokenExtractor.getIdentityFromAuthHeader(authHeader, channelId);
         if (!identity) {
             // No valid identity. Not Authorized.
             throw new Error('Unauthorized. No valid identity.');
@@ -114,7 +118,7 @@ export module EmulatorValidation {
         // what we're looking for. Note that in a multi-tenant bot, this value
         // comes from developer code that may be reaching out to a service, hence the
         // Async validation.
-        let versionClaim = identity.getClaimValue(Constants.VersionClaim);
+        const versionClaim: string = identity.getClaimValue(Constants.VersionClaim);
         if (versionClaim === null) {
             throw new Error('Unauthorized. "ver" claim is required on Emulator Tokens.');
         }
@@ -126,7 +130,7 @@ export module EmulatorValidation {
         if (!versionClaim || versionClaim === '1.0') {
             // either no Version or a version of "1.0" means we should look for
             // the claim in the "appid" claim.
-            let appIdClaim = identity.getClaimValue(Constants.AppIdClaim);
+            const appIdClaim: string = identity.getClaimValue(Constants.AppIdClaim);
             if (!appIdClaim) {
                 // No claim around AppID. Not Authorized.
                 throw new Error('Unauthorized. "appid" claim is required on Emulator Token version "1.0".');
@@ -135,7 +139,7 @@ export module EmulatorValidation {
             appId = appIdClaim;
         } else if (versionClaim === '2.0') {
             // Emulator, "2.0" puts the AppId in the "azp" claim.
-            let appZClaim = identity.getClaimValue(Constants.AuthorizedParty);
+            const appZClaim: string = identity.getClaimValue(Constants.AuthorizedParty);
             if (!appZClaim) {
                 // No claim around AppID. Not Authorized.
                 throw new Error('Unauthorized. "azp" claim is required on Emulator Token version "2.0".');

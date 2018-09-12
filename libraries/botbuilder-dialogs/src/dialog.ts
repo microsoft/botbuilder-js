@@ -8,36 +8,50 @@
 import { TurnContext } from 'botbuilder-core';
 import { DialogContext } from './dialogContext';
 
-/** 
+/**
  * Tracking information for a dialog on the stack.
- * @param T (Optional) type of state being persisted for dialog. 
+ * @param T (Optional) type of state being persisted for dialog.
  */
 export interface DialogInstance<T = any> {
-    /** ID of the dialog this instance is for. */
+    // ID of the dialog this instance is for.
     id: string;
 
-    /** The instances persisted state. */
+    // The instances persisted state.
     state: T;
 }
 
 export enum DialogReason {
-    /** A dialog is being started through a call to `DialogContext.begin()`. */
-    beginCalled,
+    // A dialog is being started through a call to `DialogContext.begin()`.
+    beginCalled = 'beginCalled',
 
-    /** A dialog is being continued through a call to `DialogContext.continue()`. */
-    continueCalled,
+    // A dialog is being continued through a call to `DialogContext.continue()`.
+    continueCalled = 'continueCalled',
 
-    /** A dialog ended normally through a call to `DialogContext.end()`. */
-    endCalled,
+    // A dialog ended normally through a call to `DialogContext.end()`.
+    endCalled = 'endCalled',
 
-    /** A dialog is ending because its being replaced through a call to `DialogContext.replace()`. */
-    replaceCalled,
+    // A dialog is ending because its being replaced through a call to `DialogContext.replace()`.
+    replaceCalled = 'replaceCalled',
 
-    /** A dialog was cancelled as part of a call to `DialogContext.cancelAll()`. */
-    cancelCalled,
+    // A dialog was cancelled as part of a call to `DialogContext.cancelAll()`.
+    cancelCalled = 'cancelCalled',
 
-    /** A step was advanced through a call to `WaterfallStepContext.next()`. */
-    nextCalled
+    // A step was advanced through a call to `WaterfallStepContext.next()`.
+    nextCalled = 'nextCalled'
+}
+
+export enum DialogTurnStatus {
+    // Indicates that there is currently nothing on the dialog stack.
+    empty = 'empty',
+
+    // Indicates that the dialog on top is waiting for a response from the user.
+    waiting = 'waiting',
+
+    // Indicates that the dialog completed successfully, the result is available, and the stack is empty.
+    complete = 'complete',
+
+    // Indicates that the dialog was cancelled and the stack is empty.
+    cancelled = 'cancelled'
 }
 
 /**
@@ -47,44 +61,41 @@ export enum DialogReason {
  * @param T (Optional) type of result returned by the dialog when it calls `dc.end()`.
  */
 export interface DialogTurnResult<T = any> {
-    /** If `true` a dialog is still active on the dialog stack. */
-    hasActive: boolean;
+    // Gets or sets the current status of the stack.
+    status: DialogTurnStatus;
 
-    /** If `true` the dialog that was on the stack just completed and the final [result](#result) is available. */
-    hasResult: boolean;
-
-    /** Final result returned by a dialog that just completed. Can be `undefined` even when [hasResult](#hasResult) is true. */
+    // Final result returned by a dialog that just completed. Can be `undefined` even when [hasResult](#hasResult) is true.
     result?: T;
 }
-
 
 /**
  * Base class for all dialogs.
  */
 export abstract class Dialog<O extends object = {}> {
-    /** Signals the end of a turn by a dialog method or waterfall/sequence step.  */
-    static EndOfTurn: DialogTurnResult = { hasActive: true, hasResult: false };
+    // Signals the end of a turn by a dialog method or waterfall/sequence step.
+    public static EndOfTurn: DialogTurnResult = { status: DialogTurnStatus.waiting };
 
-    constructor(dialogId: string) { 
+    // Unique ID of the dialog.
+    public readonly id: string;
+
+    constructor(dialogId: string) {
         this.id = dialogId;
     }
-
-    public readonly id: string;
 
     /**
      * Method called when a new dialog has been pushed onto the stack and is being activated.
      * @param dc The dialog context for the current turn of conversation.
-     * @param options (Optional) arguments that were passed to the dialog during `begin()` call that started the instance.  
+     * @param options (Optional) arguments that were passed to the dialog during `begin()` call that started the instance.
      */
     public abstract dialogBegin(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
 
     /**
-     * (Optional) method called when an instance of the dialog is the active dialog and the user 
-     * replies with a new activity. The dialog will generally continue to receive the users replies 
+     * (Optional) method called when an instance of the dialog is the active dialog and the user
+     * replies with a new activity. The dialog will generally continue to receive the users replies
      * until it calls `DialogContext.end()`, `DialogContext.begin()`, or `DialogContext.prompt()`.
-     * 
+     *
      * If this method is NOT implemented then the dialog will be automatically ended when the user
-     * replies. 
+     * replies.
      * @param dc The dialog context for the current turn of conversation.
      */
     public async dialogContinue(dc: DialogContext): Promise<DialogTurnResult> {
@@ -94,15 +105,15 @@ export abstract class Dialog<O extends object = {}> {
 
     /**
      * (Optional) method called when an instance of the dialog is being returned to from another
-     * dialog that was started by the current instance using `DialogContext.begin()` or 
+     * dialog that was started by the current instance using `DialogContext.begin()` or
      * `DialogContext.prompt()`.
-     * 
+     *
      * If this method is NOT implemented then the dialog will be automatically ended with a call
-     * to `DialogContext.end()`. Any result passed from the called dialog will be passed to the 
-     * active dialogs parent. 
+     * to `DialogContext.end()`. Any result passed from the called dialog will be passed to the
+     * active dialogs parent.
      * @param dc The dialog context for the current turn of conversation.
      * @param reason The reason the dialog is being resumed. This will typically be a value of `DialogReason.endCalled`.
-     * @param result (Optional) value returned from the dialog that was called. The type of the value returned is dependant on the dialog that was called. 
+     * @param result (Optional) value returned from the dialog that was called. The type of the value returned is dependant on the dialog that was called.
      */
     public async dialogResume(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
         // By default just end the current dialog and return result to parent.

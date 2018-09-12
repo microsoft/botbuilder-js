@@ -6,22 +6,25 @@
 /**
  * @private
  */
- export function shallowCopy<T>(value: T): T {
+export function shallowCopy<T>(value: T): T {
     if (Array.isArray(value)) { return value.slice(0) as any; }
-    if (typeof value === 'object') { return Object.assign({}, value); }
+    if (typeof value === 'object') { return {...value as any}; }
+
     return value;
 }
 
 /**
  * @private
- * @param target
- * @param handler
+ * @param target a thing that will be made revocable
+ * @param handler an object that defines the way the new revocable object works
  */
-export function makeRevocable<T extends Object>(target: T, handler?: ProxyHandler<T>): { proxy: T; revoke: () => void; } {
+export function makeRevocable<T extends Object>(target: T, handler?: ProxyHandler<T>): { proxy: T; revoke(): void } {
     // Ensure proxy supported (some browsers don't)
     if (Proxy && Proxy.revocable) {
         return Proxy.revocable(target, handler || {});
     } else {
-        return { proxy: target, revoke: () => {} };
+        return { proxy: target, revoke: (): void => {
+            // noop
+        }};
     }
 }

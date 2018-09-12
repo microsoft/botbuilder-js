@@ -32,11 +32,16 @@ While this package is in preview it's possible for updates to include build brea
 After adding the module to your application, modify your app's code to import the multi-turn dialog management capabilities. Near your other `import` and `require` statements, add:
 
 ```
-// import all capabities in the module.  
+// Import all capabities in the module.  
 import * from "botbuilder-dialogs";
 ```
 
-Then, create one or more `DialogSet` objects to manage the dialogs used in your bot:
+Then, create one or more `DialogSet` objects to manage the dialogs used in your bot.
+A DialogSet is used to collect and execute dialogs. A bot may have more than one
+DialogSet, which can be used to group dialogs logically and avoid name collisions.
+
+More sophisticated multi-dialog sets can be created using the `ComponentDialog` class, which
+has many of the capabilities of a DialogSet, but behaves and can be called like a single dialog.
 
 ```
 // set up a storage system that will capture the conversation state.
@@ -44,27 +49,29 @@ const DIALOG_STATE_PROPERTY = 'dialogState';
 const storage = new MemoryStorage();
 const convoState = new ConversationState(storage);
 
-// define a property associated with the conversation
+// Define a property associated with the conversation
 const dialogState = convoState.createProperty(DIALOG_STATE_PROPERTY);
 
-// initialize the dialogset with the propery accessor as a paramter.
+// Initialize the dialogset, passing in the property used to capture state.
 const dialogs = new DialogSet(dialogState);
 
-// add dialog. each dialog is identified by a unique name used to invoke the dialog later
+// Add a dialog. Use the included WaterfallDialog type, or build your own
+// by subclassing from the Dialog class.
+// Each dialog is identified by a unique name used to invoke the dialog later.
 const DIALOG_ONE = 'dialog_identifier_value';
 dialogs.add(new WaterfallDialog(DIALOG_ONE, [
-    async (dialog_context, step) => {
+    async (step) => {
         // access user input from previous step
         var last_step_answer = step.result;
 
         // send a message to the user
-        await dialog_context.context.sendActivity('Send a reply');
+        await step.context.sendActivity('Send a reply');
 
         // continue to the next step
         return await step.next();
 
         // OR end
-        // return await dc.end();
+        // return await step.end();
     },
     step2fn,
     step3fn,
@@ -79,7 +86,7 @@ Finally, from somewhere in your bot's code, invoke your dialog by name:
 // receive and process incoming events into TurnContext objects in the normal way
 adapter.processActivity(req, res, async (context) => {
     // create a dialogContext object from the incoming TurnContext
-    const dc = await dialogs.createContext(context);
+    const dc = await dialogs.createContext(context, state);
 
     // ...evaluate message and do other bot logic...
 
@@ -92,4 +99,8 @@ adapter.processActivity(req, res, async (context) => {
 
 [Prompts](https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-prompts?view=azure-bot-service-4.0&tabs=javascript) This module contains several types of built-in prompt that can be used to create dialogs that capture and validate specific data types like dates, numbers and multiple-choice answers.
 
-[Component Dialogs]() Component Dialogs are containers that encapsulate multiple sub-dialogs, but can be invoked like normal dialogs. This is useful for re-usable dialogs, or creating multiple dialogs with similarly named sub-dialogs that would otherwise collide.
+[DialogSet]() DialogSet is a container for multiple dialogs. Once added to a DialogSet, dialogs can be called and interlinked.
+
+[WaterfallDialog](https://docs.microsoft.com/en-us/javascript/api/botbuilder-dialogs/waterfall) WaterfallDialogs execute a series of step functions in order, passing the resulting user input from each steo into the next step's function.
+
+[ComponentDialog]() ComponentDialogs are containers that encapsulate multiple sub-dialogs, but can be invoked like normal dialogs. This is useful for re-usable dialogs, or creating multiple dialogs with similarly named sub-dialogs that would otherwise collide.

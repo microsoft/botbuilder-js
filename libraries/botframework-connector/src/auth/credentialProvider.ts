@@ -24,7 +24,7 @@ export interface ICredentialProvider {
      * @param  {string} appId bot appid
      * @returns {Promise<boolean>} true if it is a valid AppId
      */
-    isValidAppId(appId: string): Promise<boolean>
+    isValidAppId(appId: string): Promise<boolean>;
 
     /**
      * Get the app password for a given bot appId, if it is not a valid appId, return Null
@@ -34,7 +34,7 @@ export interface ICredentialProvider {
      * @param  {string} appId bot appid
      * @returns {Promise<string|null>} password or null for invalid appid
      */
-    getAppPassword(appId: string): Promise<string|null>
+    getAppPassword(appId: string): Promise<string|null>;
 
     /**
      * Checks if bot authentication is disabled.
@@ -44,13 +44,13 @@ export interface ICredentialProvider {
      * that may need to call out to serviced to validate the appId / password pair.
      * @returns {Promise<boolean>} true if bot authentication is disabled.
      */
-    isAuthenticationDisabled(): Promise<boolean>
+    isAuthenticationDisabled(): Promise<boolean>;
 }
 
 export class SimpleCredentialProvider implements ICredentialProvider {
 
-    readonly appId: string;
-    readonly appPassword: string;
+    private readonly appId: string;
+    private readonly appPassword: string;
 
     constructor(appId: string, appPassword: string) {
         this.appId = appId;
@@ -65,7 +65,7 @@ export class SimpleCredentialProvider implements ICredentialProvider {
      * @param  {string} appId bot appid
      * @returns {Promise<boolean>} true if it is a valid AppId
      */
-    isValidAppId(appId: string): Promise<boolean> {
+    public isValidAppId(appId: string): Promise<boolean> {
         return Promise.resolve(this.appId === appId);
     }
 
@@ -77,7 +77,7 @@ export class SimpleCredentialProvider implements ICredentialProvider {
      * @param  {string} appId bot appid
      * @returns {Promise<string|null>} password or null for invalid appid
      */
-    getAppPassword(appId: string): Promise<string|null> {
+    public getAppPassword(appId: string): Promise<string|null> {
         return Promise.resolve((this.appId === appId) ? this.appPassword : null);
     }
 
@@ -89,7 +89,7 @@ export class SimpleCredentialProvider implements ICredentialProvider {
      * that may need to call out to serviced to validate the appId / password pair.
      * @returns {Promise<boolean>} true if bot authentication is disabled.
      */
-    isAuthenticationDisabled(): Promise<boolean> {
+    public isAuthenticationDisabled(): Promise<boolean> {
         return Promise.resolve(!this.appId);
     }
 }

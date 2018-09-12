@@ -6,12 +6,14 @@
  * Licensed under the MIT License.
  */
 import { VerifyOptions } from 'jsonwebtoken';
+import { ClaimsIdentity } from './claimsIdentity';
 import { Constants } from './constants';
 import { ICredentialProvider } from './credentialProvider';
-import { ClaimsIdentity } from './claimsIdentity';
 import { JwtTokenExtractor } from './jwtTokenExtractor';
 
 export module ChannelValidation {
+
+    export var OpenIdMetadataEndpoint : string = undefined;
 
     /**
      * TO BOT FROM CHANNEL: Token validation parameters when connecting to a bot
@@ -31,11 +33,16 @@ export module ChannelValidation {
      * @param  {string} serviceUrl The ServiceUrl Claim value that must match in the identity.
      * @returns {Promise<ClaimsIdentity>} A valid ClaimsIdentity.
      */
-    export async function authenticateChannelTokenWithServiceUrl(authHeader: string, credentials: ICredentialProvider, serviceUrl: string, channelId: string): Promise<ClaimsIdentity> {
+    export async function authenticateChannelTokenWithServiceUrl(
+        authHeader: string,
+        credentials: ICredentialProvider,
+        serviceUrl: string,
+        channelId: string
+    ): Promise<ClaimsIdentity> {
 
-        let identity = await authenticateChannelToken(authHeader, credentials, channelId);
+        const identity: ClaimsIdentity = await authenticateChannelToken(authHeader, credentials, channelId);
 
-        let serviceUrlClaim = identity.getClaimValue(Constants.ServiceUrlClaim);
+        const serviceUrlClaim: string = identity.getClaimValue(Constants.ServiceUrlClaim);
         if (serviceUrlClaim !== serviceUrl) {
             // Claim must match. Not Authorized.
             throw new Error('Unauthorized. ServiceUrl claim do not match.');
@@ -51,19 +58,32 @@ export module ChannelValidation {
      * @param  {ICredentialProvider} credentials The user defined set of valid credentials, such as the AppId.
      * @returns {Promise<ClaimsIdentity>} A valid ClaimsIdentity.
      */
-    export async function authenticateChannelToken(authHeader: string, credentials: ICredentialProvider, channelId: string): Promise<ClaimsIdentity> {
+    export async function authenticateChannelToken(
+        authHeader: string,
+        credentials: ICredentialProvider,
+        channelId: string
+    ): Promise<ClaimsIdentity> {
 
-        let tokenExtractor = new JwtTokenExtractor(
+        const tokenExtractor: JwtTokenExtractor = new JwtTokenExtractor(
             ToBotFromChannelTokenValidationParameters,
-            Constants.ToBotFromChannelOpenIdMetadataUrl,
+            OpenIdMetadataEndpoint ? OpenIdMetadataEndpoint : Constants.ToBotFromChannelOpenIdMetadataUrl,
             Constants.AllowedSigningAlgorithms);
 
-        let identity = await tokenExtractor.getIdentityFromAuthHeader(authHeader, channelId);
-        if (!identity) {
-            // No valid identity. Not Authorized.
-            throw new Error('Unauthorized. No valid identity.');
-        }
+        const identity: ClaimsIdentity = await tokenExtractor.getIdentityFromAuthHeader(authHeader, channelId);
+        
+        return await validateIdentity(identity, credentials);
+    }
 
+    /**
+     * Validate the ClaimsIdentity to ensure it came from the channel service.
+     * @param  {ClaimsIdentity} identity The identity to validate
+     * @param  {ICredentialProvider} credentials The user defined set of valid credentials, such as the AppId.
+     * @returns {Promise<ClaimsIdentity>} A valid ClaimsIdentity.
+     */
+    export async function validateIdentity(
+        identity: ClaimsIdentity,
+        credentials: ICredentialProvider
+    ): Promise<ClaimsIdentity> {
         if (!identity.isAuthenticated) {
             // The token is in some way invalid. Not Authorized.
             throw new Error('Unauthorized. Is not authenticated');
@@ -77,15 +97,15 @@ export module ChannelValidation {
         // Look for the "aud" claim, but only if issued from the Bot Framework
         if (identity.getClaimValue(Constants.IssuerClaim) !== Constants.ToBotFromChannelTokenIssuer) {
             // The relevant Audiance Claim MUST be present. Not Authorized.
-            throw new Error('Unauthorized. Audiance Claim MUST be present.');
+            throw new Error('Unauthorized. Issuer Claim MUST be present.');
         }
 
-        // The AppId from the claim in the token must match the AppId specified by the developer. 
+        // The AppId from the claim in the token must match the AppId specified by the developer.
         // In this case, the token is destined for the app, so we find the app ID in the audience claim.
-        let audClaim = identity.getClaimValue(Constants.AudienceClaim);
-        if (!(await credentials.isValidAppId(audClaim || ""))) {
+        const audClaim: string = identity.getClaimValue(Constants.AudienceClaim);
+        if (!(await credentials.isValidAppId(audClaim || ''))) {
             // The AppId is not valid or not present. Not Authorized.
-            throw new Error(`Unauthorized. Invalid AppId passed on token: ${audClaim}`)
+            throw new Error(`Unauthorized. Invalid AppId passed on token: ${audClaim}`);
         }
 
         return identity;

@@ -6,25 +6,19 @@ import { IBotService, ServiceTypes } from '../schema';
 import { AzureService } from './azureService';
 
 export class BotService extends AzureService implements IBotService {
+    public appId: string;
 
     constructor(source: IBotService = {} as IBotService) {
         super(source, ServiceTypes.Bot);
-        Object.assign(this, {});
-        this.type = ServiceTypes.Bot;
-    }
-
-    public toJSON(): IBotService {
-        let { type, id,  name, tenantId, subscriptionId, resourceGroup, serviceName } = this;
-        return { type, id, name, tenantId, subscriptionId, resourceGroup, serviceName };
     }
 
     // encrypt keys in service
-    public encrypt(secret: string, encryptString: (value: string, secret:string) => string): void {
-
+    public encrypt(secret: string, encryptString: (value: string, secret: string) => string): void {
+        return;
     }
 
     // decrypt keys in service
-    public decrypt(secret: string, decryptString: (value: string, secret:string) => string): void {
-
+    public decrypt(secret: string, decryptString: (value: string, secret: string) => string): void {
+        return;
     }
 }

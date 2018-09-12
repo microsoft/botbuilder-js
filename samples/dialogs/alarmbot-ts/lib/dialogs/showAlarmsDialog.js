@@ -12,25 +12,26 @@ const botbuilder_dialogs_1 = require("botbuilder-dialogs");
 const moment = require("moment");
 const START_DIALOG = 'start';
 class ShowAlarmsDialog extends botbuilder_dialogs_1.ComponentDialog {
-    constructor(dialogId, alarms) {
+    constructor(dialogId, alarmsProperty) {
         super(dialogId);
-        // Add control flow dialogs
-        this.addDialog(new botbuilder_dialogs_1.WaterfallDialog(START_DIALOG, [
-            (dc, step) => __awaiter(this, void 0, void 0, function* () {
-                let msg = `No alarms found.`;
-                const list = yield alarms.get(dc.context, []);
-                if (list.length > 0) {
-                    msg = `**Current Alarms**\n\n`;
-                    let connector = '';
-                    list.forEach((alarm) => {
-                        msg += connector + `- ${alarm.title} (${moment(alarm.time).format("ddd, MMM Do, h:mm a")})`;
-                        connector = '\n';
-                    });
-                }
-                yield dc.context.sendActivity(msg);
-                return yield dc.end();
-            })
-        ]));
+        this.alarmsProperty = alarmsProperty;
+    }
+    // for single turn dialog, we can do it all here.
+    onDialogBegin(dc, options) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let msg = `No alarms found.`;
+            const list = yield this.alarmsProperty.get(dc.context, []);
+            if (list.length > 0) {
+                msg = `**Current Alarms**\n\n`;
+                let connector = '';
+                list.forEach((alarm) => {
+                    msg += connector + `- ${alarm.title} (${moment(alarm.time).format("ddd, MMM Do, h:mm a")})`;
+                    connector = '\n';
+                });
+            }
+            yield dc.context.sendActivity(msg);
+            return yield dc.end();
+        });
     }
 }
 exports.ShowAlarmsDialog = ShowAlarmsDialog;
